@@ -28,6 +28,25 @@ Styleguidist combines a style guide, where all your components are presented on 
 
 This builds the Styleguidist styleguide to a static site that you can publish.
 
+### `yarn storybook`
+
+This will start the [Storybook](https://storybook.js.org/) server and make the Storybook Demo site available at: http://localhost:6006
+
+#### Demo Usage
+
+We use Storybook to demo our modules. To load the table of contents, browse to http://localhost:6006. Then, once you're on a module, add `iframe.html` before the query string to load a standalone version of the module. This is necessary, for example, when testing or demoing a module on mobile, where the IFRAME interface will interfere with fullscreen functionality.
+
+#### Demo URL Example
+
+If the URL in the Storybook interface is  
+`https://localhost:6006/?selectedKind=Profile&selectedStory=Edit%20Profile&full=1&addons=0&stories=1&panelRight=0`  
+then the standalone demo URL would be
+`https://localhost:6006/iframe.html?selectedKind=Profile&selectedStory=Edit%20Profile&full=1&addons=0&stories=1&panelRight=0`
+
+### `yarn storybook:build`
+
+This builds the Storybook app to a static site that you can publish.
+
 ## Supported Language Features and Polyfills
 
 This project supports a superset of the latest JavaScript standard.<br>
