@@ -4,7 +4,7 @@ module.exports = {
   components: path.join(__dirname, '../src/components/**/*.js'),
   webpackConfig: require('./webpack.config.dev.js'),
   skipComponentsWithoutExample: true,
-  styleguideDir: 'build',
+  styleguideDir: path.join(__dirname, '../../../build'),
   styleguideComponents: {
     Wrapper: path.join(__dirname, '../src/components/Viewport/Viewport'),
   },
