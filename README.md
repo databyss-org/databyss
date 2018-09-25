@@ -12,7 +12,7 @@ A collection of packages that drive the databyss platform.
 
 ## Packages
 
-- [databyss-ui](/databyss-org/packages/databyss-ui)
+- [databyss-ui](packages/databyss-ui)
 
 ## Available Scripts
 
