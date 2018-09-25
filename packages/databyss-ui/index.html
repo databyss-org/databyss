@@ -1,0 +1,159 @@
+Html Webpack Plugin:
+<pre>
+  Error: Child compilation failed:
+  Entry module not found: Error: Can't resolve '/Users/paul/dev/databyss-org/databyss/packages/databyss-ui/pub  lic/index.html' in '/Users/paul/dev/databyss-org/databyss/packages/databyss-ui':
+  Error: Can't resolve '/Users/paul/dev/databyss-org/databyss/packages/databyss-ui/public/index.html' in '/Use  rs/paul/dev/databyss-org/databyss/packages/databyss-ui'
+  
+  - compiler.js:76 
+    [databyss]/[html-webpack-plugin]/lib/compiler.js:76:16
+  
+  - Compiler.js:304 compile
+    [databyss]/[webpack]/lib/Compiler.js:304:11
+  
+  - Compiler.js:514 applyPluginsAsync.err
+    [databyss]/[webpack]/lib/Compiler.js:514:14
+  
+  - Tapable.js:202 next
+    [databyss]/[tapable]/lib/Tapable.js:202:11
+  
+  - CachePlugin.js:78 Compiler.<anonymous>
+    [databyss]/[webpack]/lib/CachePlugin.js:78:5
+  
+  - Tapable.js:206 Compiler.applyPluginsAsyncSeries
+    [databyss]/[tapable]/lib/Tapable.js:206:13
+  
+  - Compiler.js:511 compilation.seal.err
+    [databyss]/[webpack]/lib/Compiler.js:511:11
+  
+  - Tapable.js:195 Compilation.applyPluginsAsyncSeries
+    [databyss]/[tapable]/lib/Tapable.js:195:46
+  
+  - Compilation.js:680 self.applyPluginsAsync.err
+    [databyss]/[webpack]/lib/Compilation.js:680:19
+  
+  - Tapable.js:195 Compilation.applyPluginsAsyncSeries
+    [databyss]/[tapable]/lib/Tapable.js:195:46
+  
+  - Compilation.js:671 self.applyPluginsAsync.err
+    [databyss]/[webpack]/lib/Compilation.js:671:11
+  
+  - Tapable.js:195 Compilation.applyPluginsAsyncSeries
+    [databyss]/[tapable]/lib/Tapable.js:195:46
+  
+  - Compilation.js:666 self.applyPluginsAsync.err
+    [databyss]/[webpack]/lib/Compilation.js:666:10
+  
+  - Tapable.js:195 Compilation.applyPluginsAsyncSeries
+    [databyss]/[tapable]/lib/Tapable.js:195:46
+  
+  - Compilation.js:662 sealPart2
+    [databyss]/[webpack]/lib/Compilation.js:662:9
+  
+  - Tapable.js:195 Compilation.applyPluginsAsyncSeries
+    [databyss]/[tapable]/lib/Tapable.js:195:46
+  
+  - Compilation.js:605 Compilation.seal
+    [databyss]/[webpack]/lib/Compilation.js:605:8
+  
+  - Compiler.js:508 applyPluginsParallel.err
+    [databyss]/[webpack]/lib/Compiler.js:508:17
+  
+  - Tapable.js:289 
+    [databyss]/[tapable]/lib/Tapable.js:289:11
+  
+  - Compilation.js:507 _addModuleChain
+    [databyss]/[webpack]/lib/Compilation.js:507:11
+  
+  - Compilation.js:390 errorAndCallback.bail
+    [databyss]/[webpack]/lib/Compilation.js:390:4
+  
+  - Compilation.js:413 moduleFactory.create
+    [databyss]/[webpack]/lib/Compilation.js:413:13
+  
+  - NormalModuleFactory.js:235 factory
+    [databyss]/[webpack]/lib/NormalModuleFactory.js:235:20
+  
+  - NormalModuleFactory.js:60 resolver
+    [databyss]/[webpack]/lib/NormalModuleFactory.js:60:20
+  
+  - NormalModuleFactory.js:127 asyncLib.parallel
+    [databyss]/[webpack]/lib/NormalModuleFactory.js:127:20
+  
+  - async.js:3888 
+    [databyss]/[async]/dist/async.js:3888:9
+  
+  - async.js:473 
+    [databyss]/[async]/dist/async.js:473:16
+  
+  - async.js:1062 iteratorCallback
+    [databyss]/[async]/dist/async.js:1062:13
+  
+  - async.js:969 
+    [databyss]/[async]/dist/async.js:969:16
+  
+  - async.js:3885 
+    [databyss]/[async]/dist/async.js:3885:13
+  
+  - From previous event:
+  
+  - compiler.js:69 Object.compileTemplate
+    [databyss]/[html-webpack-plugin]/lib/compiler.js:69:10
+  
+  - index.js:47 Compiler.<anonymous>
+    [databyss]/[html-webpack-plugin]/index.js:47:40
+  
+  - Tapable.js:293 Compiler.applyPluginsParallel
+    [databyss]/[tapable]/lib/Tapable.js:293:14
+  
+  - Compiler.js:503 applyPluginsAsync.err
+    [databyss]/[webpack]/lib/Compiler.js:503:9
+  
+  - Tapable.js:195 Compiler.applyPluginsAsyncSeries
+    [databyss]/[tapable]/lib/Tapable.js:195:46
+  
+  - Compiler.js:496 Compiler.compile
+    [databyss]/[webpack]/lib/Compiler.js:496:8
+  
+  - Compiler.js:283 readRecords.err
+    [databyss]/[webpack]/lib/Compiler.js:283:11
+  
+  - Compiler.js:395 Compiler.readRecords
+    [databyss]/[webpack]/lib/Compiler.js:395:11
+  
+  - Compiler.js:280 applyPluginsAsync.err
+    [databyss]/[webpack]/lib/Compiler.js:280:10
+  
+  - Tapable.js:202 next
+    [databyss]/[tapable]/lib/Tapable.js:202:11
+  
+  - CachePlugin.js:51 Compiler.compiler.plugin
+    [databyss]/[webpack]/lib/CachePlugin.js:51:59
+  
+  - Tapable.js:206 Compiler.applyPluginsAsyncSeries
+    [databyss]/[tapable]/lib/Tapable.js:206:13
+  
+  - Compiler.js:277 applyPluginsAsync.err
+    [databyss]/[webpack]/lib/Compiler.js:277:9
+  
+  - Tapable.js:202 next
+    [databyss]/[tapable]/lib/Tapable.js:202:11
+  
+  - NodeEnvironmentPlugin.js:21 Compiler.compiler.plugin
+    [databyss]/[webpack]/lib/node/NodeEnvironmentPlugin.js:21:4
+  
+  - Tapable.js:206 Compiler.applyPluginsAsyncSeries
+    [databyss]/[tapable]/lib/Tapable.js:206:13
+  
+  - Compiler.js:274 Compiler.run
+    [databyss]/[webpack]/lib/Compiler.js:274:8
+  
+  - webpack.js:389 processOptions
+    [databyss]/[webpack]/bin/webpack.js:389:13
+  
+  - webpack.js:393 yargs.parse
+    [databyss]/[webpack]/bin/webpack.js:393:2
+  
+  - yargs.js:533 Object.Yargs.self.parse
+    [databyss]/[webpack]/[yargs]/yargs.js:533:18
+  
+</pre><script type="text/javascript" src="/static/js/bundle.js"></script>

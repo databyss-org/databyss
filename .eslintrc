@@ -1,0 +1,37 @@
+{
+  "extends": ["eslint-config-airbnb", "eslint-config-prettier"],
+  "plugins": ["eslint-plugin-prettier"],
+  "parser": "babel-eslint",
+  "env": {
+    "jest": true,
+    "browser": true,
+  },
+  "rules": {
+    "no-return-assign": ["error", "except-parens"], // Default option
+    "no-console": "off", // Console logs are too useful and are removed in prod anyway
+    "global-require": "off", // Useful for images, assets, etc
+    "import/no-dynamic-require": "off", // Useful for images, assets, etc
+    "import/prefer-default-export": "off", // Often this is not organizationally optimal
+    "no-shadow": "off", // Shadowing is a nice language feature. Naming is hard.
+    "no-underscore-dangle": "off", // It's classic pattern to denote private props.
+    "react/prop-types": "off", // We're using flow instead
+    "react/require-default-props": "off", // Not useful without prop-types
+    "react/jsx-filename-extension": "off", // We're using .js for jsx files
+    "react/no-children-prop": "off", // Certain libs (like router) use this pattern
+    "react/no-array-index-key": "off", // It's up to the coder to ensure keys stay unique to value
+    "react/no-multi-comp": "off", // It's often useful to group small, tightly related components
+    "prefer-destructuring": "off", // This forces awkward syntax sometimes
+    "no-case-declarations": "off", // Fallthrough is useful in case/default clauses
+    "no-param-reassign": ["error", { "props": false }], // Useful for mutating reduce accumulators, ex.
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.*"]}], // storybook and scripts use devDependencies
+    "prettier/prettier": [
+      "error",
+      {
+        "printWidth": 80, // Easy to read
+        "semi": false, // Almost always unecessary
+        "singleQuote": true, // Easy to read
+        "trailingComma": "es5" // Helps simplify diffs
+      }
+    ]
+  }
+}

@@ -1,0 +1,20 @@
+@import 'shared-styles/index';
+
+.viewport {
+  padding: 20px;
+  background-color: $light-grey;
+  position: relative;
+
+  &.fullscreen {
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+}
+
+.content {
+  max-width: $max-page-width;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}

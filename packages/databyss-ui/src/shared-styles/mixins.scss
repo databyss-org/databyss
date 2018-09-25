@@ -1,0 +1,78 @@
+@import './variables';
+
+@mixin user-agent($regexArr) {
+  @each $regex in $regexArr {
+    html[data-user-agent*='#{$regex}' i] {
+      @content;
+    }
+  }
+}
+
+@mixin not-user-agent($regexArr) {
+  @each $regex in $regexArr {
+    html:not([data-user-agent*='#{$regex}' i]) {
+      @content;
+    }
+  }
+}
+
+@mixin mobile {
+  @media (max-width: #{$mobile-width}) {
+    @content;
+  }
+}
+
+@mixin mobile-os {
+  html[data-mobile-user-agent] {
+    @content;
+  }
+}
+
+@mixin not-mobile-os {
+  html:not([data-mobile-user-agent]) {
+    @content;
+  }
+}
+
+@mixin mobile-or-mobile-os {
+  @include mobile {
+    @content;
+  }
+  @include mobile-os {
+    @content;
+  }
+}
+
+@mixin tablet-only {
+  @media (min-width: #{$mobile-width + 1px}) and (max-width: #{$desktop-width}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{$mobile-width + 1px}) {
+    @content;
+  }
+}
+
+@mixin tablet-not-mobile-os {
+  @include tablet {
+    @include not-mobile-os {
+      @content;
+    }
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{$desktop-width + 1}) {
+    @content;
+  }
+}
+
+@mixin center-both {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}

@@ -1,0 +1,34 @@
+/* layout */
+$mobile-width: 600px;
+$desktop-width: 1024px;
+$max-page-width: 1024px;
+$content-width: 500px;
+$padding: 15px;
+
+/* fonts */
+$primary-font: '-apple-system', 'Helvetica', sans-serif;
+$font-size-normal: 14px;
+$font-size-s: 12px;
+$font-size-l: 16px;
+
+/* colors */
+$black: #000;
+$white: #fff;
+$dark-grey: #7a7a7a;
+$light-grey: #e8ebef;
+$lighter-grey: #f7f7f7;
+$hairline-grey: #e7e7e7;
+$disabled-grey: #8a8a8a;
+
+$bg-color-dark: $dark-grey;
+$bg-color-light: $light-grey;
+$text-color-dark: $black;
+$text-color-light: $white;
+$text-color-dark-secondary: $dark-grey;
+
+/* transitions */
+$transition-slow: 800ms;
+$transition-medium: 500ms;
+$transition-quick: 300ms;
+$transition-super-quick: 50ms;
+$ease: ease-in-out;

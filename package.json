@@ -1,0 +1,98 @@
+{
+  "name": "databyss-org-workspace",
+  "version": "1.0.0",
+  "description": "massive open-source citation database platform",
+  "main": "index.js",
+  "repository": "https://github.com/databyss-org/databyss",
+  "author": "pzhine",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "babel-core": "6.26.0",
+    "babel-eslint": "^8.2.3",
+    "babel-jest": "20.0.3",
+    "babel-loader": "7.1.2",
+    "babel-preset-react-app": "^3.1.1",
+    "babel-runtime": "6.26.0",
+    "eslint": "4.10.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-flowtype": "2.39.1",
+    "eslint-plugin-import": "2.8.0",
+    "eslint-plugin-jsx-a11y": "5.1.1",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-react": "7.4.0",
+    "flow-bin": "^0.79.1",
+    "jest": "20.0.4",
+    "prettier": "1.13.5",
+    "prettier-eslint": "^8.8.1",
+    "promise": "8.0.1",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "redux": "3.7.2",
+    "redux-actions": "2.2.1",
+    "redux-logger": "3.0.6",
+    "webpack": "3.8.1"
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "^3.4.10",
+    "@storybook/addon-links": "^3.4.10",
+    "@storybook/addon-options": "^3.4.10",
+    "@storybook/addons": "^3.4.10",
+    "@storybook/react": "^3.4.10",
+    "csvtojson": "^2.0.8",
+    "lorem-ipsum": "^1.0.6",
+    "react-styleguidist": "^7.3.4"
+  },
+  "scripts": {
+    "build": "bash scripts/build.sh",
+    "test": "node scripts/test.js --env=jsdom",
+    "flow": "flow",
+    "styleguide": "styleguidist server --config ./packages/databyss-ui/config/styleguide.config.js",
+    "styleguide:build": "styleguidist build --config ./packages/databyss-ui/config/styleguide.config.js",
+    "storybook": "start-storybook -h 0.0.0.0 -p 6006 -c ./packages/databyss-ui/.storybook -s ./packages/databyss-ui/public",
+    "storybook:build": "build-storybook -o build -c ./packages/databyss-ui/.storybook -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,mjs}"
+    ],
+    "setupFiles": [
+      "<rootDir>/config/polyfills.js"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,mjs}",
+      "<rootDir>/src/**/?(*.)(spec|test).{js,jsx,mjs}"
+    ],
+    "testEnvironment": "node",
+    "testURL": "http://localhost",
+    "transform": {
+      "^.+\\.(js|jsx|mjs)$": "<rootDir>/node_modules/babel-jest",
+      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|mjs|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$"
+    ],
+    "moduleNameMapper": {
+      "^react-native$": "react-native-web"
+    },
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node",
+      "mjs"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
+  },
+  "workspaces": [
+    "packages/*"
+  ]
+}
