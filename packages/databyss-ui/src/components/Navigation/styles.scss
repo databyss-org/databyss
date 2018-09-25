@@ -1,14 +1,18 @@
 @import 'shared-styles/index';
 
 .pageNav {
-  font-size: 16px;
+  font-size: 14px;
   font-family: $nav-font;
   color: $dark-grey;
+}
 
-  a,
-  a:hover,
-  a:active,
-  a:visited {
-    color: $dark-grey;
+.link {
+  color: $dark-grey;
+  display: block;
+  line-height: 22px;
+
+  &.inline {
+    display: inline;
+    line-height: 16px;
   }
 }
