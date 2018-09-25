@@ -1,0 +1,14 @@
+@import 'shared-styles/index';
+
+.pageNav {
+  font-size: 16px;
+  font-family: $nav-font;
+  color: $dark-grey;
+
+  a,
+  a:hover,
+  a:active,
+  a:visited {
+    color: $dark-grey;
+  }
+}

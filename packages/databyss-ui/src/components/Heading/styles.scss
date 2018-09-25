@@ -1,0 +1,16 @@
+@import 'shared-styles/index';
+
+.pageHeading {
+  font-family: $heading-font;
+  color: $dark-grey;
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.pageSubHeading {
+  font-family: $body-font;
+  font-weight: bold;
+  color: $dark-grey;
+  font-size: 16px;
+  line-height: 20px;
+}

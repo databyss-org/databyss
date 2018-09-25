@@ -40,6 +40,7 @@
     "@storybook/addon-options": "^3.4.10",
     "@storybook/addons": "^3.4.10",
     "@storybook/react": "^3.4.10",
+    "copy-webpack-plugin": "^4.5.2",
     "csvtojson": "^2.0.8",
     "lorem-ipsum": "^1.0.6",
     "react-styleguidist": "^7.3.4"

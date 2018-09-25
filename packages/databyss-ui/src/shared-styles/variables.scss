@@ -6,7 +6,9 @@ $content-width: 500px;
 $padding: 15px;
 
 /* fonts */
-$primary-font: '-apple-system', 'Helvetica', sans-serif;
+$heading-font: 'Baskerville', serif;
+$body-font: 'MonotypeBaskerville', serif;
+$nav-font: 'DINNextLTPro-Light', sans-serif;
 $font-size-normal: 14px;
 $font-size-s: 12px;
 $font-size-l: 16px;
@@ -14,7 +16,7 @@ $font-size-l: 16px;
 /* colors */
 $black: #000;
 $white: #fff;
-$dark-grey: #7a7a7a;
+$dark-grey: #4a4a4a;
 $light-grey: #e8ebef;
 $lighter-grey: #f7f7f7;
 $hairline-grey: #e7e7e7;

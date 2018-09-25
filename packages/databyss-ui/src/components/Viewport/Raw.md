@@ -3,5 +3,7 @@ Uses `dangerouslySetInnerHTML` to render raw markup.
 
 ```js
 const loremIpsum = require('lorem-ipsum')
-;<Raw html={loremIpsum({ format: 'html', units: 'paragraphs', count: 3 })} />
+;<Content>
+  <Raw html={loremIpsum({ format: 'html', units: 'paragraphs', count: 3 })} />
+</Content>
 ```
