@@ -9,7 +9,7 @@
 
   .label {
     font-family: $nav-font;
-    font-size: $font-size-normal;
+    font-size: $font-size-s;
     color: $medium-grey;
     margin-right: 5px;
   }
@@ -46,7 +46,7 @@
     border: 1px solid $hairline-grey;
     border-radius: 4px;
     position: relative;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
     transition: all $super-quick linear;
     flex-shrink: 0;
 

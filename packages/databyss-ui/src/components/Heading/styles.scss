@@ -3,16 +3,16 @@
 .pageHeading {
   font-family: $heading-font;
   color: $dark-grey;
-  font-size: 20px;
-  line-height: 24px;
+  font-size: $font-size-l;
+  line-height: $line-height-content;
 }
 
 .pageSubHeading {
   font-family: $body-font;
   font-weight: bold;
   color: $dark-grey;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: $font-size-s;
+  line-height: $line-height-content;
 }
 
 .contentHeading {

@@ -1,10 +1,10 @@
 @import 'shared-styles/index';
 
 .pageNav {
-  font-size: 14px;
+  font-size: $font-size-s;
   font-family: $nav-font;
   color: $medium-grey;
-  margin-bottom: 15px;
+  margin-bottom: 1.2em;
 
   .link {
     color: $medium-grey;
@@ -14,10 +14,10 @@
 .link {
   color: $dark-grey;
   display: block;
-  line-height: 22px;
+  line-height: 2em;
 
   &.inline {
     display: inline;
-    line-height: 16px;
+    line-height: 1.3em;
   }
 }

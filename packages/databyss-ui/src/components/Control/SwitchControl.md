@@ -4,12 +4,12 @@ initialState = {
 }
 ;<Content>
   <SwitchControl
-    label="MOTIF LINKS"
+    label="Motif Links"
     checked={state.checked}
     onChange={checked => setState({ checked })}
   />
   <SwitchControl
-    label="MOTIF LINKS (disabled)"
+    label="Motif Links (disabled)"
     checked={state.checked}
     onChange={checked => setState({ checked })}
     disabled

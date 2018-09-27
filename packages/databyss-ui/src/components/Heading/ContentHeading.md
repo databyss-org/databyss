@@ -9,6 +9,6 @@
     Databyss includes 210 entries of the motif "abyss" from{' '}
     <Link>Gift of Death and Literature in Secret</Link>
   </ContentHeading>
-  <SwitchControl style={{ alignSelf: 'flex-end' }} label="MOTIF LINKS" />
+  <SwitchControl style={{ alignSelf: 'flex-end' }} label="Motif Links" />
 </Content>
 ```

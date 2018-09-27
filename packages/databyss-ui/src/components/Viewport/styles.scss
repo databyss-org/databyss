@@ -5,8 +5,7 @@
   background-color: $white;
   position: relative;
   font-family: 'MonotypeBaskerville', 'Baskerville', serif;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: $font-size-base;
 
   &.fullscreen {
     min-height: 100vh;
@@ -16,6 +15,7 @@
 
 .content {
   max-width: $content-width;
+  line-height: $line-height-content;
   width: 100%;
   display: flex;
   flex-direction: column;
