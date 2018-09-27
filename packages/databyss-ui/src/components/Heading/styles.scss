@@ -14,3 +14,26 @@
   font-size: 16px;
   line-height: 20px;
 }
+
+.contentHeading {
+  composes: pageSubHeading;
+  position: relative;
+  padding: 10px 16px 10px 0;
+  margin: 18px 0;
+
+  .text {
+    position: relative;
+    z-index: 10;
+  }
+
+  &:before {
+    content: '';
+    background-color: $light-grey;
+    z-index: 0;
+    position: absolute;
+    left: -8px;
+    right: -8px;
+    top: 0;
+    bottom: 0;
+  }
+}

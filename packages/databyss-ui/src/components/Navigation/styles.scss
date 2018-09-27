@@ -3,7 +3,12 @@
 .pageNav {
   font-size: 14px;
   font-family: $nav-font;
-  color: $dark-grey;
+  color: $medium-grey;
+  margin-bottom: 15px;
+
+  .link {
+    color: $medium-grey;
+  }
 }
 
 .link {

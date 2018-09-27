@@ -6,9 +6,9 @@ $content-width: 500px;
 $padding: 15px;
 
 /* fonts */
-$heading-font: 'Baskerville', serif;
-$body-font: 'MonotypeBaskerville', serif;
-$nav-font: 'DINNextLTPro-Light', sans-serif;
+$heading-font: 'Baskerville', sans-serif;
+$body-font: 'MonotypeBaskerville', sans-serif;
+$nav-font: 'DINNext', sans-serif;
 $font-size-normal: 14px;
 $font-size-s: 12px;
 $font-size-l: 16px;
@@ -17,10 +17,10 @@ $font-size-l: 16px;
 $black: #000;
 $white: #fff;
 $dark-grey: #4a4a4a;
-$light-grey: #e8ebef;
-$lighter-grey: #f7f7f7;
-$hairline-grey: #e7e7e7;
-$disabled-grey: #8a8a8a;
+$medium-grey: #8b8884;
+$light-grey: #d1cdc7;
+$lighter-grey: #f2efeb;
+$hairline-grey: #a19f9c;
 
 $bg-color-dark: $dark-grey;
 $bg-color-light: $light-grey;
@@ -29,8 +29,8 @@ $text-color-light: $white;
 $text-color-dark-secondary: $dark-grey;
 
 /* transitions */
-$transition-slow: 800ms;
-$transition-medium: 500ms;
-$transition-quick: 300ms;
-$transition-super-quick: 50ms;
+$slow: 800ms;
+$medium: 500ms;
+$quick: 300ms;
+$super-quick: 100ms;
 $ease: ease-in-out;
