@@ -6,6 +6,8 @@
   position: relative;
   font-family: 'MonotypeBaskerville', 'Baskerville', serif;
   font-size: $font-size-base;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 
   &.fullscreen {
     min-height: 100vh;
