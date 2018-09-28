@@ -2,7 +2,7 @@
 initialState = {
   showLinks: false,
 }
-entries = state.showLinks ? require('./linkedEntries') : require('./entries')
+entries = state.showLinks ? require('./_linkedEntries') : require('./_entries')
 ;<Content>
   <SwitchControl
     label="Motif Links"

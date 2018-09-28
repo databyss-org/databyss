@@ -3,6 +3,7 @@
 .entry {
   font-family: $body-font;
   font-size: $font-size-normal;
+  margin-top: 0.2em;
 
   & > div {
     display: inline;
@@ -30,12 +31,12 @@
 }
 
 .entryList {
-  margin-top: 0.5em;
+  margin-top: 0.2em;
 
   & + .entryList {
     margin-top: 1.5em;
   }
   & > .entryList {
-    margin-top: 0.7em;
+    margin-top: 0.8em;
   }
 }

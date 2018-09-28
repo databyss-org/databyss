@@ -2,7 +2,7 @@
 initialState = {
   showLinks: false,
 }
-entries = state.showLinks ? require('./linkedEntries') : require('./entries')
+entries = state.showLinks ? require('./_linkedEntries') : require('./_entries')
 ;<Content>
   <SwitchControl
     label="Motif Links"
@@ -10,12 +10,19 @@ entries = state.showLinks ? require('./linkedEntries') : require('./entries')
     onChange={showLinks => setState({ showLinks })}
     style={{ alignSelf: 'flex-end' }}
   />
-  {entries.map((sourceEntries, _i) => (
-    <EntryList key={_i} ariaLabel={sourceEntries[0][0].source.title}>
-      {sourceEntries.map((locationEntries, __i) => (
-        <EntryList key={__i} ariaLabel={locationEntries[0].location}>
-          {locationEntries.map((entry, ___i) => (
-            <Entry key={___i} {...entry} />
+  {entries.map((source, _i) => (
+    <EntryList key={_i} ariaLabel={source.title}>
+      {source.locations.map((location, __i) => (
+        <EntryList key={__i} ariaLabel={location.raw}>
+          {location.entries.map((entry, ___i) => (
+            <Entry
+              key={___i}
+              {...entry}
+              source={source}
+              sourceIsRepeat={__i > 0}
+              location={location.raw}
+              locationIsRepeat={___i > 0}
+            />
           ))}
         </EntryList>
       ))}
