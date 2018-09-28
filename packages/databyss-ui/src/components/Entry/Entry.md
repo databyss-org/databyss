@@ -1,4 +1,15 @@
 ```js
-const entries = require('./entries')
-;<Content>{entries.map(entry => <Entry content={entry.content} />)}</Content>
+initialState = {
+  showLinks: false,
+}
+entries = state.showLinks ? require('./linkedEntries') : require('./entries')
+;<Content>
+  <SwitchControl
+    label="Motif Links"
+    checked={state.showLinks}
+    onChange={showLinks => setState({ showLinks })}
+    style={{ alignSelf: 'flex-end' }}
+  />
+  <Entry {...entries[0][0][0]} />
+</Content>
 ```
