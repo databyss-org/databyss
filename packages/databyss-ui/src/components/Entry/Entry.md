@@ -1,15 +1,19 @@
 ```js
 initialState = {
-  showLinks: false,
-}
-entries = state.showLinks ? require('./_linkedEntries') : require('./_entries')
-;<Content>
+  showLinks: false
+};
+sources = state.showLinks ? require("./_linkedEntries") : require("./_entries");
+<Content>
   <SwitchControl
     label="Motif Links"
     checked={state.showLinks}
     onChange={showLinks => setState({ showLinks })}
-    style={{ alignSelf: 'flex-end' }}
+    style={{ alignSelf: "flex-end" }}
   />
-  <Entry {...entries[0][0][0]} />
-</Content>
+  <Entry
+    {...sources[0].locations[0].entries[0]}
+    source={sources[0]}
+    location={sources[0].locations[0].raw}
+  />
+</Content>;
 ```
