@@ -4,7 +4,7 @@
   "parser": "babel-eslint",
   "env": {
     "jest": true,
-    "browser": true,
+    "browser": true
   },
   "rules": {
     "no-return-assign": ["error", "except-parens"], // Default option
@@ -23,7 +23,12 @@
     "prefer-destructuring": "off", // This forces awkward syntax sometimes
     "no-case-declarations": "off", // Fallthrough is useful in case/default clauses
     "no-param-reassign": ["error", { "props": false }], // Useful for mutating reduce accumulators, ex.
-    "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.*"]}], // storybook and scripts use devDependencies
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": ["**/*.*"]
+      }
+    ], // storybook and scripts use devDependencies
     "prettier/prettier": [
       "error",
       {
