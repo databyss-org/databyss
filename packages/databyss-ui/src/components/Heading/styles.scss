@@ -1,4 +1,4 @@
-@import 'shared-styles/index';
+@import '../../shared-styles/index';
 
 .pageHeading {
   font-family: $heading-font;
@@ -19,7 +19,7 @@
   composes: pageSubHeading;
   position: relative;
   padding: 10px 16px 10px 0;
-  margin: 18px 0;
+  margin: 30px 0 18px;
 
   .text {
     position: relative;
