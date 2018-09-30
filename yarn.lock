@@ -3381,9 +3381,9 @@ eslint-plugin-flowtype@2.39.1:
   dependencies:
     lodash "^4.15.0"
 
-eslint-plugin-import@^2.14.0:
+"eslint-plugin-import@https://github.com/pzhine/eslint-plugin-import.git#release-temp":
   version "2.14.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-import/-/eslint-plugin-import-2.14.0.tgz#6b17626d2e3e6ad52cfce8807a845d15e22111a8"
+  resolved "https://github.com/pzhine/eslint-plugin-import.git#45bcf0880c92bdda344051f093d22915e0c3c588"
   dependencies:
     contains-path "^0.1.0"
     debug "^2.6.8"

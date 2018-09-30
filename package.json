@@ -22,7 +22,7 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-loader": "1.9.0",
     "eslint-plugin-flowtype": "2.39.1",
-    "eslint-plugin-import": "^2.14.0",
+    "eslint-plugin-import": "https://github.com/pzhine/eslint-plugin-import.git#release-temp",
     "eslint-plugin-jsx-a11y": "5.1.1",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "7.4.0",
