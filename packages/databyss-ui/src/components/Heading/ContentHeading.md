@@ -1,9 +1,9 @@
 ```js
 <Content>
   <PageNav>
-    [cf. <Link to="#">Heidegger</Link>, <Link to="#">Ronell</Link>,{' '}
-    <Link to="#">Kierkegaard</Link>, <Link to="#">Augustine</Link>,{' '}
-    <Link to="#">Husserl</Link>]
+    [cf. <Link href="#">Heidegger</Link>, <Link href="#">Ronell</Link>,{' '}
+    <Link href="#">Kierkegaard</Link>, <Link href="#">Augustine</Link>,{' '}
+    <Link href="#">Husserl</Link>]
   </PageNav>
   <ContentHeading>
     Databyss includes 210 entries of the motif "abyss" from{' '}

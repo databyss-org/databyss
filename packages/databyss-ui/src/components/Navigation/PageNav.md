@@ -1,17 +1,17 @@
 ```js
 <PageNav ariaLabel="other authors">
-  [cf. <Link to="#">Heidegger</Link>, <Link to="#">Ronell</Link>,{' '}
-  <Link to="#">Kierkegaard</Link>, <Link to="#">Augustine</Link>,{' '}
-  <Link to="#">Husserl</Link>]
+  [cf. <Link href="#">Heidegger</Link>, <Link href="#">Ronell</Link>,{' '}
+  <Link href="#">Kierkegaard</Link>, <Link href="#">Augustine</Link>,{' '}
+  <Link href="#">Husserl</Link>]
 </PageNav>
 ```
 
 ```js
 <PageNav ariaLabel="entry grouping">
-  <Link to="#" inline={false}>
+  <Link href="#" inline={false}>
     Browse by Source
   </Link>
-  <Link to="#" inline={false}>
+  <Link href="#" inline={false}>
     Show All Entries
   </Link>
 </PageNav>

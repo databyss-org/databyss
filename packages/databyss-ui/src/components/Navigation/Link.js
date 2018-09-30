@@ -7,13 +7,13 @@ export default ({
   children,
   style,
   inline = true,
-  to = '#',
+  href = '#',
   onClick,
 }) => (
   <a
     className={classnames(className, styles.link, { [styles.inline]: inline })}
     style={style}
-    href={to}
+    href={href}
     onClick={e => {
       e.preventDefault()
       if (onClick) {
