@@ -4,7 +4,8 @@
   font-size: $font-size-s;
   font-family: $nav-font;
   color: $medium-grey;
-  margin-bottom: 1.2em;
+  margin: 1.2em 0;
+  display: flex;
 
   .link {
     color: $medium-grey;
@@ -30,6 +31,7 @@
   }
 
   .list {
+    min-height: 2.5em;
     display: flex;
     align-items: center;
     flex-grow: 1;

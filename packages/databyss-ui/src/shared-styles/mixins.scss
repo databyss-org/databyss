@@ -76,3 +76,14 @@
   justify-content: center;
   width: 100%;
 }
+
+@mixin commas() {
+  &:after {
+    content: ',';
+    padding-right: 0.4em;
+  }
+  &:last-child:after {
+    content: '';
+    padding-right: 0;
+  }
+}

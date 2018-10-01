@@ -1,0 +1,18 @@
+@import '../../shared-styles/index';
+
+.commaSeparatedList {
+  display: flex;
+
+  .listItem {
+    @include commas();
+  }
+}
+
+.tocList {
+  display: 'flex';
+  flex-direction: 'column';
+
+  .item {
+    margin-bottom: 0.7em;
+  }
+}

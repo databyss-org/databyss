@@ -32,26 +32,24 @@ export default ({
         />
       }
     >
-      <EntryList>
-        {entries.map((_source, _i) => (
-          <EntryList key={_i} ariaLabel={_source.title}>
-            {_source.locations.map((_location, __i) => (
-              <EntryList key={__i} ariaLabel={_location.raw}>
-                {_location.entries.map((entry, ___i) => (
-                  <Entry
-                    key={___i}
-                    {...entry}
-                    source={_source}
-                    sourceIsRepeat={__i > 0}
-                    location={_location.raw}
-                    locationIsRepeat={___i > 0}
-                  />
-                ))}
-              </EntryList>
-            ))}
-          </EntryList>
-        ))}
-      </EntryList>
+      {entries.map((_source, _i) => (
+        <EntryList key={_i} ariaLabel={_source.title}>
+          {_source.locations.map((_location, __i) => (
+            <EntryList key={__i} ariaLabel={_location.raw}>
+              {_location.entries.map((entry, ___i) => (
+                <Entry
+                  key={___i}
+                  {...entry}
+                  source={_source}
+                  sourceIsRepeat={__i > 0}
+                  location={_location.raw}
+                  locationIsRepeat={___i > 0}
+                />
+              ))}
+            </EntryList>
+          ))}
+        </EntryList>
+      ))}
     </ContentNav>
   </React.Fragment>
 )
