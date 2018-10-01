@@ -1,0 +1,92 @@
+@import '../../shared-styles/index';
+
+@mixin text-button {
+  font-family: $nav-font;
+  font-size: $font-size-s;
+  padding: 10px 20px;
+}
+
+.button {
+  border-radius: 3px;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  line-height: 1em;
+  align-items: center;
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: $black;
+    opacity: 0;
+    border-radius: 3px;
+  }
+
+  &.touchDecay:not([disabled]):after {
+    animation: decay $slow ease-out;
+  }
+}
+
+.backButton {
+  color: $medium-grey;
+  font-size: $font-size-s;
+  font-family: $nav-font;
+  text-decoration: underline;
+  padding: 0.2em;
+
+  svg {
+    margin-right: 0.6em;
+  }
+
+  path {
+    stroke: $light-grey;
+  }
+}
+
+.forwardButton {
+  flex-direction: row-reverse;
+
+  svg {
+    transform: rotate(180deg);
+    margin-left: 0.6em;
+  }
+}
+
+@include not-mobile-os {
+  .button {
+    &:hover:not([disabled]):not(:active) {
+      filter: brightness(1.25);
+    }
+    &:active:not([disabled]) {
+      filter: brightness(0.75);
+    }
+    &.transparentButton {
+      &:hover:not([disabled]):not(:active) {
+        filter: none;
+      }
+      &:active:not([disabled]) {
+        background-color: $lighter-grey;
+      }
+    }
+  }
+}
+
+@keyframes decay {
+  0% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+  }
+}

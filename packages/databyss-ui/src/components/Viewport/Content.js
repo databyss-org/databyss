@@ -2,9 +2,10 @@ import React from 'react'
 import classnames from 'classnames'
 import styles from './styles.scss'
 
-export default ({ className, children, style }) => (
+export default ({ className, children, style, ariaLabel }) => (
   <div
-    role="cell"
+    role="region"
+    aria-label={ariaLabel || 'content'}
     className={classnames(className, styles.content)}
     style={style}
   >

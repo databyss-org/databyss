@@ -3,13 +3,14 @@ import { storiesOf } from '@storybook/react'
 import { ViewportDecorator } from '../decorators'
 import MotifEntries from '../../modules/MotifLanding/MotifEntries'
 import MotifEntriesForSource from '../../modules/MotifLanding/MotifEntriesForSource'
+import Content from '../../components/Viewport/Content'
 import entries from '../../components/Entry/_entries'
 import linkedEntries from '../../components/Entry/_linkedEntries'
 
 storiesOf('Motif Entries', module)
   .addDecorator(ViewportDecorator)
   .add('Show All Entries', () => (
-    <React.Fragment>
+    <Content>
       <MotifEntries
         authorName="Jacques Derrida"
         motifName="Abyss"
@@ -18,10 +19,10 @@ storiesOf('Motif Entries', module)
         entries={entries}
         linkedEntries={linkedEntries}
       />
-    </React.Fragment>
+    </Content>
   ))
   .add('Entries for Source', () => (
-    <React.Fragment>
+    <Content>
       <MotifEntriesForSource
         authorName="Jacques Derrida"
         motifName="Abyss"
@@ -35,5 +36,5 @@ storiesOf('Motif Entries', module)
           title: 'Specters of Marx',
         }}
       />
-    </React.Fragment>
+    </Content>
   ))

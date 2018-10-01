@@ -21,3 +21,27 @@
     line-height: 1.3em;
   }
 }
+
+.contentNav {
+  font-family: $nav-font;
+
+  .nav {
+    margin-bottom: 1em;
+  }
+
+  .list {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+  }
+
+  .left,
+  .right {
+    display: flex;
+    flex: 1;
+  }
+
+  .right {
+    justify-content: flex-end;
+  }
+}
