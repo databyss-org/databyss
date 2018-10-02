@@ -8,7 +8,6 @@ import Content from '../../components/Viewport/Content'
 import entries from '../../components/Entry/_entries'
 import cfAuthors from './_cfauthors'
 import sources from './_sources'
-// import linkedEntries from '../../components/Entry/_linkedEntries'
 
 storiesOf('Motif Entries', module)
   .addDecorator(ViewportDecorator)

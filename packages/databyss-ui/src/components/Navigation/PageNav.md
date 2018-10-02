@@ -7,10 +7,8 @@ const authorNames = [
   'Husserl',
 ]
 ;<PageNav ariaLabel="other authors">
-  [cf.{'\u00A0'}
-  <CommaSeparatedList>
+  <CommaSeparatedList opener={'[cf.\u00A0'} closer={']'}>
     {authorNames.map(name => <Link href="#">{name}</Link>)}
   </CommaSeparatedList>
-  ]
 </PageNav>
 ```

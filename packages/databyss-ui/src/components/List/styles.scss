@@ -2,6 +2,7 @@
 
 .commaSeparatedList {
   display: flex;
+  flex-wrap: wrap;
 
   .listItem {
     @include commas();
