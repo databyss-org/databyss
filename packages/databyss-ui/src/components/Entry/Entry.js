@@ -13,29 +13,21 @@ export default ({
   locationIsRepeat,
   sourceIsRepeat,
 }) => (
-  <div
-    role="region"
-    label="entry"
-    className={classnames(className, styles.entry)}
-  >
+  <article aria-label="entry" className={classnames(className, styles.entry)}>
     {source &&
       !sourceIsRepeat && (
-        <div
-          label="entry source"
-          className={styles.source}
-          aria-label={source.title}
-        >
+        <div aria-label="entry source" className={styles.source}>
           {source.display.trim()}
         </div>
       )}
     {isStarred && (
-      <div label="entry emphasis" className={styles.emphasis}>
+      <div aria-label="entry emphasis" className={styles.emphasis}>
         ***
       </div>
     )}
     {location && (
       <div
-        label="entry location"
+        aria-label="entry location"
         className={classnames(styles.location, {
           [styles.locationRepeat]: locationIsRepeat,
         })}
@@ -43,11 +35,6 @@ export default ({
         {locationIsRepeat ? '—— ' : location.trim()}
       </div>
     )}
-    <Raw
-      className={styles.content}
-      style={style}
-      html={content.trim()}
-      ariaLabel="entry content"
-    />
-  </div>
+    <Raw className={styles.content} style={style} html={content.trim()} />
+  </article>
 )

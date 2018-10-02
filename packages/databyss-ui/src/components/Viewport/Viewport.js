@@ -17,7 +17,6 @@ export default class Viewport extends React.Component {
     const { className, children, style, isFullscreen } = this.props
     return (
       <main
-        role="application"
         className={classnames([className, styles.viewport], {
           [styles.fullscreen]: isFullscreen,
         })}
