@@ -1,6 +1,6 @@
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const webpackConfig = require('./webpack.config.dev.js')
+const webpackConfig = require('./webpack.config.js')
 
 module.exports = {
   components: path.join(

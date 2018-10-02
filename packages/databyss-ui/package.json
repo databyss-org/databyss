@@ -2,15 +2,10 @@
   "name": "@databyss-org/databyss-ui",
   "version": "1.0.0",
   "private": true,
-  "peerDependencies": {
-    "@storybook/react": "^3.4.10"
-  },
+  "main": "dist/databyss-ui.js",
   "dependencies": {
     "classnames": "^2.2.6",
     "node-sass": "^4.9.3",
-    "raf": "3.4.0",
-    "react-dev-utils": "^5.0.1",
-    "react-redux": "5.0.5",
     "react-svg-loader": "^2.1.0"
   }
 }
