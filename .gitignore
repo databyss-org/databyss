@@ -7,6 +7,7 @@ coverage
 # production
 build
 styleguide
+dist
 
 # misc
 .DS_Store
