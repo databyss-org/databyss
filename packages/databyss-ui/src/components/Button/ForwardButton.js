@@ -1,14 +1,14 @@
 import React from 'react'
 import classnames from 'classnames'
-import styles from './styles.scss'
-import BackButton from './BackButton'
+import injectSheet from 'react-jss'
+import styles from './styles'
+import Button from './Button'
+import ArrowSvg from '../../assets/arrow.svg'
 
-export default ({ className, onClick, children, ...others }) => (
-  <BackButton
-    className={classnames(className, styles.forwardButton)}
-    onClick={onClick}
-    {...others}
-  >
-    {children}
-  </BackButton>
+const ForwardButton = ({ classes, className, ...others }) => (
+  <Button className={classnames(className, classes.forwardButton)} {...others}>
+    <ArrowSvg />
+  </Button>
 )
+
+export default injectSheet(styles)(ForwardButton)

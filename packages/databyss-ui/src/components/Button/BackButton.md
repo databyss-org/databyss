@@ -1,3 +1,3 @@
 ```js
-<BackButton ariaLabel="back to sources">Sources</BackButton>
+<BackButton ariaLabel="back to sources" label="Sources" />
 ```
