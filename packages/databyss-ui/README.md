@@ -1,82 +1,32 @@
 # databyss UI library
 
-This is a component and module library for applications on the databyss platform.
+This is a component and module library for databyss applications.
+
+The goals of the library are
+
+- to allow application developers to easily build new applications or features
+- and to provide, through documented recommendations and examples, standards of semantics, aesthetics and accessibility across all databyss applications.
 
 ## Table of Contents
 
-* [Using Stylesheets](#using-stylesheets)
-* [Post-Processing CSS](#post-processing-css)
-* [Adding Images, Fonts, and Files](#adding-images-fonts-and-files)
+- [Directory Structure](#directory-structure)
+- [Stylesheets](#using-stylesheets)
+- [Fonts](#fonts)
+- [Adding Images, Fonts, and Files](#adding-images-fonts-and-files)
 
-## Using Stylesheets
+## Directory Structure
 
-This project setup uses [Webpack](https://webpack.js.org/) and [Sass](https://sass-lang.com/) for rendering styles.
+## Stylesheets
 
-Sass allows us to create shared variables and functions that we can use to keep our styles consistent and DRY.
+This library uses [Sass](https://sass-lang.com/) to generate stylesheets. Sass allows us to create shared variables and functions so that we can use to keep our styles consistent and DRY.
 
-For example, a component stylesheet might look like:
+The `css-loader` webpack module is configred to use [CSS Modules](https://github.com/webpack-contrib/css-loader#modules) to create locally scoped classes.
 
-### `App/styles.scss`
+Stylesheet sources are written in SCSS format. Each component or module directory should have exactly one stylesheet source file, named `styles.scss`. There may be more than one component or module grouped into one directory, so several components may reference the same CSS class namespace.
 
-```scss
-@import '../../shared-styles/index';
+## Fonts
 
-@include mobile {
-  .header {
-    background-color: $dark-bg-color;
-    color: $dark-txt-color;
-    height: 35px;
-  }
-}
-@include tablet {
-  .header {
-    height: 50px;
-  }
-}
-```
-
-This uses the shared colors from the `dark` theme with the sass variables `$dark-bg-color` and `$dark-txt-color`.
-
-It also uses the sass mixins `mobile` and `tablet` to render media queries around the enclosed styles. This lets us easily define a mobile-first stylesheet and then override styles for tablet viewports and larger.
-
-### CSS Modules
-
-The CSS loader is configured to use [CSS Modules](https://medium.com/seek-ui-engineering/block-element-modifying-your-javascript-components-d7f99fcab52b) so that classes are locally scoped by default and we can compose classes if want.
-
-## Post-Processing CSS
-
-This project setup minifies your CSS and adds vendor prefixes to it automatically through [Autoprefixer](https://github.com/postcss/autoprefixer) so you don’t need to worry about it.
-
-For example, this:
-
-```css
-.App {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-```
-
-becomes this:
-
-```css
-.App {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: row;
-  flex-direction: row;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-}
-```
-
-If you need to disable autoprefixing for some reason, [follow this section](https://github.com/postcss/autoprefixer#disabling).
-
-## Adding Images, Fonts, and Files
+This library uses proprietary fonts
 
 With Webpack, using static assets like images and fonts works similarly to CSS.
 

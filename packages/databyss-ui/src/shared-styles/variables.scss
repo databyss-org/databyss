@@ -6,15 +6,17 @@ $content-width: 500px;
 $padding: 15px;
 
 /* fonts */
-$heading-font: 'Baskerville', sans-serif;
-$body-font: 'MonotypeBaskerville', sans-serif;
-$nav-font: 'DINNext', sans-serif;
+$heading-font: 'Baskerville', serif;
+$body-font: 'Baskerville', serif;
+$nav-font: '-apple-system', 'Helvetica', sans-serif;
 $font-size-base: 13pt;
 $line-height-content: 1.3em;
 $font-size-normal: 13pt;
-$font-size-s: 0.9em;
-$font-size-xs: 0.8em;
+$font-size-s: 0.85em;
+$font-size-xs: 0.7em;
 $font-size-l: 1.2em;
+$font-bold: 700;
+$font-semibold: 600;
 
 /* colors */
 $black: #000;
@@ -24,7 +26,7 @@ $medium-grey: #8b8884;
 $light-grey: #d1cdc7;
 $lighter-grey: #f2efeb;
 $hairline-grey: #a19f9c;
-$pink: #D745B6;
+$pink: #d745b6;
 
 $bg-color-dark: $dark-grey;
 $bg-color-light: $light-grey;

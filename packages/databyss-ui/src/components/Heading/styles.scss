@@ -2,6 +2,7 @@
 
 .pageHeading {
   font-family: $heading-font;
+  font-weight: $font-bold;
   color: $dark-grey;
   font-size: $font-size-l;
   line-height: $line-height-content;
@@ -9,7 +10,7 @@
 
 .pageSubHeading {
   font-family: $body-font;
-  font-weight: bold;
+  font-weight: $font-semibold;
   color: $dark-grey;
   font-size: $font-size-normal;
   line-height: $line-height-content;
