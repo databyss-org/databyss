@@ -1,29 +1,18 @@
 import React from 'react'
 import classnames from 'classnames'
-import { isMobileOs } from '../../lib/mediaQuery'
-import styles from './styles.scss'
+import injectSheet from 'react-jss'
+import styles from './styles'
 
-export default class Viewport extends React.Component {
-  componentWillMount() {
-    document.documentElement.setAttribute(
-      'data-user-agent',
-      navigator.userAgent
-    )
-    if (isMobileOs()) {
-      document.documentElement.setAttribute('data-mobile-user-agent', true)
-    }
-  }
-  render() {
-    const { className, children, style, isFullscreen } = this.props
-    return (
-      <main
-        className={classnames([className, styles.viewport], {
-          [styles.fullscreen]: isFullscreen,
-        })}
-        style={style}
-      >
-        {children}
-      </main>
-    )
-  }
-}
+const Viewport = ({ classes, className, children, style, isFullscreen }) => (
+  <main
+    role="application"
+    className={classnames([className, classes.viewport], {
+      [classes.fullscreen]: isFullscreen,
+    })}
+    style={style}
+  >
+    {children}
+  </main>
+)
+
+export default injectSheet(styles)(Viewport)

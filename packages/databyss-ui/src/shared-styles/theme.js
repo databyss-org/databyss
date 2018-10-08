@@ -1,0 +1,37 @@
+import colors from './colors'
+
+export default {
+  /* layout */
+  mobileWidth: '600px',
+  desktopWidth: '1024px',
+  maxPageWidth: '1024px',
+  contentWidth: '500px',
+
+  /* fonts */
+  headingFont: "'Baskerville', serif",
+  bodyFont: "'Baskerville', serif",
+  navFont: "'-apple-system', 'Helvetica', sans-serif",
+  fontSizeBase: '13pt',
+  lineHeightContent: '1.3em',
+  fontSizeNormal: '1em',
+  fontSizeS: '0.85em',
+  fontSizeXs: '0.7em',
+  fontSizeL: '1.2em',
+  fontBold: 700,
+  fontSemibold: 600,
+
+  /* colors */
+  ...colors,
+  bgColorDark: colors.darkGrey,
+  bgColorLight: colors.lightGrey,
+  textColorDark: colors.black,
+  textColorLight: colors.white,
+  textColorDarkSecondary: colors.darkGrey,
+
+  /* transitions */
+  slow: '800ms',
+  medium: '500ms',
+  quick: '300ms',
+  superQuick: '100ms',
+  ease: 'ease-in-out',
+}
