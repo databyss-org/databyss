@@ -7,6 +7,7 @@ A collection of packages that drive the databyss platform.
 - [Packages](#packages)
 - [Available Scripts](#available-scripts)
   - [yarn build](#yarn-build)
+  - [yarn build:ui](#yarn-build-ui)
   - [yarn flow](#yarn-flow)
   - [yarn styleguide](#yarn-styleguide)
   - [yarn styleguide:build](#yarn-styleguide-build)
@@ -32,6 +33,10 @@ Runs `scripts/build.sh`, which looks for a deploy target set in the `NPM_DEPLOY_
 * If the variable's value is `DEMO`, it runs [yarn storybook:build](yarn-storybook-build).
 
 This is useful for deploying to a host that runs `yarn build` and then serves a static website from the `/build` directory, which is how our Heroku styleguide and module demo servers are configured.
+
+### `yarn build:ui`
+
+Builds the `@databyss-org/databyss-ui` package to the `/dist` directory for distribution. See the `databyss-ui` [Getting Started](packages/databyss-ui/README.md#getting-started) section for more.
 
 ### `yarn styleguide`
 
@@ -61,10 +66,6 @@ then the standalone demo URL would be
 ### `yarn storybook:build`
 
 This builds the Storybook app to a static site that you can publish.
-
-### `yarn build:ui`
-
-This builds the @databyss-org/databyss-ui package to `dist/databyss-ui.js`.
 
 ## Supported Language Features and Polyfills
 
