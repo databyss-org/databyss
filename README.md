@@ -29,8 +29,8 @@ In the project directory, you can run:
 ### `yarn build`
 
 Runs `scripts/build.sh`, which looks for a deploy target set in the `NPM_DEPLOY_TARGET` environment variables.
-* If the variable's value is `STYLEGUIDE`, it runs [yarn styleguide:build](yarn-styleguide-build).
-* If the variable's value is `DEMO`, it runs [yarn storybook:build](yarn-storybook-build).
+* If the variable's value is `STYLEGUIDE`, it runs [yarn styleguide:build](#yarn-styleguide-build).
+* If the variable's value is `DEMO`, it runs [yarn storybook:build](#yarn-storybook-build).
 
 This is useful for deploying to a host that runs `yarn build` and then serves a static website from the `/build` directory, which is how our Heroku styleguide and module demo servers are configured.
 
