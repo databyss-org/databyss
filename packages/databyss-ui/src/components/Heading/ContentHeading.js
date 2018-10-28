@@ -1,15 +1,18 @@
 import React from 'react'
 import classnames from 'classnames'
-import styles from './styles.scss'
+import injectSheet from 'react-jss'
+import styles from './styles'
 
-export default ({ className, children, style }) => (
+const ContentHeading = ({ classes, className, children, style }) => (
   <div
     role="banner"
-    className={classnames(className, styles.contentHeading)}
+    className={classnames(className, classes.contentHeading)}
     style={style}
   >
-    <div role="heading" aria-level="3" className={styles.text}>
+    <div role="heading" aria-level="3" className={classes.text}>
       {children}
     </div>
   </div>
 )
+
+export default injectSheet(styles)(ContentHeading)

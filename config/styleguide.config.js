@@ -21,7 +21,7 @@ module.exports = {
   styleguideComponents: {
     Wrapper: path.join(
       __dirname,
-      '../packages/databyss-ui/src/components/Viewport/Viewport'
+      '../packages/databyss-ui/src/components/Viewport/ThemedViewport'
     ),
   },
   styles: {

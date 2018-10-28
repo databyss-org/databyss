@@ -7,6 +7,8 @@ A collection of packages that drive the databyss platform.
 - [Packages](#packages)
 - [Available Scripts](#available-scripts)
 - [Supported Language Features and Polyfills](#supported-language-features-and-polyfills)
+- [Linting](#liniting)
+- [JSS](#jss)
 
 ## Packages
 
@@ -78,3 +80,9 @@ This project uses [ESLint](https://eslint.org/) to maintain a consist and valid 
 If you need to deviate from the rules, try to use [inline comments](https://eslint.org/docs/user-guide/configuring#disabling-rules-with-inline-comments). If you believe a rule should be changed globally, make the change in `.eslintrc`. In either case, please add a comment explaining your reason for changing the linting rule.
 
 You might want to integrate Prettier in your favorite editor. Read the section on [Editor Integration](https://prettier.io/docs/en/editors.html) on the Prettier GitHub page.
+
+## JSS
+
+This project setup [JSS](http://cssinjs.org) and [react-jss](https://github.com/cssinjs/react-jss) for rendering styles and managing themes.
+
+Shared themes variables and macros are in `src/shared-styles`.

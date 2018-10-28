@@ -1,13 +1,16 @@
 import React from 'react'
 import classnames from 'classnames'
-import styles from './styles.scss'
+import injectSheet from 'react-jss'
+import styles from './styles'
 
-export default ({ className, children, style, ariaLabel }) => (
+const Content = ({ classes, className, children, style, ariaLabel }) => (
   <div
     aria-label={ariaLabel || 'content'}
-    className={classnames(className, styles.content)}
+    className={classnames(className, classes.content)}
     style={style}
   >
     {children}
   </div>
 )
+
+export default injectSheet(styles)(Content)

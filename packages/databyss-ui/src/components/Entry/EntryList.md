@@ -5,7 +5,7 @@ initialState = {
 entries = state.showLinks ? require('./_linkedEntries') : require('./_entries')
 ;<Content>
   <ContentNav
-    left={<BackButton>Sources</BackButton>}
+    left={<BackButton label="Sources" />}
     right={
       <SwitchControl
         label="Motif Links"

@@ -1,4 +1,5 @@
 import React from 'react'
+import injectSheet from 'react-jss'
 import Content from '../../components/Viewport/Content'
 import PageHeading from '../../components/Heading/PageHeading'
 import PageSubHeading from '../../components/Heading/PageSubHeading'
@@ -8,7 +9,7 @@ import MotifEntriesForSource from './MotifEntriesForSource'
 import MotifSources from './MotifSources'
 import PageNav from '../../components/Navigation/PageNav'
 import CommaSeparatedList from '../../components/List/CommaSeparatedList'
-import styles from './styles.scss'
+import styles from './styles'
 
 const EntriesOrSources = ({ showAllEntries, source, ...others }) => {
   if (source) {
@@ -20,12 +21,19 @@ const EntriesOrSources = ({ showAllEntries, source, ...others }) => {
   return <MotifSources sources={others.sources} {...others} />
 }
 
-export default ({ source, author, motif, cfAuthors, ...others }) => {
+const MotifLanding = ({
+  classes,
+  source,
+  author,
+  motif,
+  cfAuthors,
+  ...others
+}) => {
   const authorName = `${author.firstName} ${author.lastName}`
   const motifName = motif.name
   const entriesProps = { authorName, motifName, motif }
   return (
-    <Content className={styles.MotifLanding}>
+    <Content className={classes.MotifLanding}>
       <PageHeading>
         {authorName} on “{motifName}”
       </PageHeading>
@@ -51,3 +59,5 @@ export default ({ source, author, motif, cfAuthors, ...others }) => {
     </Content>
   )
 }
+
+export default injectSheet(styles)(MotifLanding)

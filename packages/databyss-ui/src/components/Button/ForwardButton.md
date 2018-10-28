@@ -1,3 +1,3 @@
 ```js
-<ForwardButton ariaLabel="all entries">Show all</ForwardButton>
+<ForwardButton ariaLabel="all entries" label="Show all" />
 ```

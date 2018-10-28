@@ -1,18 +1,21 @@
 import React from 'react'
 import classnames from 'classnames'
-import styles from './styles.scss'
+import injectSheet from 'react-jss'
+import styles from './styles'
 
-export default ({ className, children, style, ariaLabel }) => (
+const TocList = ({ classes, className, children, style, ariaLabel }) => (
   <div
     role="list"
     aria-label={ariaLabel}
-    className={classnames(className, styles.tocList)}
+    className={classnames(className, classes.tocList)}
     style={style}
   >
     {React.Children.map(children, child => (
-      <div role="listitem" className={styles.item}>
+      <div role="listitem" className={classes.item}>
         {child}
       </div>
     ))}
   </div>
 )
+
+export default injectSheet(styles)(TocList)

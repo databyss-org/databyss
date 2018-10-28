@@ -1,20 +1,21 @@
 import React from 'react'
 import classnames from 'classnames'
-import styles from './styles.scss'
+import injectSheet from 'react-jss'
+import styles from './styles'
 
-export default ({ className, style, left, right, children }) => (
+const ContentNav = ({ classes, className, style, left, right, children }) => (
   <div
     role="region"
-    className={classnames(className, styles.contentNav)}
+    className={classnames(className, classes.contentNav)}
     style={style}
     aria-label="content"
   >
-    <nav aria-label="content navigator" className={styles.nav}>
-      <div role="list" className={styles.list}>
-        <div role="listitem" className={styles.left}>
+    <nav aria-label="content navigator" className={classes.nav}>
+      <div role="list" className={classes.list}>
+        <div role="listitem" className={classes.left}>
           {left}
         </div>
-        <div role="listitem" className={styles.right}>
+        <div role="listitem" className={classes.right}>
           {right}
         </div>
       </div>
@@ -22,3 +23,5 @@ export default ({ className, style, left, right, children }) => (
     {children}
   </div>
 )
+
+export default injectSheet(styles)(ContentNav)
