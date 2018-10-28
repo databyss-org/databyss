@@ -5,7 +5,7 @@ const webpackConfig = require('./webpack.config.js')
 module.exports = {
   components: path.join(
     __dirname,
-    '../packages/databyss-ui/src/components/**/*.js'
+    '../packages/databyss-ui/components/**/*.js'
   ),
   webpackConfig: {
     ...webpackConfig,
@@ -21,7 +21,7 @@ module.exports = {
   styleguideComponents: {
     Wrapper: path.join(
       __dirname,
-      '../packages/databyss-ui/src/components/Viewport/ThemedViewport'
+      '../packages/databyss-ui/components/Viewport/ThemedViewport'
     ),
   },
   styles: {
