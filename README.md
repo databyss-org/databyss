@@ -6,17 +6,32 @@ A collection of packages that drive the databyss platform.
 
 - [Packages](#packages)
 - [Available Scripts](#available-scripts)
+  - [yarn build](#yarn-build)
+  - [yarn flow](#yarn-flow)
+  - [yarn styleguide](#yarn-styleguide)
+  - [yarn styleguide:build](#yarn-styleguide-build)
+  - [yarn storybook](#yarn-storybook)
+  - [yarn storybook:build](#yarn-storybook-build)
+  - [yarn lint](#yarn-lint)
 - [Supported Language Features and Polyfills](#supported-language-features-and-polyfills)
 - [Linting](#liniting)
-- [JSS](#jss)
 
 ## Packages
 
 - [databyss-ui](packages/databyss-ui)
+- [databyss-core](packages/databyss-core)
 
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `yarn build`
+
+Runs `scripts/build.sh`, which looks for a deploy target set in the `NPM_DEPLOY_TARGET` environment variables.
+* If the variable's value is `STYLEGUIDE`, it runs [yarn styleguide:build](yarn-styleguide-build).
+* If the variable's value is `DEMO`, it runs [yarn storybook:build](yarn-storybook-build).
+
+This is useful for deploying to a host that runs `yarn build` and then serves a static website from the `/build` directory, which is how our Heroku styleguide and module demo servers are configured.
 
 ### `yarn styleguide`
 
@@ -80,9 +95,3 @@ This project uses [ESLint](https://eslint.org/) to maintain a consist and valid 
 If you need to deviate from the rules, try to use [inline comments](https://eslint.org/docs/user-guide/configuring#disabling-rules-with-inline-comments). If you believe a rule should be changed globally, make the change in `.eslintrc`. In either case, please add a comment explaining your reason for changing the linting rule.
 
 You might want to integrate Prettier in your favorite editor. Read the section on [Editor Integration](https://prettier.io/docs/en/editors.html) on the Prettier GitHub page.
-
-## JSS
-
-This project setup [JSS](http://cssinjs.org) and [react-jss](https://github.com/cssinjs/react-jss) for rendering styles and managing themes.
-
-Shared themes variables and macros are in `src/shared-styles`.
