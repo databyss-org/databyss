@@ -1,14 +1,17 @@
 import React from 'react'
 import classnames from 'classnames'
-import styles from './styles.scss'
+import injectSheet from 'react-jss'
+import styles from './styles'
 
-export default ({ className, children, style }) => (
+const PageHeading = ({ classes, className, children, style }) => (
   <div
     role="heading"
     aria-level="1"
-    className={classnames(className, styles.pageHeading)}
+    className={classnames(className, classes.pageHeading)}
     style={style}
   >
     {children}
   </div>
 )
+
+export default injectSheet(styles)(PageHeading)

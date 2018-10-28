@@ -1,9 +1,10 @@
 import React from 'react'
 import classnames from 'classnames'
+import injectSheet from 'react-jss'
 import Raw from '../Viewport/Raw'
-import styles from './styles.scss'
+import styles from './styles'
 
-export default ({
+const Entry = ({
   className,
   style,
   content,
@@ -12,29 +13,32 @@ export default ({
   isStarred,
   locationIsRepeat,
   sourceIsRepeat,
+  classes,
 }) => (
-  <article aria-label="entry" className={classnames(className, styles.entry)}>
+  <article aria-label="entry" className={classnames(className, classes.entry)}>
     {source &&
       !sourceIsRepeat && (
-        <div aria-label="entry source" className={styles.source}>
+        <div aria-label="entry source" className={classes.source}>
           {source.display.trim()}
         </div>
       )}
     {isStarred && (
-      <div aria-label="entry emphasis" className={styles.emphasis}>
+      <div aria-label="entry emphasis" className={classes.emphasis}>
         ***
       </div>
     )}
     {location && (
       <div
         aria-label="entry location"
-        className={classnames(styles.location, {
-          [styles.locationRepeat]: locationIsRepeat,
+        className={classnames(classes.location, {
+          [classes.locationRepeat]: locationIsRepeat,
         })}
       >
         {locationIsRepeat ? '—— ' : location.trim()}
       </div>
     )}
-    <Raw className={styles.content} style={style} html={content.trim()} />
+    <Raw className={classes.content} style={style} html={content.trim()} />
   </article>
 )
+
+export default injectSheet(styles)(Entry)

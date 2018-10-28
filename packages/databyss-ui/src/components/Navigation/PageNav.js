@@ -1,13 +1,16 @@
 import React from 'react'
 import classnames from 'classnames'
-import styles from './styles.scss'
+import injectSheet from 'react-jss'
+import styles from './styles'
 
-export default ({ className, children, style, ariaLabel }) => (
+const PageNav = ({ classes, className, children, style, ariaLabel }) => (
   <nav
     aria-label={ariaLabel}
-    className={classnames(className, styles.pageNav)}
+    className={classnames(className, classes.pageNav)}
     style={style}
   >
     {children}
   </nav>
 )
+
+export default injectSheet(styles)(PageNav)

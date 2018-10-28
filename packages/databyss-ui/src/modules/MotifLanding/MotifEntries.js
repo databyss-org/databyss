@@ -1,13 +1,15 @@
 import React from 'react'
+import injectSheet from 'react-jss'
 import SwitchControl from '../../components/Control/SwitchControl'
 import Entry from '../../components/Entry/Entry'
 import EntryList from '../../components/Entry/EntryList'
 import ContentNav from '../../components/Navigation/ContentNav'
 import ContentHeading from '../../components/Heading/ContentHeading'
 import BackButton from '../../components/Button/BackButton'
-import styles from './styles.scss'
+import styles from './styles'
 
-export default ({
+const MotifEntries = ({
+  classes,
   showMotifLinks,
   entries,
   onMotifLinksChange,
@@ -28,7 +30,7 @@ export default ({
           label="Motif Links"
           checked={showMotifLinks}
           onChange={onMotifLinksChange}
-          className={styles.motifLinksSwitch}
+          className={classes.motifLinksSwitch}
         />
       }
     >
@@ -53,3 +55,5 @@ export default ({
     </ContentNav>
   </React.Fragment>
 )
+
+export default injectSheet(styles)(MotifEntries)

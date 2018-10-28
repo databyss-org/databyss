@@ -3,10 +3,10 @@ import classnames from 'classnames'
 import injectSheet from 'react-jss'
 import styles from './styles'
 
-const Content = ({ className, children, style, ariaLabel }) => (
+const Content = ({ classes, className, children, style, ariaLabel }) => (
   <div
     aria-label={ariaLabel || 'content'}
-    className={classnames(className, styles.content)}
+    className={classnames(className, classes.content)}
     style={style}
   >
     {children}

@@ -1,8 +1,10 @@
 import React from 'react'
 import classnames from 'classnames'
-import styles from './styles.scss'
+import injectSheet from 'react-jss'
+import styles from './styles'
 
-export default ({
+const Link = ({
+  classes,
   className,
   children,
   style,
@@ -11,7 +13,9 @@ export default ({
   onClick,
 }) => (
   <a
-    className={classnames(className, styles.link, { [styles.inline]: inline })}
+    className={classnames(className, classes.link, {
+      [classes.inline]: inline,
+    })}
     style={style}
     href={href}
     onClick={e => {
@@ -24,3 +28,5 @@ export default ({
     {children}
   </a>
 )
+
+export default injectSheet(styles)(Link)
