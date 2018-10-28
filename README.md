@@ -7,12 +7,12 @@ A collection of packages that drive the databyss platform.
 - [Packages](#packages)
 - [Available Scripts](#available-scripts)
   - [yarn build](#yarn-build)
-  - [yarn build:ui](#yarn-build-ui)
+  - [yarn build:ui](#yarn-buildui)
   - [yarn flow](#yarn-flow)
   - [yarn styleguide](#yarn-styleguide)
-  - [yarn styleguide:build](#yarn-styleguide-build)
+  - [yarn styleguide:build](#yarn-styleguidebuild)
   - [yarn storybook](#yarn-storybook)
-  - [yarn storybook:build](#yarn-storybook-build)
+  - [yarn storybook:build](#yarn-storybookbuild)
   - [yarn lint](#yarn-lint)
 - [Supported Language Features and Polyfills](#supported-language-features-and-polyfills)
 - [Linting](#liniting)
@@ -29,8 +29,8 @@ In the project directory, you can run:
 ### `yarn build`
 
 Runs `scripts/build.sh`, which looks for a deploy target set in the `NPM_DEPLOY_TARGET` environment variables.
-* If the variable's value is `STYLEGUIDE`, it runs [yarn styleguide:build](#yarn-styleguide-build).
-* If the variable's value is `DEMO`, it runs [yarn storybook:build](#yarn-storybook-build).
+* If the variable's value is `STYLEGUIDE`, it runs [yarn styleguide:build](#yarn-styleguidebuild).
+* If the variable's value is `DEMO`, it runs [yarn storybook:build](#yarn-storybookbuild).
 
 This is useful for deploying to a host that runs `yarn build` and then serves a static website from the `/build` directory, which is how our Heroku styleguide and module demo servers are configured.
 
