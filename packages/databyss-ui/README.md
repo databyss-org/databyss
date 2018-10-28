@@ -1,8 +1,8 @@
-# databyss UI library
+# databyss-ui
 
 This is a component and module library for databyss applications.
 
-The goals of the library are
+The goals of the package are
 
 - to allow application developers to easily build new applications or features
 - and to provide, through documented recommendations and examples, standards of semantics, aesthetics and accessibility across all databyss applications.
