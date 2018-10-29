@@ -5,9 +5,10 @@ initialState = {
 locations = require('./_entries')[0].locations
 ;<Content>
   <EntryGroup>
-    <EntriesByLocation locations={locations}>
-      <Entry />
-    </EntriesByLocation>
+    <EntriesByLocation
+      locations={locations}
+      renderEntry={entry => <Entry {...entry} />}
+    />
   </EntryGroup>
 </Content>
 ```

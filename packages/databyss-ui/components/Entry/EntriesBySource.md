@@ -15,9 +15,10 @@ sources = state.showLinks ? require('./_linkedEntries') : require('./_entries')
       />
     }
   >
-    <EntriesBySource sources={sources}>
-      <Entry />
-    </EntriesBySource>
+    <EntriesBySource
+      sources={sources}
+      renderEntry={entry => <Entry {...entry} />}
+    />
   </ContentNav>
 </Content>
 ```
