@@ -8,4 +8,6 @@ export default (theme = defaultTheme) => ({
   sourcesToc: {
     fontFamily: theme.bodyFont,
   },
+
+  landing: {},
 })

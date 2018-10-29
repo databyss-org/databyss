@@ -5,12 +5,7 @@ import ContentNav from '../../components/Navigation/ContentNav'
 import BackButton from '../../components/Button/BackButton'
 import styles from './styles'
 
-const MotifEntries = ({
-  classes,
-  showMotifLinks,
-  onMotifLinksChange,
-  children,
-}) => (
+const Entries = ({ classes, showMotifLinks, onMotifLinksChange, children }) => (
   <ContentNav
     left={<BackButton label="Sources" />}
     right={
@@ -26,4 +21,4 @@ const MotifEntries = ({
   </ContentNav>
 )
 
-export default injectSheet(styles)(MotifEntries)
+export default injectSheet(styles)(Entries)

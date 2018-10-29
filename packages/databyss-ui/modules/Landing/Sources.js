@@ -5,7 +5,7 @@ import ContentNav from '../../components/Navigation/ContentNav'
 import ForwardButton from '../../components/Button/ForwardButton'
 import styles from './styles'
 
-const MotifSources = ({ classes, sources, renderSource }) => (
+const Sources = ({ classes, sources, renderSource }) => (
   <ContentNav right={<ForwardButton label="All Entries" />}>
     <TocList ariaLabel="sources" className={classes.sourcesToc}>
       {sources.map(source => renderSource(source))}
@@ -13,4 +13,4 @@ const MotifSources = ({ classes, sources, renderSource }) => (
   </ContentNav>
 )
 
-export default injectSheet(styles)(MotifSources)
+export default injectSheet(styles)(Sources)
