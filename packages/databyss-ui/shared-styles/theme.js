@@ -27,6 +27,7 @@ export default {
   textColorDark: colors.black,
   textColorLight: colors.white,
   textColorDarkSecondary: colors.darkGrey,
+  focusOutlineColor: colors.pink,
 
   /* transitions */
   slow: '800ms',

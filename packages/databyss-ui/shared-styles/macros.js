@@ -77,3 +77,7 @@ export const commas = () => ({
     paddingRight: 0,
   },
 })
+
+export const focused = theme => ({
+  outline: `${theme.focusOutlineColor} auto 5px`,
+})

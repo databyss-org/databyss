@@ -1,5 +1,5 @@
 import React from 'react'
-import { ThemeProvider } from 'react-jss'
+import ThemeProvider from './ThemeProvider'
 import { theme as defaultTheme } from '../../shared-styles'
 import Viewport from './Viewport'
 
