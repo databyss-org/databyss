@@ -3,7 +3,7 @@ import classnames from 'classnames'
 import injectSheet from 'react-jss'
 import styles from './styles'
 
-const EntryList = ({ className, children, style, ariaLabel, classes }) => (
+const EntryGroup = ({ className, children, style, ariaLabel, classes }) => (
   <div
     aria-label={ariaLabel ? `entries for ${ariaLabel}` : `entries`}
     className={classnames(className, classes.entryList)}
@@ -13,4 +13,4 @@ const EntryList = ({ className, children, style, ariaLabel, classes }) => (
   </div>
 )
 
-export default injectSheet(styles)(EntryList)
+export default injectSheet(styles)(EntryGroup)

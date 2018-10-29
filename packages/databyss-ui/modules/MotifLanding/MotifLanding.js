@@ -4,22 +4,10 @@ import Content from '../../components/Viewport/Content'
 import PageHeading from '../../components/Heading/PageHeading'
 import PageSubHeading from '../../components/Heading/PageSubHeading'
 import Link from '../../components/Navigation/Link'
-import MotifEntries from './MotifEntries'
-import MotifEntriesForSource from './MotifEntriesForSource'
-import MotifSources from './MotifSources'
 import PageNav from '../../components/Navigation/PageNav'
 import CommaSeparatedList from '../../components/List/CommaSeparatedList'
+import ContentHeading from '../../components/Heading/ContentHeading'
 import styles from './styles'
-
-const EntriesOrSources = ({ showAllEntries, source, ...others }) => {
-  if (source) {
-    return <MotifEntriesForSource source={source} {...others} />
-  }
-  if (showAllEntries) {
-    return <MotifEntries {...others} />
-  }
-  return <MotifSources sources={others.sources} {...others} />
-}
 
 const MotifLanding = ({
   classes,
@@ -27,11 +15,11 @@ const MotifLanding = ({
   author,
   motif,
   cfAuthors,
-  ...others
+  contentTitle,
+  children,
 }) => {
   const authorName = `${author.firstName} ${author.lastName}`
   const motifName = motif.name
-  const entriesProps = { authorName, motifName, motif }
   return (
     <Content className={classes.MotifLanding}>
       <PageHeading>
@@ -55,7 +43,8 @@ const MotifLanding = ({
           ]
         </PageNav>
       )}
-      <EntriesOrSources source={source} {...others} {...entriesProps} />
+      <ContentHeading>{contentTitle}</ContentHeading>
+      {children}
     </Content>
   )
 }
