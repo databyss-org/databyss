@@ -29,16 +29,17 @@ class Control extends React.Component {
       Tag = 'label',
       onClick,
       ariaLabel,
+      focused,
     } = this.props
     return (
       <Tag
         className={classnames(className, classes.control, {
           [classes.disabled]: disabled,
           [classes.touchDecay]: this.state.touchDecayActive,
+          [classes.focused]: focused,
         })}
         style={style}
         disabled={disabled}
-        tabIndex={0}
         onClick={onClick}
         onTouchStart={this.onTouchStart}
         aria-label={ariaLabel}

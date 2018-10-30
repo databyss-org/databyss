@@ -45,7 +45,11 @@ export default (theme = defaultTheme) => ({
       },
     },
 
-    '&:focus:after': {
+    '&$focused': {
+      ...macros.focused(theme),
+    },
+
+    '&:focus:after, &$focused:after': {
       opacity: 0.1,
     },
 
@@ -124,4 +128,5 @@ export default (theme = defaultTheme) => ({
   touchDecay: {},
   disabled: {},
   switchHandle: {},
+  focused: {},
 })
