@@ -7,13 +7,16 @@ const EntriesByLocation = ({ locations, source, renderEntry }) =>
   locations.map((location, _i) => (
     <EntryGroup key={_i} ariaLabel={location.raw}>
       {location.entries.map((entry, __i) =>
-        renderEntry({
-          ...entry,
-          location: location.raw,
-          locationIsRepeat: __i > 0,
-          source,
-          sourceIsRepeat: _i > 0,
-        })
+        React.cloneElement(
+          renderEntry({
+            ...entry,
+            location: location.raw,
+            locationIsRepeat: __i > 0,
+            source,
+            sourceIsRepeat: _i > 0,
+          }),
+          { key: __i }
+        )
       )}
     </EntryGroup>
   ))

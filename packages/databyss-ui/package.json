@@ -5,9 +5,6 @@
   "main": "dist/databyss-ui.js",
   "dependencies": {
     "classnames": "^2.2.6",
-    "jss": "^9.8.7",
-    "jss-preset-default": "^4.5.0",
-    "react-jss": "^8.6.1",
     "react-svg-loader": "^2.1.0"
   }
 }
