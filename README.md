@@ -2,6 +2,11 @@
 
 A collection of packages that drive the databyss platform.
 
+[![CircleCI](https://circleci.com/gh/databyss-org/databyss/tree/master.svg?style=svg)](https://circleci.com/gh/databyss-org/databyss/tree/master)
+
+**If you're a new developer working on the project,**  
+please see our [CONTRIBUTING](CONTRIBUTING.md) guide.
+
 ## Table of Contents
 
 - [Packages](#packages)
@@ -14,6 +19,7 @@ A collection of packages that drive the databyss platform.
   - [yarn storybook](#yarn-storybook)
   - [yarn storybook:build](#yarn-storybookbuild)
   - [yarn lint](#yarn-lint)
+  - [yarn test](#yarn-test)
 - [Supported Language Features and Polyfills](#supported-language-features-and-polyfills)
 - [Linting](#liniting)
 
@@ -66,6 +72,16 @@ then the standalone demo URL would be
 ### `yarn storybook:build`
 
 This builds the Storybook app to a static site that you can publish.
+
+### `yarn lint`
+
+This runs `eslint` on the codebase and reports problems. See also [Linting](#linting)
+
+### `yarn test`
+
+Runs the linter and the [Jest](https://jestjs.io/) test runner in the interactive watch mode. It is a good idea to have this running while you develop to catch problems and ensure everything is passing before you make a PR.
+
+Learn more about writing tests in the [Contributing doc](CONTRIBUTING.md#writing-tests)
 
 ## Supported Language Features and Polyfills
 
