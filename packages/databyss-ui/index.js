@@ -10,7 +10,10 @@ export { default as Control } from './components/Control/Control'
 export { default as SwitchControl } from './components/Control/SwitchControl'
 export { default as ToggleControl } from './components/Control/ToggleControl'
 
-export { default as EntryList } from './components/Entry/EntryList'
+export {
+  default as EntriesByLocation,
+} from './components/Entry/EntriesByLocation'
+export { default as EntriesBySource } from './components/Entry/EntriesBySource'
 export { default as Entry } from './components/Entry/Entry'
 
 export { default as ContentHeading } from './components/Heading/ContentHeading'
@@ -32,3 +35,6 @@ export { default as ThemedViewport } from './components/Viewport/ThemedViewport'
 export { default as Viewport } from './components/Viewport/Viewport'
 
 /* modules */
+export { default as LandingEntries } from './modules/Landing/Entries'
+export { default as LandingSources } from './modules/Landing/Sources'
+export { default as Landing } from './modules/Landing/Landing'

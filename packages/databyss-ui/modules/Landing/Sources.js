@@ -8,7 +8,9 @@ import styles from './styles'
 const Sources = ({ classes, sources, renderSource }) => (
   <ContentNav right={<ForwardButton label="All Entries" />}>
     <TocList ariaLabel="sources" className={classes.sourcesToc}>
-      {sources.map(source => renderSource(source))}
+      {sources.map(source =>
+        React.cloneElement(renderSource(source), { key: source.id })
+      )}
     </TocList>
   </ContentNav>
 )

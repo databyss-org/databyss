@@ -20,7 +20,6 @@ A collection of packages that drive the databyss platform.
 ## Packages
 
 - [databyss-ui](packages/databyss-ui)
-- [databyss-core](packages/databyss-core)
 
 ## Available Scripts
 
@@ -29,8 +28,9 @@ In the project directory, you can run:
 ### `yarn build`
 
 Runs `scripts/build.sh`, which looks for a deploy target set in the `NPM_DEPLOY_TARGET` environment variables.
-* If the variable's value is `STYLEGUIDE`, it runs [yarn styleguide:build](#yarn-styleguidebuild).
-* If the variable's value is `DEMO`, it runs [yarn storybook:build](#yarn-storybookbuild).
+
+- If the variable's value is `STYLEGUIDE`, it runs [yarn styleguide:build](#yarn-styleguidebuild).
+- If the variable's value is `DEMO`, it runs [yarn storybook:build](#yarn-storybookbuild).
 
 This is useful for deploying to a host that runs `yarn build` and then serves a static website from the `/build` directory, which is how our Heroku styleguide and module demo servers are configured.
 
