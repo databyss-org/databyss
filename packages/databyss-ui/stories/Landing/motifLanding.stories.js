@@ -65,19 +65,17 @@ storiesOf('Motif Landing', module)
       {...landingProps}
       contentTitle="Databyss includes 210 entries of the motif “ABYSS” from 44 sources by Jacques Derrida"
     >
-      <Entries>
-        <Sources
-          sources={sources}
-          renderSource={source => (
-            <Link href={`/motif/abyss/${source.id}`}>
-              <Raw
-                html={`${source.title}${
-                  source.entryCount ? ` (${source.entryCount})` : null
-                }`}
-              />
-            </Link>
-          )}
-        />
-      </Entries>
+      <Sources
+        sources={sources}
+        renderSource={source => (
+          <Link href={`/motif/abyss/${source.id}`}>
+            <Raw
+              html={`${source.title}${
+                source.entryCount ? ` (${source.entryCount})` : null
+              }`}
+            />
+          </Link>
+        )}
+      />
     </Landing>
   ))
