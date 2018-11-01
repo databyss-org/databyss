@@ -2,7 +2,7 @@ import React from 'react'
 import { ThemeProvider } from 'react-jss'
 import jss from 'jss'
 import jssPreset from 'jss-preset-default'
-import { theme as defaultTheme } from '../../shared-styles'
+import { theme as defaultTheme } from '.'
 import globalStyles from './globalStyles'
 
 jss.setup(jssPreset())
