@@ -1,10 +1,32 @@
 {
-  "name": "@databyss-org/databyss-ui",
+  "name": "@databyss-org/ui",
+  "author": "databyss-org",
+  "license": "MIT",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/databyss-org/databyss.git"
+  },
+  "bugs": {
+    "url": "https://github.com/databyss-org/databyss/issues"
+  },
   "main": "dist/databyss-ui.js",
+  "peerDependencies": {
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2"
+  },
   "dependencies": {
     "classnames": "^2.2.6",
+    "jss": "^9.8.7",
+    "jss-preset-default": "^4.5.0",
+    "react-jss": "^8.6.1",
     "react-svg-loader": "^2.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=6.0.0"
   }
 }
