@@ -1,5 +1,12 @@
 /* styles and theming */
-export { theme, profileThemes, muiTheme, macros, colors } from './shared-styles'
+export {
+  theme,
+  profileThemes,
+  muiTheme,
+  macros,
+  colors,
+  ThemeProvider,
+} from './shared-styles'
 
 /* components */
 export { default as Button } from './components/Button/Button'

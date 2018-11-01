@@ -638,872 +638,820 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
         >
           <div
             className="ContentNav-left"
+          />
+          <div
+            className="ContentNav-right"
           >
             <button
-              className="BackButton-backButton BackButton-linkButton Button-button Control-control"
+              className="ForwardButton-forwardButton ForwardButton-linkButton Button-button Control-control"
               onTouchStart={[Function]}
             >
               <div
                 className="Control-label"
               >
-                Sources
+                All Entries
               </div>
               <arrow.svg />
             </button>
           </div>
-          <div
-            className="ContentNav-right"
-          >
-            <label
-              className="Entries-motifLinksSwitch SwitchControl-switchControl ToggleControl-toggleControl ToggleControl-control"
-              onTouchStart={[Function]}
-            >
-              <div
-                className="ToggleControl-label"
-              >
-                Motif Links
-              </div>
-              <input
-                onBlur={[Function]}
-                onChange={[Function]}
-                onFocus={[Function]}
-                type="checkbox"
-              />
-              <div
-                className="SwitchControl-switchHandle"
-              />
-            </label>
-          </div>
         </div>
       </nav>
       <div
-        aria-label="content"
-        className="ContentNav-contentNav"
+        aria-label="sources"
+        className="Sources-sourcesToc TocList-tocList"
+        role="list"
       >
-        <nav
-          aria-label="content navigator"
-          className="ContentNav-nav"
-        >
-          <div
-            className="ContentNav-list"
-          >
-            <div
-              className="ContentNav-left"
-            />
-            <div
-              className="ContentNav-right"
-            >
-              <button
-                className="ForwardButton-forwardButton ForwardButton-linkButton Button-button Control-control"
-                onTouchStart={[Function]}
-              >
-                <div
-                  className="Control-label"
-                >
-                  All Entries
-                </div>
-                <arrow.svg />
-              </button>
-            </div>
-          </div>
-        </nav>
         <div
-          aria-label="sources"
-          className="Sources-sourcesToc TocList-tocList"
-          role="list"
+          className="TocList-item"
+          role="listitem"
         >
-          <div
-            className="TocList-item"
-            role="listitem"
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/P"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/P"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Parergon  (17)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Parergon  (17)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/REST"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/REST"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Restitutions  (14)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Restitutions  (14)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/KH"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/KH"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "<em>Kh</em><em>ō</em><em>ra</em>  (10)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "<em>Kh</em><em>ō</em><em>ra</em>  (10)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/TN"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/TN"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "On Touching—Jean-Luc Nancy  (10)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "On Touching—Jean-Luc Nancy  (10)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/D"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/D"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Dissemination  (9)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Dissemination  (9)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/OG"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/OG"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Of Grammatology  (7)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Of Grammatology  (7)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/SPEC"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/SPEC"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "To Speculate—on “Freud”  (6)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "To Speculate—on “Freud”  (6)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/DS"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/DS"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Double Session  (5)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Double Session  (5)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/FV"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/FV"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "<em>Le Facteur de la V</em><em>é</em><em>rit</em><em>é</em>  (5)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "<em>Le Facteur de la V</em><em>é</em><em>rit</em><em>é</em>  (5)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/ATIA"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/ATIA"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "The Animal That Therefore I Am  (5)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "The Animal That Therefore I Am  (5)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/BSi"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/BSi"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "The Beast & the Sovereign  (5)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "The Beast & the Sovereign  (5)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/+R"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/+R"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "+R  (4)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "+R  (4)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/C"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/C"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Cartouches  (4)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Cartouches  (4)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/DST"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/DST"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "<em>D</em><em>é</em><em>sistance </em> (4)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "<em>D</em><em>é</em><em>sistance </em> (4)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/CF"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/CF"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Cosmopolitanism and Forgiveness  (3)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Cosmopolitanism and Forgiveness  (3)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/Gii"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/Gii"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Heidegger’s Hand (<em>Geschlecht</em> II)  (3)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Heidegger’s Hand (<em>Geschlecht</em> II)  (3)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/SP"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/SP"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Spurs: Nietzsche’s Styles  (3)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Spurs: Nietzsche’s Styles  (3)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/AD"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/AD"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Adieu to Emmanuel Levinas  (2)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Adieu to Emmanuel Levinas  (2)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/GOD"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/GOD"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Gift of Death and Literature in Secret  (2)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Gift of Death and Literature in Secret  (2)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/GT"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/GT"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Given Time  (2)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Given Time  (2)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/HST"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/HST"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Hostipitality  (2)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Hostipitality  (2)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/IW"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/IW"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Interpretations at War: Kant, the Jew, the German  (2)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Interpretations at War: Kant, the Jew, the German  (2)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/POO"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/POO"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Passions: “An Oblique Offering”  (2)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Passions: “An Oblique Offering”  (2)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/PSSS"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/PSSS"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Psychoanalysis Searches the States of its Soul  (2)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Psychoanalysis Searches the States of its Soul  (2)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/SEC"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/SEC"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Signature Event Context  (2)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Signature Event Context  (2)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/AFR"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/AFR"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "The Archeology of the Frivolous: Reading Condillac  (2)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "The Archeology of the Frivolous: Reading Condillac  (2)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/POOF"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/POOF"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "The Politics of Friendship  (2)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "The Politics of Friendship  (2)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/POR"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/POR"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "The Principle of Reason  (2)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "The Principle of Reason  (2)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/SW"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/SW"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "A Silkworm of One’s Own  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "A Silkworm of One’s Own  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/A"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/A"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Aporias  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Aporias  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/AF"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/AF"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Archive Fever  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Archive Fever  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/DPi"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/DPi"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Death Penalty: Volume I  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Death Penalty: Volume I  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/TB"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/TB"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Des Tours Des Babel  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Des Tours Des Babel  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/EM"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/EM"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Ends of Man  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Ends of Man  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/FWT"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/FWT"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "For What Tomorrow…  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "For What Tomorrow…  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/MPM"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/MPM"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Memoires for Paul de Man  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Memoires for Paul de Man  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/S"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/S"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Of Spirit: Heidegger and the Question  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Of Spirit: Heidegger and the Question  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/PAS"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/PAS"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "<em>Pas </em> (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "<em>Pas </em> (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/PP"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/PP"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Plato’s Pharmacy  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Plato’s Pharmacy  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/PIO"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/PIO"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Psyche: Invention of the Other  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Psyche: Invention of the Other  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/ROP"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/ROP"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Resistances of Psychoanalysis  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Resistances of Psychoanalysis  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/SPOM"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/SPOM"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "Specters of Marx  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Specters of Marx  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/RM"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/RM"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "The <em>Retrait</em> of Metaphor  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "The <em>Retrait</em> of Metaphor  (1)",
                 }
-              />
-            </a>
-          </div>
-          <div
-            className="TocList-item"
-            role="listitem"
+              }
+            />
+          </a>
+        </div>
+        <div
+          className="TocList-item"
+          role="listitem"
+        >
+          <a
+            className="Link-link Link-inline"
+            href="/motif/abyss/WM"
+            onClick={[Function]}
           >
-            <a
-              className="Link-link Link-inline"
-              href="/motif/abyss/WM"
-              onClick={[Function]}
-            >
-              <div
-                dangerouslySetInnerHTML={
-                  Object {
-                    "__html": "White Mythology  (1)",
-                  }
+            <div
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "White Mythology  (1)",
                 }
-              />
-            </a>
-          </div>
+              }
+            />
+          </a>
         </div>
       </div>
     </div>
