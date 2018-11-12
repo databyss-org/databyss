@@ -14,21 +14,33 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
       className="PageHeading-pageHeading"
       role="heading"
     >
-      Jacques Derrida on “ABYSS”
+      <div
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "Jacques Derrida on “ABYSS”",
+          }
+        }
+      />
     </div>
     <div
       aria-level="2"
       className="PageSubHeading-pageSubHeading"
       role="heading"
     >
-      in 
-      <a
-        className="Link-link Link-inline"
-        href="/source/SPOM"
-        onClick={[Function]}
-      >
-        Specters of Marx
-      </a>
+      <div
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": <React.Fragment>
+              in 
+              <Jss(Link)
+                href="/source/SPOM"
+              >
+                Specters of Marx
+              </Jss(Link)>
+            </React.Fragment>,
+          }
+        }
+      />
     </div>
     <nav
       aria-label="compare with"
@@ -112,15 +124,21 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
         className="ContentHeading-text"
         role="heading"
       >
-        210 entries for “Abyss” in
-         
-        <a
-          className="Link-link Link-inline"
-          href="/source/SPOM"
-          onClick={[Function]}
-        >
-          Specters of Marx
-        </a>
+        <div
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": <React.Fragment>
+                210 entries for “Abyss” in
+                 
+                <Jss(Link)
+                  href="/source/SPOM"
+                >
+                  Specters of Marx
+                </Jss(Link)>
+              </React.Fragment>,
+            }
+          }
+        />
       </div>
     </div>
     <div
@@ -244,7 +262,13 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
       className="PageHeading-pageHeading"
       role="heading"
     >
-      Jacques Derrida on “ABYSS”
+      <div
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "Jacques Derrida on “ABYSS”",
+          }
+        }
+      />
     </div>
     <nav
       aria-label="compare with"
@@ -328,7 +352,13 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
         className="ContentHeading-text"
         role="heading"
       >
-        Databyss includes 210 entries of the motif “ABYSS” from 42 sources by Jacques Derrida
+        <div
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "Databyss includes 210 entries of the motif “ABYSS” from 42 sources by Jacques Derrida",
+            }
+          }
+        />
       </div>
     </div>
     <div
@@ -538,7 +568,13 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
       className="PageHeading-pageHeading"
       role="heading"
     >
-      Jacques Derrida on “ABYSS”
+      <div
+        dangerouslySetInnerHTML={
+          Object {
+            "__html": "Jacques Derrida on “ABYSS”",
+          }
+        }
+      />
     </div>
     <nav
       aria-label="compare with"
@@ -622,7 +658,13 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
         className="ContentHeading-text"
         role="heading"
       >
-        Databyss includes 210 entries of the motif “ABYSS” from 44 sources by Jacques Derrida
+        <div
+          dangerouslySetInnerHTML={
+            Object {
+              "__html": "Databyss includes 210 entries of the motif “ABYSS” from 44 sources by Jacques Derrida",
+            }
+          }
+        />
       </div>
     </div>
     <div
