@@ -16,7 +16,7 @@ module.exports = [
         raw: 'p.27',
         entries: [
           {
-            isStarred: true,
+            starred: true,
             content:
               '<a href="/motif/analogy">analogy</a> of <a href="/disambiguate/motif?mids=abyss,abyssandvolcano">abyss</a> &amp; <a href="/disambiguate/motif?mids=economimesisthebridgeclosure,thebridgeeventpledgeprogram">bridge</a> over <a href="/disambiguate/motif?mids=abyss,abyssandvolcano">abyss</a> require 3rd term, that which heals the gap, a <a href="/motif/symbol">symbol</a>, <a href="/disambiguate/motif?mids=economimesisthebridgeclosure,thebridgeeventpledgeprogram">bridge</a> is <a href="/motif/symbol">symbol</a>, <a href="/motif/symbol">symbol</a> <a href="/disambiguate/motif?mids=economimesisthebridgeclosure,thebridgeeventpledgeprogram">bridge</a> &gt; <a href="/disambiguate/motif?mids=abyss,abyssandvolcano">abyss</a> <a href="/disambiguate/motif?mids=callappel,callandresponsewelcomeoftheotherethicalopening">calls</a> for <a href="/motif/analogy">analogy</a> (<a href="/motif/activepassive">active</a> resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un <a href="/motif/thissensecertainty">certain</a> <a href="/motif/art">art</a> pour décrire analogiquement le jeu de l’analogie</em>',
           },

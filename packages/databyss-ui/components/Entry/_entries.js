@@ -16,7 +16,7 @@ module.exports = [
         raw: 'p.27',
         entries: [
           {
-            isStarred: true,
+            starred: true,
             content:
               ' analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>',
           },
