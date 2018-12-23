@@ -5,9 +5,15 @@ import ContentNav from '../../components/Navigation/ContentNav'
 import BackButton from '../../components/Button/BackButton'
 import styles from './styles'
 
-const Entries = ({ classes, showMotifLinks, onMotifLinksChange, children }) => (
+const Entries = ({
+  classes,
+  showMotifLinks,
+  onMotifLinksChange,
+  children,
+  onSourcesClick,
+}) => (
   <ContentNav
-    left={<BackButton label="Sources" />}
+    left={<BackButton label="Sources" onClick={onSourcesClick} />}
     right={
       <SwitchControl
         label="Motif Links"

@@ -5,8 +5,10 @@ import ContentNav from '../../components/Navigation/ContentNav'
 import ForwardButton from '../../components/Button/ForwardButton'
 import styles from './styles'
 
-const Sources = ({ classes, sources, renderSource }) => (
-  <ContentNav right={<ForwardButton label="All Entries" />}>
+const Sources = ({ classes, sources, renderSource, onAllEntriesClick }) => (
+  <ContentNav
+    right={<ForwardButton label="All Entries" onClick={onAllEntriesClick} />}
+  >
     <TocList ariaLabel="sources" className={classes.sourcesToc}>
       {sources.map(source =>
         React.cloneElement(renderSource(source), { key: source.id })

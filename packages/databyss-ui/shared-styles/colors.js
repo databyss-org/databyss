@@ -7,4 +7,5 @@ export default {
   lighterGrey: '#f2efeb',
   hairlineGrey: '#a19f9c',
   pink: '#d745b6',
+  lightPurple: '#675d71',
 }
