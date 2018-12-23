@@ -1,3 +1,4 @@
+import Color from 'color'
 import { theme as defaultTheme } from '../../shared-styles'
 
 export default (theme = defaultTheme) => ({
@@ -9,8 +10,9 @@ export default (theme = defaultTheme) => ({
     '& > div': {
       display: 'inline',
     },
-
-    'a, a:active, a:visited': {
+  },
+  content: {
+    '& a, & a:active, & a:visited': {
       color: 'inherit',
       borderBottom: `1px dotted ${theme.pink}`,
       display: 'inline-block',
@@ -25,7 +27,10 @@ export default (theme = defaultTheme) => ({
   source: {
     marginRight: '0.3em',
     fontWeight: 'bold',
-    color: theme.darkGrey,
+    color: theme.entrySourceColor,
+    textDecoration: `underline solid ${Color(theme.entrySourceColor).lighten(
+      0.7
+    )}`,
   },
 
   entryList: {

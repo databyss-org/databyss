@@ -22,6 +22,7 @@ export {
 } from './components/Entry/EntriesByLocation'
 export { default as EntriesBySource } from './components/Entry/EntriesBySource'
 export { default as Entry } from './components/Entry/Entry'
+export { default as EntrySource } from './components/Entry/EntrySource'
 
 export { default as ContentHeading } from './components/Heading/ContentHeading'
 export { default as PageHeading } from './components/Heading/PageHeading'

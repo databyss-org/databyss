@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.6",
+    "color": "^3.1.0",
     "jss": "^9.8.7",
     "jss-preset-default": "^4.5.0",
     "react-jss": "^8.6.1",

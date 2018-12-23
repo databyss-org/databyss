@@ -28,6 +28,7 @@ export default {
   textColorLight: colors.white,
   textColorDarkSecondary: colors.darkGrey,
   focusOutlineColor: colors.pink,
+  entrySourceColor: colors.lightPurple,
 
   /* transitions */
   slow: '800ms',

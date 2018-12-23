@@ -189,6 +189,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
             p. 106
           </div>
           <div
+            className="Entry-content"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
@@ -217,6 +218,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
             p.27
           </div>
           <div
+            className="Entry-content"
             dangerouslySetInnerHTML={
               Object {
                 "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
@@ -394,12 +396,13 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
             aria-label="entry"
             className="Entry-entry"
           >
-            <div
-              aria-label="entry source"
-              className="Entry-source"
+            <a
+              aria-label="source"
+              className="EntrySource-source"
+              onClick={[Function]}
             >
               SPOM
-            </div>
+            </a>
             <div
               aria-label="entry location"
               className="Entry-location"
@@ -407,6 +410,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
               p. 106
             </div>
             <div
+              className="Entry-content"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
@@ -435,6 +439,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
               p.27
             </div>
             <div
+              className="Entry-content"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
@@ -456,12 +461,13 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
             aria-label="entry"
             className="Entry-entry"
           >
-            <div
-              aria-label="entry source"
-              className="Entry-source"
+            <a
+              aria-label="source"
+              className="EntrySource-source"
+              onClick={[Function]}
             >
               CF
-            </div>
+            </a>
             <div
               aria-label="entry location"
               className="Entry-location"
@@ -469,6 +475,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
               p. 50
             </div>
             <div
+              className="Entry-content"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "must forgiveness saturate the abyss (suture, reconcile)? but who could object to imperative of reconciliation? amnesties, work of mourning—political strategy, psycho-therapeutic economy",
@@ -492,6 +499,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
               pp. 53-54
             </div>
             <div
+              className="Entry-content"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "when not insoluble, when I know what to do (program), no decision or responsibility",
@@ -510,6 +518,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
               —— 
             </div>
             <div
+              className="Entry-content"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "an abyss remains and must remain",

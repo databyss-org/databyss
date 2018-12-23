@@ -1,6 +1,7 @@
 import React from 'react'
 import classnames from 'classnames'
 import injectSheet from 'react-jss'
+import EntrySource from './EntrySource'
 import Raw from '../Viewport/Raw'
 import styles from './styles'
 
@@ -14,13 +15,15 @@ const Entry = ({
   locationIsRepeat,
   sourceIsRepeat,
   classes,
+  onSourceClick,
+  sourceHref,
 }) => (
   <article aria-label="entry" className={classnames(className, classes.entry)}>
     {source &&
       !sourceIsRepeat && (
-        <div aria-label="entry source" className={classes.source}>
+        <EntrySource onClick={onSourceClick} href={sourceHref} source={source}>
           {source.display.trim()}
-        </div>
+        </EntrySource>
       )}
     {isStarred && (
       <div aria-label="entry emphasis" className={classes.emphasis}>
