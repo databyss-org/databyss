@@ -13,7 +13,7 @@ const EntriesByLocation = ({ locations, source, renderEntry }) =>
             location: location.raw,
             locationIsRepeat: __i > 0,
             source,
-            sourceIsRepeat: _i > 0,
+            sourceIsRepeat: _i > 0 || __i > 0,
           }),
           { key: __i }
         )
