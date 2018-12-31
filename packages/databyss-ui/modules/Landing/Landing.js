@@ -24,13 +24,11 @@ const Landing = ({
     {subtitle && <PageSubHeading>{subtitle}</PageSubHeading>}
     {cfList && (
       <PageNav ariaLabel="compare with">
-        [cf.{'\u00A0'}
-        <CommaSeparatedList>
+        <CommaSeparatedList opener="[cf." closer="]">
           {cfList.map(cf =>
             React.cloneElement(renderCfItem(cf), { key: cf.id })
           )}
         </CommaSeparatedList>
-        ]
       </PageNav>
     )}
     <ContentHeading>{contentTitle}</ContentHeading>
