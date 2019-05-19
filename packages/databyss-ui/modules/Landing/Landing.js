@@ -2,6 +2,7 @@ import React from 'react'
 import injectSheet from 'react-jss'
 import classnames from 'classnames'
 import Content from '../../components/Viewport/Content'
+import Raw from '../../components/Viewport/Raw'
 import PageHeading from '../../components/Heading/PageHeading'
 import PageSubHeading from '../../components/Heading/PageSubHeading'
 import PageNav from '../../components/Navigation/PageNav'
@@ -20,8 +21,14 @@ const Landing = ({
   subtitle,
 }) => (
   <Content className={classnames(className, classes.landing)}>
-    <PageHeading>{title}</PageHeading>
-    {subtitle && <PageSubHeading>{subtitle}</PageSubHeading>}
+    <PageHeading>
+      <Raw html={title} />
+    </PageHeading>
+    {subtitle && (
+      <PageSubHeading>
+        <Raw html={subtitle} />
+      </PageSubHeading>
+    )}
     {cfList && (
       <PageNav ariaLabel="compare with">
         [cf.{'\u00A0'}
@@ -33,7 +40,9 @@ const Landing = ({
         ]
       </PageNav>
     )}
-    <ContentHeading>{contentTitle}</ContentHeading>
+    <ContentHeading>
+      <Raw html={contentTitle} />
+    </ContentHeading>
     {children}
   </Content>
 )

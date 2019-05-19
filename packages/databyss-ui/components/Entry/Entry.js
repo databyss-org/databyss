@@ -11,7 +11,7 @@ const Entry = ({
   content,
   location,
   source,
-  isStarred,
+  starred,
   locationIsRepeat,
   sourceIsRepeat,
   classes,
@@ -25,7 +25,7 @@ const Entry = ({
           {source.display.trim()}
         </EntrySource>
       )}
-    {isStarred && (
+    {starred && (
       <div aria-label="entry emphasis" className={classes.emphasis}>
         ***
       </div>
