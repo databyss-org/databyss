@@ -1,19 +1,17 @@
-import React from 'react'
-import { renderToString } from 'react-dom/server'
-
-import { storiesOf } from '@storybook/react'
-import { ViewportDecorator } from '../decorators'
-import Raw from '../../components/Viewport/Raw'
-import Link from '../../components/Navigation/Link'
-import Entries from '../../modules/Landing/Entries'
-import Sources from '../../modules/Landing/Sources'
-import EntriesBySource from '../../components/Entry/EntriesBySource'
-import EntriesByLocation from '../../components/Entry/EntriesByLocation'
-import Entry from '../../components/Entry/Entry'
-import Landing from '../../modules/Landing/Landing'
-import entriesBySource from '../../components/Entry/_entries'
-import cfList from './_cfauthors'
-import sources from './_sources'
+import React from 'react';
+import { storiesOf } from '@storybook/react';
+import { ViewportDecorator } from '../decorators';
+import Raw from '../../components/Viewport/Raw';
+import Link from '../../components/Navigation/Link';
+import Entries from '../../modules/Landing/Entries';
+import Sources from '../../modules/Landing/Sources';
+import EntriesBySource from '../../components/Entry/EntriesBySource';
+import EntriesByLocation from '../../components/Entry/EntriesByLocation';
+import Entry from '../../components/Entry/Entry';
+import Landing from '../../modules/Landing/Landing';
+import entriesBySource from '../../components/Entry/_entries';
+import cfList from './_cfauthors';
+import sources from './_sources';
 
 const landingProps = {
   cfList,
@@ -23,7 +21,7 @@ const landingProps = {
       {cf.lastName}
     </Link>
   ),
-}
+};
 storiesOf('Motif Landing', module)
   .addDecorator(ViewportDecorator)
   .add('Show All Entries', () => (
@@ -73,4 +71,4 @@ storiesOf('Motif Landing', module)
         )}
       />
     </Landing>
-  ))
+  ));

@@ -1,12 +1,6 @@
 import { theme as defaultTheme } from '../../shared-styles'
 
 export default (theme = defaultTheme) => ({
-  /*
-  motifLinksSwitch: {
-    position: 'absolute',
-    right: 1,
-  },
-  */
   sourcesToc: {
     fontFamily: theme.bodyFont,
   },

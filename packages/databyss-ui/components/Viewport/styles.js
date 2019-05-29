@@ -22,6 +22,7 @@ export default (theme = defaultTheme) => ({
       theme
     ),
   },
+
   content: {
     maxWidth: theme.contentWidth,
     lineHeight: theme.lineHeightContent,
