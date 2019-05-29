@@ -27,7 +27,6 @@ export default (theme = defaultTheme) => ({
 
     '& $nav': {
       marginBottom: '1em',
-      // backgroundColor: 'white',
     },
 
     '& $list': {
