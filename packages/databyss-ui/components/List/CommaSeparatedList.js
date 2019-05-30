@@ -19,12 +19,12 @@ const CommaSeparatedList = ({
     style={style}
   >
     {opener}
-    {React.Children.map(children, child => (
+    {React.Children.map(children, (child, idx) => [
       <div role="listitem" className={classes.listItem}>
         {child}
-      </div>
-    ))}
-    {closer}
+      </div>,
+      idx === children.length - 1 ? closer : null,
+    ])}
   </div>
 )
 
