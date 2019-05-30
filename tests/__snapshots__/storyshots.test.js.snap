@@ -20,6 +20,11 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
             "__html": "Jacques Derrida on “ABYSS”",
           }
         }
+        style={
+          Object {
+            "display": "inline",
+          }
+        }
       />
     </div>
     <div
@@ -38,6 +43,11 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                 Specters of Marx
               </Jss(Link)>
             </React.Fragment>,
+          }
+        }
+        style={
+          Object {
+            "display": "inline",
           }
         }
       />
@@ -135,6 +145,11 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                   Specters of Marx
                 </Jss(Link)>
               </React.Fragment>,
+            }
+          }
+          style={
+            Object {
+              "display": "inline",
             }
           }
         />
@@ -279,6 +294,11 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
             "__html": "Jacques Derrida on “ABYSS”",
           }
         }
+        style={
+          Object {
+            "display": "inline",
+          }
+        }
       />
     </div>
     <nav
@@ -366,6 +386,11 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
           dangerouslySetInnerHTML={
             Object {
               "__html": "Databyss includes 210 entries of the motif “ABYSS” from 42 sources by Jacques Derrida",
+            }
+          }
+          style={
+            Object {
+              "display": "inline",
             }
           }
         />
@@ -616,6 +641,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
             "__html": "Jacques Derrida on “ABYSS”",
           }
         }
+        style={
+          Object {
+            "display": "inline",
+          }
+        }
       />
     </div>
     <nav
@@ -703,6 +733,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
           dangerouslySetInnerHTML={
             Object {
               "__html": "Databyss includes 210 entries of the motif “ABYSS” from 44 sources by Jacques Derrida",
+            }
+          }
+          style={
+            Object {
+              "display": "inline",
             }
           }
         />
