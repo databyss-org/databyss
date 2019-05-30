@@ -2,7 +2,7 @@
   "name": "@databyss-org/ui",
   "author": "databyss-org",
   "license": "MIT",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": false,
   "repository": {
     "type": "git",
@@ -13,8 +13,8 @@
   },
   "main": "dist/databyss-ui.js",
   "peerDependencies": {
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2"
+    "react": "1.0.5",
+    "react-dom": "1.0.5"
   },
   "dependencies": {
     "classnames": "^2.2.6",

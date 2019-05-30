@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "massive open-source citation database platform",
   "main": "index.js",
   "repository": {
@@ -70,6 +70,7 @@
     "styleguide:build": "styleguidist build --config ./config/styleguide.config.js",
     "storybook": "start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public",
     "storybook:build": "build-storybook -o build -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss",
+    "sync-versions": "node scripts/sync-versions.js",
     "lint": "eslint . --cache && echo \"eslint: no lint errors\""
   },
   "jest": {
@@ -105,6 +106,16 @@
         "moduleFileExtensions": [
           "js",
           "json"
+        ]
+      },
+      {
+        "displayName": "checkversion",
+        "runner": "./tests/checkversion.runner.js",
+        "testMatch": [
+          "<rootDir>/**/package.json"
+        ],
+        "testPathIgnorePatterns": [
+          "/node_modules/"
         ]
       }
     ]
