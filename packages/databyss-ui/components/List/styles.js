@@ -7,6 +7,12 @@ export default () => ({
   },
   listItem: {
     ...macros.commas(),
+    '&:last-child': {
+      marginRight: '1px',
+    },
+    '&:first-child': {
+      marginLeft: '2px',
+    },
   },
 
   tocList: {

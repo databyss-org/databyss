@@ -46,12 +46,11 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
       aria-label="compare with"
       className="PageNav-pageNav"
     >
-      [cf.
-       
       <div
         className="CommaSeparatedList-commaSeparatedList"
         role="list"
       >
+        [cf.
         <div
           className="CommaSeparatedList-listItem"
           role="listitem"
@@ -112,8 +111,8 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
             Husserl
           </a>
         </div>
+        ]
       </div>
-      ]
     </nav>
     <div
       className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
@@ -213,6 +212,11 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                 "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
               }
             }
+            style={
+              Object {
+                "display": "inline",
+              }
+            }
           />
         </article>
       </div>
@@ -240,6 +244,11 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
             dangerouslySetInnerHTML={
               Object {
                 "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
+              }
+            }
+            style={
+              Object {
+                "display": "inline",
               }
             }
           />
@@ -276,12 +285,11 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
       aria-label="compare with"
       className="PageNav-pageNav"
     >
-      [cf.
-       
       <div
         className="CommaSeparatedList-commaSeparatedList"
         role="list"
       >
+        [cf.
         <div
           className="CommaSeparatedList-listItem"
           role="listitem"
@@ -342,8 +350,8 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
             Husserl
           </a>
         </div>
+        ]
       </div>
-      ]
     </nav>
     <div
       className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
@@ -446,6 +454,11 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                   "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </article>
         </div>
@@ -473,6 +486,11 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -511,6 +529,11 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                   "__html": "must forgiveness saturate the abyss (suture, reconcile)? but who could object to imperative of reconciliation? amnesties, work of mourning—political strategy, psycho-therapeutic economy",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </article>
         </div>
@@ -535,6 +558,11 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                   "__html": "when not insoluble, when I know what to do (program), no decision or responsibility",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </article>
           <article
@@ -552,6 +580,11 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "an abyss remains and must remain",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -589,12 +622,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
       aria-label="compare with"
       className="PageNav-pageNav"
     >
-      [cf.
-       
       <div
         className="CommaSeparatedList-commaSeparatedList"
         role="list"
       >
+        [cf.
         <div
           className="CommaSeparatedList-listItem"
           role="listitem"
@@ -655,8 +687,8 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
             Husserl
           </a>
         </div>
+        ]
       </div>
-      ]
     </nav>
     <div
       className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
@@ -727,6 +759,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Parergon  (17)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -743,6 +780,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Restitutions  (14)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -763,6 +805,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "<em>Kh</em><em>ō</em><em>ra</em>  (10)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -779,6 +826,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "On Touching—Jean-Luc Nancy  (10)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -799,6 +851,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Dissemination  (9)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -815,6 +872,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Of Grammatology  (7)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -835,6 +897,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "To Speculate—on “Freud”  (6)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -851,6 +918,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Double Session  (5)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -871,6 +943,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "<em>Le Facteur de la V</em><em>é</em><em>rit</em><em>é</em>  (5)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -887,6 +964,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "The Animal That Therefore I Am  (5)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -907,6 +989,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "The Beast & the Sovereign  (5)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -923,6 +1010,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "+R  (4)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -943,6 +1035,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Cartouches  (4)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -959,6 +1056,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "<em>D</em><em>é</em><em>sistance </em> (4)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -979,6 +1081,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Cosmopolitanism and Forgiveness  (3)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -995,6 +1102,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Heidegger’s Hand (<em>Geschlecht</em> II)  (3)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1015,6 +1127,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Spurs: Nietzsche’s Styles  (3)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1031,6 +1148,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Adieu to Emmanuel Levinas  (2)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1051,6 +1173,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Gift of Death and Literature in Secret  (2)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1067,6 +1194,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Given Time  (2)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1087,6 +1219,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Hostipitality  (2)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1103,6 +1240,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Interpretations at War: Kant, the Jew, the German  (2)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1123,6 +1265,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Passions: “An Oblique Offering”  (2)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1139,6 +1286,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Psychoanalysis Searches the States of its Soul  (2)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1159,6 +1311,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Signature Event Context  (2)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1175,6 +1332,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "The Archeology of the Frivolous: Reading Condillac  (2)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1195,6 +1357,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "The Politics of Friendship  (2)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1211,6 +1378,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "The Principle of Reason  (2)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1231,6 +1403,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "A Silkworm of One’s Own  (1)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1247,6 +1424,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Aporias  (1)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1267,6 +1449,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Archive Fever  (1)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1283,6 +1470,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Death Penalty: Volume I  (1)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1303,6 +1495,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Des Tours Des Babel  (1)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1319,6 +1516,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Ends of Man  (1)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1339,6 +1541,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "For What Tomorrow…  (1)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1355,6 +1562,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Memoires for Paul de Man  (1)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1375,6 +1587,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Of Spirit: Heidegger and the Question  (1)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1391,6 +1608,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "<em>Pas </em> (1)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1411,6 +1633,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Plato’s Pharmacy  (1)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1427,6 +1654,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Psyche: Invention of the Other  (1)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1447,6 +1679,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "Resistances of Psychoanalysis  (1)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1463,6 +1700,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "Specters of Marx  (1)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
@@ -1483,6 +1725,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                   "__html": "The <em>Retrait</em> of Metaphor  (1)",
                 }
               }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
             />
           </a>
         </div>
@@ -1499,6 +1746,11 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "White Mythology  (1)",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
                 }
               }
             />
