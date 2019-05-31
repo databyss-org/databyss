@@ -21,7 +21,6 @@ class Landing extends React.Component {
       contentLoaded: false,
       headerLoaded: false,
     }
-    this.body = React.createRef()
   }
 
   componentDidMount() {
@@ -82,7 +81,6 @@ class Landing extends React.Component {
           style={{
             borderBottom: this.state.borderBottom && '1px solid #D6D6D6',
           }}
-          ref={this.body}
           left={
             <PageHeading>
               <Raw html={title} />
