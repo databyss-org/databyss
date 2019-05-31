@@ -9,6 +9,17 @@ export default (theme = defaultTheme) => ({
     lineHeight: theme.lineHeightContent,
   },
 
+  landingHeader: {
+    position: 'sticky',
+    top: 0,
+    backgroundColor: 'white',
+    width: '100%',
+    alignItems: 'stretch',
+    fontSize: '1em',
+    borderBottom: '1px solid #D6D6D6',
+    zIndex: 10,
+  },
+
   pageSubHeading: {
     fontFamily: theme.bodyFont,
     fontWeight: theme.fontSemibold,
@@ -19,23 +30,32 @@ export default (theme = defaultTheme) => ({
 
   contentHeading: {
     composes: '$pageSubHeading',
-    position: 'relative',
     padding: '10px 16px 10px 0',
-    margin: '30px 0 18px',
+    margin: '30px 0 18px 0',
+    backgroundColor: theme.lightGrey,
 
     '&:before': {
       content: '""',
       backgroundColor: theme.lightGrey,
-      zIndex: 0,
-      position: 'absolute',
-      left: '-8px',
-      right: '-8px',
-      top: 0,
-      bottom: 0,
     },
   },
   text: {
-    position: 'relative',
-    zIndex: 10,
+    paddingLeft: '14px',
+  },
+
+  headingContainer: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    flexWrap: 'nowrap',
+  },
+  title: {
+    width: '100%  ',
+  },
+  titleWithToggle: {
+    width: 'calc(100% - 130px)',
+  },
+  toggle: {
+    width: '130px',
+    margin: '-0.6em 0',
   },
 })

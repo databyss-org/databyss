@@ -1,4 +1,6 @@
 import React from 'react'
+import { renderToString } from 'react-dom/server'
+
 import { storiesOf } from '@storybook/react'
 import { ViewportDecorator } from '../decorators'
 import Raw from '../../components/Viewport/Raw'
@@ -28,6 +30,7 @@ storiesOf('Motif Landing', module)
     <Landing
       {...landingProps}
       contentTitle="Databyss includes 210 entries of the motif “ABYSS” from 42 sources by Jacques Derrida"
+      withToggle
     >
       <Entries>
         <EntriesBySource
@@ -40,17 +43,9 @@ storiesOf('Motif Landing', module)
   .add('Entries for Source', () => (
     <Landing
       {...landingProps}
-      contentTitle={
-        <React.Fragment>
-          210 entries for “Abyss” in{' '}
-          <Link href="/source/SPOM">Specters of Marx</Link>
-        </React.Fragment>
-      }
-      subtitle={
-        <React.Fragment>
-          in <Link href="/source/SPOM">Specters of Marx</Link>
-        </React.Fragment>
-      }
+      contentTitle={'210 entries for “Abyss” in Specters of Marx'}
+      subtitle={'in Specters of Marx'}
+      withToggle
     >
       <Entries>
         <EntriesByLocation

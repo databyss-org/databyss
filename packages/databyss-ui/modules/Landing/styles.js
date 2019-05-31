@@ -1,13 +1,19 @@
 import { theme as defaultTheme } from '../../shared-styles'
 
 export default (theme = defaultTheme) => ({
+  /*
   motifLinksSwitch: {
-    alignSelf: 'flex-end',
+    position: 'absolute',
+    right: 1,
   },
-
+  */
   sourcesToc: {
     fontFamily: theme.bodyFont,
   },
-
-  landing: {},
+  landing: {
+    position: 'fixed',
+    height: 'calc(100% - 100px)',
+    display: 'flex',
+    flexDirection: 'column',
+  },
 })

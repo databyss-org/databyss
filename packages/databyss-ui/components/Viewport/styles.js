@@ -22,12 +22,25 @@ export default (theme = defaultTheme) => ({
       theme
     ),
   },
-
   content: {
     maxWidth: theme.contentWidth,
     lineHeight: theme.lineHeightContent,
     width: '100%',
     display: 'flex',
     flexDirection: 'column',
+  },
+
+  landingBody: {
+    flex: 1,
+    paddingBottom: '20px',
+    height: '50vh',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    maxWidth: '1024px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    left: 0,
+    right: 0,
+    width: '100%',
   },
 })
