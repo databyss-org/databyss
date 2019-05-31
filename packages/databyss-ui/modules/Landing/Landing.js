@@ -40,7 +40,8 @@ class Landing extends React.Component {
     if (document.getElementById('content-header') && !contentLoaded) {
       this.setState({ contentLoaded: true })
     }
-    // if both elements are loaded apply logic to render bottom border on content header
+
+    // if both elements are loaded apply logic to set the bottomBorder state
     if (contentLoaded && headerLoaded) {
       const headerBottom = document
         .getElementById('landing-header')
