@@ -10,8 +10,13 @@ const LandingHeading = ({
   style,
   left,
   right,
+  id,
 }) => (
-  <div className={classnames(className, classes.landingHeader)} style={style}>
+  <div
+    id={id}
+    className={classnames(className, classes.landingHeader)}
+    style={style}
+  >
     <div className={classes.headingContainer}>
       <div
         className={classnames(right ? classes.titleWithToggle : classes.title)}

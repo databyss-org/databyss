@@ -16,7 +16,6 @@ export default (theme = defaultTheme) => ({
     width: '100%',
     alignItems: 'stretch',
     fontSize: '1em',
-    borderBottom: '1px solid #D6D6D6',
     zIndex: 10,
   },
 
