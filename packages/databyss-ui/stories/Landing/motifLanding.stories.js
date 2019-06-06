@@ -51,8 +51,8 @@ storiesOf('Motif Landing', module)
   .add('Entries for Source', () => (
     <Landing
       {...landingProps}
-      contentTitle={'210 entries for “Abyss” in Specters of Marx'}
-      subtitle={'in Specters of Marx'}
+      contentTitle="210 entries for “Abyss” in Specters of Marx"
+      subtitle="in Specters of Marx"
       withToggle
     >
       <Entries>
@@ -66,10 +66,8 @@ storiesOf('Motif Landing', module)
   .add('Entries for Source (long title)', () => (
     <Landing
       {...landingPropsLong}
-      contentTitle={
-        'Databyss includes 210 entries of the motif “ABYSS” from 42 sources by Jacques Derrida'
-      }
-      subtitle={'in Of Grammatology'}
+      contentTitle="Databyss includes 210 entries of the motif “ABYSS” from 42 sources by Jacques Derrida"
+      subtitle="in Of Grammatology"
       withToggle
     >
       <Entries>
