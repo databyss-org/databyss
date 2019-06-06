@@ -21,16 +21,16 @@ jobs:
 
       - run:
           name: "Reset master branch"
-            command: |
-              git checkout -q master
-              git reset --hard origin/master
-              if [ -n "$CIRCLE_TAG" ]
-              then
-                git checkout -q "$CIRCLE_TAG"
-              elif [ -n "$CIRCLE_BRANCH" ]
-              then
-                git checkout -q -B "$CIRCLE_BRANCH"
-              fi
+          command: |
+            git checkout -q master
+            git reset --hard origin/master
+            if [ -n "$CIRCLE_TAG" ]
+            then
+              git checkout -q "$CIRCLE_TAG"
+            elif [ -n "$CIRCLE_BRANCH" ]
+            then
+              git checkout -q -B "$CIRCLE_BRANCH"
+            fi
 
       # Download and cache dependencies
       - restore_cache:
