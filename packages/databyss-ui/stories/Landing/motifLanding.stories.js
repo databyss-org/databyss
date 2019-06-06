@@ -25,7 +25,7 @@ const landingProps = {
 const landingPropsLong = {
   cfList,
   title:
-    'acques Derrida on HIEROGLYPH / PASIGRAPHY / LEIBNIZ / CHINESE / UNIVERSAL LANGUAGE',
+    'Jacques Derrida on HIEROGLYPH / PASIGRAPHY / LEIBNIZ / CHINESE / UNIVERSAL LANGUAGE',
   renderCfItem: cf => (
     <Link key={cf.id} href={`/motif/abyss:${cf.id}`}>
       {cf.lastName}

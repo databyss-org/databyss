@@ -3,9 +3,9 @@ import classnames from 'classnames'
 import injectSheet from 'react-jss'
 import styles from './styles'
 
-const ContentHeading = ({ classes, className, children, style, id }) => (
+const ContentHeading = ({ classes, className, children, style, _ref }) => (
   <div
-    id={id}
+    ref={_ref}
     role="banner"
     className={classnames(className, classes.contentHeading)}
     style={style}

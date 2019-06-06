@@ -21,34 +21,42 @@ class Landing extends React.Component {
       contentLoaded: false,
       headerLoaded: false,
     }
+    this.headerRef = React.createRef()
+    this.bodyRef = React.createRef()
+    this.contentRef = React.createRef()
   }
 
   componentDidMount() {
-    window.addEventListener('scroll', this.handleScroll.bind(this), true)
+    this.contentRef.current.addEventListener(
+      'scroll',
+      this.handleScroll.bind(this),
+      true
+    )
   }
 
   componentWillUnmount() {
-    window.removeEventListener('scroll', this.handleScroll.bind(this), true)
+    this.contentRef.current.removeEventListener(
+      'scroll',
+      this.handleScroll.bind(this),
+      true
+    )
   }
 
   handleScroll() {
     // check to see both header and content header are mounted
     const { contentLoaded, headerLoaded, borderBottom } = this.state
-    if (document.getElementById('landing-header') && !headerLoaded) {
+
+    if (this.headerRef.current && !headerLoaded) {
       this.setState({ headerLoaded: true })
     }
-    if (document.getElementById('content-header') && !contentLoaded) {
+    if (this.bodyRef.current && !contentLoaded) {
       this.setState({ contentLoaded: true })
     }
 
     // if both elements are loaded apply logic to set the bottomBorder state
     if (contentLoaded && headerLoaded) {
-      const headerBottom = document
-        .getElementById('landing-header')
-        .getBoundingClientRect().bottom
-      const contentHeaderTop = document
-        .getElementById('content-header')
-        .getBoundingClientRect().top
+      const headerBottom = this.headerRef.current.getBoundingClientRect().bottom
+      const contentHeaderTop = this.bodyRef.current.getBoundingClientRect().top
 
       if (headerBottom > contentHeaderTop && !borderBottom) {
         this.setState({ borderBottom: true })
@@ -76,9 +84,12 @@ class Landing extends React.Component {
     } = this.props
 
     return (
-      <Content className={classnames(className, classes.landing)}>
+      <Content
+        className={classnames(className, classes.landing)}
+        _ref={this.contentRef}
+      >
         <LandingHeading
-          id="landing-header"
+          _ref={this.headerRef}
           style={{
             borderBottom: this.state.borderBottom && '1px solid #D6D6D6',
           }}
@@ -115,7 +126,7 @@ class Landing extends React.Component {
           )}
         </LandingHeading>
         <LandingBody>
-          <ContentHeading id="content-header">
+          <ContentHeading _ref={this.bodyRef}>
             <Raw html={contentTitle} />
           </ContentHeading>
           {children}

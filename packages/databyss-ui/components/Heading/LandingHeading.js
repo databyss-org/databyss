@@ -10,10 +10,10 @@ const LandingHeading = ({
   style,
   left,
   right,
-  id,
+  _ref,
 }) => (
   <div
-    id={id}
+    ref={_ref}
     className={classnames(className, classes.landingHeader)}
     style={style}
   >
