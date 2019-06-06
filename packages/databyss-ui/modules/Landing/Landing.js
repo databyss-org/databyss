@@ -27,19 +27,23 @@ class Landing extends React.Component {
   }
 
   componentDidMount() {
-    this.contentRef.current.addEventListener(
-      'scroll',
-      this.handleScroll.bind(this),
-      true
-    )
+    if (this.contentRef.current) {
+      this.contentRef.current.addEventListener(
+        'scroll',
+        this.handleScroll.bind(this),
+        true
+      )
+    }
   }
 
   componentWillUnmount() {
-    this.contentRef.current.removeEventListener(
-      'scroll',
-      this.handleScroll.bind(this),
-      true
-    )
+    if (this.contentRef.current) {
+      this.contentRef.current.removeEventListener(
+        'scroll',
+        this.handleScroll.bind(this),
+        true
+      )
+    }
   }
 
   handleScroll() {

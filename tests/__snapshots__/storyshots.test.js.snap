@@ -11,7 +11,6 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
   >
     <div
       className="LandingHeading-landingHeader"
-      id="landing-header"
       style={
         Object {
           "borderBottom": false,
@@ -32,7 +31,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
             <div
               dangerouslySetInnerHTML={
                 Object {
-                  "__html": "acques Derrida on HIEROGLYPH / PASIGRAPHY / LEIBNIZ / CHINESE / UNIVERSAL LANGUAGE",
+                  "__html": "Jacques Derrida on HIEROGLYPH / PASIGRAPHY / LEIBNIZ / CHINESE / UNIVERSAL LANGUAGE",
                 }
               }
               style={
@@ -163,7 +162,6 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
     >
       <div
         className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
-        id="content-header"
         role="banner"
       >
         <div
@@ -422,7 +420,6 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
   >
     <div
       className="LandingHeading-landingHeader"
-      id="landing-header"
       style={
         Object {
           "borderBottom": false,
@@ -574,7 +571,6 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
     >
       <div
         className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
-        id="content-header"
         role="banner"
       >
         <div
@@ -833,7 +829,6 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
   >
     <div
       className="LandingHeading-landingHeader"
-      id="landing-header"
       style={
         Object {
           "borderBottom": false,
@@ -967,7 +962,6 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
     >
       <div
         className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
-        id="content-header"
         role="banner"
       >
         <div
@@ -1332,7 +1326,6 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
   >
     <div
       className="LandingHeading-landingHeader"
-      id="landing-header"
       style={
         Object {
           "borderBottom": false,
@@ -1446,7 +1439,6 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
     >
       <div
         className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
-        id="content-header"
         role="banner"
       >
         <div
