@@ -16,4 +16,6 @@ function syncVersion(packagePath) {
   fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2))
 }
 
-fs.readdirSync('packages').forEach(p => syncVersion(`packages/${p}`))
+fs.readdirSync('packages').forEach(
+  p => p !== '.DS_Store' && syncVersion(`packages/${p}`)
+)
