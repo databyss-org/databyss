@@ -13,8 +13,8 @@
   },
   "main": "dist/databyss-ui.js",
   "peerDependencies": {
-    "react": "1.0.5",
-    "react-dom": "1.0.5"
+    "react": "1.0.6",
+    "react-dom": "1.0.6"
   },
   "dependencies": {
     "classnames": "^2.2.6",
