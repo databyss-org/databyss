@@ -26,11 +26,12 @@ jobs:
             git reset --hard origin/master
             if [ -n "$CIRCLE_TAG" ]
             then
-              git checkout -q "$CIRCLE_TAG"
+              git checkout "$CIRCLE_TAG"
             elif [ -n "$CIRCLE_BRANCH" ]
             then
-              git checkout -q -B "$CIRCLE_BRANCH"
+              git checkout "$CIRCLE_BRANCH"
             fi
+            git reset --hard "$CIRCLE_SHA1"
 
       # Download and cache dependencies
       - restore_cache:
