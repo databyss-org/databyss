@@ -24,13 +24,16 @@ class Landing extends React.Component {
     this.headerRef = React.createRef()
     this.bodyRef = React.createRef()
     this.contentRef = React.createRef()
+    // this.handleScroll = this.handleScroll.bind(this)
+    this.throttleScroll = this.throttleScroll.bind(this)
+    this.time = Date.now()
   }
 
   componentDidMount() {
     if (this.contentRef.current) {
       this.contentRef.current.addEventListener(
         'scroll',
-        this.handleScroll.bind(this),
+        this.throttleScroll,
         true
       )
     }
@@ -40,9 +43,17 @@ class Landing extends React.Component {
     if (this.contentRef.current) {
       this.contentRef.current.removeEventListener(
         'scroll',
-        this.handleScroll.bind(this),
+        this.throttleScroll,
         true
       )
+    }
+  }
+
+  throttleScroll() {
+    // throttles the scroll every 30ms
+    if (this.time + 30 - Date.now() < 0) {
+      this.time = Date.now()
+      this.handleScroll()
     }
   }
 
