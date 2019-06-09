@@ -1,12 +1,13 @@
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const webpackConfig = require('./webpack.config.js')
+const webpackConfig = require('./webpack.config.js')('development')
 
 module.exports = {
   components: path.join(
     __dirname,
     '../packages/databyss-ui/components/**/*.js'
   ),
+  ignore: ['**/styles.js', '**/_*.js'],
   webpackConfig: {
     ...webpackConfig,
     plugins: [
@@ -15,6 +16,12 @@ module.exports = {
         path.join(__dirname, '../packages/databyss-ui/public'),
       ]),
     ],
+  },
+  context: {
+    Content: path.resolve(
+      __dirname,
+      '../packages/databyss-ui/components/Viewport/Content.js'
+    ),
   },
   skipComponentsWithoutExample: true,
   styleguideDir: path.join(__dirname, '../build'),

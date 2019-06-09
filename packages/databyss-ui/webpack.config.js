@@ -1,5 +1,6 @@
 const path = require('path')
-const moduleConfig = require('../../config/webpack.config.js').module
+const moduleConfig = require('../../config/webpack.config.js')('production')
+  .module
 const nodeExternals = require('webpack-node-externals')
 
 module.exports = {
