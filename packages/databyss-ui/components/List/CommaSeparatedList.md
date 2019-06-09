@@ -1,4 +1,6 @@
 ```js
+import PageNav from '../Navigation/PageNav'
+import Link from '../Navigation/Link'
 const authorNames = [
   'Heidegger',
   'Ronell',

@@ -1,4 +1,6 @@
 ```js
+import CommaSeparatedList from '../List/CommaSeparatedList'
+import Link from '../Navigation/Link'
 const authorNames = [
   'Heidegger',
   'Ronell',
