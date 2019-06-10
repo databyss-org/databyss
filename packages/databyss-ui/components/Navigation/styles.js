@@ -1,4 +1,4 @@
-import { theme as defaultTheme } from '../../shared-styles'
+import { theme as defaultTheme } from '../../theming'
 
 export default (theme = defaultTheme) => ({
   link: {

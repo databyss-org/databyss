@@ -57,7 +57,7 @@ export default () => (
 
 The databyss-ui package uses [JSS](http://cssinjs.org) and [react-jss](https://github.com/cssinjs/react-jss) for rendering styles and managing themes.
 
-Shared themes variables and macros are in `src/shared-styles`.
+Shared themes variables and macros are in `src/theming`.
 
 ## Adding Images and Files
 

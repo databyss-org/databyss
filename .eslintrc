@@ -28,7 +28,7 @@
       "error",
       {
         "devDependencies": ["**/*.*"],
-        "packageDir": ["./packages/databyss-ui", "./"]
+        "packageDir": ["./packages/databyss-ui", "./packages/databyss-notes-native", "./"]
       }
     ], // storybook and scripts use devDependencies
     "prettier/prettier": [

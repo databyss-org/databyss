@@ -1,4 +1,7 @@
 import colors from './colors'
+import fonts, { EM } from './fonts'
+
+export { EM }
 
 export default {
   /* layout */
@@ -8,18 +11,7 @@ export default {
   contentWidth: '500px',
 
   /* fonts */
-  headingFont: "'Baskerville', serif",
-  bodyFont: "'Baskerville', serif",
-  navFont: "'-apple-system', 'Helvetica', sans-serif",
-  fontSizeBase: '13pt',
-  lineHeightContent: '1.3em',
-  fontSizeNormal: '1em',
-  fontSizeS: '0.85em',
-  fontSizeXs: '0.7em',
-  fontSizeL: '1.2em',
-  fontSizeXL: '1.4em',
-  fontBold: 700,
-  fontSemibold: 600,
+  ...fonts,
 
   /* colors */
   ...colors,

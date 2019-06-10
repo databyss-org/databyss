@@ -1,5 +1,5 @@
 /* styles and theming */
-export { theme, macros, colors, ThemeProvider } from './shared-styles'
+export { theme, macros, colors, ThemeProvider } from './theming'
 
 /* components */
 export { default as Button } from './components/Button/Button'

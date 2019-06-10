@@ -3,11 +3,13 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const webpackConfig = require('./webpack.config.js')('development')
 
 module.exports = {
-  components: path.join(
-    __dirname,
-    '../packages/databyss-ui/components/**/*.js'
-  ),
-  ignore: ['**/styles.js', '**/_*.js'],
+  ignore: [
+    '**/styles.js',
+    '**/_*.js',
+    '**/*.native.js',
+    '**/*.ios.js',
+    '**/*.android.js',
+  ],
   webpackConfig: {
     ...webpackConfig,
     plugins: [
@@ -52,4 +54,20 @@ module.exports = {
     },
   },
   title: 'Databyss Component Library',
+  pagePerSection: true,
+  sections: [
+    {
+      name: 'Components',
+      components: '../packages/databyss-ui/components/**/*.js',
+      exampleMode: 'collapse',
+      usageMode: 'collapse',
+    },
+    {
+      name: 'Primitives',
+      components: '../packages/databyss-ui/primitives/**/*.js',
+      exampleMode: 'collapse',
+      usageMode: 'collapse',
+    },
+    {},
+  ],
 }
