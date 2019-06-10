@@ -5,8 +5,6 @@ export default (theme = defaultTheme) => ({
     fontFamily: theme.bodyFont,
   },
   landing: {
-    overflow: 'auto',
-    maxHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
   },

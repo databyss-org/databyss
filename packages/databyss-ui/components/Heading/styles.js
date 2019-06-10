@@ -10,13 +10,13 @@ export default (theme = defaultTheme) => ({
   },
 
   landingHeader: {
-    position: 'sticky',
-    top: 0,
+    top: -40,
     backgroundColor: 'white',
     width: '100%',
     alignItems: 'stretch',
     fontSize: '1em',
     zIndex: 10,
+    transition: 'padding 300ms ease-in-out',
   },
 
   pageSubHeading: {

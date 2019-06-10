@@ -20,6 +20,8 @@ class Landing extends React.Component {
       borderBottom: false,
       contentLoaded: false,
       headerLoaded: false,
+      headerSticky: false,
+      animateHeader: false,
     }
     this.headerRef = React.createRef()
     this.bodyRef = React.createRef()
@@ -29,22 +31,27 @@ class Landing extends React.Component {
   }
 
   componentDidMount() {
+    this.calculateToolbarHeight()
+
     if (this.contentRef.current) {
-      this.contentRef.current.addEventListener(
-        'scroll',
-        this.throttleScroll,
-        true
-      )
+      window.addEventListener('scroll', this.throttleScroll, true)
     }
   }
 
   componentWillUnmount() {
     if (this.contentRef.current) {
-      this.contentRef.current.removeEventListener(
-        'scroll',
-        this.throttleScroll,
-        true
-      )
+      window.removeEventListener('scroll', this.throttleScroll, true)
+    }
+  }
+
+  calculateToolbarHeight() {
+    if (this.contentRef.current) {
+      const distanceFromBottom = this.contentRef.current.getBoundingClientRect()
+        .bottom
+      const elementHeight =
+        this.contentRef.current.offsetHeight + window.innerHeight * 0.02
+      const appBarHeight = distanceFromBottom - elementHeight
+      this.setState({ appBarCalculatedHeight: appBarHeight })
     }
   }
 
@@ -58,7 +65,13 @@ class Landing extends React.Component {
 
   handleScroll() {
     // check to see both header and content header are mounted
-    const { contentLoaded, headerLoaded, borderBottom } = this.state
+    const {
+      contentLoaded,
+      headerLoaded,
+      headerSticky,
+      animateHeader,
+      appBarCalculatedHeight,
+    } = this.state
     if (this.headerRef.current && !headerLoaded) {
       this.setState({ headerLoaded: true })
     }
@@ -68,13 +81,35 @@ class Landing extends React.Component {
     // if both elements are loaded apply logic to set the bottomBorder state
     if (contentLoaded && headerLoaded) {
       const headerBottom = this.headerRef.current.getBoundingClientRect().bottom
+      const headerTop = this.headerRef.current.getBoundingClientRect().top
+      const headerHeight = headerBottom - headerTop
       const contentHeaderTop = this.bodyRef.current.getBoundingClientRect().top
-      if (headerBottom > contentHeaderTop && !borderBottom) {
-        this.setState({ borderBottom: true })
-      }
+      const appBarHeight = window.innerHeight * 0.09
 
-      if (headerBottom < contentHeaderTop && borderBottom) {
-        this.setState({ borderBottom: false })
+      if (
+        !headerSticky &&
+        contentHeaderTop - appBarHeight < 0 &&
+        !animateHeader
+      ) {
+        this.setState({
+          headerSticky: true,
+          borderBottom: true,
+          animateHeader: true,
+        })
+        // compensates for the 300ms position animation
+        setTimeout(() => this.setState({ animateHeader: false }), 500)
+      }
+      if (
+        headerSticky &&
+        contentHeaderTop - headerHeight - appBarCalculatedHeight >= 0 &&
+        !animateHeader
+      ) {
+        this.setState({
+          headerSticky: false,
+          borderBottom: false,
+          animateHeader: true,
+        })
+        setTimeout(() => this.setState({ animateHeader: false }), 500)
       }
     }
   }
@@ -103,6 +138,8 @@ class Landing extends React.Component {
           _ref={this.headerRef}
           style={{
             borderBottom: this.state.borderBottom && '1px solid #D6D6D6',
+            paddingTop: this.state.headerSticky && '40px',
+            position: this.state.headerSticky && 'sticky',
           }}
           left={
             <PageHeading>

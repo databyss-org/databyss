@@ -14,6 +14,8 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
       style={
         Object {
           "borderBottom": false,
+          "paddingTop": false,
+          "position": false,
         }
       }
     >
@@ -423,6 +425,8 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
       style={
         Object {
           "borderBottom": false,
+          "paddingTop": false,
+          "position": false,
         }
       }
     >
@@ -832,6 +836,8 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
       style={
         Object {
           "borderBottom": false,
+          "paddingTop": false,
+          "position": false,
         }
       }
     >
@@ -1329,6 +1335,8 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
       style={
         Object {
           "borderBottom": false,
+          "paddingTop": false,
+          "position": false,
         }
       }
     >
