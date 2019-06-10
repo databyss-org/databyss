@@ -9,7 +9,7 @@ export const serif = Platform.select({
 })
 
 export const sans = Platform.select({
-  ios: '"San Francisco"',
+  ios: 'System',
   android: 'sans-serif',
   default: '-apple-system, sans-serif',
 })

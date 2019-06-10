@@ -86,6 +86,7 @@
     "workbox-webpack-plugin": "^4.3.1"
   },
   "scripts": {
+    "notes-native": "yarn workspace @databyss-org/notes-native start",
     "build": "bash scripts/build.sh",
     "build:ui": "NODE_ENV=production BABEL_ENV=production webpack --config packages/databyss-ui/webpack.config.js --mode=production",
     "test": "node scripts/test.js",
