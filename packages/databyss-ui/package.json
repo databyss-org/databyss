@@ -13,9 +13,9 @@
   },
   "main": "dist/databyss-ui.js",
   "peerDependencies": {
-    "react": "16.8.3",
-    "react-native": "0.59.9",
-    "react-dom": "16.8.3"
+    "react": "^16.8.3",
+    "react-native": "^0.59.9",
+    "react-dom": "^16.8.3"
   },
   "dependencies": {
     "classnames": "^2.2.6",

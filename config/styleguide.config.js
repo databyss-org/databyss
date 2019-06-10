@@ -5,6 +5,7 @@ const webpackConfig = require('./webpack.config.js')('development')
 module.exports = {
   ignore: [
     '**/styles.js',
+    '**/defaultProps.js',
     '**/_*.js',
     '**/*.native.js',
     '**/*.ios.js',

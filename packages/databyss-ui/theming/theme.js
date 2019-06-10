@@ -15,13 +15,6 @@ export default {
 
   /* colors */
   ...colors,
-  bgColorDark: colors.darkGrey,
-  bgColorLight: colors.lightGrey,
-  textColorDark: colors.black,
-  textColorLight: colors.white,
-  textColorDarkSecondary: colors.darkGrey,
-  focusOutlineColor: colors.pink,
-  entrySourceColor: colors.lightPurple,
 
   /* transitions */
   slow: '800ms',

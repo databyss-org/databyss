@@ -1,4 +1,11 @@
+import React from 'react'
 import styled from '@emotion/native'
-import styles from './styles'
+import styles, { defaultProps } from './styles'
 
-export default styled.Text(({ theme }) => styles(theme))
+const Text = styled.Text(styles)
+
+export default ({ children, ...others }) => (
+  <Text {...defaultProps} {...others}>
+    {children}
+  </Text>
+)
