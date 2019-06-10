@@ -24,7 +24,6 @@ class Landing extends React.Component {
     this.headerRef = React.createRef()
     this.bodyRef = React.createRef()
     this.contentRef = React.createRef()
-    // this.handleScroll = this.handleScroll.bind(this)
     this.throttleScroll = this.throttleScroll.bind(this)
     this.time = Date.now()
   }
@@ -60,19 +59,16 @@ class Landing extends React.Component {
   handleScroll() {
     // check to see both header and content header are mounted
     const { contentLoaded, headerLoaded, borderBottom } = this.state
-
     if (this.headerRef.current && !headerLoaded) {
       this.setState({ headerLoaded: true })
     }
     if (this.bodyRef.current && !contentLoaded) {
       this.setState({ contentLoaded: true })
     }
-
     // if both elements are loaded apply logic to set the bottomBorder state
     if (contentLoaded && headerLoaded) {
       const headerBottom = this.headerRef.current.getBoundingClientRect().bottom
       const contentHeaderTop = this.bodyRef.current.getBoundingClientRect().top
-
       if (headerBottom > contentHeaderTop && !borderBottom) {
         this.setState({ borderBottom: true })
       }
