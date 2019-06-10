@@ -7,10 +7,6 @@ export default (theme = defaultTheme) => ({
   landing: {
     overflow: 'auto',
     maxHeight: '100vh',
-    /*
-    position: 'fixed',
-    height: 'calc(100% - 100px)',
-    */
     display: 'flex',
     flexDirection: 'column',
   },
