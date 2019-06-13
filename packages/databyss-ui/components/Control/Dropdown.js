@@ -40,7 +40,7 @@ class Dropdown extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.list !== nextProps.list) {
-      this.updateList(this.props.list)
+      this.updateList(nextProps.list)
     }
   }
 
