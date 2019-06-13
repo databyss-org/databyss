@@ -57,9 +57,10 @@ export default (theme = defaultTheme) => ({
     display: 'flex',
     alignItems: 'flex-start',
     flexWrap: 'nowrap',
+    paddingBottom: '20px',
+
     ...macros.mobile({
       flexWrap: 'wrap',
-      paddingBottom: '20px',
     }),
   },
 

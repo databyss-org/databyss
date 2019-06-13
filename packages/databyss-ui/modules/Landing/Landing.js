@@ -8,7 +8,6 @@ import LandingBody from '../../components/Viewport/LandingBody'
 import Raw from '../../components/Viewport/Raw'
 import PageHeading from '../../components/Heading/PageHeading'
 import PageSubHeading from '../../components/Heading/PageSubHeading'
-import PageNav from '../../components/Navigation/PageNav'
 import LandingHeading from '../../components/Heading/LandingHeading'
 import ContentHeading from '../../components/Heading/ContentHeading'
 import styles from './styles'
@@ -169,9 +168,7 @@ class Landing extends React.Component {
               ) : null}
             </div>
           }
-        >
-          {cfList && <PageNav ariaLabel="compare with" />}
-        </LandingHeading>
+        />
 
         <LandingBody>
           <ContentHeading _ref={this.bodyRef}>
