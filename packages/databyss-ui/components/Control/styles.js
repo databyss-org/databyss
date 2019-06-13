@@ -12,7 +12,7 @@ export default (theme = defaultTheme) => ({
 
   dropdown: {
     paddingBottom: '6px',
-    paddingTop: '12px',
+    paddingTop: '5px',
     display: 'inline-block',
     width: '125px',
     outline: 'none',
