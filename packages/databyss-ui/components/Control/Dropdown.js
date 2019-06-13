@@ -49,7 +49,7 @@ class Dropdown extends React.Component {
   render() {
     const { classes, onSelect } = this.props
     const list = this.state.list
-
+    console.log(list)
     return list.length > 0 ? (
       <div>
         <p className={classes.dropdownTitle}>cf.</p>
@@ -59,7 +59,7 @@ class Dropdown extends React.Component {
             style={{ boxShadow: 'none', outline: 'none' }}
             styles={customStyles}
             captureMenuScroll={false}
-            placeholder={`${list.length} author${list.length > 1 && 's'}`}
+            placeholder={`${list.length} author${list.length > 1 ? 's' : ''}`}
             onChange={id => onSelect(id)}
             options={list}
           />
