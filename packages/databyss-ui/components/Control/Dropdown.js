@@ -49,7 +49,6 @@ class Dropdown extends React.Component {
   render() {
     const { classes, onSelect } = this.props
     const list = this.state.list
-    console.log(list)
     return list.length > 0 ? (
       <div>
         <p className={classes.dropdownTitle}>cf.</p>
