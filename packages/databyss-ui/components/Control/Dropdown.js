@@ -34,12 +34,18 @@ class Dropdown extends React.Component {
 
   componentDidMount() {
     if (this.props.list) {
-      this.updateList()
+      this.updateList(this.props.list)
     }
   }
 
-  updateList() {
-    const newList = this.props.list.reduce((acc, d) => {
+  componentWillReceiveProps(nextProps) {
+    if (this.props.list !== nextProps.list) {
+      this.updateList(this.props.list)
+    }
+  }
+
+  updateList(rawList) {
+    const newList = rawList.reduce((acc, d) => {
       acc.push({ label: d.lastName, value: d.id })
       return acc
     }, [])
