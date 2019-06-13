@@ -1,4 +1,4 @@
-import { theme as defaultTheme } from '../../shared-styles'
+import { macros, theme as defaultTheme } from '../../shared-styles'
 
 export default (theme = defaultTheme) => ({
   pageHeading: {
@@ -27,6 +27,17 @@ export default (theme = defaultTheme) => ({
     lineHeight: theme.lineHeightContent,
   },
 
+  headerPageSubHeading: {
+    ...macros.mobile({
+      display: 'none',
+    }),
+    fontFamily: theme.bodyFont,
+    fontWeight: theme.fontSemibold,
+    color: theme.darkGrey,
+    fontSize: theme.fontSizeNormal,
+    lineHeight: theme.lineHeightContent,
+  },
+
   contentHeading: {
     composes: '$pageSubHeading',
     padding: '10px 16px 10px 0',
@@ -46,15 +57,38 @@ export default (theme = defaultTheme) => ({
     display: 'flex',
     alignItems: 'flex-start',
     flexWrap: 'nowrap',
+    ...macros.mobile({
+      flexWrap: 'wrap',
+      paddingBottom: '20px',
+    }),
   },
+
   title: {
     width: '100%  ',
   },
   titleWithToggle: {
-    width: 'calc(100% - 130px)',
+    width: 'calc(100% - 160px)',
+    ...macros.mobile({
+      width: '100%',
+    }),
   },
   toggle: {
-    width: '130px',
+    width: '150px',
     margin: '-0.6em 0',
+    ...macros.mobile({
+      display: 'flex',
+      alignItems: 'flex-start',
+      flexWrap: 'wrap',
+      width: '100%',
+      margin: '-0.6em 0',
+    }),
   },
+  /*
+  dropdownMobile: {
+    width: '50%  ',
+  },
+  titleMobile: {
+    width: '100%  ',
+  },
+  */
 })

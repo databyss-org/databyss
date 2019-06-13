@@ -1,7 +1,8 @@
-import { theme as defaultTheme } from '../../shared-styles'
+import { macros, theme as defaultTheme } from '../../shared-styles'
 
 export default (theme = defaultTheme) => ({
   pageNav: {
+    ...macros.mobile({ display: 'none' }),
     fontSize: theme.fontSizeS,
     fontFamily: theme.navFont,
     color: theme.mediumGrey,

@@ -2,13 +2,13 @@ import React from 'react'
 import injectSheet from 'react-jss'
 import classnames from 'classnames'
 import SwitchControl from '../../components/Control/SwitchControl'
+import Dropdown from '../../components/Control/Dropdown'
 import Content from '../../components/Viewport/Content'
 import LandingBody from '../../components/Viewport/LandingBody'
 import Raw from '../../components/Viewport/Raw'
 import PageHeading from '../../components/Heading/PageHeading'
 import PageSubHeading from '../../components/Heading/PageSubHeading'
 import PageNav from '../../components/Navigation/PageNav'
-import CommaSeparatedList from '../../components/List/CommaSeparatedList'
 import LandingHeading from '../../components/Heading/LandingHeading'
 import ContentHeading from '../../components/Heading/ContentHeading'
 import styles from './styles'
@@ -119,7 +119,6 @@ class Landing extends React.Component {
       className,
       classes,
       cfList,
-      renderCfItem,
       contentTitle,
       children,
       title,
@@ -142,37 +141,38 @@ class Landing extends React.Component {
             position: this.state.headerSticky && 'sticky',
           }}
           left={
-            <PageHeading>
-              <Raw html={title} />
-            </PageHeading>
+            <div>
+              <PageHeading>
+                <Raw html={title} />
+              </PageHeading>
+              {subtitle && (
+                <PageSubHeading>
+                  <Raw html={subtitle} />
+                </PageSubHeading>
+              )}
+            </div>
           }
           right={
-            withToggle ? (
-              <SwitchControl
-                label="Motif Links"
-                checked={showMotifLinks}
-                onChange={onMotifLinksChange}
+            <div className={classes.bottomHeaderContainer}>
+              <Dropdown
+                list={cfList}
                 className={classes.motifLinksSwitch}
+                onSelect={value => this.props.onCfListSelect(value.value)}
               />
-            ) : null
+              {withToggle ? (
+                <SwitchControl
+                  label="Motif Links"
+                  checked={showMotifLinks}
+                  onChange={onMotifLinksChange}
+                  className={classes.motifLinksSwitch}
+                />
+              ) : null}
+            </div>
           }
         >
-          {subtitle && (
-            <PageSubHeading>
-              <Raw html={subtitle} />
-            </PageSubHeading>
-          )}
-
-          {cfList && (
-            <PageNav ariaLabel="compare with">
-              <CommaSeparatedList opener="[cf.&nbsp;" closer="]">
-                {cfList.map(cf =>
-                  React.cloneElement(renderCfItem(cf), { key: cf.id })
-                )}
-              </CommaSeparatedList>
-            </PageNav>
-          )}
+          {cfList && <PageNav ariaLabel="compare with" />}
         </LandingHeading>
+
         <LandingBody>
           <ContentHeading _ref={this.bodyRef}>
             <Raw html={contentTitle} />

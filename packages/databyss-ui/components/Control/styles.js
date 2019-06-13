@@ -9,12 +9,37 @@ export default (theme = defaultTheme) => ({
       opacity: 0,
     },
   },
+
+  dropdown: {
+    paddingBottom: '6px',
+    paddingTop: '12px',
+    display: 'inline-block',
+    width: '125px',
+    outline: 'none',
+    fontFamily: theme.navFont,
+    fontSize: '0.9em',
+
+    '&:hover': {
+      outline: 'none',
+    },
+  },
+
+  dropdownTitle: {
+    margin: '0px',
+    display: 'inline-block',
+    marginRight: '6px',
+    fontSize: '0.9em',
+    fontFamily: theme.navFont,
+    color: '#807d79',
+  },
+
   control: {
     display: 'flex',
     alignItems: 'center',
     cursor: 'pointer',
     position: 'relative',
     margin: '0.6em 0',
+    justifyContent: 'flex-end',
 
     /* control highlight */
     '&:after': {
@@ -86,6 +111,7 @@ export default (theme = defaultTheme) => ({
   },
 
   switchControl: {
+    paddingRight: '3px',
     '& $switchHandle': {
       boxSizing: 'border-box',
       width: '35px',

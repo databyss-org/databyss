@@ -22,6 +22,8 @@
     "jss": "^9.8.7",
     "jss-preset-default": "^4.5.0",
     "react-jss": "^8.6.1",
+    "react-responsive": "^7.0.0",
+    "react-select": "^3.0.4",
     "react-svg-loader": "^2.1.0"
   },
   "publishConfig": {

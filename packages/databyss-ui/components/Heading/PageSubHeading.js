@@ -7,7 +7,7 @@ const PageSubHeading = ({ classes, className, children, style }) => (
   <div
     role="heading"
     aria-level="2"
-    className={classnames(className, classes.pageSubHeading)}
+    className={classnames(className, classes.headerPageSubHeading)}
     style={style}
   >
     {children}
