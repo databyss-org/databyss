@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots Motif Landing Entries for Source 1`] = `
+exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
 <main
-  className="root-0-0-2  Viewport-viewport undefined"
+  className="root-0-0-3  Viewport-viewport undefined"
   role="application"
 >
   <div
@@ -10,182 +10,182 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
     className="Landing-landing Content-content"
   >
     <div
-      aria-level="1"
-      className="PageHeading-pageHeading"
-      role="heading"
+      className="LandingHeading-landingHeader"
+      style={
+        Object {
+          "borderBottom": false,
+          "paddingTop": false,
+          "position": false,
+        }
+      }
     >
       <div
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "Jacques Derrida on “ABYSS”",
-          }
-        }
-        style={
-          Object {
-            "display": "inline",
-          }
-        }
-      />
-    </div>
-    <div
-      aria-level="2"
-      className="PageSubHeading-pageSubHeading"
-      role="heading"
-    >
-      <div
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": <React.Fragment>
-              in 
-              <Jss(Link)
-                href="/source/SPOM"
+        className="LandingHeading-headingContainer"
+      >
+        <div
+          className="LandingHeading-titleWithToggle"
+        >
+          <div>
+            <div
+              aria-level="1"
+              className="PageHeading-pageHeading"
+              role="heading"
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Jacques Derrida on HIEROGLYPH / PASIGRAPHY / LEIBNIZ / CHINESE / UNIVERSAL LANGUAGE",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </div>
+            <div
+              aria-level="2"
+              className="PageSubHeading-headerPageSubHeading"
+              role="heading"
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "in Of Grammatology",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          className="LandingHeading-toggle"
+        >
+          <div
+            className="Landing-bottomHeaderContainer"
+          >
+            <div>
+              <p
+                className="Dropdown-dropdownTitle"
               >
-                Specters of Marx
-              </Jss(Link)>
-            </React.Fragment>,
-          }
-        }
-        style={
-          Object {
-            "display": "inline",
-          }
-        }
-      />
-    </div>
-    <nav
-      aria-label="compare with"
-      className="PageNav-pageNav"
-    >
-      <div
-        className="CommaSeparatedList-commaSeparatedList"
-        role="list"
-      >
-        [cf.
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:HDG"
-            onClick={[Function]}
-          >
-            Heidegger
-          </a>
-        </div>
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:RN"
-            onClick={[Function]}
-          >
-            Ronell
-          </a>
-        </div>
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:KKGD"
-            onClick={[Function]}
-          >
-            Kierkegaard
-          </a>
-        </div>
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:AUG"
-            onClick={[Function]}
-          >
-            Augustine
-          </a>
-        </div>
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:HUSS"
-            onClick={[Function]}
-          >
-            Husserl
-          </a>
-        </div>
-        ]
-      </div>
-    </nav>
-    <div
-      className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
-      role="banner"
-    >
-      <div
-        aria-level="3"
-        className="ContentHeading-text"
-        role="heading"
-      >
-        <div
-          dangerouslySetInnerHTML={
-            Object {
-              "__html": <React.Fragment>
-                210 entries for “Abyss” in
-                 
-                <Jss(Link)
-                  href="/source/SPOM"
+                cf.
+              </p>
+              <div
+                className="Dropdown-dropdown"
+              >
+                <div
+                  className=" css-2b097c-container"
+                  onKeyDown={[Function]}
                 >
-                  Specters of Marx
-                </Jss(Link)>
-              </React.Fragment>,
-            }
-          }
-          style={
-            Object {
-              "display": "inline",
-            }
-          }
-        />
-      </div>
-    </div>
-    <div
-      aria-label="content"
-      className="ContentNav-contentNav"
-    >
-      <nav
-        aria-label="content navigator"
-        className="ContentNav-nav"
-      >
-        <div
-          className="ContentNav-list"
-        >
-          <div
-            className="ContentNav-left"
-          >
-            <button
-              className="BackButton-backButton BackButton-linkButton Button-button Control-control"
-              onTouchStart={[Function]}
-            >
-              <div
-                className="Control-label"
-              >
-                Sources
+                  <div
+                    className=" css-1vqe5pc-control"
+                    onMouseDown={[Function]}
+                    onTouchEnd={[Function]}
+                  >
+                    <div
+                      className=" css-1hwfws3"
+                    >
+                      <div
+                        className=" css-vx7sgc-placeholder"
+                      >
+                        5 authors
+                      </div>
+                      <div
+                        className="css-1g6gooi"
+                      >
+                        <div
+                          className=""
+                          style={
+                            Object {
+                              "display": "inline-block",
+                            }
+                          }
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autoCapitalize="none"
+                            autoComplete="off"
+                            autoCorrect="off"
+                            disabled={false}
+                            id="react-select-4-input"
+                            onBlur={[Function]}
+                            onChange={[Function]}
+                            onFocus={[Function]}
+                            spellCheck="false"
+                            style={
+                              Object {
+                                "background": 0,
+                                "border": 0,
+                                "boxSizing": "content-box",
+                                "color": "inherit",
+                                "fontSize": "inherit",
+                                "label": "input",
+                                "opacity": 1,
+                                "outline": 0,
+                                "padding": 0,
+                                "width": "1px",
+                              }
+                            }
+                            tabIndex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style={
+                              Object {
+                                "height": 0,
+                                "left": 0,
+                                "overflow": "scroll",
+                                "position": "absolute",
+                                "top": 0,
+                                "visibility": "hidden",
+                                "whiteSpace": "pre",
+                              }
+                            }
+                          >
+                            
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className=" css-1wy0on6"
+                    >
+                      <span
+                        className=" css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        className=" css-tlfecz-indicatorContainer"
+                        onMouseDown={[Function]}
+                        onTouchEnd={[Function]}
+                      >
+                        <svg
+                          aria-hidden="true"
+                          className="css-19bqh2r"
+                          focusable="false"
+                          height={20}
+                          viewBox="0 0 20 20"
+                          width={20}
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <arrow.svg />
-            </button>
-          </div>
-          <div
-            className="ContentNav-right"
-          >
+            </div>
             <label
-              className="Entries-motifLinksSwitch SwitchControl-switchControl ToggleControl-toggleControl ToggleControl-control"
+              className="SwitchControl-switchControl ToggleControl-toggleControl ToggleControl-control"
               onTouchStart={[Function]}
             >
               <div
@@ -205,26 +205,24 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
             </label>
           </div>
         </div>
-      </nav>
+      </div>
+    </div>
+    <div
+      className="LandingBody-landingBody"
+    >
       <div
-        aria-label="entries for p. 106"
-        className="EntryGroup-entryList"
+        className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
+        role="banner"
       >
-        <article
-          aria-label="entry"
-          className="Entry-entry"
+        <div
+          aria-level="3"
+          className="ContentHeading-text"
+          role="heading"
         >
           <div
-            aria-label="entry location"
-            className="Entry-location"
-          >
-            p. 106
-          </div>
-          <div
-            className="Entry-content"
             dangerouslySetInnerHTML={
               Object {
-                "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
+                "__html": "Databyss includes 210 entries of the motif “ABYSS” from 42 sources by Jacques Derrida",
               }
             }
             style={
@@ -233,224 +231,39 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
               }
             }
           />
-        </article>
+        </div>
       </div>
       <div
-        aria-label="entries for p.27"
-        className="EntryGroup-entryList"
+        aria-label="content"
+        className="ContentNav-contentNav"
       >
-        <article
-          aria-label="entry"
-          className="Entry-entry"
+        <nav
+          aria-label="content navigator"
+          className="ContentNav-nav"
         >
           <div
-            aria-label="entry emphasis"
+            className="ContentNav-list"
           >
-            ***
-          </div>
-          <div
-            aria-label="entry location"
-            className="Entry-location"
-          >
-            p.27
-          </div>
-          <div
-            className="Entry-content"
-            dangerouslySetInnerHTML={
-              Object {
-                "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
-              }
-            }
-            style={
-              Object {
-                "display": "inline",
-              }
-            }
-          />
-        </article>
-      </div>
-    </div>
-  </div>
-</main>
-`;
-
-exports[`Storyshots Motif Landing Show All Entries 1`] = `
-<main
-  className="root-0-0-1  Viewport-viewport undefined"
-  role="application"
->
-  <div
-    aria-label="content"
-    className="Landing-landing Content-content"
-  >
-    <div
-      aria-level="1"
-      className="PageHeading-pageHeading"
-      role="heading"
-    >
-      <div
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "Jacques Derrida on “ABYSS”",
-          }
-        }
-        style={
-          Object {
-            "display": "inline",
-          }
-        }
-      />
-    </div>
-    <nav
-      aria-label="compare with"
-      className="PageNav-pageNav"
-    >
-      <div
-        className="CommaSeparatedList-commaSeparatedList"
-        role="list"
-      >
-        [cf.
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:HDG"
-            onClick={[Function]}
-          >
-            Heidegger
-          </a>
-        </div>
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:RN"
-            onClick={[Function]}
-          >
-            Ronell
-          </a>
-        </div>
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:KKGD"
-            onClick={[Function]}
-          >
-            Kierkegaard
-          </a>
-        </div>
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:AUG"
-            onClick={[Function]}
-          >
-            Augustine
-          </a>
-        </div>
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:HUSS"
-            onClick={[Function]}
-          >
-            Husserl
-          </a>
-        </div>
-        ]
-      </div>
-    </nav>
-    <div
-      className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
-      role="banner"
-    >
-      <div
-        aria-level="3"
-        className="ContentHeading-text"
-        role="heading"
-      >
-        <div
-          dangerouslySetInnerHTML={
-            Object {
-              "__html": "Databyss includes 210 entries of the motif “ABYSS” from 42 sources by Jacques Derrida",
-            }
-          }
-          style={
-            Object {
-              "display": "inline",
-            }
-          }
-        />
-      </div>
-    </div>
-    <div
-      aria-label="content"
-      className="ContentNav-contentNav"
-    >
-      <nav
-        aria-label="content navigator"
-        className="ContentNav-nav"
-      >
-        <div
-          className="ContentNav-list"
-        >
-          <div
-            className="ContentNav-left"
-          >
-            <button
-              className="BackButton-backButton BackButton-linkButton Button-button Control-control"
-              onTouchStart={[Function]}
+            <div
+              className="ContentNav-left"
             >
-              <div
-                className="Control-label"
+              <button
+                className="BackButton-backButton BackButton-linkButton Button-button Control-control"
+                onTouchStart={[Function]}
               >
-                Sources
-              </div>
-              <arrow.svg />
-            </button>
+                <div
+                  className="Control-label"
+                >
+                  Sources
+                </div>
+                <arrow.svg />
+              </button>
+            </div>
+            <div
+              className="ContentNav-right"
+            />
           </div>
-          <div
-            className="ContentNav-right"
-          >
-            <label
-              className="Entries-motifLinksSwitch SwitchControl-switchControl ToggleControl-toggleControl ToggleControl-control"
-              onTouchStart={[Function]}
-            >
-              <div
-                className="ToggleControl-label"
-              >
-                Motif Links
-              </div>
-              <input
-                onBlur={[Function]}
-                onChange={[Function]}
-                onFocus={[Function]}
-                type="checkbox"
-              />
-              <div
-                className="SwitchControl-switchHandle"
-              />
-            </label>
-          </div>
-        </div>
-      </nav>
-      <div
-        aria-label="entries for Spectors of Marx"
-        className="EntryGroup-entryList"
-      >
+        </nav>
         <div
           aria-label="entries for p. 106"
           className="EntryGroup-entryList"
@@ -459,13 +272,132 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
             aria-label="entry"
             className="Entry-entry"
           >
-            <a
-              aria-label="source"
-              className="EntrySource-source"
-              onClick={[Function]}
+            <div
+              aria-label="entry location"
+              className="Entry-location"
             >
-              SPOM
-            </a>
+              p. 106
+            </div>
+            <div
+              className="Entry-content"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
+            />
+          </article>
+        </div>
+        <div
+          aria-label="entries for p.27"
+          className="EntryGroup-entryList"
+        >
+          <article
+            aria-label="entry"
+            className="Entry-entry"
+          >
+            <div
+              aria-label="entry emphasis"
+            >
+              ***
+            </div>
+            <div
+              aria-label="entry location"
+              className="Entry-location"
+            >
+              p.27
+            </div>
+            <div
+              className="Entry-content"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
+            />
+          </article>
+        </div>
+        <div
+          aria-label="entries for p. 106"
+          className="EntryGroup-entryList"
+        >
+          <article
+            aria-label="entry"
+            className="Entry-entry"
+          >
+            <div
+              aria-label="entry location"
+              className="Entry-location"
+            >
+              p. 106
+            </div>
+            <div
+              className="Entry-content"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
+            />
+          </article>
+        </div>
+        <div
+          aria-label="entries for p.27"
+          className="EntryGroup-entryList"
+        >
+          <article
+            aria-label="entry"
+            className="Entry-entry"
+          >
+            <div
+              aria-label="entry emphasis"
+            >
+              ***
+            </div>
+            <div
+              aria-label="entry location"
+              className="Entry-location"
+            >
+              p.27
+            </div>
+            <div
+              className="Entry-content"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
+            />
+          </article>
+        </div>
+        <div
+          aria-label="entries for p. 106"
+          className="EntryGroup-entryList"
+        >
+          <article
+            aria-label="entry"
+            className="Entry-entry"
+          >
             <div
               aria-label="entry location"
               className="Entry-location"
@@ -522,36 +454,294 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
           </article>
         </div>
       </div>
+    </div>
+  </div>
+</main>
+`;
+
+exports[`Storyshots Motif Landing Entries for Source 1`] = `
+<main
+  className="root-0-0-2  Viewport-viewport undefined"
+  role="application"
+>
+  <div
+    aria-label="content"
+    className="Landing-landing Content-content"
+  >
+    <div
+      className="LandingHeading-landingHeader"
+      style={
+        Object {
+          "borderBottom": false,
+          "paddingTop": false,
+          "position": false,
+        }
+      }
+    >
       <div
-        aria-label="entries for Cosmopolitanism and Forgiveness"
-        className="EntryGroup-entryList"
+        className="LandingHeading-headingContainer"
       >
         <div
-          aria-label="entries for p. 50"
+          className="LandingHeading-titleWithToggle"
+        >
+          <div>
+            <div
+              aria-level="1"
+              className="PageHeading-pageHeading"
+              role="heading"
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Jacques Derrida on “ABYSS”",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </div>
+            <div
+              aria-level="2"
+              className="PageSubHeading-headerPageSubHeading"
+              role="heading"
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "in Specters of Marx",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          className="LandingHeading-toggle"
+        >
+          <div
+            className="Landing-bottomHeaderContainer"
+          >
+            <div>
+              <p
+                className="Dropdown-dropdownTitle"
+              >
+                cf.
+              </p>
+              <div
+                className="Dropdown-dropdown"
+              >
+                <div
+                  className=" css-2b097c-container"
+                  onKeyDown={[Function]}
+                >
+                  <div
+                    className=" css-1vqe5pc-control"
+                    onMouseDown={[Function]}
+                    onTouchEnd={[Function]}
+                  >
+                    <div
+                      className=" css-1hwfws3"
+                    >
+                      <div
+                        className=" css-vx7sgc-placeholder"
+                      >
+                        5 authors
+                      </div>
+                      <div
+                        className="css-1g6gooi"
+                      >
+                        <div
+                          className=""
+                          style={
+                            Object {
+                              "display": "inline-block",
+                            }
+                          }
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autoCapitalize="none"
+                            autoComplete="off"
+                            autoCorrect="off"
+                            disabled={false}
+                            id="react-select-3-input"
+                            onBlur={[Function]}
+                            onChange={[Function]}
+                            onFocus={[Function]}
+                            spellCheck="false"
+                            style={
+                              Object {
+                                "background": 0,
+                                "border": 0,
+                                "boxSizing": "content-box",
+                                "color": "inherit",
+                                "fontSize": "inherit",
+                                "label": "input",
+                                "opacity": 1,
+                                "outline": 0,
+                                "padding": 0,
+                                "width": "1px",
+                              }
+                            }
+                            tabIndex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style={
+                              Object {
+                                "height": 0,
+                                "left": 0,
+                                "overflow": "scroll",
+                                "position": "absolute",
+                                "top": 0,
+                                "visibility": "hidden",
+                                "whiteSpace": "pre",
+                              }
+                            }
+                          >
+                            
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className=" css-1wy0on6"
+                    >
+                      <span
+                        className=" css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        className=" css-tlfecz-indicatorContainer"
+                        onMouseDown={[Function]}
+                        onTouchEnd={[Function]}
+                      >
+                        <svg
+                          aria-hidden="true"
+                          className="css-19bqh2r"
+                          focusable="false"
+                          height={20}
+                          viewBox="0 0 20 20"
+                          width={20}
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <label
+              className="SwitchControl-switchControl ToggleControl-toggleControl ToggleControl-control"
+              onTouchStart={[Function]}
+            >
+              <div
+                className="ToggleControl-label"
+              >
+                Motif Links
+              </div>
+              <input
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                type="checkbox"
+              />
+              <div
+                className="SwitchControl-switchHandle"
+              />
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="LandingBody-landingBody"
+    >
+      <div
+        className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
+        role="banner"
+      >
+        <div
+          aria-level="3"
+          className="ContentHeading-text"
+          role="heading"
+        >
+          <div
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "210 entries for “Abyss” in Specters of Marx",
+              }
+            }
+            style={
+              Object {
+                "display": "inline",
+              }
+            }
+          />
+        </div>
+      </div>
+      <div
+        aria-label="content"
+        className="ContentNav-contentNav"
+      >
+        <nav
+          aria-label="content navigator"
+          className="ContentNav-nav"
+        >
+          <div
+            className="ContentNav-list"
+          >
+            <div
+              className="ContentNav-left"
+            >
+              <button
+                className="BackButton-backButton BackButton-linkButton Button-button Control-control"
+                onTouchStart={[Function]}
+              >
+                <div
+                  className="Control-label"
+                >
+                  Sources
+                </div>
+                <arrow.svg />
+              </button>
+            </div>
+            <div
+              className="ContentNav-right"
+            />
+          </div>
+        </nav>
+        <div
+          aria-label="entries for p. 106"
           className="EntryGroup-entryList"
         >
           <article
             aria-label="entry"
             className="Entry-entry"
           >
-            <a
-              aria-label="source"
-              className="EntrySource-source"
-              onClick={[Function]}
-            >
-              CF
-            </a>
             <div
               aria-label="entry location"
               className="Entry-location"
             >
-              p. 50
+              p. 106
             </div>
             <div
               className="Entry-content"
               dangerouslySetInnerHTML={
                 Object {
-                  "__html": "must forgiveness saturate the abyss (suture, reconcile)? but who could object to imperative of reconciliation? amnesties, work of mourning—political strategy, psycho-therapeutic economy",
+                  "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
                 }
               }
               style={
@@ -563,7 +753,41 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
           </article>
         </div>
         <div
-          aria-label="entries for pp. 53-54"
+          aria-label="entries for p.27"
+          className="EntryGroup-entryList"
+        >
+          <article
+            aria-label="entry"
+            className="Entry-entry"
+          >
+            <div
+              aria-label="entry emphasis"
+            >
+              ***
+            </div>
+            <div
+              aria-label="entry location"
+              className="Entry-location"
+            >
+              p.27
+            </div>
+            <div
+              className="Entry-content"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
+            />
+          </article>
+        </div>
+        <div
+          aria-label="entries for p. 106"
           className="EntryGroup-entryList"
         >
           <article
@@ -574,13 +798,13 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
               aria-label="entry location"
               className="Entry-location"
             >
-              pp. 53-54
+              p. 106
             </div>
             <div
               className="Entry-content"
               dangerouslySetInnerHTML={
                 Object {
-                  "__html": "when not insoluble, when I know what to do (program), no decision or responsibility",
+                  "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
                 }
               }
               style={
@@ -590,21 +814,94 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
               }
             />
           </article>
+        </div>
+        <div
+          aria-label="entries for p.27"
+          className="EntryGroup-entryList"
+        >
+          <article
+            aria-label="entry"
+            className="Entry-entry"
+          >
+            <div
+              aria-label="entry emphasis"
+            >
+              ***
+            </div>
+            <div
+              aria-label="entry location"
+              className="Entry-location"
+            >
+              p.27
+            </div>
+            <div
+              className="Entry-content"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
+            />
+          </article>
+        </div>
+        <div
+          aria-label="entries for p. 106"
+          className="EntryGroup-entryList"
+        >
           <article
             aria-label="entry"
             className="Entry-entry"
           >
             <div
               aria-label="entry location"
-              className="Entry-location undefined"
+              className="Entry-location"
             >
-              —— 
+              p. 106
             </div>
             <div
               className="Entry-content"
               dangerouslySetInnerHTML={
                 Object {
-                  "__html": "an abyss remains and must remain",
+                  "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
+                }
+              }
+              style={
+                Object {
+                  "display": "inline",
+                }
+              }
+            />
+          </article>
+        </div>
+        <div
+          aria-label="entries for p.27"
+          className="EntryGroup-entryList"
+        >
+          <article
+            aria-label="entry"
+            className="Entry-entry"
+          >
+            <div
+              aria-label="entry emphasis"
+            >
+              ***
+            </div>
+            <div
+              aria-label="entry location"
+              className="Entry-location"
+            >
+              p.27
+            </div>
+            <div
+              className="Entry-content"
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
                 }
               }
               style={
@@ -621,9 +918,9 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
 </main>
 `;
 
-exports[`Storyshots Motif Landing Source TOC 1`] = `
+exports[`Storyshots Motif Landing Show All Entries 1`] = `
 <main
-  className="root-0-0-3  Viewport-viewport undefined"
+  className="root-0-0-1  Viewport-viewport undefined"
   role="application"
 >
   <div
@@ -631,1165 +928,1787 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
     className="Landing-landing Content-content"
   >
     <div
-      aria-level="1"
-      className="PageHeading-pageHeading"
-      role="heading"
-    >
-      <div
-        dangerouslySetInnerHTML={
-          Object {
-            "__html": "Jacques Derrida on “ABYSS”",
-          }
+      className="LandingHeading-landingHeader"
+      style={
+        Object {
+          "borderBottom": false,
+          "paddingTop": false,
+          "position": false,
         }
-        style={
-          Object {
-            "display": "inline",
-          }
-        }
-      />
-    </div>
-    <nav
-      aria-label="compare with"
-      className="PageNav-pageNav"
+      }
     >
       <div
-        className="CommaSeparatedList-commaSeparatedList"
-        role="list"
-      >
-        [cf.
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:HDG"
-            onClick={[Function]}
-          >
-            Heidegger
-          </a>
-        </div>
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:RN"
-            onClick={[Function]}
-          >
-            Ronell
-          </a>
-        </div>
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:KKGD"
-            onClick={[Function]}
-          >
-            Kierkegaard
-          </a>
-        </div>
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:AUG"
-            onClick={[Function]}
-          >
-            Augustine
-          </a>
-        </div>
-        <div
-          className="CommaSeparatedList-listItem"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss:HUSS"
-            onClick={[Function]}
-          >
-            Husserl
-          </a>
-        </div>
-        ]
-      </div>
-    </nav>
-    <div
-      className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
-      role="banner"
-    >
-      <div
-        aria-level="3"
-        className="ContentHeading-text"
-        role="heading"
+        className="LandingHeading-headingContainer"
       >
         <div
-          dangerouslySetInnerHTML={
-            Object {
-              "__html": "Databyss includes 210 entries of the motif “ABYSS” from 44 sources by Jacques Derrida",
-            }
-          }
-          style={
-            Object {
-              "display": "inline",
-            }
-          }
-        />
-      </div>
-    </div>
-    <div
-      aria-label="content"
-      className="ContentNav-contentNav"
-    >
-      <nav
-        aria-label="content navigator"
-        className="ContentNav-nav"
-      >
+          className="LandingHeading-titleWithToggle"
+        >
+          <div>
+            <div
+              aria-level="1"
+              className="PageHeading-pageHeading"
+              role="heading"
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Jacques Derrida on “ABYSS”",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </div>
+          </div>
+        </div>
         <div
-          className="ContentNav-list"
+          className="LandingHeading-toggle"
         >
           <div
-            className="ContentNav-left"
-          />
-          <div
-            className="ContentNav-right"
+            className="Landing-bottomHeaderContainer"
           >
-            <button
-              className="ForwardButton-forwardButton ForwardButton-linkButton Button-button Control-control"
+            <div>
+              <p
+                className="Dropdown-dropdownTitle"
+              >
+                cf.
+              </p>
+              <div
+                className="Dropdown-dropdown"
+              >
+                <div
+                  className=" css-2b097c-container"
+                  onKeyDown={[Function]}
+                >
+                  <div
+                    className=" css-1vqe5pc-control"
+                    onMouseDown={[Function]}
+                    onTouchEnd={[Function]}
+                  >
+                    <div
+                      className=" css-1hwfws3"
+                    >
+                      <div
+                        className=" css-vx7sgc-placeholder"
+                      >
+                        5 authors
+                      </div>
+                      <div
+                        className="css-1g6gooi"
+                      >
+                        <div
+                          className=""
+                          style={
+                            Object {
+                              "display": "inline-block",
+                            }
+                          }
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autoCapitalize="none"
+                            autoComplete="off"
+                            autoCorrect="off"
+                            disabled={false}
+                            id="react-select-2-input"
+                            onBlur={[Function]}
+                            onChange={[Function]}
+                            onFocus={[Function]}
+                            spellCheck="false"
+                            style={
+                              Object {
+                                "background": 0,
+                                "border": 0,
+                                "boxSizing": "content-box",
+                                "color": "inherit",
+                                "fontSize": "inherit",
+                                "label": "input",
+                                "opacity": 1,
+                                "outline": 0,
+                                "padding": 0,
+                                "width": "1px",
+                              }
+                            }
+                            tabIndex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style={
+                              Object {
+                                "height": 0,
+                                "left": 0,
+                                "overflow": "scroll",
+                                "position": "absolute",
+                                "top": 0,
+                                "visibility": "hidden",
+                                "whiteSpace": "pre",
+                              }
+                            }
+                          >
+                            
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className=" css-1wy0on6"
+                    >
+                      <span
+                        className=" css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        className=" css-tlfecz-indicatorContainer"
+                        onMouseDown={[Function]}
+                        onTouchEnd={[Function]}
+                      >
+                        <svg
+                          aria-hidden="true"
+                          className="css-19bqh2r"
+                          focusable="false"
+                          height={20}
+                          viewBox="0 0 20 20"
+                          width={20}
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <label
+              className="SwitchControl-switchControl ToggleControl-toggleControl ToggleControl-control"
               onTouchStart={[Function]}
             >
               <div
-                className="Control-label"
+                className="ToggleControl-label"
               >
-                All Entries
+                Motif Links
               </div>
-              <arrow.svg />
-            </button>
+              <input
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                type="checkbox"
+              />
+              <div
+                className="SwitchControl-switchHandle"
+              />
+            </label>
           </div>
         </div>
-      </nav>
+      </div>
+    </div>
+    <div
+      className="LandingBody-landingBody"
+    >
       <div
-        aria-label="sources"
-        className="Sources-sourcesToc TocList-tocList"
-        role="list"
+        className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
+        role="banner"
       >
         <div
-          className="TocList-item"
-          role="listitem"
+          aria-level="3"
+          className="ContentHeading-text"
+          role="heading"
         >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/P"
-            onClick={[Function]}
+          <div
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "Databyss includes 210 entries of the motif “ABYSS” from 42 sources by Jacques Derrida",
+              }
+            }
+            style={
+              Object {
+                "display": "inline",
+              }
+            }
+          />
+        </div>
+      </div>
+      <div
+        aria-label="content"
+        className="ContentNav-contentNav"
+      >
+        <nav
+          aria-label="content navigator"
+          className="ContentNav-nav"
+        >
+          <div
+            className="ContentNav-list"
           >
             <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Parergon  (17)",
-                }
-              }
-              style={
-                Object {
-                  "display": "inline",
-                }
-              }
+              className="ContentNav-left"
+            >
+              <button
+                className="BackButton-backButton BackButton-linkButton Button-button Control-control"
+                onTouchStart={[Function]}
+              >
+                <div
+                  className="Control-label"
+                >
+                  Sources
+                </div>
+                <arrow.svg />
+              </button>
+            </div>
+            <div
+              className="ContentNav-right"
             />
-          </a>
+          </div>
+        </nav>
+        <div
+          aria-label="entries for Spectors of Marx"
+          className="EntryGroup-entryList"
+        >
+          <div
+            aria-label="entries for p. 106"
+            className="EntryGroup-entryList"
+          >
+            <article
+              aria-label="entry"
+              className="Entry-entry"
+            >
+              <a
+                aria-label="source"
+                className="EntrySource-source"
+                onClick={[Function]}
+              >
+                SPOM
+              </a>
+              <div
+                aria-label="entry location"
+                className="Entry-location"
+              >
+                p. 106
+              </div>
+              <div
+                className="Entry-content"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </article>
+          </div>
+          <div
+            aria-label="entries for p.27"
+            className="EntryGroup-entryList"
+          >
+            <article
+              aria-label="entry"
+              className="Entry-entry"
+            >
+              <div
+                aria-label="entry emphasis"
+              >
+                ***
+              </div>
+              <div
+                aria-label="entry location"
+                className="Entry-location"
+              >
+                p.27
+              </div>
+              <div
+                className="Entry-content"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </article>
+          </div>
+          <div
+            aria-label="entries for p. 106"
+            className="EntryGroup-entryList"
+          >
+            <article
+              aria-label="entry"
+              className="Entry-entry"
+            >
+              <div
+                aria-label="entry location"
+                className="Entry-location"
+              >
+                p. 106
+              </div>
+              <div
+                className="Entry-content"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </article>
+          </div>
+          <div
+            aria-label="entries for p.27"
+            className="EntryGroup-entryList"
+          >
+            <article
+              aria-label="entry"
+              className="Entry-entry"
+            >
+              <div
+                aria-label="entry emphasis"
+              >
+                ***
+              </div>
+              <div
+                aria-label="entry location"
+                className="Entry-location"
+              >
+                p.27
+              </div>
+              <div
+                className="Entry-content"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </article>
+          </div>
+          <div
+            aria-label="entries for p. 106"
+            className="EntryGroup-entryList"
+          >
+            <article
+              aria-label="entry"
+              className="Entry-entry"
+            >
+              <div
+                aria-label="entry location"
+                className="Entry-location"
+              >
+                p. 106
+              </div>
+              <div
+                className="Entry-content"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Derrida less concerned w/ art of Plato [re: <em>mises en abyme</em> of <em>khōra</em> and politics] but in a constraint, a <em>programme</em>, the being-programme of the programme, the being-logical of logic: Plato apprehends them as such, though in a dream, put <em>en abyme</em>",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </article>
+          </div>
+          <div
+            aria-label="entries for p.27"
+            className="EntryGroup-entryList"
+          >
+            <article
+              aria-label="entry"
+              className="Entry-entry"
+            >
+              <div
+                aria-label="entry emphasis"
+              >
+                ***
+              </div>
+              <div
+                aria-label="entry location"
+                className="Entry-location"
+              >
+                p.27
+              </div>
+              <div
+                className="Entry-content"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "analogy of abyss &amp; bridge over abyss require 3rd term, that which heals the gap, a symbol, bridge is symbol, symbol bridge &gt; abyss calls for analogy (active resource of <em>Critique</em>), <em>mais l’analogie s’abîme sans fin dès lors qu’il faut bien un certain art pour décrire analogiquement le jeu de l’analogie</em>",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </article>
+          </div>
         </div>
         <div
-          className="TocList-item"
-          role="listitem"
+          aria-label="entries for Cosmopolitanism and Forgiveness"
+          className="EntryGroup-entryList"
         >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/REST"
-            onClick={[Function]}
+          <div
+            aria-label="entries for p. 50"
+            className="EntryGroup-entryList"
           >
+            <article
+              aria-label="entry"
+              className="Entry-entry"
+            >
+              <a
+                aria-label="source"
+                className="EntrySource-source"
+                onClick={[Function]}
+              >
+                CF
+              </a>
+              <div
+                aria-label="entry location"
+                className="Entry-location"
+              >
+                p. 50
+              </div>
+              <div
+                className="Entry-content"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "must forgiveness saturate the abyss (suture, reconcile)? but who could object to imperative of reconciliation? amnesties, work of mourning—political strategy, psycho-therapeutic economy",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </article>
+          </div>
+          <div
+            aria-label="entries for pp. 53-54"
+            className="EntryGroup-entryList"
+          >
+            <article
+              aria-label="entry"
+              className="Entry-entry"
+            >
+              <div
+                aria-label="entry location"
+                className="Entry-location"
+              >
+                pp. 53-54
+              </div>
+              <div
+                className="Entry-content"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "when not insoluble, when I know what to do (program), no decision or responsibility",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </article>
+            <article
+              aria-label="entry"
+              className="Entry-entry"
+            >
+              <div
+                aria-label="entry location"
+                className="Entry-location undefined"
+              >
+                —— 
+              </div>
+              <div
+                className="Entry-content"
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "an abyss remains and must remain",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+`;
+
+exports[`Storyshots Motif Landing Source TOC 1`] = `
+<main
+  className="root-0-0-4  Viewport-viewport undefined"
+  role="application"
+>
+  <div
+    aria-label="content"
+    className="Landing-landing Content-content"
+  >
+    <div
+      className="LandingHeading-landingHeader"
+      style={
+        Object {
+          "borderBottom": false,
+          "paddingTop": false,
+          "position": false,
+        }
+      }
+    >
+      <div
+        className="LandingHeading-headingContainer"
+      >
+        <div
+          className="LandingHeading-titleWithToggle"
+        >
+          <div>
             <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Restitutions  (14)",
+              aria-level="1"
+              className="PageHeading-pageHeading"
+              role="heading"
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Jacques Derrida on “ABYSS”",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
+              />
+            </div>
+          </div>
         </div>
         <div
-          className="TocList-item"
-          role="listitem"
+          className="LandingHeading-toggle"
         >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/KH"
-            onClick={[Function]}
+          <div
+            className="Landing-bottomHeaderContainer"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "<em>Kh</em><em>ō</em><em>ra</em>  (10)",
-                }
-              }
-              style={
-                Object {
-                  "display": "inline",
-                }
-              }
-            />
-          </a>
+            <div>
+              <p
+                className="Dropdown-dropdownTitle"
+              >
+                cf.
+              </p>
+              <div
+                className="Dropdown-dropdown"
+              >
+                <div
+                  className=" css-2b097c-container"
+                  onKeyDown={[Function]}
+                >
+                  <div
+                    className=" css-1vqe5pc-control"
+                    onMouseDown={[Function]}
+                    onTouchEnd={[Function]}
+                  >
+                    <div
+                      className=" css-1hwfws3"
+                    >
+                      <div
+                        className=" css-vx7sgc-placeholder"
+                      >
+                        5 authors
+                      </div>
+                      <div
+                        className="css-1g6gooi"
+                      >
+                        <div
+                          className=""
+                          style={
+                            Object {
+                              "display": "inline-block",
+                            }
+                          }
+                        >
+                          <input
+                            aria-autocomplete="list"
+                            autoCapitalize="none"
+                            autoComplete="off"
+                            autoCorrect="off"
+                            disabled={false}
+                            id="react-select-5-input"
+                            onBlur={[Function]}
+                            onChange={[Function]}
+                            onFocus={[Function]}
+                            spellCheck="false"
+                            style={
+                              Object {
+                                "background": 0,
+                                "border": 0,
+                                "boxSizing": "content-box",
+                                "color": "inherit",
+                                "fontSize": "inherit",
+                                "label": "input",
+                                "opacity": 1,
+                                "outline": 0,
+                                "padding": 0,
+                                "width": "1px",
+                              }
+                            }
+                            tabIndex="0"
+                            type="text"
+                            value=""
+                          />
+                          <div
+                            style={
+                              Object {
+                                "height": 0,
+                                "left": 0,
+                                "overflow": "scroll",
+                                "position": "absolute",
+                                "top": 0,
+                                "visibility": "hidden",
+                                "whiteSpace": "pre",
+                              }
+                            }
+                          >
+                            
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className=" css-1wy0on6"
+                    >
+                      <span
+                        className=" css-1okebmr-indicatorSeparator"
+                      />
+                      <div
+                        aria-hidden="true"
+                        className=" css-tlfecz-indicatorContainer"
+                        onMouseDown={[Function]}
+                        onTouchEnd={[Function]}
+                      >
+                        <svg
+                          aria-hidden="true"
+                          className="css-19bqh2r"
+                          focusable="false"
+                          height={20}
+                          viewBox="0 0 20 20"
+                          width={20}
+                        >
+                          <path
+                            d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+    </div>
+    <div
+      className="LandingBody-landingBody"
+    >
+      <div
+        className="ContentHeading-contentHeading ContentHeading-pageSubHeading"
+        role="banner"
+      >
         <div
-          className="TocList-item"
-          role="listitem"
+          aria-level="3"
+          className="ContentHeading-text"
+          role="heading"
         >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/TN"
-            onClick={[Function]}
-          >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "On Touching—Jean-Luc Nancy  (10)",
-                }
+          <div
+            dangerouslySetInnerHTML={
+              Object {
+                "__html": "Databyss includes 210 entries of the motif “ABYSS” from 44 sources by Jacques Derrida",
               }
-              style={
-                Object {
-                  "display": "inline",
-                }
+            }
+            style={
+              Object {
+                "display": "inline",
               }
-            />
-          </a>
+            }
+          />
         </div>
-        <div
-          className="TocList-item"
-          role="listitem"
+      </div>
+      <div
+        aria-label="content"
+        className="ContentNav-contentNav"
+      >
+        <nav
+          aria-label="content navigator"
+          className="ContentNav-nav"
         >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/D"
-            onClick={[Function]}
+          <div
+            className="ContentNav-list"
           >
             <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Dissemination  (9)",
-                }
-              }
-              style={
-                Object {
-                  "display": "inline",
-                }
-              }
+              className="ContentNav-left"
             />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/OG"
-            onClick={[Function]}
-          >
             <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Of Grammatology  (7)",
-                }
-              }
-              style={
-                Object {
-                  "display": "inline",
-                }
-              }
-            />
-          </a>
-        </div>
+              className="ContentNav-right"
+            >
+              <button
+                className="ForwardButton-forwardButton ForwardButton-linkButton Button-button Control-control"
+                onTouchStart={[Function]}
+              >
+                <div
+                  className="Control-label"
+                >
+                  All Entries
+                </div>
+                <arrow.svg />
+              </button>
+            </div>
+          </div>
+        </nav>
         <div
-          className="TocList-item"
-          role="listitem"
+          aria-label="sources"
+          className="Sources-sourcesToc TocList-tocList"
+          role="list"
         >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/SPEC"
-            onClick={[Function]}
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "To Speculate—on “Freud”  (6)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/P"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Parergon  (17)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/DS"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Double Session  (5)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/REST"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Restitutions  (14)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/FV"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "<em>Le Facteur de la V</em><em>é</em><em>rit</em><em>é</em>  (5)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/KH"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "<em>Kh</em><em>ō</em><em>ra</em>  (10)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/ATIA"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "The Animal That Therefore I Am  (5)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/TN"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "On Touching—Jean-Luc Nancy  (10)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/BSi"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "The Beast & the Sovereign  (5)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/D"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Dissemination  (9)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/+R"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "+R  (4)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/OG"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Of Grammatology  (7)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/C"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Cartouches  (4)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/SPEC"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "To Speculate—on “Freud”  (6)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/DST"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "<em>D</em><em>é</em><em>sistance </em> (4)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/DS"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Double Session  (5)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/CF"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Cosmopolitanism and Forgiveness  (3)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/FV"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "<em>Le Facteur de la V</em><em>é</em><em>rit</em><em>é</em>  (5)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/Gii"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Heidegger’s Hand (<em>Geschlecht</em> II)  (3)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/ATIA"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "The Animal That Therefore I Am  (5)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/SP"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Spurs: Nietzsche’s Styles  (3)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/BSi"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "The Beast & the Sovereign  (5)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/AD"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Adieu to Emmanuel Levinas  (2)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/+R"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "+R  (4)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/GOD"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Gift of Death and Literature in Secret  (2)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/C"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Cartouches  (4)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/GT"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Given Time  (2)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/DST"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "<em>D</em><em>é</em><em>sistance </em> (4)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/HST"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Hostipitality  (2)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/CF"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Cosmopolitanism and Forgiveness  (3)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/IW"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Interpretations at War: Kant, the Jew, the German  (2)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/Gii"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Heidegger’s Hand (<em>Geschlecht</em> II)  (3)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/POO"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Passions: “An Oblique Offering”  (2)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/SP"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Spurs: Nietzsche’s Styles  (3)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/PSSS"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Psychoanalysis Searches the States of its Soul  (2)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/AD"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Adieu to Emmanuel Levinas  (2)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/SEC"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Signature Event Context  (2)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/GOD"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Gift of Death and Literature in Secret  (2)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/AFR"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "The Archeology of the Frivolous: Reading Condillac  (2)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/GT"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Given Time  (2)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/POOF"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "The Politics of Friendship  (2)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/HST"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Hostipitality  (2)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/POR"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "The Principle of Reason  (2)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/IW"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Interpretations at War: Kant, the Jew, the German  (2)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/SW"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "A Silkworm of One’s Own  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/POO"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Passions: “An Oblique Offering”  (2)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/A"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Aporias  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/PSSS"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Psychoanalysis Searches the States of its Soul  (2)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/AF"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Archive Fever  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/SEC"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Signature Event Context  (2)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/DPi"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Death Penalty: Volume I  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/AFR"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "The Archeology of the Frivolous: Reading Condillac  (2)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/TB"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Des Tours Des Babel  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/POOF"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "The Politics of Friendship  (2)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/EM"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Ends of Man  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/POR"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "The Principle of Reason  (2)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/FWT"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "For What Tomorrow…  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/SW"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "A Silkworm of One’s Own  (1)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/MPM"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Memoires for Paul de Man  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/A"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Aporias  (1)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/S"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Of Spirit: Heidegger and the Question  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/AF"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Archive Fever  (1)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/PAS"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "<em>Pas </em> (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/DPi"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Death Penalty: Volume I  (1)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/PP"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Plato’s Pharmacy  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/TB"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Des Tours Des Babel  (1)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/PIO"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Psyche: Invention of the Other  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/EM"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Ends of Man  (1)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/ROP"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Resistances of Psychoanalysis  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/FWT"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "For What Tomorrow…  (1)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/SPOM"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "Specters of Marx  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/MPM"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Memoires for Paul de Man  (1)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/RM"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "The <em>Retrait</em> of Metaphor  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/S"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Of Spirit: Heidegger and the Question  (1)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
-        </div>
-        <div
-          className="TocList-item"
-          role="listitem"
-        >
-          <a
-            className="Link-link Link-inline"
-            href="/motif/abyss/WM"
-            onClick={[Function]}
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
           >
-            <div
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "White Mythology  (1)",
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/PAS"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "<em>Pas </em> (1)",
+                  }
                 }
-              }
-              style={
-                Object {
-                  "display": "inline",
+                style={
+                  Object {
+                    "display": "inline",
+                  }
                 }
-              }
-            />
-          </a>
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
+          >
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/PP"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Plato’s Pharmacy  (1)",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
+          >
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/PIO"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Psyche: Invention of the Other  (1)",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
+          >
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/ROP"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Resistances of Psychoanalysis  (1)",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
+          >
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/SPOM"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "Specters of Marx  (1)",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
+          >
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/RM"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "The <em>Retrait</em> of Metaphor  (1)",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </a>
+          </div>
+          <div
+            className="TocList-item"
+            role="listitem"
+          >
+            <a
+              className="Link-link Link-inline"
+              href="/motif/abyss/WM"
+              onClick={[Function]}
+            >
+              <div
+                dangerouslySetInnerHTML={
+                  Object {
+                    "__html": "White Mythology  (1)",
+                  }
+                }
+                style={
+                  Object {
+                    "display": "inline",
+                  }
+                }
+              />
+            </a>
+          </div>
         </div>
       </div>
     </div>

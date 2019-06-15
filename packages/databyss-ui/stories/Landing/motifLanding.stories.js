@@ -22,12 +22,23 @@ const landingProps = {
     </Link>
   ),
 }
+const landingPropsLong = {
+  cfList,
+  title:
+    'Jacques Derrida on HIEROGLYPH / PASIGRAPHY / LEIBNIZ / CHINESE / UNIVERSAL LANGUAGE',
+  renderCfItem: cf => (
+    <Link key={cf.id} href={`/motif/abyss:${cf.id}`}>
+      {cf.lastName}
+    </Link>
+  ),
+}
 storiesOf('Motif Landing', module)
   .addDecorator(ViewportDecorator)
   .add('Show All Entries', () => (
     <Landing
       {...landingProps}
       contentTitle="Databyss includes 210 entries of the motif “ABYSS” from 42 sources by Jacques Derrida"
+      withToggle
     >
       <Entries>
         <EntriesBySource
@@ -40,17 +51,24 @@ storiesOf('Motif Landing', module)
   .add('Entries for Source', () => (
     <Landing
       {...landingProps}
-      contentTitle={
-        <React.Fragment>
-          210 entries for “Abyss” in{' '}
-          <Link href="/source/SPOM">Specters of Marx</Link>
-        </React.Fragment>
-      }
-      subtitle={
-        <React.Fragment>
-          in <Link href="/source/SPOM">Specters of Marx</Link>
-        </React.Fragment>
-      }
+      contentTitle="210 entries for “Abyss” in Specters of Marx"
+      subtitle="in Specters of Marx"
+      withToggle
+    >
+      <Entries>
+        <EntriesByLocation
+          locations={entriesBySource[0].locations}
+          renderEntry={entry => <Entry {...entry} />}
+        />
+      </Entries>
+    </Landing>
+  ))
+  .add('Entries for Source (long title)', () => (
+    <Landing
+      {...landingPropsLong}
+      contentTitle="Databyss includes 210 entries of the motif “ABYSS” from 42 sources by Jacques Derrida"
+      subtitle="in Of Grammatology"
+      withToggle
     >
       <Entries>
         <EntriesByLocation

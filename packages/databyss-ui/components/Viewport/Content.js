@@ -3,8 +3,9 @@ import classnames from 'classnames'
 import injectSheet from 'react-jss'
 import styles from './styles'
 
-const Content = ({ classes, className, children, style, ariaLabel }) => (
+const Content = ({ classes, className, children, style, ariaLabel, _ref }) => (
   <div
+    ref={_ref}
     aria-label={ariaLabel || 'content'}
     className={classnames(className, classes.content)}
     style={style}

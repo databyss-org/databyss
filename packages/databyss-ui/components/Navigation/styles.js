@@ -1,17 +1,6 @@
 import { theme as defaultTheme } from '../../shared-styles'
 
 export default (theme = defaultTheme) => ({
-  pageNav: {
-    fontSize: theme.fontSizeS,
-    fontFamily: theme.navFont,
-    color: theme.mediumGrey,
-    margin: '1.2em 0',
-    display: 'flex',
-
-    '& a': {
-      color: theme.mediumGrey,
-    },
-  },
   link: {
     color: theme.darkGrey,
     display: 'block',

@@ -1,4 +1,4 @@
-import { theme as defaultTheme } from '../../shared-styles'
+import { macros, theme as defaultTheme } from '../../shared-styles'
 
 export default (theme = defaultTheme) => ({
   pageHeading: {
@@ -9,7 +9,28 @@ export default (theme = defaultTheme) => ({
     lineHeight: theme.lineHeightContent,
   },
 
+  landingHeader: {
+    top: -40,
+    backgroundColor: 'white',
+    width: '100%',
+    alignItems: 'stretch',
+    fontSize: '1em',
+    zIndex: 10,
+    transition: 'padding 300ms ease-in-out',
+  },
+
   pageSubHeading: {
+    fontFamily: theme.bodyFont,
+    fontWeight: theme.fontSemibold,
+    color: theme.darkGrey,
+    fontSize: theme.fontSizeNormal,
+    lineHeight: theme.lineHeightContent,
+  },
+
+  headerPageSubHeading: {
+    ...macros.mobile({
+      display: 'none',
+    }),
     fontFamily: theme.bodyFont,
     fontWeight: theme.fontSemibold,
     color: theme.darkGrey,
@@ -19,23 +40,56 @@ export default (theme = defaultTheme) => ({
 
   contentHeading: {
     composes: '$pageSubHeading',
-    position: 'relative',
     padding: '10px 16px 10px 0',
-    margin: '30px 0 18px',
+    margin: '30px 0 18px 0',
+    backgroundColor: theme.lightGrey,
 
     '&:before': {
       content: '""',
       backgroundColor: theme.lightGrey,
-      zIndex: 0,
-      position: 'absolute',
-      left: '-8px',
-      right: '-8px',
-      top: 0,
-      bottom: 0,
     },
   },
   text: {
-    position: 'relative',
-    zIndex: 10,
+    paddingLeft: '14px',
   },
+
+  headingContainer: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    flexWrap: 'nowrap',
+    paddingBottom: '20px',
+
+    ...macros.mobile({
+      flexWrap: 'wrap',
+    }),
+  },
+
+  title: {
+    width: '100%  ',
+  },
+  titleWithToggle: {
+    width: 'calc(100% - 160px)',
+    ...macros.mobile({
+      width: '100%',
+    }),
+  },
+  toggle: {
+    width: '150px',
+    margin: '-0.6em 0',
+    ...macros.mobile({
+      display: 'flex',
+      alignItems: 'flex-start',
+      flexWrap: 'wrap',
+      width: '100%',
+      margin: '-0.6em 0',
+    }),
+  },
+  /*
+  dropdownMobile: {
+    width: '50%  ',
+  },
+  titleMobile: {
+    width: '100%  ',
+  },
+  */
 })
