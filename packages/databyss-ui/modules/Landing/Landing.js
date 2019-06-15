@@ -134,10 +134,9 @@ class Landing extends React.Component {
       >
         <LandingHeading
           _ref={this.headerRef}
+          className={classnames(this.state.headerSticky && classes.sticky)}
           style={{
             borderBottom: this.state.borderBottom && '1px solid #D6D6D6',
-            paddingTop: this.state.headerSticky && '40px',
-            position: this.state.headerSticky && 'sticky',
           }}
           left={
             <div>

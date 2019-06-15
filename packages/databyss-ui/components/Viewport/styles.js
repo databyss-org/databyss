@@ -34,7 +34,6 @@ export default (theme = defaultTheme) => ({
   landingBody: {
     flex: 1,
     paddingBottom: '20px',
-    height: '50vh',
     maxWidth: '1024px',
     marginLeft: 'auto',
     marginRight: 'auto',

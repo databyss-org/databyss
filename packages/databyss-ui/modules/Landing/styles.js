@@ -1,6 +1,8 @@
+import { prefix } from 'inline-style-prefixer'
+
 import { macros, theme as defaultTheme } from '../../shared-styles'
 
-export default (theme = defaultTheme) => ({
+const style = (theme = defaultTheme) => ({
   sourcesToc: {
     fontFamily: theme.bodyFont,
   },
@@ -17,4 +19,10 @@ export default (theme = defaultTheme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
+  sticky: {
+    paddingTop: '40px',
+    position: 'sticky',
+  },
 })
+
+export default prefix(style)
