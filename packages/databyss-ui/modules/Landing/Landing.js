@@ -10,7 +10,7 @@ import PageHeading from '../../components/Heading/PageHeading'
 import PageSubHeading from '../../components/Heading/PageSubHeading'
 import LandingHeading from '../../components/Heading/LandingHeading'
 import ContentHeading from '../../components/Heading/ContentHeading'
-import Modal from '../../components/Modal/Modal'
+import CfMobileModal from '../../components/Modal/CfMobileModal'
 import { isMobile } from '../../lib/mediaQuery'
 import styles from './styles'
 
@@ -181,7 +181,7 @@ class Landing extends React.Component {
           right={
             <div className={classes.bottomHeaderContainer}>
               {mobile ? (
-                <Modal
+                <CfMobileModal
                   parentRef={this.contentRef.current}
                   appBarCalculatedHeight={appBarCalculatedHeight}
                   list={cfList}

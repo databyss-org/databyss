@@ -17,6 +17,8 @@ export { default as Control } from './components/Control/Control'
 export { default as SwitchControl } from './components/Control/SwitchControl'
 export { default as ToggleControl } from './components/Control/ToggleControl'
 
+export { default as CfMobileModal } from './components/Modal/CfMobileModal'
+
 export {
   default as EntriesByLocation,
 } from './components/Entry/EntriesByLocation'

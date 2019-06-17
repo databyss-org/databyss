@@ -6,7 +6,7 @@ import BackButton from './../Button/BackButton'
 import EntrySource from './../Entry/EntrySource'
 import styles from './styles'
 
-class Modal extends React.Component {
+class CfMobileModal extends React.Component {
   constructor() {
     super()
     this.state = {
@@ -104,4 +104,4 @@ class Modal extends React.Component {
   }
 }
 
-export default injectSheet(styles)(Modal)
+export default injectSheet(styles)(CfMobileModal)
