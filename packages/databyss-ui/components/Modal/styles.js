@@ -8,7 +8,6 @@ const style = (theme = defaultTheme) => ({
     display: 'none',
     ...macros.mobile({
       display: 'block',
-      paddingTop: '11px',
     }),
   },
   authorName: {
