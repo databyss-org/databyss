@@ -9,6 +9,14 @@ export default (theme = defaultTheme) => ({
     lineHeight: theme.lineHeightContent,
   },
 
+  pageHeadingSticky: {
+    fontFamily: theme.headingFont,
+    fontWeight: theme.fontBold,
+    color: theme.darkGrey,
+    fontSize: theme.fontSizeNormal,
+    lineHeight: theme.lineHeightContent,
+  },
+
   landingHeader: {
     top: -40,
     backgroundColor: 'white',
@@ -16,7 +24,7 @@ export default (theme = defaultTheme) => ({
     alignItems: 'stretch',
     fontSize: '1em',
     zIndex: 10,
-    transition: 'padding 300ms ease-in-out',
+    transition: '500ms ease-in-out',
   },
 
   pageSubHeading: {
@@ -35,6 +43,17 @@ export default (theme = defaultTheme) => ({
     fontWeight: theme.fontSemibold,
     color: theme.darkGrey,
     fontSize: theme.fontSizeNormal,
+    lineHeight: theme.lineHeightContent,
+  },
+
+  headerPageSubHeadingSticky: {
+    ...macros.mobile({
+      display: 'none',
+    }),
+    fontFamily: theme.bodyFont,
+    fontWeight: theme.fontSemibold,
+    color: theme.darkGrey,
+    fontSize: theme.fontSizeS,
     lineHeight: theme.lineHeightContent,
   },
 
@@ -84,12 +103,4 @@ export default (theme = defaultTheme) => ({
       margin: '-0.6em 0',
     }),
   },
-  /*
-  dropdownMobile: {
-    width: '50%  ',
-  },
-  titleMobile: {
-    width: '100%  ',
-  },
-  */
 })

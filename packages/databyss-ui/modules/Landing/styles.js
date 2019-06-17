@@ -1,11 +1,10 @@
-import { prefix } from 'inline-style-prefixer'
-
 import { macros, theme as defaultTheme } from '../../shared-styles'
 
 const style = (theme = defaultTheme) => ({
   sourcesToc: {
     fontFamily: theme.bodyFont,
   },
+
   bottomHeaderContainer: {
     ...macros.mobile({
       display: 'flex',
@@ -19,10 +18,17 @@ const style = (theme = defaultTheme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  sticky: {
-    paddingTop: '40px',
+
+  notSticky: {
+    paddingTop: '0px',
     position: 'sticky',
+    transform: 'translate(0, -500px)',
+  },
+
+  sticky: {
+    paddingTop: '24px',
+    position: 'sticky',
+    borderBottom: '1px solid #D6D6D6',
   },
 })
-
-export default prefix(style)
+export default style
