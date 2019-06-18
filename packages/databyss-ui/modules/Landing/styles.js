@@ -27,6 +27,7 @@ const style = (theme = defaultTheme) => ({
 
   sticky: {
     paddingTop: '24px',
+    zIndex: 2,
     position: 'sticky',
     borderBottom: '1px solid #D6D6D6',
   },

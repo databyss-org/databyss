@@ -2,8 +2,7 @@ import React from 'react'
 import ReactModal from 'react-modal'
 import injectSheet from 'react-jss'
 import DropDown from './../Control/Dropdown'
-import BackButton from './../Button/BackButton'
-import EntrySource from './../Entry/EntrySource'
+import CloseButton from './../Button/CloseButton'
 import styles from './styles'
 
 class CfMobileModal extends React.Component {
@@ -38,20 +37,21 @@ class CfMobileModal extends React.Component {
     if (list) {
       list.sort((a, b) => (a.lastName > b.lastName ? 1 : -1))
       authorList = list.map((a, i) => (
-        <p className={classes.authorsModal} key={i}>
-          <EntrySource
-            className={classes.authorName}
-            onClick={() => this.clickHandler(a.id)}
-            onKeyPress={() => this.clickHandler(a.id)}
-            role="button"
-            tabIndex={0}
-          >
-            {a.lastName}
-          </EntrySource>
-        </p>
+        <div className={classes.authorsModal} key={i}>
+          <div className={classes.borderBottom}>
+            <a
+              className={classes.authorName}
+              onClick={() => this.clickHandler(a.id)}
+              onKeyPress={() => this.clickHandler(a.id)}
+              role="button"
+              tabIndex={0}
+            >
+              {a.lastName}
+            </a>
+          </div>
+        </div>
       ))
     }
-
     return (
       <div className={classes.modalContainer}>
         <div
@@ -83,20 +83,22 @@ class CfMobileModal extends React.Component {
               WebkitOverflowScrolling: 'touch',
               border: 'none',
               outline: 'none',
-              padding: '40px',
+              padding: '0px',
             },
           }}
           appElement={this.props.parentRef}
           isOpen={this.state.showModal}
           contentLabel="see all authors"
         >
-          <BackButton
-            onClick={this.handleCloseModal}
-            ariaLabel="back"
-            label="Back"
-          >
-            back
-          </BackButton>
+          <div className={classes.modalTitle}>
+            <div className={classes.modalHeader}>{this.props.modalTitle}</div>
+            <div className={classes.close}>
+              <CloseButton onClick={this.handleCloseModal} ariaLabel="back" />
+            </div>
+          </div>
+
+          <p className={classes.info}> see also </p>
+
           <div className={classes.listContainer}>{authorList}</div>
         </ReactModal>
       </div>

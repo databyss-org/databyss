@@ -9,6 +9,14 @@ export default (theme = defaultTheme) => ({
     fontSize: 'unset',
   },
 
+  closeButton: {
+    composes: '$linkButton',
+    color: theme.mediumGrey,
+
+    margin: '0px',
+    //  flexDirection: 'row-reverse',
+  },
+
   linkButton: {
     color: theme.mediumGrey,
     fontFamily: theme.navFont,

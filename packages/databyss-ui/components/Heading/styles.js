@@ -24,7 +24,7 @@ export default (theme = defaultTheme) => ({
     alignItems: 'stretch',
     fontSize: '1em',
     zIndex: 10,
-    transition: '500ms ease-in-out',
+    transition: '200ms ease-in-out',
   },
 
   pageSubHeading: {
