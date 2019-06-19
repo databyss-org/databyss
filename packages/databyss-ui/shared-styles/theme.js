@@ -45,4 +45,8 @@ export default {
 
   /* border radius */
   borderRadius: '3px',
+
+  zIndex: {
+    modalOverlay: 200,
+  },
 }

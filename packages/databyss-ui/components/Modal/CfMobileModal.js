@@ -1,8 +1,7 @@
 import React from 'react'
-import ReactModal from 'react-modal'
 import injectSheet from 'react-jss'
+import FullscreenModal from './FullscreenModal'
 import DropDown from './../Control/Dropdown'
-import CloseButton from './../Button/CloseButton'
 import styles from './styles'
 
 class CfMobileModal extends React.Component {
@@ -33,6 +32,7 @@ class CfMobileModal extends React.Component {
 
   render() {
     const { classes, list } = this.props
+
     let authorList = []
     if (list) {
       list.sort((a, b) => (a.lastName > b.lastName ? 1 : -1))
@@ -52,6 +52,7 @@ class CfMobileModal extends React.Component {
         </div>
       ))
     }
+
     return (
       <div className={classes.modalContainer}>
         <div
@@ -62,45 +63,22 @@ class CfMobileModal extends React.Component {
         >
           <DropDown list={list} isModalDisabled />
         </div>
-
-        <ReactModal
-          style={{
-            overlay: {
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              zIndex: 5,
-            },
-            content: {
-              position: 'absolute',
-              top: `${this.props.appBarCalculatedHeight - 20}px`,
-              left: '0px',
-              right: '0px',
-              bottom: '0px',
-              overflow: 'auto',
-              WebkitOverflowScrolling: 'touch',
-              border: 'none',
-              outline: 'none',
-              padding: '0px',
-            },
-          }}
-          appElement={this.props.parentRef}
-          isOpen={this.state.showModal}
-          contentLabel="see all authors"
-        >
-          <div className={classes.modalTitle}>
-            <div className={classes.modalHeader}>{this.props.modalTitle}</div>
-            <div className={classes.close}>
-              <CloseButton onClick={this.handleCloseModal} ariaLabel="back" />
-            </div>
-          </div>
-
-          <p className={classes.info}> see also </p>
-
-          <div className={classes.listContainer}>{authorList}</div>
-        </ReactModal>
+        {this.state.showModal && (
+          <FullscreenModal
+            onDismiss={() => this.handleCloseModal()}
+            title={
+              <div className={classes.modalTitle}>
+                <div className={classes.modalHeader}>
+                  {this.props.modalTitle}
+                </div>
+              </div>
+            }
+            subtitle={<p className={classes.info}> see also </p>}
+            appElementId="root"
+          >
+            <div>{authorList}</div>
+          </FullscreenModal>
+        )}
       </div>
     )
   }

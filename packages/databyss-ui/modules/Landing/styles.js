@@ -4,7 +4,6 @@ const style = (theme = defaultTheme) => ({
   sourcesToc: {
     fontFamily: theme.bodyFont,
   },
-
   bottomHeaderContainer: {
     ...macros.mobile({
       display: 'flex',
@@ -18,18 +17,39 @@ const style = (theme = defaultTheme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-
   notSticky: {
-    paddingTop: '0px',
-    position: 'sticky',
-    transform: 'translate(0, -500px)',
+    position: 'fixed',
+    transform: 'translate(0, -100px)',
   },
 
-  sticky: {
-    paddingTop: '24px',
-    zIndex: 2,
-    position: 'sticky',
+  stickyContainer: {
+    backgroundColor: 'white',
+    top: '77px',
+    left: '0px',
+    width: '100%',
+    position: 'fixed',
+    paddingTop: '20px',
+    paddingRight: '20px',
+    ...macros.mobile({
+      paddingRight: '0px',
+    }),
+    zIndex: 11,
+    justifyContent: 'center',
+    display: 'flex',
+  },
+  stickyContent: {
     borderBottom: '1px solid #D6D6D6',
+    ...macros.mobile({
+      paddingRight: '52px',
+      paddingLeft: '18px',
+      borderBottom: 0,
+    }),
+    maxWidth: '550px',
+  },
+  bottomBorder: {
+    ...macros.mobile({
+      borderBottom: '1px solid #D6D6D6',
+    }),
   },
 })
 export default style

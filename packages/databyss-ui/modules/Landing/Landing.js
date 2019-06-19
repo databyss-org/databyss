@@ -41,6 +41,10 @@ class Landing extends React.Component {
     }
   }
 
+  componentWillReceiveProps() {
+    this.handleScroll()
+  }
+
   componentWillUnmount() {
     if (this.contentRef.current) {
       window.removeEventListener('scroll', this.throttleScroll, true)
@@ -66,7 +70,7 @@ class Landing extends React.Component {
 
   throttleScroll() {
     // throttles the scroll every 30ms
-    if (this.time + 10 - Date.now() < 0) {
+    if (this.time + 20 - Date.now() < 0) {
       this.time = Date.now()
       this.handleScroll()
     }
@@ -92,18 +96,14 @@ class Landing extends React.Component {
     }
     // if both elements are loaded apply logic to set the bottomBorder state
 
-    /*
-    const headerBottom = this.headerRef.current.getBoundingClientRect().bottom
-    const headerTop = this.headerRef.current.getBoundingClientRect().top
-    const headerHeight = headerBottom - headerTop
-    */
-
     const contentHeaderTop = this.bodyRef.current.getBoundingClientRect().top
     const appBarHeight = window.innerHeight * 0.09
-
     // calculate if scrolling up or down
-    const scrollDown = isViewMobile ? contentHeaderTop < lastScroll : false
-    this.setState({ lastScroll: contentHeaderTop })
+    const scrollDown = isViewMobile ? contentHeaderTop <= lastScroll : false
+
+    const w = this.contentRef.current.offsetWidth
+
+    this.setState({ lastScroll: contentHeaderTop, width: w })
 
     // if mobile use scrollDown variable
     const mobileHeaderisSticky = isViewMobile
@@ -147,19 +147,13 @@ class Landing extends React.Component {
       withToggle,
     } = this.props
 
-    const {
-      headerSticky,
-      inStickyContainer,
-      appBarCalculatedHeight,
-      isViewMobile,
-    } = this.state
+    const { headerSticky, inStickyContainer, isViewMobile, width } = this.state
 
     const rightHeader = (
       <div className={classes.bottomHeaderContainer}>
         {isViewMobile ? (
           <CfMobileModal
             parentRef={this.contentRef.current}
-            appBarCalculatedHeight={appBarCalculatedHeight}
             list={cfList}
             onSelect={value => this.props.onCfListSelect(value)}
             modalTitle={title}
@@ -214,13 +208,25 @@ class Landing extends React.Component {
       )
 
     const stickyHeader = (
-      <LandingHeading
+      <div
+        style={{
+          top: window.innerHeight * 0.09,
+        }}
         className={classnames(
-          headerSticky ? classes.sticky : inStickyContainer && classes.notSticky
+          headerSticky ? classes.stickyContainer : classes.notSticky
         )}
-        left={leftHeader(true)}
-        right={rightHeader}
-      />
+      >
+        <div
+          style={{ width: !isViewMobile && width }}
+          className={classes.stickyContent}
+        >
+          <LandingHeading
+            className={classes.bottomBorder}
+            left={leftHeader(true)}
+            right={rightHeader}
+          />
+        </div>
+      </div>
     )
 
     return (
@@ -228,8 +234,7 @@ class Landing extends React.Component {
         className={classnames(className, classes.landing)}
         _ref={this.contentRef}
       >
-        {headerSticky && stickyHeader}
-
+        {stickyHeader}
         <LandingHeading
           _ref={this.headerRef}
           left={leftHeader(false)}
