@@ -213,7 +213,8 @@ class Landing extends React.Component {
           top: window.innerHeight * 0.09,
         }}
         className={classnames(
-          headerSticky ? classes.stickyContainer : classes.notSticky
+          headerSticky ? classes.stickyContainer : classes.notSticky,
+          classes.transition
         )}
       >
         <div

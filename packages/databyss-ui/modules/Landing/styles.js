@@ -21,8 +21,11 @@ const style = (theme = defaultTheme) => ({
     position: 'fixed',
     transform: 'translate(0, -100px)',
   },
-
+  transition: {
+    transition: 'transform 200ms ease-in-out',
+  },
   stickyContainer: {
+    transform: 'translate(0, 0)',
     backgroundColor: 'white',
     top: '77px',
     left: '0px',
