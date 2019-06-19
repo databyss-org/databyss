@@ -19,7 +19,7 @@ const style = (theme = defaultTheme) => ({
   },
   notSticky: {
     position: 'fixed',
-    transform: 'translate(0, -100px)',
+    transform: 'translate(0, -400px)',
   },
   transition: {
     transition: 'transform 200ms ease-in-out',
