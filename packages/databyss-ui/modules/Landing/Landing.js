@@ -112,9 +112,9 @@ class Landing extends React.Component {
 
     if (contentLoaded && headerLoaded) {
       if (mobileHeaderisSticky) {
-        this.setState({ inStickyContainer: true })
         this.setState({
           headerSticky: true,
+          inStickyContainer: true,
         })
       }
 

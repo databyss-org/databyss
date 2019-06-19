@@ -56,6 +56,7 @@ class Dropdown extends React.Component {
   render() {
     const { classes, onSelect } = this.props
     const list = this.state.list
+    list.sort((a, b) => (a.label > b.label ? 1 : -1))
     return list.length > 0 ? (
       <div className={classes.dropdownContainer}>
         <p className={classes.dropdownTitle}>cf.</p>
