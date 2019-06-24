@@ -10,17 +10,21 @@ import PageHeading from '../../components/Heading/PageHeading'
 import PageSubHeading from '../../components/Heading/PageSubHeading'
 import LandingHeading from '../../components/Heading/LandingHeading'
 import ContentHeading from '../../components/Heading/ContentHeading'
+import CfMobileModal from '../../components/Modal/CfMobileModal'
+import { isMobile } from '../../lib/mediaQuery'
 import styles from './styles'
 
 class Landing extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      borderBottom: false,
       contentLoaded: false,
+      appBarCalculatedHeight: 0,
       headerLoaded: false,
       headerSticky: false,
-      animateHeader: false,
+      lastScroll: 0,
+      inStickyContainer: false,
+      isViewMobile: false,
     }
     this.headerRef = React.createRef()
     this.bodyRef = React.createRef()
@@ -37,6 +41,10 @@ class Landing extends React.Component {
     }
   }
 
+  componentWillReceiveProps() {
+    this.handleScroll()
+  }
+
   componentWillUnmount() {
     if (this.contentRef.current) {
       window.removeEventListener('scroll', this.throttleScroll, true)
@@ -45,18 +53,24 @@ class Landing extends React.Component {
 
   calculateToolbarHeight() {
     if (this.contentRef.current) {
-      const distanceFromBottom = this.contentRef.current.getBoundingClientRect()
-        .bottom
-      const elementHeight =
-        this.contentRef.current.offsetHeight + window.innerHeight * 0.02
+      const content = this.contentRef.current
+
+      const distanceFromBottom = content.getBoundingClientRect().bottom
+      const elementHeight = content.offsetHeight + window.innerHeight * 0.02
       const appBarHeight = distanceFromBottom - elementHeight
-      this.setState({ appBarCalculatedHeight: appBarHeight })
+      const scrollTop = this.bodyRef.current.getBoundingClientRect().top
+      const isWindowMobile = isMobile()
+      this.setState({
+        appBarCalculatedHeight: appBarHeight,
+        lastScroll: scrollTop,
+        isViewMobile: isWindowMobile,
+      })
     }
   }
 
   throttleScroll() {
     // throttles the scroll every 30ms
-    if (this.time + 30 - Date.now() < 0) {
+    if (this.time + 20 - Date.now() < 0) {
       this.time = Date.now()
       this.handleScroll()
     }
@@ -68,9 +82,12 @@ class Landing extends React.Component {
       contentLoaded,
       headerLoaded,
       headerSticky,
-      animateHeader,
       appBarCalculatedHeight,
+      lastScroll,
+      inStickyContainer,
+      isViewMobile,
     } = this.state
+
     if (this.headerRef.current && !headerLoaded) {
       this.setState({ headerLoaded: true })
     }
@@ -78,37 +95,40 @@ class Landing extends React.Component {
       this.setState({ contentLoaded: true })
     }
     // if both elements are loaded apply logic to set the bottomBorder state
-    if (contentLoaded && headerLoaded) {
-      const headerBottom = this.headerRef.current.getBoundingClientRect().bottom
-      const headerTop = this.headerRef.current.getBoundingClientRect().top
-      const headerHeight = headerBottom - headerTop
-      const contentHeaderTop = this.bodyRef.current.getBoundingClientRect().top
-      const appBarHeight = window.innerHeight * 0.09
 
-      if (
-        !headerSticky &&
-        contentHeaderTop - appBarHeight < 0 &&
-        !animateHeader
-      ) {
+    const contentHeaderTop = this.bodyRef.current.getBoundingClientRect().top
+    const appBarHeight = window.innerHeight * 0.09
+    // calculate if scrolling up or down
+    const scrollDown = isViewMobile ? contentHeaderTop <= lastScroll : false
+
+    const w = this.contentRef.current.offsetWidth
+
+    this.setState({ lastScroll: contentHeaderTop, width: w })
+
+    // if mobile use scrollDown variable
+    const mobileHeaderisSticky = isViewMobile
+      ? !headerSticky && contentHeaderTop - appBarHeight < 0 && !scrollDown
+      : !headerSticky && contentHeaderTop - appBarHeight < 0
+
+    if (contentLoaded && headerLoaded) {
+      if (mobileHeaderisSticky) {
         this.setState({
           headerSticky: true,
-          borderBottom: true,
-          animateHeader: true,
+          inStickyContainer: true,
         })
-        // compensates for the 300ms position animation
-        setTimeout(() => this.setState({ animateHeader: false }), 500)
       }
-      if (
-        headerSticky &&
-        contentHeaderTop - headerHeight - appBarCalculatedHeight >= 0 &&
-        !animateHeader
-      ) {
+
+      if (isViewMobile && inStickyContainer && scrollDown && headerSticky) {
         this.setState({
           headerSticky: false,
-          borderBottom: false,
-          animateHeader: true,
         })
-        setTimeout(() => this.setState({ animateHeader: false }), 500)
+      }
+
+      if (headerSticky && contentHeaderTop - appBarCalculatedHeight >= 0) {
+        this.setState({
+          headerSticky: false,
+          inStickyContainer: false,
+        })
       }
     }
   }
@@ -127,47 +147,99 @@ class Landing extends React.Component {
       withToggle,
     } = this.props
 
+    const { headerSticky, inStickyContainer, isViewMobile, width } = this.state
+
+    const rightHeader = (
+      <div className={classes.bottomHeaderContainer}>
+        {isViewMobile ? (
+          <CfMobileModal
+            parentRef={this.contentRef.current}
+            list={cfList}
+            onSelect={value => this.props.onCfListSelect(value)}
+            modalTitle={title}
+          />
+        ) : (
+          <Dropdown
+            list={cfList}
+            className={classes.motifLinksSwitch}
+            onSelect={value => this.props.onCfListSelect(value.value)}
+          />
+        )}
+        {withToggle ? (
+          <SwitchControl
+            label="Motif Links"
+            checked={showMotifLinks}
+            onChange={onMotifLinksChange}
+            className={classes.motifLinksSwitch}
+          />
+        ) : null}
+      </div>
+    )
+
+    const leftHeader = isStickyMount =>
+      isStickyMount ? (
+        <div>
+          <PageHeading
+            headerSticky={headerSticky}
+            inStickyContainer={inStickyContainer}
+          >
+            <Raw html={title} />
+          </PageHeading>
+          {subtitle && (
+            <PageSubHeading
+              headerSticky={headerSticky}
+              inStickyContainer={inStickyContainer}
+            >
+              <Raw html={subtitle} />
+            </PageSubHeading>
+          )}
+        </div>
+      ) : (
+        <div>
+          <PageHeading>
+            <Raw html={title} />
+          </PageHeading>
+          {subtitle && (
+            <PageSubHeading>
+              <Raw html={subtitle} />
+            </PageSubHeading>
+          )}
+        </div>
+      )
+
+    const stickyHeader = (
+      <div
+        style={{
+          top: window.innerHeight * 0.09,
+        }}
+        className={classnames(
+          headerSticky ? classes.stickyContainer : classes.notSticky,
+          classes.transition
+        )}
+      >
+        <div
+          style={{ width: !isViewMobile && width }}
+          className={classes.stickyContent}
+        >
+          <LandingHeading
+            className={classes.bottomBorder}
+            left={leftHeader(true)}
+            right={rightHeader}
+          />
+        </div>
+      </div>
+    )
+
     return (
       <Content
         className={classnames(className, classes.landing)}
         _ref={this.contentRef}
       >
+        {stickyHeader}
         <LandingHeading
           _ref={this.headerRef}
-          style={{
-            borderBottom: this.state.borderBottom && '1px solid #D6D6D6',
-            paddingTop: this.state.headerSticky && '40px',
-            position: this.state.headerSticky && 'sticky',
-          }}
-          left={
-            <div>
-              <PageHeading>
-                <Raw html={title} />
-              </PageHeading>
-              {subtitle && (
-                <PageSubHeading>
-                  <Raw html={subtitle} />
-                </PageSubHeading>
-              )}
-            </div>
-          }
-          right={
-            <div className={classes.bottomHeaderContainer}>
-              <Dropdown
-                list={cfList}
-                className={classes.motifLinksSwitch}
-                onSelect={value => this.props.onCfListSelect(value.value)}
-              />
-              {withToggle ? (
-                <SwitchControl
-                  label="Motif Links"
-                  checked={showMotifLinks}
-                  onChange={onMotifLinksChange}
-                  className={classes.motifLinksSwitch}
-                />
-              ) : null}
-            </div>
-          }
+          left={leftHeader(false)}
+          right={rightHeader}
         />
 
         <LandingBody>

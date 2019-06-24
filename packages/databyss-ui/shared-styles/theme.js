@@ -17,6 +17,7 @@ export default {
   fontSizeS: '0.85em',
   fontSizeXs: '0.7em',
   fontSizeL: '1.2em',
+  fontSizeXL: '1.4em',
   fontBold: 700,
   fontSemibold: 600,
 
@@ -44,4 +45,8 @@ export default {
 
   /* border radius */
   borderRadius: '3px',
+
+  zIndex: {
+    modalOverlay: 200,
+  },
 }

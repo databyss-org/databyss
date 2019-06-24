@@ -16,6 +16,7 @@ const customStyles = {
     boxShadow: 'none',
     '&:hover': { borderColor: '#a19f9c' },
     borderColor: state.isSelected ? '#807d79' : '#a19f9c',
+    backgroundColor: state.isDisabled && 'white',
   }),
 
   placeholder: provided => ({
@@ -55,12 +56,14 @@ class Dropdown extends React.Component {
   render() {
     const { classes, onSelect } = this.props
     const list = this.state.list
+    list.sort((a, b) => (a.label > b.label ? 1 : -1))
     return list.length > 0 ? (
-      <div>
+      <div className={classes.dropdownContainer}>
         <p className={classes.dropdownTitle}>cf.</p>
         <div className={classes.dropdown}>
           <Select
             value={null}
+            isDisabled={this.props.isModalDisabled}
             style={{ boxShadow: 'none', outline: 'none' }}
             styles={customStyles}
             captureMenuScroll={false}
