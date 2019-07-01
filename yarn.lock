@@ -3851,6 +3851,12 @@ event-emitter@~0.3.5:
     d "1"
     es5-ext "~0.10.14"
 
+eventdispatcher@^2.6.0:
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/eventdispatcher/-/eventdispatcher-2.6.0.tgz#b4ae2299fb1b24945679b90bb63a8f41bee3bcad"
+  dependencies:
+    object-assign ">=4.1.1"
+
 eventemitter3@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-3.1.0.tgz#090b4d6cdbd645ed10bf750d4b5407942d7ba163"
@@ -6865,7 +6871,7 @@ oauth-sign@~0.9.0:
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.9.0.tgz#47a7b016baa68b5fa0ecf3dee08a85c679ac6455"
 
-object-assign@4.1.1, object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
+object-assign@4.1.1, object-assign@>=4.1.1, object-assign@^4.0.1, object-assign@^4.1.0, object-assign@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/object-assign/-/object-assign-4.1.1.tgz#2109adc7965887cfc05cbbd442cac8bfbb360863"
 
@@ -7812,7 +7818,7 @@ raf@3.4.0:
   dependencies:
     performance-now "^2.1.0"
 
-raf@^3.4.0:
+raf@^3.3.2, raf@^3.4.0:
   version "3.4.1"
   resolved "https://registry.yarnpkg.com/raf/-/raf-3.4.1.tgz#0742e99a4a6552f445d73e3ee0328af0ff1ede39"
   dependencies:
@@ -8747,6 +8753,13 @@ schema-utils@^0.4.0, schema-utils@^0.4.5:
   dependencies:
     ajv "^6.1.0"
     ajv-keywords "^3.1.0"
+
+scrollfeatures@^1.8.4:
+  version "1.8.4"
+  resolved "https://registry.yarnpkg.com/scrollfeatures/-/scrollfeatures-1.8.4.tgz#8514ea7f80a2426d64391125d79c2804fd298c2f"
+  dependencies:
+    eventdispatcher "^2.6.0"
+    raf "^3.3.2"
 
 select-hose@^2.0.0:
   version "2.0.0"
