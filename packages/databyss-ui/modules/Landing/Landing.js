@@ -145,12 +145,9 @@ class Landing extends React.Component {
       showMotifLinks,
       onMotifLinksChange,
       withToggle,
-      isSource,
     } = this.props
 
     const { headerSticky, inStickyContainer, isViewMobile, width } = this.state
-
-    const sourceHeader = isSource
 
     const rightHeader = (
       <div className={classes.bottomHeaderContainer}>
@@ -190,7 +187,6 @@ class Landing extends React.Component {
           </PageHeading>
           {subtitle && (
             <PageSubHeading
-              sourceHeader={sourceHeader}
               headerSticky={headerSticky}
               inStickyContainer={inStickyContainer}
             >
@@ -204,7 +200,7 @@ class Landing extends React.Component {
             <Raw html={title} />
           </PageHeading>
           {subtitle && (
-            <PageSubHeading sourceHeader={sourceHeader}>
+            <PageSubHeading>
               <Raw html={subtitle} />
             </PageSubHeading>
           )}

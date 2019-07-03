@@ -10,15 +10,7 @@ const PageSubHeading = ({
   style,
   inStickyContainer,
   headerSticky,
-  sourceHeader,
 }) => {
-  const motifOrSourceSticky = !sourceHeader
-    ? classes.headerPageSubHeadingSticky
-    : classes.headerPageSubHeadingStickySource
-  const motifOrSource = !sourceHeader
-    ? classes.headerPageSubHeading
-    : classes.headerPageSubHeadingSource
-
   return (
     <div
       role="heading"
@@ -26,8 +18,8 @@ const PageSubHeading = ({
       className={classnames(
         className,
         !headerSticky && !inStickyContainer
-          ? motifOrSource
-          : motifOrSourceSticky
+          ? classes.headerPageSubHeading
+          : classes.headerPageSubHeadingSticky
       )}
       style={style}
     >

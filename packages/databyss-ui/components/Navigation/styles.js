@@ -19,7 +19,6 @@ export default (theme = defaultTheme) => ({
     },
 
     '& $list': {
-      minHeight: '2.5em',
       display: 'flex',
       alignItems: 'center',
       flexGrow: 1,

@@ -34,6 +34,10 @@ export default (theme = defaultTheme) => ({
     )}`,
   },
 
+  backButton: {
+    margin: '0px',
+  },
+
   entryList: {
     marginTop: '0.2em',
 
