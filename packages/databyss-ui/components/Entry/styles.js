@@ -25,6 +25,7 @@ export default (theme = defaultTheme) => ({
   },
 
   source: {
+    cursor: 'pointer',
     marginRight: '0.3em',
     fontWeight: 'bold',
     color: theme.entrySourceColor,
