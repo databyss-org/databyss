@@ -46,10 +46,30 @@ export default (theme = defaultTheme) => ({
     lineHeight: theme.lineHeightContent,
   },
 
+  headerPageSubHeadingSource: {
+    fontFamily: theme.bodyFont,
+    fontWeight: theme.fontSemibold,
+    color: theme.darkGrey,
+    fontSize: theme.fontSizeNormal,
+    lineHeight: theme.lineHeightContent,
+  },
+
   headerPageSubHeadingSticky: {
     ...macros.mobile({
       display: 'none',
     }),
+    paddingTop: '0.2em',
+
+    fontFamily: theme.bodyFont,
+    fontWeight: theme.fontSemibold,
+    color: theme.darkGrey,
+    fontSize: theme.fontSizeS,
+    lineHeight: theme.lineHeightContent,
+  },
+
+  headerPageSubHeadingStickySource: {
+    paddingTop: '0.2em',
+
     fontFamily: theme.bodyFont,
     fontWeight: theme.fontSemibold,
     color: theme.darkGrey,
