@@ -14,6 +14,9 @@ import CfMobileModal from '../../components/Modal/CfMobileModal'
 import { isMobile } from '../../lib/mediaQuery'
 import styles from './styles'
 
+const scrollSensitivity = 10
+const throttle = 30
+
 class Landing extends React.Component {
   constructor(props) {
     super(props)
@@ -41,10 +44,6 @@ class Landing extends React.Component {
     }
   }
 
-  componentWillReceiveProps() {
-    this.handleScroll()
-  }
-
   componentWillUnmount() {
     if (this.contentRef.current) {
       window.removeEventListener('scroll', this.throttleScroll, true)
@@ -69,15 +68,14 @@ class Landing extends React.Component {
   }
 
   throttleScroll() {
-    // throttles the scroll every 30ms
-    if (this.time + 20 - Date.now() < 0) {
+    // throttles the scroll
+    if (this.time + throttle - Date.now() < 0) {
       this.time = Date.now()
       this.handleScroll()
     }
   }
 
   handleScroll() {
-    // check to see both header and content header are mounted
     const {
       contentLoaded,
       headerLoaded,
@@ -97,13 +95,15 @@ class Landing extends React.Component {
     // if both elements are loaded apply logic to set the bottomBorder state
 
     const contentHeaderTop = this.bodyRef.current.getBoundingClientRect().top
+
     const appBarHeight = window.innerHeight * 0.09
     // calculate if scrolling up or down
-    const scrollDown = isViewMobile ? contentHeaderTop <= lastScroll : false
+    const scrollDown = isViewMobile
+      ? contentHeaderTop - lastScroll < (headerSticky ? -1 : scrollSensitivity)
+      : false
 
     const w = this.contentRef.current.offsetWidth
-
-    this.setState({ lastScroll: contentHeaderTop, width: w })
+    this.setState({ width: w, lastScroll: contentHeaderTop })
 
     // if mobile use scrollDown variable
     const mobileHeaderisSticky = isViewMobile

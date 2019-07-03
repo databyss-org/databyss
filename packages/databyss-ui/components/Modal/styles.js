@@ -77,6 +77,9 @@ const style = (theme = defaultTheme) => ({
     cursor: 'pointer',
     color: theme.bgColorDark,
     textDecoration: 'none',
+    height: '100%',
+    width: '100%',
+    display: 'inline-block',
   },
   borderBottom: {
     borderBottom: `1px solid ${theme.hairlineGrey}`,
