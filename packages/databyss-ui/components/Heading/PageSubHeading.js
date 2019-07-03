@@ -10,22 +10,20 @@ const PageSubHeading = ({
   style,
   inStickyContainer,
   headerSticky,
-}) => {
-  return (
-    <div
-      role="heading"
-      aria-level="2"
-      className={classnames(
-        className,
-        !headerSticky && !inStickyContainer
-          ? classes.headerPageSubHeading
-          : classes.headerPageSubHeadingSticky
-      )}
-      style={style}
-    >
-      {children}
-    </div>
-  )
-}
+}) => (
+  <div
+    role="heading"
+    aria-level="2"
+    className={classnames(
+      className,
+      !headerSticky && !inStickyContainer
+        ? classes.headerPageSubHeading
+        : classes.headerPageSubHeadingSticky
+    )}
+    style={style}
+  >
+    {children}
+  </div>
+)
 
 export default injectSheet(styles)(PageSubHeading)
