@@ -36,9 +36,6 @@ export default (theme = defaultTheme) => ({
   },
 
   headerPageSubHeading: {
-    ...macros.mobile({
-      display: 'none',
-    }),
     fontFamily: theme.bodyFont,
     fontWeight: theme.fontSemibold,
     color: theme.darkGrey,
@@ -47,9 +44,8 @@ export default (theme = defaultTheme) => ({
   },
 
   headerPageSubHeadingSticky: {
-    ...macros.mobile({
-      display: 'none',
-    }),
+    paddingTop: '0.2em',
+
     fontFamily: theme.bodyFont,
     fontWeight: theme.fontSemibold,
     color: theme.darkGrey,
@@ -60,7 +56,7 @@ export default (theme = defaultTheme) => ({
   contentHeading: {
     composes: '$pageSubHeading',
     padding: '10px 16px 10px 0',
-    margin: '30px 0 18px 0',
+    margin: '30px 0 24px 0',
     backgroundColor: theme.lightGrey,
 
     '&:before': {

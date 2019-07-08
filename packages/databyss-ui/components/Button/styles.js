@@ -13,7 +13,7 @@ export default (theme = defaultTheme) => ({
     composes: '$linkButton',
     color: theme.mediumGrey,
 
-    margin: '0px',
+    marginTop: '0px',
     //  flexDirection: 'row-reverse',
   },
 
@@ -28,6 +28,7 @@ export default (theme = defaultTheme) => ({
   },
 
   backButton: {
+    margin: '0px',
     composes: '$linkButton',
     flexDirection: 'row-reverse',
 

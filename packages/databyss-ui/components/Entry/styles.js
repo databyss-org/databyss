@@ -25,12 +25,17 @@ export default (theme = defaultTheme) => ({
   },
 
   source: {
+    cursor: 'pointer',
     marginRight: '0.3em',
     fontWeight: 'bold',
     color: theme.entrySourceColor,
     textDecoration: `underline solid ${Color(theme.entrySourceColor).lighten(
       0.7
     )}`,
+  },
+
+  backButton: {
+    margin: '0px',
   },
 
   entryList: {
