@@ -92,6 +92,7 @@ class Landing extends React.Component {
     if (this.bodyRef.current && !contentLoaded) {
       this.setState({ contentLoaded: true })
     }
+
     // if both elements are loaded apply logic to set the bottomBorder state
 
     const contentHeaderTop = this.bodyRef.current.getBoundingClientRect().top
@@ -99,7 +100,10 @@ class Landing extends React.Component {
     const appBarHeight = window.innerHeight * 0.09
     // calculate if scrolling up or down
     const scrollDown = isViewMobile
-      ? contentHeaderTop - lastScroll < (headerSticky ? -1 : scrollSensitivity)
+      ? contentHeaderTop -
+          lastScroll +
+          (!headerSticky ? 0 : scrollSensitivity) <
+        (headerSticky ? -1 : scrollSensitivity)
       : false
 
     const w = this.contentRef.current.offsetWidth
@@ -214,18 +218,15 @@ class Landing extends React.Component {
         }}
         className={classnames(
           headerSticky ? classes.stickyContainer : classes.notSticky,
-          classes.transition
+          classes.transition,
+          classes.bottomBorder
         )}
       >
         <div
           style={{ width: !isViewMobile && width }}
           className={classes.stickyContent}
         >
-          <LandingHeading
-            className={classes.bottomBorder}
-            left={leftHeader(true)}
-            right={rightHeader}
-          />
+          <LandingHeading left={leftHeader(true)} right={rightHeader} />
         </div>
       </div>
     )

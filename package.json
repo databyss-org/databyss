@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "description": "massive open-source citation database platform",
   "main": "index.js",
   "repository": {

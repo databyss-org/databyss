@@ -10,7 +10,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
     className="Landing-landing Content-content"
   >
     <div
-      className="Landing-notSticky Landing-transition"
+      className="Landing-notSticky Landing-transition Landing-bottomBorder"
       style={
         Object {
           "top": 69.12,
@@ -26,7 +26,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
         }
       >
         <div
-          className="Landing-bottomBorder LandingHeading-landingHeader"
+          className="LandingHeading-landingHeader"
         >
           <div
             className="LandingHeading-headingContainer"
@@ -671,7 +671,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
     className="Landing-landing Content-content"
   >
     <div
-      className="Landing-notSticky Landing-transition"
+      className="Landing-notSticky Landing-transition Landing-bottomBorder"
       style={
         Object {
           "top": 69.12,
@@ -687,7 +687,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
         }
       >
         <div
-          className="Landing-bottomBorder LandingHeading-landingHeader"
+          className="LandingHeading-landingHeader"
         >
           <div
             className="LandingHeading-headingContainer"
@@ -1332,7 +1332,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
     className="Landing-landing Content-content"
   >
     <div
-      className="Landing-notSticky Landing-transition"
+      className="Landing-notSticky Landing-transition Landing-bottomBorder"
       style={
         Object {
           "top": 69.12,
@@ -1348,7 +1348,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
         }
       >
         <div
-          className="Landing-bottomBorder LandingHeading-landingHeader"
+          className="LandingHeading-landingHeader"
         >
           <div
             className="LandingHeading-headingContainer"
@@ -2063,7 +2063,7 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
     className="Landing-landing Content-content"
   >
     <div
-      className="Landing-notSticky Landing-transition"
+      className="Landing-notSticky Landing-transition Landing-bottomBorder"
       style={
         Object {
           "top": 69.12,
@@ -2079,7 +2079,7 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
         }
       >
         <div
-          className="Landing-bottomBorder LandingHeading-landingHeader"
+          className="LandingHeading-landingHeader"
         >
           <div
             className="LandingHeading-headingContainer"
