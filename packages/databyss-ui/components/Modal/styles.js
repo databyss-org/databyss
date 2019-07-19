@@ -1,4 +1,4 @@
-import { macros, theme as defaultTheme } from '../../shared-styles'
+import { macros, theme as defaultTheme } from '../../theming'
 
 const fullscreen = theme => ({
   position: 'fixed',

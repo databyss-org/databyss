@@ -264,7 +264,6 @@ module.exports = webpackEnv => {
                 customize: require.resolve(
                   'babel-preset-react-app/webpack-overrides'
                 ),
-
                 plugins: [
                   [
                     require.resolve('babel-plugin-named-asset-import'),
