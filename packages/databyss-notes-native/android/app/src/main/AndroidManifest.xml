@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.databyss_notes">
+  package="com.databyssnotes">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

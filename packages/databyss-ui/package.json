@@ -13,13 +13,12 @@
   },
   "main": "dist/databyss-ui.js",
   "peerDependencies": {
-    "react": "^16.8.3",
-    "react-dom": "^16.8.3"
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-native": "^0.60.4"
   },
   "dependencies": {
-    "@emotion/core": "^10.0.10",
-    "@emotion/native": "^10.0.11",
-    "@emotion/styled": "^10.0.12",
+    "@emotion/native": "^10.0.14",
     "classnames": "^2.2.6",
     "color": "^3.1.0",
     "emotion-theming": "^10.0.10",
@@ -28,7 +27,7 @@
     "prop-types": "^15.7.2",
     "react-jss": "^8.6.1",
     "react-modal": "^3.8.1",
-    "react-native": "^0.59.9",
+    "react-native-web": "^0.11.0",
     "react-responsive": "^7.0.0",
     "react-scrolllock": "^4.0.1",
     "react-select": "^3.0.4",
@@ -36,5 +35,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "babel-plugin-react-native-web": "^0.11.5"
   }
 }

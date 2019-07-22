@@ -26,6 +26,27 @@ Please familiarize yourself with [Storybook](https://storybook.js.org/) and crea
 
 During testing, StoryShot renders the story to HTML and compares the rendered markup to the markup in the snapshot stored from an earlier test run. If you review the differences and everything looks ok, it give you a chance to confirm the changes and update the snapshot. You must do this before submitting your PR, because the CI will reject the changes if the snapshots are out of date.
 
+## Adding native apps
+
+- [ ] _Outside_ of the project repo, follow the [React Native CLI Quickstart](https://facebook.github.io/react-native/docs/getting-started.html#installing-dependencies) instructions to create a new app.
+
+_NOTE_: Because the React Native module is shared for all workspaces in the monorepo, you must specify the version: `react-native init AwesomeApp --version X.XX.X` (use the version from `package.json`)
+
+- [ ] Move the new native app to a directory within `/packages`
+
+- [ ] Remove local config files because we want to inherit the global configs for the monorepo:
+
+  - [ ] Remove `.eslintrc.js`
+  - [ ] Remove `.flowconfig`
+  - [ ] Remove `.gitattributes`
+  - [ ] Remove `.gitignore`
+
+- [ ] Replace `package.json` with the one from `databyss-notes-native` and update the package name.
+
+- [ ] Replace `metro.config.js` with the one from `/packages/databyss-notes-native`
+
+- [ ] In the root `package.json`, copy the `scripts` entry for `metro:notes` and change `databyss-notes-native` to your app directory name
+
 ## Happy coding!
 
 See you on the [Slack](https://databyssorg.slack.com/#dev)

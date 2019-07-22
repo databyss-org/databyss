@@ -11,7 +11,7 @@ please see our [CONTRIBUTING](CONTRIBUTING.md) guide.
 
 - [Packages](#packages)
 - [Available Scripts](#available-scripts)
-  - [yarn notes-native](#yarn-notes-native)
+  - [yarn metro:notes](#yarn-metronotes)
   - [yarn build](#yarn-build)
   - [yarn build:ui](#yarn-buildui)
   - [yarn flow](#yarn-flow)
@@ -32,7 +32,7 @@ please see our [CONTRIBUTING](CONTRIBUTING.md) guide.
 
 In the project directory, you can run:
 
-### `yarn notes-native`
+### `yarn metro:notes`
 
 Runs the Metro bundler for developing the notes-native app. Run this before running the app in the iOS or Android simulators.
 

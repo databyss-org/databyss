@@ -1,32 +1,107 @@
-import React from 'react'
-import { Platform, StyleSheet, View } from 'react-native'
-import ThemeProvider from '@databyss-org/ui/theming/ThemeProvider'
+import React, { Fragment } from 'react'
+import {
+  SafeAreaView,
+  StyleSheet,
+  ScrollView,
+  View,
+  StatusBar,
+} from 'react-native'
+
+import { ThemeProvider } from '@databyss-org/ui/theming'
 import Text from '@databyss-org/ui/primitives/Text/Text'
 
-const instructions = Platform.select({
-  ios: `Press Cmd+R to reload,\nCmd+D or shake for dev menu`,
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-})
+import {
+  Header,
+  LearnMoreLinks,
+  Colors,
+  DebugInstructions,
+  ReloadInstructions,
+} from 'react-native/Libraries/NewAppScreen'
+
+console.disableYellowBox = true
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+  scrollView: {
+    backgroundColor: Colors.lighter,
+  },
+  engine: {
+    position: 'absolute',
+    right: 0,
+  },
+  body: {
+    backgroundColor: Colors.white,
+  },
+  sectionContainer: {
+    marginTop: 32,
+    paddingHorizontal: 24,
+  },
+  sectionDescription: {
+    marginTop: 8,
+  },
+  highlight: {
+    fontWeight: '700',
+  },
+  footer: {
+    padding: 4,
+    paddingRight: 12,
+    textAlign: 'right',
   },
 })
 
-export default () => (
+const styleProps = {
+  sectionTitle: {
+    textSize: 'large',
+    fontWeight: 'semiBold',
+  },
+}
+
+const App = () => (
   <ThemeProvider>
-    <View style={styles.container}>
-      <Text textSize="extraLarge">Welcome to React Native!</Text>
-      <Text>To get started, edit App.js</Text>
-      <Text lineHeight="large" textAlign="center">
-        {instructions}
-      </Text>
-    </View>
+    <Fragment>
+      <StatusBar barStyle="dark-content" />
+      <SafeAreaView>
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={styles.scrollView}
+        >
+          <Header />
+          {global.HermesInternal == null ? null : (
+            <View style={styles.engine}>
+              <Text style={styles.footer}>Engine: Hermes</Text>
+            </View>
+          )}
+          <View style={styles.body}>
+            <View style={styles.sectionContainer}>
+              <Text {...styleProps.sectionTitle}>Step One</Text>
+              <Text style={styles.sectionDescription}>
+                Edit <Text style={styles.highlight}>App.js</Text> to change this
+                screen and then come back to see your edits.
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text {...styleProps.sectionTitle}>See Your Changes</Text>
+              <Text style={styles.sectionDescription}>
+                <ReloadInstructions />
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text {...styleProps.sectionTitle}>Debug</Text>
+              <Text style={styles.sectionDescription}>
+                <DebugInstructions />
+              </Text>
+            </View>
+            <View style={styles.sectionContainer}>
+              <Text {...styleProps.sectionTitle}>Learn More</Text>
+              <Text style={styles.sectionDescription}>
+                Read the docs to discover what to do next:
+              </Text>
+            </View>
+            <LearnMoreLinks />
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    </Fragment>
   </ThemeProvider>
 )
+
+export default App

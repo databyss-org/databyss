@@ -20,10 +20,16 @@ export const mono = Platform.select({
   default: 'SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace',
 })
 
-const units = Platform.select({
+export const pxUnits = Platform.select({
   ios: v => v,
   android: v => v,
   default: v => `${v}px`,
+})
+
+export const weightUnits = Platform.select({
+  ios: v => `${v}`,
+  android: v => `${v}`,
+  default: v => v,
 })
 
 const fonts = {
@@ -36,7 +42,7 @@ fonts.headingFont = fonts.serif
 fonts.bodyFont = fonts.serif
 fonts.navFont = fonts.sans
 
-const fontWeights = [400, 600, 700]
+const fontWeights = [400, 600, 700].map(weightUnits)
 fontWeights.bold = fontWeights[2]
 fontWeights.semiBold = fontWeights[1]
 fontWeights.regular = fontWeights[0]
@@ -48,11 +54,11 @@ fontSizes.small = fontSizes[2]
 fontSizes.large = fontSizes[3]
 fontSizes.extraLarge = fontSizes[4]
 
-const lineHeights = [EM, EM * 1.25, EM * 1.5, EM * 2, EM * 3]
-lineHeights.tight = units(lineHeights[0])
-lineHeights.normal = units(lineHeights[1])
-lineHeights.large = units(lineHeights[2])
-lineHeights.extraLarge = units(lineHeights[3])
+const lineHeights = [EM, EM * 1.25, EM * 1.5, EM * 2, EM * 3].map(pxUnits)
+lineHeights.tight = lineHeights[0]
+lineHeights.normal = lineHeights[1]
+lineHeights.large = lineHeights[2]
+lineHeights.extraLarge = lineHeights[3]
 
 /* combines fontSize and lineHeight */
 const textSizes = {

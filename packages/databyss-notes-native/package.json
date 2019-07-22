@@ -3,7 +3,7 @@
   "author": "databyss-org",
   "license": "MIT",
   "version": "1.1.0",
-  "private": false,
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/databyss-org/databyss.git"
@@ -11,12 +11,12 @@
   "bugs": {
     "url": "https://github.com/databyss-org/databyss/issues"
   },
-  "scripts": {
-    "start": "node ../../node_modules/react-native/local-cli/cli.js start --projectRoot ../../"
+  "dependencies": {
+    "@emotion/native": "^10.0.14",
+    "react-native": "0.60.4"
   },
   "peerDependencies": {
-    "react": "16.8.3",
-    "react-native": "0.59.9",
+    "react": "16.8.6",
     "@databyss-org/ui": "1.1.0"
   },
   "publishConfig": {
@@ -24,5 +24,18 @@
   },
   "engines": {
     "node": ">=8.16.0"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "workspaces": {
+    "nohoist": [
+      "**/@emotion/native",
+      "**/react-native",
+      "**/react-native/**",
+      "**/@react-native-community",
+      "**/hermesvm",
+      "**/jsc-android"
+    ]
   }
 }

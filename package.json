@@ -11,8 +11,10 @@
   "license": "MIT",
   "private": true,
   "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/runtime": "^7.4.5",
+    "@babel/core": "^7.5.5",
+    "@babel/runtime": "^7.5.5",
+    "@emotion/core": "^10.0.14",
+    "@emotion/styled": "^10.0.14",
     "@storybook/addon-options": "^5.1.1",
     "@storybook/addon-storyshots": "^5.1.1",
     "@storybook/addons": "^5.1.1",
@@ -46,7 +48,8 @@
     "jest-resolve": "^23.6.0",
     "jest-runner-eslint": "^0.7.1",
     "lorem-ipsum": "^1.0.6",
-    "metro-react-native-babel-preset": "^0.54.1",
+    "metro-config": "^0.55.0",
+    "metro-react-native-babel-preset": "^0.55.0",
     "mini-css-extract-plugin": "^0.7.0",
     "object-assign": "4.1.1",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
@@ -60,10 +63,11 @@
     "prettier-eslint": "^8.8.1",
     "promise": "8.0.1",
     "raf": "3.4.0",
-    "react": "16.8.3",
+    "react": "16.8.6",
     "react-dev-utils": "^9.0.1",
-    "react-dom": "^16.8.3",
+    "react-dom": "^16.8.6",
     "react-jss": "^8.6.1",
+    "react-native": "^0.60.4",
     "react-styleguidist": "^9.1.5",
     "react-svg-loader": "^3.0.3",
     "react-test-renderer": "^16.6.0",
@@ -80,7 +84,7 @@
     "workbox-webpack-plugin": "^4.3.1"
   },
   "scripts": {
-    "notes-native": "yarn workspace @databyss-org/notes-native start",
+    "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
     "build": "bash scripts/build.sh",
     "build:ui": "NODE_ENV=production BABEL_ENV=production webpack --config packages/databyss-ui/webpack.config.js --mode=production",
     "test": "node scripts/test.js",
@@ -145,7 +149,6 @@
   "workspaces": {
     "packages": [
       "packages/*"
-    ],
-    "nohoist": []
+    ]
   }
 }
