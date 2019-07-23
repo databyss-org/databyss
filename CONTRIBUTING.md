@@ -26,6 +26,24 @@ Please familiarize yourself with [Storybook](https://storybook.js.org/) and crea
 
 During testing, StoryShot renders the story to HTML and compares the rendered markup to the markup in the snapshot stored from an earlier test run. If you review the differences and everything looks ok, it give you a chance to confirm the changes and update the snapshot. You must do this before submitting your PR, because the CI will reject the changes if the snapshots are out of date.
 
+## Working on native apps
+
+We use React Native and Metro to build native apps that use our shared UI primitives and components. Before developing, please ensure that you have all of the pre-requisites for developing a (non-Expo) React Native app in the [React Native CLI Quickstart](https://facebook.github.io/react-native/docs/getting-started.html#installing-dependencies)
+
+### Xcode
+
+1.  In terminal, change to the native app directory, which should be `/packages/[native app package]/ios`
+2.  Run `pod install` (you may need to install CocoaPods first)
+3.  In Xcode, open the Xcode workspace for the app, which is the app directory from step 1
+4.  In terminal, change to the root directory of the repo and run `yarn metro:[native app name]` (see [README](README.md) for available `metro:` commands)
+5.  In Xcode, choose an emulator and click "Run" (play button)
+
+### Android
+
+1.  In Android studio, open the project for the app, which is the directory `/packages/[native app package]/android`
+2.  Run the project (play button) and choose an emulator if needed (SDK 29 or greater)
+3.  If you get an error that `keystore.debug` is not found, download it from https://raw.githubusercontent.com/facebook/react-native/master/template/android/app/debug.keystore and put it in the `/packages/[native app package]/android/app` directory.
+
 ## Adding native apps
 
 - [ ] _Outside_ of the project repo, follow the [React Native CLI Quickstart](https://facebook.github.io/react-native/docs/getting-started.html#installing-dependencies) instructions to create a new app.

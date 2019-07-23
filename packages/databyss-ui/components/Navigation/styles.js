@@ -12,7 +12,7 @@ export default (theme = defaultTheme) => ({
     },
   },
   contentNav: {
-    fontFamily: theme.navFont,
+    fontFamily: theme.uiFont,
 
     '& $nav': {
       marginBottom: '1em',

@@ -15,6 +15,7 @@ export default compose(
 export const defaultProps = {
   fontFamily: 'bodyFont',
   textSize: 'normal',
+  // TODO: create a function that does a "mediaQuery" on native and returns the appropriate value
   color: 'darkText',
   marginBottom: 2,
 }

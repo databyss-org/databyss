@@ -72,7 +72,7 @@ const style = (theme = defaultTheme) => ({
   },
   authorName: {
     fontSize: theme.fontSizeNormal,
-    fontFamily: theme.navFont,
+    fontFamily: theme.uiFont,
     lineHeight: 2.8,
     cursor: 'pointer',
     color: theme.bgColorDark,

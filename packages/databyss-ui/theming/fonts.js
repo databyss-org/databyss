@@ -40,14 +40,14 @@ const fonts = {
 
 fonts.headingFont = fonts.serif
 fonts.bodyFont = fonts.serif
-fonts.navFont = fonts.sans
+fonts.uiFont = fonts.sans
 
 const fontWeights = [400, 600, 700].map(weightUnits)
 fontWeights.bold = fontWeights[2]
 fontWeights.semiBold = fontWeights[1]
 fontWeights.regular = fontWeights[0]
 
-const fontSizes = [EM, 0.7 * EM, 0.85 * EM, 1.2 * EM, 1.8 * EM]
+const fontSizes = [EM, EM, 0.85 * EM, 1.2 * EM, 1.8 * EM, 2.2 * EM]
 fontSizes.normal = fontSizes[0]
 fontSizes.extraSmall = fontSizes[1]
 fontSizes.small = fontSizes[2]

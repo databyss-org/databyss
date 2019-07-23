@@ -1,4 +1,5 @@
 import colors from './colors'
+import responsive from './responsive'
 import fonts, { EM } from './fonts'
 
 export { EM }
@@ -15,6 +16,9 @@ export default {
 
   /* colors */
   ...colors,
+
+  /* responsive */
+  ...responsive,
 
   /* transitions */
   slow: '800ms',
