@@ -25,7 +25,7 @@
     "babel-loader": "8.0.6",
     "babel-plugin-emotion": "^10.0.13",
     "babel-preset-react-app": "^9.0.0",
-    "case-sensitive-paths-webpack-plugin": "2.1.1",
+    "case-sensitive-paths-webpack-plugin": "2.2.0",
     "copy-webpack-plugin": "^4.5.2",
     "csvtojson": "^2.0.8",
     "dotenv": "^8.0.0",
@@ -84,6 +84,8 @@
     "workbox-webpack-plugin": "^4.3.1"
   },
   "scripts": {
+    "start:login": "node scripts/start.js",
+    "build:login": "node scripts/build.js",
     "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
     "build": "bash scripts/build.sh",
     "build:ui": "NODE_ENV=production BABEL_ENV=production webpack --config packages/databyss-ui/webpack.config.js --mode=production",
@@ -164,6 +166,24 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mongoose": "^5.6.5",
+    "sass-loader": "^7.1.0",
     "supertest": "^4.0.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ]
   }
 }
