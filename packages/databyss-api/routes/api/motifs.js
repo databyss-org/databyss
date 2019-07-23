@@ -1,7 +1,7 @@
 const express = require('express')
+
 const router = express.Router()
 const Motif = require('../../models/Motif')
-const fs = require('fs')
 
 // const Entry = require('../../models/Entry')
 
@@ -45,13 +45,14 @@ router.post('/', async (req, res) => {
       return res.json(author)
     }
 */
-    motif = new Motif(authFields)
+    const motif = new Motif(authFields)
 
     const post = await motif.save()
     res.json(post)
   } catch (err) {
     console.error(err.message)
     res.status(500).send('Server error')
+    throw new Error('err')
   }
 })
 
@@ -80,10 +81,11 @@ router.get('/:id', auth, async (req, res) => {
       return res.status(401).json({ msg: 'This post is private' })
     }
 
-    res.json(author)
+    return res.json(author)
   } catch (err) {
     console.error(err.message)
     res.status(500).send('Server Error')
+    throw new Error('err')
   }
 })
 // @route    GET api/motifs/
@@ -97,16 +99,16 @@ router.get('/', async (req, res) => {
     if (!motif) {
       return res.status(400).json({ msg: 'There are no Motifs' })
     }
-
+    /*
     let newData = motif.map(async m => {
-      let obj = m
+      const obj = m
       obj.motifStyleManual = false
       obj.parsedWords = m.name.split(' ').map(w => ({
         word: w,
         selected: true,
       }))
       obj.otherWords = []
-      const newMotif = await Motif.findOne({
+      let newMotif = await Motif.findOne({
         _id: m._id,
       })
       if (newMotif) {
@@ -118,10 +120,12 @@ router.get('/', async (req, res) => {
       //  return m
     })
 
-    res.json(motif)
+    */
+
+    return res.json(motif)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
+    return res.status(500).send('Server Error')
   }
 })
 

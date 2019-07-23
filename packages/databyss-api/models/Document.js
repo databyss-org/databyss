@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+
 const Schema = mongoose.Schema
 
 const DocumentSchema = new Schema({
@@ -16,4 +17,7 @@ const DocumentSchema = new Schema({
   },
 })
 
-module.exports = Document = mongoose.model('document', DocumentSchema)
+const Document =
+  mongoose.models.Document || mongoose.model('document', DocumentSchema)
+
+module.exports = Document

@@ -1,8 +1,9 @@
 const mongoose = require('mongoose')
+
 const Schema = mongoose.Schema
 
 const SourceSchema = new mongoose.Schema({
-  //resource is a raw text
+  // resource is a raw text
   user: {
     type: Schema.Types.ObjectId,
     ref: 'users',
@@ -57,4 +58,6 @@ const SourceSchema = new mongoose.Schema({
   ],
 })
 
-module.exports = Source = mongoose.model('source', SourceSchema)
+const Source = mongoose.models.Source || mongoose.model('source', SourceSchema)
+
+module.exports = Source

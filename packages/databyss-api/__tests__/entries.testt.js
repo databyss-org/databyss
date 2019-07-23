@@ -6,7 +6,7 @@ const { dropDB } = require('./../config/db')
 // AUTH
 const email = 'email@company.com'
 const password = 'password'
-//let token
+// let token
 
 // RESOURCE
 const entry = 'Testing an entry'
@@ -28,8 +28,8 @@ describe('Creates Account and logs user in to create new entry', () => {
       .post('/api/users')
       .send({
         name: 'joe',
-        password: password,
-        email: email,
+        password,
+        email,
       })
       .then(response => {
         token = JSON.parse(response.text).token
@@ -40,7 +40,7 @@ describe('Creates Account and logs user in to create new entry', () => {
     request(app)
       .post('/api/entries')
       .send({
-        entry: entry,
+        entry,
       })
       .then(response => {
         expect(response.statusCode).toBe(401)
@@ -53,7 +53,7 @@ describe('Creates Account and logs user in to create new entry', () => {
       .post('/api/entries')
       .set('x-auth-token', token)
       .send({
-        entry: entry,
+        entry,
       })
       .then(response => {
         newEntryId = JSON.parse(response.text)._id

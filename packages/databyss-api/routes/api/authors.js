@@ -1,5 +1,7 @@
 const express = require('express')
+
 const router = express.Router()
+
 const Author = require('../../models/Author')
 // const Entry = require('../../models/Entry')
 
@@ -29,14 +31,14 @@ router.post('/', auth, async (req, res) => {
 
   // Updated if author already exists
   try {
-    let author = await Author.findOne({ _id: _id })
+    let author = await Author.findOne({ _id })
     if (author) {
       if (req.user.id.toString() !== author.user.toString()) {
         return res.status(401).json({ msg: 'This post is private' })
       }
 
       authFields._id = _id
-      author = await Author.findOneAndUpdate({ _id: _id }, { $set: authFields })
+      author = await Author.findOneAndUpdate({ _id }, { $set: authFields })
 
       return res.json(author)
     }
@@ -50,10 +52,10 @@ router.post('/', auth, async (req, res) => {
     })
 
     const post = await author.save()
-    res.json(post)
+    return res.json(post)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    return res.status(500).send('Server error')
   }
 })
 
@@ -84,10 +86,10 @@ router.get('/:id', auth, async (req, res) => {
       }
     }
 
-    res.json(author)
+    return res.json(author)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
+    return res.status(500).send('Server Error')
   }
 })
 // @route    GET api/authors/
@@ -105,10 +107,10 @@ router.get('/', auth, async (req, res) => {
       return res.status(400).json({ msg: 'There are no authors' })
     }
 
-    res.json(author)
+    return res.json(author)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
+    return res.status(500).send('Server Error')
   }
 })
 

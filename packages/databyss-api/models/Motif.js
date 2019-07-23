@@ -1,5 +1,4 @@
 const mongoose = require('mongoose')
-const Schema = mongoose.Schema
 
 const MotifSchema = new mongoose.Schema({
   cfauthors: [
@@ -25,4 +24,6 @@ const MotifSchema = new mongoose.Schema({
   otherWords: [{ type: String }],
 })
 
-module.exports = Motif = mongoose.model('motif', MotifSchema)
+const Motif = mongoose.models.Motif || mongoose.model('motif', MotifSchema)
+
+module.exports = Motif

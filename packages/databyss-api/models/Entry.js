@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+
 const Schema = mongoose.Schema
 
 const EntrySchema = new mongoose.Schema({
@@ -71,4 +72,6 @@ const EntrySchema = new mongoose.Schema({
   },
 })
 
-module.exports = Entry = mongoose.model('entry', EntrySchema)
+const Entry = mongoose.models.Entry || mongoose.model('entry', EntrySchema)
+
+module.exports = Entry

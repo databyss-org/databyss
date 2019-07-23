@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-//const config = require('config')
+
 require('dotenv').config()
 
 /*
@@ -10,12 +10,12 @@ let dbURI =
 
 */
 
-let dbURI =
+const dbURI =
   process.env.NODE_ENV === 'test'
     ? process.env.MONGO_URI_TEST
     : process.env.MONGO_URI
 
-let dB = mongoose
+const dB = mongoose
 
 const connectDB = async () => {
   try {

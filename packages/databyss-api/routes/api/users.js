@@ -1,10 +1,12 @@
 const express = require('express')
-const router = express.Router()
-const gravatar = require('gravatar')
+
 const bcrypt = require('bcryptjs')
+
 const jwt = require('jsonwebtoken')
-const config = require('config')
+
 const { check, validationResult } = require('express-validator/check')
+
+const router = express.Router()
 
 const User = require('../../models/User')
 
@@ -40,16 +42,9 @@ router.post(
           .json({ errors: [{ msg: 'User already exists' }] })
       }
 
-      const avatar = gravatar.url(email, {
-        s: '200',
-        r: 'pg',
-        d: 'mm',
-      })
-
       user = new User({
         name,
         email,
-        avatar,
         password,
       })
 
@@ -74,9 +69,10 @@ router.post(
           res.json({ token })
         }
       )
+      return undefined
     } catch (err) {
       console.error(err.message)
-      res.status(500).send('Server error')
+      return res.status(500).send('Server error')
     }
   }
 )

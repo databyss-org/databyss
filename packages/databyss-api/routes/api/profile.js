@@ -1,10 +1,13 @@
 const express = require('express')
+
 const axios = require('axios')
-const request = require('request')
+
 const mongoose = require('mongoose')
-const config = require('config')
+
 const router = express.Router()
+
 const auth = require('../../middleware/auth')
+
 const { check, validationResult } = require('express-validator/check')
 
 const Profile = require('../../models/Profile')
@@ -24,10 +27,10 @@ router.get('/me', auth, async (req, res) => {
       return res.status(400).json({ msg: 'There is no profile for this user' })
     }
 
-    res.json(profile)
+    return res.json(profile)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
+    return res.status(500).send('Server Error')
   }
 })
 
@@ -107,10 +110,10 @@ router.post(
       profile = new Profile(profileFields)
 
       await profile.save()
-      res.json(profile)
+      return res.json(profile)
     } catch (err) {
       console.error(err.message)
-      res.status(500).send('Server Error')
+      return res.status(500).send('Server Error')
     }
   }
 )
@@ -121,10 +124,10 @@ router.post(
 router.get('/', async (req, res) => {
   try {
     const profiles = await Profile.find().populate('user', ['name', 'avatar'])
-    res.json(profiles)
+    return res.json(profiles)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
+    return res.status(500).send('Server Error')
   }
 })
 
@@ -139,13 +142,13 @@ router.get('/user/:user_id', async (req, res) => {
 
     if (!profile) return res.status(400).json({ msg: 'Profile not found' })
 
-    res.json(profile)
+    return res.json(profile)
   } catch (err) {
     console.error(err.message)
-    if (err.kind == 'ObjectId') {
+    if (err.kind === 'ObjectId') {
       return res.status(400).json({ msg: 'Profile not found' })
     }
-    res.status(500).send('Server Error')
+    return res.status(500).send('Server Error')
   }
 })
 
@@ -159,10 +162,10 @@ router.delete('/', auth, async (req, res) => {
     // Remove user
     await User.findOneAndRemove({ _id: req.user.id })
 
-    res.json({ msg: 'User deleted' })
+    return res.json({ msg: 'User deleted' })
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
+    return res.status(500).send('Server Error')
   }
 })
 
@@ -207,18 +210,15 @@ router.post('/google', async (req, res) => {
         console.log(profile)
         await profile.save()
 
-        res.json(profile)
+        return res.json(profile)
       } catch (err) {
         console.error(err.message)
-        res.status(500).send('Server Error')
+        return res.status(500).send('Server Error')
       }
     })
     .catch(err => {
-      if (err) {
-        return res
-          .status(400)
-          .json({ msg: 'There is no profile for this user' })
-      }
+      console.error(err.message)
+      return res.status(400).json({ msg: 'There is no profile for this user' })
     })
 })
 

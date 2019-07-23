@@ -1,15 +1,14 @@
 const fs = require('fs')
-const mongoose = require('mongoose')
-const Author = require('./models/Author')
+
 // const Entry = require('../../models/Entry')
 
-let rawdata = fs.readFileSync('entries_old.json')
-let entries = JSON.parse(rawdata)
-//const slicedEntry = entries.slice(1, 3)
-//console.log(slicedEntry[0])
+const rawdata = fs.readFileSync('entries_old.json')
+const entries = JSON.parse(rawdata)
+// const slicedEntry = entries.slice(1, 3)
+// console.log(slicedEntry[0])
 
-let newEntry = entries.map(e => {
-  let obj = {}
+const newEntry = entries.map(e => {
+  const obj = {}
   obj._id = e._id
   obj.authorId = e.source.author
   obj.sourceId = e.source.id
@@ -69,15 +68,15 @@ let newSources = sources.map(a => {
 
 // Author.find({ _id: '5b0efb34889a46141f199136' }).then(e => console.log(e))
 
-//fs.writeFileSync('source.json', JSON.stringify(newSources))
+// fs.writeFileSync('source.json', JSON.stringify(newSources))
 /*
 const findAuthor = async id => {
   const author = await Author.find()
 }
 */
-//findAuthor(newSources[0].author)
+// findAuthor(newSources[0].author)
 
-//Author.findOne().then(a => console.log(a))
+// Author.findOne().then(a => console.log(a))
 
 /*
 console.log(newSources[0].author)
@@ -87,9 +86,9 @@ Author.findOne({ id: newSources[0].author })
     console.log(error)
   })
   */
-//console.log(a.author)
+// console.log(a.author)
 /*
-//console.log(authors[0])
+// console.log(authors[0])
 
 let newAuthors = authors.map(a => {
   let obj = a
@@ -105,7 +104,7 @@ console.log(newAuthors[0])
 Author.findOne().then(a => console.log(a))
 */
 
-//fs.writeFileSync('author.json', JSON.stringify(newAuthors))
+// fs.writeFileSync('author.json', JSON.stringify(newAuthors))
 
 // console.log(motifs[0])
 

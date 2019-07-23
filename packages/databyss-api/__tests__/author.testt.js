@@ -4,14 +4,14 @@ const { globalSetup, globalTeardown } = require('./../serverSetup')
 // const globalTeardown = require('./../serverSetup')
 const { dropDB } = require('./../config/db')
 
-//const disconnectDB = require('./../config/db/')
+// const disconnectDB = require('./../config/db/')
 
-//globalSetup()
+// globalSetup()
 
 // AUTH
 const email = 'email@company.com'
 const password = 'password'
-//let token
+// let token
 
 // AUTHOR
 const firstName = 'John'
@@ -19,12 +19,12 @@ const lastName = 'Doe'
 // let authorId
 
 // SOURCE
-const resource = 'A book title'
+// const resource = 'A book title'
 // let authors = [authorId]
 // let sourceId
 
 // ENTRY
-let entry = 'this is my first entry'
+// let entry = 'this is my first entry'
 // let entryId
 
 beforeAll(async done => {
@@ -36,14 +36,14 @@ beforeAll(async done => {
 describe('Creates Account and logs user in to create new author', () => {
   let token
   let authorId
-  let authors
+  // let authors = []
   beforeAll(done => {
     request(app)
       .post('/api/users')
       .send({
         name: 'joe',
-        password: password,
-        email: email,
+        password,
+        email,
       })
       .then(response => {
         token = JSON.parse(response.text).token
@@ -54,8 +54,8 @@ describe('Creates Account and logs user in to create new author', () => {
     request(app)
       .post('/api/authors')
       .send({
-        firstName: firstName,
-        lastName: lastName,
+        firstName,
+        lastName,
       })
       .then(response => {
         expect(response.statusCode).toBe(401)
@@ -68,12 +68,12 @@ describe('Creates Account and logs user in to create new author', () => {
       .post('/api/authors')
       .set('x-auth-token', token)
       .send({
-        firstName: firstName,
-        lastName: lastName,
+        firstName,
+        lastName,
       })
       .then(response => {
         authorId = JSON.parse(response.text)._id
-        authors = [authorId]
+        // let authors = [authorId]
         expect(response.statusCode).toBe(200)
         done()
       })

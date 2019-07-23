@@ -1,20 +1,28 @@
 const express = require('express')
-const router = express.Router()
+
 const Entry = require('../../models/Entry')
+
 const Author = require('../../models/Author')
+
 const Source = require('../../models/Source')
+
 const auth = require('../../middleware/auth')
+
 const _ = require('lodash')
-const m = require('./helpers/entriesHelper')
+
+const helpers = require('./helpers/entriesHelper')
+
+const router = express.Router()
+
 const {
   appendEntryToSource,
   appendEntryToAuthors,
   appendAuthorToSource,
-  appendEntryToAuthorList,
-  appendEntriesToSource,
-  addAuthorId,
-  addSourceId,
-} = m
+  // appendEntryToAuthorList,
+  //  appendEntriesToSource,
+  //  addAuthorId,
+  //  addSourceId,
+} = helpers
 
 // @route    POST api/entry
 // @desc     new Entry
@@ -28,9 +36,9 @@ router.post('/', auth, async (req, res) => {
       return res.status(400).json({ errors: errors.array() })
     }
 */
-    let {
+    let { source } = req.body
+    const {
       pageFrom,
-      source,
       author,
       pageTo,
       files,
@@ -47,8 +55,8 @@ router.post('/', auth, async (req, res) => {
       // POST NEW AUTHOR
       let authorPost
       authorPost = new Author({
-        firstName: firstName,
-        lastName: lastName,
+        firstName,
+        lastName,
         user: req.user.id,
       })
       authorPost = await authorPost.save()
@@ -62,8 +70,8 @@ router.post('/', auth, async (req, res) => {
         let authorPost
         // create new author
         authorPost = new Author({
-          firstName: firstName,
-          lastName: lastName,
+          firstName,
+          lastName,
           user: req.user.id,
         })
         authorPost = await authorPost.save()
@@ -79,7 +87,7 @@ router.post('/', auth, async (req, res) => {
         sourcePost = await newSource.save()
         source = sourcePost._id.toString()
 
-        //Update author with new source id
+        // Update author with new source id
         authorPost = await Author.findOne({ _id: authorId })
         authorPost.sources = authorPost.sources.concat(source)
         authorPost = await Author.findOneAndUpdate(
@@ -91,7 +99,7 @@ router.post('/', auth, async (req, res) => {
         // create new source with or without existing author
         const newSource = new Source({
           resource,
-          authors: author ? author : [],
+          authors: !_.isEmpty(author) ? author : [],
           user: req.user.id,
         })
         sourcePost = await newSource.save()
@@ -105,18 +113,18 @@ router.post('/', auth, async (req, res) => {
     }
 
     const entryFields = {
-      pageFrom: pageFrom ? pageFrom : '',
-      source: source ? source : '',
-      author: author ? author : [],
-      pageTo: pageTo ? pageTo : '',
-      files: files ? files : [],
+      pageFrom: _.isEmpty(pageFrom) ? pageFrom : '',
+      source: _.isEmpty(source) ? source : '',
+      author: _.isEmpty(author) ? author : [],
+      pageTo: _.isEmpty(pageTo) ? pageTo : '',
+      files: _.isEmpty(files) ? files : [],
       entry,
-      index: index ? index : 0,
+      index: _.isEmpty(index) ? index : 0,
       user: req.user.id,
     }
 
     // CHECK HERE FOR IF ENTRY EXISTS
-    let entryExists = await Entry.findOne({ _id: _id })
+    let entryExists = await Entry.findOne({ _id })
     if (entryExists) {
       if (req.user.id.toString() !== entryExists.user.toString()) {
         return res.status(401).json({ msg: 'This post is private' })
@@ -125,7 +133,7 @@ router.post('/', auth, async (req, res) => {
       // update entry
       entryFields._id = _id
       entryExists = await Entry.findOneAndUpdate(
-        { _id: _id },
+        { _id },
         { $set: entryFields }
       ).then(() => {
         // if source exists, append entry to source
@@ -150,11 +158,12 @@ router.post('/', auth, async (req, res) => {
       if (author) {
         appendEntryToAuthors({ authors: author, entryId: post._id })
       }
-      res.json(post)
+      return res.json(post)
     }
+    return undefined
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    return res.status(500).send('Server error')
   }
 })
 
@@ -178,17 +187,17 @@ router.get('/:id', auth, async (req, res) => {
     if (!entry) {
       return res.status(400).json({ msg: 'There is no entry for this id' })
     }
-    //console.log(entry)
+    // console.log(entry)
     if (!entry.default) {
       if (req.user.id.toString() !== entry.user.toString()) {
         return res.status(401).json({ msg: 'This post is private' })
       }
     }
 
-    res.json(entry)
+    return res.json(entry)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
+    return res.status(500).send('Server Error')
   }
 })
 // @route    GET api/entries/
@@ -208,14 +217,14 @@ router.get('/', auth, async (req, res) => {
     // to migrate run command in order, one at a time
     // only run each function once
     // appendEntryToAuthorList(entry)
-    //appendEntriesToSource(entry)
-    //addAuthorId(entry)
-    //addSourceId(entry)
+    // appendEntriesToSource(entry)
+    // addAuthorId(entry)
+    // addSourceId(entry)
 
-    res.json(entry)
+    return res.json(entry)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
+    return res.status(500).send('Server Error')
   }
 })
 

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+
 const Schema = mongoose.Schema
 
 const AuthorSchema = new mongoose.Schema({
@@ -30,4 +31,6 @@ const AuthorSchema = new mongoose.Schema({
   ],
 })
 
-module.exports = Author = mongoose.model('author', AuthorSchema)
+const Author = mongoose.models.Author || mongoose.model('author', AuthorSchema)
+
+module.exports = Author

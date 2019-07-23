@@ -1,9 +1,23 @@
 const express = require('express')
+
 const _ = require('lodash')
+
 const router = express.Router()
+
 const Source = require('../../models/Source')
+
 const Author = require('../../models/Author')
+
 const auth = require('../../middleware/auth')
+
+const helpers = require('./helpers/entriesHelper')
+
+const {
+  // appendSourceToAuthorList,
+  // addAuthorIdToSource,
+  appendSourceToAuthor,
+  appendEntryToAuthor,
+} = helpers
 
 // @route    POST api/sources
 // @desc     Add Source
@@ -16,16 +30,16 @@ router.post('/', auth, async (req, res) => {
       return res.status(400).json({ errors: errors.array() })
     }
 */
-  let {
+
+  let { entries, authors } = req.body
+  const {
     title,
-    authors,
     abbreviation,
     city,
     publishingCompany,
     sourceType,
     url,
     files,
-    entries,
     date,
     resource,
     authorFirstName,
@@ -37,7 +51,7 @@ router.post('/', auth, async (req, res) => {
 
   // if new author add author and retrive ID
   if (authorFirstName || authorLastName) {
-    authors = authors ? authors : []
+    authors = !_.isEmptyisEmpty(authors) ? authors : []
     const author = new Author({
       firstName: authorFirstName,
       lastName: authorLastName,
@@ -48,22 +62,22 @@ router.post('/', auth, async (req, res) => {
   }
 
   const sourceFields = {
-    title: title ? title : '',
-    authors: authors ? authors : [],
-    abbreviation: abbreviation ? abbreviation : '',
-    city: city ? city : '',
-    publishingCompany: publishingCompany ? publishingCompany : '',
-    sourceType: sourceType ? sourceType : '',
-    url: url ? url : '',
-    files: files ? files : '',
-    entries: entries ? entries : [],
-    date: date ? date : '',
+    title: !_.isEmpty(title) ? title : '',
+    authors: !_.isEmpty(authors) ? authors : [],
+    abbreviation: !_.isEmpty(abbreviation) ? abbreviation : '',
+    city: !_.isEmpty(city) ? city : '',
+    publishingCompany: !_.isEmpty(publishingCompany) ? publishingCompany : '',
+    sourceType: !_.isEmpty(sourceType) ? sourceType : '',
+    url: !_.isEmpty(url) ? url : '',
+    files: !_.isEmpty(files) ? files : '',
+    entries: !_.isEmpty(entries) ? entries : [],
+    date: !_.isEmpty(date) ? date : '',
     resource,
     user: req.user.id,
   }
-  //if source exists update it and exit
+  // if source exists update it and exit
   try {
-    let source = await Source.findOne({ _id: _id })
+    let source = await Source.findOne({ _id })
     if (source) {
       if (req.user.id.toString() !== source.user.toString()) {
         return res.status(401).json({ msg: 'This post is private' })
@@ -77,22 +91,22 @@ router.post('/', auth, async (req, res) => {
 
       sourceFields._id = _id
       source = await Source.findOneAndUpdate(
-        { _id: _id },
+        { _id },
         { $set: sourceFields },
         { new: true }
       ).then(response => {
         if (!_.isEmpty(authorPost)) {
-          authors = authors ? authors : []
+          authors = !_.isEmpty(authors) ? authors : []
           appendSourceToAuthor({
-            authors: authors,
+            authors,
             sourceId: _id.toString(),
           }).then(() => {
             if (!_.isEmpty(entries)) {
-              entries = entries ? entries : []
+              entries = !_.isEmpty(entries) ? entries : []
               // if entry exists append the authorID to both entry and source
               appendEntryToAuthor({
-                entries: entries,
-                authors: authors,
+                entries,
+                authors,
               })
             }
           })
@@ -108,7 +122,7 @@ router.post('/', auth, async (req, res) => {
       if (authors) {
         if (authors.length > 0) {
           appendSourceToAuthor({
-            authors: authors,
+            authors,
             sourceId: post._id.toString(),
           })
         }
@@ -118,16 +132,18 @@ router.post('/', auth, async (req, res) => {
       if (entries) {
         if (entries.length > 0) {
           appendEntryToAuthor({
-            entries: entries,
-            authors: authors,
+            entries,
+            authors,
           })
         }
       }
       res.json(post)
     }
+
+    return res.status(200)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    return res.status(500).send('Server error')
   }
 })
 
@@ -157,10 +173,10 @@ router.get('/:id', auth, async (req, res) => {
       }
     }
 
-    res.json(sources)
+    return res.json(sources)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    return res.status(500).send('Server error')
   }
 })
 
@@ -178,129 +194,13 @@ router.get('/', auth, async (req, res) => {
     }
 
     // appendSourceToAuthorList(source)
-    //addAuthorId(source)
+    // addAuthorIdToSource(source)
 
-    res.json(source)
+    return res.json(source)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
+    return res.status(500).send('Server Error')
   }
 })
 
-const appendSourceToAuthor = ({ authors, sourceId }) => {
-  const promises = authors.map(async a => {
-    if (a) {
-      let author = await Author.findOne({
-        _id: a,
-      }).catch(err => console.log(err))
-      if (author) {
-        let newInput = author
-        let list = newInput.sources
-        if (list.indexOf(sourceId) > -1) return
-        list.push(sourceId)
-        newInput.sources = list
-        author = await Author.findOneAndUpdate(
-          { _id: a },
-          { $set: newInput },
-          { new: true }
-        ).catch(err => console.log(err))
-      }
-    }
-  })
-  return Promise.all(promises)
-}
-
-const appendEntryToAuthor = ({ entries, authors }) => {
-  const promises = authors.map(async a => {
-    if (a) {
-      let author = await Author.findOne({
-        _id: a,
-      }).catch(err => console.log(err))
-      if (author) {
-        let newInput = author
-        let list = newInput.entries
-        list = list.concat(entries.filter(e => list.indexOf(e) < 0))
-        // figure out how to remove duplicates
-        newInput.entries = list
-        author = await Author.findOneAndUpdate(
-          { _id: a },
-          { $set: newInput },
-          { new: true }
-        ).catch(err => console.log(err))
-      }
-    }
-  })
-  return Promise.all(promises)
-}
-
-const addAuthorId = sources => {
-  const promises = sources.map(async s => {
-    if (s) {
-      let author = await Author.findOne({
-        id: s.author,
-      }).catch(err => console.log(err))
-      if (author) {
-        let newSource = s
-        newSource.authors = [author._id]
-        let source = await Source.findOneAndUpdate(
-          { _id: s._id },
-          { $set: newSource },
-          { new: true }
-        )
-        /*
-        let newInput = author
-        let list = newInput.entries
-        list = list.concat(entries.filter(e => list.indexOf(e) < 0))
-        // figure out how to remove duplicates
-        newInput.entries = list
-        author = await Author.findOneAndUpdate(
-          { _id: a },
-          { $set: newInput },
-          { new: true }
-        ).catch(err => console.log(err))
-        */
-      }
-    }
-  })
-  return Promise.all(promises)
-}
-
 module.exports = router
-
-const appendSourceToAuthorList = source => {
-  const newSource = source.reduce((acc, s) => {
-    const obj = {
-      author: s.author,
-      id: [s._id],
-    }
-    if (acc.length > 0) {
-      if (acc.some(e => e.author === s.author)) {
-        const index = acc.findIndex(a => a.author === s.author)
-        acc[index].id = acc[index].id.concat(s._id)
-        return acc
-      } else {
-        return acc.concat(obj)
-      }
-    }
-    return [obj]
-  }, [])
-  newSource.map(a => {
-    if (a) {
-      Author.findOne({
-        id: a.author,
-      })
-        .then(author => {
-          if (author) {
-            let newInput = author
-            newInput.sources = a.id
-            Author.findOneAndUpdate(
-              { id: a.author },
-              { $set: newInput },
-              { new: true }
-            ).catch(err => console.log(err))
-          }
-        })
-        .catch(err => console.log(err))
-    }
-  })
-}

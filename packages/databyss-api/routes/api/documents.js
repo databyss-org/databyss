@@ -1,7 +1,10 @@
 const express = require('express')
-const router = express.Router()
+
 const Document = require('../../models/Document')
+
 const auth = require('../../middleware/auth')
+
+const router = express.Router()
 
 // @route    POST api/document
 // @desc     Adds document
@@ -54,10 +57,10 @@ router.get('/:id', auth, async (req, res) => {
       return res.status(400).json({ msg: 'There is no document for this id' })
     }
 
-    res.json(document)
+    return res.json(document)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
+    return res.status(500).send('Server Error')
   }
 })
 
@@ -71,10 +74,10 @@ router.get('/', auth, async (req, res) => {
       return res.status(400).json({ msg: 'There are no documents' })
     }
 
-    res.json(document)
+    return res.json(document)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
+    return res.status(500).send('Server Error')
   }
 })
 
