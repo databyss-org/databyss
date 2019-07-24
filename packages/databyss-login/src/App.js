@@ -1,4 +1,5 @@
 import React from 'react'
+import ThemeProvider from '@databyss-org/ui/theming/ThemeProvider'
 import Button from '@material-ui/core/Button'
 import { setAuthToken, setGoogleAuthToken } from './utils/setAuthToken'
 import jwt from 'jsonwebtoken'
@@ -35,18 +36,20 @@ if (localStorage.token) {
 
 function App() {
   return (
-    <div className="App">
-      <Router>
-        <Header />
-        <div>
+    <ThemeProvider>
+      <div className="App">
+        <Router>
+          <Header />
           <div>
-            <Route exact path="/" component={Body} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/register" component={Register} />
+            <div>
+              <Route exact path="/" component={Body} />
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/register" component={Register} />
+            </div>
           </div>
-        </div>
-      </Router>
-    </div>
+        </Router>
+      </div>
+    </ThemeProvider>
   )
 }
 

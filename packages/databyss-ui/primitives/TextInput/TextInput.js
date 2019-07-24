@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { Platform } from 'react-native'
 import styled from '../styled'
 import styles, { defaultProps } from './styles'
+import IS_NATIVE from './../isNative'
 
 const TextInput = styled(
   {
@@ -12,32 +12,53 @@ const TextInput = styled(
   styles
 )
 
-export default ({ children, value, ...others }) => {
+export default ({ children, value, onChange, ...others }) => {
   const [inputValue, setInputValue] = useState(value)
-  const onChange = evt => {
-    setInputValue(
-      Platform.select({
-        ios: () => evt,
-        android: () => evt,
-        default: () => evt.target.value,
-      })()
-    )
+  const onValueChange = evt => {
+    onChange(evt)
+    setInputValue(IS_NATIVE ? evt : evt.target.value)
   }
 
-  const handlerProps = {
-    [Platform.select({
-      ios: 'onChangeText',
-      android: 'onChangeText',
-      default: 'onChange',
-    })]: onChange,
+  const [hover, setHover] = useState(false)
+  const toggleHover = () => {
+    setHover(!hover)
   }
+
+  const [focus, setFocus] = useState(false)
+
+  const sharedProps = {
+    ...defaultProps,
+    onFocus: () => setFocus(true),
+    onBlur: () => setFocus(false),
+    value: inputValue,
+  }
+
+  const sharedStyle = {
+    borderColor: focus ? 'black' : 'grey',
+  }
+
+  const webProps = {
+    ...sharedProps,
+    onChange: onValueChange,
+    onMouseEnter: toggleHover,
+    onMouseLeave: toggleHover,
+    style: {
+      ...sharedStyle,
+      outline: 'none',
+      backgroundColor: hover ? 'lightGrey' : 'white',
+    },
+  }
+
+  const nativeProps = {
+    ...sharedProps,
+    onChangeText: onValueChange,
+    style: {
+      ...sharedStyle,
+    },
+  }
+
   return (
-    <TextInput
-      {...defaultProps}
-      value={inputValue}
-      {...handlerProps}
-      {...others}
-    >
+    <TextInput {...(!IS_NATIVE ? webProps : nativeProps)} {...others}>
       {children}
     </TextInput>
   )

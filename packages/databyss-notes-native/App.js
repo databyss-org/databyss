@@ -9,6 +9,8 @@ import {
 
 import { ThemeProvider } from '@databyss-org/ui/theming'
 import Text from '@databyss-org/ui/primitives/Text/Text'
+import TextInput from '@databyss-org/ui/primitives/TextInput/TextInput'
+import Button from '@databyss-org/ui/primitives/Button/Button'
 
 import {
   Header,
@@ -57,50 +59,15 @@ const styleProps = {
 
 const App = () => (
   <ThemeProvider>
-    <Fragment>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}
-        >
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text {...styleProps.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text {...styleProps.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text {...styleProps.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text {...styleProps.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </Fragment>
+    <View>
+      <Text> hello</Text>
+      <TextInput
+        value=""
+        placeholder="placeholder"
+        onChange={e => console.log(e)}
+      />
+      <Button label="butttttton" />
+    </View>
   </ThemeProvider>
 )
 

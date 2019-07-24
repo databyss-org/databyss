@@ -7,6 +7,11 @@ import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import Grid from '@material-ui/core/Grid'
 import Link from '@material-ui/core/Link'
+import TextInput from '@databyss-org/ui/primitives/TextInput/TextInput'
+import Buttons from '@databyss-org/ui/primitives/Button/Button'
+
+import Text from '@databyss-org/ui/primitives/Text/Text'
+
 import { makeStyles } from '@material-ui/core/styles'
 import { login, setGoogleAuthToken } from './../actions'
 
@@ -38,8 +43,10 @@ const Login = ({ history }) => {
 
   const onSubmit = async e => {
     e.preventDefault()
-    login({ formData, history })
+    // login({ formData, history })
   }
+
+  console.log(formData)
 
   const responseGoogle = response => {
     if (response.tokenId) {
@@ -59,7 +66,7 @@ const Login = ({ history }) => {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-
+            <Text> wow </Text>
             <form
               noValidate
               autoComplete="off"
@@ -69,8 +76,35 @@ const Login = ({ history }) => {
                 minWidth: '300px',
               }}
             >
-              <TextField
+              <Buttons label="signin" />
+
+              <TextInput
                 autoFocus
+                id="outlined-email-input"
+                type="email"
+                required
+                value={email}
+                placeholder="email"
+                onChange={e => onChange(e)}
+                name="email"
+                autoComplete="email"
+              />
+
+              <TextInput
+                id="outlined-password-input"
+                label="Password"
+                type="password"
+                placeholder="password"
+                required
+                value={password}
+                name="password"
+                onChange={e => onChange(e)}
+                autoComplete="current-password"
+                margin="normal"
+                variant="outlined"
+              />
+              {/*
+              <TextField
                 id="outlined-email-input"
                 label="Email"
                 type="email"
@@ -94,6 +128,8 @@ const Login = ({ history }) => {
                 margin="normal"
                 variant="outlined"
               />
+
+*/}
               <Button
                 type="submit"
                 fullWidth
