@@ -1,12 +1,14 @@
 import React, { useState } from 'react'
 import theme from '@databyss-org/ui/theming/theme'
 import { TouchableHighlight, Text } from 'react-native'
+import _ from 'lodash'
 
 import styled from '../styled'
-import styles, { defaultProps } from './styles'
+import styles, { defaultProps, themes } from './styles'
 import IS_NATIVE from './../isNative'
 
-const { colors, fontSizes } = theme
+const { fontSizes } = theme
+
 const Button = styled(
   {
     ios: 'View',
@@ -16,8 +18,7 @@ const Button = styled(
   styles
 )
 
-console.log(fontSizes)
-export default ({ label, onChange, ...others }) => {
+export default ({ label, onClick, style, ...others }) => {
   const [hover, setHover] = useState(false)
   const toggleHover = () => {
     setHover(!hover)
@@ -28,20 +29,25 @@ export default ({ label, onChange, ...others }) => {
     setClick(bool)
   }
 
+  const buttonStyle = !_.isEmpty(style) ? style : 'primary'
+
   const sharedProps = {
     ...defaultProps,
   }
 
-  const sharedStyle = {}
+  const sharedStyle = {
+    height: 40,
+    borderColor: themes[buttonStyle].borderColor,
+  }
 
   const backgroundColor = () => {
     if (hover) {
       if (click) {
-        return colors.blues[0]
+        return themes[buttonStyle].pressed
       }
-      return colors.blues[3]
+      return themes[buttonStyle].hover
     }
-    return colors.blues[1]
+    return themes[buttonStyle].primary
   }
 
   const webProps = {
@@ -51,10 +57,11 @@ export default ({ label, onChange, ...others }) => {
     onMouseLeave: toggleHover,
     onMouseDown: () => isClick(true),
     onMouseUp: () => isClick(false),
+    onClick,
     style: {
       ...sharedStyle,
       outline: 'none',
-      color: colors.white,
+      color: themes[buttonStyle].fontColor,
       backgroundColor: backgroundColor(),
     },
   }
@@ -70,15 +77,21 @@ export default ({ label, onChange, ...others }) => {
   const ButtonLabel = IS_NATIVE ? (
     <TouchableHighlight
       onPress={() => console.log('pressed')}
-      underlayColor={colors.blues[0]}
+      underlayColor={themes[buttonStyle].pressed}
       style={{
         flex: 1,
         alignItems: 'center',
-        backgroundColor: colors.blues[1],
-        padding: 14,
+        justifyContent: 'center',
+        backgroundColor: themes[buttonStyle].primary,
+        // padding: 14,
       }}
     >
-      <Text style={{ color: colors.white, fontSize: fontSizes.normal }}>
+      <Text
+        style={{
+          color: themes[buttonStyle].fontColor,
+          fontSize: fontSizes.normal,
+        }}
+      >
         {label}
       </Text>
     </TouchableHighlight>

@@ -10,7 +10,7 @@ import Link from '@material-ui/core/Link'
 import TextInput from '@databyss-org/ui/primitives/TextInput/TextInput'
 import Buttons from '@databyss-org/ui/primitives/Button/Button'
 
-import Text from '@databyss-org/ui/primitives/Text/Text'
+// import Text from '@databyss-org/ui/primitives/Text/Text'
 
 import { makeStyles } from '@material-ui/core/styles'
 import { login, setGoogleAuthToken } from './../actions'
@@ -66,7 +66,6 @@ const Login = ({ history }) => {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Text> wow </Text>
             <form
               noValidate
               autoComplete="off"
@@ -76,8 +75,6 @@ const Login = ({ history }) => {
                 minWidth: '300px',
               }}
             >
-              <Buttons label="signin" />
-
               <TextInput
                 autoFocus
                 id="outlined-email-input"
@@ -130,6 +127,8 @@ const Login = ({ history }) => {
               />
 
 */}
+              <Buttons label="Sign In" style="primary" onClick={onSubmit} />
+              {/*
               <Button
                 type="submit"
                 fullWidth
@@ -138,8 +137,10 @@ const Login = ({ history }) => {
                 onClick={onSubmit}
                 className={classes.submit}
               >
+     
                 Sign In
               </Button>
+                       */}
               <Grid container>
                 <Grid item xs>
                   <Link href="#" variant="body2">
@@ -152,27 +153,20 @@ const Login = ({ history }) => {
                   </Link>
                 </Grid>
               </Grid>
-              <div>
-                <GoogleLogin
-                  clientId="364426797891-ebkvbpfkpdoh3kb9451b30s5etqq04km.apps.googleusercontent.com"
-                  buttonText="Login"
-                  render={renderProps => (
-                    <Button
-                      onClick={renderProps.onClick}
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      className={classes.googleButton}
-                    >
-                      Sign in with Google
-                    </Button>
-                  )}
-                  onSuccess={responseGoogle}
-                  onFailure={responseGoogle}
-                  cookiePolicy={'single_host_origin'}
-                />
-              </div>
+              <GoogleLogin
+                clientId="364426797891-ebkvbpfkpdoh3kb9451b30s5etqq04km.apps.googleusercontent.com"
+                buttonText="Login"
+                render={renderProps => (
+                  <Buttons
+                    label="Sign in with Google"
+                    style="external"
+                    onClick={renderProps.onClick}
+                  />
+                )}
+                onSuccess={responseGoogle}
+                onFailure={responseGoogle}
+                cookiePolicy={'single_host_origin'}
+              />
             </form>
           </Col>
         </Row>

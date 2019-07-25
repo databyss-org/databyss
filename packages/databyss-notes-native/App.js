@@ -66,7 +66,7 @@ const App = () => (
         placeholder="placeholder"
         onChange={e => console.log(e)}
       />
-      <Button label="butttttton" />
+      <Button label="butttttton" style="external" />
     </View>
   </ThemeProvider>
 )

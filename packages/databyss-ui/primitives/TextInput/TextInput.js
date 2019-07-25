@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import styled from '../styled'
-import styles, { defaultProps } from './styles'
+import styles, { defaultProps, themes } from './styles'
 import IS_NATIVE from './../isNative'
+
+const { primary } = themes
 
 const TextInput = styled(
   {
@@ -34,7 +36,7 @@ export default ({ children, value, onChange, ...others }) => {
   }
 
   const sharedStyle = {
-    borderColor: focus ? 'black' : 'grey',
+    borderColor: focus ? primary.borderColorActive : primary.borderColor,
   }
 
   const webProps = {
@@ -45,7 +47,7 @@ export default ({ children, value, onChange, ...others }) => {
     style: {
       ...sharedStyle,
       outline: 'none',
-      backgroundColor: hover ? 'lightGrey' : 'white',
+      backgroundColor: hover ? primary.backgroundHover : 'white',
     },
   }
 

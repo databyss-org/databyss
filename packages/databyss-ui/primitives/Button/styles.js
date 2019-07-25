@@ -1,3 +1,4 @@
+import theme from '@databyss-org/ui/theming/theme'
 import {
   typography,
   color,
@@ -6,6 +7,8 @@ import {
   border,
   variant,
 } from 'styled-system'
+
+const { colors } = theme
 
 const textSize = variant({
   prop: 'textSize',
@@ -25,4 +28,35 @@ export const defaultProps = {
   borderRadius: 6,
   borderWidth: 2,
   textSize: 'normal',
+}
+
+export const themes = {
+  primary: {
+    primary: colors.blues[1],
+    hover: colors.blues[2],
+    pressed: colors.blues[0],
+    borderColor: colors.blues[2],
+    fontColor: colors.white,
+  },
+  secondary: {
+    primary: colors.white,
+    hover: colors.greys[6],
+    pressed: colors.greys[5],
+    borderColor: colors.black,
+    fontColor: colors.black,
+  },
+  external: {
+    primary: colors.browns[2],
+    hover: colors.browns[1],
+    pressed: colors.browns[0],
+    borderColor: colors.oranges[0],
+    fontColor: colors.oranges[0],
+  },
+  disabled: {
+    primary: colors.browns[2],
+    hover: colors.browns[1],
+    pressed: colors.browns[0],
+    borderColor: colors.oranges[0],
+    fontColor: colors.oranges[0],
+  },
 }
