@@ -1,6 +1,6 @@
 {
   "name": "databyss-login",
-  "version": "1.0.11",
+  "version": "1.1.1",
   "private": true,
   "dependencies": {
     "@babel/core": "7.4.3",
