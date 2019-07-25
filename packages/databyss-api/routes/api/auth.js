@@ -75,7 +75,7 @@ router.post(
           res.json({ token })
         }
       )
-      return undefined
+      return res.status(200)
     } catch (err) {
       console.error(err.message)
       res.status(500).send('Server error')

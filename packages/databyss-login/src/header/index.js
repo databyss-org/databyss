@@ -9,7 +9,7 @@ const Header = () => {
         <Col xs={12}>
           <Row between="xs">
             <Col xs={2} md={1}>
-              <Link to="/" style={{ textDecoration: 'none', color: 'white' }}>
+              <Link to="/" style={{ textDecoration: 'none', color: 'black' }}>
                 Databyss
               </Link>
             </Col>
@@ -18,14 +18,14 @@ const Header = () => {
                 <Col xs={6}>
                   <Link
                     to="/login"
-                    style={{ textDecoration: 'none', color: 'white' }}
+                    style={{ textDecoration: 'none', color: 'black' }}
                   >
                     Login
                   </Link>
                 </Col>
                 <Link
                   to="/register"
-                  style={{ textDecoration: 'none', color: 'white' }}
+                  style={{ textDecoration: 'none', color: 'black' }}
                 >
                   Register
                 </Link>

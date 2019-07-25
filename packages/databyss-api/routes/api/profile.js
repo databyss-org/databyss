@@ -1,9 +1,5 @@
 const express = require('express')
 
-const axios = require('axios')
-
-const mongoose = require('mongoose')
-
 const router = express.Router()
 
 const auth = require('../../middleware/auth')
@@ -167,59 +163,6 @@ router.delete('/', auth, async (req, res) => {
     console.error(err.message)
     return res.status(500).send('Server Error')
   }
-})
-
-// @route    POST api/profile/google
-// @desc     create or get profile info for google user
-// @access   Private
-router.post('/google', async (req, res) => {
-  // check if id is valid google id
-  const { token } = req.body
-
-  axios
-    .get(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`)
-    .then(async response => {
-      console.log(response.data.sub)
-      const id = mongoose.Types.ObjectId(response.data.sub)
-      console.log(id)
-
-      const profileFields = {}
-      profileFields.user = id
-
-      try {
-        let profile = await Profile.findOne({ user: id })
-
-        if (profile) {
-          // Update
-          console.log('update')
-          /*
-        profile = await Profile.findOneAndUpdate(
-          { user: req.user.id },
-          { $set: profileFields },
-          { new: true }
-        )
-  
-        return res.json(profile)
-        */
-        }
-
-        // Create
-
-        profile = new Profile(profileFields)
-
-        console.log(profile)
-        await profile.save()
-
-        return res.json(profile)
-      } catch (err) {
-        console.error(err.message)
-        return res.status(500).send('Server Error')
-      }
-    })
-    .catch(err => {
-      console.error(err.message)
-      return res.status(400).json({ msg: 'There is no profile for this user' })
-    })
 })
 
 module.exports = router

@@ -38,25 +38,11 @@ export const themes = {
     borderColor: colors.blues[2],
     fontColor: colors.white,
   },
-  secondary: {
-    primary: colors.white,
-    hover: colors.greys[6],
-    pressed: colors.greys[5],
-    borderColor: colors.black,
-    fontColor: colors.black,
-  },
   external: {
     primary: colors.browns[2],
     hover: colors.browns[1],
     pressed: colors.browns[0],
     borderColor: colors.oranges[0],
     fontColor: colors.oranges[0],
-  },
-  link: {
-    primary: colors.clear,
-    hover: colors.greys[6],
-    pressed: colors.browns[5],
-    borderColor: colors.clear,
-    fontColor: colors.blues[1],
   },
 }

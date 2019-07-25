@@ -1,8 +1,8 @@
 const express = require('express')
 
 const bcrypt = require('bcryptjs')
-
 const jwt = require('jsonwebtoken')
+const axios = require('axios')
 
 const { check, validationResult } = require('express-validator/check')
 
@@ -69,12 +69,77 @@ router.post(
           res.json({ token })
         }
       )
-      return undefined
+      return res.status(200)
     } catch (err) {
       console.error(err.message)
       return res.status(500).send('Server error')
     }
   }
 )
+
+// @route    POST api/users/google
+// @desc     create or get profile info for google user
+// @access   Private
+router.post('/google', async (req, res) => {
+  const { token } = req.body
+  axios
+    .get(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`)
+    .then(async response => {
+      const id = response.data.sub
+      try {
+        let user = await User.findOne({ googleId: id })
+
+        if (user) {
+          const payload = {
+            user: {
+              id: user.id,
+            },
+          }
+          jwt.sign(
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: 360000 },
+            (err, token) => {
+              if (err) throw err
+              res.json({ token })
+            }
+          )
+        }
+
+        const { name, email, sub } = response.data
+        user = new User({
+          name,
+          email,
+          googleId: sub,
+        })
+
+        await user.save()
+
+        const payload = {
+          user: {
+            id: user.id,
+          },
+        }
+
+        jwt.sign(
+          payload,
+          process.env.JWT_SECRET,
+          { expiresIn: '1y' },
+          (err, token) => {
+            if (err) throw err
+            res.json({ token })
+          }
+        )
+        return res.status(200)
+      } catch (err) {
+        console.error(err.message)
+        return res.status(500).send('Server Error')
+      }
+    })
+    .catch(err => {
+      console.error(err.message)
+      return res.status(400).json({ msg: 'There is no profile for this user' })
+    })
+})
 
 module.exports = router

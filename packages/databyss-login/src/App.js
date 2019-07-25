@@ -1,5 +1,6 @@
 import React from 'react'
 import ThemeProvider from '@databyss-org/ui/theming/ThemeProvider'
+import { checkToken } from './actions'
 import Button from '@material-ui/core/Button'
 import { setAuthToken, setGoogleAuthToken } from './utils/setAuthToken'
 import jwt from 'jsonwebtoken'
@@ -11,27 +12,9 @@ import Register from './body/Register'
 
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
 
-import './App.css'
-
-if (localStorage.googleToken) {
-  console.log(localStorage.googleToken)
-  axios
-    .get(
-      `https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${
-        localStorage.googleToken
-      }`
-    )
-    .then(response => {
-      if (response.data.sub) {
-        setGoogleAuthToken(response.data.sub)
-        console.log(response.data.sub)
-      }
-    })
-    .catch(err => console.log(err))
-}
-
 if (localStorage.token) {
-  console.log(localStorage.token)
+  const token = localStorage.getItem('token')
+  checkToken(token)
 }
 
 function App() {

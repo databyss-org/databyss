@@ -18,8 +18,7 @@ const Button = styled(
   styles
 )
 
-export default ({ label, onClick, buttonType, ...others }) => {
-  console.log(buttonType)
+export default ({ label, onClick, style, ...others }) => {
   const [hover, setHover] = useState(false)
   const toggleHover = () => {
     setHover(!hover)
@@ -30,7 +29,7 @@ export default ({ label, onClick, buttonType, ...others }) => {
     setClick(bool)
   }
 
-  const buttonStyle = !_.isEmpty(buttonType) ? buttonType : 'primary'
+  const buttonStyle = !_.isEmpty(style) ? style : 'primary'
 
   const sharedProps = {
     ...defaultProps,
@@ -62,7 +61,6 @@ export default ({ label, onClick, buttonType, ...others }) => {
     style: {
       ...sharedStyle,
       outline: 'none',
-      textDecoration: buttonType === 'link' ? 'underline' : 'none',
       color: themes[buttonStyle].fontColor,
       backgroundColor: backgroundColor(),
     },

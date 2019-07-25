@@ -15,7 +15,7 @@ import Buttons from '@databyss-org/ui/primitives/Button/Button'
 import { makeStyles } from '@material-ui/core/styles'
 import { login, setGoogleAuthToken } from './../actions'
 
-import { saveGoogleToken } from './../utils/setAuthToken'
+// import { saveGoogleToken } from './../utils/setAuthToken'
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -30,7 +30,8 @@ const useStyles = makeStyles(theme => ({
 }))
 
 const Login = ({ history }) => {
-  const classes = useStyles()
+  // const classes = useStyles()
+
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -43,15 +44,13 @@ const Login = ({ history }) => {
 
   const onSubmit = async e => {
     e.preventDefault()
-    // login({ formData, history })
+    login({ formData, history })
   }
-
-  console.log(formData)
 
   const responseGoogle = response => {
     if (response.tokenId) {
       const token = response.tokenId
-      saveGoogleToken(token)
+      // saveGoogleToken(token)
       setGoogleAuthToken({ token, history })
 
       history.push('/')
@@ -100,57 +99,28 @@ const Login = ({ history }) => {
                 margin="normal"
                 variant="outlined"
               />
-              {/*
-              <TextField
-                id="outlined-email-input"
-                label="Email"
-                type="email"
-                required
-                value={email}
-                onChange={e => onChange(e)}
-                name="email"
-                autoComplete="email"
-                margin="normal"
-                variant="outlined"
-              />
-              <TextField
-                id="outlined-password-input"
-                label="Password"
-                type="password"
-                required
-                value={password}
-                name="password"
-                onChange={e => onChange(e)}
-                autoComplete="current-password"
-                margin="normal"
-                variant="outlined"
+
+              <Buttons
+                label="Sign In"
+                buttonType="primary"
+                onClick={onSubmit}
+                type="submit"
               />
 
-*/}
-              <Buttons label="Sign In" style="primary" onClick={onSubmit} />
-              {/*
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="primary"
-                onClick={onSubmit}
-                className={classes.submit}
-              >
-     
-                Sign In
-              </Button>
-                       */}
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
+                  <Buttons
+                    label="Forgot Password"
+                    buttonType="link"
+                    onClick={onSubmit}
+                  />
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
-                    {"Don't have an account? Sign Up"}
-                  </Link>
+                  <Buttons
+                    label="Sign Up"
+                    buttonType="link"
+                    onClick={() => history.push('/register')}
+                  />
                 </Grid>
               </Grid>
               <GoogleLogin
@@ -159,7 +129,7 @@ const Login = ({ history }) => {
                 render={renderProps => (
                   <Buttons
                     label="Sign in with Google"
-                    style="external"
+                    buttonType="external"
                     onClick={renderProps.onClick}
                   />
                 )}

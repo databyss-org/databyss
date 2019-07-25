@@ -8,6 +8,8 @@ const colors = {
   yellow: '#FFE766',
   black: '#000',
   white: '#fff',
+  clear: 'rgba(0,0,0,0)',
+
   greys: [
     '#181510',
     '#312A21',
