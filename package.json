@@ -129,7 +129,7 @@
           "^(?!.*\\.(js|json)$)": "<rootDir>/config/jest/fileTransform.js"
         },
         "transformIgnorePatterns": [
-          "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
+          "node_modules/(?!(react-native-web)/)"
         ],
         "moduleFileExtensions": [
           "js",
@@ -179,11 +179,6 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-    ]
-  },
-  "babel": {
-    "presets": [
-      "react-app"
     ]
   }
 }
