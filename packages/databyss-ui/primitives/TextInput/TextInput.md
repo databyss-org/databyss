@@ -1,3 +1,3 @@
 ```js
-<TextInput value="hello" />
+<TextInput value="hello" onChange={e => console.log(e)} />
 ```

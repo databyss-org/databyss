@@ -1,3 +1,0 @@
-```js
-<TextInput value="hello" />
-```
