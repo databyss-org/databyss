@@ -1,8 +1,8 @@
 const express = require('express')
-
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
+const sgMail = require('@sendgrid/mail')
 
 const { check, validationResult } = require('express-validator/check')
 
@@ -141,5 +141,63 @@ router.post('/google', async (req, res) => {
       return res.status(400).json({ msg: 'There is no profile for this user' })
     })
 })
+
+// @route    POST api/users/email
+// @desc     creates new user and sends email
+// @access   Private
+router.post(
+  '/email',
+  [check('email', 'Please include a valid email').isEmail()],
+  async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() })
+    }
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+    const { email } = req.body
+
+    try {
+      let user = await User.findOne({ email })
+
+      if (!user) {
+        // Creates new user
+        user = new User({
+          email,
+        })
+        await user.save()
+      }
+
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      }
+      jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: '1y' },
+        (err, token) => {
+          if (err) throw err
+          const msg = {
+            to: email,
+            from: 'test@email.com',
+            subject: 'Log in to Databyss',
+            text: 'Click here to log in to Databyss',
+            html: `<p>Click <a href="${
+              process.env.HOST
+            }/login/${token}">here</a> to log in to Databyss</p>`,
+          }
+          sgMail.send(msg)
+          res.status(200).send('check email')
+        }
+      )
+
+      return res.status(200)
+    } catch (err) {
+      console.error(err.message)
+      return res.status(500).send('Server error')
+    }
+  }
+)
 
 module.exports = router

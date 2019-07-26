@@ -22,12 +22,6 @@ const Header = () => (
                   Login
                 </Link>
               </Col>
-              <Link
-                to="/register"
-                style={{ textDecoration: 'none', color: 'black' }}
-              >
-                Register
-              </Link>
             </Row>
           </Col>
         </Row>

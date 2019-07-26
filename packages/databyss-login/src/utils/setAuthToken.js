@@ -5,14 +5,6 @@ axios.defaults.baseURL =
     ? 'http://localhost:5000'
     : 'https://thawing-mountain-34862.herokuapp.com'
 
-export const setAuthToken = token => {
-  if (token) {
-    // check to see if token is valid
-    // redirect
-    // localStorage.setItem('token', token)
-  }
-}
-
 export const setGoogleAuthToken = ({ token }) => {
   if (token) {
     axios
