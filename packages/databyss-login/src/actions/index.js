@@ -36,8 +36,8 @@ export const checkToken = async token => {
       console.log('success')
     }
   } catch (err) {
-    const errors = err.response.data.errors
-    console.log(errors)
+    // const errors = err.response.data.errors
+    console.log(err)
   }
 }
 

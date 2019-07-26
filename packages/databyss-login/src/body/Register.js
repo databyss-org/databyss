@@ -1,35 +1,18 @@
 import React, { useState } from 'react'
-import { Row, Col } from 'react-flexbox-grid'
-import { Link as RouterLink } from 'react-router-dom'
-import Grid from '@material-ui/core/Grid'
-import { makeStyles } from '@material-ui/core/styles'
+import { Grid, Row, Col } from 'react-flexbox-grid'
+// import Grid from '@material-ui/core/Grid'
 import TextInput from '@databyss-org/ui/primitives/TextInput/TextInput'
 import Buttons from '@databyss-org/ui/primitives/Button/Button'
 import { register } from './../actions'
 
-const useStyles = makeStyles(theme => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
+/*
+form style 
+
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}))
+*/
 
 const Register = ({ history }) => {
-  const classes = useStyles()
-
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -47,7 +30,6 @@ const Register = ({ history }) => {
     register({ formData, history })
   }
 
-  console.log(formData)
   return (
     <Row middle="xs" style={{ height: '90vh' }}>
       <Col xs={12}>
@@ -55,7 +37,6 @@ const Register = ({ history }) => {
           <Col xs={12}>
             {' '}
             <form
-              className={classes.form}
               noValidate
               style={{
                 display: 'inline-grid',
@@ -63,53 +44,53 @@ const Register = ({ history }) => {
                 minWidth: '300px',
               }}
             >
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
+              <Grid>
+                <Grid>
                   <TextInput
                     autoFocus
                     id="firstName"
                     label="First name"
                     placeholder="First Name"
                     required
-                    value=""
+                    value={firstName}
                     name="firstName"
                     onChange={e => onChange(e)}
                     autoComplete="fname"
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid>
                   <TextInput
                     id="lastName"
                     label="Last name"
                     placeholder="Last Name"
                     required
-                    value=""
+                    value={lastName}
                     name="lastName"
                     onChange={e => onChange(e)}
                     autoComplete="lname"
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid>
                   <TextInput
                     autoFocus
                     id="outlined-email-input"
                     type="email"
                     required
-                    value=""
+                    value={email}
                     placeholder="email"
                     onChange={e => onChange(e)}
                     name="email"
                     autoComplete="email"
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid>
                   <TextInput
                     id="outlined-password-input"
                     label="Password"
                     type="password"
                     placeholder="password"
                     required
-                    value=""
+                    value={password}
                     name="password"
                     onChange={e => onChange(e)}
                     autoComplete="current-password"
@@ -124,8 +105,8 @@ const Register = ({ history }) => {
                 onClick={onSubmit}
                 type="submit"
               />
-              <Grid container justify="flex-end">
-                <Grid item>
+              <Grid>
+                <Grid>
                   <Buttons
                     label="Already have an account? Sign in"
                     buttonType="link"

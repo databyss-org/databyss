@@ -1,33 +1,15 @@
 import React, { useState } from 'react'
 import { GoogleLogin } from 'react-google-login'
-import { Route, Redirect, withRouter } from 'react-router'
-import { Row, Col } from 'react-flexbox-grid'
-import TextField from '@material-ui/core/TextField'
-import Typography from '@material-ui/core/Typography'
-import Button from '@material-ui/core/Button'
-import Grid from '@material-ui/core/Grid'
-import Link from '@material-ui/core/Link'
+import { withRouter } from 'react-router'
+import { Grid, Row, Col } from 'react-flexbox-grid'
 import TextInput from '@databyss-org/ui/primitives/TextInput/TextInput'
 import Buttons from '@databyss-org/ui/primitives/Button/Button'
 
 // import Text from '@databyss-org/ui/primitives/Text/Text'
 
-import { makeStyles } from '@material-ui/core/styles'
 import { login, setGoogleAuthToken } from './../actions'
 
 // import { saveGoogleToken } from './../utils/setAuthToken'
-
-const useStyles = makeStyles(theme => ({
-  submit: {
-    marginTop: '16px',
-    marginBottom: '16px',
-  },
-  googleButton: {
-    backgroundColor: 'red',
-    marginTop: '16px',
-    marginBottom: '16px',
-  },
-}))
 
 const Login = ({ history }) => {
   // const classes = useStyles()
@@ -62,9 +44,7 @@ const Login = ({ history }) => {
       <Col xs={12}>
         <Row around="xs">
           <Col xs={12}>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
+            <p>Sign in</p>
             <form
               noValidate
               autoComplete="off"
@@ -107,15 +87,15 @@ const Login = ({ history }) => {
                 type="submit"
               />
 
-              <Grid container>
-                <Grid item xs>
+              <Grid>
+                <Grid>
                   <Buttons
                     label="Forgot Password"
                     buttonType="link"
                     onClick={onSubmit}
                   />
                 </Grid>
-                <Grid item>
+                <Grid>
                   <Buttons
                     label="Sign Up"
                     buttonType="link"
@@ -135,7 +115,7 @@ const Login = ({ history }) => {
                 )}
                 onSuccess={responseGoogle}
                 onFailure={responseGoogle}
-                cookiePolicy={'single_host_origin'}
+                cookiePolicy="single_host_origin"
               />
             </form>
           </Col>

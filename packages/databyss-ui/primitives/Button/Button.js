@@ -19,7 +19,6 @@ const Button = styled(
 )
 
 export default ({ label, onClick, buttonType, ...others }) => {
-  console.log(buttonType)
   const [hover, setHover] = useState(false)
   const toggleHover = () => {
     setHover(!hover)

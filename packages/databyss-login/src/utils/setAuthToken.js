@@ -13,7 +13,7 @@ export const setAuthToken = token => {
   }
 }
 
-export const setGoogleAuthToken = ({ token, history }) => {
+export const setGoogleAuthToken = ({ token }) => {
   if (token) {
     axios
       .get(
