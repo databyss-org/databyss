@@ -50,6 +50,8 @@ We use React Native and Metro to build native apps that use our shared UI primit
 
 _NOTE_: Because the React Native module is shared for all workspaces in the monorepo, you must specify the version: `react-native init AwesomeApp --version X.XX.X` (use the version from `package.json`)
 
+- [ ] Remove `node_modules` directory and `yarn.lock` from the new native app directory
+
 - [ ] Move the new native app to a directory within `/packages`
 
 - [ ] Remove local config files because we want to inherit the global configs for the monorepo:
@@ -61,9 +63,11 @@ _NOTE_: Because the React Native module is shared for all workspaces in the mono
 
 - [ ] Replace `package.json` with the one from `databyss-notes-native` and update the package name.
 
+- [ ] Run `yarn` from the root directory of the repo
+
 - [ ] Replace `metro.config.js` with the one from `/packages/databyss-notes-native`
 
-- [ ] In the root `package.json`, copy the `scripts` entry for `metro:notes` and change `databyss-notes-native` to your app directory name
+- [ ] In the root `package.json`, copy the `scripts` entry for `metro:notes`, rename it to `metro:[app name]` and change `databyss-notes-native` to your app directory name
 
 ## Happy coding!
 
