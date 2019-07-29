@@ -12,9 +12,8 @@ export const login = async ({ formData, history }) => {
   try {
     const res = await axios.post('/api/auth', body, config)
     if (res.status === 200) {
-      history.push('/')
       localStorage.setItem('token', res.data)
-      // REDIRECT HERE
+      history.push('/')
     }
   } catch (err) {
     const errors = err.response.data.errors
@@ -22,7 +21,7 @@ export const login = async ({ formData, history }) => {
   }
 }
 
-export const checkToken = async ({ token, history }) => {
+export const checkToken = async ({ token }) => {
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -33,8 +32,7 @@ export const checkToken = async ({ token, history }) => {
     const res = await axios.get('/api/auth', {}, config)
     if (res.status === 200) {
       localStorage.setItem('token', token)
-      // REDIRECT HERE
-      history.push('/newpage')
+      window.location = '/'
     }
   } catch (err) {
     // const errors = err.response.data.errors
@@ -57,9 +55,8 @@ export const register = async ({ formData, history }) => {
   try {
     const res = await axios.post('/api/users', body, config)
     if (res.status === 200) {
-      history.push('/')
       localStorage.setItem('token', res.data.token)
-      // REDIRECT HERE
+      history.push('/')
     }
   } catch (err) {
     const errors = err.response.data.errors

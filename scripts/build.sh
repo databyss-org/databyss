@@ -10,6 +10,10 @@ then
 elif [ $NPM_DEPLOY_TARGET == DEMO ]
 then
   npm run storybook:build
+elif [ $NPM_DEPLOY_TARGET == NOTES_APP ]
+then
+  NPM_BUILD_TARGET=NOTES_APP node scripts/build.js
+  NPM_BUILD_TARGET=LOGIN_APP PUBLIC_URL=/login node scripts/build.js
 else
   echo 'ERROR: NO TARGETS FOUND'
   exit 1
