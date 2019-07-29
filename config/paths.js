@@ -70,6 +70,9 @@ function getAppIndexJs(deployTarget) {
     case 'NOTES_APP': {
       return resolveApp('packages/databyss-notes/index.js')
     }
+    case 'API_SERVER': {
+      return null
+    }
     default: {
       throw new Error(`Invalid deployTarget: ${deployTarget}`)
     }
@@ -84,6 +87,9 @@ function getAppBuild(deployTarget) {
     case 'NOTES_APP': {
       return resolveApp('build')
     }
+    case 'API_SERVER': {
+      return resolveApp('build/api')
+    }
     default: {
       throw new Error(`Invalid deployTarget: ${deployTarget}`)
     }
@@ -97,6 +103,9 @@ function getAppDevPublic(deployTarget) {
     }
     case 'NOTES_APP': {
       return resolveApp('build')
+    }
+    case 'API_SERVER': {
+      return null
     }
     default: {
       throw new Error(`Invalid deployTarget: ${deployTarget}`)
