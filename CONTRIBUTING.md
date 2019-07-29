@@ -69,6 +69,8 @@ _NOTE_: Because the React Native module is shared for all workspaces in the mono
 
 - [ ] In the root `package.json`, copy the `scripts` entry for `metro:notes`, rename it to `metro:[app name]` and change `databyss-notes-native` to your app directory name
 
+_NOTE_: When running the Android app, you may get an error about a missing keystore file. You can [download it here](https://raw.githubusercontent.com/facebook/react-native/master/template/android/app/debug.keystore) and put it in the `app` directory within the native app package directory.
+
 ## Happy coding!
 
 See you on the [Slack](https://databyssorg.slack.com/#dev)

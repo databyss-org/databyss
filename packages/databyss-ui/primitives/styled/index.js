@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 
-export default function getStyled(component, styles) {
-  return styled[component.default](styles)
-}
+export default (component, styles) =>
+  component.default
+    ? styled[component.default](styles)
+    : styled(component)(styles)

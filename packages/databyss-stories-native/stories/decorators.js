@@ -1,15 +1,19 @@
 import React from 'react'
 import { ThemeProvider } from '@databyss-org/ui/theming'
-import { View } from 'react-native'
-
-const style = {
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-}
+import { ScrollView, View } from 'react-native'
 
 export const ThemeDecorator = storyFn => (
-  <ThemeProvider>
-    <View style={style}>{storyFn()}</View>
-  </ThemeProvider>
+  <ThemeProvider>{storyFn()}</ThemeProvider>
+)
+
+export const ContentDecorator = storyFn => (
+  <View style={{ flex: 1 }}>
+    <ScrollView
+      contentContainerStyle={{
+        padding: 24,
+      }}
+    >
+      {storyFn()}
+    </ScrollView>
+  </View>
 )

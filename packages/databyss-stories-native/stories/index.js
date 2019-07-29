@@ -1,8 +1,8 @@
-import React from 'react'
 import { storiesOf } from '@storybook/react-native'
-import Text from '@databyss-org/ui/primitives/Text/Text'
-import { ThemeDecorator } from './decorators'
+import Typography from '@databyss-org/ui/stories/Styleguides/Typography'
+import { ThemeDecorator, ContentDecorator } from './decorators'
 
-storiesOf('CenteredView', module)
+storiesOf('Styleguides', module)
   .addDecorator(ThemeDecorator)
-  .add('default view', () => <Text>Hello Storybook</Text>)
+  .addDecorator(ContentDecorator)
+  .add('Typography', Typography)
