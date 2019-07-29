@@ -89,6 +89,7 @@
   },
   "scripts": {
     "start:login": "node scripts/start.js",
+    "start:docs": "cd ./packages/databyss-documentation/website && yarn run start",
     "start:server": "nodemon packages/databyss-api/server.js",
     "build:login": "node scripts/build.js",
     "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
@@ -165,6 +166,7 @@
     "babel-plugin-require-context-hook": "^1.0.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "docusaurus": "^1.12.0",
     "eslint-config-react-app": "^4.0.1",
     "express": "^4.17.1",
     "express-validator": "^6.1.1",
