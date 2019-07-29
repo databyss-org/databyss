@@ -11,6 +11,7 @@ please see our [CONTRIBUTING](CONTRIBUTING.md) guide.
 
 - [Packages](#packages)
 - [Available Scripts](#available-scripts)
+
   - [yarn metro:notes](#yarn-metronotes)
   - [yarn build](#yarn-build)
   - [yarn build:ui](#yarn-buildui)
@@ -20,6 +21,8 @@ please see our [CONTRIBUTING](CONTRIBUTING.md) guide.
   - [yarn storybook](#yarn-storybook)
   - [yarn storybook:build](#yarn-storybookbuild)
   - [yarn lint](#yarn-lint)
+  - [yarn start:server](#yarn-startserver)
+  - [yarn start:docs](#yarn-startdocs)
   - [yarn test](#yarn-test)
   - [yarn sync-versions](#yarn-sync-versions)
 
@@ -76,6 +79,14 @@ This runs `eslint` on the codebase and reports problems. See also [Linting](#lin
 Runs the linter and the [Jest](https://jestjs.io/) test runner in the interactive watch mode. It is a good idea to have this running while you develop to catch problems and ensure everything is passing before you make a PR.
 
 Learn more about writing tests in the [Contributing doc](CONTRIBUTING.md#writing-tests)
+
+### `yarn start:server`
+
+Runs the `@databyss-org/databyss-api` package on port `5000`
+
+### `yarn start:docs`
+
+Runs the Documentation on port `3000`
 
 ### `yarn sync-versions`
 
