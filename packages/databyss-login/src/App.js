@@ -10,7 +10,7 @@ function App() {
         <Router>
           <div>
             <div style={{ height: '90vh' }}>
-              <Route exact path="/:id?" component={Login} />
+              <Route exact path="/login/" component={Login} />
             </div>
           </div>
         </Router>

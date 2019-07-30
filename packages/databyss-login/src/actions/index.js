@@ -13,6 +13,12 @@ export const checkToken = async token => {
   }
 }
 
+export const checkCode = async code => {
+  if (await auth.checkCode(code)) {
+    window.location = '/'
+  }
+}
+
 export const register = async formData => {
   if (await auth.register(formData)) {
     window.location = '/'
