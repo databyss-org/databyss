@@ -115,7 +115,6 @@ export const register = async ({ firstName, lastName, email, password }) => {
 }
 
 export const registerWithEmail = async ({ email }) => {
-  console.log(email)
   const config = {
     headers: {
       'Content-Type': 'application/json',
@@ -132,7 +131,6 @@ export const registerWithEmail = async ({ email }) => {
       config
     )
     if (res.status === 200) {
-      console.log(res)
       return true
     }
   } catch (err) {

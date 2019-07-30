@@ -25,11 +25,9 @@ export const register = async formData => {
   }
 }
 
-export const registerWithEmail = async ({ formData, history }) => {
+export const registerWithEmail = async ({ formData, onEmailSuccess }) => {
   if (await auth.registerWithEmail(formData)) {
-    history.push('/verify')
-    // SEND TO A CHECK EMAIL PAGE
-    // REDIRECT HERE
+    onEmailSuccess()
   }
 }
 
