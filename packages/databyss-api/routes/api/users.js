@@ -158,17 +158,20 @@ router.post(
       return res.status(400).json({ errors: errors.array() })
     }
     sgMail.setApiKey(process.env.SENDGRID_API_KEY)
+
     const { email } = req.body
+    let emailExists = false
 
     try {
       let user = await User.findOne({ email })
-
       if (!user) {
         // Creates new user
         user = new User({
           email,
         })
         await user.save()
+      } else {
+        emailExists = true
       }
 
       const payload = {
@@ -186,17 +189,18 @@ router.post(
             code: hri.random(),
             token,
           })
-
           login.save()
 
           const msg = {
             to: email,
             from: 'test@email.com',
-            subject: 'Log in to Databyss',
-            text: 'Click here to log in to Databyss',
-            html: `<p>Click <a href="${process.env.LOGIN_URL}/?code=${
-              login.code
-            }">here</a> to log in to Databyss</p>`,
+            templateId: emailExists
+              ? 'd-9e03c4ebd5a24560b6e02a15af4b9b2e'
+              : 'd-845a6d7d37c14d828191b6c7933b20f7',
+            dynamic_template_data: {
+              code: login.code,
+              url: process.env.LOGIN_URL,
+            },
           }
           sgMail.send(msg)
           res.status(200).send('check email')
