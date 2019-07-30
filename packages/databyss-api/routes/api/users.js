@@ -79,9 +79,11 @@ router.post(
 
 // @route    POST api/users/google
 // @desc     create or get profile info for google user
-// @access   Private
+// @access   Public
 router.post('/google', async (req, res) => {
   const { token } = req.body
+
+  console.log(token)
   axios
     .get(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`)
     .then(async response => {
@@ -144,7 +146,7 @@ router.post('/google', async (req, res) => {
 
 // @route    POST api/users/email
 // @desc     creates new user and sends email
-// @access   Private
+// @access   Public
 router.post(
   '/email',
   [check('email', 'Please include a valid email').isEmail()],

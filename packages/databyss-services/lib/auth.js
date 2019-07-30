@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export function setAuthToken(value) {
-  setAuthToken(value)
+  localStorage.setItem('token', value)
 }
 
 export function getAuthToken() {
@@ -126,7 +126,11 @@ export const setGoogleAuthToken = async token => {
     }
     const body = JSON.stringify({ token })
     try {
-      const res = await axios.post('/api/users/google', body, config)
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/users/google`,
+        body,
+        config
+      )
       if (res.status === 200) {
         setAuthToken(res.data.token)
         return true

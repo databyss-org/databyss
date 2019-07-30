@@ -34,7 +34,7 @@ const Login = ({ match }) => {
     if (response.tokenId) {
       const token = response.tokenId
       setGoogleAuthToken(token)
-      window.location = '/'
+      // window.location = '/'
     }
   }
 
