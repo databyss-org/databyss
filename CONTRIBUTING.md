@@ -2,15 +2,40 @@
 
 Welcome to the Databyss team. We're happy you are present, although [presence has been deconstructed](http://www.returntocinder.com/motif/presence) so [question](https://databyssorg.slack.com) everything you see here!
 
+## Table of Contents
+
+- [Getting Started](#getting-started)
+- [Setup Checklist](#setup-checklist)
+- [Coding Style](#coding-style)
+- [Writing Tests](#writing-tests)
+- [Working on Native Apps](#working-on-native-apps)
+  - [Xcode](#xcode)
+  - [Android](#android)
+- [Adding Native Apps](#adding-native-apps)
+- [Environment Variables](#environment-variables)
+  - [Summary of Environment files in Use](#summary-of-environment-files-in-use)
+  - [Adding Development Environment Variables](#adding-development-environment-variables)
+  - [Environment Variables in Client Apps](#environment-variables-in-client-apps)
+  - [Expanding Environment Variables In `.env`](#expanding-environment-variables-in-env)
+  - [Local-only Environment Variables](#local-only-environment-variables)
+
 ## Getting started
 
-Always work from a local fork and submit changes via pull request.
+Always work from a local fork, include your GitHub name in the branch name, and submit changes via pull request:
 
 1.  Fork the databyss repository on Github
-2.  Clone your fork to your local machine `git clone git@github.com:<yourname>/databyss.git`
-3.  Create a branch `git checkout -b my-topic-branch`
-4.  Make your changes, lint, then push to to GitHub with `git push --set-upstream origin my-topic-branch`.
-5.  Visit GitHub and make your pull request.
+2.  Clone your fork to your local machine `git clone git@github.com:<your-name>/databyss.git`
+3.  Follow the [Setup Checklist](#setup-checklist)
+4.  Create a branch `git checkout -b <your-name>/<your-feature>`
+5.  Make your changes, lint, then push to to GitHub with `git push --set-upstream origin <your-name>/<your-feature>`.
+6.  Visit GitHub and make your pull request.
+
+## Setup checklist
+
+- [ ] Run `yarn` in the package root to install all the dependencies
+- [ ] Ensure that all of the [local environment variables](#local-environment-variables) are defined in `.env.development.local`. Ask for help on the [#dev channel](https://databyssorg.slack.com/#dev) if you need it.
+- [ ] If you are developing on the Native apps, follow the [Working on Native Apps](#working-on-native-apps) guide.
+- [ ] Use the [available scripts](README.md#available-scripts) to run or build an app or library
 
 ## Coding style
 
@@ -70,6 +95,65 @@ _NOTE_: Because the React Native module is shared for all workspaces in the mono
 - [ ] In the root `package.json`, copy the `scripts` entry for `metro:notes`, rename it to `metro:[app name]` and change `databyss-notes-native` to your app directory name
 
 _NOTE_: When running the Android app, you may get an error about a missing keystore file. You can [download it here](https://raw.githubusercontent.com/facebook/react-native/master/template/android/app/debug.keystore) and put it in the `app` directory within the native app package directory.
+
+## Environment variables
+
+We use the [dotenv](https://www.npmjs.com/package/dotenv) package to coordinate environment configurations, with a convention based on the one used by [create-react-app](https://github.com/facebook/create-react-app).
+
+### Summary of Environment Files in Use
+
+- `.env`: Default, loaded for all environments, in source control
+- `.env.local`: Local overrides, loaded for all environments except test, not in source control
+- `.env.development`, `.env.test`, `.env.production`: Environment-specific settings, in source control
+- `.env.development.local`, `.env.test.local`, `.env.production.local`: Local overrides of environment-specific settings, not in source control
+
+Files on the left have more priority than files on the right:
+
+- `yarn start:*`: `.env.development.local`, `.env.development`, `.env.local`, `.env`
+- `yarn build:*`: `.env.production.local`, `.env.production`, `.env.local`, `.env`
+- `yarn test:*`: `.env.test.local`, `.env.test`, `.env` (note `.env.local` is missing)
+
+### Adding Development Environment Variables
+
+To define permanent environment variables, edit the `.env.development` in the root of your project. If the value is sensitive and shouldn't be in source control, leave it blank as a template, add the sensitive key and value to `.env.development.local`, and make a note of it below in [Local-only Environment Variables](#local-only-environment-variables).
+
+`.env` files **should be** checked into source control (with the exclusion of `.env*.local`).
+
+### Environment Variables in Client Apps
+
+For variables intended to be read in a client app (e.g. not run by node on the server), you must create custom environment variables beginning with `REACT_APP_`. Any other variables except `NODE_ENV` will be ignored to avoid [accidentally exposing a private key on the machine that could have the same name](https://github.com/facebookincubator/create-react-app/issues/865#issuecomment-252199527). Changing any environment variables will require you to restart the development server if it is running.
+
+These environment variables will be defined for you on `process.env`. For example, having an environment
+variable named `REACT_APP_SECRET_CODE` will be exposed in your JS as `process.env.REACT_APP_SECRET_CODE`.
+
+### Expanding Environment Variables In `.env`
+
+Expand variables already on your machine for use in your `.env` file (using [dotenv-expand](https://github.com/motdotla/dotenv-expand)).
+
+For example, to get the environment variable `npm_package_version`:
+
+```
+REACT_APP_VERSION=$npm_package_version
+# also works:
+# REACT_APP_VERSION=${npm_package_version}
+```
+
+Or expand variables local to the current `.env` file:
+
+```
+DOMAIN=www.example.com
+REACT_APP_FOO=$DOMAIN/foo
+REACT_APP_BAR=$DOMAIN/bar
+```
+
+### Local-only Environment Variables
+
+The following environment vars are sensitive and should only be defined in `.env*.local` files. You must populate before running certain apps within the repo:
+
+```
+MONGO_URI=
+SENDGRID_API_KEY
+```
 
 ## Happy coding!
 

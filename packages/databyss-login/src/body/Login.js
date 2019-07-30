@@ -2,17 +2,24 @@ import React, { useState } from 'react'
 import { GoogleLogin } from 'react-google-login'
 import TextInput from '@databyss-org/ui/primitives/TextInput/TextInput'
 import Button from '@databyss-org/ui/primitives/Button/Button'
-import { registerWithEmail, checkToken, setGoogleAuthToken } from './../actions'
+import { getAuthToken } from '@databyss-org/services/lib/auth'
+import {
+  registerWithEmail,
+  checkToken,
+  setGoogleAuthToken,
+  checkCode,
+} from './../actions'
 
-const Login = ({ history, match }) => {
-  localStorage.clear()
-  if (match.params.id) {
-    checkToken({ token: match.params.id, history })
+const Login = ({ history }) => {
+  const urlParams = new URLSearchParams(window.location.search)
+
+  if (urlParams.has('code')) {
+    checkCode(urlParams.get('code'))
   }
 
-  if (localStorage.token) {
-    const token = localStorage.getItem('token')
-    checkToken({ token, history })
+  const token = getAuthToken()
+  if (token) {
+    checkToken(token)
   }
 
   const [formData, setFormData] = useState({
@@ -32,14 +39,13 @@ const Login = ({ history, match }) => {
   const responseGoogle = response => {
     if (response.tokenId) {
       const token = response.tokenId
-      setGoogleAuthToken({ token, history })
-      history.push('/')
+      setGoogleAuthToken(token)
+      // window.location = '/'
     }
   }
 
   return (
     <div
-      fluid
       style={{
         display: 'flex',
         justifyContent: 'center',

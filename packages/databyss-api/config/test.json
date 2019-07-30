@@ -1,0 +1,7 @@
+{
+  "mongoURI":
+    "mongodb+srv://databyss-api:EUdVPlI6xJQtiWXj@cluster0-zggfn.mongodb.net/test?retryWrites=true&w=majority",
+  "jwtSecret": "secret",
+  "githubClientId": "",
+  "githubSecret": ""
+}
