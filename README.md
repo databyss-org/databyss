@@ -103,5 +103,3 @@ Runs the Documentation on port `3000`
 ### `yarn sync-versions`
 
 This updates the versions of all of the workspaces sub-packages to match the version in the root-level `package.json`. Run this after bumping the version. See [CONTRIBUTING](CONTRIBUTING.md) for more about versioning.
-
-.
