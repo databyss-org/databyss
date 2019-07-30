@@ -4,13 +4,11 @@ const jwt = require('jsonwebtoken')
 const axios = require('axios')
 const sgMail = require('@sendgrid/mail')
 const hri = require('human-readable-ids').hri
-
 const { check, validationResult } = require('express-validator/check')
-
-const router = express.Router()
-
 const User = require('../../models/User')
 const Login = require('../../models/Login')
+
+const router = express.Router()
 
 // @route    POST api/users
 // @desc     Register user
