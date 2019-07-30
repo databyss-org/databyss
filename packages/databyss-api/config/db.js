@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
 
-require('dotenv').config()
-
 /*
 let dbURI =
   process.env.NODE_ENV === 'test'

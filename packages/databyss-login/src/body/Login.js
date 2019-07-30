@@ -2,17 +2,18 @@ import React, { useState } from 'react'
 import { GoogleLogin } from 'react-google-login'
 import TextInput from '@databyss-org/ui/primitives/TextInput/TextInput'
 import Button from '@databyss-org/ui/primitives/Button/Button'
+import { getAuthToken } from '@databyss-org/services/lib/auth'
 import { registerWithEmail, checkToken, setGoogleAuthToken } from './../actions'
 
-const Login = ({ history, match }) => {
+const Login = ({ match }) => {
   localStorage.clear()
   if (match.params.id) {
-    checkToken({ token: match.params.id, history })
+    checkToken(match.params.id)
   }
 
-  if (localStorage.token) {
-    const token = localStorage.getItem('token')
-    checkToken({ token, history })
+  const token = getAuthToken()
+  if (token) {
+    checkToken(token)
   }
 
   const [formData, setFormData] = useState({
@@ -26,14 +27,14 @@ const Login = ({ history, match }) => {
 
   const onSubmit = async e => {
     e.preventDefault()
-    registerWithEmail({ formData, history })
+    registerWithEmail(formData)
   }
 
   const responseGoogle = response => {
     if (response.tokenId) {
       const token = response.tokenId
-      setGoogleAuthToken({ token, history })
-      history.push('/')
+      setGoogleAuthToken(token)
+      window.location = '/'
     }
   }
 

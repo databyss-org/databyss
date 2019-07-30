@@ -1,5 +1,3 @@
-'use strict'
-
 const path = require('path')
 const fs = require('fs')
 const url = require('url')
@@ -17,9 +15,8 @@ function ensureSlash(inputPath, needsSlash) {
     return inputPath.substr(0, inputPath.length - 1)
   } else if (!hasSlash && needsSlash) {
     return `${inputPath}/`
-  } else {
-    return inputPath
   }
+  return inputPath
 }
 
 const getPublicUrl = appPackageJson =>
@@ -65,17 +62,68 @@ const resolveModule = (resolveFn, filePath) => {
   return resolveFn(`${filePath}.js`)
 }
 
+function getAppIndexJs(deployTarget) {
+  switch (deployTarget) {
+    case 'LOGIN_APP': {
+      return resolveApp('packages/databyss-login/index.js')
+    }
+    case 'NOTES_APP': {
+      return resolveApp('packages/databyss-notes/index.js')
+    }
+    case 'API_SERVER': {
+      return null
+    }
+    default: {
+      throw new Error(`Invalid deployTarget: ${deployTarget}`)
+    }
+  }
+}
+
+function getAppBuild(deployTarget) {
+  switch (deployTarget) {
+    case 'LOGIN_APP': {
+      return resolveApp('build/login')
+    }
+    case 'NOTES_APP': {
+      return resolveApp('build')
+    }
+    case 'API_SERVER': {
+      return resolveApp('build/api')
+    }
+    default: {
+      throw new Error(`Invalid deployTarget: ${deployTarget}`)
+    }
+  }
+}
+
+function getAppDevPublic(deployTarget) {
+  switch (deployTarget) {
+    case 'LOGIN_APP': {
+      return resolveApp('public')
+    }
+    case 'NOTES_APP': {
+      return resolveApp('build')
+    }
+    case 'API_SERVER': {
+      return null
+    }
+    default: {
+      throw new Error(`Invalid deployTarget: ${deployTarget}`)
+    }
+  }
+}
+
 // config after eject: we're in ./config/
 module.exports = {
   dotenv: resolveApp('.env'),
   appPath: resolveApp('.'),
-  appBuild: resolveApp('build'),
+  appBuild: getAppBuild(process.env.NPM_BUILD_TARGET),
   appPublic: resolveApp('public'),
+  appDevPublic: getAppDevPublic(process.env.NPM_BUILD_TARGET),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveModule(resolveApp, 'packages/databyss-login/src/index'),
+  appIndexJs: getAppIndexJs(process.env.NPM_BUILD_TARGET),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('packages'),
-  // packagesSrc: resolveApp('packages'),
   appTsConfig: resolveApp('tsconfig.json'),
   appJsConfig: resolveApp('jsconfig.json'),
   yarnLockFile: resolveApp('yarn.lock'),
