@@ -14,6 +14,9 @@ elif [ $NPM_DEPLOY_TARGET == NOTES_APP ]
 then
   NPM_BUILD_TARGET=NOTES_APP node scripts/build.js
   NPM_BUILD_TARGET=LOGIN_APP PUBLIC_URL=/login node scripts/build.js
+elif [ $NPM_DEPLOY_TARGET == API_SERVER ]
+then
+  echo 'SKIPPING BUILD FOR API_SERVER TARGET'
 else
   echo 'ERROR: NO TARGETS FOUND'
   exit 1

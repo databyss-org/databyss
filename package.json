@@ -10,14 +10,18 @@
   "author": "databyss-org",
   "license": "MIT",
   "private": true,
+  "engines": {
+    "node": "10.x"
+  },
   "scripts": {
+    "build": "bash scripts/build.sh",
+    "start": "bash scripts/start.sh",
     "start:notes": "NPM_DEPLOY_TARGET=NOTES_APP yarn build && NPM_BUILD_TARGET=NOTES_APP node scripts/start.js",
     "start:login": "NPM_BUILD_TARGET=LOGIN_APP PUBLIC_URL=/login node scripts/start.js",
     "start:docs": "cd ./packages/databyss-documentation/website && yarn run start",
     "start:server": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER NODE_ENV=development nodemon packages/databyss-api/server.js",
     "build:login": "node scripts/build.js",
     "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
-    "build": "bash scripts/build.sh",
     "build:ui": "NODE_ENV=production BABEL_ENV=production webpack --config packages/databyss-ui/webpack.config.js --mode=production",
     "test": "node scripts/test.js",
     "flow": "flow",
