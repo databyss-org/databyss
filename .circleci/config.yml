@@ -53,4 +53,9 @@ workflows:
   version: 2
   lint-and-test:
     jobs:
-      - build
+      - build:
+          filters:
+            branches:
+              only:
+                - master
+                - next
