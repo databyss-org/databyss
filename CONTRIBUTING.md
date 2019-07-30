@@ -15,6 +15,7 @@ Welcome to the Databyss team. We're happy you are present, although [presence ha
 - [Environment Variables](#environment-variables)
   - [Summary of Environment files in Use](#summary-of-environment-files-in-use)
   - [Adding Development Environment Variables](#adding-development-environment-variables)
+  - [Environment Variables in Client Apps](#environment-variables-in-client-apps)
   - [Expanding Environment Variables In `.env`](#expanding-environment-variables-in-env)
   - [Local-only Environment Variables](#local-only-environment-variables)
 
@@ -110,9 +111,14 @@ Files on the left have more priority than files on the right:
 
 To define permanent environment variables, edit the `.env.development` in the root of your project. If the value is sensitive and shouldn't be in source control, leave it blank as a template, add the sensitive key and value to `.env.development.local`, and make a note of it below in [Local-only Environment Variables](#local-only-environment-variables).
 
-> Note: For variables intended to be read in a client app (e.g. not run by node on the server), uou must create custom environment variables beginning with `REACT_APP_`. Any other variables except `NODE_ENV` will be ignored to avoid [accidentally exposing a private key on the machine that could have the same name](https://github.com/facebookincubator/create-react-app/issues/865#issuecomment-252199527). Changing any environment variables will require you to restart the development server if it is running.
-
 `.env` files **should be** checked into source control (with the exclusion of `.env*.local`).
+
+### Environment Variables in Client Apps
+
+For variables intended to be read in a client app (e.g. not run by node on the server), you must create custom environment variables beginning with `REACT_APP_`. Any other variables except `NODE_ENV` will be ignored to avoid [accidentally exposing a private key on the machine that could have the same name](https://github.com/facebookincubator/create-react-app/issues/865#issuecomment-252199527). Changing any environment variables will require you to restart the development server if it is running.
+
+These environment variables will be defined for you on `process.env`. For example, having an environment
+variable named `REACT_APP_SECRET_CODE` will be exposed in your JS as `process.env.REACT_APP_SECRET_CODE`.
 
 ### Expanding Environment Variables In `.env`
 
