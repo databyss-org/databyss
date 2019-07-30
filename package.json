@@ -87,7 +87,7 @@
     "webpack-node-externals": "^1.7.2",
     "whatwg-fetch": "2.0.3",
     "workbox-webpack-plugin": "^4.3.1"
-
+  },
   "engines": {
     "node": "10.x"
   },
@@ -99,7 +99,6 @@
     "start:docs": "cd ./packages/databyss-documentation/website && yarn run start",
     "metro:stories": "react-native start --reset-cache --config packages/databyss-stories-native/metro.config.js",
     "start:server": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER NODE_ENV=development nodemon packages/databyss-api/server.js",
-    "build:login": "node scripts/build.js",
     "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
     "build:ui": "NODE_ENV=production BABEL_ENV=production webpack --config packages/databyss-ui/webpack.config.js --mode=production",
     "build:login": "node scripts/build.js",
