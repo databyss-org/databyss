@@ -1,16 +1,11 @@
 const express = require('express')
-
 const _ = require('lodash')
+const Source = require('../../models/Source')
+const Author = require('../../models/Author')
+const auth = require('../../middleware/auth')
+const helpers = require('./helpers/entriesHelper')
 
 const router = express.Router()
-
-const Source = require('../../models/Source')
-
-const Author = require('../../models/Author')
-
-const auth = require('../../middleware/auth')
-
-const helpers = require('./helpers/entriesHelper')
 
 const {
   // appendSourceToAuthorList,
@@ -51,7 +46,7 @@ router.post('/', auth, async (req, res) => {
 
   // if new author add author and retrive ID
   if (authorFirstName || authorLastName) {
-    authors = !_.isEmptyisEmpty(authors) ? authors : []
+    authors = !_.isEmpty(authors) ? authors : []
     const author = new Author({
       firstName: authorFirstName,
       lastName: authorLastName,

@@ -1,15 +1,9 @@
 const express = require('express')
-
 const Entry = require('../../models/Entry')
-
 const Author = require('../../models/Author')
-
 const Source = require('../../models/Source')
-
 const auth = require('../../middleware/auth')
-
 const _ = require('lodash')
-
 const helpers = require('./helpers/entriesHelper')
 
 const router = express.Router()
@@ -123,7 +117,7 @@ router.post('/', auth, async (req, res) => {
       user: req.user.id,
     }
 
-    // CHECK HERE FOR IF ENTRY EXISTS
+    // CHECK HERE IF ENTRY EXISTS
     let entryExists = await Entry.findOne({ _id })
     if (entryExists) {
       if (req.user.id.toString() !== entryExists.user.toString()) {
@@ -167,7 +161,7 @@ router.post('/', auth, async (req, res) => {
   }
 })
 
-// @route    GET api/entry
+// @route    GET api/entry/:id
 // @desc     Get entry by ID
 // @access   Private
 
@@ -187,7 +181,7 @@ router.get('/:id', auth, async (req, res) => {
     if (!entry) {
       return res.status(400).json({ msg: 'There is no entry for this id' })
     }
-    // console.log(entry)
+
     if (!entry.default) {
       if (req.user.id.toString() !== entry.user.toString()) {
         return res.status(401).json({ msg: 'This post is private' })
