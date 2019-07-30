@@ -15,9 +15,9 @@
   "peerDependencies": {
     "@databyss-org/ui": "1.1.2",
     "@storybook/react": "1.1.2",
-    "react": "1.1.2",
-    "react-dom": "1.1.2",
-    "react-native": "1.1.2"
+    "react": "16.8.6",
+    "react-dom": "16.8.6",
+    "react-native": "^0.60.4"
   },
   "dependencies": {
     "@emotion/core": "^10.0.14",
