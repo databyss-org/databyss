@@ -3,12 +3,18 @@ import { GoogleLogin } from 'react-google-login'
 import TextInput from '@databyss-org/ui/primitives/TextInput/TextInput'
 import Button from '@databyss-org/ui/primitives/Button/Button'
 import { getAuthToken } from '@databyss-org/services/lib/auth'
-import { registerWithEmail, checkToken, setGoogleAuthToken } from './../actions'
+import {
+  registerWithEmail,
+  checkToken,
+  setGoogleAuthToken,
+  checkCode,
+} from './../actions'
 
-const Login = ({ match }) => {
-  localStorage.clear()
-  if (match.params.id) {
-    checkToken(match.params.id)
+const Login = ({ history }) => {
+  const urlParams = new URLSearchParams(window.location.search)
+
+  if (urlParams.has('code')) {
+    checkCode(urlParams.get('code'))
   }
 
   const token = getAuthToken()
@@ -27,7 +33,7 @@ const Login = ({ match }) => {
 
   const onSubmit = async e => {
     e.preventDefault()
-    registerWithEmail(formData)
+    registerWithEmail({ formData, history })
   }
 
   const responseGoogle = response => {
@@ -40,7 +46,6 @@ const Login = ({ match }) => {
 
   return (
     <div
-      fluid
       style={{
         display: 'flex',
         justifyContent: 'center',

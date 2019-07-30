@@ -3,12 +3,14 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
 const sgMail = require('@sendgrid/mail')
+const hri = require('human-readable-ids').hri
 
 const { check, validationResult } = require('express-validator/check')
 
 const router = express.Router()
 
 const User = require('../../models/User')
+const Login = require('../../models/Login')
 
 // @route    POST api/users
 // @desc     Register user
@@ -180,14 +182,21 @@ router.post(
         { expiresIn: '1y' },
         (err, token) => {
           if (err) throw err
+          const login = new Login({
+            code: hri.random(),
+            token,
+          })
+
+          login.save()
+
           const msg = {
             to: email,
             from: 'test@email.com',
             subject: 'Log in to Databyss',
             text: 'Click here to log in to Databyss',
-            html: `<p>Click <a href="${
-              process.env.HOST
-            }/login/${token}">here</a> to log in to Databyss</p>`,
+            html: `<p>Click <a href="${process.env.LOGIN_URL}/?code=${
+              login.code
+            }">here</a> to log in to Databyss</p>`,
           }
           sgMail.send(msg)
           res.status(200).send('check email')

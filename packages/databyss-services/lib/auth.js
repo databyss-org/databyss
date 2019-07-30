@@ -61,6 +61,31 @@ export const checkToken = async token => {
   return false
 }
 
+export const checkCode = async code => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+  const body = JSON.stringify({ code })
+  try {
+    const res = await axios.post(
+      `${process.env.REACT_APP_API_URL}/auth/code`,
+      body,
+      config
+    )
+
+    if (res.status === 200) {
+      setAuthToken(res.data.token)
+      return true
+    }
+  } catch (err) {
+    // const errors = err.response.data.errors
+    console.log(err)
+  }
+  return false
+}
+
 export const register = async ({ firstName, lastName, email, password }) => {
   const config = {
     headers: {
@@ -89,14 +114,15 @@ export const register = async ({ firstName, lastName, email, password }) => {
   return false
 }
 
-export const registerWithEmail = async ({ firstName, lastName, email }) => {
+export const registerWithEmail = async ({ email }) => {
+  console.log(email)
   const config = {
     headers: {
       'Content-Type': 'application/json',
     },
   }
   const body = JSON.stringify({
-    name: `${firstName} ${lastName}`,
+    // name: `${firstName} ${lastName}`,
     email,
   })
   try {
