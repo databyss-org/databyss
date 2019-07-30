@@ -27,6 +27,8 @@ please see our [CONTRIBUTING](CONTRIBUTING.md) guide.
   - [yarn start:docs](#yarn-startdocs)
   - [yarn test](#yarn-test)
   - [yarn sync-versions](#yarn-sync-versions)
+  - [yarn build](#yarn-build)
+  - [yarn start](#yarn-start)
 
 ## Packages
 
@@ -103,3 +105,11 @@ Runs the Documentation on port `3000`
 ### `yarn sync-versions`
 
 This updates the versions of all of the workspaces sub-packages to match the version in the root-level `package.json`. Run this after bumping the version. See [CONTRIBUTING](CONTRIBUTING.md) for more about versioning.
+
+### `yarn build`
+
+This command is used during deploy and will have no effect if run locally.
+
+### `yarn start`
+
+This command is used during deploy and will have no effect if run locally.
