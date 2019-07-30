@@ -1,6 +1,11 @@
 import React from 'react'
+import { variant } from 'styled-system'
 import styled from '../styled'
-import styles, { defaultProps } from './styles'
+
+const styles = variant({
+  prop: 'variant',
+  scale: 'textVariants',
+})
 
 const Text = styled(
   {
@@ -12,7 +17,7 @@ const Text = styled(
 )
 
 export default ({ children, ...others }) => (
-  <Text {...defaultProps} {...others}>
+  <Text variant="bodyNormal" {...others}>
     {children}
   </Text>
 )
