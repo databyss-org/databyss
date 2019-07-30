@@ -20,10 +20,10 @@ jobs:
       - checkout
 
       - run:
-          name: "Reset master branch"
+          name: "Reset next branch"
           command: |
-            git checkout -q master
-            git reset --hard origin/master
+            git checkout -q next
+            git reset --hard origin/next
             if [ -n "$CIRCLE_TAG" ]
             then
               git checkout "$CIRCLE_TAG"
