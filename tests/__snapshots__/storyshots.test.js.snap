@@ -3468,3 +3468,61 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
   </div>
 </main>
 `;
+
+exports[`Storyshots Styleguides Typography 1`] = `
+<main
+  className="root-0-0-5  Viewport-viewport undefined"
+  role="application"
+>
+  <div
+    aria-label="content"
+    className="Content-content"
+  >
+    <div
+      className="css-1vwme8n"
+    >
+      Headings
+    </div>
+    <div
+      className="css-13pilab"
+    >
+      Heading 1
+    </div>
+    <div
+      className="css-1pchfvn"
+    >
+      Veniam do ea non ut. Quis magna aute et consequat enim aute officia esse aute nulla magna.
+    </div>
+    <div
+      className="css-1n03hhd"
+    >
+      Heading 2
+    </div>
+    <div
+      className="css-1pchfvn"
+    >
+      Nisi consequat officia tempor aute officia amet officia exercitation id commodo exercitation consequat. Id exercitation amet eu aute do magna ex eiusmod deserunt deserunt do sit.
+    </div>
+    <div
+      className="css-1vwme8n"
+    >
+      Heading 3
+    </div>
+    <div
+      className="css-1pchfvn"
+    >
+      Occaecat cupidatat duis sint minim nostrud nostrud sint in. Ad mollit amet ad commodo eu.
+    </div>
+    <div
+      className="css-txy2p7"
+    >
+      Heading 4
+    </div>
+    <div
+      className="css-1pchfvn"
+    >
+      Exercitation est anim incididunt deserunt laboris. Laborum proident non ad incididunt qui ullamco cupidatat.
+    </div>
+  </div>
+</main>
+`;

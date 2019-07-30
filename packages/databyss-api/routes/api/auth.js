@@ -31,7 +31,7 @@ router.post('/code', async (req, res) => {
   try {
     const { code } = req.body
     const query = Login.findOne({ code })
-    query.exec(function(err, login) {
+    query.exec((err, login) => {
       if (err) {
         console.error(err.message)
         res.status(500).send('Server Error')
