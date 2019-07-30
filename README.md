@@ -11,6 +11,9 @@ please see our [CONTRIBUTING](CONTRIBUTING.md) guide.
 
 - [Packages](#packages)
 - [Available Scripts](#available-scripts)
+  - [yarn start:notes](#yarn-start-notes)
+  - [yarn start:login](#yarn-start-login)
+  - [yarn start:server](#yarn-start-server)
   - [yarn metro:notes](#yarn-metronotes)
   - [yarn build](#yarn-build)
   - [yarn build:ui](#yarn-buildui)
@@ -20,6 +23,8 @@ please see our [CONTRIBUTING](CONTRIBUTING.md) guide.
   - [yarn storybook](#yarn-storybook)
   - [yarn storybook:build](#yarn-storybookbuild)
   - [yarn lint](#yarn-lint)
+  - [yarn start:server](#yarn-startserver)
+  - [yarn start:docs](#yarn-startdocs)
   - [yarn test](#yarn-test)
   - [yarn sync-versions](#yarn-sync-versions)
 
@@ -32,9 +37,17 @@ please see our [CONTRIBUTING](CONTRIBUTING.md) guide.
 
 In the project directory, you can run:
 
+### `yarn start:notes`
+
+Runs the Webpack dev server for the notes web app (`/packages/databyss-notes`). Also builds a static version of `packages/databyss-login`. If you need to do development on the login app, use [yarn start:login](#yarn-start-login). _NOTE_: unless you have configured it to use a remote API, this app depends on a local instance of the API server to be running. See [yarn start:server](#yarn-start-server).
+
+### `yarn start:login`
+
+Runs the Webpack dev server for the login web app (`/packages/databyss-login`).
+
 ### `yarn metro:notes`
 
-Runs the Metro bundler for developing the notes-native app. Run this before running the app in the iOS or Android simulators.
+Runs the Metro bundler for developing the notes native app (`/packages/databyss-notes-native`). Run this before running the app in the iOS or Android simulators.
 
 ### `yarn build`
 
@@ -42,6 +55,8 @@ Runs `scripts/build.sh`, which looks for a deploy target set in the `NPM_DEPLOY_
 
 - If the variable's value is `STYLEGUIDE`, it runs [yarn styleguide:build](#yarn-styleguidebuild).
 - If the variable's value is `DEMO`, it runs [yarn storybook:build](#yarn-storybookbuild).
+- If the variable's value is `NOTES_APP`, it builds the notes web app (`/packages/databyss-notes`).
+- If the variable's value is `API_SERVER`, it builds the API (`/packages/databyss-api`).
 
 This is useful for deploying to a host that runs `yarn build` and then serves a static website from the `/build` directory, which is how our Heroku styleguide and module demo servers are configured.
 
@@ -76,6 +91,14 @@ This runs `eslint` on the codebase and reports problems. See also [Linting](#lin
 Runs the linter and the [Jest](https://jestjs.io/) test runner in the interactive watch mode. It is a good idea to have this running while you develop to catch problems and ensure everything is passing before you make a PR.
 
 Learn more about writing tests in the [Contributing doc](CONTRIBUTING.md#writing-tests)
+
+### `yarn start:server`
+
+Runs the `@databyss-org/databyss-api` package on port `5000`
+
+### `yarn start:docs`
+
+Runs the Documentation on port `3000`
 
 ### `yarn sync-versions`
 

@@ -19,7 +19,7 @@ export default (theme = defaultTheme) => ({
 
   linkButton: {
     color: theme.mediumGrey,
-    fontFamily: theme.navFont,
+    fontFamily: theme.uiFont,
     textDecoration: 'underline',
 
     '& path': {

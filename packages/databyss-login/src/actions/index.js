@@ -1,0 +1,38 @@
+import * as auth from '@databyss-org/services/lib/auth'
+
+export const login = async formData => {
+  const { email, password } = formData
+  if (await auth.login({ email, password })) {
+    window.location = '/'
+  }
+}
+
+export const checkToken = async token => {
+  if (await auth.checkToken(token)) {
+    window.location = '/'
+  }
+}
+
+export const checkCode = async code => {
+  if (await auth.checkCode(code)) {
+    window.location = '/'
+  }
+}
+
+export const register = async formData => {
+  if (await auth.register(formData)) {
+    window.location = '/'
+  }
+}
+
+export const registerWithEmail = async ({ formData, onEmailSuccess }) => {
+  if (await auth.registerWithEmail(formData)) {
+    onEmailSuccess()
+  }
+}
+
+export const setGoogleAuthToken = async token => {
+  if (await auth.setGoogleAuthToken(token)) {
+    window.location = '/'
+  }
+}

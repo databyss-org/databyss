@@ -38,16 +38,16 @@ const fonts = {
   mono,
 }
 
-fonts.headingFont = fonts.serif
+fonts.headingFont = fonts.sans
 fonts.bodyFont = fonts.serif
-fonts.navFont = fonts.sans
+fonts.uiFont = fonts.sans
 
 const fontWeights = [400, 600, 700].map(weightUnits)
 fontWeights.bold = fontWeights[2]
 fontWeights.semiBold = fontWeights[1]
 fontWeights.regular = fontWeights[0]
 
-const fontSizes = [EM, 0.7 * EM, 0.85 * EM, 1.2 * EM, 1.8 * EM]
+const fontSizes = [EM, EM, 0.85 * EM, 1.2 * EM, 1.8 * EM, 2.2 * EM]
 fontSizes.normal = fontSizes[0]
 fontSizes.extraSmall = fontSizes[1]
 fontSizes.small = fontSizes[2]
@@ -60,28 +60,64 @@ lineHeights.normal = lineHeights[1]
 lineHeights.large = lineHeights[2]
 lineHeights.extraLarge = lineHeights[3]
 
-/* combines fontSize and lineHeight */
-const textSizes = {
-  normal: {
-    fontSize: fontSizes.normal,
-    lineHeight: lineHeights.normal,
-  },
-  small: {
-    fontSize: fontSizes.small,
-    lineHeight: lineHeights.tight,
-  },
-  large: {
-    fontSize: fontSizes.large,
-    lineHeight: lineHeights.large,
-  },
-  extraLarge: {
-    fontSize: fontSizes.extraLarge,
-    lineHeight: lineHeights.extraLarge,
-  },
-  extraSmall: {
-    fontSize: fontSizes.extraSmall,
-    lineHeight: lineHeights.tight,
-  },
+const headingText = size => ({
+  fontFamily: fonts.headingFont,
+  fontWeight: fontWeights.bold,
+  fontSize: size,
+  lineHeight: pxUnits(size),
+  marginTop: pxUnits(34),
+  marginBottom: pxUnits(8),
+})
+
+const uiText = size => ({
+  fontFamily: fonts.uiFont,
+  fontSize: size,
+  lineHeight: pxUnits(size * 1.5),
+  fontWeight: fontWeights.normal,
+})
+
+const headingVariants = {
+  heading1: headingText(72),
+  heading2: headingText(48),
+  heading3: headingText(30),
+  heading4: headingText(24),
+}
+
+const uiTextVariants = {
+  uiTextLarge: uiText(22),
+  uiTextNormal: uiText(16),
+  uiTextSmall: uiText(14),
+}
+
+const uiTextBoldVariants = Object.keys(uiTextVariants).reduce(
+  (variants, vk) => ({
+    ...variants,
+    [`${vk}Semibold`]: {
+      ...uiTextVariants[vk],
+      fontWeight: fontWeights.semiBold,
+    },
+  }),
+  {}
+)
+
+const bodyText = size => ({
+  fontFamily: fonts.bodyFont,
+  fontSize: size,
+  lineHeight: pxUnits(size * 1.5),
+  fontWeight: fontWeights.normal,
+})
+
+const bodyVariants = {
+  bodyLarge: bodyText(22),
+  bodyNormal: bodyText(18),
+  bodySmall: bodyText(14),
+}
+
+const textVariants = {
+  ...headingVariants,
+  ...uiTextVariants,
+  ...uiTextBoldVariants,
+  ...bodyVariants,
 }
 
 export default {
@@ -89,5 +125,5 @@ export default {
   fontSizes,
   fontWeights,
   lineHeights,
-  textSizes,
+  textVariants,
 }

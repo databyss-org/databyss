@@ -1,4 +1,7 @@
 import colors from './colors'
+import responsive from './responsive'
+import space from './space'
+
 import fonts, { EM } from './fonts'
 
 export { EM }
@@ -10,11 +13,17 @@ export default {
   maxPageWidth: '1024px',
   contentWidth: '500px',
 
+  /* space */
+  ...space,
+
   /* fonts */
   ...fonts,
 
   /* colors */
   ...colors,
+
+  /* responsive */
+  ...responsive,
 
   /* transitions */
   slow: '800ms',

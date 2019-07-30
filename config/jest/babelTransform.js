@@ -3,6 +3,10 @@ const babelOptions = require('../../babel.config')({
   env: () => process.env.NODE_ENV,
 })
 
-babelOptions.plugins = [...babelOptions.plugins, 'require-context-hook']
+babelOptions.plugins = [
+  ...babelOptions.plugins,
+  'require-context-hook',
+  'react-native-web',
+]
 
 module.exports = require('babel-jest').createTransformer(babelOptions)

@@ -1,5 +1,5 @@
 ```js
-const loremIpsum = require('lorem-ipsum')
+const { loremIpsum } = require('lorem-ipsum')
 initialState = {
   showModal: false,
 }

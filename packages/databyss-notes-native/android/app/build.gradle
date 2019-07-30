@@ -1,5 +1,9 @@
 apply plugin: "com.android.application"
 
+    dependencies {
+        implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    }
+
 import com.android.build.OutputFile
 
 /**

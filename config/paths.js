@@ -4,7 +4,7 @@ const url = require('url')
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
-const appDirectory = fs.realpathSync(path.resolve(__dirname, '../'))
+const appDirectory = fs.realpathSync(process.cwd())
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath)
 
 const envPublicUrl = process.env.PUBLIC_URL
@@ -62,14 +62,71 @@ const resolveModule = (resolveFn, filePath) => {
   return resolveFn(`${filePath}.js`)
 }
 
+function getAppIndexJs(deployTarget) {
+  switch (deployTarget) {
+    case 'LOGIN_APP': {
+      return resolveApp('packages/databyss-login/index.js')
+    }
+    case 'NOTES_APP': {
+      return resolveApp('packages/databyss-notes/index.js')
+    }
+    case 'TEST':
+    case 'API_SERVER': {
+      return null
+    }
+    default: {
+      throw new Error(`Invalid deployTarget: ${deployTarget}`)
+    }
+  }
+}
+
+function getAppBuild(deployTarget) {
+  switch (deployTarget) {
+    case 'LOGIN_APP': {
+      return resolveApp('build/login')
+    }
+    case 'NOTES_APP': {
+      return resolveApp('build')
+    }
+    case 'API_SERVER': {
+      return resolveApp('build/api')
+    }
+    case 'TEST': {
+      return null
+    }
+    default: {
+      throw new Error(`Invalid deployTarget: ${deployTarget}`)
+    }
+  }
+}
+
+function getAppDevPublic(deployTarget) {
+  switch (deployTarget) {
+    case 'LOGIN_APP': {
+      return resolveApp('public')
+    }
+    case 'NOTES_APP': {
+      return resolveApp('build')
+    }
+    case 'TEST':
+    case 'API_SERVER': {
+      return null
+    }
+    default: {
+      throw new Error(`Invalid deployTarget: ${deployTarget}`)
+    }
+  }
+}
+
 // config after eject: we're in ./config/
 module.exports = {
   dotenv: resolveApp('.env'),
   appPath: resolveApp('.'),
-  appBuild: resolveApp('build'),
+  appBuild: getAppBuild(process.env.NPM_BUILD_TARGET),
   appPublic: resolveApp('public'),
+  appDevPublic: getAppDevPublic(process.env.NPM_BUILD_TARGET),
   appHtml: resolveApp('public/index.html'),
-  appIndexJs: resolveModule(resolveApp, 'src/index'),
+  appIndexJs: getAppIndexJs(process.env.NPM_BUILD_TARGET),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('packages'),
   appTsConfig: resolveApp('tsconfig.json'),

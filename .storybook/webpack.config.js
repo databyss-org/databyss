@@ -16,6 +16,23 @@ module.exports = {
   ],
   module: {
     rules: [
+      // Process application JS with Babel.
+      // The preset includes JSX, Flow, TypeScript, and some ESnext features.
+      {
+        test: /\.(js|mjs|jsx)$/,
+        include: paths.appSrc,
+        loader: require.resolve('babel-loader'),
+        options: {
+          plugins: [
+            [
+              require.resolve('babel-plugin-react-native-web'),
+              {
+                commonjs: true,
+              },
+            ],
+          ],
+        },
+      },
       {
         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
         loader: require.resolve('url-loader'),
