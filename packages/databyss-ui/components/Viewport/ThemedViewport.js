@@ -1,5 +1,5 @@
 import React from 'react'
-import { theme as defaultTheme, ThemeProvider } from '../../theming'
+import { theme as defaultTheme, ThemeProvider } from '../../shared-styles'
 import Viewport from './Viewport'
 
 export default ({ theme = defaultTheme, children, ...others }) => (

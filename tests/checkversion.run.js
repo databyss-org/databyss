@@ -6,25 +6,20 @@ const exec = require('./_util.js').exec
 module.exports = ({ testPath }) => {
   const start = Date.now()
 
-  const packageJsonRoot = JSON.parse(fs.readFileSync('package.json').toString())
-  const masterBranch = packageJsonRoot.repository.masterBranch
-
-  if (process.env.CIRCLE_BRANCH === masterBranch) {
-    console.log(`Branch is ${masterBranch}, skipping version check`)
+  if (process.env.CIRCLE_BRANCH === 'master') {
+    console.log('Branch is master, skipping version check')
     return pass({ start, end: Date.now(), test: { path: testPath } })
   }
-
+  const packageJsonRoot = JSON.parse(fs.readFileSync('package.json').toString())
   const packageJsonTest = JSON.parse(fs.readFileSync(testPath).toString())
-  const packageJsonMaster = JSON.parse(
-    exec(`git show ${masterBranch}:package.json`)
-  )
+  const packageJsonMaster = JSON.parse(exec(`git show master:package.json`))
   const semver = semverDiff(packageJsonMaster.version, packageJsonRoot.version)
   const testEqualToRoot = packageJsonTest.version === packageJsonRoot.version
 
   const end = Date.now()
 
   if (!semver) {
-    const errorMessage = `Version bump is required. ${masterBranch}@${
+    const errorMessage = `Version bump is required. master@${
       packageJsonMaster.version
     }, current@${packageJsonRoot.version}`
     return fail({

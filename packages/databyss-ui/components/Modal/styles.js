@@ -1,4 +1,4 @@
-import { macros, theme as defaultTheme } from '../../theming'
+import { macros, theme as defaultTheme } from '../../shared-styles'
 
 const fullscreen = theme => ({
   position: 'fixed',
@@ -72,7 +72,7 @@ const style = (theme = defaultTheme) => ({
   },
   authorName: {
     fontSize: theme.fontSizeNormal,
-    fontFamily: theme.uiFont,
+    fontFamily: theme.navFont,
     lineHeight: 2.8,
     cursor: 'pointer',
     color: theme.bgColorDark,

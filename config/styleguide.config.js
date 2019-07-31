@@ -1,16 +1,12 @@
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const webpackConfig = require('./webpack.config.js')('development')
+const webpackConfig = require('./webpack.config.js')
 
 module.exports = {
-  ignore: [
-    '**/styles.js',
-    '**/defaultProps.js',
-    '**/_*.js',
-    '**/*.native.js',
-    '**/*.ios.js',
-    '**/*.android.js',
-  ],
+  components: path.join(
+    __dirname,
+    '../packages/databyss-ui/components/**/*.js'
+  ),
   webpackConfig: {
     ...webpackConfig,
     plugins: [
@@ -19,12 +15,6 @@ module.exports = {
         path.join(__dirname, '../packages/databyss-ui/public'),
       ]),
     ],
-  },
-  context: {
-    Content: path.resolve(
-      __dirname,
-      '../packages/databyss-ui/components/Viewport/Content.js'
-    ),
   },
   skipComponentsWithoutExample: true,
   styleguideDir: path.join(__dirname, '../build'),
@@ -55,20 +45,4 @@ module.exports = {
     },
   },
   title: 'Databyss Component Library',
-  pagePerSection: true,
-  sections: [
-    {
-      name: 'Components',
-      components: '../packages/databyss-ui/components/**/*.js',
-      exampleMode: 'collapse',
-      usageMode: 'collapse',
-    },
-    {
-      name: 'Primitives',
-      components: '../packages/databyss-ui/primitives/**/*.js',
-      exampleMode: 'collapse',
-      usageMode: 'collapse',
-    },
-    {},
-  ],
 }

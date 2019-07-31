@@ -1,9 +1,6 @@
-import { theme as defaultTheme, macros } from '../../theming'
+import { macros, theme as defaultTheme } from '../../shared-styles'
 
 const style = (theme = defaultTheme) => ({
-  motifLinksSwitch: {
-    alignSelf: 'flex-end',
-  },
   sourcesToc: {
     fontFamily: theme.bodyFont,
   },

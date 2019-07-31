@@ -1,4 +1,4 @@
-import { theme as defaultTheme } from '../../theming'
+import { theme as defaultTheme } from '../../shared-styles'
 
 export default (theme = defaultTheme) => ({
   button: {
@@ -19,7 +19,7 @@ export default (theme = defaultTheme) => ({
 
   linkButton: {
     color: theme.mediumGrey,
-    fontFamily: theme.uiFont,
+    fontFamily: theme.navFont,
     textDecoration: 'underline',
 
     '& path': {

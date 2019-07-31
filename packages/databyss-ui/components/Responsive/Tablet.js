@@ -1,7 +1,7 @@
 import React from 'react'
 import MediaQuery from 'react-responsive'
 import { withTheme } from 'react-jss'
-import { macros } from '../../theming'
+import { macros } from '../../shared-styles'
 import { isMobileOs } from '../../lib/mediaQuery'
 
 export default withTheme(
