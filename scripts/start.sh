@@ -6,7 +6,7 @@ set -o pipefail # fail immediately in pipeline
 # otherwise, run build.js (from create-react-app)
 if [ $NPM_DEPLOY_TARGET == API_SERVER ]
 then
-  NPM_BUILD_TARGET=API_SERVER node packages/databyss-api/server.js
+  NPM_BUILD_TARGET=API_SERVER node build/api/server.js
 else
   echo 'ERROR: NO VALID TARGETS FOUND'
   exit 1
