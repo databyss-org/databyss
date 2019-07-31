@@ -16,7 +16,7 @@ then
   NPM_BUILD_TARGET=LOGIN_APP PUBLIC_URL=/login node scripts/build.js
 elif [ $NPM_DEPLOY_TARGET == API_SERVER ]
 then
-  echo 'SKIPPING BUILD FOR API_SERVER TARGET'
+  babel packages/databyss-api -d build/api --config-file=./packages/databyss-api/babel.config.js --copy-files
 else
   echo 'ERROR: NO TARGETS FOUND'
   exit 1

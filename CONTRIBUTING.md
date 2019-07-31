@@ -151,8 +151,9 @@ REACT_APP_BAR=$DOMAIN/bar
 The following environment vars are sensitive and should only be defined in `.env*.local` files. You must populate before running certain apps within the repo:
 
 ```
-MONGO_URI=
+MONGO_URI
 SENDGRID_API_KEY
+API_BUGSNAG_KEY
 ```
 
 ## Happy coding!
