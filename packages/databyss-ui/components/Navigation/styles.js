@@ -1,4 +1,4 @@
-import { theme as defaultTheme } from '../../theming'
+import { theme as defaultTheme } from '../../shared-styles'
 
 export default (theme = defaultTheme) => ({
   link: {
@@ -12,7 +12,7 @@ export default (theme = defaultTheme) => ({
     },
   },
   contentNav: {
-    fontFamily: theme.uiFont,
+    fontFamily: theme.navFont,
 
     '& $nav': {
       marginBottom: '1em',

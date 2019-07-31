@@ -1,12 +1,8 @@
 const path = require('path')
-const moduleConfig = require('../../config/webpack.config.js')('production')
-  .module
+const moduleConfig = require('../../config/webpack.config.js').module
 const nodeExternals = require('webpack-node-externals')
 
 module.exports = {
-  stats: {
-    maxModules: 200,
-  },
   entry: path.resolve(__dirname, './index.js'),
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -15,6 +11,5 @@ module.exports = {
     libraryTarget: 'commonjs',
   },
   externals: [nodeExternals()],
-
   module: moduleConfig,
 }

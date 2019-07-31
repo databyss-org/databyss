@@ -1,12 +1,12 @@
-import { macros, theme as defaultTheme } from '../../theming'
+import { macros, theme as defaultTheme } from '../../shared-styles'
 
 export default (theme = defaultTheme) => ({
   viewport: {
     padding: '20px',
     backgroundColor: theme.white,
     position: 'relative',
-    fontFamily: theme.fonts.bodyFont,
-    fontSize: theme.fontSizes.normal,
+    fontFamily: theme.bodyFont,
+    fontSize: theme.fontSizeBase,
     textRendering: 'optimizeLegibility',
     '-webkit-font-smoothing': 'antialiased',
 
@@ -25,7 +25,7 @@ export default (theme = defaultTheme) => ({
 
   content: {
     maxWidth: theme.contentWidth,
-    lineHeight: theme.lineHeights.normal,
+    lineHeight: theme.lineHeightContent,
     width: '100%',
     display: 'flex',
     flexDirection: 'column',

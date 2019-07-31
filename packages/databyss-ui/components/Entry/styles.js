@@ -1,5 +1,5 @@
 import Color from 'color'
-import { theme as defaultTheme } from '../../theming'
+import { theme as defaultTheme } from '../../shared-styles'
 
 export default (theme = defaultTheme) => ({
   entry: {
