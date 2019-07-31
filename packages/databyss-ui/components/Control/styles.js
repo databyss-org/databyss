@@ -1,4 +1,4 @@
-import { macros, theme as defaultTheme } from '../../shared-styles'
+import { macros, theme as defaultTheme } from '../../theming'
 
 export default (theme = defaultTheme) => ({
   '@keyframes decay': {
@@ -16,7 +16,7 @@ export default (theme = defaultTheme) => ({
     display: 'inline-block',
     width: '125px',
     outline: 'none',
-    fontFamily: theme.navFont,
+    fontFamily: theme.uiFont,
     fontSize: '0.9em',
 
     '&:hover': {
@@ -29,7 +29,7 @@ export default (theme = defaultTheme) => ({
     display: 'inline-block',
     marginRight: '6px',
     fontSize: '0.9em',
-    fontFamily: theme.navFont,
+    fontFamily: theme.uiFont,
     color: '#807d79',
   },
 
@@ -97,7 +97,7 @@ export default (theme = defaultTheme) => ({
   },
 
   label: {
-    fontFamily: theme.navFont,
+    fontFamily: theme.uiFont,
     fontSize: theme.fontSizeS,
     color: theme.mediumGrey,
     marginRight: '0.5em',

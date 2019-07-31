@@ -24,13 +24,6 @@
     "no-case-declarations": "off", // Fallthrough is useful in case/default clauses
     "no-param-reassign": ["error", { "props": false }], // Useful for mutating reduce accumulators, ex.
     "jsx-a11y/anchor-is-valid": "off",
-    "import/no-extraneous-dependencies": [
-      "error",
-      {
-        "devDependencies": ["**/*.*"],
-        "packageDir": ["./packages/databyss-ui", "./"]
-      }
-    ], // storybook and scripts use devDependencies
     "prettier/prettier": [
       "error",
       {

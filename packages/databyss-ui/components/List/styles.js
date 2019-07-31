@@ -1,4 +1,4 @@
-import { macros } from '../../shared-styles'
+import { macros } from '../../theming'
 
 export default () => ({
   commaSeparatedList: {

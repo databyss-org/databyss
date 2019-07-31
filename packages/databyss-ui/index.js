@@ -1,12 +1,8 @@
 /* styles and theming */
-export {
-  theme,
-  profileThemes,
-  muiTheme,
-  macros,
-  colors,
-  ThemeProvider,
-} from './shared-styles'
+export { theme, macros, colors, ThemeProvider } from './theming'
+
+/* media query */
+export { isMobile, isMobileOs, isMobileOrMobileOs } from './lib/mediaQuery'
 
 /* components */
 export { default as Button } from './components/Button/Button'

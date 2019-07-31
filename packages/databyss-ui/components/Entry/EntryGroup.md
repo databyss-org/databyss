@@ -1,4 +1,5 @@
 ```js
+import Entry from './Entry'
 initialState = {
   showLinks: false,
 }

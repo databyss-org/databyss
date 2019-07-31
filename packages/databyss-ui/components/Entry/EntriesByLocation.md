@@ -1,4 +1,6 @@
 ```js
+import EntryGroup from './EntryGroup'
+import Entry from './Entry'
 initialState = {
   showLinks: false,
 }

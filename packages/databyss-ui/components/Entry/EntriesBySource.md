@@ -1,4 +1,8 @@
 ```js
+import ContentNav from '../Navigation/ContentNav'
+import SwitchControl from '../Control/SwitchControl'
+import BackButton from '../Button/BackButton'
+import Entry from './Entry'
 initialState = {
   showLinks: false,
 }

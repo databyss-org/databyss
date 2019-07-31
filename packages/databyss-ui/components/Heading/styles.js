@@ -1,4 +1,4 @@
-import { macros, theme as defaultTheme } from '../../shared-styles'
+import { theme as defaultTheme, macros } from '../../theming'
 
 export default (theme = defaultTheme) => ({
   pageHeading: {
