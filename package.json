@@ -58,6 +58,10 @@
         "testMatch": [
           "<rootDir>/**/*.test.js"
         ],
+        "testPathIgnorePatterns": [
+          "/node_modules/",
+          "/build/"
+        ],
         "testEnvironment": "jsdom",
         "testURL": "http://localhost",
         "transform": {
@@ -79,7 +83,8 @@
           "<rootDir>/**/package.json"
         ],
         "testPathIgnorePatterns": [
-          "/node_modules/"
+          "/node_modules/",
+          "/build/"
         ]
       }
     ]
