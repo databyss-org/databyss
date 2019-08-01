@@ -7,10 +7,9 @@ let dbURI =
     : config.get('mongoURI')
 
 */
+//const dbURI = process.env.MONGO_URI
+const dbURI = process.env.MONGO_URI
 
-// const dbURI = process.env.MONGO_URI
-const dbURI =
-  'mongodb+srv://databyss-api:EUdVPlI6xJQtiWXj@cluster0-zggfn.mongodb.net/test?retryWrites=true&w=majority'
 /*
 const dbURI =
   process.env.NODE_ENV === 'test'
@@ -40,14 +39,12 @@ const connectDB = async () => {
 }
 
 // Deletes test database
-const dropDB = () => {
+const dropDB = async () => {
   if (process.env.NODE_ENV === 'test') {
-    dB.connection.once('connected', async () => {
-      await dB.connection.db.dropDatabase()
-      await dB.connection.close()
-      await dB.disconnect()
-      console.log('MongoDB Disconnected...')
-    })
+    if (dB.connection) await dB.connection.db.dropDatabase()
+    await dB.connection.close()
+    await dB.disconnect()
+    console.log('MongoDB Disconnected...')
   }
 }
 

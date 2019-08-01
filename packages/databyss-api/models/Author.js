@@ -17,7 +17,8 @@ const AuthorSchema = new mongoose.Schema({
   },
   entries: [
     {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'entry',
     },
   ],
   default: {
@@ -26,7 +27,8 @@ const AuthorSchema = new mongoose.Schema({
   },
   sources: [
     {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'source',
     },
   ],
 })

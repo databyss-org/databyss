@@ -48,14 +48,63 @@ http://localhost:5000/api/sources
 | `authorFirstName`   | `false`  | `string` |                                          if included, creates new author and appends source ID |
 | `authorLastName`    | `false`  | `string` | if included, creates new author and appends source ID (last name is required to add new author |
 
-#### Response
+#### Example Request (no author)
+
+    POST /api/sources HTTP/1.1
+    Host: localhost:5000
+    Content-Type: application/json
+    x-auth-token: xxxxxxxxxxxxxxx
+
+    {
+        "resource": " A book title",
+        "date": "2002",
+        "city": "new york",
+        "sourceType": "book",
+        "url": "google.com"
+    }
+
+#### Example Request (with author)
+
+    POST /api/sources HTTP/1.1
+    Host: localhost:5000
+    Content-Type: application/json
+    x-auth-token: xxxxxxxxxxxxxxx
+
+    {
+        "resource": " A book title",
+        "date": "2002",
+        "city": "new york",
+        "sourceType": "book",
+        "url": "google.com"
+        "authorFirstName": "William",
+        "authorLastName": "Shakespeare"
+    }
+
+#### Example Response
 
     HTTP/1.1 200 OK
     Status: 200 OK
     Content-Type: application/json; charset=utf-8
     ...
 
-    {"resource":"AAAA%2FAAA%3DAAAAAAAA"...}
+    {
+        "authors": [
+            "5d4334ccf210f44181018fbb"
+        ],
+        "default": false,
+        "files": [],
+        "entries": [],
+        "_id": "5d4334ccf210f44181018fbc",
+        "abbreviation": "",
+        "city": "new york",
+        "publishingCompany": "",
+        "sourceType": "book",
+        "url": "google.com",
+        "date": "2002",
+        "resource": " A book title",
+        "user": "xxxxxxxxxxxxxxx",
+        "__v": 0
+    }
 
 ## Get source by id
 
@@ -82,14 +131,42 @@ http://localhost:5000/api/sources/:id
 | -------------- | :------: | -------: | -----------: |
 | `x-auth-token` |  `true`  | `string` | access token |
 
-#### Response
+#### Example Request
+
+    GET /api/sources/5d4334ccf210f44181018fbc HTTP/1.1
+    Host: localhost:5000
+    Content-Type: application/json
+    x-auth-token: xxxxxxxxxxxxxxx
+
+#### Example Response
 
     HTTP/1.1 200 OK
     Status: 200 OK
     Content-Type: application/json; charset=utf-8
     ...
 
-    {"resource":"AAAA%2FAAA%3DAAAAAAAA", ...}
+    {
+        "authors": [
+            {
+                "_id": "5d4334ccf210f44181018fbb",
+                "firstName": "William",
+                "lastName": "Shakespeare"
+            }
+        ],
+        "default": false,
+        "files": [],
+        "entries": [],
+        "_id": "5d4334ccf210f44181018fbc",
+        "abbreviation": "",
+        "city": "new york",
+        "publishingCompany": "",
+        "sourceType": "book",
+        "url": "google.com",
+        "date": "2002",
+        "resource": " A book title",
+        "user": "xxxxxxxxxxxxxxx",
+        "__v": 0
+    }
 
 ## Get all sources
 
@@ -116,11 +193,40 @@ http://localhost:5000/api/sources/
 | -------------- | :------: | -------: | -----------: |
 | `x-auth-token` |  `true`  | `string` | access token |
 
-#### Response
+#### Example Request
+
+    GET /api/sources/ HTTP/1.1
+    Host: localhost:5000
+    Content-Type: application/json
+    x-auth-token: xxxxxxxxxxxxxxx
+
+#### Example Response
 
     HTTP/1.1 200 OK
     Status: 200 OK
     Content-Type: application/json; charset=utf-8
     ...
-
-    [{"resources":"AAAA%2FAAA%3DAAAAAAAA"...}, ...]
+    [
+        {
+            "authors": [
+                {
+                    "_id": "5d432e682b6e123520577a00",
+                    "firstName": "Charles",
+                    "lastName": "Dickens"
+                }
+            ],
+            "default": false,
+            "files": [],
+            "entries": [
+                {
+                    "_id": "5d432e682b6e123520577a02",
+                    "entry": "It was the best of times..."
+                }
+            ],
+            "_id": "5d432e682b6e123520577a01",
+            "resource": "Tale of Two",
+            "user": "5d4300b697ebbb06300e78b2",
+            "__v": 0
+        },
+    ...
+    ]

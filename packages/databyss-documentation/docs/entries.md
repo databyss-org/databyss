@@ -43,17 +43,69 @@ http://localhost:5000/api/entry
 | `lastName`  | `false`  | `string` | if provided, adds a new author and appends the ID to entry, `lastName` is required for new entry |
 | `author`    | `false`  |  `array` |                                                     array of author ID's contained in this entry |
 | `source`    | `false`  | `string` |                                                              source ID's contained in this entry |
-| `document`  |  `true`  | `string` |                                                                               raw text for entry |
 | `_id`       | `false`  | `string` |                                                                  edit existing entry if provided |
 
-#### Response
+#### Example Request (no author, no source)
+
+    POST /api/entries HTTP/1.1
+    Host: localhost:5000
+    Content-Type: application/json
+    x-auth-token: xxxxxxxxxxxxxxx
+
+    {
+        "entry": "It was the best of times...",
+        "pageFrom": 20
+    }
+
+#### Example Request (new source)
+
+    POST /api/entries HTTP/1.1
+    Host: localhost:5000
+    Content-Type: application/json
+    x-auth-token: xxxxxxxxxxxxxxx
+
+    {
+        "entry": "It was the best of times...",
+        "pageFrom": 20,
+        "resource": "Tale of Two"
+    }
+
+#### Example Request (new source, new author)
+
+    POST /api/entries HTTP/1.1
+    Host: localhost:5000
+    Content-Type: application/json
+    x-auth-token: xxxxxxxxxxxxxxx
+
+    {
+        "entry": "It was the best of times...",
+        "pageFrom": 20,
+        "resource": "Tale of Two",
+        "lastName": "Dickens",
+        "firstName": "Charles"
+    }
+
+#### Example Response
 
     HTTP/1.1 200 OK
     Status: 200 OK
     Content-Type: application/json; charset=utf-8
-    ...
 
-    {"entry":"entry text"... }
+    {
+    "author": [
+        "5d4313a8d9bc931a27a84ec6"
+    ],
+    "default": false,
+    "files": [],
+    "index": 0,
+    "_id": "5d4313a8d9bc931a27a84ec8",
+    "pageFrom": 20,
+    "source": "5d4313a8d9bc931a27a84ec7",
+    "pageTo": -1,
+    "entry": "It was the best of times...",
+    "user": "xxxxxxxxxxxxxxx",
+    "__v": 0
+    }
 
 ## Get entry by id
 
@@ -80,6 +132,13 @@ http://localhost:5000/api/entry/:id
 | -------------- | :------: | -------: | -----------: |
 | `x-auth-token` |  `true`  | `string` | access token |
 
+#### Example Request
+
+    GET /api/entries/5d4313a8d9bc931a27a84ec8 HTTP/1.1
+    Host: localhost:5000
+    Content-Type: application/json
+    x-auth-token: xxxxxxxxxxxxxxx
+
 #### Response
 
     HTTP/1.1 200 OK
@@ -87,7 +146,28 @@ http://localhost:5000/api/entry/:id
     Content-Type: application/json; charset=utf-8
     ...
 
-    {"entry":"entry text", ...}
+    {
+        "author": [
+            {
+                "_id": "5d432d6bfd4c6634364d5c4c",
+                "firstName": "Charles",
+                "lastName": "Dickens"
+            }
+        ],
+        "default": false,
+        "files": [],
+        "index": 0,
+        "_id": "5d432d6bfd4c6634364d5c4e",
+        "pageFrom": 20,
+        "source": {
+            "_id": "5d432d6bfd4c6634364d5c4d",
+            "resource": "Tale of Two"
+        },
+        "pageTo": -1,
+        "entry": "It was the best of times...",
+        "user": "xxxxxxxxxxxxxxx",
+        "__v": 0
+    }
 
 ## Get all entries
 
@@ -121,4 +201,28 @@ http://localhost:5000/api/entries/
     Content-Type: application/json; charset=utf-8
     ...
 
-    [{"entry":"entry text"...}, ...]
+    [
+        {
+            "author": [
+                {
+                "_id": "5d432d6bfd4c6634364d5c4c",
+                "firstName": "Charles",
+                "lastName": "Dickens"
+                }
+            ],
+            "default": false,
+            "files": [],
+            "index": 0,
+            "_id": "5d432d6bfd4c6634364d5c4e",
+            "pageFrom": 20,
+            "source": {
+                "_id": "5d432d6bfd4c6634364d5c4d",
+                "resource": "Tale of Two"
+                },
+            "pageTo": -1,
+            "entry": "It was the best of times...",
+            "user": "xxxxxxxxxxxxxxx",
+            "__v": 0
+        }
+    ...
+    ]

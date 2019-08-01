@@ -34,6 +34,13 @@
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
     "lint": "eslint . --cache && echo \"eslint: no lint errors\""
   },
+  "nodemonConfig": {
+    "events": {
+      "restart": "kill-port 5000",
+      "crash": "kill-port 5000"
+    },
+    "delay": "1500"
+  },
   "jest": {
     "projects": [
       {
@@ -150,6 +157,7 @@
     "jest-resolve": "^23.6.0",
     "jest-runner-eslint": "^0.7.1",
     "jsonwebtoken": "^8.5.1",
+    "kill-port": "^1.5.1",
     "metro-react-native-babel-preset": "^0.55.0",
     "mini-css-extract-plugin": "^0.7.0",
     "mongoose": "^5.6.5",

@@ -10,44 +10,21 @@ const EntrySchema = new mongoose.Schema({
   },
   author: [
     {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'author',
     },
   ],
   source: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'source',
   },
   linkedContent: {
-    type: String,
-  },
-  authorId: {
-    type: String,
-  },
-  sourceId: {
     type: String,
   },
   default: {
     type: Boolean,
     default: false,
   },
-  /*
-  locationType: {
-    string default: other
-    example: PAGE_RANGE
-  },
-  locationDesc: {
-    string -- default to timestamp 
-    free text to add on top of your detail 
-    example: 'these are pages'
-  }
-  locationDetail: {
-    object this can be variable JSON object 
-    example: pageRange, section, chapter, book, 
-  }
-
-  replace page to/page from 
-
-  */
-
   pageFrom: {
     type: Number,
   },
@@ -65,6 +42,7 @@ const EntrySchema = new mongoose.Schema({
   },
   index: {
     type: Number,
+    default: 0,
   },
   document: {
     type: String,
