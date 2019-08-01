@@ -1,11 +1,6 @@
 const request = require('supertest')
 const app = require('./../app')
 
-// AUTH
-const EMAIL = 'email@company.com'
-
-const PASSWORD = 'password'
-
 exports.noAuthPost = resource =>
   request(app)
     .post('/api/sources')
@@ -28,21 +23,21 @@ exports.noAuthAuthor = (firstName, lastName) =>
       lastName,
     })
 
-exports.createUser = async () => {
+exports.createUser = async (email, password) => {
   let response = await request(app)
     .post('/api/users')
     .send({
       name: 'joe',
-      password: PASSWORD,
-      email: EMAIL,
+      password,
+      email,
     })
 
   if (response.status === 400) {
     response = await request(app)
       .post('/api/auth')
       .send({
-        password: PASSWORD,
-        email: EMAIL,
+        password,
+        email,
       })
   }
   return JSON.parse(response.text).token
@@ -128,4 +123,9 @@ exports.editedSourceWithAuthor = (token, resource, _id) =>
 exports.getEditedSourceWithAuthor = (token, sourceId) =>
   request(app)
     .get(`/api/sources/${sourceId}`)
+    .set('x-auth-token', token)
+
+exports.deleteUserPosts = token =>
+  request(app)
+    .del(`/api/profile/`)
     .set('x-auth-token', token)

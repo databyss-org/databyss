@@ -7,11 +7,16 @@ const {
   getEntryNoSource,
   createEntryNewSource,
   getEntryNewSource,
+  deleteUserPosts,
 } = helpers
 
 const ENTRY = 'Testing an entry'
 const ENTRY_WITH_SOURCE = 'this is a source entry'
 const SOURCE = 'this is the source'
+
+// USER
+const EMAIL = 'email3@company.com'
+const PASSWORD = 'password3'
 
 describe('Entry', () => {
   describe('Not authorized', () => {
@@ -27,7 +32,7 @@ describe('Entry', () => {
 describe('Authorized', () => {
   let token
   beforeAll(async done => {
-    token = await createUser()
+    token = await createUser(EMAIL, PASSWORD)
     done()
   }, 5000)
 
@@ -58,7 +63,11 @@ describe('Authorized', () => {
     await getEntryNewSource(token, newEntryId).then(response => {
       const res = JSON.parse(response.text)
       expect(res.entry).toBe(ENTRY_WITH_SOURCE)
-      expect(res.source).toBe(sourceId)
+      expect(res.source._id).toBe(sourceId)
+    })
+    afterAll(async done => {
+      await deleteUserPosts()
+      done()
     })
   })
 })

@@ -1,23 +1,6 @@
 const mongoose = require('mongoose')
 
-/*
-let dbURI =
-  process.env.NODE_ENV === 'test'
-    ? config.get('mongoURI')
-    : config.get('mongoURI')
-
-*/
-//const dbURI = process.env.MONGO_URI
 const dbURI = process.env.MONGO_URI
-
-/*
-const dbURI =
-  process.env.NODE_ENV === 'test'
-    ? process.env.MONGO_URI_TEST
-    : process.env.MONGO_URI
-
-    */
-
 const dB = mongoose
 
 const connectDB = async () => {
@@ -41,10 +24,15 @@ const connectDB = async () => {
 // Deletes test database
 const dropDB = async () => {
   if (process.env.NODE_ENV === 'test') {
-    if (dB.connection) await dB.connection.db.dropDatabase()
-    await dB.connection.close()
-    await dB.disconnect()
-    console.log('MongoDB Disconnected...')
+    dB.connect(
+      dbURI,
+      { useNewUrlParser: true }
+    ).then(async () => {
+      await dB.connection.db.dropDatabase()
+      await dB.connection.close()
+      await dB.disconnect()
+      console.log('MongoDB Disconnected...')
+    })
   }
 }
 

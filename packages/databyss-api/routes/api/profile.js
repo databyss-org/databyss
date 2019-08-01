@@ -3,6 +3,9 @@ const auth = require('../../middleware/auth')
 const { validationResult } = require('express-validator/check')
 const Profile = require('../../models/Profile')
 const User = require('../../models/User')
+const Entry = require('../../models/Entry')
+const Author = require('../../models/Author')
+const Source = require('../../models/Source')
 
 const router = express.Router()
 
@@ -111,6 +114,12 @@ router.delete('/', auth, async (req, res) => {
     await Profile.findOneAndRemove({ user: req.user.id })
     // Remove user
     await User.findOneAndRemove({ _id: req.user.id })
+    // Remove entries
+    await Entry.findOneAndRemove({ user: req.user.id })
+    // Remove author
+    await Author.findOneAndRemove({ user: req.user.id })
+    // Remove source
+    await Source.findOneAndRemove({ user: req.user.id })
 
     return res.json({ msg: 'User deleted' })
   } catch (err) {

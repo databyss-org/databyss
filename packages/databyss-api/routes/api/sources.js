@@ -80,7 +80,7 @@ router.post('/', auth, async (req, res) => {
       // if new author has been added
       if (_.isArray(source.authors)) {
         if (_.isArray(authors)) {
-          appendSourceToAuthor({ authors, sourceId: _id })
+          await appendSourceToAuthor({ authors, sourceId: _id })
         }
       }
 
@@ -89,7 +89,7 @@ router.post('/', auth, async (req, res) => {
         { _id },
         { $set: sourceFields },
         { new: true }
-      ).then(async response => {
+      ).then(async () => {
         if (!_.isEmpty(authorPost)) {
           authors = !_.isEmpty(authors) ? authors : []
           await appendSourceToAuthor({
@@ -106,9 +106,10 @@ router.post('/', auth, async (req, res) => {
             })
           }
         }
-        return res.json(response)
       })
+      return res.json(source)
     }
+
     // if new source has been added
     const sources = new Source(sourceFields)
     const post = await sources.save()
@@ -132,7 +133,7 @@ router.post('/', auth, async (req, res) => {
       }
     }
 
-    res.json(post)
+    return res.json(post)
   } catch (err) {
     console.error(err.message)
     return res.status(500).send('Server error')

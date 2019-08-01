@@ -9,12 +9,17 @@ const {
   getSourceWithAuthor,
   editedSourceWithAuthor,
   getEditedSourceWithAuthor,
+  deleteUserPosts,
 } = helpers
 
 // RESOURCE
 const RESOURCE = 'A book made for testing'
 const EDITED_RESOURCE = 'A book made for editing'
 const AUTHOR_LAST_NAME = 'Best Selling'
+
+// USER
+const EMAIL = 'email@company.com'
+const PASSWORD = 'password'
 
 // CREATE ACCOUNT
 describe('Source', () => {
@@ -30,7 +35,7 @@ describe('Source', () => {
   describe('Authorized', () => {
     let token
     beforeAll(async done => {
-      token = await createUser()
+      token = await createUser(EMAIL, PASSWORD)
       done()
     }, 5000)
 
@@ -74,6 +79,10 @@ describe('Source', () => {
       )
       const res = JSON.parse(getResponse.text)
       expect(res.resource).toBe(EDITED_RESOURCE)
+    })
+    afterAll(async done => {
+      await deleteUserPosts()
+      return done()
     })
   })
 })

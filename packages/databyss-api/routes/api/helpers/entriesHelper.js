@@ -3,16 +3,17 @@ const Author = require('../../../models/Author')
 const Source = require('../../../models/Source')
 
 const appendEntryToSource = async ({ sourceId, entryId }) => {
-  let source = await Source.findOne({
+  const source = await Source.findOne({
     _id: sourceId,
   }).catch(err => console.log(err))
+
   if (source) {
     const newInput = source
     const newEntriesList = newInput.entries
     if (newEntriesList.indexOf(entryId) > -1) return
     newEntriesList.push(entryId)
     newInput.entries = newEntriesList
-    source = await Source.findOneAndUpdate(
+    Source.findOneAndUpdate(
       { _id: sourceId },
       { $set: newInput },
       { new: true }

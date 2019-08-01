@@ -132,11 +132,12 @@ router.post('/', auth, async (req, res) => {
       files,
       entry,
       index,
+      linkedContent,
       user: req.user.id,
     }
 
     // CHECK HERE IF ENTRY EXISTS
-    let entryExists = await Entry.findOne({ _id })
+    const entryExists = await Entry.findOne({ _id })
     if (entryExists) {
       if (req.user.id.toString() !== entryExists.user.toString()) {
         return res.status(401).json({ msg: 'This post is private' })
@@ -167,17 +168,17 @@ router.post('/', auth, async (req, res) => {
 
     // create new entry
     const entries = new Entry(entryFields)
-    entries.save().then(async post => {
-      // if source exists, append entry to source
-      if (!_.isEmpty(source)) {
-        await appendEntryToSource({ sourceId: source, entryId: post._id })
-      }
-      // if author exists, append entry to author
-      if (!_.isEmpty(author)) {
-        await appendEntryToAuthors({ authors: author, entryId: post._id })
-      }
-      return res.json(post)
-    })
+    const post = await entries.save()
+
+    // if source exists, append entry to source
+    if (!_.isEmpty(source)) {
+      await appendEntryToSource({ sourceId: source, entryId: post._id })
+    }
+    // if author exists, append entry to author
+    if (!_.isEmpty(author)) {
+      await appendEntryToAuthors({ authors: author, entryId: post._id })
+    }
+    return res.json(post)
   } catch (err) {
     console.error(err.message)
     return res.status(500).send('Server error')

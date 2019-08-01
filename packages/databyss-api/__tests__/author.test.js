@@ -1,10 +1,20 @@
 const helpers = require('./_helpers')
 
-const { noAuthAuthor, createUser, createAuthor, getAuthor } = helpers
+const {
+  noAuthAuthor,
+  createUser,
+  createAuthor,
+  getAuthor,
+  deleteUserPosts,
+} = helpers
 
 // AUTHOR
 const FIRST_NAME = 'John'
 const LAST_NAME = 'Doe'
+
+// USER
+const EMAIL = 'email2@company.com'
+const PASSWORD = 'password2'
 
 describe('Author', () => {
   describe('Not authorized', () => {
@@ -20,7 +30,7 @@ describe('Author', () => {
 describe('Authorized', () => {
   let token
   beforeAll(async done => {
-    token = await createUser()
+    token = await createUser(EMAIL, PASSWORD)
     done()
   }, 5000)
   test('It should post/get new author', async () => {
@@ -32,6 +42,10 @@ describe('Authorized', () => {
     await getAuthor(token, newAuthorId).then(response => {
       const res = JSON.parse(response.text).firstName
       expect(res).toBe(FIRST_NAME)
+    })
+    afterAll(async done => {
+      await deleteUserPosts()
+      done()
     })
   })
 })
