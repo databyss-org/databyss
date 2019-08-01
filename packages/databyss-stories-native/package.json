@@ -2,7 +2,7 @@
   "name": "@databyss-org/stories-native",
   "author": "databyss-org",
   "license": "MIT",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "private": true,
   "repository": {
     "type": "git",
@@ -19,7 +19,7 @@
   },
   "peerDependencies": {
     "react": "16.8.6",
-    "@databyss-org/ui": "1.1.4"
+    "@databyss-org/ui": "1.1.5"
   },
   "publishConfig": {
     "access": "public"

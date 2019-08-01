@@ -8,10 +8,16 @@ let dbURI =
 
 */
 
+// const dbURI = process.env.MONGO_URI
+const dbURI =
+  'mongodb+srv://databyss-api:EUdVPlI6xJQtiWXj@cluster0-zggfn.mongodb.net/test?retryWrites=true&w=majority'
+/*
 const dbURI =
   process.env.NODE_ENV === 'test'
     ? process.env.MONGO_URI_TEST
     : process.env.MONGO_URI
+
+    */
 
 const dB = mongoose
 
@@ -34,12 +40,14 @@ const connectDB = async () => {
 }
 
 // Deletes test database
-const dropDB = async () => {
+const dropDB = () => {
   if (process.env.NODE_ENV === 'test') {
-    await dB.connection.db.dropDatabase()
-    await dB.connection.close()
-    await dB.disconnect()
-    console.log('MongoDB Disconnected...')
+    dB.connection.once('connected', async () => {
+      await dB.connection.db.dropDatabase()
+      await dB.connection.close()
+      await dB.disconnect()
+      console.log('MongoDB Disconnected...')
+    })
   }
 }
 
