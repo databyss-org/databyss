@@ -32,6 +32,8 @@
     "lodash": "^4.17.15",
     "lorem-ipsum": "^2.0.3",
     "prop-types": "^15.7.2",
+    "react-google-login": "^5.0.4",
+    "@databyss-org/services": "1.1.5",
     "react-jss": "^8.6.1",
     "react-modal": "^3.8.1",
     "react-native-web": "^0.11.0",

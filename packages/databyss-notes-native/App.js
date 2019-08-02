@@ -8,6 +8,9 @@ import Button from '@databyss-org/ui/primitives/Button/Button'
 
 console.disableYellowBox = true
 
+// client id
+// 282602380521-vq3m78u53vqk2rrqqj43lg021if7jhj7.apps.googleusercontent.com
+
 const App = () => (
   <ThemeProvider>
     <View>
