@@ -1,8 +1,8 @@
 import React from 'react'
-import { variant } from 'styled-system'
+import { variant, color, compose } from 'styled-system'
 import styled from '../styled'
 
-const styles = variant({
+const variants = variant({
   prop: 'variant',
   scale: 'textVariants',
 })
@@ -13,7 +13,10 @@ const Text = styled(
     android: 'Text',
     default: 'div',
   },
-  styles
+  compose(
+    variants,
+    color
+  )
 )
 
 export default ({ children, ...others }) => (

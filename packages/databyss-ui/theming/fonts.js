@@ -30,6 +30,12 @@ export const weightUnits = Platform.select({
   default: v => v,
 })
 
+export const underline = Platform.select({
+  ios: { textDecorationLine: 'underline' },
+  android: { textDecorationLine: 'underline' },
+  default: { textDecoration: 'underline' },
+})
+
 const fonts = {
   sans,
   serif,
@@ -49,9 +55,7 @@ const headingText = size => ({
   fontFamily: fonts.headingFont,
   fontWeight: fontWeights.bold,
   fontSize: size,
-  lineHeight: pxUnits(size),
-  marginTop: pxUnits(34),
-  marginBottom: pxUnits(8),
+  lineHeight: pxUnits(size * 1.15),
 })
 
 const uiText = size => ({
@@ -85,6 +89,28 @@ const uiTextBoldVariants = Object.keys(uiTextVariants).reduce(
   {}
 )
 
+const uiTextUnderlineVariants = Object.keys(uiTextVariants).reduce(
+  (variants, vk) => ({
+    ...variants,
+    [`${vk}Underline`]: {
+      ...uiTextVariants[vk],
+      ...underline,
+    },
+  }),
+  {}
+)
+
+const uiTextBoldUnderlineVariants = Object.keys(uiTextBoldVariants).reduce(
+  (variants, vk) => ({
+    ...variants,
+    [`${vk}Underline`]: {
+      ...uiTextBoldVariants[vk],
+      ...underline,
+    },
+  }),
+  {}
+)
+
 const bodyText = size => ({
   fontFamily: fonts.bodyFont,
   fontSize: size,
@@ -102,6 +128,8 @@ const textVariants = {
   ...headingVariants,
   ...uiTextVariants,
   ...uiTextBoldVariants,
+  ...uiTextUnderlineVariants,
+  ...uiTextBoldUnderlineVariants,
   ...bodyVariants,
 }
 

@@ -23,10 +23,10 @@ const border = (thickness, color) => ({
 
 const borderVariants = {
   none: border(0, colors.transparent),
-  thinDark: border(1, colors.grays[1]),
-  thinLight: border(1, colors.grays[4]),
-  thickDark: border(3, colors.grays[1]),
-  thickLight: border(3, colors.grays[4]),
+  thinDark: border(1, colors.gray[1]),
+  thinLight: border(1, colors.gray[4]),
+  thickDark: border(3, colors.gray[1]),
+  thickLight: border(3, colors.gray[4]),
 }
 
 export default {
