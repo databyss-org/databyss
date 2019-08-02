@@ -9,8 +9,8 @@ const colors = {
   black: '#000',
   white: '#fff',
   clear: 'rgba(0,0,0,0)',
-
-  greys: [
+  transparent: 'rgba(0,0,0,0)',
+  grays: [
     '#181510',
     '#312A21',
     '#4D4842',
@@ -24,12 +24,12 @@ const colors = {
   lightPurple: '#675d71',
 }
 
-colors.darkBackground = colors.greys[0]
-colors.lightBackground = colors.greys[1]
+colors.darkBackground = colors.grays[0]
+colors.lightBackground = colors.grays[1]
 colors.darkText = colors.black
 colors.inverseText = colors.white
-colors.darkTexts = [colors.black, colors.greys[0]]
+colors.darkTexts = [colors.black, colors.grays[0]]
 colors.focusOutlineColor = colors.pink
 colors.entrySourceColor = colors.lightPurple
 
-export default { colors }
+export default colors

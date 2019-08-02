@@ -1,7 +1,5 @@
 import { Platform } from 'react-native'
 
-export const EM = 17
-
 export const serif = Platform.select({
   ios: 'Baskerville',
   android: 'serif',
@@ -47,19 +45,6 @@ fontWeights.bold = fontWeights[2]
 fontWeights.semiBold = fontWeights[1]
 fontWeights.regular = fontWeights[0]
 
-const fontSizes = [EM, EM, 0.85 * EM, 1.2 * EM, 1.8 * EM, 2.2 * EM]
-fontSizes.normal = fontSizes[0]
-fontSizes.extraSmall = fontSizes[1]
-fontSizes.small = fontSizes[2]
-fontSizes.large = fontSizes[3]
-fontSizes.extraLarge = fontSizes[4]
-
-const lineHeights = [EM, EM * 1.25, EM * 1.5, EM * 2, EM * 3].map(pxUnits)
-lineHeights.tight = lineHeights[0]
-lineHeights.normal = lineHeights[1]
-lineHeights.large = lineHeights[2]
-lineHeights.extraLarge = lineHeights[3]
-
 const headingText = size => ({
   fontFamily: fonts.headingFont,
   fontWeight: fontWeights.bold,
@@ -72,7 +57,7 @@ const headingText = size => ({
 const uiText = size => ({
   fontFamily: fonts.uiFont,
   fontSize: size,
-  lineHeight: pxUnits(size * 1.5),
+  lineHeight: pxUnits(size * 1.4),
   fontWeight: fontWeights.normal,
 })
 
@@ -122,8 +107,6 @@ const textVariants = {
 
 export default {
   fonts,
-  fontSizes,
   fontWeights,
-  lineHeights,
   textVariants,
 }

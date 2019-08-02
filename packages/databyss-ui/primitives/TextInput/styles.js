@@ -24,10 +24,10 @@ export const defaultProps = {
 
 export const themes = {
   primary: {
-    backgroundHover: colors.greys[6],
-    backgroundDisabled: colors.greys[5],
-    borderColor: colors.greys[4],
+    backgroundHover: colors.grays[6],
+    backgroundDisabled: colors.grays[5],
+    borderColor: colors.grays[4],
     borderColorActive: colors.black,
-    fontColor: colors.greys[4],
+    fontColor: colors.grays[4],
   },
 }

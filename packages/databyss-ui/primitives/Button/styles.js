@@ -40,8 +40,8 @@ export const themes = {
   },
   secondary: {
     primary: colors.white,
-    hover: colors.greys[6],
-    pressed: colors.greys[5],
+    hover: colors.grays[6],
+    pressed: colors.grays[5],
     borderColor: colors.black,
     fontColor: colors.black,
   },
@@ -54,7 +54,7 @@ export const themes = {
   },
   link: {
     primary: colors.clear,
-    hover: colors.greys[6],
+    hover: colors.grays[6],
     pressed: colors.browns[5],
     borderColor: colors.clear,
     fontColor: colors.blues[1],

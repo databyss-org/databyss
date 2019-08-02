@@ -1,8 +1,9 @@
 import { storiesOf } from '@storybook/react'
-import { ViewportDecorator, ContentDecorator } from '../decorators'
+import { ViewportDecorator } from '../decorators'
 import Typography from './Typography'
+import Views from './Views'
 
 storiesOf('Styleguides', module)
-  .addDecorator(ContentDecorator)
   .addDecorator(ViewportDecorator)
   .add('Typography', Typography)
+  .add('Views', Views)

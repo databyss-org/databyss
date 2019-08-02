@@ -11,12 +11,12 @@
   "bugs": {
     "url": "https://github.com/databyss-org/databyss/issues"
   },
-  "main": "dist/databyss-ui.js",
+  "main": "index.js",
   "peerDependencies": {
     "@databyss-org/ui": "1.1.5",
     "react": "16.8.6",
     "react-dom": "16.8.6",
-    "react-native": "^0.60.4"
+    "react-native": "0.60.4"
   },
   "dependencies": {
     "@emotion/core": "^10.0.14",
