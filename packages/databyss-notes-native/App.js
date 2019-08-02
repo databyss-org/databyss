@@ -1,6 +1,5 @@
 import React from 'react'
 import { View } from 'react-native'
-
 import { ThemeProvider } from '@databyss-org/ui/theming'
 import Text from '@databyss-org/ui/primitives/Text/Text'
 import TextInput from '@databyss-org/ui/primitives/TextInput/TextInput'

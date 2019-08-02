@@ -9,8 +9,6 @@ import {
   checkCode,
 } from './actions'
 
-// import Login from './body/Login'
-
 function App() {
   return (
     <ThemeProvider>

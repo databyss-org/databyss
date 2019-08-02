@@ -131,6 +131,7 @@ router.post('/google', async (req, res) => {
             }
           )
         }
+        return res.status(200)
       } catch (err) {
         console.error(err.message)
         return res.status(500).send('Server Error')
