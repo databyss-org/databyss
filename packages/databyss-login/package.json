@@ -9,6 +9,7 @@
     "@databyss-org/services": "1.1.6"
   },
   "dependencies": {
+    "@storybook/react": "^5.1.1",
     "jsonwebtoken": "^8.5.1",
     "react-flexbox-grid": "^2.1.2",
     "react-google-login": "^5.0.4",
