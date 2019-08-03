@@ -1,8 +1,7 @@
-import { checkToken } from './src/actions'
+import { getAuthToken } from '@databyss-org/services/auth'
 
-const token = localStorage.getItem('token')
-if (token) {
-  checkToken({ token })
+if (getAuthToken()) {
+  window.location = '/'
 } else {
   import('./index.unauthenticated')
 }

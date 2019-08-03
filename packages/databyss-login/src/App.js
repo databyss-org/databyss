@@ -1,7 +1,6 @@
-import React from 'react'
-import ThemeProvider from '@databyss-org/ui/theming/ThemeProvider'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import React, { useContext } from 'react'
 import Login from '@databyss-org/ui/modules/Login/Login'
+import { ServiceContext } from '@databyss-org/services/components/ServiceProvider'
 import {
   registerWithEmail,
   checkToken,
@@ -9,31 +8,25 @@ import {
   checkCode,
 } from './actions'
 
-function App() {
+export default () => {
+  const serviceContext = useContext(ServiceContext)
+  const { auth } = serviceContext
+
+  const urlParams = new URLSearchParams(window.location.search)
+  console.log(window.location.search)
+  if (urlParams.has('code')) {
+    checkCode(auth)(urlParams.get('code'))
+  }
+
   return (
-    <ThemeProvider>
-      <div className="App">
-        <Router>
-          <div>
-            <div style={{ height: '90vh' }}>
-              <Route
-                exact
-                path="/login/"
-                render={() => (
-                  <Login
-                    registerWithEmail={registerWithEmail}
-                    checkToken={checkToken}
-                    setGoogleAuthToken={setGoogleAuthToken}
-                    checkCode={checkCode}
-                  />
-                )}
-              />
-            </div>
-          </div>
-        </Router>
-      </div>
-    </ThemeProvider>
+    <div style={{ height: '90vh' }}>
+      <Login
+        registerWithEmail={registerWithEmail(auth)}
+        checkToken={checkToken(auth)}
+        setGoogleAuthToken={setGoogleAuthToken(auth)}
+        checkCode={checkCode(auth)}
+        getAuthToken={auth.getAuthToken}
+      />
+    </div>
   )
 }
-
-export default App

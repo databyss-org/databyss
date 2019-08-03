@@ -3,20 +3,14 @@ import { GoogleLogin } from 'react-google-login'
 import TextInput from '@databyss-org/ui/primitives/TextInput/TextInput'
 import Text from '@databyss-org/ui/primitives/Text/Text'
 import Button from '@databyss-org/ui/primitives/Button/Button'
-import { getAuthToken } from '@databyss-org/services/lib/auth'
 
 const Login = ({
   registerWithEmail,
   checkToken,
   setGoogleAuthToken,
   checkCode,
+  getAuthToken,
 }) => {
-  const urlParams = new URLSearchParams(window.location.search)
-  console.log(window.location.search)
-  if (urlParams.has('code')) {
-    checkCode(urlParams.get('code'))
-  }
-
   const token = getAuthToken()
   if (token) {
     checkToken(token)
