@@ -1,8 +1,8 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 import { ServiceProviderDecorator } from './decorators'
-import Login from '../src/Login'
+import LoginApp from '../src/App'
 
 storiesOf('Demos//Login', module)
   .addDecorator(ServiceProviderDecorator)
-  .add('default', () => <Login />)
+  .add('default', () => <LoginApp />)
