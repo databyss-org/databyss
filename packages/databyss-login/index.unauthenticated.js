@@ -2,12 +2,12 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import ThemeProvider from '@databyss-org/ui/theming/ThemeProvider'
 import ServiceProvider from '@databyss-org/services/components/ServiceProvider'
-import Login from './src/Login'
+import LoginApp from './src/App'
 
 const App = () => (
   <ServiceProvider>
     <ThemeProvider>
-      <Login />
+      <LoginApp />
     </ThemeProvider>
   </ServiceProvider>
 )
