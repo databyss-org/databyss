@@ -1,29 +1,28 @@
 import colors from './colors'
 import responsive from './responsive'
 import space from './space'
-
-import fonts, { EM } from './fonts'
-
-export { EM }
+import sizes from './sizes'
+import views from './views'
+import fonts from './fonts'
 
 export default {
-  /* layout */
-  mobileWidth: '600px',
-  desktopWidth: '1024px',
-  maxPageWidth: '1024px',
-  contentWidth: '500px',
-
   /* space */
-  ...space,
+  space,
+
+  /* sizes */
+  sizes,
 
   /* fonts */
   ...fonts,
 
   /* colors */
-  ...colors,
+  colors,
 
   /* responsive */
-  ...responsive,
+  responsive,
+
+  /* views */
+  ...views,
 
   /* transitions */
   slow: '800ms',
