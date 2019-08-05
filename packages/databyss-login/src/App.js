@@ -13,7 +13,7 @@ export default () => {
   const { auth } = serviceContext
 
   const urlParams = new URLSearchParams(window.location.search)
-  console.log(window.location.search)
+
   if (urlParams.has('code')) {
     checkCode(auth)(urlParams.get('code'))
   }

@@ -1,5 +1,89 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Storyshots Demos//Login default 1`] = `
+<div
+  style={
+    Object {
+      "height": "90vh",
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "alignItems": "center",
+        "display": "flex",
+        "height": "100%",
+        "justifyContent": "center",
+      }
+    }
+  >
+     
+    <form
+      noValidate={true}
+      style={
+        Object {
+          "display": "inline-grid",
+          "minWidth": "300px",
+          "width": "50%",
+        }
+      }
+    >
+      <div
+        className="css-0"
+        style={
+          Object {
+            "textAlign": "center",
+          }
+        }
+      >
+        Log In
+      </div>
+      <button
+        className="css-14rvchw"
+        onClick={[Function]}
+        onMouseDown={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#EFDACA",
+            "borderColor": "#B84D00",
+            "color": "#B84D00",
+            "height": 40,
+            "outline": "none",
+            "textDecoration": "none",
+          }
+        }
+        type="button"
+      >
+        <div>
+          Continue with Google
+        </div>
+      </button>
+      <div
+        className="css-0"
+        style={
+          Object {
+            "textAlign": "center",
+          }
+        }
+      >
+        You can also
+         
+        <a
+          href=""
+          onClick={[Function]}
+        >
+          continue with email
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+`;
+
 exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
 <main
   className="root-0-0-3  Viewport-viewport undefined"

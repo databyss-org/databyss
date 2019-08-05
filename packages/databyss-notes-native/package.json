@@ -17,8 +17,8 @@
     "react-native": "0.60.4"
   },
   "peerDependencies": {
-    "react": "16.8.6",
-    "@databyss-org/ui": "1.1.6"
+    "@databyss-org/ui": "1.1.6",
+    "react": "16.8.6"
   },
   "publishConfig": {
     "access": "public"
