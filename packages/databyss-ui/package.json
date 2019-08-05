@@ -14,6 +14,7 @@
   "main": "index.js",
   "peerDependencies": {
     "@databyss-org/ui": "1.1.7",
+    "@databyss-org/services": "1.1.7",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-native": "0.60.4"
@@ -42,8 +43,7 @@
     "react-select": "^3.0.4",
     "react-svg-loader": "^2.1.0",
     "styled-system": "^5.0.5",
-    "webpack-node-externals": "^1.7.2",
-    "@databyss-org/services": "1.1.6"
+    "webpack-node-externals": "^1.7.2"
   },
   "publishConfig": {
     "access": "public"
