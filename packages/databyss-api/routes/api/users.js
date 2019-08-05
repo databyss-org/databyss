@@ -83,7 +83,6 @@ router.post(
 router.post('/google', async (req, res) => {
   const { token } = req.body
 
-  console.log(token)
   axios
     .get(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`)
     .then(async response => {
@@ -103,35 +102,35 @@ router.post('/google', async (req, res) => {
             { expiresIn: 360000 },
             (err, token) => {
               if (err) throw err
-              res.json({ token })
+              return res.json({ token })
+            }
+          )
+        } else {
+          const { name, email, sub } = response.data
+          user = new User({
+            name,
+            email,
+            googleId: sub,
+          })
+
+          await user.save()
+
+          const payload = {
+            user: {
+              id: user.id,
+            },
+          }
+
+          jwt.sign(
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: '1y' },
+            (err, token) => {
+              if (err) throw err
+              return res.json({ token })
             }
           )
         }
-
-        const { name, email, sub } = response.data
-        user = new User({
-          name,
-          email,
-          googleId: sub,
-        })
-
-        await user.save()
-
-        const payload = {
-          user: {
-            id: user.id,
-          },
-        }
-
-        jwt.sign(
-          payload,
-          process.env.JWT_SECRET,
-          { expiresIn: '1y' },
-          (err, token) => {
-            if (err) throw err
-            res.json({ token })
-          }
-        )
         return res.status(200)
       } catch (err) {
         console.error(err.message)
