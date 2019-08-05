@@ -1,5 +1,5 @@
 ```js
-import Typography from '../../stories/Styleguides/Typography'
+import Typography from '../../stories/System/Typography'
 ;<Content>
   <Typography />
 </Content>
