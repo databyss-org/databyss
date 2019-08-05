@@ -1,13 +1,402 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
-<main
-  className="root-0-0-3  Viewport-viewport undefined"
-  role="application"
+exports[`Storyshots Design System Typography 1`] = `
+<div
+  className="root-0-0-5  css-17grojp e1btk33m0"
 >
   <div
-    aria-label="content"
-    className="Landing-landing Content-content"
+    className="css-ipn2og e1btk33m0"
+  >
+    <div
+      className="css-1z0xfz e1btk33m0"
+    >
+      <div
+        className="css-1z0xfz e1btk33m0"
+      >
+        <div
+          className="css-1lr6moq e1btk33m0"
+        >
+          Headings
+        </div>
+      </div>
+      <div
+        className="css-1z0xfz e1btk33m0"
+      >
+        <div
+          className="css-yzi1y7 e1btk33m0"
+        >
+          Heading 1
+        </div>
+        <div
+          className="css-1pchfvn e1btk33m0"
+        >
+          Sit enim laborum enim proident. Ut id fugiat esse voluptate nisi exercitation est voluptate ullamco tempor proident.
+        </div>
+      </div>
+      <div
+        className="css-1z0xfz e1btk33m0"
+      >
+        <div
+          className="css-1i9npjf e1btk33m0"
+        >
+          Heading 2
+        </div>
+        <div
+          className="css-1pchfvn e1btk33m0"
+        >
+          Adipisicing do tempor Lorem adipisicing sint nostrud aliqua Lorem ea officia eiusmod. Non aliquip laborum dolore exercitation aliqua nisi Lorem commodo qui et.
+        </div>
+      </div>
+      <div
+        className="css-1z0xfz e1btk33m0"
+      >
+        <div
+          className="css-11zut8c e1btk33m0"
+        >
+          Heading 3
+        </div>
+        <div
+          className="css-1pchfvn e1btk33m0"
+        >
+          Aute laboris incididunt anim cupidatat velit commodo mollit ut duis. Ut elit pariatur dolor laboris.
+        </div>
+      </div>
+      <div
+        className="css-1z0xfz e1btk33m0"
+      >
+        <div
+          className="css-1knxvbi e1btk33m0"
+        >
+          Heading 4
+        </div>
+        <div
+          className="css-1pchfvn e1btk33m0"
+        >
+          Nulla ipsum ea veniam fugiat enim deserunt quis nostrud. Anim consectetur deserunt mollit quis.
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="css-1z0xfz e1btk33m0"
+  >
+    <div
+      className="css-1z0xfz e1btk33m0"
+    >
+      <div
+        className="css-1lr6moq e1btk33m0"
+      >
+        UI Text
+      </div>
+    </div>
+    <div
+      className="css-1kzuqtr e1btk33m0"
+    >
+      <div
+        className="css-6v79d5 e1btk33m0"
+      >
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-1xuiuv3 e1btk33m0"
+          >
+            UITextLarge
+          </div>
+        </div>
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-139gbjx e1btk33m0"
+          >
+            UITextNormal
+          </div>
+        </div>
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-c892rc e1btk33m0"
+          >
+            UITextSmall
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-6v79d5 e1btk33m0"
+      >
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-v1mi3f e1btk33m0"
+          >
+            UITextLargeSemibold
+          </div>
+        </div>
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-1krly18 e1btk33m0"
+          >
+            UITextNormalSemibold
+          </div>
+        </div>
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-1pd32tj e1btk33m0"
+          >
+            UITextSmallSemibold
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-6v79d5 e1btk33m0"
+      >
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-1srzns7 e1btk33m0"
+          >
+            UITextLargeUnderline
+          </div>
+        </div>
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-9dm13m e1btk33m0"
+          >
+            UITextNormalUnderline
+          </div>
+        </div>
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-nexcnz e1btk33m0"
+          >
+            UITextSmallUnderline
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-6v79d5 e1btk33m0"
+      >
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-mkavzm e1btk33m0"
+          >
+            UITextLargeSemiboldUnderline
+          </div>
+        </div>
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-xbj9xw e1btk33m0"
+          >
+            UITextNormalSemiboldUnderline
+          </div>
+        </div>
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-1k0ybr e1btk33m0"
+          >
+            UITextSmallSemiboldUnderline
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-6v79d5 e1btk33m0"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Design System Views 1`] = `
+<div
+  className="root-0-0-6  css-17grojp e1btk33m0"
+>
+  <div
+    className="css-1z0xfz e1btk33m0"
+  >
+    <div
+      className="css-1z0xfz e1btk33m0"
+    >
+      <div
+        className="css-1lr6moq e1btk33m0"
+      >
+        Border variants
+      </div>
+    </div>
+    <div
+      className="css-1kzuqtr e1btk33m0"
+    >
+      <div
+        className="css-onv8d5 e1btk33m0"
+      >
+        <div
+          className="css-4qxs4u e1btk33m0"
+        >
+          <div
+            className="css-139gbjx e1btk33m0"
+          >
+            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+          </div>
+        </div>
+        <div
+          className="css-1krly18 e1btk33m0"
+        >
+          none
+        </div>
+      </div>
+      <div
+        className="css-onv8d5 e1btk33m0"
+      >
+        <div
+          className="css-oiztje e1btk33m0"
+        >
+          <div
+            className="css-139gbjx e1btk33m0"
+          >
+            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+          </div>
+        </div>
+        <div
+          className="css-1krly18 e1btk33m0"
+        >
+          thinDark
+        </div>
+      </div>
+      <div
+        className="css-onv8d5 e1btk33m0"
+      >
+        <div
+          className="css-1msdmvw e1btk33m0"
+        >
+          <div
+            className="css-139gbjx e1btk33m0"
+          >
+            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+          </div>
+        </div>
+        <div
+          className="css-1krly18 e1btk33m0"
+        >
+          thinLight
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="css-1z0xfz e1btk33m0"
+  >
+    <div
+      className="css-1z0xfz e1btk33m0"
+    >
+      <div
+        className="css-1lr6moq e1btk33m0"
+      >
+        Padding variants
+      </div>
+    </div>
+    <div
+      className="css-m5pdlm e1btk33m0"
+    >
+      <div
+        className="css-onv8d5 e1btk33m0"
+      >
+        <div
+          className="css-1msdmvw e1btk33m0"
+        >
+          <div
+            className="css-139gbjx e1btk33m0"
+          >
+            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+          </div>
+        </div>
+        <div
+          className="css-1krly18 e1btk33m0"
+        >
+          none
+        </div>
+      </div>
+      <div
+        className="css-onv8d5 e1btk33m0"
+      >
+        <div
+          className="css-wj9iwy e1btk33m0"
+        >
+          <div
+            className="css-139gbjx e1btk33m0"
+          >
+            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+          </div>
+        </div>
+        <div
+          className="css-1krly18 e1btk33m0"
+        >
+          small
+        </div>
+      </div>
+      <div
+        className="css-onv8d5 e1btk33m0"
+      >
+        <div
+          className="css-1g1jm2 e1btk33m0"
+        >
+          <div
+            className="css-139gbjx e1btk33m0"
+          >
+            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+          </div>
+        </div>
+        <div
+          className="css-1krly18 e1btk33m0"
+        >
+          medium
+        </div>
+      </div>
+      <div
+        className="css-onv8d5 e1btk33m0"
+      >
+        <div
+          className="css-1180q5x e1btk33m0"
+        >
+          <div
+            className="css-139gbjx e1btk33m0"
+          >
+            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+          </div>
+        </div>
+        <div
+          className="css-1krly18 e1btk33m0"
+        >
+          large
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
+<div
+  className="root-0-0-3  css-17grojp e1btk33m0"
+>
+  <div
+    className="Landing-landing css-ipn2og e1btk33m0"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -658,17 +1047,15 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
       </div>
     </div>
   </div>
-</main>
+</div>
 `;
 
 exports[`Storyshots Motif Landing Entries for Source 1`] = `
-<main
-  className="root-0-0-2  Viewport-viewport undefined"
-  role="application"
+<div
+  className="root-0-0-2  css-17grojp e1btk33m0"
 >
   <div
-    aria-label="content"
-    className="Landing-landing Content-content"
+    className="Landing-landing css-ipn2og e1btk33m0"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -1319,17 +1706,15 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
       </div>
     </div>
   </div>
-</main>
+</div>
 `;
 
 exports[`Storyshots Motif Landing Show All Entries 1`] = `
-<main
-  className="root-0-0-1  Viewport-viewport undefined"
-  role="application"
+<div
+  className="root-0-0-1  css-17grojp e1btk33m0"
 >
   <div
-    aria-label="content"
-    className="Landing-landing Content-content"
+    className="Landing-landing css-ipn2og e1btk33m0"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -2050,17 +2435,15 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
       </div>
     </div>
   </div>
-</main>
+</div>
 `;
 
 exports[`Storyshots Motif Landing Source TOC 1`] = `
-<main
-  className="root-0-0-4  Viewport-viewport undefined"
-  role="application"
+<div
+  className="root-0-0-4  css-17grojp e1btk33m0"
 >
   <div
-    aria-label="content"
-    className="Landing-landing Content-content"
+    className="Landing-landing css-ipn2og e1btk33m0"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -3466,63 +3849,5 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
       </div>
     </div>
   </div>
-</main>
-`;
-
-exports[`Storyshots Styleguides Typography 1`] = `
-<main
-  className="root-0-0-5  Viewport-viewport undefined"
-  role="application"
->
-  <div
-    aria-label="content"
-    className="Content-content"
-  >
-    <div
-      className="css-1vwme8n"
-    >
-      Headings
-    </div>
-    <div
-      className="css-13pilab"
-    >
-      Heading 1
-    </div>
-    <div
-      className="css-1pchfvn"
-    >
-      Veniam do ea non ut. Quis magna aute et consequat enim aute officia esse aute nulla magna.
-    </div>
-    <div
-      className="css-1n03hhd"
-    >
-      Heading 2
-    </div>
-    <div
-      className="css-1pchfvn"
-    >
-      Nisi consequat officia tempor aute officia amet officia exercitation id commodo exercitation consequat. Id exercitation amet eu aute do magna ex eiusmod deserunt deserunt do sit.
-    </div>
-    <div
-      className="css-1vwme8n"
-    >
-      Heading 3
-    </div>
-    <div
-      className="css-1pchfvn"
-    >
-      Occaecat cupidatat duis sint minim nostrud nostrud sint in. Ad mollit amet ad commodo eu.
-    </div>
-    <div
-      className="css-txy2p7"
-    >
-      Heading 4
-    </div>
-    <div
-      className="css-1pchfvn"
-    >
-      Exercitation est anim incididunt deserunt laboris. Laborum proident non ad incididunt qui ullamco cupidatat.
-    </div>
-  </div>
-</main>
+</div>
 `;

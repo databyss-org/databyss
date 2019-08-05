@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import theme from '@databyss-org/ui/theming/theme'
+// import theme from '@databyss-org/ui/theming/theme'
 import { TouchableHighlight, Text } from 'react-native'
 import _ from 'lodash'
 
@@ -7,7 +7,7 @@ import styled from '../styled'
 import styles, { defaultProps, themes } from './styles'
 import IS_NATIVE from './../isNative'
 
-const { fontSizes } = theme
+// const { fontSizes } = theme
 
 const Button = styled(
   {
@@ -90,7 +90,7 @@ export default ({ label, onClick, buttonType, ...others }) => {
       <Text
         style={{
           color: themes[buttonStyle].fontColor,
-          fontSize: fontSizes.normal,
+          // fontSize: fontSizes.normal,
         }}
       >
         {label}
