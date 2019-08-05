@@ -21,16 +21,15 @@
     "start:login": "NPM_BUILD_TARGET=LOGIN_APP PUBLIC_URL=/login node scripts/start.js",
     "start:docs": "cd ./packages/databyss-documentation/website && yarn run start",
     "metro:stories": "react-native start --reset-cache --config packages/databyss-stories-native/metro.config.js",
-    "start:server": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER NODE_ENV=development nodemon packages/databyss-api/server.js",
+    "start:server": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER NODE_ENV=development nodemon packages/databyss-api/server.js --exec babel-node --watch packages/databyss-api",
     "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
     "build:ui": "NODE_ENV=production BABEL_ENV=production webpack --config packages/databyss-ui/webpack.config.js --mode=production",
-    "build:login": "node scripts/build.js",
     "test": "NPM_BUILD_TARGET=TEST node scripts/test.js",
     "flow": "flow",
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
     "styleguide:build": "NPM_BUILD_TARGET=TEST styleguidist build --config ./config/styleguide.config.js",
-    "storybook": "start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public",
-    "storybook:build": "build-storybook -o build -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss",
+    "storybook": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public",
+    "storybook:build": "NPM_BUILD_TARGET=TEST build-storybook -o build -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss",
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
     "lint": "eslint . --cache && echo \"eslint: no lint errors\""
   },
@@ -64,6 +63,10 @@
         ],
         "testMatch": [
           "<rootDir>/**/*.test.js"
+        ],
+        "testPathIgnorePatterns": [
+          "/node_modules/",
+          "/build/"
         ],
         "testEnvironment": "jsdom",
         "testURL": "http://localhost",
@@ -102,7 +105,8 @@
           "<rootDir>/**/package.json"
         ],
         "testPathIgnorePatterns": [
-          "/node_modules/"
+          "/node_modules/",
+          "/build/"
         ]
       }
     ]
@@ -113,12 +117,17 @@
     ]
   },
   "dependencies": {
+    "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
     "@babel/polyfill": "^7.4.4",
+    "@babel/preset-env": "^7.5.5",
     "@babel/runtime": "^7.5.5",
-    "@storybook/addon-options": "^5.1.1",
-    "@storybook/addon-storyshots": "^5.1.1",
-    "@storybook/addons": "^5.1.1",
+    "@bugsnag/js": "^6.3.2",
+    "@storybook/addon-options": "5.1.9",
+    "@storybook/addon-storyshots": "5.1.9",
+    "@storybook/addons": "5.1.9",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^24.8.0",
@@ -179,7 +188,7 @@
     "react-flexbox-grid": "^2.1.2",
     "react-google-login": "^5.0.4",
     "react-jss": "^8.6.1",
-    "react-native": "^0.60.4",
+    "react-native": "0.60.4",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
     "react-styleguidist": "^9.1.5",

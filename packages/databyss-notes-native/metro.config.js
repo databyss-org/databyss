@@ -13,6 +13,9 @@ module.exports = {
     }),
   },
   resolver: {
-    blacklistRE: blacklist([/packages\/.*\/node_modules\/react-native\/.*/]),
+    blacklistRE: blacklist([
+      /packages\/.*\/node_modules\/react-native\/.*/,
+      /.*\/build\/.*/,
+    ]),
   },
 }
