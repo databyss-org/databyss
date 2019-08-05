@@ -1,4 +1,4 @@
-import { deleteAuthCookie } from './auth'
+import { deleteAuthToken } from '../auth'
 import packageJson from '../package.json'
 
 export class UnauthorizedError extends Error {}
@@ -8,7 +8,7 @@ function checkStatus(response) {
     return response
   }
   if (response.status === 401) {
-    deleteAuthCookie()
+    deleteAuthToken()
     window.location = '/login'
     throw new UnauthorizedError('Unauthorized')
   }

@@ -1,5 +1,5 @@
 import request from './request'
-import { getAuthToken } from './auth'
+import { getAuthToken } from './../auth'
 
 export const requestApi = (path, options = { headers: {} }, responseIsJson) =>
   request(
