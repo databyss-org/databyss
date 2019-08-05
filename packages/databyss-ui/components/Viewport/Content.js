@@ -1,17 +1,10 @@
 import React from 'react'
-import classnames from 'classnames'
-import injectSheet from 'react-jss'
-import styles from './styles'
+import { View } from '@databyss-org/ui/primitives'
 
-const Content = ({ classes, className, children, style, ariaLabel, _ref }) => (
-  <div
-    ref={_ref}
-    aria-label={ariaLabel || 'content'}
-    className={classnames(className, classes.content)}
-    style={style}
-  >
+const Content = ({ children, ...others }) => (
+  <View maxWidth="contentWidth" {...others}>
     {children}
-  </div>
+  </View>
 )
 
-export default injectSheet(styles)(Content)
+export default Content

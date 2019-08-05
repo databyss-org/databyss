@@ -1,18 +1,10 @@
 import React from 'react'
-import classnames from 'classnames'
-import injectSheet from 'react-jss'
-import styles from './styles'
+import { View } from '@databyss-org/ui/primitives'
 
-const Viewport = ({ classes, className, children, style, isFullscreen }) => (
-  <main
-    role="application"
-    className={classnames([className, classes.viewport], {
-      [classes.fullscreen]: isFullscreen,
-    })}
-    style={style}
-  >
+const Viewport = ({ children, isFullscreen, ...others }) => (
+  <View paddingVariant="medium" {...others}>
     {children}
-  </main>
+  </View>
 )
 
-export default injectSheet(styles)(Viewport)
+export default Viewport
