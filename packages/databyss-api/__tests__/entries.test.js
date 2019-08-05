@@ -66,7 +66,7 @@ describe('Authorized', () => {
       expect(res.source._id).toBe(sourceId)
     })
     afterAll(async done => {
-      await deleteUserPosts()
+      await deleteUserPosts(token)
       done()
     })
   })

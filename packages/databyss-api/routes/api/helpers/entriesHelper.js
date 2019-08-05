@@ -205,25 +205,23 @@ const appendSourceToAuthorList = source => {
     }
     return [obj]
   }, [])
-  newSource.map(a => {
-    if (a) {
-      Author.findOne({
-        id: a.author,
+  newSource.forEach(a => {
+    Author.findOne({
+      id: a.author,
+    })
+      .then(author => {
+        if (author) {
+          const newInput = author
+          newInput.sources = a.id
+          Author.findOneAndUpdate(
+            { id: a.author },
+            { $set: newInput },
+            { new: true }
+          ).catch(err => console.log(err))
+        }
       })
-        .then(author => {
-          if (author) {
-            const newInput = author
-            newInput.sources = a.id
-            Author.findOneAndUpdate(
-              { id: a.author },
-              { $set: newInput },
-              { new: true }
-            ).catch(err => console.log(err))
-          }
-        })
-        .catch(err => console.log(err))
-    }
-    return undefined
+      .catch(err => console.log(err))
+    // return undefined
   })
 }
 
@@ -252,24 +250,25 @@ const appendSourceToAuthor = ({ authors, sourceId }) => {
 
 const appendEntryToAuthor = ({ entries, authors }) => {
   const promises = authors.map(async a => {
-    if (a) {
-      let author = await Author.findOne({
-        _id: a,
-      }).catch(err => console.log(err))
-      if (author) {
-        const newInput = author
-        let list = newInput.entries
-        list = list.concat(entries.filter(e => list.indexOf(e) < 0))
-        // figure out how to remove duplicates
-        newInput.entries = list
-        author = await Author.findOneAndUpdate(
-          { _id: a },
-          { $set: newInput },
-          { new: true }
-        ).catch(err => console.log(err))
-      }
+    let author = await Author.findOne({
+      _id: a,
+    }).catch(err => console.log(err))
+    if (author) {
+      const newInput = author
+      let list = newInput.entries
+      list = list.concat(entries.filter(e => list.indexOf(e) < 0))
+      // figure out how to remove duplicates
+      newInput.entries = list
+      author = await Author.findOneAndUpdate(
+        { _id: a },
+        { $set: newInput },
+        { new: true }
+      ).catch(err => console.log(err))
+      return author
     }
     return undefined
+
+    // return undefined
   })
   return Promise.all(promises)
 }

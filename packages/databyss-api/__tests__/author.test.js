@@ -33,7 +33,7 @@ describe('Authorized', () => {
     token = await createUser(EMAIL, PASSWORD)
     done()
   }, 5000)
-  test('It should post/get new author', async () => {
+  test('It should post/get new author', async done => {
     let newAuthorId
     await createAuthor(token, FIRST_NAME, LAST_NAME).then(response => {
       newAuthorId = JSON.parse(response.text)._id
@@ -43,9 +43,10 @@ describe('Authorized', () => {
       const res = JSON.parse(response.text).firstName
       expect(res).toBe(FIRST_NAME)
     })
-    afterAll(async done => {
-      await deleteUserPosts()
-      done()
-    })
+    done()
+  })
+  afterAll(async done => {
+    await deleteUserPosts(token)
+    done()
   })
 })

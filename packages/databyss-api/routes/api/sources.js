@@ -109,7 +109,6 @@ router.post('/', auth, async (req, res) => {
       })
       return res.json(source)
     }
-
     // if new source has been added
     const sources = new Source(sourceFields)
     const post = await sources.save()
@@ -132,7 +131,6 @@ router.post('/', auth, async (req, res) => {
         })
       }
     }
-
     return res.json(post)
   } catch (err) {
     console.error(err.message)

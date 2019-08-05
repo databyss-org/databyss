@@ -39,7 +39,7 @@ describe('Source', () => {
       done()
     }, 5000)
 
-    test('It should post/get new source with no author', async () => {
+    test('It should post/get new source with no author', async done => {
       const postResponse = await createSourceNoAuthor(token, RESOURCE)
       const sourceNoAuthorId = JSON.parse(postResponse.text)._id
       expect(postResponse.statusCode).toBe(200)
@@ -47,9 +47,10 @@ describe('Source', () => {
       const res = JSON.parse(getResponse.text)
       expect(res.resource).toBe(RESOURCE)
       expect(res.authors.length).toBe(0)
+      done()
     })
 
-    test('It should post/get new source with author', async () => {
+    test('It should post/get new source with author', async done => {
       const postResponse = await createSourceWithAuthor(
         token,
         RESOURCE,
@@ -62,9 +63,10 @@ describe('Source', () => {
       const res = JSON.parse(getResponse.text)
       expect(res.resource).toBe(RESOURCE)
       expect(res.authors.length).toBeGreaterThan(0)
+      done()
     })
 
-    test('It should edit a source by ID', async () => {
+    test('It should edit a source by ID', async done => {
       const createResponse = await createSourceNoAuthor(token, RESOURCE)
       const sourceNoAuthorId = JSON.parse(createResponse.text)._id
       const editResponse = await editedSourceWithAuthor(
@@ -79,9 +81,10 @@ describe('Source', () => {
       )
       const res = JSON.parse(getResponse.text)
       expect(res.resource).toBe(EDITED_RESOURCE)
+      done()
     })
     afterAll(async done => {
-      await deleteUserPosts()
+      await deleteUserPosts(token)
       return done()
     })
   })
