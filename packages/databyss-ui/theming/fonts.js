@@ -1,7 +1,5 @@
 import { Platform } from 'react-native'
 
-export const EM = 17
-
 export const serif = Platform.select({
   ios: 'Baskerville',
   android: 'serif',
@@ -32,6 +30,12 @@ export const weightUnits = Platform.select({
   default: v => v,
 })
 
+export const underline = Platform.select({
+  ios: { textDecorationLine: 'underline' },
+  android: { textDecorationLine: 'underline' },
+  default: { textDecoration: 'underline' },
+})
+
 const fonts = {
   sans,
   serif,
@@ -47,32 +51,17 @@ fontWeights.bold = fontWeights[2]
 fontWeights.semiBold = fontWeights[1]
 fontWeights.regular = fontWeights[0]
 
-const fontSizes = [EM, EM, 0.85 * EM, 1.2 * EM, 1.8 * EM, 2.2 * EM]
-fontSizes.normal = fontSizes[0]
-fontSizes.extraSmall = fontSizes[1]
-fontSizes.small = fontSizes[2]
-fontSizes.large = fontSizes[3]
-fontSizes.extraLarge = fontSizes[4]
-
-const lineHeights = [EM, EM * 1.25, EM * 1.5, EM * 2, EM * 3].map(pxUnits)
-lineHeights.tight = lineHeights[0]
-lineHeights.normal = lineHeights[1]
-lineHeights.large = lineHeights[2]
-lineHeights.extraLarge = lineHeights[3]
-
 const headingText = size => ({
   fontFamily: fonts.headingFont,
   fontWeight: fontWeights.bold,
   fontSize: size,
-  lineHeight: pxUnits(size),
-  marginTop: pxUnits(34),
-  marginBottom: pxUnits(8),
+  lineHeight: pxUnits(size * 1.15),
 })
 
 const uiText = size => ({
   fontFamily: fonts.uiFont,
   fontSize: size,
-  lineHeight: pxUnits(size * 1.5),
+  lineHeight: pxUnits(size * 1.4),
   fontWeight: fontWeights.normal,
 })
 
@@ -100,6 +89,28 @@ const uiTextBoldVariants = Object.keys(uiTextVariants).reduce(
   {}
 )
 
+const uiTextUnderlineVariants = Object.keys(uiTextVariants).reduce(
+  (variants, vk) => ({
+    ...variants,
+    [`${vk}Underline`]: {
+      ...uiTextVariants[vk],
+      ...underline,
+    },
+  }),
+  {}
+)
+
+const uiTextBoldUnderlineVariants = Object.keys(uiTextBoldVariants).reduce(
+  (variants, vk) => ({
+    ...variants,
+    [`${vk}Underline`]: {
+      ...uiTextBoldVariants[vk],
+      ...underline,
+    },
+  }),
+  {}
+)
+
 const bodyText = size => ({
   fontFamily: fonts.bodyFont,
   fontSize: size,
@@ -117,13 +128,13 @@ const textVariants = {
   ...headingVariants,
   ...uiTextVariants,
   ...uiTextBoldVariants,
+  ...uiTextUnderlineVariants,
+  ...uiTextBoldUnderlineVariants,
   ...bodyVariants,
 }
 
 export default {
   fonts,
-  fontSizes,
   fontWeights,
-  lineHeights,
   textVariants,
 }

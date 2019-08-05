@@ -11,19 +11,20 @@
   "bugs": {
     "url": "https://github.com/databyss-org/databyss/issues"
   },
-  "main": "dist/databyss-ui.js",
+  "main": "index.js",
   "peerDependencies": {
     "@databyss-org/ui": "1.1.8",
     "@databyss-org/services": "1.1.8",
     "react": "16.8.6",
     "react-dom": "16.8.6",
-    "react-native": "^0.60.4"
+    "react-native": "0.60.4"
   },
   "dependencies": {
     "@emotion/core": "^10.0.14",
     "@emotion/native": "^10.0.14",
     "@emotion/styled": "^10.0.14",
     "@storybook/react": "^5.1.1",
+    "@styled-system/should-forward-prop": "^5.0.18",
     "alea": "^1.0.0",
     "classnames": "^2.2.6",
     "color": "^3.1.0",
@@ -33,6 +34,7 @@
     "lodash": "^4.17.15",
     "lorem-ipsum": "^2.0.3",
     "prop-types": "^15.7.2",
+    "react-google-login": "^5.0.4",
     "react-jss": "^8.6.1",
     "react-modal": "^3.8.1",
     "react-native-web": "^0.11.0",

@@ -4,6 +4,7 @@ apply plugin: "com.android.application"
         implementation 'com.google.android.gms:play-services-auth:17.0.0'
     }
 
+
 import com.android.build.OutputFile
 
 /**
@@ -79,12 +80,16 @@ import com.android.build.OutputFile
  * ]
  */
 
+
+
+
 project.ext.react = [
     entryFile: "index.js",
     enableHermes: false,  // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
+
 
 /**
  * Set this to true to create two separate APKs instead of one:
