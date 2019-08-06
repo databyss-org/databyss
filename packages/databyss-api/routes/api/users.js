@@ -83,7 +83,6 @@ router.post(
 router.post('/google', async (req, res) => {
   const { token } = req.body
 
-  console.log(token)
   axios
     .get(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`)
     .then(async response => {
@@ -103,35 +102,35 @@ router.post('/google', async (req, res) => {
             { expiresIn: 360000 },
             (err, token) => {
               if (err) throw err
-              res.json({ token })
+              return res.json({ token })
+            }
+          )
+        } else {
+          const { name, email, sub } = response.data
+          user = new User({
+            name,
+            email,
+            googleId: sub,
+          })
+
+          await user.save()
+
+          const payload = {
+            user: {
+              id: user.id,
+            },
+          }
+
+          jwt.sign(
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: '1y' },
+            (err, token) => {
+              if (err) throw err
+              return res.json({ token })
             }
           )
         }
-
-        const { name, email, sub } = response.data
-        user = new User({
-          name,
-          email,
-          googleId: sub,
-        })
-
-        await user.save()
-
-        const payload = {
-          user: {
-            id: user.id,
-          },
-        }
-
-        jwt.sign(
-          payload,
-          process.env.JWT_SECRET,
-          { expiresIn: '1y' },
-          (err, token) => {
-            if (err) throw err
-            res.json({ token })
-          }
-        )
         return res.status(200)
       } catch (err) {
         console.error(err.message)
@@ -191,7 +190,7 @@ router.post(
 
           const msg = {
             to: email,
-            from: 'test@email.com',
+            from: process.env.LOGIN_URL.TRANSACTIONAL_EMAIL_SENDER,
             templateId: emailExists
               ? 'd-9e03c4ebd5a24560b6e02a15af4b9b2e'
               : 'd-845a6d7d37c14d828191b6c7933b20f7',

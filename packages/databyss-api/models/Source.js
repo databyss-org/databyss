@@ -21,7 +21,8 @@ const SourceSchema = new mongoose.Schema({
   },
   authors: [
     {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'author',
     },
   ],
   abbreviation: {
@@ -53,7 +54,8 @@ const SourceSchema = new mongoose.Schema({
   ],
   entries: [
     {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'entry',
     },
   ],
 })

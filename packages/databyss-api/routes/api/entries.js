@@ -30,22 +30,40 @@ router.post('/', auth, async (req, res) => {
       return res.status(400).json({ errors: errors.array() })
     }
 */
-    let { source } = req.body
-    const {
+    let {
+      source,
+      firstName,
+      lastName,
       pageFrom,
+      index,
       author,
       pageTo,
       files,
-      entry,
-      index,
+      linkedContent,
       resource,
-      firstName,
-      lastName,
+    } = req.body
+
+    const {
+      entry,
       _id, // NEED TO ADD THIS PARAM TO FRONT END
     } = req.body
 
+    // source = _.isString(source) ? source : ''
+    resource = _.isString(resource) ? resource : ''
+    firstName = _.isString(firstName) ? firstName : ''
+    lastName = _.isString(lastName) ? lastName : ''
+    pageFrom = _.isNumber(pageFrom) ? pageFrom : ''
+    index = _.isString(index) ? index : 0
+    author = _.isArray(author) ? author : []
+    pageTo = _.isNumber(pageTo) ? pageTo : -1
+    files = _.isArray(files) ? files : []
+    linkedContent = _.isString(linkedContent) ? linkedContent : ''
+
     // If new source, create new Id
-    if ((firstName || lastName) && !resource) {
+    if (
+      (!_.isEmpty(firstName) || !_.isEmpty(lastName)) &&
+      _.isEmpty(resource)
+    ) {
       // POST NEW AUTHOR
       let authorPost
       authorPost = new Author({
@@ -57,10 +75,10 @@ router.post('/', auth, async (req, res) => {
       author.push(authorPost._id.toString())
     }
 
-    if (resource) {
+    if (!_.isEmpty(resource)) {
       let sourcePost
       let authorId
-      if (firstName || lastName) {
+      if (!_.isEmpty(firstName) || !_.isEmpty(lastName)) {
         let authorPost
         // create new author
         authorPost = new Author({
@@ -107,18 +125,19 @@ router.post('/', auth, async (req, res) => {
     }
 
     const entryFields = {
-      pageFrom: _.isEmpty(pageFrom) ? pageFrom : '',
-      source: _.isEmpty(source) ? source : '',
-      author: _.isEmpty(author) ? author : [],
-      pageTo: _.isEmpty(pageTo) ? pageTo : '',
-      files: _.isEmpty(files) ? files : [],
+      pageFrom,
+      source,
+      author,
+      pageTo,
+      files,
       entry,
-      index: _.isEmpty(index) ? index : 0,
+      index,
+      linkedContent,
       user: req.user.id,
     }
 
     // CHECK HERE IF ENTRY EXISTS
-    let entryExists = await Entry.findOne({ _id })
+    const entryExists = await Entry.findOne({ _id })
     if (entryExists) {
       if (req.user.id.toString() !== entryExists.user.toString()) {
         return res.status(401).json({ msg: 'This post is private' })
@@ -126,35 +145,40 @@ router.post('/', auth, async (req, res) => {
 
       // update entry
       entryFields._id = _id
-      entryExists = await Entry.findOneAndUpdate(
-        { _id },
-        { $set: entryFields }
-      ).then(() => {
-        // if source exists, append entry to source
-        if (source) {
-          appendEntryToSource({ sourceId: source, entryId: entryExists._id })
+      Entry.findOneAndUpdate({ _id }, { $set: entryFields }).then(
+        async entryPost => {
+          // if source exists, append entry to source
+          if (!_.isEmpty(source)) {
+            await appendEntryToSource({
+              sourceId: source,
+              entryId: entryPost._id,
+            })
+          }
+          // if author exists, append entry to author
+          if (!_.isEmpty(author)) {
+            await appendEntryToAuthors({
+              authors: author,
+              entryId: entryPost._id,
+            })
+          }
+          return res.json(entryPost)
         }
-        // if author exists, append entry to author
-        if (author) {
-          appendEntryToAuthors({ authors: author, entryId: entryExists._id })
-        }
-      })
-    } else {
-      // create new entry
-      const entries = new Entry(entryFields)
-      const post = await entries.save()
-
-      // if source exists, append entry to source
-      if (source) {
-        appendEntryToSource({ sourceId: source, entryId: post._id })
-      }
-      // if author exists, append entry to author
-      if (author) {
-        appendEntryToAuthors({ authors: author, entryId: post._id })
-      }
-      return res.json(post)
+      )
     }
-    return undefined
+
+    // create new entry
+    const entries = new Entry(entryFields)
+    const post = await entries.save()
+
+    // if source exists, append entry to source
+    if (!_.isEmpty(source)) {
+      await appendEntryToSource({ sourceId: source, entryId: post._id })
+    }
+    // if author exists, append entry to author
+    if (!_.isEmpty(author)) {
+      await appendEntryToAuthors({ authors: author, entryId: post._id })
+    }
+    return res.json(post)
   } catch (err) {
     console.error(err.message)
     return res.status(500).send('Server error')
@@ -177,6 +201,8 @@ router.get('/:id', auth, async (req, res) => {
     const entry = await Entry.findOne({
       _id: req.params.id,
     })
+      .populate('source', 'resource')
+      .populate('author', 'firstName lastName')
 
     if (!entry) {
       return res.status(400).json({ msg: 'There is no entry for this id' })
@@ -201,6 +227,8 @@ router.get('/', auth, async (req, res) => {
   try {
     const entry = await Entry.find()
       .or([{ user: req.user.id }, { default: true }])
+      .populate('source', 'resource')
+      .populate('author', 'firstName lastName')
       .limit(10)
 
     // const entry = await Entry.find({ user: req.user.id })

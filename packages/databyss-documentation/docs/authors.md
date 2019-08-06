@@ -39,14 +39,35 @@ http://localhost:5000/api/authors
 | `sources`   | `false`  |  `array` | array of source ID's containing this author |
 | `_id`       | `false`  | `string` |                        edit existing author |
 
-#### Response
+#### Example Request
+
+    POST /api/authors HTTP/1.1
+    Host: localhost:5000
+    Content-Type: application/json
+    x-auth-token: xxxxxxxxxxxxxxx
+
+    {
+        "firstName":"William",
+        "lastName":"Shakespeare"
+    }
+
+#### Example Response
 
     HTTP/1.1 200 OK
     Status: 200 OK
     Content-Type: application/json; charset=utf-8
     ...
 
-    {"lastName":"AAAA%2FAAA%3DAAAAAAAA"}
+    {
+        "entries": [],
+        "default": false,
+        "sources": [],
+        "_id": "5d4341c5294d454f4a715e2b",
+        "firstName": "William",
+        "lastName": "Shakespeare",
+        "user": "xxxxxxxxxxxxxx",
+        "__v": 0
+    }
 
 ## Get author by ID
 
@@ -73,14 +94,30 @@ http://localhost:5000/api/authors/:id
 | -------------- | :------: | -------: | -----------: |
 | `x-auth-token` |  `true`  | `string` | access token |
 
-#### Response
+#### Example Request
+
+    GET /api/authors/5d4341c5294d454f4a715e2b HTTP/1.1
+    Host: localhost:5000
+    Content-Type: application/json
+    x-auth-token: xxxxxxxxxxxxxxx
+
+#### Example Response
 
     HTTP/1.1 200 OK
     Status: 200 OK
     Content-Type: application/json; charset=utf-8
     ...
 
-    {"firstName":"AAAA%2FAAA%3DAAAAAAAA", ...}
+    {
+        "entries": [],
+        "default": false,
+        "sources": [],
+        "_id": "5d4341c5294d454f4a715e2b",
+        "firstName": "William",
+        "lastName": "Shakespeare",
+        "user": "xxxxxxxxxxxxxx",
+        "__v": 0
+    }
 
 ## Gets all authors
 
@@ -107,11 +144,40 @@ http://localhost:5000/api/authors/
 | -------------- | :------: | -------: | -----------: |
 | `x-auth-token` |  `true`  | `string` | access token |
 
-#### Response
+#### Example Request
+
+    GET /api/authors/ HTTP/1.1
+    Host: localhost:5000
+    Content-Type: application/json
+    x-auth-token: xxxxxxxxxxxxxxx
+
+#### Example Response
 
     HTTP/1.1 200 OK
     Status: 200 OK
     Content-Type: application/json; charset=utf-8
     ...
 
-    [{"firstName":"AAAA%2FAAA%3DAAAAAAAA"...}, ...]
+    [
+        {
+            "entries": [
+                {
+                    "_id": "5d432e682b6e123520577a02",
+                    "entry": "It was the best of times..."
+                }
+            ],
+            "default": false,
+            "sources": [
+                {
+                    "_id": "5d432e682b6e123520577a01",
+                    "resource": "Tale of Two"
+                }
+            ],
+            "_id": "5d432e682b6e123520577a00",
+            "firstName": "Charles",
+            "lastName": "Dickens",
+            "user": "5d4300b697ebbb06300e78b2",
+            "__v": 0
+        },
+    ...
+    ]

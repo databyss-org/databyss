@@ -33,6 +33,13 @@
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
     "lint": "eslint . --cache && echo \"eslint: no lint errors\""
   },
+  "nodemonConfig": {
+    "events": {
+      "restart": "kill-port 5000",
+      "crash": "kill-port 5000"
+    },
+    "delay": "1500"
+  },
   "jest": {
     "projects": [
       {
@@ -73,7 +80,23 @@
         "moduleFileExtensions": [
           "js",
           "json"
+        ],
+        "testPathIgnorePatterns": [
+          "/databyss-api/"
         ]
+      },
+      {
+        "displayName": "test-api",
+        "testEnvironment": "node",
+        "testMatch": [
+          "<rootDir>/packages/databyss-api/**/*.test.js"
+        ],
+        "moduleFileExtensions": [
+          "js",
+          "json"
+        ],
+        "globalSetup": "<rootDir>/packages/databyss-api/config/globalSetup.js",
+        "globalTeardown": "<rootDir>/packages/databyss-api/config/globalTeardown.js"
       },
       {
         "displayName": "checkversion",
@@ -131,6 +154,7 @@
     "eslint-plugin-jsx-a11y": "6.2.1",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.13.0",
+    "expo-app-auth": "^6.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.1.1",
     "file-loader": "^4.0.0",
@@ -143,6 +167,7 @@
     "jest-resolve": "^23.6.0",
     "jest-runner-eslint": "^0.7.1",
     "jsonwebtoken": "^8.5.1",
+    "kill-port": "^1.5.1",
     "metro-react-native-babel-preset": "^0.55.0",
     "mini-css-extract-plugin": "^0.7.0",
     "mongoose": "^5.6.5",

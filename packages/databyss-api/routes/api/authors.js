@@ -75,6 +75,8 @@ router.get('/:id', auth, async (req, res) => {
     const author = await Author.findOne({
       _id: req.params.id,
     })
+      .populate('entries', 'entry')
+      .populate('sources', 'resource')
 
     if (!author) {
       return res.status(400).json({ msg: 'There is no author for this id' })
@@ -97,10 +99,10 @@ router.get('/:id', auth, async (req, res) => {
 // @access   private
 router.get('/', auth, async (req, res) => {
   try {
-    const author = await Author.find().or([
-      { user: req.user.id },
-      { default: true },
-    ])
+    const author = await Author.find()
+      .populate('entries', 'entry')
+      .populate('sources', 'resource')
+      .or([{ user: req.user.id }, { default: true }])
 
     // const author = await Author.find({ user: req.user.id })
     if (!author) {
