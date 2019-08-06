@@ -124,6 +124,39 @@ const bodyVariants = {
   bodySmall: bodyText(14),
 }
 
+const bodyBoldVariants = Object.keys(bodyVariants).reduce(
+  (variants, vk) => ({
+    ...variants,
+    [`${vk}Semibold`]: {
+      ...bodyVariants[vk],
+      fontWeight: fontWeights.semiBold,
+    },
+  }),
+  {}
+)
+
+const bodyItalicVariants = Object.keys(bodyVariants).reduce(
+  (variants, vk) => ({
+    ...variants,
+    [`${vk}Italic`]: {
+      ...bodyVariants[vk],
+      fontStyle: 'italic',
+    },
+  }),
+  {}
+)
+
+const bodyBoldItalicVariants = Object.keys(bodyBoldVariants).reduce(
+  (variants, vk) => ({
+    ...variants,
+    [`${vk}Italic`]: {
+      ...bodyBoldVariants[vk],
+      fontStyle: 'italic',
+    },
+  }),
+  {}
+)
+
 const textVariants = {
   ...headingVariants,
   ...uiTextVariants,
@@ -131,6 +164,9 @@ const textVariants = {
   ...uiTextUnderlineVariants,
   ...uiTextBoldUnderlineVariants,
   ...bodyVariants,
+  ...bodyBoldVariants,
+  ...bodyItalicVariants,
+  ...bodyBoldItalicVariants,
 }
 
 export default {

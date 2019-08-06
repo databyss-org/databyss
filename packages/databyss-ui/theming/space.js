@@ -5,4 +5,8 @@ space.small = space[1]
 space.medium = space[3]
 space.large = space[5]
 
+space.smallNegative = space.small * -1
+space.mediumNegative = space.medium * -1
+space.largeNegative = space.large * -1
+
 export default space

@@ -2,7 +2,7 @@
   "name": "@databyss-org/ui",
   "author": "databyss-org",
   "license": "MIT",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "private": false,
   "repository": {
     "type": "git",
@@ -13,8 +13,8 @@
   },
   "main": "index.js",
   "peerDependencies": {
-    "@databyss-org/ui": "1.1.8",
-    "@databyss-org/services": "1.1.8",
+    "@databyss-org/ui": "1.1.9",
+    "@databyss-org/services": "1.1.9",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-native": "0.60.4"
@@ -34,6 +34,7 @@
     "lodash": "^4.17.15",
     "lorem-ipsum": "^2.0.3",
     "prop-types": "^15.7.2",
+    "react-fast-compare": "^2.0.4",
     "react-google-login": "^5.0.4",
     "react-jss": "^8.6.1",
     "react-modal": "^3.8.1",

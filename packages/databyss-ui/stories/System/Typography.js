@@ -2,7 +2,7 @@ import React from 'react'
 import { loremIpsum } from 'lorem-ipsum'
 import Alea from 'alea'
 import { Text, View } from '@databyss-org/ui/primitives'
-import { Content } from '@databyss-org/ui'
+import { Content, Grid } from '@databyss-org/ui'
 import { Section } from './'
 
 const alea = new Alea('typography')
@@ -41,7 +41,7 @@ export default () => (
       </Section>
     </Content>
     <Section title="UI Text">
-      <View flexDirection="row" flexWrap="wrap">
+      <Grid>
         <View mr="medium">
           <TextVariant variant="uiTextLarge">UITextLarge</TextVariant>
           <TextVariant variant="uiTextNormal">UITextNormal</TextVariant>
@@ -81,7 +81,44 @@ export default () => (
           </TextVariant>
         </View>
         <View mr="medium" />
-      </View>
+      </Grid>
+    </Section>
+    <Section title="Body Text">
+      <Grid>
+        <View mr="medium">
+          <TextVariant variant="bodyLarge">BodyLarge</TextVariant>
+          <TextVariant variant="bodyNormal">BodyNormal</TextVariant>
+          <TextVariant variant="bodySmall">BodySmall</TextVariant>
+        </View>
+        <View mr="medium">
+          <TextVariant variant="bodyLargeSemibold">
+            BodyLargeSemibold
+          </TextVariant>
+          <TextVariant variant="bodyNormalSemibold">
+            BodyNormalSemibold
+          </TextVariant>
+          <TextVariant variant="bodySmallSemibold">
+            BodySmallSemibold
+          </TextVariant>
+        </View>
+        <View mr="medium">
+          <TextVariant variant="bodyLargeItalic">BodyLargeItalic</TextVariant>
+          <TextVariant variant="bodyNormalItalic">BodyNormalItalic</TextVariant>
+          <TextVariant variant="bodySmallItalic">BodySmallItalic</TextVariant>
+        </View>
+        <View mr="medium">
+          <TextVariant variant="bodyLargeSemiboldItalic">
+            BodyLargeSemiboldItalic
+          </TextVariant>
+          <TextVariant variant="bodyNormalSemiboldItalic">
+            BodyNormalSemiboldItalic
+          </TextVariant>
+          <TextVariant variant="bodySmallSemiboldItalic">
+            BodySmallSemiboldItalic
+          </TextVariant>
+        </View>
+        <View mr="medium" />
+      </Grid>
     </Section>
   </React.Fragment>
 )

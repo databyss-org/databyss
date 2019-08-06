@@ -174,135 +174,287 @@ exports[`Storyshots Design System Typography 1`] = `
       </div>
     </div>
     <div
-      className="css-1kzuqtr e1btk33m0"
+      className="css-ybz1ij e1btk33m0"
     >
       <div
-        className="css-6v79d5 e1btk33m0"
+        className="css-1a7jkag e1btk33m0"
       >
         <div
-          className="css-4qxs4u e1btk33m0"
+          className="css-1j28lhg e1btk33m0"
         >
           <div
-            className="css-1xuiuv3 e1btk33m0"
+            className="css-4qxs4u e1btk33m0"
           >
-            UITextLarge
+            <div
+              className="css-1xuiuv3 e1btk33m0"
+            >
+              UITextLarge
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-139gbjx e1btk33m0"
+            >
+              UITextNormal
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-c892rc e1btk33m0"
+            >
+              UITextSmall
+            </div>
           </div>
         </div>
         <div
-          className="css-4qxs4u e1btk33m0"
+          className="css-1j28lhg e1btk33m0"
         >
           <div
-            className="css-139gbjx e1btk33m0"
+            className="css-4qxs4u e1btk33m0"
           >
-            UITextNormal
+            <div
+              className="css-v1mi3f e1btk33m0"
+            >
+              UITextLargeSemibold
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-1krly18 e1btk33m0"
+            >
+              UITextNormalSemibold
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-1pd32tj e1btk33m0"
+            >
+              UITextSmallSemibold
+            </div>
           </div>
         </div>
         <div
-          className="css-4qxs4u e1btk33m0"
+          className="css-1j28lhg e1btk33m0"
         >
           <div
-            className="css-c892rc e1btk33m0"
+            className="css-4qxs4u e1btk33m0"
           >
-            UITextSmall
+            <div
+              className="css-1srzns7 e1btk33m0"
+            >
+              UITextLargeUnderline
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-9dm13m e1btk33m0"
+            >
+              UITextNormalUnderline
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-nexcnz e1btk33m0"
+            >
+              UITextSmallUnderline
+            </div>
           </div>
         </div>
+        <div
+          className="css-1j28lhg e1btk33m0"
+        >
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-mkavzm e1btk33m0"
+            >
+              UITextLargeSemiboldUnderline
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-xbj9xw e1btk33m0"
+            >
+              UITextNormalSemiboldUnderline
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-1k0ybr e1btk33m0"
+            >
+              UITextSmallSemiboldUnderline
+            </div>
+          </div>
+        </div>
+        <div
+          className="css-1j28lhg e1btk33m0"
+        />
       </div>
+    </div>
+  </div>
+  <div
+    className="css-1z0xfz e1btk33m0"
+  >
+    <div
+      className="css-1z0xfz e1btk33m0"
+    >
       <div
-        className="css-6v79d5 e1btk33m0"
+        className="css-1lr6moq e1btk33m0"
+      >
+        Body Text
+      </div>
+    </div>
+    <div
+      className="css-ybz1ij e1btk33m0"
+    >
+      <div
+        className="css-1a7jkag e1btk33m0"
       >
         <div
-          className="css-4qxs4u e1btk33m0"
+          className="css-1j28lhg e1btk33m0"
         >
           <div
-            className="css-v1mi3f e1btk33m0"
+            className="css-4qxs4u e1btk33m0"
           >
-            UITextLargeSemibold
+            <div
+              className="css-1fxozs1 e1btk33m0"
+            >
+              BodyLarge
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-1pchfvn e1btk33m0"
+            >
+              BodyNormal
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-l0vx0v e1btk33m0"
+            >
+              BodySmall
+            </div>
           </div>
         </div>
         <div
-          className="css-4qxs4u e1btk33m0"
+          className="css-1j28lhg e1btk33m0"
         >
           <div
-            className="css-1krly18 e1btk33m0"
+            className="css-4qxs4u e1btk33m0"
           >
-            UITextNormalSemibold
+            <div
+              className="css-uzujdl e1btk33m0"
+            >
+              BodyLargeSemibold
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-o5naq0 e1btk33m0"
+            >
+              BodyNormalSemibold
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-1dghums e1btk33m0"
+            >
+              BodySmallSemibold
+            </div>
           </div>
         </div>
         <div
-          className="css-4qxs4u e1btk33m0"
+          className="css-1j28lhg e1btk33m0"
         >
           <div
-            className="css-1pd32tj e1btk33m0"
+            className="css-4qxs4u e1btk33m0"
           >
-            UITextSmallSemibold
+            <div
+              className="css-zvqho0 e1btk33m0"
+            >
+              BodyLargeItalic
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-vky1mq e1btk33m0"
+            >
+              BodyNormalItalic
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-13egyiq e1btk33m0"
+            >
+              BodySmallItalic
+            </div>
           </div>
         </div>
+        <div
+          className="css-1j28lhg e1btk33m0"
+        >
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-3ttymq e1btk33m0"
+            >
+              BodyLargeSemiboldItalic
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-vkwws5 e1btk33m0"
+            >
+              BodyNormalSemiboldItalic
+            </div>
+          </div>
+          <div
+            className="css-4qxs4u e1btk33m0"
+          >
+            <div
+              className="css-1s54j7k e1btk33m0"
+            >
+              BodySmallSemiboldItalic
+            </div>
+          </div>
+        </div>
+        <div
+          className="css-1j28lhg e1btk33m0"
+        />
       </div>
-      <div
-        className="css-6v79d5 e1btk33m0"
-      >
-        <div
-          className="css-4qxs4u e1btk33m0"
-        >
-          <div
-            className="css-1srzns7 e1btk33m0"
-          >
-            UITextLargeUnderline
-          </div>
-        </div>
-        <div
-          className="css-4qxs4u e1btk33m0"
-        >
-          <div
-            className="css-9dm13m e1btk33m0"
-          >
-            UITextNormalUnderline
-          </div>
-        </div>
-        <div
-          className="css-4qxs4u e1btk33m0"
-        >
-          <div
-            className="css-nexcnz e1btk33m0"
-          >
-            UITextSmallUnderline
-          </div>
-        </div>
-      </div>
-      <div
-        className="css-6v79d5 e1btk33m0"
-      >
-        <div
-          className="css-4qxs4u e1btk33m0"
-        >
-          <div
-            className="css-mkavzm e1btk33m0"
-          >
-            UITextLargeSemiboldUnderline
-          </div>
-        </div>
-        <div
-          className="css-4qxs4u e1btk33m0"
-        >
-          <div
-            className="css-xbj9xw e1btk33m0"
-          >
-            UITextNormalSemiboldUnderline
-          </div>
-        </div>
-        <div
-          className="css-4qxs4u e1btk33m0"
-        >
-          <div
-            className="css-1k0ybr e1btk33m0"
-          >
-            UITextSmallSemiboldUnderline
-          </div>
-        </div>
-      </div>
-      <div
-        className="css-6v79d5 e1btk33m0"
-      />
     </div>
   </div>
 </div>
@@ -325,60 +477,64 @@ exports[`Storyshots Design System Views 1`] = `
       </div>
     </div>
     <div
-      className="css-1kzuqtr e1btk33m0"
+      className="css-1z0xfz e1btk33m0"
     >
       <div
-        className="css-onv8d5 e1btk33m0"
+        className="css-1a7jkag e1btk33m0"
       >
         <div
-          className="css-4qxs4u e1btk33m0"
+          className="css-d6orty e1btk33m0"
         >
           <div
-            className="css-139gbjx e1btk33m0"
+            className="css-4qxs4u e1btk33m0"
           >
-            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            <div
+              className="css-139gbjx e1btk33m0"
+            >
+              Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            </div>
+          </div>
+          <div
+            className="css-1krly18 e1btk33m0"
+          >
+            none
           </div>
         </div>
         <div
-          className="css-1krly18 e1btk33m0"
-        >
-          none
-        </div>
-      </div>
-      <div
-        className="css-onv8d5 e1btk33m0"
-      >
-        <div
-          className="css-oiztje e1btk33m0"
+          className="css-d6orty e1btk33m0"
         >
           <div
-            className="css-139gbjx e1btk33m0"
+            className="css-oiztje e1btk33m0"
           >
-            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            <div
+              className="css-139gbjx e1btk33m0"
+            >
+              Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            </div>
+          </div>
+          <div
+            className="css-1krly18 e1btk33m0"
+          >
+            thinDark
           </div>
         </div>
         <div
-          className="css-1krly18 e1btk33m0"
-        >
-          thinDark
-        </div>
-      </div>
-      <div
-        className="css-onv8d5 e1btk33m0"
-      >
-        <div
-          className="css-1msdmvw e1btk33m0"
+          className="css-d6orty e1btk33m0"
         >
           <div
-            className="css-139gbjx e1btk33m0"
+            className="css-1msdmvw e1btk33m0"
           >
-            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            <div
+              className="css-139gbjx e1btk33m0"
+            >
+              Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            </div>
           </div>
-        </div>
-        <div
-          className="css-1krly18 e1btk33m0"
-        >
-          thinLight
+          <div
+            className="css-1krly18 e1btk33m0"
+          >
+            thinLight
+          </div>
         </div>
       </div>
     </div>
@@ -396,78 +552,82 @@ exports[`Storyshots Design System Views 1`] = `
       </div>
     </div>
     <div
-      className="css-m5pdlm e1btk33m0"
+      className="css-1z0xfz e1btk33m0"
     >
       <div
-        className="css-onv8d5 e1btk33m0"
+        className="css-1a7jkag e1btk33m0"
       >
         <div
-          className="css-1msdmvw e1btk33m0"
+          className="css-d6orty e1btk33m0"
         >
           <div
-            className="css-139gbjx e1btk33m0"
+            className="css-1msdmvw e1btk33m0"
           >
-            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            <div
+              className="css-139gbjx e1btk33m0"
+            >
+              Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            </div>
+          </div>
+          <div
+            className="css-1krly18 e1btk33m0"
+          >
+            none
           </div>
         </div>
         <div
-          className="css-1krly18 e1btk33m0"
-        >
-          none
-        </div>
-      </div>
-      <div
-        className="css-onv8d5 e1btk33m0"
-      >
-        <div
-          className="css-wj9iwy e1btk33m0"
+          className="css-d6orty e1btk33m0"
         >
           <div
-            className="css-139gbjx e1btk33m0"
+            className="css-wj9iwy e1btk33m0"
           >
-            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            <div
+              className="css-139gbjx e1btk33m0"
+            >
+              Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            </div>
+          </div>
+          <div
+            className="css-1krly18 e1btk33m0"
+          >
+            small
           </div>
         </div>
         <div
-          className="css-1krly18 e1btk33m0"
-        >
-          small
-        </div>
-      </div>
-      <div
-        className="css-onv8d5 e1btk33m0"
-      >
-        <div
-          className="css-1g1jm2 e1btk33m0"
+          className="css-d6orty e1btk33m0"
         >
           <div
-            className="css-139gbjx e1btk33m0"
+            className="css-1g1jm2 e1btk33m0"
           >
-            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            <div
+              className="css-139gbjx e1btk33m0"
+            >
+              Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            </div>
+          </div>
+          <div
+            className="css-1krly18 e1btk33m0"
+          >
+            medium
           </div>
         </div>
         <div
-          className="css-1krly18 e1btk33m0"
-        >
-          medium
-        </div>
-      </div>
-      <div
-        className="css-onv8d5 e1btk33m0"
-      >
-        <div
-          className="css-1180q5x e1btk33m0"
+          className="css-d6orty e1btk33m0"
         >
           <div
-            className="css-139gbjx e1btk33m0"
+            className="css-1180q5x e1btk33m0"
           >
-            Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            <div
+              className="css-139gbjx e1btk33m0"
+            >
+              Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
+            </div>
           </div>
-        </div>
-        <div
-          className="css-1krly18 e1btk33m0"
-        >
-          large
+          <div
+            className="css-1krly18 e1btk33m0"
+          >
+            large
+          </div>
         </div>
       </div>
     </div>
