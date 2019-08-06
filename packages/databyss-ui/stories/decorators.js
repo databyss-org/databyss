@@ -1,10 +1,11 @@
 import React from 'react'
 import Content from '@databyss-org/ui/components/Viewport/Content'
 import Viewport from '@databyss-org/ui/components/Viewport/ThemedViewport'
-import ServiceProvider from '@databyss-org/services/components/ServiceProvider'
-import * as auth from '@databyss-org/services/auth/mocks'
+import * as app from '@databyss-org/services/app/mocks'
 
-const services = { auth }
+import ServiceProvider from '@databyss-org/services/components/ServiceProvider'
+
+const services = { app }
 
 export const ServiceProviderDecorator = storyFn => (
   <ServiceProvider services={services}>{storyFn()}</ServiceProvider>
