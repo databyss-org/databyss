@@ -64,15 +64,15 @@ router.post('/', auth, async (req, res) => {
     publishingCompany: !_.isEmpty(publishingCompany) ? publishingCompany : '',
     sourceType: !_.isEmpty(sourceType) ? sourceType : '',
     url: !_.isEmpty(url) ? url : '',
-    files: !_.isEmpty(files) ? files : '',
+    files: !_.isEmpty(files) ? files : [],
     entries: !_.isEmpty(entries) ? entries : [],
     date: !_.isEmpty(date) ? date : '',
     resource,
     user: req.user.id,
   }
-  // if source exists update it and exit
   try {
     let source = await Source.findOne({ _id })
+    // if source exists update it and exit
     if (source) {
       if (req.user.id.toString() !== source.user.toString()) {
         return res.status(401).json({ msg: 'This post is private' })
@@ -80,7 +80,7 @@ router.post('/', auth, async (req, res) => {
       // if new author has been added
       if (_.isArray(source.authors)) {
         if (_.isArray(authors)) {
-          appendSourceToAuthor({ authors, sourceId: _id })
+          await appendSourceToAuthor({ authors, sourceId: _id })
         }
       }
 
@@ -89,53 +89,49 @@ router.post('/', auth, async (req, res) => {
         { _id },
         { $set: sourceFields },
         { new: true }
-      ).then(response => {
+      ).then(async () => {
         if (!_.isEmpty(authorPost)) {
           authors = !_.isEmpty(authors) ? authors : []
-          appendSourceToAuthor({
+          await appendSourceToAuthor({
             authors,
             sourceId: _id.toString(),
-          }).then(() => {
-            if (!_.isEmpty(entries)) {
-              entries = !_.isEmpty(entries) ? entries : []
-              // if entry exists append the authorID to both entry and source
-              appendEntryToAuthor({
-                entries,
-                authors,
-              })
-            }
           })
+
+          if (!_.isEmpty(entries)) {
+            entries = !_.isEmpty(entries) ? entries : []
+            // if entry exists append the authorID to both entry and source
+            await appendEntryToAuthor({
+              entries,
+              authors,
+            })
+          }
         }
-        return res.json(response)
       })
-    } else {
-      // if new source has been added
-      const sources = new Source(sourceFields)
-      const post = await sources.save()
-
-      // if authors id exist append to source
-      if (authors) {
-        if (authors.length > 0) {
-          appendSourceToAuthor({
-            authors,
-            sourceId: post._id.toString(),
-          })
-        }
-      }
-
-      // if entry exists append the authorID to both entry and source
-      if (entries) {
-        if (entries.length > 0) {
-          appendEntryToAuthor({
-            entries,
-            authors,
-          })
-        }
-      }
-      res.json(post)
+      return res.json(source)
     }
+    // if new source has been added
+    const sources = new Source(sourceFields)
+    const post = await sources.save()
 
-    return res.status(200)
+    // if authors id exist append to source
+    if (authors) {
+      if (authors.length > 0) {
+        await appendSourceToAuthor({
+          authors,
+          sourceId: post._id.toString(),
+        })
+      }
+    }
+    // if entry exists append the authorID to both entry and source
+    if (entries) {
+      if (entries.length > 0) {
+        await appendEntryToAuthor({
+          entries,
+          authors,
+        })
+      }
+    }
+    return res.json(post)
   } catch (err) {
     console.error(err.message)
     return res.status(500).send('Server error')
@@ -159,6 +155,9 @@ router.get('/:id', auth, async (req, res) => {
     const sources = await Source.findOne({
       _id: req.params.id,
     })
+      .populate('authors', 'firstName lastName')
+      .populate('entries', 'entry')
+
     if (!sources) {
       return res.status(400).json({ msg: 'There is no source for this id' })
     }
@@ -183,6 +182,8 @@ router.get('/', auth, async (req, res) => {
   try {
     const source = await Source.find()
       .or([{ user: req.user.id }, { default: true }])
+      .populate('authors', 'firstName lastName')
+      .populate('entries', 'entry')
       .limit(10)
     if (!source) {
       return res.status(400).json({ msg: 'There are no sources' })
