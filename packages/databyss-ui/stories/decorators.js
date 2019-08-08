@@ -1,13 +1,9 @@
 import React from 'react'
 import Content from '@databyss-org/ui/components/Viewport/Content'
 import Viewport from '@databyss-org/ui/components/Viewport/ThemedViewport'
-import {
-  reducer,
-  initialState,
-} from '@databyss-org/services/app/mockReducer.js'
-// import * as app from '@databyss-org/services/app/mocks'
+import { reducer, initialState } from './../modules/Editor/reducer/mockReducer'
 
-import ServiceProvider from '@databyss-org/services/components/ServiceProvider'
+import ServiceProvider from '@databyss-org/services/editor/ServiceProvider'
 
 export const ServiceProviderDecorator = storyFn => (
   <ServiceProvider initialState={initialState} reducer={reducer}>

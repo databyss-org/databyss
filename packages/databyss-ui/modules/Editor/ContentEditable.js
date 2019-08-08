@@ -13,7 +13,7 @@ export default class ContentEditable extends Component {
 
   componentDidUpdate() {
     if (this.props.htmlState.raw !== this.props._ref.current.innerHTML) {
-      this.props._ref.current.innerHTML = this.props.htmlState.rawText
+      this.props._ref.current.innerHTML = this.props.htmlState.html
     }
     //  var el = this.props._ref.current
     //  setEndOfContenteditable(el)

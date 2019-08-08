@@ -2,12 +2,6 @@ import React, { Component } from 'react'
 import ContentEditable from './ContentEditable'
 import { htmlParser } from './_helpers'
 
-const empty = {
-  html: '',
-  rawText: 'enter text',
-  source: { name: '' },
-}
-
 export default class TextArea extends Component {
   constructor(props) {
     super(props)
@@ -18,6 +12,19 @@ export default class TextArea extends Component {
     this.textRef = React.createRef()
   }
 
+  componentDidMount() {
+    this.props.setRef(this.textRef)
+  }
+
+  componentDidUpdate(nextProps) {
+    // if element isnt active elemnt, set focus
+    if (nextProps.blockState.type === 'NEW_ELEMENT') {
+      this.textRef.current.innerHTML = this.textRef.current.innerHTML
+      this.textRef.current.focus()
+      setTimeout(() => this.props.dispatch({ type: 'SET_FOCUS' }), 50)
+    }
+  }
+
   handleChange(text, e) {
     let newHtmlState = { ...this.props.blockState }
     newHtmlState.rawText = text
@@ -26,8 +33,7 @@ export default class TextArea extends Component {
   }
 
   parseText(htmlState) {
-    const newState = htmlParser(htmlState, this.props.dispatch)
-    this.props.dispatch({ type: 'ON_CHANGE', data: newState })
+    htmlParser(htmlState, this.props.dispatch)
   }
 
   render() {

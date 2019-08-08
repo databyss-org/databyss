@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const menuAction = action => {
   switch (action.type) {
     case 'RESOURCE':
@@ -20,40 +22,23 @@ export const menuAction = action => {
 }
 
 export function htmlParser(htmlState, dispatch) {
-  let text = htmlState.rawText
-  text = text.replace(/<div>/gi, '\n')
-  text = text.replace(/<\/div>/gi, '')
-  text = text.replace(/<br>/gi, '\n')
-  /*
-  const regex = new RegExp(
-    /\@(\w+)?\.?(\w+)?(\n*)?[[Pp]*]?[\.\s]?\s?(\d+)?[\-*]?(\d+)?\n*([\w\s]*)?/
-  )
-*/
-  const regex = new RegExp(/\@(\w+)?(\n*)?/)
+  let newHtmlState = { ...htmlState }
 
-  const match = text.match(regex)
-  let matches = {}
-  if (match) {
-    matches = {
-      source: match[1],
-      author: match[2],
+  newHtmlState.html = newHtmlState.html.replace(/<div>/gi, '\n')
+  // text = text.replace(/<div>/gi, '\n')
+  newHtmlState.html = newHtmlState.html.replace(/<\/div>/gi, '')
+  newHtmlState.html = newHtmlState.html.replace(/<br>/gi, '\n')
 
-      /*
-      author: match[2],
-      pageFrom: match[4],
-      pageTo: match[5],
-      entry: match[6],
-      */
-    }
+  //  let newHtmlState = { ...htmlState }
+
+  const data = newHtmlState
+  dispatch({ type: 'ON_CHANGE', data })
+}
+
+export const appendBlock = ({ blocks, newBlockInfo }) => {
+  let newBlock = {
+    type: newBlockInfo.type,
+    data: newBlockInfo.rawText,
   }
-  let newHtmlState = { ...htmlState, entrySources: { ...matches } }
-
-  if (match[2]) {
-    dispatch({ type: 'NEW_LINE', data: { ...newHtmlState, type: 'new' } })
-  }
-  if (match[1] && !match[2]) {
-    dispatch({ type: 'NEW_SOURCE' })
-  }
-
-  return newHtmlState
+  return blocks.concat([newBlock])
 }

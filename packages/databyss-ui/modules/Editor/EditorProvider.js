@@ -1,5 +1,5 @@
 import React from 'react'
-import { useStateValue } from '@databyss-org/services/components/ServiceProvider'
+import { useStateValue } from '@databyss-org/services/editor/ServiceProvider'
 import { View } from '@databyss-org/ui/primitives'
 import EditorBlocks from './EditorBlocks'
 import EditorMenu from './EditorMenu'

@@ -1,3 +1,4 @@
+import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { ViewportDecorator, ServiceProviderDecorator } from '../decorators'
 import EditorBlock from './EditorBlock'
@@ -6,4 +7,4 @@ import EditorBlock from './EditorBlock'
 storiesOf('Editor', module)
   .addDecorator(ViewportDecorator)
   .addDecorator(ServiceProviderDecorator)
-  .add('Editor', EditorBlock)
+  .add('Editor', () => <EditorBlock text="EXAMPLE TEXT" />)

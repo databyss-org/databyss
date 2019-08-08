@@ -8,7 +8,7 @@ export const initialState1 = {
   },
   blockState: {
     html: '',
-    rawText: 'enter text',
+    rawText: '',
     source: { name: '' },
     inSource: true,
   },
@@ -51,6 +51,7 @@ export const initialState = {
 export const reducer = (state, action) => {
   switch (action.type) {
     case 'ON_CHANGE':
+      console.log('changed')
       return {
         ...state,
         blockState: action.data,
