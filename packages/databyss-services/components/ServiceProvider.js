@@ -1,13 +1,13 @@
-import React from 'react'
-import * as auth from '../auth'
-import * as app from '../app'
+import React, { createContext, useContext, useReducer } from 'react'
 
-export const ServiceContext = React.createContext()
+export const ServiceContext = createContext()
 
-const ServiceProvider = ({ services, children }) => (
-  <ServiceContext.Provider value={services}>{children}</ServiceContext.Provider>
+const ServiceProvider = ({ reducer, initialState, children }) => (
+  <ServiceContext.Provider value={useReducer(reducer, initialState)}>
+    {children}
+  </ServiceContext.Provider>
 )
 
-ServiceProvider.defaultProps = { services: { auth, app } }
+export const useStateValue = () => useContext(ServiceContext)
 
 export default ServiceProvider

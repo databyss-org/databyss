@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { Text, View } from '@databyss-org/ui/primitives'
 import { useStateValue } from '@databyss-org/services/components/ServiceProvider'
 import EditorEditor from './EditorEditor'
 import TextArea from './TextArea'
 
-const EditorBlock = ({ symbol, text, ...others }) => {
+const ActiveBlock = ({ symbol, text, ...others }) => {
+  const [{ blockState }, dispatch] = useStateValue()
+
+  console.log(blockState)
   return (
     <Grid columnGap={1} mb={1} {...others}>
       <View width={1 / 12}>
@@ -14,10 +17,10 @@ const EditorBlock = ({ symbol, text, ...others }) => {
         </Text>
       </View>
       <View width={10 / 12}>
-        <EditorEditor value={text} />
+        <TextArea blockState={blockState} dispatch={dispatch} />
       </View>
     </Grid>
   )
 }
 
-export default EditorBlock
+export default ActiveBlock

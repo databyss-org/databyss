@@ -4,8 +4,8 @@ import { Text, View } from '@databyss-org/ui/primitives'
 const MenuItem = ({ item, k, ...others }) => (
   <View
     m={0}
-    height={26}
-    width={26}
+    height={24}
+    width={24}
     bg="gray.6"
     borderRadius="50%"
     alignItems="center"
