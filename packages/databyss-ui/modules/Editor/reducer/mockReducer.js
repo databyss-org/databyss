@@ -11,13 +11,14 @@ export const initialState1 = {
     html: '',
     rawText: 'enter text',
     source: { name: '' },
-    inSource: true,
+    type: '',
   },
   ...app,
 }
 
 export const initialState = {
   contentRef: {},
+  enterCount: 0,
   blocks: [
     {
       type: 'RESOURCE',
@@ -52,25 +53,38 @@ export const initialState = {
 
 export const reducer = (state, action) => {
   console.log(action.type)
-
   switch (action.type) {
     case 'ON_CHANGE':
-      if (action.data.html[0] === '@') {
+      if (action.data.rawText.length === 0) {
         return {
           ...state,
-          blockState: { ...action.data, html: '', type: 'RESOURCE' },
+          blockState: { ...action.data, html: '' },
+        }
+      } else if (action.data.html[0] === '@') {
+        return {
+          ...state,
+          blockState: { ...action.data, type: 'RESOURCE' },
+        }
+      } else if (action.data.html.substring(0, 2) === '//') {
+        return {
+          ...state,
+          blockState: { ...action.data, type: 'LOCATION' },
+        }
+      } else if (action.data.html.match('<div><br></div><div><br></div>')) {
+        const newBlocks = appendBlock({
+          blocks: state.blocks,
+          newBlockInfo: action.data,
+        })
+        return {
+          ...state,
+          blockState: { ...action.data, html: '', type: 'NEW_ELEMENT' },
+          blocks: newBlocks,
         }
       } else {
         return {
           ...state,
-          blockState: action.data,
+          blockState: { ...action.data, type: 'ENTRY' },
         }
-      }
-
-    case 'IN_SOURCE':
-      return {
-        ...state,
-        blockState: { ...state.blockState, html: '', type: 'RESOURCE' },
       }
     case 'BACKSPACE':
       if (state.blockState.html.length === 0) {
@@ -93,18 +107,11 @@ export const reducer = (state, action) => {
         ...state,
         blockState: { ...state.blockState, type: 'NEW' },
       }
-
-    case 'NEW_SOURCE':
-      const newBlockState =
-        state.blockState.type !== 'RESOURCE'
-          ? { ...state.blockState, type: 'RESOURCE' }
-          : { ...state.blockState }
-      return {
-        ...state,
-        blockState: newBlockState,
-      }
     case 'NEW_LINE':
-      if (state.blockState.type === 'RESOURCE') {
+      if (
+        state.blockState.type === 'RESOURCE' ||
+        state.blockState.type === 'LOCATION'
+      ) {
         const newBlocks = appendBlock({
           blocks: state.blocks,
           newBlockInfo: state.blockState,
@@ -114,17 +121,13 @@ export const reducer = (state, action) => {
           blockState: { ...state.blockState, html: '', type: 'NEW_ELEMENT' },
           blocks: newBlocks,
         }
-      }
-      return {
-        ...state,
-        blockState: { ...state.blockState, type: 'NEW' },
+      } else {
+        return {
+          ...state,
+          blockState: { ...state.blockState },
+        }
       }
 
-    case 'FIRE':
-      // manipulate here
-      return {
-        ...state,
-      }
     default:
       return state
   }

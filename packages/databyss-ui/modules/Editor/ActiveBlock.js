@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import _ from 'lodash'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { Text, View } from '@databyss-org/ui/primitives'
@@ -17,12 +17,10 @@ const ActiveBlock = ({ text, ...others }) => {
     // detect keystrokes
     if (e.keyCode === 8) {
       dispatch({ type: 'BACKSPACE' })
-    }
-    if (e.keyCode === 13) {
+    } else if (e.keyCode === 13) {
       dispatch({ type: 'NEW_LINE' })
-    }
-    if (e.key === '@') {
-      //  dispatch({ type: 'IN_SOURCE' })
+    } else {
+      // clear()
     }
   }
 

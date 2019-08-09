@@ -27,7 +27,7 @@ export default class TextArea extends Component {
 
   handleChange(text, e) {
     let newHtmlState = { ...this.props.blockState }
-    newHtmlState.rawText = text
+    //  newHtmlState.rawText = text
     newHtmlState.html = text
     this.parseText(newHtmlState)
   }
