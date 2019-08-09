@@ -1,4 +1,21 @@
+import React from 'react'
 import _ from 'lodash'
+// import { ServerStyleSheet } from 'styled-components'
+import { Text } from '@databyss-org/ui/primitives'
+import { renderToStaticMarkup } from 'react-dom/server'
+
+// const sheet = new ServerStyleSheet()
+
+export const styleSelector = type => {
+  switch (type) {
+    case 'RESOURCE':
+      return 'bodyNormal'
+    case 'LOCATION':
+      return 'bodySmall'
+    default:
+      return ''
+  }
+}
 
 export const menuAction = action => {
   switch (action.type) {
@@ -28,9 +45,32 @@ export function htmlParser(htmlState, dispatch) {
 }
 
 export const appendBlock = ({ blocks, newBlockInfo }) => {
-  let newBlock = {
-    type: newBlockInfo.type,
-    data: newBlockInfo.rawText,
+  let { type, rawText, html } = newBlockInfo
+  if (type === 'RESOURCE') {
+    html = html.substr(1)
+    rawText = rawText.substr(1)
+    html = `<u>${htmlToText(html)}</u>`
+  }
+  if (type === 'LOCATION') {
+    html = html.substr(2)
+    rawText = rawText.substr(2)
+    html = htmlToText(html)
+  }
+  if (type === 'TAG') {
+    html = html.substr(1)
+    rawText = rawText.substr(1)
+    html = `<b>${htmlToText(html)}</b>`
+  }
+  if (type === 'ENTRY') {
+    rawText = rawText.trim()
+    html = html.replace('<div><br></div><div><br></div>', '')
+  }
+
+  const newBlock = {
+    html: html,
+    rawText: rawText,
+    source: { name: '' },
+    type: type,
   }
   return blocks.concat([newBlock])
 }

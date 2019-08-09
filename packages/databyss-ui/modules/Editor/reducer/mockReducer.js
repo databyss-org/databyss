@@ -1,7 +1,8 @@
 import * as app from './../actions/mocks'
 import { appendBlock } from './../_helpers'
 
-export const initialState1 = {
+export const initialState = {
+  contentRef: {},
   blocks: [],
   menu: {
     action: { type: '' },
@@ -16,22 +17,28 @@ export const initialState1 = {
   ...app,
 }
 
-export const initialState = {
+export const initialState1 = {
   contentRef: {},
-  enterCount: 0,
   blocks: [
     {
-      type: 'RESOURCE',
-      data:
+      html:
         'Stamenov, Maxim I., editor. Language Structure, Discourse and the Access to Consciousness. Vol. 12, John Benjamins Publishing Company 1997. Crossref, doi:10.1075/aicr.12.',
+      rawText:
+        'Stamenov, Maxim I., editor. Language Structure, Discourse and the Access to Consciousness. Vol. 12, John Benjamins Publishing Company 1997. Crossref, doi:10.1075/aicr.12.',
+      source: { name: '' },
+      type: 'RESOURCE',
     },
     {
+      html: 'p 288-90',
+      rawText: 'p 288-90',
+      source: { name: '' },
       type: 'LOCATION',
-      data: 'p 288-90',
     },
     {
+      html: 'On the limitation of third-order thought to assertion',
+      rawText: 'On the limitation of third-order thought to assertion',
+      source: { name: '' },
       type: 'ENTRY',
-      data: 'On the limitation of third-order thought to assertion',
     },
   ],
   menu: {
@@ -64,6 +71,11 @@ export const reducer = (state, action) => {
         return {
           ...state,
           blockState: { ...action.data, type: 'RESOURCE' },
+        }
+      } else if (action.data.html[0] === '#') {
+        return {
+          ...state,
+          blockState: { ...action.data, type: 'TAG' },
         }
       } else if (action.data.html.substring(0, 2) === '//') {
         return {
@@ -110,7 +122,8 @@ export const reducer = (state, action) => {
     case 'NEW_LINE':
       if (
         state.blockState.type === 'RESOURCE' ||
-        state.blockState.type === 'LOCATION'
+        state.blockState.type === 'LOCATION' ||
+        state.blockState.type === 'TAG'
       ) {
         const newBlocks = appendBlock({
           blocks: state.blocks,

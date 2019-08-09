@@ -27,7 +27,6 @@ export default class ContentEditable extends Component {
   render() {
     return (
       <div
-        style={{ height: '100px' }}
         ref={this.props._ref}
         id="contenteditable"
         onInput={this.emitChange}

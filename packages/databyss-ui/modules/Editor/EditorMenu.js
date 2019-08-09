@@ -12,13 +12,13 @@ const EditorMenu = ({ data }) => {
   })
 
   return (
-    <Grid columnGap={1} mb={1} alignItems="right">
+    <Grid columnGap={1} mb={2} alignItems="right">
       <View width={1 / 12}>
         <Grid columnGap={0} mb={1}>
           <MenuItem item={action} />
         </Grid>
       </View>
-      <View width={10 / 12}>
+      <View width={9 / 12}>
         <Grid columnGap={1} mb={1}>
           {menuItems}
         </Grid>

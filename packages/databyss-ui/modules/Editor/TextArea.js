@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import ContentEditable from './ContentEditable'
-import { htmlParser } from './_helpers'
+import { htmlParser, styleSelector } from './_helpers'
+import { Text } from '@databyss-org/ui/primitives'
 
 export default class TextArea extends Component {
   constructor(props) {
@@ -38,13 +39,11 @@ export default class TextArea extends Component {
 
   render() {
     return (
-      <div>
-        <ContentEditable
-          htmlState={this.props.blockState}
-          onChange={this.handleChange}
-          _ref={this.textRef}
-        />
-      </div>
+      <ContentEditable
+        htmlState={this.props.blockState}
+        onChange={this.handleChange}
+        _ref={this.textRef}
+      />
     )
   }
 }

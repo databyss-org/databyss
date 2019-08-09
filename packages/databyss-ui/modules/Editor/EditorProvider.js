@@ -1,6 +1,8 @@
 import React from 'react'
 import { useStateValue } from '@databyss-org/services/editor/ServiceProvider'
 import { View } from '@databyss-org/ui/primitives'
+import Grid from '@databyss-org/ui/components/Grid/Grid'
+
 import EditorBlocks from './EditorBlocks'
 import EditorMenu from './EditorMenu'
 
