@@ -47,7 +47,7 @@ const ActiveBlock = ({ text, ...others }) => {
   )
   const symbol = menuAction(blockState).text
   return (
-    <Grid columnGap={1} mb={3} flex="1 1 auto" {...others}>
+    <Grid columnGap={1} mb={3} {...others}>
       <View width={1 / 12} />
       <View width={10 / 12}>
         <TextArea blockState={blockState} dispatch={dispatch} setRef={setRef} />

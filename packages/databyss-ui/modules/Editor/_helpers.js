@@ -13,7 +13,7 @@ export const styleSelector = type => {
     case 'LOCATION':
       return 'bodySmall'
     default:
-      return ''
+      return 'bodyNormal'
   }
 }
 
@@ -41,7 +41,11 @@ export const menuAction = action => {
 export function htmlParser(htmlState, dispatch) {
   let data = { ...htmlState }
   data.rawText = htmlToText(htmlState.html)
-  dispatch({ type: 'ON_CHANGE', data })
+  if (htmlState.index > -1) {
+    dispatch({ type: 'ON_EDIT', data })
+  } else {
+    dispatch({ type: 'ON_CHANGE', data })
+  }
 }
 
 export const appendBlock = ({ blocks, newBlockInfo }) => {
@@ -71,6 +75,7 @@ export const appendBlock = ({ blocks, newBlockInfo }) => {
     rawText: rawText,
     source: { name: '' },
     type: type,
+    index: blocks.length,
   }
   return blocks.concat([newBlock])
 }

@@ -27,6 +27,10 @@ export default class ContentEditable extends Component {
   render() {
     return (
       <div
+        onClick={this.props.onClick}
+        style={{
+          outline: 'none',
+        }}
         ref={this.props._ref}
         id="contenteditable"
         onInput={this.emitChange}

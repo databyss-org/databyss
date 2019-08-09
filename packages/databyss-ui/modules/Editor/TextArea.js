@@ -22,7 +22,7 @@ export default class TextArea extends Component {
     if (nextProps.blockState.type === 'NEW_ELEMENT') {
       this.textRef.current.innerHTML = this.textRef.current.innerHTML
       this.textRef.current.focus()
-      setTimeout(() => this.props.dispatch({ type: 'SET_FOCUS' }), 50)
+      setTimeout(() => this.props.dispatch({ type: 'SET_FOCUS' }), 10)
     }
   }
 
@@ -40,6 +40,9 @@ export default class TextArea extends Component {
   render() {
     return (
       <ContentEditable
+        onClick={() =>
+          this.props.editRef(this.textRef, this.props.blockState.index)
+        }
         htmlState={this.props.blockState}
         onChange={this.handleChange}
         _ref={this.textRef}
