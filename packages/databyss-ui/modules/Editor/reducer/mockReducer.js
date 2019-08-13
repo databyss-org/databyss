@@ -31,64 +31,8 @@ export const reducer = (state, action) => {
   console.log(action.type)
   switch (action.type) {
     case 'ON_EDIT':
-      if (!_.isEqual(action.data === state.blocks[state.editIndex])) {
-        let blocks = state.blocks
-        if (action.data.rawText.length === 0) {
-          blocks[action.data.index] = {
-            ...action.data,
-            html: '',
-            rawText: '',
-            type: 'NEW',
-          }
-          return {
-            ...state,
-            blocks,
-          }
-        } else if (action.data.rawText[0] === '@') {
-          blocks[action.data.index] = { ...action.data, type: 'RESOURCE' }
-          return {
-            ...state,
-            blocks,
-          }
-        } else if (action.data.rawText.substring(0, 2) === '##') {
-          blocks[action.data.index] = { ...action.data, type: 'TAG' }
-          return {
-            ...state,
-            blocks,
-          }
-        } else if (action.data.rawText.substring(0, 1) === '#') {
-          blocks[action.data.index] = { ...action.data, type: 'HEADER' }
-          return {
-            ...state,
-            blocks,
-          }
-        } else if (action.data.rawText.substring(0, 2) === '//') {
-          blocks[action.data.index] = { ...action.data, type: 'LOCATION' }
-          return {
-            ...state,
-            blocks,
-          }
-        } else if (action.data.html.match('<div><br></div><div><br></div>')) {
-          // FOCUS BLOCK
-          const newBlocks = appendBlock({
-            blocks: state.blocks,
-            index: state.editIndex,
-            addNewBlock: true,
-          })
-          return {
-            ...state,
-            blocks: newBlocks,
-          }
-        } else {
-          blocks[action.data.index] = { ...action.data /*, type: 'ENTRY' */ }
-          return {
-            ...state,
-            blocks,
-          }
-        }
-      } else {
-        console.log('no change')
-        return { ...state }
+      return {
+        ...action.data,
       }
     case 'BACKSPACE':
       if (

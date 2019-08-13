@@ -7,7 +7,7 @@ const EditorProvider = ({ reducer, initialState, children, actions }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   return (
-    <ServiceContext.Provider value={[state, actions(dispatch)]}>
+    <ServiceContext.Provider value={[state, actions(dispatch, state)]}>
       {children}
     </ServiceContext.Provider>
   )
