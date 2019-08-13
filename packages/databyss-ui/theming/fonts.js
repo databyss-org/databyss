@@ -157,6 +157,17 @@ const bodyBoldItalicVariants = Object.keys(bodyBoldVariants).reduce(
   {}
 )
 
+const bodyTextUnderlineVariants = Object.keys(bodyVariants).reduce(
+  (variants, vk) => ({
+    ...variants,
+    [`${vk}Underline`]: {
+      ...bodyVariants[vk],
+      ...underline,
+    },
+  }),
+  {}
+)
+
 const textVariants = {
   ...headingVariants,
   ...uiTextVariants,
@@ -167,6 +178,7 @@ const textVariants = {
   ...bodyBoldVariants,
   ...bodyItalicVariants,
   ...bodyBoldItalicVariants,
+  ...bodyTextUnderlineVariants,
 }
 
 export default {

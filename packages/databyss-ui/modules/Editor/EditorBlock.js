@@ -1,9 +1,7 @@
 import React from 'react'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { Text, View } from '@databyss-org/ui/primitives'
-import { useStateValue } from '@databyss-org/services/components/ServiceProvider'
 import EditorEditor from './EditorEditor'
-import TextArea from './TextArea'
 
 const EditorBlock = ({ symbol, text, ...others }) => {
   return (

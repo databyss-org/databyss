@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import ContentEditable from './ContentEditable'
-import { htmlParser, styleSelector } from './_helpers'
-import { Text } from '@databyss-org/ui/primitives'
+import { htmlParser } from './_helpers'
 
 export default class TextArea extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      index: -1,
+      isFocused: false,
       //  htmlState: empty,
     }
     this.handleChange = this.handleChange.bind(this)
@@ -14,11 +15,16 @@ export default class TextArea extends Component {
   }
 
   componentDidMount() {
-    this.props.setRef(this.textRef)
+    this.props.setRef({
+      ref: this.textRef.current,
+      index: this.props.blockState.index,
+    })
+    if (this.props.blockState.index > -1) {
+      this.setState({ index: this.props.blockState.index })
+    }
   }
 
   componentDidUpdate(nextProps) {
-    // if element isnt active elemnt, set focus
     if (nextProps.blockState.type === 'NEW_ELEMENT') {
       this.textRef.current.innerHTML = this.textRef.current.innerHTML
       this.textRef.current.focus()
@@ -28,7 +34,6 @@ export default class TextArea extends Component {
 
   handleChange(text, e) {
     let newHtmlState = { ...this.props.blockState }
-    //  newHtmlState.rawText = text
     newHtmlState.html = text
     this.parseText(newHtmlState)
   }

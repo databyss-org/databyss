@@ -1,73 +1,31 @@
 import * as app from './../actions/mocks'
-import { appendBlock } from './../_helpers'
+import { appendBlock, getPos } from './../_helpers'
 
 export const initialState = {
-  contentRef: {},
   editRef: {},
-  editIndex: -1,
-  blocks: [],
+  lastCarotPosition: -1,
+  editIndex: 0,
+  blocks: [
+    {
+      html: '',
+      rawText: 'enter text',
+      source: { name: '' },
+      type: '',
+      ref: {},
+      index: 0,
+    },
+  ],
   menu: {
     action: { type: '' },
     items: [{ type: '' }],
-  },
-  blockState: {
-    html: '',
-    rawText: 'enter text',
-    source: { name: '' },
-    type: '',
   },
   ...app,
 }
 
 export const reducer = (state, action) => {
+  console.log(state)
   console.log(action.type)
   switch (action.type) {
-    case 'ON_CHANGE':
-      if (action.data.rawText.length === 0) {
-        if (action.data.index > -1) {
-          let blocks = state.blocks
-          blocks[action.data.index] = { ...action.data, html: '', type: '' }
-          return {
-            ...state,
-            blocks,
-          }
-        } else {
-          return {
-            ...state,
-            blockState: { ...action.data, html: '', type: '' },
-          }
-        }
-      } else if (action.data.html[0] === '@') {
-        return {
-          ...state,
-          blockState: { ...action.data, type: 'RESOURCE' },
-        }
-      } else if (action.data.html[0] === '#') {
-        return {
-          ...state,
-          blockState: { ...action.data, type: 'TAG' },
-        }
-      } else if (action.data.html.substring(0, 2) === '//') {
-        return {
-          ...state,
-          blockState: { ...action.data, type: 'LOCATION' },
-        }
-      } else if (action.data.html.match('<div><br></div><div><br></div>')) {
-        const newBlocks = appendBlock({
-          blocks: state.blocks,
-          newBlockInfo: action.data,
-        })
-        return {
-          ...state,
-          blockState: { ...action.data, html: '', type: 'NEW_ELEMENT' },
-          blocks: newBlocks,
-        }
-      } else {
-        return {
-          ...state,
-          blockState: { ...action.data, type: 'ENTRY' },
-        }
-      }
     case 'ON_EDIT':
       let blocks = state.blocks
       if (action.data.rawText.length === 0) {
@@ -82,8 +40,14 @@ export const reducer = (state, action) => {
           ...state,
           blocks,
         }
-      } else if (action.data.rawText[0] === '#') {
+      } else if (action.data.rawText.substring(0, 2) === '##') {
         blocks[action.data.index] = { ...action.data, type: 'TAG' }
+        return {
+          ...state,
+          blocks,
+        }
+      } else if (action.data.rawText.substring(0, 1) === '#') {
+        blocks[action.data.index] = { ...action.data, type: 'HEADER' }
         return {
           ...state,
           blocks,
@@ -95,34 +59,24 @@ export const reducer = (state, action) => {
           blocks,
         }
       } else if (action.data.html.match('<div><br></div><div><br></div>')) {
+        // FOCUS BLOCK
         const newBlocks = appendBlock({
           blocks: state.blocks,
-          newBlockInfo: action.data,
+          index: state.editIndex,
+          addNewBlock: true,
         })
         return {
           ...state,
-          blockState: { ...action.data, html: '', type: 'NEW_ELEMENT' },
           blocks: newBlocks,
         }
       } else {
-        blocks[action.data.index] = { ...action.data }
+        blocks[action.data.index] = { ...action.data /*, type: 'ENTRY' */ }
         return {
           ...state,
           blocks,
         }
       }
     case 'BACKSPACE':
-      if (state.blockState.html.length === 0) {
-        return {
-          ...state,
-          blockState: { ...state.blockState, type: 'NEW' },
-        }
-      } else {
-        return {
-          ...state,
-        }
-      }
-    case 'BACKSPACE_EDIT':
       if (state.blocks[state.editIndex].html.length === 0) {
         let blocks = state.blocks
         blocks[state.editIndex] = {
@@ -139,10 +93,25 @@ export const reducer = (state, action) => {
         }
       }
     case 'SET_REF':
+      // if existing ref
+      let index =
+        action.data.index === -1 ? state.blocks.length - 1 : action.data.index
+      let newBlocks = state.blocks
+      newBlocks[index] = {
+        ...newBlocks[index],
+        ref: action.data.ref,
+        index,
+      }
+      if (action.data.index === -1) {
+        action.data.ref.focus()
+      }
       return {
         ...state,
-        contentRef: action.data,
+        editIndex: index,
+        //   contentRef: action.data.ref,
+        blocks: newBlocks,
       }
+
     case 'EDIT_REF':
       return {
         ...state,
@@ -154,54 +123,63 @@ export const reducer = (state, action) => {
         ...state,
         blockState: { ...state.blockState, type: 'NEW' },
       }
-    case 'NEW_LINE':
-      if (
-        state.blockState.type === 'RESOURCE' ||
-        state.blockState.type === 'LOCATION' ||
-        state.blockState.type === 'TAG'
-      ) {
-        const newBlocks = appendBlock({
-          blocks: state.blocks,
-          newBlockInfo: state.blockState,
-        })
-        return {
-          ...state,
-          blockState: { ...state.blockState, html: '', type: 'NEW_ELEMENT' },
-          blocks: newBlocks,
+    case 'UP':
+      if (state.lastCarotPosition === 0) {
+        if (state.editIndex > -1) {
+          const index = state.editIndex === 0 ? 0 : state.editIndex - 1
+          state.blocks[index].ref.focus()
+          // set focus to previous block from 'blocks'
+          return {
+            ...state,
+            lastCarotPosition: getPos(document.activeElement),
+            editIndex: index,
+          }
+        } else {
+          // set focus to last block in 'blocks'
+          state.blocks[state.blocks.length - 1].ref.focus()
+          return {
+            ...state,
+            lastCarotPosition: getPos(document.activeElement),
+            editIndex: state.blocks.length - 1,
+          }
         }
       } else {
         return {
           ...state,
-          blockState: { ...state.blockState },
+          lastCarotPosition: getPos(document.activeElement),
         }
       }
-
-    case 'NEW_LINE_EDIT':
-      /*
-
-      need to change to 'blocks'
-      if (
-        state.blockState.type === 'RESOURCE' ||
-        state.blockState.type === 'LOCATION' ||
-        state.blockState.type === 'TAG'
-      ) {
-        const newBlocks = appendBlock({
-          blocks: state.blocks,
-          newBlockInfo: state.blockState,
-        })
-        return {
-          ...state,
-          blockState: { ...state.blockState, html: '', type: 'NEW_ELEMENT' },
-          blocks: newBlocks,
-        }
-      } else {
-        */
+    case 'DOWN':
+      console.log(getPos(document.activeElement))
+      console.log(
+        state.blocks[state.editIndex].rawText.replace(/[\n\r]/, '').length
+      )
       return {
         ...state,
-        blockState: { ...state.blockState },
+        lastCarotPosition: getPos(document.activeElement),
       }
-    // }
-
+    case 'NEW_LINE':
+      const currentBlock = state.blocks[state.editIndex]
+      if (
+        currentBlock.type === 'RESOURCE' ||
+        currentBlock.type === 'LOCATION' ||
+        currentBlock.type === 'HEADER' ||
+        currentBlock.type === 'TAG'
+      ) {
+        const newBlocks = appendBlock({
+          blocks: state.blocks,
+          index: state.editIndex,
+          addNewBlock: true,
+        })
+        return {
+          ...state,
+          blocks: newBlocks,
+        }
+      } else {
+        return {
+          ...state,
+        }
+      }
     default:
       return state
   }

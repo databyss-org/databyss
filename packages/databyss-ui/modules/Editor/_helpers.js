@@ -1,17 +1,25 @@
 import React from 'react'
 import _ from 'lodash'
-// import { ServerStyleSheet } from 'styled-components'
-import { Text } from '@databyss-org/ui/primitives'
-import { renderToStaticMarkup } from 'react-dom/server'
 
-// const sheet = new ServerStyleSheet()
+const emptyBlock = {
+  html: '',
+  rawText: '',
+  source: { name: '' },
+  type: '',
+  ref: {},
+  index: -1,
+}
 
 export const styleSelector = type => {
   switch (type) {
     case 'RESOURCE':
-      return 'bodyNormal'
+      return 'bodyNormalUnderline'
     case 'LOCATION':
       return 'bodySmall'
+    case 'HEADER':
+      return 'bodyNormalSemibold'
+    case 'TAG':
+      return 'BodySmall'
     default:
       return 'bodyNormal'
   }
@@ -20,19 +28,19 @@ export const styleSelector = type => {
 export const menuAction = action => {
   switch (action.type) {
     case 'RESOURCE':
-      return { text: '', onClick: () => console.log('new entry ') }
+      return { text: '', onClick: () => console.log('RESOURCE ') }
     case 'LOCATION':
-      return { text: '', onClick: () => console.log('new entry ') }
+      return { text: '', onClick: () => console.log('LOCATION') }
     case 'ENTRY':
-      return { text: '', onClick: () => console.log('new entry ') }
+      return { text: '', onClick: () => console.log('ENTRY') }
     case 'NEW_ENTRY':
-      return { text: '+', onClick: () => console.log('new entry ') }
+      return { text: '+', onClick: () => console.log('NEW_ENTRY') }
     case 'CLOSE':
-      return { text: 'x', onClick: () => console.log('new entry ') }
+      return { text: 'x', onClick: () => console.log('CLOSE') }
     case 'NEW_SOURCE':
-      return { text: '@', onClick: () => console.log('new entry ') }
+      return { text: '@', onClick: () => console.log('NEW_SOURCE') }
     case 'NEW_LOCATION':
-      return { text: '//', onClick: () => console.log('new entry ') }
+      return { text: '//', onClick: () => console.log('NEW_LOCATION ') }
     default:
       return { text: '', onClick: () => console.log('none') }
   }
@@ -48,36 +56,53 @@ export function htmlParser(htmlState, dispatch) {
   }
 }
 
-export const appendBlock = ({ blocks, newBlockInfo }) => {
-  let { type, rawText, html } = newBlockInfo
+export const appendBlock = ({ blocks, index, addNewBlock }) => {
+  console.log(index)
+  let { type, rawText, html, ref } = blocks[index]
+  console.log(type)
   if (type === 'RESOURCE') {
     html = html.substr(1)
     rawText = rawText.substr(1)
-    html = `<u>${htmlToText(html)}</u>`
+    html = htmlToText(html)
+  }
+  if (type === 'TAG') {
+    html = html.substr(2)
+    rawText = rawText.substr(2)
+    html = htmlToText(html)
   }
   if (type === 'LOCATION') {
     html = html.substr(2)
     rawText = rawText.substr(2)
     html = htmlToText(html)
   }
-  if (type === 'TAG') {
+  if (type === 'HEADER') {
     html = html.substr(1)
     rawText = rawText.substr(1)
-    html = `<b>${htmlToText(html)}</b>`
+    html = htmlToText(html)
   }
-  if (type === 'ENTRY') {
+  if (type === '') {
+    html = rawText.replace(/[\n\r]/, '<br>')
     rawText = rawText.trim()
-    html = html.replace('<div><br></div><div><br></div>', '')
   }
+
+  let newBlocks = [...blocks]
 
   const newBlock = {
     html: html,
     rawText: rawText,
     source: { name: '' },
     type: type,
-    index: blocks.length,
+    ref,
+    index: blocks[index].index,
   }
-  return blocks.concat([newBlock])
+
+  newBlocks[index] = newBlock
+
+  if (addNewBlock) {
+    newBlocks = newBlocks.concat(emptyBlock)
+  }
+
+  return newBlocks
 }
 
 /*
@@ -134,4 +159,28 @@ function htmlToText(value) {
   value = value.trim()
 
   return value
+}
+
+export const getPos = element => {
+  var caretOffset = 0
+  var doc = element.ownerDocument || element.document
+  var win = doc.defaultView || doc.parentWindow
+  var sel
+  if (typeof win.getSelection != 'undefined') {
+    sel = win.getSelection()
+    if (sel.rangeCount > 0) {
+      var range = win.getSelection().getRangeAt(0)
+      var preCaretRange = range.cloneRange()
+      preCaretRange.selectNodeContents(element)
+      preCaretRange.setEnd(range.endContainer, range.endOffset)
+      caretOffset = preCaretRange.toString().length
+    }
+  } else if ((sel = doc.selection) && sel.type != 'Control') {
+    var textRange = sel.createRange()
+    var preCaretTextRange = doc.body.createTextRange()
+    preCaretTextRange.moveToElementText(element)
+    preCaretTextRange.setEndPoint('EndToEnd', textRange)
+    caretOffset = preCaretTextRange.text.length
+  }
+  return caretOffset
 }
