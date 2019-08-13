@@ -45,7 +45,10 @@ const EditorBlocks = ({ data }) => {
           {menuAction && <MenuItem text={menuAction} />}
         </View>
         <View width={9 / 12}>
-          <Text variant={styleSelector(i.type)}>
+          <Text
+            variant={styleSelector(i.type).style}
+            color={styleSelector(i.type).color}
+          >
             <TextArea
               activeIndex={editIndex}
               editRef={setEditRef}

@@ -13,15 +13,15 @@ const emptyBlock = {
 export const styleSelector = type => {
   switch (type) {
     case 'RESOURCE':
-      return 'bodyNormalUnderline'
+      return { style: 'bodyNormalUnderline', color: '' }
     case 'LOCATION':
-      return 'bodySmall'
+      return { style: 'bodySmall', color: '' }
     case 'HEADER':
-      return 'bodyNormalSemibold'
+      return { style: 'bodyNormalSemibold', color: '' }
     case 'TAG':
-      return 'BodySmall'
+      return { style: 'BodySmall', color: 'grey' }
     default:
-      return 'bodyNormal'
+      return { style: 'bodyNormal', color: '' }
   }
 }
 
@@ -80,28 +80,36 @@ export const removeBlock = ({ blocks, index }) => {
 export const appendBlock = ({ blocks, index, addNewBlock }) => {
   let { type, rawText, html, ref } = blocks[index]
   if (type === 'RESOURCE') {
-    html = html.substr(1)
-    rawText = rawText.substr(1)
+    if (rawText[0] === '@') {
+      html = html.substr(1)
+      rawText = rawText.substr(1)
+    }
     html = htmlToText(html)
   }
   if (type === 'TAG') {
-    html = html.substr(2)
-    rawText = rawText.substr(2)
+    if (rawText[0] === '#') {
+      html = html.substr(2)
+      rawText = rawText.substr(2)
+    }
     html = htmlToText(html)
   }
   if (type === 'LOCATION') {
-    html = html.substr(2)
-    rawText = rawText.substr(2)
+    if (rawText[0] === '/') {
+      html = html.substr(2)
+      rawText = rawText.substr(2)
+    }
     html = htmlToText(html)
   }
   if (type === 'HEADER') {
-    html = html.substr(1)
-    rawText = rawText.substr(1)
+    if (rawText[0] === '#') {
+      html = html.substr(1)
+      rawText = rawText.substr(1)
+    }
     html = htmlToText(html)
   }
   if (type === '') {
-    html = rawText.replace(/[\n\r]/, '<br>')
     rawText = rawText.trim()
+    html = rawText.replace(/[\n\r]/, '<br>')
   }
 
   let newBlocks = [...blocks]
