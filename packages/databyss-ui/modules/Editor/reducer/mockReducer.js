@@ -1,12 +1,10 @@
-import * as app from './../actions/mocks'
+// import * as app from './../actions/mocks'
 import {
   appendBlock,
   getPos,
   removeBlock,
   placeCaretAtEnd,
 } from './../_helpers'
-
-// const [{ blocks, editRef, editIndex }, dispatch] = useStateValue()
 
 export const initialState = {
   editRef: {},
@@ -26,7 +24,6 @@ export const initialState = {
     action: { type: '' },
     items: [{ type: '' }],
   },
-  ...app,
 }
 
 export const reducer = (state, action) => {

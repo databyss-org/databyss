@@ -1,31 +1,19 @@
 import React, { useEffect } from 'react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
-import {
-  useStateValue,
-  setRef,
-} from '@databyss-org/services/editor/EditorProvider'
+import { useProviderContext } from '@databyss-org/services/editor/EditorProvider'
 import TextArea from './TextArea'
 import MenuItem from './MenuItem'
 import { styleSelector } from './_helpers'
 
-const EditorBlocks = ({ data }) => {
-  const [{ blocks, editRef, editIndex }, dispatch] = useStateValue()
-
-  const setRef = ({ ref, index }) => {
-    // dispatch(setRef({ref, index})
-
-    dispatch({ type: 'SET_REF', data: { ref, index } })
-  }
-
-  const setEditRef = (ref, i) => {
-    dispatch({ type: 'EDIT_REF', data: ref.current, index: i })
-  }
+const EditorBlocks = ({}) => {
+  const [state, actions] = useProviderContext()
+  const { blocks, editRef, editIndex } = state
+  const { setRef, setEditRef } = actions
 
   const pasteListener = e => {
     e.preventDefault()
     const text = (e.originalEvent || e).clipboardData.getData('text/plain')
-
     // insert text manually
     document.execCommand('insertHTML', false, text)
   }
@@ -58,7 +46,7 @@ const EditorBlocks = ({ data }) => {
               activeIndex={editIndex}
               editRef={setEditRef}
               blockState={i}
-              dispatch={dispatch}
+              actions={actions}
               setRef={setRef}
             />
           </Text>

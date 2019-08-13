@@ -28,7 +28,7 @@ export default class TextArea extends Component {
     if (nextProps.blockState.type === 'NEW_ELEMENT') {
       this.textRef.current.innerHTML = this.textRef.current.innerHTML
       this.textRef.current.focus()
-      setTimeout(() => this.props.dispatch({ type: 'SET_FOCUS' }), 10)
+      setTimeout(() => this.props.actions.setFocus(), 10)
     }
   }
 
@@ -39,7 +39,7 @@ export default class TextArea extends Component {
   }
 
   parseText(htmlState) {
-    htmlParser(htmlState, this.props.dispatch)
+    htmlParser({ htmlState, actions: this.props.actions })
   }
 
   render() {

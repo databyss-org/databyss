@@ -46,11 +46,12 @@ export const menuAction = action => {
   }
 }
 
-export function htmlParser(htmlState, dispatch) {
+export function htmlParser({ htmlState, actions }) {
+  const { onEdit } = actions
   let data = { ...htmlState }
   data.rawText = htmlToText(htmlState.html)
   if (htmlState.index > -1) {
-    dispatch({ type: 'ON_EDIT', data })
+    onEdit(data)
   }
 }
 
