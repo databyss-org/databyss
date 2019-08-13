@@ -3,6 +3,7 @@ import { View, Text } from '@databyss-org/ui/primitives'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { useStateValue } from '@databyss-org/services/editor/ServiceProvider'
 import TextArea from './TextArea'
+import MenuItem from './MenuItem'
 import { styleSelector } from './_helpers'
 
 const EditorBlocks = ({ data }) => {
@@ -36,9 +37,13 @@ const EditorBlocks = ({ data }) => {
     [editRef]
   )
   let blocksRender = blocks.map((i, k) => {
+    const menuAction =
+      i.index === editIndex && i.rawText.length === 0 ? '+' : null
     return (
       <Grid columnGap={1} mb={3} width={1} key={k}>
-        <View width={1 / 12} />
+        <View width={1 / 12}>
+          {menuAction && <MenuItem text={menuAction} />}
+        </View>
         <View width={9 / 12}>
           <Text variant={styleSelector(i.type)}>
             <TextArea

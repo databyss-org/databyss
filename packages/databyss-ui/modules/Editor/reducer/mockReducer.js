@@ -1,5 +1,10 @@
 import * as app from './../actions/mocks'
-import { appendBlock, getPos } from './../_helpers'
+import {
+  appendBlock,
+  getPos,
+  removeBlock,
+  placeCaretAtEnd,
+} from './../_helpers'
 
 export const initialState = {
   editRef: {},
@@ -8,7 +13,7 @@ export const initialState = {
   blocks: [
     {
       html: '',
-      rawText: 'enter text',
+      rawText: '',
       source: { name: '' },
       type: '',
       ref: {},
@@ -27,65 +32,88 @@ export const reducer = (state, action) => {
   console.log(action.type)
   switch (action.type) {
     case 'ON_EDIT':
-      let blocks = state.blocks
-      if (action.data.rawText.length === 0) {
-        blocks[action.data.index] = { ...action.data, html: '', type: '' }
-        return {
-          ...state,
-          blocks,
-        }
-      } else if (action.data.rawText[0] === '@') {
-        blocks[action.data.index] = { ...action.data, type: 'RESOURCE' }
-        return {
-          ...state,
-          blocks,
-        }
-      } else if (action.data.rawText.substring(0, 2) === '##') {
-        blocks[action.data.index] = { ...action.data, type: 'TAG' }
-        return {
-          ...state,
-          blocks,
-        }
-      } else if (action.data.rawText.substring(0, 1) === '#') {
-        blocks[action.data.index] = { ...action.data, type: 'HEADER' }
-        return {
-          ...state,
-          blocks,
-        }
-      } else if (action.data.rawText.substring(0, 2) === '//') {
-        blocks[action.data.index] = { ...action.data, type: 'LOCATION' }
-        return {
-          ...state,
-          blocks,
-        }
-      } else if (action.data.html.match('<div><br></div><div><br></div>')) {
-        // FOCUS BLOCK
-        const newBlocks = appendBlock({
-          blocks: state.blocks,
-          index: state.editIndex,
-          addNewBlock: true,
-        })
-        return {
-          ...state,
-          blocks: newBlocks,
+      if (!_.isEqual(action.data === state.blocks[state.editIndex])) {
+        let blocks = state.blocks
+        if (action.data.rawText.length === 0) {
+          blocks[action.data.index] = {
+            ...action.data,
+            html: '',
+            rawText: '',
+            type: 'NEW',
+          }
+          return {
+            ...state,
+            blocks,
+          }
+        } else if (action.data.rawText[0] === '@') {
+          blocks[action.data.index] = { ...action.data, type: 'RESOURCE' }
+          return {
+            ...state,
+            blocks,
+          }
+        } else if (action.data.rawText.substring(0, 2) === '##') {
+          blocks[action.data.index] = { ...action.data, type: 'TAG' }
+          return {
+            ...state,
+            blocks,
+          }
+        } else if (action.data.rawText.substring(0, 1) === '#') {
+          blocks[action.data.index] = { ...action.data, type: 'HEADER' }
+          return {
+            ...state,
+            blocks,
+          }
+        } else if (action.data.rawText.substring(0, 2) === '//') {
+          blocks[action.data.index] = { ...action.data, type: 'LOCATION' }
+          return {
+            ...state,
+            blocks,
+          }
+        } else if (action.data.html.match('<div><br></div><div><br></div>')) {
+          // FOCUS BLOCK
+          const newBlocks = appendBlock({
+            blocks: state.blocks,
+            index: state.editIndex,
+            addNewBlock: true,
+          })
+          return {
+            ...state,
+            blocks: newBlocks,
+          }
+        } else {
+          blocks[action.data.index] = { ...action.data /*, type: 'ENTRY' */ }
+          return {
+            ...state,
+            blocks,
+          }
         }
       } else {
-        blocks[action.data.index] = { ...action.data /*, type: 'ENTRY' */ }
-        return {
-          ...state,
-          blocks,
-        }
+        console.log('no change')
+        return { ...state }
       }
     case 'BACKSPACE':
-      if (state.blocks[state.editIndex].html.length === 0) {
+      if (
+        state.blocks[state.editIndex].html.length === 0 &&
+        state.blocks[state.editIndex].type === 'NEW'
+      ) {
         let blocks = state.blocks
+        //  blocks[state.editIndex !== 0 ? state.editIndex - 1 : 0].ref.focus()
+
+        /*
         blocks[state.editIndex] = {
           ...state.blocks[state.editIndex],
           type: 'NEW',
         }
+*/
+
+        console.log('change')
+        //  blocks = removeBlock({ blocks, index: state.editIndex })
+        // blocks[state.editIndex !== 0 ? state.editIndex - 1 : 0].type = 'NEW'
+        //  blocks[state.editIndex !== 0 ? state.editIndex - 1 : 0].ref.focus()
         return {
           ...state,
           blocks,
+          editIndex: state.editIndex !== 0 ? state.editIndex - 1 : 0,
         }
       } else {
         return {
@@ -128,6 +156,7 @@ export const reducer = (state, action) => {
         if (state.editIndex > -1) {
           const index = state.editIndex === 0 ? 0 : state.editIndex - 1
           state.blocks[index].ref.focus()
+          placeCaretAtEnd(state.blocks[index].ref)
           // set focus to previous block from 'blocks'
           return {
             ...state,
@@ -150,10 +179,21 @@ export const reducer = (state, action) => {
         }
       }
     case 'DOWN':
-      console.log(getPos(document.activeElement))
-      console.log(
+      if (
+        state.lastCarotPosition ===
         state.blocks[state.editIndex].rawText.replace(/[\n\r]/, '').length
-      )
+      ) {
+        const editIndex =
+          state.editIndex + 1 < state.blocks.length
+            ? state.editIndex + 1
+            : state.editIndex
+        state.blocks[editIndex].ref.focus()
+        return {
+          ...state,
+          lastCarotPosition: 0,
+          editIndex,
+        }
+      }
       return {
         ...state,
         lastCarotPosition: getPos(document.activeElement),

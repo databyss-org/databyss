@@ -12,7 +12,7 @@ const EditorProvider = () => {
   const logKey = e => {
     // detect keystrokes
     if (e.keyCode === 8) {
-      dispatch({ type: 'BACKSPACE_EDIT' })
+      dispatch({ type: 'BACKSPACE' })
     } else if (e.keyCode === 13) {
       dispatch({ type: 'NEW_LINE' })
     } else if (e.keyCode === 38) {

@@ -51,15 +51,34 @@ export function htmlParser(htmlState, dispatch) {
   data.rawText = htmlToText(htmlState.html)
   if (htmlState.index > -1) {
     dispatch({ type: 'ON_EDIT', data })
+  }
+}
+
+export const removeBlock = ({ blocks, index }) => {
+  if (blocks.length === 1) {
+    console.log('one block')
+    return blocks
   } else {
-    dispatch({ type: 'ON_CHANGE', data })
+    let newBlocks = blocks.slice(0)
+    console.log(newBlocks)
+    newBlocks.splice(index, 1)
+    /*
+    let newBlocks = blocksCopy.filter(b => b.index !== index)
+    */
+    console.log(newBlocks)
+    /*
+    newBlocks = newBlocks.map((b, i) => {
+      console.log(b.ref)
+      console.log(b.index)
+      return { ...b, index: i }
+    })
+    */
+    return newBlocks
   }
 }
 
 export const appendBlock = ({ blocks, index, addNewBlock }) => {
-  console.log(index)
   let { type, rawText, html, ref } = blocks[index]
-  console.log(type)
   if (type === 'RESOURCE') {
     html = html.substr(1)
     rawText = rawText.substr(1)
@@ -183,4 +202,24 @@ export const getPos = element => {
     caretOffset = preCaretTextRange.text.length
   }
   return caretOffset
+}
+
+export const placeCaretAtEnd = el => {
+  el.focus()
+  if (
+    typeof window.getSelection != 'undefined' &&
+    typeof document.createRange != 'undefined'
+  ) {
+    var range = document.createRange()
+    range.selectNodeContents(el)
+    range.collapse(false)
+    var sel = window.getSelection()
+    sel.removeAllRanges()
+    sel.addRange(range)
+  } else if (typeof document.body.createTextRange != 'undefined') {
+    var textRange = document.body.createTextRange()
+    textRange.moveToElementText(el)
+    textRange.collapse(false)
+    textRange.select()
+  }
 }

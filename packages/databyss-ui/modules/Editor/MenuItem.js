@@ -1,20 +1,20 @@
 import React from 'react'
 import { Text, View } from '@databyss-org/ui/primitives'
 
-const MenuItem = ({ item, k, ...others }) => (
-  <View
-    m={0}
-    height={24}
-    width={24}
-    bg="gray.6"
-    borderRadius="50%"
-    alignItems="center"
-    justifyContent="center"
-    {...others}
-  >
-    <Text variant="uiTextNormal" color="gray.4">
-      {item.text}
-    </Text>
+const MenuItem = ({ text, ...others }) => (
+  <View m={0} flex="none" {...others}>
+    <View
+      height={24}
+      width={24}
+      borderRadius="50%"
+      bg="gray.6"
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Text variant="uiTextNormal" color="gray.4">
+        {text}
+      </Text>
+    </View>
   </View>
 )
 
