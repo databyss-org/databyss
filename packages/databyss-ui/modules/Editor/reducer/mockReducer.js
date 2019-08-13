@@ -6,6 +6,8 @@ import {
   placeCaretAtEnd,
 } from './../_helpers'
 
+// const [{ blocks, editRef, editIndex }, dispatch] = useStateValue()
+
 export const initialState = {
   editRef: {},
   lastCarotPosition: -1,

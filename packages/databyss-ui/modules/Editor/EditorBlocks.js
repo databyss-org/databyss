@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
-import { useStateValue } from '@databyss-org/services/editor/ServiceProvider'
+import {
+  useStateValue,
+  setRef,
+} from '@databyss-org/services/editor/EditorProvider'
 import TextArea from './TextArea'
 import MenuItem from './MenuItem'
 import { styleSelector } from './_helpers'
@@ -10,6 +13,8 @@ const EditorBlocks = ({ data }) => {
   const [{ blocks, editRef, editIndex }, dispatch] = useStateValue()
 
   const setRef = ({ ref, index }) => {
+    // dispatch(setRef({ref, index})
+
     dispatch({ type: 'SET_REF', data: { ref, index } })
   }
 

@@ -1,11 +1,11 @@
 import React, { useRef, useEffect } from 'react'
-import { useStateValue } from '@databyss-org/services/editor/ServiceProvider'
+import { useStateValue } from '@databyss-org/services/editor/EditorProvider'
 import { View } from '@databyss-org/ui/primitives'
 
 import EditorBlocks from './EditorBlocks'
 import EditorMenu from './EditorMenu'
 
-const EditorProvider = () => {
+const Editor = () => {
   const [{ blocks, menu }, dispatch] = useStateValue()
   const contentEl = useRef(null)
 
@@ -46,4 +46,4 @@ const EditorProvider = () => {
   )
 }
 
-export default EditorProvider
+export default Editor

@@ -3,12 +3,12 @@ import Content from '@databyss-org/ui/components/Viewport/Content'
 import Viewport from '@databyss-org/ui/components/Viewport/ThemedViewport'
 import { reducer, initialState } from './../modules/Editor/reducer/mockReducer'
 
-import ServiceProvider from '@databyss-org/services/editor/ServiceProvider'
+import EditorProvider from '@databyss-org/services/editor/EditorProvider'
 
 export const ServiceProviderDecorator = storyFn => (
-  <ServiceProvider initialState={initialState} reducer={reducer}>
+  <EditorProvider initialState={initialState} reducer={reducer}>
     {storyFn()}
-  </ServiceProvider>
+  </EditorProvider>
 )
 
 export const ViewportDecorator = storyFn => (
