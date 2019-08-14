@@ -19,6 +19,7 @@ const Editor = () => {
     } else if (e.keyCode === 13) {
       onNewLine()
     } else if (e.keyCode === 38) {
+      // console.log('GET STATE')
       setTimeout(() => onUpKey(), 50)
     } else if (e.keyCode === 40) {
       setTimeout(() => onDownKey(), 50)
@@ -36,7 +37,7 @@ const Editor = () => {
         }
       }
     },
-    [contentEl]
+    [contentEl, state]
   )
 
   return (

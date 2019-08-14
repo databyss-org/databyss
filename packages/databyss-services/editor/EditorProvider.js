@@ -15,8 +15,4 @@ const EditorProvider = ({ reducer, initialState, children, actions }) => {
 
 export const useProviderContext = () => useContext(ServiceContext)
 
-export const setRef = ({ ref, index }) => {
-  return { type: 'SET_REF', data: { ref, index } }
-}
-
 export default EditorProvider
