@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
+import { withEditorContext } from './EditorProvider'
 import ContentEditable from './ContentEditable'
 import { htmlParser } from './_helpers'
+import { setRef, setFocus, setEditRef, onEdit } from './actions/actions'
 
-export default class TextArea extends Component {
+class TextArea extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -15,43 +17,54 @@ export default class TextArea extends Component {
   }
 
   componentDidMount() {
-    this.props.setRef({
-      ref: this.textRef.current,
-      index: this.props.blockState.index,
-    })
-    if (this.props.blockState.index > -1) {
-      this.setState({ index: this.props.blockState.index })
+    const [, dispatch] = this.props.editorContext
+    const { blockState } = this.props
+    dispatch(
+      setRef({
+        ref: this.textRef.current,
+        index: blockState.index,
+      })
+    )
+    if (blockState.index > -1) {
+      this.setState({ index: blockState.index })
     }
   }
 
   componentDidUpdate(nextProps) {
+    const [, dispatch] = this.props.editorContext
     if (nextProps.blockState.type === 'NEW_ELEMENT') {
       this.textRef.current.innerHTML = this.textRef.current.innerHTML
       this.textRef.current.focus()
-      setTimeout(() => this.props.actions.setFocus(), 10)
+      setTimeout(() => dispatch(setFocus()), 10)
     }
   }
 
-  handleChange(text, e) {
-    let newHtmlState = { ...this.props.blockState }
+  handleChange(text) {
+    const newHtmlState = { ...this.props.blockState }
     newHtmlState.html = text
     this.parseText(newHtmlState)
   }
 
   parseText(htmlState) {
-    htmlParser({ htmlState, actions: this.props.actions })
+    const [, dispatch] = this.props.editorContext
+    const data = htmlParser(htmlState)
+    if (htmlState.index > -1) {
+      dispatch(onEdit(data))
+    }
   }
 
   render() {
+    const [, dispatch] = this.props.editorContext
+    const { blockState } = this.props
     return (
       <ContentEditable
-        onClick={() =>
-          this.props.editRef(this.textRef, this.props.blockState.index)
-        }
-        htmlState={this.props.blockState}
+        onClick={() => dispatch(setEditRef(this.textRef, blockState.index))}
+        htmlState={blockState}
         onChange={this.handleChange}
         _ref={this.textRef}
       />
     )
   }
 }
+
+export default withEditorContext(TextArea)

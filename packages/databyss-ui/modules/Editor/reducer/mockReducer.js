@@ -22,8 +22,6 @@ export const initialState = {
 }
 
 export const reducer = (state, action) => {
-  console.log(action.type)
-  console.log(state)
   switch (action.type) {
     case 'ON_EDIT':
       return {

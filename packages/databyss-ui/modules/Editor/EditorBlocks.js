@@ -1,15 +1,14 @@
 import React, { useEffect } from 'react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
-import { useProviderContext } from '@databyss-org/services/editor/EditorProvider'
+import { useProviderContext } from './EditorProvider'
 import TextArea from './TextArea'
 import MenuItem from './MenuItem'
 import { styleSelector } from './_helpers'
 
-const EditorBlocks = ({}) => {
-  const [state, actions] = useProviderContext()
+const EditorBlocks = () => {
+  const [state] = useProviderContext()
   const { blocks, editRef, editIndex } = state
-  const { setRef, setEditRef } = actions
 
   const pasteListener = e => {
     e.preventDefault()
@@ -26,10 +25,11 @@ const EditorBlocks = ({}) => {
           editRef.removeEventListener('paste', pasteListener)
         }
       }
+      return () => null
     },
     [editRef]
   )
-  let blocksRender = blocks.map((i, k) => {
+  const blocksRender = blocks.map((i, k) => {
     const menuAction =
       i.index === editIndex && i.rawText.length === 0 ? '+' : null
     return (
@@ -42,13 +42,7 @@ const EditorBlocks = ({}) => {
             variant={styleSelector(i.type).style}
             color={styleSelector(i.type).color}
           >
-            <TextArea
-              activeIndex={editIndex}
-              editRef={setEditRef}
-              blockState={i}
-              actions={actions}
-              setRef={setRef}
-            />
+            <TextArea blockState={i} />
           </Text>
         </View>
       </Grid>

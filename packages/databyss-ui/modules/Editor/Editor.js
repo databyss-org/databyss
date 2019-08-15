@@ -1,28 +1,28 @@
 import React, { useRef, useEffect } from 'react'
-import { useProviderContext } from '@databyss-org/services/editor/EditorProvider'
 import { View } from '@databyss-org/ui/primitives'
+import { useProviderContext } from './EditorProvider'
+import { onBackspace, onNewLine, onUpKey, onDownKey } from './actions/actions'
 
 import EditorBlocks from './EditorBlocks'
 import EditorMenu from './EditorMenu'
 
 const Editor = () => {
-  const [state, actions] = useProviderContext()
+  const [state, dispatch] = useProviderContext()
   const { blocks, menu } = state
-  const { onBackspace, onNewLine, onUpKey, onDownKey } = actions
 
   const contentEl = useRef(null)
 
   const logKey = e => {
     // detect keystrokes
     if (e.keyCode === 8) {
-      onBackspace()
+      dispatch(onBackspace())
     } else if (e.keyCode === 13) {
-      onNewLine()
+      dispatch(onNewLine())
     } else if (e.keyCode === 38) {
       // console.log('GET STATE')
-      setTimeout(() => onUpKey(), 50)
+      setTimeout(() => dispatch(onUpKey()), 50)
     } else if (e.keyCode === 40) {
-      setTimeout(() => onDownKey(), 50)
+      setTimeout(() => dispatch(onDownKey()), 50)
     } else {
       // clear()
     }
@@ -36,8 +36,9 @@ const Editor = () => {
           contentEl.current.removeEventListener('keydown', logKey)
         }
       }
+      return () => null
     },
-    [contentEl, state]
+    [contentEl]
   )
 
   return (

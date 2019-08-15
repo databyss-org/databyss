@@ -1,4 +1,3 @@
-import React from 'react'
 import _ from 'lodash'
 
 const emptyBlock = {
@@ -46,36 +45,32 @@ export const menuAction = action => {
   }
 }
 
-export function htmlParser({ htmlState, actions }) {
-  const { onEdit } = actions
-  let data = { ...htmlState }
+export function htmlParser(htmlState) {
+  const data = { ...htmlState }
   data.rawText = htmlToText(htmlState.html)
-  if (htmlState.index > -1) {
-    onEdit(data)
-  }
+  return data
 }
 
 export const removeBlock = ({ blocks, index }) => {
   if (blocks.length === 1) {
     console.log('one block')
     return blocks
-  } else {
-    let newBlocks = blocks.slice(0)
-    console.log(newBlocks)
-    newBlocks.splice(index, 1)
-    /*
+  }
+  const newBlocks = blocks.slice(0)
+  console.log(newBlocks)
+  newBlocks.splice(index, 1)
+  /*
     let newBlocks = blocksCopy.filter(b => b.index !== index)
     */
-    console.log(newBlocks)
-    /*
+  console.log(newBlocks)
+  /*
     newBlocks = newBlocks.map((b, i) => {
       console.log(b.ref)
       console.log(b.index)
       return { ...b, index: i }
     })
     */
-    return newBlocks
-  }
+  return newBlocks
 }
 
 export const appendBlock = ({ blocks, index, addNewBlock }) => {
@@ -116,10 +111,10 @@ export const appendBlock = ({ blocks, index, addNewBlock }) => {
   let newBlocks = [...blocks]
 
   const newBlock = {
-    html: html,
-    rawText: rawText,
+    html,
+    rawText,
     source: { name: '' },
-    type: type,
+    type,
     ref,
     index: blocks[index].index,
   }
@@ -190,22 +185,22 @@ function htmlToText(value) {
 }
 
 export const getPos = element => {
-  var caretOffset = 0
-  var doc = element.ownerDocument || element.document
-  var win = doc.defaultView || doc.parentWindow
-  var sel
-  if (typeof win.getSelection != 'undefined') {
+  let caretOffset = 0
+  const doc = element.ownerDocument || element.document
+  const win = doc.defaultView || doc.parentWindow
+  let sel
+  if (typeof win.getSelection !== 'undefined') {
     sel = win.getSelection()
     if (sel.rangeCount > 0) {
-      var range = win.getSelection().getRangeAt(0)
-      var preCaretRange = range.cloneRange()
+      const range = win.getSelection().getRangeAt(0)
+      const preCaretRange = range.cloneRange()
       preCaretRange.selectNodeContents(element)
       preCaretRange.setEnd(range.endContainer, range.endOffset)
       caretOffset = preCaretRange.toString().length
     }
   } else if ((sel = doc.selection) && sel.type != 'Control') {
-    var textRange = sel.createRange()
-    var preCaretTextRange = doc.body.createTextRange()
+    const textRange = sel.createRange()
+    const preCaretTextRange = doc.body.createTextRange()
     preCaretTextRange.moveToElementText(element)
     preCaretTextRange.setEndPoint('EndToEnd', textRange)
     caretOffset = preCaretTextRange.text.length
@@ -216,17 +211,17 @@ export const getPos = element => {
 export const placeCaretAtEnd = el => {
   el.focus()
   if (
-    typeof window.getSelection != 'undefined' &&
-    typeof document.createRange != 'undefined'
+    typeof window.getSelection !== 'undefined' &&
+    typeof document.createRange !== 'undefined'
   ) {
-    var range = document.createRange()
+    const range = document.createRange()
     range.selectNodeContents(el)
     range.collapse(false)
-    var sel = window.getSelection()
+    const sel = window.getSelection()
     sel.removeAllRanges()
     sel.addRange(range)
-  } else if (typeof document.body.createTextRange != 'undefined') {
-    var textRange = document.body.createTextRange()
+  } else if (typeof document.body.createTextRange !== 'undefined') {
+    const textRange = document.body.createTextRange()
     textRange.moveToElementText(el)
     textRange.collapse(false)
     textRange.select()
