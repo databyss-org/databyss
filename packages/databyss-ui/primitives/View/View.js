@@ -7,6 +7,7 @@ import {
   position,
   compose,
   variant,
+  color,
 } from 'styled-system'
 import fastCompare from 'react-fast-compare'
 import styled from '../styled'
@@ -34,6 +35,7 @@ const View = styled(
     flexbox,
     border,
     position,
+    color,
     paddingVariant,
     borderVariant
   )

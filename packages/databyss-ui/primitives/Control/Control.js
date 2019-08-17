@@ -5,7 +5,7 @@ import { animatingCss } from './touchDecay'
 import styled from '../styled'
 import timing from '../../theming/timing'
 import IS_NATIVE from '../../lib/isNative'
-import { View } from '../'
+import { View, Text } from '../'
 
 const variants = variant({
   prop: 'variant',
@@ -53,6 +53,16 @@ const Control = ({
     [resetDecay]
   )
 
+  const containerProps = {
+    ...(label && label.length
+      ? {
+          flexDirection: 'row',
+          flexWrap: 'nowrap',
+          alignItems: 'center',
+        }
+      : {}),
+  }
+
   const webProps = () => ({
     onClick: e => {
       if (disabled) {
@@ -81,17 +91,25 @@ const Control = ({
     }),
   })
 
+  const _children = React.Children.map(
+    children,
+    child => child && React.cloneElement(child, { disabled })
+  )
+
   return (
     <Styled
-      {...(!IS_NATIVE ? webProps() : nativeProps())}
+      {...(IS_NATIVE ? nativeProps() : webProps())}
       variant={disabled ? 'disabled' : variant}
       {...others}
     >
-      <View>
-        {React.Children.map(
-          children,
-          child => child && React.cloneElement(child, { disabled })
-        )}
+      <View {...containerProps}>
+        {_children}
+        {label &&
+          label.length && (
+            <View ml="small">
+              <Text variant="uiTextNormal">{label}</Text>
+            </View>
+          )}
       </View>
     </Styled>
   )
