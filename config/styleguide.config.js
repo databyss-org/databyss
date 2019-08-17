@@ -25,6 +25,10 @@ module.exports = {
       __dirname,
       '../packages/databyss-ui/components/Viewport/Content.js'
     ),
+    Text: path.resolve(
+      __dirname,
+      '../packages/databyss-ui/primitives/Text/Text.js'
+    ),
   },
   skipComponentsWithoutExample: true,
   styleguideDir: path.join(__dirname, '../build'),
@@ -57,12 +61,12 @@ module.exports = {
   title: 'Databyss Component Library',
   pagePerSection: true,
   sections: [
-    {
-      name: 'Components',
-      components: '../packages/databyss-ui/components/**/*.js',
-      exampleMode: 'collapse',
-      usageMode: 'collapse',
-    },
+    // {
+    //   name: 'Components',
+    //   components: '../packages/databyss-ui/components/**/*.js',
+    //   exampleMode: 'collapse',
+    //   usageMode: 'collapse',
+    // },
     {
       name: 'Primitives',
       components: '../packages/databyss-ui/primitives/**/*.js',
