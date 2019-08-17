@@ -10,21 +10,6 @@ const decay = keyframes({
   },
 })
 
-export default {
-  position: 'relative',
-  '&:after': {
-    content: '""',
-    position: 'absolute',
-    top: '-4px',
-    bottom: '-4px',
-    left: '-4px',
-    right: '-4px',
-    backgroundColor: '#000',
-    opacity: 0,
-    borderRadius: '3px',
-  },
-}
-
 export const animatingCss = {
   '&:after': {
     animation: `${decay} ${timing.touchDecay}ms ${timing.ease}`,

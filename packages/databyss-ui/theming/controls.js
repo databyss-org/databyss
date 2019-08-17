@@ -8,13 +8,28 @@ export const nativePropVariants = {
   },
 }
 
+const mobileWebControl = color => ({
+  position: 'relative',
+  '&:after': {
+    content: '""',
+    position: 'absolute',
+    top: '-4px',
+    bottom: '-4px',
+    left: '-4px',
+    right: '-4px',
+    backgroundColor: color,
+    opacity: 0,
+    borderRadius: '3px',
+  },
+})
+
 const controlVariants = {
   default: {
     ...Platform.select({
       ios: {},
       android: {},
       default: isMobileOrMobileOs()
-        ? {}
+        ? mobileWebControl(colors.gray[1])
         : {
             '&:hover': {
               backgroundColor: colors.gray[6],
@@ -25,6 +40,9 @@ const controlVariants = {
             cursor: 'pointer',
           },
     }),
+  },
+  disabled: {
+    opacity: 0.5,
   },
 }
 

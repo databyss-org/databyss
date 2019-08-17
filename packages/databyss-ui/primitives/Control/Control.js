@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Platform } from 'react-native'
 import { variant, color, compose } from 'styled-system'
-import touchDecayCss, { animatingCss } from './touchDecay'
+import { animatingCss } from './touchDecay'
 import styled from '../styled'
 import timing from '../../theming/timing'
 import IS_NATIVE from '../../lib/isNative'
@@ -12,13 +12,24 @@ const variants = variant({
   scale: 'controlVariants',
 })
 
-const Control = ({ label, onPress, variant, children, ...others }) => {
+/**
+ * Base Control component. Optionally renders a label and handles disabled state
+ */
+const Control = ({
+  label,
+  onPress,
+  variant,
+  children,
+  disabled,
+  ...others
+}) => {
   const [decay, setDecay] = useState(false)
+  const [resetDecay, setResetDecay] = useState(false)
   const decayTimerRef = useRef(null)
   const Styled = styled(
     {
-      ios: 'TouchableOpacity',
-      android: 'TouchableNativeFeedback',
+      ios: disabled ? 'View' : 'TouchableOpacity',
+      android: disabled ? 'View' : 'TouchableNativeFeedback',
       default: label ? 'label' : 'div',
     },
     compose(
@@ -27,22 +38,41 @@ const Control = ({ label, onPress, variant, children, ...others }) => {
     )
   )
 
-  const webProps = () => ({
-    onClick: () => {
-      clearTimeout(decayTimerRef.current)
-      decayTimerRef.current = setTimeout(
-        () => setDecay(false),
-        timing.touchDecay
-      )
-      setDecay(true)
-      if (onPress) {
-        onPress()
+  const startDecayAnimation = () => {
+    decayTimerRef.current = setTimeout(() => setDecay(false), timing.touchDecay)
+    setDecay(true)
+  }
+
+  useEffect(
+    () => {
+      if (resetDecay) {
+        startDecayAnimation()
+        setResetDecay(false)
       }
     },
-    css: [touchDecayCss, decay && animatingCss],
+    [resetDecay]
+  )
+
+  const webProps = () => ({
+    onClick: e => {
+      if (disabled) {
+        return
+      }
+      if (decay) {
+        clearTimeout(decayTimerRef.current)
+        setResetDecay(true)
+      } else {
+        startDecayAnimation()
+      }
+
+      if (onPress) {
+        onPress(e)
+      }
+    },
+    css: disabled || (decay && animatingCss),
   })
   const nativeProps = () => ({
-    onPress,
+    onPress: disabled ? null : onPress,
     ...Platform.select({
       android: {
         useForeground: true,
@@ -54,10 +84,15 @@ const Control = ({ label, onPress, variant, children, ...others }) => {
   return (
     <Styled
       {...(!IS_NATIVE ? webProps() : nativeProps())}
-      variant={variant}
+      variant={disabled ? 'disabled' : variant}
       {...others}
     >
-      <View>{children}</View>
+      <View>
+        {React.Children.map(
+          children,
+          child => child && React.cloneElement(child, { disabled })
+        )}
+      </View>
     </Styled>
   )
 }

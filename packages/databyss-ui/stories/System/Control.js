@@ -8,6 +8,9 @@ export default () => (
       <Control onPress={() => console.log('pressed')}>
         <Text>Text control</Text>
       </Control>
+      <Control disabled onPress={() => console.log('pressed')}>
+        <Text>Text control (disabled)</Text>
+      </Control>
     </Section>
   </React.Fragment>
 )
