@@ -1,6 +1,7 @@
 import View from './View/View'
 import Text from './Text/Text'
-import Control from './Control/Control'
+import BaseControl from './Control/BaseControl'
 import ToggleControl from './Control/ToggleControl'
+import SwitchControl from './Control/SwitchControl'
 
-export { View, Text, Control, ToggleControl }
+export { View, Text, BaseControl, ToggleControl, SwitchControl }

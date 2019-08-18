@@ -1,9 +1,9 @@
 import React from 'react'
-// import { Platform } from 'react-native'
-import Control from './Control'
+import BaseControl from './BaseControl'
+import { View, Text } from '../'
 
 /**
- * Base component for boolean selection controls
+ * Base component for boolean selection controls. Optionally renders a label
  */
 const ToggleControl = ({
   value,
@@ -11,20 +11,36 @@ const ToggleControl = ({
   onChange,
   disabled,
   label,
+  alignLabel,
   ...others
-}) => {
-  const sharedProps = {
-    onPress: onChange && (() => onChange(!value)),
-  }
-  return (
-    <Control {...sharedProps} {...others} disabled={disabled} label={label}>
-      {children}
-    </Control>
-  )
-}
+}) => (
+  <BaseControl
+    containerProps={
+      label && label.length
+        ? {
+            flexDirection: alignLabel === 'left' ? 'row-reverse' : 'row',
+            flexWrap: 'nowrap',
+            alignItems: 'center',
+          }
+        : {}
+    }
+    onPress={onChange && (() => onChange(!value))}
+    disabled={disabled}
+    label={label}
+    {...others}
+  >
+    {children}
+    {label &&
+      label.length && (
+        <View {...{ [alignLabel === 'right' ? 'ml' : 'mr']: 'small' }}>
+          <Text variant="uiTextNormal">{label}</Text>
+        </View>
+      )}
+  </BaseControl>
+)
 
 ToggleControl.defaultProps = {
-  label: true,
+  alignLabel: 'right',
 }
 
 export default ToggleControl

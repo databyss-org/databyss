@@ -1,5 +1,11 @@
 import React, { useState } from 'react'
-import { Text, Control, ToggleControl, View } from '@databyss-org/ui/primitives'
+import {
+  Text,
+  BaseControl,
+  ToggleControl,
+  SwitchControl,
+  View,
+} from '@databyss-org/ui/primitives'
 import { Section } from './'
 
 const Checkbox = ({ checked }) => (
@@ -14,15 +20,16 @@ const Checkbox = ({ checked }) => (
 
 export default () => {
   const [checked, setChecked] = useState(false)
+  const [switched, setSwitched] = useState(false)
   return (
     <React.Fragment>
       <Section title="Controls">
-        <Control onPress={() => console.log('pressed')}>
+        <BaseControl onPress={() => console.log('pressed')}>
           <Text>Text control</Text>
-        </Control>
-        <Control disabled onPress={() => console.log('pressed')}>
+        </BaseControl>
+        <BaseControl disabled onPress={() => console.log('pressed')}>
           <Text>Text control (disabled)</Text>
-        </Control>
+        </BaseControl>
       </Section>
       <Section title="Toggle Controls">
         <ToggleControl label="toggle" value={checked} onChange={setChecked}>
@@ -36,6 +43,23 @@ export default () => {
         >
           <Checkbox checked={checked} />
         </ToggleControl>
+      </Section>
+      <Section title="Switch Controls">
+        <SwitchControl label="switch" value={switched} onChange={setSwitched} />
+        <SwitchControl
+          label="switch (disabled)"
+          value={switched}
+          onChange={setSwitched}
+          disabled
+        />
+        <View flexDirection="row" justifyContent="flex-end">
+          <SwitchControl
+            label="right aligned"
+            value={switched}
+            onChange={setSwitched}
+            alignLabel="left"
+          />
+        </View>
       </Section>
     </React.Fragment>
   )
