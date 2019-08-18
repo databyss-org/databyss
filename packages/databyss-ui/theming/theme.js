@@ -4,7 +4,6 @@ import space from './space'
 import sizes from './sizes'
 import views from './views'
 import fonts from './fonts'
-import controls from './controls'
 import timing from './timing'
 
 export default {
@@ -25,9 +24,6 @@ export default {
 
   /* views */
   ...views,
-
-  /* controls */
-  ...controls,
 
   /* timing */
   timing,
