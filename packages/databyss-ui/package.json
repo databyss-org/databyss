@@ -28,7 +28,7 @@
     "@styled-system/should-forward-prop": "^5.0.18",
     "alea": "^1.0.0",
     "classnames": "^2.2.6",
-    "color": "^3.1.0",
+    "color": "^3.1.2",
     "emotion-theming": "^10.0.10",
     "jss": "^9.8.7",
     "jss-preset-default": "^4.5.0",

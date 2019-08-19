@@ -1,5 +1,4 @@
 ```js
-<Button variant="primary">
-  <Text>Primary</Text>
-</Button>
+import Buttons from '../../stories/System/Buttons'
+;<Buttons />
 ```

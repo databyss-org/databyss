@@ -1,43 +1,48 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { keyframes } from '@emotion/core'
-import { color, layout, compose } from 'styled-system'
+import { color, layout, flexbox, compose } from 'styled-system'
 import { isMobileOrMobileOs } from '../../../lib/mediaQuery'
 import styled from '../../styled'
 import theme from '../../../theming/theme'
 
 const decay = keyframes({
   '0%': {
-    opacity: '0.4',
+    opacity: '0.5',
   },
   '100%': {
     opacity: 0,
   },
 })
 
-const controlCss = {
+const controlCssDesktop = {
+  cursor: 'pointer',
   '&:hover': {
-    backgroundColor: theme.colors.controlHover,
+    '&:after': {
+      opacity: '0.2',
+    },
   },
   '&:active': {
-    backgroundColor: theme.colors.controlActive,
+    '&:after': {
+      opacity: '0.6',
+    },
   },
-  cursor: 'pointer',
 }
 
-const controlCssMobile = {
+const controlCss = rippleColor => ({
   position: 'relative',
   '&:after': {
     content: '""',
     position: 'absolute',
-    top: '-4px',
-    bottom: '-4px',
-    left: '-4px',
-    right: '-4px',
-    backgroundColor: theme.colors.controlRippleColor,
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: rippleColor,
     opacity: 0,
     borderRadius: '3px',
+    transition: `opacity ${theme.timing.flash}ms ${theme.timing.ease}`,
   },
-}
+})
 
 const animatingCss = {
   '&:after': {
@@ -49,11 +54,12 @@ const Styled = styled(
   'div',
   compose(
     color,
+    flexbox,
     layout
   )
 )
 
-export default ({ disabled, children, onPress, ...others }) => {
+const Control = ({ disabled, children, onPress, rippleColor, ...others }) => {
   const [decay, setDecay] = useState(false)
   const [resetDecay, setResetDecay] = useState(false)
   const decayTimerRef = useRef(null)
@@ -94,8 +100,9 @@ export default ({ disabled, children, onPress, ...others }) => {
         }
       }}
       css={[
-        !disabled && (isMobileOrMobileOs() ? controlCssMobile : controlCss),
-        !disabled && decay && animatingCss,
+        !disabled && controlCss(rippleColor),
+        !disabled && !isMobileOrMobileOs() && controlCssDesktop,
+        !disabled && isMobileOrMobileOs() && decay && animatingCss,
       ]}
       {...others}
     >
@@ -103,3 +110,9 @@ export default ({ disabled, children, onPress, ...others }) => {
     </Styled>
   )
 }
+
+Control.defaultProps = {
+  rippleColor: theme.colors.controlRippleColor,
+}
+
+export default Control

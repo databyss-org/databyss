@@ -1,6 +1,6 @@
 ```js
-import Control from '../../stories/System/Control'
+import Controls from '../../stories/System/Controls'
 ;<Content>
-  <Control />
+  <Controls />
 </Content>
 ```

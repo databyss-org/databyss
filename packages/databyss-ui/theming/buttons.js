@@ -1,33 +1,80 @@
-const button = size => ({
-  textVariant: `uiText${size}`,
+import Color from 'color'
+import { Platform } from 'react-native'
+import colors from './colors'
+import { border, pxUnits } from './views'
+import space from './space'
+
+const button = () => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingLeft: space.medium,
+  paddingRight: space.medium,
+  paddingTop: space.small,
+  paddingBottom: space.small,
+  borderRadius: pxUnits(5),
+  ...Platform.select({
+    ios: {},
+    android: {},
+    default: {
+      '& > div': {
+        zIndex: 1,
+      },
+    },
+  }),
+})
+
+const linkButton = () => ({
+  textDecoration: 'underline',
+  paddingLeft: space.small,
+  paddingRight: space.small,
+  paddingTop: space.small,
+  paddingBottom: space.small,
 })
 
 const buttonVariants = {
   primaryUi: {
-    primary: colors.blue[1],
-    hover: colors.blue[2],
-    pressed: colors.blue[0],
-    borderColor: colors.blue[2],
-    fontColor: colors.white,
+    ...button(),
+    ...border(1, colors.blue[1]),
+    backgroundColor: colors.blue[1],
+    rippleColor: Color(colors.blue[0])
+      .darken(0.5)
+      .string(),
+    color: colors.white,
   },
-  secondary: {
-    primary: colors.white,
-    hover: colors.gray[6],
-    pressed: colors.gray[5],
-    borderColor: colors.black,
-    fontColor: colors.black,
+  secondaryUi: {
+    ...button(),
+    ...border(1, colors.black),
+    backgroundColor: colors.transparent,
+    color: colors.black,
   },
-  external: {
-    primary: colors.orange[2],
-    hover: colors.orange[1],
-    pressed: colors.orange[0],
-    borderColor: colors.orange[0],
-    fontColor: colors.orange[0],
+  primaryExternal: {
+    ...button(),
+    ...border(1, colors.orange[0]),
+    backgroundColor: Color(colors.orange[0])
+      .alpha(0.2)
+      .rgb()
+      .string(),
+    color: colors.orange[0],
+    rippleColor: colors.orange[0],
   },
-  link: {
-    primary: colors.clear,
-    hover: colors.gray[6],
-    pressed: colors.orange[5],
-    borderColor: colors.clear,
-    fontColor: colors.blue[1],
+  secondaryExternal: {
+    ...button(),
+    ...border(1, colors.gray[2]),
+    backgroundColor: 'transparent',
+    color: colors.black,
   },
+  uiLink: {
+    ...linkButton(),
+    color: colors.blue[1],
+  },
+  externalLink: {
+    ...linkButton(),
+    color: colors.orange[0],
+  },
+}
+
+export default {
+  buttonVariants,
+}
