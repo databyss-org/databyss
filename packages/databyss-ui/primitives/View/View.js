@@ -7,10 +7,11 @@ import {
   position,
   compose,
   variant,
+  color,
 } from 'styled-system'
 import fastCompare from 'react-fast-compare'
 import styled from '../styled'
-import IS_NATIVE from '../isNative'
+import IS_NATIVE from '../../lib/isNative'
 
 const paddingVariant = variant({
   prop: 'paddingVariant',
@@ -34,6 +35,7 @@ const View = styled(
     flexbox,
     border,
     position,
+    color,
     paddingVariant,
     borderVariant
   )

@@ -29,4 +29,8 @@ colors.darkTexts = [colors.black, colors.gray[0]]
 colors.focusOutlineColor = colors.pink
 colors.entrySourceColor = colors.purple[0]
 
+colors.controlRippleColor = colors.gray[3]
+colors.controlHover = colors.gray[6]
+colors.controlActive = colors.gray[5]
+
 export default colors

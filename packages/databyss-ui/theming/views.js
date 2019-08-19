@@ -14,7 +14,7 @@ const paddingVariants = {
   large: { padding: pxUnits(64) },
 }
 
-const border = (thickness, color) => ({
+export const border = (thickness, color) => ({
   borderRadius: pxUnits(3),
   borderStyle: 'solid',
   borderColor: color,

@@ -4,6 +4,8 @@ import space from './space'
 import sizes from './sizes'
 import views from './views'
 import fonts from './fonts'
+import timing from './timing'
+import buttons from './buttons'
 
 export default {
   /* space */
@@ -15,6 +17,9 @@ export default {
   /* fonts */
   ...fonts,
 
+  /* buttons */
+  ...buttons,
+
   /* colors */
   colors,
 
@@ -24,13 +29,8 @@ export default {
   /* views */
   ...views,
 
-  /* transitions */
-  slow: '800ms',
-  medium: '500ms',
-  quick: '300ms',
-  superQuick: '100ms',
-  ease: 'ease-in-out',
-  touchDecayDuration: 800,
+  /* timing */
+  timing,
 
   /* shadows */
   lightShadow:

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from '../styled'
 import styles, { defaultProps, themes } from './styles'
-import IS_NATIVE from './../isNative'
+import IS_NATIVE from '../../lib/isNative'
 
 const { primary } = themes
 
