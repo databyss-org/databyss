@@ -39,29 +39,20 @@ exports[`Storyshots Demos//Login default 1`] = `
       >
         Log In
       </div>
-      <button
-        className="css-14rvchw e1btk33m0"
+      <div
+        className="css-gaj9zn-Control e1btk33m1"
+        label="Continue with Google"
         onClick={[Function]}
-        onMouseDown={[Function]}
-        onMouseEnter={[Function]}
-        onMouseLeave={[Function]}
-        onMouseUp={[Function]}
-        style={
-          Object {
-            "backgroundColor": "#FFC000",
-            "borderColor": "#B84D00",
-            "color": "#B84D00",
-            "height": 40,
-            "outline": "none",
-            "textDecoration": "none",
-          }
-        }
-        type="button"
+        opacity={1}
       >
-        <div>
-          Continue with Google
+        <div
+          className="css-1dabqxm e1btk33m0"
+        >
+          <div
+            className="e1btk33m1 css-1dabqxm e1btk33m0"
+          />
         </div>
-      </button>
+      </div>
       <div
         className="css-0 e1btk33m0"
         style={
@@ -84,6 +75,594 @@ exports[`Storyshots Demos//Login default 1`] = `
 </div>
 `;
 
+exports[`Storyshots Design System Buttons 1`] = `
+<div
+  className="root-0-0-8  css-17grojp e1btk33m0"
+>
+  <div
+    className="css-1z0xfz e1btk33m0"
+  >
+    <div
+      className="css-4qxs4u e1btk33m0"
+    >
+      <div
+        className="css-1lr6moq e1btk33m0"
+      >
+        UI Buttons
+      </div>
+    </div>
+    <div
+      className="css-4qxs4u e1btk33m0"
+    >
+      <div
+        className="css-1l49k75 e1btk33m0"
+      >
+        <div
+          className="css-t5yleq e1btk33m0"
+        >
+          <div
+            className="css-gaj9zn-Control e1btk33m1"
+            onClick={[Function]}
+            opacity={1}
+          >
+            <div
+              className="css-ybz1ij e1btk33m0"
+            >
+              <div
+                className="e1btk33m1 css-1x621bz e1btk33m0"
+              >
+                <div
+                  className="css-8tqbb2 e1btk33m0"
+                >
+                  Primary UI
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="css-t5yleq e1btk33m0"
+        >
+          <div
+            className="css-7hl1wi-Control e1btk33m1"
+            onClick={[Function]}
+            opacity={0.5}
+          >
+            <div
+              className="css-ybz1ij e1btk33m0"
+            >
+              <div
+                className="e1btk33m1 css-1x621bz e1btk33m0"
+                disabled={true}
+              >
+                <div
+                  className="css-8tqbb2 e1btk33m0"
+                >
+                  Primary UI (disabled)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="css-4qxs4u e1btk33m0"
+    >
+      <div
+        className="css-1l49k75 e1btk33m0"
+      >
+        <div
+          className="css-t5yleq e1btk33m0"
+        >
+          <div
+            className="css-1mxsulb-Control e1btk33m1"
+            onClick={[Function]}
+            opacity={1}
+          >
+            <div
+              className="css-ybz1ij e1btk33m0"
+            >
+              <div
+                className="e1btk33m1 css-apgvdp e1btk33m0"
+              >
+                <div
+                  className="css-szmbne e1btk33m0"
+                >
+                  Secondary UI
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="css-t5yleq e1btk33m0"
+        >
+          <div
+            className="css-7hl1wi-Control e1btk33m1"
+            onClick={[Function]}
+            opacity={0.5}
+          >
+            <div
+              className="css-ybz1ij e1btk33m0"
+            >
+              <div
+                className="e1btk33m1 css-apgvdp e1btk33m0"
+                disabled={true}
+              >
+                <div
+                  className="css-szmbne e1btk33m0"
+                >
+                  Secondary UI (disabled)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="css-4qxs4u e1btk33m0"
+    >
+      <div
+        className="css-1l49k75 e1btk33m0"
+      >
+        <div
+          className="css-t5yleq e1btk33m0"
+        >
+          <div
+            className="css-1mxsulb-Control e1btk33m1"
+            onClick={[Function]}
+            opacity={1}
+          >
+            <div
+              className="css-ybz1ij e1btk33m0"
+            >
+              <div
+                className="e1btk33m1 css-sg34y1 e1btk33m0"
+              >
+                <div
+                  className="css-i9t175 e1btk33m0"
+                >
+                  UI Link Button
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="css-t5yleq e1btk33m0"
+        >
+          <div
+            className="css-7hl1wi-Control e1btk33m1"
+            onClick={[Function]}
+            opacity={0.5}
+          >
+            <div
+              className="css-ybz1ij e1btk33m0"
+            >
+              <div
+                className="e1btk33m1 css-sg34y1 e1btk33m0"
+                disabled={true}
+              >
+                <div
+                  className="css-i9t175 e1btk33m0"
+                >
+                  UI Link Button (disabled)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="css-1z0xfz e1btk33m0"
+  >
+    <div
+      className="css-4qxs4u e1btk33m0"
+    >
+      <div
+        className="css-1lr6moq e1btk33m0"
+      >
+        External Buttons
+      </div>
+    </div>
+    <div
+      className="css-4qxs4u e1btk33m0"
+    >
+      <div
+        className="css-1l49k75 e1btk33m0"
+      >
+        <div
+          className="css-t5yleq e1btk33m0"
+        >
+          <div
+            className="css-1og0tsw-Control e1btk33m1"
+            onClick={[Function]}
+            opacity={1}
+          >
+            <div
+              className="css-ybz1ij e1btk33m0"
+            >
+              <div
+                className="e1btk33m1 css-5vodd7 e1btk33m0"
+              >
+                <div
+                  className="css-nzo7is e1btk33m0"
+                >
+                  Primary External
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="css-t5yleq e1btk33m0"
+        >
+          <div
+            className="css-7hl1wi-Control e1btk33m1"
+            onClick={[Function]}
+            opacity={0.5}
+          >
+            <div
+              className="css-ybz1ij e1btk33m0"
+            >
+              <div
+                className="e1btk33m1 css-5vodd7 e1btk33m0"
+                disabled={true}
+              >
+                <div
+                  className="css-nzo7is e1btk33m0"
+                >
+                  Primary External (disabled)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="css-4qxs4u e1btk33m0"
+    >
+      <div
+        className="css-1l49k75 e1btk33m0"
+      >
+        <div
+          className="css-t5yleq e1btk33m0"
+        >
+          <div
+            className="css-1mxsulb-Control e1btk33m1"
+            onClick={[Function]}
+            opacity={1}
+          >
+            <div
+              className="css-ybz1ij e1btk33m0"
+            >
+              <div
+                className="e1btk33m1 css-8c866t e1btk33m0"
+              >
+                <div
+                  className="css-szmbne e1btk33m0"
+                >
+                  Secondary External
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="css-t5yleq e1btk33m0"
+        >
+          <div
+            className="css-7hl1wi-Control e1btk33m1"
+            onClick={[Function]}
+            opacity={0.5}
+          >
+            <div
+              className="css-ybz1ij e1btk33m0"
+            >
+              <div
+                className="e1btk33m1 css-8c866t e1btk33m0"
+                disabled={true}
+              >
+                <div
+                  className="css-szmbne e1btk33m0"
+                >
+                  Secondary External (disabled)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="css-4qxs4u e1btk33m0"
+    >
+      <div
+        className="css-1l49k75 e1btk33m0"
+      >
+        <div
+          className="css-t5yleq e1btk33m0"
+        >
+          <div
+            className="css-1mxsulb-Control e1btk33m1"
+            onClick={[Function]}
+            opacity={1}
+          >
+            <div
+              className="css-ybz1ij e1btk33m0"
+            >
+              <div
+                className="e1btk33m1 css-vo1p1t e1btk33m0"
+              >
+                <div
+                  className="css-nzo7is e1btk33m0"
+                >
+                  External Link Button
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="css-t5yleq e1btk33m0"
+        >
+          <div
+            className="css-7hl1wi-Control e1btk33m1"
+            onClick={[Function]}
+            opacity={0.5}
+          >
+            <div
+              className="css-ybz1ij e1btk33m0"
+            >
+              <div
+                className="e1btk33m1 css-vo1p1t e1btk33m0"
+                disabled={true}
+              >
+                <div
+                  className="css-nzo7is e1btk33m0"
+                >
+                  External Link Button (disabled)
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Design System Controls 1`] = `
+<div
+  className="root-0-0-7  css-17grojp e1btk33m0"
+>
+  <div
+    className="css-1z0xfz e1btk33m0"
+  >
+    <div
+      className="css-4qxs4u e1btk33m0"
+    >
+      <div
+        className="css-1lr6moq e1btk33m0"
+      >
+        Base Control
+      </div>
+    </div>
+    <div
+      className="css-1mxsulb-Control e1btk33m1"
+      onClick={[Function]}
+      opacity={1}
+    >
+      <div
+        className="css-ybz1ij e1btk33m0"
+      >
+        <div
+          className="css-1pchfvn e1btk33m0"
+        >
+          Base control
+        </div>
+      </div>
+    </div>
+    <div
+      className="css-7hl1wi-Control e1btk33m1"
+      onClick={[Function]}
+      opacity={0.5}
+    >
+      <div
+        className="css-ybz1ij e1btk33m0"
+      >
+        <div
+          className="css-1pchfvn e1btk33m0"
+          disabled={true}
+        >
+          Base control (disabled)
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="css-1z0xfz e1btk33m0"
+  >
+    <div
+      className="css-4qxs4u e1btk33m0"
+    >
+      <div
+        className="css-1lr6moq e1btk33m0"
+      >
+        Toggle Control
+      </div>
+    </div>
+    <div
+      className="css-1mxsulb-Control e1btk33m1"
+      label="toggle"
+      onClick={[Function]}
+      opacity={1}
+    >
+      <div
+        className="css-a1jevu e1btk33m0"
+      >
+        <div
+          className="css-1xkg0zp e1btk33m0"
+        />
+        <div
+          className="css-e8kwmj e1btk33m0"
+        >
+          <div
+            className="css-139gbjx e1btk33m0"
+          >
+            toggle
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="css-7hl1wi-Control e1btk33m1"
+      label="toggle (disabled)"
+      onClick={[Function]}
+      opacity={0.5}
+    >
+      <div
+        className="css-a1jevu e1btk33m0"
+      >
+        <div
+          className="css-1xkg0zp e1btk33m0"
+        />
+        <div
+          className="css-e8kwmj e1btk33m0"
+          disabled={true}
+        >
+          <div
+            className="css-139gbjx e1btk33m0"
+          >
+            toggle (disabled)
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="css-1z0xfz e1btk33m0"
+  >
+    <div
+      className="css-4qxs4u e1btk33m0"
+    >
+      <div
+        className="css-1lr6moq e1btk33m0"
+      >
+        Switch Control
+      </div>
+    </div>
+    <div
+      className="css-1mxsulb-Control e1btk33m1"
+      label="switch"
+      onClick={[Function]}
+      opacity={1}
+    >
+      <div
+        className="css-a1jevu e1btk33m0"
+      >
+        <div
+          className="css-zgdkaq"
+          style={
+            Object {
+              "opacity": 1,
+            }
+          }
+        >
+          <div
+            className="css-copmi1"
+          />
+        </div>
+        <div
+          className="css-1y60j69 e1btk33m0"
+        >
+          <div
+            className="css-139gbjx e1btk33m0"
+          >
+            switch
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="css-szc5yk-Control e1btk33m1"
+      label="switch (disabled)"
+      onClick={[Function]}
+      opacity={1}
+    >
+      <div
+        className="css-a1jevu e1btk33m0"
+      >
+        <div
+          className="css-zgdkaq"
+          style={
+            Object {
+              "opacity": 0.5,
+            }
+          }
+        >
+          <div
+            className="css-copmi1"
+          />
+        </div>
+        <div
+          className="css-109j6t0 e1btk33m0"
+          disabled={true}
+        >
+          <div
+            className="css-139gbjx e1btk33m0"
+          >
+            switch (disabled)
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="css-1g3mc3w e1btk33m0"
+    >
+      <div
+        className="css-1mxsulb-Control e1btk33m1"
+        label="right aligned"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-rjzulv e1btk33m0"
+        >
+          <div
+            className="css-zgdkaq"
+            style={
+              Object {
+                "opacity": 1,
+              }
+            }
+          >
+            <div
+              className="css-copmi1"
+            />
+          </div>
+          <div
+            className="css-6ifoft e1btk33m0"
+          >
+            <div
+              className="css-139gbjx e1btk33m0"
+            >
+              right aligned
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots Design System Typography 1`] = `
 <div
   className="root-0-0-5  css-17grojp e1btk33m0"
@@ -95,7 +674,7 @@ exports[`Storyshots Design System Typography 1`] = `
       className="css-1z0xfz e1btk33m0"
     >
       <div
-        className="css-1z0xfz e1btk33m0"
+        className="css-4qxs4u e1btk33m0"
       >
         <div
           className="css-1lr6moq e1btk33m0"
@@ -165,7 +744,7 @@ exports[`Storyshots Design System Typography 1`] = `
     className="css-1z0xfz e1btk33m0"
   >
     <div
-      className="css-1z0xfz e1btk33m0"
+      className="css-4qxs4u e1btk33m0"
     >
       <div
         className="css-1lr6moq e1btk33m0"
@@ -313,7 +892,7 @@ exports[`Storyshots Design System Typography 1`] = `
     className="css-1z0xfz e1btk33m0"
   >
     <div
-      className="css-1z0xfz e1btk33m0"
+      className="css-4qxs4u e1btk33m0"
     >
       <div
         className="css-1lr6moq e1btk33m0"
@@ -468,7 +1047,7 @@ exports[`Storyshots Design System Views 1`] = `
     className="css-1z0xfz e1btk33m0"
   >
     <div
-      className="css-1z0xfz e1btk33m0"
+      className="css-4qxs4u e1btk33m0"
     >
       <div
         className="css-1lr6moq e1btk33m0"
@@ -543,7 +1122,7 @@ exports[`Storyshots Design System Views 1`] = `
     className="css-1z0xfz e1btk33m0"
   >
     <div
-      className="css-1z0xfz e1btk33m0"
+      className="css-4qxs4u e1btk33m0"
     >
       <div
         className="css-1lr6moq e1btk33m0"
