@@ -12,6 +12,7 @@ const ToggleControl = ({
   disabled,
   label,
   alignLabel,
+  labelProps,
   ...others
 }) => (
   <BaseControl
@@ -32,7 +33,10 @@ const ToggleControl = ({
     {children}
     {label &&
       label.length && (
-        <View {...{ [alignLabel === 'right' ? 'ml' : 'mr']: 'small' }}>
+        <View
+          {...{ [alignLabel === 'right' ? 'ml' : 'mr']: 'small' }}
+          {...labelProps}
+        >
           <Text variant="uiTextNormal">{label}</Text>
         </View>
       )}

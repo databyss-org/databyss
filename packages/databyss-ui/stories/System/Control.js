@@ -23,15 +23,15 @@ export default () => {
   const [switched, setSwitched] = useState(false)
   return (
     <React.Fragment>
-      <Section title="Controls">
+      <Section title="Base Control">
         <BaseControl onPress={() => console.log('pressed')}>
-          <Text>Text control</Text>
+          <Text>Base control</Text>
         </BaseControl>
         <BaseControl disabled onPress={() => console.log('pressed')}>
-          <Text>Text control (disabled)</Text>
+          <Text>Base control (disabled)</Text>
         </BaseControl>
       </Section>
-      <Section title="Toggle Controls">
+      <Section title="Toggle Control">
         <ToggleControl label="toggle" value={checked} onChange={setChecked}>
           <Checkbox checked={checked} />
         </ToggleControl>
@@ -44,7 +44,7 @@ export default () => {
           <Checkbox checked={checked} />
         </ToggleControl>
       </Section>
-      <Section title="Switch Controls">
+      <Section title="Switch Control">
         <SwitchControl label="switch" value={switched} onChange={setSwitched} />
         <SwitchControl
           label="switch (disabled)"

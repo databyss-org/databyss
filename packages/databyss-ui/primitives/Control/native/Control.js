@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { keyframes } from '@emotion/core'
+import { color, layout, compose } from 'styled-system'
 import { isMobileOrMobileOs } from '../../../lib/mediaQuery'
 import styled from '../../styled'
 import theme from '../../../theming/theme'
@@ -44,7 +45,13 @@ const animatingCss = {
   },
 }
 
-const Styled = styled('div')
+const Styled = styled(
+  'div',
+  compose(
+    color,
+    layout
+  )
+)
 
 export default ({ disabled, children, onPress, ...others }) => {
   const [decay, setDecay] = useState(false)

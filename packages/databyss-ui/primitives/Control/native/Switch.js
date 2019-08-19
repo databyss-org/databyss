@@ -34,8 +34,8 @@ const handleCheckedCss = {
   left: '15px',
 }
 
-export default ({ value }) => (
-  <div css={toggleCss}>
+export default ({ value, disabled }) => (
+  <div css={toggleCss} style={{ opacity: disabled ? 0.5 : 1 }}>
     <div css={[handleCss, value && handleCheckedCss]} />
   </div>
 )

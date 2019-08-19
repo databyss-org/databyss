@@ -26,7 +26,12 @@ const BaseControl = ({
   )
 
   return (
-    <Styled onPress={disabled ? null : onPress} disabled={disabled} {...others}>
+    <Styled
+      onPress={disabled ? null : onPress}
+      disabled={disabled}
+      opacity={disabled ? 0.5 : 1}
+      {...others}
+    >
       <View {...containerProps}>{_children}</View>
     </Styled>
   )
