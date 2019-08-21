@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { keyframes } from '@emotion/core'
-import { color, layout, flexbox, compose } from 'styled-system'
+import { color, layout, flexbox, compose, border } from 'styled-system'
 import { isMobileOrMobileOs } from '../../../lib/mediaQuery'
 import styled from '../../styled'
 import theme from '../../../theming/theme'
@@ -28,7 +28,7 @@ const controlCssDesktop = {
   },
 }
 
-const controlCss = rippleColor => ({
+const controlCss = props => ({
   position: 'relative',
   '&:after': {
     content: '""',
@@ -37,9 +37,9 @@ const controlCss = rippleColor => ({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: rippleColor,
+    backgroundColor: props.rippleColor,
     opacity: 0,
-    borderRadius: '3px',
+    borderRadius: props.borderRadius,
     transition: `opacity ${theme.timing.flash}ms ${theme.timing.ease}`,
   },
 })
@@ -55,11 +55,16 @@ const Styled = styled(
   compose(
     color,
     flexbox,
-    layout
+    layout,
+    border
   )
 )
 
-const Control = ({ disabled, children, onPress, rippleColor, ...others }) => {
+export const ControlNoFeedback = ({ children, ...others }) => (
+  <Styled {...others}>{children}</Styled>
+)
+
+const Control = ({ disabled, children, onPress, ...others }) => {
   const [decay, setDecay] = useState(false)
   const [resetDecay, setResetDecay] = useState(false)
   const decayTimerRef = useRef(null)
@@ -100,7 +105,7 @@ const Control = ({ disabled, children, onPress, rippleColor, ...others }) => {
         }
       }}
       css={[
-        !disabled && controlCss(rippleColor),
+        !disabled && controlCss(others),
         !disabled && !isMobileOrMobileOs() && controlCssDesktop,
         !disabled && isMobileOrMobileOs() && decay && animatingCss,
       ]}
@@ -113,6 +118,7 @@ const Control = ({ disabled, children, onPress, rippleColor, ...others }) => {
 
 Control.defaultProps = {
   rippleColor: theme.colors.controlRippleColor,
+  borderRadius: '3px',
 }
 
 export default Control

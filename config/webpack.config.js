@@ -34,6 +34,7 @@ const useTypeScript = fs.existsSync(paths.appTsConfig)
 // This is the production and development configuration.
 // It is focused on developer experience, fast rebuilds, and a minimal bundle.
 module.exports = webpackEnv => {
+  console.log('WEBPACK ENV', webpackEnv)
   console.log('APP SOURCE', paths.appSrc)
   const isEnvDevelopment = webpackEnv === 'development'
   const isEnvProduction = webpackEnv === 'production'
@@ -259,6 +260,7 @@ module.exports = webpackEnv => {
                 customize: require.resolve(
                   'babel-preset-react-app/webpack-overrides'
                 ),
+                presets: ['react-app', '@emotion/babel-preset-css-prop'],
                 plugins: [
                   [
                     require.resolve('babel-plugin-named-asset-import'),
@@ -276,6 +278,7 @@ module.exports = webpackEnv => {
                       commonjs: true,
                     },
                   ],
+                  [require.resolve('babel-plugin-emotion'), {}],
                 ],
                 // This is a feature of `babel-loader` for webpack (not Babel itself).
                 // It enables caching results in ./node_modules/.cache/babel-loader/
@@ -316,6 +319,9 @@ module.exports = webpackEnv => {
               use: [
                 {
                   loader: require.resolve('babel-loader'),
+                  options: {
+                    presets: ['react-app', '@emotion/babel-preset-css-prop'],
+                  },
                 },
                 {
                   loader: require.resolve('react-svg-loader'),
@@ -336,7 +342,7 @@ module.exports = webpackEnv => {
               // its runtime that would otherwise be processed through "file" loader.
               // Also exclude `html` and `json` extensions so they get processed
               // by webpacks internal loaders.
-              exclude: [/\.(js|jsx)$/, /\.html$/, /\.json$/],
+              exclude: [/\.(js|jsx)$/, /\.html$/, /\.json$/, /\.ejs$/],
               options: {
                 name: 'static/media/[name].[hash:8].[ext]',
               },

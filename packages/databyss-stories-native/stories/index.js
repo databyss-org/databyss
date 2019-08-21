@@ -4,6 +4,7 @@ import Typography from '@databyss-org/ui/stories/System/Typography'
 import Views from '@databyss-org/ui/stories/System/Views'
 import Controls from '@databyss-org/ui/stories/System/Controls'
 import Buttons from '@databyss-org/ui/stories/System/Buttons'
+import ListControl from '@databyss-org/ui/stories/System/ListControl'
 import { ThemeDecorator, ContentDecorator } from './decorators'
 
 storiesOf('Design System', module)
@@ -13,3 +14,4 @@ storiesOf('Design System', module)
   .add('Views', () => <Views />)
   .add('Controls', () => <Controls />)
   .add('Buttons', () => <Buttons />)
+  .add('ListControl', () => <ListControl />)
