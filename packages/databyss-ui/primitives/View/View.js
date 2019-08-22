@@ -23,22 +23,24 @@ const borderVariant = variant({
   scale: 'borderVariants',
 })
 
+export const styleProps = compose(
+  space,
+  layout,
+  flexbox,
+  border,
+  position,
+  color,
+  paddingVariant,
+  borderVariant
+)
+
 const View = styled(
   {
     ios: 'View',
     android: 'View',
     default: 'div',
   },
-  compose(
-    space,
-    layout,
-    flexbox,
-    border,
-    position,
-    color,
-    paddingVariant,
-    borderVariant
-  )
+  styleProps
 )
 
 export default ({ children, onLayout, ...others }) => {

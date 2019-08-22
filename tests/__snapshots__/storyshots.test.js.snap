@@ -30,7 +30,7 @@ exports[`Storyshots Demos//Login default 1`] = `
       }
     >
       <div
-        className="css-0 e1btk33m0"
+        className="css-0"
         style={
           Object {
             "textAlign": "center",
@@ -40,21 +40,21 @@ exports[`Storyshots Demos//Login default 1`] = `
         Log In
       </div>
       <div
-        className="css-gaj9zn-Control e1btk33m1"
+        className="css-tmnf3a"
         label="Continue with Google"
         onClick={[Function]}
         opacity={1}
       >
         <div
-          className="css-1dabqxm e1btk33m0"
+          className="css-1dabqxm"
         >
           <div
-            className="e1btk33m1 css-1dabqxm e1btk33m0"
+            className="css-1dabqxm"
           />
         </div>
       </div>
       <div
-        className="css-0 e1btk33m0"
+        className="css-0"
         style={
           Object {
             "textAlign": "center",
@@ -77,42 +77,42 @@ exports[`Storyshots Demos//Login default 1`] = `
 
 exports[`Storyshots Design System Buttons 1`] = `
 <div
-  className="root-0-0-8  css-17grojp e1btk33m0"
+  className="root-0-0-8  css-17grojp"
 >
   <div
-    className="css-1z0xfz e1btk33m0"
+    className="css-1z0xfz"
   >
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1lr6moq e1btk33m0"
+        className="css-1lr6moq"
       >
         UI Buttons
       </div>
     </div>
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1l49k75 e1btk33m0"
+        className="css-1l49k75"
       >
         <div
-          className="css-t5yleq e1btk33m0"
+          className="css-t5yleq"
         >
           <div
-            className="css-gaj9zn-Control e1btk33m1"
+            className="css-tmnf3a"
             onClick={[Function]}
             opacity={1}
           >
             <div
-              className="css-ybz1ij e1btk33m0"
+              className="css-ybz1ij"
             >
               <div
-                className="e1btk33m1 css-1x621bz e1btk33m0"
+                className="css-1x621bz"
               >
                 <div
-                  className="css-8tqbb2 e1btk33m0"
+                  className="css-8tqbb2"
                 >
                   Primary UI
                 </div>
@@ -121,22 +121,22 @@ exports[`Storyshots Design System Buttons 1`] = `
           </div>
         </div>
         <div
-          className="css-t5yleq e1btk33m0"
+          className="css-t5yleq"
         >
           <div
-            className="css-7hl1wi-Control e1btk33m1"
+            className="css-pq7jap"
             onClick={[Function]}
             opacity={0.5}
           >
             <div
-              className="css-ybz1ij e1btk33m0"
+              className="css-ybz1ij"
             >
               <div
-                className="e1btk33m1 css-1x621bz e1btk33m0"
+                className="css-1x621bz"
                 disabled={true}
               >
                 <div
-                  className="css-8tqbb2 e1btk33m0"
+                  className="css-8tqbb2"
                 >
                   Primary UI (disabled)
                 </div>
@@ -147,27 +147,27 @@ exports[`Storyshots Design System Buttons 1`] = `
       </div>
     </div>
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1l49k75 e1btk33m0"
+        className="css-1l49k75"
       >
         <div
-          className="css-t5yleq e1btk33m0"
+          className="css-t5yleq"
         >
           <div
-            className="css-1mxsulb-Control e1btk33m1"
+            className="css-tmnf3a"
             onClick={[Function]}
             opacity={1}
           >
             <div
-              className="css-ybz1ij e1btk33m0"
+              className="css-ybz1ij"
             >
               <div
-                className="e1btk33m1 css-apgvdp e1btk33m0"
+                className="css-apgvdp"
               >
                 <div
-                  className="css-szmbne e1btk33m0"
+                  className="css-szmbne"
                 >
                   Secondary UI
                 </div>
@@ -176,22 +176,22 @@ exports[`Storyshots Design System Buttons 1`] = `
           </div>
         </div>
         <div
-          className="css-t5yleq e1btk33m0"
+          className="css-t5yleq"
         >
           <div
-            className="css-7hl1wi-Control e1btk33m1"
+            className="css-pq7jap"
             onClick={[Function]}
             opacity={0.5}
           >
             <div
-              className="css-ybz1ij e1btk33m0"
+              className="css-ybz1ij"
             >
               <div
-                className="e1btk33m1 css-apgvdp e1btk33m0"
+                className="css-apgvdp"
                 disabled={true}
               >
                 <div
-                  className="css-szmbne e1btk33m0"
+                  className="css-szmbne"
                 >
                   Secondary UI (disabled)
                 </div>
@@ -202,27 +202,27 @@ exports[`Storyshots Design System Buttons 1`] = `
       </div>
     </div>
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1l49k75 e1btk33m0"
+        className="css-1l49k75"
       >
         <div
-          className="css-t5yleq e1btk33m0"
+          className="css-t5yleq"
         >
           <div
-            className="css-1mxsulb-Control e1btk33m1"
+            className="css-tmnf3a"
             onClick={[Function]}
             opacity={1}
           >
             <div
-              className="css-ybz1ij e1btk33m0"
+              className="css-ybz1ij"
             >
               <div
-                className="e1btk33m1 css-sg34y1 e1btk33m0"
+                className="css-sg34y1"
               >
                 <div
-                  className="css-i9t175 e1btk33m0"
+                  className="css-i9t175"
                 >
                   UI Link Button
                 </div>
@@ -231,22 +231,22 @@ exports[`Storyshots Design System Buttons 1`] = `
           </div>
         </div>
         <div
-          className="css-t5yleq e1btk33m0"
+          className="css-t5yleq"
         >
           <div
-            className="css-7hl1wi-Control e1btk33m1"
+            className="css-pq7jap"
             onClick={[Function]}
             opacity={0.5}
           >
             <div
-              className="css-ybz1ij e1btk33m0"
+              className="css-ybz1ij"
             >
               <div
-                className="e1btk33m1 css-sg34y1 e1btk33m0"
+                className="css-sg34y1"
                 disabled={true}
               >
                 <div
-                  className="css-i9t175 e1btk33m0"
+                  className="css-i9t175"
                 >
                   UI Link Button (disabled)
                 </div>
@@ -258,39 +258,39 @@ exports[`Storyshots Design System Buttons 1`] = `
     </div>
   </div>
   <div
-    className="css-1z0xfz e1btk33m0"
+    className="css-1z0xfz"
   >
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1lr6moq e1btk33m0"
+        className="css-1lr6moq"
       >
         External Buttons
       </div>
     </div>
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1l49k75 e1btk33m0"
+        className="css-1l49k75"
       >
         <div
-          className="css-t5yleq e1btk33m0"
+          className="css-t5yleq"
         >
           <div
-            className="css-1og0tsw-Control e1btk33m1"
+            className="css-tmnf3a"
             onClick={[Function]}
             opacity={1}
           >
             <div
-              className="css-ybz1ij e1btk33m0"
+              className="css-ybz1ij"
             >
               <div
-                className="e1btk33m1 css-5vodd7 e1btk33m0"
+                className="css-5vodd7"
               >
                 <div
-                  className="css-nzo7is e1btk33m0"
+                  className="css-nzo7is"
                 >
                   Primary External
                 </div>
@@ -299,22 +299,22 @@ exports[`Storyshots Design System Buttons 1`] = `
           </div>
         </div>
         <div
-          className="css-t5yleq e1btk33m0"
+          className="css-t5yleq"
         >
           <div
-            className="css-7hl1wi-Control e1btk33m1"
+            className="css-pq7jap"
             onClick={[Function]}
             opacity={0.5}
           >
             <div
-              className="css-ybz1ij e1btk33m0"
+              className="css-ybz1ij"
             >
               <div
-                className="e1btk33m1 css-5vodd7 e1btk33m0"
+                className="css-5vodd7"
                 disabled={true}
               >
                 <div
-                  className="css-nzo7is e1btk33m0"
+                  className="css-nzo7is"
                 >
                   Primary External (disabled)
                 </div>
@@ -325,27 +325,27 @@ exports[`Storyshots Design System Buttons 1`] = `
       </div>
     </div>
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1l49k75 e1btk33m0"
+        className="css-1l49k75"
       >
         <div
-          className="css-t5yleq e1btk33m0"
+          className="css-t5yleq"
         >
           <div
-            className="css-1mxsulb-Control e1btk33m1"
+            className="css-tmnf3a"
             onClick={[Function]}
             opacity={1}
           >
             <div
-              className="css-ybz1ij e1btk33m0"
+              className="css-ybz1ij"
             >
               <div
-                className="e1btk33m1 css-8c866t e1btk33m0"
+                className="css-8c866t"
               >
                 <div
-                  className="css-szmbne e1btk33m0"
+                  className="css-szmbne"
                 >
                   Secondary External
                 </div>
@@ -354,22 +354,22 @@ exports[`Storyshots Design System Buttons 1`] = `
           </div>
         </div>
         <div
-          className="css-t5yleq e1btk33m0"
+          className="css-t5yleq"
         >
           <div
-            className="css-7hl1wi-Control e1btk33m1"
+            className="css-pq7jap"
             onClick={[Function]}
             opacity={0.5}
           >
             <div
-              className="css-ybz1ij e1btk33m0"
+              className="css-ybz1ij"
             >
               <div
-                className="e1btk33m1 css-8c866t e1btk33m0"
+                className="css-8c866t"
                 disabled={true}
               >
                 <div
-                  className="css-szmbne e1btk33m0"
+                  className="css-szmbne"
                 >
                   Secondary External (disabled)
                 </div>
@@ -380,27 +380,27 @@ exports[`Storyshots Design System Buttons 1`] = `
       </div>
     </div>
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1l49k75 e1btk33m0"
+        className="css-1l49k75"
       >
         <div
-          className="css-t5yleq e1btk33m0"
+          className="css-t5yleq"
         >
           <div
-            className="css-1mxsulb-Control e1btk33m1"
+            className="css-tmnf3a"
             onClick={[Function]}
             opacity={1}
           >
             <div
-              className="css-ybz1ij e1btk33m0"
+              className="css-ybz1ij"
             >
               <div
-                className="e1btk33m1 css-vo1p1t e1btk33m0"
+                className="css-vo1p1t"
               >
                 <div
-                  className="css-nzo7is e1btk33m0"
+                  className="css-nzo7is"
                 >
                   External Link Button
                 </div>
@@ -409,22 +409,22 @@ exports[`Storyshots Design System Buttons 1`] = `
           </div>
         </div>
         <div
-          className="css-t5yleq e1btk33m0"
+          className="css-t5yleq"
         >
           <div
-            className="css-7hl1wi-Control e1btk33m1"
+            className="css-pq7jap"
             onClick={[Function]}
             opacity={0.5}
           >
             <div
-              className="css-ybz1ij e1btk33m0"
+              className="css-ybz1ij"
             >
               <div
-                className="e1btk33m1 css-vo1p1t e1btk33m0"
+                className="css-vo1p1t"
                 disabled={true}
               >
                 <div
-                  className="css-nzo7is e1btk33m0"
+                  className="css-nzo7is"
                 >
                   External Link Button (disabled)
                 </div>
@@ -440,45 +440,45 @@ exports[`Storyshots Design System Buttons 1`] = `
 
 exports[`Storyshots Design System Controls 1`] = `
 <div
-  className="root-0-0-7  css-17grojp e1btk33m0"
+  className="root-0-0-7  css-17grojp"
 >
   <div
-    className="css-1z0xfz e1btk33m0"
+    className="css-1z0xfz"
   >
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1lr6moq e1btk33m0"
+        className="css-1lr6moq"
       >
         Base Control
       </div>
     </div>
     <div
-      className="css-1mxsulb-Control e1btk33m1"
+      className="css-tmnf3a"
       onClick={[Function]}
       opacity={1}
     >
       <div
-        className="css-ybz1ij e1btk33m0"
+        className="css-ybz1ij"
       >
         <div
-          className="css-1pchfvn e1btk33m0"
+          className="css-1pchfvn"
         >
           Base control
         </div>
       </div>
     </div>
     <div
-      className="css-7hl1wi-Control e1btk33m1"
+      className="css-pq7jap"
       onClick={[Function]}
       opacity={0.5}
     >
       <div
-        className="css-ybz1ij e1btk33m0"
+        className="css-ybz1ij"
       >
         <div
-          className="css-1pchfvn e1btk33m0"
+          className="css-1pchfvn"
           disabled={true}
         >
           Base control (disabled)
@@ -487,34 +487,34 @@ exports[`Storyshots Design System Controls 1`] = `
     </div>
   </div>
   <div
-    className="css-1z0xfz e1btk33m0"
+    className="css-1z0xfz"
   >
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1lr6moq e1btk33m0"
+        className="css-1lr6moq"
       >
         Toggle Control
       </div>
     </div>
     <div
-      className="css-1mxsulb-Control e1btk33m1"
+      className="css-tmnf3a"
       label="toggle"
       onClick={[Function]}
       opacity={1}
     >
       <div
-        className="css-a1jevu e1btk33m0"
+        className="css-a1jevu"
       >
         <div
-          className="css-1xkg0zp e1btk33m0"
+          className="css-1xkg0zp"
         />
         <div
-          className="css-e8kwmj e1btk33m0"
+          className="css-e8kwmj"
         >
           <div
-            className="css-139gbjx e1btk33m0"
+            className="css-139gbjx"
           >
             toggle
           </div>
@@ -522,23 +522,23 @@ exports[`Storyshots Design System Controls 1`] = `
       </div>
     </div>
     <div
-      className="css-7hl1wi-Control e1btk33m1"
+      className="css-pq7jap"
       label="toggle (disabled)"
       onClick={[Function]}
       opacity={0.5}
     >
       <div
-        className="css-a1jevu e1btk33m0"
+        className="css-a1jevu"
       >
         <div
-          className="css-1xkg0zp e1btk33m0"
+          className="css-1xkg0zp"
         />
         <div
-          className="css-e8kwmj e1btk33m0"
+          className="css-e8kwmj"
           disabled={true}
         >
           <div
-            className="css-139gbjx e1btk33m0"
+            className="css-139gbjx"
           >
             toggle (disabled)
           </div>
@@ -547,28 +547,40 @@ exports[`Storyshots Design System Controls 1`] = `
     </div>
   </div>
   <div
-    className="css-1z0xfz e1btk33m0"
+    className="css-1z0xfz"
   >
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1lr6moq e1btk33m0"
+        className="css-1lr6moq"
       >
         Switch Control
       </div>
     </div>
     <div
-      className="css-1mxsulb-Control e1btk33m1"
+      className="css-tmnf3a"
       label="switch"
       onClick={[Function]}
       opacity={1}
     >
       <div
-        className="css-a1jevu e1btk33m0"
+        className="css-a1jevu"
       >
         <div
-          className="css-zgdkaq"
+          css={
+            Object {
+              "backgroundColor": "#AAA49C",
+              "border": "1px solid #4D4842",
+              "borderRadius": "4px",
+              "boxSizing": "border-box",
+              "flexShrink": 0,
+              "height": "20px",
+              "position": "relative",
+              "transition": "all 300ms ease-in-out",
+              "width": "35px",
+            }
+          }
           style={
             Object {
               "opacity": 1,
@@ -576,14 +588,32 @@ exports[`Storyshots Design System Controls 1`] = `
           }
         >
           <div
-            className="css-copmi1"
+            css={
+              Array [
+                Object {
+                  "background": "#ffffff",
+                  "border": "1px solid #D0CDC8",
+                  "borderRadius": "3px",
+                  "boxShadow": "0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)",
+                  "boxSizing": "border-box",
+                  "content": "\\"\\"",
+                  "height": "18px",
+                  "left": 0,
+                  "position": "absolute",
+                  "top": 0,
+                  "transition": "all 300ms ease-in-out",
+                  "width": "18px",
+                },
+                false,
+              ]
+            }
           />
         </div>
         <div
-          className="css-1y60j69 e1btk33m0"
+          className="css-1y60j69"
         >
           <div
-            className="css-139gbjx e1btk33m0"
+            className="css-139gbjx"
           >
             switch
           </div>
@@ -591,16 +621,28 @@ exports[`Storyshots Design System Controls 1`] = `
       </div>
     </div>
     <div
-      className="css-szc5yk-Control e1btk33m1"
+      className="css-tmnf3a"
       label="switch (disabled)"
       onClick={[Function]}
       opacity={1}
     >
       <div
-        className="css-a1jevu e1btk33m0"
+        className="css-a1jevu"
       >
         <div
-          className="css-zgdkaq"
+          css={
+            Object {
+              "backgroundColor": "#AAA49C",
+              "border": "1px solid #4D4842",
+              "borderRadius": "4px",
+              "boxSizing": "border-box",
+              "flexShrink": 0,
+              "height": "20px",
+              "position": "relative",
+              "transition": "all 300ms ease-in-out",
+              "width": "35px",
+            }
+          }
           style={
             Object {
               "opacity": 0.5,
@@ -608,15 +650,33 @@ exports[`Storyshots Design System Controls 1`] = `
           }
         >
           <div
-            className="css-copmi1"
+            css={
+              Array [
+                Object {
+                  "background": "#ffffff",
+                  "border": "1px solid #D0CDC8",
+                  "borderRadius": "3px",
+                  "boxShadow": "0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)",
+                  "boxSizing": "border-box",
+                  "content": "\\"\\"",
+                  "height": "18px",
+                  "left": 0,
+                  "position": "absolute",
+                  "top": 0,
+                  "transition": "all 300ms ease-in-out",
+                  "width": "18px",
+                },
+                false,
+              ]
+            }
           />
         </div>
         <div
-          className="css-109j6t0 e1btk33m0"
+          className="css-109j6t0"
           disabled={true}
         >
           <div
-            className="css-139gbjx e1btk33m0"
+            className="css-139gbjx"
           >
             switch (disabled)
           </div>
@@ -624,19 +684,31 @@ exports[`Storyshots Design System Controls 1`] = `
       </div>
     </div>
     <div
-      className="css-1g3mc3w e1btk33m0"
+      className="css-1g3mc3w"
     >
       <div
-        className="css-1mxsulb-Control e1btk33m1"
+        className="css-tmnf3a"
         label="right aligned"
         onClick={[Function]}
         opacity={1}
       >
         <div
-          className="css-rjzulv e1btk33m0"
+          className="css-rjzulv"
         >
           <div
-            className="css-zgdkaq"
+            css={
+              Object {
+                "backgroundColor": "#AAA49C",
+                "border": "1px solid #4D4842",
+                "borderRadius": "4px",
+                "boxSizing": "border-box",
+                "flexShrink": 0,
+                "height": "20px",
+                "position": "relative",
+                "transition": "all 300ms ease-in-out",
+                "width": "35px",
+              }
+            }
             style={
               Object {
                 "opacity": 1,
@@ -644,14 +716,32 @@ exports[`Storyshots Design System Controls 1`] = `
             }
           >
             <div
-              className="css-copmi1"
+              css={
+                Array [
+                  Object {
+                    "background": "#ffffff",
+                    "border": "1px solid #D0CDC8",
+                    "borderRadius": "3px",
+                    "boxShadow": "0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)",
+                    "boxSizing": "border-box",
+                    "content": "\\"\\"",
+                    "height": "18px",
+                    "left": 0,
+                    "position": "absolute",
+                    "top": 0,
+                    "transition": "all 300ms ease-in-out",
+                    "width": "18px",
+                  },
+                  false,
+                ]
+              }
             />
           </div>
           <div
-            className="css-6ifoft e1btk33m0"
+            className="css-6ifoft"
           >
             <div
-              className="css-139gbjx e1btk33m0"
+              className="css-139gbjx"
             >
               right aligned
             </div>
@@ -663,77 +753,943 @@ exports[`Storyshots Design System Controls 1`] = `
 </div>
 `;
 
-exports[`Storyshots Design System Typography 1`] = `
+exports[`Storyshots Design System ListControl 1`] = `
 <div
-  className="root-0-0-5  css-17grojp e1btk33m0"
+  className="root-0-0-9  css-17grojp"
 >
   <div
-    className="css-ipn2og e1btk33m0"
+    className="css-1z0xfz"
   >
     <div
-      className="css-1z0xfz e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-4qxs4u e1btk33m0"
+        className="css-1lr6moq"
+      >
+        Long List
+      </div>
+    </div>
+    <div
+      className="css-upj0dg"
+    >
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
       >
         <div
-          className="css-1lr6moq e1btk33m0"
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            ullamco tempor proident mollit
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            nisi exercitation est voluptate
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            id fugiat esse voluptate
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            enim proident anim ut
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            ipsum sit enim laborum
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            Lorem commodo qui et
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            dolore exercitation aliqua nisi
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            minim non aliquip laborum
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            Lorem ea officia eiusmod
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            adipisicing sint nostrud aliqua
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            adipisicing do tempor Lorem
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            pariatur dolor laboris adipisicing
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            duis incididunt ut elit
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            velit commodo mollit ut
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            laboris incididunt anim cupidatat
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            mollit quis amet aute
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            est anim consectetur deserunt
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            enim deserunt quis nostrud
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            ipsum ea veniam fugiat
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            ea ea culpa nulla
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            fugiat ut sit ut
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            amet laboris occaecat in
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            sunt occaecat do velit
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            do ea do eiusmod
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            consectetur ea excepteur dolore
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            adipisicing sit cupidatat ipsum
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            in ex cupidatat duis
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            consequat voluptate enim adipisicing
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            laboris non officia id
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            pariatur ut mollit sint
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            veniam irure officia deserunt
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            pariatur magna qui non
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            nostrud cupidatat in reprehenderit
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            commodo excepteur dolor nulla
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            duis id ipsum voluptate
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            magna esse ex duis
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            occaecat aliquip quis deserunt
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            dolore aliqua Lorem enim
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            ipsum voluptate cupidatat sit
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            dolore Lorem adipisicing qui
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            eiusmod qui adipisicing quis
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            velit cillum proident exercitation
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            commodo anim incididunt non
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            proident do esse nisi
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            laboris ullamco laboris est
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            tempor sit irure in
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            aliquip nulla qui occaecat
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            consequat officia sint nulla
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            cillum veniam esse anim
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            qui amet eu laborum
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    className="css-1z0xfz"
+  >
+    <div
+      className="css-4qxs4u"
+    >
+      <div
+        className="css-1lr6moq"
+      >
+        Short List
+      </div>
+    </div>
+    <div
+      className="css-1hrl2tl"
+    >
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            occaecat ea excepteur Lorem
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            magna esse occaecat occaecat
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            consequat esse do incididunt
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            fugiat anim aliquip adipisicing
+          </div>
+        </div>
+      </div>
+      <div
+        className="css-ngcw9g"
+        onClick={[Function]}
+        opacity={1}
+      >
+        <div
+          className="css-kjp178"
+        >
+          <div
+            className="css-1pchfvn"
+          >
+            labore veniam anim ipsum
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Design System Typography 1`] = `
+<div
+  className="root-0-0-5  css-17grojp"
+>
+  <div
+    className="css-ipn2og"
+  >
+    <div
+      className="css-1z0xfz"
+    >
+      <div
+        className="css-4qxs4u"
+      >
+        <div
+          className="css-1lr6moq"
         >
           Headings
         </div>
       </div>
       <div
-        className="css-1z0xfz e1btk33m0"
+        className="css-1z0xfz"
       >
         <div
-          className="css-yzi1y7 e1btk33m0"
+          className="css-yzi1y7"
         >
           Heading 1
         </div>
         <div
-          className="css-1pchfvn e1btk33m0"
+          className="css-1pchfvn"
         >
           Sit enim laborum enim proident. Ut id fugiat esse voluptate nisi exercitation est voluptate ullamco tempor proident.
         </div>
       </div>
       <div
-        className="css-1z0xfz e1btk33m0"
+        className="css-1z0xfz"
       >
         <div
-          className="css-1i9npjf e1btk33m0"
+          className="css-1i9npjf"
         >
           Heading 2
         </div>
         <div
-          className="css-1pchfvn e1btk33m0"
+          className="css-1pchfvn"
         >
           Adipisicing do tempor Lorem adipisicing sint nostrud aliqua Lorem ea officia eiusmod. Non aliquip laborum dolore exercitation aliqua nisi Lorem commodo qui et.
         </div>
       </div>
       <div
-        className="css-1z0xfz e1btk33m0"
+        className="css-1z0xfz"
       >
         <div
-          className="css-11zut8c e1btk33m0"
+          className="css-11zut8c"
         >
           Heading 3
         </div>
         <div
-          className="css-1pchfvn e1btk33m0"
+          className="css-1pchfvn"
         >
           Aute laboris incididunt anim cupidatat velit commodo mollit ut duis. Ut elit pariatur dolor laboris.
         </div>
       </div>
       <div
-        className="css-1z0xfz e1btk33m0"
+        className="css-1z0xfz"
       >
         <div
-          className="css-1knxvbi e1btk33m0"
+          className="css-1knxvbi"
         >
           Heading 4
         </div>
         <div
-          className="css-1pchfvn e1btk33m0"
+          className="css-1pchfvn"
         >
           Nulla ipsum ea veniam fugiat enim deserunt quis nostrud. Anim consectetur deserunt mollit quis.
         </div>
@@ -741,297 +1697,297 @@ exports[`Storyshots Design System Typography 1`] = `
     </div>
   </div>
   <div
-    className="css-1z0xfz e1btk33m0"
+    className="css-1z0xfz"
   >
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1lr6moq e1btk33m0"
+        className="css-1lr6moq"
       >
         UI Text
       </div>
     </div>
     <div
-      className="css-ybz1ij e1btk33m0"
+      className="css-ybz1ij"
     >
       <div
-        className="css-1a7jkag e1btk33m0"
+        className="css-1a7jkag"
       >
         <div
-          className="css-1j28lhg e1btk33m0"
+          className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-1xuiuv3 e1btk33m0"
+              className="css-1xuiuv3"
             >
               UITextLarge
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-139gbjx e1btk33m0"
+              className="css-139gbjx"
             >
               UITextNormal
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-c892rc e1btk33m0"
+              className="css-c892rc"
             >
               UITextSmall
             </div>
           </div>
         </div>
         <div
-          className="css-1j28lhg e1btk33m0"
+          className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-v1mi3f e1btk33m0"
+              className="css-v1mi3f"
             >
               UITextLargeSemibold
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-1krly18 e1btk33m0"
+              className="css-1krly18"
             >
               UITextNormalSemibold
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-1pd32tj e1btk33m0"
+              className="css-1pd32tj"
             >
               UITextSmallSemibold
             </div>
           </div>
         </div>
         <div
-          className="css-1j28lhg e1btk33m0"
+          className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-1srzns7 e1btk33m0"
+              className="css-1srzns7"
             >
               UITextLargeUnderline
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-9dm13m e1btk33m0"
+              className="css-9dm13m"
             >
               UITextNormalUnderline
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-nexcnz e1btk33m0"
+              className="css-nexcnz"
             >
               UITextSmallUnderline
             </div>
           </div>
         </div>
         <div
-          className="css-1j28lhg e1btk33m0"
+          className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-mkavzm e1btk33m0"
+              className="css-mkavzm"
             >
               UITextLargeSemiboldUnderline
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-xbj9xw e1btk33m0"
+              className="css-xbj9xw"
             >
               UITextNormalSemiboldUnderline
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-1k0ybr e1btk33m0"
+              className="css-1k0ybr"
             >
               UITextSmallSemiboldUnderline
             </div>
           </div>
         </div>
         <div
-          className="css-1j28lhg e1btk33m0"
+          className="css-1j28lhg"
         />
       </div>
     </div>
   </div>
   <div
-    className="css-1z0xfz e1btk33m0"
+    className="css-1z0xfz"
   >
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1lr6moq e1btk33m0"
+        className="css-1lr6moq"
       >
         Body Text
       </div>
     </div>
     <div
-      className="css-ybz1ij e1btk33m0"
+      className="css-ybz1ij"
     >
       <div
-        className="css-1a7jkag e1btk33m0"
+        className="css-1a7jkag"
       >
         <div
-          className="css-1j28lhg e1btk33m0"
+          className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-1fxozs1 e1btk33m0"
+              className="css-1fxozs1"
             >
               BodyLarge
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-1pchfvn e1btk33m0"
+              className="css-1pchfvn"
             >
               BodyNormal
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-l0vx0v e1btk33m0"
+              className="css-l0vx0v"
             >
               BodySmall
             </div>
           </div>
         </div>
         <div
-          className="css-1j28lhg e1btk33m0"
+          className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-uzujdl e1btk33m0"
+              className="css-uzujdl"
             >
               BodyLargeSemibold
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-o5naq0 e1btk33m0"
+              className="css-o5naq0"
             >
               BodyNormalSemibold
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-1dghums e1btk33m0"
+              className="css-1dghums"
             >
               BodySmallSemibold
             </div>
           </div>
         </div>
         <div
-          className="css-1j28lhg e1btk33m0"
+          className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-zvqho0 e1btk33m0"
+              className="css-zvqho0"
             >
               BodyLargeItalic
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-vky1mq e1btk33m0"
+              className="css-vky1mq"
             >
               BodyNormalItalic
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-13egyiq e1btk33m0"
+              className="css-13egyiq"
             >
               BodySmallItalic
             </div>
           </div>
         </div>
         <div
-          className="css-1j28lhg e1btk33m0"
+          className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-3ttymq e1btk33m0"
+              className="css-3ttymq"
             >
               BodyLargeSemiboldItalic
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-vkwws5 e1btk33m0"
+              className="css-vkwws5"
             >
               BodyNormalSemiboldItalic
             </div>
           </div>
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-1s54j7k e1btk33m0"
+              className="css-1s54j7k"
             >
               BodySmallSemiboldItalic
             </div>
           </div>
         </div>
         <div
-          className="css-1j28lhg e1btk33m0"
+          className="css-1j28lhg"
         />
       </div>
     </div>
@@ -1041,76 +1997,76 @@ exports[`Storyshots Design System Typography 1`] = `
 
 exports[`Storyshots Design System Views 1`] = `
 <div
-  className="root-0-0-6  css-17grojp e1btk33m0"
+  className="root-0-0-6  css-17grojp"
 >
   <div
-    className="css-1z0xfz e1btk33m0"
+    className="css-1z0xfz"
   >
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1lr6moq e1btk33m0"
+        className="css-1lr6moq"
       >
         Border variants
       </div>
     </div>
     <div
-      className="css-1z0xfz e1btk33m0"
+      className="css-1z0xfz"
     >
       <div
-        className="css-1a7jkag e1btk33m0"
+        className="css-1a7jkag"
       >
         <div
-          className="css-d6orty e1btk33m0"
+          className="css-d6orty"
         >
           <div
-            className="css-4qxs4u e1btk33m0"
+            className="css-4qxs4u"
           >
             <div
-              className="css-139gbjx e1btk33m0"
+              className="css-139gbjx"
             >
               Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
             </div>
           </div>
           <div
-            className="css-1krly18 e1btk33m0"
+            className="css-1krly18"
           >
             none
           </div>
         </div>
         <div
-          className="css-d6orty e1btk33m0"
+          className="css-d6orty"
         >
           <div
-            className="css-oiztje e1btk33m0"
+            className="css-oiztje"
           >
             <div
-              className="css-139gbjx e1btk33m0"
+              className="css-139gbjx"
             >
               Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
             </div>
           </div>
           <div
-            className="css-1krly18 e1btk33m0"
+            className="css-1krly18"
           >
             thinDark
           </div>
         </div>
         <div
-          className="css-d6orty e1btk33m0"
+          className="css-d6orty"
         >
           <div
-            className="css-1msdmvw e1btk33m0"
+            className="css-1msdmvw"
           >
             <div
-              className="css-139gbjx e1btk33m0"
+              className="css-139gbjx"
             >
               Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
             </div>
           </div>
           <div
-            className="css-1krly18 e1btk33m0"
+            className="css-1krly18"
           >
             thinLight
           </div>
@@ -1119,91 +2075,91 @@ exports[`Storyshots Design System Views 1`] = `
     </div>
   </div>
   <div
-    className="css-1z0xfz e1btk33m0"
+    className="css-1z0xfz"
   >
     <div
-      className="css-4qxs4u e1btk33m0"
+      className="css-4qxs4u"
     >
       <div
-        className="css-1lr6moq e1btk33m0"
+        className="css-1lr6moq"
       >
         Padding variants
       </div>
     </div>
     <div
-      className="css-1z0xfz e1btk33m0"
+      className="css-1z0xfz"
     >
       <div
-        className="css-1a7jkag e1btk33m0"
+        className="css-1a7jkag"
       >
         <div
-          className="css-d6orty e1btk33m0"
+          className="css-d6orty"
         >
           <div
-            className="css-1msdmvw e1btk33m0"
+            className="css-1msdmvw"
           >
             <div
-              className="css-139gbjx e1btk33m0"
+              className="css-139gbjx"
             >
               Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
             </div>
           </div>
           <div
-            className="css-1krly18 e1btk33m0"
+            className="css-1krly18"
           >
             none
           </div>
         </div>
         <div
-          className="css-d6orty e1btk33m0"
+          className="css-d6orty"
         >
           <div
-            className="css-wj9iwy e1btk33m0"
+            className="css-wj9iwy"
           >
             <div
-              className="css-139gbjx e1btk33m0"
+              className="css-139gbjx"
             >
               Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
             </div>
           </div>
           <div
-            className="css-1krly18 e1btk33m0"
+            className="css-1krly18"
           >
             small
           </div>
         </div>
         <div
-          className="css-d6orty e1btk33m0"
+          className="css-d6orty"
         >
           <div
-            className="css-1g1jm2 e1btk33m0"
+            className="css-1g1jm2"
           >
             <div
-              className="css-139gbjx e1btk33m0"
+              className="css-139gbjx"
             >
               Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
             </div>
           </div>
           <div
-            className="css-1krly18 e1btk33m0"
+            className="css-1krly18"
           >
             medium
           </div>
         </div>
         <div
-          className="css-d6orty e1btk33m0"
+          className="css-d6orty"
         >
           <div
-            className="css-1180q5x e1btk33m0"
+            className="css-1180q5x"
           >
             <div
-              className="css-139gbjx e1btk33m0"
+              className="css-139gbjx"
             >
               Non in occaecat excepteur ipsum. Labore et exercitation commodo adipisicing sint tempor esse aliqua culpa nisi. Labore amet tempor voluptate anim aliqua pariatur laborum consectetur excepteur elit fugiat ad. Elit reprehenderit fugiat magna enim Lorem cupidatat dolore consectetur aute amet ut elit officia nulla.
             </div>
           </div>
           <div
-            className="css-1krly18 e1btk33m0"
+            className="css-1krly18"
           >
             large
           </div>
@@ -1216,10 +2172,10 @@ exports[`Storyshots Design System Views 1`] = `
 
 exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
 <div
-  className="root-0-0-3  css-17grojp e1btk33m0"
+  className="root-0-0-3  css-17grojp"
 >
   <div
-    className="Landing-landing css-ipn2og e1btk33m0"
+    className="Landing-landing css-ipn2og"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -1318,7 +2274,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
                             5 authors
                           </div>
                           <div
-                            className="css-1g6gooi"
+                            className="css-w8afj7-Input"
                           >
                             <div
                               className=""
@@ -1376,7 +2332,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
                           </div>
                         </div>
                         <div
-                          className=" css-1wy0on6"
+                          className=" css-1g48xl4-IndicatorsContainer"
                         >
                           <span
                             className=" css-1okebmr-indicatorSeparator"
@@ -1389,7 +2345,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
                           >
                             <svg
                               aria-hidden="true"
-                              className="css-19bqh2r"
+                              className="css-tj5bde-Svg"
                               focusable="false"
                               height={20}
                               viewBox="0 0 20 20"
@@ -1511,7 +2467,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
                         5 authors
                       </div>
                       <div
-                        className="css-1g6gooi"
+                        className="css-w8afj7-Input"
                       >
                         <div
                           className=""
@@ -1569,7 +2525,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
                       </div>
                     </div>
                     <div
-                      className=" css-1wy0on6"
+                      className=" css-1g48xl4-IndicatorsContainer"
                     >
                       <span
                         className=" css-1okebmr-indicatorSeparator"
@@ -1582,7 +2538,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
                       >
                         <svg
                           aria-hidden="true"
-                          className="css-19bqh2r"
+                          className="css-tj5bde-Svg"
                           focusable="false"
                           height={20}
                           viewBox="0 0 20 20"
@@ -1875,10 +2831,10 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
 
 exports[`Storyshots Motif Landing Entries for Source 1`] = `
 <div
-  className="root-0-0-2  css-17grojp e1btk33m0"
+  className="root-0-0-2  css-17grojp"
 >
   <div
-    className="Landing-landing css-ipn2og e1btk33m0"
+    className="Landing-landing css-ipn2og"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -1977,7 +2933,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                             5 authors
                           </div>
                           <div
-                            className="css-1g6gooi"
+                            className="css-w8afj7-Input"
                           >
                             <div
                               className=""
@@ -2035,7 +2991,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                           </div>
                         </div>
                         <div
-                          className=" css-1wy0on6"
+                          className=" css-1g48xl4-IndicatorsContainer"
                         >
                           <span
                             className=" css-1okebmr-indicatorSeparator"
@@ -2048,7 +3004,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                           >
                             <svg
                               aria-hidden="true"
-                              className="css-19bqh2r"
+                              className="css-tj5bde-Svg"
                               focusable="false"
                               height={20}
                               viewBox="0 0 20 20"
@@ -2170,7 +3126,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                         5 authors
                       </div>
                       <div
-                        className="css-1g6gooi"
+                        className="css-w8afj7-Input"
                       >
                         <div
                           className=""
@@ -2228,7 +3184,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                       </div>
                     </div>
                     <div
-                      className=" css-1wy0on6"
+                      className=" css-1g48xl4-IndicatorsContainer"
                     >
                       <span
                         className=" css-1okebmr-indicatorSeparator"
@@ -2241,7 +3197,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                       >
                         <svg
                           aria-hidden="true"
-                          className="css-19bqh2r"
+                          className="css-tj5bde-Svg"
                           focusable="false"
                           height={20}
                           viewBox="0 0 20 20"
@@ -2534,10 +3490,10 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
 
 exports[`Storyshots Motif Landing Show All Entries 1`] = `
 <div
-  className="root-0-0-1  css-17grojp e1btk33m0"
+  className="root-0-0-1  css-17grojp"
 >
   <div
-    className="Landing-landing css-ipn2og e1btk33m0"
+    className="Landing-landing css-ipn2og"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -2618,7 +3574,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                             5 authors
                           </div>
                           <div
-                            className="css-1g6gooi"
+                            className="css-w8afj7-Input"
                           >
                             <div
                               className=""
@@ -2676,7 +3632,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                           </div>
                         </div>
                         <div
-                          className=" css-1wy0on6"
+                          className=" css-1g48xl4-IndicatorsContainer"
                         >
                           <span
                             className=" css-1okebmr-indicatorSeparator"
@@ -2689,7 +3645,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                           >
                             <svg
                               aria-hidden="true"
-                              className="css-19bqh2r"
+                              className="css-tj5bde-Svg"
                               focusable="false"
                               height={20}
                               viewBox="0 0 20 20"
@@ -2793,7 +3749,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                         5 authors
                       </div>
                       <div
-                        className="css-1g6gooi"
+                        className="css-w8afj7-Input"
                       >
                         <div
                           className=""
@@ -2851,7 +3807,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                       </div>
                     </div>
                     <div
-                      className=" css-1wy0on6"
+                      className=" css-1g48xl4-IndicatorsContainer"
                     >
                       <span
                         className=" css-1okebmr-indicatorSeparator"
@@ -2864,7 +3820,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                       >
                         <svg
                           aria-hidden="true"
-                          className="css-19bqh2r"
+                          className="css-tj5bde-Svg"
                           focusable="false"
                           height={20}
                           viewBox="0 0 20 20"
@@ -3263,10 +4219,10 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
 
 exports[`Storyshots Motif Landing Source TOC 1`] = `
 <div
-  className="root-0-0-4  css-17grojp e1btk33m0"
+  className="root-0-0-4  css-17grojp"
 >
   <div
-    className="Landing-landing css-ipn2og e1btk33m0"
+    className="Landing-landing css-ipn2og"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -3347,7 +4303,7 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                             5 authors
                           </div>
                           <div
-                            className="css-1g6gooi"
+                            className="css-w8afj7-Input"
                           >
                             <div
                               className=""
@@ -3405,7 +4361,7 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                           </div>
                         </div>
                         <div
-                          className=" css-1wy0on6"
+                          className=" css-1g48xl4-IndicatorsContainer"
                         >
                           <span
                             className=" css-1okebmr-indicatorSeparator"
@@ -3418,7 +4374,7 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                           >
                             <svg
                               aria-hidden="true"
-                              className="css-19bqh2r"
+                              className="css-tj5bde-Svg"
                               focusable="false"
                               height={20}
                               viewBox="0 0 20 20"
@@ -3503,7 +4459,7 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                         5 authors
                       </div>
                       <div
-                        className="css-1g6gooi"
+                        className="css-w8afj7-Input"
                       >
                         <div
                           className=""
@@ -3561,7 +4517,7 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                       </div>
                     </div>
                     <div
-                      className=" css-1wy0on6"
+                      className=" css-1g48xl4-IndicatorsContainer"
                     >
                       <span
                         className=" css-1okebmr-indicatorSeparator"
@@ -3574,7 +4530,7 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                       >
                         <svg
                           aria-hidden="true"
-                          className="css-19bqh2r"
+                          className="css-tj5bde-Svg"
                           focusable="false"
                           height={20}
                           viewBox="0 0 20 20"
