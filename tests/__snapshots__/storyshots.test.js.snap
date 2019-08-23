@@ -40,16 +40,15 @@ exports[`Storyshots Demos//Login default 1`] = `
         Log In
       </div>
       <div
-        className="css-tmnf3a"
+        className="css-1smc6kp"
         label="Continue with Google"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-1dabqxm"
+          className="css-6m6cwb"
         >
           <div
-            className="css-1dabqxm"
+            className="css-6m6cwb"
           />
         </div>
       </div>
@@ -77,13 +76,13 @@ exports[`Storyshots Demos//Login default 1`] = `
 
 exports[`Storyshots Design System Buttons 1`] = `
 <div
-  className="root-0-0-8  css-17grojp"
+  className="root-0-0-8  css-un2q2s"
 >
   <div
-    className="css-1z0xfz"
+    className="css-8ozd3w"
   >
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
         className="css-1lr6moq"
@@ -92,24 +91,23 @@ exports[`Storyshots Design System Buttons 1`] = `
       </div>
     </div>
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
-        className="css-1l49k75"
+        className="css-1paq7r3"
       >
         <div
           className="css-t5yleq"
         >
           <div
-            className="css-tmnf3a"
+            className="css-d697aa"
             onClick={[Function]}
-            opacity={1}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-1x621bz"
+                className="css-26eiyu"
               >
                 <div
                   className="css-8tqbb2"
@@ -124,15 +122,14 @@ exports[`Storyshots Design System Buttons 1`] = `
           className="css-t5yleq"
         >
           <div
-            className="css-pq7jap"
+            className="css-bezbsf"
             onClick={[Function]}
-            opacity={0.5}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-1x621bz"
+                className="css-26eiyu"
                 disabled={true}
               >
                 <div
@@ -147,24 +144,23 @@ exports[`Storyshots Design System Buttons 1`] = `
       </div>
     </div>
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
-        className="css-1l49k75"
+        className="css-1paq7r3"
       >
         <div
           className="css-t5yleq"
         >
           <div
-            className="css-tmnf3a"
+            className="css-d697aa"
             onClick={[Function]}
-            opacity={1}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-apgvdp"
+                className="css-1g371hj"
               >
                 <div
                   className="css-szmbne"
@@ -179,15 +175,14 @@ exports[`Storyshots Design System Buttons 1`] = `
           className="css-t5yleq"
         >
           <div
-            className="css-pq7jap"
+            className="css-bezbsf"
             onClick={[Function]}
-            opacity={0.5}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-apgvdp"
+                className="css-1g371hj"
                 disabled={true}
               >
                 <div
@@ -202,24 +197,23 @@ exports[`Storyshots Design System Buttons 1`] = `
       </div>
     </div>
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
-        className="css-1l49k75"
+        className="css-1paq7r3"
       >
         <div
           className="css-t5yleq"
         >
           <div
-            className="css-tmnf3a"
+            className="css-d697aa"
             onClick={[Function]}
-            opacity={1}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-sg34y1"
+                className="css-8gp55v"
               >
                 <div
                   className="css-i9t175"
@@ -234,15 +228,14 @@ exports[`Storyshots Design System Buttons 1`] = `
           className="css-t5yleq"
         >
           <div
-            className="css-pq7jap"
+            className="css-bezbsf"
             onClick={[Function]}
-            opacity={0.5}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-sg34y1"
+                className="css-8gp55v"
                 disabled={true}
               >
                 <div
@@ -258,10 +251,10 @@ exports[`Storyshots Design System Buttons 1`] = `
     </div>
   </div>
   <div
-    className="css-1z0xfz"
+    className="css-8ozd3w"
   >
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
         className="css-1lr6moq"
@@ -270,24 +263,23 @@ exports[`Storyshots Design System Buttons 1`] = `
       </div>
     </div>
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
-        className="css-1l49k75"
+        className="css-1paq7r3"
       >
         <div
           className="css-t5yleq"
         >
           <div
-            className="css-tmnf3a"
+            className="css-d697aa"
             onClick={[Function]}
-            opacity={1}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-5vodd7"
+                className="css-b98icv"
               >
                 <div
                   className="css-nzo7is"
@@ -302,15 +294,14 @@ exports[`Storyshots Design System Buttons 1`] = `
           className="css-t5yleq"
         >
           <div
-            className="css-pq7jap"
+            className="css-bezbsf"
             onClick={[Function]}
-            opacity={0.5}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-5vodd7"
+                className="css-b98icv"
                 disabled={true}
               >
                 <div
@@ -325,24 +316,23 @@ exports[`Storyshots Design System Buttons 1`] = `
       </div>
     </div>
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
-        className="css-1l49k75"
+        className="css-1paq7r3"
       >
         <div
           className="css-t5yleq"
         >
           <div
-            className="css-tmnf3a"
+            className="css-d697aa"
             onClick={[Function]}
-            opacity={1}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-8c866t"
+                className="css-1ooc2e6"
               >
                 <div
                   className="css-szmbne"
@@ -357,15 +347,14 @@ exports[`Storyshots Design System Buttons 1`] = `
           className="css-t5yleq"
         >
           <div
-            className="css-pq7jap"
+            className="css-bezbsf"
             onClick={[Function]}
-            opacity={0.5}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-8c866t"
+                className="css-1ooc2e6"
                 disabled={true}
               >
                 <div
@@ -380,24 +369,23 @@ exports[`Storyshots Design System Buttons 1`] = `
       </div>
     </div>
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
-        className="css-1l49k75"
+        className="css-1paq7r3"
       >
         <div
           className="css-t5yleq"
         >
           <div
-            className="css-tmnf3a"
+            className="css-d697aa"
             onClick={[Function]}
-            opacity={1}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-vo1p1t"
+                className="css-1i995yc"
               >
                 <div
                   className="css-nzo7is"
@@ -412,15 +400,14 @@ exports[`Storyshots Design System Buttons 1`] = `
           className="css-t5yleq"
         >
           <div
-            className="css-pq7jap"
+            className="css-bezbsf"
             onClick={[Function]}
-            opacity={0.5}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-vo1p1t"
+                className="css-1i995yc"
                 disabled={true}
               >
                 <div
@@ -440,13 +427,13 @@ exports[`Storyshots Design System Buttons 1`] = `
 
 exports[`Storyshots Design System Controls 1`] = `
 <div
-  className="root-0-0-7  css-17grojp"
+  className="root-0-0-7  css-un2q2s"
 >
   <div
-    className="css-1z0xfz"
+    className="css-8ozd3w"
   >
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
         className="css-1lr6moq"
@@ -455,12 +442,11 @@ exports[`Storyshots Design System Controls 1`] = `
       </div>
     </div>
     <div
-      className="css-tmnf3a"
+      className="css-d697aa"
       onClick={[Function]}
-      opacity={1}
     >
       <div
-        className="css-ybz1ij"
+        className="css-2u2ztj"
       >
         <div
           className="css-1pchfvn"
@@ -470,12 +456,11 @@ exports[`Storyshots Design System Controls 1`] = `
       </div>
     </div>
     <div
-      className="css-pq7jap"
+      className="css-bezbsf"
       onClick={[Function]}
-      opacity={0.5}
     >
       <div
-        className="css-ybz1ij"
+        className="css-2u2ztj"
       >
         <div
           className="css-1pchfvn"
@@ -485,12 +470,35 @@ exports[`Storyshots Design System Controls 1`] = `
         </div>
       </div>
     </div>
+    <div
+      className="css-d697aa"
+      onClick={[Function]}
+    >
+      <div
+        className="css-1t3407"
+      >
+        <div
+          className="css-2a82ac"
+        >
+          <source.svg
+            fill="#12100C"
+            height="100%"
+            width="100%"
+          />
+        </div>
+        <div
+          className="css-1pchfvn"
+        >
+          Icon control
+        </div>
+      </div>
+    </div>
   </div>
   <div
-    className="css-1z0xfz"
+    className="css-8ozd3w"
   >
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
         className="css-1lr6moq"
@@ -499,19 +507,18 @@ exports[`Storyshots Design System Controls 1`] = `
       </div>
     </div>
     <div
-      className="css-tmnf3a"
+      className="css-d697aa"
       label="toggle"
       onClick={[Function]}
-      opacity={1}
     >
       <div
-        className="css-a1jevu"
+        className="css-11ivge7"
       >
         <div
-          className="css-1xkg0zp"
+          className="css-1wzlj67"
         />
         <div
-          className="css-e8kwmj"
+          className="css-18jcmqc"
         >
           <div
             className="css-139gbjx"
@@ -522,19 +529,18 @@ exports[`Storyshots Design System Controls 1`] = `
       </div>
     </div>
     <div
-      className="css-pq7jap"
+      className="css-bezbsf"
       label="toggle (disabled)"
       onClick={[Function]}
-      opacity={0.5}
     >
       <div
-        className="css-a1jevu"
+        className="css-11ivge7"
       >
         <div
-          className="css-1xkg0zp"
+          className="css-1wzlj67"
         />
         <div
-          className="css-e8kwmj"
+          className="css-18jcmqc"
           disabled={true}
         >
           <div
@@ -547,10 +553,10 @@ exports[`Storyshots Design System Controls 1`] = `
     </div>
   </div>
   <div
-    className="css-1z0xfz"
+    className="css-8ozd3w"
   >
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
         className="css-1lr6moq"
@@ -559,13 +565,12 @@ exports[`Storyshots Design System Controls 1`] = `
       </div>
     </div>
     <div
-      className="css-tmnf3a"
+      className="css-d697aa"
       label="switch"
       onClick={[Function]}
-      opacity={1}
     >
       <div
-        className="css-a1jevu"
+        className="css-11ivge7"
       >
         <div
           css={
@@ -610,7 +615,7 @@ exports[`Storyshots Design System Controls 1`] = `
           />
         </div>
         <div
-          className="css-1y60j69"
+          className="css-1x6n23f"
         >
           <div
             className="css-139gbjx"
@@ -621,13 +626,12 @@ exports[`Storyshots Design System Controls 1`] = `
       </div>
     </div>
     <div
-      className="css-tmnf3a"
+      className="css-d697aa"
       label="switch (disabled)"
       onClick={[Function]}
-      opacity={1}
     >
       <div
-        className="css-a1jevu"
+        className="css-11ivge7"
       >
         <div
           css={
@@ -672,7 +676,7 @@ exports[`Storyshots Design System Controls 1`] = `
           />
         </div>
         <div
-          className="css-109j6t0"
+          className="css-4jmhq2"
           disabled={true}
         >
           <div
@@ -684,16 +688,15 @@ exports[`Storyshots Design System Controls 1`] = `
       </div>
     </div>
     <div
-      className="css-1g3mc3w"
+      className="css-1ymzi3d"
     >
       <div
-        className="css-tmnf3a"
+        className="css-d697aa"
         label="right aligned"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-rjzulv"
+          className="css-mtrseu"
         >
           <div
             css={
@@ -738,7 +741,7 @@ exports[`Storyshots Design System Controls 1`] = `
             />
           </div>
           <div
-            className="css-6ifoft"
+            className="css-j7gms0"
           >
             <div
               className="css-139gbjx"
@@ -753,15 +756,195 @@ exports[`Storyshots Design System Controls 1`] = `
 </div>
 `;
 
-exports[`Storyshots Design System ListControl 1`] = `
+exports[`Storyshots Design System Icons 1`] = `
 <div
-  className="root-0-0-9  css-17grojp"
+  className="root-0-0-9  css-un2q2s"
 >
   <div
-    className="css-1z0xfz"
+    className="css-8ozd3w"
   >
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
+    >
+      <div
+        className="css-1lr6moq"
+      >
+        Icons
+      </div>
+    </div>
+    <div
+      className="css-8ozd3w"
+    >
+      <div
+        className="css-14mfrw6"
+      >
+        <div
+          className="css-1cvpn50"
+        >
+          <div
+            className="css-1m6d3br"
+          >
+            <source.svg
+              fill="#12100C"
+              height="100%"
+              width="100%"
+            />
+          </div>
+          <div
+            className="css-c892rc"
+          >
+            Tiny
+          </div>
+        </div>
+        <div
+          className="css-1cvpn50"
+        >
+          <div
+            className="css-pl4frh"
+          >
+            <source.svg
+              fill="#12100C"
+              height="100%"
+              width="100%"
+            />
+          </div>
+          <div
+            className="css-c892rc"
+          >
+            Small
+          </div>
+        </div>
+        <div
+          className="css-1cvpn50"
+        >
+          <div
+            className="css-17vpa5x"
+          >
+            <source.svg
+              fill="#12100C"
+              height="100%"
+              width="100%"
+            />
+          </div>
+          <div
+            className="css-c892rc"
+          >
+            Medium
+          </div>
+        </div>
+        <div
+          className="css-1cvpn50"
+        >
+          <div
+            className="css-1kxg9bv"
+          >
+            <source.svg
+              fill="#12100C"
+              height="100%"
+              width="100%"
+            />
+          </div>
+          <div
+            className="css-c892rc"
+          >
+            Large
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="css-1f8puzo"
+    >
+      <div
+        className="css-14mfrw6"
+      >
+        <div
+          className="css-1cvpn50"
+        >
+          <div
+            className="css-pl4frh"
+          >
+            <source.svg
+              fill="#12100C"
+              height="100%"
+              width="100%"
+            />
+          </div>
+          <div
+            className="css-c892rc"
+          >
+            Black
+          </div>
+        </div>
+        <div
+          className="css-1cvpn50"
+        >
+          <div
+            className="css-pl4frh"
+          >
+            <source.svg
+              fill="#847B71"
+              height="100%"
+              width="100%"
+            />
+          </div>
+          <div
+            className="css-c892rc"
+          >
+            Gray 3
+          </div>
+        </div>
+        <div
+          className="css-1cvpn50"
+        >
+          <div
+            className="css-pl4frh"
+          >
+            <source.svg
+              fill="#4770FF"
+              height="100%"
+              width="100%"
+            />
+          </div>
+          <div
+            className="css-c892rc"
+          >
+            Blue 2
+          </div>
+        </div>
+        <div
+          className="css-1cvpn50"
+        >
+          <div
+            className="css-pl4frh"
+          >
+            <source.svg
+              fill="#D745B6"
+              height="100%"
+              width="100%"
+            />
+          </div>
+          <div
+            className="css-c892rc"
+          >
+            Pink
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Design System ListControl 1`] = `
+<div
+  className="root-0-0-10  css-un2q2s"
+>
+  <div
+    className="css-8ozd3w"
+  >
+    <div
+      className="css-1f8puzo"
     >
       <div
         className="css-1lr6moq"
@@ -770,15 +953,14 @@ exports[`Storyshots Design System ListControl 1`] = `
       </div>
     </div>
     <div
-      className="css-upj0dg"
+      className="css-18uc7x3"
     >
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -788,12 +970,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -803,12 +984,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -818,12 +998,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -833,12 +1012,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -848,12 +1026,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -863,12 +1040,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -878,12 +1054,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -893,12 +1068,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -908,12 +1082,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -923,12 +1096,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -938,12 +1110,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -953,12 +1124,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -968,12 +1138,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -983,12 +1152,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -998,12 +1166,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1013,12 +1180,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1028,12 +1194,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1043,12 +1208,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1058,12 +1222,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1073,12 +1236,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1088,12 +1250,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1103,12 +1264,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1118,12 +1278,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1133,12 +1292,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1148,12 +1306,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1163,12 +1320,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1178,12 +1334,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1193,12 +1348,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1208,12 +1362,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1223,12 +1376,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1238,12 +1390,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1253,12 +1404,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1268,12 +1418,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1283,12 +1432,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1298,12 +1446,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1313,12 +1460,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1328,12 +1474,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1343,12 +1488,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1358,12 +1502,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1373,12 +1516,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1388,12 +1530,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1403,12 +1544,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1418,12 +1558,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1433,12 +1572,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1448,12 +1586,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1463,12 +1600,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1478,12 +1614,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1493,12 +1628,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1508,12 +1642,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1525,10 +1658,10 @@ exports[`Storyshots Design System ListControl 1`] = `
     </div>
   </div>
   <div
-    className="css-1z0xfz"
+    className="css-8ozd3w"
   >
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
         className="css-1lr6moq"
@@ -1537,15 +1670,14 @@ exports[`Storyshots Design System ListControl 1`] = `
       </div>
     </div>
     <div
-      className="css-1hrl2tl"
+      className="css-dp71hy"
     >
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1555,12 +1687,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1570,12 +1701,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1585,12 +1715,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1600,12 +1729,11 @@ exports[`Storyshots Design System ListControl 1`] = `
         </div>
       </div>
       <div
-        className="css-ngcw9g"
+        className="css-1gdal18"
         onClick={[Function]}
-        opacity={1}
       >
         <div
-          className="css-kjp178"
+          className="css-y7hrf4"
         >
           <div
             className="css-1pchfvn"
@@ -1621,16 +1749,16 @@ exports[`Storyshots Design System ListControl 1`] = `
 
 exports[`Storyshots Design System Typography 1`] = `
 <div
-  className="root-0-0-5  css-17grojp"
+  className="root-0-0-5  css-un2q2s"
 >
   <div
-    className="css-ipn2og"
+    className="css-1b8bikd"
   >
     <div
-      className="css-1z0xfz"
+      className="css-8ozd3w"
     >
       <div
-        className="css-4qxs4u"
+        className="css-1f8puzo"
       >
         <div
           className="css-1lr6moq"
@@ -1639,7 +1767,7 @@ exports[`Storyshots Design System Typography 1`] = `
         </div>
       </div>
       <div
-        className="css-1z0xfz"
+        className="css-8ozd3w"
       >
         <div
           className="css-yzi1y7"
@@ -1653,7 +1781,7 @@ exports[`Storyshots Design System Typography 1`] = `
         </div>
       </div>
       <div
-        className="css-1z0xfz"
+        className="css-8ozd3w"
       >
         <div
           className="css-1i9npjf"
@@ -1667,7 +1795,7 @@ exports[`Storyshots Design System Typography 1`] = `
         </div>
       </div>
       <div
-        className="css-1z0xfz"
+        className="css-8ozd3w"
       >
         <div
           className="css-11zut8c"
@@ -1681,7 +1809,7 @@ exports[`Storyshots Design System Typography 1`] = `
         </div>
       </div>
       <div
-        className="css-1z0xfz"
+        className="css-8ozd3w"
       >
         <div
           className="css-1knxvbi"
@@ -1697,10 +1825,10 @@ exports[`Storyshots Design System Typography 1`] = `
     </div>
   </div>
   <div
-    className="css-1z0xfz"
+    className="css-8ozd3w"
   >
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
         className="css-1lr6moq"
@@ -1709,16 +1837,16 @@ exports[`Storyshots Design System Typography 1`] = `
       </div>
     </div>
     <div
-      className="css-ybz1ij"
+      className="css-2u2ztj"
     >
       <div
-        className="css-1a7jkag"
+        className="css-14mfrw6"
       >
         <div
           className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-1xuiuv3"
@@ -1727,7 +1855,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-139gbjx"
@@ -1736,7 +1864,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-c892rc"
@@ -1749,7 +1877,7 @@ exports[`Storyshots Design System Typography 1`] = `
           className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-v1mi3f"
@@ -1758,7 +1886,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-1krly18"
@@ -1767,7 +1895,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-1pd32tj"
@@ -1780,7 +1908,7 @@ exports[`Storyshots Design System Typography 1`] = `
           className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-1srzns7"
@@ -1789,7 +1917,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-9dm13m"
@@ -1798,7 +1926,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-nexcnz"
@@ -1811,7 +1939,7 @@ exports[`Storyshots Design System Typography 1`] = `
           className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-mkavzm"
@@ -1820,7 +1948,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-xbj9xw"
@@ -1829,7 +1957,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-1k0ybr"
@@ -1845,10 +1973,10 @@ exports[`Storyshots Design System Typography 1`] = `
     </div>
   </div>
   <div
-    className="css-1z0xfz"
+    className="css-8ozd3w"
   >
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
         className="css-1lr6moq"
@@ -1857,16 +1985,16 @@ exports[`Storyshots Design System Typography 1`] = `
       </div>
     </div>
     <div
-      className="css-ybz1ij"
+      className="css-2u2ztj"
     >
       <div
-        className="css-1a7jkag"
+        className="css-14mfrw6"
       >
         <div
           className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-1fxozs1"
@@ -1875,7 +2003,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-1pchfvn"
@@ -1884,7 +2012,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-l0vx0v"
@@ -1897,7 +2025,7 @@ exports[`Storyshots Design System Typography 1`] = `
           className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-uzujdl"
@@ -1906,7 +2034,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-o5naq0"
@@ -1915,7 +2043,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-1dghums"
@@ -1928,7 +2056,7 @@ exports[`Storyshots Design System Typography 1`] = `
           className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-zvqho0"
@@ -1937,7 +2065,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-vky1mq"
@@ -1946,7 +2074,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-13egyiq"
@@ -1959,7 +2087,7 @@ exports[`Storyshots Design System Typography 1`] = `
           className="css-1j28lhg"
         >
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-3ttymq"
@@ -1968,7 +2096,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-vkwws5"
@@ -1977,7 +2105,7 @@ exports[`Storyshots Design System Typography 1`] = `
             </div>
           </div>
           <div
-            className="css-4qxs4u"
+            className="css-1f8puzo"
           >
             <div
               className="css-1s54j7k"
@@ -1997,13 +2125,13 @@ exports[`Storyshots Design System Typography 1`] = `
 
 exports[`Storyshots Design System Views 1`] = `
 <div
-  className="root-0-0-6  css-17grojp"
+  className="root-0-0-6  css-un2q2s"
 >
   <div
-    className="css-1z0xfz"
+    className="css-8ozd3w"
   >
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
         className="css-1lr6moq"
@@ -2012,16 +2140,16 @@ exports[`Storyshots Design System Views 1`] = `
       </div>
     </div>
     <div
-      className="css-1z0xfz"
+      className="css-8ozd3w"
     >
       <div
-        className="css-1a7jkag"
+        className="css-14mfrw6"
       >
         <div
-          className="css-d6orty"
+          className="css-1466bqd"
         >
           <div
-            className="css-4qxs4u"
+            className="css-1yprtth"
           >
             <div
               className="css-139gbjx"
@@ -2036,10 +2164,10 @@ exports[`Storyshots Design System Views 1`] = `
           </div>
         </div>
         <div
-          className="css-d6orty"
+          className="css-1466bqd"
         >
           <div
-            className="css-oiztje"
+            className="css-6gia2z"
           >
             <div
               className="css-139gbjx"
@@ -2054,10 +2182,10 @@ exports[`Storyshots Design System Views 1`] = `
           </div>
         </div>
         <div
-          className="css-d6orty"
+          className="css-1466bqd"
         >
           <div
-            className="css-1msdmvw"
+            className="css-4p9rxs"
           >
             <div
               className="css-139gbjx"
@@ -2075,10 +2203,10 @@ exports[`Storyshots Design System Views 1`] = `
     </div>
   </div>
   <div
-    className="css-1z0xfz"
+    className="css-8ozd3w"
   >
     <div
-      className="css-4qxs4u"
+      className="css-1f8puzo"
     >
       <div
         className="css-1lr6moq"
@@ -2087,16 +2215,16 @@ exports[`Storyshots Design System Views 1`] = `
       </div>
     </div>
     <div
-      className="css-1z0xfz"
+      className="css-8ozd3w"
     >
       <div
-        className="css-1a7jkag"
+        className="css-14mfrw6"
       >
         <div
-          className="css-d6orty"
+          className="css-1466bqd"
         >
           <div
-            className="css-1msdmvw"
+            className="css-4p9rxs"
           >
             <div
               className="css-139gbjx"
@@ -2111,10 +2239,10 @@ exports[`Storyshots Design System Views 1`] = `
           </div>
         </div>
         <div
-          className="css-d6orty"
+          className="css-1466bqd"
         >
           <div
-            className="css-wj9iwy"
+            className="css-1rxj9uj"
           >
             <div
               className="css-139gbjx"
@@ -2129,10 +2257,10 @@ exports[`Storyshots Design System Views 1`] = `
           </div>
         </div>
         <div
-          className="css-d6orty"
+          className="css-1466bqd"
         >
           <div
-            className="css-1g1jm2"
+            className="css-xh6ych"
           >
             <div
               className="css-139gbjx"
@@ -2147,10 +2275,10 @@ exports[`Storyshots Design System Views 1`] = `
           </div>
         </div>
         <div
-          className="css-d6orty"
+          className="css-1466bqd"
         >
           <div
-            className="css-1180q5x"
+            className="css-zitqxs"
           >
             <div
               className="css-139gbjx"
@@ -2172,10 +2300,10 @@ exports[`Storyshots Design System Views 1`] = `
 
 exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
 <div
-  className="root-0-0-3  css-17grojp"
+  className="root-0-0-3  css-un2q2s"
 >
   <div
-    className="Landing-landing css-ipn2og"
+    className="Landing-landing css-1b8bikd"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -2831,10 +2959,10 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
 
 exports[`Storyshots Motif Landing Entries for Source 1`] = `
 <div
-  className="root-0-0-2  css-17grojp"
+  className="root-0-0-2  css-un2q2s"
 >
   <div
-    className="Landing-landing css-ipn2og"
+    className="Landing-landing css-1b8bikd"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -3490,10 +3618,10 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
 
 exports[`Storyshots Motif Landing Show All Entries 1`] = `
 <div
-  className="root-0-0-1  css-17grojp"
+  className="root-0-0-1  css-un2q2s"
 >
   <div
-    className="Landing-landing css-ipn2og"
+    className="Landing-landing css-1b8bikd"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -4219,10 +4347,10 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
 
 exports[`Storyshots Motif Landing Source TOC 1`] = `
 <div
-  className="root-0-0-4  css-17grojp"
+  className="root-0-0-4  css-un2q2s"
 >
   <div
-    className="Landing-landing css-ipn2og"
+    className="Landing-landing css-1b8bikd"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"

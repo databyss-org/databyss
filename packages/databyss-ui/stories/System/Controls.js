@@ -5,7 +5,9 @@ import {
   ToggleControl,
   SwitchControl,
   View,
+  Icon,
 } from '@databyss-org/ui/primitives'
+import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import { Section } from './'
 
 const Checkbox = ({ checked }) => (
@@ -29,6 +31,15 @@ export default () => {
         </BaseControl>
         <BaseControl disabled onPress={() => console.log('pressed')}>
           <Text>Base control (disabled)</Text>
+        </BaseControl>
+        <BaseControl
+          onPress={() => console.log('icon pressed')}
+          containerProps={{ flexDirection: 'row', alignItems: 'center' }}
+        >
+          <Icon sizeVariant="small" mr="tiny">
+            <SourceSvg />
+          </Icon>
+          <Text>Icon control</Text>
         </BaseControl>
       </Section>
       <Section title="Toggle Control">
