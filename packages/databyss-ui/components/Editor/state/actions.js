@@ -2,8 +2,6 @@ import {
   SET_ACTIVE_INDEX,
   MOVE_CARET_LEFT,
   MOVE_CARET_RIGHT,
-  MOVE_CARET_UP,
-  MOVE_CARET_DOWN,
   SELECT_TEXT,
   TEXT_CHANGE,
   DELETE_BLOCKS,
@@ -11,6 +9,7 @@ import {
   SELECT_BLOCKS,
   COPY_BLOCKS,
   PASTE_BLOCKS,
+  INSERT_TEXT_AT_CARET,
 } from './constants'
 
 export function setActiveIndex(index) {
@@ -29,18 +28,6 @@ export function moveCaretLeft() {
 export function moveCaretRight() {
   return {
     type: MOVE_CARET_RIGHT,
-  }
-}
-
-export function moveCaretUp() {
-  return {
-    type: MOVE_CARET_UP,
-  }
-}
-
-export function moveCaretDown() {
-  return {
-    type: MOVE_CARET_DOWN,
   }
 }
 
@@ -65,6 +52,13 @@ export function deleteBlocks(blockRange) {
   return {
     type: DELETE_BLOCKS,
     payload: blockRange,
+  }
+}
+
+export function insertTextAtCaret(text) {
+  return {
+    type: INSERT_TEXT_AT_CARET,
+    payload: text,
   }
 }
 

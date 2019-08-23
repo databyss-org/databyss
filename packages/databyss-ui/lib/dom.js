@@ -88,23 +88,7 @@ export const getPosition = element => {
   return caretOffset
 }
 
-export const getInnerTextForBlock = id => {
-  const el = document.getElementById(id)
-  return el.innerText
-}
-
-// export const getSelectedId = e => {
-
-//   try {
-//     const _selection = e.target.getSelection()
-//     const _el = _selection.focusNode.parentElement.closest('[data-byss-block]')
-//     return _el.getAttribute('id')
-//   } catch {
-//     return null
-//   }
-// }
-
-export const getSelectedId = e => {
+export const findSelectedBlockId = e => {
   try {
     const _selection = e.target
     const _el = _selection.closest('[data-byss-block]')
@@ -124,7 +108,7 @@ export const getCaretPosition = () => {
   }
 }
 
-export const setCaretPos = pos => {
+export const setCaretPosition = pos => {
   try {
     const _selection = window.getSelection()
     const _el = _selection.focusNode.parentElement.closest('[data-byss-block]')
@@ -141,7 +125,7 @@ export const setCaretPos = pos => {
 
 export const inKeyWhitelist = e => {
   const whitelist = ['ArrowUp', 'ArrowDown', 'Shift', 'Meta']
-  const inWhteList = whitelist.findIndex(w => w === e.key) > -1 ? true : false
+  const inWhteList = whitelist.findIndex(w => w === e.key) > -1
 
   return inWhteList || e.ctrlKey || e.metaKey
 }

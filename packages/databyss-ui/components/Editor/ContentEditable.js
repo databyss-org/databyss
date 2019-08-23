@@ -1,88 +1,66 @@
 import React, { useRef, useEffect } from 'react'
+
 import {
-  getInnerTextForBlock,
-  getSelectedId,
+  findSelectedBlockId,
   getCaretPosition,
-  setCaretPos,
+  setCaretPosition,
   inKeyWhitelist,
 } from './../../lib/dom'
 
 const ContentEditable = ({
   children,
   activeBlockId,
-  onActiveBlockChange,
-  onActiveBlockIdChange,
   caretPosition,
-  onCaretPositionChange,
+  onActiveBlockIdChange,
+  onKeyDown,
 }) => {
-  const editorRef = useRef(null)
-  const caretPositionRef = useRef(caretPosition)
+  const stateRef = useRef({ caretPosition, activeBlockId })
 
   useEffect(
     () => {
-      caretPositionRef.current = caretPosition
+      Object.assign(stateRef.current, { caretPosition, activeBlockId })
     },
-    [caretPosition]
+    [caretPosition, activeBlockId]
   )
 
-  const fixCaretPosition = () => {
-    //  console.log('caret should be at ', caretPositionRef.current)
-    const _caretPosition = getCaretPosition()
-    //  console.log('caret is at', _caretPosition)
-
-    if (caretPositionRef.current !== _caretPosition) {
-      setCaretPos(caretPositionRef.current)
-    }
-  }
-
-  // const onSelectChange = e => {
-  //   const _selectedBlockId = getSelectedId(e)
-
-  //   onActiveBlockIdChange(_selectedBlockId)
-  // }
-
-  // useEffect(
-  //   () => {
-  //     if (editorRef.current) {
-  //       document.addEventListener('selectionchange', onSelectChange)
-  //     }
-  //     return () => {
-  //       console.log('removeEventListener')
-  //       document.removeEventListener('selectionchange', onSelectChange)
-  //     }
-  //   },
-  //   [editorRef]
-  // )
-
-  const onInput = () => {
-    onActiveBlockChange(getInnerTextForBlock(activeBlockId))
-  }
-
-  const onKeyDown = e => {
-    if (!inKeyWhitelist(e)) {
-      e.preventDefault()
-      onActiveBlockChange(e.key)
-    }
-  }
-
-  const onClick = e => {
-    const _caretPostion = getCaretPosition()
-    onCaretPositionChange(_caretPostion)
-    const _selectedBlockId = getSelectedId(e)
-    if (_selectedBlockId) {
+  const checkSelectedBlock = e => {
+    // selector should accept a wider area to click on
+    // returns null if no id is found
+    const _selectedBlockId = findSelectedBlockId(e)
+    if (_selectedBlockId !== stateRef.current.activeBlockId && _selectedBlockId)
       onActiveBlockIdChange(_selectedBlockId)
-    }
+  }
+
+  const caretPositionNeedsFixing = () => {
+    const _caretPosition = getCaretPosition()
+
+    return stateRef.current.caretPosition !== _caretPosition
   }
 
   useEffect(() => {
-    fixCaretPosition()
+    if (caretPositionNeedsFixing()) {
+      setCaretPosition(stateRef.current.caretPosition)
+    }
   })
+
+  const onKeyDownEvent = e => {
+    if (!inKeyWhitelist(e)) {
+      e.preventDefault()
+      onKeyDown(e.key)
+      return
+    }
+    checkSelectedBlock(e)
+  }
+
+  const onClick = e => {
+    checkSelectedBlock(e)
+  }
 
   return (
     <div
+      role="application"
       contentEditable="true"
-      ref={editorRef}
-      onKeyDown={e => onKeyDown(e)}
+      onKeyDown={e => onKeyDownEvent(e)}
       onClick={e => onClick(e)}
       suppressContentEditableWarning
     >

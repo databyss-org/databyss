@@ -1,5 +1,5 @@
 import cloneDeep from 'clone-deep'
-import { reducer } from './reducer'
+import reducer from './reducer'
 import {
   setActiveIndex,
   moveCaretLeft,
@@ -69,40 +69,40 @@ describe(SET_ACTIVE_INDEX, () => {
 
 describe(MOVE_CARET_LEFT, () => {
   let state = initialState
-  test('should move activeTextColumn left one position', () => {
+  test('should move activeTextOffset left one position', () => {
     state = reducer(state, moveCaretLeft())
-    expect(state.activeTextColumn).toEqual(0)
+    expect(state.activeTextOffset).toEqual(0)
   })
   test('should decrement activeIndex by one', () => {
     state = reducer(state, moveCaretLeft())
-    expect(state.activeTextColumn).toEqual(0)
+    expect(state.activeTextOffset).toEqual(0)
     expect(state.activeIndex).toEqual(0)
   })
   test('should remain the same', () => {
     state = reducer(state, moveCaretLeft())
-    expect(state.activeTextColumn).toEqual(0)
+    expect(state.activeTextOffset).toEqual(0)
     expect(state.activeIndex).toEqual(0)
   })
 })
 
 describe(MOVE_CARET_RIGHT, () => {
   let state = initialState
-  test('should move activeTextColumn right one position', () => {
+  test('should move activeTextOffset right one position', () => {
     state = reducer(state, moveCaretRight())
-    expect(state.activeTextColumn).toEqual(2)
+    expect(state.activeTextOffset).toEqual(2)
   })
-  test('should move activeTextColumn to zero and increment the index', () => {
+  test('should move activeTextOffset to zero and increment the index', () => {
     state = reducer(state, moveCaretRight())
     state = reducer(state, moveCaretRight())
-    expect(state.activeTextColumn).toEqual(0)
+    expect(state.activeTextOffset).toEqual(0)
     expect(state.activeIndex).toEqual(2)
   })
-  test('should move activeTextColumn to zero and increment the index', () => {
+  test('should move activeTextOffset to zero and increment the index', () => {
     state = reducer(state, moveCaretRight())
     state = reducer(state, moveCaretRight())
     state = reducer(state, moveCaretRight())
     state = reducer(state, moveCaretRight())
-    expect(state.activeTextColumn).toEqual(0)
+    expect(state.activeTextOffset).toEqual(0)
     expect(state.activeIndex).toEqual(2)
   })
   test('should stay the same', () => {
