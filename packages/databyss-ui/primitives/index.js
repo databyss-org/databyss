@@ -7,6 +7,7 @@ import ToggleControl from './Control/ToggleControl'
 import SwitchControl from './Control/SwitchControl'
 import ListControl from './Control/ListControl'
 import Button from './Button/Button'
+import Icon from './Icon/Icon'
 
 export {
   View,
@@ -17,5 +18,6 @@ export {
   SwitchControl,
   ListControl,
   Button,
+  Icon,
   pxUnits,
 }

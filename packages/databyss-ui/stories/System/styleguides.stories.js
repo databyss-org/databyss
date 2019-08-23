@@ -5,6 +5,7 @@ import Typography from './Typography'
 import Views from './Views'
 import Controls from './Controls'
 import Buttons from './Buttons'
+import Icons from './Icons'
 import ListControl from './ListControl'
 
 storiesOf('Design System', module)
@@ -13,4 +14,5 @@ storiesOf('Design System', module)
   .add('Views', () => <Views />)
   .add('Controls', () => <Controls />)
   .add('Buttons', () => <Buttons />)
+  .add('Icons', () => <Icons />)
   .add('ListControl', () => <ListControl />)

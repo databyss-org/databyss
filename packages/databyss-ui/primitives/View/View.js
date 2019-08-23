@@ -57,15 +57,19 @@ export default ({ children, onLayout, ...others }) => {
   )
 
   const defaultProps = {
-    flexGrow: 1,
-    flexShrink: 1,
+    flexGrow: 0,
+    flexShrink: 0,
     flexBasis: 'auto',
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
     ref: viewRef,
   }
-  const webProps = {}
+  const webProps = {
+    css: {
+      boxSizing: 'border-box',
+    },
+  }
   const nativeProps = {
     onLayout: () =>
       onLayout &&

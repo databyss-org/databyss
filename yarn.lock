@@ -1775,6 +1775,13 @@
   dependencies:
     object-assign "^4.1.1"
 
+"@styled-system/core@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@styled-system/core/-/core-5.1.1.tgz#7dcd7faf576a18f15a947241d260f170d6f783bf"
+  integrity sha512-8doP1Uptn1nlNrG44O/DfiRtLvoh9OkPqxEv9Gp1YAKAD2RgRTTQou/wYw/4y4pqmV3Hjb3NA/5Nbp/Uo5eGUQ==
+  dependencies:
+    object-assign "^4.1.1"
+
 "@styled-system/css@^5.0.23":
   version "5.0.23"
   resolved "https://registry.yarnpkg.com/@styled-system/css/-/css-5.0.23.tgz#35ad4f34fe0fec9b011a5468ac0821f12f5e4b1a"
@@ -1830,6 +1837,13 @@
   integrity sha512-rBCjAlXOLx8yVLTiG3noIelwDsFBYeFllH9Tf33/1oPZIWlykzLF3qOhyWLFjkjqfSyiu46+HzRcPwHgedoc8A==
   dependencies:
     "@styled-system/core" "^5.1.0"
+
+"@styled-system/theme-get@^5.1.1":
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/@styled-system/theme-get/-/theme-get-5.1.1.tgz#aab28c127dda06ca9f32b0a838e48e5d0fe19b62"
+  integrity sha512-NqEcnF0hj+Zyj2AJEcr4/GJvp9yKZnYdgJ8Fxw86eQOuI6s486PNBtI5B4sOoko25N8wfQ7Ndl/wcTNPcTFRZw==
+  dependencies:
+    "@styled-system/core" "^5.1.1"
 
 "@styled-system/typography@^5.1.0":
   version "5.1.0"
@@ -1900,7 +1914,7 @@
     "@svgr/babel-plugin-transform-react-native-svg" "^4.2.0"
     "@svgr/babel-plugin-transform-svg-component" "^4.2.0"
 
-"@svgr/core@^4.3.2":
+"@svgr/core@^4.1.0", "@svgr/core@^4.3.2":
   version "4.3.2"
   resolved "https://registry.yarnpkg.com/@svgr/core/-/core-4.3.2.tgz#939c89be670ad79b762f4c063f213f0e02535f2e"
   integrity sha512-N+tP5CLFd1hP9RpO83QJPZY3NL8AtrdqNbuhRgBkjE/49RnMrrRsFm1wY8pueUfAGvzn6tSXUq29o6ah8RuR5w==
@@ -13838,6 +13852,19 @@ react-modal@^3.8.1:
     prop-types "^15.5.10"
     react-lifecycles-compat "^3.0.0"
     warning "^4.0.3"
+
+react-native-svg-transformer@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/react-native-svg-transformer/-/react-native-svg-transformer-0.13.0.tgz#ec0913f76d58c4df7092f52c98e8db368e5f894f"
+  integrity sha512-tfcnIDC2Q6FN8+g/BXPootZtb+sWLzKJde3o5jSuUJdXSmKwwSazAbk+V808n/Ez5kd2arzsuPTKONT66qx5Xw==
+  dependencies:
+    "@svgr/core" "^4.1.0"
+    semver "^5.6.0"
+
+react-native-svg@^9.6.4:
+  version "9.6.4"
+  resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-9.6.4.tgz#f9ceb228efd07317a5f9c378c6b9c5e13ff50cd0"
+  integrity sha512-6SlbGx0vlXHyDPQXSpX+8o6bNjxKFNJsISoboAkR7YWW6hdnkMg/HJXCgT6oJC0/ClKtSO7ZPrQcK4HR65kDNg==
 
 react-native-swipe-gestures@^1.0.3:
   version "1.0.3"
