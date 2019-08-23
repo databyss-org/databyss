@@ -88,13 +88,25 @@ export const getPosition = element => {
   return caretOffset
 }
 
-export const findSelectedBlockId = e => {
+// export const findSelectedBlockId = e => {
+//   try {
+//     const _selection = e.target
+//     const _el = _selection.closest('[data-byss-block]')
+//     return _el.getAttribute('id')
+//   } catch {
+//     return null
+//   }
+// }
+
+export const findSelectedBlockId = () => {
   try {
-    const _selection = e.target
-    const _el = _selection.closest('[data-byss-block]')
+    const _selection = window.getSelection()
+    const _el = _selection.focusNode.parentElement.closest('[data-byss-block]')
     return _el.getAttribute('id')
-  } catch {
-    return null
+  } catch (e) {
+    console.error('no selection has been found', e)
+
+    return e
   }
 }
 
@@ -118,8 +130,8 @@ export const setCaretPosition = pos => {
     range.collapse(true)
     sel.removeAllRanges()
     sel.addRange(range)
-  } catch {
-    console.log('no selection')
+  } catch (e) {
+    console.error('no selection has been found', e)
   }
 }
 

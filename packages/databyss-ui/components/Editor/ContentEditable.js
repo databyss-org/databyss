@@ -23,11 +23,12 @@ const ContentEditable = ({
     [caretPosition, activeBlockId]
   )
 
-  const checkSelectedBlock = e => {
+  const checkSelectedBlock = () => {
     // selector should accept a wider area to click on
     // returns null if no id is found
-    const _selectedBlockId = findSelectedBlockId(e)
-    if (_selectedBlockId !== stateRef.current.activeBlockId && _selectedBlockId)
+
+    const _selectedBlockId = findSelectedBlockId()
+    if (_selectedBlockId !== stateRef.current.activeBlockId)
       onActiveBlockIdChange(_selectedBlockId)
   }
 
@@ -49,19 +50,27 @@ const ContentEditable = ({
       onKeyDown(e.key)
       return
     }
-    checkSelectedBlock(e)
+    checkSelectedBlock()
+  }
+  const onKeyUpEvent = e => {
+    if (!inKeyWhitelist(e)) {
+      return
+    }
+    checkSelectedBlock()
   }
 
-  const onClick = e => {
-    checkSelectedBlock(e)
+  const onClick = () => {
+    checkSelectedBlock()
   }
 
   return (
     <div
-      role="application"
+      role="textbox"
       contentEditable="true"
+      tabIndex="0"
       onKeyDown={e => onKeyDownEvent(e)}
-      onClick={e => onClick(e)}
+      onKeyUp={e => onKeyUpEvent(e)}
+      onClick={() => onClick()}
       suppressContentEditableWarning
     >
       {children}
