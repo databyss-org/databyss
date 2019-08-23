@@ -61,12 +61,12 @@ module.exports = {
   title: 'Databyss Component Library',
   pagePerSection: true,
   sections: [
-    // {
-    //   name: 'Components',
-    //   components: '../packages/databyss-ui/components/**/*.js',
-    //   exampleMode: 'collapse',
-    //   usageMode: 'collapse',
-    // },
+    {
+      name: 'Components',
+      components: '../packages/databyss-ui/components/**/*.js',
+      exampleMode: 'collapse',
+      usageMode: 'collapse',
+    },
     {
       name: 'Primitives',
       components: '../packages/databyss-ui/primitives/**/*.js',
