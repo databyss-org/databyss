@@ -1,41 +1,45 @@
 import React from 'react'
 import { useEditorContext } from './EditorProvider'
-import ContentEditable from './ContentEditable'
-import Block from './Block'
+import DraftContentEditable from './DraftContentEditable'
+
 import {
-  insertTextAtCaret,
-  setActiveIndex,
-  moveCaretLeft,
-  moveCaretRight,
+  setActiveBlockId,
+  setActiveBlockContent,
+  setEditorState,
+  setActiveBlockType,
 } from './state/actions'
 
 const DocumentView = () => {
   const [state, dispatch] = useEditorContext()
-  const onKeyDown = value => {
-    if (value === 'ArrowRight') {
-      dispatch(moveCaretRight())
-    } else if (value === 'ArrowLeft') {
-      dispatch(moveCaretLeft())
+  const onActiveBlockIdChange = (id, editorState) =>
+    dispatch(setActiveBlockId(id, editorState))
+  const onActiveBlockContentChange = (rawHtml, editorState) => {
+    if (
+      rawHtml.match(/^#/) &&
+      state.blocks[state.activeBlockId].type !== 'HEADER'
+    ) {
+      dispatch(setActiveBlockType('HEADER'))
+    } else if (
+      rawHtml.match(/^@/) &&
+      state.blocks[state.activeBlockId].type !== 'RESOURCE'
+    ) {
+      dispatch(setActiveBlockType('RESOURCE'))
     } else {
-      dispatch(insertTextAtCaret(value))
+      dispatch(setActiveBlockContent(rawHtml, editorState))
     }
   }
-  const onActiveBlockIdChange = blockId => {
-    const index = state.documentView.findIndex(d => d._id === blockId)
-    dispatch(setActiveIndex(index))
-  }
+  const onEditorStateChange = editorState =>
+    dispatch(setEditorState(editorState))
 
   return (
-    <ContentEditable
-      activeBlockId={state.documentView[state.activeIndex]._id}
-      caretPosition={state.activeTextOffset}
+    <DraftContentEditable
+      activeBlockId={state.activeBlockId}
       onActiveBlockIdChange={onActiveBlockIdChange}
-      onKeyDown={onKeyDown}
-    >
-      {state.documentView.map(docItem => (
-        <Block block={state.blocks[docItem._id]} key={docItem._id} />
-      ))}
-    </ContentEditable>
+      onActiveBlockContentChange={onActiveBlockContentChange}
+      onEditorStateChange={onEditorStateChange}
+      blocks={state.documentView.map(item => state.blocks[item._id])}
+      editorState={state.editorState}
+    />
   )
 }
 

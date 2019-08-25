@@ -12,7 +12,7 @@ const useThunkReducer = createReducer(thunk, logger)
 
 export const EditorContext = createContext()
 
-const EditorProvider = ({ children }) => {
+const EditorProvider = ({ children, initialState }) => {
   const [state, dispatch] = useThunkReducer(reducer, initialState)
 
   return (
@@ -23,5 +23,9 @@ const EditorProvider = ({ children }) => {
 }
 
 export const useEditorContext = () => useContext(EditorContext)
+
+EditorProvider.defaultProps = {
+  initialState,
+}
 
 export default EditorProvider

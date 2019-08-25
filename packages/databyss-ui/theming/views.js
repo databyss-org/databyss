@@ -9,9 +9,10 @@ export const pxUnits = Platform.select({
 
 const paddingVariants = {
   none: { padding: pxUnits(0) },
-  small: { padding: pxUnits(16) },
-  medium: { padding: pxUnits(32) },
-  large: { padding: pxUnits(64) },
+  tiny: { padding: pxUnits(3) },
+  small: { padding: pxUnits(8) },
+  medium: { padding: pxUnits(16) },
+  large: { padding: pxUnits(32) },
 }
 
 export const border = (thickness, color) => ({
