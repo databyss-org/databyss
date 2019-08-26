@@ -7,7 +7,7 @@ import EditorProvider, {
   useEditorContext,
 } from '@databyss-org/ui/components/Editor/EditorProvider'
 import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/actions'
-import DraftDocumentView from '@databyss-org/ui/components/Editor/DraftDocumentView'
+import DraftDocumentView from '@databyss-org/ui/components/Editor/DocumentView'
 import initialState from '@databyss-org/ui/components/Editor/_document'
 import { ViewportDecorator } from '../decorators'
 
@@ -16,13 +16,13 @@ const DraftDemo = () => {
 
   const onChange = _state => {
     const _selection = _state.getSelection()
-    console.log('onChange', {
-      type: _state.getLastChangeType(),
-      selection: {
-        focusKey: _selection.getFocusKey(),
-        focusOfset: _selection.getFocusOffset(),
-      },
-    })
+    // console.log('onChange', {
+    //   type: _state.getLastChangeType(),
+    //   selection: {
+    //     focusKey: _selection.getFocusKey(),
+    //     focusOfset: _selection.getFocusOffset(),
+    //   },
+    // })
     // console.log('onChange', _state)
     setEditorState(_state)
   }
@@ -66,7 +66,7 @@ storiesOf('Editor//Draft Implementation', module)
       <DraftDemo />
     </Box>
   ))
-  .add('DraftDocumentView', () => (
+  .add('DocumentView', () => (
     <View>
       <ToolbarDemo />
       <Box>
