@@ -83,6 +83,7 @@
       },
       {
         "displayName": "test-api",
+        "runner": "jest-serial-runner",
         "testEnvironment": "node",
         "testMatch": [
           "<rootDir>/packages/databyss-api/**/*.test.js"
@@ -163,6 +164,7 @@
     "jest-pnp-resolver": "^1.0.1",
     "jest-resolve": "^23.6.0",
     "jest-runner-eslint": "^0.7.1",
+    "jest-serial-runner": "^1.1.0",
     "jsonwebtoken": "^8.5.1",
     "kill-port": "^1.5.1",
     "metro-react-native-babel-preset": "^0.55.0",
