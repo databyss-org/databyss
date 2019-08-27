@@ -9,12 +9,15 @@ const getBlockItemsFromId = blocks => {
       _id,
     }).catch(err => console.log(err))
     const { type, entryId, sourceId, authorId } = block
-    let response = { type, _id }
+    const response = { type, _id }
     if (type === 'ENTRY') {
       response.refId = entryId
     }
     if (type === 'SOURCE') {
       response.refId = sourceId
+    }
+    if (type === 'AUTHOR') {
+      response.refId = authorId
     }
     return response
   })
@@ -28,7 +31,7 @@ const getSourcesFromId = list => {
       _id,
     }).catch(err => console.log(err))
     const { resource } = source
-    let response = { rawHtml: resource, _id }
+    const response = { rawHtml: resource, _id }
     return response
   })
   return Promise.all(promises)
@@ -41,14 +44,14 @@ const getEntriesFromId = list => {
       _id,
     }).catch(err => console.log(err))
     const { entry } = entryResponse
-    let response = { rawHtml: entry, _id }
+    const response = { rawHtml: entry, _id }
     return response
   })
   return Promise.all(promises)
 }
 
 const dictionaryFromList = list => {
-  let result = {}
+  const result = {}
   list.forEach(b => {
     result[b._id] = b
   })

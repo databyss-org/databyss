@@ -1,4 +1,5 @@
 const helpers = require('./_helpers')
+
 const {
   getSourcesFromBlocks,
   getEntriesFromBlocks,
@@ -24,7 +25,7 @@ const {
 const RESOURCE = 'A book made for testing'
 
 // USER
-const EMAIL = 'email@company.com'
+const EMAIL = 'email4@company.com'
 const PASSWORD = 'password'
 
 // CREATE ACCOUNT
@@ -112,6 +113,7 @@ describe('Source', () => {
         e.map(a => (entries[a._id] = a))
         expect(entries).toStrictEqual(POST_EXAMPLE.entries)
       })
+
       done()
     })
 
