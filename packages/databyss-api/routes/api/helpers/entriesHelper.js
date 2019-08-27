@@ -305,6 +305,46 @@ const addAuthorIdToSource = sources => {
   return Promise.all(promises)
 }
 
+const getSourcesFromBlocks = blocks => {
+  const _blocks = Object.keys(blocks)
+    .map(b => {
+      const { type, refId } = blocks[b]
+      return { type, refId }
+    })
+    .filter(b => b.type === 'SOURCE')
+
+  const promises = _blocks.map(async e => {
+    const _id = e.refId
+    const source = await Source.findOne({
+      _id,
+    }).catch(err => console.log(err))
+    return { _id, rawHtml: source.resource }
+  })
+  return Promise.all(promises)
+}
+
+const getEntriesFromBlocks = blocks => {
+  const _blocks = Object.keys(blocks)
+    .map(b => {
+      const { type, refId } = blocks[b]
+      return { type, refId }
+    })
+    .filter(b => b.type === 'ENTRY')
+
+  const promises = _blocks.map(async e => {
+    const _id = e.refId
+    const entry = await Entry.findOne({
+      _id,
+    }).catch(err => console.log(err))
+    //const _id = entry._id.toString()
+    return { _id, rawHtml: entry.entry }
+  })
+  return Promise.all(promises)
+}
+
+module.exports.getSourcesFromBlocks = getSourcesFromBlocks
+module.exports.getEntriesFromBlocks = getEntriesFromBlocks
+
 module.exports.appendEntryToSource = appendEntryToSource
 module.exports.appendEntryToAuthors = appendEntryToAuthors
 module.exports.appendAuthorToSource = appendAuthorToSource

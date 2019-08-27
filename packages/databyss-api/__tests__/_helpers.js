@@ -129,3 +129,75 @@ exports.deleteUserPosts = token =>
   request(app)
     .del(`/api/profile/`)
     .set('x-auth-token', token)
+
+exports.createSourceWithId = (token, resource, sourceId) =>
+  request(app)
+    .post('/api/sources')
+    .set('x-auth-token', token)
+    .send({
+      resource,
+      _id: sourceId,
+    })
+
+exports.createEntryWithId = (token, entry, entryId) =>
+  request(app)
+    .post('/api/entries')
+    .set('x-auth-token', token)
+    .send({
+      entry,
+      _id: entryId,
+    })
+
+exports.createPage = (token, _id, name, blocks) =>
+  request(app)
+    .post('/api/pages')
+    .set('x-auth-token', token)
+    .send({
+      name,
+      blocks,
+      _id,
+    })
+
+exports.getPage = (token, _id) =>
+  request(app)
+    .get(`/api/pages/${_id}`)
+    .set('x-auth-token', token)
+
+export const POST_EXAMPLE = {
+  sources: {
+    '5d64419f1cbc815583c35058': {
+      _id: '5d64419f1cbc815583c35058',
+      rawHtml: 'Staminov, Lev. Conscious and Embodiment',
+    },
+  },
+  entries: {
+    '5d6442046e84d304ddceb768': {
+      _id: '5d6442046e84d304ddceb768',
+      rawHtml: 'Mind as homunculus ins body',
+    },
+  },
+  blocks: {
+    '5d64423aae2da21680dc208b': {
+      type: 'SOURCE',
+      _id: '5d64423aae2da21680dc208b',
+      refId: '5d64419f1cbc815583c35058',
+    },
+    '5d64424bcfa313f70483c1b0': {
+      type: 'ENTRY',
+      _id: '5d64424bcfa313f70483c1b0',
+      refId: '5d6442046e84d304ddceb768',
+    },
+  },
+  page: {
+    _id: '5d6443bdd9ca9149d1a346c2',
+    name: 'pauls document',
+    blocks: [
+      {
+        _id: '5d64423aae2da21680dc208b',
+      },
+      {
+        _id: '5d64424bcfa313f70483c1b0',
+      },
+    ],
+  },
+}

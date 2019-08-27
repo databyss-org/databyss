@@ -1,4 +1,5 @@
 const express = require('express')
+const mongoose = require('mongoose')
 const _ = require('lodash')
 const Source = require('../../models/Source')
 const Author = require('../../models/Author')
@@ -109,8 +110,11 @@ router.post('/', auth, async (req, res) => {
       })
       return res.json(source)
     }
+
+    // if _id is included create new Mongo Obj ID
+    const newId = new mongoose.mongo.ObjectId(!_.isEmpty(_id) && _id)
     // if new source has been added
-    const sources = new Source(sourceFields)
+    const sources = new Source({ ...sourceFields, _id: newId })
     const post = await sources.save()
 
     // if authors id exist append to source

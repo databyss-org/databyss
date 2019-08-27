@@ -1,4 +1,5 @@
 const express = require('express')
+const mongoose = require('mongoose')
 const Entry = require('../../models/Entry')
 const Author = require('../../models/Author')
 const Source = require('../../models/Source')
@@ -41,12 +42,10 @@ router.post('/', auth, async (req, res) => {
       files,
       linkedContent,
       resource,
+      _id,
     } = req.body
 
-    const {
-      entry,
-      _id, // NEED TO ADD THIS PARAM TO FRONT END
-    } = req.body
+    const { entry } = req.body
 
     // source = _.isString(source) ? source : ''
     resource = _.isString(resource) ? resource : ''
@@ -167,7 +166,8 @@ router.post('/', auth, async (req, res) => {
     }
 
     // create new entry
-    const entries = new Entry(entryFields)
+    const newId = new mongoose.mongo.ObjectId(!_.isEmpty(_id) && _id)
+    const entries = new Entry({ ...entryFields, _id: newId })
     const post = await entries.save()
 
     // if source exists, append entry to source
