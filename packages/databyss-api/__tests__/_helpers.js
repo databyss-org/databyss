@@ -163,6 +163,26 @@ exports.getPage = (token, _id) =>
     .get(`/api/pages/${_id}`)
     .set('x-auth-token', token)
 
+exports.createBlock = (token, _id, type, refId) =>
+  request(app)
+    .post('/api/blocks')
+    .set('x-auth-token', token)
+    .send({
+      type,
+      refId,
+      _id,
+    })
+
+exports.getBlock = (token, _id) =>
+  request(app)
+    .get(`/api/blocks/${_id}`)
+    .set('x-auth-token', token)
+
+exports.getPopulatedPage = (token, _id) =>
+  request(app)
+    .get(`/api/pages/populate/${_id}`)
+    .set('x-auth-token', token)
+
 export const POST_EXAMPLE = {
   sources: {
     '5d64419f1cbc815583c35058': {

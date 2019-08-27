@@ -15,6 +15,9 @@ const {
   getEntryNoSource,
   createPage,
   getPage,
+  createBlock,
+  getBlock,
+  getPopulatedPage,
 } = helpers
 
 // RESOURCE
@@ -82,6 +85,21 @@ describe('Source', () => {
       expect(res.name).toBe(name)
       done()
     })
+
+    test('It should post/get new block with given ID', async done => {
+      const blocks = POST_EXAMPLE.blocks
+      const _blocks = Object.keys(blocks).map(b => blocks[b])
+      _blocks.forEach(async b => {
+        const postResponse = await createBlock(token, b._id, b.type, b.refId)
+        expect(JSON.parse(postResponse.text)._id).toBe(b._id)
+        expect(JSON.parse(postResponse.text).type).toBe(b.type)
+        const getResponse = await getBlock(token, b._id)
+        expect(JSON.parse(getResponse.text).type).toBe(b.type)
+        expect(JSON.parse(getResponse.text)._id).toBe(b._id)
+      })
+      done()
+    })
+
     test('It should get and populate entries and sources', async done => {
       const blocks = POST_EXAMPLE.blocks
       getSourcesFromBlocks(blocks).then(s => {
@@ -94,6 +112,15 @@ describe('Source', () => {
         e.map(a => (entries[a._id] = a))
         expect(entries).toStrictEqual(POST_EXAMPLE.entries)
       })
+      done()
+    })
+
+    test('it should recieve an Id and construct the the state', async done => {
+      const pageId = POST_EXAMPLE.page._id
+      const getResponse = await getPopulatedPage(token, pageId)
+      const res = JSON.parse(getResponse.text)
+      expect(res.sources).toStrictEqual(POST_EXAMPLE.sources)
+      expect(res.entries).toStrictEqual(POST_EXAMPLE.entries)
       done()
     })
 

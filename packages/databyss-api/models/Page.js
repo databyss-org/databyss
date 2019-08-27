@@ -13,8 +13,10 @@ const PageSchema = new Schema({
   },
   blocks: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'block',
+      _id: {
+        type: Schema.Types.ObjectId,
+        ref: 'block',
+      },
     },
   ],
 })

@@ -15,7 +15,9 @@ router.post('/', auth, async (req, res) => {
       INSERT ERROR HANDLER HERE
 */
     const { type, refId, _id } = req.body
-    const newId = new mongoose.mongo.ObjectId(!_.isEmpty(_id) && _id)
+    const newId = !_.isEmpty(_id)
+      ? new mongoose.mongo.ObjectId(_id)
+      : new mongoose.mongo.ObjectId() // if new source has been added
 
     const blockFields = { type, _id: newId, user: req.user.id.toString() }
 

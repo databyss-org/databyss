@@ -6,6 +6,8 @@ const User = require('../../models/User')
 const Entry = require('../../models/Entry')
 const Author = require('../../models/Author')
 const Source = require('../../models/Source')
+const Block = require('../../models/Block')
+const Page = require('../../models/Page')
 
 const router = express.Router()
 
@@ -120,6 +122,10 @@ router.delete('/', auth, async (req, res) => {
     await Author.findOneAndRemove({ user: req.user.id })
     // Remove source
     await Source.findOneAndRemove({ user: req.user.id })
+    // Remove page
+    await Page.findOneAndRemove({ user: req.user.id })
+    // Remove block
+    await Block.findOneAndRemove({ user: req.user.id })
 
     return res.json({ msg: 'User deleted' })
   } catch (err) {
