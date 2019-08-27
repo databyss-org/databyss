@@ -5,7 +5,7 @@ import { Text, View } from '@databyss-org/ui/primitives'
 
 const styleSelector = type => {
   switch (type) {
-    case 'RESOURCE':
+    case 'SOURCE':
       return { style: 'bodyNormalUnderline', color: '' }
     case 'LOCATION':
       return { style: 'bodySmall', color: '' }
@@ -19,7 +19,7 @@ const styleSelector = type => {
 }
 
 const DraftBlock = ({ block, ...others }) => (
-  <Grid mb="medium" flexWrap="nowrap" columnGap="small">
+  <Grid mb="medium" flexWrap="nowrap" columnGap="small" alignItems="baseline">
     <View
       contentEditable="false"
       suppressContentEditableWarning
@@ -27,7 +27,7 @@ const DraftBlock = ({ block, ...others }) => (
     >
       +
     </View>
-    <View>
+    <View flexShrink={1}>
       <Text
         variant={styleSelector(block.getType()).style}
         color={styleSelector(block.getType()).color}

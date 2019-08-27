@@ -1,28 +1,48 @@
 import { Modifier, EditorState } from 'draft-js'
-import { SET_ACTIVE_BLOCK_TYPE } from './constants'
+import { SET_ACTIVE_BLOCK_TYPE, SET_ACTIVE_BLOCK_CONTENT } from './constants'
 
-export default (editorState, action) => {
+const setActiveBlockType = (draftState, type) => {
+  let _nextContentState = draftState.getCurrentContent()
+  const _selection = draftState.getSelection()
+
+  _nextContentState = Modifier.setBlockType(
+    draftState.getCurrentContent(),
+    _selection,
+    type
+  )
+
+  return _nextContentState
+}
+
+export default (draftState, action) => {
   switch (action.type) {
-    case SET_ACTIVE_BLOCK_TYPE:
-      console.log('draftReducer.SET_ACTIVE_BLOCK_TYPE')
-      let _nextContentState = editorState.getCurrentContent()
-      const _selection = editorState.getSelection()
-      _nextContentState = Modifier.setBlockType(
-        editorState.getCurrentContent(),
-        _selection,
+    case SET_ACTIVE_BLOCK_CONTENT: {
+      if (!action.payload.html.length) {
+        const _nextContentState = setActiveBlockType(draftState, 'ENTRY')
+        return EditorState.push(draftState, _nextContentState)
+      }
+      return draftState
+    }
+    case SET_ACTIVE_BLOCK_TYPE: {
+      let _nextContentState = setActiveBlockType(
+        draftState,
         action.payload.type
       )
-      const _rangeToRemove = _selection.merge({
-        anchorOffset: 0,
-        focusOffset: 0,
-      })
-      _nextContentState = Modifier.removeRange(
-        _nextContentState,
-        _rangeToRemove,
-        'forward'
-      )
-      return EditorState.push(editorState, _nextContentState)
+      if (action.payload.fromSymbolInput) {
+        const _selection = draftState.getSelection()
+        const _rangeToRemove = _selection.merge({
+          anchorOffset: 0,
+          focusOffset: 1,
+        })
+        _nextContentState = Modifier.removeRange(
+          _nextContentState,
+          _rangeToRemove,
+          'forward'
+        )
+      }
+      return EditorState.push(draftState, _nextContentState)
+    }
     default:
-      return editorState
+      return draftState
   }
 }

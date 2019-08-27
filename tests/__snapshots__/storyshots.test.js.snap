@@ -18,7 +18,7 @@ exports[`Storyshots Demos//Login default 1`] = `
       }
     }
   >
-     
+
     <form
       noValidate={true}
       style={
@@ -61,7 +61,7 @@ exports[`Storyshots Demos//Login default 1`] = `
         }
       >
         You can also
-         
+
         <a
           href=""
           onClick={[Function]}
@@ -76,7 +76,7 @@ exports[`Storyshots Demos//Login default 1`] = `
 
 exports[`Storyshots Design System Buttons 1`] = `
 <div
-  className="root-0-0-8  css-un2q2s"
+  className="root-0-0-10  css-1myf34d"
 >
   <div
     className="css-8ozd3w"
@@ -94,7 +94,7 @@ exports[`Storyshots Design System Buttons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-1paq7r3"
+        className="css-1xhpo1g"
       >
         <div
           className="css-t5yleq"
@@ -147,7 +147,7 @@ exports[`Storyshots Design System Buttons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-1paq7r3"
+        className="css-1xhpo1g"
       >
         <div
           className="css-t5yleq"
@@ -200,7 +200,7 @@ exports[`Storyshots Design System Buttons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-1paq7r3"
+        className="css-1xhpo1g"
       >
         <div
           className="css-t5yleq"
@@ -266,7 +266,7 @@ exports[`Storyshots Design System Buttons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-1paq7r3"
+        className="css-1xhpo1g"
       >
         <div
           className="css-t5yleq"
@@ -319,7 +319,7 @@ exports[`Storyshots Design System Buttons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-1paq7r3"
+        className="css-1xhpo1g"
       >
         <div
           className="css-t5yleq"
@@ -372,7 +372,7 @@ exports[`Storyshots Design System Buttons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-1paq7r3"
+        className="css-1xhpo1g"
       >
         <div
           className="css-t5yleq"
@@ -427,7 +427,7 @@ exports[`Storyshots Design System Buttons 1`] = `
 
 exports[`Storyshots Design System Controls 1`] = `
 <div
-  className="root-0-0-7  css-un2q2s"
+  className="root-0-0-9  css-1myf34d"
 >
   <div
     className="css-8ozd3w"
@@ -938,7 +938,7 @@ exports[`Storyshots Design System Icons 1`] = `
 
 exports[`Storyshots Design System ListControl 1`] = `
 <div
-  className="root-0-0-10  css-un2q2s"
+  className="root-0-0-11  css-1myf34d"
 >
   <div
     className="css-8ozd3w"
@@ -953,7 +953,7 @@ exports[`Storyshots Design System ListControl 1`] = `
       </div>
     </div>
     <div
-      className="css-18uc7x3"
+      className="css-5ycrvu"
     >
       <div
         className="css-1gdal18"
@@ -1670,7 +1670,7 @@ exports[`Storyshots Design System ListControl 1`] = `
       </div>
     </div>
     <div
-      className="css-dp71hy"
+      className="css-le2kcg"
     >
       <div
         className="css-1gdal18"
@@ -1749,7 +1749,7 @@ exports[`Storyshots Design System ListControl 1`] = `
 
 exports[`Storyshots Design System Typography 1`] = `
 <div
-  className="root-0-0-5  css-un2q2s"
+  className="root-0-0-7  css-1myf34d"
 >
   <div
     className="css-1b8bikd"
@@ -1840,7 +1840,7 @@ exports[`Storyshots Design System Typography 1`] = `
       className="css-2u2ztj"
     >
       <div
-        className="css-14mfrw6"
+        className="css-152l3sp"
       >
         <div
           className="css-1j28lhg"
@@ -1988,7 +1988,7 @@ exports[`Storyshots Design System Typography 1`] = `
       className="css-2u2ztj"
     >
       <div
-        className="css-14mfrw6"
+        className="css-152l3sp"
       >
         <div
           className="css-1j28lhg"
@@ -2125,7 +2125,7 @@ exports[`Storyshots Design System Typography 1`] = `
 
 exports[`Storyshots Design System Views 1`] = `
 <div
-  className="root-0-0-6  css-un2q2s"
+  className="root-0-0-8  css-1myf34d"
 >
   <div
     className="css-8ozd3w"
@@ -2143,7 +2143,7 @@ exports[`Storyshots Design System Views 1`] = `
       className="css-8ozd3w"
     >
       <div
-        className="css-14mfrw6"
+        className="css-152l3sp"
       >
         <div
           className="css-1466bqd"
@@ -2218,7 +2218,7 @@ exports[`Storyshots Design System Views 1`] = `
       className="css-8ozd3w"
     >
       <div
-        className="css-14mfrw6"
+        className="css-152l3sp"
       >
         <div
           className="css-1466bqd"
@@ -2242,7 +2242,7 @@ exports[`Storyshots Design System Views 1`] = `
           className="css-1466bqd"
         >
           <div
-            className="css-1rxj9uj"
+            className="css-1h27gl5"
           >
             <div
               className="css-139gbjx"
@@ -2260,7 +2260,7 @@ exports[`Storyshots Design System Views 1`] = `
           className="css-1466bqd"
         >
           <div
-            className="css-xh6ych"
+            className="css-wj9iwy"
           >
             <div
               className="css-139gbjx"
@@ -2278,7 +2278,7 @@ exports[`Storyshots Design System Views 1`] = `
           className="css-1466bqd"
         >
           <div
-            className="css-zitqxs"
+            className="css-1g1jm2"
           >
             <div
               className="css-139gbjx"
@@ -2298,9 +2298,305 @@ exports[`Storyshots Design System Views 1`] = `
 </div>
 `;
 
+exports[`Storyshots Editor//Draft Implementation DocumentView 1`] = `
+<div
+  className="root-0-0-2  css-1myf34d"
+>
+  <div
+    className="css-ybz1ij"
+  >
+    <div
+      className="css-1z0xfz"
+    >
+      <div
+        className="css-152l3sp"
+      >
+        <div
+          className="css-1j28lhg"
+        >
+          <div
+            className="css-tmnf3a"
+            onClick={[Function]}
+            opacity={1}
+          >
+            <div
+              className="css-ybz1ij"
+            >
+              <div
+                className="css-1x621bz"
+              >
+                <div
+                  className="css-8tqbb2"
+                >
+                  RESOURCE
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="css-1j28lhg"
+        >
+          <div
+            className="css-tmnf3a"
+            onClick={[Function]}
+            opacity={1}
+          >
+            <div
+              className="css-ybz1ij"
+            >
+              <div
+                className="css-1x621bz"
+              >
+                <div
+                  className="css-8tqbb2"
+                >
+                  ENTRY
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="css-19sxrm"
+    >
+      <div
+        className="DraftEditor-root"
+      >
+        <div
+          className="DraftEditor-editorContainer"
+        >
+          <div
+            aria-describedby="placeholder-19mos"
+            aria-expanded={null}
+            className="notranslate public-DraftEditor-content"
+            contentEditable={true}
+            onBeforeInput={[Function]}
+            onBlur={[Function]}
+            onCompositionEnd={[Function]}
+            onCompositionStart={[Function]}
+            onCopy={[Function]}
+            onCut={[Function]}
+            onDragEnd={[Function]}
+            onDragEnter={[Function]}
+            onDragLeave={[Function]}
+            onDragOver={[Function]}
+            onDragStart={[Function]}
+            onDrop={[Function]}
+            onFocus={[Function]}
+            onInput={[Function]}
+            onKeyDown={[Function]}
+            onKeyPress={[Function]}
+            onKeyUp={[Function]}
+            onMouseUp={[Function]}
+            onPaste={[Function]}
+            onSelect={[Function]}
+            role="textbox"
+            spellCheck={false}
+            style={
+              Object {
+                "WebkitUserSelect": "text",
+                "outline": "none",
+                "userSelect": "text",
+                "whiteSpace": "pre-wrap",
+                "wordWrap": "break-word",
+              }
+            }
+            suppressContentEditableWarning={true}
+          >
+            <div
+              data-contents="true"
+            >
+              <div
+                className=""
+                contentEditable={true}
+                data-block={true}
+                data-editor="19mos"
+                data-offset-key="5d64423aae2da21680dc208b-0-0"
+                suppressContentEditableWarning={true}
+              >
+                <div
+                  className="css-1z0xfz"
+                >
+                  <div
+                    className="css-kixe1v"
+                  >
+                    <div
+                      className="css-10vbosf"
+                      contentEditable="false"
+                      suppressContentEditableWarning={true}
+                    >
+                      +
+                    </div>
+                    <div
+                      className="css-15seebq"
+                    >
+                      <div
+                        className="css-13kzlrs"
+                      >
+                        <div
+                          className="public-DraftStyleDefault-block public-DraftStyleDefault-ltr"
+                          data-offset-key="5d64423aae2da21680dc208b-0-0"
+                        >
+                          <span
+                            data-offset-key="5d64423aae2da21680dc208b-0-0"
+                            style={Object {}}
+                          >
+                            <span
+                              data-text="true"
+                            >
+                              Stamenov, Language Structure, Discourse and the Access to Consciousness
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                className=""
+                contentEditable={true}
+                data-block={true}
+                data-editor="19mos"
+                data-offset-key="5d64424bcfa313f70483c1b0-0-0"
+                suppressContentEditableWarning={true}
+              >
+                <div
+                  className="css-1z0xfz"
+                >
+                  <div
+                    className="css-kixe1v"
+                  >
+                    <div
+                      className="css-10vbosf"
+                      contentEditable="false"
+                      suppressContentEditableWarning={true}
+                    >
+                      +
+                    </div>
+                    <div
+                      className="css-15seebq"
+                    >
+                      <div
+                        className="css-17snvmf"
+                      >
+                        <div
+                          className="public-DraftStyleDefault-block public-DraftStyleDefault-ltr"
+                          data-offset-key="5d64424bcfa313f70483c1b0-0-0"
+                        >
+                          <span
+                            data-offset-key="5d64424bcfa313f70483c1b0-0-0"
+                            style={Object {}}
+                          >
+                            <span
+                              data-text="true"
+                            >
+                              On the limitation of third-order thought to assertion
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Storyshots Editor//Draft Implementation Draft 1`] = `
+<div
+  className="root-0-0-1  css-1myf34d"
+>
+  <div
+    className="css-19sxrm"
+  >
+    <div
+      className="DraftEditor-root"
+    >
+      <div
+        className="DraftEditor-editorContainer"
+      >
+        <div
+          aria-describedby="placeholder-d170d"
+          aria-expanded={null}
+          className="notranslate public-DraftEditor-content"
+          contentEditable={true}
+          onBeforeInput={[Function]}
+          onBlur={[Function]}
+          onCompositionEnd={[Function]}
+          onCompositionStart={[Function]}
+          onCopy={[Function]}
+          onCut={[Function]}
+          onDragEnd={[Function]}
+          onDragEnter={[Function]}
+          onDragLeave={[Function]}
+          onDragOver={[Function]}
+          onDragStart={[Function]}
+          onDrop={[Function]}
+          onFocus={[Function]}
+          onInput={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseUp={[Function]}
+          onPaste={[Function]}
+          onSelect={[Function]}
+          role="textbox"
+          spellCheck={false}
+          style={
+            Object {
+              "WebkitUserSelect": "text",
+              "outline": "none",
+              "userSelect": "text",
+              "whiteSpace": "pre-wrap",
+              "wordWrap": "break-word",
+            }
+          }
+          suppressContentEditableWarning={true}
+        >
+          <div
+            data-contents="true"
+          >
+            <div
+              className=""
+              data-block={true}
+              data-editor="d170d"
+              data-offset-key="csv3u-0-0"
+            >
+              <div
+                className="public-DraftStyleDefault-block public-DraftStyleDefault-ltr"
+                data-offset-key="csv3u-0-0"
+              >
+                <span
+                  data-offset-key="csv3u-0-0"
+                  style={Object {}}
+                >
+                  <br
+                    data-text="true"
+                  />
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
 <div
-  className="root-0-0-3  css-un2q2s"
+  className="root-0-0-5  css-1myf34d"
 >
   <div
     className="Landing-landing css-1b8bikd"
@@ -2454,7 +2750,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
                                   }
                                 }
                               >
-                                
+
                               </div>
                             </div>
                           </div>
@@ -2647,7 +2943,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
                               }
                             }
                           >
-                            
+
                           </div>
                         </div>
                       </div>
@@ -2959,7 +3255,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
 
 exports[`Storyshots Motif Landing Entries for Source 1`] = `
 <div
-  className="root-0-0-2  css-un2q2s"
+  className="root-0-0-4  css-1myf34d"
 >
   <div
     className="Landing-landing css-1b8bikd"
@@ -3113,7 +3409,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                                   }
                                 }
                               >
-                                
+
                               </div>
                             </div>
                           </div>
@@ -3306,7 +3602,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                               }
                             }
                           >
-                            
+
                           </div>
                         </div>
                       </div>
@@ -3618,7 +3914,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
 
 exports[`Storyshots Motif Landing Show All Entries 1`] = `
 <div
-  className="root-0-0-1  css-un2q2s"
+  className="root-0-0-3  css-1myf34d"
 >
   <div
     className="Landing-landing css-1b8bikd"
@@ -3754,7 +4050,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                                   }
                                 }
                               >
-                                
+
                               </div>
                             </div>
                           </div>
@@ -3929,7 +4225,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                               }
                             }
                           >
-                            
+
                           </div>
                         </div>
                       </div>
@@ -4321,7 +4617,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                 aria-label="entry location"
                 className="Entry-location undefined"
               >
-                —— 
+                ——
               </div>
               <div
                 className="Entry-content"
@@ -4347,7 +4643,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
 
 exports[`Storyshots Motif Landing Source TOC 1`] = `
 <div
-  className="root-0-0-4  css-un2q2s"
+  className="root-0-0-6  css-1myf34d"
 >
   <div
     className="Landing-landing css-1b8bikd"
@@ -4483,7 +4779,7 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                                   }
                                 }
                               >
-                                
+
                               </div>
                             </div>
                           </div>
@@ -4639,7 +4935,7 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                               }
                             }
                           >
-                            
+
                           </div>
                         </div>
                       </div>

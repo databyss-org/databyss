@@ -3,19 +3,19 @@ import { storiesOf } from '@storybook/react'
 import { Editor, EditorState } from 'draft-js'
 import { View, Button } from '@databyss-org/ui/primitives'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
-import EditorProvider, {
+import DraftEditorProvider, {
   useEditorContext,
-} from '@databyss-org/ui/components/Editor/EditorProvider'
+} from '@databyss-org/ui/components/Editor/DraftEditorProvider'
 import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/actions'
-import DraftDocumentView from '@databyss-org/ui/components/Editor/DocumentView'
-import initialState from '@databyss-org/ui/components/Editor/_document'
+import Page from '@databyss-org/ui/components/Editor/Page'
+import initialState from '@databyss-org/ui/components/Editor/state/__tests__/initialState'
 import { ViewportDecorator } from '../decorators'
 
 const DraftDemo = () => {
-  const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  const [draftState, setDraftState] = useState(EditorState.createEmpty())
 
   const onChange = _state => {
-    const _selection = _state.getSelection()
+    // const _selection = _state.getSelection()
     // console.log('onChange', {
     //   type: _state.getLastChangeType(),
     //   selection: {
@@ -24,24 +24,32 @@ const DraftDemo = () => {
     //   },
     // })
     // console.log('onChange', _state)
-    setEditorState(_state)
+    setDraftState(_state)
   }
 
-  return <Editor editorState={editorState} onChange={onChange} />
+  return <Editor editorState={draftState} onChange={onChange} />
 }
 
 const ToolbarDemo = () => {
-  const [, dispatch] = useEditorContext()
+  const [state, dispatch] = useEditorContext()
   return (
     <Grid mb="medium">
       <View>
-        <Button onPress={() => dispatch(setActiveBlockType('RESOURCE'))}>
+        <Button
+          onPress={() =>
+            dispatch(setActiveBlockType('SOURCE', state.draftState))
+          }
+        >
           RESOURCE
         </Button>
       </View>
       <View>
-        <Button onPress={() => dispatch(setActiveBlockType('HEADER'))}>
-          HEADER
+        <Button
+          onPress={() =>
+            dispatch(setActiveBlockType('ENTRY', state.draftState))
+          }
+        >
+          ENTRY
         </Button>
       </View>
     </Grid>
@@ -55,7 +63,9 @@ const Box = ({ children }) => (
 )
 
 const ProviderDecorator = storyFn => (
-  <EditorProvider initialState={initialState}>{storyFn()}</EditorProvider>
+  <DraftEditorProvider initialState={initialState}>
+    {storyFn()}
+  </DraftEditorProvider>
 )
 
 storiesOf('Editor//Draft Implementation', module)
@@ -70,7 +80,7 @@ storiesOf('Editor//Draft Implementation', module)
     <View>
       <ToolbarDemo />
       <Box>
-        <DraftDocumentView />
+        <Page />
       </Box>
     </View>
   ))
