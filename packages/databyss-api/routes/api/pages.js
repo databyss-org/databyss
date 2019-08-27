@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const _ = require('lodash')
 const Page = require('../../models/Page')
 const auth = require('../../middleware/auth')
+
 const router = express.Router()
 
 // @route    POST api/page
@@ -36,10 +37,10 @@ router.post('/', auth, async (req, res) => {
     }
     const post = await page.save()
 
-    res.json(post)
+    return res.json(post)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    return res.status(500).send('Server error')
   }
 })
 

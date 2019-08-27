@@ -112,8 +112,9 @@ router.post('/', auth, async (req, res) => {
     }
 
     // if _id is included create new Mongo Obj ID
-    const newId = new mongoose.mongo.ObjectId(!_.isEmpty(_id) && _id)
-    // if new source has been added
+    const newId = !_.isEmpty(_id)
+      ? new mongoose.mongo.ObjectId(_id)
+      : new mongoose.mongo.ObjectId() // if new source has been added
     const sources = new Source({ ...sourceFields, _id: newId })
     const post = await sources.save()
 

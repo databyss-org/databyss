@@ -287,18 +287,6 @@ const addAuthorIdToSource = sources => {
           { $set: newSource },
           { new: true }
         )
-        /*
-        let newInput = author
-        let list = newInput.entries
-        list = list.concat(entries.filter(e => list.indexOf(e) < 0))
-        // figure out how to remove duplicates
-        newInput.entries = list
-        author = await Author.findOneAndUpdate(
-          { _id: a },
-          { $set: newInput },
-          { new: true }
-        ).catch(err => console.log(err))
-        */
       }
     }
   })
@@ -336,7 +324,6 @@ const getEntriesFromBlocks = blocks => {
     const entry = await Entry.findOne({
       _id,
     }).catch(err => console.log(err))
-    //const _id = entry._id.toString()
     return { _id, rawHtml: entry.entry }
   })
   return Promise.all(promises)

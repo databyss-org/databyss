@@ -42,10 +42,9 @@ router.post('/', auth, async (req, res) => {
       files,
       linkedContent,
       resource,
-      _id,
     } = req.body
 
-    const { entry } = req.body
+    const { entry, _id } = req.body
 
     // source = _.isString(source) ? source : ''
     resource = _.isString(resource) ? resource : ''
@@ -166,7 +165,9 @@ router.post('/', auth, async (req, res) => {
     }
 
     // create new entry
-    const newId = new mongoose.mongo.ObjectId(!_.isEmpty(_id) && _id)
+    const newId = !_.isEmpty(_id)
+      ? new mongoose.mongo.ObjectId(_id)
+      : new mongoose.mongo.ObjectId()
     const entries = new Entry({ ...entryFields, _id: newId })
     const post = await entries.save()
 

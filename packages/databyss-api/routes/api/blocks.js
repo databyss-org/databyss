@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const _ = require('lodash')
 const Block = require('../../models/Block')
 const auth = require('../../middleware/auth')
+
 const router = express.Router()
 
 // @route    POST api/page
@@ -16,7 +17,7 @@ router.post('/', auth, async (req, res) => {
     const { type, refId, _id } = req.body
     const newId = new mongoose.mongo.ObjectId(!_.isEmpty(_id) && _id)
 
-    let blockFields = { type, _id: newId, user: req.user.id.toString() }
+    const blockFields = { type, _id: newId, user: req.user.id.toString() }
 
     if (type === 'SOURCE') {
       blockFields.sourceId = refId
@@ -28,7 +29,7 @@ router.post('/', auth, async (req, res) => {
       blockFields.authorId = refId
     }
 
-    let block = awaitPage.findOne({ _id })
+    let block = await Block.findOne({ _id })
     if (block) {
       if (req.user.id.toString() !== block.user.toString()) {
         return res.status(401).json({ msg: 'This post is private' })
@@ -40,10 +41,10 @@ router.post('/', auth, async (req, res) => {
     }
 
     const post = await block.save()
-    res.json(post)
+    return res.json(post)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    return res.status(500).send('Server error')
   }
 })
 
@@ -56,19 +57,19 @@ router.get('/:id', auth, async (req, res) => {
       INSERT ERROR HANDLER HERE
 */
 
-    const page = await Page.findOne({
+    const block = await Block.findOne({
       _id: req.params.id,
     })
 
-    if (!page) {
+    if (!block) {
       return res.status(400).json({ msg: 'There is no page for this id' })
     }
 
-    if (req.user.id.toString() !== page.user.toString()) {
+    if (req.user.id.toString() !== block.user.toString()) {
       return res.status(401).json({ msg: 'This page is private' })
     }
 
-    return res.json(page)
+    return res.json(block)
   } catch (err) {
     console.error(err.message)
     return res.status(500).send('Server Error')
@@ -80,12 +81,12 @@ router.get('/:id', auth, async (req, res) => {
 // @access   private
 router.get('/', auth, async (req, res) => {
   try {
-    const page = await Page.find({ user: req.user.id })
-    if (!page) {
+    const block = await Block.find({ user: req.user.id })
+    if (!block) {
       return res.status(400).json({ msg: 'There are no pages' })
     }
 
-    return res.json(page)
+    return res.json(block)
   } catch (err) {
     console.error(err.message)
     return res.status(500).send('Server Error')
