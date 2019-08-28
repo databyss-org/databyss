@@ -18,7 +18,7 @@ exports[`Storyshots Demos//Login default 1`] = `
       }
     }
   >
-
+     
     <form
       noValidate={true}
       style={
@@ -61,7 +61,7 @@ exports[`Storyshots Demos//Login default 1`] = `
         }
       >
         You can also
-
+         
         <a
           href=""
           onClick={[Function]}
@@ -76,7 +76,7 @@ exports[`Storyshots Demos//Login default 1`] = `
 
 exports[`Storyshots Design System Buttons 1`] = `
 <div
-  className="root-0-0-10  css-1myf34d"
+  className="root-0-0-10  css-1f5fkxy"
 >
   <div
     className="css-8ozd3w"
@@ -94,7 +94,7 @@ exports[`Storyshots Design System Buttons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-1xhpo1g"
+        className="css-o547ce"
       >
         <div
           className="css-t5yleq"
@@ -147,7 +147,7 @@ exports[`Storyshots Design System Buttons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-1xhpo1g"
+        className="css-o547ce"
       >
         <div
           className="css-t5yleq"
@@ -200,7 +200,7 @@ exports[`Storyshots Design System Buttons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-1xhpo1g"
+        className="css-o547ce"
       >
         <div
           className="css-t5yleq"
@@ -266,7 +266,7 @@ exports[`Storyshots Design System Buttons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-1xhpo1g"
+        className="css-o547ce"
       >
         <div
           className="css-t5yleq"
@@ -319,7 +319,7 @@ exports[`Storyshots Design System Buttons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-1xhpo1g"
+        className="css-o547ce"
       >
         <div
           className="css-t5yleq"
@@ -372,7 +372,7 @@ exports[`Storyshots Design System Buttons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-1xhpo1g"
+        className="css-o547ce"
       >
         <div
           className="css-t5yleq"
@@ -427,7 +427,7 @@ exports[`Storyshots Design System Buttons 1`] = `
 
 exports[`Storyshots Design System Controls 1`] = `
 <div
-  className="root-0-0-9  css-1myf34d"
+  className="root-0-0-9  css-1f5fkxy"
 >
   <div
     className="css-8ozd3w"
@@ -758,7 +758,7 @@ exports[`Storyshots Design System Controls 1`] = `
 
 exports[`Storyshots Design System Icons 1`] = `
 <div
-  className="root-0-0-9  css-un2q2s"
+  className="root-0-0-11  css-1f5fkxy"
 >
   <div
     className="css-8ozd3w"
@@ -776,7 +776,7 @@ exports[`Storyshots Design System Icons 1`] = `
       className="css-8ozd3w"
     >
       <div
-        className="css-14mfrw6"
+        className="css-1duu38n"
       >
         <div
           className="css-1cvpn50"
@@ -856,7 +856,7 @@ exports[`Storyshots Design System Icons 1`] = `
       className="css-1f8puzo"
     >
       <div
-        className="css-14mfrw6"
+        className="css-1duu38n"
       >
         <div
           className="css-1cvpn50"
@@ -938,7 +938,7 @@ exports[`Storyshots Design System Icons 1`] = `
 
 exports[`Storyshots Design System ListControl 1`] = `
 <div
-  className="root-0-0-11  css-1myf34d"
+  className="root-0-0-12  css-1f5fkxy"
 >
   <div
     className="css-8ozd3w"
@@ -953,7 +953,7 @@ exports[`Storyshots Design System ListControl 1`] = `
       </div>
     </div>
     <div
-      className="css-5ycrvu"
+      className="css-q4uc6p"
     >
       <div
         className="css-1gdal18"
@@ -1670,7 +1670,7 @@ exports[`Storyshots Design System ListControl 1`] = `
       </div>
     </div>
     <div
-      className="css-le2kcg"
+      className="css-10si1v3"
     >
       <div
         className="css-1gdal18"
@@ -1749,7 +1749,7 @@ exports[`Storyshots Design System ListControl 1`] = `
 
 exports[`Storyshots Design System Typography 1`] = `
 <div
-  className="root-0-0-7  css-1myf34d"
+  className="root-0-0-7  css-1f5fkxy"
 >
   <div
     className="css-1b8bikd"
@@ -1840,7 +1840,7 @@ exports[`Storyshots Design System Typography 1`] = `
       className="css-2u2ztj"
     >
       <div
-        className="css-152l3sp"
+        className="css-1duu38n"
       >
         <div
           className="css-1j28lhg"
@@ -1988,7 +1988,7 @@ exports[`Storyshots Design System Typography 1`] = `
       className="css-2u2ztj"
     >
       <div
-        className="css-152l3sp"
+        className="css-1duu38n"
       >
         <div
           className="css-1j28lhg"
@@ -2125,7 +2125,7 @@ exports[`Storyshots Design System Typography 1`] = `
 
 exports[`Storyshots Design System Views 1`] = `
 <div
-  className="root-0-0-8  css-1myf34d"
+  className="root-0-0-8  css-1f5fkxy"
 >
   <div
     className="css-8ozd3w"
@@ -2143,7 +2143,7 @@ exports[`Storyshots Design System Views 1`] = `
       className="css-8ozd3w"
     >
       <div
-        className="css-152l3sp"
+        className="css-1duu38n"
       >
         <div
           className="css-1466bqd"
@@ -2218,7 +2218,7 @@ exports[`Storyshots Design System Views 1`] = `
       className="css-8ozd3w"
     >
       <div
-        className="css-152l3sp"
+        className="css-1duu38n"
       >
         <div
           className="css-1466bqd"
@@ -2242,7 +2242,7 @@ exports[`Storyshots Design System Views 1`] = `
           className="css-1466bqd"
         >
           <div
-            className="css-1h27gl5"
+            className="css-qjx7wa"
           >
             <div
               className="css-139gbjx"
@@ -2260,7 +2260,7 @@ exports[`Storyshots Design System Views 1`] = `
           className="css-1466bqd"
         >
           <div
-            className="css-wj9iwy"
+            className="css-1rxj9uj"
           >
             <div
               className="css-139gbjx"
@@ -2278,7 +2278,7 @@ exports[`Storyshots Design System Views 1`] = `
           className="css-1466bqd"
         >
           <div
-            className="css-1g1jm2"
+            className="css-xh6ych"
           >
             <div
               className="css-139gbjx"
@@ -2300,30 +2300,29 @@ exports[`Storyshots Design System Views 1`] = `
 
 exports[`Storyshots Editor//Draft Implementation DocumentView 1`] = `
 <div
-  className="root-0-0-2  css-1myf34d"
+  className="root-0-0-2  css-1f5fkxy"
 >
   <div
-    className="css-ybz1ij"
+    className="css-2u2ztj"
   >
     <div
-      className="css-1z0xfz"
+      className="css-8ozd3w"
     >
       <div
-        className="css-152l3sp"
+        className="css-1duu38n"
       >
         <div
           className="css-1j28lhg"
         >
           <div
-            className="css-tmnf3a"
+            className="css-d697aa"
             onClick={[Function]}
-            opacity={1}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-1x621bz"
+                className="css-26eiyu"
               >
                 <div
                   className="css-8tqbb2"
@@ -2338,15 +2337,14 @@ exports[`Storyshots Editor//Draft Implementation DocumentView 1`] = `
           className="css-1j28lhg"
         >
           <div
-            className="css-tmnf3a"
+            className="css-d697aa"
             onClick={[Function]}
-            opacity={1}
           >
             <div
-              className="css-ybz1ij"
+              className="css-2u2ztj"
             >
               <div
-                className="css-1x621bz"
+                className="css-26eiyu"
               >
                 <div
                   className="css-8tqbb2"
@@ -2360,7 +2358,7 @@ exports[`Storyshots Editor//Draft Implementation DocumentView 1`] = `
       </div>
     </div>
     <div
-      className="css-19sxrm"
+      className="css-183cbie"
     >
       <div
         className="DraftEditor-root"
@@ -2369,7 +2367,7 @@ exports[`Storyshots Editor//Draft Implementation DocumentView 1`] = `
           className="DraftEditor-editorContainer"
         >
           <div
-            aria-describedby="placeholder-2dvki"
+            aria-describedby="placeholder-6jb7c"
             aria-expanded={null}
             className="notranslate public-DraftEditor-content"
             contentEditable={true}
@@ -2413,15 +2411,15 @@ exports[`Storyshots Editor//Draft Implementation DocumentView 1`] = `
                 className=""
                 contentEditable={true}
                 data-block={true}
-                data-editor="2dvki"
+                data-editor="6jb7c"
                 data-offset-key="5d64423aae2da21680dc208b-0-0"
                 suppressContentEditableWarning={true}
               >
                 <div
-                  className="css-1z0xfz"
+                  className="css-8ozd3w"
                 >
                   <div
-                    className="css-kixe1v"
+                    className="css-1e9hzeu"
                   >
                     <div
                       className="css-10vbosf"
@@ -2460,15 +2458,15 @@ exports[`Storyshots Editor//Draft Implementation DocumentView 1`] = `
                 className=""
                 contentEditable={true}
                 data-block={true}
-                data-editor="2dvki"
+                data-editor="6jb7c"
                 data-offset-key="5d64424bcfa313f70483c1b0-0-0"
                 suppressContentEditableWarning={true}
               >
                 <div
-                  className="css-1z0xfz"
+                  className="css-8ozd3w"
                 >
                   <div
-                    className="css-kixe1v"
+                    className="css-1e9hzeu"
                   >
                     <div
                       className="css-10vbosf"
@@ -2514,10 +2512,10 @@ exports[`Storyshots Editor//Draft Implementation DocumentView 1`] = `
 
 exports[`Storyshots Editor//Draft Implementation Draft 1`] = `
 <div
-  className="root-0-0-1  css-1myf34d"
+  className="root-0-0-1  css-1f5fkxy"
 >
   <div
-    className="css-19sxrm"
+    className="css-183cbie"
   >
     <div
       className="DraftEditor-root"
@@ -2526,7 +2524,7 @@ exports[`Storyshots Editor//Draft Implementation Draft 1`] = `
         className="DraftEditor-editorContainer"
       >
         <div
-          aria-describedby="placeholder-a5vjf"
+          aria-describedby="placeholder-dmhlk"
           aria-expanded={null}
           className="notranslate public-DraftEditor-content"
           contentEditable={true}
@@ -2569,15 +2567,15 @@ exports[`Storyshots Editor//Draft Implementation Draft 1`] = `
             <div
               className=""
               data-block={true}
-              data-editor="a5vjf"
-              data-offset-key="7v4h4-0-0"
+              data-editor="dmhlk"
+              data-offset-key="2beob-0-0"
             >
               <div
                 className="public-DraftStyleDefault-block public-DraftStyleDefault-ltr"
-                data-offset-key="7v4h4-0-0"
+                data-offset-key="2beob-0-0"
               >
                 <span
-                  data-offset-key="7v4h4-0-0"
+                  data-offset-key="2beob-0-0"
                   style={Object {}}
                 >
                   <br
@@ -2596,7 +2594,7 @@ exports[`Storyshots Editor//Draft Implementation Draft 1`] = `
 
 exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
 <div
-  className="root-0-0-5  css-1myf34d"
+  className="root-0-0-5  css-1f5fkxy"
 >
   <div
     className="Landing-landing css-1b8bikd"
@@ -2750,7 +2748,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
                                   }
                                 }
                               >
-
+                                
                               </div>
                             </div>
                           </div>
@@ -2943,7 +2941,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
                               }
                             }
                           >
-
+                            
                           </div>
                         </div>
                       </div>
@@ -3255,7 +3253,7 @@ exports[`Storyshots Motif Landing Entries for Source (long title) 1`] = `
 
 exports[`Storyshots Motif Landing Entries for Source 1`] = `
 <div
-  className="root-0-0-4  css-1myf34d"
+  className="root-0-0-4  css-1f5fkxy"
 >
   <div
     className="Landing-landing css-1b8bikd"
@@ -3409,7 +3407,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                                   }
                                 }
                               >
-
+                                
                               </div>
                             </div>
                           </div>
@@ -3602,7 +3600,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
                               }
                             }
                           >
-
+                            
                           </div>
                         </div>
                       </div>
@@ -3914,7 +3912,7 @@ exports[`Storyshots Motif Landing Entries for Source 1`] = `
 
 exports[`Storyshots Motif Landing Show All Entries 1`] = `
 <div
-  className="root-0-0-3  css-1myf34d"
+  className="root-0-0-3  css-1f5fkxy"
 >
   <div
     className="Landing-landing css-1b8bikd"
@@ -4050,7 +4048,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                                   }
                                 }
                               >
-
+                                
                               </div>
                             </div>
                           </div>
@@ -4225,7 +4223,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                               }
                             }
                           >
-
+                            
                           </div>
                         </div>
                       </div>
@@ -4617,7 +4615,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
                 aria-label="entry location"
                 className="Entry-location undefined"
               >
-                ——
+                —— 
               </div>
               <div
                 className="Entry-content"
@@ -4643,7 +4641,7 @@ exports[`Storyshots Motif Landing Show All Entries 1`] = `
 
 exports[`Storyshots Motif Landing Source TOC 1`] = `
 <div
-  className="root-0-0-6  css-1myf34d"
+  className="root-0-0-6  css-1f5fkxy"
 >
   <div
     className="Landing-landing css-1b8bikd"
@@ -4779,7 +4777,7 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                                   }
                                 }
                               >
-
+                                
                               </div>
                             </div>
                           </div>
@@ -4935,7 +4933,7 @@ exports[`Storyshots Motif Landing Source TOC 1`] = `
                               }
                             }
                           >
-
+                            
                           </div>
                         </div>
                       </div>
