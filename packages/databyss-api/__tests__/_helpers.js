@@ -148,14 +148,12 @@ exports.createEntryWithId = (token, entry, entryId) =>
       _id: entryId,
     })
 
-exports.createPage = (token, _id, name, blocks) =>
+exports.createPage = (token, data) =>
   request(app)
     .post('/api/pages')
     .set('x-auth-token', token)
     .send({
-      name,
-      blocks,
-      _id,
+      data,
     })
 
 exports.getPage = (token, _id) =>

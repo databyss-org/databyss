@@ -1,22 +1,14 @@
 const helpers = require('./_helpers')
 
 const {
-  getSourcesFromBlocks,
-  getEntriesFromBlocks,
-} = require('./../routes/api/helpers/entriesHelper')
-
-const {
   noAuthPost,
   createUser,
-  createSourceWithId,
   deleteUserPosts,
   POST_EXAMPLE,
   getSourceNoAuthor,
-  createEntryWithId,
   getEntryNoSource,
   createPage,
   getPage,
-  createBlock,
   getBlock,
   getPopulatedPage,
 } = helpers
@@ -46,95 +38,48 @@ describe('Source', () => {
       done()
     }, 5000)
 
-    describe('adding source', () => {
-      test('It should post/get new source with given ID', async done => {
+    describe('adding page entities', () => {
+      test('it should add a page state', async done => {
+        const pageResponse = await createPage(token, POST_EXAMPLE)
+        expect(pageResponse.statusCode).toBe(200)
+
+        // TESTS SOURCES WERE CORRECTLY STORED
         const sources = Object.keys(POST_EXAMPLE.sources)
-        sources.forEach(async s => {
-          const source = POST_EXAMPLE.sources[s].rawHtml
-          const sourceId = POST_EXAMPLE.sources[s]._id
-          const postResponse = await createSourceWithId(token, source, sourceId)
-          const _sourceId = JSON.parse(postResponse.text)._id
-          expect(_sourceId).toBe(sourceId)
-          const getResponse = await getSourceNoAuthor(token, _sourceId)
-          const res = JSON.parse(getResponse.text)
-          expect(res.resource).toBe(source)
-        })
-        done()
-      })
-    })
-
-    describe('adding entry', () => {
-      test('It should post/get new entry with given ID', async done => {
+        const getSourceResponse = await getSourceNoAuthor(token, sources[0])
+        const sourceResponse = JSON.parse(getSourceResponse.text)
+        expect(sourceResponse.resource).toBe(
+          POST_EXAMPLE.sources[sources[0]].rawHtml
+        )
+        // TESTS ENTRIES WERE CORRECTLY STORED
         const entries = Object.keys(POST_EXAMPLE.entries)
-        entries.forEach(async e => {
-          const entry = POST_EXAMPLE.entries[e].rawHtml
-          const entryId = POST_EXAMPLE.entries[e]._id
-          const postResponse = await createEntryWithId(token, entry, entryId)
-          const _entryId = JSON.parse(postResponse.text)._id
-          expect(_entryId).toBe(entryId)
-          const getResponse = await getEntryNoSource(token, _entryId)
-          const res = JSON.parse(getResponse.text)
-          expect(res.entry).toBe(entry)
-        })
-        done()
-      })
-    })
+        const getEntryResponse = await getEntryNoSource(token, entries[0])
+        const entryResponse = JSON.parse(getEntryResponse.text)
+        expect(entryResponse.entry).toBe(
+          POST_EXAMPLE.entries[entries[0]].rawHtml
+        )
 
-    describe('adding page', () => {
-      test('It should post/get new page with given ID', async done => {
+        // TESTS IF BLOCKS WERE CORRECTLY STORED
+        const blocks = Object.keys(POST_EXAMPLE.blocks)
+        const getBlockResponse = await getBlock(token, blocks[0])
+        const blockResponse = JSON.parse(getBlockResponse.text)
+        expect(blockResponse._id).toBe(blocks[0])
+        expect(blockResponse.type).toBe(POST_EXAMPLE.blocks[blocks[0]].type)
+
+        // TETS IF PAGE WAS CORRECTLY STORED
         const page = POST_EXAMPLE.page
-        const { _id, name, blocks } = page
-        const postResponse = await createPage(token, _id, name, blocks)
-        const _postId = JSON.parse(postResponse.text)._id
-        expect(_postId).toBe(_id)
-        const getResponse = await getPage(token, _id)
-        const res = JSON.parse(getResponse.text)
-        expect(res.name).toBe(name)
-        done()
-      })
-    })
+        const { _id, name } = page
+        const getPageResponse = await getPage(token, _id)
+        const pageResponseTest = JSON.parse(getPageResponse.text)
+        expect(pageResponseTest._id).toBe(_id)
+        expect(pageResponseTest.name).toBe(name)
 
-    describe('adding block', () => {
-      test('It should post/get new block with given ID', async done => {
-        const blocks = POST_EXAMPLE.blocks
-        const _blocks = Object.keys(blocks).map(b => blocks[b])
-        _blocks.forEach(async b => {
-          const postResponse = await createBlock(token, b._id, b.type, b.refId)
-          expect(JSON.parse(postResponse.text)._id).toBe(b._id)
-          expect(JSON.parse(postResponse.text).type).toBe(b.type)
-          const getResponse = await getBlock(token, b._id)
-          expect(JSON.parse(getResponse.text).type).toBe(b.type)
-          expect(JSON.parse(getResponse.text)._id).toBe(b._id)
-        })
-        done()
-      })
-    })
-
-    describe('populating full block', () => {
-      test('It should get and populate entries and sources', async done => {
-        const blocks = POST_EXAMPLE.blocks
-        getSourcesFromBlocks(blocks).then(s => {
-          const sources = {}
-          s.map(a => (sources[a._id] = a))
-          expect(sources).toStrictEqual(POST_EXAMPLE.sources)
-        })
-        getEntriesFromBlocks(blocks).then(e => {
-          const entries = {}
-          e.map(a => (entries[a._id] = a))
-          expect(entries).toStrictEqual(POST_EXAMPLE.entries)
-        })
-
-        done()
-      })
-    })
-
-    describe('respond with  populated state', () => {
-      test('it should recieve an Id and construct the the state', async done => {
+        // SHOULD RETURN POPULATED STATE
         const pageId = POST_EXAMPLE.page._id
         const getResponse = await getPopulatedPage(token, pageId)
         const res = JSON.parse(getResponse.text)
         expect(res.sources).toStrictEqual(POST_EXAMPLE.sources)
         expect(res.entries).toStrictEqual(POST_EXAMPLE.entries)
+
         done()
       })
     })
