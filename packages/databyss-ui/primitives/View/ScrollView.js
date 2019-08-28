@@ -18,6 +18,7 @@ export default ({ children, ...others }) => {
   return (
     <Styled {...(IS_NATIVE ? nativeProps : webProps)} {...others}>
       {children}
+      {IS_NATIVE && <View height={50} />}
     </Styled>
   )
 }

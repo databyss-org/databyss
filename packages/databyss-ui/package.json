@@ -2,7 +2,7 @@
   "name": "@databyss-org/ui",
   "author": "databyss-org",
   "license": "MIT",
-  "version": "1.1.12",
+  "version": "1.1.13",
   "private": false,
   "repository": {
     "type": "git",
@@ -13,8 +13,9 @@
   },
   "main": "index.js",
   "peerDependencies": {
-    "@databyss-org/services": "1.1.12",
-    "@databyss-org/ui": "1.1.12",
+
+    "@databyss-org/services": "1.1.13",
+    "@databyss-org/ui": "1.1.13",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-native": "0.60.4"
@@ -24,12 +25,18 @@
     "@emotion/native": "^10.0.14",
     "@emotion/styled": "^10.0.14",
     "@storybook/react": "5.1.9",
+    "@styled-system/core": "^5.1.1",
     "@styled-system/css": "^5.0.23",
     "@styled-system/should-forward-prop": "^5.0.18",
+    "@styled-system/theme-get": "^5.1.1",
     "alea": "^1.0.0",
+    "bson-objectid": "^1.3.0",
     "classnames": "^2.2.6",
+    "clone-deep": "^4.0.1",
     "color": "^3.1.2",
+    "draft-js": "^0.11.0",
     "emotion-theming": "^10.0.10",
+    "immutable": "^4.0.0-rc.12",
     "jss": "^9.8.7",
     "jss-preset-default": "^4.5.0",
     "lodash": "^4.17.15",
@@ -39,11 +46,15 @@
     "react-google-login": "^5.0.4",
     "react-jss": "^8.6.1",
     "react-modal": "^3.8.1",
+    "react-native-svg": "^9.6.4",
     "react-native-web": "^0.11.0",
     "react-responsive": "^7.0.0",
     "react-scrolllock": "^4.0.1",
     "react-select": "^3.0.4",
     "react-svg-loader": "^2.1.0",
+    "react-use": "^11.0.0",
+    "redux-logger": "^3.0.6",
+    "redux-thunk": "^2.3.0",
     "styled-system": "^5.0.5",
     "webpack-node-externals": "^1.7.2"
   },
@@ -52,5 +63,11 @@
   },
   "devDependencies": {
     "babel-plugin-react-native-web": "^0.11.5"
+  },
+  "workspaces": {
+    "nohoist": [
+      "**/react-native-svg",
+      "**/react-native-svg-transformer"
+    ]
   }
 }

@@ -63,3 +63,81 @@ export const triggerMouseEvent = (node, eventName) => {
 }
 
 export const idFromTitle = title => title.toLowerCase().replace(/[^a-z]/, '_')
+
+export const getPosition = element => {
+  let caretOffset = 0
+  const doc = element.ownerDocument || element.document
+  const win = doc.defaultView || doc.parentWindow
+  let sel
+  if (typeof win.getSelection !== 'undefined') {
+    sel = win.getSelection()
+    if (sel.rangeCount > 0) {
+      const range = win.getSelection().getRangeAt(0)
+      const preCaretRange = range.cloneRange()
+      preCaretRange.selectNodeContents(element)
+      preCaretRange.setEnd(range.endContainer, range.endOffset)
+      caretOffset = preCaretRange.toString().length
+    }
+  } else if (sel === doc.selection && sel.type !== 'Control') {
+    const textRange = sel.createRange()
+    const preCaretTextRange = doc.body.createTextRange()
+    preCaretTextRange.moveToElementText(element)
+    preCaretTextRange.setEndPoint('EndToEnd', textRange)
+    caretOffset = preCaretTextRange.text.length
+  }
+  return caretOffset
+}
+
+// export const findSelectedBlockId = e => {
+//   try {
+//     const _selection = e.target
+//     const _el = _selection.closest('[data-byss-block]')
+//     return _el.getAttribute('id')
+//   } catch {
+//     return null
+//   }
+// }
+
+export const findSelectedBlockId = () => {
+  try {
+    const _selection = window.getSelection()
+    const _el = _selection.focusNode.parentElement.closest('[data-byss-block]')
+    return _el.getAttribute('id')
+  } catch (e) {
+    console.error('no selection has been found', e)
+
+    return e
+  }
+}
+
+export const getCaretPosition = () => {
+  const _selection = window.getSelection()
+  try {
+    const _el = _selection.focusNode.parentElement.closest('[data-byss-block]')
+    return getPosition(_el)
+  } catch {
+    return 0
+  }
+}
+
+export const setCaretPosition = pos => {
+  try {
+    const _selection = window.getSelection()
+    const _el = _selection.focusNode.parentElement.closest('[data-byss-block]')
+    const range = document.createRange()
+    const sel = window.getSelection()
+    range.setStart(_el.childNodes[0], pos)
+    range.collapse(true)
+    sel.removeAllRanges()
+    sel.addRange(range)
+  } catch (e) {
+    console.error('no selection has been found', e)
+  }
+}
+
+export const inKeyWhitelist = e => {
+  const whitelist = ['ArrowUp', 'ArrowDown', 'Shift', 'Meta']
+  const inWhteList = whitelist.findIndex(w => w === e.key) > -1
+
+  return inWhteList || e.ctrlKey || e.metaKey
+}

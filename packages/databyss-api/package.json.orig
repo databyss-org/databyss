@@ -1,0 +1,41 @@
+{
+  "name": "@databyss-org/api",
+<<<<<<< HEAD
+  "version": "1.1.12",
+=======
+  "version": "1.1.13",
+>>>>>>> 0c8ffb21f3b1ffb5b6ba4039e0f3ff13a1fac024
+  "description": "api",
+  "main": "server.js",
+  "author": "databyss-org",
+  "license": "MIT",
+  "peerDependencies": {
+    "@bugsnag/js": "^6.3.2"
+  },
+  "dependencies": {
+    "@babel/core": "^7.5.0",
+    "@babel/preset-env": "^7.5.3",
+    "@bugsnag/plugin-express": "^6.3.0",
+    "@sendgrid/mail": "^6.4.0",
+    "axios": "^0.19.0",
+    "babel-jest": "^24.8.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "config": "^3.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.0.0",
+    "express": "^4.17.1",
+    "express-validator": "^5.3.1",
+    "gravatar": "^1.8.0",
+    "human-readable-ids": "^1.0.4",
+    "jest": "^24.8.0",
+    "jest-dev-server": "^4.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.11",
+    "mongoose": "^5.6.0",
+    "nodemon": "^1.19.1",
+    "request": "^2.88.0",
+    "supertest": "^4.0.2"
+  }
+}

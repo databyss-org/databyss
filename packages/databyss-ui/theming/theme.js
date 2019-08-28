@@ -6,6 +6,7 @@ import views from './views'
 import fonts from './fonts'
 import timing from './timing'
 import buttons from './buttons'
+import icons from './icons'
 
 export default {
   /* space */
@@ -31,6 +32,9 @@ export default {
 
   /* timing */
   timing,
+
+  /* icons */
+  ...icons,
 
   /* shadows */
   lightShadow:
