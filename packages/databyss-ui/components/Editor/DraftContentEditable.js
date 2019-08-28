@@ -2,9 +2,9 @@ import React from 'react'
 import { Editor, EditorState, ContentState, ContentBlock } from 'draft-js'
 import DraftBlock from './DraftBlock'
 import { getRawHtmlForBlock } from './state/reducer'
-import { useEditorContext } from './DraftEditorProvider'
+import { useEditorContext } from './EditorProvider'
 
-const setDraftStateBlocks = (state, draftState, pageBlocks) => {
+const setDraftStateBlocks = (state, editableState, pageBlocks) => {
   const _blockArray = pageBlocks.map(
     block =>
       new ContentBlock({
@@ -14,7 +14,7 @@ const setDraftStateBlocks = (state, draftState, pageBlocks) => {
       })
   )
   const contentState = ContentState.createFromBlockArray(_blockArray)
-  return EditorState.push(draftState, contentState, 'insert-characters')
+  return EditorState.push(editableState, contentState, 'insert-characters')
 }
 
 const DraftContentEditable = ({
@@ -23,7 +23,7 @@ const DraftContentEditable = ({
   onEditorStateChange,
 }) => {
   const [editorState] = useEditorContext()
-  const { activeBlockId, draftState, blocks, page } = editorState
+  const { activeBlockId, editableState, blocks, page } = editorState
 
   // checks editor state for active block changed
   const checkSelectedBlockChanged = _nextDraftState => {
@@ -65,8 +65,8 @@ const DraftContentEditable = ({
     editable: true,
   })
 
-  const _draftState =
-    draftState ||
+  const _editableState =
+    editableState ||
     setDraftStateBlocks(
       editorState,
       EditorState.createEmpty(),
@@ -75,7 +75,7 @@ const DraftContentEditable = ({
 
   return (
     <Editor
-      editorState={_draftState}
+      editorState={_editableState}
       onChange={onChange}
       blockRendererFn={blockRendererFn}
     />
