@@ -1,5 +1,4 @@
 import React from 'react'
-import { EditorBlock } from 'draft-js'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { Text, View } from '@databyss-org/ui/primitives'
 
@@ -18,7 +17,7 @@ const styleSelector = type => {
   }
 }
 
-const DraftBlock = ({ block, ...others }) => (
+const EditorBlock = ({ type, children }) => (
   <Grid mb="medium" flexWrap="nowrap" columnGap="small" alignItems="baseline">
     <View
       contentEditable="false"
@@ -29,15 +28,13 @@ const DraftBlock = ({ block, ...others }) => (
     </View>
     <View flexShrink={1}>
       <Text
-        variant={styleSelector(block.getType()).style}
-        color={styleSelector(block.getType()).color}
+        variant={styleSelector(type).style}
+        color={styleSelector(type).color}
       >
-        <EditorBlock block={block} {...others}>
-          {block.getText()}
-        </EditorBlock>
+        {children}
       </Text>
     </View>
   </Grid>
 )
 
-export default DraftBlock
+export default EditorBlock

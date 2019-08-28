@@ -1,6 +1,12 @@
 import React from 'react'
-import { Editor, EditorState, ContentState, ContentBlock } from 'draft-js'
-import DraftBlock from './DraftBlock'
+import {
+  Editor,
+  EditorBlock as DraftBlock,
+  EditorState,
+  ContentState,
+  ContentBlock,
+} from 'draft-js'
+import EditorBlock from './EditorBlock'
 import { getRawHtmlForBlock } from './state/reducer'
 import { useEditorContext } from './EditorProvider'
 
@@ -61,7 +67,13 @@ const DraftContentEditable = ({
   }
 
   const blockRendererFn = () => ({
-    component: DraftBlock,
+    component: ({ block, ...others }) => (
+      <EditorBlock type={block.getType()}>
+        <DraftBlock block={block} {...others}>
+          {block.getText()}
+        </DraftBlock>
+      </EditorBlock>
+    ),
     editable: true,
   })
 

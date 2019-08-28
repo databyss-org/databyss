@@ -1,26 +1,62 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import { Editor, EditorState } from 'draft-js'
+import { Editor } from 'slate-react'
+import { Value } from 'slate'
 import { View, Button } from '@databyss-org/ui/primitives'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import EditorProvider, {
   useEditorContext,
 } from '@databyss-org/ui/components/Editor/EditorProvider'
 import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/actions'
-import DraftContentEditable from '@databyss-org/ui/components/Editor/DraftContentEditable'
-import draftReducer from '@databyss-org/ui/components/Editor/state/draftReducer'
+import SlateContentEditable from '@databyss-org/ui/components/Editor/SlateContentEditable'
+import slateReducer from '@databyss-org/ui/components/Editor/state/slateReducer'
 import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
 import initialState from '@databyss-org/ui/components/Editor/state/__tests__/initialState'
 import { ViewportDecorator } from '../decorators'
 
-const DraftDemo = () => {
-  const [editableState, setDraftState] = useState(EditorState.createEmpty())
+const SlateDemo = () => {
+  const schema = {
+    document: {
+      nodes: [
+        {
+          match: [{ type: 'ENTRY' }],
+        },
+      ],
+    },
+    blocks: {
+      ENTRY: {
+        nodes: [
+          {
+            match: { object: 'text' },
+          },
+        ],
+      },
+    },
+  }
+  const initialValue = Value.fromJSON({
+    document: {
+      nodes: [
+        {
+          object: 'block',
+          type: 'ENTRY',
+          id: '23984723ijhrkjsdhf',
+          nodes: [
+            {
+              object: 'text',
+              text: 'A line of text in a paragraph.',
+            },
+          ],
+        },
+      ],
+    },
+  })
+  const [slateValue, setSlateValue] = useState(initialValue)
 
-  const onChange = _state => {
-    setDraftState(_state)
+  const onChange = ({ value }) => {
+    setSlateValue(value)
   }
 
-  return <Editor editorState={editableState} onChange={onChange} />
+  return <Editor value={slateValue} onChange={onChange} schema={schema} />
 }
 
 const ToolbarDemo = () => {
@@ -56,17 +92,17 @@ const Box = ({ children }) => (
 )
 
 const ProviderDecorator = storyFn => (
-  <EditorProvider initialState={initialState} editableReducer={draftReducer}>
+  <EditorProvider initialState={initialState} editableReducer={slateReducer}>
     {storyFn()}
   </EditorProvider>
 )
 
-storiesOf('Editor//Draft Implementation', module)
+storiesOf('Editor//Slate Implementation', module)
   .addDecorator(ProviderDecorator)
   .addDecorator(ViewportDecorator)
-  .add('Draft', () => (
+  .add('Slate', () => (
     <Box>
-      <DraftDemo />
+      <SlateDemo />
     </Box>
   ))
   .add('EditorPage', () => (
@@ -74,7 +110,7 @@ storiesOf('Editor//Draft Implementation', module)
       <ToolbarDemo />
       <Box>
         <EditorPage>
-          <DraftContentEditable />
+          <SlateContentEditable />
         </EditorPage>
       </Box>
     </View>
