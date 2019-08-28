@@ -32,7 +32,7 @@ const landingPropsLong = {
     </Link>
   ),
 }
-storiesOf('Motif Landing', module)
+storiesOf('Modules//Motif Landing', module)
   .addDecorator(ViewportDecorator)
   .add('Show All Entries', () => (
     <Landing
