@@ -20,23 +20,23 @@ const setDraftStateBlocks = (state, editableState, pageBlocks) => {
 const DraftContentEditable = ({
   onActiveBlockIdChange,
   onActiveBlockContentChange,
-  onEditorStateChange,
+  onEditableStateChange,
 }) => {
   const [editorState] = useEditorContext()
   const { activeBlockId, editableState, blocks, page } = editorState
 
   // checks editor state for active block changed
-  const checkSelectedBlockChanged = _nextDraftState => {
-    const _nextActiveBlockId = _nextDraftState.getSelection().getFocusKey()
+  const checkSelectedBlockChanged = _nextEditableState => {
+    const _nextActiveBlockId = _nextEditableState.getSelection().getFocusKey()
     if (_nextActiveBlockId !== activeBlockId) {
-      onActiveBlockIdChange(_nextActiveBlockId, _nextDraftState)
+      onActiveBlockIdChange(_nextActiveBlockId, _nextEditableState)
       return true
     }
     return false
   }
 
-  const checkActiveBlockContentChanged = _nextDraftState => {
-    const _nextText = _nextDraftState
+  const checkActiveBlockContentChanged = _nextEditableState => {
+    const _nextText = _nextEditableState
       .getCurrentContent()
       .getBlockForKey(activeBlockId)
       .getText()
@@ -45,18 +45,18 @@ const DraftContentEditable = ({
       blocks[editorState.activeBlockId]
     )
     if (_nextText !== _prevText) {
-      onActiveBlockContentChange(_nextText, _nextDraftState)
+      onActiveBlockContentChange(_nextText, _nextEditableState)
       return true
     }
     return false
   }
 
-  const onChange = _state => {
+  const onChange = _editableState => {
     if (
-      !checkSelectedBlockChanged(_state) &&
-      !checkActiveBlockContentChanged(_state)
+      !checkSelectedBlockChanged(_editableState) &&
+      !checkActiveBlockContentChanged(_editableState)
     ) {
-      onEditorStateChange(_state)
+      onEditableStateChange(_editableState)
     }
   }
 

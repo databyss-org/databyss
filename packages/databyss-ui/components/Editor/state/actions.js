@@ -1,7 +1,7 @@
 import {
   SET_ACTIVE_BLOCK_ID,
   SET_ACTIVE_BLOCK_CONTENT,
-  SET_DRAFT_STATE,
+  SET_EDITABLE_STATE,
   SET_ACTIVE_BLOCK_TYPE,
 } from './constants'
 
@@ -25,9 +25,9 @@ export function setActiveBlockContent(html, editableState) {
   }
 }
 
-export function setDraftState(editableState) {
+export function setEditableState(editableState) {
   return {
-    type: SET_DRAFT_STATE,
+    type: SET_EDITABLE_STATE,
     payload: {
       editableState,
     },

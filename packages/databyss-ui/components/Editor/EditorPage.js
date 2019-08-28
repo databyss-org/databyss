@@ -4,7 +4,7 @@ import { useEditorContext } from './EditorProvider'
 import {
   setActiveBlockId,
   setActiveBlockContent,
-  setDraftState,
+  setEditableState,
   setActiveBlockType,
 } from './state/actions'
 
@@ -22,14 +22,14 @@ const EditorPage = ({ children }) => {
       dispatchEditor(setActiveBlockContent(rawHtml, editableState))
     }
   }
-  const onEditorStateChange = editableState =>
-    dispatchEditor(setDraftState(editableState))
+  const onEditableStateChange = editableState =>
+    dispatchEditor(setEditableState(editableState))
 
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
     onActiveBlockIdChange,
     onActiveBlockContentChange,
-    onEditorStateChange,
+    onEditableStateChange,
   })
 }
 
