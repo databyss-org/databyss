@@ -1,4 +1,5 @@
 const express = require('express')
+const ApiError = require('./ApiError')
 
 const router = express.Router()
 
@@ -34,15 +35,15 @@ router.post('/', auth, async (req, res) => {
     let author = await Author.findOne({ _id })
     if (author) {
       if (req.user.id.toString() !== author.user.toString()) {
-        return res.status(401).json({ msg: 'This post is private' })
+        throw new ApiError('This post is private', 401)
+
+        // return res.status(401).json({ msg: 'This post is private' })
       }
 
       authFields._id = _id
       author = await Author.findOneAndUpdate({ _id }, { $set: authFields })
-
       return res.json(author)
     }
-
     author = new Author({
       firstName,
       lastName,
@@ -54,6 +55,9 @@ router.post('/', auth, async (req, res) => {
     const post = await author.save()
     return res.json(post)
   } catch (err) {
+    if (err instanceof ApiError) {
+      return res.status(err.status).json({ message: err.message })
+    }
     console.error(err.message)
     return res.status(500).send('Server error')
   }
@@ -79,7 +83,9 @@ router.get('/:id', auth, async (req, res) => {
       .populate('sources', 'resource')
 
     if (!author) {
-      return res.status(400).json({ msg: 'There is no author for this id' })
+      throw new ApiError('There is no author for this id', 400)
+
+      // return res.status(400).json({ msg: 'There is no author for this id' })
     }
 
     if (!author.default) {
@@ -90,6 +96,9 @@ router.get('/:id', auth, async (req, res) => {
 
     return res.json(author)
   } catch (err) {
+    if (err instanceof ApiError) {
+      return res.status(err.status).json({ message: err.message })
+    }
     console.error(err.message)
     return res.status(500).send('Server Error')
   }
@@ -106,11 +115,15 @@ router.get('/', auth, async (req, res) => {
 
     // const author = await Author.find({ user: req.user.id })
     if (!author) {
-      return res.status(400).json({ msg: 'There are no authors' })
+      throw new ApiError('There are no authors', 400)
+      //  return res.status(400).json({ msg: 'There are no authors' })
     }
 
     return res.json(author)
   } catch (err) {
+    if (err instanceof ApiError) {
+      return res.status(err.status).json({ message: err.message })
+    }
     console.error(err.message)
     return res.status(500).send('Server Error')
   }

@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const Entry = require('../../models/Entry')
+const ApiError = require('./ApiError')
 const Author = require('../../models/Author')
 const Source = require('../../models/Source')
 const auth = require('../../middleware/auth')
@@ -26,10 +27,7 @@ router.post('/', auth, async (req, res) => {
   try {
     /*
       INSERT ERROR HANDLER HERE
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() })
-    }
+    
 */
     let {
       source,
@@ -138,7 +136,9 @@ router.post('/', auth, async (req, res) => {
     const entryExists = await Entry.findOne({ _id })
     if (entryExists) {
       if (req.user.id.toString() !== entryExists.user.toString()) {
-        return res.status(401).json({ msg: 'This post is private' })
+        throw new ApiError('This post is private', 401)
+
+        //  return res.status(401).json({ msg: 'This post is private' })
       }
 
       // update entry
@@ -181,6 +181,9 @@ router.post('/', auth, async (req, res) => {
     }
     return res.json(post)
   } catch (err) {
+    if (err instanceof ApiError) {
+      return res.status(err.status).json({ message: err.message })
+    }
     console.error(err.message)
     return res.status(500).send('Server error')
   }
@@ -206,17 +209,24 @@ router.get('/:id', auth, async (req, res) => {
       .populate('author', 'firstName lastName')
 
     if (!entry) {
-      return res.status(400).json({ msg: 'There is no entry for this id' })
+      throw new ApiError('There is no entry for this id', 400)
+
+      // return res.status(400).json({ msg: 'There is no entry for this id' })
     }
 
     if (!entry.default) {
       if (req.user.id.toString() !== entry.user.toString()) {
-        return res.status(401).json({ msg: 'This post is private' })
+        throw new ApiError('This post is private', 401)
+
+        //  return res.status(401).json({ msg: 'This post is private' })
       }
     }
 
     return res.json(entry)
   } catch (err) {
+    if (err instanceof ApiError) {
+      return res.status(err.status).json({ message: err.message })
+    }
     console.error(err.message)
     return res.status(500).send('Server Error')
   }
@@ -234,7 +244,9 @@ router.get('/', auth, async (req, res) => {
 
     // const entry = await Entry.find({ user: req.user.id })
     if (!entry) {
-      return res.status(400).json({ msg: 'There are no entries' })
+      throw new ApiError('There are no entries', 400)
+
+      //   return res.status(400).json({ msg: 'There are no entries' })
     }
 
     // to migrate run command in order, one at a time
@@ -246,6 +258,9 @@ router.get('/', auth, async (req, res) => {
 
     return res.json(entry)
   } catch (err) {
+    if (err instanceof ApiError) {
+      return res.status(err.status).json({ message: err.message })
+    }
     console.error(err.message)
     return res.status(500).send('Server Error')
   }

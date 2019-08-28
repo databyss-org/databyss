@@ -5,6 +5,7 @@ const Source = require('../../models/Source')
 const Author = require('../../models/Author')
 const auth = require('../../middleware/auth')
 const helpers = require('./helpers/entriesHelper')
+const ApiError = require('./ApiError')
 
 const router = express.Router()
 
@@ -76,7 +77,8 @@ router.post('/', auth, async (req, res) => {
     // if source exists update it and exit
     if (source) {
       if (req.user.id.toString() !== source.user.toString()) {
-        return res.status(401).json({ msg: 'This post is private' })
+        throw new ApiError('This post is private', 401)
+        // return res.status(401).json({ msg: 'This post is private' })
       }
       // if new author has been added
       if (_.isArray(source.authors)) {
@@ -138,6 +140,9 @@ router.post('/', auth, async (req, res) => {
     }
     return res.json(post)
   } catch (err) {
+    if (err instanceof ApiError) {
+      return res.status(err.status).json({ message: err.message })
+    }
     console.error(err.message)
     return res.status(500).send('Server error')
   }
@@ -164,7 +169,9 @@ router.get('/:id', auth, async (req, res) => {
       .populate('entries', 'entry')
 
     if (!sources) {
-      return res.status(400).json({ msg: 'There is no source for this id' })
+      throw new ApiError('There is no source for this id', 400)
+
+      // return res.status(400).json({ msg: 'There is no source for this id' })
     }
     if (!sources.default) {
       if (req.user.id.toString() !== sources.user.toString()) {
@@ -174,6 +181,9 @@ router.get('/:id', auth, async (req, res) => {
 
     return res.json(sources)
   } catch (err) {
+    if (err instanceof ApiError) {
+      return res.status(err.status).json({ message: err.message })
+    }
     console.error(err.message)
     return res.status(500).send('Server error')
   }
@@ -191,7 +201,9 @@ router.get('/', auth, async (req, res) => {
       .populate('entries', 'entry')
       .limit(10)
     if (!source) {
-      return res.status(400).json({ msg: 'There are no sources' })
+      throw new ApiError('There are no sources', 400)
+
+      //      return res.status(400).json({ msg: 'There are no sources' })
     }
 
     // appendSourceToAuthorList(source)
@@ -199,6 +211,9 @@ router.get('/', auth, async (req, res) => {
 
     return res.json(source)
   } catch (err) {
+    if (err instanceof ApiError) {
+      return res.status(err.status).json({ message: err.message })
+    }
     console.error(err.message)
     return res.status(500).send('Server Error')
   }
