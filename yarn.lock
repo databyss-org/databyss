@@ -9530,7 +9530,7 @@ jest-runner-eslint@^0.7.1:
     create-jest-runner "^0.5.3"
     eslint "^5.6.0"
 
-jest-runner@^24.8.0, jest-runner@^24.9.0:
+jest-runner@^24.9.0:
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/jest-runner/-/jest-runner-24.9.0.tgz#574fafdbd54455c2b34b4bdf4365a23857fcdf42"
   integrity sha512-KksJQyI3/0mhcfspnxxEOBueGrd5E4vV7ADQLT9ESaCzz02WnbdbKWIf5Mkaucoaj7obQckYPVX6JJhgUcoWWg==
@@ -9583,13 +9583,6 @@ jest-runtime@^24.9.0:
     slash "^2.0.0"
     strip-bom "^3.0.0"
     yargs "^13.3.0"
-
-jest-serial-runner@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/jest-serial-runner/-/jest-serial-runner-1.1.0.tgz#867fcd3ce0284afdf742a7306a9cbfd998631aaf"
-  integrity sha512-QSCMVZMYPAB8ALys43sxgVt4R6slizz7wj2rbCQPvczMh/AOImKeRil6T0dqaXQUTT9UXYzq00zb1bdK5uGEVQ==
-  dependencies:
-    jest-runner "^24.8.0"
 
 jest-serializer@^24.4.0, jest-serializer@^24.9.0:
   version "24.9.0"
