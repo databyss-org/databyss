@@ -2369,7 +2369,7 @@ exports[`Storyshots Editor//Draft Implementation DocumentView 1`] = `
           className="DraftEditor-editorContainer"
         >
           <div
-            aria-describedby="placeholder-19mos"
+            aria-describedby="placeholder-2dvki"
             aria-expanded={null}
             className="notranslate public-DraftEditor-content"
             contentEditable={true}
@@ -2413,7 +2413,7 @@ exports[`Storyshots Editor//Draft Implementation DocumentView 1`] = `
                 className=""
                 contentEditable={true}
                 data-block={true}
-                data-editor="19mos"
+                data-editor="2dvki"
                 data-offset-key="5d64423aae2da21680dc208b-0-0"
                 suppressContentEditableWarning={true}
               >
@@ -2460,7 +2460,7 @@ exports[`Storyshots Editor//Draft Implementation DocumentView 1`] = `
                 className=""
                 contentEditable={true}
                 data-block={true}
-                data-editor="19mos"
+                data-editor="2dvki"
                 data-offset-key="5d64424bcfa313f70483c1b0-0-0"
                 suppressContentEditableWarning={true}
               >
@@ -2526,7 +2526,7 @@ exports[`Storyshots Editor//Draft Implementation Draft 1`] = `
         className="DraftEditor-editorContainer"
       >
         <div
-          aria-describedby="placeholder-d170d"
+          aria-describedby="placeholder-a5vjf"
           aria-expanded={null}
           className="notranslate public-DraftEditor-content"
           contentEditable={true}
@@ -2569,15 +2569,15 @@ exports[`Storyshots Editor//Draft Implementation Draft 1`] = `
             <div
               className=""
               data-block={true}
-              data-editor="d170d"
-              data-offset-key="csv3u-0-0"
+              data-editor="a5vjf"
+              data-offset-key="7v4h4-0-0"
             >
               <div
                 className="public-DraftStyleDefault-block public-DraftStyleDefault-ltr"
-                data-offset-key="csv3u-0-0"
+                data-offset-key="7v4h4-0-0"
               >
                 <span
-                  data-offset-key="csv3u-0-0"
+                  data-offset-key="7v4h4-0-0"
                   style={Object {}}
                 >
                   <br
