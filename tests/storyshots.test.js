@@ -11,4 +11,4 @@ addDecorator(story => (
   <JssProvider generateClassName={generateClassName}>{story()}</JssProvider>
 ))
 
-initStoryshots({})
+initStoryshots({ storyKindRegex: /^Modules/ })
