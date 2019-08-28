@@ -13,7 +13,10 @@
   },
   "main": "index.js",
   "peerDependencies": {
+<<<<<<< HEAD
+=======
 
+>>>>>>> next
     "@databyss-org/services": "1.1.13",
     "@databyss-org/ui": "1.1.13",
     "react": "16.8.6",

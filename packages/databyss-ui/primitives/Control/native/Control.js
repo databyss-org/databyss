@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { keyframes } from '@emotion/core'
-import { color, layout, flexbox, compose, border } from 'styled-system'
+import { View } from '../../'
 import { isMobileOrMobileOs } from '../../../lib/mediaQuery'
-import styled from '../../styled'
 import theme from '../../../theming/theme'
 
 const decay = keyframes({
@@ -50,15 +49,7 @@ const animatingCss = {
   },
 }
 
-const Styled = styled(
-  'div',
-  compose(
-    color,
-    flexbox,
-    layout,
-    border
-  )
-)
+const Styled = View
 
 export const ControlNoFeedback = ({ children, ...others }) => (
   <Styled {...others}>{children}</Styled>

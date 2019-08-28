@@ -9,8 +9,8 @@ const alea = new Alea('views')
 const ipsum = loremIpsum({ units: 'sentences', count: 4, random: alea })
 
 const CaptionedView = ({ caption, children, ...others }) => (
-  <View height={180} width={240} {...others}>
-    {children}
+  <View width={240} {...others}>
+    {React.cloneElement(children, { height: 180 })}
     <Text variant="uiTextNormalSemibold">{caption}</Text>
   </View>
 )
