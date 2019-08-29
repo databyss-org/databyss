@@ -1,5 +1,5 @@
 export default {
-  draftState: null,
+  editableState: null,
   activeBlockId: null,
   sources: {
     '5d64419f1cbc815583c35058': {

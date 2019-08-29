@@ -1,12 +1,12 @@
 import { Modifier, EditorState } from 'draft-js'
 import { SET_ACTIVE_BLOCK_TYPE, SET_ACTIVE_BLOCK_CONTENT } from './constants'
 
-const setActiveBlockType = (draftState, type) => {
-  let _nextContentState = draftState.getCurrentContent()
-  const _selection = draftState.getSelection()
+const setActiveBlockType = (editableState, type) => {
+  let _nextContentState = editableState.getCurrentContent()
+  const _selection = editableState.getSelection()
 
   _nextContentState = Modifier.setBlockType(
-    draftState.getCurrentContent(),
+    editableState.getCurrentContent(),
     _selection,
     type
   )
@@ -14,22 +14,22 @@ const setActiveBlockType = (draftState, type) => {
   return _nextContentState
 }
 
-export default (draftState, action) => {
+export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
       if (!action.payload.html.length) {
-        const _nextContentState = setActiveBlockType(draftState, 'ENTRY')
-        return EditorState.push(draftState, _nextContentState)
+        const _nextContentState = setActiveBlockType(editableState, 'ENTRY')
+        return EditorState.push(editableState, _nextContentState)
       }
-      return draftState
+      return editableState
     }
     case SET_ACTIVE_BLOCK_TYPE: {
       let _nextContentState = setActiveBlockType(
-        draftState,
+        editableState,
         action.payload.type
       )
       if (action.payload.fromSymbolInput) {
-        const _selection = draftState.getSelection()
+        const _selection = editableState.getSelection()
         const _rangeToRemove = _selection.merge({
           anchorOffset: 0,
           focusOffset: 1,
@@ -40,9 +40,9 @@ export default (draftState, action) => {
           'forward'
         )
       }
-      return EditorState.push(draftState, _nextContentState)
+      return EditorState.push(editableState, _nextContentState)
     }
     default:
-      return draftState
+      return editableState
   }
 }

@@ -3,31 +3,24 @@ import { storiesOf } from '@storybook/react'
 import { Editor, EditorState } from 'draft-js'
 import { View, Button } from '@databyss-org/ui/primitives'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
-import DraftEditorProvider, {
+import EditorProvider, {
   useEditorContext,
-} from '@databyss-org/ui/components/Editor/DraftEditorProvider'
+} from '@databyss-org/ui/components/Editor/EditorProvider'
 import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/actions'
-import Page from '@databyss-org/ui/components/Editor/Page'
+import DraftContentEditable from '@databyss-org/ui/components/Editor/DraftContentEditable'
+import draftReducer from '@databyss-org/ui/components/Editor/state/draftReducer'
+import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
 import initialState from '@databyss-org/ui/components/Editor/state/__tests__/initialState'
 import { ViewportDecorator } from '../decorators'
 
 const DraftDemo = () => {
-  const [draftState, setDraftState] = useState(EditorState.createEmpty())
+  const [editableState, setDraftState] = useState(EditorState.createEmpty())
 
   const onChange = _state => {
-    // const _selection = _state.getSelection()
-    // console.log('onChange', {
-    //   type: _state.getLastChangeType(),
-    //   selection: {
-    //     focusKey: _selection.getFocusKey(),
-    //     focusOfset: _selection.getFocusOffset(),
-    //   },
-    // })
-    // console.log('onChange', _state)
     setDraftState(_state)
   }
 
-  return <Editor editorState={draftState} onChange={onChange} />
+  return <Editor editorState={editableState} onChange={onChange} />
 }
 
 const ToolbarDemo = () => {
@@ -37,7 +30,7 @@ const ToolbarDemo = () => {
       <View>
         <Button
           onPress={() =>
-            dispatch(setActiveBlockType('SOURCE', state.draftState))
+            dispatch(setActiveBlockType('SOURCE', state.editableState))
           }
         >
           RESOURCE
@@ -46,7 +39,7 @@ const ToolbarDemo = () => {
       <View>
         <Button
           onPress={() =>
-            dispatch(setActiveBlockType('ENTRY', state.draftState))
+            dispatch(setActiveBlockType('ENTRY', state.editableState))
           }
         >
           ENTRY
@@ -63,9 +56,9 @@ const Box = ({ children }) => (
 )
 
 const ProviderDecorator = storyFn => (
-  <DraftEditorProvider initialState={initialState}>
+  <EditorProvider initialState={initialState} editableReducer={draftReducer}>
     {storyFn()}
-  </DraftEditorProvider>
+  </EditorProvider>
 )
 
 storiesOf('Editor//Draft Implementation', module)
@@ -76,11 +69,13 @@ storiesOf('Editor//Draft Implementation', module)
       <DraftDemo />
     </Box>
   ))
-  .add('DocumentView', () => (
+  .add('EditorPage', () => (
     <View>
       <ToolbarDemo />
       <Box>
-        <Page />
+        <EditorPage>
+          <DraftContentEditable />
+        </EditorPage>
       </Box>
     </View>
   ))

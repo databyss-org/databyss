@@ -1,45 +1,45 @@
 import {
   SET_ACTIVE_BLOCK_ID,
   SET_ACTIVE_BLOCK_CONTENT,
-  SET_DRAFT_STATE,
+  SET_EDITABLE_STATE,
   SET_ACTIVE_BLOCK_TYPE,
 } from './constants'
 
-export function setActiveBlockId(id, draftState) {
+export function setActiveBlockId(id, editableState) {
   return {
     type: SET_ACTIVE_BLOCK_ID,
     payload: {
       id,
-      draftState,
+      editableState,
     },
   }
 }
 
-export function setActiveBlockContent(html, draftState) {
+export function setActiveBlockContent(html, editableState) {
   return {
     type: SET_ACTIVE_BLOCK_CONTENT,
     payload: {
       html,
-      draftState,
+      editableState,
     },
   }
 }
 
-export function setDraftState(draftState) {
+export function setEditableState(editableState) {
   return {
-    type: SET_DRAFT_STATE,
+    type: SET_EDITABLE_STATE,
     payload: {
-      draftState,
+      editableState,
     },
   }
 }
 
-export function setActiveBlockType(type, draftState, fromSymbolInput) {
+export function setActiveBlockType(type, editableState, fromSymbolInput) {
   return {
     type: SET_ACTIVE_BLOCK_TYPE,
     payload: {
       type,
-      draftState,
+      editableState,
       fromSymbolInput,
     },
   }

@@ -11,7 +11,7 @@ export const initialState = {
   activeBlockId: null,
   page: {},
   blocks: {},
-  draftState: null,
+  editableState: null,
 }
 
 export const getRawHtmlForBlock = (state, block) => {
