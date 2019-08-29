@@ -8,6 +8,10 @@ const EntrySchema = new mongoose.Schema({
     ref: 'users',
     required: true,
   },
+  account: {
+    type: Schema.Types.ObjectId,
+    ref: 'account',
+  },
   author: [
     {
       type: Schema.Types.ObjectId,

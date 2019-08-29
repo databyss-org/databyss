@@ -1,10 +1,12 @@
 const helpers = require('./_helpers')
+const constants = require('./_constants')
+
+const { POST_EXAMPLE } = constants
 
 const {
   noAuthPost,
   createUser,
   deleteUserPosts,
-  POST_EXAMPLE,
   getSourceNoAuthor,
   getEntryNoSource,
   createPage,

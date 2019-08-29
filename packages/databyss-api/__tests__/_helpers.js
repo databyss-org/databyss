@@ -8,6 +8,12 @@ exports.noAuthPost = resource =>
       resource,
     })
 
+exports.getUserInfo = token =>
+  request(app)
+    .get('/api/profile/me')
+    .set('x-auth-token', token)
+    .send()
+
 exports.noAuthEntry = entry =>
   request(app)
     .post('/api/entries')
@@ -181,41 +187,16 @@ exports.getPopulatedPage = (token, _id) =>
     .get(`/api/pages/populate/${_id}`)
     .set('x-auth-token', token)
 
-export const POST_EXAMPLE = {
-  sources: {
-    '5d64419f1cbc815583c35058': {
-      _id: '5d64419f1cbc815583c35058',
-      rawHtml: 'Staminov, Lev. Conscious and Embodiment',
-    },
-  },
-  entries: {
-    '5d6442046e84d304ddceb768': {
-      _id: '5d6442046e84d304ddceb768',
-      rawHtml: 'Mind as homunculus ins body',
-    },
-  },
-  blocks: {
-    '5d64423aae2da21680dc208b': {
-      type: 'SOURCE',
-      _id: '5d64423aae2da21680dc208b',
-      refId: '5d64419f1cbc815583c35058',
-    },
-    '5d64424bcfa313f70483c1b0': {
-      type: 'ENTRY',
-      _id: '5d64424bcfa313f70483c1b0',
-      refId: '5d6442046e84d304ddceb768',
-    },
-  },
-  page: {
-    _id: '5d6443bdd9ca9149d1a346c2',
-    name: 'pauls document',
-    blocks: [
-      {
-        _id: '5d64423aae2da21680dc208b',
-      },
-      {
-        _id: '5d64424bcfa313f70483c1b0',
-      },
-    ],
-  },
-}
+exports.newAccountWithUserId = token =>
+  request(app)
+    .post('/api/accounts')
+    .set('x-auth-token', token)
+    .send()
+
+exports.addUserToAccount = (token, _id, userId) =>
+  request(app)
+    .post(`/api/accounts/${_id}`)
+    .set('x-auth-token', token)
+    .send({
+      user: userId,
+    })

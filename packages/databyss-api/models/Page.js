@@ -8,6 +8,10 @@ const PageSchema = new Schema({
     ref: 'users',
     required: true,
   },
+  account: {
+    type: Schema.Types.ObjectId,
+    ref: 'account',
+  },
   name: {
     type: String,
   },

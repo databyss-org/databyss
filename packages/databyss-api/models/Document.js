@@ -11,6 +11,10 @@ const DocumentSchema = new Schema({
     type: String,
     required: true,
   },
+  account: {
+    type: Schema.Types.ObjectId,
+    ref: 'account',
+  },
   user: {
     type: String,
     required: true,

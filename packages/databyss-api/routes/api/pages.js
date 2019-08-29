@@ -4,6 +4,8 @@ const Source = require('../../models/Source')
 const Entry = require('../../models/Entry')
 const Block = require('../../models/Block')
 const auth = require('../../middleware/auth')
+const Account = require('../../models/Account')
+
 const ApiError = require('./ApiError')
 const {
   getBlockItemsFromId,
@@ -19,16 +21,31 @@ const router = express.Router()
 // @access   private
 router.post('/', auth, async (req, res) => {
   try {
-    /*
-      INSERT ERROR HANDLER HERE
-*/
-
     const { sources, entries, blocks, page } = req.body.data
-    // ADD SOURCES
+    const { name, _id } = page
 
+    const accountCheck = await Page.findOne({ _id })
+    let account
+
+    // checks if account exists
+    if (accountCheck) {
+      // if account exists check if user has access to account
+      account = await Account.findOne({ _id: accountCheck.account })
+      const users = account.users
+      if (users.indexOf(req.user.id) < 0) {
+        throw new ApiError('This page is private', 401)
+      }
+    } else {
+      // create account and initiate it with current user
+      const userId = req.user.id
+      account = new Account({ users: [userId] })
+      await account.save()
+      // create a page and get account id
+    }
+
+    // ADD SOURCES
     const _sources = Object.keys(sources)
 
-    // for in
     _sources.forEach(async s => {
       const source = sources[s].rawHtml
       const sourceId = sources[s]._id
@@ -37,25 +54,27 @@ router.post('/', auth, async (req, res) => {
         resource: source,
         _id: sourceId,
         user: req.user.id,
+        account: account._id,
       }
 
       // IF SOURCE EXISTS EDIT SOURCE
-      let sourceResponse = await Source.findOne({ sourceId })
+      let sourceResponse = await Source.findOne({ _id: sourceId })
+
       if (sourceResponse) {
-        if (req.user.id.toString() !== sourceResponse.user.toString()) {
+        if (account._id.toString() !== sourceResponse.account.toString()) {
           throw new ApiError('This source is private', 401)
           //  return res.status(401).json({ msg:  })
         }
 
         sourceResponse = await Source.findOneAndUpdate(
-          { sourceId },
+          { _id: sourceId },
           { $set: sourceFields }
         )
       } else {
         // ADD NEW SOURCE
         sourceResponse = new Source(sourceFields)
+        await sourceResponse.save()
       }
-      await sourceResponse.save()
     })
 
     // ADD ENTRIES
@@ -69,27 +88,27 @@ router.post('/', auth, async (req, res) => {
         entry,
         _id: entryId,
         user: req.user.id,
+        account: account._id,
       }
 
-      let entryResponse = await Entry.findOne({ entryId })
-
+      let entryResponse = await Entry.findOne({ _id: entryId })
       if (entryResponse) {
         // IF ENTRY EXIST EDIT ENTRY
-        if (req.user.id.toString() !== entryResponse.user.toString()) {
+        if (account._id.toString() !== entryResponse.account.toString()) {
           throw new ApiError('This entry is private', 401)
 
           //   return res.status(401).json({ msg:  })
         }
 
         entryResponse = await Entry.findOneAndUpdate(
-          { entryId },
+          { _id: entryId },
           { $set: entryFields }
         )
       } else {
         // ADD NEW ENTRY
         entryResponse = new Entry(entryFields)
+        await entryResponse.save()
       }
-      await entryResponse.save()
     })
 
     // ADD BLOCK
@@ -97,7 +116,7 @@ router.post('/', auth, async (req, res) => {
     _blocks.forEach(async block => {
       const { _id, type, refId } = block
 
-      const blockFields = { type, _id, user: req.user.id }
+      const blockFields = { type, _id, user: req.user.id, account: account._id }
 
       if (type === 'SOURCE') {
         blockFields.sourceId = refId
@@ -111,10 +130,8 @@ router.post('/', auth, async (req, res) => {
 
       let blockResponse = await Block.findOne({ _id })
       if (blockResponse) {
-        if (req.user.id.toString() !== blockResponse.user.toString()) {
+        if (account._id.toString() !== blockResponse.account.toString()) {
           throw new ApiError('This block is private', 401)
-
-          //   return res.status(401).json({ msg: 'This post is private' })
         }
 
         blockResponse = await Block.findOneAndUpdate(
@@ -123,36 +140,33 @@ router.post('/', auth, async (req, res) => {
         )
       } else {
         blockResponse = new Block(blockFields)
+        await blockResponse.save()
       }
-      await blockResponse.save()
     })
 
-    const { name, _id } = page
     const pageBlocks = page.blocks
 
     let pageResponse = await Page.findOne({ _id })
     if (pageResponse) {
-      if (req.user.id.toString() !== pageResponse.user.toString()) {
+      if (account._id.toString() !== pageResponse.account.toString()) {
         throw new ApiError('This page is private', 401)
-
-        // return res.status(401).json({ msg: 'This post is private' })
       }
 
       pageResponse = await Page.findOneAndUpdate(
         { _id },
-        { $set: { name, blocks: pageBlocks } }
+        { $set: { name, blocks: pageBlocks, account: account._id } }
       )
     } else {
-      // const newId = new mongoose.mongo.ObjectId(!_.isEmpty(_id) && _id)
-
       pageResponse = new Page({
         _id,
         name,
         blocks: pageBlocks,
         user: req.user.id,
+        account: account._id,
       })
+      await pageResponse.save()
     }
-    const post = await pageResponse.save()
+    const post = pageResponse
     return res.json(post)
   } catch (err) {
     if (err instanceof ApiError) {
@@ -180,8 +194,13 @@ router.get('/:id', auth, async (req, res) => {
       return res.status(400).json({ msg: 'There is no page for this id' })
     }
 
-    if (req.user.id.toString() !== page.user.toString()) {
-      return res.status(401).json({ msg: 'This page is private' })
+    const account = await Account.findOne({ _id: page.account })
+
+    if (!account) {
+      throw new ApiError('account not found', 400)
+    }
+    if (account.users.indexOf(req.user.id) === -1) {
+      throw new ApiError('not authorized', 401)
     }
 
     return res.json(page)
@@ -208,10 +227,20 @@ router.get('/populate/:id', auth, async (req, res) => {
       return res.status(400).json({ msg: 'There is no page for this id' })
     }
 
+    // get account id and verify user is authorized
+    const account = await Account.findOne({ _id: pageResponse.account })
+
+    if (!account) {
+      throw new ApiError('account not found', 400)
+    }
+    if (account.users.indexOf(req.user.id) === -1) {
+      throw new ApiError('not authorized', 401)
+    }
+    /*
     if (req.user.id.toString() !== pageResponse.user.toString()) {
       return res.status(401).json({ msg: 'This page is private' })
     }
-
+*/
     const page = {
       _id: pageResponse._id,
       name: pageResponse.name,
