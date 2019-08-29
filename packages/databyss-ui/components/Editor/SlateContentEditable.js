@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { Editor } from 'slate-react'
 import { Value } from 'slate'
 import EditorBlock from './EditorBlock'
@@ -33,7 +33,7 @@ const SlateContentEditable = ({
 
   // checks editor state for active block changed
   const checkSelectedBlockChanged = _nextEditableState => {
-    const _nextActiveBlock = findActiveBlock(_nextEditableState)
+    const _nextActiveBlock = findActiveBlock(_nextEditableState.value)
     if (!_nextActiveBlock) {
       return false
     }
@@ -45,6 +45,7 @@ const SlateContentEditable = ({
     return false
   }
 
+  // checks editor state for active block content changed
   const checkActiveBlockContentChanged = _nextEditableState => {
     if (!editorState.activeBlockId || !activeBlockId) {
       return false
@@ -63,12 +64,11 @@ const SlateContentEditable = ({
   }
 
   const onChange = ({ value }) => {
-    const editor = editableRef.current
     if (
-      !checkSelectedBlockChanged({ value, editor }) &&
-      !checkActiveBlockContentChanged({ value, editor })
+      !checkSelectedBlockChanged({ value }) &&
+      !checkActiveBlockContentChanged({ value })
     ) {
-      onEditableStateChange({ value, editor })
+      onEditableStateChange({ value })
     }
   }
 
@@ -80,8 +80,17 @@ const SlateContentEditable = ({
     value: Value.fromJSON(
       toSlateJson(editorState, page.blocks.map(item => blocks[item._id]))
     ),
-    editor: editableRef.current,
   }
+
+  useEffect(
+    () =>
+      _editableState.editorCommands &&
+      _editableState.editorCommands(
+        editableRef.current,
+        _editableState.value,
+        () => undefined
+      )
+  )
 
   return (
     <Editor
