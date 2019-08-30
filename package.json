@@ -20,8 +20,10 @@
     "start:notes": "NPM_DEPLOY_TARGET=NOTES_APP yarn build && NPM_BUILD_TARGET=NOTES_APP node scripts/start.js",
     "start:login": "NPM_BUILD_TARGET=LOGIN_APP PUBLIC_URL=/login node scripts/start.js",
     "start:docs": "cd ./packages/databyss-documentation/website && yarn run start",
-    "start:seeded-server": "NODE_ENV=test babel-node packages/databyss-api/seed-test-server.js",
-    "start:server": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER NODE_ENV=test nodemon packages/databyss-api/server.js --exec babel-node --watch packages/databyss-api",
+    "seed:testdb": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER NODE_ENV=test babel-node --config-file ./packages/databyss-api/babel.config.js packages/databyss-api/scripts/seed-test-server.js",
+    "start:server:test": "NODE_ENV=test yarn start:server",
+    "start:server:dev": "NODE_ENV=development yarn start:server",
+    "start:server": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER nodemon packages/databyss-api/server.js --exec \"babel-node --config-file ./packages/databyss-api/babel.config.js -- \" --watch packages/databyss-api",
     "metro:stories": "react-native start --reset-cache --config packages/databyss-stories-native/metro.config.js",
     "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
     "build:ui": "NODE_ENV=production BABEL_ENV=production webpack --config packages/databyss-ui/webpack.config.js --mode=production",
@@ -92,8 +94,8 @@
           "js",
           "json"
         ],
-        "globalSetup": "<rootDir>/packages/databyss-api/config/globalSetup.js",
-        "globalTeardown": "<rootDir>/packages/databyss-api/config/globalTeardown.js"
+        "globalSetup": "<rootDir>/packages/databyss-api/__tests__/globalSetup.js",
+        "globalTeardown": "<rootDir>/packages/databyss-api/__tests__/globalTeardown.js"
       },
       {
         "displayName": "checkversion",

@@ -1,6 +1,8 @@
 const { setup: setupDevServer } = require('jest-dev-server')
+const { dropTestDB } = require('../db')
 
 module.exports = async function globalSetup() {
+  await dropTestDB()
   await setupDevServer({
     command: `${
       process.env.BABEL_ENV ? '' : 'cd ./../../ && '
