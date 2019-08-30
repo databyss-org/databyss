@@ -9,6 +9,9 @@ export const bugsnagClient = bugsnag({
   releaseStage: process.env.API_BUGSNAG_RELEASE_STAGE,
 })
 
-bugsnagClient.use(bugsnagExpress)
+const init = async () => {
+  bugsnagClient.use(bugsnagExpress)
+  return bugsnagClient.getPlugin('express')
+}
 
-export default bugsnagClient.getPlugin('express')
+export default init

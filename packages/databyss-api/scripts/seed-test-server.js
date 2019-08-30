@@ -1,8 +1,9 @@
-require('../../../config/env')
-const helpers = require('../__tests__/_helpers')
-const { dropTestDB } = require('../src/lib/db')
+import '../../../config/env'
+import { POST_EXAMPLE } from '../__tests__/_constants'
+import helpers from '../__tests__/_helpers'
+import { dropTestDB } from '../src/lib/db'
 
-const { createUser, createPage, POST_EXAMPLE } = helpers
+const { createUser, createPage, newAccountWithUserId } = helpers
 
 // USER
 const EMAIL = 'email4@company.com'
@@ -19,7 +20,9 @@ async function seedTestDatabase() {
   console.log('seeding...')
   try {
     const token = await createUser(EMAIL, PASSWORD)
-    await createPage(token, POST_EXAMPLE)
+    const accountResponse = await newAccountWithUserId(token)
+    const account = JSON.parse(accountResponse.text)
+    await createPage(token, account._id, POST_EXAMPLE)
   } catch (err) {
     console.error('error while seeding', err)
   }

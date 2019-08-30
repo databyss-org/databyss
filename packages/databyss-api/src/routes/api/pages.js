@@ -30,96 +30,104 @@ router.post(
       // ADD SOURCES
       const _sources = Object.keys(sources)
 
-      _sources.forEach(async s => {
-        const source = sources[s].rawHtml
-        const sourceId = sources[s]._id
+      await Promise.all(
+        _sources.map(async s => {
+          const source = sources[s].rawHtml
+          const sourceId = sources[s]._id
 
-        // SOURCE WITH ID
-        const sourceFields = {
-          resource: source,
-          _id: sourceId,
-          user: req.user.id,
-          account: req.account._id,
-        }
+          // SOURCE WITH ID
+          const sourceFields = {
+            resource: source,
+            _id: sourceId,
+            user: req.user.id,
+            account: req.account._id,
+          }
 
-        // IF SOURCE EXISTS EDIT SOURCE
-        let sourceResponse = await Source.findOne({ _id: sourceId })
+          // IF SOURCE EXISTS EDIT SOURCE
+          let sourceResponse = await Source.findOne({ _id: sourceId })
 
-        if (sourceResponse) {
-          sourceResponse = await Source.findOneAndUpdate(
-            { _id: sourceId },
-            { $set: sourceFields }
-          )
-        } else {
-          // ADD NEW SOURCE
-          sourceResponse = new Source(sourceFields)
-          await sourceResponse.save()
-        }
-      })
+          if (sourceResponse) {
+            sourceResponse = await Source.findOneAndUpdate(
+              { _id: sourceId },
+              { $set: sourceFields }
+            )
+          } else {
+            // ADD NEW SOURCE
+            sourceResponse = new Source(sourceFields)
+            await sourceResponse.save()
+          }
+        })
+      )
 
       // ADD ENTRIES
       const _entries = Object.keys(entries)
 
-      _entries.forEach(async e => {
-        const entry = entries[e].rawHtml
-        const entryId = entries[e]._id
-        // ENTRY WITH ID
-        const entryFields = {
-          entry,
-          _id: entryId,
-          user: req.user.id,
-          account: req.account._id,
-        }
+      await Promise.all(
+        _entries.map(async e => {
+          const entry = entries[e].rawHtml
+          const entryId = entries[e]._id
+          // ENTRY WITH ID
+          const entryFields = {
+            entry,
+            _id: entryId,
+            user: req.user.id,
+            account: req.account._id,
+          }
 
-        let entryResponse = await Entry.findOne({ _id: entryId })
-        if (entryResponse) {
-          entryResponse = await Entry.findOneAndUpdate(
-            { _id: entryId },
-            { $set: entryFields }
-          )
-        } else {
-          // ADD NEW ENTRY
-          entryResponse = new Entry(entryFields)
-          await entryResponse.save()
-        }
-      })
+          let entryResponse = await Entry.findOne({ _id: entryId })
+          if (entryResponse) {
+            entryResponse = await Entry.findOneAndUpdate(
+              { _id: entryId },
+              { $set: entryFields }
+            )
+          } else {
+            // ADD NEW ENTRY
+            entryResponse = new Entry(entryFields)
+            await entryResponse.save()
+          }
+        })
+      )
 
       // ADD BLOCK
       const _blocks = Object.keys(blocks).map(b => blocks[b])
-      _blocks.forEach(async block => {
-        const { _id, type, refId } = block
-        const blockFields = {
-          type,
-          _id,
-          user: req.user.id,
-          account: req.account._id,
-        }
-        if (type === 'SOURCE') {
-          blockFields.sourceId = refId
-        }
-        if (type === 'ENTRY') {
-          blockFields.entryId = refId
-        }
-        if (type === 'Author') {
-          blockFields.authorId = refId
-        }
-        let blockResponse = await Block.findOne({ _id })
-        // if block exists, edit block
-        if (blockResponse) {
-          if (req.account._id.toString() !== blockResponse.account.toString()) {
-            throw new ApiError('This block is private', 401)
+      await Promise.all(
+        _blocks.map(async block => {
+          const { _id, type, refId } = block
+          const blockFields = {
+            type,
+            _id,
+            user: req.user.id,
+            account: req.account._id,
           }
+          if (type === 'SOURCE') {
+            blockFields.sourceId = refId
+          }
+          if (type === 'ENTRY') {
+            blockFields.entryId = refId
+          }
+          if (type === 'Author') {
+            blockFields.authorId = refId
+          }
+          let blockResponse = await Block.findOne({ _id })
+          // if block exists, edit block
+          if (blockResponse) {
+            if (
+              req.account._id.toString() !== blockResponse.account.toString()
+            ) {
+              throw new ApiError('This block is private', 401)
+            }
 
-          blockResponse = await Block.findOneAndUpdate(
-            { _id },
-            { $set: blockFields }
-          )
-        } else {
-          // create new block
-          blockResponse = new Block(blockFields)
-          await blockResponse.save()
-        }
-      })
+            blockResponse = await Block.findOneAndUpdate(
+              { _id },
+              { $set: blockFields }
+            )
+          } else {
+            // create new block
+            blockResponse = new Block(blockFields)
+            await blockResponse.save()
+          }
+        })
+      )
 
       const pageBlocks = page.blocks
 
