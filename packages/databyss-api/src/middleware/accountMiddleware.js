@@ -1,5 +1,5 @@
 // const ApiError = require('./../routes/api/ApiError')
-const Account = require('./../models/Account')
+const Account = require('../models/Account')
 
 function checkRequiredRoles(requiredRoles, userRoles) {
   return requiredRoles.filter(value => userRoles.includes(value)).length > 0

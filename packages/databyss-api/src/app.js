@@ -32,15 +32,7 @@ module.exports = async () => {
   app.use('/api/auth', require('./routes/api/auth'))
   app.use('/api/profile', require('./routes/api/profile'))
   app.use('/api/pages', require('./routes/api/pages'))
-  app.use('/api/blocks', require('./routes/api/blocks'))
   app.use('/api/accounts', require('./routes/api/accounts'))
-
-  app.use('/api/authors', require('./routes/api/authors'))
-  app.use('/api/entries', require('./routes/api/entries'))
-  app.use('/api/sources', require('./routes/api/sources'))
-  app.use('/api/motifs', require('./routes/api/motifs'))
-
-  app.use('/api/documents', require('./routes/api/documents'))
 
   app.use('/api/error', require('./routes/api/error'))
 
@@ -60,7 +52,7 @@ module.exports = async () => {
   }
 
   app.get('/', (req, res) => {
-    res.status(200).send('Hello Worlds!')
+    res.status(200).send('Hello World!')
   })
 
   return app
