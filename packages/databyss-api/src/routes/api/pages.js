@@ -6,7 +6,7 @@ const Block = require('../../models/Block')
 const auth = require('../../middleware/auth')
 const accountMiddleware = require('../../middleware/accountMiddleware')
 const pageMiddleware = require('../../middleware/pageMiddleware')
-const ApiError = require('./ApiError')
+const ApiError = require('../../lib/ApiError')
 const {
   getBlockItemsFromId,
   dictionaryFromList,

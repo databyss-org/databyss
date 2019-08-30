@@ -1,28 +1,28 @@
 const request = require('supertest')
-const app = require('./../app')
+const app = require('../src/app')
 
-exports.noAuthPost = resource =>
-  request(app)
+exports.noAuthPost = async resource =>
+  request(await app())
     .post('/api/sources')
     .send({
       resource,
     })
 
-exports.getUserInfo = token =>
-  request(app)
+exports.getUserInfo = async token =>
+  request(await app())
     .get('/api/profile/me')
     .set('x-auth-token', token)
     .send()
 
-exports.noAuthEntry = entry =>
-  request(app)
+exports.noAuthEntry = async entry =>
+  request(await app())
     .post('/api/entries')
     .send({
       entry,
     })
 
-exports.noAuthAuthor = (firstName, lastName) =>
-  request(app)
+exports.noAuthAuthor = async (firstName, lastName) =>
+  request(await app())
     .post('/api/authors')
     .send({
       firstName,
@@ -30,7 +30,7 @@ exports.noAuthAuthor = (firstName, lastName) =>
     })
 
 exports.createUser = async (email, password) => {
-  let response = await request(app)
+  let response = await request(await app())
     .post('/api/users')
     .send({
       name: 'joe',
@@ -39,7 +39,7 @@ exports.createUser = async (email, password) => {
     })
 
   if (response.status === 400) {
-    response = await request(app)
+    response = await request(await app())
       .post('/api/auth')
       .send({
         password,
@@ -49,16 +49,16 @@ exports.createUser = async (email, password) => {
   return JSON.parse(response.text).token
 }
 
-exports.createSourceNoAuthor = (token, resource) =>
-  request(app)
+exports.createSourceNoAuthor = async (token, resource) =>
+  request(await app())
     .post('/api/sources')
     .set('x-auth-token', token)
     .send({
       resource,
     })
 
-exports.createAuthor = (token, firstName, lastName) =>
-  request(app)
+exports.createAuthor = async (token, firstName, lastName) =>
+  request(await app())
     .post('/api/authors')
     .set('x-auth-token', token)
     .send({
@@ -66,26 +66,26 @@ exports.createAuthor = (token, firstName, lastName) =>
       lastName,
     })
 
-exports.getAuthor = (token, authorId) =>
-  request(app)
+exports.getAuthor = async (token, authorId) =>
+  request(await app())
     .get(`/api/authors/${authorId}`)
     .set('x-auth-token', token)
 
-exports.createEntryNoSource = (token, entry) =>
-  request(app)
+exports.createEntryNoSource = async (token, entry) =>
+  request(await app())
     .post('/api/entries')
     .set('x-auth-token', token)
     .send({
       entry,
     })
 
-exports.getEntryNoSource = (token, entryId) =>
-  request(app)
+exports.getEntryNoSource = async (token, entryId) =>
+  request(await app())
     .get(`/api/entries/${entryId}`)
     .set('x-auth-token', token)
 
-exports.createEntryNewSource = (token, entry, resource) =>
-  request(app)
+exports.createEntryNewSource = async (token, entry, resource) =>
+  request(await app())
     .post('/api/entries')
     .set('x-auth-token', token)
     .send({
@@ -93,18 +93,18 @@ exports.createEntryNewSource = (token, entry, resource) =>
       resource,
     })
 
-exports.getEntryNewSource = (token, entryId) =>
-  request(app)
+exports.getEntryNewSource = async (token, entryId) =>
+  request(await app())
     .get(`/api/entries/${entryId}`)
     .set('x-auth-token', token)
 
 exports.getSourceNoAuthor = async (token, sourceNoAuthorId) =>
-  request(app)
+  request(await app())
     .get(`/api/sources/${sourceNoAuthorId}`)
     .set('x-auth-token', token)
 
-exports.createSourceWithAuthor = (token, resource, authorLastName) =>
-  request(app)
+exports.createSourceWithAuthor = async (token, resource, authorLastName) =>
+  request(await app())
     .post('/api/sources')
     .set('x-auth-token', token)
     .send({
@@ -113,12 +113,12 @@ exports.createSourceWithAuthor = (token, resource, authorLastName) =>
     })
 
 exports.getSourceWithAuthor = async (token, sourceWithAuthorId) =>
-  request(app)
+  request(await app())
     .get(`/api/sources/${sourceWithAuthorId}`)
     .set('x-auth-token', token)
 
-exports.editedSourceWithAuthor = (token, resource, _id) =>
-  request(app)
+exports.editedSourceWithAuthor = async (token, resource, _id) =>
+  request(await app())
     .post(`/api/sources/`)
     .set('x-auth-token', token)
     .send({
@@ -126,18 +126,18 @@ exports.editedSourceWithAuthor = (token, resource, _id) =>
       _id,
     })
 
-exports.getEditedSourceWithAuthor = (token, sourceId) =>
-  request(app)
+exports.getEditedSourceWithAuthor = async (token, sourceId) =>
+  request(await app())
     .get(`/api/sources/${sourceId}`)
     .set('x-auth-token', token)
 
-exports.deleteUserPosts = token =>
-  request(app)
+exports.deleteUserPosts = async token =>
+  request(await app())
     .del(`/api/profile/`)
     .set('x-auth-token', token)
 
-exports.createSourceWithId = (token, resource, sourceId) =>
-  request(app)
+exports.createSourceWithId = async (token, resource, sourceId) =>
+  request(await app())
     .post('/api/sources')
     .set('x-auth-token', token)
     .send({
@@ -145,8 +145,8 @@ exports.createSourceWithId = (token, resource, sourceId) =>
       _id: sourceId,
     })
 
-exports.createEntryWithId = (token, entry, entryId) =>
-  request(app)
+exports.createEntryWithId = async (token, entry, entryId) =>
+  request(await app())
     .post('/api/entries')
     .set('x-auth-token', token)
     .send({
@@ -154,8 +154,8 @@ exports.createEntryWithId = (token, entry, entryId) =>
       _id: entryId,
     })
 
-exports.createPage = (token, accountId, data) =>
-  request(app)
+exports.createPage = async (token, accountId, data) =>
+  request(await app())
     .post('/api/pages')
     .set('x-auth-token', token)
     .set('x-databyss-account', accountId)
@@ -164,14 +164,14 @@ exports.createPage = (token, accountId, data) =>
       data,
     })
 
-exports.getPage = (token, accountId, _id) =>
-  request(app)
+exports.getPage = async (token, accountId, _id) =>
+  request(await app())
     .get(`/api/pages/${_id}`)
     .set('x-auth-token', token)
     .set('x-databyss-account', accountId)
 
-exports.createBlock = (token, _id, type, refId) =>
-  request(app)
+exports.createBlock = async (token, _id, type, refId) =>
+  request(await app())
     .post('/api/blocks')
     .set('x-auth-token', token)
     .send({
@@ -180,25 +180,25 @@ exports.createBlock = (token, _id, type, refId) =>
       _id,
     })
 
-exports.getBlock = (token, _id) =>
-  request(app)
+exports.getBlock = async (token, _id) =>
+  request(await app())
     .get(`/api/blocks/${_id}`)
     .set('x-auth-token', token)
 
-exports.getPopulatedPage = (token, accountId, _id) =>
-  request(app)
+exports.getPopulatedPage = async (token, accountId, _id) =>
+  request(await app())
     .get(`/api/pages/populate/${_id}`)
     .set('x-auth-token', token)
     .set('x-databyss-account', accountId)
 
-exports.newAccountWithUserId = token =>
-  request(app)
+exports.newAccountWithUserId = async token =>
+  request(await app())
     .post('/api/accounts')
     .set('x-auth-token', token)
     .send()
 
-exports.addUserToAccount = (token, _id, userId, role) =>
-  request(app)
+exports.addUserToAccount = async (token, _id, userId, role) =>
+  request(await app())
     .post(`/api/accounts/user/${userId}`)
     .set('x-auth-token', token)
     .set('x-databyss-account', _id)
@@ -206,8 +206,8 @@ exports.addUserToAccount = (token, _id, userId, role) =>
       role,
     })
 
-exports.deleteUserFromAccount = (token, accountId, userId) =>
-  request(app)
+exports.deleteUserFromAccount = async (token, accountId, userId) =>
+  request(await app())
     .delete(`/api/accounts/${userId}`)
     .set('x-auth-token', token)
     .set('x-databyss-account', accountId)

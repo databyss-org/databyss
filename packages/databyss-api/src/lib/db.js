@@ -22,19 +22,20 @@ const connectDB = async () => {
   }
 }
 
+const closeDB = async () => {
+  await dB.disconnect()
+  console.log('database connections closed')
+}
+
 // Deletes test database
-const dropDB = async () => {
+const dropTestDB = async () => {
   if (process.env.NODE_ENV === 'test') {
-    dB.connect(
-      dbURI,
-      { useNewUrlParser: true }
-    ).then(async () => {
-      await dB.connection.db.dropDatabase()
-      await dB.connection.close()
-      await dB.disconnect()
-      console.log('MongoDB Disconnected...')
-    })
+    console.log('Dropping TEST database')
+    await connectDB()
+    await dB.connection.dropDatabase()
+    await dB.disconnect()
+    console.log('MongoDB Disconnected...')
   }
 }
 
-module.exports = { connectDB, dropDB }
+module.exports = { connectDB, dropTestDB, closeDB }

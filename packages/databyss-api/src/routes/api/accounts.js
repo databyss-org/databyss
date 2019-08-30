@@ -1,7 +1,7 @@
 const express = require('express')
 const auth = require('../../middleware/auth')
 const Account = require('../../models/Account')
-const ApiError = require('./ApiError')
+const ApiError = require('../../lib/ApiError')
 const accountMiddleware = require('../../middleware/accountMiddleware')
 
 const router = express.Router()
