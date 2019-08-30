@@ -22,6 +22,11 @@ const connectDB = async () => {
   }
 }
 
+const closeDB = async () => {
+  await dB.disconnect()
+  console.log('database connections closed')
+}
+
 // Deletes test database
 const dropTestDB = async () => {
   if (process.env.NODE_ENV === 'test') {
@@ -33,4 +38,4 @@ const dropTestDB = async () => {
   }
 }
 
-module.exports = { connectDB, dropTestDB }
+module.exports = { connectDB, dropTestDB, closeDB }

@@ -1,6 +1,6 @@
 require('../../../config/env')
 const helpers = require('../__tests__/_helpers')
-const { dropTestDB } = require('../db')
+const { dropTestDB } = require('../lib/db')
 
 const { createUser, createPage, POST_EXAMPLE } = helpers
 

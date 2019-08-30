@@ -1,4 +1,4 @@
-import packageJson from '../package.json'
+import packageJson from '../../package.json'
 
 const bugsnag = require('@bugsnag/js')
 const bugsnagExpress = require('@bugsnag/plugin-express')

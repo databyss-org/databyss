@@ -1,5 +1,5 @@
 const { setup: setupDevServer } = require('jest-dev-server')
-const { dropTestDB } = require('../db')
+const { dropTestDB } = require('../lib/db')
 
 module.exports = async function globalSetup() {
   await dropTestDB()

@@ -23,7 +23,7 @@
     "seed:testdb": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER NODE_ENV=test babel-node --config-file ./packages/databyss-api/babel.config.js packages/databyss-api/scripts/seed-test-server.js",
     "start:server:test": "NODE_ENV=test yarn start:server",
     "start:server:dev": "NODE_ENV=development yarn start:server",
-    "start:server": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER nodemon packages/databyss-api/server.js --exec \"babel-node --config-file ./packages/databyss-api/babel.config.js -- \" --watch packages/databyss-api",
+    "start:server": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER babel-node --config-file ./packages/databyss-api/babel.config.js packages/databyss-api/server.js",
     "metro:stories": "react-native start --reset-cache --config packages/databyss-stories-native/metro.config.js",
     "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
     "build:ui": "NODE_ENV=production BABEL_ENV=production webpack --config packages/databyss-ui/webpack.config.js --mode=production",
@@ -35,13 +35,6 @@
     "storybook:build": "NPM_BUILD_TARGET=TEST build-storybook -o build -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss",
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
     "lint": "eslint . --cache && echo \"eslint: no lint errors\""
-  },
-  "nodemonConfig": {
-    "events": {
-      "restart": "kill-port 5000",
-      "crash": "kill-port 5000"
-    },
-    "delay": "1500"
   },
   "jest": {
     "projects": [
