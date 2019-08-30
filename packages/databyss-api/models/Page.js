@@ -3,14 +3,10 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const PageSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'users',
-    required: true,
-  },
   account: {
     type: Schema.Types.ObjectId,
     ref: 'account',
+    required: true,
   },
   name: {
     type: String,

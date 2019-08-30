@@ -22,16 +22,7 @@ app.use('/api/users', require('./routes/api/users'))
 app.use('/api/auth', require('./routes/api/auth'))
 app.use('/api/profile', require('./routes/api/profile'))
 app.use('/api/pages', require('./routes/api/pages'))
-app.use('/api/blocks', require('./routes/api/blocks'))
 app.use('/api/accounts', require('./routes/api/accounts'))
-
-app.use('/api/authors', require('./routes/api/authors'))
-app.use('/api/entries', require('./routes/api/entries'))
-app.use('/api/sources', require('./routes/api/sources'))
-app.use('/api/motifs', require('./routes/api/motifs'))
-
-app.use('/api/documents', require('./routes/api/documents'))
-
 app.use('/api/error', require('./routes/api/error'))
 
 // This handles any errors that Express catches and must be the last middleware

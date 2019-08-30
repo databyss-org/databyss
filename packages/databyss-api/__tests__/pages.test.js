@@ -4,18 +4,21 @@ const constants = require('./_constants')
 const { POST_EDIT_ONE, POST_EDIT_TWO } = constants
 
 const {
-  noAuthPost,
   createUser,
   deleteUserPosts,
+  newAccountWithUserId,
   getPopulatedPage,
   getPage,
   getUserInfo,
   createPage,
   addUserToAccount,
+  deleteUserFromAccount,
 } = helpers
 
-// RESOURCE
-const RESOURCE = 'A book made for testing'
+// PERMISSIONS
+const ADMIN = 'ADMIN'
+const EDITOR = 'EDITOR'
+// const READ_ONLY = 'READ_ONLY'
 
 // USER
 const EMAIL = 'email5@company.com'
@@ -26,18 +29,10 @@ const EMAIL2 = 'email6@company.com'
 const PASSWORD2 = 'password'
 
 // CREATE ACCOUNT
-describe('Source', () => {
-  describe('Not authorized', () => {
-    test('Create should require Authorization', async done => {
-      noAuthPost(RESOURCE).then(response => {
-        expect(response.statusCode).toBe(401)
-        done()
-      })
-    })
-  })
-
+describe('Pages', () => {
   describe('Authorized', () => {
     let token
+    let account
     let _token
     beforeAll(async done => {
       token = await createUser(EMAIL, PASSWORD)
@@ -46,44 +41,79 @@ describe('Source', () => {
 
     describe('create an account and add user to account', () => {
       test('it should add a page state', async done => {
-        // create a page
-        const pageResponse = await createPage(token, POST_EDIT_ONE)
-        expect(pageResponse.statusCode).toBe(200)
+        // create an account
+        const accountResponse = await newAccountWithUserId(token)
+        account = JSON.parse(accountResponse.text)
 
+        // create page
+        const pageResponse = await createPage(token, account._id, POST_EDIT_ONE)
+        expect(pageResponse.statusCode).toBe(200)
         let page = JSON.parse(pageResponse.text)
-        const accountId = page.account
+        expect(page.account).toBe(account._id)
 
         // create second user
         _token = await createUser(EMAIL2, PASSWORD2)
+
         const userTwoInfo = await getUserInfo(_token)
         const userTwoId = JSON.parse(userTwoInfo.text)
+
         // add second user to account
-        const addUserResponse = await addUserToAccount(
+        let role = ADMIN
+        let addUserResponse = await addUserToAccount(
           token,
-          accountId,
-          userTwoId
+          account._id,
+          userTwoId,
+          role
         )
-        const addUser = JSON.parse(addUserResponse.text)
-        expect(addUser.users[1]).toBe(userTwoId)
+        let addUser = JSON.parse(addUserResponse.text)
+        expect(addUser.users[1]._id).toBe(userTwoId)
+        expect(addUser.users[1].role).toBe(ADMIN)
+
+        // change second user role
+        role = EDITOR
+        addUserResponse = await addUserToAccount(
+          token,
+          account._id,
+          userTwoId,
+          role
+        )
+        addUser = JSON.parse(addUserResponse.text)
+        expect(addUser.users[1]._id).toBe(userTwoId)
+        expect(addUser.users[1].role).toBe(EDITOR)
 
         // checks if second user can access page
         page = POST_EDIT_ONE.page
         const { _id, name } = page
-        const getPageResponse = await getPage(_token, _id)
+        const getPageResponse = await getPage(_token, account._id, _id)
+
         const pageResponseTest = JSON.parse(getPageResponse.text)
         expect(pageResponseTest._id).toBe(_id)
         expect(pageResponseTest.name).toBe(name)
 
         // allow second user to edit the page
-        const pageTwoResponse = await createPage(_token, POST_EDIT_TWO)
+        const pageTwoResponse = await createPage(
+          _token,
+          account._id,
+          POST_EDIT_TWO
+        )
         expect(pageTwoResponse.statusCode).toBe(200)
 
         // SHOULD RETURN SECOND POPULATED STATE
         const pageId = POST_EDIT_ONE.page._id
-        const getResponse = await getPopulatedPage(_token, pageId)
+        const getResponse = await getPopulatedPage(_token, account._id, pageId)
         const res = JSON.parse(getResponse.text)
         expect(res.sources).toStrictEqual(POST_EDIT_TWO.sources)
         expect(res.entries).toStrictEqual(POST_EDIT_TWO.entries)
+
+        // SHOULD DELETE SECOND USER
+        let deleteResponse = await deleteUserFromAccount(
+          token,
+          account._id,
+          userTwoId
+        )
+        expect(deleteResponse.statusCode).toBe(200)
+        deleteResponse = JSON.parse(deleteResponse.text)
+
         done()
       })
     })

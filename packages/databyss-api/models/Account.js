@@ -9,8 +9,13 @@ const AccountSchema = new Schema({
   },
   users: [
     {
-      type: Schema.Types.ObjectId,
-      ref: 'user',
+      _id: {
+        type: Schema.Types.ObjectId,
+        ref: 'user',
+      },
+      role: {
+        type: String,
+      },
     },
   ],
 })

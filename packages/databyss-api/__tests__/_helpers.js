@@ -154,18 +154,21 @@ exports.createEntryWithId = (token, entry, entryId) =>
       _id: entryId,
     })
 
-exports.createPage = (token, data) =>
+exports.createPage = (token, accountId, data) =>
   request(app)
     .post('/api/pages')
     .set('x-auth-token', token)
+    .set('x-databyss-account', accountId)
+
     .send({
       data,
     })
 
-exports.getPage = (token, _id) =>
+exports.getPage = (token, accountId, _id) =>
   request(app)
     .get(`/api/pages/${_id}`)
     .set('x-auth-token', token)
+    .set('x-databyss-account', accountId)
 
 exports.createBlock = (token, _id, type, refId) =>
   request(app)
@@ -182,10 +185,11 @@ exports.getBlock = (token, _id) =>
     .get(`/api/blocks/${_id}`)
     .set('x-auth-token', token)
 
-exports.getPopulatedPage = (token, _id) =>
+exports.getPopulatedPage = (token, accountId, _id) =>
   request(app)
     .get(`/api/pages/populate/${_id}`)
     .set('x-auth-token', token)
+    .set('x-databyss-account', accountId)
 
 exports.newAccountWithUserId = token =>
   request(app)
@@ -193,10 +197,17 @@ exports.newAccountWithUserId = token =>
     .set('x-auth-token', token)
     .send()
 
-exports.addUserToAccount = (token, _id, userId) =>
+exports.addUserToAccount = (token, _id, userId, role) =>
   request(app)
-    .post(`/api/accounts/${_id}`)
+    .post(`/api/accounts/user/${userId}`)
     .set('x-auth-token', token)
+    .set('x-databyss-account', _id)
     .send({
-      user: userId,
+      role,
     })
+
+exports.deleteUserFromAccount = (token, accountId, userId) =>
+  request(app)
+    .delete(`/api/accounts/${userId}`)
+    .set('x-auth-token', token)
+    .set('x-databyss-account', accountId)
