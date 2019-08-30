@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('./../app')
+const app = require('../src/app')
 
 exports.noAuthPost = async resource =>
   request(await app())
@@ -9,7 +9,7 @@ exports.noAuthPost = async resource =>
     })
 
 exports.getUserInfo = async token =>
-  request(app())
+  request(await app())
     .get('/api/profile/me')
     .set('x-auth-token', token)
     .send()
