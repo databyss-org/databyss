@@ -2,7 +2,7 @@
   "name": "@databyss-org/ui",
   "author": "databyss-org",
   "license": "MIT",
-  "version": "1.1.15",
+  "version": "1.1.13",
   "private": false,
   "repository": {
     "type": "git",
@@ -13,8 +13,12 @@
   },
   "main": "index.js",
   "peerDependencies": {
-    "@databyss-org/services": "1.1.15",
-    "@databyss-org/ui": "1.1.15",
+<<<<<<< HEAD
+=======
+
+>>>>>>> next
+    "@databyss-org/services": "1.1.13",
+    "@databyss-org/ui": "1.1.13",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-native": "0.60.4"
@@ -54,8 +58,6 @@
     "react-use": "^11.0.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "slate": "^0.47.8",
-    "slate-react": "^0.22.8",
     "styled-system": "^5.0.5",
     "webpack-node-externals": "^1.7.2"
   },

@@ -11707,6 +11707,11 @@ node-forge@0.7.5:
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-0.7.5.tgz#6c152c345ce11c52f465c2abd957e8639cd674df"
   integrity sha512-MmbQJ2MTESTjt3Gi/3yG1wGpIMhUfcIypUCGtTizFR9IiccFwxSpfp0vtIZlkFclEqERemxfnSdZEMR9VqqEFQ==
 
+node-graceful-shutdown@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/node-graceful-shutdown/-/node-graceful-shutdown-1.0.3.tgz#eea9466ac7d571212857ca0d574d394d68cc6a8c"
+  integrity sha512-StLuSh23kyGPHw7wXUl+ifqDhO3wtDYg1ji07XomY+u/flUPMha80vSOIlyjsYbA0+K++LZ0SzaRH+nf+8PQ8Q==
+
 node-int64@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/node-int64/-/node-int64-0.4.0.tgz#87a9065cdb355d3182d8f94ce11188b825c68a3b"
