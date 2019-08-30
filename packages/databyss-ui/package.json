@@ -54,6 +54,8 @@
     "react-use": "^11.0.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "slate": "^0.47.8",
+    "slate-react": "^0.22.8",
     "styled-system": "^5.0.5",
     "webpack-node-externals": "^1.7.2"
   },

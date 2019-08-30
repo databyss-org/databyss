@@ -3,7 +3,6 @@ import { createReducer } from 'react-use'
 import { createLogger } from 'redux-logger'
 import thunk from 'redux-thunk'
 import reducer, { initialState } from './state/reducer'
-import draftReducer from './state/draftReducer'
 
 const logger = createLogger({
   collapsed: true,
@@ -13,16 +12,19 @@ const useThunkReducer = createReducer(thunk, logger)
 
 export const EditorContext = createContext()
 
-const composedReducer = (state, action) => ({
+const makeComposedReducer = contentEditableReducer => (state, action) => ({
   ...reducer(state, action),
-  draftState: draftReducer(
-    action.payload.draftState || state.draftState,
+  editableState: contentEditableReducer(
+    action.payload.editableState || state.editableState,
     action
   ),
 })
 
-const DraftEditorProvider = ({ children, initialState }) => {
-  const [state, dispatch] = useThunkReducer(composedReducer, initialState)
+const DraftEditorProvider = ({ children, initialState, editableReducer }) => {
+  const [state, dispatch] = useThunkReducer(
+    makeComposedReducer(editableReducer),
+    initialState
+  )
 
   return (
     <EditorContext.Provider value={[state, dispatch]}>

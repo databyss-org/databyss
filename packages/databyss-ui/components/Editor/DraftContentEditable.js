@@ -1,10 +1,16 @@
 import React from 'react'
-import { Editor, EditorState, ContentState, ContentBlock } from 'draft-js'
-import DraftBlock from './DraftBlock'
+import {
+  Editor,
+  EditorBlock as DraftBlock,
+  EditorState,
+  ContentState,
+  ContentBlock,
+} from 'draft-js'
+import EditorBlock from './EditorBlock'
 import { getRawHtmlForBlock } from './state/reducer'
-import { useEditorContext } from './DraftEditorProvider'
+import { useEditorContext } from './EditorProvider'
 
-const setDraftStateBlocks = (state, draftState, pageBlocks) => {
+const setDraftStateBlocks = (state, editableState, pageBlocks) => {
   const _blockArray = pageBlocks.map(
     block =>
       new ContentBlock({
@@ -14,29 +20,29 @@ const setDraftStateBlocks = (state, draftState, pageBlocks) => {
       })
   )
   const contentState = ContentState.createFromBlockArray(_blockArray)
-  return EditorState.push(draftState, contentState, 'insert-characters')
+  return EditorState.push(editableState, contentState, 'insert-characters')
 }
 
 const DraftContentEditable = ({
   onActiveBlockIdChange,
   onActiveBlockContentChange,
-  onEditorStateChange,
+  onEditableStateChange,
 }) => {
   const [editorState] = useEditorContext()
-  const { activeBlockId, draftState, blocks, page } = editorState
+  const { activeBlockId, editableState, blocks, page } = editorState
 
   // checks editor state for active block changed
-  const checkSelectedBlockChanged = _nextDraftState => {
-    const _nextActiveBlockId = _nextDraftState.getSelection().getFocusKey()
+  const checkSelectedBlockChanged = _nextEditableState => {
+    const _nextActiveBlockId = _nextEditableState.getSelection().getFocusKey()
     if (_nextActiveBlockId !== activeBlockId) {
-      onActiveBlockIdChange(_nextActiveBlockId, _nextDraftState)
+      onActiveBlockIdChange(_nextActiveBlockId, _nextEditableState)
       return true
     }
     return false
   }
 
-  const checkActiveBlockContentChanged = _nextDraftState => {
-    const _nextText = _nextDraftState
+  const checkActiveBlockContentChanged = _nextEditableState => {
+    const _nextText = _nextEditableState
       .getCurrentContent()
       .getBlockForKey(activeBlockId)
       .getText()
@@ -45,28 +51,34 @@ const DraftContentEditable = ({
       blocks[editorState.activeBlockId]
     )
     if (_nextText !== _prevText) {
-      onActiveBlockContentChange(_nextText, _nextDraftState)
+      onActiveBlockContentChange(_nextText, _nextEditableState)
       return true
     }
     return false
   }
 
-  const onChange = _state => {
+  const onChange = _editableState => {
     if (
-      !checkSelectedBlockChanged(_state) &&
-      !checkActiveBlockContentChanged(_state)
+      !checkSelectedBlockChanged(_editableState) &&
+      !checkActiveBlockContentChanged(_editableState)
     ) {
-      onEditorStateChange(_state)
+      onEditableStateChange(_editableState)
     }
   }
 
   const blockRendererFn = () => ({
-    component: DraftBlock,
+    component: ({ block, ...others }) => (
+      <EditorBlock type={block.getType()}>
+        <DraftBlock block={block} {...others}>
+          {block.getText()}
+        </DraftBlock>
+      </EditorBlock>
+    ),
     editable: true,
   })
 
-  const _draftState =
-    draftState ||
+  const _editableState =
+    editableState ||
     setDraftStateBlocks(
       editorState,
       EditorState.createEmpty(),
@@ -75,7 +87,7 @@ const DraftContentEditable = ({
 
   return (
     <Editor
-      editorState={_draftState}
+      editorState={_editableState}
       onChange={onChange}
       blockRendererFn={blockRendererFn}
     />
