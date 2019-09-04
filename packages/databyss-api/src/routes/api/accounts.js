@@ -26,6 +26,22 @@ router.post('/', auth, async (req, res) => {
   }
 })
 
+// @route GET api/accounts/
+// @desc  get account info
+router.get(
+  '/',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  async (req, res) => {
+    try {
+      const account = await Account.findOne({ _id: req.account._id })
+      return res.json(account)
+    } catch (err) {
+      console.error(err.message)
+      return res.status(500).send('Server Error')
+    }
+  }
+)
+
 // @route    POST api/accounts/:id
 // @desc     add user id to account
 // @access   private

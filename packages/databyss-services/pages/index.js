@@ -1,41 +1,28 @@
 import axios from 'axios'
+import { httpGet, httpPost } from '../lib/requestApi'
 
 // TODO: Add native versions of these
-export function setAuthToken(value) {
-  localStorage.setItem('token', value)
+export function setAccountId(value) {
+  localStorage.setItem('account', value)
 }
 
-export function getAuthToken() {
-  return localStorage.getItem('token')
+export function getAccountId() {
+  return localStorage.getItem('account')
 }
 
-export function deleteAuthToken() {
-  setAuthToken(null)
+export function deleteAccountId() {
+  setAccountId(null)
 }
 
-export const register = async ({ email, password, name }) => {
-  const config = {
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  }
-  const body = JSON.stringify({ email, password, name })
-  try {
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_URL}/users`,
-      body,
-      config
-    )
-    if (res.status === 200) {
-      setAuthToken(res.data.token)
-      return true
-    }
-  } catch (err) {
-    const errors = err.response.data.errors
-    console.log(errors[0].msg)
-  }
-  return false
-}
+export const getPage = _id => httpGet(`/pages/${_id}`)
+
+export const newAccountFromToken = () => httpPost(`/accounts/`)
+
+export const getAccount = () => httpGet(`/accounts/`)
+
+export const savePage = data => httpPost('/pages', { data })
+
+/*
 
 export const login = async ({ email, password }) => {
   const config = {
@@ -162,3 +149,5 @@ export const setGoogleAuthToken = async token => {
   }
   return false
 }
+
+*/

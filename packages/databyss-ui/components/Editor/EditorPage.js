@@ -13,6 +13,7 @@ const EditorPage = ({ children }) => {
   const onActiveBlockIdChange = (id, editableState) =>
     dispatchEditor(setActiveBlockId(id, editableState))
   const onActiveBlockContentChange = (rawHtml, editableState) => {
+    console.log(rawHtml)
     if (
       rawHtml.match(/^@/) &&
       editorState.blocks[editorState.activeBlockId].type !== 'SOURCE'

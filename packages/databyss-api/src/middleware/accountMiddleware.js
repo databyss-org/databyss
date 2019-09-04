@@ -24,7 +24,6 @@ const accountMiddleware = requiredRoles => async (req, res, next) => {
 
   // add required roles and user account roles
   if (!checkRequiredRoles(requiredRoles, accountUser.role)) {
-    console.log('TWO')
     return res.status(401).json({ msg: 'authorization denied' })
     //	throw new ApiError('not authorized', 401)
   }
