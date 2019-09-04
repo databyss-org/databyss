@@ -28,8 +28,20 @@ const SlateContentEditable = ({
   onEditableStateChange,
 }) => {
   const [editorState] = useEditorContext()
+
   const { activeBlockId, editableState, blocks, page } = editorState
+  // const [appState, setAppState] = useState(editorState)
+
+  // console.log('app state', appState)
+  // const { activeBlockId, editableState, blocks, page } = appState
+
   const editableRef = useRef(null)
+
+  // console.log('in slate', editorState)
+
+  // useEffect(() => {
+  //   setAppState(editorState)
+  // })
 
   // checks editor state for active block changed
   const checkSelectedBlockChanged = _nextEditableState => {

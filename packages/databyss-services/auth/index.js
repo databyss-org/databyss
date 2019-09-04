@@ -1,8 +1,11 @@
 import axios from 'axios'
+import _ from 'lodash'
 
 // TODO: Add native versions of these
 export function setAuthToken(value) {
-  localStorage.setItem('token', value)
+  const token = !_.isEmpty(value.token) ? value.token : value
+
+  localStorage.setItem('token', token)
 }
 
 export function getAuthToken() {

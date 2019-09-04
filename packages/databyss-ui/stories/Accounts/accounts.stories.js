@@ -28,24 +28,26 @@ const AccountDemo = () => {
       let account = getAccountId()
       if (account) {
         const res = await getAccount()
+
         setAccountId(res._id)
         setUserState(s => ({ ...s, account: res._id }))
       } else {
         account = await newAccountFromToken(token)
         if (account) {
           setAccountId(account._id)
-          setUserState(s => ({ ...s, account: res._id }))
+          setUserState(s => ({ ...s, account: account._id }))
         }
       }
     }
   }
 
   const registerUser = async () => {
-    let token = await register({
+    const token = await register({
       email: 'email@test.com',
       password: 'password',
       name: 'joe',
     })
+
     if (token) {
       checkUserStatus()
     } else {
@@ -88,10 +90,8 @@ const AccountDemo = () => {
 
 storiesOf('Login and Create Account Id', module)
   .addDecorator(ViewportDecorator)
-  .add('Login/Accounts', () => {
-    return (
-      <View>
-        <AccountDemo />
-      </View>
-    )
-  })
+  .add('Login/Accounts', () => (
+    <View>
+      <AccountDemo />
+    </View>
+  ))

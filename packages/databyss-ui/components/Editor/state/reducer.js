@@ -5,8 +5,6 @@ import {
   SET_ACTIVE_BLOCK_ID,
   SET_ACTIVE_BLOCK_CONTENT,
   SET_ACTIVE_BLOCK_TYPE,
-  LOAD_PAGE,
-  SAVE_PAGE,
 } from './constants'
 
 export const initialState = {
@@ -83,12 +81,6 @@ export default (state, action) => {
         return setActiveBlockType(state, 'ENTRY', true)
       }
       return setRawHtmlForBlock(state, activeBlock, action.payload.html)
-    }
-    case LOAD_PAGE: {
-      return { ...state }
-    }
-    case SAVE_PAGE: {
-      return { ...state }
     }
     default:
       return state

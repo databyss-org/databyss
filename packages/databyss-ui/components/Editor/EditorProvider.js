@@ -20,7 +20,7 @@ const makeComposedReducer = contentEditableReducer => (state, action) => ({
   ),
 })
 
-const DraftEditorProvider = ({ children, initialState, editableReducer }) => {
+const EditorProvider = ({ children, initialState, editableReducer }) => {
   const [state, dispatch] = useThunkReducer(
     makeComposedReducer(editableReducer),
     initialState
@@ -35,8 +35,8 @@ const DraftEditorProvider = ({ children, initialState, editableReducer }) => {
 
 export const useEditorContext = () => useContext(EditorContext)
 
-DraftEditorProvider.defaultProps = {
+EditorProvider.defaultProps = {
   initialState,
 }
 
-export default DraftEditorProvider
+export default EditorProvider

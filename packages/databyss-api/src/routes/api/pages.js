@@ -224,6 +224,29 @@ router.get(
   }
 )
 
+// @route    GET api/page
+// @desc     returns all pages associated with account
+// @access   private
+router.get(
+  '/',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  async (req, res) => {
+    try {
+      const pageResponse = await Page.find({ account: req.account._id })
+
+      if (!pageResponse) {
+        return res
+          .status(400)
+          .json({ msg: 'There are no pages associated with this account' })
+      }
+      return res.json(pageResponse)
+    } catch (err) {
+      console.error(err.message)
+      return res.status(500).send('Server Error')
+    }
+  }
+)
+
 // @route    GET api/page/
 // @desc     Get all pages
 // @access   private
