@@ -215,7 +215,6 @@ router.get(
         entries,
         sources,
       }
-
       return res.json(response)
     } catch (err) {
       console.error(err.message)

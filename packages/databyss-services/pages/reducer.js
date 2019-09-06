@@ -13,6 +13,7 @@ export const initialState = {
   isPagesLoading: true,
   isSaving: false,
   pages: [],
+  pageState: {},
 }
 
 export default (state, action) => {
@@ -45,7 +46,7 @@ export default (state, action) => {
       return {
         ...state,
         isLoading: false,
-        ...action.payload,
+        pageState: { ...action.payload },
       }
     }
     case FETCHING_PAGES: {

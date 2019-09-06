@@ -24,12 +24,13 @@ import seedState from './_seedState'
 import { ViewportDecorator } from '../decorators'
 
 const ToolbarDemo = () => {
-  const [state, dispatch] = useEditorContext()
+  const [state] = useEditorContext()
+  const [, dispatchPage] = usePageContext()
 
   return (
     <Grid mb="medium">
       <View>
-        <Button onPress={() => dispatch(savePage(state))}>SAVE</Button>
+        <Button onPress={() => dispatchPage(savePage(state))}>SAVE</Button>
       </View>
     </Grid>
   )
@@ -45,7 +46,6 @@ const EditorLoader = ({ children }) => {
   const [state, dispatch] = usePageContext()
   useEffect(
     () => {
-      //  dispatch(loadPage(seedState))
       dispatch(getPages())
     },
     [dispatch]
@@ -68,7 +68,10 @@ const EditorLoader = ({ children }) => {
       <Text> is Loading </Text>
     </View>
   ) : (
-    <EditorProvider initialState={state} editableReducer={slateReducer}>
+    <EditorProvider
+      initialState={state.pageState}
+      editableReducer={slateReducer}
+    >
       {children}
     </EditorProvider>
   )

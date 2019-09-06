@@ -26,6 +26,7 @@ export function loadPage(_id) {
 }
 
 export function savePage(state) {
+  console.log('save page', state)
   return dispatch => {
     dispatch({
       type: SAVE_PAGE,

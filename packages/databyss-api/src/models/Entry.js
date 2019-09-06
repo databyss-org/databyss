@@ -42,7 +42,6 @@ const EntrySchema = new mongoose.Schema({
   ],
   entry: {
     type: String,
-    required: true,
   },
   index: {
     type: Number,

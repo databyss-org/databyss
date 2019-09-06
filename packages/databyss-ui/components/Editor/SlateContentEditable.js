@@ -1,10 +1,14 @@
 import React, { useRef, useEffect } from 'react'
+import { KeyUtils, Value } from 'slate'
+import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
-import { Value } from 'slate'
+import InsertBlockOnEnter from './plugins/InsertBlockOnEnter'
 import EditorBlock from './EditorBlock'
 import { getRawHtmlForBlock } from './state/reducer'
 import { findActiveBlock } from './state/slateReducer'
 import { useEditorContext } from './EditorProvider'
+
+KeyUtils.setGenerator(() => ObjectId().toHexString())
 
 const toSlateJson = (editorState, pageBlocks) => ({
   document: {
@@ -22,28 +26,32 @@ const toSlateJson = (editorState, pageBlocks) => ({
   },
 })
 
+const plugins = [
+  InsertBlockOnEnter({
+    object: 'block',
+    type: 'ENTRY',
+    nodes: [
+      {
+        object: 'text',
+        text: '',
+      },
+    ],
+  }),
+]
+
 const SlateContentEditable = ({
   onActiveBlockIdChange,
   onActiveBlockContentChange,
   onEditableStateChange,
+  onNewBlock,
+  onBackspace,
 }) => {
   const [editorState] = useEditorContext()
 
+  // const { activeBlockId, editableState, blocks, page } = editorState
   const { activeBlockId, editableState, blocks, page } = editorState
-  // const [appState, setAppState] = useState(editorState)
-
-  // console.log('app state', appState)
-  // const { activeBlockId, editableState, blocks, page } = appState
-
   const editableRef = useRef(null)
 
-  // console.log('in slate', editorState)
-
-  // useEffect(() => {
-  //   setAppState(editorState)
-  // })
-
-  // checks editor state for active block changed
   const checkSelectedBlockChanged = _nextEditableState => {
     const _nextActiveBlock = findActiveBlock(_nextEditableState.value)
     if (!_nextActiveBlock) {
@@ -104,12 +112,35 @@ const SlateContentEditable = ({
       )
   )
 
+  const onKeyUp = (event, editor, next) => {
+    if (event.key === 'Enter') {
+      const blockProperties = {
+        activeBlockId: editor.value.anchorBlock.key,
+        activeBlockText: editor.value.anchorBlock.text,
+        previousBlockId: editor.value.previousBlock.key,
+        previousBlockText: editor.value.previousBlock.text,
+      }
+      onNewBlock(blockProperties, editor)
+    }
+    if (event.key === 'Backspace') {
+      const blockProperties = {
+        activeBlockId: editor.value.anchorBlock.key,
+        nextBlockId: editor.value.nextBlock ? editor.value.nextBlock.key : null,
+      }
+      onBackspace(blockProperties, editor)
+    }
+
+    return next()
+  }
+
   return (
     <Editor
       value={_editableState.value}
       ref={editableRef}
       onChange={onChange}
       renderBlock={renderBlock}
+      plugins={plugins}
+      onKeyUp={onKeyUp}
     />
   )
 }

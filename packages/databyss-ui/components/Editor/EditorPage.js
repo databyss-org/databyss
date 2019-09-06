@@ -6,12 +6,16 @@ import {
   setActiveBlockContent,
   setEditableState,
   setActiveBlockType,
+  newBlock,
+  backspace,
 } from './state/actions'
 
 const EditorPage = ({ children }) => {
   const [editorState, dispatchEditor] = useEditorContext()
+
   const onActiveBlockIdChange = (id, editableState) =>
     dispatchEditor(setActiveBlockId(id, editableState))
+
   const onActiveBlockContentChange = (rawHtml, editableState) => {
     if (
       rawHtml.match(/^@/) &&
@@ -22,14 +26,25 @@ const EditorPage = ({ children }) => {
       dispatchEditor(setActiveBlockContent(rawHtml, editableState))
     }
   }
+
   const onEditableStateChange = editableState =>
     dispatchEditor(setEditableState(editableState))
+
+  const onNewBlock = (blockProperties, editableState) => {
+    dispatchEditor(newBlock(blockProperties, editableState))
+  }
+
+  const onBackspace = (blockProperties, editableState) => {
+    dispatchEditor(backspace(blockProperties, editableState))
+  }
 
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
     onActiveBlockIdChange,
     onActiveBlockContentChange,
     onEditableStateChange,
+    onNewBlock,
+    onBackspace,
   })
 }
 

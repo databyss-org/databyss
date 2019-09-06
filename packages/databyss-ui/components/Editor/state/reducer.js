@@ -5,6 +5,8 @@ import {
   SET_ACTIVE_BLOCK_ID,
   SET_ACTIVE_BLOCK_CONTENT,
   SET_ACTIVE_BLOCK_TYPE,
+  INSERT_BLOCK,
+  BACKSPACE,
 } from './constants'
 
 export const initialState = {
@@ -40,7 +42,7 @@ export const setRawHtmlForBlock = (state, block, html) => {
   return nextState
 }
 
-const setActiveBlockType = (state, type, isNew) => {
+const setActiveBlockType = (state, type, isNew, _id) => {
   // changing block type will always generate a new refId
   const nextRefId = ObjectId().toHexString()
   const activeBlock = state.blocks[state.activeBlockId]
@@ -48,6 +50,7 @@ const setActiveBlockType = (state, type, isNew) => {
   const nextState = cloneDeep(state)
   nextState.blocks[state.activeBlockId] = {
     ...nextState.blocks[state.activeBlockId],
+    _id,
     type,
     refId: nextRefId,
   }
@@ -62,6 +65,74 @@ const setActiveBlockType = (state, type, isNew) => {
     default:
       throw new Error('Invalid target block type', type)
   }
+}
+
+const insertBlock = (state, payload) => {
+  const {
+    activeBlockId,
+    activeBlockText,
+    previousBlockId,
+    previousBlockText,
+  } = payload.blockProperties
+
+  let _state = state
+  _state.page.blocks = [..._state.page.blocks, { _id: state.activeBlockId }]
+  _state = setActiveBlockType(_state, 'ENTRY', true, activeBlockId)
+  _state = setRawHtmlForBlock(
+    _state,
+    _state.blocks[activeBlockId],
+    activeBlockText
+  )
+  _state = setRawHtmlForBlock(
+    _state,
+    _state.blocks[previousBlockId],
+    previousBlockText
+  )
+  return _state
+}
+
+const cleanUpState = state => {
+  const _state = cloneDeep(state)
+  const pageBlocks = _state.page.blocks
+  const { blocks, entries, sources } = _state
+  const _sources = {}
+  const _blocks = {}
+  const _entries = {}
+  pageBlocks.forEach(b => {
+    const { type, refId } = blocks[b._id]
+    if (type === 'SOURCE') {
+      _sources[refId] = sources[refId]
+    }
+    if (type === 'ENTRY') {
+      _entries[refId] = entries[refId]
+    }
+    _blocks[b._id] = blocks[b._id]
+  })
+  _state.blocks = _blocks
+  _state.entries = _entries
+  _state.sources = _sources
+  return _state
+}
+
+const backspace = (state, payload) => {
+  const { activeBlockId, nextBlockId } = payload.blockProperties
+  const _state = state
+  const _blocks = _state.page.blocks
+  const activeBlockIndex = _blocks.findIndex(b => b._id === activeBlockId)
+  if (!nextBlockId) {
+    // current block should be the last block
+    if (_blocks.length === activeBlockIndex + 1) {
+      return cleanUpState(_state)
+    }
+    _blocks.splice(activeBlockIndex + 1, 1)
+  }
+  const nextBlockIndex = _blocks.findIndex(b => b._id === nextBlockId)
+  // next block index should correspond to page index
+  if (activeBlockIndex + 1 === nextBlockIndex) {
+    return cleanUpState(_state)
+  }
+  _blocks.splice(activeBlockIndex + 1, 1)
+  return cleanUpState(_state)
 }
 
 export default (state, action) => {
@@ -82,6 +153,10 @@ export default (state, action) => {
       }
       return setRawHtmlForBlock(state, activeBlock, action.payload.html)
     }
+    case INSERT_BLOCK:
+      return insertBlock(state, action.payload)
+    case BACKSPACE:
+      return backspace(state, action.payload)
     default:
       return state
   }
