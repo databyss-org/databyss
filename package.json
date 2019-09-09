@@ -198,6 +198,7 @@
     "resolve": "^1.11.1",
     "sass-loader": "^7.1.0",
     "semver-diff": "^2.0.0",
+    "slate-auto-replace": "^0.12.1",
     "slate-insert-block-on-enter": "^0.4.0",
     "styled-system": "^5.0.5",
     "supertest": "^4.0.2",

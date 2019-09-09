@@ -5,6 +5,7 @@ import {
   setActiveBlockId,
   setActiveBlockContent,
   setEditableState,
+  setBlockIdType,
   setActiveBlockType,
   newBlock,
   backspace,
@@ -17,14 +18,16 @@ const EditorPage = ({ children }) => {
     dispatchEditor(setActiveBlockId(id, editableState))
 
   const onActiveBlockContentChange = (rawHtml, editableState) => {
-    if (
-      rawHtml.match(/^@/) &&
-      editorState.blocks[editorState.activeBlockId].type !== 'SOURCE'
-    ) {
-      dispatchEditor(setActiveBlockType('SOURCE', editableState, true))
-    } else {
-      dispatchEditor(setActiveBlockContent(rawHtml, editableState))
-    }
+    // if (
+    //   rawHtml.match(/^@/) &&
+    //   editorState.blocks[editorState.activeBlockId].type !== 'SOURCE'
+    // ) {
+    //   dispatchEditor(setActiveBlockType('SOURCE', editableState, true))
+    // } else {
+    //   dispatchEditor(setActiveBlockContent(rawHtml, editableState))
+    // }
+
+    dispatchEditor(setActiveBlockContent(rawHtml, editableState))
   }
 
   const onEditableStateChange = editableState =>
@@ -38,6 +41,14 @@ const EditorPage = ({ children }) => {
     dispatchEditor(backspace(blockProperties, editableState))
   }
 
+  const checkTagOnBlur = (id, rawHtml, editableState) => {
+    if (rawHtml.match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
+      dispatchEditor(setBlockIdType('SOURCE', id, editableState, true))
+
+      //  dispatchEditor(setActiveBlockType('SOURCE', editableState, true))
+    }
+  }
+
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
     onActiveBlockIdChange,
@@ -45,6 +56,7 @@ const EditorPage = ({ children }) => {
     onEditableStateChange,
     onNewBlock,
     onBackspace,
+    checkTagOnBlur,
   })
 }
 

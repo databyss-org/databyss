@@ -27,13 +27,15 @@ export function loadPage(_id) {
 
 export function savePage(state) {
   console.log('save page', state)
+  const body = state
+  delete body.editableState
   return dispatch => {
     dispatch({
       type: SAVE_PAGE,
       payload: {},
     })
 
-    services.savePage(state).then(() => {
+    services.savePage(body).then(() => {
       dispatch({
         type: PAGE_SAVED,
         payload: {},

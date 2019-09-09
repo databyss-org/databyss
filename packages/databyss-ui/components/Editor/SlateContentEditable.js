@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react'
 import { KeyUtils, Value } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
+import AutoReplace from './plugins/autoReplace'
 import InsertBlockOnEnter from './plugins/InsertBlockOnEnter'
 import EditorBlock from './EditorBlock'
 import { getRawHtmlForBlock } from './state/reducer'
@@ -27,6 +28,13 @@ const toSlateJson = (editorState, pageBlocks) => ({
 })
 
 const plugins = [
+  // AutoReplace({
+  //   trigger: 'enter',
+  //   before: /^(@)+/,
+  //   change: (change, e, matches) => {
+  //     return change.setBlocks({ type: 'SOURCE', isVoid: true })
+  //   },
+  // }),
   InsertBlockOnEnter({
     object: 'block',
     type: 'ENTRY',
@@ -45,6 +53,7 @@ const SlateContentEditable = ({
   onEditableStateChange,
   onNewBlock,
   onBackspace,
+  checkTagOnBlur,
 }) => {
   const [editorState] = useEditorContext()
 
@@ -59,6 +68,12 @@ const SlateContentEditable = ({
     }
 
     if (_nextActiveBlock.key !== activeBlockId) {
+      let rawHtml = ''
+      if (_nextEditableState.value.document.getNode(activeBlockId)) {
+        rawHtml = _nextEditableState.value.document.getNode(activeBlockId).text
+      }
+
+      checkTagOnBlur(activeBlockId, rawHtml, _nextEditableState)
       onActiveBlockIdChange(_nextActiveBlock.key, _nextEditableState)
       return true
     }
@@ -84,6 +99,10 @@ const SlateContentEditable = ({
   }
 
   const onChange = ({ value }) => {
+    if (value.anchorBlock) {
+      console.log('current type', value.anchorBlock.type)
+      console.log('current key', value.anchorBlock.key)
+    }
     if (
       !checkSelectedBlockChanged({ value }) &&
       !checkActiveBlockContentChanged({ value })
@@ -120,7 +139,8 @@ const SlateContentEditable = ({
         previousBlockId: editor.value.previousBlock.key,
         previousBlockText: editor.value.previousBlock.text,
       }
-      onNewBlock(blockProperties, editor)
+      const editorState = { value: editor.value }
+      onNewBlock(blockProperties, editorState)
     }
     if (event.key === 'Backspace') {
       const blockProperties = {

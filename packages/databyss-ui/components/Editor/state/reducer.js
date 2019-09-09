@@ -6,6 +6,7 @@ import {
   SET_ACTIVE_BLOCK_CONTENT,
   SET_ACTIVE_BLOCK_TYPE,
   INSERT_BLOCK,
+  SET_BLOCK_ID_TYPE,
   BACKSPACE,
 } from './constants'
 
@@ -50,6 +51,31 @@ const setActiveBlockType = (state, type, isNew, _id) => {
   const nextState = cloneDeep(state)
   nextState.blocks[state.activeBlockId] = {
     ...nextState.blocks[state.activeBlockId],
+    _id,
+    type,
+    refId: nextRefId,
+  }
+  switch (type) {
+    case 'SOURCE':
+      nextState.sources[nextRefId] = { _id: nextRefId, rawHtml }
+      return nextState
+    case 'ENTRY':
+      nextState.entries[nextRefId] = { _id: nextRefId, rawHtml }
+      return nextState
+
+    default:
+      throw new Error('Invalid target block type', type)
+  }
+}
+
+const setBlockIdType = (state, type, _id) => {
+  // changing block type will always generate a new refId
+  const nextRefId = ObjectId().toHexString()
+  const previousBlock = state.blocks[_id]
+  const rawHtml = getRawHtmlForBlock(state, previousBlock)
+  const nextState = cloneDeep(state)
+  nextState.blocks[_id] = {
+    ...nextState.blocks[_id],
     _id,
     type,
     refId: nextRefId,
@@ -136,7 +162,6 @@ const backspace = (state, payload) => {
 }
 
 export default (state, action) => {
-  // console.log('nextState', nextState)
   switch (action.type) {
     case SET_ACTIVE_BLOCK_TYPE:
       return setActiveBlockType(state, action.payload.type)
@@ -147,16 +172,14 @@ export default (state, action) => {
       }
     case SET_ACTIVE_BLOCK_CONTENT: {
       const activeBlock = state.blocks[state.activeBlockId]
-      // handle edge case: remove all content resets type
-      if (!action.payload.html.length) {
-        return setActiveBlockType(state, 'ENTRY', true)
-      }
       return setRawHtmlForBlock(state, activeBlock, action.payload.html)
     }
     case INSERT_BLOCK:
       return insertBlock(state, action.payload)
     case BACKSPACE:
       return backspace(state, action.payload)
+    case SET_BLOCK_ID_TYPE:
+      return setBlockIdType(state, action.payload.type, action.payload.id)
     default:
       return state
   }

@@ -8966,6 +8966,11 @@ is-hotkey@0.1.4:
   resolved "https://registry.yarnpkg.com/is-hotkey/-/is-hotkey-0.1.4.tgz#c34d2c85d6ec8d09a871dcf71931c8067a824c7d"
   integrity sha512-Py+aW4r5mBBY18TGzGz286/gKS+fCQ0Hee3qkaiSmEPiD0PqFpe0wuA3l7rTOUKyeXl8Mxf3XzJxIoTlSv+kxA==
 
+is-hotkey@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/is-hotkey/-/is-hotkey-0.0.3.tgz#3713fea135f86528c87cf39810b3934e45151390"
+  integrity sha512-qpMe/7DxFXs65E3f8u5Zu+3qOXmqlKlAF/cpYlRiPzg1UKC9clzQcwcuf/2RC4WMFhh56DQC+FfK63Qp3lM35w==
+
 is-in-browser@^1.0.2, is-in-browser@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/is-in-browser/-/is-in-browser-1.1.3.tgz#56ff4db683a078c6082eb95dad7dc62e1d04f835"
@@ -15498,6 +15503,14 @@ slash@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
   integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
+
+slate-auto-replace@^0.12.1:
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/slate-auto-replace/-/slate-auto-replace-0.12.1.tgz#c877a66e40f8f27f59b614cbc4b25ce2cd262ed4"
+  integrity sha512-4TBjWk/NKk2ef8FvPM0kYiOY+fClPieqyxAzAa2lpFbUnVX01I9Up4X34d/cmAlyX2jojn5AvBA/GG5xDschBg==
+  dependencies:
+    is-hotkey "^0.0.3"
+    type-of "^2.0.1"
 
 slate-base64-serializer@^0.2.111:
   version "0.2.111"
