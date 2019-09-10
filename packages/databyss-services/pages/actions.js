@@ -1,3 +1,4 @@
+import cloneDeep from 'clone-deep'
 import * as services from './'
 
 import {
@@ -27,7 +28,7 @@ export function loadPage(_id) {
 
 export function savePage(state) {
   console.log('save page', state)
-  const body = state
+  const body = cloneDeep(state)
   delete body.editableState
   return dispatch => {
     dispatch({
