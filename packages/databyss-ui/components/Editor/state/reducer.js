@@ -174,7 +174,15 @@ export default (state, action) => {
       }
     case SET_ACTIVE_BLOCK_CONTENT: {
       const activeBlock = state.blocks[state.activeBlockId]
-      return setRawHtmlForBlock(state, activeBlock, action.payload.html)
+      const nextState = setRawHtmlForBlock(
+        state,
+        activeBlock,
+        action.payload.html
+      )
+      if (!action.payload.html.length) {
+        return setActiveBlockType(nextState, 'ENTRY')
+      }
+      return nextState
     }
     case INSERT_NEW_ACTIVE_BLOCK:
       return insertNewActiveBlock(state, action.payload.blockProperties)

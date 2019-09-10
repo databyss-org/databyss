@@ -101,7 +101,7 @@ const ProviderDecorator = storyFn => (
 const SlateEditorDemo = () => {
   const [slateDocument, setSlateDocument] = useState({})
   const [editorState] = useEditorContext()
-  const { activeBlockId, sources, entries, page, blocks } = editorState
+  const { activeBlockId, page, blocks } = editorState
 
   const editorDocument = {
     activeBlockId,
