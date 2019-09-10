@@ -1,22 +1,16 @@
 import React, { createContext, useContext } from 'react'
-import { createReducer } from 'react-use'
-import { createLogger } from 'redux-logger'
-import thunk from 'redux-thunk'
+import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 
-const logger = createLogger({
-  collapsed: true,
-})
-
-const useThunkReducer = createReducer(thunk, logger)
+const useReducer = createReducer()
 
 export const PageContext = createContext()
 
 const PageProvider = ({ children, initialState }) => {
-  const [state, dispatch] = useThunkReducer(reducer, initialState)
+  const [state, dispatch, stateRef] = useReducer(reducer, initialState)
 
   return (
-    <PageContext.Provider value={[state, dispatch]}>
+    <PageContext.Provider value={[state, dispatch, stateRef]}>
       {children}
     </PageContext.Provider>
   )
