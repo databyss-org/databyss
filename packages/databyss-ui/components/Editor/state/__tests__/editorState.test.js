@@ -3,11 +3,13 @@ import {
   setActiveBlockId,
   setActiveBlockContent,
   setActiveBlockType,
+  setBlockType,
 } from '../actions'
 import {
   SET_ACTIVE_BLOCK_CONTENT,
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_ID,
+  SET_BLOCK_TYPE,
 } from '../constants'
 import initialState from './initialState'
 
@@ -76,6 +78,34 @@ describe('editorState', () => {
       expect(source.rawHtml).toEqual(
         'On the limitation of third-order thought to assertion'
       )
+    })
+  })
+
+  describe(SET_BLOCK_TYPE, () => {
+    test('should change block type from ENTRY to SOURCE', () => {
+      const state = reducer(
+        initialState,
+        setActiveBlockId('5d64423aae2da21680dc208b')
+      )
+      const blockId = '5d64424bcfa313f70483c1b0'
+      const nextState = reducer(state, setBlockType('SOURCE', blockId))
+      expect(nextState.blocks[blockId].type).toEqual('SOURCE')
+    })
+    test('should remove leading @', () => {
+      const blockId = '5d64424bcfa313f70483c1b0'
+      const state = reducer(initialState, setActiveBlockId(blockId))
+      let nextState = reducer(
+        state,
+        setActiveBlockContent('@this should become a source')
+      )
+      nextState = reducer(
+        nextState,
+        setBlockType('SOURCE', blockId, null, true)
+      )
+      expect(
+        nextState.sources[nextState.blocks[nextState.activeBlockId].refId]
+          .rawHtml
+      ).toEqual('this should become a source')
     })
   })
 

@@ -1,4 +1,4 @@
-import { Point, Range, Block } from 'slate'
+import { Block } from 'slate'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
@@ -21,7 +21,10 @@ const setActiveBlockType = type => (editor, value, next) => {
 const setBlockType = (id, type) => (editor, value, next) => {
   if (type === 'SOURCE') {
     const _node = value.document.getNode(id)
-    const _text = _node.getFirstText().text
+    let _text = _node.getFirstText().text
+    if (_text.startsWith('@')) {
+      _text = _text.substring(1)
+    }
     const _block = Block.fromJSON({
       object: 'block',
       type: 'SOURCE',
@@ -85,19 +88,6 @@ export default (editableState, action) => {
     }
     case SET_ACTIVE_BLOCK_TYPE: {
       const _nextEditorCommands = setActiveBlockType(action.payload.type)
-      if (action.payload.fromSymbolInput) {
-        return {
-          ...editableState,
-          editorCommands: (editor, value, next) => {
-            const { key } = findActiveNode(value)
-            const _start = Point.create({ key, offset: 0 })
-            const _end = Point.create({ key, offset: 1 })
-            const _range = Range.create({ anchor: _start, focus: _end })
-            editor.deleteForwardAtRange(_range)
-            _nextEditorCommands(editor, value, next)
-          },
-        }
-      }
       return {
         ...editableState,
         editorCommands: _nextEditorCommands,

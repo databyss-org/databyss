@@ -33,7 +33,7 @@ const EditorPage = ({ children }) => {
 
   const onBlockBlur = (id, rawHtml, editableState) => {
     if (rawHtml.match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
-      dispatchEditor(setBlockType('SOURCE', id, editableState, true))
+      dispatchEditor(setBlockType('SOURCE', id, editableState))
     }
   }
 
