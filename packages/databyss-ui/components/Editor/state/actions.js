@@ -3,8 +3,8 @@ import {
   SET_ACTIVE_BLOCK_CONTENT,
   SET_EDITABLE_STATE,
   SET_ACTIVE_BLOCK_TYPE,
-  INSERT_BLOCK,
-  SET_BLOCK_ID_TYPE,
+  INSERT_NEW_ACTIVE_BLOCK,
+  SET_BLOCK_TYPE,
   BACKSPACE,
 } from './constants'
 
@@ -48,9 +48,9 @@ export function setActiveBlockType(type, editableState, fromSymbolInput) {
   }
 }
 
-export function setBlockIdType(type, id, editableState, fromSymbolInput) {
+export function setBlockType(type, id, editableState, fromSymbolInput) {
   return {
-    type: SET_BLOCK_ID_TYPE,
+    type: SET_BLOCK_TYPE,
     payload: {
       type,
       editableState,
@@ -60,9 +60,9 @@ export function setBlockIdType(type, id, editableState, fromSymbolInput) {
   }
 }
 
-export function newBlock(blockProperties, editableState) {
+export function newActiveBlock(blockProperties, editableState) {
   return {
-    type: INSERT_BLOCK,
+    type: INSERT_NEW_ACTIVE_BLOCK,
     payload: {
       editableState,
       blockProperties,

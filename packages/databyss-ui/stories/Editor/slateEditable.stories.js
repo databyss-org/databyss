@@ -8,8 +8,8 @@ import EditorProvider, {
   useEditorContext,
 } from '@databyss-org/ui/components/Editor/EditorProvider'
 import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/actions'
-import SlateContentEditable from '@databyss-org/ui/components/Editor/SlateContentEditable'
-import slateReducer from '@databyss-org/ui/components/Editor/state/slateReducer'
+import SlateContentEditable from '@databyss-org/ui/components/Editor/slate/ContentEditable'
+import slateReducer from '@databyss-org/ui/components/Editor/slate/reducer'
 import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
 import initialState from '@databyss-org/ui/components/Editor/state/__tests__/initialState'
 import { ViewportDecorator } from '../decorators'
@@ -85,8 +85,8 @@ const ToolbarDemo = () => {
   )
 }
 
-const Box = ({ children }) => (
-  <View borderVariant="thinDark" paddingVariant="tiny" width="100%">
+const Box = ({ children, ...others }) => (
+  <View borderVariant="thinDark" paddingVariant="tiny" width="100%" {...others}>
     {children}
   </View>
 )
@@ -96,6 +96,23 @@ const ProviderDecorator = storyFn => (
     {storyFn()}
   </EditorProvider>
 )
+
+const SlateEditorDemo = () => {
+  const [slateDocument, setSlateDocument] = useState({})
+
+  return (
+    <Grid>
+      <Box mb="medium" maxWidth="500px" flexShrink={1}>
+        <EditorPage>
+          <SlateContentEditable onDocumentChange={setSlateDocument} />
+        </EditorPage>
+      </Box>
+      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
+        <pre>{JSON.stringify(slateDocument, null, 2)}</pre>
+      </Box>
+    </Grid>
+  )
+}
 
 storiesOf('Editor//Slate Implementation', module)
   .addDecorator(ProviderDecorator)
@@ -108,10 +125,6 @@ storiesOf('Editor//Slate Implementation', module)
   .add('EditorPage', () => (
     <View>
       <ToolbarDemo />
-      <Box>
-        <EditorPage>
-          <SlateContentEditable />
-        </EditorPage>
-      </Box>
+      <SlateEditorDemo />
     </View>
   ))

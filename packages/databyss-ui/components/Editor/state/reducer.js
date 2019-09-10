@@ -1,12 +1,13 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
+import invariant from 'invariant'
 
 import {
   SET_ACTIVE_BLOCK_ID,
   SET_ACTIVE_BLOCK_CONTENT,
   SET_ACTIVE_BLOCK_TYPE,
-  INSERT_BLOCK,
-  SET_BLOCK_ID_TYPE,
+  INSERT_NEW_ACTIVE_BLOCK,
+  SET_BLOCK_TYPE,
   BACKSPACE,
 } from './constants'
 
@@ -68,7 +69,7 @@ const setActiveBlockType = (state, type, isNew, _id) => {
   }
 }
 
-const setBlockIdType = (state, type, _id) => {
+const setBlockType = (state, type, _id) => {
   // changing block type will always generate a new refId
   const nextRefId = ObjectId().toHexString()
   const previousBlock = state.blocks[_id]
@@ -93,26 +94,27 @@ const setBlockIdType = (state, type, _id) => {
   }
 }
 
-const insertBlock = (state, payload) => {
-  const {
-    activeBlockId,
-    activeBlockText,
-    previousBlockId,
-    previousBlockText,
-  } = payload.blockProperties
+const insertNewActiveBlock = (
+  state,
+  { insertedBlockId, insertedBlockHtml, previousBlockId, previousBlockHtml }
+) => {
+  invariant(
+    insertedBlockId === state.activeBlockId,
+    'insertedBlockId must match activeBlockId. It is possible that you called insertNewActiveBlock before activeBlockId was updated'
+  )
 
-  let _state = state
-  _state.page.blocks = [..._state.page.blocks, { _id: state.activeBlockId }]
-  _state = setActiveBlockType(_state, 'ENTRY', true, activeBlockId)
+  let _state = cloneDeep(state)
+  _state.page.blocks = [..._state.page.blocks, { _id: state.insertedBlockId }]
+  _state = setActiveBlockType(_state, 'ENTRY', true, insertedBlockId)
   _state = setRawHtmlForBlock(
     _state,
-    _state.blocks[activeBlockId],
-    activeBlockText
+    _state.blocks[insertedBlockId],
+    insertedBlockHtml
   )
   _state = setRawHtmlForBlock(
     _state,
     _state.blocks[previousBlockId],
-    previousBlockText
+    previousBlockHtml
   )
   return _state
 }
@@ -174,12 +176,12 @@ export default (state, action) => {
       const activeBlock = state.blocks[state.activeBlockId]
       return setRawHtmlForBlock(state, activeBlock, action.payload.html)
     }
-    case INSERT_BLOCK:
-      return insertBlock(state, action.payload)
+    case INSERT_NEW_ACTIVE_BLOCK:
+      return insertNewActiveBlock(state, action.payload)
     case BACKSPACE:
       return backspace(state, action.payload)
-    case SET_BLOCK_ID_TYPE:
-      return setBlockIdType(state, action.payload.type, action.payload.id)
+    case SET_BLOCK_TYPE:
+      return setBlockType(state, action.payload.type, action.payload.id)
     default:
       return state
   }

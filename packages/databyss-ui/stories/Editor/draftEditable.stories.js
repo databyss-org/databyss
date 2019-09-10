@@ -7,8 +7,8 @@ import EditorProvider, {
   useEditorContext,
 } from '@databyss-org/ui/components/Editor/EditorProvider'
 import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/actions'
-import DraftContentEditable from '@databyss-org/ui/components/Editor/DraftContentEditable'
-import draftReducer from '@databyss-org/ui/components/Editor/state/draftReducer'
+import DraftContentEditable from '@databyss-org/ui/components/Editor/draft/ContentEditable'
+import draftReducer from '@databyss-org/ui/components/Editor/draft/reducer'
 import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
 import initialState from '@databyss-org/ui/components/Editor/state/__tests__/initialState'
 import { ViewportDecorator } from '../decorators'

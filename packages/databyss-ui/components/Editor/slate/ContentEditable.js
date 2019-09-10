@@ -2,12 +2,10 @@ import React, { useRef, useEffect } from 'react'
 import { KeyUtils, Value } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
-import AutoReplace from './plugins/autoReplace'
-import InsertBlockOnEnter from './plugins/InsertBlockOnEnter'
-import EditorBlock from './EditorBlock'
-import { getRawHtmlForBlock } from './state/reducer'
-import { findActiveBlock } from './state/slateReducer'
-import { useEditorContext } from './EditorProvider'
+import EditorBlock from '../EditorBlock'
+import { getRawHtmlForBlock } from '../state/reducer'
+import { findActiveBlock } from './reducer'
+import { useEditorContext } from '../EditorProvider'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -19,45 +17,60 @@ const toSlateJson = (editorState, pageBlocks) => ({
       type: block.type,
       nodes: [
         {
-          object: 'text',
-          text: getRawHtmlForBlock(editorState, block),
+          object: 'inline',
+          nodes: [
+            {
+              object: 'text',
+              text: getRawHtmlForBlock(editorState, block),
+            },
+          ],
+          type: block.type,
         },
       ],
     })),
   },
 })
 
-const plugins = [
-  // AutoReplace({
-  //   trigger: 'enter',
-  //   before: /^(@)+/,
-  //   change: (change, e, matches) => {
-  //     return change.setBlocks({ type: 'SOURCE', isVoid: true })
-  //   },
-  // }),
-  InsertBlockOnEnter({
-    object: 'block',
-    type: 'ENTRY',
-    nodes: [
-      {
-        object: 'text',
-        text: '',
-      },
-    ],
-  }),
-]
+const schema = {
+  inlines: {
+    SOURCE: {
+      isVoid: true,
+    },
+  },
+}
+
+const renderInline = ({ node, attributes }, editor, next) => {
+  const isSelected = editor.value.selection.focus.isInNode(node)
+  const style = isSelected
+    ? {
+        backgroundColor: '#efefef',
+      }
+    : {}
+  if (node.type === 'SOURCE') {
+    return (
+      <span style={style} {...attributes}>
+        {node.text}
+      </span>
+    )
+  }
+
+  return next()
+}
+
+const renderBlock = ({ node, children }) => (
+  <EditorBlock type={node.type}>{children}</EditorBlock>
+)
 
 const SlateContentEditable = ({
   onActiveBlockIdChange,
   onActiveBlockContentChange,
   onEditableStateChange,
-  onNewBlock,
+  onnewActiveBlock,
   onBackspace,
-  checkTagOnBlur,
+  onBlockBlur,
+  onDocumentChange,
 }) => {
   const [editorState] = useEditorContext()
-
-  // const { activeBlockId, editableState, blocks, page } = editorState
   const { activeBlockId, editableState, blocks, page } = editorState
   const editableRef = useRef(null)
 
@@ -73,7 +86,7 @@ const SlateContentEditable = ({
         rawHtml = _nextEditableState.value.document.getNode(activeBlockId).text
       }
 
-      checkTagOnBlur(activeBlockId, rawHtml, _nextEditableState)
+      onBlockBlur(activeBlockId, rawHtml, _nextEditableState)
       onActiveBlockIdChange(_nextActiveBlock.key, _nextEditableState)
       return true
     }
@@ -82,13 +95,14 @@ const SlateContentEditable = ({
 
   // checks editor state for active block content changed
   const checkActiveBlockContentChanged = _nextEditableState => {
-    if (!editorState.activeBlockId || !activeBlockId) {
+    if (
+      !editorState.activeBlockId ||
+      !activeBlockId ||
+      !blocks[activeBlockId]
+    ) {
       return false
     }
-    const _prevText = getRawHtmlForBlock(
-      editorState,
-      blocks[editorState.activeBlockId]
-    )
+    const _prevText = getRawHtmlForBlock(editorState, blocks[activeBlockId])
     const _nextText = _nextEditableState.value.document.getNode(activeBlockId)
       .text
     if (_nextText !== _prevText) {
@@ -99,9 +113,8 @@ const SlateContentEditable = ({
   }
 
   const onChange = ({ value }) => {
-    if (value.anchorBlock) {
-      console.log('current type', value.anchorBlock.type)
-      console.log('current key', value.anchorBlock.key)
+    if (onDocumentChange) {
+      onDocumentChange(value.document.toJSON())
     }
     if (
       !checkSelectedBlockChanged({ value }) &&
@@ -110,10 +123,6 @@ const SlateContentEditable = ({
       onEditableStateChange({ value })
     }
   }
-
-  const renderBlock = ({ node, children }) => (
-    <EditorBlock type={node.type}>{children}</EditorBlock>
-  )
 
   const _editableState = editableState || {
     value: Value.fromJSON(
@@ -127,7 +136,7 @@ const SlateContentEditable = ({
       _editableState.editorCommands(
         editableRef.current,
         _editableState.value,
-        () => undefined
+        () => editableRef.current.controller.flush()
       )
   )
 
@@ -140,7 +149,7 @@ const SlateContentEditable = ({
         previousBlockText: editor.value.previousBlock.text,
       }
       const editorState = { value: editor.value }
-      onNewBlock(blockProperties, editorState)
+      onnewActiveBlock(blockProperties, editorState)
     }
     if (event.key === 'Backspace') {
       const blockProperties = {
@@ -149,6 +158,10 @@ const SlateContentEditable = ({
       }
       onBackspace(blockProperties, editor)
     }
+
+    // special case:
+    // if cursor is immediately before or after the atomic source in a
+    // SOURCE block, prevent all
 
     return next()
   }
@@ -159,7 +172,8 @@ const SlateContentEditable = ({
       ref={editableRef}
       onChange={onChange}
       renderBlock={renderBlock}
-      plugins={plugins}
+      renderInline={renderInline}
+      schema={schema}
       onKeyUp={onKeyUp}
     />
   )
