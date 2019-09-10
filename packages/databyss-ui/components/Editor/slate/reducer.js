@@ -78,18 +78,12 @@ export default (editableState, action) => {
         action.payload.id,
         action.payload.type
       )
-      return {
-        ...editableState,
-        editorCommands: _nextEditorCommands,
-      }
-    }
-    case SET_ACTIVE_BLOCK_TYPE: {
-      const _nextEditorCommands = setActiveBlockType(action.payload.type)
       if (action.payload.fromSymbolInput) {
         return {
           ...editableState,
           editorCommands: (editor, value, next) => {
-            const { key } = findActiveNode(value)
+            const node = value.document.getNode(action.payload.id)
+            const key = node.getFirstText().key
             const _start = Point.create({ key, offset: 0 })
             const _end = Point.create({ key, offset: 1 })
             const _range = Range.create({ anchor: _start, focus: _end })
@@ -98,6 +92,13 @@ export default (editableState, action) => {
           },
         }
       }
+      return {
+        ...editableState,
+        editorCommands: _nextEditorCommands,
+      }
+    }
+    case SET_ACTIVE_BLOCK_TYPE: {
+      const _nextEditorCommands = setActiveBlockType(action.payload.type)
       return {
         ...editableState,
         editorCommands: _nextEditorCommands,
