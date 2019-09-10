@@ -1,5 +1,6 @@
 import axios from 'axios'
 import _ from 'lodash'
+import { httpGet, httpPost } from '../lib/requestApi'
 
 // TODO: Add native versions of these
 export function setAuthToken(value) {
@@ -14,6 +15,22 @@ export function getAuthToken() {
 
 export function deleteAuthToken() {
   setAuthToken(null)
+}
+
+export function setAccountId(value) {
+  localStorage.setItem('account', value)
+}
+
+export const getAccount = () => httpGet(`/accounts/`)
+
+export const newAccountFromToken = () => httpPost(`/accounts/`)
+
+export function getAccountId() {
+  return localStorage.getItem('account')
+}
+
+export function deleteAccountId() {
+  setAccountId(null)
 }
 
 export const register = async ({ email, password, name }) => {

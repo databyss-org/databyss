@@ -7,13 +7,11 @@ import {
   getAuthToken,
   checkToken,
   login,
-} from '@databyss-org/services/auth'
-import {
   getAccountId,
   newAccountFromToken,
   setAccountId,
   getAccount,
-} from '@databyss-org/services/pages'
+} from '@databyss-org/services/auth'
 
 import { ViewportDecorator } from '../decorators'
 

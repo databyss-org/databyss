@@ -1,6 +1,5 @@
 import request from './request'
-import { getAuthToken } from './../auth'
-import { getAccountId } from './../pages'
+import { getAuthToken, getAccountId } from './../auth'
 
 export const requestApi = (path, options = { headers: {} }, responseIsJson) =>
   request(
