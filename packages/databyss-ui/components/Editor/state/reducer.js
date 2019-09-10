@@ -167,18 +167,16 @@ export default (state, action) => {
       return backspace(state, action.payload)
     case SET_BLOCK_TYPE:
       let nextState = cloneDeep(state)
-      if (action.payload.fromSymbolInput) {
-        const _html = getRawHtmlForBlock(
+      const _html = getRawHtmlForBlock(
+        nextState,
+        nextState.blocks[action.payload.id]
+      )
+      if (_html.startsWith('@')) {
+        nextState = setRawHtmlForBlock(
           nextState,
-          nextState.blocks[action.payload.id]
+          nextState.blocks[action.payload.id],
+          _html.substring(1)
         )
-        if (_html.startsWith('@')) {
-          nextState = setRawHtmlForBlock(
-            nextState,
-            nextState.blocks[action.payload.id],
-            _html.substring(1)
-          )
-        }
       }
       return setBlockType(nextState, action.payload.type, action.payload.id)
     default:

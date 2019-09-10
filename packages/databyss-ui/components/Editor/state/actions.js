@@ -47,14 +47,13 @@ export function setActiveBlockType(type, editableState) {
   }
 }
 
-export function setBlockType(type, id, editableState, fromSymbolInput) {
+export function setBlockType(type, id, editableState) {
   return {
     type: SET_BLOCK_TYPE,
     payload: {
       type,
       editableState,
       id,
-      fromSymbolInput,
     },
   }
 }
