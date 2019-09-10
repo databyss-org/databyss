@@ -71,7 +71,9 @@ const SlateContentEditable = ({
   onDocumentChange,
 }) => {
   const [editorState] = useEditorContext()
+
   const { activeBlockId, editableState, blocks, page } = editorState
+
   const editableRef = useRef(null)
 
   const checkSelectedBlockChanged = _nextEditableState => {

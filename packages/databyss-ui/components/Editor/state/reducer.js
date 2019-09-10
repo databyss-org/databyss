@@ -44,36 +44,11 @@ export const setRawHtmlForBlock = (state, block, html) => {
   return nextState
 }
 
-const setActiveBlockType = (state, type, isNew, _id) => {
-  // changing block type will always generate a new refId
-  const nextRefId = ObjectId().toHexString()
-  const activeBlock = state.blocks[state.activeBlockId]
-  const rawHtml = isNew ? '' : getRawHtmlForBlock(state, activeBlock)
-  const nextState = cloneDeep(state)
-  nextState.blocks[state.activeBlockId] = {
-    ...nextState.blocks[state.activeBlockId],
-    _id,
-    type,
-    refId: nextRefId,
-  }
-  switch (type) {
-    case 'SOURCE':
-      nextState.sources[nextRefId] = { _id: nextRefId, rawHtml }
-      return nextState
-    case 'ENTRY':
-      nextState.entries[nextRefId] = { _id: nextRefId, rawHtml }
-      return nextState
-
-    default:
-      throw new Error('Invalid target block type', type)
-  }
-}
-
 const setBlockType = (state, type, _id) => {
   // changing block type will always generate a new refId
   const nextRefId = ObjectId().toHexString()
-  const previousBlock = state.blocks[_id]
-  const rawHtml = getRawHtmlForBlock(state, previousBlock)
+  const block = state.blocks[_id]
+  const rawHtml = block ? getRawHtmlForBlock(state, block) : ''
   const nextState = cloneDeep(state)
   nextState.blocks[_id] = {
     ...nextState.blocks[_id],
@@ -94,27 +69,29 @@ const setBlockType = (state, type, _id) => {
   }
 }
 
+const setActiveBlockType = (state, type) =>
+  setBlockType(state, type, state.activeBlockId)
+
 const insertNewActiveBlock = (
   state,
-  { insertedBlockId, insertedBlockHtml, previousBlockId, previousBlockHtml }
+  { insertedBlockId, insertedBlockText, previousBlockId, previousBlockText }
 ) => {
   invariant(
     insertedBlockId === state.activeBlockId,
     'insertedBlockId must match activeBlockId. It is possible that you called insertNewActiveBlock before activeBlockId was updated'
   )
-
   let _state = cloneDeep(state)
   _state.page.blocks = [..._state.page.blocks, { _id: insertedBlockId }]
-  _state = setActiveBlockType(_state, 'ENTRY', true, insertedBlockId)
+  _state = setBlockType(_state, 'ENTRY', insertedBlockId)
   _state = setRawHtmlForBlock(
     _state,
     _state.blocks[insertedBlockId],
-    insertedBlockHtml
+    insertedBlockText
   )
   _state = setRawHtmlForBlock(
     _state,
     _state.blocks[previousBlockId],
-    previousBlockHtml
+    previousBlockText
   )
   return _state
 }
