@@ -24,7 +24,6 @@
     "no-case-declarations": "off", // Fallthrough is useful in case/default clauses
     "no-param-reassign": ["error", { "props": false }], // Useful for mutating reduce accumulators, ex.
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
     "jsx-a11y/anchor-is-valid": "off",
     "prettier/prettier": [
       "error",

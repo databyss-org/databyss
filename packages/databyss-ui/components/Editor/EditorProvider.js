@@ -1,14 +1,8 @@
 import React, { createContext, useContext } from 'react'
-import { createReducer } from 'react-use'
-import { createLogger } from 'redux-logger'
-import thunk from 'redux-thunk'
+import createReducer from '@databyss-org/services/lib/createReducer'
 import reducer, { initialState } from './state/reducer'
 
-const logger = createLogger({
-  collapsed: true,
-})
-
-const useThunkReducer = createReducer(thunk, logger)
+const useReducer = createReducer()
 
 export const EditorContext = createContext()
 
@@ -21,13 +15,13 @@ const makeComposedReducer = contentEditableReducer => (state, action) => ({
 })
 
 const EditorProvider = ({ children, initialState, editableReducer }) => {
-  const [state, dispatch] = useThunkReducer(
+  const [state, dispatch, stateRef] = useReducer(
     makeComposedReducer(editableReducer),
     initialState
   )
 
   return (
-    <EditorContext.Provider value={[state, dispatch]}>
+    <EditorContext.Provider value={[state, dispatch, stateRef]}>
       {children}
     </EditorContext.Provider>
   )

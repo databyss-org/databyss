@@ -20,6 +20,7 @@ import { initialState } from '@databyss-org/services/pages/reducer'
 import SlateContentEditable from '@databyss-org/ui/components/Editor/slate/ContentEditable'
 import slateReducer from '@databyss-org/ui/components/Editor/slate/reducer'
 import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
+import AutoSave from '@databyss-org/ui/components/Editor/AutoSave'
 import seedState from './_seedState'
 import { ViewportDecorator } from '../decorators'
 
@@ -72,6 +73,7 @@ const EditorLoader = ({ children }) => {
       initialState={state.pageState}
       editableReducer={slateReducer}
     >
+      <AutoSave />
       {children}
     </EditorProvider>
   )
