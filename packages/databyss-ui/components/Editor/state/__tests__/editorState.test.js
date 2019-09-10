@@ -36,7 +36,7 @@ describe('editorState', () => {
           .rawHtml
       ).toEqual('updated content')
     })
-    test('clearning content should reset type to ENTRY', () => {
+    test('clearing content should reset type to ENTRY', () => {
       const state = reducer(
         initialState,
         setActiveBlockId('5d64423aae2da21680dc208b')

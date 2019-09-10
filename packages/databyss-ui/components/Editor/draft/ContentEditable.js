@@ -6,9 +6,9 @@ import {
   ContentState,
   ContentBlock,
 } from 'draft-js'
-import EditorBlock from './EditorBlock'
-import { getRawHtmlForBlock } from './state/reducer'
-import { useEditorContext } from './EditorProvider'
+import EditorBlock from '../EditorBlock'
+import { getRawHtmlForBlock } from '../state/reducer'
+import { useEditorContext } from '../EditorProvider'
 
 const setDraftStateBlocks = (state, editableState, pageBlocks) => {
   const _blockArray = pageBlocks.map(

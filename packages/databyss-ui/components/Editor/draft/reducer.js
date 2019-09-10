@@ -1,5 +1,8 @@
 import { Modifier, EditorState } from 'draft-js'
-import { SET_ACTIVE_BLOCK_TYPE, SET_ACTIVE_BLOCK_CONTENT } from './constants'
+import {
+  SET_ACTIVE_BLOCK_TYPE,
+  SET_ACTIVE_BLOCK_CONTENT,
+} from '../state/constants'
 
 const setActiveBlockType = (editableState, type) => {
   let _nextContentState = editableState.getCurrentContent()

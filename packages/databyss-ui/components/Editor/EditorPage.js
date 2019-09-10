@@ -5,8 +5,8 @@ import {
   setActiveBlockId,
   setActiveBlockContent,
   setEditableState,
-  setActiveBlockType,
-  newBlock,
+  setBlockType,
+  newActiveBlock,
   backspace,
 } from './state/actions'
 
@@ -17,25 +17,24 @@ const EditorPage = ({ children }) => {
     dispatchEditor(setActiveBlockId(id, editableState))
 
   const onActiveBlockContentChange = (rawHtml, editableState) => {
-    if (
-      rawHtml.match(/^@/) &&
-      editorState.blocks[editorState.activeBlockId].type !== 'SOURCE'
-    ) {
-      dispatchEditor(setActiveBlockType('SOURCE', editableState, true))
-    } else {
-      dispatchEditor(setActiveBlockContent(rawHtml, editableState))
-    }
+    dispatchEditor(setActiveBlockContent(rawHtml, editableState))
   }
 
   const onEditableStateChange = editableState =>
     dispatchEditor(setEditableState(editableState))
 
-  const onNewBlock = (blockProperties, editableState) => {
-    dispatchEditor(newBlock(blockProperties, editableState))
+  const onNewActiveBlock = (blockProperties, editableState) => {
+    dispatchEditor(newActiveBlock(blockProperties, editableState))
   }
 
   const onBackspace = (blockProperties, editableState) => {
     dispatchEditor(backspace(blockProperties, editableState))
+  }
+
+  const onBlockBlur = (id, rawHtml, editableState) => {
+    if (rawHtml.match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
+      dispatchEditor(setBlockType('SOURCE', id, editableState, true))
+    }
   }
 
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
@@ -43,8 +42,9 @@ const EditorPage = ({ children }) => {
     onActiveBlockIdChange,
     onActiveBlockContentChange,
     onEditableStateChange,
-    onNewBlock,
+    onNewActiveBlock,
     onBackspace,
+    onBlockBlur,
   })
 }
 

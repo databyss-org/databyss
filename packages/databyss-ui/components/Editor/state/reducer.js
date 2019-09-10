@@ -1,11 +1,13 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
+import invariant from 'invariant'
 
 import {
   SET_ACTIVE_BLOCK_ID,
   SET_ACTIVE_BLOCK_CONTENT,
   SET_ACTIVE_BLOCK_TYPE,
-  INSERT_BLOCK,
+  INSERT_NEW_ACTIVE_BLOCK,
+  SET_BLOCK_TYPE,
   BACKSPACE,
 } from './constants'
 
@@ -67,26 +69,52 @@ const setActiveBlockType = (state, type, isNew, _id) => {
   }
 }
 
-const insertBlock = (state, payload) => {
-  const {
-    activeBlockId,
-    activeBlockText,
-    previousBlockId,
-    previousBlockText,
-  } = payload.blockProperties
+const setBlockType = (state, type, _id) => {
+  // changing block type will always generate a new refId
+  const nextRefId = ObjectId().toHexString()
+  const previousBlock = state.blocks[_id]
+  const rawHtml = getRawHtmlForBlock(state, previousBlock)
+  const nextState = cloneDeep(state)
+  nextState.blocks[_id] = {
+    ...nextState.blocks[_id],
+    _id,
+    type,
+    refId: nextRefId,
+  }
+  switch (type) {
+    case 'SOURCE':
+      nextState.sources[nextRefId] = { _id: nextRefId, rawHtml }
+      return nextState
+    case 'ENTRY':
+      nextState.entries[nextRefId] = { _id: nextRefId, rawHtml }
+      return nextState
 
-  let _state = state
-  _state.page.blocks = [..._state.page.blocks, { _id: state.activeBlockId }]
-  _state = setActiveBlockType(_state, 'ENTRY', true, activeBlockId)
+    default:
+      throw new Error('Invalid target block type', type)
+  }
+}
+
+const insertNewActiveBlock = (
+  state,
+  { insertedBlockId, insertedBlockHtml, previousBlockId, previousBlockHtml }
+) => {
+  invariant(
+    insertedBlockId === state.activeBlockId,
+    'insertedBlockId must match activeBlockId. It is possible that you called insertNewActiveBlock before activeBlockId was updated'
+  )
+
+  let _state = cloneDeep(state)
+  _state.page.blocks = [..._state.page.blocks, { _id: insertedBlockId }]
+  _state = setActiveBlockType(_state, 'ENTRY', true, insertedBlockId)
   _state = setRawHtmlForBlock(
     _state,
-    _state.blocks[activeBlockId],
-    activeBlockText
+    _state.blocks[insertedBlockId],
+    insertedBlockHtml
   )
   _state = setRawHtmlForBlock(
     _state,
     _state.blocks[previousBlockId],
-    previousBlockText
+    previousBlockHtml
   )
   return _state
 }
@@ -136,7 +164,6 @@ const backspace = (state, payload) => {
 }
 
 export default (state, action) => {
-  // console.log('nextState', nextState)
   switch (action.type) {
     case SET_ACTIVE_BLOCK_TYPE:
       return setActiveBlockType(state, action.payload.type)
@@ -147,16 +174,22 @@ export default (state, action) => {
       }
     case SET_ACTIVE_BLOCK_CONTENT: {
       const activeBlock = state.blocks[state.activeBlockId]
-      // handle edge case: remove all content resets type
+      const nextState = setRawHtmlForBlock(
+        state,
+        activeBlock,
+        action.payload.html
+      )
       if (!action.payload.html.length) {
-        return setActiveBlockType(state, 'ENTRY', true)
+        return setActiveBlockType(nextState, 'ENTRY')
       }
-      return setRawHtmlForBlock(state, activeBlock, action.payload.html)
+      return nextState
     }
-    case INSERT_BLOCK:
-      return insertBlock(state, action.payload)
+    case INSERT_NEW_ACTIVE_BLOCK:
+      return insertNewActiveBlock(state, action.payload.blockProperties)
     case BACKSPACE:
       return backspace(state, action.payload)
+    case SET_BLOCK_TYPE:
+      return setBlockType(state, action.payload.type, action.payload.id)
     default:
       return state
   }

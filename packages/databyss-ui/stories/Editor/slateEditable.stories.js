@@ -7,9 +7,10 @@ import Grid from '@databyss-org/ui/components/Grid/Grid'
 import EditorProvider, {
   useEditorContext,
 } from '@databyss-org/ui/components/Editor/EditorProvider'
+import { getRawHtmlForBlock } from '@databyss-org/ui/components/Editor/state/reducer'
 import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/actions'
-import SlateContentEditable from '@databyss-org/ui/components/Editor/SlateContentEditable'
-import slateReducer from '@databyss-org/ui/components/Editor/state/slateReducer'
+import SlateContentEditable from '@databyss-org/ui/components/Editor/slate/ContentEditable'
+import slateReducer from '@databyss-org/ui/components/Editor/slate/reducer'
 import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
 import initialState from '@databyss-org/ui/components/Editor/state/__tests__/initialState'
 import { ViewportDecorator } from '../decorators'
@@ -85,8 +86,8 @@ const ToolbarDemo = () => {
   )
 }
 
-const Box = ({ children }) => (
-  <View borderVariant="thinDark" paddingVariant="tiny" width="100%">
+const Box = ({ children, ...others }) => (
+  <View borderVariant="thinDark" paddingVariant="tiny" width="100%" {...others}>
     {children}
   </View>
 )
@@ -96,6 +97,36 @@ const ProviderDecorator = storyFn => (
     {storyFn()}
   </EditorProvider>
 )
+
+const SlateEditorDemo = () => {
+  const [slateDocument, setSlateDocument] = useState({})
+  const [editorState] = useEditorContext()
+  const { activeBlockId, page, blocks } = editorState
+
+  const editorDocument = {
+    activeBlockId,
+    pageBlocks: page.blocks.map(block => ({
+      ...blocks[block._id],
+      rawHtml: getRawHtmlForBlock(editorState, blocks[block._id]),
+    })),
+  }
+
+  return (
+    <Grid>
+      <Box mb="medium" maxWidth="500px" flexShrink={1}>
+        <EditorPage>
+          <SlateContentEditable onDocumentChange={setSlateDocument} />
+        </EditorPage>
+      </Box>
+      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
+        <pre>{JSON.stringify(slateDocument, null, 2)}</pre>
+      </Box>
+      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
+        <pre>{JSON.stringify(editorDocument, null, 2)}</pre>
+      </Box>
+    </Grid>
+  )
+}
 
 storiesOf('Editor//Slate Implementation', module)
   .addDecorator(ProviderDecorator)
@@ -108,10 +139,6 @@ storiesOf('Editor//Slate Implementation', module)
   .add('EditorPage', () => (
     <View>
       <ToolbarDemo />
-      <Box>
-        <EditorPage>
-          <SlateContentEditable />
-        </EditorPage>
-      </Box>
+      <SlateEditorDemo />
     </View>
   ))
