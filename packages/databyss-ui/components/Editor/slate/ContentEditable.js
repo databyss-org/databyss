@@ -65,7 +65,7 @@ const SlateContentEditable = ({
   onActiveBlockIdChange,
   onActiveBlockContentChange,
   onEditableStateChange,
-  onnewActiveBlock,
+  onNewActiveBlock,
   onBackspace,
   onBlockBlur,
   onDocumentChange,
@@ -143,13 +143,13 @@ const SlateContentEditable = ({
   const onKeyUp = (event, editor, next) => {
     if (event.key === 'Enter') {
       const blockProperties = {
-        activeBlockId: editor.value.anchorBlock.key,
-        activeBlockText: editor.value.anchorBlock.text,
+        insertedBlockId: editor.value.anchorBlock.key,
+        insertedBlockText: editor.value.anchorBlock.text,
         previousBlockId: editor.value.previousBlock.key,
         previousBlockText: editor.value.previousBlock.text,
       }
       const editorState = { value: editor.value }
-      onnewActiveBlock(blockProperties, editorState)
+      onNewActiveBlock(blockProperties, editorState)
     }
     if (event.key === 'Backspace') {
       const blockProperties = {

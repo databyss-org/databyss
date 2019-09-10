@@ -23,7 +23,7 @@ const EditorPage = ({ children }) => {
   const onEditableStateChange = editableState =>
     dispatchEditor(setEditableState(editableState))
 
-  const onnewActiveBlock = (blockProperties, editableState) => {
+  const onNewActiveBlock = (blockProperties, editableState) => {
     dispatchEditor(newActiveBlock(blockProperties, editableState))
   }
 
@@ -42,7 +42,7 @@ const EditorPage = ({ children }) => {
     onActiveBlockIdChange,
     onActiveBlockContentChange,
     onEditableStateChange,
-    onnewActiveBlock,
+    onNewActiveBlock,
     onBackspace,
     onBlockBlur,
   })

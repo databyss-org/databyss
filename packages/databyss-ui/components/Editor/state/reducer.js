@@ -104,7 +104,7 @@ const insertNewActiveBlock = (
   )
 
   let _state = cloneDeep(state)
-  _state.page.blocks = [..._state.page.blocks, { _id: state.insertedBlockId }]
+  _state.page.blocks = [..._state.page.blocks, { _id: insertedBlockId }]
   _state = setActiveBlockType(_state, 'ENTRY', true, insertedBlockId)
   _state = setRawHtmlForBlock(
     _state,
@@ -177,7 +177,7 @@ export default (state, action) => {
       return setRawHtmlForBlock(state, activeBlock, action.payload.html)
     }
     case INSERT_NEW_ACTIVE_BLOCK:
-      return insertNewActiveBlock(state, action.payload)
+      return insertNewActiveBlock(state, action.payload.blockProperties)
     case BACKSPACE:
       return backspace(state, action.payload)
     case SET_BLOCK_TYPE:

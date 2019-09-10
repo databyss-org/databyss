@@ -7,6 +7,7 @@ import Grid from '@databyss-org/ui/components/Grid/Grid'
 import EditorProvider, {
   useEditorContext,
 } from '@databyss-org/ui/components/Editor/EditorProvider'
+import { getRawHtmlForBlock } from '@databyss-org/ui/components/Editor/state/reducer'
 import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/actions'
 import SlateContentEditable from '@databyss-org/ui/components/Editor/slate/ContentEditable'
 import slateReducer from '@databyss-org/ui/components/Editor/slate/reducer'
@@ -99,6 +100,16 @@ const ProviderDecorator = storyFn => (
 
 const SlateEditorDemo = () => {
   const [slateDocument, setSlateDocument] = useState({})
+  const [editorState] = useEditorContext()
+  const { activeBlockId, sources, entries, page, blocks } = editorState
+
+  const editorDocument = {
+    activeBlockId,
+    pageBlocks: page.blocks.map(block => ({
+      ...blocks[block._id],
+      rawHtml: getRawHtmlForBlock(editorState, blocks[block._id]),
+    })),
+  }
 
   return (
     <Grid>
@@ -109,6 +120,9 @@ const SlateEditorDemo = () => {
       </Box>
       <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
         <pre>{JSON.stringify(slateDocument, null, 2)}</pre>
+      </Box>
+      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
+        <pre>{JSON.stringify(editorDocument, null, 2)}</pre>
       </Box>
     </Grid>
   )
