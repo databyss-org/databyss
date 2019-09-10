@@ -11,23 +11,30 @@ KeyUtils.setGenerator(() => ObjectId().toHexString())
 
 const toSlateJson = (editorState, pageBlocks) => ({
   document: {
-    nodes: pageBlocks.map(block => ({
-      object: 'block',
-      key: block._id,
-      type: block.type,
-      nodes: [
-        {
-          object: 'inline',
-          nodes: [
-            {
+    nodes: pageBlocks.map(block => {
+      const textBlock =
+        block.type === 'SOURCE'
+          ? {
+              object: 'inline',
+              nodes: [
+                {
+                  object: 'text',
+                  text: getRawHtmlForBlock(editorState, block),
+                },
+              ],
+              type: block.type,
+            }
+          : {
               object: 'text',
               text: getRawHtmlForBlock(editorState, block),
-            },
-          ],
-          type: block.type,
-        },
-      ],
-    })),
+            }
+      return {
+        object: 'block',
+        key: block._id,
+        type: block.type,
+        nodes: [textBlock],
+      }
+    }),
   },
 })
 

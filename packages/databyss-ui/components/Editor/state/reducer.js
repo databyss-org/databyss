@@ -46,6 +46,8 @@ export const setRawHtmlForBlock = (state, block, html) => {
 
 const setBlockType = (state, type, _id) => {
   // changing block type will always generate a new refId
+
+  console.log('type', type)
   const nextRefId = ObjectId().toHexString()
   const block = state.blocks[_id]
   const rawHtml = block ? getRawHtmlForBlock(state, block) : ''
