@@ -3,6 +3,8 @@ import {
   SET_ACTIVE_BLOCK_CONTENT,
   SET_EDITABLE_STATE,
   SET_ACTIVE_BLOCK_TYPE,
+  INSERT_BLOCK,
+  BACKSPACE,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -41,6 +43,26 @@ export function setActiveBlockType(type, editableState, fromSymbolInput) {
       type,
       editableState,
       fromSymbolInput,
+    },
+  }
+}
+
+export function newBlock(blockProperties, editableState) {
+  return {
+    type: INSERT_BLOCK,
+    payload: {
+      editableState,
+      blockProperties,
+    },
+  }
+}
+
+export function backspace(blockProperties, editableState) {
+  return {
+    type: BACKSPACE,
+    payload: {
+      editableState,
+      blockProperties,
     },
   }
 }

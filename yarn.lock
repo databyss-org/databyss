@@ -6356,6 +6356,11 @@ eslint-plugin-prettier@^2.6.0:
     fast-diff "^1.1.1"
     jest-docblock "^21.0.0"
 
+eslint-plugin-react-hooks@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-2.0.1.tgz#e898ec26a0a335af6f7b0ad1f0bedda7143ed756"
+  integrity sha512-xir+3KHKo86AasxlCV8AHRtIZPHljqCRRUYgASkbatmt0fad4+5GgC7zkT7o/06hdKM6MIwp8giHVXqBPaarHQ==
+
 eslint-plugin-react@^7.13.0:
   version "7.14.3"
   resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.14.3.tgz#911030dd7e98ba49e1b2208599571846a66bdf13"
@@ -15515,6 +15520,11 @@ slate-hotkeys@^0.2.9:
   dependencies:
     is-hotkey "0.1.4"
     slate-dev-environment "^0.2.2"
+
+slate-insert-block-on-enter@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/slate-insert-block-on-enter/-/slate-insert-block-on-enter-0.4.0.tgz#6facd63d152c0448c8e39afa0bef4bbf8309da61"
+  integrity sha512-1Yw6BiwcHuo74jAOYwxNXDLMtC5OpTB4HbimoMUpuSSRuv3YcJpaFnkwOUXvfuiY/OaPn8ztKNQV9AZknC+5uQ==
 
 slate-plain-serializer@^0.7.10:
   version "0.7.10"

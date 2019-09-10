@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "1.1.15",
+  "version": "1.1.16",
   "description": "massive open-source citation database platform",
   "main": "index.js",
   "repository": {
@@ -149,6 +149,7 @@
     "eslint-plugin-jsx-a11y": "6.2.1",
     "eslint-plugin-prettier": "^2.6.0",
     "eslint-plugin-react": "^7.13.0",
+    "eslint-plugin-react-hooks": "^2.0.1",
     "expo-app-auth": "^6.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.1.1",
@@ -163,6 +164,7 @@
     "jest-runner-eslint": "^0.7.1",
     "jsonwebtoken": "^8.5.1",
     "kill-port": "^1.5.1",
+    "lodash": "^4.17.15",
     "metro-react-native-babel-preset": "^0.55.0",
     "mini-css-extract-plugin": "^0.7.0",
     "mongoose": "^5.6.5",
@@ -196,6 +198,7 @@
     "resolve": "^1.11.1",
     "sass-loader": "^7.1.0",
     "semver-diff": "^2.0.0",
+    "slate-insert-block-on-enter": "^0.4.0",
     "styled-system": "^5.0.5",
     "supertest": "^4.0.2",
     "sw-precache-webpack-plugin": "0.11.5",

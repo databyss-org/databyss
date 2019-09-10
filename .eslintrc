@@ -1,6 +1,6 @@
 {
   "extends": ["eslint-config-airbnb", "eslint-config-prettier"],
-  "plugins": ["eslint-plugin-prettier"],
+  "plugins": ["eslint-plugin-prettier", "react-hooks"],
   "parser": "babel-eslint",
   "env": {
     "jest": true,
@@ -23,6 +23,8 @@
     "prefer-destructuring": "off", // This forces awkward syntax sometimes
     "no-case-declarations": "off", // Fallthrough is useful in case/default clauses
     "no-param-reassign": ["error", { "props": false }], // Useful for mutating reduce accumulators, ex.
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "jsx-a11y/anchor-is-valid": "off",
     "prettier/prettier": [
       "error",

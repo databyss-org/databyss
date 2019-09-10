@@ -1,5 +1,5 @@
 import request from './request'
-import { getAuthToken } from './../auth'
+import { getAuthToken, getAccountId } from './../auth'
 
 export const requestApi = (path, options = { headers: {} }, responseIsJson) =>
   request(
@@ -8,7 +8,8 @@ export const requestApi = (path, options = { headers: {} }, responseIsJson) =>
       ...options,
       headers: {
         ...options.headers,
-        Authorization: `Bearer ${getAuthToken()}`,
+        'x-auth-token': `${getAuthToken()}`,
+        'x-databyss-account': `${getAccountId()}`,
       },
     },
     responseIsJson

@@ -1,12 +1,12 @@
 {
   "name": "@databyss-org/login",
-  "version": "1.1.15",
+  "version": "1.1.16",
   "private": true,
   "peerDependencies": {
     "react": "16.8.6",
     "react-dom": "16.8.6",
-    "@databyss-org/ui": "1.1.15",
-    "@databyss-org/services": "1.1.15"
+    "@databyss-org/ui": "1.1.16",
+    "@databyss-org/services": "1.1.16"
   },
   "dependencies": {
     "@storybook/react": "5.1.9",

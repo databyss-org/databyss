@@ -1,4 +1,4 @@
-import bugsnagMiddleware from './middleware/bugsnag'
+import bugsnag from './middleware/bugsnag'
 import ApiError from './lib/ApiError'
 
 const express = require('express')
@@ -6,6 +6,7 @@ const cors = require('cors')
 const { connectDB } = require('./lib/db')
 
 let app = null
+let bugsnagMiddleware
 
 module.exports = async () => {
   if (app) {
@@ -20,6 +21,7 @@ module.exports = async () => {
   // This must be the first piece of middleware in the stack.
   // It can only capture errors in downstream middleware
   if (process.env.NODE_ENV !== 'test') {
+    bugsnagMiddleware = bugsnag()
     app.use(bugsnagMiddleware.requestHandler)
   }
 
