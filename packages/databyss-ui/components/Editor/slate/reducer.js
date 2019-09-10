@@ -1,4 +1,4 @@
-import { Point, Range } from 'slate'
+import { Point, Range, Block } from 'slate'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
@@ -19,7 +19,43 @@ const setActiveBlockType = type => (editor, value, next) => {
 }
 
 const setBlockType = (id, type) => (editor, value, next) => {
-  editor.setNodeByKey(id, { type })
+  if (type === 'SOURCE') {
+    const _node = value.document.getNode(id)
+    const _text = _node.getFirstText().text
+    const _block = Block.fromJSON({
+      object: 'block',
+      type: 'SOURCE',
+      key: _node.key,
+      data: {},
+      nodes: [
+        {
+          object: 'text',
+          text: '',
+          marks: [],
+        },
+        {
+          object: 'inline',
+          type: 'SOURCE',
+          data: {},
+          nodes: [
+            {
+              object: 'text',
+              text: _text,
+              marks: [],
+            },
+          ],
+        },
+        {
+          object: 'text',
+          text: '',
+          marks: [],
+        },
+      ],
+    })
+    editor.replaceNodeByKey(id, _block)
+  } else {
+    editor.setNodeByKey(id, { type })
+  }
   next(editor, value)
 }
 
