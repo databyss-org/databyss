@@ -156,18 +156,47 @@ const SlateContentEditable = ({
       const editorState = { value: editor.value }
       onNewActiveBlock(blockProperties, editorState)
     }
+
     if (event.key === 'Backspace') {
       const blockProperties = {
         activeBlockId: editor.value.anchorBlock.key,
         nextBlockId: editor.value.nextBlock ? editor.value.nextBlock.key : null,
       }
-      onBackspace(blockProperties, editor)
+      const editorState = { value: editor.value }
+      onBackspace(blockProperties, editorState)
     }
 
     // special case:
     // if cursor is immediately before or after the atomic source in a
     // SOURCE block, prevent all
 
+    return next()
+  }
+
+  const onKeyDown = (event, editor, next) => {
+    if (editor.value.anchorBlock.type === 'SOURCE') {
+      if (
+        event.key === 'Backspace' ||
+        event.key === 'Enter' ||
+        event.key === 'ArrowLeft' ||
+        event.key === 'ArrowRight' ||
+        event.key === 'ArrowUp' ||
+        event.key === 'ArrowDown'
+      ) {
+        if (event.key === 'Backspace' && editor.value.previousBlock.text) {
+          if (
+            !editor.value.selection.focus.isAtStartOfNode(
+              editor.value.anchorBlock
+            )
+          ) {
+            return next()
+          }
+          return event.preventDefault()
+        }
+        return next()
+      }
+      return event.preventDefault()
+    }
     return next()
   }
 
@@ -180,6 +209,7 @@ const SlateContentEditable = ({
       renderInline={renderInline}
       schema={schema}
       onKeyUp={onKeyUp}
+      onKeyDown={onKeyDown}
     />
   )
 }

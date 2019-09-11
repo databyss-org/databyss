@@ -4,6 +4,7 @@ import {
   SET_ACTIVE_BLOCK_CONTENT,
   INSERT_NEW_ACTIVE_BLOCK,
   SET_BLOCK_TYPE,
+  BACKSPACE,
 } from '../state/constants'
 
 export const findActiveBlock = value =>
@@ -14,8 +15,24 @@ export const findActiveNode = value =>
 
 const setActiveBlockType = type => (editor, value, next) => {
   const _activeBlock = findActiveBlock(value)
-  editor.setNodeByKey(_activeBlock.key, { type })
-  next(editor, value)
+  if (_activeBlock.type === 'SOURCE') {
+    // if previous value is SOURCE and is currently not empty
+    // set current block type as ENTRY
+    if (
+      editor.value.previousBlock.type === 'SOURCE' &&
+      editor.value.previousBlock.text
+    ) {
+      editor.setNodeByKey(editor.value.anchorBlock.key, { type: 'ENTRY' })
+    }
+    // if active block is SOURCE set node type to SOURCE
+    // if previous block text is empty, set previous to ENTRY
+    if (!editor.value.previousBlock.text) {
+      editor.setNodeByKey(editor.value.previousBlock.key, { type: 'ENTRY' })
+    }
+  } else {
+    editor.setNodeByKey(_activeBlock.key, { type })
+    next(editor, value)
+  }
 }
 
 const setBlockType = (id, type) => (editor, value, next) => {
@@ -62,6 +79,16 @@ const setBlockType = (id, type) => (editor, value, next) => {
   next(editor, value)
 }
 
+const backspace = () => (editor, value, next) => {
+  // if current block is empty and block type is SOURCE
+  // set block type to ENTRY
+  const _block = value.anchorBlock
+  if (!_block.text && _block.type === 'SOURCE') {
+    editor.setNodeByKey(_block.key, { type: 'ENTRY' })
+  }
+  next(editor, value)
+}
+
 export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
@@ -75,6 +102,13 @@ export default (editableState, action) => {
     }
     case INSERT_NEW_ACTIVE_BLOCK:
       return { ...editableState, editorCommands: setActiveBlockType('ENTRY') }
+    case BACKSPACE:
+      const _nextEditorCommands = backspace()
+
+      return {
+        ...editableState,
+        editorCommands: _nextEditorCommands,
+      }
 
     case SET_BLOCK_TYPE: {
       const _nextEditorCommands = setBlockType(
