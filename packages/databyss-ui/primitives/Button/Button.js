@@ -1,6 +1,8 @@
 import React from 'react'
 import { variant, flexbox, compose } from 'styled-system'
-import { View, BaseControl, Text } from '../'
+import { BaseControl, Text } from '../'
+// HACK: if View is imported from '../' above, it breaks storybook:build (reason unknown)
+import View from '../View/View'
 import styled from '../styled'
 import buttons from '../../theming/buttons'
 

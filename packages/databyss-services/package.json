@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/services",
-  "version": "1.1.22",
+  "version": "1.1.23",
   "repository": {
     "type": "git",
     "url": "https://github.com/databyss-org/databyss.git"
@@ -12,8 +12,8 @@
   "license": "MIT",
   "private": true,
   "peerDependencies": {
-    "react": "16.8.6",
-    "react-dom": "16.8.6"
+    "react": "16.9.0",
+    "react-dom": "16.9.0"
   },
   "dependencies": {
     "axios": "^0.19.0",
