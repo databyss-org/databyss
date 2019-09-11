@@ -1,3 +1,5 @@
+import Color from 'color'
+
 const colors = {
   gray: [
     '#181510',
@@ -32,5 +34,10 @@ colors.entrySourceColor = colors.purple[0]
 colors.controlRippleColor = colors.gray[3]
 colors.controlHover = colors.gray[6]
 colors.controlActive = colors.gray[5]
+
+colors.selectionHighlight = Color(colors.blue[3])
+  .alpha(0.5)
+  .rgb()
+  .string()
 
 export default colors
