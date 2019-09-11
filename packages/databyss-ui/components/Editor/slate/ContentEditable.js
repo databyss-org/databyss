@@ -3,6 +3,7 @@ import { KeyUtils, Value } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
 import EditorBlock from '../EditorBlock'
+import EditorInline from '../EditorInline'
 import { getRawHtmlForBlock } from '../state/reducer'
 import { findActiveBlock } from './reducer'
 import { useEditorContext } from '../EditorProvider'
@@ -47,17 +48,12 @@ const schema = {
 }
 
 const renderInline = ({ node, attributes }, editor, next) => {
-  const isSelected = editor.value.selection.focus.isInNode(node)
-  const style = isSelected
-    ? {
-        backgroundColor: '#efefef',
-      }
-    : {}
+  const isFocused = editor.value.selection.focus.isInNode(node)
   if (node.type === 'SOURCE') {
     return (
-      <span style={style} {...attributes}>
+      <EditorInline isFocused={isFocused} {...attributes}>
         {node.text}
-      </span>
+      </EditorInline>
     )
   }
 
