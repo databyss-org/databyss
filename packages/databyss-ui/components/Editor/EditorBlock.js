@@ -26,7 +26,7 @@ const EditorBlock = ({ type, children }) => (
     >
       +
     </View>
-    <View flexShrink={1}>
+    <View flexShrink={1} overflow="visible">
       <Text
         variant={styleSelector(type).style}
         color={styleSelector(type).color}
