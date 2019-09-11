@@ -18,6 +18,29 @@ export const initialState = {
   editableState: null,
 }
 
+const cleanUpState = state => {
+  const _state = cloneDeep(state)
+  const pageBlocks = _state.page.blocks
+  const { blocks, entries, sources } = _state
+  const _sources = {}
+  const _blocks = {}
+  const _entries = {}
+  pageBlocks.forEach(b => {
+    const { type, refId } = blocks[b._id]
+    if (type === 'SOURCE') {
+      _sources[refId] = sources[refId]
+    }
+    if (type === 'ENTRY') {
+      _entries[refId] = entries[refId]
+    }
+    _blocks[b._id] = blocks[b._id]
+  })
+  _state.blocks = _blocks
+  _state.entries = _entries
+  _state.sources = _sources
+  return _state
+}
+
 export const getRawHtmlForBlock = (state, block) => {
   switch (block.type) {
     case 'ENTRY':
@@ -80,9 +103,23 @@ const insertNewActiveBlock = (
     insertedBlockId === state.activeBlockId,
     'insertedBlockId must match activeBlockId. It is possible that you called insertNewActiveBlock before activeBlockId was updated'
   )
+
+  let insertedBlockType = 'ENTRY'
   let _state = cloneDeep(state)
-  _state.page.blocks = [..._state.page.blocks, { _id: insertedBlockId }]
-  _state = setBlockType(_state, 'ENTRY', insertedBlockId)
+
+  // get index value where previous block was
+  // insert current ID after previous index value
+  const _index = _state.page.blocks.findIndex(b => b._id === previousBlockId)
+  _state.page.blocks.splice(_index + 1, 0, { _id: insertedBlockId })
+
+  // if previous block was type SOURCE and is now empty
+  // set previous block to ENTRY and active block as SOURCE
+  if (state.blocks[previousBlockId].type === 'SOURCE' && !previousBlockText) {
+    _state = setBlockType(_state, 'ENTRY', previousBlockId)
+    insertedBlockType = 'SOURCE'
+  }
+
+  _state = setBlockType(_state, insertedBlockType, insertedBlockId)
   _state = setRawHtmlForBlock(
     _state,
     _state.blocks[insertedBlockId],
@@ -93,30 +130,7 @@ const insertNewActiveBlock = (
     _state.blocks[previousBlockId],
     previousBlockText
   )
-  return _state
-}
-
-const cleanUpState = state => {
-  const _state = cloneDeep(state)
-  const pageBlocks = _state.page.blocks
-  const { blocks, entries, sources } = _state
-  const _sources = {}
-  const _blocks = {}
-  const _entries = {}
-  pageBlocks.forEach(b => {
-    const { type, refId } = blocks[b._id]
-    if (type === 'SOURCE') {
-      _sources[refId] = sources[refId]
-    }
-    if (type === 'ENTRY') {
-      _entries[refId] = entries[refId]
-    }
-    _blocks[b._id] = blocks[b._id]
-  })
-  _state.blocks = _blocks
-  _state.entries = _entries
-  _state.sources = _sources
-  return _state
+  return cleanUpState(_state)
 }
 
 const backspace = (state, payload) => {
