@@ -14,7 +14,7 @@ const toSlateJson = (editorState, pageBlocks) => ({
   document: {
     nodes: pageBlocks.map(block => {
       const textBlock =
-        block.type === 'SOURCE'
+        block.type === 'SOURCE' || block.type === 'TOPIC'
           ? {
               object: 'inline',
               nodes: [
@@ -44,12 +44,15 @@ const schema = {
     SOURCE: {
       isVoid: true,
     },
+    TOPIC: {
+      isVoid: true,
+    },
   },
 }
 
 const renderInline = ({ node, attributes }, editor, next) => {
   const isFocused = editor.value.selection.focus.isInNode(node)
-  if (node.type === 'SOURCE') {
+  if (node.type === 'SOURCE' || node.type === 'TOPIC') {
     return (
       <EditorInline isFocused={isFocused} {...attributes}>
         {node.text}
@@ -150,7 +153,8 @@ const SlateContentEditable = ({
       // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
       // PREVENT NEW BLOCK
       if (
-        editor.value.anchorBlock.type === 'SOURCE' &&
+        (editor.value.anchorBlock.type === 'SOURCE' ||
+          editor.value.anchorBlock.type === 'TOPIC') &&
         !editor.value.selection.focus.isAtStartOfNode(
           editor.value.anchorBlock
         ) &&
@@ -182,7 +186,10 @@ const SlateContentEditable = ({
   }
 
   const onKeyDown = (event, editor, next) => {
-    if (editor.value.anchorBlock.type === 'SOURCE') {
+    if (
+      editor.value.anchorBlock.type === 'SOURCE' ||
+      editor.value.anchorBlock.type === 'TOPIC'
+    ) {
       if (
         event.key === 'Backspace' ||
         event.key === 'Enter' ||

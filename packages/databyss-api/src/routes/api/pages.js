@@ -1,8 +1,11 @@
 const express = require('express')
+const _ = require('lodash')
 const Page = require('../../models/Page')
 const Source = require('../../models/Source')
 const Entry = require('../../models/Entry')
 const Block = require('../../models/Block')
+const Topic = require('../../models/Topic')
+
 const auth = require('../../middleware/auth')
 const accountMiddleware = require('../../middleware/accountMiddleware')
 const pageMiddleware = require('../../middleware/pageMiddleware')
@@ -12,6 +15,7 @@ const {
   dictionaryFromList,
   getSourcesFromId,
   getEntriesFromId,
+  getTopicsFromId,
 } = require('./helpers/pagesHelper')
 
 const router = express.Router()
@@ -24,7 +28,12 @@ router.post(
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
   async (req, res) => {
     try {
-      const { sources, entries, blocks, page } = req.body.data
+      const { blocks, page } = req.body.data
+      let { sources, entries, topics } = req.body.data
+      sources = !_.isEmpty(sources) ? sources : {}
+      topics = !_.isEmpty(topics) ? topics : {}
+      entries = !_.isEmpty(entries) ? entries : {}
+
       const { name, _id } = page
 
       // ADD SOURCES
@@ -88,6 +97,34 @@ router.post(
         })
       )
 
+      // ADD TOPICS
+      const _topics = Object.keys(topics)
+
+      await Promise.all(
+        _topics.map(async e => {
+          const topic = topics[e].rawHtml
+          const topicId = topics[e]._id
+          // TOPIC WITH ID
+          const topicFields = {
+            text: topic,
+            _id: topicId,
+            account: req.account._id,
+          }
+
+          let topicResponse = await Topic.findOne({ _id: topicId })
+          if (topicResponse) {
+            topicResponse = await Topic.findOneAndUpdate(
+              { _id: topicId },
+              { $set: topicFields }
+            )
+          } else {
+            // ADD NEW TOPIC
+            topicResponse = new Topic(topicFields)
+            await topicResponse.save()
+          }
+        })
+      )
+
       // ADD BLOCK
       const _blocks = Object.keys(blocks).map(b => blocks[b])
       await Promise.all(
@@ -104,6 +141,9 @@ router.post(
           }
           if (type === 'ENTRY') {
             blockFields.entryId = refId
+          }
+          if (type === 'TOPIC') {
+            blockFields.topicId = refId
           }
           if (type === 'Author') {
             blockFields.authorId = refId
@@ -209,11 +249,16 @@ router.get(
       let entries = await getEntriesFromId(entriesList)
       entries = dictionaryFromList(entries)
 
+      const topicsList = blockList.filter(b => b.type === 'TOPIC')
+      let topics = await getTopicsFromId(topicsList)
+      topics = dictionaryFromList(topics)
+
       const response = {
         page,
         blocks,
         entries,
         sources,
+        topics,
       }
       return res.json(response)
     } catch (err) {

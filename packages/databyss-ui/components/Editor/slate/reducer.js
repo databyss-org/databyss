@@ -15,11 +15,12 @@ export const findActiveNode = value =>
 
 const setActiveBlockType = type => (editor, value, next) => {
   const _activeBlock = findActiveBlock(value)
-  if (_activeBlock.type === 'SOURCE') {
+  if (_activeBlock.type === 'SOURCE' || _activeBlock.type === 'TOPIC') {
     // if previous value is SOURCE and is currently not empty
     // set current block type as ENTRY
     if (
-      editor.value.previousBlock.type === 'SOURCE' &&
+      (editor.value.previousBlock.type === 'SOURCE' ||
+        editor.value.previousBlock.type === 'TOPIC') &&
       editor.value.previousBlock.text
     ) {
       editor.setNodeByKey(editor.value.anchorBlock.key, { type: 'ENTRY' })
@@ -36,15 +37,15 @@ const setActiveBlockType = type => (editor, value, next) => {
 }
 
 const setBlockType = (id, type) => (editor, value, next) => {
-  if (type === 'SOURCE') {
+  if (type === 'SOURCE' || type === 'TOPIC') {
     const _node = value.document.getNode(id)
     let _text = _node.getFirstText().text
-    if (_text.startsWith('@')) {
+    if (_text.startsWith('@') || _text.startsWith('#')) {
       _text = _text.substring(1)
     }
     const _block = Block.fromJSON({
       object: 'block',
-      type: 'SOURCE',
+      type,
       key: _node.key,
       data: {},
       nodes: [
@@ -55,7 +56,7 @@ const setBlockType = (id, type) => (editor, value, next) => {
         },
         {
           object: 'inline',
-          type: 'SOURCE',
+          type,
           data: {},
           nodes: [
             {
@@ -83,7 +84,7 @@ const backspace = () => (editor, value, next) => {
   // if current block is empty and block type is SOURCE
   // set block type to ENTRY
   const _block = value.anchorBlock
-  if (!_block.text && _block.type === 'SOURCE') {
+  if (!_block.text && (_block.type === 'SOURCE' || _block.type === 'TOPIC')) {
     editor.setNodeByKey(_block.key, { type: 'ENTRY' })
   }
   next(editor, value)
