@@ -147,6 +147,18 @@ const SlateContentEditable = ({
 
   const onKeyUp = (event, editor, next) => {
     if (event.key === 'Enter') {
+      // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
+      // PREVENT NEW BLOCK
+      if (
+        editor.value.anchorBlock.type === 'SOURCE' &&
+        !editor.value.selection.focus.isAtStartOfNode(
+          editor.value.anchorBlock
+        ) &&
+        !editor.value.selection.focus.isAtEndOfNode(editor.value.anchorBlock)
+      ) {
+        return event.preventDefault()
+      }
+
       const blockProperties = {
         insertedBlockId: editor.value.anchorBlock.key,
         insertedBlockText: editor.value.anchorBlock.text,
@@ -156,18 +168,56 @@ const SlateContentEditable = ({
       const editorState = { value: editor.value }
       onNewActiveBlock(blockProperties, editorState)
     }
+
     if (event.key === 'Backspace') {
       const blockProperties = {
         activeBlockId: editor.value.anchorBlock.key,
         nextBlockId: editor.value.nextBlock ? editor.value.nextBlock.key : null,
       }
-      onBackspace(blockProperties, editor)
+      const editorState = { value: editor.value }
+      onBackspace(blockProperties, editorState)
     }
 
-    // special case:
-    // if cursor is immediately before or after the atomic source in a
-    // SOURCE block, prevent all
+    return next()
+  }
 
+  const onKeyDown = (event, editor, next) => {
+    if (editor.value.anchorBlock.type === 'SOURCE') {
+      if (
+        event.key === 'Backspace' ||
+        event.key === 'Enter' ||
+        event.key === 'ArrowLeft' ||
+        event.key === 'ArrowRight' ||
+        event.key === 'ArrowUp' ||
+        event.key === 'ArrowDown'
+      ) {
+        if (event.key === 'Backspace' && editor.value.previousBlock.text) {
+          if (
+            !editor.value.selection.focus.isAtStartOfNode(
+              editor.value.anchorBlock
+            )
+          ) {
+            return next()
+          }
+          return event.preventDefault()
+        }
+
+        // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
+        // PREVENT ENTER KEY
+        if (
+          event.key === 'Enter' &&
+          !editor.value.selection.focus.isAtStartOfNode(
+            editor.value.anchorBlock
+          ) &&
+          !editor.value.selection.focus.isAtEndOfNode(editor.value.anchorBlock)
+        ) {
+          return event.preventDefault()
+        }
+
+        return next()
+      }
+      return event.preventDefault()
+    }
     return next()
   }
 
@@ -180,6 +230,7 @@ const SlateContentEditable = ({
       renderInline={renderInline}
       schema={schema}
       onKeyUp={onKeyUp}
+      onKeyDown={onKeyDown}
     />
   )
 }
