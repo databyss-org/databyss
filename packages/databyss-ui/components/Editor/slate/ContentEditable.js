@@ -69,11 +69,14 @@ const renderBlock = ({ node, children }) => (
 )
 
 const renderMark = (props, editor, next) => {
-  switch (props.mark.type) {
+  console.log(props)
+  const { children, mark, attributes } = props
+
+  switch (mark.type) {
     case 'bold':
-      return <strong> {props.children} </strong>
+      return <strong {...{ attributes }}> {children} </strong>
     case 'italic':
-      return <i> {props.children} </i>
+      return <i {...{ attributes }}> {props.children} </i>
     default:
       return next()
   }
@@ -133,7 +136,9 @@ const SlateContentEditable = ({
     return false
   }
 
-  const onChange = ({ value }) => {
+  const onChange = change => {
+    console.log(change)
+    const { value } = change
     if (onDocumentChange) {
       onDocumentChange(value.document.toJSON())
     }
