@@ -212,6 +212,7 @@ const SlateContentEditable = ({
       }
       return event.preventDefault()
     }
+
     if (!event.ctrlKey) return next()
     switch (event.key) {
       case 'b': {
