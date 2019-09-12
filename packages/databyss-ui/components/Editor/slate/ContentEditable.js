@@ -147,6 +147,18 @@ const SlateContentEditable = ({
 
   const onKeyUp = (event, editor, next) => {
     if (event.key === 'Enter') {
+      // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
+      // PREVENT NEW BLOCK
+      if (
+        editor.value.anchorBlock.type === 'SOURCE' &&
+        !editor.value.selection.focus.isAtStartOfNode(
+          editor.value.anchorBlock
+        ) &&
+        !editor.value.selection.focus.isAtEndOfNode(editor.value.anchorBlock)
+      ) {
+        return event.preventDefault()
+      }
+
       const blockProperties = {
         insertedBlockId: editor.value.anchorBlock.key,
         insertedBlockText: editor.value.anchorBlock.text,
@@ -165,10 +177,6 @@ const SlateContentEditable = ({
       const editorState = { value: editor.value }
       onBackspace(blockProperties, editorState)
     }
-
-    // special case:
-    // if cursor is immediately before or after the atomic source in a
-    // SOURCE block, prevent all
 
     return next()
   }
@@ -193,6 +201,19 @@ const SlateContentEditable = ({
           }
           return event.preventDefault()
         }
+
+        // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
+        // PREVENT ENTER KEY
+        if (
+          event.key === 'Enter' &&
+          !editor.value.selection.focus.isAtStartOfNode(
+            editor.value.anchorBlock
+          ) &&
+          !editor.value.selection.focus.isAtEndOfNode(editor.value.anchorBlock)
+        ) {
+          return event.preventDefault()
+        }
+
         return next()
       }
       return event.preventDefault()
