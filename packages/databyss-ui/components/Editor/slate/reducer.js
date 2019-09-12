@@ -92,6 +92,7 @@ const backspace = () => (editor, value, next) => {
 
 const toggleMark = mark => (editor, value, next) => {
   editor.toggleMark(mark)
+  next(editor, value)
 }
 
 export default (editableState, action) => {
@@ -114,9 +115,6 @@ export default (editableState, action) => {
         editorCommands: _nextEditorCommands,
       }
     case TOGGLE_MARK:
-      // const _nextEditorCommands = toggleMark(editableState)
-      // const value = editableState.value
-      // const _editableState = { value }
       return {
         ...editableState,
         editorCommands: toggleMark(action.payload.mark),

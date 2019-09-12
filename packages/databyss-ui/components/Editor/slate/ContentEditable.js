@@ -226,11 +226,11 @@ const SlateContentEditable = ({
         break
       }
       default: {
-        return next()
+        break
       }
     }
 
-    //  return next()
+    return next()
   }
 
   return (
