@@ -8,6 +8,7 @@ import {
   setBlockType,
   newActiveBlock,
   backspace,
+  toggleMark,
 } from './state/actions'
 
 const EditorPage = ({ children }) => {
@@ -33,8 +34,12 @@ const EditorPage = ({ children }) => {
 
   const onBlockBlur = (id, rawHtml, editableState) => {
     if (rawHtml.match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
-      dispatchEditor(setBlockType('SOURCE', id, editableState, true))
+      dispatchEditor(setBlockType('SOURCE', id, editableState))
     }
+  }
+
+  const OnToggleMark = (mark, { value }) => {
+    dispatchEditor(toggleMark(mark, { value }))
   }
 
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
@@ -45,6 +50,7 @@ const EditorPage = ({ children }) => {
     onNewActiveBlock,
     onBackspace,
     onBlockBlur,
+    OnToggleMark,
   })
 }
 

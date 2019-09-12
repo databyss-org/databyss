@@ -1,10 +1,11 @@
-import { Point, Range, Block } from 'slate'
+import { Block } from 'slate'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
   INSERT_NEW_ACTIVE_BLOCK,
   SET_BLOCK_TYPE,
   BACKSPACE,
+  TOGGLE_MARK,
 } from '../state/constants'
 
 export const findActiveBlock = value =>
@@ -38,7 +39,10 @@ const setActiveBlockType = type => (editor, value, next) => {
 const setBlockType = (id, type) => (editor, value, next) => {
   if (type === 'SOURCE') {
     const _node = value.document.getNode(id)
-    const _text = _node.getFirstText().text
+    let _text = _node.getFirstText().text
+    if (_text.startsWith('@')) {
+      _text = _text.substring(1)
+    }
     const _block = Block.fromJSON({
       object: 'block',
       type: 'SOURCE',
@@ -86,6 +90,10 @@ const backspace = () => (editor, value, next) => {
   next(editor, value)
 }
 
+const toggleMark = mark => (editor, value, next) => {
+  editor.toggleMark(mark)
+}
+
 export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
@@ -101,12 +109,18 @@ export default (editableState, action) => {
       return { ...editableState, editorCommands: setActiveBlockType('ENTRY') }
     case BACKSPACE:
       const _nextEditorCommands = backspace()
-
       return {
         ...editableState,
         editorCommands: _nextEditorCommands,
       }
-
+    case TOGGLE_MARK:
+      // const _nextEditorCommands = toggleMark(editableState)
+      // const value = editableState.value
+      // const _editableState = { value }
+      return {
+        ...editableState,
+        editorCommands: toggleMark(action.payload.mark),
+      }
     case SET_BLOCK_TYPE: {
       const _nextEditorCommands = setBlockType(
         action.payload.id,
@@ -119,19 +133,6 @@ export default (editableState, action) => {
     }
     case SET_ACTIVE_BLOCK_TYPE: {
       const _nextEditorCommands = setActiveBlockType(action.payload.type)
-      if (action.payload.fromSymbolInput) {
-        return {
-          ...editableState,
-          editorCommands: (editor, value, next) => {
-            const { key } = findActiveNode(value)
-            const _start = Point.create({ key, offset: 0 })
-            const _end = Point.create({ key, offset: 1 })
-            const _range = Range.create({ anchor: _start, focus: _end })
-            editor.deleteForwardAtRange(_range)
-            _nextEditorCommands(editor, value, next)
-          },
-        }
-      }
       return {
         ...editableState,
         editorCommands: _nextEditorCommands,

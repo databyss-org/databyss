@@ -68,6 +68,17 @@ const renderBlock = ({ node, children }) => (
   <EditorBlock type={node.type}>{children}</EditorBlock>
 )
 
+const renderMark = (props, editor, next) => {
+  switch (props.mark.type) {
+    case 'bold':
+      return <strong> {props.children} </strong>
+    case 'italic':
+      return <i> {props.children} </i>
+    default:
+      return next()
+  }
+}
+
 const SlateContentEditable = ({
   onActiveBlockIdChange,
   onActiveBlockContentChange,
@@ -76,6 +87,7 @@ const SlateContentEditable = ({
   onBackspace,
   onBlockBlur,
   onDocumentChange,
+  OnToggleMark,
 }) => {
   const [editorState] = useEditorContext()
 
@@ -129,6 +141,7 @@ const SlateContentEditable = ({
       !checkSelectedBlockChanged({ value }) &&
       !checkActiveBlockContentChanged({ value })
     ) {
+      // SOMETHING GOING WRONG HERE
       onEditableStateChange({ value })
     }
   }
@@ -169,11 +182,9 @@ const SlateContentEditable = ({
       const editorState = { value: editor.value }
       onBackspace(blockProperties, editorState)
     }
-
     // special case:
     // if cursor is immediately before or after the atomic source in a
     // SOURCE block, prevent all
-
     return next()
   }
 
@@ -201,7 +212,24 @@ const SlateContentEditable = ({
       }
       return event.preventDefault()
     }
-    return next()
+    if (!event.ctrlKey) return next()
+    switch (event.key) {
+      case 'b': {
+        event.preventDefault()
+        OnToggleMark('bold', editor)
+        break
+      }
+      case 'i': {
+        event.preventDefault()
+        OnToggleMark('italic', editor)
+        break
+      }
+      default: {
+        return next()
+      }
+    }
+
+    //  return next()
   }
 
   return (
@@ -214,6 +242,7 @@ const SlateContentEditable = ({
       schema={schema}
       onKeyUp={onKeyUp}
       onKeyDown={onKeyDown}
+      renderMark={renderMark}
     />
   )
 }

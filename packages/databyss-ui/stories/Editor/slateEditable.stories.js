@@ -14,6 +14,7 @@ import slateReducer from '@databyss-org/ui/components/Editor/slate/reducer'
 import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
 import initialState from '@databyss-org/ui/components/Editor/state/__tests__/initialState'
 import { ViewportDecorator } from '../decorators'
+import colors from '../../theming/colors'
 
 const SlateDemo = () => {
   const schema = {
@@ -137,7 +138,9 @@ storiesOf('Editor//Slate Implementation', module)
     </Box>
   ))
   .add('EditorPage', () => (
-    <View>
+    <View
+      css={{ '& ::selection': { backgroundColor: colors.selectionHighlight } }}
+    >
       <ToolbarDemo />
       <SlateEditorDemo />
     </View>
