@@ -1,0 +1,6 @@
+{
+  "testFiles": "**/*.cypress.js",
+  "integrationFolder": "packages",
+  "viewportWidth": 1780,
+  "viewportHeight": 800
+}

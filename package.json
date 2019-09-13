@@ -31,10 +31,13 @@
     "flow": "flow",
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
     "styleguide:build": "NPM_BUILD_TARGET=TEST styleguidist build --config ./config/styleguide.config.js",
-    "storybook": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public",
+    "storybook": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public --ci",
     "storybook:build": "NPM_BUILD_TARGET=TEST build-storybook -o build -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss",
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
-    "lint": "eslint . --cache && echo \"eslint: no lint errors\""
+    "lint": "eslint . --cache && echo \"eslint: no lint errors\"",
+    "cy:open": "yarn storybook & BABEL_ENV=development cypress open",
+    "cy:run": "BABEL_ENV=development cypress run",
+    "test:editor": "start-server-and-test storybook http-get://localhost:6006/iframe.html?id=editor-tests--slate cy:run"
   },
   "jest": {
     "projects": [
@@ -147,6 +150,7 @@
     "eslint-config-prettier": "^2.9.0",
     "eslint-config-react-app": "^4.0.1",
     "eslint-loader": "2.1.2",
+    "eslint-plugin-cypress": "^2.6.1",
     "eslint-plugin-flowtype": "2.39.1",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "6.2.1",
@@ -206,6 +210,7 @@
     "slate-dev-environment": "^0.2.2",
     "slate-html-serializer": "^0.8.10",
     "slate-insert-block-on-enter": "^0.4.0",
+    "start-server-and-test": "^1.10.2",
     "styled-system": "^5.0.5",
     "supertest": "^4.0.2",
     "sw-precache-webpack-plugin": "0.11.5",

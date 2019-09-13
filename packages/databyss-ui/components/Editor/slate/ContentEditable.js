@@ -117,7 +117,7 @@ const renderMark = (props, editor, next) => {
   }
 }
 
-const SlateContentEditable = ({
+const ContentEditable = ({
   onActiveBlockIdChange,
   onActiveBlockContentChange,
   onEditableStateChange,
@@ -317,4 +317,4 @@ const SlateContentEditable = ({
   )
 }
 
-export default SlateContentEditable
+export default ContentEditable

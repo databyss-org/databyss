@@ -36,6 +36,7 @@
     "classnames": "^2.2.6",
     "clone-deep": "^4.0.1",
     "color": "^3.1.2",
+    "cypress": "^3.4.1",
     "draft-js": "^0.11.0",
     "emotion-theming": "^10.0.10",
     "immutable": "^4.0.0-rc.12",
