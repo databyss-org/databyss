@@ -16,6 +16,15 @@ export const findActiveNode = value =>
 
 const setActiveBlockType = type => (editor, value, next) => {
   const _activeBlock = findActiveBlock(value)
+
+  // clears all active marks
+  if (editor.value.activeMarks.size > 0) {
+    const _marks = value.marks._map._root.entries
+    _marks.forEach(m => {
+      editor.toggleMark(m[0].type)
+    })
+  }
+
   if (_activeBlock.type === 'SOURCE') {
     // if previous value is SOURCE and is currently not empty
     // set current block type as ENTRY

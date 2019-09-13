@@ -6,6 +6,7 @@ import EditorBlock from '../EditorBlock'
 import { getRawHtmlForBlock } from '../state/reducer'
 import { findActiveBlock } from './reducer'
 import { useEditorContext } from '../EditorProvider'
+import hotKeys from './hotKeys'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -69,9 +70,7 @@ const renderBlock = ({ node, children }) => (
 )
 
 const renderMark = (props, editor, next) => {
-  console.log(props)
   const { children, mark, attributes } = props
-
   switch (mark.type) {
     case 'bold':
       return <strong {...attributes}>{children}</strong>
@@ -137,7 +136,6 @@ const SlateContentEditable = ({
   }
 
   const onChange = change => {
-    console.log(change)
     const { value } = change
     if (onDocumentChange) {
       onDocumentChange(value.document.toJSON())
@@ -217,24 +215,16 @@ const SlateContentEditable = ({
       }
       return event.preventDefault()
     }
-    console.log(event.metaKey)
-    if (!event.ctrlKey) return next()
-    switch (event.key) {
-      case 'b': {
-        event.preventDefault()
-        OnToggleMark('bold', editor)
-        break
-      }
-      case 'i': {
-        event.preventDefault()
-        OnToggleMark('italic', editor)
-        break
-      }
-      default: {
-        break
-      }
+
+    if (hotKeys.isBold(event)) {
+      event.preventDefault()
+      OnToggleMark('bold', editor)
     }
 
+    if (hotKeys.isItalic(event)) {
+      event.preventDefault()
+      OnToggleMark('italic', editor)
+    }
     return next()
   }
 
