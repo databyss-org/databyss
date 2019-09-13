@@ -9216,6 +9216,11 @@ is-hotkey@^0.0.3:
   resolved "https://registry.yarnpkg.com/is-hotkey/-/is-hotkey-0.0.3.tgz#3713fea135f86528c87cf39810b3934e45151390"
   integrity sha512-qpMe/7DxFXs65E3f8u5Zu+3qOXmqlKlAF/cpYlRiPzg1UKC9clzQcwcuf/2RC4WMFhh56DQC+FfK63Qp3lM35w==
 
+is-hotkey@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/is-hotkey/-/is-hotkey-0.1.5.tgz#5b3b3edb5f3b60618b0ec27f65801692639e85ca"
+  integrity sha512-vquwKK6JQyr4YDeIdE6nVBAlHR7lt98pMU+2UYR7pmy+Qe3lOsCfho5Aih0Zdl6hLADlZlDGAipbp5auWw4www==
+
 is-in-browser@^1.0.2, is-in-browser@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/is-in-browser/-/is-in-browser-1.1.3.tgz#56ff4db683a078c6082eb95dad7dc62e1d04f835"
@@ -12965,11 +12970,6 @@ portfinder@^1.0.21, portfinder@^1.0.9:
     async "^1.5.2"
     debug "^2.2.0"
     mkdirp "0.5.x"
-
-positions@^1.6.2:
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/positions/-/positions-1.6.2.tgz#9d43e7d87384704c4f4e5841d1f0536bade6ba00"
-  integrity sha512-cnqXu1cqw/WsGWKIxXcfMMMJZWUrBFTx950Z+8Fj7XTVrCRsfF0t9rkgFndvqFPIOEhk1BdHOGeDYkO1cCWSRA==
 
 posix-character-classes@^0.1.0:
   version "0.1.1"

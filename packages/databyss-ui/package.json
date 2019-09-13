@@ -24,6 +24,8 @@
     "@emotion/core": "^10.0.14",
     "@emotion/native": "^10.0.14",
     "@emotion/styled": "^10.0.14",
+    "is-hotkey": "^0.1.5",
+    "slate-dev-environment": "^0.2.2",
     "@styled-system/core": "^5.1.1",
     "@styled-system/css": "^5.0.23",
     "@styled-system/should-forward-prop": "^5.0.18",
