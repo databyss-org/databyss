@@ -74,9 +74,9 @@ const renderMark = (props, editor, next) => {
 
   switch (mark.type) {
     case 'bold':
-      return <strong {...{ attributes }}> {children} </strong>
+      return <strong {...attributes}>{children}</strong>
     case 'italic':
-      return <i {...{ attributes }}> {props.children} </i>
+      return <i {...attributes}>{props.children}</i>
     default:
       return next()
   }
@@ -217,7 +217,7 @@ const SlateContentEditable = ({
       }
       return event.preventDefault()
     }
-
+    console.log(event.metaKey)
     if (!event.ctrlKey) return next()
     switch (event.key) {
       case 'b': {
