@@ -64,7 +64,7 @@ const renderBlock = ({ node, children }) => (
   <EditorBlock type={node.type}>{children}</EditorBlock>
 )
 
-const SlateContentEditable = ({
+const ContentEditable = ({
   onActiveBlockIdChange,
   onActiveBlockContentChange,
   onEditableStateChange,
@@ -235,4 +235,4 @@ const SlateContentEditable = ({
   )
 }
 
-export default SlateContentEditable
+export default ContentEditable
