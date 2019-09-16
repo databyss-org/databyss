@@ -19,10 +19,12 @@ const setActiveBlockType = type => (editor, value, next) => {
 
   // clears all active marks
   if (editor.value.activeMarks.size > 0) {
-    const _marks = value.marks._map._root.entries
-    _marks.forEach(m => {
-      editor.toggleMark(m[0].type)
-    })
+    if (value.marks._map._root) {
+      const _marks = value.marks._map._root.entries
+      _marks.forEach(m => {
+        editor.toggleMark(m[0].type)
+      })
+    }
   }
 
   if (_activeBlock.type === 'SOURCE') {
@@ -48,7 +50,8 @@ const setActiveBlockType = type => (editor, value, next) => {
 const setBlockType = (id, type) => (editor, value, next) => {
   if (type === 'SOURCE') {
     const _node = value.document.getNode(id)
-    let _text = _node.getFirstText().text
+    let _text = _node.text
+
     if (_text.startsWith('@')) {
       _text = _text.substring(1)
     }
