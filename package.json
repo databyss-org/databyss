@@ -40,7 +40,7 @@
     "cy:run": "BABEL_ENV=test cypress run",
     "cy:run:debug": "DEBUG=cypress:*,-cypress:server:files yarn cy:run",
     "cy": "start-server-and-test storybook http-get://localhost:6006/iframe.html?id=editor-tests--slate cy:open",
-    "test:editor": "start-server-and-test storybook:cy http-get://localhost:6006/iframe.html?id=editor-tests--slate cy:run"
+    "test:editor": "start-server-and-test storybook:cy http-get://0.0.0.0:6006/iframe.html?id=editor-tests--slate cy:run"
   },
   "jest": {
     "projects": [
