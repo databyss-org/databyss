@@ -32,12 +32,15 @@
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
     "styleguide:build": "NPM_BUILD_TARGET=TEST styleguidist build --config ./config/styleguide.config.js",
     "storybook": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public --ci",
+    "storybook:cy": "NODE_ENV=production yarn storybook",
     "storybook:build": "NPM_BUILD_TARGET=TEST build-storybook -o build -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss",
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
     "lint": "eslint . --cache && echo \"eslint: no lint errors\"",
-    "cy:open": "yarn storybook & BABEL_ENV=development cypress open",
-    "cy:run": "BABEL_ENV=development cypress run",
-    "test:editor": "start-server-and-test storybook http-get://localhost:6006/iframe.html?id=editor-tests--slate cy:run"
+    "cy:open": "BABEL_ENV=test cypress open",
+    "cy:run": "BABEL_ENV=test cypress run",
+    "cy:run:debug": "DEBUG=cypress:*,-cypress:server:files yarn cy:run",
+    "cy": "start-server-and-test storybook http-get://localhost:6006/iframe.html?id=editor-tests--slate cy:open",
+    "test:editor": "start-server-and-test storybook:cy http-get://localhost:6006/iframe.html?id=editor-tests--slate cy:run"
   },
   "jest": {
     "projects": [
@@ -120,6 +123,7 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/runtime": "^7.5.5",
     "@bugsnag/js": "^6.3.2",
+    "@cypress/webpack-preprocessor": "^4.1.0",
     "@emotion/babel-preset-css-prop": "^10.0.14",
     "@storybook/addon-actions": "5.1.11",
     "@storybook/addon-knobs": "5.1.11",
@@ -220,16 +224,5 @@
     "whatwg-fetch": "2.0.3",
     "workbox-webpack-plugin": "^4.3.1"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "browserslist": {}
 }

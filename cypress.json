@@ -1,6 +1,15 @@
 {
   "testFiles": "**/*.cypress.js",
   "integrationFolder": "packages",
-  "viewportWidth": 1780,
-  "viewportHeight": 800
+  "viewportWidth": 1700,
+  "viewportHeight": 1200,
+  "video": false,
+  "screenshots": false,
+  "trashAssetsBeforeRuns": true,
+  "defaultCommandTimeout": 10000,
+  "execTimeout": 10000,
+  "taskTimeout": 10000,
+  "pageLoadTimeout": 10000,
+  "requestTimeout": 10000,
+  "responseTimeout": 10000
 }
