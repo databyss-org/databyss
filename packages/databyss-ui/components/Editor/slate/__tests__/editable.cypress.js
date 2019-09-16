@@ -46,6 +46,7 @@ context('Editor', () => {
       .type('{downarrow}')
       .type('{downarrow}')
       .type('{home}')
+      .type('{alt}{uparrow}')
       .type('@')
       .type('{uparrow}')
 
