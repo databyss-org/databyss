@@ -57,6 +57,6 @@ workflows:
   lint-and-test:
     jobs:
       - build
-      - cypress/run
+      - cypress/run:
         start: yarn storybook:cy
         wait-on: localhost:6006/iframe.html?id=editor-tests--slate
