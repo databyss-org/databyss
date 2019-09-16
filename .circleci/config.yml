@@ -58,5 +58,6 @@ workflows:
     jobs:
       - build
       - cypress/run:
+          yarn: true
           start: yarn storybook:cy
           wait-on: localhost:6006/iframe.html?id=editor-tests--slate
