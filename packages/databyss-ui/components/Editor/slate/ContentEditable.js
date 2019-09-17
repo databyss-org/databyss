@@ -7,34 +7,47 @@ import { getRawHtmlForBlock } from '../state/reducer'
 import { findActiveBlock } from './reducer'
 import { useEditorContext } from '../EditorProvider'
 import hotKeys from './hotKeys'
+import { stateToSlate, slateToState } from './markup'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
 const toSlateJson = (editorState, pageBlocks) => ({
   document: {
     nodes: pageBlocks.map(block => {
-      const textBlock =
-        block.type === 'SOURCE'
-          ? {
-              object: 'inline',
-              nodes: [
-                {
-                  object: 'text',
-                  text: getRawHtmlForBlock(editorState, block),
-                },
-              ],
-              type: block.type,
-            }
-          : {
-              object: 'text',
-              text: getRawHtmlForBlock(editorState, block),
-            }
-      return {
-        object: 'block',
-        key: block._id,
-        type: block.type,
-        nodes: [textBlock],
+      let nodes = []
+      switch (block.type) {
+        case 'ENTRY':
+          nodes = slateToState(
+            {
+              [block.refId]: editorState.entries[block.refId],
+            },
+            block._id
+          )
+
+          break
+        default:
+          break
       }
+
+      const textBlock = {
+        object: 'inline',
+        nodes: [
+          {
+            object: 'text',
+            text: getRawHtmlForBlock(editorState, block),
+          },
+        ],
+        type: block.type,
+      }
+
+      return block.type === 'ENTRY'
+        ? nodes
+        : {
+            object: 'block',
+            key: block._id,
+            type: block.type,
+            nodes: [textBlock],
+          }
     }),
   },
 })
@@ -129,7 +142,10 @@ const SlateContentEditable = ({
     const _nextText = _nextEditableState.value.document.getNode(activeBlockId)
       .text
     if (_nextText !== _prevText) {
-      onActiveBlockContentChange(_nextText, _nextEditableState)
+      const block = _nextEditableState.value.anchorBlock
+      const jsonBlockValue = { ...block.toJSON(), key: block.key }
+
+      onActiveBlockContentChange(_nextText, _nextEditableState, jsonBlockValue)
       return true
     }
     return false

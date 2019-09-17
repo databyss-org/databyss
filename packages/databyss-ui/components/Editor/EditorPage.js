@@ -17,8 +17,8 @@ const EditorPage = ({ children }) => {
   const onActiveBlockIdChange = (id, editableState) =>
     dispatchEditor(setActiveBlockId(id, editableState))
 
-  const onActiveBlockContentChange = (rawHtml, editableState) => {
-    dispatchEditor(setActiveBlockContent(rawHtml, editableState))
+  const onActiveBlockContentChange = (rawHtml, editableState, blockValue) => {
+    dispatchEditor(setActiveBlockContent(rawHtml, editableState, blockValue))
   }
 
   const onEditableStateChange = editableState =>

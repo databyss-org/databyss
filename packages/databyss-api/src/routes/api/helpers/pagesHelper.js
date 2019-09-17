@@ -46,8 +46,8 @@ const getEntriesFromId = list => {
     const entryResponse = await Entry.findOne({
       _id,
     }).catch(err => console.log(err))
-    const { entry } = entryResponse
-    const response = { rawHtml: entry, _id }
+    const { entry, ranges } = entryResponse
+    const response = { rawHtml: entry, _id, ranges }
     return response
   })
   return Promise.all(promises)

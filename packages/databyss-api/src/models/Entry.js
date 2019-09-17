@@ -3,15 +3,11 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const EntrySchema = new mongoose.Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'users',
-    required: true,
-  },
   account: {
     type: Schema.Types.ObjectId,
     ref: 'account',
   },
+  ranges: { type: Array },
   author: [
     {
       type: Schema.Types.ObjectId,

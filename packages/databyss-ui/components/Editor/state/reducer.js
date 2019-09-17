@@ -1,6 +1,7 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import invariant from 'invariant'
+import { stateToSlate, slateToState } from './../slate/markup'
 
 import {
   SET_ACTIVE_BLOCK_ID,
@@ -114,6 +115,8 @@ const insertNewActiveBlock = (
 
   // if previous block was type SOURCE and is now empty
   // set previous block to ENTRY and active block as SOURCE
+  console.log('state', state)
+  console.log('previousBlock', previousBlockId)
   if (state.blocks[previousBlockId].type === 'SOURCE' && !previousBlockText) {
     _state = setBlockType(_state, 'ENTRY', previousBlockId)
     insertedBlockType = 'SOURCE'
@@ -154,6 +157,35 @@ const backspace = (state, payload) => {
   return cleanUpState(_state)
 }
 
+const getMarkupValues = (nextState, blockValue) => {
+  const block = nextState.blocks[nextState.activeBlockId]
+  let _state = cloneDeep(nextState)
+  switch (block.type) {
+    case 'ENTRY':
+      _state.entries[block.refId] = {
+        ..._state.entries[block.refId],
+        ...stateToSlate(blockValue, block.refId)[_state.activeBlockId],
+      }
+      break
+    case 'SOURCE':
+      _state.entries[block.refId] = {
+        ..._state.sources[block.refId],
+        ...stateToSlate(blockValue, block.refId)[_state.activeBlockId],
+      }
+      break
+    case 'TOPIC':
+      _state.entries[block.refId] = {
+        ..._state.topics[block.refId],
+        ...stateToSlate(blockValue, block.refId)[_state.activeBlockId],
+      }
+      break
+    default:
+      break
+  }
+
+  return _state
+}
+
 export default (state, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_TYPE:
@@ -165,11 +197,12 @@ export default (state, action) => {
       }
     case SET_ACTIVE_BLOCK_CONTENT: {
       const activeBlock = state.blocks[state.activeBlockId]
-      const nextState = setRawHtmlForBlock(
+      let nextState = setRawHtmlForBlock(
         state,
         activeBlock,
         action.payload.html
       )
+      nextState = getMarkupValues(nextState, action.payload.blockValue)
       if (!action.payload.html.length) {
         return setActiveBlockType(nextState, 'ENTRY')
       }

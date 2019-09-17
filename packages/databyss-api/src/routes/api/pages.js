@@ -1,4 +1,5 @@
 const express = require('express')
+const _ = require('lodash')
 const Page = require('../../models/Page')
 const Source = require('../../models/Source')
 const Entry = require('../../models/Entry')
@@ -34,12 +35,13 @@ router.post(
         _sources.map(async s => {
           const source = sources[s].rawHtml
           const sourceId = sources[s]._id
+          const ranges = !_.isEmpty(sources[s].ranges) ? sources[s].ranges : []
 
           // SOURCE WITH ID
           const sourceFields = {
             resource: source,
             _id: sourceId,
-            user: req.user.id,
+            ranges,
             account: req.account._id,
           }
 
@@ -66,14 +68,15 @@ router.post(
         _entries.map(async e => {
           const entry = entries[e].rawHtml
           const entryId = entries[e]._id
+          const ranges = !_.isEmpty(entries[e].ranges) ? entries[e].ranges : []
           // ENTRY WITH ID
           const entryFields = {
             entry,
+            ranges,
             _id: entryId,
             user: req.user.id,
             account: req.account._id,
           }
-
           let entryResponse = await Entry.findOne({ _id: entryId })
           if (entryResponse) {
             entryResponse = await Entry.findOneAndUpdate(

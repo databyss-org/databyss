@@ -10,11 +10,13 @@ export const stateToSlate = (slate, _id) => {
     let range = {}
     if (n.marks.length) {
       const _nodes = cloneDeep(nodes)
+
       // find length of all previous nodes
       _nodes.splice(i)
       const previousTextLength = _nodes.reduce((total, current, index) => {
         return total + current.text.length
       }, 0)
+      // create range object
       range = {
         offset: previousTextLength,
         length: n.text.length,
@@ -29,17 +31,17 @@ export const stateToSlate = (slate, _id) => {
   })
   const response = {
     _id,
-    text,
+    rawHtml: text,
     ranges,
   }
-  return { [_id]: response }
+  return { [slate.key]: response }
 }
 
-export const slateToState = state => {
+export const slateToState = (state, id) => {
   const _id = Object.keys(state)[0]
   const _state = cloneDeep(state)
   const _stateObject = _state[_id]
-
+  // creates empty value
   const _value = Value.fromJSON({
     document: {
       nodes: [
@@ -58,18 +60,20 @@ export const slateToState = state => {
   })
 
   const _editor = new Editor({ value: _value })
-  _editor.insertText(_stateObject.text).moveBackward(_stateObject.text.length)
-
+  // insert text in mock editor
+  _editor
+    .insertText(_stateObject.rawHtml)
+    .moveBackward(_stateObject.rawHtml.length)
+  // select correct range and apply marks
   _stateObject.ranges.forEach(n => {
     _editor.moveForward(n.offset).moveFocusForward(n.length)
     n.marks.forEach(m => {
       _editor.addMark(m)
     })
+    // replace range to original position
     _editor.moveFocusBackward(n.length).moveBackward(n.offset)
   })
-
+  // translate to json
   const document = _editor.value.toJSON().document
-  return { ...document.nodes[0], key: _stateObject._id }
-
-  // console.log(JSON.stringify(_editor.value.toJSON(), null, 2))
+  return { ...document.nodes[0], key: id }
 }
