@@ -7,7 +7,7 @@ import { getRawHtmlForBlock } from '../state/reducer'
 import { findActiveBlock } from './reducer'
 import { useEditorContext } from '../EditorProvider'
 import hotKeys from './hotKeys'
-import { stateToSlate, slateToState } from './markup'
+import { slateToState } from './markup'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -23,12 +23,12 @@ const toSlateJson = (editorState, pageBlocks) => ({
             },
             block._id
           )
-
           break
+        // todo: insert sources and topics
         default:
           break
       }
-
+      // this will change when sources get markup
       const textBlock = {
         object: 'inline',
         nodes: [
@@ -39,7 +39,7 @@ const toSlateJson = (editorState, pageBlocks) => ({
         ],
         type: block.type,
       }
-
+      // this will return generic nod
       return block.type === 'ENTRY'
         ? nodes
         : {

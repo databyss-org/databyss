@@ -33,8 +33,8 @@ const getSourcesFromId = list => {
     const source = await Source.findOne({
       _id,
     }).catch(err => console.log(err))
-    const { resource } = source
-    const response = { rawHtml: resource, _id }
+    const { resource, ranges } = source
+    const response = { rawHtml: resource, _id, ranges }
     return response
   })
   return Promise.all(promises)

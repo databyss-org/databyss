@@ -6,12 +6,14 @@ export default {
       _id: '5d64419f1cbc815583c35058',
       rawHtml:
         'Stamenov, Language Structure, Discourse and the Access to Consciousness',
+      ranges: [],
     },
   },
   entries: {
     '5d6442046e84d304ddceb768': {
       _id: '5d6442046e84d304ddceb768',
       rawHtml: 'On the limitation of third-order thought to assertion',
+      ranges: [],
     },
   },
   blocks: {

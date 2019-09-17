@@ -12,11 +12,7 @@ const SourceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  ranges: [
-    {
-      type: Object,
-    },
-  ],
+  ranges: { type: Array },
   citations: {
     type: String,
   },

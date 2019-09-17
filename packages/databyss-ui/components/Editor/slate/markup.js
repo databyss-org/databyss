@@ -1,5 +1,5 @@
 import cloneDeep from 'clone-deep'
-import { Mark, Block, Range, Point, Document, Editor, Value } from 'slate'
+import { Editor, Value } from 'slate'
 
 export const stateToSlate = (slate, _id) => {
   const { nodes } = slate
@@ -13,9 +13,10 @@ export const stateToSlate = (slate, _id) => {
 
       // find length of all previous nodes
       _nodes.splice(i)
-      const previousTextLength = _nodes.reduce((total, current, index) => {
-        return total + current.text.length
-      }, 0)
+      const previousTextLength = _nodes.reduce(
+        (total, current) => total + current.text.length,
+        0
+      )
       // create range object
       range = {
         offset: previousTextLength,
@@ -26,9 +27,7 @@ export const stateToSlate = (slate, _id) => {
     return range
   })
   // remove empty values
-  ranges = ranges.filter(x => {
-    return x.length != null
-  })
+  ranges = ranges.filter(x => x.length != null)
   const response = {
     _id,
     rawHtml: text,

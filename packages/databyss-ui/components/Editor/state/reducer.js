@@ -1,7 +1,7 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import invariant from 'invariant'
-import { stateToSlate, slateToState } from './../slate/markup'
+import { stateToSlate } from './../slate/markup'
 
 import {
   SET_ACTIVE_BLOCK_ID,
@@ -115,8 +115,7 @@ const insertNewActiveBlock = (
 
   // if previous block was type SOURCE and is now empty
   // set previous block to ENTRY and active block as SOURCE
-  console.log('state', state)
-  console.log('previousBlock', previousBlockId)
+
   if (state.blocks[previousBlockId].type === 'SOURCE' && !previousBlockText) {
     _state = setBlockType(_state, 'ENTRY', previousBlockId)
     insertedBlockType = 'SOURCE'
@@ -159,7 +158,7 @@ const backspace = (state, payload) => {
 
 const getMarkupValues = (nextState, blockValue) => {
   const block = nextState.blocks[nextState.activeBlockId]
-  let _state = cloneDeep(nextState)
+  const _state = cloneDeep(nextState)
   switch (block.type) {
     case 'ENTRY':
       _state.entries[block.refId] = {
@@ -202,7 +201,9 @@ export default (state, action) => {
         activeBlock,
         action.payload.html
       )
-      nextState = getMarkupValues(nextState, action.payload.blockValue)
+      if (action.payload.blockValue) {
+        nextState = getMarkupValues(nextState, action.payload.blockValue)
+      }
       if (!action.payload.html.length) {
         return setActiveBlockType(nextState, 'ENTRY')
       }
