@@ -11,29 +11,47 @@ please see our [CONTRIBUTING](CONTRIBUTING.md) guide.
 
 - [Packages](#packages)
 - [Available Scripts](#available-scripts)
-  - [yarn start:notes](#yarn-start-notes)
-  - [yarn start:login](#yarn-start-login)
-  - [yarn start:server](#yarn-start-server)
-  - [yarn metro:notes](#yarn-metronotes)
-  - [yarn build](#yarn-build)
-  - [yarn build:ui](#yarn-buildui)
-  - [yarn flow](#yarn-flow)
-  - [yarn styleguide](#yarn-styleguide)
-  - [yarn styleguide:build](#yarn-styleguidebuild)
-  - [yarn storybook](#yarn-storybook)
-  - [yarn storybook:build](#yarn-storybookbuild)
-  - [yarn lint](#yarn-lint)
-  - [yarn start:server](#yarn-startserver)
-  - [yarn start:docs](#yarn-startdocs)
-  - [yarn test](#yarn-test)
-  - [yarn sync-versions](#yarn-sync-versions)
-  - [yarn build](#yarn-build)
-  - [yarn start](#yarn-start)
+  - Building
+    - [yarn build](#yarn-build)
+    - [yarn build:ui](#yarn-buildui)
+    - [yarn storybook:build](#yarn-storybookbuild)
+  - Developing
+    - [yarn styleguide](#yarn-styleguide)
+    - [yarn styleguide:build](#yarn-styleguidebuild)
+    - [yarn storybook](#yarn-storybook)
+    - [yarn metro:stories](#yarn-metronotes)
+    - [yarn sync-versions](#yarn-sync-versions)
+  - Testing
+    - [yarn lint](#yarn-lint)
+    - [yarn test](#yarn-test)
+    - [yarn cy](#yarn-testcy)
+      - [yarn cy:test](#yarn-testcy)
+      - [yarn cy:open](#yarn-cyopen)
+      - [yarn cy:run](#yarn-cyrun)
+        - [yarn cy:run:debug](#yarn-cyrundebug)
+      - [yarn storybook:cy](#yarn-storybookcy)
+  - Starting servers
+    - [yarn start](#yarn-start)
+    - [yarn start:docs](#yarn-startdocs)
+    - [yarn start:notes](#yarn-start-notes)
+    - [yarn start:login](#yarn-start-login)
+    - [yarn start:server](#yarn-startserver)
+      - [yarn start:server:test](#yarn-startserver)
+  - Seeding
+    - [yarn seed:testdb](@yarn-seedtestdb)
+  - Native
+    - [yarn metro:notes](#yarn-metronotes)
+    - [yarn metro:stories](#yarn-metronotes)
 
 ## Packages
 
-- [databyss-ui](packages/databyss-ui)
+- [databyss-documentation](packages/databyss-documentation)
+- [databyss-login](packages/databyss-login)
+- [databyss-notes](packages/databyss-notes)
 - [databyss-notes-native](packages/databyss-notes-native)
+- [databyss-services](packages/databyss-services)
+- [databyss-stories-native](packages/databyss-stories-native)
+- [databyss-ui](packages/databyss-ui)
 
 ## Available Scripts
 
