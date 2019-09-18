@@ -3,6 +3,7 @@ import { KeyUtils, Value } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
 import EditorBlock from '../EditorBlock'
+// import EditorInline from '../EditorInline'
 import { getRawHtmlForBlock } from '../state/reducer'
 import { findActiveBlock } from './reducer'
 import { useEditorContext } from '../EditorProvider'
@@ -160,7 +161,6 @@ const SlateContentEditable = ({
       !checkSelectedBlockChanged({ value }) &&
       !checkActiveBlockContentChanged({ value })
     ) {
-      // SOMETHING GOING WRONG HERE
       onEditableStateChange({ value })
     }
   }
@@ -183,6 +183,18 @@ const SlateContentEditable = ({
 
   const onKeyUp = (event, editor, next) => {
     if (event.key === 'Enter') {
+      // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
+      // PREVENT NEW BLOCK
+      if (
+        editor.value.anchorBlock.type === 'SOURCE' &&
+        !editor.value.selection.focus.isAtStartOfNode(
+          editor.value.anchorBlock
+        ) &&
+        !editor.value.selection.focus.isAtEndOfNode(editor.value.anchorBlock)
+      ) {
+        return event.preventDefault()
+      }
+
       const blockProperties = {
         insertedBlockId: editor.value.anchorBlock.key,
         insertedBlockText: editor.value.anchorBlock.text,
@@ -227,6 +239,19 @@ const SlateContentEditable = ({
           }
           return event.preventDefault()
         }
+
+        // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
+        // PREVENT ENTER KEY
+        if (
+          event.key === 'Enter' &&
+          !editor.value.selection.focus.isAtStartOfNode(
+            editor.value.anchorBlock
+          ) &&
+          !editor.value.selection.focus.isAtEndOfNode(editor.value.anchorBlock)
+        ) {
+          return event.preventDefault()
+        }
+
         return next()
       }
       return event.preventDefault()
