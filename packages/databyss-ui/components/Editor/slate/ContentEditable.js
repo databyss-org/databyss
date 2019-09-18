@@ -5,7 +5,7 @@ import { Editor } from 'slate-react'
 import EditorBlock from '../EditorBlock'
 import EditorInline from '../EditorInline'
 import { getRawHtmlForBlock } from '../state/reducer'
-import { findActiveBlock } from './reducer'
+import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../EditorProvider'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
@@ -13,22 +13,21 @@ KeyUtils.setGenerator(() => ObjectId().toHexString())
 const toSlateJson = (editorState, pageBlocks) => ({
   document: {
     nodes: pageBlocks.map(block => {
-      const textBlock =
-        block.type === 'SOURCE' || block.type === 'TOPIC'
-          ? {
-              object: 'inline',
-              nodes: [
-                {
-                  object: 'text',
-                  text: getRawHtmlForBlock(editorState, block),
-                },
-              ],
-              type: block.type,
-            }
-          : {
-              object: 'text',
-              text: getRawHtmlForBlock(editorState, block),
-            }
+      const textBlock = isAtomicInlineType(block.type)
+        ? {
+            object: 'inline',
+            nodes: [
+              {
+                object: 'text',
+                text: getRawHtmlForBlock(editorState, block),
+              },
+            ],
+            type: block.type,
+          }
+        : {
+            object: 'text',
+            text: getRawHtmlForBlock(editorState, block),
+          }
       return {
         object: 'block',
         key: block._id,
@@ -52,7 +51,7 @@ const schema = {
 
 const renderInline = ({ node, attributes }, editor, next) => {
   const isFocused = editor.value.selection.focus.isInNode(node)
-  if (node.type === 'SOURCE' || node.type === 'TOPIC') {
+  if (isAtomicInlineType(node.type)) {
     return (
       <EditorInline isFocused={isFocused} {...attributes}>
         {node.text}
@@ -153,8 +152,7 @@ const SlateContentEditable = ({
       // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
       // PREVENT NEW BLOCK
       if (
-        (editor.value.anchorBlock.type === 'SOURCE' ||
-          editor.value.anchorBlock.type === 'TOPIC') &&
+        isAtomicInlineType(editor.value.anchorBlock.type) &&
         !editor.value.selection.focus.isAtStartOfNode(
           editor.value.anchorBlock
         ) &&
@@ -186,10 +184,7 @@ const SlateContentEditable = ({
   }
 
   const onKeyDown = (event, editor, next) => {
-    if (
-      editor.value.anchorBlock.type === 'SOURCE' ||
-      editor.value.anchorBlock.type === 'TOPIC'
-    ) {
+    if (isAtomicInlineType(editor.value.anchorBlock.type)) {
       if (
         event.key === 'Backspace' ||
         event.key === 'Enter' ||

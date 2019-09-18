@@ -2,6 +2,7 @@ const Block = require('../../../models/Block')
 const Source = require('../../../models/Source')
 const Entry = require('../../../models/Entry')
 const Topic = require('../../../models/Topic')
+const BadRefId = require('../../../lib/BadRefId')
 
 const getBlockItemsFromId = blocks => {
   const promises = blocks.map(async b => {
@@ -12,18 +13,12 @@ const getBlockItemsFromId = blocks => {
     if (block) {
       const { type, entryId, sourceId, authorId, topicId } = block
       const response = { type, _id }
-      if (type === 'ENTRY') {
-        response.refId = entryId
-      }
-      if (type === 'SOURCE') {
-        response.refId = sourceId
-      }
-      if (type === 'TOPIC') {
-        response.refId = topicId
-      }
-      if (type === 'AUTHOR') {
-        response.refId = authorId
-      }
+      response.refId = {
+        ENTRY: entryId,
+        SOURCE: sourceId,
+        TOPIC: topicId,
+        AUTHOR: authorId,
+      }[type]
       return response
     }
     return {}
@@ -31,49 +26,17 @@ const getBlockItemsFromId = blocks => {
   return Promise.all(promises)
 }
 
-const getSourcesFromId = list => {
-  const promises = list.map(async b => {
-    const _id = b.refId
-    const source = await Source.findOne({
-      _id,
-    }).catch(err => console.log(err))
-    if (!source) return {}
-
-    const { resource } = source
-    const response = { rawHtml: resource, _id }
-    return response
-  })
-  return Promise.all(promises)
-}
-
-const getTopicsFromId = list => {
-  const promises = list.map(async b => {
-    const _id = b.refId
-    const topic = await Topic.findOne({
-      _id,
-    }).catch(err => console.log(err))
-    if (!topic) return {}
-    const { text } = topic
-    const response = { rawHtml: text, _id }
-    return response
-  })
-  return Promise.all(promises)
-}
-
-const getEntriesFromId = list => {
-  const promises = list.map(async b => {
-    const _id = b.refId
-    const entryResponse = await Entry.findOne({
-      _id,
-    }).catch(err => console.log(err))
-    if (!entryResponse) return {}
-
-    const { entry } = entryResponse
-    const response = { rawHtml: entry, _id }
-    return response
-  })
-  return Promise.all(promises)
-}
+const populateRefEntities = (list, Model) =>
+  Promise.all(
+    list.map(async b => {
+      const _id = b.refId
+      const entity = await eval(Model).findOne({ _id })
+      if (!entity) {
+        throw new BadRefIdError(refId, 500)
+      }
+      return { rawHtml: entity.text, _id }
+    })
+  )
 
 const dictionaryFromList = list => {
   const result = {}
@@ -87,6 +50,4 @@ const dictionaryFromList = list => {
 
 module.exports.getBlockItemsFromId = getBlockItemsFromId
 module.exports.dictionaryFromList = dictionaryFromList
-module.exports.getSourcesFromId = getSourcesFromId
-module.exports.getEntriesFromId = getEntriesFromId
-module.exports.getTopicsFromId = getTopicsFromId
+module.exports.populateRefEntities = populateRefEntities

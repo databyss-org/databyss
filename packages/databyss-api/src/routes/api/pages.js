@@ -13,9 +13,7 @@ const ApiError = require('../../lib/ApiError')
 const {
   getBlockItemsFromId,
   dictionaryFromList,
-  getSourcesFromId,
-  getEntriesFromId,
-  getTopicsFromId,
+  populateRefEntities,
 } = require('./helpers/pagesHelper')
 
 const router = express.Router()
@@ -43,10 +41,9 @@ router.post(
         _sources.map(async s => {
           const source = sources[s].rawHtml
           const sourceId = sources[s]._id
-
           // SOURCE WITH ID
           const sourceFields = {
-            resource: source,
+            text: source,
             _id: sourceId,
             user: req.user.id,
             account: req.account._id,
@@ -73,11 +70,11 @@ router.post(
 
       await Promise.all(
         _entries.map(async e => {
-          const entry = entries[e].rawHtml
+          const text = entries[e].rawHtml
           const entryId = entries[e]._id
           // ENTRY WITH ID
           const entryFields = {
-            entry,
+            text,
             _id: entryId,
             user: req.user.id,
             account: req.account._id,
@@ -130,24 +127,22 @@ router.post(
       await Promise.all(
         _blocks.map(async block => {
           const { _id, type, refId } = block
+
+          const idType = {
+            ENTRY: { entryId: refId },
+            SOURCE: { sourceId: refId },
+            TOPIC: { topicId: refId },
+            AUTHOR: { authorId: refId },
+          }[type]
+
           const blockFields = {
             type,
             _id,
             user: req.user.id,
             account: req.account._id,
+            ...idType,
           }
-          if (type === 'SOURCE') {
-            blockFields.sourceId = refId
-          }
-          if (type === 'ENTRY') {
-            blockFields.entryId = refId
-          }
-          if (type === 'TOPIC') {
-            blockFields.topicId = refId
-          }
-          if (type === 'Author') {
-            blockFields.authorId = refId
-          }
+
           let blockResponse = await Block.findOne({ _id })
           // if block exists, edit block
           if (blockResponse) {
@@ -242,16 +237,17 @@ router.get(
 
       const blockList = await getBlockItemsFromId(pageResponse.blocks)
       const blocks = dictionaryFromList(blockList)
-      const sourceList = blockList.filter(b => b.type === 'SOURCE')
-      let sources = await getSourcesFromId(sourceList)
-      sources = dictionaryFromList(sources)
-      const entriesList = blockList.filter(b => b.type === 'ENTRY')
-      let entries = await getEntriesFromId(entriesList)
-      entries = dictionaryFromList(entries)
 
-      const topicsList = blockList.filter(b => b.type === 'TOPIC')
-      let topics = await getTopicsFromId(topicsList)
-      topics = dictionaryFromList(topics)
+      const [sources, entries, topics] = await Promise.all(
+        ['SOURCE', 'ENTRY', 'TOPIC'].map(async t => {
+          const model = t
+            .replace(/(\B)[^ ]*/g, match => match.toLowerCase())
+            .replace(/^[^ ]/g, match => match.toUpperCase())
+          const list = blockList.filter(b => b.type === t)
+          const populated = await populateRefEntities(list, model)
+          return dictionaryFromList(populated)
+        })
+      )
 
       const response = {
         page,

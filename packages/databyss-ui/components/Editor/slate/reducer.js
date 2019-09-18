@@ -13,14 +13,24 @@ export const findActiveBlock = value =>
 export const findActiveNode = value =>
   value.document.getNode(value.selection.focus.key)
 
+export const isAtomicInlineType = type => {
+  switch (type) {
+    case 'SOURCE':
+      return true
+    case 'TOPIC':
+      return true
+    default:
+      return false
+  }
+}
+
 const setActiveBlockType = type => (editor, value, next) => {
   const _activeBlock = findActiveBlock(value)
-  if (_activeBlock.type === 'SOURCE' || _activeBlock.type === 'TOPIC') {
+  if (isAtomicInlineType(_activeBlock.type)) {
     // if previous value is SOURCE and is currently not empty
     // set current block type as ENTRY
     if (
-      (editor.value.previousBlock.type === 'SOURCE' ||
-        editor.value.previousBlock.type === 'TOPIC') &&
+      isAtomicInlineType(editor.value.previousBlock.type) &&
       editor.value.previousBlock.text
     ) {
       editor.setNodeByKey(editor.value.anchorBlock.key, { type: 'ENTRY' })
@@ -37,7 +47,7 @@ const setActiveBlockType = type => (editor, value, next) => {
 }
 
 const setBlockType = (id, type) => (editor, value, next) => {
-  if (type === 'SOURCE' || type === 'TOPIC') {
+  if (isAtomicInlineType(type)) {
     const _node = value.document.getNode(id)
     let _text = _node.getFirstText().text
     if (_text.startsWith('@') || _text.startsWith('#')) {
@@ -84,7 +94,7 @@ const backspace = () => (editor, value, next) => {
   // if current block is empty and block type is SOURCE
   // set block type to ENTRY
   const _block = value.anchorBlock
-  if (!_block.text && (_block.type === 'SOURCE' || _block.type === 'TOPIC')) {
+  if (!_block.text && isAtomicInlineType(_block.type)) {
     editor.setNodeByKey(_block.key, { type: 'ENTRY' })
   }
   next(editor, value)
