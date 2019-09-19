@@ -70,9 +70,11 @@ const renderInline = ({ node, attributes }, editor, next) => {
     : {}
   if (node.type === 'SOURCE') {
     return (
-      <span style={style} {...attributes}>
-        {node.text}
-      </span>
+      <span
+        style={style}
+        {...attributes}
+        dangerouslySetInnerHTML={{ __html: node.text }}
+      />
     )
   }
 
@@ -154,6 +156,8 @@ const SlateContentEditable = ({
 
   const onChange = change => {
     const { value } = change
+    // const html = serializer.serialize(value)
+
     if (onDocumentChange) {
       onDocumentChange(value.document.toJSON())
     }
