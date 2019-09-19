@@ -3,12 +3,12 @@ import { KeyUtils, Value } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
 import EditorBlock from '../EditorBlock'
-// import EditorInline from '../EditorInline'
+import EditorInline from '../EditorInline'
 import { getRawHtmlForBlock } from '../state/reducer'
 import { findActiveBlock } from './reducer'
 import { useEditorContext } from '../EditorProvider'
 import hotKeys from './hotKeys'
-import { slateToState } from './markup'
+import { slateToState, stateToSlate } from './markup'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -62,20 +62,14 @@ const schema = {
 }
 
 const renderInline = ({ node, attributes }, editor, next) => {
-  const isSelected = editor.value.selection.focus.isInNode(node)
-  const style = isSelected
-    ? {
-        backgroundColor: '#efefef',
-      }
-    : {}
+  const isFocused = editor.value.selection.focus.isInNode(node)
   if (node.type === 'SOURCE') {
     return (
-      <span style={style} {...attributes}>
+      <EditorInline isFocused={isFocused} {...attributes}>
         {node.text}
-      </span>
+      </EditorInline>
     )
   }
-
   return next()
 }
 
@@ -146,7 +140,9 @@ const SlateContentEditable = ({
       const block = _nextEditableState.value.anchorBlock
       const jsonBlockValue = { ...block.toJSON(), key: block.key }
 
-      onActiveBlockContentChange(_nextText, _nextEditableState, jsonBlockValue)
+      const ranges = stateToSlate(jsonBlockValue, block.key)[block.key].ranges
+      // const ranges = []
+      onActiveBlockContentChange(_nextText, _nextEditableState, ranges)
       return true
     }
     return false

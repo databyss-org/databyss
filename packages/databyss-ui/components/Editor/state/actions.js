@@ -19,13 +19,13 @@ export function setActiveBlockId(id, editableState) {
   }
 }
 
-export function setActiveBlockContent(html, editableState, blockValue) {
+export function setActiveBlockContent(html, editableState, ranges) {
   return {
     type: SET_ACTIVE_BLOCK_CONTENT,
     payload: {
       html,
       editableState,
-      blockValue,
+      ranges,
     },
   }
 }

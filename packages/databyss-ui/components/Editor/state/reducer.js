@@ -53,14 +53,30 @@ export const getRawHtmlForBlock = (state, block) => {
   }
 }
 
-export const setRawHtmlForBlock = (state, block, html) => {
+export const getRangesForBlock = (state, block) =>
+  ({
+    ENTRY: state.entries[block.refId].ranges,
+    SOURCE: state.sources[block.refId].ranges,
+  }[block.type])
+
+export const setRawHtmlForBlock = (state, block, html, ranges) => {
   const nextState = cloneDeep(state)
   switch (block.type) {
     case 'ENTRY':
       nextState.entries[block.refId].rawHtml = html
+      nextState.entries[block.refId].ranges = ranges
+        ? ranges
+        : nextState.entries[block.refId].ranges
+
       break
     case 'SOURCE':
+      console.log('herere')
+      console.log(nextState)
       nextState.sources[block.refId].rawHtml = html
+      nextState.sources[block.refId].ranges = ranges
+        ? ranges
+        : nextState.entries[block.refId].ranges
+
       break
     default:
       throw new Error('Invalid block type', block.type)
@@ -73,6 +89,8 @@ const setBlockType = (state, type, _id) => {
   const nextRefId = ObjectId().toHexString()
   const block = state.blocks[_id]
   const rawHtml = block ? getRawHtmlForBlock(state, block) : ''
+  const ranges = block ? getRangesForBlock(state, block) : []
+  console.log('ranges', ranges)
   const nextState = cloneDeep(state)
   nextState.blocks[_id] = {
     ...nextState.blocks[_id],
@@ -82,10 +100,11 @@ const setBlockType = (state, type, _id) => {
   }
   switch (type) {
     case 'SOURCE':
-      nextState.sources[nextRefId] = { _id: nextRefId, rawHtml }
+      // NEED TO ADD RANGES HERE
+      nextState.sources[nextRefId] = { _id: nextRefId, rawHtml, ranges }
       return nextState
     case 'ENTRY':
-      nextState.entries[nextRefId] = { _id: nextRefId, rawHtml }
+      nextState.entries[nextRefId] = { _id: nextRefId, rawHtml, ranges }
       return nextState
 
     default:
@@ -199,11 +218,12 @@ export default (state, action) => {
       let nextState = setRawHtmlForBlock(
         state,
         activeBlock,
-        action.payload.html
+        action.payload.html,
+        action.payload.ranges
       )
-      if (action.payload.blockValue) {
-        nextState = getMarkupValues(nextState, action.payload.blockValue)
-      }
+      // if (action.payload.blockValue) {
+      //   nextState = getMarkupValues(nextState, action.payload.blockValue)
+      // }
       if (!action.payload.html.length) {
         return setActiveBlockType(nextState, 'ENTRY')
       }
