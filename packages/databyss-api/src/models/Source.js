@@ -15,6 +15,10 @@ const SourceSchema = new mongoose.Schema({
   },
   resource: {
     type: String,
+    //   required: true,
+  },
+  text: {
+    type: String,
     required: true,
   },
   citations: {

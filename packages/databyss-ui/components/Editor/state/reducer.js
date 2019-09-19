@@ -18,39 +18,43 @@ export const initialState = {
   editableState: null,
 }
 
+const entities = (state, type) =>
+  ({
+    ENTRY: state.entries,
+    SOURCE: state.sources,
+    TOPIC: state.topics,
+  }[type])
+
 const cleanUpState = state => {
-  const _state = cloneDeep(state)
+  let _state = cloneDeep(state)
   const pageBlocks = _state.page.blocks
-  const { blocks, entries, sources } = _state
-  const _sources = {}
-  const _blocks = {}
-  const _entries = {}
+  const _blocks = _state.blocks
+  const entities = (state, type) =>
+    ({
+      ENTRY: state.entries,
+      SOURCE: state.sources,
+      TOPIC: state.topics,
+    }[type])
+
+  const newState = {
+    entries: {},
+    sources: {},
+    topics: {},
+    blocks: {},
+  }
+
   pageBlocks.forEach(b => {
-    const { type, refId } = blocks[b._id]
-    if (type === 'SOURCE') {
-      _sources[refId] = sources[refId]
-    }
-    if (type === 'ENTRY') {
-      _entries[refId] = entries[refId]
-    }
-    _blocks[b._id] = blocks[b._id]
+    const { type, refId } = _blocks[b._id]
+    entities(newState, type)[refId] = entities(state, type)[refId]
+    newState.blocks[b._id] = _blocks[b._id]
   })
-  _state.blocks = _blocks
-  _state.entries = _entries
-  _state.sources = _sources
+
+  _state = { ..._state, ...newState }
   return _state
 }
 
-export const getRawHtmlForBlock = (state, block) => {
-  switch (block.type) {
-    case 'ENTRY':
-      return state.entries[block.refId].rawHtml
-    case 'SOURCE':
-      return state.sources[block.refId].rawHtml
-    default:
-      throw new Error('Invalid block type', block.type)
-  }
-}
+export const getRawHtmlForBlock = (state, block) =>
+  entities(state, block.type)[block.refId].rawHtml
 
 export const setRawHtmlForBlock = (state, block, html) => {
   const nextState = cloneDeep(state)
@@ -60,6 +64,9 @@ export const setRawHtmlForBlock = (state, block, html) => {
       break
     case 'SOURCE':
       nextState.sources[block.refId].rawHtml = html
+      break
+    case 'TOPIC':
+      nextState.topics[block.refId].rawHtml = html
       break
     default:
       throw new Error('Invalid block type', block.type)
@@ -79,12 +86,16 @@ const setBlockType = (state, type, _id) => {
     type,
     refId: nextRefId,
   }
+
   switch (type) {
     case 'SOURCE':
       nextState.sources[nextRefId] = { _id: nextRefId, rawHtml }
       return nextState
     case 'ENTRY':
       nextState.entries[nextRefId] = { _id: nextRefId, rawHtml }
+      return nextState
+    case 'TOPIC':
+      nextState.topics[nextRefId] = { _id: nextRefId, rawHtml }
       return nextState
 
     default:
@@ -114,9 +125,13 @@ const insertNewActiveBlock = (
 
   // if previous block was type SOURCE and is now empty
   // set previous block to ENTRY and active block as SOURCE
-  if (state.blocks[previousBlockId].type === 'SOURCE' && !previousBlockText) {
+  if (
+    (state.blocks[previousBlockId].type === 'SOURCE' ||
+      state.blocks[previousBlockId].type === 'TOPIC') &&
+    !previousBlockText
+  ) {
     _state = setBlockType(_state, 'ENTRY', previousBlockId)
-    insertedBlockType = 'SOURCE'
+    insertedBlockType = state.blocks[previousBlockId].type
   }
 
   _state = setBlockType(_state, insertedBlockType, insertedBlockId)
@@ -185,13 +200,14 @@ export default (state, action) => {
         nextState,
         nextState.blocks[action.payload.id]
       )
-      if (_html.startsWith('@')) {
+      if (_html.startsWith('@') || _html.startsWith('#')) {
         nextState = setRawHtmlForBlock(
           nextState,
           nextState.blocks[action.payload.id],
           _html.substring(1)
         )
       }
+
       return setBlockType(nextState, action.payload.type, action.payload.id)
     default:
       return state

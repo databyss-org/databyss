@@ -8,7 +8,7 @@ const styleSelector = type => {
       return { style: 'bodyNormalUnderline', color: '' }
     case 'LOCATION':
       return { style: 'bodySmall', color: '' }
-    case 'HEADER':
+    case 'TOPIC':
       return { style: 'bodyNormalSemibold', color: '' }
     case 'TAG':
       return { style: 'BodySmall', color: 'grey' }

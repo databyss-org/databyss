@@ -1,6 +1,15 @@
 const Block = require('../../../models/Block')
 const Source = require('../../../models/Source')
 const Entry = require('../../../models/Entry')
+const Topic = require('../../../models/Topic')
+const BadRefId = require('../../../lib/BadRefId')
+
+const modelDict = type =>
+  ({
+    SOURCE: Source,
+    ENTRY: Entry,
+    TOPIC: Topic,
+  }[type])
 
 const getBlockItemsFromId = blocks => {
   const promises = blocks.map(async b => {
@@ -9,17 +18,14 @@ const getBlockItemsFromId = blocks => {
       _id,
     }).catch(err => console.log(err))
     if (block) {
-      const { type, entryId, sourceId, authorId } = block
+      const { type, entryId, sourceId, authorId, topicId } = block
       const response = { type, _id }
-      if (type === 'ENTRY') {
-        response.refId = entryId
-      }
-      if (type === 'SOURCE') {
-        response.refId = sourceId
-      }
-      if (type === 'AUTHOR') {
-        response.refId = authorId
-      }
+      response.refId = {
+        ENTRY: entryId,
+        SOURCE: sourceId,
+        TOPIC: topicId,
+        AUTHOR: authorId,
+      }[type]
       return response
     }
     return {}
@@ -27,31 +33,17 @@ const getBlockItemsFromId = blocks => {
   return Promise.all(promises)
 }
 
-const getSourcesFromId = list => {
-  const promises = list.map(async b => {
-    const _id = b.refId
-    const source = await Source.findOne({
-      _id,
-    }).catch(err => console.log(err))
-    const { resource } = source
-    const response = { rawHtml: resource, _id }
-    return response
-  })
-  return Promise.all(promises)
-}
-
-const getEntriesFromId = list => {
-  const promises = list.map(async b => {
-    const _id = b.refId
-    const entryResponse = await Entry.findOne({
-      _id,
-    }).catch(err => console.log(err))
-    const { entry } = entryResponse
-    const response = { rawHtml: entry, _id }
-    return response
-  })
-  return Promise.all(promises)
-}
+const populateRefEntities = (list, type) =>
+  Promise.all(
+    list.map(async b => {
+      const _id = b.refId
+      const entity = await modelDict(type).findOne({ _id })
+      if (!entity) {
+        throw new BadRefId(b.refId, 500)
+      }
+      return { rawHtml: entity.text, _id }
+    })
+  )
 
 const dictionaryFromList = list => {
   const result = {}
@@ -65,5 +57,4 @@ const dictionaryFromList = list => {
 
 module.exports.getBlockItemsFromId = getBlockItemsFromId
 module.exports.dictionaryFromList = dictionaryFromList
-module.exports.getSourcesFromId = getSourcesFromId
-module.exports.getEntriesFromId = getEntriesFromId
+module.exports.populateRefEntities = populateRefEntities
