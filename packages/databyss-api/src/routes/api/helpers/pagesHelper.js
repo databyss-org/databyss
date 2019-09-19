@@ -4,6 +4,13 @@ const Entry = require('../../../models/Entry')
 const Topic = require('../../../models/Topic')
 const BadRefId = require('../../../lib/BadRefId')
 
+const modelDict = type =>
+  ({
+    SOURCE: Source,
+    ENTRY: Entry,
+    TOPIC: Topic,
+  }[type])
+
 const getBlockItemsFromId = blocks => {
   const promises = blocks.map(async b => {
     const _id = b._id.toString()
@@ -26,11 +33,11 @@ const getBlockItemsFromId = blocks => {
   return Promise.all(promises)
 }
 
-const populateRefEntities = (list, Model) =>
+const populateRefEntities = (list, type) =>
   Promise.all(
     list.map(async b => {
       const _id = b.refId
-      const entity = await eval(Model).findOne({ _id })
+      const entity = await modelDict(type).findOne({ _id })
       if (!entity) {
         throw new BadRefId(b.refId, 500)
       }

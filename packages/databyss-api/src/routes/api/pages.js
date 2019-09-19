@@ -240,11 +240,8 @@ router.get(
 
       const [sources, entries, topics] = await Promise.all(
         ['SOURCE', 'ENTRY', 'TOPIC'].map(async t => {
-          const model = t
-            .replace(/(\B)[^ ]*/g, match => match.toLowerCase())
-            .replace(/^[^ ]/g, match => match.toUpperCase())
           const list = blockList.filter(b => b.type === t)
-          const populated = await populateRefEntities(list, model)
+          const populated = await populateRefEntities(list, t)
           return dictionaryFromList(populated)
         })
       )
