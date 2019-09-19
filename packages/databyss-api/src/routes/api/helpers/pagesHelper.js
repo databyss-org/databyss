@@ -32,7 +32,7 @@ const populateRefEntities = (list, Model) =>
       const _id = b.refId
       const entity = await eval(Model).findOne({ _id })
       if (!entity) {
-        throw new BadRefIdError(refId, 500)
+        throw new BadRefId(b.refId, 500)
       }
       return { rawHtml: entity.text, _id }
     })
