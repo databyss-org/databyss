@@ -1,8 +1,11 @@
 const express = require('express')
+const _ = require('lodash')
 const Page = require('../../models/Page')
 const Source = require('../../models/Source')
 const Entry = require('../../models/Entry')
 const Block = require('../../models/Block')
+const Topic = require('../../models/Topic')
+
 const auth = require('../../middleware/auth')
 const accountMiddleware = require('../../middleware/accountMiddleware')
 const pageMiddleware = require('../../middleware/pageMiddleware')
@@ -10,8 +13,7 @@ const ApiError = require('../../lib/ApiError')
 const {
   getBlockItemsFromId,
   dictionaryFromList,
-  getSourcesFromId,
-  getEntriesFromId,
+  populateRefEntities,
 } = require('./helpers/pagesHelper')
 
 const router = express.Router()
@@ -24,7 +26,12 @@ router.post(
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
   async (req, res) => {
     try {
-      const { sources, entries, blocks, page } = req.body.data
+      const { blocks, page } = req.body.data
+      let { sources, entries, topics } = req.body.data
+      sources = !_.isEmpty(sources) ? sources : {}
+      topics = !_.isEmpty(topics) ? topics : {}
+      entries = !_.isEmpty(entries) ? entries : {}
+
       const { name, _id } = page
 
       // ADD SOURCES
@@ -34,10 +41,9 @@ router.post(
         _sources.map(async s => {
           const source = sources[s].rawHtml
           const sourceId = sources[s]._id
-
           // SOURCE WITH ID
           const sourceFields = {
-            resource: source,
+            text: source,
             _id: sourceId,
             user: req.user.id,
             account: req.account._id,
@@ -64,11 +70,11 @@ router.post(
 
       await Promise.all(
         _entries.map(async e => {
-          const entry = entries[e].rawHtml
+          const text = entries[e].rawHtml
           const entryId = entries[e]._id
           // ENTRY WITH ID
           const entryFields = {
-            entry,
+            text,
             _id: entryId,
             user: req.user.id,
             account: req.account._id,
@@ -88,26 +94,55 @@ router.post(
         })
       )
 
+      // ADD TOPICS
+      const _topics = Object.keys(topics)
+
+      await Promise.all(
+        _topics.map(async e => {
+          const topic = topics[e].rawHtml
+          const topicId = topics[e]._id
+          // TOPIC WITH ID
+          const topicFields = {
+            text: topic,
+            _id: topicId,
+            account: req.account._id,
+          }
+
+          let topicResponse = await Topic.findOne({ _id: topicId })
+          if (topicResponse) {
+            topicResponse = await Topic.findOneAndUpdate(
+              { _id: topicId },
+              { $set: topicFields }
+            )
+          } else {
+            // ADD NEW TOPIC
+            topicResponse = new Topic(topicFields)
+            await topicResponse.save()
+          }
+        })
+      )
+
       // ADD BLOCK
       const _blocks = Object.keys(blocks).map(b => blocks[b])
       await Promise.all(
         _blocks.map(async block => {
           const { _id, type, refId } = block
+
+          const idType = {
+            ENTRY: { entryId: refId },
+            SOURCE: { sourceId: refId },
+            TOPIC: { topicId: refId },
+            AUTHOR: { authorId: refId },
+          }[type]
+
           const blockFields = {
             type,
             _id,
             user: req.user.id,
             account: req.account._id,
+            ...idType,
           }
-          if (type === 'SOURCE') {
-            blockFields.sourceId = refId
-          }
-          if (type === 'ENTRY') {
-            blockFields.entryId = refId
-          }
-          if (type === 'Author') {
-            blockFields.authorId = refId
-          }
+
           let blockResponse = await Block.findOne({ _id })
           // if block exists, edit block
           if (blockResponse) {
@@ -202,18 +237,21 @@ router.get(
 
       const blockList = await getBlockItemsFromId(pageResponse.blocks)
       const blocks = dictionaryFromList(blockList)
-      const sourceList = blockList.filter(b => b.type === 'SOURCE')
-      let sources = await getSourcesFromId(sourceList)
-      sources = dictionaryFromList(sources)
-      const entriesList = blockList.filter(b => b.type === 'ENTRY')
-      let entries = await getEntriesFromId(entriesList)
-      entries = dictionaryFromList(entries)
+
+      const [sources, entries, topics] = await Promise.all(
+        ['SOURCE', 'ENTRY', 'TOPIC'].map(async t => {
+          const list = blockList.filter(b => b.type === t)
+          const populated = await populateRefEntities(list, t)
+          return dictionaryFromList(populated)
+        })
+      )
 
       const response = {
         page,
         blocks,
         entries,
         sources,
+        topics,
       }
       return res.json(response)
     } catch (err) {
