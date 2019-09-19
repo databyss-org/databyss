@@ -36,6 +36,9 @@ const EditorPage = ({ children }) => {
     if (rawHtml.match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
       dispatchEditor(setBlockType('SOURCE', id, editableState))
     }
+    if (rawHtml.match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
+      dispatchEditor(setBlockType('TOPIC', id, editableState))
+    }
   }
 
   const OnToggleMark = (mark, { value }) => {

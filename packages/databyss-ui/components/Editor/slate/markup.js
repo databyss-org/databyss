@@ -71,14 +71,17 @@ export const stateToSlate = (state, id) => {
     .insertText(_stateObject.rawHtml)
     .moveBackward(_stateObject.rawHtml.length)
   // select correct range and apply marks
-  _stateObject.ranges.forEach(n => {
-    _editor.moveForward(n.offset).moveFocusForward(n.length)
-    n.marks.forEach(m => {
-      _editor.addMark(m)
+  if (_stateObject.ranges) {
+    _stateObject.ranges.forEach(n => {
+      _editor.moveForward(n.offset).moveFocusForward(n.length)
+      n.marks.forEach(m => {
+        _editor.addMark(m)
+      })
+      // replace range to original position
+      _editor.moveFocusBackward(n.length).moveBackward(n.offset)
     })
-    // replace range to original position
-    _editor.moveFocusBackward(n.length).moveBackward(n.offset)
-  })
+  }
+
   // translate to json
   const document = _editor.value.toJSON().document
   return { ...document.nodes[0], key: id }

@@ -15,6 +15,16 @@ export default {
       rawHtml: 'On the limitation of third-order thought to assertion',
       ranges: [],
     },
+    '5d7bbfb58a5f2f5dc1edfe7c': {
+      _id: '5d7bbfb58a5f2f5dc1edfe7c',
+      rawHtml: 'entry ',
+    },
+  },
+  topics: {
+    '5d7bbfb58a5f2f5dc1edfe7c': {
+      _id: '5d7bbfb58a5f2f5dc1edfe7c',
+      rawHtml: 'topic',
+    },
   },
   blocks: {
     '5d64423aae2da21680dc208b': {
@@ -27,6 +37,11 @@ export default {
       _id: '5d64424bcfa313f70483c1b0',
       refId: '5d6442046e84d304ddceb768',
     },
+    '5d7bbf85b5bf4165a5826720': {
+      type: 'TOPIC',
+      _id: '5d7bbf85b5bf4165a5826720',
+      refId: '5d7bbfb58a5f2f5dc1edfe7c',
+    },
   },
   page: {
     _id: '5d6443bdd9ca9149d1a346c2',
@@ -37,6 +52,9 @@ export default {
       },
       {
         _id: '5d64424bcfa313f70483c1b0',
+      },
+      {
+        _id: '5d7bbf85b5bf4165a5826720',
       },
     ],
   },

@@ -46,6 +46,26 @@ describe('editorState', () => {
       const nextState = reducer(state, setActiveBlockContent(''))
       expect(nextState.blocks[nextState.activeBlockId].type).toEqual('ENTRY')
     })
+
+    test('should set source content for type TOPIC', () => {
+      const state = reducer(
+        initialState,
+        setActiveBlockId('5d7bbf85b5bf4165a5826720')
+      )
+      const nextState = reducer(state, setActiveBlockContent('updated content'))
+      expect(
+        nextState.topics[nextState.blocks[nextState.activeBlockId].refId]
+          .rawHtml
+      ).toEqual('updated content')
+    })
+    test('clearing content should reset type to ENTRY', () => {
+      const state = reducer(
+        initialState,
+        setActiveBlockId('5d7bbf85b5bf4165a5826720')
+      )
+      const nextState = reducer(state, setActiveBlockContent(''))
+      expect(nextState.blocks[nextState.activeBlockId].type).toEqual('ENTRY')
+    })
   })
 
   describe(SET_ACTIVE_BLOCK_TYPE, () => {
@@ -106,6 +126,62 @@ describe('editorState', () => {
         nextState.sources[nextState.blocks[nextState.activeBlockId].refId]
           .rawHtml
       ).toEqual('this should become a source')
+    })
+  })
+
+  describe(SET_ACTIVE_BLOCK_TYPE, () => {
+    test('should change block type from ENTRY to TOPIC', () => {
+      const state = reducer(
+        initialState,
+        setActiveBlockId('5d7bbf85b5bf4165a5826720')
+      )
+      const nextState = reducer(state, setActiveBlockType('TOPIC'))
+      expect(nextState.blocks[nextState.activeBlockId].type).toEqual('TOPIC')
+    })
+    test('should create a new refId', () => {
+      const state = reducer(
+        initialState,
+        setActiveBlockId('5d7bbf85b5bf4165a5826720')
+      )
+      const prevRefId = state.blocks[state.activeBlockId].refId
+      const nextState = reducer(state, setActiveBlockType('TOPIC'))
+      const nextRefId = nextState.blocks[state.activeBlockId].refId
+      expect(nextRefId).not.toEqual(prevRefId)
+    })
+    test('should create a TOPIC record with new refId', () => {
+      const state = reducer(
+        initialState,
+        setActiveBlockId('5d7bbf85b5bf4165a5826720')
+      )
+      const nextState = reducer(state, setActiveBlockType('TOPIC'))
+      const block = nextState.blocks[nextState.activeBlockId]
+      const topic = nextState.topics[block.refId]
+      expect(topic.rawHtml).toEqual('topic')
+    })
+  })
+
+  describe(SET_BLOCK_TYPE, () => {
+    test('should change block type from ENTRY to TOPIC', () => {
+      const state = reducer(
+        initialState,
+        setActiveBlockId('5d7bbf85b5bf4165a5826720')
+      )
+      const blockId = '5d64424bcfa313f70483c1b0'
+      const nextState = reducer(state, setBlockType('TOPIC', blockId))
+      expect(nextState.blocks[blockId].type).toEqual('TOPIC')
+    })
+    test('should remove leading #', () => {
+      const blockId = '5d64424bcfa313f70483c1b0'
+      const state = reducer(initialState, setActiveBlockId(blockId))
+      let nextState = reducer(
+        state,
+        setActiveBlockContent('#this should become a topic')
+      )
+      nextState = reducer(nextState, setBlockType('TOPIC', blockId, null, true))
+      expect(
+        nextState.topics[nextState.blocks[nextState.activeBlockId].refId]
+          .rawHtml
+      ).toEqual('this should become a topic')
     })
   })
 

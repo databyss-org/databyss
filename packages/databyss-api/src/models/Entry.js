@@ -39,6 +39,9 @@ const EntrySchema = new mongoose.Schema({
   entry: {
     type: String,
   },
+  text: {
+    type: String,
+  },
   index: {
     type: Number,
     default: 0,
