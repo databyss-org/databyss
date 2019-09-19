@@ -1,7 +1,6 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import invariant from 'invariant'
-import { stateToSlate } from './../slate/markup'
 
 import {
   SET_ACTIVE_BLOCK_ID,
@@ -53,30 +52,14 @@ export const getRawHtmlForBlock = (state, block) => {
   }
 }
 
-export const getRangesForBlock = (state, block) =>
-  ({
-    ENTRY: state.entries[block.refId].ranges,
-    SOURCE: state.sources[block.refId].ranges,
-  }[block.type])
-
-export const setRawHtmlForBlock = (state, block, html, ranges) => {
+export const setRawHtmlForBlock = (state, block, html) => {
   const nextState = cloneDeep(state)
   switch (block.type) {
     case 'ENTRY':
       nextState.entries[block.refId].rawHtml = html
-      nextState.entries[block.refId].ranges = ranges
-        ? ranges
-        : nextState.entries[block.refId].ranges
-
       break
     case 'SOURCE':
-      console.log('herere')
-      console.log(nextState)
       nextState.sources[block.refId].rawHtml = html
-      nextState.sources[block.refId].ranges = ranges
-        ? ranges
-        : nextState.entries[block.refId].ranges
-
       break
     default:
       throw new Error('Invalid block type', block.type)
@@ -89,8 +72,6 @@ const setBlockType = (state, type, _id) => {
   const nextRefId = ObjectId().toHexString()
   const block = state.blocks[_id]
   const rawHtml = block ? getRawHtmlForBlock(state, block) : ''
-  const ranges = block ? getRangesForBlock(state, block) : []
-  console.log('ranges', ranges)
   const nextState = cloneDeep(state)
   nextState.blocks[_id] = {
     ...nextState.blocks[_id],
@@ -100,11 +81,10 @@ const setBlockType = (state, type, _id) => {
   }
   switch (type) {
     case 'SOURCE':
-      // NEED TO ADD RANGES HERE
-      nextState.sources[nextRefId] = { _id: nextRefId, rawHtml, ranges }
+      nextState.sources[nextRefId] = { _id: nextRefId, rawHtml }
       return nextState
     case 'ENTRY':
-      nextState.entries[nextRefId] = { _id: nextRefId, rawHtml, ranges }
+      nextState.entries[nextRefId] = { _id: nextRefId, rawHtml }
       return nextState
 
     default:
@@ -175,26 +155,26 @@ const backspace = (state, payload) => {
   return cleanUpState(_state)
 }
 
-const getMarkupValues = (nextState, blockValue) => {
+const getMarkupValues = (nextState, ranges) => {
   const block = nextState.blocks[nextState.activeBlockId]
   const _state = cloneDeep(nextState)
   switch (block.type) {
     case 'ENTRY':
       _state.entries[block.refId] = {
         ..._state.entries[block.refId],
-        ...stateToSlate(blockValue, block.refId)[_state.activeBlockId],
+        ranges,
       }
       break
     case 'SOURCE':
       _state.entries[block.refId] = {
         ..._state.sources[block.refId],
-        ...stateToSlate(blockValue, block.refId)[_state.activeBlockId],
+        ranges,
       }
       break
     case 'TOPIC':
       _state.entries[block.refId] = {
         ..._state.topics[block.refId],
-        ...stateToSlate(blockValue, block.refId)[_state.activeBlockId],
+        ranges,
       }
       break
     default:
@@ -218,12 +198,11 @@ export default (state, action) => {
       let nextState = setRawHtmlForBlock(
         state,
         activeBlock,
-        action.payload.html,
-        action.payload.ranges
+        action.payload.html
       )
-      // if (action.payload.blockValue) {
-      //   nextState = getMarkupValues(nextState, action.payload.blockValue)
-      // }
+      if (action.payload.ranges) {
+        nextState = getMarkupValues(nextState, action.payload.ranges)
+      }
       if (!action.payload.html.length) {
         return setActiveBlockType(nextState, 'ENTRY')
       }
@@ -246,6 +225,7 @@ export default (state, action) => {
           _html.substring(1)
         )
       }
+      // TODO: TO TRANSFER RANGES TO NEW BLOCK
       return setBlockType(nextState, action.payload.type, action.payload.id)
     default:
       return state

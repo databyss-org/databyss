@@ -8,7 +8,7 @@ import { getRawHtmlForBlock } from '../state/reducer'
 import { findActiveBlock } from './reducer'
 import { useEditorContext } from '../EditorProvider'
 import hotKeys from './hotKeys'
-import { slateToState, stateToSlate } from './markup'
+import { stateToSlate, getRangesFromBlock } from './markup'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -18,7 +18,7 @@ const toSlateJson = (editorState, pageBlocks) => ({
       let nodes = []
       switch (block.type) {
         case 'ENTRY':
-          nodes = slateToState(
+          nodes = stateToSlate(
             {
               [block.refId]: editorState.entries[block.refId],
             },
@@ -139,9 +139,7 @@ const SlateContentEditable = ({
     if (_nextText !== _prevText) {
       const block = _nextEditableState.value.anchorBlock
       const jsonBlockValue = { ...block.toJSON(), key: block.key }
-
-      const ranges = stateToSlate(jsonBlockValue, block.key)[block.key].ranges
-      // const ranges = []
+      const ranges = getRangesFromBlock(jsonBlockValue).ranges
       onActiveBlockContentChange(_nextText, _nextEditableState, ranges)
       return true
     }
