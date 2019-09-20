@@ -204,6 +204,7 @@
     "semver-diff": "^2.0.0",
     "slate-auto-replace": "^0.12.1",
     "slate-dev-environment": "^0.2.2",
+    "slate-html-serializer": "^0.8.10",
     "slate-insert-block-on-enter": "^0.4.0",
     "styled-system": "^5.0.5",
     "supertest": "^4.0.2",

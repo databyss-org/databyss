@@ -60,6 +60,7 @@
     "redux-thunk": "^2.3.0",
     "slate": "^0.47.8",
     "slate-react": "^0.22.8",
+    "slate-html-serializer": "^0.8.10",
     "styled-system": "^5.0.5",
     "webpack-node-externals": "^1.7.2"
   },
