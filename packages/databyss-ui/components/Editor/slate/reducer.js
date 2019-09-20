@@ -68,7 +68,6 @@ const setBlockType = (id, type) => (editor, value, next) => {
 
     if (_marks.length) {
       _text = serializeNodeToHtml(_node)
-      console.log('inner', _text)
     }
     if (_text.startsWith('@') || _text.startsWith('#')) {
       _text = _text.substring(1)

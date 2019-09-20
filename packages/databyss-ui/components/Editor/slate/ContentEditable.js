@@ -1,13 +1,14 @@
 import React, { useRef, useEffect } from 'react'
-import { KeyUtils, Value } from 'slate'
+import { KeyUtils, Value, Block } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
 import EditorBlock from '../EditorBlock'
-import EditorInline from '../EditorInline'
-import { getRawHtmlForBlock } from '../state/reducer'
+// import EditorInline from '../EditorInline'
+import { getRawHtmlForBlock, entities } from '../state/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../EditorProvider'
 import hotKeys from './hotKeys'
+import { serializeNodeToHtml } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
@@ -25,18 +26,28 @@ const toSlateJson = (editorState, pageBlocks) => ({
             block._id
           )
           break
-        // todo: insert sources and topics
         default:
           break
       }
-      // this will change when sources get markup
+
+      const nodeWithRanges = stateToSlate({
+        [block.refId]: entities(editorState, block.type)[block.refId],
+      }).nodes
+
+      const _block = Block.fromJSON({
+        object: 'block',
+        type: block.type,
+        nodes: nodeWithRanges,
+      })
+      const _innerHtml = serializeNodeToHtml(_block)
+
       const textBlock = isAtomicInlineType(block.type)
         ? {
             object: 'inline',
             nodes: [
               {
                 object: 'text',
-                text: getRawHtmlForBlock(editorState, block),
+                text: _innerHtml,
               },
             ],
             type: block.type,
@@ -143,6 +154,11 @@ const SlateContentEditable = ({
 
   // checks editor state for active block content changed
   const checkActiveBlockContentChanged = _nextEditableState => {
+    // on first click on change returns null values for anchor block
+    if (!_nextEditableState.value.anchorBlock) {
+      return false
+    }
+
     if (
       !editorState.activeBlockId ||
       !activeBlockId ||
@@ -150,9 +166,15 @@ const SlateContentEditable = ({
     ) {
       return false
     }
+
     const _prevText = getRawHtmlForBlock(editorState, blocks[activeBlockId])
     const _nextText = _nextEditableState.value.document.getNode(activeBlockId)
       .text
+
+    if (isAtomicInlineType(_nextEditableState.value.anchorBlock.type)) {
+      return false
+    }
+
     if (_nextText !== _prevText) {
       const block = _nextEditableState.value.anchorBlock
       const jsonBlockValue = { ...block.toJSON(), key: block.key }
@@ -205,15 +227,15 @@ const SlateContentEditable = ({
       ) {
         return event.preventDefault()
       }
-
+      // if its atomic get text value from state
       const blockProperties = {
         insertedBlockId: editor.value.anchorBlock.key,
         insertedBlockText: editor.value.anchorBlock.text,
         previousBlockId: editor.value.previousBlock.key,
         previousBlockText: editor.value.previousBlock.text,
       }
-      const editorState = { value: editor.value }
-      onNewActiveBlock(blockProperties, editorState)
+      const _editorState = { value: editor.value }
+      onNewActiveBlock(blockProperties, _editorState)
     }
 
     if (event.key === 'Backspace') {
@@ -221,8 +243,8 @@ const SlateContentEditable = ({
         activeBlockId: editor.value.anchorBlock.key,
         nextBlockId: editor.value.nextBlock ? editor.value.nextBlock.key : null,
       }
-      const editorState = { value: editor.value }
-      onBackspace(blockProperties, editorState)
+      const _editorState = { value: editor.value }
+      onBackspace(blockProperties, _editorState)
     }
     // special case:
     // if cursor is immediately before or after the atomic source in a

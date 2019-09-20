@@ -1,6 +1,7 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import invariant from 'invariant'
+import { isAtomicInlineType } from './../slate/reducer'
 
 import {
   SET_ACTIVE_BLOCK_ID,
@@ -18,7 +19,7 @@ export const initialState = {
   editableState: null,
 }
 
-const entities = (state, type) =>
+export const entities = (state, type) =>
   ({
     ENTRY: state.entries,
     SOURCE: state.sources,
@@ -29,12 +30,6 @@ const cleanUpState = state => {
   let _state = cloneDeep(state)
   const pageBlocks = _state.page.blocks
   const _blocks = _state.blocks
-  const entities = (state, type) =>
-    ({
-      ENTRY: state.entries,
-      SOURCE: state.sources,
-      TOPIC: state.topics,
-    }[type])
 
   const newState = {
     entries: {},
@@ -80,16 +75,17 @@ export const correctRangeOffsetForBlock = (state, block, offset) => {
     case 'ENTRY':
       _state.entries[block.refId].ranges = state.entries[
         block.refId
-      ].ranges.map(r => {
-        return { ...r, offset: r.offset + offset }
-      })
+      ].ranges.map(r => ({ ...r, offset: r.offset + offset }))
       return _state
     case 'SOURCE':
       _state.sources[block.refId].ranges = state.sources[
         block.refId
-      ].ranges.map(r => {
-        return { ...r, offset: r.offset + offset }
-      })
+      ].ranges.map(r => ({ ...r, offset: r.offset + offset }))
+      return _state
+    case 'TOPIC':
+      _state.topics[block.refId].ranges = state.topics[block.refId].ranges.map(
+        r => ({ ...r, offset: r.offset + offset })
+      )
       return _state
     default:
       throw new Error('Invalid block type', block.type)
@@ -102,6 +98,8 @@ export const getRangesForBlock = (state, block) => {
       return state.entries[block.refId].ranges
     case 'SOURCE':
       return state.sources[block.refId].ranges
+    case 'TOPIC':
+      return state.topics[block.refId].ranges
     default:
       throw new Error('Invalid block type', block.type)
   }
@@ -112,8 +110,7 @@ const setBlockType = (state, type, _id) => {
   const nextRefId = ObjectId().toHexString()
   const block = state.blocks[_id]
   const rawHtml = block ? getRawHtmlForBlock(state, block) : ''
-
-  //initialize range
+  // initialize range
   const ranges = block ? getRangesForBlock(state, block) : []
 
   const nextState = cloneDeep(state)
@@ -153,6 +150,7 @@ const insertNewActiveBlock = (
   )
 
   let insertedBlockType = 'ENTRY'
+  let insertedText = insertedBlockText
   let _state = cloneDeep(state)
 
   // get index value where previous block was
@@ -160,29 +158,44 @@ const insertNewActiveBlock = (
   const _index = _state.page.blocks.findIndex(b => b._id === previousBlockId)
   _state.page.blocks.splice(_index + 1, 0, { _id: insertedBlockId })
 
-  // if previous block was type SOURCE and is now empty
+  // if previous block was atomic type and is now empty
   // set previous block to ENTRY and active block as SOURCE
+
   if (
-    // TODO: ADD ATOMIC CHECKER
-    (state.blocks[previousBlockId].type === 'SOURCE' ||
-      state.blocks[previousBlockId].type === 'TOPIC') &&
+    isAtomicInlineType(state.blocks[previousBlockId].type) &&
     !previousBlockText
   ) {
     _state = setBlockType(_state, 'ENTRY', previousBlockId)
     insertedBlockType = state.blocks[previousBlockId].type
+    // get atomic block text to transfer to new block
+    // get ranges from here
+    const { rawHtml } = entities(_state, 'ENTRY')[
+      _state.blocks[previousBlockId].refId
+    ]
+    insertedText = rawHtml
   }
 
   _state = setBlockType(_state, insertedBlockType, insertedBlockId)
+
+  // TODO TRANSER RANGE TO NEW BLOCK
+
   _state = setRawHtmlForBlock(
     _state,
     _state.blocks[insertedBlockId],
-    insertedBlockText
+    insertedText
   )
+
+  // prevent html elements in rawText from atomic types
+  const previousText = isAtomicInlineType(_state.blocks[previousBlockId].type)
+    ? getRawHtmlForBlock(_state, _state.blocks[previousBlockId])
+    : previousBlockText
+
   _state = setRawHtmlForBlock(
     _state,
     _state.blocks[previousBlockId],
-    previousBlockText
+    previousText
   )
+
   return cleanUpState(_state)
 }
 
