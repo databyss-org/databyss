@@ -74,11 +74,48 @@ export const setRawHtmlForBlock = (state, block, html) => {
   return nextState
 }
 
+export const correctRangeOffsetForBlock = (state, block, offset) => {
+  const _state = cloneDeep(state)
+  switch (block.type) {
+    case 'ENTRY':
+      _state.entries[block.refId].ranges = state.entries[
+        block.refId
+      ].ranges.map(r => {
+        return { ...r, offset: r.offset + offset }
+      })
+      return _state
+    case 'SOURCE':
+      _state.sources[block.refId].ranges = state.sources[
+        block.refId
+      ].ranges.map(r => {
+        return { ...r, offset: r.offset + offset }
+      })
+      return _state
+    default:
+      throw new Error('Invalid block type', block.type)
+  }
+}
+
+export const getRangesForBlock = (state, block) => {
+  switch (block.type) {
+    case 'ENTRY':
+      return state.entries[block.refId].ranges
+    case 'SOURCE':
+      return state.sources[block.refId].ranges
+    default:
+      throw new Error('Invalid block type', block.type)
+  }
+}
+
 const setBlockType = (state, type, _id) => {
   // changing block type will always generate a new refId
   const nextRefId = ObjectId().toHexString()
   const block = state.blocks[_id]
   const rawHtml = block ? getRawHtmlForBlock(state, block) : ''
+
+  //initialize range
+  const ranges = block ? getRangesForBlock(state, block) : []
+
   const nextState = cloneDeep(state)
   nextState.blocks[_id] = {
     ...nextState.blocks[_id],
@@ -89,13 +126,13 @@ const setBlockType = (state, type, _id) => {
 
   switch (type) {
     case 'SOURCE':
-      nextState.sources[nextRefId] = { _id: nextRefId, rawHtml }
+      nextState.sources[nextRefId] = { _id: nextRefId, rawHtml, ranges }
       return nextState
     case 'ENTRY':
-      nextState.entries[nextRefId] = { _id: nextRefId, rawHtml }
+      nextState.entries[nextRefId] = { _id: nextRefId, rawHtml, ranges }
       return nextState
     case 'TOPIC':
-      nextState.topics[nextRefId] = { _id: nextRefId, rawHtml }
+      nextState.topics[nextRefId] = { _id: nextRefId, rawHtml, ranges }
       return nextState
 
     default:
@@ -238,6 +275,12 @@ export default (state, action) => {
           nextState,
           nextState.blocks[action.payload.id],
           _html.substring(1)
+        )
+        // correct range offset
+        nextState = correctRangeOffsetForBlock(
+          nextState,
+          nextState.blocks[action.payload.id],
+          -1
         )
       }
       // TODO: TO TRANSFER RANGES TO NEW BLOCK

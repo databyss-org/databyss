@@ -1,5 +1,5 @@
 import { Block } from 'slate'
-
+import { serializeNodeToHtml } from './inlineSerializer'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
@@ -64,6 +64,12 @@ const setBlockType = (id, type) => (editor, value, next) => {
     const _node = value.document.getNode(id)
 
     let _text = _node.text
+    const _marks = _node.getMarks().toJSON()
+
+    if (_marks.length) {
+      _text = serializeNodeToHtml(_node)
+      console.log('inner', _text)
+    }
     if (_text.startsWith('@') || _text.startsWith('#')) {
       _text = _text.substring(1)
     }
@@ -86,7 +92,7 @@ const setBlockType = (id, type) => (editor, value, next) => {
             {
               object: 'text',
               text: _text,
-              marks: [],
+              marks: _marks,
             },
           ],
         },

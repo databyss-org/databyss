@@ -71,14 +71,22 @@ const schema = {
 }
 
 const renderInline = ({ node, attributes }, editor, next) => {
-  const isFocused = editor.value.selection.focus.isInNode(node)
+  const isSelected = editor.value.selection.focus.isInNode(node)
+  const style = isSelected
+    ? {
+        backgroundColor: '#efefef',
+      }
+    : {}
   if (isAtomicInlineType(node.type)) {
     return (
-      <EditorInline isFocused={isFocused} {...attributes}>
-        {node.text}
-      </EditorInline>
+      <span
+        style={style}
+        {...attributes}
+        dangerouslySetInnerHTML={{ __html: node.text }}
+      />
     )
   }
+
   return next()
 }
 
