@@ -105,20 +105,6 @@ export const getRangesForBlock = (state, block) => {
   }
 }
 
-// export const getRangesForBlock = (state, block) =>
-//   ({
-//     ENTRY: state.entries[block.refId].ranges,
-//     SOURCE: state.sources[block.refId].ranges,
-//     TOPIC: state.topics[block.refId].ranges,
-//   }[block.type])
-
-// export const entities = (state, type) =>
-//   ({
-//     ENTRY: state.entries,
-//     SOURCE: state.sources,
-//     TOPIC: state.topics,
-//   }[type])
-
 export const setRangesForBlock = (state, block, ranges) => {
   const nextState = cloneDeep(state)
   switch (block.type) {
