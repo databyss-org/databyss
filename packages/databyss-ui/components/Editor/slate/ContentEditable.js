@@ -2,6 +2,8 @@ import React, { useRef, useEffect } from 'react'
 import { KeyUtils, Value, Block } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
+import xss from 'xss'
+
 import EditorBlock from '../EditorBlock'
 // import EditorInline from '../EditorInline'
 import { getRawHtmlForBlock, entities } from '../state/reducer'
@@ -88,12 +90,19 @@ const renderInline = ({ node, attributes }, editor, next) => {
         backgroundColor: '#efefef',
       }
     : {}
+
+  const _text = xss(node.text, {
+    whiteList: [],
+    stripIgnoreTag: false,
+    stripIgnoreTagBody: ['script'],
+  })
+
   if (isAtomicInlineType(node.type)) {
     return (
       <span
         style={style}
         {...attributes}
-        dangerouslySetInnerHTML={{ __html: node.text }}
+        dangerouslySetInnerHTML={{ __html: _text }}
       />
     )
   }
@@ -239,6 +248,7 @@ const SlateContentEditable = ({
     }
 
     if (event.key === 'Backspace') {
+      // TODO when cursor is at the beginning of an entry and previous block is empty remove previous block
       const blockProperties = {
         activeBlockId: editor.value.anchorBlock.key,
         nextBlockId: editor.value.nextBlock ? editor.value.nextBlock.key : null,
@@ -262,6 +272,10 @@ const SlateContentEditable = ({
         event.key === 'ArrowUp' ||
         event.key === 'ArrowDown'
       ) {
+        // if previous block doesnt exist
+        if (!editor.value.previousBlock) {
+          return next()
+        }
         if (event.key === 'Backspace' && editor.value.previousBlock.text) {
           if (
             !editor.value.selection.focus.isAtStartOfNode(
@@ -299,6 +313,7 @@ const SlateContentEditable = ({
       event.preventDefault()
       OnToggleMark('italic', editor)
     }
+
     return next()
   }
 

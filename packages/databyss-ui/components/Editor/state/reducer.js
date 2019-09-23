@@ -1,6 +1,8 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import invariant from 'invariant'
+import xss from 'xss'
+
 import { isAtomicInlineType } from './../slate/reducer'
 
 import {
@@ -128,6 +130,7 @@ const setBlockType = (state, type, _id) => {
   const nextRefId = ObjectId().toHexString()
   const block = state.blocks[_id]
   const rawHtml = block ? getRawHtmlForBlock(state, block) : ''
+  console.log('raw html', rawHtml)
   // initialize range
   const ranges = block ? getRangesForBlock(state, block) : []
 
@@ -279,6 +282,7 @@ export default (state, action) => {
       }
     case SET_ACTIVE_BLOCK_CONTENT: {
       const activeBlock = state.blocks[state.activeBlockId]
+      if (isAtomicInlineType(activeBlock.type)) return state
       let nextState = setRawHtmlForBlock(
         state,
         activeBlock,

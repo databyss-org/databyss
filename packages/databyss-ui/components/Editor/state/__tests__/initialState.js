@@ -18,12 +18,14 @@ export default {
     '5d7bbfb58a5f2f5dc1edfe7c': {
       _id: '5d7bbfb58a5f2f5dc1edfe7c',
       rawHtml: 'entry ',
+      ranges: [],
     },
   },
   topics: {
     '5d7bbfb58a5f2f5dc1edfe7c': {
       _id: '5d7bbfb58a5f2f5dc1edfe7c',
       rawHtml: 'topic',
+      ranges: [],
     },
   },
   blocks: {

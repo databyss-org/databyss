@@ -1,5 +1,5 @@
 import { Block } from 'slate'
-import { serializeNodeToHtml } from './inlineSerializer'
+import xss from 'xss'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
@@ -72,6 +72,13 @@ const setBlockType = (id, type) => (editor, value, next) => {
     if (_text.startsWith('@') || _text.startsWith('#')) {
       _text = _text.substring(1)
     }
+
+    _text = xss(_text, {
+      whiteList: [],
+      stripIgnoreTag: false,
+      stripIgnoreTagBody: ['script'],
+    })
+
     const _block = Block.fromJSON({
       object: 'block',
       type,
@@ -91,6 +98,7 @@ const setBlockType = (id, type) => (editor, value, next) => {
             {
               object: 'text',
               text: _text,
+              //  text: sanitizer(_text),
               marks: _marks,
             },
           ],
