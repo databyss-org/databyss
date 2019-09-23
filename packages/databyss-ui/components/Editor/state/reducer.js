@@ -105,6 +105,38 @@ export const getRangesForBlock = (state, block) => {
   }
 }
 
+// export const getRangesForBlock = (state, block) =>
+//   ({
+//     ENTRY: state.entries[block.refId].ranges,
+//     SOURCE: state.sources[block.refId].ranges,
+//     TOPIC: state.topics[block.refId].ranges,
+//   }[block.type])
+
+// export const entities = (state, type) =>
+//   ({
+//     ENTRY: state.entries,
+//     SOURCE: state.sources,
+//     TOPIC: state.topics,
+//   }[type])
+
+export const setRangesForBlock = (state, block, ranges) => {
+  const nextState = cloneDeep(state)
+  switch (block.type) {
+    case 'ENTRY':
+      nextState.entries[block.refId].ranges = ranges
+      break
+    case 'SOURCE':
+      nextState.sources[block.refId].ranges = ranges
+      break
+    case 'TOPIC':
+      nextState.topics[block.refId].ranges = ranges
+      break
+    default:
+      throw new Error('Invalid block type', block.type)
+  }
+  return nextState
+}
+
 const setBlockType = (state, type, _id) => {
   // changing block type will always generate a new refId
   const nextRefId = ObjectId().toHexString()
@@ -151,6 +183,7 @@ const insertNewActiveBlock = (
 
   let insertedBlockType = 'ENTRY'
   let insertedText = insertedBlockText
+  let _ranges = []
   let _state = cloneDeep(state)
 
   // get index value where previous block was
@@ -167,23 +200,23 @@ const insertNewActiveBlock = (
   ) {
     _state = setBlockType(_state, 'ENTRY', previousBlockId)
     insertedBlockType = state.blocks[previousBlockId].type
-    // get atomic block text to transfer to new block
-    // get ranges from here
-    const { rawHtml } = entities(_state, 'ENTRY')[
+    // get atomic block text and ranges to transfer to new block
+    const { rawHtml, ranges } = entities(_state, 'ENTRY')[
       _state.blocks[previousBlockId].refId
     ]
     insertedText = rawHtml
+    _ranges = ranges
   }
 
   _state = setBlockType(_state, insertedBlockType, insertedBlockId)
-
-  // TODO TRANSER RANGE TO NEW BLOCK
 
   _state = setRawHtmlForBlock(
     _state,
     _state.blocks[insertedBlockId],
     insertedText
   )
+
+  _state = setRangesForBlock(_state, _state.blocks[insertedBlockId], _ranges)
 
   // prevent html elements in rawText from atomic types
   const previousText = isAtomicInlineType(_state.blocks[previousBlockId].type)
