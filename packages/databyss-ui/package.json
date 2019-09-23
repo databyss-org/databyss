@@ -62,6 +62,7 @@
     "slate-react": "^0.22.8",
     "slate-html-serializer": "^0.8.10",
     "styled-system": "^5.0.5",
+    "xss": "^1.0.6",
     "webpack-node-externals": "^1.7.2"
   },
   "publishConfig": {

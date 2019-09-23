@@ -1,5 +1,6 @@
 import { Block } from 'slate'
 import xss from 'xss'
+import { serializeNodeToHtml } from './inlineSerializer'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
