@@ -213,6 +213,7 @@
     "url-loader": "0.6.2",
     "webpack": "^4.33.0",
     "webpack-cli": "^3.3.3",
+    "uuid": "3.3.3",
     "webpack-dev-server": "3.2.1",
     "webpack-manifest-plugin": "^2.0.4",
     "whatwg-fetch": "2.0.3",
