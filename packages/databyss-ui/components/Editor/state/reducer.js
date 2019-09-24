@@ -69,27 +69,18 @@ export const setRawHtmlForBlock = (state, block, html) => {
   return nextState
 }
 
+export const getBlockRefEntity = (state, block) => {
+  return entities(state, block.type)[block.refId]
+}
+
 export const correctRangeOffsetForBlock = (state, block, offset) => {
   const _state = cloneDeep(state)
-  switch (block.type) {
-    case 'ENTRY':
-      _state.entries[block.refId].ranges = state.entries[
-        block.refId
-      ].ranges.map(r => ({ ...r, offset: r.offset + offset }))
-      return _state
-    case 'SOURCE':
-      _state.sources[block.refId].ranges = state.sources[
-        block.refId
-      ].ranges.map(r => ({ ...r, offset: r.offset + offset }))
-      return _state
-    case 'TOPIC':
-      _state.topics[block.refId].ranges = state.topics[block.refId].ranges.map(
-        r => ({ ...r, offset: r.offset + offset })
-      )
-      return _state
-    default:
-      throw new Error('Invalid block type', block.type)
-  }
+
+  getBlockRefEntity(_state, block).ranges = getBlockRefEntity(
+    _state,
+    block
+  ).ranges.map(r => ({ ...r, offset: r.offset + offset }))
+  return _state
 }
 
 export const getRangesForBlock = (state, block) => {
