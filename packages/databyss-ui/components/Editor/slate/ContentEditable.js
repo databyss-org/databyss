@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from 'react'
 import { KeyUtils, Value, Block } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
-import xss from 'xss'
 
 import EditorBlock from '../EditorBlock'
 // import EditorInline from '../EditorInline'
@@ -10,7 +9,7 @@ import { getRawHtmlForBlock, entities } from '../state/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../EditorProvider'
 import hotKeys from './hotKeys'
-import { serializeNodeToHtml } from './inlineSerializer'
+import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
@@ -50,7 +49,7 @@ const toSlateJson = (editorState, pageBlocks) => ({
             nodes: [
               {
                 object: 'text',
-                text: _innerHtml,
+                text: sanitizer(_innerHtml),
               },
             ],
             type: block.type,
@@ -92,20 +91,12 @@ const renderInline = ({ node, attributes }, editor, next) => {
       }
     : {}
 
-  const _text = xss(node.text, {
-    whiteList: [],
-    stripIgnoreTag: false,
-    stripIgnoreTagBody: ['script'],
-  })
-
-  console.log(_text)
-
   if (isAtomicInlineType(node.type)) {
     return (
       <span
         style={style}
         {...attributes}
-        dangerouslySetInnerHTML={{ __html: _text }}
+        dangerouslySetInnerHTML={{ __html: node.text }}
       />
     )
   }

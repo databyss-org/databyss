@@ -1,6 +1,5 @@
 import { Block } from 'slate'
-import xss from 'xss'
-import { serializeNodeToHtml } from './inlineSerializer'
+import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
@@ -67,14 +66,6 @@ const setBlockType = (id, type) => (editor, value, next) => {
     let _text = _node.text
     const _marks = _node.getMarks().toJSON()
 
-    _text = xss(_text, {
-      whiteList: [],
-      stripIgnoreTag: false,
-      stripIgnoreTagBody: ['script'],
-    })
-
-    console.log(_text)
-
     if (_marks.length) {
       _text = serializeNodeToHtml(_node)
     }
@@ -100,8 +91,7 @@ const setBlockType = (id, type) => (editor, value, next) => {
           nodes: [
             {
               object: 'text',
-              text: _text,
-              //  text: sanitizer(_text),
+              text: sanitizer(_text),
               marks: _marks,
             },
           ],
