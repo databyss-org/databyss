@@ -67,18 +67,20 @@ const setBlockType = (id, type) => (editor, value, next) => {
     let _text = _node.text
     const _marks = _node.getMarks().toJSON()
 
+    _text = xss(_text, {
+      whiteList: [],
+      stripIgnoreTag: false,
+      stripIgnoreTagBody: ['script'],
+    })
+
+    console.log(_text)
+
     if (_marks.length) {
       _text = serializeNodeToHtml(_node)
     }
     if (_text.startsWith('@') || _text.startsWith('#')) {
       _text = _text.substring(1)
     }
-
-    _text = xss(_text, {
-      whiteList: [],
-      stripIgnoreTag: false,
-      stripIgnoreTagBody: ['script'],
-    })
 
     const _block = Block.fromJSON({
       object: 'block',

@@ -1,6 +1,7 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import invariant from 'invariant'
+import xss from 'xss'
 
 import { isAtomicInlineType } from './../slate/reducer'
 
@@ -54,6 +55,18 @@ export const getRawHtmlForBlock = (state, block) =>
 
 export const setRawHtmlForBlock = (state, block, html) => {
   const nextState = cloneDeep(state)
+  let text = html
+
+  if (isAtomicInlineType(block.type)) {
+    console.log(
+      xss(_text, {
+        whiteList: [],
+        stripIgnoreTag: false,
+        stripIgnoreTagBody: ['script'],
+      })
+    )
+  }
+
   switch (block.type) {
     case 'ENTRY':
       nextState.entries[block.refId].rawHtml = html
@@ -314,6 +327,7 @@ export default (state, action) => {
           nextState.blocks[action.payload.id],
           _html.substring(1)
         )
+
         // correct range offset
         nextState = correctRangeOffsetForBlock(
           nextState,

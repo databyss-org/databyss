@@ -41,6 +41,7 @@ const toSlateJson = (editorState, pageBlocks) => ({
         type: block.type,
         nodes: nodeWithRanges,
       })
+
       const _innerHtml = serializeNodeToHtml(_block)
 
       const textBlock = isAtomicInlineType(block.type)
@@ -96,6 +97,8 @@ const renderInline = ({ node, attributes }, editor, next) => {
     stripIgnoreTag: false,
     stripIgnoreTagBody: ['script'],
   })
+
+  console.log(_text)
 
   if (isAtomicInlineType(node.type)) {
     return (
