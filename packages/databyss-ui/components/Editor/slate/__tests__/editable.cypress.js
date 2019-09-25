@@ -54,6 +54,8 @@ context('Editor', () => {
       .type('{backspace}')
       .type('this is a source')
       .type('{home}')
+      .type('{alt}{uparrow}')
+
       .type('@')
       .type('{uparrow}')
 
