@@ -207,5 +207,3 @@ context('Editor', () => {
     cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
 })
-
-//Should not allow content change on atomic blocks
