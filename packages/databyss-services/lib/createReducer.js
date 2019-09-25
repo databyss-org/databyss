@@ -12,7 +12,11 @@ const logger = createLogger({
 })
 
 const createReducer = (...middlewares) => {
-  const composedMiddleware = composeMiddleware([thunk, ...middlewares, logger])
+  const composedMiddleware = composeMiddleware([
+    thunk,
+    ...middlewares,
+    ...(process.env.NODE_ENV === 'development' ? [logger] : []),
+  ])
 
   return (reducer, initialState, initializer = value => value) => {
     const ref = useRef(initializer(initialState))
