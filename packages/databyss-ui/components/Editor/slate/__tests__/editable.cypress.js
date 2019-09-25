@@ -47,17 +47,17 @@ context('Editor', () => {
 
   it('should set @ block to SOURCE on blur', () => {
     cy.get('@editor')
-      .type('{downarrow}')
-      .type('{downarrow}')
-      .type('{downarrow}')
-      .type('{downarrow}')
-      .type('{backspace}')
-      .type('this is a source')
-      .type('{home}')
+      .type(
+        '{downarrow}{downarrow}{downarrow}{downarrow}{backspace}this is a source'
+      )
+      // .type('{downarrow}')
+      // .type('{downarrow}')
+      // .type('{downarrow}')
+      // .type('{backspace}')
+      // .type('this is a source')
       .type('{alt}{uparrow}')
-
-      .type('@')
-      .type('{uparrow}')
+      .type('@{uparrow}')
+    // .type('{uparrow}')
 
     const expected = toSlateJson(
       <value>
