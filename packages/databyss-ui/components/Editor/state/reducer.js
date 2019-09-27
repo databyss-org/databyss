@@ -1,6 +1,7 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import invariant from 'invariant'
+import { isAtomicInlineType } from './../slate/reducer'
 
 import {
   SET_ACTIVE_BLOCK_ID,
@@ -18,7 +19,7 @@ export const initialState = {
   editableState: null,
 }
 
-const entities = (state, type) =>
+export const entities = (state, type) =>
   ({
     ENTRY: state.entries,
     SOURCE: state.sources,
@@ -29,12 +30,6 @@ const cleanUpState = state => {
   let _state = cloneDeep(state)
   const pageBlocks = _state.page.blocks
   const _blocks = _state.blocks
-  const entities = (state, type) =>
-    ({
-      ENTRY: state.entries,
-      SOURCE: state.sources,
-      TOPIC: state.topics,
-    }[type])
 
   const newState = {
     entries: {},
@@ -74,11 +69,39 @@ export const setRawHtmlForBlock = (state, block, html) => {
   return nextState
 }
 
+export const getBlockRefEntity = (state, block) =>
+  entities(state, block.type)[block.refId]
+
+export const correctRangeOffsetForBlock = (state, block, offset) => {
+  const _state = cloneDeep(state)
+  getBlockRefEntity(_state, block).ranges = getBlockRefEntity(
+    _state,
+    block
+  ).ranges.map(r => ({ ...r, offset: r.offset + offset }))
+  return _state
+}
+
+export const getRangesForBlock = (state, block) => {
+  switch (block.type) {
+    case 'ENTRY':
+      return state.entries[block.refId].ranges
+    case 'SOURCE':
+      return state.sources[block.refId].ranges
+    case 'TOPIC':
+      return state.topics[block.refId].ranges
+    default:
+      throw new Error('Invalid block type', block.type)
+  }
+}
+
 const setBlockType = (state, type, _id) => {
   // changing block type will always generate a new refId
   const nextRefId = ObjectId().toHexString()
   const block = state.blocks[_id]
   const rawHtml = block ? getRawHtmlForBlock(state, block) : ''
+  // initialize range
+  const ranges = block ? getRangesForBlock(state, block) : []
+
   const nextState = cloneDeep(state)
   nextState.blocks[_id] = {
     ...nextState.blocks[_id],
@@ -89,13 +112,13 @@ const setBlockType = (state, type, _id) => {
 
   switch (type) {
     case 'SOURCE':
-      nextState.sources[nextRefId] = { _id: nextRefId, rawHtml }
+      nextState.sources[nextRefId] = { _id: nextRefId, rawHtml, ranges }
       return nextState
     case 'ENTRY':
-      nextState.entries[nextRefId] = { _id: nextRefId, rawHtml }
+      nextState.entries[nextRefId] = { _id: nextRefId, rawHtml, ranges }
       return nextState
     case 'TOPIC':
-      nextState.topics[nextRefId] = { _id: nextRefId, rawHtml }
+      nextState.topics[nextRefId] = { _id: nextRefId, rawHtml, ranges }
       return nextState
 
     default:
@@ -116,6 +139,7 @@ const insertNewActiveBlock = (
   )
 
   let insertedBlockType = 'ENTRY'
+  let insertedText = insertedBlockText
   let _state = cloneDeep(state)
 
   // get index value where previous block was
@@ -123,28 +147,44 @@ const insertNewActiveBlock = (
   const _index = _state.page.blocks.findIndex(b => b._id === previousBlockId)
   _state.page.blocks.splice(_index + 1, 0, { _id: insertedBlockId })
 
-  // if previous block was type SOURCE and is now empty
+  // if previous block was atomic type and is now empty
   // set previous block to ENTRY and active block as SOURCE
+
   if (
-    (state.blocks[previousBlockId].type === 'SOURCE' ||
-      state.blocks[previousBlockId].type === 'TOPIC') &&
+    isAtomicInlineType(state.blocks[previousBlockId].type) &&
     !previousBlockText
   ) {
     _state = setBlockType(_state, 'ENTRY', previousBlockId)
     insertedBlockType = state.blocks[previousBlockId].type
+    // get atomic block text to transfer to new block
+    // get ranges from here
+    const { rawHtml } = entities(_state, 'ENTRY')[
+      _state.blocks[previousBlockId].refId
+    ]
+    insertedText = rawHtml
   }
 
   _state = setBlockType(_state, insertedBlockType, insertedBlockId)
+
+  // TODO TRANSER RANGE TO NEW BLOCK
+
   _state = setRawHtmlForBlock(
     _state,
     _state.blocks[insertedBlockId],
-    insertedBlockText
+    insertedText
   )
+
+  // prevent html elements in rawText from atomic types
+  const previousText = isAtomicInlineType(_state.blocks[previousBlockId].type)
+    ? getRawHtmlForBlock(_state, _state.blocks[previousBlockId])
+    : previousBlockText
+
   _state = setRawHtmlForBlock(
     _state,
     _state.blocks[previousBlockId],
-    previousBlockText
+    previousText
   )
+
   return cleanUpState(_state)
 }
 
@@ -169,6 +209,35 @@ const backspace = (state, payload) => {
   return cleanUpState(_state)
 }
 
+const getMarkupValues = (nextState, ranges) => {
+  const block = nextState.blocks[nextState.activeBlockId]
+  const _state = cloneDeep(nextState)
+  switch (block.type) {
+    case 'ENTRY':
+      _state.entries[block.refId] = {
+        ..._state.entries[block.refId],
+        ranges,
+      }
+      break
+    case 'SOURCE':
+      _state.entries[block.refId] = {
+        ..._state.sources[block.refId],
+        ranges,
+      }
+      break
+    case 'TOPIC':
+      _state.entries[block.refId] = {
+        ..._state.topics[block.refId],
+        ranges,
+      }
+      break
+    default:
+      break
+  }
+
+  return _state
+}
+
 export default (state, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_TYPE:
@@ -180,11 +249,14 @@ export default (state, action) => {
       }
     case SET_ACTIVE_BLOCK_CONTENT: {
       const activeBlock = state.blocks[state.activeBlockId]
-      const nextState = setRawHtmlForBlock(
+      let nextState = setRawHtmlForBlock(
         state,
         activeBlock,
         action.payload.html
       )
+      if (action.payload.ranges) {
+        nextState = getMarkupValues(nextState, action.payload.ranges)
+      }
       if (!action.payload.html.length) {
         return setActiveBlockType(nextState, 'ENTRY')
       }
@@ -206,8 +278,14 @@ export default (state, action) => {
           nextState.blocks[action.payload.id],
           _html.substring(1)
         )
+        // correct range offset
+        nextState = correctRangeOffsetForBlock(
+          nextState,
+          nextState.blocks[action.payload.id],
+          -1
+        )
       }
-
+      // TODO: TO TRANSFER RANGES TO NEW BLOCK
       return setBlockType(nextState, action.payload.type, action.payload.id)
     default:
       return state

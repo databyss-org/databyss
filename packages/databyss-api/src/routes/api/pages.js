@@ -31,7 +31,6 @@ router.post(
       sources = !_.isEmpty(sources) ? sources : {}
       topics = !_.isEmpty(topics) ? topics : {}
       entries = !_.isEmpty(entries) ? entries : {}
-
       const { name, _id } = page
 
       // ADD SOURCES
@@ -41,11 +40,13 @@ router.post(
         _sources.map(async s => {
           const source = sources[s].rawHtml
           const sourceId = sources[s]._id
+          const ranges = !_.isEmpty(sources[s].ranges) ? sources[s].ranges : []
+
           // SOURCE WITH ID
           const sourceFields = {
             text: source,
             _id: sourceId,
-            user: req.user.id,
+            ranges,
             account: req.account._id,
           }
 
@@ -72,14 +73,15 @@ router.post(
         _entries.map(async e => {
           const text = entries[e].rawHtml
           const entryId = entries[e]._id
+          const ranges = !_.isEmpty(entries[e].ranges) ? entries[e].ranges : []
           // ENTRY WITH ID
           const entryFields = {
             text,
+            ranges,
             _id: entryId,
             user: req.user.id,
             account: req.account._id,
           }
-
           let entryResponse = await Entry.findOne({ _id: entryId })
           if (entryResponse) {
             entryResponse = await Entry.findOneAndUpdate(

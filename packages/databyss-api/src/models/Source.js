@@ -4,11 +4,6 @@ const Schema = mongoose.Schema
 
 const SourceSchema = new mongoose.Schema({
   // resource is a raw text
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'users',
-    required: true,
-  },
   account: {
     type: Schema.Types.ObjectId,
     ref: 'account',
@@ -21,6 +16,7 @@ const SourceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  ranges: { type: Array },
   citations: {
     type: String,
   },

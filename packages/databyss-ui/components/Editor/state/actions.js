@@ -6,6 +6,7 @@ import {
   INSERT_NEW_ACTIVE_BLOCK,
   SET_BLOCK_TYPE,
   BACKSPACE,
+  TOGGLE_MARK,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -18,12 +19,13 @@ export function setActiveBlockId(id, editableState) {
   }
 }
 
-export function setActiveBlockContent(html, editableState) {
+export function setActiveBlockContent(html, editableState, ranges) {
   return {
     type: SET_ACTIVE_BLOCK_CONTENT,
     payload: {
       html,
       editableState,
+      ranges,
     },
   }
 }
@@ -74,6 +76,16 @@ export function backspace(blockProperties, editableState) {
     payload: {
       editableState,
       blockProperties,
+    },
+  }
+}
+
+export function toggleMark(mark, editableState) {
+  return {
+    type: TOGGLE_MARK,
+    payload: {
+      editableState,
+      mark,
     },
   }
 }

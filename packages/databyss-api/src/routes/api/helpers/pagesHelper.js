@@ -41,7 +41,7 @@ const populateRefEntities = (list, type) =>
       if (!entity) {
         throw new BadRefId(b.refId, 500)
       }
-      return { rawHtml: entity.text, _id }
+      return { rawHtml: entity.text, _id, ranges: entity.ranges }
     })
   )
 

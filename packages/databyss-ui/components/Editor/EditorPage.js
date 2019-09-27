@@ -8,6 +8,7 @@ import {
   setBlockType,
   newActiveBlock,
   backspace,
+  toggleMark,
 } from './state/actions'
 
 const EditorPage = ({ children }) => {
@@ -16,8 +17,8 @@ const EditorPage = ({ children }) => {
   const onActiveBlockIdChange = (id, editableState) =>
     dispatchEditor(setActiveBlockId(id, editableState))
 
-  const onActiveBlockContentChange = (rawHtml, editableState) => {
-    dispatchEditor(setActiveBlockContent(rawHtml, editableState))
+  const onActiveBlockContentChange = (rawHtml, editableState, blockValue) => {
+    dispatchEditor(setActiveBlockContent(rawHtml, editableState, blockValue))
   }
 
   const onEditableStateChange = editableState =>
@@ -40,6 +41,10 @@ const EditorPage = ({ children }) => {
     }
   }
 
+  const OnToggleMark = (mark, { value }) => {
+    dispatchEditor(toggleMark(mark, { value }))
+  }
+
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
     onActiveBlockIdChange,
@@ -48,6 +53,7 @@ const EditorPage = ({ children }) => {
     onNewActiveBlock,
     onBackspace,
     onBlockBlur,
+    OnToggleMark,
   })
 }
 
