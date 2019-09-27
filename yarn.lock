@@ -16387,7 +16387,7 @@ slate-html-serializer@^0.8.10:
   integrity sha512-mWJeMLlIvuwGTbk73itvFtZtRFV0+LRvJeBlGb5NNnBsD27nJNax72mfDjb9tsM1PfYSK1JeMd087mQY1+74cg==
   dependencies:
     type-of "^2.0.1"
-    
+
 slate-hyperscript@^0.13.8:
   version "0.13.8"
   resolved "https://registry.yarnpkg.com/slate-hyperscript/-/slate-hyperscript-0.13.8.tgz#4c78cea620a9bbc092bdcb5d3cc148704772f863"

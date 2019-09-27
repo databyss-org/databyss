@@ -105,6 +105,7 @@ const renderBlock = ({ node, children }) => (
   <EditorBlock type={node.type}>{children}</EditorBlock>
 )
 
+<<<<<<< HEAD
 const renderMark = (props, editor, next) => {
   const { children, mark, attributes } = props
   switch (mark.type) {
@@ -117,6 +118,8 @@ const renderMark = (props, editor, next) => {
   }
 }
 
+=======
+>>>>>>> b686b065131b5b4b8b0c90d5750fb187ecd6521a
 const ContentEditable = ({
   onActiveBlockIdChange,
   onActiveBlockContentChange,
