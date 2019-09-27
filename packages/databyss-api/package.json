@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/api",
-  "version": "1.1.26",
+  "version": "1.1.28",
   "description": "api",
   "main": "server.js",
   "author": "databyss-org",
