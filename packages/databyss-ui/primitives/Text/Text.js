@@ -7,7 +7,7 @@ const variants = variant({
   scale: 'textVariants',
 })
 
-const Text = styled(
+const Styled = styled(
   {
     ios: 'Text',
     android: 'Text',
@@ -19,8 +19,14 @@ const Text = styled(
   )
 )
 
-export default ({ children, ...others }) => (
-  <Text variant="bodyNormal" {...others}>
+const Text = ({ children, color, ...others }) => (
+  <Styled variant="bodyNormal" color={color} {...others}>
     {children}
-  </Text>
+  </Styled>
 )
+
+Text.defaultProps = {
+  color: 'text.0',
+}
+
+export default Text

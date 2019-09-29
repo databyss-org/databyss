@@ -37,37 +37,5 @@ export default () => (
         </View>
       </Grid>
     </Section>
-    <Section title="External Buttons">
-      <Grid mb="small" rowGap="small" columnGap="small">
-        <View>
-          <Button variant="primaryExternal">Primary External</Button>
-        </View>
-        <View>
-          <Button variant="primaryExternal" disabled>
-            Primary External (disabled)
-          </Button>
-        </View>
-      </Grid>
-      <Grid mb="small" rowGap="small" columnGap="small">
-        <View>
-          <Button variant="secondaryExternal">Secondary External</Button>
-        </View>
-        <View>
-          <Button variant="secondaryExternal" disabled>
-            Secondary External (disabled)
-          </Button>
-        </View>
-      </Grid>
-      <Grid mb="small" rowGap="small" columnGap="small">
-        <View>
-          <Button variant="externalLink">External Link Button</Button>
-        </View>
-        <View>
-          <Button variant="externalLink" disabled>
-            External Link Button (disabled)
-          </Button>
-        </View>
-      </Grid>
-    </Section>
   </React.Fragment>
 )

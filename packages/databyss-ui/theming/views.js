@@ -7,6 +7,8 @@ export const pxUnits = Platform.select({
   default: v => `${v}px`,
 })
 
+const borderRadius = pxUnits(5)
+
 const paddingVariants = {
   none: { padding: pxUnits(0) },
   tiny: { padding: pxUnits(3) },
@@ -16,7 +18,7 @@ const paddingVariants = {
 }
 
 export const border = (thickness, color) => ({
-  borderRadius: pxUnits(3),
+  borderRadius,
   borderStyle: 'solid',
   borderColor: color,
   borderWidth: pxUnits(thickness),
@@ -24,13 +26,14 @@ export const border = (thickness, color) => ({
 
 const borderVariants = {
   none: border(0, colors.transparent),
-  thinDark: border(1, colors.gray[1]),
-  thinLight: border(1, colors.gray[4]),
-  thickDark: border(3, colors.gray[1]),
-  thickLight: border(3, colors.gray[4]),
+  thinDark: border(1, colors.border[0]),
+  thinLight: border(1, colors.border[1]),
+  thickDark: border(3, colors.border[0]),
+  thickLight: border(3, colors.border[1]),
 }
 
 export default {
   paddingVariants,
   borderVariants,
+  borderRadius,
 }

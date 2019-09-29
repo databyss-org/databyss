@@ -24,8 +24,6 @@
     "@emotion/core": "^10.0.14",
     "@emotion/native": "^10.0.14",
     "@emotion/styled": "^10.0.14",
-    "is-hotkey": "^0.1.5",
-    "slate-dev-environment": "^0.2.2",
     "@styled-system/core": "^5.1.1",
     "@styled-system/css": "^5.0.23",
     "@styled-system/should-forward-prop": "^5.0.18",
@@ -41,6 +39,7 @@
     "emotion-theming": "^10.0.10",
     "immutable": "^4.0.0-rc.12",
     "invariant": "^2.2.4",
+    "is-hotkey": "^0.1.5",
     "jss": "^9.8.7",
     "jss-preset-default": "^4.5.0",
     "lodash": "^4.17.15",
@@ -61,9 +60,14 @@
     "redux-thunk": "^2.3.0",
     "uuid": "3.3.3",
     "slate": "^0.47.8",
+<<<<<<< HEAD
     "slate-hyperscript": "^0.13.8",
     "slate-react": "^0.22.8",
+=======
+    "slate-dev-environment": "^0.2.2",
+>>>>>>> add dark theme
     "slate-html-serializer": "^0.8.10",
+    "slate-react": "^0.22.8",
     "styled-system": "^5.0.5",
     "xss": "^1.0.6",
     "webpack-node-externals": "^1.7.2"

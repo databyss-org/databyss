@@ -1,45 +1,46 @@
 import React, { useState, useRef, useEffect } from 'react'
+import Color from 'color'
 import { keyframes } from '@emotion/core'
 import { View } from '../../'
-import { isMobileOrMobileOs } from '../../../lib/mediaQuery'
+import { isMobileOs } from '../../../lib/mediaQuery'
 import theme from '../../../theming/theme'
 
 const decay = keyframes({
   '0%': {
-    opacity: '0.5',
+    opacity: 0.8,
   },
   '100%': {
     opacity: 0,
   },
 })
 
-const controlCssDesktop = {
+const controlCssDesktop = props => ({
   cursor: 'pointer',
+  transition: `background-color ${theme.timing.flash}ms ${theme.timing.ease}`,
   '&:hover': {
-    '&:after': {
-      opacity: '0.2',
-    },
+    backgroundColor: props.hoverColor,
   },
   '&:active': {
-    '&:after': {
-      opacity: '0.6',
-    },
+    backgroundColor: props.activeColor,
   },
-}
+})
+
+const _pseudomaskCss = () => ({
+  content: '""',
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  left: 0,
+  right: 0,
+  opacity: 0,
+})
 
 const controlCss = props => ({
   position: 'relative',
   '&:after': {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
+    ..._pseudomaskCss(props),
     backgroundColor: props.rippleColor,
-    opacity: 0,
-    borderRadius: props.borderRadius,
-    transition: `opacity ${theme.timing.flash}ms ${theme.timing.ease}`,
+    zIndex: 1,
   },
 })
 
@@ -84,7 +85,7 @@ const Control = ({ disabled, children, onPress, ...others }) => {
         if (onPress) {
           onPress(e)
         }
-        if (!isMobileOrMobileOs()) {
+        if (!isMobileOs()) {
           return
         }
         if (decay) {
@@ -97,8 +98,8 @@ const Control = ({ disabled, children, onPress, ...others }) => {
       }}
       css={[
         !disabled && controlCss(others),
-        !disabled && !isMobileOrMobileOs() && controlCssDesktop,
-        !disabled && isMobileOrMobileOs() && decay && animatingCss,
+        !disabled && !isMobileOs() && controlCssDesktop(others),
+        !disabled && isMobileOs() && decay && animatingCss,
       ]}
       {...others}
     >
@@ -108,8 +109,13 @@ const Control = ({ disabled, children, onPress, ...others }) => {
 }
 
 Control.defaultProps = {
-  rippleColor: theme.colors.controlRippleColor,
-  borderRadius: '3px',
+  rippleColor: Color(theme.colors.gray[3])
+    .alpha(0.5)
+    .rgb()
+    .string(),
+  hoverColor: theme.colors.gray[6],
+  activeColor: theme.colors.gray[4],
+  borderRadius: theme.borderRadius,
 }
 
 export default Control

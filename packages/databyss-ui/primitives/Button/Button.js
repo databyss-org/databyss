@@ -1,8 +1,7 @@
 import React from 'react'
-import { variant, flexbox, compose } from 'styled-system'
+import { variant, flexbox, shadow, layout, compose } from 'styled-system'
 import { BaseControl, Text } from '../'
 // HACK: if View is imported from '../' above, it breaks storybook:build (reason unknown)
-import View from '../View/View'
 import styled from '../styled'
 import buttons from '../../theming/buttons'
 
@@ -11,17 +10,19 @@ const variants = variant({
   scale: 'buttonVariants',
 })
 
-const StyledView = styled(
-  View,
+const StyledControl = styled(
+  BaseControl,
   compose(
     flexbox,
+    shadow,
+    layout,
     variants
   )
 )
 
 const Button = ({ onPress, variant, children, ...others }) => {
   let _children = children
-  const { buttonVariants } = buttons
+  const { buttonVariants, buttonThemes } = buttons
   if (typeof children === 'string') {
     _children = (
       <Text variant="uiTextNormal" color={buttonVariants[variant].color}>
@@ -30,13 +31,16 @@ const Button = ({ onPress, variant, children, ...others }) => {
     )
   }
   return (
-    <BaseControl
+    <StyledControl
+      variant={variant}
       onPress={onPress}
-      rippleColor={buttonVariants[variant].rippleColor}
+      rippleColor={buttonThemes[variant].rippleColor}
+      hoverColor={buttonThemes[variant].hoverColor}
+      activeColor={buttonThemes[variant].activeColor}
       {...others}
     >
-      <StyledView variant={variant}>{_children}</StyledView>
-    </BaseControl>
+      {_children}
+    </StyledControl>
   )
 }
 
