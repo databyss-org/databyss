@@ -2,7 +2,7 @@ import { isKeyHotkey } from 'is-hotkey'
 import { IS_IOS, IS_MAC } from 'slate-dev-environment'
 
 export const IS_LINUX =
-  window.navigator.platform.toLowerCase().search('linux') > -1 ? true : false
+  window.navigator.platform.toLowerCase().search('linux') > -1
 
 export const metaKey = IS_LINUX ? 'alt' : 'mod'
 /**
