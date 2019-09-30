@@ -6,8 +6,6 @@ import h from 'slate-hyperscript'
 import { toSlateJson, matchExpectedJson } from './_helpers'
 import { IS_LINUX } from './../hotKeys'
 
-console.log('is linux', IS_LINUX)
-
 context('Editor', () => {
   beforeEach(() => {
     cy.visit('http://0.0.0.0:6006/iframe.html?id=editor-tests--slate')

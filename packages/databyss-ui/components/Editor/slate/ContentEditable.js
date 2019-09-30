@@ -147,7 +147,6 @@ const SlateContentEditable = ({
 
   const checkSelectedBlockChanged = _nextEditableState => {
     const _nextActiveBlock = findActiveBlock(_nextEditableState.value)
-    console.log('next active block', _nextActiveBlock)
     if (!_nextActiveBlock) {
       return false
     }
@@ -157,7 +156,6 @@ const SlateContentEditable = ({
       if (_nextEditableState.value.document.getNode(activeBlockId)) {
         rawHtml = _nextEditableState.value.document.getNode(activeBlockId).text
       }
-      console.log('on block blur in constent editable')
 
       onBlockBlur(activeBlockId, rawHtml, _nextEditableState)
       onActiveBlockIdChange(_nextActiveBlock.key, _nextEditableState)
