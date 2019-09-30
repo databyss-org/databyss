@@ -47,17 +47,11 @@ context('Editor', () => {
 
   it('should set @ block to SOURCE on blur', () => {
     cy.get('@editor')
-      .type(
-        '{downarrow}{downarrow}{downarrow}{downarrow}{backspace}this is a source'
-      )
-      // .type('{downarrow}')
-      // .type('{downarrow}')
-      // .type('{downarrow}')
-      // .type('{backspace}')
-      // .type('this is a source')
-      .type('{alt}{uparrow}')
-      .type('@{uparrow}')
-    // .type('{uparrow}')
+      .nextBlock()
+      .nextBlock()
+      .endOfLine()
+      .type('{backspace}@this is a source')
+      .newLine()
 
     const expected = toSlateJson(
       <value>
@@ -78,6 +72,7 @@ context('Editor', () => {
             <inline type="SOURCE">this is a source</inline>
             <text />
           </block>
+          <block type="ENTRY" />
         </document>
       </value>
     )
@@ -86,10 +81,8 @@ context('Editor', () => {
 
   it('Should not allow content/range change on atomic blocks', () => {
     cy.get('@editor')
-      .type('{downarrow}')
-      .type('{downarrow}')
-      .type('{downarrow}')
-      .type('{downarrow}')
+      .nextBlock()
+      .nextBlock()
       .type('{meta}b')
       .type('this should not be allowed')
       .type('{uparrow}')
@@ -121,17 +114,14 @@ context('Editor', () => {
 
   it('should escape html on block type change and allow bold', () => {
     cy.get('@editor')
-      .type('{downarrow}')
-      .type('{downarrow}')
-      .type('{downarrow}')
-      .type('{downarrow}')
+      .endOfDoc()
       .type('{backspace}')
       .type('@this is ')
       .type('{meta}b')
       .type('bold and not ')
       .type('{meta}b')
       .type('<i>italic</i>')
-      .type('{uparrow}')
+      .newLine()
 
     const expected = toSlateJson(
       <value>
@@ -158,6 +148,7 @@ context('Editor', () => {
             </inline>
             <text />
           </block>
+          <block type="ENTRY" />
         </document>
       </value>
     )
@@ -166,17 +157,14 @@ context('Editor', () => {
 
   it('should escape html on block type change and allow italic', () => {
     cy.get('@editor')
-      .type('{downarrow}')
-      .type('{downarrow}')
-      .type('{downarrow}')
-      .type('{downarrow}')
+      .endOfDoc()
       .type('{backspace}')
       .type('@this is ')
       .type('{meta}i')
       .type('italic and not ')
       .type('{meta}i')
       .type('<strong>bold</strong>')
-      .type('{uparrow}')
+      .newLine()
 
     const expected = toSlateJson(
       <value>
@@ -203,6 +191,7 @@ context('Editor', () => {
             </inline>
             <text />
           </block>
+          <block type="ENTRY" />
         </document>
       </value>
     )

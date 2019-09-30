@@ -8,7 +8,15 @@ import EditorBlock from '../EditorBlock'
 import { getRawHtmlForBlock, entities } from '../state/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../EditorProvider'
-import hotKeys from './hotKeys'
+import hotKeys, {
+  START_OF_LINE,
+  END_OF_LINE,
+  START_OF_DOCUMENT,
+  END_OF_DOCUMENT,
+  NEXT_BLOCK,
+  PREVIOUS_BLOCK,
+} from './hotKeys'
+
 import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
 
@@ -129,6 +137,7 @@ const SlateContentEditable = ({
   onBlockBlur,
   onDocumentChange,
   OnToggleMark,
+  onHotKey,
 }) => {
   const [editorState] = useEditorContext()
 
@@ -138,6 +147,7 @@ const SlateContentEditable = ({
 
   const checkSelectedBlockChanged = _nextEditableState => {
     const _nextActiveBlock = findActiveBlock(_nextEditableState.value)
+    console.log('next active block', _nextActiveBlock)
     if (!_nextActiveBlock) {
       return false
     }
@@ -147,6 +157,7 @@ const SlateContentEditable = ({
       if (_nextEditableState.value.document.getNode(activeBlockId)) {
         rawHtml = _nextEditableState.value.document.getNode(activeBlockId).text
       }
+      console.log('on block blur in constent editable')
 
       onBlockBlur(activeBlockId, rawHtml, _nextEditableState)
       onActiveBlockIdChange(_nextActiveBlock.key, _nextEditableState)
@@ -257,6 +268,35 @@ const SlateContentEditable = ({
   }
 
   const onKeyDown = (event, editor, next) => {
+    if (hotKeys.isStartOfLine(event)) {
+      event.preventDefault()
+      onHotKey(START_OF_LINE, editor)
+    }
+
+    if (hotKeys.isEndOfLine(event)) {
+      event.preventDefault()
+      onHotKey(END_OF_LINE, editor)
+    }
+
+    if (hotKeys.isStartOfDocument(event)) {
+      event.preventDefault()
+      onHotKey(START_OF_DOCUMENT, editor)
+    }
+    if (hotKeys.isEndOfDocument(event)) {
+      event.preventDefault()
+      onHotKey(END_OF_DOCUMENT, editor)
+    }
+
+    if (hotKeys.isNextBlock(event)) {
+      event.preventDefault()
+      onHotKey(NEXT_BLOCK, editor)
+    }
+
+    if (hotKeys.isPreviousBlock(event)) {
+      event.preventDefault()
+      onHotKey(PREVIOUS_BLOCK, editor)
+    }
+
     if (isAtomicInlineType(editor.value.anchorBlock.type)) {
       if (
         event.key === 'Backspace' ||

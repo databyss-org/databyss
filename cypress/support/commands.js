@@ -23,3 +23,77 @@
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+Cypress.Commands.add(
+  'nextBlock',
+  {
+    prevSubject: 'element',
+  },
+  subject => {
+    return cy.get(subject).type('{meta}{shift}p')
+  }
+)
+
+Cypress.Commands.add(
+  'previousBlock',
+  {
+    prevSubject: 'element',
+  },
+  subject => {
+    return cy.get(subject).type('{meta}{shift}o')
+  }
+)
+
+Cypress.Commands.add(
+  'endOfLine',
+  {
+    prevSubject: 'element',
+  },
+  subject => {
+    return cy.get(subject).type('{meta}{shift}{rightarrow}')
+  }
+)
+
+Cypress.Commands.add(
+  'startOfLine',
+  {
+    prevSubject: 'element',
+  },
+  subject => {
+    return cy.get(subject).type('{meta}{shift}{leftarrow}')
+  }
+)
+
+Cypress.Commands.add(
+  'startOfDoc',
+  {
+    prevSubject: 'element',
+  },
+  subject => {
+    return cy.get(subject).type('{meta}{shift}{uparrow}')
+  }
+)
+
+Cypress.Commands.add(
+  'endOfDoc',
+  {
+    prevSubject: 'element',
+  },
+  subject => {
+    return cy.get(subject).type('{meta}{shift}{downarrow}')
+  }
+)
+
+Cypress.Commands.add(
+  'newLine',
+  {
+    prevSubject: 'element',
+  },
+  subject => {
+    return cy
+      .get(subject)
+      .trigger('keydown', { key: 'Enter', release: false })
+      .wait(10)
+      .trigger('keyup', { key: 'Enter', release: false })
+  }
+)

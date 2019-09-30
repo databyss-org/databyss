@@ -9,6 +9,12 @@ const HOTKEYS = {
   bold: 'mod+b',
   italic: 'mod+i',
   undo: 'mod+z',
+  startOfLine: 'mod+shift+left',
+  endOfLine: 'mod+shift+right',
+  startOfDocument: 'mod+shift+up',
+  endOfDocument: 'mod+shift+down',
+  nextBlock: 'mod+shift+p',
+  previousBlock: 'mod+shift+o',
 }
 const APPLE_HOTKEYS = {}
 const WINDOWS_HOTKEYS = {}
@@ -46,3 +52,10 @@ KEYS.forEach(key => {
  * @type {Object}
  */
 export default Hotkeys
+
+export const START_OF_LINE = 'START_OF_LINE'
+export const END_OF_LINE = 'END_OF_LINE'
+export const START_OF_DOCUMENT = 'START_OF_DOCUMENT'
+export const END_OF_DOCUMENT = 'END_OF_DOCUMENT'
+export const NEXT_BLOCK = 'NEXT_BLOCK'
+export const PREVIOUS_BLOCK = 'PREVIOUS_BLOCK'

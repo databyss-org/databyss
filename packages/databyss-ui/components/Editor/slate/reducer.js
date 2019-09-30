@@ -7,6 +7,7 @@ import {
   SET_BLOCK_TYPE,
   BACKSPACE,
   TOGGLE_MARK,
+  HOTKEY,
 } from '../state/constants'
 
 export const findActiveBlock = value =>
@@ -125,6 +126,19 @@ const toggleMark = mark => (editor, value, next) => {
   next(editor, value)
 }
 
+const onHotKey = command => (editor, value, next) => {
+  const _node = findActiveBlock(editor.value)
+  ;({
+    START_OF_LINE: () => editor.moveToStartOfNode(_node),
+    END_OF_LINE: () => editor.moveToEndOfNode(_node),
+    START_OF_DOCUMENT: () => editor.moveToStartOfDocument(),
+    END_OF_DOCUMENT: () => editor.moveToEndOfDocument(),
+    NEXT_BLOCK: () => editor.moveToStartOfNextBlock(),
+    PREVIOUS_BLOCK: () => editor.moveToStartOfPreviousBlock(),
+  }[command]())
+
+  next(editor, value)
+}
 export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
@@ -164,6 +178,12 @@ export default (editableState, action) => {
       return {
         ...editableState,
         editorCommands: _nextEditorCommands,
+      }
+    }
+    case HOTKEY: {
+      return {
+        ...editableState,
+        editorCommands: onHotKey(action.payload.command),
       }
     }
     default:

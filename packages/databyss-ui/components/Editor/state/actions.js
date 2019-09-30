@@ -7,6 +7,7 @@ import {
   SET_BLOCK_TYPE,
   BACKSPACE,
   TOGGLE_MARK,
+  HOTKEY,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -86,6 +87,17 @@ export function toggleMark(mark, editableState) {
     payload: {
       editableState,
       mark,
+    },
+  }
+}
+
+export function hotKey(command, editableState) {
+  console.log(command)
+  return {
+    type: HOTKEY,
+    payload: {
+      editableState,
+      command,
     },
   }
 }
