@@ -30,7 +30,7 @@ Cypress.Commands.add(
     prevSubject: 'element',
   },
   subject => {
-    return cy.get(subject).type('{meta}{shift}p')
+    return cy.get(subject).type('{command}{shift}p')
   }
 )
 
@@ -40,7 +40,7 @@ Cypress.Commands.add(
     prevSubject: 'element',
   },
   subject => {
-    return cy.get(subject).type('{meta}{shift}o')
+    return cy.get(subject).type('{command}{shift}o')
   }
 )
 
@@ -50,7 +50,7 @@ Cypress.Commands.add(
     prevSubject: 'element',
   },
   subject => {
-    return cy.get(subject).type('{meta}{shift}{rightarrow}')
+    return cy.get(subject).type('{command}{shift}{rightarrow}')
   }
 )
 
@@ -60,7 +60,7 @@ Cypress.Commands.add(
     prevSubject: 'element',
   },
   subject => {
-    return cy.get(subject).type('{meta}{shift}{leftarrow}')
+    return cy.get(subject).type('{command}{shift}{leftarrow}')
   }
 )
 
@@ -70,7 +70,7 @@ Cypress.Commands.add(
     prevSubject: 'element',
   },
   subject => {
-    return cy.get(subject).type('{meta}{shift}{uparrow}')
+    return cy.get(subject).type('{command}{shift}{uparrow}')
   }
 )
 
@@ -80,7 +80,7 @@ Cypress.Commands.add(
     prevSubject: 'element',
   },
   subject => {
-    return cy.get(subject).type('{meta}{shift}{downarrow}')
+    return cy.get(subject).type('{command}{shift}{downarrow}')
   }
 )
 
