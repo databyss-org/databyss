@@ -117,9 +117,12 @@ context('Editor', () => {
       .endOfDoc()
       .type('{backspace}')
       .type('@this is ')
-      .type('{command}b')
+      .toggleBold()
+      // .type('{command}b')
       .type('bold and not ')
-      .type('{command}b')
+      .toggleBold()
+
+      //  .type('{command}b')
       .type('<i>italic</i>')
       .newLine()
 

@@ -97,3 +97,18 @@ Cypress.Commands.add(
       .trigger('keyup', { key: 'Enter', release: false })
   }
 )
+
+Cypress.Commands.add(
+  'toggleBold',
+  {
+    prevSubject: 'element',
+  },
+  subject => {
+    return cy.get(subject).trigger('keydown', {
+      keyCode: 66,
+      key: 'b',
+      which: 91,
+      metaKey: true,
+    })
+  }
+)
