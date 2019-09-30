@@ -92,7 +92,6 @@ export function toggleMark(mark, editableState) {
 }
 
 export function hotKey(command, editableState) {
-  console.log(command)
   return {
     type: HOTKEY,
     payload: {
