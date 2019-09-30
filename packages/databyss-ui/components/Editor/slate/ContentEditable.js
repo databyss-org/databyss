@@ -266,6 +266,7 @@ const SlateContentEditable = ({
   }
 
   const onKeyDown = (event, editor, next) => {
+    console.log(event)
     if (hotKeys.isStartOfLine(event)) {
       event.preventDefault()
       onHotKey(START_OF_LINE, editor)

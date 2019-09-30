@@ -29,8 +29,8 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  (subject, isLinux) => {
-    return cy.get(subject).type(`{${modType(isLinux)}}{shift}p`)
+  subject => {
+    return cy.get(subject).type(`{ctrl}{shift}p`)
   }
 )
 
@@ -39,8 +39,8 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  (subject, isLinux) => {
-    return cy.get(subject).type(`{${modType(isLinux)}}{shift}o`)
+  subject => {
+    return cy.get(subject).type(`{ctrl}{shift}o`)
   }
 )
 
@@ -49,8 +49,8 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  (subject, isLinux) => {
-    return cy.get(subject).type(`{${modType(isLinux)}}{shift}{rightarrow}`)
+  subject => {
+    return cy.get(subject).type(`{ctrl}{shift}{rightarrow}`)
   }
 )
 
@@ -60,7 +60,7 @@ Cypress.Commands.add(
     prevSubject: 'element',
   },
   subject => {
-    return cy.get(subject).type(`{${modType(isLinux)}}{shift}{leftarrow}`)
+    return cy.get(subject).type(`{ctrl}{shift}{leftarrow}`)
   }
 )
 
@@ -69,8 +69,8 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  (subject, isLinux) => {
-    return cy.get(subject).type(`{${modType(isLinux)}}{shift}{uparrow}`)
+  subject => {
+    return cy.get(subject).type(`{ctrl}{shift}{uparrow}`)
   }
 )
 
@@ -79,8 +79,8 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  (subject, isLinux) => {
-    return cy.get(subject).type(`{${modType(isLinux)}}{shift}{downarrow}`)
+  subject => {
+    return cy.get(subject).type(`{ctrl}{shift}{downarrow}`)
   }
 )
 

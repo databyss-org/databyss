@@ -14,12 +14,12 @@ const HOTKEYS = {
   bold: `${metaKey}+b`,
   italic: `${metaKey}+i`,
   undo: `${metaKey}+z`,
-  startOfLine: `${metaKey}+shift+left`,
-  endOfLine: `${metaKey}+shift+right`,
-  startOfDocument: `${metaKey}+shift+up`,
-  endOfDocument: `${metaKey}+shift+down`,
-  nextBlock: `${metaKey}+shift+p`,
-  previousBlock: `${metaKey}+shift+o`,
+  startOfLine: `ctrl+shift+left`,
+  endOfLine: `ctrl+shift+right`,
+  startOfDocument: `ctrl+shift+up`,
+  endOfDocument: `ctrl+shift+down`,
+  nextBlock: `ctrl+shift+p`,
+  previousBlock: `ctrl+shift+o`,
 }
 const APPLE_HOTKEYS = {}
 const WINDOWS_HOTKEYS = {}
