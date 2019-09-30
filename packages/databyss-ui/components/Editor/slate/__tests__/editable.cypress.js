@@ -4,6 +4,9 @@
 
 import h from 'slate-hyperscript'
 import { toSlateJson, matchExpectedJson } from './_helpers'
+import { IS_LINUX } from './../hotKeys'
+
+console.log('is linux', IS_LINUX)
 
 context('Editor', () => {
   beforeEach(() => {
@@ -118,11 +121,8 @@ context('Editor', () => {
       .type('{backspace}')
       .type('@this is ')
       .toggleBold()
-      // .type('{command}b')
       .type('bold and not ')
       .toggleBold()
-
-      //  .type('{command}b')
       .type('<i>italic</i>')
       .newLine()
 
@@ -163,9 +163,9 @@ context('Editor', () => {
       .endOfDoc()
       .type('{backspace}')
       .type('@this is ')
-      .type('{command}i')
+      .toggleItalic(IS_LINUX)
       .type('italic and not ')
-      .type('{command}i')
+      .toggleItalic()
       .type('<strong>bold</strong>')
       .newLine()
 

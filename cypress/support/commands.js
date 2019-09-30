@@ -29,8 +29,8 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  subject => {
-    return cy.get(subject).type('{command}{shift}p')
+  (subject, isLinux) => {
+    return cy.get(subject).type(`{${modType(isLinux)}}{shift}p`)
   }
 )
 
@@ -39,8 +39,8 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  subject => {
-    return cy.get(subject).type('{command}{shift}o')
+  (subject, isLinux) => {
+    return cy.get(subject).type(`{${modType(isLinux)}}{shift}o`)
   }
 )
 
@@ -49,8 +49,8 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  subject => {
-    return cy.get(subject).type('{command}{shift}{rightarrow}')
+  (subject, isLinux) => {
+    return cy.get(subject).type(`{${modType(isLinux)}}{shift}{rightarrow}`)
   }
 )
 
@@ -60,7 +60,7 @@ Cypress.Commands.add(
     prevSubject: 'element',
   },
   subject => {
-    return cy.get(subject).type('{command}{shift}{leftarrow}')
+    return cy.get(subject).type(`{${modType(isLinux)}}{shift}{leftarrow}`)
   }
 )
 
@@ -69,8 +69,8 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  subject => {
-    return cy.get(subject).type('{command}{shift}{uparrow}')
+  (subject, isLinux) => {
+    return cy.get(subject).type(`{${modType(isLinux)}}{shift}{uparrow}`)
   }
 )
 
@@ -79,8 +79,8 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  subject => {
-    return cy.get(subject).type('{command}{shift}{downarrow}')
+  (subject, isLinux) => {
+    return cy.get(subject).type(`{${modType(isLinux)}}{shift}{downarrow}`)
   }
 )
 
@@ -103,12 +103,31 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  subject => {
+  (subject, isLinux) => {
     return cy.get(subject).trigger('keydown', {
       keyCode: 66,
       key: 'b',
       which: 91,
-      metaKey: true,
+      [modKeys(isLinux)]: true,
     })
   }
 )
+
+Cypress.Commands.add(
+  'toggleItalic',
+  {
+    prevSubject: 'element',
+  },
+  (subject, isLinux) => {
+    return cy.get(subject).trigger('keydown', {
+      keyCode: 66,
+      key: 'i',
+      which: 91,
+      [modKeys(isLinux)]: true,
+    })
+  }
+)
+
+const modKeys = isLinux => (isLinux ? 'altKey' : 'metaKey')
+
+const modType = isLinux => (isLinux ? 'alt' : 'meta')

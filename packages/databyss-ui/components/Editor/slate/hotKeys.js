@@ -1,20 +1,25 @@
 import { isKeyHotkey } from 'is-hotkey'
 import { IS_IOS, IS_MAC } from 'slate-dev-environment'
+
+export const IS_LINUX =
+  window.navigator.platform.toLowerCase().search('linux') > -1 ? true : false
+
+export const metaKey = IS_LINUX ? 'alt' : 'mod'
 /**
  * Hotkey mappings for each platform.
  *
  * @type {Object}
  */
 const HOTKEYS = {
-  bold: 'mod+b',
-  italic: 'mod+i',
-  undo: 'mod+z',
-  startOfLine: 'mod+shift+left',
-  endOfLine: 'mod+shift+right',
-  startOfDocument: 'mod+shift+up',
-  endOfDocument: 'mod+shift+down',
-  nextBlock: 'mod+shift+p',
-  previousBlock: 'mod+shift+o',
+  bold: `${metaKey}+b`,
+  italic: `${metaKey}+i`,
+  undo: `${metaKey}+z`,
+  startOfLine: `${metaKey}+shift+left`,
+  endOfLine: `${metaKey}+shift+right`,
+  startOfDocument: `${metaKey}+shift+up`,
+  endOfDocument: `${metaKey}+shift+down`,
+  nextBlock: `${metaKey}+shift+p`,
+  previousBlock: `${metaKey}+shift+o`,
 }
 const APPLE_HOTKEYS = {}
 const WINDOWS_HOTKEYS = {}
