@@ -83,7 +83,7 @@ context('Editor', () => {
     cy.get('@editor')
       .nextBlock()
       .nextBlock()
-      .type('{meta}b')
+      .type('{cmd}b')
       .type('this should not be allowed')
       .type('{uparrow}')
 
@@ -117,9 +117,9 @@ context('Editor', () => {
       .endOfDoc()
       .type('{backspace}')
       .type('@this is ')
-      .type('{meta}b')
+      .type('{cmd}b')
       .type('bold and not ')
-      .type('{meta}b')
+      .type('{cmd}b')
       .type('<i>italic</i>')
       .newLine()
 
@@ -160,9 +160,9 @@ context('Editor', () => {
       .endOfDoc()
       .type('{backspace}')
       .type('@this is ')
-      .type('{meta}i')
+      .type('{cmd}i')
       .type('italic and not ')
-      .type('{meta}i')
+      .type('{cmd}i')
       .type('<strong>bold</strong>')
       .newLine()
 
