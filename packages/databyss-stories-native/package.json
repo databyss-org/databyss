@@ -22,12 +22,7 @@
   },
   "peerDependencies": {
     "react": "16.9.0",
-<<<<<<<<< Temporary merge branch 1
-    "@databyss-org/ui": "1.1.26"
-=========
-    "@databyss-org/ui": "1.1.27"
     "@databyss-org/ui": "1.1.28"
-    "@databyss-org/ui": "1.1.27"
   },
   "publishConfig": {
     "access": "public"
