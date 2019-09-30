@@ -50,9 +50,9 @@ context('Editor', () => {
 
   it('should set @ block to SOURCE on blur', () => {
     cy.get('@editor')
-      .nextBlock()
-      .nextBlock()
-      .endOfLine()
+      .nextBlock(IS_LINUX)
+      .nextBlock(IS_LINUX)
+      .endOfLine(IS_LINUX)
       .type('{backspace}@this is a source')
       .newLine()
 
@@ -84,8 +84,8 @@ context('Editor', () => {
 
   it('Should not allow content/range change on atomic blocks', () => {
     cy.get('@editor')
-      .nextBlock()
-      .nextBlock()
+      .nextBlock(IS_LINUX)
+      .nextBlock(IS_LINUX)
       .type('{command}b')
       .type('this should not be allowed')
       .type('{uparrow}')
@@ -117,12 +117,12 @@ context('Editor', () => {
 
   it('should escape html on block type change and allow bold', () => {
     cy.get('@editor')
-      .endOfDoc()
+      .endOfDoc(IS_LINUX)
       .type('{backspace}')
       .type('@this is ')
-      .toggleBold()
+      .toggleBold(IS_LINUX)
       .type('bold and not ')
-      .toggleBold()
+      .toggleBold(IS_LINUX)
       .type('<i>italic</i>')
       .newLine()
 
@@ -160,12 +160,12 @@ context('Editor', () => {
 
   it('should escape html on block type change and allow italic', () => {
     cy.get('@editor')
-      .endOfDoc()
+      .endOfDoc(IS_LINUX)
       .type('{backspace}')
       .type('@this is ')
       .toggleItalic(IS_LINUX)
       .type('italic and not ')
-      .toggleItalic()
+      .toggleItalic(IS_LINUX)
       .type('<strong>bold</strong>')
       .newLine()
 
