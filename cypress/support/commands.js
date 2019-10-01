@@ -1,3 +1,5 @@
+import { IS_LINUX } from '@databyss-org/ui/lib/dom'
+
 // ***********************************************
 // This example commands.js shows you how to
 // create various custom commands and overwrite
@@ -103,12 +105,12 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  (subject, isLinux) => {
+  subject => {
     return cy.get(subject).trigger('keydown', {
       keyCode: 66,
       key: 'b',
       which: 91,
-      [modKeys(isLinux)]: true,
+      [modKeys(IS_LINUX)]: true,
     })
   }
 )
@@ -118,16 +120,16 @@ Cypress.Commands.add(
   {
     prevSubject: 'element',
   },
-  (subject, isLinux) => {
+  subject => {
     return cy.get(subject).trigger('keydown', {
       keyCode: 66,
       key: 'i',
       which: 91,
-      [modKeys(isLinux)]: true,
+      [modKeys(IS_LINUX)]: true,
     })
   }
 )
 
-const modKeys = isLinux => (isLinux ? 'altKey' : 'metaKey')
+const modKeys = () => (IS_LINUX ? 'altKey' : 'metaKey')
 
-const modType = isLinux => (isLinux ? 'alt' : 'meta')
+const modType = () => (IS_LINUX ? 'alt' : 'meta')

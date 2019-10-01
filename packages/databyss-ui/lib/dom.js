@@ -141,3 +141,6 @@ export const inKeyWhitelist = e => {
 
   return inWhteList || e.ctrlKey || e.metaKey
 }
+
+export const IS_LINUX =
+  window.navigator.platform.toLowerCase().search('linux') > -1

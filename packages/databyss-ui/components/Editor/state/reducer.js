@@ -98,19 +98,7 @@ export const getRangesForBlock = (state, block) => {
 
 export const setRangesForBlock = (state, block, ranges) => {
   const nextState = cloneDeep(state)
-  switch (block.type) {
-    case 'ENTRY':
-      nextState.entries[block.refId].ranges = ranges
-      break
-    case 'SOURCE':
-      nextState.sources[block.refId].ranges = ranges
-      break
-    case 'TOPIC':
-      nextState.topics[block.refId].ranges = ranges
-      break
-    default:
-      throw new Error('Invalid block type', block.type)
-  }
+  entities(nextState, block.type)[block.refId].ranges = ranges
   return nextState
 }
 

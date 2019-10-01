@@ -1,8 +1,6 @@
 import { isKeyHotkey } from 'is-hotkey'
 import { IS_IOS, IS_MAC } from 'slate-dev-environment'
-
-export const IS_LINUX =
-  window.navigator.platform.toLowerCase().search('linux') > -1
+import { IS_LINUX } from '@databyss-org/ui/lib/dom'
 
 export const metaKey = IS_LINUX ? 'alt' : 'mod'
 /**
