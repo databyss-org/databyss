@@ -65,8 +65,7 @@ _c = {
       // [lightest...darkest]
       background: _c.gray.slice(1),
       // borders [darkest...lightest]
-      border: [_c.gray[7], _c.gray[5]],
-      // application specific
+      border: [_c.gray[7], _c.gray[3]],
     },
   },
 }

@@ -215,6 +215,7 @@
     "slate-html-serializer": "^0.8.10",
     "slate-insert-block-on-enter": "^0.4.0",
     "start-server-and-test": "^1.10.2",
+    "storybook-dark-mode": "^0.1.7",
     "styled-system": "^5.0.5",
     "supertest": "^4.0.2",
     "sw-precache-webpack-plugin": "0.11.5",

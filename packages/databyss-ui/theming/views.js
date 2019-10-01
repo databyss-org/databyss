@@ -1,5 +1,4 @@
 import { Platform } from 'react-native'
-import colors from './colors'
 
 export const pxUnits = Platform.select({
   ios: v => v,
@@ -7,7 +6,7 @@ export const pxUnits = Platform.select({
   default: v => `${v}px`,
 })
 
-const borderRadius = pxUnits(5)
+export const borderRadius = pxUnits(5)
 
 const paddingVariants = {
   none: { padding: pxUnits(0) },
@@ -25,11 +24,11 @@ export const border = (thickness, color) => ({
 })
 
 const borderVariants = {
-  none: border(0, colors.transparent),
-  thinDark: border(1, colors.border[0]),
-  thinLight: border(1, colors.border[1]),
-  thickDark: border(3, colors.border[0]),
-  thickLight: border(3, colors.border[1]),
+  none: border(0, 'transparent'),
+  thinDark: border(1, 'border.0'),
+  thinLight: border(1, 'border.1'),
+  thickDark: border(3, 'border.0'),
+  thickLight: border(3, 'border.1'),
 }
 
 export default {

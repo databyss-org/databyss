@@ -18,11 +18,19 @@ import IS_NATIVE from '../../lib/isNative'
 const paddingVariant = variant({
   prop: 'paddingVariant',
   scale: 'paddingVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
 })
 
 const borderVariant = variant({
   prop: 'borderVariant',
   scale: 'borderVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
 })
 
 export const styleProps = compose(

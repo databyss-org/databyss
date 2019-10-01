@@ -24,6 +24,7 @@
     "@emotion/core": "^10.0.14",
     "@emotion/native": "^10.0.14",
     "@emotion/styled": "^10.0.14",
+    "@storybook/addons": "^5.2.1",
     "@styled-system/core": "^5.1.1",
     "@styled-system/css": "^5.0.23",
     "@styled-system/should-forward-prop": "^5.0.18",

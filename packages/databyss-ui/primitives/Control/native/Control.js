@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
-import Color from 'color'
-import { keyframes } from '@emotion/core'
+import css from '@styled-system/css'
+import { keyframes, ThemeContext } from '@emotion/core'
 import { View } from '../../'
 import { isMobileOs } from '../../../lib/mediaQuery'
 import theme from '../../../theming/theme'
@@ -77,44 +77,45 @@ const Control = ({ disabled, children, onPress, ...others }) => {
     [resetDecay]
   )
   return (
-    <Styled
-      onClick={e => {
-        if (disabled) {
-          return
-        }
-        if (onPress) {
-          onPress(e)
-        }
-        if (!isMobileOs()) {
-          return
-        }
-        if (decay) {
-          clearTimeout(decayTimerRef.current)
-          setDecay(false)
-          setResetDecay(true)
-        } else {
-          startDecayAnimation()
-        }
-      }}
-      css={[
-        !disabled && controlCss(others),
-        !disabled && !isMobileOs() && controlCssDesktop(others),
-        !disabled && isMobileOs() && decay && animatingCss,
-      ]}
-      {...others}
-    >
-      {children}
-    </Styled>
+    <ThemeContext.Consumer>
+      {theme => (
+        <Styled
+          onClick={e => {
+            if (disabled) {
+              return
+            }
+            if (onPress) {
+              onPress(e)
+            }
+            if (!isMobileOs()) {
+              return
+            }
+            if (decay) {
+              clearTimeout(decayTimerRef.current)
+              setDecay(false)
+              setResetDecay(true)
+            } else {
+              startDecayAnimation()
+            }
+          }}
+          css={[
+            !disabled && css(controlCss(others))(theme),
+            !disabled && !isMobileOs() && css(controlCssDesktop(others))(theme),
+            !disabled && isMobileOs() && decay && animatingCss,
+          ]}
+          {...others}
+        >
+          {children}
+        </Styled>
+      )}
+    </ThemeContext.Consumer>
   )
 }
 
 Control.defaultProps = {
-  rippleColor: Color(theme.colors.gray[3])
-    .alpha(0.5)
-    .rgb()
-    .string(),
-  hoverColor: theme.colors.gray[6],
-  activeColor: theme.colors.gray[4],
+  rippleColor: 'background.3',
+  hoverColor: 'background.2',
+  activeColor: 'background.4',
   borderRadius: theme.borderRadius,
 }
 
