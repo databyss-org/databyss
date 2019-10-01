@@ -44,10 +44,6 @@ export const isAtomicInlineType = type => {
 const setActiveBlockType = type => (editor, value, next) => {
   const _activeBlock = findActiveBlock(value)
 
-  // TODO: BUG
-  // this functions toggles off the marks but does not remove them from the block
-  // if block is refocused marks become active again
-
   if (editor.value.activeMarks.size > 0) {
     if (value.marks._map._root) {
       const _marks = value.marks._map._root.entries
