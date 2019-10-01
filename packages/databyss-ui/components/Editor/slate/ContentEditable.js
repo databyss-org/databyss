@@ -341,6 +341,11 @@ const SlateContentEditable = ({
       OnToggleMark('bold', editor)
     }
 
+    if (hotKeys.isLocation(event)) {
+      event.preventDefault()
+      OnToggleMark('location', editor)
+    }
+
     if (hotKeys.isItalic(event)) {
       event.preventDefault()
       OnToggleMark('italic', editor)

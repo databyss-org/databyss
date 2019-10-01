@@ -11,6 +11,7 @@ export const metaKey = IS_LINUX ? 'alt' : 'mod'
 const HOTKEYS = {
   bold: `${metaKey}+b`,
   italic: `${metaKey}+i`,
+  location: `${metaKey}+k`,
   undo: `${metaKey}+z`,
   startOfLine: `ctrl+shift+left`,
   endOfLine: `ctrl+shift+right`,

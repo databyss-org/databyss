@@ -173,6 +173,26 @@ const insertNewActiveBlock = (
     _ranges = ranges
   }
 
+  // check if location is the only thing on previous block
+  if (state.blocks[previousBlockId].type === 'ENTRY') {
+    const { ranges, rawHtml } = entities(_state, 'ENTRY')[
+      _state.blocks[previousBlockId].refId
+    ]
+    // iterate through ranges, if marks contains location get length and add it to total
+    // compare total length with the total length of inner text
+    const locationLength = ranges.reduce((acc, range) => {
+      if (range.marks.findIndex(m => m === 'location') > -1) {
+        return range.length + acc
+      }
+      return acc
+    }, 0)
+    // if whole entry is tagged as location
+    if (locationLength === rawHtml.length) {
+      // TODO: TAGGING BLOCK TYPE LOCATION BREAKS MODEL
+      // _state = setBlockType(_state, 'LOCATION', previousBlockId)
+    }
+  }
+
   _state = setBlockType(_state, insertedBlockType, insertedBlockId)
 
   _state = setRawHtmlForBlock(
