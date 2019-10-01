@@ -23,6 +23,7 @@ export const initialState = {
 export const entities = (state, type) =>
   ({
     ENTRY: state.entries,
+    LOCATION: state.locations,
     SOURCE: state.sources,
     TOPIC: state.topics,
   }[type])
@@ -37,6 +38,7 @@ const cleanUpState = state => {
     sources: {},
     topics: {},
     blocks: {},
+    locations: {},
   }
 
   pageBlocks.forEach(b => {
@@ -61,6 +63,9 @@ export const setRawHtmlForBlock = (state, block, html) => {
       break
     case 'SOURCE':
       nextState.sources[block.refId].rawHtml = html
+      break
+    case 'LOCATION':
+      nextState.locations[block.refId].rawHtml = html
       break
     case 'TOPIC':
       nextState.topics[block.refId].rawHtml = html
@@ -89,6 +94,8 @@ export const getRangesForBlock = (state, block) => {
       return state.entries[block.refId].ranges
     case 'SOURCE':
       return state.sources[block.refId].ranges
+    case 'LOCATION':
+      return state.locations[block.refId].ranges
     case 'TOPIC':
       return state.topics[block.refId].ranges
     default:
@@ -124,6 +131,9 @@ const setBlockType = (state, type, _id) => {
       return nextState
     case 'ENTRY':
       nextState.entries[nextRefId] = { _id: nextRefId, rawHtml, ranges }
+      return nextState
+    case 'LOCATION':
+      nextState.locations[nextRefId] = { _id: nextRefId, rawHtml, ranges }
       return nextState
     case 'TOPIC':
       nextState.topics[nextRefId] = { _id: nextRefId, rawHtml, ranges }
@@ -173,24 +183,15 @@ const insertNewActiveBlock = (
     _ranges = ranges
   }
 
-  // check if location is the only thing on previous block
-  if (state.blocks[previousBlockId].type === 'ENTRY') {
-    const { ranges, rawHtml } = entities(_state, 'ENTRY')[
+  // if new block is added before LOCATION type
+  if (state.blocks[previousBlockId].type === 'LOCATION' && !previousBlockText) {
+    _state = setBlockType(_state, 'ENTRY', previousBlockId)
+    insertedBlockType = state.blocks[previousBlockId].type
+    const { rawHtml, ranges } = entities(_state, 'ENTRY')[
       _state.blocks[previousBlockId].refId
     ]
-    // iterate through ranges, if marks contains location get length and add it to total
-    // compare total length with the total length of inner text
-    const locationLength = ranges.reduce((acc, range) => {
-      if (range.marks.findIndex(m => m === 'location') > -1) {
-        return range.length + acc
-      }
-      return acc
-    }, 0)
-    // if whole entry is tagged as location
-    if (locationLength === rawHtml.length) {
-      // TODO: TAGGING BLOCK TYPE LOCATION BREAKS MODEL
-      // _state = setBlockType(_state, 'LOCATION', previousBlockId)
-    }
+    insertedText = rawHtml
+    _ranges = ranges
   }
 
   _state = setBlockType(_state, insertedBlockType, insertedBlockId)

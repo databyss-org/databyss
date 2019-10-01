@@ -10,6 +10,7 @@ import {
   backspace,
   toggleMark,
   hotKey,
+  clearBlock,
 } from './state/actions'
 
 const EditorPage = ({ children }) => {
@@ -34,12 +35,24 @@ const EditorPage = ({ children }) => {
   }
 
   const onBlockBlur = (id, rawHtml, editableState) => {
+    // check if block is empty
+    // if empty replace block with virgin block
+    if (rawHtml.length === 0 && id) {
+      dispatchEditor(clearBlock(id, editableState))
+    }
+
     if (rawHtml.match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
-      dispatchEditor(setBlockType('SOURCE', id, editableState))
+      onSetBlockType('SOURCE', id, editableState)
+      // dispatchEditor(setBlockType('SOURCE', id, editableState))
     }
     if (rawHtml.match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
-      dispatchEditor(setBlockType('TOPIC', id, editableState))
+      onSetBlockType('TOPIC', id, editableState)
+      //   dispatchEditor(setBlockType('TOPIC', id, editableState))
     }
+  }
+
+  const onSetBlockType = (type, id, editableState) => {
+    dispatchEditor(setBlockType(type, id, editableState))
   }
 
   const OnToggleMark = (mark, { value }) => {
@@ -60,6 +73,7 @@ const EditorPage = ({ children }) => {
     onBlockBlur,
     OnToggleMark,
     onHotKey,
+    onSetBlockType,
   })
 }
 

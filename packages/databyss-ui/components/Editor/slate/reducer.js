@@ -8,7 +8,21 @@ import {
   BACKSPACE,
   TOGGLE_MARK,
   HOTKEY,
+  CLEAR_BLOCK,
 } from '../state/constants'
+
+export const newBlock = id =>
+  Block.fromJSON({
+    object: 'block',
+    type: 'ENTRY',
+    key: id,
+    nodes: [
+      {
+        object: 'text',
+        text: '',
+      },
+    ],
+  })
 
 export const findActiveBlock = value =>
   value.document.getClosestBlock(value.selection.focus.key)
@@ -30,7 +44,10 @@ export const isAtomicInlineType = type => {
 const setActiveBlockType = type => (editor, value, next) => {
   const _activeBlock = findActiveBlock(value)
 
-  // clears all active marks
+  // TODO: BUG
+  // this functions toggles off the marks but does not remove them from the block
+  // if block is refocused marks become active again
+
   if (editor.value.activeMarks.size > 0) {
     if (value.marks._map._root) {
       const _marks = value.marks._map._root.entries
@@ -54,10 +71,27 @@ const setActiveBlockType = type => (editor, value, next) => {
     if (!editor.value.previousBlock.text) {
       editor.setNodeByKey(editor.value.previousBlock.key, { type: 'ENTRY' })
     }
+  } else if (
+    // if current block is location and previous block is empty
+    // replace with empty block
+    _activeBlock.type === 'LOCATION' &&
+    editor.value.previousBlock.text.length === 0
+  ) {
+    editor.replaceNodeByKey(
+      editor.value.previousBlock.key,
+      newBlock(editor.value.previousBlock.key)
+    )
+    editor.toggleMark('location')
+    next(editor, value)
   } else {
     editor.setNodeByKey(_activeBlock.key, { type })
     next(editor, value)
   }
+}
+
+const clearBlockById = id => (editor, value, next) => {
+  editor.replaceNodeByKey(id, newBlock(id))
+  next(editor, value)
 }
 
 const setBlockType = (id, type) => (editor, value, next) => {
@@ -180,10 +214,17 @@ export default (editableState, action) => {
         editorCommands: _nextEditorCommands,
       }
     }
+
     case HOTKEY: {
       return {
         ...editableState,
         editorCommands: onHotKey(action.payload.command),
+      }
+    }
+    case CLEAR_BLOCK: {
+      return {
+        ...editableState,
+        editorCommands: clearBlockById(action.payload.id),
       }
     }
     default:
