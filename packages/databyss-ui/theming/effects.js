@@ -1,7 +1,31 @@
+import { Platform } from 'react-native'
+import Color from 'color'
+import { pxUnits } from './views'
+
+export const shadow = (offsetLeft, offsetTop, blur, color, opacity) => {
+  const native = {
+    shadowOffset: { width: offsetLeft, height: offsetTop },
+    shadowRadius: blur,
+    shadowColor: color,
+    shadowOpacity: opacity,
+  }
+  const web = {
+    boxShadow: `${offsetLeft}px ${offsetTop}px ${blur}px ${Color(color)
+      .alpha(opacity)
+      .rgb()
+      .string()}`,
+  }
+  return Platform.select({
+    ios: native,
+    android: native,
+    default: web,
+  })
+}
+
 const effects = {
   buttonShadow: {
-    boxShadow: '0px 1px 1px rgba(0, 0, 0, 0.25)',
-    marginBottom: '1px',
+    ...shadow(0, 1, 1, 'black', 0.25),
+    marginBottom: pxUnits(1),
   },
 }
 

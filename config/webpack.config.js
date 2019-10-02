@@ -327,6 +327,9 @@ module.exports = webpackEnv => {
                   loader: require.resolve('react-svg-loader'),
                   options: {
                     jsx: true, // true outputs JSX tags
+                    svgo: {
+                      plugins: [{ removeViewBox: false }],
+                    },
                   },
                 },
               ],

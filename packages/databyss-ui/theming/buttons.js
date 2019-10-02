@@ -1,6 +1,6 @@
 import effects from './effects'
 import colors from './colors'
-import { border, borderRadius } from './views'
+import { border, borderRadius, pxUnits } from './views'
 import space from './space'
 
 const button = () => ({
@@ -12,7 +12,7 @@ const button = () => ({
   paddingRight: space.medium,
   paddingTop: space.small,
   paddingBottom: space.small,
-  marginTop: '1px',
+  marginTop: pxUnits(1),
   borderRadius,
   ...effects.buttonShadow,
 })

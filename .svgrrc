@@ -1,5 +1,10 @@
 {
   "replaceAttrValues": {
     "#000": "{props.fill}"
+  },
+  "svgoConfig": {
+    "plugins": {
+      "removeViewBox": false
+    }
   }
 }
