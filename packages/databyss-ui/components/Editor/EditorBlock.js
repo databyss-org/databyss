@@ -38,13 +38,3 @@ const EditorBlock = ({ type, children }) => (
 )
 
 export default EditorBlock
-
-// {type === 'SOURCE' ? (
-//   <span>
-//     <span contentEditable="false">{children}</span>
-
-//     <br />
-//   </span>
-// ) : (
-//   <span>{children}</span>
-// )}

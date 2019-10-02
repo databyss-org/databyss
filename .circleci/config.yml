@@ -2,9 +2,12 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
+orbs:
+  # use Cypress orb from CircleCI registry
+  cypress: cypress-io/cypress@1.8.0
 jobs:
-  build:
+  jest:
     docker:
       # specify the version you desire here
       - image: circleci/node:10.16.0
@@ -53,4 +56,9 @@ workflows:
   version: 2
   lint-and-test:
     jobs:
-      - build
+      - jest
+      - cypress/run:
+          yarn: true
+          start: yarn storybook:cy
+          wait-on: -t 300000 http://0.0.0.0:6006/iframe.html?id=editor-tests--slate
+          command: yarn cy:run

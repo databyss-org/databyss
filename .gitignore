@@ -69,3 +69,7 @@ buck-out/
 
 # CocoaPods
 Pods/
+
+# cypress
+cypress/screenshots
+cypress/videos

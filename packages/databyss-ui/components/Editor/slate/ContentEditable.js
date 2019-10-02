@@ -2,13 +2,22 @@ import React, { useRef, useEffect } from 'react'
 import { KeyUtils, Value, Block } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
+
 import EditorBlock from '../EditorBlock'
 // import EditorInline from '../EditorInline'
 import { getRawHtmlForBlock, entities } from '../state/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../EditorProvider'
-import hotKeys from './hotKeys'
-import { serializeNodeToHtml } from './inlineSerializer'
+import hotKeys, {
+  START_OF_LINE,
+  END_OF_LINE,
+  START_OF_DOCUMENT,
+  END_OF_DOCUMENT,
+  NEXT_BLOCK,
+  PREVIOUS_BLOCK,
+} from './hotKeys'
+
+import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
@@ -39,6 +48,7 @@ const toSlateJson = (editorState, pageBlocks) => ({
         type: block.type,
         nodes: nodeWithRanges,
       })
+
       const _innerHtml = serializeNodeToHtml(_block)
 
       const textBlock = isAtomicInlineType(block.type)
@@ -47,7 +57,7 @@ const toSlateJson = (editorState, pageBlocks) => ({
             nodes: [
               {
                 object: 'text',
-                text: _innerHtml,
+                text: sanitizer(_innerHtml),
               },
             ],
             type: block.type,
@@ -88,6 +98,7 @@ const renderInline = ({ node, attributes }, editor, next) => {
         backgroundColor: '#efefef',
       }
     : {}
+
   if (isAtomicInlineType(node.type)) {
     return (
       <span
@@ -126,6 +137,7 @@ const SlateContentEditable = ({
   onBlockBlur,
   onDocumentChange,
   OnToggleMark,
+  onHotKey,
 }) => {
   const [editorState] = useEditorContext()
 
@@ -239,6 +251,7 @@ const SlateContentEditable = ({
     }
 
     if (event.key === 'Backspace') {
+      // TODO when cursor is at the beginning of an entry and previous block is empty remove previous block
       const blockProperties = {
         activeBlockId: editor.value.anchorBlock.key,
         nextBlockId: editor.value.nextBlock ? editor.value.nextBlock.key : null,
@@ -253,6 +266,35 @@ const SlateContentEditable = ({
   }
 
   const onKeyDown = (event, editor, next) => {
+    if (hotKeys.isStartOfLine(event)) {
+      event.preventDefault()
+      onHotKey(START_OF_LINE, editor)
+    }
+
+    if (hotKeys.isEndOfLine(event)) {
+      event.preventDefault()
+      onHotKey(END_OF_LINE, editor)
+    }
+
+    if (hotKeys.isStartOfDocument(event)) {
+      event.preventDefault()
+      onHotKey(START_OF_DOCUMENT, editor)
+    }
+    if (hotKeys.isEndOfDocument(event)) {
+      event.preventDefault()
+      onHotKey(END_OF_DOCUMENT, editor)
+    }
+
+    if (hotKeys.isNextBlock(event)) {
+      event.preventDefault()
+      onHotKey(NEXT_BLOCK, editor)
+    }
+
+    if (hotKeys.isPreviousBlock(event)) {
+      event.preventDefault()
+      onHotKey(PREVIOUS_BLOCK, editor)
+    }
+
     if (isAtomicInlineType(editor.value.anchorBlock.type)) {
       if (
         event.key === 'Backspace' ||
@@ -262,6 +304,10 @@ const SlateContentEditable = ({
         event.key === 'ArrowUp' ||
         event.key === 'ArrowDown'
       ) {
+        // if previous block doesnt exist
+        if (!editor.value.previousBlock) {
+          return next()
+        }
         if (event.key === 'Backspace' && editor.value.previousBlock.text) {
           if (
             !editor.value.selection.focus.isAtStartOfNode(
@@ -299,6 +345,7 @@ const SlateContentEditable = ({
       event.preventDefault()
       OnToggleMark('italic', editor)
     }
+
     return next()
   }
 

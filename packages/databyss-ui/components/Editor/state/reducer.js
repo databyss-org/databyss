@@ -1,6 +1,7 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import invariant from 'invariant'
+
 import { isAtomicInlineType } from './../slate/reducer'
 
 import {
@@ -53,6 +54,7 @@ export const getRawHtmlForBlock = (state, block) =>
 
 export const setRawHtmlForBlock = (state, block, html) => {
   const nextState = cloneDeep(state)
+
   switch (block.type) {
     case 'ENTRY':
       nextState.entries[block.refId].rawHtml = html
@@ -92,6 +94,12 @@ export const getRangesForBlock = (state, block) => {
     default:
       throw new Error('Invalid block type', block.type)
   }
+}
+
+export const setRangesForBlock = (state, block, ranges) => {
+  const nextState = cloneDeep(state)
+  entities(nextState, block.type)[block.refId].ranges = ranges
+  return nextState
 }
 
 const setBlockType = (state, type, _id) => {
@@ -140,6 +148,7 @@ const insertNewActiveBlock = (
 
   let insertedBlockType = 'ENTRY'
   let insertedText = insertedBlockText
+  let _ranges = []
   let _state = cloneDeep(state)
 
   // get index value where previous block was
@@ -156,23 +165,23 @@ const insertNewActiveBlock = (
   ) {
     _state = setBlockType(_state, 'ENTRY', previousBlockId)
     insertedBlockType = state.blocks[previousBlockId].type
-    // get atomic block text to transfer to new block
-    // get ranges from here
-    const { rawHtml } = entities(_state, 'ENTRY')[
+    // get atomic block text and ranges to transfer to new block
+    const { rawHtml, ranges } = entities(_state, 'ENTRY')[
       _state.blocks[previousBlockId].refId
     ]
     insertedText = rawHtml
+    _ranges = ranges
   }
 
   _state = setBlockType(_state, insertedBlockType, insertedBlockId)
-
-  // TODO TRANSER RANGE TO NEW BLOCK
 
   _state = setRawHtmlForBlock(
     _state,
     _state.blocks[insertedBlockId],
     insertedText
   )
+
+  _state = setRangesForBlock(_state, _state.blocks[insertedBlockId], _ranges)
 
   // prevent html elements in rawText from atomic types
   const previousText = isAtomicInlineType(_state.blocks[previousBlockId].type)
@@ -249,6 +258,11 @@ export default (state, action) => {
       }
     case SET_ACTIVE_BLOCK_CONTENT: {
       const activeBlock = state.blocks[state.activeBlockId]
+      if (
+        isAtomicInlineType(activeBlock.type) &&
+        action.payload.html.length !== 0
+      )
+        return state
       let nextState = setRawHtmlForBlock(
         state,
         activeBlock,
@@ -278,6 +292,7 @@ export default (state, action) => {
           nextState.blocks[action.payload.id],
           _html.substring(1)
         )
+
         // correct range offset
         nextState = correctRangeOffsetForBlock(
           nextState,
@@ -285,7 +300,6 @@ export default (state, action) => {
           -1
         )
       }
-      // TODO: TO TRANSFER RANGES TO NEW BLOCK
       return setBlockType(nextState, action.payload.type, action.payload.id)
     default:
       return state

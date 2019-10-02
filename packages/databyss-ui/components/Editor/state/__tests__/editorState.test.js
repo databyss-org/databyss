@@ -27,7 +27,7 @@ describe('editorState', () => {
       ).toEqual('updated content')
     })
 
-    test('should set source content for type SOURCE', () => {
+    test('should not set source content for type SOURCE (atomic)', () => {
       const state = reducer(
         initialState,
         setActiveBlockId('5d64423aae2da21680dc208b')
@@ -36,7 +36,9 @@ describe('editorState', () => {
       expect(
         nextState.sources[nextState.blocks[nextState.activeBlockId].refId]
           .rawHtml
-      ).toEqual('updated content')
+      ).toEqual(
+        'Stamenov, Language Structure, Discourse and the Access to Consciousness'
+      )
     })
     test('clearing content should reset type to ENTRY', () => {
       const state = reducer(
@@ -47,7 +49,7 @@ describe('editorState', () => {
       expect(nextState.blocks[nextState.activeBlockId].type).toEqual('ENTRY')
     })
 
-    test('should set source content for type TOPIC', () => {
+    test('should not set source content for type TOPIC (atomic)', () => {
       const state = reducer(
         initialState,
         setActiveBlockId('5d7bbf85b5bf4165a5826720')
@@ -56,7 +58,7 @@ describe('editorState', () => {
       expect(
         nextState.topics[nextState.blocks[nextState.activeBlockId].refId]
           .rawHtml
-      ).toEqual('updated content')
+      ).toEqual('topic')
     })
     test('clearing content should reset type to ENTRY', () => {
       const state = reducer(

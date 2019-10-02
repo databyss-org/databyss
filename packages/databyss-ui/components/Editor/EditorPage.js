@@ -9,6 +9,7 @@ import {
   newActiveBlock,
   backspace,
   toggleMark,
+  hotKey,
 } from './state/actions'
 
 const EditorPage = ({ children }) => {
@@ -45,6 +46,10 @@ const EditorPage = ({ children }) => {
     dispatchEditor(toggleMark(mark, { value }))
   }
 
+  const onHotKey = (command, { value }) => {
+    dispatchEditor(hotKey(command, { value }))
+  }
+
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
     onActiveBlockIdChange,
@@ -54,6 +59,7 @@ const EditorPage = ({ children }) => {
     onBackspace,
     onBlockBlur,
     OnToggleMark,
+    onHotKey,
   })
 }
 
