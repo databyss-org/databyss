@@ -86,7 +86,9 @@ const setActiveBlockType = type => (editor, value, next) => {
 }
 
 const clearBlockById = id => (editor, value, next) => {
-  editor.replaceNodeByKey(id, newBlock(id))
+  if (value.document.getNode(id)) {
+    editor.replaceNodeByKey(id, newBlock(id))
+  }
   next(editor, value)
 }
 

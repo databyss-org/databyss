@@ -35,40 +35,52 @@ const toSlateJson = (editorState, pageBlocks) => ({
             block._id
           )
           break
+        case 'LOCATION':
+          nodes = stateToSlate(
+            {
+              [block.refId]: editorState.locations[block.refId],
+            },
+            block._id
+          )
+          nodes.type = 'LOCATION'
+          break
         default:
           break
       }
 
-      const nodeWithRanges = stateToSlate({
-        [block.refId]: entities(editorState, block.type)[block.refId],
-      }).nodes
+      let textBlock
+      if (isAtomicInlineType(block.type)) {
+        const nodeWithRanges = stateToSlate({
+          [block.refId]: entities(editorState, block.type)[block.refId],
+        }).nodes
 
-      const _block = Block.fromJSON({
-        object: 'block',
-        type: block.type,
-        nodes: nodeWithRanges,
-      })
+        const _block = Block.fromJSON({
+          object: 'block',
+          type: block.type,
+          nodes: nodeWithRanges,
+        })
 
-      const _innerHtml = serializeNodeToHtml(_block)
+        const _innerHtml = serializeNodeToHtml(_block)
 
-      const textBlock = isAtomicInlineType(block.type)
-        ? {
-            object: 'inline',
-            nodes: [
-              {
-                object: 'text',
-                text: sanitizer(_innerHtml),
-              },
-            ],
-            type: block.type,
-          }
-        : {
-            object: 'text',
-            text: getRawHtmlForBlock(editorState, block),
-          }
+        textBlock = isAtomicInlineType(block.type)
+          ? {
+              object: 'inline',
+              nodes: [
+                {
+                  object: 'text',
+                  text: sanitizer(_innerHtml),
+                },
+              ],
+              type: block.type,
+            }
+          : {
+              object: 'text',
+              text: getRawHtmlForBlock(editorState, block),
+            }
+      }
 
-      // this will return generic nod
-      return block.type === 'ENTRY'
+      // this will return generic node
+      return !isAtomicInlineType(block.type)
         ? nodes
         : {
             object: 'block',

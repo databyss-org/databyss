@@ -10,6 +10,7 @@ export default {
   editableState: null,
   activeBlockId: null,
   topics: {},
+  locations: {},
   sources: {
     sourceId: {
       _id: sourceId,

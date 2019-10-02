@@ -38,6 +38,7 @@ const EditorPage = ({ children }) => {
     // check if block is empty
     // if empty replace block with virgin block
     if (rawHtml.length === 0 && id) {
+      // check block to see if ranges exist
       dispatchEditor(clearBlock(id, editableState))
     }
 
