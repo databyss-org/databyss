@@ -4,7 +4,7 @@
 
 import h from 'slate-hyperscript'
 import { toSlateJson, matchExpectedJson } from './_helpers'
-import { IS_LINUX } from './../hotKeys'
+// import {  } from './../hotKeys'
 
 context('Editor', () => {
   beforeEach(() => {
@@ -48,9 +48,9 @@ context('Editor', () => {
 
   it('should set @ block to SOURCE on blur', () => {
     cy.get('@editor')
-      .nextBlock(IS_LINUX)
-      .nextBlock(IS_LINUX)
-      .endOfLine(IS_LINUX)
+      .nextBlock()
+      .nextBlock()
+      .endOfLine()
       .type('{backspace}@this is a source')
       .newLine()
 
@@ -82,8 +82,8 @@ context('Editor', () => {
 
   it('Should not allow content/range change on atomic blocks', () => {
     cy.get('@editor')
-      .nextBlock(IS_LINUX)
-      .nextBlock(IS_LINUX)
+      .nextBlock()
+      .nextBlock()
       .type('{command}b')
       .type('this should not be allowed')
       .type('{uparrow}')
@@ -115,12 +115,12 @@ context('Editor', () => {
 
   it('should escape html on block type change and allow bold', () => {
     cy.get('@editor')
-      .endOfDoc(IS_LINUX)
+      .endOfDoc()
       .type('{backspace}')
       .type('@this is ')
-      .toggleBold(IS_LINUX)
+      .toggleBold()
       .type('bold and not ')
-      .toggleBold(IS_LINUX)
+      .toggleBold()
       .type('<i>italic</i>')
       .newLine()
 
@@ -158,12 +158,12 @@ context('Editor', () => {
 
   it('should escape html on block type change and allow italic', () => {
     cy.get('@editor')
-      .endOfDoc(IS_LINUX)
+      .endOfDoc()
       .type('{backspace}')
       .type('@this is ')
-      .toggleItalic(IS_LINUX)
+      .toggleItalic()
       .type('italic and not ')
-      .toggleItalic(IS_LINUX)
+      .toggleItalic()
       .type('<strong>bold</strong>')
       .newLine()
 
@@ -191,6 +191,41 @@ context('Editor', () => {
               </mark>
             </inline>
             <text />
+          </block>
+          <block type="ENTRY" />
+        </document>
+      </value>
+    )
+    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+  })
+
+  it('should toggle a location mark and tag block as location', () => {
+    cy.get('@editor')
+      .endOfDoc()
+      .type('{backspace}')
+      .toggleLocation()
+      .type('this whole block should get tagged as a location')
+      .newLine()
+      .type('{uparrow}')
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE">
+            <text />
+            <inline type="SOURCE">
+              Stamenov, Language Structure, Discourse and the Access to
+              Consciousness
+            </inline>
+            <text />
+          </block>
+          <block type="ENTRY">
+            On the limitation of third-order thought to assertion
+          </block>
+          <block type="LOCATION">
+            <mark type="location">
+              this whole block should get tagged as a location
+            </mark>
           </block>
           <block type="ENTRY" />
         </document>

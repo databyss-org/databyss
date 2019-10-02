@@ -33,6 +33,9 @@ const EditorPage = ({ children }) => {
   const onBackspace = (blockProperties, editableState) => {
     dispatchEditor(backspace(blockProperties, editableState))
   }
+  const onSetBlockType = (type, id, editableState) => {
+    dispatchEditor(setBlockType(type, id, editableState))
+  }
 
   const onBlockBlur = (id, rawHtml, editableState) => {
     // check if block is empty
@@ -44,16 +47,10 @@ const EditorPage = ({ children }) => {
 
     if (rawHtml.match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
       onSetBlockType('SOURCE', id, editableState)
-      // dispatchEditor(setBlockType('SOURCE', id, editableState))
     }
     if (rawHtml.match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
       onSetBlockType('TOPIC', id, editableState)
-      //   dispatchEditor(setBlockType('TOPIC', id, editableState))
     }
-  }
-
-  const onSetBlockType = (type, id, editableState) => {
-    dispatchEditor(setBlockType(type, id, editableState))
   }
 
   const OnToggleMark = (mark, { value }) => {

@@ -32,6 +32,8 @@ router.post(
       sources = !_.isEmpty(sources) ? sources : {}
       topics = !_.isEmpty(topics) ? topics : {}
       entries = !_.isEmpty(entries) ? entries : {}
+      locations = !_.isEmpty(locations) ? locations : {}
+
       const { name, _id } = page
 
       // ADD SOURCES
