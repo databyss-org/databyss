@@ -25,12 +25,55 @@ const button = () => ({
   }),
 })
 
-const linkButton = () => ({
-  textDecoration: 'underline',
+const menuButton = () => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
   paddingLeft: space.small,
   paddingRight: space.small,
-  paddingTop: space.small,
-  paddingBottom: space.small,
+  paddingTop: space.tiny,
+  paddingBottom: space.tiny,
+  borderRadius: pxUnits(5),
+  ...Platform.select({
+    ios: {},
+    android: {},
+    default: {
+      '& > div': {
+        zIndex: 1,
+      },
+    },
+  }),
+})
+
+const sidebarButton = () => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingLeft: space.small,
+  paddingRight: space.small,
+  paddingTop: space.tiny,
+  paddingBottom: space.tiny,
+  borderRadius: '50%',
+
+  ...Platform.select({
+    ios: {},
+    android: {},
+    default: {
+      '& > div': {
+        zIndex: 1,
+      },
+    },
+  }),
+})
+
+const linkButton = () => ({
+  textDecoration: 'underline',
+  paddingLeft: space.tiny,
+  paddingRight: space.tiny,
+  paddingTop: space.tiny,
+  paddingBottom: space.tiny,
 })
 
 const buttonVariants = {
@@ -72,6 +115,18 @@ const buttonVariants = {
   externalLink: {
     ...linkButton(),
     color: colors.orange[0],
+  },
+  menuAction: {
+    ...menuButton(),
+    backgroundColor: colors.gray[8],
+    color: colors.gray[9],
+  },
+  sidebarAction: {
+    ...sidebarButton(),
+    backgroundColor: colors.gray[7],
+    borderColor: colors.gray[5],
+    borderWidth: '1px',
+    color: colors.gray[4],
   },
 }
 

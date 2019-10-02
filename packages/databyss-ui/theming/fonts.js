@@ -76,6 +76,7 @@ const uiTextVariants = {
   uiTextLarge: uiText(22),
   uiTextNormal: uiText(16),
   uiTextSmall: uiText(14),
+  uiTextExtraSmall: uiText(12),
 }
 
 const uiTextBoldVariants = Object.keys(uiTextVariants).reduce(
