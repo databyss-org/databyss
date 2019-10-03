@@ -8,6 +8,10 @@ import buttons from '../../theming/buttons'
 const variants = variant({
   prop: 'variant',
   scale: 'buttonVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
 })
 
 const StyledControl = styled(

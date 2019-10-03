@@ -3,9 +3,9 @@ import Color from 'color'
 // raw colors [dark...light]
 let _c = {
   gray: [
-    '#181510',
-    '#312A21',
-    '#4D4842',
+    '#221F1B',
+    '#353331',
+    '#4A4845',
     '#847B71',
     '#AAA49C',
     '#D0CDC8',
@@ -14,8 +14,8 @@ let _c = {
   ],
   black: '#12100C',
   white: '#FDFDFC',
-  blue: ['#0F2A8A', '#1944DD', '#4770FF', '#99C2FF'],
-  purple: ['#591749', '#782664', '#9F2881', '#E052BD'],
+  blue: ['#4444BC', '#6C6CE0', '#7D7DE8', '#B6B6FB'],
+  purple: ['#591749', '#932A79', '#C70095', '#C695D0'],
   red: ['#FF4343'],
   green: ['#7AB814'],
   orange: ['#B82E00', '#E55E1A', '#EB9947', '#F7C96E'],
@@ -36,9 +36,9 @@ _c = {
   text: [_c.black, ..._c.gray],
   // [lightest...darkest]
   background: [_c.white, ..._c.gray.slice().reverse()],
-  // control colors [enabled, hover, active]
-  primary: [_c.purple[2], _c.purple[1], _c.purple[0]],
-  secondary: [_c.transparent, _c.gray[6], _c.gray[5]],
+  // control colors [enabled, hover, active, label]
+  primary: [_c.blue[1], _c.blue[2], _c.blue[0], _c.white],
+  secondary: [_c.blue[1], _c.gray[6], _c.gray[5], _c.blue[1]],
   // borders [darkest...lightest]
   border: [_c.black, _c.gray[5]],
   // application specific
@@ -63,9 +63,11 @@ _c = {
       // [darkest...lightest]
       text: [_c.white, ..._c.gray.slice().reverse()],
       // [lightest...darkest]
-      background: _c.gray.slice(1),
+      background: _c.gray,
       // borders [darkest...lightest]
       border: [_c.gray[7], _c.gray[3]],
+      // control colors [enabled, hover, active, label]
+      secondary: [_c.blue[1], _c.gray[2], _c.gray[1], _c.blue[2]],
     },
   },
 }

@@ -28,31 +28,31 @@ const linkButton = () => ({
 const buttonVariants = {
   primaryUi: {
     ...button(),
-    backgroundColor: colors.primary[0],
-    color: colors.white,
+    backgroundColor: 'primary.0',
+    color: 'primary.3',
   },
   secondaryUi: {
     ...button(),
-    ...border(1, colors.border[0]),
-    backgroundColor: colors.transparent,
-    color: colors.black,
+    ...border(1, 'secondary.0'),
+    backgroundColor: 'background.0',
+    color: 'secondary.3',
   },
   uiLink: {
     ...linkButton(),
-    color: colors.primary[0],
+    color: 'secondary.3',
   },
 }
 
 const buttonThemes = {
   primaryUi: {
-    rippleColor: colors.primary[2],
-    hoverColor: colors.primary[1],
-    activeColor: colors.primary[2],
+    rippleColor: 'primary.2',
+    hoverColor: 'primary.1',
+    activeColor: 'primary.2',
   },
   secondaryUi: {
-    rippleColor: colors.secondary[2],
-    hoverColor: colors.secondary[1],
-    activeColor: colors.secondary[2],
+    rippleColor: 'secondary.2',
+    hoverColor: 'secondary.1',
+    activeColor: 'secondary.2',
   },
   primaryExternal: {},
   secondaryExternal: {},

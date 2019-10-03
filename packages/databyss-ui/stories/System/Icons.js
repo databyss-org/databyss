@@ -30,7 +30,7 @@ export default () => (
       </LabeledIcon>
     </Grid>
     <Grid mb="small" rowGap="medium" columnGap="medium">
-      <LabeledIcon label="Black" color="black" sizeVariant="small">
+      <LabeledIcon label="Default" sizeVariant="small">
         <SourceSvg />
       </LabeledIcon>
       <LabeledIcon label="Gray 3" color="gray.3" sizeVariant="small">
@@ -39,7 +39,7 @@ export default () => (
       <LabeledIcon label="Blue 2" color="blue.2" sizeVariant="small">
         <SourceSvg />
       </LabeledIcon>
-      <LabeledIcon label="Pink" color="pink" sizeVariant="small">
+      <LabeledIcon label="Primary" color="primary.0" sizeVariant="small">
         <SourceSvg />
       </LabeledIcon>
     </Grid>

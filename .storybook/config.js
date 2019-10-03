@@ -7,7 +7,12 @@ import colors from '../packages/databyss-ui/theming/colors'
 addParameters({
   darkMode: {
     // Override the default dark theme
-    dark: { ...themes.dark, appBg: colors.gray[2] },
+    dark: {
+      ...themes.dark,
+      appBg: colors.gray[2],
+      appContentBg: colors.gray[0],
+      barBg: colors.gray[0],
+    },
   },
 })
 

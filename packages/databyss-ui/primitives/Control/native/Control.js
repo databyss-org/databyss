@@ -115,7 +115,7 @@ const Control = ({ disabled, children, onPress, ...others }) => {
 Control.defaultProps = {
   rippleColor: 'background.3',
   hoverColor: 'background.2',
-  activeColor: 'background.4',
+  activeColor: 'background.3',
   borderRadius: theme.borderRadius,
 }
 
