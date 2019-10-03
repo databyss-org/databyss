@@ -1,5 +1,4 @@
 import effects from './effects'
-import colors from './colors'
 import { border, borderRadius, pxUnits } from './views'
 import space from './space'
 

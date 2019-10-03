@@ -2,7 +2,7 @@
   "name": "@databyss-org/ui",
   "author": "databyss-org",
   "license": "MIT",
-  "version": "1.1.28",
+  "version": "1.1.29",
   "private": false,
   "repository": {
     "type": "git",
@@ -13,9 +13,9 @@
   },
   "main": "index.js",
   "peerDependencies": {
-    "@databyss-org/services": "1.1.28",
-    "@databyss-org/ui": "1.1.28",
-    "@storybook/react": "5.1.11",
+    "@databyss-org/services": "1.1.29",
+    "@databyss-org/ui": "1.1.29",
+    "@storybook/react": "5.2.1",
     "react": "16.9.0",
     "react-dom": "16.9.0",
     "react-native": "0.60.4"
@@ -61,12 +61,9 @@
     "redux-thunk": "^2.3.0",
     "uuid": "3.3.3",
     "slate": "^0.47.8",
-<<<<<<< HEAD
     "slate-hyperscript": "^0.13.8",
     "slate-react": "^0.22.8",
-=======
     "slate-dev-environment": "^0.2.2",
->>>>>>> add dark theme
     "slate-html-serializer": "^0.8.10",
     "slate-react": "^0.22.8",
     "styled-system": "^5.0.5",
