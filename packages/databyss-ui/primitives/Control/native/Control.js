@@ -1,45 +1,46 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { keyframes } from '@emotion/core'
+import css from '@styled-system/css'
+import { keyframes, ThemeContext } from '@emotion/core'
 import { View } from '../../'
-import { isMobileOrMobileOs } from '../../../lib/mediaQuery'
+import { isMobileOs } from '../../../lib/mediaQuery'
 import theme from '../../../theming/theme'
 
 const decay = keyframes({
   '0%': {
-    opacity: '0.5',
+    opacity: 0.8,
   },
   '100%': {
     opacity: 0,
   },
 })
 
-const controlCssDesktop = {
+const controlCssDesktop = props => ({
   cursor: 'pointer',
+  transition: `background-color ${theme.timing.flash}ms ${theme.timing.ease}`,
   '&:hover': {
-    '&:after': {
-      opacity: '0.2',
-    },
+    backgroundColor: props.hoverColor,
   },
   '&:active': {
-    '&:after': {
-      opacity: '0.6',
-    },
+    backgroundColor: props.activeColor,
   },
-}
+})
+
+const _pseudomaskCss = () => ({
+  content: '""',
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  left: 0,
+  right: 0,
+  opacity: 0,
+})
 
 const controlCss = props => ({
   position: 'relative',
   '&:after': {
-    content: '""',
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
+    ..._pseudomaskCss(props),
     backgroundColor: props.rippleColor,
-    opacity: 0,
-    borderRadius: props.borderRadius,
-    transition: `opacity ${theme.timing.flash}ms ${theme.timing.ease}`,
+    zIndex: 1,
   },
 })
 
@@ -76,40 +77,46 @@ const Control = ({ disabled, children, onPress, ...others }) => {
     [resetDecay]
   )
   return (
-    <Styled
-      onClick={e => {
-        if (disabled) {
-          return
-        }
-        if (onPress) {
-          onPress(e)
-        }
-        if (!isMobileOrMobileOs()) {
-          return
-        }
-        if (decay) {
-          clearTimeout(decayTimerRef.current)
-          setDecay(false)
-          setResetDecay(true)
-        } else {
-          startDecayAnimation()
-        }
-      }}
-      css={[
-        !disabled && controlCss(others),
-        !disabled && !isMobileOrMobileOs() && controlCssDesktop,
-        !disabled && isMobileOrMobileOs() && decay && animatingCss,
-      ]}
-      {...others}
-    >
-      {children}
-    </Styled>
+    <ThemeContext.Consumer>
+      {theme => (
+        <Styled
+          onClick={e => {
+            if (disabled) {
+              return
+            }
+            if (onPress) {
+              onPress(e)
+            }
+            if (!isMobileOs()) {
+              return
+            }
+            if (decay) {
+              clearTimeout(decayTimerRef.current)
+              setDecay(false)
+              setResetDecay(true)
+            } else {
+              startDecayAnimation()
+            }
+          }}
+          css={[
+            !disabled && css(controlCss(others))(theme),
+            !disabled && !isMobileOs() && css(controlCssDesktop(others))(theme),
+            !disabled && isMobileOs() && decay && animatingCss,
+          ]}
+          {...others}
+        >
+          {children}
+        </Styled>
+      )}
+    </ThemeContext.Consumer>
   )
 }
 
 Control.defaultProps = {
-  rippleColor: theme.colors.controlRippleColor,
-  borderRadius: '3px',
+  rippleColor: 'background.3',
+  hoverColor: 'background.2',
+  activeColor: 'background.3',
+  borderRadius: theme.borderRadius,
 }
 
 export default Control

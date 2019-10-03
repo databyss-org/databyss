@@ -7,6 +7,7 @@ import Controls from './Controls'
 import Buttons from './Buttons'
 import Icons from './Icons'
 import ListControl from './ListControl'
+import Dark from './Dark'
 
 storiesOf('Design System', module)
   .addDecorator(ViewportDecorator)
@@ -16,3 +17,4 @@ storiesOf('Design System', module)
   .add('Buttons', () => <Buttons />)
   .add('Icons', () => <Icons />)
   .add('ListControl', () => <ListControl />)
+  .add('Dark', () => <Dark />)

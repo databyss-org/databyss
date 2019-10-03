@@ -1,6 +1,7 @@
 import React from 'react'
 import timing from '../../../theming/timing'
 import colors from '../../../theming/colors'
+import theme from '../../../theming/theme'
 
 const toggleCss = {
   boxSizing: 'border-box',
@@ -8,7 +9,7 @@ const toggleCss = {
   height: '20px',
   backgroundColor: colors.gray[4],
   border: `1px solid ${colors.gray[2]}`,
-  borderRadius: '4px',
+  borderRadius: theme.borderRadius,
   position: 'relative',
   transition: `all ${timing.quick}ms ${timing.ease}`,
   flexShrink: 0,
@@ -21,7 +22,7 @@ const handleCss = {
   border: `1px solid ${colors.gray[5]}`,
   boxShadow:
     '0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)',
-  borderRadius: '3px',
+  borderRadius: theme.borderRadius,
   position: 'absolute',
   transition: `all ${timing.quick}ms ${timing.ease}`,
   left: 0,
