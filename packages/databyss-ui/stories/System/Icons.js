@@ -8,7 +8,7 @@ import FilterSvg from '@databyss-org/ui/assets/filter.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
-import { Grid } from '@databyss-org/ui'
+import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { Section } from './'
 
 const LabeledIcon = ({ label, sizeVariant, children, color, ...others }) => (

@@ -2,7 +2,8 @@ import React from 'react'
 import { loremIpsum } from 'lorem-ipsum'
 import Alea from 'alea'
 import { Text, View } from '@databyss-org/ui/primitives'
-import { Content, Grid } from '@databyss-org/ui'
+import Content from '@databyss-org/ui/components/Viewport/Content'
+import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { Section } from './'
 
 const alea = new Alea('typography')
