@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from 'react'
 import { KeyUtils, Value, Block } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
-
 import EditorBlock from '../EditorBlock'
 // import EditorInline from '../EditorInline'
 import { getRawHtmlForBlock, entities } from '../state/reducer'
@@ -16,9 +15,9 @@ import hotKeys, {
   NEXT_BLOCK,
   PREVIOUS_BLOCK,
 } from './hotKeys'
-
 import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
+import { Text } from '@databyss-org/ui/primitives'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -103,20 +102,38 @@ const schema = {
   },
 }
 
+// const renderInline = ({ node, attributes }, editor, next) => {
+//   const isSelected = editor.value.selection.focus.isInNode(node)
+//   const style = isSelected
+//     ? {
+//         backgroundColor: '#efefef',
+//       }
+//     : {}
+
+//   if (isAtomicInlineType(node.type)) {
+//     return (
+//       <span
+//         style={style}
+//         {...attributes}
+//         dangerouslySetInnerHTML={{ __html: node.text }}
+//       />
+//     )
+//   }
+
+//   return next()
+// }
+
 const renderInline = ({ node, attributes }, editor, next) => {
   const isSelected = editor.value.selection.focus.isInNode(node)
-  const style = isSelected
-    ? {
-        backgroundColor: '#efefef',
-      }
-    : {}
+  const backgroundColor = isSelected ? 'background.2' : ''
 
   if (isAtomicInlineType(node.type)) {
     return (
-      <span
-        style={style}
+      <Text
+        inline
+        backgroundColor={backgroundColor}
         {...attributes}
-        dangerouslySetInnerHTML={{ __html: node.text }}
+        _html={{ __html: node.text }}
       />
     )
   }

@@ -19,11 +19,27 @@ const Styled = styled(
   )
 )
 
-const Text = ({ children, color, ...others }) => (
-  <Styled variant="bodyNormal" color={color} {...others}>
-    {children}
-  </Styled>
+const StyledInline = styled(
+  {
+    ios: 'Text',
+    android: 'Text',
+    default: 'span',
+  },
+  compose(
+    variants,
+    color
+  )
 )
+
+const Text = ({ children, color, inline, _html, ...others }) => {
+  return inline ? (
+    <StyledInline dangerouslySetInnerHTML={_html} {...others} />
+  ) : (
+    <Styled variant="bodyNormal" color={color} {...others}>
+      {children}
+    </Styled>
+  )
+}
 
 Text.defaultProps = {
   color: 'text.0',
