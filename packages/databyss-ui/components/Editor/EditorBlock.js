@@ -3,23 +3,28 @@ import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { Text, View } from '@databyss-org/ui/primitives'
 import EditorMenu from './EditorMenu/EditorMenu'
 
-const styleSelector = type => {
-  switch (type) {
-    case 'SOURCE':
-      return { style: 'bodyNormalUnderline', color: '' }
-    case 'LOCATION':
-      return { style: 'bodySmall', color: '' }
-    case 'TOPIC':
-      return { style: 'bodyNormalSemibold', color: '' }
-    case 'TAG':
-      return { style: 'BodySmall', color: 'grey' }
-    default:
-      return { style: 'bodyNormal', color: '' }
-  }
+const TextBlock = ({ children, variant, color }) => (
+  <Text variant={variant} color={color}>
+    {children}
+  </Text>
+)
+
+const textSelector = ({ children, type }) => {
+  const textStyle = type =>
+    ({
+      SOURCE: { variant: 'bodyNormalUnderline', color: 'text.0' },
+      LOCATION: { variant: 'bodySmall', color: 'text.0' },
+      TOPIC: {
+        variant: 'bodyNormalSemibold',
+        color: 'text.0',
+      },
+      TAG: { variant: 'BodySmall', color: 'grey' },
+      ENTRY: { variant: 'bodyNormal', color: 'text.0' },
+    }[type])
+  return TextBlock({ children, ...textStyle(type) })
 }
 
 const EditorBlock = ({ children, node }) => (
-  // use context editor here
   <Grid mb="medium" flexWrap="nowrap" columnGap="small" alignItems="flex-start">
     <View
       contentEditable="false"
@@ -32,14 +37,8 @@ const EditorBlock = ({ children, node }) => (
         {node.text.length < 1 && <EditorMenu node={node} />}
       </View>
     </View>
-
     <View flexShrink={1} overflow="visible">
-      <Text
-        variant={styleSelector(node.type).style}
-        color={styleSelector(node.type).color}
-      >
-        {children}
-      </Text>
+      {textSelector({ children, type: node.type })}
     </View>
   </Grid>
 )

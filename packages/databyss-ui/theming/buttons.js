@@ -70,9 +70,9 @@ const buttonVariants = {
     ...sidebarButton(),
     backgroundColor: 'background.3',
     // TODO: this doesnt get evaluated
-    //  borderColor: 'border.3',
+    borderColor: 'secondary.1',
 
-    borderColor: 'grey',
+    // borderColor: 'grey',
     borderWidth: '1px',
     color: 'text.4',
   },
