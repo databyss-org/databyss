@@ -20,7 +20,7 @@ const LabeledIcon = ({ label, sizeVariant, children, color, ...others }) => (
   </View>
 )
 
-const EditorMenu = ({ node, editableState }) => {
+const EditorMenu = ({ node }) => {
   const [editorState, dispatchEditor] = useEditorContext()
   const [actions, showActions] = useState(false)
   let isVisible = false
@@ -46,7 +46,7 @@ const EditorMenu = ({ node, editableState }) => {
           <LabeledIcon
             label="Tiny"
             sizeVariant="tiny"
-            color={buttonVariants['sidebarAction'].color}
+            color={buttonVariants.sidebarAction.color}
           >
             <View>{actions ? <Close /> : <Add />}</View>
           </LabeledIcon>

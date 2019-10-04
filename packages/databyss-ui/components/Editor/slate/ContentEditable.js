@@ -404,9 +404,7 @@ const SlateContentEditable = ({
   }
 
   const renderBlock = ({ node, children }) => (
-    <EditorBlock type={node.type} node={node} editableState={_editableState}>
-      {children}
-    </EditorBlock>
+    <EditorBlock node={node}>{children}</EditorBlock>
   )
 
   return (

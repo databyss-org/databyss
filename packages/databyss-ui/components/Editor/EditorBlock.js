@@ -18,7 +18,7 @@ const styleSelector = type => {
   }
 }
 
-const EditorBlock = ({ children, node, editableState }) => (
+const EditorBlock = ({ children, node }) => (
   // use context editor here
   <Grid mb="medium" flexWrap="nowrap" columnGap="small" alignItems="flex-start">
     <View
@@ -29,9 +29,7 @@ const EditorBlock = ({ children, node, editableState }) => (
       overflow="visible"
     >
       <View position="absolute">
-        {node.text.length < 1 && (
-          <EditorMenu node={node} editableState={editableState} />
-        )}
+        {node.text.length < 1 && <EditorMenu node={node} />}
       </View>
     </View>
 
