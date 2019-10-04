@@ -205,6 +205,8 @@ const SlateContentEditable = ({
     if (_nextText !== _prevText) {
       const block = _nextEditableState.value.anchorBlock
       const ranges = getBlockRanges(block)
+<<<<<<< HEAD
+=======
 
       // if not atomic get range and check for location
       if (
@@ -239,6 +241,7 @@ const SlateContentEditable = ({
         }
       }
 
+>>>>>>> 94a39f2222acfc030c6043be82d117a44ec3e159
       onActiveBlockContentChange(_nextText, _nextEditableState, ranges)
       return true
     }
