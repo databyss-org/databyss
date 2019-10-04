@@ -9,6 +9,7 @@ import {
   TOGGLE_MARK,
   HOTKEY,
   CLEAR_BLOCK,
+  ADD_TAG,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -108,6 +109,16 @@ export function clearBlock(id, editableState) {
     payload: {
       editableState,
       id,
+    },
+  }
+}
+
+export function addTag(tag, editableState) {
+  return {
+    type: ADD_TAG,
+    payload: {
+      tag,
+      editableState,
     },
   }
 }

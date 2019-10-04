@@ -1,5 +1,5 @@
 {
-  "name": "@databyss-org/notes-native",
+  "name": "@databyss-org/stories-native",
   "author": "databyss-org",
   "license": "MIT",
   "version": "1.1.29",
@@ -13,12 +13,21 @@
   },
   "dependencies": {
     "@emotion/native": "^10.0.14",
+    "@storybook/react-native": "5.1.9",
+    "@svgr/plugin-svgo": "^4.3.1",
     "metro-config": "^0.55.0",
-    "react-native": "0.60.4"
+    "react-native": "0.60.4",
+    "react-native-svg": "^9.6.4",
+    "react-native-svg-transformer": "^0.13.0"
   },
   "peerDependencies": {
+<<<<<<< HEAD
     "react": "16.9.0",
     "@databyss-org/ui": "1.1.29"
+=======
+    "@databyss-org/ui": "1.1.29",
+    "react": "16.9.0"
+>>>>>>> 38631b81289185c4e3c1faf9294d5fc0fc2c7e4a
   },
   "publishConfig": {
     "access": "public"
@@ -36,7 +45,9 @@
       "**/react-native/**",
       "**/@react-native-community",
       "**/hermesvm",
-      "**/jsc-android"
+      "**/jsc-android",
+      "**/react-native-svg",
+      "**/react-native-svg-transformer"
     ]
   }
 }

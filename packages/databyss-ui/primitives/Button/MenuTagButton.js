@@ -33,6 +33,7 @@ const MenuTagButton = ({ onPress, variant, children, ...others }) => {
     <BaseControl
       onPress={onPress}
       rippleColor={buttonVariants[variant].rippleColor}
+      backgroundColor={buttonVariants[variant].backgroundColor}
       {...others}
     >
       <StyledView variant={variant}>{_children}</StyledView>

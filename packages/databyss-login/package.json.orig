@@ -7,7 +7,11 @@
     "react-dom": "16.9.0",
     "@databyss-org/ui": "1.1.29",
     "@databyss-org/services": "1.1.29",
+<<<<<<< HEAD
+    "@storybook/react": "5.1.11"
+=======
     "@storybook/react": "5.2.1"
+>>>>>>> 38631b81289185c4e3c1faf9294d5fc0fc2c7e4a
   },
   "dependencies": {
     "jsonwebtoken": "^8.5.1",

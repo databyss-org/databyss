@@ -8,7 +8,9 @@ import {
   compose,
   variant,
   color,
+  shadow,
 } from 'styled-system'
+import { ThemeProvider } from 'emotion-theming'
 import fastCompare from 'react-fast-compare'
 import styled from '../styled'
 import IS_NATIVE from '../../lib/isNative'
@@ -16,11 +18,19 @@ import IS_NATIVE from '../../lib/isNative'
 const paddingVariant = variant({
   prop: 'paddingVariant',
   scale: 'paddingVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
 })
 
 const borderVariant = variant({
   prop: 'borderVariant',
   scale: 'borderVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
 })
 
 export const styleProps = compose(
@@ -30,6 +40,7 @@ export const styleProps = compose(
   border,
   position,
   color,
+  shadow,
   paddingVariant,
   borderVariant
 )
@@ -98,7 +109,8 @@ export default ({ children, onLayout, ...others }) => {
       window.removeEventListener('resize', onWindowResize)
     }
   })
-  return (
+
+  const view = (
     <View
       paddingVariant="none"
       borderVariant="none"
@@ -109,4 +121,10 @@ export default ({ children, onLayout, ...others }) => {
       {children}
     </View>
   )
+
+  if (others.theme) {
+    return <ThemeProvider theme={others.theme}>{view}</ThemeProvider>
+  }
+
+  return view
 }

@@ -1,10 +1,19 @@
 import React from 'react'
-import { variant, flexbox, compose, border } from 'styled-system'
+import { variant, flexbox, compose, border, color } from 'styled-system'
 import { BaseControl, Text } from '../'
 // HACK: if View is imported from '../' above, it breaks storybook:build (reason unknown)
 import View from '../View/View'
 import styled from '../styled'
 import buttons from '../../theming/buttons'
+
+const borderVariant = variant({
+  prop: 'borderVariant',
+  scale: 'borderVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
+})
 
 const variants = variant({
   prop: 'variant',
@@ -16,13 +25,16 @@ const StyledView = styled(
   compose(
     flexbox,
     border,
-    variants
+    variants,
+    borderVariant,
+    color
   )
 )
 
 const SidebarButton = ({ onPress, variant, children, ...others }) => {
   let _children = children
   const { buttonVariants } = buttons
+
   if (typeof children === 'string') {
     _children = (
       <Text variant="uiTextExtraSmall" color={buttonVariants[variant].color}>
@@ -34,6 +46,8 @@ const SidebarButton = ({ onPress, variant, children, ...others }) => {
     <BaseControl
       onPress={onPress}
       rippleColor={buttonVariants[variant].rippleColor}
+      backgroundColor={buttonVariants[variant].backgroundColor}
+      borderColor={buttonVariants[variant].borderColor}
       {...others}
     >
       <StyledView variant={variant}>{_children}</StyledView>

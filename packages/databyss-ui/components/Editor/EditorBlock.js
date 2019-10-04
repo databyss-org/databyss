@@ -1,6 +1,7 @@
 import React from 'react'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { Text, View } from '@databyss-org/ui/primitives'
+import EditorMenu from './EditorMenu/EditorMenu'
 
 const styleSelector = type => {
   switch (type) {
@@ -17,19 +18,27 @@ const styleSelector = type => {
   }
 }
 
-const EditorBlock = ({ type, children }) => (
-  <Grid mb="medium" flexWrap="nowrap" columnGap="small" alignItems="baseline">
+const EditorBlock = ({ children, node, editableState }) => (
+  // use context editor here
+  <Grid mb="medium" flexWrap="nowrap" columnGap="small" alignItems="flex-start">
     <View
       contentEditable="false"
       suppressContentEditableWarning
       css={{ userSelect: 'none' }}
+      width={1 / 10}
+      overflow="visible"
     >
-      +
+      <View position="absolute">
+        {node.text.length < 1 && (
+          <EditorMenu node={node} editableState={editableState} />
+        )}
+      </View>
     </View>
+
     <View flexShrink={1} overflow="visible">
       <Text
-        variant={styleSelector(type).style}
-        color={styleSelector(type).color}
+        variant={styleSelector(node.type).style}
+        color={styleSelector(node.type).color}
       >
         {children}
       </Text>

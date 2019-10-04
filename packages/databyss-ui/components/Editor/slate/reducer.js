@@ -9,7 +9,9 @@ import {
   TOGGLE_MARK,
   HOTKEY,
   CLEAR_BLOCK,
+  ADD_TAG,
 } from '../state/constants'
+// import { addTag } from '../state/actions'
 
 export const newBlock = id =>
   Block.fromJSON({
@@ -171,6 +173,15 @@ const onHotKey = command => (editor, value, next) => {
 
   next(editor, value)
 }
+
+const addTag = tag => (editor, value, next) => {
+  ;({
+    SOURCE: () => editor.insertText('@'),
+    TOPIC: () => editor.insertText('#'),
+    LOCATION: () => editor.toggleMark('location'),
+  }[tag]())
+  next(editor, value)
+}
 export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
@@ -223,6 +234,12 @@ export default (editableState, action) => {
       return {
         ...editableState,
         editorCommands: clearBlockById(action.payload.id),
+      }
+    }
+    case ADD_TAG: {
+      return {
+        ...editableState,
+        editorCommands: addTag(action.payload.tag),
       }
     }
     default:

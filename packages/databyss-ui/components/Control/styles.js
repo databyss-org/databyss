@@ -51,7 +51,7 @@ export default (theme = defaultTheme) => ({
       right: '-4px',
       backgroundColor: theme.black,
       opacity: 0,
-      borderRadius: '3px',
+      borderRadius: theme.borderRadius,
     },
 
     '&$disabled': {

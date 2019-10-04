@@ -1,5 +1,20 @@
 import { configure } from '@storybook/react'
 import { setOptions } from '@storybook/addon-options'
+import { addParameters } from '@storybook/react'
+import { themes } from '@storybook/theming'
+import colors from '../packages/databyss-ui/theming/colors'
+
+addParameters({
+  darkMode: {
+    // Override the default dark theme
+    dark: {
+      ...themes.dark,
+      appBg: colors.gray[2],
+      appContentBg: colors.gray[0],
+      barBg: colors.gray[0],
+    },
+  },
+})
 
 setOptions({
   /**

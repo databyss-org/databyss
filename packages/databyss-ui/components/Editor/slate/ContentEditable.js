@@ -124,10 +124,6 @@ const renderInline = ({ node, attributes }, editor, next) => {
   return next()
 }
 
-const renderBlock = ({ node, children }) => (
-  <EditorBlock type={node.type}>{children}</EditorBlock>
-)
-
 const renderMark = (props, editor, next) => {
   const { children, mark, attributes } = props
   switch (mark.type) {
@@ -236,9 +232,6 @@ const SlateContentEditable = ({
     if (_nextText !== _prevText) {
       const block = _nextEditableState.value.anchorBlock
       const ranges = getBlockRanges(block)
-      // const block = _nextEditableState.value.anchorBlock
-      // const jsonBlockValue = { ...block.toJSON(), key: block.key }
-      // const ranges = getRangesFromBlock(jsonBlockValue).ranges
       onActiveBlockContentChange(_nextText, _nextEditableState, ranges)
       return true
     }
@@ -402,6 +395,12 @@ const SlateContentEditable = ({
 
     return next()
   }
+
+  const renderBlock = ({ node, children }) => (
+    <EditorBlock type={node.type} node={node} editableState={_editableState}>
+      {children}
+    </EditorBlock>
+  )
 
   return (
     <Editor
