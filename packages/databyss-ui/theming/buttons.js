@@ -42,12 +42,12 @@ const sidebarButton = () => ({
   alignItems: 'center',
   justifyContent: 'center',
   padding: space.small,
-  height: '10px',
+  //  height: '10px',
   // paddingLeft: space.small,
   // paddingRight: space.small,
   // paddingTop: space.tiny,
   // paddingBottom: space.tiny,
-  borderRadius: '50%',
+  // borderRadius: '50%',
 })
 
 const buttonVariants = {
@@ -71,9 +71,6 @@ const buttonVariants = {
     backgroundColor: 'background.3',
     // TODO: this doesnt get evaluated
     borderColor: 'secondary.1',
-
-    // borderColor: 'grey',
-    borderWidth: '1px',
     color: 'text.4',
   },
   menuAction: {

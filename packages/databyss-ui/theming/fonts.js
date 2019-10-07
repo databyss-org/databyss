@@ -33,7 +33,20 @@ export const weightUnits = Platform.select({
 export const underline = Platform.select({
   ios: { textDecorationLine: 'underline' },
   android: { textDecorationLine: 'underline' },
-  default: { textDecoration: 'underline' },
+  default: {
+    textDecoration: 'underline',
+  },
+})
+
+export const dashedUnderline = Platform.select({
+  ios: { textDecorationLine: 'underline' },
+  android: { textDecorationLine: 'underline' },
+  default: {
+    textDecorationStyle: ' dotted',
+    textDecorationLine: 'underline',
+    // TODO: this property needs to be dynamic
+    textDecorationColor: 'grey',
+  },
 })
 
 const fonts = {
@@ -147,6 +160,17 @@ const bodyUnderlineVariants = Object.keys(bodyVariants).reduce(
   {}
 )
 
+const bodyDashedUnderlineVariants = Object.keys(bodyVariants).reduce(
+  (variants, vk) => ({
+    ...variants,
+    [`${vk}DashedUnderline`]: {
+      ...bodyVariants[vk],
+      ...dashedUnderline,
+    },
+  }),
+  {}
+)
+
 const bodyItalicVariants = Object.keys(bodyVariants).reduce(
   (variants, vk) => ({
     ...variants,
@@ -180,6 +204,7 @@ const textVariants = {
   ...bodyBoldVariants,
   ...bodyItalicVariants,
   ...bodyBoldItalicVariants,
+  ...bodyDashedUnderlineVariants,
 }
 
 export default {

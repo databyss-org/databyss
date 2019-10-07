@@ -102,27 +102,6 @@ const schema = {
   },
 }
 
-// const renderInline = ({ node, attributes }, editor, next) => {
-//   const isSelected = editor.value.selection.focus.isInNode(node)
-//   const style = isSelected
-//     ? {
-//         backgroundColor: '#efefef',
-//       }
-//     : {}
-
-//   if (isAtomicInlineType(node.type)) {
-//     return (
-//       <span
-//         style={style}
-//         {...attributes}
-//         dangerouslySetInnerHTML={{ __html: node.text }}
-//       />
-//     )
-//   }
-
-//   return next()
-// }
-
 const renderInline = ({ node, attributes }, editor, next) => {
   const isSelected = editor.value.selection.focus.isInNode(node)
   const backgroundColor = isSelected ? 'background.2' : ''

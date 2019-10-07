@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import buttons from '@databyss-org/ui/theming/buttons'
+import space from '@databyss-org/ui/theming/space'
+
 import {
   View,
   MenuTagButton,
@@ -40,8 +42,13 @@ const EditorMenu = ({ node }) => {
   }
 
   return isVisible ? (
-    <Grid mb="small" rowGap="small" columnGap="small">
-      <View>
+    <Grid m="none" rowGap="small" columnGap="none">
+      <View
+        height={space.menuHeight}
+        width={1 / 10}
+        paddingLeft={space.small}
+        justifyContent="center"
+      >
         <SidebarButton variant="sidebarAction" onClick={onShowActions}>
           <LabeledIcon
             label="Tiny"
@@ -52,9 +59,13 @@ const EditorMenu = ({ node }) => {
           </LabeledIcon>
         </SidebarButton>
       </View>
-      <View>
+      <View
+        ml="smallNegative"
+        justifyContent="center"
+        height={space.menuHeight}
+      >
         {actions && (
-          <Grid mb="small" rowGap="small" columnGap="small">
+          <Grid mb="none" rowGap="small" columnGap="small">
             <View>
               <MenuTagButton
                 variant="menuAction"
