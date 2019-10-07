@@ -50,7 +50,6 @@ const SidebarButton = ({ onPress, variant, children, ...others }) => {
       height="20px"
       width="20px"
       justifyContent="center"
-      borderColor="text.6"
       borderWidth="1px"
       backgroundColor={buttonVariants[variant].backgroundColor}
       borderColor={buttonVariants[variant].borderColor}

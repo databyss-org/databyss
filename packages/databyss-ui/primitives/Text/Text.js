@@ -31,15 +31,14 @@ const StyledInline = styled(
   )
 )
 
-const Text = ({ children, color, inline, _html, ...others }) => {
-  return inline ? (
+const Text = ({ children, color, inline, _html, ...others }) =>
+  inline ? (
     <StyledInline dangerouslySetInnerHTML={_html} {...others} />
   ) : (
     <Styled variant="bodyNormal" color={color} {...others}>
       {children}
     </Styled>
   )
-}
 
 Text.defaultProps = {
   color: 'text.0',

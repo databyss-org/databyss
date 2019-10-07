@@ -2,8 +2,8 @@ import React, { useRef, useEffect } from 'react'
 import { KeyUtils, Value, Block } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
+import { Text } from '@databyss-org/ui/primitives'
 import EditorBlock from '../EditorBlock'
-// import EditorInline from '../EditorInline'
 import { getRawHtmlForBlock, entities } from '../state/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../EditorProvider'
@@ -17,7 +17,6 @@ import hotKeys, {
 } from './hotKeys'
 import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
-import { Text } from '@databyss-org/ui/primitives'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 

@@ -1,8 +1,8 @@
 import React from 'react'
-import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { Text, View } from '@databyss-org/ui/primitives'
-import EditorMenu from './EditorMenu/EditorMenu'
+import Grid from '@databyss-org/ui/components/Grid/Grid'
 import space from '@databyss-org/ui/theming/space'
+import EditorMenu from './EditorMenu/EditorMenu'
 
 const TextBlock = ({ children, variant, color }) => (
   <Text variant={variant} color={color}>
