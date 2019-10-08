@@ -7,6 +7,7 @@ import EditorBlock from '../EditorBlock'
 import { getRawHtmlForBlock, entities } from '../state/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../EditorProvider'
+import FormatMenu from '../EditorMenu/FormatMenu'
 import hotKeys, {
   START_OF_LINE,
   END_OF_LINE,
@@ -147,6 +148,7 @@ const SlateContentEditable = ({
   const { activeBlockId, editableState, blocks, page } = editorState
 
   const editableRef = useRef(null)
+  const menuRef = useRef(null)
 
   const getBlockRanges = block => {
     const jsonBlockValue = { ...block.toJSON(), key: block.key }
@@ -401,6 +403,16 @@ const SlateContentEditable = ({
     <EditorBlock node={node}>{children}</EditorBlock>
   )
 
+  const renderEditor = (props, editor, next) => {
+    const children = next()
+    return (
+      <React.Fragment>
+        {children}
+        <FormatMenu ref={menuRef} editor={editor} editableRef={editableRef} />
+      </React.Fragment>
+    )
+  }
+
   return (
     <Editor
       value={_editableState.value}
@@ -408,6 +420,7 @@ const SlateContentEditable = ({
       onChange={onChange}
       renderBlock={renderBlock}
       renderInline={renderInline}
+      renderEditor={renderEditor}
       schema={schema}
       onKeyUp={onKeyUp}
       onKeyDown={onKeyDown}

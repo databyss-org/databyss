@@ -149,6 +149,7 @@
     "docusaurus": "^1.12.0",
     "dotenv": "^8.0.0",
     "dotenv-expand": "^5.1.0",
+    "emotion": "^10.0.17",
     "eslint": "5.16.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-config-prettier": "^2.9.0",
