@@ -127,18 +127,22 @@ const renderMark = (props, editor, next) => {
     case 'italic':
       return <i {...attributes}>{children}</i>
     case 'location':
-      return (
-        <div
-          {...attributes}
-          borderBottom="1px dashed"
-          borderColor="text.4"
-          display="inline"
-          borderRadius={0}
-        >
-          {children}
-        </div>
-      )
-    //  return <i {...attributes}>{props.children}</i>
+      if (editor.value.anchorBlock.type !== 'LOCATION') {
+        return (
+          <div
+            {...attributes}
+            style={{
+              borderBottom: '1px dashed',
+              borderColor: 'grey',
+              display: 'inline',
+              borderRadius: 0,
+            }}
+          >
+            {children}
+          </div>
+        )
+      }
+      return next()
     default:
       return next()
   }
