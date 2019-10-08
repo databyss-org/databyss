@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react'
 import { KeyUtils, Value, Block } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
-import { Text } from '@databyss-org/ui/primitives'
+import { RawHtml } from '@databyss-org/ui/primitives'
 import EditorBlock from '../EditorBlock'
 import { getRawHtmlForBlock, entities } from '../state/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
@@ -107,11 +107,10 @@ const renderInline = ({ node, attributes }, editor, next) => {
 
   if (isAtomicInlineType(node.type)) {
     return (
-      <Text
-        inline
+      <RawHtml
         backgroundColor={backgroundColor}
-        {...attributes}
         _html={{ __html: node.text }}
+        {...attributes}
       />
     )
   }

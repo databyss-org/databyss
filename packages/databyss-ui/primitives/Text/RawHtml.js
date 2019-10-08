@@ -1,6 +1,7 @@
 import React from 'react'
 import { variant, color, compose } from 'styled-system'
 import styled from '../styled'
+import IS_NATIVE from '../../lib/isNative'
 
 const variants = variant({
   prop: 'variant',
@@ -11,7 +12,7 @@ const Styled = styled(
   {
     ios: 'Text',
     android: 'Text',
-    default: 'div',
+    default: 'span',
   },
   compose(
     variants,
@@ -19,14 +20,15 @@ const Styled = styled(
   )
 )
 
-const Text = ({ children, color, inline, _html, ...others }) => (
-  <Styled variant="bodyNormal" color={color} {...others}>
-    {children}
-  </Styled>
-)
+const RawHtml = ({ _html, ...others }) => {
+  if (IS_NATIVE) {
+    throw new Error('Component not availablle in React Native')
+  }
+  return <Styled dangerouslySetInnerHTML={_html} {...others} />
+}
 
-Text.defaultProps = {
+RawHtml.defaultProps = {
   color: 'text.0',
 }
 
-export default Text
+export default RawHtml

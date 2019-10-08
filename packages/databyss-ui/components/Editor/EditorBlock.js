@@ -14,9 +14,21 @@ const textSelector = ({ children, type }) => {
   const textStyle = type =>
     ({
       SOURCE: { variant: 'bodyNormalUnderline', color: 'text.0' },
+      // WRAP INLINE IN VIEW WITH BOTTOM BORDER
+      // TRY CHANGE DISLAY TO INLINE FLEX
       LOCATION: {
-        variant: 'bodyNormalDashedUnderline',
+        variant: 'bodyNormal',
         color: 'text.0',
+        children: (
+          <View
+            borderBottom="1px dashed"
+            borderColor="text.4"
+            display="inline"
+            borderRadius={0}
+          >
+            {children}
+          </View>
+        ),
       },
       TOPIC: {
         variant: 'bodyNormalSemibold',
