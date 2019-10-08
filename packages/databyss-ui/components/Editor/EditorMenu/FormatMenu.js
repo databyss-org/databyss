@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
 import { cx, css } from 'emotion'
+import { useEditorContext } from '../EditorProvider'
+import { toggleMark } from '../state/actions'
 
 export const Menu = React.forwardRef(({ className, ...props }, ref) => (
   <div
@@ -21,10 +23,20 @@ export const Menu = React.forwardRef(({ className, ...props }, ref) => (
 ))
 
 const MarkButton = ({ editor, type, icon }) => {
+  const [editorState, dispatchEditor] = useEditorContext()
   const { value } = editor
   const isActive = value.activeMarks.some(mark => mark.type === type)
+
   return (
-    <div style={{ color: 'white' }}>button</div>
+    <button
+      onMouseDown={e => {
+        e.preventDefault()
+        dispatchEditor(toggleMark(type, { value }))
+        // console.log(type)
+      }}
+    >
+      {type}
+    </button>
     // <Button
     //   reversed
     //   active={isActive}
@@ -85,8 +97,9 @@ const HoverMenu = ({ editor, editableRef }) => {
         transition: opacity 0.75s;
       `}
     >
-      <MarkButton editor={editor} type="bold" icon="format_bold" />
-      <MarkButton editor={editor} type="italic" icon="format_italic" />
+      <MarkButton editor={editor} type="bold" />
+      <MarkButton editor={editor} type="italic" />
+      <MarkButton editor={editor} type="location" />
     </Menu>,
     root
   )

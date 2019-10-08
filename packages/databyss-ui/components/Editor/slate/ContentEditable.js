@@ -125,7 +125,20 @@ const renderMark = (props, editor, next) => {
     case 'bold':
       return <strong {...attributes}>{children}</strong>
     case 'italic':
-      return <i {...attributes}>{props.children}</i>
+      return <i {...attributes}>{children}</i>
+    case 'location':
+      return (
+        <div
+          {...attributes}
+          borderBottom="1px dashed"
+          borderColor="text.4"
+          display="inline"
+          borderRadius={0}
+        >
+          {children}
+        </div>
+      )
+    //  return <i {...attributes}>{props.children}</i>
     default:
       return next()
   }
@@ -403,7 +416,7 @@ const SlateContentEditable = ({
     <EditorBlock node={node}>{children}</EditorBlock>
   )
 
-  const renderEditor = (props, editor, next) => {
+  const renderEditor = ({}, editor, next) => {
     const children = next()
     return (
       <React.Fragment>
