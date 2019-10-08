@@ -49,7 +49,11 @@ const EditorMenu = ({ node }) => {
         paddingLeft={space.small}
         justifyContent="center"
       >
-        <SidebarButton variant="sidebarAction" onClick={onShowActions}>
+        <SidebarButton
+          variant="sidebarAction"
+          onClick={onShowActions}
+          data-test-block-menu-opener
+        >
           <LabeledIcon
             label="Tiny"
             sizeVariant="tiny"
@@ -68,6 +72,7 @@ const EditorMenu = ({ node }) => {
           <Grid mb="none" rowGap="small" columnGap="small">
             <View>
               <MenuTagButton
+                data-test-block-menu-source
                 variant="menuAction"
                 onClick={() => onMenuAction('SOURCE')}
               >
@@ -77,6 +82,7 @@ const EditorMenu = ({ node }) => {
 
             <View>
               <MenuTagButton
+                data-test-block-menu-topic
                 variant="menuAction"
                 onClick={() => onMenuAction('TOPIC')}
               >
@@ -85,6 +91,7 @@ const EditorMenu = ({ node }) => {
             </View>
             <View>
               <MenuTagButton
+                data-test-block-menu-location
                 variant="menuAction"
                 onClick={() => onMenuAction('LOCATION')}
               >

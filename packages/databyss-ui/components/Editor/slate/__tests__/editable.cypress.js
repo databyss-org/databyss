@@ -207,6 +207,7 @@ context('Editor', () => {
       .type('this whole block should get tagged as a location')
       .newLine()
       .type('{uparrow}')
+      .type('{uparrow}')
 
     const expected = toSlateJson(
       <value>
