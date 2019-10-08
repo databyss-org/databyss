@@ -148,7 +148,7 @@ const SlateContentEditable = ({
   const { activeBlockId, editableState, blocks, page } = editorState
 
   const editableRef = useRef(null)
-  const menuRef = useRef(null)
+  // const menuRef = useRef(null)
 
   const getBlockRanges = block => {
     const jsonBlockValue = { ...block.toJSON(), key: block.key }
@@ -408,7 +408,7 @@ const SlateContentEditable = ({
     return (
       <React.Fragment>
         {children}
-        <FormatMenu ref={menuRef} editor={editor} editableRef={editableRef} />
+        <FormatMenu editor={editor} editableRef={editableRef} />
       </React.Fragment>
     )
   }

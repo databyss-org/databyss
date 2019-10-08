@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
 import { cx, css } from 'emotion'
 
@@ -38,7 +38,8 @@ const MarkButton = ({ editor, type, icon }) => {
   )
 }
 
-const HoverMenu = React.forwardRef(({ editor, editableRef }, ref) => {
+const HoverMenu = ({ editor, editableRef }) => {
+  const menuRef = useRef(null)
   const root = editableRef.current
     ? editableRef.current.el
     : window.document.getElementById('root')
@@ -48,7 +49,7 @@ const HoverMenu = React.forwardRef(({ editor, editableRef }, ref) => {
   })
 
   const updateMenu = () => {
-    const menu = ref.current
+    const menu = menuRef.current
     if (!menu) return
     const { value } = editor
     const { fragment, selection } = value
@@ -70,7 +71,7 @@ const HoverMenu = React.forwardRef(({ editor, editableRef }, ref) => {
 
   return ReactDOM.createPortal(
     <Menu
-      ref={ref}
+      ref={menuRef}
       className={css`
         padding: 8px 7px 6px;
         position: absolute;
@@ -89,6 +90,6 @@ const HoverMenu = React.forwardRef(({ editor, editableRef }, ref) => {
     </Menu>,
     root
   )
-})
+}
 
 export default HoverMenu
