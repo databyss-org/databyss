@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react'
 import { KeyUtils, Value, Block } from 'slate'
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
-import { RawHtml } from '@databyss-org/ui/primitives'
+import { RawHtml, View } from '@databyss-org/ui/primitives'
 import EditorBlock from '../EditorBlock'
 import { getRawHtmlForBlock, entities } from '../state/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
@@ -128,18 +128,18 @@ const renderMark = (props, editor, next) => {
       return <i {...attributes}>{children}</i>
     case 'location':
       if (editor.value.anchorBlock.type !== 'LOCATION') {
+        const underRef = useRef(null)
+
         return (
-          <div
+          <View
             {...attributes}
-            style={{
-              borderBottom: '1px dashed',
-              borderColor: 'grey',
-              display: 'inline',
-              borderRadius: 0,
-            }}
+            borderBottom="1px dashed"
+            borderColor="text.4"
+            display="inline"
+            borderRadius={0}
           >
             {children}
-          </div>
+          </View>
         )
       }
       return next()
