@@ -3,12 +3,7 @@ import Grid from '@databyss-org/ui/components/Grid/Grid'
 import buttons from '@databyss-org/ui/theming/buttons'
 import space from '@databyss-org/ui/theming/space'
 
-import {
-  View,
-  MenuTagButton,
-  SidebarButton,
-  Icon,
-} from '@databyss-org/ui/primitives'
+import { View, Button, Icon } from '@databyss-org/ui/primitives'
 import Close from '@databyss-org/ui/assets/close-menu.svg'
 import Add from '@databyss-org/ui/assets/add.svg'
 import { useEditorContext } from '../EditorProvider'
@@ -49,7 +44,7 @@ const EditorMenu = ({ node }) => {
         paddingLeft={space.small}
         justifyContent="center"
       >
-        <SidebarButton
+        <Button
           variant="sidebarAction"
           onClick={onShowActions}
           data-test-block-menu-opener
@@ -61,7 +56,7 @@ const EditorMenu = ({ node }) => {
           >
             <View>{actions ? <Close /> : <Add />}</View>
           </LabeledIcon>
-        </SidebarButton>
+        </Button>
       </View>
       <View
         ml="smallNegative"
@@ -71,32 +66,32 @@ const EditorMenu = ({ node }) => {
         {actions && (
           <Grid mb="none" rowGap="small" columnGap="small">
             <View>
-              <MenuTagButton
+              <Button
                 data-test-block-menu-source
                 variant="menuAction"
                 onClick={() => onMenuAction('SOURCE')}
               >
                 @ source
-              </MenuTagButton>
+              </Button>
             </View>
 
             <View>
-              <MenuTagButton
+              <Button
                 data-test-block-menu-topic
                 variant="menuAction"
                 onClick={() => onMenuAction('TOPIC')}
               >
                 # topic
-              </MenuTagButton>
+              </Button>
             </View>
             <View>
-              <MenuTagButton
+              <Button
                 data-test-block-menu-location
                 variant="menuAction"
                 onClick={() => onMenuAction('LOCATION')}
               >
                 location
-              </MenuTagButton>
+              </Button>
             </View>
           </Grid>
         )}

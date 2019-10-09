@@ -1,5 +1,12 @@
 import React from 'react'
-import { variant, flexbox, shadow, layout, compose } from 'styled-system'
+import {
+  variant,
+  flexbox,
+  shadow,
+  layout,
+  compose,
+  border,
+} from 'styled-system'
 import { BaseControl, Text } from '../'
 // HACK: if View is imported from '../' above, it breaks storybook:build (reason unknown)
 import styled from '../styled'
@@ -20,7 +27,8 @@ const StyledControl = styled(
     flexbox,
     shadow,
     layout,
-    variants
+    variants,
+    border
   )
 )
 
@@ -29,7 +37,13 @@ const Button = ({ onPress, variant, children, ...others }) => {
   const { buttonVariants, buttonThemes } = buttons
   if (typeof children === 'string') {
     _children = (
-      <Text variant="uiTextNormal" color={buttonVariants[variant].color}>
+      <Text
+        variant="uiTextNormal"
+        color={buttonVariants[variant].color}
+        {...(buttonThemes[variant].textProps
+          ? buttonThemes[variant].textProps
+          : {})}
+      >
         {children}
       </Text>
     )

@@ -2,6 +2,8 @@ import effects from './effects'
 import { border, borderRadius, pxUnits } from './views'
 import space from './space'
 
+export const editorMenuButtonHeight = 24
+
 const button = () => ({
   display: 'flex',
   flexDirection: 'column',
@@ -34,6 +36,7 @@ const menuButton = () => ({
   paddingTop: space.tiny,
   paddingBottom: space.tiny,
   borderRadius: pxUnits(5),
+  height: pxUnits(editorMenuButtonHeight),
 })
 
 const sidebarButton = () => ({
@@ -71,7 +74,11 @@ const buttonVariants = {
     backgroundColor: 'background.3',
     // TODO: this doesnt get evaluated
     borderColor: 'secondary.1',
+    borderWidth: pxUnits(1),
     color: 'text.4',
+    borderRadius: pxUnits(editorMenuButtonHeight),
+    width: pxUnits(editorMenuButtonHeight),
+    height: pxUnits(editorMenuButtonHeight),
   },
   menuAction: {
     ...menuButton(),
@@ -99,6 +106,9 @@ const buttonThemes = {
     rippleColor: 'secondary.2',
     hoverColor: 'secondary.1',
     activeColor: 'secondary.4',
+    textProps: {
+      variant: 'uiTextSmall',
+    },
   },
   sidebarAction: {
     rippleColor: 'primary.2',
