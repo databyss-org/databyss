@@ -199,7 +199,7 @@ context('Editor', () => {
     cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
 
-  it('should toggle a location mark and tag block as location', () => {
+  it('should toggle a location mark and tag block as location, then split up block into two location blocks', () => {
     cy.get('@editor')
       .endOfDoc()
       .type('{backspace}')
@@ -207,6 +207,12 @@ context('Editor', () => {
       .type('this whole block should get tagged as a location')
       .newLine()
       .type('{uparrow}')
+      .type('{rightarrow}')
+      .type('{rightarrow}')
+      .type('{rightarrow}')
+      .type('{rightarrow}')
+      .type('{rightarrow}')
+      .newLine()
 
     const expected = toSlateJson(
       <value>
@@ -223,9 +229,93 @@ context('Editor', () => {
             On the limitation of third-order thought to assertion
           </block>
           <block type="LOCATION">
+            <mark type="location">{'this '}</mark>
+          </block>
+          <block type="LOCATION">
             <mark type="location">
-              this whole block should get tagged as a location
+              whole block should get tagged as a location
             </mark>
+          </block>
+          <block type="ENTRY" />
+        </document>
+      </value>
+    )
+    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+  })
+
+  it('should toggle inline location mark', () => {
+    cy.get('@editor')
+      .endOfDoc()
+      .type('{backspace}')
+      .type('this block has an ')
+      .toggleLocation()
+      .type('inline location')
+      .toggleLocation()
+      .type(' within an entry')
+      .newLine()
+      .type('{uparrow}')
+      .type('{uparrow}')
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE">
+            <text />
+            <inline type="SOURCE">
+              Stamenov, Language Structure, Discourse and the Access to
+              Consciousness
+            </inline>
+            <text />
+          </block>
+          <block type="ENTRY">
+            On the limitation of third-order thought to assertion
+          </block>
+          <block type="ENTRY">
+            <text>{'this block has an '}</text>
+            <mark type="location">inline location</mark>
+            <text>{' within an entry'}</text>
+          </block>
+          <block type="ENTRY" />
+        </document>
+      </value>
+    )
+    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+  })
+
+  it('should toggle LOCATION type then go back to ENTRY when location toggle is entered within the entry', () => {
+    cy.get('@editor')
+      .endOfDoc()
+      .type('{backspace}')
+      .toggleLocation()
+      .type('this whole block should get tagged as an ')
+      .toggleLocation()
+      .type('entry')
+      .newLine()
+      .type('{uparrow}')
+      .type('{uparrow}')
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE">
+            <text />
+            <inline type="SOURCE">
+              Stamenov, Language Structure, Discourse and the Access to
+              Consciousness
+            </inline>
+            <text />
+          </block>
+          <block type="ENTRY">
+            On the limitation of third-order thought to assertion
+          </block>
+          <block type="ENTRY">
+            <text>
+              <mark type="location">
+                {'this whole block should get tagged as an '}
+              </mark>
+            </text>
+            {'entry'}
+            <text />
           </block>
           <block type="ENTRY" />
         </document>

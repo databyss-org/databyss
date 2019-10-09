@@ -9,7 +9,9 @@ import {
   TOGGLE_MARK,
   HOTKEY,
   CLEAR_BLOCK,
+  ADD_TAG,
 } from '../state/constants'
+// import { addTag } from '../state/actions'
 
 export const newBlock = id =>
   Block.fromJSON({
@@ -40,6 +42,34 @@ export const isAtomicInlineType = type => {
       return false
   }
 }
+const handleNewBlockConditions = (activeBlock, editor) => {
+  if (isAtomicInlineType(activeBlock.type)) {
+    if (
+      isAtomicInlineType(editor.value.previousBlock.type) &&
+      editor.value.previousBlock.text
+    ) {
+      return true
+    }
+    if (!editor.value.previousBlock.text) {
+      return true
+    }
+  } else if (
+    // if current block is location and previous block is empty
+    // replace with empty block
+    activeBlock.type === 'LOCATION' &&
+    editor.value.previousBlock.text.length === 0
+  ) {
+    return true
+  } else if (
+    // if previous block and active block have content and both tagged as location
+    activeBlock.type === 'LOCATION' &&
+    activeBlock.text.length !== 0
+  ) {
+    return true
+  }
+
+  return false
+}
 
 const setActiveBlockType = type => (editor, value, next) => {
   const _activeBlock = findActiveBlock(value)
@@ -51,6 +81,11 @@ const setActiveBlockType = type => (editor, value, next) => {
         editor.toggleMark(m[0].type)
       })
     }
+  }
+
+  if (!handleNewBlockConditions(_activeBlock, editor)) {
+    editor.setNodeByKey(_activeBlock.key, { type })
+    next(editor, value)
   }
 
   if (isAtomicInlineType(_activeBlock.type)) {
@@ -67,7 +102,9 @@ const setActiveBlockType = type => (editor, value, next) => {
     if (!editor.value.previousBlock.text) {
       editor.setNodeByKey(editor.value.previousBlock.key, { type: 'ENTRY' })
     }
-  } else if (
+  }
+
+  if (
     // if current block is location and previous block is empty
     // replace with empty block
     _activeBlock.type === 'LOCATION' &&
@@ -78,11 +115,8 @@ const setActiveBlockType = type => (editor, value, next) => {
       newBlock(editor.value.previousBlock.key)
     )
     editor.toggleMark('location')
-    next(editor, value)
-  } else {
-    editor.setNodeByKey(_activeBlock.key, { type })
-    next(editor, value)
   }
+  next(editor, value)
 }
 
 const clearBlockById = id => (editor, value, next) => {
@@ -171,6 +205,15 @@ const onHotKey = command => (editor, value, next) => {
 
   next(editor, value)
 }
+
+const addTag = tag => (editor, value, next) => {
+  ;({
+    SOURCE: () => editor.insertText('@'),
+    TOPIC: () => editor.insertText('#'),
+    LOCATION: () => editor.toggleMark('location'),
+  }[tag]())
+  next(editor, value)
+}
 export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
@@ -223,6 +266,12 @@ export default (editableState, action) => {
       return {
         ...editableState,
         editorCommands: clearBlockById(action.payload.id),
+      }
+    }
+    case ADD_TAG: {
+      return {
+        ...editableState,
+        editorCommands: addTag(action.payload.tag),
       }
     }
     default:
