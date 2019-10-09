@@ -1,6 +1,6 @@
 import React from 'react'
 import { Platform, View } from 'react-native'
-import { color, layout, compose } from 'styled-system'
+import { color, layout, compose, space, border } from 'styled-system'
 import styled from '../../styled'
 
 const Styled = styled(
@@ -10,6 +10,8 @@ const Styled = styled(
   },
   compose(
     color,
+    border,
+    space,
     layout
   )
 )

@@ -1,7 +1,8 @@
 import { Platform } from 'react-native'
 
 export const pxUnits = Platform.select({
-  ios: v => v,
+  // HACK: add 0.01 to tell YGValue that we want pt units not "em" (or equiv)
+  ios: v => v + 0.01,
   android: v => v,
   default: v => `${v}px`,
 })
