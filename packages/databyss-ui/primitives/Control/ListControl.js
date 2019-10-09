@@ -24,14 +24,15 @@ const ListControl = ({
             }
           : {}
       return (
-        <View borderRadius={0} {...borderProps}>
+        <View {...borderProps}>
           <BaseControl
             key={keySelector({ item, index })}
             onPress={onItemPress && (() => onItemPress({ item, index }))}
             borderRadius={0}
-            containerProps={{ borderRadius: 0 }}
-            paddingTop={pxUnits(itemSpacing)}
-            paddingBottom={pxUnits(itemSpacing)}
+            childViewProps={{
+              paddingTop: pxUnits(itemSpacing),
+              paddingBottom: pxUnits(itemSpacing),
+            }}
           >
             {renderItem({ item, index })}
           </BaseControl>
