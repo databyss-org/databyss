@@ -229,7 +229,7 @@ context('Editor', () => {
             On the limitation of third-order thought to assertion
           </block>
           <block type="LOCATION">
-            <mark type="location">{'this '}</mark>
+            <mark type="location">this </mark>
           </block>
           <block type="LOCATION">
             <mark type="location">
@@ -271,9 +271,9 @@ context('Editor', () => {
             On the limitation of third-order thought to assertion
           </block>
           <block type="ENTRY">
-            <text>{'this block has an '}</text>
+            <text>this block has an </text>
             <mark type="location">inline location</mark>
-            <text>{' within an entry'}</text>
+            <text> within an entry</text>
           </block>
           <block type="ENTRY" />
         </document>
@@ -311,10 +311,10 @@ context('Editor', () => {
           <block type="ENTRY">
             <text>
               <mark type="location">
-                {'this whole block should get tagged as an '}
+                this whole block should get tagged as an{' '}
               </mark>
             </text>
-            {'entry'}
+            entry
             <text />
           </block>
           <block type="ENTRY" />
