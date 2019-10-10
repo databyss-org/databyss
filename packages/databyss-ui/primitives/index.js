@@ -8,6 +8,8 @@ import SwitchControl from './Control/SwitchControl'
 import ListControl from './Control/ListControl'
 import Button from './Button/Button'
 import Icon from './Icon/Icon'
+import Modal from './Modal/Modal'
+import Grid from './Grid/Grid'
 
 export {
   View,
@@ -19,5 +21,7 @@ export {
   ListControl,
   Button,
   Icon,
+  Modal,
+  Grid,
   pxUnits,
 }

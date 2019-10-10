@@ -17,7 +17,6 @@ const button = () => ({
 })
 
 const linkButton = () => ({
-  textDecoration: 'underline',
   paddingLeft: space.small,
   paddingRight: space.small,
   paddingTop: space.small,

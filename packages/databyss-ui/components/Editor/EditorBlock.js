@@ -1,6 +1,5 @@
 import React from 'react'
-import Grid from '@databyss-org/ui/components/Grid/Grid'
-import { Text, View } from '@databyss-org/ui/primitives'
+import { Text, View, Grid } from '@databyss-org/ui/primitives'
 
 const styleSelector = type => {
   switch (type) {

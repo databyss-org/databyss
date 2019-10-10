@@ -5,6 +5,7 @@ import Views from '@databyss-org/ui/stories/System/Views'
 import Controls from '@databyss-org/ui/stories/System/Controls'
 import Buttons from '@databyss-org/ui/stories/System/Buttons'
 import Icons from '@databyss-org/ui/stories/System/Icons'
+import Modals from '@databyss-org/ui/stories/System/Modals'
 import ListControl, {
   ItemSeparators,
   ComplexItems,
@@ -26,3 +27,4 @@ storiesOf('Design System', module)
       <ComplexItems />
     </React.Fragment>
   ))
+  .add('Modals', () => <Modals />)

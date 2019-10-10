@@ -20,11 +20,14 @@ const Grid = ({
     })
   )
 
+  const columnGapCorrection = columnGap === 'none' ? 0 : `${columnGap}Negative`
+  const rowGapCorrection = rowGap === 'none' ? 0 : `${rowGap}Negative`
+
   return (
     <View {...others}>
       <View
-        mr={`${columnGap}Negative`}
-        mb={singleRow ? 0 : `${rowGap}Negative`}
+        mr={columnGapCorrection}
+        mb={singleRow ? 0 : rowGapCorrection}
         flexDirection="row"
         flexWrap={flexWrap || 'wrap'}
         alignItems={alignItems}

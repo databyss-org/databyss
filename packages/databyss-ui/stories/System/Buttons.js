@@ -1,6 +1,5 @@
 import React from 'react'
-import { Button, View } from '@databyss-org/ui/primitives'
-import Grid from '@databyss-org/ui/components/Grid/Grid'
+import { Button, View, Grid } from '@databyss-org/ui/primitives'
 import { Section } from './'
 
 export default () => (

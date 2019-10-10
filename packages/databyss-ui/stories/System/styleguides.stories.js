@@ -7,6 +7,7 @@ import Controls from './Controls'
 import Buttons from './Buttons'
 import Icons from './Icons'
 import ListControl, { ItemSeparators, ComplexItems } from './ListControl'
+import Modals from './Modals'
 
 storiesOf('Design System|Buttons', module)
   .addDecorator(ViewportDecorator)
@@ -28,3 +29,6 @@ storiesOf('Design System|ListControl', module)
   .add('Scrolling', () => <ListControl />)
   .add('Separators', () => <ItemSeparators />)
   .add('Complex', () => <ComplexItems />)
+storiesOf('Design System|Modals', module)
+  .addDecorator(ViewportDecorator)
+  .add('Default', () => <Modals />)
