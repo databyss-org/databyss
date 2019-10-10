@@ -99,16 +99,16 @@ const buttonThemes = {
   uiLink: {},
   externalLink: {},
   menuAction: {
-    rippleColor: 'secondary.2',
-    hoverColor: 'secondary.1',
-    activeColor: 'secondary.4',
+    rippleColor: 'background.2',
+    hoverColor: 'background.5',
+    activeColor: 'background.4',
     textProps: {
       variant: 'uiTextSmall',
     },
   },
   sidebarAction: {
     rippleColor: 'primary.2',
-    hoverColor: 'primary.1',
+    hoverColor: 'background.4',
     activeColor: 'primary.2',
   },
 }
