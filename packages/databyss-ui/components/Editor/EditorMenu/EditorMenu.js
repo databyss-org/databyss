@@ -7,7 +7,7 @@ import { View, Button, Icon } from '@databyss-org/ui/primitives'
 import Close from '@databyss-org/ui/assets/close-menu.svg'
 import Add from '@databyss-org/ui/assets/add.svg'
 import { useEditorContext } from '../EditorProvider'
-import { addTag } from '../state/actions'
+import { startTag } from '../state/actions'
 
 const EditorMenu = ({ node }) => {
   const [editorState, dispatchEditor] = useEditorContext()
@@ -24,7 +24,7 @@ const EditorMenu = ({ node }) => {
   }
 
   const onMenuAction = tag => {
-    dispatchEditor(addTag(tag, editorState.editableState))
+    dispatchEditor(startTag(tag, editorState.editableState))
     showActions(false)
   }
 
@@ -68,7 +68,7 @@ const EditorMenu = ({ node }) => {
         <Button
           variant="sidebarAction"
           onClick={onShowActions}
-          data-test-block-menu-opener
+          data-test-block-menu="open"
         >
           <Icon
             label="Tiny"

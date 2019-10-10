@@ -9,7 +9,7 @@ import {
   TOGGLE_MARK,
   HOTKEY,
   CLEAR_BLOCK,
-  ADD_TAG,
+  START_TAG,
 } from '../state/constants'
 // import { addTag } from '../state/actions'
 
@@ -174,7 +174,7 @@ const onHotKey = command => (editor, value, next) => {
   next(editor, value)
 }
 
-const addTag = tag => (editor, value, next) => {
+const startTag = tag => (editor, value, next) => {
   ;({
     SOURCE: () => editor.insertText('@'),
     TOPIC: () => editor.insertText('#'),
@@ -236,10 +236,10 @@ export default (editableState, action) => {
         editorCommands: clearBlockById(action.payload.id),
       }
     }
-    case ADD_TAG: {
+    case START_TAG: {
       return {
         ...editableState,
-        editorCommands: addTag(action.payload.tag),
+        editorCommands: startTag(action.payload.tag),
       }
     }
     default:

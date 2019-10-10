@@ -9,7 +9,7 @@ import {
   TOGGLE_MARK,
   HOTKEY,
   CLEAR_BLOCK,
-  ADD_TAG,
+  START_TAG,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -113,9 +113,9 @@ export function clearBlock(id, editableState) {
   }
 }
 
-export function addTag(tag, editableState) {
+export function startTag(tag, editableState) {
   return {
-    type: ADD_TAG,
+    type: START_TAG,
     payload: {
       tag,
       editableState,
