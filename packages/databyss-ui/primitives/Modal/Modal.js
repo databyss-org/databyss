@@ -11,7 +11,16 @@ ReactModal.setAppElement('#root')
 const StyledReactModal = styled(ReactModal, position)
 
 const Modal = ({ children, visible, onDismiss, ...others }) => {
-  const animations = makeAnimations()
+  const animations = makeAnimations({
+    slide: {
+      '0%': {
+        top: '100%',
+      },
+      '100%': {
+        top: '0',
+      },
+    },
+  })
 
   const sharedProps = {
     isOpen: visible,
@@ -23,15 +32,17 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
     bottom: 0,
     top: 0,
   }
-  const mobileCss = {}
+  const mobileCss = {
+    zIndex: 1000,
+  }
   const desktopProps = {}
   return (
     <StyledReactModal
       {...sharedProps}
       {...(isMobile() ? mobileProps : desktopProps)}
-      onAfterOpen={() => animations.slide.run('intro')}
+      onAfterOpen={() => animations.slide.intro.run()}
       onRequestClose={() => {
-        animations.slide.run('outro', () => {
+        animations.slide.outro.run(() => {
           if (onDismiss) {
             onDismiss()
           }
@@ -39,8 +50,8 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
       }}
       css={[
         isMobile() && mobileCss,
-        isMobile() && animations.slide.getCssFor('intro'),
-        isMobile() && animations.slide.getCssFor('outro'),
+        isMobile() && animations.slide.intro.css,
+        isMobile() && animations.slide.outro.css,
       ]}
     >
       {isMobile() ? (

@@ -40,7 +40,6 @@ const controlCss = props => ({
   '&:after': {
     ..._pseudomaskCss(props),
     backgroundColor: props.rippleColor,
-    zIndex: 1,
   },
 })
 

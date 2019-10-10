@@ -1,74 +1,52 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useState } from 'react'
-import { keyframes } from '@emotion/core'
+import { keyframes as makeKeyframes } from '@emotion/core'
 import theme from '../../theming/theme'
 
-const makeKeyframes = intro => ({
-  intro: keyframes(intro),
-  outro: keyframes({
-    '0%': {
-      ...intro['100%'],
-    },
-    '100%': {
-      ...intro['0%'],
-    },
-  }),
+const reverseKeyframes = keyframes => ({
+  '0%': {
+    ...keyframes['100%'],
+  },
+  '100%': {
+    ...keyframes['0%'],
+  },
 })
 
-const animationCss = animation => ({
+const animationCss = (animation, duration, timing) => ({
   animation,
-  animationDuration: `${theme.timing.medium}ms`,
-  animationTimingFunction: theme.timing.easeOut,
+  animationDuration: `${duration}ms`,
+  animationTimingFunction: timing,
 })
 
-const makeRunner = (key, animationStates) => onComplete => {
-  setTimeout(() => {
-    if (onComplete) {
-      onComplete()
-    }
-    animationStates[key].set(false)
-  }, theme.timing.medium)
-  animationStates[key].set(true)
-}
-
-const makeAnimation = () => {
-  const animations = makeKeyframes({
-    '0%': {
-      top: '100%',
-    },
-    '100%': {
-      top: 0,
-    },
-  })
-  const css = {
-    intro: animationCss(animations.intro),
-    outro: animationCss(animations.outro),
-  }
-  const [introState, setIntroState] = useState(false)
-  const [outroState, setOutroState] = useState(false)
-  const states = {
-    intro: {
-      get: introState,
-      set: v => setIntroState(v),
-    },
-    outro: {
-      get: outroState,
-      set: v => setOutroState(v),
-    },
-  }
-  const runners = {
-    intro: makeRunner('intro', states),
-    outro: makeRunner('outro', states),
-  }
-  const getCssFor = key => states[key].get && css[key]
-  const run = (key, onComplete) => runners[key](onComplete)
+const makeAnimation = (keyframes, duration, timing) => {
+  const [state, setState] = useState(false)
+  const animationKeyframes = makeKeyframes(keyframes)
 
   return {
-    getCssFor,
-    run,
+    css: state && animationCss(animationKeyframes, duration, timing),
+    run: onComplete => {
+      setTimeout(() => {
+        if (onComplete) {
+          onComplete()
+        }
+        setState(false)
+      }, duration)
+      setState(true)
+    },
   }
 }
 
-export default () => ({
-  slide: makeAnimation(),
-})
+const makeAnimations = (
+  keyframes,
+  duration = theme.timing.medium,
+  timing = theme.timing.easeOut
+) =>
+  Object.keys(keyframes).reduce((acc, key) => {
+    acc[key] = {
+      intro: makeAnimation(keyframes[key], duration, timing),
+      outro: makeAnimation(reverseKeyframes(keyframes[key]), duration, timing),
+    }
+    return acc
+  }, {})
+
+export default makeAnimations
