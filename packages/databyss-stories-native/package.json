@@ -21,12 +21,8 @@
     "react-native-svg-transformer": "^0.13.0"
   },
   "peerDependencies": {
-    "@databyss-org/ui": "1.1.29",
-    "react": "16.9.0"
     "@databyss-org/ui": "1.1.31",
     "react": "16.9.0"
-    "react": "16.9.0",
-    "@databyss-org/ui": "1.1.30"
   },
   "publishConfig": {
     "access": "public"

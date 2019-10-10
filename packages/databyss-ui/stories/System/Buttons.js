@@ -1,5 +1,6 @@
 import React from 'react'
 import { Grid } from '@databyss-org/ui'
+import { View, Button, Icon } from '@databyss-org/ui/primitives'
 import PlusSvg from '../../assets/add.svg'
 import { editorMenuButtonHeight } from '../../theming/buttons'
 import { Section } from './'
