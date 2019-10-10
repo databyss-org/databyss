@@ -2,20 +2,12 @@ import React, { useState } from 'react'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import buttons from '@databyss-org/ui/theming/buttons'
 import space from '@databyss-org/ui/theming/space'
-
+import { pxUnits } from '@databyss-org/ui/theming/views'
 import { View, Button, Icon } from '@databyss-org/ui/primitives'
 import Close from '@databyss-org/ui/assets/close-menu.svg'
 import Add from '@databyss-org/ui/assets/add.svg'
 import { useEditorContext } from '../EditorProvider'
 import { addTag } from '../state/actions'
-
-const LabeledIcon = ({ label, sizeVariant, children, color, ...others }) => (
-  <View alignItems="center" justifyContent="center" {...others}>
-    <Icon sizeVariant={sizeVariant} color={color} flexGrow={1}>
-      {children}
-    </Icon>
-  </View>
-)
 
 const EditorMenu = ({ node }) => {
   const [editorState, dispatchEditor] = useEditorContext()
@@ -36,11 +28,40 @@ const EditorMenu = ({ node }) => {
     showActions(false)
   }
 
+  const menuActions = [
+    {
+      ACTION: 'SOURCE',
+      label: '@ source',
+      testLabel: 'source',
+    },
+    {
+      ACTION: 'TOPIC',
+      label: '# topic',
+      testLabel: 'topic',
+    },
+    {
+      ACTION: 'LOCATION',
+      label: 'location',
+      testLabel: 'location',
+    },
+  ]
+
+  const menuActionButtons = menuActions.map((a, i) => (
+    <Button
+      variant="menuAction"
+      data-test-block-menu={a.testLabel}
+      key={i}
+      onClick={() => onMenuAction(a.ACTION)}
+    >
+      {a.label}
+    </Button>
+  ))
+
   return isVisible ? (
     <Grid m="none" rowGap="small" columnGap="none">
       <View
         height={space.menuHeight}
-        width={1 / 10}
+        width={pxUnits(32)}
         paddingLeft={space.small}
         justifyContent="center"
       >
@@ -49,50 +70,19 @@ const EditorMenu = ({ node }) => {
           onClick={onShowActions}
           data-test-block-menu-opener
         >
-          <LabeledIcon
+          <Icon
             label="Tiny"
             sizeVariant="tiny"
             color={buttonVariants.sidebarAction.color}
           >
             <View>{actions ? <Close /> : <Add />}</View>
-          </LabeledIcon>
+          </Icon>
         </Button>
       </View>
-      <View
-        ml="smallNegative"
-        justifyContent="center"
-        height={space.menuHeight}
-      >
+      <View ml={pxUnits(8)} justifyContent="center" height={space.menuHeight}>
         {actions && (
           <Grid mb="none" rowGap="small" columnGap="small">
-            <View>
-              <Button
-                data-test-block-menu-source
-                variant="menuAction"
-                onClick={() => onMenuAction('SOURCE')}
-              >
-                @ source
-              </Button>
-            </View>
-
-            <View>
-              <Button
-                data-test-block-menu-topic
-                variant="menuAction"
-                onClick={() => onMenuAction('TOPIC')}
-              >
-                # topic
-              </Button>
-            </View>
-            <View>
-              <Button
-                data-test-block-menu-location
-                variant="menuAction"
-                onClick={() => onMenuAction('LOCATION')}
-              >
-                location
-              </Button>
-            </View>
+            {menuActionButtons}
           </Grid>
         )}
       </View>
