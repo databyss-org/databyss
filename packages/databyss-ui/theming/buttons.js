@@ -1,7 +1,5 @@
-import Color from 'color'
-import { Platform } from 'react-native'
-import colors from './colors'
-import { border, pxUnits } from './views'
+import effects from './effects'
+import { border, borderRadius, pxUnits } from './views'
 import space from './space'
 
 const button = () => ({
@@ -13,16 +11,9 @@ const button = () => ({
   paddingRight: space.medium,
   paddingTop: space.small,
   paddingBottom: space.small,
-  borderRadius: pxUnits(5),
-  ...Platform.select({
-    ios: {},
-    android: {},
-    default: {
-      '& > div': {
-        zIndex: 1,
-      },
-    },
-  }),
+  marginTop: pxUnits(1),
+  borderRadius,
+  ...effects.buttonShadow,
 })
 
 const linkButton = () => ({
@@ -36,45 +27,39 @@ const linkButton = () => ({
 const buttonVariants = {
   primaryUi: {
     ...button(),
-    ...border(1, colors.blue[1]),
-    backgroundColor: colors.blue[1],
-    rippleColor: Color(colors.blue[0])
-      .darken(0.5)
-      .string(),
-    color: colors.white,
+    backgroundColor: 'primary.0',
+    color: 'primary.3',
   },
   secondaryUi: {
     ...button(),
-    ...border(1, colors.black),
-    backgroundColor: colors.transparent,
-    color: colors.black,
-  },
-  primaryExternal: {
-    ...button(),
-    ...border(1, colors.orange[0]),
-    backgroundColor: Color(colors.orange[0])
-      .alpha(0.2)
-      .rgb()
-      .string(),
-    color: colors.orange[0],
-    rippleColor: colors.orange[0],
-  },
-  secondaryExternal: {
-    ...button(),
-    ...border(1, colors.gray[2]),
-    backgroundColor: 'transparent',
-    color: colors.black,
+    ...border(1, 'secondary.0'),
+    backgroundColor: 'background.0',
+    color: 'secondary.3',
   },
   uiLink: {
     ...linkButton(),
-    color: colors.blue[1],
+    color: 'secondary.3',
   },
-  externalLink: {
-    ...linkButton(),
-    color: colors.orange[0],
+}
+
+const buttonThemes = {
+  primaryUi: {
+    rippleColor: 'primary.2',
+    hoverColor: 'primary.1',
+    activeColor: 'primary.2',
   },
+  secondaryUi: {
+    rippleColor: 'secondary.2',
+    hoverColor: 'secondary.1',
+    activeColor: 'secondary.2',
+  },
+  primaryExternal: {},
+  secondaryExternal: {},
+  uiLink: {},
+  externalLink: {},
 }
 
 export default {
   buttonVariants,
+  buttonThemes,
 }

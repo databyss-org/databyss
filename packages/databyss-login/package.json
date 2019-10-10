@@ -7,7 +7,7 @@
     "react-dom": "16.9.0",
     "@databyss-org/ui": "1.1.32",
     "@databyss-org/services": "1.1.32",
-    "@storybook/react": "5.1.11"
+    "@storybook/react": "5.2.1"
   },
   "dependencies": {
     "jsonwebtoken": "^8.5.1",

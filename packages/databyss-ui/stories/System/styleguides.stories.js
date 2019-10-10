@@ -6,13 +6,25 @@ import Views from './Views'
 import Controls from './Controls'
 import Buttons from './Buttons'
 import Icons from './Icons'
-import ListControl from './ListControl'
+import ListControl, { ItemSeparators, ComplexItems } from './ListControl'
 
-storiesOf('Design System', module)
+storiesOf('Design System|Buttons', module)
+  .addDecorator(ViewportDecorator)
+  .add('UI Buttons', () => <Buttons />)
+storiesOf('Design System|Typography', module)
   .addDecorator(ViewportDecorator)
   .add('Typography', () => <Typography />)
+storiesOf('Design System|Views', module)
+  .addDecorator(ViewportDecorator)
   .add('Views', () => <Views />)
+storiesOf('Design System|Controls', module)
+  .addDecorator(ViewportDecorator)
   .add('Controls', () => <Controls />)
-  .add('Buttons', () => <Buttons />)
+storiesOf('Design System|Icons', module)
+  .addDecorator(ViewportDecorator)
   .add('Icons', () => <Icons />)
-  .add('ListControl', () => <ListControl />)
+storiesOf('Design System|ListControl', module)
+  .addDecorator(ViewportDecorator)
+  .add('Scrolling', () => <ListControl />)
+  .add('Separators', () => <ItemSeparators />)
+  .add('Complex', () => <ComplexItems />)

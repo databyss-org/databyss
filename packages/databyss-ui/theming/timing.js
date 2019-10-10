@@ -1,4 +1,4 @@
-const timing = [75, 300, 500, 1000, 3000]
+const timing = [100, 300, 500, 1000, 1500]
 
 timing.slow = timing[3]
 timing.medium = timing[2]

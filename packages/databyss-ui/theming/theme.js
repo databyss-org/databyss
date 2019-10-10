@@ -1,14 +1,15 @@
 import colors from './colors'
+import effects from './effects'
 import responsive from './responsive'
 import space from './space'
 import sizes from './sizes'
-import views from './views'
+import views, { borderRadius } from './views'
 import fonts from './fonts'
 import timing from './timing'
 import buttons from './buttons'
 import icons from './icons'
 
-export default {
+const theme = {
   /* space */
   space,
 
@@ -24,6 +25,9 @@ export default {
   /* colors */
   colors,
 
+  /* colors */
+  effects,
+
   /* responsive */
   responsive,
 
@@ -36,14 +40,23 @@ export default {
   /* icons */
   ...icons,
 
-  /* shadows */
+  /* shadows (deprecated, use `effects`) */
   lightShadow:
     '0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)',
 
-  /* border radius */
-  borderRadius: '3px',
-
   zIndex: {
     modalOverlay: 200,
+  },
+}
+
+export default theme
+
+export { borderRadius }
+
+export const darkTheme = {
+  ...theme,
+  colors: {
+    ...theme.colors,
+    ...theme.colors.modes.dark,
   },
 }

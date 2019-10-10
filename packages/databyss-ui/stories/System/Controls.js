@@ -34,7 +34,7 @@ export default () => {
         </BaseControl>
         <BaseControl
           onPress={() => console.log('icon pressed')}
-          containerProps={{ flexDirection: 'row', alignItems: 'center' }}
+          childViewProps={{ flexDirection: 'row', alignItems: 'center' }}
         >
           <Icon sizeVariant="small" mr="tiny">
             <SourceSvg />

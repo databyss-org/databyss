@@ -34,6 +34,16 @@ export default () => (
             <Text variant="uiTextNormal">{ipsum}</Text>
           </View>
         </CaptionedView>
+        <CaptionedView caption="thickDark">
+          <View borderVariant="thickDark" mb="small">
+            <Text variant="uiTextNormal">{ipsum}</Text>
+          </View>
+        </CaptionedView>
+        <CaptionedView caption="thickLight">
+          <View borderVariant="thickLight" mb="small">
+            <Text variant="uiTextNormal">{ipsum}</Text>
+          </View>
+        </CaptionedView>
       </Grid>
     </Section>
     <Section title="Padding variants">

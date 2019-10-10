@@ -10,6 +10,10 @@ import IS_NATIVE from '../../lib/isNative'
 const variants = variant({
   prop: 'sizeVariant',
   scale: 'iconSizeVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
 })
 
 const Styled = styled(View, variants)
@@ -43,7 +47,7 @@ const Icon = ({ children, color, sizeVariant, ...others }) => {
 
 Icon.defaultProps = {
   sizeVariant: 'medium',
-  color: 'black',
+  color: 'text.0',
 }
 
 export default Icon
