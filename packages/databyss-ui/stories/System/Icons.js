@@ -76,10 +76,5 @@ export default () => (
         <TopicSvg />
       </LabeledIcon>
     </Grid>
-    <View height={100} width={100}>
-      <Icon flexGrow={1}>
-        <TopicSvg />
-      </Icon>
-    </View>
   </Section>
 )

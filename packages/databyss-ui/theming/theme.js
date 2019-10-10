@@ -3,13 +3,11 @@ import effects from './effects'
 import responsive from './responsive'
 import space from './space'
 import sizes from './sizes'
-import views, { borderRadius as _borderRadius } from './views'
+import views, { borderRadius } from './views'
 import fonts from './fonts'
 import timing from './timing'
 import buttons from './buttons'
 import icons from './icons'
-
-export const borderRadius = _borderRadius
 
 const theme = {
   /* space */
@@ -52,6 +50,8 @@ const theme = {
 }
 
 export default theme
+
+export { borderRadius }
 
 export const darkTheme = {
   ...theme,
