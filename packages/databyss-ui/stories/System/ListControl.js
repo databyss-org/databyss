@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from 'react'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
@@ -21,7 +22,7 @@ export default () => (
         height={250}
         renderItem={({ item }) => <Text>{item}</Text>}
         onItemPress={({ item }) => {
-          console.log('item pressed', item)
+          // console.log('item pressed', item)
         }}
         data={longIpsums}
         borderVariant="thinDark"
@@ -33,7 +34,7 @@ export default () => (
         height={200}
         renderItem={({ item }) => <Text>{item}</Text>}
         onItemPress={({ item }) => {
-          console.log('item pressed', item)
+          // console.log('item pressed', item)
         }}
         data={shortIpsums}
         borderVariant="thinDark"
@@ -51,7 +52,7 @@ export const ItemSeparators = () => (
       itemSeparatorWidth={1}
       itemSpacing={10}
       onItemPress={({ item }) => {
-        console.log('item pressed', item)
+        // console.log('item pressed', item)
       }}
       data={shortIpsums}
       borderVariant="thinDark"
@@ -80,9 +81,8 @@ export const ComplexItems = () => {
     },
   ]
   return (
-    <Section title="List with Complex Items" borderRadius={0}>
+    <Section title="List with Complex Items">
       <ListControl
-        borderRadius={0}
         itemSpacing={5}
         renderItem={({ item }) => (
           <Grid
@@ -101,7 +101,7 @@ export const ComplexItems = () => {
         )}
         itemSeparatorWidth={1}
         onItemPress={({ item }) => {
-          console.log('item pressed', item)
+          // console.log('item pressed', item)
         }}
         data={menuItems}
       />

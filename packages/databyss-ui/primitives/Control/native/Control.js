@@ -3,7 +3,7 @@ import css from '@styled-system/css'
 import { keyframes, ThemeContext } from '@emotion/core'
 import { View } from '../../'
 import { isMobileOs } from '../../../lib/mediaQuery'
-import theme from '../../../theming/theme'
+import theme, { borderRadius } from '../../../theming/theme'
 
 const decay = keyframes({
   '0%': {
@@ -116,7 +116,7 @@ Control.defaultProps = {
   rippleColor: 'background.3',
   hoverColor: 'background.2',
   activeColor: 'background.3',
-  borderRadius: theme.borderRadius,
+  borderRadius,
 }
 
 export default Control
