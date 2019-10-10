@@ -74,7 +74,6 @@ const headingText = size => ({
 const uiText = size => ({
   fontFamily: fonts.uiFont,
   fontSize: size,
-  lineHeight: pxUnits(size * 1.4),
   fontWeight: fontWeights.normal,
 })
 

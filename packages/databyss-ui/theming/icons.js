@@ -5,7 +5,7 @@ const icon = size => ({
 
 const iconSizeVariants = {
   tiny: {
-    ...icon(12),
+    ...icon(14),
   },
   small: {
     ...icon(22),

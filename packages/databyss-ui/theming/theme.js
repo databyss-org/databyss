@@ -3,7 +3,7 @@ import effects from './effects'
 import responsive from './responsive'
 import space from './space'
 import sizes from './sizes'
-import views from './views'
+import views, { borderRadius } from './views'
 import fonts from './fonts'
 import timing from './timing'
 import buttons from './buttons'
@@ -50,6 +50,8 @@ const theme = {
 }
 
 export default theme
+
+export { borderRadius }
 
 export const darkTheme = {
   ...theme,

@@ -16,7 +16,7 @@ const ToggleControl = ({
   ...others
 }) => (
   <BaseControl
-    containerProps={
+    childViewProps={
       label && label.length
         ? {
             flexDirection: alignLabel === 'left' ? 'row-reverse' : 'row',
