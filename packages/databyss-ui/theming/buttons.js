@@ -3,6 +3,7 @@ import { border, borderRadius, pxUnits } from './views'
 import space from './space'
 
 export const editorMenuButtonHeight = 24
+const editorSideButtonHeight = (2 / 3) * editorMenuButtonHeight
 
 const button = () => ({
   display: 'flex',
@@ -44,13 +45,7 @@ const sidebarButton = () => ({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: space.small,
-  //  height: '10px',
-  // paddingLeft: space.small,
-  // paddingRight: space.small,
-  // paddingTop: space.tiny,
-  // paddingBottom: space.tiny,
-  // borderRadius: '50%',
+  //  padding: space.small,
 })
 
 const buttonVariants = {
@@ -72,18 +67,19 @@ const buttonVariants = {
   sidebarAction: {
     ...sidebarButton(),
     backgroundColor: 'background.3',
-    // TODO: this doesnt get evaluated
     borderColor: 'secondary.1',
     borderWidth: pxUnits(1),
     color: 'text.4',
-    borderRadius: pxUnits(editorMenuButtonHeight),
-    width: pxUnits(editorMenuButtonHeight),
-    height: pxUnits(editorMenuButtonHeight),
+    borderRadius: pxUnits(editorSideButtonHeight),
+    width: pxUnits(editorSideButtonHeight),
+    height: pxUnits(editorSideButtonHeight),
   },
+
   menuAction: {
     ...menuButton(),
     color: 'text.4',
     backgroundColor: 'background.4',
+    height: pxUnits(12),
   },
 }
 

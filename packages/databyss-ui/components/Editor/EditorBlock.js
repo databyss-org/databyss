@@ -4,7 +4,7 @@ import Grid from '@databyss-org/ui/components/Grid/Grid'
 import space from '@databyss-org/ui/theming/space'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 
-import EditorMenu from './EditorMenu/EditorMenu'
+import EditorBlockMenu from './Menu/EditorBlockMenu'
 
 const TextBlock = ({ children, variant, color }) => (
   <Text variant={variant} color={color}>
@@ -54,7 +54,7 @@ const EditorBlock = ({ children, node }) => (
       paddingLeft={space.small}
     >
       <View position="absolute" width={1}>
-        {node.text.length < 1 && <EditorMenu node={node} />}
+        {node.text.length < 1 && <EditorBlockMenu node={node} />}
       </View>
     </View>
     <View flexShrink={1} overflow="visible">

@@ -1,64 +1,42 @@
 import React from 'react'
-import {
-  variant,
-  flexbox,
-  shadow,
-  layout,
-  compose,
-  border,
-} from 'styled-system'
+import { variant, flexbox, compose } from 'styled-system'
 import { BaseControl, Text } from '../'
 // HACK: if View is imported from '../' above, it breaks storybook:build (reason unknown)
+import View from '../View/View'
 import styled from '../styled'
 import buttons from '../../theming/buttons'
 
 const variants = variant({
   prop: 'variant',
   scale: 'buttonVariants',
-  variants: {
-    // need one member to enable theming
-    default: {},
-  },
 })
 
-const StyledControl = styled(
-  BaseControl,
+const StyledView = styled(
+  View,
   compose(
     flexbox,
-    shadow,
-    layout,
-    variants,
-    border
+    variants
   )
 )
 
 const Button = ({ onPress, variant, children, ...others }) => {
   let _children = children
-  const { buttonVariants, buttonThemes } = buttons
+  const { buttonVariants } = buttons
   if (typeof children === 'string') {
     _children = (
-      <Text
-        variant="uiTextNormal"
-        color={buttonVariants[variant].color}
-        {...(buttonThemes[variant].textProps
-          ? buttonThemes[variant].textProps
-          : {})}
-      >
+      <Text variant="uiTextNormal" color={buttonVariants[variant].color}>
         {children}
       </Text>
     )
   }
   return (
-    <StyledControl
-      variant={variant}
+    <BaseControl
       onPress={onPress}
-      rippleColor={buttonThemes[variant].rippleColor}
-      hoverColor={buttonThemes[variant].hoverColor}
-      activeColor={buttonThemes[variant].activeColor}
+      rippleColor={buttonVariants[variant].rippleColor}
       {...others}
     >
-      {_children}
-    </StyledControl>
+      <StyledView variant={variant}>{_children}</StyledView>
+    </BaseControl>
   )
 }
 

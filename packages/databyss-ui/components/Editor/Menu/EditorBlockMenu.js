@@ -9,7 +9,7 @@ import Add from '@databyss-org/ui/assets/add.svg'
 import { useEditorContext } from '../EditorProvider'
 import { startTag } from '../state/actions'
 
-const EditorMenu = ({ node }) => {
+const EditorBlockMenu = ({ node }) => {
   const [editorState, dispatchEditor] = useEditorContext()
   const [actions, showActions] = useState(false)
   let isVisible = false
@@ -71,8 +71,7 @@ const EditorMenu = ({ node }) => {
           data-test-block-menu="open"
         >
           <Icon
-            label="Tiny"
-            sizeVariant="tiny"
+            sizeVariant="extraTiny"
             color={buttonVariants.sidebarAction.color}
           >
             <View>{actions ? <Close /> : <Add />}</View>
@@ -90,4 +89,4 @@ const EditorMenu = ({ node }) => {
   ) : null
 }
 
-export default EditorMenu
+export default EditorBlockMenu
