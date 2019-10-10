@@ -25,29 +25,28 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
   const sharedProps = {
     isOpen: visible,
   }
-  const mobileProps = {
+  const mobileProps = closing => ({
     position: 'absolute',
     left: 0,
     right: 0,
     bottom: 0,
-    top: 0,
-  }
-  const mobileCss = {
-    zIndex: 1000,
-  }
+    top: closing ? '100%' : 0,
+  })
+  const mobileCss = {}
   const desktopProps = {}
+  const onClose = () => {
+    animations.slide.outro.run(() => {
+      if (onDismiss) {
+        onDismiss()
+      }
+    })
+  }
   return (
     <StyledReactModal
       {...sharedProps}
-      {...(isMobile() ? mobileProps : desktopProps)}
+      {...(isMobile() ? mobileProps(animations.slide.outro.css) : desktopProps)}
       onAfterOpen={() => animations.slide.intro.run()}
-      onRequestClose={() => {
-        animations.slide.outro.run(() => {
-          if (onDismiss) {
-            onDismiss()
-          }
-        })
-      }}
+      onRequestClose={onClose}
       css={[
         isMobile() && mobileCss,
         isMobile() && animations.slide.intro.css,
@@ -55,7 +54,9 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
       ]}
     >
       {isMobile() ? (
-        <MobileModal {...others}>{children}</MobileModal>
+        <MobileModal {...others} onDismiss={onClose}>
+          {children}
+        </MobileModal>
       ) : (
         children
       )}

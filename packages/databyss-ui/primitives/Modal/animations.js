@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { keyframes as makeKeyframes } from '@emotion/core'
 import theme from '../../theming/theme'
 
@@ -20,12 +20,16 @@ const animationCss = (animation, duration, timing) => ({
 
 const makeAnimation = (keyframes, duration, timing) => {
   const [state, setState] = useState(false)
+  const timerRef = useRef(null)
   const animationKeyframes = makeKeyframes(keyframes)
+
+  // stop all timers on unmount
+  useEffect(() => () => clearTimeout(timerRef.current), [timerRef])
 
   return {
     css: state && animationCss(animationKeyframes, duration, timing),
     run: onComplete => {
-      setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         if (onComplete) {
           onComplete()
         }

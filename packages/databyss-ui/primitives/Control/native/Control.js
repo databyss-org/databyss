@@ -66,6 +66,7 @@ const Control = ({ disabled, children, onPress, ...others }) => {
     )
     setDecay(true)
   }
+  useEffect(() => () => clearTimeout(decayTimerRef.current), [decayTimerRef])
   useEffect(
     () => {
       if (resetDecay) {

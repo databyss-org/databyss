@@ -12,10 +12,10 @@ const StyledSafeArea = styled(
   )
 )
 
-const Modal = ({ visible, title, children }) => (
+const Modal = ({ visible, children, ...others }) => (
   <NativeModal visible={visible} animationType="slide">
     <StyledSafeArea flex={1} bg="background.0">
-      <MobileModal title={title}>{children}</MobileModal>
+      <MobileModal {...others}>{children}</MobileModal>
     </StyledSafeArea>
   </NativeModal>
 )

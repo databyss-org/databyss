@@ -2,7 +2,13 @@ import React from 'react'
 import { View, Text, Grid, Button } from '../'
 
 // renders the window controls (title, cancel, ok, etc) for a mobile modal
-const MobileModal = ({ title, dismissChild, secondaryChild, children }) => (
+const MobileModal = ({
+  title,
+  dismissChild,
+  secondaryChild,
+  onDismiss,
+  children,
+}) => (
   <View bg="background.0" height="100%">
     <View
       mb="small"
@@ -17,7 +23,9 @@ const MobileModal = ({ title, dismissChild, secondaryChild, children }) => (
           <Text>{title}</Text>
         </View>
         <View flexBasis="25%" paddingRight="small" alignItems="flex-end">
-          <Button variant="uiLink">{dismissChild}</Button>
+          <Button variant="uiLink" onPress={onDismiss}>
+            {dismissChild}
+          </Button>
         </View>
       </Grid>
     </View>
