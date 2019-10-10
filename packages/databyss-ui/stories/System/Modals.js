@@ -13,7 +13,11 @@ export default () => {
   return (
     <Section title="Default modal">
       <Button onPress={() => setVisible(true)}>Show Modal</Button>
-      <Modal visible={visible} title="Hello modal!">
+      <Modal
+        visible={visible}
+        title="Hello modal!"
+        onDismiss={() => setVisible(false)}
+      >
         <Text>{ipsum}</Text>
       </Modal>
     </Section>
