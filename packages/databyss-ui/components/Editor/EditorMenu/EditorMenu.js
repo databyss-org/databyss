@@ -58,7 +58,7 @@ const EditorMenu = ({ node }) => {
   ))
 
   return isVisible ? (
-    <Grid m="none" rowGap="small" columnGap="none">
+    <Grid singleRow rowGap="small" columnGap="none">
       <View
         height={space.menuHeight}
         width={pxUnits(32)}
