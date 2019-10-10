@@ -23,6 +23,7 @@ export const initialState = {
 export const entities = (state, type) =>
   ({
     ENTRY: state.entries,
+    LOCATION: state.locations,
     SOURCE: state.sources,
     TOPIC: state.topics,
   }[type])
@@ -37,6 +38,7 @@ const cleanUpState = state => {
     sources: {},
     topics: {},
     blocks: {},
+    locations: {},
   }
 
   pageBlocks.forEach(b => {
@@ -61,6 +63,9 @@ export const setRawHtmlForBlock = (state, block, html) => {
       break
     case 'SOURCE':
       nextState.sources[block.refId].rawHtml = html
+      break
+    case 'LOCATION':
+      nextState.locations[block.refId].rawHtml = html
       break
     case 'TOPIC':
       nextState.topics[block.refId].rawHtml = html
@@ -89,6 +94,8 @@ export const getRangesForBlock = (state, block) => {
       return state.entries[block.refId].ranges
     case 'SOURCE':
       return state.sources[block.refId].ranges
+    case 'LOCATION':
+      return state.locations[block.refId].ranges
     case 'TOPIC':
       return state.topics[block.refId].ranges
     default:
@@ -124,6 +131,9 @@ const setBlockType = (state, type, _id) => {
       return nextState
     case 'ENTRY':
       nextState.entries[nextRefId] = { _id: nextRefId, rawHtml, ranges }
+      return nextState
+    case 'LOCATION':
+      nextState.locations[nextRefId] = { _id: nextRefId, rawHtml, ranges }
       return nextState
     case 'TOPIC':
       nextState.topics[nextRefId] = { _id: nextRefId, rawHtml, ranges }
@@ -171,6 +181,23 @@ const insertNewActiveBlock = (
     ]
     insertedText = rawHtml
     _ranges = ranges
+  }
+
+  if (state.blocks[previousBlockId].type === 'LOCATION') {
+    // if new block is added before LOCATION type
+    if (!previousBlockText) {
+      _state = setBlockType(_state, 'ENTRY', previousBlockId)
+      insertedBlockType = state.blocks[previousBlockId].type
+      const { rawHtml, ranges } = entities(_state, 'ENTRY')[
+        _state.blocks[previousBlockId].refId
+      ]
+      insertedText = rawHtml
+      _ranges = ranges
+    }
+    // if enter is pressed in the middle of a location
+    if (previousBlockText && insertedBlockText) {
+      insertedBlockType = 'LOCATION'
+    }
   }
 
   _state = setBlockType(_state, insertedBlockType, insertedBlockId)

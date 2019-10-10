@@ -28,6 +28,7 @@ export default {
       ranges: [],
     },
   },
+  locations: {},
   blocks: {
     '5d64423aae2da21680dc208b': {
       type: 'SOURCE',

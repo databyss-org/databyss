@@ -109,7 +109,6 @@ Cypress.Commands.add(
     return cy.get(subject).trigger('keydown', {
       keyCode: 66,
       key: 'b',
-      which: 91,
       [modKeys(IS_LINUX)]: true,
     })
   }
@@ -122,9 +121,22 @@ Cypress.Commands.add(
   },
   subject => {
     return cy.get(subject).trigger('keydown', {
-      keyCode: 66,
+      keyCode: 73,
       key: 'i',
-      which: 91,
+      [modKeys(IS_LINUX)]: true,
+    })
+  }
+)
+
+Cypress.Commands.add(
+  'toggleLocation',
+  {
+    prevSubject: 'element',
+  },
+  subject => {
+    return cy.get(subject).trigger('keydown', {
+      keyCode: 75,
+      key: 'k',
       [modKeys(IS_LINUX)]: true,
     })
   }

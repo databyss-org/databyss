@@ -35,40 +35,52 @@ const toSlateJson = (editorState, pageBlocks) => ({
             block._id
           )
           break
+        case 'LOCATION':
+          nodes = stateToSlate(
+            {
+              [block.refId]: editorState.locations[block.refId],
+            },
+            block._id
+          )
+          nodes.type = 'LOCATION'
+          break
         default:
           break
       }
 
-      const nodeWithRanges = stateToSlate({
-        [block.refId]: entities(editorState, block.type)[block.refId],
-      }).nodes
+      let textBlock
+      if (isAtomicInlineType(block.type)) {
+        const nodeWithRanges = stateToSlate({
+          [block.refId]: entities(editorState, block.type)[block.refId],
+        }).nodes
 
-      const _block = Block.fromJSON({
-        object: 'block',
-        type: block.type,
-        nodes: nodeWithRanges,
-      })
+        const _block = Block.fromJSON({
+          object: 'block',
+          type: block.type,
+          nodes: nodeWithRanges,
+        })
 
-      const _innerHtml = serializeNodeToHtml(_block)
+        const _innerHtml = serializeNodeToHtml(_block)
 
-      const textBlock = isAtomicInlineType(block.type)
-        ? {
-            object: 'inline',
-            nodes: [
-              {
-                object: 'text',
-                text: sanitizer(_innerHtml),
-              },
-            ],
-            type: block.type,
-          }
-        : {
-            object: 'text',
-            text: getRawHtmlForBlock(editorState, block),
-          }
+        textBlock = isAtomicInlineType(block.type)
+          ? {
+              object: 'inline',
+              nodes: [
+                {
+                  object: 'text',
+                  text: sanitizer(_innerHtml),
+                },
+              ],
+              type: block.type,
+            }
+          : {
+              object: 'text',
+              text: getRawHtmlForBlock(editorState, block),
+            }
+      }
 
-      // this will return generic nod
-      return block.type === 'ENTRY'
+      // this will return generic node
+      return !isAtomicInlineType(block.type)
         ? nodes
         : {
             object: 'block',
@@ -138,12 +150,19 @@ const SlateContentEditable = ({
   onDocumentChange,
   OnToggleMark,
   onHotKey,
+  onSetBlockType,
 }) => {
   const [editorState] = useEditorContext()
 
   const { activeBlockId, editableState, blocks, page } = editorState
 
   const editableRef = useRef(null)
+
+  const getBlockRanges = block => {
+    const jsonBlockValue = { ...block.toJSON(), key: block.key }
+    const ranges = getRangesFromBlock(jsonBlockValue).ranges
+    return ranges
+  }
 
   const checkSelectedBlockChanged = _nextEditableState => {
     const _nextActiveBlock = findActiveBlock(_nextEditableState.value)
@@ -189,12 +208,48 @@ const SlateContentEditable = ({
 
     if (_nextText !== _prevText) {
       const block = _nextEditableState.value.anchorBlock
-      const jsonBlockValue = { ...block.toJSON(), key: block.key }
-      const ranges = getRangesFromBlock(jsonBlockValue).ranges
+      const ranges = getBlockRanges(block)
       onActiveBlockContentChange(_nextText, _nextEditableState, ranges)
-      return true
+      return { _nextText, _nextEditableState, ranges }
     }
     return false
+  }
+
+  const handleSelectedBlockChanged = ({
+    _nextText,
+    _nextEditableState,
+    ranges,
+  }) => {
+    // if not atomic get range and check for location
+    if (
+      !isAtomicInlineType(
+        _nextEditableState.value.document.getNode(activeBlockId).type
+      )
+    ) {
+      const locationLength = ranges.reduce((acc, range) => {
+        if (range.marks.findIndex(m => m === 'location') > -1) {
+          return range.length + acc
+        }
+        return acc
+      }, 0)
+      // if type LOCATION is set check for non LOCATION type
+      if (
+        _nextEditableState.value.document.getNode(activeBlockId).type ===
+          'LOCATION' &&
+        locationLength !== _nextText.length
+      ) {
+        onSetBlockType('ENTRY', activeBlockId, _nextEditableState)
+      }
+      // if whole entry has a location range set block as LOCATION
+      if (
+        _nextText.length !== 0 &&
+        locationLength === _nextText.length &&
+        _nextEditableState.value.document.getNode(activeBlockId).type !==
+          'LOCATION'
+      ) {
+        onSetBlockType('LOCATION', activeBlockId, _nextEditableState)
+      }
+    }
   }
 
   const onChange = change => {
@@ -202,11 +257,13 @@ const SlateContentEditable = ({
     if (onDocumentChange) {
       onDocumentChange(value.document.toJSON())
     }
-    if (
-      !checkSelectedBlockChanged({ value }) &&
-      !checkActiveBlockContentChanged({ value })
-    ) {
-      onEditableStateChange({ value })
+    if (!checkSelectedBlockChanged({ value })) {
+      const blockChanges = checkActiveBlockContentChanged({ value })
+      if (blockChanges) {
+        handleSelectedBlockChanged(blockChanges)
+      } else {
+        onEditableStateChange({ value })
+      }
     }
   }
 
@@ -308,6 +365,7 @@ const SlateContentEditable = ({
         if (!editor.value.previousBlock) {
           return next()
         }
+
         if (event.key === 'Backspace' && editor.value.previousBlock.text) {
           if (
             !editor.value.selection.focus.isAtStartOfNode(
@@ -339,6 +397,11 @@ const SlateContentEditable = ({
     if (hotKeys.isBold(event)) {
       event.preventDefault()
       OnToggleMark('bold', editor)
+    }
+
+    if (hotKeys.isLocation(event)) {
+      event.preventDefault()
+      OnToggleMark('location', editor)
     }
 
     if (hotKeys.isItalic(event)) {

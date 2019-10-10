@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const Schema = mongoose.Schema
 
-const TopicSchema = new mongoose.Schema({
+const LocationSchema = new mongoose.Schema({
   account: {
     type: Schema.Types.ObjectId,
     ref: 'account',
@@ -13,6 +13,7 @@ const TopicSchema = new mongoose.Schema({
   ranges: { type: Array },
 })
 
-const Topic = mongoose.models.Topic || mongoose.model('topic', TopicSchema)
+const Location =
+  mongoose.models.Location || mongoose.model('location', LocationSchema)
 
-module.exports = Topic
+module.exports = Location

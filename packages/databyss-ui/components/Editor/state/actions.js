@@ -8,6 +8,7 @@ import {
   BACKSPACE,
   TOGGLE_MARK,
   HOTKEY,
+  CLEAR_BLOCK,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -97,6 +98,16 @@ export function hotKey(command, editableState) {
     payload: {
       editableState,
       command,
+    },
+  }
+}
+
+export function clearBlock(id, editableState) {
+  return {
+    type: CLEAR_BLOCK,
+    payload: {
+      editableState,
+      id,
     },
   }
 }

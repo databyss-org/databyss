@@ -10,6 +10,7 @@ import {
   backspace,
   toggleMark,
   hotKey,
+  clearBlock,
 } from './state/actions'
 
 const EditorPage = ({ children }) => {
@@ -32,13 +33,23 @@ const EditorPage = ({ children }) => {
   const onBackspace = (blockProperties, editableState) => {
     dispatchEditor(backspace(blockProperties, editableState))
   }
+  const onSetBlockType = (type, id, editableState) => {
+    dispatchEditor(setBlockType(type, id, editableState))
+  }
 
   const onBlockBlur = (id, rawHtml, editableState) => {
+    // check if block is empty
+    // if empty replace block with virgin block
+    if (rawHtml.length === 0 && id) {
+      // check block to see if ranges exist
+      dispatchEditor(clearBlock(id, editableState))
+    }
+
     if (rawHtml.match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
-      dispatchEditor(setBlockType('SOURCE', id, editableState))
+      onSetBlockType('SOURCE', id, editableState)
     }
     if (rawHtml.match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
-      dispatchEditor(setBlockType('TOPIC', id, editableState))
+      onSetBlockType('TOPIC', id, editableState)
     }
   }
 
@@ -60,6 +71,7 @@ const EditorPage = ({ children }) => {
     onBlockBlur,
     OnToggleMark,
     onHotKey,
+    onSetBlockType,
   })
 }
 

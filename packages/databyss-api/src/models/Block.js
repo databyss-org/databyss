@@ -19,6 +19,10 @@ const BlockSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'topic',
   },
+  locationId: {
+    type: Schema.Types.ObjectId,
+    ref: 'location',
+  },
   sourceId: {
     type: Schema.Types.ObjectId,
     ref: 'source',

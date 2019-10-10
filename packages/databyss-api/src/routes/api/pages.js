@@ -5,6 +5,7 @@ const Source = require('../../models/Source')
 const Entry = require('../../models/Entry')
 const Block = require('../../models/Block')
 const Topic = require('../../models/Topic')
+const Location = require('../../models/Location')
 
 const auth = require('../../middleware/auth')
 const accountMiddleware = require('../../middleware/accountMiddleware')
@@ -27,145 +28,198 @@ router.post(
   async (req, res) => {
     try {
       const { blocks, page } = req.body.data
-      let { sources, entries, topics } = req.body.data
+      let { sources, entries, topics, locations } = req.body.data
       sources = !_.isEmpty(sources) ? sources : {}
       topics = !_.isEmpty(topics) ? topics : {}
       entries = !_.isEmpty(entries) ? entries : {}
+      locations = !_.isEmpty(locations) ? locations : {}
+
       const { name, _id } = page
 
       // ADD SOURCES
-      const _sources = Object.keys(sources)
+      if (!_.isEmpty(sources)) {
+        const _sources = Object.keys(sources)
 
-      await Promise.all(
-        _sources.map(async s => {
-          const source = sources[s].rawHtml
-          const sourceId = sources[s]._id
-          const ranges = !_.isEmpty(sources[s].ranges) ? sources[s].ranges : []
+        await Promise.all(
+          _sources.map(async s => {
+            const source = sources[s].rawHtml
+            const sourceId = sources[s]._id
+            const ranges = !_.isEmpty(sources[s].ranges)
+              ? sources[s].ranges
+              : []
 
-          // SOURCE WITH ID
-          const sourceFields = {
-            text: source,
-            _id: sourceId,
-            ranges,
-            account: req.account._id,
-          }
-
-          // IF SOURCE EXISTS EDIT SOURCE
-          let sourceResponse = await Source.findOne({ _id: sourceId })
-
-          if (sourceResponse) {
-            sourceResponse = await Source.findOneAndUpdate(
-              { _id: sourceId },
-              { $set: sourceFields }
-            )
-          } else {
-            // ADD NEW SOURCE
-            sourceResponse = new Source(sourceFields)
-            await sourceResponse.save()
-          }
-        })
-      )
-
-      // ADD ENTRIES
-      const _entries = Object.keys(entries)
-
-      await Promise.all(
-        _entries.map(async e => {
-          const text = entries[e].rawHtml
-          const entryId = entries[e]._id
-          const ranges = !_.isEmpty(entries[e].ranges) ? entries[e].ranges : []
-          // ENTRY WITH ID
-          const entryFields = {
-            text,
-            ranges,
-            _id: entryId,
-            user: req.user.id,
-            account: req.account._id,
-          }
-          let entryResponse = await Entry.findOne({ _id: entryId })
-          if (entryResponse) {
-            entryResponse = await Entry.findOneAndUpdate(
-              { _id: entryId },
-              { $set: entryFields }
-            )
-          } else {
-            // ADD NEW ENTRY
-            entryResponse = new Entry(entryFields)
-            await entryResponse.save()
-          }
-        })
-      )
-
-      // ADD TOPICS
-      const _topics = Object.keys(topics)
-
-      await Promise.all(
-        _topics.map(async e => {
-          const topic = topics[e].rawHtml
-          const topicId = topics[e]._id
-          // TOPIC WITH ID
-          const topicFields = {
-            text: topic,
-            _id: topicId,
-            account: req.account._id,
-          }
-
-          let topicResponse = await Topic.findOne({ _id: topicId })
-          if (topicResponse) {
-            topicResponse = await Topic.findOneAndUpdate(
-              { _id: topicId },
-              { $set: topicFields }
-            )
-          } else {
-            // ADD NEW TOPIC
-            topicResponse = new Topic(topicFields)
-            await topicResponse.save()
-          }
-        })
-      )
-
-      // ADD BLOCK
-      const _blocks = Object.keys(blocks).map(b => blocks[b])
-      await Promise.all(
-        _blocks.map(async block => {
-          const { _id, type, refId } = block
-
-          const idType = {
-            ENTRY: { entryId: refId },
-            SOURCE: { sourceId: refId },
-            TOPIC: { topicId: refId },
-            AUTHOR: { authorId: refId },
-          }[type]
-
-          const blockFields = {
-            type,
-            _id,
-            user: req.user.id,
-            account: req.account._id,
-            ...idType,
-          }
-
-          let blockResponse = await Block.findOne({ _id })
-          // if block exists, edit block
-          if (blockResponse) {
-            if (
-              req.account._id.toString() !== blockResponse.account.toString()
-            ) {
-              throw new ApiError('This block is private', 401)
+            // SOURCE WITH ID
+            const sourceFields = {
+              text: source,
+              _id: sourceId,
+              ranges,
+              account: req.account._id,
             }
 
-            blockResponse = await Block.findOneAndUpdate(
-              { _id },
-              { $set: blockFields }
-            )
-          } else {
-            // create new block
-            blockResponse = new Block(blockFields)
-            await blockResponse.save()
-          }
-        })
-      )
+            // IF SOURCE EXISTS EDIT SOURCE
+            let sourceResponse = await Source.findOne({ _id: sourceId })
 
+            if (sourceResponse) {
+              sourceResponse = await Source.findOneAndUpdate(
+                { _id: sourceId },
+                { $set: sourceFields }
+              )
+            } else {
+              // ADD NEW SOURCE
+              sourceResponse = new Source(sourceFields)
+              await sourceResponse.save()
+            }
+          })
+        )
+      }
+
+      // ADD ENTRIES
+
+      if (!_.isEmpty(entries)) {
+        const _entries = Object.keys(entries)
+
+        await Promise.all(
+          _entries.map(async e => {
+            const text = entries[e].rawHtml
+            const entryId = entries[e]._id
+            const ranges = !_.isEmpty(entries[e].ranges)
+              ? entries[e].ranges
+              : []
+            // ENTRY WITH ID
+            const entryFields = {
+              text,
+              ranges,
+              _id: entryId,
+              user: req.user.id,
+              account: req.account._id,
+            }
+            let entryResponse = await Entry.findOne({ _id: entryId })
+            if (entryResponse) {
+              entryResponse = await Entry.findOneAndUpdate(
+                { _id: entryId },
+                { $set: entryFields }
+              )
+            } else {
+              // ADD NEW ENTRY
+              entryResponse = new Entry(entryFields)
+              await entryResponse.save()
+            }
+          })
+        )
+      }
+
+      // ADD TOPICS
+      if (!_.isEmpty(topics)) {
+        const _topics = Object.keys(topics)
+
+        await Promise.all(
+          _topics.map(async e => {
+            const topic = topics[e].rawHtml
+            const topicId = topics[e]._id
+            const ranges = !_.isEmpty(topics[e].ranges) ? topics[e].ranges : []
+
+            // TOPIC WITH ID
+            const topicFields = {
+              text: topic,
+              ranges,
+              _id: topicId,
+              account: req.account._id,
+            }
+
+            let topicResponse = await Topic.findOne({ _id: topicId })
+            if (topicResponse) {
+              topicResponse = await Topic.findOneAndUpdate(
+                { _id: topicId },
+                { $set: topicFields }
+              )
+            } else {
+              // ADD NEW TOPIC
+              topicResponse = new Topic(topicFields)
+              await topicResponse.save()
+            }
+          })
+        )
+      }
+
+      // ADD LOCATION
+      if (!_.isEmpty(locations)) {
+        const _locations = Object.keys(locations)
+
+        await Promise.all(
+          _locations.map(async e => {
+            const location = locations[e].rawHtml
+            const locationId = locations[e]._id
+            const ranges = !_.isEmpty(locations[e].ranges)
+              ? locations[e].ranges
+              : []
+
+            // LOCATION WITH ID
+            const locationFields = {
+              text: location,
+              ranges,
+              _id: locationId,
+              account: req.account._id,
+            }
+
+            let locationResponse = await Location.findOne({ _id: locationId })
+            if (locationResponse) {
+              locationResponse = await Location.findOneAndUpdate(
+                { _id: locationId },
+                { $set: locationFields }
+              )
+            } else {
+              // ADD NEW LOCATION
+              locationResponse = new Location(locationFields)
+              await locationResponse.save()
+            }
+          })
+        )
+      }
+
+      // ADD BLOCK
+      if (!_.isEmpty(blocks)) {
+        const _blocks = Object.keys(blocks).map(b => blocks[b])
+        await Promise.all(
+          _blocks.map(async block => {
+            const { _id, type, refId } = block
+
+            const idType = {
+              ENTRY: { entryId: refId },
+              SOURCE: { sourceId: refId },
+              TOPIC: { topicId: refId },
+              AUTHOR: { authorId: refId },
+              LOCATION: { locationId: refId },
+            }[type]
+
+            const blockFields = {
+              type,
+              _id,
+              user: req.user.id,
+              account: req.account._id,
+              ...idType,
+            }
+
+            let blockResponse = await Block.findOne({ _id })
+            // if block exists, edit block
+            if (blockResponse) {
+              if (
+                req.account._id.toString() !== blockResponse.account.toString()
+              ) {
+                throw new ApiError('This block is private', 401)
+              }
+
+              blockResponse = await Block.findOneAndUpdate(
+                { _id },
+                { $set: blockFields }
+              )
+            } else {
+              // create new block
+              blockResponse = new Block(blockFields)
+              await blockResponse.save()
+            }
+          })
+        )
+      }
       const pageBlocks = page.blocks
 
       const pageFields = {
@@ -240,8 +294,8 @@ router.get(
       const blockList = await getBlockItemsFromId(pageResponse.blocks)
       const blocks = dictionaryFromList(blockList)
 
-      const [sources, entries, topics] = await Promise.all(
-        ['SOURCE', 'ENTRY', 'TOPIC'].map(async t => {
+      const [sources, entries, topics, locations] = await Promise.all(
+        ['SOURCE', 'ENTRY', 'TOPIC', 'LOCATION'].map(async t => {
           const list = blockList.filter(b => b.type === t)
           const populated = await populateRefEntities(list, t)
           return dictionaryFromList(populated)
@@ -253,6 +307,7 @@ router.get(
         blocks,
         entries,
         sources,
+        locations,
         topics,
       }
       return res.json(response)

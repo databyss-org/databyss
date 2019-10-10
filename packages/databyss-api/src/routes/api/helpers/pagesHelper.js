@@ -2,6 +2,8 @@ const Block = require('../../../models/Block')
 const Source = require('../../../models/Source')
 const Entry = require('../../../models/Entry')
 const Topic = require('../../../models/Topic')
+const Location = require('../../../models/Location')
+
 const BadRefId = require('../../../lib/BadRefId')
 
 const modelDict = type =>
@@ -9,6 +11,7 @@ const modelDict = type =>
     SOURCE: Source,
     ENTRY: Entry,
     TOPIC: Topic,
+    LOCATION: Location,
   }[type])
 
 const getBlockItemsFromId = blocks => {
@@ -18,12 +21,13 @@ const getBlockItemsFromId = blocks => {
       _id,
     }).catch(err => console.log(err))
     if (block) {
-      const { type, entryId, sourceId, authorId, topicId } = block
+      const { type, entryId, sourceId, authorId, topicId, locationId } = block
       const response = { type, _id }
       response.refId = {
         ENTRY: entryId,
         SOURCE: sourceId,
         TOPIC: topicId,
+        LOCATION: locationId,
         AUTHOR: authorId,
       }[type]
       return response
