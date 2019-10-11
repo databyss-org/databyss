@@ -205,8 +205,7 @@ context('Editor', () => {
       .type('{backspace}')
       .toggleLocation()
       .type('this whole block should get tagged as a location')
-      .newLine()
-      .type('{uparrow}')
+      .startOfLine()
       .type('{rightarrow}')
       .type('{rightarrow}')
       .type('{rightarrow}')
@@ -236,7 +235,6 @@ context('Editor', () => {
               whole block should get tagged as a location
             </mark>
           </block>
-          <block type="ENTRY" />
         </document>
       </value>
     )
