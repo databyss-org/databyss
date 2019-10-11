@@ -183,15 +183,21 @@ const insertNewActiveBlock = (
     _ranges = ranges
   }
 
-  // if new block is added before LOCATION type
-  if (state.blocks[previousBlockId].type === 'LOCATION' && !previousBlockText) {
-    _state = setBlockType(_state, 'ENTRY', previousBlockId)
-    insertedBlockType = state.blocks[previousBlockId].type
-    const { rawHtml, ranges } = entities(_state, 'ENTRY')[
-      _state.blocks[previousBlockId].refId
-    ]
-    insertedText = rawHtml
-    _ranges = ranges
+  if (state.blocks[previousBlockId].type === 'LOCATION') {
+    // if new block is added before LOCATION type
+    if (!previousBlockText) {
+      _state = setBlockType(_state, 'ENTRY', previousBlockId)
+      insertedBlockType = state.blocks[previousBlockId].type
+      const { rawHtml, ranges } = entities(_state, 'ENTRY')[
+        _state.blocks[previousBlockId].refId
+      ]
+      insertedText = rawHtml
+      _ranges = ranges
+    }
+    // if enter is pressed in the middle of a location
+    if (previousBlockText && insertedBlockText) {
+      insertedBlockType = 'LOCATION'
+    }
   }
 
   _state = setBlockType(_state, insertedBlockType, insertedBlockId)

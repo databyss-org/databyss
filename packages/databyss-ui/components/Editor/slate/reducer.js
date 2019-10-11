@@ -42,6 +42,44 @@ export const isAtomicInlineType = type => {
       return false
   }
 }
+const handleNewBlockConditions = (activeBlock, editor) => {
+  if (isAtomicInlineType(activeBlock.type)) {
+    if (
+      isAtomicInlineType(editor.value.previousBlock.type) &&
+      editor.value.previousBlock.text
+    ) {
+      console.log('handle new condition')
+      editor.setNodeByKey(editor.value.anchorBlock.key, { type: 'ENTRY' })
+      return false
+    }
+    if (!editor.value.previousBlock.text) {
+      editor.setNodeByKey(editor.value.previousBlock.key, { type: 'ENTRY' })
+      return false
+    }
+  }
+
+  if (
+    // if current block is location and previous block is empty
+    // replace with empty block
+    activeBlock.type === 'LOCATION' &&
+    editor.value.previousBlock.text.length === 0
+  ) {
+    editor.replaceNodeByKey(
+      editor.value.previousBlock.key,
+      newBlock(editor.value.previousBlock.key)
+    )
+    editor.toggleMark('location')
+    return false
+  }
+  // if block break is in the middle of a location
+  if (
+    activeBlock.type === 'LOCATION' &&
+    editor.value.previousBlock.text.length !== 0
+  ) {
+    return false
+  }
+  return true
+}
 
 const setActiveBlockType = type => (editor, value, next) => {
   const _activeBlock = findActiveBlock(value)
@@ -54,34 +92,8 @@ const setActiveBlockType = type => (editor, value, next) => {
       })
     }
   }
-
-  if (isAtomicInlineType(_activeBlock.type)) {
-    // if previous value is SOURCE and is currently not empty
-    // set current block type as ENTRY
-    if (
-      isAtomicInlineType(editor.value.previousBlock.type) &&
-      editor.value.previousBlock.text
-    ) {
-      editor.setNodeByKey(editor.value.anchorBlock.key, { type: 'ENTRY' })
-    }
-    // if active block is SOURCE set node type to SOURCE
-    // if previous block text is empty, set previous to ENTRY
-    if (!editor.value.previousBlock.text) {
-      editor.setNodeByKey(editor.value.previousBlock.key, { type: 'ENTRY' })
-    }
-  } else if (
-    // if current block is location and previous block is empty
-    // replace with empty block
-    _activeBlock.type === 'LOCATION' &&
-    editor.value.previousBlock.text.length === 0
-  ) {
-    editor.replaceNodeByKey(
-      editor.value.previousBlock.key,
-      newBlock(editor.value.previousBlock.key)
-    )
-    editor.toggleMark('location')
-    next(editor, value)
-  } else {
+  // if set active block type was handled already return true
+  if (handleNewBlockConditions(_activeBlock, editor, next)) {
     editor.setNodeByKey(_activeBlock.key, { type })
     next(editor, value)
   }

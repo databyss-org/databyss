@@ -200,43 +200,49 @@ const SlateContentEditable = ({
       const block = _nextEditableState.value.anchorBlock
       const ranges = getBlockRanges(block)
 
-      // if not atomic get range and check for location
-      if (
-        !isAtomicInlineType(
-          _nextEditableState.value.document.getNode(activeBlockId).type
-        )
-      ) {
-        const locationLength = ranges.reduce((acc, range) => {
-          if (range.marks.findIndex(m => m === 'location') > -1) {
-            return range.length + acc
-          }
-          return acc
-        }, 0)
-
-        // if type LOCATION is set check for non LOCATION type
-        if (
-          _nextEditableState.value.document.getNode(activeBlockId).type ===
-            'LOCATION' &&
-          locationLength !== _nextText.length
-        ) {
-          onSetBlockType('ENTRY', activeBlockId, _nextEditableState)
-        }
-
-        // if whole entry has a location range set block as LOCATION
-        if (
-          _nextText.length !== 0 &&
-          locationLength === _nextText.length &&
-          _nextEditableState.value.document.getNode(activeBlockId).type !==
-            'LOCATION'
-        ) {
-          onSetBlockType('LOCATION', activeBlockId, _nextEditableState)
-        }
-      }
-
       onActiveBlockContentChange(_nextText, _nextEditableState, ranges)
-      return true
+      return { _nextText, _nextEditableState, ranges }
     }
     return false
+  }
+
+  const handleSelectedBlockChanged = ({
+    _nextText,
+    _nextEditableState,
+    ranges,
+  }) => {
+    // if not atomic get range and check for location
+    if (
+      !isAtomicInlineType(
+        _nextEditableState.value.document.getNode(activeBlockId).type
+      )
+    ) {
+      const locationLength = ranges.reduce((acc, range) => {
+        if (range.marks.findIndex(m => m === 'location') > -1) {
+          return range.length + acc
+        }
+        return acc
+      }, 0)
+      // if type LOCATION is set check for non LOCATION type
+      if (
+        _nextEditableState.value.document.getNode(activeBlockId).type ===
+          'LOCATION' &&
+        locationLength !== _nextText.length
+      ) {
+        console.log('setting to entry')
+        onSetBlockType('ENTRY', activeBlockId, _nextEditableState)
+      }
+      // if whole entry has a location range set block as LOCATION
+      if (
+        _nextText.length !== 0 &&
+        locationLength === _nextText.length &&
+        _nextEditableState.value.document.getNode(activeBlockId).type !==
+          'LOCATION'
+      ) {
+        console.log('set it to location')
+        onSetBlockType('LOCATION', activeBlockId, _nextEditableState)
+      }
+    }
   }
 
   const onChange = change => {
@@ -244,11 +250,13 @@ const SlateContentEditable = ({
     if (onDocumentChange) {
       onDocumentChange(value.document.toJSON())
     }
-    if (
-      !checkSelectedBlockChanged({ value }) &&
-      !checkActiveBlockContentChanged({ value })
-    ) {
-      onEditableStateChange({ value })
+    if (!checkSelectedBlockChanged({ value })) {
+      const blockChanges = checkActiveBlockContentChanged({ value })
+      if (blockChanges) {
+        handleSelectedBlockChanged(blockChanges)
+      } else {
+        onEditableStateChange({ value })
+      }
     }
   }
 
