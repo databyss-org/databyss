@@ -8,19 +8,23 @@ const MobileModal = ({
   secondaryChild,
   onDismiss,
   children,
+  ...others
 }) => (
   <View bg="background.0" height="100%">
     <View
-      mb="small"
       borderBottomWidth={1}
       borderBottomColor="border.1"
       paddingBottom="tiny"
       paddingTop="small"
     >
       <Grid singleRow columnGap="none" alignItems="center">
-        <View flexBasis="25%">{secondaryChild}</View>
+        <View flexBasis="25%" paddingLeft="small" alignItems="flex-start">
+          {secondaryChild ? (
+            <Button variant="uiLink">{secondaryChild}</Button>
+          ) : null}
+        </View>
         <View flexBasis="50%" alignItems="center">
-          <Text>{title}</Text>
+          <Text variant="uiTextNormal">{title}</Text>
         </View>
         <View flexBasis="25%" paddingRight="small" alignItems="flex-end">
           <Button variant="uiLink" onPress={onDismiss}>
@@ -29,7 +33,9 @@ const MobileModal = ({
         </View>
       </Grid>
     </View>
-    <View flexGrow={1}>{children}</View>
+    <View flexGrow={1} {...others}>
+      {children}
+    </View>
   </View>
 )
 
