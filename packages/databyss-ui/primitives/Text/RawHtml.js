@@ -1,12 +1,8 @@
 import React from 'react'
-import { variant, color, compose } from 'styled-system'
+import { color, compose } from 'styled-system'
 import styled from '../styled'
 import IS_NATIVE from '../../lib/isNative'
-
-const variants = variant({
-  prop: 'variant',
-  scale: 'textVariants',
-})
+import { variants } from './Text'
 
 const Styled = styled(
   {

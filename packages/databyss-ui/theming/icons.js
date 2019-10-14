@@ -4,8 +4,11 @@ const icon = size => ({
 })
 
 const iconSizeVariants = {
+  extraTiny: {
+    ...icon(8),
+  },
   tiny: {
-    ...icon(12),
+    ...icon(14),
   },
   small: {
     ...icon(22),

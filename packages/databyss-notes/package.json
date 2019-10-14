@@ -1,11 +1,11 @@
 {
   "name": "@databyss-org/notes",
-  "version": "1.1.30",
+  "version": "1.1.33",
   "private": true,
   "peerDependencies": {
     "react": "16.9.0",
     "react-dom": "16.9.0",
-    "@databyss-org/ui": "1.1.30",
-    "@databyss-org/services": "1.1.30"
+    "@databyss-org/ui": "1.1.33",
+    "@databyss-org/services": "1.1.33"
   }
 }

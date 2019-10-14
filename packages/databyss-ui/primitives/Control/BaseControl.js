@@ -11,7 +11,7 @@ const BaseControl = ({
   children,
   disabled,
   noFeedback,
-  containerProps,
+  childViewProps,
   ...others
 }) => {
   const Styled = Platform.select({
@@ -32,7 +32,7 @@ const BaseControl = ({
       opacity={disabled ? 0.5 : 1}
       {...others}
     >
-      <View {...containerProps}>{_children}</View>
+      <View {...childViewProps}>{_children}</View>
     </Styled>
   )
 }

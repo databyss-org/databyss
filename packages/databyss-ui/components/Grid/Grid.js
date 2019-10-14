@@ -7,6 +7,7 @@ const Grid = ({
   rowGap,
   flexWrap,
   alignItems,
+  singleRow,
   ...others
 }) => {
   const childrenWithLayout = React.Children.map(children, child =>
@@ -14,7 +15,7 @@ const Grid = ({
       flexGrow: 0,
       flexShrink: 0,
       marginRight: columnGap,
-      marginBottom: rowGap,
+      marginBottom: singleRow ? 0 : rowGap,
       ...child.props,
     })
   )
@@ -23,7 +24,7 @@ const Grid = ({
     <View {...others}>
       <View
         mr={`${columnGap}Negative`}
-        mb={`${rowGap}Negative`}
+        mb={singleRow ? 0 : `${rowGap}Negative`}
         flexDirection="row"
         flexWrap={flexWrap || 'wrap'}
         alignItems={alignItems}

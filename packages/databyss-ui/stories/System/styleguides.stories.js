@@ -5,18 +5,25 @@ import Typography from './Typography'
 import Views from './Views'
 import Controls from './Controls'
 import Buttons from './Buttons'
-import EditorMenu from './EditorMenu'
 import Icons from './Icons'
-import ListControl from './ListControl'
-import Dark from './Dark'
+import ListControl, { ItemSeparators, ComplexItems } from './ListControl'
 
-storiesOf('Design System', module)
+storiesOf('Design System|Buttons', module)
+  .addDecorator(ViewportDecorator)
+  .add('UI Buttons', () => <Buttons />)
+storiesOf('Design System|Typography', module)
   .addDecorator(ViewportDecorator)
   .add('Typography', () => <Typography />)
+storiesOf('Design System|Views', module)
+  .addDecorator(ViewportDecorator)
   .add('Views', () => <Views />)
+storiesOf('Design System|Controls', module)
+  .addDecorator(ViewportDecorator)
   .add('Controls', () => <Controls />)
   .add('Buttons', () => <Buttons />)
-  .add('EditorMenu', () => <EditorMenu />)
   .add('Icons', () => <Icons />)
-  .add('ListControl', () => <ListControl />)
-  .add('Dark', () => <Dark />)
+storiesOf('Design System|ListControl', module)
+  .addDecorator(ViewportDecorator)
+  .add('Scrolling', () => <ListControl />)
+  .add('Separators', () => <ItemSeparators />)
+  .add('Complex', () => <ComplexItems />)

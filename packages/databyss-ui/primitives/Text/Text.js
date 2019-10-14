@@ -1,10 +1,14 @@
 import React from 'react'
-import { variant, color, compose } from 'styled-system'
+import { variant, color, typography, compose } from 'styled-system'
 import styled from '../styled'
 
-const variants = variant({
+export const variants = variant({
   prop: 'variant',
   scale: 'textVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
 })
 
 const Styled = styled(
@@ -15,11 +19,12 @@ const Styled = styled(
   },
   compose(
     variants,
-    color
+    color,
+    typography
   )
 )
 
-const Text = ({ children, color, inline, _html, ...others }) => (
+const Text = ({ children, color, ...others }) => (
   <Styled variant="bodyNormal" color={color} {...others}>
     {children}
   </Styled>

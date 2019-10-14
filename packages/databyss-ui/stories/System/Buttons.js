@@ -1,6 +1,8 @@
 import React from 'react'
-import { Button, View } from '@databyss-org/ui/primitives'
 import { Grid } from '@databyss-org/ui'
+import { View, Button, Icon } from '@databyss-org/ui/primitives'
+import PlusSvg from '../../assets/add.svg'
+import { editorMenuButtonHeight } from '../../theming/buttons'
 import { Section } from './'
 
 export default () => (
@@ -33,6 +35,21 @@ export default () => (
         <View>
           <Button variant="uiLink" disabled>
             UI Link Button (disabled)
+          </Button>
+        </View>
+      </Grid>
+    </Section>
+    <Section title="Editor Buttons">
+      <Grid mb="small" rowGap="small" columnGap="small">
+        <View>
+          <Button variant="sidebarAction">
+            <Icon
+              width={editorMenuButtonHeight * 0.5}
+              height={editorMenuButtonHeight * 0.5}
+              sizeVariant="none"
+            >
+              <PlusSvg />
+            </Icon>
           </Button>
         </View>
       </Grid>

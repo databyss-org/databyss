@@ -2,7 +2,9 @@ import React from 'react'
 import { Text, View } from '@databyss-org/ui/primitives'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import space from '@databyss-org/ui/theming/space'
-import EditorMenu from './EditorMenu/EditorMenu'
+import { pxUnits } from '@databyss-org/ui/theming/views'
+
+import EditorBlockMenu from './Menu/EditorBlockMenu'
 
 const TextBlock = ({ children, variant, color }) => (
   <Text variant={variant} color={color}>
@@ -21,7 +23,8 @@ const textSelector = ({ children, type }) => {
         color: 'text.0',
         children: (
           <View
-            borderBottom="1px dashed"
+            borderBottomWidth={pxUnits(1)}
+            borderStyle="dashed"
             borderColor="text.4"
             display="inline"
             borderRadius={0}
@@ -51,7 +54,7 @@ const EditorBlock = ({ children, node }) => (
       paddingLeft={space.small}
     >
       <View position="absolute" width={1}>
-        {node.text.length < 1 && <EditorMenu node={node} />}
+        {node.text.length < 1 && <EditorBlockMenu node={node} />}
       </View>
     </View>
     <View flexShrink={1} overflow="visible">
