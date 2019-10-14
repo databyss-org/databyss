@@ -5,11 +5,7 @@ import IS_NATIVE from '../../lib/isNative'
 import { variants } from './Text'
 
 const Styled = styled(
-  {
-    ios: 'Text',
-    android: 'Text',
-    default: 'span',
-  },
+  'span',
   compose(
     variants,
     color

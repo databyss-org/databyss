@@ -229,7 +229,6 @@ const SlateContentEditable = ({
           'LOCATION' &&
         locationLength !== _nextText.length
       ) {
-        console.log('setting to entry')
         onSetBlockType('ENTRY', activeBlockId, _nextEditableState)
       }
       // if whole entry has a location range set block as LOCATION

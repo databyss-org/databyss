@@ -11,8 +11,6 @@ let _c = {
     '#D0CDC8',
     '#ECEBE9',
     '#FAFAFA',
-    '#EAEAEA',
-    '#666666',
   ],
   black: '#12100C',
   white: '#FDFDFC',

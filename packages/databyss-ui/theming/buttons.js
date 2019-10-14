@@ -2,8 +2,7 @@ import effects from './effects'
 import { border, borderRadius, pxUnits } from './views'
 import space from './space'
 
-export const editorMenuButtonHeight = 24
-const editorSideButtonHeight = (2 / 3) * editorMenuButtonHeight
+export const editorMarginMenuItemHeight = 24
 
 const button = () => ({
   display: 'flex',
@@ -27,27 +26,6 @@ const linkButton = () => ({
   paddingBottom: space.small,
 })
 
-const menuButton = () => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  paddingLeft: space.small,
-  paddingRight: space.small,
-  paddingTop: space.tiny,
-  paddingBottom: space.tiny,
-  borderRadius: pxUnits(5),
-  height: pxUnits(editorMenuButtonHeight),
-})
-
-const sidebarButton = () => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  //  padding: space.small,
-})
-
 const buttonVariants = {
   primaryUi: {
     ...button(),
@@ -64,21 +42,33 @@ const buttonVariants = {
     ...linkButton(),
     color: 'secondary.3',
   },
-  sidebarAction: {
-    ...sidebarButton(),
-    backgroundColor: 'background.3',
-    borderColor: 'secondary.1',
+  editorMarginMenu: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'background.1',
+    borderColor: 'background.2',
     borderWidth: pxUnits(1),
     color: 'text.4',
-    borderRadius: pxUnits(editorSideButtonHeight),
-    width: pxUnits(editorSideButtonHeight),
-    height: pxUnits(editorSideButtonHeight),
+    borderRadius: pxUnits(editorMarginMenuItemHeight),
+    width: pxUnits(editorMarginMenuItemHeight),
+    height: pxUnits(editorMarginMenuItemHeight),
   },
 
-  menuAction: {
-    ...menuButton(),
+  editorMarginMenuItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingLeft: space.small,
+    paddingRight: space.small,
+    paddingTop: editorMarginMenuItemHeight / 2,
+    paddingBottom: editorMarginMenuItemHeight / 2,
+    borderRadius: pxUnits(5),
+    height: pxUnits(editorMarginMenuItemHeight),
     color: 'text.4',
-    backgroundColor: 'background.4',
+    backgroundColor: 'background.2',
     height: pxUnits(12),
   },
 }
@@ -98,15 +88,15 @@ const buttonThemes = {
   secondaryExternal: {},
   uiLink: {},
   externalLink: {},
-  menuAction: {
+  editorMarginMenuItem: {
     rippleColor: 'background.2',
-    hoverColor: 'background.5',
-    activeColor: 'background.4',
+    hoverColor: 'background.4',
+    activeColor: 'background.1',
     textProps: {
       variant: 'uiTextSmall',
     },
   },
-  sidebarAction: {
+  editorMarginMenu: {
     rippleColor: 'primary.2',
     hoverColor: 'background.4',
     activeColor: 'primary.2',
