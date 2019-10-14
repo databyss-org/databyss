@@ -69,7 +69,6 @@ const buttonVariants = {
     height: pxUnits(editorMarginMenuItemHeight),
     color: 'text.4',
     backgroundColor: 'background.2',
-    height: pxUnits(12),
   },
 }
 

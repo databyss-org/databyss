@@ -1,5 +1,3 @@
-import { pxUnits } from '@databyss-org/ui/theming/views'
-
 const space = [0, 8, 16, 24, 32, 64]
 
 space.none = space[0]
