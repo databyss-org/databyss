@@ -38,17 +38,6 @@ export const underline = Platform.select({
   },
 })
 
-export const dashedUnderline = Platform.select({
-  ios: { textDecorationLine: 'underline' },
-  android: { textDecorationLine: 'underline' },
-  default: {
-    textDecorationStyle: ' dotted',
-    textDecorationLine: 'underline',
-    // TODO: this property needs to be dynamic
-    textDecorationColor: 'grey',
-  },
-})
-
 const fonts = {
   sans,
   serif,
@@ -88,7 +77,6 @@ const uiTextVariants = {
   uiTextLarge: uiText(22),
   uiTextNormal: uiText(16),
   uiTextSmall: uiText(14),
-  uiTextExtraSmall: uiText(12),
 }
 
 const uiTextBoldVariants = Object.keys(uiTextVariants).reduce(
@@ -159,17 +147,6 @@ const bodyUnderlineVariants = Object.keys(bodyVariants).reduce(
   {}
 )
 
-const bodyDashedUnderlineVariants = Object.keys(bodyVariants).reduce(
-  (variants, vk) => ({
-    ...variants,
-    [`${vk}DashedUnderline`]: {
-      ...bodyVariants[vk],
-      ...dashedUnderline,
-    },
-  }),
-  {}
-)
-
 const bodyItalicVariants = Object.keys(bodyVariants).reduce(
   (variants, vk) => ({
     ...variants,
@@ -203,7 +180,6 @@ const textVariants = {
   ...bodyBoldVariants,
   ...bodyItalicVariants,
   ...bodyBoldItalicVariants,
-  ...bodyDashedUnderlineVariants,
 }
 
 export default {

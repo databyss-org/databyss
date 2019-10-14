@@ -2,7 +2,7 @@ import React from 'react'
 import { Grid } from '@databyss-org/ui'
 import { View, Button, Icon } from '@databyss-org/ui/primitives'
 import PlusSvg from '../../assets/add.svg'
-import { editorMenuButtonHeight } from '../../theming/buttons'
+import { editorMarginMenuItemHeight } from '../../theming/buttons'
 import { Section } from './'
 
 export default () => (
@@ -42,15 +42,22 @@ export default () => (
     <Section title="Editor Buttons">
       <Grid mb="small" rowGap="small" columnGap="small">
         <View>
-          <Button variant="sidebarAction">
+          <Button variant="editorMarginMenuItem">
             <Icon
-              width={editorMenuButtonHeight * 0.5}
-              height={editorMenuButtonHeight * 0.5}
-              sizeVariant="none"
+              width={editorMarginMenuItemHeight * 0.5}
+              height={editorMarginMenuItemHeight * 0.5}
+              sizeVariant="tiny"
             >
               <PlusSvg />
             </Icon>
           </Button>
+        </View>
+      </Grid>
+    </Section>
+    <Section title="Editor Menu Buttons">
+      <Grid mb="small" rowGap="small" columnGap="small">
+        <View>
+          <Button variant="editorMarginMenuItem">button action</Button>
         </View>
       </Grid>
     </Section>

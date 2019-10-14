@@ -1,7 +1,8 @@
 import React from 'react'
 import { Text, View } from '@databyss-org/ui/primitives'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
-import space from '@databyss-org/ui/theming/space'
+import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
+
 import { pxUnits } from '@databyss-org/ui/theming/views'
 
 import EditorBlockMenu from './Menu/EditorBlockMenu'
@@ -49,13 +50,10 @@ const EditorBlock = ({ children, node }) => (
       contentEditable="false"
       suppressContentEditableWarning
       css={{ userSelect: 'none' }}
-      width={1 / 10}
+      width={editorMarginMenuItemHeight}
       overflow="visible"
-      paddingLeft={space.small}
     >
-      <View position="absolute" width={1}>
-        {node.text.length < 1 && <EditorBlockMenu node={node} />}
-      </View>
+      {node.text.length < 1 && <EditorBlockMenu node={node} />}
     </View>
     <View flexShrink={1} overflow="visible">
       {textSelector({ children, type: node.type })}
