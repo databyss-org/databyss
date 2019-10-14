@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Icon, Text } from '@databyss-org/ui/primitives'
+import { View, Icon, Text, Grid } from '@databyss-org/ui/primitives'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import ChevronSvg from '@databyss-org/ui/assets/chevron.svg'

@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Grid, Button } from '../'
+import { View, Text, Grid, Button, ScrollView } from '../'
 
 // renders the window controls (title, cancel, ok, etc) for a mobile modal
 const MobileModal = ({
@@ -33,9 +33,9 @@ const MobileModal = ({
         </View>
       </Grid>
     </View>
-    <View flexGrow={1} {...others}>
+    <ScrollView flexGrow={1} flexBasis={0} {...others}>
       {children}
-    </View>
+    </ScrollView>
   </View>
 )
 

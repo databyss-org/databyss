@@ -40,6 +40,7 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
     left: 0,
     right: 0,
     bottom: 0,
+    overflow: 'auto',
     top: closing ? '100%' : 0,
   })
   const desktopCss = {
@@ -87,7 +88,7 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
         },
       }}
     >
-      {isMobile() ? (
+      {_mobile ? (
         <MobileModal {...others} onDismiss={onClose}>
           {children}
         </MobileModal>

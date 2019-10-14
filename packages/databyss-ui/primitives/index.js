@@ -5,11 +5,14 @@ import Text from './Text/Text'
 import BaseControl from './Control/BaseControl'
 import ToggleControl from './Control/ToggleControl'
 import SwitchControl from './Control/SwitchControl'
-import ListControl from './Control/ListControl'
+import List from './List/List'
+import Separator from './List/Separator'
 import Button from './Button/Button'
 import Icon from './Icon/Icon'
 import Modal from './Modal/Modal'
+import InputModal from './Modal/InputModal'
 import Grid from './Grid/Grid'
+import TextControl from './Control/TextControl'
 
 export {
   View,
@@ -18,10 +21,13 @@ export {
   BaseControl,
   ToggleControl,
   SwitchControl,
-  ListControl,
+  List,
+  Separator,
   Button,
   Icon,
   Modal,
+  InputModal,
   Grid,
+  TextControl,
   pxUnits,
 }

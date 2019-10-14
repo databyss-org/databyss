@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, forwardRef } from 'react'
 import css from '@styled-system/css'
 import { keyframes, ThemeContext } from '@emotion/core'
 import { View } from '../../'
@@ -17,12 +17,18 @@ const decay = keyframes({
 const controlCssDesktop = props => ({
   cursor: 'pointer',
   transition: `background-color ${theme.timing.flash}ms ${theme.timing.ease}`,
-  '&:hover': {
-    backgroundColor: props.hoverColor,
-  },
-  '&:active': {
-    backgroundColor: props.activeColor,
-  },
+  ...(props.active
+    ? {
+        backgroundColor: props.activeColor,
+      }
+    : {
+        '&:hover': {
+          backgroundColor: props.hoverColor,
+        },
+        '&:active': {
+          backgroundColor: props.activeColor,
+        },
+      }),
 })
 
 const _pseudomaskCss = () => ({
@@ -37,6 +43,11 @@ const _pseudomaskCss = () => ({
 
 const controlCss = props => ({
   position: 'relative',
+  ...(props.active
+    ? {
+        backgroundColor: props.activeColor,
+      }
+    : {}),
   '&:after': {
     ..._pseudomaskCss(props),
     backgroundColor: props.rippleColor,
@@ -49,68 +60,71 @@ const animatingCss = {
   },
 }
 
-const Styled = View
-
 export const ControlNoFeedback = ({ children, ...others }) => (
-  <Styled {...others}>{children}</Styled>
+  <View {...others}>{children}</View>
 )
 
-const Control = ({ disabled, children, onPress, ...others }) => {
-  const [decay, setDecay] = useState(false)
-  const [resetDecay, setResetDecay] = useState(false)
-  const decayTimerRef = useRef(null)
-  const startDecayAnimation = () => {
-    decayTimerRef.current = setTimeout(
-      () => setDecay(false),
-      theme.timing.touchDecay
+const Control = forwardRef(
+  ({ disabled, children, onPress, ...others }, ref) => {
+    const [decay, setDecay] = useState(false)
+    const [resetDecay, setResetDecay] = useState(false)
+    const decayTimerRef = useRef(null)
+    const startDecayAnimation = () => {
+      decayTimerRef.current = setTimeout(
+        () => setDecay(false),
+        theme.timing.touchDecay
+      )
+      setDecay(true)
+    }
+    useEffect(() => () => clearTimeout(decayTimerRef.current), [decayTimerRef])
+    useEffect(
+      () => {
+        if (resetDecay) {
+          startDecayAnimation()
+          setResetDecay(false)
+        }
+      },
+      [resetDecay]
     )
-    setDecay(true)
+    return (
+      <ThemeContext.Consumer>
+        {theme => (
+          <View
+            ref={ref}
+            onClick={e => {
+              if (disabled) {
+                return
+              }
+              if (onPress) {
+                onPress(e)
+              }
+              if (!isMobileOs()) {
+                return
+              }
+              if (decay) {
+                clearTimeout(decayTimerRef.current)
+                setDecay(false)
+                setResetDecay(true)
+              } else {
+                startDecayAnimation()
+              }
+            }}
+            css={[
+              !disabled && css(controlCss(others))(theme),
+              !disabled &&
+                !isMobileOs() &&
+                css(controlCssDesktop(others))(theme),
+              !disabled && isMobileOs() && decay && animatingCss,
+            ]}
+            {...others}
+          >
+            {children}
+          </View>
+        )}
+      </ThemeContext.Consumer>
+    )
   }
-  useEffect(() => () => clearTimeout(decayTimerRef.current), [decayTimerRef])
-  useEffect(
-    () => {
-      if (resetDecay) {
-        startDecayAnimation()
-        setResetDecay(false)
-      }
-    },
-    [resetDecay]
-  )
-  return (
-    <ThemeContext.Consumer>
-      {theme => (
-        <Styled
-          onClick={e => {
-            if (disabled) {
-              return
-            }
-            if (onPress) {
-              onPress(e)
-            }
-            if (!isMobileOs()) {
-              return
-            }
-            if (decay) {
-              clearTimeout(decayTimerRef.current)
-              setDecay(false)
-              setResetDecay(true)
-            } else {
-              startDecayAnimation()
-            }
-          }}
-          css={[
-            !disabled && css(controlCss(others))(theme),
-            !disabled && !isMobileOs() && css(controlCssDesktop(others))(theme),
-            !disabled && isMobileOs() && decay && animatingCss,
-          ]}
-          {...others}
-        >
-          {children}
-        </Styled>
-      )}
-    </ThemeContext.Consumer>
-  )
-}
+)
 
 Control.defaultProps = {
   rippleColor: 'background.3',

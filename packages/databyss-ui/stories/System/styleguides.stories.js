@@ -6,8 +6,8 @@ import Views from './Views'
 import Controls from './Controls'
 import Buttons from './Buttons'
 import Icons from './Icons'
-import ListControl, { ItemSeparators, ComplexItems } from './ListControl'
-import Modals from './Modals'
+import List, { ItemSeparators, ComplexItems, Sections } from './List'
+import Modals, { Editable as EditableModals } from './Modals'
 
 storiesOf('Design System|Buttons', module)
   .addDecorator(ViewportDecorator)
@@ -24,11 +24,13 @@ storiesOf('Design System|Controls', module)
 storiesOf('Design System|Icons', module)
   .addDecorator(ViewportDecorator)
   .add('Icons', () => <Icons />)
-storiesOf('Design System|ListControl', module)
+storiesOf('Design System|List', module)
   .addDecorator(ViewportDecorator)
-  .add('Scrolling', () => <ListControl />)
+  .add('Scrolling', () => <List />)
   .add('Separators', () => <ItemSeparators />)
   .add('Complex', () => <ComplexItems />)
+  .add('Sections', () => <Sections />)
 storiesOf('Design System|Modals', module)
   .addDecorator(ViewportDecorator)
   .add('Default', () => <Modals />)
+  .add('Editable', () => <EditableModals />)

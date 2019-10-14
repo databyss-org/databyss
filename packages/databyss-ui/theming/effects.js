@@ -27,6 +27,9 @@ const effects = {
     ...shadow(0, 1, 1, 'black', 0.25),
     marginBottom: pxUnits(1),
   },
+  modalShadow: {
+    ...shadow(0, 0, 4, 'black', 0.5),
+  },
 }
 
 export default effects

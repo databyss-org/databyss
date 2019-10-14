@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react'
+import React, { useEffect, useRef, useCallback, forwardRef } from 'react'
 import {
   space,
   layout,
@@ -54,7 +54,7 @@ const View = styled(
   styleProps
 )
 
-export default ({ children, onLayout, ...others }) => {
+export default forwardRef(({ children, onLayout, ...others }, ref) => {
   const viewRef = useRef(null)
   const clientRect = {}
   const _onLayout = useCallback(
@@ -74,7 +74,6 @@ export default ({ children, onLayout, ...others }) => {
     overflow: 'hidden',
     display: 'flex',
     flexDirection: 'column',
-    ref: viewRef,
   }
   const webProps = {
     css: {
@@ -110,10 +109,18 @@ export default ({ children, onLayout, ...others }) => {
     }
   })
 
+  const setRef = _ref => {
+    viewRef.current = _ref
+    if (ref) {
+      ref.current = _ref
+    }
+  }
+
   const view = (
     <View
       paddingVariant="none"
       borderVariant="none"
+      ref={setRef}
       {...defaultProps}
       {...(IS_NATIVE ? nativeProps : webProps)}
       {...others}
@@ -127,4 +134,4 @@ export default ({ children, onLayout, ...others }) => {
   }
 
   return view
-}
+})
