@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
-import { cx, css } from 'emotion'
 import { Button, Text, HoverView } from '@databyss-org/ui/primitives'
 import { useEditorContext } from '../EditorProvider'
 import { toggleMark } from '../state/actions'
@@ -21,7 +20,7 @@ const formatActions = [
   {
     type: 'location',
     label: 'loc',
-    variant: 'bodyNormal',
+    variant: 'uiTextNormal',
     action: a => toggleMark(a),
   },
 ]
