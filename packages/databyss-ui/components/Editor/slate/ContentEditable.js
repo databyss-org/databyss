@@ -128,8 +128,6 @@ const renderMark = (props, editor, next) => {
       return <i {...attributes}>{children}</i>
     case 'location':
       if (editor.value.anchorBlock.type !== 'LOCATION') {
-        const underRef = useRef(null)
-
         return (
           <View
             {...attributes}
@@ -427,7 +425,7 @@ const SlateContentEditable = ({
     <EditorBlock node={node}>{children}</EditorBlock>
   )
 
-  const renderEditor = ({}, editor, next) => {
+  const renderEditor = (_, editor, next) => {
     const children = next()
     return (
       <React.Fragment>

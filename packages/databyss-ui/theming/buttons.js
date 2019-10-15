@@ -72,10 +72,8 @@ const buttonVariants = {
   },
   formatButton: {
     display: 'inline-grid',
-    paddingLeft: space.small,
     backgroundColor: 'background.6',
-
-    paddingRight: space.small,
+    overflow: 'visible',
   },
 }
 

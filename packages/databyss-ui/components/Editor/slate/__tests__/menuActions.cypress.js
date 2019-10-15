@@ -163,11 +163,55 @@ context('Editor', () => {
       .get('[data-test-block-menu="open"]')
       .should('not.be.visible')
     cy.get('@editor')
-      .type('{uparrow}')
+      .previousBlock()
+      .endOfLine()
       .type('{backspace}')
       .get('[data-test-block-menu="open"]')
       .click()
       .get('[data-test-block-menu="TOPIC"]')
       .should('be.visible')
+  })
+
+  it('it should highlight a selection and toggle bold/italic on the marks', () => {
+    cy.get('@editor')
+      .endOfDoc()
+      .previousBlock()
+      .previousBlock()
+      .startOfLine()
+      .setSelection('limitation')
+      .get('[data-test-format-menu="italic"]')
+      .click()
+    cy.get('@editor')
+      .setSelection('order')
+      .get('[data-test-format-menu="bold"]')
+      .click()
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE">
+            <text />
+            <inline type="SOURCE">
+              Stamenov, Language Structure, Discourse and the Access to
+              Consciousness
+            </inline>
+            <text />
+          </block>
+          <block type="ENTRY">
+            {'On the '}
+            <mark type="italic">limitation</mark>
+            {' of third-'}
+            <mark type="bold">order</mark>
+            {' thought to assertion'}
+          </block>
+          <block type="TOPIC">
+            <text />
+            <inline type="TOPIC">topic</inline>
+            <text />
+          </block>
+        </document>
+      </value>
+    )
+    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
 })

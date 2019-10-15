@@ -90,6 +90,17 @@ const uiTextBoldVariants = Object.keys(uiTextVariants).reduce(
   {}
 )
 
+const uitextItalicVariants = Object.keys(uiTextVariants).reduce(
+  (variants, vk) => ({
+    ...variants,
+    [`${vk}Italic`]: {
+      ...uiTextVariants[vk],
+      fontStyle: 'italic',
+    },
+  }),
+  {}
+)
+
 const uiTextUnderlineVariants = Object.keys(uiTextVariants).reduce(
   (variants, vk) => ({
     ...variants,
@@ -173,6 +184,7 @@ const textVariants = {
   ...headingVariants,
   ...uiTextVariants,
   ...uiTextBoldVariants,
+  ...uitextItalicVariants,
   ...uiTextUnderlineVariants,
   ...uiTextBoldUnderlineVariants,
   ...bodyVariants,

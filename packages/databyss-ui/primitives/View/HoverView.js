@@ -31,11 +31,12 @@ const Styled = styled(
 )
 
 const HoverView = forwardRef(({ children, ...others }, ref) => {
-  const webProps = {
-    css: {},
+  if (IS_NATIVE) {
+    throw new Error('Component not availablle in React Native')
   }
+
   return (
-    <Styled {...webProps} {...others} ref={ref}>
+    <Styled {...others} ref={ref}>
       {children}
     </Styled>
   )

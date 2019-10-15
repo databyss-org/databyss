@@ -328,9 +328,7 @@ context('Editor', () => {
       .type('{backspace}')
       .toggleLocation()
       .type('this whole block should get tagged as a location')
-      .newLine()
-      .type('{uparrow}')
-      .type('{uparrow}')
+      .previousBlock()
 
     const expected = toSlateJson(
       <value>
@@ -351,7 +349,6 @@ context('Editor', () => {
               this whole block should get tagged as a location
             </mark>
           </block>
-          <block type="ENTRY" />
         </document>
       </value>
     )

@@ -48,6 +48,16 @@ const hoverVariants = {
     transition: 'opacity 0.75s',
     borderRadius,
   },
+  divider: {
+    position: 'absolute',
+    top: '0px',
+    left: '100px',
+    height: '100%',
+    zIndex: 1,
+    borderColor: 'background.5',
+    borderRightStyle: 'solid',
+    borderWidth: pxUnits(1),
+  },
 }
 
 export default {

@@ -1,10 +1,29 @@
 import React, { useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
 import { Button, Text, HoverView } from '@databyss-org/ui/primitives'
+import space from '@databyss-org/ui/theming/space'
 import { useEditorContext } from '../EditorProvider'
 import { toggleMark } from '../state/actions'
 
 const formatActions = [
+  {
+    type: 'source',
+    label: '@',
+    variant: 'uiTextNormal',
+    action: a => toggleMark(a),
+  },
+  {
+    type: 'location',
+    label: 'loc',
+    variant: 'uiTextNormal',
+    action: a => toggleMark(a),
+  },
+  {
+    type: 'topic',
+    label: '#',
+    variant: 'uiTextNormal',
+    action: a => toggleMark(a),
+  },
   {
     type: 'bold',
     label: 'b',
@@ -14,21 +33,16 @@ const formatActions = [
   {
     type: 'italic',
     label: 'i',
-    variant: 'bodyNormalItalic',
-    action: a => toggleMark(a),
-  },
-  {
-    type: 'location',
-    label: 'loc',
-    variant: 'uiTextNormal',
+    variant: 'uiTextNormalItalic',
     action: a => toggleMark(a),
   },
 ]
 
 const formatActionButtons = editor =>
-  formatActions.map(a => (
+  formatActions.map((a, i) => (
     <MarkButton
       editor={editor}
+      key={i}
       type={a.type}
       label={a.label}
       variant={a.variant}
@@ -44,20 +58,28 @@ export const Menu = React.forwardRef(
   )
 )
 
-const MarkButton = ({ editor, type, label, variant, action }) => {
-  const [editorState, dispatchEditor] = useEditorContext()
+const MarkButton = ({ editor, type, label, variant, action, key }) => {
+  const [, dispatchEditor] = useEditorContext()
   const { value } = editor
   const isActive = value.activeMarks.some(mark => mark.type === type)
 
   return (
     <Button
+      data-test-format-menu={type}
+      key={key}
       variant="formatButton"
+      className="buttonClass"
       onMouseDown={e => {
         e.preventDefault()
         dispatchEditor(action(type, { value }))
       }}
     >
-      <Text variant={variant} color={isActive ? 'primary.1' : 'background.1'}>
+      <Text
+        variant={variant}
+        pr={space.small}
+        pl={space.small}
+        color={isActive ? 'primary.1' : 'background.1'}
+      >
         {label}
       </Text>
     </Button>
@@ -69,10 +91,6 @@ const HoverMenu = ({ editor, editableRef }) => {
   const root = editableRef.current
     ? editableRef.current.el
     : window.document.getElementById('root')
-
-  useEffect(() => {
-    updateMenu()
-  })
 
   const updateMenu = () => {
     const menu = menuRef.current
@@ -96,8 +114,15 @@ const HoverMenu = ({ editor, editableRef }) => {
       rect.width / 2}px`
   }
 
+  useEffect(() => {
+    updateMenu()
+  })
+
   return ReactDOM.createPortal(
-    <Menu ref={menuRef}>{formatActionButtons(editor)}</Menu>,
+    <Menu ref={menuRef}>
+      {formatActionButtons(editor)}
+      <HoverView variant="divider" />
+    </Menu>,
     root
   )
 }

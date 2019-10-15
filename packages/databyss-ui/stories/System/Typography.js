@@ -60,6 +60,17 @@ export default () => (
           </TextVariant>
         </View>
         <View mr="medium">
+          <TextVariant variant="uiTextLargeItalic">
+            UITextLargeItalic
+          </TextVariant>
+          <TextVariant variant="uiTextNormalItalic">
+            UITextNormalItalic
+          </TextVariant>
+          <TextVariant variant="uiTextSmallItalic">
+            UITextSmallItalic
+          </TextVariant>
+        </View>
+        <View mr="medium">
           <TextVariant variant="uiTextLargeUnderline">
             UITextLargeUnderline
           </TextVariant>
