@@ -15,7 +15,7 @@ import fastCompare from 'react-fast-compare'
 import styled from '../styled'
 import IS_NATIVE from '../../lib/isNative'
 
-const paddingVariant = variant({
+export const paddingVariant = variant({
   prop: 'paddingVariant',
   scale: 'paddingVariants',
   variants: {
@@ -24,9 +24,18 @@ const paddingVariant = variant({
   },
 })
 
-const borderVariant = variant({
+export const borderVariant = variant({
   prop: 'borderVariant',
   scale: 'borderVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
+})
+
+export const shadowVariant = variant({
+  prop: 'shadowVariant',
+  scale: 'shadowVariants',
   variants: {
     // need one member to enable theming
     default: {},
@@ -42,10 +51,11 @@ export const styleProps = compose(
   color,
   shadow,
   paddingVariant,
-  borderVariant
+  borderVariant,
+  shadowVariant
 )
 
-const View = styled(
+const Styled = styled(
   {
     ios: 'View',
     android: 'View',
@@ -54,7 +64,7 @@ const View = styled(
   styleProps
 )
 
-export default forwardRef(({ children, onLayout, ...others }, ref) => {
+const View = forwardRef(({ children, onLayout, ...others }, ref) => {
   const viewRef = useRef(null)
   const clientRect = {}
   const _onLayout = useCallback(
@@ -66,8 +76,10 @@ export default forwardRef(({ children, onLayout, ...others }, ref) => {
     },
     [clientRect]
   )
-
   const defaultProps = {
+    paddingVariant: 'none',
+    borderVariant: 'none',
+    shadowVariant: 'none',
     flexGrow: 0,
     flexShrink: 0,
     flexBasis: 'auto',
@@ -117,16 +129,14 @@ export default forwardRef(({ children, onLayout, ...others }, ref) => {
   }
 
   const view = (
-    <View
-      paddingVariant="none"
-      borderVariant="none"
+    <Styled
       ref={setRef}
       {...defaultProps}
       {...(IS_NATIVE ? nativeProps : webProps)}
       {...others}
     >
       {children}
-    </View>
+    </Styled>
   )
 
   if (others.theme) {
@@ -135,3 +145,5 @@ export default forwardRef(({ children, onLayout, ...others }, ref) => {
 
   return view
 })
+
+export default View

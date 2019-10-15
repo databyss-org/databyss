@@ -5,9 +5,10 @@ import css from '@styled-system/css'
 import { isMobile } from '../../lib/mediaQuery'
 import MobileModal from './MobileModal'
 import { View } from '../'
+import { shadowVariant } from '../View/View'
 import styled from '../styled'
 import makeAnimations from './animations'
-import theme from '../../theming/theme'
+import theme, { borderRadius } from '../../theming/theme'
 
 ReactModal.setAppElement('#root')
 
@@ -15,7 +16,8 @@ const StyledReactModal = styled(
   ReactModal,
   compose(
     position,
-    color
+    color,
+    shadowVariant
   )
 )
 
@@ -50,8 +52,12 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
-    backgroundColor: 'background.1',
-    maxWidth: `calc(100% - ${theme.space[2] * 2}px)`,
+    backgroundColor: 'background.0',
+    width: `calc(100% - ${theme.space[5] * 2}px)`,
+    maxWidth: `850px`,
+    maxHeight: `calc(100% - ${theme.space[5] * 2}px)`,
+    overflow: 'auto',
+    borderRadius,
   }
   const _mobile = isMobile()
   const _css = _mobile
@@ -81,10 +87,11 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
       {...sharedProps}
       onAfterOpen={onOpen}
       onRequestClose={onClose}
+      shadowVariant="modal"
       css={_css}
       style={{
         overlay: {
-          backgroundColor: 'transparent',
+          backgroundColor: 'rgba(0, 0, 0, 0.35)',
         },
       }}
     >
@@ -101,6 +108,7 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
 
 Modal.defaultProps = {
   onDismiss: () => null,
+  shadowVariant: 'modal',
 }
 
 export default Modal

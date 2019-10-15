@@ -1,19 +1,13 @@
 import React, { useState, useRef } from 'react'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
-import {
-  Modal,
-  InputModal,
-  Button,
-  Text,
-  Icon,
-} from '@databyss-org/ui/primitives'
+import { Modal, Button, Text, Icon } from '@databyss-org/ui/primitives'
 import { loremIpsum } from 'lorem-ipsum'
 import Alea from 'alea'
-import { Section } from './'
+import { Section, TextControls } from './'
 
 const alea = new Alea('modals')
-const ipsum = loremIpsum({ units: 'paragraphs', count: 4, random: alea })
+const ipsum = loremIpsum({ units: 'paragraphs', count: 1, random: alea })
 
 const modals = {
   default: {
@@ -50,6 +44,7 @@ export default () => {
     <Section title="Modals">
       {Object.keys(modals).map(key => (
         <Button
+          key={key}
           onPress={() => {
             setModal(key)
             setVisible(true)
@@ -64,7 +59,10 @@ export default () => {
         paddingVariant="medium"
         {...modals[modal]}
       >
-        <Text>{ipsum}</Text>
+        <Text>
+          {ipsum}
+          {ipsum}
+        </Text>
       </Modal>
     </Section>
   )
@@ -79,32 +77,32 @@ const editableModals = {
 export const Editable = () => {
   const [visible, setVisible] = useState(false)
   const [modal, setModal] = useState('default')
-  const inputRef = useRef(null)
 
   return (
     <Section title="Modals (editable content)">
       {Object.keys(editableModals).map(key => (
         <Button
+          key={key}
           onPress={() => {
             setModal(key)
             setVisible(true)
-            inputRef.current.focus()
           }}
         >
           {editableModals[key].title}
         </Button>
       ))}
-      <InputModal
+      <Modal
         visible={visible}
         onDismiss={() => setVisible(false)}
-        paddingVariant="medium"
+        paddingVariant="large"
         {...editableModals[modal]}
       >
-        <textarea
-          ref={inputRef}
-          style={{ width: '95%', height: '150px', fontSize: '16px' }}
-        />
-      </InputModal>
+        <TextControls />
+        <TextControls />
+        <TextControls />
+        <TextControls />
+        <TextControls />
+      </Modal>
     </Section>
   )
 }

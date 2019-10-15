@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react'
 import { variant, flexbox, shadow, layout, compose } from 'styled-system'
 import { BaseControl, Text } from '../'
-// HACK: if View is imported from '../' above, it breaks storybook:build (reason unknown)
+import { shadowVariant } from '../View/View'
 import styled from '../styled'
 import buttons from '../../theming/buttons'
 
@@ -20,7 +20,8 @@ const StyledControl = styled(
     flexbox,
     shadow,
     layout,
-    variants
+    variants,
+    shadowVariant
   )
 )
 
@@ -51,6 +52,7 @@ const Button = forwardRef(({ onPress, variant, children, ...others }, ref) => {
 
 Button.defaultProps = {
   variant: 'primaryUi',
+  shadowVariant: 'none',
 }
 
 export default Button

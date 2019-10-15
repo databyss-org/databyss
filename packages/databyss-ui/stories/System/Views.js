@@ -69,5 +69,19 @@ export default () => (
         </CaptionedView>
       </Grid>
     </Section>
+    <Section title="Shadow variants" overflow="visible">
+      <Grid mb="medium" overflow="visible">
+        <CaptionedView caption="button" overflow="visible">
+          <View borderVariant="thinLight" shadowVariant="button" mb="small">
+            <Text variant="uiTextNormal">{ipsum}</Text>
+          </View>
+        </CaptionedView>
+        <CaptionedView caption="modal" overflow="visible">
+          <View borderVariant="thinLight" shadowVariant="modal" mb="small">
+            <Text variant="uiTextNormal">{ipsum}</Text>
+          </View>
+        </CaptionedView>
+      </Grid>
+    </Section>
   </React.Fragment>
 )

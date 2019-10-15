@@ -39,6 +39,7 @@ const TextInput = forwardRef(
 
     return (
       <Editor
+        tabIndex={0}
         value={_value}
         onChange={_onChange}
         ref={ref}

@@ -9,7 +9,6 @@ import {
   Icon,
   List,
 } from '@databyss-org/ui/primitives'
-import TextInput from '@databyss-org/ui/primitives/Control/native/TextInput'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import { loremIpsum } from 'lorem-ipsum'
 import Alea from 'alea'
@@ -28,15 +27,56 @@ const Checkbox = ({ checked }) => (
   />
 )
 
-export default () => {
-  const [checked, setChecked] = useState(false)
-  const [switched, setSwitched] = useState(false)
+export const TextControls = () => {
   const [textValue, setTextValue] = useState({ textValue: 'Jacques Derrida' })
   const [textValue2, setTextValue2] = useState({ textValue: 'Of Grammatology' })
   const [textValue3, setTextValue3] = useState({
     textValue: 'Johns Hopkins University Press',
   })
   const [textValue4, setTextValue4] = useState({ textValue: ipsum })
+  return (
+    <List overflow="visible">
+      <TextControl
+        labelProps={{
+          width: '20%',
+        }}
+        label="Author"
+        value={textValue}
+        onChange={value => setTextValue(value)}
+      />
+      <TextControl
+        labelProps={{
+          width: '20%',
+        }}
+        label="Title"
+        value={textValue2}
+        onChange={value => setTextValue2(value)}
+      />
+      <TextControl
+        labelProps={{
+          width: '20%',
+        }}
+        label="Publisher"
+        value={textValue3}
+        onChange={value => setTextValue3(value)}
+      />
+      <TextControl
+        labelProps={{
+          width: '20%',
+        }}
+        label="Abstract"
+        value={textValue4}
+        onChange={value => setTextValue4(value)}
+        gridFlexWrap="nowrap"
+      />
+    </List>
+  )
+}
+
+export default () => {
+  const [checked, setChecked] = useState(false)
+  const [switched, setSwitched] = useState(false)
+
   return (
     <React.Fragment>
       <Section title="Base Control">
@@ -62,41 +102,7 @@ export default () => {
       </Section>
       <Section title="Text Control" overflow="visible">
         <View backgroundColor="background.1" overflow="visible">
-          <List overflow="visible">
-            <TextControl
-              labelProps={{
-                width: '20%',
-              }}
-              label="Author"
-              value={textValue}
-              onChange={value => setTextValue(value)}
-            />
-            <TextControl
-              labelProps={{
-                width: '20%',
-              }}
-              label="Title"
-              value={textValue2}
-              onChange={value => setTextValue2(value)}
-            />
-            <TextControl
-              labelProps={{
-                width: '20%',
-              }}
-              label="Publisher"
-              value={textValue3}
-              onChange={value => setTextValue3(value)}
-            />
-            <TextControl
-              labelProps={{
-                width: '20%',
-              }}
-              label="Abstract"
-              value={textValue4}
-              onChange={value => setTextValue4(value)}
-              gridFlexWrap="nowrap"
-            />
-          </List>
+          <TextControls />
         </View>
       </Section>
       <Section title="Toggle Control">

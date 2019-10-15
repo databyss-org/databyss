@@ -26,6 +26,12 @@ const TextControl = ({
         setTimeout(() => setActive(true), 50)
         inputRef.current.focus()
       }}
+      onFocus={() => {
+        if (!active && inputRef.current) {
+          setTimeout(() => setActive(true), 50)
+          inputRef.current.focus()
+        }
+      }}
       {...others}
     >
       <Grid
@@ -48,7 +54,7 @@ const TextControl = ({
             ref={inputRef}
             active={active}
             onBlur={() => {
-              setActive(false)
+              setTimeout(() => setActive(false), 50)
             }}
             onChange={onChange}
             variant={textVariant}

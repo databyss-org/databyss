@@ -4,7 +4,6 @@ import { ThemeContext } from '@emotion/core'
 import ClickAwayListener from '../../Util/ClickAwayListener'
 import { isMobileOs } from '../../../lib/mediaQuery'
 import { View, Text } from '../../'
-import effects from '../../../theming/effects'
 
 const desktopInputCss = {
   display: 'flex',
@@ -33,7 +32,6 @@ const mobileViewCss = active =>
         padding: 'none',
         bg: 'transparent',
         marginRight: 0,
-        ...effects.modalShadow,
       }
     : {}
 
@@ -45,6 +43,8 @@ const activeInputCss = {
   borderRadius: 0,
   margin: 0,
 }
+
+const _isMobileOs = isMobileOs()
 
 const TextInputView = ({ active, children, value, label, ...others }) => {
   const child = React.Children.only(children)
@@ -61,7 +61,7 @@ const TextInputView = ({ active, children, value, label, ...others }) => {
     <ThemeContext.Consumer>
       {theme => (
         <View overflow="visible" ref={viewRef} {...others} flexShrink={1}>
-          {isMobileOs() && (
+          {_isMobileOs && (
             <View padding="1px" flexShrink={1} flexWrap="wrap">
               <Text variant={child.props.variant}>
                 {child.props.value.textValue}
@@ -71,15 +71,16 @@ const TextInputView = ({ active, children, value, label, ...others }) => {
 
           <ClickAwayListener
             onClickAway={() => {
-              if (isMobileOs() && active) {
+              if (_isMobileOs && active) {
                 child.props.onBlur()
               }
             }}
           >
             <View
-              css={[isMobileOs() && css(mobileViewCss(active))(theme)]}
+              css={[_isMobileOs && css(mobileViewCss(active))(theme)]}
+              shadowVariant={_isMobileOs ? 'modal' : 'none'}
               onClick={
-                isMobileOs()
+                _isMobileOs
                   ? () => {
                       if (inputRef.current) {
                         inputRef.current.focus()
@@ -89,14 +90,14 @@ const TextInputView = ({ active, children, value, label, ...others }) => {
               }
             >
               {React.cloneElement(child, {
-                variant: isMobileOs() ? 'uiTextNormal' : child.props.variant,
+                variant: _isMobileOs ? 'uiTextNormal' : child.props.variant,
                 css: [
                   { outlineOffset: 0, outline: 'none', borderWidth: 0 },
-                  isMobileOs() && css(mobileInputCss(active))(theme),
-                  !isMobileOs() && css(desktopInputCss)(theme),
+                  _isMobileOs && css(mobileInputCss(active))(theme),
+                  !_isMobileOs && css(desktopInputCss)(theme),
                   active && css(activeInputCss)(theme),
                 ],
-                onBlur: isMobileOs() ? () => null : child.props.onBlur,
+                onBlur: _isMobileOs ? () => null : child.props.onBlur,
                 ref: setRef,
               })}
             </View>

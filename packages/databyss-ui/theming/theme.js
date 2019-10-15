@@ -26,7 +26,7 @@ const theme = {
   colors,
 
   /* colors */
-  effects,
+  ...effects,
 
   /* responsive */
   responsive,

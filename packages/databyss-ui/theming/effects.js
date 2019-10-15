@@ -32,4 +32,13 @@ const effects = {
   },
 }
 
-export default effects
+const shadowVariants = {
+  none: {},
+  button: effects.buttonShadow,
+  modal: effects.modalShadow,
+}
+
+export default {
+  ...effects,
+  shadowVariants,
+}
