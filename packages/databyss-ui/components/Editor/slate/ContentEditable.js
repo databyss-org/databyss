@@ -7,7 +7,7 @@ import EditorBlock from '../EditorBlock'
 import { getRawHtmlForBlock, entities } from '../state/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../EditorProvider'
-import FormatMenu from '../EditorMenu/FormatMenu'
+import FormatMenu from '../Menu/FormatMenu'
 import hotKeys, {
   START_OF_LINE,
   END_OF_LINE,

@@ -70,6 +70,13 @@ const buttonVariants = {
     color: 'text.4',
     backgroundColor: 'background.2',
   },
+  formatButton: {
+    display: 'inline-grid',
+    paddingLeft: space.small,
+    backgroundColor: 'background.6',
+
+    paddingRight: space.small,
+  },
 }
 
 const buttonThemes = {
@@ -98,6 +105,12 @@ const buttonThemes = {
   editorMarginMenu: {
     rippleColor: 'primary.2',
     hoverColor: 'background.4',
+    activeColor: 'primary.2',
+  },
+  formatButton: {
+    textProps: {},
+    rippleColor: 'primary.2',
+    hoverColor: 'background.6',
     activeColor: 'primary.2',
   },
 }

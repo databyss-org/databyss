@@ -1,52 +1,67 @@
 import React, { useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
 import { cx, css } from 'emotion'
+import { Button, Text, HoverView } from '@databyss-org/ui/primitives'
 import { useEditorContext } from '../EditorProvider'
 import { toggleMark } from '../state/actions'
 
-export const Menu = React.forwardRef(({ className, ...props }, ref) => (
-  <div
-    {...props}
-    ref={ref}
-    className={cx(
-      className,
-      css`
-        & > * {
-          display: inline-block;
-        }
-        & > * + * {
-          margin-left: 15px;
-        }
-      `
-    )}
-  />
-))
+const formatActions = [
+  {
+    type: 'bold',
+    label: 'b',
+    variant: 'uiTextNormalSemibold',
+    action: a => toggleMark(a),
+  },
+  {
+    type: 'italic',
+    label: 'i',
+    variant: 'bodyNormalItalic',
+    action: a => toggleMark(a),
+  },
+  {
+    type: 'location',
+    label: 'loc',
+    variant: 'bodyNormal',
+    action: a => toggleMark(a),
+  },
+]
 
-const MarkButton = ({ editor, type, icon }) => {
+const formatActionButtons = editor =>
+  formatActions.map(a => (
+    <MarkButton
+      editor={editor}
+      type={a.type}
+      label={a.label}
+      variant={a.variant}
+      action={a.action}
+    />
+  ))
+
+export const Menu = React.forwardRef(
+  ({ className, children, ...props }, ref) => (
+    <HoverView {...props} ref={ref}>
+      {children}
+    </HoverView>
+  )
+)
+
+const MarkButton = ({ editor, type, label, variant, action }) => {
   const [editorState, dispatchEditor] = useEditorContext()
   const { value } = editor
   const isActive = value.activeMarks.some(mark => mark.type === type)
 
   return (
-    <button
+    <Button
+      variant="formatButton"
       onMouseDown={e => {
         e.preventDefault()
-        dispatchEditor(toggleMark(type, { value }))
-        // console.log(type)
+        dispatchEditor(action(type, { value }))
       }}
     >
-      {type}
-    </button>
-    // <Button
-    //   reversed
-    //   active={isActive}
-    //   onMouseDown={event => {
-    //     event.preventDefault()
-    //     editor.toggleMark(type)
-    //   }}
-    // >
-    //   <Icon>{icon}</Icon>
-    // </Button>
+      <Text variant={variant} color={isActive ? 'primary.1' : 'background.1'}>
+        {label}
+      </Text>
+    </Button>
   )
 }
 
@@ -72,6 +87,7 @@ const HoverMenu = ({ editor, editableRef }) => {
     const native = window.getSelection()
     const range = native.getRangeAt(0)
     const rect = range.getBoundingClientRect()
+
     menu.style.opacity = 1
     menu.style.top = `${rect.top + window.pageYOffset - menu.offsetHeight}px`
 
@@ -82,25 +98,7 @@ const HoverMenu = ({ editor, editableRef }) => {
   }
 
   return ReactDOM.createPortal(
-    <Menu
-      ref={menuRef}
-      className={css`
-        padding: 8px 7px 6px;
-        position: absolute;
-        z-index: 1;
-        top: -10000px;
-        left: -10000px;
-        margin-top: -6px;
-        opacity: 0;
-        background-color: #222;
-        border-radius: 4px;
-        transition: opacity 0.75s;
-      `}
-    >
-      <MarkButton editor={editor} type="bold" />
-      <MarkButton editor={editor} type="italic" />
-      <MarkButton editor={editor} type="location" />
-    </Menu>,
+    <Menu ref={menuRef}>{formatActionButtons(editor)}</Menu>,
     root
   )
 }
