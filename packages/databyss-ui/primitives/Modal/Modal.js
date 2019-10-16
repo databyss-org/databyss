@@ -2,15 +2,13 @@ import React from 'react'
 import ReactModal from 'react-modal'
 import { position, color, compose } from 'styled-system'
 import css from '@styled-system/css'
-import { isMobile } from '../../lib/mediaQuery'
+import { isMobileOs } from '../../lib/mediaQuery'
 import MobileModal from './MobileModal'
 import { View } from '../'
 import { shadowVariant } from '../View/View'
 import styled from '../styled'
 import makeAnimations from './animations'
 import theme, { borderRadius } from '../../theming/theme'
-
-ReactModal.setAppElement('#root')
 
 const StyledReactModal = styled(
   ReactModal,
@@ -59,7 +57,7 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
     overflow: 'auto',
     borderRadius,
   }
-  const _mobile = isMobile()
+  const _mobile = isMobileOs()
   const _css = _mobile
     ? [
         mobileCss(animations.slide.outro.css),
@@ -85,9 +83,10 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
   return (
     <StyledReactModal
       {...sharedProps}
+      appElement={document.getElementById('root')}
       onAfterOpen={onOpen}
       onRequestClose={onClose}
-      shadowVariant="modal"
+      shadowVariant={_mobile ? 'none' : 'modal'}
       css={_css}
       style={{
         overlay: {
@@ -108,7 +107,6 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
 
 Modal.defaultProps = {
   onDismiss: () => null,
-  shadowVariant: 'modal',
 }
 
 export default Modal

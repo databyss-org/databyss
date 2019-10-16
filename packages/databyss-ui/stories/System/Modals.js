@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import { Modal, Button, Text, Icon } from '@databyss-org/ui/primitives'
