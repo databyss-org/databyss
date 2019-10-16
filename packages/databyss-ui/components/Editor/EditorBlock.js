@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
+import css from '@styled-system/css'
+
 import { Text, View } from '@databyss-org/ui/primitives'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
@@ -8,7 +10,12 @@ import { pxUnits } from '@databyss-org/ui/theming/views'
 import EditorBlockMenu from './Menu/EditorBlockMenu'
 
 const TextBlock = ({ children, variant, color }) => (
-  <Text variant={variant} color={color}>
+  <Text
+    onBlur={() => console.log('is blurred')}
+    onFocus={() => console.log('is focused')}
+    variant={variant}
+    color={color}
+  >
     {children}
   </Text>
 )
@@ -44,22 +51,36 @@ const textSelector = ({ children, type }) => {
   return TextBlock({ children, ...textStyle(type) })
 }
 
-const EditorBlock = ({ children, node }) => (
-  <Grid singleRow mb="tiny" flexWrap="nowrap" columnGap="small">
-    <View
-      contentEditable="false"
-      suppressContentEditableWarning
-      css={{ userSelect: 'none' }}
-      width={editorMarginMenuItemHeight}
-      height={editorMarginMenuItemHeight}
-      overflow="visible"
-    >
-      {node.text.length < 1 && <EditorBlockMenu node={node} />}
-    </View>
-    <View flexShrink={1} overflow="visible" justifyContent="center">
-      {textSelector({ children, type: node.type })}
-    </View>
-  </Grid>
-)
+const EditorBlock = ({ children, node }) => {
+  const [menuActive, setMenuActive] = useState(false)
+
+  return (
+    <Grid singleRow mb="tiny" flexWrap="nowrap" columnGap="small">
+      <View
+        contentEditable="false"
+        suppressContentEditableWarning
+        css={{ userSelect: 'none' }}
+        width={editorMarginMenuItemHeight}
+        height={editorMarginMenuItemHeight}
+        overflow="visible"
+      >
+        {node.text.length < 1 && (
+          <EditorBlockMenu
+            hideCursor={bool => setMenuActive(bool)}
+            node={node}
+          />
+        )}
+      </View>
+      <View
+        flexShrink={1}
+        overflow="visible"
+        justifyContent="center"
+        css={css({ caretColor: menuActive && 'transparent' })}
+      >
+        {textSelector({ children, type: node.type })}
+      </View>
+    </Grid>
+  )
+}
 
 export default EditorBlock

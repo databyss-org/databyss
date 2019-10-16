@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import buttons, {
   editorMarginMenuItemHeight,
 } from '@databyss-org/ui/theming/buttons'
-import space from '@databyss-org/ui/theming/space'
-import { pxUnits } from '@databyss-org/ui/theming/views'
+import EditorBlockMenuActions from './EditorBlockMenuActions'
 import { View, Button, Icon } from '@databyss-org/ui/primitives'
 import Close from '@databyss-org/ui/assets/close-menu.svg'
 import Add from '@databyss-org/ui/assets/add.svg'
@@ -12,7 +11,7 @@ import Add from '@databyss-org/ui/assets/add.svg'
 import { useEditorContext } from '../EditorProvider'
 import { startTag } from '../state/actions'
 
-const EditorBlockMenu = ({ node }) => {
+const EditorBlockMenu = ({ node, hideCursor }) => {
   const [editorState, dispatchEditor] = useEditorContext()
   const [actions, showActions] = useState(false)
   let isVisible = false
@@ -30,6 +29,17 @@ const EditorBlockMenu = ({ node }) => {
     dispatchEditor(startTag(tag, editorState.editableState))
     showActions(false)
   }
+
+  useEffect(
+    () => {
+      if (actions) {
+        hideCursor(true)
+      } else {
+        hideCursor(false)
+      }
+    },
+    [actions]
+  )
 
   const menuActions = [
     {
@@ -79,9 +89,10 @@ const EditorBlockMenu = ({ node }) => {
       </View>
       <View justifyContent="center" height={editorMarginMenuItemHeight}>
         {actions && (
-          <Grid singleRow columnGap="tiny">
-            {menuActionButtons}
-          </Grid>
+          <EditorBlockMenuActions
+            unmount={() => showActions(false)}
+            menuActionButtons={menuActionButtons}
+          />
         )}
       </View>
     </Grid>

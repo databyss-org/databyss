@@ -48,7 +48,6 @@ const handleNewBlockConditions = (activeBlock, editor) => {
       isAtomicInlineType(editor.value.previousBlock.type) &&
       editor.value.previousBlock.text
     ) {
-      console.log('handle new condition')
       editor.setNodeByKey(editor.value.anchorBlock.key, { type: 'ENTRY' })
       return false
     }
