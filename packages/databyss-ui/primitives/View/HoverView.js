@@ -7,6 +7,7 @@ import {
   compose,
   border,
 } from 'styled-system'
+import Grid from '@databyss-org/ui/components/Grid/Grid'
 import styled from '../styled'
 import IS_NATIVE from '../../lib/isNative'
 
@@ -37,7 +38,9 @@ const HoverView = forwardRef(({ children, ...others }, ref) => {
 
   return (
     <Styled {...others} ref={ref}>
-      {children}
+      <Grid singleRow mr={0}>
+        {children}
+      </Grid>
     </Styled>
   )
 })

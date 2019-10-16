@@ -1,29 +1,30 @@
 import React, { useEffect, useRef } from 'react'
 import ReactDOM from 'react-dom'
 import { Button, Text, HoverView } from '@databyss-org/ui/primitives'
+import { isMobileOs } from '@databyss-org/ui/'
 import space from '@databyss-org/ui/theming/space'
 import { useEditorContext } from '../EditorProvider'
 import { toggleMark } from '../state/actions'
 
 const formatActions = [
-  {
-    type: 'source',
-    label: '@',
-    variant: 'uiTextNormal',
-    action: a => toggleMark(a),
-  },
+  // {
+  //   type: 'source',
+  //   label: '@',
+  //   variant: 'uiTextNormal',
+  //   action: a => toggleMark(a),
+  // },
   {
     type: 'location',
     label: 'loc',
     variant: 'uiTextNormal',
     action: a => toggleMark(a),
   },
-  {
-    type: 'topic',
-    label: '#',
-    variant: 'uiTextNormal',
-    action: a => toggleMark(a),
-  },
+  // {
+  //   type: 'topic',
+  //   label: '#',
+  //   variant: 'uiTextNormal',
+  //   action: a => toggleMark(a),
+  // },
   {
     type: 'bold',
     label: 'b',
@@ -42,7 +43,7 @@ const formatActionButtons = editor =>
   formatActions.map((a, i) => (
     <MarkButton
       editor={editor}
-      key={i}
+      index={i}
       type={a.type}
       label={a.label}
       variant={a.variant}
@@ -58,17 +59,18 @@ export const Menu = React.forwardRef(
   )
 )
 
-const MarkButton = ({ editor, type, label, variant, action, key }) => {
+const MarkButton = ({ editor, type, label, variant, action, index }) => {
   const [, dispatchEditor] = useEditorContext()
   const { value } = editor
   const isActive = value.activeMarks.some(mark => mark.type === type)
-
+  const borderRightColor =
+    formatActions.length === index + 1 ? 'none' : 'background.5'
   return (
     <Button
       data-test-format-menu={type}
-      key={key}
+      key={index}
       variant="formatButton"
-      className="buttonClass"
+      borderRightColor={borderRightColor}
       onMouseDown={e => {
         e.preventDefault()
         dispatchEditor(action(type, { value }))
@@ -101,12 +103,15 @@ const HoverMenu = ({ editor, editableRef }) => {
       menu.removeAttribute('style')
       return
     }
+
     const native = window.getSelection()
     const range = native.getRangeAt(0)
     const rect = range.getBoundingClientRect()
 
     menu.style.opacity = 1
-    menu.style.top = `${rect.top + window.pageYOffset - menu.offsetHeight}px`
+    menu.style.top = isMobileOs()
+      ? `${rect.bottom + window.pageYOffset + 10}px`
+      : `${rect.top + window.pageYOffset - menu.offsetHeight}px`
 
     menu.style.left = `${rect.left +
       window.pageXOffset -
@@ -118,10 +123,14 @@ const HoverMenu = ({ editor, editableRef }) => {
     updateMenu()
   })
 
+  // try to make these in view
+  // divider should be view
+  // dont create new variant
+
   return ReactDOM.createPortal(
     <Menu ref={menuRef}>
       {formatActionButtons(editor)}
-      <HoverView variant="divider" />
+      {/* <HoverView variant="divider" /> */}
     </Menu>,
     root
   )

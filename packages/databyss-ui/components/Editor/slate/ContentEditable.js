@@ -255,7 +255,6 @@ const SlateContentEditable = ({
         _nextEditableState.value.document.getNode(activeBlockId).type !==
           'LOCATION'
       ) {
-        console.log('set it to location')
         onSetBlockType('LOCATION', activeBlockId, _nextEditableState)
       }
     }
@@ -427,6 +426,7 @@ const SlateContentEditable = ({
 
   const renderEditor = (_, editor, next) => {
     const children = next()
+
     return (
       <React.Fragment>
         {children}
