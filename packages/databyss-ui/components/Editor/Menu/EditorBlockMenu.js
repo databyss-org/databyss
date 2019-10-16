@@ -3,11 +3,10 @@ import Grid from '@databyss-org/ui/components/Grid/Grid'
 import buttons, {
   editorMarginMenuItemHeight,
 } from '@databyss-org/ui/theming/buttons'
-import EditorBlockMenuActions from './EditorBlockMenuActions'
 import { View, Button, Icon } from '@databyss-org/ui/primitives'
 import Close from '@databyss-org/ui/assets/close-menu.svg'
 import Add from '@databyss-org/ui/assets/add.svg'
-
+import EditorBlockMenuActions from './EditorBlockMenuActions'
 import { useEditorContext } from '../EditorProvider'
 import { startTag } from '../state/actions'
 

@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 
 const EditorBlockMenuActions = ({ menuActionButtons, unmount }) => {
-  useEffect(() => {
-    return () => unmount()
-  }, [])
+  useEffect(() => () => unmount(), [])
   return (
     <Grid singleRow columnGap="tiny">
       {menuActionButtons}
