@@ -45,17 +45,18 @@ const textSelector = ({ children, type }) => {
 }
 
 const EditorBlock = ({ children, node }) => (
-  <Grid mb="medium" flexWrap="nowrap" columnGap="small">
+  <Grid singleRow mb="tiny" flexWrap="nowrap" columnGap="small">
     <View
       contentEditable="false"
       suppressContentEditableWarning
       css={{ userSelect: 'none' }}
       width={editorMarginMenuItemHeight}
+      height={editorMarginMenuItemHeight}
       overflow="visible"
     >
       {node.text.length < 1 && <EditorBlockMenu node={node} />}
     </View>
-    <View flexShrink={1} overflow="visible">
+    <View flexShrink={1} overflow="visible" justifyContent="center">
       {textSelector({ children, type: node.type })}
     </View>
   </Grid>

@@ -115,7 +115,7 @@ const uiTextBoldUnderlineVariants = Object.keys(uiTextBoldVariants).reduce(
 const bodyText = size => ({
   fontFamily: fonts.bodyFont,
   fontSize: size,
-  lineHeight: pxUnits(size * 1.5),
+  lineHeight: pxUnits(size * 1.3),
   fontWeight: fontWeights.normal,
 })
 

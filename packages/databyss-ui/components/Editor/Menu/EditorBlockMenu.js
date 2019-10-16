@@ -58,35 +58,33 @@ const EditorBlockMenu = ({ node }) => {
   ))
 
   return isVisible ? (
-    <View position="absolute">
-      <Grid singleRow rowGap="small" columnGap="none">
-        <View
-          height={space.menuHeight}
-          width={editorMarginMenuItemHeight}
-          justifyContent="center"
+    <Grid singleRow columnGap="small" position="absolute">
+      <View
+        height={editorMarginMenuItemHeight}
+        width={editorMarginMenuItemHeight}
+        justifyContent="center"
+      >
+        <Button
+          variant="editorMarginMenu"
+          onClick={onShowActions}
+          data-test-block-menu="open"
         >
-          <Button
-            variant="editorMarginMenu"
-            onClick={onShowActions}
-            data-test-block-menu="open"
+          <Icon
+            sizeVariant="tiny"
+            color={buttonVariants.editorMarginMenu.color}
           >
-            <Icon
-              sizeVariant="tiny"
-              color={buttonVariants.editorMarginMenu.color}
-            >
-              <View>{actions ? <Close /> : <Add />}</View>
-            </Icon>
-          </Button>
-        </View>
-        <View ml={pxUnits(8)} justifyContent="center" height={space.menuHeight}>
-          {actions && (
-            <Grid singleRow columnGap="small">
-              {menuActionButtons}
-            </Grid>
-          )}
-        </View>
-      </Grid>
-    </View>
+            <View>{actions ? <Close /> : <Add />}</View>
+          </Icon>
+        </Button>
+      </View>
+      <View justifyContent="center" height={editorMarginMenuItemHeight}>
+        {actions && (
+          <Grid singleRow columnGap="tiny">
+            {menuActionButtons}
+          </Grid>
+        )}
+      </View>
+    </Grid>
   ) : null
 }
 
