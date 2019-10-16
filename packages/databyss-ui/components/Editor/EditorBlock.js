@@ -10,12 +10,7 @@ import { pxUnits } from '@databyss-org/ui/theming/views'
 import EditorBlockMenu from './Menu/EditorBlockMenu'
 
 const TextBlock = ({ children, variant, color }) => (
-  <Text
-    onBlur={() => console.log('is blurred')}
-    onFocus={() => console.log('is focused')}
-    variant={variant}
-    color={color}
-  >
+  <Text variant={variant} color={color}>
     {children}
   </Text>
 )
