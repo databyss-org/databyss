@@ -38,7 +38,7 @@ const HoverView = forwardRef(({ children, ...others }, ref) => {
 
   return (
     <Styled {...others} ref={ref}>
-      <Grid singleRow mr={0}>
+      <Grid singleRow columnGap={0}>
         {children}
       </Grid>
     </Styled>
