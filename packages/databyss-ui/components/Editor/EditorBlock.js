@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import css from '@styled-system/css'
+import { isMobileOs } from '@databyss-org/ui/'
 
 import { Text, View } from '@databyss-org/ui/primitives'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
@@ -59,12 +60,13 @@ const EditorBlock = ({ children, node }) => {
         height={editorMarginMenuItemHeight}
         overflow="visible"
       >
-        {node.text.length < 1 && (
-          <EditorBlockMenu
-            hideCursor={bool => setMenuActive(bool)}
-            node={node}
-          />
-        )}
+        {node.text.length < 1 &&
+          !isMobileOs() && (
+            <EditorBlockMenu
+              hideCursor={bool => setMenuActive(bool)}
+              node={node}
+            />
+          )}
       </View>
       <View
         flexShrink={1}

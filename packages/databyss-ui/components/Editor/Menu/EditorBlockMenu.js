@@ -29,8 +29,6 @@ const EditorBlockMenu = ({ node, hideCursor }) => {
     showActions(false)
   }
 
-  console.log('show actions', actions)
-
   useEffect(
     () => {
       if (actions) {

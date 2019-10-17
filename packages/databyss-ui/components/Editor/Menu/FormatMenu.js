@@ -8,27 +8,44 @@ import { toggleMark, startTag } from '../state/actions'
 
 // if mobile and line is empty
 const mobileActions = [
-  // {
-  //   type: 'SOURCE',
-  //   label: '@',
-  //   variant: 'uiTextNormal',
-  //   action: a => startTag(a),
-  // },
+  {
+    type: 'SOURCE',
+    label: '+ source',
+    variant: 'uiTextNormal',
+    action: a => startTag(a),
+  },
+  {
+    type: 'TOPIC',
+    label: '+ topic',
+    variant: 'uiTextNormal',
+    action: a => startTag(a),
+  },
+  {
+    type: 'LOCATION',
+    label: '+ location',
+    variant: 'uiTextNormal',
+    action: a => startTag(a),
+  },
 ]
 
-const formatActions = [
-  // {
-  //   type: 'source',
-  //   label: '@',
-  //   variant: 'uiTextNormal',
-  //   action: a => toggleMark(a),
-  // },
+const webActions = [
   {
     type: 'location',
     label: 'loc',
     variant: 'uiTextNormal',
     action: a => toggleMark(a),
   },
+]
+
+const formatActions = [
+  ...(isMobileOs() ? mobileActions : webActions),
+  // {
+  //   type: 'source',
+  //   label: '@',
+  //   variant: 'uiTextNormal',
+  //   action: a => toggleMark(a),
+  // },
+
   // {
   //   type: 'topic',
   //   label: '#',
@@ -47,7 +64,6 @@ const formatActions = [
     variant: 'uiTextNormalItalic',
     action: a => toggleMark(a),
   },
-  ...mobileActions,
 ]
 
 const formatActionButtons = editor =>
@@ -99,7 +115,27 @@ const MarkButton = ({ editor, type, label, variant, action, index }) => {
   )
 }
 
+const isActiveSelection = value => {
+  const { fragment, selection } = value
+  if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
+    return false
+  }
+  return true
+}
+
+const isNewLineOnMobile = value => {
+  if (value.anchorBlock) {
+    if (value.anchorBlock.text.length === 0 && isMobileOs()) {
+      return true
+    }
+  }
+
+  return false
+}
+
 const HoverMenu = ({ editor, editableRef }) => {
+  // need to optomize this with hooks
+
   const menuRef = useRef(null)
   const root = editableRef.current
     ? editableRef.current.el
@@ -109,8 +145,7 @@ const HoverMenu = ({ editor, editableRef }) => {
     const menu = menuRef.current
     if (!menu) return
     const { value } = editor
-    const { fragment, selection } = value
-    if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
+    if (!isActiveSelection(value) && !isNewLineOnMobile(value)) {
       menu.removeAttribute('style')
       return
     }
@@ -125,7 +160,6 @@ const HoverMenu = ({ editor, editableRef }) => {
       : `${rect.top + window.pageYOffset - menu.offsetHeight}px`
 
     // menu offset to prevent overflow
-
     let menuLeftOffset = 0
 
     if (menu.offsetWidth / 2 > rect.left + rect.width / 2) {
