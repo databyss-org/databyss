@@ -4,7 +4,17 @@ import { Button, Text, HoverView } from '@databyss-org/ui/primitives'
 import { isMobileOs } from '@databyss-org/ui/'
 import space from '@databyss-org/ui/theming/space'
 import { useEditorContext } from '../EditorProvider'
-import { toggleMark } from '../state/actions'
+import { toggleMark, startTag } from '../state/actions'
+
+// if mobile and line is empty
+const mobileActions = [
+  // {
+  //   type: 'SOURCE',
+  //   label: '@',
+  //   variant: 'uiTextNormal',
+  //   action: a => startTag(a),
+  // },
+]
 
 const formatActions = [
   // {
@@ -37,6 +47,7 @@ const formatActions = [
     variant: 'uiTextNormalItalic',
     action: a => toggleMark(a),
   },
+  ...mobileActions,
 ]
 
 const formatActionButtons = editor =>
