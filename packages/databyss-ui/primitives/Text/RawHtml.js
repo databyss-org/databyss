@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import { color, compose } from 'styled-system'
 import styled from '../styled'
 import IS_NATIVE from '../../lib/isNative'
@@ -12,12 +12,12 @@ const Styled = styled(
   )
 )
 
-const RawHtml = ({ _html, ...others }) => {
+const RawHtml = forwardRef(({ _html, ...others }, ref) => {
   if (IS_NATIVE) {
     throw new Error('Component not availablle in React Native')
   }
-  return <Styled dangerouslySetInnerHTML={_html} {...others} />
-}
+  return <Styled ref={ref} dangerouslySetInnerHTML={_html} {...others} />
+})
 
 RawHtml.defaultProps = {
   color: 'text.0',

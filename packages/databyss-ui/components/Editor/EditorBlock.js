@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState } from 'react'
+import css from '@styled-system/css'
+
 import { Text, View } from '@databyss-org/ui/primitives'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
@@ -44,21 +46,36 @@ const textSelector = ({ children, type }) => {
   return TextBlock({ children, ...textStyle(type) })
 }
 
-const EditorBlock = ({ children, node }) => (
-  <Grid mb="medium" flexWrap="nowrap" columnGap="small">
-    <View
-      contentEditable="false"
-      suppressContentEditableWarning
-      css={{ userSelect: 'none' }}
-      width={editorMarginMenuItemHeight}
-      overflow="visible"
-    >
-      {node.text.length < 1 && <EditorBlockMenu node={node} />}
-    </View>
-    <View flexShrink={1} overflow="visible">
-      {textSelector({ children, type: node.type })}
-    </View>
-  </Grid>
-)
+const EditorBlock = ({ children, node }) => {
+  const [menuActive, setMenuActive] = useState(false)
+
+  return (
+    <Grid singleRow mb="tiny" flexWrap="nowrap" columnGap="small">
+      <View
+        contentEditable="false"
+        suppressContentEditableWarning
+        css={{ userSelect: 'none' }}
+        width={editorMarginMenuItemHeight}
+        height={editorMarginMenuItemHeight}
+        overflow="visible"
+      >
+        {node.text.length < 1 && (
+          <EditorBlockMenu
+            hideCursor={bool => setMenuActive(bool)}
+            node={node}
+          />
+        )}
+      </View>
+      <View
+        flexShrink={1}
+        overflow="visible"
+        justifyContent="center"
+        css={css({ caretColor: menuActive && 'transparent' })}
+      >
+        {textSelector({ children, type: node.type })}
+      </View>
+    </Grid>
+  )
+}
 
 export default EditorBlock

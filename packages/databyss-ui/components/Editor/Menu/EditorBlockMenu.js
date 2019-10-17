@@ -1,18 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Grid from '@databyss-org/ui/components/Grid/Grid'
 import buttons, {
   editorMarginMenuItemHeight,
 } from '@databyss-org/ui/theming/buttons'
-import space from '@databyss-org/ui/theming/space'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 import { View, Button, Icon } from '@databyss-org/ui/primitives'
 import Close from '@databyss-org/ui/assets/close-menu.svg'
 import Add from '@databyss-org/ui/assets/add.svg'
-
+import EditorBlockMenuActions from './EditorBlockMenuActions'
 import { useEditorContext } from '../EditorProvider'
 import { startTag } from '../state/actions'
 
-const EditorBlockMenu = ({ node }) => {
+const EditorBlockMenu = ({ node, hideCursor }) => {
   const [editorState, dispatchEditor] = useEditorContext()
   const [actions, showActions] = useState(false)
   let isVisible = false
@@ -30,6 +28,17 @@ const EditorBlockMenu = ({ node }) => {
     dispatchEditor(startTag(tag, editorState.editableState))
     showActions(false)
   }
+
+  useEffect(
+    () => {
+      if (actions) {
+        hideCursor(true)
+      } else {
+        hideCursor(false)
+      }
+    },
+    [actions]
+  )
 
   const menuActions = [
     {
@@ -58,35 +67,34 @@ const EditorBlockMenu = ({ node }) => {
   ))
 
   return isVisible ? (
-    <View position="absolute">
-      <Grid singleRow rowGap="small" columnGap="none">
-        <View
-          height={space.menuHeight}
-          width={editorMarginMenuItemHeight}
-          justifyContent="center"
+    <Grid singleRow columnGap="small" position="absolute">
+      <View
+        height={editorMarginMenuItemHeight}
+        width={editorMarginMenuItemHeight}
+        justifyContent="center"
+      >
+        <Button
+          variant="editorMarginMenu"
+          onClick={onShowActions}
+          data-test-block-menu="open"
         >
-          <Button
-            variant="editorMarginMenu"
-            onClick={onShowActions}
-            data-test-block-menu="open"
+          <Icon
+            sizeVariant="tiny"
+            color={buttonVariants.editorMarginMenu.color}
           >
-            <Icon
-              sizeVariant="tiny"
-              color={buttonVariants.editorMarginMenu.color}
-            >
-              <View>{actions ? <Close /> : <Add />}</View>
-            </Icon>
-          </Button>
-        </View>
-        <View ml={pxUnits(8)} justifyContent="center" height={space.menuHeight}>
-          {actions && (
-            <Grid singleRow columnGap="small">
-              {menuActionButtons}
-            </Grid>
-          )}
-        </View>
-      </Grid>
-    </View>
+            <View>{actions ? <Close /> : <Add />}</View>
+          </Icon>
+        </Button>
+      </View>
+      <View justifyContent="center" height={editorMarginMenuItemHeight}>
+        {actions && (
+          <EditorBlockMenuActions
+            unmount={() => showActions(false)}
+            menuActionButtons={menuActionButtons}
+          />
+        )}
+      </View>
+    </Grid>
   ) : null
 }
 
