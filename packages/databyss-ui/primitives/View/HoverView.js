@@ -38,7 +38,7 @@ const HoverView = forwardRef(({ children, ...others }, ref) => {
 
   return (
     <Styled {...others} ref={ref}>
-      <Grid singleRow columnGap={0}>
+      <Grid singleRow columnGap={0} flexWrap="nowrap">
         {children}
       </Grid>
     </Styled>

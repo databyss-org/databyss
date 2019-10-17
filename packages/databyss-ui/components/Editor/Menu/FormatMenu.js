@@ -113,25 +113,32 @@ const HoverMenu = ({ editor, editableRef }) => {
       ? `${rect.bottom + window.pageYOffset + 10}px`
       : `${rect.top + window.pageYOffset - menu.offsetHeight}px`
 
+    // menu offset to prevent overflow
+
+    let menuLeftOffset = 0
+
+    if (menu.offsetWidth / 2 > rect.left + rect.width / 2) {
+      menuLeftOffset = menu.offsetWidth / 2 - (rect.left + rect.width / 2)
+    }
+
+    if (rect.left + rect.width / 2 + menu.offsetWidth / 2 > window.innerWidth) {
+      menuLeftOffset =
+        window.innerWidth - (rect.left + rect.width / 2 + menu.offsetWidth / 2)
+    }
+
     menu.style.left = `${rect.left +
       window.pageXOffset -
       menu.offsetWidth / 2 +
-      rect.width / 2}px`
+      rect.width / 2 +
+      menuLeftOffset}px`
   }
 
   useEffect(() => {
     updateMenu()
   })
 
-  // try to make these in view
-  // divider should be view
-  // dont create new variant
-
   return ReactDOM.createPortal(
-    <Menu ref={menuRef}>
-      {formatActionButtons(editor)}
-      {/* <HoverView variant="divider" /> */}
-    </Menu>,
+    <Menu ref={menuRef}>{formatActionButtons(editor)}</Menu>,
     root
   )
 }
