@@ -54,8 +54,14 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
     width: `calc(100% - ${theme.space[5] * 2}px)`,
     maxWidth: `850px`,
     maxHeight: `calc(100% - ${theme.space[5] * 2}px)`,
-    overflow: 'auto',
+    overflow: 'hidden',
     borderRadius,
+    display: 'flex',
+  }
+  const containerProps = {
+    flexGrow: 1,
+    flexShrink: 1,
+    overflow: 'auto',
   }
   const _mobile = isMobileOs()
   const _css = _mobile
@@ -90,7 +96,7 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
       css={_css}
       style={{
         overlay: {
-          backgroundColor: 'rgba(0, 0, 0, 0.35)',
+          backgroundColor: _mobile ? 'transparent' : 'rgba(0, 0, 0, 0.35)',
         },
       }}
     >
@@ -99,7 +105,9 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
           {children}
         </MobileModal>
       ) : (
-        <View {...others}>{children}</View>
+        <View {...containerProps} {...others}>
+          {children}
+        </View>
       )}
     </StyledReactModal>
   )

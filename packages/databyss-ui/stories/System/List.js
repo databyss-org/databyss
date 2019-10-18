@@ -80,7 +80,12 @@ export const ComplexItems = () => {
   return (
     <Section title="List with Complex Items">
       <View borderVariant="thinLight" theme={darkTheme} bg="background.0">
-        <List verticalItemPadding={2} mt="none" mb="none">
+        <List
+          verticalItemPadding={2}
+          horizontalItemPadding={2}
+          mt="none"
+          mb="none"
+        >
           {menuItems.reduce((acc, item, index) => {
             if (index > 0) {
               acc.push(<Separator key={`separator${index}`} />)

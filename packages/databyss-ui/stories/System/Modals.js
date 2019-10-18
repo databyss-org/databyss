@@ -5,6 +5,7 @@ import { Modal, Button, Text, Icon } from '@databyss-org/ui/primitives'
 import { loremIpsum } from 'lorem-ipsum'
 import Alea from 'alea'
 import { Section, TextControls } from './'
+import { isMobileOs } from '../../lib/mediaQuery'
 
 const alea = new Alea('modals')
 const ipsum = loremIpsum({ units: 'paragraphs', count: 1, random: alea })
@@ -94,7 +95,7 @@ export const Editable = () => {
       <Modal
         visible={visible}
         onDismiss={() => setVisible(false)}
-        paddingVariant="large"
+        paddingVariant={isMobileOs() ? 'small' : 'large'}
         {...editableModals[modal]}
       >
         <TextControls />
