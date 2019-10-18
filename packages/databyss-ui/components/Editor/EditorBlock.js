@@ -50,6 +50,7 @@ const textSelector = ({ children, type }) => {
 const EditorBlock = ({ children, node }) => {
   const [menuActive, setMenuActive] = useState(false)
 
+  // WHEN YOU START TYPING CURSOR GOES AWAY
   return (
     <Grid singleRow mb="tiny" flexWrap="nowrap" columnGap="small">
       <View

@@ -72,6 +72,9 @@ const buttonVariants = {
   },
   formatButton: {
     backgroundColor: 'background.6',
+    paddingBottom: pxUnits(6),
+    paddingTop: pxUnits(6),
+
     borderRadius: pxUnits(0),
     borderRightWidth: pxUnits(1),
   },
@@ -113,11 +116,6 @@ const buttonThemes = {
   },
 }
 
-// make toolbar button component
-// make button component inline-grid
-// use our custom grid component
-// use single row variant for grid
-// take out sources and topics from menu
 // on mobile it will show plus topic and location instead of plus
 //
 

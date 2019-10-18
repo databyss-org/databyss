@@ -34,9 +34,9 @@ const borderVariants = {
 
 const hoverVariants = {
   formatMenuUI: {
-    paddingTop: pxUnits(8),
+    // paddingTop: pxUnits(8),
     paddingLeft: pxUnits(7),
-    paddingBottom: pxUnits(6),
+    // paddingBottom: pxUnits(6),
     paddingRight: pxUnits(7),
     backgroundColor: 'background.6',
     zIndex: 1,

@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react'
-import ReactDOM from 'react-dom'
+import { findDOMNode } from 'slate-react'
+
 import { Button, Text, HoverView } from '@databyss-org/ui/primitives'
 import { isMobileOs } from '@databyss-org/ui/'
 import space from '@databyss-org/ui/theming/space'
 import { useEditorContext } from '../EditorProvider'
 import { toggleMark, startTag } from '../state/actions'
 
-// if mobile and line is empty
 const mobileActions = [
   {
     type: 'SOURCE',
@@ -37,8 +37,8 @@ const webActions = [
   },
 ]
 
-const formatActions = [
-  ...(isMobileOs() ? mobileActions : webActions),
+const formatActions = isMobileNewLine => [
+  ...(isMobileOs() && isMobileNewLine ? mobileActions : webActions),
   // {
   //   type: 'source',
   //   label: '@',
@@ -66,9 +66,11 @@ const formatActions = [
   },
 ]
 
-const formatActionButtons = editor =>
-  formatActions.map((a, i) => (
+const formatActionButtons = editor => {
+  const isMobileNewLine = window.getSelection().focusOffset === 0
+  return formatActions(isMobileNewLine).map((a, i) => (
     <MarkButton
+      isMobileNewLine={isMobileNewLine}
       editor={editor}
       index={i}
       type={a.type}
@@ -77,6 +79,7 @@ const formatActionButtons = editor =>
       action={a.action}
     />
   ))
+}
 
 export const Menu = React.forwardRef(
   ({ className, children, ...props }, ref) => (
@@ -86,12 +89,25 @@ export const Menu = React.forwardRef(
   )
 )
 
-const MarkButton = ({ editor, type, label, variant, action, index }) => {
+const MarkButton = ({
+  editor,
+  type,
+  label,
+  variant,
+  action,
+  index,
+  isMobileNewLine,
+}) => {
   const [, dispatchEditor] = useEditorContext()
   const { value } = editor
   const isActive = value.activeMarks.some(mark => mark.type === type)
-  const borderRightColor =
-    formatActions.length === index + 1 ? 'none' : 'background.5'
+  let borderRightColor =
+    formatActions(isMobileNewLine).length === index + 1
+      ? 'none'
+      : 'background.5'
+  if (isMobileNewLine && index === 2) {
+    borderRightColor = 'background.2'
+  }
   return (
     <Button
       data-test-format-menu={type}
@@ -135,11 +151,8 @@ const isNewLineOnMobile = value => {
 
 const HoverMenu = ({ editor, editableRef }) => {
   // need to optomize this with hooks
-
+  let isMobileNewLine
   const menuRef = useRef(null)
-  const root = editableRef.current
-    ? editableRef.current.el
-    : window.document.getElementById('root')
 
   const updateMenu = () => {
     const menu = menuRef.current
@@ -154,21 +167,36 @@ const HoverMenu = ({ editor, editableRef }) => {
     const range = native.getRangeAt(0)
     const rect = range.getBoundingClientRect()
 
+    // CHECK FOR RANGE AND RENDER
+    const _node = findDOMNode(value.document.getNode(value.selection.focus.key))
+
+    isMobileNewLine = rect.width === 0
+
+    // CHECK FOR TOP OF LINE
+
+    const _mobileOffsetHeight = isMobileNewLine
+      ? `${rect.bottom + _node.getBoundingClientRect().top + 32}px`
+      : `${rect.bottom + window.pageYOffset + 10}px`
+
     menu.style.opacity = 1
+
     menu.style.top = isMobileOs()
-      ? `${rect.bottom + window.pageYOffset + 10}px`
+      ? _mobileOffsetHeight
       : `${rect.top + window.pageYOffset - menu.offsetHeight}px`
 
     // menu offset to prevent overflow
     let menuLeftOffset = 0
 
     if (menu.offsetWidth / 2 > rect.left + rect.width / 2) {
-      menuLeftOffset = menu.offsetWidth / 2 - (rect.left + rect.width / 2)
+      menuLeftOffset =
+        menu.offsetWidth / 2 - (rect.left + rect.width / 2) + space.small
     }
 
     if (rect.left + rect.width / 2 + menu.offsetWidth / 2 > window.innerWidth) {
       menuLeftOffset =
-        window.innerWidth - (rect.left + rect.width / 2 + menu.offsetWidth / 2)
+        window.innerWidth -
+        (rect.left + rect.width / 2 + menu.offsetWidth / 2) -
+        space.small
     }
 
     menu.style.left = `${rect.left +
@@ -182,10 +210,7 @@ const HoverMenu = ({ editor, editableRef }) => {
     updateMenu()
   })
 
-  return ReactDOM.createPortal(
-    <Menu ref={menuRef}>{formatActionButtons(editor)}</Menu>,
-    root
-  )
+  return <Menu ref={menuRef}>{formatActionButtons(editor)}</Menu>
 }
 
 export default HoverMenu

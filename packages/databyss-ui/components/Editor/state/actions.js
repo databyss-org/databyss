@@ -84,7 +84,6 @@ export function backspace(blockProperties, editableState) {
 }
 
 export function toggleMark(mark, editableState) {
-  console.log(editableState)
   return {
     type: TOGGLE_MARK,
     payload: {

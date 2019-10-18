@@ -373,6 +373,10 @@ const SlateContentEditable = ({
         if (!editor.value.previousBlock) {
           return next()
         }
+        // if backspace
+        // if prvious block is atomic
+        // if cursor is at position 0
+        // remove atomic block above
 
         if (event.key === 'Backspace' && editor.value.previousBlock.text) {
           if (
