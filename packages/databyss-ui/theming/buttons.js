@@ -89,7 +89,11 @@ const buttonThemes = {
   },
   primaryExternal: {},
   secondaryExternal: {},
-  uiLink: {},
+  uiLink: {
+    rippleColor: 'background.2',
+    hoverColor: 'background.1',
+    activeColor: 'background.2',
+  },
   externalLink: {},
   editorMarginMenuItem: {
     rippleColor: 'background.2',

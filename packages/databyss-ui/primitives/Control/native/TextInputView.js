@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import css from '@styled-system/css'
 import { ThemeContext } from '@emotion/core'
 import ClickAwayListener from '../../Util/ClickAwayListener'
+import forkRef from '../../Util/forkRef'
 import { isMobileOs } from '../../../lib/mediaQuery'
 import { View, Text } from '../../'
 
@@ -50,12 +51,6 @@ const TextInputView = ({ active, children, value, label, ...others }) => {
   const child = React.Children.only(children)
   const viewRef = useRef(null)
   const inputRef = useRef(null)
-  const setRef = _ref => {
-    inputRef.current = _ref
-    if (child.ref) {
-      child.ref.current = _ref
-    }
-  }
 
   return (
     <ThemeContext.Consumer>
@@ -98,7 +93,7 @@ const TextInputView = ({ active, children, value, label, ...others }) => {
                   active && css(activeInputCss)(theme),
                 ],
                 onBlur: _isMobileOs ? () => null : child.props.onBlur,
-                ref: setRef,
+                ref: forkRef(child.ref, inputRef),
               })}
             </View>
           </ClickAwayListener>

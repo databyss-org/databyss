@@ -10,6 +10,7 @@ let _c = {
     '#AAA49C',
     '#D0CDC8',
     '#ECEBE9',
+    '#F0F0F0',
   ],
   black: '#12100C',
   white: '#FDFDFC',
@@ -34,7 +35,13 @@ _c = {
   // [darkest...lightest]
   text: [_c.black, ..._c.gray],
   // [lightest...darkest]
-  background: [_c.white, ..._c.gray.slice().reverse()],
+  background: [
+    _c.white,
+    ..._c.gray
+      .slice()
+      .reverse()
+      .slice(1),
+  ],
   // control colors [enabled, hover, active, label]
   primary: [_c.blue[1], _c.blue[2], _c.blue[0], _c.white],
   secondary: [_c.blue[1], _c.gray[6], _c.gray[5], _c.blue[1]],
@@ -72,7 +79,7 @@ _c = {
       // borders [darkest...lightest]
       border: [_c.gray[7], _c.gray[3], _c.gray[1]],
       // control colors [enabled, hover, active, label]
-      secondary: [_c.blue[1], _c.gray[2], _c.gray[1], _c.blue[2]],
+      secondary: [_c.blue[1], _c.gray[2], _c.gray[0], _c.blue[2]],
     },
   },
 }

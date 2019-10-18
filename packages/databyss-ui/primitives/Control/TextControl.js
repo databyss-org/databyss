@@ -21,6 +21,7 @@ const TextControl = ({
     <BaseControl
       active={active}
       overflow="visible"
+      tabIndex={-1}
       onPress={event => {
         event.preventDefault()
         setTimeout(() => setActive(true), 50)

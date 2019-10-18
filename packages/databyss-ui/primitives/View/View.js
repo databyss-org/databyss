@@ -14,6 +14,7 @@ import { ThemeProvider } from 'emotion-theming'
 import fastCompare from 'react-fast-compare'
 import styled from '../styled'
 import IS_NATIVE from '../../lib/isNative'
+import forkRef from '../Util/forkRef'
 
 export const paddingVariant = variant({
   prop: 'paddingVariant',
@@ -55,6 +56,24 @@ export const styleProps = compose(
   shadowVariant
 )
 
+export const defaultProps = {
+  paddingVariant: 'none',
+  borderVariant: 'none',
+  shadowVariant: 'none',
+  flexGrow: 0,
+  flexShrink: 0,
+  flexBasis: 'auto',
+  overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
+}
+
+export const webProps = {
+  css: {
+    boxSizing: 'border-box',
+  },
+}
+
 const Styled = styled(
   {
     ios: 'View',
@@ -76,22 +95,6 @@ const View = forwardRef(({ children, onLayout, ...others }, ref) => {
     },
     [clientRect]
   )
-  const defaultProps = {
-    paddingVariant: 'none',
-    borderVariant: 'none',
-    shadowVariant: 'none',
-    flexGrow: 0,
-    flexShrink: 0,
-    flexBasis: 'auto',
-    overflow: 'hidden',
-    display: 'flex',
-    flexDirection: 'column',
-  }
-  const webProps = {
-    css: {
-      boxSizing: 'border-box',
-    },
-  }
   const nativeProps = {
     onLayout: () =>
       onLayout &&
@@ -121,16 +124,9 @@ const View = forwardRef(({ children, onLayout, ...others }, ref) => {
     }
   })
 
-  const setRef = _ref => {
-    viewRef.current = _ref
-    if (ref) {
-      ref.current = _ref
-    }
-  }
-
   const view = (
     <Styled
-      ref={setRef}
+      ref={forkRef(viewRef, ref)}
       {...defaultProps}
       {...(IS_NATIVE ? nativeProps : webProps)}
       {...others}

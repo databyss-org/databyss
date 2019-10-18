@@ -1,9 +1,12 @@
 import React, { useState, useRef, useEffect, forwardRef } from 'react'
 import css from '@styled-system/css'
 import { keyframes, ThemeContext } from '@emotion/core'
-import { View } from '../../'
+import View, { styleProps, defaultProps, webProps } from '../../View/View'
+import styled from '../../styled'
 import { isMobileOs } from '../../../lib/mediaQuery'
 import theme, { borderRadius } from '../../../theming/theme'
+
+const Styled = styled('button', styleProps)
 
 const decay = keyframes({
   '0%': {
@@ -12,23 +15,6 @@ const decay = keyframes({
   '100%': {
     opacity: 0,
   },
-})
-
-const controlCssDesktop = props => ({
-  cursor: 'pointer',
-  transition: `background-color ${theme.timing.flash}ms ${theme.timing.ease}`,
-  ...(props.active
-    ? {
-        backgroundColor: props.activeColor,
-      }
-    : {
-        '&:hover': {
-          backgroundColor: props.hoverColor,
-        },
-        '&:active': {
-          backgroundColor: props.activeColor,
-        },
-      }),
 })
 
 const _pseudomaskCss = () => ({
@@ -41,17 +27,69 @@ const _pseudomaskCss = () => ({
   opacity: 0,
 })
 
+const resetProps = {
+  padding: 0,
+  border: 'none',
+  font: 'inherit',
+  color: 'inherit',
+  backgroundColor: 'transparent',
+  cursor: 'pointer',
+  alignItems: 'unset',
+}
+
+const resetCss = {
+  textAlign: 'left',
+}
+
+const viewProps = {
+  ...resetProps,
+  ...defaultProps,
+  ...webProps,
+}
+
+const controlCssDesktop = props => ({
+  cursor: 'pointer',
+  transition: `background-color ${theme.timing.flash}ms ${theme.timing.ease}`,
+  ...(props.active
+    ? {
+        backgroundColor: props.activeColor,
+      }
+    : {
+        '&:focus:before': {
+          ..._pseudomaskCss(props),
+          zIndex: 0,
+          opacity: 0.8,
+          backgroundColor: props.hoverColor,
+        },
+        '&:hover': {
+          backgroundColor: props.hoverColor,
+        },
+        '&:active': {
+          backgroundColor: props.activeColor,
+        },
+      }),
+})
+
+const controlCssMobile = props => ({
+  '&:after': {
+    ..._pseudomaskCss(props),
+    backgroundColor: props.rippleColor,
+  },
+})
+
 const controlCss = props => ({
   position: 'relative',
+  '&:active': {
+    backgroundColor: props.activeColor,
+  },
+  '&:focus': {
+    outline: 'none',
+  },
   ...(props.active
     ? {
         backgroundColor: props.activeColor,
       }
     : {}),
-  '&:after': {
-    ..._pseudomaskCss(props),
-    backgroundColor: props.rippleColor,
-  },
 })
 
 const animatingCss = {
@@ -59,6 +97,8 @@ const animatingCss = {
     animation: `${decay} ${theme.timing.touchDecay}ms ${theme.timing.ease}`,
   },
 }
+
+const _mobile = isMobileOs()
 
 export const ControlNoFeedback = ({ children, ...others }) => (
   <View {...others}>{children}</View>
@@ -89,8 +129,9 @@ const Control = forwardRef(
     return (
       <ThemeContext.Consumer>
         {theme => (
-          <View
+          <Styled
             ref={ref}
+            tabIndex={0}
             onClick={e => {
               if (disabled) {
                 return
@@ -98,7 +139,7 @@ const Control = forwardRef(
               if (onPress) {
                 onPress(e)
               }
-              if (!isMobileOs()) {
+              if (!_mobile) {
                 return
               }
               if (decay) {
@@ -109,17 +150,18 @@ const Control = forwardRef(
                 startDecayAnimation()
               }
             }}
+            {...viewProps}
             css={[
-              !disabled && css(controlCss(others))(theme),
-              !disabled &&
-                !isMobileOs() &&
-                css(controlCssDesktop(others))(theme),
-              !disabled && isMobileOs() && decay && animatingCss,
+              resetCss,
+              css(controlCss(others))(theme),
+              _mobile && css(controlCssMobile(others))(theme),
+              !_mobile && css(controlCssDesktop(others))(theme),
+              !disabled && _mobile && decay && animatingCss,
             ]}
             {...others}
           >
             {children}
-          </View>
+          </Styled>
         )}
       </ThemeContext.Consumer>
     )
