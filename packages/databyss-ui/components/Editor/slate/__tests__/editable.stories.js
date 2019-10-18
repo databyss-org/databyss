@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View } from '@databyss-org/ui/primitives'
-import Grid from '@databyss-org/ui/components/Grid/Grid'
+import { View, Grid } from '@databyss-org/ui/primitives'
 import EditorProvider, { useEditorContext } from '../../EditorProvider'
 import EditorPage from '../../EditorPage'
 import ContentEditable from '../ContentEditable'

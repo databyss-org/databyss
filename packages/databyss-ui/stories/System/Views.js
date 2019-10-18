@@ -1,8 +1,7 @@
 import React from 'react'
 import { loremIpsum } from 'lorem-ipsum'
 import Alea from 'alea'
-import { Text, View } from '@databyss-org/ui/primitives'
-import Grid from '@databyss-org/ui/components/Grid/Grid'
+import { Text, View, Grid } from '@databyss-org/ui/primitives'
 import { Section } from './'
 
 const alea = new Alea('views')
@@ -65,6 +64,20 @@ export default () => (
         </CaptionedView>
         <CaptionedView caption="large">
           <View borderVariant="thinLight" paddingVariant="large" mb="small">
+            <Text variant="uiTextNormal">{ipsum}</Text>
+          </View>
+        </CaptionedView>
+      </Grid>
+    </Section>
+    <Section title="Shadow variants" overflow="visible">
+      <Grid mb="medium" overflow="visible">
+        <CaptionedView caption="button" overflow="visible">
+          <View borderVariant="thinLight" shadowVariant="button" mb="small">
+            <Text variant="uiTextNormal">{ipsum}</Text>
+          </View>
+        </CaptionedView>
+        <CaptionedView caption="modal" overflow="visible">
+          <View borderVariant="thinLight" shadowVariant="modal" mb="small">
             <Text variant="uiTextNormal">{ipsum}</Text>
           </View>
         </CaptionedView>

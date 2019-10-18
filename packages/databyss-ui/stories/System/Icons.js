@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Icon, Text } from '@databyss-org/ui/primitives'
+import { View, Icon, Text, Grid } from '@databyss-org/ui/primitives'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import ChevronSvg from '@databyss-org/ui/assets/chevron.svg'
@@ -8,7 +8,6 @@ import FilterSvg from '@databyss-org/ui/assets/filter.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
-import Grid from '@databyss-org/ui/components/Grid/Grid'
 import { Section } from './'
 
 const LabeledIcon = ({ label, sizeVariant, children, color, ...others }) => (
