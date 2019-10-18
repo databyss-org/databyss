@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { findDOMNode } from 'slate-react'
 
-import { Button, Text, HoverView } from '@databyss-org/ui/primitives'
+import { Button, Text, HoverView, View } from '@databyss-org/ui/primitives'
 import { isMobileOs } from '@databyss-org/ui/'
 import space from '@databyss-org/ui/theming/space'
 import { useEditorContext } from '../EditorProvider'
@@ -70,6 +70,7 @@ const formatActionButtons = editor => {
   const isMobileNewLine = window.getSelection().focusOffset === 0
   return formatActions(isMobileNewLine).map((a, i) => (
     <MarkButton
+      key={i}
       isMobileNewLine={isMobileNewLine}
       editor={editor}
       index={i}
@@ -101,17 +102,17 @@ const MarkButton = ({
   const [, dispatchEditor] = useEditorContext()
   const { value } = editor
   const isActive = value.activeMarks.some(mark => mark.type === type)
+
   let borderRightColor =
     formatActions(isMobileNewLine).length === index + 1
       ? 'none'
-      : 'background.5'
-  if (isMobileNewLine && index === 2) {
+      : 'background.4'
+  if (isMobileNewLine && index === 2 && isMobileOs()) {
     borderRightColor = 'background.2'
   }
   return (
     <Button
       data-test-format-menu={type}
-      key={index}
       variant="formatButton"
       borderRightColor={borderRightColor}
       onMouseDown={e => {
@@ -151,7 +152,6 @@ const isNewLineOnMobile = value => {
 
 const HoverMenu = ({ editor, editableRef }) => {
   // need to optomize this with hooks
-  let isMobileNewLine
   const menuRef = useRef(null)
 
   const updateMenu = () => {
@@ -170,7 +170,7 @@ const HoverMenu = ({ editor, editableRef }) => {
     // CHECK FOR RANGE AND RENDER
     const _node = findDOMNode(value.document.getNode(value.selection.focus.key))
 
-    isMobileNewLine = rect.width === 0
+    const isMobileNewLine = rect.width === 0
 
     // CHECK FOR TOP OF LINE
 

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import Grid from '@databyss-org/ui/components/Grid/Grid'
+import { Grid } from '@databyss-org/ui/primitives'
 
 const EditorBlockMenuActions = ({ menuActionButtons, unmount }) => {
   useEffect(() => () => unmount(), [])

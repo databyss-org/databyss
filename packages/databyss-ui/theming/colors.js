@@ -10,7 +10,6 @@ let _c = {
     '#AAA49C',
     '#D0CDC8',
     '#ECEBE9',
-    '#FAFAFA',
   ],
   black: '#12100C',
   white: '#FDFDFC',
@@ -60,10 +59,10 @@ _c = {
   ..._c,
   modes: {
     dark: {
-      // [darkest...lightest]
-      text: [_c.white, ..._c.gray.slice().reverse()],
       // [lightest...darkest]
-      background: _c.gray,
+      text: [_c.white, ..._c.gray.slice().reverse()],
+      // [darkest...lightest]
+      background: _c.gray.slice(1),
       // borders [darkest...lightest]
       border: [_c.gray[7], _c.gray[3]],
       // control colors [enabled, hover, active, label]

@@ -1,8 +1,7 @@
 import React from 'react'
 import { loremIpsum } from 'lorem-ipsum'
 import Alea from 'alea'
-import { Text, View } from '@databyss-org/ui/primitives'
-import Grid from '@databyss-org/ui/components/Grid/Grid'
+import { Text, View, Grid } from '@databyss-org/ui/primitives'
 import { Section } from './'
 import { darkTheme } from '../../theming/theme'
 

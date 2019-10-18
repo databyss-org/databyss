@@ -7,7 +7,7 @@ import {
   compose,
   border,
 } from 'styled-system'
-import Grid from '@databyss-org/ui/components/Grid/Grid'
+import { Grid } from '@databyss-org/ui/primitives'
 import styled from '../styled'
 import IS_NATIVE from '../../lib/isNative'
 

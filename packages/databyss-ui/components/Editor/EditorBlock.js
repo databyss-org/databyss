@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import css from '@styled-system/css'
 import { isMobileOs } from '@databyss-org/ui/'
 
-import { Text, View } from '@databyss-org/ui/primitives'
-import Grid from '@databyss-org/ui/components/Grid/Grid'
+import { Text, View, Grid } from '@databyss-org/ui/primitives'
+
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 
 import { pxUnits } from '@databyss-org/ui/theming/views'
@@ -73,7 +73,9 @@ const EditorBlock = ({ children, node }) => {
         flexShrink={1}
         overflow="visible"
         justifyContent="center"
-        css={css({ caretColor: menuActive && 'transparent' })}
+        css={css({
+          caretColor: menuActive && node.text.length === 0 && 'transparent',
+        })}
       >
         {textSelector({ children, type: node.type })}
       </View>

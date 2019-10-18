@@ -10,8 +10,8 @@ addParameters({
     dark: {
       ...themes.dark,
       appBg: colors.gray[2],
-      appContentBg: colors.gray[0],
-      barBg: colors.gray[0],
+      appContentBg: colors.gray[1],
+      barBg: colors.gray[1],
     },
   },
 })

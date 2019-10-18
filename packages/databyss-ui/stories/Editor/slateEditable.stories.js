@@ -2,8 +2,13 @@ import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { Editor } from 'slate-react'
 import { Value } from 'slate'
-import { View, Button } from '@databyss-org/ui/primitives'
-import Grid from '@databyss-org/ui/components/Grid/Grid'
+import {
+  View,
+  Button,
+  Grid,
+  List,
+  Separator,
+} from '@databyss-org/ui/primitives'
 import EditorProvider, {
   useEditorContext,
 } from '@databyss-org/ui/components/Editor/EditorProvider'
@@ -16,36 +21,36 @@ import initialState from '@databyss-org/ui/components/Editor/state/__tests__/ini
 import { ViewportDecorator } from '../decorators'
 import colors from '../../theming/colors'
 
-const SlateDemo = () => {
-  const schema = {
-    document: {
+const schema = {
+  document: {
+    nodes: [
+      {
+        match: [{ type: 'ENTRY' }],
+      },
+    ],
+  },
+  blocks: {
+    ENTRY: {
       nodes: [
         {
-          match: [{ type: 'ENTRY' }],
+          match: { object: 'text' },
         },
       ],
     },
-    blocks: {
-      ENTRY: {
-        nodes: [
-          {
-            match: { object: 'text' },
-          },
-        ],
-      },
-    },
-  }
+  },
+}
+
+const SlateDemo = ({ initialString }) => {
   const initialValue = Value.fromJSON({
     document: {
       nodes: [
         {
           object: 'block',
           type: 'ENTRY',
-          id: '23984723ijhrkjsdhf',
           nodes: [
             {
               object: 'text',
-              text: 'A line of text in a paragraph.',
+              text: initialString,
             },
           ],
         },
@@ -58,7 +63,14 @@ const SlateDemo = () => {
     setSlateValue(value)
   }
 
-  return <Editor value={slateValue} onChange={onChange} schema={schema} />
+  return (
+    <Editor
+      value={slateValue}
+      onChange={onChange}
+      schema={schema}
+      onBlur={() => console.log('onblur')}
+    />
+  )
 }
 
 const ToolbarDemo = () => {
@@ -88,7 +100,7 @@ const ToolbarDemo = () => {
 }
 
 const Box = ({ children, ...others }) => (
-  <View borderVariant="thinDark" paddingVariant="tiny" width="100%" {...others}>
+  <View borderVariant="thinDark" paddingVariant="none" width="100%" {...others}>
     {children}
   </View>
 )
@@ -135,6 +147,15 @@ storiesOf('Editor//Slate Implementation', module)
   .add('Slate', () => (
     <Box>
       <SlateDemo />
+    </Box>
+  ))
+  .add('Multiple Slates', () => (
+    <Box>
+      <List verticalItemPadding="small">
+        <SlateDemo initialString="Editor one" />
+        <Separator spacing="small" />
+        <SlateDemo initialString="Editor two" />
+      </List>
     </Box>
   ))
   .add('EditorPage', () => (
