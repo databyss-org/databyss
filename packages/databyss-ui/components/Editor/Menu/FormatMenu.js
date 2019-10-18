@@ -1,7 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { findDOMNode } from 'slate-react'
-
-import { Button, Text, HoverView, View } from '@databyss-org/ui/primitives'
+import { Button, Text, HoverView } from '@databyss-org/ui/primitives'
 import { isMobileOs } from '@databyss-org/ui/'
 import space from '@databyss-org/ui/theming/space'
 import { useEditorContext } from '../EditorProvider'
@@ -150,7 +148,7 @@ const isNewLineOnMobile = value => {
   return false
 }
 
-const HoverMenu = ({ editor, editableRef }) => {
+const HoverMenu = ({ editor }) => {
   // need to optomize this with hooks
   const menuRef = useRef(null)
 
@@ -168,7 +166,11 @@ const HoverMenu = ({ editor, editableRef }) => {
     const rect = range.getBoundingClientRect()
 
     // CHECK FOR RANGE AND RENDER
-    const _node = findDOMNode(value.document.getNode(value.selection.focus.key))
+
+    // eslint-disable-next-line
+    const _node = editor.findDOMNode(
+      value.document.getPath(value.selection.focus.key)
+    )
 
     const isMobileNewLine = rect.width === 0
 
