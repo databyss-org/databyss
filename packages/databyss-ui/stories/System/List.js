@@ -93,10 +93,10 @@ export const ComplexItems = () => {
             acc.push(
               <BaseControl key={index}>
                 <Grid singleRow alignItems="center" columnGap="small">
-                  <Icon sizeVariant="tiny" color="text.4">
+                  <Icon sizeVariant="tiny" color="text.3">
                     {item.svg}
                   </Icon>
-                  <Text variant="uiTextSmall" color="text.3">
+                  <Text variant="uiTextSmall" color="text.2">
                     {item.text}
                   </Text>
                 </Grid>

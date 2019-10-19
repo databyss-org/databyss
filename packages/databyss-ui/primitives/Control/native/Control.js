@@ -6,7 +6,7 @@ import styled from '../../styled'
 import { isMobileOs } from '../../../lib/mediaQuery'
 import theme, { borderRadius } from '../../../theming/theme'
 
-const Styled = styled('button', styleProps)
+const StyledButton = styled('button', styleProps)
 
 const decay = keyframes({
   '0%': {
@@ -79,6 +79,7 @@ const controlCssMobile = props => ({
 
 const controlCss = props => ({
   position: 'relative',
+  userSelect: props.userSelect,
   '&:active': {
     backgroundColor: props.activeColor,
   },
@@ -105,31 +106,12 @@ export const ControlNoFeedback = ({ children, ...others }) => (
 )
 
 const Control = forwardRef(
-  ({ disabled, children, onPress, ...others }, ref) => {
-    const [decay, setDecay] = useState(false)
-    const [resetDecay, setResetDecay] = useState(false)
-    const decayTimerRef = useRef(null)
-    const startDecayAnimation = () => {
-      decayTimerRef.current = setTimeout(
-        () => setDecay(false),
-        theme.timing.touchDecay
-      )
-      setDecay(true)
-    }
-    useEffect(() => () => clearTimeout(decayTimerRef.current), [decayTimerRef])
-    useEffect(
-      () => {
-        if (resetDecay) {
-          startDecayAnimation()
-          setResetDecay(false)
-        }
-      },
-      [resetDecay]
-    )
+  ({ disabled, children, onPress, renderAsView, ...others }, ref) => {
+    const StyledComponent = renderAsView || _mobile ? View : StyledButton
     return (
       <ThemeContext.Consumer>
         {theme => (
-          <Styled
+          <StyledComponent
             ref={ref}
             tabIndex={0}
             onClick={e => {
@@ -139,29 +121,18 @@ const Control = forwardRef(
               if (onPress) {
                 onPress(e)
               }
-              if (!_mobile) {
-                return
-              }
-              if (decay) {
-                clearTimeout(decayTimerRef.current)
-                setDecay(false)
-                setResetDecay(true)
-              } else {
-                startDecayAnimation()
-              }
             }}
-            {...viewProps}
+            {...(renderAsView ? {} : viewProps)}
             css={[
-              resetCss,
+              !renderAsView && resetCss,
               css(controlCss(others))(theme),
               _mobile && css(controlCssMobile(others))(theme),
               !_mobile && css(controlCssDesktop(others))(theme),
-              !disabled && _mobile && decay && animatingCss,
             ]}
             {...others}
           >
             {children}
-          </Styled>
+          </StyledComponent>
         )}
       </ThemeContext.Consumer>
     )
@@ -173,6 +144,7 @@ Control.defaultProps = {
   hoverColor: 'background.2',
   activeColor: 'background.3',
   borderRadius,
+  userSelect: 'none',
 }
 
 export default Control

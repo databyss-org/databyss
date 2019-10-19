@@ -4,12 +4,12 @@ import Color from 'color'
 let _c = {
   gray: [
     '#221F1B',
-    '#353331',
-    '#4A4845',
-    '#847B71',
-    '#AAA49C',
+    '#282625',
+    '#42403e',
+    '#605a52',
+    '#8a8175',
     '#D0CDC8',
-    '#ECEBE9',
+    '#e3e1de',
     '#F0F0F0',
   ],
   black: '#12100C',
@@ -35,13 +35,7 @@ _c = {
   // [darkest...lightest]
   text: [_c.black, ..._c.gray],
   // [lightest...darkest]
-  background: [
-    _c.white,
-    ..._c.gray
-      .slice()
-      .reverse()
-      .slice(1),
-  ],
+  background: [_c.white, ..._c.gray.slice().reverse()],
   // control colors [enabled, hover, active, label]
   primary: [_c.blue[1], _c.blue[2], _c.blue[0], _c.white],
   secondary: [_c.blue[1], _c.gray[6], _c.gray[5], _c.blue[1]],

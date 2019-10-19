@@ -10,7 +10,6 @@ const desktopInputCss = {
   display: 'flex',
   position: 'relative',
   zIndex: 1,
-  pointerEvents: 'none',
   padding: '1px',
   paddingLeft: '2px',
   backgroundColor: 'transparent',
@@ -87,7 +86,12 @@ const TextInputView = ({ active, children, value, label, ...others }) => {
               {React.cloneElement(child, {
                 variant: _isMobileOs ? 'uiTextNormal' : child.props.variant,
                 css: [
-                  { outlineOffset: 0, outline: 'none', borderWidth: 0 },
+                  {
+                    outlineOffset: 0,
+                    outline: 'none',
+                    borderWidth: 0,
+                    pointerEvents: 'none',
+                  },
                   _isMobileOs && css(mobileInputCss(active))(theme),
                   !_isMobileOs && css(desktopInputCss)(theme),
                   active && css(activeInputCss)(theme),
