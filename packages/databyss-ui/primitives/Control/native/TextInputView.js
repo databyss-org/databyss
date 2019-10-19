@@ -55,7 +55,7 @@ const TextInputView = ({ active, children, value, label, ...others }) => {
   return (
     <ThemeContext.Consumer>
       {theme => (
-        <View overflow="visible" ref={viewRef} {...others} flexShrink={1}>
+        <View ref={viewRef} {...others} flexShrink={1}>
           {_isMobileOs && (
             <View padding="1px" flexShrink={1} flexWrap="wrap">
               <Text variant={child.props.variant}>

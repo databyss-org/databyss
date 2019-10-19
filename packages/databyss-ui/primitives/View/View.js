@@ -63,7 +63,7 @@ export const defaultProps = {
   flexGrow: 0,
   flexShrink: 0,
   flexBasis: 'auto',
-  overflow: 'hidden',
+  overflow: 'visible',
   display: 'flex',
   flexDirection: 'column',
 }

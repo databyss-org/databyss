@@ -35,7 +35,7 @@ export const TextControls = () => {
   })
   const [textValue4, setTextValue4] = useState({ textValue: ipsum })
   return (
-    <List overflow="visible">
+    <List>
       <TextControl
         labelProps={{
           width: '20%',
@@ -100,8 +100,8 @@ export default () => {
           </List>
         </View>
       </Section>
-      <Section title="Text Control" overflow="visible">
-        <View backgroundColor="background.1" overflow="visible">
+      <Section title="Text Control">
+        <View backgroundColor="background.1">
           <TextControls />
         </View>
       </Section>

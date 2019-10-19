@@ -43,7 +43,7 @@ const Grid = ({
 Grid.defaultProps = {
   columnGap: 'medium',
   rowGap: 'medium',
-  overflow: 'hidden',
+  overflow: 'visible',
 }
 
 export default Grid

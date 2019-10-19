@@ -20,7 +20,6 @@ const TextControl = ({
   return (
     <BaseControl
       active={active}
-      overflow="visible"
       tabIndex={-1}
       onPress={event => {
         event.preventDefault()
@@ -35,12 +34,7 @@ const TextControl = ({
       }}
       {...others}
     >
-      <Grid
-        singleRow
-        alignItems="baseline"
-        overflow="visible"
-        flexWrap={gridFlexWrap}
-      >
+      <Grid singleRow alignItems="baseline" flexWrap={gridFlexWrap}>
         {label &&
           label.length && (
             <View {...labelProps}>
