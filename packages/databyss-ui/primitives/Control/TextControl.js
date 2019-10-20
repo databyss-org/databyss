@@ -1,9 +1,11 @@
 import React, { useState, useRef } from 'react'
 import BaseControl from './BaseControl'
 import TextInput from './native/TextInput'
+import RichTextInput from './native/RichTextInput'
 import TextInputView from './native/TextInputView'
 import { View, Text, Grid } from '../'
 import IS_NATIVE from '../../lib/isNative'
+import theme from '../../theming/theme'
 
 const TextControl = ({
   value,
@@ -14,10 +16,14 @@ const TextControl = ({
   textVariant,
   id,
   gridFlexWrap,
+  rich,
+  modal,
+  multiline,
   ...others
 }) => {
   const [active, setActive] = useState(false)
   const inputRef = useRef(null)
+  const controlRef = useRef(null)
   const nativeProps = {
     onPress: () => {
       setActive(true)
@@ -37,12 +43,12 @@ const TextControl = ({
         inputRef.current.focus()
       }
     },
-    onPress: event => {
-      event.preventDefault()
-    },
+    zIndex: active ? 2 : 'unset',
   }
+  const TextInputComponent = rich ? RichTextInput : TextInput
   return (
     <BaseControl
+      ref={controlRef}
       renderAsView
       active={active}
       tabIndex={-1}
@@ -65,8 +71,15 @@ const TextControl = ({
               </Text>
             </View>
           )}
-        <TextInputView active={active} flexGrow={1} label={label}>
-          <TextInput
+        <TextInputView
+          active={active}
+          flexGrow={1}
+          label={label}
+          modal={modal}
+          smallText={theme.textVariants[textVariant].fontSize < 16}
+          controlRef={controlRef}
+        >
+          <TextInputComponent
             id={id}
             ref={inputRef}
             active={active}
@@ -76,6 +89,7 @@ const TextControl = ({
             onChange={onChange}
             variant={textVariant}
             value={value}
+            multiline={multiline}
           />
         </TextInputView>
       </Grid>
@@ -87,5 +101,6 @@ TextControl.defaultProps = {
   textVariant: 'uiTextSmall',
   labelColor: 'text.0',
   gridFlexWrap: 'wrap',
+  labelProps: {},
 }
 export default TextControl

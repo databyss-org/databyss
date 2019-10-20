@@ -68,6 +68,7 @@ export const TextControls = () => {
         value={textValue4}
         onChange={value => setTextValue4(value)}
         gridFlexWrap="nowrap"
+        multiline
       />
     </List>
   )

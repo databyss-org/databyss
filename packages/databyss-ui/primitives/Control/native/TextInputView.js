@@ -21,14 +21,14 @@ const mobileInputCss = active => ({
   opacity: 0,
 })
 
-const mobileViewCss = active =>
+const mobileViewCss = (active, label) =>
   active
     ? {
         position: 'absolute',
-        zIndex: 5,
+        zIndex: 2,
         top: '-5px',
-        left: '25%',
-        right: '5px',
+        left: label ? '25%' : '-5px',
+        right: label ? '5px' : '-5px',
         padding: 'none',
         bg: 'transparent',
         marginRight: 0,
@@ -44,18 +44,27 @@ const activeInputCss = {
   margin: 0,
 }
 
-const _isMobileOs = isMobileOs()
-
-const TextInputView = ({ active, children, value, label, ...others }) => {
+const TextInputView = ({
+  active,
+  children,
+  value,
+  label,
+  modal,
+  smallText,
+  controlRef,
+  ...others
+}) => {
   const child = React.Children.only(children)
   const viewRef = useRef(null)
   const inputRef = useRef(null)
+
+  const _modal = modal || (isMobileOs() && smallText)
 
   return (
     <ThemeContext.Consumer>
       {theme => (
         <View ref={viewRef} {...others} flexShrink={1}>
-          {_isMobileOs && (
+          {_modal && (
             <View padding="1px" flexShrink={1} flexWrap="wrap">
               <Text variant={child.props.variant}>
                 {child.props.value.textValue}
@@ -64,17 +73,18 @@ const TextInputView = ({ active, children, value, label, ...others }) => {
           )}
 
           <ClickAwayListener
+            additionalNodeRefs={controlRef ? [controlRef] : undefined}
             onClickAway={() => {
-              if (_isMobileOs && active) {
+              if (_modal && active && child.props.onBlur) {
                 child.props.onBlur()
               }
             }}
           >
             <View
-              css={[_isMobileOs && css(mobileViewCss(active))(theme)]}
-              shadowVariant={_isMobileOs ? 'modal' : 'none'}
+              css={[_modal && css(mobileViewCss(active, label))(theme)]}
+              shadowVariant={_modal ? 'modal' : 'none'}
               onClick={
-                _isMobileOs
+                _modal
                   ? () => {
                       if (inputRef.current) {
                         inputRef.current.focus()
@@ -84,7 +94,7 @@ const TextInputView = ({ active, children, value, label, ...others }) => {
               }
             >
               {React.cloneElement(child, {
-                variant: _isMobileOs ? 'uiTextNormal' : child.props.variant,
+                variant: _modal ? 'uiTextNormal' : child.props.variant,
                 css: [
                   {
                     outlineOffset: 0,
@@ -92,11 +102,11 @@ const TextInputView = ({ active, children, value, label, ...others }) => {
                     borderWidth: 0,
                     pointerEvents: 'none',
                   },
-                  _isMobileOs && css(mobileInputCss(active))(theme),
-                  !_isMobileOs && css(desktopInputCss)(theme),
+                  _modal && css(mobileInputCss(active))(theme),
+                  !_modal && css(desktopInputCss)(theme),
                   active && css(activeInputCss)(theme),
                 ],
-                onBlur: _isMobileOs ? () => null : child.props.onBlur,
+                onBlur: child.props.onBlur,
                 ref: forkRef(child.ref, inputRef),
               })}
             </View>

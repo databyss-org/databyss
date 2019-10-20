@@ -7,19 +7,34 @@ import { Section } from './'
 const alea = new Alea('views')
 const ipsum = loremIpsum({ units: 'sentences', count: 4, random: alea })
 
-const CaptionedView = ({ caption, children, ...others }) => (
+export const CaptionedView = ({
+  caption,
+  children,
+  paddingVariant,
+  borderVariant,
+  shadowVariant,
+  height,
+  ...others
+}) => (
   <View width={240} {...others}>
-    <View>
-      {React.cloneElement(children, {
-        height: 180,
-        mb: 'small',
-        paddingVariant: 'small',
-        ...children.props,
-      })}
+    <View
+      mb="small"
+      height={height}
+      paddingVariant={paddingVariant}
+      borderVariant={borderVariant}
+      shadowVariant={shadowVariant}
+    >
+      {children}
     </View>
     <Text variant="uiTextNormalSemibold">{caption}</Text>
   </View>
 )
+
+CaptionedView.defaultProps = {
+  paddingVariant: 'small',
+  borderVariant: 'thinLight',
+  height: 180,
+}
 
 const Ipsum = () => (
   <Text variant="uiTextNormal" css={{ height: '100%', overflow: 'hidden' }}>
@@ -31,68 +46,46 @@ export default () => (
   <React.Fragment>
     <Section title="Border variants">
       <Grid mb="medium">
-        <CaptionedView caption="none">
-          <View borderVariant="none">
-            <Ipsum />
-          </View>
+        <CaptionedView caption="none" borderVariant="none">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="thinDark">
-          <View borderVariant="thinDark">
-            <Ipsum />
-          </View>
+        <CaptionedView caption="thinDark" borderVariant="thinDark">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="thinLight">
-          <View borderVariant="thinLight">
-            <Ipsum />
-          </View>
+        <CaptionedView caption="thinLight" borderVariant="thinLight">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="thickDark">
-          <View borderVariant="thickDark">
-            <Ipsum />
-          </View>
+        <CaptionedView caption="thickDark" borderVariant="thickDark">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="thickLight">
-          <View borderVariant="thickLight">
-            <Ipsum />
-          </View>
+        <CaptionedView caption="thickLight" borderVariant="thickLight">
+          <Ipsum />
         </CaptionedView>
       </Grid>
     </Section>
     <Section title="Padding variants">
       <Grid mb="medium">
-        <CaptionedView caption="none">
-          <View borderVariant="thinLight" paddingVariant="none">
-            <Ipsum />
-          </View>
+        <CaptionedView caption="none" paddingVariant="none">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="small">
-          <View borderVariant="thinLight" paddingVariant="small">
-            <Ipsum />
-          </View>
+        <CaptionedView caption="small" paddingVariant="small">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="medium">
-          <View borderVariant="thinLight" paddingVariant="medium">
-            <Ipsum />
-          </View>
+        <CaptionedView caption="medium" paddingVariant="medium">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="large">
-          <View borderVariant="thinLight" paddingVariant="large">
-            <Ipsum />
-          </View>
+        <CaptionedView caption="large" paddingVariant="large">
+          <Ipsum />
         </CaptionedView>
       </Grid>
     </Section>
     <Section title="Shadow variants">
       <Grid mb="medium">
-        <CaptionedView caption="button">
-          <View borderVariant="thinLight" shadowVariant="button">
-            <Ipsum />
-          </View>
+        <CaptionedView caption="button" shadowVariant="button">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="modal">
-          <View borderVariant="thinLight" shadowVariant="modal">
-            <Ipsum />
-          </View>
+        <CaptionedView caption="modal" shadowVariant="modal">
+          <Ipsum />
         </CaptionedView>
       </Grid>
     </Section>

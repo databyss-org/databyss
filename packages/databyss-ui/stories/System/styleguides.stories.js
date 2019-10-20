@@ -6,6 +6,7 @@ import Views from './Views'
 import Controls from './Controls'
 import Buttons from './Buttons'
 import Icons from './Icons'
+import TextInputs from './TextInputs'
 import List, { ItemSeparators, ComplexItems, Sections } from './List'
 import Modals, { Editable as EditableModals } from './Modals'
 
@@ -21,6 +22,8 @@ storiesOf('Design System|Views', module)
 storiesOf('Design System|Controls', module)
   .addDecorator(ViewportDecorator)
   .add('Controls', () => <Controls />)
+  .add('TextInputs', () => <TextInputs />)
+  .add('RichTextInputs', () => <TextInputs rich />)
 storiesOf('Design System|Icons', module)
   .addDecorator(ViewportDecorator)
   .add('Icons', () => <Icons />)

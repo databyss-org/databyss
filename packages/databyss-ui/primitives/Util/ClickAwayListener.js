@@ -17,6 +17,7 @@ const ClickAwayListener = React.forwardRef((props, ref) => {
     children,
     mouseEvent = 'onClick',
     touchEvent = 'onTouchEnd',
+    additionalNodeRefs = [],
     onClickAway,
   } = props
   const movedRef = React.useRef(false)
@@ -50,14 +51,22 @@ const ClickAwayListener = React.forwardRef((props, ref) => {
       return
     }
 
-    // Multi window support
-    const doc = ownerDocument(nodeRef.current)
+    const nodeRefList = [nodeRef, ...additionalNodeRefs]
 
-    if (
-      doc.documentElement &&
-      doc.documentElement.contains(event.target) &&
-      !nodeRef.current.contains(event.target)
-    ) {
+    // Multi window support
+    const shouldClickAway = nodeRefList.reduce((acc, _nodeRef) => {
+      const doc = ownerDocument(_nodeRef.current)
+      if (
+        doc.documentElement &&
+        doc.documentElement.contains(event.target) &&
+        !_nodeRef.current.contains(event.target)
+      ) {
+        return acc
+      }
+      return false
+    }, true)
+
+    if (shouldClickAway) {
       onClickAway(event)
     }
   })
@@ -125,6 +134,10 @@ ClickAwayListener.propTypes = {
    * The touch event to listen to. You can disable the listener by providing `false`.
    */
   touchEvent: PropTypes.oneOf(['onTouchStart', 'onTouchEnd', false]),
+  /**
+   * In addition to the child node, we whitelist these node refs so they do not trigger a "click away" event
+   */
+  additionalNodeRefs: PropTypes.arrayOf(PropTypes.shape({})),
 }
 
 if (process.env.NODE_ENV !== 'production') {

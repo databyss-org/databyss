@@ -12,7 +12,7 @@ const StyledInput = styled(
   )
 )
 
-const TextInput = forwardRef(({ value, onChange, ...others }, ref) => (
+const RichTextInput = forwardRef(({ value, onChange, ...others }, ref) => (
   <StyledInput
     color="text.0"
     value={value.textValue}
@@ -26,9 +26,9 @@ const TextInput = forwardRef(({ value, onChange, ...others }, ref) => (
   />
 ))
 
-TextInput.defaultProps = {
+RichTextInput.defaultProps = {
   variant: 'uiTextSmall',
   onChange: () => null,
 }
 
-export default TextInput
+export default RichTextInput
