@@ -38,31 +38,34 @@ export const TextControls = () => {
     <List>
       <TextControl
         labelProps={{
-          width: '20%',
+          width: 80,
         }}
         label="Author"
         value={textValue}
         onChange={value => setTextValue(value)}
+        gridFlexWrap="nowrap"
       />
       <TextControl
         labelProps={{
-          width: '20%',
+          width: 80,
         }}
         label="Title"
         value={textValue2}
         onChange={value => setTextValue2(value)}
+        gridFlexWrap="nowrap"
       />
       <TextControl
         labelProps={{
-          width: '20%',
+          width: 80,
         }}
         label="Publisher"
         value={textValue3}
         onChange={value => setTextValue3(value)}
+        gridFlexWrap="nowrap"
       />
       <TextControl
         labelProps={{
-          width: '20%',
+          width: 80,
         }}
         label="Abstract"
         value={textValue4}

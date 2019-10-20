@@ -21,34 +21,34 @@ const mobileInputCss = active => ({
   opacity: 0,
 })
 
-const mobileViewCss = (active, label) =>
+const modalViewCss = (active, labelWidth) =>
   active
     ? {
         position: 'absolute',
         zIndex: 2,
         top: '-5px',
-        left: label ? '25%' : '-5px',
-        right: label ? '5px' : '-5px',
+        left: labelWidth ? `${labelWidth - 8}px` : '-5px',
+        right: labelWidth ? '5px' : '-5px',
         padding: 'none',
         bg: 'transparent',
         marginRight: 0,
       }
     : {}
 
-const activeInputCss = {
-  bg: 'background.0',
+const activeInputCss = modal => ({
+  bg: modal ? 'inputModalBackground' : 'background.0',
   pointerEvents: 'all',
   cursor: 'text',
   opacity: 1,
   borderRadius: 0,
   margin: 0,
-}
+})
 
 const TextInputView = ({
   active,
   children,
   value,
-  label,
+  labelOffset,
   modal,
   smallText,
   controlRef,
@@ -81,7 +81,7 @@ const TextInputView = ({
             }}
           >
             <View
-              css={[_modal && css(mobileViewCss(active, label))(theme)]}
+              css={[_modal && css(modalViewCss(active, labelOffset))(theme)]}
               shadowVariant={_modal ? 'modal' : 'none'}
               onClick={
                 _modal
@@ -104,7 +104,7 @@ const TextInputView = ({
                   },
                   _modal && css(mobileInputCss(active))(theme),
                   !_modal && css(desktopInputCss)(theme),
-                  active && css(activeInputCss)(theme),
+                  active && css(activeInputCss(_modal))(theme),
                 ],
                 onBlur: child.props.onBlur,
                 ref: forkRef(child.ref, inputRef),

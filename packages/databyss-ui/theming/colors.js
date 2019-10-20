@@ -46,6 +46,7 @@ _c = {
     .alpha(0.5)
     .rgb()
     .string(),
+  inputModalBackground: _c.white,
 }
 
 // legacy (deprecated)
@@ -74,6 +75,7 @@ _c = {
       border: [_c.gray[7], _c.gray[3], _c.gray[1]],
       // control colors [enabled, hover, active, label]
       secondary: [_c.blue[1], _c.gray[2], _c.gray[0], _c.blue[2]],
+      inputModalBackground: _c.gray[3],
     },
   },
 }

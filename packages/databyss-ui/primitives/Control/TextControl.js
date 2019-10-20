@@ -46,6 +46,29 @@ const TextControl = ({
     zIndex: active ? 2 : 'unset',
   }
   const TextInputComponent = rich ? RichTextInput : TextInput
+  const _children = (
+    <TextInputView
+      active={active}
+      flexGrow={1}
+      labelOffset={labelProps ? labelProps.width : 0}
+      modal={modal}
+      smallText={theme.textVariants[textVariant].fontSize < 16}
+      controlRef={controlRef}
+    >
+      <TextInputComponent
+        id={id}
+        ref={inputRef}
+        active={active}
+        onBlur={() => {
+          setTimeout(() => setActive(false), 50)
+        }}
+        onChange={onChange}
+        variant={textVariant}
+        value={value}
+        multiline={multiline}
+      />
+    </TextInputView>
+  )
   return (
     <BaseControl
       ref={controlRef}
@@ -62,37 +85,23 @@ const TextControl = ({
       {...(IS_NATIVE ? nativeProps : webProps)}
       {...others}
     >
-      <Grid singleRow alignItems="baseline" flexWrap={gridFlexWrap}>
-        {label &&
-          label.length && (
-            <View {...labelProps} css={{ userSelect: 'none' }}>
-              <Text variant={textVariant} color={labelColor}>
-                {label}
-              </Text>
-            </View>
-          )}
-        <TextInputView
-          active={active}
-          flexGrow={1}
-          label={label}
-          modal={modal}
-          smallText={theme.textVariants[textVariant].fontSize < 16}
-          controlRef={controlRef}
+      {label && label.length ? (
+        <Grid
+          singleRow
+          alignItems="baseline"
+          flexWrap={gridFlexWrap}
+          columnGap="none"
         >
-          <TextInputComponent
-            id={id}
-            ref={inputRef}
-            active={active}
-            onBlur={() => {
-              setTimeout(() => setActive(false), 50)
-            }}
-            onChange={onChange}
-            variant={textVariant}
-            value={value}
-            multiline={multiline}
-          />
-        </TextInputView>
-      </Grid>
+          <View {...labelProps} css={{ userSelect: 'none' }}>
+            <Text variant={textVariant} color={labelColor}>
+              {label}
+            </Text>
+          </View>
+          {_children}
+        </Grid>
+      ) : (
+        _children
+      )}
     </BaseControl>
   )
 }
