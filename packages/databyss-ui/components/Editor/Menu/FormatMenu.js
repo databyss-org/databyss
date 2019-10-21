@@ -84,7 +84,7 @@ const formatActionButtons = editor => {
   }, [])
 }
 
-const MarkButton = ({ editor, type, label, variant, action }) => {
+const MarkButton = ({ editor, type, label, variant, action, ...others }) => {
   const [, dispatchEditor] = useEditorContext()
   const { value } = editor
   const isActive = value.activeMarks.some(mark => mark.type === type)
@@ -97,6 +97,7 @@ const MarkButton = ({ editor, type, label, variant, action }) => {
         e.preventDefault()
         dispatchEditor(action(type, { value }))
       }}
+      {...others}
     >
       <Text
         variant={variant}
