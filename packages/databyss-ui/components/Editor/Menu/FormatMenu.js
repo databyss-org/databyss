@@ -55,9 +55,8 @@ const formatActions = isMobileNewLine => [
   },
 ]
 
-const formatActionButtons = editor => {
-  const isMobileNewLine = window.getSelection().focusOffset === 0
-  return formatActions(isMobileNewLine).reduce((acc, a, i) => {
+const formatActionButtons = editor =>
+  formatActions(!editor.value.anchorBlock.text.length).reduce((acc, a, i) => {
     if (a.type === 'DIVIDER') {
       return acc.concat(
         <View
@@ -72,7 +71,6 @@ const formatActionButtons = editor => {
     return acc.concat(
       <MarkButton
         key={i}
-        isMobileNewLine={isMobileNewLine}
         editor={editor}
         index={i}
         type={a.type}
@@ -82,7 +80,6 @@ const formatActionButtons = editor => {
       />
     )
   }, [])
-}
 
 const MarkButton = ({ editor, type, label, variant, action, ...others }) => {
   const [, dispatchEditor] = useEditorContext()

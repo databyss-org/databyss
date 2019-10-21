@@ -82,7 +82,7 @@ const EditorBlock = ({ children, node }) => {
       {_children}
     </Grid>
   ) : (
-    _children
+    <View mb="tiny">{_children}</View>
   )
 }
 

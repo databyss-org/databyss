@@ -79,14 +79,9 @@ const isActiveSelection = value => {
   return true
 }
 
-const isNewLineOnMobile = value => {
-  if (value.anchorBlock) {
-    if (value.anchorBlock.text.length === 0 && isMobileOs()) {
-      return true
-    }
-  }
-
-  return false
+const isNewLine = value => {
+  console.log('isNewLineOnMobile', value.focusBlock.text.length)
+  return value.anchorBlock && value.anchorBlock.text.length === 0
 }
 
 const EditorTooltip = ({ children, css, editor, ...others }) => {
@@ -96,11 +91,11 @@ const EditorTooltip = ({ children, css, editor, ...others }) => {
   const { value } = editor
   useEffect(
     () => {
-      if (!isActiveSelection(value) && !isNewLineOnMobile(value)) {
-        setActive(false)
-      } else {
+      if (isActiveSelection(value) || (_mobile && isNewLine(value))) {
         setPosition(getPosition(editor, menuRef))
         setActive(true)
+      } else {
+        setActive(false)
       }
     },
     [value]
