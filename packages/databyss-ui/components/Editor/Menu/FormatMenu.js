@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import { Button, Text } from '@databyss-org/ui/primitives'
-import EditorTooltip from '../EditorTooltip'
 import { isMobileOs } from '@databyss-org/ui/'
 import space from '@databyss-org/ui/theming/space'
+import EditorTooltip from '../EditorTooltip'
 import { useEditorContext } from '../EditorProvider'
 import { toggleMark, startTag } from '../state/actions'
 
