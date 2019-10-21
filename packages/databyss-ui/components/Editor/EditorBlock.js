@@ -50,8 +50,19 @@ const textSelector = ({ children, type }) => {
 const EditorBlock = ({ children, node }) => {
   const [menuActive, setMenuActive] = useState(false)
 
-  // WHEN YOU START TYPING CURSOR GOES AWAY
-  return (
+  const _children = (
+    <View
+      flexShrink={1}
+      overflow="visible"
+      justifyContent="center"
+      css={css({
+        caretColor: menuActive && node.text.length === 0 && 'transparent',
+      })}
+    >
+      {textSelector({ children, type: node.type })}
+    </View>
+  )
+  return !isMobileOs() ? (
     <Grid singleRow mb="tiny" flexWrap="nowrap" columnGap="small">
       <View
         contentEditable="false"
@@ -61,25 +72,17 @@ const EditorBlock = ({ children, node }) => {
         height={editorMarginMenuItemHeight}
         overflow="visible"
       >
-        {node.text.length < 1 &&
-          !isMobileOs() && (
-            <EditorBlockMenu
-              hideCursor={bool => setMenuActive(bool)}
-              node={node}
-            />
-          )}
+        {node.text.length < 1 && (
+          <EditorBlockMenu
+            hideCursor={bool => setMenuActive(bool)}
+            node={node}
+          />
+        )}
       </View>
-      <View
-        flexShrink={1}
-        overflow="visible"
-        justifyContent="center"
-        css={css({
-          caretColor: menuActive && node.text.length === 0 && 'transparent',
-        })}
-      >
-        {textSelector({ children, type: node.type })}
-      </View>
+      {_children}
     </Grid>
+  ) : (
+    _children
   )
 }
 

@@ -32,26 +32,7 @@ const borderVariants = {
   thickLight: border(3, 'border.1'),
 }
 
-const hoverVariants = {
-  formatMenuUI: {
-    // paddingTop: pxUnits(8),
-    paddingLeft: pxUnits(7),
-    // paddingBottom: pxUnits(6),
-    paddingRight: pxUnits(7),
-    backgroundColor: 'background.6',
-    zIndex: 1,
-    top: pxUnits(-10000),
-    left: pxUnits(-10000),
-    marginTop: pxUnits(-6),
-    position: 'absolute',
-    opacity: 0,
-    transition: 'opacity 0.75s',
-    borderRadius,
-  },
-}
-
 export default {
   paddingVariants,
   borderVariants,
-  hoverVariants,
 }

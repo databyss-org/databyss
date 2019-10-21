@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
-import { Button, Text, HoverView } from '@databyss-org/ui/primitives'
+import { Button, Text } from '@databyss-org/ui/primitives'
+import EditorTooltip from '../EditorTooltip'
 import { isMobileOs } from '@databyss-org/ui/'
 import space from '@databyss-org/ui/theming/space'
 import { useEditorContext } from '../EditorProvider'
@@ -26,7 +27,7 @@ const mobileActions = [
   },
 ]
 
-const webActions = [
+const desktopActions = [
   {
     type: 'location',
     label: 'loc',
@@ -36,20 +37,7 @@ const webActions = [
 ]
 
 const formatActions = isMobileNewLine => [
-  ...(isMobileOs() && isMobileNewLine ? mobileActions : webActions),
-  // {
-  //   type: 'source',
-  //   label: '@',
-  //   variant: 'uiTextNormal',
-  //   action: a => toggleMark(a),
-  // },
-
-  // {
-  //   type: 'topic',
-  //   label: '#',
-  //   variant: 'uiTextNormal',
-  //   action: a => toggleMark(a),
-  // },
+  ...(isMobileOs() && isMobileNewLine ? mobileActions : desktopActions),
   {
     type: 'bold',
     label: 'b',
@@ -82,9 +70,9 @@ const formatActionButtons = editor => {
 
 export const Menu = React.forwardRef(
   ({ className, children, ...props }, ref) => (
-    <HoverView {...props} ref={ref}>
+    <EditorTooltip {...props} ref={ref}>
       {children}
-    </HoverView>
+    </EditorTooltip>
   )
 )
 
