@@ -73,9 +73,7 @@ const buttonVariants = {
     backgroundColor: 'background.6',
     paddingBottom: pxUnits(6),
     paddingTop: pxUnits(6),
-
     borderRadius: pxUnits(0),
-    borderRightWidth: pxUnits(1),
   },
 }
 
