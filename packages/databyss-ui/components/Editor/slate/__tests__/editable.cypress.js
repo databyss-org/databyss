@@ -20,7 +20,8 @@ context('Editor', () => {
   })
 
   it('should set initial blocks', () => {
-    cy.get('@editor').newLine()
+    cy.get('@editor').click()
+
     const expected = toSlateJson(
       <value>
         <document>

@@ -116,7 +116,6 @@ context('Editor', () => {
   // TODO: needs to add padding top
   it('it should highlight a selection and toggle bold/italic on the marks', () => {
     cy.get('@editor')
-      .newLine()
       .type('On the limitation of third-order thought to assertion')
       .setSelection('limitation')
       .get('[data-test-format-menu="italic"]')
@@ -135,11 +134,6 @@ context('Editor', () => {
             {' of third-'}
             <mark type="bold">order</mark>
             {' thought to assertion'}
-          </block>
-          <block type="TOPIC">
-            <text />
-            <inline type="TOPIC">topic</inline>
-            <text />
           </block>
         </document>
       </value>
