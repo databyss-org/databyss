@@ -70,12 +70,9 @@ const buttonVariants = {
     backgroundColor: 'background.2',
   },
   formatButton: {
-    backgroundColor: 'background.6',
     paddingBottom: pxUnits(6),
     paddingTop: pxUnits(6),
-
     borderRadius: pxUnits(0),
-    borderRightWidth: pxUnits(1),
   },
 }
 
@@ -109,9 +106,8 @@ const buttonThemes = {
   },
   formatButton: {
     textProps: {},
-    rippleColor: 'primary.2',
-    hoverColor: 'background.6',
-    activeColor: 'primary.2',
+    hoverColor: 'background.1',
+    activeColor: 'background.2',
   },
 }
 

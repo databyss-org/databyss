@@ -108,8 +108,95 @@ const MarkButton = ({ editor, type, label, variant, action, ...others }) => {
   )
 }
 
-const FormatMenu = ({ editor }) => (
+<<<<<<< HEAD
+const isActiveSelection = value => {
+  const { fragment, selection } = value
+  if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
+    return false
+  }
+  return true
+}
+
+const isNewLineOnMobile = value => {
+  if (value.anchorBlock) {
+    if (value.anchorBlock.text.length === 0 && isMobileOs()) {
+      return true
+    }
+  }
+
+  return false
+}
+
+const HoverMenu = ({ editor }) => {
+  // need to optomize this with hooks
+  const menuRef = useRef(null)
+
+  const updateMenu = () => {
+    const menu = menuRef.current
+    if (!menu) return
+    const { value } = editor
+    if (!isActiveSelection(value) && !isNewLineOnMobile(value)) {
+      menu.removeAttribute('style')
+      return
+    }
+
+    const native = window.getSelection()
+    const range = native.getRangeAt(0)
+    const rect = range.getBoundingClientRect()
+
+    // CHECK FOR RANGE AND RENDER
+
+    // eslint-disable-next-line
+    const _node = editor.findDOMNode(
+      value.document.getPath(value.selection.focus.key)
+    )
+
+    const isMobileNewLine = rect.width === 0
+
+    // CHECK FOR TOP OF LINE
+
+    const _mobileOffsetHeight = isMobileNewLine
+      ? `${rect.bottom + _node.getBoundingClientRect().top + 32}px`
+      : `${rect.bottom + window.pageYOffset + 10}px`
+
+    menu.style.opacity = 1
+    menu.style.pointerEvents = 'auto'
+    menu.style.top = isMobileOs()
+      ? _mobileOffsetHeight
+      : `${rect.top + window.pageYOffset - menu.offsetHeight}px`
+
+    // menu offset to prevent overflow
+    let menuLeftOffset = 0
+
+    if (menu.offsetWidth / 2 > rect.left + rect.width / 2) {
+      menuLeftOffset =
+        menu.offsetWidth / 2 - (rect.left + rect.width / 2) + space.small
+    }
+
+    if (rect.left + rect.width / 2 + menu.offsetWidth / 2 > window.innerWidth) {
+      menuLeftOffset =
+        window.innerWidth -
+        (rect.left + rect.width / 2 + menu.offsetWidth / 2) -
+        space.small
+    }
+
+    menu.style.left = `${rect.left +
+      window.pageXOffset -
+      menu.offsetWidth / 2 +
+      rect.width / 2 +
+      menuLeftOffset}px`
+  }
+
+  useEffect(() => {
+    updateMenu()
+  })
+
+  return <Menu ref={menuRef}>{formatActionButtons(editor)}</Menu>
+}
+=======
+const HoverMenu = ({ editor }) => (
   <EditorTooltip editor={editor}>{formatActionButtons(editor)}</EditorTooltip>
 )
+>>>>>>> 244ddf613bb01758f5eaecf0d0f1095107cb8b15
 
-export default FormatMenu
+export default HoverMenu

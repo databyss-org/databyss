@@ -1,8 +1,21 @@
 import React from 'react'
-import { View, Button, Icon, Grid } from '@databyss-org/ui/primitives'
+import { View, Button, Icon, Grid, Text } from '@databyss-org/ui/primitives'
 import PlusSvg from '../../assets/add.svg'
 import { editorMarginMenuItemHeight } from '../../theming/buttons'
 import { Section } from './'
+
+const MarkButton = ({ isActive, label, variant }) => (
+  <Button variant="formatButton">
+    <Text
+      variant={variant}
+      pr="extraSmall"
+      pl="extraSmall"
+      color={isActive ? 'primary.1' : 'text.1'}
+    >
+      {label}
+    </Text>
+  </Button>
+)
 
 export default () => (
   <React.Fragment>
@@ -50,6 +63,9 @@ export default () => (
               <PlusSvg />
             </Icon>
           </Button>
+        </View>
+        <View>
+          <MarkButton label="b" variant="uiTextBold" />
         </View>
       </Grid>
     </Section>

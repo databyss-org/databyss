@@ -52,6 +52,29 @@ const getPosition = (editor, menuRef) => {
       space.small
   }
 
+<<<<<<< HEAD
+  const style = {
+    paddingLeft: pxUnits(7),
+    paddingRight: pxUnits(7),
+    backgroundColor: 'background.6',
+    zIndex: 1,
+    marginTop: pxUnits(-6),
+    position: 'absolute',
+    opacity: 0,
+    transition: 'opacity 0.75s',
+    borderRadius: pxUnits(5),
+  }
+
+  const css = {
+    pointerEvents: 'none',
+  }
+  return (
+    <View {...style} {...others} ref={ref} css={css}>
+      <Grid singleRow columnGap={0} flexWrap="nowrap">
+        {children}
+      </Grid>
+    </View>
+=======
   return {
     top: _mobile
       ? _mobileOffsetHeight
@@ -117,6 +140,7 @@ const EditorTooltip = ({ children, css, editor, ...others }) => {
         </Grid>
       </View>
     </ThemeProvider>
+>>>>>>> 244ddf613bb01758f5eaecf0d0f1095107cb8b15
   )
 }
 
