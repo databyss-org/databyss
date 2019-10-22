@@ -13,15 +13,18 @@ const EditorTooltip = forwardRef(({ children, ...others }, ref) => {
     paddingRight: pxUnits(7),
     backgroundColor: 'background.6',
     zIndex: 1,
-    pointerEvents: 'none',
     marginTop: pxUnits(-6),
     position: 'absolute',
     opacity: 0,
     transition: 'opacity 0.75s',
     borderRadius: pxUnits(5),
   }
+
+  const css = {
+    pointerEvents: 'none',
+  }
   return (
-    <View {...style} {...others} ref={ref}>
+    <View {...style} {...others} ref={ref} css={css}>
       <Grid singleRow columnGap={0} flexWrap="nowrap">
         {children}
       </Grid>

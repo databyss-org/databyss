@@ -8,7 +8,7 @@ import { toSlateJson, matchExpectedJson } from './_helpers'
 
 context('Editor', () => {
   beforeEach(() => {
-    cy.visit('http://0.0.0.0:6006/iframe.html?id=editor-tests--slate')
+    cy.visit('http://0.0.0.0:6006/iframe.html?id=editor-tests--slate-empty')
     cy.get('[contenteditable="true"]')
       .as('editor')
       .focus()
@@ -21,8 +21,6 @@ context('Editor', () => {
 
   it('it should open the menu, display actions and select source', () => {
     cy.get('@editor')
-      .endOfDoc()
-      .newLine()
       .get('[data-test-block-menu="open"]')
       .click()
       .get('[data-test-block-menu="SOURCE"]')
@@ -34,22 +32,6 @@ context('Editor', () => {
     const expected = toSlateJson(
       <value>
         <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">
-              Stamenov, Language Structure, Discourse and the Access to
-              Consciousness
-            </inline>
-            <text />
-          </block>
-          <block type="ENTRY">
-            On the limitation of third-order thought to assertion
-          </block>
-          <block type="TOPIC">
-            <text />
-            <inline type="TOPIC">topic</inline>
-            <text />
-          </block>
           <block type="SOURCE">
             <text>
               <inline type="SOURCE">this should be a source</inline>
@@ -64,8 +46,6 @@ context('Editor', () => {
 
   it('it should open the menu, display actions and select tag', () => {
     cy.get('@editor')
-      .endOfDoc()
-      .newLine()
       .get('[data-test-block-menu="open"]')
       .click()
       .get('[data-test-block-menu="TOPIC"]')
@@ -77,22 +57,6 @@ context('Editor', () => {
     const expected = toSlateJson(
       <value>
         <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">
-              Stamenov, Language Structure, Discourse and the Access to
-              Consciousness
-            </inline>
-            <text />
-          </block>
-          <block type="ENTRY">
-            On the limitation of third-order thought to assertion
-          </block>
-          <block type="TOPIC">
-            <text />
-            <inline type="TOPIC">topic</inline>
-            <text />
-          </block>
           <block type="TOPIC">
             <text>
               <inline type="TOPIC">this should be a topic</inline>
@@ -107,8 +71,6 @@ context('Editor', () => {
 
   it('it should open the menu, display actions and select location', () => {
     cy.get('@editor')
-      .endOfDoc()
-      .newLine()
       .get('[data-test-block-menu="open"]')
       .click()
       .get('[data-test-block-menu="LOCATION"]')
@@ -123,22 +85,6 @@ context('Editor', () => {
     const expected = toSlateJson(
       <value>
         <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">
-              Stamenov, Language Structure, Discourse and the Access to
-              Consciousness
-            </inline>
-            <text />
-          </block>
-          <block type="ENTRY">
-            On the limitation of third-order thought to assertion
-          </block>
-          <block type="TOPIC">
-            <text />
-            <inline type="TOPIC">topic</inline>
-            <text />
-          </block>
           <block type="LOCATION">
             <mark type="location">
               this whole block should get tagged as a location
@@ -153,31 +99,25 @@ context('Editor', () => {
 
   it('only appear when the proceeding line is blank', () => {
     cy.get('@editor')
-      .endOfDoc()
-      .newLine()
       .get('[data-test-block-menu="open"]')
       .click()
     cy.get('@editor')
-      .endOfDoc()
       .type('test')
       .get('[data-test-block-menu="open"]')
       .should('not.be.visible')
     cy.get('@editor')
-      .previousBlock()
-      .endOfLine()
-      .type('{backspace}')
+      .newLine()
       .get('[data-test-block-menu="open"]')
       .click()
       .get('[data-test-block-menu="TOPIC"]')
       .should('be.visible')
   })
 
+  // TODO: needs to add padding top
   it('it should highlight a selection and toggle bold/italic on the marks', () => {
     cy.get('@editor')
-      .endOfDoc()
-      .previousBlock()
-      .previousBlock()
-      .startOfLine()
+      .newLine()
+      .type('On the limitation of third-order thought to assertion')
       .setSelection('limitation')
       .get('[data-test-format-menu="italic"]')
       .click()
@@ -189,14 +129,6 @@ context('Editor', () => {
     const expected = toSlateJson(
       <value>
         <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">
-              Stamenov, Language Structure, Discourse and the Access to
-              Consciousness
-            </inline>
-            <text />
-          </block>
           <block type="ENTRY">
             {'On the '}
             <mark type="italic">limitation</mark>

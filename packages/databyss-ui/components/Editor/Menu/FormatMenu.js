@@ -169,7 +169,7 @@ const HoverMenu = ({ editor }) => {
       : `${rect.bottom + window.pageYOffset + 10}px`
 
     menu.style.opacity = 1
-
+    menu.style.pointerEvents = 'auto'
     menu.style.top = isMobileOs()
       ? _mobileOffsetHeight
       : `${rect.top + window.pageYOffset - menu.offsetHeight}px`
