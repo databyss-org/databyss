@@ -18,6 +18,7 @@ import hotKeys, {
 } from './hotKeys'
 import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
+import { isAtomicNotInSelection } from './../EditorTooltip'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -331,6 +332,18 @@ const SlateContentEditable = ({
   }
 
   const onKeyDown = (event, editor, next) => {
+    const { fragment, selection } = editor.value
+
+    if (!(selection.isBlurred || selection.isCollapsed)) {
+      if (
+        event.key === 'Backspace' &&
+        !isAtomicNotInSelection(editor.value, editorState)
+      ) {
+        console.log('PLACE CLEAR BLOCK HERE')
+        return event.preventDefault()
+      }
+    }
+
     if (hotKeys.isStartOfLine(event)) {
       event.preventDefault()
       onHotKey(START_OF_LINE, editor)

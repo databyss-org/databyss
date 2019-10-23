@@ -82,12 +82,11 @@ const _activeCss = {
   opacity: 1,
 }
 
-const isActiveSelection = (value, editorState) => {
+export const isAtomicNotInSelection = (value, editorState) => {
   const { fragment, selection } = value
 
   const _idList = getAtomicBlockIds(editorState)
 
-  // returns a boolean if both anchor and focus do not contain atomic block
   const isNotAtomic = _idList.reduce((bool, id) => {
     const _node = value.document.getNode(id)
     const isAchorAtomic = selection.anchor.isInNode(_node)
@@ -111,6 +110,14 @@ const isActiveSelection = (value, editorState) => {
       )
     )
   }, true)
+  return isNotAtomic
+}
+
+const isActiveSelection = (value, editorState) => {
+  const { fragment, selection } = value
+
+  // returns a boolean if both anchor and focus do not contain atomic block
+  const isNotAtomic = isAtomicNotInSelection(value, editorState)
 
   if (
     selection.isBlurred ||
