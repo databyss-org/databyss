@@ -26,7 +26,7 @@ const _css = position => ({
 
 const getAtomicBlockIds = state => {
   const _list = []
-  state.page.blocks.map(b => {
+  state.page.blocks.forEach(b => {
     if (isAtomicInlineType(state.blocks[b._id].type)) {
       _list.push(state.blocks[b._id]._id)
     }
