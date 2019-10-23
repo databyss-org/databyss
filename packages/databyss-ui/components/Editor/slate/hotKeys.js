@@ -14,6 +14,7 @@ const HOTKEYS = {
   location: `${metaKey}+k`,
   undo: `${metaKey}+z`,
   startOfLine: `ctrl+shift+left`,
+  tab: 'tab',
   endOfLine: `ctrl+shift+right`,
   startOfDocument: `ctrl+shift+up`,
   endOfDocument: `ctrl+shift+down`,
@@ -63,3 +64,4 @@ export const START_OF_DOCUMENT = 'START_OF_DOCUMENT'
 export const END_OF_DOCUMENT = 'END_OF_DOCUMENT'
 export const NEXT_BLOCK = 'NEXT_BLOCK'
 export const PREVIOUS_BLOCK = 'PREVIOUS_BLOCK'
+export const TAB = 'TAB'

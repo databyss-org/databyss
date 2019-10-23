@@ -334,22 +334,25 @@ const SlateContentEditable = ({
   }
 
   const onKeyDown = (event, editor, next) => {
+<<<<<<< HEAD
     const { fragment, selection } = editor.value
 
-    // if (!(selection.isBlurred || selection.isCollapsed)) {
-    //   if (
-    //     event.key === 'Backspace' &&
-    //     !isAtomicNotInSelection(editor.value, editorState)
-    //   ) {
-    //     console.log('PLACE CLEAR BLOCK HERE')
-    //     return event.preventDefault()
-    //   }
-    // }
+    if (!(selection.isBlurred || selection.isCollapsed)) {
+      if (
+        event.key === 'Backspace' &&
+        !isAtomicNotInSelection(editor.value, editorState)
+      ) {
+        console.log('PLACE CLEAR BLOCK HERE')
+        return event.preventDefault()
+      }
+    }
 
+=======
     if (hotKeys.isTab(event)) {
       event.preventDefault()
       onHotKey(TAB, editor)
     }
+>>>>>>> michael/bug-fixes
     if (hotKeys.isStartOfLine(event)) {
       event.preventDefault()
       onHotKey(START_OF_LINE, editor)
@@ -403,16 +406,19 @@ const SlateContentEditable = ({
         if (!editor.value.previousBlock) {
           return next()
         }
+<<<<<<< HEAD
         // if backspace
         // if prvious block is atomic
         // if cursor is at position 0
         // remove atomic block above
+=======
         if (
           event.key === 'Backspace' &&
           isAtomicInlineType(editor.value.previousBlock.type)
         ) {
           console.log('apply here')
         }
+>>>>>>> michael/bug-fixes
 
         if (event.key === 'Backspace' && editor.value.previousBlock.text) {
           if (

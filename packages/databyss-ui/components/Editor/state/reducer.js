@@ -11,6 +11,7 @@ import {
   INSERT_NEW_ACTIVE_BLOCK,
   SET_BLOCK_TYPE,
   BACKSPACE,
+  DELETE_BLOCK,
 } from './constants'
 
 export const initialState = {
@@ -274,6 +275,12 @@ const getMarkupValues = (nextState, ranges) => {
   return _state
 }
 
+const deleteBlock = (state, payload) => {
+  const _state = cloneDeep(state)
+  _state.page.blocks = _state.page.blocks.filter(v => v._id !== payload.id)
+  return cleanUpState(_state)
+}
+
 export default (state, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_TYPE:
@@ -307,6 +314,8 @@ export default (state, action) => {
       return insertNewActiveBlock(state, action.payload.blockProperties)
     case BACKSPACE:
       return backspace(state, action.payload)
+    case DELETE_BLOCK:
+      return deleteBlock(state, action.payload)
     case SET_BLOCK_TYPE:
       let nextState = cloneDeep(state)
       const _html = getRawHtmlForBlock(
@@ -317,7 +326,7 @@ export default (state, action) => {
         nextState = setRawHtmlForBlock(
           nextState,
           nextState.blocks[action.payload.id],
-          _html.substring(1)
+          _html.substring(1).trim()
         )
 
         // correct range offset

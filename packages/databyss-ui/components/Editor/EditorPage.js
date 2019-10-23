@@ -11,6 +11,7 @@ import {
   toggleMark,
   hotKey,
   clearBlock,
+  deleteBlock,
 } from './state/actions'
 
 const EditorPage = ({ children }) => {
@@ -61,6 +62,10 @@ const EditorPage = ({ children }) => {
     dispatchEditor(hotKey(command, { value }))
   }
 
+  const deleteBlockByKey = (id, { value }) => {
+    dispatchEditor(deleteBlock(id, { value }))
+  }
+
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
     onActiveBlockIdChange,
@@ -72,6 +77,7 @@ const EditorPage = ({ children }) => {
     OnToggleMark,
     onHotKey,
     onSetBlockType,
+    deleteBlockByKey,
   })
 }
 

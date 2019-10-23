@@ -9,8 +9,12 @@ import {
   TOGGLE_MARK,
   HOTKEY,
   CLEAR_BLOCK,
+<<<<<<< HEAD
   START_TAG,
+=======
+  ADD_TAG,
   DELETE_BLOCK,
+>>>>>>> michael/bug-fixes
 } from '../state/constants'
 // import { addTag } from '../state/actions'
 
