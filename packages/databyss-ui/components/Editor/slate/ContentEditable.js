@@ -166,7 +166,8 @@ const SlateContentEditable = ({
   const { activeBlockId, editableState, blocks, page } = editorState
 
   const editableRef = useRef(null)
-  // const menuRef = useRef(null)
+
+  //  const menuRef = useRef(null)
 
   const getBlockRanges = block => {
     const jsonBlockValue = { ...block.toJSON(), key: block.key }
@@ -325,6 +326,22 @@ const SlateContentEditable = ({
         nextBlockId: editor.value.nextBlock ? editor.value.nextBlock.key : null,
       }
       const _editorState = { value: editor.value }
+
+      // EDGE CASE FOR HIGHLIGHTED EMPTY BLOCK
+      const { selection } = editor.value
+
+      if (!(selection.isBlurred || selection.isCollapsed)) {
+        if (
+          event.key === 'Backspace' &&
+          !isAtomicNotInSelection(editor.value, editorState)
+        ) {
+          // gets node in the middle of highlight
+          const _node = editor.value.blocks._tail.array[1]
+          deleteBlockByKey(_node.key, editor)
+          return event.preventDefault()
+        }
+      }
+
       onBackspace(blockProperties, _editorState)
     }
     // special case:
@@ -334,17 +351,17 @@ const SlateContentEditable = ({
   }
 
   const onKeyDown = (event, editor, next) => {
-    const { fragment, selection } = editor.value
+    const { selection } = editor.value
 
-    // if (!(selection.isBlurred || selection.isCollapsed)) {
-    //   if (
-    //     event.key === 'Backspace' &&
-    //     !isAtomicNotInSelection(editor.value, editorState)
-    //   ) {
-    //     console.log('PLACE CLEAR BLOCK HERE')
-    //     return event.preventDefault()
-    //   }
-    // }
+    // EDGE CASE: prevent block from being deleted when empty block highlighted
+    if (!(selection.isBlurred || selection.isCollapsed)) {
+      if (
+        event.key === 'Backspace' &&
+        !isAtomicNotInSelection(editor.value, editorState)
+      ) {
+        return event.preventDefault()
+      }
+    }
 
     if (hotKeys.isTab(event)) {
       event.preventDefault()
@@ -402,16 +419,6 @@ const SlateContentEditable = ({
         // if previous block doesnt exist
         if (!editor.value.previousBlock) {
           return next()
-        }
-        // if backspace
-        // if prvious block is atomic
-        // if cursor is at position 0
-        // remove atomic block above
-        if (
-          event.key === 'Backspace' &&
-          isAtomicInlineType(editor.value.previousBlock.type)
-        ) {
-          console.log('apply here')
         }
 
         if (event.key === 'Backspace' && editor.value.previousBlock.text) {

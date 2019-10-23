@@ -88,18 +88,16 @@ export const isAtomicNotInSelection = (value, editorState) => {
   const _idList = getAtomicBlockIds(editorState)
 
   const isNotAtomic = _idList.reduce((bool, id) => {
-    console.log(id)
-    const _node = value.document.getNode(id)
     let isAchorAtomic = false
-    console.log(_node)
+    let isFocusAtomic = false
+
+    const _node = value.document.getNode(id)
     if (_node) {
       isAchorAtomic = selection.anchor.isInNode(_node)
+      // BUG: if whole line is double click highlighted
+      // isFocusAtomic return the value of the next block
+      isFocusAtomic = selection.focus.isInNode(_node)
     }
-    // const isAchorAtomic = selection.anchor.isInNode(_node)
-
-    // BUG: if whole line is double click highlighted
-    // isFocusAtomic return the value of the next block
-    const isFocusAtomic = selection.focus.isInNode(_node)
 
     // checks inner content for atomic block
     const doesFragmentContainAtomic = fragment.hasNode(id)
