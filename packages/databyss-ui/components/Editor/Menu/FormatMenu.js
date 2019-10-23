@@ -108,8 +108,10 @@ const MarkButton = ({ editor, type, label, variant, action, ...others }) => {
   )
 }
 
-const FormatMenu = ({ editor }) => (
-  <EditorTooltip editor={editor}>{formatActionButtons(editor)}</EditorTooltip>
+const FormatMenu = ({ editor, editorState }) => (
+  <EditorTooltip editor={editor} editorState={editorState}>
+    {formatActionButtons(editor)}
+  </EditorTooltip>
 )
 
 export default FormatMenu

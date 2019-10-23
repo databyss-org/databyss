@@ -434,7 +434,7 @@ const SlateContentEditable = ({
     return (
       <React.Fragment>
         {children}
-        <FormatMenu editor={editor} />
+        <FormatMenu editor={editor} editorState={editorState} />
       </React.Fragment>
     )
   }

@@ -6,6 +6,7 @@ import theme, { borderRadius, darkTheme } from '@databyss-org/ui/theming/theme'
 import { ThemeProvider } from 'emotion-theming'
 import space from '@databyss-org/ui/theming/space'
 import { isMobileOs } from '@databyss-org/ui/'
+import { isAtomicInlineType } from './slate/reducer'
 
 const _mobile = isMobileOs()
 
@@ -22,6 +23,16 @@ const _css = position => ({
   borderRadius,
   ...position,
 })
+
+const getAtomicBlockIds = state => {
+  const _list = []
+  state.page.blocks.map(b => {
+    if (isAtomicInlineType(state.blocks[b._id].type)) {
+      _list.push(state.blocks[b._id]._id)
+    }
+  })
+  return _list
+}
 
 const getPosition = (editor, menuRef) => {
   const menu = menuRef.current
@@ -71,9 +82,42 @@ const _activeCss = {
   opacity: 1,
 }
 
-const isActiveSelection = value => {
+const isActiveSelection = (value, editorState) => {
   const { fragment, selection } = value
-  if (selection.isBlurred || selection.isCollapsed || fragment.text === '') {
+
+  const _idList = getAtomicBlockIds(editorState)
+
+  // returns a boolean if both anchor and focus do not contain atomic block
+  const isNotAtomic = _idList.reduce((bool, id) => {
+    const _node = value.document.getNode(id)
+    const isAchorAtomic = selection.anchor.isInNode(_node)
+
+    // BUG: if whole line is double click highlighted
+    // isFocusAtomic return the value of the next block
+    const isFocusAtomic = selection.focus.isInNode(_node)
+
+    // checks inner content for atomic block
+    const doesFragmentContainAtomic = fragment.hasNode(id)
+
+    // checks if anchor block is atomic type
+    const isAnchorBlockAtomic = isAtomicInlineType(value.anchorBlock.type)
+    return (
+      bool &&
+      !(
+        isAchorAtomic ||
+        isFocusAtomic ||
+        doesFragmentContainAtomic ||
+        isAnchorBlockAtomic
+      )
+    )
+  }, true)
+
+  if (
+    selection.isBlurred ||
+    selection.isCollapsed ||
+    fragment.text === '' ||
+    !isNotAtomic
+  ) {
     return false
   }
   return true
@@ -84,14 +128,17 @@ const isNewLine = value => {
   return value.anchorBlock && value.anchorBlock.text.length === 0
 }
 
-const EditorTooltip = ({ children, css, editor, ...others }) => {
+const EditorTooltip = ({ children, css, editor, editorState, ...others }) => {
   const menuRef = useRef(null)
   const [active, setActive] = useState(false)
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const { value } = editor
   useEffect(
     () => {
-      if (isActiveSelection(value) || (_mobile && isNewLine(value))) {
+      if (
+        isActiveSelection(value, editorState) ||
+        (_mobile && isNewLine(value))
+      ) {
         setPosition(getPosition(editor, menuRef))
         setActive(true)
       } else {
