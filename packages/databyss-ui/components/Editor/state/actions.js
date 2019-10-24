@@ -11,6 +11,7 @@ import {
   CLEAR_BLOCK,
   START_TAG,
   DELETE_BLOCK,
+  DELETE_BLOCKS,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -130,6 +131,16 @@ export function deleteBlock(id, editableState) {
     payload: {
       editableState,
       id,
+    },
+  }
+}
+
+export function deleteBlocks(idList, editableState) {
+  return {
+    type: DELETE_BLOCKS,
+    payload: {
+      editableState,
+      idList,
     },
   }
 }

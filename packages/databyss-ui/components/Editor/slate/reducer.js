@@ -11,6 +11,7 @@ import {
   CLEAR_BLOCK,
   START_TAG,
   DELETE_BLOCK,
+  DELETE_BLOCKS,
 } from '../state/constants'
 // import { addTag } from '../state/actions'
 
@@ -201,6 +202,14 @@ const deleteBlockById = id => (editor, value, next) => {
   next(editor, value)
 }
 
+const deleteBlocksByIds = idList => (editor, value, next) => {
+  idList.forEach(id => {
+    editor.removeNodeByKey(id)
+  })
+  editor.moveFocusBackward(1)
+  next(editor, value)
+}
+
 export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
@@ -265,6 +274,12 @@ export default (editableState, action) => {
       return {
         ...editableState,
         editorCommands: deleteBlockById(action.payload.id),
+      }
+    }
+    case DELETE_BLOCKS: {
+      return {
+        ...editableState,
+        editorCommands: deleteBlocksByIds(action.payload.idList),
       }
     }
     default:

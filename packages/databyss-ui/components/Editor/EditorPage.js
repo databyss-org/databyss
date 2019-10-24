@@ -12,6 +12,7 @@ import {
   hotKey,
   clearBlock,
   deleteBlock,
+  deleteBlocks,
 } from './state/actions'
 
 const EditorPage = ({ children }) => {
@@ -65,6 +66,9 @@ const EditorPage = ({ children }) => {
   const deleteBlockByKey = (id, { value }) => {
     dispatchEditor(deleteBlock(id, { value }))
   }
+  const deleteBlocksByKeys = (idList, { value }) => {
+    dispatchEditor(deleteBlocks(idList, { value }))
+  }
 
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
@@ -78,6 +82,7 @@ const EditorPage = ({ children }) => {
     onHotKey,
     onSetBlockType,
     deleteBlockByKey,
+    deleteBlocksByKeys,
   })
 }
 

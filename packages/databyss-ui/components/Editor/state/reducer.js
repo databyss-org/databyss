@@ -12,6 +12,7 @@ import {
   SET_BLOCK_TYPE,
   BACKSPACE,
   DELETE_BLOCK,
+  DELETE_BLOCKS,
 } from './constants'
 
 export const initialState = {
@@ -280,6 +281,14 @@ const deleteBlock = (state, payload) => {
   _state.page.blocks = _state.page.blocks.filter(v => v._id !== payload.id)
   return cleanUpState(_state)
 }
+const deleteBlocks = (state, payload) => {
+  const _state = cloneDeep(state)
+  _state.page.blocks = _state.page.blocks.filter(
+    v => !payload.idList.includes(v._id)
+  )
+
+  return cleanUpState(_state)
+}
 
 export default (state, action) => {
   switch (action.type) {
@@ -316,6 +325,8 @@ export default (state, action) => {
       return backspace(state, action.payload)
     case DELETE_BLOCK:
       return deleteBlock(state, action.payload)
+    case DELETE_BLOCKS:
+      return deleteBlocks(state, action.payload)
     case SET_BLOCK_TYPE:
       let nextState = cloneDeep(state)
       const _html = getRawHtmlForBlock(

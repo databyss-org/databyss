@@ -160,6 +160,7 @@ const SlateContentEditable = ({
   onHotKey,
   onSetBlockType,
   deleteBlockByKey,
+  deleteBlocksByKeys,
 }) => {
   const [editorState] = useEditorContext()
 
@@ -295,6 +296,48 @@ const SlateContentEditable = ({
       )
   )
 
+  const deleteBlocksFromSelection = editor => {
+    const value = editor.value
+    const { selection, fragment, document } = value
+    let _nodeList = fragment.nodes
+
+    // if fragment selection spans multiple block
+    if (_nodeList.size > 1) {
+      let _lastNodeFragment = _nodeList.get(_nodeList.size - 1).text
+      let _lastNode = document.getNode(_nodeList.get(_nodeList.size - 1).key)
+
+      let _firstNodeFragment = _nodeList.get(0).text
+      let _firstNode = document.getNode(_nodeList.get(0).key)
+        ? _nodeList.get(0)
+        : value.anchorBlock
+
+      // check if focus is the same as last block
+      // if not reverse the list
+      if (!selection.focus.isInNode(_lastNode)) {
+        const _frag = _firstNodeFragment
+        const _node = _firstNode
+        _firstNodeFragment = _lastNodeFragment
+        _firstNode = _lastNode
+        _lastNodeFragment = _frag
+        _lastNode = _node
+      }
+      // if first block selection is not equal to first block
+      // remove block from list
+      if (_firstNode.text !== _firstNodeFragment) {
+        _nodeList = _nodeList.delete(0)
+      }
+
+      // if last block selection is not equal to last block
+      // remove block from list
+      if (_lastNode.text !== _lastNodeFragment) {
+        _nodeList = _nodeList.delete(_nodeList.size - 1)
+      }
+
+      const _nodesToDelete = _nodeList.map(n => n.key)
+      deleteBlocksByKeys(_nodesToDelete, editor)
+    }
+  }
+
   const onKeyUp = (event, editor, next) => {
     if (event.key === 'Enter') {
       // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
@@ -327,21 +370,6 @@ const SlateContentEditable = ({
       }
       const _editorState = { value: editor.value }
 
-      // EDGE CASE FOR HIGHLIGHTED EMPTY BLOCK
-      const { selection } = editor.value
-
-      if (!(selection.isBlurred || selection.isCollapsed)) {
-        if (
-          event.key === 'Backspace' &&
-          !isAtomicNotInSelection(editor.value, editorState)
-        ) {
-          // gets node in the middle of highlight
-          const _node = editor.value.blocks._tail.array[1]
-          deleteBlockByKey(_node.key, editor)
-          return event.preventDefault()
-        }
-      }
-
       onBackspace(blockProperties, _editorState)
     }
     // special case:
@@ -351,14 +379,17 @@ const SlateContentEditable = ({
   }
 
   const onKeyDown = (event, editor, next) => {
-    const { selection } = editor.value
+    const { selection, fragment } = editor.value
 
     // EDGE CASE: prevent block from being deleted when empty block highlighted
+
     if (!(selection.isBlurred || selection.isCollapsed)) {
       if (
         event.key === 'Backspace' &&
-        !isAtomicNotInSelection(editor.value, editorState)
+        !isAtomicNotInSelection(editor.value) &&
+        fragment.text === ''
       ) {
+        deleteBlocksFromSelection(editor)
         return event.preventDefault()
       }
     }

@@ -24,16 +24,6 @@ const _css = position => ({
   ...position,
 })
 
-const getAtomicBlockIds = state => {
-  const _list = []
-  state.page.blocks.forEach(b => {
-    if (isAtomicInlineType(state.blocks[b._id].type)) {
-      _list.push(state.blocks[b._id]._id)
-    }
-  })
-  return _list
-}
-
 const getPosition = (editor, menuRef) => {
   const menu = menuRef.current
   if (!menu) return null
@@ -82,39 +72,14 @@ const _activeCss = {
   opacity: 1,
 }
 
-export const isAtomicNotInSelection = (value, editorState) => {
-  const { fragment, selection } = value
+export const isAtomicNotInSelection = value => {
+  const { fragment } = value
 
-  const _idList = getAtomicBlockIds(editorState)
+  // BUG: if whole block is selected by double click, it includes the next block
+  const isNotAtomicInFragment =
+    fragment.nodes.filter(block => isAtomicInlineType(block.type)).size === 0
 
-  const isNotAtomic = _idList.reduce((bool, id) => {
-    let isAchorAtomic = false
-    let isFocusAtomic = false
-
-    const _node = value.document.getNode(id)
-    if (_node) {
-      isAchorAtomic = selection.anchor.isInNode(_node)
-      // BUG: if whole line is double click highlighted
-      // isFocusAtomic return the value of the next block
-      isFocusAtomic = selection.focus.isInNode(_node)
-    }
-
-    // checks inner content for atomic block
-    const doesFragmentContainAtomic = fragment.hasNode(id)
-
-    // checks if anchor block is atomic type
-    const isAnchorBlockAtomic = isAtomicInlineType(value.anchorBlock.type)
-    return (
-      bool &&
-      !(
-        isAchorAtomic ||
-        isFocusAtomic ||
-        doesFragmentContainAtomic ||
-        isAnchorBlockAtomic
-      )
-    )
-  }, true)
-  return isNotAtomic
+  return isNotAtomicInFragment
 }
 
 const isActiveSelection = (value, editorState) => {
