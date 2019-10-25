@@ -310,7 +310,7 @@ const SlateContentEditable = ({
     return false
   }
 
-  const deleteBlocksFromSelection = editor => {
+  const getSelectedBlocks = editor => {
     const value = editor.value
     const { selection, fragment, document } = value
     let _fragmentNodes = fragment.nodes
@@ -346,9 +346,14 @@ const SlateContentEditable = ({
       if (isSelectionReversed(editor)) {
         _nodeList = _nodeList.reverse()
       }
-      const _nodesToDelete = _nodeList.map(n => n.key)
-      deleteBlocksByKeys(_nodesToDelete, editor)
+      return _nodeList
     }
+  }
+
+  const deleteBlocksFromSelection = editor => {
+    const _nodeList = getSelectedBlocks(editor)
+    const _nodesToDelete = _nodeList.map(n => n.key)
+    deleteBlocksByKeys(_nodesToDelete, editor)
   }
 
   const onKeyUp = (event, editor, next) => {
