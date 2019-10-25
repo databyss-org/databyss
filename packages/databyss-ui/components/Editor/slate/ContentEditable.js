@@ -1,5 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import { KeyUtils, Value, Block } from 'slate'
+import cloneDeep from 'clone-deep'
+
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
 import { RawHtml, View } from '@databyss-org/ui/primitives'
@@ -296,31 +298,40 @@ const SlateContentEditable = ({
       )
   )
 
+  const isSelectionReversed = editor => {
+    const value = editor.value
+    const { selection, fragment, document } = value
+
+    if (
+      !selection.focus.isInNode(
+        document.getNode(fragment.nodes.get(fragment.nodes.size - 1).key)
+      )
+    ) {
+      return true
+    }
+    return false
+  }
+
   const deleteBlocksFromSelection = editor => {
     const value = editor.value
     const { selection, fragment, document } = value
-    let _nodeList = fragment.nodes
-
+    let _fragmentNodes = fragment.nodes
+    // get normalized block list
+    let _nodeList = editor.value.document.getRootBlocksAtRange(selection)
     // if fragment selection spans multiple block
     if (_nodeList.size > 1) {
-      let _lastNodeFragment = _nodeList.get(_nodeList.size - 1).text
-      let _lastNode = document.getNode(_nodeList.get(_nodeList.size - 1).key)
-
-      let _firstNodeFragment = _nodeList.get(0).text
-      let _firstNode = document.getNode(_nodeList.get(0).key)
-        ? _nodeList.get(0)
-        : value.anchorBlock
-
-      // check if focus is the same as last block
-      // if not reverse the list
-      if (!selection.focus.isInNode(_lastNode)) {
-        const _frag = _firstNodeFragment
-        const _node = _firstNode
-        _firstNodeFragment = _lastNodeFragment
-        _firstNode = _lastNode
-        _lastNodeFragment = _frag
-        _lastNode = _node
+      // reverse if needed
+      if (isSelectionReversed(editor)) {
+        _fragmentNodes = _fragmentNodes.reverse()
+        _nodeList = _nodeList.reverse()
       }
+
+      let _lastNodeFragment = _fragmentNodes.get(_fragmentNodes.size - 1).text
+      let _lastNode = _nodeList.get(_nodeList.size - 1)
+
+      let _firstNodeFragment = _fragmentNodes.get(0).text
+      let _firstNode = _nodeList.get(0)
+
       // if first block selection is not equal to first block
       // remove block from list
       if (_firstNode.text !== _firstNodeFragment) {
@@ -333,6 +344,11 @@ const SlateContentEditable = ({
         _nodeList = _nodeList.delete(_nodeList.size - 1)
       }
 
+      // check if reversed
+
+      if (isSelectionReversed(editor)) {
+        _nodeList = _nodeList.reverse()
+      }
       const _nodesToDelete = _nodeList.map(n => n.key)
       deleteBlocksByKeys(_nodesToDelete, editor)
     }
@@ -363,13 +379,19 @@ const SlateContentEditable = ({
     }
 
     if (event.key === 'Backspace') {
-      // TODO when cursor is at the beginning of an entry and previous block is empty remove previous block
       const blockProperties = {
         activeBlockId: editor.value.anchorBlock.key,
         nextBlockId: editor.value.nextBlock ? editor.value.nextBlock.key : null,
       }
-      const _editorState = { value: editor.value }
 
+      if (!isAtomicNotInSelection(editor.value)) {
+        // if atomic block is highlighted
+        if (editor.value.fragment.nodes.size > 1) {
+          return event.preventDefault()
+        }
+      }
+
+      const _editorState = { value: editor.value }
       onBackspace(blockProperties, _editorState)
     }
     // special case:
@@ -381,16 +403,23 @@ const SlateContentEditable = ({
   const onKeyDown = (event, editor, next) => {
     const { selection, fragment } = editor.value
 
-    // EDGE CASE: prevent block from being deleted when empty block highlighted
-
+    // check for selection
     if (!(selection.isBlurred || selection.isCollapsed)) {
-      if (
-        event.key === 'Backspace' &&
-        !isAtomicNotInSelection(editor.value) &&
-        fragment.text === ''
-      ) {
-        deleteBlocksFromSelection(editor)
-        return event.preventDefault()
+      if (event.key === 'Backspace' && !isAtomicNotInSelection(editor.value)) {
+        // EDGE CASE: prevent block from being deleted when empty block highlighted
+        if (fragment.text === '') {
+          deleteBlocksFromSelection(editor)
+          return event.preventDefault()
+        } else {
+          // if atomic block is highlighted
+          if (fragment.nodes.size === 1) {
+            deleteBlockByKey(editor.value.anchorBlock.key, editor)
+            return event.preventDefault()
+          } else {
+            deleteBlocksFromSelection(editor)
+            return event.preventDefault()
+          }
+        }
       }
     }
 

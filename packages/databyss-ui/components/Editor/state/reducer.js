@@ -283,10 +283,15 @@ const deleteBlock = (state, payload) => {
 }
 const deleteBlocks = (state, payload) => {
   const _state = cloneDeep(state)
+
   _state.page.blocks = _state.page.blocks.filter(
     v => !payload.idList.includes(v._id)
   )
-
+  // if first block was included, replace with id
+  if (state.page.blocks.findIndex(i => i._id === payload.idList.get(0)) === 0) {
+    const firstBlock = { _id: payload.idList.get(0) }
+    _state.page.blocks.splice(0, 0, firstBlock)
+  }
   return cleanUpState(_state)
 }
 

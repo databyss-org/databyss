@@ -203,10 +203,22 @@ const deleteBlockById = id => (editor, value, next) => {
 }
 
 const deleteBlocksByIds = idList => (editor, value, next) => {
-  idList.forEach(id => {
-    editor.removeNodeByKey(id)
+  const _firstBlockId = idList.get(0)
+  const _previousKey = editor.value.document.getPreviousBlock(_firstBlockId)
+
+  idList.forEach((id, i) => {
+    if (_previousKey === null && i === 0) {
+      editor.replaceNodeByKey(_firstBlockId, newBlock(_firstBlockId))
+    } else {
+      editor.removeNodeByKey(id)
+    }
   })
-  editor.moveFocusBackward(1)
+
+  if (_previousKey === null) {
+    editor.focus()
+  } else {
+    editor.moveFocusToEndOfNode(_previousKey)
+  }
   next(editor, value)
 }
 
