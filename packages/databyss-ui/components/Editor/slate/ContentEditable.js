@@ -345,7 +345,6 @@ const SlateContentEditable = ({
       }
 
       // check if reversed
-
       if (isSelectionReversed(editor)) {
         _nodeList = _nodeList.reverse()
       }
