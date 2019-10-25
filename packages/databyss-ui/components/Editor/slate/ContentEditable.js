@@ -1,7 +1,5 @@
 import React, { useRef, useEffect } from 'react'
 import { KeyUtils, Value, Block } from 'slate'
-import cloneDeep from 'clone-deep'
-
 import ObjectId from 'bson-objectid'
 import { Editor } from 'slate-react'
 import { RawHtml, View } from '@databyss-org/ui/primitives'
@@ -317,7 +315,7 @@ const SlateContentEditable = ({
     const { selection, fragment, document } = value
     let _fragmentNodes = fragment.nodes
     // get normalized block list
-    let _nodeList = editor.value.document.getRootBlocksAtRange(selection)
+    let _nodeList = document.getRootBlocksAtRange(selection)
     // if fragment selection spans multiple block
     if (_nodeList.size > 1) {
       // reverse if needed
@@ -326,11 +324,11 @@ const SlateContentEditable = ({
         _nodeList = _nodeList.reverse()
       }
 
-      let _lastNodeFragment = _fragmentNodes.get(_fragmentNodes.size - 1).text
-      let _lastNode = _nodeList.get(_nodeList.size - 1)
+      const _lastNodeFragment = _fragmentNodes.get(_fragmentNodes.size - 1).text
+      const _lastNode = _nodeList.get(_nodeList.size - 1)
 
-      let _firstNodeFragment = _fragmentNodes.get(0).text
-      let _firstNode = _nodeList.get(0)
+      const _firstNodeFragment = _fragmentNodes.get(0).text
+      const _firstNode = _nodeList.get(0)
 
       // if first block selection is not equal to first block
       // remove block from list
@@ -409,16 +407,14 @@ const SlateContentEditable = ({
         if (fragment.text === '') {
           deleteBlocksFromSelection(editor)
           return event.preventDefault()
-        } else {
-          // if atomic block is highlighted
-          if (fragment.nodes.size === 1) {
-            deleteBlockByKey(editor.value.anchorBlock.key, editor)
-            return event.preventDefault()
-          } else {
-            deleteBlocksFromSelection(editor)
-            return event.preventDefault()
-          }
         }
+        // if atomic block is highlighted
+        if (fragment.nodes.size === 1) {
+          deleteBlockByKey(editor.value.anchorBlock.key, editor)
+          return event.preventDefault()
+        }
+        deleteBlocksFromSelection(editor)
+        return event.preventDefault()
       }
     }
 
