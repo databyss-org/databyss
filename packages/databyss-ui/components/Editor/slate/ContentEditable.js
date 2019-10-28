@@ -419,7 +419,6 @@ const SlateContentEditable = ({
         return event.preventDefault()
       }
     }
-
     if (isAtomicInlineType(editor.value.anchorBlock.type)) {
       if (
         event.key === 'Backspace' ||
@@ -427,7 +426,8 @@ const SlateContentEditable = ({
         event.key === 'ArrowLeft' ||
         event.key === 'ArrowRight' ||
         event.key === 'ArrowUp' ||
-        event.key === 'ArrowDown'
+        event.key === 'ArrowDown' ||
+        event.metaKey
       ) {
         // if previous block doesnt exist
         if (!editor.value.previousBlock) {
