@@ -93,6 +93,7 @@ const setActiveBlockType = type => (editor, value, next) => {
       })
     }
   }
+
   // if set active block type was handled already return true
   if (handleNewBlockConditions(_activeBlock, editor, next)) {
     editor.setNodeByKey(_activeBlock.key, { type })
@@ -117,7 +118,7 @@ const setBlockType = (id, type) => (editor, value, next) => {
     if (_marks.length) {
       _text = serializeNodeToHtml(_node)
     }
-    if (_text.startsWith('@') || _text.startsWith('#')) {
+    if (_text.trim().startsWith('@') || _text.trim().startsWith('#')) {
       _text = _text.substring(1).trim()
     }
 

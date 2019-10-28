@@ -47,10 +47,13 @@ const EditorPage = ({ children }) => {
       dispatchEditor(clearBlock(id, editableState))
     }
 
-    if (rawHtml.match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
+    if (
+      rawHtml.trim().match(/^@/) &&
+      editorState.blocks[id].type !== 'SOURCE'
+    ) {
       onSetBlockType('SOURCE', id, editableState)
     }
-    if (rawHtml.match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
+    if (rawHtml.trim().match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
       onSetBlockType('TOPIC', id, editableState)
     }
   }

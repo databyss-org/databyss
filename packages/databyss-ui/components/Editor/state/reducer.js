@@ -338,11 +338,14 @@ export default (state, action) => {
         nextState,
         nextState.blocks[action.payload.id]
       )
-      if (_html.startsWith('@') || _html.startsWith('#')) {
+      if (_html.trim().startsWith('@') || _html.trim().startsWith('#')) {
         nextState = setRawHtmlForBlock(
           nextState,
           nextState.blocks[action.payload.id],
-          _html.substring(1).trim()
+          _html
+            .trim()
+            .substring(1)
+            .trim()
         )
 
         // correct range offset
