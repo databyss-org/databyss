@@ -423,10 +423,6 @@ const SlateContentEditable = ({
       }
     }
 
-    if (hotKeys.isTab(event)) {
-      event.preventDefault()
-      onHotKey(TAB, editor)
-    }
     if (hotKeys.isStartOfLine(event)) {
       event.preventDefault()
       onHotKey(START_OF_LINE, editor)
@@ -507,6 +503,11 @@ const SlateContentEditable = ({
         return next()
       }
       return event.preventDefault()
+    }
+
+    if (hotKeys.isTab(event)) {
+      event.preventDefault()
+      onHotKey(TAB, editor)
     }
 
     if (hotKeys.isBold(event)) {
