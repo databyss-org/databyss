@@ -72,6 +72,19 @@ const _activeCss = {
   opacity: 1,
 }
 
+export const isSelectionReversed = value => {
+  const { selection, fragment, document } = value
+
+  if (
+    !selection.focus.isInNode(
+      document.getNode(fragment.nodes.get(fragment.nodes.size - 1).key)
+    )
+  ) {
+    return true
+  }
+  return false
+}
+
 export const getSelectedBlocks = value => {
   // const value = editor.value
   const { selection, fragment, document } = value
@@ -114,21 +127,8 @@ export const getSelectedBlocks = value => {
   return _nodeList
 }
 
-export const isSelectionReversed = value => {
-  const { selection, fragment, document } = value
-
-  if (
-    !selection.focus.isInNode(
-      document.getNode(fragment.nodes.get(fragment.nodes.size - 1).key)
-    )
-  ) {
-    return true
-  }
-  return false
-}
-
 export const isAtomicNotInSelection = value => {
-  let _nodeList = getSelectedBlocks(value)
+  const _nodeList = getSelectedBlocks(value)
 
   const isNotAtomicInFragment =
     _nodeList.filter(block => isAtomicInlineType(block.type)).size === 0
@@ -153,9 +153,8 @@ const isActiveSelection = (value, editorState) => {
   return true
 }
 
-const isNewLine = value => {
-  return value.anchorBlock && value.anchorBlock.text.length === 0
-}
+const isNewLine = value =>
+  value.anchorBlock && value.anchorBlock.text.length === 0
 
 const EditorTooltip = ({ children, css, editor, editorState, ...others }) => {
   const menuRef = useRef(null)

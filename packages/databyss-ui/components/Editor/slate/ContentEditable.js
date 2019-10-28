@@ -357,7 +357,7 @@ const SlateContentEditable = ({
   }
 
   const onKeyDown = (event, editor, next) => {
-    const { selection, fragment } = editor.value
+    const { fragment } = editor.value
     // check for selection
     if (hasSelection(editor.value)) {
       if (event.key === 'Backspace' && !isAtomicNotInSelection(editor.value)) {
