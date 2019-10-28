@@ -19,7 +19,7 @@ import hotKeys, {
 } from './hotKeys'
 import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
-import { isAtomicNotInSelection } from './../EditorTooltip'
+import { isAtomicNotInSelection, getSelectedBlocks } from './../EditorTooltip'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -296,63 +296,8 @@ const SlateContentEditable = ({
       )
   )
 
-  const isSelectionReversed = editor => {
-    const value = editor.value
-    const { selection, fragment, document } = value
-
-    if (
-      !selection.focus.isInNode(
-        document.getNode(fragment.nodes.get(fragment.nodes.size - 1).key)
-      )
-    ) {
-      return true
-    }
-    return false
-  }
-
-  const getSelectedBlocks = editor => {
-    const value = editor.value
-    const { selection, fragment, document } = value
-    let _fragmentNodes = fragment.nodes
-    // get normalized block list
-    let _nodeList = document.getRootBlocksAtRange(selection)
-    // if fragment selection spans multiple block
-    if (_nodeList.size > 1) {
-      // reverse if needed
-      if (isSelectionReversed(editor)) {
-        _fragmentNodes = _fragmentNodes.reverse()
-        _nodeList = _nodeList.reverse()
-      }
-
-      const _lastNodeFragment = _fragmentNodes.get(_fragmentNodes.size - 1).text
-      const _lastNode = _nodeList.get(_nodeList.size - 1)
-
-      const _firstNodeFragment = _fragmentNodes.get(0).text
-      const _firstNode = _nodeList.get(0)
-
-      // if first block selection is not equal to first block
-      // remove block from list
-      if (_firstNode.text !== _firstNodeFragment) {
-        _nodeList = _nodeList.delete(0)
-      }
-
-      // if last block selection is not equal to last block
-      // remove block from list
-      if (_lastNode.text !== _lastNodeFragment) {
-        _nodeList = _nodeList.delete(_nodeList.size - 1)
-      }
-
-      // check if reversed
-      if (isSelectionReversed(editor)) {
-        _nodeList = _nodeList.reverse()
-      }
-      return _nodeList
-    }
-    return _nodeList
-  }
-
   const deleteBlocksFromSelection = editor => {
-    const _nodeList = getSelectedBlocks(editor)
+    const _nodeList = getSelectedBlocks(editor.value)
     const _nodesToDelete = _nodeList.map(n => n.key)
     deleteBlocksByKeys(_nodesToDelete, editor)
   }
@@ -403,11 +348,18 @@ const SlateContentEditable = ({
     return next()
   }
 
+  const hasSelection = value => {
+    const { selection } = value
+    if (!(selection.isBlurred || selection.isCollapsed)) {
+      return true
+    }
+    return false
+  }
+
   const onKeyDown = (event, editor, next) => {
     const { selection, fragment } = editor.value
-
     // check for selection
-    if (!(selection.isBlurred || selection.isCollapsed)) {
+    if (hasSelection(editor.value)) {
       if (event.key === 'Backspace' && !isAtomicNotInSelection(editor.value)) {
         // EDGE CASE: prevent block from being deleted when empty block highlighted
         if (fragment.text === '') {
@@ -415,6 +367,7 @@ const SlateContentEditable = ({
           return event.preventDefault()
         }
         // if atomic block is highlighted
+
         if (fragment.nodes.size === 1) {
           deleteBlockByKey(editor.value.anchorBlock.key, editor)
           return event.preventDefault()
@@ -457,7 +410,10 @@ const SlateContentEditable = ({
       if (
         isAtomicInlineType(editor.value.previousBlock.type) &&
         event.key === 'Backspace' &&
-        editor.value.selection.focus.isAtStartOfNode(editor.value.anchorBlock)
+        editor.value.selection.focus.isAtStartOfNode(
+          editor.value.anchorBlock
+        ) &&
+        !hasSelection(editor.value)
       ) {
         deleteBlockByKey(editor.value.previousBlock.key, editor)
         return event.preventDefault()

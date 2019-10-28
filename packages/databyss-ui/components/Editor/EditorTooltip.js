@@ -72,12 +72,66 @@ const _activeCss = {
   opacity: 1,
 }
 
-export const isAtomicNotInSelection = value => {
-  const { fragment } = value
+export const getSelectedBlocks = value => {
+  // const value = editor.value
+  const { selection, fragment, document } = value
+  let _fragmentNodes = fragment.nodes
+  // get normalized block list
+  let _nodeList = document.getRootBlocksAtRange(selection)
+  // if fragment selection spans multiple block
+  if (_nodeList.size > 1) {
+    // reverse if needed
+    if (isSelectionReversed(value)) {
+      _fragmentNodes = _fragmentNodes.reverse()
+      _nodeList = _nodeList.reverse()
+    }
 
-  // BUG: if whole block is selected by double click, it includes the next block
+    const _lastNodeFragment = _fragmentNodes.get(_fragmentNodes.size - 1).text
+    const _lastNode = _nodeList.get(_nodeList.size - 1)
+
+    const _firstNodeFragment = _fragmentNodes.get(0).text
+    const _firstNode = _nodeList.get(0)
+
+    // if first block selection is not equal to first block
+    // remove block from list
+    if (_firstNode.text !== _firstNodeFragment) {
+      _nodeList = _nodeList.delete(0)
+    }
+
+    // if last block selection is not equal to last block
+    // remove block from list
+    if (_lastNode.text !== _lastNodeFragment) {
+      _nodeList = _nodeList.delete(_nodeList.size - 1)
+    }
+
+    // check if reversed
+    if (isSelectionReversed(value)) {
+      _nodeList = _nodeList.reverse()
+    }
+
+    return _nodeList
+  }
+  return _nodeList
+}
+
+export const isSelectionReversed = value => {
+  const { selection, fragment, document } = value
+
+  if (
+    !selection.focus.isInNode(
+      document.getNode(fragment.nodes.get(fragment.nodes.size - 1).key)
+    )
+  ) {
+    return true
+  }
+  return false
+}
+
+export const isAtomicNotInSelection = value => {
+  let _nodeList = getSelectedBlocks(value)
+
   const isNotAtomicInFragment =
-    fragment.nodes.filter(block => isAtomicInlineType(block.type)).size === 0
+    _nodeList.filter(block => isAtomicInlineType(block.type)).size === 0
 
   return isNotAtomicInFragment
 }
@@ -100,7 +154,6 @@ const isActiveSelection = (value, editorState) => {
 }
 
 const isNewLine = value => {
-  console.log('isNewLineOnMobile', value.focusBlock.text.length)
   return value.anchorBlock && value.anchorBlock.text.length === 0
 }
 
