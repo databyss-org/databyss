@@ -348,6 +348,7 @@ const SlateContentEditable = ({
       }
       return _nodeList
     }
+    return _nodeList
   }
 
   const deleteBlocksFromSelection = editor => {
