@@ -427,7 +427,12 @@ const SlateContentEditable = ({
         event.key === 'ArrowRight' ||
         event.key === 'ArrowUp' ||
         event.key === 'ArrowDown' ||
-        event.metaKey
+        (event.metaKey &&
+          !(
+            hotKeys.isBold(event) ||
+            hotKeys.isItalic(event) ||
+            hotKeys.isLocation(event)
+          ))
       ) {
         // if previous block doesnt exist
         if (!editor.value.previousBlock) {
