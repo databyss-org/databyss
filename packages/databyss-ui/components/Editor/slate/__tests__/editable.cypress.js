@@ -60,7 +60,7 @@ context('Editor', () => {
       .type('@this is a source')
       .newLine()
       .previousBlock()
-      .type('{command}b')
+      .toggleBold()
       .type('this should not be allowed')
       .nextBlock()
 
