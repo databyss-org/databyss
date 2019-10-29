@@ -395,10 +395,8 @@ const SlateContentEditable = ({
       }
 
       if (singleBlockBackspaceCheck(editor.value)) {
-        console.log('here2')
         deleteBlockByKey(getSelectedBlocks(editor.value).get(0).key, editor)
         return event.preventDefault()
-        console.log('special case')
       }
     }
 

@@ -78,8 +78,6 @@ context('Editor', () => {
       // Now look for the expected messages
       expect(err.message).to.include('cy.click() failed because this element')
       expect(err.message).to.include('is being covered by another element')
-
-      done()
     })
   })
 })
