@@ -302,6 +302,26 @@ const SlateContentEditable = ({
     deleteBlocksByKeys(_nodesToDelete, editor)
   }
 
+  const singleBlockBackspaceCheck = value => {
+    const _selectedBlocks = getSelectedBlocks(value)
+    if (
+      _selectedBlocks.size === 1 &&
+      !isAtomicInlineType(_selectedBlocks.get(0)) &&
+      _selectedBlocks.get(0).text.length === 0
+    ) {
+      return true
+    }
+    return false
+  }
+
+  const hasSelection = value => {
+    const { selection } = value
+    if (!(selection.isBlurred || selection.isCollapsed)) {
+      return true
+    }
+    return false
+  }
+
   const onKeyUp = (event, editor, next) => {
     if (event.key === 'Enter') {
       // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
@@ -339,6 +359,13 @@ const SlateContentEditable = ({
         }
       }
 
+      if (singleBlockBackspaceCheck(editor.value)) {
+        // check selection
+        if (editor.value.previousBlock && hasSelection(editor.value)) {
+          deleteBlockByKey(getSelectedBlocks(editor.value).get(0).key, editor)
+          return event.preventDefault()
+        }
+      }
       const _editorState = { value: editor.value }
       onBackspace(blockProperties, _editorState)
     }
@@ -346,14 +373,6 @@ const SlateContentEditable = ({
     // if cursor is immediately before or after the atomic source in a
     // SOURCE block, prevent all
     return next()
-  }
-
-  const hasSelection = value => {
-    const { selection } = value
-    if (!(selection.isBlurred || selection.isCollapsed)) {
-      return true
-    }
-    return false
   }
 
   const onKeyDown = (event, editor, next) => {
@@ -367,13 +386,19 @@ const SlateContentEditable = ({
           return event.preventDefault()
         }
         // if atomic block is highlighted
-
         if (fragment.nodes.size === 1) {
           deleteBlockByKey(editor.value.anchorBlock.key, editor)
           return event.preventDefault()
         }
         deleteBlocksFromSelection(editor)
         return event.preventDefault()
+      }
+
+      if (singleBlockBackspaceCheck(editor.value)) {
+        console.log('here2')
+        deleteBlockByKey(getSelectedBlocks(editor.value).get(0).key, editor)
+        return event.preventDefault()
+        console.log('special case')
       }
     }
 
@@ -405,6 +430,7 @@ const SlateContentEditable = ({
       event.preventDefault()
       onHotKey(PREVIOUS_BLOCK, editor)
     }
+
     // if previous block is atomic delete previous block
     if (editor.value.previousBlock) {
       if (
@@ -413,7 +439,8 @@ const SlateContentEditable = ({
         editor.value.selection.focus.isAtStartOfNode(
           editor.value.anchorBlock
         ) &&
-        !hasSelection(editor.value)
+        !hasSelection(editor.value) &&
+        editor.value.anchorBlock.text.length !== 0
       ) {
         deleteBlockByKey(editor.value.previousBlock.key, editor)
         return event.preventDefault()
@@ -439,6 +466,7 @@ const SlateContentEditable = ({
           return next()
         }
 
+        // allow backspace
         if (event.key === 'Backspace' && editor.value.previousBlock.text) {
           if (
             !editor.value.selection.focus.isAtStartOfNode(

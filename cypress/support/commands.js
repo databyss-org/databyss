@@ -217,6 +217,22 @@ Cypress.Commands.add(
   }
 )
 
+Cypress.Commands.add('isNotActionable', function(selector, done) {
+  cy.get(selector).click({ force: true })
+  cy.once('fail', err => {
+    expect(err.message).to.include('cy.click() failed because this element')
+    expect(err.message).to.include('is being covered by another element')
+    done()
+  })
+  cy.get(selector)
+    .click()
+    .then(x => {
+      done(
+        new Error('Expected element NOT to be clickable, but click() succeeded')
+      )
+    })
+})
+
 // Helper functions
 function getTextNode(el, match) {
   const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false)

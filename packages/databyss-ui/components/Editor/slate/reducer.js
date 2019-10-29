@@ -199,7 +199,14 @@ const startTag = tag => (editor, value, next) => {
 }
 
 const deleteBlockById = id => (editor, value, next) => {
+  const _previousKey = editor.value.document.getPreviousBlock(id)
   editor.removeNodeByKey(id)
+  if (_previousKey === null) {
+    editor.focus()
+  } else {
+    editor.moveFocusToEndOfNode(_previousKey)
+  }
+
   next(editor, value)
 }
 
