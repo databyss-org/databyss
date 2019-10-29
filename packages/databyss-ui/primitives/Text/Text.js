@@ -1,5 +1,5 @@
 import React from 'react'
-import { variant, color, typography, compose } from 'styled-system'
+import { variant, color, typography, compose, space } from 'styled-system'
 import styled from '../styled'
 
 export const variants = variant({
@@ -20,7 +20,8 @@ const Styled = styled(
   compose(
     variants,
     color,
-    typography
+    typography,
+    space
   )
 )
 

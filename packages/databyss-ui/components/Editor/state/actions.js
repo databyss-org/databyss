@@ -9,6 +9,9 @@ import {
   TOGGLE_MARK,
   HOTKEY,
   CLEAR_BLOCK,
+  START_TAG,
+  DELETE_BLOCK,
+  DELETE_BLOCKS,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -108,6 +111,36 @@ export function clearBlock(id, editableState) {
     payload: {
       editableState,
       id,
+    },
+  }
+}
+
+export function startTag(tag, editableState) {
+  return {
+    type: START_TAG,
+    payload: {
+      tag,
+      editableState,
+    },
+  }
+}
+
+export function deleteBlock(id, editableState) {
+  return {
+    type: DELETE_BLOCK,
+    payload: {
+      editableState,
+      id,
+    },
+  }
+}
+
+export function deleteBlocks(idList, editableState) {
+  return {
+    type: DELETE_BLOCKS,
+    payload: {
+      editableState,
+      idList,
     },
   }
 }

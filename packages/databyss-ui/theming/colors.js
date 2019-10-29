@@ -39,7 +39,7 @@ _c = {
   primary: [_c.blue[1], _c.blue[2], _c.blue[0], _c.white],
   secondary: [_c.blue[1], _c.gray[6], _c.gray[5], _c.blue[1]],
   // borders [darkest...lightest]
-  border: [_c.black, _c.gray[5]],
+  border: [_c.black, _c.gray[5], _c.gray[3]],
   // application specific
   selectionHighlight: Color(_c.blue[3])
     .alpha(0.5)
@@ -60,11 +60,17 @@ _c = {
   modes: {
     dark: {
       // [lightest...darkest]
-      text: [_c.white, ..._c.gray.slice().reverse()],
+      text: [
+        _c.white,
+        ..._c.gray
+          .slice()
+          .reverse()
+          .slice(1),
+      ],
       // [darkest...lightest]
       background: _c.gray.slice(1),
       // borders [darkest...lightest]
-      border: [_c.gray[7], _c.gray[3]],
+      border: [_c.gray[7], _c.gray[3], _c.gray[1]],
       // control colors [enabled, hover, active, label]
       secondary: [_c.blue[1], _c.gray[2], _c.gray[1], _c.blue[2]],
     },

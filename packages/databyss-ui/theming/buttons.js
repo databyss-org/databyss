@@ -2,6 +2,8 @@ import effects from './effects'
 import { border, borderRadius, pxUnits } from './views'
 import space from './space'
 
+export const editorMarginMenuItemHeight = 24
+
 const button = () => ({
   display: 'flex',
   flexDirection: 'column',
@@ -39,6 +41,39 @@ const buttonVariants = {
     ...linkButton(),
     color: 'secondary.3',
   },
+  editorMarginMenu: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'background.1',
+    borderColor: 'background.2',
+    borderWidth: pxUnits(1),
+    color: 'text.4',
+    borderRadius: pxUnits(editorMarginMenuItemHeight),
+    width: pxUnits(editorMarginMenuItemHeight),
+    height: pxUnits(editorMarginMenuItemHeight),
+  },
+
+  editorMarginMenuItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingLeft: space.small,
+    paddingRight: space.small,
+    paddingTop: editorMarginMenuItemHeight / 2,
+    paddingBottom: editorMarginMenuItemHeight / 2,
+    borderRadius: pxUnits(5),
+    height: pxUnits(editorMarginMenuItemHeight),
+    color: 'text.4',
+    backgroundColor: 'background.2',
+  },
+  formatButton: {
+    paddingBottom: pxUnits(6),
+    paddingTop: pxUnits(6),
+    borderRadius: pxUnits(0),
+  },
 }
 
 const buttonThemes = {
@@ -56,7 +91,28 @@ const buttonThemes = {
   secondaryExternal: {},
   uiLink: {},
   externalLink: {},
+  editorMarginMenuItem: {
+    rippleColor: 'background.2',
+    hoverColor: 'background.4',
+    activeColor: 'background.1',
+    textProps: {
+      variant: 'uiTextSmall',
+    },
+  },
+  editorMarginMenu: {
+    rippleColor: 'primary.2',
+    hoverColor: 'background.4',
+    activeColor: 'primary.2',
+  },
+  formatButton: {
+    textProps: {},
+    hoverColor: 'background.1',
+    activeColor: 'background.2',
+  },
 }
+
+// on mobile it will show plus topic and location instead of plus
+//
 
 export default {
   buttonVariants,

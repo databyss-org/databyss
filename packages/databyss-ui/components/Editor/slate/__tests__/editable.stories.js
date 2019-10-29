@@ -6,6 +6,8 @@ import EditorPage from '../../EditorPage'
 import ContentEditable from '../ContentEditable'
 import { getRawHtmlForBlock } from '../../state/reducer'
 import initialState from '../../state/__tests__/initialState'
+import emptyInitialState from '../../state/__tests__/emptyInitialState'
+
 import slateReducer from '../reducer'
 import { ViewportDecorator } from '../../../../stories/decorators'
 
@@ -30,7 +32,7 @@ const EditableTest = () => {
 
   return (
     <Grid>
-      <Box mb="medium" maxWidth="500px" flexShrink={1}>
+      <Box mb="medium" pt="medium" maxWidth="500px" flexShrink={1}>
         <EditorPage>
           <ContentEditable onDocumentChange={setSlateDocument} />
         </EditorPage>
@@ -49,6 +51,14 @@ storiesOf('Editor//Tests', module)
   .addDecorator(ViewportDecorator)
   .add('Slate', () => (
     <EditorProvider initialState={initialState} editableReducer={slateReducer}>
+      <EditableTest />
+    </EditorProvider>
+  ))
+  .add('Slate - Empty', () => (
+    <EditorProvider
+      initialState={emptyInitialState}
+      editableReducer={slateReducer}
+    >
       <EditableTest />
     </EditorProvider>
   ))

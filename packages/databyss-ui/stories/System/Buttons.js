@@ -1,6 +1,21 @@
 import React from 'react'
-import { Button, View, Grid } from '@databyss-org/ui/primitives'
+import { View, Button, Icon, Grid, Text } from '@databyss-org/ui/primitives'
+import PlusSvg from '../../assets/add.svg'
+import { editorMarginMenuItemHeight } from '../../theming/buttons'
 import { Section } from './'
+
+const MarkButton = ({ isActive, label, variant }) => (
+  <Button variant="formatButton">
+    <Text
+      variant={variant}
+      pr="extraSmall"
+      pl="extraSmall"
+      color={isActive ? 'primary.1' : 'text.1'}
+    >
+      {label}
+    </Text>
+  </Button>
+)
 
 export default () => (
   <React.Fragment>
@@ -33,6 +48,31 @@ export default () => (
           <Button variant="uiLink" disabled>
             UI Link Button (disabled)
           </Button>
+        </View>
+      </Grid>
+    </Section>
+    <Section title="Editor Buttons">
+      <Grid mb="small" rowGap="small" columnGap="small">
+        <View>
+          <Button variant="editorMarginMenuItem">
+            <Icon
+              width={editorMarginMenuItemHeight * 0.5}
+              height={editorMarginMenuItemHeight * 0.5}
+              sizeVariant="tiny"
+            >
+              <PlusSvg />
+            </Icon>
+          </Button>
+        </View>
+        <View>
+          <MarkButton label="b" variant="uiTextBold" />
+        </View>
+      </Grid>
+    </Section>
+    <Section title="Editor Menu Buttons">
+      <Grid mb="small" rowGap="small" columnGap="small">
+        <View>
+          <Button variant="editorMarginMenuItem">button action</Button>
         </View>
       </Grid>
     </Section>

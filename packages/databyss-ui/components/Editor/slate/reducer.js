@@ -9,7 +9,9 @@ import {
   TOGGLE_MARK,
   HOTKEY,
   CLEAR_BLOCK,
-  ADD_TAG,
+  START_TAG,
+  DELETE_BLOCK,
+  DELETE_BLOCKS,
 } from '../state/constants'
 // import { addTag } from '../state/actions'
 
@@ -91,6 +93,7 @@ const setActiveBlockType = type => (editor, value, next) => {
       })
     }
   }
+
   // if set active block type was handled already return true
   if (handleNewBlockConditions(_activeBlock, editor, next)) {
     editor.setNodeByKey(_activeBlock.key, { type })
@@ -115,8 +118,8 @@ const setBlockType = (id, type) => (editor, value, next) => {
     if (_marks.length) {
       _text = serializeNodeToHtml(_node)
     }
-    if (_text.startsWith('@') || _text.startsWith('#')) {
-      _text = _text.substring(1)
+    if (_text.trim().startsWith('@') || _text.trim().startsWith('#')) {
+      _text = _text.trim().substring(1)
     }
 
     const _block = Block.fromJSON({
@@ -180,12 +183,13 @@ const onHotKey = command => (editor, value, next) => {
     END_OF_DOCUMENT: () => editor.moveToEndOfDocument(),
     NEXT_BLOCK: () => editor.moveToStartOfNextBlock(),
     PREVIOUS_BLOCK: () => editor.moveToStartOfPreviousBlock(),
+    TAB: () => editor.insertText('\t'),
   }[command]())
 
   next(editor, value)
 }
 
-const addTag = tag => (editor, value, next) => {
+const startTag = tag => (editor, value, next) => {
   ;({
     SOURCE: () => editor.insertText('@'),
     TOPIC: () => editor.insertText('#'),
@@ -193,6 +197,39 @@ const addTag = tag => (editor, value, next) => {
   }[tag]())
   next(editor, value)
 }
+
+const deleteBlockById = id => (editor, value, next) => {
+  const _previousKey = editor.value.document.getPreviousBlock(id)
+  editor.removeNodeByKey(id)
+  if (_previousKey === null) {
+    editor.focus()
+  } else {
+    editor.moveFocusToEndOfNode(_previousKey)
+  }
+
+  next(editor, value)
+}
+
+const deleteBlocksByIds = idList => (editor, value, next) => {
+  const _firstBlockId = idList.get(0)
+  const _previousKey = editor.value.document.getPreviousBlock(_firstBlockId)
+
+  idList.forEach((id, i) => {
+    if (_previousKey === null && i === 0) {
+      editor.replaceNodeByKey(_firstBlockId, newBlock(_firstBlockId))
+    } else {
+      editor.removeNodeByKey(id)
+    }
+  })
+
+  if (_previousKey === null) {
+    editor.focus()
+  } else {
+    editor.moveFocusToEndOfNode(_previousKey)
+  }
+  next(editor, value)
+}
+
 export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
@@ -247,10 +284,22 @@ export default (editableState, action) => {
         editorCommands: clearBlockById(action.payload.id),
       }
     }
-    case ADD_TAG: {
+    case START_TAG: {
       return {
         ...editableState,
-        editorCommands: addTag(action.payload.tag),
+        editorCommands: startTag(action.payload.tag),
+      }
+    }
+    case DELETE_BLOCK: {
+      return {
+        ...editableState,
+        editorCommands: deleteBlockById(action.payload.id),
+      }
+    }
+    case DELETE_BLOCKS: {
+      return {
+        ...editableState,
+        editorCommands: deleteBlocksByIds(action.payload.idList),
       }
     }
     default:

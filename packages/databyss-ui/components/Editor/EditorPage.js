@@ -11,6 +11,8 @@ import {
   toggleMark,
   hotKey,
   clearBlock,
+  deleteBlock,
+  deleteBlocks,
 } from './state/actions'
 
 const EditorPage = ({ children }) => {
@@ -42,13 +44,17 @@ const EditorPage = ({ children }) => {
     // if empty replace block with virgin block
     if (rawHtml.length === 0 && id) {
       // check block to see if ranges exist
+      console.log('here')
       dispatchEditor(clearBlock(id, editableState))
     }
 
-    if (rawHtml.match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
+    if (
+      rawHtml.trim().match(/^@/) &&
+      editorState.blocks[id].type !== 'SOURCE'
+    ) {
       onSetBlockType('SOURCE', id, editableState)
     }
-    if (rawHtml.match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
+    if (rawHtml.trim().match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
       onSetBlockType('TOPIC', id, editableState)
     }
   }
@@ -59,6 +65,13 @@ const EditorPage = ({ children }) => {
 
   const onHotKey = (command, { value }) => {
     dispatchEditor(hotKey(command, { value }))
+  }
+
+  const deleteBlockByKey = (id, { value }) => {
+    dispatchEditor(deleteBlock(id, { value }))
+  }
+  const deleteBlocksByKeys = (idList, { value }) => {
+    dispatchEditor(deleteBlocks(idList, { value }))
   }
 
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
@@ -72,6 +85,8 @@ const EditorPage = ({ children }) => {
     OnToggleMark,
     onHotKey,
     onSetBlockType,
+    deleteBlockByKey,
+    deleteBlocksByKeys,
   })
 }
 

@@ -1,39 +1,89 @@
-import React from 'react'
+import React, { useState } from 'react'
+import css from '@styled-system/css'
+import { isMobileOs } from '@databyss-org/ui/'
+
 import { Text, View, Grid } from '@databyss-org/ui/primitives'
 
-const styleSelector = type => {
-  switch (type) {
-    case 'SOURCE':
-      return { style: 'bodyNormalUnderline', color: '' }
-    case 'LOCATION':
-      return { style: 'bodySmall', color: '' }
-    case 'TOPIC':
-      return { style: 'bodyNormalSemibold', color: '' }
-    case 'TAG':
-      return { style: 'BodySmall', color: 'grey' }
-    default:
-      return { style: 'bodyNormal', color: '' }
-  }
+import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
+
+import { pxUnits } from '@databyss-org/ui/theming/views'
+
+import EditorBlockMenu from './Menu/EditorBlockMenu'
+
+const TextBlock = ({ children, variant, color }) => (
+  <Text variant={variant} color={color}>
+    {children}
+  </Text>
+)
+
+const textSelector = ({ children, type }) => {
+  const textStyle = type =>
+    ({
+      SOURCE: { variant: 'bodyNormalUnderline', color: 'text.0' },
+      // WRAP INLINE IN VIEW WITH BOTTOM BORDER
+      // TRY CHANGE DISLAY TO INLINE FLEX
+      LOCATION: {
+        variant: 'bodyNormal',
+        color: 'text.0',
+        children: (
+          <View
+            borderBottomWidth={pxUnits(1)}
+            borderStyle="dashed"
+            borderColor="text.4"
+            display="inline"
+            borderRadius={0}
+          >
+            {children}
+          </View>
+        ),
+      },
+      TOPIC: {
+        variant: 'bodyNormalSemibold',
+        color: 'text.0',
+      },
+      TAG: { variant: 'BodySmall', color: 'grey' },
+      ENTRY: { variant: 'bodyNormal', color: 'text.0' },
+    }[type])
+  return TextBlock({ children, ...textStyle(type) })
 }
 
-const EditorBlock = ({ type, children }) => (
-  <Grid mb="medium" flexWrap="nowrap" columnGap="small" alignItems="baseline">
+const EditorBlock = ({ children, node }) => {
+  const [menuActive, setMenuActive] = useState(false)
+
+  const _children = (
     <View
-      contentEditable="false"
-      suppressContentEditableWarning
-      css={{ userSelect: 'none' }}
+      flexShrink={1}
+      overflow="visible"
+      justifyContent="center"
+      css={css({
+        caretColor: menuActive && node.text.length === 0 && 'transparent',
+      })}
     >
-      +
+      {textSelector({ children, type: node.type })}
     </View>
-    <View flexShrink={1} overflow="visible">
-      <Text
-        variant={styleSelector(type).style}
-        color={styleSelector(type).color}
+  )
+  return !isMobileOs() ? (
+    <Grid singleRow mb="tiny" flexWrap="nowrap" columnGap="small">
+      <View
+        contentEditable="false"
+        suppressContentEditableWarning
+        css={{ userSelect: 'none' }}
+        width={editorMarginMenuItemHeight}
+        height={editorMarginMenuItemHeight}
+        overflow="visible"
       >
-        {children}
-      </Text>
-    </View>
-  </Grid>
-)
+        {node.text.length < 1 && (
+          <EditorBlockMenu
+            hideCursor={bool => setMenuActive(bool)}
+            node={node}
+          />
+        )}
+      </View>
+      {_children}
+    </Grid>
+  ) : (
+    <View mb="tiny">{_children}</View>
+  )
+}
 
 export default EditorBlock

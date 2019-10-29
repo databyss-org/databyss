@@ -33,7 +33,9 @@ export const weightUnits = Platform.select({
 export const underline = Platform.select({
   ios: { textDecorationLine: 'underline' },
   android: { textDecorationLine: 'underline' },
-  default: { textDecoration: 'underline' },
+  default: {
+    textDecoration: 'underline',
+  },
 })
 
 const fonts = {
@@ -88,6 +90,17 @@ const uiTextBoldVariants = Object.keys(uiTextVariants).reduce(
   {}
 )
 
+const uitextItalicVariants = Object.keys(uiTextVariants).reduce(
+  (variants, vk) => ({
+    ...variants,
+    [`${vk}Italic`]: {
+      ...uiTextVariants[vk],
+      fontStyle: 'italic',
+    },
+  }),
+  {}
+)
+
 const uiTextUnderlineVariants = Object.keys(uiTextVariants).reduce(
   (variants, vk) => ({
     ...variants,
@@ -113,7 +126,7 @@ const uiTextBoldUnderlineVariants = Object.keys(uiTextBoldVariants).reduce(
 const bodyText = size => ({
   fontFamily: fonts.bodyFont,
   fontSize: size,
-  lineHeight: pxUnits(size * 1.5),
+  lineHeight: pxUnits(size * 1.3),
   fontWeight: fontWeights.normal,
 })
 
@@ -171,6 +184,7 @@ const textVariants = {
   ...headingVariants,
   ...uiTextVariants,
   ...uiTextBoldVariants,
+  ...uitextItalicVariants,
   ...uiTextUnderlineVariants,
   ...uiTextBoldUnderlineVariants,
   ...bodyVariants,

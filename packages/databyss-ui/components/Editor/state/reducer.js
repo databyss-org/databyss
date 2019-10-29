@@ -11,6 +11,8 @@ import {
   INSERT_NEW_ACTIVE_BLOCK,
   SET_BLOCK_TYPE,
   BACKSPACE,
+  DELETE_BLOCK,
+  DELETE_BLOCKS,
 } from './constants'
 
 export const initialState = {
@@ -274,6 +276,25 @@ const getMarkupValues = (nextState, ranges) => {
   return _state
 }
 
+const deleteBlock = (state, payload) => {
+  const _state = cloneDeep(state)
+  _state.page.blocks = _state.page.blocks.filter(v => v._id !== payload.id)
+  return cleanUpState(_state)
+}
+const deleteBlocks = (state, payload) => {
+  const _state = cloneDeep(state)
+
+  _state.page.blocks = _state.page.blocks.filter(
+    v => !payload.idList.includes(v._id)
+  )
+  // if first block was included, replace with id
+  if (state.page.blocks.findIndex(i => i._id === payload.idList.get(0)) === 0) {
+    const firstBlock = { _id: payload.idList.get(0) }
+    _state.page.blocks.splice(0, 0, firstBlock)
+  }
+  return cleanUpState(_state)
+}
+
 export default (state, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_TYPE:
@@ -307,17 +328,24 @@ export default (state, action) => {
       return insertNewActiveBlock(state, action.payload.blockProperties)
     case BACKSPACE:
       return backspace(state, action.payload)
+    case DELETE_BLOCK:
+      return deleteBlock(state, action.payload)
+    case DELETE_BLOCKS:
+      return deleteBlocks(state, action.payload)
     case SET_BLOCK_TYPE:
       let nextState = cloneDeep(state)
       const _html = getRawHtmlForBlock(
         nextState,
         nextState.blocks[action.payload.id]
       )
-      if (_html.startsWith('@') || _html.startsWith('#')) {
+      if (_html.trim().startsWith('@') || _html.trim().startsWith('#')) {
         nextState = setRawHtmlForBlock(
           nextState,
           nextState.blocks[action.payload.id],
-          _html.substring(1)
+          _html
+            .trim()
+            .substring(1)
+            .trim()
         )
 
         // correct range offset
