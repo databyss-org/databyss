@@ -72,9 +72,10 @@ const _activeCss = {
   opacity: 1,
 }
 
+// checks if the selection has the anchor before the focus
+//  if it was selected with the range going forward or backwards
 export const isSelectionReversed = value => {
   const { selection, fragment, document } = value
-
   if (
     !selection.focus.isInNode(
       document.getNode(fragment.nodes.get(fragment.nodes.size - 1).key)
@@ -85,11 +86,14 @@ export const isSelectionReversed = value => {
   return false
 }
 
+// Takes a selection and normalizes it to the document (getRootBlocksAtRange)
+// checks the first and last block to see if its contained in the selection, sometimes the selection will include previous and last block despite not having text in the selection
 export const getSelectedBlocks = value => {
-  // const value = editor.value
   const { selection, fragment, document } = value
   let _fragmentNodes = fragment.nodes
-  // get normalized block list
+
+  // first or last block sometimes appear as orphan keys in our data structure
+  //  selection needs to be normalized
   let _nodeList = document.getRootBlocksAtRange(selection)
   // if fragment selection spans multiple block
   if (_nodeList.size > 1) {
@@ -127,7 +131,7 @@ export const getSelectedBlocks = value => {
   return _nodeList
 }
 
-export const isAtomicNotInSelection = value => {
+export const noAtomicInSelection = value => {
   const _nodeList = getSelectedBlocks(value)
 
   const isNotAtomicInFragment =
@@ -140,7 +144,7 @@ const isActiveSelection = (value, editorState) => {
   const { fragment, selection } = value
 
   // returns a boolean if both anchor and focus do not contain atomic block
-  const isNotAtomic = isAtomicNotInSelection(value, editorState)
+  const isNotAtomic = noAtomicInSelection(value, editorState)
 
   if (
     selection.isBlurred ||

@@ -19,7 +19,7 @@ import hotKeys, {
 } from './hotKeys'
 import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
-import { isAtomicNotInSelection, getSelectedBlocks } from './../EditorTooltip'
+import { noAtomicInSelection, getSelectedBlocks } from './../EditorTooltip'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -302,6 +302,7 @@ const SlateContentEditable = ({
     deleteBlocksByKeys(_nodesToDelete, editor)
   }
 
+  // https://www.notion.so/databyss/Editor-crashes-on-backspace-edge-case-f3fd18b2ba6e4df190703a94815542ed
   const singleBlockBackspaceCheck = value => {
     const _selectedBlocks = getSelectedBlocks(value)
     if (
@@ -352,13 +353,17 @@ const SlateContentEditable = ({
         nextBlockId: editor.value.nextBlock ? editor.value.nextBlock.key : null,
       }
 
-      if (!isAtomicNotInSelection(editor.value)) {
+      // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
+      // case 2
+      // event is handled onKeyDown
+      if (!noAtomicInSelection(editor.value)) {
         // if atomic block is highlighted
         if (editor.value.fragment.nodes.size > 1) {
           return event.preventDefault()
         }
       }
 
+      // https://www.notion.so/databyss/Editor-crashes-on-backspace-edge-case-f3fd18b2ba6e4df190703a94815542ed
       if (singleBlockBackspaceCheck(editor.value)) {
         // check selection
         if (editor.value.previousBlock && hasSelection(editor.value)) {
@@ -366,6 +371,7 @@ const SlateContentEditable = ({
           return event.preventDefault()
         }
       }
+
       const _editorState = { value: editor.value }
       onBackspace(blockProperties, _editorState)
     }
@@ -379,17 +385,22 @@ const SlateContentEditable = ({
     const { fragment } = editor.value
     // check for selection
     if (hasSelection(editor.value)) {
-      if (event.key === 'Backspace' && !isAtomicNotInSelection(editor.value)) {
+      if (event.key === 'Backspace' && !noAtomicInSelection(editor.value)) {
         // EDGE CASE: prevent block from being deleted when empty block highlighted
         if (fragment.text === '') {
           deleteBlocksFromSelection(editor)
           return event.preventDefault()
         }
+
+        // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
+        // case 1
         // if atomic block is highlighted
+
         if (fragment.nodes.size === 1) {
           deleteBlockByKey(editor.value.anchorBlock.key, editor)
           return event.preventDefault()
         }
+        // case 2
         deleteBlocksFromSelection(editor)
         return event.preventDefault()
       }
