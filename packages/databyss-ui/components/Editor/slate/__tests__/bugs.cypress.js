@@ -154,4 +154,109 @@ context('Editor', () => {
 
     cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
+
+  it('should highlight atomic block and delte it', () => {
+    cy.get('@editor')
+      .startOfDoc()
+      .setSelection(
+        'Stamenov, Language Structure, Discourse and the Access to Consciousness'
+      )
+      .type('{backspace}')
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="ENTRY" />
+          <block type="ENTRY">
+            On the limitation of third-order thought to assertion
+          </block>
+          <block type="TOPIC">
+            <text />
+            <inline type="TOPIC">topic</inline>
+            <text />
+          </block>
+        </document>
+      </value>
+    )
+
+    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+  })
+
+  it('should highlight all content and delete', () => {
+    cy.get('@editor')
+      .endOfDoc()
+      .type('{selectall}')
+      .type('{backspace}')
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="ENTRY">
+            <text />
+          </block>
+        </document>
+      </value>
+    )
+
+    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+  })
+
+  it('case 3 highlight text bug', () => {
+    cy.get('@editor')
+      .endOfDoc()
+      .type('{selectall}')
+      .type('{backspace}')
+      .type('{backspace}')
+      .type('{rightarrow}')
+      .type('this is some text')
+      .setSelection('some ')
+      .type('{backspace}')
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="ENTRY">this is text</block>
+        </document>
+      </value>
+    )
+
+    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+  })
+
+  it('case 4 bug', () => {
+    cy.get('@editor')
+      .setSelection('On the limitation of third-order thought to assertion')
+      .type('{backspace}')
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE">
+            <text />
+            <inline type="SOURCE">
+              Stamenov, Language Structure, Discourse and the Access to
+              Consciousness
+            </inline>
+            <text />
+          </block>
+          <block type="ENTRY" />
+          <block type="TOPIC">
+            <text />
+            <inline type="TOPIC">topic</inline>
+            <text />
+          </block>
+        </document>
+      </value>
+    )
+
+    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+  })
+
+  // - Highlight all text in the Slate test story (with content)
+  // - Press [Delete] twice
+  // - Press [Right Arrow] then [Delete] to remove last block
+  // - Type "this is some text"
+  // - Highlight "some"
+  // - Press [Delete]
+  // - Text is not deleted
 })
