@@ -35,6 +35,7 @@ context('Editor', () => {
     cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
 
+  // https://www.notion.so/databyss/Tab-in-editor-moves-focus-away-9dedc0df7fb6417b86fa0cc5c2f7cb03
   it('should trim white space on atomic blocks and allow tabs on entries', () => {
     cy.get('@editor')
       .type('    @source name')
@@ -63,7 +64,8 @@ context('Editor', () => {
     cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
 
-  it('should highlight atomic block and block format menu', () => {
+  // https://www.notion.so/databyss/Format-menu-keystrokes-shouldn-t-show-work-on-atomic-blocks-8190f837c9014d108fda7ca948a5bdf8
+  it('should highlight atomic block and not allow format menu', () => {
     cy.get('@editor')
       .type('@Source Name')
       .newLine()
@@ -95,7 +97,8 @@ context('Editor', () => {
     cy.get('@editor').should('have.attr', 'role')
   })
 
-  it('should highlight atomic block and not allow format menu click', () => {
+  // https://www.notion.so/databyss/Editor-crashes-on-backspace-edge-case-f3fd18b2ba6e4df190703a94815542ed
+  it('should highlight empty block and remove the block', () => {
     cy.get('@editor')
       .endOfDoc()
       .previousBlock()
@@ -155,7 +158,9 @@ context('Editor', () => {
     cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
 
-  it('should highlight atomic block and delte it', () => {
+  // Case 1
+  // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
+  it('should highlight atomic block and delete it', () => {
     cy.get('@editor')
       .startOfDoc()
       .setSelection(
@@ -182,6 +187,8 @@ context('Editor', () => {
     cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
 
+  // case 2
+  // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
   it('should highlight all content and delete', () => {
     cy.get('@editor')
       .endOfDoc()
@@ -201,7 +208,8 @@ context('Editor', () => {
     cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
 
-  it('case 3 highlight text bug', () => {
+  // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
+  it('case 3 highlight text', () => {
     cy.get('@editor')
       .endOfDoc()
       .type('{selectall}')
@@ -223,7 +231,8 @@ context('Editor', () => {
     cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
 
-  it('case 4 bug', () => {
+  // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
+  it('case 4', () => {
     cy.get('@editor')
       .setSelection('On the limitation of third-order thought to assertion')
       .type('{backspace}')
@@ -251,12 +260,4 @@ context('Editor', () => {
 
     cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
-
-  // - Highlight all text in the Slate test story (with content)
-  // - Press [Delete] twice
-  // - Press [Right Arrow] then [Delete] to remove last block
-  // - Type "this is some text"
-  // - Highlight "some"
-  // - Press [Delete]
-  // - Text is not deleted
 })
