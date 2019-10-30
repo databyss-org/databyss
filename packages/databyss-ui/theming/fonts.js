@@ -3,7 +3,8 @@ import { Platform } from 'react-native'
 export const serif = Platform.select({
   ios: 'Baskerville',
   android: 'serif',
-  default: 'Baskerville, serif',
+  default: 'PT Serif, serif',
+  // default: 'Baskerville, serif',
 })
 
 export const sans = Platform.select({
