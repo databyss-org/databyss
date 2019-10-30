@@ -55,7 +55,6 @@ const Button = forwardRef(({ onPress, variant, children, ...others }, ref) => {
     <StyledControl
       variant={variant}
       onPress={onPress}
-      rippleColor={buttonThemes[variant].rippleColor}
       hoverColor={buttonThemes[variant].hoverColor}
       activeColor={buttonThemes[variant].activeColor}
       ref={ref}

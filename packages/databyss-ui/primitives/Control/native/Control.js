@@ -1,22 +1,13 @@
 import React, { forwardRef } from 'react'
 import css from '@styled-system/css'
 import { ThemeContext } from '@emotion/core'
+import Color from 'color'
 import View, { styleProps, defaultProps, webProps } from '../../View/View'
 import styled from '../../styled'
 import { isMobileOs } from '../../../lib/mediaQuery'
 import theme, { borderRadius } from '../../../theming/theme'
 
 const StyledButton = styled('button', styleProps)
-
-const _pseudomaskCss = () => ({
-  content: '""',
-  position: 'absolute',
-  top: 0,
-  bottom: 0,
-  left: 0,
-  right: 0,
-  opacity: 0,
-})
 
 const resetProps = {
   padding: 0,
@@ -38,7 +29,7 @@ const viewProps = {
   ...webProps,
 }
 
-const controlCssDesktop = props => ({
+const controlCssDesktop = (props, theme) => ({
   cursor: 'pointer',
   transition: `background-color ${theme.timing.flash}ms ${theme.timing.ease}`,
   ...(props.active
@@ -46,11 +37,15 @@ const controlCssDesktop = props => ({
         backgroundColor: props.activeColor,
       }
     : {
-        '&:focus:before': {
-          ..._pseudomaskCss(props),
-          zIndex: 0,
-          opacity: 0.8,
-          backgroundColor: props.hoverColor,
+        '&:focus': {
+          borderStyle: 'solid',
+          borderColor: 'primary.0',
+          boxShadow: `0 0 0 5px ${Color(
+            css({ color: 'primary.0' })(theme).color
+          )
+            .alpha(0.6)
+            .rgb()
+            .string()}`,
         },
         '&:hover': {
           backgroundColor: props.hoverColor,
@@ -61,16 +56,16 @@ const controlCssDesktop = props => ({
       }),
 })
 
-const controlCssMobile = props => ({
-  '&:after': {
-    ..._pseudomaskCss(props),
-    backgroundColor: props.rippleColor,
-  },
+const controlCssMobile = () => ({
+  transition: `background-color ${theme.timing.quick}ms ${
+    theme.timing.easeOut
+  }`,
 })
 
 const controlCss = props => ({
   position: 'relative',
   userSelect: props.userSelect,
+  borderWidth: '1px',
   '&:active': {
     backgroundColor: props.activeColor,
   },
@@ -112,7 +107,7 @@ const Control = forwardRef(
               !renderAsView && resetCss,
               css(controlCss(others))(theme),
               _mobile && css(controlCssMobile(others))(theme),
-              !_mobile && css(controlCssDesktop(others))(theme),
+              !_mobile && css(controlCssDesktop(others, theme))(theme),
             ]}
             {...others}
           >
@@ -125,7 +120,6 @@ const Control = forwardRef(
 )
 
 Control.defaultProps = {
-  rippleColor: 'background.3',
   hoverColor: 'background.2',
   activeColor: 'background.3',
   borderRadius,
