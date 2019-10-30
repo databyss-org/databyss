@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useState } from 'react'
 import addons from '@storybook/addons'
 import Content from '@databyss-org/ui/components/Viewport/Content'
-import Viewport from '@databyss-org/ui/components/Viewport/ThemedViewport'
+import { View } from '@databyss-org/ui/primitives'
 import ServiceProvider from '@databyss-org/services/components/ServiceProvider'
 import * as auth from '@databyss-org/services/auth/mocks'
 import defaultTheme, { darkTheme } from '../theming/theme'
@@ -19,7 +19,7 @@ channel.on('DARK_MODE', () => {
   storybookIsDark = true
 })
 
-const ViewportWrapper = ({ children }) => {
+export const ViewportWrapper = ({ children, ...others }) => {
   const [isDark, setDark] = useState(storybookIsDark)
 
   useLayoutEffect(() => {
@@ -29,9 +29,13 @@ const ViewportWrapper = ({ children }) => {
   }, [])
 
   return (
-    <Viewport theme={isDark ? darkTheme : defaultTheme} isFullscreen>
+    <View
+      theme={isDark ? darkTheme : defaultTheme}
+      paddingVariant="medium"
+      {...others}
+    >
       {children}
-    </Viewport>
+    </View>
   )
 }
 

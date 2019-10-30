@@ -1,7 +1,6 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import invariant from 'invariant'
-
 import { isAtomicInlineType } from './../slate/reducer'
 
 import {
@@ -15,12 +14,7 @@ import {
   DELETE_BLOCKS,
 } from './constants'
 
-export const initialState = {
-  activeBlockId: null,
-  page: {},
-  blocks: {},
-  editableState: null,
-}
+export initialState from './initialState'
 
 export const entities = (state, type) =>
   ({
