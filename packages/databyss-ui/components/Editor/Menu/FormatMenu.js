@@ -56,30 +56,35 @@ const formatActions = isMobileNewLine => [
 ]
 
 const formatActionButtons = editor =>
-  formatActions(!editor.value.anchorBlock.text.length).reduce((acc, a, i) => {
-    if (a.type === 'DIVIDER') {
-      return acc.concat(
-        <View
-          key={i}
-          borderRightColor="border.1"
-          borderRightWidth={pxUnits(1)}
-          marginLeft="extraSmall"
-          marginRight="extraSmall"
-        />
+  editor.value.anchorBlock
+    ? formatActions(!editor.value.anchorBlock.text.length).reduce(
+        (acc, a, i) => {
+          if (a.type === 'DIVIDER') {
+            return acc.concat(
+              <View
+                key={i}
+                borderRightColor="border.1"
+                borderRightWidth={pxUnits(1)}
+                marginLeft="extraSmall"
+                marginRight="extraSmall"
+              />
+            )
+          }
+          return acc.concat(
+            <MarkButton
+              key={i}
+              editor={editor}
+              index={i}
+              type={a.type}
+              label={a.label}
+              variant={a.variant}
+              action={a.action}
+            />
+          )
+        },
+        []
       )
-    }
-    return acc.concat(
-      <MarkButton
-        key={i}
-        editor={editor}
-        index={i}
-        type={a.type}
-        label={a.label}
-        variant={a.variant}
-        action={a.action}
-      />
-    )
-  }, [])
+    : []
 
 const MarkButton = ({ editor, type, label, variant, action, ...others }) => {
   const [, dispatchEditor] = useEditorContext()

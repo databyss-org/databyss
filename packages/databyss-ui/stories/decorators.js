@@ -19,7 +19,7 @@ channel.on('DARK_MODE', () => {
   storybookIsDark = true
 })
 
-const ViewportWrapper = ({ children }) => {
+export const ViewportWrapper = ({ children, ...others }) => {
   const [isDark, setDark] = useState(storybookIsDark)
 
   useLayoutEffect(() => {
@@ -29,7 +29,11 @@ const ViewportWrapper = ({ children }) => {
   }, [])
 
   return (
-    <Viewport theme={isDark ? darkTheme : defaultTheme} isFullscreen>
+    <Viewport
+      theme={isDark ? darkTheme : defaultTheme}
+      paddingVariant="medium"
+      {...others}
+    >
       {children}
     </Viewport>
   )

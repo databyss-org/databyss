@@ -3,7 +3,8 @@ import { Platform } from 'react-native'
 export const serif = Platform.select({
   ios: 'Baskerville',
   android: 'serif',
-  default: 'Baskerville, serif',
+  default: 'PT Serif, serif',
+  // default: 'Baskerville, serif',
 })
 
 export const sans = Platform.select({
@@ -123,16 +124,24 @@ const uiTextBoldUnderlineVariants = Object.keys(uiTextBoldVariants).reduce(
   {}
 )
 
+const bodyHeader = size => ({
+  fontFamily: fonts.bodyFont,
+  fontSize: size,
+  lineHeight: pxUnits(size * 1.75),
+  fontWeight: fontWeights.regular,
+})
+
 const bodyText = size => ({
   fontFamily: fonts.bodyFont,
   fontSize: size,
-  lineHeight: pxUnits(size * 1.3),
-  fontWeight: fontWeights.normal,
+  lineHeight: pxUnits(size * 1.5),
+  fontWeight: fontWeights.regular,
 })
 
 const bodyVariants = {
   bodyLarge: bodyText(22),
-  bodyNormal: bodyText(18),
+  bodyHeader: bodyHeader(20),
+  bodyNormal: bodyText(16),
   bodySmall: bodyText(14),
 }
 
