@@ -1,7 +1,7 @@
 import React, { useLayoutEffect, useState } from 'react'
 import addons from '@storybook/addons'
 import Content from '@databyss-org/ui/components/Viewport/Content'
-import { View } from '@databyss-org/ui/primitives'
+import Viewport from '@databyss-org/ui/components/Viewport/ThemedViewport'
 import ServiceProvider from '@databyss-org/services/components/ServiceProvider'
 import * as auth from '@databyss-org/services/auth/mocks'
 import defaultTheme, { darkTheme } from '../theming/theme'
@@ -29,13 +29,13 @@ export const ViewportWrapper = ({ children, ...others }) => {
   }, [])
 
   return (
-    <View
+    <Viewport
       theme={isDark ? darkTheme : defaultTheme}
       paddingVariant="medium"
       {...others}
     >
       {children}
-    </View>
+    </Viewport>
   )
 }
 

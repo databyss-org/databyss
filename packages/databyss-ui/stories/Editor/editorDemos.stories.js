@@ -6,7 +6,6 @@ import slateReducer from '@databyss-org/ui/components/Editor/slate/reducer'
 import initialState from '@databyss-org/ui/components/Editor/state/__tests__/emptyInitialState'
 import ContentEditable from '@databyss-org/ui/components/Editor/slate/ContentEditable'
 import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
-import { View } from '@databyss-org/ui/primitives'
 import { ViewportWrapper } from '../decorators'
 
 const ProviderDecorator = storyFn => (
