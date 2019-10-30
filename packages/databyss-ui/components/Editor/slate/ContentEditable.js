@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react'
+
 import { KeyUtils, Value, Block } from 'slate'
 import { Editor } from 'slate-react'
 import { RawHtml, View } from '@databyss-org/ui/primitives'
@@ -17,8 +18,18 @@ import hotKeys, {
   TAB,
 } from './hotKeys'
 import { stateToSlate, getRangesFromBlock } from './markup'
-import { noAtomicInSelection, getSelectedBlocks } from './../EditorTooltip'
-import { toSlateJson, renderInline, renderMark } from './slateUtils'
+
+import {
+  toSlateJson,
+  renderInline,
+  renderMark,
+  getBlockRanges,
+  singleBlockBackspaceCheck,
+  hasSelection,
+  renderBlock,
+  noAtomicInSelection,
+  getSelectedBlocks,
+} from './slateUtils'
 
 const schema = {
   inlines: {
@@ -52,12 +63,6 @@ const SlateContentEditable = ({
   const editableRef = useRef(null)
 
   //  const menuRef = useRef(null)
-
-  const getBlockRanges = block => {
-    const jsonBlockValue = { ...block.toJSON(), key: block.key }
-    const ranges = getRangesFromBlock(jsonBlockValue).ranges
-    return ranges
-  }
 
   const checkSelectedBlockChanged = _nextEditableState => {
     const _nextActiveBlock = findActiveBlock(_nextEditableState.value)
@@ -185,25 +190,15 @@ const SlateContentEditable = ({
     deleteBlocksByKeys(_nodesToDelete, editor)
   }
 
-  // https://www.notion.so/databyss/Editor-crashes-on-backspace-edge-case-f3fd18b2ba6e4df190703a94815542ed
-  const singleBlockBackspaceCheck = value => {
-    const _selectedBlocks = getSelectedBlocks(value)
-    if (
-      _selectedBlocks.size === 1 &&
-      !isAtomicInlineType(_selectedBlocks.get(0)) &&
-      _selectedBlocks.get(0).text.length === 0
-    ) {
-      return true
-    }
-    return false
-  }
+  const renderEditor = (_, editor, next) => {
+    const children = next()
 
-  const hasSelection = value => {
-    const { selection } = value
-    if (!(selection.isBlurred || selection.isCollapsed)) {
-      return true
-    }
-    return false
+    return (
+      <React.Fragment>
+        {children}
+        <FormatMenu editor={editor} editorState={editorState} />
+      </React.Fragment>
+    )
   }
 
   const onKeyUp = (event, editor, next) => {
@@ -408,21 +403,6 @@ const SlateContentEditable = ({
     }
 
     return next()
-  }
-
-  const renderBlock = ({ node, children }) => (
-    <EditorBlock node={node}>{children}</EditorBlock>
-  )
-
-  const renderEditor = (_, editor, next) => {
-    const children = next()
-
-    return (
-      <React.Fragment>
-        {children}
-        <FormatMenu editor={editor} editorState={editorState} />
-      </React.Fragment>
-    )
   }
 
   return (

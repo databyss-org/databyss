@@ -7,6 +7,7 @@ import { ThemeProvider } from 'emotion-theming'
 import space from '@databyss-org/ui/theming/space'
 import { isMobileOs } from '@databyss-org/ui/'
 import { isAtomicInlineType } from './slate/reducer'
+import { isActiveSelection } from './slate/slateUtils'
 
 const _mobile = isMobileOs()
 
@@ -70,91 +71,6 @@ const getPosition = (editor, menuRef) => {
 const _activeCss = {
   pointerEvents: 'all',
   opacity: 1,
-}
-
-// checks if the selection has the anchor before the focus
-//  if it was selected with the range going forward or backwards
-export const isSelectionReversed = value => {
-  const { selection, fragment, document } = value
-  if (
-    !selection.focus.isInNode(
-      document.getNode(fragment.nodes.get(fragment.nodes.size - 1).key)
-    )
-  ) {
-    return true
-  }
-  return false
-}
-
-// Takes a selection and normalizes it to the document (getRootBlocksAtRange)
-// checks the first and last block to see if its contained in the selection, sometimes the selection will include previous and last block despite not having text in the selection
-export const getSelectedBlocks = value => {
-  const { selection, fragment, document } = value
-  let _fragmentNodes = fragment.nodes
-
-  // first or last block sometimes appear as orphan keys in our data structure
-  //  selection needs to be normalized
-  let _nodeList = document.getRootBlocksAtRange(selection)
-  // if fragment selection spans multiple block
-  if (_nodeList.size > 1) {
-    // reverse if needed
-    if (isSelectionReversed(value)) {
-      _fragmentNodes = _fragmentNodes.reverse()
-      _nodeList = _nodeList.reverse()
-    }
-
-    const _lastNodeFragment = _fragmentNodes.get(_fragmentNodes.size - 1).text
-    const _lastNode = _nodeList.get(_nodeList.size - 1)
-
-    const _firstNodeFragment = _fragmentNodes.get(0).text
-    const _firstNode = _nodeList.get(0)
-
-    // if first block selection is not equal to first block
-    // remove block from list
-    if (_firstNode.text !== _firstNodeFragment) {
-      _nodeList = _nodeList.delete(0)
-    }
-
-    // if last block selection is not equal to last block
-    // remove block from list
-    if (_lastNode.text !== _lastNodeFragment) {
-      _nodeList = _nodeList.delete(_nodeList.size - 1)
-    }
-
-    // check if reversed
-    if (isSelectionReversed(value)) {
-      _nodeList = _nodeList.reverse()
-    }
-
-    return _nodeList
-  }
-  return _nodeList
-}
-
-export const noAtomicInSelection = value => {
-  const _nodeList = getSelectedBlocks(value)
-
-  const isNotAtomicInFragment =
-    _nodeList.filter(block => isAtomicInlineType(block.type)).size === 0
-
-  return isNotAtomicInFragment
-}
-
-const isActiveSelection = (value, editorState) => {
-  const { fragment, selection } = value
-
-  // returns a boolean if both anchor and focus do not contain atomic block
-  const isNotAtomic = noAtomicInSelection(value, editorState)
-
-  if (
-    selection.isBlurred ||
-    selection.isCollapsed ||
-    fragment.text === '' ||
-    !isNotAtomic
-  ) {
-    return false
-  }
-  return true
 }
 
 const isNewLine = value =>
