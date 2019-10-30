@@ -37,7 +37,7 @@ const controlCssDesktop = (props, theme) => ({
         backgroundColor: props.activeColor,
       }
     : {
-        '&:focus': {
+        '&[data-focusvisible-polyfill]': {
           borderStyle: 'solid',
           borderColor: 'primary.0',
           boxShadow: `0 0 0 5px ${Color(
