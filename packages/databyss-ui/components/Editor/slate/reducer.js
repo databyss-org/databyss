@@ -119,7 +119,10 @@ const setBlockType = (id, type) => (editor, value, next) => {
       _text = serializeNodeToHtml(_node)
     }
     if (_text.trim().startsWith('@') || _text.trim().startsWith('#')) {
-      _text = _text.trim().substring(1)
+      _text = _text
+        .trim()
+        .substring(1)
+        .trim()
     }
 
     const _block = Block.fromJSON({

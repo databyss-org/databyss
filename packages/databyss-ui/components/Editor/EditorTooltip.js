@@ -30,6 +30,12 @@ const getPosition = (editor, menuRef) => {
   const native = window.getSelection()
   const range = native.getRangeAt(0)
   const rect = range.getBoundingClientRect()
+
+  let menuTopOffset = 0
+  if (rect.top < menu.offsetHeight) {
+    menuTopOffset = 62
+  }
+
   // eslint-disable-next-line
   const _node = editor.findDOMNode(
     editor.value.document.getPath(editor.value.selection.focus.key)
@@ -37,7 +43,7 @@ const getPosition = (editor, menuRef) => {
   const isMobileNewLine = rect.width === 0
   const _mobileOffsetHeight = isMobileNewLine
     ? `${rect.bottom + _node.getBoundingClientRect().top + 32}px`
-    : `${rect.bottom + window.pageYOffset + 10}px`
+    : `${rect.bottom + window.pageYOffset + 10 + menuTopOffset}px`
   // menu offset to prevent overflow
   let menuLeftOffset = 0
 
@@ -56,7 +62,9 @@ const getPosition = (editor, menuRef) => {
   return {
     top: _mobile
       ? _mobileOffsetHeight
-      : pxUnits(rect.top + window.pageYOffset - menu.offsetHeight),
+      : pxUnits(
+          rect.top + window.pageYOffset - menu.offsetHeight + menuTopOffset
+        ),
     left: pxUnits(
       rect.left +
         window.pageXOffset -
