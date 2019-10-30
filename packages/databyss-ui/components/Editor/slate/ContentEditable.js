@@ -1,10 +1,8 @@
 import React, { useRef, useEffect } from 'react'
 
-import { KeyUtils, Value, Block } from 'slate'
+import { Value } from 'slate'
 import { Editor } from 'slate-react'
-import { RawHtml, View } from '@databyss-org/ui/primitives'
-import EditorBlock from '../EditorBlock'
-import { getRawHtmlForBlock, entities } from '../state/reducer'
+import { getRawHtmlForBlock } from '../state/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../EditorProvider'
 import FormatMenu from '../Menu/FormatMenu'
@@ -17,7 +15,6 @@ import hotKeys, {
   PREVIOUS_BLOCK,
   TAB,
 } from './hotKeys'
-import { stateToSlate, getRangesFromBlock } from './markup'
 
 import {
   toSlateJson,

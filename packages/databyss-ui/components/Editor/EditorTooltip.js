@@ -6,7 +6,6 @@ import theme, { borderRadius, darkTheme } from '@databyss-org/ui/theming/theme'
 import { ThemeProvider } from 'emotion-theming'
 import space from '@databyss-org/ui/theming/space'
 import { isMobileOs } from '@databyss-org/ui/'
-import { isAtomicInlineType } from './slate/reducer'
 import { isActiveSelection } from './slate/slateUtils'
 
 const _mobile = isMobileOs()

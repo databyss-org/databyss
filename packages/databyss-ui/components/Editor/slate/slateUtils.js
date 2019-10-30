@@ -1,12 +1,11 @@
-import React, { useRef, useEffect } from 'react'
-
-import { KeyUtils, Value, Block } from 'slate'
-import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
+import React from 'react'
+import { KeyUtils, Block } from 'slate'
 import ObjectId from 'bson-objectid'
-import { stateToSlate, getRangesFromBlock } from './markup'
-import { findActiveBlock, isAtomicInlineType } from './reducer'
-import { getRawHtmlForBlock, entities } from '../state/reducer'
 import { RawHtml, View } from '@databyss-org/ui/primitives'
+import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
+import { stateToSlate, getRangesFromBlock } from './markup'
+import { isAtomicInlineType } from './reducer'
+import { getRawHtmlForBlock, entities } from '../state/reducer'
 import EditorBlock from '../EditorBlock'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
@@ -125,37 +124,6 @@ export const renderMark = (props, editor, next) => {
   }
 }
 
-export const getBlockRanges = block => {
-  const jsonBlockValue = { ...block.toJSON(), key: block.key }
-  const ranges = getRangesFromBlock(jsonBlockValue).ranges
-  return ranges
-}
-
-// https://www.notion.so/databyss/Editor-crashes-on-backspace-edge-case-f3fd18b2ba6e4df190703a94815542ed
-export const singleBlockBackspaceCheck = value => {
-  const _selectedBlocks = getSelectedBlocks(value)
-  if (
-    _selectedBlocks.size === 1 &&
-    !isAtomicInlineType(_selectedBlocks.get(0)) &&
-    _selectedBlocks.get(0).text.length === 0
-  ) {
-    return true
-  }
-  return false
-}
-
-export const hasSelection = value => {
-  const { selection } = value
-  if (!(selection.isBlurred || selection.isCollapsed)) {
-    return true
-  }
-  return false
-}
-
-export const renderBlock = ({ node, children }) => (
-  <EditorBlock node={node}>{children}</EditorBlock>
-)
-
 // checks if the selection has the anchor before the focus
 //  if it was selected with the range going forward or backwards
 export const isSelectionReversed = value => {
@@ -168,6 +136,12 @@ export const isSelectionReversed = value => {
     return true
   }
   return false
+}
+
+export const getBlockRanges = block => {
+  const jsonBlockValue = { ...block.toJSON(), key: block.key }
+  const ranges = getRangesFromBlock(jsonBlockValue).ranges
+  return ranges
 }
 
 // Takes a selection and normalizes it to the document (getRootBlocksAtRange)
@@ -214,6 +188,31 @@ export const getSelectedBlocks = value => {
   }
   return _nodeList
 }
+
+// https://www.notion.so/databyss/Editor-crashes-on-backspace-edge-case-f3fd18b2ba6e4df190703a94815542ed
+export const singleBlockBackspaceCheck = value => {
+  const _selectedBlocks = getSelectedBlocks(value)
+  if (
+    _selectedBlocks.size === 1 &&
+    !isAtomicInlineType(_selectedBlocks.get(0)) &&
+    _selectedBlocks.get(0).text.length === 0
+  ) {
+    return true
+  }
+  return false
+}
+
+export const hasSelection = value => {
+  const { selection } = value
+  if (!(selection.isBlurred || selection.isCollapsed)) {
+    return true
+  }
+  return false
+}
+
+export const renderBlock = ({ node, children }) => (
+  <EditorBlock node={node}>{children}</EditorBlock>
+)
 
 export const noAtomicInSelection = value => {
   const _nodeList = getSelectedBlocks(value)
