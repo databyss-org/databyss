@@ -40,6 +40,7 @@ const controlCssDesktop = (props, theme) => ({
         '&[data-focusvisible-polyfill]': {
           borderStyle: 'solid',
           borderColor: 'primary.0',
+          borderRadius,
           boxShadow: `0 0 0 5px ${Color(
             css({ color: 'primary.0' })(theme).color
           )
