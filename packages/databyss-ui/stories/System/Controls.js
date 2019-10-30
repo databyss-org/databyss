@@ -35,39 +35,43 @@ export const TextControls = () => {
   })
   const [textValue4, setTextValue4] = useState({ textValue: ipsum })
   return (
-    <List overflow="visible">
+    <List>
       <TextControl
         labelProps={{
-          width: '20%',
+          width: 80,
         }}
         label="Author"
         value={textValue}
         onChange={value => setTextValue(value)}
+        gridFlexWrap="nowrap"
       />
       <TextControl
         labelProps={{
-          width: '20%',
+          width: 80,
         }}
         label="Title"
         value={textValue2}
         onChange={value => setTextValue2(value)}
+        gridFlexWrap="nowrap"
       />
       <TextControl
         labelProps={{
-          width: '20%',
+          width: 80,
         }}
         label="Publisher"
         value={textValue3}
         onChange={value => setTextValue3(value)}
+        gridFlexWrap="nowrap"
       />
       <TextControl
         labelProps={{
-          width: '20%',
+          width: 80,
         }}
         label="Abstract"
         value={textValue4}
         onChange={value => setTextValue4(value)}
         gridFlexWrap="nowrap"
+        multiline
       />
     </List>
   )
@@ -100,8 +104,8 @@ export default () => {
           </List>
         </View>
       </Section>
-      <Section title="Text Control" overflow="visible">
-        <View backgroundColor="background.1" overflow="visible">
+      <Section title="Text Control">
+        <View backgroundColor="background.1">
           <TextControls />
         </View>
       </Section>

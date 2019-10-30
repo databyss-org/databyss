@@ -97,6 +97,7 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
       style={{
         overlay: {
           backgroundColor: _mobile ? 'transparent' : 'rgba(0, 0, 0, 0.35)',
+          zIndex: 1,
         },
       }}
     >

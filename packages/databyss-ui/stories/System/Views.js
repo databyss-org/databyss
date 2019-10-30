@@ -7,79 +7,85 @@ import { Section } from './'
 const alea = new Alea('views')
 const ipsum = loremIpsum({ units: 'sentences', count: 4, random: alea })
 
-const CaptionedView = ({ caption, children, ...others }) => (
+export const CaptionedView = ({
+  caption,
+  children,
+  paddingVariant,
+  borderVariant,
+  shadowVariant,
+  height,
+  ...others
+}) => (
   <View width={240} {...others}>
-    {React.cloneElement(children, { height: 180 })}
+    <View
+      mb="small"
+      height={height}
+      paddingVariant={paddingVariant}
+      borderVariant={borderVariant}
+      shadowVariant={shadowVariant}
+    >
+      {children}
+    </View>
     <Text variant="uiTextNormalSemibold">{caption}</Text>
   </View>
+)
+
+CaptionedView.defaultProps = {
+  paddingVariant: 'small',
+  borderVariant: 'thinLight',
+  height: 180,
+}
+
+const Ipsum = () => (
+  <Text variant="uiTextNormal" css={{ height: '100%', overflow: 'hidden' }}>
+    {ipsum}
+  </Text>
 )
 
 export default () => (
   <React.Fragment>
     <Section title="Border variants">
       <Grid mb="medium">
-        <CaptionedView caption="none">
-          <View borderVariant="none" mb="small">
-            <Text variant="uiTextNormal">{ipsum}</Text>
-          </View>
+        <CaptionedView caption="none" borderVariant="none">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="thinDark">
-          <View borderVariant="thinDark" mb="small">
-            <Text variant="uiTextNormal">{ipsum}</Text>
-          </View>
+        <CaptionedView caption="thinDark" borderVariant="thinDark">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="thinLight">
-          <View borderVariant="thinLight" mb="small">
-            <Text variant="uiTextNormal">{ipsum}</Text>
-          </View>
+        <CaptionedView caption="thinLight" borderVariant="thinLight">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="thickDark">
-          <View borderVariant="thickDark" mb="small">
-            <Text variant="uiTextNormal">{ipsum}</Text>
-          </View>
+        <CaptionedView caption="thickDark" borderVariant="thickDark">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="thickLight">
-          <View borderVariant="thickLight" mb="small">
-            <Text variant="uiTextNormal">{ipsum}</Text>
-          </View>
+        <CaptionedView caption="thickLight" borderVariant="thickLight">
+          <Ipsum />
         </CaptionedView>
       </Grid>
     </Section>
     <Section title="Padding variants">
       <Grid mb="medium">
-        <CaptionedView caption="none">
-          <View borderVariant="thinLight" paddingVariant="none" mb="small">
-            <Text variant="uiTextNormal">{ipsum}</Text>
-          </View>
+        <CaptionedView caption="none" paddingVariant="none">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="small">
-          <View borderVariant="thinLight" paddingVariant="small" mb="small">
-            <Text variant="uiTextNormal">{ipsum}</Text>
-          </View>
+        <CaptionedView caption="small" paddingVariant="small">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="medium">
-          <View borderVariant="thinLight" paddingVariant="medium" mb="small">
-            <Text variant="uiTextNormal">{ipsum}</Text>
-          </View>
+        <CaptionedView caption="medium" paddingVariant="medium">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="large">
-          <View borderVariant="thinLight" paddingVariant="large" mb="small">
-            <Text variant="uiTextNormal">{ipsum}</Text>
-          </View>
+        <CaptionedView caption="large" paddingVariant="large">
+          <Ipsum />
         </CaptionedView>
       </Grid>
     </Section>
-    <Section title="Shadow variants" overflow="visible">
-      <Grid mb="medium" overflow="visible">
-        <CaptionedView caption="button" overflow="visible">
-          <View borderVariant="thinLight" shadowVariant="button" mb="small">
-            <Text variant="uiTextNormal">{ipsum}</Text>
-          </View>
+    <Section title="Shadow variants">
+      <Grid mb="medium">
+        <CaptionedView caption="button" shadowVariant="button">
+          <Ipsum />
         </CaptionedView>
-        <CaptionedView caption="modal" overflow="visible">
-          <View borderVariant="thinLight" shadowVariant="modal" mb="small">
-            <Text variant="uiTextNormal">{ipsum}</Text>
-          </View>
+        <CaptionedView caption="modal" shadowVariant="modal">
+          <Ipsum />
         </CaptionedView>
       </Grid>
     </Section>

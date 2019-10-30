@@ -4,12 +4,13 @@ import Color from 'color'
 let _c = {
   gray: [
     '#221F1B',
-    '#353331',
-    '#4A4845',
-    '#847B71',
-    '#AAA49C',
+    '#282625',
+    '#42403e',
+    '#605a52',
+    '#8a8175',
     '#D0CDC8',
-    '#ECEBE9',
+    '#e3e1de',
+    '#F0F0F0',
   ],
   black: '#12100C',
   white: '#FDFDFC',
@@ -45,6 +46,7 @@ _c = {
     .alpha(0.5)
     .rgb()
     .string(),
+  inputModalBackground: _c.white,
 }
 
 // legacy (deprecated)
@@ -72,7 +74,8 @@ _c = {
       // borders [darkest...lightest]
       border: [_c.gray[7], _c.gray[3], _c.gray[1]],
       // control colors [enabled, hover, active, label]
-      secondary: [_c.blue[1], _c.gray[2], _c.gray[1], _c.blue[2]],
+      secondary: [_c.blue[1], _c.gray[2], _c.gray[0], _c.blue[2]],
+      inputModalBackground: _c.gray[3],
     },
   },
 }

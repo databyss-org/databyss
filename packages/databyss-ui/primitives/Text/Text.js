@@ -11,6 +11,12 @@ export const variants = variant({
   },
 })
 
+export const styleProps = compose(
+  variants,
+  color,
+  typography
+)
+
 const Styled = styled(
   {
     ios: 'Text',

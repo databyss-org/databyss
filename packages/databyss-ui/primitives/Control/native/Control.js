@@ -1,35 +1,12 @@
-import React, { useState, useRef, useEffect, forwardRef } from 'react'
+import React, { forwardRef } from 'react'
 import css from '@styled-system/css'
-import { keyframes, ThemeContext } from '@emotion/core'
-import { View } from '../../'
+import { ThemeContext } from '@emotion/core'
+import View, { styleProps, defaultProps, webProps } from '../../View/View'
+import styled from '../../styled'
 import { isMobileOs } from '../../../lib/mediaQuery'
 import theme, { borderRadius } from '../../../theming/theme'
 
-const decay = keyframes({
-  '0%': {
-    opacity: 0.8,
-  },
-  '100%': {
-    opacity: 0,
-  },
-})
-
-const controlCssDesktop = props => ({
-  cursor: 'pointer',
-  transition: `background-color ${theme.timing.flash}ms ${theme.timing.ease}`,
-  ...(props.active
-    ? {
-        backgroundColor: props.activeColor,
-      }
-    : {
-        '&:hover': {
-          backgroundColor: props.hoverColor,
-        },
-        '&:active': {
-          backgroundColor: props.activeColor,
-        },
-      }),
-})
+const StyledButton = styled('button', styleProps)
 
 const _pseudomaskCss = () => ({
   content: '""',
@@ -41,56 +18,87 @@ const _pseudomaskCss = () => ({
   opacity: 0,
 })
 
-const controlCss = props => ({
-  position: 'relative',
+const resetProps = {
+  padding: 0,
+  border: 'none',
+  font: 'inherit',
+  color: 'inherit',
+  backgroundColor: 'transparent',
+  cursor: 'pointer',
+  alignItems: 'unset',
+}
+
+const resetCss = {
+  textAlign: 'left',
+}
+
+const viewProps = {
+  ...resetProps,
+  ...defaultProps,
+  ...webProps,
+}
+
+const controlCssDesktop = props => ({
+  cursor: 'pointer',
+  transition: `background-color ${theme.timing.flash}ms ${theme.timing.ease}`,
   ...(props.active
     ? {
         backgroundColor: props.activeColor,
       }
-    : {}),
+    : {
+        '&:focus:before': {
+          ..._pseudomaskCss(props),
+          zIndex: 0,
+          opacity: 0.8,
+          backgroundColor: props.hoverColor,
+        },
+        '&:hover': {
+          backgroundColor: props.hoverColor,
+        },
+        '&:active': {
+          backgroundColor: props.activeColor,
+        },
+      }),
+})
+
+const controlCssMobile = props => ({
   '&:after': {
     ..._pseudomaskCss(props),
     backgroundColor: props.rippleColor,
   },
 })
 
-const animatingCss = {
-  '&:after': {
-    animation: `${decay} ${theme.timing.touchDecay}ms ${theme.timing.ease}`,
+const controlCss = props => ({
+  position: 'relative',
+  userSelect: props.userSelect,
+  '&:active': {
+    backgroundColor: props.activeColor,
   },
-}
+  '&:focus': {
+    outline: 'none',
+  },
+  ...(props.active
+    ? {
+        backgroundColor: props.activeColor,
+      }
+    : {}),
+})
+
+const _mobile = isMobileOs()
 
 export const ControlNoFeedback = ({ children, ...others }) => (
   <View {...others}>{children}</View>
 )
 
 const Control = forwardRef(
-  ({ disabled, children, onPress, ...others }, ref) => {
-    const [decay, setDecay] = useState(false)
-    const [resetDecay, setResetDecay] = useState(false)
-    const decayTimerRef = useRef(null)
-    const startDecayAnimation = () => {
-      decayTimerRef.current = setTimeout(
-        () => setDecay(false),
-        theme.timing.touchDecay
-      )
-      setDecay(true)
-    }
-    useEffect(() => () => clearTimeout(decayTimerRef.current), [decayTimerRef])
-    useEffect(
-      () => {
-        if (resetDecay) {
-          startDecayAnimation()
-          setResetDecay(false)
-        }
-      },
-      [resetDecay]
-    )
+  ({ disabled, children, onPress, renderAsView, ...others }, ref) => {
+    const StyledComponent = renderAsView || _mobile ? View : StyledButton
     return (
       <ThemeContext.Consumer>
         {theme => (
-          <View
+          <StyledComponent
             ref={ref}
+            tabIndex={0}
             onClick={e => {
               if (disabled) {
                 return
@@ -98,28 +106,18 @@ const Control = forwardRef(
               if (onPress) {
                 onPress(e)
               }
-              if (!isMobileOs()) {
-                return
-              }
-              if (decay) {
-                clearTimeout(decayTimerRef.current)
-                setDecay(false)
-                setResetDecay(true)
-              } else {
-                startDecayAnimation()
-              }
             }}
+            {...(renderAsView ? {} : viewProps)}
             css={[
-              !disabled && css(controlCss(others))(theme),
-              !disabled &&
-                !isMobileOs() &&
-                css(controlCssDesktop(others))(theme),
-              !disabled && isMobileOs() && decay && animatingCss,
+              !renderAsView && resetCss,
+              css(controlCss(others))(theme),
+              _mobile && css(controlCssMobile(others))(theme),
+              !_mobile && css(controlCssDesktop(others))(theme),
             ]}
             {...others}
           >
             {children}
-          </View>
+          </StyledComponent>
         )}
       </ThemeContext.Consumer>
     )
@@ -131,6 +129,7 @@ Control.defaultProps = {
   hoverColor: 'background.2',
   activeColor: 'background.3',
   borderRadius,
+  userSelect: 'none',
 }
 
 export default Control

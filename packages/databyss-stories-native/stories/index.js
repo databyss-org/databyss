@@ -3,6 +3,7 @@ import { storiesOf } from '@storybook/react-native'
 import Typography from '@databyss-org/ui/stories/System/Typography'
 import Views from '@databyss-org/ui/stories/System/Views'
 import Controls from '@databyss-org/ui/stories/System/Controls'
+import TextInputs from '@databyss-org/ui/stories/System/TextInputs'
 import Buttons from '@databyss-org/ui/stories/System/Buttons'
 import Icons from '@databyss-org/ui/stories/System/Icons'
 import Modals from '@databyss-org/ui/stories/System/Modals'
@@ -18,6 +19,12 @@ storiesOf('Design System', module)
   .add('Typography', () => <Typography />)
   .add('Views', () => <Views />)
   .add('Controls', () => <Controls />)
+  .add('TextInputs', () => (
+    <React.Fragment>
+      <TextInputs />
+      <TextInputs rich />
+    </React.Fragment>
+  ))
   .add('Buttons', () => <Buttons />)
   .add('Icons', () => <Icons />)
   .add('List', () => (

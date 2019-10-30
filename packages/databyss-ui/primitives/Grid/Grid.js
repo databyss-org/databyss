@@ -11,14 +11,17 @@ const Grid = ({
   overflow,
   ...others
 }) => {
-  const childrenWithLayout = React.Children.map(children, child =>
-    React.cloneElement(child, {
-      flexGrow: 0,
-      flexShrink: 0,
-      marginRight: columnGap,
-      marginBottom: singleRow ? 0 : rowGap,
-      ...child.props,
-    })
+  const childrenWithLayout = React.Children.map(
+    children,
+    child =>
+      child &&
+      React.cloneElement(child, {
+        flexGrow: 0,
+        flexShrink: 0,
+        marginRight: columnGap,
+        marginBottom: singleRow ? 0 : rowGap,
+        ...child.props,
+      })
   )
 
   const columnGapCorrection = columnGap === 'none' ? 0 : `${columnGap}Negative`
@@ -43,7 +46,7 @@ const Grid = ({
 Grid.defaultProps = {
   columnGap: 'medium',
   rowGap: 'medium',
-  overflow: 'hidden',
+  overflow: 'visible',
 }
 
 export default Grid

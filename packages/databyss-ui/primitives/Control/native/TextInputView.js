@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import css from '@styled-system/css'
 import { ThemeContext } from '@emotion/core'
 import ClickAwayListener from '../../Util/ClickAwayListener'
+import forkRef from '../../Util/forkRef'
 import { isMobileOs } from '../../../lib/mediaQuery'
 import { View, Text } from '../../'
 
@@ -9,7 +10,6 @@ const desktopInputCss = {
   display: 'flex',
   position: 'relative',
   zIndex: 1,
-  pointerEvents: 'none',
   padding: '1px',
   paddingLeft: '2px',
   backgroundColor: 'transparent',
@@ -21,47 +21,50 @@ const mobileInputCss = active => ({
   opacity: 0,
 })
 
-const mobileViewCss = active =>
+const modalViewCss = (active, labelWidth) =>
   active
     ? {
         position: 'absolute',
-        zIndex: 5,
+        zIndex: 2,
         top: '-5px',
-        left: '25%',
-        right: '5px',
+        left: labelWidth ? `${labelWidth - 8}px` : '-5px',
+        right: labelWidth ? '5px' : '-5px',
         padding: 'none',
         bg: 'transparent',
         marginRight: 0,
       }
     : {}
 
-const activeInputCss = {
-  bg: 'background.0',
+const activeInputCss = modal => ({
+  bg: modal ? 'inputModalBackground' : 'background.0',
   pointerEvents: 'all',
   cursor: 'text',
   opacity: 1,
   borderRadius: 0,
   margin: 0,
-}
+})
 
-const _isMobileOs = isMobileOs()
-
-const TextInputView = ({ active, children, value, label, ...others }) => {
+const TextInputView = ({
+  active,
+  children,
+  value,
+  labelOffset,
+  modal,
+  smallText,
+  controlRef,
+  ...others
+}) => {
   const child = React.Children.only(children)
   const viewRef = useRef(null)
   const inputRef = useRef(null)
-  const setRef = _ref => {
-    inputRef.current = _ref
-    if (child.ref) {
-      child.ref.current = _ref
-    }
-  }
+
+  const _modal = modal || (isMobileOs() && smallText)
 
   return (
     <ThemeContext.Consumer>
       {theme => (
-        <View overflow="visible" ref={viewRef} {...others} flexShrink={1}>
-          {_isMobileOs && (
+        <View ref={viewRef} {...others} flexShrink={1}>
+          {_modal && (
             <View padding="1px" flexShrink={1} flexWrap="wrap">
               <Text variant={child.props.variant}>
                 {child.props.value.textValue}
@@ -70,17 +73,18 @@ const TextInputView = ({ active, children, value, label, ...others }) => {
           )}
 
           <ClickAwayListener
+            additionalNodeRefs={controlRef ? [controlRef] : undefined}
             onClickAway={() => {
-              if (_isMobileOs && active) {
+              if (_modal && active && child.props.onBlur) {
                 child.props.onBlur()
               }
             }}
           >
             <View
-              css={[_isMobileOs && css(mobileViewCss(active))(theme)]}
-              shadowVariant={_isMobileOs ? 'modal' : 'none'}
+              css={[_modal && css(modalViewCss(active, labelOffset))(theme)]}
+              shadowVariant={_modal ? 'modal' : 'none'}
               onClick={
-                _isMobileOs
+                _modal
                   ? () => {
                       if (inputRef.current) {
                         inputRef.current.focus()
@@ -90,15 +94,20 @@ const TextInputView = ({ active, children, value, label, ...others }) => {
               }
             >
               {React.cloneElement(child, {
-                variant: _isMobileOs ? 'uiTextNormal' : child.props.variant,
+                variant: _modal ? 'uiTextNormal' : child.props.variant,
                 css: [
-                  { outlineOffset: 0, outline: 'none', borderWidth: 0 },
-                  _isMobileOs && css(mobileInputCss(active))(theme),
-                  !_isMobileOs && css(desktopInputCss)(theme),
-                  active && css(activeInputCss)(theme),
+                  {
+                    outlineOffset: 0,
+                    outline: 'none',
+                    borderWidth: 0,
+                    pointerEvents: 'none',
+                  },
+                  _modal && css(mobileInputCss(active))(theme),
+                  !_modal && css(desktopInputCss)(theme),
+                  active && css(activeInputCss(_modal))(theme),
                 ],
-                onBlur: _isMobileOs ? () => null : child.props.onBlur,
-                ref: setRef,
+                onBlur: child.props.onBlur,
+                ref: forkRef(child.ref, inputRef),
               })}
             </View>
           </ClickAwayListener>

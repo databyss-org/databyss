@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { GoogleLogin } from 'react-google-login'
-import TextInput from '@databyss-org/ui/primitives/TextInput/TextInput'
+import { TextInput } from '@databyss-org/ui/primitives'
 import Text from '@databyss-org/ui/primitives/Text/Text'
 import Button from '@databyss-org/ui/primitives/Button/Button'
 
