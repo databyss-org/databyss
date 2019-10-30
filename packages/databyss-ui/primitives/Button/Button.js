@@ -7,7 +7,8 @@ import {
   compose,
   border,
 } from 'styled-system'
-import { BaseControl, Text } from '../'
+import BaseControl from '../Control/BaseControl' // HACK: we can't import BaseControl from index.js for some reason
+import { Text } from '../'
 import { shadowVariant } from '../View/View'
 import styled from '../styled'
 import buttons from '../../theming/buttons'
