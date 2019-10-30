@@ -1,21 +1,12 @@
-import React, { useState, useRef, useEffect, forwardRef } from 'react'
+import React, { forwardRef } from 'react'
 import css from '@styled-system/css'
-import { keyframes, ThemeContext } from '@emotion/core'
+import { ThemeContext } from '@emotion/core'
 import View, { styleProps, defaultProps, webProps } from '../../View/View'
 import styled from '../../styled'
 import { isMobileOs } from '../../../lib/mediaQuery'
 import theme, { borderRadius } from '../../../theming/theme'
 
 const StyledButton = styled('button', styleProps)
-
-const decay = keyframes({
-  '0%': {
-    opacity: 0.8,
-  },
-  '100%': {
-    opacity: 0,
-  },
-})
 
 const _pseudomaskCss = () => ({
   content: '""',
@@ -92,12 +83,6 @@ const controlCss = props => ({
       }
     : {}),
 })
-
-const animatingCss = {
-  '&:after': {
-    animation: `${decay} ${theme.timing.touchDecay}ms ${theme.timing.ease}`,
-  },
-}
 
 const _mobile = isMobileOs()
 
