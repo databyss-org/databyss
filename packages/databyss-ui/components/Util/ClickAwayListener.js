@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import PropTypes from 'prop-types'
 import { elementAcceptingRef, exactProp } from '@material-ui/utils'
-import useEventCallback from './useEventCallback'
-import ownerDocument from './ownerDocument'
+import useEventCallback from '../../lib/useEventCallback'
+import ownerDocument from '../../lib/ownerDocument'
 
 function mapEventPropToEvent(eventProp) {
   return eventProp.substring(2).toLowerCase()

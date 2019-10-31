@@ -11,10 +11,10 @@ import {
   shadow,
 } from 'styled-system'
 import { ThemeProvider } from 'emotion-theming'
+import forkRef from '@databyss-org/ui/lib/forkRef'
 import fastCompare from 'react-fast-compare'
 import styled from '../styled'
 import IS_NATIVE from '../../lib/isNative'
-import forkRef from '../Util/forkRef'
 
 export const paddingVariant = variant({
   prop: 'paddingVariant',

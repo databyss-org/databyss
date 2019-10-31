@@ -1,8 +1,8 @@
 import React, { useRef } from 'react'
 import css from '@styled-system/css'
 import { ThemeContext } from '@emotion/core'
-import ClickAwayListener from '../../Util/ClickAwayListener'
-import forkRef from '../../Util/forkRef'
+import forkRef from '@databyss-org/ui/lib/forkRef'
+import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { isMobileOs } from '../../../lib/mediaQuery'
 import { View, Text } from '../../'
 

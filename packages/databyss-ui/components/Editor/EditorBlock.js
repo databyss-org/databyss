@@ -19,7 +19,7 @@ const TextBlock = ({ children, variant, color }) => (
 const textSelector = ({ children, type }) => {
   const textStyle = type =>
     ({
-      SOURCE: { variant: 'bodyNormalUnderline', color: 'text.0' },
+      SOURCE: { variant: 'bodyHeaderUnderline', color: 'text.0' },
       // WRAP INLINE IN VIEW WITH BOTTOM BORDER
       // TRY CHANGE DISLAY TO INLINE FLEX
       LOCATION: {
@@ -38,7 +38,7 @@ const textSelector = ({ children, type }) => {
         ),
       },
       TOPIC: {
-        variant: 'bodyNormalSemibold',
+        variant: 'bodyHeader',
         color: 'text.0',
       },
       TAG: { variant: 'BodySmall', color: 'grey' },

@@ -78,25 +78,21 @@ const buttonVariants = {
 
 const buttonThemes = {
   primaryUi: {
-    rippleColor: 'primary.2',
     hoverColor: 'primary.1',
     activeColor: 'primary.2',
   },
   secondaryUi: {
-    rippleColor: 'secondary.2',
     hoverColor: 'secondary.1',
     activeColor: 'secondary.2',
   },
   primaryExternal: {},
   secondaryExternal: {},
   uiLink: {
-    rippleColor: 'background.2',
     hoverColor: 'background.1',
     activeColor: 'background.2',
   },
   externalLink: {},
   editorMarginMenuItem: {
-    rippleColor: 'background.2',
     hoverColor: 'background.4',
     activeColor: 'background.1',
     textProps: {
@@ -104,7 +100,6 @@ const buttonThemes = {
     },
   },
   editorMarginMenu: {
-    rippleColor: 'primary.2',
     hoverColor: 'background.4',
     activeColor: 'primary.2',
   },
