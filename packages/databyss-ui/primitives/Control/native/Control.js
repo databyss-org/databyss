@@ -58,9 +58,12 @@ const controlCssDesktop = (props, theme) => ({
 })
 
 const controlCssMobile = () => ({
-  transition: `background-color ${theme.timing.quick}ms ${
-    theme.timing.easeOut
-  }`,
+  transition: `background-color ${theme.timing.medium}ms ${theme.timing.ease}`,
+  '&:active': {
+    transition: `background-color ${theme.timing.quick}ms ${
+      theme.timing.easeOut
+    }`,
+  },
 })
 
 const controlCss = props => ({
