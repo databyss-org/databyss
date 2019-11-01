@@ -1,7 +1,7 @@
-import reducer, { entities } from '../reducer'
+import reducer, { entities } from '../page/reducer'
 
-import { setActiveBlockId, setActiveBlockContent } from '../actions'
-import { SET_ACTIVE_BLOCK_CONTENT } from '../constants'
+import { setActiveBlockId, setActiveBlockContent } from '../page/actions'
+import { SET_ACTIVE_BLOCK_CONTENT } from '../page/constants'
 import initialState from './initialState'
 
 describe('atomic Blocks', () => {

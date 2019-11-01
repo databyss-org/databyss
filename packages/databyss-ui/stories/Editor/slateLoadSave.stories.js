@@ -16,8 +16,9 @@ import {
 } from '@databyss-org/services/pages/actions'
 import { initialState } from '@databyss-org/services/pages/reducer'
 
-import SlateContentEditable from '@databyss-org/ui/components/Editor/slate/ContentEditable'
-import slateReducer from '@databyss-org/ui/components/Editor/slate/reducer'
+import SlateContentEditable from '@databyss-org/ui/components/Editor/slate/page/ContentEditable'
+import slateReducer from '@databyss-org/ui/components/Editor/slate/page/reducer'
+import reducer from '@databyss-org/ui/components/Editor/state/page/reducer'
 import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
 import AutoSave from '@databyss-org/ui/components/Editor/AutoSave'
 import seedState from './_seedState'
@@ -71,6 +72,7 @@ const EditorLoader = ({ children }) => {
     <EditorProvider
       initialState={state.pageState}
       editableReducer={slateReducer}
+      reducer={reducer}
     >
       <AutoSave />
       {children}

@@ -3,12 +3,12 @@ import { storiesOf } from '@storybook/react'
 import { View, Grid } from '@databyss-org/ui/primitives'
 import EditorProvider, { useEditorContext } from '../../EditorProvider'
 import EditorPage from '../../EditorPage'
-import ContentEditable from '../ContentEditable'
-import { getRawHtmlForBlock } from '../../state/reducer'
+import ContentEditable from '../page/ContentEditable'
+import reducer, { getRawHtmlForBlock } from '../../state/page/reducer'
 import initialState from '../../state/__tests__/initialState'
 import emptyInitialState from '../../state/__tests__/emptyInitialState'
 
-import slateReducer from '../reducer'
+import slateReducer from '../page/reducer'
 import { ViewportDecorator } from '../../../../stories/decorators'
 
 const Box = ({ children, ...others }) => (
@@ -50,7 +50,11 @@ const EditableTest = () => {
 storiesOf('Editor//Tests', module)
   .addDecorator(ViewportDecorator)
   .add('Slate', () => (
-    <EditorProvider initialState={initialState} editableReducer={slateReducer}>
+    <EditorProvider
+      initialState={initialState}
+      editableReducer={slateReducer}
+      reducer={reducer}
+    >
       <EditableTest />
     </EditorProvider>
   ))
@@ -58,6 +62,7 @@ storiesOf('Editor//Tests', module)
     <EditorProvider
       initialState={emptyInitialState}
       editableReducer={slateReducer}
+      reducer={reducer}
     >
       <EditableTest />
     </EditorProvider>

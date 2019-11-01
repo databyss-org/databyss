@@ -4,7 +4,7 @@ import { isMobileOs } from '@databyss-org/ui/'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import EditorTooltip from '../EditorTooltip'
 import { useEditorContext } from '../EditorProvider'
-import { toggleMark, startTag } from '../state/actions'
+import { toggleMark, startTag } from '../state/page/actions'
 
 const mobileActions = [
   {

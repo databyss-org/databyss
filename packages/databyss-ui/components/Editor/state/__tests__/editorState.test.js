@@ -1,16 +1,16 @@
-import reducer from '../reducer'
+import reducer from '../page/reducer'
 import {
   setActiveBlockId,
   setActiveBlockContent,
   setActiveBlockType,
   setBlockType,
-} from '../actions'
+} from '../page/actions'
 import {
   SET_ACTIVE_BLOCK_CONTENT,
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_ID,
   SET_BLOCK_TYPE,
-} from '../constants'
+} from '../page/constants'
 import initialState from './initialState'
 
 describe('editorState', () => {

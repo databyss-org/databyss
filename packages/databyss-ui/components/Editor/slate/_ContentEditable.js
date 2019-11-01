@@ -2,8 +2,8 @@ import React, { useRef, useEffect } from 'react'
 
 import { Value } from 'slate'
 import { Editor } from 'slate-react'
-import { getRawHtmlForBlock } from '../state/reducer'
-import { findActiveBlock, isAtomicInlineType } from './reducer'
+import { getRawHtmlForBlock } from '../state/page/reducer'
+import { findActiveBlock, isAtomicInlineType } from './page/reducer'
 import { useEditorContext } from '../EditorProvider'
 import FormatMenu from '../Menu/FormatMenu'
 import hotKeys, {

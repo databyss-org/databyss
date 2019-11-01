@@ -5,7 +5,7 @@ import { View, Button, Grid } from '@databyss-org/ui/primitives'
 import EditorProvider, {
   useEditorContext,
 } from '@databyss-org/ui/components/Editor/EditorProvider'
-import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/actions'
+import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/page/actions'
 import DraftContentEditable from '@databyss-org/ui/components/Editor/draft/ContentEditable'
 import draftReducer from '@databyss-org/ui/components/Editor/draft/reducer'
 import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'

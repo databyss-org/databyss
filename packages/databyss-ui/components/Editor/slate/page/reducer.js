@@ -1,5 +1,5 @@
 import { Block } from 'slate'
-import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
+import { serializeNodeToHtml, sanitizer } from './../inlineSerializer'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
@@ -12,7 +12,7 @@ import {
   START_TAG,
   DELETE_BLOCK,
   DELETE_BLOCKS,
-} from '../state/constants'
+} from './../../state/page/constants'
 // import { addTag } from '../state/actions'
 
 export const newBlock = id =>

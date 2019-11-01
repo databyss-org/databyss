@@ -4,8 +4,8 @@ import ObjectId from 'bson-objectid'
 import { RawHtml, View } from '@databyss-org/ui/primitives'
 import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
-import { isAtomicInlineType } from './reducer'
-import { getRawHtmlForBlock, entities } from '../state/reducer'
+import { isAtomicInlineType } from './page/reducer'
+import { getRawHtmlForBlock, entities } from '../state/page/reducer'
 import EditorBlock from '../EditorBlock'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())

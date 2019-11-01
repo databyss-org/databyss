@@ -1,7 +1,7 @@
 import { stateValue, slateValue } from './markupState'
 import { stateToSlate, slateToState } from './../../slate/markup'
-import reducer, { entities } from './../reducer'
-import { setActiveBlockId, setActiveBlockContent } from '../actions'
+import reducer, { entities } from './../page/reducer'
+import { setActiveBlockId, setActiveBlockContent } from '../page/actions'
 
 import initialState from './initialState'
 

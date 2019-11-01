@@ -12,10 +12,12 @@ import {
 import EditorProvider, {
   useEditorContext,
 } from '@databyss-org/ui/components/Editor/EditorProvider'
-import { getRawHtmlForBlock } from '@databyss-org/ui/components/Editor/state/reducer'
-import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/actions'
-import SlateContentEditable from '@databyss-org/ui/components/Editor/slate/ContentEditable'
-import slateReducer from '@databyss-org/ui/components/Editor/slate/reducer'
+import reducer, {
+  getRawHtmlForBlock,
+} from '@databyss-org/ui/components/Editor/state/page/reducer'
+import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/page/actions'
+import SlateContentEditable from '@databyss-org/ui/components/Editor/slate/page/ContentEditable'
+import slateReducer from '@databyss-org/ui/components/Editor/slate/page/reducer'
 import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
 import initialState from '@databyss-org/ui/components/Editor/state/__tests__/initialState'
 import { ViewportDecorator } from '../decorators'
@@ -106,7 +108,11 @@ const Box = ({ children, ...others }) => (
 )
 
 const ProviderDecorator = storyFn => (
-  <EditorProvider initialState={initialState} editableReducer={slateReducer}>
+  <EditorProvider
+    initialState={initialState}
+    editableReducer={slateReducer}
+    reducer={reducer}
+  >
     {storyFn()}
   </EditorProvider>
 )

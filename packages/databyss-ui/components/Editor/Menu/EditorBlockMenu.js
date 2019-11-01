@@ -7,7 +7,7 @@ import Close from '@databyss-org/ui/assets/close-menu.svg'
 import Add from '@databyss-org/ui/assets/add.svg'
 import EditorBlockMenuActions from './EditorBlockMenuActions'
 import { useEditorContext } from '../EditorProvider'
-import { startTag } from '../state/actions'
+import { startTag } from '../state/page/actions'
 
 const EditorBlockMenu = ({ node, hideCursor }) => {
   const [editorState, dispatchEditor] = useEditorContext()

@@ -13,7 +13,7 @@ import {
   clearBlock,
   deleteBlock,
   deleteBlocks,
-} from './state/actions'
+} from './state/page/actions'
 
 const EditorPage = ({ children }) => {
   const [editorState, dispatchEditor] = useEditorContext()
