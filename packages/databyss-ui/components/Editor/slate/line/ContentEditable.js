@@ -4,7 +4,7 @@ import { Editor } from 'slate-react'
 import { lineStateToSlate } from './../markup'
 
 import { useEditorContext } from '../../EditorProvider'
-import hotKeys, { START_OF_LINE, END_OF_LINE, TAB } from './../hotKeys'
+import hotKeys, { editorHotKeys } from './../hotKeys'
 
 import { renderMark, getBlockRanges, renderBlock } from './../slateUtils'
 
@@ -83,34 +83,11 @@ const SlateContentEditable = ({
       return event.preventDefault()
     }
 
-    if (hotKeys.isStartOfLine(event)) {
-      event.preventDefault()
-      onHotKey(START_OF_LINE, editor)
-    }
-
-    if (hotKeys.isEndOfLine(event)) {
-      event.preventDefault()
-      onHotKey(END_OF_LINE, editor)
-    }
-
-    if (hotKeys.isTab(event)) {
-      event.preventDefault()
-      onHotKey(TAB, editor)
-    }
-
-    if (hotKeys.isBold(event)) {
-      event.preventDefault()
-      OnToggleMark('bold', editor)
-    }
+    editorHotKeys(event, editor, onHotKey, OnToggleMark)
 
     if (hotKeys.isLocation(event)) {
       event.preventDefault()
       OnToggleMark('location', editor)
-    }
-
-    if (hotKeys.isItalic(event)) {
-      event.preventDefault()
-      OnToggleMark('italic', editor)
     }
 
     return next()

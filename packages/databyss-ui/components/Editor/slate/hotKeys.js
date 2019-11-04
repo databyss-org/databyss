@@ -58,6 +58,41 @@ KEYS.forEach(key => {
  */
 export default Hotkeys
 
+export const editorHotKeys = (event, editor, onHotKey, OnToggleMark) => {
+  if (Hotkeys.isStartOfLine(event)) {
+    event.preventDefault()
+    onHotKey(START_OF_LINE, editor)
+  }
+
+  if (Hotkeys.isEndOfLine(event)) {
+    event.preventDefault()
+    onHotKey(END_OF_LINE, editor)
+  }
+
+  if (Hotkeys.isTab(event)) {
+    event.preventDefault()
+    onHotKey(TAB, editor)
+  }
+
+  if (Hotkeys.isBold(event)) {
+    event.preventDefault()
+    OnToggleMark('bold', editor)
+  }
+
+  if (Hotkeys.isItalic(event)) {
+    event.preventDefault()
+    OnToggleMark('italic', editor)
+  }
+  if (Hotkeys.isStartOfDocument(event)) {
+    event.preventDefault()
+    onHotKey(START_OF_DOCUMENT, editor)
+  }
+  if (Hotkeys.isEndOfDocument(event)) {
+    event.preventDefault()
+    onHotKey(END_OF_DOCUMENT, editor)
+  }
+}
+
 export const START_OF_LINE = 'START_OF_LINE'
 export const END_OF_LINE = 'END_OF_LINE'
 export const START_OF_DOCUMENT = 'START_OF_DOCUMENT'

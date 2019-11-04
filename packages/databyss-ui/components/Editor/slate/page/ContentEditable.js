@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react'
-
 import { Value } from 'slate'
 import { Editor } from 'slate-react'
 import { getRawHtmlForBlock } from './../../state/page/reducer'
@@ -7,13 +6,9 @@ import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../../EditorProvider'
 import FormatMenu from '../../Menu/FormatMenu'
 import hotKeys, {
-  START_OF_LINE,
-  END_OF_LINE,
-  START_OF_DOCUMENT,
-  END_OF_DOCUMENT,
   NEXT_BLOCK,
   PREVIOUS_BLOCK,
-  TAB,
+  editorHotKeys,
 } from './../hotKeys'
 
 import {
@@ -286,24 +281,15 @@ const SlateContentEditable = ({
       }
     }
 
-    if (hotKeys.isStartOfLine(event)) {
-      event.preventDefault()
-      onHotKey(START_OF_LINE, editor)
-    }
+    // if (hotKeys.isStartOfLine(event)) {
+    //   event.preventDefault()
+    //   onHotKey(START_OF_LINE, editor)
+    // }
 
-    if (hotKeys.isEndOfLine(event)) {
-      event.preventDefault()
-      onHotKey(END_OF_LINE, editor)
-    }
-
-    if (hotKeys.isStartOfDocument(event)) {
-      event.preventDefault()
-      onHotKey(START_OF_DOCUMENT, editor)
-    }
-    if (hotKeys.isEndOfDocument(event)) {
-      event.preventDefault()
-      onHotKey(END_OF_DOCUMENT, editor)
-    }
+    // if (hotKeys.isEndOfLine(event)) {
+    //   event.preventDefault()
+    //   onHotKey(END_OF_LINE, editor)
+    // }
 
     if (hotKeys.isNextBlock(event)) {
       event.preventDefault()
@@ -330,6 +316,7 @@ const SlateContentEditable = ({
         return event.preventDefault()
       }
     }
+
     if (isAtomicInlineType(editor.value.anchorBlock.type)) {
       if (
         event.key === 'Backspace' ||
@@ -379,24 +366,11 @@ const SlateContentEditable = ({
       return event.preventDefault()
     }
 
-    if (hotKeys.isTab(event)) {
-      event.preventDefault()
-      onHotKey(TAB, editor)
-    }
-
-    if (hotKeys.isBold(event)) {
-      event.preventDefault()
-      OnToggleMark('bold', editor)
-    }
+    editorHotKeys(event, editor, onHotKey, OnToggleMark)
 
     if (hotKeys.isLocation(event)) {
       event.preventDefault()
       OnToggleMark('location', editor)
-    }
-
-    if (hotKeys.isItalic(event)) {
-      event.preventDefault()
-      OnToggleMark('italic', editor)
     }
 
     return next()
