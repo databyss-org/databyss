@@ -25,7 +25,7 @@ describe('atomic Blocks', () => {
         nextState,
         nextState.blocks[nextState.activeBlockId].type
       )[nextState.blocks[nextState.activeBlockId].refId]
-      expect(block.rawHtml).toEqual('topic')
+      expect(block.text).toEqual('topic')
       expect(block.ranges).toEqual([])
     })
   })

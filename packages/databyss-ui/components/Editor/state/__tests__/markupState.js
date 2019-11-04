@@ -58,7 +58,7 @@ export const slateValue = {
 export const stateValue = {
   '5d6442046e84d304ddceb768': {
     _id: '5d6442046e84d304ddceb768',
-    rawHtml: 'The quick brown fox jumps over the lazy dog.',
+    text: 'The quick brown fox jumps over the lazy dog.',
     ranges: [
       {
         offset: 10,

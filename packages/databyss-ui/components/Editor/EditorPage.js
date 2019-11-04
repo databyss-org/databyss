@@ -21,8 +21,8 @@ const EditorPage = ({ children }) => {
   const onActiveBlockIdChange = (id, editableState) =>
     dispatchEditor(setActiveBlockId(id, editableState))
 
-  const onActiveBlockContentChange = (rawHtml, editableState, blockValue) => {
-    dispatchEditor(setActiveBlockContent(rawHtml, editableState, blockValue))
+  const onActiveBlockContentChange = (text, editableState, blockValue) => {
+    dispatchEditor(setActiveBlockContent(text, editableState, blockValue))
   }
 
   const onEditableStateChange = editableState =>
@@ -39,21 +39,18 @@ const EditorPage = ({ children }) => {
     dispatchEditor(setBlockType(type, id, editableState))
   }
 
-  const onBlockBlur = (id, rawHtml, editableState) => {
+  const onBlockBlur = (id, text, editableState) => {
     // check if block is empty
     // if empty replace block with virgin block
-    if (rawHtml.length === 0 && id) {
+    if (text.length === 0 && id) {
       // check block to see if ranges exist
       dispatchEditor(clearBlock(id, editableState))
     }
 
-    if (
-      rawHtml.trim().match(/^@/) &&
-      editorState.blocks[id].type !== 'SOURCE'
-    ) {
+    if (text.trim().match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
       onSetBlockType('SOURCE', id, editableState)
     }
-    if (rawHtml.trim().match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
+    if (text.trim().match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
       onSetBlockType('TOPIC', id, editableState)
     }
   }

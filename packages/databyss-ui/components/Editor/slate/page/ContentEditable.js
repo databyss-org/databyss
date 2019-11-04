@@ -63,12 +63,12 @@ const SlateContentEditable = ({
     }
 
     if (_nextActiveBlock.key !== activeBlockId) {
-      let rawHtml = ''
+      let text = ''
       if (_nextEditableState.value.document.getNode(activeBlockId)) {
-        rawHtml = _nextEditableState.value.document.getNode(activeBlockId).text
+        text = _nextEditableState.value.document.getNode(activeBlockId).text
       }
 
-      onBlockBlur(activeBlockId, rawHtml, _nextEditableState)
+      onBlockBlur(activeBlockId, text, _nextEditableState)
       onActiveBlockIdChange(_nextActiveBlock.key, _nextEditableState)
       return true
     }

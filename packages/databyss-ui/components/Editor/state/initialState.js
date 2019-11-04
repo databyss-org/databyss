@@ -11,7 +11,7 @@ export default {
   entries: {
     [entryId]: {
       _id: entryId,
-      rawHtml: '',
+      text: '',
       ranges: [],
     },
   },

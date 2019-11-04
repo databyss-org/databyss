@@ -26,7 +26,7 @@ const EditableTest = () => {
     activeBlockId,
     pageBlocks: page.blocks.map(block => ({
       ...blocks[block._id],
-      rawHtml: getRawHtmlForBlock(editorState, blocks[block._id]),
+      text: getRawHtmlForBlock(editorState, blocks[block._id]),
     })),
   }
 
