@@ -5,7 +5,7 @@ import css from '@styled-system/css'
 import { isMobileOs } from '../../lib/mediaQuery'
 import MobileModal from './MobileModal'
 import { View } from '../'
-import { shadowVariant } from '../View/View'
+import { shadowVariant, widthVariant } from '../View/View'
 import styled from '../styled'
 import makeAnimations from './animations'
 import theme, { borderRadius } from '../../theming/theme'
@@ -15,11 +15,36 @@ const StyledReactModal = styled(
   compose(
     position,
     color,
-    shadowVariant
+    shadowVariant,
+    widthVariant
   )
 )
 
-const Modal = ({ children, visible, onDismiss, ...others }) => {
+const mobileCss = closing => ({
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  bottom: 0,
+  overflow: 'auto',
+  top: closing ? '100%' : 0,
+})
+const desktopCss = {
+  top: '50%',
+  left: '50%',
+  right: 'auto',
+  bottom: 'auto',
+  marginRight: '-50%',
+  transform: 'translate(-50%, -50%)',
+  backgroundColor: 'background.0',
+  width: `calc(100% - ${theme.space[5] * 2}px)`,
+  maxHeight: `calc(100% - ${theme.space[5] * 2}px)`,
+  overflow: 'hidden',
+  borderRadius,
+  display: 'flex',
+}
+const _mobile = isMobileOs()
+
+const Modal = ({ children, visible, onDismiss, widthVariant, ...others }) => {
   const animations = makeAnimations({
     slide: {
       '0%': {
@@ -31,39 +56,6 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
     },
   })
 
-  const sharedProps = {
-    position: 'absolute',
-    isOpen: visible,
-  }
-  const mobileCss = closing => ({
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    overflow: 'auto',
-    top: closing ? '100%' : 0,
-  })
-  const desktopCss = {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    backgroundColor: 'background.0',
-    width: `calc(100% - ${theme.space[5] * 2}px)`,
-    maxWidth: `850px`,
-    maxHeight: `calc(100% - ${theme.space[5] * 2}px)`,
-    overflow: 'hidden',
-    borderRadius,
-    display: 'flex',
-  }
-  const containerProps = {
-    flexGrow: 1,
-    flexShrink: 1,
-    overflow: 'auto',
-  }
-  const _mobile = isMobileOs()
   const _css = _mobile
     ? [
         mobileCss(animations.slide.outro.css),
@@ -88,11 +80,13 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
 
   return (
     <StyledReactModal
-      {...sharedProps}
+      position="absolute"
+      isOpen={visible}
       appElement={document.getElementById('root')}
       onAfterOpen={onOpen}
       onRequestClose={onClose}
       shadowVariant={_mobile ? 'none' : 'modal'}
+      widthVariant={_mobile ? 'none' : widthVariant}
       css={_css}
       style={{
         overlay: {
@@ -106,7 +100,7 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
           {children}
         </MobileModal>
       ) : (
-        <View {...containerProps} {...others}>
+        <View flexGrow={1} flexShrink={1} overflow="auto" {...others}>
           {children}
         </View>
       )}
@@ -116,6 +110,7 @@ const Modal = ({ children, visible, onDismiss, ...others }) => {
 
 Modal.defaultProps = {
   onDismiss: () => null,
+  widthVariant: 'modal',
 }
 
 export default Modal

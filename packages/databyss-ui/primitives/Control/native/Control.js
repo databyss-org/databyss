@@ -124,8 +124,8 @@ const Control = forwardRef(
 )
 
 Control.defaultProps = {
-  hoverColor: 'background.2',
-  activeColor: 'background.3',
+  hoverColor: 'background.1',
+  activeColor: 'background.2',
   borderRadius,
   userSelect: 'none',
 }

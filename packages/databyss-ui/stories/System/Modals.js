@@ -103,7 +103,9 @@ export const Editable = () => {
       <Modal
         visible={visible}
         onDismiss={() => setVisible(false)}
-        paddingVariant={isMobileOs() ? 'small' : 'large'}
+        paddingVariant={isMobileOs() ? 'none' : 'medium'}
+        paddingTop={isMobileOs() ? 'small' : 'medium'}
+        widthVariant="form"
         {...editableModals[modal]}
       >
         <TextControls />
