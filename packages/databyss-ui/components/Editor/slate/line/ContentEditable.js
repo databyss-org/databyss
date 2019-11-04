@@ -2,17 +2,24 @@ import React, { useRef, useEffect } from 'react'
 import { Value } from 'slate'
 import { Editor } from 'slate-react'
 import { getRawHtmlForBlock } from '../../state/line/reducer'
+import { getRangesFromBlock } from './../markup'
+
 import { useEditorContext } from '../../EditorProvider'
 import hotKeys, { START_OF_LINE, END_OF_LINE, TAB } from './../hotKeys'
 
-import { toSlateJson, renderMark, getBlockRanges } from './../slateUtils'
+import {
+  toSlateJson,
+  renderMark,
+  getBlockRanges,
+  renderBlock,
+} from './../slateUtils'
 
 const emptyValue = {
   document: {
     nodes: [
       {
         object: 'block',
-        type: 'paragraph',
+        type: 'TEXT',
         nodes: [
           {
             object: 'text',
@@ -25,7 +32,7 @@ const emptyValue = {
 }
 
 const SlateContentEditable = ({
-  onActiveBlockContentChange,
+  onContentChange,
   onEditableStateChange,
   onDocumentChange,
   OnToggleMark,
@@ -43,23 +50,15 @@ const SlateContentEditable = ({
     if (!_nextEditableState.value.anchorBlock) {
       return false
     }
-    if (
-      !editorState.activeBlockId ||
-      !activeBlockId ||
-      !blocks[activeBlockId]
-    ) {
-      return false
+    if (!textValue) {
+      const _text = _nextEditableState.value.anchorBlock.text
+      return { _text }
     }
 
-    const _prevText = getRawHtmlForBlock(editorState, blocks[activeBlockId])
-    const _nextText = _nextEditableState.value.document.getNode(activeBlockId)
-      .text
-
-    if (_nextText !== _prevText) {
-      const block = _nextEditableState.value.anchorBlock
-      const ranges = getBlockRanges(block)
-      onActiveBlockContentChange(_nextText, _nextEditableState, ranges)
-      return { _nextText, _nextEditableState, ranges }
+    const _text = _nextEditableState.value.anchorBlock.text
+    if (textValue !== _text) {
+      const _ranges = getBlockRanges(_nextEditableState.value.anchorBlock)
+      return { _text, _ranges }
     }
     return false
   }
@@ -67,21 +66,22 @@ const SlateContentEditable = ({
   const onChange = change => {
     const { value } = change
     if (onDocumentChange) {
-      console.log('heres')
       onDocumentChange(value.document.toJSON())
     }
 
     const blockChanges = checkActiveBlockContentChanged({ value })
-    if (!blockChanges) {
-      console.log('two')
+    if (blockChanges) {
+      const { _text, _ranges } = blockChanges
+      onContentChange(_text, _ranges, { value })
+    } else {
       onEditableStateChange({ value })
     }
   }
 
-  const _editableState = editableState || Value.fromJSON(emptyValue)
-  // editableState || Value.fromJSON(toSlateJson(editorState, initialTextValue))
+  const _editableState = editableState
+    ? editableState
+    : { value: Value.fromJSON(emptyValue) }
 
-  console.log(_editableState)
   useEffect(
     () =>
       _editableState.editorCommands &&
@@ -138,6 +138,7 @@ const SlateContentEditable = ({
       onChange={onChange}
       onKeyDown={onKeyDown}
       renderMark={renderMark}
+      renderBlock={renderBlock}
     />
   )
 }

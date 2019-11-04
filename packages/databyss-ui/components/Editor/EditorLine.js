@@ -18,8 +18,8 @@ const EditorLine = ({ children, initialValue, onChange, value }) => {
   //   [state]
   // )
 
-  const onContentChange = (textValue, editableState, ranges) => {
-    dispatch(setContent(textValue, editableState, ranges))
+  const onContentChange = (textValue, ranges, editableState) => {
+    dispatch(setContent(textValue, ranges, editableState))
   }
 
   const onEditableStateChange = editableState =>

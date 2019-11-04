@@ -43,6 +43,7 @@ const textSelector = ({ children, type }) => {
       },
       TAG: { variant: 'BodySmall', color: 'grey' },
       ENTRY: { variant: 'bodyNormal', color: 'text.0' },
+      TEXT: { variant: 'bodyNormal', color: 'text.0' },
     }[type])
   return TextBlock({ children, ...textStyle(type) })
 }
@@ -64,21 +65,23 @@ const EditorBlock = ({ children, node }) => {
   )
   return !isMobileOs() ? (
     <Grid singleRow mb="tiny" flexWrap="nowrap" columnGap="small">
-      <View
-        contentEditable="false"
-        suppressContentEditableWarning
-        css={{ userSelect: 'none' }}
-        width={editorMarginMenuItemHeight}
-        height={editorMarginMenuItemHeight}
-        overflow="visible"
-      >
-        {node.text.length < 1 && (
-          <EditorBlockMenu
-            hideCursor={bool => setMenuActive(bool)}
-            node={node}
-          />
-        )}
-      </View>
+      {node.type !== 'TEXT' && (
+        <View
+          contentEditable="false"
+          suppressContentEditableWarning
+          css={{ userSelect: 'none' }}
+          width={editorMarginMenuItemHeight}
+          height={editorMarginMenuItemHeight}
+          overflow="visible"
+        >
+          {node.text.length < 1 && (
+            <EditorBlockMenu
+              hideCursor={bool => setMenuActive(bool)}
+              node={node}
+            />
+          )}
+        </View>
+      )}
       {_children}
     </Grid>
   ) : (

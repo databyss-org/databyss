@@ -1,34 +1,15 @@
 import {
-  SET_ACTIVE_BLOCK_ID,
-  SET_ACTIVE_BLOCK_CONTENT,
   SET_EDITABLE_STATE,
-  SET_ACTIVE_BLOCK_TYPE,
-  INSERT_NEW_ACTIVE_BLOCK,
-  SET_BLOCK_TYPE,
-  BACKSPACE,
+  SET_CONTENT,
   TOGGLE_MARK,
   HOTKEY,
-  CLEAR_BLOCK,
-  START_TAG,
-  DELETE_BLOCK,
-  DELETE_BLOCKS,
 } from './constants'
 
-export function setActiveBlockId(id, editableState) {
+export function setContent(textValue, ranges, editableState) {
   return {
-    type: SET_ACTIVE_BLOCK_ID,
+    type: SET_CONTENT,
     payload: {
-      id,
-      editableState,
-    },
-  }
-}
-
-export function setActiveBlockContent(html, editableState, ranges) {
-  return {
-    type: SET_ACTIVE_BLOCK_CONTENT,
-    payload: {
-      html,
+      textValue,
       editableState,
       ranges,
     },
@@ -40,47 +21,6 @@ export function setEditableState(editableState) {
     type: SET_EDITABLE_STATE,
     payload: {
       editableState,
-    },
-  }
-}
-
-export function setActiveBlockType(type, editableState) {
-  return {
-    type: SET_ACTIVE_BLOCK_TYPE,
-    payload: {
-      type,
-      editableState,
-    },
-  }
-}
-
-export function setBlockType(type, id, editableState) {
-  return {
-    type: SET_BLOCK_TYPE,
-    payload: {
-      type,
-      editableState,
-      id,
-    },
-  }
-}
-
-export function newActiveBlock(blockProperties, editableState) {
-  return {
-    type: INSERT_NEW_ACTIVE_BLOCK,
-    payload: {
-      editableState,
-      blockProperties,
-    },
-  }
-}
-
-export function backspace(blockProperties, editableState) {
-  return {
-    type: BACKSPACE,
-    payload: {
-      editableState,
-      blockProperties,
     },
   }
 }
@@ -101,46 +41,6 @@ export function hotKey(command, editableState) {
     payload: {
       editableState,
       command,
-    },
-  }
-}
-
-export function clearBlock(id, editableState) {
-  return {
-    type: CLEAR_BLOCK,
-    payload: {
-      editableState,
-      id,
-    },
-  }
-}
-
-export function startTag(tag, editableState) {
-  return {
-    type: START_TAG,
-    payload: {
-      tag,
-      editableState,
-    },
-  }
-}
-
-export function deleteBlock(id, editableState) {
-  return {
-    type: DELETE_BLOCK,
-    payload: {
-      editableState,
-      id,
-    },
-  }
-}
-
-export function deleteBlocks(idList, editableState) {
-  return {
-    type: DELETE_BLOCKS,
-    payload: {
-      editableState,
-      idList,
     },
   }
 }
