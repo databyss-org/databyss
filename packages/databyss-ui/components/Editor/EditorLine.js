@@ -8,13 +8,14 @@ import {
   hotKey,
 } from './state/line/actions'
 
-const EditorLine = ({ children, onChange, value }) => {
+const EditorLine = ({ children, onStateChange, value }) => {
   const [state, dispatch] = useEditorContext()
+  const { textValue, ranges } = state
 
   useEffect(
     () => {
-      if (onChange) {
-        onChange(state)
+      if (onStateChange) {
+        onStateChange({ textValue, ranges })
       }
     },
     [state]

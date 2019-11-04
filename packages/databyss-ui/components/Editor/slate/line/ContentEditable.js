@@ -20,6 +20,7 @@ const SlateContentEditable = ({
   onDocumentChange,
   OnToggleMark,
   onHotKey,
+  css,
 }) => {
   const [editorState] = useEditorContext()
 
@@ -123,6 +124,7 @@ const SlateContentEditable = ({
       onKeyDown={onKeyDown}
       renderMark={renderMark}
       renderBlock={renderBlock}
+      css={css}
     />
   )
 }
