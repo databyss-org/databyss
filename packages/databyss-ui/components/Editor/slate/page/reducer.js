@@ -172,12 +172,12 @@ const backspace = () => (editor, value, next) => {
   next(editor, value)
 }
 
-const toggleMark = mark => (editor, value, next) => {
+export const toggleMark = mark => (editor, value, next) => {
   editor.toggleMark(mark)
   next(editor, value)
 }
 
-const onHotKey = command => (editor, value, next) => {
+export const onHotKey = command => (editor, value, next) => {
   const _node = findActiveBlock(editor.value)
   ;({
     START_OF_LINE: () => editor.moveToStartOfNode(_node),

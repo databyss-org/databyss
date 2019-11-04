@@ -43,11 +43,7 @@ export const slateToState = (slate, _id) => {
   return { [slate.key]: response }
 }
 
-export const stateToSlate = (state, id) => {
-  const _id = Object.keys(state)[0]
-  const _state = cloneDeep(state)
-  const _stateObject = _state[_id]
-  // creates empty value
+export const stateToSlateMarkup = state => {
   const _value = Value.fromJSON({
     document: {
       nodes: [
@@ -67,12 +63,10 @@ export const stateToSlate = (state, id) => {
 
   const _editor = new Editor({ value: _value })
   // insert text in mock editor
-  _editor
-    .insertText(_stateObject.rawHtml)
-    .moveBackward(_stateObject.rawHtml.length)
+  _editor.insertText(state.rawHtml).moveBackward(state.rawHtml.length)
   // select correct range and apply marks
-  if (_stateObject.ranges) {
-    _stateObject.ranges.forEach(n => {
+  if (state.ranges) {
+    state.ranges.forEach(n => {
       _editor.moveForward(n.offset).moveFocusForward(n.length)
       n.marks.forEach(m => {
         _editor.addMark(m)
@@ -84,5 +78,22 @@ export const stateToSlate = (state, id) => {
 
   // translate to json
   const document = _editor.value.toJSON().document
+  return document
+}
+
+export const stateToSlate = (state, id) => {
+  const _id = Object.keys(state)[0]
+  const _state = cloneDeep(state)
+  const _stateObject = _state[_id]
+
+  const document = stateToSlateMarkup(_stateObject)
+
   return { ...document.nodes[0], key: id }
+}
+
+export const lineStateToSlate = state => {
+  const _state = { rawHtml: state.textValue, ranges: state.ranges }
+  // TODO: fix this to text value
+  const document = stateToSlateMarkup(_state)
+  return { ...document.nodes[0], type: 'TEXT' }
 }

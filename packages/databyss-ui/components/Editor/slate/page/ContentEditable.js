@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, forwardRef } from 'react'
+import React, { useRef, useEffect } from 'react'
 
 import { Value } from 'slate'
 import { Editor } from 'slate-react'

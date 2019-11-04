@@ -4,16 +4,14 @@ import { View, Grid } from '@databyss-org/ui/primitives'
 import EditorProvider, {
   useEditorContext,
 } from '@databyss-org/ui/components/Editor/EditorProvider'
-import reducer from '@databyss-org/ui/components/Editor/state/line/reducer'
-import { getRawHtmlForBlock } from '@databyss-org/ui/components/Editor/state/page/reducer'
+import reducer, {
+  initialState,
+} from '@databyss-org/ui/components/Editor/state/line/reducer'
 import SlateContentEditable from '@databyss-org/ui/components/Editor/slate/line/ContentEditable'
 import slateReducer from '@databyss-org/ui/components/Editor/slate/line/reducer'
 import EditorLine from '@databyss-org/ui/components/Editor/EditorLine'
-import { initialState } from '@databyss-org/ui/components/Editor/state/line/reducer'
 import { ViewportDecorator } from '../decorators'
 import colors from '../../theming/colors'
-
-console.log(initialState)
 
 const Box = ({ children, ...others }) => (
   <View borderVariant="thinDark" paddingVariant="none" width="100%" {...others}>
@@ -34,15 +32,12 @@ const ProviderDecorator = storyFn => (
 const SlateEditorDemo = () => {
   const [slateDocument, setSlateDocument] = useState({})
   const [editorState] = useEditorContext()
-  const { activeBlockId, page, blocks } = editorState
+  const { textValue, ranges } = editorState
 
-  // const editorDocument = {
-  //   activeBlockId,
-  //   pageBlocks: page.blocks.map(block => ({
-  //     ...blocks[block._id],
-  //     rawHtml: getRawHtmlForBlock(editorState, blocks[block._id]),
-  //   })),
-  // }
+  const editorDocument = {
+    textValue,
+    ranges,
+  }
 
   return (
     <Grid>
@@ -54,9 +49,9 @@ const SlateEditorDemo = () => {
       <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
         <pre>{JSON.stringify(slateDocument, null, 2)}</pre>
       </Box>
-      {/* <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
+      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
         <pre>{JSON.stringify(editorDocument, null, 2)}</pre>
-      </Box> */}
+      </Box>
     </Grid>
   )
 }

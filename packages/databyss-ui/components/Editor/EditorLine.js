@@ -8,15 +8,17 @@ import {
   hotKey,
 } from './state/line/actions'
 
-const EditorLine = ({ children, initialValue, onChange, value }) => {
+const EditorLine = ({ children, onChange, value }) => {
   const [state, dispatch] = useEditorContext()
 
-  // useEffect(
-  //   () => {
-  //     onChange(state)
-  //   },
-  //   [state]
-  // )
+  useEffect(
+    () => {
+      if (onChange) {
+        onChange(state)
+      }
+    },
+    [state]
+  )
 
   const onContentChange = (textValue, ranges, editableState) => {
     dispatch(setContent(textValue, ranges, editableState))

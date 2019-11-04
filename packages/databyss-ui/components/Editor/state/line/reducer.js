@@ -1,8 +1,8 @@
 import { SET_CONTENT } from './constants'
 
 export const initialState = {
-  textValue: null,
-  ranges: null,
+  textValue: '',
+  ranges: [],
   editableState: null,
 }
 
@@ -19,7 +19,6 @@ export default (state, action) => {
       const _nextState = setContent(action.payload, state)
       return _nextState
     }
-
     default:
       return state
   }

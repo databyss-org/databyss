@@ -1,35 +1,18 @@
 import React, { useRef, useEffect } from 'react'
 import { Value } from 'slate'
 import { Editor } from 'slate-react'
-import { getRawHtmlForBlock } from '../../state/line/reducer'
-import { getRangesFromBlock } from './../markup'
+import { lineStateToSlate } from './../markup'
 
 import { useEditorContext } from '../../EditorProvider'
 import hotKeys, { START_OF_LINE, END_OF_LINE, TAB } from './../hotKeys'
 
-import {
-  toSlateJson,
-  renderMark,
-  getBlockRanges,
-  renderBlock,
-} from './../slateUtils'
+import { renderMark, getBlockRanges, renderBlock } from './../slateUtils'
 
-const emptyValue = {
+const initalValue = node => ({
   document: {
-    nodes: [
-      {
-        object: 'block',
-        type: 'TEXT',
-        nodes: [
-          {
-            object: 'text',
-            text: '',
-          },
-        ],
-      },
-    ],
+    nodes: [node],
   },
-}
+})
 
 const SlateContentEditable = ({
   onContentChange,
@@ -40,7 +23,7 @@ const SlateContentEditable = ({
 }) => {
   const [editorState] = useEditorContext()
 
-  const { editableState, textValue, ranges } = editorState
+  const { editableState, textValue } = editorState
 
   const editableRef = useRef(null)
 
@@ -60,6 +43,8 @@ const SlateContentEditable = ({
       const _ranges = getBlockRanges(_nextEditableState.value.anchorBlock)
       return { _text, _ranges }
     }
+    // TODO
+    // if markup is applied to selection. update state range
     return false
   }
 
@@ -68,7 +53,6 @@ const SlateContentEditable = ({
     if (onDocumentChange) {
       onDocumentChange(value.document.toJSON())
     }
-
     const blockChanges = checkActiveBlockContentChanged({ value })
     if (blockChanges) {
       const { _text, _ranges } = blockChanges
@@ -78,9 +62,9 @@ const SlateContentEditable = ({
     }
   }
 
-  const _editableState = editableState
-    ? editableState
-    : { value: Value.fromJSON(emptyValue) }
+  const _editableState = editableState || {
+    value: Value.fromJSON(initalValue(lineStateToSlate(editorState))),
+  }
 
   useEffect(
     () =>
