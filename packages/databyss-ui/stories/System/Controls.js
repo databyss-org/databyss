@@ -10,12 +10,7 @@ import {
   List,
 } from '@databyss-org/ui/primitives'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
-import { loremIpsum } from 'lorem-ipsum'
-import Alea from 'alea'
 import { Section } from './'
-
-const alea = new Alea('views')
-const ipsum = loremIpsum({ units: 'sentences', count: 1, random: alea })
 
 const Checkbox = ({ checked }) => (
   <View
@@ -28,50 +23,44 @@ const Checkbox = ({ checked }) => (
 )
 
 export const TextControls = () => {
-  const [textValue, setTextValue] = useState({ textValue: 'Jacques Derrida' })
-  const [textValue2, setTextValue2] = useState({ textValue: 'Of Grammatology' })
-  const [textValue3, setTextValue3] = useState({
-    textValue: 'Johns Hopkins University Press',
+  const [textValue, setTextValue] = useState({ textValue: 'Stamenov' })
+  const [textValue2, setTextValue2] = useState({ textValue: 'Maxim' })
+  // const [textValue3, setTextValue3] = useState({
+  //   textValue: 'Johns Hopkins University Press',
+  // })
+  const [textValue4, setTextValue4] = useState({
+    textValue:
+      'Stamenov, Maxim I., editor. Language Structure, Discourse and the Access to Consciousness. Vol. 12, John Benjamins Publishing Company, 1997. Crossref, doi:10.1075/aicr.12.',
   })
-  const [textValue4, setTextValue4] = useState({ textValue: ipsum })
   return (
     <List>
       <TextControl
         labelProps={{
-          width: 80,
-        }}
-        label="Author"
-        value={textValue}
-        onChange={value => setTextValue(value)}
-        gridFlexWrap="nowrap"
-      />
-      <TextControl
-        labelProps={{
-          width: 80,
-        }}
-        label="Title"
-        value={textValue2}
-        onChange={value => setTextValue2(value)}
-        gridFlexWrap="nowrap"
-      />
-      <TextControl
-        labelProps={{
-          width: 80,
-        }}
-        label="Publisher"
-        value={textValue3}
-        onChange={value => setTextValue3(value)}
-        gridFlexWrap="nowrap"
-      />
-      <TextControl
-        labelProps={{
-          width: 80,
+          width: '25%',
         }}
         label="Abstract"
         value={textValue4}
         onChange={value => setTextValue4(value)}
         gridFlexWrap="nowrap"
         multiline
+      />
+      <TextControl
+        labelProps={{
+          width: '25%',
+        }}
+        label="Author (First Name)"
+        value={textValue}
+        onChange={value => setTextValue(value)}
+        gridFlexWrap="nowrap"
+      />
+      <TextControl
+        labelProps={{
+          width: '25%',
+        }}
+        label="Author (Last Name)"
+        value={textValue2}
+        onChange={value => setTextValue2(value)}
+        gridFlexWrap="nowrap"
       />
     </List>
   )
@@ -84,7 +73,7 @@ export default () => {
   return (
     <React.Fragment>
       <Section title="Base Control">
-        <View backgroundColor="background.1">
+        <View borderVariant="thinLight" widthVariant="content">
           <List>
             <BaseControl onPress={() => console.log('pressed')}>
               <Text variant="uiTextSmall">Base control</Text>
@@ -105,12 +94,12 @@ export default () => {
         </View>
       </Section>
       <Section title="Text Control">
-        <View backgroundColor="background.1">
+        <View borderVariant="thinLight" widthVariant="content">
           <TextControls />
         </View>
       </Section>
       <Section title="Toggle Control">
-        <View backgroundColor="background.1">
+        <View borderVariant="thinLight" widthVariant="content">
           <List>
             <ToggleControl label="toggle" value={checked} onChange={setChecked}>
               <Checkbox checked={checked} />
@@ -127,7 +116,7 @@ export default () => {
         </View>
       </Section>
       <Section title="Switch Control">
-        <View backgroundColor="background.1">
+        <View borderVariant="thinLight" widthVariant="content">
           <List>
             <SwitchControl
               label="switch"
@@ -149,14 +138,6 @@ export default () => {
             />
           </List>
         </View>
-      </Section>
-      <Section title="Filler Text">
-        <Text>
-          {ipsum}
-          {ipsum}
-          {ipsum}
-          {ipsum}
-        </Text>
       </Section>
     </React.Fragment>
   )

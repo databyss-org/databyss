@@ -26,7 +26,7 @@ const shortIpsums = new Array(5).fill().map(ipsum)
 
 export default () => (
   <Section title="Long List">
-    <ScrollView height={250} borderVariant="thinLight">
+    <ScrollView height={250} borderVariant="thinLight" widthVariant="content">
       <List>
         {longIpsums.map((item, index) => (
           <BaseControl key={index}>
@@ -40,7 +40,7 @@ export default () => (
 
 export const ItemSeparators = () => (
   <Section title="List with Separators &amp; Spacing">
-    <View borderVariant="thinLight">
+    <View borderVariant="thinLight" widthVariant="content">
       <List verticalItemPadding="small">
         {shortIpsums.reduce((acc, item, index) => {
           if (index > 0) {
@@ -79,7 +79,12 @@ export const ComplexItems = () => {
   ]
   return (
     <Section title="List with Complex Items">
-      <View borderVariant="thinLight" theme={darkTheme} bg="background.0">
+      <View
+        borderVariant="thinLight"
+        widthVariant="content"
+        theme={darkTheme}
+        bg="background.0"
+      >
         <List
           verticalItemPadding={2}
           horizontalItemPadding={2}
@@ -133,7 +138,7 @@ export const Sections = () => {
   ]
   return (
     <Section title="List with Sections">
-      <View borderVariant="thinLight">
+      <View borderVariant="thinLight" widthVariant="content">
         <List>
           {menuSections.map((section, sectionIndex) => [
             <View

@@ -33,7 +33,7 @@ _c = {
 _c = {
   ..._c,
   // [darkest...lightest]
-  text: [_c.black, ..._c.gray],
+  text: [_c.black, ..._c.gray.slice(2)],
   // [lightest...darkest]
   background: [_c.white, ..._c.gray.slice().reverse()],
   // control colors [enabled, hover, active, label]

@@ -43,6 +43,15 @@ export const shadowVariant = variant({
   },
 })
 
+export const widthVariant = variant({
+  prop: 'widthVariant',
+  scale: 'widthVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
+})
+
 export const styleProps = compose(
   space,
   layout,
@@ -53,7 +62,8 @@ export const styleProps = compose(
   shadow,
   paddingVariant,
   borderVariant,
-  shadowVariant
+  shadowVariant,
+  widthVariant
 )
 
 export const defaultProps = {

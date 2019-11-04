@@ -38,6 +38,7 @@ const TextInput = forwardRef(
 
 TextInput.defaultProps = {
   color: 'text.0',
+  variant: 'bodyNormal',
 }
 
 export default TextInput
