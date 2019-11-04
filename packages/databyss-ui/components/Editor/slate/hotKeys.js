@@ -3,6 +3,13 @@ import { IS_IOS, IS_MAC } from 'slate-dev-environment'
 import { IS_LINUX } from '@databyss-org/ui/lib/dom'
 
 export const metaKey = IS_LINUX ? 'alt' : 'mod'
+export const START_OF_LINE = 'START_OF_LINE'
+export const END_OF_LINE = 'END_OF_LINE'
+export const START_OF_DOCUMENT = 'START_OF_DOCUMENT'
+export const END_OF_DOCUMENT = 'END_OF_DOCUMENT'
+export const NEXT_BLOCK = 'NEXT_BLOCK'
+export const PREVIOUS_BLOCK = 'PREVIOUS_BLOCK'
+export const TAB = 'TAB'
 /**
  * Hotkey mappings for each platform.
  *
@@ -92,11 +99,3 @@ export const editorHotKeys = (event, editor, onHotKey, OnToggleMark) => {
     onHotKey(END_OF_DOCUMENT, editor)
   }
 }
-
-export const START_OF_LINE = 'START_OF_LINE'
-export const END_OF_LINE = 'END_OF_LINE'
-export const START_OF_DOCUMENT = 'START_OF_DOCUMENT'
-export const END_OF_DOCUMENT = 'END_OF_DOCUMENT'
-export const NEXT_BLOCK = 'NEXT_BLOCK'
-export const PREVIOUS_BLOCK = 'PREVIOUS_BLOCK'
-export const TAB = 'TAB'
