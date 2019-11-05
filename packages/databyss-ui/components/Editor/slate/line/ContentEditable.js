@@ -96,6 +96,7 @@ const SlateContentEditable = ({
   return (
     <Editor
       value={_editableState.value}
+      autoFocus={true}
       ref={editableRef}
       onChange={onChange}
       onKeyDown={onKeyDown}

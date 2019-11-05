@@ -12,7 +12,7 @@ const Box = ({ children, ...others }) => (
 
 const SlateEditorDemo = () => {
   const [state, setState] = useState({
-    textValue: 'initial value from story',
+    textValue: '',
     ranges: [],
     editableState: null,
   })
@@ -21,7 +21,7 @@ const SlateEditorDemo = () => {
 
   return (
     <Grid>
-      <Box id="slateDocument" overflow="scroll" maxWidth="500px" flexShrink={1}>
+      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
         <RichLineInput
           variant="uiTextNormal"
           onDocumentChange={setDocument}
@@ -32,7 +32,7 @@ const SlateEditorDemo = () => {
       <Box id="slateDocument" overflow="scroll" maxWidth="500px" flexShrink={1}>
         <pre>{JSON.stringify(document, null, 2)}</pre>
       </Box>
-      <Box id="slateDocument" overflow="scroll" maxWidth="500px" flexShrink={1}>
+      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
         <pre>{JSON.stringify(state, null, 2)}</pre>
       </Box>
     </Grid>
