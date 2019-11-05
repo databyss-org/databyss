@@ -165,7 +165,6 @@ const SlateContentEditable = ({
       toSlateJson(editorState, page.blocks.map(item => blocks[item._id]))
     ),
   }
-
   useEffect(
     () =>
       _editableState.editorCommands &&
@@ -210,8 +209,12 @@ const SlateContentEditable = ({
       const blockProperties = {
         insertedBlockId: editor.value.anchorBlock.key,
         insertedBlockText: editor.value.anchorBlock.text,
-        previousBlockId: editor.value.previousBlock.key,
-        previousBlockText: editor.value.previousBlock.text,
+        previousBlockId: editor.value.previousBlock
+          ? editor.value.previousBlock.key
+          : null,
+        previousBlockText: editor.value.previousBlock
+          ? editor.value.previousBlock.text
+          : null,
       }
       const _editorState = { value: editor.value }
       onNewActiveBlock(blockProperties, _editorState)

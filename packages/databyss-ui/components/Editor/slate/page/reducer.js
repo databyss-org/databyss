@@ -79,11 +79,20 @@ const handleNewBlockConditions = (activeBlock, editor) => {
   ) {
     return false
   }
+
   return true
 }
 
 const setActiveBlockType = type => (editor, value, next) => {
   const _activeBlock = findActiveBlock(value)
+
+  // if empty block replace all marks/types
+  // https://www.notion.so/databyss/Demo-error-7-If-you-click-location-and-press-return-it-doesn-t-move-the-cursor-but-it-makes-everyth-9eaa6b3f02c04358b42f00159863a355
+  if (_activeBlock.text.length === 0) {
+    editor.replaceNodeByKey(_activeBlock.key, newBlock(_activeBlock.key))
+    editor.moveForward(1)
+    next(editor, value)
+  }
 
   if (editor.value.activeMarks.size > 0) {
     if (value.marks._map._root) {
@@ -196,8 +205,14 @@ const startTag = tag => (editor, value, next) => {
   ;({
     SOURCE: () => editor.insertText('@'),
     TOPIC: () => editor.insertText('#'),
-    LOCATION: () => editor.toggleMark('location'),
+    // issue with https://www.notion.so/databyss/Demo-error-7-If-you-click-location-and-press-return-it-doesn-t-move-the-cursor-but-it-makes-everyth-9eaa6b3f02c04358b42f00159863a355
+    LOCATION: () =>
+      editor
+        .toggleMark('location')
+        .insertText(' ')
+        .deleteBackward(1),
   }[tag]())
+
   next(editor, value)
 }
 

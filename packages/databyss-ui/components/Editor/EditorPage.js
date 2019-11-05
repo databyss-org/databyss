@@ -40,18 +40,26 @@ const EditorPage = ({ children }) => {
   }
 
   const onBlockBlur = (id, text, editableState) => {
-    // check if block is empty
     // if empty replace block with virgin block
     if (text.length === 0 && id) {
-      // check block to see if ranges exist
+      // TODO: if block is already empty dont dispatch this
       dispatchEditor(clearBlock(id, editableState))
     }
 
     if (text.trim().match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
-      onSetBlockType('SOURCE', id, editableState)
+      // if only @ or # was entered
+      if (text.trim().length === 1) {
+        dispatchEditor(clearBlock(id, editableState))
+      } else {
+        onSetBlockType('SOURCE', id, editableState)
+      }
     }
     if (text.trim().match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
-      onSetBlockType('TOPIC', id, editableState)
+      if (text.trim().length === 1) {
+        dispatchEditor(clearBlock(id, editableState))
+      } else {
+        onSetBlockType('TOPIC', id, editableState)
+      }
     }
   }
 
