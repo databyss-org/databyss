@@ -28,7 +28,7 @@ const modalViewCss = (active, labelWidth) =>
     ? {
         position: 'absolute',
         zIndex: 2,
-        top: '-5px',
+        transform: 'translate(0, -1px)',
         left: labelWidth ? `calc(${labelWidth} - 8px)` : '-5px',
         right: labelWidth ? '5px' : '-5px',
         padding: 'none',
@@ -36,10 +36,12 @@ const modalViewCss = (active, labelWidth) =>
         marginRight: 0,
         borderRadius,
       }
-    : {}
+    : {
+        position: 'absolute',
+      }
 
 const activeInputCss = modal => ({
-  bg: modal ? 'inputModalBackground' : 'background.0',
+  bg: 'activeTextInputBackground',
   pointerEvents: 'all',
   cursor: 'text',
   opacity: 1,

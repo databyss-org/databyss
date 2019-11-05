@@ -24,6 +24,7 @@ const TextControl = ({
   rich,
   modal,
   multiline,
+  css,
   ...others
 }) => {
   const [active, setActive] = useState(false)
@@ -89,6 +90,13 @@ const TextControl = ({
           inputRef.current.focus()
         }
       }}
+      css={[
+        {
+          borderWidth: 0,
+          position: active ? 'relative' : 'static',
+        },
+        css,
+      ]}
       {...(IS_NATIVE ? nativeProps : webProps)}
       {...others}
     >
@@ -98,8 +106,6 @@ const TextControl = ({
           alignItems="baseline"
           flexWrap={gridFlexWrap}
           columnGap="small"
-          marginLeft={isMobileOs() ? 'small' : 'none'}
-          marginRight={isMobileOs() ? 'small' : 'none'}
         >
           <View {...labelProps} css={{ userSelect: 'none' }}>
             <Text

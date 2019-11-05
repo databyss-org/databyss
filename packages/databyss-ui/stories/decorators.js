@@ -32,6 +32,8 @@ export const ViewportWrapper = ({ children, ...others }) => {
     <Viewport
       theme={isDark ? darkTheme : defaultTheme}
       paddingVariant="medium"
+      backgroundColor="pageBackground"
+      minHeight="100vh"
       {...others}
     >
       {children}

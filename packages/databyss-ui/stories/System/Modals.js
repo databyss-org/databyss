@@ -8,7 +8,7 @@ import { Section, TextControls } from './'
 import { isMobileOs } from '../../lib/mediaQuery'
 
 const alea = new Alea('modals')
-const ipsum = loremIpsum({ units: 'paragraphs', count: 1, random: alea })
+const ipsum = loremIpsum({ units: 'paragraphs', count: 2, random: alea })
 
 const modals = {
   default: {
@@ -65,7 +65,6 @@ export default () => {
       <Modal
         visible={visible}
         onDismiss={() => setVisible(false)}
-        paddingVariant="medium"
         {...modals[modal]}
       >
         <Text>
@@ -103,16 +102,21 @@ export const Editable = () => {
       <Modal
         visible={visible}
         onDismiss={() => setVisible(false)}
-        paddingVariant={isMobileOs() ? 'none' : 'medium'}
-        paddingTop={isMobileOs() ? 'small' : 'medium'}
         widthVariant="form"
+        padding={isMobileOs() ? 'none' : 'small'}
         {...editableModals[modal]}
       >
-        <TextControls />
-        <TextControls />
-        <TextControls />
-        <TextControls />
-        <TextControls />
+        {Array(5)
+          .fill()
+          .map((_, idx) => (
+            <TextControls
+              key={idx}
+              listProps={{
+                horizontalItemPadding: isMobileOs() ? 'none' : 'small',
+              }}
+              labelProps={{ paddingLeft: isMobileOs() ? '2' : 'tiny' }}
+            />
+          ))}
       </Modal>
     </Section>
   )
