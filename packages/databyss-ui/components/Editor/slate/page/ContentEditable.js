@@ -321,6 +321,10 @@ const SlateContentEditable = ({
     }
 
     if (isAtomicInlineType(editor.value.anchorBlock.type)) {
+      // does not allow paste on atomic blocks
+      if (hotKeys.isPaste(event)) {
+        return event.preventDefault()
+      }
       if (
         event.key === 'Backspace' ||
         event.key === 'Enter' ||

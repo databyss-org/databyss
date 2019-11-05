@@ -58,26 +58,27 @@ const handleNewBlockConditions = (activeBlock, editor) => {
       return false
     }
   }
-
-  if (
-    // if current block is location and previous block is empty
-    // replace with empty block
-    activeBlock.type === 'LOCATION' &&
-    editor.value.previousBlock.text.length === 0
-  ) {
-    editor.replaceNodeByKey(
-      editor.value.previousBlock.key,
-      newBlock(editor.value.previousBlock.key)
-    )
-    editor.toggleMark('location')
-    return false
-  }
-  // if block break is in the middle of a location
-  if (
-    activeBlock.type === 'LOCATION' &&
-    editor.value.previousBlock.text.length !== 0
-  ) {
-    return false
+  if (editor.value.previousBlock) {
+    if (
+      // if current block is location and previous block is empty
+      // replace with empty block
+      activeBlock.type === 'LOCATION' &&
+      editor.value.previousBlock.text.length === 0
+    ) {
+      editor.replaceNodeByKey(
+        editor.value.previousBlock.key,
+        newBlock(editor.value.previousBlock.key)
+      )
+      editor.toggleMark('location')
+      return false
+    }
+    // if block break is in the middle of a location
+    if (
+      activeBlock.type === 'LOCATION' &&
+      editor.value.previousBlock.text.length !== 0
+    ) {
+      return false
+    }
   }
 
   return true
@@ -88,8 +89,10 @@ const setActiveBlockType = type => (editor, value, next) => {
 
   // if empty block replace all marks/types
   // https://www.notion.so/databyss/Demo-error-7-If-you-click-location-and-press-return-it-doesn-t-move-the-cursor-but-it-makes-everyth-9eaa6b3f02c04358b42f00159863a355
-  if (_activeBlock.text.length === 0) {
+
+  if (_activeBlock.text.length === 0 && editor.value.previousBlock) {
     editor.replaceNodeByKey(_activeBlock.key, newBlock(_activeBlock.key))
+    // if previous block exists move caret forward
     editor.moveForward(1)
     next(editor, value)
   }

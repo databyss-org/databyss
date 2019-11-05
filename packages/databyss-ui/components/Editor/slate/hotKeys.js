@@ -19,6 +19,8 @@ const HOTKEYS = {
   bold: `${metaKey}+b`,
   italic: `${metaKey}+i`,
   location: `${metaKey}+k`,
+  copy: `${metaKey}+c`,
+  paste: `${metaKey}+v`,
   undo: `${metaKey}+z`,
   startOfLine: `ctrl+shift+left`,
   tab: 'tab',
