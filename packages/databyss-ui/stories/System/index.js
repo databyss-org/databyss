@@ -7,7 +7,7 @@ export { CaptionedView } from './Views'
 export const Section = ({ children, title, variant, ...others }) => (
   <View mb="medium" {...others}>
     <View mb="small">
-      <Text variant={variant} color="text.4">
+      <Text variant={variant} color="text.3">
         {title}
       </Text>
     </View>

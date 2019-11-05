@@ -3,8 +3,7 @@ import ReactModal from 'react-modal'
 import { position, color, compose } from 'styled-system'
 import css from '@styled-system/css'
 import { isMobileOs } from '../../lib/mediaQuery'
-import MobileModal from './MobileModal'
-import { View } from '../'
+import ModalView from './ModalView'
 import { shadowVariant, widthVariant } from '../View/View'
 import styled from '../styled'
 import makeAnimations from './animations'
@@ -92,18 +91,16 @@ const Modal = ({ children, visible, onDismiss, widthVariant, ...others }) => {
         overlay: {
           backgroundColor: _mobile ? 'transparent' : 'rgba(0, 0, 0, 0.35)',
           zIndex: 1,
+          overflow: 'hidden',
+        },
+        content: {
+          overflow: 'hidden',
         },
       }}
     >
-      {_mobile ? (
-        <MobileModal {...others} onDismiss={onClose}>
-          {children}
-        </MobileModal>
-      ) : (
-        <View flexGrow={1} flexShrink={1} overflow="auto" {...others}>
-          {children}
-        </View>
-      )}
+      <ModalView {...others} onDismiss={onClose}>
+        {children}
+      </ModalView>
     </StyledReactModal>
   )
 }
