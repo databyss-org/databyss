@@ -90,12 +90,19 @@ context('Editor', () => {
       .newLine()
       .type('#')
       .newLine()
+      .type('@this is a source')
+      .newLine()
 
     const expected = toSlateJson(
       <value>
         <document>
           <block type="ENTRY" />
           <block type="ENTRY" />
+          <block type="SOURCE">
+            <text />
+            <inline type="SOURCE">this is a source</inline>
+            <text />
+          </block>
           <block type="ENTRY" />
         </document>
       </value>
@@ -269,6 +276,50 @@ context('Editor', () => {
             <text />
           </block>
           <block type="ENTRY" />
+          <block type="TOPIC">
+            <text />
+            <inline type="TOPIC">topic</inline>
+            <text />
+          </block>
+        </document>
+      </value>
+    )
+
+    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+  })
+
+  // https://www.notion.so/databyss/Demo-error-7-If-you-click-location-and-press-return-it-doesn-t-move-the-cursor-but-it-makes-everyth-9eaa6b3f02c04358b42f00159863a355
+  it('it should toggle location on empty line using the format menu', () => {
+    cy.get('@editor')
+      .nextBlock()
+      .startOfLine()
+      .newLine()
+      .previousBlock()
+
+    cy.get('@editor')
+      .get('[data-test-block-menu="open"]')
+      .click()
+      .get('[data-test-block-menu="TOPIC"]')
+      .click()
+      .get('@editor')
+      .newLine()
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE">
+            <text />
+            <inline type="SOURCE">
+              Stamenov, Language Structure, Discourse and the Access to
+              Consciousness
+            </inline>
+            <text />
+          </block>
+          <block type="ENTRY" />
+          <block type="ENTRY" />
+          <block type="ENTRY">
+            On the limitation of third-order thought to assertion
+          </block>
           <block type="TOPIC">
             <text />
             <inline type="TOPIC">topic</inline>
