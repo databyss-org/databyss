@@ -82,6 +82,27 @@ context('Editor', () => {
       expect(err.message).to.include('is being covered by another element')
     })
   })
+
+  // https://www.notion.so/databyss/Demo-error-3-If-you-press-and-then-return-i-e-without-typing-anything-it-goes-to-the-next-lin-aba055d79d334040a9798a55d0f18356
+  it('it should delete an atomic block when only the start symbol is entered', () => {
+    cy.get('@editor')
+      .type('@')
+      .newLine()
+      .type('#')
+      .newLine()
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="ENTRY" />
+          <block type="ENTRY" />
+          <block type="ENTRY" />
+        </document>
+      </value>
+    )
+
+    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+  })
 })
 
 context('Editor', () => {
@@ -106,7 +127,6 @@ context('Editor', () => {
       .newLine()
       .type('{shift}{rightarrow}')
       .type('{backspace}')
-      .should('be.visible')
 
     const expected = toSlateJson(
       <value>

@@ -67,7 +67,7 @@ KEYS.forEach(key => {
  */
 export default Hotkeys
 
-export const editorHotKeys = (event, editor, onHotKey, OnToggleMark) => {
+export const navHotKeys = (event, editor, onHotKey) => {
   if (Hotkeys.isStartOfLine(event)) {
     event.preventDefault()
     onHotKey(START_OF_LINE, editor)
@@ -77,7 +77,18 @@ export const editorHotKeys = (event, editor, onHotKey, OnToggleMark) => {
     event.preventDefault()
     onHotKey(END_OF_LINE, editor)
   }
+  if (Hotkeys.isNextBlock(event)) {
+    event.preventDefault()
+    onHotKey(NEXT_BLOCK, editor)
+  }
 
+  if (Hotkeys.isPreviousBlock(event)) {
+    event.preventDefault()
+    onHotKey(PREVIOUS_BLOCK, editor)
+  }
+}
+
+export const formatHotKeys = (event, editor, onHotKey, OnToggleMark) => {
   if (Hotkeys.isTab(event)) {
     event.preventDefault()
     onHotKey(TAB, editor)

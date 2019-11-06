@@ -4,7 +4,7 @@ import { Editor } from 'slate-react'
 import { lineStateToSlate } from './../markup'
 
 import { useEditorContext } from '../../EditorProvider'
-import hotKeys, { editorHotKeys } from './../hotKeys'
+import hotKeys, { formatHotKeys, navHotKeys } from './../hotKeys'
 
 import { renderMark, getBlockRanges, renderBlock } from './../slateUtils'
 
@@ -82,8 +82,9 @@ const SlateContentEditable = ({
       editor.insertText('\n')
       return event.preventDefault()
     }
+    navHotKeys(event, editor, onHotKey, OnToggleMark)
 
-    editorHotKeys(event, editor, onHotKey, OnToggleMark)
+    formatHotKeys(event, editor, onHotKey, OnToggleMark)
 
     if (hotKeys.isLocation(event)) {
       event.preventDefault()

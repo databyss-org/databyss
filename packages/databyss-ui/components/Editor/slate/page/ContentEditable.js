@@ -5,11 +5,7 @@ import { getRawHtmlForBlock } from './../../state/page/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../../EditorProvider'
 import FormatMenu from '../../Menu/FormatMenu'
-import hotKeys, {
-  NEXT_BLOCK,
-  PREVIOUS_BLOCK,
-  editorHotKeys,
-} from './../hotKeys'
+import hotKeys, { formatHotKeys, navHotKeys } from './../hotKeys'
 
 import {
   toSlateJson,
@@ -284,25 +280,7 @@ const SlateContentEditable = ({
       }
     }
 
-    // if (hotKeys.isStartOfLine(event)) {
-    //   event.preventDefault()
-    //   onHotKey(START_OF_LINE, editor)
-    // }
-
-    // if (hotKeys.isEndOfLine(event)) {
-    //   event.preventDefault()
-    //   onHotKey(END_OF_LINE, editor)
-    // }
-
-    if (hotKeys.isNextBlock(event)) {
-      event.preventDefault()
-      onHotKey(NEXT_BLOCK, editor)
-    }
-
-    if (hotKeys.isPreviousBlock(event)) {
-      event.preventDefault()
-      onHotKey(PREVIOUS_BLOCK, editor)
-    }
+    navHotKeys(event, editor, onHotKey, OnToggleMark)
 
     // if previous block is atomic delete previous block
     if (editor.value.previousBlock) {
@@ -373,7 +351,7 @@ const SlateContentEditable = ({
       return event.preventDefault()
     }
 
-    editorHotKeys(event, editor, onHotKey, OnToggleMark)
+    formatHotKeys(event, editor, onHotKey, OnToggleMark)
 
     if (hotKeys.isLocation(event)) {
       event.preventDefault()
