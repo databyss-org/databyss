@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { elementAcceptingRef, exactProp } from '@material-ui/utils'
 import useEventCallback from '../../lib/useEventCallback'
 import ownerDocument from '../../lib/ownerDocument'
+import forkRef from '../../lib/forkRef'
 
 function mapEventPropToEvent(eventProp) {
   return eventProp.substring(2).toLowerCase()
@@ -23,17 +24,6 @@ const ClickAwayListener = React.forwardRef((props, ref) => {
   const movedRef = React.useRef(false)
   const nodeRef = React.useRef(null)
 
-  // forward changes in nodeRef to component ref
-  useEffect(
-    () => {
-      if (ref) {
-        ref.current = nodeRef.current
-      }
-      return undefined
-    },
-    [nodeRef.current]
-  )
-
   const handleClickAway = useEventCallback(event => {
     // Ignore events that have been `event.preventDefault()` marked.
     if (event.defaultPrevented) {
@@ -50,6 +40,17 @@ const ClickAwayListener = React.forwardRef((props, ref) => {
     if (!nodeRef.current) {
       return
     }
+
+    // forward changes in nodeRef to component ref
+    useEffect(
+      () => {
+        if (ref) {
+          ref.current = nodeRef.current
+        }
+        return undefined
+      },
+      [nodeRef.current]
+    )
 
     const nodeRefList = [nodeRef, ...additionalNodeRefs]
 
@@ -112,7 +113,7 @@ const ClickAwayListener = React.forwardRef((props, ref) => {
 
   return (
     <React.Fragment>
-      {React.cloneElement(children, { ref: nodeRef })}
+      {React.cloneElement(children, { ref: forkRef(children.ref, nodeRef) })}
     </React.Fragment>
   )
 })

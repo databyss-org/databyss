@@ -4,7 +4,7 @@ import { ThemeContext } from '@emotion/core'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { isMobileOs } from '../../../lib/mediaQuery'
-import { View, Text } from '../../'
+import { View, Text, RawHtml } from '../../'
 import { borderRadius } from '../../../theming/theme'
 
 const desktopInputCss = {
@@ -28,7 +28,6 @@ const modalViewCss = (active, labelWidth) =>
     ? {
         position: 'absolute',
         zIndex: 2,
-        transform: 'translate(0, -1px)',
         left: labelWidth ? `calc(${labelWidth} - 8px)` : '-5px',
         right: labelWidth ? '5px' : '-5px',
         padding: 'none',
@@ -69,15 +68,19 @@ const TextInputView = ({
   const _labelWidth =
     labelOffset.toString().indexOf('%') >= 0 ? labelOffset : `${labelOffset}px`
 
+  const { textValue } = child.props.value
+
   return (
     <ThemeContext.Consumer>
       {theme => (
         <View ref={viewRef} {...others} flexShrink={1}>
           {_modal && (
             <View padding="1px" flexShrink={1} flexWrap="wrap">
-              <Text variant={child.props.variant}>
-                {child.props.value.textValue}
-              </Text>
+              {textValue && textValue.length ? (
+                <Text variant={child.props.variant}>{textValue}</Text>
+              ) : (
+                <RawHtml variant={child.props.variant} html="&nbsp;" />
+              )}
             </View>
           )}
 

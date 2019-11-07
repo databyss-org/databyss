@@ -37,7 +37,11 @@ const EditorDemo = () => {
   }, [])
 
   return (
-    <ViewportWrapper height="100%" onClick={() => editorRef.current.focus()}>
+    <ViewportWrapper
+      height="100%"
+      backgroundColor="white"
+      onClick={() => editorRef.current.focus()}
+    >
       <EditorPage>
         <ContentEditable ref={editorRef} />
       </EditorPage>

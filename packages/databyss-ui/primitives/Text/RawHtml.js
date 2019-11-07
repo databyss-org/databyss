@@ -12,11 +12,17 @@ const Styled = styled(
   )
 )
 
-const RawHtml = forwardRef(({ _html, ...others }, ref) => {
+const RawHtml = forwardRef(({ _html, html, ...others }, ref) => {
   if (IS_NATIVE) {
     throw new Error('Component not availablle in React Native')
   }
-  return <Styled ref={ref} dangerouslySetInnerHTML={_html} {...others} />
+  return (
+    <Styled
+      ref={ref}
+      dangerouslySetInnerHTML={_html || { __html: html }}
+      {...others}
+    />
+  )
 })
 
 RawHtml.defaultProps = {
