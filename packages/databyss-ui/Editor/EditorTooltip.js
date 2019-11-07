@@ -7,6 +7,8 @@ import { ThemeProvider } from 'emotion-theming'
 import space from '@databyss-org/ui/theming/space'
 import { isMobileOs } from '@databyss-org/ui/'
 import { isActiveSelection } from './slate/slateUtils'
+import { useEditorContext } from './EditorProvider'
+import { onShowFormatMenu } from './state/page/actions'
 
 const _mobile = isMobileOs()
 
@@ -83,21 +85,22 @@ const _activeCss = {
 const isNewLine = value =>
   value.anchorBlock && value.anchorBlock.text.length === 0
 
-const EditorTooltip = ({ children, css, editor, editorState, ...others }) => {
+const EditorTooltip = ({ children, css, editor, ...others }) => {
+  const [editorState, dispatchEditor] = useEditorContext()
   const menuRef = useRef(null)
-  const [active, setActive] = useState(false)
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const { value } = editor
+  const { showFormatMenu } = editorState
   useEffect(
     () => {
-      if (
-        isActiveSelection(value, editorState) ||
-        (_mobile && isNewLine(value))
-      ) {
+      if (isActiveSelection(value) || (_mobile && isNewLine(value))) {
         setPosition(getPosition(editor, menuRef))
-        setActive(true)
-      } else {
-        setActive(false)
+        if (!showFormatMenu) {
+          dispatchEditor(onShowFormatMenu(true, { value }))
+        }
+      }
+      if (showFormatMenu) {
+        dispatchEditor(onShowFormatMenu(false, { value }))
       }
     },
     [value]
@@ -108,7 +111,7 @@ const EditorTooltip = ({ children, css, editor, editorState, ...others }) => {
       <View
         css={[
           styledCss(_css(position))(darkTheme),
-          active && styledCss(_activeCss)(darkTheme),
+          showFormatMenu && styledCss(_activeCss)(darkTheme),
           css,
         ]}
         {...others}

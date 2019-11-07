@@ -120,6 +120,7 @@ const SlateContentEditable = ({
         }
         return acc
       }, 0)
+
       // if type LOCATION is set check for non LOCATION type
       if (
         _nextEditableState.value.document.getNode(activeBlockId).type ===
@@ -182,7 +183,7 @@ const SlateContentEditable = ({
     return (
       <React.Fragment>
         {children}
-        <FormatMenu editor={editor} editorState={editorState} />
+        <FormatMenu editor={editor} />
       </React.Fragment>
     )
   }

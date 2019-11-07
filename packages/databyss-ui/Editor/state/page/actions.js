@@ -12,6 +12,8 @@ import {
   START_TAG,
   DELETE_BLOCK,
   DELETE_BLOCKS,
+  SHOW_MENU_ACTIONS,
+  SHOW_FORMAT_MENU,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -120,6 +122,26 @@ export function startTag(tag, editableState) {
     type: START_TAG,
     payload: {
       tag,
+      editableState,
+    },
+  }
+}
+
+export function onShowMenuActions(bool, editableState) {
+  return {
+    type: SHOW_MENU_ACTIONS,
+    payload: {
+      bool,
+      editableState,
+    },
+  }
+}
+
+export function onShowFormatMenu(bool, editableState) {
+  return {
+    type: SHOW_FORMAT_MENU,
+    payload: {
+      bool,
       editableState,
     },
   }

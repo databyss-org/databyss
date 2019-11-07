@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import buttons, {
   editorMarginMenuItemHeight,
 } from '@databyss-org/ui/theming/buttons'
@@ -7,36 +7,36 @@ import Close from '@databyss-org/ui/assets/close-menu.svg'
 import Add from '@databyss-org/ui/assets/add.svg'
 import EditorBlockMenuActions from './EditorBlockMenuActions'
 import { useEditorContext } from '../EditorProvider'
-import { startTag } from '../state/page/actions'
+import { startTag, onShowMenuActions } from '../state/page/actions'
 
 const EditorBlockMenu = ({ node, hideCursor }) => {
   const [editorState, dispatchEditor] = useEditorContext()
-  const [actions, showActions] = useState(false)
+  const { activeBlockId, showMenuActions, editableState } = editorState
   let isVisible = false
-  if (node.key === editorState.activeBlockId) {
+  if (node.key === activeBlockId) {
     isVisible = true
   }
 
   const { buttonVariants } = buttons
 
   const onShowActions = () => {
-    showActions(!actions)
+    dispatchEditor(onShowMenuActions(!showMenuActions, editableState))
   }
 
   const onMenuAction = tag => {
-    dispatchEditor(startTag(tag, editorState.editableState))
-    showActions(false)
+    dispatchEditor(onShowMenuActions(false, editableState))
+    dispatchEditor(startTag(tag, editableState))
   }
 
   useEffect(
     () => {
-      if (actions) {
+      if (showMenuActions) {
         hideCursor(true)
       } else {
         hideCursor(false)
       }
     },
-    [actions]
+    [showMenuActions]
   )
 
   const menuActions = [
@@ -81,14 +81,16 @@ const EditorBlockMenu = ({ node, hideCursor }) => {
             sizeVariant="tiny"
             color={buttonVariants.editorMarginMenu.color}
           >
-            <View>{actions ? <Close /> : <Add />}</View>
+            <View>{showMenuActions ? <Close /> : <Add />}</View>
           </Icon>
         </Button>
       </View>
       <View justifyContent="center" height={editorMarginMenuItemHeight}>
-        {actions && (
+        {showMenuActions && (
           <EditorBlockMenuActions
-            unmount={() => showActions(false)}
+            unmount={() =>
+              dispatchEditor(onShowMenuActions(false, editableState))
+            }
             menuActionButtons={menuActionButtons}
           />
         )}

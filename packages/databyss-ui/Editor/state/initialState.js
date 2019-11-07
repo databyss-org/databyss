@@ -6,6 +6,8 @@ const pageId = ObjectId().toHexString()
 
 export default {
   editableState: null,
+  showMenuActions: false,
+  showFormatMenu: false,
   activeBlockId: null,
   sources: {},
   entries: {

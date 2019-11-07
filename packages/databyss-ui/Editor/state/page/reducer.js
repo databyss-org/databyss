@@ -12,6 +12,8 @@ import {
   BACKSPACE,
   DELETE_BLOCK,
   DELETE_BLOCKS,
+  SHOW_MENU_ACTIONS,
+  SHOW_FORMAT_MENU,
 } from './constants'
 
 export initialState from './../initialState'
@@ -297,6 +299,16 @@ export default (state, action) => {
       return {
         ...state,
         activeBlockId: action.payload.id,
+      }
+    case SHOW_MENU_ACTIONS:
+      return {
+        ...state,
+        showMenuActions: action.payload.bool,
+      }
+    case SHOW_FORMAT_MENU:
+      return {
+        ...state,
+        showFormatMenu: action.payload.bool,
       }
     case SET_ACTIVE_BLOCK_CONTENT: {
       const activeBlock = state.blocks[state.activeBlockId]
