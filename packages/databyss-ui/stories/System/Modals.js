@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
-import { Modal, Button, Text, Icon } from '@databyss-org/ui/primitives'
+import { Modal, Button, Text, Icon, Dialog } from '@databyss-org/ui/primitives'
 import { loremIpsum } from 'lorem-ipsum'
 import Alea from 'alea'
 import { Section, TextControls } from './'
@@ -34,6 +34,14 @@ const modals = {
         <AuthorSvg />
       </Icon>
     ),
+  },
+}
+
+const dialogs = {
+  ok: {
+    name: 'Ok Dialog',
+    message: ipsum,
+    confirmButton: <Button variant="secondaryUi">Ok</Button>,
   },
 }
 
@@ -104,6 +112,32 @@ export const Editable = () => {
         <TextControls />
         <TextControls />
       </Modal>
+    </Section>
+  )
+}
+
+export const Dialogs = () => {
+  const [visible, setVisible] = useState(false)
+  const [dialog, setDialog] = useState('ok')
+
+  return (
+    <Section title="Dialogs">
+      {Object.keys(dialogs).map(key => (
+        <Button
+          key={key}
+          onPress={() => {
+            setDialog(key)
+            setVisible(true)
+          }}
+        >
+          {dialogs[key].name}
+        </Button>
+      ))}
+      <Dialog
+        visible={visible}
+        onDismiss={() => setVisible(false)}
+        {...dialogs[dialog]}
+      />
     </Section>
   )
 }
