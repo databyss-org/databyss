@@ -15,6 +15,8 @@ import {
   deleteBlocks,
 } from './state/page/actions'
 
+import { isBlockEmpty } from './slate/slateUtils'
+
 const EditorPage = ({ children }) => {
   const [editorState, dispatchEditor] = useEditorContext()
 
@@ -42,8 +44,9 @@ const EditorPage = ({ children }) => {
   const onBlockBlur = (id, text, editableState) => {
     // if empty replace block with virgin block
     if (text.length === 0 && id) {
-      // TODO: if block is already empty dont dispatch this
-      dispatchEditor(clearBlock(id, editableState))
+      if (!isBlockEmpty(id, editableState)) {
+        dispatchEditor(clearBlock(id, editableState))
+      }
     }
 
     if (text.trim().match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {

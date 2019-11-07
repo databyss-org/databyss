@@ -234,3 +234,15 @@ export const isActiveSelection = value => {
   }
   return true
 }
+
+export const isBlockEmpty = (id, editor) => {
+  const _node = editor.value.document.getNode(id)
+  if (
+    _node.text.length === 0 &&
+    editor.value.activeMarks.size === 0 &&
+    editor.value.anchorBlock.type === 'ENTRY'
+  ) {
+    return true
+  }
+  return false
+}
