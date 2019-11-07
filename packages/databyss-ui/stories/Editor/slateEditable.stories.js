@@ -11,15 +11,15 @@ import {
 } from '@databyss-org/ui/primitives'
 import EditorProvider, {
   useEditorContext,
-} from '@databyss-org/ui/components/Editor/EditorProvider'
+} from '@databyss-org/ui/Editor/EditorProvider'
 import reducer, {
   getRawHtmlForBlock,
-} from '@databyss-org/ui/components/Editor/state/page/reducer'
-import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/page/actions'
-import SlateContentEditable from '@databyss-org/ui/components/Editor/slate/page/ContentEditable'
-import slateReducer from '@databyss-org/ui/components/Editor/slate/page/reducer'
-import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
-import initialState from '@databyss-org/ui/components/Editor/state/__tests__/initialState'
+} from '@databyss-org/ui/Editor/state/page/reducer'
+import { setActiveBlockType } from '@databyss-org/ui/Editor/state/page/actions'
+import SlateContentEditable from '@databyss-org/ui/Editor/slate/page/ContentEditable'
+import slateReducer from '@databyss-org/ui/Editor/slate/page/reducer'
+import EditorPage from '@databyss-org/ui/Editor/EditorPage'
+import initialState from '@databyss-org/ui/Editor/state/__tests__/initialState'
 import { ViewportDecorator } from '../decorators'
 import colors from '../../theming/colors'
 

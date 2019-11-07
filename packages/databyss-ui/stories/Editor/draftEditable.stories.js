@@ -4,12 +4,12 @@ import { Editor, EditorState } from 'draft-js'
 import { View, Button, Grid } from '@databyss-org/ui/primitives'
 import EditorProvider, {
   useEditorContext,
-} from '@databyss-org/ui/components/Editor/EditorProvider'
-import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/page/actions'
-import DraftContentEditable from '@databyss-org/ui/components/Editor/draft/ContentEditable'
-import draftReducer from '@databyss-org/ui/components/Editor/draft/reducer'
-import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
-import initialState from '@databyss-org/ui/components/Editor/state/__tests__/initialState'
+} from '@databyss-org/ui/Editor/EditorProvider'
+import { setActiveBlockType } from '@databyss-org/ui/Editor/state/page/actions'
+import DraftContentEditable from '@databyss-org/ui/Editor/draft/ContentEditable'
+import draftReducer from '@databyss-org/ui/Editor/draft/reducer'
+import EditorPage from '@databyss-org/ui/Editor/EditorPage'
+import initialState from '@databyss-org/ui/Editor/state/__tests__/initialState'
 import { ViewportDecorator } from '../decorators'
 
 const DraftDemo = () => {

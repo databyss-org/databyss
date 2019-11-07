@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Grid } from '@databyss-org/ui/primitives'
+import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
+
 import EditorProvider, { useEditorContext } from '../../EditorProvider'
 import EditorPage from '../../EditorPage'
 import ContentEditable from '../page/ContentEditable'
@@ -9,7 +11,6 @@ import initialState from '../../state/__tests__/initialState'
 import emptyInitialState from '../../state/__tests__/emptyInitialState'
 
 import slateReducer from '../page/reducer'
-import { ViewportDecorator } from '../../../../stories/decorators'
 
 const Box = ({ children, ...others }) => (
   <View borderVariant="thinDark" paddingVariant="tiny" width="100%" {...others}>
