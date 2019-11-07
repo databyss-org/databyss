@@ -11,9 +11,14 @@ import { startTag, onShowMenuActions } from '../state/page/actions'
 
 const EditorBlockMenu = ({ node, hideCursor }) => {
   const [editorState, dispatchEditor] = useEditorContext()
-  const { activeBlockId, showMenuActions, editableState } = editorState
+  const {
+    activeBlockId,
+    showMenuActions,
+    editableState,
+    showFormatMenu,
+  } = editorState
   let isVisible = false
-  if (node.key === activeBlockId) {
+  if (node.key === activeBlockId && !showFormatMenu) {
     isVisible = true
   }
 

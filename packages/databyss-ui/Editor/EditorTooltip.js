@@ -98,8 +98,7 @@ const EditorTooltip = ({ children, css, editor, ...others }) => {
         if (!showFormatMenu) {
           dispatchEditor(onShowFormatMenu(true, { value }))
         }
-      }
-      if (showFormatMenu) {
+      } else if (showFormatMenu) {
         dispatchEditor(onShowFormatMenu(false, { value }))
       }
     },
