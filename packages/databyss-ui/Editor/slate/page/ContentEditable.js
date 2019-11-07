@@ -6,7 +6,7 @@ import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../../EditorProvider'
 import FormatMenu from '../../Menu/FormatMenu'
 import hotKeys, { formatHotKeys, navHotKeys } from './../hotKeys'
-
+import { renderBlock } from './../../EditorBlock'
 import {
   toSlateJson,
   renderInline,
@@ -14,7 +14,6 @@ import {
   getBlockRanges,
   singleBlockBackspaceCheck,
   hasSelection,
-  renderBlock,
   noAtomicInSelection,
   getSelectedBlocks,
 } from './../slateUtils'

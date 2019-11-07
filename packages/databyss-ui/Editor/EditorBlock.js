@@ -87,6 +87,10 @@ export const EditorBlock = ({ children, node }) => {
   )
 }
 
+export const renderBlock = ({ node, children }) => (
+  <EditorBlock node={node}>{children}</EditorBlock>
+)
+
 export const EditorLine = ({ children }) => {
   const _children = (
     <Text variant="bodyNormal" color="text.0">
@@ -95,3 +99,5 @@ export const EditorLine = ({ children }) => {
   )
   return <View mb="tiny">{_children}</View>
 }
+
+export const renderLine = ({ children }) => <EditorLine>{children}</EditorLine>
