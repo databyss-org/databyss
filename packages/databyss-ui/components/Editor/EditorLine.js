@@ -8,14 +8,14 @@ import {
   hotKey,
 } from './state/line/actions'
 
-const EditorLine = ({ children, onStateChange, value }) => {
+const EditorLine = ({ children, onChange, value }) => {
   const [state, dispatch] = useEditorContext()
   const { textValue, ranges } = state
 
   useEffect(
     () => {
-      if (onStateChange) {
-        onStateChange({ textValue, ranges })
+      if (onChange) {
+        onChange({ textValue, ranges })
       }
     },
     [state]
@@ -37,7 +37,13 @@ const EditorLine = ({ children, onStateChange, value }) => {
   }
 
   // should only have 1 child (e.g. draft/ContentEditable or slate/ContentEditable)
+
+  const _css = children.props.css ? [...children.props.css] : null
+
+  // TODO: CSS GETS OVERRIDDEN HERE
   return React.cloneElement(React.Children.only(children), {
+    ...children.props,
+    _css,
     onContentChange,
     onEditableStateChange,
     OnToggleMark,

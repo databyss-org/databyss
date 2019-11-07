@@ -6,7 +6,7 @@ import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
 import { isAtomicInlineType } from './page/reducer'
 import { getRawHtmlForBlock, entities } from '../state/page/reducer'
-import EditorBlock from '../EditorBlock'
+import { EditorBlock, EditorLine } from '../EditorBlock'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -213,6 +213,8 @@ export const hasSelection = value => {
 export const renderBlock = ({ node, children }) => (
   <EditorBlock node={node}>{children}</EditorBlock>
 )
+
+export const renderLine = ({ children }) => <EditorLine>{children}</EditorLine>
 
 export const noAtomicInSelection = value => {
   const _nodeList = getSelectedBlocks(value)

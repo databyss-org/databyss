@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Grid, RichLineInput } from '@databyss-org/ui/primitives'
+import { View, Grid, RichTextInput } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '../decorators'
 import colors from '../../theming/colors'
 
@@ -22,10 +22,10 @@ const SlateEditorDemo = () => {
   return (
     <Grid>
       <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
-        <RichLineInput
+        <RichTextInput
           variant="uiTextNormal"
-          onDocumentChange={setDocument}
-          onStateChange={setState}
+          onNativeDocumentChange={setDocument}
+          onChange={setState}
           value={state}
         />
       </Box>

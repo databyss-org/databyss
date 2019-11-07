@@ -48,7 +48,7 @@ const textSelector = ({ children, type }) => {
   return TextBlock({ children, ...textStyle(type) })
 }
 
-const EditorBlock = ({ children, node }) => {
+export const EditorBlock = ({ children, node }) => {
   const [menuActive, setMenuActive] = useState(false)
 
   const _children = (
@@ -65,23 +65,21 @@ const EditorBlock = ({ children, node }) => {
   )
   return !isMobileOs() ? (
     <Grid singleRow mb="tiny" flexWrap="nowrap" columnGap="small">
-      {node.type !== 'TEXT' && (
-        <View
-          contentEditable="false"
-          suppressContentEditableWarning
-          css={{ userSelect: 'none' }}
-          width={editorMarginMenuItemHeight}
-          height={editorMarginMenuItemHeight}
-          overflow="visible"
-        >
-          {node.text.length < 1 && (
-            <EditorBlockMenu
-              hideCursor={bool => setMenuActive(bool)}
-              node={node}
-            />
-          )}
-        </View>
-      )}
+      <View
+        contentEditable="false"
+        suppressContentEditableWarning
+        css={{ userSelect: 'none' }}
+        width={editorMarginMenuItemHeight}
+        height={editorMarginMenuItemHeight}
+        overflow="visible"
+      >
+        {node.text.length < 1 && (
+          <EditorBlockMenu
+            hideCursor={bool => setMenuActive(bool)}
+            node={node}
+          />
+        )}
+      </View>
       {_children}
     </Grid>
   ) : (
@@ -89,4 +87,11 @@ const EditorBlock = ({ children, node }) => {
   )
 }
 
-export default EditorBlock
+export const EditorLine = ({ children }) => {
+  const _children = (
+    <Text variant="bodyNormal" color="text.0">
+      {children}
+    </Text>
+  )
+  return <View mb="tiny">{_children}</View>
+}

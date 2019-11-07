@@ -1,12 +1,12 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
 import { Editor } from 'slate-react'
 import { lineStateToSlate } from './../markup'
 
 import { useEditorContext } from '../../EditorProvider'
-import hotKeys, { formatHotKeys, navHotKeys } from './../hotKeys'
+import { formatHotKeys, navHotKeys } from './../hotKeys'
 
-import { renderMark, getBlockRanges, renderBlock } from './../slateUtils'
+import { renderMark, getBlockRanges, renderLine } from './../slateUtils'
 
 const initalValue = node => ({
   document: {
@@ -14,98 +14,121 @@ const initalValue = node => ({
   },
 })
 
-const SlateContentEditable = ({
-  onContentChange,
-  onEditableStateChange,
-  onDocumentChange,
-  OnToggleMark,
-  onHotKey,
-  css,
-}) => {
-  const [editorState] = useEditorContext()
+function useCombinedRefs(...refs) {
+  const targetRef = useRef()
+  useEffect(
+    () => {
+      refs.forEach(ref => {
+        if (!ref) return
 
-  const { editableState, textValue } = editorState
+        if (typeof ref === 'function') {
+          ref(targetRef.current)
+        } else {
+          ref.current = targetRef.current
+        }
+      })
+    },
+    [refs]
+  )
+  return targetRef
+}
 
-  const editableRef = useRef(null)
+const SlateContentEditable = forwardRef(
+  (
+    {
+      onContentChange,
+      onEditableStateChange,
+      onNativeDocumentChange,
+      OnToggleMark,
+      onHotKey,
+      onBlur,
+      _css,
+    },
+    ref
+  ) => {
+    const [editorState] = useEditorContext()
 
-  // checks editor state for active block content changed
-  const checkActiveBlockContentChanged = _nextEditableState => {
-    // on first click on change returns null values for anchor block
-    if (!_nextEditableState.value.anchorBlock) {
+    const { editableState, textValue } = editorState
+
+    const editableRef = useRef(null)
+
+    // solution from https://itnext.io/reusing-the-ref-from-forwardref-with-react-hooks-4ce9df693dd
+    const combinedRef = useCombinedRefs(ref, editableRef)
+
+    // checks editor state for active block content changed
+    const checkActiveBlockContentChanged = _nextEditableState => {
+      // on first click on change returns null values for anchor block
+      if (!_nextEditableState.value.anchorBlock) {
+        return false
+      }
+      if (!textValue) {
+        const _text = _nextEditableState.value.anchorBlock.text
+        return { _text }
+      }
+
+      const _text = _nextEditableState.value.anchorBlock.text
+      if (textValue !== _text) {
+        const _ranges = getBlockRanges(_nextEditableState.value.anchorBlock)
+        return { _text, _ranges }
+      }
+      // TODO
+      // if markup is applied to selection. update state range
       return false
     }
-    if (!textValue) {
-      const _text = _nextEditableState.value.anchorBlock.text
-      return { _text }
+
+    const onChange = change => {
+      const { value } = change
+      if (onNativeDocumentChange) {
+        onNativeDocumentChange(value.document.toJSON())
+      }
+      const blockChanges = checkActiveBlockContentChanged({ value })
+      if (blockChanges) {
+        const { _text, _ranges } = blockChanges
+        onContentChange(_text, _ranges, { value })
+      } else {
+        onEditableStateChange({ value })
+      }
     }
 
-    const _text = _nextEditableState.value.anchorBlock.text
-    if (textValue !== _text) {
-      const _ranges = getBlockRanges(_nextEditableState.value.anchorBlock)
-      return { _text, _ranges }
+    const _editableState = editableState || {
+      value: Value.fromJSON(initalValue(lineStateToSlate(editorState))),
     }
-    // TODO
-    // if markup is applied to selection. update state range
-    return false
+
+    useEffect(
+      () =>
+        _editableState.editorCommands &&
+        _editableState.editorCommands(
+          editableRef.current,
+          _editableState.value,
+          () => editableRef.current.controller.flush()
+        )
+    )
+
+    const onKeyDown = (event, editor, next) => {
+      if (event.key === 'Enter') {
+        editor.insertText('\n')
+        return event.preventDefault()
+      }
+      navHotKeys(event, editor, onHotKey, OnToggleMark)
+
+      formatHotKeys(event, editor, onHotKey, OnToggleMark)
+
+      return next()
+    }
+    return (
+      <Editor
+        value={_editableState.value}
+        autoFocus
+        ref={combinedRef}
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        renderMark={renderMark}
+        renderBlock={renderLine}
+        onBlur={onBlur}
+        css={_css}
+      />
+    )
   }
-
-  const onChange = change => {
-    const { value } = change
-    if (onDocumentChange) {
-      onDocumentChange(value.document.toJSON())
-    }
-    const blockChanges = checkActiveBlockContentChanged({ value })
-    if (blockChanges) {
-      const { _text, _ranges } = blockChanges
-      onContentChange(_text, _ranges, { value })
-    } else {
-      onEditableStateChange({ value })
-    }
-  }
-
-  const _editableState = editableState || {
-    value: Value.fromJSON(initalValue(lineStateToSlate(editorState))),
-  }
-
-  useEffect(
-    () =>
-      _editableState.editorCommands &&
-      _editableState.editorCommands(
-        editableRef.current,
-        _editableState.value,
-        () => editableRef.current.controller.flush()
-      )
-  )
-
-  const onKeyDown = (event, editor, next) => {
-    if (event.key === 'Enter') {
-      editor.insertText('\n')
-      return event.preventDefault()
-    }
-    navHotKeys(event, editor, onHotKey, OnToggleMark)
-
-    formatHotKeys(event, editor, onHotKey, OnToggleMark)
-
-    if (hotKeys.isLocation(event)) {
-      event.preventDefault()
-      OnToggleMark('location', editor)
-    }
-
-    return next()
-  }
-
-  return (
-    <Editor
-      value={_editableState.value}
-      autoFocus
-      ref={editableRef}
-      onChange={onChange}
-      onKeyDown={onKeyDown}
-      renderMark={renderMark}
-      renderBlock={renderBlock}
-      css={css}
-    />
-  )
-}
+)
 
 export default SlateContentEditable
