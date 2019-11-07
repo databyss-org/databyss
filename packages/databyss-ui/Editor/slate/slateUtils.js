@@ -237,7 +237,6 @@ export const isActiveSelection = value => {
 
 export const isBlockEmpty = (id, editor) => {
   if (hasSelection(editor.value)) {
-    console.log('here wahtt')
     return true
   }
   const _node = editor.value.document.getNode(id)
