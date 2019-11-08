@@ -1,35 +1,15 @@
 import React from 'react'
 import Modal from './Modal'
-import { View, Text, Grid } from '../'
+import theme from '../../theming/theme'
+import DialogView from './DialogView'
 
-const Dialog = ({
-  message,
-  confirmButton,
-  cancelButton,
-  onDismiss,
-  onConfirm,
-  onCancel,
-  ...others
-}) => (
-  <Modal {...others}>
-    <View paddingVariant="medium">
-      <Text variant="uiTextNormal">{message}</Text>
-      <Grid singleColumn rowGap="tiny" mt="2">
-        {React.cloneElement(confirmButton, {
-          onClick: () => {
-            onConfirm()
-            onDismiss()
-          },
-        })}
-      </Grid>
-    </View>
+const _css = {
+  width: `calc(100% - ${theme.space.small}px)`,
+}
+const Dialog = ({ visible, ...others }) => (
+  <Modal widthVariant="dialog" appendCss={_css} visible={visible}>
+    <DialogView {...others} />
   </Modal>
 )
-
-Dialog.defaultProps = {
-  onConfirm: () => null,
-  onCancel: () => null,
-  onDismiss: () => null,
-}
 
 export default Dialog

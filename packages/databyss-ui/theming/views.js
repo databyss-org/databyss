@@ -42,6 +42,9 @@ const widthVariants = {
   modal: {
     maxWidth: pxUnits(850),
   },
+  dialog: {
+    maxWidth: pxUnits(300),
+  },
 }
 
 export default {

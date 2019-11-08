@@ -31,7 +31,7 @@ const ModalView = ({
         <View
           flexGrow={1}
           alignItems={secondaryChild ? 'center' : 'flex-start'}
-          paddingLeft={secondaryChild ? 'none' : '2'}
+          paddingLeft={secondaryChild ? 'none' : 'em'}
         >
           <Text variant="uiTextNormal">{title}</Text>
         </View>
@@ -45,7 +45,7 @@ const ModalView = ({
     <ScrollView
       flexGrow={1}
       flexShrink={1}
-      padding="2"
+      padding="em"
       {...(isMobileOs() ? { flexBasis: 0, paddingBottom: 'medium' } : {})}
       {...others}
     >

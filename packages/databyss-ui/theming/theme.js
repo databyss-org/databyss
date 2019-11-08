@@ -2,7 +2,6 @@ import colors from './colors'
 import effects from './effects'
 import responsive from './responsive'
 import space from './space'
-import sizes from './sizes'
 import views, { borderRadius, pxUnits } from './views'
 import fonts from './fonts'
 import timing from './timing'
@@ -12,9 +11,6 @@ import icons from './icons'
 const theme = {
   /* space */
   space,
-
-  /* sizes */
-  sizes,
 
   /* fonts */
   ...fonts,
@@ -29,7 +25,7 @@ const theme = {
   ...effects,
 
   /* responsive */
-  responsive,
+  ...responsive,
 
   /* views */
   ...views,

@@ -6,7 +6,7 @@ import Controls from '@databyss-org/ui/stories/System/Controls'
 import TextInputs from '@databyss-org/ui/stories/System/TextInputs'
 import Buttons from '@databyss-org/ui/stories/System/Buttons'
 import Icons from '@databyss-org/ui/stories/System/Icons'
-import Modals from '@databyss-org/ui/stories/System/Modals'
+import Modals, { Dialogs } from '@databyss-org/ui/stories/System/Modals'
 import ListControl, {
   ItemSeparators,
   ComplexItems,
@@ -34,4 +34,9 @@ storiesOf('Design System', module)
       <ComplexItems />
     </React.Fragment>
   ))
-  .add('Modals', () => <Modals />)
+  .add('Modals', () => (
+    <React.Fragment>
+      <Modals />
+      <Dialogs />
+    </React.Fragment>
+  ))

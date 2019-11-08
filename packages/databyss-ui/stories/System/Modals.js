@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
-import { Modal, Button, Text, Icon, Dialog } from '@databyss-org/ui/primitives'
+import {
+  ModalWindow,
+  Button,
+  Text,
+  Icon,
+  Dialog,
+} from '@databyss-org/ui/primitives'
 import { loremIpsum } from 'lorem-ipsum'
 import Alea from 'alea'
 import { Section, TextControls } from './'
@@ -9,6 +15,7 @@ import { isMobileOs } from '../../lib/mediaQuery'
 
 const alea = new Alea('modals')
 const ipsum = loremIpsum({ units: 'paragraphs', count: 2, random: alea })
+const shortIpsum = loremIpsum({ units: 'sentences', count: 2, random: alea })
 
 const modals = {
   default: {
@@ -40,7 +47,7 @@ const modals = {
 const dialogs = {
   ok: {
     name: 'Ok Dialog',
-    message: ipsum,
+    message: shortIpsum,
     confirmButton: <Button variant="secondaryUi">Ok</Button>,
   },
 }
@@ -62,7 +69,7 @@ export default () => {
           {modals[key].title}
         </Button>
       ))}
-      <Modal
+      <ModalWindow
         visible={visible}
         onDismiss={() => setVisible(false)}
         {...modals[modal]}
@@ -71,7 +78,7 @@ export default () => {
           {ipsum}
           {ipsum}
         </Text>
-      </Modal>
+      </ModalWindow>
     </Section>
   )
 }
@@ -99,7 +106,7 @@ export const Editable = () => {
           {editableModals[key].title}
         </Button>
       ))}
-      <Modal
+      <ModalWindow
         visible={visible}
         onDismiss={() => setVisible(false)}
         widthVariant="form"
@@ -114,10 +121,10 @@ export const Editable = () => {
               listProps={{
                 horizontalItemPadding: isMobileOs() ? 'none' : 'small',
               }}
-              labelProps={{ paddingLeft: isMobileOs() ? '2' : 'tiny' }}
+              labelProps={{ paddingLeft: isMobileOs() ? 'em' : 'tiny' }}
             />
           ))}
-      </Modal>
+      </ModalWindow>
     </Section>
   )
 }
