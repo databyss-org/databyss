@@ -15,7 +15,7 @@ import {
   deleteBlocks,
 } from './state/page/actions'
 
-import { isBlockEmpty } from './slate/slateUtils'
+import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
 const EditorPage = ({ children }) => {
   const [editorState, dispatchEditor] = useEditorContext()
@@ -49,20 +49,14 @@ const EditorPage = ({ children }) => {
       }
     }
 
+    if (isEmptyAndAtomic(text)) {
+      dispatchEditor(clearBlock(id, editableState))
+    }
     if (text.trim().match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
-      // if only @ or # was entered
-      if (text.trim().length === 1) {
-        dispatchEditor(clearBlock(id, editableState))
-      } else {
-        onSetBlockType('SOURCE', id, editableState)
-      }
+      onSetBlockType('SOURCE', id, editableState)
     }
     if (text.trim().match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
-      if (text.trim().length === 1) {
-        dispatchEditor(clearBlock(id, editableState))
-      } else {
-        onSetBlockType('TOPIC', id, editableState)
-      }
+      onSetBlockType('TOPIC', id, editableState)
     }
   }
 

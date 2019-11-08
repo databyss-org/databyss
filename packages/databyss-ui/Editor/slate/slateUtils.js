@@ -240,15 +240,25 @@ export const isBlockEmpty = (id, editor) => {
     return true
   }
   const _node = editor.value.document.getNode(id)
+
   if (_node) {
     if (
       _node.text.length === 0 &&
       editor.value.activeMarks.size === 0 &&
-      editor.value.anchorBlock.type === 'ENTRY'
+      _node.type === 'ENTRY'
     ) {
       return true
     }
     return false
   }
   return true
+}
+
+export const isEmptyAndAtomic = text => {
+  if (
+    (text.trim().match(/^@/) || text.trim().match(/^#/)) &&
+    text.trim().length === 1
+  ) {
+    console.log('is there')
+  }
 }

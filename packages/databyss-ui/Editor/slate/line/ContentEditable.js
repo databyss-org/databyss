@@ -60,10 +60,6 @@ const SlateContentEditable = forwardRef(
       if (!_nextEditableState.value.anchorBlock) {
         return false
       }
-      // if (!textValue) {
-      //   const _text = _nextEditableState.value.anchorBlock.text
-      //   return { _text }
-      // }
 
       const _text = _nextEditableState.value.anchorBlock.text
       if (textValue !== _text) {
