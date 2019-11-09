@@ -13,7 +13,17 @@ const StyledSafeArea = styled(
 )
 
 const ModalWindow = ({ visible, children, ...others }) => (
-  <NativeModal visible={visible} animationType="slide">
+  <NativeModal
+    visible={visible}
+    animationType="slide"
+    supportedOrientations={[
+      'portrait',
+      'portrait-upside-down',
+      'landscape',
+      'landscape-left',
+      'landscape-right',
+    ]}
+  >
     <StyledSafeArea flex={1} bg="background.0">
       <ModalView {...others}>{children}</ModalView>
     </StyledSafeArea>

@@ -16,17 +16,12 @@ const StyledReactModal = styled(
 )
 
 const _css = {
-  top: '50%',
-  left: '50%',
-  right: 'auto',
-  bottom: 'auto',
-  marginRight: '-50%',
-  transform: 'translate(-50%, -50%)',
-  width: `calc(100% - ${theme.space[5] * 2}px)`,
-  maxHeight: `calc(100% - ${theme.space[5] * 2}px)`,
+  // width: '100%',
+  // height: '100%',
   overflow: 'hidden',
   borderRadius,
   display: 'flex',
+  width: '100%',
 }
 
 const Modal = ({
@@ -36,23 +31,27 @@ const Modal = ({
   onOpen,
   showOverlay,
   overrideCss,
-  appendCss,
+  concatCss,
   ...others
 }) => (
   <StyledReactModal
-    position="absolute"
     isOpen={visible}
     appElement={document.getElementById('root')}
     onAfterOpen={onOpen}
     onRequestClose={onDismiss}
     shadowVariant="modal"
     backgroundColor="background.0"
-    css={overrideCss || [_css, appendCss]}
+    css={overrideCss || [_css].concat(concatCss)}
     style={{
       overlay: {
         backgroundColor: showOverlay ? 'rgba(0, 0, 0, 0.35)' : 'transparent',
         zIndex: 1,
         overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: `${theme.space[5]}px`,
       },
       content: {
         overflow: 'hidden',

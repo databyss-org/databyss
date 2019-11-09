@@ -5,7 +5,17 @@ import { borderRadius } from '../../theming/theme'
 import DialogView from './DialogView'
 
 const Dialog = ({ visible, ...others }) => (
-  <NativeModal visible={visible} transparent>
+  <NativeModal
+    visible={visible}
+    transparent
+    supportedOrientations={[
+      'portrait',
+      'portrait-upside-down',
+      'landscape',
+      'landscape-left',
+      'landscape-right',
+    ]}
+  >
     <View height="100%" justifyContent="center" alignItems="center">
       <View
         flex={1}
@@ -19,6 +29,7 @@ const Dialog = ({ visible, ...others }) => (
       />
       <DialogView
         width="80%"
+        widthVariant="dialog"
         backgroundColor="background.0"
         borderRadius={borderRadius}
         shadowVariant="modal"

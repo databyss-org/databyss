@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Grid } from '../'
+import { View, Text, Grid, Button } from '../'
 
 const DialogView = ({
   message,
@@ -28,6 +28,7 @@ DialogView.defaultProps = {
   onConfirm: () => null,
   onCancel: () => null,
   onDismiss: () => null,
+  confirmButton: <Button variant="secondaryUi">Ok</Button>,
 }
 
 export default DialogView

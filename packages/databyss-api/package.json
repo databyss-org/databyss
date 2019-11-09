@@ -6,6 +6,7 @@
   "author": "databyss-org",
   "license": "MIT",
   "peerDependencies": {
+    "@databyss-org/services": "1.1.37",
     "@bugsnag/js": "^6.3.2"
   },
   "dependencies": {

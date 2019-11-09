@@ -6,6 +6,8 @@ import ServiceProvider from '@databyss-org/services/components/ServiceProvider'
 import * as auth from '@databyss-org/services/auth/mocks'
 import defaultTheme, { darkTheme } from '../theming/theme'
 
+export NotifyDecorator from './notifyDecorator'
+
 const services = { auth }
 
 export const ServiceProviderDecorator = storyFn => (

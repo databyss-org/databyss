@@ -1,14 +1,7 @@
-import packageJson from '../../package.json'
-
-const bugsnag = require('@bugsnag/js')
+const bugsnag = require('@databyss-org/services/lib/bugsnag')
 const bugsnagExpress = require('@bugsnag/plugin-express')
 
-export const bugsnagClient = bugsnag({
-  apiKey: process.env.API_BUGSNAG_KEY,
-  appVersion: packageJson.version,
-  releaseStage: process.env.API_BUGSNAG_RELEASE_STAGE,
-})
-
+export const bugsnagClient = bugsnag('API')
 const init = async () => {
   bugsnagClient.use(bugsnagExpress)
   return bugsnagClient.getPlugin('express')
