@@ -1164,6 +1164,11 @@
   dependencies:
     iserror "^0.0.2"
 
+"@bugsnag/plugin-react@^6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@bugsnag/plugin-react/-/plugin-react-6.4.0.tgz#945c09e2d5d2fc385ccde76a6a2b74907a62c3c6"
+  integrity sha512-dQx5fMrB1f/vWBnSbGtubRZ4/33ENbCzRbaRsMKS/u9lzIaGxagluq/A4IBkEwdelpgaRp5IfjDjuWgwnSSklw==
+
 "@cnakazawa/watch@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@cnakazawa/watch/-/watch-1.0.3.tgz#099139eaec7ebf07a27c1786a3ff64f39464d2ef"
