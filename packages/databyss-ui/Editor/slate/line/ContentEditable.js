@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
 import { Editor } from 'slate-react'
-import { Text, View } from '@databyss-org/ui/primitives'
+import { Text } from '@databyss-org/ui/primitives'
 import { lineStateToSlate } from './../markup'
 import { useEditorContext } from '../../EditorProvider'
 import { formatHotKeys, navHotKeys } from './../hotKeys'
