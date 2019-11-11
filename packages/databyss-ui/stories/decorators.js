@@ -3,6 +3,7 @@ import addons from '@storybook/addons'
 import Content from '@databyss-org/ui/components/Viewport/Content'
 import Viewport from '@databyss-org/ui/components/Viewport/ThemedViewport'
 import ServiceProvider from '@databyss-org/services/components/ServiceProvider'
+import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 import * as auth from '@databyss-org/services/auth/mocks'
 import defaultTheme, { darkTheme } from '../theming/theme'
 
@@ -32,6 +33,8 @@ export const ViewportWrapper = ({ children, ...others }) => {
     <Viewport
       theme={isDark ? darkTheme : defaultTheme}
       paddingVariant="medium"
+      backgroundColor="pageBackground"
+      minHeight="100vh"
       {...others}
     >
       {children}
@@ -44,3 +47,7 @@ export const ViewportDecorator = storyFn => (
 )
 
 export const ContentDecorator = storyFn => <Content>{storyFn()}</Content>
+
+export const NotifyDecorator = storyFn => (
+  <NotifyProvider envPrefix="REACT_APP">{storyFn()}</NotifyProvider>
+)

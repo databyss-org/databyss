@@ -37,11 +37,7 @@ const EditorLine = ({ children, onChange, value }) => {
   }
 
   // should only have 1 child (e.g. draft/ContentEditable or slate/ContentEditable)
-
-  const overrideCss = children.props.overrideCss
-  // TODO: CSS GETS OVERRIDDEN HERE
   return React.cloneElement(React.Children.only(children), {
-    overrideCss,
     onContentChange,
     onEditableStateChange,
     OnToggleMark,

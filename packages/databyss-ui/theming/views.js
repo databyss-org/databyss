@@ -32,7 +32,23 @@ const borderVariants = {
   thickLight: border(3, 'border.1'),
 }
 
+const widthVariants = {
+  content: {
+    maxWidth: pxUnits(500),
+  },
+  form: {
+    maxWidth: pxUnits(550),
+  },
+  modal: {
+    maxWidth: pxUnits(850),
+  },
+  dialog: {
+    maxWidth: pxUnits(300),
+  },
+}
+
 export default {
   paddingVariants,
   borderVariants,
+  widthVariants,
 }

@@ -2,12 +2,12 @@ import React, { useState, useRef } from 'react'
 import BaseControl from './BaseControl'
 import TextInput from './native/TextInput'
 import RichTextInput from './native/RichTextInput'
-// simport RichLineInput from './native/RichLineInput'
 
 import TextInputView from './native/TextInputView'
 import { View, Text, Grid } from '../'
 import IS_NATIVE from '../../lib/isNative'
 import theme from '../../theming/theme'
+import { isMobileOs } from '../../lib/mediaQuery'
 
 const TextControl = ({
   value,
@@ -15,12 +15,15 @@ const TextControl = ({
   label,
   labelProps,
   labelColor,
-  textVariant,
+  activeLabelColor,
+  labelVariant,
+  inputVariant,
   id,
   gridFlexWrap,
   rich,
   modal,
   multiline,
+  css,
   ...others
 }) => {
   const [active, setActive] = useState(false)
@@ -55,7 +58,7 @@ const TextControl = ({
       flexGrow={1}
       labelOffset={labelProps ? labelProps.width : 0}
       modal={modal}
-      smallText={theme.textVariants[textVariant].fontSize < 16}
+      smallText={theme.textVariants[inputVariant].fontSize < 16}
       controlRef={controlRef}
     >
       <TextInputComponent
@@ -66,9 +69,9 @@ const TextControl = ({
           setTimeout(() => setActive(false), 50)
         }}
         onChange={onChange}
-        variant={textVariant}
         value={value}
         multiline={multiline}
+        variant={inputVariant}
       />
     </TextInputView>
   )
@@ -86,6 +89,13 @@ const TextControl = ({
           inputRef.current.focus()
         }
       }}
+      css={[
+        {
+          borderWidth: 0,
+          position: active ? 'relative' : 'static',
+        },
+        css,
+      ]}
       {...(IS_NATIVE ? nativeProps : webProps)}
       {...others}
     >
@@ -94,10 +104,13 @@ const TextControl = ({
           singleRow
           alignItems="baseline"
           flexWrap={gridFlexWrap}
-          columnGap="none"
+          columnGap="small"
         >
           <View {...labelProps} css={{ userSelect: 'none' }}>
-            <Text variant={textVariant} color={labelColor}>
+            <Text
+              variant={labelVariant}
+              color={active ? activeLabelColor : labelColor}
+            >
               {label}
             </Text>
           </View>
@@ -111,8 +124,10 @@ const TextControl = ({
 }
 
 TextControl.defaultProps = {
-  textVariant: 'uiTextSmall',
-  labelColor: 'text.0',
+  labelVariant: 'uiTextSmall',
+  labelColor: 'text.3',
+  activeLabelColor: 'text.2',
+  inputVariant: isMobileOs() ? 'bodySmall' : 'bodyNormal',
   gridFlexWrap: 'wrap',
   labelProps: {},
 }

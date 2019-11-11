@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
 import { Editor } from 'slate-react'
+import { Text } from '@databyss-org/ui/primitives'
 import { lineStateToSlate } from './../markup'
 import { useEditorContext } from '../../EditorProvider'
 import { formatHotKeys, navHotKeys } from './../hotKeys'
 import { renderMark, getBlockRanges } from './../slateUtils'
-import { renderLine } from './../../EditorBlock'
 
 const initalValue = node => ({
   document: {
@@ -42,6 +42,7 @@ const SlateContentEditable = forwardRef(
       onHotKey,
       onBlur,
       overrideCss,
+      multiline,
     },
     ref
   ) => {
@@ -109,6 +110,17 @@ const SlateContentEditable = forwardRef(
 
       return next()
     }
+
+    const renderLine = ({ children }) => (
+      <Text
+        variant="bodyNormal"
+        color="text.0"
+        css={multiline ? {} : { flexShrink: 0 }}
+      >
+        {children}
+      </Text>
+    )
+
     return (
       <Editor
         value={_editableState.value}

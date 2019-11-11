@@ -1,9 +1,9 @@
 import React, { forwardRef } from 'react'
-import reducer from '@databyss-org/ui/Editor/state/line/reducer'
-import slateReducer from '@databyss-org/ui/Editor/slate/line/reducer'
-import EditorProvider from '@databyss-org/ui/Editor/EditorProvider'
-import EditorLine from '@databyss-org/ui/Editor/EditorLine'
-import SlateContentEditable from '@databyss-org/ui/Editor/slate/line/ContentEditable'
+import reducer from '@databyss-org/ui/editor/state/line/reducer'
+import slateReducer from '@databyss-org/ui/editor/slate/line/reducer'
+import EditorProvider from '@databyss-org/ui/editor/EditorProvider'
+import EditorLine from '@databyss-org/ui/editor/EditorLine'
+import SlateContentEditable from '@databyss-org/ui/editor/slate/line/ContentEditable'
 
 const RichTextInput = forwardRef(
   ({ value, onChange, id, concatCss, onBlur, multiline, ...others }, ref) => {
@@ -13,7 +13,13 @@ const RichTextInput = forwardRef(
       next()
     }
 
-    const _css = [{ overflow: 'scroll' }].concat(concatCss)
+    const _css = [
+      {
+        display: 'flex',
+        overflow: 'scroll',
+        ...(!multiline ? { '::-webkit-scrollbar': { display: 'none' } } : {}),
+      },
+    ].concat(concatCss)
     const _children = (
       <EditorProvider
         initialState={value}
@@ -24,6 +30,7 @@ const RichTextInput = forwardRef(
           <SlateContentEditable
             overrideCss={_css}
             onBlur={_onBlur}
+            multiline={multiline}
             {...others}
             ref={ref}
           />

@@ -10,12 +10,7 @@ import {
   List,
 } from '@databyss-org/ui/primitives'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
-import { loremIpsum } from 'lorem-ipsum'
-import Alea from 'alea'
 import { Section } from './'
-
-const alea = new Alea('views')
-const ipsum = loremIpsum({ units: 'sentences', count: 1, random: alea })
 
 const Checkbox = ({ checked }) => (
   <View
@@ -27,54 +22,61 @@ const Checkbox = ({ checked }) => (
   />
 )
 
-export const TextControls = () => {
-  const [textValue, setTextValue] = useState({ textValue: 'Jacques Derrida' })
-  const [textValue2, setTextValue2] = useState({ textValue: 'Of Grammatology' })
-  const [textValue3, setTextValue3] = useState({
-    textValue: 'Johns Hopkins University Press',
+const ControlList = ({ children, ...others }) => (
+  <List horizontalItemPadding="small" {...others}>
+    {children}
+  </List>
+)
+
+export const TextControls = ({ labelProps, listProps }) => {
+  const [textValue, setTextValue] = useState({ textValue: 'Stamenov' })
+  const [textValue2, setTextValue2] = useState({ textValue: 'Maxim' })
+  // const [textValue3, setTextValue3] = useState({
+  //   textValue: 'Johns Hopkins University Press',
+  // })
+  const [textValue4, setTextValue4] = useState({
+    textValue:
+      'Stamenov, Maxim I., editor. Language Structure, Discourse and the Access to Consciousness. Vol. 12, John Benjamins Publishing Company, 1997. Crossref, doi:10.1075/aicr.12.',
   })
-  const [textValue4, setTextValue4] = useState({ textValue: ipsum })
   return (
-    <List>
+    <ControlList verticalItemPadding="tiny" {...listProps}>
       <TextControl
         labelProps={{
-          width: 80,
+          width: '25%',
+          ...labelProps,
         }}
-        label="Author"
+        label="Citation"
+        value={textValue4}
+        onChange={value => setTextValue4(value)}
+        gridFlexWrap="nowrap"
+        multiline
+      />
+      <TextControl
+        labelProps={{
+          width: '25%',
+          ...labelProps,
+        }}
+        label="Author (First Name)"
         value={textValue}
         onChange={value => setTextValue(value)}
         gridFlexWrap="nowrap"
       />
       <TextControl
         labelProps={{
-          width: 80,
+          width: '25%',
+          ...labelProps,
         }}
-        label="Title"
+        label="Author (Last Name)"
         value={textValue2}
         onChange={value => setTextValue2(value)}
         gridFlexWrap="nowrap"
       />
-      <TextControl
-        labelProps={{
-          width: 80,
-        }}
-        label="Publisher"
-        value={textValue3}
-        onChange={value => setTextValue3(value)}
-        gridFlexWrap="nowrap"
-      />
-      <TextControl
-        labelProps={{
-          width: 80,
-        }}
-        label="Abstract"
-        value={textValue4}
-        onChange={value => setTextValue4(value)}
-        gridFlexWrap="nowrap"
-        multiline
-      />
-    </List>
+    </ControlList>
   )
+}
+
+TextControls.defaultProps = {
+  listProps: {},
 }
 
 export default () => {
@@ -84,8 +86,12 @@ export default () => {
   return (
     <React.Fragment>
       <Section title="Base Control">
-        <View backgroundColor="background.1">
-          <List>
+        <View
+          borderVariant="thinLight"
+          widthVariant="content"
+          backgroundColor="background.0"
+        >
+          <ControlList>
             <BaseControl onPress={() => console.log('pressed')}>
               <Text variant="uiTextSmall">Base control</Text>
             </BaseControl>
@@ -101,17 +107,25 @@ export default () => {
               </Icon>
               <Text variant="uiTextSmall">Icon control</Text>
             </BaseControl>
-          </List>
+          </ControlList>
         </View>
       </Section>
       <Section title="Text Control">
-        <View backgroundColor="background.1">
+        <View
+          borderVariant="thinLight"
+          widthVariant="content"
+          backgroundColor="background.0"
+        >
           <TextControls />
         </View>
       </Section>
       <Section title="Toggle Control">
-        <View backgroundColor="background.1">
-          <List>
+        <View
+          borderVariant="thinLight"
+          widthVariant="content"
+          backgroundColor="background.0"
+        >
+          <ControlList>
             <ToggleControl label="toggle" value={checked} onChange={setChecked}>
               <Checkbox checked={checked} />
             </ToggleControl>
@@ -123,12 +137,16 @@ export default () => {
             >
               <Checkbox checked={checked} />
             </ToggleControl>
-          </List>
+          </ControlList>
         </View>
       </Section>
       <Section title="Switch Control">
-        <View backgroundColor="background.1">
-          <List>
+        <View
+          borderVariant="thinLight"
+          widthVariant="content"
+          backgroundColor="background.0"
+        >
+          <ControlList>
             <SwitchControl
               label="switch"
               value={switched}
@@ -147,16 +165,8 @@ export default () => {
               onChange={setSwitched}
               alignLabel="left"
             />
-          </List>
+          </ControlList>
         </View>
-      </Section>
-      <Section title="Filler Text">
-        <Text>
-          {ipsum}
-          {ipsum}
-          {ipsum}
-          {ipsum}
-        </Text>
       </Section>
     </React.Fragment>
   )
