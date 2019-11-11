@@ -1,8 +1,9 @@
 import React, { createContext, useContext } from 'react'
 import { Dialog } from '@databyss-org/ui/primitives'
 import { UnauthorizedError } from '@databyss-org/services/lib/request'
-import bugsnag from '@databyss-org/services/lib/bugsnag'
+import Bugsnag from '@databyss-org/services/lib/Bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
+import IS_NATIVE from '../../lib/isNative'
 
 const NotifyContext = createContext()
 
@@ -31,8 +32,17 @@ export const makeBugsnagReport = (client, error, info) => {
 class NotifyProvider extends React.Component {
   constructor(props) {
     super(props)
-    this.bugsnagClient = bugsnag(`REACT_APP_${this.props.envPrefix}`)
-    window.addEventListener('error', this.showUnhandledErrorDialog)
+    this.bugsnagClient = Bugsnag.init(props.envPrefix, props.options)
+
+    if (IS_NATIVE) {
+      global.ErrorUtils.setGlobalHandler(error => {
+        this.bugsnagClient.notify(error)
+        this.showUnhandledErrorDialog()
+        console.error(error)
+      })
+    } else {
+      window.addEventListener('error', this.showUnhandledErrorDialog)
+    }
   }
   state = {
     dialogVisible: false,
@@ -45,9 +55,15 @@ class NotifyProvider extends React.Component {
       return
     }
     this.bugsnagClient.notify(
-      makeBugsnagReport(this.bugsnagClient, error, info)
+      IS_NATIVE ? error : makeBugsnagReport(this.bugsnagClient, error, info)
     )
     this.showUnhandledErrorDialog()
+  }
+
+  componentWillUnmount() {
+    if (!IS_NATIVE) {
+      window.removeEventListener('error', this.showUnhandledErrorDialog)
+    }
   }
 
   showUnhandledErrorDialog = () => {
@@ -61,9 +77,9 @@ class NotifyProvider extends React.Component {
     })
   }
 
-  notifyError = message => {
-    this.bugsnagClient.notify(message)
-    this.notify(message)
+  notifyError = error => {
+    this.bugsnagClient.notify(error)
+    this.notify(error.message)
   }
 
   render() {
@@ -81,6 +97,11 @@ class NotifyProvider extends React.Component {
       </NotifyContext.Provider>
     )
   }
+}
+
+NotifyProvider.defaultProps = {
+  envPrefix: '',
+  options: {},
 }
 
 export const useNotifyContext = () => useContext(NotifyContext)

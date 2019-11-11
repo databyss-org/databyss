@@ -3,10 +3,9 @@ import addons from '@storybook/addons'
 import Content from '@databyss-org/ui/components/Viewport/Content'
 import Viewport from '@databyss-org/ui/components/Viewport/ThemedViewport'
 import ServiceProvider from '@databyss-org/services/components/ServiceProvider'
+import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 import * as auth from '@databyss-org/services/auth/mocks'
 import defaultTheme, { darkTheme } from '../theming/theme'
-
-export NotifyDecorator from './notifyDecorator'
 
 const services = { auth }
 
@@ -48,3 +47,7 @@ export const ViewportDecorator = storyFn => (
 )
 
 export const ContentDecorator = storyFn => <Content>{storyFn()}</Content>
+
+export const NotifyDecorator = storyFn => (
+  <NotifyProvider envPrefix="REACT_APP">{storyFn()}</NotifyProvider>
+)

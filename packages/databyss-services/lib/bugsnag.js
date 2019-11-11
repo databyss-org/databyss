@@ -1,10 +1,14 @@
 import packageJson from '../package.json'
+import bugsnagLib from './bugsnagLib'
 
-const bugsnag = require('@bugsnag/js')
-
-export default envPrefix =>
-  bugsnag({
-    apiKey: process.env[`${envPrefix}_BUGSNAG_KEY`],
+// singleton pattern
+const Bugsnag = { client: null }
+Bugsnag.init = (envPrefix, options = {}) => {
+  Bugsnag.client = bugsnagLib(envPrefix, {
     appVersion: packageJson.version,
-    releaseStage: process.env[`${envPrefix}_BUGSNAG_RELEASE_STAGE`],
+    ...options,
   })
+  return Bugsnag.client
+}
+
+export default Bugsnag

@@ -28,7 +28,7 @@ const Dialog = ({ visible, ...others }) => (
         opacity={0.35}
       />
       <DialogView
-        width="80%"
+        maxWidth="80%"
         widthVariant="dialog"
         backgroundColor="background.0"
         borderRadius={borderRadius}

@@ -18,7 +18,9 @@ export const NotifyError = () => {
   const { notifyError } = useNotifyContext()
   return (
     <Section title="Notify Error">
-      <Button onPress={() => notifyError('⚠️This is an error message.')}>
+      <Button
+        onPress={() => notifyError(new Error('⚠️This is an error message.'))}
+      >
         Notify Error
       </Button>
     </Section>
