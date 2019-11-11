@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react'
 import BaseControl from './BaseControl'
 import TextInput from './native/TextInput'
 import RichTextInput from './native/RichTextInput'
+// simport RichLineInput from './native/RichLineInput'
+
 import TextInputView from './native/TextInputView'
 import { View, Text, Grid } from '../'
 import IS_NATIVE from '../../lib/isNative'
@@ -46,6 +48,7 @@ const TextControl = ({
     zIndex: active ? 2 : 'unset',
   }
   const TextInputComponent = rich ? RichTextInput : TextInput
+
   const _children = (
     <TextInputView
       active={active}
@@ -69,6 +72,7 @@ const TextControl = ({
       />
     </TextInputView>
   )
+
   return (
     <BaseControl
       ref={controlRef}

@@ -306,7 +306,7 @@ const getSourcesFromBlocks = blocks => {
     const source = await Source.findOne({
       _id,
     }).catch(err => console.log(err))
-    return { _id, rawHtml: source.resource }
+    return { _id, text: source.resource }
   })
   return Promise.all(promises)
 }
@@ -324,7 +324,7 @@ const getEntriesFromBlocks = blocks => {
     const entry = await Entry.findOne({
       _id,
     }).catch(err => console.log(err))
-    return { _id, rawHtml: entry.entry }
+    return { _id, text: entry.entry }
   })
   return Promise.all(promises)
 }

@@ -13,12 +13,12 @@ const alea = new Alea('views')
 const ipsum = loremIpsum({ units: 'sentences', count: 1, random: alea })
 
 const TextInputs = ({ rich }) => {
-  const [value1, setValue1] = useState({ textValue: ipsum })
-  const [value2, setValue2] = useState({ textValue: ipsum })
-  const [value3, setValue3] = useState({ textValue: ipsum })
-  const [value4, setValue4] = useState({ textValue: ipsum })
-  const [value5, setValue5] = useState({ textValue: ipsum })
-  const [value6, setValue6] = useState({ textValue: ipsum })
+  const [value1, setValue1] = useState({ textValue: ipsum, ranges: [] })
+  const [value2, setValue2] = useState({ textValue: ipsum, ranges: [] })
+  const [value3, setValue3] = useState({ textValue: ipsum, ranges: [] })
+  const [value4, setValue4] = useState({ textValue: ipsum, ranges: [] })
+  const [value5, setValue5] = useState({ textValue: ipsum, ranges: [] })
+  const [value6, setValue6] = useState({ textValue: ipsum, ranges: [] })
   const TextInputComponent = rich ? RichTextInput : TextInput
   const title = rich ? 'Rich Text Inputs' : 'Text Inputs'
   const inputName = rich ? 'RichTextInput' : 'TextInput'

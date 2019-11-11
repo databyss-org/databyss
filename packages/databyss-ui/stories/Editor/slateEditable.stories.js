@@ -11,13 +11,15 @@ import {
 } from '@databyss-org/ui/primitives'
 import EditorProvider, {
   useEditorContext,
-} from '@databyss-org/ui/components/Editor/EditorProvider'
-import { getRawHtmlForBlock } from '@databyss-org/ui/components/Editor/state/reducer'
-import { setActiveBlockType } from '@databyss-org/ui/components/Editor/state/actions'
-import SlateContentEditable from '@databyss-org/ui/components/Editor/slate/ContentEditable'
-import slateReducer from '@databyss-org/ui/components/Editor/slate/reducer'
-import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
-import initialState from '@databyss-org/ui/components/Editor/state/__tests__/initialState'
+} from '@databyss-org/ui/Editor/EditorProvider'
+import reducer, {
+  getRawHtmlForBlock,
+} from '@databyss-org/ui/Editor/state/page/reducer'
+import { setActiveBlockType } from '@databyss-org/ui/Editor/state/page/actions'
+import SlateContentEditable from '@databyss-org/ui/Editor/slate/page/ContentEditable'
+import slateReducer from '@databyss-org/ui/Editor/slate/page/reducer'
+import EditorPage from '@databyss-org/ui/Editor/EditorPage'
+import initialState from '@databyss-org/ui/Editor/state/__tests__/initialState'
 import { ViewportDecorator } from '../decorators'
 import colors from '../../theming/colors'
 
@@ -106,7 +108,11 @@ const Box = ({ children, ...others }) => (
 )
 
 const ProviderDecorator = storyFn => (
-  <EditorProvider initialState={initialState} editableReducer={slateReducer}>
+  <EditorProvider
+    initialState={initialState}
+    editableReducer={slateReducer}
+    reducer={reducer}
+  >
     {storyFn()}
   </EditorProvider>
 )
@@ -120,7 +126,7 @@ const SlateEditorDemo = () => {
     activeBlockId,
     pageBlocks: page.blocks.map(block => ({
       ...blocks[block._id],
-      rawHtml: getRawHtmlForBlock(editorState, blocks[block._id]),
+      text: getRawHtmlForBlock(editorState, blocks[block._id]),
     })),
   }
 

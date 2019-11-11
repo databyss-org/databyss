@@ -42,7 +42,7 @@ router.post(
 
         await Promise.all(
           _sources.map(async s => {
-            const source = sources[s].rawHtml
+            const source = sources[s].text
             const sourceId = sources[s]._id
             const ranges = !_.isEmpty(sources[s].ranges)
               ? sources[s].ranges
@@ -80,7 +80,7 @@ router.post(
 
         await Promise.all(
           _entries.map(async e => {
-            const text = entries[e].rawHtml
+            const text = entries[e].text
             const entryId = entries[e]._id
             const ranges = !_.isEmpty(entries[e].ranges)
               ? entries[e].ranges
@@ -114,7 +114,7 @@ router.post(
 
         await Promise.all(
           _topics.map(async e => {
-            const topic = topics[e].rawHtml
+            const topic = topics[e].text
             const topicId = topics[e]._id
             const ranges = !_.isEmpty(topics[e].ranges) ? topics[e].ranges : []
 
@@ -147,7 +147,7 @@ router.post(
 
         await Promise.all(
           _locations.map(async e => {
-            const location = locations[e].rawHtml
+            const location = locations[e].text
             const locationId = locations[e]._id
             const ranges = !_.isEmpty(locations[e].ranges)
               ? locations[e].ranges

@@ -14,14 +14,14 @@ export default {
   sources: {
     sourceId: {
       _id: sourceId,
-      rawHtml:
+      text:
         'Stamenov, Language Structure, Discourse and the Access to Consciousness',
     },
   },
   entries: {
     entryId: {
       _id: entryId,
-      rawHtml: 'On the limitation of third-order thought to assertion',
+      text: 'On the limitation of third-order thought to assertion',
     },
   },
   blocks: {

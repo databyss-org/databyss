@@ -1,15 +1,20 @@
 import React, { useEffect, useRef } from 'react'
 import { storiesOf } from '@storybook/react'
 import { Global } from '@emotion/core'
-import EditorProvider from '@databyss-org/ui/components/Editor/EditorProvider'
-import slateReducer from '@databyss-org/ui/components/Editor/slate/reducer'
-import initialState from '@databyss-org/ui/components/Editor/state/__tests__/emptyInitialState'
-import ContentEditable from '@databyss-org/ui/components/Editor/slate/ContentEditable'
-import EditorPage from '@databyss-org/ui/components/Editor/EditorPage'
+import EditorProvider from '@databyss-org/ui/Editor/EditorProvider'
+import slateReducer from '@databyss-org/ui/Editor/slate/page/reducer'
+import reducer from '@databyss-org/ui/Editor/state/page/reducer'
+import initialState from '@databyss-org/ui/Editor/state/__tests__/emptyInitialState'
+import ContentEditable from '@databyss-org/ui/Editor/slate/page/ContentEditable'
+import EditorPage from '@databyss-org/ui/Editor/EditorPage'
 import { ViewportWrapper } from '../decorators'
 
 const ProviderDecorator = storyFn => (
-  <EditorProvider editableReducer={slateReducer} initialState={initialState}>
+  <EditorProvider
+    editableReducer={slateReducer}
+    initialState={initialState}
+    reducer={reducer}
+  >
     <Global
       styles={{
         'html,body,#root': {
