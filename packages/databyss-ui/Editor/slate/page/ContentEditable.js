@@ -149,11 +149,9 @@ const SlateContentEditable = ({
       const blockChanges = checkActiveBlockContentChanged({ value })
       if (blockChanges) {
         handleSelectedBlockChanged(blockChanges)
-      } else {
+      } else if (!value.selection.isBlurred) {
         // issue https://github.com/ianstormtaylor/slate/issues/2432
-        if (!value.selection.isBlurred) {
-          onEditableStateChange({ value })
-        }
+        onEditableStateChange({ value })
       }
     }
   }
