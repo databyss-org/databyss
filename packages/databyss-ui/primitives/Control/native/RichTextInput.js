@@ -6,17 +6,14 @@ import EditorLine from '@databyss-org/ui/Editor/EditorLine'
 import SlateContentEditable from '@databyss-org/ui/Editor/slate/line/ContentEditable'
 
 const RichTextInput = forwardRef(
-  ({ value, onChange, id, css, onBlur, multiline, ...others }, ref) => {
+  ({ value, onChange, id, concatCss, onBlur, multiline, ...others }, ref) => {
     const _onBlur = (event, editor, next) => {
       onBlur(event)
       setTimeout(() => editor.blur(), 50)
       next()
     }
 
-    const styledCss = [css]
-
-    const _css = [{ overflow: 'scroll' }, ...styledCss]
-
+    const _css = [{ overflow: 'scroll' }].concat(concatCss)
     const _children = (
       <EditorProvider
         initialState={value}
@@ -25,7 +22,7 @@ const RichTextInput = forwardRef(
       >
         <EditorLine onChange={onChange}>
           <SlateContentEditable
-            css={_css}
+            overrideCss={_css}
             onBlur={_onBlur}
             {...others}
             ref={ref}

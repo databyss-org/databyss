@@ -24,33 +24,37 @@ https://databyss-stories.herokuapp.com
 To use `databyss-ui` components or modules in your project, you may import them in one of two ways.
 
 If your ES6 configuration doesn't match that of the `databyss-ui` package, use the following format to import components pre-transpiled with `babel-preset-env`:
+
 ```js
-import { BackButton } from '@databyss-org/databyss-ui';
+import { BackButton } from '@databyss-org/databyss-ui'
 ```
 
 If you want to import the components directory, without any transpile stage, use this format:
+
 ```js
-import PageHeading from '@databyss-org/databyss-ui/components/Heading/PageHeading';
+import PageHeading from '@databyss-org/databyss-ui/components/Heading/PageHeading'
 ```
 
 You'll also need to wrap your components in a `ThemeProvider` component from the `react-jss` package:
+
 ```js
-import { theme } from '@databyss-org/databyss-ui';
+import { theme } from '@databyss-org/databyss-ui'
 export default () => (
   <ThemeProvider theme={theme}>
     <PageHeading>Jacques Derrida on "Abyss"</PageHeading>
   </ThemeProvider>
-);
+)
 ```
 
 Alternatively, if you're render a fullscreen module or component, you can use the `ThemedViewport` component, which uses the default theme if none is specified:
+
 ```js
-import { ThemedViewport } from '@databyss-org/databyss-ui';
+import { ThemedViewport } from '@databyss-org/databyss-ui'
 export default () => (
   <ThemedViewport>
     <PageHeading>Jacques Derrida on "Abyss"</PageHeading>
   </ThemedViewport>
-);
+)
 ```
 
 ## JSS
@@ -72,8 +76,6 @@ Here is an example:
 ```js
 import React from 'react'
 import logo from './logo.png' // Tell Webpack this JS file uses this image
-
-console.log(logo) // /logo.84287d09.png
 
 function Header() {
   // Import result is the URL of your image

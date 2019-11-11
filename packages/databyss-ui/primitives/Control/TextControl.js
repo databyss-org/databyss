@@ -48,7 +48,7 @@ const TextControl = ({
     zIndex: active ? 2 : 'unset',
   }
   const TextInputComponent = rich ? RichTextInput : TextInput
-  // const TextInputComponent = rich ? RichLineInput : TextInput
+
   const _children = (
     <TextInputView
       active={active}

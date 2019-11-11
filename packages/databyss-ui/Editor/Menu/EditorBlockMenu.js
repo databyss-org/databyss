@@ -28,7 +28,13 @@ const EditorBlockMenu = ({ node, hideCursor }) => {
     dispatchEditor(onShowMenuActions(!showMenuActions, editableState))
   }
 
-  const onMenuAction = tag => {
+  const onMenuAction = (tag, e) => {
+    // issue with https://www.notion.so/databyss/Demo-error-7-If-you-click-location-and-press-return-it-doesn-t-move-the-cursor-but-it-makes-everyth-9eaa6b3f02c04358b42f00159863a355
+    // TODO: make this compatable with native
+    // prevent default is needed for any button that affects editor state
+    // without this, editor looses focus and has undefined behavior
+    e.preventDefault()
+    // TODO: be able to fire an action wihtout sending editable state
     dispatchEditor(onShowMenuActions(false, editableState))
     dispatchEditor(startTag(tag, editableState))
   }
@@ -64,7 +70,7 @@ const EditorBlockMenu = ({ node, hideCursor }) => {
       variant="editorMarginMenuItem"
       data-test-block-menu={a.action}
       key={i}
-      onClick={() => onMenuAction(a.action)}
+      onMouseDown={e => onMenuAction(a.action, e)}
     >
       {a.label}
     </Button>

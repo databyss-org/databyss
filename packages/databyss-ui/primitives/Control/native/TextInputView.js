@@ -95,7 +95,7 @@ const TextInputView = ({
             >
               {React.cloneElement(child, {
                 variant: _modal ? 'uiTextNormal' : child.props.variant,
-                css: [
+                concatCss: [
                   {
                     outlineOffset: 0,
                     outline: 'none',

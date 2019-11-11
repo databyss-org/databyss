@@ -259,6 +259,7 @@ export const isEmptyAndAtomic = text => {
     (text.trim().match(/^@/) || text.trim().match(/^#/)) &&
     text.trim().length === 1
   ) {
-    console.log('is there')
+    return true
   }
+  return false
 }

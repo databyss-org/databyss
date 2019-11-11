@@ -13,7 +13,6 @@ import {
   DELETE_BLOCK,
   DELETE_BLOCKS,
 } from './../../state/page/constants'
-// import { addTag } from '../state/actions'
 
 export const newBlock = id =>
   Block.fromJSON({
@@ -88,7 +87,6 @@ const setActiveBlockType = type => (editor, value, next) => {
   const _activeBlock = findActiveBlock(value)
 
   // if empty block replace all marks/types
-  // https://www.notion.so/databyss/Demo-error-7-If-you-click-location-and-press-return-it-doesn-t-move-the-cursor-but-it-makes-everyth-9eaa6b3f02c04358b42f00159863a355
 
   if (_activeBlock.text.length === 0 && editor.value.previousBlock) {
     editor.replaceNodeByKey(_activeBlock.key, newBlock(_activeBlock.key))
@@ -208,14 +206,8 @@ const startTag = tag => (editor, value, next) => {
   ;({
     SOURCE: () => editor.insertText('@'),
     TOPIC: () => editor.insertText('#'),
-    // issue with https://www.notion.so/databyss/Demo-error-7-If-you-click-location-and-press-return-it-doesn-t-move-the-cursor-but-it-makes-everyth-9eaa6b3f02c04358b42f00159863a355
-    LOCATION: () =>
-      editor
-        .toggleMark('location')
-        .insertText(' ')
-        .deleteBackward(1),
+    LOCATION: () => editor.toggleMark('location'),
   }[tag]())
-
   next(editor, value)
 }
 
@@ -308,6 +300,7 @@ export default (editableState, action) => {
     case START_TAG: {
       return {
         ...editableState,
+
         editorCommands: startTag(action.payload.tag),
       }
     }

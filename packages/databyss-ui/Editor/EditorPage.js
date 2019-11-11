@@ -51,12 +51,13 @@ const EditorPage = ({ children }) => {
 
     if (isEmptyAndAtomic(text)) {
       dispatchEditor(clearBlock(id, editableState))
-    }
-    if (text.trim().match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
-      onSetBlockType('SOURCE', id, editableState)
-    }
-    if (text.trim().match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
-      onSetBlockType('TOPIC', id, editableState)
+    } else {
+      if (text.trim().match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
+        onSetBlockType('SOURCE', id, editableState)
+      }
+      if (text.trim().match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
+        onSetBlockType('TOPIC', id, editableState)
+      }
     }
   }
 

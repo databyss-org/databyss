@@ -62,7 +62,6 @@ const SlateContentEditable = ({
       if (_nextEditableState.value.document.getNode(activeBlockId)) {
         text = _nextEditableState.value.document.getNode(activeBlockId).text
       }
-
       onBlockBlur(activeBlockId, text, _nextEditableState)
       onActiveBlockIdChange(_nextActiveBlock.key, _nextEditableState)
       return true
@@ -151,7 +150,10 @@ const SlateContentEditable = ({
       if (blockChanges) {
         handleSelectedBlockChanged(blockChanges)
       } else {
-        onEditableStateChange({ value })
+        // issue https://github.com/ianstormtaylor/slate/issues/2432
+        if (!value.selection.isBlurred) {
+          onEditableStateChange({ value })
+        }
       }
     }
   }
@@ -161,6 +163,7 @@ const SlateContentEditable = ({
       toSlateJson(editorState, page.blocks.map(item => blocks[item._id]))
     ),
   }
+
   useEffect(
     () =>
       _editableState.editorCommands &&
