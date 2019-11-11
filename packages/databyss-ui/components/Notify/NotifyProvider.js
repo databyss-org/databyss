@@ -1,7 +1,7 @@
 import React, { createContext, useContext } from 'react'
 import { Dialog } from '@databyss-org/ui/primitives'
 import { UnauthorizedError } from '@databyss-org/services/lib/request'
-import Bugsnag from '@databyss-org/services/lib/Bugsnag'
+import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
 import IS_NATIVE from '../../lib/isNative'
 

@@ -6,7 +6,7 @@ import {
   ContentState,
   ContentBlock,
 } from 'draft-js'
-import EditorBlock from '../EditorBlock'
+import { EditorBlock } from '../EditorBlock'
 import { getRawHtmlForBlock } from '../state/page/reducer'
 import { useEditorContext } from '../EditorProvider'
 
@@ -68,7 +68,7 @@ const DraftContentEditable = ({
 
   const blockRendererFn = () => ({
     component: ({ block, ...others }) => (
-      <EditorBlock type={block.getType()}>
+      <EditorBlock node={{ type: block.getType(), text: block.getText() }}>
         <DraftBlock block={block} {...others}>
           {block.getText()}
         </DraftBlock>

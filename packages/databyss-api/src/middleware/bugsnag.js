@@ -1,4 +1,4 @@
-import Bugsnag from '@databyss-org/services/lib/Bugsnag'
+import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import bugsnagExpress from '@bugsnag/plugin-express'
 
 export const bugsnagClient = Bugsnag.init('API')

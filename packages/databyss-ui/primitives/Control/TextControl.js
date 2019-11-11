@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react'
 import BaseControl from './BaseControl'
 import TextInput from './native/TextInput'
 import RichTextInput from './native/RichTextInput'
-// simport RichLineInput from './native/RichLineInput'
 
 import TextInputView from './native/TextInputView'
 import { View, Text, Grid } from '../'
