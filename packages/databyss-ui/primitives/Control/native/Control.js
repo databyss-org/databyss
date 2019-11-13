@@ -5,7 +5,7 @@ import Color from 'color'
 import View, { styleProps, defaultProps, webProps } from '../../View/View'
 import styled from '../../styled'
 import { isMobileOs } from '../../../lib/mediaQuery'
-import theme, { borderRadius } from '../../../theming/theme'
+import { borderRadius, timing } from '../../../theming/theme'
 
 const StyledButton = styled('button', styleProps)
 
@@ -31,7 +31,7 @@ const viewProps = {
 
 const controlCssDesktop = (props, theme) => ({
   cursor: 'pointer',
-  transition: `background-color ${theme.timing.flash}ms ${theme.timing.ease}`,
+  transition: `background-color ${timing.flash}ms ${timing.ease}`,
   ...(props.active
     ? {
         backgroundColor: props.activeColor,
@@ -58,11 +58,9 @@ const controlCssDesktop = (props, theme) => ({
 })
 
 const controlCssMobile = () => ({
-  transition: `background-color ${theme.timing.medium}ms ${theme.timing.ease}`,
+  transition: `background-color ${timing.medium}ms ${timing.ease}`,
   '&:active': {
-    transition: `background-color ${theme.timing.quick}ms ${
-      theme.timing.easeOut
-    }`,
+    transition: `background-color ${timing.quick}ms ${timing.easeOut}`,
   },
 })
 

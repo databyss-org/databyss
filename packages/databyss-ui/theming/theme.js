@@ -47,7 +47,7 @@ const theme = {
 
 export default theme
 
-export { borderRadius, pxUnits }
+export { borderRadius, pxUnits, timing }
 
 export const darkTheme = {
   ...theme,

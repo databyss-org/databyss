@@ -1,12 +1,12 @@
 {
   "name": "@databyss-org/api",
-  "version": "1.1.39",
+  "version": "1.1.40",
   "description": "api",
   "main": "server.js",
   "author": "databyss-org",
   "license": "MIT",
   "peerDependencies": {
-    "@databyss-org/services": "1.1.39",
+    "@databyss-org/services": "1.1.40",
     "@bugsnag/js": "^6.3.2"
   },
   "dependencies": {

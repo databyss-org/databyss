@@ -2,6 +2,7 @@ import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
 import { Editor } from 'slate-react'
 import forkRef from '@databyss-org/ui/lib/forkRef'
+import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { getRawHtmlForBlock } from './../../state/page/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../../EditorProvider'
@@ -145,6 +146,9 @@ const SlateContentEditable = forwardRef(
 
     const onChange = change => {
       const { value } = change
+      Bugsnag.client.leaveBreadcrumb('editor.onChange', {
+        state: JSON.stringify(editorState, null, 2),
+      })
       if (onDocumentChange) {
         onDocumentChange(value.document.toJSON())
       }
