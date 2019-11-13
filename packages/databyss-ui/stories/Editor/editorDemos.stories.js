@@ -33,7 +33,7 @@ const EditorDemo = () => {
           },
         }}
       />
-      <NotifyProvider envPrefix="REACT_APP">
+      <NotifyProvider envPrefix="STORYBOOK">
         <EditorProvider
           editableReducer={slateReducer}
           initialState={initialState}

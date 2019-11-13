@@ -51,5 +51,5 @@ export const ViewportDecorator = storyFn => (
 export const ContentDecorator = storyFn => <Content>{storyFn()}</Content>
 
 export const NotifyDecorator = storyFn => (
-  <NotifyProvider envPrefix="REACT_APP">{storyFn()}</NotifyProvider>
+  <NotifyProvider envPrefix="STORYBOOK">{storyFn()}</NotifyProvider>
 )
