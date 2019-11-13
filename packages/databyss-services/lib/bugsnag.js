@@ -6,6 +6,7 @@ const Bugsnag = { client: null }
 Bugsnag.init = (envPrefix, options = {}) => {
   Bugsnag.client = bugsnagLib(envPrefix, {
     appVersion: packageJson.version,
+    consoleBreadcrumbsEnabled: false,
     ...options,
   })
   return Bugsnag.client
