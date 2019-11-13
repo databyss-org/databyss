@@ -5,13 +5,3 @@ export default class SourceNotFoundError extends Error {
     this.sourceId = sourceId
   }
 }
-
-// class SourceNotFoundError extends Error {
-//   constructor(message, status) {
-//     super()
-//     this.message = message
-//     this.status = status
-//   }
-// }
-
-// module.exports = SourceNotFoundError

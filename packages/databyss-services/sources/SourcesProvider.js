@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { Text, View } from '@databyss-org/ui/primitives'
 import SourceNotFoundError from './SourceNotFoundError'
-
+import Loading from '@databyss-org/ui/components/Loading'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { initialState } from './reducer'
 import { fetchSource, saveSource } from './actions'
@@ -8,6 +9,14 @@ import { fetchSource, saveSource } from './actions'
 const useReducer = createReducer()
 
 export const SourceContext = createContext()
+
+const Error = () => (
+  <View height={'100%'}>
+    <View alignSelf="center" justifyContent="center">
+      <Text>No Source Found</Text>
+    </View>
+  </View>
+)
 
 const SourceProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
@@ -53,10 +62,10 @@ export const withSource = Wrapped => ({ sourceId, ...others }) => {
   )
 
   if (source instanceof SourceNotFoundError) {
-    return <div> not found </div>
+    return <Error />
   }
 
-  return source ? <Wrapped source={source} /> : <div>loading</div>
+  return source ? <Wrapped source={source} /> : <Loading />
 }
 
 export default SourceProvider
