@@ -24,7 +24,7 @@ export default (theme = defaultTheme) => ({
   },
 
   content: {
-    maxWidth: theme.contentWidth,
+    maxWidth: theme.widthVariants.content.maxWidth,
     // lineHeight: theme.lineHeights.normal,
     width: '100%',
     display: 'flex',

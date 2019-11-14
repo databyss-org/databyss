@@ -1,10 +1,11 @@
 const express = require('express')
 const _ = require('lodash')
-const router = express.Router()
 const Source = require('../../models/Source')
 const auth = require('../../middleware/auth')
 const accountMiddleware = require('../../middleware/accountMiddleware')
 const ApiError = require('../../lib/ApiError')
+
+const router = express.Router()
 
 // @route    POST api/sources
 // @desc     Add Source
@@ -13,7 +14,7 @@ router.post(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
-    let { name, ranges, authors, citations, _id } = req.body.data
+    const { name, ranges, authors, citations, _id } = req.body.data
     const sourceFields = {
       name: !_.isEmpty(name) ? name : '',
       ranges: !_.isEmpty(ranges) ? ranges : [],
@@ -26,23 +27,20 @@ router.post(
     // if source exists update it and exit
     try {
       let source = await Source.findOne({ _id })
-      console.log('found', source)
       if (source) {
         sourceFields._id = _id
         source = await Source.findOneAndUpdate(
           { _id },
           { $set: sourceFields },
           { new: true }
-        ).then(response => {
-          return res.json(response)
-        })
+        ).then(response => res.json(response))
       } else {
         // if new source has been added
         const sources = new Source(sourceFields)
         const post = await sources.save()
-        return res.json(post)
+        res.json(post)
       }
-      //  return res.status(200)
+      return res.status(200)
     } catch (err) {
       console.error(err.message)
       return res.status(500).send('Server error')
@@ -63,8 +61,9 @@ router.get(
       })
 
       if (!source) {
-        return res.status(400).json({ msg: 'There is no source for this id' })
+        return res.status(404).json({ msg: 'There is no source for this id' })
       }
+
       if (req.account.id.toString() !== source.account.toString()) {
         throw new ApiError('This author is private')
       }

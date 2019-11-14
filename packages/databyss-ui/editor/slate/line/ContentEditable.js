@@ -1,11 +1,12 @@
 import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
 import { Editor } from 'slate-react'
+import { Text } from '@databyss-org/ui/primitives'
+import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { lineStateToSlate } from './../markup'
 import { useEditorContext } from '../../EditorProvider'
 import { formatHotKeys, navHotKeys } from './../hotKeys'
 import { renderMark, getBlockRanges } from './../slateUtils'
-import { renderLine } from './../../EditorBlock'
 
 const initalValue = node => ({
   document: {
@@ -42,6 +43,7 @@ const SlateContentEditable = forwardRef(
       onHotKey,
       onBlur,
       overrideCss,
+      multiline,
     },
     ref
   ) => {
@@ -72,6 +74,9 @@ const SlateContentEditable = forwardRef(
 
     const onChange = change => {
       const { value } = change
+      Bugsnag.client.leaveBreadcrumb('line/ContentEditable/onChange', {
+        state: JSON.stringify(editorState, null, 2),
+      })
       if (onNativeDocumentChange) {
         onNativeDocumentChange(value.document.toJSON())
       }
@@ -109,6 +114,17 @@ const SlateContentEditable = forwardRef(
 
       return next()
     }
+
+    const renderLine = ({ children }) => (
+      <Text
+        variant="bodyNormal"
+        color="text.0"
+        css={multiline ? {} : { flexShrink: 0 }}
+      >
+        {children}
+      </Text>
+    )
+
     return (
       <Editor
         value={_editableState.value}

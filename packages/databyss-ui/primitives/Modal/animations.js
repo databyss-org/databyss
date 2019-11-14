@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { useState, useEffect, useRef } from 'react'
 import { keyframes as makeKeyframes } from '@emotion/core'
-import theme from '../../theming/theme'
+import { timing as themeTiming } from '../../theming/theme'
 
 const reverseKeyframes = keyframes => ({
   '0%': {
@@ -42,8 +42,8 @@ const makeAnimation = (keyframes, duration, timing) => {
 
 const makeAnimations = (
   keyframes,
-  duration = theme.timing.medium,
-  timing = theme.timing.easeOut
+  duration = themeTiming.medium,
+  timing = themeTiming.easeOut
 ) =>
   Object.keys(keyframes).reduce((acc, key) => {
     acc[key] = {

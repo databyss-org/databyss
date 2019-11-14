@@ -1,3 +1,8 @@
-const breakpoints = ['640px', '1024px', '1200px', '1400px']
+import { pxUnits } from './views'
 
-export default breakpoints
+const breakpoints = [600, 1024, 1200, 1400].map(pxUnits)
+
+breakpoints.mobile = breakpoints[0]
+breakpoints.desktop = breakpoints[1]
+
+export default { breakpoints }

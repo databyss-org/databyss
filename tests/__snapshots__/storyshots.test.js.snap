@@ -2,10 +2,10 @@
 
 exports[`Storyshots Modules//Motif Landing Entries for Source (long title) 1`] = `
 <div
-  className="root-0-0-3  css-1rwqazw"
+  className="root-0-0-3  css-xcep3h"
 >
   <div
-    className="Landing-landing css-smg0zc"
+    className="Landing-landing css-1huk8xz"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -661,10 +661,10 @@ exports[`Storyshots Modules//Motif Landing Entries for Source (long title) 1`] =
 
 exports[`Storyshots Modules//Motif Landing Entries for Source 1`] = `
 <div
-  className="root-0-0-2  css-1rwqazw"
+  className="root-0-0-2  css-xcep3h"
 >
   <div
-    className="Landing-landing css-smg0zc"
+    className="Landing-landing css-1huk8xz"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -1320,10 +1320,10 @@ exports[`Storyshots Modules//Motif Landing Entries for Source 1`] = `
 
 exports[`Storyshots Modules//Motif Landing Show All Entries 1`] = `
 <div
-  className="root-0-0-1  css-1rwqazw"
+  className="root-0-0-1  css-xcep3h"
 >
   <div
-    className="Landing-landing css-smg0zc"
+    className="Landing-landing css-1huk8xz"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
@@ -2049,10 +2049,10 @@ exports[`Storyshots Modules//Motif Landing Show All Entries 1`] = `
 
 exports[`Storyshots Modules//Motif Landing Source TOC 1`] = `
 <div
-  className="root-0-0-4  css-1rwqazw"
+  className="root-0-0-4  css-xcep3h"
 >
   <div
-    className="Landing-landing css-smg0zc"
+    className="Landing-landing css-1huk8xz"
   >
     <div
       className="Landing-notSticky Landing-transition Landing-bottomBorder"
