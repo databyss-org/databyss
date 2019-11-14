@@ -367,7 +367,7 @@ const SlateContentEditable = forwardRef(
 
       if (hotKeys.isTab(event)) {
         event.preventDefault()
-        onHotKey(TAB, editor)
+        onHotKey('TAB', editor)
       }
       if (hotKeys.isLocation(event)) {
         event.preventDefault()
