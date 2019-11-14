@@ -13,6 +13,6 @@ module.exports = async ({ config, mode }) => {
 
   const webpack = require('../config/webpack.config.js')(mode.toLowerCase())
   config.module.rules = webpack.module.rules
-
+  config.devtool = 'source-map'
   return config
 }
