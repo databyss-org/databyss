@@ -2,6 +2,7 @@ import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
 import { Editor } from 'slate-react'
 import { Text } from '@databyss-org/ui/primitives'
+import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { lineStateToSlate } from './../markup'
 import { useEditorContext } from '../../EditorProvider'
 import { formatHotKeys, navHotKeys } from './../hotKeys'
@@ -73,6 +74,9 @@ const SlateContentEditable = forwardRef(
 
     const onChange = change => {
       const { value } = change
+      Bugsnag.client.leaveBreadcrumb('line/ContentEditable/onChange', {
+        state: JSON.stringify(editorState, null, 2),
+      })
       if (onNativeDocumentChange) {
         onNativeDocumentChange(value.document.toJSON())
       }
