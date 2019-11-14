@@ -89,11 +89,6 @@ export const navHotKeys = (event, editor, onHotKey) => {
 }
 
 export const formatHotKeys = (event, editor, onHotKey, OnToggleMark) => {
-  if (Hotkeys.isTab(event)) {
-    event.preventDefault()
-    onHotKey(TAB, editor)
-  }
-
   if (Hotkeys.isBold(event)) {
     event.preventDefault()
     OnToggleMark('bold', editor)
