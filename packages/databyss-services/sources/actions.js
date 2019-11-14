@@ -16,71 +16,54 @@ export function fetchSource(id) {
       type: GET_SOURCE,
       payload: {},
     })
-    sources
-      .getSource(id)
-      .then(source => {
-        dispatch({
-          type: CACHE_SOURCE,
-          payload: { source },
-        })
-      })
-      .catch(() => {
-        dispatch({
-          type: ERROR,
-          payload: {
-            source: new SourceNotFoundError('Source not found', id),
-            id,
-          },
-        })
-      })
+
+    let source = await sources.getSource(id)
+    if (!source) {
+      source = new SourceNotFoundError('Source not found', id)
+    }
+
+    dispatch({
+      type: CACHE_SOURCE,
+      payload: { source, id },
+    })
   }
 }
 
-export function saveSource(id) {
-  return dispatch => {
+export function saveSource(sourceFields) {
+  return async dispatch => {
     dispatch({
       type: SET_SOURCE,
       payload: {},
     })
-    sources.setSource(id).then(source => {
-      dispatch({
-        type: CACHE_SOURCE,
-        payload: { source },
-      }).catch(() => {
-        dispatch({
-          type: ERROR,
-          payload: {
-            source: new SourceNotFoundError('Source not saved'),
-            id,
-          },
-        })
-      })
+
+    let source = await sources.setSource(sourceFields)
+    if (!source) {
+      source = new SourceNotFoundError('Source not saved', id)
+    }
+
+    dispatch({
+      type: CACHE_SOURCE,
+      payload: { source, id: sourceFields._id },
     })
   }
 }
 
-export function deleteSource(id) {
-  return dispatch => {
-    dispatch({
-      type: DELETE_SOURCE,
-      payload: {},
-    })
-    sources
-      .deleteSource(id)
-      .then(source => {
-        dispatch({
-          type: SOURCE_DELETED,
-          payload: { source },
-        })
-      })
-      .catch(() => {
-        dispatch({
-          type: ERROR,
-          payload: {
-            source: new SourceNotFoundError('Source not deleted'),
-            id,
-          },
-        })
-      })
-  }
-}
+// export function deleteSource(id) {
+//   return dispatch => {
+//     dispatch({
+//       type: DELETE_SOURCE,
+//       payload: {},
+//     })
+
+//     let source = await sources.deleteSource(id)
+//     if (!source) {
+//       source = new SourceNotFoundError('Source not deleted', id)
+//     }
+
+//     dispatch({
+//       type: CACHE_SOURCE,
+//       payload: { source, id },
+//     })
+
+//   }
+// }

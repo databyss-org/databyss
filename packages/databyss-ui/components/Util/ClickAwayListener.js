@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { elementAcceptingRef, exactProp } from '@material-ui/utils'
 import useEventCallback from '../../lib/useEventCallback'
 import ownerDocument from '../../lib/ownerDocument'
+import forkRef from '../../lib/forkRef'
 
 function mapEventPropToEvent(eventProp) {
   return eventProp.substring(2).toLowerCase()
@@ -12,7 +13,7 @@ function mapEventPropToEvent(eventProp) {
  * Listen for click events that occur somewhere in the document, outside of the element itself.
  * For instance, if you need to hide a menu when people click anywhere else on your page.
  */
-const ClickAwayListener = React.forwardRef((props, ref) => {
+const ClickAwayListener = props => {
   const {
     children,
     mouseEvent = 'onClick',
@@ -22,17 +23,6 @@ const ClickAwayListener = React.forwardRef((props, ref) => {
   } = props
   const movedRef = React.useRef(false)
   const nodeRef = React.useRef(null)
-
-  // forward changes in nodeRef to component ref
-  useEffect(
-    () => {
-      if (ref) {
-        ref.current = nodeRef.current
-      }
-      return undefined
-    },
-    [nodeRef.current]
-  )
 
   const handleClickAway = useEventCallback(event => {
     // Ignore events that have been `event.preventDefault()` marked.
@@ -112,10 +102,10 @@ const ClickAwayListener = React.forwardRef((props, ref) => {
 
   return (
     <React.Fragment>
-      {React.cloneElement(children, { ref: nodeRef })}
+      {React.cloneElement(children, { ref: forkRef(children.ref, nodeRef) })}
     </React.Fragment>
   )
-})
+}
 
 ClickAwayListener.propTypes = {
   /**

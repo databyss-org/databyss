@@ -8,7 +8,7 @@ import Buttons from './Buttons'
 import Icons from './Icons'
 import TextInputs from './TextInputs'
 import List, { ItemSeparators, ComplexItems, Sections } from './List'
-import Modals, { Editable as EditableModals } from './Modals'
+import Modals, { Editable as EditableModals, Dialogs } from './Modals'
 
 storiesOf('Design System|Buttons', module)
   .addDecorator(ViewportDecorator)
@@ -37,3 +37,4 @@ storiesOf('Design System|Modals', module)
   .addDecorator(ViewportDecorator)
   .add('Default', () => <Modals />)
   .add('Editable', () => <EditableModals />)
+  .add('Dialogs', () => <Dialogs />)

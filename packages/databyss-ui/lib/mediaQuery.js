@@ -1,8 +1,8 @@
-import IS_NATIVE from './isNative'
-
 const mobileOsAgents = /ios|ipad|iphone|android|windows phone/i
 
-export const isMobile = () => IS_NATIVE || window.innerWidth <= 600
-export const isMobileOs = () =>
-  IS_NATIVE || navigator.userAgent.match(mobileOsAgents)
+const _isMobile = window.innerWidth <= 600
+const _isMobileOs = navigator.userAgent.match(mobileOsAgents)
+
+export const isMobile = () => _isMobile
+export const isMobileOs = () => _isMobileOs
 export const isMobileOrMobileOs = () => isMobile() || isMobileOs()

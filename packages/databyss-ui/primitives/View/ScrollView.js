@@ -8,7 +8,8 @@ const Styled = IS_NATIVE ? styled(ScrollView, styleProps) : View
 
 export default ({ children, ...others }) => {
   const webProps = {
-    overflow: 'auto',
+    overflowY: 'auto',
+    overflowX: 'hidden',
     css: {
       overscrollBehavior: 'contain',
       WebkitOverflowScrolling: 'touch',

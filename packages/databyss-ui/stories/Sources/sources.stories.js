@@ -11,7 +11,10 @@ import ShowFirstCitation from '@databyss-org/services/sources/ShowFirstCitation'
 import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
 
-const _seedValue = {
+const _id1 = ObjectId().toHexString()
+const _id2 = ObjectId().toHexString()
+
+const _seedValue1 = {
   authors: [
     {
       firstName: 'Max',
@@ -27,11 +30,29 @@ const _seedValue = {
       ranges: [],
     },
   ],
-  _id: '5dcb069b948335a42b7ec453',
+  _id: _id1,
+}
+
+const _seedValue2 = {
+  authors: [
+    {
+      firstName: 'Max',
+      lastName: 'Stamenov',
+    },
+  ],
+  name: 'Stamenov. Language Structure',
+  ranges: [{ offset: 0, length: 2, marks: 'bold' }],
+  citations: [
+    {
+      textValue: 'Second Source',
+      ranges: [],
+    },
+  ],
+  _id: _id2,
 }
 
 const SourcesDemo = () => {
-  const [source, setSourceState] = useState('5dcb069b948335a42b7ec453')
+  const [source, setSourceState] = useState(_id1)
 
   const [getSource, setSource, cache] = useSourceContext()
   return (
@@ -40,7 +61,8 @@ const SourcesDemo = () => {
       <Button onPress={() => setSourceState('5dcb06ae948335a42b7ec45a')}>
         switch sources
       </Button>
-      <Button onPress={() => setSource(_seedValue)}>seed source 1</Button>
+      <Button onPress={() => setSource(_seedValue1)}>seed source 1</Button>
+      <Button onPress={() => setSource(_seedValue2)}>seed source 2</Button>
     </View>
   )
 }

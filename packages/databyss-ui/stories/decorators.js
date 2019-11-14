@@ -1,10 +1,12 @@
 import React, { useLayoutEffect, useState } from 'react'
 import addons from '@storybook/addons'
 import Content from '@databyss-org/ui/components/Viewport/Content'
-import Viewport from '@databyss-org/ui/components/Viewport/ThemedViewport'
+import { View } from '@databyss-org/ui/primitives'
 import ServiceProvider from '@databyss-org/services/components/ServiceProvider'
+import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 import * as auth from '@databyss-org/services/auth/mocks'
 import defaultTheme, { darkTheme } from '../theming/theme'
+import { ThemeProvider } from '../theming'
 
 const services = { auth }
 
@@ -29,13 +31,16 @@ export const ViewportWrapper = ({ children, ...others }) => {
   }, [])
 
   return (
-    <Viewport
-      theme={isDark ? darkTheme : defaultTheme}
-      paddingVariant="medium"
-      {...others}
-    >
-      {children}
-    </Viewport>
+    <ThemeProvider theme={isDark ? darkTheme : defaultTheme}>
+      <View
+        paddingVariant="medium"
+        backgroundColor="pageBackground"
+        minHeight="100vh"
+        {...others}
+      >
+        {children}
+      </View>
+    </ThemeProvider>
   )
 }
 
@@ -44,3 +49,7 @@ export const ViewportDecorator = storyFn => (
 )
 
 export const ContentDecorator = storyFn => <Content>{storyFn()}</Content>
+
+export const NotifyDecorator = storyFn => (
+  <NotifyProvider envPrefix="STORYBOOK">{storyFn()}</NotifyProvider>
+)

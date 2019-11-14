@@ -33,7 +33,7 @@ _c = {
 _c = {
   ..._c,
   // [darkest...lightest]
-  text: [_c.black, ..._c.gray],
+  text: [_c.black, ..._c.gray.slice(2)],
   // [lightest...darkest]
   background: [_c.white, ..._c.gray.slice().reverse()],
   // control colors [enabled, hover, active, label]
@@ -46,7 +46,8 @@ _c = {
     .alpha(0.5)
     .rgb()
     .string(),
-  inputModalBackground: _c.white,
+  activeTextInputBackground: _c.white,
+  pageBackground: _c.gray[7],
 }
 
 // legacy (deprecated)
@@ -75,7 +76,8 @@ _c = {
       border: [_c.gray[7], _c.gray[3], _c.gray[1]],
       // control colors [enabled, hover, active, label]
       secondary: [_c.blue[1], _c.gray[2], _c.gray[0], _c.blue[2]],
-      inputModalBackground: _c.gray[3],
+      activeTextInputBackground: _c.black,
+      pageBackground: _c.black,
     },
   },
 }

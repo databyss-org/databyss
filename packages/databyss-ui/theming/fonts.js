@@ -1,16 +1,16 @@
 import { Platform } from 'react-native'
+import { isMobileOs } from '../lib/mediaQuery'
 
 export const serif = Platform.select({
   ios: 'Baskerville',
   android: 'serif',
   default: 'PT Serif, serif',
-  // default: 'Baskerville, serif',
 })
 
 export const sans = Platform.select({
   ios: 'System',
   android: 'sans-serif',
-  default: '-apple-system, sans-serif',
+  default: 'Source Sans Pro, sans-serif',
 })
 
 export const mono = Platform.select({
@@ -141,8 +141,8 @@ const bodyText = size => ({
 const bodyVariants = {
   bodyLarge: bodyText(22),
   bodyHeader: bodyHeader(20),
-  bodyNormal: bodyText(16),
-  bodySmall: bodyText(14),
+  bodyNormal: bodyText(isMobileOs() ? 16 : 15),
+  bodySmall: bodyText(isMobileOs() ? 14 : 13),
 }
 
 const bodyBoldVariants = Object.keys(bodyVariants).reduce(

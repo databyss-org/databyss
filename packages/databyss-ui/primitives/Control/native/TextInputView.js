@@ -4,14 +4,16 @@ import { ThemeContext } from '@emotion/core'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { isMobileOs } from '../../../lib/mediaQuery'
-import { View, Text } from '../../'
+import { View, Text, RawHtml } from '../../'
+import { borderRadius } from '../../../theming/theme'
 
 const desktopInputCss = {
   display: 'flex',
   position: 'relative',
   zIndex: 1,
-  padding: '1px',
-  paddingLeft: '2px',
+  padding: '2px',
+  paddingLeft: 'tiny',
+  paddingRight: 'tiny',
   backgroundColor: 'transparent',
 }
 
@@ -26,21 +28,25 @@ const modalViewCss = (active, labelWidth) =>
     ? {
         position: 'absolute',
         zIndex: 2,
-        top: '-5px',
-        left: labelWidth ? `${labelWidth - 8}px` : '-5px',
+        left: labelWidth ? `calc(${labelWidth} - 8px)` : '-5px',
         right: labelWidth ? '5px' : '-5px',
         padding: 'none',
         bg: 'transparent',
         marginRight: 0,
+        borderRadius,
       }
-    : {}
+    : {
+        position: 'absolute',
+      }
 
 const activeInputCss = modal => ({
-  bg: modal ? 'inputModalBackground' : 'background.0',
+  bg: 'activeTextInputBackground',
   pointerEvents: 'all',
   cursor: 'text',
   opacity: 1,
-  borderRadius: 0,
+  borderRadius,
+  paddingLeft: modal ? 'small' : 'tiny',
+  paddingRight: modal ? 'small' : 'tiny',
   margin: 0,
 })
 
@@ -59,6 +65,10 @@ const TextInputView = ({
   const inputRef = useRef(null)
 
   const _modal = modal || (isMobileOs() && smallText)
+  const _labelWidth =
+    labelOffset.toString().indexOf('%') >= 0 ? labelOffset : `${labelOffset}px`
+
+  const { textValue } = child.props.value
 
   return (
     <ThemeContext.Consumer>
@@ -66,9 +76,11 @@ const TextInputView = ({
         <View ref={viewRef} {...others} flexShrink={1}>
           {_modal && (
             <View padding="1px" flexShrink={1} flexWrap="wrap">
-              <Text variant={child.props.variant}>
-                {child.props.value.textValue}
-              </Text>
+              {textValue && textValue.length ? (
+                <Text variant={child.props.variant}>{textValue}</Text>
+              ) : (
+                <RawHtml variant={child.props.variant} html="&nbsp;" />
+              )}
             </View>
           )}
 
@@ -81,7 +93,7 @@ const TextInputView = ({
             }}
           >
             <View
-              css={[_modal && css(modalViewCss(active, labelOffset))(theme)]}
+              css={[_modal && css(modalViewCss(active, _labelWidth))(theme)]}
               shadowVariant={_modal ? 'modal' : 'none'}
               onClick={
                 _modal
@@ -94,7 +106,7 @@ const TextInputView = ({
               }
             >
               {React.cloneElement(child, {
-                variant: _modal ? 'uiTextNormal' : child.props.variant,
+                variant: _modal ? 'bodyNormal' : child.props.variant,
                 concatCss: [
                   {
                     outlineOffset: 0,
@@ -115,6 +127,10 @@ const TextInputView = ({
       )}
     </ThemeContext.Consumer>
   )
+}
+
+TextInputView.defaultProps = {
+  labelOffset: 0,
 }
 
 export default TextInputView

@@ -8,6 +8,7 @@ const Grid = ({
   flexWrap,
   alignItems,
   singleRow,
+  singleColumn,
   overflow,
   ...others
 }) => {
@@ -18,7 +19,7 @@ const Grid = ({
       React.cloneElement(child, {
         flexGrow: 0,
         flexShrink: 0,
-        marginRight: columnGap,
+        marginRight: singleColumn ? 0 : columnGap,
         marginBottom: singleRow ? 0 : rowGap,
         ...child.props,
       })
@@ -30,7 +31,7 @@ const Grid = ({
   return (
     <View overflow={overflow} {...others}>
       <View
-        mr={columnGapCorrection}
+        mr={singleColumn ? 0 : columnGapCorrection}
         mb={singleRow ? 0 : rowGapCorrection}
         flexDirection="row"
         flexWrap={flexWrap || 'wrap'}

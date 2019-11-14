@@ -1,14 +1,21 @@
 import React, { useState } from 'react'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
-import { Modal, Button, Text, Icon } from '@databyss-org/ui/primitives'
+import {
+  ModalWindow,
+  Button,
+  Text,
+  Icon,
+  Dialog,
+} from '@databyss-org/ui/primitives'
 import { loremIpsum } from 'lorem-ipsum'
 import Alea from 'alea'
 import { Section, TextControls } from './'
 import { isMobileOs } from '../../lib/mediaQuery'
 
 const alea = new Alea('modals')
-const ipsum = loremIpsum({ units: 'paragraphs', count: 1, random: alea })
+const ipsum = loremIpsum({ units: 'paragraphs', count: 2, random: alea })
+const shortIpsum = loremIpsum({ units: 'sentences', count: 2, random: alea })
 
 const modals = {
   default: {
@@ -37,6 +44,14 @@ const modals = {
   },
 }
 
+const dialogs = {
+  ok: {
+    name: 'Ok Dialog',
+    message: shortIpsum,
+    confirmButton: <Button variant="secondaryUi">Ok</Button>,
+  },
+}
+
 export default () => {
   const [visible, setVisible] = useState(false)
   const [modal, setModal] = useState('default')
@@ -54,17 +69,16 @@ export default () => {
           {modals[key].title}
         </Button>
       ))}
-      <Modal
+      <ModalWindow
         visible={visible}
         onDismiss={() => setVisible(false)}
-        paddingVariant="medium"
         {...modals[modal]}
       >
         <Text>
           {ipsum}
           {ipsum}
         </Text>
-      </Modal>
+      </ModalWindow>
     </Section>
   )
 }
@@ -92,18 +106,51 @@ export const Editable = () => {
           {editableModals[key].title}
         </Button>
       ))}
-      <Modal
+      <ModalWindow
         visible={visible}
         onDismiss={() => setVisible(false)}
-        paddingVariant={isMobileOs() ? 'small' : 'large'}
+        widthVariant="form"
+        padding={isMobileOs() ? 'none' : 'small'}
         {...editableModals[modal]}
       >
-        <TextControls />
-        <TextControls />
-        <TextControls />
-        <TextControls />
-        <TextControls />
-      </Modal>
+        {Array(5)
+          .fill()
+          .map((_, idx) => (
+            <TextControls
+              key={idx}
+              listProps={{
+                horizontalItemPadding: isMobileOs() ? 'none' : 'small',
+              }}
+              labelProps={{ paddingLeft: isMobileOs() ? 'em' : 'tiny' }}
+            />
+          ))}
+      </ModalWindow>
+    </Section>
+  )
+}
+
+export const Dialogs = () => {
+  const [visible, setVisible] = useState(false)
+  const [dialog, setDialog] = useState('ok')
+
+  return (
+    <Section title="Dialogs">
+      {Object.keys(dialogs).map(key => (
+        <Button
+          key={key}
+          onPress={() => {
+            setDialog(key)
+            setVisible(true)
+          }}
+        >
+          {dialogs[key].name}
+        </Button>
+      ))}
+      <Dialog
+        visible={visible}
+        onDismiss={() => setVisible(false)}
+        {...dialogs[dialog]}
+      />
     </Section>
   )
 }
