@@ -18,6 +18,7 @@ import {
   hasSelection,
   noAtomicInSelection,
   getSelectedBlocks,
+  isTextAtomic,
 } from './../slateUtils'
 
 const schema = {
@@ -370,8 +371,10 @@ const SlateContentEditable = forwardRef(
         onHotKey('TAB', editor)
       }
       if (hotKeys.isLocation(event)) {
-        event.preventDefault()
-        OnToggleMark('location', editor)
+        if (!isTextAtomic(editor.value.anchorBlock.text)) {
+          event.preventDefault()
+          OnToggleMark('location', editor)
+        }
       }
 
       return next()

@@ -254,11 +254,15 @@ export const isBlockEmpty = (id, editor) => {
   return true
 }
 
+export const isTextAtomic = text => {
+  if (text.trim().match(/^@/) || text.trim().match(/^#/)) {
+    return true
+  }
+  return false
+}
+
 export const isEmptyAndAtomic = text => {
-  if (
-    (text.trim().match(/^@/) || text.trim().match(/^#/)) &&
-    text.trim().length === 1
-  ) {
+  if (isTextAtomic(text) && text.trim().length === 1) {
     return true
   }
   return false
