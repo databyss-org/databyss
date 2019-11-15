@@ -60,31 +60,6 @@ context('Editor', () => {
     cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
 
-  // // issue #116
-  // it('should not allow location on atomic block', () => {
-  //   cy.get('@editor')
-  //     .type('@source and ')
-  //     .toggleLocation()
-  //     .type('not location')
-  //     .newLine()
-  //     .previousBlock()
-
-  //   const expected = toSlateJson(
-  //     <value>
-  //       <document>
-  //         <block type="SOURCE">
-  //           <text />
-  //           <inline type="SOURCE">source and not location</inline>
-  //           <text />
-  //         </block>
-  //         <block type="ENTRY" />
-  //       </document>
-  //     </value>
-  //   )
-
-  //   cy.get('@slateDocument').then(matchExpectedJson(expected.document))
-  // })
-
   // issue #117
   it('should remove formatted # or @', () => {
     cy.get('@editor')
