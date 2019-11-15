@@ -371,6 +371,7 @@ const SlateContentEditable = forwardRef(
         onHotKey('TAB', editor)
       }
       if (hotKeys.isLocation(event)) {
+        // issue #116
         if (!isTextAtomic(editor.value.anchorBlock.text)) {
           event.preventDefault()
           OnToggleMark('location', editor)
