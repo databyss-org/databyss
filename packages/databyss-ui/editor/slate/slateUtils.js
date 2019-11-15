@@ -1,5 +1,5 @@
 import React from 'react'
-import { KeyUtils, Block } from 'slate'
+import { KeyUtils, Block, Editor, Value } from 'slate'
 import ObjectId from 'bson-objectid'
 import { RawHtml, View } from '@databyss-org/ui/primitives'
 import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
@@ -266,4 +266,25 @@ export const isEmptyAndAtomic = text => {
     return true
   }
   return false
+}
+
+export const newEditor = () => {
+  const _value = Value.fromJSON({
+    document: {
+      nodes: [
+        {
+          object: 'block',
+          type: 'ENTRY',
+          nodes: [
+            {
+              object: 'text',
+              text: '',
+            },
+          ],
+        },
+      ],
+    },
+  })
+  const _editor = new Editor({ value: _value })
+  return _editor
 }

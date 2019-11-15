@@ -13,9 +13,6 @@ const rules = [
             return <strong data-serializer-key={uuid}>{children}</strong>
           case 'italic':
             return <em data-serializer-key={uuid}>{children}</em>
-          // issue #116
-          case 'location':
-            return <span data-serializer-key={uuid}>{children}</span>
           default:
             return children
         }
@@ -33,7 +30,9 @@ export default serializer
 
 export const serializeNodeToHtml = node => {
   const children = serializer.serializeNode(node)
+
   const html = renderToStaticMarkup(<body>{children}</body>)
+
   return html.slice(6, -7)
 }
 
