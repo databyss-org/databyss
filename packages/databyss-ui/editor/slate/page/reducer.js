@@ -1,4 +1,4 @@
-import { Block, Mark } from 'slate'
+import { Block } from 'slate'
 import { serializeNodeToHtml, sanitizer } from './../inlineSerializer'
 import { getRangesFromBlock } from './../markup'
 
@@ -127,7 +127,7 @@ const setBlockType = (id, type) => (editor, value, next) => {
     let _marks = _node.getMarks().toJSON()
 
     // mock editor to correct marks
-    let _editor = newEditor()
+    const _editor = newEditor()
     _editor.insertBlock(_node)
 
     // issue #117
