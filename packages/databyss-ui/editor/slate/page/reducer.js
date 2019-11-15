@@ -120,19 +120,29 @@ const clearBlockById = id => (editor, value, next) => {
 
 const setBlockType = (id, type) => (editor, value, next) => {
   if (isAtomicInlineType(type)) {
-    const _node = value.document.getNode(id)
+    let _node = value.document.getNode(id)
 
     let _text = _node.text
-    const _marks = _node.getMarks().toJSON()
 
-    if (_marks.length) {
-      _text = serializeNodeToHtml(_node)
-    }
     if (_text.trim().startsWith('@') || _text.trim().startsWith('#')) {
+      // issue #117
+      editor.removeTextByKey(
+        editor.value.document.getNode(id).getFirstText().key,
+        0,
+        1
+      )
+      _node = editor.value.document.getNode(id)
+
       _text = _text
         .trim()
         .substring(1)
         .trim()
+    }
+
+    const _marks = _node.getMarks().toJSON()
+
+    if (_marks.length) {
+      _text = serializeNodeToHtml(_node)
     }
 
     const _block = Block.fromJSON({

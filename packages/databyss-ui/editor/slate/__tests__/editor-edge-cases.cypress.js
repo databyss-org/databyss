@@ -35,6 +35,32 @@ context('Editor', () => {
     cy.get('@slateDocument').then(matchExpectedJson(expected.document))
   })
 
+  it('should not allow location on atomic block', () => {
+    cy.get('@editor')
+      .type('@source and ')
+      .toggleLocation()
+      .type('location')
+      .newLine()
+      .previousBlock()
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE">
+            <inline type="SOURCE">
+              <text />
+              <mark type="location">{'source and <span>location</span>'}</mark>
+            </inline>
+            <text />
+          </block>
+          <block type="ENTRY" />
+        </document>
+      </value>
+    )
+
+    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+  })
+
   // https://www.notion.so/databyss/Tab-in-editor-moves-focus-away-9dedc0df7fb6417b86fa0cc5c2f7cb03
   it('should trim white space on atomic blocks and allow tabs on entries', () => {
     cy.get('@editor')

@@ -13,6 +13,9 @@ const rules = [
             return <strong data-serializer-key={uuid}>{children}</strong>
           case 'italic':
             return <em data-serializer-key={uuid}>{children}</em>
+          // issue #116
+          case 'location':
+            return <span data-serializer-key={uuid}>{children}</span>
           default:
             return children
         }
@@ -45,7 +48,7 @@ function getKey(html) {
   return null
 }
 
-const WHITELIST = ['strong', 'em']
+const WHITELIST = ['strong', 'em', 'span']
 
 export const sanitizer = text => {
   const list = []
