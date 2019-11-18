@@ -3,10 +3,10 @@ import { storiesOf } from '@storybook/react'
 import { View, Button, TextControl } from '@databyss-org/ui/primitives'
 import ObjectId from 'bson-objectid'
 
-import SourcesProvider, {
+import SourceProvider, {
   useSourceContext,
   withSource,
-} from '@databyss-org/services/sources/SourcesProvider'
+} from '@databyss-org/services/sources/SourceProvider'
 // import ShowFirstCitation from '@databyss-org/services/sources/ShowFirstCitation'
 
 import reducer, { initialState } from '@databyss-org/services/sources/reducer'
@@ -97,9 +97,9 @@ const Box = ({ children }) => (
 )
 
 const ProviderDecorator = storyFn => (
-  <SourcesProvider initialState={initialState} reducer={reducer}>
+  <SourceProvider initialState={initialState} reducer={reducer}>
     {storyFn()}
-  </SourcesProvider>
+  </SourceProvider>
 )
 
 storiesOf('Accounts//Sources', module)
