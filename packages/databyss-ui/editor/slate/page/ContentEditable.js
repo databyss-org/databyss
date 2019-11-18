@@ -68,6 +68,7 @@ const SlateContentEditable = forwardRef(
         }
         onBlockBlur(activeBlockId, text, _nextEditableState)
         onActiveBlockIdChange(_nextActiveBlock.key, _nextEditableState)
+
         return true
       }
       return false

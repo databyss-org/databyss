@@ -30,7 +30,9 @@ export default serializer
 
 export const serializeNodeToHtml = node => {
   const children = serializer.serializeNode(node)
+
   const html = renderToStaticMarkup(<body>{children}</body>)
+
   return html.slice(6, -7)
 }
 
@@ -45,7 +47,7 @@ function getKey(html) {
   return null
 }
 
-const WHITELIST = ['strong', 'em']
+const WHITELIST = ['strong', 'em', 'span']
 
 export const sanitizer = text => {
   const list = []
