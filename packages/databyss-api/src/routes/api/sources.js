@@ -3,7 +3,7 @@ const _ = require('lodash')
 const Source = require('../../models/Source')
 const auth = require('../../middleware/auth')
 const accountMiddleware = require('../../middleware/accountMiddleware')
-const ApiError = require('../../lib/ApiError')
+// const ApiError = require('../../lib/ApiError')
 
 const router = express.Router()
 
@@ -62,10 +62,6 @@ router.get(
 
       if (!source) {
         return res.status(404).json({ msg: 'There is no source for this id' })
-      }
-
-      if (req.account.id.toString() !== source.account.toString()) {
-        throw new ApiError('This author is private')
       }
 
       return res.json(source)

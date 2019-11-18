@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const Range = require('./Range')
 
 const Schema = mongoose.Schema
 
@@ -10,7 +11,7 @@ const LocationSchema = new mongoose.Schema({
   text: {
     type: String,
   },
-  ranges: { type: Array },
+  ranges: [Range],
 })
 
 const Location =

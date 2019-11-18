@@ -1,5 +1,6 @@
 import { deleteAuthToken } from '../auth'
 import packageJson from '../package.json'
+import { ResourceNotFoundError } from './ResourceNotFoundError'
 
 export class UnauthorizedError extends Error {}
 
@@ -33,6 +34,7 @@ function request(uri, options, responseIsJson) {
   const promise = fetch(uri, options)
     .then(checkStatus)
     .then(parseResponse(responseIsJson))
+    .catch(() => new ResourceNotFoundError('not found'))
 
   return promise
 }

@@ -22,6 +22,8 @@ const TextInputs = ({ rich }) => {
   const TextInputComponent = rich ? RichTextInput : TextInput
   const title = rich ? 'Rich Text Inputs' : 'Text Inputs'
   const inputName = rich ? 'RichTextInput' : 'TextInput'
+
+  console.log('rich', rich)
   return (
     <React.Fragment>
       <Section title={title}>

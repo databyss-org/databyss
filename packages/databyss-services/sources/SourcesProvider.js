@@ -1,30 +1,21 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
-import { Text, View } from '@databyss-org/ui/primitives'
-import Loading from '@databyss-org/ui/components/Loading'
+import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
+import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import { SourceNotFoundError } from './SourceNotFoundError'
+import { ResourceNotFoundError } from './../lib/ResourceNotFoundError'
 import { initialState } from './reducer'
-import { fetchSource, saveSource } from './actions'
+import { fetchSource, saveSource, removeSourceFromCache } from './actions'
 
 const useReducer = createReducer()
 
 export const SourceContext = createContext()
-
-const Error = () => (
-  <View height="100%">
-    <View alignSelf="center" justifyContent="center">
-      <Text>No Source Found</Text>
-    </View>
-  </View>
-)
 
 const SourceProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   // provider methods
   const setSource = source => {
-    // find and update source or
-    // create new cache value and append new source
+    // add or update source and set cache value
     dispatch(saveSource(source))
   }
 
@@ -36,9 +27,15 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     return null
   }
 
+  const removeCacheValue = id => {
+    if (state.cache[id]) {
+      dispatch(removeSourceFromCache(id))
+    }
+  }
+
   return (
     <SourceContext.Provider
-      value={[getSource, setSource, { cache: state.cache }]}
+      value={[getSource, setSource, removeCacheValue, state.cache]}
     >
       {children}
     </SourceContext.Provider>
@@ -52,18 +49,31 @@ SourceProvider.defaultProps = {
 }
 
 export const withSource = Wrapped => ({ sourceId, ...others }) => {
-  const [getSource, , state] = useSourceContext()
-  const [source, setSourcState] = useState(getSource(sourceId))
+  const [getSource, setSource, removeCacheValue, cache] = useSourceContext()
+  //const [source, setSourceState] = useState(getSource(sourceId))
+  // gets stuck in a loop if initiated with a get source value
+
+  const [source, setSourceState] = useState(null)
 
   useEffect(
     () => {
-      setSourcState(state.cache[sourceId])
+      setSourceState(cache[sourceId])
     },
-    [state.cache[sourceId]]
+    [cache[sourceId]]
   )
 
-  if (source instanceof SourceNotFoundError) {
-    return <Error />
+  if (source instanceof Error) {
+    // reset source in cache so we can retry
+    removeCacheValue(sourceId)
+  }
+
+  if (source instanceof ResourceNotFoundError) {
+    return <ErrorFallback message="No Source Found" />
+  }
+
+  if (source instanceof Error) {
+    // throw to the source to trigger the "unexpected error" dialog
+    throw source
   }
 
   return source ? <Wrapped source={source} {...others} /> : <Loading />

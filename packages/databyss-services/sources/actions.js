@@ -1,12 +1,17 @@
 import * as sources from './'
 import { SourceNotFoundError } from './SourceNotFoundError'
 
-import { GET_SOURCE, SET_SOURCE, CACHE_SOURCE } from './constants'
+import {
+  FETCH_SOURCE,
+  SAVE_SOURCE,
+  CACHE_SOURCE,
+  REMOVE_SOURCE,
+} from './constants'
 
 export function fetchSource(id) {
   return async dispatch => {
     dispatch({
-      type: GET_SOURCE,
+      type: FETCH_SOURCE,
       payload: {},
     })
 
@@ -18,11 +23,11 @@ export function fetchSource(id) {
           payload: { source, id },
         })
       })
-      .catch(() => {
+      .catch(err => {
         dispatch({
           type: CACHE_SOURCE,
           payload: {
-            source: new SourceNotFoundError('Source not found', id),
+            source: err,
             id,
           },
         })
@@ -33,7 +38,7 @@ export function fetchSource(id) {
 export function saveSource(sourceFields) {
   return async dispatch => {
     dispatch({
-      type: SET_SOURCE,
+      type: SAVE_SOURCE,
       payload: {},
     })
 
@@ -57,6 +62,15 @@ export function saveSource(sourceFields) {
           },
         })
       })
+  }
+}
+
+export function removeSourceFromCache(id) {
+  return dispatch => {
+    dispatch({
+      type: REMOVE_SOURCE,
+      payload: { id },
+    })
   }
 }
 

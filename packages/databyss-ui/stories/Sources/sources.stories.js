@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Button } from '@databyss-org/ui/primitives'
+import { View, Button, TextControl } from '@databyss-org/ui/primitives'
 import ObjectId from 'bson-objectid'
 
 import SourcesProvider, {
   useSourceContext,
+  withSource,
 } from '@databyss-org/services/sources/SourcesProvider'
-import ShowFirstCitation from '@databyss-org/services/sources/ShowFirstCitation'
+// import ShowFirstCitation from '@databyss-org/services/sources/ShowFirstCitation'
 
 import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
@@ -27,7 +28,7 @@ const _seedValue1 = {
     {
       textValue:
         'Stamenov, Maxim I., editor. Language Structure, Discourse and the Access to Consciousness. Vol. 12, John Benjamins Publishing Company, 1997. Crossref, doi:10.1075/aicr.12.',
-      ranges: [],
+      ranges: [{ length: 10, offset: 0, marks: ['bold'] }],
     },
   ],
   _id: _id1,
@@ -50,6 +51,15 @@ const _seedValue2 = {
   ],
   _id: _id2,
 }
+
+const ShowFirstCitation = withSource(({ source }) => {
+  const [value, setValue] = useState({
+    textValue: source.citations[0].textValue,
+    ranges: source.citations[0].ranges,
+  })
+
+  return <TextControl value={value} onChange={setValue} rich />
+})
 
 const SourcesDemo = () => {
   const [source, setSourceState] = useState(_id1)

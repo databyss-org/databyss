@@ -1,40 +1,23 @@
 const mongoose = require('mongoose')
+const Range = require('./Range')
+const RichTextSchema = require('./RichTextSchema')
 
 const Schema = mongoose.Schema
 
 const SourceSchema = new mongoose.Schema({
-  // resource is a raw text
   account: {
     type: Schema.Types.ObjectId,
     ref: 'account',
   },
   resource: {
     type: String,
-    //   required: true,
-  },
-  text: {
-    type: String,
-    // required: true,
   },
   name: {
     type: String,
-    //  required: true,
   },
-  ranges: { type: Array },
-  citations: { type: Array },
-  author: {
-    type: String,
-  },
-  authors: { type: Array },
-  // authors: [
-  //   {
-  //     type: Schema.Types.ObjectId,
-  //     ref: 'author',
-  //   },
-  // ],
-  abbreviation: {
-    type: String,
-  },
+  ranges: [Range],
+  citations: [RichTextSchema],
+
   date: {
     type: String,
   },
