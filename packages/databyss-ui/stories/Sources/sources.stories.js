@@ -53,7 +53,6 @@ const _seedValue2 = {
 }
 
 const ShowFirstCitation = withSource(({ source }) => {
-  console.log('in story', source)
   const [value, setValue] = useState({
     textValue: source.citations[0].textValue,
     ranges: source.citations[0].ranges,
@@ -61,7 +60,6 @@ const ShowFirstCitation = withSource(({ source }) => {
 
   useEffect(
     () => {
-      console.log('in effect', source.citations[0].textValue)
       setValue({
         textValue: source.citations[0].textValue,
         ranges: source.citations[0].ranges,
@@ -70,7 +68,6 @@ const ShowFirstCitation = withSource(({ source }) => {
     [source]
   )
 
-  console.log(value)
   return <Text> {source.citations[0].textValue} </Text>
 
   //  return <TextControl value={value} onChange={setValue} rich />
