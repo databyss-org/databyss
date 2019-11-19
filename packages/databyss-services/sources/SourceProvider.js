@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext } from 'react'
 import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import { ResourceNotFoundError } from './../lib/ResourceNotFoundError'
+import { ResourceNotFoundError } from '../lib/ResourceNotFoundError'
 import { initialState } from './reducer'
 import { fetchSource, saveSource, removeSourceFromCache } from './actions'
 
@@ -34,9 +34,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
   }
 
   return (
-    <SourceContext.Provider
-      value={[getSource, setSource, removeCacheValue, state.cache]}
-    >
+    <SourceContext.Provider value={[getSource, setSource, removeCacheValue]}>
       {children}
     </SourceContext.Provider>
   )
@@ -49,23 +47,9 @@ SourceProvider.defaultProps = {
 }
 
 export const withSource = Wrapped => ({ sourceId, ...others }) => {
-  const [getSource, setSource, removeCacheValue, cache] = useSourceContext()
-  //const [source, setSourceState] = useState(getSource(sourceId))
-  // gets stuck in a loop if initiated with a get source value
+  const [getSource] = useSourceContext()
 
-  const [source, setSourceState] = useState(null)
-
-  useEffect(
-    () => {
-      setSourceState(cache[sourceId])
-    },
-    [cache[sourceId]]
-  )
-
-  if (source instanceof Error) {
-    // reset source in cache so we can retry
-    removeCacheValue(sourceId)
-  }
+  const source = getSource(sourceId)
 
   if (source instanceof ResourceNotFoundError) {
     return <ErrorFallback message="No Source Found" />

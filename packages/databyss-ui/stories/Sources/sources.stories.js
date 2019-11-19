@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Button, TextControl } from '@databyss-org/ui/primitives'
+import { View, Button, Text } from '@databyss-org/ui/primitives'
 import ObjectId from 'bson-objectid'
 
 import SourceProvider, {
@@ -41,7 +41,7 @@ const _seedValue2 = {
       lastName: 'Stamenov',
     },
   ],
-  name: 'Stamenov. Language Structure',
+  name: 'Second',
   ranges: [{ offset: 0, length: 2, marks: 'bold' }],
   citations: [
     {
@@ -53,16 +53,31 @@ const _seedValue2 = {
 }
 
 const ShowFirstCitation = withSource(({ source }) => {
+  console.log('in story', source)
   const [value, setValue] = useState({
     textValue: source.citations[0].textValue,
     ranges: source.citations[0].ranges,
   })
 
-  return <TextControl value={value} onChange={setValue} rich />
+  useEffect(
+    () => {
+      console.log('in effect', source.citations[0].textValue)
+      setValue({
+        textValue: source.citations[0].textValue,
+        ranges: source.citations[0].ranges,
+      })
+    },
+    [source]
+  )
+
+  console.log(value)
+  return <Text> {source.citations[0].textValue} </Text>
+
+  //  return <TextControl value={value} onChange={setValue} rich />
 })
 
 const SourcesDemo = () => {
-  const [source, setSourceState] = useState(_id1)
+  const [sourceId, setSourceState] = useState(_id1)
 
   const [getSource, setSource] = useSourceContext()
 
@@ -78,7 +93,7 @@ const SourcesDemo = () => {
 
   return (
     <View>
-      <ShowFirstCitation sourceId={source} />
+      <ShowFirstCitation sourceId={sourceId} />
 
       <Button onPress={() => getSourceFields(_id1)}>get source 1</Button>
       <Button onPress={() => getSourceFields(_id2)}>get source 2</Button>

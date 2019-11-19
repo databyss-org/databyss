@@ -3,7 +3,13 @@ import LoadingIcon from '@databyss-org/ui/assets/loading.svg'
 import { View } from '@databyss-org/ui/primitives'
 
 const Loading = () => (
-  <View height="100%" justifyContent="center">
+  <View
+    justifyContent="center"
+    borderVariant="thinDark"
+    paddingVariant="tiny"
+    width={200}
+    alignSelf="center"
+  >
     <View alignSelf="center" height={100}>
       <LoadingIcon />
     </View>
