@@ -20,7 +20,8 @@ const RichTextInput = forwardRef(
         ...(!multiline ? { '::-webkit-scrollbar': { display: 'none' } } : {}),
       },
     ].concat(concatCss)
-    const _children = (
+
+    return (
       <EditorProvider
         initialState={value}
         editableReducer={slateReducer}
@@ -37,8 +38,6 @@ const RichTextInput = forwardRef(
         </EditorLine>
       </EditorProvider>
     )
-
-    return _children
   }
 )
 
