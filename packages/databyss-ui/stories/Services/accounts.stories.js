@@ -85,7 +85,7 @@ const AccountDemo = () => {
   )
 }
 
-storiesOf('SERVICES', module)
+storiesOf('Services|Auth', module)
   .addDecorator(ViewportDecorator)
   .add('Login/Accounts', () => (
     <View>
