@@ -1,61 +1,79 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import SourceProvider, {
-  useSourceContext,
-  withSource,
-} from '@databyss-org/services/sources/SourceProvider'
+import ObjectId from 'bson-objectid'
+
 import ValueListProvider, {
-  useValueListContext,
   ValueListItem,
-} from '@databyss-org/services/forms/FormProvider'
-import { View, Text, TextControl } from '@databyss-org/ui/primitives'
+} from '@databyss-org/ui/components/ValueList/ValueListProvider'
+import { View, TextControl, List } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '../decorators'
 
-// insert into UI folder components/ValueList/
-//
-const SourceForm = ({ sourceId }) => {
-  const [, setSource] = useSourceContext()
+const _id = ObjectId().toHexString()
 
-  // dont use source provider
-  // move value list item
+const source = {
+  authors: [
+    {
+      firstName: 'Max',
+      lastName: 'Stamenov',
+    },
+  ],
+  name: 'Stamenov. Language Structure',
+  ranges: [{ offset: 0, length: 2, marks: ['bold'] }],
+  citations: [
+    {
+      textValue:
+        'Stamenov, Maxim I., editor. Language Structure, Discourse and the Access to Consciousness. Vol. 12, John Benjamins Publishing Company, 1997. Crossref, doi:10.1075/aicr.12.',
+      ranges: [{ length: 10, offset: 0, marks: ['bold'] }],
+    },
+  ],
+  _id,
+}
 
-  // show JSON values
-  // textValue and ranges
-  const SourceValueList = withSource(({ source, children }) => (
-    <ValueListProvider onChange={setSource} values={source}>
-      {children}
-    </ValueListProvider>
-  ))
+const SourceForm = () => {
+  const [values, setValues] = useState(source)
+
   return (
-    <SourceProvider>
-      <SourceValueList sourceId={sourceId}>
-        <List horizontalItemPadding="small">
-          <ValueListItem path="text">
-            <TextControl
-              label="Name"
-              rich
-              placeholder="descriptive name for the source"
-            />
-          </ValueListItem>
-          <ValueListItem path="authors[0].firstName">
-            <TextControl label="Author (first name)" />
-          </ValueListItem>
-          <ValueListItem path="authors[0].lastName">
-            <TextControl label="Author (last name)" />
-          </ValueListItem>
-          <ValueListItem path="citations[0].text">
-            <TextControl label="Citation" rich />
-          </ValueListItem>
-        </List>
-      </SourceValueList>
-    </SourceProvider>
+    <ValueListProvider onChange={setValues} values={values}>
+      <List horizontalItemPadding="small" mb={20}>
+        <ValueListItem textPath="name" rangesPath="ranges">
+          <TextControl
+            rich
+            label="Name"
+            placeholder="descriptive name for the source"
+          />
+        </ValueListItem>
+        <ValueListItem textPath="authors[0].firstName">
+          <TextControl label="Author (first name)" />
+        </ValueListItem>
+        <ValueListItem textPath="authors[0].lastName">
+          <TextControl label="Author (last name)" />
+        </ValueListItem>
+        <ValueListItem
+          textPath="citations[0].textValue"
+          rangesPath="citations[0].ranges"
+        >
+          <TextControl label="Citation" rich />
+        </ValueListItem>
+      </List>
+      <View
+        id="formDocuments"
+        borderVariant="thinDark"
+        paddingVariant="none"
+        width="100%"
+        overflow="scroll"
+        maxWidth="500px"
+        flexShrink={1}
+      >
+        <pre>{JSON.stringify(values, null, 2)}</pre>
+      </View>
+    </ValueListProvider>
   )
 }
 
-storiesOf('Forms', module)
+storiesOf('Value List', module)
   .addDecorator(ViewportDecorator)
-  .add('Form Controller', () => (
+  .add('ValueList Controller', () => (
     <View>
-      <Text>HERE</Text>
+      <SourceForm />
     </View>
   ))

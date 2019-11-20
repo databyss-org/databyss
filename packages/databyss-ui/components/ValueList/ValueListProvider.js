@@ -10,20 +10,22 @@ import _ from 'lodash'
  */
 export const ValueListContext = createContext()
 
+// values is dicitonary
 export const ValueListProvider = ({ children, values, onChange }) => {
-  const onItemChange = (path, value) => {
+  const onItemChange = (textPath, rangesPath, value) => {
     // apply changes to values, cloned to preserve immutability
     const _values = cloneDeep(values)
     // lodash.set:
     // Sets the value at path of object.
     // If a portion of path doesn't exist, it's created.
     // https://lodash.com/docs/4.17.15#set
-    _.set(_values, path, value)
+    _.set(_values, textPath, value.textValue)
+    _.set(_values, rangesPath, value.ranges)
 
     // pass updated values to parent handler
     // also pass the path in case the handler wants to know where the change
     // occurred
-    onChange(_values, path)
+    onChange(_values)
   }
   return (
     <ValueListContext.Provider value={[onItemChange, values]}>
@@ -38,17 +40,21 @@ export const useValueListContext = () => useContext(ValueListContext)
  * onChange of its child
  */
 
-export const ValueListItem = ({ children, path }) => {
+export const ValueListItem = ({ children, textPath, rangesPath }) => {
   const [onItemChange, values] = useValueListContext()
-
   // lodash.get:
   // Gets the value at path of object.
   // If the resolved value is undefined, the defaultValue is returned in its place.
   // https://lodash.com/docs/4.17.15#get
-  const value = _.get(values, path, '')
+  const value = {
+    textValue: _.get(values, textPath, ''),
+    ranges: _.get(values, rangesPath, []),
+  }
 
-  return React.cloneElement(React.children.only(children), {
+  return React.cloneElement(React.Children.only(children), {
     value,
-    onChange: _value => onItemChange(path, _value),
+    onChange: _value => onItemChange(textPath, rangesPath, _value),
   })
 }
+
+export default ValueListProvider

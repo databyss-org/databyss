@@ -23,7 +23,6 @@ const TextInputs = ({ rich }) => {
   const title = rich ? 'Rich Text Inputs' : 'Text Inputs'
   const inputName = rich ? 'RichTextInput' : 'TextInput'
 
-  console.log('rich', rich)
   return (
     <React.Fragment>
       <Section title={title}>
