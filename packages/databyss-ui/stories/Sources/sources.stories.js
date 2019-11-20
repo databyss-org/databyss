@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Button, TextControl } from '@databyss-org/ui/primitives'
 import ObjectId from 'bson-objectid'
