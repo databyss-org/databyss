@@ -3,7 +3,6 @@ const _ = require('lodash')
 const Source = require('../../models/Source')
 const auth = require('../../middleware/auth')
 const accountMiddleware = require('../../middleware/accountMiddleware')
-// const ApiError = require('../../lib/ApiError')
 
 const router = express.Router()
 

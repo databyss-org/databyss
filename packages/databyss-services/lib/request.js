@@ -13,6 +13,9 @@ function checkStatus(response) {
     window.location = '/login'
     throw new UnauthorizedError('Unauthorized')
   }
+  if (response.status === 404) {
+    throw new ResourceNotFoundError('not found')
+  }
   const errorMessage = response.statusText
   const error = new Error(errorMessage)
   console.error(error)
@@ -34,7 +37,6 @@ function request(uri, options, responseIsJson) {
   const promise = fetch(uri, options)
     .then(checkStatus)
     .then(parseResponse(responseIsJson))
-    .catch(() => new ResourceNotFoundError('not found'))
 
   return promise
 }

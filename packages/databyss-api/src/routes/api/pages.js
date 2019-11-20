@@ -50,7 +50,7 @@ router.post(
 
             // SOURCE WITH ID
             const sourceFields = {
-              name: source,
+              text: source,
               _id: sourceId,
               ranges,
               account: req.account._id,

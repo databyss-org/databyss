@@ -7,9 +7,12 @@ const Range = new mongoose.Schema({
   offset: {
     type: Number,
   },
-  marks: {
-    type: Array,
-  },
+  // example ['bold', 'italic', 'location']
+  marks: [
+    {
+      type: String,
+    },
+  ],
 })
 
 module.exports = Range

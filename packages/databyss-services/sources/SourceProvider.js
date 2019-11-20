@@ -3,7 +3,8 @@ import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { ResourceNotFoundError } from '../lib/ResourceNotFoundError'
-import { initialState } from './reducer'
+import reducer, { initialState } from './reducer'
+
 import { fetchSource, saveSource, removeSourceFromCache } from './actions'
 
 const useReducer = createReducer()
@@ -44,6 +45,7 @@ export const useSourceContext = () => useContext(SourceContext)
 
 SourceProvider.defaultProps = {
   initialState,
+  reducer,
 }
 
 export const withSource = Wrapped => ({ sourceId, ...others }) => {

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const Range = require('./Range')
-const RichTextSchema = require('./RichTextSchema')
+const RichText = require('./RichText')
 
 const Schema = mongoose.Schema
 
@@ -12,11 +12,11 @@ const SourceSchema = new mongoose.Schema({
   resource: {
     type: String,
   },
-  name: {
+  text: {
     type: String,
   },
   ranges: [Range],
-  citations: [RichTextSchema],
+  citations: [RichText],
 
   date: {
     type: String,
