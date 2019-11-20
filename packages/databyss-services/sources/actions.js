@@ -1,5 +1,5 @@
 import * as sources from './'
-import { SourceNotFoundError } from './SourceNotFoundError'
+import { ResourceNotFoundError } from './../lib/ResourceNotFoundError'
 
 import {
   FETCH_SOURCE,
@@ -54,7 +54,7 @@ export function saveSource(sourceFields) {
         dispatch({
           type: CACHE_SOURCE,
           payload: {
-            source: new SourceNotFoundError(
+            source: new ResourceNotFoundError(
               'Source not saved',
               sourceFields._id
             ),

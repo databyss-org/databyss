@@ -5,8 +5,8 @@ const ErrorFallback = ({ message }) => (
   <View
     borderVariant="thinDark"
     paddingVariant="tiny"
-    width={300}
-    height={200}
+    width="100%"
+    height="100%"
     alignSelf="center"
     justifyContent="center"
   >

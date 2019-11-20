@@ -7,10 +7,10 @@ const Loading = () => (
     justifyContent="center"
     borderVariant="thinDark"
     paddingVariant="tiny"
-    width={200}
+    width="100%"
     alignSelf="center"
   >
-    <View alignSelf="center" height={100}>
+    <View alignSelf="center" height="100%">
       <LoadingIcon />
     </View>
   </View>

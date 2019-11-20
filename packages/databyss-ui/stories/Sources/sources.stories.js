@@ -114,7 +114,7 @@ const ProviderDecorator = storyFn => (
   </SourceProvider>
 )
 
-storiesOf('Accounts//Sources', module)
+storiesOf('SERVICES', module)
   .addDecorator(ProviderDecorator)
   .addDecorator(ViewportDecorator)
   .add('Load and Save sources', () => (
