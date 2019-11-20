@@ -69,7 +69,6 @@ const EditFirstCitation = withSource(({ source }) => {
   // which is what we need because we're changing the initialState of the
   // underlying Editor component
 
-  console.log('value', value)
   return (
     <TextControl key={source._id} value={value} rich onChange={updateSource} />
   )
