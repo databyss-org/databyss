@@ -1,26 +1,36 @@
 import React, { useState, useEffect } from 'react'
 import { storiesOf } from '@storybook/react'
-import {
+import SourceProvider, {
   useSourceContext,
   withSource,
 } from '@databyss-org/services/sources/SourceProvider'
-import { View, Button, Text, Grid } from '@databyss-org/ui/primitives'
+import ValueListProvider, {
+  useValueListContext,
+  ValueListItem,
+} from '@databyss-org/services/forms/FormProvider'
+import { View, Text, TextControl } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '../decorators'
 
+// insert into UI folder components/ValueList/
+//
 const SourceForm = ({ sourceId }) => {
   const [, setSource] = useSourceContext()
 
-  const SourceValueList = withSource(({ source, children }) => (
-    <ValueList onChange={setSource} values={source}>
-      {children}
-    </ValueList>
-  ))
+  // dont use source provider
+  // move value list item
 
+  // show JSON values
+  // textValue and ranges
+  const SourceValueList = withSource(({ source, children }) => (
+    <ValueListProvider onChange={setSource} values={source}>
+      {children}
+    </ValueListProvider>
+  ))
   return (
     <SourceProvider>
       <SourceValueList sourceId={sourceId}>
         <List horizontalItemPadding="small">
-          <ValueListItem itemKey="text" default="untitled source">
+          <ValueListItem path="text">
             <TextControl
               label="Name"
               rich
