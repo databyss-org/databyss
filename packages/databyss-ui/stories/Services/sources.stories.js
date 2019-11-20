@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Button, TextControl } from '@databyss-org/ui/primitives'
+import { View, Button, RichTextInput } from '@databyss-org/ui/primitives'
 import ObjectId from 'bson-objectid'
 
 import SourceProvider, {
@@ -69,7 +69,13 @@ const EditFirstCitation = withSource(({ source }) => {
   // which is what we need because we're changing the initialState of the
   // underlying Editor component
   return (
-    <TextControl key={source._id} value={value} rich onChange={updateSource} />
+    <RichTextInput
+      key={source._id}
+      value={value}
+      rich
+      onChange={updateSource}
+      multiline
+    />
   )
 })
 
@@ -89,23 +95,22 @@ const SourcesDemo = () => {
 
   return (
     <View>
-      <EditFirstCitation sourceId={sourceId} />
-
+      <View
+        paddingVariant="medium"
+        borderVariant="thinDark"
+        minHeight="100"
+        width="200"
+        mb="medium"
+      >
+        <EditFirstCitation sourceId={sourceId} mb="medium" />
+      </View>
       <Button onPress={() => getSourceFields(_id1)}>get source 1</Button>
       <Button onPress={() => getSourceFields(_id2)}>get source 2</Button>
-
       <Button onPress={() => setSourceFields(_seedValue1)}>set source 1</Button>
-
       <Button onPress={() => setSourceFields(_seedValue2)}>set source 2</Button>
     </View>
   )
 }
-
-const Box = ({ children }) => (
-  <View borderVariant="thinDark" paddingVariant="tiny" width="100%">
-    {children}
-  </View>
-)
 
 const ProviderDecorator = storyFn => (
   <SourceProvider initialState={initialState} reducer={reducer}>
@@ -113,13 +118,7 @@ const ProviderDecorator = storyFn => (
   </SourceProvider>
 )
 
-storiesOf('SERVICES', module)
+storiesOf('Services|Sources', module)
   .addDecorator(ProviderDecorator)
   .addDecorator(ViewportDecorator)
-  .add('Load and Save sources', () => (
-    <View>
-      <Box>
-        <SourcesDemo />
-      </Box>
-    </View>
-  ))
+  .add('Load and Save sources', () => <SourcesDemo />)
