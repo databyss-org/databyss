@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Button, Text } from '@databyss-org/ui/primitives'
+import { View, Button, TextControl } from '@databyss-org/ui/primitives'
 import ObjectId from 'bson-objectid'
 
 import SourceProvider, {
   useSourceContext,
   withSource,
 } from '@databyss-org/services/sources/SourceProvider'
-// import ShowFirstCitation from '@databyss-org/services/sources/ShowFirstCitation'
 
 import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
@@ -52,45 +51,45 @@ const _seedValue2 = {
   _id: _id2,
 }
 
-const ShowFirstCitation = withSource(({ source }) => {
-  const [value, setValue] = useState({
+const EditFirstCitation = withSource(({ source }) => {
+  const [, setSource] = useSourceContext()
+  const value = {
     textValue: source.citations[0].textValue,
     ranges: source.citations[0].ranges,
-  })
+  }
 
-  useEffect(
-    () => {
-      setValue({
-        textValue: source.citations[0].textValue,
-        ranges: source.citations[0].ranges,
-      })
-    },
-    [source]
+  const updateSource = _value => {
+    setSource({
+      ...source,
+      citations: [_value],
+    })
+  }
+
+  // NOTE: setting `key` to the unique sourceId forces the component to remount
+  // which is what we need because we're changing the initialState of the
+  // underlying Editor component
+  return (
+    <TextControl key={source._id} value={value} rich onChange={updateSource} />
   )
-
-  return <Text> {source.citations[0].textValue} </Text>
-
-  //  return <TextControl value={value} onChange={setValue} rich />
 })
 
 const SourcesDemo = () => {
   const [sourceId, setSourceState] = useState(_id1)
 
-  const [getSource, setSource] = useSourceContext()
+  const [, setSource] = useSourceContext()
 
   const setSourceFields = sourceFields => {
     setSource(sourceFields)
-    setSourceState(sourceFields._id)
   }
 
   const getSourceFields = id => {
-    getSource(id)
+    // don't need to call `getSource` here because `withSource` does that for us
     setSourceState(id)
   }
 
   return (
     <View>
-      <ShowFirstCitation sourceId={sourceId} />
+      <EditFirstCitation sourceId={sourceId} />
 
       <Button onPress={() => getSourceFields(_id1)}>get source 1</Button>
       <Button onPress={() => getSourceFields(_id2)}>get source 2</Button>
