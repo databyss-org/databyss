@@ -1,5 +1,8 @@
 import { Block } from 'slate'
 import { serializeNodeToHtml, sanitizer } from './../inlineSerializer'
+import { getRangesFromBlock } from './../markup'
+
+import { newEditor, isTextAtomic } from './../slateUtils'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
@@ -120,19 +123,47 @@ const clearBlockById = id => (editor, value, next) => {
 
 const setBlockType = (id, type) => (editor, value, next) => {
   if (isAtomicInlineType(type)) {
-    const _node = value.document.getNode(id)
+    let _node = editor.value.document.getNode(id)
+    let _marks = _node.getMarks().toJSON()
+
+    // mock editor to correct marks
+    const _editor = newEditor()
+    _editor.insertBlock(_node)
+
+    // issue #117
+    // removes @ or #
+    _editor.removeTextByKey(
+      _editor.value.document.getNode(id).getFirstText().key,
+      0,
+      1
+    )
+    _node = _editor.value.document.getNode(id)
 
     let _text = _node.text
-    const _marks = _node.getMarks().toJSON()
+    // if left over @ or #
+    _text = isTextAtomic(_text) ? _text.trim().substring(1) : _text.trim()
+
+    // issue #116
+    // removes location from atomic types
+    if (_marks.find(m => m.type === 'location')) {
+      let _ranges = getRangesFromBlock(_node.toJSON()).ranges
+      _ranges = _ranges.filter(r => r.marks.includes('location'))
+      _ranges.forEach(r => {
+        _editor
+          .moveToStartOfNode(_node)
+          .moveForward(r.offset)
+          .moveFocusForward(r.length)
+          .removeMark('location')
+          .moveFocusBackward(r.length)
+          .moveBackward(r.offset)
+      })
+      // update node and marks
+      _node = _editor.value.document.getNode(id)
+      _marks = _node.getMarks().toJSON()
+    }
 
     if (_marks.length) {
       _text = serializeNodeToHtml(_node)
-    }
-    if (_text.trim().startsWith('@') || _text.trim().startsWith('#')) {
-      _text = _text
-        .trim()
-        .substring(1)
-        .trim()
     }
 
     const _block = Block.fromJSON({
@@ -165,6 +196,7 @@ const setBlockType = (id, type) => (editor, value, next) => {
         },
       ],
     })
+
     editor.replaceNodeByKey(id, _block)
   } else {
     editor.setNodeByKey(id, { type })
