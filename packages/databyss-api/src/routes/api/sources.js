@@ -13,9 +13,10 @@ router.post(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
-    const { name, ranges, authors, citations, _id } = req.body.data
+    const { text, ranges, authors, citations, _id } = req.body.data
+
     const sourceFields = {
-      name: !_.isEmpty(name) ? name : '',
+      text: !_.isEmpty(text) ? text : [],
       ranges: !_.isEmpty(ranges) ? ranges : [],
       citations: !_.isEmpty(citations) ? citations : [],
       authors: !_.isEmpty(authors) ? authors : [],

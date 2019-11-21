@@ -12,21 +12,14 @@ const SourceSchema = new mongoose.Schema({
   resource: {
     type: String,
   },
-  text: {
-    RichText,
-  },
+  text: RichText,
   // text: {
   //   type: String,
   // },
   ranges: [Range],
   citations: [RichText],
-
   date: {
     type: String,
-  },
-  default: {
-    type: Boolean,
-    default: false,
   },
   city: {
     type: String,

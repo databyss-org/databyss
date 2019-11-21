@@ -21,8 +21,10 @@ const _seedValue1 = {
       lastName: 'Stamenov',
     },
   ],
-  name: 'Stamenov. Language Structure',
-  ranges: [{ offset: 0, length: 2, marks: 'bold' }],
+  text: {
+    textValue: 'Stamenov. Language Structure',
+    ranges: [{ offset: 0, length: 2, marks: 'bold' }],
+  },
   citations: [
     {
       textValue:
@@ -40,8 +42,10 @@ const _seedValue2 = {
       lastName: 'Stamenov',
     },
   ],
-  name: 'Second',
-  ranges: [{ offset: 0, length: 2, marks: 'bold' }],
+  text: {
+    textValue: 'Second Source',
+    ranges: [{ offset: 0, length: 2, marks: 'bold' }],
+  },
   citations: [
     {
       textValue: 'Second Source',
@@ -53,6 +57,7 @@ const _seedValue2 = {
 
 const EditFirstCitation = withSource(({ source }) => {
   const [, setSource] = useSourceContext()
+
   const value = {
     textValue: source.citations[0].textValue,
     ranges: source.citations[0].ranges,
