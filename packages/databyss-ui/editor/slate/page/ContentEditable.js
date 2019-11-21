@@ -68,6 +68,7 @@ const SlateContentEditable = forwardRef(
         }
         onBlockBlur(activeBlockId, text, _nextEditableState)
         onActiveBlockIdChange(_nextActiveBlock.key, _nextEditableState)
+
         return true
       }
       return false
@@ -365,6 +366,10 @@ const SlateContentEditable = forwardRef(
 
       formatHotKeys(event, editor, onHotKey, OnToggleMark)
 
+      if (hotKeys.isTab(event)) {
+        event.preventDefault()
+        onHotKey('TAB', editor)
+      }
       if (hotKeys.isLocation(event)) {
         event.preventDefault()
         OnToggleMark('location', editor)
