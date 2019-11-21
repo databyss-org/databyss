@@ -1,0 +1,7 @@
+export const FETCH_SOURCE = 'FETCH_SOURCE'
+export const SAVE_SOURCE = 'SAVE_SOURCE'
+export const DELETE_SOURCE = 'DELETE_SOURCE'
+export const CACHE_SOURCE = 'CACHE_SOURCE'
+export const SOURCE_DELETED = 'SOURCE_DELETED'
+export const ERROR = 'ERROR'
+export const REMOVE_SOURCE = 'REMOVE_SOURCE'

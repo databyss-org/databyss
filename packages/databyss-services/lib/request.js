@@ -1,5 +1,6 @@
 import { deleteAuthToken } from '../auth'
 import packageJson from '../package.json'
+import { ResourceNotFoundError } from './ResourceNotFoundError'
 
 export class UnauthorizedError extends Error {}
 
@@ -11,6 +12,9 @@ function checkStatus(response) {
     deleteAuthToken()
     window.location = '/login'
     throw new UnauthorizedError('Unauthorized')
+  }
+  if (response.status === 404) {
+    throw new ResourceNotFoundError('not found')
   }
   const errorMessage = response.statusText
   const error = new Error(errorMessage)

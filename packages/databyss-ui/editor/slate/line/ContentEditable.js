@@ -3,6 +3,7 @@ import { Value } from 'slate'
 import { Editor } from 'slate-react'
 import { Text } from '@databyss-org/ui/primitives'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
+import _ from 'lodash'
 import { lineStateToSlate } from './../markup'
 import { useEditorContext } from '../../EditorProvider'
 import { formatHotKeys, navHotKeys } from './../hotKeys'
@@ -49,7 +50,7 @@ const SlateContentEditable = forwardRef(
   ) => {
     const [editorState] = useEditorContext()
 
-    const { editableState, textValue } = editorState
+    const { editableState, textValue, ranges } = editorState
 
     const editableRef = useRef(null)
 
@@ -64,8 +65,8 @@ const SlateContentEditable = forwardRef(
       }
 
       const _text = _nextEditableState.value.anchorBlock.text
-      if (textValue !== _text) {
-        const _ranges = getBlockRanges(_nextEditableState.value.anchorBlock)
+      const _ranges = getBlockRanges(_nextEditableState.value.anchorBlock)
+      if (textValue !== _text || !_.isEqual(_ranges, ranges)) {
         return { _text, _ranges }
       }
 
