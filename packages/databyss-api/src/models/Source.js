@@ -16,7 +16,7 @@ const SourceSchema = new mongoose.Schema({
   // text: {
   //   type: String,
   // },
-  ranges: [Range],
+  // ranges: [Range],
   citations: [RichText],
   date: {
     type: String,

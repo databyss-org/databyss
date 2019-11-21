@@ -46,6 +46,7 @@ export function savePage(state) {
 }
 
 export function seedPage(page) {
+  console.log('seed', page)
   return dispatch => {
     dispatch({
       type: SEED_PAGE,
