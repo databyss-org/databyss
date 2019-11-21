@@ -18,6 +18,7 @@ const source = {
       lastName: 'Stamenov',
     },
   ],
+  text: { textValue: 'Stamenov. Language Structure', ranges: [] },
   name: 'Stamenov. Language Structure',
   ranges: [{ offset: 0, length: 2, marks: ['bold'] }],
   citations: [

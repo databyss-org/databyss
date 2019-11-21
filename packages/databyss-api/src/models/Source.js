@@ -13,8 +13,11 @@ const SourceSchema = new mongoose.Schema({
     type: String,
   },
   text: {
-    type: String,
+    RichText,
   },
+  // text: {
+  //   type: String,
+  // },
   ranges: [Range],
   citations: [RichText],
 
