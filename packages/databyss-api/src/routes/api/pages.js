@@ -51,7 +51,6 @@ router.post(
             // SOURCE WITH ID
             const sourceFields = {
               text: { textValue: source, ranges },
-              // text: source,
               _id: sourceId,
               ranges,
               account: req.account._id,

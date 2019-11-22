@@ -9,7 +9,6 @@ const TopicSchema = new mongoose.Schema({
     ref: 'account',
   },
   text: RichText,
-  // ranges: [Range],
 })
 
 const Topic = mongoose.models.Topic || mongoose.model('topic', TopicSchema)

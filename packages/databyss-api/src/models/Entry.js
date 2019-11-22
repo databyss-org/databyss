@@ -8,7 +8,6 @@ const EntrySchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'account',
   },
-  // ranges: [Range],
   author: [
     {
       type: Schema.Types.ObjectId,
