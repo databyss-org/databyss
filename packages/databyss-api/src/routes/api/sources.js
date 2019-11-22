@@ -17,7 +17,6 @@ router.post(
 
     const sourceFields = {
       text: !_.isEmpty(text) ? text : [],
-      ranges: !_.isEmpty(ranges) ? ranges : [],
       citations: !_.isEmpty(citations) ? citations : [],
       authors: !_.isEmpty(authors) ? authors : [],
       account: req.account.id.toString(),
