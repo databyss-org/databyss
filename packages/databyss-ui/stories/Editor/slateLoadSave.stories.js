@@ -55,7 +55,7 @@ const EditorLoader = ({ children }) => {
   const pages = state.pages.map(p => (
     <View key={p._id}>
       <Button onPress={() => dispatch(loadPage(p._id))}>
-        load page {p._id}
+        <Text>load page {p._id}</Text>
       </Button>
     </View>
   ))
@@ -86,7 +86,7 @@ const ProviderDecorator = storyFn => (
   </PageProvider>
 )
 
-storiesOf('Editor//Save and Load', module)
+storiesOf('Services|Page', module)
   .addDecorator(ProviderDecorator)
   .addDecorator(ViewportDecorator)
   .add('Slate Load and Save', () => (

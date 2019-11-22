@@ -63,6 +63,7 @@ export const stateToSlateMarkup = state => {
 
   const _editor = new Editor({ value: _value })
   // insert text in mock editor
+
   _editor.insertText(state.textValue).moveBackward(state.textValue.length)
   // select correct range and apply marks
   if (state.ranges) {
@@ -87,7 +88,6 @@ export const stateToSlate = (state, id) => {
   const _stateObject = _state[_id]
 
   const document = stateToSlateMarkup(_stateObject)
-
   return { ...document.nodes[0], key: id }
 }
 
