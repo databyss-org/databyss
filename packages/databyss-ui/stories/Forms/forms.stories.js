@@ -115,7 +115,7 @@ const SourceForm = () => {
   )
 }
 
-storiesOf('Value List', module)
+storiesOf('Editor//Tests', module)
   .addDecorator(ViewportDecorator)
   .add('ValueList Controller', () => (
     <View>
