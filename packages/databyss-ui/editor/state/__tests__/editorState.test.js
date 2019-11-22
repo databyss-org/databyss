@@ -22,7 +22,8 @@ describe('editorState', () => {
       )
       const nextState = reducer(state, setActiveBlockContent('updated content'))
       expect(
-        nextState.entries[nextState.blocks[nextState.activeBlockId].refId].text
+        nextState.entries[nextState.blocks[nextState.activeBlockId].refId]
+          .textValue
       ).toEqual('updated content')
     })
 
@@ -33,7 +34,8 @@ describe('editorState', () => {
       )
       const nextState = reducer(state, setActiveBlockContent('updated content'))
       expect(
-        nextState.sources[nextState.blocks[nextState.activeBlockId].refId].text
+        nextState.sources[nextState.blocks[nextState.activeBlockId].refId]
+          .textValue
       ).toEqual(
         'Stamenov, Language Structure, Discourse and the Access to Consciousness'
       )
@@ -54,7 +56,8 @@ describe('editorState', () => {
       )
       const nextState = reducer(state, setActiveBlockContent('updated content'))
       expect(
-        nextState.topics[nextState.blocks[nextState.activeBlockId].refId].text
+        nextState.topics[nextState.blocks[nextState.activeBlockId].refId]
+          .textValue
       ).toEqual('topic')
     })
     test('clearing content should reset type to ENTRY', () => {
@@ -94,7 +97,7 @@ describe('editorState', () => {
       const nextState = reducer(state, setActiveBlockType('SOURCE'))
       const block = nextState.blocks[nextState.activeBlockId]
       const source = nextState.sources[block.refId]
-      expect(source.text).toEqual(
+      expect(source.textValue).toEqual(
         'On the limitation of third-order thought to assertion'
       )
     })
@@ -122,7 +125,8 @@ describe('editorState', () => {
         setBlockType('SOURCE', blockId, null, true)
       )
       expect(
-        nextState.sources[nextState.blocks[nextState.activeBlockId].refId].text
+        nextState.sources[nextState.blocks[nextState.activeBlockId].refId]
+          .textValue
       ).toEqual('this should become a source')
     })
   })
@@ -154,7 +158,7 @@ describe('editorState', () => {
       const nextState = reducer(state, setActiveBlockType('TOPIC'))
       const block = nextState.blocks[nextState.activeBlockId]
       const topic = nextState.topics[block.refId]
-      expect(topic.text).toEqual('topic')
+      expect(topic.textValue).toEqual('topic')
     })
   })
 
@@ -177,7 +181,8 @@ describe('editorState', () => {
       )
       nextState = reducer(nextState, setBlockType('TOPIC', blockId, null, true))
       expect(
-        nextState.topics[nextState.blocks[nextState.activeBlockId].refId].text
+        nextState.topics[nextState.blocks[nextState.activeBlockId].refId]
+          .textValue
       ).toEqual('this should become a topic')
     })
   })

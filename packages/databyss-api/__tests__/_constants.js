@@ -2,14 +2,14 @@ export const POST_EXAMPLE = {
   sources: {
     '5d6831c0c92fbc0022c43ef8': {
       _id: '5d6831c0c92fbc0022c43ef8',
-      text: 'Staminov, Lev. Conscious and Embodiment',
+      textValue: 'Staminov, Lev. Conscious and Embodiment',
       ranges: [],
     },
   },
   entries: {
     '5d6831b3c30e221abc6963e1': {
       _id: '5d6831b3c30e221abc6963e1',
-      text: 'Mind as homunculus ins body',
+      textValue: 'Mind as homunculus ins body',
       ranges: [],
     },
   },
@@ -43,14 +43,14 @@ export const POST_EDIT_ONE = {
   sources: {
     '5d64419f1cbc815583c35058': {
       _id: '5d64419f1cbc815583c35058',
-      text: 'Staminov, Lev. Conscious and Embodiment',
+      textValue: 'Staminov, Lev. Conscious and Embodiment',
       ranges: [],
     },
   },
   entries: {
     '5d6442046e84d304ddceb768': {
       _id: '5d6442046e84d304ddceb768',
-      text: 'Mind as homunculus ins body',
+      textValue: 'Mind as homunculus ins body',
       ranges: [],
     },
   },
@@ -84,14 +84,14 @@ export const POST_EDIT_TWO = {
   sources: {
     '5d64419f1cbc815583c35058': {
       _id: '5d64419f1cbc815583c35058',
-      text: 'Staminov',
+      textValue: 'Staminov',
       ranges: [],
     },
   },
   entries: {
     '5d6442046e84d304ddceb768': {
       _id: '5d6442046e84d304ddceb768',
-      text: 'Mind',
+      textValue: 'Mind',
       ranges: [],
     },
   },

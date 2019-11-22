@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 const RichText = require('./RichText')
-const Range = require('./Range')
 
 const Schema = mongoose.Schema
 
