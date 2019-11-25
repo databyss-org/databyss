@@ -59,6 +59,6 @@ workflows:
       - jest
       - cypress/run:
           yarn: true
-          start: yarn storybook:cy
+          start: yarn cy:tests
           wait-on: -t 300000 http://0.0.0.0:6006/iframe.html?id=editor-tests--slate
           command: yarn cy:run
