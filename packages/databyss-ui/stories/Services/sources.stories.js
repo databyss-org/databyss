@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Button, RichTextInput } from '@databyss-org/ui/primitives'
-import ObjectId from 'bson-objectid'
 
 import SourceProvider, {
   useSourceContext,
@@ -10,46 +9,7 @@ import SourceProvider, {
 
 import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
-
-const _id1 = ObjectId().toHexString()
-const _id2 = ObjectId().toHexString()
-
-const _seedValue1 = {
-  authors: [
-    {
-      firstName: 'Max',
-      lastName: 'Stamenov',
-    },
-  ],
-  name: 'Stamenov. Language Structure',
-  ranges: [{ offset: 0, length: 2, marks: 'bold' }],
-  citations: [
-    {
-      textValue:
-        'Stamenov, Maxim I., editor. Language Structure, Discourse and the Access to Consciousness. Vol. 12, John Benjamins Publishing Company, 1997. Crossref, doi:10.1075/aicr.12.',
-      ranges: [{ length: 10, offset: 0, marks: ['bold'] }],
-    },
-  ],
-  _id: _id1,
-}
-
-const _seedValue2 = {
-  authors: [
-    {
-      firstName: 'Max',
-      lastName: 'Stamenov',
-    },
-  ],
-  name: 'Second',
-  ranges: [{ offset: 0, length: 2, marks: 'bold' }],
-  citations: [
-    {
-      textValue: 'Second Source',
-      ranges: [],
-    },
-  ],
-  _id: _id2,
-}
+import { _seedValue1, _seedValue2, _id1, _id2 } from './__tests__/initialValue'
 
 const EditFirstCitation = withSource(({ source }) => {
   const [, setSource] = useSourceContext()
@@ -101,6 +61,7 @@ const SourcesDemo = () => {
         minHeight="100"
         width="200"
         mb="medium"
+        id="currentSource"
       >
         <EditFirstCitation sourceId={sourceId} mb="medium" />
       </View>
