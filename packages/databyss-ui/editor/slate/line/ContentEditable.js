@@ -45,6 +45,7 @@ const SlateContentEditable = forwardRef(
       onBlur,
       overrideCss,
       multiline,
+      ...other
     },
     ref
   ) => {
@@ -137,6 +138,7 @@ const SlateContentEditable = forwardRef(
         renderBlock={renderLine}
         onBlur={onBlur}
         css={overrideCss}
+        {...other}
       />
     )
   }

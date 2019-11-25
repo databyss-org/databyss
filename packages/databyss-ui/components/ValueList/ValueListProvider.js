@@ -12,15 +12,24 @@ export const ValueListContext = createContext()
 
 // values is dicitonary
 export const ValueListProvider = ({ children, values, onChange }) => {
-  const onItemChange = (textPath, rangesPath, value) => {
+  const onItemChange = (path, value) => {
     // apply changes to values, cloned to preserve immutability
     const _values = cloneDeep(values)
     // lodash.set:
     // Sets the value at path of object.
     // If a portion of path doesn't exist, it's created.
     // https://lodash.com/docs/4.17.15#set
-    _.set(_values, textPath, value.textValue)
-    _.set(_values, rangesPath, value.ranges)
+
+    // if value is rich text
+    if (value.ranges) {
+      _.set(_values, path + '.textValue', value.textValue)
+      _.set(_values, path + '.ranges', value.ranges)
+    } else {
+      _.set(_values, path, value.textValue)
+    }
+
+    // _.set(_values, rangesPath, value.ranges)
+    // _.set(_values, editableStatePath, value.editableState)
 
     // pass updated values to parent handler
     // also pass the path in case the handler wants to know where the change
@@ -40,20 +49,30 @@ export const useValueListContext = () => useContext(ValueListContext)
  * onChange of its child
  */
 
-export const ValueListItem = ({ children, textPath, rangesPath }) => {
+export const ValueListItem = ({ children, path }) => {
   const [onItemChange, values] = useValueListContext()
+
+  let value
+  // if path is rich text it will containt text value and ranges
+  if (_.get(values, path) instanceof Object) {
+    value = {
+      textValue: _.get(values, path + '.textValue', {}),
+      ranges: _.get(values, path + '.ranges', []),
+    }
+  }
   // lodash.get:
   // Gets the value at path of object.
   // If the resolved value is undefined, the defaultValue is returned in its place.
   // https://lodash.com/docs/4.17.15#get
-  const value = {
-    textValue: _.get(values, textPath, ''),
-    ranges: _.get(values, rangesPath, []),
+  else {
+    value = {
+      textValue: _.get(values, path, ''),
+    }
   }
 
   return React.cloneElement(React.Children.only(children), {
     value,
-    onChange: _value => onItemChange(textPath, rangesPath, _value),
+    onChange: _value => onItemChange(path, _value),
   })
 }
 
