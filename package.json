@@ -41,7 +41,8 @@
     "cy:run:debug": "DEBUG=cypress:*,-cypress:server:files yarn cy:run",
     "cy": "start-server-and-test storybook http-get://localhost:6006/iframe.html?id=editor-tests--slate cy:open",
     "cy:storybook": "start-server-and-test storybook:cy http-get://0.0.0.0:6006/iframe.html?id=editor-tests--slate cy:run",
-    "cy:test": "start-server-and-test start:server:test http://0.0.0.0:5000/api/error/api-server-await cy:storybook"
+    "cy:test": "start-server-and-test start:server:test http://0.0.0.0:5000/api/error/api-server-await cy:storybook",
+    "ci:test": "start-server-and-test start:server:test http://0.0.0.0:5000/api/error/api-server-await storybook:cy"
   },
   "jest": {
     "projects": [
