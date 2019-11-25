@@ -3,8 +3,6 @@
 /* eslint-disable func-names */
 
 import { _seedValue1, _seedValue2 } from './initialValue'
-// import { toSlateJson, matchExpectedJson } from './_helpers'
-// import {  } from './../hotKeys'
 
 context('Editor', () => {
   beforeEach(() => {
