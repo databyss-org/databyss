@@ -10,7 +10,7 @@ import {
 
 const EditorLine = ({ children, onChange, value }) => {
   const [state, dispatch] = useEditorContext()
-  const { textValue, ranges, editableState } = state
+  const { textValue, ranges } = state
 
   useEffect(
     () => {

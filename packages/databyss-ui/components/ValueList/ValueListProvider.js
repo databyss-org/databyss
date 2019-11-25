@@ -22,8 +22,8 @@ export const ValueListProvider = ({ children, values, onChange }) => {
 
     // if value is rich text
     if (value.ranges) {
-      _.set(_values, path + '.textValue', value.textValue)
-      _.set(_values, path + '.ranges', value.ranges)
+      _.set(_values, `${path}.textValue`, value.textValue)
+      _.set(_values, `${path}.ranges`, value.ranges)
     } else {
       _.set(_values, path, value.textValue)
     }
@@ -56,8 +56,8 @@ export const ValueListItem = ({ children, path }) => {
   // if path is rich text it will containt text value and ranges
   if (_.get(values, path) instanceof Object) {
     value = {
-      textValue: _.get(values, path + '.textValue', {}),
-      ranges: _.get(values, path + '.ranges', []),
+      textValue: _.get(values, `${path}.textValue`, {}),
+      ranges: _.get(values, `${path}.ranges`, []),
     }
   }
   // lodash.get:
