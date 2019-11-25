@@ -19,10 +19,6 @@ context('Editor', () => {
     cy.get('#currentSource').as('source')
   })
 
-  //   it('renders the contenteditable container', () => {
-  //     cy.get('@source').should('be.visible')
-  //   })
-
   it('renders the contenteditable container', () => {
     cy.get('button').then(buttonList => {
       const getSource1 = buttonList[0]
