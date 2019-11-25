@@ -48,12 +48,6 @@ context('Editor', () => {
               expect(source).to.eq(_seedValue2.citations[0].textValue)
             )
         })
-      // getSource2.click()
-      // cy.get('@source')
-      //   .invoke('text')
-      //   .then(source =>
-      //     expect(source).to.eq(_seedValue2.citations[0].textValue)
-      //   )
     })
   })
 })
