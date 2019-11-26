@@ -1,15 +1,12 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import css from '@styled-system/css'
 import { isMobileOs } from '@databyss-org/ui/'
-
 import { Text, View, Grid } from '@databyss-org/ui/primitives'
-
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
-
 import { pxUnits } from '@databyss-org/ui/theming/views'
-
 import EditorBlockMenu from './Menu/EditorBlockMenu'
-
+import { useEditorContext } from '@databyss-org/ui/editor/EditorProvider'
+import { newBlockMenu } from '@databyss-org/ui/editor/state/page/actions'
 const TextBlock = ({ children, variant, color }) => (
   <Text variant={variant} color={color}>
     {children}
@@ -51,6 +48,20 @@ const textSelector = ({ children, type }) => {
 export const EditorBlock = ({ children, node }) => {
   const [menuActive, setMenuActive] = useState(false)
 
+  const [editorState, dispatchEditor] = useEditorContext()
+  const { editableState, showNewBlockMenu } = editorState
+
+  useEffect(
+    () => {
+      if (node.text.length === 0 && !showNewBlockMenu) {
+        dispatchEditor(newBlockMenu(true, editableState))
+      } else if (node.text.length > 0 && showNewBlockMenu) {
+        dispatchEditor(newBlockMenu(false, editableState))
+      }
+    },
+    [node.text]
+  )
+
   const _children = (
     <View
       flexShrink={1}
@@ -73,7 +84,7 @@ export const EditorBlock = ({ children, node }) => {
         height={editorMarginMenuItemHeight}
         overflow="visible"
       >
-        {node.text.length < 1 && (
+        {showNewBlockMenu && (
           <EditorBlockMenu
             hideCursor={bool => setMenuActive(bool)}
             node={node}

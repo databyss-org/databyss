@@ -13,6 +13,7 @@ import {
   clearBlock,
   deleteBlock,
   deleteBlocks,
+  newBlockMenu,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
@@ -75,6 +76,9 @@ const EditorPage = ({ children }) => {
   const deleteBlocksByKeys = (idList, { value }) => {
     dispatchEditor(deleteBlocks(idList, { value }))
   }
+  const onNewBlockMenu = (bool, { value }) => {
+    dispatchEditor(newBlockMenu(bool, { value }))
+  }
 
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
@@ -89,6 +93,7 @@ const EditorPage = ({ children }) => {
     onSetBlockType,
     deleteBlockByKey,
     deleteBlocksByKeys,
+    onNewBlockMenu,
   })
 }
 

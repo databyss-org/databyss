@@ -14,6 +14,7 @@ import {
   DELETE_BLOCKS,
   SHOW_MENU_ACTIONS,
   SHOW_FORMAT_MENU,
+  SHOW_NEW_BLOCK_MENU,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -163,6 +164,16 @@ export function deleteBlocks(idList, editableState) {
     payload: {
       editableState,
       idList,
+    },
+  }
+}
+
+export function newBlockMenu(bool, editableState) {
+  return {
+    type: SHOW_NEW_BLOCK_MENU,
+    payload: {
+      editableState,
+      bool,
     },
   }
 }
