@@ -4,9 +4,10 @@ import { isMobileOs } from '@databyss-org/ui/'
 import { Text, View, Grid } from '@databyss-org/ui/primitives'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import EditorBlockMenu from './Menu/EditorBlockMenu'
 import { useEditorContext } from '@databyss-org/ui/editor/EditorProvider'
 import { newBlockMenu } from '@databyss-org/ui/editor/state/page/actions'
+import EditorBlockMenu from './Menu/EditorBlockMenu'
+
 const TextBlock = ({ children, variant, color }) => (
   <Text variant={variant} color={color}>
     {children}
