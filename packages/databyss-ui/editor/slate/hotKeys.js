@@ -29,6 +29,7 @@ const HOTKEYS = {
   endOfDocument: `ctrl+shift+down`,
   nextBlock: `ctrl+shift+p`,
   previousBlock: `ctrl+shift+o`,
+  esc: 'esc',
 }
 const APPLE_HOTKEYS = {}
 const WINDOWS_HOTKEYS = {}

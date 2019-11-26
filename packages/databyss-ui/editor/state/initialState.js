@@ -8,6 +8,7 @@ export default {
   editableState: null,
   showMenuActions: false,
   showFormatMenu: false,
+  showNewBlockMenu: true,
   activeBlockId: null,
   sources: {},
   entries: {
