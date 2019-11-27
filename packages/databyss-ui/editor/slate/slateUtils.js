@@ -35,6 +35,11 @@ export const toSlateJson = (editorState, pageBlocks) => ({
           break
       }
 
+      //append data information to non atomic blocks
+      if (!isAtomicInlineType(block.type)) {
+        nodes.data = { refId: block.refId, _id: block._id }
+      }
+
       let textBlock
       if (isAtomicInlineType(block.type)) {
         const nodeWithRanges = stateToSlate({
@@ -65,12 +70,12 @@ export const toSlateJson = (editorState, pageBlocks) => ({
               text: getRawHtmlForBlock(editorState, block),
             }
       }
-
       // this will return generic node
       return !isAtomicInlineType(block.type)
         ? nodes
         : {
             object: 'block',
+            data: { refId: block.refId, _id: block._id },
             key: block._id,
             type: block.type,
             nodes: [textBlock],

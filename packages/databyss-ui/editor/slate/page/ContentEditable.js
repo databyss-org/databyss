@@ -20,6 +20,8 @@ import {
   getSelectedBlocks,
 } from './../slateUtils'
 
+import { blocksToState } from './../markup'
+
 const schema = {
   inlines: {
     SOURCE: {
@@ -62,6 +64,18 @@ const SlateContentEditable = forwardRef(
       }
 
       if (_nextActiveBlock.key !== activeBlockId) {
+        const _nodes = _nextEditableState.value.document.nodes
+        // check to see if multiple blocks were pasted
+        if (_nodes.size > Object.keys(blocks).length + 1) {
+          // slateToState
+
+          // convert slate state to our state model here
+          const _blocks = blocksToState(_nodes, editorState)
+
+          console.log(_blocks)
+          console.log('NOT EQUAL')
+        }
+
         let text = ''
         if (_nextEditableState.value.document.getNode(activeBlockId)) {
           text = _nextEditableState.value.document.getNode(activeBlockId).text
@@ -158,6 +172,7 @@ const SlateContentEditable = forwardRef(
         if (blockChanges) {
           handleSelectedBlockChanged(blockChanges)
         } else if (!value.selection.isBlurred) {
+          console.log('check for pasted blocks here')
           // issue https://github.com/ianstormtaylor/slate/issues/2432
           onEditableStateChange({ value })
         }
