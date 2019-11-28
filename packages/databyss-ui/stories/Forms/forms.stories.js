@@ -14,14 +14,28 @@ const _id = ObjectId().toHexString()
 const source = {
   authors: [
     {
-      firstName: '',
-      lastName: '',
+      firstName: {
+        textValue: 'Maxim',
+      },
+      lastName: {
+        textValue: 'Stamenov',
+      },
     },
   ],
-  text: { textValue: '', ranges: [] },
+  text: {
+    textValue: 'Stamenov, Language Structure',
+    ranges: [
+      {
+        offset: 10,
+        length: 18,
+        marks: ['italic'],
+      },
+    ],
+  },
   citations: [
     {
-      textValue: '',
+      textValue:
+        'Stamenov, Maxim I., editor. Language Structure, Discourse and the Access to Consciousness. Vol. 12, John Benjamins Publishing Company, 1997. Crossref, doi:10.1075/aicr.12.',
       ranges: [],
     },
   ],
@@ -53,19 +67,18 @@ const SourceForm = () => {
           </View>
           <View
             borderVariant="thinLight"
-            paddingVariant="small"
+            paddingVariant="none"
             widthVariant="content"
             backgroundColor="background.0"
           >
             <ControlList verticalItemPadding="tiny">
               <ValueListItem path="text">
                 <TextControl
-                  id="name"
                   labelProps={{
                     width: '25%',
                   }}
-                  label="Citation"
-                  multiline
+                  label="Name"
+                  gridFlexWrap="nowrap"
                   paddingVariant="tiny"
                   rich
                 />
@@ -76,7 +89,6 @@ const SourceForm = () => {
                     width: '25%',
                   }}
                   label="Author (First Name)"
-                  id="firstName"
                   gridFlexWrap="nowrap"
                   paddingVariant="tiny"
                 />
@@ -87,21 +99,16 @@ const SourceForm = () => {
                     width: '25%',
                   }}
                   label="Author (Last Name)"
-                  id="lastName"
                   gridFlexWrap="nowrap"
                   paddingVariant="tiny"
                 />
               </ValueListItem>
-              <ValueListItem
-                path="citations[0]"
-                //    rangesPath="citations[0].ranges"
-              >
+              <ValueListItem path="citations[0]">
                 <TextControl
                   labelProps={{
                     width: '25%',
                   }}
                   label="Citation"
-                  id="citation"
                   rich
                   gridFlexWrap="nowrap"
                   multiline

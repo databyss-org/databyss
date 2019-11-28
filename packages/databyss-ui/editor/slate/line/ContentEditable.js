@@ -3,6 +3,7 @@ import { Value } from 'slate'
 import { Editor } from 'slate-react'
 import { Text } from '@databyss-org/ui/primitives'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
+import forkRef from '@databyss-org/ui/lib/forkRef'
 import _ from 'lodash'
 import { lineStateToSlate } from './../markup'
 import { useEditorContext } from '../../EditorProvider'
@@ -56,7 +57,7 @@ const SlateContentEditable = forwardRef(
     const editableRef = useRef(null)
 
     // solution from https://itnext.io/reusing-the-ref-from-forwardref-with-react-hooks-4ce9df693dd
-    const combinedRef = useCombinedRefs(ref, editableRef)
+    const combinedRef = forkRef(ref, editableRef)
 
     // checks editor state for active block content changed
     const checkContentChanged = _nextEditableState => {
@@ -118,11 +119,7 @@ const SlateContentEditable = forwardRef(
     }
 
     const renderLine = ({ children }) => (
-      <Text
-        variant="bodyNormal"
-        color="text.0"
-        css={multiline ? {} : { flexShrink: 0 }}
-      >
+      <Text variant="bodyNormal" color="text.0" css={{}}>
         {children}
       </Text>
     )
