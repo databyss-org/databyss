@@ -14,6 +14,7 @@ import {
   DELETE_BLOCKS,
   SHOW_MENU_ACTIONS,
   SHOW_FORMAT_MENU,
+  ON_PASTE,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -163,6 +164,18 @@ export function deleteBlocks(idList, editableState) {
     payload: {
       editableState,
       idList,
+    },
+  }
+}
+
+export function onPaste(key, list, fragment, editableState) {
+  return {
+    type: ON_PASTE,
+    payload: {
+      editableState,
+      key,
+      list,
+      fragment,
     },
   }
 }

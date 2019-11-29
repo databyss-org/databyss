@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
-import { Editor } from 'slate-react'
+import { Editor, getEventTransfer } from 'slate-react'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { getRawHtmlForBlock } from './../../state/page/reducer'
@@ -20,7 +20,7 @@ import {
   getSelectedBlocks,
 } from './../slateUtils'
 
-import { blocksToState } from './../markup'
+import { blocksToState, nodesToState } from './../markup'
 
 const schema = {
   inlines: {
@@ -48,6 +48,7 @@ const SlateContentEditable = forwardRef(
       onSetBlockType,
       deleteBlockByKey,
       deleteBlocksByKeys,
+      onPasteAction,
     },
     ref
   ) => {
@@ -161,6 +162,7 @@ const SlateContentEditable = forwardRef(
 
     const onChange = change => {
       const { value } = change
+
       Bugsnag.client.leaveBreadcrumb('page/ContentEditable/onChange', {
         state: JSON.stringify(editorState, null, 2),
       })
@@ -172,7 +174,6 @@ const SlateContentEditable = forwardRef(
         if (blockChanges) {
           handleSelectedBlockChanged(blockChanges)
         } else if (!value.selection.isBlurred) {
-          console.log('check for pasted blocks here')
           // issue https://github.com/ianstormtaylor/slate/issues/2432
           onEditableStateChange({ value })
         }
@@ -389,13 +390,29 @@ const SlateContentEditable = forwardRef(
         event.preventDefault()
         OnToggleMark('location', editor)
       }
+      return next()
+    }
 
+    const onPaste = (event, editor, next) => {
+      const { value } = editor
+      const transfer = getEventTransfer(event)
+      const { fragment, type } = transfer
+      if (type === 'fragment') {
+        // get anchor block from slate,
+        // get new pasted list from slate
+        // in state reducer insert pasted blocks into state
+        const anchorKey = value.anchorBlock.key
+        const _nodeList = nodesToState(fragment.nodes)
+        onPasteAction(anchorKey, _nodeList, fragment, editor)
+        return event.preventDefault()
+      }
       return next()
     }
 
     return (
       <Editor
         value={_editableState.value}
+        onPaste={onPaste}
         ref={forkRef(ref, editableRef)}
         onChange={onChange}
         renderBlock={renderBlock}

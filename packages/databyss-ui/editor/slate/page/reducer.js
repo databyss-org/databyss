@@ -15,6 +15,7 @@ import {
   START_TAG,
   DELETE_BLOCK,
   DELETE_BLOCKS,
+  ON_PASTE,
 } from './../../state/page/constants'
 
 export const newBlock = id =>
@@ -275,6 +276,41 @@ const deleteBlocksByIds = idList => (editor, value, next) => {
   next(editor, value)
 }
 
+export const onPaste = (list, fragment) => (editor, value, next) => {
+  let _frag = fragment.nodes
+  editor.insertFragment(fragment)
+  // keys get lost when insert fragment applied
+  // retrieve the last key in the fragment and apply it to the document
+  let _nodeList = editor.value.document.nodes.map(n => n.key)
+  _nodeList = _nodeList.reverse()
+  _frag = _frag.reverse()
+  // calculate offset index
+  // value will be 0 if last line in document
+  const offsetIndex = _nodeList.indexOf(editor.value.anchorBlock.key)
+  _frag.forEach((n, i) => {
+    const newKey = n.key
+    const tempKey = _nodeList.get(i + offsetIndex)
+    // clone block with new key value
+    let _block = editor.value.document.getNode(tempKey)
+    let _refId = _block.data.get('refId')
+    // if not atomic block type, replace refId with the one provided in the list
+    if (!isAtomicInlineType(_block.type)) {
+      const _blockData = list[i][Object.keys(list[i])[0]]
+      _refId = _blockData.refId
+    }
+    // create new block
+    _block = Block.fromJSON({
+      ..._block.toJSON(),
+      key: newKey,
+      data: { refId: _refId },
+    })
+    // replace block
+    editor.replaceNodeByKey(tempKey, _block)
+  })
+
+  next(editor, value)
+}
+
 export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
@@ -348,6 +384,13 @@ export default (editableState, action) => {
         editorCommands: deleteBlocksByIds(action.payload.idList),
       }
     }
+    case ON_PASTE: {
+      return {
+        ...editableState,
+        editorCommands: onPaste(action.payload.list, action.payload.fragment),
+      }
+    }
+
     default:
       return editableState
   }

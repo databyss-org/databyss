@@ -37,7 +37,7 @@ export const toSlateJson = (editorState, pageBlocks) => ({
 
       //append data information to non atomic blocks
       if (!isAtomicInlineType(block.type)) {
-        nodes.data = { refId: block.refId, _id: block._id }
+        nodes.data = { refId: block.refId }
       }
 
       let textBlock
@@ -75,7 +75,7 @@ export const toSlateJson = (editorState, pageBlocks) => ({
         ? nodes
         : {
             object: 'block',
-            data: { refId: block.refId, _id: block._id },
+            data: { refId: block.refId },
             key: block._id,
             type: block.type,
             nodes: [textBlock],

@@ -14,6 +14,7 @@ import {
   DELETE_BLOCKS,
   SHOW_MENU_ACTIONS,
   SHOW_FORMAT_MENU,
+  ON_PASTE,
 } from './constants'
 
 export initialState from './../initialState'
@@ -291,6 +292,51 @@ const deleteBlocks = (state, payload) => {
   return cleanUpState(_state)
 }
 
+const onPaste = (state, anchorKey, list) => {
+  const _state = cloneDeep(state)
+  const { blocks, page } = _state
+  // get current block contents
+  const { type, refId, _id } = blocks[anchorKey]
+  const _entity = entities(state, type)[refId]
+
+  if (_entity.text.length === 0) {
+    /* if contents of current block are empty, slate will create a new block id, replace the the block id with the first block in the list
+    */
+    const _pagesList = list.map(b => ({ _id: b[Object.keys(b)[0]]._id }))
+    const _blocks = {}
+    list.forEach(b => {
+      // populate blocks
+      const _block = b[Object.keys(b)[0]]
+      _blocks[_block._id] = {
+        _id: _block._id,
+        refId: _block.refId,
+        type: _block.type,
+      }
+      // populate entities
+      // block is atomic type, look up value in dictionary
+
+      if (!isAtomicInlineType(_block.type)) {
+        entities(_state, _block.type)[_block.refId] = {
+          _id: _block.refId,
+          ranges: _block.ranges,
+          text: _block.text,
+        }
+      }
+      // entities(_state, _block.type)[_block.refId] = {
+      //   _id: _block.refId,
+      //   ranges: _ranges,
+      //   text: _text,
+      // }
+    })
+
+    _state.blocks = Object.assign({}, _state.blocks, _blocks)
+    const _index = _state.page.blocks.findIndex(i => i._id === anchorKey)
+    // inserted blocks added to pages block list
+    _state.page.blocks.splice(_index, 1, ..._pagesList)
+  }
+  return cleanUpState(_state)
+}
+
 export default (state, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_TYPE:
@@ -305,7 +351,9 @@ export default (state, action) => {
         ...state,
         showMenuActions: action.payload.bool,
       }
-
+    case ON_PASTE:
+      const _state = onPaste(state, action.payload.key, action.payload.list)
+      return onPaste(state, action.payload.key, action.payload.list)
     case SHOW_FORMAT_MENU:
       return {
         ...state,

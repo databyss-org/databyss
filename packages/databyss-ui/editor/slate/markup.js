@@ -1,5 +1,6 @@
 import cloneDeep from 'clone-deep'
 import { Editor, Value } from 'slate'
+import ObjectId from 'bson-objectid'
 import { isAtomicInlineType } from './page/reducer'
 import { entities } from './../state/page/reducer'
 
@@ -51,7 +52,6 @@ export const slateToState = (slate, _id) => {
 }
 
 export const blocksToState = (nodes, state) => {
-  console.log(state)
   const _blocks = nodes.map(block => blockToState(block, state)).toJS()
 
   const _state = {
@@ -70,6 +70,7 @@ export const blocksToState = (nodes, state) => {
   _blocks.forEach(b => {
     // populate blocks
     const _block = b[Object.keys(b)[0]]
+    const { _id, refId, type, text, ranges } = _block
     _state.blocks[_block._id] = {
       refId: _block.refId,
       type: _block.type,
@@ -78,11 +79,47 @@ export const blocksToState = (nodes, state) => {
 
     // populate block in page object
     _state.page.blocks.push({ _id: _block._id })
+
+    // if block type is not atomic, generate a new refId
+    const _refId = isAtomicInlineType(type) ? refId : ObjectId().toHexString()
+    // populate entities
+    entities(_state, type)[_refId] = { _id, text, ranges }
   })
 
-  console.log(_state)
+  return _state
+}
+
+export const nodesToState = nodes => {
+  const _blocks = nodes.map(block => nodeToState(block)).toJS()
 
   return _blocks
+}
+
+export const nodeToState = block => {
+  // refID is required in the block data
+  // refId is used to look up ranges and text in state for atomic blocks
+
+  let refId = null
+  if (block.data.size > 0) {
+    // get refId from block if it exist
+    refId = block.data.get('refId')
+  }
+  // generate new refID if non atomic block
+  const _refId = isAtomicInlineType(block.type)
+    ? refId
+    : ObjectId().toHexString()
+
+  const { ranges, text } = !isAtomicInlineType(block.type)
+    ? getRangesFromBlock(block.toJSON())
+    : { ranges: [], text: '' }
+  const response = {
+    text,
+    type: block.type,
+    ranges,
+    refId: _refId,
+    _id: block.key,
+  }
+  return { [block.key]: response }
 }
 
 export const blockToState = (block, state) => {
@@ -92,7 +129,7 @@ export const blockToState = (block, state) => {
   if (block.data.size > 0) {
     refId = block.data.get('refId')
   }
-  isAtomicInlineType(block.type)
+  // isAtomicInlineType(block.type)
   const { ranges, text } = !isAtomicInlineType(block.type)
     ? getRangesFromBlock(block.toJSON())
     : entities(state, block.type)[refId]
