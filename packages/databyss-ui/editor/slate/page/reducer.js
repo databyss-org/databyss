@@ -6,6 +6,7 @@ import { newEditor, isTextAtomic } from './../slateUtils'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
+  SET_ACTIVE_BLOCK_ID,
   INSERT_NEW_ACTIVE_BLOCK,
   SET_BLOCK_TYPE,
   BACKSPACE,
@@ -16,6 +17,7 @@ import {
   DELETE_BLOCK,
   DELETE_BLOCKS,
   ON_PASTE,
+  SET_BLOCK_REF,
 } from './../../state/page/constants'
 
 export const newBlock = id =>
@@ -311,6 +313,25 @@ export const onPaste = (list, fragment) => (editor, value, next) => {
   next(editor, value)
 }
 
+// const onNewActiveBlock = () => (editor, value, next) => {
+//   console.log('here')
+//   next(editor, value)
+// }
+
+const setBlockRef = (_id, refId) => (editor, value, next) => {
+  const _block = value.document.getNode(_id).toJSON()
+  _block.data = { refId: refId }
+  _block.key = _id
+  editor.replaceNodeByKey(_id, _block)
+  editor.moveForward()
+  next(editor, value)
+}
+
+const onNewActiveBlock = something => (editor, value, next) => {
+  console.log(editor)
+  next(editor, value)
+}
+
 export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
@@ -384,10 +405,22 @@ export default (editableState, action) => {
         editorCommands: deleteBlocksByIds(action.payload.idList),
       }
     }
+    case SET_BLOCK_REF: {
+      return {
+        ...editableState,
+        editorCommands: setBlockRef(action.payload._id, action.payload.refId),
+      }
+    }
     case ON_PASTE: {
       return {
         ...editableState,
         editorCommands: onPaste(action.payload.list, action.payload.fragment),
+      }
+    }
+    case SET_ACTIVE_BLOCK_ID: {
+      return {
+        ...editableState,
+        //   editorCommands: onNewActiveBlock('something'),
       }
     }
 

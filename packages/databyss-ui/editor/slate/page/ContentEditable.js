@@ -49,6 +49,7 @@ const SlateContentEditable = forwardRef(
       deleteBlockByKey,
       deleteBlocksByKeys,
       onPasteAction,
+      setBlockRef,
     },
     ref
   ) => {
@@ -63,20 +64,25 @@ const SlateContentEditable = forwardRef(
       if (!_nextActiveBlock) {
         return false
       }
+      // check if current blockId matches refId in data parameter
+      const _nextRefId = _nextActiveBlock.data.get('refId')
+
+      if (blocks[_nextActiveBlock.key]) {
+        if (_nextRefId !== blocks[_nextActiveBlock.key].refId) {
+          // dispatch setting refId to current block
+          setBlockRef(
+            _nextActiveBlock.key,
+            blocks[_nextActiveBlock.key].refId,
+            _nextEditableState
+          )
+        }
+      }
+
+      console.log(_nextRefId)
+      console.log(_nextActiveBlock)
+      console.log(blocks[_nextActiveBlock.key])
 
       if (_nextActiveBlock.key !== activeBlockId) {
-        const _nodes = _nextEditableState.value.document.nodes
-        // check to see if multiple blocks were pasted
-        if (_nodes.size > Object.keys(blocks).length + 1) {
-          // slateToState
-
-          // convert slate state to our state model here
-          const _blocks = blocksToState(_nodes, editorState)
-
-          console.log(_blocks)
-          console.log('NOT EQUAL')
-        }
-
         let text = ''
         if (_nextEditableState.value.document.getNode(activeBlockId)) {
           text = _nextEditableState.value.document.getNode(activeBlockId).text
@@ -403,6 +409,15 @@ const SlateContentEditable = forwardRef(
         // in state reducer insert pasted blocks into state
         const anchorKey = value.anchorBlock.key
         const _nodeList = nodesToState(fragment.nodes)
+
+        if (value.anchorBlock.text.length > 0) {
+          // if value already in first block slate will not replace first node key
+          console.log(value.anchorBlock.key)
+          console.log(value.anchorBlock.data.get('refId'))
+          console.log(_nodeList)
+          //   _nodeList[0]
+        }
+
         onPasteAction(anchorKey, _nodeList, fragment, editor)
         return event.preventDefault()
       }

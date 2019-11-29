@@ -294,7 +294,7 @@ const deleteBlocks = (state, payload) => {
 
 const onPaste = (state, anchorKey, list) => {
   const _state = cloneDeep(state)
-  const { blocks, page } = _state
+  const { blocks } = _state
   // get current block contents
   const { type, refId, _id } = blocks[anchorKey]
   const _entity = entities(state, type)[refId]

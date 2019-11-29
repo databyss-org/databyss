@@ -15,6 +15,7 @@ import {
   SHOW_MENU_ACTIONS,
   SHOW_FORMAT_MENU,
   ON_PASTE,
+  SET_BLOCK_REF,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -176,6 +177,17 @@ export function onPaste(key, list, fragment, editableState) {
       key,
       list,
       fragment,
+    },
+  }
+}
+
+export function onSetBlockRef(_id, refId, editableState) {
+  return {
+    type: SET_BLOCK_REF,
+    payload: {
+      editableState,
+      _id,
+      refId,
     },
   }
 }

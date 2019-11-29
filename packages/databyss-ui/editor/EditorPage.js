@@ -14,6 +14,7 @@ import {
   deleteBlock,
   deleteBlocks,
   onPaste,
+  onSetBlockRef,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
@@ -81,6 +82,10 @@ const EditorPage = ({ children }) => {
     dispatchEditor(onPaste(key, list, fragment, { value }))
   }
 
+  const setBlockRef = (id, ref, { value }) => {
+    dispatchEditor(onSetBlockRef(id, ref, { value }))
+  }
+
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
     onActiveBlockIdChange,
@@ -95,6 +100,7 @@ const EditorPage = ({ children }) => {
     deleteBlockByKey,
     deleteBlocksByKeys,
     onPasteAction,
+    setBlockRef,
   })
 }
 
