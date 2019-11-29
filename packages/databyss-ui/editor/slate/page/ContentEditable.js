@@ -64,6 +64,7 @@ const SlateContentEditable = forwardRef(
       if (!_nextActiveBlock) {
         return false
       }
+
       // check if current blockId matches refId in data parameter
       const _nextRefId = _nextActiveBlock.data.get('refId')
 
@@ -77,10 +78,6 @@ const SlateContentEditable = forwardRef(
           )
         }
       }
-
-      console.log(_nextRefId)
-      console.log(_nextActiveBlock)
-      console.log(blocks[_nextActiveBlock.key])
 
       if (_nextActiveBlock.key !== activeBlockId) {
         let text = ''

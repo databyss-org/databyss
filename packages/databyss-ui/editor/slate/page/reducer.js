@@ -300,35 +300,27 @@ export const onPaste = (list, fragment) => (editor, value, next) => {
       const _blockData = list[i][Object.keys(list[i])[0]]
       _refId = _blockData.refId
     }
-    // create new block
+    // replace block
     _block = Block.fromJSON({
       ..._block.toJSON(),
       key: newKey,
       data: { refId: _refId },
     })
-    // replace block
     editor.replaceNodeByKey(tempKey, _block)
   })
-
+  // moves cursor to end of fragment
+  const _node = editor.value.document.getNode(_frag.get(0).key)
+  editor.moveToEndOfNode(_node)
   next(editor, value)
 }
-
-// const onNewActiveBlock = () => (editor, value, next) => {
-//   console.log('here')
-//   next(editor, value)
-// }
 
 const setBlockRef = (_id, refId) => (editor, value, next) => {
   const _block = value.document.getNode(_id).toJSON()
   _block.data = { refId: refId }
   _block.key = _id
   editor.replaceNodeByKey(_id, _block)
-  editor.moveForward()
-  next(editor, value)
-}
-
-const onNewActiveBlock = something => (editor, value, next) => {
-  console.log(editor)
+  const _node = editor.value.document.getNode(_id)
+  editor.moveToEndOfNode(_node)
   next(editor, value)
 }
 
@@ -415,12 +407,6 @@ export default (editableState, action) => {
       return {
         ...editableState,
         editorCommands: onPaste(action.payload.list, action.payload.fragment),
-      }
-    }
-    case SET_ACTIVE_BLOCK_ID: {
-      return {
-        ...editableState,
-        //   editorCommands: onNewActiveBlock('something'),
       }
     }
 
