@@ -400,22 +400,37 @@ const SlateContentEditable = forwardRef(
       const { value } = editor
       const transfer = getEventTransfer(event)
       const { fragment, type } = transfer
+      let _frag = fragment
       if (type === 'fragment') {
+        if (_frag.nodes.size > 1) {
+          _frag.nodes.forEach(n => {
+            // TODO: FILTER OUT BLOCKS NOT IN OUR STATE
+            if (n.text.length === 0) {
+              _frag = _frag.removeNode(n.key)
+            }
+            // if empty atomic block is in selection remove from list
+            if (n.text.length === 0 && isAtomicInlineType(n.type)) {
+              _frag.removeNode(n.key)
+            }
+          })
+        }
+
         // get anchor block from slate,
         // get new pasted list from slate
         // in state reducer insert pasted blocks into state
         const anchorKey = value.anchorBlock.key
-        const _nodeList = nodesToState(fragment.nodes)
+        let _nodeList = nodesToState(_frag.nodes)
+
+        //TODO: FILTER OUT EMPTY NODES
 
         if (value.anchorBlock.text.length > 0) {
           // if value already in first block slate will not replace first node key
-          console.log(value.anchorBlock.key)
-          console.log(value.anchorBlock.data.get('refId'))
-          console.log(_nodeList)
-          //   _nodeList[0]
+          // TODO: breaks when paste is html
+          _nodeList[0][
+            Object.keys(_nodeList[0])
+          ].refId = value.anchorBlock.data.get('refId')
         }
-
-        onPasteAction(anchorKey, _nodeList, fragment, editor)
+        onPasteAction(anchorKey, _nodeList, _frag, editor)
         return event.preventDefault()
       }
       return next()

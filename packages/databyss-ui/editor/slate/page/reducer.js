@@ -6,7 +6,6 @@ import { newEditor, isTextAtomic } from './../slateUtils'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
-  SET_ACTIVE_BLOCK_ID,
   INSERT_NEW_ACTIVE_BLOCK,
   SET_BLOCK_TYPE,
   BACKSPACE,

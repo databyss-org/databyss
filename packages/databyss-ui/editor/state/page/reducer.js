@@ -50,8 +50,12 @@ const cleanUpState = state => {
   return _state
 }
 
-export const getRawHtmlForBlock = (state, block) =>
-  entities(state, block.type)[block.refId].text
+export const getRawHtmlForBlock = (state, block) => {
+  if (entities(state, block.type)[block.refId]) {
+    return entities(state, block.type)[block.refId].text
+  }
+  return null
+}
 
 export const setRawHtmlForBlock = (state, block, html) => {
   const nextState = cloneDeep(state)
@@ -296,6 +300,8 @@ const onPaste = (state, anchorKey, list) => {
   const _state = cloneDeep(state)
   const { blocks } = _state
   // get current block contents
+  console.log(blocks)
+  console.log(anchorKey)
   const { type, refId, _id } = blocks[anchorKey]
   const _entity = entities(state, type)[refId]
 
