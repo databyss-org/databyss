@@ -4,7 +4,7 @@ import { Editor, getEventTransfer } from 'slate-react'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { getRawHtmlForBlock } from './../../state/page/reducer'
-import { findActiveBlock, isAtomicInlineType, newBlock } from './reducer'
+import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../../EditorProvider'
 import FormatMenu from '../../Menu/FormatMenu'
 import hotKeys, { formatHotKeys, navHotKeys } from './../hotKeys'
@@ -18,7 +18,6 @@ import {
   hasSelection,
   noAtomicInSelection,
   getSelectedBlocks,
-  newEditor,
 } from './../slateUtils'
 
 import { blocksToState, getFragFromText } from './../clipboard'
@@ -396,8 +395,9 @@ const SlateContentEditable = forwardRef(
       return next()
     }
 
-    const onPaste = (event, editor, next) => {
+    const onPaste = (event, editor) => {
       // TODO: if html convert to ranges
+      // TODO: transfer ref id when hard return before source
       const { value } = editor
       const transfer = getEventTransfer(event)
       const { fragment, type } = transfer
@@ -420,7 +420,7 @@ const SlateContentEditable = forwardRef(
 
         // get list of refId and Id of fragment to paste,
         // this list is used to keep slate and state in sync
-        let _blockList = blocksToState(_frag.nodes)
+        const _blockList = blocksToState(_frag.nodes)
         onPasteAction(anchorKey, _blockList, _frag, editor)
         return event.preventDefault()
       }

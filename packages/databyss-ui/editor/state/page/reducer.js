@@ -353,7 +353,6 @@ export default (state, action) => {
         showMenuActions: action.payload.bool,
       }
     case ON_PASTE:
-      const _state = onPaste(state, action.payload.key, action.payload.list)
       return onPaste(state, action.payload.key, action.payload.list)
     case SHOW_FORMAT_MENU:
       return {

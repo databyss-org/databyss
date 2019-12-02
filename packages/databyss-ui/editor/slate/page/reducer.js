@@ -2,7 +2,7 @@ import { Block } from 'slate'
 import { serializeNodeToHtml, sanitizer } from './../inlineSerializer'
 import { getRangesFromBlock } from './../markup'
 
-import { newEditor, isTextAtomic } from './../slateUtils'
+import { NewEditor, isTextAtomic } from './../slateUtils'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
@@ -144,10 +144,12 @@ const setBlockType = (id, type) => (editor, value, next) => {
     const _refId = _node.data.get('refId')
     let _marks = _node.getMarks().toJSON()
     _node = { ..._node.toJSON(), data: { refId: _refId }, key: id }
+
+    /* eslint new-cap: 1 */
     _node = new Block.fromJSON(_node)
     // create new block from node
     // mock editor to correct marks
-    const _editor = newEditor()
+    const _editor = NewEditor()
     _editor.insertBlock(_node)
     // issue #117
     // removes @ or #
@@ -301,7 +303,7 @@ const deleteBlocksByIds = idList => (editor, value, next) => {
 }
 
 export const onPaste = (list, fragment) => (editor, value, next) => {
-  let _list = list.reverse()
+  const _list = list.reverse()
   let _frag = fragment.nodes
   editor.insertFragment(fragment)
   // keys get lost when insert fragment applied
@@ -317,13 +319,11 @@ export const onPaste = (list, fragment) => (editor, value, next) => {
     const newKey = n.key
     const tempKey = _nodeList.get(i + offsetIndex)
 
-    // console.log(newKey)
-    // console.log(tempKey)
     // clone block with new key value
     let _block = editor.value.document.getNode(tempKey)
     // get refId from provided list
 
-    let _refId = _list[i][newKey].refId
+    const _refId = _list[i][newKey].refId
 
     // replace block
     _block = Block.fromJSON({
@@ -343,7 +343,7 @@ export const onPaste = (list, fragment) => (editor, value, next) => {
 
 const setBlockRef = (_id, refId) => (editor, value, next) => {
   const _block = value.document.getNode(_id).toJSON()
-  _block.data = { refId: refId }
+  _block.data = { refId }
   _block.key = _id
   editor.replaceNodeByKey(_id, _block)
   const _node = editor.value.document.getNode(_id)

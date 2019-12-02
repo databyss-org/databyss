@@ -1,8 +1,8 @@
-import { isAtomicInlineType } from './page/reducer'
 import Html from 'slate-html-serializer'
-import { getRangesFromBlock } from './markup'
-import { newEditor } from './slateUtils'
 import ObjectId from 'bson-objectid'
+import { isAtomicInlineType } from './page/reducer'
+import { getRangesFromBlock } from './markup'
+import { NewEditor } from './slateUtils'
 
 // deserializer for atomic blocks
 const MARK_TAG = {
@@ -12,11 +12,12 @@ const MARK_TAG = {
 
 const rules = [
   {
-    deserialize(el, next) {
+    deserialize: (el, next) => {
       const mark = MARK_TAG[el.tagName.toLowerCase()]
       if (!mark) {
-        return
+        return undefined
       }
+      /* eslint consistent-return: "error" */
       return {
         object: 'mark',
         type: mark,
@@ -26,19 +27,10 @@ const rules = [
   },
 ]
 
-/*
-takes a node list and deserializes them to return a list with refId, _id, text, and ranges
-*/
-export const blocksToState = nodes => {
-  const _blocks = nodes.map(block => blockToState(block)).toJS()
-  return _blocks
-}
-
 export const blockToState = block => {
   // refID is required in the block data
   // refId is used to look up ranges and text in state
   let refId = block.data ? block.data.get('refId') : null
-  let _textFields
   let _block = block
 
   if (isAtomicInlineType(block.type)) {
@@ -48,7 +40,7 @@ export const blockToState = block => {
     // if not atomic, generate new refId
     refId = ObjectId().toHexString()
   }
-  _textFields = getRangesFromBlock(_block.toJSON())
+  const _textFields = getRangesFromBlock(_block.toJSON())
 
   const text = _textFields.text
   const ranges = _textFields.ranges
@@ -63,11 +55,19 @@ export const blockToState = block => {
   return { [block.key]: response }
 }
 
+/*
+takes a node list and deserializes them to return a list with refId, _id, text, and ranges
+*/
+export const blocksToState = nodes => {
+  const _blocks = nodes.map(block => blockToState(block)).toJS()
+  return _blocks
+}
+
 export const getFragFromText = text => {
   // create a list split by carriage returns
   const _textList = text.split(/\r?\n/)
   // creates a slate editor to compose a fragment
-  let _editor = newEditor()
+  const _editor = NewEditor()
   // creates list of new blocks with refId and _id
 
   const _blockList = _textList.map(t => {

@@ -35,7 +35,7 @@ export const toSlateJson = (editorState, pageBlocks) => ({
           break
       }
 
-      //append data information to non atomic blocks
+      // append data information to non atomic blocks
       if (!isAtomicInlineType(block.type)) {
         nodes.data = { refId: block.refId }
       }
@@ -273,7 +273,7 @@ export const isEmptyAndAtomic = text => {
   return false
 }
 
-export const newEditor = () => {
+export const NewEditor = () => {
   const _value = Value.fromJSON({
     document: {
       nodes: [
