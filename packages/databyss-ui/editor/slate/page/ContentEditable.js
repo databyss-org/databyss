@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
 import { Editor, getEventTransfer } from 'slate-react'
+import ObjectId from 'bson-objectid'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { getRawHtmlForBlock } from './../../state/page/reducer'
-import { findActiveBlock, isAtomicInlineType } from './reducer'
+import { findActiveBlock, isAtomicInlineType, newBlock } from './reducer'
 import { useEditorContext } from '../../EditorProvider'
 import FormatMenu from '../../Menu/FormatMenu'
 import hotKeys, { formatHotKeys, navHotKeys } from './../hotKeys'
@@ -18,6 +19,7 @@ import {
   hasSelection,
   noAtomicInSelection,
   getSelectedBlocks,
+  newEditor,
 } from './../slateUtils'
 
 import { blocksToState } from './../markup'
@@ -89,7 +91,6 @@ const SlateContentEditable = forwardRef(
         )
         return false
       }
-
       return false
     }
 
@@ -99,7 +100,6 @@ const SlateContentEditable = forwardRef(
       if (!_nextEditableState.value.anchorBlock) {
         return false
       }
-
       if (
         !editorState.activeBlockId ||
         !activeBlockId ||
@@ -398,11 +398,14 @@ const SlateContentEditable = forwardRef(
     }
 
     const onPaste = (event, editor, next) => {
+      // TODO: if html convert to ranges
+
       const { value } = editor
       const transfer = getEventTransfer(event)
       const { fragment, type } = transfer
       let _frag = fragment
-
+      // get anchor block from slate,
+      const anchorKey = value.anchorBlock.key
       console.log('transfer', transfer)
       // TODO: CHECK FOR TEXT CARRYIGN CARRIGE RETURNS
       if (type === 'fragment') {
@@ -418,18 +421,55 @@ const SlateContentEditable = forwardRef(
             _frag = _frag.removeNode(_lastBlock.key)
           }
         }
-        // get anchor block from slate,
-        const anchorKey = value.anchorBlock.key
 
         // get list of refId and Id of fragment to paste,
         // this list is used to keep slate and state in sync
         let _blockList = blocksToState(_frag.nodes)
-        // TODO: breaks when paste is html
-
         onPasteAction(anchorKey, _blockList, _frag, editor)
         return event.preventDefault()
       }
-      return next()
+      // if plaintext or html
+
+      // creates list of new blocks with refId and _id
+
+      // create a list split by carriage returns
+      const _textList = transfer.text.split(/\r?\n/)
+      // creates a slate editor to compose a fragment
+      let _editor = newEditor()
+      const _blockList = _textList.map(t => {
+        const _refId = ObjectId().toHexString()
+        const _key = ObjectId().toHexString()
+        const _block = {
+          object: 'block',
+          type: 'ENTRY',
+          data: { refId: _refId },
+          key: _key,
+          nodes: [
+            {
+              object: 'text',
+              text: t,
+            },
+          ],
+        }
+        _editor.insertBlock(_block)
+        return {
+          [_key]: {
+            _id: _key,
+            refId: _refId,
+            text: t,
+            type: 'ENTRY',
+            ranges: [],
+          },
+        }
+      })
+      // removes first node in fragment
+      // this node is empty by default
+      _frag = _editor.value.document.removeNode(
+        _editor.value.document.nodes.get(0).key
+      )
+
+      onPasteAction(anchorKey, _blockList, _frag, editor)
+      return event.preventDefault()
     }
 
     return (
