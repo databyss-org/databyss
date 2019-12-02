@@ -113,8 +113,10 @@ export const setRangesForBlock = (state, block, ranges) => {
 }
 
 const setBlockType = (state, type, _id) => {
-  // changing block type will always generate a new refId
-  const nextRefId = ObjectId().toHexString()
+  // preserve refId if it exists
+  const nextRefId = state.blocks[_id]
+    ? state.blocks[_id].refId
+    : ObjectId().toHexString()
   const block = state.blocks[_id]
   const text = block ? getRawHtmlForBlock(state, block) : ''
   // initialize range
@@ -300,9 +302,7 @@ const onPaste = (state, anchorKey, list) => {
   const _state = cloneDeep(state)
   const { blocks } = _state
   // get current block contents
-  console.log(blocks)
-  console.log(anchorKey)
-  const { type, refId, _id } = blocks[anchorKey]
+  const { type, refId } = blocks[anchorKey]
   const _entity = entities(state, type)[refId]
 
   if (_entity.text.length === 0) {
@@ -328,11 +328,6 @@ const onPaste = (state, anchorKey, list) => {
           text: _block.text,
         }
       }
-      // entities(_state, _block.type)[_block.refId] = {
-      //   _id: _block.refId,
-      //   ranges: _ranges,
-      //   text: _text,
-      // }
     })
 
     _state.blocks = Object.assign({}, _state.blocks, _blocks)
@@ -370,8 +365,9 @@ export default (state, action) => {
       if (
         isAtomicInlineType(activeBlock.type) &&
         action.payload.html.length !== 0
-      )
+      ) {
         return state
+      }
       let nextState = setRawHtmlForBlock(
         state,
         activeBlock,

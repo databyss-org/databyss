@@ -20,7 +20,7 @@ import {
   getSelectedBlocks,
 } from './../slateUtils'
 
-import { blocksToState, nodesToState } from './../markup'
+import { blocksToState } from './../markup'
 
 const schema = {
   inlines: {
@@ -64,21 +64,7 @@ const SlateContentEditable = forwardRef(
       if (!_nextActiveBlock) {
         return false
       }
-
-      // check if current blockId matches refId in data parameter
-      const _nextRefId = _nextActiveBlock.data.get('refId')
-
-      if (blocks[_nextActiveBlock.key]) {
-        if (_nextRefId !== blocks[_nextActiveBlock.key].refId) {
-          // dispatch setting refId to current block
-          setBlockRef(
-            _nextActiveBlock.key,
-            blocks[_nextActiveBlock.key].refId,
-            _nextEditableState
-          )
-        }
-      }
-
+      // checks for active block ID change
       if (_nextActiveBlock.key !== activeBlockId) {
         let text = ''
         if (_nextEditableState.value.document.getNode(activeBlockId)) {
@@ -89,6 +75,21 @@ const SlateContentEditable = forwardRef(
 
         return true
       }
+
+      // check if current blockId matches refId in data parameter
+      const _nextRefId = _nextActiveBlock.data.get('refId')
+
+      // if state has refID for current block
+      // set slate refId of block
+      if (!_nextRefId && blocks[_nextActiveBlock.key]) {
+        setBlockRef(
+          _nextActiveBlock.key,
+          blocks[_nextActiveBlock.key].refId,
+          _nextEditableState
+        )
+        return false
+      }
+
       return false
     }
 
@@ -401,36 +402,31 @@ const SlateContentEditable = forwardRef(
       const transfer = getEventTransfer(event)
       const { fragment, type } = transfer
       let _frag = fragment
+
+      console.log('transfer', transfer)
+      // TODO: CHECK FOR TEXT CARRYIGN CARRIGE RETURNS
       if (type === 'fragment') {
         if (_frag.nodes.size > 1) {
-          _frag.nodes.forEach(n => {
-            // TODO: FILTER OUT BLOCKS NOT IN OUR STATE
-            if (n.text.length === 0) {
-              _frag = _frag.removeNode(n.key)
-            }
-            // if empty atomic block is in selection remove from list
-            if (n.text.length === 0 && isAtomicInlineType(n.type)) {
-              _frag.removeNode(n.key)
-            }
-          })
+          // trim first node if empty
+          const _firstBlock = _frag.nodes.get(0)
+          if (_firstBlock.text.length === 0) {
+            _frag = _frag.removeNode(_firstBlock.key)
+          }
+          // trim last block if empty
+          const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
+          if (_lastBlock.text.length === 0) {
+            _frag = _frag.removeNode(_lastBlock.key)
+          }
         }
-
         // get anchor block from slate,
-        // get new pasted list from slate
-        // in state reducer insert pasted blocks into state
         const anchorKey = value.anchorBlock.key
-        let _nodeList = nodesToState(_frag.nodes)
 
-        //TODO: FILTER OUT EMPTY NODES
+        // get list of refId and Id of fragment to paste,
+        // this list is used to keep slate and state in sync
+        let _blockList = blocksToState(_frag.nodes)
+        // TODO: breaks when paste is html
 
-        if (value.anchorBlock.text.length > 0) {
-          // if value already in first block slate will not replace first node key
-          // TODO: breaks when paste is html
-          _nodeList[0][
-            Object.keys(_nodeList[0])
-          ].refId = value.anchorBlock.data.get('refId')
-        }
-        onPasteAction(anchorKey, _nodeList, _frag, editor)
+        onPasteAction(anchorKey, _blockList, _frag, editor)
         return event.preventDefault()
       }
       return next()
