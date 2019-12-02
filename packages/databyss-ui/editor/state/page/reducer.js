@@ -112,11 +112,16 @@ export const setRangesForBlock = (state, block, ranges) => {
   return nextState
 }
 
-const setBlockType = (state, type, _id) => {
-  // preserve refId if it exists
-  const nextRefId = state.blocks[_id]
-    ? state.blocks[_id].refId
-    : ObjectId().toHexString()
+// If refId is passed, function will preserve the ID
+const setBlockType = (state, type, _id, _refId) => {
+  // if it is type atomic, preserve the ID
+  const nextRefId =
+    (state.blocks[_id] && isAtomicInlineType(type)) || _refId
+      ? state.blocks[_id]
+        ? state.blocks[_id].refId
+        : _refId
+      : ObjectId().toHexString()
+
   const block = state.blocks[_id]
   const text = block ? getRawHtmlForBlock(state, block) : ''
   // initialize range
@@ -149,8 +154,8 @@ const setBlockType = (state, type, _id) => {
   }
 }
 
-const setActiveBlockType = (state, type) =>
-  setBlockType(state, type, state.activeBlockId)
+const setActiveBlockType = (state, type, refId) =>
+  setBlockType(state, type, state.activeBlockId, refId)
 
 const insertNewActiveBlock = (
   state,
@@ -165,6 +170,7 @@ const insertNewActiveBlock = (
   let insertedText = insertedBlockText
   let _ranges = []
   let _state = cloneDeep(state)
+  let _refId = null
 
   // get index value where previous block was
   // insert current ID after previous index value
@@ -178,6 +184,10 @@ const insertNewActiveBlock = (
     isAtomicInlineType(state.blocks[previousBlockId].type) &&
     !previousBlockText
   ) {
+    console.log('one')
+
+    // get refId from previous block to apply to atomic block
+    _refId = _state.blocks[previousBlockId].refId
     _state = setBlockType(_state, 'ENTRY', previousBlockId)
     insertedBlockType = state.blocks[previousBlockId].type
     // get atomic block text and ranges to transfer to new block
@@ -204,8 +214,8 @@ const insertNewActiveBlock = (
       insertedBlockType = 'LOCATION'
     }
   }
-
-  _state = setBlockType(_state, insertedBlockType, insertedBlockId)
+  console.log('refId', _refId)
+  _state = setBlockType(_state, insertedBlockType, insertedBlockId, _refId)
 
   _state = setRawHtmlForBlock(
     _state,
@@ -375,8 +385,16 @@ export default (state, action) => {
       if (action.payload.ranges) {
         nextState = getMarkupValues(nextState, action.payload.ranges)
       }
+      // if length is empty, set blocktype to entry
+      // preserve refId
       if (!action.payload.html.length) {
-        return setActiveBlockType(nextState, 'ENTRY')
+        let _refId = null
+        if (nextState.blocks[nextState.activeBlockId]) {
+          const { type, refId } = nextState.blocks[nextState.activeBlockId]
+          _refId = isAtomicInlineType(type) ? refId : null
+        }
+        // if refID gets passed, preserve the refID
+        return setActiveBlockType(nextState, 'ENTRY', _refId)
       }
       return nextState
     }
