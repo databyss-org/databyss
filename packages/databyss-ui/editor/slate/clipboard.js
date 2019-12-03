@@ -65,7 +65,16 @@ export const blocksToState = nodes => {
 
 export const getFragFromText = text => {
   // create a list split by carriage returns
-  const _textList = text.split(/\r?\n/)
+  let _textList = text.split(/\r?\n/)
+  // remove first or last text value if empty
+  _textList = _textList.filter((t, i) => {
+    if (
+      (i !== 0 && t.length !== 0) ||
+      (!i !== _textList.length - 1 && t.length !== 0)
+    ) {
+      return t
+    }
+  })
   // creates a slate editor to compose a fragment
   const _editor = NewEditor()
   // creates list of new blocks with refId and _id
@@ -102,5 +111,6 @@ export const getFragFromText = text => {
   const _frag = _editor.value.document.removeNode(
     _editor.value.document.nodes.get(0).key
   )
+
   return { _blockList, _frag }
 }

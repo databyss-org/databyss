@@ -307,9 +307,12 @@ const deleteBlocksByIds = idList => (editor, value, next) => {
 }
 
 export const onPaste = (list, fragment) => (editor, value, next) => {
+  console.log('list', list)
+  console.log('frag', fragment)
   const _list = list.reverse()
   let _frag = fragment.nodes
   editor.insertFragment(fragment)
+  console.log(editor.value.document)
   // keys get lost when insert fragment applied
   // retrieve the last key in the fragment and apply it to the document
   let _nodeList = editor.value.document.nodes.map(n => n.key)
@@ -325,6 +328,8 @@ export const onPaste = (list, fragment) => (editor, value, next) => {
 
     // clone block with new key value
     let _block = editor.value.document.getNode(tempKey)
+    console.log('tempKey', tempKey)
+    console.log('block', _block)
     // get refId from provided list
 
     const _refId = _list[i][newKey].refId

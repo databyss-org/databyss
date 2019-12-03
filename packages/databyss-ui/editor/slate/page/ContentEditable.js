@@ -419,9 +419,13 @@ const SlateContentEditable = forwardRef(
 
     const onPaste = (event, editor) => {
       // TODO: if html convert to ranges
-      // TODO: transfer ref id when hard return before source
+      // TODO: transfer ref id when hard return before
+      // todo: paste atomic blocks breakup fragments
+      // todo: handle fragment text not full block
+      // todo add cut handler to backspace
       const { value } = editor
       const transfer = getEventTransfer(event)
+      console.log(transfer)
       const { fragment, type } = transfer
       let _frag = fragment
       // get anchor block from slate,
