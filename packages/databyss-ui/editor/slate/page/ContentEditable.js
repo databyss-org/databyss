@@ -81,13 +81,27 @@ const SlateContentEditable = forwardRef(
 
       // if state has refID for current block
       // set slate refId of block
-      if (!_nextRefId && blocks[_nextActiveBlock.key]) {
-        setBlockRef(
-          _nextActiveBlock.key,
-          blocks[_nextActiveBlock.key].refId,
-          _nextEditableState
-        )
-        return false
+      if (blocks[_nextActiveBlock.key]) {
+        if (!_nextRefId) {
+          setBlockRef(
+            _nextActiveBlock.key,
+            blocks[_nextActiveBlock.key].refId,
+            _nextEditableState
+          )
+          return false
+        }
+
+        // if refId's dont match, use state value to set slate value
+        if (_nextRefId !== blocks[_nextActiveBlock.key].refId) {
+          setBlockRef(
+            _nextActiveBlock.key,
+            blocks[_nextActiveBlock.key].refId,
+            _nextEditableState
+          )
+          return false
+        }
+
+        //  return false
       }
       return false
     }
@@ -283,22 +297,26 @@ const SlateContentEditable = forwardRef(
       const { fragment } = editor.value
       // check for selection
       if (hasSelection(editor.value)) {
-        if (event.key === 'Backspace' && !noAtomicInSelection(editor.value)) {
-          // EDGE CASE: prevent block from being deleted when empty block highlighted
-          if (fragment.text === '') {
+        if (event.key === 'Backspace') {
+          if (!noAtomicInSelection(editor.value)) {
+            // EDGE CASE: prevent block from being deleted when empty block highlighted
+            if (fragment.text === '') {
+              deleteBlocksFromSelection(editor)
+              return event.preventDefault()
+            }
+
+            // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
+            // case 1
+            // if atomic block is highlighted
+            if (fragment.nodes.size === 1) {
+              deleteBlockByKey(editor.value.anchorBlock.key, editor)
+              return event.preventDefault()
+            }
+            // case 2
             deleteBlocksFromSelection(editor)
             return event.preventDefault()
           }
-
-          // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
-          // case 1
-          // if atomic block is highlighted
-
-          if (fragment.nodes.size === 1) {
-            deleteBlockByKey(editor.value.anchorBlock.key, editor)
-            return event.preventDefault()
-          }
-          // case 2
+          // delete multiple text blocks
           deleteBlocksFromSelection(editor)
           return event.preventDefault()
         }

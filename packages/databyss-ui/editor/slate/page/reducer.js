@@ -76,6 +76,7 @@ const handleNewBlockConditions = (activeBlock, editor) => {
       return false
     }
   }
+
   if (editor.value.previousBlock) {
     if (
       // if current block is location and previous block is empty
@@ -342,12 +343,7 @@ export const onPaste = (list, fragment) => (editor, value, next) => {
 }
 
 const setBlockRef = (_id, refId) => (editor, value, next) => {
-  const _block = value.document.getNode(_id).toJSON()
-  _block.data = { refId }
-  _block.key = _id
-  editor.replaceNodeByKey(_id, _block)
-  const _node = editor.value.document.getNode(_id)
-  editor.moveToEndOfNode(_node)
+  editor.setNodeByKey(_id, { data: { refId } })
   next(editor, value)
 }
 

@@ -184,8 +184,6 @@ const insertNewActiveBlock = (
     isAtomicInlineType(state.blocks[previousBlockId].type) &&
     !previousBlockText
   ) {
-    console.log('one')
-
     // get refId from previous block to apply to atomic block
     _refId = _state.blocks[previousBlockId].refId
     _state = setBlockType(_state, 'ENTRY', previousBlockId)
@@ -214,7 +212,6 @@ const insertNewActiveBlock = (
       insertedBlockType = 'LOCATION'
     }
   }
-  console.log('refId', _refId)
   _state = setBlockType(_state, insertedBlockType, insertedBlockId, _refId)
 
   _state = setRawHtmlForBlock(
@@ -241,7 +238,7 @@ const insertNewActiveBlock = (
 
 const backspace = (state, payload) => {
   const { activeBlockId, nextBlockId } = payload.blockProperties
-  const _state = state
+  const _state = cloneDeep(state)
   const _blocks = _state.page.blocks
   const activeBlockIndex = _blocks.findIndex(b => b._id === activeBlockId)
   if (!nextBlockId) {
@@ -251,11 +248,13 @@ const backspace = (state, payload) => {
     }
     _blocks.splice(activeBlockIndex + 1, 1)
   }
+
   const nextBlockIndex = _blocks.findIndex(b => b._id === nextBlockId)
   // next block index should correspond to page index
   if (activeBlockIndex + 1 === nextBlockIndex) {
     return cleanUpState(_state)
   }
+
   _blocks.splice(activeBlockIndex + 1, 1)
   return cleanUpState(_state)
 }
