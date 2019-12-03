@@ -13,6 +13,7 @@ context('Editor', () => {
       .as('editor')
       .focus()
     cy.get('#slateDocument').as('slateDocument')
+    cy.get('#pageBlocks').as('pageBlocks')
   })
 
   it('renders the contenteditable container', () => {
@@ -22,37 +23,44 @@ context('Editor', () => {
   it('should set initial blocks', () => {
     cy.get('@editor').click()
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="ENTRY">
-            <text />
-          </block>
-        </document>
-      </value>
-    )
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="ENTRY" data={{ refId: refIdList[0] }}>
+              <text />
+            </block>
+          </document>
+        </value>
+      )
 
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 
   it('should set @ block to SOURCE on blur', () => {
     cy.get('@editor')
       .type('@this is a source')
       .newLine()
+      .wait(500)
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">this is a source</inline>
-            <text />
-          </block>
-          <block type="ENTRY" />
-        </document>
-      </value>
-    )
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+              <text />
+              <inline type="SOURCE">this is a source</inline>
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 
   it('Should not allow content/range change on atomic blocks', () => {
@@ -63,20 +71,24 @@ context('Editor', () => {
       .toggleBold()
       .type('this should not be allowed')
       .nextBlock()
+      .wait(500)
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">this is a source</inline>
-            <text />
-          </block>
-          <block type="ENTRY" />
-        </document>
-      </value>
-    )
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+              <text />
+              <inline type="SOURCE">this is a source</inline>
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 
   it('should escape html on block type change and allow bold', () => {
@@ -87,26 +99,30 @@ context('Editor', () => {
       .toggleBold()
       .type('<i>italic</i>')
       .newLine()
+      .wait(500)
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">
-              <mark type="bold">
-                {
-                  'this is <strong>bold and not </strong>&lt;i&gt;italic&lt;/i&gt;'
-                }
-              </mark>
-            </inline>
-            <text />
-          </block>
-          <block type="ENTRY" />
-        </document>
-      </value>
-    )
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+              <text />
+              <inline type="SOURCE">
+                <mark type="bold">
+                  {
+                    'this is <strong>bold and not </strong>&lt;i&gt;italic&lt;/i&gt;'
+                  }
+                </mark>
+              </inline>
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 
   it('should escape html on block type change and allow italic', () => {
@@ -117,28 +133,31 @@ context('Editor', () => {
       .toggleItalic()
       .type('<strong>bold</strong>')
       .newLine()
+      .wait(500)
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">
-              <mark type="italic">
-                {
-                  'this is <em>italic and not </em>&lt;strong&gt;bold&lt;/strong&gt;'
-                }
-              </mark>
-            </inline>
-            <text />
-          </block>
-          <block type="ENTRY" />
-        </document>
-      </value>
-    )
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+              <text />
+              <inline type="SOURCE">
+                <mark type="italic">
+                  {
+                    'this is <em>italic and not </em>&lt;strong&gt;bold&lt;/strong&gt;'
+                  }
+                </mark>
+              </inline>
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
-
   it('should toggle a location mark and tag block as location, then split up block into two location blocks', () => {
     cy.get('@editor')
       .toggleLocation()
@@ -150,22 +169,25 @@ context('Editor', () => {
       .type('{rightarrow}')
       .type('{rightarrow}')
       .newLine()
-
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="LOCATION">
-            <mark type="location">this </mark>
-          </block>
-          <block type="LOCATION">
-            <mark type="location">
-              whole block should get tagged as a location
-            </mark>
-          </block>
-        </document>
-      </value>
-    )
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+      .wait(500)
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="LOCATION" data={{ refId: refIdList[0] }}>
+              <mark type="location">this </mark>
+            </block>
+            <block type="LOCATION" data={{ refId: refIdList[1] }}>
+              <mark type="location">
+                whole block should get tagged as a location
+              </mark>
+            </block>
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 
   it('should toggle inline location mark', () => {
@@ -176,20 +198,23 @@ context('Editor', () => {
       .toggleLocation()
       .type(' within an entry')
       .newLine()
-
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="ENTRY">
-            <text>this block has an </text>
-            <mark type="location">inline location</mark>
-            <text> within an entry</text>
-          </block>
-          <block type="ENTRY" />
-        </document>
-      </value>
-    )
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+      .wait(500)
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="ENTRY" data={{ refId: refIdList[0] }}>
+              <text>this block has an </text>
+              <mark type="location">inline location</mark>
+              <text> within an entry</text>
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 
   it('should toggle LOCATION type then go back to ENTRY when location toggle is entered within the entry', () => {
@@ -199,24 +224,27 @@ context('Editor', () => {
       .toggleLocation()
       .type('entry')
       .newLine()
-
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="ENTRY">
-            <text>
-              <mark type="location">
-                this whole block should get tagged as an{' '}
-              </mark>
-            </text>
-            entry
-            <text />
-          </block>
-          <block type="ENTRY" />
-        </document>
-      </value>
-    )
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+      .wait(500)
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="ENTRY" data={{ refId: refIdList[0] }}>
+              <text>
+                <mark type="location">
+                  this whole block should get tagged as an{' '}
+                </mark>
+              </text>
+              entry
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 
   it('should toggle a location mark and tag block as location', () => {
@@ -225,19 +253,23 @@ context('Editor', () => {
       .type('this whole block should get tagged as a location')
       .newLine()
       .type('{uparrow}')
+      .wait(500)
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="LOCATION">
-            <mark type="location">
-              this whole block should get tagged as a location
-            </mark>
-          </block>
-          <block type="ENTRY" />
-        </document>
-      </value>
-    )
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="LOCATION" data={{ refId: refIdList[0] }}>
+              <mark type="location">
+                this whole block should get tagged as a location
+              </mark>
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 })

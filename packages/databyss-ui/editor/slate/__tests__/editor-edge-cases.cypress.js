@@ -13,6 +13,7 @@ context('Editor', () => {
       .as('editor')
       .focus()
     cy.get('#slateDocument').as('slateDocument')
+    cy.get('#pageBlocks').as('pageBlocks')
   })
 
   it('renders the contenteditable container', () => {
@@ -21,20 +22,21 @@ context('Editor', () => {
 
   it('should set initial blocks', () => {
     cy.get('@editor').click()
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="ENTRY" data={{ refId: refIdList[0] }}>
+              <text />
+            </block>
+          </document>
+        </value>
+      )
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="ENTRY">
-            <text />
-          </block>
-        </document>
-      </value>
-    )
-
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
-
   // issue #116
   it('should not allow location on atomic block', () => {
     cy.get('@editor')
@@ -44,20 +46,23 @@ context('Editor', () => {
       .newLine()
       .previousBlock()
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">source and not location</inline>
-            <text />
-          </block>
-          <block type="ENTRY" />
-        </document>
-      </value>
-    )
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+              <text />
+              <inline type="SOURCE">source and not location</inline>
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+          </document>
+        </value>
+      )
 
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 
   // issue #117
@@ -68,24 +73,26 @@ context('Editor', () => {
       .newLine()
       .previousBlock()
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">
-              <mark type="bold">{'<strong>source</strong>'}</mark>
-            </inline>
-            <text />
-          </block>
-          <block type="ENTRY" />
-        </document>
-      </value>
-    )
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+              <text />
+              <inline type="SOURCE">
+                <mark type="bold">{'<strong>source</strong>'}</mark>
+              </inline>
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+          </document>
+        </value>
+      )
 
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
-
   // https://www.notion.so/databyss/Tab-in-editor-moves-focus-away-9dedc0df7fb6417b86fa0cc5c2f7cb03
   it('should trim white space on atomic blocks and allow tabs on entries', () => {
     cy.get('@editor')
@@ -93,26 +100,28 @@ context('Editor', () => {
       .newLine()
       .type('\t@second source')
       .newLine()
-
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">source name</inline>
-            <text />
-          </block>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">second source</inline>
-            <text />
-          </block>
-          <block type="ENTRY" />
-        </document>
-      </value>
-    )
-
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+      .wait(500)
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+              <text />
+              <inline type="SOURCE">source name</inline>
+              <text />
+            </block>
+            <block type="SOURCE" data={{ refId: refIdList[1] }}>
+              <text />
+              <inline type="SOURCE">second source</inline>
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[2] }} />
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 
   // https://www.notion.so/databyss/Format-menu-keystrokes-shouldn-t-show-work-on-atomic-blocks-8190f837c9014d108fda7ca948a5bdf8
@@ -143,23 +152,27 @@ context('Editor', () => {
       .newLine()
       .type('@this is a source')
       .newLine()
+      .wait(500)
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="ENTRY" />
-          <block type="ENTRY" />
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">this is a source</inline>
-            <text />
-          </block>
-          <block type="ENTRY" />
-        </document>
-      </value>
-    )
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="ENTRY" data={{ refId: refIdList[0] }} />
+            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+            <block type="SOURCE" data={{ refId: refIdList[2] }}>
+              <text />
+              <inline type="SOURCE">this is a source</inline>
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[3] }} />
+          </document>
+        </value>
+      )
 
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 })
 
@@ -169,6 +182,7 @@ context('Editor', () => {
     cy.get('[contenteditable="true"]')
       .as('editor')
       .focus()
+    cy.get('#pageBlocks').as('pageBlocks')
     cy.get('#slateDocument').as('slateDocument')
   })
 
@@ -186,30 +200,32 @@ context('Editor', () => {
       .type('{shift}{rightarrow}')
       .type('{backspace}')
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">
-              Stamenov, Language Structure, Discourse and the Access to
-              Consciousness
-            </inline>
-            <text />
-          </block>
-          <block type="ENTRY">
-            On the limitation of third-order thought to assertion
-          </block>
-          <block type="TOPIC">
-            <text />
-            <inline type="TOPIC">topic</inline>
-            <text />
-          </block>
-        </document>
-      </value>
-    )
-
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+              <text />
+              <inline type="SOURCE">
+                Stamenov, Language Structure, Discourse and the Access to
+                Consciousness
+              </inline>
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1] }}>
+              On the limitation of third-order thought to assertion
+            </block>
+            <block type="TOPIC" data={{ refId: refIdList[2] }}>
+              <text />
+              <inline type="TOPIC">topic</inline>
+              <text />
+            </block>
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 
   it('should delete prevoius block if atomic and backspace clicked', () => {
@@ -218,22 +234,24 @@ context('Editor', () => {
       .startOfLine()
       .type('{backspace}')
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="ENTRY">
-            On the limitation of third-order thought to assertion
-          </block>
-          <block type="TOPIC">
-            <text />
-            <inline type="TOPIC">topic</inline>
-            <text />
-          </block>
-        </document>
-      </value>
-    )
-
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="ENTRY" data={{ refId: refIdList[0] }}>
+              On the limitation of third-order thought to assertion
+            </block>
+            <block type="TOPIC" data={{ refId: refIdList[1] }}>
+              <text />
+              <inline type="TOPIC">topic</inline>
+              <text />
+            </block>
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 
   // Case 1
@@ -246,25 +264,26 @@ context('Editor', () => {
       )
       .type('{backspace}')
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="ENTRY" />
-          <block type="ENTRY">
-            On the limitation of third-order thought to assertion
-          </block>
-          <block type="TOPIC">
-            <text />
-            <inline type="TOPIC">topic</inline>
-            <text />
-          </block>
-        </document>
-      </value>
-    )
-
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="ENTRY" data={{ refId: refIdList[0] }} />
+            <block type="ENTRY" data={{ refId: refIdList[1] }}>
+              On the limitation of third-order thought to assertion
+            </block>
+            <block type="TOPIC" data={{ refId: refIdList[2] }}>
+              <text />
+              <inline type="TOPIC">topic</inline>
+              <text />
+            </block>
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
-
   // case 2
   // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
   it('should highlight all content and delete', () => {
@@ -272,20 +291,21 @@ context('Editor', () => {
       .endOfDoc()
       .type('{selectall}')
       .type('{backspace}')
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="ENTRY" data={{ refId: refIdList[0] }}>
+              <text />
+            </block>
+          </document>
+        </value>
+      )
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="ENTRY">
-            <text />
-          </block>
-        </document>
-      </value>
-    )
-
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
-
   // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
   it('case 3 highlight text', () => {
     cy.get('@editor')
@@ -297,16 +317,22 @@ context('Editor', () => {
       .type('this is some text')
       .setSelection('some ')
       .type('{backspace}')
+      .wait(500)
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="ENTRY">this is text</block>
-        </document>
-      </value>
-    )
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="ENTRY" data={{ refId: refIdList[0] }}>
+              this is text
+            </block>
+          </document>
+        </value>
+      )
 
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 
   // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
@@ -314,37 +340,42 @@ context('Editor', () => {
     cy.get('@editor')
       .setSelection('On the limitation of third-order thought to assertion')
       .type('{backspace}')
+      .wait(500)
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">
-              Stamenov, Language Structure, Discourse and the Access to
-              Consciousness
-            </inline>
-            <text />
-          </block>
-          <block type="ENTRY" />
-          <block type="TOPIC">
-            <text />
-            <inline type="TOPIC">topic</inline>
-            <text />
-          </block>
-        </document>
-      </value>
-    )
-
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+              <text />
+              <inline type="SOURCE">
+                Stamenov, Language Structure, Discourse and the Access to
+                Consciousness
+              </inline>
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1] }}>
+              <text />
+            </block>
+            <block type="TOPIC" data={{ refId: refIdList[2] }}>
+              <text />
+              <inline type="TOPIC">topic</inline>
+              <text />
+            </block>
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
-
   // https://www.notion.so/databyss/Demo-error-7-If-you-click-location-and-press-return-it-doesn-t-move-the-cursor-but-it-makes-everyth-9eaa6b3f02c04358b42f00159863a355
   it('it should toggle location on empty line using the format menu', () => {
     cy.get('@editor')
       .nextBlock()
       .startOfLine()
       .newLine()
+      .wait(500)
       .previousBlock()
 
     cy.get('@editor')
@@ -354,32 +385,35 @@ context('Editor', () => {
       .click()
       .get('@editor')
       .newLine()
+      .wait(500)
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="SOURCE">
-            <text />
-            <inline type="SOURCE">
-              Stamenov, Language Structure, Discourse and the Access to
-              Consciousness
-            </inline>
-            <text />
-          </block>
-          <block type="ENTRY" />
-          <block type="ENTRY" />
-          <block type="ENTRY">
-            On the limitation of third-order thought to assertion
-          </block>
-          <block type="TOPIC">
-            <text />
-            <inline type="TOPIC">topic</inline>
-            <text />
-          </block>
-        </document>
-      </value>
-    )
-
-    cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+              <text />
+              <inline type="SOURCE">
+                Stamenov, Language Structure, Discourse and the Access to
+                Consciousness
+              </inline>
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+            <block type="ENTRY" data={{ refId: refIdList[2] }} />
+            <block type="ENTRY" data={{ refId: refIdList[3] }}>
+              On the limitation of third-order thought to assertion
+            </block>
+            <block type="TOPIC" data={{ refId: refIdList[4] }}>
+              <text />
+              <inline type="TOPIC">topic</inline>
+              <text />
+            </block>
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
   })
 })

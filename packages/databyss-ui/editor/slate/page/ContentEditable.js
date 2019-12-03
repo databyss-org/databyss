@@ -317,13 +317,17 @@ const SlateContentEditable = forwardRef(
             return event.preventDefault()
           }
           // delete multiple text blocks
-          deleteBlocksFromSelection(editor)
-          return event.preventDefault()
-        }
-
-        if (singleBlockBackspaceCheck(editor.value)) {
-          deleteBlockByKey(getSelectedBlocks(editor.value).get(0).key, editor)
-          return event.preventDefault()
+          const _selectedBlocks = getSelectedBlocks(editor.value)
+          if (_selectedBlocks.size > 1) {
+            // TODO: check for fragments of blocks
+            // this deletes whole block
+            deleteBlocksFromSelection(editor)
+            return event.preventDefault()
+          }
+          if (singleBlockBackspaceCheck(editor.value)) {
+            deleteBlockByKey(getSelectedBlocks(editor.value).get(0).key, editor)
+            return event.preventDefault()
+          }
         }
       }
 
