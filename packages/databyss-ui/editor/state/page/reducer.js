@@ -113,13 +113,13 @@ export const setRangesForBlock = (state, block, ranges) => {
 }
 
 // If refId is passed, function will preserve the ID
-const setBlockType = (state, type, _id, _refId) => {
+const setBlockType = (state, type, _id, refId) => {
+  const _refId = state.blocks[_id] ? state.blocks[_id].refId : refId
+
   // if it is type atomic, preserve the ID
   const nextRefId =
-    (state.blocks[_id] && isAtomicInlineType(type)) || _refId
-      ? state.blocks[_id]
-        ? state.blocks[_id].refId
-        : _refId
+    (state.blocks[_id] && isAtomicInlineType(type)) || refId
+      ? _refId
       : ObjectId().toHexString()
 
   const block = state.blocks[_id]
