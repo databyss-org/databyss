@@ -143,6 +143,34 @@ Cypress.Commands.add(
 )
 
 Cypress.Commands.add(
+  'copy',
+  {
+    prevSubject: 'element',
+  },
+  subject => {
+    return cy.get(subject).trigger('keydown', {
+      keyCode: 67,
+      key: 'c',
+      [modKeys(IS_LINUX)]: true,
+    })
+  }
+)
+
+Cypress.Commands.add(
+  'paste',
+  {
+    prevSubject: 'element',
+  },
+  subject => {
+    return cy.get(subject).trigger('keydown', {
+      keyCode: 86,
+      key: 'v',
+      [modKeys(IS_LINUX)]: true,
+    })
+  }
+)
+
+Cypress.Commands.add(
   'toggleLocation',
   {
     prevSubject: 'element',

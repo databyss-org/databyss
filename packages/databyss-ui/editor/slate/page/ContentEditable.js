@@ -81,6 +81,9 @@ const SlateContentEditable = forwardRef(
 
         return true
       }
+      /*
+      this section ensures a sync is maintained between the slate and our internal state, if any refIds fall out of sync, the state refID is applied to slate
+      */
 
       // check if current blockId matches refId in data parameter
       const _nextRefId = _nextActiveBlock.data.get('refId')
@@ -105,6 +108,20 @@ const SlateContentEditable = forwardRef(
             _nextEditableState
           )
           return false
+        }
+
+        // check previous blocks refIds to ensure proper sync
+        // when enter is placed at the beginning of atomic block
+        // previous refId's sync is lost
+        if (_nextEditableState.value.previousBlock) {
+          const _prevKey = _nextEditableState.value.previousBlock.key
+          const _previousRef = _nextEditableState.value.previousBlock.data.get(
+            'refId'
+          )
+          const _previousStateRef = blocks[_prevKey].refId
+          if (_previousStateRef !== _previousRef) {
+            setBlockRef(_prevKey, _previousStateRef, _nextEditableState)
+          }
         }
 
         //  return false

@@ -64,15 +64,21 @@ export const isAtomicInlineType = type => {
 }
 const handleNewBlockConditions = (activeBlock, editor) => {
   if (isAtomicInlineType(activeBlock.type)) {
+    console.log('two')
     if (
       isAtomicInlineType(editor.value.previousBlock.type) &&
       editor.value.previousBlock.text
     ) {
+      console.log('three')
       editor.setNodeByKey(editor.value.anchorBlock.key, { type: 'ENTRY' })
       return false
     }
     if (!editor.value.previousBlock.text) {
-      editor.setNodeByKey(editor.value.previousBlock.key, { type: 'ENTRY' })
+      console.log('four')
+      editor.setNodeByKey(editor.value.previousBlock.key, {
+        type: 'ENTRY',
+        //   data: { refId: null },
+      })
       return false
     }
   }
