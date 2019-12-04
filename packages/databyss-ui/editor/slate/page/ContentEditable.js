@@ -20,7 +20,13 @@ import {
   getSelectedBlocks,
 } from './../slateUtils'
 
-import { blocksToState, getFragFromText } from './../clipboard'
+import {
+  blocksToState,
+  getFragFromText,
+  isFragmentFullBlock,
+  trimFragment,
+  handleTextPaste,
+} from './../clipboard'
 
 const schema = {
   inlines: {
@@ -123,7 +129,6 @@ const SlateContentEditable = forwardRef(
       const _prevText = getRawHtmlForBlock(editorState, blocks[activeBlockId])
       const _nextText = _nextEditableState.value.document.getNode(activeBlockId)
         .text
-
       if (isAtomicInlineType(_nextEditableState.value.anchorBlock.type)) {
         return false
       }
@@ -257,7 +262,7 @@ const SlateContentEditable = forwardRef(
         onNewActiveBlock(blockProperties, _editorState)
       }
 
-      if (event.key === 'Backspace') {
+      if (event.key === 'Backspace' || hotKeys.isCut(event)) {
         const blockProperties = {
           activeBlockId: editor.value.anchorBlock.key,
           nextBlockId: editor.value.nextBlock
@@ -297,7 +302,7 @@ const SlateContentEditable = forwardRef(
       const { fragment } = editor.value
       // check for selection
       if (hasSelection(editor.value)) {
-        if (event.key === 'Backspace') {
+        if (event.key === 'Backspace' || hotKeys.isCut(event)) {
           if (!noAtomicInSelection(editor.value)) {
             // EDGE CASE: prevent block from being deleted when empty block highlighted
             if (fragment.text === '') {
@@ -337,7 +342,7 @@ const SlateContentEditable = forwardRef(
       if (editor.value.previousBlock) {
         if (
           isAtomicInlineType(editor.value.previousBlock.type) &&
-          event.key === 'Backspace' &&
+          (event.key === 'Backspace' || hotKeys.isCut(event)) &&
           editor.value.selection.focus.isAtStartOfNode(
             editor.value.anchorBlock
           ) &&
@@ -374,7 +379,10 @@ const SlateContentEditable = forwardRef(
           }
 
           // allow backspace
-          if (event.key === 'Backspace' && editor.value.previousBlock.text) {
+          if (
+            (event.key === 'Backspace' || hotKeys.isCut(event)) &&
+            editor.value.previousBlock.text
+          ) {
             if (
               !editor.value.selection.focus.isAtStartOfNode(
                 editor.value.anchorBlock
@@ -417,20 +425,43 @@ const SlateContentEditable = forwardRef(
       return next()
     }
 
-    const onPaste = (event, editor) => {
+    const onPaste = (event, editor, next) => {
       // TODO: if html convert to ranges
       // TODO: transfer ref id when hard return before
       // todo: paste atomic blocks breakup fragments
       // todo: handle fragment text not full block
       // todo add cut handler to backspace
       const { value } = editor
+      const _offset = value.selection.anchor.offset
       const transfer = getEventTransfer(event)
       console.log(transfer)
       const { fragment, type } = transfer
+
       let _frag = fragment
       // get anchor block from slate,
       const anchorKey = value.anchorBlock.key
-      if (type === 'fragment') {
+
+      // case 1: insert text
+      // paste single line text in middle of block
+      // const _pasteValues = handleTextPaste(_frag, value)
+      // if (_pasteValues) {
+      //   console.log('is true')
+      // }
+
+      // case 2: insert multiple text in middle of block
+
+      // if anchor block is not empty and first fragment is atomic
+      // prompt a warning that pasting atomic blocks is only
+      if (_offset !== 0 && isAtomicInlineType(_frag.nodes.get(0).type)) {
+        // throw error
+        console.log('prevent behavior')
+        return event.preventDefault()
+      }
+
+      if (
+        type === 'fragment' ||
+        isFragmentFullBlock(fragment, value.document)
+      ) {
         if (_frag.nodes.size > 1) {
           // trim first node if empty
           const _firstBlock = _frag.nodes.get(0)
@@ -443,18 +474,18 @@ const SlateContentEditable = forwardRef(
             _frag = _frag.removeNode(_lastBlock.key)
           }
         }
-
         // get list of refId and Id of fragment to paste,
         // this list is used to keep slate and state in sync
         const _blockList = blocksToState(_frag.nodes)
-        onPasteAction(anchorKey, _blockList, _frag, editor)
+        onPasteAction(anchorKey, _blockList, _frag, _offset, editor)
         return event.preventDefault()
       }
+
       // if plaintext or html is pasted
       const _textData = getFragFromText(transfer.text)
       const _blockList = _textData._blockList
       _frag = _textData._frag
-      onPasteAction(anchorKey, _blockList, _frag, editor)
+      onPasteAction(anchorKey, _blockList, _frag, _offset, editor)
       return event.preventDefault()
     }
 

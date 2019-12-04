@@ -306,13 +306,18 @@ const deleteBlocksByIds = idList => (editor, value, next) => {
   next(editor, value)
 }
 
-export const onPaste = (list, fragment) => (editor, value, next) => {
-  console.log('list', list)
-  console.log('frag', fragment)
-  const _list = list.reverse()
+export const onPaste = (list, fragment, key, offset) => (
+  editor,
+  value,
+  next
+) => {
+  // get anchor refID from document
+  const _anchorRef = editor.value.document.getNode(key).data.get('refId')
+
+  let _list = list.reverse()
   let _frag = fragment.nodes
   editor.insertFragment(fragment)
-  console.log(editor.value.document)
+
   // keys get lost when insert fragment applied
   // retrieve the last key in the fragment and apply it to the document
   let _nodeList = editor.value.document.nodes.map(n => n.key)
@@ -328,8 +333,6 @@ export const onPaste = (list, fragment) => (editor, value, next) => {
 
     // clone block with new key value
     let _block = editor.value.document.getNode(tempKey)
-    console.log('tempKey', tempKey)
-    console.log('block', _block)
     // get refId from provided list
 
     const _refId = _list[i][newKey].refId
@@ -347,6 +350,28 @@ export const onPaste = (list, fragment) => (editor, value, next) => {
   // moves cursor to end of fragment
   const _node = editor.value.document.getNode(_frag.get(0).key)
   editor.moveToEndOfNode(_node)
+
+  // if offset is in first node
+  // merge first nodes
+  if (offset > 0) {
+    _list = _list.reverse()
+    const _firstKey = Object.keys(_list[0])[0]
+    let _firstBlock = editor.value.document.getNode(_firstKey)
+    _firstBlock = Block.fromJSON({
+      ..._firstBlock.toJSON(),
+      data: { refId: _anchorRef },
+      key,
+    })
+    editor.replaceNodeByKey(_firstKey, _firstBlock)
+
+    // replace cursor
+    if (fragment.nodes.size === 1) {
+      editor.moveToStartOfNode(_firstBlock)
+      const _firstPasteText = fragment.nodes.get(0).text.length
+      editor.moveForward(offset + _firstPasteText)
+    }
+  }
+
   next(editor, value)
 }
 
@@ -437,7 +462,12 @@ export default (editableState, action) => {
     case ON_PASTE: {
       return {
         ...editableState,
-        editorCommands: onPaste(action.payload.list, action.payload.fragment),
+        editorCommands: onPaste(
+          action.payload.list,
+          action.payload.fragment,
+          action.payload.key,
+          action.payload.offset
+        ),
       }
     }
 

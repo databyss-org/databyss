@@ -318,6 +318,7 @@ const onPaste = (state, anchorKey, list) => {
     /* if contents of current block are empty, slate will create a new block id, replace the the block id with the first block in the list
     */
     const _pagesList = list.map(b => ({ _id: b[Object.keys(b)[0]]._id }))
+
     const _blocks = {}
     list.forEach(b => {
       // populate blocks
@@ -328,14 +329,10 @@ const onPaste = (state, anchorKey, list) => {
         type: _block.type,
       }
       // populate entities
-      // block is atomic type, look up value in dictionary
-
-      if (!isAtomicInlineType(_block.type)) {
-        entities(_state, _block.type)[_block.refId] = {
-          _id: _block.refId,
-          ranges: _block.ranges,
-          text: _block.text,
-        }
+      entities(_state, _block.type)[_block.refId] = {
+        _id: _block.refId,
+        ranges: _block.ranges,
+        text: _block.text,
       }
     })
 
@@ -343,7 +340,12 @@ const onPaste = (state, anchorKey, list) => {
     const _index = _state.page.blocks.findIndex(i => i._id === anchorKey)
     // inserted blocks added to pages block list
     _state.page.blocks.splice(_index, 1, ..._pagesList)
+  } else {
+    /*
+    slate will insert the text at selected offset 
+    */
   }
+
   return cleanUpState(_state)
 }
 

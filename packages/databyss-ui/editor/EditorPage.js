@@ -78,8 +78,8 @@ const EditorPage = ({ children }) => {
     dispatchEditor(deleteBlocks(idList, { value }))
   }
 
-  const onPasteAction = (key, list, fragment, { value }) => {
-    dispatchEditor(onPaste(key, list, fragment, { value }))
+  const onPasteAction = (key, list, fragment, offset, { value }) => {
+    dispatchEditor(onPaste(key, list, fragment, offset, { value }))
   }
 
   const setBlockRef = (id, ref, { value }) => {

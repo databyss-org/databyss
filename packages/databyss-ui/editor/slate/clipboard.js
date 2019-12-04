@@ -114,3 +114,49 @@ export const getFragFromText = text => {
 
   return { _blockList, _frag }
 }
+
+/*
+this function takes a fragment and checks to see if a full single block was pasted by comparing the paste fragment to the document
+*/
+export const isFragmentFullBlock = (fragment, document) => {
+  if (!fragment) {
+    return false
+  }
+  const _nodes = document.nodes
+  // trim fragment first and last block for empty nodes
+  const _frag = trimFragment(fragment).nodes
+  if (_frag.size > 1) {
+    return true
+  }
+  if (_frag.size === 1) {
+    const _refId = _frag.get(0).data.get('refId')
+    const _keyRefDict = _nodes.map(n => ({
+      key: n.key,
+      refId: n.data.get('refId'),
+    }))
+    const _keyRef = _keyRefDict.find(f => f.refId === _refId)
+    const _text = document.getNode(_keyRef.key).text
+    // fragment contains full block
+    if (_text === _frag.get(0).text) {
+      return true
+    }
+  }
+  return false
+}
+
+export const trimFragment = frag => {
+  let _frag = frag
+  if (_frag.nodes.size > 1) {
+    // trim first node if empty
+    const _firstBlock = _frag.nodes.get(0)
+    if (_firstBlock.text.length === 0) {
+      _frag = _frag.removeNode(_firstBlock.key)
+    }
+    // trim last block if empty
+    const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
+    if (_lastBlock.text.length === 0) {
+      _frag = _frag.removeNode(_lastBlock.key)
+    }
+  }
+  return _frag
+}
