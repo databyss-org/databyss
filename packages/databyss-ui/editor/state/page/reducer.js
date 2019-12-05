@@ -15,6 +15,7 @@ import {
   SHOW_MENU_ACTIONS,
   SHOW_FORMAT_MENU,
   ON_PASTE,
+  SHOW_NEW_BLOCK_MENU,
 } from './constants'
 
 export initialState from './../initialState'
@@ -365,6 +366,11 @@ export default (state, action) => {
       }
     case ON_PASTE:
       return onPaste(state, action.payload.key, action.payload.list)
+    case SHOW_NEW_BLOCK_MENU:
+      return {
+        ...state,
+        showNewBlockMenu: action.payload.bool,
+      }
     case SHOW_FORMAT_MENU:
       return {
         ...state,

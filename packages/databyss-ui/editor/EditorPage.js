@@ -15,6 +15,7 @@ import {
   deleteBlocks,
   onPaste,
   onSetBlockRef,
+  newBlockMenu,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
@@ -77,6 +78,9 @@ const EditorPage = ({ children }) => {
   const deleteBlocksByKeys = (idList, { value }) => {
     dispatchEditor(deleteBlocks(idList, { value }))
   }
+  const onNewBlockMenu = (bool, { value }) => {
+    dispatchEditor(newBlockMenu(bool, { value }))
+  }
 
   const onPasteAction = (key, list, fragment, offset, { value }) => {
     dispatchEditor(onPaste(key, list, fragment, offset, { value }))
@@ -101,6 +105,7 @@ const EditorPage = ({ children }) => {
     deleteBlocksByKeys,
     onPasteAction,
     setBlockRef,
+    onNewBlockMenu,
   })
 }
 

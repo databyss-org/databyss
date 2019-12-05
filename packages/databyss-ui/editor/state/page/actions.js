@@ -16,6 +16,7 @@ import {
   SHOW_FORMAT_MENU,
   ON_PASTE,
   SET_BLOCK_REF,
+  SHOW_NEW_BLOCK_MENU,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -189,6 +190,16 @@ export function onSetBlockRef(_id, refId, editableState) {
       editableState,
       _id,
       refId,
+    },
+  }
+}
+
+export function newBlockMenu(bool, editableState) {
+  return {
+    type: SHOW_NEW_BLOCK_MENU,
+    payload: {
+      editableState,
+      bool,
     },
   }
 }
