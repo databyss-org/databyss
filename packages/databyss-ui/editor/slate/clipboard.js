@@ -27,6 +27,23 @@ const rules = [
   },
 ]
 
+export const trimFragment = frag => {
+  let _frag = frag
+  if (_frag.nodes.size > 1) {
+    // trim first node if empty
+    const _firstBlock = _frag.nodes.get(0)
+    if (_firstBlock.text.length === 0) {
+      _frag = _frag.removeNode(_firstBlock.key)
+    }
+    // trim last block if empty
+    const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
+    if (_lastBlock.text.length === 0) {
+      _frag = _frag.removeNode(_lastBlock.key)
+    }
+  }
+  return _frag
+}
+
 export const blockToState = block => {
   // refID is required in the block data
   // refId is used to look up ranges and text in state
@@ -72,8 +89,9 @@ export const getFragFromText = text => {
       (i !== 0 && t.length !== 0) ||
       (!i !== _textList.length - 1 && t.length !== 0)
     ) {
-      return t
+      return true
     }
+    return false
   })
   // creates a slate editor to compose a fragment
   const _editor = NewEditor()
@@ -142,21 +160,4 @@ export const isFragmentFullBlock = (fragment, document) => {
     }
   }
   return false
-}
-
-export const trimFragment = frag => {
-  let _frag = frag
-  if (_frag.nodes.size > 1) {
-    // trim first node if empty
-    const _firstBlock = _frag.nodes.get(0)
-    if (_firstBlock.text.length === 0) {
-      _frag = _frag.removeNode(_firstBlock.key)
-    }
-    // trim last block if empty
-    const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
-    if (_lastBlock.text.length === 0) {
-      _frag = _frag.removeNode(_lastBlock.key)
-    }
-  }
-  return _frag
 }

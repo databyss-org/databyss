@@ -3,11 +3,7 @@
 /* eslint-disable func-names */
 
 import h from 'slate-hyperscript'
-import {
-  toSlateJson,
-  matchExpectedJson,
-  createEncodedFragmentFromValue,
-} from './_helpers'
+import { toSlateJson, matchExpectedJson } from './_helpers'
 // import {  } from './../hotKeys'
 
 context('Editor', () => {

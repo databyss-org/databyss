@@ -25,7 +25,6 @@ import {
   getFragFromText,
   isFragmentFullBlock,
   trimFragment,
-  handleTextPaste,
 } from './../clipboard'
 
 const schema = {
@@ -442,7 +441,7 @@ const SlateContentEditable = forwardRef(
       return next()
     }
 
-    const onPaste = (event, editor, next) => {
+    const onPaste = (event, editor) => {
       if (isAtomicInlineType(editor.value.anchorBlock.type)) {
         return event.preventDefault()
       }
@@ -452,7 +451,6 @@ const SlateContentEditable = forwardRef(
       const { value } = editor
       const _offset = value.selection.anchor.offset
       const transfer = getEventTransfer(event)
-      console.log(transfer)
 
       const { fragment, type } = transfer
 
@@ -475,16 +473,7 @@ const SlateContentEditable = forwardRef(
         isFragmentFullBlock(fragment, value.document)
       ) {
         if (_frag.nodes.size > 1) {
-          // trim first node if empty
-          const _firstBlock = _frag.nodes.get(0)
-          if (_firstBlock.text.length === 0) {
-            _frag = _frag.removeNode(_firstBlock.key)
-          }
-          // trim last block if empty
-          const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
-          if (_lastBlock.text.length === 0) {
-            _frag = _frag.removeNode(_lastBlock.key)
-          }
+          _frag = trimFragment(_frag)
         }
 
         // get list of refId and Id of fragment to paste,
