@@ -29,7 +29,7 @@ context('Editor', () => {
         pastePayload: 'pasted content',
         simple: false,
       })
-      .wait(500)
+      .wait(1000)
 
     cy.get('@pageBlocks').then(page => {
       const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
