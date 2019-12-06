@@ -48,7 +48,7 @@ const EditableTest = () => {
   )
 }
 
-storiesOf('Editor//Tests', module)
+storiesOf('Cypress//Tests', module)
   .addDecorator(ViewportDecorator)
   .add('Slate', () => (
     <EditorProvider

@@ -26,7 +26,7 @@ const expected = {
 context('Editor', () => {
   beforeEach(() => {
     cy.visit(
-      'http://localhost:6006/iframe.html?id=editor-tests--valuelist-controller'
+      'http://localhost:6006/iframe.html?id=cypress-tests--valuelist-controller'
     )
     cy.get('#citation').as('citation')
     cy.get('#firstName').as('firstName')
@@ -39,7 +39,7 @@ context('Editor', () => {
     cy.get('@citation').should('have.attr', 'role')
   })
 
-  it('should highlight block and delete', () => {
+  it('should enter citation', () => {
     cy.get('@name').type('name of citation')
     cy.get('@firstName')
       .focus()
