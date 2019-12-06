@@ -1,11 +1,14 @@
 export default {
   editableState: null,
   activeBlockId: null,
+  showMenuActions: false,
+  showFormatMenu: false,
+  showNewBlockMenu: true,
   sources: {},
   entries: {
     '5d6442046e84d304ddceb768': {
       _id: '5d6442046e84d304ddceb768',
-      text: '',
+      textValue: '',
       ranges: [],
     },
   },

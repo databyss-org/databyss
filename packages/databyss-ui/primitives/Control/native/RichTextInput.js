@@ -29,6 +29,7 @@ const RichTextInput = forwardRef(
       >
         <EditorLine onChange={onChange}>
           <SlateContentEditable
+            id={id}
             overrideCss={_css}
             onBlur={_onBlur}
             multiline={multiline}

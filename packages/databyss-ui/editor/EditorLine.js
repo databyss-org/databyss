@@ -42,7 +42,7 @@ const EditorLine = ({ children, onChange, value }) => {
     onEditableStateChange,
     OnToggleMark,
     onHotKey,
-    initialTextValue: value,
+    // initialTextValue: value,
   })
 }
 

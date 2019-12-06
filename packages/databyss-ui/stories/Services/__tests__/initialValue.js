@@ -10,8 +10,11 @@ export const _seedValue1 = {
       lastName: 'Stamenov',
     },
   ],
-  name: 'Stamenov. Language Structure',
-  ranges: [{ offset: 0, length: 2, marks: 'bold' }],
+
+  text: {
+    textValue: 'Stamenov. Language Structure',
+    ranges: [{ offset: 0, length: 2, marks: 'bold' }],
+  },
   citations: [
     {
       textValue:
@@ -29,8 +32,10 @@ export const _seedValue2 = {
       lastName: 'Stamenov',
     },
   ],
-  name: 'Second',
-  ranges: [{ offset: 0, length: 2, marks: 'bold' }],
+  text: {
+    textValue: 'Second',
+    ranges: [{ offset: 0, length: 2, marks: 'bold' }],
+  },
   citations: [
     {
       textValue: 'Second Source',

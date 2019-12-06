@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Button, RichTextInput } from '@databyss-org/ui/primitives'
+import ObjectId from 'bson-objectid'
 
 import SourceProvider, {
   useSourceContext,
@@ -9,7 +10,50 @@ import SourceProvider, {
 
 import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
-import { _seedValue1, _seedValue2, _id1, _id2 } from './__tests__/initialValue'
+
+const _id1 = ObjectId().toHexString()
+const _id2 = ObjectId().toHexString()
+
+const _seedValue1 = {
+  authors: [
+    {
+      firstName: 'Max',
+      lastName: 'Stamenov',
+    },
+  ],
+  text: {
+    textValue: 'Stamenov. Language Structure',
+    ranges: [{ offset: 0, length: 2, marks: 'bold' }],
+  },
+  citations: [
+    {
+      textValue:
+        'Stamenov, Maxim I., editor. Language Structure, Discourse and the Access to Consciousness. Vol. 12, John Benjamins Publishing Company, 1997. Crossref, doi:10.1075/aicr.12.',
+      ranges: [{ length: 10, offset: 0, marks: ['bold'] }],
+    },
+  ],
+  _id: _id1,
+}
+
+const _seedValue2 = {
+  authors: [
+    {
+      firstName: 'Max',
+      lastName: 'Stamenov',
+    },
+  ],
+  text: {
+    textValue: 'Second Source',
+    ranges: [{ offset: 0, length: 2, marks: 'bold' }],
+  },
+  citations: [
+    {
+      textValue: 'Second Source',
+      ranges: [],
+    },
+  ],
+  _id: _id2,
+}
 
 const EditFirstCitation = withSource(({ source }) => {
   const [, setSource] = useSourceContext()
@@ -33,7 +77,7 @@ const EditFirstCitation = withSource(({ source }) => {
     <RichTextInput
       key={source._id}
       value={value}
-      rich="true"
+      rich
       onChange={updateSource}
       multiline
     />
@@ -62,7 +106,6 @@ const SourcesDemo = () => {
         minHeight="100"
         width="200"
         mb="medium"
-        id="currentSource"
       >
         <EditFirstCitation sourceId={sourceId} mb="medium" />
       </View>
@@ -83,4 +126,4 @@ const ProviderDecorator = storyFn => (
 storiesOf('Services|Sources', module)
   .addDecorator(ProviderDecorator)
   .addDecorator(ViewportDecorator)
-  .add('Load and Save sources', () => <SourcesDemo />)
+  .add('Update Atomic Sources', () => <SourcesDemo />)
