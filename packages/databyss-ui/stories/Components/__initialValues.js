@@ -1,4 +1,5 @@
 import ObjectId from 'bson-objectid'
+
 const _id = ObjectId().toHexString()
 
 export const emptySource = {

@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import ObjectId from 'bson-objectid'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
@@ -8,8 +7,6 @@ import { View, TextControl, List, Grid } from '@databyss-org/ui/primitives'
 import Section from './../Section'
 import { emptySource, populatedSource } from './__initialValues'
 import { ViewportDecorator } from '../decorators'
-
-const _id = ObjectId().toHexString()
 
 const ControlList = ({ children, ...others }) => (
   <List horizontalItemPadding="small" {...others}>
