@@ -89,6 +89,7 @@ const SourceForm = () => {
                     width: '25%',
                   }}
                   label="Author (First Name)"
+                  id="firstName"
                   gridFlexWrap="nowrap"
                   paddingVariant="tiny"
                 />
@@ -99,6 +100,7 @@ const SourceForm = () => {
                     width: '25%',
                   }}
                   label="Author (Last Name)"
+                  id="lastName"
                   gridFlexWrap="nowrap"
                   paddingVariant="tiny"
                 />
@@ -109,6 +111,7 @@ const SourceForm = () => {
                     width: '25%',
                   }}
                   label="Citation"
+                  id="citation"
                   rich
                   gridFlexWrap="nowrap"
                   multiline
