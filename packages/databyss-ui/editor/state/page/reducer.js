@@ -51,23 +51,23 @@ const cleanUpState = state => {
 }
 
 export const getRawHtmlForBlock = (state, block) =>
-  entities(state, block.type)[block.refId].text
+  entities(state, block.type)[block.refId].textValue
 
-export const setRawHtmlForBlock = (state, block, html) => {
+export const setRawHtmlForBlock = (state, block, text) => {
   const nextState = cloneDeep(state)
 
   switch (block.type) {
     case 'ENTRY':
-      nextState.entries[block.refId].text = html
+      nextState.entries[block.refId].textValue = text
       break
     case 'SOURCE':
-      nextState.sources[block.refId].text = html
+      nextState.sources[block.refId].textValue = text
       break
     case 'LOCATION':
-      nextState.locations[block.refId].text = html
+      nextState.locations[block.refId].textValue = text
       break
     case 'TOPIC':
-      nextState.topics[block.refId].text = html
+      nextState.topics[block.refId].textValue = text
       break
     default:
       throw new Error('Invalid block type', block.type)
@@ -112,7 +112,7 @@ const setBlockType = (state, type, _id) => {
   // changing block type will always generate a new refId
   const nextRefId = ObjectId().toHexString()
   const block = state.blocks[_id]
-  const text = block ? getRawHtmlForBlock(state, block) : ''
+  const textValue = block ? getRawHtmlForBlock(state, block) : ''
   // initialize range
   const ranges = block ? getRangesForBlock(state, block) : []
 
@@ -126,16 +126,16 @@ const setBlockType = (state, type, _id) => {
 
   switch (type) {
     case 'SOURCE':
-      nextState.sources[nextRefId] = { _id: nextRefId, text, ranges }
+      nextState.sources[nextRefId] = { _id: nextRefId, textValue, ranges }
       return nextState
     case 'ENTRY':
-      nextState.entries[nextRefId] = { _id: nextRefId, text, ranges }
+      nextState.entries[nextRefId] = { _id: nextRefId, textValue, ranges }
       return nextState
     case 'LOCATION':
-      nextState.locations[nextRefId] = { _id: nextRefId, text, ranges }
+      nextState.locations[nextRefId] = { _id: nextRefId, textValue, ranges }
       return nextState
     case 'TOPIC':
-      nextState.topics[nextRefId] = { _id: nextRefId, text, ranges }
+      nextState.topics[nextRefId] = { _id: nextRefId, textValue, ranges }
       return nextState
 
     default:
@@ -175,10 +175,10 @@ const insertNewActiveBlock = (
     _state = setBlockType(_state, 'ENTRY', previousBlockId)
     insertedBlockType = state.blocks[previousBlockId].type
     // get atomic block text and ranges to transfer to new block
-    const { text, ranges } = entities(_state, 'ENTRY')[
+    const { textValue, ranges } = entities(_state, 'ENTRY')[
       _state.blocks[previousBlockId].refId
     ]
-    insertedText = text
+    insertedText = textValue
     _ranges = ranges
   }
 
@@ -187,10 +187,10 @@ const insertNewActiveBlock = (
     if (!previousBlockText) {
       _state = setBlockType(_state, 'ENTRY', previousBlockId)
       insertedBlockType = state.blocks[previousBlockId].type
-      const { text, ranges } = entities(_state, 'ENTRY')[
+      const { textValue, ranges } = entities(_state, 'ENTRY')[
         _state.blocks[previousBlockId].refId
       ]
-      insertedText = text
+      insertedText = textValue
       _ranges = ranges
     }
     // if enter is pressed in the middle of a location

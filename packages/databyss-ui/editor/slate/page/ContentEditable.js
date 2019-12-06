@@ -1,9 +1,13 @@
 import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
 import { Editor } from 'slate-react'
+import _ from 'lodash'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
-import { getRawHtmlForBlock } from './../../state/page/reducer'
+import {
+  getRawHtmlForBlock,
+  getRangesForBlock,
+} from './../../state/page/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../../EditorProvider'
 import FormatMenu from '../../Menu/FormatMenu'
@@ -98,10 +102,12 @@ const SlateContentEditable = forwardRef(
         return false
       }
 
-      if (_nextText !== _prevText) {
-        const block = _nextEditableState.value.anchorBlock
-        const ranges = getBlockRanges(block)
+      // gets ranges and compares them to current ranges
+      const block = _nextEditableState.value.anchorBlock
+      const ranges = getBlockRanges(block)
+      const _ranges = getRangesForBlock(editorState, blocks[activeBlockId])
 
+      if (_nextText !== _prevText || !_.isEqual(_ranges, ranges)) {
         onActiveBlockContentChange(_nextText, _nextEditableState, ranges)
         return { _nextText, _nextEditableState, ranges }
       }

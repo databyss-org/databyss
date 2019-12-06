@@ -42,7 +42,7 @@ router.post(
 
         await Promise.all(
           _sources.map(async s => {
-            const source = sources[s].text
+            const source = sources[s].textValue
             const sourceId = sources[s]._id
             const ranges = !_.isEmpty(sources[s].ranges)
               ? sources[s].ranges
@@ -50,7 +50,7 @@ router.post(
 
             // SOURCE WITH ID
             const sourceFields = {
-              text: source,
+              text: { textValue: source, ranges },
               _id: sourceId,
               ranges,
               account: req.account._id,
@@ -80,14 +80,14 @@ router.post(
 
         await Promise.all(
           _entries.map(async e => {
-            const text = entries[e].text
+            const text = entries[e].textValue
             const entryId = entries[e]._id
             const ranges = !_.isEmpty(entries[e].ranges)
               ? entries[e].ranges
               : []
             // ENTRY WITH ID
             const entryFields = {
-              text,
+              text: { textValue: text, ranges },
               ranges,
               _id: entryId,
               user: req.user.id,
@@ -114,13 +114,15 @@ router.post(
 
         await Promise.all(
           _topics.map(async e => {
-            const topic = topics[e].text
+            const topic = topics[e].textValue
             const topicId = topics[e]._id
             const ranges = !_.isEmpty(topics[e].ranges) ? topics[e].ranges : []
 
             // TOPIC WITH ID
             const topicFields = {
-              text: topic,
+              text: { textValue: topic, ranges },
+
+              //  text: topic,
               ranges,
               _id: topicId,
               account: req.account._id,

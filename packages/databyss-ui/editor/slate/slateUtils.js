@@ -30,6 +30,7 @@ export const toSlateJson = (editorState, pageBlocks) => ({
             block._id
           )
           nodes.type = 'LOCATION'
+
           break
         default:
           break
