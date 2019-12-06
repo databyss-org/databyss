@@ -50,6 +50,7 @@ const SlateContentEditable = forwardRef(
       onSetBlockType,
       deleteBlockByKey,
       deleteBlocksByKeys,
+      onNewBlockMenu,
     },
     ref
   ) => {
@@ -268,6 +269,9 @@ const SlateContentEditable = forwardRef(
     }
 
     const onKeyDown = (event, editor, next) => {
+      if (hotKeys.isEsc(event)) {
+        onNewBlockMenu(false, editor)
+      }
       const { fragment } = editor.value
       // check for selection
       if (hasSelection(editor.value)) {

@@ -7,8 +7,8 @@ import { matchWithoutId } from './_helpers'
 const expected = {
   authors: [
     {
-      firstName: 'first name of source',
-      lastName: 'last name of source',
+      firstName: { textValue: 'first name of source' },
+      lastName: { textValue: 'last name of source' },
     },
   ],
   text: {

@@ -1,6 +1,9 @@
 export default {
   editableState: null,
   activeBlockId: null,
+  showMenuActions: false,
+  showFormatMenu: false,
+  showNewBlockMenu: true,
   sources: {},
   entries: {
     '5d6442046e84d304ddceb768': {

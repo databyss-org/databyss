@@ -14,6 +14,7 @@ import {
   DELETE_BLOCKS,
   SHOW_MENU_ACTIONS,
   SHOW_FORMAT_MENU,
+  SHOW_NEW_BLOCK_MENU,
 } from './constants'
 
 export initialState from './../initialState'
@@ -305,7 +306,11 @@ export default (state, action) => {
         ...state,
         showMenuActions: action.payload.bool,
       }
-
+    case SHOW_NEW_BLOCK_MENU:
+      return {
+        ...state,
+        showNewBlockMenu: action.payload.bool,
+      }
     case SHOW_FORMAT_MENU:
       return {
         ...state,

@@ -15,27 +15,20 @@ const source = {
   authors: [
     {
       firstName: {
-        textValue: 'Maxim',
+        textValue: '',
       },
       lastName: {
-        textValue: 'Stamenov',
+        textValue: '',
       },
     },
   ],
   text: {
-    textValue: 'Stamenov, Language Structure',
-    ranges: [
-      {
-        offset: 10,
-        length: 18,
-        marks: ['italic'],
-      },
-    ],
+    textValue: '',
+    ranges: [],
   },
   citations: [
     {
-      textValue:
-        'Stamenov, Maxim I., editor. Language Structure, Discourse and the Access to Consciousness. Vol. 12, John Benjamins Publishing Company, 1997. Crossref, doi:10.1075/aicr.12.',
+      textValue: '',
       ranges: [],
     },
   ],
@@ -78,6 +71,7 @@ const SourceForm = () => {
                     width: '25%',
                   }}
                   label="Name"
+                  id="name"
                   gridFlexWrap="nowrap"
                   paddingVariant="tiny"
                   rich
