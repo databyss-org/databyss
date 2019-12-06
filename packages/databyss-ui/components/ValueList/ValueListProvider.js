@@ -43,8 +43,7 @@ export const useValueListContext = () => useContext(ValueListContext)
 export const ValueListItem = ({ children, path, ...others }) => {
   const [onItemChange, values] = useValueListContext()
 
-  let value
-  value = _.get(values, path)
+  const value = _.get(values, path)
 
   // lodash.get:
   // Gets the value at path of object.
