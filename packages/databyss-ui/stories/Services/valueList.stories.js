@@ -20,10 +20,10 @@ const _initialValue = {
   authors: [
     {
       firstName: {
-        textValue: '',
+        textValue: 'Max',
       },
       lastName: {
-        textValue: '',
+        textValue: 'Stamenov',
       },
     },
   ],
@@ -80,28 +80,28 @@ const SourceForm = withSource(({ source }) => {
                 rich
               />
             </ValueListItem>
-            {/* <ValueListItem path="authors[0].firstName">
-                <TextControl
-                  labelProps={{
-                    width: '25%',
-                  }}
-                  label="Author (First Name)"
-                  id="firstName"
-                  gridFlexWrap="nowrap"
-                  paddingVariant="tiny"
-                />
-              </ValueListItem>
-              <ValueListItem path="authors[0].lastName">
-                <TextControl
-                  labelProps={{
-                    width: '25%',
-                  }}
-                  label="Author (Last Name)"
-                  id="lastName"
-                  gridFlexWrap="nowrap"
-                  paddingVariant="tiny"
-                />
-              </ValueListItem> */}
+            <ValueListItem path="authors[0].firstName">
+              <TextControl
+                labelProps={{
+                  width: '25%',
+                }}
+                label="Author (First Name)"
+                id="firstName"
+                gridFlexWrap="nowrap"
+                paddingVariant="tiny"
+              />
+            </ValueListItem>
+            <ValueListItem path="authors[0].lastName">
+              <TextControl
+                labelProps={{
+                  width: '25%',
+                }}
+                label="Author (Last Name)"
+                id="lastName"
+                gridFlexWrap="nowrap"
+                paddingVariant="tiny"
+              />
+            </ValueListItem>
             <ValueListItem path="citations[0]">
               <TextControl
                 labelProps={{
@@ -158,4 +158,4 @@ const ProviderDecorator = storyFn => (
 storiesOf('Services|ValueList', module)
   .addDecorator(ProviderDecorator)
   .addDecorator(ViewportDecorator)
-  .add('Load and Save sources', () => <SourcesDemo />)
+  .add('Update to DB', () => <SourcesDemo />)

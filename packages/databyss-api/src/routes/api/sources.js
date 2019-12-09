@@ -14,7 +14,6 @@ router.post(
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
     const { text, authors, citations, _id } = req.body.data
-    console.log(req.body.data)
     const sourceFields = {
       text: !_.isEmpty(text) ? text : {},
       citations: !_.isEmpty(citations) ? citations : [],

@@ -51,7 +51,6 @@ SourceProvider.defaultProps = {
 export const withSource = Wrapped => ({ sourceId, ...others }) => {
   const [getSource] = useSourceContext()
 
-  console.log(sourceId)
   const source = getSource(sourceId)
 
   if (source instanceof ResourceNotFoundError) {

@@ -13,6 +13,12 @@ const SourceSchema = new mongoose.Schema({
   },
   text: RichText,
   citations: [RichText],
+  authors: [
+    {
+      firstName: { textValue: { type: String } },
+      lastName: { textValue: { type: String } },
+    },
+  ],
   date: {
     type: String,
   },
