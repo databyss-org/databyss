@@ -3,14 +3,7 @@ import { storiesOf } from '@storybook/react'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
-import {
-  View,
-  Button,
-  RichTextInput,
-  List,
-  Grid,
-  TextControl,
-} from '@databyss-org/ui/primitives'
+import { View, List, Grid, TextControl } from '@databyss-org/ui/primitives'
 import ObjectId from 'bson-objectid'
 
 import SourceProvider, {
@@ -21,10 +14,9 @@ import SourceProvider, {
 import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
 
-const _id1 = ObjectId().toHexString()
-const _id2 = ObjectId().toHexString()
+const _id = ObjectId().toHexString()
 
-const _seedValue1 = {
+const _initialValue = {
   authors: [
     {
       firstName: {
@@ -46,76 +38,7 @@ const _seedValue1 = {
       ranges: [{ length: 10, offset: 0, marks: ['bold'] }],
     },
   ],
-  _id: _id1,
-}
-
-const ValueList = withSource(({ source }) => {
-  const [, setSource] = useSourceContext()
-
-  const value = {
-    textValue: source.citations[0].textValue,
-    ranges: source.citations[0].ranges,
-  }
-
-  const updateSource = _value => {
-    setSource({
-      ...source,
-      citations: [_value],
-    })
-  }
-
-  // NOTE: setting `key` to the unique sourceId forces the component to remount
-  // which is what we need because we're changing the initialState of the
-  // underlying Editor component
-  return (
-    <RichTextInput
-      key={source._id}
-      value={value}
-      rich
-      onChange={updateSource}
-      multiline
-    />
-  )
-})
-
-const SourcesDemo = () => {
-  const [sourceId, setSourceState] = useState(_id1)
-
-  useEffect(() => {
-    setSource(_seedValue1)
-  }, [])
-
-  const [getSource, setSource] = useSourceContext()
-
-  const setSourceFields = sourceFields => {
-    setSource(sourceFields)
-  }
-
-  console.log(sourceId)
-
-  const getSourceFields = id => {
-    // don't need to call `getSource` here because `withSource` does that for us
-    setSourceState(id)
-  }
-
-  return (
-    <View>
-      <View
-        paddingVariant="medium"
-        borderVariant="thinDark"
-        minHeight="100"
-        width="200"
-        mb="medium"
-      >
-        <SourceForm sourceId={sourceId} />
-        {/* <ValueList sourceId={sourceId} mb="medium" /> */}
-      </View>
-      <Button onPress={() => getSourceFields(_id1)}>get source 1</Button>
-      <Button onPress={() => getSourceFields(_id2)}>get source 2</Button>
-      <Button onPress={() => setSourceFields(_seedValue1)}>set source 1</Button>
-      <Button onPress={() => setSourceFields(_seedValue2)}>set source 2</Button>
-    </View>
-  )
+  _id,
 }
 
 const ControlList = ({ children, ...others }) => (
@@ -125,22 +48,19 @@ const ControlList = ({ children, ...others }) => (
 )
 
 const SourceForm = withSource(({ source }) => {
-  console.log(source)
   const [values, setValues] = useState(source)
+  const [, setSource] = useSourceContext()
+
+  const onChange = _value => {
+    // update internal state
+    setValues(_value)
+    // update database
+    setSource(_value)
+  }
 
   return (
-    <ValueListProvider onChange={setValues} values={values}>
+    <ValueListProvider onChange={onChange} values={values}>
       <Grid>
-        <View
-          id="formDocuments"
-          borderVariant="thinDark"
-          paddingVariant="none"
-          overflow="scroll"
-          maxWidth="500px"
-          flexShrink={1}
-        >
-          <pre>{JSON.stringify(values, null, 2)}</pre>
-        </View>
         <View
           borderVariant="thinLight"
           paddingVariant="none"
@@ -161,27 +81,27 @@ const SourceForm = withSource(({ source }) => {
               />
             </ValueListItem>
             {/* <ValueListItem path="authors[0].firstName">
-              <TextControl
-                labelProps={{
-                  width: '25%',
-                }}
-                label="Author (First Name)"
-                id="firstName"
-                gridFlexWrap="nowrap"
-                paddingVariant="tiny"
-              />
-            </ValueListItem>
-            <ValueListItem path="authors[0].lastName">
-              <TextControl
-                labelProps={{
-                  width: '25%',
-                }}
-                label="Author (Last Name)"
-                id="lastName"
-                gridFlexWrap="nowrap"
-                paddingVariant="tiny"
-              />
-            </ValueListItem> */}
+                <TextControl
+                  labelProps={{
+                    width: '25%',
+                  }}
+                  label="Author (First Name)"
+                  id="firstName"
+                  gridFlexWrap="nowrap"
+                  paddingVariant="tiny"
+                />
+              </ValueListItem>
+              <ValueListItem path="authors[0].lastName">
+                <TextControl
+                  labelProps={{
+                    width: '25%',
+                  }}
+                  label="Author (Last Name)"
+                  id="lastName"
+                  gridFlexWrap="nowrap"
+                  paddingVariant="tiny"
+                />
+              </ValueListItem> */}
             <ValueListItem path="citations[0]">
               <TextControl
                 labelProps={{
@@ -197,10 +117,37 @@ const SourceForm = withSource(({ source }) => {
             </ValueListItem>
           </ControlList>
         </View>
+        <View
+          id="formDocuments"
+          borderVariant="thinDark"
+          paddingVariant="none"
+          overflow="scroll"
+          maxWidth="500px"
+          flexShrink={1}
+        >
+          <pre>{JSON.stringify(values, null, 2)}</pre>
+        </View>
       </Grid>
     </ValueListProvider>
   )
 })
+
+const SourcesDemo = () => {
+  const [, setSource] = useSourceContext()
+
+  // set initial value
+  useEffect(() => {
+    setSource(_initialValue)
+  }, [])
+
+  return (
+    <View>
+      <View paddingVariant="medium" mb="medium">
+        <SourceForm sourceId={_id} />
+      </View>
+    </View>
+  )
+}
 
 const ProviderDecorator = storyFn => (
   <SourceProvider initialState={initialState} reducer={reducer}>
