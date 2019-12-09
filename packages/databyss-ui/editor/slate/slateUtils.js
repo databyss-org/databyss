@@ -6,6 +6,7 @@ import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
 import { isAtomicInlineType } from './page/reducer'
 import { getRawHtmlForBlock, entities } from '../state/page/reducer'
+import EditorInline from './../EditorInline'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -86,11 +87,15 @@ export const renderInline = ({ node, attributes }, editor, next) => {
 
   if (isAtomicInlineType(node.type)) {
     return (
-      <RawHtml
-        backgroundColor={backgroundColor}
-        _html={{ __html: node.text }}
-        {...attributes}
-      />
+      <EditorInline backgroundColor={backgroundColor} node={node}>
+        <RawHtml
+          p={1}
+          borderRadius={5}
+          backgroundColor={backgroundColor}
+          _html={{ __html: node.text }}
+          {...attributes}
+        />
+      </EditorInline>
     )
   }
 

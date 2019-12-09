@@ -17,11 +17,14 @@ router.post(
     const sourceFields = {
       text: !_.isEmpty(text) ? text : {},
       citations: !_.isEmpty(citations) ? citations : [],
-      authors: !_.isEmpty(authors) ? authors : [],
+      authors: !_.isEmpty(authors)
+        ? authors
+        : [{ firstName: '', lastName: '' }],
       account: req.account.id.toString(),
       _id,
     }
 
+    console.log(sourceFields)
     // if source exists update it and exit
     try {
       let source = await Source.findOne({ _id })
