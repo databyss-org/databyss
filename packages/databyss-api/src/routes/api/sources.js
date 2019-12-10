@@ -24,7 +24,6 @@ router.post(
       _id,
     }
 
-    console.log(sourceFields)
     // if source exists update it and exit
     try {
       let source = await Source.findOne({ _id })
