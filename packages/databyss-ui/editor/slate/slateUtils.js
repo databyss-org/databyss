@@ -83,13 +83,13 @@ export const toSlateJson = (editorState, pageBlocks) => ({
 
 export const renderInline = ({ node, attributes }, editor, next) => {
   const isSelected = editor.value.selection.focus.isInNode(node)
-  const backgroundColor = isSelected ? 'background.2' : ''
+  const backgroundColor = isSelected ? 'background.3' : 'background.2'
 
   if (isAtomicInlineType(node.type)) {
     return (
       <EditorInline backgroundColor={backgroundColor} node={node}>
         <RawHtml
-          p={1}
+          p={'2px'}
           borderRadius={5}
           backgroundColor={backgroundColor}
           _html={{ __html: node.text }}
