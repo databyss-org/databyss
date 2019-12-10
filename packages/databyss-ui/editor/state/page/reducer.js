@@ -15,6 +15,7 @@ import {
   SHOW_MENU_ACTIONS,
   SHOW_FORMAT_MENU,
   SHOW_NEW_BLOCK_MENU,
+  UPDATE_SOURCE,
 } from './constants'
 
 export initialState from './../initialState'
@@ -244,6 +245,17 @@ const backspace = (state, payload) => {
   return cleanUpState(_state)
 }
 
+const updateSource = (state, source) => {
+  const _state = cloneDeep(state)
+  _state.sources[source._id] = {
+    ranges: source.text.ranges,
+    textValue: source.text.textValue,
+  }
+  console.log(state)
+  console.log(source)
+  return _state
+}
+
 const getMarkupValues = (nextState, ranges) => {
   const block = nextState.blocks[nextState.activeBlockId]
   const _state = cloneDeep(nextState)
@@ -316,6 +328,9 @@ export default (state, action) => {
         ...state,
         showFormatMenu: action.payload.bool,
       }
+    case UPDATE_SOURCE: {
+      return updateSource(state, action.payload.source)
+    }
     case SET_ACTIVE_BLOCK_CONTENT: {
       const activeBlock = state.blocks[state.activeBlockId]
       if (

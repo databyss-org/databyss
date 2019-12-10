@@ -179,12 +179,13 @@ export function newBlockMenu(bool, editableState) {
   }
 }
 
-export function updateSource(source, editableState) {
+export function updateSource(source, idList, editableState) {
   return {
     type: UPDATE_SOURCE,
     payload: {
       editableState,
       source,
+      idList,
     },
   }
 }

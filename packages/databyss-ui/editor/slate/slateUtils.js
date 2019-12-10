@@ -294,3 +294,37 @@ export const newEditor = () => {
   const _editor = new Editor({ value: _value })
   return _editor
 }
+
+export const newAtomicBlock = (id, type, text, marks) => {
+  const _block = Block.fromJSON({
+    object: 'block',
+    type,
+    key: id,
+    data: {},
+    nodes: [
+      {
+        object: 'text',
+        text: '',
+        marks: [],
+      },
+      {
+        object: 'inline',
+        type,
+        data: {},
+        nodes: [
+          {
+            object: 'text',
+            text: sanitizer(text),
+            marks,
+          },
+        ],
+      },
+      {
+        object: 'text',
+        text: '',
+        marks: [],
+      },
+    ],
+  })
+  return _block
+}

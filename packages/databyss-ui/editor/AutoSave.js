@@ -4,7 +4,7 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { savePage } from '@databyss-org/services/pages/actions'
 import { useEditorContext } from './EditorProvider'
 
-const removeProperties = state => {
+const stripProperties = state => {
   const { page, blocks, topics, entries, sources, locations } = state
   const _state = {
     page,
@@ -23,7 +23,7 @@ const AutoSave = ({ interval }) => {
   useEffect(() => {
     setInterval(() => {
       // check if values have changed before saving
-      const _current = removeProperties(editorStateRef.current)
+      const _current = stripProperties(editorStateRef.current)
       if (!_.isEqual(_current, lastState)) {
         setLastState(_current)
         pageDispatch(savePage(editorStateRef.current))

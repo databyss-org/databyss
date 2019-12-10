@@ -40,7 +40,7 @@ const ControlList = ({ children, ...others }) => (
 )
 
 const SourceModal = withSource(
-  ({ source, visible, setVisible, updateSource, ...modal }) => {
+  ({ source, visible, setVisible, onUpdateSource, ...modal }) => {
     const [values, setValues] = useState(source)
     const [, setSource] = useSourceContext()
 
@@ -52,7 +52,7 @@ const SourceModal = withSource(
     const onSave = () => {
       setVisible(false)
       setSource(values)
-      updateSource(values)
+      onUpdateSource(values)
       // set internal dispatch here
     }
 
@@ -144,7 +144,14 @@ const EditorInline = React.forwardRef(
     )
 
     const onUpdateSource = source => {
-      dispatchEditor(updateSource(source, { value: editableState.value }))
+      // return a list of blocks containing the source that will be updated
+      const _idList = Object.keys(blocks).filter(
+        (block, i) => blocks[block].refId === source._id
+      )
+
+      dispatchEditor(
+        updateSource(source, _idList, { value: editableState.value })
+      )
     }
 
     return (
@@ -170,7 +177,7 @@ const EditorInline = React.forwardRef(
               sourceId={refId}
               visible={visible}
               setVisible={setVisible}
-              updateSource={onUpdateSource}
+              onUpdateSource={onUpdateSource}
               {...modal}
             />
           )}
