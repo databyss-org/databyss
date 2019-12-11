@@ -19,6 +19,14 @@ import SourceProvider, {
   withSource,
 } from '@databyss-org/services/sources/SourceProvider'
 import {
+  showModal,
+  hideModal,
+} from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
+
+import NavigationProvider, {
+  useNavigationContext,
+} from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import {
   loadPage,
   savePage,
   seedPage,
@@ -42,6 +50,7 @@ const Box = ({ children }) => (
 
 const EditorLoader = ({ children }) => {
   const [state, dispatch] = usePageContext()
+
   useEffect(
     () => {
       dispatch(getPages())
@@ -57,9 +66,29 @@ const EditorLoader = ({ children }) => {
     </View>
   ))
 
+  const [navState, dispatchNav] = useNavigationContext()
+
+  const sampleModal = (
+    <View>
+      <Text>sample</Text>
+    </View>
+  )
   return state.isLoading ? (
     <View mb="medium">
       <View>
+        <Button
+          onPress={() =>
+            dispatchNav(
+              showModal('SOURCE', {
+                props: 'component props',
+                dismiss: () => dispatchNav(hideModal()),
+              })
+            )
+          }
+        >
+          dispatch modal
+        </Button>
+
         <Button onPress={() => dispatch(seedPage(seedState))}>SEED</Button>
       </View>
       {pages}
@@ -78,11 +107,13 @@ const EditorLoader = ({ children }) => {
 }
 
 const ProviderDecorator = storyFn => (
-  <PageProvider initialState={initialState}>
-    <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-      <EditorLoader>{storyFn()}</EditorLoader>
-    </SourceProvider>
-  </PageProvider>
+  <NavigationProvider>
+    <PageProvider initialState={initialState}>
+      <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+        <EditorLoader>{storyFn()}</EditorLoader>
+      </SourceProvider>
+    </PageProvider>
+  </NavigationProvider>
 )
 
 storiesOf('Services|Atomic Blocks', module)

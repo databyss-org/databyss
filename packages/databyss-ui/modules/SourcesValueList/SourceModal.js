@@ -34,6 +34,7 @@ const SourceModal = ({ source, visible, setVisible, onUpdateSource }) => {
     setSource(values)
     onUpdateSource(values)
   }
+  console.log('visible', values)
 
   return (
     <ModalWindow

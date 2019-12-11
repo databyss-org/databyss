@@ -46,7 +46,9 @@ export default (state, action) => {
       return {
         ...state,
         isLoading: false,
-        pageState: { ...action.payload },
+        pageState: {
+          ...action.payload,
+        },
       }
     }
     case FETCHING_PAGES: {

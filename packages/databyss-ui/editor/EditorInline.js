@@ -10,8 +10,6 @@ import SourceModal from '@databyss-org/ui/modules/SourcesValueList/SourceModal'
 
 const Styled = styled('span')(color)
 
-const { buttonVariants } = buttons
-
 const EditorInline = React.forwardRef(
   ({ backgroundColor, node, children, ...others }, ref) => {
     const [visible, setVisible] = useState(false)
@@ -46,24 +44,27 @@ const EditorInline = React.forwardRef(
     return (
       <Styled {...others} ref={ref}>
         {children}
-        <View display="inline-block">
-          <Button
-            variant="editSource"
-            onClick={() => setVisible(true)}
-            data-test-atomic-edit="open"
-          >
-            <Icon sizeVariant="tiny" color="background.5">
-              <Close />
-            </Icon>
-          </Button>
-        </View>
-        {refId && (
-          <SourceModal
-            sourceId={refId}
-            visible={visible}
-            setVisible={setVisible}
-            onUpdateSource={onUpdateSource}
-          />
+
+        {node.type === 'SOURCE' && (
+          <View display="inline-block">
+            <Button
+              variant="editSource"
+              onClick={() => setVisible(true)}
+              data-test-atomic-edit="open"
+            >
+              <Icon sizeVariant="tiny" color="background.5">
+                <Close />
+              </Icon>
+            </Button>
+            {refId && (
+              <SourceModal
+                sourceId={refId}
+                visible={visible}
+                setVisible={setVisible}
+                onUpdateSource={onUpdateSource}
+              />
+            )}
+          </View>
         )}
       </Styled>
     )

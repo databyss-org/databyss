@@ -78,8 +78,7 @@ const buttonVariants = {
     padding: pxUnits(9),
     marginLeft: pxUnits(8),
     borderRadius: pxUnits(6),
-    backgroundColor: 'background.3',
-    color: 'background.5',
+    backgroundColor: 'background.2',
   },
 }
 
@@ -117,7 +116,7 @@ const buttonThemes = {
   },
   editSource: {
     textProps: {},
-    hoverColor: 'background.4',
+    hoverColor: 'background.3',
     activeColor: 'background.2',
   },
 }
