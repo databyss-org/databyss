@@ -7,6 +7,11 @@ import Close from '@databyss-org/ui/assets/angle-right-solid.svg'
 import { updateSource } from './state/page/actions'
 import { useEditorContext } from './EditorProvider'
 import SourceModal from '@databyss-org/ui/modules/SourcesValueList/SourceModal'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import {
+  showModal,
+  hideModal,
+} from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
 
 const Styled = styled('span')(color)
 
@@ -18,6 +23,8 @@ const EditorInline = React.forwardRef(
 
     const [editorState, dispatchEditor] = useEditorContext()
     const { editableState, blocks } = editorState
+
+    const [navState, dispatchNav] = useNavigationContext()
 
     useEffect(
       () => {
@@ -41,6 +48,10 @@ const EditorInline = React.forwardRef(
       )
     }
 
+    const onDismiss = () => {
+      dispatchNav(hideModal())
+    }
+
     return (
       <Styled {...others} ref={ref}>
         {children}
@@ -49,21 +60,29 @@ const EditorInline = React.forwardRef(
           <View display="inline-block">
             <Button
               variant="editSource"
-              onClick={() => setVisible(true)}
+              onClick={() =>
+                dispatchNav(
+                  showModal('SOURCE', {
+                    dismiss: onDismiss,
+                    sourceId: refId,
+                    onUpdateSource: onUpdateSource,
+                  })
+                )
+              }
               data-test-atomic-edit="open"
             >
               <Icon sizeVariant="tiny" color="background.5">
                 <Close />
               </Icon>
             </Button>
-            {refId && (
+            {/* {refId && (
               <SourceModal
                 sourceId={refId}
                 visible={visible}
                 setVisible={setVisible}
                 onUpdateSource={onUpdateSource}
               />
-            )}
+            )} */}
           </View>
         )}
       </Styled>

@@ -15,12 +15,11 @@ const NavigationProvider = ({ children }) => {
     <NavigationContext.Provider value={[state, dispatch]}>
       {children}
 
-      {state.modals.map((modal, i) =>
-        modalDict[modal.component](
-          modal.visible,
-          modal.props.props,
-          modal.props.dismiss
-        )
+      {state.modals.map(modal =>
+        modalDict[modal.component]({
+          visible: modal.visible,
+          ...modal.props,
+        })
       )}
     </NavigationContext.Provider>
   )

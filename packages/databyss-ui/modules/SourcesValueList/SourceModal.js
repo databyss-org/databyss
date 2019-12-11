@@ -13,99 +13,29 @@ import {
   TextControl,
   List,
 } from '@databyss-org/ui/primitives'
+import SourcesValueList from './SourcesValueList'
 
-const ControlList = ({ children, ...others }) => (
-  <List horizontalItemPadding="small" {...others}>
-    {children}
-  </List>
-)
-
-const SourceModal = ({ source, visible, setVisible, onUpdateSource }) => {
-  const [values, setValues] = useState(source)
+const SourceModal = ({ sourceId, visible, onUpdateSource, dismiss }) => {
   const [, setSource] = useSourceContext()
 
-  const onChange = _value => {
-    // update internal state
-    setValues(_value)
+  const onChange = _values => {
+    // updates in editor provider
+    onUpdateSource(_values)
+    // updates in source provider
+    setSource(_values)
   }
-
-  const onSave = () => {
-    setVisible(false)
-    setSource(values)
-    onUpdateSource(values)
-  }
-  console.log('visible', values)
 
   return (
     <ModalWindow
       visible={visible}
-      onDismiss={() => onSave()}
+      onDismiss={() => dismiss()}
       title="Edit Source"
       dismissChild="Save"
       secondaryChild="Cancel"
     >
-      <ValueListProvider onChange={onChange} values={values}>
-        <Grid>
-          <View
-            paddingVariant="none"
-            widthVariant="content"
-            backgroundColor="background.0"
-            width="100%"
-          >
-            <ControlList verticalItemPadding="tiny">
-              <ValueListItem path="text">
-                <TextControl
-                  labelProps={{
-                    width: '25%',
-                  }}
-                  label="Name"
-                  id="name"
-                  gridFlexWrap="nowrap"
-                  paddingVariant="tiny"
-                  rich
-                />
-              </ValueListItem>
-              <ValueListItem path="authors[0].firstName">
-                <TextControl
-                  labelProps={{
-                    width: '25%',
-                  }}
-                  label="Author (First Name)"
-                  id="firstName"
-                  gridFlexWrap="nowrap"
-                  paddingVariant="tiny"
-                />
-              </ValueListItem>
-              <ValueListItem path="authors[0].lastName">
-                <TextControl
-                  labelProps={{
-                    width: '25%',
-                  }}
-                  label="Author (Last Name)"
-                  id="lastName"
-                  gridFlexWrap="nowrap"
-                  paddingVariant="tiny"
-                />
-              </ValueListItem>
-              <ValueListItem path="citations[0]">
-                <TextControl
-                  labelProps={{
-                    width: '25%',
-                  }}
-                  label="Citation"
-                  id="citation"
-                  rich
-                  gridFlexWrap="nowrap"
-                  multiline
-                  paddingVariant="tiny"
-                />
-              </ValueListItem>
-            </ControlList>
-          </View>
-        </Grid>
-      </ValueListProvider>
+      <SourcesValueList onValueChange={onChange} sourceId={sourceId} />
     </ModalWindow>
   )
 }
 
-export default withSource(SourceModal)
+export default SourceModal

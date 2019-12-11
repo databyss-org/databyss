@@ -107,13 +107,13 @@ const EditorLoader = ({ children }) => {
 }
 
 const ProviderDecorator = storyFn => (
-  <NavigationProvider>
-    <PageProvider initialState={initialState}>
-      <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+  <PageProvider initialState={initialState}>
+    <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+      <NavigationProvider>
         <EditorLoader>{storyFn()}</EditorLoader>
-      </SourceProvider>
-    </PageProvider>
-  </NavigationProvider>
+      </NavigationProvider>
+    </SourceProvider>
+  </PageProvider>
 )
 
 storiesOf('Services|Atomic Blocks', module)
