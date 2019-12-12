@@ -1,34 +1,18 @@
 import React, { useEffect } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Button, Text, Grid } from '@databyss-org/ui/primitives'
-import EditorProvider, {
-  useEditorContext,
-} from '@databyss-org/ui/editor/EditorProvider'
+import { View, Button, Text } from '@databyss-org/ui/primitives'
+import EditorProvider from '@databyss-org/ui/editor/EditorProvider'
 import PageProvider, {
   usePageContext,
 } from '@databyss-org/services/pages/PageProvider'
-import ValueListProvider, {
-  ValueListItem,
-} from '@databyss-org/ui/components/ValueList/ValueListProvider'
-import {
-  default as sourceReducer,
+import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
-import SourceProvider, {
-  useSourceContext,
-  withSource,
-} from '@databyss-org/services/sources/SourceProvider'
-import {
-  showModal,
-  hideModal,
-} from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
+import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 
-import NavigationProvider, {
-  useNavigationContext,
-} from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
   loadPage,
-  savePage,
   seedPage,
   getPages,
 } from '@databyss-org/services/pages/actions'
@@ -66,29 +50,9 @@ const EditorLoader = ({ children }) => {
     </View>
   ))
 
-  const [navState, dispatchNav] = useNavigationContext()
-
-  const sampleModal = (
-    <View>
-      <Text>sample</Text>
-    </View>
-  )
   return state.isLoading ? (
     <View mb="medium">
       <View>
-        <Button
-          onPress={() =>
-            dispatchNav(
-              showModal('SOURCE', {
-                props: 'component props',
-                dismiss: () => dispatchNav(hideModal()),
-              })
-            )
-          }
-        >
-          dispatch modal
-        </Button>
-
         <Button onPress={() => dispatch(seedPage(seedState))}>SEED</Button>
       </View>
       {pages}

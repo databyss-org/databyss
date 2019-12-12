@@ -1,18 +1,6 @@
-import React, { useState } from 'react'
-import {
-  useSourceContext,
-  withSource,
-} from '@databyss-org/services/sources/SourceProvider'
-import ValueListProvider, {
-  ValueListItem,
-} from '@databyss-org/ui/components/ValueList/ValueListProvider'
-import {
-  View,
-  Grid,
-  ModalWindow,
-  TextControl,
-  List,
-} from '@databyss-org/ui/primitives'
+import React from 'react'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { ModalWindow } from '@databyss-org/ui/primitives'
 import SourcesValueList from './SourcesValueList'
 
 const SourceModal = ({ sourceId, visible, onUpdateSource, dismiss }) => {
@@ -30,8 +18,7 @@ const SourceModal = ({ sourceId, visible, onUpdateSource, dismiss }) => {
       visible={visible}
       onDismiss={() => dismiss()}
       title="Edit Source"
-      dismissChild="Save"
-      secondaryChild="Cancel"
+      dismissChild="done"
     >
       <SourcesValueList onValueChange={onChange} sourceId={sourceId} />
     </ModalWindow>

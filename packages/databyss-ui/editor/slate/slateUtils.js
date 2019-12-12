@@ -87,9 +87,13 @@ export const renderInline = ({ node, attributes }, editor, next) => {
 
   if (isAtomicInlineType(node.type)) {
     return (
-      <EditorInline backgroundColor={backgroundColor} node={node}>
+      <EditorInline
+        editor={editor}
+        backgroundColor={backgroundColor}
+        node={node}
+      >
         <RawHtml
-          p={'2px'}
+          p="2px"
           borderRadius={5}
           backgroundColor={backgroundColor}
           _html={{ __html: node.text }}

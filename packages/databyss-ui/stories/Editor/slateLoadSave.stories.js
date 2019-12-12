@@ -7,6 +7,7 @@ import EditorProvider, {
 import PageProvider, {
   usePageContext,
 } from '@databyss-org/services/pages/PageProvider'
+import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 
 import {
   loadPage,
@@ -82,7 +83,9 @@ const EditorLoader = ({ children }) => {
 
 const ProviderDecorator = storyFn => (
   <PageProvider initialState={initialState}>
-    <EditorLoader>{storyFn()}</EditorLoader>
+    <NavigationProvider>
+      <EditorLoader>{storyFn()}</EditorLoader>
+    </NavigationProvider>
   </PageProvider>
 )
 

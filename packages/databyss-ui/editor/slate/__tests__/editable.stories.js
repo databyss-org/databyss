@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Grid } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
+import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 
 import EditorProvider, { useEditorContext } from '../../EditorProvider'
 import EditorPage from '../../EditorPage'
@@ -51,20 +52,24 @@ const EditableTest = () => {
 storiesOf('Editor//Tests', module)
   .addDecorator(ViewportDecorator)
   .add('Slate', () => (
-    <EditorProvider
-      initialState={initialState}
-      editableReducer={slateReducer}
-      reducer={reducer}
-    >
-      <EditableTest />
-    </EditorProvider>
+    <NavigationProvider>
+      <EditorProvider
+        initialState={initialState}
+        editableReducer={slateReducer}
+        reducer={reducer}
+      >
+        <EditableTest />
+      </EditorProvider>
+    </NavigationProvider>
   ))
   .add('Slate - Empty', () => (
-    <EditorProvider
-      initialState={emptyInitialState}
-      editableReducer={slateReducer}
-      reducer={reducer}
-    >
-      <EditableTest />
-    </EditorProvider>
+    <NavigationProvider>
+      <EditorProvider
+        initialState={emptyInitialState}
+        editableReducer={slateReducer}
+        reducer={reducer}
+      >
+        <EditableTest />
+      </EditorProvider>
+    </NavigationProvider>
   ))

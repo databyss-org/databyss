@@ -1,7 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import reducer, { initialState } from './reducer'
-import { View, Button, Text, Grid } from '@databyss-org/ui/primitives'
 import { modalDict } from './modalDict'
 
 const useReducer = createReducer()

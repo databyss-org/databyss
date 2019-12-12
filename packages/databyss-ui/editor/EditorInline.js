@@ -2,29 +2,25 @@ import React, { useState, useEffect } from 'react'
 import { color } from 'styled-system'
 import styled from '@emotion/styled'
 import { View, Button, Icon } from '@databyss-org/ui/primitives'
-import buttons from '@databyss-org/ui/theming/buttons'
 import Close from '@databyss-org/ui/assets/angle-right-solid.svg'
-import { updateSource } from './state/page/actions'
-import { useEditorContext } from './EditorProvider'
-import SourceModal from '@databyss-org/ui/modules/SourcesValueList/SourceModal'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
   showModal,
   hideModal,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
+import { updateSource } from './state/page/actions'
+import { useEditorContext } from './EditorProvider'
 
 const Styled = styled('span')(color)
 
 const EditorInline = React.forwardRef(
-  ({ backgroundColor, node, children, ...others }, ref) => {
-    const [visible, setVisible] = useState(false)
-
+  ({ backgroundColor, node, children, editor, ...others }, ref) => {
     const [refId, setRefId] = useState(null)
 
     const [editorState, dispatchEditor] = useEditorContext()
     const { editableState, blocks } = editorState
 
-    const [navState, dispatchNav] = useNavigationContext()
+    const [, dispatchNav] = useNavigationContext()
 
     useEffect(
       () => {
@@ -41,7 +37,7 @@ const EditorInline = React.forwardRef(
     const onUpdateSource = source => {
       // return a list of blocks containing the source that will be updated
       const _idList = Object.keys(blocks).filter(
-        (block, i) => blocks[block].refId === source._id
+        block => blocks[block].refId === source._id
       )
       dispatchEditor(
         updateSource(source, _idList, { value: editableState.value })
@@ -52,6 +48,18 @@ const EditorInline = React.forwardRef(
       dispatchNav(hideModal())
     }
 
+    const onEditSource = () => {
+      dispatchNav(
+        showModal('SOURCE', {
+          dismiss: onDismiss,
+          sourceId: refId,
+          onUpdateSource,
+        })
+      )
+      console.log(editor)
+      editor.readOnly = true
+    }
+
     return (
       <Styled {...others} ref={ref}>
         {children}
@@ -60,29 +68,22 @@ const EditorInline = React.forwardRef(
           <View display="inline-block">
             <Button
               variant="editSource"
-              onClick={() =>
-                dispatchNav(
-                  showModal('SOURCE', {
-                    dismiss: onDismiss,
-                    sourceId: refId,
-                    onUpdateSource: onUpdateSource,
-                  })
-                )
-              }
+              onClick={onEditSource}
+              // onClick={() =>
+              //   dispatchNav(
+              //     showModal('SOURCE', {
+              //       dismiss: onDismiss,
+              //       sourceId: refId,
+              //       onUpdateSource,
+              //     })
+              //   )
+              // }
               data-test-atomic-edit="open"
             >
               <Icon sizeVariant="tiny" color="background.5">
                 <Close />
               </Icon>
             </Button>
-            {/* {refId && (
-              <SourceModal
-                sourceId={refId}
-                visible={visible}
-                setVisible={setVisible}
-                onUpdateSource={onUpdateSource}
-              />
-            )} */}
           </View>
         )}
       </Styled>

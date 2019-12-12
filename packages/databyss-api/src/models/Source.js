@@ -1,7 +1,5 @@
 const mongoose = require('mongoose')
 const RichText = require('./RichText')
-const Text = require('./Text')
-const Author = require('./Author')
 
 const Schema = mongoose.Schema
 

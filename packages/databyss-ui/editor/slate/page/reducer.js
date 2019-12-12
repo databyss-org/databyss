@@ -269,7 +269,7 @@ const onUpdateSource = (source, idList) => (editor, value, next) => {
       type: 'SOURCE',
       nodes: _newNodes,
     })
-    let _innerHtml = serializeNodeToHtml(_block)
+    const _innerHtml = serializeNodeToHtml(_block)
     const textBlock = {
       object: 'inline',
       nodes: [

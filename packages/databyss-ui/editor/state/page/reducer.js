@@ -251,8 +251,6 @@ const updateSource = (state, source) => {
     ranges: source.text.ranges,
     textValue: source.text.textValue,
   }
-  console.log(state)
-  console.log(source)
   return _state
 }
 
