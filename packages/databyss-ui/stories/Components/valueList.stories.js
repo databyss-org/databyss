@@ -1,39 +1,12 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import ObjectId from 'bson-objectid'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
 import { View, TextControl, List, Grid } from '@databyss-org/ui/primitives'
 import Section from './../Section'
-
+import { emptySource, populatedSource } from './__initialValues'
 import { ViewportDecorator } from '../decorators'
-
-const _id = ObjectId().toHexString()
-
-const source = {
-  authors: [
-    {
-      firstName: {
-        textValue: '',
-      },
-      lastName: {
-        textValue: '',
-      },
-    },
-  ],
-  text: {
-    textValue: '',
-    ranges: [],
-  },
-  citations: [
-    {
-      textValue: '',
-      ranges: [],
-    },
-  ],
-  _id,
-}
 
 const ControlList = ({ children, ...others }) => (
   <List horizontalItemPadding="small" {...others}>
@@ -41,8 +14,8 @@ const ControlList = ({ children, ...others }) => (
   </List>
 )
 
-const SourceForm = () => {
-  const [values, setValues] = useState(source)
+const SourceForm = ({ initialSource }) => {
+  const [values, setValues] = useState(initialSource)
 
   return (
     <ValueListProvider onChange={setValues} values={values}>
@@ -120,10 +93,18 @@ const SourceForm = () => {
   )
 }
 
-storiesOf('Editor//Tests', module)
+storiesOf('Cypress//Tests', module)
   .addDecorator(ViewportDecorator)
   .add('ValueList Controller', () => (
     <View>
-      <SourceForm />
+      <SourceForm initialSource={emptySource} />
+    </View>
+  ))
+
+storiesOf('Components//ValueList', module)
+  .addDecorator(ViewportDecorator)
+  .add('ValueList', () => (
+    <View>
+      <SourceForm initialSource={populatedSource} />
     </View>
   ))
