@@ -23,6 +23,7 @@ import initialState from '@databyss-org/ui/editor/state/__tests__/initialState'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { ViewportDecorator } from '../decorators'
 import colors from '../../theming/colors'
+import { modalDict } from '@databyss-org/ui/components/Navigation/NavigationProvider/modalDict'
 
 const schema = {
   document: {
@@ -109,7 +110,7 @@ const Box = ({ children, ...others }) => (
 )
 
 const ProviderDecorator = storyFn => (
-  <NavigationProvider>
+  <NavigationProvider modalDict={modalDict}>
     <EditorProvider
       initialState={initialState}
       editableReducer={slateReducer}

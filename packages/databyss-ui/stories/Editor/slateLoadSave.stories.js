@@ -8,7 +8,11 @@ import PageProvider, {
   usePageContext,
 } from '@databyss-org/services/pages/PageProvider'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-
+import SourceProvider from '@databyss-org/services/sources/SourceProvider'
+import sourceReducer, {
+  initialState as sourceInitialState,
+} from '@databyss-org/services/sources/reducer'
+import { modalDict } from '@databyss-org/ui/components/Navigation/NavigationProvider/modalDict'
 import {
   loadPage,
   savePage,
@@ -83,9 +87,11 @@ const EditorLoader = ({ children }) => {
 
 const ProviderDecorator = storyFn => (
   <PageProvider initialState={initialState}>
-    <NavigationProvider>
-      <EditorLoader>{storyFn()}</EditorLoader>
-    </NavigationProvider>
+    <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+      <NavigationProvider modalDict={modalDict}>
+        <EditorLoader>{storyFn()}</EditorLoader>
+      </NavigationProvider>
+    </SourceProvider>
   </PageProvider>
 )
 

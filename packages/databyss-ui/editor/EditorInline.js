@@ -36,28 +36,24 @@ const EditorInline = React.forwardRef(
 
     const onUpdateSource = source => {
       // return a list of blocks containing the source that will be updated
-      const _idList = Object.keys(blocks).filter(
-        block => blocks[block].refId === source._id
-      )
-      dispatchEditor(
-        updateSource(source, _idList, { value: editableState.value })
-      )
-    }
-
-    const onDismiss = () => {
-      dispatchNav(hideModal())
+      if (source) {
+        const _idList = Object.keys(blocks).filter(
+          block => blocks[block].refId === source._id
+        )
+        dispatchEditor(
+          updateSource(source, _idList, { value: editableState.value })
+        )
+      }
     }
 
     const onEditSource = () => {
       dispatchNav(
         showModal('SOURCE', {
-          dismiss: onDismiss,
           sourceId: refId,
           onUpdateSource,
         })
       )
-      console.log(editor)
-      editor.readOnly = true
+      editor.blur()
     }
 
     return (

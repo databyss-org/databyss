@@ -8,6 +8,7 @@ import {
   getRawHtmlForBlock,
   getRangesForBlock,
 } from './../../state/page/reducer'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../../EditorProvider'
 import FormatMenu from '../../Menu/FormatMenu'

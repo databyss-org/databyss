@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEditorContext } from './EditorProvider'
-
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import {
   setActiveBlockId,
   setActiveBlockContent,
@@ -21,6 +21,8 @@ import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 const EditorPage = ({ children }) => {
   const [editorState, dispatchEditor] = useEditorContext()
 
+  const [, setSource] = useSourceContext()
+
   const onActiveBlockIdChange = (id, editableState) =>
     dispatchEditor(setActiveBlockId(id, editableState))
 
@@ -38,8 +40,8 @@ const EditorPage = ({ children }) => {
   const onBackspace = (blockProperties, editableState) => {
     dispatchEditor(backspace(blockProperties, editableState))
   }
-  const onSetBlockType = (type, id, editableState) => {
-    dispatchEditor(setBlockType(type, id, editableState))
+  const onSetBlockType = (type, id, editableState, setState) => {
+    dispatchEditor(setBlockType(type, id, editableState, setState))
   }
 
   const onBlockBlur = (id, text, editableState) => {
@@ -54,7 +56,9 @@ const EditorPage = ({ children }) => {
       dispatchEditor(clearBlock(id, editableState))
     } else {
       if (text.trim().match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
-        onSetBlockType('SOURCE', id, editableState)
+        // TODO: update source provider here
+        // consistent refID is needed from clipboard branch
+        onSetBlockType('SOURCE', id, editableState, setSource)
       }
       if (text.trim().match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
         onSetBlockType('TOPIC', id, editableState)

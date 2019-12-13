@@ -3,33 +3,34 @@ import _ from 'lodash'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { savePage } from '@databyss-org/services/pages/actions'
 import { useEditorContext } from './EditorProvider'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 
-const stripProperties = state => {
-  const { page, blocks, topics, entries, sources, locations } = state
-  const _state = {
-    page,
-    blocks,
-    topics,
-    entries,
-    sources,
-    locations,
-  }
-  return _state
-}
 const AutoSave = ({ interval }) => {
   const [, pageDispatch] = usePageContext()
   const [, , editorStateRef] = useEditorContext()
-  const [lastState, setLastState] = useState(editorStateRef.current)
-  useEffect(() => {
-    setInterval(() => {
-      // check if values have changed before saving
-      const _current = stripProperties(editorStateRef.current)
-      if (!_.isEqual(_current, lastState)) {
-        setLastState(_current)
-        pageDispatch(savePage(editorStateRef.current))
+  const [navState] = useNavigationContext()
+
+  const [refreshId, setRefreshId] = useState(null)
+
+  useEffect(
+    () => {
+      // if modal is present, turn off autosave
+      const hasModal = navState.modals.length > 0
+      if (!refreshId && !hasModal) {
+        setRefreshId(
+          setInterval(() => {
+            // TODO: check if values have changed before saving
+            pageDispatch(savePage(editorStateRef.current))
+          }, interval * 1000)
+        )
       }
-    }, interval * 1000)
-  }, [])
+      if (hasModal) {
+        clearInterval(refreshId)
+        setRefreshId(null)
+      }
+    },
+    [navState]
+  )
   return null
 }
 

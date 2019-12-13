@@ -41,7 +41,6 @@ export function saveSource(sourceFields) {
       type: SAVE_SOURCE,
       payload: {},
     })
-
     sources
       .setSource(sourceFields)
       .then(source => {
@@ -51,17 +50,27 @@ export function saveSource(sourceFields) {
         })
       })
       .catch(() => {
+        // for offline mode
         dispatch({
           type: CACHE_SOURCE,
           payload: {
-            source: new ResourceNotFoundError(
-              'Source not saved',
-              sourceFields._id
-            ),
+            source: sourceFields,
             id: sourceFields._id,
           },
         })
       })
+    // .catch(() => {
+    //   dispatch({
+    //     type: CACHE_SOURCE,
+    //     payload: {
+    //       source: new ResourceNotFoundError(
+    //         'Source not saved',
+    //         sourceFields._id
+    //       ),
+    //       id: sourceFields._id,
+    //     },
+    //   })
+    // })
   }
 }
 

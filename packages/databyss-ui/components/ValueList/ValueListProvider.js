@@ -44,7 +44,6 @@ export const ValueListItem = ({ children, path, ...others }) => {
   const [onItemChange, values] = useValueListContext()
 
   const value = _.get(values, path)
-
   // lodash.get:
   // Gets the value at path of object.
   // If the resolved value is undefined, the defaultValue is returned in its place.

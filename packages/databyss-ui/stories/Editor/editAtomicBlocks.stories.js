@@ -11,6 +11,7 @@ import sourceReducer, {
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { modalDict } from '@databyss-org/ui/components/Navigation/NavigationProvider/modalDict'
 import {
   loadPage,
   seedPage,
@@ -23,6 +24,7 @@ import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
 import reducer from '@databyss-org/ui/editor/state/page/reducer'
 import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import AutoSave from '@databyss-org/ui/editor/AutoSave'
+
 import seedState from './_seedState'
 import { ViewportDecorator } from '../decorators'
 
@@ -73,7 +75,7 @@ const EditorLoader = ({ children }) => {
 const ProviderDecorator = storyFn => (
   <PageProvider initialState={initialState}>
     <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-      <NavigationProvider>
+      <NavigationProvider modalDict={modalDict}>
         <EditorLoader>{storyFn()}</EditorLoader>
       </NavigationProvider>
     </SourceProvider>
@@ -92,3 +94,14 @@ storiesOf('Services|Atomic Blocks', module)
       </Box>
     </View>
   ))
+
+// dont update editor when source is updated
+// update when onDismiss is called
+// when modal is hidden update editor state
+
+// from souceModal turn off autosave in page provider
+// pass the modalDictionary
+
+// writes test using mock for updating sources
+
+// within editor provider dispatch source provider or new source

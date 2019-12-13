@@ -1,6 +1,8 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import invariant from 'invariant'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+
 import { isAtomicInlineType } from './../../slate/page/reducer'
 
 import {
@@ -109,7 +111,7 @@ export const setRangesForBlock = (state, block, ranges) => {
   return nextState
 }
 
-const setBlockType = (state, type, _id) => {
+const setBlockType = (state, type, _id, setSource) => {
   // changing block type will always generate a new refId
   const nextRefId = ObjectId().toHexString()
   const block = state.blocks[_id]
@@ -128,6 +130,17 @@ const setBlockType = (state, type, _id) => {
   switch (type) {
     case 'SOURCE':
       nextState.sources[nextRefId] = { _id: nextRefId, textValue, ranges }
+      // update source in source provider here
+      // const [, setSource] = useSourceContext()
+      // initialize empty state with text and range
+      const _source = {
+        _id: nextRefId,
+        text: { textValue, ranges },
+        citations: [{ textValue: '', ranges: [] }],
+        authors: [{ firstName: '', lastName: '' }],
+      }
+      setSource(_source)
+
       return nextState
     case 'ENTRY':
       nextState.entries[nextRefId] = { _id: nextRefId, textValue, ranges }
@@ -380,7 +393,12 @@ export default (state, action) => {
           -1
         )
       }
-      return setBlockType(nextState, action.payload.type, action.payload.id)
+      return setBlockType(
+        nextState,
+        action.payload.type,
+        action.payload.id,
+        action.payload.setSource
+      )
     default:
       return state
   }

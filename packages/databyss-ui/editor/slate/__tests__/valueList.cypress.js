@@ -39,7 +39,7 @@ context('Editor', () => {
     cy.get('@citation').should('have.attr', 'role')
   })
 
-  it('should highlight block and delete', () => {
+  it('should type the correct values in valueList', () => {
     cy.get('@name').type('name of citation')
     cy.get('@firstName')
       .focus()

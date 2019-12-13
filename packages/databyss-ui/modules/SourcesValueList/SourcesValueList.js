@@ -4,6 +4,7 @@ import ValueListProvider, {
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
 import { withSource } from '@databyss-org/services/sources/SourceProvider'
 import { View, Grid, TextControl, List } from '@databyss-org/ui/primitives'
+import _ from 'lodash'
 
 const ControlList = ({ children, ...others }) => (
   <List horizontalItemPadding="small" {...others}>
@@ -15,10 +16,15 @@ const SourcesValueList = ({ source, onValueChange }) => {
   const [values, setValues] = useState(source)
 
   const onChange = _value => {
-    onValueChange(_value)
+    //  onValueChange(_value)
     setValues(_value)
   }
 
+  const onBlur = () => {
+    if (!_.isEqual(source, values) && values) {
+      onValueChange(values)
+    }
+  }
   return (
     <ValueListProvider onChange={onChange} values={values}>
       <Grid>
@@ -39,28 +45,7 @@ const SourcesValueList = ({ source, onValueChange }) => {
                 gridFlexWrap="nowrap"
                 paddingVariant="tiny"
                 rich
-              />
-            </ValueListItem>
-            <ValueListItem path="authors[0].firstName">
-              <TextControl
-                labelProps={{
-                  width: '25%',
-                }}
-                label="Author (First Name)"
-                id="firstName"
-                gridFlexWrap="nowrap"
-                paddingVariant="tiny"
-              />
-            </ValueListItem>
-            <ValueListItem path="authors[0].lastName">
-              <TextControl
-                labelProps={{
-                  width: '25%',
-                }}
-                label="Author (Last Name)"
-                id="lastName"
-                gridFlexWrap="nowrap"
-                paddingVariant="tiny"
+                onBlur={onBlur}
               />
             </ValueListItem>
             <ValueListItem path="citations[0]">
@@ -74,6 +59,31 @@ const SourcesValueList = ({ source, onValueChange }) => {
                 gridFlexWrap="nowrap"
                 multiline
                 paddingVariant="tiny"
+                onBlur={onBlur}
+              />
+            </ValueListItem>
+            <ValueListItem path="authors[0].firstName">
+              <TextControl
+                labelProps={{
+                  width: '25%',
+                }}
+                label="Author (First Name)"
+                id="firstName"
+                gridFlexWrap="nowrap"
+                paddingVariant="tiny"
+                onBlur={onBlur}
+              />
+            </ValueListItem>
+            <ValueListItem path="authors[0].lastName">
+              <TextControl
+                labelProps={{
+                  width: '25%',
+                }}
+                label="Author (Last Name)"
+                id="lastName"
+                gridFlexWrap="nowrap"
+                paddingVariant="tiny"
+                onBlur={onBlur}
               />
             </ValueListItem>
           </ControlList>
