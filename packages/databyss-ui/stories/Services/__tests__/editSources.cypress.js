@@ -13,7 +13,7 @@ context('Editor', () => {
     cy.get('button').click()
     cy.wait(4000)
     cy.visit(
-      'http://localhost:6006/iframe.html?id=services-page--slate-load-and-save'
+      'http://localhost:6006/iframe.html?id=services-atomic-blocks--edit-atomic-blocks'
     ).focus()
     cy.wait(1000)
     cy.get('button').then(buttonList => {
@@ -49,11 +49,5 @@ context('Editor', () => {
       .focus()
       .get('[contenteditable="true"]')
       .then(content => content[1].click())
-
-    //   .newLine()
-    //   .type('{backspace}')
-    //   .type('{backspace}')
-
-    //   .type('typing')
   })
 })

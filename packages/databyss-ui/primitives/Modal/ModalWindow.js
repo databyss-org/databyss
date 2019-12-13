@@ -20,6 +20,7 @@ const ModalWindow = ({
   visible,
   onDismiss,
   widthVariant,
+  onModalOpen,
   ...others
 }) => {
   const animations = makeAnimations({
@@ -40,6 +41,7 @@ const ModalWindow = ({
     animations.slide.outro.run(onDismiss)
   }
   const onOpen = () => {
+    onModalOpen()
     if (!_mobile) {
       return
     }

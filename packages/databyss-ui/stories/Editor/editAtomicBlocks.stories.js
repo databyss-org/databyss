@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Button, Text } from '@databyss-org/ui/primitives'
 import EditorProvider from '@databyss-org/ui/editor/EditorProvider'
@@ -85,15 +85,22 @@ const ProviderDecorator = storyFn => (
 storiesOf('Services|Atomic Blocks', module)
   .addDecorator(ProviderDecorator)
   .addDecorator(ViewportDecorator)
-  .add('Edit Atomic Blocks', () => (
-    <View>
-      <Box>
-        <EditorPage>
-          <SlateContentEditable />
-        </EditorPage>
-      </Box>
-    </View>
-  ))
+  .add('Edit Atomic Blocks', () => {
+    const [slateDocument, setSlateDocument] = useState({})
+
+    return (
+      <View>
+        <Box>
+          <EditorPage>
+            <SlateContentEditable onDocumentChange={setSlateDocument} />
+          </EditorPage>
+        </Box>
+        <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
+          <pre id="slateDocument">{JSON.stringify(slateDocument, null, 2)}</pre>
+        </Box>
+      </View>
+    )
+  })
 
 // dont update editor when source is updated
 // update when onDismiss is called

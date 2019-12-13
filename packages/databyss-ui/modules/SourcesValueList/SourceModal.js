@@ -13,13 +13,17 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
   const onChange = _values => {
     // update internal state
     setValues(_values)
+    // if (values) {
+    //   // updates in source provider
+    //   setSource(_values)
+    // }
+  }
+
+  const onDismiss = () => {
     if (values) {
       // updates in source provider
       setSource(_values)
     }
-  }
-
-  const onDismiss = () => {
     // hide modal in navProvider
     dispatchNav(hideModal())
     // update to editor provider
@@ -32,6 +36,7 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
       onDismiss={onDismiss}
       title="Edit Source"
       dismissChild="done"
+      onModalOpen={() => console.log('on open')}
     >
       <SourcesValueList onValueChange={onChange} sourceId={sourceId} />
     </ModalWindow>
