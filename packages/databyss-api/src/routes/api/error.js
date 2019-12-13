@@ -35,4 +35,8 @@ router.get('/api-error-await', async (req, res, next) => {
   }
 })
 
+router.get('/api-server-await', (req, res) => {
+  res.status(200).send()
+})
+
 module.exports = router

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Button, Text, Grid } from '@databyss-org/ui/primitives'
 import EditorProvider, {
@@ -95,16 +95,25 @@ const ProviderDecorator = storyFn => (
   </PageProvider>
 )
 
-storiesOf('Services|Page', module)
-  .addDecorator(ProviderDecorator)
-  .addDecorator(ViewportDecorator)
-  .add('Slate Load and Save', () => (
+const LoadAndSave = () => {
+  const [slateDocument, setSlateDocument] = useState({})
+
+  return (
     <View>
       <ToolbarDemo />
       <Box>
         <EditorPage>
-          <SlateContentEditable />
+          <SlateContentEditable onDocumentChange={setSlateDocument} />
         </EditorPage>
       </Box>
+      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
+        <pre id="slateDocument">{JSON.stringify(slateDocument, null, 2)}</pre>
+      </Box>
     </View>
-  ))
+  )
+}
+
+storiesOf('Services|Page', module)
+  .addDecorator(ProviderDecorator)
+  .addDecorator(ViewportDecorator)
+  .add('Slate Load and Save', () => <LoadAndSave />)
