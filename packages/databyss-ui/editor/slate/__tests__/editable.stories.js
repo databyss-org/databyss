@@ -56,19 +56,28 @@ const EditableTest = () => {
 
 storiesOf('Cypress//Tests', module)
   .addDecorator(ViewportDecorator)
-  .add('Slate', () => (
-    <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-      <NavigationProvider modalDict={modalDict}>
-        <EditorProvider
-          initialState={initialState}
-          editableReducer={slateReducer}
-          reducer={reducer}
-        >
-          <EditableTest />
-        </EditorProvider>
-      </NavigationProvider>
-    </SourceProvider>
-  ))
+  .add('Slate', () => {
+    let data = {}
+    fetchMock.restore().post((url, opt) => {
+      if (url === 'http://localhost:5000/api/sources') {
+        data = JSON.parse(opt.body).data
+        return true
+      }
+    }, 200)
+    return (
+      <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+        <NavigationProvider modalDict={modalDict}>
+          <EditorProvider
+            initialState={initialState}
+            editableReducer={slateReducer}
+            reducer={reducer}
+          >
+            <EditableTest />
+          </EditorProvider>
+        </NavigationProvider>
+      </SourceProvider>
+    )
+  })
   .add('Slate - Empty', () => {
     let data = {}
     fetchMock
@@ -83,15 +92,7 @@ storiesOf('Cypress//Tests', module)
           data = JSON.parse(opt.body).data
           return true
         }
-
-        // console.log(url)
-        // console.log(data)
       }, 200)
-    // .getOnce((url, { headers }) => console.log(header), 200)
-
-    // .getOnce('http://localhost:5000/api/sources/:id', {
-    //   respon se: 'responses',
-    // })
     return (
       <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
         <NavigationProvider modalDict={modalDict}>
