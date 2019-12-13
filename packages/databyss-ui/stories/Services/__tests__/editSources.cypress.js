@@ -14,7 +14,7 @@ context('Editor', () => {
     cy.wait(4000)
     cy.visit(
       'http://localhost:6006/iframe.html?id=services-atomic-blocks--edit-atomic-blocks'
-    ).focus()
+    )
     cy.wait(1000)
     cy.get('button').then(buttonList => {
       buttonList[0].click()
@@ -24,9 +24,7 @@ context('Editor', () => {
       cy.get('button').then(buttonList => {
         buttonList[1].click()
         cy.wait(2000)
-        cy.get('[contenteditable="true"]')
-          .as('editor')
-          .focus()
+        cy.get('[contenteditable="true"]').as('editor')
         cy.get('#slateDocument').as('slateDocument')
       })
     })
@@ -38,16 +36,23 @@ context('Editor', () => {
 
   it('Edits atomic sources', () => {
     cy.get('@editor')
-      .focus()
       .get('[data-test-atomic-edit="open"]')
       .click()
-    cy.get('#citation').as('citation')
-    cy.get('#firstName').as('firstName')
-    cy.get('#lastName').as('lastName')
-    cy.get('#name').as('name')
-    cy.get('@name')
+
+    cy.get('#citation')
       .focus()
-      .get('[contenteditable="true"]')
-      .then(content => content[1].click())
+      .type('full length citation')
+    cy.get('#firstName')
+      .focus()
+      .type('first name')
+    cy.get('#lastName')
+      .focus()
+      .type('last name')
+
+    cy.get('button').then(buttonList => {
+      buttonList[4].click()
+    })
+
+    // look up in api and validate against values
   })
 })

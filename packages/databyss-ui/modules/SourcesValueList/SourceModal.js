@@ -22,7 +22,7 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
   const onDismiss = () => {
     if (values) {
       // updates in source provider
-      setSource(_values)
+      setSource(values)
     }
     // hide modal in navProvider
     dispatchNav(hideModal())
