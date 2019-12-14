@@ -65,6 +65,7 @@ const EditorLoader = ({ children }) => {
       initialState={state.pageState}
       editableReducer={slateReducer}
       reducer={reducer}
+      name="Page"
     >
       <AutoSave />
       {children}
