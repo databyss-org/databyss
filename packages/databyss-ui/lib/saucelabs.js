@@ -1,6 +1,7 @@
 import webdriver from 'selenium-webdriver'
 
 export const CHROME = 'chrome'
+export const FIREFOX = 'firefox'
 export const WIN = 'Windows 10'
 
 const username = process.env.SAUCE_USERNAME
