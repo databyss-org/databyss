@@ -1,7 +1,6 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import invariant from 'invariant'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 
 import { isAtomicInlineType } from './../../slate/page/reducer'
 

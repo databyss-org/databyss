@@ -18,20 +18,19 @@ const EditorInline = React.forwardRef(
     const [refId, setRefId] = useState(null)
 
     const [editorState, dispatchEditor] = useEditorContext()
-    const { editableState, blocks } = editorState
+    const { blocks } = editorState
 
     const [, dispatchNav] = useNavigationContext()
-
     useEffect(
       () => {
-        if (editableState && !refId) {
+        if (editor && !refId) {
           // sets initial refId
-          const _id = editableState.value.document.getClosestBlock(node.key).key
+          const _id = editor.value.document.getClosestBlock(node.key).key
           const _refId = blocks[_id].refId
           setRefId(_refId)
         }
       },
-      [node, editableState]
+      [node, editor]
     )
 
     const onUpdateSource = source => {
@@ -40,9 +39,7 @@ const EditorInline = React.forwardRef(
         const _idList = Object.keys(blocks).filter(
           block => blocks[block].refId === source._id
         )
-        dispatchEditor(
-          updateSource(source, _idList, { value: editableState.value })
-        )
+        dispatchEditor(updateSource(source, _idList, { value: editor.value }))
       }
     }
 
@@ -65,15 +62,6 @@ const EditorInline = React.forwardRef(
             <Button
               variant="editSource"
               onClick={onEditSource}
-              // onClick={() =>
-              //   dispatchNav(
-              //     showModal('SOURCE', {
-              //       dismiss: onDismiss,
-              //       sourceId: refId,
-              //       onUpdateSource,
-              //     })
-              //   )
-              // }
               data-test-atomic-edit="open"
             >
               <Icon sizeVariant="tiny" color="background.5">
