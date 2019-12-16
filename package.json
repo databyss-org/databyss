@@ -31,7 +31,7 @@
     "flow": "flow",
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
     "styleguide:build": "NPM_BUILD_TARGET=TEST styleguidist build --config ./config/styleguide.config.js",
-    "storybook": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 3000 -s ./packages/databyss-ui/public --ci --https --ssl-cert ./.storybook/server.cert --ssl-key ./.storybook/server.key",
+    "storybook": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 8080 -s ./packages/databyss-ui/public --ci",
     "storybook:cy": "NODE_ENV=production yarn storybook",
     "storybook:build": "NPM_BUILD_TARGET=TEST build-storybook -o build -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss",
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
