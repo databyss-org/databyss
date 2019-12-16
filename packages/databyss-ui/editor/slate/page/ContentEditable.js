@@ -56,6 +56,7 @@ const SlateContentEditable = forwardRef(
     ref
   ) => {
     const [editorState] = useEditorContext()
+    const selfRef = useRef({ focused: false })
 
     const { activeBlockId, editableState, blocks, page } = editorState
 
@@ -154,6 +155,9 @@ const SlateContentEditable = forwardRef(
     }
 
     const onChange = change => {
+      if (!selfRef.current.focused) {
+        return
+      }
       const { value } = change
       Bugsnag.client.leaveBreadcrumb('page/ContentEditable/onChange', {
         state: JSON.stringify(editorState, null, 2),
@@ -401,6 +405,12 @@ const SlateContentEditable = forwardRef(
         onKeyUp={onKeyUp}
         onKeyDown={onKeyDown}
         renderMark={renderMark}
+        onBlur={() => {
+          selfRef.current.focused = false
+        }}
+        onFocus={() => {
+          selfRef.current.focused = true
+        }}
       />
     )
   }

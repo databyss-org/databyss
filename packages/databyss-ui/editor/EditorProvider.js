@@ -21,10 +21,12 @@ const EditorProvider = ({
   initialState,
   reducer,
   editableReducer,
+  name,
 }) => {
   const [state, dispatch, stateRef] = useReducer(
     makeComposedReducer(reducer, editableReducer),
-    initialState
+    initialState,
+    { name: `EditorProvider ${name ? `(${name})` : ''}` }
   )
 
   return (
