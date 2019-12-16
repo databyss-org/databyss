@@ -14,6 +14,7 @@ const SourceSchema = new mongoose.Schema(
     },
     text: RichText,
     citations: { type: Array, default: [{ textValue: '', ranges: [] }] },
+    // citations: { type: Array, default: [{ textValue: '', ranges: [] }] },
     authors: {
       type: Array,
       default: [{ firstName: { textValue: '' }, lastName: { textValue: '' } }],
