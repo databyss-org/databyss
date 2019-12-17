@@ -155,7 +155,7 @@ const ProviderDecorator = storyFn => (
   </SourceProvider>
 )
 
-storiesOf('Services|ValueList', module)
+storiesOf('Services|Sources', module)
   .addDecorator(ProviderDecorator)
   .addDecorator(ViewportDecorator)
   .add('Update to DB', () => <SourcesDemo />)

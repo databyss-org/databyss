@@ -47,6 +47,7 @@ const SourcesValueList = ({ source, onValueChange }) => {
                 id="name"
                 gridFlexWrap="nowrap"
                 paddingVariant="tiny"
+                autoFocus
                 rich
                 onBlur={onBlur}
               />

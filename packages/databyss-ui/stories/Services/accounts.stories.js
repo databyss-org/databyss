@@ -25,7 +25,6 @@ const AccountDemo = () => {
       let account = getAccountId()
       if (account) {
         const res = await getAccount()
-
         setAccountId(res._id)
         setUserState(s => ({ ...s, account: res._id }))
       } else {
@@ -58,18 +57,12 @@ const AccountDemo = () => {
   }
 
   useEffect(() => {
-    checkUserStatus()
+    localStorage.clear()
+    registerUser()
   }, [])
 
   return (
     <View>
-      <Grid mb="medium">
-        <View>
-          <Button onPress={() => registerUser()}>
-            CREATE USER AND ACCOUNT
-          </Button>
-        </View>
-      </Grid>
       <Grid>
         <View>
           <Text>

@@ -393,6 +393,9 @@ const SlateContentEditable = forwardRef(
       return next()
     }
 
+    const onRenderInline = (event, editor, next) => {
+      renderInline(event, editor, next)
+    }
     return (
       <Editor
         value={_editableState.value}

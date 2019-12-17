@@ -138,7 +138,11 @@ const setBlockType = (state, type, _id, setSource) => {
         citations: [{ textValue: '', ranges: [] }],
         authors: [{ firstName: '', lastName: '' }],
       }
-      setSource(_source)
+      // TODO: put this in editor page
+      // ON ENTITY ADDED
+      if (setSource) {
+        setSource(_source)
+      }
 
       return nextState
     case 'ENTRY':

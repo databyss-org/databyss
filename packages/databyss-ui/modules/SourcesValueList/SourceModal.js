@@ -33,6 +33,7 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
   return (
     <ModalWindow
       visible={visible}
+      widthVariant="form"
       onDismiss={onDismiss}
       title="Edit Source"
       dismissChild="done"

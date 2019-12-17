@@ -41,7 +41,9 @@ const ModalWindow = ({
     animations.slide.outro.run(onDismiss)
   }
   const onOpen = () => {
-    onModalOpen()
+    if (onModalOpen) {
+      onModalOpen()
+    }
     if (!_mobile) {
       return
     }

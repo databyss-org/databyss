@@ -28,6 +28,7 @@ import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import AutoSave from '@databyss-org/ui/editor/AutoSave'
 import seedState from './_seedState'
 import { ViewportDecorator } from '../decorators'
+import { ifStatement } from '@babel/types'
 
 const ToolbarDemo = () => {
   const [state] = useEditorContext()
@@ -50,9 +51,11 @@ const Box = ({ children }) => (
 
 const EditorLoader = ({ children }) => {
   const [state, dispatch] = usePageContext()
+
   useEffect(
     () => {
       dispatch(getPages())
+      dispatch(seedPage(seedState))
     },
     [dispatch]
   )
@@ -71,7 +74,7 @@ const EditorLoader = ({ children }) => {
         <Button onPress={() => dispatch(seedPage(seedState))}>SEED</Button>
       </View>
       {pages}
-      <Text> is Loading </Text>
+      <Text> Refresh to seed new page </Text>
     </View>
   ) : (
     <EditorProvider
@@ -100,7 +103,6 @@ const LoadAndSave = () => {
 
   return (
     <View>
-      <ToolbarDemo />
       <Box>
         <EditorPage>
           <SlateContentEditable onDocumentChange={setSlateDocument} />

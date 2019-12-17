@@ -26,8 +26,11 @@ const EditorInline = React.forwardRef(
         if (editor && !refId) {
           // sets initial refId
           const _id = editor.value.document.getClosestBlock(node.key).key
-          const _refId = blocks[_id].refId
-          setRefId(_refId)
+          // get refId
+          if (blocks[_id]) {
+            const _refId = blocks[_id].refId
+            setRefId(_refId)
+          }
         }
       },
       [node, editor]
