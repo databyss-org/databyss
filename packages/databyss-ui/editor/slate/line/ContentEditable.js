@@ -109,7 +109,6 @@ const SlateContentEditable = forwardRef(
     return (
       <Editor
         value={_editableState.value}
-        autoFocus
         ref={combinedRef}
         onChange={onChange}
         onKeyDown={onKeyDown}

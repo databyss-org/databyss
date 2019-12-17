@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Button, Text, Grid } from '@databyss-org/ui/primitives'
+import { View, Text, Grid } from '@databyss-org/ui/primitives'
 import {
   register,
   getAuthToken,

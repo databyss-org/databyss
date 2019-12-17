@@ -4,10 +4,7 @@ import styled from '@emotion/styled'
 import { View, Button, Icon } from '@databyss-org/ui/primitives'
 import Close from '@databyss-org/ui/assets/angle-right-solid.svg'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import {
-  showModal,
-  hideModal,
-} from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
+import { showModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
 import { updateSource } from './state/page/actions'
 import { useEditorContext } from './EditorProvider'
 

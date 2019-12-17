@@ -49,28 +49,28 @@ export function saveSource(sourceFields) {
           payload: { source, id: sourceFields._id },
         })
       })
+      // .catch(() => {
+      //   // for offline mode
+      //   dispatch({
+      //     type: CACHE_SOURCE,
+      //     payload: {
+      //       source: sourceFields,
+      //       id: sourceFields._id,
+      //     },
+      //   })
+      // })
       .catch(() => {
-        // for offline mode
         dispatch({
           type: CACHE_SOURCE,
           payload: {
-            source: sourceFields,
+            source: new ResourceNotFoundError(
+              'Source not saved',
+              sourceFields._id
+            ),
             id: sourceFields._id,
           },
         })
       })
-    // .catch(() => {
-    //   dispatch({
-    //     type: CACHE_SOURCE,
-    //     payload: {
-    //       source: new ResourceNotFoundError(
-    //         'Source not saved',
-    //         sourceFields._id
-    //       ),
-    //       id: sourceFields._id,
-    //     },
-    //   })
-    // })
   }
 }
 

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Button, Text, Grid } from '@databyss-org/ui/primitives'
-import EditorProvider, {
-  useEditorContext,
-} from '@databyss-org/ui/editor/EditorProvider'
+import { View, Button, Text } from '@databyss-org/ui/primitives'
+import EditorProvider from '@databyss-org/ui/editor/EditorProvider'
 import PageProvider, {
   usePageContext,
 } from '@databyss-org/services/pages/PageProvider'
@@ -15,7 +13,6 @@ import sourceReducer, {
 import { modalDict } from '@databyss-org/ui/components/Navigation/NavigationProvider/modalDict'
 import {
   loadPage,
-  savePage,
   seedPage,
   getPages,
 } from '@databyss-org/services/pages/actions'
@@ -28,20 +25,6 @@ import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import AutoSave from '@databyss-org/ui/editor/AutoSave'
 import seedState from './_seedState'
 import { ViewportDecorator } from '../decorators'
-import { ifStatement } from '@babel/types'
-
-const ToolbarDemo = () => {
-  const [state] = useEditorContext()
-  const [, dispatchPage] = usePageContext()
-
-  return (
-    <Grid mb="medium">
-      <View>
-        <Button onPress={() => dispatchPage(savePage(state))}>SAVE</Button>
-      </View>
-    </Grid>
-  )
-}
 
 const Box = ({ children }) => (
   <View borderVariant="thinDark" paddingVariant="tiny" width="100%">

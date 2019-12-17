@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
-import _ from 'lodash'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { savePage } from '@databyss-org/services/pages/actions'
-import { useEditorContext } from './EditorProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useEditorContext } from './EditorProvider'
 
 const AutoSave = ({ interval }) => {
   const [, pageDispatch] = usePageContext()

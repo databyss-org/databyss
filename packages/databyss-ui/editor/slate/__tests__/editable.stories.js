@@ -63,6 +63,7 @@ storiesOf('Cypress//Tests', module)
         data = JSON.parse(opt.body).data
         return true
       }
+      return null
     }, 200)
     return (
       <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
@@ -92,6 +93,7 @@ storiesOf('Cypress//Tests', module)
           data = JSON.parse(opt.body).data
           return true
         }
+        return null
       }, 200)
     return (
       <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>

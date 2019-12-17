@@ -1,6 +1,10 @@
-import React from 'react'
-import { useEditorContext } from './EditorProvider'
+import React, { useState, useEffect } from 'react'
+import _ from 'lodash'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useEditorContext } from './EditorProvider'
+import { difference } from './difference'
+import { entities } from './state/page/reducer'
+
 import {
   setActiveBlockId,
   setActiveBlockContent,
@@ -20,8 +24,41 @@ import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
 const EditorPage = ({ children }) => {
   const [editorState, dispatchEditor] = useEditorContext()
-
   const [, setSource] = useSourceContext()
+
+  const [sources, setSources] = useState(editorState.sources)
+
+  /*
+  checks to see if new source has been added
+  adds the new source to the source provider
+  */
+  useEffect(
+    () => {
+      if (!_.isEqual(editorState.sources, sources)) {
+        // check if sources added
+        if (
+          Object.keys(editorState.sources).length > Object.keys(sources).length
+        ) {
+          const _newSource = difference(editorState.sources, sources)
+          const _refId = Object.keys(_newSource)[0]
+          const _sourceFields = _newSource[_refId]
+          // initialize with empty value
+          const _source = {
+            _id: _refId,
+            text: {
+              textValue: _sourceFields.textValue,
+              ranges: _sourceFields.ranges,
+            },
+            citations: [{ textValue: '', ranges: [] }],
+            authors: [{ firstName: '', lastName: '' }],
+          }
+          setSource(_source)
+        }
+        setSources(editorState.sources)
+      }
+    },
+    [editorState]
+  )
 
   const onActiveBlockIdChange = (id, editableState) =>
     dispatchEditor(setActiveBlockId(id, editableState))
@@ -56,9 +93,7 @@ const EditorPage = ({ children }) => {
       dispatchEditor(clearBlock(id, editableState))
     } else {
       if (text.trim().match(/^@/) && editorState.blocks[id].type !== 'SOURCE') {
-        // TODO: update source provider here
-        // consistent refID is needed from clipboard branch
-        onSetBlockType('SOURCE', id, editableState, setSource)
+        onSetBlockType('SOURCE', id, editableState)
       }
       if (text.trim().match(/^#/) && editorState.blocks[id].type !== 'TOPIC') {
         onSetBlockType('TOPIC', id, editableState)

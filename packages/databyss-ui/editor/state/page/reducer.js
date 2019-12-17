@@ -110,7 +110,7 @@ export const setRangesForBlock = (state, block, ranges) => {
   return nextState
 }
 
-const setBlockType = (state, type, _id, setSource) => {
+const setBlockType = (state, type, _id) => {
   // changing block type will always generate a new refId
   const nextRefId = ObjectId().toHexString()
   const block = state.blocks[_id]
@@ -129,20 +129,6 @@ const setBlockType = (state, type, _id, setSource) => {
   switch (type) {
     case 'SOURCE':
       nextState.sources[nextRefId] = { _id: nextRefId, textValue, ranges }
-      // update source in source provider here
-      // const [, setSource] = useSourceContext()
-      // initialize empty state with text and range
-      const _source = {
-        _id: nextRefId,
-        text: { textValue, ranges },
-        citations: [{ textValue: '', ranges: [] }],
-        authors: [{ firstName: '', lastName: '' }],
-      }
-      // TODO: put this in editor page
-      // ON ENTITY ADDED
-      if (setSource) {
-        setSource(_source)
-      }
 
       return nextState
     case 'ENTRY':
@@ -396,12 +382,7 @@ export default (state, action) => {
           -1
         )
       }
-      return setBlockType(
-        nextState,
-        action.payload.type,
-        action.payload.id,
-        action.payload.setSource
-      )
+      return setBlockType(nextState, action.payload.type, action.payload.id)
     default:
       return state
   }

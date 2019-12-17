@@ -65,7 +65,6 @@ export function setBlockType(type, id, editableState, setSource) {
       type,
       editableState,
       id,
-      setSource,
     },
   }
 }

@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { ModalWindow } from '@databyss-org/ui/primitives'
-import SourcesValueList from './SourcesValueList'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { hideModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import SourcesValueList from './SourcesValueList'
 
 const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
   const [, setSource] = useSourceContext()

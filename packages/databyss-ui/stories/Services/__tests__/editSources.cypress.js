@@ -2,8 +2,6 @@
 
 /* eslint-disable func-names */
 
-import { _seedValue1, _seedValue2 } from './initialValue'
-
 const firstSource = {
   firstName: 'first name',
   lastName: 'last name',
@@ -144,15 +142,9 @@ context('Editor', () => {
 // -- move value list story into sources
 // -- move edit atomic blcks to page, (should be the same functionality)
 // creat fully mocked version of page demo
-// have a seeded page ready
-// have first text control fully focused
-// right width vairant
-// check  modals/ editable
-// width variable 'form' put that on window
-// check for enter on first line test
+// -- have a seeded page ready
+// -- have first text control fully focused
+// --- right width vairant
+// -- check for enter on first line test
 // leave arrow in
 // focus editor when source is updated
-
-// cy.get('#firstName')
-// .invoke('val') // for input or textarea, .invoke('val')
-// .then(str => console.log(str))

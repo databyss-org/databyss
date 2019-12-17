@@ -1,7 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import reducer, { initialState } from './reducer'
-// import { modalDict } from './modalDict'
 
 const useReducer = createReducer()
 
@@ -14,7 +13,7 @@ const NavigationProvider = ({ children, modalDict }) => {
     <NavigationContext.Provider value={[state, dispatch]}>
       {children}
 
-      {state.modals.map((modal, i) => {
+      {state.modals.map(modal => {
         const ModalComponent = modalDict[modal.component]
         return <ModalComponent visible={modal.visible} {...modal.props} />
       })}

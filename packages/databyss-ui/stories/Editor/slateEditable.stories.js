@@ -21,9 +21,9 @@ import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
 import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import initialState from '@databyss-org/ui/editor/state/__tests__/initialState'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { modalDict } from '@databyss-org/ui/components/Navigation/NavigationProvider/modalDict'
 import { ViewportDecorator } from '../decorators'
 import colors from '../../theming/colors'
-import { modalDict } from '@databyss-org/ui/components/Navigation/NavigationProvider/modalDict'
 
 const schema = {
   document: {
