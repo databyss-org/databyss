@@ -28,10 +28,12 @@
     "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
     "build:ui": "NODE_ENV=production BABEL_ENV=production webpack --config packages/databyss-ui/webpack.config.js --mode=production",
     "test": "NPM_BUILD_TARGET=TEST node scripts/test.js",
+    "test:selenium": "jest --config config/jest/selenium.config.js",
     "flow": "flow",
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
     "styleguide:build": "NPM_BUILD_TARGET=TEST styleguidist build --config ./config/styleguide.config.js",
-    "storybook": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 8080 -s ./packages/databyss-ui/public --ci",
+    "storybook": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public --ci",
+    "storybook:sauce": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 8080 -s ./packages/databyss-ui/public --ci",
     "storybook:cy": "NODE_ENV=production yarn storybook",
     "storybook:build": "NPM_BUILD_TARGET=TEST build-storybook -o build -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss",
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
@@ -41,7 +43,8 @@
     "cy:run:debug": "DEBUG=cypress:*,-cypress:server:files yarn cy:run",
     "cy": "start-server-and-test storybook http-get://localhost:6006/iframe.html?id=editor-tests--slate cy:open",
     "cy:test": "start-server-and-test storybook:cy http-get://0.0.0.0:6006/iframe.html?id=editor-tests--slate cy:run",
-    "selenium": "yarn test selenium.test"
+    "sauce:proxy": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/sauce-connect.js",
+    "sauce:test": "start-server-and-test storybook:sauce http-get://0.0.0.0:8080/iframe.html?id=editor-tests--slate sauce:proxy"
   },
   "jest": {
     "projects": [
@@ -151,6 +154,7 @@
     "docusaurus": "^1.12.0",
     "dotenv": "^8.0.0",
     "dotenv-expand": "^5.1.0",
+    "download": "^7.1.0",
     "emotion": "^10.0.17",
     "eslint": "5.16.0",
     "eslint-config-airbnb": "^16.1.0",
