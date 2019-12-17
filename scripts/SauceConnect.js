@@ -6,21 +6,20 @@ const os = require('os')
 const ServerProcess = require('./ServerProcess')
 
 class SauceConnect extends ServerProcess {
-  async startProxy() {
+  async startProxy(run = this.exec) {
     const binPath = path.join(__dirname, 'bin/sc')
-    const configPath = path.join(__dirname, '../config/sauceconnect.yml')
+    const configPath = path.join(__dirname, '../config/sauce/sauceconnect.yml')
     if (!fs.existsSync(binPath)) {
       await this.downloadBinary()
     }
-    await this.exec(
+    return run(
       `${binPath} -u ${process.env.SAUCE_USERNAME} -k ${
         process.env.SAUCE_ACCESS_KEY
       } --config-file ${configPath}`
     )
   }
-  async runTests() {
-    console.log('Starting Jest test runner...')
-    await this.exec(`yarn test:selenium`)
+  async spawnProxy() {
+    return this.startProxy(this.spawn)
   }
   async downloadBinary() {
     console.log('Downloading Sauce Connect binary, please wait...')
@@ -45,7 +44,6 @@ if (require.main === module) {
     console.log(msg)
     if (msg.match('Sauce Connect is up')) {
       console.log('Sauce dashboard: https://app.saucelabs.com/dashboard/builds')
-      job.runTests()
     }
   })
   job.on('stderr', msg => {
@@ -53,3 +51,5 @@ if (require.main === module) {
   })
   job.startProxy()
 }
+
+module.exports = SauceConnect
