@@ -89,7 +89,8 @@ export const renderInline = ({ node, attributes }, editor, next) => {
     return (
       <EditorInline
         editor={editor}
-        backgroundColor={backgroundColor}
+        isSelected={isSelected}
+        //  backgroundColor={backgroundColor}
         node={node}
       >
         <RawHtml

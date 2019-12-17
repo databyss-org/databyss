@@ -6,12 +6,13 @@ import { _seedValue1, _seedValue2 } from './initialValue'
 
 context('Editor', () => {
   beforeEach(() => {
+    cy.clearLocalStorage()
+
     cy.visit(
       'http://localhost:6006/iframe.html?id=services-auth--login-accounts'
     )
-    cy.clearLocalStorage()
 
-    cy.get('button').click()
+    //  cy.get('button').click()
     cy.wait(1000)
     cy.visit(
       'http://localhost:6006/iframe.html?id=services-sources--load-and-save-sources'

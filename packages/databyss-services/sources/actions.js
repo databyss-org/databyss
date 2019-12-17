@@ -43,22 +43,12 @@ export function saveSource(sourceFields) {
     })
     sources
       .setSource(sourceFields)
-      .then(source => {
+      .then(() => {
         dispatch({
           type: CACHE_SOURCE,
-          payload: { source, id: sourceFields._id },
+          payload: { source: sourceFields, id: sourceFields._id },
         })
       })
-      // .catch(() => {
-      //   // for offline mode
-      //   dispatch({
-      //     type: CACHE_SOURCE,
-      //     payload: {
-      //       source: sourceFields,
-      //       id: sourceFields._id,
-      //     },
-      //   })
-      // })
       .catch(() => {
         dispatch({
           type: CACHE_SOURCE,

@@ -18,6 +18,17 @@ import initialState from '../../state/__tests__/initialState'
 import emptyInitialState from '../../state/__tests__/emptyInitialState'
 import slateReducer from '../page/reducer'
 
+const _source = {
+  _id: '5d64419f1cbc815583c35058',
+  text: {
+    textValue:
+      'Stamenov, Language Structure, Discourse and the Access to Consciousness',
+    ranges: [],
+  },
+  citations: [{ textValue: '', ranges: [] }],
+  authors: [{ firstName: '', lastName: '' }],
+}
+
 const Box = ({ children, ...others }) => (
   <View borderVariant="thinDark" paddingVariant="tiny" width="100%" {...others}>
     {children}
@@ -58,13 +69,21 @@ storiesOf('Cypress//Tests', module)
   .addDecorator(ViewportDecorator)
   .add('Slate', () => {
     let data = {}
-    fetchMock.restore().post((url, opt) => {
-      if (url === 'http://localhost:5000/api/sources') {
-        data = JSON.parse(opt.body).data
-        return true
-      }
-      return null
-    }, 200)
+    fetchMock
+      .restore()
+      .post((url, opt) => {
+        if (url === 'http://localhost:5000/api/sources') {
+          data = JSON.parse(opt.body).data
+          return true
+        }
+        return null
+      }, data)
+      .get(url => {
+        if (url.includes('http://localhost:5000/api/sources')) {
+          return true
+        }
+        return null
+      }, _source)
     return (
       <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
         <NavigationProvider modalDict={modalDict}>
@@ -81,20 +100,13 @@ storiesOf('Cypress//Tests', module)
   })
   .add('Slate - Empty', () => {
     let data = {}
-    fetchMock
-      .restore()
-      // .getOnce((url, opt) => {
-      //   console.log(url)
-      //   console.log(opt)
-      //   return true
-      // }, 200)
-      .post((url, opt) => {
-        if (url === 'http://localhost:5000/api/sources') {
-          data = JSON.parse(opt.body).data
-          return true
-        }
-        return null
-      }, 200)
+    fetchMock.restore().post((url, opt) => {
+      if (url === 'http://localhost:5000/api/sources') {
+        data = JSON.parse(opt.body).data
+        return true
+      }
+      return null
+    }, data)
     return (
       <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
         <NavigationProvider modalDict={modalDict}>

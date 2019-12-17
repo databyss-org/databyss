@@ -11,12 +11,11 @@ import { useEditorContext } from './EditorProvider'
 const Styled = styled('span')(color)
 
 const EditorInline = React.forwardRef(
-  ({ backgroundColor, node, children, editor, ...others }, ref) => {
+  ({ isSelected, node, children, editor, ...others }, ref) => {
     const [refId, setRefId] = useState(null)
 
     const [editorState, dispatchEditor] = useEditorContext()
     const { blocks } = editorState
-
     const [, dispatchNav] = useNavigationContext()
     useEffect(
       () => {
@@ -57,19 +56,20 @@ const EditorInline = React.forwardRef(
       <Styled {...others} ref={ref}>
         {children}
 
-        {node.type === 'SOURCE' && (
-          <View display="inline-block">
-            <Button
-              variant="editSource"
-              onClick={onEditSource}
-              data-test-atomic-edit="open"
-            >
-              <Icon sizeVariant="tiny" color="background.5">
-                <Close />
-              </Icon>
-            </Button>
-          </View>
-        )}
+        {node.type === 'SOURCE' &&
+          isSelected && (
+            <View display="inline-block">
+              <Button
+                variant="editSource"
+                onClick={onEditSource}
+                data-test-atomic-edit="open"
+              >
+                <Icon sizeVariant="tiny" color="background.5">
+                  <Close />
+                </Icon>
+              </Button>
+            </View>
+          )}
       </Styled>
     )
   }
