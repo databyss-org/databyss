@@ -3,7 +3,6 @@ import _ from 'lodash'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useEditorContext } from './EditorProvider'
 import { difference } from './difference'
-import { entities } from './state/page/reducer'
 
 import {
   setActiveBlockId,

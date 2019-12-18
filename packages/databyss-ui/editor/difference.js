@@ -1,3 +1,4 @@
+import _ from 'lodash'
 /**
  * Deep diff between two object, using lodash
  * @param  {Object} object Object compared
@@ -5,9 +6,9 @@
  * @return {Object}        Return a new object who represent the diff
  */
 
-export function difference(object, base) {
-  function changes(object, base) {
-    return _.transform(object, function(result, value, key) {
+export const difference = (object, base) => {
+  const changes = (object, base) =>
+    _.transform(object, (result, value, key) => {
       if (!_.isEqual(value, base[key])) {
         result[key] =
           _.isObject(value) && _.isObject(base[key])
@@ -15,6 +16,6 @@ export function difference(object, base) {
             : value
       }
     })
-  }
+
   return changes(object, base)
 }
