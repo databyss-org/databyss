@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { color } from 'styled-system'
+import { color, border, space } from 'styled-system'
 import styled from '@emotion/styled'
 import { View, Button, Icon } from '@databyss-org/ui/primitives'
-import Close from '@databyss-org/ui/assets/angle-right-solid.svg'
+import Pen from '@databyss-org/ui/assets/pen.svg'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { showModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
 import { updateSource } from './state/page/actions'
 import { useEditorContext } from './EditorProvider'
 
-const Styled = styled('span')(color)
+const Span = styled('span')(color, border, space)
 
 const EditorInline = React.forwardRef(
   ({ isSelected, node, children, editor, ...others }, ref) => {
@@ -17,6 +17,9 @@ const EditorInline = React.forwardRef(
     const [editorState, dispatchEditor] = useEditorContext()
     const { blocks } = editorState
     const [, dispatchNav] = useNavigationContext()
+
+    const backgroundColor = isSelected ? 'background.3' : 'background.2'
+
     useEffect(
       () => {
         if (editor && !refId) {
@@ -53,24 +56,46 @@ const EditorInline = React.forwardRef(
     }
 
     return (
-      <Styled {...others} ref={ref}>
+      <Span
+        {...others}
+        ref={ref}
+        id="test"
+        borderRadius={5}
+        border="1px"
+        p="2px"
+        // pt="2px"
+        // pb="2px"
+        // pl="2px"
+        backgroundColor={backgroundColor}
+      >
         {children}
 
         {node.type === 'SOURCE' &&
           isSelected && (
-            <View display="inline-block">
+            <Span
+              borderLeft="1px solid"
+              borderColor="background.4"
+              ml="10px"
+              padding="1px"
+            >
               <Button
+                display="inline-block"
                 variant="editSource"
                 onClick={onEditSource}
+                pl="4px"
+                pt="4px"
+                pb="4px"
+                pr="4px"
+                borderRadius="50%"
                 data-test-atomic-edit="open"
               >
                 <Icon sizeVariant="tiny" color="background.5">
-                  <Close />
+                  <Pen />
                 </Icon>
               </Button>
-            </View>
+            </Span>
           )}
-      </Styled>
+      </Span>
     )
   }
 )
