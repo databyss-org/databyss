@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { color, border, space } from 'styled-system'
 import styled from '@emotion/styled'
-import { View, Button, Icon } from '@databyss-org/ui/primitives'
+import { Button, Icon } from '@databyss-org/ui/primitives'
 import Pen from '@databyss-org/ui/assets/pen.svg'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { showModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
@@ -63,8 +63,6 @@ const EditorInline = React.forwardRef(
         borderRadius={5}
         border="1px"
         p="2px"
-        // pt="2px"
-        // pb="2px"
         pl="4px"
         pr="4px"
         backgroundColor={backgroundColor}
@@ -80,14 +78,8 @@ const EditorInline = React.forwardRef(
               padding="1px"
             >
               <Button
-                display="inline-block"
                 variant="editSource"
                 onClick={onEditSource}
-                pl="4px"
-                pt="4px"
-                pb="4px"
-                pr="4px"
-                borderRadius="50%"
                 data-test-atomic-edit="open"
               >
                 <Icon sizeVariant="tiny" color="background.5">

@@ -83,7 +83,6 @@ export const toSlateJson = (editorState, pageBlocks) => ({
 
 export const renderInline = ({ node, attributes }, editor, next) => {
   const isSelected = editor.value.selection.focus.isInNode(node)
-  const backgroundColor = isSelected ? 'background.3' : 'background.2'
 
   if (isAtomicInlineType(node.type)) {
     return (

@@ -75,10 +75,12 @@ const buttonVariants = {
     borderRadius: pxUnits(0),
   },
   editSource: {
-    // marginLeft: pxUnits(7),
-    //  padding: pxUnits(7),
-    //  borderRadius: pxUnits(0),
-    //  backgroundColor: 'background.3',
+    display: 'inline-block',
+    pl: '4px',
+    pt: '4px',
+    pb: '4px',
+    pr: '4px',
+    borderRadius: '50%',
   },
 }
 
