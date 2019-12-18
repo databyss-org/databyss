@@ -8,7 +8,7 @@ import { showModal } from '@databyss-org/ui/components/Navigation/NavigationProv
 import { updateSource } from './state/page/actions'
 import { useEditorContext } from './EditorProvider'
 
-const Span = styled('span')(color, border, space)
+const Span = styled('span')({ cursor: 'pointer' }, color, border, space)
 
 const EditorInline = React.forwardRef(
   ({ isSelected, node, children, editor, ...others }, ref) => {
@@ -65,7 +65,8 @@ const EditorInline = React.forwardRef(
         p="2px"
         // pt="2px"
         // pb="2px"
-        // pl="2px"
+        pl="4px"
+        pr="4px"
         backgroundColor={backgroundColor}
       >
         {children}
