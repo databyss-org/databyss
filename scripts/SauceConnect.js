@@ -5,6 +5,19 @@ const download = require('download')
 const os = require('os')
 const ServerProcess = require('./ServerProcess')
 
+const IS_CI =
+  process.env.CI &&
+  (typeof process.env.CI !== 'string' ||
+    process.env.CI.toLowerCase() !== 'false')
+
+const ARCHIVE_FILENAME = IS_CI ? 'sc-4.5.4-linux.tar.gz' : 'sc-4.5.4-osx.zip'
+const ARCHIVE_DIRNAME = ARCHIVE_FILENAME.replace(/\.zip|\.tar\.gz/, '')
+const ARCHIVE_PATH = `${os.tmpdir()}/${ARCHIVE_FILENAME}`
+const EXTRACTED_PATH = `${os.tmpdir()}/${ARCHIVE_DIRNAME}`
+const UNARCHIVE_CMD = IS_CI
+  ? `tar -xvzf ${ARCHIVE_PATH} -C ${os.tmpdir()}`
+  : `unzip ${ARCHIVE_PATH} -d ${os.tmpdir()}`
+
 class SauceConnect extends ServerProcess {
   async startProxy(run = this.exec) {
     const binPath = path.join(__dirname, 'bin/sc')
@@ -18,20 +31,25 @@ class SauceConnect extends ServerProcess {
       } --config-file ${configPath}`
     )
   }
-  async spawnProxy() {
+  spawnProxy() {
     return this.startProxy(this.spawn)
   }
   async downloadBinary() {
     console.log('Downloading Sauce Connect binary, please wait...')
-    await download(
-      'https://saucelabs.com/downloads/sc-4.5.4-osx.zip',
-      os.tmpdir()
-    )
-    await this.exec(`unzip ${os.tmpdir()}/sc-4.5.4-osx.zip -d ${os.tmpdir()}`)
+
+    if (!fs.existsSync(ARCHIVE_PATH)) {
+      await download(
+        `https://saucelabs.com/downloads/${ARCHIVE_FILENAME}`,
+        os.tmpdir()
+      )
+    }
+    if (!fs.existsSync(EXTRACTED_PATH)) {
+      await this.exec(UNARCHIVE_CMD)
+    }
     if (!fs.existsSync(`${__dirname}/bin`)) {
       await this.exec(`mkdir ${__dirname}/bin`)
     }
-    await this.exec(`cp ${os.tmpdir()}/sc-4.5.4-osx/bin/sc ${__dirname}/bin/sc`)
+    await this.exec(`cp ${EXTRACTED_PATH}/bin/sc ${__dirname}/bin/sc`)
   }
 }
 
