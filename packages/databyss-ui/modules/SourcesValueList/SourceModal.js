@@ -37,7 +37,6 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
       onDismiss={onDismiss}
       title="Edit Source"
       dismissChild="done"
-      onModalOpen={() => console.log('on open')}
     >
       <SourcesValueList onValueChange={onChange} sourceId={sourceId} />
     </ModalWindow>

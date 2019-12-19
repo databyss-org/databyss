@@ -46,13 +46,14 @@ const EditorInline = React.forwardRef(
     }
 
     const onEditSource = () => {
+      //  editor.blur()
+
       dispatchNav(
         showModal('SOURCE', {
           sourceId: refId,
           onUpdateSource,
         })
       )
-      editor.blur()
     }
 
     return (

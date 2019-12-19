@@ -56,7 +56,8 @@ const TextControl = ({
     () => {
       if (autoFocus && !active && inputRef.current) {
         setActive(true)
-        inputRef.current.focus()
+        //   console.log(inputRef.current)
+        setTimeout(() => inputRef.current.focus(), 10)
       }
     },
     [autoFocus, inputRef]

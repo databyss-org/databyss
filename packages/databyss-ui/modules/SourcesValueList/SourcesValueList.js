@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
@@ -28,6 +28,7 @@ const SourcesValueList = ({ source, onValueChange }) => {
       //  onValueChange(values)
     }
   }
+
   return (
     <ValueListProvider onChange={onChange} values={values}>
       <Grid>

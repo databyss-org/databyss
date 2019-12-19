@@ -289,7 +289,7 @@ const onUpdateSource = (source, idList) => (editor, value, next) => {
 
     editor.replaceNodeByKey(id, _tempNode)
   })
-  editor.focus()
+  setTimeout(() => editor.focus(), 10)
   next(editor, value)
 }
 
