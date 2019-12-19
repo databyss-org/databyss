@@ -18,7 +18,9 @@ const EditorInline = React.forwardRef(
     const { blocks } = editorState
     const [, dispatchNav] = useNavigationContext()
 
-    const backgroundColor = isSelected ? 'background.3' : 'background.2'
+    const backgroundColor = isSelected ? 'background.3' : ''
+
+    const [blockSelected, setBlockSelected] = useState(false)
 
     useEffect(
       () => {
@@ -47,7 +49,6 @@ const EditorInline = React.forwardRef(
 
     const onEditSource = () => {
       //  editor.blur()
-
       dispatchNav(
         showModal('SOURCE', {
           sourceId: refId,
@@ -56,9 +57,29 @@ const EditorInline = React.forwardRef(
       )
     }
 
+    const onClick = () => {
+      if (!blockSelected) {
+        return setBlockSelected(true)
+      }
+      if (node.type === 'SOURCE' && isSelected) {
+        onEditSource()
+        setBlockSelected(false)
+      }
+    }
+
+    useEffect(
+      () => {
+        if (blockSelected && blockSelected != isSelected) {
+          setBlockSelected(blockSelected)
+        }
+      },
+      [isSelected]
+    )
+
     return (
       <Span
         {...others}
+        onClick={onClick}
         ref={ref}
         id="test"
         borderRadius={5}
@@ -78,11 +99,7 @@ const EditorInline = React.forwardRef(
               ml="10px"
               padding="1px"
             >
-              <Button
-                variant="editSource"
-                onClick={onEditSource}
-                data-test-atomic-edit="open"
-              >
+              <Button variant="editSource" data-test-atomic-edit="open">
                 <Icon sizeVariant="tiny" color="background.5">
                   <Pen />
                 </Icon>
