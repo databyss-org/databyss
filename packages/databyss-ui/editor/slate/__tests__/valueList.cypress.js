@@ -40,7 +40,9 @@ context('Editor', () => {
   })
 
   it('should enter citation', () => {
-    cy.get('@name').type('name of citation')
+    cy.get('@name')
+      .focus()
+      .type('name of citation')
     cy.get('@firstName')
       .focus()
       .type('first name of source')

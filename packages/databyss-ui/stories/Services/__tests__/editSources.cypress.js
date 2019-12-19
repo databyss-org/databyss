@@ -57,9 +57,12 @@ context('Editor', () => {
       .newLine()
       .type('@new source')
       .newLine()
+      .previousBlock()
+      .setSelection('new source')
+      .wait(1000)
       .get('[data-test-atomic-edit="open"]')
       .then(buttonList => {
-        buttonList[1].click()
+        buttonList[0].click()
         cy.wait(2000)
           .get('#name')
           .focus()
@@ -77,7 +80,7 @@ context('Editor', () => {
           .wait(1000)
 
         cy.get('button').then(buttonList => {
-          buttonList[5].click()
+          buttonList[4].click()
         })
         // wait for autosave
         cy.wait(11000)
@@ -120,9 +123,12 @@ context('Editor', () => {
 
     cy.get('@editor')
       .focus()
+      .endOfDoc()
+      .previousBlock()
+      .setSelection('updated source')
       .get('[data-test-atomic-edit="open"]')
       .then(buttonList => {
-        buttonList[1].click()
+        buttonList[0].click()
         cy.get('#name')
           .focus()
           .invoke('text')
@@ -146,5 +152,24 @@ context('Editor', () => {
 // -- have first text control fully focused
 // --- right width vairant
 // -- check for enter on first line test
-// leave arrow in
-// focus editor when source is updated
+// -- focus editor when source is updated
+
+// enter when atomic highlighted should launch modal
+// click on atomic should launch modal
+// padding for cursor after atomic block on same line
+// transparent background on atomic
+// checkout site in mobile and make not of things that dont work
+// add clean slate in demo version
+// delete atomic pages
+
+// use notify decorator to catch a server not found and pop up dialog that says "this story requires server, see readme"
+// use notify provider
+// create authenticated ping
+
+// <NeedsNetworkd> {children} </NeedsNetwork>
+// create this into component (similar to autosave) checks for connnectivity and authentication and is consumer of notify context
+
+// notify should be near top level
+// throw generic error with message
+
+// add loading handling withPage
