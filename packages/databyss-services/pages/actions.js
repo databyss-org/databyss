@@ -1,4 +1,6 @@
 import cloneDeep from 'clone-deep'
+import { ResourceNotFoundError } from '@databyss-org/services/lib/ResourceNotFoundError'
+import { NetworkUnavailableError } from '@databyss-org/services/lib/NetworkUnavailableError'
 import * as services from './'
 
 import {
@@ -17,12 +19,15 @@ export function loadPage(_id) {
       type: LOAD_PAGE,
       payload: {},
     })
-    services.loadPage(_id).then(res => {
-      dispatch({
-        type: PAGE_LOADED,
-        payload: res,
+    services
+      .loadPage(_id)
+      .then(res => {
+        dispatch({
+          type: PAGE_LOADED,
+          payload: res,
+        })
       })
-    })
+      .catch(err => console.log(err))
   }
 }
 
@@ -70,11 +75,25 @@ export function getPages() {
       payload: {},
     })
 
-    services.getAllPages().then(res => {
-      dispatch({
-        type: PAGES_LOADED,
-        payload: res,
+    services
+      .getAllPages()
+      .then(res => {
+        dispatch({
+          type: PAGES_LOADED,
+          payload: res,
+        })
       })
-    })
+      .catch(err => {
+        let _err = new ResourceNotFoundError('Source not saved')
+        if (err.message === 'Failed to fetch') {
+          _err = new NetworkUnavailableError('Network not available')
+        }
+
+        dispatch({
+          type: PAGES_LOADED,
+          payload: _err,
+        })
+        //  console.log(_err)
+      })
   }
 }

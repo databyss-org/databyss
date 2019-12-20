@@ -22,4 +22,15 @@ PageProvider.defaultProps = {
   initialState,
 }
 
+export const withPages = Wrapped => ({ sourceId, ...others }) => {
+  const { getSource } = useSourceContext()
+  const source = getSource(sourceId)
+
+  if (source instanceof Error) {
+    return <ErrorFallback error={source} />
+  }
+
+  return source ? <Wrapped source={source} {...others} /> : <Loading />
+}
+
 export default PageProvider

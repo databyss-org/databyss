@@ -1,5 +1,6 @@
 import * as sources from './'
 import { ResourceNotFoundError } from './../lib/ResourceNotFoundError'
+import { NetworkUnavailableError } from './../lib/NetworkUnavailableError'
 
 import {
   FETCH_SOURCE,
@@ -26,10 +27,15 @@ export function fetchSource(id) {
         })
       })
       .catch(err => {
+        let _err = new ResourceNotFoundError('Source not found')
+
+        if (err.message === 'Failed to fetch') {
+          _err = new NetworkUnavailableError('Network not available')
+        }
         dispatch({
           type: CACHE_SOURCE,
           payload: {
-            source: err,
+            source: _err,
             id,
           },
         })
@@ -53,14 +59,19 @@ export function saveSource(sourceFields) {
       })
       // check for type of error
       // send correct error class
-      .catch(() => {
+      .catch(err => {
+        let _err = new ResourceNotFoundError(
+          'Source not saved',
+          sourceFields._id
+        )
+
+        if (err.message === 'Failed to fetch') {
+          _err = new NetworkUnavailableError('Network not available')
+        }
         dispatch({
           type: CACHE_SOURCE,
           payload: {
-            source: new ResourceNotFoundError(
-              'Source not saved',
-              sourceFields._id
-            ),
+            source: _err,
             id: sourceFields._id,
           },
         })

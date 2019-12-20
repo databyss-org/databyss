@@ -32,6 +32,7 @@ const Box = ({ children }) => (
   </View>
 )
 
+// add with pages here
 const EditorLoader = ({ children }) => {
   const [state, dispatch] = usePageContext()
 
