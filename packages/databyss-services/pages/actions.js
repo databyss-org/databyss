@@ -74,25 +74,24 @@ export function getPages() {
       type: FETCHING_PAGES,
       payload: {},
     })
-    services
-      .getAllPages()
-      .then(res => {
-        dispatch({
-          type: PAGES_LOADED,
-          payload: res,
-        })
+    services.getAllPages().then(res => {
+      dispatch({
+        type: PAGES_LOADED,
+        payload: res,
       })
-      .catch(err => {
-        let _err = new ResourceNotFoundError('Pages not found')
-        if (err.message === 'Failed to fetch') {
-          _err = new NetworkUnavailableError('Network not available')
-        }
+    })
+    // .catch(err => {
+    //   console.log('DOES IT GET HERE')
+    //   let _err = new ResourceNotFoundError('Pages not found')
+    //   if (err.message === 'Failed to fetch') {
+    //     _err = new NetworkUnavailableError('Network not available')
+    //   }
 
-        dispatch({
-          type: PAGES_LOADED,
-          payload: _err,
-        })
-        //  console.log(_err)
-      })
+    //   dispatch({
+    //     type: PAGES_LOADED,
+    //     payload: _err,
+    //   })
+    //   //  console.log(_err)
+    // })
   }
 }

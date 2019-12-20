@@ -41,7 +41,6 @@ function request(uri, options, responseIsJson) {
     .then(parseResponse(responseIsJson))
     .catch(err => {
       let _err = err
-      console.log(err)
       if (_err.message === "Cannot read property 'token' of null") {
         _err = new NotAuthorizedError('not authorized')
       } else if (_err.message === 'Failed to fetch') {
