@@ -4,6 +4,7 @@ import { View, Button, Text } from '@databyss-org/ui/primitives'
 import EditorProvider from '@databyss-org/ui/editor/EditorProvider'
 import PageProvider, {
   usePageContext,
+  withPages,
 } from '@databyss-org/services/pages/PageProvider'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
@@ -33,18 +34,16 @@ const Box = ({ children }) => (
 )
 
 // add with pages here
-const EditorLoader = ({ children }) => {
+const EditorLoader = withPages(({ pages, children }) => {
   const [state, dispatch] = usePageContext()
-
   useEffect(
     () => {
-      dispatch(getPages())
       dispatch(seedPage(seedState))
     },
     [dispatch]
   )
 
-  const pages = state.pages.map(p => (
+  const pagesRender = state.pages.map(p => (
     <View key={p._id}>
       <Button onPress={() => dispatch(loadPage(p._id))}>
         <Text>load page {p._id}</Text>
@@ -57,7 +56,7 @@ const EditorLoader = ({ children }) => {
       <View>
         <Button onPress={() => dispatch(seedPage(seedState))}>SEED</Button>
       </View>
-      {pages}
+      {pagesRender}
       <Text> Refresh to seed new page </Text>
     </View>
   ) : (
@@ -70,7 +69,7 @@ const EditorLoader = ({ children }) => {
       {children}
     </EditorProvider>
   )
-}
+})
 
 const ProviderDecorator = storyFn => (
   <PageProvider initialState={initialState}>

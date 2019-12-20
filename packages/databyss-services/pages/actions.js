@@ -74,7 +74,6 @@ export function getPages() {
       type: FETCHING_PAGES,
       payload: {},
     })
-
     services
       .getAllPages()
       .then(res => {
@@ -84,7 +83,7 @@ export function getPages() {
         })
       })
       .catch(err => {
-        let _err = new ResourceNotFoundError('Source not saved')
+        let _err = new ResourceNotFoundError('Pages not found')
         if (err.message === 'Failed to fetch') {
           _err = new NetworkUnavailableError('Network not available')
         }

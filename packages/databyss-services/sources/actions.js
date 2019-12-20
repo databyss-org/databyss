@@ -19,8 +19,6 @@ export function fetchSource(id) {
     sources
       .getSource(id)
       .then(source => {
-        console.log('sources error')
-
         dispatch({
           type: CACHE_SOURCE,
           payload: { source, id },

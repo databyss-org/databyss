@@ -10,9 +10,9 @@ import {
 
 export const initialState = {
   isLoading: true,
-  isPagesLoading: true,
+  isPagesLoading: false,
   isSaving: false,
-  pages: [],
+  pages: null,
   pageState: {},
 }
 

@@ -1,6 +1,8 @@
 import { deleteAuthToken } from '../auth'
 import packageJson from '../package.json'
 import { ResourceNotFoundError } from './ResourceNotFoundError'
+import { NotAuthorizedError } from './NotAuthorizedError'
+import { NetworkUnavailableError } from './NetworkUnavailableError'
 
 export class UnauthorizedError extends Error {}
 
@@ -37,7 +39,15 @@ function request(uri, options, responseIsJson) {
   const promise = fetch(uri, options)
     .then(checkStatus)
     .then(parseResponse(responseIsJson))
-
+    .catch(err => {
+      let _err = err
+      if (_err.message === "Cannot read property 'token' of null") {
+        _err = new NotAuthorizedError('not authorized')
+      } else if (_err.message === 'Failed to fetch') {
+        _err = new NetworkUnavailableError('not connected')
+      }
+      return _err
+    })
   return promise
 }
 

@@ -2,14 +2,17 @@ import React from 'react'
 import { Text, View } from '@databyss-org/ui/primitives'
 import { ResourceNotFoundError } from '@databyss-org/services/lib/ResourceNotFoundError'
 import { NetworkUnavailableError } from '@databyss-org/services/lib/NetworkUnavailableError'
+import { NotAuthorizedError } from '@databyss-org/services/lib/NotAuthorizedError'
 
 const ErrorFallback = ({ error, message, ...others }) => {
   let _message = message
   if (!_message && error) {
     if (error instanceof ResourceNotFoundError) {
-      _message = 'Source not found'
+      _message = 'not found'
     } else if (error instanceof NetworkUnavailableError) {
       _message = 'Please connect to the internet to use this feature'
+    } else if (error instanceof NotAuthorizedError) {
+      _message = 'Not Authorized, please log in'
     }
   }
 
