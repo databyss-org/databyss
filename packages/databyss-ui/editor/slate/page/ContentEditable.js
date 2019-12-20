@@ -62,6 +62,15 @@ const SlateContentEditable = forwardRef(
 
     const { activeBlockId, editableState, blocks, page } = editorState
 
+    const blocksRef = useRef(blocks)
+
+    useEffect(
+      () => {
+        blocksRef.current = blocks
+      },
+      [blocks]
+    )
+
     const editableRef = useRef(null)
 
     const checkSelectedBlockChanged = _nextEditableState => {
@@ -211,6 +220,11 @@ const SlateContentEditable = forwardRef(
       )
     }
 
+    const editSource = (_id, editor) => {
+      let _refId = blocksRef.current[_id].refId
+
+      onEditSource(_refId, blocksRef.current, editor)
+    }
     const onKeyUp = (event, editor, next) => {
       if (event.key === 'Enter') {
         // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
@@ -281,12 +295,8 @@ const SlateContentEditable = forwardRef(
       }
 
       if (isInlineSourceSelected(editor) && event.key === 'Enter') {
-        console.log(editor.value.anchorBlock.key)
-        const _refId = blocks[editor.value.anchorBlock.key].refId
-
-        onEditSource(_refId, blocks, editor)
-        // console.log(blocks[editor.value.anchorBlock.key].refId)
-        // console.log('DISPATCH SOURCE')
+        let _id = editor.value.anchorBlock.key
+        editSource(_id, editor)
         return event.preventDefault()
       }
       const { fragment } = editor.value

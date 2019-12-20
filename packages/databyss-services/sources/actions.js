@@ -45,11 +45,12 @@ export function saveSource(sourceFields) {
   return async dispatch => {
     dispatch({
       type: SAVE_SOURCE,
-      payload: {},
+      payload: { source: sourceFields, id: sourceFields._id },
     })
     sources
       .setSource(sourceFields)
-      .then(() => {
+      .then(source => {
+        console.log(source)
         dispatch({
           type: CACHE_SOURCE,
           payload: { source: sourceFields, id: sourceFields._id },
@@ -62,7 +63,6 @@ export function saveSource(sourceFields) {
           'Source not saved',
           sourceFields._id
         )
-
         if (err.message === 'Failed to fetch') {
           _err = new NetworkUnavailableError('Network not available')
         }

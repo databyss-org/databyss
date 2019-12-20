@@ -28,22 +28,24 @@ import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
 const EditorPage = ({ children }) => {
   const [editorState, dispatchEditor] = useEditorContext()
-  const { setSource, getSources } = useSourceContext()
-  // turn the set and get as object properties
-  // add getSources as third source and use that to compare
+  const { getSource, setSource, getSources } = useSourceContext()
 
+  const { sources, blocks } = editorState
   /*
   checks to see if new source has been added
   adds the new source to the source provider
   */
-
   useEffect(
     () => {
       const _sourceDictionary = getSources()
-      const _sources = Object.keys(editorState.sources)
+      const _sources = Object.keys(sources)
       _sources.forEach(_refId => {
         if (!_sourceDictionary[_refId]) {
-          const _sourceFields = editorState.sources[_refId]
+          // TODO: NEED TO GET SOURCE FIRST
+          // if source doesnt exist
+          // need hook to load all sources from page
+
+          const _sourceFields = sources[_refId]
           const _source = {
             _id: _refId,
             text: {
@@ -57,7 +59,7 @@ const EditorPage = ({ children }) => {
         }
       })
     },
-    [editorState]
+    [sources]
   )
 
   const onActiveBlockIdChange = (id, editableState) =>
