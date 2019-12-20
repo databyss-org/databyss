@@ -10,7 +10,7 @@ const ErrorFallback = ({ error, message, ...others }) => {
     if (error instanceof ResourceNotFoundError) {
       _message = 'not found'
     } else if (error instanceof NetworkUnavailableError) {
-      _message = 'Please connect to the internet to use this feature'
+      _message = 'Network error'
     } else if (error instanceof NotAuthorizedError) {
       _message = 'Not Authorized, please log in'
     }
