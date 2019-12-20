@@ -7,6 +7,7 @@ import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import {
   getRawHtmlForBlock,
   getRangesForBlock,
+  entities,
 } from './../../state/page/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../../EditorProvider'
@@ -22,6 +23,7 @@ import {
   hasSelection,
   noAtomicInSelection,
   getSelectedBlocks,
+  isInlineSourceSelected,
 } from './../slateUtils'
 
 const schema = {
@@ -51,6 +53,7 @@ const SlateContentEditable = forwardRef(
       deleteBlockByKey,
       deleteBlocksByKeys,
       onNewBlockMenu,
+      onEditSource,
     },
     ref
   ) => {
@@ -276,8 +279,19 @@ const SlateContentEditable = forwardRef(
       if (hotKeys.isEsc(event)) {
         onNewBlockMenu(false, editor)
       }
+
+      if (isInlineSourceSelected(editor) && event.key === 'Enter') {
+        console.log(editor.value.anchorBlock.key)
+        const _refId = blocks[editor.value.anchorBlock.key].refId
+
+        onEditSource(_refId, blocks, editor)
+        // console.log(blocks[editor.value.anchorBlock.key].refId)
+        // console.log('DISPATCH SOURCE')
+        return event.preventDefault()
+      }
       const { fragment } = editor.value
       // check for selection
+
       if (hasSelection(editor.value)) {
         if (event.key === 'Backspace' && !noAtomicInSelection(editor.value)) {
           // EDGE CASE: prevent block from being deleted when empty block highlighted
@@ -392,9 +406,6 @@ const SlateContentEditable = forwardRef(
       return next()
     }
 
-    // const onRenderInline = (event, editor, next) => {
-    //   renderInline(event, editor, next)
-    // }
     return (
       <Editor
         value={_editableState.value}

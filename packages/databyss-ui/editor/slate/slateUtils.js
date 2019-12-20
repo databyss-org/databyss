@@ -326,3 +326,15 @@ export const newAtomicBlock = (id, type, text, marks) => {
   })
   return _block
 }
+
+export const isInlineSourceSelected = ({ value }) => {
+  if (
+    value.selection.focus.isInNode(value.anchorBlock) &&
+    value.anchorBlock.type === 'SOURCE' &&
+    !value.selection.focus.isAtStartOfNode(value.anchorBlock) &&
+    !value.selection.focus.isAtEndOfNode(value.anchorBlock)
+  ) {
+    return true
+  }
+  return false
+}

@@ -20,8 +20,6 @@ const EditorInline = React.forwardRef(
 
     const backgroundColor = isSelected ? 'background.3' : ''
 
-    const [blockSelected, setBlockSelected] = useState(false)
-
     useEffect(
       () => {
         if (editor && !refId) {
@@ -48,7 +46,6 @@ const EditorInline = React.forwardRef(
     }
 
     const onEditSource = () => {
-      //  editor.blur()
       dispatchNav(
         showModal('SOURCE', {
           sourceId: refId,
@@ -58,28 +55,16 @@ const EditorInline = React.forwardRef(
     }
 
     const onClick = () => {
-      if (!blockSelected) {
-        return setBlockSelected(true)
-      }
       if (node.type === 'SOURCE' && isSelected) {
         onEditSource()
-        setBlockSelected(false)
       }
     }
-
-    useEffect(
-      () => {
-        if (blockSelected && blockSelected != isSelected) {
-          setBlockSelected(blockSelected)
-        }
-      },
-      [isSelected]
-    )
 
     return (
       <Span
         {...others}
-        onClick={onClick}
+        //  onClick={onClick}
+        onMouseDown={onClick}
         ref={ref}
         id="test"
         borderRadius={5}

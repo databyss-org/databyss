@@ -154,13 +154,13 @@ context('Editor', () => {
 // -- check for enter on first line test
 // -- focus editor when source is updated
 
-// enter when atomic highlighted should launch modal
-// click on atomic should launch modal
-// padding for cursor after atomic block on same line
-// transparent background on atomic
+// -- enter when atomic highlighted should launch modal
+// -- click on atomic should launch modal
+// -- padding for cursor after atomic block on same line
+// -- transparent background on atomic
 // checkout site in mobile and make not of things that dont work
 // add clean slate in demo version
-// delete atomic pages
+// -- delete atomic pages
 
 // use notify decorator to catch a server not found and pop up dialog that says "this story requires server, see readme"
 // use notify provider
