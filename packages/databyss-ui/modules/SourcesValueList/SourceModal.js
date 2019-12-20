@@ -6,7 +6,7 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import SourcesValueList from './SourcesValueList'
 
 const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
-  const [, setSource] = useSourceContext()
+  const { setSource } = useSourceContext()
   const [values, setValues] = useState(null)
   const [, dispatchNav] = useNavigationContext()
 

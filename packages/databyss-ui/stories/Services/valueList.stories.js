@@ -49,7 +49,7 @@ const ControlList = ({ children, ...others }) => (
 
 const SourceForm = withSource(({ source }) => {
   const [values, setValues] = useState(source)
-  const [, setSource] = useSourceContext()
+  const { setSource } = useSourceContext()
 
   const onChange = _value => {
     // update internal state
@@ -133,7 +133,7 @@ const SourceForm = withSource(({ source }) => {
 })
 
 const SourcesDemo = () => {
-  const [, setSource] = useSourceContext()
+  const { setSource } = useSourceContext()
 
   // set initial value
   useEffect(() => {

@@ -28,12 +28,9 @@ import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
 const EditorPage = ({ children }) => {
   const [editorState, dispatchEditor] = useEditorContext()
-  const [getSource, setSource] = useSourceContext()
+  const { setSource, getSources } = useSourceContext()
   // turn the set and get as object properties
   // add getSources as third source and use that to compare
-
-  // make this a use ref instead
-  const [sources, setSources] = useState(editorState.sources)
 
   /*
   checks to see if new source has been added
@@ -42,11 +39,10 @@ const EditorPage = ({ children }) => {
 
   useEffect(
     () => {
+      const _sourceDictionary = getSources()
       const _sources = Object.keys(editorState.sources)
       _sources.forEach(_refId => {
-        console.log(getSource(_refId))
-        if (!getSource(_refId)) {
-          // get properties
+        if (!_sourceDictionary[_refId]) {
           const _sourceFields = editorState.sources[_refId]
           const _source = {
             _id: _refId,
@@ -57,36 +53,10 @@ const EditorPage = ({ children }) => {
             citations: [{ textValue: '', ranges: [] }],
             authors: [{ firstName: '', lastName: '' }],
           }
-          //  console.log(_source)
-          // setSource(_source)
+          setSource(_source)
         }
-        // console.log(getSource(source))
       })
-      //  console.log(Object.keys(editorState.sources))
-      // if (!_.isEqual(editorState.sources, sources)) {
-      //   // check if sources added
-      //   if (
-      //     Object.keys(editorState.sources).length > Object.keys(sources).length
-      //   ) {
-      //     const _newSource = difference(editorState.sources, sources)
-      //     const _refId = Object.keys(_newSource)[0]
-      //     const _sourceFields = _newSource[_refId]
-      //     // initialize with empty value
-      //     const _source = {
-      //       _id: _refId,
-      //       text: {
-      //         textValue: _sourceFields.textValue,
-      //         ranges: _sourceFields.ranges,
-      //       },
-      //       citations: [{ textValue: '', ranges: [] }],
-      //       authors: [{ firstName: '', lastName: '' }],
-      //     }
-      //     setSource(_source)
-      //   }
-      //   setSources(editorState.sources)
-      // }
     },
-    // update this to just sources
     [editorState]
   )
 

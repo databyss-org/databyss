@@ -34,8 +34,14 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     }
   }
 
+  const getSources = () => {
+    return state.cache
+  }
+
   return (
-    <SourceContext.Provider value={[getSource, setSource, removeCacheValue]}>
+    <SourceContext.Provider
+      value={{ getSource, setSource, removeCacheValue, getSources }}
+    >
       {children}
     </SourceContext.Provider>
   )
@@ -49,7 +55,7 @@ SourceProvider.defaultProps = {
 }
 
 export const withSource = Wrapped => ({ sourceId, ...others }) => {
-  const [getSource] = useSourceContext()
+  const { getSource } = useSourceContext()
 
   const source = getSource(sourceId)
 
