@@ -42,6 +42,7 @@ const SourcesCache = withSources(({}) => {})
 const EditorLoader = withPages(({ pages, children }) => {
   const [state, dispatch] = usePageContext()
   const { getAllSources } = useSourceContext()
+
   useEffect(
     () => {
       getAllSources()

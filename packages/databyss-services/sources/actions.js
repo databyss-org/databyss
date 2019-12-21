@@ -51,7 +51,6 @@ export function saveSource(sourceFields) {
     sources
       .setSource(sourceFields)
       .then(source => {
-        console.log(source)
         dispatch({
           type: CACHE_SOURCE,
           payload: { source: sourceFields, id: sourceFields._id },
@@ -88,7 +87,6 @@ export function removeSourceFromCache(id) {
 }
 
 export function fetchAllSources() {
-  console.log('here')
   return async dispatch => {
     dispatch({
       type: FETCH_SOURCE,
