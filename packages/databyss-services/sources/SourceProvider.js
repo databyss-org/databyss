@@ -4,7 +4,12 @@ import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import reducer, { initialState } from './reducer'
 
-import { fetchSource, saveSource, removeSourceFromCache } from './actions'
+import {
+  fetchSource,
+  saveSource,
+  removeSourceFromCache,
+  fetchAllSources,
+} from './actions'
 
 const useReducer = createReducer()
 
@@ -27,6 +32,12 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     return null
   }
 
+  const getAllSources = () => {
+    dispatch(fetchAllSources())
+
+    //  console.log('here')
+  }
+
   const removeCacheValue = id => {
     if (state.cache[id]) {
       dispatch(removeSourceFromCache(id))
@@ -39,7 +50,13 @@ const SourceProvider = ({ children, initialState, reducer }) => {
 
   return (
     <SourceContext.Provider
-      value={{ getSource, setSource, removeCacheValue, getSources }}
+      value={{
+        getSource,
+        setSource,
+        removeCacheValue,
+        getSources,
+        getAllSources,
+      }}
     >
       {children}
     </SourceContext.Provider>
@@ -62,6 +79,17 @@ export const withSource = Wrapped => ({ sourceId, ...others }) => {
   }
 
   return source ? <Wrapped source={source} {...others} /> : <Loading />
+}
+
+export const withSources = Wrapped => ({ sourceList, ...others }) => {
+  const { getSourcesFromList } = useSourceContext()
+  const sources = []
+
+  // if (source instanceof Error) {
+  //   return <ErrorFallback error={source} />
+  // }
+
+  return sources ? <Wrapped sources={sources} {...others} /> : <Loading />
 }
 
 export default SourceProvider

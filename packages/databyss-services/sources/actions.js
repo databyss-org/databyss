@@ -7,6 +7,7 @@ import {
   SAVE_SOURCE,
   CACHE_SOURCE,
   REMOVE_SOURCE,
+  GET_ALL_SOURCES,
 } from './constants'
 
 export function fetchSource(id) {
@@ -82,6 +83,22 @@ export function removeSourceFromCache(id) {
     dispatch({
       type: REMOVE_SOURCE,
       payload: { id },
+    })
+  }
+}
+
+export function fetchAllSources() {
+  console.log('here')
+  return async dispatch => {
+    dispatch({
+      type: FETCH_SOURCE,
+      payload: {},
+    })
+    sources.getSources().then(sources => {
+      dispatch({
+        type: GET_ALL_SOURCES,
+        payload: { sources },
+      })
     })
   }
 }

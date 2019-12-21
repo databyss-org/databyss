@@ -72,4 +72,24 @@ router.get(
   }
 )
 
+router.get(
+  '/',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  async (req, res) => {
+    try {
+      const sourceResponse = await Source.find({ account: req.account._id })
+
+      if (!sourceResponse) {
+        return res
+          .status(400)
+          .json({ msg: 'There are no sources associated with this account' })
+      }
+      return res.json(sourceResponse)
+    } catch (err) {
+      console.error(err.message)
+      return res.status(500).send('Server Error')
+    }
+  }
+)
+
 module.exports = router

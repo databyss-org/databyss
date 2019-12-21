@@ -7,7 +7,10 @@ import PageProvider, {
   withPages,
 } from '@databyss-org/services/pages/PageProvider'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import SourceProvider from '@databyss-org/services/sources/SourceProvider'
+import SourceProvider, {
+  withSources,
+  useSourceContext,
+} from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
@@ -33,17 +36,21 @@ const Box = ({ children }) => (
   </View>
 )
 
+const SourcesCache = withSources(({}) => {})
+
 // add with pages here
 const EditorLoader = withPages(({ pages, children }) => {
   const [state, dispatch] = usePageContext()
+  const { getAllSources } = useSourceContext()
   useEffect(
     () => {
+      getAllSources()
       dispatch(seedPage(seedState))
     },
     [dispatch]
   )
 
-  const pagesRender = state.pages.map(p => (
+  const pagesRender = pages.map(p => (
     <View key={p._id}>
       <Button onPress={() => dispatch(loadPage(p._id))}>
         <Text>load page {p._id}</Text>
