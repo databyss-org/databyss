@@ -78,18 +78,5 @@ export function getPages() {
         payload: res,
       })
     })
-    // .catch(err => {
-    //   console.log('DOES IT GET HERE')
-    //   let _err = new ResourceNotFoundError('Pages not found')
-    //   if (err.message === 'Failed to fetch') {
-    //     _err = new NetworkUnavailableError('Network not available')
-    //   }
-
-    //   dispatch({
-    //     type: PAGES_LOADED,
-    //     payload: _err,
-    //   })
-    //   //  console.log(_err)
-    // })
   }
 }

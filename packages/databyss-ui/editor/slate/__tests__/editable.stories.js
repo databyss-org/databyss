@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react'
 import { View, Grid } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { modalDict } from '@databyss-org/ui/components/Navigation/NavigationProvider/modalDict'
+import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import fetchMock from 'fetch-mock'
 
@@ -86,7 +86,7 @@ storiesOf('Cypress//Tests', module)
       }, _source)
     return (
       <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-        <NavigationProvider modalDict={modalDict}>
+        <NavigationProvider componentMap={componentMap}>
           <EditorProvider
             initialState={initialState}
             editableReducer={slateReducer}
@@ -109,7 +109,7 @@ storiesOf('Cypress//Tests', module)
     }, data)
     return (
       <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-        <NavigationProvider modalDict={modalDict}>
+        <NavigationProvider componentMap={componentMap}>
           <EditorProvider
             initialState={emptyInitialState}
             editableReducer={slateReducer}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { color, border, space } from 'styled-system'
 import styled from '@emotion/styled'
 import { Button, Icon } from '@databyss-org/ui/primitives'
-import Pen from '@databyss-org/ui/assets/pen.svg'
+import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { showModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
 import { updateSource } from './state/page/actions'
@@ -37,6 +37,7 @@ const EditorInline = React.forwardRef(
 
     const onUpdateSource = source => {
       // return a list of blocks containing the source that will be updated
+
       if (source) {
         const _idList = Object.keys(blocks).filter(
           block => blocks[block].refId === source._id
@@ -47,9 +48,12 @@ const EditorInline = React.forwardRef(
 
     const onEditSource = () => {
       dispatchNav(
-        showModal('SOURCE', {
-          sourceId: refId,
-          onUpdateSource,
+        showModal({
+          component: 'SOURCE',
+          props: {
+            sourceId: refId,
+            onUpdateSource,
+          },
         })
       )
     }
@@ -66,12 +70,8 @@ const EditorInline = React.forwardRef(
         //  onClick={onClick}
         onMouseDown={onClick}
         ref={ref}
-        id="test"
         borderRadius={5}
-        border="1px"
-        p="2px"
-        pl="4px"
-        pr="4px"
+        p="tiny"
         backgroundColor={backgroundColor}
       >
         {children}
@@ -86,7 +86,7 @@ const EditorInline = React.forwardRef(
             >
               <Button variant="editSource" data-test-atomic-edit="open">
                 <Icon sizeVariant="tiny" color="background.5">
-                  <Pen />
+                  <PenSVG />
                 </Icon>
               </Button>
             </Span>

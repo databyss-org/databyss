@@ -12,21 +12,22 @@ const ControlList = ({ children, ...others }) => (
   </List>
 )
 
-const SourcesValueList = ({ source, onValueChange }) => {
+const SourcesValueList = ({ source, onValueChange, onValueBlur }) => {
   const [values, setValues] = useState(source)
 
   const onChange = _value => {
-    //  onValueChange(_value)
+    onValueChange(_value)
     setValues(_value)
-    if (!_.isEqual(_value, values) && values) {
-      onValueChange(_value)
-    }
+    // if (!_.isEqual(_value, values) && values) {
+    //   onValueChange(_value)
+    // }
   }
 
   const onBlur = () => {
-    if (!_.isEqual(source, values) && values) {
-      //  onValueChange(values)
-    }
+    onValueBlur()
+    // if (!_.isEqual(source, values) && values) {
+    //    onValueChange(values)
+    // }
   }
 
   return (

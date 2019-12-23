@@ -76,11 +76,7 @@ const buttonVariants = {
   },
   editSource: {
     display: 'inline-block',
-    pl: '4px',
-    pt: '4px',
-    pb: '4px',
-    pr: '4px',
-    borderRadius: '50%',
+    padding: 'extraSmall',
   },
 }
 

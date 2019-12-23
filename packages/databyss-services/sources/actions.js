@@ -48,32 +48,12 @@ export function saveSource(sourceFields) {
       type: SAVE_SOURCE,
       payload: { source: sourceFields, id: sourceFields._id },
     })
-    sources
-      .setSource(sourceFields)
-      .then(() => {
-        dispatch({
-          type: CACHE_SOURCE,
-          payload: { source: sourceFields, id: sourceFields._id },
-        })
+    sources.setSource(sourceFields).then(() => {
+      dispatch({
+        type: CACHE_SOURCE,
+        payload: { source: sourceFields, id: sourceFields._id },
       })
-      // check for type of error
-      // send correct error class
-      .catch(err => {
-        let _err = new ResourceNotFoundError(
-          'Source not saved',
-          sourceFields._id
-        )
-        if (err.message === 'Failed to fetch') {
-          _err = new NetworkUnavailableError('Network not available')
-        }
-        dispatch({
-          type: CACHE_SOURCE,
-          payload: {
-            source: _err,
-            id: sourceFields._id,
-          },
-        })
-      })
+    })
   }
 }
 

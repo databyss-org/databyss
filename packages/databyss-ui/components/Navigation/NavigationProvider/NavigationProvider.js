@@ -6,7 +6,7 @@ const useReducer = createReducer()
 
 export const NavigationContext = createContext()
 
-const NavigationProvider = ({ children, modalDict }) => {
+const NavigationProvider = ({ children, componentMap }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
   return (
@@ -14,7 +14,7 @@ const NavigationProvider = ({ children, modalDict }) => {
       {children}
 
       {state.modals.map(modal => {
-        const ModalComponent = modalDict[modal.component]
+        const ModalComponent = componentMap[modal.component]
         return <ModalComponent visible={modal.visible} {...modal.props} />
       })}
     </NavigationContext.Provider>

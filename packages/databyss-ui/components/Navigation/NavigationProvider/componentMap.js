@@ -1,5 +1,5 @@
 import SourceModal from '@databyss-org/ui/modules/SourcesValueList/SourceModal'
 
-export const modalDict = {
+export const componentMap = {
   SOURCE: SourceModal,
 }

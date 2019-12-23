@@ -13,7 +13,7 @@ import SourceProvider, {
 import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
-import { modalDict } from '@databyss-org/ui/components/Navigation/NavigationProvider/modalDict'
+import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
 import { loadPage, seedPage } from '@databyss-org/services/pages/actions'
 import { initialState } from '@databyss-org/services/pages/reducer'
 
@@ -75,7 +75,7 @@ const EditorLoader = withPages(({ pages, children }) => {
 const ProviderDecorator = storyFn => (
   <PageProvider initialState={initialState}>
     <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-      <NavigationProvider modalDict={modalDict}>
+      <NavigationProvider componentMap={componentMap}>
         <EditorLoader>{storyFn()}</EditorLoader>
       </NavigationProvider>
     </SourceProvider>

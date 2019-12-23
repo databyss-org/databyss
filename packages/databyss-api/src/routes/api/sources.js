@@ -15,11 +15,9 @@ router.post(
   async (req, res) => {
     const { text, authors, citations, _id } = req.body.data
     const sourceFields = {
-      text: !_.isEmpty(text) ? text : {},
-      citations: !_.isEmpty(citations) ? citations : [],
-      authors: !_.isEmpty(authors)
-        ? authors
-        : [{ firstName: '', lastName: '' }],
+      text,
+      citations,
+      authors,
       account: req.account.id.toString(),
       _id,
     }

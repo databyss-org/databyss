@@ -39,10 +39,6 @@ const EditorPage = ({ children }) => {
       const _sources = Object.keys(sources)
       _sources.forEach(_refId => {
         if (!_sourceDictionary[_refId]) {
-          // TODO: NEED TO GET SOURCE FIRST
-          // if source doesnt exist
-          // need hook to load all sources from page
-
           const _sourceFields = sources[_refId]
           const _source = {
             _id: _refId,
@@ -77,8 +73,8 @@ const EditorPage = ({ children }) => {
   const onBackspace = (blockProperties, editableState) => {
     dispatchEditor(backspace(blockProperties, editableState))
   }
-  const onSetBlockType = (type, id, editableState, setState) => {
-    dispatchEditor(setBlockType(type, id, editableState, setState))
+  const onSetBlockType = (type, id, editableState) => {
+    dispatchEditor(setBlockType(type, id, editableState))
   }
 
   const onBlockBlur = (id, text, editableState) => {
@@ -133,9 +129,12 @@ const EditorPage = ({ children }) => {
       }
     }
     dispatchNav(
-      showModal('SOURCE', {
-        sourceId: refId,
-        onUpdateSource,
+      showModal({
+        component: 'SOURCE',
+        props: {
+          sourceId: refId,
+          onUpdateSource,
+        },
       })
     )
   }

@@ -13,10 +13,14 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
   const onChange = _values => {
     // update internal state
     setValues(_values)
-    // if (values) {
-    //   // updates in source provider
-    //   setSource(_values)
-    // }
+    if (values) {
+      // updates in source provider
+      // setSource(_values)
+    }
+  }
+
+  const onBlur = () => {
+    //  setSource(values)
   }
 
   const onDismiss = () => {
@@ -38,7 +42,11 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
       title="Edit Source"
       dismissChild="done"
     >
-      <SourcesValueList onValueChange={onChange} sourceId={sourceId} />
+      <SourcesValueList
+        onValueChange={onChange}
+        sourceId={sourceId}
+        onValueBlur={onBlur}
+      />
     </ModalWindow>
   )
 }
