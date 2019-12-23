@@ -50,7 +50,7 @@ export function saveSource(sourceFields) {
     })
     sources
       .setSource(sourceFields)
-      .then(source => {
+      .then(() => {
         dispatch({
           type: CACHE_SOURCE,
           payload: { source: sourceFields, id: sourceFields._id },

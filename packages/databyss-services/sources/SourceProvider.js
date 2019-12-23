@@ -44,9 +44,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     }
   }
 
-  const getSources = () => {
-    return state.cache
-  }
+  const getSources = () => state.cache
 
   return (
     <SourceContext.Provider
@@ -79,17 +77,6 @@ export const withSource = Wrapped => ({ sourceId, ...others }) => {
   }
 
   return source ? <Wrapped source={source} {...others} /> : <Loading />
-}
-
-export const withSources = Wrapped => ({ sourceList, ...others }) => {
-  const { getSourcesFromList } = useSourceContext()
-  const sources = []
-
-  // if (source instanceof Error) {
-  //   return <ErrorFallback error={source} />
-  // }
-
-  return sources ? <Wrapped sources={sources} {...others} /> : <Loading />
 }
 
 export default SourceProvider

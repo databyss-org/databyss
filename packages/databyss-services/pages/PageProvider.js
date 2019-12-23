@@ -1,8 +1,9 @@
 import React, { createContext, useContext } from 'react'
 import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
+import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
-import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
+
 import { getPages } from './actions'
 
 const useReducer = createReducer()

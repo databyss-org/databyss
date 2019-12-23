@@ -1,6 +1,4 @@
 import cloneDeep from 'clone-deep'
-import { ResourceNotFoundError } from '@databyss-org/services/lib/ResourceNotFoundError'
-import { NetworkUnavailableError } from '@databyss-org/services/lib/NetworkUnavailableError'
 import * as services from './'
 
 import {

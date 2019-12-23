@@ -7,7 +7,6 @@ import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import {
   getRawHtmlForBlock,
   getRangesForBlock,
-  entities,
 } from './../../state/page/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../../EditorProvider'
@@ -221,8 +220,7 @@ const SlateContentEditable = forwardRef(
     }
 
     const editSource = (_id, editor) => {
-      let _refId = blocksRef.current[_id].refId
-
+      const _refId = blocksRef.current[_id].refId
       onEditSource(_refId, blocksRef.current, editor)
     }
     const onKeyUp = (event, editor, next) => {
@@ -295,7 +293,7 @@ const SlateContentEditable = forwardRef(
       }
 
       if (isInlineSourceSelected(editor) && event.key === 'Enter') {
-        let _id = editor.value.anchorBlock.key
+        const _id = editor.value.anchorBlock.key
         editSource(_id, editor)
         return event.preventDefault()
       }

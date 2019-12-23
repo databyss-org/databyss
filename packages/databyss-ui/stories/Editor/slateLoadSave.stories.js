@@ -8,18 +8,13 @@ import PageProvider, {
 } from '@databyss-org/services/pages/PageProvider'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import SourceProvider, {
-  withSources,
   useSourceContext,
 } from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
 import { modalDict } from '@databyss-org/ui/components/Navigation/NavigationProvider/modalDict'
-import {
-  loadPage,
-  seedPage,
-  getPages,
-} from '@databyss-org/services/pages/actions'
+import { loadPage, seedPage } from '@databyss-org/services/pages/actions'
 import { initialState } from '@databyss-org/services/pages/reducer'
 
 import SlateContentEditable from '@databyss-org/ui/editor/slate/page/ContentEditable'
@@ -35,8 +30,6 @@ const Box = ({ children }) => (
     {children}
   </View>
 )
-
-const SourcesCache = withSources(({}) => {})
 
 // add with pages here
 const EditorLoader = withPages(({ pages, children }) => {

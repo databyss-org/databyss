@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import _ from 'lodash'
+import React, { useEffect } from 'react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { showModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
 import { useEditorContext } from './EditorProvider'
-import { difference } from './difference'
 
 // generic stuff in services/lib
 
@@ -28,9 +26,9 @@ import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
 const EditorPage = ({ children }) => {
   const [editorState, dispatchEditor] = useEditorContext()
-  const { getSource, setSource, getSources } = useSourceContext()
+  const { setSource, getSources } = useSourceContext()
 
-  const { sources, blocks } = editorState
+  const { sources } = editorState
   /*
   checks to see if new source has been added
   adds the new source to the source provider
