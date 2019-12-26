@@ -4,6 +4,7 @@ import { ModalWindow } from '@databyss-org/ui/primitives'
 import { hideModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import SourcesValueList from './SourcesValueList'
+import TestSource from './TestSourcev2'
 
 const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
   const { setSource } = useSourceContext()
@@ -13,14 +14,16 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
   const onChange = _values => {
     // update internal state
     setValues(_values)
-    if (values) {
+    if (_values) {
       // updates in source provider
-      // setSource(_values)
+      //  setSource(_values)
     }
   }
 
   const onBlur = () => {
-    //  setSource(values)
+    if (values) {
+      setSource(values)
+    }
   }
 
   const onDismiss = () => {
@@ -31,8 +34,10 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
     // hide modal in navProvider
     dispatchNav(hideModal())
     // update to editor provider
-    onUpdateSource(values)
+    // onUpdateSource(values)
   }
+
+  console.log(document.activeElement)
 
   return (
     <ModalWindow
@@ -42,11 +47,18 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
       title="Edit Source"
       dismissChild="done"
     >
-      <SourcesValueList
+      <TestSource
         onValueChange={onChange}
         sourceId={sourceId}
         onValueBlur={onBlur}
       />
+
+      {/* <SourcesValueList
+        onValueChange={onChange}
+        sourceId={sourceId}
+        onValueBlur={onBlur}
+        value={values}
+      /> */}
     </ModalWindow>
   )
 }

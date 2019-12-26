@@ -13,6 +13,11 @@ export const ValueListContext = createContext()
 // values is dicitonary
 export const ValueListProvider = ({ children, values, onChange }) => {
   const onItemChange = (path, value) => {
+    const _value = _.get(values, path)
+    if (_.isEqual(_value, value)) {
+      return
+    }
+
     // apply changes to values, cloned to preserve immutability
     const _values = cloneDeep(values)
     // lodash.set:
@@ -49,9 +54,14 @@ export const ValueListItem = ({ children, path, ...others }) => {
   // If the resolved value is undefined, the defaultValue is returned in its place.
   // https://lodash.com/docs/4.17.15#get
 
+  console.log(value)
+
   return React.cloneElement(React.Children.only(children), {
-    value,
-    onChange: _value => onItemChange(path, _value),
+    value: value,
+    onChange: _value => {
+      console.log(_value)
+      return onItemChange(path, _value)
+    },
     ...others,
   })
 }

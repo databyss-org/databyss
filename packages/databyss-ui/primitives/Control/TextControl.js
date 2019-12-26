@@ -54,8 +54,8 @@ const TextControl = ({
 
   useEffect(() => {
     if (focusOnMount && !active && inputRef.current) {
+      console.log('is focus')
       setActive(true)
-      //   console.log(inputRef.current)
       setTimeout(() => inputRef.current.focus(), 10)
     }
   }, [])

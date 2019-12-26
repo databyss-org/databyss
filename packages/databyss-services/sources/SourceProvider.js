@@ -20,8 +20,11 @@ const SourceProvider = ({ children, initialState, reducer }) => {
 
   // provider methods
   const setSource = source => {
+    if (_.isEqual(state.cache[source._id], source)) {
+      return
+    }
     // add or update source and set cache value
-    dispatch(saveSource(source))
+    setTimeout(() => dispatch(saveSource(source)), 10)
   }
 
   const getSource = id => {

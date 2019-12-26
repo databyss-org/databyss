@@ -418,7 +418,7 @@ const SlateContentEditable = forwardRef(
       <Editor
         value={_editableState.value}
         ref={forkRef(ref, editableRef)}
-        autoFocus
+        // autoFocus
         onChange={onChange}
         renderBlock={renderBlock}
         renderInline={renderInline}

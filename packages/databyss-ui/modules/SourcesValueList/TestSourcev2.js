@@ -12,12 +12,19 @@ const ControlList = ({ children, ...others }) => (
   </List>
 )
 
-const SourcesValueList = ({ source, onValueChange, onValueBlur, value }) => {
-  //  const [values, setValues] = useState(source)
+const SourcesValueList = ({ source, onValueChange, onValueBlur }) => {
+  const [values, setValues] = useState(source)
+
+  // useEffect(() => {
+  //   console.log('mounted')
+  //   onValueChange(source)
+
+  //   //  console.log(source)
+  // }, [])
 
   const onChange = _value => {
     onValueChange(_value)
-    //    setValues(_value)
+    setValues(_value)
     // if (!_.isEqual(_value, values) && values) {
     //   onValueChange(_value)
     // }
@@ -30,10 +37,9 @@ const SourcesValueList = ({ source, onValueChange, onValueBlur, value }) => {
     // }
   }
 
-  const initValue = value || source
-
+  console.log('values', values)
   return (
-    <ValueListProvider onChange={onChange} values={initValue}>
+    <ValueListProvider onChange={onChange} values={values}>
       <Grid>
         <View
           paddingVariant="none"
@@ -42,6 +48,18 @@ const SourcesValueList = ({ source, onValueChange, onValueBlur, value }) => {
           width="100%"
         >
           <ControlList verticalItemPadding="tiny">
+            <ValueListItem path="citations[0]">
+              <TextControl
+                labelProps={{
+                  width: '25%',
+                }}
+                label="citations"
+                id="citations"
+                gridFlexWrap="nowrap"
+                paddingVariant="tiny"
+                onBlur={onBlur}
+              />
+            </ValueListItem>
             <ValueListItem path="text">
               <TextControl
                 labelProps={{
@@ -49,46 +67,8 @@ const SourcesValueList = ({ source, onValueChange, onValueBlur, value }) => {
                 }}
                 label="Name"
                 id="name"
-                gridFlexWrap="nowrap"
+                rich
                 focusOnMount
-                paddingVariant="tiny"
-                rich
-                onBlur={onBlur}
-              />
-            </ValueListItem>
-            <ValueListItem path="citations[0]">
-              <TextControl
-                labelProps={{
-                  width: '25%',
-                }}
-                label="Citation"
-                id="citation"
-                rich
-                gridFlexWrap="nowrap"
-                multiline
-                paddingVariant="tiny"
-                onBlur={onBlur}
-              />
-            </ValueListItem>
-            <ValueListItem path="authors[0].firstName">
-              <TextControl
-                labelProps={{
-                  width: '25%',
-                }}
-                label="Author (First Name)"
-                id="firstName"
-                gridFlexWrap="nowrap"
-                paddingVariant="tiny"
-                onBlur={onBlur}
-              />
-            </ValueListItem>
-            <ValueListItem path="authors[0].lastName">
-              <TextControl
-                labelProps={{
-                  width: '25%',
-                }}
-                label="Author (Last Name)"
-                id="lastName"
                 gridFlexWrap="nowrap"
                 paddingVariant="tiny"
                 onBlur={onBlur}
