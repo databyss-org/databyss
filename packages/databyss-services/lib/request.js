@@ -4,16 +4,14 @@ import { ResourceNotFoundError } from './ResourceNotFoundError'
 import { NotAuthorizedError } from './NotAuthorizedError'
 import { NetworkUnavailableError } from './NetworkUnavailableError'
 
-export class UnauthorizedError extends Error {}
-
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response
   }
   if (response.status === 401) {
     deleteAuthToken()
-    window.location = '/login'
-    throw new UnauthorizedError('Unauthorized')
+    // window.location = '/login'
+    throw new NotAuthorizedError('Unauthorized')
   }
   if (response.status === 404) {
     throw new ResourceNotFoundError('not found')
@@ -37,17 +35,12 @@ function parseResponse(responseIsJson) {
 
 function request(uri, options, responseIsJson) {
   const promise = fetch(uri, options)
+    .catch(err => {
+      throw new NetworkUnavailableError(err)
+    })
     .then(checkStatus)
     .then(parseResponse(responseIsJson))
-    .catch(err => {
-      let _err = err
-      if (_err.message === "Cannot read property 'token' of null") {
-        _err = new NotAuthorizedError('not authorized')
-      } else if (_err.message === 'Failed to fetch') {
-        _err = new NetworkUnavailableError('not connected')
-      }
-      return _err
-    })
+
   return promise
 }
 

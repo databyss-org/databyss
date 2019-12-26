@@ -23,7 +23,7 @@ const TextControl = ({
   rich,
   modal,
   multiline,
-  autoFocus,
+  focusOnMount,
   css,
   ...others
 }) => {
@@ -52,16 +52,13 @@ const TextControl = ({
     zIndex: active ? 2 : 'unset',
   }
 
-  useEffect(
-    () => {
-      if (autoFocus && !active && inputRef.current) {
-        setActive(true)
-        //   console.log(inputRef.current)
-        setTimeout(() => inputRef.current.focus(), 10)
-      }
-    },
-    [autoFocus, inputRef]
-  )
+  useEffect(() => {
+    if (focusOnMount && !active && inputRef.current) {
+      setActive(true)
+      //   console.log(inputRef.current)
+      setTimeout(() => inputRef.current.focus(), 10)
+    }
+  }, [])
 
   const TextInputComponent = rich ? RichTextInput : TextInput
 
@@ -78,7 +75,7 @@ const TextControl = ({
         id={id}
         ref={inputRef}
         active={active}
-        autoFocus={autoFocus}
+        autoFocus={focusOnMount}
         onBlur={() => {
           setTimeout(() => setActive(false), 50)
         }}

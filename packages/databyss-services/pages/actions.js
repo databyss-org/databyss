@@ -72,11 +72,19 @@ export function getPages() {
       type: FETCHING_PAGES,
       payload: {},
     })
-    services.getAllPages().then(res => {
-      dispatch({
-        type: PAGES_LOADED,
-        payload: res,
+    services
+      .getAllPages()
+      .then(res => {
+        dispatch({
+          type: PAGES_LOADED,
+          payload: res,
+        })
       })
-    })
+      .catch(e => {
+        dispatch({
+          type: PAGES_LOADED,
+          payload: e,
+        })
+      })
   }
 }
