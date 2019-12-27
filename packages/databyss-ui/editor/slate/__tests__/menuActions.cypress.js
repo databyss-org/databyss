@@ -21,6 +21,7 @@ context('Editor', () => {
 
   it('it should open the menu, display actions and select source', () => {
     cy.get('@editor')
+      .focus()
       .get('[data-test-block-menu="open"]')
       .click()
       .get('[data-test-block-menu="SOURCE"]')
@@ -46,6 +47,9 @@ context('Editor', () => {
 
   it('it should open the menu, display actions and select tag', () => {
     cy.get('@editor')
+      //  .focus()
+      // .type(' ')
+      // .type('{backspace}')
       .get('[data-test-block-menu="open"]')
       .click()
       .get('[data-test-block-menu="TOPIC"]')
@@ -71,6 +75,7 @@ context('Editor', () => {
 
   it('it should open the menu, display actions and select location', () => {
     cy.get('@editor')
+      .focus()
       .get('[data-test-block-menu="open"]')
       .click()
       .get('[data-test-block-menu="LOCATION"]')
@@ -98,6 +103,7 @@ context('Editor', () => {
 
   it('only appear when the proceeding line is blank', () => {
     cy.get('@editor')
+      .focus()
       .get('[data-test-block-menu="open"]')
       .click()
     cy.get('@editor')

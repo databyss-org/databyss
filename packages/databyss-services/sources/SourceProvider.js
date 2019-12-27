@@ -28,8 +28,8 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     // add or update source and set cache value
 
     // add set timeout to prevent focus issue with line content editable on tab
-    // setTimeout(() => dispatch(saveSource(source)), 1000)
-    window.requestAnimationFrame(() => dispatch(saveSource(source)))
+    setTimeout(() => dispatch(saveSource(source)), 10)
+    // window.requestAnimationFrame(() => dispatch(saveSource(source)))
   }
 
   const getSource = id => {

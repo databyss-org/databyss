@@ -290,8 +290,8 @@ const onUpdateSource = (source, idList) => (editor, value, next) => {
     editor.replaceNodeByKey(id, _tempNode)
   })
 
-  window.requestAnimationFrame(() => editor.focus())
-  // setTimeout(() => editor.focus(), 10)
+  // window.requestAnimationFrame(() => editor.focus())
+  setTimeout(() => editor.focus(), 10)
   next(editor, value)
 }
 

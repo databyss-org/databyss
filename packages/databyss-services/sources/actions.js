@@ -41,7 +41,9 @@ export function saveSource(sourceFields) {
       type: SAVE_SOURCE,
       payload: { source: sourceFields, id: sourceFields._id },
     })
-    sources.setSource(sourceFields).then(() => {
+    sources.setSource(sourceFields).then(err => {
+      console.log(sourceFields)
+      console.log(err)
       dispatch({
         type: CACHE_SOURCE,
         payload: { source: sourceFields, id: sourceFields._id },

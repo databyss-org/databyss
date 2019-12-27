@@ -221,6 +221,7 @@ context('Editor', () => {
 
   it('should toggle a location mark and tag block as location', () => {
     cy.get('@editor')
+      .focus()
       .toggleLocation()
       .type('this whole block should get tagged as a location')
       .newLine()

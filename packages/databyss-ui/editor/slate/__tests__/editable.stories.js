@@ -51,7 +51,7 @@ const EditableTest = () => {
   return (
     <Grid>
       <Box mb="medium" pt="medium" maxWidth="500px" flexShrink={1}>
-        <EditorPage>
+        <EditorPage autoFocus>
           <ContentEditable onDocumentChange={setSlateDocument} />
         </EditorPage>
       </Box>
@@ -73,11 +73,12 @@ storiesOf('Cypress//Tests', module)
       .restore()
       .post((url, opt) => {
         if (url === 'http://localhost:5000/api/sources') {
+          console.log(opt.body)
           data = JSON.parse(opt.body).data
           return true
         }
         return null
-      }, data)
+      }, 200)
       .get(url => {
         if (url.includes('http://localhost:5000/api/sources')) {
           return true

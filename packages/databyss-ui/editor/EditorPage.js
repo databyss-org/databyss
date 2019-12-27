@@ -24,7 +24,7 @@ import {
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
-const EditorPage = ({ children }) => {
+const EditorPage = ({ children, autoFocus }) => {
   const [editorState, dispatchEditor] = useEditorContext()
   const { setSource, getSources } = useSourceContext()
 
@@ -154,6 +154,7 @@ const EditorPage = ({ children }) => {
     deleteBlocksByKeys,
     onNewBlockMenu,
     onEditSource,
+    autoFocus,
   })
 }
 
