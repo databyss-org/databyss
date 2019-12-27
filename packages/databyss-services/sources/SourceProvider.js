@@ -42,8 +42,6 @@ const SourceProvider = ({ children, initialState, reducer }) => {
 
   const getAllSources = () => {
     dispatch(fetchAllSources())
-
-    //  console.log('here')
   }
 
   const removeCacheValue = id => {

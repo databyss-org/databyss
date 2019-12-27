@@ -68,12 +68,11 @@ const EditableTest = () => {
 storiesOf('Cypress//Tests', module)
   .addDecorator(ViewportDecorator)
   .add('Slate', () => {
-    let data = {}
+    //   let data = {}
     fetchMock
       .restore()
       .post((url, opt) => {
         if (url === 'http://localhost:5000/api/sources') {
-          console.log(opt.body)
           data = JSON.parse(opt.body).data
           return true
         }
