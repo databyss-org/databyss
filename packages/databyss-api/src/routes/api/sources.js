@@ -1,5 +1,4 @@
 const express = require('express')
-const _ = require('lodash')
 const Source = require('../../models/Source')
 const auth = require('../../middleware/auth')
 const accountMiddleware = require('../../middleware/accountMiddleware')

@@ -1,3 +1,5 @@
+import cloneDeep from 'clone-deep'
+
 import {
   CACHE_SOURCE,
   SAVE_SOURCE,
@@ -5,22 +7,20 @@ import {
   GET_ALL_SOURCES,
 } from './constants'
 
-import cloneDeep from 'clone-deep'
-
 export const initialState = {
   cache: {},
 }
 
 export default (state, action) => {
   switch (action.type) {
-    // case CACHE_SOURCE: {
-    //   const _cache = cloneDeep(state.cache)
-    //   _cache[action.payload.id] = action.payload.source
-    //   return {
-    //     ...state,
-    //     cache: _cache,
-    //   }
-    // }
+    case CACHE_SOURCE: {
+      const _cache = cloneDeep(state.cache)
+      _cache[action.payload.id] = action.payload.source
+      return {
+        ...state,
+        cache: _cache,
+      }
+    }
     case SAVE_SOURCE: {
       const _cache = cloneDeep(state.cache)
       _cache[action.payload.id] = action.payload.source

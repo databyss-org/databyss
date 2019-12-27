@@ -115,9 +115,7 @@ const SlateContentEditable = forwardRef(
         renderMark={renderMark}
         renderBlock={renderLine}
         onBlur={onBlur}
-        // set this default to false
-        // set active in stories
-        // autoFocus={autoFocus}
+        autoFocus={autoFocus}
         css={overrideCss}
         {...other}
       />

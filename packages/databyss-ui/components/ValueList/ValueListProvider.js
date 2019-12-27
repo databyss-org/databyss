@@ -55,7 +55,7 @@ export const ValueListItem = ({ children, path, ...others }) => {
   // https://lodash.com/docs/4.17.15#get
 
   return React.cloneElement(React.Children.only(children), {
-    value: value,
+    value,
     onChange: _value => onItemChange(path, _value),
     ...others,
   })

@@ -1,4 +1,3 @@
-import cloneDeep from 'clone-deep'
 import { SHOW_MODAL, DISMISS_MODAL } from './constants'
 
 export const initialState = {

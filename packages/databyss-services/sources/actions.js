@@ -1,6 +1,4 @@
 import * as sources from './'
-import { ResourceNotFoundError } from './../lib/ResourceNotFoundError'
-import { NetworkUnavailableError } from './../lib/NetworkUnavailableError'
 
 import {
   FETCH_SOURCE,
