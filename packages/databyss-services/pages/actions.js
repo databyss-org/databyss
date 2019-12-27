@@ -47,18 +47,6 @@ export function savePage(state) {
   }
 }
 
-export function seedPage(page) {
-  return dispatch => {
-    dispatch({
-      type: SEED_PAGE,
-      payload: {},
-    })
-    services.savePage(page).then(res => {
-      dispatch(getPages())
-    })
-  }
-}
-
 export function getPages() {
   return dispatch => {
     dispatch({
@@ -79,5 +67,17 @@ export function getPages() {
           payload: e,
         })
       })
+  }
+}
+
+export function seedPage(page) {
+  return dispatch => {
+    dispatch({
+      type: SEED_PAGE,
+      payload: {},
+    })
+    services.savePage(page).then(() => {
+      dispatch(getPages())
+    })
   }
 }
