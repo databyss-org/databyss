@@ -61,30 +61,29 @@ context('Editor', () => {
       .setSelection('new source')
       .wait(1000)
       .get('[data-test-atomic-edit="open"]')
-      .then(buttonList => {
-        buttonList[0].click()
-        cy.wait(2000)
-          .get('#name')
-          .focus()
-          .type('{rightarrow}')
-          .type('{rightarrow}')
-          .type('{rightarrow}')
-          .type('{rightarrow}')
-          .type('{backspace}')
-          .type('{backspace}')
-          .type('{backspace}')
-          .type('updated')
-        cy.get('#citation')
-          .focus()
-          .type(secondSource.citation)
-          .wait(1000)
+      .click()
+    cy.wait(2000)
+      .get('#name')
+      .focus()
+      .type('{rightarrow}')
+      .type('{rightarrow}')
+      .type('{rightarrow}')
+      .type('{rightarrow}')
+      .type('{backspace}')
+      .type('{backspace}')
+      .type('{backspace}')
+      .type('updated')
+    cy.get('#citation')
+      .focus()
+      .type(secondSource.citation)
+      .wait(1000)
 
-        cy.get('button').then(buttonList => {
-          buttonList[4].click()
-        })
-        // wait for autosave
-        cy.wait(11000)
-      })
+    cy.get('button').then(buttonList => {
+      buttonList[4].click()
+    })
+    // wait for autosave
+    cy.wait(11000)
+
     // reload the page
     cy.reload().wait(2000)
     cy.get('button').then(buttonList => {
@@ -94,32 +93,31 @@ context('Editor', () => {
 
     cy.get('@editor')
       .focus()
+      .setSelection(
+        'Stamenov, Language Structure, Discourse and the Access to Consciousness'
+      )
       .get('[data-test-atomic-edit="open"]')
-      .then(buttonList => {
-        buttonList[0].click()
-        cy.wait(2000)
-        cy.get('#firstName')
-          .invoke('val')
-          .then(str => {
-            expect(str).to.deep.equal(firstSource.firstName)
-          })
-        cy.get('#lastName')
-          .invoke('val')
-          .then(str => {
-            expect(str).to.deep.equal(firstSource.lastName)
-          })
-        cy.get('#citation')
-          .focus()
-          .invoke('text')
-          .then(str => {
-            expect(str).to.deep.equal(firstSource.citation)
-          })
-        cy.get('button').then(buttonList => {
-          buttonList[5].click()
-        })
-
-        // reload the page
+      .click()
+    cy.wait(2000)
+    cy.get('#firstName')
+      .invoke('val')
+      .then(str => {
+        expect(str).to.deep.equal(firstSource.firstName)
       })
+    cy.get('#lastName')
+      .invoke('val')
+      .then(str => {
+        expect(str).to.deep.equal(firstSource.lastName)
+      })
+    cy.get('#citation')
+      .focus()
+      .invoke('text')
+      .then(str => {
+        expect(str).to.deep.equal(firstSource.citation)
+      })
+    cy.get('button').then(buttonList => {
+      buttonList[5].click()
+    })
 
     cy.get('@editor')
       .focus()
@@ -127,27 +125,25 @@ context('Editor', () => {
       .previousBlock()
       .setSelection('updated source')
       .get('[data-test-atomic-edit="open"]')
-      .then(buttonList => {
-        buttonList[0].click()
-        cy.get('#name')
-          .focus()
-          .invoke('text')
-          .then(str => {
-            expect(str).to.deep.equal(secondSource.name)
-          })
-        cy.get('#citation')
-          .focus()
-          .invoke('text')
-          .then(str => {
-            expect(str).to.deep.equal(secondSource.citation)
-          })
+      .click()
+    cy.get('#name')
+      .focus()
+      .invoke('text')
+      .then(str => {
+        expect(str).to.deep.equal(secondSource.name)
+      })
+    cy.get('#citation')
+      .focus()
+      .invoke('text')
+      .then(str => {
+        expect(str).to.deep.equal(secondSource.citation)
       })
   })
 })
 
 // -- move value list story into sources
 // -- move edit atomic blcks to page, (should be the same functionality)
-// creat fully mocked version of page demo
+// -- creat fully mocked version of page demo
 // -- have a seeded page ready
 // -- have first text control fully focused
 // --- right width vairant
@@ -161,10 +157,6 @@ context('Editor', () => {
 // checkout site in mobile and make not of things that dont work
 // add clean slate in demo version
 // -- delete atomic pages
-
-// use notify decorator to catch a server not found and pop up dialog that says "this story requires server, see readme"
-// use notify provider
-// create authenticated ping
 
 // <NeedsNetworkd> {children} </NeedsNetwork>
 // create this into component (similar to autosave) checks for connnectivity and authentication and is consumer of notify context
