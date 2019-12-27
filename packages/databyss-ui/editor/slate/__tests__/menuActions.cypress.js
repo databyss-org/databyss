@@ -47,9 +47,6 @@ context('Editor', () => {
 
   it('it should open the menu, display actions and select tag', () => {
     cy.get('@editor')
-      //  .focus()
-      // .type(' ')
-      // .type('{backspace}')
       .get('[data-test-block-menu="open"]')
       .click()
       .get('[data-test-block-menu="TOPIC"]')

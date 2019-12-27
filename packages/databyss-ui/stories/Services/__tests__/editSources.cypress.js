@@ -140,28 +140,3 @@ context('Editor', () => {
       })
   })
 })
-
-// -- move value list story into sources
-// -- move edit atomic blcks to page, (should be the same functionality)
-// -- creat fully mocked version of page demo
-// -- have a seeded page ready
-// -- have first text control fully focused
-// --- right width vairant
-// -- check for enter on first line test
-// -- focus editor when source is updated
-
-// -- enter when atomic highlighted should launch modal
-// -- click on atomic should launch modal
-// -- padding for cursor after atomic block on same line
-// -- transparent background on atomic
-// checkout site in mobile and make not of things that dont work
-// add clean slate in demo version
-// -- delete atomic pages
-
-// <NeedsNetworkd> {children} </NeedsNetwork>
-// create this into component (similar to autosave) checks for connnectivity and authentication and is consumer of notify context
-
-// notify should be near top level
-// throw generic error with message
-
-// add loading handling withPage

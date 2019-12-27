@@ -168,38 +168,7 @@ const setBlockType = (id, type) => (editor, value, next) => {
     }
 
     const _block = newAtomicBlock(_node.key, type, _text, _marks)
-    /*
-    const _block = Block.fromJSON({
-      object: 'block',
-      type,
-      key: _node.key,
-      data: {},
-      nodes: [
-        {
-          object: 'text',
-          text: '',
-          marks: [],
-        },
-        {
-          object: 'inline',
-          type,
-          data: {},
-          nodes: [
-            {
-              object: 'text',
-              text: sanitizer(_text),
-              marks: _marks,
-            },
-          ],
-        },
-        {
-          object: 'text',
-          text: '',
-          marks: [],
-        },
-      ],
-    })
-*/
+
     editor.replaceNodeByKey(id, _block)
   } else {
     editor.setNodeByKey(id, { type })

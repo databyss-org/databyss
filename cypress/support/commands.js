@@ -106,18 +106,11 @@ Cypress.Commands.add(
     prevSubject: 'element',
   },
   subject => {
-    return cy
-      .get(subject)
-      .trigger('keydown', {
-        keyCode: 66,
-        key: 'b',
-        [modKeys(IS_LINUX)]: true,
-      })
-      .trigger('keyup', {
-        keyCode: 66,
-        key: 'b',
-        [modKeys(IS_LINUX)]: true,
-      })
+    return cy.get(subject).trigger('keydown', {
+      keyCode: 66,
+      key: 'b',
+      [modKeys(IS_LINUX)]: true,
+    })
   }
 )
 

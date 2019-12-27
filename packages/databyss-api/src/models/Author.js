@@ -1,21 +1,7 @@
-// const mongoose = require('mongoose')
-// const Text = require('./Text')
-
-// const AuthorSchema = new mongoose.Schema({
-//   firstName: {
-//     type: String,
-//     default: '',
-//   },
-//   lastName: {
-//     type: String,
-//     default: '',
-//   },
-// })
-
 const mongoose = require('mongoose')
 
 const Author = new mongoose.Schema({
-  textValue: { type: String, default: 's' },
+  textValue: { type: String, default: '' },
 })
 
 module.exports = Author

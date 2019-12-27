@@ -14,7 +14,9 @@ export const initialState = {
 export default (state, action) => {
   switch (action.type) {
     case CACHE_SOURCE: {
-      const _cache = cloneDeep(state.cache)
+      const _cache = state.cache
+
+      // const _cache = cloneDeep(state.cache)
       _cache[action.payload.id] = action.payload.source
       return {
         ...state,
@@ -22,7 +24,8 @@ export default (state, action) => {
       }
     }
     case SAVE_SOURCE: {
-      const _cache = cloneDeep(state.cache)
+      const _cache = state.cache
+      //  const _cache = cloneDeep(state.cache)
       _cache[action.payload.id] = action.payload.source
       return {
         ...state,

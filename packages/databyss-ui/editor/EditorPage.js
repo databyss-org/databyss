@@ -4,8 +4,6 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import { showModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
 import { useEditorContext } from './EditorProvider'
 
-// generic stuff in services/lib
-
 import {
   setActiveBlockId,
   setActiveBlockContent,
