@@ -74,11 +74,9 @@ const TextControl = ({
       <TextInputComponent
         id={id}
         ref={inputRef}
-        active={active}
         autoFocus={focusOnMount}
         onBlur={() => {
           window.requestAnimationFrame(() => setActive(false))
-          // setTimeout(() => setActive(false), 50)
         }}
         onChange={onChange}
         value={value}
@@ -98,7 +96,6 @@ const TextControl = ({
       onFocus={() => {
         if (!active && inputRef.current) {
           inputRef.current.focus()
-          // setTimeout(() => setActive(true), 50)
           window.requestAnimationFrame(() => setActive(true))
         }
       }}
