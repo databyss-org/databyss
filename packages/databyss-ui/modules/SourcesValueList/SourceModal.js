@@ -27,11 +27,6 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
   const [values, setValues] = useState(null)
   const [, dispatchNav] = useNavigationContext()
 
-  const onChange = _values => {
-    // update internal state
-    setValues(_values)
-  }
-
   const onBlur = () => {
     if (values) {
       setSource(values)
@@ -59,7 +54,7 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
     >
       <SourceLoader sourceId={sourceId}>
         {source => (
-          <ValueListProvider onChange={onChange} values={values || source}>
+          <ValueListProvider onChange={setValues} values={values || source}>
             <Grid>
               <View
                 paddingVariant="none"
