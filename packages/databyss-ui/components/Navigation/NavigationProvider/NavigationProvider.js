@@ -13,9 +13,11 @@ const NavigationProvider = ({ children, componentMap }) => {
     <NavigationContext.Provider value={[state, dispatch]}>
       {children}
 
-      {state.modals.map(modal => {
+      {state.modals.map((modal, i) => {
         const ModalComponent = componentMap[modal.component]
-        return <ModalComponent visible={modal.visible} {...modal.props} />
+        return (
+          <ModalComponent visible={modal.visible} key={i} {...modal.props} />
+        )
       })}
     </NavigationContext.Provider>
   )
