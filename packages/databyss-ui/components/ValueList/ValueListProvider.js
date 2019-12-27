@@ -54,14 +54,9 @@ export const ValueListItem = ({ children, path, ...others }) => {
   // If the resolved value is undefined, the defaultValue is returned in its place.
   // https://lodash.com/docs/4.17.15#get
 
-  console.log(value)
-
   return React.cloneElement(React.Children.only(children), {
     value: value,
-    onChange: _value => {
-      console.log(_value)
-      return onItemChange(path, _value)
-    },
+    onChange: _value => onItemChange(path, _value),
     ...others,
   })
 }

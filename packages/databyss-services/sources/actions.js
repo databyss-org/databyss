@@ -26,15 +26,10 @@ export function fetchSource(id) {
         })
       })
       .catch(err => {
-        let _err = new ResourceNotFoundError('Source not found')
-
-        if (err.message === 'Failed to fetch') {
-          _err = new NetworkUnavailableError('Network not available')
-        }
         dispatch({
           type: CACHE_SOURCE,
           payload: {
-            source: _err,
+            source: err,
             id,
           },
         })

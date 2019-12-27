@@ -262,7 +262,6 @@ const deleteBlockById = id => (editor, value, next) => {
 updates all sources provided in the ID list
 */
 const onUpdateSource = (source, idList, state) => (editor, value, next) => {
-  console.log(state)
   idList.forEach(id => {
     const _newNodes = stateToSlateMarkup(source.text).nodes
     const _block = Block.fromJSON({
@@ -290,7 +289,9 @@ const onUpdateSource = (source, idList, state) => (editor, value, next) => {
 
     editor.replaceNodeByKey(id, _tempNode)
   })
-  setTimeout(() => editor.focus(), 10)
+
+  window.requestAnimationFrame(() => editor.focus())
+  // setTimeout(() => editor.focus(), 10)
   next(editor, value)
 }
 

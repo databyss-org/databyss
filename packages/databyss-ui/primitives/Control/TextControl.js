@@ -54,9 +54,9 @@ const TextControl = ({
 
   useEffect(() => {
     if (focusOnMount && !active && inputRef.current) {
-      console.log('is focus')
       setActive(true)
-      setTimeout(() => inputRef.current.focus(), 10)
+      window.requestAnimationFrame(() => inputRef.current.focus())
+      //  setTimeout(() => inputRef.current.focus(), 10)
     }
   }, [])
 
@@ -77,7 +77,8 @@ const TextControl = ({
         active={active}
         autoFocus={focusOnMount}
         onBlur={() => {
-          setTimeout(() => setActive(false), 50)
+          window.requestAnimationFrame(() => setActive(false))
+          // setTimeout(() => setActive(false), 50)
         }}
         onChange={onChange}
         value={value}
@@ -96,8 +97,9 @@ const TextControl = ({
       userSelect="auto"
       onFocus={() => {
         if (!active && inputRef.current) {
-          setTimeout(() => setActive(true), 50)
           inputRef.current.focus()
+          // setTimeout(() => setActive(true), 50)
+          window.requestAnimationFrame(() => setActive(true))
         }
       }}
       css={[

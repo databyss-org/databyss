@@ -24,7 +24,10 @@ const SourceProvider = ({ children, initialState, reducer }) => {
       return
     }
     // add or update source and set cache value
-    setTimeout(() => dispatch(saveSource(source)), 10)
+
+    // add set timeout to prevent focus issue with line content editable on tab
+    // setTimeout(() => dispatch(saveSource(source)), 1000)
+    window.requestAnimationFrame(() => dispatch(saveSource(source)))
   }
 
   const getSource = id => {
@@ -71,7 +74,7 @@ SourceProvider.defaultProps = {
   reducer,
 }
 
-export const withSource = Wrapped => ({ sourceId, ...others }) => {
+export const SourceLoader = ({ sourceId, children }) => {
   const { getSource } = useSourceContext()
   const source = getSource(sourceId)
 
@@ -79,7 +82,17 @@ export const withSource = Wrapped => ({ sourceId, ...others }) => {
     return <ErrorFallback error={source} />
   }
 
-  return source ? <Wrapped source={source} {...others} /> : <Loading />
+  // const child = React.Children.only(children)
+  if (typeof children !== 'function') {
+    throw new Error('Child must be a function')
+  }
+  return source ? children(source) : <Loading />
 }
+
+export const withSource = Wrapped => ({ sourceId, ...others }) => (
+  <SourceLoader sourceId={sourceId}>
+    {source => <Wrapped source={source} {...others} />}
+  </SourceLoader>
+)
 
 export default SourceProvider
