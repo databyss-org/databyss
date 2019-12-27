@@ -39,7 +39,7 @@ const EditableTest = () => {
   return (
     <Grid>
       <Box mb="medium" pt="medium" maxWidth="500px" flexShrink={1}>
-        <EditorPage autoFocus>
+        <EditorPage>
           <ContentEditable onDocumentChange={setSlateDocument} />
         </EditorPage>
       </Box>

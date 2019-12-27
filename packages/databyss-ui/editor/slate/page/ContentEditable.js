@@ -13,6 +13,8 @@ import { useEditorContext } from '../../EditorProvider'
 import FormatMenu from '../../Menu/FormatMenu'
 import hotKeys, { formatHotKeys, navHotKeys } from './../hotKeys'
 import { renderBlock } from './../../EditorBlock'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+
 import {
   toSlateJson,
   renderInline,
@@ -59,6 +61,8 @@ const SlateContentEditable = forwardRef(
   ) => {
     const [editorState] = useEditorContext()
     const selfRef = useRef({ focused: false })
+
+    const [navState, dispatchNav] = useNavigationContext()
 
     const { activeBlockId, editableState, blocks, page } = editorState
 
@@ -418,6 +422,7 @@ const SlateContentEditable = forwardRef(
     return (
       <Editor
         value={_editableState.value}
+        readOnly={navState.modals.length > 0}
         ref={forkRef(ref, editableRef)}
         autoFocus={autoFocus}
         onChange={onChange}

@@ -22,7 +22,7 @@ const ControlList = ({ children, ...others }) => (
   </List>
 )
 
-const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
+const SourceModal = ({ sourceId, visible, onUpdateSource, id }) => {
   const { setSource } = useSourceContext()
   const [values, setValues] = useState(null)
   const [, dispatchNav] = useNavigationContext()
@@ -47,6 +47,7 @@ const SourceModal = ({ sourceId, visible, onUpdateSource }) => {
   return (
     <ModalWindow
       visible={visible}
+      key={id}
       widthVariant="form"
       onDismiss={onDismiss}
       title="Edit Source"

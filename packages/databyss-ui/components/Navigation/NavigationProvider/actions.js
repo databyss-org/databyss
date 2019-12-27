@@ -5,7 +5,7 @@ export function showModal({ component, props, dismiss }) {
     type: SHOW_MODAL,
     payload: {
       component,
-      props,
+      props: { ...props, id: Date.now() },
       dismiss,
     },
   }
