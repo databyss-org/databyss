@@ -87,6 +87,7 @@ context('Editor', () => {
     // reload the page
     cy.reload().wait(2000)
     cy.get('button').then(buttonList => {
+      console.log(buttonList)
       buttonList[1].click()
       cy.wait(2000)
     })
@@ -116,7 +117,7 @@ context('Editor', () => {
         expect(str).to.deep.equal(firstSource.citation)
       })
     cy.get('button').then(buttonList => {
-      buttonList[5].click()
+      buttonList[4].click()
     })
 
     cy.get('@editor')

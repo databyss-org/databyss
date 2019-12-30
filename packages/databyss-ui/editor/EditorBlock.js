@@ -54,10 +54,12 @@ export const EditorBlock = ({ children, node }) => {
 
   useEffect(
     () => {
-      if (node.text.length === 0 && !showNewBlockMenu) {
-        dispatchEditor(newBlockMenu(true, editableState))
-      } else if (node.text.length > 0 && showNewBlockMenu) {
-        dispatchEditor(newBlockMenu(false, editableState))
+      if (editableState) {
+        if (node.text.length === 0 && !showNewBlockMenu) {
+          dispatchEditor(newBlockMenu(true, editableState))
+        } else if (node.text.length > 0 && showNewBlockMenu) {
+          dispatchEditor(newBlockMenu(false, editableState))
+        }
       }
     },
     [node.text]

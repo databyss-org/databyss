@@ -88,7 +88,7 @@ const LoadAndSave = () => {
   return (
     <View>
       <Box>
-        <EditorPage>
+        <EditorPage autoFocus>
           <SlateContentEditable onDocumentChange={setSlateDocument} />
         </EditorPage>
       </Box>

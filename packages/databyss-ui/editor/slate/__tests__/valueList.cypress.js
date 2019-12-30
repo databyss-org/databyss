@@ -52,6 +52,7 @@ context('Editor', () => {
     cy.get('@citation')
       .focus()
       .type('long form of citation')
+      .wait(2000)
 
     cy.get('@slateDocument').then(matchWithoutId(expected))
   })

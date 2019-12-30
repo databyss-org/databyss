@@ -171,7 +171,7 @@ const SlateContentEditable = forwardRef(
 
     const onChange = change => {
       if (!selfRef.current.focused) {
-        //  return
+        // return
       }
       const { value } = change
       Bugsnag.client.leaveBreadcrumb('page/ContentEditable/onChange', {
