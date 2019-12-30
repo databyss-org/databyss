@@ -36,13 +36,9 @@ const EditorInline = React.forwardRef(
     )
 
     const onUpdateSource = source => {
-      // return a list of blocks containing the source that will be updated
-
+      // this will be replaced when we use paths
       if (source) {
-        const _idList = Object.keys(blocks).filter(
-          block => blocks[block].refId === source._id
-        )
-        dispatchEditor(updateSource(source, _idList, { value: editor.value }))
+        dispatchEditor(updateSource(source, { value: editor.value }))
       }
     }
 
@@ -67,7 +63,6 @@ const EditorInline = React.forwardRef(
     return (
       <Span
         {...others}
-        //  onClick={onClick}
         onMouseDown={onClick}
         ref={ref}
         borderRadius={5}

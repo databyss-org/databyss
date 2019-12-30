@@ -230,8 +230,12 @@ const deleteBlockById = id => (editor, value, next) => {
 /*
 updates all sources provided in the ID list
 */
-const onUpdateSource = (source, idList) => (editor, value, next) => {
-  idList.forEach(id => {
+const onUpdateSource = (source, blocks) => (editor, value, next) => {
+  // generates a list of blocks to update
+  const _idList = Object.keys(blocks).filter(
+    block => blocks[block].refId === source._id
+  )
+  _idList.forEach(id => {
     const _newNodes = stateToSlateMarkup(source.text).nodes
     const _block = Block.fromJSON({
       object: 'block',
@@ -259,8 +263,7 @@ const onUpdateSource = (source, idList) => (editor, value, next) => {
     editor.replaceNodeByKey(id, _tempNode)
   })
 
-  // window.requestAnimationFrame(() => editor.focus())
-  setTimeout(() => editor.focus(), 10)
+  window.requestAnimationFrame(() => editor.focus())
   next(editor, value)
 }
 
@@ -330,8 +333,7 @@ export default (editableState, action) => {
         ...editableState,
         editorCommands: onUpdateSource(
           action.payload.source,
-          action.payload.idList,
-          editableState
+          editableState.blocks
         ),
       }
     }

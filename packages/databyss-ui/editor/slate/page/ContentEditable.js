@@ -4,6 +4,7 @@ import { Editor } from 'slate-react'
 import _ from 'lodash'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
   getRawHtmlForBlock,
   getRangesForBlock,
@@ -13,7 +14,6 @@ import { useEditorContext } from '../../EditorProvider'
 import FormatMenu from '../../Menu/FormatMenu'
 import hotKeys, { formatHotKeys, navHotKeys } from './../hotKeys'
 import { renderBlock } from './../../EditorBlock'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 
 import {
   toSlateJson,
@@ -62,7 +62,7 @@ const SlateContentEditable = forwardRef(
     const [editorState] = useEditorContext()
     const selfRef = useRef({ focused: false })
 
-    const [navState, dispatchNav] = useNavigationContext()
+    const [navState] = useNavigationContext()
 
     const { activeBlockId, editableState, blocks, page } = editorState
 
@@ -224,10 +224,12 @@ const SlateContentEditable = forwardRef(
       )
     }
 
+    // this will get removed when paths are implemented
     const editSource = (_id, editor) => {
       const _refId = blocksRef.current[_id].refId
       onEditSource(_refId, blocksRef.current, editor)
     }
+
     const onKeyUp = (event, editor, next) => {
       if (event.key === 'Enter') {
         // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
@@ -302,6 +304,7 @@ const SlateContentEditable = forwardRef(
         editSource(_id, editor)
         return event.preventDefault()
       }
+
       const { fragment } = editor.value
       // check for selection
 

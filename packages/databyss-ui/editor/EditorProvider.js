@@ -11,7 +11,10 @@ export const makeComposedReducer = (reducer, editableReducer) => (
 ) => ({
   ...reducer(state, action),
   editableState: editableReducer(
-    action.payload.editableState || state.editableState,
+    {
+      ...(action.payload.editableState || state.editableState),
+      blocks: state.blocks,
+    },
     action
   ),
 })

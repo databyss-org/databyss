@@ -56,7 +56,6 @@ const TextControl = ({
     if (focusOnMount && !active && inputRef.current) {
       setActive(true)
       window.requestAnimationFrame(() => inputRef.current.focus())
-      //  setTimeout(() => inputRef.current.focus(), 10)
     }
   }, [])
 

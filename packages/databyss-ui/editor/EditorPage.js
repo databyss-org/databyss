@@ -33,6 +33,10 @@ const EditorPage = ({ children, autoFocus }) => {
   */
   useEffect(
     () => {
+      // load only sources which appear on page
+      // change GET_ALL_SOURCES
+      // to GET_PAGE_SOURCES which only loads whats on a list
+
       const _sourceDictionary = getSources()
       const _sources = Object.keys(sources)
       _sources.forEach(_refId => {
@@ -118,12 +122,8 @@ const EditorPage = ({ children, autoFocus }) => {
   const onEditSource = (refId, blocks, { value }) => {
     // Editor function to dispatch with modal
     const onUpdateSource = source => {
-      // return a list of blocks containing the source that will be updated
       if (source) {
-        const _idList = Object.keys(blocks).filter(
-          block => blocks[block].refId === source._id
-        )
-        dispatchEditor(updateSource(source, _idList, { value }))
+        dispatchEditor(updateSource(source, { value }))
       }
     }
     dispatchNav(
