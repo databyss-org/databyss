@@ -33,10 +33,6 @@ const EditorPage = ({ children, autoFocus }) => {
   */
   useEffect(
     () => {
-      // load only sources which appear on page
-      // change GET_ALL_SOURCES
-      // to GET_PAGE_SOURCES which only loads whats on a list
-
       const _sourceDictionary = getSources()
       const _sources = Object.keys(sources)
       _sources.forEach(_refId => {
