@@ -22,7 +22,7 @@ export const startSession = async (
       browserVersion: 'latest',
       'goog:chromeOptions': { w3c: true },
       'sauce:options': {
-        // extendedDebugging: true,
+        extendedDebugging: true,
         // prerun: {
         //   executable:
         //     'https://raw.githubusercontent.com/databyss-org/databyss/paul/clipboard/scripts/osx-forward-80.sh',
