@@ -6,6 +6,8 @@ import {
   CACHE_SOURCE,
   REMOVE_SOURCE,
   GET_ALL_SOURCES,
+  FETCH_PAGE_SOURCES,
+  CACHE_SOURCES,
 } from './constants'
 
 export function fetchSource(id) {
@@ -68,6 +70,21 @@ export function fetchAllSources() {
     sources.getSources().then(sources => {
       dispatch({
         type: GET_ALL_SOURCES,
+        payload: { sources },
+      })
+    })
+  }
+}
+
+export function fetchPageSources(id) {
+  return async dispatch => {
+    dispatch({
+      type: FETCH_PAGE_SOURCES,
+      payload: {},
+    })
+    sources.getPageSources(id).then(sources => {
+      dispatch({
+        type: CACHE_SOURCES,
         payload: { sources },
       })
     })

@@ -34,11 +34,10 @@ const Box = ({ children }) => (
 // add with pages here
 const EditorLoader = withPages(({ pages, children }) => {
   const [state, dispatch] = usePageContext()
-  const { getAllSources } = useSourceContext()
+  const { getSourcesforPage } = useSourceContext()
 
   useEffect(
     () => {
-      getAllSources()
       dispatch(seedPage(seedState))
     },
     [dispatch]
@@ -46,7 +45,13 @@ const EditorLoader = withPages(({ pages, children }) => {
 
   const pagesRender = pages.map(p => (
     <View key={p._id}>
-      <Button onPress={() => dispatch(loadPage(p._id))}>
+      <Button
+        onPress={() => {
+          // load sources for id
+          getSourcesforPage(p._id)
+          dispatch(loadPage(p._id))
+        }}
+      >
         <Text>load page {p._id}</Text>
       </Button>
     </View>

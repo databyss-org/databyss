@@ -3,6 +3,7 @@ import {
   SAVE_SOURCE,
   REMOVE_SOURCE,
   GET_ALL_SOURCES,
+  CACHE_SOURCES,
 } from './constants'
 
 export const initialState = {
@@ -14,6 +15,17 @@ export default (state, action) => {
     case CACHE_SOURCE: {
       const _cache = state.cache
       _cache[action.payload.id] = action.payload.source
+      return {
+        ...state,
+        cache: _cache,
+      }
+    }
+    case CACHE_SOURCES: {
+      const _sources = action.payload.sources
+      const _cache = state.cache
+      Object.keys(_sources).forEach(s => {
+        _cache[s] = _sources[s]
+      })
       return {
         ...state,
         cache: _cache,

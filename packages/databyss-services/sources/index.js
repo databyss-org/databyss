@@ -9,3 +9,5 @@ export const setSource = data => httpPost('/sources', { data })
 export const getSources = () => httpGet('/sources')
 
 export const deleteSource = id => httpDelete(`/sources/${id}`)
+
+export const getPageSources = id => httpGet(`/sources/pages/${id}`)

@@ -11,6 +11,7 @@ import {
   saveSource,
   removeSourceFromCache,
   fetchAllSources,
+  fetchPageSources,
 } from './actions'
 
 const useReducer = createReducer()
@@ -26,9 +27,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
       return
     }
     // add or update source and set cache value
-
     // add set timeout to prevent focus issue with line content editable on tab
-    // setTimeout(() => dispatch(saveSource(source)), 100)
     window.requestAnimationFrame(() => dispatch(saveSource(source)))
   }
 
@@ -42,6 +41,10 @@ const SourceProvider = ({ children, initialState, reducer }) => {
 
   const getAllSources = () => {
     dispatch(fetchAllSources())
+  }
+
+  const getSourcesforPage = id => {
+    dispatch(fetchPageSources(id))
   }
 
   const removeCacheValue = id => {
@@ -60,6 +63,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
         removeCacheValue,
         getSources,
         getAllSources,
+        getSourcesforPage,
       }}
     >
       {children}
