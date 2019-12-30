@@ -64,6 +64,7 @@
     "react-use": "^11.0.0",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
+    "selenium-webdriver": "^4.0.0-alpha.5",
     "slate": "^0.47.8",
     "slate-dev-environment": "^0.2.2",
     "slate-html-serializer": "^0.8.10",
