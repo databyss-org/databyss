@@ -96,43 +96,43 @@ describe('editor selenium', () => {
     expect(actual).toEqual(expected.document)
   })
 
-  it('should copy and paste an entry and a source', async () => {
-    await editor.sendKeys('this is an example of entry text')
-    await editor.sendKeys(Key.ENTER)
-    await editor.sendKeys('@this is an example of source text')
-    await editor.sendKeys(Key.ENTER)
-    await editor.sendKeys(Key.CONTROL, 'a')
-    await body.sendKeys(Key.CONTROL, 'c')
-    await endOfDoc(editor)
-    await editor.sendKeys(Key.CONTROL, 'v')
+  // it('should copy and paste an entry and a source', async () => {
+  //   await editor.sendKeys('this is an example of entry text')
+  //   await editor.sendKeys(Key.ENTER)
+  //   await editor.sendKeys('@this is an example of source text')
+  //   await editor.sendKeys(Key.ENTER)
+  //   await editor.sendKeys(Key.CONTROL, 'a')
+  //   await body.sendKeys(Key.CONTROL, 'c')
+  //   await endOfDoc(editor)
+  //   await editor.sendKeys(Key.CONTROL, 'v')
 
-    const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
-      b => b.refId
-    )
+  //   const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
+  //     b => b.refId
+  //   )
 
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="ENTRY" data={{ refId: refIdList[0] }}>
-            <text>this is an example of entry text</text>
-          </block>
-          <block type="SOURCE" data={{ refId: refIdList[1] }}>
-            <text />
-            <inline type="SOURCE">this is an example of source text</inline>
-            <text />
-          </block>
-          <block type="ENTRY" data={{ refId: refIdList[2] }}>
-            <text>this is an example of entry text</text>
-          </block>
-          <block type="SOURCE" data={{ refId: refIdList[1] }}>
-            <text />
-            <inline type="SOURCE">this is an example of source text</inline>
-            <text />
-          </block>
-        </document>
-      </value>
-    )
-    const actual = JSON.parse(await slateDocument.getText())
-    expect(actual).toEqual(expected.document)
-  })
+  //   const expected = toSlateJson(
+  //     <value>
+  //       <document>
+  //         <block type="ENTRY" data={{ refId: refIdList[0] }}>
+  //           <text>this is an example of entry text</text>
+  //         </block>
+  //         <block type="SOURCE" data={{ refId: refIdList[1] }}>
+  //           <text />
+  //           <inline type="SOURCE">this is an example of source text</inline>
+  //           <text />
+  //         </block>
+  //         <block type="ENTRY" data={{ refId: refIdList[2] }}>
+  //           <text>this is an example of entry text</text>
+  //         </block>
+  //         <block type="SOURCE" data={{ refId: refIdList[1] }}>
+  //           <text />
+  //           <inline type="SOURCE">this is an example of source text</inline>
+  //           <text />
+  //         </block>
+  //       </document>
+  //     </value>
+  //   )
+  //   const actual = JSON.parse(await slateDocument.getText())
+  //   expect(actual).toEqual(expected.document)
+  // })
 })
