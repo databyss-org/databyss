@@ -8,3 +8,9 @@ export const nextBlock = driver =>
 
 export const endOfDoc = driver =>
   driver.sendKeys(Key.chord(Key.CONTROL, Key.SHIFT, Key.ARROW_DOWN))
+
+export const startOfDoc = driver =>
+  driver.sendKeys(Key.chord(Key.CONTROL, Key.SHIFT, Key.ARROW_UP))
+
+export const highlightSingleSpace = driver =>
+  driver.sendKeys(Key.chord(Key.SHIFT, Key.ARROW_RIGHT))
