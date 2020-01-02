@@ -57,7 +57,7 @@ workflows:
     jobs:
       - jest
       - cypress/run:
-          executor: base-12-6-0
+          executor: browsers-chrome75
           yarn: true
           start: yarn storybook:cy
           wait-on: -t 300000 http://0.0.0.0:6006/iframe.html?id=editor-tests--slate
