@@ -10,9 +10,14 @@ const username = process.env.SAUCE_USERNAME
 const accessKey = process.env.SAUCE_ACCESS_KEY
 
 export const startSession = process.env.LOCAL_ENV
-  ? async () => await new Builder().forBrowser('safari').build()
-  : async (name, platformName = WIN, browserName = CHROME) => {
+  ? async () => {
       jest.setTimeout(40000)
+
+      const _builder = await new Builder().forBrowser('safari').build()
+      return _builder
+    }
+  : async (name, platformName = WIN, browserName = CHROME) => {
+      jest.setTimeout(80000)
       const driver = await new webdriver.Builder()
         .withCapabilities({
           browserName,
@@ -31,7 +36,7 @@ export const startSession = process.env.LOCAL_ENV
             seleniumVersion: '3.141.59',
             build: 'databyss-org/ui',
             name,
-            maxDuration: 3600,
+            maxDuration: 7200,
             idleTimeout: 1000,
           },
         })

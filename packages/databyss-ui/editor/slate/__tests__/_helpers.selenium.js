@@ -4,6 +4,8 @@ const waitUntilTime = 20000
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
+// export const CONTROL = Key.META
+
 export const sleep = m => new Promise(r => setTimeout(r, m))
 
 export const endOfLine = actions =>
@@ -24,9 +26,9 @@ export const copy = actions =>
 
 export const paste = actions =>
   actions
-    .keyDown(Key.META)
+    .keyDown(CONTROL)
     .sendKeys('v')
-    .keyUp(Key.META)
+    .keyUp(CONTROL)
     .perform()
 
 export const selectAll = actions =>
