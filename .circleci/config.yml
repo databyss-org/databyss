@@ -10,8 +10,7 @@ jobs:
   jest:
     docker:
       # specify the version you desire here
-      - image: 'cypress/base:12.6.0'
-
+      - image: circleci/node:10.16.0
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -58,6 +57,7 @@ workflows:
     jobs:
       - jest
       - cypress/run:
+          executor: base-12-6-0
           yarn: true
           start: yarn storybook:cy
           wait-on: -t 300000 http://0.0.0.0:6006/iframe.html?id=editor-tests--slate
