@@ -27,7 +27,7 @@
     "metro:stories": "react-native start --reset-cache --config packages/databyss-stories-native/metro.config.js",
     "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
     "build:ui": "NODE_ENV=production BABEL_ENV=production webpack --config packages/databyss-ui/webpack.config.js --mode=production",
-    "test": "NPM_BUILD_TARGET=TEST node scripts/test.js",
+    "test": "NPM_BUILD_TARGET=TEST node scripts/test.js --runInBand",
     "test:selenium": "yarn test seleniumtest",
     "test:selenium:local": "LOCAL_ENV=true yarn test seleniumtest",
     "flow": "flow",
