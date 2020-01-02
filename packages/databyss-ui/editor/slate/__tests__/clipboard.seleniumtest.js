@@ -10,7 +10,7 @@ import {
   endOfDoc,
   startOfDoc,
   highlightSingleSpace,
-  CONTROL,
+  getEditor,
   copy,
   paste,
   sleep,
@@ -19,7 +19,7 @@ import {
 
 let driver
 let editor
-let body
+// let body
 let slateDocument
 let pageBlocks
 let actions
@@ -32,9 +32,10 @@ describe('editor selenium', () => {
     await driver.get(
       'http://localhost:6006/iframe.html?id=editor-tests--slate-empty'
     )
-    editor = await driver.findElement(By.css('[contenteditable="true"]'))
+    // editor = await driver.findElement(By.css('[contenteditable="true"]'))
+    editor = await getEditor(driver)
 
-    body = await driver.findElement(By.css('body'))
+    // body = await driver.findElement(By.css('body'))
     slateDocument = await driver.findElement(By.id('slateDocument'))
     pageBlocks = await driver.findElement(By.id('pageBlocks'))
     await editor.click()
@@ -49,22 +50,11 @@ describe('editor selenium', () => {
 
   it('should copy and paste an entry block', async () => {
     await editor.sendKeys('this is an example of entry text')
-
-    await selectAll(editor)
+    await selectAll(actions)
     await copy(actions)
     await endOfLine(actions)
     await editor.sendKeys(Key.ENTER)
     await paste(actions)
-    await sleep(1000)
-
-    // await copy(editor)
-    // await sleep(100)
-    // await endOfLine(editor)
-    // await sleep(100)
-    // await editor.sendKeys(Key.ENTER)
-    // await sleep(100)
-    // await paste(editor)
-    // await sleep(1000)
 
     const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
       b => b.refId
@@ -87,37 +77,38 @@ describe('editor selenium', () => {
     expect(actual).toEqual(expected.document)
   })
 
-  // it('should copy and paste a text fragment on a new line', async () => {
-  //   await editor.sendKeys('this is an example of entry text')
-  //   await startOfDoc(editor)
-  //   await highlightSingleSpace(editor)
-  //   await highlightSingleSpace(editor)
-  //   await highlightSingleSpace(editor)
-  //   await highlightSingleSpace(editor)
-  //   await body.sendKeys(Key.CONTROL, 'c')
-  //   await endOfLine(editor)
-  //   await editor.sendKeys(Key.ENTER)
-  //   await editor.sendKeys(Key.CONTROL, 'v')
+  it('should copy and paste a text fragment on a new line', async () => {
+    await editor.sendKeys('this is an example of entry text')
+    await startOfDoc(actions)
+    await highlightSingleSpace(actions)
+    await highlightSingleSpace(actions)
+    await highlightSingleSpace(actions)
+    await highlightSingleSpace(actions)
+    await copy(actions)
+    await endOfLine(actions)
+    await editor.sendKeys(Key.ENTER)
+    await endOfDoc(actions)
+    await paste(actions)
 
-  //   const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
-  //     b => b.refId
-  //   )
+    const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
+      b => b.refId
+    )
 
-  //   const expected = toSlateJson(
-  //     <value>
-  //       <document>
-  //         <block type="ENTRY" data={{ refId: refIdList[0] }}>
-  //           <text>this is an example of entry text</text>
-  //         </block>
-  //         <block type="ENTRY" data={{ refId: refIdList[1] }}>
-  //           <text>this</text>
-  //         </block>
-  //       </document>
-  //     </value>
-  //   )
-  //   const actual = JSON.parse(await slateDocument.getText())
-  //   expect(actual).toEqual(expected.document)
-  // })
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="ENTRY" data={{ refId: refIdList[0] }}>
+            <text>this is an example of entry text</text>
+          </block>
+          <block type="ENTRY" data={{ refId: refIdList[1] }}>
+            <text>this</text>
+          </block>
+        </document>
+      </value>
+    )
+    const actual = JSON.parse(await slateDocument.getText())
+    expect(actual).toEqual(expected.document)
+  })
 
   // it('should copy and paste a source', async () => {
   //   await editor.sendKeys(Key.ENTER)

@@ -1,4 +1,6 @@
-import { Key } from 'selenium-webdriver'
+import { Key, By, until } from 'selenium-webdriver'
+
+const waitUntilTime = 20000
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -67,3 +69,11 @@ export const highlightSingleSpace = actions =>
     .sendKeys(Key.ARROW_RIGHT)
     .keyUp(Key.SHIFT)
     .perform()
+
+export const getEditor = async driver => {
+  const el = await driver.wait(
+    until.elementLocated(By.css('[contenteditable="true"]')),
+    waitUntilTime
+  )
+  return await driver.wait(until.elementIsVisible(el), waitUntilTime)
+}

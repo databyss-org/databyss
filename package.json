@@ -29,7 +29,7 @@
     "build:ui": "NODE_ENV=production BABEL_ENV=production webpack --config packages/databyss-ui/webpack.config.js --mode=production",
     "test": "NPM_BUILD_TARGET=TEST node scripts/test.js",
     "test:selenium": "yarn test seleniumtest",
-    "test:selenium:local": "LOCAL_ENV=true yarn test seleniumtest",
+    "test:selenium:local": "LOCAL_ENV=true yarn test seleniumtest --runInBand",
     "flow": "flow",
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
     "styleguide:build": "NPM_BUILD_TARGET=TEST styleguidist build --config ./config/styleguide.config.js",
