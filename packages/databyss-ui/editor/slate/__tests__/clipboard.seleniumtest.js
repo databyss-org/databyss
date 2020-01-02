@@ -1,7 +1,6 @@
 /** @jsx h */
 
 /* eslint-disable func-names */
-
 import h from 'slate-hyperscript'
 import { By, Key } from 'selenium-webdriver'
 import { startSession, WIN, CHROME } from '../../../lib/saucelabs'
@@ -11,6 +10,11 @@ import {
   endOfDoc,
   startOfDoc,
   highlightSingleSpace,
+  CONTROL,
+  copy,
+  paste,
+  sleep,
+  selectAll,
 } from './_helpers.selenium'
 
 let driver
@@ -18,9 +22,10 @@ let editor
 let body
 let slateDocument
 let pageBlocks
+let actions
 
 describe('editor selenium', () => {
-  beforeEach(async () => {
+  beforeEach(async done => {
     driver = await startSession('clipboard-win-chrome', WIN, CHROME)
 
     // TODO: THIS PORT NEEDS TO BE CHANGED TO 8080
@@ -28,10 +33,14 @@ describe('editor selenium', () => {
       'http://localhost:6006/iframe.html?id=editor-tests--slate-empty'
     )
     editor = await driver.findElement(By.css('[contenteditable="true"]'))
+
     body = await driver.findElement(By.css('body'))
     slateDocument = await driver.findElement(By.id('slateDocument'))
     pageBlocks = await driver.findElement(By.id('pageBlocks'))
     await editor.click()
+    actions = driver.actions()
+    await sleep(1000)
+    done()
   })
 
   afterEach(async () => {
@@ -40,11 +49,22 @@ describe('editor selenium', () => {
 
   it('should copy and paste an entry block', async () => {
     await editor.sendKeys('this is an example of entry text')
-    await editor.sendKeys(Key.CONTROL, 'a')
-    await body.sendKeys(Key.CONTROL, 'c')
-    await endOfLine(editor)
+
+    await selectAll(editor)
+    await copy(actions)
+    await endOfLine(actions)
     await editor.sendKeys(Key.ENTER)
-    await editor.sendKeys(Key.CONTROL, 'v')
+    await paste(actions)
+    await sleep(1000)
+
+    // await copy(editor)
+    // await sleep(100)
+    // await endOfLine(editor)
+    // await sleep(100)
+    // await editor.sendKeys(Key.ENTER)
+    // await sleep(100)
+    // await paste(editor)
+    // await sleep(1000)
 
     const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
       b => b.refId
@@ -62,6 +82,7 @@ describe('editor selenium', () => {
         </document>
       </value>
     )
+
     const actual = JSON.parse(await slateDocument.getText())
     expect(actual).toEqual(expected.document)
   })
