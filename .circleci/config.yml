@@ -3,6 +3,10 @@
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2.1
+executors:
+  base-12-6-0:
+    docker:
+      - image: cypress/base:12.6.0
 orbs:
   # use Cypress orb from CircleCI registry
   cypress: cypress-io/cypress@1.13.0
