@@ -6,7 +6,7 @@ version: 2.1
 executors:
   base-10:
     docker:
-      - image: 'cypress/base:10'
+      - image: cypress/base:10.16.0
 orbs:
   # use Cypress orb from CircleCI registry
   cypress: cypress-io/cypress@1.13.0
