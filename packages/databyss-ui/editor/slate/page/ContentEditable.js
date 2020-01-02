@@ -429,6 +429,10 @@ const SlateContentEditable = forwardRef(
 
           return next()
         }
+        // for windows machines
+        if (hotKeys.isCopy(event) || hotKeys.isCut(event)) {
+          return next()
+        }
         return event.preventDefault()
       }
 
@@ -466,8 +470,6 @@ const SlateContentEditable = forwardRef(
       // prompt a warning that pasting atomic blocks is only
       if (type === 'fragment') {
         if (_offset !== 0 && isAtomicInlineType(_frag.nodes.get(0).type)) {
-          // throw error
-          console.log('prevent behavior')
           return event.preventDefault()
         }
       }
