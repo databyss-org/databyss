@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "1.1.50",
+  "version": "1.1.51",
   "description": "massive open-source citation database platform",
   "main": "index.js",
   "repository": {
@@ -27,7 +27,7 @@
     "metro:stories": "react-native start --reset-cache --config packages/databyss-stories-native/metro.config.js",
     "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
     "build:ui": "NODE_ENV=production BABEL_ENV=production webpack --config packages/databyss-ui/webpack.config.js --mode=production",
-    "test": "NPM_BUILD_TARGET=TEST node scripts/test.js --maxWorkers=1",
+    "test": "NPM_BUILD_TARGET=TEST node scripts/test.js --maxWorkers=2",
     "test:selenium": "yarn test seleniumtest",
     "test:selenium:local": "LOCAL_ENV=true yarn test seleniumtest",
     "flow": "flow",
