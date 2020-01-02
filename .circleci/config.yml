@@ -4,9 +4,9 @@
 #
 version: 2.1
 executors:
-  base-12-6-0:
+  base-10:
     docker:
-      - image: cypress/base:12.6.0
+      - image: 'cypress/base:10'
 orbs:
   # use Cypress orb from CircleCI registry
   cypress: cypress-io/cypress@1.13.0
@@ -61,7 +61,7 @@ workflows:
     jobs:
       - jest
       - cypress/run:
-          executor: base-12-6-0
+          executor: base-10
           yarn: true
           start: yarn storybook:cy
           wait-on: -t 300000 http://0.0.0.0:6006/iframe.html?id=editor-tests--slate
