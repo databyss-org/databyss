@@ -141,41 +141,41 @@ describe('editor selenium', () => {
     expect(actual).toEqual(expected.document)
   })
 
-  // it('should copy and paste a source', async () => {
-  //   await editor.sendKeys(' ')
-  //   await editor.sendKeys(Key.BACK_SPACE)
-  //   await editor.sendKeys('@this is an example of source text')
-  //   await editor.sendKeys(Key.ENTER)
-  //   await selectAll(actions)
-  //   await copy(actions)
-  //   await endOfLine(actions)
-  //   await endOfDoc(actions)
-  //   await paste(actions)
-  //   await sleep(1000)
+  it('should copy and paste a source', async () => {
+    await editor.sendKeys(' ')
+    await editor.sendKeys(Key.BACK_SPACE)
+    await editor.sendKeys('@this is an example of source text')
+    await editor.sendKeys(Key.ENTER)
+    await selectAll(actions)
+    await copy(actions)
+    await endOfLine(actions)
+    await endOfDoc(actions)
+    await paste(actions)
+    await sleep(1000)
 
-  //   const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
-  //     b => b.refId
-  //   )
+    const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
+      b => b.refId
+    )
 
-  //   const expected = toSlateJson(
-  //     <value>
-  //       <document>
-  //         <block type="SOURCE" data={{ refId: refIdList[1] }}>
-  //           <text />
-  //           <inline type="SOURCE">this is an example of source text</inline>
-  //           <text />
-  //         </block>
-  //         <block type="SOURCE" data={{ refId: refIdList[1] }}>
-  //           <text />
-  //           <inline type="SOURCE">this is an example of source text</inline>
-  //           <text />
-  //         </block>
-  //       </document>
-  //     </value>
-  //   )
-  //   const actual = JSON.parse(await slateDocument.getText())
-  //   expect(actual).toEqual(expected.document)
-  // })
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE" data={{ refId: refIdList[1] }}>
+            <text />
+            <inline type="SOURCE">this is an example of source text</inline>
+            <text />
+          </block>
+          <block type="SOURCE" data={{ refId: refIdList[1] }}>
+            <text />
+            <inline type="SOURCE">this is an example of source text</inline>
+            <text />
+          </block>
+        </document>
+      </value>
+    )
+    const actual = JSON.parse(await slateDocument.getText())
+    expect(actual).toEqual(expected.document)
+  })
 
   it('should copy and paste an entry and a source', async () => {
     await editor.sendKeys('this is an example of an entry text')
