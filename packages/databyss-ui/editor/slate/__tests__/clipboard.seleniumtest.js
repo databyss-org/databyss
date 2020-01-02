@@ -3,7 +3,7 @@
 /* eslint-disable func-names */
 import h from 'slate-hyperscript'
 import { By, Key } from 'selenium-webdriver'
-import { startSession, OSX, CHROME } from '../../../lib/saucelabs'
+import { startSession, OSX, SAFARI } from '../../../lib/saucelabs'
 import { toSlateJson } from './_helpers'
 import {
   endOfLine,
@@ -26,16 +26,15 @@ let actions
 
 jest.setTimeout(40000)
 
+const LOCAL_URL =
+  'http://localhost:6006/iframe.html?id=editor-tests--slate-empty'
+const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=editor-tests--slate-empty'
+
 describe('editor selenium', () => {
   beforeEach(async done => {
-    driver = await startSession('clipboard-win-chrome', OSX, CHROME)
+    driver = await startSession('clipboard-win-chrome', OSX, SAFARI)
 
-    // TODO: THIS PORT NEEDS TO BE CHANGED TO 8080
-    await driver.get(
-      process.env.LOCAL_ENV
-        ? 'http://localhost:6006/iframe.html?id=editor-tests--slate-empty'
-        : 'http://0.0.0.0:8080/iframe.html?id=editor-tests--slate-empty'
-    )
+    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     // editor = await driver.findElement(By.css('[contenteditable="true"]'))
     editor = await getEditor(driver)
 
