@@ -4,14 +4,13 @@
 #
 version: 2.1
 orbs:
-  # node: circleci/node@1.1.6
   # use Cypress orb from CircleCI registry
   cypress: cypress-io/cypress@1.13.0
 jobs:
-  jest: 
+  jest:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.16.0
+      - image: 'cypress/base:12.6.0'
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -59,7 +58,6 @@ workflows:
     jobs:
       - jest
       - cypress/run:
-          executor: base-12-6-0
           yarn: true
           start: yarn storybook:cy
           wait-on: -t 300000 http://0.0.0.0:6006/iframe.html?id=editor-tests--slate
