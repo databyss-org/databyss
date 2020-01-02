@@ -6,7 +6,7 @@ version: 2.1
 orbs:
   # node: circleci/node@1.1.6
   # use Cypress orb from CircleCI registry
-  cypress: cypress-io/cypress@1.8.0
+  cypress: cypress-io/cypress@1.13.0
 jobs:
   jest: 
     docker:
