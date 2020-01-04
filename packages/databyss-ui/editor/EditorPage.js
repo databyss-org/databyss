@@ -115,7 +115,7 @@ const EditorPage = ({ children, autoFocus }) => {
 
   const [, dispatchNav] = useNavigationContext()
 
-  const onEditSource = (refId, blocks, { value }) => {
+  const onEditSource = (refId, { value }) => {
     // Editor function to dispatch with modal
     const onUpdateSource = source => {
       if (source) {

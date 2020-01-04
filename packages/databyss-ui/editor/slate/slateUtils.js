@@ -81,12 +81,21 @@ export const toSlateJson = (editorState, pageBlocks) => ({
   },
 })
 
-export const renderInline = ({ node, attributes }, editor, next) => {
+export const renderInline = onEditSource => (
+  { node, attributes },
+  editor,
+  next
+) => {
   const isSelected = editor.value.selection.focus.isInNode(node)
 
   if (isAtomicInlineType(node.type)) {
     return (
-      <EditorInline editor={editor} isSelected={isSelected} node={node}>
+      <EditorInline
+        editor={editor}
+        isSelected={isSelected}
+        node={node}
+        onEditSource={onEditSource}
+      >
         <RawHtml _html={{ __html: node.text }} {...attributes} />
       </EditorInline>
     )
