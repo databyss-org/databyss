@@ -1,11 +1,15 @@
 const mongoose = require('mongoose')
+const Text = require('./Text')
 
-const Author = new mongoose.Schema({
-  textValue: { type: String, default: '' },
+const AuthorSchema = new mongoose.Schema({
+  firstName: {
+    type: Text.schema,
+  },
+  lastName: {
+    type: Text.schema,
+  },
 })
 
+const Author = mongoose.models.Author || mongoose.model('author', AuthorSchema)
+
 module.exports = Author
-
-// const Author = mongoose.models.Author || mongoose.model('author', AuthorSchema)
-
-// module.exports = Author

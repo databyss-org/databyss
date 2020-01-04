@@ -44,8 +44,8 @@ const EditorPage = ({ children, autoFocus }) => {
               textValue: _sourceFields.textValue,
               ranges: _sourceFields.ranges,
             },
-            citations: [{ textValue: '', ranges: [] }],
-            authors: [{ firstName: '', lastName: '' }],
+            // citations: [{ textValue: '', ranges: [] }],
+            // authors: [{ firstName: '', lastName: '' }],
           }
           setSource(_source)
         }

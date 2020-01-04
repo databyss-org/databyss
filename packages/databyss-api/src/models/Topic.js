@@ -8,7 +8,7 @@ const TopicSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'account',
   },
-  text: RichText,
+  text: RichText.schema,
 })
 
 const Topic = mongoose.models.Topic || mongoose.model('topic', TopicSchema)
