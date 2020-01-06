@@ -4,6 +4,7 @@ import { Editor } from 'slate-react'
 import _ from 'lodash'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
   getRawHtmlForBlock,
   getRangesForBlock,
@@ -13,6 +14,7 @@ import { useEditorContext } from '../../EditorProvider'
 import FormatMenu from '../../Menu/FormatMenu'
 import hotKeys, { formatHotKeys, navHotKeys } from './../hotKeys'
 import { renderBlock } from './../../EditorBlock'
+
 import {
   toSlateJson,
   renderInline,
@@ -22,6 +24,7 @@ import {
   hasSelection,
   noAtomicInSelection,
   getSelectedBlocks,
+  isInlineSourceSelected,
 } from './../slateUtils'
 
 const schema = {
@@ -51,10 +54,14 @@ const SlateContentEditable = forwardRef(
       deleteBlockByKey,
       deleteBlocksByKeys,
       onNewBlockMenu,
+      onEditSource,
+      autoFocus,
     },
     ref
   ) => {
-    const [editorState] = useEditorContext()
+    const [editorState, , stateRef] = useEditorContext()
+
+    const [navState] = useNavigationContext()
 
     const { activeBlockId, editableState, blocks, page } = editorState
 
@@ -204,6 +211,12 @@ const SlateContentEditable = forwardRef(
       )
     }
 
+    // this will get removed when paths are implemented
+    const editSource = (_id, editor) => {
+      const _refId = stateRef.current.blocks[_id].refId
+      onEditSource(_refId, editor)
+    }
+
     const onKeyUp = (event, editor, next) => {
       if (event.key === 'Enter') {
         // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
@@ -272,8 +285,16 @@ const SlateContentEditable = forwardRef(
       if (hotKeys.isEsc(event)) {
         onNewBlockMenu(false, editor)
       }
+
+      if (isInlineSourceSelected(editor) && event.key === 'Enter') {
+        const _id = editor.value.anchorBlock.key
+        editSource(_id, editor)
+        return event.preventDefault()
+      }
+
       const { fragment } = editor.value
       // check for selection
+
       if (hasSelection(editor.value)) {
         if (event.key === 'Backspace' && !noAtomicInSelection(editor.value)) {
           // EDGE CASE: prevent block from being deleted when empty block highlighted
@@ -391,10 +412,12 @@ const SlateContentEditable = forwardRef(
     return (
       <Editor
         value={_editableState.value}
+        readOnly={navState.modals.length > 0}
         ref={forkRef(ref, editableRef)}
+        autoFocus={autoFocus}
         onChange={onChange}
         renderBlock={renderBlock}
-        renderInline={renderInline}
+        renderInline={renderInline(onEditSource)}
         renderEditor={renderEditor}
         schema={schema}
         onKeyUp={onKeyUp}

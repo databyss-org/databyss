@@ -9,10 +9,16 @@ import _ from 'lodash'
  * Values in the bound object can be literals, arrays or objects
  */
 export const ValueListContext = createContext()
+const defaultText = { textValue: '', ranges: [] }
 
 // values is dicitonary
 export const ValueListProvider = ({ children, values, onChange }) => {
   const onItemChange = (path, value) => {
+    const _value = _.get(values, path, defaultText)
+    if (_.isEqual(_value, value)) {
+      return
+    }
+
     // apply changes to values, cloned to preserve immutability
     const _values = cloneDeep(values)
     // lodash.set:
@@ -43,8 +49,7 @@ export const useValueListContext = () => useContext(ValueListContext)
 export const ValueListItem = ({ children, path, ...others }) => {
   const [onItemChange, values] = useValueListContext()
 
-  const value = _.get(values, path)
-
+  const value = _.get(values, path, defaultText)
   // lodash.get:
   // Gets the value at path of object.
   // If the resolved value is undefined, the defaultValue is returned in its place.

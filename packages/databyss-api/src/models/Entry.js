@@ -39,7 +39,7 @@ const EntrySchema = new mongoose.Schema({
   entry: {
     type: String,
   },
-  text: RichText,
+  text: RichText.schema,
   index: {
     type: Number,
     default: 0,

@@ -15,6 +15,7 @@ import {
   SHOW_MENU_ACTIONS,
   SHOW_FORMAT_MENU,
   SHOW_NEW_BLOCK_MENU,
+  UPDATE_SOURCE,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -174,6 +175,16 @@ export function newBlockMenu(bool, editableState) {
     payload: {
       editableState,
       bool,
+    },
+  }
+}
+
+export function updateSource(source, editableState) {
+  return {
+    type: UPDATE_SOURCE,
+    payload: {
+      editableState,
+      source,
     },
   }
 }

@@ -2,10 +2,18 @@ import React, { createContext, useContext } from 'react'
 import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import { ResourceNotFoundError } from '../lib/ResourceNotFoundError'
+import _ from 'lodash'
+
 import reducer, { initialState } from './reducer'
 
-import { fetchSource, saveSource, removeSourceFromCache } from './actions'
+import {
+  fetchSource,
+  saveSource,
+  removeSourceFromCache,
+  fetchAllSources,
+  fetchPageSources,
+  fetchSourcesFromList,
+} from './actions'
 
 const useReducer = createReducer()
 
@@ -16,8 +24,12 @@ const SourceProvider = ({ children, initialState, reducer }) => {
 
   // provider methods
   const setSource = source => {
+    if (_.isEqual(state.cache[source._id], source)) {
+      return
+    }
     // add or update source and set cache value
-    dispatch(saveSource(source))
+    // add set timeout to prevent focus issue with line content editable on tab
+    window.requestAnimationFrame(() => dispatch(saveSource(source)))
   }
 
   const getSource = id => {
@@ -28,6 +40,21 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     return null
   }
 
+  const getAllSources = () => {
+    dispatch(fetchAllSources())
+  }
+
+  const getPageSources = id => {
+    dispatch(fetchPageSources(id))
+  }
+
+  const getSourcesFromList = list => {
+    const _sourceList = list.filter(s => typeof state.cache[s] === 'undefined')
+    if (_sourceList.length > 0) {
+      dispatch(fetchSourcesFromList(_sourceList))
+    }
+  }
+
   const removeCacheValue = id => {
     if (state.cache[id]) {
       dispatch(removeSourceFromCache(id))
@@ -35,7 +62,17 @@ const SourceProvider = ({ children, initialState, reducer }) => {
   }
 
   return (
-    <SourceContext.Provider value={[getSource, setSource, removeCacheValue]}>
+    <SourceContext.Provider
+      value={{
+        state,
+        getSource,
+        setSource,
+        removeCacheValue,
+        getAllSources,
+        getPageSources,
+        getSourcesFromList,
+      }}
+    >
       {children}
     </SourceContext.Provider>
   )
@@ -48,21 +85,25 @@ SourceProvider.defaultProps = {
   reducer,
 }
 
-export const withSource = Wrapped => ({ sourceId, ...others }) => {
-  const [getSource] = useSourceContext()
-
+export const SourceLoader = ({ sourceId, children }) => {
+  const { getSource } = useSourceContext()
   const source = getSource(sourceId)
 
-  if (source instanceof ResourceNotFoundError) {
-    return <ErrorFallback message="No Source Found" />
-  }
-
   if (source instanceof Error) {
-    // throw to the source to trigger the "unexpected error" dialog
-    throw source
+    return <ErrorFallback error={source} />
   }
 
-  return source ? <Wrapped source={source} {...others} /> : <Loading />
+  // const child = React.Children.only(children)
+  if (typeof children !== 'function') {
+    throw new Error('Child must be a function')
+  }
+  return source ? children(source) : <Loading />
 }
+
+export const withSource = Wrapped => ({ sourceId, ...others }) => (
+  <SourceLoader sourceId={sourceId}>
+    {source => <Wrapped source={source} {...others} />}
+  </SourceLoader>
+)
 
 export default SourceProvider

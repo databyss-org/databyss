@@ -17,12 +17,15 @@ export function loadPage(_id) {
       type: LOAD_PAGE,
       payload: {},
     })
-    services.loadPage(_id).then(res => {
-      dispatch({
-        type: PAGE_LOADED,
-        payload: res,
+    services
+      .loadPage(_id)
+      .then(res => {
+        dispatch({
+          type: PAGE_LOADED,
+          payload: res,
+        })
       })
-    })
+      .catch(err => console.log(err))
   }
 }
 
@@ -35,7 +38,6 @@ export function savePage(state) {
       type: SAVE_PAGE,
       payload: {},
     })
-
     services.savePage(body).then(() => {
       dispatch({
         type: PAGE_SAVED,
@@ -45,36 +47,37 @@ export function savePage(state) {
   }
 }
 
-export function seedPage(page) {
-  return dispatch => {
-    dispatch({
-      type: SEED_PAGE,
-      payload: {},
-    })
-
-    services.savePage(page)
-    // .then(res => {
-    //   dispatch({
-    //     type: PAGE_LOADED,
-    //     payload: res,
-    //   })
-    // }
-    // )
-  }
-}
-
 export function getPages() {
   return dispatch => {
     dispatch({
       type: FETCHING_PAGES,
       payload: {},
     })
-
-    services.getAllPages().then(res => {
-      dispatch({
-        type: PAGES_LOADED,
-        payload: res,
+    services
+      .getAllPages()
+      .then(res => {
+        dispatch({
+          type: PAGES_LOADED,
+          payload: res,
+        })
       })
+      .catch(e => {
+        dispatch({
+          type: PAGES_LOADED,
+          payload: e,
+        })
+      })
+  }
+}
+
+export function seedPage(page) {
+  return dispatch => {
+    dispatch({
+      type: SEED_PAGE,
+      payload: {},
+    })
+    services.savePage(page).then(() => {
+      dispatch(getPages())
     })
   }
 }

@@ -1,4 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { showModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
 import { useEditorContext } from './EditorProvider'
 
 import {
@@ -14,12 +17,40 @@ import {
   deleteBlock,
   deleteBlocks,
   newBlockMenu,
+  updateSource,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
-const EditorPage = ({ children }) => {
+const EditorPage = ({ children, autoFocus }) => {
   const [editorState, dispatchEditor] = useEditorContext()
+  const { setSource, state } = useSourceContext()
+
+  const { sources } = editorState
+  /*
+  checks to see if new source has been added
+  adds the new source to the source provider
+  */
+  useEffect(
+    () => {
+      const _sourceDictionary = state.cache
+      const _sources = Object.keys(sources)
+      _sources.forEach(_refId => {
+        if (!_sourceDictionary[_refId]) {
+          const _sourceFields = sources[_refId]
+          const _source = {
+            _id: _refId,
+            text: {
+              textValue: _sourceFields.textValue,
+              ranges: _sourceFields.ranges,
+            },
+          }
+          setSource(_source)
+        }
+      })
+    },
+    [sources]
+  )
 
   const onActiveBlockIdChange = (id, editableState) =>
     dispatchEditor(setActiveBlockId(id, editableState))
@@ -80,6 +111,27 @@ const EditorPage = ({ children }) => {
     dispatchEditor(newBlockMenu(bool, { value }))
   }
 
+  const [, dispatchNav] = useNavigationContext()
+
+  // dont need blocks
+  const onEditSource = (refId, { value }) => {
+    // Editor function to dispatch with modal
+    const onUpdateSource = source => {
+      if (source) {
+        dispatchEditor(updateSource(source, { value }))
+      }
+    }
+    dispatchNav(
+      showModal({
+        component: 'SOURCE',
+        props: {
+          sourceId: refId,
+          onUpdateSource,
+        },
+      })
+    )
+  }
+
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
     onActiveBlockIdChange,
@@ -94,6 +146,8 @@ const EditorPage = ({ children }) => {
     deleteBlockByKey,
     deleteBlocksByKeys,
     onNewBlockMenu,
+    onEditSource,
+    autoFocus,
   })
 }
 

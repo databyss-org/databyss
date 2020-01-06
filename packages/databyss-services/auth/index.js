@@ -14,7 +14,9 @@ export function getAuthToken() {
 }
 
 export function deleteAuthToken() {
-  setAuthToken(null)
+  if (getAuthToken()) {
+    setAuthToken(null)
+  }
 }
 
 export function setAccountId(value) {

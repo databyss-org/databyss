@@ -12,7 +12,7 @@ import { ViewportDecorator } from '../decorators'
 import { _seedValue1, _seedValue2, _id1, _id2 } from './__tests__/initialValue'
 
 const EditFirstCitation = withSource(({ source }) => {
-  const [, setSource] = useSourceContext()
+  const { setSource } = useSourceContext()
 
   const value = {
     textValue: source.citations[0].textValue,
@@ -43,7 +43,7 @@ const EditFirstCitation = withSource(({ source }) => {
 const SourcesDemo = () => {
   const [sourceId, setSourceState] = useState(_id1)
 
-  const [, setSource] = useSourceContext()
+  const { setSource } = useSourceContext()
 
   const setSourceFields = sourceFields => {
     setSource(sourceFields)

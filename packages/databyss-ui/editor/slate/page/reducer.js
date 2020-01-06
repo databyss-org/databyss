@@ -1,8 +1,8 @@
 import { Block } from 'slate'
 import { serializeNodeToHtml, sanitizer } from './../inlineSerializer'
-import { getRangesFromBlock } from './../markup'
+import { getRangesFromBlock, stateToSlateMarkup } from './../markup'
 
-import { newEditor, isTextAtomic } from './../slateUtils'
+import { newEditor, isTextAtomic, newAtomicBlock } from './../slateUtils'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
@@ -15,6 +15,7 @@ import {
   START_TAG,
   DELETE_BLOCK,
   DELETE_BLOCKS,
+  UPDATE_SOURCE,
 } from './../../state/page/constants'
 
 export const newBlock = id =>
@@ -166,36 +167,7 @@ const setBlockType = (id, type) => (editor, value, next) => {
       _text = serializeNodeToHtml(_node)
     }
 
-    const _block = Block.fromJSON({
-      object: 'block',
-      type,
-      key: _node.key,
-      data: {},
-      nodes: [
-        {
-          object: 'text',
-          text: '',
-          marks: [],
-        },
-        {
-          object: 'inline',
-          type,
-          data: {},
-          nodes: [
-            {
-              object: 'text',
-              text: sanitizer(_text),
-              marks: _marks,
-            },
-          ],
-        },
-        {
-          object: 'text',
-          text: '',
-          marks: [],
-        },
-      ],
-    })
+    const _block = newAtomicBlock(_node.key, type, _text, _marks)
 
     editor.replaceNodeByKey(id, _block)
   } else {
@@ -252,6 +224,46 @@ const deleteBlockById = id => (editor, value, next) => {
     editor.moveFocusToEndOfNode(_previousKey)
   }
 
+  next(editor, value)
+}
+
+/*
+updates all sources provided in the ID list
+*/
+const onUpdateSource = (source, blocks) => (editor, value, next) => {
+  // generates a list of blocks to update
+  const _idList = Object.keys(blocks).filter(
+    block => blocks[block].refId === source._id
+  )
+  _idList.forEach(id => {
+    const _newNodes = stateToSlateMarkup(source.text).nodes
+    const _block = Block.fromJSON({
+      object: 'block',
+      type: 'SOURCE',
+      nodes: _newNodes,
+    })
+    const _innerHtml = serializeNodeToHtml(_block)
+    const textBlock = {
+      object: 'inline',
+      nodes: [
+        {
+          object: 'text',
+          text: sanitizer(_innerHtml),
+        },
+      ],
+      type: 'SOURCE',
+    }
+    const _tempNode = Block.fromJSON({
+      object: 'block',
+      type: 'SOURCE',
+      key: id,
+      nodes: [textBlock],
+    })
+
+    editor.replaceNodeByKey(id, _tempNode)
+  })
+
+  window.requestAnimationFrame(() => editor.focus())
   next(editor, value)
 }
 
@@ -316,7 +328,15 @@ export default (editableState, action) => {
         editorCommands: _nextEditorCommands,
       }
     }
-
+    case UPDATE_SOURCE: {
+      return {
+        ...editableState,
+        editorCommands: onUpdateSource(
+          action.payload.source,
+          editableState.blocks
+        ),
+      }
+    }
     case HOTKEY: {
       return {
         ...editableState,

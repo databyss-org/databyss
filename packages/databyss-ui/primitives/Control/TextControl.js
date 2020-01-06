@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import BaseControl from './BaseControl'
 import TextInput from './native/TextInput'
 import RichTextInput from './native/RichTextInput'
@@ -23,6 +23,7 @@ const TextControl = ({
   rich,
   modal,
   multiline,
+  focusOnMount,
   css,
   ...others
 }) => {
@@ -50,6 +51,14 @@ const TextControl = ({
     },
     zIndex: active ? 2 : 'unset',
   }
+
+  useEffect(() => {
+    if (focusOnMount && !active && inputRef.current) {
+      setActive(true)
+      window.requestAnimationFrame(() => inputRef.current.focus())
+    }
+  }, [])
+
   const TextInputComponent = rich ? RichTextInput : TextInput
 
   const _children = (
@@ -64,9 +73,9 @@ const TextControl = ({
       <TextInputComponent
         id={id}
         ref={inputRef}
-        active={active}
+        autoFocus={focusOnMount}
         onBlur={() => {
-          setTimeout(() => setActive(false), 50)
+          window.requestAnimationFrame(() => setActive(false))
         }}
         onChange={onChange}
         value={value}
@@ -85,8 +94,8 @@ const TextControl = ({
       userSelect="auto"
       onFocus={() => {
         if (!active && inputRef.current) {
-          setTimeout(() => setActive(true), 50)
           inputRef.current.focus()
+          window.requestAnimationFrame(() => setActive(true))
         }
       }}
       css={[
