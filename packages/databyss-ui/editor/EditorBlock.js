@@ -50,19 +50,28 @@ export const EditorBlock = ({ children, node }) => {
   const [menuActive, setMenuActive] = useState(false)
 
   const [editorState, dispatchEditor] = useEditorContext()
-  const { editableState, showNewBlockMenu } = editorState
+  const { editableState, showNewBlockMenu, activeBlockId } = editorState
 
   useEffect(
     () => {
       if (editableState) {
-        if (node.text.length === 0 && !showNewBlockMenu) {
+        if (
+          activeBlockId === node.key &&
+          node.text.length === 0 &&
+          !showNewBlockMenu
+        ) {
           dispatchEditor(newBlockMenu(true, editableState))
-        } else if (node.text.length > 0 && showNewBlockMenu) {
+        }
+        if (
+          showNewBlockMenu &&
+          activeBlockId === node.key &&
+          node.text.length !== 0
+        ) {
           dispatchEditor(newBlockMenu(false, editableState))
         }
       }
     },
-    [node.text]
+    [node.text, activeBlockId]
   )
 
   const _children = (
@@ -77,6 +86,7 @@ export const EditorBlock = ({ children, node }) => {
       {textSelector({ children, type: node.type })}
     </View>
   )
+
   return !isMobileOs() ? (
     <Grid singleRow mb="tiny" flexWrap="nowrap" columnGap="small">
       <View
