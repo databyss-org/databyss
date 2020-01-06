@@ -6,8 +6,8 @@ export const _id2 = ObjectId().toHexString()
 export const _seedValue1 = {
   authors: [
     {
-      firstName: 'Max',
-      lastName: 'Stamenov',
+      firstName: { textValue: 'Max' },
+      lastName: { textValue: 'Stamenov' },
     },
   ],
 
@@ -28,8 +28,8 @@ export const _seedValue1 = {
 export const _seedValue2 = {
   authors: [
     {
-      firstName: 'Max',
-      lastName: 'Stamenov',
+      firstName: { textValue: 'Max' },
+      lastName: { textValue: 'Stamenov' },
     },
   ],
   text: {

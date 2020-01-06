@@ -37,6 +37,7 @@ context('Editor', () => {
           expect(source).to.eq(_seedValue1.citations[0].textValue)
 
           getSource2.click()
+          cy.wait(2000)
           cy.get('@source')
             .invoke('text')
             .then(source =>
