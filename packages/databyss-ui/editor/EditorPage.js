@@ -44,8 +44,8 @@ const EditorPage = ({ children, autoFocus }) => {
               textValue: _sourceFields.textValue,
               ranges: _sourceFields.ranges,
             },
-            citations: [{ textValue: '', ranges: [] }],
-            authors: [{ firstName: '', lastName: '' }],
+            // citations: [{ textValue: '', ranges: [] }],
+            // authors: [{ firstName: '', lastName: '' }],
           }
           setSource(_source)
         }
@@ -115,7 +115,7 @@ const EditorPage = ({ children, autoFocus }) => {
 
   const [, dispatchNav] = useNavigationContext()
 
-  const onEditSource = (refId, blocks, { value }) => {
+  const onEditSource = (refId, { value }) => {
     // Editor function to dispatch with modal
     const onUpdateSource = source => {
       if (source) {

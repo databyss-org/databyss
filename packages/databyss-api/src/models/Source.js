@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const RichText = require('./RichText')
+const Author = require('./Author')
 
 const Schema = mongoose.Schema
 
@@ -11,11 +12,17 @@ const SourceSchema = new mongoose.Schema({
   resource: {
     type: String,
   },
-  text: RichText,
-  citations: { type: Array, default: [{ textValue: '', ranges: [] }] },
+  text: {
+    type: RichText.schema,
+    required: true,
+  },
+  citations: {
+    type: [RichText.schema],
+    default: [],
+  },
   authors: {
-    type: Array,
-    default: [{ firstName: { textValue: '' }, lastName: { textValue: '' } }],
+    type: [Author.schema],
+    default: [],
   },
   date: {
     type: String,

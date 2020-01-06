@@ -1,7 +1,9 @@
 const mongoose = require('mongoose')
 
-const Text = new mongoose.Schema({
+const TextSchema = new mongoose.Schema({
   textValue: { type: String, default: '' },
 })
+
+const Text = mongoose.models.Text || mongoose.model('text', TextSchema)
 
 module.exports = Text

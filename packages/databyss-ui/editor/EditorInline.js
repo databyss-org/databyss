@@ -3,20 +3,16 @@ import { color, border, space } from 'styled-system'
 import styled from '@emotion/styled'
 import { Button, Icon } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { showModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
-import { updateSource } from './state/page/actions'
 import { useEditorContext } from './EditorProvider'
 
 const Span = styled('span')({ cursor: 'pointer' }, color, border, space)
 
 const EditorInline = React.forwardRef(
-  ({ isSelected, node, children, editor, ...others }, ref) => {
+  ({ isSelected, node, children, editor, onEditSource, ...others }, ref) => {
     const [refId, setRefId] = useState(null)
 
-    const [editorState, dispatchEditor] = useEditorContext()
+    const [editorState] = useEditorContext()
     const { blocks } = editorState
-    const [, dispatchNav] = useNavigationContext()
 
     const backgroundColor = isSelected ? 'background.3' : ''
 
@@ -35,28 +31,9 @@ const EditorInline = React.forwardRef(
       [node, editor]
     )
 
-    const onUpdateSource = source => {
-      // this will be replaced when we use paths
-      if (source) {
-        dispatchEditor(updateSource(source, { value: editor.value }))
-      }
-    }
-
-    const onEditSource = () => {
-      dispatchNav(
-        showModal({
-          component: 'SOURCE',
-          props: {
-            sourceId: refId,
-            onUpdateSource,
-          },
-        })
-      )
-    }
-
     const onClick = () => {
       if (node.type === 'SOURCE' && isSelected) {
-        onEditSource()
+        onEditSource(refId, { value: editor.value })
       }
     }
 
