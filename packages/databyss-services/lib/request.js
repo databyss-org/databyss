@@ -10,6 +10,7 @@ function checkStatus(response) {
   }
   if (response.status === 401) {
     deleteAuthToken()
+    // TODO: move redirect upstream
     // window.location = '/login'
     throw new NotAuthorizedError('Unauthorized')
   }
