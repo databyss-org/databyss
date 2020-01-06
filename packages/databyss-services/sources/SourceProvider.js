@@ -44,7 +44,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     dispatch(fetchAllSources())
   }
 
-  const getSourcesforPage = id => {
+  const getPageSources = id => {
     dispatch(fetchPageSources(id))
   }
 
@@ -64,12 +64,12 @@ const SourceProvider = ({ children, initialState, reducer }) => {
   return (
     <SourceContext.Provider
       value={{
-        state: state,
+        state,
         getSource,
         setSource,
         removeCacheValue,
         getAllSources,
-        getSourcesforPage,
+        getPageSources,
         getSourcesFromList,
       }}
     >

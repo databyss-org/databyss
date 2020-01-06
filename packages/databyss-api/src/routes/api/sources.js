@@ -16,6 +16,7 @@ router.post(
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
     const { text, authors, citations, _id } = req.body.data
+
     const sourceFields = {
       text,
       citations,
@@ -53,9 +54,9 @@ router.get(
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
     try {
-      let _list = JSON.parse(req.query.array)
+      const _list = JSON.parse(req.query.array)
 
-      let sourceList = await Promise.all(
+      const sourceList = await Promise.all(
         _list.map(async _id => {
           const source = await Source.findOne({ _id })
           return source

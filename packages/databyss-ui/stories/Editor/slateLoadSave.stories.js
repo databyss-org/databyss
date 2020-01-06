@@ -47,7 +47,7 @@ const EditorLoader = withPages(({ pages, children }) => {
     () => {
       if (state.pageState.sources) {
         // loads sources from page into cache
-        let _sourceList = Object.keys(state.pageState.sources)
+        const _sourceList = Object.keys(state.pageState.sources)
         getSourcesFromList(_sourceList)
       }
     },
@@ -107,7 +107,7 @@ const LoadAndSave = () => {
     () => {
       // ensures that all sources have been loaded into cache before loading the page
       if (!sourcesLoaded && pageState.pageState.sources) {
-        let list = Object.keys(pageState.pageState.sources)
+        const list = Object.keys(pageState.pageState.sources)
         const _sourceList = list.filter(
           s => typeof state.cache[s] === 'undefined'
         )
