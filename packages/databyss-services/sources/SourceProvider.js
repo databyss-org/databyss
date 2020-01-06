@@ -12,6 +12,7 @@ import {
   removeSourceFromCache,
   fetchAllSources,
   fetchPageSources,
+  fetchSourcesFromList,
 } from './actions'
 
 const useReducer = createReducer()
@@ -47,23 +48,29 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     dispatch(fetchPageSources(id))
   }
 
+  const getSourcesFromList = list => {
+    const _sourceList = list.filter(s => typeof state.cache[s] === 'undefined')
+    if (_sourceList.length > 0) {
+      dispatch(fetchSourcesFromList(_sourceList))
+    }
+  }
+
   const removeCacheValue = id => {
     if (state.cache[id]) {
       dispatch(removeSourceFromCache(id))
     }
   }
 
-  const getSources = () => state.cache
-
   return (
     <SourceContext.Provider
       value={{
+        state: state,
         getSource,
         setSource,
         removeCacheValue,
-        getSources,
         getAllSources,
         getSourcesforPage,
+        getSourcesFromList,
       }}
     >
       {children}

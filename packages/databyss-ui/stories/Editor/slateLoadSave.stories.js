@@ -34,7 +34,7 @@ const Box = ({ children }) => (
 // add with pages here
 const EditorLoader = withPages(({ pages, children }) => {
   const [state, dispatch] = usePageContext()
-  const { getSourcesforPage } = useSourceContext()
+  const { getSourcesFromList } = useSourceContext()
 
   useEffect(
     () => {
@@ -43,12 +43,21 @@ const EditorLoader = withPages(({ pages, children }) => {
     [dispatch]
   )
 
+  useEffect(
+    () => {
+      if (state.pageState.sources) {
+        // loads sources from page into cache
+        let _sourceList = Object.keys(state.pageState.sources)
+        getSourcesFromList(_sourceList)
+      }
+    },
+    [state.pageState.sources]
+  )
+
   const pagesRender = pages.map(p => (
     <View key={p._id}>
       <Button
         onPress={() => {
-          // load sources for id
-          getSourcesforPage(p._id)
           dispatch(loadPage(p._id))
         }}
       >
@@ -89,18 +98,40 @@ const ProviderDecorator = storyFn => (
 
 const LoadAndSave = () => {
   const [slateDocument, setSlateDocument] = useState({})
+  const [sourcesLoaded, setSourcesLoaded] = useState(false)
+
+  const [pageState] = usePageContext()
+  const { state } = useSourceContext()
+
+  useEffect(
+    () => {
+      // ensures that all sources have been loaded into cache before loading the page
+      if (!sourcesLoaded && pageState.pageState.sources) {
+        let list = Object.keys(pageState.pageState.sources)
+        const _sourceList = list.filter(
+          s => typeof state.cache[s] === 'undefined'
+        )
+        if (_sourceList.length === 0) {
+          setSourcesLoaded(true)
+        }
+      }
+    },
+    [pageState.pageState.sources, state]
+  )
 
   return (
-    <View>
-      <Box>
-        <EditorPage autoFocus>
-          <SlateContentEditable onDocumentChange={setSlateDocument} />
-        </EditorPage>
-      </Box>
-      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
-        <pre id="slateDocument">{JSON.stringify(slateDocument, null, 2)}</pre>
-      </Box>
-    </View>
+    sourcesLoaded && (
+      <View>
+        <Box>
+          <EditorPage autoFocus>
+            <SlateContentEditable onDocumentChange={setSlateDocument} />
+          </EditorPage>
+        </Box>
+        <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
+          <pre id="slateDocument">{JSON.stringify(slateDocument, null, 2)}</pre>
+        </Box>
+      </View>
+    )
   )
 }
 

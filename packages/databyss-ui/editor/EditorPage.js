@@ -24,7 +24,7 @@ import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
 const EditorPage = ({ children, autoFocus }) => {
   const [editorState, dispatchEditor] = useEditorContext()
-  const { setSource, getSources } = useSourceContext()
+  const { setSource, state } = useSourceContext()
 
   const { sources } = editorState
   /*
@@ -33,7 +33,7 @@ const EditorPage = ({ children, autoFocus }) => {
   */
   useEffect(
     () => {
-      const _sourceDictionary = getSources()
+      const _sourceDictionary = state.cache
       const _sources = Object.keys(sources)
       _sources.forEach(_refId => {
         if (!_sourceDictionary[_refId]) {
@@ -44,8 +44,8 @@ const EditorPage = ({ children, autoFocus }) => {
               textValue: _sourceFields.textValue,
               ranges: _sourceFields.ranges,
             },
-            // citations: [{ textValue: '', ranges: [] }],
-            // authors: [{ firstName: '', lastName: '' }],
+            citations: [{ textValue: '', ranges: [] }],
+            authors: [{ firstName: '', lastName: '' }],
           }
           setSource(_source)
         }
@@ -115,6 +115,7 @@ const EditorPage = ({ children, autoFocus }) => {
 
   const [, dispatchNav] = useNavigationContext()
 
+  // dont need blocks
   const onEditSource = (refId, { value }) => {
     // Editor function to dispatch with modal
     const onUpdateSource = source => {

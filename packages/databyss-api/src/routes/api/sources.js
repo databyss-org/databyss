@@ -48,6 +48,31 @@ router.post(
   }
 )
 
+router.get(
+  '/list',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  async (req, res) => {
+    try {
+      let _list = JSON.parse(req.query.array)
+
+      let sourceList = await Promise.all(
+        _list.map(async _id => {
+          const source = await Source.findOne({ _id })
+          return source
+        })
+      )
+
+      const sourceDict = {}
+      sourceList.forEach(s => (sourceDict[s._id] = s))
+
+      return res.json(sourceDict)
+    } catch (err) {
+      console.error(err.message)
+      return res.status(500).send('Server Error')
+    }
+  }
+)
+
 // @route    GET api/sources
 // @desc     Get source by id
 // @access   Private

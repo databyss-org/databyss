@@ -227,7 +227,7 @@ const SlateContentEditable = forwardRef(
     // this will get removed when paths are implemented
     const editSource = (_id, editor) => {
       const _refId = blocksRef.current[_id].refId
-      onEditSource(_refId, blocksRef.current, editor)
+      onEditSource(_refId, editor)
     }
 
     const onKeyUp = (event, editor, next) => {
