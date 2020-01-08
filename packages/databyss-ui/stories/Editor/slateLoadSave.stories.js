@@ -5,10 +5,12 @@ import EditorProvider from '@databyss-org/ui/editor/EditorProvider'
 import PageProvider, {
   usePageContext,
   withPages,
+  withPage,
 } from '@databyss-org/services/pages/PageProvider'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import SourceProvider, {
   useSourceContext,
+  withSources,
 } from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
@@ -31,10 +33,24 @@ const Box = ({ children }) => (
   </View>
 )
 
-// add with pages here
+const Editor = withPage(({ page, children }) => {
+  return (
+    <EditorProvider
+      initialState={page}
+      editableReducer={slateReducer}
+      reducer={reducer}
+    >
+      <AutoSave />
+      {children}
+    </EditorProvider>
+  )
+})
+
 const EditorLoader = withPages(({ pages, children }) => {
-  const [state, dispatch] = usePageContext()
+  const { state, dispatch } = usePageContext()
   const { getSourcesFromList } = useSourceContext()
+  const [pageId, setPageId] = useState(null)
+  const [pagesRender, setPagesRender] = useState(null)
 
   useEffect(
     () => {
@@ -45,28 +61,35 @@ const EditorLoader = withPages(({ pages, children }) => {
 
   useEffect(
     () => {
-      if (state.pageState.sources) {
-        // loads sources from page into cache
-        const _sourceList = Object.keys(state.pageState.sources)
+      if (state.cache[pageId]) {
+        const _sourceList = Object.keys(state.cache[pageId].sources)
         getSourcesFromList(_sourceList)
       }
     },
-    [state.pageState.sources]
+    [state, pageId]
   )
 
-  const pagesRender = pages.map(p => (
-    <View key={p._id}>
-      <Button
-        onPress={() => {
-          dispatch(loadPage(p._id))
-        }}
-      >
-        <Text>load page {p._id}</Text>
-      </Button>
-    </View>
-  ))
+  useEffect(
+    () => {
+      setPagesRender(
+        pages.map(p => (
+          <View key={p._id}>
+            <Button
+              onPress={() => {
+                setPageId(p._id)
+              }}
+            >
+              <Text>load page {p._id}</Text>
+            </Button>
+          </View>
+        ))
+      )
+    },
+    [pages]
+  )
 
-  return state.isLoading ? (
+  // change this to see if pageID exists
+  return !pageId ? (
     <View mb="medium">
       <View>
         <Button onPress={() => dispatch(seedPage(seedState))}>SEED</Button>
@@ -75,14 +98,8 @@ const EditorLoader = withPages(({ pages, children }) => {
       <Text> Refresh to seed new page </Text>
     </View>
   ) : (
-    <EditorProvider
-      initialState={state.pageState}
-      editableReducer={slateReducer}
-      reducer={reducer}
-    >
-      <AutoSave />
-      {children}
-    </EditorProvider>
+    // wrapped in with page
+    <Editor pageId={pageId}>{children}</Editor>
   )
 })
 
@@ -98,40 +115,34 @@ const ProviderDecorator = storyFn => (
 
 const LoadAndSave = () => {
   const [slateDocument, setSlateDocument] = useState({})
-  const [sourcesLoaded, setSourcesLoaded] = useState(false)
 
-  const [pageState] = usePageContext()
-  const { state } = useSourceContext()
-
-  useEffect(
-    () => {
-      // ensures that all sources have been loaded into cache before loading the page
-      if (!sourcesLoaded && pageState.pageState.sources) {
-        const list = Object.keys(pageState.pageState.sources)
-        const _sourceList = list.filter(
-          s => typeof state.cache[s] === 'undefined'
-        )
-        if (_sourceList.length === 0) {
-          setSourcesLoaded(true)
-        }
-      }
-    },
-    [pageState.pageState.sources, state]
-  )
+  // useEffect(
+  //   () => {
+  //     // ensures that all sources have been loaded into cache before loading the page
+  //     if (!sourcesLoaded && pageState.cache[pageId]) {
+  //       const list = Object.keys(pageState.pageState.sources)
+  //       const _sourceList = list.filter(
+  //         s => typeof state.cache[s] === 'undefined'
+  //       )
+  //       if (_sourceList.length === 0) {
+  //         setSourcesLoaded(true)
+  //       }
+  //     }
+  //   },
+  //   [pageState, state]
+  // )
 
   return (
-    sourcesLoaded && (
-      <View>
-        <Box>
-          <EditorPage autoFocus>
-            <SlateContentEditable onDocumentChange={setSlateDocument} />
-          </EditorPage>
-        </Box>
-        <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
-          <pre id="slateDocument">{JSON.stringify(slateDocument, null, 2)}</pre>
-        </Box>
-      </View>
-    )
+    <View>
+      <Box>
+        <EditorPage autoFocus>
+          <SlateContentEditable onDocumentChange={setSlateDocument} />
+        </EditorPage>
+      </Box>
+      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
+        <pre id="slateDocument">{JSON.stringify(slateDocument, null, 2)}</pre>
+      </Box>
+    </View>
   )
 }
 

@@ -11,7 +11,7 @@ import {
   PAGES_LOADED,
 } from './constants'
 
-export function loadPage(_id) {
+export function fetchPage(_id) {
   return dispatch => {
     dispatch({
       type: LOAD_PAGE,
@@ -22,10 +22,15 @@ export function loadPage(_id) {
       .then(res => {
         dispatch({
           type: PAGE_LOADED,
-          payload: res,
+          payload: { page: res, id: _id },
         })
       })
-      .catch(err => console.log(err))
+      .catch(e => {
+        dispatch({
+          type: PAGE_LOADED,
+          payload: e,
+        })
+      })
   }
 }
 
@@ -38,6 +43,7 @@ export function savePage(state) {
       type: SAVE_PAGE,
       payload: {},
     })
+    // CACHE_PAGE HERE similar to autosave
     services.savePage(body).then(() => {
       dispatch({
         type: PAGE_SAVED,
@@ -47,7 +53,7 @@ export function savePage(state) {
   }
 }
 
-export function getPages() {
+export function fetchPages() {
   return dispatch => {
     dispatch({
       type: FETCHING_PAGES,
@@ -77,7 +83,7 @@ export function seedPage(page) {
       payload: {},
     })
     services.savePage(page).then(() => {
-      dispatch(getPages())
+      dispatch(fetchPages())
     })
   }
 }

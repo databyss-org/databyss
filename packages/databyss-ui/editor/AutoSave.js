@@ -5,7 +5,7 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import { useEditorContext } from './EditorProvider'
 
 const AutoSave = ({ interval }) => {
-  const [, pageDispatch] = usePageContext()
+  const { dispatch: pageDispatch } = usePageContext()
   const [, , editorStateRef] = useEditorContext()
   const [navState] = useNavigationContext()
 

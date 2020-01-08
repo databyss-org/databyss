@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import {
   LOAD_PAGE,
   SAVE_PAGE,
@@ -6,14 +7,17 @@ import {
   SEED_PAGE,
   FETCHING_PAGES,
   PAGES_LOADED,
+  CACHE_PAGE,
 } from './constants'
 
 export const initialState = {
-  isLoading: true,
+  isLoading: false,
   isPagesLoading: false,
   isSaving: false,
   pages: null,
   pageState: {},
+  cache: {},
+  headerCache: {},
 }
 
 export default (state, action) => {
@@ -43,25 +47,49 @@ export default (state, action) => {
       }
     }
     case PAGE_LOADED: {
+      const _page = action.payload.page
+      const _cache = state.cache
+      _cache[action.payload.id] = _page
       return {
         ...state,
         isLoading: false,
-        pageState: {
-          ...action.payload,
-        },
+        // pageState: {
+        //   ...action.payload.page,
+        // },
+        cache: _cache,
       }
     }
     case FETCHING_PAGES: {
       return {
         ...state,
+        isLoading: true,
         isPagesLoading: true,
       }
     }
+    case CACHE_PAGE: {
+      console.log(action.payload)
+      return {
+        ...state,
+      }
+    }
+
     case PAGES_LOADED: {
+      const _cache = state.headerCache
+      if (_.isArray(action.payload)) {
+        action.payload.forEach(
+          page =>
+            (_cache[page._id] = {
+              name: page.name,
+              _id: page._id,
+            })
+        )
+      }
       return {
         ...state,
         isPagesLoading: false,
+        isLoading: false,
         pages: action.payload,
+        headerCache: _cache,
       }
     }
     default:
