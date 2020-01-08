@@ -37,18 +37,14 @@ const EditorPage = ({ children, autoFocus }) => {
     () => {
       if (newSources && editableState) {
         if (newSources.length > 0) {
-          window.requestAnimationFrame(() =>
-            newSources.forEach(s => {
-              const _source = {
-                _id: s._id,
-                text: { textValue: s.textValue, ranges: s.ranges },
-              }
-              setSource(_source)
-              dispatchEditor(
-                removeSourceFromQue(s._id, { value: editableState.value })
-              )
-            })
-          )
+          newSources.forEach(s => {
+            const _source = {
+              _id: s._id,
+              text: { textValue: s.textValue, ranges: s.ranges },
+            }
+            setSource(_source)
+            dispatchEditor(removeSourceFromQue(s._id))
+          })
         }
       }
     },

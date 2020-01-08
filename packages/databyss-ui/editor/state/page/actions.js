@@ -190,11 +190,10 @@ export function updateSource(source, editableState) {
   }
 }
 
-export function removeSourceFromQue(id, editableState) {
+export function removeSourceFromQue(id) {
   return {
     type: DEQUEUE_NEW_SOURCES,
     payload: {
-      editableState,
       id,
     },
   }
