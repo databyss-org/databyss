@@ -9,28 +9,32 @@ const AutoSave = ({ interval }) => {
   const [, , editorStateRef] = useEditorContext()
   const [navState] = useNavigationContext()
 
-  const [refreshId, setRefreshId] = useState(null)
-
   useEffect(
     () => {
       // if modal is present, turn off autosave
       const hasModal = navState.modals.length > 0
-      if (!refreshId && !hasModal) {
-        setRefreshId(
-          setInterval(() => {
-            // TODO: check if values have changed before saving
-            pageDispatch(savePage(editorStateRef.current))
-          }, interval * 1000)
-        )
+      let _timer
+      if (!hasModal && !_timer) {
+        _timer = setInterval(() => {
+          // TODO: check if values have changed before saving
+          pageDispatch(savePage(editorStateRef.current))
+        }, interval * 1000)
       }
       if (hasModal) {
-        clearInterval(refreshId)
-        setRefreshId(null)
+        clearInterval(_timer)
+        _timer = null
+      }
+      // on unmount clear autosave
+      return () => {
+        clearInterval(_timer)
       }
     },
     [navState]
   )
   return null
+
+  // add an unmount handler
+  // clear interal on unmount instead
 }
 
 AutoSave.defaultProps = {

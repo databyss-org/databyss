@@ -9,6 +9,7 @@ import {
   SEED_PAGE,
   FETCHING_PAGES,
   PAGES_LOADED,
+  CACHE_PAGE,
 } from './constants'
 
 export function fetchPage(_id) {
@@ -39,6 +40,11 @@ export function savePage(state) {
   const body = cloneDeep(state)
   delete body.editableState
   return dispatch => {
+    dispatch({
+      type: CACHE_PAGE,
+      payload: body,
+    })
+
     dispatch({
       type: SAVE_PAGE,
       payload: {},

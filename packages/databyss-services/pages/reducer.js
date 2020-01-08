@@ -1,4 +1,6 @@
 import _ from 'lodash'
+import cloneDeep from 'clone-deep'
+
 import {
   LOAD_PAGE,
   SAVE_PAGE,
@@ -67,9 +69,11 @@ export default (state, action) => {
       }
     }
     case CACHE_PAGE: {
-      console.log(action.payload)
+      const _state = cloneDeep(state)
+      const _id = action.payload.page._id
+      _state.cache[_id] = action.payload
       return {
-        ...state,
+        ..._state,
       }
     }
 

@@ -40,7 +40,7 @@ const Editor = withPage(({ page, children }) => {
       editableReducer={slateReducer}
       reducer={reducer}
     >
-      {/* <AutoSave /> */}
+      <AutoSave />
       {children}
     </EditorProvider>
   )
@@ -58,16 +58,6 @@ const EditorLoader = withPages(({ pages, children }) => {
     },
     [dispatch]
   )
-
-  // useEffect(
-  //   () => {
-  //     if (state.cache[pageId]) {
-  //       const _sourceList = Object.keys(state.cache[pageId].sources)
-  //       getSourcesFromList(_sourceList)
-  //     }
-  //   },
-  //   [state, pageId]
-  // )
 
   useEffect(
     () => {
@@ -98,7 +88,6 @@ const EditorLoader = withPages(({ pages, children }) => {
       <Text> Refresh to seed new page </Text>
     </View>
   ) : (
-    // wrapped in with page
     <Editor pageId={pageId}>{children}</Editor>
   )
 })
@@ -115,22 +104,6 @@ const ProviderDecorator = storyFn => (
 
 const LoadAndSave = () => {
   const [slateDocument, setSlateDocument] = useState({})
-
-  // useEffect(
-  //   () => {
-  //     // ensures that all sources have been loaded into cache before loading the page
-  //     if (!sourcesLoaded && pageState.cache[pageId]) {
-  //       const list = Object.keys(pageState.pageState.sources)
-  //       const _sourceList = list.filter(
-  //         s => typeof state.cache[s] === 'undefined'
-  //       )
-  //       if (_sourceList.length === 0) {
-  //         setSourcesLoaded(true)
-  //       }
-  //     }
-  //   },
-  //   [pageState, state]
-  // )
 
   return (
     <View>
