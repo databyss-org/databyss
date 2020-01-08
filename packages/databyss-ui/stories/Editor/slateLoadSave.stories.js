@@ -40,7 +40,7 @@ const Editor = withPage(({ page, children }) => {
       editableReducer={slateReducer}
       reducer={reducer}
     >
-      <AutoSave />
+      {/* <AutoSave /> */}
       {children}
     </EditorProvider>
   )
@@ -59,15 +59,15 @@ const EditorLoader = withPages(({ pages, children }) => {
     [dispatch]
   )
 
-  useEffect(
-    () => {
-      if (state.cache[pageId]) {
-        const _sourceList = Object.keys(state.cache[pageId].sources)
-        getSourcesFromList(_sourceList)
-      }
-    },
-    [state, pageId]
-  )
+  // useEffect(
+  //   () => {
+  //     if (state.cache[pageId]) {
+  //       const _sourceList = Object.keys(state.cache[pageId].sources)
+  //       getSourcesFromList(_sourceList)
+  //     }
+  //   },
+  //   [state, pageId]
+  // )
 
   useEffect(
     () => {

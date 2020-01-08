@@ -4,6 +4,7 @@ export default {
   showMenuActions: false,
   showFormatMenu: false,
   showNewBlockMenu: true,
+  newSources: [],
   sources: {},
   entries: {
     '5d6442046e84d304ddceb768': {

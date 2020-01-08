@@ -17,6 +17,7 @@ import {
   SHOW_FORMAT_MENU,
   SHOW_NEW_BLOCK_MENU,
   UPDATE_SOURCE,
+  DEQUEUE_NEW_SOURCES,
 } from './constants'
 
 export initialState from './../initialState'
@@ -128,8 +129,9 @@ const setBlockType = (state, type, _id) => {
 
   switch (type) {
     case 'SOURCE':
-      nextState.sources[nextRefId] = { _id: nextRefId, textValue, ranges }
-
+      const _source = { _id: nextRefId, textValue, ranges }
+      nextState.sources[nextRefId] = _source
+      nextState.newSources = [_source]
       return nextState
     case 'ENTRY':
       nextState.entries[nextRefId] = { _id: nextRefId, textValue, ranges }
@@ -383,6 +385,11 @@ export default (state, action) => {
         )
       }
       return setBlockType(nextState, action.payload.type, action.payload.id)
+    case DEQUEUE_NEW_SOURCES:
+      let _que = state.newSources
+      const _id = action.payload.id
+      _que = _que.filter(q => q._id !== _id)
+      return { ...state, newSources: _que }
     default:
       return state
   }
