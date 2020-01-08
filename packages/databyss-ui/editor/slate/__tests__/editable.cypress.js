@@ -59,7 +59,6 @@ context('Editor', () => {
     cy.get('@editor')
       .type('@this is a source')
       .newLine()
-      .wait(600)
       .previousBlock()
       .toggleBold()
       .type('this should not be allowed')

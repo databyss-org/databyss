@@ -32,9 +32,6 @@ const AutoSave = ({ interval }) => {
     [navState]
   )
   return null
-
-  // add an unmount handler
-  // clear interal on unmount instead
 }
 
 AutoSave.defaultProps = {
