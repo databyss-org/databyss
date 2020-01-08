@@ -14,8 +14,9 @@ const PageProvider = ({ children, initialState }) => {
   const [state, dispatch, stateRef] = useReducer(reducer, initialState)
 
   const getPages = () => {
-    if (state.pages) {
-      return state.pages
+    console.log(state)
+    if (state.headerCache) {
+      return state.headerCache
     }
     if (!state.isLoading) {
       dispatch(fetchPages())

@@ -6,7 +6,6 @@ import {
   SAVE_PAGE,
   PAGE_SAVED,
   PAGE_LOADED,
-  SEED_PAGE,
   FETCHING_PAGES,
   PAGES_LOADED,
   CACHE_PAGE,
@@ -22,14 +21,14 @@ export function fetchPage(_id) {
       .loadPage(_id)
       .then(res => {
         dispatch({
-          type: PAGE_LOADED,
-          payload: { page: res, id: _id },
+          type: CACHE_PAGE,
+          payload: { body: res, id: _id },
         })
       })
       .catch(e => {
         dispatch({
-          type: PAGE_LOADED,
-          payload: e,
+          type: CACHE_PAGE,
+          payload: { body: e, id: _id },
         })
       })
   }
@@ -42,14 +41,8 @@ export function savePage(state) {
   return dispatch => {
     dispatch({
       type: CACHE_PAGE,
-      payload: body,
+      payload: { body, id: body.page._id },
     })
-
-    dispatch({
-      type: SAVE_PAGE,
-      payload: {},
-    })
-    // CACHE_PAGE HERE similar to autosave
     services.savePage(body).then(() => {
       dispatch({
         type: PAGE_SAVED,
@@ -84,10 +77,6 @@ export function fetchPages() {
 
 export function seedPage(page) {
   return dispatch => {
-    dispatch({
-      type: SEED_PAGE,
-      payload: {},
-    })
     services.savePage(page).then(() => {
       dispatch(fetchPages())
     })

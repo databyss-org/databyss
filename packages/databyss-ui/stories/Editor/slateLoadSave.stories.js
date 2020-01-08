@@ -10,13 +10,12 @@ import PageProvider, {
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import SourceProvider, {
   useSourceContext,
-  withSources,
 } from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
 import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
-import { loadPage, seedPage } from '@databyss-org/services/pages/actions'
+import { seedPage } from '@databyss-org/services/pages/actions'
 import { initialState } from '@databyss-org/services/pages/reducer'
 
 import SlateContentEditable from '@databyss-org/ui/editor/slate/page/ContentEditable'
@@ -52,38 +51,32 @@ const EditorLoader = withPages(({ pages, children }) => {
   const [pageId, setPageId] = useState(null)
   const [pagesRender, setPagesRender] = useState(null)
 
-  useEffect(
-    () => {
-      dispatch(seedPage(seedState))
-    },
-    [dispatch]
-  )
+  useEffect(() => {
+    dispatch(seedPage(seedState))
+  }, [])
 
   useEffect(
     () => {
       setPagesRender(
-        pages.map(p => (
-          <View key={p._id}>
+        Object.keys(pages).map((p, i) => (
+          <View key={i}>
             <Button
               onPress={() => {
-                setPageId(p._id)
+                setPageId(p)
               }}
             >
-              <Text>load page {p._id}</Text>
+              <Text>load page '{pages[p].name}'</Text>
             </Button>
           </View>
         ))
       )
     },
-    [pages]
+    [state]
   )
 
   // change this to see if pageID exists
   return !pageId ? (
     <View mb="medium">
-      <View>
-        <Button onPress={() => dispatch(seedPage(seedState))}>SEED</Button>
-      </View>
       {pagesRender}
       <Text> Refresh to seed new page </Text>
     </View>

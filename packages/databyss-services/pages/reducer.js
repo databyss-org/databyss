@@ -3,10 +3,8 @@ import cloneDeep from 'clone-deep'
 
 import {
   LOAD_PAGE,
-  SAVE_PAGE,
   PAGE_SAVED,
   PAGE_LOADED,
-  SEED_PAGE,
   FETCHING_PAGES,
   PAGES_LOADED,
   CACHE_PAGE,
@@ -14,10 +12,6 @@ import {
 
 export const initialState = {
   isLoading: false,
-  isPagesLoading: false,
-  isSaving: false,
-  pages: null,
-  pageState: {},
   cache: {},
   headerCache: {},
 }
@@ -30,24 +24,6 @@ export default (state, action) => {
         isLoading: true,
       }
     }
-    case SAVE_PAGE: {
-      return {
-        ...state,
-        isSaving: true,
-      }
-    }
-    case SEED_PAGE: {
-      return {
-        ...state,
-        isLoading: true,
-      }
-    }
-    case PAGE_SAVED: {
-      return {
-        ...state,
-        isSaving: false,
-      }
-    }
     case PAGE_LOADED: {
       const _page = action.payload.page
       const _cache = state.cache
@@ -55,9 +31,6 @@ export default (state, action) => {
       return {
         ...state,
         isLoading: false,
-        // pageState: {
-        //   ...action.payload.page,
-        // },
         cache: _cache,
       }
     }
@@ -65,13 +38,11 @@ export default (state, action) => {
       return {
         ...state,
         isLoading: true,
-        isPagesLoading: true,
       }
     }
     case CACHE_PAGE: {
       const _state = cloneDeep(state)
-      const _id = action.payload.page._id
-      _state.cache[_id] = action.payload
+      _state.cache[action.payload.id] = action.payload.body
       return {
         ..._state,
       }
@@ -90,9 +61,7 @@ export default (state, action) => {
       }
       return {
         ...state,
-        isPagesLoading: false,
         isLoading: false,
-        pages: action.payload,
         headerCache: _cache,
       }
     }
