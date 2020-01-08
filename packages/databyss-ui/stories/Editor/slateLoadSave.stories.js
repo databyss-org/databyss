@@ -8,9 +8,7 @@ import PageProvider, {
   withPage,
 } from '@databyss-org/services/pages/PageProvider'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import SourceProvider, {
-  useSourceContext,
-} from '@databyss-org/services/sources/SourceProvider'
+import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
@@ -32,22 +30,19 @@ const Box = ({ children }) => (
   </View>
 )
 
-const Editor = withPage(({ page, children }) => {
-  return (
-    <EditorProvider
-      initialState={page}
-      editableReducer={slateReducer}
-      reducer={reducer}
-    >
-      <AutoSave />
-      {children}
-    </EditorProvider>
-  )
-})
+const Editor = withPage(({ page, children }) => (
+  <EditorProvider
+    initialState={page}
+    editableReducer={slateReducer}
+    reducer={reducer}
+  >
+    <AutoSave />
+    {children}
+  </EditorProvider>
+))
 
 const EditorLoader = withPages(({ pages, children }) => {
   const { state, dispatch } = usePageContext()
-  const { getSourcesFromList } = useSourceContext()
   const [pageId, setPageId] = useState(null)
   const [pagesRender, setPagesRender] = useState(null)
 
@@ -65,7 +60,7 @@ const EditorLoader = withPages(({ pages, children }) => {
                 setPageId(p)
               }}
             >
-              <Text>load page '{pages[p].name}'</Text>
+              <Text>load {pages[p].name}</Text>
             </Button>
           </View>
         ))

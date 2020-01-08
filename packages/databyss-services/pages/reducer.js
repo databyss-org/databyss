@@ -3,7 +3,6 @@ import cloneDeep from 'clone-deep'
 
 import {
   LOAD_PAGE,
-  PAGE_SAVED,
   PAGE_LOADED,
   FETCHING_PAGES,
   PAGES_LOADED,

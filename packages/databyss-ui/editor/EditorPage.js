@@ -25,7 +25,7 @@ import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
 const EditorPage = ({ children, autoFocus }) => {
   const [editorState, dispatchEditor] = useEditorContext()
-  const { setSource, state } = useSourceContext()
+  const { setSource } = useSourceContext()
 
   const { sources, newSources, editableState } = editorState
 

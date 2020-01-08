@@ -3,9 +3,7 @@ import * as services from './'
 
 import {
   LOAD_PAGE,
-  SAVE_PAGE,
   PAGE_SAVED,
-  PAGE_LOADED,
   FETCHING_PAGES,
   PAGES_LOADED,
   CACHE_PAGE,
@@ -48,6 +46,8 @@ export function savePage(state) {
         type: PAGE_SAVED,
         payload: {},
       })
+      // TODO: PAGE_SAVED DOES NOTHING
+      // HANDLE IF ERROR ON SAVING
     })
   }
 }

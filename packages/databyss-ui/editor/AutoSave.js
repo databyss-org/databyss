@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { savePage } from '@databyss-org/services/pages/actions'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'

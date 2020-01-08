@@ -84,9 +84,7 @@ export const PageLoader = ({ pageId, children }) => {
 
 export const withPage = Wrapped => ({ pageId, ...others }) => (
   <PageLoader pageId={pageId}>
-    {page => {
-      return <Wrapped page={page} {...others} />
-    }}
+    {page => <Wrapped page={page} {...others} />}
   </PageLoader>
 )
 
