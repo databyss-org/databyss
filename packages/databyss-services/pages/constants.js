@@ -1,5 +1,4 @@
-export const LOAD_PAGE = 'LOAD_PAGE'
-export const PAGE_LOADED = 'PAGE_LOADED'
-export const FETCHING_PAGES = 'FETCHING_PAGES'
-export const PAGES_LOADED = 'PAGES_LOADED'
 export const CACHE_PAGE = 'CACHE_PAGE'
+export const CACHE_PAGE_HEADERS = 'CACHE_PAGE_HEADERS'
+export const FETCH_PAGE_HEADERS = 'FETCH_PAGE_HEADERS'
+export const FETCH_PAGE = 'FETCH_PAGE'

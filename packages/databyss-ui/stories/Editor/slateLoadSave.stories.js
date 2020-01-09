@@ -15,7 +15,6 @@ import sourceReducer, {
 import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
 import { seedPage } from '@databyss-org/services/pages/actions'
 import { initialState } from '@databyss-org/services/pages/reducer'
-
 import SlateContentEditable from '@databyss-org/ui/editor/slate/page/ContentEditable'
 import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
 import reducer from '@databyss-org/ui/editor/state/page/reducer'
@@ -47,7 +46,7 @@ const EditorLoader = withPages(({ pages, children }) => {
   const [pagesRender, setPagesRender] = useState(null)
 
   useEffect(() => {
-    dispatch(seedPage(seedState))
+    dispatch(seedPage(seedState, state.headerCache))
   }, [])
 
   useEffect(

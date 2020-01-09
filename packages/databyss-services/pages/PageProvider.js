@@ -3,8 +3,9 @@ import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
+import { ResourcePending } from './../lib/ResourcePending'
 
-import { fetchPages, fetchPage } from './actions'
+import { fetchPageHeaders, fetchPage } from './actions'
 
 const useReducer = createReducer()
 
@@ -17,9 +18,11 @@ const PageProvider = ({ children, initialState }) => {
     if (state.headerCache) {
       return state.headerCache
     }
-    if (!state.isLoading) {
-      dispatch(fetchPages())
+
+    if (!(state.headerCache instanceof ResourcePending)) {
+      dispatch(fetchPageHeaders())
     }
+
     return null
   }
 
@@ -27,7 +30,7 @@ const PageProvider = ({ children, initialState }) => {
     if (state.cache[id]) {
       return state.cache[id]
     }
-    if (!state.isLoading) {
+    if (!(state.cache[id] instanceof ResourcePending)) {
       dispatch(fetchPage(id))
     }
     return null
@@ -51,16 +54,19 @@ PageProvider.defaultProps = {
 export const PagesLoader = ({ children }) => {
   const { getPages } = usePageContext()
   const pages = getPages()
-
   if (pages instanceof Error) {
     return <ErrorFallback error={pages} />
+  }
+
+  if (!pages || pages instanceof ResourcePending) {
+    return <Loading />
   }
 
   if (typeof children !== 'function') {
     throw new Error('Child must be a function')
   }
 
-  return pages ? children(pages) : <Loading />
+  return children(pages)
 }
 
 export const withPages = Wrapped => ({ ...others }) => (
@@ -70,6 +76,11 @@ export const withPages = Wrapped => ({ ...others }) => (
 export const PageLoader = ({ pageId, children }) => {
   const { getPage } = usePageContext()
   const page = getPage(pageId)
+
+  if (!page || page instanceof ResourcePending) {
+    return <Loading />
+  }
+
   if (page instanceof Error) {
     return <ErrorFallback error={page} />
   }
@@ -77,8 +88,8 @@ export const PageLoader = ({ pageId, children }) => {
   if (typeof children !== 'function') {
     throw new Error('Child must be a function')
   }
-  // return <Loading />
-  return page ? children(page) : <Loading />
+
+  return children(page)
 }
 
 export const withPage = Wrapped => ({ pageId, ...others }) => (

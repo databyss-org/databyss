@@ -136,8 +136,6 @@ const setBlockType = (state, type, _id) => {
       } else {
         nextState.newSources = [_source]
       }
-
-      // nextState.newSources = [_source]
       return nextState
     case 'ENTRY':
       nextState.entries[nextRefId] = { _id: nextRefId, textValue, ranges }
