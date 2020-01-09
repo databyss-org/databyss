@@ -1,12 +1,17 @@
-import request from '../lib/request'
+import * as actions from '../actions'
+import request from './request'
 
+export const fetchSession = args => actions.fetchSession({ ...args, request })
+export const endSession = actions.endSession
+
+/*
 import {
   FETCH_SESSION,
   CACHE_SESSION,
   DENY_ACCESS,
   REQUEST_CODE,
   END_SESSION,
-} from './constants'
+} from '../constants'
 
 import {
   setAuthToken,
@@ -15,61 +20,50 @@ import {
   getAccountId,
   setAccountId,
   deleteAccountId,
-} from './clientStorage'
+} from '../clientStorage'
+
+import { mockSession1, validAuthToken, validCode } from './sessions'
 
 export const fetchSession = async ({
-  _request,
   code,
   googleToken,
   email,
 }) => async dispatch => {
-  // eslint-disable-next-line no-param-reassign
-  _request = _request || request
-
   dispatch({ type: FETCH_SESSION })
 
-  // fetch params
-  let path = process.env.REACT_APP_API_URL
-  const options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  }
+  const authToken = getAuthToken()
+  const accountId = getAccountId()
+
+  let sessionData = null
 
   try {
-    const authToken = getAuthToken()
-    const accountId = getAccountId()
     if (authToken && accountId) {
-      // if we have the token, try to use it
-      path += '/auth'
-      options.headers['x-databyss-account'] = accountId
-      options.headers['x-auth-token'] = authToken
+      // check local creds
+      if (authToken === validAuthToken) {
+        sessionData = mockSession1
+      }
     } else if (googleToken) {
-      // google oAuth token
-      path = `/users/google`
-      options.body = JSON.stringify({ token: googleToken })
+      // assume valid google token
+      sessionData = mockSession1
     } else if (code) {
-      // code from email
-      path += '/auth/code'
-      options.body = JSON.stringify({ code })
+      // check code from email
+      if (code === validCode) {
+        sessionData = mockSession1
+      }
     } else if (email) {
       // register with email
-      path = `/users/email`
-      options.body = JSON.stringify({ email })
     } else {
       throw new Error('No credentials')
     }
 
-    const res = await _request(path, options, true)
-    if (res.data.session) {
+    if (sessionData) {
       // authenticated
       setAuthToken(res.data.token)
       setAccountId(res.data.account.id)
       dispatch({
         type: CACHE_SESSION,
         payload: {
-          session: res.data.session,
+          session: sessionData,
         },
       })
     } else {
@@ -96,3 +90,4 @@ export const endSession = () => {
     type: END_SESSION,
   }
 }
+*/
