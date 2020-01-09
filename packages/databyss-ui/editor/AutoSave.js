@@ -26,6 +26,7 @@ const AutoSave = ({ interval }) => {
       }
       // on unmount clear autosave
       return () => {
+        pageDispatch(savePage(editorStateRef.current))
         clearInterval(_timer)
       }
     },

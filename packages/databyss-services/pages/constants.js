@@ -1,5 +1,5 @@
 export const LOAD_PAGE = 'LOAD_PAGE'
-export const PAGE_SAVED = 'PAGE_LOADED'
+export const PAGE_LOADED = 'PAGE_LOADED'
 export const FETCHING_PAGES = 'FETCHING_PAGES'
 export const PAGES_LOADED = 'PAGES_LOADED'
 export const CACHE_PAGE = 'CACHE_PAGE'

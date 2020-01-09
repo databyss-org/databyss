@@ -18,7 +18,7 @@ import {
   deleteBlocks,
   newBlockMenu,
   updateSource,
-  removeSourceFromQue,
+  removeSourceFromQueue,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
@@ -43,7 +43,7 @@ const EditorPage = ({ children, autoFocus }) => {
               text: { textValue: s.textValue, ranges: s.ranges },
             }
             setSource(_source)
-            dispatchEditor(removeSourceFromQue(s._id))
+            dispatchEditor(removeSourceFromQueue(s._id))
           })
         }
       }

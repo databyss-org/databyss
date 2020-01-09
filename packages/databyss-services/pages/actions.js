@@ -3,7 +3,7 @@ import * as services from './'
 
 import {
   LOAD_PAGE,
-  PAGE_SAVED,
+  PAGE_LOADED,
   FETCHING_PAGES,
   PAGES_LOADED,
   CACHE_PAGE,
@@ -43,10 +43,10 @@ export function savePage(state) {
     })
     services.savePage(body).then(() => {
       dispatch({
-        type: PAGE_SAVED,
+        type: PAGE_LOADED,
         payload: {},
       })
-      // TODO: PAGE_SAVED DOES NOTHING
+      // TODO: PAGE_LOADED DOES NOTHING
       // HANDLE IF ERROR ON SAVING
     })
   }

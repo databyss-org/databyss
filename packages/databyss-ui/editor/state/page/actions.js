@@ -16,7 +16,7 @@ import {
   SHOW_FORMAT_MENU,
   SHOW_NEW_BLOCK_MENU,
   UPDATE_SOURCE,
-  DEQUEUE_NEW_SOURCES,
+  DEQUEUE_NEW_SOURCE,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -190,9 +190,9 @@ export function updateSource(source, editableState) {
   }
 }
 
-export function removeSourceFromQue(id) {
+export function removeSourceFromQueue(id) {
   return {
-    type: DEQUEUE_NEW_SOURCES,
+    type: DEQUEUE_NEW_SOURCE,
     payload: {
       id,
     },
