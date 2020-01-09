@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Grid } from '@databyss-org/ui/primitives'
+import { View } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
@@ -10,48 +10,27 @@ import fetchMock from 'fetch-mock'
 import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
-import EditorProvider, { useEditorContext } from '../../EditorProvider'
+import EditorProvider from '../../EditorProvider'
 import EditorPage from '../../EditorPage'
 import ContentEditable from '../page/ContentEditable'
-import reducer, { getRawHtmlForBlock } from '../../state/page/reducer'
+import reducer from '../../state/page/reducer'
 import emptyInitialState from '../../state/__tests__/emptyInitialState'
 import slateReducer from '../page/reducer'
 
-const Box = ({ children, ...others }) => (
-  <View borderVariant="thinDark" paddingVariant="tiny" width="100%" {...others}>
-    {children}
+const EditableTest = () => (
+  <View
+    mb="medium"
+    pt="medium"
+    id="testtest"
+    width="100%"
+    height="100%"
+    flexGrow={1}
+  >
+    <EditorPage>
+      <ContentEditable height="100%" />
+    </EditorPage>
   </View>
 )
-
-const EditableTest = () => {
-  const [slateDocument, setSlateDocument] = useState({})
-  const [editorState] = useEditorContext()
-  const { activeBlockId, page, blocks } = editorState
-
-  const editorDocument = {
-    activeBlockId,
-    pageBlocks: page.blocks.map(block => ({
-      ...blocks[block._id],
-      textValue: getRawHtmlForBlock(editorState, blocks[block._id]),
-    })),
-  }
-
-  return (
-    <Grid>
-      <Box mb="medium" pt="medium" maxWidth="500px" flexShrink={1}>
-        <EditorPage>
-          <ContentEditable onDocumentChange={setSlateDocument} />
-        </EditorPage>
-      </Box>
-      <Box id="slateDocument" overflow="scroll" maxWidth="500px" flexShrink={1}>
-        <pre>{JSON.stringify(slateDocument, null, 2)}</pre>
-      </Box>
-      <Box id="pageBlocks" overflow="scroll" maxWidth="500px" flexShrink={1}>
-        <pre>{JSON.stringify(editorDocument, null, 2)}</pre>
-      </Box>
-    </Grid>
-  )
-}
 
 storiesOf('Demos//Editor', module)
   .addDecorator(ViewportDecorator)

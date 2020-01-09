@@ -56,6 +56,7 @@ const SlateContentEditable = forwardRef(
       onNewBlockMenu,
       onEditSource,
       autoFocus,
+      ...others
     },
     ref
   ) => {
@@ -423,6 +424,8 @@ const SlateContentEditable = forwardRef(
         onKeyUp={onKeyUp}
         onKeyDown={onKeyDown}
         renderMark={renderMark}
+        style={{ flex: 1 }}
+        {...others}
       />
     )
   }
