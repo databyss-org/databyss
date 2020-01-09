@@ -1,5 +1,5 @@
 import React from 'react'
-import ServiceProvider from '@databyss-org/services/components/ServiceProvider'
+import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import * as auth from '@databyss-org/services/auth/mocks'
 
 const services = { auth }

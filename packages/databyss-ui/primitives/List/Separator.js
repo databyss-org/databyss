@@ -5,7 +5,7 @@ import { pxUnits } from '../../theming/views'
 const Separator = ({ spacing }) => (
   <View
     height={1}
-    borderColor="border.1"
+    borderColor="border.2"
     borderTopWidth={pxUnits(1)}
     borderStyle="solid"
     paddingTop="none"

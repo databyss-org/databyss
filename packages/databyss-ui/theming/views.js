@@ -27,9 +27,11 @@ export const border = (thickness, color) => ({
 const borderVariants = {
   none: border(0, 'transparent'),
   thinDark: border(1, 'border.0'),
-  thinLight: border(1, 'border.1'),
+  thinLight: border(1, 'border.2'),
   thickDark: border(3, 'border.0'),
-  thickLight: border(3, 'border.1'),
+  thickLight: border(3, 'border.2'),
+  formField: border(2, 'border.1'),
+  activeFormField: border(2, 'primary.0'),
 }
 
 const widthVariants = {
