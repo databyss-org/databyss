@@ -28,7 +28,7 @@ context('Editor', () => {
   it('Edits atomic sources', () => {
     cy.get('button').then(buttonList => {
       // clicks on first page
-      buttonList[1].click()
+      buttonList[0].click()
       cy.wait(2000)
       cy.get('[contenteditable="true"]').as('editor')
       cy.get('#slateDocument').as('slateDocument')
@@ -59,7 +59,6 @@ context('Editor', () => {
       .newLine()
       .previousBlock()
       .setSelection('new source')
-      .wait(1000)
       .get('[data-test-atomic-edit="open"]')
       .click()
     cy.wait(2000)
@@ -87,8 +86,7 @@ context('Editor', () => {
     // reload the page
     cy.reload().wait(2000)
     cy.get('button').then(buttonList => {
-      console.log(buttonList)
-      buttonList[1].click()
+      buttonList[0].click()
       cy.wait(2000)
     })
 

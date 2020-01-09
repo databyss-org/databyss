@@ -18,36 +18,35 @@ import {
   deleteBlocks,
   newBlockMenu,
   updateSource,
+  removeSourceFromQueue,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
 const EditorPage = ({ children, autoFocus }) => {
   const [editorState, dispatchEditor] = useEditorContext()
-  const { setSource, state } = useSourceContext()
+  const { setSource } = useSourceContext()
 
-  const { sources } = editorState
+  const { sources, newSources, editableState } = editorState
+
   /*
   checks to see if new source has been added
   adds the new source to the source provider
   */
   useEffect(
     () => {
-      const _sourceDictionary = state.cache
-      const _sources = Object.keys(sources)
-      _sources.forEach(_refId => {
-        if (!_sourceDictionary[_refId]) {
-          const _sourceFields = sources[_refId]
-          const _source = {
-            _id: _refId,
-            text: {
-              textValue: _sourceFields.textValue,
-              ranges: _sourceFields.ranges,
-            },
-          }
-          setSource(_source)
+      if (newSources && editableState) {
+        if (newSources.length > 0) {
+          newSources.forEach(s => {
+            const _source = {
+              _id: s._id,
+              text: { textValue: s.textValue, ranges: s.ranges },
+            }
+            setSource(_source)
+            dispatchEditor(removeSourceFromQueue(s._id))
+          })
         }
-      })
+      }
     },
     [sources]
   )

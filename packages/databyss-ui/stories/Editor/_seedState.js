@@ -9,6 +9,7 @@ const blockTwoId = ObjectId().toHexString()
 export default {
   editableState: null,
   activeBlockId: null,
+  newSources: [],
   topics: {},
   locations: {},
   sources: {

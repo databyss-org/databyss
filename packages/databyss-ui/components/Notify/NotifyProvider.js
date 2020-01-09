@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import { Dialog } from '@databyss-org/ui/primitives'
-import { UnauthorizedError } from '@databyss-org/services/lib/request'
+import { NotAuthorizedError } from '@databyss-org/services/lib/NotAuthorizedError'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
 import IS_NATIVE from '../../lib/isNative'
@@ -50,7 +50,7 @@ class NotifyProvider extends React.Component {
   }
 
   componentDidCatch(error, info) {
-    if (error instanceof UnauthorizedError) {
+    if (error instanceof NotAuthorizedError) {
       // we don't need to notify, we should be redirecting
       return
     }
