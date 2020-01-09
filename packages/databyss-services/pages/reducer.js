@@ -23,22 +23,6 @@ export default (state, action) => {
         ..._state,
       }
     }
-    // case PAGE_LOADED: {
-    //   const _page = action.payload.page
-    //   const _cache = state.cache
-    //   _cache[action.payload.id] = _page
-    //   return {
-    //     ...state,
-    //     isLoading: false,
-    //     cache: _cache,
-    //   }
-    // }
-    // case FETCHING_PAGES: {
-    //   return {
-    //     ...state,
-    //     isLoading: true,
-    //   }
-    // }
     case CACHE_PAGE: {
       const _state = cloneDeep(state)
       _state.cache[action.payload.id] = action.payload.body
