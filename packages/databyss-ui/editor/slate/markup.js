@@ -33,7 +33,7 @@ export const getRangesFromBlock = block => {
           return range
         })
         .filter(x => x.length != null),
-      text,
+      textValue: text,
     }
   }
   return null

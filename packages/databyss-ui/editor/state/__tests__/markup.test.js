@@ -17,6 +17,7 @@ describe('Markup Translator', () => {
   describe('state value to slate value', () => {
     test('should return correct slate JSON value', () => {
       const _state = slateToState(slateValue, '5d6442046e84d304ddceb768')
+      console.log(_state)
       expect(_state).toEqual(stateValue)
       const _slate = stateToSlate(stateValue, '5d6442046e84d304ddceb768')
       expect(_slate).toEqual(slateValue)
