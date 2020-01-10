@@ -8,7 +8,7 @@ import { toSlateJson, matchExpectedJson } from './_helpers'
 
 context('Editor', () => {
   beforeEach(() => {
-    cy.visit('http://0.0.0.0:6006/iframe.html?id=editor-tests--slate-empty')
+    cy.visit('http-get://0.0.0.0:6006/iframe.html?id=cypress-tests--slate')
     cy.get('[contenteditable="true"]')
       .as('editor')
       .focus()
