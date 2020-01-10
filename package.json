@@ -45,6 +45,7 @@
     "cy": "start-server-and-test storybook http-get://localhost:6006/iframe.html?id=editor-tests--slate cy:open",
     "cy:test": "start-server-and-test storybook:cy http-get://0.0.0.0:6006/iframe.html?id=editor-tests--slate cy:run",
     "cy:wait-for-api": "start-server-and-test start:server:test http://0.0.0.0:5000/api/ping/ storybook:cy",
+    "cy:wait-for-storybook": "start-server-and-test storybook:cy http-get://0.0.0.0:6006/iframe.html?id=editor-tests--slate cy:run",
     "sauce:proxy": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/SauceConnect.js",
     "sauce:dev-server": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/sauce-dev-server.js"
   },
