@@ -1,6 +1,7 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import invariant from 'invariant'
+
 import { isAtomicInlineType } from './../../slate/page/reducer'
 
 import {
@@ -16,6 +17,8 @@ import {
   SHOW_FORMAT_MENU,
   ON_PASTE,
   SHOW_NEW_BLOCK_MENU,
+  UPDATE_SOURCE,
+  DEQUEUE_NEW_SOURCE,
 } from './constants'
 
 export initialState from './../initialState'
@@ -53,26 +56,26 @@ const cleanUpState = state => {
 
 export const getRawHtmlForBlock = (state, block) => {
   if (entities(state, block.type)[block.refId]) {
-    return entities(state, block.type)[block.refId].text
+    return entities(state, block.type)[block.refId].textValue
   }
   return null
 }
 
-export const setRawHtmlForBlock = (state, block, html) => {
+export const setRawHtmlForBlock = (state, block, text) => {
   const nextState = cloneDeep(state)
 
   switch (block.type) {
     case 'ENTRY':
-      nextState.entries[block.refId].text = html
+      nextState.entries[block.refId].textValue = text
       break
     case 'SOURCE':
-      nextState.sources[block.refId].text = html
+      nextState.sources[block.refId].textValue = text
       break
     case 'LOCATION':
-      nextState.locations[block.refId].text = html
+      nextState.locations[block.refId].textValue = text
       break
     case 'TOPIC':
-      nextState.topics[block.refId].text = html
+      nextState.topics[block.refId].textValue = text
       break
     default:
       throw new Error('Invalid block type', block.type)
@@ -124,7 +127,7 @@ const setBlockType = (state, type, _id, refId) => {
       : ObjectId().toHexString()
 
   const block = state.blocks[_id]
-  const text = block ? getRawHtmlForBlock(state, block) : ''
+  const textValue = block ? getRawHtmlForBlock(state, block) : ''
   // initialize range
   const ranges = block ? getRangesForBlock(state, block) : []
 
@@ -138,16 +141,22 @@ const setBlockType = (state, type, _id, refId) => {
 
   switch (type) {
     case 'SOURCE':
-      nextState.sources[nextRefId] = { _id: nextRefId, text, ranges }
+      const _source = { _id: nextRefId, textValue, ranges }
+      nextState.sources[nextRefId] = _source
+      if (nextState.newSources) {
+        nextState.newSources.push(_source)
+      } else {
+        nextState.newSources = [_source]
+      }
       return nextState
     case 'ENTRY':
-      nextState.entries[nextRefId] = { _id: nextRefId, text, ranges }
+      nextState.entries[nextRefId] = { _id: nextRefId, textValue, ranges }
       return nextState
     case 'LOCATION':
-      nextState.locations[nextRefId] = { _id: nextRefId, text, ranges }
+      nextState.locations[nextRefId] = { _id: nextRefId, textValue, ranges }
       return nextState
     case 'TOPIC':
-      nextState.topics[nextRefId] = { _id: nextRefId, text, ranges }
+      nextState.topics[nextRefId] = { _id: nextRefId, textValue, ranges }
       return nextState
 
     default:
@@ -190,10 +199,10 @@ const insertNewActiveBlock = (
     _state = setBlockType(_state, 'ENTRY', previousBlockId)
     insertedBlockType = state.blocks[previousBlockId].type
     // get atomic block text and ranges to transfer to new block
-    const { text, ranges } = entities(_state, 'ENTRY')[
+    const { textValue, ranges } = entities(_state, 'ENTRY')[
       _state.blocks[previousBlockId].refId
     ]
-    insertedText = text
+    insertedText = textValue
     _ranges = ranges
   }
 
@@ -202,10 +211,10 @@ const insertNewActiveBlock = (
     if (!previousBlockText) {
       _state = setBlockType(_state, 'ENTRY', previousBlockId)
       insertedBlockType = state.blocks[previousBlockId].type
-      const { text, ranges } = entities(_state, 'ENTRY')[
+      const { textValue, ranges } = entities(_state, 'ENTRY')[
         _state.blocks[previousBlockId].refId
       ]
-      insertedText = text
+      insertedText = textValue
       _ranges = ranges
     }
     // if enter is pressed in the middle of a location
@@ -258,6 +267,15 @@ const backspace = (state, payload) => {
 
   _blocks.splice(activeBlockIndex + 1, 1)
   return cleanUpState(_state)
+}
+
+const updateSource = (state, source) => {
+  const _state = cloneDeep(state)
+  _state.sources[source._id] = {
+    ranges: source.text.ranges,
+    textValue: source.text.textValue,
+  }
+  return _state
 }
 
 const getMarkupValues = (nextState, ranges) => {
@@ -313,11 +331,12 @@ const onPaste = (state, anchorKey, list) => {
   const { blocks } = _state
   // get current block contents
   const { type, refId } = blocks[anchorKey]
+
   const _entity = entities(state, type)[refId]
 
-  if (_entity.text.length === 0) {
+  if (_entity.textValue.length === 0) {
     /* if contents of current block are empty, slate will create a new block id, replace the the block id with the first block in the list
-    */
+     */
     const _pagesList = list.map(b => ({ _id: b[Object.keys(b)[0]]._id }))
 
     const _blocks = {}
@@ -333,7 +352,7 @@ const onPaste = (state, anchorKey, list) => {
       entities(_state, _block.type)[_block.refId] = {
         _id: _block.refId,
         ranges: _block.ranges,
-        text: _block.text,
+        textValue: _block.text,
       }
     })
 
@@ -376,6 +395,9 @@ export default (state, action) => {
         ...state,
         showFormatMenu: action.payload.bool,
       }
+    case UPDATE_SOURCE: {
+      return updateSource(state, action.payload.source)
+    }
     case SET_ACTIVE_BLOCK_CONTENT: {
       const activeBlock = state.blocks[state.activeBlockId]
       if (
@@ -437,6 +459,11 @@ export default (state, action) => {
         )
       }
       return setBlockType(nextState, action.payload.type, action.payload.id)
+    case DEQUEUE_NEW_SOURCE:
+      let _que = state.newSources
+      const _id = action.payload.id
+      _que = _que.filter(q => q._id !== _id)
+      return { ...state, newSources: _que }
     default:
       return state
   }

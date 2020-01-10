@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "1.1.51",
+  "version": "1.1.52",
   "description": "massive open-source citation database platform",
   "main": "index.js",
   "repository": {
@@ -184,8 +184,10 @@
     "expo-app-auth": "^6.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.1.1",
+    "fetch-mock": "^8.0.1",
     "file-loader": "^4.0.0",
     "flow-bin": "^0.79.1",
+    "focus-trap-react": "^6.0.0",
     "html-webpack-plugin": "4.0.0-beta.5",
     "is-hotkey": "^0.1.5",
     "is-wsl": "^2.0.0",

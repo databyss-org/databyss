@@ -1,17 +1,37 @@
 import { useEffect } from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { savePage } from '@databyss-org/services/pages/actions'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorContext } from './EditorProvider'
 
 const AutoSave = ({ interval }) => {
-  const [, pageDispatch] = usePageContext()
+  const { dispatch: pageDispatch } = usePageContext()
   const [, , editorStateRef] = useEditorContext()
-  useEffect(() => {
-    setInterval(
-      () => pageDispatch(savePage(editorStateRef.current)),
-      interval * 1000
-    )
-  }, [])
+  const [navState] = useNavigationContext()
+
+  useEffect(
+    () => {
+      // if modal is present, turn off autosave
+      const hasModal = navState.modals.length > 0
+      let _timer
+      if (!hasModal && !_timer) {
+        _timer = setInterval(() => {
+          // TODO: check if values have changed before saving
+          pageDispatch(savePage(editorStateRef.current))
+        }, interval * 1000)
+      }
+      if (hasModal) {
+        clearInterval(_timer)
+        _timer = null
+      }
+      // on unmount clear autosave
+      return () => {
+        pageDispatch(savePage(editorStateRef.current))
+        clearInterval(_timer)
+      }
+    },
+    [navState]
+  )
   return null
 }
 

@@ -1,4 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { showModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
 import { useEditorContext } from './EditorProvider'
 
 import {
@@ -16,12 +19,36 @@ import {
   onPaste,
   onSetBlockRef,
   newBlockMenu,
+  updateSource,
+  removeSourceFromQueue,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
-const EditorPage = ({ children }) => {
+const EditorPage = ({ children, autoFocus }) => {
   const [editorState, dispatchEditor] = useEditorContext()
+  const { setSource } = useSourceContext()
+
+  const { sources, newSources, editableState } = editorState
+
+  /*
+  checks to see if new source has been added
+  adds the new source to the source provider
+  */
+  useEffect(() => {
+    if (newSources && editableState) {
+      if (newSources.length > 0) {
+        newSources.forEach(s => {
+          const _source = {
+            _id: s._id,
+            text: { textValue: s.textValue, ranges: s.ranges },
+          }
+          setSource(_source)
+          dispatchEditor(removeSourceFromQueue(s._id))
+        })
+      }
+    }
+  }, [sources])
 
   const onActiveBlockIdChange = (id, editableState) =>
     dispatchEditor(setActiveBlockId(id, editableState))
@@ -89,6 +116,26 @@ const EditorPage = ({ children }) => {
   const setBlockRef = (id, ref, { value }) => {
     dispatchEditor(onSetBlockRef(id, ref, { value }))
   }
+  const [, dispatchNav] = useNavigationContext()
+
+  // dont need blocks
+  const onEditSource = (refId, { value }) => {
+    // Editor function to dispatch with modal
+    const onUpdateSource = source => {
+      if (source) {
+        dispatchEditor(updateSource(source, { value }))
+      }
+    }
+    dispatchNav(
+      showModal({
+        component: 'SOURCE',
+        props: {
+          sourceId: refId,
+          onUpdateSource,
+        },
+      })
+    )
+  }
 
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
@@ -106,6 +153,8 @@ const EditorPage = ({ children }) => {
     onPasteAction,
     setBlockRef,
     onNewBlockMenu,
+    onEditSource,
+    autoFocus,
   })
 }
 

@@ -1,21 +1,20 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Button, Text, Grid } from '@databyss-org/ui/primitives'
-import EditorProvider, {
-  useEditorContext,
-} from '@databyss-org/ui/editor/EditorProvider'
+import { View, Button, Text } from '@databyss-org/ui/primitives'
+import EditorProvider from '@databyss-org/ui/editor/EditorProvider'
 import PageProvider, {
   usePageContext,
+  withPages,
+  withPage,
 } from '@databyss-org/services/pages/PageProvider'
-
-import {
-  loadPage,
-  savePage,
-  seedPage,
-  getPages,
-} from '@databyss-org/services/pages/actions'
+import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import SourceProvider from '@databyss-org/services/sources/SourceProvider'
+import sourceReducer, {
+  initialState as sourceInitialState,
+} from '@databyss-org/services/sources/reducer'
+import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
+import { seedPage } from '@databyss-org/services/pages/actions'
 import { initialState } from '@databyss-org/services/pages/reducer'
-
 import SlateContentEditable from '@databyss-org/ui/editor/slate/page/ContentEditable'
 import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
 import reducer from '@databyss-org/ui/editor/state/page/reducer'
@@ -24,78 +23,90 @@ import AutoSave from '@databyss-org/ui/editor/AutoSave'
 import seedState from './_seedState'
 import { ViewportDecorator } from '../decorators'
 
-const ToolbarDemo = () => {
-  const [state] = useEditorContext()
-  const [, dispatchPage] = usePageContext()
-
-  return (
-    <Grid mb="medium">
-      <View>
-        <Button onPress={() => dispatchPage(savePage(state))}>SAVE</Button>
-      </View>
-    </Grid>
-  )
-}
-
 const Box = ({ children }) => (
   <View borderVariant="thinDark" paddingVariant="tiny" width="100%">
     {children}
   </View>
 )
 
-const EditorLoader = ({ children }) => {
-  const [state, dispatch] = usePageContext()
+const Editor = withPage(({ page, children }) => (
+  <EditorProvider
+    initialState={page}
+    editableReducer={slateReducer}
+    reducer={reducer}
+  >
+    <AutoSave />
+    {children}
+  </EditorProvider>
+))
+
+const EditorLoader = withPages(({ pages, children }) => {
+  const { state, dispatch } = usePageContext()
+  const [pageId, setPageId] = useState(null)
+  const [pagesRender, setPagesRender] = useState(null)
+
+  useEffect(() => {
+    dispatch(seedPage(seedState, state.headerCache))
+  }, [])
+
   useEffect(
     () => {
-      dispatch(getPages())
+      setPagesRender(
+        Object.keys(pages).map((p, i) => (
+          <View key={i}>
+            <Button
+              onPress={() => {
+                setPageId(p)
+              }}
+            >
+              <Text>load {pages[p].name}</Text>
+            </Button>
+          </View>
+        ))
+      )
     },
-    [dispatch]
+    [state]
   )
 
-  const pages = state.pages.map(p => (
-    <View key={p._id}>
-      <Button onPress={() => dispatch(loadPage(p._id))}>
-        load page {p._id}
-      </Button>
-    </View>
-  ))
-
-  return state.isLoading ? (
+  // change this to see if pageID exists
+  return !pageId ? (
     <View mb="medium">
-      <View>
-        <Button onPress={() => dispatch(seedPage(seedState))}>SEED</Button>
-      </View>
-      {pages}
-      <Text> is Loading </Text>
+      {pagesRender}
+      <Text> Refresh to seed new page </Text>
     </View>
   ) : (
-    <EditorProvider
-      initialState={state.pageState}
-      editableReducer={slateReducer}
-      reducer={reducer}
-    >
-      <AutoSave />
-      {children}
-    </EditorProvider>
+    <Editor pageId={pageId}>{children}</Editor>
   )
-}
+})
 
 const ProviderDecorator = storyFn => (
   <PageProvider initialState={initialState}>
-    <EditorLoader>{storyFn()}</EditorLoader>
+    <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+      <NavigationProvider componentMap={componentMap}>
+        <EditorLoader>{storyFn()}</EditorLoader>
+      </NavigationProvider>
+    </SourceProvider>
   </PageProvider>
 )
 
-storiesOf('Editor//Save and Load', module)
-  .addDecorator(ProviderDecorator)
-  .addDecorator(ViewportDecorator)
-  .add('Slate Load and Save', () => (
+const LoadAndSave = () => {
+  const [slateDocument, setSlateDocument] = useState({})
+
+  return (
     <View>
-      <ToolbarDemo />
       <Box>
-        <EditorPage>
-          <SlateContentEditable />
+        <EditorPage autoFocus>
+          <SlateContentEditable onDocumentChange={setSlateDocument} />
         </EditorPage>
       </Box>
+      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
+        <pre id="slateDocument">{JSON.stringify(slateDocument, null, 2)}</pre>
+      </Box>
     </View>
-  ))
+  )
+}
+
+storiesOf('Services|Page', module)
+  .addDecorator(ProviderDecorator)
+  .addDecorator(ViewportDecorator)
+  .add('Slate Load and Save', () => <LoadAndSave />)

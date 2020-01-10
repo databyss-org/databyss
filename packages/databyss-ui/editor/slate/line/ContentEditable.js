@@ -3,6 +3,7 @@ import { Value } from 'slate'
 import { Editor } from 'slate-react'
 import { Text } from '@databyss-org/ui/primitives'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
+import forkRef from '@databyss-org/ui/lib/forkRef'
 import _ from 'lodash'
 import { lineStateToSlate } from './../markup'
 import { useEditorContext } from '../../EditorProvider'
@@ -15,25 +16,6 @@ const initalValue = node => ({
   },
 })
 
-function useCombinedRefs(...refs) {
-  const targetRef = useRef()
-  useEffect(
-    () => {
-      refs.forEach(ref => {
-        if (!ref) return
-
-        if (typeof ref === 'function') {
-          ref(targetRef.current)
-        } else {
-          ref.current = targetRef.current
-        }
-      })
-    },
-    [refs]
-  )
-  return targetRef
-}
-
 const SlateContentEditable = forwardRef(
   (
     {
@@ -45,6 +27,8 @@ const SlateContentEditable = forwardRef(
       onBlur,
       overrideCss,
       multiline,
+      autoFocus,
+      ...other
     },
     ref
   ) => {
@@ -55,7 +39,7 @@ const SlateContentEditable = forwardRef(
     const editableRef = useRef(null)
 
     // solution from https://itnext.io/reusing-the-ref-from-forwardref-with-react-hooks-4ce9df693dd
-    const combinedRef = useCombinedRefs(ref, editableRef)
+    const combinedRef = forkRef(ref, editableRef)
 
     // checks editor state for active block content changed
     const checkContentChanged = _nextEditableState => {
@@ -117,11 +101,7 @@ const SlateContentEditable = forwardRef(
     }
 
     const renderLine = ({ children }) => (
-      <Text
-        variant="bodyNormal"
-        color="text.0"
-        css={multiline ? {} : { flexShrink: 0 }}
-      >
+      <Text variant="bodyNormal" color="text.0" css={{}}>
         {children}
       </Text>
     )
@@ -129,14 +109,15 @@ const SlateContentEditable = forwardRef(
     return (
       <Editor
         value={_editableState.value}
-        autoFocus
         ref={combinedRef}
         onChange={onChange}
         onKeyDown={onKeyDown}
         renderMark={renderMark}
         renderBlock={renderLine}
         onBlur={onBlur}
+        autoFocus={autoFocus}
         css={overrideCss}
+        {...other}
       />
     )
   }

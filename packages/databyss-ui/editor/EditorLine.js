@@ -8,7 +8,7 @@ import {
   hotKey,
 } from './state/line/actions'
 
-const EditorLine = ({ children, onChange, value }) => {
+const EditorLine = ({ children, onChange }) => {
   const [state, dispatch] = useEditorContext()
   const { textValue, ranges } = state
 
@@ -42,7 +42,7 @@ const EditorLine = ({ children, onChange, value }) => {
     onEditableStateChange,
     OnToggleMark,
     onHotKey,
-    initialTextValue: value,
+    // initialTextValue: value,
   })
 }
 

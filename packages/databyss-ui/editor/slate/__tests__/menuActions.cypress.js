@@ -8,7 +8,7 @@ import { toSlateJson, matchExpectedJson } from './_helpers'
 
 context('Editor', () => {
   beforeEach(() => {
-    cy.visit('http://0.0.0.0:6006/iframe.html?id=editor-tests--slate-empty')
+    cy.visit('http://localhost:6006/iframe.html?id=cypress-tests--slate-empty')
     cy.get('[contenteditable="true"]')
       .as('editor')
       .focus()
@@ -22,6 +22,7 @@ context('Editor', () => {
 
   it('it should open the menu, display actions and select source', () => {
     cy.get('@editor')
+      .focus()
       .get('[data-test-block-menu="open"]')
       .click()
       .get('[data-test-block-menu="SOURCE"]')
@@ -80,6 +81,7 @@ context('Editor', () => {
 
   it('it should open the menu, display actions and select location', () => {
     cy.get('@editor')
+      .focus()
       .get('[data-test-block-menu="open"]')
       .click()
       .get('[data-test-block-menu="LOCATION"]')
@@ -108,6 +110,7 @@ context('Editor', () => {
   })
   it('only appear when the proceeding line is blank', () => {
     cy.get('@editor')
+      .focus()
       .get('[data-test-block-menu="open"]')
       .click()
     cy.get('@editor')

@@ -8,7 +8,7 @@ import { toSlateJson, matchExpectedJson } from './_helpers'
 
 context('Editor', () => {
   beforeEach(() => {
-    cy.visit('http://0.0.0.0:6006/iframe.html?id=editor-tests--slate-empty')
+    cy.visit('http://localhost:6006/iframe.html?id=cypress-tests--slate-empty')
     cy.get('[contenteditable="true"]')
       .as('editor')
       .focus()
@@ -249,6 +249,7 @@ context('Editor', () => {
 
   it('should toggle a location mark and tag block as location', () => {
     cy.get('@editor')
+      .focus()
       .toggleLocation()
       .type('this whole block should get tagged as a location')
       .newLine()

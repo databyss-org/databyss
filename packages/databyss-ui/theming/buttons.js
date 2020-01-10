@@ -46,10 +46,10 @@ const buttonVariants = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'background.1',
+    backgroundColor: 'background.3',
     borderColor: 'background.2',
     borderWidth: pxUnits(1),
-    color: 'text.4',
+    color: 'text.2',
     borderRadius: pxUnits(editorMarginMenuItemHeight),
     width: pxUnits(editorMarginMenuItemHeight),
     height: pxUnits(editorMarginMenuItemHeight),
@@ -66,13 +66,17 @@ const buttonVariants = {
     paddingBottom: editorMarginMenuItemHeight / 2,
     borderRadius: pxUnits(5),
     height: pxUnits(editorMarginMenuItemHeight),
-    color: 'text.4',
-    backgroundColor: 'background.2',
+    color: 'text.2',
+    backgroundColor: 'background.3',
   },
   formatButton: {
     paddingBottom: pxUnits(6),
     paddingTop: pxUnits(6),
     borderRadius: pxUnits(0),
+  },
+  editSource: {
+    display: 'inline-block',
+    padding: 'extraSmall',
   },
 }
 
@@ -107,6 +111,11 @@ const buttonThemes = {
     textProps: {},
     hoverColor: 'background.1',
     activeColor: 'background.2',
+  },
+  editSource: {
+    textProps: {},
+    hoverColor: 'background.3',
+    activeColor: 'background.4',
   },
 }
 

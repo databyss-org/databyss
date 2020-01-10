@@ -10,6 +10,7 @@ export default {
   showFormatMenu: false,
   showNewBlockMenu: true,
   activeBlockId: null,
+  newSources: [],
   sources: {},
   entries: {
     [entryId]: {

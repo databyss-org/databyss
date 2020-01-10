@@ -2,27 +2,32 @@ import cloneDeep from 'clone-deep'
 import * as services from './'
 
 import {
-  LOAD_PAGE,
-  SAVE_PAGE,
-  PAGE_SAVED,
-  PAGE_LOADED,
-  SEED_PAGE,
-  FETCHING_PAGES,
-  PAGES_LOADED,
+  FETCH_PAGE,
+  CACHE_PAGE,
+  CACHE_PAGE_HEADERS,
+  FETCH_PAGE_HEADERS,
 } from './constants'
 
-export function loadPage(_id) {
+export function fetchPage(_id) {
   return dispatch => {
     dispatch({
-      type: LOAD_PAGE,
-      payload: {},
+      type: FETCH_PAGE,
+      payload: { id: _id },
     })
-    services.loadPage(_id).then(res => {
-      dispatch({
-        type: PAGE_LOADED,
-        payload: res,
+    services
+      .loadPage(_id)
+      .then(res => {
+        dispatch({
+          type: CACHE_PAGE,
+          payload: { body: res, id: _id },
+        })
       })
-    })
+      .catch(e => {
+        dispatch({
+          type: CACHE_PAGE,
+          payload: { body: e, id: _id },
+        })
+      })
   }
 }
 
@@ -32,49 +37,43 @@ export function savePage(state) {
   delete body.editableState
   return dispatch => {
     dispatch({
-      type: SAVE_PAGE,
-      payload: {},
+      type: CACHE_PAGE,
+      payload: { body, id: body.page._id },
     })
-
     services.savePage(body).then(() => {
-      dispatch({
-        type: PAGE_SAVED,
-        payload: {},
-      })
+      // TODO:  HANDLE IF ERROR ON SAVING
     })
   }
 }
 
-export function seedPage(page) {
+export function fetchPageHeaders() {
   return dispatch => {
     dispatch({
-      type: SEED_PAGE,
-      payload: {},
+      type: FETCH_PAGE_HEADERS,
     })
-
-    services.savePage(page)
-    // .then(res => {
-    //   dispatch({
-    //     type: PAGE_LOADED,
-    //     payload: res,
-    //   })
-    // }
-    // )
+    services
+      .getAllPages()
+      .then(res => {
+        dispatch({
+          type: CACHE_PAGE_HEADERS,
+          payload: res,
+        })
+      })
+      .catch(e => {
+        dispatch({
+          type: CACHE_PAGE_HEADERS,
+          payload: e,
+        })
+      })
   }
 }
 
-export function getPages() {
+export function seedPage(page, cache) {
   return dispatch => {
-    dispatch({
-      type: FETCHING_PAGES,
-      payload: {},
-    })
-
-    services.getAllPages().then(res => {
-      dispatch({
-        type: PAGES_LOADED,
-        payload: res,
-      })
+    services.savePage(page).then(() => {
+      if (Object.keys(cache).length === 0 || !cache) {
+        dispatch(fetchPageHeaders())
+      }
     })
   }
 }

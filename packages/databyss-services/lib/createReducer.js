@@ -18,12 +18,13 @@ const createReducer = (...middlewares) => {
     ...(process.env.NODE_ENV === 'development' ? [logger] : []),
   ])
 
-  return (reducer, initialState, initializer = value => value) => {
-    const ref = useRef(initializer(initialState))
+  return (reducer, initialState, { initializer, name } = {}) => {
+    const ref = useRef((initializer || (value => value))(initialState))
     const [, setState] = useState(ref.current)
 
     const dispatch = useCallback(
       action => {
+        action.source = name
         ref.current = reducer(ref.current, action)
         Object.freeze(ref.current)
         setState(ref.current)

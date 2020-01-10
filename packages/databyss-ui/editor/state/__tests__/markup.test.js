@@ -45,7 +45,7 @@ describe('Markup Translator', () => {
       nextState,
       nextState.blocks[nextState.activeBlockId].type
     )[nextState.blocks[nextState.activeBlockId].refId]
-    expect(block.text).toEqual('Another type of entry')
+    expect(block.textValue).toEqual('Another type of entry')
     expect(block.ranges).toEqual(ranges)
   })
 })

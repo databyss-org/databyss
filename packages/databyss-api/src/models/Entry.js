@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const RichText = require('./RichText')
 
 const Schema = mongoose.Schema
 
@@ -7,7 +8,6 @@ const EntrySchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'account',
   },
-  ranges: { type: Array },
   author: [
     {
       type: Schema.Types.ObjectId,
@@ -39,9 +39,7 @@ const EntrySchema = new mongoose.Schema({
   entry: {
     type: String,
   },
-  text: {
-    type: String,
-  },
+  text: RichText.schema,
   index: {
     type: Number,
     default: 0,

@@ -6,6 +6,7 @@ import { serializeNodeToHtml, sanitizer } from './inlineSerializer'
 import { stateToSlate, getRangesFromBlock } from './markup'
 import { isAtomicInlineType } from './page/reducer'
 import { getRawHtmlForBlock, entities } from '../state/page/reducer'
+import EditorInline from './../EditorInline'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -30,6 +31,7 @@ export const toSlateJson = (editorState, pageBlocks) => ({
             block._id
           )
           nodes.type = 'LOCATION'
+
           break
         default:
           break
@@ -84,17 +86,23 @@ export const toSlateJson = (editorState, pageBlocks) => ({
   },
 })
 
-export const renderInline = ({ node, attributes }, editor, next) => {
+export const renderInline = onEditSource => (
+  { node, attributes },
+  editor,
+  next
+) => {
   const isSelected = editor.value.selection.focus.isInNode(node)
-  const backgroundColor = isSelected ? 'background.2' : ''
 
   if (isAtomicInlineType(node.type)) {
     return (
-      <RawHtml
-        backgroundColor={backgroundColor}
-        _html={{ __html: node.text }}
-        {...attributes}
-      />
+      <EditorInline
+        editor={editor}
+        isSelected={isSelected}
+        node={node}
+        onEditSource={onEditSource}
+      >
+        <RawHtml _html={{ __html: node.text }} {...attributes} />
+      </EditorInline>
     )
   }
 
@@ -292,4 +300,50 @@ export const NewEditor = () => {
   })
   const _editor = new Editor({ value: _value })
   return _editor
+}
+
+export const newAtomicBlock = (id, type, text, marks) => {
+  const _block = Block.fromJSON({
+    object: 'block',
+    type,
+    key: id,
+    data: {},
+    nodes: [
+      {
+        object: 'text',
+        text: '',
+        marks: [],
+      },
+      {
+        object: 'inline',
+        type,
+        data: {},
+        nodes: [
+          {
+            object: 'text',
+            text: sanitizer(text),
+            marks,
+          },
+        ],
+      },
+      {
+        object: 'text',
+        text: '',
+        marks: [],
+      },
+    ],
+  })
+  return _block
+}
+
+export const isInlineSourceSelected = ({ value }) => {
+  if (
+    value.selection.focus.isInNode(value.anchorBlock) &&
+    value.anchorBlock.type === 'SOURCE' &&
+    !value.selection.focus.isAtStartOfNode(value.anchorBlock) &&
+    !value.selection.focus.isAtEndOfNode(value.anchorBlock)
+  ) {
+    return true
+  }
+  return false
 }

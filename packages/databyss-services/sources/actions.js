@@ -1,11 +1,14 @@
 import * as sources from './'
-import { ResourceNotFoundError } from './../lib/ResourceNotFoundError'
 
 import {
   FETCH_SOURCE,
   SAVE_SOURCE,
   CACHE_SOURCE,
   REMOVE_SOURCE,
+  GET_ALL_SOURCES,
+  FETCH_PAGE_SOURCES,
+  CACHE_SOURCES,
+  FETCH_SOURCE_FROM_LIST,
 } from './constants'
 
 export function fetchSource(id) {
@@ -39,29 +42,14 @@ export function saveSource(sourceFields) {
   return async dispatch => {
     dispatch({
       type: SAVE_SOURCE,
-      payload: {},
+      payload: { source: sourceFields, id: sourceFields._id },
     })
-
-    sources
-      .setSource(sourceFields)
-      .then(source => {
-        dispatch({
-          type: CACHE_SOURCE,
-          payload: { source, id: sourceFields._id },
-        })
+    sources.setSource(sourceFields).then(() => {
+      dispatch({
+        type: CACHE_SOURCE,
+        payload: { source: sourceFields, id: sourceFields._id },
       })
-      .catch(() => {
-        dispatch({
-          type: CACHE_SOURCE,
-          payload: {
-            source: new ResourceNotFoundError(
-              'Source not saved',
-              sourceFields._id
-            ),
-            id: sourceFields._id,
-          },
-        })
-      })
+    })
   }
 }
 
@@ -70,6 +58,51 @@ export function removeSourceFromCache(id) {
     dispatch({
       type: REMOVE_SOURCE,
       payload: { id },
+    })
+  }
+}
+
+export function fetchAllSources() {
+  return async dispatch => {
+    dispatch({
+      type: FETCH_SOURCE,
+      payload: {},
+    })
+    sources.getSources().then(sources => {
+      dispatch({
+        type: GET_ALL_SOURCES,
+        payload: { sources },
+      })
+    })
+  }
+}
+
+export function fetchPageSources(id) {
+  return async dispatch => {
+    dispatch({
+      type: FETCH_PAGE_SOURCES,
+      payload: {},
+    })
+    sources.getPageSources(id).then(sources => {
+      dispatch({
+        type: CACHE_SOURCES,
+        payload: { sources },
+      })
+    })
+  }
+}
+
+export function fetchSourcesFromList(list) {
+  return async dispatch => {
+    dispatch({
+      type: FETCH_SOURCE_FROM_LIST,
+      payload: {},
+    })
+    sources.getSourceFromList(list).then(sources => {
+      dispatch({
+        type: CACHE_SOURCES,
+        payload: { sources },
+      })
     })
   }
 }

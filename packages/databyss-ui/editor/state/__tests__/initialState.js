@@ -1,10 +1,11 @@
 export default {
   editableState: null,
   activeBlockId: null,
+  newSources: [],
   sources: {
     '5d64419f1cbc815583c35058': {
       _id: '5d64419f1cbc815583c35058',
-      text:
+      textValue:
         'Stamenov, Language Structure, Discourse and the Access to Consciousness',
       ranges: [],
     },
@@ -12,19 +13,19 @@ export default {
   entries: {
     '5d6442046e84d304ddceb768': {
       _id: '5d6442046e84d304ddceb768',
-      text: 'On the limitation of third-order thought to assertion',
+      textValue: 'On the limitation of third-order thought to assertion',
       ranges: [],
     },
     '5d7bbfb58a5f2f5dc1edfe7c': {
       _id: '5d7bbfb58a5f2f5dc1edfe7c',
-      text: 'entry ',
+      textValue: 'entry ',
       ranges: [],
     },
   },
   topics: {
     '5d7bbfb58a5f2f5dc1edfe7c': {
       _id: '5d7bbfb58a5f2f5dc1edfe7c',
-      text: 'topic',
+      textValue: 'topic',
       ranges: [],
     },
   },

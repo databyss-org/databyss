@@ -1,65 +1,55 @@
+import cloneDeep from 'clone-deep'
+import { ResourcePending } from './../lib/ResourcePending'
+
 import {
-  LOAD_PAGE,
-  SAVE_PAGE,
-  PAGE_SAVED,
-  PAGE_LOADED,
-  SEED_PAGE,
-  FETCHING_PAGES,
-  PAGES_LOADED,
+  FETCH_PAGE,
+  CACHE_PAGE,
+  CACHE_PAGE_HEADERS,
+  FETCH_PAGE_HEADERS,
 } from './constants'
 
 export const initialState = {
-  isLoading: true,
-  isPagesLoading: true,
-  isSaving: false,
-  pages: [],
-  pageState: {},
+  isLoading: false,
+  cache: {},
+  headerCache: null,
 }
 
 export default (state, action) => {
   switch (action.type) {
-    case LOAD_PAGE: {
+    case FETCH_PAGE: {
+      const _state = cloneDeep(state)
+      _state.cache[action.payload.id] = new ResourcePending()
       return {
-        ...state,
-        isLoading: true,
+        ..._state,
       }
     }
-    case SAVE_PAGE: {
+    case CACHE_PAGE: {
+      const _state = cloneDeep(state)
+      _state.cache[action.payload.id] = action.payload.body
       return {
-        ...state,
-        isSaving: true,
+        ..._state,
       }
     }
-    case SEED_PAGE: {
+
+    case FETCH_PAGE_HEADERS: {
       return {
         ...state,
-        isLoading: true,
+        headerCache: new ResourcePending(),
       }
     }
-    case PAGE_SAVED: {
+
+    case CACHE_PAGE_HEADERS: {
+      const _cache = {}
+      action.payload.forEach(
+        page =>
+          (_cache[page._id] = {
+            name: page.name,
+            _id: page._id,
+          })
+      )
       return {
         ...state,
-        isSaving: false,
-      }
-    }
-    case PAGE_LOADED: {
-      return {
-        ...state,
-        isLoading: false,
-        pageState: { ...action.payload },
-      }
-    }
-    case FETCHING_PAGES: {
-      return {
-        ...state,
-        isPagesLoading: true,
-      }
-    }
-    case PAGES_LOADED: {
-      return {
-        ...state,
-        isPagesLoading: false,
-        pages: action.payload,
+        headerCache: _cache,
       }
     }
     default:

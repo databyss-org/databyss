@@ -40,10 +40,10 @@ export const getRangesFromBlock = block => {
 }
 
 export const slateToState = (slate, _id) => {
-  const { ranges, text } = getRangesFromBlock(slate)
+  const { ranges, textValue } = getRangesFromBlock(slate)
   const response = {
     _id,
-    text,
+    textValue,
     ranges,
   }
   return { [slate.key]: response }
@@ -69,7 +69,8 @@ export const stateToSlateMarkup = state => {
 
   const _editor = new Editor({ value: _value })
   // insert text in mock editor
-  _editor.insertText(state.text).moveBackward(state.text.length)
+
+  _editor.insertText(state.textValue).moveBackward(state.textValue.length)
   // select correct range and apply marks
   if (state.ranges) {
     state.ranges.forEach(n => {
@@ -95,7 +96,7 @@ export const stateToSlate = (state, id) => {
 }
 
 export const lineStateToSlate = state => {
-  const _state = { text: state.textValue, ranges: state.ranges }
+  const _state = { textValue: state.textValue, ranges: state.ranges }
   const document = stateToSlateMarkup(_state)
   return { ...document.nodes[0], type: 'TEXT' }
 }

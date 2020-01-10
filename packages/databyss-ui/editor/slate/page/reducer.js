@@ -1,8 +1,8 @@
 import { Block } from 'slate'
 import { serializeNodeToHtml, sanitizer } from './../inlineSerializer'
-import { getRangesFromBlock } from './../markup'
+import { getRangesFromBlock, stateToSlateMarkup } from './../markup'
 
-import { NewEditor, isTextAtomic } from './../slateUtils'
+import { NewEditor, isTextAtomic, newAtomicBlock } from './../slateUtils'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
@@ -17,6 +17,7 @@ import {
   DELETE_BLOCKS,
   ON_PASTE,
   SET_BLOCK_REF,
+  UPDATE_SOURCE,
 } from './../../state/page/constants'
 
 export const newBlockWithRef = (id, refId) =>
@@ -114,6 +115,7 @@ const setActiveBlockType = type => (editor, value, next) => {
   if (_activeBlock.text.length === 0 && editor.value.previousBlock) {
     editor.replaceNodeByKey(_activeBlock.key, newBlock(_activeBlock.key))
     // if previous block exists move caret forward
+    // TODO: UNCOMMENT THIS CODE
     editor.moveForward(1)
     next(editor, value)
   }
@@ -282,6 +284,46 @@ const deleteBlockById = id => (editor, value, next) => {
   next(editor, value)
 }
 
+/*
+updates all sources provided in the ID list
+*/
+const onUpdateSource = (source, blocks) => (editor, value, next) => {
+  // generates a list of blocks to update
+  const _idList = Object.keys(blocks).filter(
+    block => blocks[block].refId === source._id
+  )
+  _idList.forEach(id => {
+    const _newNodes = stateToSlateMarkup(source.text).nodes
+    const _block = Block.fromJSON({
+      object: 'block',
+      type: 'SOURCE',
+      nodes: _newNodes,
+    })
+    const _innerHtml = serializeNodeToHtml(_block)
+    const textBlock = {
+      object: 'inline',
+      nodes: [
+        {
+          object: 'text',
+          text: sanitizer(_innerHtml),
+        },
+      ],
+      type: 'SOURCE',
+    }
+    const _tempNode = Block.fromJSON({
+      object: 'block',
+      type: 'SOURCE',
+      key: id,
+      nodes: [textBlock],
+    })
+
+    editor.replaceNodeByKey(id, _tempNode)
+  })
+
+  window.requestAnimationFrame(() => editor.focus())
+  next(editor, value)
+}
+
 const deleteBlocksByIds = idList => (editor, value, next) => {
   const _firstBlockId = idList.get(0)
   const _previousKey = editor.value.document.getPreviousBlock(_firstBlockId)
@@ -423,7 +465,15 @@ export default (editableState, action) => {
         editorCommands: _nextEditorCommands,
       }
     }
-
+    case UPDATE_SOURCE: {
+      return {
+        ...editableState,
+        editorCommands: onUpdateSource(
+          action.payload.source,
+          editableState.blocks
+        ),
+      }
+    }
     case HOTKEY: {
       return {
         ...editableState,

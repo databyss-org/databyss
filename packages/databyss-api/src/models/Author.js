@@ -1,41 +1,16 @@
 const mongoose = require('mongoose')
-
-const Schema = mongoose.Schema
+const Text = require('./Text')
 
 const AuthorSchema = new mongoose.Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'users',
-    required: true,
-  },
-  account: {
-    type: Schema.Types.ObjectId,
-    ref: 'account',
-  },
   firstName: {
-    type: String,
+    type: Text.schema,
   },
   lastName: {
-    type: String,
-    required: true,
+    type: Text.schema,
   },
-  entries: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'entry',
-    },
-  ],
-  default: {
-    type: Boolean,
-    default: false,
-  },
-  sources: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'source',
-    },
-  ],
 })
+
+// const Author = mongoose.model('author', AuthorSchema)
 
 const Author = mongoose.models.Author || mongoose.model('author', AuthorSchema)
 

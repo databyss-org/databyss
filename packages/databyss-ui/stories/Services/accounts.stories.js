@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Button, Text, Grid } from '@databyss-org/ui/primitives'
+import { View, Text, Grid } from '@databyss-org/ui/primitives'
 import {
   register,
   getAuthToken,
@@ -25,7 +25,6 @@ const AccountDemo = () => {
       let account = getAccountId()
       if (account) {
         const res = await getAccount()
-
         setAccountId(res._id)
         setUserState(s => ({ ...s, account: res._id }))
       } else {
@@ -58,18 +57,12 @@ const AccountDemo = () => {
   }
 
   useEffect(() => {
-    checkUserStatus()
+    localStorage.clear()
+    registerUser()
   }, [])
 
   return (
     <View>
-      <Grid mb="medium">
-        <View>
-          <Button onPress={() => registerUser()}>
-            CREATE USER AND ACCOUNT
-          </Button>
-        </View>
-      </Grid>
       <Grid>
         <View>
           <Text>

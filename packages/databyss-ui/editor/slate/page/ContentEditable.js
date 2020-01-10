@@ -1,14 +1,20 @@
 import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
 import { Editor, getEventTransfer } from 'slate-react'
+import _ from 'lodash'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
-import { getRawHtmlForBlock } from './../../state/page/reducer'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import {
+  getRawHtmlForBlock,
+  getRangesForBlock,
+} from './../../state/page/reducer'
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../../EditorProvider'
 import FormatMenu from '../../Menu/FormatMenu'
 import hotKeys, { formatHotKeys, navHotKeys } from './../hotKeys'
 import { renderBlock } from './../../EditorBlock'
+
 import {
   toSlateJson,
   renderInline,
@@ -18,6 +24,7 @@ import {
   hasSelection,
   noAtomicInSelection,
   getSelectedBlocks,
+  isInlineSourceSelected,
 } from './../slateUtils'
 
 import {
@@ -56,10 +63,15 @@ const SlateContentEditable = forwardRef(
       onPasteAction,
       setBlockRef,
       onNewBlockMenu,
+      onEditSource,
+      autoFocus,
+      ...others
     },
     ref
   ) => {
-    const [editorState] = useEditorContext()
+    const [editorState, , stateRef] = useEditorContext()
+
+    const [navState] = useNavigationContext()
 
     const { activeBlockId, editableState, blocks, page } = editorState
 
@@ -92,6 +104,7 @@ const SlateContentEditable = forwardRef(
       // set slate refId of block
       if (blocks[_nextActiveBlock.key]) {
         if (!_nextRefId) {
+          // TODO REPLACE THIS
           setBlockRef(
             _nextActiveBlock.key,
             blocks[_nextActiveBlock.key].refId,
@@ -150,10 +163,12 @@ const SlateContentEditable = forwardRef(
         return false
       }
 
-      if (_nextText !== _prevText) {
-        const block = _nextEditableState.value.anchorBlock
-        const ranges = getBlockRanges(block)
+      // gets ranges and compares them to current ranges
+      const block = _nextEditableState.value.anchorBlock
+      const ranges = getBlockRanges(block)
+      const _ranges = getRangesForBlock(editorState, blocks[activeBlockId])
 
+      if (_nextText !== _prevText || !_.isEqual(_ranges, ranges)) {
         onActiveBlockContentChange(_nextText, _nextEditableState, ranges)
         return { _nextText, _nextEditableState, ranges }
       }
@@ -251,6 +266,12 @@ const SlateContentEditable = forwardRef(
       )
     }
 
+    // this will get removed when paths are implemented
+    const editSource = (_id, editor) => {
+      const _refId = stateRef.current.blocks[_id].refId
+      onEditSource(_refId, editor)
+    }
+
     const onKeyUp = (event, editor, next) => {
       if (event.key === 'Enter') {
         // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
@@ -319,8 +340,16 @@ const SlateContentEditable = forwardRef(
       if (hotKeys.isEsc(event)) {
         onNewBlockMenu(false, editor)
       }
+
+      if (isInlineSourceSelected(editor) && event.key === 'Enter') {
+        const _id = editor.value.anchorBlock.key
+        editSource(_id, editor)
+        return event.preventDefault()
+      }
+
       const { fragment } = editor.value
       // check for selection
+
       if (hasSelection(editor.value)) {
         if (event.key === 'Backspace' || hotKeys.isCut(event)) {
           if (!noAtomicInSelection(editor.value)) {
@@ -501,15 +530,19 @@ const SlateContentEditable = forwardRef(
       <Editor
         value={_editableState.value}
         onPaste={onPaste}
+        readOnly={navState.modals.length > 0}
         ref={forkRef(ref, editableRef)}
+        autoFocus={autoFocus}
         onChange={onChange}
         renderBlock={renderBlock}
-        renderInline={renderInline}
+        renderInline={renderInline(onEditSource)}
         renderEditor={renderEditor}
         schema={schema}
         onKeyUp={onKeyUp}
         onKeyDown={onKeyDown}
         renderMark={renderMark}
+        style={{ flex: 1 }}
+        {...others}
       />
     )
   }

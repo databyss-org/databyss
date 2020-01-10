@@ -116,3 +116,9 @@ Runs `scripts/build.sh`, which looks for a deploy target set in the `NPM_DEPLOY_
 - If the variable's value is `API_SERVER`, it builds the API (`/packages/databyss-api`).
 
 This is useful for deploying to a host that runs `yarn build` and then serves a static website from the `/build` directory, which is how our Heroku styleguide and module demo servers are configured.
+
+## Big Thanks
+
+Cross-browser Testing Platform and Open Source ❤️ provided by <a href="https://saucelabs.com">
+<img alt="Sauce Labs" src="./public/sauce.png" width="100"/>
+</a>.
