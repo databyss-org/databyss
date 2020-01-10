@@ -1,8 +1,10 @@
 import React from 'react'
 import { Text, View } from '@databyss-org/ui/primitives'
-import { ResourceNotFoundError } from '@databyss-org/services/lib/ResourceNotFoundError'
-import { NetworkUnavailableError } from '@databyss-org/services/lib/NetworkUnavailableError'
-import { NotAuthorizedError } from '@databyss-org/services/lib/NotAuthorizedError'
+import {
+  ResourceNotFoundError,
+  NetworkUnavailableError,
+  NotAuthorizedError,
+} from '@databyss-org/services/lib/errors'
 
 const ErrorFallback = ({ error, message, ...others }) => {
   let _message = message

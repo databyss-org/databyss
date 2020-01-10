@@ -6,11 +6,11 @@ import {
   FETCH_SESSION,
 } from './constants'
 
-import ResourcePending from '../lib/ResourcePending'
+import { ResourcePending } from '../lib/ResourcePending'
 
 export const initialState = {
   // session is either `null`, `Error` or {user: {}, account: {}}
-  session: null,
+  session: new ResourcePending(),
   // in TFA (like email login/register), this is set to true after email is sent
   //   and reset to false on successful authentication and on end session
   requestCode: false,
@@ -44,7 +44,10 @@ export default (state, action) => {
       }
     }
     case END_SESSION: {
-      return initialState
+      return {
+        ...state,
+        session: null,
+      }
     }
     default:
       return state

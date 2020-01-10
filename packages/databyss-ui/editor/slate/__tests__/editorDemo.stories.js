@@ -32,7 +32,7 @@ const EditableTest = () => (
   </View>
 )
 
-storiesOf('Demos//Editor', module)
+storiesOf('Demos|Editor', module)
   .addDecorator(ViewportDecorator)
   .add('Slate', () => {
     let data = {}

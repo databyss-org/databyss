@@ -1,4 +1,5 @@
 import request from '../lib/request'
+import { NotAuthorizedError } from '../lib/errors'
 
 import {
   FETCH_SESSION,
@@ -17,7 +18,7 @@ import {
   deleteAccountId,
 } from './clientStorage'
 
-export const fetchSession = async ({
+export const fetchSession = ({
   _request,
   code,
   googleToken,
@@ -47,7 +48,7 @@ export const fetchSession = async ({
       options.headers['x-auth-token'] = authToken
     } else if (googleToken) {
       // google oAuth token
-      path = `/users/google`
+      path = '/users/google'
       options.body = JSON.stringify({ token: googleToken })
     } else if (code) {
       // code from email
@@ -55,17 +56,17 @@ export const fetchSession = async ({
       options.body = JSON.stringify({ code })
     } else if (email) {
       // register with email
-      path = `/users/email`
+      path = '/users/email'
       options.body = JSON.stringify({ email })
     } else {
-      throw new Error('No credentials')
+      throw new NotAuthorizedError()
     }
 
     const res = await _request(path, options, true)
-    if (res.data.session) {
+    if (res.data && res.data.session) {
       // authenticated
-      setAuthToken(res.data.token)
-      setAccountId(res.data.account.id)
+      setAuthToken(res.data.session.token)
+      setAccountId(res.data.session.account.id)
       dispatch({
         type: CACHE_SESSION,
         payload: {
@@ -85,6 +86,9 @@ export const fetchSession = async ({
       type: DENY_ACCESS,
       payload: { error },
     })
+    if (!(error instanceof NotAuthorizedError)) {
+      throw error
+    }
   }
 }
 

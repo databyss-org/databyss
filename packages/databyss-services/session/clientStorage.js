@@ -2,7 +2,7 @@ import _ from 'lodash'
 
 // TODO: Add native versions of these
 export function setAuthToken(value) {
-  const token = !_.isEmpty(value.token) ? value.token : value
+  const token = value && !_.isEmpty(value.token) ? value.token : value
 
   localStorage.setItem('token', token)
 }
@@ -12,7 +12,7 @@ export function getAuthToken() {
 }
 
 export function deleteAuthToken() {
-  setAuthToken(null)
+  localStorage.removeItem('token')
 }
 
 export function setAccountId(value) {
@@ -24,5 +24,5 @@ export function getAccountId() {
 }
 
 export function deleteAccountId() {
-  setAccountId(null)
+  localStorage.removeItem('account')
 }

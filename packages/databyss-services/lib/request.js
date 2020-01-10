@@ -1,7 +1,9 @@
 import packageJson from '../package.json'
-import { ResourceNotFoundError } from './ResourceNotFoundError'
-import { NotAuthorizedError } from './NotAuthorizedError'
-import { NetworkUnavailableError } from './NetworkUnavailableError'
+import {
+  ResourceNotFoundError,
+  NotAuthorizedError,
+  NetworkUnavailableError,
+} from './errors'
 
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
