@@ -64,6 +64,6 @@ workflows:
       - cypress/run:
           executor: base-10
           yarn: true
-          start: yarn storybook:cy
+          start: yarn cy:wait-for-api
           wait-on: -t 300000 http://localhost:6006/iframe.html?id=cypress-tests--slate
           command: yarn cy:run
