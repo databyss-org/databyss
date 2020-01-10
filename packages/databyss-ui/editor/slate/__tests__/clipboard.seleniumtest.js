@@ -24,8 +24,8 @@ let slateDocument
 let pageBlocks
 let actions
 
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=cypress-tests--slate '
-const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=cypress-tests--slate '
+const LOCAL_URL = 'http://localhost:6006/iframe.html?id=cypress-tests--slate'
+const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=cypress-tests--slate'
 
 describe('editor selenium', () => {
   beforeEach(async done => {
