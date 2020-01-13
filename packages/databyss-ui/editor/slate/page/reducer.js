@@ -362,7 +362,7 @@ export const onPaste = (list, fragment, key, offset) => (
   const _firstNode = list[0][Object.keys(list[0])[0]]
   /* if first value in list is atomic
   create a new block with first id in list */
-  if (isAtomicInlineType(_firstNode.type)) {
+  if (isAtomicInlineType(_firstNode.type) && offset !== 0) {
     // insert empty block to initialize new atomic block
     const _emptyBlock = newBlock()
     editor.insertBlock(_emptyBlock)
