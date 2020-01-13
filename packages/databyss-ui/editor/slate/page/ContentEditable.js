@@ -514,6 +514,7 @@ const SlateContentEditable = forwardRef(
         // get list of refId and Id of fragment to paste,
         // this list is used to keep slate and state in sync
         const _blockList = blocksToState(_frag.nodes)
+
         onPasteAction(anchorKey, _blockList, _frag, _offset, editor)
         return event.preventDefault()
       }

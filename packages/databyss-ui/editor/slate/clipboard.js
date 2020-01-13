@@ -58,8 +58,7 @@ export const blockToState = block => {
     refId = ObjectId().toHexString()
   }
   const _textFields = getRangesFromBlock(_block.toJSON())
-
-  const text = _textFields.text
+  const text = _textFields.textValue
   const ranges = _textFields.ranges
 
   const response = {

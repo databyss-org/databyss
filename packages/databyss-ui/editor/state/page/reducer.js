@@ -326,48 +326,136 @@ const deleteBlocks = (state, payload) => {
   return cleanUpState(_state)
 }
 
-const onPaste = (state, anchorKey, list) => {
+const onPaste = (state, anchorKey, list, offset) => {
+  let _text
+  const _list = cloneDeep(list)
   const _state = cloneDeep(state)
+  let _index = _state.page.blocks.findIndex(i => i._id === anchorKey)
+
   const { blocks } = _state
+
   // get current block contents
   const { type, refId } = blocks[anchorKey]
-
   const _entity = entities(state, type)[refId]
 
-  if (_entity.textValue.length === 0) {
-    /* if contents of current block are empty, slate will create a new block id, replace the the block id with the first block in the list
-     */
-    const _pagesList = list.map(b => ({ _id: b[Object.keys(b)[0]]._id }))
+  if (_entity.textValue.length !== 0) {
+    const _firstPasteFrag = _list[0][Object.keys(_list[0])[0]]
+    // check if first paste fragment is not atomic
+    if (!isAtomicInlineType(_firstPasteFrag.type)) {
+      const _oldRefId = Object.keys(_list[0])[0]
+      // block value to be merged with anchorBlock
+      const _anchorBlock = _list[0][_oldRefId]
 
-    const _blocks = {}
-    list.forEach(b => {
-      // populate blocks
-      const _block = b[Object.keys(b)[0]]
-      _blocks[_block._id] = {
-        _id: _block._id,
-        refId: _block.refId,
-        type: _block.type,
-      }
-      // populate entities
-      entities(_state, _block.type)[_block.refId] = {
-        _id: _block.refId,
-        ranges: _block.ranges,
-        textValue: _block.text,
-      }
-    })
+      if (_entity.textValue.length === offset) {
+        // if paste occurs at the end of a block
+        _text = _entity.textValue + _anchorBlock.text
+      } else {
+        // split first block where paste occured
+        let _firstText = _entity.textValue.split('')
+        const _lastText = _firstText.splice(offset).join('')
+        _firstText = _firstText.join('')
+        _text = _firstText + _anchorBlock.text
 
-    _state.blocks = Object.assign({}, _state.blocks, _blocks)
-    const _index = _state.page.blocks.findIndex(i => i._id === anchorKey)
-    // inserted blocks added to pages block list
-    _state.page.blocks.splice(_index, 1, ..._pagesList)
-  } else {
-    /*
+        const _lastPasteFrag =
+          _list[_list.length - 1][Object.keys(_list[_list.length - 1])[0]]
+        if (!isAtomicInlineType(_lastPasteFrag.type)) {
+          // if last paste block is not atomic append text to last block
+          _list[_list.length - 1][_lastPasteFrag._id].textV =
+            _list[_list.length - 1][_lastPasteFrag._id].text + _lastText
+        } else {
+          // TODO:
+          // if last paste block is atomic create a new block for last text
+        }
+      }
+      // TODO: MERGE BOTH RANGES
+      const _newEntity = {
+        textValue: _text,
+        _id: _entity._id,
+        ranges: _entity.ranges,
+      }
+      // append merged anchor block
+      entities(_state, type)[refId] = _newEntity
+      // remove first list item
+      _list.shift()
+      _index += _index
+    } else {
+      // TODO: if first paste fragment is atomic
+    }
+  }
+  /* if contents of current block are empty, slate will create a new block id, replace the the block id with the first block in the list
+   */
+  const _pagesList = _list.map(b => ({ _id: b[Object.keys(b)[0]]._id }))
+
+  const _blocks = {}
+  _list.forEach(b => {
+    // populate blocks
+    const _block = b[Object.keys(b)[0]]
+    _blocks[_block._id] = {
+      _id: _block._id,
+      refId: _block.refId,
+      type: _block.type,
+    }
+    // populate entities
+    entities(_state, _block.type)[_block.refId] = {
+      _id: _block.refId,
+      ranges: _block.ranges,
+      textValue: _block.text,
+    }
+  })
+
+  _state.blocks = Object.assign({}, _state.blocks, _blocks)
+  // inserted blocks added to pages block list
+  _state.page.blocks.splice(_index, 1, ..._pagesList)
+
+  /*
     slate will insert the text at selected offset 
     */
-  }
 
   return cleanUpState(_state)
 }
+
+// const onPaste = (state, anchorKey, list) => {
+//   const _state = cloneDeep(state)
+//   const { blocks } = _state
+//   // get current block contents
+//   const { type, refId } = blocks[anchorKey]
+
+//   const _entity = entities(state, type)[refId]
+
+//   if (_entity.textValue.length === 0) {
+//     /* if contents of current block are empty, slate will create a new block id, replace the the block id with the first block in the list
+//      */
+//     const _pagesList = list.map(b => ({ _id: b[Object.keys(b)[0]]._id }))
+
+//     const _blocks = {}
+//     list.forEach(b => {
+//       // populate blocks
+//       const _block = b[Object.keys(b)[0]]
+//       _blocks[_block._id] = {
+//         _id: _block._id,
+//         refId: _block.refId,
+//         type: _block.type,
+//       }
+//       // populate entities
+//       entities(_state, _block.type)[_block.refId] = {
+//         _id: _block.refId,
+//         ranges: _block.ranges,
+//         textValue: _block.text,
+//       }
+//     })
+
+//     _state.blocks = Object.assign({}, _state.blocks, _blocks)
+//     const _index = _state.page.blocks.findIndex(i => i._id === anchorKey)
+//     // inserted blocks added to pages block list
+//     _state.page.blocks.splice(_index, 1, ..._pagesList)
+//   } else {
+//     /*
+//     slate will insert the text at selected offset
+//     */
+//   }
+
+//   return cleanUpState(_state)
+// }
 
 export default (state, action) => {
   switch (action.type) {
@@ -384,7 +472,12 @@ export default (state, action) => {
         showMenuActions: action.payload.bool,
       }
     case ON_PASTE:
-      return onPaste(state, action.payload.key, action.payload.list)
+      return onPaste(
+        state,
+        action.payload.key,
+        action.payload.list,
+        action.payload.offset
+      )
     case SHOW_NEW_BLOCK_MENU:
       return {
         ...state,
