@@ -380,8 +380,13 @@ const onPaste = (state, anchorKey, list, offset) => {
       _list.shift()
       _index += _index
     } else {
-      console.log('paste here in reducer')
-      // TODO: if first paste fragment is atomic
+      // if first block in paste is atomic on an existing line
+      // find offset where to add empty block
+      // initialize empty block with first Id value
+      _index += _index
+      const _firstPasteFrag = _list[0][Object.keys(_list[0])]
+      // add empty block to pages list
+      _state.page.blocks.splice(_index, 0, { _id: _firstPasteFrag._id })
     }
   }
   /* if contents of current block are empty, slate will create a new block id, replace the the block id with the first block in the list
