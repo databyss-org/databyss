@@ -354,11 +354,23 @@ export const onPaste = (list, fragment, key, offset) => (
   value,
   next
 ) => {
+  let _offset = offset
+
   // get anchor refID from document
   const _anchorRef = editor.value.document.getNode(key).data.get('refId')
 
+  const _firstNode = list[0][Object.keys(list[0])[0]]
+  /* if first value in list is atomic
+  create a new block with first id in list */
+  if (isAtomicInlineType(_firstNode.type)) {
+    // insert empty block to initialize new atomic block
+    const _emptyBlock = newBlock()
+    editor.insertBlock(_emptyBlock)
+    _offset = 0
+  }
   let _list = list.reverse()
   let _frag = fragment.nodes
+
   editor.insertFragment(fragment)
 
   // keys get lost when insert fragment applied
@@ -377,7 +389,6 @@ export const onPaste = (list, fragment, key, offset) => (
     // clone block with new key value
     let _block = editor.value.document.getNode(tempKey)
     // get refId from provided list
-
     const _refId = _list[i][newKey].refId
 
     // replace block
@@ -396,7 +407,7 @@ export const onPaste = (list, fragment, key, offset) => (
 
   // if offset is in first node
   // merge first nodes
-  if (offset > 0) {
+  if (_offset > 0) {
     _list = _list.reverse()
     const _firstKey = Object.keys(_list[0])[0]
     let _firstBlock = editor.value.document.getNode(_firstKey)

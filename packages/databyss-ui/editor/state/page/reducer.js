@@ -380,6 +380,7 @@ const onPaste = (state, anchorKey, list, offset) => {
       _list.shift()
       _index += _index
     } else {
+      console.log('paste here in reducer')
       // TODO: if first paste fragment is atomic
     }
   }
@@ -415,49 +416,6 @@ const onPaste = (state, anchorKey, list, offset) => {
     */
   return cleanUpState(_state)
 }
-
-// const onPaste = (state, anchorKey, list) => {
-//   const _state = cloneDeep(state)
-//   const { blocks } = _state
-//   // get current block contents
-//   const { type, refId } = blocks[anchorKey]
-
-//   const _entity = entities(state, type)[refId]
-
-//   if (_entity.textValue.length === 0) {
-//     /* if contents of current block are empty, slate will create a new block id, replace the the block id with the first block in the list
-//      */
-//     const _pagesList = list.map(b => ({ _id: b[Object.keys(b)[0]]._id }))
-
-//     const _blocks = {}
-//     list.forEach(b => {
-//       // populate blocks
-//       const _block = b[Object.keys(b)[0]]
-//       _blocks[_block._id] = {
-//         _id: _block._id,
-//         refId: _block.refId,
-//         type: _block.type,
-//       }
-//       // populate entities
-//       entities(_state, _block.type)[_block.refId] = {
-//         _id: _block.refId,
-//         ranges: _block.ranges,
-//         textValue: _block.text,
-//       }
-//     })
-
-//     _state.blocks = Object.assign({}, _state.blocks, _blocks)
-//     const _index = _state.page.blocks.findIndex(i => i._id === anchorKey)
-//     // inserted blocks added to pages block list
-//     _state.page.blocks.splice(_index, 1, ..._pagesList)
-//   } else {
-//     /*
-//     slate will insert the text at selected offset
-//     */
-//   }
-
-//   return cleanUpState(_state)
-// }
 
 export default (state, action) => {
   switch (action.type) {

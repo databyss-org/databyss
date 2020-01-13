@@ -497,11 +497,14 @@ const SlateContentEditable = forwardRef(
 
       // if anchor block is not empty and first fragment is atomic
       // prompt a warning that pasting atomic blocks is only
-      if (type === 'fragment') {
-        if (_offset !== 0 && isAtomicInlineType(_frag.nodes.get(0).type)) {
-          return event.preventDefault()
-        }
-      }
+
+      // TODO: allow this action
+      // if (type === 'fragment') {
+      //   if (_offset !== 0 && isAtomicInlineType(_frag.nodes.get(0).type)) {
+      //     console.log('send paste here')
+      //     return event.preventDefault()
+      //   }
+      // }
 
       if (
         type === 'fragment' ||
