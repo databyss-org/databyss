@@ -23,9 +23,10 @@ let editor
 let slateDocument
 let pageBlocks
 let actions
-
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=cypress-tests--slate'
-const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=cypress-tests--slate'
+const LOCAL_URL =
+  'http://localhost:6006/iframe.html?id=cypress-tests--slate-empty'
+const PROXY_URL =
+  'http://0.0.0.0:8080/iframe.html?id=cypress-tests--slate-empty'
 
 describe('editor selenium', () => {
   beforeEach(async done => {
@@ -53,7 +54,7 @@ describe('editor selenium', () => {
     await copy(actions)
     await endOfLine(actions)
     await paste(actions)
-    await sleep(1000)
+    await sleep(2000)
 
     const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
       b => b.refId
