@@ -115,7 +115,6 @@ const setActiveBlockType = type => (editor, value, next) => {
   if (_activeBlock.text.length === 0 && editor.value.previousBlock) {
     editor.replaceNodeByKey(_activeBlock.key, newBlock(_activeBlock.key))
     // if previous block exists move caret forward
-    // TODO: UNCOMMENT THIS CODE
     editor.moveForward(1)
     next(editor, value)
   }
