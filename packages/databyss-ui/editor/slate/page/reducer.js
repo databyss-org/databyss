@@ -2,7 +2,7 @@ import { Block } from 'slate'
 import { serializeNodeToHtml, sanitizer } from './../inlineSerializer'
 import { getRangesFromBlock, stateToSlateMarkup } from './../markup'
 
-import { NewEditor, isTextAtomic, newAtomicBlock } from './../slateUtils'
+import { NewEditor, isTextAtomic } from './../slateUtils'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
