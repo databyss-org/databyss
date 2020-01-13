@@ -360,7 +360,7 @@ const onPaste = (state, anchorKey, list, offset) => {
           _list[_list.length - 1][Object.keys(_list[_list.length - 1])[0]]
         if (!isAtomicInlineType(_lastPasteFrag.type)) {
           // if last paste block is not atomic append text to last block
-          _list[_list.length - 1][_lastPasteFrag._id].textV =
+          _list[_list.length - 1][_lastPasteFrag._id].text =
             _list[_list.length - 1][_lastPasteFrag._id].text + _lastText
         } else {
           // TODO:
@@ -368,6 +368,7 @@ const onPaste = (state, anchorKey, list, offset) => {
         }
       }
       // TODO: MERGE BOTH RANGES
+
       const _newEntity = {
         textValue: _text,
         _id: _entity._id,
@@ -395,6 +396,7 @@ const onPaste = (state, anchorKey, list, offset) => {
       refId: _block.refId,
       type: _block.type,
     }
+
     // populate entities
     entities(_state, _block.type)[_block.refId] = {
       _id: _block.refId,
@@ -402,15 +404,15 @@ const onPaste = (state, anchorKey, list, offset) => {
       textValue: _block.text,
     }
   })
-
   _state.blocks = Object.assign({}, _state.blocks, _blocks)
   // inserted blocks added to pages block list
-  _state.page.blocks.splice(_index, 1, ..._pagesList)
+  if (_pagesList.length > 0) {
+    _state.page.blocks.splice(_index, 1, ..._pagesList)
+  }
 
   /*
     slate will insert the text at selected offset 
     */
-
   return cleanUpState(_state)
 }
 
