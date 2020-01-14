@@ -326,7 +326,7 @@ const deleteBlocks = (state, payload) => {
   return cleanUpState(_state)
 }
 
-const onPaste = (state, anchorKey, list, offset) => {
+const onPaste = (state, anchorKey, list, offset, newId) => {
   let _text
   const _list = cloneDeep(list)
   const _state = cloneDeep(state)
@@ -406,6 +406,32 @@ const onPaste = (state, anchorKey, list, offset) => {
             _list[_list.length - 1][_lastPasteFrag._id].text + _lastText
 
           // TODO: MERGE RANGES
+        } else {
+          /* if last block is atomic and pasted in the middle of an entry, create a new block for last fragment */
+          const _block = _state.blocks[anchorKey]
+          const _entity = entities(_state, _block.type)[_block.refId]
+          // split the text
+          let _first = _entity.textValue.split('')
+          const _last = _first.splice(offset).join('')
+          _first = _first.join('')
+          // replace first half of text
+          entities(_state, _block.type)[_block.refId] = {
+            _id: _block.refId,
+            ranges: _block.ranges,
+            textValue: _first,
+          }
+
+          // append new block to list with second half of text
+          const _newBlock = {
+            [newId]: {
+              text: _last,
+              type: 'ENTRY',
+              ranges: [],
+              refId: ObjectId().toHexString(),
+              _id: newId,
+            },
+          }
+          _list.push(_newBlock)
         }
       }
     }
@@ -464,7 +490,8 @@ export default (state, action) => {
         state,
         action.payload.key,
         action.payload.list,
-        action.payload.offset
+        action.payload.offset,
+        action.payload.newId
       )
     case SHOW_NEW_BLOCK_MENU:
       return {

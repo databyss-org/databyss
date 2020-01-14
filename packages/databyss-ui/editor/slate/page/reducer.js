@@ -349,7 +349,7 @@ const deleteBlocksByIds = idList => (editor, value, next) => {
   next(editor, value)
 }
 
-export const onPaste = (list, fragment, key, offset) => (
+export const onPaste = (list, fragment, key, offset, newId) => (
   editor,
   value,
   next
@@ -372,6 +372,11 @@ export const onPaste = (list, fragment, key, offset) => (
     editor.insertBlock(_emptyBlock)
     _offset = 0
     _nodeAfterPaste = editor.value.nextBlock
+    const _tempKey = _nodeAfterPaste.key
+    const _tempBlock = _nodeAfterPaste.toJSON()
+    _tempBlock.key = newId
+    // replace last block with provided Id
+    editor.replaceNodeByKey(_tempKey, _tempBlock)
   }
 
   /* if last value is not atomic block and paste occured
@@ -551,7 +556,8 @@ export default (editableState, action) => {
           action.payload.list,
           action.payload.fragment,
           action.payload.key,
-          action.payload.offset
+          action.payload.offset,
+          action.payload.newId
         ),
       }
     }

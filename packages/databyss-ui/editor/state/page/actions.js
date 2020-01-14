@@ -172,12 +172,13 @@ export function deleteBlocks(idList, editableState) {
   }
 }
 
-export function onPaste(key, list, fragment, offset, editableState) {
+export function onPaste(key, list, fragment, offset, newId, editableState) {
   return {
     type: ON_PASTE,
     payload: {
       editableState,
       key,
+      newId,
       list,
       fragment,
       offset,

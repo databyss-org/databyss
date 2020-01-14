@@ -2,6 +2,7 @@ import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
 import { Editor, getEventTransfer } from 'slate-react'
 import _ from 'lodash'
+import ObjectId from 'bson-objectid'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -479,6 +480,9 @@ const SlateContentEditable = forwardRef(
     }
 
     const onPaste = (event, editor) => {
+      // if new block is created in reducer
+      // use this _id
+      const newId = ObjectId().toHexString()
       if (isAtomicInlineType(editor.value.anchorBlock.type)) {
         return event.preventDefault()
       }
@@ -498,14 +502,6 @@ const SlateContentEditable = forwardRef(
       // if anchor block is not empty and first fragment is atomic
       // prompt a warning that pasting atomic blocks is only
 
-      // TODO: allow this action
-      // if (type === 'fragment') {
-      //   if (_offset !== 0 && isAtomicInlineType(_frag.nodes.get(0).type)) {
-      //     console.log('send paste here')
-      //     return event.preventDefault()
-      //   }
-      // }
-
       if (
         type === 'fragment' ||
         isFragmentFullBlock(fragment, value.document)
@@ -518,7 +514,7 @@ const SlateContentEditable = forwardRef(
         // this list is used to keep slate and state in sync
         const _blockList = blocksToState(_frag.nodes)
 
-        onPasteAction(anchorKey, _blockList, _frag, _offset, editor)
+        onPasteAction(anchorKey, _blockList, _frag, _offset, newId, editor)
         return event.preventDefault()
       }
 
@@ -526,7 +522,7 @@ const SlateContentEditable = forwardRef(
       const _textData = getFragFromText(transfer.text)
       const _blockList = _textData._blockList
       _frag = _textData._frag
-      onPasteAction(anchorKey, _blockList, _frag, _offset, editor)
+      onPasteAction(anchorKey, _blockList, _frag, _offset, newId, editor)
       return event.preventDefault()
     }
 
