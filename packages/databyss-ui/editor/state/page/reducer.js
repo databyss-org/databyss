@@ -338,8 +338,11 @@ const onPaste = (state, anchorKey, list, offset) => {
   const { type, refId } = blocks[anchorKey]
   const _entity = entities(state, type)[refId]
 
+  const _firstPasteFrag = _list[0][Object.keys(_list[0])[0]]
+  const _lastPasteFrag =
+    _list[_list.length - 1][Object.keys(_list[_list.length - 1])[0]]
+
   if (_entity.textValue.length !== 0) {
-    const _firstPasteFrag = _list[0][Object.keys(_list[0])[0]]
     // check if first paste fragment is not atomic
     if (!isAtomicInlineType(_firstPasteFrag.type)) {
       const _oldRefId = Object.keys(_list[0])[0]
@@ -356,8 +359,6 @@ const onPaste = (state, anchorKey, list, offset) => {
         _firstText = _firstText.join('')
         _text = _firstText + _anchorBlock.text
 
-        const _lastPasteFrag =
-          _list[_list.length - 1][Object.keys(_list[_list.length - 1])[0]]
         if (!isAtomicInlineType(_lastPasteFrag.type)) {
           // if last paste block is not atomic append text to last block
           _list[_list.length - 1][_lastPasteFrag._id].text =
@@ -393,10 +394,25 @@ const onPaste = (state, anchorKey, list, offset) => {
       const _firstPasteFrag = _list[0][Object.keys(_list[0])]
       // add empty block to pages list
       _state.page.blocks.splice(_index, 0, { _id: _firstPasteFrag._id })
+      /* if last paste fragment is not atomic merge second half of entry with the end of paste fragment */
+      if (_entity.textValue.length !== offset) {
+        if (!isAtomicInlineType(_lastPasteFrag.type)) {
+          const _lastText = _entity.textValue
+            .split('')
+            .splice(offset)
+            .join('')
+
+          _list[_list.length - 1][_lastPasteFrag._id].text =
+            _list[_list.length - 1][_lastPasteFrag._id].text + _lastText
+
+          // TODO: MERGE RANGES
+        }
+      }
     }
   }
   /* if contents of current block are empty, slate will create a new block id, replace the the block id with the first block in the list
    */
+
   const _pagesList = _list.map(b => ({ _id: b[Object.keys(b)[0]]._id }))
 
   const _blocks = {}
@@ -425,6 +441,7 @@ const onPaste = (state, anchorKey, list, offset) => {
   /*
     slate will insert the text at selected offset 
     */
+
   return cleanUpState(_state)
 }
 

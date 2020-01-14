@@ -355,11 +355,15 @@ export const onPaste = (list, fragment, key, offset) => (
   next
 ) => {
   let _offset = offset
+  let _fragment = fragment
 
   // get anchor refID from document
   const _anchorRef = editor.value.document.getNode(key).data.get('refId')
 
   const _firstNode = list[0][Object.keys(list[0])[0]]
+  const _lastNode = list[list.length - 1][Object.keys(list[list.length - 1])[0]]
+
+  let _nodeAfterPaste = editor.value.nextBlock
   /* if first value in list is atomic
   create a new block with first id in list */
   if (isAtomicInlineType(_firstNode.type) && offset !== 0) {
@@ -367,11 +371,30 @@ export const onPaste = (list, fragment, key, offset) => (
     const _emptyBlock = newBlock()
     editor.insertBlock(_emptyBlock)
     _offset = 0
+    _nodeAfterPaste = editor.value.nextBlock
+  }
+
+  /* if last value is not atomic block and paste occured
+  in the middle of an entry, merge the last fragment with paste fragment*/
+  if (!isAtomicInlineType(_lastNode.type) && offset !== 0) {
+    // TODO: MERGE RANGES
+    let _text = ''
+    if (_nodeAfterPaste) {
+      // get last fragment and delete it from editor
+      _text = _nodeAfterPaste.text
+      editor.removeNodeByKey(_nodeAfterPaste.key)
+    }
+
+    // append last paste fragment to block
+    const _editor = NewEditor()
+    _editor.insertFragment(_fragment)
+    _editor.insertText(_text)
+    _fragment = _editor.value.document
   }
   let _list = list.reverse()
   let _frag = fragment.nodes
 
-  editor.insertFragment(fragment)
+  editor.insertFragment(_fragment)
 
   // keys get lost when insert fragment applied
   // retrieve the last key in the fragment and apply it to the document
@@ -419,9 +442,9 @@ export const onPaste = (list, fragment, key, offset) => (
     editor.replaceNodeByKey(_firstKey, _firstBlock)
 
     // replace cursor
-    if (fragment.nodes.size === 1) {
+    if (_fragment.nodes.size === 1) {
       editor.moveToStartOfNode(_firstBlock)
-      const _firstPasteText = fragment.nodes.get(0).text.length
+      const _firstPasteText = _fragment.nodes.get(0).text.length
       editor.moveForward(offset + _firstPasteText)
     }
   }
