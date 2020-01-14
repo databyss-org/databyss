@@ -364,8 +364,9 @@ const onPaste = (state, anchorKey, list, offset, newId) => {
           _list[_list.length - 1][_lastPasteFrag._id].text =
             _list[_list.length - 1][_lastPasteFrag._id].text + _lastText
         } else {
-          // TODO:
-          // if last paste block is atomic create a new block for last text
+          console.log('PASTE HERE')
+          /* if last paste block is atomic and pasted in the middle of an entry */
+          // TODO: IF last paste block is atomic and pasted in the middle of entry
         }
       }
       // TODO: MERGE BOTH RANGES
@@ -381,10 +382,6 @@ const onPaste = (state, anchorKey, list, offset, newId) => {
       _list.shift()
       _index += _index
     } else {
-      // TODO: WRITE TESTS TO COVER BOTH THESE CASES
-      // CASE 1: PASTE ON END OF ENTRY WITH FIRST BLOCK ATOMIC
-      // CASE 2: SAME AS CASE 1 BUT IN THE MIDDLE OF A PAGE
-
       /*
        if first block in paste is atomic on an existing line
        find offset where to add empty block
@@ -436,6 +433,7 @@ const onPaste = (state, anchorKey, list, offset, newId) => {
       }
     }
   }
+
   /* if contents of current block are empty, slate will create a new block id, replace the the block id with the first block in the list
    */
 
