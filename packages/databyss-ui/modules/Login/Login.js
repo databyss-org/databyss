@@ -8,6 +8,15 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { GoogleLogin } from 'react-google-login'
 import { NotAuthorizedError } from '@databyss-org/services/lib/errors'
 
+const initialFormState = {
+  email: {
+    textValue: '',
+  },
+  code: {
+    textValue: '',
+  },
+}
+
 const Login = ({ title, pending, resetFlow }) => {
   const { getSession, requestCode, session } = useSessionContext()
   const emailInputRef = useRef(null)
@@ -15,16 +24,15 @@ const Login = ({ title, pending, resetFlow }) => {
   const [isEmailFlow, setIsEmailFlow] = useState(false)
   const [didSubmit, setDidSubmit] = useState(false)
   const [showRequestCode, setShowRequestCode] = useState(requestCode)
-  const [values, setValues] = useState({
-    email: {
-      textValue: '',
-    },
-    code: {
-      textValue: '',
-    },
-  })
+  const [values, setValues] = useState(initialFormState)
 
   const onSubmit = ({ googleToken } = {}) => {
+    if (
+      (showRequestCode && !values.code.textValue.length) ||
+      (isEmailFlow && !values.email.textValue.length)
+    ) {
+      return
+    }
     getSession({
       email: values.email.textValue,
       code: values.code.textValue,
@@ -32,6 +40,13 @@ const Login = ({ title, pending, resetFlow }) => {
       retry: true,
     })
     setDidSubmit(true)
+  }
+
+  const onGoogleRequest = cb => () => {
+    setIsEmailFlow(false)
+    setShowRequestCode(false)
+    setValues(initialFormState)
+    cb()
   }
 
   const onGoogleResponse = ({ tokenId }) =>
@@ -90,7 +105,11 @@ const Login = ({ title, pending, resetFlow }) => {
             clientId="282602380521-soik6nealmn1vgu50ohc37vmors61b6h.apps.googleusercontent.com"
             buttonText="Login"
             render={({ onClick }) => (
-              <Button variant="primaryUi" onPress={onClick} disabled={pending}>
+              <Button
+                variant="primaryUi"
+                onPress={onGoogleRequest(onClick)}
+                disabled={pending}
+              >
                 Continue with Google
               </Button>
             )}
@@ -128,7 +147,11 @@ const Login = ({ title, pending, resetFlow }) => {
                 <Button
                   variant="secondaryUi"
                   onPress={onSubmit}
-                  disabled={pending}
+                  disabled={
+                    pending ||
+                    (showRequestCode && !values.code.textValue.length) ||
+                    !values.email.textValue.length
+                  }
                 >
                   {pending ? (
                     <Loading size={20} />
