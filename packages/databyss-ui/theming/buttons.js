@@ -37,9 +37,14 @@ const buttonVariants = {
     backgroundColor: 'background.0',
     color: 'secondary.3',
   },
-  uiLink: {
+  uiLinkButton: {
     ...linkButton(),
     color: 'secondary.3',
+  },
+  uiLink: {
+    padding: space.none,
+    color: 'secondary.3',
+    textDecoration: 'underline',
   },
   editorMarginMenu: {
     display: 'flex',

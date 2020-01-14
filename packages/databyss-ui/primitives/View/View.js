@@ -34,6 +34,15 @@ export const borderVariant = variant({
   },
 })
 
+export const hlineVariant = variant({
+  prop: 'hlineVariant',
+  scale: 'hlineVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
+})
+
 export const shadowVariant = variant({
   prop: 'shadowVariant',
   scale: 'shadowVariants',
@@ -62,6 +71,7 @@ export const styleProps = compose(
   shadow,
   paddingVariant,
   borderVariant,
+  hlineVariant,
   shadowVariant,
   widthVariant
 )

@@ -33,9 +33,9 @@ const SessionProvider = ({ children, initialState }) => {
     return null
   }
 
-  const endSession = () => {
-    dispatch(actions.endSession())
-  }
+  const endSession = () => dispatch(actions.endSession())
+
+  const showEmailFlow = () => dispatch(actions.showEmailFlow())
 
   // try to resume session on mount
   useEffect(() => {
@@ -43,15 +43,21 @@ const SessionProvider = ({ children, initialState }) => {
   }, [])
 
   let _children = children
-  if (!state.session || state.session instanceof Error) {
-    _children = <Login />
-  }
-  if (state.session instanceof ResourcePending) {
+  const isPending = state.session instanceof ResourcePending
+  if (
+    !state.session ||
+    state.session instanceof Error ||
+    state.lastCredentials
+  ) {
+    _children = <Login pending={isPending} />
+  } else if (isPending) {
     _children = <Loading />
   }
 
   return (
-    <SessionContext.Provider value={{ ...state, getSession, endSession }}>
+    <SessionContext.Provider
+      value={{ ...state, getSession, endSession, showEmailFlow }}
+    >
       {_children}
     </SessionContext.Provider>
   )

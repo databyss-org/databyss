@@ -1,4 +1,5 @@
 import { NotAuthorizedError, ResourceNotFoundError } from '../../lib/errors'
+import { delay } from '../../lib/mocks'
 
 const validAuthToken = '5e1767601a16fb802874a5cd'
 const validCode = '5e17693fcfd842d830117981'
@@ -18,10 +19,11 @@ export const mockSession1 = {
 
 const validSessionResponse = { data: { session: mockSession1 } }
 
-export default (path, options) => {
+export default async (path, options) => {
   const body = (options.body && JSON.parse(options.body)) || {}
   console.log('MOCK REQUEST', path, options)
   const _path = path.replace(process.env.REACT_APP_API_URL, '')
+  await delay(3)
   switch (_path) {
     case '/auth': {
       if (

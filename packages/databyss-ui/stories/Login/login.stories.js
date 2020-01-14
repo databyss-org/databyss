@@ -30,7 +30,7 @@ const SessionInfo = () => {
 storiesOf('Demos|Login', module)
   .addDecorator(NotifyDecorator)
   .addDecorator(ViewportDecorator)
-  .add('mock', () => (
+  .add('default', () => (
     <ServiceProvider actions={{ session: actions }}>
       <SessionProvider>
         <List verticalItemPadding="small">

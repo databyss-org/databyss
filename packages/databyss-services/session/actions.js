@@ -7,6 +7,7 @@ import {
   DENY_ACCESS,
   REQUEST_CODE,
   END_SESSION,
+  SHOW_EMAIL_FLOW,
 } from './constants'
 
 import {
@@ -20,14 +21,14 @@ import {
 
 export const fetchSession = ({
   _request,
-  code,
-  googleToken,
-  email,
+  ...credentials
 }) => async dispatch => {
   // eslint-disable-next-line no-param-reassign
   _request = _request || request
 
-  dispatch({ type: FETCH_SESSION })
+  const { code, googleToken, email } = credentials
+
+  dispatch({ type: FETCH_SESSION, payload: { credentials } })
 
   // fetch params
   let path = process.env.REACT_APP_API_URL
@@ -77,6 +78,7 @@ export const fetchSession = ({
       // assume TFA, request code
       dispatch({
         type: REQUEST_CODE,
+        payload: { email },
       })
     }
   } catch (error) {
@@ -100,3 +102,5 @@ export const endSession = () => {
     type: END_SESSION,
   }
 }
+
+export const showEmailFlow = () => ({ type: SHOW_EMAIL_FLOW })

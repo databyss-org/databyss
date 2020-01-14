@@ -14988,6 +14988,13 @@ react-jss@^8.6.1:
     prop-types "^15.6.0"
     theming "^1.3.0"
 
+react-keyed-flatten-children@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-keyed-flatten-children/-/react-keyed-flatten-children-1.1.0.tgz#1d9a1eb6aa9df5e90e3f71e31cade2fc616fee65"
+  integrity sha512-zxuTMn0NrxsMyX0oX1DOUz4sgLwRjeubrQCLlaePSbWP0DyiZ7A17uWQdlnkuM4d0lZ6sVvCIwOcS/EzcBF1CA==
+  dependencies:
+    react-is "^16.8.6"
+
 react-lifecycles-compat@^3.0.0, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"

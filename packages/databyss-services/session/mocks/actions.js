@@ -4,3 +4,4 @@ import request from './request'
 export const fetchSession = args =>
   actions.fetchSession({ ...args, _request: request })
 export const endSession = actions.endSession
+export const showEmailFlow = actions.showEmailFlow
