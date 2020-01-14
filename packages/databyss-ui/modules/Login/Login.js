@@ -56,6 +56,7 @@ const Login = ({ pending, signupFlow }) => {
     setValues(values)
   }
 
+  // autofocus the email input field when it is shown
   useEffect(
     () => {
       if (isEmailFlow && emailInputRef) {
@@ -65,6 +66,7 @@ const Login = ({ pending, signupFlow }) => {
     [isEmailFlow, emailInputRef]
   )
 
+  // autofocus the request code field when it is shown
   useEffect(
     () => {
       if (showRequestCode && codeInputRef) {
@@ -74,17 +76,20 @@ const Login = ({ pending, signupFlow }) => {
     [showRequestCode, codeInputRef]
   )
 
+  // reset TFA (request code) if email changes
   useEffect(
     () => {
-      // reset TFA if email changes
       if (showRequestCode) {
         setValues({ ...values, code: { textValue: '' } })
         setShowRequestCode(false)
+        setDidSubmit(false)
       }
     },
     [values.email.textValue]
   )
 
+  // auth response may contain the `requestCode` verb for TFA
+  // if it does, show the request code UI
   useEffect(
     () => {
       if (!showRequestCode && requestCode) {
@@ -109,6 +114,7 @@ const Login = ({ pending, signupFlow }) => {
                 variant="primaryUi"
                 onPress={onGoogleRequest(onClick)}
                 disabled={pending}
+                data-test-id="googleButton"
               >
                 Continue with Google
               </Button>
@@ -152,6 +158,7 @@ const Login = ({ pending, signupFlow }) => {
                     (showRequestCode && !values.code.textValue.length) ||
                     !values.email.textValue.length
                   }
+                  data-test-id="continueButton"
                 >
                   {pending ? (
                     <Loading size={20} />
@@ -163,7 +170,11 @@ const Login = ({ pending, signupFlow }) => {
               {didSubmit &&
                 session instanceof NotAuthorizedError && (
                   <View alignItems="center">
-                    <Text color="red.0" variant="uiTextNormal">
+                    <Text
+                      color="red.0"
+                      variant="uiTextNormal"
+                      data-test-id="errorMessage"
+                    >
                       {showRequestCode
                         ? 'Code is invalid or expired'
                         : 'Please enter a valid email'}
@@ -180,7 +191,11 @@ const Login = ({ pending, signupFlow }) => {
               <Text variant="uiTextNormal" mr="tiny" color="gray.3">
                 You can also
               </Text>
-              <Button variant="uiLink" onPress={setIsEmailFlow}>
+              <Button
+                variant="uiLink"
+                onPress={setIsEmailFlow}
+                data-test-id="emailButton"
+              >
                 continue with email
               </Button>
             </View>

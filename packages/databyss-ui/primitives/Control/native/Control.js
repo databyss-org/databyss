@@ -111,6 +111,7 @@ const Control = forwardRef(
               !_mobile && css(controlCssDesktop(others, theme))(theme),
             ]}
             href={href}
+            disabled={disabled}
             {...others}
           >
             {children}

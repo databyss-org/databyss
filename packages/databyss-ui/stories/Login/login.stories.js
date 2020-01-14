@@ -25,7 +25,9 @@ const SessionInfo = () => {
           </Text>
         </List>
       </View>
-      <Button onPress={endSession}>Logout</Button>
+      <Button onPress={endSession} data-test-id="logoutButton">
+        Logout
+      </Button>
     </React.Fragment>
   )
 }
@@ -36,7 +38,9 @@ const LoginDemo = () => {
     <ServiceProvider actions={{ session: actions }}>
       <SessionProvider signUp={path === '/signup'}>
         <List verticalItemPadding="small">
-          <Text variant="uiTextNormalSemibold">Authorized</Text>
+          <Text variant="uiTextNormalSemibold" data-test-id="authorized">
+            Authorized
+          </Text>
           <SessionInfo />
         </List>
       </SessionProvider>
