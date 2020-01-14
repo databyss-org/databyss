@@ -17,7 +17,7 @@ const initialFormState = {
   },
 }
 
-const Login = ({ title, pending, resetFlow }) => {
+const Login = ({ pending, signupFlow }) => {
   const { getSession, requestCode, session } = useSessionContext()
   const emailInputRef = useRef(null)
   const codeInputRef = useRef(null)
@@ -98,7 +98,7 @@ const Login = ({ title, pending, resetFlow }) => {
     <ValueListProvider values={values} onChange={onChange} onSubmit={onSubmit}>
       <View widthVariant="dialog" alignItems="center">
         <Text variant="heading2" color="gray.3">
-          {title}
+          {signupFlow ? 'Sign Up' : 'Log In'}
         </Text>
         <List mt="medium" mb="medium" verticalItemPadding="medium" width="100%">
           <GoogleLogin
@@ -188,10 +188,14 @@ const Login = ({ title, pending, resetFlow }) => {
         </List>
         <View flexDirection="horizontal" alignItems="center">
           <Text variant="uiTextSmall" mr="tiny" color="gray.3">
-            Don't have an account?
+            {signupFlow ? 'Already have an account?' : "Don't have an account?"}
           </Text>
-          <Button variant="uiLink" textVariant="uiTextSmall" href="/signup">
-            Sign Up
+          <Button
+            variant="uiLink"
+            textVariant="uiTextSmall"
+            href={signupFlow ? '/' : '/signup'}
+          >
+            {signupFlow ? 'Log In' : 'Sign Up'}
           </Button>
         </View>
       </View>

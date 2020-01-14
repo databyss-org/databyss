@@ -10,11 +10,11 @@ const useReducer = createReducer()
 
 export const SessionContext = createContext()
 
-const SessionProvider = ({ children, initialState }) => {
-  const [state, dispatch] = useReducer(reducer, initialState)
-  // const { session: actions } = useServiceContext()
-  const context = useServiceContext()
-  const { session: actions } = context
+const SessionProvider = ({ children, initialState, signUp }) => {
+  const [state, dispatch] = useReducer(reducer, initialState, {
+    name: 'SessionProvider',
+  })
+  const { session: actions } = useServiceContext()
 
   // credentials can be:
   // - `undefined` if we're just reloading
@@ -49,7 +49,7 @@ const SessionProvider = ({ children, initialState }) => {
     state.session instanceof Error ||
     state.lastCredentials
   ) {
-    _children = <Login pending={isPending} />
+    _children = <Login pending={isPending} signupFlow={signUp} />
   } else if (isPending) {
     _children = <Loading />
   }
@@ -67,6 +67,7 @@ export const useSessionContext = () => useContext(SessionContext)
 
 SessionProvider.defaultProps = {
   initialState,
+  signUp: false,
 }
 
 export default SessionProvider

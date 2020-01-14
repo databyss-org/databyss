@@ -6,6 +6,9 @@ import SessionProvider, {
 } from '@databyss-org/services/session/SessionProvider'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import * as actions from '@databyss-org/services/session/mocks/actions'
+import NavigationProvider, {
+  useNavigationContext,
+} from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { ViewportDecorator, NotifyDecorator } from '../decorators'
 
 const SessionInfo = () => {
@@ -27,16 +30,30 @@ const SessionInfo = () => {
   )
 }
 
-storiesOf('Demos|Login', module)
-  .addDecorator(NotifyDecorator)
-  .addDecorator(ViewportDecorator)
-  .add('default', () => (
+const LoginDemo = () => {
+  const { path } = useNavigationContext()
+  return (
     <ServiceProvider actions={{ session: actions }}>
-      <SessionProvider>
+      <SessionProvider signUp={path === '/signup'}>
         <List verticalItemPadding="small">
           <Text variant="uiTextNormalSemibold">Authorized</Text>
           <SessionInfo />
         </List>
       </SessionProvider>
     </ServiceProvider>
+  )
+}
+
+storiesOf('Demos|Login', module)
+  .addDecorator(NotifyDecorator)
+  .addDecorator(ViewportDecorator)
+  .add('default', () => (
+    <NavigationProvider>
+      <LoginDemo />
+    </NavigationProvider>
+  ))
+  .add('signup', () => (
+    <NavigationProvider initialPath="/signup">
+      <LoginDemo />
+    </NavigationProvider>
   ))
