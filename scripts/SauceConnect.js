@@ -25,11 +25,11 @@ class SauceConnect extends ServerProcess {
     if (!fs.existsSync(binPath)) {
       await this.downloadBinary()
     }
-    const cmd = `${binPath} -u ${process.env.SAUCE_USERNAME} -k ${
-      process.env.SAUCE_ACCESS_KEY
-    } --config-file ${configPath}`
-    console.log('SauceConnect.startProxy', cmd)
-    return run(cmd)
+    return run(
+      `${binPath} -u ${process.env.SAUCE_USERNAME} -k ${
+        process.env.SAUCE_ACCESS_KEY
+      } --config-file ${configPath}`
+    )
   }
   spawnProxy() {
     return this.startProxy(this.spawn)
