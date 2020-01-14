@@ -15,6 +15,8 @@ import {
   paste,
   sleep,
   selectAll,
+  // previousLine,
+  // nextLine,
 } from './_helpers.selenium'
 
 let driver
@@ -27,6 +29,8 @@ const LOCAL_URL =
   'http://localhost:6006/iframe.html?id=cypress-tests--slate-empty'
 const PROXY_URL =
   'http://0.0.0.0:8080/iframe.html?id=cypress-tests--slate-empty'
+
+export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('editor selenium', () => {
   beforeEach(async done => {
@@ -285,4 +289,99 @@ describe('editor selenium', () => {
     const actual = JSON.parse(await slateDocument.getText())
     expect(actual).toEqual(expected.document)
   })
+
+  it('should copy and paste atomic block and entry block at end of existing line at the end of the document', async () => {
+    await editor.sendKeys('@this is a source')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('this is an entry')
+    await selectAll(actions)
+    await copy(actions)
+    await endOfLine(actions)
+    await paste(actions)
+    await sleep(2000)
+
+    const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
+      b => b.refId
+    )
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <text />
+            <inline type="SOURCE">this is a source</inline>
+            <text />
+          </block>
+          <block type="ENTRY" data={{ refId: refIdList[1] }}>
+            <text>this is an entry</text>
+          </block>
+          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <text />
+            <inline type="SOURCE">this is a source</inline>
+            <text />
+          </block>
+          <block type="ENTRY" data={{ refId: refIdList[3] }}>
+            <text>this is an entry</text>
+          </block>
+        </document>
+      </value>
+    )
+
+    const actual = JSON.parse(await slateDocument.getText())
+    expect(actual).toEqual(expected.document)
+  })
+
+  // it('should copy and paste atomic block and entry block at end of existing line in the middle of a document', async () => {
+  //   await editor.sendKeys('@this is a source')
+  //   await editor.sendKeys(Key.ENTER)
+  //   await editor.sendKeys('this is an entry')
+  //   await editor.sendKeys(Key.ENTER)
+  //   await editor.sendKeys('this is also an entry')
+  //   await selectAll(actions)
+  //   await copy(actions)
+  //   await endOfDoc(actions)
+  //   await paste(actions)
+
+  //   // await editor.sendKeys(Key.ARROW_LEFT)
+  //   // await editor.sendKeys(Key.ARROW_DOWN)
+  //   // await editor.sendKeys(Key.ARROW_DOWN)
+  //   // await editor.sendKeys(Key.ARROW_LEFT)
+
+  //   // await paste(actions)
+
+  //   await sleep(50000)
+
+  //   const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
+  //     b => b.refId
+  //   )
+
+  //   const expected = toSlateJson(
+  //     <value>
+  //       <document>
+  //         <block type="SOURCE" data={{ refId: refIdList[0] }}>
+  //           <text />
+  //           <inline type="SOURCE">this is a source</inline>
+  //           <text />
+  //         </block>
+  //         <block type="ENTRY" data={{ refId: refIdList[1] }}>
+  //           <text>this is an entry</text>
+  //         </block>
+  //         <block type="SOURCE" data={{ refId: refIdList[0] }}>
+  //           <text />
+  //           <inline type="SOURCE">this is a source</inline>
+  //           <text />
+  //         </block>
+  //         <block type="ENTRY" data={{ refId: refIdList[3] }}>
+  //           <text>this is an entry</text>
+  //         </block>
+  //         <block type="ENTRY" data={{ refId: refIdList[4] }}>
+  //           <text>this is also an entry</text>
+  //         </block>
+  //       </document>
+  //     </value>
+  //   )
+
+  //   const actual = JSON.parse(await slateDocument.getText())
+  //   expect(actual).toEqual(expected.document)
+  // })
 })

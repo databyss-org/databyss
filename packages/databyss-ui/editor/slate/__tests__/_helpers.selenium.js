@@ -17,17 +17,17 @@ export const endOfLine = actions =>
     .keyUp(Key.SHIFT)
     .perform()
 
-export const copy = actions =>
-  actions
-    .keyDown(CONTROL)
-    .sendKeys('c')
-    .keyUp(CONTROL)
-    .perform()
-
 export const paste = actions =>
   actions
     .keyDown(CONTROL)
     .sendKeys('v')
+    .keyUp(CONTROL)
+    .perform()
+
+export const copy = actions =>
+  actions
+    .keyDown(CONTROL)
+    .sendKeys('c')
     .keyUp(CONTROL)
     .perform()
 
@@ -61,6 +61,24 @@ export const startOfDoc = actions =>
     .keyDown(Key.CONTROL)
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_UP)
+    .keyUp(Key.CONTROL)
+    .keyUp(Key.SHIFT)
+    .perform()
+
+export const previousLine = actions =>
+  actions
+    .keyDown(Key.CONTROL)
+    .keyDown(Key.SHIFT)
+    .sendKeys('o')
+    .keyUp(Key.CONTROL)
+    .keyUp(Key.SHIFT)
+    .perform()
+
+export const nextLine = actions =>
+  actions
+    .keyDown(Key.CONTROL)
+    .keyDown(Key.SHIFT)
+    .sendKeys('p')
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
     .perform()

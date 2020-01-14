@@ -380,9 +380,15 @@ const onPaste = (state, anchorKey, list, offset) => {
       _list.shift()
       _index += _index
     } else {
-      // if first block in paste is atomic on an existing line
-      // find offset where to add empty block
-      // initialize empty block with first Id value
+      // TODO: WRITE TESTS TO COVER BOTH THESE CASES
+      // CASE 1: PASTE ON END OF ENTRY WITH FIRST BLOCK ATOMIC
+      // CASE 2: SAME AS CASE 1 BUT IN THE MIDDLE OF A PAGE
+
+      /*
+       if first block in paste is atomic on an existing line
+       find offset where to add empty block
+       initialize empty block with first Id value
+       */
       _index += _index
       const _firstPasteFrag = _list[0][Object.keys(_list[0])]
       // add empty block to pages list
