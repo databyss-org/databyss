@@ -369,9 +369,54 @@ const onPaste = (state, pasteData) => {
           _list[_list.length - 1][_lastPasteFrag._id].text =
             _list[_list.length - 1][_lastPasteFrag._id].text + _lastText
         } else {
-          console.log('PASTE HERE')
           /* if last paste block is atomic and pasted in the middle of an entry */
-          // TODO: IF last paste block is atomic and pasted in the middle of entry
+          const _block = _state.blocks[anchorKey]
+          const _entity = entities(_state, _block.type)[_block.refId]
+          // split the text
+          let _first = _entity.textValue.split('')
+          const _last = _first.splice(offset).join('')
+
+          const _newBlock = {
+            [secondId]: {
+              text: _last,
+              type: 'ENTRY',
+              ranges: [],
+              refId: ObjectId().toHexString(),
+              _id: secondId,
+            },
+          }
+          _list.push(_newBlock)
+
+          // get second fragment
+          // add to state page at correct index
+          // add to entity
+          // add to blocks
+
+          // const _block = _state.blocks[anchorKey]
+          // const _entity = entities(_state, _block.type)[_block.refId]
+          // // split the text
+          // let _first = _entity.textValue.split('')
+          // const _last = _first.splice(offset).join('')
+          // _first = _first.join('')
+          // // replace first half of text
+          // entities(_state, _block.type)[_block.refId] = {
+          //   _id: _block.refId,
+          //   ranges: _block.ranges,
+          //   textValue: _first,
+          // }
+          // // append new block to list with second half of text
+
+          // // TODO: check length of block list to use first or secondId
+          // const _newBlock = {
+          //   [firstId]: {
+          //     text: _last,
+          //     type: 'ENTRY',
+          //     ranges: [],
+          //     refId: ObjectId().toHexString(),
+          //     _id: firstId,
+          //   },
+          // }
+          // _list.push(_newBlock)
         }
       }
       // TODO: MERGE BOTH RANGES
@@ -409,6 +454,22 @@ const onPaste = (state, pasteData) => {
           _list[_list.length - 1][_lastPasteFrag._id].text =
             _list[_list.length - 1][_lastPasteFrag._id].text + _lastText
 
+          // split first block where paste occured
+          let _firstText = _entity.textValue
+            .split('')
+            .splice(offset)
+            .join('')
+
+          const _newEntity = {
+            textValue: _firstText,
+            _id: _entity._id,
+            ranges: _entity.ranges,
+          }
+          // append merged anchor block
+          entities(_state, type)[refId] = _newEntity
+
+          console.log(_state)
+          console.log('REMOVE FROM STATE')
           // TODO: MERGE RANGES
         } else {
           /* if last block is atomic and pasted in the middle of an entry, create a new block for last fragment */
@@ -425,13 +486,14 @@ const onPaste = (state, pasteData) => {
             textValue: _first,
           }
           // append new block to list with second half of text
+
           const _newBlock = {
-            [secondId]: {
+            [firstId]: {
               text: _last,
               type: 'ENTRY',
               ranges: [],
               refId: ObjectId().toHexString(),
-              _id: secondId,
+              _id: firstId,
             },
           }
           _list.push(_newBlock)

@@ -364,6 +364,7 @@ export const onPaste = pasteData => (editor, value, next) => {
   let _offset = offset
   let _fragment = fragment
   let deleteForward
+  let mergeForward
 
   // get anchor refID from document
   const _anchorRef = editor.value.document.getNode(anchorKey).data.get('refId')
@@ -381,13 +382,9 @@ export const onPaste = pasteData => (editor, value, next) => {
     /* if paste occurs at the end of a block
 
         * create a new empty block
-        * replace block with provided key
-        * move caret forward to empty block 
+        * replace next block with provided key
+
       */
-
-    // TODO: if paste occurs in the middle of an entry
-    // break up entry in state reducer
-
     const _emptyBlock = newBlock()
     editor.insertBlock(_emptyBlock)
 
@@ -395,16 +392,19 @@ export const onPaste = pasteData => (editor, value, next) => {
       // replace the the next block with provided id
       const _tempKey = editor.value.nextBlock.key
       const _tempBlock = editor.value.nextBlock.toJSON()
-      _tempBlock.key = secondId
+      _tempBlock.key = firstId
       editor.replaceNodeByKey(_tempKey, _tempBlock)
+    } else {
+      if (!isAtomicInlineType(_lastNode.type)) {
+        mergeForward = true
+        console.log(editor.value)
+        console.log(_lastNode)
+        console.log(pasteData)
+        // check if left over fragment
+      }
     }
-
-    const _tempKey = editor.value.anchorBlock.key
-    const _tempBlock = editor.value.anchorBlock.toJSON()
-    _tempBlock.key = firstId
-    editor.replaceNodeByKey(_tempKey, _tempBlock)
-    editor.moveForward(1)
     _offset = 0
+    // TODO: merge last block
 
     //  }
     // else {
@@ -482,6 +482,9 @@ export const onPaste = pasteData => (editor, value, next) => {
     editor.removeNodeByKey(_deleteKey)
   }
 
+  if (mergeForward) {
+    editor.deleteForward(1)
+  }
   // keys get lost when insert fragment applied
   // retrieve the last key in the fragment and apply it to the document
   let _nodeList = editor.value.document.nodes.map(n => n.key)
