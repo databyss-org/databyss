@@ -328,15 +328,8 @@ const deleteBlocks = (state, payload) => {
 
 const onPaste = (state, pasteData) => {
   //anchorKey, list, offset, newId
-
-  const {
-    anchorKey,
-    blockList,
-    fragment,
-    offset,
-    firstId,
-    secondId,
-  } = pasteData
+  console.log(pasteData)
+  const { anchorKey, blockList, offset, firstId, secondId } = pasteData
 
   let _text
   const _list = cloneDeep(blockList)

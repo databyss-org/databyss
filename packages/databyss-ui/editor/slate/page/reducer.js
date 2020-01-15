@@ -373,30 +373,45 @@ export const onPaste = pasteData => (editor, value, next) => {
     ]
 
   let _nodeAfterPaste = editor.value.nextBlock
-  /* if first value in list is atomic
-  create a new block with first id in list */
+  /* if first value in paste list is atomic and does not occur on an empty block */
   if (isAtomicInlineType(_firstNode.type) && offset !== 0) {
-    if (editor.value.anchorBlock.text.length === offset) {
-      console.log('paste is at end of entry')
-      // TODO: IF ATOMIC IS PASTED AT END OF ENTRY
-    } else {
-      // insert empty block to initialize new atomic block
-      const _emptyBlock = newBlock()
-      editor.insertBlock(_emptyBlock)
-      _offset = 0
-      _nodeAfterPaste = editor.value.nextBlock
-      // TODO: ADD LOGIC TO STATE REDUCDER
-      const _tempKey = _nodeAfterPaste ? _nodeAfterPaste.key : newId
-      const _tempBlock = _nodeAfterPaste.toJSON()
-      _tempBlock.key = newId
-      // replace last block with provided Id
-      editor.replaceNodeByKey(_tempKey, _tempBlock)
-    }
+    // if (editor.value.anchorBlock.text.length === offset) {
+    /* if paste occurs at the end of a block
+
+        * create a new empty block
+        * replace block with provided key
+        * move caret forward to empty block 
+      */
+    const _emptyBlock = newBlock()
+    editor.insertBlock(_emptyBlock)
+    const _tempKey = editor.value.anchorBlock.key
+    const _tempBlock = editor.value.anchorBlock.toJSON()
+    _tempBlock.key = firstId
+    editor.replaceNodeByKey(_tempKey, _tempBlock)
+    editor.moveForward(1)
+    _offset = 0
+    //  }
+    // else {
+    //   /* if paste occurs in the middle of an entry
+    //     *
+    //   */
+    //   // insert empty block to initialize new atomic block
+    //   const _emptyBlock = newBlock()
+    //   editor.insertBlock(_emptyBlock)
+    //   _offset = 0
+    //   _nodeAfterPaste = editor.value.nextBlock
+    //   // TODO: ADD LOGIC TO STATE REDUCDER
+    //   const _tempKey = _nodeAfterPaste ? _nodeAfterPaste.key : firstId
+    //   const _tempBlock = _nodeAfterPaste.toJSON()
+    //   _tempBlock.key = firstId
+    //   // replace last block with provided Id
+    //   editor.replaceNodeByKey(_tempKey, _tempBlock)
+    // }
   }
 
   /* if last value is not atomic block and paste occured
   in the middle of an entry, merge the last fragment with paste fragment*/
-  if (!isAtomicInlineType(_lastNode.type) && offset !== 0) {
+  if (!isAtomicInlineType(_lastNode.type) && _offset !== 0) {
     // TODO: MERGE RANGES
     let _text = ''
     if (_nodeAfterPaste) {
