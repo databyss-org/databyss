@@ -132,9 +132,11 @@ const SlateContentEditable = forwardRef(
           const _previousRef = _nextEditableState.value.previousBlock.data.get(
             'refId'
           )
-          const _previousStateRef = blocks[_prevKey].refId
-          if (_previousStateRef !== _previousRef) {
-            setBlockRef(_prevKey, _previousStateRef, _nextEditableState)
+          if (blocks[_prevKey]) {
+            const _previousStateRef = blocks[_prevKey].refId
+            if (_previousStateRef !== _previousRef) {
+              setBlockRef(_prevKey, _previousStateRef, _nextEditableState)
+            }
           }
         }
 

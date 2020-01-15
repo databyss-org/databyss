@@ -327,7 +327,6 @@ const deleteBlocks = (state, payload) => {
 }
 
 const onPaste = (state, pasteData) => {
-  //anchorKey, list, offset, newId
   const { anchorKey, blockList, offset, firstId, secondId } = pasteData
 
   let _text
@@ -399,14 +398,14 @@ const onPaste = (state, pasteData) => {
       entities(_state, type)[refId] = _newEntity
       // remove first list item
       _list.shift()
-      _index += _index
+      _index = _index + 1
     } else {
       /*
        if first block in paste is atomic on an existing line
        find offset where to add empty block
        initialize empty block with first Id value
        */
-      _index += _index
+      _index = _index + 1
       const _firstPasteFrag = _list[0][Object.keys(_list[0])]
       // add empty block to pages list
       _state.page.blocks.splice(_index, 0, {
@@ -436,24 +435,28 @@ const onPaste = (state, pasteData) => {
           }
           // append merged anchor block
           entities(_state, type)[refId] = _newEntity
-
-          console.log(_state)
-          console.log('REMOVE FROM STATE')
           // TODO: MERGE RANGES
         } else {
           /* if last block is atomic and pasted in the middle of an entry, create a new block for last fragment */
+          //   if (blockList.length > 1) {
           const _block = _state.blocks[anchorKey]
           const _entity = entities(_state, _block.type)[_block.refId]
           // split the text
           let _first = _entity.textValue.split('')
           const _last = _first.splice(offset).join('')
           _first = _first.join('')
+          // if paste occured in the beggining of an entry block with existing text
+          if (_first.length === 0) {
+            _state.page.blocks = _state.page.blocks.splice(_index, 1)
+            _index = _index - 1
+          }
           // replace first half of text
           entities(_state, _block.type)[_block.refId] = {
             _id: _block.refId,
             ranges: _block.ranges,
             textValue: _first,
           }
+
           // append new block to list with second half of text
 
           const _newBlock = {
@@ -498,10 +501,6 @@ const onPaste = (state, pasteData) => {
   if (_pagesList.length > 0) {
     _state.page.blocks.splice(_index, 1, ..._pagesList)
   }
-
-  /*
-    slate will insert the text at selected offset 
-    */
 
   return cleanUpState(_state)
 }

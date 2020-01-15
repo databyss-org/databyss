@@ -374,17 +374,17 @@ export const onPaste = pasteData => (editor, value, next) => {
       Object.keys(blockList[blockList.length - 1])[0]
     ]
 
-  let _nodeAfterPaste = editor.value.nextBlock
   /* 
     if first value in paste list is atomic and does not occur on an empty block 
   */
-  if (isAtomicInlineType(_firstNode.type) && offset !== 0) {
+  if (
+    isAtomicInlineType(_firstNode.type) &&
+    editor.value.anchorBlock.text.length > 0
+  ) {
     /* if paste occurs at the end of a block
-
         * create a new empty block
         * replace next block with provided key
-
-      */
+    */
     const _emptyBlock = newBlock()
     editor.insertBlock(_emptyBlock)
 
