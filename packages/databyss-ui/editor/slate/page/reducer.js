@@ -1,6 +1,7 @@
 import { Block } from 'slate'
 import { serializeNodeToHtml, sanitizer } from './../inlineSerializer'
 import { getRangesFromBlock, stateToSlateMarkup } from './../markup'
+import cloneDeep from 'clone-deep'
 
 import { NewEditor, isTextAtomic } from './../slateUtils'
 import {
@@ -362,6 +363,7 @@ export const onPaste = pasteData => (editor, value, next) => {
 
   let _offset = offset
   let _fragment = fragment
+  let deleteForward
 
   // get anchor refID from document
   const _anchorRef = editor.value.document.getNode(anchorKey).data.get('refId')
@@ -382,14 +384,28 @@ export const onPaste = pasteData => (editor, value, next) => {
         * replace block with provided key
         * move caret forward to empty block 
       */
+
+    // TODO: if paste occurs in the middle of an entry
+    // break up entry in state reducer
+
     const _emptyBlock = newBlock()
     editor.insertBlock(_emptyBlock)
+
+    if (blockList.length === 1) {
+      // replace the the next block with provided id
+      const _tempKey = editor.value.nextBlock.key
+      const _tempBlock = editor.value.nextBlock.toJSON()
+      _tempBlock.key = secondId
+      editor.replaceNodeByKey(_tempKey, _tempBlock)
+    }
+
     const _tempKey = editor.value.anchorBlock.key
     const _tempBlock = editor.value.anchorBlock.toJSON()
     _tempBlock.key = firstId
     editor.replaceNodeByKey(_tempKey, _tempBlock)
     editor.moveForward(1)
     _offset = 0
+
     //  }
     // else {
     //   /* if paste occurs in the middle of an entry
@@ -408,35 +424,63 @@ export const onPaste = pasteData => (editor, value, next) => {
     //   editor.replaceNodeByKey(_tempKey, _tempBlock)
     // }
   }
+  /*
+  if last value in paste fragment is atomic and pasted in the middle of a fragment
+  */
+  if (
+    isAtomicInlineType(_lastNode.type) &&
+    _offset !== 0 &&
+    blockList.length > 1
+  ) {
+    /*
+      * create empty block and move caret back to previous block
+    */
+    const _emptyBlock = newBlock()
+    editor.insertBlock(_emptyBlock)
+    const _tempKey = editor.value.nextBlock.key
+    const _tempBlock = editor.value.nextBlock.toJSON()
+    _tempBlock.key = secondId
+    editor.replaceNodeByKey(_tempKey, _tempBlock)
+    editor.moveBackward(1)
+    deleteForward = true
+    // TODO: ADD LOGIC IN STATE REDUCER
+  }
 
   /* if last value is not atomic block and paste occured
   in the middle of an entry, merge the last fragment with paste fragment*/
-  if (!isAtomicInlineType(_lastNode.type) && _offset !== 0) {
-    // TODO: MERGE RANGES
-    let _text = ''
-    if (_nodeAfterPaste) {
-      // get last fragment and delete it from editor
-      _text = _nodeAfterPaste.text
-      editor.removeNodeByKey(_nodeAfterPaste.key)
-    }
+  // if (!isAtomicInlineType(_lastNode.type) && _offset !== 0) {
+  //   // TODO: MERGE RANGES
+  //   let _text = ''
+  //   if (_nodeAfterPaste) {
+  //     // get last fragment and delete it from editor
+  //     console.log(_nodeAfterPaste)
+  //     _text = _nodeAfterPaste.text
+  //     editor.removeNodeByKey(_nodeAfterPaste.key)
+  //   }
 
-    // append last paste fragment to block
-    const _editor = NewEditor()
-    _editor.insertFragment(_fragment)
-    _editor.insertText(_text)
-    _fragment = _editor.value.document
-  } else {
-    /*
-    if last block in paste fragment is atomic and paste occurs in the middle of an entry
-    create a new block with second the entry fragment 
-    */
+  //   // append last paste fragment to block
+  //   const _editor = NewEditor()
+  //   _editor.insertFragment(_fragment)
+  //   console.log(_text)
+  //   _editor.insertText(_text)
+  //   _fragment = _editor.value.document
+  // } else {
+  //   /*
+  //   if last block in paste fragment is atomic and paste occurs in the middle of an entry
+  //   create a new block with second the entry fragment
+  //   */
 
-    console.log('ACTION HAPPENS HERE')
-  }
+  //   console.log('ACTION HAPPENS HERE')
+  // }
+
   let _list = blockList.reverse()
   let _frag = fragment.nodes
 
   editor.insertFragment(_fragment)
+  if (deleteForward) {
+    const _deleteKey = editor.value.nextBlock.key
+    editor.removeNodeByKey(_deleteKey)
+  }
 
   // keys get lost when insert fragment applied
   // retrieve the last key in the fragment and apply it to the document

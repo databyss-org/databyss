@@ -328,7 +328,6 @@ const deleteBlocks = (state, payload) => {
 
 const onPaste = (state, pasteData) => {
   //anchorKey, list, offset, newId
-  console.log(pasteData)
   const { anchorKey, blockList, offset, firstId, secondId } = pasteData
 
   let _text
@@ -345,6 +344,8 @@ const onPaste = (state, pasteData) => {
   const _firstPasteFrag = _list[0][Object.keys(_list[0])[0]]
   const _lastPasteFrag =
     _list[_list.length - 1][Object.keys(_list[_list.length - 1])[0]]
+
+  // TODO: replace second block if atomic block is one fragment long
 
   if (_entity.textValue.length !== 0) {
     // check if first paste fragment is not atomic
@@ -394,7 +395,9 @@ const onPaste = (state, pasteData) => {
       _index += _index
       const _firstPasteFrag = _list[0][Object.keys(_list[0])]
       // add empty block to pages list
-      _state.page.blocks.splice(_index, 0, { _id: _firstPasteFrag._id })
+      _state.page.blocks.splice(_index, 0, {
+        _id: _firstPasteFrag._id,
+      })
       /* if last paste fragment is not atomic merge second half of entry with the end of paste fragment */
       if (_entity.textValue.length !== offset) {
         if (!isAtomicInlineType(_lastPasteFrag.type)) {
@@ -423,12 +426,12 @@ const onPaste = (state, pasteData) => {
           }
           // append new block to list with second half of text
           const _newBlock = {
-            [firstId]: {
+            [secondId]: {
               text: _last,
               type: 'ENTRY',
               ranges: [],
               refId: ObjectId().toHexString(),
-              _id: firstId,
+              _id: secondId,
             },
           }
           _list.push(_newBlock)
