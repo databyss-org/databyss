@@ -482,7 +482,9 @@ const SlateContentEditable = forwardRef(
     const onPaste = (event, editor) => {
       // if new block is created in reducer
       // use this _id
-      const newId = ObjectId().toHexString()
+      const _firstId = ObjectId().toHexString()
+      const _secondId = ObjectId().toHexString()
+
       if (isAtomicInlineType(editor.value.anchorBlock.type)) {
         return event.preventDefault()
       }
@@ -513,8 +515,15 @@ const SlateContentEditable = forwardRef(
         // get list of refId and Id of fragment to paste,
         // this list is used to keep slate and state in sync
         const _blockList = blocksToState(_frag.nodes)
-
-        onPasteAction(anchorKey, _blockList, _frag, _offset, newId, editor)
+        const _pasteData = {
+          anchorKey,
+          blockList: _blockList,
+          fragment: _frag,
+          offset: _offset,
+          firstId: _firstId,
+          secondId: _secondId,
+        }
+        onPasteAction(_pasteData, editor)
         return event.preventDefault()
       }
 
@@ -522,7 +531,15 @@ const SlateContentEditable = forwardRef(
       const _textData = getFragFromText(transfer.text)
       const _blockList = _textData._blockList
       _frag = _textData._frag
-      onPasteAction(anchorKey, _blockList, _frag, _offset, newId, editor)
+      const _pasteData = {
+        anchorKey,
+        blockList: _blockList,
+        fragment: _frag,
+        offset: _offset,
+        firstId: _firstId,
+        secondId: _secondId,
+      }
+      onPasteAction(_pasteData, editor)
       return event.preventDefault()
     }
 

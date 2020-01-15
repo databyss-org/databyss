@@ -326,9 +326,20 @@ const deleteBlocks = (state, payload) => {
   return cleanUpState(_state)
 }
 
-const onPaste = (state, anchorKey, list, offset, newId) => {
+const onPaste = (state, pasteData) => {
+  //anchorKey, list, offset, newId
+
+  const {
+    anchorKey,
+    blockList,
+    fragment,
+    offset,
+    firstId,
+    secondId,
+  } = pasteData
+
   let _text
-  const _list = cloneDeep(list)
+  const _list = cloneDeep(blockList)
   const _state = cloneDeep(state)
   let _index = _state.page.blocks.findIndex(i => i._id === anchorKey)
 
@@ -417,15 +428,14 @@ const onPaste = (state, anchorKey, list, offset, newId) => {
             ranges: _block.ranges,
             textValue: _first,
           }
-
           // append new block to list with second half of text
           const _newBlock = {
-            [newId]: {
+            [firstId]: {
               text: _last,
               type: 'ENTRY',
               ranges: [],
               refId: ObjectId().toHexString(),
-              _id: newId,
+              _id: firstId,
             },
           }
           _list.push(_newBlock)
@@ -484,13 +494,7 @@ export default (state, action) => {
         showMenuActions: action.payload.bool,
       }
     case ON_PASTE:
-      return onPaste(
-        state,
-        action.payload.key,
-        action.payload.list,
-        action.payload.offset,
-        action.payload.newId
-      )
+      return onPaste(state, action.payload.pasteData)
     case SHOW_NEW_BLOCK_MENU:
       return {
         ...state,

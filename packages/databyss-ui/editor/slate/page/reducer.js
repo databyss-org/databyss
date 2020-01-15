@@ -349,19 +349,28 @@ const deleteBlocksByIds = idList => (editor, value, next) => {
   next(editor, value)
 }
 
-export const onPaste = (list, fragment, key, offset, newId) => (
-  editor,
-  value,
-  next
-) => {
+export const onPaste = pasteData => (editor, value, next) => {
+  const {
+    anchorKey,
+    blockList,
+    fragment,
+    offset,
+    firstId,
+    secondId,
+  } = pasteData
+  //list, fragment, key, offset, newId
+
   let _offset = offset
   let _fragment = fragment
 
   // get anchor refID from document
-  const _anchorRef = editor.value.document.getNode(key).data.get('refId')
+  const _anchorRef = editor.value.document.getNode(anchorKey).data.get('refId')
 
-  const _firstNode = list[0][Object.keys(list[0])[0]]
-  const _lastNode = list[list.length - 1][Object.keys(list[list.length - 1])[0]]
+  const _firstNode = blockList[0][Object.keys(blockList[0])[0]]
+  const _lastNode =
+    blockList[blockList.length - 1][
+      Object.keys(blockList[blockList.length - 1])[0]
+    ]
 
   let _nodeAfterPaste = editor.value.nextBlock
   /* if first value in list is atomic
@@ -409,7 +418,7 @@ export const onPaste = (list, fragment, key, offset, newId) => (
 
     console.log('ACTION HAPPENS HERE')
   }
-  let _list = list.reverse()
+  let _list = blockList.reverse()
   let _frag = fragment.nodes
 
   editor.insertFragment(_fragment)
@@ -455,7 +464,7 @@ export const onPaste = (list, fragment, key, offset, newId) => (
     _firstBlock = Block.fromJSON({
       ..._firstBlock.toJSON(),
       data: { refId: _anchorRef },
-      key,
+      key: anchorKey,
     })
     editor.replaceNodeByKey(_firstKey, _firstBlock)
 
@@ -565,13 +574,7 @@ export default (editableState, action) => {
     case ON_PASTE: {
       return {
         ...editableState,
-        editorCommands: onPaste(
-          action.payload.list,
-          action.payload.fragment,
-          action.payload.key,
-          action.payload.offset,
-          action.payload.newId
-        ),
+        editorCommands: onPaste(action.payload.pasteData),
       }
     }
 

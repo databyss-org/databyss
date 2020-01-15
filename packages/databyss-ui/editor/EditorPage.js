@@ -112,8 +112,8 @@ const EditorPage = ({ children, autoFocus }) => {
     dispatchEditor(newBlockMenu(bool, { value }))
   }
 
-  const onPasteAction = (key, list, fragment, offset, newId, { value }) => {
-    dispatchEditor(onPaste(key, list, fragment, offset, newId, { value }))
+  const onPasteAction = (pasteData, { value }) => {
+    dispatchEditor(onPaste(pasteData, { value }))
   }
 
   const setBlockRef = (id, ref, { value }) => {
