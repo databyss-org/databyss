@@ -386,37 +386,6 @@ const onPaste = (state, pasteData) => {
             },
           }
           _list.push(_newBlock)
-
-          // get second fragment
-          // add to state page at correct index
-          // add to entity
-          // add to blocks
-
-          // const _block = _state.blocks[anchorKey]
-          // const _entity = entities(_state, _block.type)[_block.refId]
-          // // split the text
-          // let _first = _entity.textValue.split('')
-          // const _last = _first.splice(offset).join('')
-          // _first = _first.join('')
-          // // replace first half of text
-          // entities(_state, _block.type)[_block.refId] = {
-          //   _id: _block.refId,
-          //   ranges: _block.ranges,
-          //   textValue: _first,
-          // }
-          // // append new block to list with second half of text
-
-          // // TODO: check length of block list to use first or secondId
-          // const _newBlock = {
-          //   [firstId]: {
-          //     text: _last,
-          //     type: 'ENTRY',
-          //     ranges: [],
-          //     refId: ObjectId().toHexString(),
-          //     _id: firstId,
-          //   },
-          // }
-          // _list.push(_newBlock)
         }
       }
       // TODO: MERGE BOTH RANGES

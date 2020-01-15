@@ -359,7 +359,6 @@ export const onPaste = pasteData => (editor, value, next) => {
     firstId,
     secondId,
   } = pasteData
-  //list, fragment, key, offset, newId
 
   let _offset = offset
   let _fragment = fragment
@@ -376,9 +375,10 @@ export const onPaste = pasteData => (editor, value, next) => {
     ]
 
   let _nodeAfterPaste = editor.value.nextBlock
-  /* if first value in paste list is atomic and does not occur on an empty block */
+  /* 
+    if first value in paste list is atomic and does not occur on an empty block 
+  */
   if (isAtomicInlineType(_firstNode.type) && offset !== 0) {
-    // if (editor.value.anchorBlock.text.length === offset) {
     /* if paste occurs at the end of a block
 
         * create a new empty block
@@ -388,8 +388,8 @@ export const onPaste = pasteData => (editor, value, next) => {
     const _emptyBlock = newBlock()
     editor.insertBlock(_emptyBlock)
 
-    if (blockList.length === 1) {
-      // replace the the next block with provided id
+    if (blockList.length === 1 && editor.value.nextBlock) {
+      // replace the the next block with provided id if next block exists
       const _tempKey = editor.value.nextBlock.key
       const _tempBlock = editor.value.nextBlock.toJSON()
       _tempBlock.key = firstId
@@ -397,32 +397,9 @@ export const onPaste = pasteData => (editor, value, next) => {
     } else {
       if (!isAtomicInlineType(_lastNode.type)) {
         mergeForward = true
-        console.log(editor.value)
-        console.log(_lastNode)
-        console.log(pasteData)
-        // check if left over fragment
       }
     }
     _offset = 0
-    // TODO: merge last block
-
-    //  }
-    // else {
-    //   /* if paste occurs in the middle of an entry
-    //     *
-    //   */
-    //   // insert empty block to initialize new atomic block
-    //   const _emptyBlock = newBlock()
-    //   editor.insertBlock(_emptyBlock)
-    //   _offset = 0
-    //   _nodeAfterPaste = editor.value.nextBlock
-    //   // TODO: ADD LOGIC TO STATE REDUCDER
-    //   const _tempKey = _nodeAfterPaste ? _nodeAfterPaste.key : firstId
-    //   const _tempBlock = _nodeAfterPaste.toJSON()
-    //   _tempBlock.key = firstId
-    //   // replace last block with provided Id
-    //   editor.replaceNodeByKey(_tempKey, _tempBlock)
-    // }
   }
   /*
   if last value in paste fragment is atomic and pasted in the middle of a fragment
@@ -443,35 +420,7 @@ export const onPaste = pasteData => (editor, value, next) => {
     editor.replaceNodeByKey(_tempKey, _tempBlock)
     editor.moveBackward(1)
     deleteForward = true
-    // TODO: ADD LOGIC IN STATE REDUCER
   }
-
-  /* if last value is not atomic block and paste occured
-  in the middle of an entry, merge the last fragment with paste fragment*/
-  // if (!isAtomicInlineType(_lastNode.type) && _offset !== 0) {
-  //   // TODO: MERGE RANGES
-  //   let _text = ''
-  //   if (_nodeAfterPaste) {
-  //     // get last fragment and delete it from editor
-  //     console.log(_nodeAfterPaste)
-  //     _text = _nodeAfterPaste.text
-  //     editor.removeNodeByKey(_nodeAfterPaste.key)
-  //   }
-
-  //   // append last paste fragment to block
-  //   const _editor = NewEditor()
-  //   _editor.insertFragment(_fragment)
-  //   console.log(_text)
-  //   _editor.insertText(_text)
-  //   _fragment = _editor.value.document
-  // } else {
-  //   /*
-  //   if last block in paste fragment is atomic and paste occurs in the middle of an entry
-  //   create a new block with second the entry fragment
-  //   */
-
-  //   console.log('ACTION HAPPENS HERE')
-  // }
 
   let _list = blockList.reverse()
   let _frag = fragment.nodes
@@ -485,14 +434,18 @@ export const onPaste = pasteData => (editor, value, next) => {
   if (mergeForward) {
     editor.deleteForward(1)
   }
-  // keys get lost when insert fragment applied
-  // retrieve the last key in the fragment and apply it to the document
+  /*
+   keys get lost when insert fragment applied
+   retrieve the last key in the fragment and apply it to the document
+   */
   let _nodeList = editor.value.document.nodes.map(n => n.key)
   _nodeList = _nodeList.reverse()
   _frag = _frag.reverse()
-  // calculate offset index
-  // value will be 0 if last line in document
-  // example: if paste occurs in the middle of document
+  /*
+    * calculate offset index
+    * value will be 0 if last line in document
+    * example: if paste occurs in the middle of document
+  */
   const offsetIndex = _nodeList.indexOf(editor.value.anchorBlock.key)
   _frag.forEach((n, i) => {
     const newKey = n.key
