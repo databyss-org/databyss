@@ -380,7 +380,7 @@ const onPaste = (state, pasteData) => {
           const _block = _state.blocks[anchorKey]
           const _entity = entities(_state, _block.type)[_block.refId]
           // split the text
-          let _first = _entity.textValue.split('')
+          const _first = _entity.textValue.split('')
           const _last = _first.splice(offset).join('')
           const _newBlock = {
             [secondId]: {
@@ -406,14 +406,14 @@ const onPaste = (state, pasteData) => {
       entities(_state, type)[refId] = _newEntity
       // remove first list item
       _list.shift()
-      _index = _index + 1
+      _index += 1
     } else {
       /*
        if first block in paste is atomic on an existing line
        find offset where to add empty block
        initialize empty block with first Id value
        */
-      _index = _index + 1
+      _index += 1
       const _firstPasteFrag = _list[0][Object.keys(_list[0])]
       // add empty block to pages list
       _state.page.blocks.splice(_index, 0, {
@@ -431,7 +431,7 @@ const onPaste = (state, pasteData) => {
             _list[_list.length - 1][_lastPasteFrag._id].text + _lastText
 
           // split first block where paste occured
-          let _firstText = _entity.textValue
+          const _firstText = _entity.textValue
             .split('')
             .splice(offset)
             .join('')
@@ -456,7 +456,7 @@ const onPaste = (state, pasteData) => {
           // if paste occured in the beggining of an entry block with existing text
           if (_first.length === 0) {
             _state.page.blocks = _state.page.blocks.splice(_index, 1)
-            _index = _index - 1
+            _index -= 1
           }
           // replace first half of text
           entities(_state, _block.type)[_block.refId] = {

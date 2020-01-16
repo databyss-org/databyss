@@ -15,7 +15,7 @@ import {
   getEditor,
   copy,
   paste,
-  sleep,
+  //  sleep,
   selectAll,
   // previousLine,
   // sendText,
@@ -582,7 +582,6 @@ describe('editor selenium', () => {
     await actions.sendKeys('this is an entry')
     await paste(actions)
     await actions.perform()
-    await sleep(500)
 
     const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
       b => b.refId
@@ -626,7 +625,6 @@ describe('editor selenium', () => {
     await actions.sendKeys(Key.ARROW_LEFT)
     await paste(actions)
     await actions.perform()
-    await sleep(5000)
 
     const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
       b => b.refId
@@ -669,7 +667,6 @@ describe('editor selenium', () => {
     await startOfLine(actions)
     await paste(actions)
     await actions.perform()
-    await sleep(5000)
 
     const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
       b => b.refId

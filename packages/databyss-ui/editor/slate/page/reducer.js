@@ -1,7 +1,6 @@
 import { Block } from 'slate'
 import { serializeNodeToHtml, sanitizer } from './../inlineSerializer'
 import { getRangesFromBlock, stateToSlateMarkup } from './../markup'
-import cloneDeep from 'clone-deep'
 
 import { NewEditor, isTextAtomic } from './../slateUtils'
 import {
@@ -363,7 +362,7 @@ export const onPaste = pasteData => (editor, value, next) => {
   } = pasteData
 
   let _offset = offset
-  let _fragment = fragment
+  const _fragment = fragment
   let deleteForward
   let mergeForward
 
@@ -397,19 +396,15 @@ export const onPaste = pasteData => (editor, value, next) => {
       _tempBlock.key = firstId
       _tempBlock.data = { refId: firstRef }
       editor.replaceNodeByKey(_tempKey, _tempBlock)
-    } else {
-      if (!isAtomicInlineType(_lastNode.type)) {
-        mergeForward = true
-      } else {
-        // replace with first ref
-        if (editor.value.nextBlock) {
-          const _tempKey = editor.value.nextBlock.key
-          const _tempBlock = editor.value.nextBlock.toJSON()
-          _tempBlock.key = firstId
-          _tempBlock.data = { refId: firstRef }
-          editor.replaceNodeByKey(_tempKey, _tempBlock)
-        }
-      }
+    } else if (!isAtomicInlineType(_lastNode.type)) {
+      mergeForward = true
+    } else if (editor.value.nextBlock) {
+      // replace with first ref
+      const _tempKey = editor.value.nextBlock.key
+      const _tempBlock = editor.value.nextBlock.toJSON()
+      _tempBlock.key = firstId
+      _tempBlock.data = { refId: firstRef }
+      editor.replaceNodeByKey(_tempKey, _tempBlock)
     }
     _offset = 0
   }
