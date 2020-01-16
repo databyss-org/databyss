@@ -493,8 +493,7 @@ const SlateContentEditable = forwardRef(
         return event.preventDefault()
       }
       // TODO: if html convert to ranges
-      // todo: paste atomic blocks breakup fragments
-      // todo add cut handler to backspace
+
       const { value } = editor
       const _offset = value.selection.anchor.offset
       const transfer = getEventTransfer(event)

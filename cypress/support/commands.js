@@ -142,36 +142,6 @@ Cypress.Commands.add(
   }
 )
 
-// Cypress.Commands.add(
-//   'copy',
-//   {
-//     prevSubject: 'element',
-//   },
-//   subject => {
-//     return cy.get(subject).trigger('keydown', {
-//       native: true,
-//       keyCode: 67,
-//       key: 'c',
-//       [modKeys(IS_LINUX)]: true,
-//     })
-//   }
-// )
-
-Cypress.Commands.add(
-  'onpaste',
-  {
-    prevSubject: 'element',
-  },
-  subject => {
-    return cy.get(subject).trigger('keydown', {
-      native: true,
-      keyCode: 86,
-      key: 'v',
-      [modKeys(IS_LINUX)]: true,
-    })
-  }
-)
-
 Cypress.Commands.add(
   'toggleLocation',
   {
@@ -261,14 +231,6 @@ Cypress.Commands.add(
   }
 )
 
-Cypress.Commands.add(
-  'paste',
-  {
-    prevSubject: true,
-  },
-  paste
-)
-
 // Helper functions
 function getTextNode(el, match) {
   const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false)
@@ -288,27 +250,4 @@ function setBaseAndExtent(...args) {
   const document = args[0].ownerDocument
   document.getSelection().removeAllRanges()
   document.getSelection().setBaseAndExtent(...args)
-}
-
-export function paste(
-  subject,
-  { pastePayload, simple = true, pasteType = 'text' }
-) {
-  if (simple) {
-    subject[0].value = pastePayload
-    return
-  }
-
-  // https://developer.mozilla.org/en-US/docs/Web/API/Element/paste_event
-  const pasteEvent = Object.assign(
-    new Event('paste', { bubbles: true, cancelable: true }),
-    {
-      clipboardData: {
-        getData: (type = pasteType) => pastePayload,
-      },
-    }
-  )
-  subject[0].dispatchEvent(pasteEvent)
-
-  return subject
 }

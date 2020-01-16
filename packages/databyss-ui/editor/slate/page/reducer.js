@@ -75,7 +75,6 @@ const handleNewBlockConditions = (activeBlock, editor) => {
     if (!editor.value.previousBlock.text) {
       editor.setNodeByKey(editor.value.previousBlock.key, {
         type: 'ENTRY',
-        //   data: { refId: null },
       })
       return false
     }
@@ -400,6 +399,7 @@ export const onPaste = pasteData => (editor, value, next) => {
       mergeForward = true
     } else if (editor.value.nextBlock) {
       // replace with first ref
+
       const _tempKey = editor.value.nextBlock.key
       const _tempBlock = editor.value.nextBlock.toJSON()
       _tempBlock.key = firstId
