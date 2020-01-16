@@ -17,6 +17,14 @@ export const endOfLine = actions =>
     .keyUp(Key.SHIFT)
 //  .perform()
 
+export const startOfLine = actions =>
+  actions
+    .keyDown(Key.CONTROL)
+    .keyDown(Key.SHIFT)
+    .sendKeys(Key.ARROW_LEFT)
+    .keyUp(Key.CONTROL)
+    .keyUp(Key.SHIFT)
+
 export const paste = actions =>
   actions
     .keyDown(CONTROL)

@@ -395,17 +395,20 @@ export const onPaste = pasteData => (editor, value, next) => {
       const _tempKey = editor.value.nextBlock.key
       const _tempBlock = editor.value.nextBlock.toJSON()
       _tempBlock.key = firstId
+      _tempBlock.data = { refId: firstRef }
       editor.replaceNodeByKey(_tempKey, _tempBlock)
     } else {
       if (!isAtomicInlineType(_lastNode.type)) {
         mergeForward = true
       } else {
         // replace with first ref
-        const _tempKey = editor.value.nextBlock.key
-        const _tempBlock = editor.value.nextBlock.toJSON()
-        _tempBlock.key = firstId
-        _tempBlock.data = { refId: firstRef }
-        editor.replaceNodeByKey(_tempKey, _tempBlock)
+        if (editor.value.nextBlock) {
+          const _tempKey = editor.value.nextBlock.key
+          const _tempBlock = editor.value.nextBlock.toJSON()
+          _tempBlock.key = firstId
+          _tempBlock.data = { refId: firstRef }
+          editor.replaceNodeByKey(_tempKey, _tempBlock)
+        }
       }
     }
     _offset = 0
@@ -418,7 +421,6 @@ export const onPaste = pasteData => (editor, value, next) => {
     _offset !== 0 &&
     blockList.length > 1
   ) {
-    console.log('CASE ONE')
     /*
       * create empty block and move caret back to previous block
     */
@@ -505,7 +507,6 @@ export const onPaste = pasteData => (editor, value, next) => {
       editor.moveForward(offset + _firstPasteText)
     }
   }
-
   next(editor, value)
 }
 

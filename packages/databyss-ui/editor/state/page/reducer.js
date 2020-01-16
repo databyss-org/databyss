@@ -509,7 +509,6 @@ const onPaste = (state, pasteData) => {
   if (_pagesList.length > 0) {
     _state.page.blocks.splice(_index, 1, ..._pagesList)
   }
-
   return cleanUpState(_state)
 }
 

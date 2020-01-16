@@ -7,6 +7,7 @@ import { startSession, WIN, CHROME } from '../../../lib/saucelabs'
 import { toSlateJson } from './_helpers'
 import {
   endOfLine,
+  startOfLine,
   endOfDoc,
   startOfDoc,
   highlightSingleSpace,
@@ -14,7 +15,7 @@ import {
   getEditor,
   copy,
   paste,
-  // sleep,
+  sleep,
   selectAll,
   // previousLine,
   // sendText,
@@ -563,6 +564,132 @@ describe('editor selenium', () => {
           </block>
           <block type="ENTRY" data={{ refId: refIdList[5] }}>
             <text>this is a second entryentry</text>
+          </block>
+        </document>
+      </value>
+    )
+
+    const actual = JSON.parse(await slateDocument.getText())
+    expect(actual).toEqual(expected.document)
+  })
+
+  it('should copy an atomic block and paste at the end of an entry', async () => {
+    await actions.sendKeys('@this is a source')
+    await actions.sendKeys(Key.ENTER)
+    await selectAll(actions)
+    await copy(actions)
+    await endOfLine(actions)
+    await actions.sendKeys('this is an entry')
+    await paste(actions)
+    await actions.perform()
+    await sleep(500)
+
+    const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
+      b => b.refId
+    )
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <text />
+            <inline type="SOURCE">this is a source</inline>
+            <text />
+          </block>
+          <block type="ENTRY" data={{ refId: refIdList[1] }}>
+            <text>this is an entry</text>
+          </block>
+          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <text />
+            <inline type="SOURCE">this is a source</inline>
+            <text />
+          </block>
+        </document>
+      </value>
+    )
+
+    const actual = JSON.parse(await slateDocument.getText())
+    expect(actual).toEqual(expected.document)
+  })
+
+  it('should copy an atomic block and paste it in the middle of an entry', async () => {
+    await actions.sendKeys('@this is a source')
+    await actions.sendKeys(Key.ENTER)
+    await selectAll(actions)
+    await copy(actions)
+    await endOfLine(actions)
+    await actions.sendKeys('this is an entry')
+    await actions.sendKeys(Key.ARROW_LEFT)
+    await actions.sendKeys(Key.ARROW_LEFT)
+    await actions.sendKeys(Key.ARROW_LEFT)
+    await actions.sendKeys(Key.ARROW_LEFT)
+    await actions.sendKeys(Key.ARROW_LEFT)
+    await paste(actions)
+    await actions.perform()
+    await sleep(5000)
+
+    const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
+      b => b.refId
+    )
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <text />
+            <inline type="SOURCE">this is a source</inline>
+            <text />
+          </block>
+          <block type="ENTRY" data={{ refId: refIdList[1] }}>
+            <text>this is an </text>
+          </block>
+          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <text />
+            <inline type="SOURCE">this is a source</inline>
+            <text />
+          </block>
+          <block type="ENTRY" data={{ refId: refIdList[3] }}>
+            <text>entry</text>
+          </block>
+        </document>
+      </value>
+    )
+
+    const actual = JSON.parse(await slateDocument.getText())
+    expect(actual).toEqual(expected.document)
+  })
+
+  it('should copy an atomic block and paste it at the end of an entry', async () => {
+    await actions.sendKeys('@this is a source')
+    await actions.sendKeys(Key.ENTER)
+    await selectAll(actions)
+    await copy(actions)
+    await endOfLine(actions)
+    await actions.sendKeys('this is an entry')
+    await startOfLine(actions)
+    await paste(actions)
+    await actions.perform()
+    await sleep(5000)
+
+    const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
+      b => b.refId
+    )
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <text />
+            <inline type="SOURCE">this is a source</inline>
+            <text />
+          </block>
+          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <text />
+            <inline type="SOURCE">this is a source</inline>
+            <text />
+          </block>
+          <block type="ENTRY" data={{ refId: refIdList[2] }}>
+            <text>this is an entry</text>
           </block>
         </document>
       </value>
