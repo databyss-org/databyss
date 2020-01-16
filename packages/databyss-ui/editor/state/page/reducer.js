@@ -327,7 +327,15 @@ const deleteBlocks = (state, payload) => {
 }
 
 const onPaste = (state, pasteData) => {
-  const { anchorKey, blockList, offset, firstId, secondId } = pasteData
+  const {
+    anchorKey,
+    blockList,
+    offset,
+    firstId,
+    firstRef,
+    secondId,
+    secondRef,
+  } = pasteData
 
   let _text
   const _list = cloneDeep(blockList)
@@ -374,16 +382,16 @@ const onPaste = (state, pasteData) => {
           // split the text
           let _first = _entity.textValue.split('')
           const _last = _first.splice(offset).join('')
-
           const _newBlock = {
             [secondId]: {
               text: _last,
               type: 'ENTRY',
               ranges: [],
-              refId: ObjectId().toHexString(),
+              refId: secondRef,
               _id: secondId,
             },
           }
+
           _list.push(_newBlock)
         }
       }
@@ -464,7 +472,7 @@ const onPaste = (state, pasteData) => {
               text: _last,
               type: 'ENTRY',
               ranges: [],
-              refId: ObjectId().toHexString(),
+              refId: firstRef,
               _id: firstId,
             },
           }

@@ -15,28 +15,28 @@ export const endOfLine = actions =>
     .sendKeys(Key.ARROW_RIGHT)
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-    .perform()
+//  .perform()
 
 export const paste = actions =>
   actions
     .keyDown(CONTROL)
     .sendKeys('v')
     .keyUp(CONTROL)
-    .perform()
+// .perform()
 
 export const copy = actions =>
   actions
     .keyDown(CONTROL)
     .sendKeys('c')
     .keyUp(CONTROL)
-    .perform()
+// .perform()
 
 export const selectAll = actions =>
   actions
     .keyDown(CONTROL)
     .sendKeys('a')
     .keyUp(CONTROL)
-    .perform()
+// .perform()
 
 export const nextBlock = actions =>
   actions
@@ -45,7 +45,7 @@ export const nextBlock = actions =>
     .sendKeys('p')
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-    .perform()
+// .perform()
 
 export const endOfDoc = actions =>
   actions
@@ -54,7 +54,7 @@ export const endOfDoc = actions =>
     .sendKeys(Key.ARROW_DOWN)
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-    .perform()
+// .perform()
 
 export const startOfDoc = actions =>
   actions
@@ -63,7 +63,7 @@ export const startOfDoc = actions =>
     .sendKeys(Key.ARROW_UP)
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-    .perform()
+// .perform()
 
 export const previousLine = actions =>
   actions
@@ -72,7 +72,7 @@ export const previousLine = actions =>
     .sendKeys('o')
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-    .perform()
+// .perform()
 
 export const nextLine = actions =>
   actions
@@ -81,14 +81,23 @@ export const nextLine = actions =>
     .sendKeys('p')
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-    .perform()
+// .perform()
+
+export const sendText = actions => actions.sendKeys('stuff')
 
 export const highlightSingleSpace = actions =>
   actions
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_RIGHT)
     .keyUp(Key.SHIFT)
-    .perform()
+// .perform()
+
+export const highlightSingleLine = actions =>
+  actions
+    .keyDown(Key.SHIFT)
+    .sendKeys(Key.ARROW_UP)
+    .keyUp(Key.SHIFT)
+// .perform()
 
 export const getEditor = async driver => {
   const el = await driver.wait(

@@ -357,7 +357,9 @@ export const onPaste = pasteData => (editor, value, next) => {
     fragment,
     offset,
     firstId,
+    firstRef,
     secondId,
+    secondRef,
   } = pasteData
 
   let _offset = offset
@@ -397,6 +399,13 @@ export const onPaste = pasteData => (editor, value, next) => {
     } else {
       if (!isAtomicInlineType(_lastNode.type)) {
         mergeForward = true
+      } else {
+        // replace with first ref
+        const _tempKey = editor.value.nextBlock.key
+        const _tempBlock = editor.value.nextBlock.toJSON()
+        _tempBlock.key = firstId
+        _tempBlock.data = { refId: firstRef }
+        editor.replaceNodeByKey(_tempKey, _tempBlock)
       }
     }
     _offset = 0
@@ -409,6 +418,7 @@ export const onPaste = pasteData => (editor, value, next) => {
     _offset !== 0 &&
     blockList.length > 1
   ) {
+    console.log('CASE ONE')
     /*
       * create empty block and move caret back to previous block
     */
@@ -429,6 +439,11 @@ export const onPaste = pasteData => (editor, value, next) => {
   if (deleteForward) {
     const _deleteKey = editor.value.nextBlock.key
     editor.removeNodeByKey(_deleteKey)
+    const _tempKey = editor.value.nextBlock.key
+    const _tempBlock = editor.value.nextBlock.toJSON()
+    _tempBlock.key = _tempKey
+    _tempBlock.data = { refId: secondRef }
+    editor.replaceNodeByKey(_tempKey, _tempBlock)
   }
 
   if (mergeForward) {

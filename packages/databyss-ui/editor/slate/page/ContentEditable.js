@@ -485,7 +485,9 @@ const SlateContentEditable = forwardRef(
       // if new block is created in reducer
       // use this _id
       const _firstId = ObjectId().toHexString()
+      const _firstRef = ObjectId().toHexString()
       const _secondId = ObjectId().toHexString()
+      const _secondRef = ObjectId().toHexString()
 
       if (isAtomicInlineType(editor.value.anchorBlock.type)) {
         return event.preventDefault()
@@ -523,7 +525,9 @@ const SlateContentEditable = forwardRef(
           fragment: _frag,
           offset: _offset,
           firstId: _firstId,
+          firstRef: _firstRef,
           secondId: _secondId,
+          secondRef: _secondRef,
         }
         onPasteAction(_pasteData, editor)
         return event.preventDefault()
@@ -539,7 +543,9 @@ const SlateContentEditable = forwardRef(
         fragment: _frag,
         offset: _offset,
         firstId: _firstId,
+        firstRef: _firstRef,
         secondId: _secondId,
+        secondRef: _secondRef,
       }
       onPasteAction(_pasteData, editor)
       return event.preventDefault()
