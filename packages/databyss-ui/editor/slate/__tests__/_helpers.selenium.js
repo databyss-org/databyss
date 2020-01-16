@@ -99,14 +99,14 @@ export const highlightSingleSpace = actions =>
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_RIGHT)
     .keyUp(Key.SHIFT)
-    .pause(50)
+    .pause(100)
 
 export const highlightSingleLine = actions =>
   actions
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_UP)
     .keyUp(Key.SHIFT)
-    .pause(50)
+    .pause(100)
 
 export const getEditor = async driver => {
   const el = await driver.wait(
