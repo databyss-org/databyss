@@ -106,7 +106,7 @@ export const highlightSingleLine = actions =>
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_UP)
     .keyUp(Key.SHIFT)
-    .pause(100)
+    .pause(200)
 
 export const getEditor = async driver => {
   const el = await driver.wait(
