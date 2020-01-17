@@ -92,7 +92,6 @@ export const SourceLoader = ({ sourceId, children }) => {
   if (source instanceof Error) {
     return <ErrorFallback error={source} />
   }
-
   // const child = React.Children.only(children)
   if (typeof children !== 'function') {
     throw new Error('Child must be a function')

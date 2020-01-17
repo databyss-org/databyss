@@ -26,6 +26,7 @@ import {
   noAtomicInSelection,
   getSelectedBlocks,
   isInlineSourceSelected,
+  NewEditor,
 } from './../slateUtils'
 
 import {
@@ -517,7 +518,42 @@ const SlateContentEditable = forwardRef(
 
         // get list of refId and Id of fragment to paste,
         // this list is used to keep slate and state in sync
-        const _blockList = blocksToState(_frag.nodes)
+        let _blockList = blocksToState(_frag.nodes)
+
+        // look up refId's for all sources and replace them in _blockList and _frag
+
+        _blockList.forEach((b, i) => {
+          const _block = b[Object.keys(b)[0]]
+          if (_block.type === 'SOURCE') {
+            // look up source in dictionary
+            const _dictSource = stateRef.current.sources[_block.refId]
+            // replace in blockList
+            _blockList[i] = {
+              [_block._id]: {
+                ..._block,
+                text: _dictSource.textValue,
+                ranges: _dictSource.ranges,
+              },
+            }
+            // look up first instance of refID in state
+            const _idList = Object.keys(stateRef.current.blocks)
+            const _id = _idList.find(id => {
+              if (stateRef.current.blocks[id].refId === _block.refId) {
+                return true
+              }
+            })
+            const _node = editor.value.document.getNode(_id).toJSON()
+            const _editor = NewEditor()
+            _editor.insertFragment(_frag)
+            let _nodeList = _editor.value.document.nodes.map(n => n.key)
+            _editor.replaceNodeByKey(_nodeList.get(i), _node)
+            _frag = _editor.value.document
+            console.log(_frag)
+            // replace in fragment
+          }
+        })
+        _blockList = blocksToState(_frag.nodes)
+
         const _pasteData = {
           anchorKey,
           blockList: _blockList,

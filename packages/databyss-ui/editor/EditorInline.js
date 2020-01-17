@@ -9,31 +9,12 @@ const Span = styled('span')({ cursor: 'pointer' }, color, border, space)
 
 const EditorInline = React.forwardRef(
   ({ isSelected, node, children, editor, onEditSource, ...others }, ref) => {
-    const [refId, setRefId] = useState(null)
-
-    const [editorState] = useEditorContext()
-    const { blocks } = editorState
-
     const backgroundColor = isSelected ? 'background.3' : ''
-
-    useEffect(
-      () => {
-        if (editor && !refId) {
-          // sets initial refId
-          const _id = editor.value.document.getClosestBlock(node.key).key
-          // get refId
-          if (blocks[_id]) {
-            const _refId = blocks[_id].refId
-            setRefId(_refId)
-          }
-        }
-      },
-      [node, editor]
-    )
 
     const onClick = () => {
       if (node.type === 'SOURCE' && isSelected) {
-        onEditSource(refId, { value: editor.value })
+        const _refId = editor.value.anchorBlock.data.get('refId')
+        onEditSource(_refId, { value: editor.value })
       }
     }
 

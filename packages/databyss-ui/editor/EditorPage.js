@@ -27,7 +27,7 @@ import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
 const EditorPage = ({ children, autoFocus }) => {
   const [editorState, dispatchEditor] = useEditorContext()
-  const { setSource } = useSourceContext()
+  const { setSource, state: sourceState } = useSourceContext()
 
   const { sources, newSources, editableState } = editorState
 
@@ -44,7 +44,9 @@ const EditorPage = ({ children, autoFocus }) => {
               _id: s._id,
               text: { textValue: s.textValue, ranges: s.ranges },
             }
-            setSource(_source)
+            if (!sourceState.cache[s._id]) {
+              setSource(_source)
+            }
             dispatchEditor(removeSourceFromQueue(s._id))
           })
         }
