@@ -5,6 +5,7 @@ const _shouldForwardProp = prop =>
   shouldForwardProp(prop) &&
   (process.env.NODE_ENV !== 'production' ||
     process.env.BABEL_ENV === 'test' ||
+    process.env.CI === 'true' ||
     !prop.match('data-test-'))
 
 export default (component, styles) => {
