@@ -35,8 +35,6 @@ const SessionProvider = ({ children, initialState, signUp }) => {
 
   const endSession = () => dispatch(actions.endSession())
 
-  const showEmailFlow = () => dispatch(actions.showEmailFlow())
-
   // try to resume session on mount
   useEffect(() => {
     getSession({ retry: true })
@@ -55,9 +53,7 @@ const SessionProvider = ({ children, initialState, signUp }) => {
   }
 
   return (
-    <SessionContext.Provider
-      value={{ ...state, getSession, endSession, showEmailFlow }}
-    >
+    <SessionContext.Provider value={{ ...state, getSession, endSession }}>
       {_children}
     </SessionContext.Provider>
   )

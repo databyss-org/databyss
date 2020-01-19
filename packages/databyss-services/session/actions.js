@@ -7,7 +7,6 @@ import {
   DENY_ACCESS,
   REQUEST_CODE,
   END_SESSION,
-  SHOW_EMAIL_FLOW,
 } from './constants'
 
 import {
@@ -102,5 +101,3 @@ export const endSession = () => {
     type: END_SESSION,
   }
 }
-
-export const showEmailFlow = () => ({ type: SHOW_EMAIL_FLOW })

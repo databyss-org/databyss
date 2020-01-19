@@ -9,7 +9,7 @@ import {
 import { ResourcePending } from '../lib/ResourcePending'
 
 export const initialState = {
-  // session is either `null`, `Error` or {user: {}, account: {}}
+  // session is either `null`, `ResourcePending`, `Error` or {user: {}, account: {}}
   session: new ResourcePending(),
   // in TFA (like email login/register), this is set to true after email is sent
   //   and reset to false on successful authentication and on end session
