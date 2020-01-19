@@ -3,7 +3,9 @@ import shouldForwardProp from '@styled-system/should-forward-prop'
 
 const _shouldForwardProp = prop =>
   shouldForwardProp(prop) &&
-  (process.env.NODE_ENV !== 'production' || !prop.match('data-test-'))
+  (process.env.NODE_ENV !== 'production' ||
+    process.env.BABEL_ENV === 'test' ||
+    !prop.match('data-test-'))
 
 export default (component, styles) => {
   let options = {}

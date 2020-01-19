@@ -6,7 +6,7 @@ import h from 'slate-hyperscript'
 import { toSlateJson, matchExpectedJson } from './_helpers'
 // import {  } from './../hotKeys'
 
-context('Editor', () => {
+context('Editor Menu Actions', () => {
   beforeEach(() => {
     cy.visit('http://localhost:6006/iframe.html?id=cypress-tests--slate-empty')
     cy.get('[contenteditable="true"]')
@@ -103,12 +103,14 @@ context('Editor', () => {
       .focus()
       .get('[data-test-block-menu="open"]')
       .click()
-    cy.get('@editor')
+      .get('@editor')
       .type('test')
       .get('[data-test-block-menu="open"]')
       .should('not.be.visible')
-    cy.get('@editor')
+      .get('@editor')
       .newLine()
+      .get('@editor')
+      .focus()
       .get('[data-test-block-menu="open"]')
       .click()
       .get('[data-test-block-menu="TOPIC"]')
