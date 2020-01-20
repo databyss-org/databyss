@@ -2,17 +2,9 @@ import React, { useLayoutEffect, useState } from 'react'
 import addons from '@storybook/addons'
 import Content from '@databyss-org/ui/components/Viewport/Content'
 import { View } from '@databyss-org/ui/primitives'
-import ServiceProvider from '@databyss-org/services/components/ServiceProvider'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
-import * as auth from '@databyss-org/services/auth/mocks'
 import defaultTheme, { darkTheme } from '../theming/theme'
 import { ThemeProvider } from '../theming'
-
-const services = { auth }
-
-export const ServiceProviderDecorator = storyFn => (
-  <ServiceProvider services={services}>{storyFn()}</ServiceProvider>
-)
 
 // get channel to listen to event emitter
 const channel = addons.getChannel()

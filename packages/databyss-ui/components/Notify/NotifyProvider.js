@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import { Dialog } from '@databyss-org/ui/primitives'
-import { NotAuthorizedError } from '@databyss-org/services/lib/NotAuthorizedError'
+import { NotAuthorizedError } from '@databyss-org/services/lib/errors'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
 import IS_NATIVE from '../../lib/isNative'
@@ -42,6 +42,10 @@ class NotifyProvider extends React.Component {
       })
     } else {
       window.addEventListener('error', this.showUnhandledErrorDialog)
+      window.addEventListener(
+        'unhandledrejection',
+        this.showUnhandledErrorDialog
+      )
     }
   }
   state = {
@@ -63,6 +67,10 @@ class NotifyProvider extends React.Component {
   componentWillUnmount() {
     if (!IS_NATIVE) {
       window.removeEventListener('error', this.showUnhandledErrorDialog)
+      window.removeEventListener(
+        'unhandledrejection',
+        this.showUnhandledErrorDialog
+      )
     }
   }
 

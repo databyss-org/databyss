@@ -7,8 +7,6 @@ import styled from '../../styled'
 import { isMobileOs } from '../../../lib/mediaQuery'
 import { borderRadius, timing } from '../../../theming/theme'
 
-const StyledButton = styled('button', styleProps)
-
 const resetProps = {
   padding: 0,
   border: 'none',
@@ -87,9 +85,13 @@ export const ControlNoFeedback = ({ children, ...others }) => (
   <View {...others}>{children}</View>
 )
 
+const StyledButton = styled('button', styleProps)
+const StyledLink = styled('a', styleProps)
+
 const Control = forwardRef(
-  ({ disabled, children, onPress, renderAsView, ...others }, ref) => {
-    const StyledComponent = renderAsView || _mobile ? View : StyledButton
+  ({ disabled, children, onPress, renderAsView, href, ...others }, ref) => {
+    const StyledControl = href ? StyledLink : StyledButton
+    const StyledComponent = renderAsView || _mobile ? View : StyledControl
     return (
       <ThemeContext.Consumer>
         {theme => (
@@ -111,6 +113,8 @@ const Control = forwardRef(
               _mobile && css(controlCssMobile(others))(theme),
               !_mobile && css(controlCssDesktop(others, theme))(theme),
             ]}
+            href={href}
+            disabled={disabled}
             {...others}
           >
             {children}

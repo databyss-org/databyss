@@ -1,10 +1,12 @@
 import React from 'react'
+import flattenChildren from 'react-keyed-flatten-children'
 import { View } from '../'
 
 const List = ({
   children,
   horizontalItemPadding,
   verticalItemPadding,
+  removeBorderRadius,
   ...others
 }) => (
   <View
@@ -12,15 +14,22 @@ const List = ({
     marginBottom={verticalItemPadding}
     {...others}
   >
-    {React.Children.map(children, child =>
-      React.cloneElement(child, {
-        borderRadius: 0,
-        paddingLeft: horizontalItemPadding,
-        paddingRight: horizontalItemPadding,
-        paddingTop: verticalItemPadding,
-        paddingBottom: verticalItemPadding,
-        ...child.props,
-      })
+    {React.Children.map(
+      flattenChildren(children),
+      child =>
+        child &&
+        React.cloneElement(child, {
+          ...(removeBorderRadius
+            ? {
+                borderRadius: 0,
+              }
+            : {}),
+          paddingLeft: horizontalItemPadding,
+          paddingRight: horizontalItemPadding,
+          paddingTop: verticalItemPadding,
+          paddingBottom: verticalItemPadding,
+          ...child.props,
+        })
     )}
   </View>
 )
@@ -28,6 +37,7 @@ const List = ({
 List.defaultProps = {
   horizontalItemPadding: 'tiny',
   verticalItemPadding: 'tiny',
+  removeBorderRadius: true,
 }
 
 export default List

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { showModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
 import { useEditorContext } from './EditorProvider'
 
 import {
@@ -110,7 +109,7 @@ const EditorPage = ({ children, autoFocus }) => {
     dispatchEditor(newBlockMenu(bool, { value }))
   }
 
-  const [, dispatchNav] = useNavigationContext()
+  const { showModal } = useNavigationContext()
 
   // dont need blocks
   const onEditSource = (refId, { value }) => {
@@ -120,15 +119,13 @@ const EditorPage = ({ children, autoFocus }) => {
         dispatchEditor(updateSource(source, { value }))
       }
     }
-    dispatchNav(
-      showModal({
-        component: 'SOURCE',
-        props: {
-          sourceId: refId,
-          onUpdateSource,
-        },
-      })
-    )
+    showModal({
+      component: 'SOURCE',
+      props: {
+        sourceId: refId,
+        onUpdateSource,
+      },
+    })
   }
 
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)

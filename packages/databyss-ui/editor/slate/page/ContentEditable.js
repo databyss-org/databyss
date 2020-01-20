@@ -62,7 +62,7 @@ const SlateContentEditable = forwardRef(
   ) => {
     const [editorState, , stateRef] = useEditorContext()
 
-    const [navState] = useNavigationContext()
+    const { modals } = useNavigationContext()
 
     const { activeBlockId, editableState, blocks, page } = editorState
 
@@ -413,7 +413,7 @@ const SlateContentEditable = forwardRef(
     return (
       <Editor
         value={_editableState.value}
-        readOnly={navState.modals.length > 0}
+        readOnly={modals.length > 0}
         ref={forkRef(ref, editableRef)}
         autoFocus={autoFocus}
         onChange={onChange}

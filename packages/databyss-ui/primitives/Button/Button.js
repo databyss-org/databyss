@@ -34,40 +34,49 @@ const StyledControl = styled(
   )
 )
 
-const Button = forwardRef(({ onPress, variant, children, ...others }, ref) => {
-  let _children = children
-  const { buttonVariants, buttonThemes } = buttons
-  if (typeof children === 'string') {
-    _children = (
-      <Text
-        variant="uiTextNormal"
-        color={buttonVariants[variant].color}
-        {...(buttonThemes[variant].textProps
-          ? buttonThemes[variant].textProps
-          : {})}
+const Button = forwardRef(
+  ({ onPress, variant, children, textVariant, ...others }, ref) => {
+    let _children = children
+    const { buttonVariants, buttonThemes } = buttons
+    if (
+      Array.isArray(_children) &&
+      _children.filter(c => typeof c !== 'string').length === 0
+    ) {
+      _children = _children.join(' ')
+    }
+    if (typeof _children === 'string') {
+      _children = (
+        <Text
+          variant={textVariant}
+          color={buttonVariants[variant].color}
+          {...(buttonThemes[variant].textProps
+            ? buttonThemes[variant].textProps
+            : {})}
+        >
+          {children}
+        </Text>
+      )
+    }
+
+    return (
+      <StyledControl
+        variant={variant}
+        onPress={onPress}
+        hoverColor={buttonThemes[variant].hoverColor}
+        activeColor={buttonThemes[variant].activeColor}
+        ref={ref}
+        {...others}
       >
-        {children}
-      </Text>
+        {_children}
+      </StyledControl>
     )
   }
-
-  return (
-    <StyledControl
-      variant={variant}
-      onPress={onPress}
-      hoverColor={buttonThemes[variant].hoverColor}
-      activeColor={buttonThemes[variant].activeColor}
-      ref={ref}
-      {...others}
-    >
-      {_children}
-    </StyledControl>
-  )
-})
+)
 
 Button.defaultProps = {
   variant: 'primaryUi',
   shadowVariant: 'none',
+  textVariant: 'uiTextNormal',
 }
 
 export default Button

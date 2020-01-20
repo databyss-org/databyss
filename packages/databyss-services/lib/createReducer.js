@@ -24,7 +24,7 @@ const createReducer = (...middlewares) => {
 
     const dispatch = useCallback(
       action => {
-        action.source = name
+        action.meta = { provider: name }
         ref.current = reducer(ref.current, action)
         Object.freeze(ref.current)
         setState(ref.current)

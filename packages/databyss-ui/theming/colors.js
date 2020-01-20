@@ -40,7 +40,7 @@ _c = {
   primary: [_c.blue[1], _c.blue[2], _c.blue[0], _c.white],
   secondary: [_c.blue[1], _c.gray[6], _c.gray[5], _c.blue[1]],
   // borders [darkest...lightest]
-  border: [_c.black, _c.gray[5], _c.gray[3]],
+  border: [_c.black, _c.gray[3], _c.gray[5]],
   // application specific
   selectionHighlight: Color(_c.blue[3])
     .alpha(0.5)

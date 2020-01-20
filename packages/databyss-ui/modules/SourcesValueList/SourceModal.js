@@ -13,7 +13,6 @@ import {
   TextControl,
   List,
 } from '@databyss-org/ui/primitives'
-import { hideModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 
 const ControlList = ({ children, ...others }) => (
@@ -25,7 +24,7 @@ const ControlList = ({ children, ...others }) => (
 const SourceModal = ({ sourceId, visible, onUpdateSource, id }) => {
   const { setSource } = useSourceContext()
   const [values, setValues] = useState(null)
-  const [, dispatchNav] = useNavigationContext()
+  const { hideModal } = useNavigationContext()
 
   const onBlur = () => {
     if (values) {
@@ -39,7 +38,7 @@ const SourceModal = ({ sourceId, visible, onUpdateSource, id }) => {
       setSource(values)
     }
     // hide modal in navProvider
-    dispatchNav(hideModal())
+    hideModal()
     // update to editor provider
     onUpdateSource(values)
   }
