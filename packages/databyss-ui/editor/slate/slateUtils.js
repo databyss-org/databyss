@@ -91,6 +91,7 @@ export const renderInline = onEditSource => (
   editor,
   next
 ) => {
+  console.log(hasSelection(editor.value))
   const isSelected = editor.value.selection.focus.isInNode(node)
 
   if (isAtomicInlineType(node.type)) {

@@ -587,6 +587,8 @@ const SlateContentEditable = forwardRef(
     }
 
     const onSelect = (event, editor, next) => {
+      console.log(editor.value.document.getNode([0]))
+
       let _needsUpdate = false
       // if item has selection
       if (!editor.value.selection.isCollapsed) {
@@ -628,11 +630,14 @@ const SlateContentEditable = forwardRef(
           // check first and last node for atomic type
           // check if anchor or focus are at end or start of node
           // if not move focus or anchor to end or start of node
-          const _firstFrag = _frag.nodes.get(0)
-          const _lastFrag = _frag.nodes.get(_frag.nodes.size - 1)
+          const _firstFrag = editor.value.document.getNode([
+            _anchor.path.get(0),
+          ])
+          const _lastFrag = editor.value.document.getNode([_focus.path.get(0)])
 
           if (isAtomicInlineType(_firstFrag.type)) {
             const _isAtStart = _anchor.isAtStartOfNode(_firstFrag)
+
             if (!_isAtStart) {
               _needsUpdate = true
               _selection.isForward
@@ -641,7 +646,7 @@ const SlateContentEditable = forwardRef(
             }
           }
           if (isAtomicInlineType(_lastFrag.type)) {
-            const _isAtEnd = _focus.isAtStartOfNode(_lastFrag)
+            const _isAtEnd = _focus.isAtEndOfNode(_lastFrag)
             if (!_isAtEnd) {
               _needsUpdate = true
               _selection.isForward
@@ -651,7 +656,6 @@ const SlateContentEditable = forwardRef(
           }
         }
       }
-
       if (_needsUpdate) {
         onSelectionChange(editor)
       } else {
