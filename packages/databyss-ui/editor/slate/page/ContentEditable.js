@@ -587,8 +587,6 @@ const SlateContentEditable = forwardRef(
     }
 
     const onSelect = (event, editor, next) => {
-      console.log(editor.value.document.getNode([0]))
-
       let _needsUpdate = false
       // if item has selection
       if (!editor.value.selection.isCollapsed) {
