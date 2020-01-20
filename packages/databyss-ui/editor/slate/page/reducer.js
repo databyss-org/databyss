@@ -354,10 +354,10 @@ export const onPaste = pasteData => (editor, value, next) => {
     blockList,
     fragment,
     offset,
-    firstId,
-    firstRef,
-    secondId,
-    secondRef,
+    beforeBlockId,
+    beforeBlockRef,
+    afterBlockId,
+    afterBlockRef,
   } = pasteData
 
   let _offset = offset
@@ -392,8 +392,8 @@ export const onPaste = pasteData => (editor, value, next) => {
       // replace the the next block with provided id if next block exists
       const _tempKey = editor.value.nextBlock.key
       const _tempBlock = editor.value.nextBlock.toJSON()
-      _tempBlock.key = firstId
-      _tempBlock.data = { refId: firstRef }
+      _tempBlock.key = beforeBlockId
+      _tempBlock.data = { refId: beforeBlockRef }
       editor.replaceNodeByKey(_tempKey, _tempBlock)
     } else if (!isAtomicInlineType(_lastNode.type)) {
       mergeForward = true
@@ -402,8 +402,8 @@ export const onPaste = pasteData => (editor, value, next) => {
 
       const _tempKey = editor.value.nextBlock.key
       const _tempBlock = editor.value.nextBlock.toJSON()
-      _tempBlock.key = firstId
-      _tempBlock.data = { refId: firstRef }
+      _tempBlock.key = beforeBlockId
+      _tempBlock.data = { refId: beforeBlockRef }
       editor.replaceNodeByKey(_tempKey, _tempBlock)
     }
     _offset = 0
@@ -423,7 +423,7 @@ export const onPaste = pasteData => (editor, value, next) => {
     editor.insertBlock(_emptyBlock)
     const _tempKey = editor.value.nextBlock.key
     const _tempBlock = editor.value.nextBlock.toJSON()
-    _tempBlock.key = secondId
+    //   _tempBlock.key = afterBlockId
     editor.replaceNodeByKey(_tempKey, _tempBlock)
     editor.moveBackward(1)
     deleteForward = true
@@ -433,13 +433,14 @@ export const onPaste = pasteData => (editor, value, next) => {
   let _frag = fragment.nodes
 
   editor.insertFragment(_fragment)
+
   if (deleteForward) {
     const _deleteKey = editor.value.nextBlock.key
     editor.removeNodeByKey(_deleteKey)
     const _tempKey = editor.value.nextBlock.key
     const _tempBlock = editor.value.nextBlock.toJSON()
-    _tempBlock.key = _tempKey
-    _tempBlock.data = { refId: secondRef }
+    _tempBlock.key = afterBlockId
+    _tempBlock.data = { refId: afterBlockRef }
     editor.replaceNodeByKey(_tempKey, _tempBlock)
   }
 

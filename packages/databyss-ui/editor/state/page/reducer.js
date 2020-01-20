@@ -331,10 +331,10 @@ const onPaste = (state, pasteData) => {
     anchorKey,
     blockList,
     offset,
-    firstId,
-    firstRef,
-    secondId,
-    secondRef,
+    beforeBlockId,
+    beforeBlockRef,
+    afterBlockId,
+    afterBlockRef,
   } = pasteData
 
   let _text
@@ -383,12 +383,12 @@ const onPaste = (state, pasteData) => {
           const _first = _entity.textValue.split('')
           const _last = _first.splice(offset).join('')
           const _newBlock = {
-            [secondId]: {
+            [afterBlockId]: {
               text: _last,
               type: 'ENTRY',
               ranges: [],
-              refId: secondRef,
-              _id: secondId,
+              refId: afterBlockRef,
+              _id: afterBlockId,
             },
           }
 
@@ -468,12 +468,12 @@ const onPaste = (state, pasteData) => {
           // append new block to list with second half of text
 
           const _newBlock = {
-            [firstId]: {
+            [beforeBlockId]: {
               text: _last,
               type: 'ENTRY',
               ranges: [],
-              refId: firstRef,
-              _id: firstId,
+              refId: beforeBlockRef,
+              _id: beforeBlockId,
             },
           }
           _list.push(_newBlock)

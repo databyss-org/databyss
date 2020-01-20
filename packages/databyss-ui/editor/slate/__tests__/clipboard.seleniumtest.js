@@ -15,7 +15,7 @@ import {
   getEditor,
   copy,
   paste,
-  //  sleep,
+  sleep,
   selectAll,
   // previousLine,
   // sendText,
@@ -55,8 +55,9 @@ describe('editor selenium', () => {
   })
 
   it('should copy and paste an entry block', async () => {
+    await sleep(1000)
     await actions.sendKeys('this is an example of entry text')
-    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ENTER).pause(100)
     await selectAll(actions)
     await copy(actions)
     await endOfLine(actions)
@@ -85,6 +86,7 @@ describe('editor selenium', () => {
   })
 
   it('should copy and paste a text fragment on a new line', async () => {
+    await sleep(1000)
     await actions.sendKeys('this is an example of entry text')
     await startOfDoc(actions)
     await highlightSingleSpace(actions)
@@ -93,7 +95,7 @@ describe('editor selenium', () => {
     await highlightSingleSpace(actions)
     await copy(actions)
     await endOfLine(actions)
-    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ENTER).pause(100)
     await endOfDoc(actions)
     await paste(actions)
     await actions.perform()
@@ -119,6 +121,7 @@ describe('editor selenium', () => {
   })
 
   it('should copy and paste a text fragment on a same line', async () => {
+    await sleep(1000)
     await actions.sendKeys('this is an example of entry text')
     await startOfDoc(actions)
     await highlightSingleSpace(actions)
@@ -149,10 +152,11 @@ describe('editor selenium', () => {
   })
 
   it('should copy and paste a source', async () => {
+    await sleep(1000)
     await actions.sendKeys(' ')
     await actions.sendKeys(Key.BACK_SPACE)
     await actions.sendKeys('@this is an example of source text')
-    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ENTER).pause(100)
     await selectAll(actions)
     await copy(actions)
     await endOfLine(actions)
@@ -185,10 +189,11 @@ describe('editor selenium', () => {
   })
 
   it('should copy and paste an entry and a source', async () => {
+    await sleep(1000)
     await actions.sendKeys('this is an example of an entry text')
-    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ENTER).pause(100)
     await actions.sendKeys('@this is an example of a source text')
-    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ENTER).pause(100)
     await selectAll(actions)
     await copy(actions)
     await endOfDoc(actions)
@@ -226,8 +231,9 @@ describe('editor selenium', () => {
   })
 
   it('should not allow a paste on an atomic block', async () => {
+    await sleep(1000)
     await actions.sendKeys('@this is a source')
-    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ENTER).pause(100)
     await selectAll(actions)
     await copy(actions)
     await actions.sendKeys(Key.ARROW_LEFT)
@@ -257,9 +263,10 @@ describe('editor selenium', () => {
   })
 
   it('should copy and paste an empty block and source block', async () => {
-    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys(Key.ENTER).pause(100)
     await actions.sendKeys('@this is a source')
-    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ENTER).pause(100)
     await selectAll(actions)
     await copy(actions)
     await endOfDoc(actions)
@@ -293,8 +300,9 @@ describe('editor selenium', () => {
   })
 
   it('should copy and paste atomic block and entry block at end of existing line at the end of the document', async () => {
+    await sleep(1000)
     await actions.sendKeys('@this is a source')
-    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ENTER).pause(100)
     await actions.sendKeys('this is an entry')
     await selectAll(actions)
     await copy(actions)
@@ -334,11 +342,14 @@ describe('editor selenium', () => {
   })
 
   it('should copy and paste and entry block and an atomic block in the middle of an entry, first line and paste fragment should merge', async () => {
+    await sleep(1000)
     await actions
       .sendKeys('this is an example of entry text')
       .sendKeys(Key.ENTER)
+      .pause(100)
       .sendKeys('@this is an example of source text')
       .sendKeys(Key.ENTER)
+      .pause(100)
     await highlightSingleLine(actions)
     await highlightSingleLine(actions)
     await copy(actions)
@@ -387,11 +398,14 @@ describe('editor selenium', () => {
   })
 
   it('should copy and paste and source block and an entry block in the middle of an entry, second line and paste fragment should merge', async () => {
+    await sleep(1000)
     await actions
       .sendKeys('@this is an example of source text')
       .sendKeys(Key.ENTER)
+      .pause(100)
       .sendKeys('this is an example of entry text')
       .sendKeys(Key.ENTER)
+      .pause(100)
 
     await highlightSingleLine(actions)
     await highlightSingleLine(actions)
@@ -443,13 +457,17 @@ describe('editor selenium', () => {
   })
 
   it('should copy and paste and source block, entry block and source block in the middle of an entry, should create two new blocks', async () => {
+    await sleep(1000)
     await actions
       .sendKeys('@this is an example of source text')
       .sendKeys(Key.ENTER)
+      .pause(100)
       .sendKeys('this is an example of entry text')
       .sendKeys(Key.ENTER)
+      .pause(100)
       .sendKeys('@this is a second source')
       .sendKeys(Key.ENTER)
+      .pause(100)
 
     await highlightSingleLine(actions)
     await highlightSingleLine(actions)
@@ -515,13 +533,17 @@ describe('editor selenium', () => {
   })
 
   it('should copy and paste an entry block, atomic block and entry block in the middle of an entry, should create two new blocks', async () => {
+    await sleep(1000)
     await actions
       .sendKeys('this is an example of entry text')
       .sendKeys(Key.ENTER)
+      .pause(100)
       .sendKeys('@this is an example of source text')
       .sendKeys(Key.ENTER)
+      .pause(100)
       .sendKeys('this is a second entry')
       .sendKeys(Key.ENTER)
+      .pause(100)
 
     await highlightSingleLine(actions)
     await highlightSingleLine(actions)
@@ -575,8 +597,9 @@ describe('editor selenium', () => {
   })
 
   it('should copy an atomic block and paste at the end of an entry', async () => {
+    await sleep(1000)
     await actions.sendKeys('@this is a source')
-    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ENTER).pause(100)
     await selectAll(actions)
     await copy(actions)
     await endOfLine(actions)
@@ -613,8 +636,9 @@ describe('editor selenium', () => {
   })
 
   it('should copy an atomic block and paste it in the middle of an entry', async () => {
+    await sleep(1000)
     await actions.sendKeys('@this is a source')
-    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ENTER).pause(100)
     await selectAll(actions)
     await copy(actions)
     await endOfLine(actions)
@@ -659,8 +683,9 @@ describe('editor selenium', () => {
   })
 
   it('should copy an atomic block and paste it at the end of an entry', async () => {
+    await sleep(1000)
     await actions.sendKeys('@this is a source')
-    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ENTER).pause(100)
     await selectAll(actions)
     await copy(actions)
     await endOfLine(actions)
