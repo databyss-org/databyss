@@ -19,6 +19,7 @@ import {
   SHOW_NEW_BLOCK_MENU,
   UPDATE_SOURCE,
   DEQUEUE_NEW_SOURCE,
+  ON_SELECTION,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -218,6 +219,15 @@ export function removeSourceFromQueue(id) {
     type: DEQUEUE_NEW_SOURCE,
     payload: {
       id,
+    },
+  }
+}
+
+export function onSelection(editableState) {
+  return {
+    type: ON_SELECTION,
+    payload: {
+      editableState,
     },
   }
 }

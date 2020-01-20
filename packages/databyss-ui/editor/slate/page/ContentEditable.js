@@ -67,6 +67,7 @@ const SlateContentEditable = forwardRef(
       onNewBlockMenu,
       onEditSource,
       autoFocus,
+      onSelectionChange,
       ...others
     },
     ref
@@ -548,7 +549,6 @@ const SlateContentEditable = forwardRef(
             let _nodeList = _editor.value.document.nodes.map(n => n.key)
             _editor.replaceNodeByKey(_nodeList.get(i), _node)
             _frag = _editor.value.document
-            console.log(_frag)
             // replace in fragment
           }
         })
@@ -586,10 +586,84 @@ const SlateContentEditable = forwardRef(
       return event.preventDefault()
     }
 
+    const onSelect = (event, editor, next) => {
+      let _needsUpdate = false
+      // if item has selection
+      if (!editor.value.selection.isCollapsed) {
+        const _frag = editor.value.fragment
+        const _selection = editor.value.selection
+        const _anchor = _selection.isForward
+          ? editor.value.selection.anchor
+          : editor.value.selection.focus
+        const _focus = _selection.isForward
+          ? editor.value.selection.focus
+          : editor.value.selection.anchor
+        /* 
+          if fragment is one block long check to see if full block is selected 
+        */
+
+        if (
+          _frag.nodes.size === 1 &&
+          isAtomicInlineType(_frag.nodes.get(0).type)
+        ) {
+          const _isAtStart = _anchor.isAtStartOfNode(editor.value.anchorBlock)
+          if (!_isAtStart) {
+            _needsUpdate = true
+            _selection.isForward
+              ? editor.moveAnchorToStartOfNode(editor.value.anchorBlock)
+              : editor.moveFocusToStartOfNode(editor.value.anchorBlock)
+          }
+
+          const _isAtEnd = _focus.isAtEndOfNode(editor.value.anchorBlock)
+
+          if (!_isAtEnd) {
+            _needsUpdate = true
+            _selection.isForward
+              ? editor.moveFocusToEndOfNode(editor.value.anchorBlock)
+              : editor.moveAnchorToEndOfNode(editor.value.anchorBlock)
+
+            // move anchor left one
+          }
+        } else {
+          // check first and last node for atomic type
+          // check if anchor or focus are at end or start of node
+          // if not move focus or anchor to end or start of node
+          const _firstFrag = _frag.nodes.get(0)
+          const _lastFrag = _frag.nodes.get(_frag.nodes.size - 1)
+
+          if (isAtomicInlineType(_firstFrag.type)) {
+            const _isAtStart = _anchor.isAtStartOfNode(_firstFrag)
+            if (!_isAtStart) {
+              _needsUpdate = true
+              _selection.isForward
+                ? editor.moveAnchorToStartOfNode(_firstFrag)
+                : editor.moveFocusToStartOfNode(_firstFrag)
+            }
+          }
+          if (isAtomicInlineType(_lastFrag.type)) {
+            const _isAtEnd = _focus.isAtStartOfNode(_lastFrag)
+            if (!_isAtEnd) {
+              _needsUpdate = true
+              _selection.isForward
+                ? editor.moveFocusToEndOfNode(_lastFrag)
+                : editor.moveAnchorToEndOfNode(_lastFrag)
+            }
+          }
+        }
+      }
+
+      if (_needsUpdate) {
+        onSelectionChange(editor)
+      } else {
+        next()
+      }
+    }
+
     return (
       <Editor
         value={_editableState.value}
         onPaste={onPaste}
+        onSelect={onSelect}
         readOnly={navState.modals.length > 0}
         ref={forkRef(ref, editableRef)}
         autoFocus={autoFocus}

@@ -21,6 +21,7 @@ import {
   newBlockMenu,
   updateSource,
   removeSourceFromQueue,
+  onSelection,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
@@ -142,6 +143,10 @@ const EditorPage = ({ children, autoFocus }) => {
     )
   }
 
+  const onSelectionChange = ({ value }) => {
+    dispatchEditor(onSelection({ value }))
+  }
+
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
     onActiveBlockIdChange,
@@ -160,6 +165,7 @@ const EditorPage = ({ children, autoFocus }) => {
     onNewBlockMenu,
     onEditSource,
     autoFocus,
+    onSelectionChange,
   })
 }
 

@@ -18,6 +18,7 @@ import {
   ON_PASTE,
   SET_BLOCK_REF,
   UPDATE_SOURCE,
+  ON_SELECTION,
 } from './../../state/page/constants'
 
 export const newBlockWithRef = (id, refId) =>
@@ -511,6 +512,10 @@ const setBlockRef = (_id, refId) => (editor, value, next) => {
   next(editor, value)
 }
 
+const onSelection = () => (editor, value, next) => {
+  next(editor, value)
+}
+
 export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
@@ -602,6 +607,13 @@ export default (editableState, action) => {
       return {
         ...editableState,
         editorCommands: onPaste(action.payload.pasteData),
+      }
+    }
+
+    case ON_SELECTION: {
+      return {
+        ...editableState,
+        editorCommands: onSelection(),
       }
     }
 
