@@ -1,12 +1,12 @@
 import styled from '@emotion/styled'
 import shouldForwardProp from '@styled-system/should-forward-prop'
 
-// const _shouldForwardProp = prop =>
-//   shouldForwardProp(prop) &&
-//   (process.env.NODE_ENV !== 'production' ||
-//     process.env.BABEL_ENV === 'test' ||
-//     process.env.CI === 'true' ||
-//     !prop.match('data-test-'))
+const _shouldForwardProp = prop =>
+  shouldForwardProp(prop) &&
+  (process.env.NODE_ENV !== 'production' ||
+    process.env.BABEL_ENV === 'test' ||
+    process.env.CI === 'true' ||
+    !prop.match('data-test-'))
 
 export default (component, styles) => {
   let options = {}
@@ -15,8 +15,7 @@ export default (component, styles) => {
     _component = component
   }
   if (typeof _component === 'string') {
-    // options = { shouldForwardProp: _shouldForwardProp }
-    options = { shouldForwardProp }
+    options = { shouldForwardProp: _shouldForwardProp }
   }
   return styled(_component, options)(styles)
 }

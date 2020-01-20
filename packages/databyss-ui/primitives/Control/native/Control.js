@@ -85,10 +85,13 @@ export const ControlNoFeedback = ({ children, ...others }) => (
   <View {...others}>{children}</View>
 )
 
+const StyledButton = styled('button', styleProps)
+const StyledLink = styled('a', styleProps)
+
 const Control = forwardRef(
   ({ disabled, children, onPress, renderAsView, href, ...others }, ref) => {
-    const StyledButton = styled(href ? 'a' : 'button', styleProps)
-    const StyledComponent = renderAsView || _mobile ? View : StyledButton
+    const StyledControl = href ? StyledLink : StyledButton
+    const StyledComponent = renderAsView || _mobile ? View : StyledControl
     return (
       <ThemeContext.Consumer>
         {theme => (
