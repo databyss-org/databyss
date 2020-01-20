@@ -3,7 +3,7 @@
 /* eslint-disable func-names */
 import h from 'slate-hyperscript'
 import { By, Key } from 'selenium-webdriver'
-import { startSession, WIN, CHROME } from '../../../lib/saucelabs'
+import { startSession, OSX, SAFARI } from '../../../lib/saucelabs'
 import { toSlateJson } from './_helpers'
 import {
   endOfLine,
@@ -37,7 +37,7 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('editor selenium', () => {
   beforeEach(async done => {
-    driver = await startSession('clipboard-osx-safari-1', WIN, CHROME)
+    driver = await startSession('clipboard-osx-safari-2', OSX, SAFARI)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     // editor = await driver.findElement(By.css('[contenteditable="true"]'))
     editor = await getEditor(driver)
