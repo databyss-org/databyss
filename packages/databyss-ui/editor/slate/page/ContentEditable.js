@@ -542,11 +542,12 @@ const SlateContentEditable = forwardRef(
               if (stateRef.current.blocks[id].refId === _block.refId) {
                 return true
               }
+              return false
             })
             const _node = editor.value.document.getNode(_id).toJSON()
             const _editor = NewEditor()
             _editor.insertFragment(_frag)
-            let _nodeList = _editor.value.document.nodes.map(n => n.key)
+            const _nodeList = _editor.value.document.nodes.map(n => n.key)
             _editor.replaceNodeByKey(_nodeList.get(i), _node)
             _frag = _editor.value.document
             // replace in fragment
@@ -609,20 +610,22 @@ const SlateContentEditable = forwardRef(
           const _isAtStart = _anchor.isAtStartOfNode(editor.value.anchorBlock)
           if (!_isAtStart) {
             _needsUpdate = true
-            _selection.isForward
-              ? editor.moveAnchorToStartOfNode(editor.value.anchorBlock)
-              : editor.moveFocusToStartOfNode(editor.value.anchorBlock)
+            if (_selection.isForward) {
+              editor.moveAnchorToStartOfNode(editor.value.anchorBlock)
+            } else {
+              editor.moveFocusToStartOfNode(editor.value.anchorBlock)
+            }
           }
 
           const _isAtEnd = _focus.isAtEndOfNode(editor.value.anchorBlock)
 
           if (!_isAtEnd) {
             _needsUpdate = true
-            _selection.isForward
-              ? editor.moveFocusToEndOfNode(editor.value.anchorBlock)
-              : editor.moveAnchorToEndOfNode(editor.value.anchorBlock)
-
-            // move anchor left one
+            if (_selection.isForward) {
+              editor.moveFocusToEndOfNode(editor.value.anchorBlock)
+            } else {
+              editor.moveAnchorToEndOfNode(editor.value.anchorBlock)
+            }
           }
         } else {
           // check first and last node for atomic type
@@ -638,18 +641,22 @@ const SlateContentEditable = forwardRef(
 
             if (!_isAtStart) {
               _needsUpdate = true
-              _selection.isForward
-                ? editor.moveAnchorToStartOfNode(_firstFrag)
-                : editor.moveFocusToStartOfNode(_firstFrag)
+              if (_selection.isForward) {
+                editor.moveAnchorToStartOfNode(_firstFrag)
+              } else {
+                editor.moveFocusToStartOfNode(_firstFrag)
+              }
             }
           }
           if (isAtomicInlineType(_lastFrag.type)) {
             const _isAtEnd = _focus.isAtEndOfNode(_lastFrag)
             if (!_isAtEnd) {
               _needsUpdate = true
-              _selection.isForward
-                ? editor.moveFocusToEndOfNode(_lastFrag)
-                : editor.moveAnchorToEndOfNode(_lastFrag)
+              if (_selection.isForward) {
+                editor.moveFocusToEndOfNode(_lastFrag)
+              } else {
+                editor.moveAnchorToEndOfNode(_lastFrag)
+              }
             }
           }
         }

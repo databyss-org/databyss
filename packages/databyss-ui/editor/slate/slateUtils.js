@@ -86,6 +86,14 @@ export const toSlateJson = (editorState, pageBlocks) => ({
   },
 })
 
+export const hasSelection = value => {
+  const { selection } = value
+  if (!(selection.isBlurred || selection.isCollapsed)) {
+    return true
+  }
+  return false
+}
+
 export const renderInline = onEditSource => (
   { node, attributes },
   editor,
@@ -210,14 +218,6 @@ export const singleBlockBackspaceCheck = value => {
     !isAtomicInlineType(_selectedBlocks.get(0)) &&
     _selectedBlocks.get(0).text.length === 0
   ) {
-    return true
-  }
-  return false
-}
-
-export const hasSelection = value => {
-  const { selection } = value
-  if (!(selection.isBlurred || selection.isCollapsed)) {
     return true
   }
   return false

@@ -9,6 +9,8 @@ export const OSX = 'OS X 10.14'
 const username = process.env.SAUCE_USERNAME
 const accessKey = process.env.SAUCE_ACCESS_KEY
 
+// using chrome requires the user to have a verion of chrome driver installed for selenium
+
 export const startSession = process.env.LOCAL_ENV
   ? async () => {
       jest.setTimeout(40000)
@@ -16,7 +18,7 @@ export const startSession = process.env.LOCAL_ENV
       const _builder = await new Builder().forBrowser('safari').build()
       return _builder
     }
-  : async (name, platformName = WIN, browserName = CHROME) => {
+  : async (name, platformName = OSX, browserName = SAFARI) => {
       jest.setTimeout(80000)
       const driver = await new webdriver.Builder()
         .withCapabilities({

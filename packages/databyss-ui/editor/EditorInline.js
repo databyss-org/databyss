@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { color, border, space } from 'styled-system'
 import styled from '@emotion/styled'
 import { Button, Icon } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
-import { useEditorContext } from './EditorProvider'
 
 const Span = styled('span')({ cursor: 'pointer' }, color, border, space)
 
