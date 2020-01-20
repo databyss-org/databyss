@@ -37,7 +37,7 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('editor selenium', () => {
   beforeEach(async done => {
-    driver = await startSession('clipboard-osx-safari', WIN, CHROME)
+    driver = await startSession('clipboard-osx-safari-1', WIN, CHROME)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     // editor = await driver.findElement(By.css('[contenteditable="true"]'))
     editor = await getEditor(driver)
