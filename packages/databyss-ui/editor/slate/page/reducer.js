@@ -292,6 +292,7 @@ const onUpdateSource = (source, blocks) => (editor, value, next) => {
     block => blocks[block].refId === source._id
   )
   _idList.forEach(id => {
+    const _refId = blocks[id].refId
     const _newNodes = stateToSlateMarkup(source.text).nodes
     const _block = Block.fromJSON({
       object: 'block',
@@ -312,6 +313,7 @@ const onUpdateSource = (source, blocks) => (editor, value, next) => {
     const _tempNode = Block.fromJSON({
       object: 'block',
       type: 'SOURCE',
+      data: { refId: _refId },
       key: id,
       nodes: [textBlock],
     })

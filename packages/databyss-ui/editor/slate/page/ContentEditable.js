@@ -520,13 +520,13 @@ const SlateContentEditable = forwardRef(
         // get list of refId and Id of fragment to paste,
         // this list is used to keep slate and state in sync
         let _blockList = blocksToState(_frag.nodes)
-
         // look up refId's for all sources and replace them in _blockList and _frag
 
         _blockList.forEach((b, i) => {
           const _block = b[Object.keys(b)[0]]
           if (_block.type === 'SOURCE') {
             // look up source in dictionary
+
             const _dictSource = stateRef.current.sources[_block.refId]
             // replace in blockList
             _blockList[i] = {
