@@ -14,12 +14,11 @@ const accessKey = process.env.SAUCE_ACCESS_KEY
 export const startSession = process.env.LOCAL_ENV
   ? async () => {
       jest.setTimeout(40000)
-
       const _builder = await new Builder().forBrowser(SAFARI).build()
       return _builder
     }
   : async (name, platformName = OSX, browserName = SAFARI) => {
-      jest.setTimeout(80000)
+      jest.setTimeout(800000)
       const driver = await new webdriver.Builder()
         .withCapabilities({
           browserName,
@@ -38,8 +37,8 @@ export const startSession = process.env.LOCAL_ENV
             seleniumVersion: '3.141.59',
             build: 'databyss-org/ui',
             name,
-            maxDuration: 7200,
-            idleTimeout: 1000,
+            maxDuration: 72000,
+            idleTimeout: 10000,
           },
         })
         .usingServer('https://ondemand.saucelabs.com/wd/hub')

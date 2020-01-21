@@ -35,22 +35,25 @@ const EditorPage = ({ children, autoFocus }) => {
   checks to see if new source has been added
   adds the new source to the source provider
   */
-  useEffect(() => {
-    if (newSources && editableState) {
-      if (newSources.length > 0) {
-        newSources.forEach(s => {
-          const _source = {
-            _id: s._id,
-            text: { textValue: s.textValue, ranges: s.ranges },
-          }
-          if (!sourceState.cache[s._id]) {
-            setSource(_source)
-          }
-          dispatchEditor(removeSourceFromQueue(s._id))
-        })
+  useEffect(
+    () => {
+      if (newSources && editableState) {
+        if (newSources.length > 0) {
+          newSources.forEach(s => {
+            const _source = {
+              _id: s._id,
+              text: { textValue: s.textValue, ranges: s.ranges },
+            }
+            if (!sourceState.cache[s._id]) {
+              setSource(_source)
+            }
+            dispatchEditor(removeSourceFromQueue(s._id))
+          })
+        }
       }
-    }
-  }, [sources])
+    },
+    [sources]
+  )
 
   const onActiveBlockIdChange = (id, editableState) =>
     dispatchEditor(setActiveBlockId(id, editableState))
