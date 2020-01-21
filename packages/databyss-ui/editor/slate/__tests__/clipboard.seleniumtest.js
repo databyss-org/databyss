@@ -13,7 +13,7 @@ import {
   highlightSingleSpace,
   highlightSingleLine,
   getEditor,
-  getBody,
+  // getBody,
   copy,
   paste,
   sleep,
