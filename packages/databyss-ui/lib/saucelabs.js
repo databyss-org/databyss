@@ -37,7 +37,7 @@ export const startSession = process.env.LOCAL_ENV
             seleniumVersion: '3.141.59',
             build: 'databyss-org/ui',
             name,
-            maxDuration: 72000,
+            maxDuration: 10800,
             idleTimeout: 10000,
           },
         })
