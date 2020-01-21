@@ -25,7 +25,7 @@ import {
 
 let driver
 let editor
-let body
+// let body
 let slateDocument
 let pageBlocks
 let actions
@@ -43,15 +43,14 @@ describe('editor selenium', () => {
     // editor = await driver.findElement(By.css('[contenteditable="true"]'))
     editor = await getEditor(driver)
 
-    body = await getBody(driver)
+    // body = await getBody(driver)
     slateDocument = await driver.findElement(By.id('slateDocument'))
     pageBlocks = await driver.findElement(By.id('pageBlocks'))
     await editor.click()
     actions = driver.actions({ bridge: true })
-    await actions
-      .click(editor)
-      .perform()
-      .clear()
+    await actions.click(editor)
+    // .perform()
+    //  .clear()
     done()
   })
 
