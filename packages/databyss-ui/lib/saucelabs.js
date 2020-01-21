@@ -15,7 +15,7 @@ export const startSession = process.env.LOCAL_ENV
   ? async () => {
       jest.setTimeout(40000)
 
-      const _builder = await new Builder().forBrowser('safari').build()
+      const _builder = await new Builder().forBrowser(SAFARI).build()
       return _builder
     }
   : async (name, platformName = OSX, browserName = SAFARI) => {
