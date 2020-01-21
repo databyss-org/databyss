@@ -5,6 +5,7 @@ export default {
   showFormatMenu: false,
   showNewBlockMenu: true,
   newSources: [],
+  newTopics: [],
   sources: {},
   entries: {
     '5d6442046e84d304ddceb768': {

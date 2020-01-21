@@ -4,11 +4,12 @@ import styled from '@emotion/styled'
 import { Button, Icon } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { useEditorContext } from './EditorProvider'
+import { isAtomicInlineType } from '@databyss-org/ui/editor/slate/page/reducer'
 
 const Span = styled('span')({ cursor: 'pointer' }, color, border, space)
 
 const EditorInline = React.forwardRef(
-  ({ isSelected, node, children, editor, onEditSource, ...others }, ref) => {
+  ({ isSelected, node, children, editor, onEdit, ...others }, ref) => {
     const [refId, setRefId] = useState(null)
 
     const [editorState] = useEditorContext()
@@ -32,8 +33,9 @@ const EditorInline = React.forwardRef(
     )
 
     const onClick = () => {
-      if (node.type === 'SOURCE' && isSelected) {
-        onEditSource(refId, { value: editor.value })
+      if (isAtomicInlineType(node.type) && isSelected) {
+        console.log('in editor inline', refId)
+        onEdit(refId, { value: editor.value })
       }
     }
 
@@ -48,7 +50,7 @@ const EditorInline = React.forwardRef(
       >
         {children}
 
-        {node.type === 'SOURCE' &&
+        {isAtomicInlineType(node.type) &&
           isSelected && (
             <Span
               borderLeft="1px solid"

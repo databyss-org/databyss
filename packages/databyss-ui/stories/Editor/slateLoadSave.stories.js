@@ -87,11 +87,13 @@ const EditorLoader = withPages(({ pages, children }) => {
 
 const ProviderDecorator = storyFn => (
   <PageProvider initialState={initialState}>
-    <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-      <NavigationProvider componentMap={componentMap}>
-        <EditorLoader>{storyFn()}</EditorLoader>
-      </NavigationProvider>
-    </SourceProvider>
+    <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
+      <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+        <NavigationProvider componentMap={componentMap}>
+          <EditorLoader>{storyFn()}</EditorLoader>
+        </NavigationProvider>
+      </SourceProvider>
+    </TopicProvider>
   </PageProvider>
 )
 

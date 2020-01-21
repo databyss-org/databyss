@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorContext } from './EditorProvider'
 
@@ -17,6 +18,8 @@ import {
   deleteBlocks,
   newBlockMenu,
   updateSource,
+  updateTopic,
+  removeTopicFromQueue,
   removeSourceFromQueue,
 } from './state/page/actions'
 
@@ -25,8 +28,9 @@ import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 const EditorPage = ({ children, autoFocus }) => {
   const [editorState, dispatchEditor] = useEditorContext()
   const { setSource } = useSourceContext()
+  const { setTopic } = useTopicContext()
 
-  const { sources, newSources, editableState } = editorState
+  const { sources, newSources, topics, newTopics, editableState } = editorState
 
   /*
   checks to see if new source has been added
@@ -35,20 +39,35 @@ const EditorPage = ({ children, autoFocus }) => {
 
   useEffect(
     () => {
-      if (newSources && editableState) {
-        if (newSources.length > 0) {
-          newSources.forEach(s => {
-            const _source = {
-              _id: s._id,
-              text: { textValue: s.textValue, ranges: s.ranges },
-            }
-            setSource(_source)
-            dispatchEditor(removeSourceFromQueue(s._id))
-          })
+      if (editableState) {
+        if (newSources) {
+          if (newSources.length > 0) {
+            newSources.forEach(s => {
+              const _source = {
+                _id: s._id,
+                text: { textValue: s.textValue, ranges: s.ranges },
+              }
+              setSource(_source)
+              dispatchEditor(removeSourceFromQueue(s._id))
+            })
+          }
+        }
+
+        if (newTopics) {
+          if (newTopics.length > 0) {
+            newTopics.forEach(t => {
+              const _topic = {
+                _id: t._id,
+                text: { textValue: t.textValue, ranges: t.ranges },
+              }
+              setTopic(_topic)
+              dispatchEditor(removeTopicFromQueue(t._id))
+            })
+          }
         }
       }
     },
-    [sources]
+    [sources, topics]
   )
 
   const onActiveBlockIdChange = (id, editableState) =>
@@ -112,7 +131,6 @@ const EditorPage = ({ children, autoFocus }) => {
 
   const { showModal } = useNavigationContext()
 
-  // dont need blocks
   const onEditSource = (refId, { value }) => {
     // Editor function to dispatch with modal
     const onUpdateSource = source => {
@@ -125,6 +143,23 @@ const EditorPage = ({ children, autoFocus }) => {
       props: {
         sourceId: refId,
         onUpdateSource,
+      },
+    })
+  }
+
+  const onEditTopic = (refId, { value }) => {
+    // Editor function to dispatch with modal
+    console.log('in editor page', refId)
+    const onUpdateTopic = topic => {
+      if (topic) {
+        dispatchEditor(updateTopic(topic, { value }))
+      }
+    }
+    showModal({
+      component: 'TOPIC',
+      props: {
+        topicId: refId,
+        onUpdateTopic,
       },
     })
   }
@@ -144,6 +179,7 @@ const EditorPage = ({ children, autoFocus }) => {
     deleteBlocksByKeys,
     onNewBlockMenu,
     onEditSource,
+    onEditTopic,
     autoFocus,
   })
 }

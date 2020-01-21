@@ -18,6 +18,7 @@ import {
   SHOW_NEW_BLOCK_MENU,
   UPDATE_SOURCE,
   DEQUEUE_NEW_SOURCE,
+  DEQUEUE_NEW_TOPIC,
 } from './constants'
 
 export initialState from './../initialState'
@@ -144,7 +145,14 @@ const setBlockType = (state, type, _id) => {
       nextState.locations[nextRefId] = { _id: nextRefId, textValue, ranges }
       return nextState
     case 'TOPIC':
-      nextState.topics[nextRefId] = { _id: nextRefId, textValue, ranges }
+      const _topic = { _id: nextRefId, textValue, ranges }
+      nextState.topics[nextRefId] = _topic
+      if (nextState.newTopics) {
+        nextState.newTopics.push(_topic)
+      } else {
+        nextState.newTopics = [_topic]
+      }
+
       return nextState
 
     default:
@@ -389,11 +397,18 @@ export default (state, action) => {
         )
       }
       return setBlockType(nextState, action.payload.type, action.payload.id)
+
     case DEQUEUE_NEW_SOURCE:
-      let _que = state.newSources
-      const _id = action.payload.id
-      _que = _que.filter(q => q._id !== _id)
-      return { ...state, newSources: _que }
+      let _sourcesQueue = state.newSources
+      const _sourceId = action.payload.id
+      _sourcesQueue = _sourcesQueue.filter(q => q._id !== _sourceId)
+      return { ...state, newSources: _sourcesQueue }
+
+    case DEQUEUE_NEW_TOPIC:
+      let _topicsQueue = state.newTopics
+      const _topicId = action.payload.id
+      _topicsQueue = _topicsQueue.filter(q => q._id !== _topicId)
+      return { ...state, newTopics: _topicsQueue }
     default:
       return state
   }

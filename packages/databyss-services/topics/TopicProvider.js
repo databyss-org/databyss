@@ -26,6 +26,8 @@ const TopicProvider = ({ children, initialState, reducer }) => {
   }
 
   const getTopic = id => {
+    console.log(id)
+
     if (state.cache[id]) {
       return state.cache[id]
     }

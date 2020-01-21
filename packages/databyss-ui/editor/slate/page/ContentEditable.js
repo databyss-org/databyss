@@ -55,6 +55,7 @@ const SlateContentEditable = forwardRef(
       deleteBlocksByKeys,
       onNewBlockMenu,
       onEditSource,
+      onEditTopic,
       autoFocus,
       ...others
     },
@@ -418,7 +419,7 @@ const SlateContentEditable = forwardRef(
         autoFocus={autoFocus}
         onChange={onChange}
         renderBlock={renderBlock}
-        renderInline={renderInline(onEditSource)}
+        renderInline={renderInline(onEditSource, onEditTopic)}
         renderEditor={renderEditor}
         schema={schema}
         onKeyUp={onKeyUp}
