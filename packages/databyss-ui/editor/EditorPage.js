@@ -32,6 +32,7 @@ const EditorPage = ({ children, autoFocus }) => {
   checks to see if new source has been added
   adds the new source to the source provider
   */
+
   useEffect(
     () => {
       if (newSources && editableState) {
