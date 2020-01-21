@@ -7,12 +7,12 @@ import { useEditorContext } from './EditorProvider'
 const AutoSave = ({ interval }) => {
   const { dispatch: pageDispatch } = usePageContext()
   const [, , editorStateRef] = useEditorContext()
-  const [navState] = useNavigationContext()
+  const { modals } = useNavigationContext()
 
   useEffect(
     () => {
       // if modal is present, turn off autosave
-      const hasModal = navState.modals.length > 0
+      const hasModal = modals.length > 0
       let _timer
       if (!hasModal && !_timer) {
         _timer = setInterval(() => {
@@ -30,7 +30,7 @@ const AutoSave = ({ interval }) => {
         clearInterval(_timer)
       }
     },
-    [navState]
+    [modals]
   )
   return null
 }

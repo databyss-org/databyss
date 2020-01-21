@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { showModal } from '@databyss-org/ui/components/Navigation/NavigationProvider/actions'
 import { useEditorContext } from './EditorProvider'
 
 import {
@@ -36,25 +35,22 @@ const EditorPage = ({ children, autoFocus }) => {
   checks to see if new source has been added
   adds the new source to the source provider
   */
-  useEffect(
-    () => {
-      if (newSources && editableState) {
-        if (newSources.length > 0) {
-          newSources.forEach(s => {
-            const _source = {
-              _id: s._id,
-              text: { textValue: s.textValue, ranges: s.ranges },
-            }
-            if (!sourceState.cache[s._id]) {
-              setSource(_source)
-            }
-            dispatchEditor(removeSourceFromQueue(s._id))
-          })
-        }
+  useEffect(() => {
+    if (newSources && editableState) {
+      if (newSources.length > 0) {
+        newSources.forEach(s => {
+          const _source = {
+            _id: s._id,
+            text: { textValue: s.textValue, ranges: s.ranges },
+          }
+          if (!sourceState.cache[s._id]) {
+            setSource(_source)
+          }
+          dispatchEditor(removeSourceFromQueue(s._id))
+        })
       }
-    },
-    [sources]
-  )
+    }
+  }, [sources])
 
   const onActiveBlockIdChange = (id, editableState) =>
     dispatchEditor(setActiveBlockId(id, editableState))
@@ -122,7 +118,8 @@ const EditorPage = ({ children, autoFocus }) => {
   const setBlockRef = (id, ref, { value }) => {
     dispatchEditor(onSetBlockRef(id, ref, { value }))
   }
-  const [, dispatchNav] = useNavigationContext()
+
+  const { showModal } = useNavigationContext()
 
   // dont need blocks
   const onEditSource = (refId, { value }) => {
@@ -132,15 +129,13 @@ const EditorPage = ({ children, autoFocus }) => {
         dispatchEditor(updateSource(source, { value }))
       }
     }
-    dispatchNav(
-      showModal({
-        component: 'SOURCE',
-        props: {
-          sourceId: refId,
-          onUpdateSource,
-        },
-      })
-    )
+    showModal({
+      component: 'SOURCE',
+      props: {
+        sourceId: refId,
+        onUpdateSource,
+      },
+    })
   }
 
   const onSelectionChange = ({ value }) => {

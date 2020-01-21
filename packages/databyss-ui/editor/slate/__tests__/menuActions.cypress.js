@@ -6,7 +6,7 @@ import h from 'slate-hyperscript'
 import { toSlateJson, matchExpectedJson } from './_helpers'
 // import {  } from './../hotKeys'
 
-context('Editor', () => {
+context('Editor Menu Actions', () => {
   beforeEach(() => {
     cy.visit('http://localhost:6006/iframe.html?id=cypress-tests--slate-empty')
     cy.get('[contenteditable="true"]')

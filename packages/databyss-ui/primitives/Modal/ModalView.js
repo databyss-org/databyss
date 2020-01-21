@@ -18,14 +18,14 @@ const ModalView = ({
   >
     <View
       borderBottomWidth={1}
-      borderBottomColor="border.1"
+      borderBottomColor="border.2"
       paddingBottom="small"
       paddingTop="small"
     >
       <Grid singleRow columnGap="none" alignItems="center">
         {secondaryChild ? (
           <View flexBasis="25%" paddingLeft="small" alignItems="flex-start">
-            <Button variant="uiLink">{secondaryChild}</Button>
+            <Button variant="uiTextButton">{secondaryChild}</Button>
           </View>
         ) : null}
         <View
@@ -36,7 +36,7 @@ const ModalView = ({
           <Text variant="uiTextNormal">{title}</Text>
         </View>
         <View flexBasis="25%" paddingRight="small" alignItems="flex-end">
-          <Button variant="uiLink" onPress={onDismiss}>
+          <Button variant="uiTextButton" onPress={onDismiss}>
             {dismissChild}
           </Button>
         </View>

@@ -42,6 +42,16 @@ export default () => (
       </Grid>
       <Grid mb="small" rowGap="small" columnGap="small">
         <View>
+          <Button variant="uiTextButton">UI Text Button</Button>
+        </View>
+        <View>
+          <Button variant="uiTextButton" disabled>
+            UI Text Button (disabled)
+          </Button>
+        </View>
+      </Grid>
+      <Grid mb="small" rowGap="small" columnGap="small">
+        <View>
           <Button variant="uiLink">UI Link Button</Button>
         </View>
         <View>

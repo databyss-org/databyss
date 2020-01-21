@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import Login from '@databyss-org/ui/modules/Login/Login'
-import { ServiceContext } from '@databyss-org/services/components/ServiceProvider'
+import { ServiceContext } from '@databyss-org/services/lib/ServiceProvider'
 import {
   registerWithEmail,
   checkToken,

@@ -18,7 +18,7 @@ const button = () => ({
   ...effects.buttonShadow,
 })
 
-const linkButton = () => ({
+const textButton = () => ({
   paddingLeft: space.small,
   paddingRight: space.small,
   paddingTop: space.small,
@@ -37,9 +37,14 @@ const buttonVariants = {
     backgroundColor: 'background.0',
     color: 'secondary.3',
   },
-  uiLink: {
-    ...linkButton(),
+  uiTextButton: {
+    ...textButton(),
     color: 'secondary.3',
+  },
+  uiLink: {
+    padding: space.none,
+    color: 'secondary.3',
+    textDecoration: 'underline',
   },
   editorMarginMenu: {
     display: 'flex',
@@ -92,6 +97,10 @@ const buttonThemes = {
   primaryExternal: {},
   secondaryExternal: {},
   uiLink: {
+    hoverColor: 'background.1',
+    activeColor: 'background.2',
+  },
+  uiTextButton: {
     hoverColor: 'background.1',
     activeColor: 'background.2',
   },

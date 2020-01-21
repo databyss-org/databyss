@@ -53,6 +53,15 @@ export const TriggerError = () => {
       >
         Throw Error in Event Handler
       </Button>
+      <Button
+        onPress={async () => {
+          await new Promise(() => {
+            throw new Error('☠️Error was thrown in async event handler')
+          })
+        }}
+      >
+        Throw Error in Async Event Handler
+      </Button>
     </Section>
   )
 }

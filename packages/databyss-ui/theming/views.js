@@ -24,12 +24,28 @@ export const border = (thickness, color) => ({
   borderWidth: pxUnits(thickness),
 })
 
+export const hline = (thickness, color) => ({
+  borderBottomStyle: 'solid',
+  borderBottomColor: color,
+  borderBottomWidth: pxUnits(thickness),
+})
+
 const borderVariants = {
   none: border(0, 'transparent'),
   thinDark: border(1, 'border.0'),
-  thinLight: border(1, 'border.1'),
+  thinLight: border(1, 'border.2'),
   thickDark: border(3, 'border.0'),
-  thickLight: border(3, 'border.1'),
+  thickLight: border(3, 'border.2'),
+  formField: border(2, 'border.1'),
+  activeFormField: border(2, 'primary.0'),
+}
+
+const hlineVariants = {
+  none: hline(0, 'transparent'),
+  thinDark: hline(1, 'border.0'),
+  thinLight: hline(1, 'border.2'),
+  thickDark: hline(3, 'border.0'),
+  thickLight: hline(3, 'border.2'),
 }
 
 const widthVariants = {
@@ -43,7 +59,7 @@ const widthVariants = {
     maxWidth: pxUnits(850),
   },
   dialog: {
-    maxWidth: pxUnits(300),
+    maxWidth: pxUnits(320),
   },
 }
 
@@ -51,4 +67,5 @@ export default {
   paddingVariants,
   borderVariants,
   widthVariants,
+  hlineVariants,
 }

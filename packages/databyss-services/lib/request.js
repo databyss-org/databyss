@@ -1,21 +1,19 @@
-import { deleteAuthToken } from '../auth'
 import packageJson from '../package.json'
-import { ResourceNotFoundError } from './ResourceNotFoundError'
-import { NotAuthorizedError } from './NotAuthorizedError'
-import { NetworkUnavailableError } from './NetworkUnavailableError'
+import {
+  ResourceNotFoundError,
+  NotAuthorizedError,
+  NetworkUnavailableError,
+} from './errors'
 
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response
   }
   if (response.status === 401) {
-    deleteAuthToken()
-    // TODO: move redirect upstream
-    // window.location = '/login'
     throw new NotAuthorizedError('Unauthorized')
   }
   if (response.status === 404) {
-    throw new ResourceNotFoundError('not found')
+    throw new ResourceNotFoundError()
   }
   const errorMessage = response.statusText
   const error = new Error(errorMessage)

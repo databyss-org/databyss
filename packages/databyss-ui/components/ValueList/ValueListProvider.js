@@ -12,7 +12,12 @@ export const ValueListContext = createContext()
 const defaultText = { textValue: '', ranges: [] }
 
 // values is dicitonary
-export const ValueListProvider = ({ children, values, onChange }) => {
+export const ValueListProvider = ({
+  children,
+  values,
+  onChange,
+  ...otherContext
+}) => {
   const onItemChange = (path, value) => {
     const _value = _.get(values, path, defaultText)
     if (_.isEqual(_value, value)) {
@@ -34,7 +39,9 @@ export const ValueListProvider = ({ children, values, onChange }) => {
     onChange(_values)
   }
   return (
-    <ValueListContext.Provider value={[onItemChange, values]}>
+    <ValueListContext.Provider
+      value={{ onItemChange, values, ...otherContext }}
+    >
       {children}
     </ValueListContext.Provider>
   )
@@ -47,7 +54,7 @@ export const useValueListContext = () => useContext(ValueListContext)
  */
 
 export const ValueListItem = ({ children, path, ...others }) => {
-  const [onItemChange, values] = useValueListContext()
+  const { onItemChange, values } = useValueListContext()
 
   const value = _.get(values, path, defaultText)
   // lodash.get:
@@ -58,6 +65,7 @@ export const ValueListItem = ({ children, path, ...others }) => {
   return React.cloneElement(React.Children.only(children), {
     value,
     onChange: _value => onItemChange(path, _value),
+    'data-test-path': path,
     ...others,
   })
 }
