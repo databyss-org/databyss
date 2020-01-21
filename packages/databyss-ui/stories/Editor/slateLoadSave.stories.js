@@ -12,6 +12,12 @@ import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
+
+import TopicProvider from '@databyss-org/services/topics/TopicProvider'
+import topicReducer, {
+  initialState as topicInitialState,
+} from '@databyss-org/services/topics/reducer'
+
 import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
 import { seedPage } from '@databyss-org/services/pages/actions'
 import { initialState } from '@databyss-org/services/pages/reducer'
