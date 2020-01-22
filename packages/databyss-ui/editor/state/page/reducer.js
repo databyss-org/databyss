@@ -17,6 +17,8 @@ import {
   SHOW_FORMAT_MENU,
   SHOW_NEW_BLOCK_MENU,
   UPDATE_SOURCE,
+  UPDATE_TOPIC,
+  UPDATE_ATOMIC,
   DEQUEUE_NEW_SOURCE,
   DEQUEUE_NEW_TOPIC,
 } from './constants'
@@ -262,6 +264,34 @@ const backspace = (state, payload) => {
 }
 
 const updateSource = (state, source) => {
+  console.log(source)
+  const _state = cloneDeep(state)
+  _state.sources[source._id] = {
+    ranges: source.text.ranges,
+    textValue: source.text.textValue,
+  }
+  return _state
+}
+
+const updateAtomic = (state, type, atomic) => {
+  const _text = {
+    ranges: atomic.text.ranges,
+    textValue: atomic.text.textValue,
+  }
+  const _state = cloneDeep(state)
+  ;({
+    SOURCE: () => {
+      _state.sources[atomic._id] = _text
+    },
+    TOPIC: () => {
+      _state.topics[atomic._id] = _text
+    },
+  }[type]())
+
+  return _state
+}
+
+const updateTopic = (state, source) => {
   const _state = cloneDeep(state)
   _state.sources[source._id] = {
     ranges: source.text.ranges,
@@ -342,8 +372,8 @@ export default (state, action) => {
         ...state,
         showFormatMenu: action.payload.bool,
       }
-    case UPDATE_SOURCE: {
-      return updateSource(state, action.payload.source)
+    case UPDATE_ATOMIC: {
+      return updateAtomic(state, action.payload.type, action.payload.atomic)
     }
     case SET_ACTIVE_BLOCK_CONTENT: {
       const activeBlock = state.blocks[state.activeBlockId]

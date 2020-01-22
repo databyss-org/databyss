@@ -17,6 +17,7 @@ import {
   SHOW_NEW_BLOCK_MENU,
   UPDATE_SOURCE,
   UPDATE_TOPIC,
+  UPDATE_ATOMIC,
   DEQUEUE_NEW_SOURCE,
   DEQUEUE_NEW_TOPIC,
 } from './constants'
@@ -198,6 +199,17 @@ export function updateTopic(topic, editableState) {
     payload: {
       editableState,
       topic,
+    },
+  }
+}
+
+export function updateAtomic(atomic, type, editableState) {
+  return {
+    type: UPDATE_ATOMIC,
+    payload: {
+      editableState,
+      atomic,
+      type,
     },
   }
 }

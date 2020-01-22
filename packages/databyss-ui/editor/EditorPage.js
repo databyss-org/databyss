@@ -18,6 +18,7 @@ import {
   deleteBlocks,
   newBlockMenu,
   updateSource,
+  updateAtomic,
   updateTopic,
   removeTopicFromQueue,
   removeSourceFromQueue,
@@ -131,13 +132,15 @@ const EditorPage = ({ children, autoFocus }) => {
 
   const { showModal } = useNavigationContext()
 
-  const onEditSource = (refId, { value }) => {
-    // Editor function to dispatch with modal
-    const onUpdateSource = source => {
-      if (source) {
-        dispatchEditor(updateSource(source, { value }))
-      }
+  const onUpdateAtomic = (atomic, type, { value }) => {
+    console.log(atomic)
+    if (atomic) {
+      dispatchEditor(updateAtomic(atomic, type, { value }))
     }
+  }
+
+  const onEditSource = (refId, { value }) => {
+    const onUpdateSource = source => onUpdateAtomic(source, 'SOURCE', { value })
     showModal({
       component: 'SOURCE',
       props: {
@@ -149,12 +152,12 @@ const EditorPage = ({ children, autoFocus }) => {
 
   const onEditTopic = (refId, { value }) => {
     // Editor function to dispatch with modal
-    console.log('in editor page', refId)
-    const onUpdateTopic = topic => {
-      if (topic) {
-        dispatchEditor(updateTopic(topic, { value }))
-      }
-    }
+    // const onUpdateTopic = topic => {
+    //   if (topic) {
+    //     dispatchEditor(updateTopic(topic, { value }))
+    //   }
+    // }
+    const onUpdateTopic = onUpdateAtomic(topic, 'TOPIC', { value })
     showModal({
       component: 'TOPIC',
       props: {

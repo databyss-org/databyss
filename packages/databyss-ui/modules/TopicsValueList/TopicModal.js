@@ -21,13 +21,17 @@ const ControlList = ({ children, ...others }) => (
   </List>
 )
 
-const TopicModal = ({ topicId, visible, onUpdateTopic, id, ...others }) => {
+// TODO: UPDATE TOPICS IN STATE/SLATE
+// TODO: UPDATE TOPICS ROUTE IN DATABASE
+
+const TopicModal = ({ topicId, visible, onUpdateTopic, id }) => {
   const { setTopic } = useTopicContext()
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
 
   const onBlur = () => {
     if (values) {
+      console.log('blur')
       setTopic(values)
     }
   }

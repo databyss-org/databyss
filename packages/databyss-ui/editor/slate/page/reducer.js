@@ -16,6 +16,8 @@ import {
   DELETE_BLOCK,
   DELETE_BLOCKS,
   UPDATE_SOURCE,
+  UPDATE_TOPIC,
+  UPDATE_ATOMIC,
 } from './../../state/page/constants'
 
 export const newBlock = id =>
@@ -230,16 +232,16 @@ const deleteBlockById = id => (editor, value, next) => {
 /*
 updates all sources provided in the ID list
 */
-const onUpdateSource = (source, blocks) => (editor, value, next) => {
+const onUpdateAtomic = (atomic, blocks, type) => (editor, value, next) => {
   // generates a list of blocks to update
   const _idList = Object.keys(blocks).filter(
-    block => blocks[block].refId === source._id
+    block => blocks[block].refId === atomic._id
   )
   _idList.forEach(id => {
-    const _newNodes = stateToSlateMarkup(source.text).nodes
+    const _newNodes = stateToSlateMarkup(atomic.text).nodes
     const _block = Block.fromJSON({
       object: 'block',
-      type: 'SOURCE',
+      type: type,
       nodes: _newNodes,
     })
     const _innerHtml = serializeNodeToHtml(_block)
@@ -251,11 +253,11 @@ const onUpdateSource = (source, blocks) => (editor, value, next) => {
           text: sanitizer(_innerHtml),
         },
       ],
-      type: 'SOURCE',
+      type: type,
     }
     const _tempNode = Block.fromJSON({
       object: 'block',
-      type: 'SOURCE',
+      type: type,
       key: id,
       nodes: [textBlock],
     })
@@ -331,9 +333,30 @@ export default (editableState, action) => {
     case UPDATE_SOURCE: {
       return {
         ...editableState,
-        editorCommands: onUpdateSource(
+        editorCommands: onUpdateAtomic(
           action.payload.source,
-          editableState.blocks
+          editableState.blocks,
+          'SOURCE'
+        ),
+      }
+    }
+    case UPDATE_TOPIC: {
+      return {
+        ...editableState,
+        editorCommands: onUpdateAtomic(
+          action.payload.topic,
+          editableState.blocks,
+          'TOPIC'
+        ),
+      }
+    }
+    case UPDATE_ATOMIC: {
+      return {
+        ...editableState,
+        editorCommands: onUpdateAtomic(
+          action.payload.atomic,
+          editableState.blocks,
+          action.payload.type
         ),
       }
     }
