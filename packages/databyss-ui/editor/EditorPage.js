@@ -17,9 +17,7 @@ import {
   deleteBlock,
   deleteBlocks,
   newBlockMenu,
-  updateSource,
   updateAtomic,
-  updateTopic,
   removeTopicFromQueue,
   removeSourceFromQueue,
 } from './state/page/actions'

@@ -1,4 +1,4 @@
-import { FETCH_TOPIC, SAVE_TOPIC, CACHE_TOPIC } from './constants'
+import { SAVE_TOPIC, CACHE_TOPIC } from './constants'
 
 export const initialState = {
   cache: {},

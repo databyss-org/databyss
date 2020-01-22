@@ -15,8 +15,6 @@ import {
   START_TAG,
   DELETE_BLOCK,
   DELETE_BLOCKS,
-  UPDATE_SOURCE,
-  UPDATE_TOPIC,
   UPDATE_ATOMIC,
 } from './../../state/page/constants'
 
@@ -241,7 +239,7 @@ const onUpdateAtomic = (atomic, blocks, type) => (editor, value, next) => {
     const _newNodes = stateToSlateMarkup(atomic.text).nodes
     const _block = Block.fromJSON({
       object: 'block',
-      type: type,
+      type,
       nodes: _newNodes,
     })
     const _innerHtml = serializeNodeToHtml(_block)
@@ -253,11 +251,11 @@ const onUpdateAtomic = (atomic, blocks, type) => (editor, value, next) => {
           text: sanitizer(_innerHtml),
         },
       ],
-      type: type,
+      type,
     }
     const _tempNode = Block.fromJSON({
       object: 'block',
-      type: type,
+      type,
       key: id,
       nodes: [textBlock],
     })
