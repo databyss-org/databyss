@@ -290,8 +290,6 @@ const SlateContentEditable = forwardRef(
       }
 
       if (isInlineAtomicSelected(editor) && event.key === 'Enter') {
-        // const _id = editor.value.anchorBlock.key
-        // TODO: MAKE THIS ATOMIC GENERIC
         editAtomic(editor)
         return event.preventDefault()
       }

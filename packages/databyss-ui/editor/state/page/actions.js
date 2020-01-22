@@ -183,26 +183,6 @@ export function newBlockMenu(bool, editableState) {
   }
 }
 
-export function updateSource(source, editableState) {
-  return {
-    type: UPDATE_SOURCE,
-    payload: {
-      editableState,
-      source,
-    },
-  }
-}
-
-export function updateTopic(topic, editableState) {
-  return {
-    type: UPDATE_TOPIC,
-    payload: {
-      editableState,
-      topic,
-    },
-  }
-}
-
 export function updateAtomic(atomic, type, editableState) {
   return {
     type: UPDATE_ATOMIC,

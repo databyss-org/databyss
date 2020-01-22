@@ -21,8 +21,6 @@ const ControlList = ({ children, ...others }) => (
   </List>
 )
 
-// TODO: UPDATE TOPICS IN STATE/SLATE
-
 const TopicModal = ({ atomicId, visible, onUpdate, id }) => {
   const { setTopic } = useTopicContext()
   const [values, setValues] = useState(null)
