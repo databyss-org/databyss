@@ -261,16 +261,6 @@ const backspace = (state, payload) => {
   return cleanUpState(_state)
 }
 
-const updateSource = (state, source) => {
-  console.log(source)
-  const _state = cloneDeep(state)
-  _state.sources[source._id] = {
-    ranges: source.text.ranges,
-    textValue: source.text.textValue,
-  }
-  return _state
-}
-
 const updateAtomic = (state, type, atomic) => {
   const _text = {
     ranges: atomic.text.ranges,
@@ -286,15 +276,6 @@ const updateAtomic = (state, type, atomic) => {
     },
   }[type]())
 
-  return _state
-}
-
-const updateTopic = (state, source) => {
-  const _state = cloneDeep(state)
-  _state.sources[source._id] = {
-    ranges: source.text.ranges,
-    textValue: source.text.textValue,
-  }
   return _state
 }
 

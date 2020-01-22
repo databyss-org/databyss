@@ -138,12 +138,12 @@ const EditorPage = ({ children, autoFocus }) => {
         dispatchEditor(updateAtomic(data, type, { value }))
       }
     }
-    const _idType = { [{ SOURCE: 'sourceId', TOPIC: 'topicId' }[type]]: refId }
+
     showModal({
       component: type,
       props: {
         onUpdate,
-        ..._idType,
+        atomicId: refId,
       },
     })
   }

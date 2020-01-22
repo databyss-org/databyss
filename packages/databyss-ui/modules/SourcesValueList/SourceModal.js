@@ -21,14 +21,13 @@ const ControlList = ({ children, ...others }) => (
   </List>
 )
 
-const SourceModal = ({ sourceId, visible, onUpdate, id }) => {
+const SourceModal = ({ atomicId, visible, onUpdate, id }) => {
   const { setSource } = useSourceContext()
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
 
   const onBlur = () => {
     if (values) {
-      console.log(values)
       setSource(values)
     }
   }
@@ -53,7 +52,7 @@ const SourceModal = ({ sourceId, visible, onUpdate, id }) => {
       title="Edit Source"
       dismissChild="done"
     >
-      <SourceLoader sourceId={sourceId}>
+      <SourceLoader sourceId={atomicId}>
         {source => (
           <ValueListProvider onChange={setValues} values={values || source}>
             <Grid>
