@@ -24,7 +24,7 @@ import {
   hasSelection,
   noAtomicInSelection,
   getSelectedBlocks,
-  isInlineSourceSelected,
+  isInlineAtomicSelected,
 } from './../slateUtils'
 
 const schema = {
@@ -288,8 +288,9 @@ const SlateContentEditable = forwardRef(
         onNewBlockMenu(false, editor)
       }
 
-      if (isInlineSourceSelected(editor) && event.key === 'Enter') {
+      if (isInlineAtomicSelected(editor) && event.key === 'Enter') {
         const _id = editor.value.anchorBlock.key
+        // TODO: MAKE THIS ATOMIC GENERIC
         editSource(_id, editor)
         return event.preventDefault()
       }

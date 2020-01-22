@@ -338,10 +338,10 @@ export const newAtomicBlock = (id, type, text, marks) => {
   return _block
 }
 
-export const isInlineSourceSelected = ({ value }) => {
+export const isInlineAtomicSelected = ({ value }) => {
   if (
     value.selection.focus.isInNode(value.anchorBlock) &&
-    value.anchorBlock.type === 'SOURCE' &&
+    isAtomicInlineType(value.anchorBlock.type) &&
     !value.selection.focus.isAtStartOfNode(value.anchorBlock) &&
     !value.selection.focus.isAtEndOfNode(value.anchorBlock)
   ) {
