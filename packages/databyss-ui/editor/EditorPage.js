@@ -132,14 +132,12 @@ const EditorPage = ({ children, autoFocus }) => {
 
   const { showModal } = useNavigationContext()
 
-  const onUpdateAtomic = (atomic, type, { value }) => {
-    if (atomic) {
-      dispatchEditor(updateAtomic(atomic, type, { value }))
-    }
-  }
-
   const onEditAtomic = (refId, type, { value }) => {
-    const onUpdate = data => onUpdateAtomic(data, type, { value })
+    const onUpdate = data => {
+      if (data) {
+        dispatchEditor(updateAtomic(data, type, { value }))
+      }
+    }
     const _idType = { [{ SOURCE: 'sourceId', TOPIC: 'topicId' }[type]]: refId }
     showModal({
       component: type,

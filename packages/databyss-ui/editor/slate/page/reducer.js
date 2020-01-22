@@ -230,7 +230,7 @@ const deleteBlockById = id => (editor, value, next) => {
 }
 
 /*
-updates all sources provided in the ID list
+updates all atomics provided in the ID list
 */
 const onUpdateAtomic = (atomic, blocks, type) => (editor, value, next) => {
   // generates a list of blocks to update
