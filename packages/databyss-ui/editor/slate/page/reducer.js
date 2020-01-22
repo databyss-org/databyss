@@ -330,26 +330,6 @@ export default (editableState, action) => {
         editorCommands: _nextEditorCommands,
       }
     }
-    case UPDATE_SOURCE: {
-      return {
-        ...editableState,
-        editorCommands: onUpdateAtomic(
-          action.payload.source,
-          editableState.blocks,
-          'SOURCE'
-        ),
-      }
-    }
-    case UPDATE_TOPIC: {
-      return {
-        ...editableState,
-        editorCommands: onUpdateAtomic(
-          action.payload.topic,
-          editableState.blocks,
-          'TOPIC'
-        ),
-      }
-    }
     case UPDATE_ATOMIC: {
       return {
         ...editableState,

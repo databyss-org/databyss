@@ -133,7 +133,6 @@ const EditorPage = ({ children, autoFocus }) => {
   const { showModal } = useNavigationContext()
 
   const onUpdateAtomic = (atomic, type, { value }) => {
-    console.log(atomic)
     if (atomic) {
       dispatchEditor(updateAtomic(atomic, type, { value }))
     }
@@ -151,13 +150,7 @@ const EditorPage = ({ children, autoFocus }) => {
   }
 
   const onEditTopic = (refId, { value }) => {
-    // Editor function to dispatch with modal
-    // const onUpdateTopic = topic => {
-    //   if (topic) {
-    //     dispatchEditor(updateTopic(topic, { value }))
-    //   }
-    // }
-    const onUpdateTopic = onUpdateAtomic(topic, 'TOPIC', { value })
+    const onUpdateTopic = topic => onUpdateAtomic(topic, 'TOPIC', { value })
     showModal({
       component: 'TOPIC',
       props: {
