@@ -34,8 +34,7 @@ const EditorInline = React.forwardRef(
 
     const onClick = () => {
       if (isAtomicInlineType(node.type) && isSelected) {
-        console.log('in editor inline', refId)
-        onEdit(refId, { value: editor.value })
+        onEdit(refId, node.type, { value: editor.value })
       }
     }
 

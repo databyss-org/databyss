@@ -54,9 +54,8 @@ const SlateContentEditable = forwardRef(
       deleteBlockByKey,
       deleteBlocksByKeys,
       onNewBlockMenu,
-      onEditSource,
-      onEditTopic,
       autoFocus,
+      onEditAtomic,
       ...others
     },
     ref
@@ -214,9 +213,11 @@ const SlateContentEditable = forwardRef(
     }
 
     // this will get removed when paths are implemented
-    const editSource = (_id, editor) => {
-      const _refId = stateRef.current.blocks[_id].refId
-      onEditSource(_refId, editor)
+    const editAtomic = editor => {
+      const { key, type } = editor.value.anchorBlock
+      const _refId = stateRef.current.blocks[key].refId
+      //  onEditSource(_refId, editor)
+      onEditAtomic(_refId, type, editor)
     }
 
     const onKeyUp = (event, editor, next) => {
@@ -289,9 +290,9 @@ const SlateContentEditable = forwardRef(
       }
 
       if (isInlineAtomicSelected(editor) && event.key === 'Enter') {
-        const _id = editor.value.anchorBlock.key
+        // const _id = editor.value.anchorBlock.key
         // TODO: MAKE THIS ATOMIC GENERIC
-        editSource(_id, editor)
+        editAtomic(editor)
         return event.preventDefault()
       }
 
@@ -420,7 +421,7 @@ const SlateContentEditable = forwardRef(
         autoFocus={autoFocus}
         onChange={onChange}
         renderBlock={renderBlock}
-        renderInline={renderInline(onEditSource, onEditTopic)}
+        renderInline={renderInline(onEditAtomic)}
         renderEditor={renderEditor}
         schema={schema}
         onKeyUp={onKeyUp}

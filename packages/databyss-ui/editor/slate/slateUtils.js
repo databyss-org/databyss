@@ -81,19 +81,8 @@ export const toSlateJson = (editorState, pageBlocks) => ({
   },
 })
 
-export const renderInline = (onEditSource, onEditTopic) => (
-  { node, attributes },
-  editor,
-  next
-) => {
+export const renderInline = onEdit => ({ node, attributes }, editor, next) => {
   const isSelected = editor.value.selection.focus.isInNode(node)
-  console.log('node', node.type)
-
-  // switch statement of both functions
-  const onEdit = {
-    SOURCE: onEditSource,
-    TOPIC: onEditTopic,
-  }[node.type]
 
   if (isAtomicInlineType(node.type)) {
     return (

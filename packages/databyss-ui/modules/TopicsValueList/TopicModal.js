@@ -22,16 +22,14 @@ const ControlList = ({ children, ...others }) => (
 )
 
 // TODO: UPDATE TOPICS IN STATE/SLATE
-// TODO: UPDATE TOPICS ROUTE IN DATABASE
 
-const TopicModal = ({ topicId, visible, onUpdateTopic, id }) => {
+const TopicModal = ({ topicId, visible, onUpdate, id }) => {
   const { setTopic } = useTopicContext()
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
 
   const onBlur = () => {
     if (values) {
-      console.log('blur')
       setTopic(values)
     }
   }
@@ -44,7 +42,7 @@ const TopicModal = ({ topicId, visible, onUpdateTopic, id }) => {
     // hide modal in navProvider
     hideModal()
     // update to editor provider
-    onUpdateTopic(values)
+    onUpdate(values)
   }
 
   return (

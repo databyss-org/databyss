@@ -138,24 +138,14 @@ const EditorPage = ({ children, autoFocus }) => {
     }
   }
 
-  const onEditSource = (refId, { value }) => {
-    const onUpdateSource = source => onUpdateAtomic(source, 'SOURCE', { value })
+  const onEditAtomic = (refId, type, { value }) => {
+    const onUpdate = data => onUpdateAtomic(data, type, { value })
+    const _idType = { [{ SOURCE: 'sourceId', TOPIC: 'topicId' }[type]]: refId }
     showModal({
-      component: 'SOURCE',
+      component: type,
       props: {
-        sourceId: refId,
-        onUpdateSource,
-      },
-    })
-  }
-
-  const onEditTopic = (refId, { value }) => {
-    const onUpdateTopic = topic => onUpdateAtomic(topic, 'TOPIC', { value })
-    showModal({
-      component: 'TOPIC',
-      props: {
-        topicId: refId,
-        onUpdateTopic,
+        onUpdate,
+        ..._idType,
       },
     })
   }
@@ -174,9 +164,8 @@ const EditorPage = ({ children, autoFocus }) => {
     deleteBlockByKey,
     deleteBlocksByKeys,
     onNewBlockMenu,
-    onEditSource,
-    onEditTopic,
     autoFocus,
+    onEditAtomic,
   })
 }
 
