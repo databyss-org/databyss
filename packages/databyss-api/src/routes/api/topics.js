@@ -22,7 +22,7 @@ router.post(
       _id,
     }
 
-    // if source exists update it and exit
+    // if topic exists update it and exit
     try {
       let topic = await Topic.findOne({ _id })
       if (topic) {
@@ -33,7 +33,7 @@ router.post(
           { new: true }
         ).then(response => res.json(response))
       } else {
-        // if new source has been added
+        // if new topic has been added
         const topic = new Topic(topicFields)
         const post = await topic.save()
         res.json(post)
