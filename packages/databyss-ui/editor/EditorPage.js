@@ -15,6 +15,7 @@ import {
   clearBlock,
   deleteBlock,
   deleteBlocks,
+  cutBlocks,
   onPaste,
   onSetBlockRef,
   newBlockMenu,
@@ -110,6 +111,10 @@ const EditorPage = ({ children, autoFocus }) => {
   const deleteBlocksByKeys = (idList, { value }) => {
     dispatchEditor(deleteBlocks(idList, { value }))
   }
+
+  const onCutBlocks = (idList, newRef, newId, { value }) => {
+    dispatchEditor(cutBlocks(idList, newRef, newId, { value }))
+  }
   const onNewBlockMenu = (bool, { value }) => {
     dispatchEditor(newBlockMenu(bool, { value }))
   }
@@ -158,6 +163,7 @@ const EditorPage = ({ children, autoFocus }) => {
     onSetBlockType,
     deleteBlockByKey,
     deleteBlocksByKeys,
+    onCutBlocks,
     onPasteAction,
     setBlockRef,
     onNewBlockMenu,

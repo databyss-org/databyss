@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
-import { Editor, getEventTransfer } from 'slate-react'
+import { Editor, getEventTransfer, cloneFragment } from 'slate-react'
 import _ from 'lodash'
 import ObjectId from 'bson-objectid'
 import forkRef from '@databyss-org/ui/lib/forkRef'
@@ -26,7 +26,6 @@ import {
   noAtomicInSelection,
   getSelectedBlocks,
   isInlineSourceSelected,
-  NewEditor,
 } from './../slateUtils'
 
 import {
@@ -34,6 +33,7 @@ import {
   getFragFromText,
   isFragmentFullBlock,
   trimFragment,
+  updateClipboardRefs,
 } from './../clipboard'
 
 const schema = {
@@ -62,12 +62,14 @@ const SlateContentEditable = forwardRef(
       onSetBlockType,
       deleteBlockByKey,
       deleteBlocksByKeys,
+      deleteBlockListFromState,
       onPasteAction,
       setBlockRef,
       onNewBlockMenu,
       onEditSource,
       autoFocus,
       onSelectionChange,
+      onCutBlocks,
       ...others
     },
     ref
@@ -260,6 +262,15 @@ const SlateContentEditable = forwardRef(
       deleteBlocksByKeys(_nodesToDelete, editor)
     }
 
+    const cutBlocksFromSelection = editor => {
+      const _newBlockRef = ObjectId().toHexString()
+      const _newBlockId = ObjectId().toHexString()
+
+      const _nodeList = getSelectedBlocks(editor.value)
+      const _nodesToDelete = _nodeList.map(n => n.key)
+      onCutBlocks(_nodesToDelete, _newBlockRef, _newBlockId, editor)
+    }
+
     const renderEditor = (_, editor, next) => {
       const children = next()
 
@@ -305,7 +316,7 @@ const SlateContentEditable = forwardRef(
         onNewActiveBlock(blockProperties, _editorState)
       }
 
-      if (event.key === 'Backspace' || hotKeys.isCut(event)) {
+      if (event.key === 'Backspace') {
         const blockProperties = {
           activeBlockId: editor.value.anchorBlock.key,
           nextBlockId: editor.value.nextBlock
@@ -356,14 +367,13 @@ const SlateContentEditable = forwardRef(
       // check for selection
 
       if (hasSelection(editor.value)) {
-        if (event.key === 'Backspace' || hotKeys.isCut(event)) {
+        if (event.key === 'Backspace') {
           if (!noAtomicInSelection(editor.value)) {
             // EDGE CASE: prevent block from being deleted when empty block highlighted
             if (fragment.text === '') {
               deleteBlocksFromSelection(editor)
               return event.preventDefault()
             }
-
             // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
             // case 1
             // if atomic block is highlighted
@@ -372,6 +382,7 @@ const SlateContentEditable = forwardRef(
               return event.preventDefault()
             }
             // case 2
+
             deleteBlocksFromSelection(editor)
             return event.preventDefault()
           }
@@ -396,7 +407,7 @@ const SlateContentEditable = forwardRef(
       if (editor.value.previousBlock) {
         if (
           isAtomicInlineType(editor.value.previousBlock.type) &&
-          (event.key === 'Backspace' || hotKeys.isCut(event)) &&
+          event.key === 'Backspace' &&
           editor.value.selection.focus.isAtStartOfNode(
             editor.value.anchorBlock
           ) &&
@@ -433,10 +444,7 @@ const SlateContentEditable = forwardRef(
           }
 
           // allow backspace
-          if (
-            (event.key === 'Backspace' || hotKeys.isCut(event)) &&
-            editor.value.previousBlock.text
-          ) {
+          if (event.key === 'Backspace' && editor.value.previousBlock.text) {
             if (
               !editor.value.selection.focus.isAtStartOfNode(
                 editor.value.anchorBlock
@@ -464,7 +472,7 @@ const SlateContentEditable = forwardRef(
           return next()
         }
         // for windows machines
-        if (hotKeys.isCopy(event) || hotKeys.isCut(event)) {
+        if (hotKeys.isCopy(event)) {
           return next()
         }
         return event.preventDefault()
@@ -481,6 +489,19 @@ const SlateContentEditable = forwardRef(
         OnToggleMark('location', editor)
       }
       return next()
+    }
+
+    const onCut = (event, editor, next) => {
+      cloneFragment(event, editor)
+      window.requestAnimationFrame(() => {
+        if (isFragmentFullBlock(editor.value.fragment, editor.value.document)) {
+          cutBlocksFromSelection(editor)
+        } else {
+          editor.delete()
+        }
+      })
+
+      return true
     }
 
     const onPaste = (event, editor) => {
@@ -508,7 +529,6 @@ const SlateContentEditable = forwardRef(
 
       // if anchor block is not empty and first fragment is atomic
       // prompt a warning that pasting atomic blocks is only
-
       if (
         type === 'fragment' ||
         isFragmentFullBlock(fragment, value.document)
@@ -520,40 +540,21 @@ const SlateContentEditable = forwardRef(
         // get list of refId and Id of fragment to paste,
         // this list is used to keep slate and state in sync
         let _blockList = blocksToState(_frag.nodes)
-        // look up refId's for all sources and replace them in _blockList and _frag
 
-        _blockList.forEach((b, i) => {
-          const _block = b[Object.keys(b)[0]]
-          if (_block.type === 'SOURCE') {
-            // look up source in dictionary
+        /*
+        looks up the refId of the fragment and replaces it with an updated value, paste blocks can become stale when copying and pasting
 
-            const _dictSource = stateRef.current.sources[_block.refId]
-            // replace in blockList
-            _blockList[i] = {
-              [_block._id]: {
-                ..._block,
-                text: _dictSource.textValue,
-                ranges: _dictSource.ranges,
-              },
-            }
-            // look up first instance of refID in state
-            const _idList = Object.keys(stateRef.current.blocks)
-            const _id = _idList.find(id => {
-              if (stateRef.current.blocks[id].refId === _block.refId) {
-                return true
-              }
-              return false
-            })
-            const _node = editor.value.document.getNode(_id).toJSON()
-            const _editor = NewEditor()
-            _editor.insertFragment(_frag)
-            const _nodeList = _editor.value.document.nodes.map(n => n.key)
-            _editor.replaceNodeByKey(_nodeList.get(i), _node)
-            _frag = _editor.value.document
-            // replace in fragment
-          }
-        })
-        _blockList = blocksToState(_frag.nodes)
+        this function takes a blockList, fragment, value and currentState and returns updated { blockList, fragment } 
+        */
+
+        const { blockList, frag } = updateClipboardRefs(
+          _blockList,
+          _frag,
+          stateRef.current,
+          editor.value
+        )
+        _blockList = blockList
+        _frag = frag
 
         const _pasteData = {
           anchorKey,
@@ -672,6 +673,7 @@ const SlateContentEditable = forwardRef(
       <Editor
         value={_editableState.value}
         onPaste={onPaste}
+        onCut={onCut}
         onSelect={onSelect}
         readOnly={modals.length > 0}
         ref={forkRef(ref, editableRef)}

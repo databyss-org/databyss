@@ -19,6 +19,7 @@ import {
   SET_BLOCK_REF,
   UPDATE_SOURCE,
   ON_SELECTION,
+  ON_CUT,
 } from './../../state/page/constants'
 
 export const newBlockWithRef = (id, refId) =>
@@ -145,91 +146,94 @@ const clearBlockById = id => (editor, value, next) => {
 }
 
 const setBlockType = (id, type) => (editor, value, next) => {
-  if (isAtomicInlineType(type)) {
-    let _node = editor.value.document.getNode(id)
-    // preserve refId
-    const _refId = _node.data.get('refId')
-    let _marks = _node.getMarks().toJSON()
-    _node = { ..._node.toJSON(), data: { refId: _refId }, key: id }
+  let _node = editor.value.document.getNode(id)
+  if (_node) {
+    if (isAtomicInlineType(type)) {
+      // _node = editor.value.document.getNode(id)
+      // preserve refId
+      const _refId = _node.data.get('refId')
+      let _marks = _node.getMarks().toJSON()
+      _node = { ..._node.toJSON(), data: { refId: _refId }, key: id }
 
-    /* eslint new-cap: 1 */
-    _node = new Block.fromJSON(_node)
-    // create new block from node
-    // mock editor to correct marks
-    const _editor = NewEditor()
-    _editor.insertBlock(_node)
-    // issue #117
-    // removes @ or #
-    _editor.removeTextByKey(
-      _editor.value.document.getNode(id).getFirstText().key,
-      0,
-      1
-    )
-    _node = _editor.value.document.getNode(id)
-
-    let _text = _node.text
-    // if left over @ or #
-    _text = isTextAtomic(_text) ? _text.trim().substring(1) : _text.trim()
-
-    // issue #116
-    // removes location from atomic types
-    if (_marks.find(m => m.type === 'location')) {
-      let _ranges = getRangesFromBlock(_node.toJSON()).ranges
-      _ranges = _ranges.filter(r => r.marks.includes('location'))
-      _ranges.forEach(r => {
-        _editor
-          .moveToStartOfNode(_node)
-          .moveForward(r.offset)
-          .moveFocusForward(r.length)
-          .removeMark('location')
-          .moveFocusBackward(r.length)
-          .moveBackward(r.offset)
-      })
-      // update node and marks
+      /* eslint new-cap: 1 */
+      _node = new Block.fromJSON(_node)
+      // create new block from node
+      // mock editor to correct marks
+      const _editor = NewEditor()
+      _editor.insertBlock(_node)
+      // issue #117
+      // removes @ or #
+      _editor.removeTextByKey(
+        _editor.value.document.getNode(id).getFirstText().key,
+        0,
+        1
+      )
       _node = _editor.value.document.getNode(id)
-      _marks = _node.getMarks().toJSON()
+
+      let _text = _node.text
+      // if left over @ or #
+      _text = isTextAtomic(_text) ? _text.trim().substring(1) : _text.trim()
+
+      // issue #116
+      // removes location from atomic types
+      if (_marks.find(m => m.type === 'location')) {
+        let _ranges = getRangesFromBlock(_node.toJSON()).ranges
+        _ranges = _ranges.filter(r => r.marks.includes('location'))
+        _ranges.forEach(r => {
+          _editor
+            .moveToStartOfNode(_node)
+            .moveForward(r.offset)
+            .moveFocusForward(r.length)
+            .removeMark('location')
+            .moveFocusBackward(r.length)
+            .moveBackward(r.offset)
+        })
+        // update node and marks
+        _node = _editor.value.document.getNode(id)
+        _marks = _node.getMarks().toJSON()
+      }
+
+      if (_marks.length) {
+        _text = serializeNodeToHtml(_node)
+      }
+
+      const _block = Block.fromJSON({
+        object: 'block',
+        data: { refId: _node.data.get('refId') },
+        type,
+        key: _node.key,
+        nodes: [
+          {
+            object: 'text',
+            text: '',
+            marks: [],
+          },
+          {
+            object: 'inline',
+            type,
+            data: {},
+            nodes: [
+              {
+                object: 'text',
+                text: sanitizer(_text),
+                marks: _marks,
+              },
+            ],
+          },
+          {
+            object: 'text',
+            text: '',
+            marks: [],
+          },
+        ],
+      })
+
+      editor.replaceNodeByKey(id, _block)
+    } else {
+      editor.setNodeByKey(id, { type })
     }
-
-    if (_marks.length) {
-      _text = serializeNodeToHtml(_node)
-    }
-
-    const _block = Block.fromJSON({
-      object: 'block',
-      data: { refId: _node.data.get('refId') },
-      type,
-      key: _node.key,
-      nodes: [
-        {
-          object: 'text',
-          text: '',
-          marks: [],
-        },
-        {
-          object: 'inline',
-          type,
-          data: {},
-          nodes: [
-            {
-              object: 'text',
-              text: sanitizer(_text),
-              marks: _marks,
-            },
-          ],
-        },
-        {
-          object: 'text',
-          text: '',
-          marks: [],
-        },
-      ],
-    })
-
-    editor.replaceNodeByKey(id, _block)
-  } else {
-    editor.setNodeByKey(id, { type })
+    next(editor, value)
   }
-  next(editor, value)
 }
 
 const backspace = () => (editor, value, next) => {
@@ -351,6 +355,23 @@ const deleteBlocksByIds = idList => (editor, value, next) => {
   next(editor, value)
 }
 
+export const onCut = (refId, id) => (editor, value, next) => {
+  editor.delete()
+  // if current block is atomic, set block to entry
+  if (
+    isAtomicInlineType(editor.value.anchorBlock.type) ||
+    editor.value.anchorBlock.text.length === 0
+  ) {
+    const _tempKey = editor.value.anchorBlock.key
+    const _block = editor.value.anchorBlock.toJSON()
+    _block.type = 'ENTRY'
+    _block.data = { refId }
+    _block.key = id
+    editor.replaceNodeByKey(_tempKey, _block)
+  }
+  next(editor, value)
+}
+
 export const onPaste = pasteData => (editor, value, next) => {
   const {
     anchorKey,
@@ -366,6 +387,7 @@ export const onPaste = pasteData => (editor, value, next) => {
   let _offset = offset
   const _fragment = fragment
   let deleteForward
+  let deleteCurrent
   let mergeForward
 
   // get anchor refID from document
@@ -422,14 +444,21 @@ export const onPaste = pasteData => (editor, value, next) => {
     /*
       * create empty block and move caret back to previous block
     */
+    let _tempKey
+    let _tempBlock
     const _emptyBlock = newBlock()
     editor.insertBlock(_emptyBlock)
-    const _tempKey = editor.value.nextBlock.key
-    const _tempBlock = editor.value.nextBlock.toJSON()
-    //   _tempBlock.key = afterBlockId
+    if (editor.value.nextBlock) {
+      _tempKey = editor.value.nextBlock.key
+      _tempBlock = editor.value.nextBlock.toJSON()
+      editor.moveBackward(1)
+      deleteForward = true
+    } else {
+      _tempKey = editor.value.anchorBlock.key
+      _tempBlock = editor.value.anchorBlock.toJSON()
+      deleteForward = true
+    }
     editor.replaceNodeByKey(_tempKey, _tempBlock)
-    editor.moveBackward(1)
-    deleteForward = true
   }
 
   let _list = blockList.reverse()
@@ -440,11 +469,13 @@ export const onPaste = pasteData => (editor, value, next) => {
   if (deleteForward) {
     const _deleteKey = editor.value.nextBlock.key
     editor.removeNodeByKey(_deleteKey)
-    const _tempKey = editor.value.nextBlock.key
-    const _tempBlock = editor.value.nextBlock.toJSON()
-    _tempBlock.key = afterBlockId
-    _tempBlock.data = { refId: afterBlockRef }
-    editor.replaceNodeByKey(_tempKey, _tempBlock)
+    if (editor.value.nextBlock) {
+      const _tempKey = editor.value.nextBlock.key
+      const _tempBlock = editor.value.nextBlock.toJSON()
+      _tempBlock.key = afterBlockId
+      _tempBlock.data = { refId: afterBlockRef }
+      editor.replaceNodeByKey(_tempKey, _tempBlock)
+    }
   }
 
   if (mergeForward) {
@@ -611,7 +642,12 @@ export default (editableState, action) => {
         editorCommands: onPaste(action.payload.pasteData),
       }
     }
-
+    case ON_CUT: {
+      return {
+        ...editableState,
+        editorCommands: onCut(action.payload.refId, action.payload.id),
+      }
+    }
     case ON_SELECTION: {
       return {
         ...editableState,

@@ -160,3 +160,55 @@ export const isFragmentFullBlock = (fragment, document) => {
   }
   return false
 }
+
+/*
+        looks up the refId of the fragment and replaces it with an updated value, paste blocks can become stale when copying and pasting
+
+        this function takes a blockList, fragment, value and currentState and returns updated { blockList, fragment } 
+        */
+
+export const updateClipboardRefs = (blockList, fragment, state, value) => {
+  let _blockList = blockList
+  let _frag = fragment
+
+  _blockList.forEach((b, i) => {
+    const _block = b[Object.keys(b)[0]]
+    if (_block.type === 'SOURCE') {
+      // look up source in dictionary
+      const _dictSource = state.sources[_block.refId]
+
+      // if values exist in our current state, replace with an updated value
+      if (_dictSource) {
+        // Edge case: when looking up atomic block by ref but a cut has occured and refId block is empty, do not perform a lookup
+        if (_dictSource.textValue.length === 0) {
+          return
+        }
+        // replace in blockList
+        _blockList[i] = {
+          [_block._id]: {
+            ..._block,
+            text: _dictSource.textValue,
+            ranges: _dictSource.ranges,
+          },
+        }
+        // look up first instance of refID in state
+        const _idList = Object.keys(state.blocks)
+        const _id = _idList.find(id => {
+          if (state.blocks[id].refId === _block.refId) {
+            return true
+          }
+          return false
+        })
+        const _node = value.document.getNode(_id).toJSON()
+        const _editor = NewEditor()
+        _editor.insertFragment(_frag)
+        const _nodeList = _editor.value.document.nodes.map(n => n.key)
+        _editor.replaceNodeByKey(_nodeList.get(i), _node)
+        _frag = _editor.value.document
+        // replace in fragment
+      }
+    }
+  })
+  _blockList = blocksToState(_frag.nodes)
+  return { blockList: _blockList, frag: _frag }
+}

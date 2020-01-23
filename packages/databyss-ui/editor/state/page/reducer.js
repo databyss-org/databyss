@@ -19,6 +19,7 @@ import {
   SHOW_NEW_BLOCK_MENU,
   UPDATE_SOURCE,
   DEQUEUE_NEW_SOURCE,
+  ON_CUT,
 } from './constants'
 
 export initialState from './../initialState'
@@ -189,21 +190,22 @@ const insertNewActiveBlock = (
 
   // if previous block was atomic type and is now empty
   // set previous block to ENTRY and active block as SOURCE
-
-  if (
-    isAtomicInlineType(state.blocks[previousBlockId].type) &&
-    !previousBlockText
-  ) {
-    // get refId from previous block to apply to atomic block
-    _refId = _state.blocks[previousBlockId].refId
-    _state = setBlockType(_state, 'ENTRY', previousBlockId)
-    insertedBlockType = state.blocks[previousBlockId].type
-    // get atomic block text and ranges to transfer to new block
-    const { textValue, ranges } = entities(_state, 'ENTRY')[
-      _state.blocks[previousBlockId].refId
-    ]
-    insertedText = textValue
-    _ranges = ranges
+  if (state.blocks[previousBlockId]) {
+    if (
+      isAtomicInlineType(state.blocks[previousBlockId].type) &&
+      !previousBlockText
+    ) {
+      // get refId from previous block to apply to atomic block
+      _refId = _state.blocks[previousBlockId].refId
+      _state = setBlockType(_state, 'ENTRY', previousBlockId)
+      insertedBlockType = state.blocks[previousBlockId].type
+      // get atomic block text and ranges to transfer to new block
+      const { textValue, ranges } = entities(_state, 'ENTRY')[
+        _state.blocks[previousBlockId].refId
+      ]
+      insertedText = textValue
+      _ranges = ranges
+    }
   }
 
   if (state.blocks[previousBlockId].type === 'LOCATION') {
@@ -314,13 +316,29 @@ const deleteBlock = (state, payload) => {
 }
 const deleteBlocks = (state, payload) => {
   const _state = cloneDeep(state)
-
+  // check for trailing block
   _state.page.blocks = _state.page.blocks.filter(
     v => !payload.idList.includes(v._id)
   )
   // if first block was included, replace with id
   if (state.page.blocks.findIndex(i => i._id === payload.idList.get(0)) === 0) {
-    const firstBlock = { _id: payload.idList.get(0) }
+    const firstBlock = { _id: payload.id ? payload.id : payload.idList.get(0) }
+
+    const _refId = payload.refId
+      ? payload.refId
+      : _state.blocks[firstBlock._id].refId
+
+    _state.blocks[firstBlock._id] = {
+      _id: firstBlock._id,
+      refId: _refId,
+      type: 'ENTRY',
+    }
+
+    _state.entries[_refId] = {
+      textValue: '',
+      ranges: [],
+      _id: _refId,
+    }
     _state.page.blocks.splice(0, 0, firstBlock)
   }
   return cleanUpState(_state)
@@ -577,6 +595,8 @@ export default (state, action) => {
     case DELETE_BLOCK:
       return deleteBlock(state, action.payload)
     case DELETE_BLOCKS:
+      return deleteBlocks(state, action.payload)
+    case ON_CUT:
       return deleteBlocks(state, action.payload)
     case SET_BLOCK_TYPE:
       let nextState = cloneDeep(state)

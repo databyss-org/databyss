@@ -12,6 +12,7 @@ import {
   START_TAG,
   DELETE_BLOCK,
   DELETE_BLOCKS,
+  ON_CUT,
   SHOW_MENU_ACTIONS,
   SHOW_FORMAT_MENU,
   ON_PASTE,
@@ -63,6 +64,8 @@ export function setActiveBlockType(type, editableState) {
 }
 
 export function setBlockType(type, id, editableState) {
+  console.log(id)
+  console.log(editableState)
   return {
     type: SET_BLOCK_TYPE,
     payload: {
@@ -169,6 +172,18 @@ export function deleteBlocks(idList, editableState) {
     payload: {
       editableState,
       idList,
+    },
+  }
+}
+
+export function cutBlocks(idList, refId, id, editableState) {
+  return {
+    type: ON_CUT,
+    payload: {
+      idList,
+      refId,
+      id,
+      editableState,
     },
   }
 }

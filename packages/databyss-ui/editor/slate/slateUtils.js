@@ -7,6 +7,7 @@ import { stateToSlate, getRangesFromBlock } from './markup'
 import { isAtomicInlineType } from './page/reducer'
 import { getRawHtmlForBlock, entities } from '../state/page/reducer'
 import EditorInline from './../EditorInline'
+import { blocksToState } from './clipboard'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 
@@ -347,4 +348,43 @@ export const isInlineSourceSelected = ({ value }) => {
     return true
   }
   return false
+}
+
+export const updateClipboardRefs = (blockList, fragment, state, value) => {
+  let _blockList = blockList
+  let _frag = fragment
+
+  _blockList.forEach((b, i) => {
+    const _block = b[Object.keys(b)[0]]
+    if (_block.type === 'SOURCE') {
+      // look up source in dictionary
+
+      const _dictSource = state.sources[_block.refId]
+      // replace in blockList
+      _blockList[i] = {
+        [_block._id]: {
+          ..._block,
+          text: _dictSource.textValue,
+          ranges: _dictSource.ranges,
+        },
+      }
+      // look up first instance of refID in state
+      const _idList = Object.keys(state.blocks)
+      const _id = _idList.find(id => {
+        if (state.blocks[id].refId === _block.refId) {
+          return true
+        }
+        return false
+      })
+      const _node = value.document.getNode(_id).toJSON()
+      const _editor = NewEditor()
+      _editor.insertFragment(_frag)
+      const _nodeList = _editor.value.document.nodes.map(n => n.key)
+      _editor.replaceNodeByKey(_nodeList.get(i), _node)
+      _frag = _editor.value.document
+      // replace in fragment
+    }
+  })
+  _blockList = blocksToState(_frag.nodes)
+  return { blockList: _blockList, frag: _frag }
 }
