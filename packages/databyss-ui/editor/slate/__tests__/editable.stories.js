@@ -3,6 +3,10 @@ import { storiesOf } from '@storybook/react'
 import { View, Grid } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import TopicProvider from '@databyss-org/services/topics/TopicProvider'
+import topicReducer, {
+  initialState as topicInitialState,
+} from '@databyss-org/services/topics/reducer'
 import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import fetchMock from 'fetch-mock'
@@ -27,6 +31,14 @@ const _source = {
   },
   citations: [{ textValue: '', ranges: [] }],
   authors: [{ firstName: '', lastName: '' }],
+}
+
+const _topic = {
+  _id: '5d7bbfb58a5f2f5dc1edfe7c',
+  text: {
+    textValue: 'topic',
+    ranges: [],
+  },
 }
 
 const Box = ({ children, ...others }) => (
@@ -68,7 +80,7 @@ const EditableTest = () => {
 storiesOf('Cypress//Tests', module)
   .addDecorator(ViewportDecorator)
   .add('Slate', () => {
-    // let data = {}
+    let data = {}
     fetchMock
       .restore()
       .post(url => {
@@ -84,40 +96,72 @@ storiesOf('Cypress//Tests', module)
         }
         return null
       }, _source)
+      .get(url => {
+        if (url.includes('http://localhost:5000/api/topics')) {
+          return true
+        }
+        return null
+      }, _topic)
+      .post((url, opt) => {
+        if (url === 'http://localhost:5000/api/topics') {
+          data = JSON.parse(opt.body).data
+          return true
+        }
+        return null
+      }, data)
     return (
-      <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-        <NavigationProvider componentMap={componentMap}>
-          <EditorProvider
-            initialState={initialState}
-            editableReducer={slateReducer}
-            reducer={reducer}
-          >
-            <EditableTest />
-          </EditorProvider>
-        </NavigationProvider>
-      </SourceProvider>
+      <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
+        <SourceProvider
+          initialState={sourceInitialState}
+          reducer={sourceReducer}
+        >
+          <NavigationProvider componentMap={componentMap}>
+            <EditorProvider
+              initialState={initialState}
+              editableReducer={slateReducer}
+              reducer={reducer}
+            >
+              <EditableTest />
+            </EditorProvider>
+          </NavigationProvider>
+        </SourceProvider>
+      </TopicProvider>
     )
   })
   .add('Slate - Empty', () => {
     let data = {}
-    fetchMock.restore().post((url, opt) => {
-      if (url === 'http://localhost:5000/api/sources') {
-        data = JSON.parse(opt.body).data
-        return true
-      }
-      return null
-    }, data)
+    fetchMock
+      .restore()
+      .post((url, opt) => {
+        if (url === 'http://localhost:5000/api/sources') {
+          data = JSON.parse(opt.body).data
+          return true
+        }
+        return null
+      }, data)
+      .post((url, opt) => {
+        if (url === 'http://localhost:5000/api/topics') {
+          data = JSON.parse(opt.body).data
+          return true
+        }
+        return null
+      }, data)
     return (
-      <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-        <NavigationProvider componentMap={componentMap}>
-          <EditorProvider
-            initialState={emptyInitialState}
-            editableReducer={slateReducer}
-            reducer={reducer}
-          >
-            <EditableTest />
-          </EditorProvider>
-        </NavigationProvider>
-      </SourceProvider>
+      <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
+        <SourceProvider
+          initialState={sourceInitialState}
+          reducer={sourceReducer}
+        >
+          <NavigationProvider componentMap={componentMap}>
+            <EditorProvider
+              initialState={emptyInitialState}
+              editableReducer={slateReducer}
+              reducer={reducer}
+            >
+              <EditableTest />
+            </EditorProvider>
+          </NavigationProvider>
+        </SourceProvider>
+      </TopicProvider>
     )
   })
