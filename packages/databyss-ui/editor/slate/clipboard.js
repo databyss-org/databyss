@@ -28,7 +28,6 @@ const rules = [
 ]
 
 export const trimFragment = frag => {
-  console.log(frag)
   let _frag = frag
   if (_frag.nodes.size > 1) {
     // trim first node if empty and atomic
@@ -103,7 +102,7 @@ export const getFragFromText = text => {
     const _block = {
       object: 'block',
       type: 'ENTRY',
-      data: { refId: _refId },
+      data: { refId: _refId, type: 'ENTRY' },
       key: _key,
       nodes: [
         {
@@ -174,7 +173,54 @@ export const updateClipboardRefs = (blockList, fragment, state, value) => {
   let _blockList = blockList
   let _frag = fragment
 
+  let _slateBlockList = blockList
+
   // TODO: UPDATE FROM SOURCE PROVIDER
+
+  const _nextFrag = _slateBlockList.reduce((_fragAccum, _slateBlock, i) => {
+    const _slateBlockData = Object.values(_slateBlock)[0]
+
+    if (isAtomicInlineType(_slateBlockData.type)) {
+      // look up source in dictionary
+      const _dictSource =
+        state.sources[_slateBlockData.refId] ||
+        state.topics[_slateBlockData.refId]
+      // if values exist in our current state, replace with an updated value
+      if (_dictSource) {
+        // Edge case: when looking up atomic block by refID but a cut has occured and refId block is empty, do not perform a lookup
+
+        // LOOK UP IN SOURCE CACHE
+        if (_dictSource.textValue.length === 0) {
+          return
+        }
+
+        // look up first instance of refID in state
+        const _idList = Object.keys(state.blocks)
+        const _id = _idList.find(id => {
+          if (state.blocks[id].refId === _slateBlockData.refId) {
+            return true
+          }
+          return false
+        })
+        const _node = value.document.getNode(_id).toJSON()
+        const _editor = NewEditor()
+        _editor.insertFragment(_fragAccum)
+        const _nodeList = _editor.value.document.nodes.map(n => n.key)
+        _editor.replaceNodeByKey(_nodeList.get(i), _node)
+        return _editor.value.document
+      }
+    } else {
+      return _fragAccum
+    }
+    //  const _slateBlockData = Object.values(_slateBlock)[0]
+    // ...
+    // _editor.insertFragment(_fragAccum)
+    // ...
+    // return _editor.value.document
+  }, _frag)
+
+  console.log(_nextFrag)
+
   _blockList.forEach((b, i) => {
     const _block = b[Object.keys(b)[0]]
     if (_block.type === 'SOURCE') {
@@ -219,9 +265,9 @@ export const updateClipboardRefs = (blockList, fragment, state, value) => {
   })
 
   // TODO: check if this is necessary
-  _blockList = blocksToState(_frag.nodes)
-
-  return { blockList: _blockList, frag: _frag }
+  // _blockList = blocksToState(_frag.nodes)
+  _blockList = blocksToState(_nextFrag.nodes)
+  return { blockList: _blockList, frag: _nextFrag }
 }
 
 export const extendSelectionForClipboard = editor => {

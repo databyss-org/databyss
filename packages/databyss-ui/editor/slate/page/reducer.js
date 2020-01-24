@@ -27,7 +27,7 @@ export const newBlockWithRef = (id, refId) =>
     object: 'block',
     type: 'ENTRY',
     key: id,
-    data: { refId },
+    data: { refId, type: 'ENTRY' },
     nodes: [
       {
         object: 'text',
@@ -153,7 +153,7 @@ const setBlockType = (id, type) => (editor, value, next) => {
       // preserve refId
       const _refId = _node.data.get('refId')
       let _marks = _node.getMarks().toJSON()
-      _node = { ..._node.toJSON(), data: { refId: _refId }, key: id }
+      _node = { ..._node.toJSON(), data: { refId: _refId, type }, key: id }
 
       /* eslint new-cap: 1 */
       _node = new Block.fromJSON(_node)
@@ -199,7 +199,7 @@ const setBlockType = (id, type) => (editor, value, next) => {
 
       const _block = Block.fromJSON({
         object: 'block',
-        data: { refId: _node.data.get('refId') },
+        data: { refId: _node.data.get('refId'), type: _node.data.get('type') },
         type,
         key: _node.key,
         nodes: [
@@ -317,7 +317,7 @@ const onUpdateSource = (source, blocks) => (editor, value, next) => {
     const _tempNode = Block.fromJSON({
       object: 'block',
       type: 'SOURCE',
-      data: { refId: _refId },
+      data: { refId: _refId, type: 'SOURCE' },
       key: id,
       nodes: [textBlock],
     })
@@ -365,7 +365,7 @@ export const onCut = (refId, id) => (editor, value, next) => {
     const _tempKey = editor.value.anchorBlock.key
     const _block = editor.value.anchorBlock.toJSON()
     _block.type = 'ENTRY'
-    _block.data = { refId }
+    _block.data = { refId, type: 'ENTRY' }
     _block.key = id
     editor.replaceNodeByKey(_tempKey, _block)
   }
@@ -418,7 +418,7 @@ export const onPaste = pasteData => (editor, value, next) => {
       const _tempKey = editor.value.nextBlock.key
       const _tempBlock = editor.value.nextBlock.toJSON()
       _tempBlock.key = beforeBlockId
-      _tempBlock.data = { refId: beforeBlockRef }
+      _tempBlock.data = { ..._tempBlock.data, refId: beforeBlockRef }
       editor.replaceNodeByKey(_tempKey, _tempBlock)
     } else if (!isAtomicInlineType(_lastNode.type)) {
       mergeForward = true
@@ -428,7 +428,7 @@ export const onPaste = pasteData => (editor, value, next) => {
       const _tempKey = editor.value.nextBlock.key
       const _tempBlock = editor.value.nextBlock.toJSON()
       _tempBlock.key = beforeBlockId
-      _tempBlock.data = { refId: beforeBlockRef }
+      _tempBlock.data = { ..._tempBlock.data, refId: beforeBlockRef }
       editor.replaceNodeByKey(_tempKey, _tempBlock)
     }
     _offset = 0
@@ -473,7 +473,7 @@ export const onPaste = pasteData => (editor, value, next) => {
       const _tempKey = editor.value.nextBlock.key
       const _tempBlock = editor.value.nextBlock.toJSON()
       _tempBlock.key = afterBlockId
-      _tempBlock.data = { refId: afterBlockRef }
+      _tempBlock.data = { ..._tempBlock.data, refId: afterBlockRef }
       editor.replaceNodeByKey(_tempKey, _tempBlock)
     }
   }
@@ -502,12 +502,12 @@ export const onPaste = pasteData => (editor, value, next) => {
     let _block = editor.value.document.getNode(tempKey)
     // get refId from provided list
     const _refId = _list[i][newKey].refId
-
+    const _type = _list[i][newKey].type
     // replace block
     _block = Block.fromJSON({
       ..._block.toJSON(),
       key: newKey,
-      data: { refId: _refId },
+      data: { refId: _refId, type: _type },
     })
 
     editor.replaceNodeByKey(tempKey, _block)
@@ -522,10 +522,10 @@ export const onPaste = pasteData => (editor, value, next) => {
   if (_offset > 0) {
     _list = _list.reverse()
     const _firstKey = Object.keys(_list[0])[0]
-    let _firstBlock = editor.value.document.getNode(_firstKey)
+    let _firstBlock = editor.value.document.getNode(_firstKey).toJSON()
     _firstBlock = Block.fromJSON({
-      ..._firstBlock.toJSON(),
-      data: { refId: _anchorRef },
+      ..._firstBlock,
+      data: { refId: _anchorRef, type: __firstBlock.data.type },
       key: anchorKey,
     })
     editor.replaceNodeByKey(_firstKey, _firstBlock)
@@ -541,7 +541,8 @@ export const onPaste = pasteData => (editor, value, next) => {
 }
 
 const setBlockRef = (_id, refId) => (editor, value, next) => {
-  editor.setNodeByKey(_id, { data: { refId } })
+  const _block = editor.value.document.getNode(_id).toJSON()
+  editor.setNodeByKey(_id, { data: { refId, type: _block.type } })
   next(editor, value)
 }
 
