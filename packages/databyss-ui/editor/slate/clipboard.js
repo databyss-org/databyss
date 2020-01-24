@@ -28,16 +28,17 @@ const rules = [
 ]
 
 export const trimFragment = frag => {
+  console.log(frag)
   let _frag = frag
   if (_frag.nodes.size > 1) {
-    // trim first node if empty
+    // trim first node if empty and atomic
     const _firstBlock = _frag.nodes.get(0)
-    if (_firstBlock.text.length === 0) {
+    if (_firstBlock.text.length === 0 && isAtomicInlineType(_firstBlock.type)) {
       _frag = _frag.removeNode(_firstBlock.key)
     }
     // trim last block if empty
     const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
-    if (_lastBlock.text.length === 0) {
+    if (_lastBlock.text.length === 0 && isAtomicInlineType(_lastBlock.type)) {
       _frag = _frag.removeNode(_lastBlock.key)
     }
   }
@@ -167,10 +168,13 @@ export const isFragmentFullBlock = (fragment, document) => {
         this function takes a blockList, fragment, value and currentState and returns updated { blockList, fragment } 
         */
 
+//  TODO: ADD TYPE TO DATA PARAMETER ON EACH BLOCK
+
 export const updateClipboardRefs = (blockList, fragment, state, value) => {
   let _blockList = blockList
   let _frag = fragment
 
+  // TODO: UPDATE FROM SOURCE PROVIDER
   _blockList.forEach((b, i) => {
     const _block = b[Object.keys(b)[0]]
     if (_block.type === 'SOURCE') {
@@ -179,11 +183,14 @@ export const updateClipboardRefs = (blockList, fragment, state, value) => {
 
       // if values exist in our current state, replace with an updated value
       if (_dictSource) {
-        // Edge case: when looking up atomic block by ref but a cut has occured and refId block is empty, do not perform a lookup
+        // Edge case: when looking up atomic block by refID but a cut has occured and refId block is empty, do not perform a lookup
+
+        // LOOK UP IN SOURCE CACHE
         if (_dictSource.textValue.length === 0) {
           return
         }
         // replace in blockList
+        // is THIS necessary
         _blockList[i] = {
           [_block._id]: {
             ..._block,
@@ -191,6 +198,7 @@ export const updateClipboardRefs = (blockList, fragment, state, value) => {
             ranges: _dictSource.ranges,
           },
         }
+
         // look up first instance of refID in state
         const _idList = Object.keys(state.blocks)
         const _id = _idList.find(id => {
@@ -209,6 +217,92 @@ export const updateClipboardRefs = (blockList, fragment, state, value) => {
       }
     }
   })
+
+  // TODO: check if this is necessary
   _blockList = blocksToState(_frag.nodes)
+
   return { blockList: _blockList, frag: _frag }
+}
+
+export const extendSelectionForClipboard = editor => {
+  let _needsUpdate = false
+  if (!editor.value.selection.isCollapsed) {
+    let _frag = editor.value.fragment
+    const _selection = editor.value.selection
+    const _anchor = _selection.isForward
+      ? editor.value.selection.anchor
+      : editor.value.selection.focus
+    const _focus = _selection.isForward
+      ? editor.value.selection.focus
+      : editor.value.selection.anchor
+    /* 
+      if fragment is one block long check to see if full block is selected 
+    */
+
+    if (_frag.nodes.size === 1 && isAtomicInlineType(_frag.nodes.get(0).type)) {
+      const _isAtStart = _anchor.isAtStartOfNode(editor.value.anchorBlock)
+      if (!_isAtStart) {
+        console.log('one')
+        _needsUpdate = true
+        if (_selection.isForward) {
+          editor.moveAnchorToStartOfNode(editor.value.anchorBlock)
+        } else {
+          editor.moveFocusToStartOfNode(editor.value.anchorBlock)
+        }
+      }
+
+      const _isAtEnd = _focus.isAtEndOfNode(editor.value.anchorBlock)
+
+      if (!_isAtEnd) {
+        console.log('two')
+
+        _needsUpdate = true
+        if (_selection.isForward) {
+          editor.moveFocusToEndOfNode(editor.value.anchorBlock)
+        } else {
+          editor.moveAnchorToEndOfNode(editor.value.anchorBlock)
+        }
+      }
+    } else {
+      // check first and last node for atomic type
+      // check if anchor or focus are at end or start of node
+      // if not move focus or anchor to end or start of node
+      const _firstFrag = editor.value.document.getNode([_anchor.path.get(0)])
+      const _lastFrag = editor.value.document.getNode([_focus.path.get(0)])
+      if (isAtomicInlineType(_firstFrag.type)) {
+        const _isAtStart = _anchor.isAtStartOfNode(_firstFrag)
+
+        if (!_isAtStart) {
+          // check fragment to see if first block selected is atomic
+          const _firstBlock = _frag.nodes.get(0)
+          if (!_firstBlock.text.length === 0) {
+            console.log('three')
+            _needsUpdate = true
+            if (_selection.isForward) {
+              editor.moveAnchorToStartOfNode(_firstFrag)
+            } else {
+              editor.moveFocusToStartOfNode(_firstFrag)
+            }
+          }
+        }
+      }
+      if (isAtomicInlineType(_lastFrag.type)) {
+        const _isAtEnd = _focus.isAtEndOfNode(_lastFrag)
+        if (!_isAtEnd) {
+          // check fragment to see if atomic block is selected
+          const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
+          if (!_lastBlock.text.length === 0) {
+            console.log(four)
+            _needsUpdate = true
+            if (_selection.isForward) {
+              editor.moveFocusToEndOfNode(_lastFrag)
+            } else {
+              editor.moveAnchorToEndOfNode(_lastFrag)
+            }
+          }
+        }
+      }
+    }
+  }
+  return { update: _needsUpdate, editor }
 }

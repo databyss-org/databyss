@@ -504,6 +504,11 @@ const SlateContentEditable = forwardRef(
       return true
     }
 
+    const onCopy = (event, editor, next) => {
+      cloneFragment(event, editor)
+      return true
+    }
+
     const onPaste = (event, editor) => {
       // if new block is created in reducer
       // use this _id
@@ -592,7 +597,7 @@ const SlateContentEditable = forwardRef(
       let _needsUpdate = false
       // if item has selection
       if (!editor.value.selection.isCollapsed) {
-        const _frag = editor.value.fragment
+        let _frag = editor.value.fragment
         const _selection = editor.value.selection
         const _anchor = _selection.isForward
           ? editor.value.selection.anchor
@@ -604,12 +609,17 @@ const SlateContentEditable = forwardRef(
           if fragment is one block long check to see if full block is selected 
         */
 
+        // todo: entry block highlighted, end of block shift up, then shift left to atomic
+
         if (
           _frag.nodes.size === 1 &&
           isAtomicInlineType(_frag.nodes.get(0).type)
         ) {
           const _isAtStart = _anchor.isAtStartOfNode(editor.value.anchorBlock)
           if (!_isAtStart) {
+            const _firstBlock = _frag.nodes.get(0)
+            console.log(_firstBlock)
+            console.log('one')
             _needsUpdate = true
             if (_selection.isForward) {
               editor.moveAnchorToStartOfNode(editor.value.anchorBlock)
@@ -621,6 +631,8 @@ const SlateContentEditable = forwardRef(
           const _isAtEnd = _focus.isAtEndOfNode(editor.value.anchorBlock)
 
           if (!_isAtEnd) {
+            console.log('two')
+
             _needsUpdate = true
             if (_selection.isForward) {
               editor.moveFocusToEndOfNode(editor.value.anchorBlock)
@@ -636,27 +648,34 @@ const SlateContentEditable = forwardRef(
             _anchor.path.get(0),
           ])
           const _lastFrag = editor.value.document.getNode([_focus.path.get(0)])
-
           if (isAtomicInlineType(_firstFrag.type)) {
             const _isAtStart = _anchor.isAtStartOfNode(_firstFrag)
 
             if (!_isAtStart) {
-              _needsUpdate = true
-              if (_selection.isForward) {
-                editor.moveAnchorToStartOfNode(_firstFrag)
-              } else {
-                editor.moveFocusToStartOfNode(_firstFrag)
+              // check fragment to see if first block selected is atomic
+              const _firstBlock = _frag.nodes.get(0)
+              if (!_firstBlock.text.length === 0) {
+                _needsUpdate = true
+                if (_selection.isForward) {
+                  editor.moveAnchorToStartOfNode(_firstFrag)
+                } else {
+                  editor.moveFocusToStartOfNode(_firstFrag)
+                }
               }
             }
           }
           if (isAtomicInlineType(_lastFrag.type)) {
             const _isAtEnd = _focus.isAtEndOfNode(_lastFrag)
             if (!_isAtEnd) {
-              _needsUpdate = true
-              if (_selection.isForward) {
-                editor.moveFocusToEndOfNode(_lastFrag)
-              } else {
-                editor.moveAnchorToEndOfNode(_lastFrag)
+              // check fragment to see if atomic block is selected
+              const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
+              if (!_lastBlock.text.length === 0) {
+                _needsUpdate = true
+                if (_selection.isForward) {
+                  editor.moveFocusToEndOfNode(_lastFrag)
+                } else {
+                  editor.moveAnchorToEndOfNode(_lastFrag)
+                }
               }
             }
           }
@@ -674,7 +693,8 @@ const SlateContentEditable = forwardRef(
         value={_editableState.value}
         onPaste={onPaste}
         onCut={onCut}
-        onSelect={onSelect}
+        onCopy={onCopy}
+        // onSelect={onSelect}
         readOnly={modals.length > 0}
         ref={forkRef(ref, editableRef)}
         autoFocus={autoFocus}

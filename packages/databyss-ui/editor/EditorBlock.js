@@ -7,6 +7,7 @@ import { pxUnits } from '@databyss-org/ui/theming/views'
 import { useEditorContext } from '@databyss-org/ui/editor/EditorProvider'
 import { newBlockMenu } from '@databyss-org/ui/editor/state/page/actions'
 import EditorBlockMenu from './Menu/EditorBlockMenu'
+import { hasSelection } from './slate/slateUtils'
 
 const TextBlock = ({ children, variant, color }) => (
   <Text variant={variant} color={color}>
@@ -55,7 +56,13 @@ export const EditorBlock = ({ children, node }) => {
   useEffect(
     () => {
       if (editableState) {
+        // disable '+' when editor has selection
+        if (hasSelection(editableState.value) && showNewBlockMenu) {
+          dispatchEditor(newBlockMenu(false, editableState))
+          return
+        }
         if (
+          !hasSelection(editableState.value) &&
           activeBlockId === node.key &&
           node.text.length === 0 &&
           !showNewBlockMenu
