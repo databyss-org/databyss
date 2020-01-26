@@ -18,7 +18,6 @@
     "build": "bash scripts/build.sh",
     "start": "bash scripts/start.sh",
     "start:notes": "NPM_DEPLOY_TARGET=NOTES_APP yarn build && NPM_BUILD_TARGET=NOTES_APP node scripts/start.js",
-    "start:login": "NPM_BUILD_TARGET=LOGIN_APP PUBLIC_URL=/login node scripts/start.js",
     "start:docs": "cd ./packages/databyss-documentation/website && yarn run start",
     "seed:testdb": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER NODE_ENV=test babel-node --config-file ./packages/databyss-api/babel.config.js packages/databyss-api/scripts/seed-test-server.js",
     "start:server:test": "NODE_ENV=test yarn start:server",
