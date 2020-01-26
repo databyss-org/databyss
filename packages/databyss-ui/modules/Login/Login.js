@@ -101,7 +101,7 @@ const Login = ({ pending, signupFlow }) => {
 
   return (
     <ValueListProvider values={values} onChange={onChange} onSubmit={onSubmit}>
-      <View widthVariant="dialog" alignItems="center">
+      <View widthVariant="dialog" alignItems="center" width="100%">
         <Text variant="heading2" color="gray.3">
           {signupFlow ? 'Sign Up' : 'Log In'}
         </Text>
@@ -161,7 +161,7 @@ const Login = ({ pending, signupFlow }) => {
                   data-test-id="continueButton"
                 >
                   {pending ? (
-                    <Loading size={20} />
+                    <Loading size={18} />
                   ) : (
                     `Continue with ${showRequestCode ? 'Login Code' : 'Email'}`
                   )}
