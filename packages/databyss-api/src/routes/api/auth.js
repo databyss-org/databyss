@@ -47,13 +47,14 @@ router.post('/code', async (req, res) => {
               res.status(500).send('Server Error')
               throw new Error('err')
             }
-            res.json({ token })
+            // TODO: Replace with Session model
+            return res.json({ data: { session: { token } } })
           })
         } else {
-          res.status(401).json({ err: 'timed out' })
+          res.status(401).json({ error: 'token expired' })
         }
       } else {
-        res.status(404)
+        res.status(401).end()
       }
     })
   } catch (err) {

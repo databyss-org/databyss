@@ -102,7 +102,8 @@ router.post('/google', async (req, res) => {
             { expiresIn: 360000 },
             (err, token) => {
               if (err) throw err
-              return res.json({ token })
+              // TODO: Replace with Session model
+              return res.json({ data: { session: { token } } })
             }
           )
         } else {
@@ -127,7 +128,8 @@ router.post('/google', async (req, res) => {
             { expiresIn: '1y' },
             (err, token) => {
               if (err) throw err
-              return res.json({ token })
+              // TODO: Replace with Session model
+              return res.json({ data: { session: { token } } })
             }
           )
         }
@@ -187,10 +189,9 @@ router.post(
             token,
           })
           login.save()
-
           const msg = {
             to: email,
-            from: process.env.LOGIN_URL.TRANSACTIONAL_EMAIL_SENDER,
+            from: process.env.TRANSACTIONAL_EMAIL_SENDER,
             templateId: emailExists
               ? 'd-9e03c4ebd5a24560b6e02a15af4b9b2e'
               : 'd-845a6d7d37c14d828191b6c7933b20f7',
@@ -200,7 +201,7 @@ router.post(
             },
           }
           sgMail.send(msg)
-          res.status(200).send('check email')
+          res.status(200).json({})
         }
       )
 
