@@ -31,7 +31,7 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('editor selenium', () => {
   beforeEach(async done => {
-    driver = await startSession('clipboard-win-chrome-10', WIN, CHROME)
+    driver = await startSession('clipboard-win-chrome-11', WIN, CHROME)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     editor = await getEditor(driver)
 
@@ -56,10 +56,11 @@ describe('editor selenium', () => {
       .sendKeys('@this is an example of source text')
       .sendKeys(Key.ENTER)
       .pause(100)
+    await sleep(1000)
     await highlightSingleLine(actions)
-    await sleep(100)
+    await sleep(1000)
     await highlightSingleLine(actions)
-    await sleep(100)
+    await sleep(1000)
 
     await copy(actions)
     await actions.sendKeys(Key.ARROW_RIGHT)
