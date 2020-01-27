@@ -281,6 +281,7 @@ describe('editor selenium', () => {
             <inline type="SOURCE">this is a source</inline>
             <text />
           </block>
+          <block type="ENTRY" data={{ refId: refIdList[2], type: 'ENTRY' }} />
           <block type="SOURCE" data={{ refId: refIdList[1], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is a source</inline>

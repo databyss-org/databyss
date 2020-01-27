@@ -7,7 +7,6 @@ import { stateToSlate, getRangesFromBlock } from './markup'
 import { isAtomicInlineType } from './page/reducer'
 import { getRawHtmlForBlock, entities } from '../state/page/reducer'
 import EditorInline from './../EditorInline'
-import { blocksToState } from './clipboard'
 
 KeyUtils.setGenerator(() => ObjectId().toHexString())
 

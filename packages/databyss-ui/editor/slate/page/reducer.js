@@ -308,7 +308,7 @@ export const inlineNode = ({ id, refId, type, text }) => {
   const _tempNode = Block.fromJSON({
     object: 'block',
     type: 'SOURCE',
-    data: { refId: refId, type },
+    data: { refId, type },
     key: id,
     nodes: [_textBlock],
   })
@@ -416,7 +416,6 @@ export const onPaste = pasteData => (editor, value, next) => {
   let _offset = offset
   const _fragment = fragment
   let deleteForward
-  let deleteCurrent
   let mergeForward
 
   // get anchor refID from document

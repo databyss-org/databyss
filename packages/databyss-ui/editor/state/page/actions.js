@@ -64,8 +64,6 @@ export function setActiveBlockType(type, editableState) {
 }
 
 export function setBlockType(type, id, editableState) {
-  console.log(id)
-  console.log(editableState)
   return {
     type: SET_BLOCK_TYPE,
     payload: {

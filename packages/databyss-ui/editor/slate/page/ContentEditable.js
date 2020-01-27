@@ -493,7 +493,7 @@ const SlateContentEditable = forwardRef(
       return next()
     }
 
-    const onCut = (event, editor, next) => {
+    const onCut = (event, editor) => {
       cloneFragment(event, editor)
       window.requestAnimationFrame(() => {
         if (isFragmentFullBlock(editor.value.fragment, editor.value.document)) {
@@ -559,8 +559,6 @@ const SlateContentEditable = forwardRef(
           blockList: _blockList,
           fragment: _frag,
           sourceCache: sourceState.cache,
-          state: stateRef.current,
-          value: editor.value,
         })
         _blockList = blockList
         _frag = frag
@@ -597,100 +595,100 @@ const SlateContentEditable = forwardRef(
       return event.preventDefault()
     }
 
-    const onSelect = (event, editor, next) => {
-      let _needsUpdate = false
-      // if item has selection
-      if (!editor.value.selection.isCollapsed) {
-        let _frag = editor.value.fragment
-        const _selection = editor.value.selection
-        const _anchor = _selection.isForward
-          ? editor.value.selection.anchor
-          : editor.value.selection.focus
-        const _focus = _selection.isForward
-          ? editor.value.selection.focus
-          : editor.value.selection.anchor
-        /* 
-          if fragment is one block long check to see if full block is selected 
-        */
+    // const onSelect = (event, editor, next) => {
+    //   let _needsUpdate = false
+    //   // if item has selection
+    //   if (!editor.value.selection.isCollapsed) {
+    //     let _frag = editor.value.fragment
+    //     const _selection = editor.value.selection
+    //     const _anchor = _selection.isForward
+    //       ? editor.value.selection.anchor
+    //       : editor.value.selection.focus
+    //     const _focus = _selection.isForward
+    //       ? editor.value.selection.focus
+    //       : editor.value.selection.anchor
+    //     /*
+    //       if fragment is one block long check to see if full block is selected
+    //     */
 
-        // todo: entry block highlighted, end of block shift up, then shift left to atomic
+    //     // todo: entry block highlighted, end of block shift up, then shift left to atomic
 
-        if (
-          _frag.nodes.size === 1 &&
-          isAtomicInlineType(_frag.nodes.get(0).type)
-        ) {
-          const _isAtStart = _anchor.isAtStartOfNode(editor.value.anchorBlock)
-          if (!_isAtStart) {
-            const _firstBlock = _frag.nodes.get(0)
-            console.log(_firstBlock)
-            console.log('one')
-            _needsUpdate = true
-            if (_selection.isForward) {
-              editor.moveAnchorToStartOfNode(editor.value.anchorBlock)
-            } else {
-              editor.moveFocusToStartOfNode(editor.value.anchorBlock)
-            }
-          }
+    //     if (
+    //       _frag.nodes.size === 1 &&
+    //       isAtomicInlineType(_frag.nodes.get(0).type)
+    //     ) {
+    //       const _isAtStart = _anchor.isAtStartOfNode(editor.value.anchorBlock)
+    //       if (!_isAtStart) {
+    //         const _firstBlock = _frag.nodes.get(0)
+    //         console.log(_firstBlock)
+    //         console.log('one')
+    //         _needsUpdate = true
+    //         if (_selection.isForward) {
+    //           editor.moveAnchorToStartOfNode(editor.value.anchorBlock)
+    //         } else {
+    //           editor.moveFocusToStartOfNode(editor.value.anchorBlock)
+    //         }
+    //       }
 
-          const _isAtEnd = _focus.isAtEndOfNode(editor.value.anchorBlock)
+    //       const _isAtEnd = _focus.isAtEndOfNode(editor.value.anchorBlock)
 
-          if (!_isAtEnd) {
-            console.log('two')
+    //       if (!_isAtEnd) {
+    //         console.log('two')
 
-            _needsUpdate = true
-            if (_selection.isForward) {
-              editor.moveFocusToEndOfNode(editor.value.anchorBlock)
-            } else {
-              editor.moveAnchorToEndOfNode(editor.value.anchorBlock)
-            }
-          }
-        } else {
-          // check first and last node for atomic type
-          // check if anchor or focus are at end or start of node
-          // if not move focus or anchor to end or start of node
-          const _firstFrag = editor.value.document.getNode([
-            _anchor.path.get(0),
-          ])
-          const _lastFrag = editor.value.document.getNode([_focus.path.get(0)])
-          if (isAtomicInlineType(_firstFrag.type)) {
-            const _isAtStart = _anchor.isAtStartOfNode(_firstFrag)
+    //         _needsUpdate = true
+    //         if (_selection.isForward) {
+    //           editor.moveFocusToEndOfNode(editor.value.anchorBlock)
+    //         } else {
+    //           editor.moveAnchorToEndOfNode(editor.value.anchorBlock)
+    //         }
+    //       }
+    //     } else {
+    //       // check first and last node for atomic type
+    //       // check if anchor or focus are at end or start of node
+    //       // if not move focus or anchor to end or start of node
+    //       const _firstFrag = editor.value.document.getNode([
+    //         _anchor.path.get(0),
+    //       ])
+    //       const _lastFrag = editor.value.document.getNode([_focus.path.get(0)])
+    //       if (isAtomicInlineType(_firstFrag.type)) {
+    //         const _isAtStart = _anchor.isAtStartOfNode(_firstFrag)
 
-            if (!_isAtStart) {
-              // check fragment to see if first block selected is atomic
-              const _firstBlock = _frag.nodes.get(0)
-              if (!_firstBlock.text.length === 0) {
-                _needsUpdate = true
-                if (_selection.isForward) {
-                  editor.moveAnchorToStartOfNode(_firstFrag)
-                } else {
-                  editor.moveFocusToStartOfNode(_firstFrag)
-                }
-              }
-            }
-          }
-          if (isAtomicInlineType(_lastFrag.type)) {
-            const _isAtEnd = _focus.isAtEndOfNode(_lastFrag)
-            if (!_isAtEnd) {
-              // check fragment to see if atomic block is selected
-              const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
-              if (!_lastBlock.text.length === 0) {
-                _needsUpdate = true
-                if (_selection.isForward) {
-                  editor.moveFocusToEndOfNode(_lastFrag)
-                } else {
-                  editor.moveAnchorToEndOfNode(_lastFrag)
-                }
-              }
-            }
-          }
-        }
-      }
-      if (_needsUpdate) {
-        onSelectionChange(editor)
-      } else {
-        next()
-      }
-    }
+    //         if (!_isAtStart) {
+    //           // check fragment to see if first block selected is atomic
+    //           const _firstBlock = _frag.nodes.get(0)
+    //           if (!_firstBlock.text.length === 0) {
+    //             _needsUpdate = true
+    //             if (_selection.isForward) {
+    //               editor.moveAnchorToStartOfNode(_firstFrag)
+    //             } else {
+    //               editor.moveFocusToStartOfNode(_firstFrag)
+    //             }
+    //           }
+    //         }
+    //       }
+    //       if (isAtomicInlineType(_lastFrag.type)) {
+    //         const _isAtEnd = _focus.isAtEndOfNode(_lastFrag)
+    //         if (!_isAtEnd) {
+    //           // check fragment to see if atomic block is selected
+    //           const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
+    //           if (!_lastBlock.text.length === 0) {
+    //             _needsUpdate = true
+    //             if (_selection.isForward) {
+    //               editor.moveFocusToEndOfNode(_lastFrag)
+    //             } else {
+    //               editor.moveAnchorToEndOfNode(_lastFrag)
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    //   if (_needsUpdate) {
+    //     onSelectionChange(editor)
+    //   } else {
+    //     next()
+    //   }
+    // }
 
     return (
       <Editor

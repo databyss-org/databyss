@@ -169,14 +169,8 @@ export const isFragmentFullBlock = (fragment, document) => {
 
 //  TODO: ADD TYPE TO DATA PARAMETER ON EACH BLOCK
 
-export const updateClipboardRefs = ({
-  blockList,
-  fragment,
-  sourceCache,
-  state,
-  value,
-}) => {
-  let _slateBlockList = blockList
+export const updateClipboardRefs = ({ blockList, fragment, sourceCache }) => {
+  const _slateBlockList = blockList
   // TODO: UPDATE FROM SOURCE PROVIDER
   const _nextFrag = _slateBlockList.reduce((_fragAccum, _slateBlock, i) => {
     const _slateBlockData = Object.values(_slateBlock)[0]
@@ -211,9 +205,8 @@ export const updateClipboardRefs = ({
       const _nodeList = _editor.value.document.nodes.map(n => n.key)
       _editor.replaceNodeByKey(_nodeList.get(i), _node)
       return _editor.value.document
-    } else {
-      return _fragAccum
     }
+    return _fragAccum
   }, fragment)
 
   const _blockList = blocksToState(_nextFrag.nodes)
@@ -224,7 +217,7 @@ export const updateClipboardRefs = ({
 export const extendSelectionForClipboard = editor => {
   let _needsUpdate = false
   if (!editor.value.selection.isCollapsed) {
-    let _frag = editor.value.fragment
+    const _frag = editor.value.fragment
     const _selection = editor.value.selection
     const _anchor = _selection.isForward
       ? editor.value.selection.anchor
