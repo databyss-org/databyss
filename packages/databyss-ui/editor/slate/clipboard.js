@@ -167,10 +167,10 @@ export const isFragmentFullBlock = (fragment, document) => {
         this function takes a blockList, fragment, value and currentState and returns updated { blockList, fragment } 
         */
 
-//  TODO: ADD TYPE TO DATA PARAMETER ON EACH BLOCK
-
 export const updateClipboardRefs = ({ blockList, fragment, sourceCache }) => {
   const _slateBlockList = blockList
+  console.log(blockList)
+  console.log('here now')
   // TODO: UPDATE FROM SOURCE PROVIDER
   const _nextFrag = _slateBlockList.reduce((_fragAccum, _slateBlock, i) => {
     const _slateBlockData = Object.values(_slateBlock)[0]
