@@ -18,7 +18,7 @@ export const endOfLine = actions =>
     .sendKeys(Key.ARROW_RIGHT)
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-// .pause(60)
+    .pause(100)
 
 export const startOfLine = actions =>
   actions
@@ -27,28 +27,28 @@ export const startOfLine = actions =>
     .sendKeys(Key.ARROW_LEFT)
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-// .pause(60)
+    .pause(100)
 
 export const paste = actions =>
   actions
     .keyDown(CONTROL)
     .sendKeys('v')
     .keyUp(CONTROL)
-// .pause(60)
+    .pause(100)
 
 export const copy = actions =>
   actions
     .keyDown(CONTROL)
     .sendKeys('c')
     .keyUp(CONTROL)
-// .pause(60)
+    .pause(100)
 
 export const selectAll = actions =>
   actions
     .keyDown(CONTROL)
     .sendKeys('a')
     .keyUp(CONTROL)
-    .pause(60)
+    .pause(100)
 
 export const nextBlock = actions =>
   actions
@@ -57,7 +57,7 @@ export const nextBlock = actions =>
     .sendKeys('p')
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-// .pause(60)
+    .pause(100)
 
 export const endOfDoc = actions =>
   actions
@@ -66,7 +66,7 @@ export const endOfDoc = actions =>
     .sendKeys(Key.ARROW_DOWN)
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-// .pause(60)
+    .pause(100)
 
 export const startOfDoc = actions =>
   actions
@@ -75,7 +75,7 @@ export const startOfDoc = actions =>
     .sendKeys(Key.ARROW_UP)
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-// .pause(60)
+    .pause(100)
 
 export const previousLine = actions =>
   actions
@@ -84,7 +84,7 @@ export const previousLine = actions =>
     .sendKeys('o')
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-// .pause(60)
+    .pause(100)
 
 export const nextLine = actions =>
   actions
@@ -93,7 +93,7 @@ export const nextLine = actions =>
     .sendKeys('p')
     .keyUp(Key.CONTROL)
     .keyUp(Key.SHIFT)
-// .pause(60)
+    .pause(100)
 
 export const sendText = actions => actions.sendKeys('stuff')
 
@@ -102,14 +102,14 @@ export const highlightSingleSpace = actions =>
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_RIGHT)
     .keyUp(Key.SHIFT)
-// .pause(60)
+    .pause(100)
 
 export const highlightSingleLine = actions =>
   actions
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_UP)
     .keyUp(Key.SHIFT)
-// .pause(60)
+    .pause(100)
 
 export const getEditor = async driver => {
   const el = await driver.wait(
