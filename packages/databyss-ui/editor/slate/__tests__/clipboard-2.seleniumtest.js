@@ -76,23 +76,23 @@ describe('editor selenium', () => {
     const expected = toSlateJson(
       <value>
         <document>
-          <block type="ENTRY" data={{ refId: refIdList[0] }}>
+          <block type="ENTRY" data={{ refId: refIdList[0], type: 'ENTRY' }}>
             <text>this is an example of entry text</text>
           </block>
-          <block type="SOURCE" data={{ refId: refIdList[1] }}>
+          <block type="SOURCE" data={{ refId: refIdList[1], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is an example of source text</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[2] }}>
+          <block type="ENTRY" data={{ refId: refIdList[2], type: 'ENTRY' }}>
             <text>this is an this is an example of entry text</text>
           </block>
-          <block type="SOURCE" data={{ refId: refIdList[1] }}>
+          <block type="SOURCE" data={{ refId: refIdList[1], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is an example of source text</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[4] }}>
+          <block type="ENTRY" data={{ refId: refIdList[4], type: 'ENTRY' }}>
             <text>entry</text>
           </block>
         </document>
@@ -133,25 +133,25 @@ describe('editor selenium', () => {
     const expected = toSlateJson(
       <value>
         <document>
-          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is an example of source text</inline>
             <text />
           </block>
 
-          <block type="ENTRY" data={{ refId: refIdList[1] }}>
+          <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }}>
             <text>this is an example of entry text</text>
           </block>
 
-          <block type="ENTRY" data={{ refId: refIdList[2] }}>
+          <block type="ENTRY" data={{ refId: refIdList[2], type: 'ENTRY' }}>
             <text>this is an </text>
           </block>
-          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is an example of source text</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[4] }}>
+          <block type="ENTRY" data={{ refId: refIdList[4], type: 'ENTRY' }}>
             <text>this is an example of entry textentry</text>
           </block>
         </document>
@@ -198,36 +198,36 @@ describe('editor selenium', () => {
     const expected = toSlateJson(
       <value>
         <document>
-          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is an example of source text</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[1] }}>
+          <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }}>
             <text>this is an example of entry text</text>
           </block>
-          <block type="SOURCE" data={{ refId: refIdList[2] }}>
+          <block type="SOURCE" data={{ refId: refIdList[2], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is a second source</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[3] }}>
+          <block type="ENTRY" data={{ refId: refIdList[3], type: 'ENTRY' }}>
             <text>this is an </text>
           </block>
-          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is an example of source text</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[5] }}>
+          <block type="ENTRY" data={{ refId: refIdList[5], type: 'ENTRY' }}>
             <text>this is an example of entry text</text>
           </block>
-          <block type="SOURCE" data={{ refId: refIdList[2] }}>
+          <block type="SOURCE" data={{ refId: refIdList[2], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is a second source</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[7] }}>
+          <block type="ENTRY" data={{ refId: refIdList[7], type: 'ENTRY' }}>
             <text>entry</text>
           </block>
         </document>
@@ -272,26 +272,26 @@ describe('editor selenium', () => {
     const expected = toSlateJson(
       <value>
         <document>
-          <block type="ENTRY" data={{ refId: refIdList[0] }}>
+          <block type="ENTRY" data={{ refId: refIdList[0], type: 'ENTRY' }}>
             <text>this is an example of entry text</text>
           </block>
-          <block type="SOURCE" data={{ refId: refIdList[1] }}>
+          <block type="SOURCE" data={{ refId: refIdList[1], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is an example of source text</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[2] }}>
+          <block type="ENTRY" data={{ refId: refIdList[2], type: 'ENTRY' }}>
             <text>this is a second entry</text>
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[3] }}>
+          <block type="ENTRY" data={{ refId: refIdList[3], type: 'ENTRY' }}>
             <text>this is an this is an example of entry text</text>
           </block>
-          <block type="SOURCE" data={{ refId: refIdList[1] }}>
+          <block type="SOURCE" data={{ refId: refIdList[1], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is an example of source text</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[5] }}>
+          <block type="ENTRY" data={{ refId: refIdList[5], type: 'ENTRY' }}>
             <text>this is a second entryentry</text>
           </block>
         </document>
@@ -320,15 +320,15 @@ describe('editor selenium', () => {
     const expected = toSlateJson(
       <value>
         <document>
-          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is a source</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[1] }}>
+          <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }}>
             <text>this is an entry</text>
           </block>
-          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is a source</inline>
             <text />
@@ -364,20 +364,20 @@ describe('editor selenium', () => {
     const expected = toSlateJson(
       <value>
         <document>
-          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is a source</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[1] }}>
+          <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }}>
             <text>this is an </text>
           </block>
-          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is a source</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[3] }}>
+          <block type="ENTRY" data={{ refId: refIdList[3], type: 'ENTRY' }}>
             <text>entry</text>
           </block>
         </document>
@@ -408,17 +408,17 @@ describe('editor selenium', () => {
     const expected = toSlateJson(
       <value>
         <document>
-          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is a source</inline>
             <text />
           </block>
-          <block type="SOURCE" data={{ refId: refIdList[0] }}>
+          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
             <text />
             <inline type="SOURCE">this is a source</inline>
             <text />
           </block>
-          <block type="ENTRY" data={{ refId: refIdList[2] }}>
+          <block type="ENTRY" data={{ refId: refIdList[2], type: 'ENTRY' }}>
             <text>this is an entry</text>
           </block>
         </document>

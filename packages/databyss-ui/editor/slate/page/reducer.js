@@ -554,7 +554,7 @@ export const onPaste = pasteData => (editor, value, next) => {
     let _firstBlock = editor.value.document.getNode(_firstKey).toJSON()
     _firstBlock = Block.fromJSON({
       ..._firstBlock,
-      data: { refId: _anchorRef, type: __firstBlock.data.type },
+      data: { refId: _anchorRef, type: _firstBlock.data.type },
       key: anchorKey,
     })
     editor.replaceNodeByKey(_firstKey, _firstBlock)
