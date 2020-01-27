@@ -287,6 +287,34 @@ const deleteBlockById = id => (editor, value, next) => {
   next(editor, value)
 }
 
+export const inlineNode = ({ id, refId, type, text }) => {
+  const _newNodes = stateToSlateMarkup(text).nodes
+  const _block = Block.fromJSON({
+    object: 'block',
+    type: 'SOURCE',
+    nodes: _newNodes,
+  })
+  const _innerHtml = serializeNodeToHtml(_block)
+  const _textBlock = {
+    object: 'inline',
+    nodes: [
+      {
+        object: 'text',
+        text: sanitizer(_innerHtml),
+      },
+    ],
+    type: 'SOURCE',
+  }
+  const _tempNode = Block.fromJSON({
+    object: 'block',
+    type: 'SOURCE',
+    data: { refId: refId, type },
+    key: id,
+    nodes: [_textBlock],
+  })
+  return _tempNode
+}
+
 /*
 updates all sources provided in the ID list
 */
@@ -296,6 +324,7 @@ const onUpdateSource = (source, blocks) => (editor, value, next) => {
     block => blocks[block].refId === source._id
   )
   _idList.forEach(id => {
+    // needs id, type, text: {textValue, range }
     const _refId = blocks[id].refId
     const _newNodes = stateToSlateMarkup(source.text).nodes
     const _block = Block.fromJSON({

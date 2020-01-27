@@ -1,6 +1,6 @@
 import Html from 'slate-html-serializer'
 import ObjectId from 'bson-objectid'
-import { isAtomicInlineType } from './page/reducer'
+import { isAtomicInlineType, inlineNode } from './page/reducer'
 import { getRangesFromBlock } from './markup'
 import { NewEditor } from './slateUtils'
 
@@ -37,7 +37,7 @@ export const trimFragment = frag => {
     }
     // trim last block if empty
     const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
-    if (_lastBlock.text.length === 0 && isAtomicInlineType(_lastBlock.type)) {
+    if (_lastBlock.text.length === 0) {
       _frag = _frag.removeNode(_lastBlock.key)
     }
   }
@@ -169,104 +169,55 @@ export const isFragmentFullBlock = (fragment, document) => {
 
 //  TODO: ADD TYPE TO DATA PARAMETER ON EACH BLOCK
 
-export const updateClipboardRefs = (blockList, fragment, state, value) => {
-  let _blockList = blockList
-  let _frag = fragment
-
+export const updateClipboardRefs = ({
+  blockList,
+  fragment,
+  sourceCache,
+  state,
+  value,
+}) => {
   let _slateBlockList = blockList
-
   // TODO: UPDATE FROM SOURCE PROVIDER
-
   const _nextFrag = _slateBlockList.reduce((_fragAccum, _slateBlock, i) => {
     const _slateBlockData = Object.values(_slateBlock)[0]
-
-    if (isAtomicInlineType(_slateBlockData.type)) {
+    if (_slateBlockData.type === 'SOURCE') {
       // look up source in dictionary
-      const _dictSource =
-        state.sources[_slateBlockData.refId] ||
-        state.topics[_slateBlockData.refId]
+      const _dictSource = sourceCache[_slateBlockData.refId]
       // if values exist in our current state, replace with an updated value
-      if (_dictSource) {
-        // Edge case: when looking up atomic block by refID but a cut has occured and refId block is empty, do not perform a lookup
-
-        // LOOK UP IN SOURCE CACHE
-        if (_dictSource.textValue.length === 0) {
-          return
-        }
-
-        // look up first instance of refID in state
-        const _idList = Object.keys(state.blocks)
-        const _id = _idList.find(id => {
-          if (state.blocks[id].refId === _slateBlockData.refId) {
-            return true
-          }
-          return false
-        })
-        const _node = value.document.getNode(_id).toJSON()
-        const _editor = NewEditor()
-        _editor.insertFragment(_fragAccum)
-        const _nodeList = _editor.value.document.nodes.map(n => n.key)
-        _editor.replaceNodeByKey(_nodeList.get(i), _node)
-        return _editor.value.document
+      if (!_dictSource) {
+        return _fragAccum
       }
+      // Edge case: when looking up atomic block by refID but a cut has occured and refId block is empty, do not perform a lookup
+
+      if (_dictSource.text.textValue.length === 0) {
+        return _fragAccum
+      }
+
+      const _inlineFields = {
+        refId: _slateBlockData.refId,
+        id: _slateBlockData._id,
+        type: _slateBlockData.type,
+        // text values from source cache
+        text: _dictSource.text,
+      }
+
+      // create new atomic block with given text and range
+      const _node = inlineNode(_inlineFields)
+
+      // TODO: CREATE NEW INLINE BLOCK TYPE AND ASSIGN IT TO THE INDEX VALUE
+
+      const _editor = NewEditor()
+      _editor.insertFragment(_fragAccum)
+      const _nodeList = _editor.value.document.nodes.map(n => n.key)
+      _editor.replaceNodeByKey(_nodeList.get(i), _node)
+      return _editor.value.document
     } else {
       return _fragAccum
     }
-    //  const _slateBlockData = Object.values(_slateBlock)[0]
-    // ...
-    // _editor.insertFragment(_fragAccum)
-    // ...
-    // return _editor.value.document
-  }, _frag)
+  }, fragment)
 
-  console.log(_nextFrag)
+  const _blockList = blocksToState(_nextFrag.nodes)
 
-  _blockList.forEach((b, i) => {
-    const _block = b[Object.keys(b)[0]]
-    if (_block.type === 'SOURCE') {
-      // look up source in dictionary
-      const _dictSource = state.sources[_block.refId]
-
-      // if values exist in our current state, replace with an updated value
-      if (_dictSource) {
-        // Edge case: when looking up atomic block by refID but a cut has occured and refId block is empty, do not perform a lookup
-
-        // LOOK UP IN SOURCE CACHE
-        if (_dictSource.textValue.length === 0) {
-          return
-        }
-        // replace in blockList
-        // is THIS necessary
-        _blockList[i] = {
-          [_block._id]: {
-            ..._block,
-            text: _dictSource.textValue,
-            ranges: _dictSource.ranges,
-          },
-        }
-
-        // look up first instance of refID in state
-        const _idList = Object.keys(state.blocks)
-        const _id = _idList.find(id => {
-          if (state.blocks[id].refId === _block.refId) {
-            return true
-          }
-          return false
-        })
-        const _node = value.document.getNode(_id).toJSON()
-        const _editor = NewEditor()
-        _editor.insertFragment(_frag)
-        const _nodeList = _editor.value.document.nodes.map(n => n.key)
-        _editor.replaceNodeByKey(_nodeList.get(i), _node)
-        _frag = _editor.value.document
-        // replace in fragment
-      }
-    }
-  })
-
-  // TODO: check if this is necessary
-  // _blockList = blocksToState(_frag.nodes)
-  _blockList = blocksToState(_nextFrag.nodes)
   return { blockList: _blockList, frag: _nextFrag }
 }
 
@@ -288,7 +239,6 @@ export const extendSelectionForClipboard = editor => {
     if (_frag.nodes.size === 1 && isAtomicInlineType(_frag.nodes.get(0).type)) {
       const _isAtStart = _anchor.isAtStartOfNode(editor.value.anchorBlock)
       if (!_isAtStart) {
-        console.log('one')
         _needsUpdate = true
         if (_selection.isForward) {
           editor.moveAnchorToStartOfNode(editor.value.anchorBlock)
@@ -300,8 +250,6 @@ export const extendSelectionForClipboard = editor => {
       const _isAtEnd = _focus.isAtEndOfNode(editor.value.anchorBlock)
 
       if (!_isAtEnd) {
-        console.log('two')
-
         _needsUpdate = true
         if (_selection.isForward) {
           editor.moveFocusToEndOfNode(editor.value.anchorBlock)
@@ -322,7 +270,6 @@ export const extendSelectionForClipboard = editor => {
           // check fragment to see if first block selected is atomic
           const _firstBlock = _frag.nodes.get(0)
           if (!_firstBlock.text.length === 0) {
-            console.log('three')
             _needsUpdate = true
             if (_selection.isForward) {
               editor.moveAnchorToStartOfNode(_firstFrag)
@@ -338,7 +285,6 @@ export const extendSelectionForClipboard = editor => {
           // check fragment to see if atomic block is selected
           const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
           if (!_lastBlock.text.length === 0) {
-            console.log(four)
             _needsUpdate = true
             if (_selection.isForward) {
               editor.moveFocusToEndOfNode(_lastFrag)

@@ -6,6 +6,7 @@ import ObjectId from 'bson-objectid'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import {
   getRawHtmlForBlock,
   getRangesForBlock,
@@ -77,6 +78,7 @@ const SlateContentEditable = forwardRef(
     const [editorState, , stateRef] = useEditorContext()
 
     const { modals } = useNavigationContext()
+    const { state: sourceState } = useSourceContext()
 
     const { activeBlockId, editableState, blocks, page } = editorState
 
@@ -538,6 +540,7 @@ const SlateContentEditable = forwardRef(
         type === 'fragment' ||
         isFragmentFullBlock(fragment, value.document)
       ) {
+        console.log(_frag)
         if (_frag.nodes.size > 1) {
           _frag = trimFragment(_frag)
         }
@@ -552,12 +555,13 @@ const SlateContentEditable = forwardRef(
         this function takes a blockList, fragment, value and currentState and returns updated { blockList, fragment } 
         */
 
-        const { blockList, frag } = updateClipboardRefs(
-          _blockList,
-          _frag,
-          stateRef.current,
-          editor.value
-        )
+        const { blockList, frag } = updateClipboardRefs({
+          blockList: _blockList,
+          fragment: _frag,
+          sourceCache: sourceState.cache,
+          state: stateRef.current,
+          value: editor.value,
+        })
         _blockList = blockList
         _frag = frag
 
