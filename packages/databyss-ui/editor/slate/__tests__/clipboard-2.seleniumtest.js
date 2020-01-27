@@ -61,7 +61,6 @@ describe('editor selenium', () => {
     await sleep(1000)
     await highlightSingleLine(actions)
     await sleep(1000)
-
     await copy(actions)
     await actions.sendKeys(Key.ARROW_RIGHT)
     await endOfDoc(actions)
@@ -71,6 +70,7 @@ describe('editor selenium', () => {
     await actions.sendKeys(Key.ARROW_LEFT)
     await actions.sendKeys(Key.ARROW_LEFT)
     await actions.sendKeys(Key.ARROW_LEFT)
+    await sleep(1000)
     await paste(actions)
     await actions.perform()
 
@@ -131,6 +131,7 @@ describe('editor selenium', () => {
     await actions.sendKeys(Key.ARROW_LEFT)
     await actions.sendKeys(Key.ARROW_LEFT)
     await actions.sendKeys(Key.ARROW_LEFT)
+    await sleep(1000)
     await paste(actions)
     await actions.perform()
     await sleep(5000)
@@ -201,6 +202,7 @@ describe('editor selenium', () => {
     await actions.sendKeys(Key.ARROW_LEFT)
     await actions.sendKeys(Key.ARROW_LEFT)
     await actions.sendKeys(Key.ARROW_LEFT)
+    await sleep(1000)
     await paste(actions)
     await actions.perform()
 
@@ -279,6 +281,7 @@ describe('editor selenium', () => {
     await actions.sendKeys(Key.ARROW_LEFT)
     await actions.sendKeys(Key.ARROW_LEFT)
     await actions.sendKeys(Key.ARROW_LEFT)
+    await sleep(1000)
     await paste(actions)
     await actions.perform()
 
@@ -371,6 +374,7 @@ describe('editor selenium', () => {
     await actions.sendKeys(Key.ARROW_LEFT)
     await actions.sendKeys(Key.ARROW_LEFT)
     await actions.sendKeys(Key.ARROW_LEFT)
+    await sleep(1000)
     await paste(actions)
     await actions.perform()
 
