@@ -37,12 +37,12 @@ context('Editor Menu Actions', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
               <text>
                 <inline type="SOURCE">this should be a source</inline>
               </text>
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
           </document>
         </value>
       )
@@ -66,12 +66,12 @@ context('Editor Menu Actions', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="TOPIC" data={{ refId: refIdList[0] }}>
+            <block type="TOPIC" data={{ refId: refIdList[0], type: 'TOPIC' }}>
               <text>
                 <inline type="TOPIC">this should be a topic</inline>
               </text>
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
           </document>
         </value>
       )
@@ -96,12 +96,15 @@ context('Editor Menu Actions', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="LOCATION" data={{ refId: refIdList[0] }}>
+            <block
+              type="LOCATION"
+              data={{ refId: refIdList[0], type: 'ENTRY' }}
+            >
               <mark type="location">
                 this whole block should get tagged as a location
               </mark>
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
           </document>
         </value>
       )
@@ -142,7 +145,7 @@ context('Editor Menu Actions', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="ENTRY" data={{ refId: refIdList[0] }}>
+            <block type="ENTRY" data={{ refId: refIdList[0], type: 'ENTRY' }}>
               {'On the '}
               <mark type="italic">limitation</mark>
               {' of third-'}

@@ -51,12 +51,12 @@ context('Editor', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
               <text />
               <inline type="SOURCE">source and not location</inline>
               <text />
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
           </document>
         </value>
       )
@@ -78,14 +78,14 @@ context('Editor', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
               <text />
               <inline type="SOURCE">
                 <mark type="bold">{'<strong>source</strong>'}</mark>
               </inline>
               <text />
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
           </document>
         </value>
       )
@@ -106,17 +106,17 @@ context('Editor', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
               <text />
               <inline type="SOURCE">source name</inline>
               <text />
             </block>
-            <block type="SOURCE" data={{ refId: refIdList[1] }}>
+            <block type="SOURCE" data={{ refId: refIdList[1], type: 'SOURCE' }}>
               <text />
               <inline type="SOURCE">second source</inline>
               <text />
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[2] }} />
+            <block type="ENTRY" data={{ refId: refIdList[2], type: 'ENTRY' }} />
           </document>
         </value>
       )
@@ -159,14 +159,14 @@ context('Editor', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="ENTRY" data={{ refId: refIdList[0] }} />
-            <block type="ENTRY" data={{ refId: refIdList[1] }} />
-            <block type="SOURCE" data={{ refId: refIdList[2] }}>
+            <block type="ENTRY" data={{ refId: refIdList[0], type: 'ENTRY' }} />
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
+            <block type="SOURCE" data={{ refId: refIdList[2], type: 'SOURCE' }}>
               <text />
               <inline type="SOURCE">this is a source</inline>
               <text />
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[3] }} />
+            <block type="ENTRY" data={{ refId: refIdList[3], type: 'ENTRY' }} />
           </document>
         </value>
       )
@@ -205,7 +205,7 @@ context('Editor', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
               <text />
               <inline type="SOURCE">
                 Stamenov, Language Structure, Discourse and the Access to
@@ -213,10 +213,10 @@ context('Editor', () => {
               </inline>
               <text />
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[1] }}>
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }}>
               On the limitation of third-order thought to assertion
             </block>
-            <block type="TOPIC" data={{ refId: refIdList[2] }}>
+            <block type="TOPIC" data={{ refId: refIdList[2], type: 'TOPIC' }}>
               <text />
               <inline type="TOPIC">topic</inline>
               <text />
@@ -239,10 +239,10 @@ context('Editor', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="ENTRY" data={{ refId: refIdList[0] }}>
+            <block type="ENTRY" data={{ refId: refIdList[0], type: 'ENTRY' }}>
               On the limitation of third-order thought to assertion
             </block>
-            <block type="TOPIC" data={{ refId: refIdList[1] }}>
+            <block type="TOPIC" data={{ refId: refIdList[1], type: 'TOPIC' }}>
               <text />
               <inline type="TOPIC">topic</inline>
               <text />
@@ -269,11 +269,11 @@ context('Editor', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="ENTRY" data={{ refId: refIdList[0] }} />
-            <block type="ENTRY" data={{ refId: refIdList[1] }}>
+            <block type="ENTRY" data={{ refId: refIdList[0], type: 'ENTRY' }} />
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }}>
               On the limitation of third-order thought to assertion
             </block>
-            <block type="TOPIC" data={{ refId: refIdList[2] }}>
+            <block type="TOPIC" data={{ refId: refIdList[2], type: 'TOPIC' }}>
               <text />
               <inline type="TOPIC">topic</inline>
               <text />
@@ -324,7 +324,7 @@ context('Editor', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="ENTRY" data={{ refId: refIdList[0] }}>
+            <block type="ENTRY" data={{ refId: refIdList[0], type: 'ENTRY' }}>
               this is text
             </block>
           </document>
@@ -347,7 +347,7 @@ context('Editor', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
               <text />
               <inline type="SOURCE">
                 Stamenov, Language Structure, Discourse and the Access to
@@ -355,10 +355,10 @@ context('Editor', () => {
               </inline>
               <text />
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[1] }}>
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }}>
               <text />
             </block>
-            <block type="TOPIC" data={{ refId: refIdList[2] }}>
+            <block type="TOPIC" data={{ refId: refIdList[2], type: 'TOPIC' }}>
               <text />
               <inline type="TOPIC">topic</inline>
               <text />
@@ -392,7 +392,7 @@ context('Editor', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="SOURCE" data={{ refId: refIdList[0] }}>
+            <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
               <text />
               <inline type="SOURCE">
                 Stamenov, Language Structure, Discourse and the Access to
@@ -400,12 +400,12 @@ context('Editor', () => {
               </inline>
               <text />
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[1] }} />
-            <block type="ENTRY" data={{ refId: refIdList[2] }} />
-            <block type="ENTRY" data={{ refId: refIdList[3] }}>
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
+            <block type="ENTRY" data={{ refId: refIdList[2], type: 'ENTRY' }} />
+            <block type="ENTRY" data={{ refId: refIdList[3], type: 'ENTRY' }}>
               On the limitation of third-order thought to assertion
             </block>
-            <block type="TOPIC" data={{ refId: refIdList[4] }}>
+            <block type="TOPIC" data={{ refId: refIdList[4], type: 'TOPIC' }}>
               <text />
               <inline type="TOPIC">topic</inline>
               <text />
