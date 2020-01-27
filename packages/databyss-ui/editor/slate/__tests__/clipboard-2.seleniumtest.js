@@ -59,6 +59,7 @@ describe('editor selenium', () => {
     await highlightSingleLine(actions)
     await highlightSingleLine(actions)
     await copy(actions)
+    await actions.sendKeys(Key.ARROW_RIGHT)
     await endOfDoc(actions)
     await actions.sendKeys('this is an entry')
     await actions.sendKeys(Key.ARROW_LEFT)
@@ -181,11 +182,9 @@ describe('editor selenium', () => {
     await highlightSingleLine(actions)
     await highlightSingleLine(actions)
     await highlightSingleLine(actions)
-
     await copy(actions)
-    await endOfDoc(actions)
     await actions.sendKeys(Key.ARROW_RIGHT)
-
+    await endOfDoc(actions)
     await actions.sendKeys('this is an entry')
     await actions.sendKeys(Key.ARROW_LEFT)
     await actions.sendKeys(Key.ARROW_LEFT)
@@ -259,6 +258,7 @@ describe('editor selenium', () => {
     await highlightSingleLine(actions)
     await highlightSingleLine(actions)
     await copy(actions)
+    await actions.sendKeys(Key.ARROW_RIGHT)
     await endOfDoc(actions)
     await actions.sendKeys('this is an entry')
     await actions.sendKeys(Key.ARROW_LEFT)

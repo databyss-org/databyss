@@ -294,7 +294,6 @@ export const extendSelectionForClipboard = editor => {
 }
 
 export const getPasteData = (event, editor, sourceState) => {
-  console.log(sourceState)
   let _pasteData
 
   if (isAtomicInlineType(editor.value.anchorBlock.type)) {
@@ -312,9 +311,11 @@ export const getPasteData = (event, editor, sourceState) => {
   const _offset = value.selection.anchor.offset
   const transfer = getEventTransfer(event)
 
-  const { fragment, type } = transfer
+  const { fragment, type, text } = transfer
 
-  console.log(transfer)
+  if (!text) {
+    return null
+  }
 
   let _frag = fragment
   // get anchor block from slate,

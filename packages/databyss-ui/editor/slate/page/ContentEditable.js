@@ -288,7 +288,7 @@ const SlateContentEditable = forwardRef(
       onEditSource(_refId, editor)
     }
 
-    const onCopy = (event, editor, next) => {
+    const onCopy = (event, editor) => {
       cloneFragment(event, editor)
       return true
     }
@@ -535,6 +535,7 @@ const SlateContentEditable = forwardRef(
         value={_editableState.value}
         onPaste={onPaste}
         onCut={onCut}
+        onDrop={e => e.preventDefault()}
         onSelect={onSelect}
         readOnly={modals.length > 0}
         ref={forkRef(ref, editableRef)}
