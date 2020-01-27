@@ -27,7 +27,7 @@ context('Editor', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="ENTRY" data={{ refId: refIdList[0], type='ENTRY' }}>
+            <block type="ENTRY" data={{ refId: refIdList[0], type: 'ENTRY' }}>
               <text />
             </block>
           </document>
