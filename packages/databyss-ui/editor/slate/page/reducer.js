@@ -241,7 +241,7 @@ const backspace = () => (editor, value, next) => {
   // set block type to ENTRY
   const _block = value.anchorBlock
   if (!_block.text && isAtomicInlineType(_block.type)) {
-    editor.setNodeByKey(_block.key, { type: 'ENTRY' })
+    editor.setNodeByKey(_block.key, { type: 'ENTRY', data: { type: 'ENTRY' } })
   }
   next(editor, value)
 }

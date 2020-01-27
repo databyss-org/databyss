@@ -98,7 +98,7 @@ context('Editor Menu Actions', () => {
           <document>
             <block
               type="LOCATION"
-              data={{ refId: refIdList[0], type: 'ENTRY' }}
+              data={{ refId: refIdList[0], type: 'LOCATION' }}
             >
               <mark type="location">
                 this whole block should get tagged as a location
