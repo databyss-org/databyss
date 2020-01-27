@@ -151,7 +151,7 @@ context('Editor', () => {
               </inline>
               <text />
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
           </document>
         </value>
       )
@@ -177,13 +177,13 @@ context('Editor', () => {
           <document>
             <block
               type="LOCATION"
-              data={{ refId: refIdList[0], type: 'ENTRY' }}
+              data={{ refId: refIdList[0], type: 'LOCATION' }}
             >
               <mark type="location">this </mark>
             </block>
             <block
               type="LOCATION"
-              data={{ refId: refIdList[1], type: 'ENTRY' }}
+              data={{ refId: refIdList[1], type: 'LOCATION' }}
             >
               <mark type="location">
                 whole block should get tagged as a location
@@ -236,7 +236,7 @@ context('Editor', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block type="ENTRY" data={{ refId: refIdList[0] }}>
+            <block type="ENTRY" data={{ refId: refIdList[0], type: 'ENTRY' }}>
               <text>
                 <mark type="location">
                   this whole block should get tagged as an{' '}
@@ -245,7 +245,7 @@ context('Editor', () => {
               entry
               <text />
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[1] }} />
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
           </document>
         </value>
       )
@@ -269,7 +269,7 @@ context('Editor', () => {
           <document>
             <block
               type="LOCATION"
-              data={{ refId: refIdList[0], type: 'ENTRY' }}
+              data={{ refId: refIdList[0], type: 'LOCATION' }}
             >
               <mark type="location">
                 this whole block should get tagged as a location
