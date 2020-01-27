@@ -1,5 +1,5 @@
 import request from './request'
-import { getAuthToken, getAccountId } from './../auth'
+import { getAuthToken, getAccountId } from './../session/clientStorage'
 
 export const requestApi = (path, options = { headers: {} }, responseIsJson) =>
   request(

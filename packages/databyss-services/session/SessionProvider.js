@@ -10,7 +10,20 @@ const useReducer = createReducer()
 
 export const SessionContext = createContext()
 
-const SessionProvider = ({ children, initialState, signUp }) => {
+// @signUp (bool)
+//   if true, show signup UI
+// @code
+//   login code from email flow (from url, for example)
+// @unauthorizedChildren
+//   Children to render when session is null or pending
+//   Should pass `pending` and `signupFlow` to Login component
+const SessionProvider = ({
+  children,
+  initialState,
+  signUp,
+  code,
+  unauthorizedChildren,
+}) => {
   const [state, dispatch] = useReducer(reducer, initialState, {
     name: 'SessionProvider',
   })
@@ -37,7 +50,7 @@ const SessionProvider = ({ children, initialState, signUp }) => {
 
   // try to resume session on mount
   useEffect(() => {
-    getSession({ retry: true })
+    getSession({ retry: true, code })
   }, [])
 
   let _children = children
@@ -47,7 +60,10 @@ const SessionProvider = ({ children, initialState, signUp }) => {
     state.session instanceof Error ||
     state.lastCredentials
   ) {
-    _children = <Login pending={isPending} signupFlow={signUp} />
+    _children = React.cloneElement(unauthorizedChildren, {
+      pending: isPending,
+      signupFlow: signUp,
+    })
   } else if (isPending) {
     _children = <Loading />
   }
@@ -64,6 +80,7 @@ export const useSessionContext = () => useContext(SessionContext)
 SessionProvider.defaultProps = {
   initialState,
   signUp: false,
+  unauthorizedChildren: <Login />,
 }
 
 export default SessionProvider

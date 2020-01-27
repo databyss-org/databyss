@@ -25,6 +25,15 @@ export const paddingVariant = variant({
   },
 })
 
+export const borderRadiusVariant = variant({
+  prop: 'borderRadius',
+  scale: 'borderRadiusVariants',
+  variants: {
+    // need one member to enable theming
+    default: {},
+  },
+})
+
 export const borderVariant = variant({
   prop: 'borderVariant',
   scale: 'borderVariants',
@@ -73,7 +82,8 @@ export const styleProps = compose(
   borderVariant,
   hlineVariant,
   shadowVariant,
-  widthVariant
+  widthVariant,
+  borderRadiusVariant
 )
 
 export const defaultProps = {

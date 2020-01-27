@@ -21,7 +21,7 @@ module.exports = async () => {
   // This must be the first piece of middleware in the stack.
   // It can only capture errors in downstream middleware
   if (process.env.NODE_ENV !== 'test') {
-    bugsnagMiddleware = bugsnag()
+    bugsnagMiddleware = await bugsnag()
     app.use(bugsnagMiddleware.requestHandler)
   }
 
