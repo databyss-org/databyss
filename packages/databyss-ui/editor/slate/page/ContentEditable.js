@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
-import { Editor, getEventTransfer, cloneFragment } from 'slate-react'
+import { Editor, cloneFragment } from 'slate-react'
 import _ from 'lodash'
 import ObjectId from 'bson-objectid'
 import forkRef from '@databyss-org/ui/lib/forkRef'
@@ -30,11 +30,8 @@ import {
 } from './../slateUtils'
 
 import {
-  blocksToState,
-  getFragFromText,
   isFragmentFullBlock,
-  trimFragment,
-  updateClipboardRefs,
+  getPasteData,
   extendSelectionForClipboard,
 } from './../clipboard'
 
@@ -291,6 +288,11 @@ const SlateContentEditable = forwardRef(
       onEditSource(_refId, editor)
     }
 
+    const onCopy = (event, editor, next) => {
+      cloneFragment(event, editor)
+      return true
+    }
+
     const onKeyUp = (event, editor, next) => {
       if (event.key === 'Enter') {
         // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
@@ -509,94 +511,19 @@ const SlateContentEditable = forwardRef(
       return true
     }
 
-    const onCopy = (event, editor, next) => {
-      cloneFragment(event, editor)
-      return true
-    }
-
     const onPaste = (event, editor) => {
-      // if new block is created in reducer
-      // use this _id
-      const _beforeBlockId = ObjectId().toHexString()
-      const _beforeBlockRef = ObjectId().toHexString()
-      const _afterBlockId = ObjectId().toHexString()
-      const _afterBlockRef = ObjectId().toHexString()
-
-      if (isAtomicInlineType(editor.value.anchorBlock.type)) {
+      const _pasteData = getPasteData(event, editor, sourceState)
+      if (!_pasteData) {
         return event.preventDefault()
-      }
-      // TODO: if html convert to ranges
-
-      const { value } = editor
-      const _offset = value.selection.anchor.offset
-      const transfer = getEventTransfer(event)
-
-      const { fragment, type } = transfer
-
-      let _frag = fragment
-      // get anchor block from slate,
-      const anchorKey = value.anchorBlock.key
-
-      // if anchor block is not empty and first fragment is atomic
-      // prompt a warning that pasting atomic blocks is only
-      if (
-        type === 'fragment' ||
-        isFragmentFullBlock(fragment, value.document)
-      ) {
-        if (_frag.nodes.size > 1) {
-          _frag = trimFragment(_frag)
-        }
-
-        // get list of refId and Id of fragment to paste,
-        // this list is used to keep slate and state in sync
-        let _blockList = blocksToState(_frag.nodes)
-
-        /*
-        looks up the refId of the fragment and replaces it with an updated value, paste blocks can become stale when copying and pasting
-
-        this function takes a blockList, fragment, value and currentState and returns updated { blockList, fragment } 
-        */
-        const { blockList, frag } = updateClipboardRefs({
-          blockList: _blockList,
-          fragment: _frag,
-          sourceCache: sourceState.cache,
-        })
-        _blockList = blockList
-        _frag = frag
-
-        const _pasteData = {
-          anchorKey,
-          blockList: _blockList,
-          fragment: _frag,
-          offset: _offset,
-          beforeBlockId: _beforeBlockId,
-          beforeBlockRef: _beforeBlockRef,
-          afterBlockId: _afterBlockId,
-          afterBlockRef: _afterBlockRef,
-        }
-        onPasteAction(_pasteData, editor)
-        return event.preventDefault()
-      }
-
-      // if plaintext or html is pasted
-      const _textData = getFragFromText(transfer.text)
-      const _blockList = _textData._blockList
-      _frag = _textData._frag
-      const _pasteData = {
-        anchorKey,
-        blockList: _blockList,
-        fragment: _frag,
-        offset: _offset,
-        beforeBlockId: _beforeBlockId,
-        beforeBlockRef: _beforeBlockRef,
-        afterBlockId: _afterBlockId,
-        afterBlockRef: _afterBlockRef,
       }
       onPasteAction(_pasteData, editor)
       return event.preventDefault()
     }
 
     const onSelect = (event, editor, next) => {
+      /*
+      extends selections to include full atomic block
+      */
       const _response = extendSelectionForClipboard(editor)
       if (!_response.update) {
         next()
@@ -608,7 +535,6 @@ const SlateContentEditable = forwardRef(
         value={_editableState.value}
         onPaste={onPaste}
         onCut={onCut}
-        // onCopy={onCopy}
         onSelect={onSelect}
         readOnly={modals.length > 0}
         ref={forkRef(ref, editableRef)}

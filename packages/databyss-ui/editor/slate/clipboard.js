@@ -1,4 +1,5 @@
 import Html from 'slate-html-serializer'
+import { getEventTransfer } from 'slate-react'
 import ObjectId from 'bson-objectid'
 import { isAtomicInlineType, inlineNode } from './page/reducer'
 import { getRangesFromBlock } from './markup'
@@ -169,9 +170,6 @@ export const isFragmentFullBlock = (fragment, document) => {
 
 export const updateClipboardRefs = ({ blockList, fragment, sourceCache }) => {
   const _slateBlockList = blockList
-  console.log(blockList)
-  console.log('here now')
-  // TODO: UPDATE FROM SOURCE PROVIDER
   const _nextFrag = _slateBlockList.reduce((_fragAccum, _slateBlock, i) => {
     const _slateBlockData = Object.values(_slateBlock)[0]
     if (_slateBlockData.type === 'SOURCE') {
@@ -214,6 +212,9 @@ export const updateClipboardRefs = ({ blockList, fragment, sourceCache }) => {
   return { blockList: _blockList, frag: _nextFrag }
 }
 
+/*
+checks for leaf nodes and makes sure if atomic is selected, selection is extended to cover full atomic
+*/
 export const extendSelectionForClipboard = editor => {
   let _needsUpdate = false
   if (!editor.value.selection.isCollapsed) {
@@ -290,4 +291,87 @@ export const extendSelectionForClipboard = editor => {
     }
   }
   return { update: _needsUpdate, editor }
+}
+
+export const getPasteData = (event, editor, sourceState) => {
+  console.log(sourceState)
+  let _pasteData
+
+  if (isAtomicInlineType(editor.value.anchorBlock.type)) {
+    return null
+  }
+
+  // if new block is created in reducer
+  // use this _id
+  const _beforeBlockId = ObjectId().toHexString()
+  const _beforeBlockRef = ObjectId().toHexString()
+  const _afterBlockId = ObjectId().toHexString()
+  const _afterBlockRef = ObjectId().toHexString()
+
+  const { value } = editor
+  const _offset = value.selection.anchor.offset
+  const transfer = getEventTransfer(event)
+
+  const { fragment, type } = transfer
+
+  console.log(transfer)
+
+  let _frag = fragment
+  // get anchor block from slate,
+  const anchorKey = value.anchorBlock.key
+
+  // if anchor block is not empty and first fragment is atomic
+  // prompt a warning that pasting atomic blocks is only
+  if (type === 'fragment' || isFragmentFullBlock(fragment, value.document)) {
+    if (_frag.nodes.size > 1) {
+      _frag = trimFragment(_frag)
+    }
+
+    // get list of refId and Id of fragment to paste,
+    // this list is used to keep slate and state in sync
+    let _blockList = blocksToState(_frag.nodes)
+
+    /*
+        looks up the refId of the fragment and replaces it with an updated value, paste blocks can become stale when copying and pasting
+
+        this function takes a blockList, fragment, value and currentState and returns updated { blockList, fragment } 
+        */
+    const { blockList, frag } = updateClipboardRefs({
+      blockList: _blockList,
+      fragment: _frag,
+      sourceCache: sourceState.cache,
+    })
+    _blockList = blockList
+    _frag = frag
+
+    _pasteData = {
+      anchorKey,
+      blockList: _blockList,
+      fragment: _frag,
+      offset: _offset,
+      beforeBlockId: _beforeBlockId,
+      beforeBlockRef: _beforeBlockRef,
+      afterBlockId: _afterBlockId,
+      afterBlockRef: _afterBlockRef,
+    }
+    return _pasteData
+    // onPasteAction(_pasteData, editor)
+    // return event.preventDefault()
+  }
+
+  // if plaintext or html is pasted
+  const _textData = getFragFromText(transfer.text)
+  const _blockList = _textData._blockList
+  _frag = _textData._frag
+  _pasteData = {
+    anchorKey,
+    blockList: _blockList,
+    fragment: _frag,
+    offset: _offset,
+    beforeBlockId: _beforeBlockId,
+    beforeBlockRef: _beforeBlockRef,
+    afterBlockId: _afterBlockId,
+    afterBlockRef: _afterBlockRef,
+  }
+  return _pasteData
 }

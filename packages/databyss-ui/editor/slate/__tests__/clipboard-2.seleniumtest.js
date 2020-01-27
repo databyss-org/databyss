@@ -116,6 +116,7 @@ describe('editor selenium', () => {
     await highlightSingleLine(actions)
     await highlightSingleLine(actions)
     await copy(actions)
+    await actions.sendKeys(Key.ARROW_RIGHT)
     await endOfDoc(actions)
     await actions.sendKeys('this is an entry')
     await actions.sendKeys(Key.ARROW_LEFT)
@@ -125,6 +126,7 @@ describe('editor selenium', () => {
     await actions.sendKeys(Key.ARROW_LEFT)
     await paste(actions)
     await actions.perform()
+    await sleep(5000)
 
     const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
       b => b.refId
@@ -182,6 +184,8 @@ describe('editor selenium', () => {
 
     await copy(actions)
     await endOfDoc(actions)
+    await actions.sendKeys(Key.ARROW_RIGHT)
+
     await actions.sendKeys('this is an entry')
     await actions.sendKeys(Key.ARROW_LEFT)
     await actions.sendKeys(Key.ARROW_LEFT)
@@ -399,7 +403,6 @@ describe('editor selenium', () => {
     await startOfLine(actions)
     await paste(actions)
     await actions.perform()
-    await sleep(10000)
 
     const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
       b => b.refId
