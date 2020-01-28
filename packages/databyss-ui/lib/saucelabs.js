@@ -13,7 +13,7 @@ const accessKey = process.env.SAUCE_ACCESS_KEY
 
 export const startSession = process.env.LOCAL_ENV
   ? async () => {
-      jest.setTimeout(40000)
+      jest.setTimeout(800000)
       const _builder = await new Builder().forBrowser(SAFARI).build()
       return _builder
     }
@@ -38,7 +38,7 @@ export const startSession = process.env.LOCAL_ENV
             build: 'databyss-org/ui',
             name,
             maxDuration: 10800,
-            idleTimeout: 10000,
+            idleTimeout: 10800,
           },
         })
         .usingServer('https://ondemand.saucelabs.com/wd/hub')
