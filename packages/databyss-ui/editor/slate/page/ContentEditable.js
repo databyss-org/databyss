@@ -361,6 +361,9 @@ const SlateContentEditable = forwardRef(
       if (hotKeys.isCopy(event)) {
         return onCopy(event, editor, next)
       }
+      if (hotKeys.isCut(event)) {
+        return next()
+      }
       if (hotKeys.isEsc(event)) {
         onNewBlockMenu(false, editor)
       }
@@ -479,7 +482,7 @@ const SlateContentEditable = forwardRef(
           return next()
         }
         // for windows machines
-        if (hotKeys.isCopy(event)) {
+        if (hotKeys.isCopy(event) || hotKeys.isCut(event)) {
           return next()
         }
         return event.preventDefault()

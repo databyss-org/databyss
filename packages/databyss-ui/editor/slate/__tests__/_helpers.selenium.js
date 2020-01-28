@@ -43,6 +43,13 @@ export const copy = actions =>
     .keyUp(CONTROL)
     .pause(70)
 
+export const cut = actions =>
+  actions
+    .keyDown(CONTROL)
+    .sendKeys('x')
+    .keyUp(CONTROL)
+    .pause(70)
+
 export const selectAll = actions =>
   actions
     .keyDown(CONTROL)
