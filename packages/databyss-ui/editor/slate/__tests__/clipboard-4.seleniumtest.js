@@ -46,7 +46,7 @@ describe('editor selenium', () => {
   })
 
   it('should copy an atomic block and paste at the end of an entry', async () => {
-    await sleep(1000)
+    await sleep(500)
     await actions.sendKeys('@this is a source')
     await actions.sendKeys(Key.ENTER)
     await selectAll(actions)

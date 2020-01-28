@@ -18,7 +18,7 @@ export const startSession = process.env.LOCAL_ENV
       return _builder
     }
   : async (name, platformName = OSX, browserName = SAFARI) => {
-      jest.setTimeout(800000)
+      jest.setTimeout(1000)
       const driver = await new webdriver.Builder()
         .withCapabilities({
           browserName,
