@@ -21,7 +21,7 @@ const ControlList = ({ children, ...others }) => (
   </List>
 )
 
-const TopicModal = ({ atomicId, visible, onUpdate, id }) => {
+const TopicModal = ({ refId, visible, onUpdate, id }) => {
   const { setTopic } = useTopicContext()
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
@@ -52,7 +52,7 @@ const TopicModal = ({ atomicId, visible, onUpdate, id }) => {
       title="Edit Topic"
       dismissChild="done"
     >
-      <TopicLoader topicId={atomicId}>
+      <TopicLoader topicId={refId}>
         {topic => (
           <ValueListProvider onChange={setValues} values={values || topic}>
             <Grid>

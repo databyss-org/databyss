@@ -18,8 +18,7 @@ import {
   deleteBlocks,
   newBlockMenu,
   updateAtomic,
-  removeTopicFromQueue,
-  removeSourceFromQueue,
+  removeAtomicFromQueue,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
@@ -29,7 +28,7 @@ const EditorPage = ({ children, autoFocus }) => {
   const { setSource } = useSourceContext()
   const { setTopic } = useTopicContext()
 
-  const { sources, newSources, topics, newTopics, editableState } = editorState
+  const { sources, topics, newAtomics, editableState } = editorState
 
   /*
   checks to see if new source has been added
@@ -38,32 +37,25 @@ const EditorPage = ({ children, autoFocus }) => {
 
   useEffect(
     () => {
-      if (editableState) {
-        if (newSources) {
-          if (newSources.length > 0) {
-            newSources.forEach(s => {
-              const _source = {
-                _id: s._id,
-                text: { textValue: s.textValue, ranges: s.ranges },
-              }
-              setSource(_source)
-              dispatchEditor(removeSourceFromQueue(s._id))
-            })
+      if (!editableState) {
+        return
+      }
+      if (newAtomics && newAtomics.length) {
+        newAtomics.forEach(atomic => {
+          const _data = {
+            _id: atomic._id,
+            text: { textValue: atomic.textValue, ranges: atomic.ranges },
           }
-        }
-
-        if (newTopics) {
-          if (newTopics.length > 0) {
-            newTopics.forEach(t => {
-              const _topic = {
-                _id: t._id,
-                text: { textValue: t.textValue, ranges: t.ranges },
-              }
-              setTopic(_topic)
-              dispatchEditor(removeTopicFromQueue(t._id))
-            })
-          }
-        }
+          ;({
+            SOURCE: () => {
+              setSource(_data)
+            },
+            TOPIC: () => {
+              setTopic(_data)
+            },
+          }[atomic.type]())
+          dispatchEditor(removeAtomicFromQueue(atomic._id))
+        })
       }
     },
     [sources, topics]
@@ -131,9 +123,9 @@ const EditorPage = ({ children, autoFocus }) => {
   const { showModal } = useNavigationContext()
 
   const onEditAtomic = (refId, type, { value }) => {
-    const onUpdate = data => {
-      if (data) {
-        dispatchEditor(updateAtomic(data, type, { value }))
+    const onUpdate = atomic => {
+      if (atomic) {
+        dispatchEditor(updateAtomic({ atomic, type }, { value }))
       }
     }
 
@@ -141,7 +133,7 @@ const EditorPage = ({ children, autoFocus }) => {
       component: type,
       props: {
         onUpdate,
-        atomicId: refId,
+        refId,
       },
     })
   }

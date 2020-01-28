@@ -35,11 +35,7 @@ export function saveTopic(topicFields) {
       type: SAVE_TOPIC,
       payload: { topic: topicFields, id: topicFields._id },
     })
-    topics.setTopic(topicFields).then(() => {
-      dispatch({
-        type: CACHE_TOPIC,
-        payload: { topic: topicFields, id: topicFields._id },
-      })
-    })
+    topics.setTopic(topicFields)
+    // TODO: set error handler if failed save
   }
 }

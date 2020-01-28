@@ -16,8 +16,7 @@ import {
   SHOW_FORMAT_MENU,
   SHOW_NEW_BLOCK_MENU,
   UPDATE_ATOMIC,
-  DEQUEUE_NEW_SOURCE,
-  DEQUEUE_NEW_TOPIC,
+  DEQUEUE_NEW_ATOMIC,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -181,29 +180,19 @@ export function newBlockMenu(bool, editableState) {
   }
 }
 
-export function updateAtomic(atomic, type, editableState) {
+export function updateAtomic(data, editableState) {
   return {
     type: UPDATE_ATOMIC,
     payload: {
       editableState,
-      atomic,
-      type,
+      data,
     },
   }
 }
 
-export function removeSourceFromQueue(id) {
+export function removeAtomicFromQueue(id) {
   return {
-    type: DEQUEUE_NEW_SOURCE,
-    payload: {
-      id,
-    },
-  }
-}
-
-export function removeTopicFromQueue(id) {
-  return {
-    type: DEQUEUE_NEW_TOPIC,
+    type: DEQUEUE_NEW_ATOMIC,
     payload: {
       id,
     },

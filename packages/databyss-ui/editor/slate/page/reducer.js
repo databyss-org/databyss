@@ -230,7 +230,8 @@ const deleteBlockById = id => (editor, value, next) => {
 /*
 updates all atomics provided in the ID list
 */
-const onUpdateAtomic = (atomic, blocks, type) => (editor, value, next) => {
+const onUpdateAtomic = (data, blocks) => (editor, value, next) => {
+  const { atomic, type } = data
   // generates a list of blocks to update
   const _idList = Object.keys(blocks).filter(
     block => blocks[block].refId === atomic._id
@@ -332,9 +333,8 @@ export default (editableState, action) => {
       return {
         ...editableState,
         editorCommands: onUpdateAtomic(
-          action.payload.atomic,
-          editableState.blocks,
-          action.payload.type
+          action.payload.data,
+          editableState.blocks
         ),
       }
     }
