@@ -18,7 +18,7 @@ export const startSession = process.env.LOCAL_ENV
       return _builder
     }
   : async (name, platformName = OSX, browserName = SAFARI) => {
-      jest.setTimeout(1000)
+      jest.setTimeout(800000)
       const driver = await new webdriver.Builder()
         .withCapabilities({
           browserName,
@@ -38,7 +38,7 @@ export const startSession = process.env.LOCAL_ENV
             build: 'databyss-org/ui',
             name,
             maxDuration: 10800,
-            idleTimeout: 10800,
+            idleTimeout: 1000,
           },
         })
         .usingServer('https://ondemand.saucelabs.com/wd/hub')
