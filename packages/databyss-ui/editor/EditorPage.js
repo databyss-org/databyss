@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import _ from 'lodash'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { ResourcePending } from '@databyss-org/services/lib/ResourcePending'
 import { useEditorContext } from './EditorProvider'
 
 import {
@@ -66,15 +67,16 @@ const EditorPage = ({ children, autoFocus }) => {
         const atomicData = Object.values(dirtyAtomics)
         atomicData.map(idData => {
           const _cache = { SOURCE: sourceState.cache }[idData.type]
-          if (_.isObject(_cache[idData.refId])) {
+          if (
+            _cache[idData.refId] &&
+            !(_cache[idData.refId] instanceof ResourcePending)
+          ) {
             // remove from dirtyAtomics queue
             dispatchEditor(dequeueDirtyAtomic(idData.refId))
             // TODO:change to update atomic when topics provider is merged
             dispatchEditor(
               updateSource(_cache[idData.refId], { value: editableState.value })
             )
-
-            // update
           }
         })
       }

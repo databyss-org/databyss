@@ -2,6 +2,7 @@ import Html from 'slate-html-serializer'
 import _ from 'lodash'
 import { getEventTransfer } from 'slate-react'
 import ObjectId from 'bson-objectid'
+import { ResourcePending } from '@databyss-org/services/lib/ResourcePending'
 import { isAtomicInlineType, inlineNode } from './page/reducer'
 import { getRangesFromBlock } from './markup'
 import { editorInstance } from './slateUtils'
@@ -194,7 +195,6 @@ outputs
 export const updateClipboardRefs = ({
   blockList,
   fragment,
-  sourceCache,
   getSource,
   onDirtyAtomic,
 }) => {
@@ -206,7 +206,8 @@ export const updateClipboardRefs = ({
       const _dictSource = getSource(_slateBlockData.refId)
 
       // Edge case: when looking up atomic block by refID but a cut has occured and refId block is empty, do not perform a lookup
-      if (!_.isObject(_dictSource)) {
+      // IMPORT RESOURCE PENDING
+      if (!_dictSource || _dictSource instanceof ResourcePending) {
         onDirtyAtomic(_slateBlockData.refId, _slateBlockData.type)
         return _fragAccum
         // dispatch addDirtyAtomic
@@ -326,13 +327,7 @@ export const extendSelectionForClipboard = editor => {
   return { update: _needsUpdate, editor }
 }
 
-export const getPasteData = (
-  event,
-  editor,
-  sourceState,
-  getSource,
-  onDirtyAtomic
-) => {
+export const getPasteData = ({ event, editor, getSource, onDirtyAtomic }) => {
   let _pasteData
 
   if (isAtomicInlineType(editor.value.anchorBlock.type)) {
@@ -374,7 +369,6 @@ export const getPasteData = (
     const { blockList, frag } = updateClipboardRefs({
       blockList: _blockList,
       fragment: _frag,
-      sourceCache: sourceState.cache,
       getSource,
       onDirtyAtomic,
     })

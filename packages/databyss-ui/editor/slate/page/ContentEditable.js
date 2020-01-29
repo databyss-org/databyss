@@ -5,6 +5,7 @@ import _ from 'lodash'
 import ObjectId from 'bson-objectid'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
+
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import {
@@ -517,13 +518,13 @@ const SlateContentEditable = forwardRef(
     }
 
     const onPaste = (event, editor) => {
-      const _pasteData = getPasteData(
+      // derefrence here
+      const _pasteData = getPasteData({
         event,
         editor,
-        sourceState,
         getSource,
-        onDirtyAtomic
-      )
+        onDirtyAtomic,
+      })
       if (!_pasteData) {
         return event.preventDefault()
       }
