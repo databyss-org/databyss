@@ -36,6 +36,8 @@ module.exports = async () => {
   app.use('/api/pages', require('./routes/api/pages'))
   app.use('/api/accounts', require('./routes/api/accounts'))
   app.use('/api/sources', require('./routes/api/sources'))
+  app.use('/api/topics', require('./routes/api/topics'))
+
   app.use('/api/ping', require('./routes/api/ping'))
 
   app.use('/api/error', require('./routes/api/error'))

@@ -11,6 +11,7 @@ export default {
   showNewBlockMenu: true,
   activeBlockId: null,
   newSources: [],
+  newTopics: [],
   sources: {},
   entries: {
     [entryId]: {

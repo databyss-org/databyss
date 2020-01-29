@@ -6,7 +6,10 @@ import NavigationProvider from '@databyss-org/ui/components/Navigation/Navigatio
 import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import fetchMock from 'fetch-mock'
-
+import TopicProvider from '@databyss-org/services/topics/TopicProvider'
+import topicReducer, {
+  initialState as topicInitialState,
+} from '@databyss-org/services/topics/reducer'
 import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
@@ -44,16 +47,21 @@ storiesOf('Demos|Editor', module)
       return null
     }, data)
     return (
-      <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-        <NavigationProvider componentMap={componentMap}>
-          <EditorProvider
-            initialState={emptyInitialState}
-            editableReducer={slateReducer}
-            reducer={reducer}
-          >
-            <EditableTest />
-          </EditorProvider>
-        </NavigationProvider>
-      </SourceProvider>
+      <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
+        <SourceProvider
+          initialState={sourceInitialState}
+          reducer={sourceReducer}
+        >
+          <NavigationProvider componentMap={componentMap}>
+            <EditorProvider
+              initialState={emptyInitialState}
+              editableReducer={slateReducer}
+              reducer={reducer}
+            >
+              <EditableTest />
+            </EditorProvider>
+          </NavigationProvider>
+        </SourceProvider>
+      </TopicProvider>
     )
   })

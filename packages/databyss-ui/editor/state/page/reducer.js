@@ -16,8 +16,8 @@ import {
   SHOW_MENU_ACTIONS,
   SHOW_FORMAT_MENU,
   SHOW_NEW_BLOCK_MENU,
-  UPDATE_SOURCE,
-  DEQUEUE_NEW_SOURCE,
+  UPDATE_ATOMIC,
+  DEQUEUE_NEW_ATOMIC,
 } from './constants'
 
 export initialState from './../initialState'
@@ -129,12 +129,12 @@ const setBlockType = (state, type, _id) => {
 
   switch (type) {
     case 'SOURCE':
-      const _source = { _id: nextRefId, textValue, ranges }
-      nextState.sources[nextRefId] = _source
-      if (nextState.newSources) {
-        nextState.newSources.push(_source)
+      const _source = { type: 'SOURCE', _id: nextRefId, textValue, ranges }
+      nextState.sources[nextRefId] = { _id: nextRefId, textValue, ranges }
+      if (nextState.newAtomics) {
+        nextState.newAtomics.push(_source)
       } else {
-        nextState.newSources = [_source]
+        nextState.newAtomics = [_source]
       }
       return nextState
     case 'ENTRY':
@@ -144,7 +144,13 @@ const setBlockType = (state, type, _id) => {
       nextState.locations[nextRefId] = { _id: nextRefId, textValue, ranges }
       return nextState
     case 'TOPIC':
+      const _topic = { type: 'TOPIC', _id: nextRefId, textValue, ranges }
       nextState.topics[nextRefId] = { _id: nextRefId, textValue, ranges }
+      if (nextState.newAtomics) {
+        nextState.newAtomics.push(_topic)
+      } else {
+        nextState.newAtomics = [_topic]
+      }
       return nextState
 
     default:
@@ -253,12 +259,21 @@ const backspace = (state, payload) => {
   return cleanUpState(_state)
 }
 
-const updateSource = (state, source) => {
-  const _state = cloneDeep(state)
-  _state.sources[source._id] = {
-    ranges: source.text.ranges,
-    textValue: source.text.textValue,
+const updateAtomic = (state, data) => {
+  const _text = {
+    ranges: data.text.ranges,
+    textValue: data.text.textValue,
   }
+  const _state = cloneDeep(state)
+  ;({
+    SOURCE: () => {
+      _state.sources[data._id] = _text
+    },
+    TOPIC: () => {
+      _state.topics[data._id] = _text
+    },
+  }[data.type]())
+
   return _state
 }
 
@@ -334,8 +349,12 @@ export default (state, action) => {
         ...state,
         showFormatMenu: action.payload.bool,
       }
-    case UPDATE_SOURCE: {
-      return updateSource(state, action.payload.source)
+    case UPDATE_ATOMIC: {
+      return updateAtomic(state, {
+        _id: action.payload.data.atomic._id,
+        type: action.payload.data.type,
+        text: action.payload.data.atomic.text,
+      })
     }
     case SET_ACTIVE_BLOCK_CONTENT: {
       const activeBlock = state.blocks[state.activeBlockId]
@@ -389,11 +408,13 @@ export default (state, action) => {
         )
       }
       return setBlockType(nextState, action.payload.type, action.payload.id)
-    case DEQUEUE_NEW_SOURCE:
-      let _que = state.newSources
-      const _id = action.payload.id
-      _que = _que.filter(q => q._id !== _id)
-      return { ...state, newSources: _que }
+
+    case DEQUEUE_NEW_ATOMIC:
+      let _atomicsQueue = state.newAtomics
+      const _atomicId = action.payload.id
+      _atomicsQueue = _atomicsQueue.filter(q => q._id !== _atomicId)
+      return { ...state, newAtomics: _atomicsQueue }
+
     default:
       return state
   }
