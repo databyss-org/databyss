@@ -1,5 +1,4 @@
 import Html from 'slate-html-serializer'
-import _ from 'lodash'
 import { getEventTransfer } from 'slate-react'
 import ObjectId from 'bson-objectid'
 import { ResourcePending } from '@databyss-org/services/lib/ResourcePending'

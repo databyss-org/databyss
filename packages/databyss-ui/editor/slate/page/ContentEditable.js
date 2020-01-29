@@ -78,7 +78,7 @@ const SlateContentEditable = forwardRef(
     const [editorState, , stateRef] = useEditorContext()
 
     const { modals } = useNavigationContext()
-    const { state: sourceState, getSource } = useSourceContext()
+    const { getSource } = useSourceContext()
 
     const { activeBlockId, editableState, blocks, page } = editorState
 

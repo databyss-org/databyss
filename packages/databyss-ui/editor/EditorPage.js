@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import _ from 'lodash'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { ResourcePending } from '@databyss-org/services/lib/ResourcePending'
@@ -65,7 +64,7 @@ const EditorPage = ({ children, autoFocus }) => {
       if (dirtyAtomics) {
         // check atomic cache to see if atomic has been fetched
         const atomicData = Object.values(dirtyAtomics)
-        atomicData.map(idData => {
+        atomicData.forEach(idData => {
           const _cache = { SOURCE: sourceState.cache }[idData.type]
           if (
             _cache[idData.refId] &&

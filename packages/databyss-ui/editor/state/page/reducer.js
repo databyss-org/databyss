@@ -311,15 +311,13 @@ const getMarkupValues = (nextState, ranges) => {
   return _state
 }
 
-const cutBlocks = (state, payload, anchorKey) => {
-  return deleteBlocks(state, payload)
-}
-
 const deleteBlock = (state, payload) => {
   const _state = cloneDeep(state)
   _state.page.blocks = _state.page.blocks.filter(v => v._id !== payload.id)
   return cleanUpState(_state)
 }
+
+const cutBlocks = (state, payload) => deleteBlocks(state, payload)
 
 const deleteBlocks = (state, payload) => {
   const _state = cloneDeep(state)
