@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import _ from 'lodash'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorContext } from './EditorProvider'
@@ -22,6 +23,7 @@ import {
   updateSource,
   removeSourceFromQueue,
   onSelection,
+  addDirtyAtomic,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
@@ -30,7 +32,7 @@ const EditorPage = ({ children, autoFocus }) => {
   const [editorState, dispatchEditor] = useEditorContext()
   const { setSource, state: sourceState } = useSourceContext()
 
-  const { sources, newSources, editableState } = editorState
+  const { sources, newSources, editableState, dirtyAtomics } = editorState
 
   /*
   checks to see if new source has been added
@@ -54,6 +56,23 @@ const EditorPage = ({ children, autoFocus }) => {
       }
     },
     [sources]
+  )
+
+  useEffect(
+    () => {
+      if (dirtyAtomics) {
+        // check atomic cache to see if atomic has been fetched
+        const atomicData = Object.values(dirtyAtomics)
+        atomicData.map(idData => {
+          const _cache = { SOURCE: sourceState.cache }[idData.type]
+          if (_.isObject(_cache[idData.refId])) {
+            console.log(_cache[idData.refId])
+            // update
+          }
+        })
+      }
+    },
+    [dirtyAtomics, sourceState]
   )
 
   const onActiveBlockIdChange = (id, editableState) =>
@@ -150,6 +169,10 @@ const EditorPage = ({ children, autoFocus }) => {
     dispatchEditor(onSelection({ value }))
   }
 
+  const onDirtyAtomic = (refId, type) => {
+    dispatchEditor(addDirtyAtomic(refId, type))
+  }
+
   // should only have 1 child (e.g. DraftContentEditable or SlateContentEditable)
   return React.cloneElement(React.Children.only(children), {
     onActiveBlockIdChange,
@@ -170,6 +193,7 @@ const EditorPage = ({ children, autoFocus }) => {
     onEditSource,
     autoFocus,
     onSelectionChange,
+    onDirtyAtomic,
   })
 }
 

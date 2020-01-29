@@ -22,6 +22,7 @@ export const SourceContext = createContext()
 const SourceProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
+  console.log(state)
   // provider methods
   const setSource = source => {
     if (_.isEqual(state.cache[source._id], source)) {

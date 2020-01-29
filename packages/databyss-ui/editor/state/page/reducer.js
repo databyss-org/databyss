@@ -19,7 +19,9 @@ import {
   SHOW_NEW_BLOCK_MENU,
   UPDATE_SOURCE,
   DEQUEUE_NEW_SOURCE,
+  DEQUEUE_DIRTY_ATOMIC,
   ON_CUT,
+  ADD_DIRTY_ATOMIC,
 } from './constants'
 
 export initialState from './../initialState'
@@ -309,17 +311,23 @@ const getMarkupValues = (nextState, ranges) => {
   return _state
 }
 
+const cutBlocks = (state, payload, anchorKey) => {
+  return deleteBlocks(state, payload)
+}
+
 const deleteBlock = (state, payload) => {
   const _state = cloneDeep(state)
   _state.page.blocks = _state.page.blocks.filter(v => v._id !== payload.id)
   return cleanUpState(_state)
 }
+
 const deleteBlocks = (state, payload) => {
   const _state = cloneDeep(state)
   // check for trailing block
   _state.page.blocks = _state.page.blocks.filter(
     v => !payload.idList.includes(v._id)
   )
+
   // if first block was included, replace with id
   if (state.page.blocks.findIndex(i => i._id === payload.idList.get(0)) === 0) {
     const firstBlock = { _id: payload.id ? payload.id : payload.idList.get(0) }
@@ -341,6 +349,7 @@ const deleteBlocks = (state, payload) => {
     }
     _state.page.blocks.splice(0, 0, firstBlock)
   }
+
   return cleanUpState(_state)
 }
 
@@ -364,6 +373,7 @@ const onPaste = (state, pasteData) => {
 
   // get current block contents
   const { type, refId } = blocks[anchorKey]
+
   const _entity = entities(state, type)[refId]
 
   const _firstPasteFrag = _list[0][Object.keys(_list[0])[0]]
@@ -530,6 +540,27 @@ const onPaste = (state, pasteData) => {
   return cleanUpState(_state)
 }
 
+const addDirtyAtomic = (state, refId, type) => {
+  const _state = cloneDeep(state)
+  const _atomic = { refId, type }
+  if (_state.dirtyAtomics) {
+    _state.dirtyAtomics[refId] = _atomic
+  } else {
+    _state.dirtyAtomics = { [refId]: _atomic }
+  }
+  _state.dirtyAtomics[refId] = _atomic
+
+  return _state
+}
+
+const dequeueDirtyAtomic = (state, refId) => {
+  const _state = cloneDeep(state)
+  if (_state.dirtyAtomics) {
+    delete _state.dirtyAtomics[refId]
+  }
+  return _state
+}
+
 export default (state, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_TYPE:
@@ -556,6 +587,12 @@ export default (state, action) => {
         ...state,
         showFormatMenu: action.payload.bool,
       }
+    case ADD_DIRTY_ATOMIC: {
+      return addDirtyAtomic(state, action.payload.refId, action.payload.type)
+    }
+    case DEQUEUE_DIRTY_ATOMIC: {
+      return dequeueDirtyAtomic(state, refId)
+    }
     case UPDATE_SOURCE: {
       return updateSource(state, action.payload.source)
     }
@@ -597,7 +634,7 @@ export default (state, action) => {
     case DELETE_BLOCKS:
       return deleteBlocks(state, action.payload)
     case ON_CUT:
-      return deleteBlocks(state, action.payload)
+      return cutBlocks(state, action.payload)
     case SET_BLOCK_TYPE:
       let nextState = cloneDeep(state)
       const _html = getRawHtmlForBlock(

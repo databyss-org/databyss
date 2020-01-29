@@ -21,6 +21,8 @@ import {
   UPDATE_SOURCE,
   DEQUEUE_NEW_SOURCE,
   ON_SELECTION,
+  ADD_DIRTY_ATOMIC,
+  DEQUEUE_DIRTY_ATOMIC,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -242,5 +244,22 @@ export function onSelection(editableState) {
     payload: {
       editableState,
     },
+  }
+}
+
+export function addDirtyAtomic(refId, type) {
+  return {
+    type: ADD_DIRTY_ATOMIC,
+    payload: {
+      refId,
+      type,
+    },
+  }
+}
+
+export function dequeueDirtyAtomic(refId) {
+  return {
+    type: DEQUEUE_DIRTY_ATOMIC,
+    payload: refId,
   }
 }

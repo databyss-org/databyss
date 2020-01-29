@@ -1,9 +1,10 @@
 import Html from 'slate-html-serializer'
+import _ from 'lodash'
 import { getEventTransfer } from 'slate-react'
 import ObjectId from 'bson-objectid'
 import { isAtomicInlineType, inlineNode } from './page/reducer'
 import { getRangesFromBlock } from './markup'
-import { NewEditor } from './slateUtils'
+import { editorInstance } from './slateUtils'
 
 // deserializer for atomic blocks
 const MARK_TAG = {
@@ -45,7 +46,16 @@ export const trimFragment = frag => {
   return _frag
 }
 
-export const blockToState = block => {
+/*
+Takes a slate text or inline node and converts the values to to text, type, ranges, refId, and id. 
+If the node is an atomic type, the refId is preserved
+input:
+  @block  slate node
+
+output: 
+{ text: string, type: string, ranges: array, refId: string, _id: string }
+*/
+export const slateNodeToState = block => {
   // refID is required in the block data
   // refId is used to look up ranges and text in state
   let refId = block.data ? block.data.get('refId') : null
@@ -73,13 +83,19 @@ export const blockToState = block => {
 }
 
 /*
-takes a node list and deserializes them to return a list with refId, _id, text, and ranges
+takes clipboard data in Slate format and builds the payload for the PASTE action
 */
 export const blocksToState = nodes => {
-  const _blocks = nodes.map(block => blockToState(block)).toJS()
+  const _blocks = nodes.map(block => slateNodeToState(block)).toJS()
   return _blocks
 }
 
+/*
+
+* takes a string, splits them on line breaks and converts the lines to slate block. 
+* composes a slate fragment out of the slate blocks
+
+*/
 export const getFragFromText = text => {
   // create a list split by carriage returns
   let _textList = text.split(/\r?\n/)
@@ -94,7 +110,7 @@ export const getFragFromText = text => {
     return false
   })
   // creates a slate editor to compose a fragment
-  const _editor = NewEditor()
+  const _editor = editorInstance()
   // creates list of new blocks with refId and _id
 
   const _blockList = _textList.map(t => {
@@ -163,23 +179,43 @@ export const isFragmentFullBlock = (fragment, document) => {
 }
 
 /*
-        looks up the refId of the fragment and replaces it with an updated value, paste blocks can become stale when copying and pasting
+looks up the refId of the fragment and replaces it with an updated value, paste blocks can become stale when copying and pasting
 
-        this function takes a blockList, fragment, value and currentState and returns updated { blockList, fragment } 
+inputs
+  @blockList  array of blocks to be pasted with refID and _id
+  @fragment   slate fragment
+  @getCache   lookup function to get updated source value
+
+outputs
+  @blocklist  array of blocks to be pasted with refID and _id
+  @fragment   slate fragment
         */
 
-export const updateClipboardRefs = ({ blockList, fragment, sourceCache }) => {
-  const _slateBlockList = blockList
-  const _nextFrag = _slateBlockList.reduce((_fragAccum, _slateBlock, i) => {
+export const updateClipboardRefs = ({
+  blockList,
+  fragment,
+  sourceCache,
+  getSource,
+  onDirtyAtomic,
+}) => {
+  const _nextFrag = blockList.reduce((_fragAccum, _slateBlock, i) => {
     const _slateBlockData = Object.values(_slateBlock)[0]
     if (_slateBlockData.type === 'SOURCE') {
       // look up source in dictionary
-      const _dictSource = sourceCache[_slateBlockData.refId]
-      // if values exist in our current state, replace with an updated value
-      if (!_dictSource) {
-        return _fragAccum
-      }
+      // const _dictSource = sourceCache[_slateBlockData.refId]
+      const _dictSource = getSource(_slateBlockData.refId)
+
       // Edge case: when looking up atomic block by refID but a cut has occured and refId block is empty, do not perform a lookup
+      if (!_.isObject(_dictSource)) {
+        onDirtyAtomic(_slateBlockData.refId, _slateBlockData.type)
+        return _fragAccum
+        // dispatch addDirtyAtomic
+      }
+
+      // // if values exist in our current state, replace with an updated value
+      // if (!_dictSource) {
+      //   return _fragAccum
+      // }
 
       if (_dictSource.text.textValue.length === 0) {
         return _fragAccum
@@ -195,10 +231,7 @@ export const updateClipboardRefs = ({ blockList, fragment, sourceCache }) => {
 
       // create new atomic block with given text and range
       const _node = inlineNode(_inlineFields)
-
-      // TODO: CREATE NEW INLINE BLOCK TYPE AND ASSIGN IT TO THE INDEX VALUE
-
-      const _editor = NewEditor()
+      const _editor = editorInstance()
       _editor.insertFragment(_fragAccum)
       const _nodeList = _editor.value.document.nodes.map(n => n.key)
       _editor.replaceNodeByKey(_nodeList.get(i), _node)
@@ -263,7 +296,7 @@ export const extendSelectionForClipboard = editor => {
         if (!_isAtStart) {
           // check fragment to see if first block selected is atomic
           const _firstBlock = _frag.nodes.get(0)
-          if (!_firstBlock.text.length === 0) {
+          if (_firstBlock.text.length !== 0) {
             _needsUpdate = true
             if (_selection.isForward) {
               editor.moveAnchorToStartOfNode(_firstFrag)
@@ -278,7 +311,7 @@ export const extendSelectionForClipboard = editor => {
         if (!_isAtEnd) {
           // check fragment to see if atomic block is selected
           const _lastBlock = _frag.nodes.get(_frag.nodes.size - 1)
-          if (!_lastBlock.text.length === 0) {
+          if (_lastBlock.text.length !== 0) {
             _needsUpdate = true
             if (_selection.isForward) {
               editor.moveFocusToEndOfNode(_lastFrag)
@@ -293,7 +326,13 @@ export const extendSelectionForClipboard = editor => {
   return { update: _needsUpdate, editor }
 }
 
-export const getPasteData = (event, editor, sourceState) => {
+export const getPasteData = (
+  event,
+  editor,
+  sourceState,
+  getSource,
+  onDirtyAtomic
+) => {
   let _pasteData
 
   if (isAtomicInlineType(editor.value.anchorBlock.type)) {
@@ -332,15 +371,12 @@ export const getPasteData = (event, editor, sourceState) => {
     // this list is used to keep slate and state in sync
     let _blockList = blocksToState(_frag.nodes)
 
-    /*
-        looks up the refId of the fragment and replaces it with an updated value, paste blocks can become stale when copying and pasting
-
-        this function takes a blockList, fragment, value and currentState and returns updated { blockList, fragment } 
-        */
     const { blockList, frag } = updateClipboardRefs({
       blockList: _blockList,
       fragment: _frag,
       sourceCache: sourceState.cache,
+      getSource,
+      onDirtyAtomic,
     })
     _blockList = blockList
     _frag = frag
@@ -356,8 +392,6 @@ export const getPasteData = (event, editor, sourceState) => {
       afterBlockRef: _afterBlockRef,
     }
     return _pasteData
-    // onPasteAction(_pasteData, editor)
-    // return event.preventDefault()
   }
 
   // if plaintext or html is pasted

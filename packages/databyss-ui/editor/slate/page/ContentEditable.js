@@ -69,6 +69,7 @@ const SlateContentEditable = forwardRef(
       autoFocus,
       onSelectionChange,
       onCutBlocks,
+      onDirtyAtomic,
       ...others
     },
     ref
@@ -76,7 +77,7 @@ const SlateContentEditable = forwardRef(
     const [editorState, , stateRef] = useEditorContext()
 
     const { modals } = useNavigationContext()
-    const { state: sourceState } = useSourceContext()
+    const { state: sourceState, getSource } = useSourceContext()
 
     const { activeBlockId, editableState, blocks, page } = editorState
 
@@ -349,6 +350,7 @@ const SlateContentEditable = forwardRef(
         }
 
         const _editorState = { value: editor.value }
+
         onBackspace(blockProperties, _editorState)
       }
       // special case:
@@ -515,7 +517,13 @@ const SlateContentEditable = forwardRef(
     }
 
     const onPaste = (event, editor) => {
-      const _pasteData = getPasteData(event, editor, sourceState)
+      const _pasteData = getPasteData(
+        event,
+        editor,
+        sourceState,
+        getSource,
+        onDirtyAtomic
+      )
       if (!_pasteData) {
         return event.preventDefault()
       }

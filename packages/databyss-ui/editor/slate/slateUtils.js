@@ -282,7 +282,7 @@ export const isEmptyAndAtomic = text => {
   return false
 }
 
-export const NewEditor = () => {
+export const editorInstance = () => {
   const _value = Value.fromJSON({
     document: {
       nodes: [

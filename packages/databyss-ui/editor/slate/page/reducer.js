@@ -2,7 +2,7 @@ import { Block } from 'slate'
 import { serializeNodeToHtml, sanitizer } from './../inlineSerializer'
 import { getRangesFromBlock, stateToSlateMarkup } from './../markup'
 
-import { NewEditor, isTextAtomic } from './../slateUtils'
+import { editorInstance, isTextAtomic } from './../slateUtils'
 import {
   SET_ACTIVE_BLOCK_TYPE,
   SET_ACTIVE_BLOCK_CONTENT,
@@ -159,7 +159,7 @@ const setBlockType = (id, type) => (editor, value, next) => {
       _node = new Block.fromJSON(_node)
       // create new block from node
       // mock editor to correct marks
-      const _editor = NewEditor()
+      const _editor = editorInstance()
       _editor.insertBlock(_node)
       // issue #117
       // removes @ or #
@@ -386,8 +386,16 @@ const deleteBlocksByIds = idList => (editor, value, next) => {
 
 export const onCut = (refId, id) => (editor, value, next) => {
   editor.delete()
-  // if current block is atomic, set block to entry
+  // if current block is empty and previous block exists
+  // delete current block which is included in the cut action
   if (
+    editor.value.anchorBlock.text.length === 0 &&
+    editor.value.previousBlock
+  ) {
+    editor.removeNodeByKey(editor.value.anchorBlock.key)
+  }
+  // if current block is empty and atomic replace with entry block and provided id and refId
+  else if (
     isAtomicInlineType(editor.value.anchorBlock.type) ||
     editor.value.anchorBlock.text.length === 0
   ) {
