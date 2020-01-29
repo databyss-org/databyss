@@ -29,7 +29,7 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('editor selenium', () => {
   beforeEach(async done => {
-    driver = await startSession('clipboard-win-chrome-5-3', WIN, CHROME)
+    driver = await startSession('clipboard-win-chrome-5-5', WIN, CHROME)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     editor = await getEditor(driver)
 
@@ -58,7 +58,7 @@ describe('editor selenium', () => {
     await actions.sendKeys('this is an entry')
     await paste(actions)
     await actions.perform()
-    await sleep(1000)
+    await sleep(500)
 
     const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
       b => b.refId
@@ -75,7 +75,6 @@ describe('editor selenium', () => {
             <inline type="SOURCE">this is an example of a source text</inline>
             <text />
           </block>
-
           <block type="ENTRY" data={{ refId: refIdList[2], type: 'ENTRY' }}>
             <text>this is an example of an entry text</text>
           </block>
