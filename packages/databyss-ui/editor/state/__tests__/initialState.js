@@ -2,6 +2,7 @@ export default {
   editableState: null,
   activeBlockId: null,
   newSources: [],
+  newTopics: [],
   sources: {
     '5d64419f1cbc815583c35058': {
       _id: '5d64419f1cbc815583c35058',

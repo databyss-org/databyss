@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorContext } from './EditorProvider'
 
@@ -16,8 +17,8 @@ import {
   deleteBlock,
   deleteBlocks,
   newBlockMenu,
-  updateSource,
-  removeSourceFromQueue,
+  updateAtomic,
+  removeAtomicFromQueue,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
@@ -25,8 +26,9 @@ import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 const EditorPage = ({ children, autoFocus }) => {
   const [editorState, dispatchEditor] = useEditorContext()
   const { setSource } = useSourceContext()
+  const { setTopic } = useTopicContext()
 
-  const { sources, newSources, editableState } = editorState
+  const { sources, topics, newAtomics, editableState } = editorState
 
   /*
   checks to see if new source has been added
@@ -35,20 +37,28 @@ const EditorPage = ({ children, autoFocus }) => {
 
   useEffect(
     () => {
-      if (newSources && editableState) {
-        if (newSources.length > 0) {
-          newSources.forEach(s => {
-            const _source = {
-              _id: s._id,
-              text: { textValue: s.textValue, ranges: s.ranges },
-            }
-            setSource(_source)
-            dispatchEditor(removeSourceFromQueue(s._id))
-          })
-        }
+      if (!editableState) {
+        return
+      }
+      if (newAtomics && newAtomics.length) {
+        newAtomics.forEach(atomic => {
+          const _data = {
+            _id: atomic._id,
+            text: { textValue: atomic.textValue, ranges: atomic.ranges },
+          }
+          ;({
+            SOURCE: () => {
+              setSource(_data)
+            },
+            TOPIC: () => {
+              setTopic(_data)
+            },
+          }[atomic.type]())
+          dispatchEditor(removeAtomicFromQueue(atomic._id))
+        })
       }
     },
-    [sources]
+    [sources, topics]
   )
 
   const onActiveBlockIdChange = (id, editableState) =>
@@ -112,19 +122,18 @@ const EditorPage = ({ children, autoFocus }) => {
 
   const { showModal } = useNavigationContext()
 
-  // dont need blocks
-  const onEditSource = (refId, { value }) => {
-    // Editor function to dispatch with modal
-    const onUpdateSource = source => {
-      if (source) {
-        dispatchEditor(updateSource(source, { value }))
+  const onEditAtomic = (refId, type, { value }) => {
+    const onUpdate = atomic => {
+      if (atomic) {
+        dispatchEditor(updateAtomic({ atomic, type }, { value }))
       }
     }
+
     showModal({
-      component: 'SOURCE',
+      component: type,
       props: {
-        sourceId: refId,
-        onUpdateSource,
+        onUpdate,
+        refId,
       },
     })
   }
@@ -143,8 +152,8 @@ const EditorPage = ({ children, autoFocus }) => {
     deleteBlockByKey,
     deleteBlocksByKeys,
     onNewBlockMenu,
-    onEditSource,
     autoFocus,
+    onEditAtomic,
   })
 }
 

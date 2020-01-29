@@ -15,7 +15,7 @@ import {
   START_TAG,
   DELETE_BLOCK,
   DELETE_BLOCKS,
-  UPDATE_SOURCE,
+  UPDATE_ATOMIC,
 } from './../../state/page/constants'
 
 export const newBlock = id =>
@@ -228,18 +228,19 @@ const deleteBlockById = id => (editor, value, next) => {
 }
 
 /*
-updates all sources provided in the ID list
+updates all atomics provided in the ID list
 */
-const onUpdateSource = (source, blocks) => (editor, value, next) => {
+const onUpdateAtomic = (data, blocks) => (editor, value, next) => {
+  const { atomic, type } = data
   // generates a list of blocks to update
   const _idList = Object.keys(blocks).filter(
-    block => blocks[block].refId === source._id
+    block => blocks[block].refId === atomic._id
   )
   _idList.forEach(id => {
-    const _newNodes = stateToSlateMarkup(source.text).nodes
+    const _newNodes = stateToSlateMarkup(atomic.text).nodes
     const _block = Block.fromJSON({
       object: 'block',
-      type: 'SOURCE',
+      type,
       nodes: _newNodes,
     })
     const _innerHtml = serializeNodeToHtml(_block)
@@ -251,11 +252,11 @@ const onUpdateSource = (source, blocks) => (editor, value, next) => {
           text: sanitizer(_innerHtml),
         },
       ],
-      type: 'SOURCE',
+      type,
     }
     const _tempNode = Block.fromJSON({
       object: 'block',
-      type: 'SOURCE',
+      type,
       key: id,
       nodes: [textBlock],
     })
@@ -328,11 +329,11 @@ export default (editableState, action) => {
         editorCommands: _nextEditorCommands,
       }
     }
-    case UPDATE_SOURCE: {
+    case UPDATE_ATOMIC: {
       return {
         ...editableState,
-        editorCommands: onUpdateSource(
-          action.payload.source,
+        editorCommands: onUpdateAtomic(
+          action.payload.data,
           editableState.blocks
         ),
       }
