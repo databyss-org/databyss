@@ -24,6 +24,7 @@ import {
   removeSourceFromQueue,
   onSelection,
   addDirtyAtomic,
+  dequeueDirtyAtomic,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
@@ -66,7 +67,13 @@ const EditorPage = ({ children, autoFocus }) => {
         atomicData.map(idData => {
           const _cache = { SOURCE: sourceState.cache }[idData.type]
           if (_.isObject(_cache[idData.refId])) {
-            console.log(_cache[idData.refId])
+            // remove from dirtyAtomics queue
+            dispatchEditor(dequeueDirtyAtomic(idData.refId))
+            // TODO:change to update atomic when topics provider is merged
+            dispatchEditor(
+              updateSource(_cache[idData.refId], { value: editableState.value })
+            )
+
             // update
           }
         })

@@ -591,7 +591,7 @@ export default (state, action) => {
       return addDirtyAtomic(state, action.payload.refId, action.payload.type)
     }
     case DEQUEUE_DIRTY_ATOMIC: {
-      return dequeueDirtyAtomic(state, refId)
+      return dequeueDirtyAtomic(state, action.payload)
     }
     case UPDATE_SOURCE: {
       return updateSource(state, action.payload.source)
