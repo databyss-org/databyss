@@ -216,7 +216,10 @@ const insertNewActiveBlock = (
     }
   }
 
-  if (state.blocks[previousBlockId].type === 'LOCATION') {
+  if (
+    state.blocks[previousBlockId] &&
+    state.blocks[previousBlockId].type === 'LOCATION'
+  ) {
     // if new block is added before LOCATION type
     if (!previousBlockText) {
       _state = setBlockType(_state, 'ENTRY', previousBlockId)
@@ -393,8 +396,6 @@ const onPaste = (state, pasteData) => {
   const _lastPasteFrag =
     _list[_list.length - 1][Object.keys(_list[_list.length - 1])[0]]
 
-  // TODO: replace second block if atomic block is one fragment long
-
   if (_entity.textValue.length !== 0) {
     // check if first paste fragment is not atomic
     if (!isAtomicInlineType(_firstPasteFrag.type)) {
@@ -496,7 +497,8 @@ const onPaste = (state, pasteData) => {
           _first = _first.join('')
           // if paste occured in the beggining of an entry block with existing text
           if (_first.length === 0) {
-            _state.page.blocks = _state.page.blocks.splice(_index, 1)
+            _state.page.blocks.splice(_index, 1)
+
             _index -= 1
           }
           // replace first half of text
