@@ -88,9 +88,7 @@ router.post(
             // ENTRY WITH ID
             const entryFields = {
               text: { textValue: text, ranges },
-              ranges,
               _id: entryId,
-              user: req.user.id,
               account: req.account._id,
             }
             let entryResponse = await Entry.findOne({ _id: entryId })
