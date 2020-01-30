@@ -6,6 +6,7 @@ import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { ThemeProvider } from '@databyss-org/ui/theming'
 import { Viewport } from '@databyss-org/ui'
 import Public from './Public'
+import Page from './Page'
 
 const App = () => {
   const { path } = useNavigationContext()
@@ -21,7 +22,7 @@ const App = () => {
               code={urlParams.get('code')}
               unauthorizedChildren={<Public />}
             >
-              Databyss Notes
+              {/* <Page /> */}
             </SessionProvider>
           </Viewport>
         </ServiceProvider>

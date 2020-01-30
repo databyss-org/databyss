@@ -2,27 +2,13 @@ const express = require('express')
 const bcrypt = require('bcryptjs')
 const auth = require('../../middleware/auth')
 const jwt = require('jsonwebtoken')
+const { getSessionFromToken } = require('../../lib/session')
 
 const router = express.Router()
 const { check, validationResult } = require('express-validator/check')
 
 const User = require('../../models/User')
 const Login = require('../../models/Login')
-
-// @route    GET api/auth
-// @desc     verify user
-// @access   Public
-router.get('/', auth, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select('-password')
-
-    res.json(user)
-  } catch (err) {
-    console.error(err.message)
-    res.status(500).send('Server Error')
-    throw new Error('err')
-  }
-})
 
 // @route    POST api/auth/code
 // @desc     verify user with code
@@ -41,14 +27,14 @@ router.post('/code', async (req, res) => {
         if (login.date.getTime() >= Date.now() - 3600000) {
           const token = login.token
           const deleteQuery = Login.findOneAndRemove({ code })
-          deleteQuery.exec(err => {
+          deleteQuery.exec(async err => {
             if (err) {
               console.error(err.message)
               res.status(500).send('Server Error')
               throw new Error('err')
             }
-            // TODO: Replace with Session model
-            return res.json({ data: { session: { token } } })
+            const session = await getSessionFromToken(token)
+            return res.json({ data: { session } })
           })
         } else {
           res.status(401).json({ error: 'token expired' })
