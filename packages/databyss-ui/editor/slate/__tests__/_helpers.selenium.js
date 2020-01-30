@@ -117,10 +117,14 @@ export const highlightSingleLine = actions =>
     .sendKeys(Key.ARROW_UP)
     .keyUp(Key.SHIFT)
     .pause(100)
+
 export const highlightDoubleLine = actions =>
   actions
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_UP)
+    .keyUp(Key.SHIFT)
+    .pause(100)
+    .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_UP)
     .keyUp(Key.SHIFT)
     .pause(100)

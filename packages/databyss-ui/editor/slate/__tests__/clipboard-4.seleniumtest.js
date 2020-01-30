@@ -94,6 +94,7 @@ describe('editor selenium', () => {
     await actions.sendKeys(Key.ENTER)
     await selectAll(actions)
     await copy(actions)
+    await actions.sendKeys(Key.ARROW_RIGHT)
     await endOfLine(actions)
     await actions.sendKeys('this is an entry')
     await paste(actions)
