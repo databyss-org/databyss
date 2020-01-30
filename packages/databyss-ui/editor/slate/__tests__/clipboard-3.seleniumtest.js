@@ -12,7 +12,6 @@ import {
   copy,
   paste,
   sleep,
-  selectAll,
   highlightSingleLine,
 } from './_helpers.selenium'
 

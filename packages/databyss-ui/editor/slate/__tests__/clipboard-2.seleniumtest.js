@@ -8,7 +8,6 @@ import { toSlateJson } from './_helpers'
 import {
   endOfDoc,
   highlightSingleLine,
-  highlightDoubleLine,
   getEditor,
   copy,
   paste,
