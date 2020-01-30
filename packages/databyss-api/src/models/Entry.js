@@ -8,45 +8,9 @@ const EntrySchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'account',
   },
-  author: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'author',
-    },
-  ],
-  source: {
-    type: Schema.Types.ObjectId,
-    ref: 'source',
-  },
-  linkedContent: {
-    type: String,
-  },
-  default: {
-    type: Boolean,
-    default: false,
-  },
-  pageFrom: {
-    type: Number,
-  },
-  pageTo: {
-    type: Number,
-  },
-  files: [
-    {
-      type: Array,
-    },
-  ],
-  entry: {
-    type: String,
-  },
-  text: RichText.schema,
-  index: {
-    type: Number,
-    default: 0,
-  },
-  document: {
-    type: String,
-    requied: true,
+  text: {
+    type: RichText.schema,
+    default: () => new RichText(),
   },
 })
 
