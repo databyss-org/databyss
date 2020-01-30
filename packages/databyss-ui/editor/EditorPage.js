@@ -79,7 +79,7 @@ const EditorPage = ({ children, autoFocus }) => {
       if (dirtyAtomics) {
         // check atomic cache to see if atomic has been fetched
         const atomicData = Object.values(dirtyAtomics)
-        atomicData.forEach(idData => {
+        atomicData.some(idData => {
           const _cache = { SOURCE: sourceState.cache, TOPIC: topicState.cache }[
             idData.type
           ]
@@ -89,17 +89,20 @@ const EditorPage = ({ children, autoFocus }) => {
           ) {
             // remove from dirtyAtomics queue
             dispatchEditor(dequeueDirtyAtomic(idData.refId))
-            dispatchEditor(
-              updateAtomic(
-                { atomic: _cache[idData.refId], type: idData.type },
-                { value: editableState.value }
+            window.requestAnimationFrame(() =>
+              dispatchEditor(
+                updateAtomic(
+                  { atomic: _cache[idData.refId], type: idData.type },
+                  { value: editableState.value }
+                )
               )
             )
+            return true
           }
         })
       }
     },
-    [dirtyAtomics, sourceState]
+    [dirtyAtomics, sourceState, topicState]
   )
 
   const onActiveBlockIdChange = (id, editableState) =>

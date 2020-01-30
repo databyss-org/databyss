@@ -325,6 +325,7 @@ const onUpdateAtomic = (data, blocks) => (editor, value, next) => {
     block => blocks[block].refId === atomic._id
   )
   _idList.forEach(id => {
+    const _refId = blocks[id].refId
     const _newNodes = stateToSlateMarkup(atomic.text).nodes
     const _block = Block.fromJSON({
       object: 'block',
@@ -344,6 +345,7 @@ const onUpdateAtomic = (data, blocks) => (editor, value, next) => {
     }
     const _tempNode = Block.fromJSON({
       object: 'block',
+      data: { refId: _refId, type },
       type,
       key: id,
       nodes: [textBlock],

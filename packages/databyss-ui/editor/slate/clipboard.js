@@ -56,7 +56,6 @@ output:
 { text: string, type: string, ranges: array, refId: string, _id: string }
 */
 export const slateNodeToState = block => {
-  console.log(block)
   // refID is required in the block data
   // refId is used to look up ranges and text in state
   let refId = block.data ? block.data.get('refId') : null
@@ -354,8 +353,6 @@ export const getPasteData = ({
   const transfer = getEventTransfer(event)
 
   const { fragment, type, text } = transfer
-
-  console.log('fragment', fragment)
 
   if (!text) {
     return null

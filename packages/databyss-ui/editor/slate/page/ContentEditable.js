@@ -113,9 +113,6 @@ const SlateContentEditable = forwardRef(
       // set slate refId of block
       if (blocks[_nextActiveBlock.key]) {
         if (!_nextRefId) {
-          console.log('one')
-          console.log(_nextActiveBlock.key)
-          console.log(blocks[_nextActiveBlock.key].refId)
           // TODO REPLACE THIS
           setBlockRef(
             _nextActiveBlock.key,
