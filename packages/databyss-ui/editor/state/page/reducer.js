@@ -332,8 +332,6 @@ const deleteBlock = (state, payload) => {
   return cleanUpState(_state)
 }
 
-const cutBlocks = (state, payload) => deleteBlocks(state, payload)
-
 const deleteBlocks = (state, payload) => {
   const _state = cloneDeep(state)
   // check for trailing block
@@ -365,6 +363,8 @@ const deleteBlocks = (state, payload) => {
 
   return cleanUpState(_state)
 }
+
+const cutBlocks = (state, payload) => deleteBlocks(state, payload)
 
 const onPaste = (state, pasteData) => {
   const {

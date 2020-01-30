@@ -99,6 +99,7 @@ const EditorPage = ({ children, autoFocus }) => {
             )
             return true
           }
+          return false
         })
       }
     },
