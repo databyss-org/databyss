@@ -21,6 +21,11 @@ const PageSchema = new Schema({
   ],
 })
 
-const Page = mongoose.models.Block || mongoose.model('page', PageSchema)
+PageSchema.static('create', async (values = {}) => {
+  const Page = mongoose.model('page', PageSchema)
+  const instance = new Page(values)
+  await instance.save()
+  return instance
+})
 
-module.exports = Page
+module.exports = mongoose.model('page', PageSchema)

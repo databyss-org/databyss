@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
+import reducer from './state/page/reducer'
 
 const useReducer = createReducer()
 
@@ -19,13 +20,7 @@ export const makeComposedReducer = (reducer, editableReducer) => (
   ),
 })
 
-const EditorProvider = ({
-  children,
-  initialState,
-  reducer,
-  editableReducer,
-  name,
-}) => {
+const EditorProvider = ({ children, initialState, editableReducer, name }) => {
   const [state, dispatch, stateRef] = useReducer(
     makeComposedReducer(reducer, editableReducer),
     initialState,

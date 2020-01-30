@@ -1,4 +1,7 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
+import Account from './Account'
+
+const Schema = mongoose.Schema
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -23,8 +26,31 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  defaultAccount: {
+    type: Schema.Types.ObjectId,
+    ref: 'account',
+  },
 })
 
-const User = mongoose.models.User || mongoose.model('user', UserSchema)
+UserSchema.static('create', async (values = {}) => {
+  console.log('USER.CREATE')
+  const User = mongoose.model('user', UserSchema)
+  const instance = User(values)
 
-module.exports = User
+  // save the user to generate an id
+  if (!values._id) {
+    await instance.save()
+  }
+
+  // create default account
+  const account = await Account.create()
+  console.log('CREATE ACCOUNT', account)
+  instance.defaultAccount = account._id
+
+  // set user as ADMIN on account
+  await account.setUserRole({ userId: instance._id, role: 'ADMIN' })
+  await instance.save()
+  return instance
+})
+
+module.exports = mongoose.model('user', UserSchema)
