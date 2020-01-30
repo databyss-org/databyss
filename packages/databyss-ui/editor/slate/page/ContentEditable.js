@@ -8,6 +8,7 @@ import Bugsnag from '@databyss-org/services/lib/bugsnag'
 
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import {
   getRawHtmlForBlock,
   getRangesForBlock,
@@ -27,7 +28,7 @@ import {
   hasSelection,
   noAtomicInSelection,
   getSelectedBlocks,
-  isInlineSourceSelected,
+  isInlineAtomicSelected,
 } from './../slateUtils'
 
 import {
@@ -66,11 +67,11 @@ const SlateContentEditable = forwardRef(
       onPasteAction,
       setBlockRef,
       onNewBlockMenu,
-      onEditSource,
       autoFocus,
       onSelectionChange,
       onCutBlocks,
       onDirtyAtomic,
+      onEditAtomic,
       ...others
     },
     ref
@@ -79,6 +80,7 @@ const SlateContentEditable = forwardRef(
 
     const { modals } = useNavigationContext()
     const { getSource } = useSourceContext()
+    const { getTopic } = useTopicContext()
 
     const { activeBlockId, editableState, blocks, page } = editorState
 
@@ -111,6 +113,9 @@ const SlateContentEditable = forwardRef(
       // set slate refId of block
       if (blocks[_nextActiveBlock.key]) {
         if (!_nextRefId) {
+          console.log('one')
+          console.log(_nextActiveBlock.key)
+          console.log(blocks[_nextActiveBlock.key].refId)
           // TODO REPLACE THIS
           setBlockRef(
             _nextActiveBlock.key,
@@ -122,6 +127,8 @@ const SlateContentEditable = forwardRef(
 
         // if refId's dont match, use state value to set slate value
         if (_nextRefId !== blocks[_nextActiveBlock.key].refId) {
+          console.log('two')
+
           setBlockRef(
             _nextActiveBlock.key,
             blocks[_nextActiveBlock.key].refId,
@@ -141,6 +148,8 @@ const SlateContentEditable = forwardRef(
           if (blocks[_prevKey]) {
             const _previousStateRef = blocks[_prevKey].refId
             if (_previousStateRef !== _previousRef) {
+              console.log('three')
+
               setBlockRef(_prevKey, _previousStateRef, _nextEditableState)
             }
           }
@@ -285,9 +294,11 @@ const SlateContentEditable = forwardRef(
     }
 
     // this will get removed when paths are implemented
-    const editSource = (_id, editor) => {
-      const _refId = stateRef.current.blocks[_id].refId
-      onEditSource(_refId, editor)
+    const editAtomic = editor => {
+      const { key, type } = editor.value.anchorBlock
+      const _refId = stateRef.current.blocks[key].refId
+      //  onEditSource(_refId, editor)
+      onEditAtomic(_refId, type, editor)
     }
 
     const onCopy = (event, editor) => {
@@ -371,9 +382,8 @@ const SlateContentEditable = forwardRef(
         onNewBlockMenu(false, editor)
       }
 
-      if (isInlineSourceSelected(editor) && event.key === 'Enter') {
-        const _id = editor.value.anchorBlock.key
-        editSource(_id, editor)
+      if (isInlineAtomicSelected(editor) && event.key === 'Enter') {
+        editAtomic(editor)
         return event.preventDefault()
       }
 
@@ -523,6 +533,7 @@ const SlateContentEditable = forwardRef(
         event,
         editor,
         getSource,
+        getTopic,
         onDirtyAtomic,
       })
       if (!_pasteData) {
@@ -554,7 +565,7 @@ const SlateContentEditable = forwardRef(
         autoFocus={autoFocus}
         onChange={onChange}
         renderBlock={renderBlock}
-        renderInline={renderInline(onEditSource)}
+        renderInline={renderInline(onEditAtomic)}
         renderEditor={renderEditor}
         schema={schema}
         onKeyUp={onKeyUp}

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { ResourcePending } from '@databyss-org/services/lib/ResourcePending'
 import { useEditorContext } from './EditorProvider'
@@ -20,11 +21,11 @@ import {
   onPaste,
   onSetBlockRef,
   newBlockMenu,
-  updateSource,
-  removeSourceFromQueue,
   onSelection,
   addDirtyAtomic,
   dequeueDirtyAtomic,
+  updateAtomic,
+  removeAtomicFromQueue,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
@@ -32,31 +33,45 @@ import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 const EditorPage = ({ children, autoFocus }) => {
   const [editorState, dispatchEditor] = useEditorContext()
   const { setSource, state: sourceState } = useSourceContext()
+  const { setTopic, state: topicState } = useTopicContext()
 
-  const { sources, newSources, editableState, dirtyAtomics } = editorState
+  const {
+    sources,
+    topics,
+    newAtomics,
+    editableState,
+    dirtyAtomics,
+  } = editorState
 
   /*
   checks to see if new source has been added
   adds the new source to the source provider
   */
+
   useEffect(
     () => {
-      if (newSources && editableState) {
-        if (newSources.length > 0) {
-          newSources.forEach(s => {
-            const _source = {
-              _id: s._id,
-              text: { textValue: s.textValue, ranges: s.ranges },
-            }
-            if (!sourceState.cache[s._id]) {
-              setSource(_source)
-            }
-            dispatchEditor(removeSourceFromQueue(s._id))
-          })
-        }
+      if (!editableState) {
+        return
+      }
+      if (newAtomics && newAtomics.length) {
+        newAtomics.forEach(atomic => {
+          const _data = {
+            _id: atomic._id,
+            text: { textValue: atomic.textValue, ranges: atomic.ranges },
+          }
+          ;({
+            SOURCE: () => {
+              setSource(_data)
+            },
+            TOPIC: () => {
+              setTopic(_data)
+            },
+          }[atomic.type]())
+          dispatchEditor(removeAtomicFromQueue(atomic._id))
+        })
       }
     },
-    [sources]
+    [sources, topics]
   )
 
   useEffect(
@@ -65,16 +80,20 @@ const EditorPage = ({ children, autoFocus }) => {
         // check atomic cache to see if atomic has been fetched
         const atomicData = Object.values(dirtyAtomics)
         atomicData.forEach(idData => {
-          const _cache = { SOURCE: sourceState.cache }[idData.type]
+          const _cache = { SOURCE: sourceState.cache, TOPIC: topicState.cache }[
+            idData.type
+          ]
           if (
             _cache[idData.refId] &&
             !(_cache[idData.refId] instanceof ResourcePending)
           ) {
             // remove from dirtyAtomics queue
             dispatchEditor(dequeueDirtyAtomic(idData.refId))
-            // TODO:change to update atomic when topics provider is merged
             dispatchEditor(
-              updateSource(_cache[idData.refId], { value: editableState.value })
+              updateAtomic(
+                { atomic: _cache[idData.refId], type: idData.type },
+                { value: editableState.value }
+              )
             )
           }
         })
@@ -156,19 +175,18 @@ const EditorPage = ({ children, autoFocus }) => {
 
   const { showModal } = useNavigationContext()
 
-  // dont need blocks
-  const onEditSource = (refId, { value }) => {
-    // Editor function to dispatch with modal
-    const onUpdateSource = source => {
-      if (source) {
-        dispatchEditor(updateSource(source, { value }))
+  const onEditAtomic = (refId, type, { value }) => {
+    const onUpdate = atomic => {
+      if (atomic) {
+        dispatchEditor(updateAtomic({ atomic, type }, { value }))
       }
     }
+
     showModal({
-      component: 'SOURCE',
+      component: type,
       props: {
-        sourceId: refId,
-        onUpdateSource,
+        onUpdate,
+        refId,
       },
     })
   }
@@ -198,10 +216,10 @@ const EditorPage = ({ children, autoFocus }) => {
     onPasteAction,
     setBlockRef,
     onNewBlockMenu,
-    onEditSource,
     autoFocus,
     onSelectionChange,
     onDirtyAtomic,
+    onEditAtomic,
   })
 }
 

@@ -11,6 +11,4 @@ const RichTextSchema = new mongoose.Schema({
 
 const RichText = mongoose.model('richtext', RichTextSchema)
 
-// RichText.createWithDefaults = () => RichText({ textValue: '', ranges: [] })
-
 module.exports = RichText

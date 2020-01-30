@@ -12,6 +12,7 @@ import {
 } from './constants'
 
 export function fetchSource(id) {
+  console.log(id)
   return async dispatch => {
     dispatch({
       type: FETCH_SOURCE,

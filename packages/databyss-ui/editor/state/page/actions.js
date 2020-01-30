@@ -18,11 +18,11 @@ import {
   ON_PASTE,
   SET_BLOCK_REF,
   SHOW_NEW_BLOCK_MENU,
-  UPDATE_SOURCE,
-  DEQUEUE_NEW_SOURCE,
   ON_SELECTION,
   ADD_DIRTY_ATOMIC,
   DEQUEUE_DIRTY_ATOMIC,
+  UPDATE_ATOMIC,
+  DEQUEUE_NEW_ATOMIC,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -219,19 +219,19 @@ export function newBlockMenu(bool, editableState) {
   }
 }
 
-export function updateSource(source, editableState) {
+export function updateAtomic(data, editableState) {
   return {
-    type: UPDATE_SOURCE,
+    type: UPDATE_ATOMIC,
     payload: {
       editableState,
-      source,
+      data,
     },
   }
 }
 
-export function removeSourceFromQueue(id) {
+export function removeAtomicFromQueue(id) {
   return {
-    type: DEQUEUE_NEW_SOURCE,
+    type: DEQUEUE_NEW_ATOMIC,
     payload: {
       id,
     },

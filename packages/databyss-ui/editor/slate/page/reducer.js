@@ -17,9 +17,9 @@ import {
   DELETE_BLOCKS,
   ON_PASTE,
   SET_BLOCK_REF,
-  UPDATE_SOURCE,
   ON_SELECTION,
   ON_CUT,
+  UPDATE_ATOMIC,
 } from './../../state/page/constants'
 
 export const newBlockWithRef = (id, refId) =>
@@ -291,7 +291,7 @@ export const inlineNode = ({ id, refId, type, text }) => {
   const _newNodes = stateToSlateMarkup(text).nodes
   const _block = Block.fromJSON({
     object: 'block',
-    type: 'SOURCE',
+    type,
     nodes: _newNodes,
   })
   const _innerHtml = serializeNodeToHtml(_block)
@@ -303,11 +303,11 @@ export const inlineNode = ({ id, refId, type, text }) => {
         text: sanitizer(_innerHtml),
       },
     ],
-    type: 'SOURCE',
+    type,
   }
   const _tempNode = Block.fromJSON({
     object: 'block',
-    type: 'SOURCE',
+    type,
     data: { refId, type },
     key: id,
     nodes: [_textBlock],
@@ -316,20 +316,19 @@ export const inlineNode = ({ id, refId, type, text }) => {
 }
 
 /*
-updates all sources provided in the ID list
+updates all atomics provided in the ID list
 */
-const onUpdateSource = (source, blocks) => (editor, value, next) => {
+const onUpdateAtomic = (data, blocks) => (editor, value, next) => {
+  const { atomic, type } = data
   // generates a list of blocks to update
   const _idList = Object.keys(blocks).filter(
-    block => blocks[block].refId === source._id
+    block => blocks[block].refId === atomic._id
   )
   _idList.forEach(id => {
-    // needs id, type, text: {textValue, range }
-    const _refId = blocks[id].refId
-    const _newNodes = stateToSlateMarkup(source.text).nodes
+    const _newNodes = stateToSlateMarkup(atomic.text).nodes
     const _block = Block.fromJSON({
       object: 'block',
-      type: 'SOURCE',
+      type,
       nodes: _newNodes,
     })
     const _innerHtml = serializeNodeToHtml(_block)
@@ -341,12 +340,11 @@ const onUpdateSource = (source, blocks) => (editor, value, next) => {
           text: sanitizer(_innerHtml),
         },
       ],
-      type: 'SOURCE',
+      type,
     }
     const _tempNode = Block.fromJSON({
       object: 'block',
-      type: 'SOURCE',
-      data: { refId: _refId, type: 'SOURCE' },
+      type,
       key: id,
       nodes: [textBlock],
     })
@@ -443,9 +441,9 @@ export const onPaste = pasteData => (editor, value, next) => {
     editor.value.anchorBlock.text.length > 0
   ) {
     /* if paste occurs at the end of a block
-        * create a new empty block
-        * replace next block with provided key
-    */
+     * create a new empty block
+     * replace next block with provided key
+     */
     const _emptyBlock = newBlock()
     editor.insertBlock(_emptyBlock)
 
@@ -478,8 +476,8 @@ export const onPaste = pasteData => (editor, value, next) => {
     blockList.length > 1
   ) {
     /*
-      * create empty block and move caret back to previous block
-    */
+     * create empty block and move caret back to previous block
+     */
     let _tempKey
     let _tempBlock
     const _emptyBlock = newBlock()
@@ -525,10 +523,10 @@ export const onPaste = pasteData => (editor, value, next) => {
   _nodeList = _nodeList.reverse()
   _frag = _frag.reverse()
   /*
-    * calculate offset index
-    * value will be 0 if last line in document
-    * example: if paste occurs in the middle of document
-  */
+   * calculate offset index
+   * value will be 0 if last line in document
+   * example: if paste occurs in the middle of document
+   */
   const offsetIndex = _nodeList.indexOf(editor.value.anchorBlock.key)
   _frag.forEach((n, i) => {
     const newKey = n.key
@@ -627,11 +625,11 @@ export default (editableState, action) => {
         editorCommands: _nextEditorCommands,
       }
     }
-    case UPDATE_SOURCE: {
+    case UPDATE_ATOMIC: {
       return {
         ...editableState,
-        editorCommands: onUpdateSource(
-          action.payload.source,
+        editorCommands: onUpdateAtomic(
+          action.payload.data,
           editableState.blocks
         ),
       }

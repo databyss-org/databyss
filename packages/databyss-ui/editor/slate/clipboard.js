@@ -56,6 +56,7 @@ output:
 { text: string, type: string, ranges: array, refId: string, _id: string }
 */
 export const slateNodeToState = block => {
+  console.log(block)
   // refID is required in the block data
   // refId is used to look up ranges and text in state
   let refId = block.data ? block.data.get('refId') : null
@@ -195,17 +196,19 @@ export const updateClipboardRefs = ({
   blockList,
   fragment,
   getSource,
+  getTopic,
   onDirtyAtomic,
 }) => {
   const _nextFrag = blockList.reduce((_fragAccum, _slateBlock, i) => {
     const _slateBlockData = Object.values(_slateBlock)[0]
-    if (_slateBlockData.type === 'SOURCE') {
+    if (isAtomicInlineType(_slateBlockData.type)) {
       // look up source in dictionary
-      // const _dictSource = sourceCache[_slateBlockData.refId]
-      const _dictSource = getSource(_slateBlockData.refId)
+      const _dictSource = {
+        SOURCE: () => getSource(_slateBlockData.refId),
+        TOPIC: () => getTopic(_slateBlockData.refId),
+      }[_slateBlockData.type]()
 
       // Edge case: when looking up atomic block by refID but a cut has occured and refId block is empty, do not perform a lookup
-      // IMPORT RESOURCE PENDING
       if (!_dictSource || _dictSource instanceof ResourcePending) {
         onDirtyAtomic(_slateBlockData.refId, _slateBlockData.type)
         return _fragAccum
@@ -326,7 +329,13 @@ export const extendSelectionForClipboard = editor => {
   return { update: _needsUpdate, editor }
 }
 
-export const getPasteData = ({ event, editor, getSource, onDirtyAtomic }) => {
+export const getPasteData = ({
+  event,
+  editor,
+  getSource,
+  getTopic,
+  onDirtyAtomic,
+}) => {
   let _pasteData
 
   if (isAtomicInlineType(editor.value.anchorBlock.type)) {
@@ -345,6 +354,8 @@ export const getPasteData = ({ event, editor, getSource, onDirtyAtomic }) => {
   const transfer = getEventTransfer(event)
 
   const { fragment, type, text } = transfer
+
+  console.log('fragment', fragment)
 
   if (!text) {
     return null
@@ -369,6 +380,7 @@ export const getPasteData = ({ event, editor, getSource, onDirtyAtomic }) => {
       blockList: _blockList,
       fragment: _frag,
       getSource,
+      getTopic,
       onDirtyAtomic,
     })
     _blockList = blockList

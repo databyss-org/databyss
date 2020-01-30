@@ -58,7 +58,7 @@ export const EditorBlock = ({ children, node }) => {
       if (editableState) {
         // disable '+' when editor has selection
         if (hasSelection(editableState.value) && showNewBlockMenu) {
-          dispatchEditor(newBlockMenu(false, editableState))
+          dispatchEditor(newBlockMenu(false))
           return
         }
         if (
@@ -67,14 +67,14 @@ export const EditorBlock = ({ children, node }) => {
           node.text.length === 0 &&
           !showNewBlockMenu
         ) {
-          dispatchEditor(newBlockMenu(true, editableState))
+          dispatchEditor(newBlockMenu(true))
         }
         if (
           showNewBlockMenu &&
           activeBlockId === node.key &&
           node.text.length !== 0
         ) {
-          dispatchEditor(newBlockMenu(false, editableState))
+          dispatchEditor(newBlockMenu(false))
         }
       }
     },

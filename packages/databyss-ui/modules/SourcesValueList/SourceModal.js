@@ -21,7 +21,7 @@ const ControlList = ({ children, ...others }) => (
   </List>
 )
 
-const SourceModal = ({ sourceId, visible, onUpdateSource, id }) => {
+const SourceModal = ({ refId, visible, onUpdate, id }) => {
   const { setSource } = useSourceContext()
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
@@ -40,7 +40,7 @@ const SourceModal = ({ sourceId, visible, onUpdateSource, id }) => {
     // hide modal in navProvider
     hideModal()
     // update to editor provider
-    onUpdateSource(values)
+    onUpdate(values)
   }
 
   return (
@@ -52,7 +52,7 @@ const SourceModal = ({ sourceId, visible, onUpdateSource, id }) => {
       title="Edit Source"
       dismissChild="done"
     >
-      <SourceLoader sourceId={sourceId}>
+      <SourceLoader sourceId={refId}>
         {source => (
           <ValueListProvider onChange={setValues} values={values || source}>
             <Grid>
