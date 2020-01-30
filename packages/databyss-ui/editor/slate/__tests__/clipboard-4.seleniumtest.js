@@ -29,7 +29,7 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('editor selenium', () => {
   beforeEach(async done => {
-    driver = await startSession('clipboard-win-chrome-4-4', WIN, CHROME)
+    driver = await startSession('clipboard-win-chrome-4-temp', WIN, CHROME)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     editor = await getEditor(driver)
 
@@ -43,6 +43,47 @@ describe('editor selenium', () => {
 
   afterEach(async () => {
     await driver.quit()
+  })
+
+  it('should copy an atomic block and paste it at the start of an entry', async () => {
+    await sleep(500)
+    await actions.sendKeys('@this is a source')
+    await actions.sendKeys(Key.ENTER)
+    await selectAll(actions)
+    await copy(actions)
+    await actions.sendKeys(Key.ARROW_DOWN)
+    await endOfLine(actions)
+    await actions.sendKeys('this is an entry')
+    await startOfLine(actions)
+    await paste(actions)
+    await actions.perform()
+
+    const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
+      b => b.refId
+    )
+
+    const expected = toSlateJson(
+      <value>
+        <document>
+          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
+            <text />
+            <inline type="SOURCE">this is a source</inline>
+            <text />
+          </block>
+          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
+            <text />
+            <inline type="SOURCE">this is a source</inline>
+            <text />
+          </block>
+          <block type="ENTRY" data={{ refId: refIdList[2], type: 'ENTRY' }}>
+            <text>this is an entry</text>
+          </block>
+        </document>
+      </value>
+    )
+
+    const actual = JSON.parse(await slateDocument.getText())
+    expect(actual).toEqual(expected.document)
   })
 
   it('should copy an atomic block and paste at the end of an entry', async () => {
@@ -75,46 +116,6 @@ describe('editor selenium', () => {
             <text />
             <inline type="SOURCE">this is a source</inline>
             <text />
-          </block>
-        </document>
-      </value>
-    )
-
-    const actual = JSON.parse(await slateDocument.getText())
-    expect(actual).toEqual(expected.document)
-  })
-
-  it('should copy an atomic block and paste it at the start of an entry', async () => {
-    await sleep(500)
-    await actions.sendKeys('@this is a source')
-    await actions.sendKeys(Key.ENTER)
-    await selectAll(actions)
-    await copy(actions)
-    await endOfLine(actions)
-    await actions.sendKeys('this is an entry')
-    await startOfLine(actions)
-    await paste(actions)
-    await actions.perform()
-
-    const refIdList = JSON.parse(await pageBlocks.getText()).pageBlocks.map(
-      b => b.refId
-    )
-
-    const expected = toSlateJson(
-      <value>
-        <document>
-          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
-            <text />
-            <inline type="SOURCE">this is a source</inline>
-            <text />
-          </block>
-          <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
-            <text />
-            <inline type="SOURCE">this is a source</inline>
-            <text />
-          </block>
-          <block type="ENTRY" data={{ refId: refIdList[2], type: 'ENTRY' }}>
-            <text>this is an entry</text>
           </block>
         </document>
       </value>
