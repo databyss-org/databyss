@@ -65,7 +65,6 @@ export const fetchSession = ({
     const res = await _request(path, options, true)
     if (res.data && res.data.session) {
       // authenticated
-      console.log('SESSION', res.data.session)
       setAuthToken(res.data.session.token)
       setAccountId(res.data.session.account._id)
       dispatch({

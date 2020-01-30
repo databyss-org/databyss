@@ -24,8 +24,18 @@ export const initialState = {
 
 export default (state, action) => {
   let _credentials = action.payload && action.payload.credentials
-  if (_credentials && !Object.keys(_credentials).length) {
-    _credentials = null
+  // remove null credentials
+  if (_credentials) {
+    _credentials = Object.keys(_credentials).reduce((accum, key) => {
+      if (_credentials[key]) {
+        accum[key] = _credentials[key]
+      }
+      return accum
+    }, {})
+    // if object is empty, credentials is null
+    if (!Object.keys(_credentials).length) {
+      _credentials = null
+    }
   }
 
   switch (action.type) {
