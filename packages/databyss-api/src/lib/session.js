@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/User'
+import Account from '../models/Account'
 
 export const getTokenFromUserId = userId =>
   new Promise((resolve, reject) =>
@@ -21,11 +22,12 @@ export const getSessionFromUserId = async userId => {
   if (!userId) {
     throw new Error('Bad userId')
   }
+  const account = await Account.findOne({ _id: user.defaultAccount })
   const token = await getTokenFromUserId(userId)
   return {
     token,
     user,
-    account: { _id: user.defaultAccount },
+    account,
   }
 }
 
