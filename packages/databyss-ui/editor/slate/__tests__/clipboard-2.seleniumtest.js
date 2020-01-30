@@ -8,6 +8,7 @@ import { toSlateJson } from './_helpers'
 import {
   endOfDoc,
   highlightSingleLine,
+  highlightDoubleLine,
   getEditor,
   copy,
   paste,
@@ -54,10 +55,10 @@ describe('editor selenium', () => {
       .sendKeys(Key.ENTER)
       .pause(100)
     await sleep(1000)
-    await highlightSingleLine(actions)
+    await highlightDoubleLine(actions)
     await sleep(1000)
-    await highlightSingleLine(actions)
-    await sleep(1000)
+    // await highlightSingleLine(actions)
+    // await sleep(1000)
     await copy(actions)
     await actions.sendKeys(Key.ARROW_RIGHT)
     await endOfDoc(actions)

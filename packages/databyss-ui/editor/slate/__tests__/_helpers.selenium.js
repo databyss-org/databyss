@@ -117,6 +117,13 @@ export const highlightSingleLine = actions =>
     .sendKeys(Key.ARROW_UP)
     .keyUp(Key.SHIFT)
     .pause(100)
+export const highlightDoubleLine = actions =>
+  actions
+    .keyDown(Key.SHIFT)
+    .sendKeys(Key.ARROW_UP)
+    .sendKeys(Key.ARROW_UP)
+    .keyUp(Key.SHIFT)
+    .pause(100)
 
 export const getEditor = async driver => {
   const el = await driver.wait(
