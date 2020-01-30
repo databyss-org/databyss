@@ -22,7 +22,7 @@ const App = () => {
               code={urlParams.get('code')}
               unauthorizedChildren={<Public />}
             >
-              {/* <Page /> */}
+              <Page />
             </SessionProvider>
           </Viewport>
         </ServiceProvider>

@@ -35,7 +35,7 @@ AccountSchema.static('create', async (values = {}) => {
 
   // create default page
   const page = await Page.create({ account: instance._id })
-  instance.defaultPageId = page._id
+  instance.defaultPage = page._id
   await instance.save()
   return instance
 })
