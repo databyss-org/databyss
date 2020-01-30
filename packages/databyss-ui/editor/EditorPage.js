@@ -92,8 +92,8 @@ const EditorPage = ({ children, autoFocus }) => {
             window.requestAnimationFrame(() =>
               dispatchEditor(
                 updateAtomic(
-                  { atomic: _cache[idData.refId], type: idData.type },
-                  { value: editableState.value }
+                  { atomic: _cache[idData.refId], type: idData.type }
+                  //    { value: editableState.value }
                 )
               )
             )

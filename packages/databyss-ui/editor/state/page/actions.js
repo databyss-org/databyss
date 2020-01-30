@@ -209,21 +209,19 @@ export function onSetBlockRef(_id, refId, editableState) {
   }
 }
 
-export function newBlockMenu(bool, editableState) {
+export function newBlockMenu(bool) {
   return {
     type: SHOW_NEW_BLOCK_MENU,
     payload: {
-      editableState,
       bool,
     },
   }
 }
 
-export function updateAtomic(data, editableState) {
+export function updateAtomic(data) {
   return {
     type: UPDATE_ATOMIC,
     payload: {
-      editableState,
       data,
     },
   }
