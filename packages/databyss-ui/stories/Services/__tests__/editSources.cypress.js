@@ -11,21 +11,16 @@ const secondSource = {
   name: 'updated source',
 }
 
-context('Editor', () => {
+context('Editor - Edit Sources and Atomics', () => {
   beforeEach(() => {
     authenticate()
     cy.visit(
       'http://localhost:6006/iframe.html?id=services-page--slate-load-and-save'
     )
     cy.wait(4000)
-    cy.reload().wait(4000)
-    cy.get('button').then(buttonList => {
-      // clicks on last populated page
-      buttonList[buttonList.length - 1].click()
-      cy.wait(4000)
-      cy.get('[contenteditable="true"]').as('editor')
-      cy.get('#slateDocument').as('slateDocument')
-    })
+
+    cy.get('[contenteditable="true"]').as('editor')
+    cy.get('#slateDocument').as('slateDocument')
   })
 
   it('Edits atomic sources', () => {
@@ -81,10 +76,6 @@ context('Editor', () => {
 
     // reload the page
     cy.reload().wait(2000)
-    cy.get('button').then(buttonList => {
-      buttonList[buttonList.length - 1].click()
-      cy.wait(2000)
-    })
 
     cy.get('@editor')
       .focus()

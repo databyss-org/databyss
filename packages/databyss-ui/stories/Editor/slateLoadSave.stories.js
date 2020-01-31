@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
@@ -50,6 +50,7 @@ const LoadAndSave = () => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
   const { setPage } = usePageContext()
+  const [slateDocument, setSlateDocument] = useState({})
 
   return (
     <PageLoader pageId={account.defaultPage}>
@@ -68,9 +69,20 @@ const LoadAndSave = () => {
             >
               <AutoSave />
               <EditorPage autoFocus>
-                <SlateContentEditable />
+                <SlateContentEditable onDocumentChange={setSlateDocument} />
               </EditorPage>
             </EditorProvider>
+            <View
+              overflow="scroll"
+              flexShrink={1}
+              borderVariant="thinDark"
+              paddingVariant="tiny"
+              width="100%"
+            >
+              <pre id="slateDocument">
+                {JSON.stringify(slateDocument, null, 2)}
+              </pre>
+            </View>
           </View>
         )
       }}
