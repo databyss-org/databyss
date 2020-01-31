@@ -42,6 +42,11 @@ module.exports = async () => {
 
   app.use('/api/error', require('./routes/api/error'))
 
+  // test utility routes
+  if (process.env.NODE_ENV === 'test') {
+    app.use('/api/_test', require('./routes/api/_test'))
+  }
+
   // global error middleware
   // eslint-disable-next-line no-unused-vars
   app.use((err, req, res, next) => {
