@@ -24,7 +24,6 @@ export const authenticate = () => {
     .get('@continueButton')
     .click()
     .wait(2000)
-  cy.get('@login')
     .get('[data-test-path="code"]')
     .as('codeInput')
 
@@ -32,8 +31,8 @@ export const authenticate = () => {
   cy.get('@codeInput')
     .type('test-code-42')
     .get('@continueButton')
+    .click()
     .wait(2000)
-  cy.get('@login')
     .get('[data-test-session="true"]')
     .invoke('text')
     .as('session')

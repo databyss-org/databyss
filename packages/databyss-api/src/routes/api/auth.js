@@ -35,6 +35,8 @@ router.post('/code', async (req, res) => {
         res.status(500).send('Server Error')
         throw new Error('err')
       }
+      // console.log(login.date.getTime() >= Date.now() - 3600000)
+      console.log(login)
       if (login) {
         if (login.date.getTime() >= Date.now() - 3600000) {
           const token = login.token
