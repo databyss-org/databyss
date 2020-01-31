@@ -1,3 +1,4 @@
+// logs in using auth story and returns session JSON
 export const authenticate = () => {
   cy.visit('http://localhost:6006/iframe.html?id=services-auth--login')
   cy.get('[data-test-id="googleButton"]').as('googleButton')
@@ -24,4 +25,7 @@ export const authenticate = () => {
     .get('@continueButton')
     .click()
   cy.wait(4000)
+  cy.get('[data-test-session="true"]')
+    .invoke('text')
+    .as('@session')
 }

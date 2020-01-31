@@ -17,12 +17,7 @@ export const SessionInfo = () => {
   return (
     <React.Fragment>
       <View borderVariant="thinLight" paddingVariant="small" mb="small">
-        <List>
-          <Text variant="uiTextNormalSemibold">Session</Text>
-          <Text>Account ID: {session.account._id}</Text>
-          <Text>User ID: {session.user._id}</Text>
-          <Text>Token: {session.token}</Text>
-        </List>
+        <pre data-test-session>{JSON.stringify(session, null, 2)}</pre>
       </View>
       <Button onPress={endSession} data-test-id="logoutButton">
         Logout
