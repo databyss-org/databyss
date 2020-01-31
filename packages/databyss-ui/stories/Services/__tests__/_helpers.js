@@ -9,6 +9,7 @@ export const authenticate = () => {
   cy.visit('http://localhost:6006/iframe.html?id=services-auth--login')
   cy.get('[data-test-id="googleButton"]').as('googleButton')
   cy.get('[data-test-id="emailButton"]').as('emailButton')
+  cy.get('#login-page').as('login')
 
   cy.get('@emailButton')
     .click()
@@ -22,6 +23,8 @@ export const authenticate = () => {
     .type(`${random}@test.com`)
     .get('@continueButton')
     .click()
+    .wait(2000)
+  cy.get('@login')
     .get('[data-test-path="code"]')
     .as('codeInput')
 
@@ -29,9 +32,9 @@ export const authenticate = () => {
   cy.get('@codeInput')
     .type('test-code-42')
     .get('@continueButton')
-    .click()
-  cy.wait(4000)
-  cy.get('[data-test-session="true"]')
+    .wait(2000)
+  cy.get('@login')
+    .get('[data-test-session="true"]')
     .invoke('text')
     .as('session')
 }
