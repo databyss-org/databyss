@@ -20,8 +20,8 @@ context('Editor', () => {
     cy.wait(4000)
     cy.reload().wait(4000)
     cy.get('button').then(buttonList => {
-      // clicks on populated page
-      buttonList[1].click()
+      // clicks on last populated page
+      buttonList[buttonList.length - 1].click()
       cy.wait(4000)
       cy.get('[contenteditable="true"]').as('editor')
       cy.get('#slateDocument').as('slateDocument')
@@ -82,7 +82,7 @@ context('Editor', () => {
     // reload the page
     cy.reload().wait(2000)
     cy.get('button').then(buttonList => {
-      buttonList[1].click()
+      buttonList[buttonList.length - 1].click()
       cy.wait(2000)
     })
 
