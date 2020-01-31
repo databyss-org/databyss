@@ -11,7 +11,7 @@ const secondSource = {
   name: 'updated source',
 }
 
-context('Editor - Edit Sources and Atomics', () => {
+context('Editor - Sources Provider', () => {
   beforeEach(() => {
     authenticate()
     cy.visit(

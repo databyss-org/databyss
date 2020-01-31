@@ -1,31 +1,25 @@
 /** @jsx h */
 
+import { authenticate } from './_helpers'
+
 /* eslint-disable func-names */
 
 const _topic = {
   text: 'this is an updated a new topic',
 }
 
-context('Editor', () => {
+context('Editor - Topics Provider', () => {
   beforeEach(() => {
-    cy.visit(
-      'http://localhost:6006/iframe.html?id=services-auth--login-accounts'
-    )
-    cy.wait(4000)
+    authenticate()
     cy.visit(
       'http://localhost:6006/iframe.html?id=services-page--slate-load-and-save'
     )
     cy.wait(4000)
+    cy.get('[contenteditable="true"]').as('editor')
+    cy.get('#slateDocument').as('slateDocument')
   })
 
-  it('Edits atomic sources', () => {
-    cy.get('button').then(buttonList => {
-      // clicks on first page
-      buttonList[0].click()
-      cy.wait(2000)
-      cy.get('[contenteditable="true"]').as('editor')
-      cy.get('#slateDocument').as('slateDocument')
-    })
+  it('Edits Topics sources', () => {
     cy.get('@editor')
       .type('{rightarrow}')
       .endOfDoc()
@@ -55,12 +49,8 @@ context('Editor', () => {
       })
       .wait(11000)
     // reload the page
-    cy.reload().wait(2000)
-    cy.get('button')
-      .then(buttonList => {
-        buttonList[0].click()
-        cy.wait(2000)
-      })
+    cy.reload()
+      .wait(2000)
       .get('@editor')
       .type('{rightarrow}')
       .setSelection('this is an updated a new topic')
