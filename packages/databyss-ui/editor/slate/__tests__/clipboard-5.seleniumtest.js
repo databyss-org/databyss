@@ -10,7 +10,6 @@ import {
   cut,
   paste,
   sleep,
-  selectAll,
   copy,
   endOfLine,
   highlightSingleLine,
@@ -53,9 +52,13 @@ describe('editor selenium', () => {
     await actions.sendKeys('this is an example of an entry text')
     await actions.sendKeys(Key.ENTER).pause(100)
     await actions.sendKeys('@this is the second source')
-    await actions.sendKeys(Key.ENTER).pause(100)
-    await selectAll(actions)
+    await actions.sendKeys(Key.ENTER).pause(150)
+    await highlightSingleLine(actions)
+    await sleep(100)
+    await highlightSingleLine(actions)
+    await sleep(100)
     await cut(actions)
+    await actions.sendKeys(Key.ARROW_DOWN)
     await actions.sendKeys('this is an entry')
     await paste(actions)
     await actions.perform()
