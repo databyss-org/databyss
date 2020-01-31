@@ -1,5 +1,11 @@
 // logs in using auth story and returns session JSON
+
+let random = Math.random()
+  .toString(36)
+  .substring(7)
+
 export const authenticate = () => {
+  cy.clearLocalStorage()
   cy.visit('http://localhost:6006/iframe.html?id=services-auth--login')
   cy.get('[data-test-id="googleButton"]').as('googleButton')
   cy.get('[data-test-id="emailButton"]').as('emailButton')
@@ -13,7 +19,7 @@ export const authenticate = () => {
 
   // click "continue with email" enter email
   cy.get('@emailInput')
-    .type('email@test.com')
+    .type(`${random}@test.com`)
     .get('@continueButton')
     .click()
     .get('[data-test-path="code"]')
@@ -27,5 +33,5 @@ export const authenticate = () => {
   cy.wait(4000)
   cy.get('[data-test-session="true"]')
     .invoke('text')
-    .as('@session')
+    .as('session')
 }
