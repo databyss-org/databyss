@@ -25,7 +25,7 @@ const EditorInline = React.forwardRef(
         borderRadius={5}
         p="tiny"
         pr="0"
-        ml="-3px"
+        ml="negativeTiny"
         backgroundColor={backgroundColor}
       >
         {children}

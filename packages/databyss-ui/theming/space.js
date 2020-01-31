@@ -7,6 +7,7 @@ space.medium = space[3]
 space.large = space[5]
 space.tiny = 3.0
 space.extraSmall = 5.0
+space.negativeTiny = -3
 
 space.tinyNegative = space.tiny * -1
 space.smallNegative = space.small * -1
