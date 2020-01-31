@@ -1,10 +1,8 @@
 const express = require('express')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
 const axios = require('axios')
-const sgMail = require('@sendgrid/mail')
 const hri = require('human-readable-ids').hri
 const { check, validationResult } = require('express-validator/check')
+const sendgrid = require('../../lib/sendgrid')
 const User = require('../../models/User')
 const Login = require('../../models/Login')
 const {
@@ -60,7 +58,6 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() })
     }
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
     const { email } = req.body
     let emailExists = false
@@ -76,10 +73,9 @@ router.post(
         emailExists = true
       }
 
-      console.log('USER', user)
       const token = await getTokenFromUserId(user._id)
       const login = new Login({
-        code: hri.random(),
+        code: process.env.NODE_ENV === 'test' ? 'test-code-42' : hri.random(),
         token,
       })
       login.save()
@@ -94,7 +90,7 @@ router.post(
           url: process.env.LOGIN_URL,
         },
       }
-      sgMail.send(msg)
+      sendgrid.send(msg)
       res.status(200).json({})
       return res.status(200)
     } catch (err) {

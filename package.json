@@ -95,7 +95,8 @@
           "json"
         ],
         "globalSetup": "<rootDir>/packages/databyss-api/__tests__/globalSetup.js",
-        "globalTeardown": "<rootDir>/packages/databyss-api/__tests__/globalTeardown.js"
+        "globalTeardown": "<rootDir>/packages/databyss-api/__tests__/globalTeardown.js",
+        "testTimeout": 30000
       },
       {
         "displayName": "checkversion",
@@ -174,7 +175,7 @@
     "html-webpack-plugin": "4.0.0-beta.5",
     "is-hotkey": "^0.1.5",
     "is-wsl": "^2.0.0",
-    "jest": "^24.8.0",
+    "jest": "24.8.0",
     "jest-dev-server": "^4.3.0",
     "jest-pnp-resolver": "^1.0.1",
     "jest-resolve": "^23.6.0",

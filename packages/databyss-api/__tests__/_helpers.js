@@ -1,5 +1,8 @@
 const request = require('supertest')
 const app = require('../src/app')
+const sendgrid = require('../src/lib/sendgrid')
+
+jest.mock('../src/lib/sendgrid')
 
 exports.noAuthPost = async resource =>
   request(await app())
@@ -29,24 +32,21 @@ exports.noAuthAuthor = async (firstName, lastName) =>
       lastName,
     })
 
-exports.createUser = async (email, password) => {
-  let response = await request(await app())
-    .post('/api/users')
-    .send({
-      name: 'joe',
-      password,
-      email,
-    })
+exports.createUser = async email => {
+  let code
+  sendgrid.send.mockImplementation(msg => {
+    code = msg.dynamic_template_data.code
+  })
 
-  if (response.status === 400) {
-    response = await request(await app())
-      .post('/api/auth')
-      .send({
-        password,
-        email,
-      })
-  }
-  return JSON.parse(response.text).token
+  await request(await app())
+    .post('/api/users/email')
+    .send({ email })
+
+  const response = await request(await app())
+    .post('/api/auth/code')
+    .send({ code })
+
+  return JSON.parse(response.text).data.session.token
 }
 
 exports.createSourceNoAuthor = async (token, resource) =>

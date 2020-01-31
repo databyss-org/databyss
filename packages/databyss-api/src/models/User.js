@@ -33,7 +33,6 @@ const UserSchema = new mongoose.Schema({
 })
 
 UserSchema.static('create', async (values = {}) => {
-  console.log('USER.CREATE')
   const User = mongoose.model('user', UserSchema)
   const instance = User(values)
 
@@ -44,7 +43,6 @@ UserSchema.static('create', async (values = {}) => {
 
   // create default account
   const account = await Account.create()
-  console.log('CREATE ACCOUNT', account)
   instance.defaultAccount = account._id
 
   // set user as ADMIN on account

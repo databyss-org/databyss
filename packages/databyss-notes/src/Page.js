@@ -1,5 +1,7 @@
 import React from 'react'
-import EditorProvider from '@databyss-org/ui/editor/EditorProvider'
+import EditorProvider, {
+  pageReducer,
+} from '@databyss-org/ui/editor/EditorProvider'
 import PageProvider, {
   PageLoader,
 } from '@databyss-org/services/pages/PageProvider'
@@ -23,6 +25,7 @@ const Page = () => {
             <View alignItems="stretch" flexGrow={1} width="100%">
               <EditorProvider
                 initialState={page}
+                reducer={pageReducer}
                 editableReducer={slateReducer}
               >
                 <AutoSave />

@@ -15,24 +15,46 @@ const secondSource = {
 
 context('Editor', () => {
   beforeEach(() => {
-    cy.visit(
-      'http://localhost:6006/iframe.html?id=services-auth--login-accounts'
-    )
+    cy.visit('http://localhost:6006/iframe.html?id=services-auth--login')
+    cy.get('[data-test-id="googleButton"]').as('googleButton')
+    cy.get('[data-test-id="emailButton"]').as('emailButton')
+
+    cy.get('@emailButton')
+      .click()
+      .get('[data-test-path="email"]')
+      .as('emailInput')
+      .get('[data-test-id="continueButton"]')
+      .as('continueButton')
+
+    // click "continue with email" enter email
+    cy.get('@emailInput')
+      .type('email@test.com')
+      .get('@continueButton')
+      .click()
+      .get('[data-test-path="code"]')
+      .as('codeInput')
+
+    // enter pre-defined test code
+    cy.get('@codeInput')
+      .type('test-code-42')
+      .get('@continueButton')
+      .click()
     cy.wait(4000)
     cy.visit(
       'http://localhost:6006/iframe.html?id=services-page--slate-load-and-save'
     )
     cy.wait(4000)
-  })
-
-  it('Edits atomic sources', () => {
+    cy.reload().wait(4000)
     cy.get('button').then(buttonList => {
-      // clicks on first page
-      buttonList[0].click()
-      cy.wait(2000)
+      // clicks on populated page
+      buttonList[1].click()
+      cy.wait(4000)
       cy.get('[contenteditable="true"]').as('editor')
       cy.get('#slateDocument').as('slateDocument')
     })
+  })
+
+  it('Edits atomic sources', () => {
     cy.get('@editor')
       .get('[data-test-atomic-edit="open"]')
       .click()
@@ -86,7 +108,7 @@ context('Editor', () => {
     // reload the page
     cy.reload().wait(2000)
     cy.get('button').then(buttonList => {
-      buttonList[0].click()
+      buttonList[1].click()
       cy.wait(2000)
     })
 
