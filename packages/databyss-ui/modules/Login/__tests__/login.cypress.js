@@ -16,7 +16,7 @@ context('Login', () => {
       cy.get('@emailButton')
         .click()
         .wait(2000)
-        .get('[data-test-path="email"]')
+      cy.get('[data-test-path="email"]')
         .as('emailInput')
         .get('[data-test-id="continueButton"]')
         .as('continueButton')
@@ -44,7 +44,7 @@ context('Login', () => {
           .type('foo@bar.com')
           .get('@continueButton')
           .click()
-          .wait(2000)
+        cy.wait(2000)
           .get('[data-test-path="code"]')
           .as('codeInput')
       })
@@ -71,8 +71,10 @@ context('Login', () => {
           .get('@continueButton')
           .click()
           .wait(2000)
-          .get('[data-test-id="errorMessage"]')
-          .should('contain', 'Code is invalid')
+        cy.get('[data-test-id="errorMessage"]').should(
+          'contain',
+          'Code is invalid'
+        )
       })
 
       it('hides code input UI when email changes', () => {
@@ -89,7 +91,7 @@ context('Login', () => {
             .get('@continueButton')
             .click()
             .wait(2000)
-            .get('[data-test-id="authorized"]')
+          cy.get('[data-test-id="authorized"]')
             .as('authorized')
             .get('[data-test-id="logoutButton"]')
             .as('logoutButton')
@@ -103,8 +105,7 @@ context('Login', () => {
           cy.get('@logoutButton')
             .click()
             .wait(2000)
-            .get('@googleButton')
-            .should('exist')
+          cy.get('@googleButton').should('exist')
         })
       })
     })
