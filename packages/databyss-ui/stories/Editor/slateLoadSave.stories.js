@@ -39,14 +39,16 @@ const ProviderDecorator = storyFn => (
   <ServiceProvider>
     <SessionProvider unauthorizedChildren={<LoginRequired />}>
       <PageProvider initialState={initialState}>
-        <SourceProvider
-          initialState={sourceInitialState}
-          reducer={sourceReducer}
-        >
-          <NavigationProvider componentMap={componentMap}>
-            {storyFn()}
-          </NavigationProvider>
-        </SourceProvider>
+        <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
+          <SourceProvider
+            initialState={sourceInitialState}
+            reducer={sourceReducer}
+          >
+            <NavigationProvider componentMap={componentMap}>
+              {storyFn()}
+            </NavigationProvider>
+          </SourceProvider>
+        </TopicProvider>
       </PageProvider>
     </SessionProvider>
   </ServiceProvider>
