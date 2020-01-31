@@ -5,7 +5,7 @@ import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { ResourcePending } from './../lib/ResourcePending'
 
-import { fetchPageHeaders, fetchPage } from './actions'
+import { fetchPageHeaders, fetchPage, savePage } from './actions'
 
 const useReducer = createReducer()
 
@@ -13,6 +13,11 @@ export const PageContext = createContext()
 
 const PageProvider = ({ children, initialState }) => {
   const [state, dispatch, stateRef] = useReducer(reducer, initialState)
+
+  const setPage = page => {
+    // window.requestAnimationFrame(() => dispatch(savePage(page)))
+    dispatch(savePage(page))
+  }
 
   const getPages = () => {
     if (state.headerCache) {
@@ -38,7 +43,7 @@ const PageProvider = ({ children, initialState }) => {
 
   return (
     <PageContext.Provider
-      value={{ state, dispatch, stateRef, getPages, getPage }}
+      value={{ state, dispatch, stateRef, getPages, getPage, setPage }}
     >
       {children}
     </PageContext.Provider>
