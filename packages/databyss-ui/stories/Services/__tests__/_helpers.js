@@ -1,6 +1,6 @@
 // logs in using auth story and returns session JSON
 
-let random = Math.random()
+const random = Math.random()
   .toString(36)
   .substring(7)
 
