@@ -15,7 +15,11 @@ import {
   DELETE_BLOCKS,
   SHOW_MENU_ACTIONS,
   SHOW_FORMAT_MENU,
+  ON_PASTE,
   SHOW_NEW_BLOCK_MENU,
+  DEQUEUE_DIRTY_ATOMIC,
+  ON_CUT,
+  ADD_DIRTY_ATOMIC,
   UPDATE_ATOMIC,
   DEQUEUE_NEW_ATOMIC,
 } from './constants'
@@ -53,8 +57,12 @@ const cleanUpState = state => {
   return _state
 }
 
-export const getRawHtmlForBlock = (state, block) =>
-  entities(state, block.type)[block.refId].textValue
+export const getRawHtmlForBlock = (state, block) => {
+  if (entities(state, block.type)[block.refId]) {
+    return entities(state, block.type)[block.refId].textValue
+  }
+  return null
+}
 
 export const setRawHtmlForBlock = (state, block, text) => {
   const nextState = cloneDeep(state)
@@ -111,9 +119,16 @@ export const setRangesForBlock = (state, block, ranges) => {
   return nextState
 }
 
-const setBlockType = (state, type, _id) => {
-  // changing block type will always generate a new refId
-  const nextRefId = ObjectId().toHexString()
+// If refId is passed, function will preserve the ID
+const setBlockType = (state, type, _id, refId) => {
+  const _refId = state.blocks[_id] ? state.blocks[_id].refId : refId
+
+  // if it is type atomic, preserve the ID
+  const nextRefId =
+    (state.blocks[_id] && isAtomicInlineType(type)) || refId
+      ? _refId
+      : ObjectId().toHexString()
+
   const block = state.blocks[_id]
   const textValue = block ? getRawHtmlForBlock(state, block) : ''
   // initialize range
@@ -158,8 +173,8 @@ const setBlockType = (state, type, _id) => {
   }
 }
 
-const setActiveBlockType = (state, type) =>
-  setBlockType(state, type, state.activeBlockId)
+const setActiveBlockType = (state, type, refId) =>
+  setBlockType(state, type, state.activeBlockId, refId)
 
 const insertNewActiveBlock = (
   state,
@@ -174,6 +189,7 @@ const insertNewActiveBlock = (
   let insertedText = insertedBlockText
   let _ranges = []
   let _state = cloneDeep(state)
+  let _refId = null
 
   // get index value where previous block was
   // insert current ID after previous index value
@@ -182,22 +198,28 @@ const insertNewActiveBlock = (
 
   // if previous block was atomic type and is now empty
   // set previous block to ENTRY and active block as SOURCE
-
-  if (
-    isAtomicInlineType(state.blocks[previousBlockId].type) &&
-    !previousBlockText
-  ) {
-    _state = setBlockType(_state, 'ENTRY', previousBlockId)
-    insertedBlockType = state.blocks[previousBlockId].type
-    // get atomic block text and ranges to transfer to new block
-    const { textValue, ranges } = entities(_state, 'ENTRY')[
-      _state.blocks[previousBlockId].refId
-    ]
-    insertedText = textValue
-    _ranges = ranges
+  if (state.blocks[previousBlockId]) {
+    if (
+      isAtomicInlineType(state.blocks[previousBlockId].type) &&
+      !previousBlockText
+    ) {
+      // get refId from previous block to apply to atomic block
+      _refId = _state.blocks[previousBlockId].refId
+      _state = setBlockType(_state, 'ENTRY', previousBlockId)
+      insertedBlockType = state.blocks[previousBlockId].type
+      // get atomic block text and ranges to transfer to new block
+      const { textValue, ranges } = entities(_state, 'ENTRY')[
+        _state.blocks[previousBlockId].refId
+      ]
+      insertedText = textValue
+      _ranges = ranges
+    }
   }
 
-  if (state.blocks[previousBlockId].type === 'LOCATION') {
+  if (
+    state.blocks[previousBlockId] &&
+    state.blocks[previousBlockId].type === 'LOCATION'
+  ) {
     // if new block is added before LOCATION type
     if (!previousBlockText) {
       _state = setBlockType(_state, 'ENTRY', previousBlockId)
@@ -213,8 +235,7 @@ const insertNewActiveBlock = (
       insertedBlockType = 'LOCATION'
     }
   }
-
-  _state = setBlockType(_state, insertedBlockType, insertedBlockId)
+  _state = setBlockType(_state, insertedBlockType, insertedBlockId, _refId)
 
   _state = setRawHtmlForBlock(
     _state,
@@ -240,7 +261,7 @@ const insertNewActiveBlock = (
 
 const backspace = (state, payload) => {
   const { activeBlockId, nextBlockId } = payload.blockProperties
-  const _state = state
+  const _state = cloneDeep(state)
   const _blocks = _state.page.blocks
   const activeBlockIndex = _blocks.findIndex(b => b._id === activeBlockId)
   if (!nextBlockId) {
@@ -250,11 +271,13 @@ const backspace = (state, payload) => {
     }
     _blocks.splice(activeBlockIndex + 1, 1)
   }
+
   const nextBlockIndex = _blocks.findIndex(b => b._id === nextBlockId)
   // next block index should correspond to page index
   if (activeBlockIndex + 1 === nextBlockIndex) {
     return cleanUpState(_state)
   }
+
   _blocks.splice(activeBlockIndex + 1, 1)
   return cleanUpState(_state)
 }
@@ -311,18 +334,246 @@ const deleteBlock = (state, payload) => {
   _state.page.blocks = _state.page.blocks.filter(v => v._id !== payload.id)
   return cleanUpState(_state)
 }
+
 const deleteBlocks = (state, payload) => {
   const _state = cloneDeep(state)
-
+  // check for trailing block
   _state.page.blocks = _state.page.blocks.filter(
     v => !payload.idList.includes(v._id)
   )
+
   // if first block was included, replace with id
   if (state.page.blocks.findIndex(i => i._id === payload.idList.get(0)) === 0) {
-    const firstBlock = { _id: payload.idList.get(0) }
+    const firstBlock = { _id: payload.id ? payload.id : payload.idList.get(0) }
+
+    const _refId = payload.refId
+      ? payload.refId
+      : _state.blocks[firstBlock._id].refId
+
+    _state.blocks[firstBlock._id] = {
+      _id: firstBlock._id,
+      refId: _refId,
+      type: 'ENTRY',
+    }
+
+    _state.entries[_refId] = {
+      textValue: '',
+      ranges: [],
+      _id: _refId,
+    }
     _state.page.blocks.splice(0, 0, firstBlock)
   }
+
   return cleanUpState(_state)
+}
+
+const cutBlocks = (state, payload) => deleteBlocks(state, payload)
+
+const onPaste = (state, pasteData) => {
+  const {
+    anchorKey,
+    blockList,
+    offset,
+    beforeBlockId,
+    beforeBlockRef,
+    afterBlockId,
+    afterBlockRef,
+  } = pasteData
+
+  let _text
+  const _list = cloneDeep(blockList)
+  const _state = cloneDeep(state)
+  let _index = _state.page.blocks.findIndex(i => i._id === anchorKey)
+
+  const { blocks } = _state
+
+  // get current block contents
+  const { type, refId } = blocks[anchorKey]
+
+  const _entity = entities(state, type)[refId]
+
+  const _firstPasteFrag = _list[0][Object.keys(_list[0])[0]]
+  const _lastPasteFrag =
+    _list[_list.length - 1][Object.keys(_list[_list.length - 1])[0]]
+
+  if (_entity.textValue.length !== 0) {
+    // check if first paste fragment is not atomic
+    if (!isAtomicInlineType(_firstPasteFrag.type)) {
+      const _oldRefId = Object.keys(_list[0])[0]
+      // block value to be merged with anchorBlock
+      const _anchorBlock = _list[0][_oldRefId]
+
+      if (_entity.textValue.length === offset) {
+        // if paste occurs at the end of a block
+        _text = _entity.textValue + _anchorBlock.text
+      } else {
+        // split first block where paste occured
+        let _firstText = _entity.textValue.split('')
+        const _lastText = _firstText.splice(offset).join('')
+        _firstText = _firstText.join('')
+        _text = _firstText + _anchorBlock.text
+
+        if (!isAtomicInlineType(_lastPasteFrag.type)) {
+          // if last paste block is not atomic append text to last block
+          _list[_list.length - 1][_lastPasteFrag._id].text =
+            _list[_list.length - 1][_lastPasteFrag._id].text + _lastText
+        } else {
+          /* if last paste block is atomic and pasted in the middle of an entry */
+          const _block = _state.blocks[anchorKey]
+          const _entity = entities(_state, _block.type)[_block.refId]
+          // split the text
+          const _first = _entity.textValue.split('')
+          const _last = _first.splice(offset).join('')
+          const _newBlock = {
+            [afterBlockId]: {
+              text: _last,
+              type: 'ENTRY',
+              ranges: [],
+              refId: afterBlockRef,
+              _id: afterBlockId,
+            },
+          }
+
+          _list.push(_newBlock)
+        }
+      }
+      // TODO: MERGE BOTH RANGES
+
+      const _newEntity = {
+        textValue: _text,
+        _id: _entity._id,
+        ranges: _entity.ranges,
+      }
+      // append merged anchor block
+      entities(_state, type)[refId] = _newEntity
+      // remove first list item
+      _list.shift()
+      _index += 1
+    } else {
+      /*
+       if first block in paste is atomic on an existing line
+       find offset where to add empty block
+       initialize empty block with first Id value
+       */
+      _index += 1
+      const _firstPasteFrag = _list[0][Object.keys(_list[0])]
+      // add empty block to pages list
+      _state.page.blocks.splice(_index, 0, {
+        _id: _firstPasteFrag._id,
+      })
+      /* if last paste fragment is not atomic merge second half of entry with the end of paste fragment */
+      if (_entity.textValue.length !== offset) {
+        if (!isAtomicInlineType(_lastPasteFrag.type)) {
+          const _lastText = _entity.textValue
+            .split('')
+            .splice(offset)
+            .join('')
+
+          _list[_list.length - 1][_lastPasteFrag._id].text =
+            _list[_list.length - 1][_lastPasteFrag._id].text + _lastText
+
+          // split first block where paste occured
+          const _firstText = _entity.textValue
+            .split('')
+            .splice(offset)
+            .join('')
+
+          const _newEntity = {
+            textValue: _firstText,
+            _id: _entity._id,
+            ranges: _entity.ranges,
+          }
+          // append merged anchor block
+          entities(_state, type)[refId] = _newEntity
+          // TODO: MERGE RANGES
+        } else {
+          /* if last block is atomic and pasted in the middle of an entry, create a new block for last fragment */
+          //   if (blockList.length > 1) {
+          const _block = _state.blocks[anchorKey]
+          const _entity = entities(_state, _block.type)[_block.refId]
+          // split the text
+          let _first = _entity.textValue.split('')
+          const _last = _first.splice(offset).join('')
+          _first = _first.join('')
+          // if paste occured in the beggining of an entry block with existing text
+          if (_first.length === 0) {
+            _state.page.blocks.splice(_index, 1)
+
+            _index -= 1
+          }
+          // replace first half of text
+          entities(_state, _block.type)[_block.refId] = {
+            _id: _block.refId,
+            ranges: _block.ranges,
+            textValue: _first,
+          }
+
+          // append new block to list with second half of text
+
+          const _newBlock = {
+            [beforeBlockId]: {
+              text: _last,
+              type: 'ENTRY',
+              ranges: [],
+              refId: beforeBlockRef,
+              _id: beforeBlockId,
+            },
+          }
+          _list.push(_newBlock)
+        }
+      }
+    }
+  }
+
+  /* if contents of current block are empty, slate will create a new block id, replace the the block id with the first block in the list
+   */
+
+  const _pagesList = _list.map(b => ({ _id: b[Object.keys(b)[0]]._id }))
+
+  const _blocks = {}
+  _list.forEach(b => {
+    // populate blocks
+    const _block = b[Object.keys(b)[0]]
+    _blocks[_block._id] = {
+      _id: _block._id,
+      refId: _block.refId,
+      type: _block.type,
+    }
+
+    // populate entities
+    entities(_state, _block.type)[_block.refId] = {
+      _id: _block.refId,
+      ranges: _block.ranges,
+      textValue: _block.text,
+    }
+  })
+  _state.blocks = Object.assign({}, _state.blocks, _blocks)
+  // inserted blocks added to pages block list
+  if (_pagesList.length > 0) {
+    _state.page.blocks.splice(_index, 1, ..._pagesList)
+  }
+  return cleanUpState(_state)
+}
+
+const addDirtyAtomic = (state, refId, type) => {
+  const _state = cloneDeep(state)
+  const _atomic = { refId, type }
+  if (_state.dirtyAtomics) {
+    _state.dirtyAtomics[refId] = _atomic
+  } else {
+    _state.dirtyAtomics = { [refId]: _atomic }
+  }
+  _state.dirtyAtomics[refId] = _atomic
+
+  return _state
+}
+
+const dequeueDirtyAtomic = (state, refId) => {
+  const _state = cloneDeep(state)
+  if (_state.dirtyAtomics) {
+    delete _state.dirtyAtomics[refId]
+  }
+  return _state
 }
 
 export default (state, action) => {
@@ -339,6 +590,8 @@ export default (state, action) => {
         ...state,
         showMenuActions: action.payload.bool,
       }
+    case ON_PASTE:
+      return onPaste(state, action.payload.pasteData)
     case SHOW_NEW_BLOCK_MENU:
       return {
         ...state,
@@ -349,6 +602,13 @@ export default (state, action) => {
         ...state,
         showFormatMenu: action.payload.bool,
       }
+    case ADD_DIRTY_ATOMIC: {
+      return addDirtyAtomic(state, action.payload.refId, action.payload.type)
+    }
+    case DEQUEUE_DIRTY_ATOMIC: {
+      return dequeueDirtyAtomic(state, action.payload)
+    }
+
     case UPDATE_ATOMIC: {
       return updateAtomic(state, {
         _id: action.payload.data.atomic._id,
@@ -361,8 +621,9 @@ export default (state, action) => {
       if (
         isAtomicInlineType(activeBlock.type) &&
         action.payload.html.length !== 0
-      )
+      ) {
         return state
+      }
       let nextState = setRawHtmlForBlock(
         state,
         activeBlock,
@@ -371,8 +632,16 @@ export default (state, action) => {
       if (action.payload.ranges) {
         nextState = getMarkupValues(nextState, action.payload.ranges)
       }
+      // if length is empty, set blocktype to entry
+      // preserve refId
       if (!action.payload.html.length) {
-        return setActiveBlockType(nextState, 'ENTRY')
+        let _refId = null
+        if (nextState.blocks[nextState.activeBlockId]) {
+          const { type, refId } = nextState.blocks[nextState.activeBlockId]
+          _refId = isAtomicInlineType(type) ? refId : null
+        }
+        // if refID gets passed, preserve the refID
+        return setActiveBlockType(nextState, 'ENTRY', _refId)
       }
       return nextState
     }
@@ -384,6 +653,8 @@ export default (state, action) => {
       return deleteBlock(state, action.payload)
     case DELETE_BLOCKS:
       return deleteBlocks(state, action.payload)
+    case ON_CUT:
+      return cutBlocks(state, action.payload)
     case SET_BLOCK_TYPE:
       let nextState = cloneDeep(state)
       const _html = getRawHtmlForBlock(

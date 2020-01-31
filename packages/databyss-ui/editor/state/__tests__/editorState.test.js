@@ -79,7 +79,7 @@ describe('editorState', () => {
       const nextState = reducer(state, setActiveBlockType('SOURCE'))
       expect(nextState.blocks[nextState.activeBlockId].type).toEqual('SOURCE')
     })
-    test('should create a new refId', () => {
+    test('should not create a new refId', () => {
       const state = reducer(
         initialState,
         setActiveBlockId('5d64424bcfa313f70483c1b0')
@@ -87,7 +87,7 @@ describe('editorState', () => {
       const prevRefId = state.blocks[state.activeBlockId].refId
       const nextState = reducer(state, setActiveBlockType('SOURCE'))
       const nextRefId = nextState.blocks[state.activeBlockId].refId
-      expect(nextRefId).not.toEqual(prevRefId)
+      expect(nextRefId).toEqual(prevRefId)
     })
     test('should create a SOURCE record with new refId', () => {
       const state = reducer(
@@ -140,7 +140,7 @@ describe('editorState', () => {
       const nextState = reducer(state, setActiveBlockType('TOPIC'))
       expect(nextState.blocks[nextState.activeBlockId].type).toEqual('TOPIC')
     })
-    test('should create a new refId', () => {
+    test('should not create a new refId', () => {
       const state = reducer(
         initialState,
         setActiveBlockId('5d7bbf85b5bf4165a5826720')
@@ -148,7 +148,7 @@ describe('editorState', () => {
       const prevRefId = state.blocks[state.activeBlockId].refId
       const nextState = reducer(state, setActiveBlockType('TOPIC'))
       const nextRefId = nextState.blocks[state.activeBlockId].refId
-      expect(nextRefId).not.toEqual(prevRefId)
+      expect(nextRefId).toEqual(prevRefId)
     })
     test('should create a TOPIC record with new refId', () => {
       const state = reducer(

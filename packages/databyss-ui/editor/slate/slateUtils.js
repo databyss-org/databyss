@@ -37,6 +37,11 @@ export const toSlateJson = (editorState, pageBlocks) => ({
           break
       }
 
+      // append data information to non atomic blocks
+      if (!isAtomicInlineType(block.type)) {
+        nodes.data = { refId: block.refId, type: 'ENTRY' }
+      }
+
       let textBlock
       if (isAtomicInlineType(block.type)) {
         const nodeWithRanges = stateToSlate({
@@ -67,12 +72,12 @@ export const toSlateJson = (editorState, pageBlocks) => ({
               text: getRawHtmlForBlock(editorState, block),
             }
       }
-
       // this will return generic node
       return !isAtomicInlineType(block.type)
         ? nodes
         : {
             object: 'block',
+            data: { refId: block.refId, type: block.type },
             key: block._id,
             type: block.type,
             nodes: [textBlock],
@@ -81,8 +86,17 @@ export const toSlateJson = (editorState, pageBlocks) => ({
   },
 })
 
+export const hasSelection = value => {
+  const { selection } = value
+  if (!(selection.isBlurred || selection.isCollapsed)) {
+    return true
+  }
+  return false
+}
+
 export const renderInline = onEdit => ({ node, attributes }, editor, next) => {
-  const isSelected = editor.value.selection.focus.isInNode(node)
+  const isSelected =
+    editor.value.selection.focus.isInNode(node) && !hasSelection(editor.value)
 
   if (isAtomicInlineType(node.type)) {
     return (
@@ -205,14 +219,6 @@ export const singleBlockBackspaceCheck = value => {
   return false
 }
 
-export const hasSelection = value => {
-  const { selection } = value
-  if (!(selection.isBlurred || selection.isCollapsed)) {
-    return true
-  }
-  return false
-}
-
 export const noAtomicInSelection = value => {
   const _nodeList = getSelectedBlocks(value)
 
@@ -272,7 +278,7 @@ export const isEmptyAndAtomic = text => {
   return false
 }
 
-export const newEditor = () => {
+export const editorInstance = () => {
   const _value = Value.fromJSON({
     document: {
       nodes: [
