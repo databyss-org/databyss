@@ -5,6 +5,7 @@ import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import EditorProvider from '@databyss-org/ui/editor/EditorProvider'
 import PageProvider, {
   PageLoader,
+  usePageContext,
 } from '@databyss-org/services/pages/PageProvider'
 import SessionProvider, {
   useSessionContext,
@@ -28,6 +29,7 @@ import reducer from '@databyss-org/ui/editor/state/page/reducer'
 import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import AutoSave from '@databyss-org/ui/editor/AutoSave'
 import { ViewportDecorator } from '../decorators'
+import seedState from './_seedState'
 
 const LoginRequired = () => (
   <Text>You must login before running this story</Text>
@@ -53,23 +55,31 @@ const ProviderDecorator = storyFn => (
 const LoadAndSave = () => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
+  const { setPage } = usePageContext()
 
   return (
     <PageLoader pageId={account.defaultPage}>
-      {page => (
-        <View alignItems="stretch" flexGrow={1} width="100%">
-          <EditorProvider
-            initialState={page}
-            reducer={reducer}
-            editableReducer={slateReducer}
-          >
-            <AutoSave />
-            <EditorPage autoFocus>
-              <SlateContentEditable />
-            </EditorPage>
-          </EditorProvider>
-        </View>
-      )}
+      {page => {
+        // seed if empty and reload
+        if (page.page.name !== 'test document') {
+          setPage(seedState(account.defaultPage))
+          return null
+        }
+        return (
+          <View alignItems="stretch" flexGrow={1} width="100%">
+            <EditorProvider
+              initialState={page}
+              reducer={reducer}
+              editableReducer={slateReducer}
+            >
+              <AutoSave />
+              <EditorPage autoFocus>
+                <SlateContentEditable />
+              </EditorPage>
+            </EditorProvider>
+          </View>
+        )
+      }}
     </PageLoader>
   )
 }

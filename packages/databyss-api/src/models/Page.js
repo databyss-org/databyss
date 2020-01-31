@@ -12,6 +12,7 @@ const PageSchema = new Schema({
   },
   name: {
     type: String,
+    default: '',
   },
   blocks: [
     {
