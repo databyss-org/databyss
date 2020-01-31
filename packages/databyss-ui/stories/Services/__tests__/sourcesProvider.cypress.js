@@ -1,17 +1,10 @@
-/** @jsx h */
-
-/* eslint-disable func-names */
-
+import { authenticate } from './_helpers'
 import { _seedValue1, _seedValue2 } from './initialValue'
 
 context('Editor', () => {
   beforeEach(() => {
     cy.clearLocalStorage()
-
-    cy.visit(
-      'http://localhost:6006/iframe.html?id=services-auth--login-accounts'
-    )
-
+    authenticate()
     //  cy.get('button').click()
     cy.wait(1000)
     cy.visit(
