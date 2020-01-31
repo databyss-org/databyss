@@ -1,36 +1,42 @@
 import cloneDeep from 'clone-deep'
 import { Editor, Value } from 'slate'
+import { isAtomicInlineType } from './page/reducer'
 
 export const getRangesFromBlock = block => {
   const { nodes } = block
-  let textValue = ''
-  return {
-    ranges: nodes
-      .map((n, i) => {
-        // compile full text
-        textValue += n.text
-        let range = {}
-        if (n.marks.length) {
-          const _nodes = cloneDeep(nodes)
+  let text = ''
+  // if not atomic block, returns text and ranges
+  if (!isAtomicInlineType(block.type)) {
+    return {
+      ranges: nodes
+        .map((n, i) => {
+          // compile full text
+          text += n.text
+          let range = {}
+          if (n.marks.length) {
+            const _nodes = cloneDeep(nodes)
 
-          // find length of all previous nodes
-          _nodes.splice(i)
-          const previousTextLength = _nodes.reduce(
-            (total, current) => total + current.text.length,
-            0
-          )
-          // create range object
-          range = {
-            offset: previousTextLength,
-            length: n.text.length,
-            marks: n.marks.map(m => m.type),
+            // find length of all previous nodes
+            _nodes.splice(i)
+            const previousTextLength = _nodes.reduce(
+              (total, current) => total + current.text.length,
+              0
+            )
+            // create range object
+            range = {
+              offset: previousTextLength,
+              length: n.text.length,
+              marks: n.marks.map(m => m.type),
+            }
           }
-        }
-        return range
-      })
-      .filter(x => x.length != null),
-    textValue,
+
+          return range
+        })
+        .filter(x => x.length != null),
+      textValue: text,
+    }
   }
+  return null
 }
 
 export const slateToState = (slate, _id) => {
@@ -76,7 +82,6 @@ export const stateToSlateMarkup = state => {
       _editor.moveFocusBackward(n.length).moveBackward(n.offset)
     })
   }
-
   // translate to json
   const document = _editor.value.toJSON().document
   return document
@@ -86,7 +91,6 @@ export const stateToSlate = (state, id) => {
   const _id = Object.keys(state)[0]
   const _state = cloneDeep(state)
   const _stateObject = _state[_id]
-
   const document = stateToSlateMarkup(_stateObject)
   return { ...document.nodes[0], key: id }
 }

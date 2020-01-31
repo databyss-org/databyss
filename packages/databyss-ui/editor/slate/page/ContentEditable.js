@@ -1,10 +1,14 @@
 import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
-import { Editor } from 'slate-react'
+import { Editor, cloneFragment } from 'slate-react'
 import _ from 'lodash'
+import ObjectId from 'bson-objectid'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
+
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import {
   getRawHtmlForBlock,
   getRangesForBlock,
@@ -26,6 +30,12 @@ import {
   getSelectedBlocks,
   isInlineAtomicSelected,
 } from './../slateUtils'
+
+import {
+  isFragmentFullBlock,
+  getPasteData,
+  extendSelectionForClipboard,
+} from './../clipboard'
 
 const schema = {
   inlines: {
@@ -53,8 +63,14 @@ const SlateContentEditable = forwardRef(
       onSetBlockType,
       deleteBlockByKey,
       deleteBlocksByKeys,
+      deleteBlockListFromState,
+      onPasteAction,
+      setBlockRef,
       onNewBlockMenu,
       autoFocus,
+      onSelectionChange,
+      onCutBlocks,
+      onDirtyAtomic,
       onEditAtomic,
       ...others
     },
@@ -63,6 +79,8 @@ const SlateContentEditable = forwardRef(
     const [editorState, , stateRef] = useEditorContext()
 
     const { modals } = useNavigationContext()
+    const { getSource } = useSourceContext()
+    const { getTopic } = useTopicContext()
 
     const { activeBlockId, editableState, blocks, page } = editorState
 
@@ -73,7 +91,7 @@ const SlateContentEditable = forwardRef(
       if (!_nextActiveBlock) {
         return false
       }
-
+      // checks for active block ID change
       if (_nextActiveBlock.key !== activeBlockId) {
         let text = ''
         if (_nextEditableState.value.document.getNode(activeBlockId)) {
@@ -84,6 +102,54 @@ const SlateContentEditable = forwardRef(
 
         return true
       }
+      /*
+      this section ensures a sync is maintained between the slate and our internal state, if any refIds fall out of sync, the state refID is applied to slate
+      */
+
+      // check if current blockId matches refId in data parameter
+      const _nextRefId = _nextActiveBlock.data.get('refId')
+
+      // if state has refID for current block
+      // set slate refId of block
+      if (blocks[_nextActiveBlock.key]) {
+        if (!_nextRefId) {
+          // TODO REPLACE THIS
+          setBlockRef(
+            _nextActiveBlock.key,
+            blocks[_nextActiveBlock.key].refId,
+            _nextEditableState
+          )
+          return false
+        }
+
+        // if refId's dont match, use state value to set slate value
+        if (_nextRefId !== blocks[_nextActiveBlock.key].refId) {
+          setBlockRef(
+            _nextActiveBlock.key,
+            blocks[_nextActiveBlock.key].refId,
+            _nextEditableState
+          )
+          return false
+        }
+
+        // check previous blocks refIds to ensure proper sync
+        // when enter is placed at the beginning of atomic block
+        // previous refId's sync is lost
+        if (_nextEditableState.value.previousBlock) {
+          const _prevKey = _nextEditableState.value.previousBlock.key
+          const _previousRef = _nextEditableState.value.previousBlock.data.get(
+            'refId'
+          )
+          if (blocks[_prevKey]) {
+            const _previousStateRef = blocks[_prevKey].refId
+            if (_previousStateRef !== _previousRef) {
+              setBlockRef(_prevKey, _previousStateRef, _nextEditableState)
+            }
+          }
+        }
+
+        //  return false
+      }
       return false
     }
 
@@ -93,7 +159,6 @@ const SlateContentEditable = forwardRef(
       if (!_nextEditableState.value.anchorBlock) {
         return false
       }
-
       if (
         !editorState.activeBlockId ||
         !activeBlockId ||
@@ -105,7 +170,6 @@ const SlateContentEditable = forwardRef(
       const _prevText = getRawHtmlForBlock(editorState, blocks[activeBlockId])
       const _nextText = _nextEditableState.value.document.getNode(activeBlockId)
         .text
-
       if (isAtomicInlineType(_nextEditableState.value.anchorBlock.type)) {
         return false
       }
@@ -162,6 +226,7 @@ const SlateContentEditable = forwardRef(
 
     const onChange = change => {
       const { value } = change
+
       Bugsnag.client.leaveBreadcrumb('page/ContentEditable/onChange', {
         state: JSON.stringify(editorState, null, 2),
       })
@@ -201,6 +266,15 @@ const SlateContentEditable = forwardRef(
       deleteBlocksByKeys(_nodesToDelete, editor)
     }
 
+    const cutBlocksFromSelection = editor => {
+      const _newBlockRef = ObjectId().toHexString()
+      const _newBlockId = ObjectId().toHexString()
+
+      const _nodeList = getSelectedBlocks(editor.value)
+      const _nodesToDelete = _nodeList.map(n => n.key)
+      onCutBlocks(_nodesToDelete, _newBlockRef, _newBlockId, editor)
+    }
+
     const renderEditor = (_, editor, next) => {
       const children = next()
 
@@ -218,6 +292,11 @@ const SlateContentEditable = forwardRef(
       const _refId = stateRef.current.blocks[key].refId
       //  onEditSource(_refId, editor)
       onEditAtomic(_refId, type, editor)
+    }
+
+    const onCopy = (event, editor) => {
+      cloneFragment(event, editor)
+      return true
     }
 
     const onKeyUp = (event, editor, next) => {
@@ -276,6 +355,7 @@ const SlateContentEditable = forwardRef(
         }
 
         const _editorState = { value: editor.value }
+
         onBackspace(blockProperties, _editorState)
       }
       // special case:
@@ -285,6 +365,12 @@ const SlateContentEditable = forwardRef(
     }
 
     const onKeyDown = (event, editor, next) => {
+      if (hotKeys.isCopy(event)) {
+        return onCopy(event, editor, next)
+      }
+      if (hotKeys.isCut(event)) {
+        return next()
+      }
       if (hotKeys.isEsc(event)) {
         onNewBlockMenu(false, editor)
       }
@@ -298,29 +384,37 @@ const SlateContentEditable = forwardRef(
       // check for selection
 
       if (hasSelection(editor.value)) {
-        if (event.key === 'Backspace' && !noAtomicInSelection(editor.value)) {
-          // EDGE CASE: prevent block from being deleted when empty block highlighted
-          if (fragment.text === '') {
+        if (event.key === 'Backspace') {
+          if (!noAtomicInSelection(editor.value)) {
+            // EDGE CASE: prevent block from being deleted when empty block highlighted
+            if (fragment.text === '') {
+              deleteBlocksFromSelection(editor)
+              return event.preventDefault()
+            }
+            // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
+            // case 1
+            // if atomic block is highlighted
+            if (fragment.nodes.size === 1) {
+              deleteBlockByKey(editor.value.anchorBlock.key, editor)
+              return event.preventDefault()
+            }
+            // case 2
+
             deleteBlocksFromSelection(editor)
             return event.preventDefault()
           }
-
-          // https://www.notion.so/databyss/Delete-doesn-t-always-work-when-text-is-selected-932220d69dc84bbbb133265d8575a123
-          // case 1
-          // if atomic block is highlighted
-
-          if (fragment.nodes.size === 1) {
-            deleteBlockByKey(editor.value.anchorBlock.key, editor)
+          // delete multiple text blocks
+          const _selectedBlocks = getSelectedBlocks(editor.value)
+          if (_selectedBlocks.size > 1) {
+            // TODO: check for fragments of blocks
+            // this deletes whole block
+            deleteBlocksFromSelection(editor)
             return event.preventDefault()
           }
-          // case 2
-          deleteBlocksFromSelection(editor)
-          return event.preventDefault()
-        }
-
-        if (singleBlockBackspaceCheck(editor.value)) {
-          deleteBlockByKey(getSelectedBlocks(editor.value).get(0).key, editor)
-          return event.preventDefault()
+          if (singleBlockBackspaceCheck(editor.value)) {
+            deleteBlockByKey(getSelectedBlocks(editor.value).get(0).key, editor)
+            return event.preventDefault()
+          }
         }
       }
 
@@ -391,7 +485,10 @@ const SlateContentEditable = forwardRef(
           ) {
             return event.preventDefault()
           }
-
+          return next()
+        }
+        // for windows machines
+        if (hotKeys.isCopy(event) || hotKeys.isCut(event)) {
           return next()
         }
         return event.preventDefault()
@@ -407,13 +504,55 @@ const SlateContentEditable = forwardRef(
         event.preventDefault()
         OnToggleMark('location', editor)
       }
-
       return next()
+    }
+
+    const onCut = (event, editor) => {
+      cloneFragment(event, editor)
+      window.requestAnimationFrame(() => {
+        if (isFragmentFullBlock(editor.value.fragment, editor.value.document)) {
+          cutBlocksFromSelection(editor)
+        } else {
+          editor.delete()
+        }
+      })
+
+      return true
+    }
+
+    const onPaste = (event, editor) => {
+      // derefrence here
+      const _pasteData = getPasteData({
+        event,
+        editor,
+        getSource,
+        getTopic,
+        onDirtyAtomic,
+      })
+      if (!_pasteData) {
+        return event.preventDefault()
+      }
+      onPasteAction(_pasteData, editor)
+      return event.preventDefault()
+    }
+
+    const onSelect = (event, editor, next) => {
+      /*
+      extends selections to include full atomic block
+      */
+      const _response = extendSelectionForClipboard(editor)
+      if (!_response.update) {
+        next()
+      }
     }
 
     return (
       <Editor
         value={_editableState.value}
+        onPaste={onPaste}
+        onCut={onCut}
+        onDrop={e => e.preventDefault()}
+        onSelect={onSelect}
         readOnly={modals.length > 0}
         ref={forkRef(ref, editableRef)}
         autoFocus={autoFocus}

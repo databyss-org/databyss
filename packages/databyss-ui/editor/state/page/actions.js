@@ -12,9 +12,15 @@ import {
   START_TAG,
   DELETE_BLOCK,
   DELETE_BLOCKS,
+  ON_CUT,
   SHOW_MENU_ACTIONS,
   SHOW_FORMAT_MENU,
+  ON_PASTE,
+  SET_BLOCK_REF,
   SHOW_NEW_BLOCK_MENU,
+  ON_SELECTION,
+  ADD_DIRTY_ATOMIC,
+  DEQUEUE_DIRTY_ATOMIC,
   UPDATE_ATOMIC,
   DEQUEUE_NEW_ATOMIC,
 } from './constants'
@@ -170,21 +176,52 @@ export function deleteBlocks(idList, editableState) {
   }
 }
 
-export function newBlockMenu(bool, editableState) {
+export function cutBlocks(idList, refId, id, editableState) {
+  return {
+    type: ON_CUT,
+    payload: {
+      idList,
+      refId,
+      id,
+      editableState,
+    },
+  }
+}
+
+export function onPaste(pasteData, editableState) {
+  return {
+    type: ON_PASTE,
+    payload: {
+      editableState,
+      pasteData,
+    },
+  }
+}
+
+export function onSetBlockRef(_id, refId, editableState) {
+  return {
+    type: SET_BLOCK_REF,
+    payload: {
+      editableState,
+      _id,
+      refId,
+    },
+  }
+}
+
+export function newBlockMenu(bool) {
   return {
     type: SHOW_NEW_BLOCK_MENU,
     payload: {
-      editableState,
       bool,
     },
   }
 }
 
-export function updateAtomic(data, editableState) {
+export function updateAtomic(data) {
   return {
     type: UPDATE_ATOMIC,
     payload: {
-      editableState,
       data,
     },
   }
@@ -196,5 +233,31 @@ export function removeAtomicFromQueue(id) {
     payload: {
       id,
     },
+  }
+}
+
+export function onSelection(editableState) {
+  return {
+    type: ON_SELECTION,
+    payload: {
+      editableState,
+    },
+  }
+}
+
+export function addDirtyAtomic(refId, type) {
+  return {
+    type: ADD_DIRTY_ATOMIC,
+    payload: {
+      refId,
+      type,
+    },
+  }
+}
+
+export function dequeueDirtyAtomic(refId) {
+  return {
+    type: DEQUEUE_DIRTY_ATOMIC,
+    payload: refId,
   }
 }

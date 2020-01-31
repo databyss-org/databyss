@@ -51,7 +51,6 @@ const EditableTest = () => {
   const [slateDocument, setSlateDocument] = useState({})
   const [editorState] = useEditorContext()
   const { activeBlockId, page, blocks } = editorState
-
   const editorDocument = {
     activeBlockId,
     pageBlocks: page.blocks.map(block => ({

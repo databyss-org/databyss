@@ -19,6 +19,7 @@ const HOTKEYS = {
   bold: `${metaKey}+b`,
   italic: `${metaKey}+i`,
   location: `${metaKey}+k`,
+  cut: `${metaKey}+x`,
   copy: `${metaKey}+c`,
   paste: `${metaKey}+v`,
   undo: `${metaKey}+z`,
