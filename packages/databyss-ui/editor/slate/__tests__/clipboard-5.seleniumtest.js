@@ -10,7 +10,6 @@ import {
   cut,
   paste,
   sleep,
-  selectAll,
   copy,
   endOfLine,
   highlightSingleLine,
