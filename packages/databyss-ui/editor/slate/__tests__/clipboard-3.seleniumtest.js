@@ -87,9 +87,11 @@ describe('editor selenium', () => {
   it('should copy and paste an entry and a source', async () => {
     await sleep(1000)
     await actions.sendKeys('this is an example of an entry text')
-    await actions.sendKeys(Key.ENTER).pause(100)
+    await actions.sendKeys(Key.ENTER).pause(150)
     await actions.sendKeys('@this is an example of a source text')
     await actions.sendKeys(Key.ENTER).pause(150)
+    await highlightSingleLine(actions)
+    await sleep(100)
     await highlightSingleLine(actions)
     await sleep(100)
     await copy(actions)
