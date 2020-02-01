@@ -21,7 +21,7 @@ module.exports = async () => {
   // This must be the first piece of middleware in the stack.
   // It can only capture errors in downstream middleware
   if (process.env.NODE_ENV !== 'test') {
-    bugsnagMiddleware = bugsnag()
+    bugsnagMiddleware = await bugsnag()
     app.use(bugsnagMiddleware.requestHandler)
   }
 
@@ -41,6 +41,11 @@ module.exports = async () => {
   app.use('/api/ping', require('./routes/api/ping'))
 
   app.use('/api/error', require('./routes/api/error'))
+
+  // test utility routes
+  if (process.env.NODE_ENV === 'test') {
+    app.use('/api/_test', require('./routes/api/_test'))
+  }
 
   // global error middleware
   // eslint-disable-next-line no-unused-vars

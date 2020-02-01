@@ -11,19 +11,13 @@ import NavigationProvider, {
 } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { ViewportDecorator, NotifyDecorator } from '../decorators'
 
-const SessionInfo = () => {
+export const SessionInfo = () => {
   const { getSession, endSession } = useSessionContext()
   const session = getSession()
   return (
     <React.Fragment>
       <View borderVariant="thinLight" paddingVariant="small" mb="small">
-        <List>
-          <Text variant="uiTextNormalSemibold">Session</Text>
-          <Text>Account Name: {session.account.name}</Text>
-          <Text>
-            User Name: {session.user.firstName} {session.user.lastName}
-          </Text>
-        </List>
+        <pre data-test-session>{JSON.stringify(session, null, 2)}</pre>
       </View>
       <Button onPress={endSession} data-test-id="logoutButton">
         Logout

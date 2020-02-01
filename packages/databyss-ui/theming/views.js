@@ -61,6 +61,18 @@ const widthVariants = {
   dialog: {
     maxWidth: pxUnits(320),
   },
+  page: {
+    maxWidth: pxUnits(950),
+  },
+}
+
+const borderRadiusVariants = {
+  none: {
+    borderRadius: 0,
+  },
+  default: {
+    borderRadius,
+  },
 }
 
 export default {
@@ -68,4 +80,5 @@ export default {
   borderVariants,
   widthVariants,
   hlineVariants,
+  borderRadiusVariants,
 }

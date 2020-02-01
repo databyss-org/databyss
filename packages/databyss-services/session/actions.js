@@ -48,7 +48,7 @@ export const fetchSession = ({
       options.headers['x-auth-token'] = authToken
     } else if (googleToken) {
       // google oAuth token
-      path = '/users/google'
+      path += '/users/google'
       options.body = JSON.stringify({ token: googleToken })
     } else if (code) {
       // code from email
@@ -56,7 +56,7 @@ export const fetchSession = ({
       options.body = JSON.stringify({ code })
     } else if (email) {
       // register with email
-      path = '/users/email'
+      path += '/users/email'
       options.body = JSON.stringify({ email })
     } else {
       throw new NotAuthorizedError()
@@ -66,7 +66,7 @@ export const fetchSession = ({
     if (res.data && res.data.session) {
       // authenticated
       setAuthToken(res.data.session.token)
-      setAccountId(res.data.session.account.id)
+      setAccountId(res.data.session.account._id)
       dispatch({
         type: CACHE_SESSION,
         payload: {

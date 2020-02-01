@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "1.1.55",
+  "version": "1.1.56",
   "description": "massive open-source citation database platform",
   "main": "index.js",
   "repository": {
@@ -18,7 +18,6 @@
     "build": "bash scripts/build.sh",
     "start": "bash scripts/start.sh",
     "start:notes": "NPM_DEPLOY_TARGET=NOTES_APP yarn build && NPM_BUILD_TARGET=NOTES_APP node scripts/start.js",
-    "start:login": "NPM_BUILD_TARGET=LOGIN_APP PUBLIC_URL=/login node scripts/start.js",
     "start:docs": "cd ./packages/databyss-documentation/website && yarn run start",
     "seed:testdb": "NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER NODE_ENV=test babel-node --config-file ./packages/databyss-api/babel.config.js packages/databyss-api/scripts/seed-test-server.js",
     "start:server:test": "NODE_ENV=test yarn start:server",
@@ -35,7 +34,6 @@
     "styleguide:build": "NPM_BUILD_TARGET=TEST styleguidist build --config ./config/styleguide.config.js",
     "storybook": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public --ci",
     "storybook:sauce": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 8080 -s ./packages/databyss-ui/public --ci --quiet",
-    "storybook:cy": "NODE_ENV=production yarn storybook",
     "storybook:build": "NPM_BUILD_TARGET=TEST build-storybook -o build -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss",
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
     "lint": "eslint . --cache && echo \"eslint: no lint errors\"",
@@ -43,9 +41,9 @@
     "cy:run": "BABEL_ENV=test cypress run",
     "cy:run:debug": "DEBUG=cypress:*,-cypress:server:files yarn cy:run",
     "cy": "start-server-and-test storybook http-get://localhost:6006/iframe.html?id=cypress-tests--slate cy:open",
-    "cy:test": "start-server-and-test storybook:cy http-get://0.0.0.0:6006/iframe.html?id=cypress-tests--slate cy:run",
-    "cy:wait-for-api": "start-server-and-test start:server:test http://0.0.0.0:5000/api/ping/ storybook:cy",
-    "cy:wait-for-storybook": "start-server-and-test storybook:cy http-get://0.0.0.0:6006/iframe.html?id=cypress-tests--slate cy:run",
+    "cy:test": "start-server-and-test storybook http-get://0.0.0.0:6006/iframe.html?id=cypress-tests--slate cy:run",
+    "cy:wait-for-api": "start-server-and-test start:server:test http://0.0.0.0:5000/api/ping/ storybook",
+    "cy:wait-for-storybook": "start-server-and-test storybook http-get://0.0.0.0:6006/iframe.html?id=cypress-tests--slate cy:run",
     "sauce:proxy": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/SauceConnect.js",
     "sauce:dev-server": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/sauce-dev-server.js"
   },
@@ -101,7 +99,8 @@
           "json"
         ],
         "globalSetup": "<rootDir>/packages/databyss-api/__tests__/globalSetup.js",
-        "globalTeardown": "<rootDir>/packages/databyss-api/__tests__/globalTeardown.js"
+        "globalTeardown": "<rootDir>/packages/databyss-api/__tests__/globalTeardown.js",
+        "testTimeout": 30000
       },
       {
         "displayName": "test-selenium",
@@ -193,7 +192,7 @@
     "html-webpack-plugin": "4.0.0-beta.5",
     "is-hotkey": "^0.1.5",
     "is-wsl": "^2.0.0",
-    "jest": "^24.8.0",
+    "jest": "24.8.0",
     "jest-dev-server": "^4.3.0",
     "jest-pnp-resolver": "^1.0.1",
     "jest-resolve": "^23.6.0",

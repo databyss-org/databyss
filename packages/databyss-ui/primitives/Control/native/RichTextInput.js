@@ -1,7 +1,8 @@
 import React, { forwardRef } from 'react'
-import reducer from '@databyss-org/ui/editor/state/line/reducer'
 import slateReducer from '@databyss-org/ui/editor/slate/line/reducer'
-import EditorProvider from '@databyss-org/ui/editor/EditorProvider'
+import EditorProvider, {
+  lineReducer,
+} from '@databyss-org/ui/editor/EditorProvider'
 import EditorLine from '@databyss-org/ui/editor/EditorLine'
 import SlateContentEditable from '@databyss-org/ui/editor/slate/line/ContentEditable'
 
@@ -25,7 +26,7 @@ const RichTextInput = forwardRef(
       <EditorProvider
         initialState={value}
         editableReducer={slateReducer}
-        reducer={reducer}
+        reducer={lineReducer}
         name="RichTextInput"
       >
         <EditorLine onChange={onChange}>

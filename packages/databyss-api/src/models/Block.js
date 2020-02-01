@@ -3,11 +3,6 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const BlockSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'users',
-    required: true,
-  },
   type: {
     type: String,
   },
@@ -30,6 +25,7 @@ const BlockSchema = new Schema({
   account: {
     type: Schema.Types.ObjectId,
     ref: 'account',
+    required: true,
   },
   authorId: {
     type: Schema.Types.ObjectId,
