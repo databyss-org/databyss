@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Range = require('./Range')
+import mongoose from 'mongoose'
+import Range from './Range'
 
 const RichTextSchema = new mongoose.Schema(
   {
@@ -14,4 +14,4 @@ const RichTextSchema = new mongoose.Schema(
 
 const RichText = mongoose.model('richtext', RichTextSchema)
 
-module.exports = RichText
+export default RichText

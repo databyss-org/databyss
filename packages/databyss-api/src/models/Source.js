@@ -1,6 +1,6 @@
-const mongoose = require('mongoose')
-const RichText = require('./RichText')
-const Author = require('./Author')
+import mongoose from 'mongoose'
+import RichText from './RichText'
+import Author from './Author'
 
 const Schema = mongoose.Schema
 
@@ -54,4 +54,4 @@ const SourceSchema = new mongoose.Schema({
 
 const Source = mongoose.models.Source || mongoose.model('source', SourceSchema)
 
-module.exports = Source
+export default Source

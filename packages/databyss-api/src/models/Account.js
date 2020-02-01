@@ -57,4 +57,4 @@ AccountSchema.method('setUserRole', async function({ userId, role }) {
   await this.save()
 })
 
-module.exports = mongoose.model('account', AccountSchema)
+export default mongoose.model('account', AccountSchema)

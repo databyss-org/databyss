@@ -1,12 +1,9 @@
-const express = require('express')
-const auth = require('../../middleware/auth')
-const {
-  getSessionFromToken,
-  getSessionFromUserId,
-} = require('../../lib/session')
+import express from 'express'
+import auth from '../../middleware/auth'
+import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
+import Login from '../../models/Login'
 
 const router = express.Router()
-const Login = require('../../models/Login')
 
 // @route    GET api/auth
 // @desc     verify user
@@ -64,4 +61,4 @@ router.post('/code', async (req, res) => {
   }
 })
 
-module.exports = router
+export default router

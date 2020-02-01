@@ -1,21 +1,20 @@
-const express = require('express')
-const _ = require('lodash')
-const Page = require('../../models/Page')
-const Source = require('../../models/Source')
-const Entry = require('../../models/Entry')
-const Block = require('../../models/Block')
-const Topic = require('../../models/Topic')
-const Location = require('../../models/Location')
-
-const auth = require('../../middleware/auth')
-const accountMiddleware = require('../../middleware/accountMiddleware')
-const pageMiddleware = require('../../middleware/pageMiddleware')
-const ApiError = require('../../lib/ApiError')
-const {
+import express from 'express'
+import _ from 'lodash'
+import Page from '../../models/Page'
+import Source from '../../models/Source'
+import Entry from '../../models/Entry'
+import Block from '../../models/Block'
+import Topic from '../../models/Topic'
+import Location from '../../models/Location'
+import auth from '../../middleware/auth'
+import accountMiddleware from '../../middleware/accountMiddleware'
+import pageMiddleware from '../../middleware/pageMiddleware'
+import ApiError from '../../lib/ApiError'
+import {
   getBlockItemsFromId,
   dictionaryFromList,
   populateRefEntities,
-} = require('./helpers/pagesHelper')
+} from './helpers/pagesHelper'
 
 const router = express.Router()
 
@@ -358,4 +357,4 @@ router.delete('/:id', auth, async (req, res) => {
   }
 })
 
-module.exports = router
+export default router

@@ -1,5 +1,4 @@
-// const ApiError = require('./../routes/api/ApiError')
-const Account = require('../models/Account')
+import Account from '../models/Account'
 
 function checkRequiredRoles(requiredRoles, userRoles) {
   return requiredRoles.filter(value => userRoles.includes(value)).length > 0
@@ -32,4 +31,4 @@ const accountMiddleware = requiredRoles => async (req, res, next) => {
   return next()
 }
 
-module.exports = accountMiddleware
+export default accountMiddleware

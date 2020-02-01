@@ -1,14 +1,11 @@
-const express = require('express')
-const axios = require('axios')
-const hri = require('human-readable-ids').hri
-const { check, validationResult } = require('express-validator/check')
-const sendgrid = require('../../lib/sendgrid')
-const User = require('../../models/User')
-const Login = require('../../models/Login')
-const {
-  getSessionFromUserId,
-  getTokenFromUserId,
-} = require('../../lib/session')
+import express from 'express'
+import axios from 'axios'
+import humanReadableIds from 'human-readable-ids'
+import { check, validationResult } from 'express-validator/check'
+import { send } from '../../lib/sendgrid'
+import User from '../../models/User'
+import Login from '../../models/Login'
+import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
 
 const router = express.Router()
 
@@ -75,7 +72,10 @@ router.post(
 
       const token = await getTokenFromUserId(user._id)
       const login = new Login({
-        code: process.env.NODE_ENV === 'test' ? 'test-code-42' : hri.random(),
+        code:
+          process.env.NODE_ENV === 'test'
+            ? 'test-code-42'
+            : humanReadableIds.hri.random(),
         token,
       })
       login.save()
@@ -90,7 +90,7 @@ router.post(
           url: process.env.LOGIN_URL,
         },
       }
-      sendgrid.send(msg)
+      send(msg)
       res.status(200).json({})
       return res.status(200)
     } catch (err) {
@@ -100,4 +100,4 @@ router.post(
   }
 )
 
-module.exports = router
+export default router

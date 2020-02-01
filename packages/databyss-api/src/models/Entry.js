@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const RichText = require('./RichText')
+import mongoose from 'mongoose'
+import RichText from './RichText'
 
 const Schema = mongoose.Schema
 
@@ -16,4 +16,4 @@ const EntrySchema = new mongoose.Schema({
 
 const Entry = mongoose.models.Entry || mongoose.model('entry', EntrySchema)
 
-module.exports = Entry
+export default Entry

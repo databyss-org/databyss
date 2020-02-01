@@ -1,10 +1,10 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const dbURI = process.env.MONGO_URI
 
 const dB = mongoose
 
-const connectDB = async () => {
+export const connectDB = async () => {
   try {
     await dB.connect(
       dbURI,
@@ -22,13 +22,13 @@ const connectDB = async () => {
   }
 }
 
-const closeDB = async () => {
+export const closeDB = async () => {
   await dB.disconnect()
   console.log('database connections closed')
 }
 
 // Deletes test database
-const dropTestDB = async (newConnection = true) => {
+export const dropTestDB = async (newConnection = true) => {
   if (process.env.NODE_ENV === 'test') {
     if (newConnection) {
       await connectDB()
@@ -41,5 +41,3 @@ const dropTestDB = async (newConnection = true) => {
     }
   }
 }
-
-module.exports = { connectDB, dropTestDB, closeDB }

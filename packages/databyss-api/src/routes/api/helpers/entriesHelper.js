@@ -1,8 +1,8 @@
-const Entry = require('../../../models/Entry')
-const Author = require('../../../models/Author')
-const Source = require('../../../models/Source')
+import Entry from '../../../models/Entry'
+import Author from '../../../models/Author'
+import Source from '../../../models/Source'
 
-const appendEntryToSource = async ({ sourceId, entryId }) => {
+export const appendEntryToSource = async ({ sourceId, entryId }) => {
   const source = await Source.findOne({
     _id: sourceId,
   }).catch(err => console.log(err))
@@ -21,7 +21,7 @@ const appendEntryToSource = async ({ sourceId, entryId }) => {
   }
 }
 
-const appendEntryToAuthors = ({ authors, entryId }) => {
+export const appendEntryToAuthors = ({ authors, entryId }) => {
   const promises = authors.map(async a => {
     if (a) {
       let author = await Author.findOne({
@@ -46,7 +46,7 @@ const appendEntryToAuthors = ({ authors, entryId }) => {
 
 // migration tools
 
-const appendAuthorToSource = ({ sourceId, authors }) => {
+export const appendAuthorToSource = ({ sourceId, authors }) => {
   const promises = authors.map(async a => {
     if (a) {
       let author = await Author.findOne({
@@ -69,7 +69,7 @@ const appendAuthorToSource = ({ sourceId, authors }) => {
   return Promise.all(promises)
 }
 
-const appendEntryToAuthorList = entry => {
+export const appendEntryToAuthorList = entry => {
   const newEntry = entry.reduce((acc, e) => {
     const obj = {
       author: e.authorId,
@@ -108,7 +108,7 @@ const appendEntryToAuthorList = entry => {
   })
 }
 
-const appendEntriesToSource = entry => {
+export const appendEntriesToSource = entry => {
   const newEntry = entry.reduce((acc, e) => {
     const obj = {
       source: e.sourceId,
@@ -147,7 +147,7 @@ const appendEntriesToSource = entry => {
   })
 }
 
-const addAuthorId = entries => {
+export const addAuthorId = entries => {
   const promises = entries.map(async e => {
     if (e) {
       const author = await Author.findOne({
@@ -168,7 +168,7 @@ const addAuthorId = entries => {
   return Promise.all(promises)
 }
 
-const addSourceId = entries => {
+export const addSourceId = entries => {
   const promises = entries.map(async e => {
     if (e) {
       const source = await Source.findOne({
@@ -189,7 +189,7 @@ const addSourceId = entries => {
   return Promise.all(promises)
 }
 
-const appendSourceToAuthorList = source => {
+export const appendSourceToAuthorList = source => {
   const newSource = source.reduce((acc, s) => {
     const obj = {
       author: s.author,
@@ -225,7 +225,7 @@ const appendSourceToAuthorList = source => {
   })
 }
 
-const appendSourceToAuthor = ({ authors, sourceId }) => {
+export const appendSourceToAuthor = ({ authors, sourceId }) => {
   const promises = authors.map(async a => {
     if (a) {
       let author = await Author.findOne({
@@ -248,7 +248,7 @@ const appendSourceToAuthor = ({ authors, sourceId }) => {
   return Promise.all(promises)
 }
 
-const appendEntryToAuthor = ({ entries, authors }) => {
+export const appendEntryToAuthor = ({ entries, authors }) => {
   const promises = authors.map(async a => {
     let author = await Author.findOne({
       _id: a,
@@ -273,7 +273,7 @@ const appendEntryToAuthor = ({ entries, authors }) => {
   return Promise.all(promises)
 }
 
-const addAuthorIdToSource = sources => {
+export const addAuthorIdToSource = sources => {
   const promises = sources.map(async s => {
     if (s) {
       const author = await Author.findOne({
@@ -293,7 +293,7 @@ const addAuthorIdToSource = sources => {
   return Promise.all(promises)
 }
 
-const getSourcesFromBlocks = blocks => {
+export const getSourcesFromBlocks = blocks => {
   const _blocks = Object.keys(blocks)
     .map(b => {
       const { type, refId } = blocks[b]
@@ -311,7 +311,7 @@ const getSourcesFromBlocks = blocks => {
   return Promise.all(promises)
 }
 
-const getEntriesFromBlocks = blocks => {
+export const getEntriesFromBlocks = blocks => {
   const _blocks = Object.keys(blocks)
     .map(b => {
       const { type, refId } = blocks[b]
@@ -328,19 +328,3 @@ const getEntriesFromBlocks = blocks => {
   })
   return Promise.all(promises)
 }
-
-module.exports.getSourcesFromBlocks = getSourcesFromBlocks
-module.exports.getEntriesFromBlocks = getEntriesFromBlocks
-
-module.exports.appendEntryToSource = appendEntryToSource
-module.exports.appendEntryToAuthors = appendEntryToAuthors
-module.exports.appendAuthorToSource = appendAuthorToSource
-module.exports.appendEntryToAuthorList = appendEntryToAuthorList
-module.exports.appendEntriesToSource = appendEntriesToSource
-module.exports.addAuthorId = addAuthorId
-module.exports.addSourceId = addSourceId
-module.exports.appendSourceToAuthorList = appendSourceToAuthorList
-module.exports.appendSourceToAuthor = appendSourceToAuthor
-module.exports.appendEntryToAuthor = appendEntryToAuthor
-
-module.exports.addAuthorIdToSource = addAuthorIdToSource

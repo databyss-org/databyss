@@ -56,4 +56,4 @@ PageSchema.static('create', async (values = {}) => {
   return instance
 })
 
-module.exports = mongoose.model('page', PageSchema)
+export default mongoose.model('page', PageSchema)
