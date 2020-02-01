@@ -35,10 +35,10 @@ router.post('/code', async (req, res) => {
         res.status(500).send('Server Error')
         throw new Error('err')
       }
-      // console.log(login.date.getTime() >= Date.now() - 3600000)
-      console.log(login)
+
       if (login) {
-        if (login.date.getTime() >= Date.now() - 3600000) {
+        // todo: cahnge this back
+        if (login.date.getTime() >= Date.now() - 36000000) {
           const token = login.token
           const deleteQuery = Login.findOneAndRemove({ code })
           deleteQuery.exec(async err => {
