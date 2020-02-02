@@ -7,6 +7,7 @@ import PageProvider, {
 } from '@databyss-org/services/pages/PageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
+import TopicProvider from '@databyss-org/services/topics/TopicProvider'
 import AutoSave from '@databyss-org/ui/editor/AutoSave'
 import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
 import EditorPage from '@databyss-org/ui/editor/EditorPage'
@@ -20,22 +21,24 @@ const Page = () => {
   return (
     <PageProvider>
       <SourceProvider>
-        <PageLoader pageId={account.defaultPage}>
-          {page => (
-            <View alignItems="stretch" flexGrow={1} width="100%">
-              <EditorProvider
-                initialState={page}
-                reducer={pageReducer}
-                editableReducer={slateReducer}
-              >
-                <AutoSave />
-                <EditorPage autoFocus>
-                  <SlateContentEditable />
-                </EditorPage>
-              </EditorProvider>
-            </View>
-          )}
-        </PageLoader>
+        <TopicProvider>
+          <PageLoader pageId={account.defaultPage}>
+            {page => (
+              <View alignItems="stretch" flexGrow={1} width="100%">
+                <EditorProvider
+                  initialState={page}
+                  reducer={pageReducer}
+                  editableReducer={slateReducer}
+                >
+                  <AutoSave />
+                  <EditorPage autoFocus>
+                    <SlateContentEditable />
+                  </EditorPage>
+                </EditorProvider>
+              </View>
+            )}
+          </PageLoader>
+        </TopicProvider>
       </SourceProvider>
     </PageProvider>
   )
