@@ -32,7 +32,7 @@ export const makeBugsnagReport = (client, error, info) => {
 class NotifyProvider extends React.Component {
   constructor(props) {
     super(props)
-    this.bugsnagClient = Bugsnag.init(props.envPrefix, props.options)
+    this.bugsnagClient = Bugsnag.init(props.options)
 
     if (IS_NATIVE) {
       global.ErrorUtils.setGlobalHandler(error => {

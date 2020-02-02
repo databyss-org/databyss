@@ -1,12 +1,12 @@
-const Block = require('../../../models/Block')
-const Source = require('../../../models/Source')
-const Entry = require('../../../models/Entry')
-const Topic = require('../../../models/Topic')
-const Location = require('../../../models/Location')
+import Block from '../../../models/Block'
+import Source from '../../../models/Source'
+import Entry from '../../../models/Entry'
+import Topic from '../../../models/Topic'
+import Location from '../../../models/Location'
 
 const BadRefId = require('../../../lib/BadRefId')
 
-const modelDict = type =>
+export const modelDict = type =>
   ({
     SOURCE: Source,
     ENTRY: Entry,
@@ -14,7 +14,7 @@ const modelDict = type =>
     LOCATION: Location,
   }[type])
 
-const getBlockItemsFromId = blocks => {
+export const getBlockItemsFromId = blocks => {
   const promises = blocks.map(async b => {
     const _id = b._id.toString()
     const block = await Block.findOne({
@@ -37,7 +37,7 @@ const getBlockItemsFromId = blocks => {
   return Promise.all(promises)
 }
 
-const populateRefEntities = (list, type) =>
+export const populateRefEntities = (list, type) =>
   Promise.all(
     list.map(async b => {
       const _id = b.refId
@@ -53,7 +53,7 @@ const populateRefEntities = (list, type) =>
     })
   )
 
-const dictionaryFromList = list => {
+export const dictionaryFromList = list => {
   const result = {}
   list.forEach(b => {
     if (b) {
@@ -62,7 +62,3 @@ const dictionaryFromList = list => {
   })
   return result
 }
-
-module.exports.getBlockItemsFromId = getBlockItemsFromId
-module.exports.dictionaryFromList = dictionaryFromList
-module.exports.populateRefEntities = populateRefEntities

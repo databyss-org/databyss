@@ -1,4 +1,5 @@
-const express = require('express')
+import express from 'express'
+import Login from '../../models/Login'
 
 // const auth = require('../../middleware/auth')
 // const jwt = require('jsonwebtoken')
@@ -7,7 +8,6 @@ const router = express.Router()
 // const { check, validationResult } = require('express-validator/check')
 
 // const User = require('../../models/User')
-const Login = require('../../models/Login')
 
 // @route    POST api/login/code
 // @desc     verify user, return token
@@ -25,4 +25,4 @@ router.post('/code', async (req, res) => {
   }
 })
 
-module.exports = router
+export default router

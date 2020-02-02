@@ -6,4 +6,4 @@ class BadRefIdError extends Error {
   }
 }
 
-module.exports = BadRefIdError
+export default BadRefIdError

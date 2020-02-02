@@ -1,14 +1,14 @@
-const express = require('express')
-const auth = require('../../middleware/auth')
-const { validationResult } = require('express-validator/check')
-const Profile = require('../../models/Profile')
-const User = require('../../models/User')
-const Entry = require('../../models/Entry')
-const Author = require('../../models/Author')
-const Source = require('../../models/Source')
-const Block = require('../../models/Block')
-const Page = require('../../models/Page')
-const Account = require('../../models/Account')
+import express from 'express'
+import { validationResult } from 'express-validator/check'
+import auth from '../../middleware/auth'
+import Profile from '../../models/Profile'
+import User from '../../models/User'
+import Entry from '../../models/Entry'
+import Author from '../../models/Author'
+import Source from '../../models/Source'
+import Block from '../../models/Block'
+import Page from '../../models/Page'
+import Account from '../../models/Account'
 
 const router = express.Router()
 
@@ -128,4 +128,4 @@ router.delete('/', auth, async (req, res) => {
   }
 })
 
-module.exports = router
+export default router

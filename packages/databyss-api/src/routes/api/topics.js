@@ -1,8 +1,8 @@
-const express = require('express')
-const Topic = require('../../models/Topic')
+import express from 'express'
+import Topic from '../../models/Topic'
 
-const auth = require('../../middleware/auth')
-const accountMiddleware = require('../../middleware/accountMiddleware')
+import auth from '../../middleware/auth'
+import accountMiddleware from '../../middleware/accountMiddleware'
 
 const router = express.Router()
 
@@ -70,4 +70,4 @@ router.get(
   }
 )
 
-module.exports = router
+export default router

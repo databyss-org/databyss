@@ -1,5 +1,5 @@
 // const ApiError = require('./../routes/api/ApiError')
-const Page = require('./../models/Page')
+import Page from './../models/Page'
 
 const pageMiddleware = async (req, res, next) => {
   const { _id } = req.body.data.page
@@ -22,4 +22,4 @@ const pageMiddleware = async (req, res, next) => {
   return next()
 }
 
-module.exports = pageMiddleware
+export default pageMiddleware

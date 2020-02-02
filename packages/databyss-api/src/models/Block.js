@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const Schema = mongoose.Schema
 
@@ -35,4 +35,4 @@ const BlockSchema = new Schema({
 
 const Block = mongoose.models.Block || mongoose.model('block', BlockSchema)
 
-module.exports = Block
+export default Block

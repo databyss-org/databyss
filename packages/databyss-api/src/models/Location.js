@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Range = require('./Range')
+import mongoose from 'mongoose'
+import Range from './Range'
 
 const Schema = mongoose.Schema
 
@@ -17,4 +17,4 @@ const LocationSchema = new mongoose.Schema({
 const Location =
   mongoose.models.Location || mongoose.model('location', LocationSchema)
 
-module.exports = Location
+export default Location

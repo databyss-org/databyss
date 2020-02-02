@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Text = require('./Text')
+import mongoose from 'mongoose'
+import Text from './Text'
 
 const AuthorSchema = new mongoose.Schema({
   firstName: {
@@ -14,4 +14,4 @@ const AuthorSchema = new mongoose.Schema({
 
 const Author = mongoose.models.Author || mongoose.model('author', AuthorSchema)
 
-module.exports = Author
+export default Author
