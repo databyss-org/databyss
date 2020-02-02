@@ -61,6 +61,21 @@ if (process.env.ENV_PREFIX) {
   ENV_PREFIX = new RegExp(`^${process.env.ENV_PREFIX}`, 'i')
 }
 
+// For more configurability, we customize the `env.js` script to
+// remove the prefix from environment variables targets, so you only have
+// to do `process.env.API_URL` instead of `process.env.REACT_APP_API_URL`
+// This will emit a warning if the environment variable already exists
+Object.keys(process.env)
+  .filter(key => ENV_PREFIX.test(key))
+  .forEach(key => {
+    const nextKey = key.replace(ENV_PREFIX, '')
+    console.log('REMOVE PREFIX', key, nextKey)
+    if (process.env[nextKey]) {
+      console.warn('Warning, rewriting existing environment variable', nextKey)
+    }
+    process.env[nextKey] = process.env[key]
+  })
+
 function getClientEnvironment(publicUrl) {
   const raw = Object.keys(process.env)
     .filter(key => ENV_PREFIX.test(key))
