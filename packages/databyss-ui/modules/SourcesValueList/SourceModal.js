@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {
+import SourceProvider, {
   useSourceContext,
   SourceLoader,
 } from '@databyss-org/services/sources/SourceProvider'
@@ -125,4 +125,8 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
   )
 }
 
-export default SourceModal
+export default props => (
+  <SourceProvider>
+    <SourceModal {...props} />
+  </SourceProvider>
+)
