@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
+import componentMap from './componentMap'
 import reducer, { initialState } from './reducer'
 import * as actions from './actions'
 
@@ -40,6 +41,7 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
 export const useNavigationContext = () => useContext(NavigationContext)
 
 NavigationProvider.defaultProps = {
+  componentMap,
   initialState,
 }
 

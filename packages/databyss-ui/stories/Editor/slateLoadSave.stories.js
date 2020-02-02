@@ -21,7 +21,6 @@ import topicReducer, {
   initialState as topicInitialState,
 } from '@databyss-org/services/topics/reducer'
 
-import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
 import { initialState } from '@databyss-org/services/pages/reducer'
 import SlateContentEditable from '@databyss-org/ui/editor/slate/page/ContentEditable'
 import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
@@ -44,9 +43,7 @@ const ProviderDecorator = storyFn => (
             initialState={sourceInitialState}
             reducer={sourceReducer}
           >
-            <NavigationProvider componentMap={componentMap}>
-              {storyFn()}
-            </NavigationProvider>
+            <NavigationProvider>{storyFn()}</NavigationProvider>
           </SourceProvider>
         </TopicProvider>
       </PageProvider>

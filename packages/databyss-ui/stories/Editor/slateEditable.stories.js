@@ -21,7 +21,6 @@ import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
 import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import initialState from '@databyss-org/ui/editor/state/__tests__/initialState'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
 import { ViewportDecorator } from '../decorators'
 import colors from '../../theming/colors'
 
@@ -110,7 +109,7 @@ const Box = ({ children, ...others }) => (
 )
 
 const ProviderDecorator = storyFn => (
-  <NavigationProvider componentMap={componentMap}>
+  <NavigationProvider>
     <EditorProvider
       initialState={initialState}
       editableReducer={slateReducer}
