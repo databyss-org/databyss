@@ -12,7 +12,7 @@ then
   npm run storybook:build
 elif [ $NPM_DEPLOY_TARGET == NOTES_APP ]
 then
-  NPM_BUILD_TARGET=NOTES_APP node scripts/build.js
+  ENV_PREFIX=REACT_APP_ NPM_BUILD_TARGET=NOTES_APP node scripts/build.js
 elif [ $NPM_DEPLOY_TARGET == API_SERVER ]
 then
   ENV_PREFIX=API_ NPM_BUILD_TARGET=API_SERVER BABEL_ENV=production webpack --config packages/databyss-api/webpack.config.js --mode=production

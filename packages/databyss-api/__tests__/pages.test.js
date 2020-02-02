@@ -1,9 +1,4 @@
-const helpers = require('./_helpers')
-const constants = require('./_constants')
-
-const { POST_EDIT_ONE, POST_EDIT_TWO } = constants
-
-const {
+import {
   createUser,
   deleteUserPosts,
   newAccountWithUserId,
@@ -13,7 +8,8 @@ const {
   createPage,
   addUserToAccount,
   deleteUserFromAccount,
-} = helpers
+} from './_helpers'
+import { POST_EDIT_ONE, POST_EDIT_TWO } from './_constants'
 
 // PERMISSIONS
 const ADMIN = 'ADMIN'

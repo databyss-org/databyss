@@ -1,10 +1,6 @@
 const webpack = require('webpack')
 const path = require('path')
-// const TerserPlugin = require('terser-webpack-plugin')
-// const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin')
-// const HtmlWebpackPlugin = require('html-webpack-plugin')
 const getClientEnvironment = require('../../config/env')
-// const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 
 const env = getClientEnvironment()
 const envDefines = Object.keys(env.raw).reduce((accum, key) => {
@@ -28,8 +24,6 @@ module.exports = {
   },
   optimization: {
     minimize: false,
-    // minimizer: [new TerserPlugin()],
   },
-  // externals: [nodeExternals()],
   plugins: [new webpack.DefinePlugin(envDefines)],
 }
