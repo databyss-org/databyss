@@ -73,10 +73,10 @@ const run = async () => {
   return app
 }
 
-module.exports = run
+export default run
 
-// run as script (e.g. in production)
-if (require.main === module) {
+// run as script in production
+if (process.env.NODE_ENV === 'production') {
   const PORT = process.env.PORT
   // validate port
   if (!PORT) {

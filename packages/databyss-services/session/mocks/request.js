@@ -22,7 +22,7 @@ const validSessionResponse = { data: { session: mockSession1 } }
 export default async (path, options) => {
   const body = (options.body && JSON.parse(options.body)) || {}
   console.log('MOCK REQUEST', path, options)
-  const _path = path.replace(process.env.REACT_APP_API_URL, '')
+  const _path = path.replace(process.env.API_URL, '')
   await delay(3)
   switch (_path) {
     case '/auth': {

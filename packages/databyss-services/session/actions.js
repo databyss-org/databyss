@@ -30,7 +30,7 @@ export const fetchSession = ({
   dispatch({ type: FETCH_SESSION, payload: { credentials } })
 
   // fetch params
-  let path = process.env.REACT_APP_API_URL
+  let path = process.env.API_URL
   const options = {
     method: 'POST',
     headers: {

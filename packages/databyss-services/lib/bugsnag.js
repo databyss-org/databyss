@@ -3,8 +3,8 @@ import bugsnagLib from './bugsnagLib'
 
 // singleton pattern
 const Bugsnag = { client: { leaveBreadcrumb: () => null, notify: () => null } }
-Bugsnag.init = (envPrefix, options = {}) => {
-  Bugsnag.client = bugsnagLib(envPrefix, {
+Bugsnag.init = (options = {}) => {
+  Bugsnag.client = bugsnagLib({
     appVersion: packageJson.version,
     consoleBreadcrumbsEnabled: false,
     ...options,
