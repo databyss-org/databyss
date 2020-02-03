@@ -10,8 +10,8 @@ import {
   LARGE,
 } from './testStateBuildier'
 
-const THRESHOLD = 2
-const SAMPLE_SIZE = 100
+const THRESHOLD = 1
+const SAMPLE_SIZE = 50
 const SLOPE_THRESHOLD = 0
 const NS_PER_SEC = 1e9
 
@@ -40,6 +40,7 @@ describe('Performance Test', () => {
           maxDeltas.push(diff)
         }
       })
+
       const points = deltas.map((d, i) => [getBlockSize(_size[i]), d])
       slopes.push(regression.linear(points).equation[0])
     }
