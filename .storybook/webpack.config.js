@@ -1,3 +1,6 @@
+const WebpackDefinePlugin = require('webpack').DefinePlugin
+const getClientEnvironment = require('../config/env')
+
 // you can use this file to add your custom webpack plugins, loaders and anything you like.
 // This is just the basic way to add additional webpack configurations.
 // For more information refer the docs: https://storybook.js.org/configurations/custom-webpack-config
@@ -13,6 +16,13 @@ module.exports = async ({ config, mode }) => {
 
   const webpack = require('../config/webpack.config.js')(mode.toLowerCase())
   config.module.rules = webpack.module.rules
+
+  // by default, storybook rewrites REACT_APP_ environment vars
+  // for more configurability, we customized the `env.js` script to 
+  // remove the REACT_APP_ prefix from rewrite targets, so you only have
+  // to do `process.env.API_URL` instead of `process.env.REACT_APP_API_URL`
+  const env = getClientEnvironment()
+  config.plugins.push(new WebpackDefinePlugin(env.stringified))
   config.devtool = 'source-map'
   return config
 }

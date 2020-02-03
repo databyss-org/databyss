@@ -1,13 +1,8 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const Schema = mongoose.Schema
 
 const BlockSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'users',
-    required: true,
-  },
   type: {
     type: String,
   },
@@ -30,6 +25,7 @@ const BlockSchema = new Schema({
   account: {
     type: Schema.Types.ObjectId,
     ref: 'account',
+    required: true,
   },
   authorId: {
     type: Schema.Types.ObjectId,
@@ -39,4 +35,4 @@ const BlockSchema = new Schema({
 
 const Block = mongoose.models.Block || mongoose.model('block', BlockSchema)
 
-module.exports = Block
+export default Block

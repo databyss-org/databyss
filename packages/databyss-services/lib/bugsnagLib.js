@@ -1,12 +1,11 @@
 import bugsnag from '@bugsnag/js'
 
-export default (envPrefix, options) =>
+export default options =>
   bugsnag({
-    apiKey: process.env[`${envPrefix}_BUGSNAG_KEY`],
-    releaseStage: process.env[`${envPrefix}_BUGSNAG_RELEASE_STAGE`],
+    apiKey: process.env.BUGSNAG_KEY,
+    releaseStage: process.env.BUGSNAG_RELEASE_STAGE,
     beforeSend: report => {
-      if (!process.env[`${envPrefix}_BUGSNAG_NOTIFY`]) {
-        console.error(report)
+      if (!process.env.BUGSNAG_NOTIFY) {
         report.ignore()
       }
     },

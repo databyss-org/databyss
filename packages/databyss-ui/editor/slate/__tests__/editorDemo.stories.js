@@ -3,7 +3,6 @@ import { storiesOf } from '@storybook/react'
 import { View } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import fetchMock from 'fetch-mock'
 import TopicProvider from '@databyss-org/services/topics/TopicProvider'
@@ -52,7 +51,7 @@ storiesOf('Demos|Editor', module)
           initialState={sourceInitialState}
           reducer={sourceReducer}
         >
-          <NavigationProvider componentMap={componentMap}>
+          <NavigationProvider>
             <EditorProvider
               initialState={emptyInitialState}
               editableReducer={slateReducer}

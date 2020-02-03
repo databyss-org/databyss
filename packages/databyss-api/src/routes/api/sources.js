@@ -1,10 +1,9 @@
-const express = require('express')
-const Source = require('../../models/Source')
-const Page = require('../../models/Page')
-const Block = require('../../models/Block')
-
-const auth = require('../../middleware/auth')
-const accountMiddleware = require('../../middleware/accountMiddleware')
+import express from 'express'
+import Source from '../../models/Source'
+import Page from '../../models/Page'
+import Block from '../../models/Block'
+import auth from '../../middleware/auth'
+import accountMiddleware from '../../middleware/accountMiddleware'
 
 const router = express.Router()
 
@@ -161,4 +160,4 @@ router.get(
   }
 )
 
-module.exports = router
+export default router

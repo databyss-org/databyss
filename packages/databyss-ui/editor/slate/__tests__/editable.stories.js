@@ -7,7 +7,6 @@ import TopicProvider from '@databyss-org/services/topics/TopicProvider'
 import topicReducer, {
   initialState as topicInitialState,
 } from '@databyss-org/services/topics/reducer'
-import { componentMap } from '@databyss-org/ui/components/Navigation/NavigationProvider/componentMap'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import fetchMock from 'fetch-mock'
 
@@ -114,7 +113,7 @@ storiesOf('Cypress//Tests', module)
           initialState={sourceInitialState}
           reducer={sourceReducer}
         >
-          <NavigationProvider componentMap={componentMap}>
+          <NavigationProvider>
             <EditorProvider
               initialState={initialState}
               editableReducer={slateReducer}
@@ -151,7 +150,7 @@ storiesOf('Cypress//Tests', module)
           initialState={sourceInitialState}
           reducer={sourceReducer}
         >
-          <NavigationProvider componentMap={componentMap}>
+          <NavigationProvider>
             <EditorProvider
               initialState={emptyInitialState}
               editableReducer={slateReducer}

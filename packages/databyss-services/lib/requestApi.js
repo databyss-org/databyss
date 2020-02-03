@@ -1,9 +1,9 @@
 import request from './request'
-import { getAuthToken, getAccountId } from './../auth'
+import { getAuthToken, getAccountId } from './../session/clientStorage'
 
 export const requestApi = (path, options = { headers: {} }, responseIsJson) =>
   request(
-    process.env.REACT_APP_API_URL + path,
+    process.env.API_URL + path,
     {
       ...options,
       headers: {

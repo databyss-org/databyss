@@ -1,14 +1,17 @@
-const mongoose = require('mongoose')
-const Range = require('./Range')
+import mongoose from 'mongoose'
+import Range from './Range'
 
-const RichTextSchema = new mongoose.Schema({
-  textValue: { type: String },
-  ranges: {
-    type: [Range],
-    default: [],
+const RichTextSchema = new mongoose.Schema(
+  {
+    textValue: { type: String, default: '' },
+    ranges: {
+      type: [Range],
+      default: [],
+    },
   },
-})
+  { _id: false }
+)
 
 const RichText = mongoose.model('richtext', RichTextSchema)
 
-module.exports = RichText
+export default RichText

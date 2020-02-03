@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const MotifSchema = new mongoose.Schema({
   cfauthors: [
@@ -26,4 +26,4 @@ const MotifSchema = new mongoose.Schema({
 
 const Motif = mongoose.models.Motif || mongoose.model('motif', MotifSchema)
 
-module.exports = Motif
+export default Motif

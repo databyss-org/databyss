@@ -1,10 +1,9 @@
+import express from 'express'
 import { bugsnagClient } from '../../middleware/bugsnag'
 
 import ApiError from '../../lib/ApiError'
 
 const delay = timer => new Promise(resolve => setTimeout(resolve, timer))
-
-const express = require('express')
 
 const router = express.Router()
 
@@ -39,4 +38,4 @@ router.get('/api-server-await', (req, res) => {
   res.status(200).send()
 })
 
-module.exports = router
+export default router

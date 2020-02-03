@@ -1,27 +1,30 @@
-const request = require('supertest')
-const app = require('../src/app')
+import request from 'supertest'
+import app from '../src/app'
+import { send } from '../src/lib/sendgrid'
 
-exports.noAuthPost = async resource =>
+jest.mock('../src/lib/sendgrid')
+
+export const noAuthPost = async resource =>
   request(await app())
     .post('/api/sources')
     .send({
       resource,
     })
 
-exports.getUserInfo = async token =>
+export const getUserInfo = async token =>
   request(await app())
     .get('/api/profile/me')
     .set('x-auth-token', token)
     .send()
 
-exports.noAuthEntry = async entry =>
+export const noAuthEntry = async entry =>
   request(await app())
     .post('/api/entries')
     .send({
       entry,
     })
 
-exports.noAuthAuthor = async (firstName, lastName) =>
+export const noAuthAuthor = async (firstName, lastName) =>
   request(await app())
     .post('/api/authors')
     .send({
@@ -29,27 +32,24 @@ exports.noAuthAuthor = async (firstName, lastName) =>
       lastName,
     })
 
-exports.createUser = async (email, password) => {
-  let response = await request(await app())
-    .post('/api/users')
-    .send({
-      name: 'joe',
-      password,
-      email,
-    })
+export const createUser = async email => {
+  let code
+  send.mockImplementation(msg => {
+    code = msg.dynamic_template_data.code
+  })
 
-  if (response.status === 400) {
-    response = await request(await app())
-      .post('/api/auth')
-      .send({
-        password,
-        email,
-      })
-  }
-  return JSON.parse(response.text).token
+  await request(await app())
+    .post('/api/users/email')
+    .send({ email })
+
+  const response = await request(await app())
+    .post('/api/auth/code')
+    .send({ code })
+
+  return JSON.parse(response.text).data.session.token
 }
 
-exports.createSourceNoAuthor = async (token, resource) =>
+export const createSourceNoAuthor = async (token, resource) =>
   request(await app())
     .post('/api/sources')
     .set('x-auth-token', token)
@@ -57,7 +57,7 @@ exports.createSourceNoAuthor = async (token, resource) =>
       resource,
     })
 
-exports.createAuthor = async (token, firstName, lastName) =>
+export const createAuthor = async (token, firstName, lastName) =>
   request(await app())
     .post('/api/authors')
     .set('x-auth-token', token)
@@ -66,12 +66,12 @@ exports.createAuthor = async (token, firstName, lastName) =>
       lastName,
     })
 
-exports.getAuthor = async (token, authorId) =>
+export const getAuthor = async (token, authorId) =>
   request(await app())
     .get(`/api/authors/${authorId}`)
     .set('x-auth-token', token)
 
-exports.createEntryNoSource = async (token, entry) =>
+export const createEntryNoSource = async (token, entry) =>
   request(await app())
     .post('/api/entries')
     .set('x-auth-token', token)
@@ -79,12 +79,12 @@ exports.createEntryNoSource = async (token, entry) =>
       entry,
     })
 
-exports.getEntryNoSource = async (token, entryId) =>
+export const getEntryNoSource = async (token, entryId) =>
   request(await app())
     .get(`/api/entries/${entryId}`)
     .set('x-auth-token', token)
 
-exports.createEntryNewSource = async (token, entry, resource) =>
+export const createEntryNewSource = async (token, entry, resource) =>
   request(await app())
     .post('/api/entries')
     .set('x-auth-token', token)
@@ -93,17 +93,17 @@ exports.createEntryNewSource = async (token, entry, resource) =>
       resource,
     })
 
-exports.getEntryNewSource = async (token, entryId) =>
+export const getEntryNewSource = async (token, entryId) =>
   request(await app())
     .get(`/api/entries/${entryId}`)
     .set('x-auth-token', token)
 
-exports.getSourceNoAuthor = async (token, sourceNoAuthorId) =>
+export const getSourceNoAuthor = async (token, sourceNoAuthorId) =>
   request(await app())
     .get(`/api/sources/${sourceNoAuthorId}`)
     .set('x-auth-token', token)
 
-exports.createSourceWithAuthor = async (token, resource, authorLastName) =>
+export const createSourceWithAuthor = async (token, resource, authorLastName) =>
   request(await app())
     .post('/api/sources')
     .set('x-auth-token', token)
@@ -112,12 +112,12 @@ exports.createSourceWithAuthor = async (token, resource, authorLastName) =>
       authorLastName,
     })
 
-exports.getSourceWithAuthor = async (token, sourceWithAuthorId) =>
+export const getSourceWithAuthor = async (token, sourceWithAuthorId) =>
   request(await app())
     .get(`/api/sources/${sourceWithAuthorId}`)
     .set('x-auth-token', token)
 
-exports.editedSourceWithAuthor = async (token, resource, _id) =>
+export const editedSourceWithAuthor = async (token, resource, _id) =>
   request(await app())
     .post(`/api/sources/`)
     .set('x-auth-token', token)
@@ -126,17 +126,17 @@ exports.editedSourceWithAuthor = async (token, resource, _id) =>
       _id,
     })
 
-exports.getEditedSourceWithAuthor = async (token, sourceId) =>
+export const getEditedSourceWithAuthor = async (token, sourceId) =>
   request(await app())
     .get(`/api/sources/${sourceId}`)
     .set('x-auth-token', token)
 
-exports.deleteUserPosts = async token =>
+export const deleteUserPosts = async token =>
   request(await app())
     .del(`/api/profile/`)
     .set('x-auth-token', token)
 
-exports.createSourceWithId = async (token, resource, sourceId) =>
+export const createSourceWithId = async (token, resource, sourceId) =>
   request(await app())
     .post('/api/sources')
     .set('x-auth-token', token)
@@ -145,7 +145,7 @@ exports.createSourceWithId = async (token, resource, sourceId) =>
       _id: sourceId,
     })
 
-exports.createEntryWithId = async (token, entry, entryId) =>
+export const createEntryWithId = async (token, entry, entryId) =>
   request(await app())
     .post('/api/entries')
     .set('x-auth-token', token)
@@ -154,7 +154,7 @@ exports.createEntryWithId = async (token, entry, entryId) =>
       _id: entryId,
     })
 
-exports.createPage = async (token, accountId, data) =>
+export const createPage = async (token, accountId, data) =>
   request(await app())
     .post('/api/pages')
     .set('x-auth-token', token)
@@ -164,13 +164,13 @@ exports.createPage = async (token, accountId, data) =>
       data,
     })
 
-exports.getPage = async (token, accountId, _id) =>
+export const getPage = async (token, accountId, _id) =>
   request(await app())
     .get(`/api/pages/${_id}`)
     .set('x-auth-token', token)
     .set('x-databyss-account', accountId)
 
-exports.createBlock = async (token, _id, type, refId) =>
+export const createBlock = async (token, _id, type, refId) =>
   request(await app())
     .post('/api/blocks')
     .set('x-auth-token', token)
@@ -180,24 +180,24 @@ exports.createBlock = async (token, _id, type, refId) =>
       _id,
     })
 
-exports.getBlock = async (token, _id) =>
+export const getBlock = async (token, _id) =>
   request(await app())
     .get(`/api/blocks/${_id}`)
     .set('x-auth-token', token)
 
-exports.getPopulatedPage = async (token, accountId, _id) =>
+export const getPopulatedPage = async (token, accountId, _id) =>
   request(await app())
     .get(`/api/pages/populate/${_id}`)
     .set('x-auth-token', token)
     .set('x-databyss-account', accountId)
 
-exports.newAccountWithUserId = async token =>
+export const newAccountWithUserId = async token =>
   request(await app())
     .post('/api/accounts')
     .set('x-auth-token', token)
     .send()
 
-exports.addUserToAccount = async (token, _id, userId, role) =>
+export const addUserToAccount = async (token, _id, userId, role) =>
   request(await app())
     .post(`/api/accounts/user/${userId}`)
     .set('x-auth-token', token)
@@ -206,7 +206,7 @@ exports.addUserToAccount = async (token, _id, userId, role) =>
       role,
     })
 
-exports.deleteUserFromAccount = async (token, accountId, userId) =>
+export const deleteUserFromAccount = async (token, accountId, userId) =>
   request(await app())
     .delete(`/api/accounts/${userId}`)
     .set('x-auth-token', token)

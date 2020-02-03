@@ -1,9 +1,11 @@
 import '../../../config/env'
 import { POST_EXAMPLE } from '../__tests__/_constants'
-import helpers from '../__tests__/_helpers'
+import {
+  createUser,
+  createPage,
+  newAccountWithUserId,
+} from '../__tests__/_helpers'
 import { dropTestDB } from '../src/lib/db'
-
-const { createUser, createPage, newAccountWithUserId } = helpers
 
 // USER
 const EMAIL = 'email4@company.com'

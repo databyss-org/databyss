@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
 const Range = new mongoose.Schema({
   length: {
@@ -15,4 +15,4 @@ const Range = new mongoose.Schema({
   ],
 })
 
-module.exports = Range
+export default Range

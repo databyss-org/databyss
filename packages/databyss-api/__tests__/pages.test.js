@@ -1,9 +1,4 @@
-const helpers = require('./_helpers')
-const constants = require('./_constants')
-
-const { POST_EDIT_ONE, POST_EDIT_TWO } = constants
-
-const {
+import {
   createUser,
   deleteUserPosts,
   newAccountWithUserId,
@@ -13,7 +8,8 @@ const {
   createPage,
   addUserToAccount,
   deleteUserFromAccount,
-} = helpers
+} from './_helpers'
+import { POST_EDIT_ONE, POST_EDIT_TWO } from './_constants'
 
 // PERMISSIONS
 const ADMIN = 'ADMIN'
@@ -22,11 +18,11 @@ const EDITOR = 'EDITOR'
 
 // USER
 const EMAIL = 'email5@company.com'
-const PASSWORD = 'password'
 
 // USER 2
 const EMAIL2 = 'email6@company.com'
-const PASSWORD2 = 'password'
+
+jest.setTimeout(30000)
 
 // CREATE ACCOUNT
 describe('Pages', () => {
@@ -35,9 +31,10 @@ describe('Pages', () => {
     let account
     let _token
     beforeAll(async done => {
-      token = await createUser(EMAIL, PASSWORD)
+      token = await createUser(EMAIL)
+      console.log('TOKEN', token)
       done()
-    }, 5000)
+    })
 
     describe('create an account and add user to account', () => {
       test('it should add a page state', async done => {
@@ -52,7 +49,7 @@ describe('Pages', () => {
         expect(page.account).toBe(account._id)
 
         // create second user
-        _token = await createUser(EMAIL2, PASSWORD2)
+        _token = await createUser(EMAIL2)
 
         const userTwoInfo = await getUserInfo(_token)
         const userTwoId = JSON.parse(userTwoInfo.text)

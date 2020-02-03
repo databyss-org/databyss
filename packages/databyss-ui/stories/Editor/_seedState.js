@@ -2,11 +2,10 @@ import ObjectId from 'bson-objectid'
 
 const sourceId = ObjectId().toHexString()
 const entryId = ObjectId().toHexString()
-const pageId = ObjectId().toHexString()
 const blockOneId = ObjectId().toHexString()
 const blockTwoId = ObjectId().toHexString()
 
-export default {
+export default pageId => ({
   editableState: null,
   activeBlockId: null,
   newSources: [],
@@ -14,14 +13,14 @@ export default {
   topics: {},
   locations: {},
   sources: {
-    sourceId: {
+    [sourceId]: {
       _id: sourceId,
       textValue:
         'Stamenov, Language Structure, Discourse and the Access to Consciousness',
     },
   },
   entries: {
-    entryId: {
+    [entryId]: {
       _id: entryId,
       textValue: 'On the limitation of third-order thought to assertion',
     },
@@ -40,7 +39,7 @@ export default {
   },
   page: {
     _id: pageId,
-    name: 'pauls document',
+    name: 'test document',
     blocks: [
       {
         _id: blockOneId,
@@ -50,4 +49,4 @@ export default {
       },
     ],
   },
-}
+})

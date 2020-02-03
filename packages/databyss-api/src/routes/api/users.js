@@ -1,81 +1,13 @@
-const express = require('express')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-const axios = require('axios')
-const sgMail = require('@sendgrid/mail')
-const hri = require('human-readable-ids').hri
-const { check, validationResult } = require('express-validator/check')
-const User = require('../../models/User')
-const Login = require('../../models/Login')
+import express from 'express'
+import axios from 'axios'
+import humanReadableIds from 'human-readable-ids'
+import { check, validationResult } from 'express-validator/check'
+import { send } from '../../lib/sendgrid'
+import User from '../../models/User'
+import Login from '../../models/Login'
+import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
 
 const router = express.Router()
-
-// @route    POST api/users
-// @desc     Register user
-// @access   Public
-router.post(
-  '/',
-  [
-    check('name', 'Name is required')
-      .not()
-      .isEmpty(),
-    check('email', 'Please include a valid email').isEmail(),
-    check(
-      'password',
-      'Please enter a password with 6 or more characters'
-    ).isLength({ min: 6 }),
-  ],
-  async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() })
-    }
-
-    const { name, email, password } = req.body
-
-    try {
-      let user = await User.findOne({ email })
-
-      if (user) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'User already exists' }] })
-      }
-
-      user = new User({
-        name,
-        email,
-        password,
-      })
-
-      const salt = await bcrypt.genSalt(10)
-
-      user.password = await bcrypt.hash(password, salt)
-
-      await user.save()
-
-      const payload = {
-        user: {
-          id: user.id,
-        },
-      }
-
-      jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        { expiresIn: 360000 },
-        (err, token) => {
-          if (err) throw err
-          res.json({ token })
-        }
-      )
-      return res.status(200)
-    } catch (err) {
-      console.error(err.message)
-      return res.status(500).send('Server error')
-    }
-  }
-)
 
 // @route    POST api/users/google
 // @desc     create or get profile info for google user
@@ -90,48 +22,17 @@ router.post('/google', async (req, res) => {
       try {
         let user = await User.findOne({ googleId: id })
 
-        if (user) {
-          const payload = {
-            user: {
-              id: user.id,
-            },
-          }
-          jwt.sign(
-            payload,
-            process.env.JWT_SECRET,
-            { expiresIn: 360000 },
-            (err, token) => {
-              if (err) throw err
-              return res.json({ token })
-            }
-          )
-        } else {
+        if (!user) {
           const { name, email, sub } = response.data
-          user = new User({
+          user = await User.create({
             name,
             email,
             googleId: sub,
           })
-
-          await user.save()
-
-          const payload = {
-            user: {
-              id: user.id,
-            },
-          }
-
-          jwt.sign(
-            payload,
-            process.env.JWT_SECRET,
-            { expiresIn: '1y' },
-            (err, token) => {
-              if (err) throw err
-              return res.json({ token })
-            }
-          )
         }
-        return res.status(200)
+
+        const session = await getSessionFromUserId(user._id)
+        return res.json({ data: { session } })
       } catch (err) {
         console.error(err.message)
         return res.status(500).send('Server Error')
@@ -154,7 +55,6 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() })
     }
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
     const { email } = req.body
     let emailExists = false
@@ -163,47 +63,35 @@ router.post(
       let user = await User.findOne({ email })
       if (!user) {
         // Creates new user
-        user = new User({
+        user = await User.create({
           email,
         })
-        await user.save()
       } else {
         emailExists = true
       }
 
-      const payload = {
-        user: {
-          id: user.id,
+      const token = await getTokenFromUserId(user._id)
+      const login = new Login({
+        code:
+          process.env.NODE_ENV === 'test'
+            ? 'test-code-42'
+            : humanReadableIds.hri.random(),
+        token,
+      })
+      login.save()
+      const msg = {
+        to: email,
+        from: process.env.TRANSACTIONAL_EMAIL_SENDER,
+        templateId: emailExists
+          ? 'd-9e03c4ebd5a24560b6e02a15af4b9b2e'
+          : 'd-845a6d7d37c14d828191b6c7933b20f7',
+        dynamic_template_data: {
+          code: login.code,
+          url: process.env.LOGIN_URL,
         },
       }
-      jwt.sign(
-        payload,
-        process.env.JWT_SECRET,
-        { expiresIn: '1y' },
-        (err, token) => {
-          if (err) throw err
-          const login = new Login({
-            code: hri.random(),
-            token,
-          })
-          login.save()
-
-          const msg = {
-            to: email,
-            from: process.env.LOGIN_URL.TRANSACTIONAL_EMAIL_SENDER,
-            templateId: emailExists
-              ? 'd-9e03c4ebd5a24560b6e02a15af4b9b2e'
-              : 'd-845a6d7d37c14d828191b6c7933b20f7',
-            dynamic_template_data: {
-              code: login.code,
-              url: process.env.LOGIN_URL,
-            },
-          }
-          sgMail.send(msg)
-          res.status(200).send('check email')
-        }
-      )
-
+      send(msg)
+      res.status(200).json({})
       return res.status(200)
     } catch (err) {
       console.error(err.message)
@@ -212,4 +100,4 @@ router.post(
   }
 )
 
-module.exports = router
+export default router

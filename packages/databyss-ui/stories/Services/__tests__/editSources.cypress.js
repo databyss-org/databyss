@@ -1,6 +1,4 @@
-/** @jsx h */
-
-/* eslint-disable func-names */
+import { authenticate } from './_helpers'
 
 const firstSource = {
   firstName: 'first name',
@@ -13,26 +11,19 @@ const secondSource = {
   name: 'updated source',
 }
 
-context('Editor', () => {
+context('Editor - Sources Provider', () => {
   beforeEach(() => {
-    cy.visit(
-      'http://localhost:6006/iframe.html?id=services-auth--login-accounts'
-    )
-    cy.wait(4000)
+    authenticate()
     cy.visit(
       'http://localhost:6006/iframe.html?id=services-page--slate-load-and-save'
     )
     cy.wait(4000)
+
+    cy.get('[contenteditable="true"]').as('editor')
+    cy.get('#slateDocument').as('slateDocument')
   })
 
   it('Edits atomic sources', () => {
-    cy.get('button').then(buttonList => {
-      // clicks on first page
-      buttonList[0].click()
-      cy.wait(2000)
-      cy.get('[contenteditable="true"]').as('editor')
-      cy.get('#slateDocument').as('slateDocument')
-    })
     cy.get('@editor')
       .get('[data-test-atomic-edit="open"]')
       .click()
@@ -85,10 +76,6 @@ context('Editor', () => {
 
     // reload the page
     cy.reload().wait(2000)
-    cy.get('button').then(buttonList => {
-      buttonList[0].click()
-      cy.wait(2000)
-    })
 
     cy.get('@editor')
       .focus()
