@@ -11,7 +11,7 @@ import {
 } from './testStateBuildier'
 
 const THRESHOLD = 1
-const SAMPLE_SIZE = 50
+const SAMPLE_SIZE = 20
 const SLOPE_THRESHOLD = 0
 const NS_PER_SEC = 1e9
 
@@ -29,9 +29,10 @@ describe('Performance Test', () => {
       const deltas = []
       _size.forEach(size => {
         let _state = generateState(size)
-        const _firstId = _state.page.blocks[0]._id
+        const _index = Math.floor(Math.random() * getBlockSize(size))
+        const _id = _state.page.blocks[_index]._id
         const time = process.hrtime()
-        _state = reducer(_state, setActiveBlockId(_firstId))
+        _state = reducer(_state, setActiveBlockId(_id))
         _state = reducer(_state, setActiveBlockContent('updated content'))
         let diff = process.hrtime(time)
         diff = diff[0] * NS_PER_SEC + diff[1] / NS_PER_SEC
@@ -40,8 +41,7 @@ describe('Performance Test', () => {
           maxDeltas.push(diff)
         }
       })
-
-      const points = deltas.map((d, i) => [getBlockSize(_size[i]), d])
+      const points = deltas.map((d, j) => [getBlockSize(_size[j]), d])
       slopes.push(regression.linear(points).equation[0])
     }
 
