@@ -13,7 +13,7 @@ import {
 } from '../page/constants'
 import initialState from './initialState'
 
-describe('Performance Test', () => {
+describe('editorState', () => {
   describe(SET_ACTIVE_BLOCK_CONTENT, () => {
     test('should set entry content for type ENTRY', () => {
       const state = reducer(

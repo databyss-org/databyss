@@ -11,8 +11,9 @@ import {
 } from './testStateBuildier'
 
 const THRESHOLD = 2
-const SAMPLE_SIZE = 20
+const SAMPLE_SIZE = 100
 const SLOPE_THRESHOLD = 0
+const NS_PER_SEC = 1e9
 
 function getAvg(threshold) {
   const total = threshold.reduce((acc, c) => acc + c, 0)
@@ -22,29 +23,34 @@ function getAvg(threshold) {
 describe('Performance Test', () => {
   describe(SET_ACTIVE_BLOCK_CONTENT, () => {
     const _size = [SMALL, MED, LARGE]
-    const results = []
-    _size.forEach(size => {
-      const _threshold = []
-      for (let i = 0; i < SAMPLE_SIZE; i += 1) {
+    const slopes = []
+    const maxDeltas = []
+    for (let i = 0; i < SAMPLE_SIZE; i += 1) {
+      const deltas = []
+      _size.forEach(size => {
         let _state = generateState(size)
         const _firstId = _state.page.blocks[0]._id
-        let time = Date.now()
+        const time = process.hrtime()
         _state = reducer(_state, setActiveBlockId(_firstId))
         _state = reducer(_state, setActiveBlockContent('updated content'))
-        time = Date.now() - time
-        _threshold.push(time)
-        results.push([getBlockSize(size), time])
-      }
-      if (size === LARGE) {
-        test('should test threshold for large sample size', () => {
-          const _average = getAvg(_threshold)
-          expect(Math.round(_average)).toBeLessThanOrEqual(THRESHOLD)
-        })
-      }
+        let diff = process.hrtime(time)
+        diff = diff[0] * NS_PER_SEC + diff[1] / NS_PER_SEC
+        deltas.push(diff)
+        if (size === LARGE) {
+          maxDeltas.push(diff)
+        }
+      })
+      const points = deltas.map((d, i) => [getBlockSize(_size[i]), d])
+      slopes.push(regression.linear(points).equation[0])
+    }
+
+    test('should test threshold for large sample size', () => {
+      const _average = getAvg(maxDeltas)
+      expect(Math.round(_average)).toBeLessThanOrEqual(THRESHOLD)
     })
-    test('should have a slope threshold equal or less than 0', () => {
-      const slope = regression.linear(results).equation[0]
-      expect(slope).toBeLessThanOrEqual(SLOPE_THRESHOLD)
+    test('should have a slope threshold less than ', () => {
+      const _average = getAvg(slopes)
+      expect(_average).toBeLessThanOrEqual(SLOPE_THRESHOLD)
     })
   })
 })

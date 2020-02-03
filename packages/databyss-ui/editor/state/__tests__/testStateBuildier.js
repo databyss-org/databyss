@@ -60,8 +60,8 @@ export const generateState = size => {
   const types = ['ENTRY', 'SOURCE', 'TOPIC']
   let _state = initialState
 
-  for (let i = 0; i < blockSize; i++) {
-    let _type = types[Math.floor(Math.random() * types.length)]
+  for (let i = 0; i < blockSize; i += 1) {
+    const _type = types[Math.floor(Math.random() * types.length)]
     _state = generateBlock(_state, _type)
   }
   return _state
