@@ -11,7 +11,7 @@ import {
 } from './testStateBuildier'
 
 const THRESHOLD = 1
-const SAMPLE_SIZE = 20
+const SAMPLE_SIZE = 100
 const SLOPE_THRESHOLD = 0
 const NS_PER_SEC = 1e9
 
