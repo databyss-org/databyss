@@ -11,10 +11,10 @@ import {
 } from '../page/actions'
 import { generateState, getBlockSize, SMALL, MED, LARGE } from './_helpers'
 
-const THRESHOLD = 1
+const TIME_DELTA_THRESHOLD = 50
 const SAMPLE_SIZE = 1
-const SLOPE_THRESHOLD = 0
-const NS_PER_SEC = 1e9
+const SLOPE_THRESHOLD = 0.1
+// const NS_PER_SEC = 1e9
 
 function getAvg(threshold) {
   const total = threshold.reduce((acc, c) => acc + c, 0)
@@ -37,12 +37,14 @@ export const speedTrap = reducerFunctions => {
   for (let i = 0; i < SAMPLE_SIZE; i += 1) {
     const deltas = []
     _size.forEach(size => {
-      let _state = generateState(size)
-      const time = process.hrtime()
+      const _state = generateState(size)
+      // const time = process.hrtime()
+      const time = performance.now()
       const { type } = reducerFunctions(_state, size)
       _type = type
-      let diff = process.hrtime(time)
-      diff = diff[0] * NS_PER_SEC + diff[1] / NS_PER_SEC
+      const diff = performance.now() - time
+      // let diff = process.hrtime(time)
+      // diff = diff[0] * NS_PER_SEC + diff[1] / NS_PER_SEC
       deltas.push(diff)
       if (size === LARGE) {
         maxDeltas.push(diff)
@@ -54,6 +56,10 @@ export const speedTrap = reducerFunctions => {
   return { averageSlopes: slopes, maxDeltas, type: _type }
 }
 
+/*
+Action functions to be tested, 
+must return a 'type' object in order to lable the test
+*/
 const changeBlockContent = (state, size) => {
   let _state = state
   const _index = Math.floor(Math.random() * getBlockSize(size))
@@ -130,25 +136,14 @@ describe('Performance Test', () => {
   describe('test process times for actions', () => {
     for (let i = 0; i < tests.length; i += 1) {
       const { averageSlopes, maxDeltas, type } = speedTrap(tests[i])
-      it(type, () => {
+      test(`${type} - delta threshold`, () => {
         const _average = getAvg(maxDeltas)
-        expect(Math.round(_average)).toBeLessThanOrEqual(THRESHOLD)
+        expect(Math.round(_average)).toBeLessThanOrEqual(TIME_DELTA_THRESHOLD)
       })
-      test('should have a slope threshold less than ', () => {
+      test(`${type} - slope threshold`, () => {
         const _average = getAvg(averageSlopes)
         expect(_average).toBeLessThanOrEqual(SLOPE_THRESHOLD)
       })
     }
-
-    // const { averageSlopes, maxDeltas } = speedTrap(changeBlockContent)
-
-    // test('should test threshold for large sample size', () => {
-    //   const _average = getAvg(maxDeltas)
-    //   expect(Math.round(_average)).toBeLessThanOrEqual(THRESHOLD)
-    // })
-    // test('should have a slope threshold less than ', () => {
-    //   const _average = getAvg(averageSlopes)
-    //   expect(_average).toBeLessThanOrEqual(SLOPE_THRESHOLD)
-    // })
   })
 })
