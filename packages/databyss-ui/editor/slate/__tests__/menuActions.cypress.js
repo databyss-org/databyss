@@ -96,10 +96,7 @@ context('Editor Menu Actions', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block
-              type="LOCATION"
-              data={{ refId: refIdList[0], type: 'LOCATION' }}
-            >
+            <block type="ENTRY" data={{ refId: refIdList[0], type: 'ENTRY' }}>
               <mark type="location">
                 this whole block should get tagged as a location
               </mark>
