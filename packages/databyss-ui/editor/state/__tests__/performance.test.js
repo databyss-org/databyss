@@ -11,8 +11,9 @@ import {
 } from '../page/actions'
 import { generateState, getBlockSize, SMALL, MED, LARGE } from './_helpers'
 
-const TIME_DELTA_THRESHOLD = 50
-const SAMPLE_SIZE = 1
+// how long a functin should take
+const TIME_DELTA_THRESHOLD = 75
+const SAMPLE_SIZE = 2
 const SLOPE_THRESHOLD = 0.1
 // const NS_PER_SEC = 1e9
 
@@ -24,7 +25,7 @@ function getAvg(threshold) {
 /*
 takes in a (state, , type, size) => {
   processes reducerFunctions
-  returns {maxDelta: Array, averageSlope: Array}
+  returns {maxDelta: Array, averageSlope: Array, type: String}
 }
 */
 export const speedTrap = reducerFunctions => {
