@@ -7,7 +7,11 @@ import {
   setActiveBlockContent,
   setActiveBlockType,
   newActiveBlock,
+  onShowFormatMenu,
+  onShowMenuActions,
   backspace,
+  deleteBlock,
+  deleteBlocks,
 } from '../page/actions'
 import { generateState, getBlockSize, SMALL, MED, LARGE } from './_helpers'
 
@@ -30,7 +34,7 @@ takes in a (state, , type, size) => {
 */
 export const speedTrap = reducerFunctions => {
   const _size = [SMALL, MED, LARGE]
-  // const _size = [SMALL]
+  // const _size = [LARGE]
 
   const slopes = []
   const maxDeltas = []
@@ -107,7 +111,7 @@ const insertNewActiveBlock = (state, size) => {
   return { type: 'INSERT NEW ACTIVE BLOCK' }
 }
 
-const onBackspace = (state, size) => {
+const backspaceClearBlock = (state, size) => {
   let _state = state
   const _index = Math.floor(Math.random() * getBlockSize(size))
   const _id = _state.page.blocks[_index]._id
@@ -125,12 +129,70 @@ const onBackspace = (state, size) => {
   return { type: 'CLEARS BLOCK ON BACKSPACE' }
 }
 
+const onBackspace = (state, size) => {
+  let _state = state
+  const _index = Math.floor(Math.random() * getBlockSize(size))
+  const _id = _state.page.blocks[_index]._id
+  const _nextBlockId = _state.page.blocks[_index + 2]
+    ? _state.page.blocks[_index + 1]._id
+    : null
+  _state = reducer(_state, setActiveBlockId(_id))
+
+  const _blockProperties = {
+    activeBlockId: _id,
+    nextBlockId: _nextBlockId,
+  }
+  _state = reducer(_state, backspace(_blockProperties))
+
+  return { type: 'BACKSPACE ON BLOCK' }
+}
+
+const showMenuActionsUI = (state, size) => {
+  let _state = state
+  const _index = Math.floor(Math.random() * getBlockSize(size))
+  const _id = _state.page.blocks[_index]._id
+  _state = reducer(_state, setActiveBlockId(_id))
+  _state = reducer(_state, onShowMenuActions(true))
+  return { type: 'SHOW MENU ACTIONS' }
+}
+
+const showFormatMenuUI = (state, size) => {
+  let _state = state
+  const _index = Math.floor(Math.random() * getBlockSize(size))
+  const _id = _state.page.blocks[_index]._id
+  _state = reducer(_state, setActiveBlockId(_id))
+  _state = reducer(_state, onShowFormatMenu(true))
+  return { type: 'SHOW FORMAT MENU' }
+}
+
+const onDeleteActiveBlock = (state, size) => {
+  let _state = state
+  const _index = Math.floor(Math.random() * getBlockSize(size))
+  const _id = _state.page.blocks[_index]._id
+  _state = reducer(_state, setActiveBlockId(_id))
+  _state = reducer(_state, deleteBlock(_id))
+  return { type: 'DELETE ACTIVE BLOCK' }
+}
+
+const onDeleteLastBlock = (state, size) => {
+  const _state = state
+  const _id = _state.page.blocks[_state.page.blocks.length - 1]._id
+  _state = reducer(_state, setActiveBlockId(_id))
+  _state = reducer(_state, deleteBlock(_id))
+  return { type: 'DELETE LAST BLOCK' }
+}
+
 const tests = [
   changeBlockContent,
   changeBlockToAtomic,
   changeBlockToEntry,
   insertNewActiveBlock,
+  backspaceClearBlock,
   onBackspace,
+  showMenuActionsUI,
+  showFormatMenuUI,
+  onDeleteActiveBlock,
+  onDeleteLastBlock,
 ]
 
 describe('Performance Test', () => {
