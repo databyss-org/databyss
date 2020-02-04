@@ -53,7 +53,15 @@ const generateBlock = (state, type) => {
   return _state
 }
 
-export const getBlockSize = size => ({ SMALL: 10, MED: 500, LARGE: 1000 }[size])
+export const getBlockSize = size =>
+  ({
+    // SMALL: 5,
+    // MED: 1,
+    // LARGE: 1,
+    SMALL: 10,
+    MED: 500,
+    LARGE: 1000,
+  }[size])
 
 export const generateState = size => {
   const blockSize = getBlockSize(size)

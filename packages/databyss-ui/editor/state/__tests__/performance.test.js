@@ -1,11 +1,18 @@
 import regression from 'regression'
-import reducer from '../page/reducer'
-import { setActiveBlockId, setActiveBlockContent } from '../page/actions'
-import { SET_ACTIVE_BLOCK_CONTENT } from '../page/constants'
+import ObjectId from 'bson-objectid'
+
+import reducer, { entities } from '../page/reducer'
+import {
+  setActiveBlockId,
+  setActiveBlockContent,
+  setActiveBlockType,
+  newActiveBlock,
+  backspace,
+} from '../page/actions'
 import { generateState, getBlockSize, SMALL, MED, LARGE } from './_helpers'
 
 const THRESHOLD = 1
-const SAMPLE_SIZE = 10
+const SAMPLE_SIZE = 1
 const SLOPE_THRESHOLD = 0
 const NS_PER_SEC = 1e9
 
@@ -22,6 +29,8 @@ takes in a (state, , type, size) => {
 */
 export const speedTrap = reducerFunctions => {
   const _size = [SMALL, MED, LARGE]
+  // const _size = [SMALL]
+
   const slopes = []
   const maxDeltas = []
   let _type
@@ -54,22 +63,92 @@ const changeBlockContent = (state, size) => {
   return { type: 'CHANGE CONTENT' }
 }
 
-const functionArray = [changeBlockContent]
+const changeBlockToAtomic = (state, size) => {
+  let _state = state
+  const _index = Math.floor(Math.random() * getBlockSize(size))
+  const _id = _state.page.blocks[_index]._id
+  _state = reducer(_state, setActiveBlockId(_id))
+  _state = reducer(_state, setActiveBlockType('SOURCE'))
+  return { type: 'CHANGE BLOCK TYPE TO ATOMIC' }
+}
+
+const changeBlockToEntry = (state, size) => {
+  let _state = state
+  const _index = Math.floor(Math.random() * getBlockSize(size))
+  const _id = _state.page.blocks[_index]._id
+  _state = reducer(_state, setActiveBlockId(_id))
+  _state = reducer(_state, setActiveBlockType('ENTRY'))
+  return { type: 'CHANGE BLOCK TYPE TO ENTRY' }
+}
+
+const insertNewActiveBlock = (state, size) => {
+  let _state = state
+  const _index = Math.floor(Math.random() * getBlockSize(size))
+  const _id = _state.page.blocks[_index]._id
+  const _type = _state.blocks[_id].type
+  const _refId = _state.blocks[_id].refId
+  const _text = entities(_state, _type)[_refId].textValue
+  const _insertedBlockId = ObjectId().toHexString()
+  _state = reducer(_state, setActiveBlockId(_insertedBlockId))
+  const _blockProperties = {
+    insertedBlockId: _insertedBlockId,
+    insertedBlockText: '',
+    previousBlockId: _id,
+    previousBlockText: _text,
+  }
+  _state = reducer(_state, newActiveBlock(_blockProperties))
+  return { type: 'INSERT NEW ACTIVE BLOCK' }
+}
+
+const onBackspace = (state, size) => {
+  let _state = state
+  const _index = Math.floor(Math.random() * getBlockSize(size))
+  const _id = _state.page.blocks[_index]._id
+  const _nextBlockId = _state.page.blocks[_index + 2]
+    ? _state.page.blocks[_index + 2]._id
+    : null
+  _state = reducer(_state, setActiveBlockId(_id))
+
+  const _blockProperties = {
+    activeBlockId: _id,
+    nextBlockId: _nextBlockId,
+  }
+  _state = reducer(_state, backspace(_blockProperties))
+
+  return { type: 'CLEARS BLOCK ON BACKSPACE' }
+}
+
+const tests = [
+  changeBlockContent,
+  changeBlockToAtomic,
+  changeBlockToEntry,
+  insertNewActiveBlock,
+  onBackspace,
+]
 
 describe('Performance Test', () => {
-  describe(SET_ACTIVE_BLOCK_CONTENT, () => {
-    const { averageSlopes, maxDeltas, type } = speedTrap(changeBlockContent)
+  describe('test process times for actions', () => {
+    for (let i = 0; i < tests.length; i += 1) {
+      const { averageSlopes, maxDeltas, type } = speedTrap(tests[i])
+      it(type, () => {
+        const _average = getAvg(maxDeltas)
+        expect(Math.round(_average)).toBeLessThanOrEqual(THRESHOLD)
+      })
+      test('should have a slope threshold less than ', () => {
+        const _average = getAvg(averageSlopes)
+        expect(_average).toBeLessThanOrEqual(SLOPE_THRESHOLD)
+      })
+    }
 
-    console.log('logs tests type', type)
-    // create array of functions with tests
+    // const { averageSlopes, maxDeltas } = speedTrap(changeBlockContent)
 
-    test('should test threshold for large sample size', () => {
-      const _average = getAvg(maxDeltas)
-      expect(Math.round(_average)).toBeLessThanOrEqual(THRESHOLD)
-    })
-    test('should have a slope threshold less than ', () => {
-      const _average = getAvg(averageSlopes)
-      expect(_average).toBeLessThanOrEqual(SLOPE_THRESHOLD)
-    })
+    // test('should test threshold for large sample size', () => {
+    //   const _average = getAvg(maxDeltas)
+    //   expect(Math.round(_average)).toBeLessThanOrEqual(THRESHOLD)
+    // })
+    // test('should have a slope threshold less than ', () => {
+    //   const _average = getAvg(averageSlopes)
+    //   expect(_average).toBeLessThanOrEqual(SLOPE_THRESHOLD)
+    // })
   })
 })
