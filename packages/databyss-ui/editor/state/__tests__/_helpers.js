@@ -1,5 +1,6 @@
 import { LoremIpsum } from 'lorem-ipsum'
 import ObjectId from 'bson-objectid'
+import cloneDeep from 'clone-deep'
 
 export const SMALL = 'SMALL'
 export const MED = 'MED'
@@ -7,9 +8,6 @@ export const LARGE = 'LARGE'
 
 export const getBlockSize = size =>
   ({
-    // SMALL: 5,
-    // MED: 1,
-    // LARGE: 1,
     SMALL: 10,
     MED: 500,
     LARGE: 1000,
@@ -66,8 +64,7 @@ const generateBlock = (state, type) => {
 export const generateState = size => {
   const blockSize = getBlockSize(size)
   const types = ['ENTRY', 'SOURCE', 'TOPIC']
-  let _state = initialState
-
+  let _state = cloneDeep(initialState)
   for (let i = 0; i < blockSize; i += 1) {
     const _type = types[Math.floor(Math.random() * types.length)]
     _state = generateBlock(_state, _type)

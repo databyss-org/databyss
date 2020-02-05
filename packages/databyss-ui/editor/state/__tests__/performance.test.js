@@ -1,25 +1,47 @@
 import regression from 'regression'
 import ObjectId from 'bson-objectid'
-
+import { List } from 'immutable'
+import cloneDeep from 'clone-deep'
 import reducer, { entities } from '../page/reducer'
+import {
+  SET_ACTIVE_BLOCK_CONTENT,
+  SET_ACTIVE_BLOCK_TYPE,
+  INSERT_NEW_ACTIVE_BLOCK,
+  BACKSPACE,
+  DELETE_BLOCK,
+  DELETE_BLOCKS,
+  ON_CUT,
+  SHOW_MENU_ACTIONS,
+  SHOW_FORMAT_MENU,
+  SHOW_NEW_BLOCK_MENU,
+  ADD_DIRTY_ATOMIC,
+  DEQUEUE_DIRTY_ATOMIC,
+  UPDATE_ATOMIC,
+  DEQUEUE_NEW_ATOMIC,
+} from '../page/constants'
 import {
   setActiveBlockId,
   setActiveBlockContent,
   setActiveBlockType,
   newActiveBlock,
   onShowFormatMenu,
+  newBlockMenu,
   onShowMenuActions,
   backspace,
   deleteBlock,
   deleteBlocks,
+  cutBlocks,
+  updateAtomic,
+  removeAtomicFromQueue,
+  addDirtyAtomic,
+  dequeueDirtyAtomic,
 } from '../page/actions'
 import { generateState, getBlockSize, SMALL, MED, LARGE } from './_helpers'
 
-// how long a functin should take
-const TIME_DELTA_THRESHOLD = 75
+// how long a function should take
+const TIME_DELTA_THRESHOLD = 30
 const SAMPLE_SIZE = 2
-const SLOPE_THRESHOLD = 0.1
-// const NS_PER_SEC = 1e9
+const SLOPE_THRESHOLD = 0.015
 
 function getAvg(threshold) {
   const total = threshold.reduce((acc, c) => acc + c, 0)
@@ -34,27 +56,25 @@ takes in a (state, , type, size) => {
 */
 export const speedTrap = reducerFunctions => {
   const _size = [SMALL, MED, LARGE]
-  // const _size = [LARGE]
-
   const slopes = []
   const maxDeltas = []
   let _type
   for (let i = 0; i < SAMPLE_SIZE; i += 1) {
     const deltas = []
+    /* eslint-disable */
     _size.forEach(size => {
       const _state = generateState(size)
-      // const time = process.hrtime()
       const time = performance.now()
       const { type } = reducerFunctions(_state, size)
       _type = type
       const diff = performance.now() - time
-      // let diff = process.hrtime(time)
-      // diff = diff[0] * NS_PER_SEC + diff[1] / NS_PER_SEC
       deltas.push(diff)
       if (size === LARGE) {
         maxDeltas.push(diff)
       }
     })
+    /* eslint-enable */
+
     const points = deltas.map((d, j) => [getBlockSize(_size[j]), d])
     slopes.push(regression.linear(points).equation[0])
   }
@@ -71,7 +91,13 @@ const changeBlockContent = (state, size) => {
   const _id = _state.page.blocks[_index]._id
   _state = reducer(_state, setActiveBlockId(_id))
   _state = reducer(_state, setActiveBlockContent('updated content'))
-  return { type: 'CHANGE CONTENT' }
+  return {
+    type: {
+      name: SET_ACTIVE_BLOCK_CONTENT,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: 0.025,
+    },
+  }
 }
 
 const changeBlockToAtomic = (state, size) => {
@@ -80,7 +106,13 @@ const changeBlockToAtomic = (state, size) => {
   const _id = _state.page.blocks[_index]._id
   _state = reducer(_state, setActiveBlockId(_id))
   _state = reducer(_state, setActiveBlockType('SOURCE'))
-  return { type: 'CHANGE BLOCK TYPE TO ATOMIC' }
+  return {
+    type: {
+      name: `${SET_ACTIVE_BLOCK_TYPE} - ATOMIC`,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: SLOPE_THRESHOLD,
+    },
+  }
 }
 
 const changeBlockToEntry = (state, size) => {
@@ -89,7 +121,13 @@ const changeBlockToEntry = (state, size) => {
   const _id = _state.page.blocks[_index]._id
   _state = reducer(_state, setActiveBlockId(_id))
   _state = reducer(_state, setActiveBlockType('ENTRY'))
-  return { type: 'CHANGE BLOCK TYPE TO ENTRY' }
+  return {
+    type: {
+      name: `${SET_ACTIVE_BLOCK_TYPE} - ENTRY`,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: SLOPE_THRESHOLD,
+    },
+  }
 }
 
 const insertNewActiveBlock = (state, size) => {
@@ -108,7 +146,13 @@ const insertNewActiveBlock = (state, size) => {
     previousBlockText: _text,
   }
   _state = reducer(_state, newActiveBlock(_blockProperties))
-  return { type: 'INSERT NEW ACTIVE BLOCK' }
+  return {
+    type: {
+      name: INSERT_NEW_ACTIVE_BLOCK,
+      delta: 65,
+      slope: 0.065,
+    },
+  }
 }
 
 const backspaceClearBlock = (state, size) => {
@@ -126,7 +170,13 @@ const backspaceClearBlock = (state, size) => {
   }
   _state = reducer(_state, backspace(_blockProperties))
 
-  return { type: 'CLEARS BLOCK ON BACKSPACE' }
+  return {
+    type: {
+      name: `${BACKSPACE} - CLEAR BLOCK`,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: 0.025,
+    },
+  }
 }
 
 const onBackspace = (state, size) => {
@@ -143,8 +193,13 @@ const onBackspace = (state, size) => {
     nextBlockId: _nextBlockId,
   }
   _state = reducer(_state, backspace(_blockProperties))
-
-  return { type: 'BACKSPACE ON BLOCK' }
+  return {
+    type: {
+      name: BACKSPACE,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: 0.025,
+    },
+  }
 }
 
 const showMenuActionsUI = (state, size) => {
@@ -153,7 +208,13 @@ const showMenuActionsUI = (state, size) => {
   const _id = _state.page.blocks[_index]._id
   _state = reducer(_state, setActiveBlockId(_id))
   _state = reducer(_state, onShowMenuActions(true))
-  return { type: 'SHOW MENU ACTIONS' }
+  return {
+    type: {
+      name: SHOW_MENU_ACTIONS,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: SLOPE_THRESHOLD,
+    },
+  }
 }
 
 const showFormatMenuUI = (state, size) => {
@@ -162,7 +223,25 @@ const showFormatMenuUI = (state, size) => {
   const _id = _state.page.blocks[_index]._id
   _state = reducer(_state, setActiveBlockId(_id))
   _state = reducer(_state, onShowFormatMenu(true))
-  return { type: 'SHOW FORMAT MENU' }
+  return {
+    type: {
+      name: SHOW_FORMAT_MENU,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: SLOPE_THRESHOLD,
+    },
+  }
+}
+
+const showNewBlockMenu = state => {
+  const _state = state
+  reducer(_state, newBlockMenu(true))
+  return {
+    type: {
+      name: SHOW_NEW_BLOCK_MENU,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: SLOPE_THRESHOLD,
+    },
+  }
 }
 
 const onDeleteActiveBlock = (state, size) => {
@@ -171,15 +250,133 @@ const onDeleteActiveBlock = (state, size) => {
   const _id = _state.page.blocks[_index]._id
   _state = reducer(_state, setActiveBlockId(_id))
   _state = reducer(_state, deleteBlock(_id))
-  return { type: 'DELETE ACTIVE BLOCK' }
+  return {
+    type: {
+      name: `${DELETE_BLOCK} - ACTIVE BLOCK`,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: 0.025,
+    },
+  }
 }
 
-const onDeleteLastBlock = (state, size) => {
-  const _state = state
+const onDeleteLastBlock = state => {
+  let _state = state
   const _id = _state.page.blocks[_state.page.blocks.length - 1]._id
   _state = reducer(_state, setActiveBlockId(_id))
   _state = reducer(_state, deleteBlock(_id))
-  return { type: 'DELETE LAST BLOCK' }
+  return {
+    type: {
+      name: `${DELETE_BLOCK} - LAST BLOCK`,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: 0.025,
+    },
+  }
+}
+
+const deleteBlockList = state => {
+  let _state = state
+  const _blocks = cloneDeep(_state.page.blocks)
+  let _blockList = _blocks.splice(3, 4)
+  const _list = _blockList.map(b => b._id)
+  _blockList = List(_list)
+  _state = reducer(_state, deleteBlocks(_blockList))
+  return {
+    type: {
+      name: DELETE_BLOCKS,
+      delta: 35,
+      slope: 0.035,
+    },
+  }
+}
+
+const cutBlockList = state => {
+  let _state = state
+  const _blocks = cloneDeep(_state.page.blocks)
+  let _blockList = _blocks.splice(3, 4)
+  const _list = _blockList.map(b => b._id)
+  _blockList = List(_list)
+  const _refId = ObjectId().toHexString()
+  const _id = ObjectId().toHexString()
+  _state = reducer(_state, cutBlocks(_blockList, _refId, _id))
+  return {
+    type: {
+      name: ON_CUT,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: 0.035,
+    },
+  }
+}
+
+const onUpdateAtomic = state => {
+  let _state = state
+  const _refId = Object.keys(_state.sources)[0]
+  const _data = {
+    atomic: {
+      _id: _refId,
+      text: {
+        textValue: 'New Atomic',
+        ranges: [],
+      },
+    },
+    type: 'SOURCE',
+  }
+  _state = reducer(_state, updateAtomic(_data))
+  return {
+    type: {
+      name: UPDATE_ATOMIC,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: SLOPE_THRESHOLD,
+    },
+  }
+}
+
+const onDequeuAtomic = state => {
+  let _state = state
+  const _refId = Object.keys(_state.sources)[0]
+  _state.newAtomics = [
+    {
+      _id: _refId,
+      type: 'SOURCE',
+      textValue: '',
+      ranges: [],
+    },
+  ]
+  _state = reducer(_state, removeAtomicFromQueue(_refId))
+  return {
+    type: {
+      name: DEQUEUE_NEW_ATOMIC,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: SLOPE_THRESHOLD,
+    },
+  }
+}
+
+const onDirtyAtomic = state => {
+  let _state = state
+  const _refId = Object.keys(_state.sources)[0]
+
+  _state = reducer(_state, addDirtyAtomic(_refId, 'SOURCE'))
+  return {
+    type: {
+      name: ADD_DIRTY_ATOMIC,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: SLOPE_THRESHOLD,
+    },
+  }
+}
+
+const onDequeueDirtyAtomic = state => {
+  let _state = state
+  const _refId = Object.keys(_state.sources)[0]
+  _state.dirtyAtomics = { [_refId]: { textValue: '' } }
+  _state = reducer(_state, dequeueDirtyAtomic(_refId))
+  return {
+    type: {
+      name: DEQUEUE_DIRTY_ATOMIC,
+      delta: TIME_DELTA_THRESHOLD,
+      slope: SLOPE_THRESHOLD,
+    },
+  }
 }
 
 const tests = [
@@ -193,19 +390,28 @@ const tests = [
   showFormatMenuUI,
   onDeleteActiveBlock,
   onDeleteLastBlock,
+  deleteBlockList,
+  cutBlockList,
+  showNewBlockMenu,
+  onUpdateAtomic,
+  onDequeuAtomic,
+  onDirtyAtomic,
+  onDequeueDirtyAtomic,
 ]
+
+// TODO ADD PASTE
 
 describe('Performance Test', () => {
   describe('test process times for actions', () => {
     for (let i = 0; i < tests.length; i += 1) {
       const { averageSlopes, maxDeltas, type } = speedTrap(tests[i])
-      test(`${type} - delta threshold`, () => {
+      test(`${type.name} - delta threshold`, () => {
         const _average = getAvg(maxDeltas)
-        expect(Math.round(_average)).toBeLessThanOrEqual(TIME_DELTA_THRESHOLD)
+        expect(Math.round(_average)).toBeLessThanOrEqual(type.delta)
       })
-      test(`${type} - slope threshold`, () => {
+      test(`${type.name} - slope threshold`, () => {
         const _average = getAvg(averageSlopes)
-        expect(_average).toBeLessThanOrEqual(SLOPE_THRESHOLD)
+        expect(_average).toBeLessThanOrEqual(type.slope)
       })
     }
   })
