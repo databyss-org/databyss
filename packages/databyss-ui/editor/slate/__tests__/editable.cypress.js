@@ -158,10 +158,11 @@ context('Editor', () => {
       cy.get('@slateDocument').then(matchExpectedJson(expected.document))
     })
   })
-  it('should toggle a location mark and tag block as location, then split up block into two location blocks', () => {
+
+  it('should toggle a location mark and tag block as entry, then split up block into two entry blocks', () => {
     cy.get('@editor')
       .toggleLocation()
-      .type('this whole block should get tagged as a location')
+      .type('this whole block should get marked as a location')
       .startOfLine()
       .type('{rightarrow}')
       .type('{rightarrow}')
@@ -180,7 +181,7 @@ context('Editor', () => {
             </block>
             <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }}>
               <mark type="location">
-                whole block should get tagged as a location
+                whole block should get marked as a location
               </mark>
             </block>
           </document>
@@ -247,11 +248,13 @@ context('Editor', () => {
     })
   })
 
-  it('should toggle a location mark and tag block as location', () => {
+  it('should toggle a location mark, block should be entry', () => {
     cy.get('@editor')
       .focus()
       .toggleLocation()
-      .type('this whole block should get tagged as a location')
+      .type(
+        'this whole block should get tagged as an entry with a location mark'
+      )
       .newLine()
       .type('{uparrow}')
       .wait(500)
@@ -263,7 +266,8 @@ context('Editor', () => {
           <document>
             <block type="ENTRY" data={{ refId: refIdList[0], type: 'ENTRY' }}>
               <mark type="location">
-                this whole block should get tagged as a location
+                this whole block should get tagged as an entry with a location
+                mark
               </mark>
             </block>
             <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
