@@ -204,9 +204,6 @@ module.exports = webpackEnv => {
         // Make sure your source files are compiled, as they will not be processed in any way.
         new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
       ],
-      alias: {
-        deepmerge$: 'deepmerge/dist/umd.js',
-      },
     },
     resolveLoader: {
       plugins: [
