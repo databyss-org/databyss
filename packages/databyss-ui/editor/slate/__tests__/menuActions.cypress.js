@@ -87,7 +87,7 @@ context('Editor Menu Actions', () => {
       .get('[data-test-block-menu="LOCATION"]')
       .trigger('mousedown')
     cy.get('@editor')
-      .type('this whole block should get tagged as a location')
+      .type('this whole block should get tagged as a entry with location mark')
       .newLine()
       .type('{uparrow}')
       .type('{uparrow}')
@@ -96,12 +96,9 @@ context('Editor Menu Actions', () => {
       const expected = toSlateJson(
         <value>
           <document>
-            <block
-              type="LOCATION"
-              data={{ refId: refIdList[0], type: 'LOCATION' }}
-            >
+            <block type="ENTRY" data={{ refId: refIdList[0], type: 'ENTRY' }}>
               <mark type="location">
-                this whole block should get tagged as a location
+                this whole block should get tagged as a entry with location mark
               </mark>
             </block>
             <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
