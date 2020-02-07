@@ -22,6 +22,7 @@ import {
   ADD_DIRTY_ATOMIC,
   UPDATE_ATOMIC,
   DEQUEUE_NEW_ATOMIC,
+  DEQUEUE_NEW_REF,
 } from './constants'
 
 export initialState from './../initialState'
@@ -124,10 +125,14 @@ const setBlockType = (state, type, _id, refId) => {
   const _refId = state.blocks[_id] ? state.blocks[_id].refId : refId
 
   // if it is type atomic, preserve the ID
-  const nextRefId =
-    (state.blocks[_id] && isAtomicInlineType(type)) || refId
-      ? _refId
-      : ObjectId().toHexString()
+  let nextRefId
+  let newRef
+  if ((state.blocks[_id] && isAtomicInlineType(type)) || refId) {
+    nextRefId = _refId
+  } else {
+    newRef = true
+    nextRefId = ObjectId().toHexString()
+  }
 
   const block = state.blocks[_id]
   const textValue = block ? getRawHtmlForBlock(state, block) : ''
@@ -140,6 +145,16 @@ const setBlockType = (state, type, _id, refId) => {
     _id,
     type,
     refId: nextRefId,
+  }
+
+  // get which _id to update ref
+  if (newRef) {
+    let _newRefData = { refId: nextRefId, type, _id }
+    if (nextState.newRefs) {
+      nextState.newRefs.push(_newRefData)
+    } else {
+      nextState.newRefs = [_newRefData]
+    }
   }
 
   switch (type) {
@@ -685,7 +700,11 @@ export default (state, action) => {
       const _atomicId = action.payload.id
       _atomicsQueue = _atomicsQueue.filter(q => q._id !== _atomicId)
       return { ...state, newAtomics: _atomicsQueue }
-
+    case DEQUEUE_NEW_REF:
+      let _refQueue = state.newRefs
+      const _refId = action.payload
+      _refQueue = _refQueue.filter(r => r.refId !== _refId)
+      return { ...state, newRefs: _refQueue }
     default:
       return state
   }

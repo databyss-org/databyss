@@ -112,21 +112,11 @@ const setActiveBlockType = type => (editor, value, next) => {
   const _activeBlock = findActiveBlock(value)
 
   // if empty block replace all marks/types
-
   if (_activeBlock.text.length === 0 && editor.value.previousBlock) {
     editor.replaceNodeByKey(_activeBlock.key, newBlock(_activeBlock.key))
     // if previous block exists move caret forward
     editor.moveForward(1)
     next(editor, value)
-  }
-
-  if (editor.value.activeMarks.size > 0) {
-    if (value.marks._map._root) {
-      const _marks = value.marks._map._root.entries
-      _marks.forEach(m => {
-        editor.toggleMark(m[0].type)
-      })
-    }
   }
 
   // if set active block type was handled already return true

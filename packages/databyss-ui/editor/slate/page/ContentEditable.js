@@ -112,16 +112,6 @@ const SlateContentEditable = forwardRef(
       // if state has refID for current block
       // set slate refId of block
       if (blocks[_nextActiveBlock.key]) {
-        if (!_nextRefId) {
-          // TODO REPLACE THIS
-          setBlockRef(
-            _nextActiveBlock.key,
-            blocks[_nextActiveBlock.key].refId,
-            _nextEditableState
-          )
-          return false
-        }
-
         // if refId's dont match, use state value to set slate value
         if (_nextRefId !== blocks[_nextActiveBlock.key].refId) {
           setBlockRef(
@@ -261,6 +251,15 @@ const SlateContentEditable = forwardRef(
 
     const onKeyUp = (event, editor, next) => {
       if (event.key === 'Enter') {
+        // CLEARS ALL ACTIVE MARKS ON EDITOR
+        if (editor.value.activeMarks.size > 0) {
+          if (editor.value.marks._map._root) {
+            const _marks = editor.value.marks._map._root.entries
+            _marks.forEach(m => {
+              editor.toggleMark(m[0].type)
+            })
+          }
+        }
         // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
         // PREVENT NEW BLOCK
         if (

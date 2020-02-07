@@ -23,6 +23,7 @@ import {
   DEQUEUE_DIRTY_ATOMIC,
   UPDATE_ATOMIC,
   DEQUEUE_NEW_ATOMIC,
+  DEQUEUE_NEW_REF,
 } from './constants'
 
 export function setActiveBlockId(id, editableState) {
@@ -258,6 +259,13 @@ export function addDirtyAtomic(refId, type) {
 export function dequeueDirtyAtomic(refId) {
   return {
     type: DEQUEUE_DIRTY_ATOMIC,
+    payload: refId,
+  }
+}
+
+export function dequeueNewRef(refId) {
+  return {
+    type: DEQUEUE_NEW_REF,
     payload: refId,
   }
 }

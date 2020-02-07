@@ -26,6 +26,7 @@ import {
   dequeueDirtyAtomic,
   updateAtomic,
   removeAtomicFromQueue,
+  dequeueNewRef,
 } from './state/page/actions'
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
@@ -41,12 +42,27 @@ const EditorPage = ({ children, autoFocus }) => {
     newAtomics,
     editableState,
     dirtyAtomics,
+    newRefs,
   } = editorState
 
   /*
   checks to see if new source has been added
   adds the new source to the source provider
   */
+
+  useEffect(
+    () => {
+      if (newRefs && newRefs.length) {
+        newRefs.forEach(ref => {
+          dispatchEditor(
+            onSetBlockRef(ref._id, ref.refId, { value: editableState.value })
+          )
+          dispatchEditor(dequeueNewRef(ref.refId))
+        })
+      }
+    },
+    [newRefs]
+  )
 
   useEffect(
     () => {
