@@ -16,9 +16,7 @@ import sourceReducer, {
 import EditorProvider, { useEditorContext } from '../../EditorProvider'
 import EditorPage from '../../EditorPage'
 import ContentEditable from '../page/ContentEditable'
-import reducer, { getRawHtmlForBlock } from '../../state/page/reducer'
-import initialState from '../../state/__tests__/initialState'
-import emptyInitialState from '../../state/__tests__/emptyInitialState'
+import reducer from '../../state/page/reducer'
 import slateReducer from '../page/reducer'
 import {
   generateState,
@@ -52,7 +50,25 @@ const Box = ({ children, ...others }) => (
   </View>
 )
 
-const Providers = ({ _initState }) => (
+const EditorChildren = ({ setActiveBlockId }) => {
+  const [editorState] = useEditorContext()
+  const { activeBlockId } = editorState
+  useEffect(
+    () => {
+      if (activeBlockId) {
+        setActiveBlockId(activeBlockId)
+      }
+    },
+    [activeBlockId]
+  )
+  return (
+    <EditorPage autoFocus>
+      <ContentEditable />
+    </EditorPage>
+  )
+}
+
+const Providers = ({ _initState, setActiveBlockId }) => (
   <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
     <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
       <NavigationProvider>
@@ -61,9 +77,7 @@ const Providers = ({ _initState }) => (
           editableReducer={slateReducer}
           reducer={reducer}
         >
-          <EditorPage autoFocus>
-            <ContentEditable />
-          </EditorPage>
+          <EditorChildren setActiveBlockId={setActiveBlockId} />
         </EditorProvider>
       </NavigationProvider>
     </SourceProvider>
@@ -74,14 +88,21 @@ const EditableTest = () => {
   const [active, setActive] = useState(false)
   const [blockSize, setBlockSize] = useState(SMALL)
   const [editableState, setEditbleState] = useState(generateState(blockSize))
+  const [activeBlockId, onSetActiveBlockId] = useState(null)
+
+  const setActiveBlockId = id => {
+    onSetActiveBlockId(id)
+  }
+
   const [ProviderComponent, setProviderComponent] = useState(
-    <Providers _initState={editableState} />
+    <Providers _initState={editableState} setActiveBlockId={setActiveBlockId} />
   )
   const [providerKey, setProviderKey] = useState(1)
 
   useEffect(
     () => {
       setProviderKey(providerKey + 1)
+      setActive(false)
       setEditbleState(generateState(blockSize))
     },
     [blockSize]
@@ -90,34 +111,54 @@ const EditableTest = () => {
   useEffect(
     () => {
       setProviderComponent(
-        <Providers key={providerKey} _initState={editableState} />
+        <Providers
+          key={providerKey}
+          _initState={editableState}
+          setActiveBlockId={setActiveBlockId}
+        />
       )
     },
     [providerKey]
   )
 
+  const onBlockSizeClick = size => {
+    onSetActiveBlockId(null)
+    setTimeout(() => setBlockSize(size), 10)
+  }
+
   return (
     <Grid>
       <Button
-        onClick={() => setBlockSize(SMALL)}
+        onClick={() => onBlockSizeClick(SMALL)}
         disabled={blockSize === SMALL}
       >
         <Text>5 Blocks</Text>
       </Button>
-      <Button onClick={() => setBlockSize(MED)} disabled={blockSize === MED}>
+      <Button
+        onClick={() => onBlockSizeClick(MED)}
+        disabled={blockSize === MED}
+      >
         <Text>50 Blocks</Text>
       </Button>
       <Button
-        onClick={() => setBlockSize(LARGE)}
+        onClick={() => onBlockSizeClick(LARGE)}
         disabled={blockSize === LARGE}
       >
         <Text>500 Blocks</Text>
       </Button>
-      <Button onClick={() => setActive(!active)}>
+      <Button data-test-min onClick={() => setActive(!active)}>
         <Text>{active ? 'Stop' : 'Start'}</Text>
       </Button>
-      <View borderVariant="thinDark" paddingVariant="tiny" width={70}>
-        {active && <FPSStats id="minimum" />}
+      <View
+        borderVariant="thinDark"
+        paddingVariant="tiny"
+        width={70}
+        id="minimum"
+      >
+        {active && <FPSStats />}
+      </View>
+      <View borderVariant="thinDark" paddingVariant="tiny" id="activeBlockId">
+        {activeBlockId}
       </View>
       <Box mb="medium" pt="medium" flexShrink={1} key={blockSize}>
         {ProviderComponent}
