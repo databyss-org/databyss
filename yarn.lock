@@ -14925,6 +14925,14 @@ react-focus-lock@^1.18.3:
     prop-types "^15.6.2"
     react-clientside-effect "^1.2.0"
 
+react-fps-stats@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/react-fps-stats/-/react-fps-stats-0.1.2.tgz#18d181836f0e5a4c9a349e06bdd28cae9204fdf4"
+  integrity sha512-W6O1Zw4c1qmhUT7uAzZ136DqhiR1KKC6znKnH6ZJEcUokKMhCduzqjuRifqT5jCelJy5qgCsGQTuT5qE/060Gg==
+  dependencies:
+    prop-types "^15.6.2"
+    react "^16.5.2"
+
 react-google-login@^5.0.4:
   version "5.0.5"
   resolved "https://registry.yarnpkg.com/react-google-login/-/react-google-login-5.0.5.tgz#b327a0ef1d6f466088c1a29dea0a6c29978158dc"
@@ -15413,6 +15421,15 @@ react@16.9.0, react@^16.8.3, react@^16.8.4:
   version "16.9.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.9.0.tgz#40ba2f9af13bc1a38d75dbf2f4359a5185c4f7aa"
   integrity sha512-+7LQnFBwkiw+BobzOF6N//BdoNw0ouwmSJTEm9cglOOmsg/TMiFHZLe2sEoN5M7LgJTj9oHH0gxklfnQe66S1w==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.2"
+
+react@^16.5.2:
+  version "16.12.0"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.12.0.tgz#0c0a9c6a142429e3614834d5a778e18aa78a0b83"
+  integrity sha512-fglqy3k5E+81pA8s+7K0/T3DBCF0ZDOher1elBFzF7O6arXJgzyu/FW+COxFvAWXJoJN9KIZbT2LXlukwphYTA==
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"

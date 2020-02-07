@@ -223,6 +223,7 @@
     "react-dev-utils": "^9.0.1",
     "react-dom": "16.9.0",
     "react-flexbox-grid": "^2.1.2",
+    "react-fps-stats": "^0.1.2",
     "react-google-login": "^5.0.4",
     "react-jss": "^8.6.1",
     "react-native": "0.60.4",
