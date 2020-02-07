@@ -256,6 +256,7 @@ context('Editor', () => {
         'this whole block should get tagged as an entry with a location mark'
       )
       .newLine()
+      .wait(500)
       .type('{backspace}')
       .wait(500)
 
