@@ -149,7 +149,7 @@ const setBlockType = (state, type, _id, refId) => {
 
   // get which _id to update ref
   if (newRef) {
-    let _newRefData = { refId: nextRefId, type, _id }
+    const _newRefData = { refId: nextRefId, type, _id }
     if (nextState.newRefs) {
       nextState.newRefs.push(_newRefData)
     } else {

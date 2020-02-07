@@ -256,7 +256,7 @@ context('Editor', () => {
         'this whole block should get tagged as an entry with a location mark'
       )
       .newLine()
-      .type('{uparrow}')
+      .type('{backspace}')
       .wait(500)
 
     cy.get('@pageBlocks').then(page => {
@@ -270,7 +270,6 @@ context('Editor', () => {
                 mark
               </mark>
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
           </document>
         </value>
       )
