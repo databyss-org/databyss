@@ -96,17 +96,13 @@ const EditableTest = () => {
     [providerKey]
   )
 
-  console.log(providerKey)
-
-  console.log(Object.values(editableState.sources))
-
   return (
     <Grid>
       <Button
         onClick={() => setBlockSize(SMALL)}
         disabled={blockSize === SMALL}
       >
-        <Text>10 Blocks</Text>
+        <Text>5 Blocks</Text>
       </Button>
       <Button onClick={() => setBlockSize(MED)} disabled={blockSize === MED}>
         <Text>50 Blocks</Text>
@@ -115,7 +111,7 @@ const EditableTest = () => {
         onClick={() => setBlockSize(LARGE)}
         disabled={blockSize === LARGE}
       >
-        <Text>1000 Blocks</Text>
+        <Text>500 Blocks</Text>
       </Button>
       <Button onClick={() => setActive(!active)}>
         <Text>{active ? 'Stop' : 'Start'}</Text>

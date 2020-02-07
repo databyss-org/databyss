@@ -8,9 +8,9 @@ export const LARGE = 'LARGE'
 
 export const getBlockSize = size =>
   ({
-    SMALL: 10,
-    MED: 500,
-    LARGE: 1000,
+    SMALL: 5,
+    MED: 50,
+    LARGE: 500,
   }[size])
 
 const ipsum = new LoremIpsum({
