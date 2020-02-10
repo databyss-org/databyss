@@ -54,9 +54,7 @@ const EditorPage = ({ children, autoFocus }) => {
     () => {
       if (newRefs && newRefs.length) {
         newRefs.forEach(ref => {
-          dispatchEditor(
-            onSetBlockRef(ref._id, ref.refId, { value: editableState.value })
-          )
+          dispatchEditor(onSetBlockRef(ref._id, ref.refId))
           dispatchEditor(dequeueNewRef(ref.refId))
         })
       }
@@ -189,8 +187,8 @@ const EditorPage = ({ children, autoFocus }) => {
     dispatchEditor(onPaste(pasteData, { value }))
   }
 
-  const setBlockRef = (id, ref, { value }) => {
-    dispatchEditor(onSetBlockRef(id, ref, { value }))
+  const setBlockRef = (id, ref) => {
+    dispatchEditor(onSetBlockRef(id, ref))
   }
 
   const { showModal } = useNavigationContext()

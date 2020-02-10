@@ -199,11 +199,10 @@ export function onPaste(pasteData, editableState) {
   }
 }
 
-export function onSetBlockRef(_id, refId, editableState) {
+export function onSetBlockRef(_id, refId) {
   return {
     type: SET_BLOCK_REF,
     payload: {
-      editableState,
       _id,
       refId,
     },
