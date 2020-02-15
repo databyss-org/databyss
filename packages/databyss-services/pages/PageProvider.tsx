@@ -1,20 +1,26 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, Props } from 'react'
 import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
-import { ResourcePending } from './../lib/ResourcePending'
+import { ResourcePending } from '../lib/ResourcePending'
+import Page from './Page'
 
 import { fetchPageHeaders, fetchPage, savePage } from './actions'
 
 const useReducer = createReducer()
 
-export const PageContext = createContext()
+export const PageContext = createContext(null)
 
-const PageProvider = ({ children, initialState }) => {
+interface PropsType {
+  children: JSX.Element
+  initialState: any
+}
+
+const PageProvider = ({ children, initialState }: PropsType) => {
   const [state, dispatch, stateRef] = useReducer(reducer, initialState)
 
-  const setPage = page => {
+  const setPage = (page: Page): void => {
     // window.requestAnimationFrame(() => dispatch(savePage(page)))
     dispatch(savePage(page))
   }
@@ -31,7 +37,7 @@ const PageProvider = ({ children, initialState }) => {
     return null
   }
 
-  const getPage = id => {
+  const getPage = (id: string): Page | null => {
     if (state.cache[id]) {
       return state.cache[id]
     }

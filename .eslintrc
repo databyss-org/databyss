@@ -1,11 +1,23 @@
 {
   "extends": ["eslint-config-airbnb", "eslint-config-prettier"],
-  "plugins": ["eslint-plugin-prettier", "react-hooks", "cypress"],
-  "parser": "babel-eslint",
+  "plugins": [
+    "eslint-plugin-prettier",
+    "@typescript-eslint",
+    "react-hooks", 
+    "cypress"
+  ],
+  "parser": "@typescript-eslint/parser",
   "env": {
     "jest": true,
     "browser": true,
     "cypress/globals": true
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
   },
   "rules": {
     "no-return-assign": ["error", "except-parens"], // Default option
@@ -33,6 +45,17 @@
         "semi": false, // Almost always unecessary
         "singleQuote": true, // Easy to read
         "trailingComma": "es5" // Helps simplify diffs
+      }
+    ],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "mjs": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
       }
     ]
   }
