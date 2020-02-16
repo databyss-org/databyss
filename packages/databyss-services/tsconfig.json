@@ -1,14 +1,10 @@
 {
   "extends": "../../config/tsconfig.json",
   "include": [
-    "./lib/**/*",
-    "./pages/**/*",
-    "./session/**/*",
-    "./sources/**/*",
-    "./topics/**/*"
+    "./**/*",
   ],
   "compilerOptions": {
-    "composite": true
+    "composite": true,
   },
   "references": []
 }

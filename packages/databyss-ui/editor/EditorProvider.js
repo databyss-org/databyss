@@ -1,8 +1,8 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 
-export pageReducer from './state/page/reducer'
-export lineReducer from './state/line/reducer'
+export { default as pageReducer } from './state/page/reducer'
+export { default as lineReducer } from './state/line/reducer'
 
 const useReducer = createReducer()
 

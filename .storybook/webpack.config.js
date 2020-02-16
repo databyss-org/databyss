@@ -24,5 +24,7 @@ module.exports = async ({ config, mode }) => {
   const env = getClientEnvironment()
   config.plugins.push(new WebpackDefinePlugin(env.stringified))
   config.devtool = 'source-map'
+  config.resolve.extensions.push('.ts', '.tsx');
+  
   return config
 }

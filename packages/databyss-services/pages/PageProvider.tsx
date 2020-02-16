@@ -1,6 +1,4 @@
-import React, { createContext, useContext, Props } from 'react'
-import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
-import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
+import React, { createContext, useContext } from 'react'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../lib/ResourcePending'
@@ -8,17 +6,25 @@ import Page from './Page'
 
 import { fetchPageHeaders, fetchPage, savePage } from './actions'
 
-const useReducer = createReducer()
-
-export const PageContext = createContext(null)
-
 interface PropsType {
   children: JSX.Element
   initialState: any
 }
 
-const PageProvider = ({ children, initialState }: PropsType) => {
-  const [state, dispatch, stateRef] = useReducer(reducer, initialState)
+interface ContextType {
+  setPage: (page: Page) => void
+  getPages: () => void
+  getPage: (id: string) => Page | ResourcePending | null
+}
+
+const useReducer = createReducer()
+export const PageContext = createContext<ContextType | null>(null)
+
+const PageProvider: React.FunctionComponent<PropsType> = ({
+  children,
+  initialState,
+}: PropsType) => {
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   const setPage = (page: Page): void => {
     // window.requestAnimationFrame(() => dispatch(savePage(page)))
@@ -37,7 +43,7 @@ const PageProvider = ({ children, initialState }: PropsType) => {
     return null
   }
 
-  const getPage = (id: string): Page | null => {
+  const getPage = (id: string): Page | ResourcePending | null => {
     if (state.cache[id]) {
       return state.cache[id]
     }
@@ -48,9 +54,7 @@ const PageProvider = ({ children, initialState }: PropsType) => {
   }
 
   return (
-    <PageContext.Provider
-      value={{ state, dispatch, stateRef, getPages, getPage, setPage }}
-    >
+    <PageContext.Provider value={{ getPages, getPage, setPage }}>
       {children}
     </PageContext.Provider>
   )
@@ -61,52 +65,5 @@ export const usePageContext = () => useContext(PageContext)
 PageProvider.defaultProps = {
   initialState,
 }
-
-export const PagesLoader = ({ children }) => {
-  const { getPages } = usePageContext()
-  const pages = getPages()
-  if (pages instanceof Error) {
-    return <ErrorFallback error={pages} />
-  }
-
-  if (!pages || pages instanceof ResourcePending) {
-    return <Loading />
-  }
-
-  if (typeof children !== 'function') {
-    throw new Error('Child must be a function')
-  }
-
-  return children(pages)
-}
-
-export const withPages = Wrapped => ({ ...others }) => (
-  <PagesLoader>{pages => <Wrapped pages={pages} {...others} />}</PagesLoader>
-)
-
-export const PageLoader = ({ pageId, children }) => {
-  const { getPage } = usePageContext()
-  const page = getPage(pageId)
-
-  if (!page || page instanceof ResourcePending) {
-    return <Loading />
-  }
-
-  if (page instanceof Error) {
-    return <ErrorFallback error={page} />
-  }
-
-  if (typeof children !== 'function') {
-    throw new Error('Child must be a function')
-  }
-
-  return children(page)
-}
-
-export const withPage = Wrapped => ({ pageId, ...others }) => (
-  <PageLoader pageId={pageId}>
-    {page => <Wrapped page={page} {...others} />}
-  </PageLoader>
-)
 
 export default PageProvider

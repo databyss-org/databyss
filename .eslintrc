@@ -38,6 +38,14 @@
     "no-param-reassign": ["error", { "props": false }], // Useful for mutating reduce accumulators, ex.
     "react-hooks/rules-of-hooks": "error",
     "jsx-a11y/anchor-is-valid": "off",
+    "no-unused-vars": "off", // use Typescript check instead
+    "@typescript-eslint/no-unused-vars": [
+      "error", 
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": false 
+    }],
     "prettier/prettier": [
       "error",
       {

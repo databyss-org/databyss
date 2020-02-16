@@ -251,6 +251,7 @@
     "supertest": "^4.0.2",
     "sw-precache-webpack-plugin": "0.11.5",
     "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.7.5",
     "url-loader": "0.6.2",
     "uuid": "3.3.3",
     "webpack": "^4.33.0",
