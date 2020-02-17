@@ -53,7 +53,7 @@ const run = async () => {
 
   // global error middleware
   // eslint-disable-next-line no-unused-vars
-  app.use((err, req, res, next) => {
+  app.use((err, req, res) => {
     if (err instanceof ApiError) {
       res.status(err.status).send(err.message)
     } else {

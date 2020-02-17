@@ -26,7 +26,6 @@ const SlateContentEditable = forwardRef(
       onHotKey,
       onBlur,
       overrideCss,
-      multiline,
       autoFocus,
       ...other
     },

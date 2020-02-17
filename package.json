@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "1.1.60",
+  "version": "1.1.61",
   "description": "Expressive database management tools for writers and researchers",
   "main": "index.js",
   "repository": {
@@ -32,7 +32,6 @@
     "test": "ENV_PREFIX=API_ NPM_BUILD_TARGET=TEST node scripts/test.js --maxWorkers=2",
     "test:selenium": "yarn test seleniumtest",
     "test:selenium:local": "LOCAL_ENV=true yarn test seleniumtest",
-    "flow": "flow",
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
     "styleguide:build": "NPM_BUILD_TARGET=TEST styleguidist build --config ./config/styleguide.config.js",
     "storybook": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public --ci",
@@ -80,7 +79,7 @@
         "testEnvironment": "jsdom",
         "testURL": "http://localhost",
         "transform": {
-          "^.+\\.jsx?$": "<rootDir>/config/jest/babelTransform.js",
+          "^.+\\.(jsx?|tsx?)$": "<rootDir>/config/jest/babelTransform.js",
           "^(?!.*\\.(js|json)$)": "<rootDir>/config/jest/fileTransform.js"
         },
         "transformIgnorePatterns": [
@@ -88,7 +87,9 @@
         ],
         "moduleFileExtensions": [
           "js",
-          "json"
+          "json",
+          "ts",
+          "tsx"
         ]
       },
       {
@@ -181,7 +182,6 @@
     "eslint-config-react-app": "^4.0.1",
     "eslint-loader": "2.1.2",
     "eslint-plugin-cypress": "^2.6.1",
-    "eslint-plugin-flowtype": "2.39.1",
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "6.2.1",
     "eslint-plugin-prettier": "^2.6.0",
@@ -192,7 +192,6 @@
     "express-validator": "^6.1.1",
     "fetch-mock": "^8.0.1",
     "file-loader": "^4.0.0",
-    "flow-bin": "^0.79.1",
     "focus-trap-react": "^6.0.0",
     "html-webpack-plugin": "4.0.0-beta.5",
     "is-hotkey": "^0.1.5",
