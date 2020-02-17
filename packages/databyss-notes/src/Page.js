@@ -2,9 +2,7 @@ import React from 'react'
 import EditorProvider, {
   pageReducer,
 } from '@databyss-org/ui/editor/EditorProvider'
-import PageProvider, {
-  PageLoader,
-} from '@databyss-org/services/pages/PageProvider'
+import { PageProvider } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import TopicProvider from '@databyss-org/services/topics/TopicProvider'
@@ -13,6 +11,7 @@ import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
 import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import SlateContentEditable from '@databyss-org/ui/editor/slate/page/ContentEditable'
 import { View } from '@databyss-org/ui/primitives'
+import { PageLoader } from '@databyss-org/ui/components/Loaders'
 
 const Page = () => {
   const { getSession } = useSessionContext()

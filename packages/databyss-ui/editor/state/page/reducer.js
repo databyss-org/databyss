@@ -24,7 +24,9 @@ import {
   DEQUEUE_NEW_ATOMIC,
 } from './constants'
 
-export initialState from './../initialState'
+import initialState from './../initialState'
+
+export { initialState }
 
 export const entities = (state, type) =>
   ({

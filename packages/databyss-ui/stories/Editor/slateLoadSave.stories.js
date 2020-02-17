@@ -4,7 +4,6 @@ import { View, Text } from '@databyss-org/ui/primitives'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import EditorProvider from '@databyss-org/ui/editor/EditorProvider'
 import PageProvider, {
-  PageLoader,
   usePageContext,
 } from '@databyss-org/services/pages/PageProvider'
 import SessionProvider, {
@@ -27,6 +26,7 @@ import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
 import reducer from '@databyss-org/ui/editor/state/page/reducer'
 import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import AutoSave from '@databyss-org/ui/editor/AutoSave'
+import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { ViewportDecorator } from '../decorators'
 import seedState from './_seedState'
 

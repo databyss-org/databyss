@@ -4,10 +4,8 @@ import { View, Text, Grid, Button } from '../'
 const DialogView = ({
   message,
   confirmButton,
-  cancelButton,
   onDismiss,
   onConfirm,
-  onCancel,
   ...others
 }) => (
   <View paddingVariant="medium" flexShrink={1} {...others}>
@@ -26,7 +24,6 @@ const DialogView = ({
 
 DialogView.defaultProps = {
   onConfirm: () => null,
-  onCancel: () => null,
   onDismiss: () => null,
   confirmButton: <Button variant="secondaryUi">Ok</Button>,
 }
