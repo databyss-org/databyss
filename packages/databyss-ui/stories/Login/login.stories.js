@@ -42,7 +42,7 @@ const LoginDemo = () => {
   )
 }
 
-storiesOf('Demos|Login', module)
+storiesOf('Components|Login', module)
   .addDecorator(NotifyDecorator)
   .addDecorator(ViewportDecorator)
   .add('default', () => (

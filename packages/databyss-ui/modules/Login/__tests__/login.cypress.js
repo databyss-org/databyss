@@ -1,6 +1,6 @@
 context('Login', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:6006/iframe.html?id=demos-login--default')
+    cy.visit('http://localhost:6006/iframe.html?id=components-login--default')
     cy.get('[data-test-id="googleButton"]').as('googleButton')
     cy.get('[data-test-id="emailButton"]').as('emailButton')
     // cy.get('[data-test-path="email"]').as('emailInput')

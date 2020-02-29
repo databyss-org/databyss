@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Grid } from '@databyss-org/ui/primitives'
+import { View, Grid, RichTextInput } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import TopicProvider from '@databyss-org/services/topics/TopicProvider'
@@ -70,6 +70,35 @@ const EditableTest = () => {
       </Box>
       <Box id="pageBlocks" overflow="scroll" maxWidth="500px" flexShrink={1}>
         <pre>{JSON.stringify(editorDocument, null, 2)}</pre>
+      </Box>
+    </Grid>
+  )
+}
+
+const SlateSingleLine = () => {
+  const [state, setState] = useState({
+    textValue: '',
+    ranges: [],
+    editableState: null,
+  })
+
+  const [document, setDocument] = useState(null)
+
+  return (
+    <Grid>
+      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
+        <RichTextInput
+          variant="uiTextNormal"
+          onNativeDocumentChange={setDocument}
+          onChange={setState}
+          value={state}
+        />
+      </Box>
+      <Box id="slateDocument" overflow="scroll" maxWidth="500px" flexShrink={1}>
+        <pre>{JSON.stringify(document, null, 2)}</pre>
+      </Box>
+      <Box overflow="scroll" maxWidth="500px" flexShrink={1}>
+        <pre>{JSON.stringify(state, null, 2)}</pre>
       </Box>
     </Grid>
   )
@@ -163,3 +192,4 @@ storiesOf('Cypress//Tests', module)
       </TopicProvider>
     )
   })
+  .add('Single Line', () => <SlateSingleLine />)

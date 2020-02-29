@@ -1,6 +1,6 @@
 {
   "name": "databyss-org-workspace",
-  "version": "1.1.61",
+  "version": "1.1.62",
   "description": "Expressive database management tools for writers and researchers",
   "main": "index.js",
   "repository": {
@@ -30,6 +30,7 @@
     "metro:stories": "react-native start --reset-cache --config packages/databyss-stories-native/metro.config.js",
     "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
     "test": "ENV_PREFIX=API_ NPM_BUILD_TARGET=TEST node scripts/test.js --maxWorkers=2",
+    "test:local": "LOCAL_ENV=true yarn test",
     "test:selenium": "yarn test seleniumtest",
     "test:selenium:local": "LOCAL_ENV=true yarn test seleniumtest",
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
