@@ -10,7 +10,6 @@ import {
   slateSelectionToStateSelection,
   stateSelectionToSlateSelection,
   flattenNode,
-  flattenNodeToPoint,
   flattenOffset,
   stateBlockToSlateBlock,
 } from '../lib/slateUtils'
