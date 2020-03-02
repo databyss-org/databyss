@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import { Transforms, Editor, Text, Node } from 'slate'
+import { useEditor, ReactEditor } from 'slate-react'
+
 import buttons, {
   editorMarginMenuItemHeight,
 } from '@databyss-org/ui/theming/buttons'
@@ -17,19 +20,31 @@ const BlockMenuActions = ({ menuActionButtons, unmount }) => {
 
 const BlockMenu = ({ showButton }) => {
   const [showMenuActions, setShowMenuActions] = useState(false)
+  const editor = useEditor()
 
   const { buttonVariants } = buttons
 
   const onShowActions = () => {
     setShowMenuActions(!showMenuActions)
-    console.log('show actions')
   }
 
-  const onMenuAction = tag => {
-    // issue with https://www.notion.so/databyss/Demo-error-7-If-you-click-location-and-press-return-it-doesn-t-move-the-cursor-but-it-makes-everyth-9eaa6b3f02c04358b42f00159863a355
-    console.log('click on', tag)
+  const onMenuAction = (tag, e) => {
+    e.preventDefault()
     setShowMenuActions(false)
+    actions(tag)()
   }
+
+  const actions = type =>
+    ({
+      SOURCE: () => editor.insertText('@'),
+      TOPIC: () => editor.insertText('#'),
+      LOCATION: () =>
+        Transforms.setNodes(
+          editor,
+          { location: true, type: 'location' },
+          { match: n => Text.isText(n), split: true }
+        ),
+    }[type])
 
   const menuActions = [
     {
@@ -58,7 +73,7 @@ const BlockMenu = ({ showButton }) => {
   ))
 
   return showButton ? (
-    <Grid singleRow columnGap="small">
+    <Grid singleRow columnGap="small" position="absolute">
       <View
         height={editorMarginMenuItemHeight}
         width={editorMarginMenuItemHeight}
