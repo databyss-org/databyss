@@ -158,16 +158,6 @@ export default (state, action) =>
         draft.operations.push({
           index: payload.index,
           block: _entity,
-          selection: {
-            focus: {
-              index: payload.index,
-              offset: 0,
-            },
-            anchor: {
-              index: payload.index,
-              offset: 0,
-            },
-          },
         })
         break
       }
@@ -178,6 +168,11 @@ export default (state, action) =>
     // (unless we're doing `preventDefault`)
     if (action.payload.selection && !draft.preventDefault) {
       draft.selection = action.payload.selection
+    }
+
+    if (draft.selection.focus.index !== state.selection.focus.index) {
+      console.log('blur', state.selection.focus.index)
+      // TODO: transform block type if symbol is present
     }
 
     return draft

@@ -91,6 +91,11 @@ const ContentEditable = () => {
       ) {
         event.preventDefault()
         clear(editor.selection.focus.path[0])
+        Transforms.delete(editor, {
+          distance: 1,
+          unit: 'character',
+          reverse: true,
+        })
       }
       // handle after atomic
       if (
@@ -177,9 +182,6 @@ const ContentEditable = () => {
         const _block = stateBlockToSlateBlock(op.block)
         draft[op.index].children = _block.children
         draft[op.index].isBlock = _block.isBlock
-        if (op.selection) {
-          editor.selection = stateSelectionToSlateSelection(op.selection)
-        }
       })
     }
   )
@@ -187,6 +189,11 @@ const ContentEditable = () => {
   const nextSelection = state.preventDefault
     ? selectionRef.current
     : editor.selection
+  // TODO: use controlled selection from `state`, but we need to transform
+  //  it back to a Slate-friendly format
+  //  BUT we probably don't want to do this unless a "updateSelection" flag is
+  //    set on `state` because we'll have to use "slower" transforms like: set selection
+  //    to beginning of line and moveRight * offset
 
   valueRef.current = nextValue
   selectionRef.current = nextSelection
