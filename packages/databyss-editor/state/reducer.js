@@ -171,6 +171,10 @@ export default (state, action) =>
     }
 
     if (draft.selection.focus.index !== state.selection.focus.index) {
+      const _id = state.blocks[draft.selection.focus.index]._id
+      const _entity = state.entityCache[state.blockCache[_id].entityId]
+      console.log(_entity)
+      console.log(_id)
       console.log('blur', state.selection.focus.index)
       // TODO: transform block type if symbol is present
     }
