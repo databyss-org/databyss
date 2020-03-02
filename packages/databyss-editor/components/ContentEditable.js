@@ -8,7 +8,6 @@ import {
   stateToSlate,
   getRangesFromSlate,
   slateSelectionToStateSelection,
-  stateSelectionToSlateSelection,
   flattenNode,
   flattenOffset,
   stateBlockToSlateBlock,
@@ -41,7 +40,6 @@ const ContentEditable = () => {
       }
       const _text = Node.string(editor.children[editor.selection.focus.path[0]])
       const _offset = flattenOffset(editor, editor.selection.focus)
-      // console.log(_text, _offset)
       const _prevIsBreak = _text.charAt(_offset - 1) === `\n`
       const _nextIsBreak = _text.charAt(_offset) === `\n`
       const _atBlockStart =
@@ -191,9 +189,6 @@ const ContentEditable = () => {
     : editor.selection
   // TODO: use controlled selection from `state`, but we need to transform
   //  it back to a Slate-friendly format
-  //  BUT we probably don't want to do this unless a "updateSelection" flag is
-  //    set on `state` because we'll have to use "slower" transforms like: set selection
-  //    to beginning of line and moveRight * offset
 
   valueRef.current = nextValue
   selectionRef.current = nextSelection
