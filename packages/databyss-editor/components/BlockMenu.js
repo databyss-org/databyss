@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Transforms, Editor, Text, Node } from 'slate'
 import { useEditor, ReactEditor } from 'slate-react'
-
 import buttons, {
   editorMarginMenuItemHeight,
 } from '@databyss-org/ui/theming/buttons'
 import { View, Button, Icon, Grid } from '@databyss-org/ui/primitives'
 import Close from '@databyss-org/ui/assets/close-menu.svg'
 import AddSvg from '@databyss-org/ui/assets/add.svg'
+import { isFormatActive } from './../lib/slateUtils'
 
 const BlockMenuActions = ({ menuActionButtons, unmount }) => {
   useEffect(() => () => unmount(), [])
@@ -38,12 +38,14 @@ const BlockMenu = ({ showButton }) => {
     ({
       SOURCE: () => editor.insertText('@'),
       TOPIC: () => editor.insertText('#'),
-      LOCATION: () =>
+      LOCATION: () => {
+        console.log('fire')
         Transforms.setNodes(
           editor,
           { location: true, type: 'location' },
           { match: n => Text.isText(n), split: true }
-        ),
+        )
+      },
     }[type])
 
   const menuActions = [
