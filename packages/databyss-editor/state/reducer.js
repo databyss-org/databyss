@@ -170,14 +170,16 @@ export default (state, action) =>
       draft.selection = action.payload.selection
     }
 
+    // on block blur
     if (draft.selection.focus.index !== state.selection.focus.index) {
       const _idx = state.selection.focus.index
       const _id = state.blocks[state.selection.focus.index]._id
       const _entity = state.entityCache[state.blockCache[_id].entityId]
-
+      // check if current text should be converted to atomic block
       if (!isAtomicInlineType(_entity.type)) {
         let _isAtomic = isTextAtomicAtIndex(state, _idx)
         if (_isAtomic) {
+          // push atomic block change to operator
           draft.entityCache[_entity._id] = _isAtomic
           draft.operations.push({
             index: _idx,
@@ -185,11 +187,6 @@ export default (state, action) =>
           })
         }
       }
-
-      //   // console.log(_entity)
-      //   // console.log(_id)
-      //   // TODO: transform block type if symbol is present
-      // }
     }
     return draft
   })
