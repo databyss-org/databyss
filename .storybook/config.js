@@ -96,7 +96,7 @@ setOptions({
 
 const reqs = [
   require.context('../packages/databyss-ui', true, /.stories.js$/),
-  require.context('../packages/databyss-notes', true, /.stories.js$/),
+  require.context('../packages/databyss-editor', true, /.stories.js$/),
 ]
 
 function loadStories() {
