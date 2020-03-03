@@ -52,7 +52,7 @@ export default {
     },
     '5e3f829ce5447c0018baebee': {
       type: 'ENTRY',
-      _id: '5e3f829ce5447c0018baebed',
+      _id: '5e3f829ce5447c0018baebee',
       text: {
         textValue: '',
         ranges: [],

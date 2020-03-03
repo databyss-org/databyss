@@ -37,16 +37,15 @@ const ContentEditable = () => {
   const onKeyDown = event => {
     if (event.key === 'Enter') {
       const _idx = editor.selection.focus.path[0]
-      //  console.log(editor.selection.focus.path[0])
       if (getEntityAtIndex(_idx).isAtomic) {
         return
       }
-      const _text = Node.string(editor.children[editor.selection.focus.path[0]])
+      const _text = Node.string(editor.children[_idx])
 
+      // if text should be converted to atomic type
       if (isTextAtomic(_text)) {
         return
       }
-
       const _offset = flattenOffset(editor, editor.selection.focus)
       const _prevIsBreak = _text.charAt(_offset - 1) === `\n`
       const _nextIsBreak = _text.charAt(_offset) === `\n`
