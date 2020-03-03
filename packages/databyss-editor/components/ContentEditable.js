@@ -12,6 +12,7 @@ import {
   flattenOffset,
   stateBlockToSlateBlock,
 } from '../lib/slateUtils'
+import { isTextAtomic } from '../lib/util'
 
 const ContentEditable = () => {
   const {
@@ -35,10 +36,17 @@ const ContentEditable = () => {
 
   const onKeyDown = event => {
     if (event.key === 'Enter') {
-      if (getEntityAtIndex(editor.selection.focus.path[0]).isAtomic) {
+      const _idx = editor.selection.focus.path[0]
+      //  console.log(editor.selection.focus.path[0])
+      if (getEntityAtIndex(_idx).isAtomic) {
         return
       }
       const _text = Node.string(editor.children[editor.selection.focus.path[0]])
+
+      if (isTextAtomic(_text)) {
+        return
+      }
+
       const _offset = flattenOffset(editor, editor.selection.focus)
       const _prevIsBreak = _text.charAt(_offset - 1) === `\n`
       const _nextIsBreak = _text.charAt(_offset) === `\n`

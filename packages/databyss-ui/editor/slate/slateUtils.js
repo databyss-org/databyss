@@ -344,3 +344,27 @@ export const isInlineAtomicSelected = ({ value }) => {
   }
   return false
 }
+
+export const isTextAtomicAtIndex = (state, index) => {
+  let _text =
+    state.entityCache[state.blockCache[state.blocks[index]._id].entityId].text
+      .textValue
+
+  if (_text.length > 1) {
+    const _firstCharacter = _text.split('')[0]
+    const types = symbol => ({ '@': 'SOURCE', '#': 'TOPIC' }[symbol])
+    if (_firstCharacter === '@' || _firstCharacter === '#') {
+      const _data = {
+        text: {
+          textValue: _text.substring(1),
+          // TODO: GET RANGES
+          ranges: [],
+        },
+        type: types(_firstCharacter),
+      }
+
+      return _data
+    }
+  }
+  return false
+}
