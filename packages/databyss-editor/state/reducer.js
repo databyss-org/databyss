@@ -1,7 +1,7 @@
 import ObjectId from 'bson-objectid'
 import { produce } from 'immer'
 import { SPLIT, MERGE, SET_CONTENT, REMOVE, CLEAR } from './constants'
-import { isAtomicInlineType } from '../lib/util'
+import { isAtomicInlineType, isTextAtomicAtIndex } from '../lib/util'
 
 export default (state, action) =>
   produce(state, draft => {
@@ -171,13 +171,25 @@ export default (state, action) =>
     }
 
     if (draft.selection.focus.index !== state.selection.focus.index) {
-      const _id = state.blocks[draft.selection.focus.index]._id
+      const _idx = state.selection.focus.index
+      const _id = state.blocks[state.selection.focus.index]._id
       const _entity = state.entityCache[state.blockCache[_id].entityId]
-      console.log(_entity)
-      console.log(_id)
-      console.log('blur', state.selection.focus.index)
-      // TODO: transform block type if symbol is present
-    }
 
+      if (!isAtomicInlineType(_entity.type)) {
+        let _isAtomic = isTextAtomicAtIndex(state, _idx)
+        if (_isAtomic) {
+          draft.entityCache[_entity._id] = _isAtomic
+          draft.operations.push({
+            index: _idx,
+            block: _isAtomic,
+          })
+        }
+      }
+
+      //   // console.log(_entity)
+      //   // console.log(_id)
+      //   // TODO: transform block type if symbol is present
+      // }
+    }
     return draft
   })
