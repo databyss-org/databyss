@@ -28,6 +28,7 @@ router.post(
     try {
       const { blocks, page } = req.body.data
       let { sources, entries, topics, locations } = req.body.data
+
       sources = !_.isEmpty(sources) ? sources : {}
       topics = !_.isEmpty(topics) ? topics : {}
       entries = !_.isEmpty(entries) ? entries : {}
@@ -38,11 +39,10 @@ router.post(
       // ADD SOURCES
       if (!_.isEmpty(sources)) {
         const _sources = Object.keys(sources)
-
         await Promise.all(
           _sources.map(async s => {
             const source = sources[s].textValue
-            const sourceId = sources[s]._id
+            const sourceId = s
             const ranges = !_.isEmpty(sources[s].ranges)
               ? sources[s].ranges
               : []
@@ -54,7 +54,6 @@ router.post(
               ranges,
               account: req.account._id,
             }
-
             // IF SOURCE EXISTS EDIT SOURCE
             let sourceResponse = await Source.findOne({ _id: sourceId })
 
@@ -80,7 +79,7 @@ router.post(
         await Promise.all(
           _entries.map(async e => {
             const text = entries[e].textValue
-            const entryId = entries[e]._id
+            const entryId = e
             const ranges = !_.isEmpty(entries[e].ranges)
               ? entries[e].ranges
               : []
@@ -112,7 +111,7 @@ router.post(
         await Promise.all(
           _topics.map(async e => {
             const topic = topics[e].textValue
-            const topicId = topics[e]._id
+            const topicId = e
             const ranges = !_.isEmpty(topics[e].ranges) ? topics[e].ranges : []
 
             // TOPIC WITH ID
