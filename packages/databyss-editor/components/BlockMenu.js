@@ -39,7 +39,6 @@ const BlockMenu = ({ showButton }) => {
       SOURCE: () => editor.insertText('@'),
       TOPIC: () => editor.insertText('#'),
       LOCATION: () => {
-        console.log('fire')
         Transforms.setNodes(
           editor,
           { location: true, type: 'location' },

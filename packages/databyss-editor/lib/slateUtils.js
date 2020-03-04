@@ -1,4 +1,4 @@
-import { Editor } from 'slate'
+import { Editor, Transforms, Text } from 'slate'
 import { stateToSlateMarkup } from './markup'
 import { serialize } from './inlineSerializer'
 import { isAtomicInlineType } from './util'
@@ -124,4 +124,42 @@ export const isFormatActive = (editor, format) => {
     mode: 'all',
   })
   return !!match
+}
+
+export const toggleFormat = (editor, format) => {
+  const isActive = isFormatActive(editor, format)
+  Transforms.setNodes(
+    editor,
+    { [format]: isActive ? null : true, type: !isActive ? format : null },
+    { match: Text.isText, split: true }
+  )
+  console.log(editor)
+}
+
+const isMarkActive = (editor, format) => {
+  const marks = Editor.marks(editor)
+  return marks ? marks[format] === true : false
+}
+
+export const toggleMark = (editor, format) => {
+  const isActive = isMarkActive(editor, format)
+
+  console.log(isActive)
+  if (isActive) {
+    Editor.removeMark(editor, format)
+  } else {
+    Editor.addMark(editor, format, true)
+  }
+}
+
+export const isToggleMark = editor => {
+  if (
+    editor.operations.find(op => op.type === 'insert_node') &&
+    editor.operations.find(op => op.type === 'set_selection') &&
+    editor.operations.find(op => op.type === 'insert_node')
+  ) {
+    console.log('here')
+    return true
+  }
+  return false
 }
