@@ -11,8 +11,12 @@ import {
   flattenNode,
   flattenOffset,
   stateBlockToSlateBlock,
+  toggleFormat,
+  toggleMark,
+  isToggleMark,
 } from '../lib/slateUtils'
 import { isTextAtomic } from '../lib/util'
+import Hotkeys from './../lib/hotKeys'
 
 const ContentEditable = () => {
   const {
@@ -35,6 +39,10 @@ const ContentEditable = () => {
   }
 
   const onKeyDown = event => {
+    if (Hotkeys.isBold(event)) {
+      toggleMark(editor, 'bold')
+      return
+    }
     if (event.key === 'Enter') {
       const _idx = editor.selection.focus.path[0]
       if (getEntityAtIndex(_idx).isAtomic) {
@@ -156,13 +164,13 @@ const ContentEditable = () => {
       })
       return
     }
-
     if (
       editor.operations.find(
         op => op.type === 'insert_text' || op.type === 'remove_text'
-        // || op.type === 'set_node'
-      )
+      ) ||
+      isToggleMark(editor)
     ) {
+      console.log(value[focusIndex])
       // update target node
       setContent({
         ...payload,
@@ -174,6 +182,15 @@ const ContentEditable = () => {
       })
       return
     }
+
+    // // set_node is called on format change transforms
+    // if (
+    //   editor.operations.find(op => op.type === 'insert_node') &&
+    //   editor.operations.find(op => op.type === 'set_selection') &&
+    //   editor.operations.find(op => op.type === 'insert_node')
+    // ) {
+    //   return
+    // }
 
     // set_node is called on format change transforms
     if (editor.operations.find(op => op.type === 'set_node')) {
@@ -191,6 +208,9 @@ const ContentEditable = () => {
         return
       }
     }
+
+    // TODO: if selection is removed
+    // location toggle on new format menu looses focus
 
     // else just update selection
     setSelection(selection)

@@ -12,7 +12,7 @@ const App = () => {
   const [editorState, setEditorState] = useState([])
   return (
     <Grid>
-      <View width="40%">
+      <View width="40%" pl={20}>
         <EditorProvider
           initialState={initialState}
           onChange={s => setEditorState(stateToSlate(s))}
