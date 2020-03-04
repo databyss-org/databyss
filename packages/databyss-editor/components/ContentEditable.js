@@ -11,7 +11,6 @@ import {
   flattenNode,
   flattenOffset,
   stateBlockToSlateBlock,
-  toggleFormat,
   toggleMark,
   isToggleMark,
 } from '../lib/slateUtils'
@@ -170,7 +169,6 @@ const ContentEditable = () => {
       ) ||
       isToggleMark(editor)
     ) {
-      console.log(value[focusIndex])
       // update target node
       setContent({
         ...payload,
@@ -182,15 +180,6 @@ const ContentEditable = () => {
       })
       return
     }
-
-    // // set_node is called on format change transforms
-    // if (
-    //   editor.operations.find(op => op.type === 'insert_node') &&
-    //   editor.operations.find(op => op.type === 'set_selection') &&
-    //   editor.operations.find(op => op.type === 'insert_node')
-    // ) {
-    //   return
-    // }
 
     // set_node is called on format change transforms
     if (editor.operations.find(op => op.type === 'set_node')) {
