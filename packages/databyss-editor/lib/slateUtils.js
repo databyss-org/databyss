@@ -133,7 +133,6 @@ export const toggleFormat = (editor, format) => {
     { [format]: isActive ? null : true, type: !isActive ? format : null },
     { match: Text.isText, split: true }
   )
-  console.log(editor)
 }
 
 const isMarkActive = (editor, format) => {
@@ -144,7 +143,6 @@ const isMarkActive = (editor, format) => {
 export const toggleMark = (editor, format) => {
   const isActive = isMarkActive(editor, format)
 
-  console.log(isActive)
   if (isActive) {
     Editor.removeMark(editor, format)
   } else {
@@ -158,7 +156,6 @@ export const isToggleMark = editor => {
     editor.operations.find(op => op.type === 'set_selection') &&
     editor.operations.find(op => op.type === 'insert_node')
   ) {
-    console.log('here')
     return true
   }
   return false
