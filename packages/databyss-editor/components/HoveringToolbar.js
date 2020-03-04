@@ -8,9 +8,7 @@ import { pxUnits } from '@databyss-org/ui/theming/views'
 import { ReactEditor, useSlate } from 'slate-react'
 import { Editor, Range } from 'slate'
 
-const Portal = ({ children }) => {
-  return ReactDOM.createPortal(children, document.body)
-}
+const Portal = ({ children }) => ReactDOM.createPortal(children, document.body)
 
 const _activeCss = {
   pointerEvents: 'all',

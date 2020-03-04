@@ -177,7 +177,7 @@ export default (state, action) =>
       const _entity = state.entityCache[state.blockCache[_id].entityId]
       // check if current text should be converted to atomic block
       if (!isAtomicInlineType(_entity.type)) {
-        let _isAtomic = isTextAtomicAtIndex(state, _idx)
+        const _isAtomic = isTextAtomicAtIndex(state, _idx)
         if (_isAtomic) {
           // push atomic block change to operator
           draft.entityCache[_entity._id] = _isAtomic

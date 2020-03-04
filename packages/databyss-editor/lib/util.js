@@ -35,14 +35,13 @@ export const isTextAtomic = text => {
 }
 
 export const isTextAtomicAtIndex = (state, index) => {
-  let _text =
+  const _text =
     state.entityCache[state.blockCache[state.blocks[index]._id].entityId].text
       .textValue
 
   if (isTextAtomic(_text)) {
     const _firstCharacter = _text.split('')[0]
     const types = symbol => ({ '@': 'SOURCE', '#': 'TOPIC' }[symbol])
-
     const _data = {
       text: {
         textValue: _text.substring(1),
