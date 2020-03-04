@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { RawHtml, Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
-import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import fonts from '@databyss-org/ui/theming/fonts'
-
+import styled from '@emotion/styled'
+import { color, border, space, typography, layout } from 'styled-system'
 import { Node, Range } from 'slate'
 import { useSelected, ReactEditor, useEditor } from 'slate-react'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
-import styled from '@emotion/styled'
-import { color, border, space, typography, layout } from 'styled-system'
 
 const Span = styled('span')(
   // { cursor: 'pointer' },
@@ -60,8 +58,6 @@ const Element = ({ attributes, children, element }) => {
     },
     [editor.selection, element]
   )
-
-  const blockMenuWidth = editorMarginMenuItemHeight + 6
 
   return (
     <Span pt="small" pb="small">

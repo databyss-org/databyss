@@ -1,10 +1,10 @@
 import React from 'react'
 import { Button, Text, View } from '@databyss-org/ui/primitives'
+import { useEditor } from 'slate-react'
+import { Transforms, Text as SlateText } from 'slate'
 import { isMobileOs } from '@databyss-org/ui/'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import HoveringToolbar from './HoveringToolbar'
-import { useEditor } from 'slate-react'
-import { Editor, Transforms, Text as SlateText } from 'slate'
 import { isFormatActive } from './../lib/slateUtils'
 
 const mobileActions = [
@@ -51,35 +51,29 @@ const formatActions = isMobileNewLine => [
 ]
 
 const formatActionButtons = () =>
-  // editor.value.anchorBlock
   true
-    ? //TODO: ASK ABOUT THIS COMMENT
-      formatActions(true).reduce(
-        //(!editor.value.anchorBlock.text.length).reduce(
-        (acc, a, i) => {
-          if (a.type === 'DIVIDER') {
-            return acc.concat(
-              <View
-                key={i}
-                borderRightColor="border.1"
-                borderRightWidth={pxUnits(1)}
-                marginLeft="extraSmall"
-                marginRight="extraSmall"
-              />
-            )
-          }
+    ? formatActions(true).reduce((acc, a, i) => {
+        if (a.type === 'DIVIDER') {
           return acc.concat(
-            <MarkButton
+            <View
               key={i}
-              index={i}
-              type={a.type}
-              label={a.label}
-              variant={a.variant}
+              borderRightColor="border.1"
+              borderRightWidth={pxUnits(1)}
+              marginLeft="extraSmall"
+              marginRight="extraSmall"
             />
           )
-        },
-        []
-      )
+        }
+        return acc.concat(
+          <MarkButton
+            key={i}
+            index={i}
+            type={a.type}
+            label={a.label}
+            variant={a.variant}
+          />
+        )
+      }, [])
     : []
 
 const MarkButton = ({ type, label, variant, ...others }) => {
