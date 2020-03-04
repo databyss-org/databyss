@@ -60,15 +60,12 @@ const SlateContentEditable = forwardRef(
       onDocumentChange,
       OnToggleMark,
       onHotKey,
-      onSetBlockType,
       deleteBlockByKey,
       deleteBlocksByKeys,
-      deleteBlockListFromState,
       onPasteAction,
       setBlockRef,
       onNewBlockMenu,
       autoFocus,
-      onSelectionChange,
       onCutBlocks,
       onDirtyAtomic,
       onEditAtomic,
@@ -186,44 +183,6 @@ const SlateContentEditable = forwardRef(
       return false
     }
 
-    const handleSelectedBlockChanged = ({
-      _nextText,
-      _nextEditableState,
-      ranges,
-    }) => {
-      // if not atomic get range and check for location
-      if (
-        !isAtomicInlineType(
-          _nextEditableState.value.document.getNode(activeBlockId).type
-        )
-      ) {
-        const locationLength = ranges.reduce((acc, range) => {
-          if (range.marks.findIndex(m => m === 'location') > -1) {
-            return range.length + acc
-          }
-          return acc
-        }, 0)
-
-        // if type LOCATION is set check for non LOCATION type
-        if (
-          _nextEditableState.value.document.getNode(activeBlockId).type ===
-            'LOCATION' &&
-          locationLength !== _nextText.length
-        ) {
-          onSetBlockType('ENTRY', activeBlockId, _nextEditableState)
-        }
-        // if whole entry has a location range set block as LOCATION
-        if (
-          _nextText.length !== 0 &&
-          locationLength === _nextText.length &&
-          _nextEditableState.value.document.getNode(activeBlockId).type !==
-            'LOCATION'
-        ) {
-          onSetBlockType('LOCATION', activeBlockId, _nextEditableState)
-        }
-      }
-    }
-
     const onChange = change => {
       const { value } = change
 
@@ -235,9 +194,7 @@ const SlateContentEditable = forwardRef(
       }
       if (!checkSelectedBlockChanged({ value })) {
         const blockChanges = checkActiveBlockContentChanged({ value })
-        if (blockChanges) {
-          handleSelectedBlockChanged(blockChanges)
-        } else if (!value.selection.isBlurred) {
+        if (!blockChanges && !value.selection.isBlurred) {
           // issue https://github.com/ianstormtaylor/slate/issues/2432
           onEditableStateChange({ value })
         }

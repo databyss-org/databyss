@@ -101,7 +101,7 @@ storiesOf('Cypress//Tests', module)
     </View>
   ))
 
-storiesOf('Components//ValueList', module)
+storiesOf('Components|ValueList', module)
   .addDecorator(ViewportDecorator)
   .add('ValueList', () => (
     <View>

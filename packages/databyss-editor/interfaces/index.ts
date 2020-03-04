@@ -1,0 +1,5 @@
+export { Range } from './range'
+export { Text } from './text'
+export { Selection } from './selection'
+export { Point } from './point'
+export { Entity } from './entity'

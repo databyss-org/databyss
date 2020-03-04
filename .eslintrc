@@ -1,11 +1,23 @@
 {
   "extends": ["eslint-config-airbnb", "eslint-config-prettier"],
-  "plugins": ["eslint-plugin-prettier", "react-hooks", "cypress"],
-  "parser": "babel-eslint",
+  "plugins": [
+    "eslint-plugin-prettier",
+    "@typescript-eslint",
+    "react-hooks", 
+    "cypress"
+  ],
+  "parser": "@typescript-eslint/parser",
   "env": {
     "jest": true,
     "browser": true,
     "cypress/globals": true
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
   },
   "rules": {
     "no-return-assign": ["error", "except-parens"], // Default option
@@ -15,7 +27,7 @@
     "import/prefer-default-export": "off", // Often this is not organizationally optimal
     "no-shadow": "off", // Shadowing is a nice language feature. Naming is hard.
     "no-underscore-dangle": "off", // It's classic pattern to denote private props.
-    "react/prop-types": "off", // We're using flow instead
+    "react/prop-types": "off", // We're using Typescript instead
     "react/require-default-props": "off", // Not useful without prop-types
     "react/jsx-filename-extension": "off", // We're using .js for jsx files
     "react/no-children-prop": "off", // Certain libs (like router) use this pattern
@@ -26,6 +38,14 @@
     "no-param-reassign": ["error", { "props": false }], // Useful for mutating reduce accumulators, ex.
     "react-hooks/rules-of-hooks": "error",
     "jsx-a11y/anchor-is-valid": "off",
+    "no-unused-vars": "off", // use Typescript check instead
+    "@typescript-eslint/no-unused-vars": [
+      "error", 
+      {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": false 
+    }],
     "prettier/prettier": [
       "error",
       {
@@ -33,6 +53,17 @@
         "semi": false, // Almost always unecessary
         "singleQuote": true, // Easy to read
         "trailingComma": "es5" // Helps simplify diffs
+      }
+    ],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "mjs": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
       }
     ]
   }

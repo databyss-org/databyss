@@ -53,7 +53,6 @@ const activeInputCss = modal => ({
 const TextInputView = ({
   active,
   children,
-  value,
   labelOffset,
   modal,
   smallText,

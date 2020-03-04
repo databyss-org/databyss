@@ -1,5 +1,12 @@
-import React from 'react'
-import { variant, color, typography, compose, space } from 'styled-system'
+import React, { forwardRef } from 'react'
+import {
+  variant,
+  color,
+  typography,
+  compose,
+  space,
+  layout,
+} from 'styled-system'
 import styled from '../styled'
 
 export const variants = variant({
@@ -14,7 +21,8 @@ export const variants = variant({
 export const styleProps = compose(
   variants,
   color,
-  typography
+  typography,
+  layout
 )
 
 const Styled = styled(
@@ -27,15 +35,17 @@ const Styled = styled(
     variants,
     color,
     typography,
-    space
+    space,
+    layout
   )
 )
 
-const Text = ({ children, color, ...others }) => (
-  <Styled variant="bodyNormal" color={color} {...others}>
+const Text = forwardRef(({ children, color, ...others }, ref) => (
+  // TODO: capture css `white-space` and translate to `numberOfLines` for native
+  <Styled ref={ref} variant="bodyNormal" color={color} {...others}>
     {children}
   </Styled>
-)
+))
 
 Text.defaultProps = {
   color: 'text.0',
