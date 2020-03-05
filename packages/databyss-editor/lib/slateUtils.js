@@ -1,5 +1,5 @@
 import { Editor, Transforms, Text } from 'slate'
-import { stateToSlateMarkup } from './markup'
+import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 import { serialize } from './inlineSerializer'
 import { isAtomicInlineType } from './util'
 
@@ -17,8 +17,12 @@ export const flattenNodeToPoint = (editor, point) => {
     path: [point.path[0], 0],
     offset: 0,
   }
+  const _focusPath = [...point.path]
+  if (_focusPath.length === 1) {
+    _focusPath[1] = 0
+  }
   const focus = {
-    path: point.path,
+    path: _focusPath,
     offset: point.offset,
   }
   const _frag = Editor.fragment(editor, { anchor, focus })
@@ -41,17 +45,9 @@ export const slateSelectionToStateSelection = editor => ({
 })
 
 // this doesn't work when a node has > 1 text children
-// TODO: create an editor, insert fragment and moveFocusForward to get
-// correct paths and offsets
-export const stateSelectionToSlateSelection = selection => ({
-  anchor: {
-    path: [selection.anchor.index, 0],
-    offset: selection.anchor.offset,
-  },
-  focus: {
-    path: [selection.focus.index, 0],
-    offset: selection.focus.offset,
-  },
+export const stateSelectionToSlateSelection = (children, selection) => ({
+  anchor: statePointToSlatePoint(children, selection.anchor),
+  focus: statePointToSlatePoint(children, selection.focus),
 })
 
 export const entities = type =>
@@ -110,8 +106,8 @@ export const getRangesFromSlate = node => {
       return
     }
     const _textLength = n.text.length
-    if (n.type) {
-      _ranges.push({ offset: _offset, length: _textLength, mark: n.type })
+    if (n.bold) {
+      _ranges.push({ offset: _offset, length: _textLength, mark: 'bold' })
     }
     _offset += _textLength
   })
@@ -133,30 +129,4 @@ export const toggleFormat = (editor, format) => {
     { [format]: isActive ? null : true, type: !isActive ? format : null },
     { match: Text.isText, split: true }
   )
-}
-
-const isMarkActive = (editor, format) => {
-  const marks = Editor.marks(editor)
-  return marks ? marks[format] === true : false
-}
-
-export const toggleMark = (editor, format) => {
-  const isActive = isMarkActive(editor, format)
-
-  if (isActive) {
-    Editor.removeMark(editor, format)
-  } else {
-    Editor.addMark(editor, format, true)
-  }
-}
-
-export const isToggleMark = editor => {
-  if (
-    editor.operations.find(op => op.type === 'insert_node') &&
-    editor.operations.find(op => op.type === 'set_selection') &&
-    editor.operations.find(op => op.type === 'insert_node')
-  ) {
-    return true
-  }
-  return false
 }

@@ -4,7 +4,6 @@ import { Slate, Editable, withReact } from 'slate-react'
 import { isAtomicInlineType } from '../lib/util'
 import Leaf from './Leaf'
 import Element from './Element'
-import FormatMenu from './FormatMenu'
 
 export const withInline = editor => {
   const { isInline, isVoid } = editor
@@ -29,7 +28,6 @@ const Editor = ({ children, ...others }) => {
   return (
     <Slate editor={editor} {...slateProps}>
       {children}
-      <FormatMenu />
       <Editable
         renderElement={renderElement}
         renderLeaf={renderLeaf}

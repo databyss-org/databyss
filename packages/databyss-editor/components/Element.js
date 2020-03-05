@@ -1,22 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { RawHtml, Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
-import fonts from '@databyss-org/ui/theming/fonts'
-import styled from '@emotion/styled'
-import { color, border, space, typography, layout } from 'styled-system'
+import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { Node, Range } from 'slate'
 import { useSelected, ReactEditor, useEditor } from 'slate-react'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
-
-const Span = styled('span')(
-  // { cursor: 'pointer' },
-  color,
-  border,
-  space,
-  typography,
-  layout
-)
 
 export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
@@ -59,57 +48,59 @@ const Element = ({ attributes, children, element }) => {
     [editor.selection, element]
   )
 
+  const blockMenuWidth = editorMarginMenuItemHeight + 6
+
   return (
-    <Span pt="small" pb="small">
+    <View
+      ml={element.isBlock ? blockMenuWidth : 0}
+      pt="small"
+      pb="small"
+      display={element.isBlock ? 'flex' : 'inline-flex'}
+      maxWidth="100%"
+      position="relative"
+      justifyContent="center"
+    >
       {element.isBlock && (
         <View
-          position="relative"
+          position="absolute"
           width="100%"
           contentEditable="false"
-          mt="extraSmall"
-          display="inline-block"
           readonly
-          mb="extraSmall"
-          id="bug-test"
-          height="0px"
           suppressContentEditableWarning
-          left="-30px"
-          top="small"
+          left={blockMenuWidth * -1}
         >
           <BlockMenu element={element} showButton={showNewBlockMenu} />
         </View>
       )}
       {isAtomicInlineType(element.type) ? (
-        <Span
+        <View
           flexWrap="nowrap"
-          display="inline"
+          display="inline-flex"
+          flexDirection="row"
+          alignItems="center"
+          borderRadius="default"
           contentEditable="false"
           suppressContentEditableWarning
           css={{ userSelect: 'none', cursor: 'pointer' }}
-          overflow="visible"
-          borderRadius="5px"
+          overflow="hidden"
+          borderRadiusVariant="default"
           onMouseDown={onClick}
-          fontSize={fonts.textVariants.bodyHeader.fontSize}
           pl="tiny"
           pr="0"
-          pt="tiny"
-          pb="tiny"
-          mb="tiny"
-          mt="small"
           ml="tinyNegative"
           backgroundColor={isSelected ? 'background.3' : ''}
         >
           <Text
             variant={getAtomicStyle(element.type)}
-            display="inline"
-            //  css={{ whiteSpace: 'nowrap' }}
-            //   overflow="hidden"
+            css={{ whiteSpace: 'nowrap' }}
+            overflow="hidden"
           >
             <RawHtml _html={{ __html: element.character }} {...attributes} />
           </Text>
           {children}
           {isSelected && (
-            <Span
+            <View
+              display="inline"
               borderLeft="1px solid"
               borderColor="background.4"
               ml="10px"
@@ -120,13 +111,13 @@ const Element = ({ attributes, children, element }) => {
                   <PenSVG />
                 </Icon>
               </Button>
-            </Span>
+            </View>
           )}
-        </Span>
+        </View>
       ) : (
         <Text {...attributes}>{children}</Text>
       )}
-    </Span>
+    </View>
   )
 }
 

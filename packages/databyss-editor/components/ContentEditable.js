@@ -4,15 +4,16 @@ import { withReact } from 'slate-react'
 import { produce } from 'immer'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor, { withInline } from './Editor'
+import FormatMenu from './FormatMenu'
 import {
   stateToSlate,
   getRangesFromSlate,
   slateSelectionToStateSelection,
+  stateSelectionToSlateSelection,
   flattenNode,
   flattenOffset,
   stateBlockToSlateBlock,
-  toggleMark,
-  isToggleMark,
+  toggleFormat,
 } from '../lib/slateUtils'
 import { isTextAtomic } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
@@ -37,9 +38,17 @@ const ContentEditable = () => {
     editor.children = stateToSlate(state)
   }
 
+  if (!selectionRef.current) {
+    editor.selection = {
+      focus: { path: [0], offset: 0 },
+      anchor: { path: [0], offset: 0 },
+    }
+  }
+
   const onKeyDown = event => {
     if (Hotkeys.isBold(event)) {
-      toggleMark(editor, 'bold')
+      event.preventDefault()
+      toggleFormat(editor, 'bold')
       return
     }
     if (event.key === 'Enter') {
@@ -165,37 +174,22 @@ const ContentEditable = () => {
     }
     if (
       editor.operations.find(
-        op => op.type === 'insert_text' || op.type === 'remove_text'
-      ) ||
-      isToggleMark(editor)
+        op =>
+          op.type === 'insert_text' ||
+          op.type === 'remove_text' ||
+          op.type === 'set_node'
+      )
     ) {
       // update target node
       setContent({
         ...payload,
         index: focusIndex,
         text: {
-          textValue: Node.string(value[focusIndex]),
+          textValue: flattenNode(value[focusIndex]),
           ranges: getRangesFromSlate(value[focusIndex]),
         },
       })
       return
-    }
-
-    // set_node is called on format change transforms
-    if (editor.operations.find(op => op.type === 'set_node')) {
-      // node should not be updated if a toggle mark occured
-      if (Node.string(value[focusIndex])) {
-        // update target node
-        setContent({
-          ...payload,
-          index: focusIndex,
-          text: {
-            textValue: Node.string(value[focusIndex]),
-            ranges: getRangesFromSlate(value[focusIndex]),
-          },
-        })
-        return
-      }
     }
 
     // TODO: if selection is removed
@@ -220,11 +214,17 @@ const ContentEditable = () => {
     }
   )
 
-  const nextSelection = state.preventDefault
+  // by default, let selection remain uncontrolled
+  // NOTE: preventDefault will rollback selection to that of previous render
+  let nextSelection = state.preventDefault
     ? selectionRef.current
     : editor.selection
-  // TODO: use controlled selection from `state`, but we need to transform
-  //  it back to a Slate-friendly format
+
+  // if there were any update operations,
+  //   sync the Slate selection to the state selection
+  if (state.operations.length) {
+    nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
+  }
 
   valueRef.current = nextValue
   selectionRef.current = nextSelection
@@ -241,7 +241,9 @@ const ContentEditable = () => {
       selection={nextSelection}
       onChange={onChange}
       onKeyDown={onKeyDown}
-    />
+    >
+      <FormatMenu />
+    </Editor>
   )
 }
 

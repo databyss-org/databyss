@@ -73,7 +73,7 @@ const BlockMenu = ({ showButton }) => {
   ))
 
   return showButton ? (
-    <Grid singleRow columnGap="small" position="absolute">
+    <Grid singleRow columnGap="small">
       <View
         height={editorMarginMenuItemHeight}
         width={editorMarginMenuItemHeight}

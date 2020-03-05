@@ -10,6 +10,10 @@ export default (state, action) =>
 
     const { payload } = action
 
+    if (action.payload.selection) {
+      draft.selection = action.payload.selection
+    }
+
     switch (action.type) {
       case SPLIT: {
         // add or insert a new block
@@ -125,6 +129,7 @@ export default (state, action) =>
         draft.operations.push({
           index: payload.index,
           block: _entity,
+          updateSelection: true,
         })
         break
       }
@@ -137,6 +142,7 @@ export default (state, action) =>
         break
       }
       case CLEAR: {
+        draft.preventDefault = true
         // delete the current entity
         delete draft.entityCache[
           state.blockCache[state.blocks[payload.index]._id].entityId
@@ -159,15 +165,12 @@ export default (state, action) =>
           index: payload.index,
           block: _entity,
         })
+        // set selection to 0
+        draft.selection.focus.offset = 0
+        draft.selection.anchor.offset = 0
         break
       }
       default:
-    }
-
-    // always update the selection if included in payload
-    // (unless we're doing `preventDefault`)
-    if (action.payload.selection && !draft.preventDefault) {
-      draft.selection = action.payload.selection
     }
 
     // on block blur
