@@ -23,7 +23,7 @@ const Page = () => {
         <TopicProvider>
           <PageLoader pageId={account.defaultPage}>
             {page => (
-              <View alignItems="stretch" flexGrow={1} width="100%">
+              <View>
                 <EditorProvider
                   initialState={page}
                   reducer={pageReducer}

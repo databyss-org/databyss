@@ -39,6 +39,7 @@ export { default as Content } from './components/Viewport/Content'
 export { default as Raw } from './components/Viewport/Raw'
 export { default as ThemedViewport } from './components/Viewport/ThemedViewport'
 export { default as Viewport } from './components/Viewport/Viewport'
+export { default as Sidebar } from './components/Sidebar/Sidebar'
 
 /* modules */
 export { default as LandingEntries } from './modules/Landing/Entries'
