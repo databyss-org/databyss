@@ -4,7 +4,9 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import Databyss from '@databyss-org/ui/assets/databyss.svg'
-import Arrow from '@databyss-org/ui/assets/arrowLeft.svg'
+import ArrowLeft from '@databyss-org/ui/assets/arrowLeft.svg'
+import ArrowRight from '@databyss-org/ui/assets/arrowRight.svg'
+
 import {
   Text,
   View,
@@ -13,6 +15,7 @@ import {
   Grid,
   Icon,
   Separator,
+  TextControl,
   Button,
 } from '@databyss-org/ui/primitives'
 import { Viewport } from '@databyss-org/ui'
@@ -52,10 +55,11 @@ Section.defaultProps = {
 
 const Sidebar = ({ children }) => {
   const [menuOpen, setMenuOpen] = useState(true)
+  const [value1, setValue1] = useState({ textValue: 'value', ranges: [] })
 
   const menuItems = [
     {
-      svg: <Arrow />,
+      svg: menuOpen ? <ArrowLeft /> : <Databyss />,
       text: 'Databyss',
       action: () => setMenuOpen(!menuOpen),
     },
@@ -63,6 +67,10 @@ const Sidebar = ({ children }) => {
       svg: <PageSvg />,
       text: 'Pages',
       action: () => console.log('PAGES'),
+      list: [
+        { id: 'someId', title: 'Page Title 1' },
+        { id: 'someId', title: 'Page Title 2' },
+      ],
     },
     {
       svg: <SourceSvg />,
@@ -81,15 +89,13 @@ const Sidebar = ({ children }) => {
     },
   ]
 
-  console.log(menuOpen)
-
   return (
     <View alignItems="stretch" flexGrow={1} width="100%">
       <Grid>
         <View
           {...defaultProps}
           css={css({
-            transform: menuOpen ? 'translateX(0)' : 'translateX(-250px)',
+            transform: menuOpen ? 'translateX(0)' : 'translateX(-240px)',
             transition: 'transform 0.3s ease-in-out',
           })}
         >
@@ -98,6 +104,7 @@ const Sidebar = ({ children }) => {
             theme={darkTheme}
             bg="background.0"
             width={300}
+            pt={'medium'}
           >
             <List
               verticalItemPadding={2}
@@ -114,22 +121,36 @@ const Sidebar = ({ children }) => {
                   )
                 }
                 acc.push(
-                  <BaseControl key={index} width="100%" onClick={item.action}>
+                  <BaseControl
+                    key={index}
+                    width="100%"
+                    onClick={item.action}
+                    alignItems={!menuOpen && 'flex-end'}
+                  >
                     {menuOpen ? (
-                      <Grid singleRow alignItems="center" columnGap="small">
-                        <Icon
-                          sizeVariant={index ? 'tiny' : 'medium'}
-                          color="text.3"
-                        >
-                          {item.svg}
-                        </Icon>
-                        <Text
-                          variant={index ? 'uiTextSmall' : 'uiTextLarge'}
-                          color="text.2"
-                        >
-                          {item.text}
-                        </Text>
-                      </Grid>
+                      <View>
+                        <Grid singleRow alignItems="center" columnGap="small">
+                          <Icon
+                            sizeVariant={index ? 'tiny' : 'medium'}
+                            color="text.3"
+                          >
+                            {item.svg}
+                          </Icon>
+                          <Text
+                            variant={index ? 'uiTextSmall' : 'uiTextLarge'}
+                            color="text.2"
+                          >
+                            {item.text}
+                          </Text>
+                          {index ? (
+                            <View position="absolute" right="small">
+                              <Icon sizeVariant="small" color="text.3">
+                                <ArrowRight />
+                              </Icon>
+                            </View>
+                          ) : null}
+                        </Grid>
+                      </View>
                     ) : (
                       <Grid
                         singleRow
@@ -138,17 +159,11 @@ const Sidebar = ({ children }) => {
                         columnGap="small"
                       >
                         <Icon
-                          sizeVariant={index ? 'tiny' : 'medium'}
+                          sizeVariant={!index || !menuOpen ? 'medium' : 'tiny'}
                           color="text.3"
                         >
                           {item.svg}
                         </Icon>
-                        <Text
-                          variant={index ? 'uiTextSmall' : 'uiTextLarge'}
-                          color="text.2"
-                        >
-                          {item.text}
-                        </Text>
                       </Grid>
                     )}
                   </BaseControl>
@@ -164,10 +179,16 @@ const Sidebar = ({ children }) => {
           display="flex"
           // TODO: REMOVE THIS PART
           css={css({
-            transform: menuOpen ? 'translateX(0)' : 'translateX(-300px)',
+            transform: menuOpen ? 'translateX(0)' : 'translateX(-240px)',
             transition: 'transform 0.3s ease-in-out',
           })}
         >
+          <TextControl
+            variant="uiTextNormal"
+            value={value1}
+            onChange={setValue1}
+            rich
+          />
           {children}
         </View>
       </Grid>
