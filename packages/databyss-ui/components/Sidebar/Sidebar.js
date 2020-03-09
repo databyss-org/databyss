@@ -20,17 +20,6 @@ import {
 } from '@databyss-org/ui/primitives'
 import { Viewport } from '@databyss-org/ui'
 import { darkTheme } from '../../theming/theme'
-import {
-  space,
-  layout,
-  flexbox,
-  border,
-  position,
-  compose,
-  variant,
-  color,
-} from 'styled-system'
-import styled from '../../primitives/styled'
 import css from '@styled-system/css'
 
 export const defaultProps = {
@@ -49,13 +38,45 @@ const Section = ({ children, title, variant, ...others }) => (
   </View>
 )
 
+const BottomInfoText = ({ text }) => (
+  <Text color="text.3" variant="uiTextSmall" p="tiny">
+    {text}
+  </Text>
+)
+
+const BottomInfo = (
+  <View alignItems="stretch" flexGrow={1} width="100%" p="medium">
+    <View p="small">
+      <BottomInfoText text="Syntax Guide" />
+    </View>
+    <Separator color="border.1" />
+    <View p="small">
+      <BottomInfoText text="@ source" />
+      <BottomInfoText text="// location" />
+      <BottomInfoText text="# topic" />
+    </View>
+    <Separator color="border.1" />
+    <BaseControl width="100%" onClick={() => console.log('new page')}>
+      <View p="medium" pl="small">
+        <Text color="text.3" variant="uiTextSmall">
+          + New Page Placeholder
+        </Text>
+      </View>
+    </BaseControl>
+  </View>
+)
+
 Section.defaultProps = {
   variant: 'heading3',
 }
 
 const Sidebar = ({ children }) => {
   const [menuOpen, setMenuOpen] = useState(true)
-  const [value1, setValue1] = useState({ textValue: 'value', ranges: [] })
+  const [menuItem, setMenuItem] = useState(false)
+
+  const composeList = type => {
+    console.log(type)
+  }
 
   const menuItems = [
     {
@@ -66,32 +87,100 @@ const Sidebar = ({ children }) => {
     {
       svg: <PageSvg />,
       text: 'Pages',
-      action: () => console.log('PAGES'),
+      action: () => setMenuItem('Pages'),
       list: [
-        { id: 'someId', title: 'Page Title 1' },
-        { id: 'someId', title: 'Page Title 2' },
+        {
+          svg: <ArrowLeft />,
+          text: 'Pages',
+          action: () => {
+            setMenuItem(false)
+          },
+        },
+        {
+          svg: <PageSvg />,
+          text: 'page title 1',
+          action: () => console.log('dispatch id 1'),
+        },
+        {
+          svg: <PageSvg />,
+          text: 'page title 2',
+          action: () => console.log('dispatch id 2'),
+        },
+        {
+          svg: <PageSvg />,
+          text: 'page title 3',
+          action: () => console.log('dispatch id 3'),
+        },
       ],
     },
     {
       svg: <SourceSvg />,
       text: 'Sources',
-      action: () => console.log('SOURCES'),
+      action: () => setMenuItem('Sources'),
     },
     {
       svg: <AuthorSvg />,
       text: 'Authors',
-      action: () => console.log('AUTHORS'),
+      action: () => setMenuItem('Authors'),
     },
     {
       svg: <TopicSvg />,
       text: 'Topics',
-      action: () => console.log('TOPICS'),
+      action: () => setMenuItem('Topics'),
     },
   ]
 
+  const SidebarContent = list =>
+    list.reduce((acc, item, index) => {
+      if (index !== 0) {
+        acc.push(<Separator color="border.1" key={`separator${index}`} />)
+      }
+      acc.push(
+        <BaseControl
+          key={index}
+          width="100%"
+          onClick={item.action}
+          alignItems={!menuOpen && 'flex-end'}
+        >
+          {menuOpen ? (
+            <View>
+              <Grid singleRow alignItems="center" columnGap="small">
+                <Icon sizeVariant={index ? 'tiny' : 'medium'} color="text.3">
+                  {item.svg}
+                </Icon>
+                <Text
+                  variant={index ? 'uiTextSmall' : 'uiTextLarge'}
+                  color="text.2"
+                >
+                  {item.text}
+                </Text>
+                {index && !menuItem ? (
+                  <View position="absolute" right="small">
+                    <Icon sizeVariant="small" color="text.3">
+                      <ArrowRight />
+                    </Icon>
+                  </View>
+                ) : null}
+              </Grid>
+            </View>
+          ) : (
+            <Grid singleRow id="here" alignItems="flex-end" columnGap="small">
+              <Icon
+                sizeVariant={!index || !menuOpen ? 'medium' : 'tiny'}
+                color="text.3"
+              >
+                {item.svg}
+              </Icon>
+            </Grid>
+          )}
+        </BaseControl>
+      )
+      return acc
+    }, [])
+
   return (
     <View alignItems="stretch" flexGrow={1} width="100%">
-      <Grid>
+      <Grid columnGap="none" rowGap="none">
         <View
           {...defaultProps}
           css={css({
@@ -105,90 +194,34 @@ const Sidebar = ({ children }) => {
             bg="background.0"
             width={300}
             pt={'medium'}
+            height="100vh"
           >
             <List
               verticalItemPadding={2}
               horizontalItemPadding={2}
-              height="100vh"
               mt="none"
               mb="none"
               alignItems={menuOpen ? 'center' : 'flex-end'}
             >
-              {menuItems.reduce((acc, item, index) => {
-                if (index > 0) {
-                  acc.push(
-                    <Separator color="border.1" key={`separator${index}`} />
-                  )
-                }
-                acc.push(
-                  <BaseControl
-                    key={index}
-                    width="100%"
-                    onClick={item.action}
-                    alignItems={!menuOpen && 'flex-end'}
-                  >
-                    {menuOpen ? (
-                      <View>
-                        <Grid singleRow alignItems="center" columnGap="small">
-                          <Icon
-                            sizeVariant={index ? 'tiny' : 'medium'}
-                            color="text.3"
-                          >
-                            {item.svg}
-                          </Icon>
-                          <Text
-                            variant={index ? 'uiTextSmall' : 'uiTextLarge'}
-                            color="text.2"
-                          >
-                            {item.text}
-                          </Text>
-                          {index ? (
-                            <View position="absolute" right="small">
-                              <Icon sizeVariant="small" color="text.3">
-                                <ArrowRight />
-                              </Icon>
-                            </View>
-                          ) : null}
-                        </Grid>
-                      </View>
-                    ) : (
-                      <Grid
-                        singleRow
-                        id="here"
-                        alignItems="flex-end"
-                        columnGap="small"
-                      >
-                        <Icon
-                          sizeVariant={!index || !menuOpen ? 'medium' : 'tiny'}
-                          color="text.3"
-                        >
-                          {item.svg}
-                        </Icon>
-                      </Grid>
-                    )}
-                  </BaseControl>
-                )
-                return acc
-              }, [])}
+              {menuItem
+                ? SidebarContent(menuItems.find(i => i.text === menuItem).list)
+                : SidebarContent(menuItems)}
             </List>
+            {menuOpen && (
+              <View position="fixed" bottom={0} left={0} width="100%">
+                {BottomInfo}
+              </View>
+            )}
           </View>
         </View>
-
         <View
           width={500}
           display="flex"
-          // TODO: REMOVE THIS PART
           css={css({
             transform: menuOpen ? 'translateX(0)' : 'translateX(-240px)',
             transition: 'transform 0.3s ease-in-out',
           })}
         >
-          <TextControl
-            variant="uiTextNormal"
-            value={value1}
-            onChange={setValue1}
-            rich
-          />
           {children}
         </View>
       </Grid>

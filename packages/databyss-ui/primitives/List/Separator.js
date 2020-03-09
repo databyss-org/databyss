@@ -12,7 +12,7 @@ const Separator = ({ spacing, color }) => (
     paddingBottom="none"
     paddingLeft="none"
     paddingRight="none"
-    width="90%"
+    width="100%"
     marginTop={spacing}
     marginBottom={spacing}
   />
