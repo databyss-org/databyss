@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { PagesLoader } from '@databyss-org/ui/components/Loaders'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import SidebarContent from './SidebarList'
 import {
   Text,
@@ -6,12 +8,8 @@ import {
   List,
   BaseControl,
   Grid,
-  Icon,
   Separator,
-  TextControl,
-  Button,
 } from '@databyss-org/ui/primitives'
-import { Viewport } from '@databyss-org/ui'
 import { darkTheme } from '../../theming/theme'
 import css from '@styled-system/css'
 
@@ -64,8 +62,45 @@ Section.defaultProps = {
 }
 
 const Sidebar = ({ children }) => {
-  const [menuOpen, setMenuOpen] = useState(true)
+  const { getPages } = usePageContext()
+
+  const [menuOpen, toggleMenuOpen] = useState(true)
   const [menuItem, setMenuItem] = useState(false)
+  const [menuItemList, setMenuItemList] = useState([])
+
+  const onToggleMenuOpen = () => {
+    toggleMenuOpen(!menuOpen)
+  }
+
+  const ServerContent = () => {
+    if (menuItem === 'pages') {
+      return (
+        <PagesLoader>
+          {pages => {
+            const _menuItems = Object.values(pages).map(p => ({
+              text: p.name,
+              type: 'pages',
+              id: p._id,
+            }))
+            _menuItems.unshift({ text: 'Pages', type: 'header' })
+            return SidebarContent({
+              menuItems: _menuItems,
+              menuItem,
+              menuOpen,
+              onToggleMenuOpen,
+              onItemClick: id => {
+                if (!id) {
+                  return setMenuItem(false)
+                }
+                return console.log(id)
+              },
+            })
+          }}
+        </PagesLoader>
+      )
+    }
+    return <div>item</div>
+  }
 
   return (
     <View alignItems="stretch" flexGrow={1} width="100%">
@@ -93,13 +128,16 @@ const Sidebar = ({ children }) => {
               alignItems={menuOpen ? 'center' : 'flex-end'}
             >
               {/*
-            if menuItem exists, load list of items and compose 
+            if menuItem exists, load list of items and create component 
             */}
-              {menuItem ? (
-                <div>test</div>
-              ) : (
-                SidebarContent({ menuOpen, setMenuOpen, setMenuItem })
-              )}
+              {menuItem
+                ? ServerContent()
+                : SidebarContent({
+                    menuOpen,
+                    menuItem,
+                    onToggleMenuOpen,
+                    onItemClick: setMenuItem,
+                  })}
             </List>
             {menuOpen && (
               <View position="fixed" bottom={0} left={0} width="100%">

@@ -14,34 +14,38 @@ import {
   Grid,
   Icon,
   Separator,
-  TextControl,
-  Button,
 } from '@databyss-org/ui/primitives'
-import { darkTheme } from '../../theming/theme'
-import css from '@styled-system/css'
 
-const composeList = type => {
-  console.log(type)
-  const _list = [
-    {
-      text: 'Pages',
-      type: 'pages',
-      action: () => {
-        setMenuItem(false)
-      },
-    },
-  ]
-  return SidebarContent(_list)
-  /*
-      {
-          type
-          text: 'page title 1',
-          action: () => console.log('dispatch id 1'),
-        },
-    */
-}
+const defaultMenu = [
+  {
+    text: 'Databyss',
+    type: 'header',
+  },
+  {
+    type: 'pages',
+    text: 'Pages',
+  },
+  {
+    type: 'sources',
+    text: 'Sources',
+  },
+  {
+    type: 'authors',
+    text: 'Authors',
+  },
+  {
+    type: 'topics',
+    text: 'Topics',
+  },
+]
 
-const SidebarContent = ({ menuOpen, setMenuOpen, setMenuItem }) => {
+const SidebarContent = ({
+  menuItems = defaultMenu,
+  menuItem,
+  menuOpen,
+  onToggleMenuOpen,
+  onItemClick,
+}) => {
   const menuSvgs = type => {
     return {
       header: menuOpen ? <ArrowLeft /> : <Databyss />,
@@ -52,33 +56,20 @@ const SidebarContent = ({ menuOpen, setMenuOpen, setMenuItem }) => {
     }[type]
   }
 
-  const menuItems = [
-    {
-      text: 'Databyss',
-      type: 'header',
-      action: () => setMenuOpen(!menuOpen),
-    },
-    {
-      type: 'pages',
-      text: 'Pages',
-      action: () => setMenuItem('pages'),
-    },
-    {
-      type: 'sources',
-      text: 'Sources',
-      action: () => setMenuItem('sources'),
-    },
-    {
-      type: 'authors',
-      text: 'Authors',
-      action: () => setMenuItem('authors'),
-    },
-    {
-      type: 'topics',
-      text: 'Topics',
-      action: () => setMenuItem('topics'),
-    },
-  ]
+  const onClick = (item, index) => {
+    if (!index) {
+      if (menuItems) {
+        return onItemClick(false)
+      } else {
+        return onToggleMenuOpen()
+      }
+    }
+    // if no id is passed, pass the item type
+    if (!item.id) {
+      return onItemClick(item.type)
+    }
+    return onItemClick(item.id)
+  }
 
   return menuItems.reduce((acc, item, index) => {
     if (index !== 0) {
@@ -86,13 +77,15 @@ const SidebarContent = ({ menuOpen, setMenuOpen, setMenuItem }) => {
     }
     acc.push(
       <BaseControl
+        id="menu-this"
+        p={2}
         key={index}
         width="100%"
-        onClick={item.action}
+        onClick={() => onClick(item, index)}
         alignItems={!menuOpen && 'flex-end'}
       >
         {menuOpen ? (
-          <View>
+          <View id="inside-item">
             <Grid singleRow alignItems="center" columnGap="small">
               <Icon sizeVariant={index ? 'tiny' : 'medium'} color="text.3">
                 {menuSvgs(item.type)}
