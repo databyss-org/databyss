@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import SidebarList from './SidebarList'
 import {
   Text,

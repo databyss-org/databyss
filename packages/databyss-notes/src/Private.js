@@ -1,20 +1,3 @@
-// import React from 'react'
-// import { View } from '@databyss-org/ui/primitives'
-// import { Viewport, Sidebar, PageContent } from '@databyss-org/ui'
-// import Page from './Page'
-
-// const Private = () => {
-//   return (
-//     <Sidebar>
-//       <PageContent>
-//         <Page />
-//       </PageContent>
-//     </Sidebar>
-//   )
-// }
-
-// export default Private
-
 import React from 'react'
 import EditorProvider, {
   pageReducer,
@@ -27,9 +10,8 @@ import AutoSave from '@databyss-org/ui/editor/AutoSave'
 import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
 import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import SlateContentEditable from '@databyss-org/ui/editor/slate/page/ContentEditable'
-import { View } from '@databyss-org/ui/primitives'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { Viewport, Sidebar, PageContent } from '@databyss-org/ui'
+import { Sidebar, PageContent } from '@databyss-org/ui'
 
 const Private = () => {
   const { getSession } = useSessionContext()

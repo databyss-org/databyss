@@ -5,7 +5,6 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { Viewport } from '@databyss-org/ui'
 import Public from './Public'
-import Page from './Page'
 import Private from './Private'
 
 const App = () => {
