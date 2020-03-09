@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import SidebarContent from './SidebarList'
+import SidebarList from './SidebarList'
 import {
   Text,
   View,
@@ -62,17 +62,18 @@ Section.defaultProps = {
 }
 
 const Sidebar = ({ children }) => {
-  const { getPages } = usePageContext()
-
   const [menuOpen, toggleMenuOpen] = useState(true)
   const [menuItem, setMenuItem] = useState(false)
-  const [menuItemList, setMenuItemList] = useState([])
 
   const onToggleMenuOpen = () => {
     toggleMenuOpen(!menuOpen)
   }
 
-  const ServerContent = () => {
+  /*
+  if item active in menuItem, SidebarContent will compose a list to pass to SidebarList
+  */
+
+  const SidebarContent = () => {
     if (menuItem === 'pages') {
       return (
         <PagesLoader>
@@ -82,24 +83,33 @@ const Sidebar = ({ children }) => {
               type: 'pages',
               id: p._id,
             }))
+            // first item in array should be title
             _menuItems.unshift({ text: 'Pages', type: 'header' })
-            return SidebarContent({
+            return SidebarList({
               menuItems: _menuItems,
               menuItem,
               menuOpen,
               onToggleMenuOpen,
               onItemClick: id => {
+                // if no id is passed, menu will go back to default content
                 if (!id) {
                   return setMenuItem(false)
                 }
-                return console.log(id)
+                console.log('DISPATCH PAGE ID', id)
+                // dispatch page getter
+                return
               },
             })
           }}
         </PagesLoader>
       )
     }
-    return <div>item</div>
+    return SidebarList({
+      menuOpen,
+      menuItem,
+      onToggleMenuOpen,
+      onItemClick: setMenuItem,
+    })
   }
 
   return (
@@ -127,17 +137,7 @@ const Sidebar = ({ children }) => {
               mb="none"
               alignItems={menuOpen ? 'center' : 'flex-end'}
             >
-              {/*
-            if menuItem exists, load list of items and create component 
-            */}
-              {menuItem
-                ? ServerContent()
-                : SidebarContent({
-                    menuOpen,
-                    menuItem,
-                    onToggleMenuOpen,
-                    onItemClick: setMenuItem,
-                  })}
+              <SidebarContent />
             </List>
             {menuOpen && (
               <View position="fixed" bottom={0} left={0} width="100%">

@@ -9,7 +9,6 @@ import ArrowRight from '@databyss-org/ui/assets/arrowRight.svg'
 import {
   Text,
   View,
-  List,
   BaseControl,
   Grid,
   Icon,
@@ -39,28 +38,31 @@ const defaultMenu = [
   },
 ]
 
-const SidebarContent = ({
+const menuSvgs = type => {
+  return {
+    header: <Databyss />,
+    pages: <PageSvg />,
+    sources: <SourceSvg />,
+    authors: <AuthorSvg />,
+    topics: <TopicSvg />,
+  }[type]
+}
+
+const SidebarList = ({
   menuItems = defaultMenu,
   menuItem,
   menuOpen,
   onToggleMenuOpen,
   onItemClick,
 }) => {
-  const menuSvgs = type => {
-    return {
-      header: menuOpen ? <ArrowLeft /> : <Databyss />,
-      pages: <PageSvg />,
-      sources: <SourceSvg />,
-      authors: <AuthorSvg />,
-      topics: <TopicSvg />,
-    }[type]
-  }
-
   const onClick = (item, index) => {
+    // if first item in array, item is header
     if (!index) {
-      if (menuItems) {
+      if (menuItem) {
+        // clear active item
         return onItemClick(false)
       } else {
+        // collapse menu
         return onToggleMenuOpen()
       }
     }
@@ -88,7 +90,7 @@ const SidebarContent = ({
           <View id="inside-item">
             <Grid singleRow alignItems="center" columnGap="small">
               <Icon sizeVariant={index ? 'tiny' : 'medium'} color="text.3">
-                {menuSvgs(item.type)}
+                {index ? menuSvgs(item.type) : <ArrowLeft />}
               </Icon>
               <Text
                 variant={index ? 'uiTextSmall' : 'uiTextLarge'}
@@ -121,4 +123,4 @@ const SidebarContent = ({
   }, [])
 }
 
-export default SidebarContent
+export default SidebarList
