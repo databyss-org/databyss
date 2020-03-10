@@ -7,14 +7,23 @@ import {
   List,
   BaseControl,
   Grid,
+  Icon,
   Separator,
 } from '@databyss-org/ui/primitives'
+import ArrowLeft from '@databyss-org/ui/assets/arrowLeft.svg'
+import Databyss from '@databyss-org/ui/assets/databyss.svg'
 import { darkTheme } from '../../theming/theme'
 import css from '@styled-system/css'
 
 export const defaultProps = {
   height: '100vh',
-  flexDirection: 'column',
+}
+
+const headerMap = type => {
+  if (type) {
+    return { pages: 'Pages' }[type]
+  }
+  return 'Databyss'
 }
 
 const Section = ({ children, title, variant, ...others }) => (
@@ -60,7 +69,7 @@ Section.defaultProps = {
   variant: 'heading3',
 }
 
-const Sidebar = ({ children }) => {
+const Sidebar = () => {
   const [menuOpen, toggleMenuOpen] = useState(true)
   const [menuItem, setMenuItem] = useState(false)
 
@@ -71,7 +80,6 @@ const Sidebar = ({ children }) => {
   /*
   if item active in menuItem, SidebarContent will compose a list to pass to SidebarList
   */
-
   const SidebarContent = () => {
     if (menuItem === 'pages') {
       return (
@@ -83,7 +91,7 @@ const Sidebar = ({ children }) => {
               id: p._id,
             }))
             // first item in array should be title
-            _menuItems.unshift({ text: 'Pages', type: 'header' })
+
             return SidebarList({
               menuItems: _menuItems,
               menuItem,
@@ -111,51 +119,78 @@ const Sidebar = ({ children }) => {
     })
   }
 
+  const onHeaderClick = () => {
+    if (menuItem) {
+      return setMenuItem(false)
+    }
+    return toggleMenuOpen(!menuOpen)
+  }
+
   return (
-    <View alignItems="stretch" flexGrow={1} width="100%">
-      <Grid columnGap="none" rowGap="none">
-        <View
-          {...defaultProps}
-          css={css({
-            transform: menuOpen ? 'translateX(0)' : 'translateX(-240px)',
-            transition: 'transform 0.3s ease-in-out',
-          })}
+    <View
+      {...defaultProps}
+      css={css({
+        width: menuOpen ? '300px' : '60px',
+      })}
+    >
+      <View
+        widthVariant="content"
+        theme={darkTheme}
+        bg="background.0"
+        pt={'medium'}
+        height="100vh"
+      >
+        <List
+          verticalItemPadding={2}
+          horizontalItemPadding={2}
+          mt="none"
+          mb="none"
+          p="small"
+          alignItems={menuOpen ? 'center' : 'flex-end'}
         >
-          <View
-            widthVariant="content"
-            theme={darkTheme}
-            bg="background.0"
-            width={300}
-            pt={'medium'}
-            height="100vh"
+          {/* header */}
+          <BaseControl
+            id="menu-this"
+            p={2}
+            width="100%"
+            onClick={() => onHeaderClick()}
+            alignItems={!menuOpen && 'center'}
           >
-            <List
-              verticalItemPadding={2}
-              horizontalItemPadding={2}
-              mt="none"
-              mb="none"
-              alignItems={menuOpen ? 'center' : 'flex-end'}
-            >
-              <SidebarContent />
-            </List>
-            {menuOpen && (
-              <View position="fixed" bottom={0} left={0} width="100%">
-                {BottomInfo}
+            {menuOpen ? (
+              <View id="inside-item">
+                <Grid
+                  singleRow
+                  alignItems="center"
+                  columnGap="small"
+                  id="thisicon"
+                >
+                  <Icon sizeVariant={'medium'} color="text.3">
+                    <ArrowLeft />
+                  </Icon>
+                  <Text variant={'uiTextLarge'} color="text.2">
+                    {headerMap(menuItem)}
+                  </Text>
+                </Grid>
               </View>
+            ) : (
+              <Grid singleRow id="here" alignItems="flex-end" columnGap="small">
+                <Icon
+                  sizeVariant={!menuOpen ? 'medium' : 'tiny'}
+                  color="text.3"
+                >
+                  <Databyss />
+                </Icon>
+              </Grid>
             )}
+          </BaseControl>
+          <SidebarContent />
+        </List>
+        {menuOpen && (
+          <View position="fixed" bottom={0} left={0} width="300px">
+            {BottomInfo}
           </View>
-        </View>
-        <View
-          width={500}
-          display="flex"
-          css={css({
-            transform: menuOpen ? 'translateX(0)' : 'translateX(-240px)',
-            transition: 'transform 0.3s ease-in-out',
-          })}
-        >
-          {children}
-        </View>
-      </Grid>
+        )}
+      </View>
     </View>
   )
 }

@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import css from '@styled-system/css'
+
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
@@ -16,10 +18,10 @@ import {
 } from '@databyss-org/ui/primitives'
 
 const defaultMenu = [
-  {
-    text: 'Databyss',
-    type: 'header',
-  },
+  //   {
+  //     text: 'Databyss',
+  //     type: 'header',
+  //   },
   {
     type: 'pages',
     text: 'Pages',
@@ -28,14 +30,14 @@ const defaultMenu = [
     type: 'sources',
     text: 'Sources',
   },
-  {
-    type: 'authors',
-    text: 'Authors',
-  },
-  {
-    type: 'topics',
-    text: 'Topics',
-  },
+  //   {
+  //     type: 'authors',
+  //     text: 'Authors',
+  //   },
+  //   {
+  //     type: 'topics',
+  //     text: 'Topics',
+  //   },
 ]
 
 const menuSvgs = type => {
@@ -55,70 +57,57 @@ const SidebarList = ({
   onToggleMenuOpen,
   onItemClick,
 }) => {
-  const onClick = (item, index) => {
-    // if first item in array, item is header
-    if (!index) {
-      if (menuItem) {
-        // clear active item
-        return onItemClick(false)
-      } else {
-        // collapse menu
-        return onToggleMenuOpen()
-      }
-    }
+  const onClick = item => {
     // if no id is passed, pass the item type
     if (!item.id) {
       return onItemClick(item.type)
     }
+    // dispatch id to fetch
     return onItemClick(item.id)
   }
 
   return menuItems.reduce((acc, item, index) => {
-    if (index !== 0) {
-      acc.push(<Separator color="border.1" key={`separator${index}`} />)
-    }
+    acc.push(<Separator color="border.1" key={`separator${index}`} />)
+
     acc.push(
       <BaseControl
         id="menu-this"
         p={2}
         key={index}
         width="100%"
-        onClick={() => onClick(item, index)}
-        alignItems={!menuOpen && 'flex-end'}
+        onClick={() => onClick(item)}
+        alignItems={!menuOpen && 'center'}
       >
         {menuOpen ? (
           <View id="inside-item">
-            <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant={index ? 'tiny' : 'medium'} color="text.3">
-                {index ? menuSvgs(item.type) : <ArrowLeft />}
+            <Grid singleRow alignItems="center" columnGap="small" id="thisicon">
+              <Icon sizeVariant="tiny" color="text.3">
+                {menuSvgs(item.type)}
               </Icon>
-              <Text
-                variant={index ? 'uiTextSmall' : 'uiTextLarge'}
-                color="text.2"
-              >
+              <Text variant="uiTextSmall" color="text.2">
                 {item.text}
               </Text>
-              {index ? (
-                <View position="absolute" right="small">
-                  <Icon sizeVariant="small" color="text.3">
-                    <ArrowRight />
-                  </Icon>
-                </View>
-              ) : null}
+
+              <View position="absolute" right="small">
+                <Icon sizeVariant="small" color="text.3">
+                  <ArrowRight />
+                </Icon>
+              </View>
             </Grid>
           </View>
         ) : (
           <Grid singleRow id="here" alignItems="flex-end" columnGap="small">
-            <Icon
-              sizeVariant={!index || !menuOpen ? 'medium' : 'tiny'}
-              color="text.3"
-            >
+            <Icon sizeVariant={!menuOpen ? 'medium' : 'tiny'} color="text.3">
               {menuSvgs(item.type)}
             </Icon>
           </Grid>
         )}
       </BaseControl>
     )
+
+    if (menuItems.length === index + 1) {
+      acc.push(<Separator color="border.1" key={`separator${index}`} />)
+    }
     return acc
   }, [])
 }

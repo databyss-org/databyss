@@ -12,6 +12,7 @@ import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import SlateContentEditable from '@databyss-org/ui/editor/slate/page/ContentEditable'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { Sidebar, PageContent } from '@databyss-org/ui'
+import { View, Grid } from '@databyss-org/ui/primitives'
 
 const Private = () => {
   const { getSession } = useSessionContext()
@@ -21,24 +22,27 @@ const Private = () => {
     <PageProvider>
       <SourceProvider>
         <TopicProvider>
-          <PageLoader pageId={account.defaultPage}>
-            {page => (
-              <Sidebar>
-                <PageContent>
-                  <EditorProvider
-                    initialState={page}
-                    reducer={pageReducer}
-                    editableReducer={slateReducer}
-                  >
-                    <AutoSave />
-                    <EditorPage autoFocus>
-                      <SlateContentEditable />
-                    </EditorPage>
-                  </EditorProvider>
-                </PageContent>
-              </Sidebar>
-            )}
-          </PageLoader>
+          <View flexDirection="row" display="flex" width="100vw">
+            <Sidebar />
+            <View>
+              <PageLoader pageId={account.defaultPage}>
+                {page => (
+                  <PageContent>
+                    <EditorProvider
+                      initialState={page}
+                      reducer={pageReducer}
+                      editableReducer={slateReducer}
+                    >
+                      <AutoSave />
+                      <EditorPage autoFocus>
+                        <SlateContentEditable />
+                      </EditorPage>
+                    </EditorProvider>
+                  </PageContent>
+                )}
+              </PageLoader>
+            </View>
+          </View>
         </TopicProvider>
       </SourceProvider>
     </PageProvider>
