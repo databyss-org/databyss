@@ -5,6 +5,7 @@ import makeLoader from './makeLoader'
 export const PageLoader = makeLoader(({ pageId }) => {
   const { getPage } = usePageContext()
   return getPage(pageId)
+  // return null
 })
 
 export const withPage = Wrapped => ({ pageId, ...others }) => (

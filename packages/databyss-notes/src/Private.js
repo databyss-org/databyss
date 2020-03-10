@@ -24,24 +24,22 @@ const Private = () => {
         <TopicProvider>
           <View flexDirection="row" display="flex" width="100vw">
             <Sidebar />
-            <View>
-              <PageLoader pageId={account.defaultPage}>
-                {page => (
-                  <PageContent>
-                    <EditorProvider
-                      initialState={page}
-                      reducer={pageReducer}
-                      editableReducer={slateReducer}
-                    >
-                      <AutoSave />
-                      <EditorPage autoFocus>
-                        <SlateContentEditable />
-                      </EditorPage>
-                    </EditorProvider>
-                  </PageContent>
-                )}
-              </PageLoader>
-            </View>
+            <PageLoader pageId={account.defaultPage}>
+              {page => (
+                <PageContent>
+                  <EditorProvider
+                    initialState={page}
+                    reducer={pageReducer}
+                    editableReducer={slateReducer}
+                  >
+                    <AutoSave />
+                    <EditorPage autoFocus>
+                      <SlateContentEditable />
+                    </EditorPage>
+                  </EditorProvider>
+                </PageContent>
+              )}
+            </PageLoader>
           </View>
         </TopicProvider>
       </SourceProvider>
