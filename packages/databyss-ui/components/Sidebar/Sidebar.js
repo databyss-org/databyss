@@ -48,7 +48,7 @@ const BottomInfoText = ({ text }) => (
 )
 
 const BottomInfo = () => {
-  const { path, navigate } = useNavigationContext()
+  const { navigate } = useNavigationContext()
   const { setPage } = usePageContext()
   const onNewPageClick = () => {
     const _page = newPage()
@@ -123,7 +123,6 @@ const Sidebar = () => {
                 if (!id) {
                   return setMenuItem(false)
                 }
-                console.log('here')
                 navigate(`/pages/${id}`)
                 return
               },

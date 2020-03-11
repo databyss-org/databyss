@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { Text, View, TextControl } from '@databyss-org/ui/primitives'
 
 const PageHeader = ({ isFocused, pageId }) => {
-  const { session } = useSessionContext()
   const { getPage, setPage } = usePageContext()
 
-  //   const pageId = session.account.defaultPage
-
   const [pageName, setPageName] = useState({ textValue: '' })
-
-  // const pageData = getPage(pageId)
 
   useEffect(
     () => {

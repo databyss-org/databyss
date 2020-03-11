@@ -4,7 +4,6 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import Databyss from '@databyss-org/ui/assets/databyss.svg'
-
 import ArrowRight from '@databyss-org/ui/assets/arrowRight.svg'
 import {
   Text,
