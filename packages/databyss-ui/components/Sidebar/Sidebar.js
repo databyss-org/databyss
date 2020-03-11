@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { newPage } from '@databyss-org/services/pages/_helpers'
 import SidebarList from './SidebarList'
 import {
   Text,
@@ -12,8 +15,9 @@ import {
 } from '@databyss-org/ui/primitives'
 import ArrowLeft from '@databyss-org/ui/assets/arrowLeft.svg'
 import Databyss from '@databyss-org/ui/assets/databyss.svg'
-import { darkTheme } from '../../theming/theme'
 import css from '@styled-system/css'
+
+import { darkTheme } from '../../theming/theme'
 
 export const defaultProps = {
   height: '100vh',
@@ -43,33 +47,50 @@ const BottomInfoText = ({ text }) => (
   </Text>
 )
 
-const BottomInfo = (
-  <View alignItems="stretch" flexGrow={1} width="100%" p="medium">
-    <View p="small">
-      <BottomInfoText text="Syntax Guide" />
-    </View>
-    <Separator color="border.1" />
-    <View p="small">
-      <BottomInfoText text="@ source" />
-      <BottomInfoText text="// location" />
-      <BottomInfoText text="# topic" />
-    </View>
-    <Separator color="border.1" />
-    <BaseControl width="100%" onClick={() => console.log('new page')}>
-      <View p="medium" pl="small">
-        <Text color="text.3" variant="uiTextSmall">
-          + New Page Placeholder
-        </Text>
+const BottomInfo = () => {
+  const { path, navigate } = useNavigationContext()
+  const { setPage } = usePageContext()
+  const onNewPageClick = () => {
+    const _page = newPage()
+    setPage(_page)
+    navigate(`/pages/${_page.page._id}`)
+  }
+
+  return (
+    <View
+      alignItems="stretch"
+      flexGrow={1}
+      width="100%"
+      p="medium"
+      id="bottomInfo"
+    >
+      <View p="small">
+        <BottomInfoText text="Syntax Guide" />
       </View>
-    </BaseControl>
-  </View>
-)
+      <Separator color="border.1" />
+      <View p="small">
+        <BottomInfoText text="@ source" />
+        <BottomInfoText text="// location" />
+        <BottomInfoText text="# topic" />
+      </View>
+      <Separator color="border.1" />
+      <BaseControl width="100%" onClick={onNewPageClick}>
+        <View p="medium" pl="small">
+          <Text color="text.3" variant="uiTextSmall">
+            + New Page Placeholder
+          </Text>
+        </View>
+      </BaseControl>
+    </View>
+  )
+}
 
 Section.defaultProps = {
   variant: 'heading3',
 }
 
 const Sidebar = () => {
+  const { path, navigate } = useNavigationContext()
   const [menuOpen, toggleMenuOpen] = useState(true)
   const [menuItem, setMenuItem] = useState(false)
 
@@ -102,7 +123,8 @@ const Sidebar = () => {
                 if (!id) {
                   return setMenuItem(false)
                 }
-                console.log('DISPATCH PAGE ID', id)
+                console.log('here')
+                navigate(`/pages/${id}`)
                 return
               },
             })
@@ -186,7 +208,7 @@ const Sidebar = () => {
         </List>
         {menuOpen && (
           <View position="fixed" bottom={0} left={0} width="300px">
-            {BottomInfo}
+            <BottomInfo />
           </View>
         )}
       </View>

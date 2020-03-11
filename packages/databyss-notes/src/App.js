@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import SessionProvider from '@databyss-org/services/session/SessionProvider'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'

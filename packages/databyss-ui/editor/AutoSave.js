@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
+import cloneDeep from 'clone-deep'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorContext } from './EditorProvider'
 
 const AutoSave = ({ interval }) => {
-  const { setPage } = usePageContext()
+  const { setPage, getPage } = usePageContext()
   const [, , editorStateRef] = useEditorContext()
   const { modals } = useNavigationContext()
 
@@ -15,8 +16,11 @@ const AutoSave = ({ interval }) => {
       let _timer
       if (!hasModal && !_timer) {
         _timer = setInterval(() => {
-          const _page = editorStateRef.current
+          const _page = cloneDeep(editorStateRef.current)
           delete _page.page.name
+          // preserve name from page cache
+          const _name = getPage(_page.page._id).page.name
+          _page.page.name = _name
           // TODO: check if values have changed before saving
           setPage(_page)
         }, interval * 1000)
@@ -27,8 +31,11 @@ const AutoSave = ({ interval }) => {
       }
       // on unmount clear autosave
       return () => {
-        const _page = editorStateRef.current
+        const _page = cloneDeep(editorStateRef.current)
         delete _page.page.name
+        // preserve name from page cache
+        const _name = getPage(_page.page._id).page.name
+        _page.page.name = _name
         setPage(_page)
         clearInterval(_timer)
       }

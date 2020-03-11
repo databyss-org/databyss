@@ -3,19 +3,23 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { Text, View, TextControl } from '@databyss-org/ui/primitives'
 
-const PageHeader = ({ isFocused }) => {
+const PageHeader = ({ isFocused, pageId }) => {
   const { session } = useSessionContext()
   const { getPage, setPage } = usePageContext()
 
-  const pageId = session.account.defaultPage
+  //   const pageId = session.account.defaultPage
 
   const [pageName, setPageName] = useState({ textValue: '' })
 
-  const pageData = getPage(pageId)
+  // const pageData = getPage(pageId)
 
-  useEffect(() => {
-    setPageName({ textValue: pageData.page.name })
-  }, [])
+  useEffect(
+    () => {
+      const pageData = getPage(pageId)
+      setPageName({ textValue: pageData.page.name })
+    },
+    [pageId]
+  )
 
   const onPageNameChange = val => {
     setPageName(val)
@@ -23,7 +27,7 @@ const PageHeader = ({ isFocused }) => {
 
   const onBlur = () => {
     const _pageData = {
-      page: { name: pageName.textValue, _id: pageData.page._id },
+      page: { name: pageName.textValue, _id: pageId },
     }
     setPage(_pageData)
     isFocused(false)
