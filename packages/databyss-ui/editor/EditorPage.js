@@ -21,7 +21,7 @@ import {
   onPaste,
   onSetBlockRef,
   newBlockMenu,
-  onSelection,
+  // onSelection,
   addDirtyAtomic,
   dequeueDirtyAtomic,
   updateAtomic,

@@ -4,7 +4,6 @@ import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { newPage } from '@databyss-org/services/pages/_helpers'
-import SidebarList from './SidebarList'
 import {
   Text,
   View,
@@ -16,7 +15,7 @@ import {
 } from '@databyss-org/ui/primitives'
 import ArrowLeft from '@databyss-org/ui/assets/arrowLeft.svg'
 import Databyss from '@databyss-org/ui/assets/databyss.svg'
-
+import SidebarList from './SidebarList'
 import { darkTheme } from '../../theming/theme'
 
 export const defaultProps = {
@@ -123,7 +122,7 @@ const Sidebar = () => {
                 if (!id) {
                   return setMenuItem(false)
                 }
-                navigate(`/pages/${id}`)
+                return navigate(`/pages/${id}`)
               },
             })
           }}
