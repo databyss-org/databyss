@@ -80,6 +80,7 @@ const Sidebar = () => {
   /*
   if item active in menuItem, SidebarContent will compose a list to pass to SidebarList
   */
+
   const SidebarContent = () => {
     if (menuItem === 'pages') {
       return (
@@ -90,7 +91,6 @@ const Sidebar = () => {
               type: 'pages',
               id: p._id,
             }))
-            // first item in array should be title
 
             return SidebarList({
               menuItems: _menuItems,
@@ -103,7 +103,6 @@ const Sidebar = () => {
                   return setMenuItem(false)
                 }
                 console.log('DISPATCH PAGE ID', id)
-                // dispatch page getter
                 return
               },
             })

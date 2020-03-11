@@ -15,8 +15,10 @@ const AutoSave = ({ interval }) => {
       let _timer
       if (!hasModal && !_timer) {
         _timer = setInterval(() => {
+          const _page = editorStateRef.current
+          delete _page.page.name
           // TODO: check if values have changed before saving
-          setPage(editorStateRef.current)
+          setPage(_page)
         }, interval * 1000)
       }
       if (hasModal) {
@@ -25,7 +27,9 @@ const AutoSave = ({ interval }) => {
       }
       // on unmount clear autosave
       return () => {
-        setPage(editorStateRef.current)
+        const _page = editorStateRef.current
+        delete _page.page.name
+        setPage(_page)
         clearInterval(_timer)
       }
     },

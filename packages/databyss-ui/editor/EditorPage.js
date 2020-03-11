@@ -123,9 +123,9 @@ const EditorPage = ({ children, autoFocus }) => {
   const onBackspace = (blockProperties, editableState) => {
     dispatchEditor(backspace(blockProperties, editableState))
   }
-  const onSetBlockType = (type, id, editableState) => {
-    dispatchEditor(setBlockType(type, id, editableState))
-  }
+  // const onSetBlockType = (type, id, editableState) => {
+  //   dispatchEditor(setBlockType(type, id, editableState))
+  // }
 
   const onBlockBlur = (id, text, editableState) => {
     // if empty replace block with virgin block
@@ -195,9 +195,9 @@ const EditorPage = ({ children, autoFocus }) => {
     })
   }
 
-  const onSelectionChange = ({ value }) => {
-    dispatchEditor(onSelection({ value }))
-  }
+  // const onSelectionChange = ({ value }) => {
+  //   dispatchEditor(onSelection({ value }))
+  // }
 
   const onDirtyAtomic = (refId, type) => {
     dispatchEditor(addDirtyAtomic(refId, type))
@@ -213,7 +213,7 @@ const EditorPage = ({ children, autoFocus }) => {
     onBlockBlur,
     OnToggleMark,
     onHotKey,
-    onSetBlockType,
+    //  onSetBlockType,
     deleteBlockByKey,
     deleteBlocksByKeys,
     onCutBlocks,
@@ -221,7 +221,7 @@ const EditorPage = ({ children, autoFocus }) => {
     setBlockRef,
     onNewBlockMenu,
     autoFocus,
-    onSelectionChange,
+    // onSelectionChange,
     onDirtyAtomic,
     onEditAtomic,
   })

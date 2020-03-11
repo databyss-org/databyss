@@ -22,6 +22,13 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
   const hideModal = () => dispatch(actions.hideModal())
   const navigate = options => dispatch(actions.navigate(options))
 
+  console.log('nav state', state)
+
+  /*
+  "getTokensFromPath('url string: /pages/:id/'")
+ return { id: ‘kdjf798ruiwjroi’} 
+//  returns dictionary where key is 'id string' and value is 
+  */
   return (
     <NavigationContext.Provider
       value={{ ...state, showModal, hideModal, navigate }}

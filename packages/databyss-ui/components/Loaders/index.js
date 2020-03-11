@@ -1,11 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import makeLoader from './makeLoader'
 
 export const PageLoader = makeLoader(({ pageId }) => {
   const { getPage } = usePageContext()
+  // const _temp = getPage(pageId)
+  // if (_temp) {
+  //   if (_temp.page) {
+  //     console.log('in loader', _temp.page.name)
+  //   }
+  // }
+
   return getPage(pageId)
-  // return null
 })
 
 export const withPage = Wrapped => ({ pageId, ...others }) => (

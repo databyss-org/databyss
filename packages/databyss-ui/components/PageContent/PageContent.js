@@ -1,49 +1,49 @@
-import React, { useState, useEffect } from 'react'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import {
-  Text,
-  View,
-  List,
-  BaseControl,
-  Grid,
-  Icon,
-  Separator,
-  TextControl,
-  Button,
-} from '@databyss-org/ui/primitives'
+import React, { useState } from 'react'
+import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import { View } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import PageHeader from './PageHeader'
+import PageBody from './PageBody'
 
-const PageContent = ({ children }) => {
-  const [pageName, setPageName] = useState({ textValue: '' })
-  const { session } = useSessionContext()
-  const pageId = session.account.defaultPage
+const PageContent = () => {
+  const { getSession } = useSessionContext()
+  const { account } = getSession()
 
-  const { getPage } = usePageContext()
-  const pageData = getPage(pageId)
-
-  useEffect(
-    () => {
-      setPageName({ textValue: pageData.page.name })
-    },
-    [pageData]
-  )
-
-  const onPageNameChange = val => {
-    setPageName(val)
-  }
+  const [readOnly, setReadOnly] = useState(false)
 
   // TODO:
   // TEXT CONTROL SHOULD ACCEPT TEXT VARIANT
 
+  const onHeaderClick = bool => {
+    if (readOnly !== bool) {
+      setReadOnly(bool)
+    }
+  }
+
+  /*
+  use same route to update name, just pass it name 
+  */
+
   return (
-    <View p="medium">
-      <View p="medium">
-        <Text variant="bodyLarge" id="headerstuff" color="text.3">
-          {pageName.textValue}
-          {/* <TextControl value={pageName} onChange={onPageNameChange} /> */}
-        </Text>
-      </View>
-      <Grid>{children}</Grid>
+    <View p="medium" flex="1">
+      <PageLoader pageId={account.defaultPage}>
+        {page => (
+          <View>
+            <PageHeader isFocused={onHeaderClick} />
+            <PageBody page={page} readOnly={readOnly} />
+            {/* <EditorProvider
+              initialState={page}
+              reducer={pageReducer}
+              editableReducer={slateReducer}
+            >
+              {!readOnly && <AutoSave />}
+              <EditorPage autoFocus>
+                <SlateContentEditable readOnly={readOnly} />
+              </EditorPage>
+            </EditorProvider> */}
+          </View>
+        )}
+      </PageLoader>
     </View>
   )
 }

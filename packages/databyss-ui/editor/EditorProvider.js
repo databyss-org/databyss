@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useState, useContext, useEffect } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 
 export { default as pageReducer } from './state/page/reducer'
@@ -34,6 +34,8 @@ const EditorProvider = ({
     initialState,
     { name: `EditorProvider ${name ? `(${name})` : ''}` }
   )
+
+  // if value has been updated outside of the editor context
 
   return (
     <EditorContext.Provider value={[state, dispatch, stateRef]}>

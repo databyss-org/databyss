@@ -69,6 +69,7 @@ const SlateContentEditable = forwardRef(
       onCutBlocks,
       onDirtyAtomic,
       onEditAtomic,
+      readOnly,
       ...others
     },
     ref
@@ -510,7 +511,7 @@ const SlateContentEditable = forwardRef(
         onCut={onCut}
         onDrop={e => e.preventDefault()}
         onSelect={onSelect}
-        readOnly={modals.length > 0}
+        readOnly={modals.length > 0 || readOnly}
         ref={forkRef(ref, editableRef)}
         autoFocus={autoFocus}
         onChange={onChange}

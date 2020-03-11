@@ -1,12 +1,10 @@
-import React, { useState } from 'react'
-import css from '@styled-system/css'
-
+import React from 'react'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import Databyss from '@databyss-org/ui/assets/databyss.svg'
-import ArrowLeft from '@databyss-org/ui/assets/arrowLeft.svg'
+
 import ArrowRight from '@databyss-org/ui/assets/arrowRight.svg'
 import {
   Text,
@@ -18,18 +16,14 @@ import {
 } from '@databyss-org/ui/primitives'
 
 const defaultMenu = [
-  //   {
-  //     text: 'Databyss',
-  //     type: 'header',
-  //   },
   {
     type: 'pages',
     text: 'Pages',
   },
-  {
-    type: 'sources',
-    text: 'Sources',
-  },
+  // {
+  //   type: 'sources',
+  //   text: 'Sources',
+  // },
   //   {
   //     type: 'authors',
   //     text: 'Authors',
@@ -67,7 +61,7 @@ const SidebarList = ({
   }
 
   return menuItems.reduce((acc, item, index) => {
-    acc.push(<Separator color="border.1" key={`separator${index}`} />)
+    acc.push(<Separator color="border.1" key={`separator-top${index}`} />)
 
     acc.push(
       <BaseControl
@@ -106,7 +100,7 @@ const SidebarList = ({
     )
 
     if (menuItems.length === index + 1) {
-      acc.push(<Separator color="border.1" key={`separator${index}`} />)
+      acc.push(<Separator color="border.1" key={`separator-bottom${index}`} />)
     }
     return acc
   }, [])
