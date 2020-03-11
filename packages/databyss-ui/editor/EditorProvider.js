@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext, useEffect } from 'react'
+import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 
 export { default as pageReducer } from './state/page/reducer'

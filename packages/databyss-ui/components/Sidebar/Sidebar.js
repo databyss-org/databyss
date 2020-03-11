@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import css from '@styled-system/css'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -15,7 +16,6 @@ import {
 } from '@databyss-org/ui/primitives'
 import ArrowLeft from '@databyss-org/ui/assets/arrowLeft.svg'
 import Databyss from '@databyss-org/ui/assets/databyss.svg'
-import css from '@styled-system/css'
 
 import { darkTheme } from '../../theming/theme'
 
@@ -90,7 +90,7 @@ Section.defaultProps = {
 }
 
 const Sidebar = () => {
-  const { path, navigate } = useNavigationContext()
+  const { navigate } = useNavigationContext()
   const [menuOpen, toggleMenuOpen] = useState(true)
   const [menuItem, setMenuItem] = useState(false)
 
@@ -124,7 +124,6 @@ const Sidebar = () => {
                   return setMenuItem(false)
                 }
                 navigate(`/pages/${id}`)
-                return
               },
             })
           }}
@@ -157,7 +156,7 @@ const Sidebar = () => {
         widthVariant="content"
         theme={darkTheme}
         bg="background.0"
-        pt={'medium'}
+        pt="medium"
         height="100vh"
       >
         <List
@@ -184,10 +183,10 @@ const Sidebar = () => {
                   columnGap="small"
                   id="thisicon"
                 >
-                  <Icon sizeVariant={'medium'} color="text.3">
+                  <Icon sizeVariant="medium" color="text.3">
                     <ArrowLeft />
                   </Icon>
-                  <Text variant={'uiTextLarge'} color="text.2">
+                  <Text variant="uiTextLarge" color="text.2">
                     {headerMap(menuItem)}
                   </Text>
                 </Grid>

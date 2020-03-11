@@ -33,15 +33,14 @@ const defaultMenu = [
   //   },
 ]
 
-const menuSvgs = type => {
-  return {
+const menuSvgs = type =>
+  ({
     header: <Databyss />,
     pages: <PageSvg />,
     sources: <SourceSvg />,
     authors: <AuthorSvg />,
     topics: <TopicSvg />,
-  }[type]
-}
+  }[type])
 
 const SidebarList = ({
   menuItems = defaultMenu,

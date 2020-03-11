@@ -24,8 +24,8 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
 
   /*
   "getTokensFromPath('url string: /pages/:id/'")
- return { id: ‘kdjf798ruiwjroi’} 
-//  returns dictionary where key is 'id string' and value is 
+  return { id: ‘kdjf798ruiwjroi’} 
+  returns dictionary where key is 'id string' and value is 
   */
   return (
     <NavigationContext.Provider

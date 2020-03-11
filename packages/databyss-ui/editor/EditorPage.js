@@ -196,9 +196,9 @@ const EditorPage = ({ children, autoFocus }) => {
     })
   }
 
-  const onSelectionChange = ({ value }) => {
-    dispatchEditor(onSelection({ value }))
-  }
+  // const onSelectionChange = ({ value }) => {
+  //   dispatchEditor(onSelection({ value }))
+  // }
 
   const onDirtyAtomic = (refId, type) => {
     dispatchEditor(addDirtyAtomic(refId, type))
