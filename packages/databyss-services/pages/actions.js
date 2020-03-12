@@ -31,6 +31,28 @@ export function fetchPage(_id) {
   }
 }
 
+export function fetchPageHeaders() {
+  return dispatch => {
+    dispatch({
+      type: FETCH_PAGE_HEADERS,
+    })
+    services
+      .getAllPages()
+      .then(res => {
+        dispatch({
+          type: CACHE_PAGE_HEADERS,
+          payload: res,
+        })
+      })
+      .catch(e => {
+        dispatch({
+          type: CACHE_PAGE_HEADERS,
+          payload: e,
+        })
+      })
+  }
+}
+
 export function savePage(state) {
   console.log('save page', state)
   const body = cloneDeep(state)
@@ -54,28 +76,6 @@ export function savePage(state) {
         dispatch(fetchPageHeaders())
       }
     })
-  }
-}
-
-export function fetchPageHeaders() {
-  return dispatch => {
-    dispatch({
-      type: FETCH_PAGE_HEADERS,
-    })
-    services
-      .getAllPages()
-      .then(res => {
-        dispatch({
-          type: CACHE_PAGE_HEADERS,
-          payload: res,
-        })
-      })
-      .catch(e => {
-        dispatch({
-          type: CACHE_PAGE_HEADERS,
-          payload: e,
-        })
-      })
   }
 }
 
