@@ -43,6 +43,13 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     return null
   }
 
+  const refreshPages = () => {
+    if (!(state.headerCache instanceof ResourcePending)) {
+      dispatch(fetchPageHeaders())
+    }
+    return null
+  }
+
   const getPage = (id: string): Page | ResourcePending | null => {
     if (state.cache[id]) {
       return state.cache[id]
@@ -54,7 +61,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   }
 
   return (
-    <PageContext.Provider value={{ getPages, getPage, setPage }}>
+    <PageContext.Provider value={{ getPages, getPage, setPage, refreshPages }}>
       {children}
     </PageContext.Provider>
   )

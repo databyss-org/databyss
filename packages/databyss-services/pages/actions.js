@@ -35,6 +35,14 @@ export function savePage(state) {
   console.log('save page', state)
   const body = cloneDeep(state)
   delete body.editableState
+  const _keys = Object.keys(state)
+  /*
+  if only name has been updated, refresh page headers
+  */
+  let _refreshPages = false
+  if (_keys.length === 1 && _keys[0] === 'page') {
+    _refreshPages = true
+  }
   return dispatch => {
     dispatch({
       type: CACHE_PAGE,
@@ -42,6 +50,9 @@ export function savePage(state) {
     })
     services.savePage(body).then(() => {
       // TODO:  HANDLE IF ERROR ON SAVING
+      if (_refreshPages) {
+        dispatch(fetchPageHeaders())
+      }
     })
   }
 }

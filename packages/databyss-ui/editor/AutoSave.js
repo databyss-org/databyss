@@ -33,7 +33,6 @@ const AutoSave = ({ interval }) => {
       return () => {
         const _page = cloneDeep(editorStateRef.current)
         delete _page.page.name
-        // preserve name from page cache
         const _name = getPage(_page.page._id).page.name
         _page.page.name = _name
         setPage(_page)
