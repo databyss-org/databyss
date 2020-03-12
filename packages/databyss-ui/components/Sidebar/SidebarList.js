@@ -1,5 +1,6 @@
 import React from 'react'
 import css from '@styled-system/css'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
@@ -45,9 +46,9 @@ const menuSvgs = type =>
 
 const SidebarList = ({
   menuItems = defaultMenu,
-  menuItem,
+  //  menuItem,
   menuOpen,
-  onToggleMenuOpen,
+  // onToggleMenuOpen,
   onItemClick,
 }) => {
   const onClick = item => {
@@ -63,7 +64,7 @@ const SidebarList = ({
   const headerHeight = 66
   const footerHeight = 236
 
-  const totalHeight = `${padding + headerHeight + footerHeight}px`
+  const totalHeight = pxUnits(padding + headerHeight + footerHeight)
 
   return (
     <View
@@ -73,7 +74,7 @@ const SidebarList = ({
       })}
       overflow="scroll"
       id="sidebarlist"
-      p="0px"
+      p={pxUnits(0)}
     >
       {menuItems.reduce((acc, item, index) => {
         acc.push(<Separator color="border.1" key={`separator-top${index}`} />)

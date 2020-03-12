@@ -26,6 +26,10 @@ const PageHeader = ({ isFocused, pageId }) => {
     setPage(_pageData)
     isFocused(false)
   }
+  /*
+  header input too long maxwidth 500
+  alphabatize pages
+  */
 
   return (
     <View p="medium">
@@ -38,6 +42,7 @@ const PageHeader = ({ isFocused, pageId }) => {
           labelVariant="bodyLarge"
           inputVariant="bodyLarge"
           labelColor="text.3"
+          multiline
           activeLabelColor="text.1"
         />
       </Text>

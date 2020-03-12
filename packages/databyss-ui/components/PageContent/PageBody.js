@@ -1,5 +1,4 @@
 import React from 'react'
-
 import EditorProvider, {
   pageReducer,
 } from '@databyss-org/ui/editor/EditorProvider'
