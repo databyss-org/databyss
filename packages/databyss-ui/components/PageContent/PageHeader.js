@@ -30,14 +30,15 @@ const PageHeader = ({ isFocused, pageId }) => {
   return (
     <View p="medium">
       <Text variant="bodyLarge" id="headerstuff" color="text.3">
-        {pageName.textValue}
         <TextControl
           onBlur={onBlur}
           onFocus={() => isFocused(true)}
           value={pageName}
           onChange={onPageNameChange}
           labelVariant="bodyLarge"
+          inputVariant="bodyLarge"
           labelColor="text.3"
+          activeLabelColor="text.1"
         />
       </Text>
     </View>

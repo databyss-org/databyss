@@ -26,7 +26,6 @@ const PageContent = () => {
         if (_pathList[2] !== pageId) {
           setCounter(counter + 1)
           setPageId(_pathList[2])
-          //   navigate(`/pages/${_pathList[2]}`)
         }
       }
     },
@@ -54,16 +53,6 @@ const PageContent = () => {
             <View key={counter}>
               <PageHeader pageId={pageId} isFocused={onHeaderClick} />
               <PageBody page={page} readOnly={readOnly} />
-              {/* <EditorProvider
-              initialState={page}
-              reducer={pageReducer}
-              editableReducer={slateReducer}
-            >
-              {!readOnly && <AutoSave />}
-              <EditorPage autoFocus>
-                <SlateContentEditable readOnly={readOnly} />
-              </EditorPage>
-            </EditorProvider> */}
             </View>
           )}
         </PageLoader>

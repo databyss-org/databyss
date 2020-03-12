@@ -79,6 +79,7 @@ const TextControl = ({
         }}
         onChange={onChange}
         value={value}
+        color={active ? activeLabelColor : labelColor}
         multiline={multiline}
         variant={inputVariant}
       />
@@ -114,6 +115,7 @@ const TextControl = ({
           alignItems="baseline"
           flexWrap={gridFlexWrap}
           columnGap="small"
+          id="workingout"
         >
           <View {...labelProps} css={{ userSelect: 'none' }}>
             <Text
