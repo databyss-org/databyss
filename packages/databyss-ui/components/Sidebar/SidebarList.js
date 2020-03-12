@@ -48,7 +48,7 @@ const SidebarList = ({
   menuItems = defaultMenu,
   //  menuItem,
   menuOpen,
-  // onToggleMenuOpen,
+  //   onToggleMenuOpen,
   onItemClick,
 }) => {
   const onClick = item => {
@@ -62,7 +62,7 @@ const SidebarList = ({
 
   const padding = 24
   const headerHeight = 66
-  const footerHeight = 236
+  const footerHeight = 238
 
   const totalHeight = pxUnits(padding + headerHeight + footerHeight)
 
@@ -77,7 +77,9 @@ const SidebarList = ({
       p={pxUnits(0)}
     >
       {menuItems.reduce((acc, item, index) => {
-        acc.push(<Separator color="border.1" key={`separator-top${index}`} />)
+        if (index) {
+          acc.push(<Separator color="border.1" key={`separator-top${index}`} />)
+        }
 
         acc.push(
           <BaseControl
@@ -123,11 +125,11 @@ const SidebarList = ({
           </BaseControl>
         )
 
-        if (menuItems.length === index + 1) {
-          acc.push(
-            <Separator color="border.1" key={`separator-bottom${index}`} />
-          )
-        }
+        // if (menuItems.length === index + 1) {
+        //   acc.push(
+        //     <Separator color="border.1" key={`separator-bottom${index}`} />
+        //   )
+        // }
         return acc
       }, [])}
     </View>

@@ -14,6 +14,7 @@ import {
   Separator,
 } from '@databyss-org/ui/primitives'
 import ArrowLeft from '@databyss-org/ui/assets/arrowLeft.svg'
+import Plus from '@databyss-org/ui/assets/plus.svg'
 import Databyss from '@databyss-org/ui/assets/databyss.svg'
 import SidebarList from './SidebarList'
 import { darkTheme } from '../../theming/theme'
@@ -63,6 +64,8 @@ const BottomInfo = () => {
       p="medium"
       id="bottomInfo"
     >
+      <Separator color="border.1" />
+
       <View p="small">
         <BottomInfoText text="Syntax Guide" />
       </View>
@@ -75,9 +78,18 @@ const BottomInfo = () => {
       <Separator color="border.1" />
       <BaseControl width="100%" onClick={onNewPageClick}>
         <View p="medium" pl="small">
-          <Text color="text.3" variant="uiTextSmall">
+          <Grid singleRow alignItems="center" columnGap="small" id="thisicon">
+            <Icon sizeVariant="medium" color="text.3">
+              <Plus />
+            </Icon>
+            <Text variant="uiTextSmall" color="text.3">
+              New Page
+            </Text>
+          </Grid>
+
+          {/* <Text color="text.3" variant="uiTextSmall">
             + New Page Placeholder
-          </Text>
+          </Text> */}
         </View>
       </BaseControl>
     </View>
@@ -164,6 +176,8 @@ const Sidebar = () => {
           mt="none"
           mb="none"
           p="small"
+          pl={menuOpen && 'medium'}
+          pr={menuOpen && 'medium'}
           alignItems={menuOpen ? 'center' : 'flex-end'}
         >
           {/* header */}
@@ -202,7 +216,7 @@ const Sidebar = () => {
             )}
           </BaseControl>
           {/* content */}
-
+          <Separator color="border.1" />
           <SidebarContent />
         </List>
         {/* footer  */}
