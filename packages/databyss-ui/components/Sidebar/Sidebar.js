@@ -123,6 +123,8 @@ const Sidebar = () => {
               type: 'pages',
               id: p._id,
             }))
+            // alphabetize list
+            _menuItems.sort((a, b) => (a.text > b.text ? 1 : -1))
 
             return SidebarList({
               menuItems: _menuItems,

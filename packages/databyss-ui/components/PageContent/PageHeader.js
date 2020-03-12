@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { Text, View, TextControl } from '@databyss-org/ui/primitives'
 
@@ -33,7 +34,12 @@ const PageHeader = ({ isFocused, pageId }) => {
 
   return (
     <View p="medium">
-      <Text variant="bodyLarge" id="headerstuff" color="text.3">
+      <Text
+        variant="bodyLarge"
+        id="headerstuff"
+        color="text.3"
+        maxWidth={pxUnits(500)}
+      >
         <TextControl
           onBlur={onBlur}
           onFocus={() => isFocused(true)}
