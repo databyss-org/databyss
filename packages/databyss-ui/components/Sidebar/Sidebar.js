@@ -201,8 +201,11 @@ const Sidebar = () => {
               </Grid>
             )}
           </BaseControl>
+          {/* content */}
+
           <SidebarContent />
         </List>
+        {/* footer  */}
         {menuOpen && (
           <View position="fixed" bottom={0} left={0} width="300px">
             <BottomInfo />
