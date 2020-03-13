@@ -586,6 +586,20 @@ const onSelection = () => (editor, value, next) => {
   next(editor, value)
 }
 
+const checkText = () => (editor, value, next) => {
+  const _text = value.anchorBlock.getText().split(' ')
+  const _lastWord = _text[_text.length - 1]
+
+  // checks for m-dash
+  if (_lastWord.substr(_lastWord.length - 2) === '--') {
+    editor.moveFocusBackward(2) // select last word
+    editor.insertText('\u2014') // replace it
+    editor.moveFocusForward(1) // move focus back
+  }
+
+  next(editor, value)
+}
+
 export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
@@ -595,7 +609,11 @@ export default (editableState, action) => {
           editorCommands: setActiveBlockType('ENTRY'),
         }
       }
-      return editableState
+
+      return {
+        ...editableState,
+        editorCommands: checkText(),
+      }
     }
     case INSERT_NEW_ACTIVE_BLOCK:
       return { ...editableState, editorCommands: setActiveBlockType('ENTRY') }
