@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, forwardRef } from 'react'
 import { Value } from 'slate'
 import { Editor, cloneFragment } from 'slate-react'
-import InstantReplace from 'slate-instant-replace'
 import _ from 'lodash'
 import ObjectId from 'bson-objectid'
 import forkRef from '@databyss-org/ui/lib/forkRef'
@@ -37,16 +36,6 @@ import {
   getPasteData,
   extendSelectionForClipboard,
 } from './../clipboard'
-
-// const emDash = (editor, lastWord) => {
-//   if (lastWord.substr(lastWord.length - 2) === '--') {
-//     editor.moveFocusBackward(2) // select last word
-//     editor.insertText('\u2014') // replace it
-//     editor.moveFocusForward(1) // move focus back
-//   }
-// }
-
-const plugins = [InstantReplace()]
 
 const schema = {
   inlines: {
@@ -541,7 +530,6 @@ const SlateContentEditable = forwardRef(
         onKeyUp={onKeyUp}
         onKeyDown={onKeyDown}
         renderMark={renderMark}
-        //    plugins={plugins}
         style={{ flex: 1 }}
         {...others}
       />
