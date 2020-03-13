@@ -176,7 +176,7 @@ const SlateContentEditable = forwardRef(
       }
 
       const _prevText = getRawHtmlForBlock(editorState, blocks[activeBlockId])
-      let _nextText = _nextEditableState.value.document.getNode(activeBlockId)
+      const _nextText = _nextEditableState.value.document.getNode(activeBlockId)
         .text
       if (isAtomicInlineType(_nextEditableState.value.anchorBlock.type)) {
         return false

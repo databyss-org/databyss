@@ -43,7 +43,7 @@ context('Editor', () => {
     cy.get('@editor')
       .type('@this is a source')
       .newLine()
-      .wait(500)
+      .wait(700)
 
     cy.get('@pageBlocks').then(page => {
       const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
@@ -71,7 +71,7 @@ context('Editor', () => {
       .toggleBold()
       .type('this should not be allowed')
       .nextBlock()
-      .wait(500)
+      .wait(700)
 
     cy.get('@pageBlocks').then(page => {
       const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
@@ -99,7 +99,7 @@ context('Editor', () => {
       .toggleBold()
       .type('<i>italic</i>')
       .newLine()
-      .wait(500)
+      .wait(700)
 
     cy.get('@pageBlocks').then(page => {
       const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
@@ -133,7 +133,7 @@ context('Editor', () => {
       .toggleItalic()
       .type('<strong>bold</strong>')
       .newLine()
-      .wait(500)
+      .wait(700)
 
     cy.get('@pageBlocks').then(page => {
       const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
@@ -170,7 +170,7 @@ context('Editor', () => {
       .type('{rightarrow}')
       .type('{rightarrow}')
       .newLine()
-      .wait(500)
+      .wait(700)
     cy.get('@pageBlocks').then(page => {
       const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
       const expected = toSlateJson(
@@ -199,7 +199,7 @@ context('Editor', () => {
       .toggleLocation()
       .type(' within an entry')
       .newLine()
-      .wait(500)
+      .wait(700)
     cy.get('@pageBlocks').then(page => {
       const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
       const expected = toSlateJson(
@@ -225,7 +225,7 @@ context('Editor', () => {
       .toggleLocation()
       .type('entry')
       .newLine()
-      .wait(500)
+      .wait(700)
     cy.get('@pageBlocks').then(page => {
       const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
       const expected = toSlateJson(
@@ -257,7 +257,7 @@ context('Editor', () => {
       )
       .newLine()
       .type('{uparrow}')
-      .wait(500)
+      .wait(700)
 
     cy.get('@pageBlocks').then(page => {
       const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
