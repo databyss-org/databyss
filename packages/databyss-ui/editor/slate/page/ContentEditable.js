@@ -541,7 +541,7 @@ const SlateContentEditable = forwardRef(
         onKeyUp={onKeyUp}
         onKeyDown={onKeyDown}
         renderMark={renderMark}
-        plugins={plugins}
+        //    plugins={plugins}
         style={{ flex: 1 }}
         {...others}
       />
