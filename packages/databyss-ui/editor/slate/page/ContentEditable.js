@@ -38,13 +38,13 @@ import {
   extendSelectionForClipboard,
 } from './../clipboard'
 
-const emDash = (editor, lastWord) => {
-  if (lastWord.substr(lastWord.length - 2) === '--') {
-    editor.moveFocusBackward(2) // select last word
-    editor.insertText('\u2014') // replace it
-    editor.moveFocusForward(1) // move focus back
-  }
-}
+// const emDash = (editor, lastWord) => {
+//   if (lastWord.substr(lastWord.length - 2) === '--') {
+//     editor.moveFocusBackward(2) // select last word
+//     editor.insertText('\u2014') // replace it
+//     editor.moveFocusForward(1) // move focus back
+//   }
+// }
 
 const plugins = [InstantReplace()]
 
@@ -474,12 +474,12 @@ const SlateContentEditable = forwardRef(
       }
 
       // emdash
-      const _lastWord = editor.getLastWord()
-      if (_lastWord.substr(_lastWord.length - 2) === '--') {
-        editor.moveFocusBackward(2) // select last word
-        editor.insertText('\u2014') // replace it
-        editor.moveFocusForward(1) // move focus back
-      }
+      // const _lastWord = editor.getLastWord()
+      // if (_lastWord.substr(_lastWord.length - 2) === '--') {
+      //   editor.moveFocusBackward(2) // select last word
+      //   editor.insertText('\u2014') // replace it
+      //   editor.moveFocusForward(1) // move focus back
+      // }
 
       return next()
     }
