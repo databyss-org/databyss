@@ -244,7 +244,6 @@
     "slate-dev-environment": "^0.2.2",
     "slate-html-serializer": "^0.8.10",
     "slate-insert-block-on-enter": "^0.4.0",
-    "slate-instant-replace": "^0.1.15",
     "spawnd": "^4.0.0",
     "start-server-and-test": "^1.10.2",
     "storybook-dark-mode": "^0.1.7",

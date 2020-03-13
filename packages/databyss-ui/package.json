@@ -70,7 +70,6 @@
     "selenium-webdriver": "^4.0.0-alpha.5",
     "slate": "^0.47.8",
     "slate-dev-environment": "^0.2.2",
-    "slate-instant-replace": "^0.1.15",
     "slate-html-serializer": "^0.8.10",
     "slate-hyperscript": "^0.13.8",
     "slate-react": "^0.22.8",
