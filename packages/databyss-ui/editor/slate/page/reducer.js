@@ -592,12 +592,15 @@ const checkText = () => (editor, value, next) => {
   */
   const _offset = editor.value.selection.anchor.offset
   if (_offset > 1) {
-    editor.moveFocusBackward(2)
-    const _text = editor.value.fragment.text
-    if (_text === '--') {
-      editor.insertText('\u2014')
-    } else {
-      editor.moveFocusForward(2)
+    let _text = editor.value.anchorBlock.text
+    if (_text.includes('--')) {
+      editor.moveFocusBackward(2)
+      _text = editor.value.fragment.text
+      if (_text === '--') {
+        editor.insertText('\u2014')
+      } else {
+        editor.moveFocusForward(2)
+      }
     }
   }
 
