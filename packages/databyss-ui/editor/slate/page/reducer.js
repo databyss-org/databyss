@@ -587,14 +587,18 @@ const onSelection = () => (editor, value, next) => {
 }
 
 const checkText = () => (editor, value, next) => {
-  const _text = value.anchorBlock.getText().split(' ')
-  const _lastWord = _text[_text.length - 1]
-
-  // checks for m-dash
-  if (_lastWord.substr(_lastWord.length - 2) === '--') {
-    editor.moveFocusBackward(2) // select last word
-    editor.insertText('\u2014') // replace it
-    editor.moveFocusForward(1) // move focus back
+  /*
+  checks value before anchor for m-dash
+  */
+  const _offset = editor.value.selection.anchor.offset
+  if (_offset > 1) {
+    editor.moveFocusBackward(2)
+    const _text = editor.value.fragment.text
+    if (_text === '--') {
+      editor.insertText('\u2014')
+    } else {
+      editor.moveFocusForward(2)
+    }
   }
 
   next(editor, value)
