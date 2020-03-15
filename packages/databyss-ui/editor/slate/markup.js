@@ -1,5 +1,5 @@
 import cloneDeep from 'clone-deep'
-import { Editor, Value, Range, Point } from 'slate'
+import { Editor, Value, Point } from 'slate'
 import { isAtomicInlineType } from './page/reducer'
 
 export const getRangesFromBlock = block => {
