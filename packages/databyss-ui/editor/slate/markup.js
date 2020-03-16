@@ -1,5 +1,5 @@
 import cloneDeep from 'clone-deep'
-import { Editor, Value, Point } from 'slate'
+import { Editor, Value } from 'slate'
 import { isAtomicInlineType } from './page/reducer'
 
 export const getRangesFromBlock = block => {
@@ -72,23 +72,16 @@ export const stateToSlateMarkup = state => {
 
   _editor.insertText(state.textValue).moveBackward(state.textValue.length)
   // select correct range and apply marks
-
-  const reducer = (acc, curr) => {
-    const anchor = new Point({ path: [0], offset: curr.offset })
-    const focus = new Point({ path: [0], offset: curr.length + curr.offset })
-
-    acc.setAnchor(anchor)
-    acc.setFocus(focus)
-
-    curr.marks.forEach(m => {
-      acc.addMark(m)
-    })
-    return acc
-  }
   if (state.ranges) {
-    state.ranges.reduce(reducer, _editor)
+    state.ranges.forEach(n => {
+      _editor.moveForward(n.offset).moveFocusForward(n.length)
+      n.marks.forEach(m => {
+        _editor.addMark(m)
+      })
+      // replace range to original position
+      _editor.moveFocusBackward(n.length).moveBackward(n.offset)
+    })
   }
-
   // translate to json
   const document = _editor.value.toJSON().document
   return document
