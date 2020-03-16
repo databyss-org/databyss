@@ -586,6 +586,27 @@ const onSelection = () => (editor, value, next) => {
   next(editor, value)
 }
 
+const checkText = () => (editor, value, next) => {
+  /*
+  checks value before anchor for m-dash
+  */
+  const _offset = editor.value.selection.anchor.offset
+  if (_offset > 1) {
+    let _text = editor.value.anchorBlock.text
+    if (_text.includes('--')) {
+      editor.moveFocusBackward(2)
+      _text = editor.value.fragment.text
+      if (_text === '--') {
+        editor.insertText('\u2014')
+      } else {
+        editor.moveFocusForward(2)
+      }
+    }
+  }
+
+  next(editor, value)
+}
+
 export default (editableState, action) => {
   switch (action.type) {
     case SET_ACTIVE_BLOCK_CONTENT: {
@@ -595,7 +616,11 @@ export default (editableState, action) => {
           editorCommands: setActiveBlockType('ENTRY'),
         }
       }
-      return editableState
+
+      return {
+        ...editableState,
+        editorCommands: checkText(),
+      }
     }
     case INSERT_NEW_ACTIVE_BLOCK:
       return { ...editableState, editorCommands: setActiveBlockType('ENTRY') }

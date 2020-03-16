@@ -19,6 +19,7 @@
   "peerDependencies": {
     "react": "16.9.0",
     "@databyss-org/ui": "1.1.65"
+
   },
   "publishConfig": {
     "access": "public"

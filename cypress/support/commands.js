@@ -95,7 +95,7 @@ Cypress.Commands.add(
     return cy
       .get(subject)
       .trigger('keydown', { key: 'Enter', release: false })
-      .wait(10)
+      .wait(30)
       .trigger('keyup', { key: 'Enter', release: false })
   }
 )
