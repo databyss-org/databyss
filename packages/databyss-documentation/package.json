@@ -1,6 +1,10 @@
 {
   "name": "databyss-documentation",
+<<<<<<< HEAD
   "version": "1.1.65",
+=======
+  "version": "1.1.64",
+>>>>>>> c36aeac91eb258025dce10a82d669b15f19148ea
   "description": "documentation",
   "license": "MIT",
   "scripts": {

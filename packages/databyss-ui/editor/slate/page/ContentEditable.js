@@ -461,6 +461,15 @@ const SlateContentEditable = forwardRef(
         event.preventDefault()
         OnToggleMark('location', editor)
       }
+
+      // emdash
+      // const _lastWord = editor.getLastWord()
+      // if (_lastWord.substr(_lastWord.length - 2) === '--') {
+      //   editor.moveFocusBackward(2) // select last word
+      //   editor.insertText('\u2014') // replace it
+      //   editor.moveFocusForward(1) // move focus back
+      // }
+
       return next()
     }
 

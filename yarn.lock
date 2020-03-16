@@ -16932,6 +16932,11 @@ slate-insert-block-on-enter@^0.4.0:
   resolved "https://registry.yarnpkg.com/slate-insert-block-on-enter/-/slate-insert-block-on-enter-0.4.0.tgz#6facd63d152c0448c8e39afa0bef4bbf8309da61"
   integrity sha512-1Yw6BiwcHuo74jAOYwxNXDLMtC5OpTB4HbimoMUpuSSRuv3YcJpaFnkwOUXvfuiY/OaPn8ztKNQV9AZknC+5uQ==
 
+slate-instant-replace@^0.1.15:
+  version "0.1.15"
+  resolved "https://registry.yarnpkg.com/slate-instant-replace/-/slate-instant-replace-0.1.15.tgz#91c40c355e369780c4680c1abbe9b417b7787fe2"
+  integrity sha512-HK+AI4P4CPXTbMMRAd92+O5z61Ah5XcrOH5qU8NZXDGpw/GMrJFBD7+go5aowSdsqfZhnszUouAuCBmHzTrETg==
+
 slate-plain-serializer@^0.7.10:
   version "0.7.10"
   resolved "https://registry.yarnpkg.com/slate-plain-serializer/-/slate-plain-serializer-0.7.10.tgz#bc4a6942cf52fde826019bb1095dffd0dac8cc08"
