@@ -1,5 +1,6 @@
 import React from 'react'
 import css from '@styled-system/css'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
@@ -51,6 +52,9 @@ const SidebarList = ({
   //   onToggleMenuOpen,
   onItemClick,
 }) => {
+  const { path } = useNavigationContext()
+  console.log(path)
+
   const onClick = item => {
     // if no id is passed, pass the item type
     if (!item.id) {
@@ -81,9 +85,13 @@ const SidebarList = ({
           acc.push(<Separator color="border.1" key={`separator-top${index}`} />)
         }
 
+        if (item.type === 'pages') {
+          console.log('id', item.id)
+        }
+
         acc.push(
           <BaseControl
-            id="menu-this"
+            backgroundColor={'background.1'}
             p={2}
             key={index}
             width="100%"
@@ -91,13 +99,8 @@ const SidebarList = ({
             alignItems={!menuOpen && 'center'}
           >
             {menuOpen ? (
-              <View id="inside-item">
-                <Grid
-                  singleRow
-                  alignItems="center"
-                  columnGap="small"
-                  id="thisicon"
-                >
+              <View>
+                <Grid singleRow alignItems="center" columnGap="small">
                   <Icon sizeVariant="tiny" color="text.3">
                     {menuSvgs(item.type)}
                   </Icon>

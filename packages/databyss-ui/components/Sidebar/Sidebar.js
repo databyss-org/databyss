@@ -86,10 +86,6 @@ const BottomInfo = () => {
               New Page
             </Text>
           </Grid>
-
-          {/* <Text color="text.3" variant="uiTextSmall">
-            + New Page Placeholder
-          </Text> */}
         </View>
       </BaseControl>
     </View>
@@ -184,14 +180,13 @@ const Sidebar = () => {
         >
           {/* header */}
           <BaseControl
-            id="menu-this"
             p={2}
             width="100%"
             onClick={() => onHeaderClick()}
             alignItems={!menuOpen && 'center'}
           >
             {menuOpen ? (
-              <View id="inside-item">
+              <View>
                 <Grid
                   singleRow
                   alignItems="center"
