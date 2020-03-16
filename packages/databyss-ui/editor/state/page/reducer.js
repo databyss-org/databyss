@@ -543,6 +543,7 @@ const onPaste = (state, pasteData) => {
     }
 
     // populate entities
+
     entities(_state, _block.type)[_block.refId] = {
       _id: _block.refId,
       ranges: _block.ranges,

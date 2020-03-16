@@ -362,9 +362,23 @@ export const getPasteData = ({
   // get anchor block from slate,
   const anchorKey = value.anchorBlock.key
 
+  // if fragment was copied from modal, block is marked with type 'TEXT' paste this fragment as plaintext
+  const _isFromModal = frag => {
+    if (type === 'fragment') {
+      if (frag.nodes.get(0).type === 'TEXT') {
+        return true
+      }
+    }
+    return false
+  }
+
   // if anchor block is not empty and first fragment is atomic
   // prompt a warning that pasting atomic blocks is only
-  if (type === 'fragment' || isFragmentFullBlock(fragment, value.document)) {
+
+  if (
+    !_isFromModal(_frag) &&
+    (type === 'fragment' || isFragmentFullBlock(fragment, value.document))
+  ) {
     if (_frag.nodes.size > 1) {
       _frag = trimFragment(_frag)
     }
