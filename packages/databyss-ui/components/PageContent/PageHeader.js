@@ -48,7 +48,6 @@ const PageHeader = ({ isFocused, pageId }) => {
           labelVariant="bodyLarge"
           inputVariant="bodyLarge"
           labelColor="text.3"
-          multiline
           activeLabelColor="text.1"
         />
       </Text>
