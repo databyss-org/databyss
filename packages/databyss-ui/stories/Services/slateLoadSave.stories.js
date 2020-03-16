@@ -25,11 +25,12 @@ import topicReducer, {
 import { initialState } from '@databyss-org/services/pages/reducer'
 import SlateContentEditable from '@databyss-org/ui/editor/slate/page/ContentEditable'
 import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
-import reducer from '@databyss-org/ui/editor/state/page/reducer'
+import reducer, {
+  getRawHtmlForBlock,
+} from '@databyss-org/ui/editor/state/page/reducer'
 import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import AutoSave from '@databyss-org/ui/editor/AutoSave'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { getRawHtmlForBlock } from '@databyss-org/ui/editor/state/page/reducer'
 import { ViewportDecorator } from '../decorators'
 import seedState from './_seedState'
 

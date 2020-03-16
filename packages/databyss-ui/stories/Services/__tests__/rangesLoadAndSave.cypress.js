@@ -1,11 +1,10 @@
 /** @jsx h */
 import h from 'slate-hyperscript'
-
-import { authenticate } from './_helpers'
 import {
   toSlateJson,
   matchExpectedJson,
 } from '@databyss-org/ui/editor/slate/__tests__/_helpers'
+import { authenticate } from './_helpers'
 
 context('Editor - Sources Provider', () => {
   beforeEach(() => {
