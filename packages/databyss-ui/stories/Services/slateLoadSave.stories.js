@@ -2,7 +2,9 @@ import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
-import EditorProvider from '@databyss-org/ui/editor/EditorProvider'
+import EditorProvider, {
+  useEditorContext,
+} from '@databyss-org/ui/editor/EditorProvider'
 import PageProvider, {
   usePageContext,
 } from '@databyss-org/services/pages/PageProvider'
@@ -27,6 +29,7 @@ import reducer from '@databyss-org/ui/editor/state/page/reducer'
 import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import AutoSave from '@databyss-org/ui/editor/AutoSave'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import { getRawHtmlForBlock } from '@databyss-org/ui/editor/state/page/reducer'
 import { ViewportDecorator } from '../decorators'
 import seedState from './_seedState'
 
@@ -50,6 +53,30 @@ const ProviderDecorator = storyFn => (
     </SessionProvider>
   </ServiceProvider>
 )
+
+const PageBlocks = () => {
+  const [editorState] = useEditorContext()
+  const { activeBlockId, page, blocks } = editorState
+  const editorDocument = {
+    activeBlockId,
+    pageBlocks: page.blocks.map(block => ({
+      ...blocks[block._id],
+      textValue: getRawHtmlForBlock(editorState, blocks[block._id]),
+    })),
+  }
+
+  return (
+    <View
+      overflow="scroll"
+      flexShrink={1}
+      borderVariant="thinDark"
+      paddingVariant="tiny"
+      width="100%"
+    >
+      <pre id="pageBlocks">{JSON.stringify(editorDocument, null, 2)}</pre>
+    </View>
+  )
+}
 
 const LoadAndSave = () => {
   const { getSession } = useSessionContext()
@@ -76,18 +103,19 @@ const LoadAndSave = () => {
               <EditorPage autoFocus>
                 <SlateContentEditable onDocumentChange={setSlateDocument} />
               </EditorPage>
+              <View
+                overflow="scroll"
+                flexShrink={1}
+                borderVariant="thinDark"
+                paddingVariant="tiny"
+                width="100%"
+              >
+                <pre id="slateDocument">
+                  {JSON.stringify(slateDocument, null, 2)}
+                </pre>
+              </View>
+              <PageBlocks />
             </EditorProvider>
-            <View
-              overflow="scroll"
-              flexShrink={1}
-              borderVariant="thinDark"
-              paddingVariant="tiny"
-              width="100%"
-            >
-              <pre id="slateDocument">
-                {JSON.stringify(slateDocument, null, 2)}
-              </pre>
-            </View>
           </View>
         )
       }}
