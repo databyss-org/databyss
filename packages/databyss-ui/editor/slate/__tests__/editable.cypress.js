@@ -277,4 +277,32 @@ context('Editor', () => {
       cy.get('@slateDocument').then(matchExpectedJson(expected.document))
     })
   })
+
+  it('should remove empty block above atomic block', () => {
+    cy.get('@editor')
+      .focus()
+      .type('@this is a source')
+      .newLine()
+      .previousBlock()
+      .startOfLine()
+      .newLine()
+      .type('{backspace}')
+
+    cy.get('@pageBlocks').then(page => {
+      const refIdList = JSON.parse(page.text()).pageBlocks.map(b => b.refId)
+      const expected = toSlateJson(
+        <value>
+          <document>
+            <block type="SOURCE" data={{ refId: refIdList[0], type: 'SOURCE' }}>
+              <text />
+              <inline type="SOURCE">this is a source</inline>
+              <text />
+            </block>
+            <block type="ENTRY" data={{ refId: refIdList[1], type: 'ENTRY' }} />
+          </document>
+        </value>
+      )
+      cy.get('@slateDocument').then(matchExpectedJson(expected.document))
+    })
+  })
 })
