@@ -52,8 +52,9 @@ const SidebarList = ({
   //   onToggleMenuOpen,
   onItemClick,
 }) => {
-  const { path } = useNavigationContext()
-  console.log(path)
+  const { getTokensFromPath } = useNavigationContext()
+
+  const tokens = getTokensFromPath()
 
   const onClick = item => {
     // if no id is passed, pass the item type
@@ -85,13 +86,11 @@ const SidebarList = ({
           acc.push(<Separator color="border.1" key={`separator-top${index}`} />)
         }
 
-        if (item.type === 'pages') {
-          console.log('id', item.id)
-        }
+        const _isActive = item.id === tokens.id && tokens.id
 
         acc.push(
           <BaseControl
-            backgroundColor={'background.1'}
+            backgroundColor={_isActive ? 'background.1' : 'background.0'}
             p={2}
             key={index}
             width="100%"
