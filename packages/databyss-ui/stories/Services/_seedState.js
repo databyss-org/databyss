@@ -39,7 +39,7 @@ export default pageId => ({
   },
   page: {
     _id: pageId,
-    name: 'test document',
+    name: 'untitled',
     blocks: [
       {
         _id: blockOneId,

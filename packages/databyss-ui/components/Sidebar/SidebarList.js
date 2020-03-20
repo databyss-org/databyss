@@ -47,7 +47,7 @@ const menuSvgs = type =>
 
 const SidebarList = ({
   menuItems = defaultMenu,
-  //  menuItem,
+  menuItem,
   menuOpen,
   //   onToggleMenuOpen,
   onItemClick,
@@ -87,7 +87,6 @@ const SidebarList = ({
         }
 
         const _isActive = item.id === tokens.id && tokens.id
-
         acc.push(
           <BaseControl
             backgroundColor={_isActive ? 'background.1' : 'background.0'}
@@ -105,11 +104,13 @@ const SidebarList = ({
                 <Text variant="uiTextSmall" color="text.2">
                   {item.text}
                 </Text>
-                <View position="absolute" right="small">
-                  <Icon sizeVariant="small" color="text.3">
-                    <ArrowRight />
-                  </Icon>
-                </View>
+                {!menuItem && (
+                  <View position="absolute" right="small">
+                    <Icon sizeVariant="small" color="text.3">
+                      <ArrowRight />
+                    </Icon>
+                  </View>
+                )}
               </Grid>
             </View>
           </BaseControl>

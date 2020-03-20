@@ -57,13 +57,7 @@ const BottomInfo = () => {
   }
 
   return (
-    <View
-      alignItems="stretch"
-      flexGrow={1}
-      width="100%"
-      p="medium"
-      id="bottomInfo"
-    >
+    <View alignItems="stretch" flexGrow={1} width="100%" p="medium">
       <Separator color="border.1" />
 
       <View p="small">
@@ -78,7 +72,7 @@ const BottomInfo = () => {
       <Separator color="border.1" />
       <BaseControl width="100%" onClick={onNewPageClick}>
         <View p="medium" pl="small">
-          <Grid singleRow alignItems="center" columnGap="small" id="thisicon">
+          <Grid singleRow alignItems="center" columnGap="small">
             <Icon sizeVariant="medium" color="text.3">
               <Plus />
             </Icon>

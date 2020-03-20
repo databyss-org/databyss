@@ -9,6 +9,10 @@ import {
   Icon,
   Separator,
 } from '@databyss-org/ui/primitives'
+import { newPage } from '@databyss-org/services/pages/_helpers'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import Plus from '@databyss-org/ui/assets/plus.svg'
 import Databyss from '@databyss-org/ui/assets/databyss.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import { darkTheme } from '../../theming/theme'
@@ -33,6 +37,14 @@ Section.defaultProps = {
 }
 
 const SidebarCollapsed = ({ onToggleMenuOpen, setMenuItem }) => {
+  const { navigate } = useNavigationContext()
+  const { setPage } = usePageContext()
+  const onNewPageClick = () => {
+    const _page = newPage()
+    setPage(_page)
+    navigate(`/pages/${_page.page._id}`)
+  }
+
   const onItemClick = item => {
     setMenuItem(item)
     onToggleMenuOpen()
@@ -87,6 +99,20 @@ const SidebarCollapsed = ({ onToggleMenuOpen, setMenuItem }) => {
             </Grid>
           </BaseControl>
         </List>
+        <View position="fixed" bottom={0} left={0} width="60px">
+          <BaseControl
+            p={2}
+            width="100%"
+            onClick={() => onNewPageClick()}
+            alignItems={'center'}
+          >
+            <Grid singleRow alignItems="center" columnGap="small">
+              <Icon sizeVariant={'medium'} color="text.3">
+                <Plus />
+              </Icon>
+            </Grid>
+          </BaseControl>
+        </View>
       </View>
     </View>
   )
