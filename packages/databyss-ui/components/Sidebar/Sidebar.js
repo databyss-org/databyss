@@ -175,12 +175,7 @@ const Sidebar = () => {
           {/* header */}
           <BaseControl p={2} width="100%" onClick={() => onHeaderClick()}>
             <View>
-              <Grid
-                singleRow
-                alignItems="center"
-                columnGap="small"
-                id="thisicon"
-              >
+              <Grid singleRow alignItems="center" columnGap="small">
                 <Icon sizeVariant="medium" color="text.3">
                   <ArrowLeft />
                 </Icon>

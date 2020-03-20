@@ -34,12 +34,7 @@ const PageHeader = ({ isFocused, pageId }) => {
 
   return (
     <View p="medium">
-      <Text
-        variant="bodyLarge"
-        id="headerstuff"
-        color="text.3"
-        maxWidth={pxUnits(500)}
-      >
+      <Text variant="bodyLarge" color="text.3" maxWidth={pxUnits(500)}>
         <TextControl
           onBlur={onBlur}
           onFocus={() => isFocused(true)}

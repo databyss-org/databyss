@@ -78,7 +78,6 @@ const SidebarList = ({
         height: `calc(100vh - ${totalHeight})`,
       })}
       overflow="scroll"
-      id="sidebarlist"
       p={pxUnits(0)}
     >
       {menuItems.reduce((acc, item, index) => {

@@ -115,7 +115,6 @@ const TextControl = ({
           alignItems="baseline"
           flexWrap={gridFlexWrap}
           columnGap="small"
-          id="workingout"
         >
           <View {...labelProps} css={{ userSelect: 'none' }}>
             <Text
