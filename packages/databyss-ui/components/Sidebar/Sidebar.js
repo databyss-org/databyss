@@ -15,8 +15,8 @@ import {
 } from '@databyss-org/ui/primitives'
 import ArrowLeft from '@databyss-org/ui/assets/arrowLeft.svg'
 import Plus from '@databyss-org/ui/assets/plus.svg'
-import Databyss from '@databyss-org/ui/assets/databyss.svg'
 import SidebarList from './SidebarList'
+import SidebarCollapsed from './SidebarCollapsed'
 import { darkTheme } from '../../theming/theme'
 
 export const defaultProps = {
@@ -154,11 +154,11 @@ const Sidebar = () => {
     return toggleMenuOpen(!menuOpen)
   }
 
-  return (
+  return menuOpen ? (
     <View
       {...defaultProps}
       css={css({
-        width: menuOpen ? '300px' : '60px',
+        width: '300px',
       })}
     >
       <View
@@ -174,56 +174,43 @@ const Sidebar = () => {
           mt="none"
           mb="none"
           p="small"
-          pl={menuOpen && 'medium'}
-          pr={menuOpen && 'medium'}
-          alignItems={menuOpen ? 'center' : 'flex-end'}
+          pl={'medium'}
+          pr={'medium'}
+          alignItems={'center'}
         >
           {/* header */}
-          <BaseControl
-            p={2}
-            width="100%"
-            onClick={() => onHeaderClick()}
-            alignItems={!menuOpen && 'center'}
-          >
-            {menuOpen ? (
-              <View>
-                <Grid
-                  singleRow
-                  alignItems="center"
-                  columnGap="small"
-                  id="thisicon"
-                >
-                  <Icon sizeVariant="medium" color="text.3">
-                    <ArrowLeft />
-                  </Icon>
-                  <Text variant="uiTextLarge" color="text.2">
-                    {headerMap(menuItem)}
-                  </Text>
-                </Grid>
-              </View>
-            ) : (
-              <Grid singleRow id="here" alignItems="flex-end" columnGap="small">
-                <Icon
-                  sizeVariant={!menuOpen ? 'medium' : 'tiny'}
-                  color="text.3"
-                >
-                  <Databyss />
+          <BaseControl p={2} width="100%" onClick={() => onHeaderClick()}>
+            <View>
+              <Grid
+                singleRow
+                alignItems="center"
+                columnGap="small"
+                id="thisicon"
+              >
+                <Icon sizeVariant="medium" color="text.3">
+                  <ArrowLeft />
                 </Icon>
+                <Text variant="uiTextLarge" color="text.2">
+                  {headerMap(menuItem)}
+                </Text>
               </Grid>
-            )}
+            </View>
           </BaseControl>
           {/* content */}
           <Separator color="border.1" />
           <SidebarContent />
         </List>
         {/* footer  */}
-        {menuOpen && (
-          <View position="fixed" bottom={0} left={0} width="300px">
-            <BottomInfo />
-          </View>
-        )}
+        <View position="fixed" bottom={0} left={0} width="300px">
+          <BottomInfo />
+        </View>
       </View>
     </View>
+  ) : (
+    <SidebarCollapsed
+      onToggleMenuOpen={onToggleMenuOpen}
+      setMenuItem={setMenuItem}
+    />
   )
 }
 
