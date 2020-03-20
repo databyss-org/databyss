@@ -168,9 +168,9 @@ const Sidebar = () => {
           mt="none"
           mb="none"
           p="small"
-          pl={'medium'}
-          pr={'medium'}
-          alignItems={'center'}
+          pl="medium"
+          pr="medium"
+          alignItems="center"
         >
           {/* header */}
           <BaseControl p={2} width="100%" onClick={() => onHeaderClick()}>

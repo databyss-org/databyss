@@ -76,10 +76,10 @@ const SidebarCollapsed = ({ onToggleMenuOpen, setMenuItem }) => {
             p={2}
             width="100%"
             onClick={() => onToggleMenuOpen()}
-            alignItems={'center'}
+            alignItems="center"
           >
             <Grid singleRow alignItems="flex-end" columnGap="small">
-              <Icon sizeVariant={'medium'} color="text.3">
+              <Icon sizeVariant="medium" color="text.3">
                 <Databyss />
               </Icon>
             </Grid>
@@ -90,10 +90,10 @@ const SidebarCollapsed = ({ onToggleMenuOpen, setMenuItem }) => {
             p={2}
             width="100%"
             onClick={() => onItemClick('pages')}
-            alignItems={'center'}
+            alignItems="center"
           >
             <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant={'medium'} color="text.3">
+              <Icon sizeVariant="medium" color="text.3">
                 <PageSvg />
               </Icon>
             </Grid>
@@ -104,10 +104,10 @@ const SidebarCollapsed = ({ onToggleMenuOpen, setMenuItem }) => {
             p={2}
             width="100%"
             onClick={() => onNewPageClick()}
-            alignItems={'center'}
+            alignItems="center"
           >
             <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant={'medium'} color="text.3">
+              <Icon sizeVariant="medium" color="text.3">
                 <Plus />
               </Icon>
             </Grid>
