@@ -62,7 +62,7 @@ const LoadAndSave = () => {
       {page => {
         console.log(page.page.name)
         // seed if empty and reload
-        if (page.page.name !== 'untitled') {
+        if (page.page.name !== 'test document') {
           setPage(seedState(account.defaultPage))
           return null
         }
