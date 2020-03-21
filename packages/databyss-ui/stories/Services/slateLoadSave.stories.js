@@ -60,8 +60,9 @@ const LoadAndSave = () => {
   return (
     <PageLoader pageId={account.defaultPage}>
       {page => {
+        console.log(page.page.name)
         // seed if empty and reload
-        if (page.page.name !== 'test document') {
+        if (page.page.name !== 'untitled') {
           setPage(seedState(account.defaultPage))
           return null
         }
