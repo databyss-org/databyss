@@ -430,6 +430,13 @@ const SlateContentEditable = forwardRef(
             return event.preventDefault()
           }
 
+          if (event.key === 'Backspace' && !editor.value.previousBlock.text) {
+            const _prevKey = editor.value.previousBlock.key
+
+            deleteBlockByKey(_prevKey, editor)
+            return event.preventDefault()
+          }
+
           // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
           // PREVENT ENTER KEY
           if (
@@ -462,14 +469,6 @@ const SlateContentEditable = forwardRef(
         event.preventDefault()
         OnToggleMark('location', editor)
       }
-
-      // emdash
-      // const _lastWord = editor.getLastWord()
-      // if (_lastWord.substr(_lastWord.length - 2) === '--') {
-      //   editor.moveFocusBackward(2) // select last word
-      //   editor.insertText('\u2014') // replace it
-      //   editor.moveFocusForward(1) // move focus back
-      // }
 
       return next()
     }
