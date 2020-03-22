@@ -4,6 +4,7 @@ import makeLoader from './makeLoader'
 
 export const PageLoader = makeLoader(({ pageId }) => {
   const { getPage } = usePageContext()
+
   return getPage(pageId)
 })
 

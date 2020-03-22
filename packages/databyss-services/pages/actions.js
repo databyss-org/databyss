@@ -31,21 +31,6 @@ export function fetchPage(_id) {
   }
 }
 
-export function savePage(state) {
-  console.log('save page', state)
-  const body = cloneDeep(state)
-  delete body.editableState
-  return dispatch => {
-    dispatch({
-      type: CACHE_PAGE,
-      payload: { body, id: body.page._id },
-    })
-    services.savePage(body).then(() => {
-      // TODO:  HANDLE IF ERROR ON SAVING
-    })
-  }
-}
-
 export function fetchPageHeaders() {
   return dispatch => {
     dispatch({
@@ -65,6 +50,18 @@ export function fetchPageHeaders() {
           payload: e,
         })
       })
+  }
+}
+
+export function savePage(state) {
+  const body = cloneDeep(state)
+  delete body.editableState
+  return dispatch => {
+    dispatch({
+      type: CACHE_PAGE,
+      payload: { body, id: body.page._id },
+    })
+    services.savePage(body)
   }
 }
 

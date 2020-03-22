@@ -25,6 +25,7 @@ context('Editor - Sources Provider', () => {
 
   it('Edits atomic sources', () => {
     cy.get('@editor')
+      .focus()
       .get('[data-test-atomic-edit="open"]')
       .click()
       .wait(2000)

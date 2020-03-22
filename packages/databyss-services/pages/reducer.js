@@ -25,7 +25,11 @@ export default (state, action) => {
     }
     case CACHE_PAGE: {
       const _state = cloneDeep(state)
-      _state.cache[action.payload.id] = action.payload.body
+      const _page = action.payload.body
+      _state.cache[action.payload.id] = _page
+      if (_state.headerCache) {
+        _state.headerCache[_page.page._id] = _page.page
+      }
       return {
         ..._state,
       }
