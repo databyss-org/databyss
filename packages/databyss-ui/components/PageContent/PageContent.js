@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { View } from '@databyss-org/ui/primitives'
+import { View, ScrollView } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageHeader from './PageHeader'
@@ -29,7 +29,7 @@ const PageContent = () => {
   */
 
   return (
-    <View p="medium" flex="1">
+    <ScrollView p="medium" flex="1" maxHeight="98vh">
       {pageId && (
         <PageLoader pageId={pageId}>
           {page => (
@@ -40,7 +40,7 @@ const PageContent = () => {
           )}
         </PageLoader>
       )}
-    </View>
+    </ScrollView>
   )
 }
 
