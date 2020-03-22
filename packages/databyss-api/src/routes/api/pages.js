@@ -220,9 +220,10 @@ router.post(
       }
       const pageBlocks = page.blocks
 
+      // if name is passed, save name
       const pageFields = {
-        name,
-        blocks: pageBlocks,
+        ...(name && { name }),
+        ...(pageBlocks && { blocks: pageBlocks }),
         account: req.account._id,
       }
 
@@ -308,6 +309,7 @@ router.get(
         locations,
         topics,
       }
+
       return res.json(response)
     } catch (err) {
       console.error(err.message)

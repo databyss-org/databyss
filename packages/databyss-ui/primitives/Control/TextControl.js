@@ -79,6 +79,7 @@ const TextControl = ({
         }}
         onChange={onChange}
         value={value}
+        color={active ? activeLabelColor : labelColor}
         multiline={multiline}
         variant={inputVariant}
       />

@@ -35,6 +35,8 @@ const EditorProvider = ({
     { name: `EditorProvider ${name ? `(${name})` : ''}` }
   )
 
+  // if value has been updated outside of the editor context
+
   return (
     <EditorContext.Provider value={[state, dispatch, stateRef]}>
       {children}
