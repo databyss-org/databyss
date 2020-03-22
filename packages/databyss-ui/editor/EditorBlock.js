@@ -95,7 +95,13 @@ export const EditorBlock = ({ children, node }) => {
   )
 
   return !isMobileOs() ? (
-    <Grid singleRow mb="tiny" flexWrap="nowrap" columnGap="small">
+    <Grid
+      singleRow
+      mb="tiny"
+      flexWrap="nowrap"
+      columnGap="small"
+      position="relative"
+    >
       <View
         contentEditable="false"
         suppressContentEditableWarning
