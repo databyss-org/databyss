@@ -47,13 +47,14 @@ const BottomInfoText = ({ text }) => (
   </Text>
 )
 
-const BottomInfo = () => {
+const BottomInfo = ({ setMenuItem }) => {
   const { navigate } = useNavigationContext()
   const { setPage } = usePageContext()
   const onNewPageClick = () => {
     const _page = newPage()
     setPage(_page)
     navigate(`/pages/${_page.page._id}`)
+    setMenuItem('pages')
   }
 
   return (
@@ -191,7 +192,7 @@ const Sidebar = () => {
         </List>
         {/* footer  */}
         <View position="fixed" bottom={0} left={0} width="300px">
-          <BottomInfo />
+          <BottomInfo setMenuItem={setMenuItem} />
         </View>
       </View>
     </View>
