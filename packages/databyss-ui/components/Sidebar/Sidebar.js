@@ -18,6 +18,7 @@ import Plus from '@databyss-org/ui/assets/plus.svg'
 import SidebarList from './SidebarList'
 import SidebarCollapsed from './SidebarCollapsed'
 import { darkTheme } from '../../theming/theme'
+import Search from './Search'
 
 export const defaultProps = {
   height: '100vh',
@@ -25,7 +26,7 @@ export const defaultProps = {
 
 const headerMap = type => {
   if (type) {
-    return { pages: 'Pages' }[type]
+    return { pages: 'Pages', search: 'Search' }[type]
   }
   return 'Databyss'
 }
@@ -134,6 +135,9 @@ const Sidebar = () => {
         </PagesLoader>
       )
     }
+    if (menuItem === 'search') {
+      return <Text>test</Text>
+    }
     return SidebarList({
       menuOpen,
       menuItem,
@@ -188,6 +192,7 @@ const Sidebar = () => {
           </BaseControl>
           {/* content */}
           <Separator color="border.1" />
+          <Search onClick={() => setMenuItem('search')} />
           <SidebarContent />
         </List>
         {/* footer  */}

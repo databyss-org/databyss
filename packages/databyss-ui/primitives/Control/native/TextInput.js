@@ -27,6 +27,7 @@ const TextInput = forwardRef(
     ) : (
       <StyledInput
         type="text"
+        placeholder="temp"
         value={value.textValue}
         onChange={e => onChange({ textValue: e.target.value })}
         ref={ref}

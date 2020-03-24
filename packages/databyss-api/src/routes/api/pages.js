@@ -87,6 +87,7 @@ router.post(
             const entryFields = {
               text: { textValue: text, ranges },
               _id: entryId,
+              page: _id,
               account: req.account._id,
             }
             let entryResponse = await Entry.findOne({ _id: entryId })

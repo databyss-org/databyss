@@ -15,6 +15,7 @@ import sourcesRoute from './routes/api/sources'
 import topicsRoute from './routes/api/topics'
 import pingRoute from './routes/api/ping'
 import errorRoute from './routes/api/error'
+import entriesRoute from './routes/api/entries'
 
 let app = null
 let bugsnagMiddleware
@@ -50,6 +51,7 @@ const run = async () => {
   app.use('/api/topics', topicsRoute)
   app.use('/api/ping', pingRoute)
   app.use('/api/error', errorRoute)
+  app.use('/api/entries', entriesRoute)
 
   // global error middleware
   // eslint-disable-next-line no-unused-vars
