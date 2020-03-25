@@ -19,7 +19,7 @@ const EntrySchema = new mongoose.Schema({
   },
 })
 
-EntrySchema.index({ 'text.textValue': 'text' })
+// EntrySchema.index({ 'text.textValue': 'text' })
 
 const Entry = mongoose.models.Entry || mongoose.model('entry', EntrySchema)
 

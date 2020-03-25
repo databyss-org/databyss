@@ -136,7 +136,7 @@ const Sidebar = () => {
       )
     }
     if (menuItem === 'search') {
-      return <Text>test</Text>
+      return null
     }
     return SidebarList({
       menuOpen,
@@ -191,8 +191,8 @@ const Sidebar = () => {
             </View>
           </BaseControl>
           {/* content */}
-          <Separator color="border.1" />
-          <Search onClick={() => setMenuItem('search')} />
+          {menuItem !== 'search' && <Separator color="border.1" />}
+          <Search menuItem={menuItem} onClick={() => setMenuItem('search')} />
           <SidebarContent />
         </List>
         {/* footer  */}

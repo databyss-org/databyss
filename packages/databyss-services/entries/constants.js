@@ -1,0 +1,2 @@
+export const SEARCH_ENTRY = 'SEARCH_ENTRY'
+export const CACHE_RESULTS = 'CACHE_RESULTS'
