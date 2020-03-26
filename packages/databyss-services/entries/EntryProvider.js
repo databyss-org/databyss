@@ -66,8 +66,11 @@ EntryProvider.defaultProps = {
 }
 
 export const EntrySearchLoader = ({ query, children }) => {
-  const { searchEntries, state } = useEntryContext()
-  searchEntries(query)
+  const { searchEntries, searchTerm, state } = useEntryContext()
+
+  if (query !== searchTerm) {
+    searchEntries(query)
+  }
 
   if (state.searchResults instanceof Error) {
     return <ErrorFallback error={state.searchResults} />

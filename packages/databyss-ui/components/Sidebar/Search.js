@@ -15,6 +15,7 @@ import {
   Separator,
 } from '@databyss-org/ui/primitives'
 import SearchIcon from '@databyss-org/ui/assets/search.svg'
+import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import _ from 'lodash'
 
 const Search = ({ onClick, menuItem }) => {
@@ -42,18 +43,23 @@ const Search = ({ onClick, menuItem }) => {
     navigate(`/search/${searchTerm}`)
   }
 
+  const clear = () => {
+    setValue({ textValue: '' })
+  }
+
   return (
     <View height="40px" width="100%" m="small" onClick={onClick}>
       <View
         backgroundColor="background.1"
         height="100%"
         justifyContent="center"
+        position="relative"
         flex={1}
         borderVariant="thinLight"
         p="small"
       >
-        <Grid singleRow alignItems="center">
-          <Icon sizeVariant="small" color="text.3">
+        <Grid singleRow alignItems="center" columnGap="none">
+          <Icon sizeVariant="small" color="text.3" pr="small">
             <SearchIcon />
           </Icon>
           <TextInput
@@ -62,6 +68,13 @@ const Search = ({ onClick, menuItem }) => {
             value={value}
             onChange={onChange}
           />
+          <View position="absolute" right="small">
+            <BaseControl onClick={clear}>
+              <Icon sizeVariant="tiny" color="text.3">
+                <CloseSvg />
+              </Icon>
+            </BaseControl>
+          </View>
         </Grid>
       </View>
       {value.textValue &&

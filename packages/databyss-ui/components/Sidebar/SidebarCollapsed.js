@@ -15,6 +15,7 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import Plus from '@databyss-org/ui/assets/plus.svg'
 import Databyss from '@databyss-org/ui/assets/databyss.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
+import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import { darkTheme } from '../../theming/theme'
 
 export const defaultProps = {
@@ -86,6 +87,18 @@ const SidebarCollapsed = ({ onToggleMenuOpen, setMenuItem }) => {
           </BaseControl>
           {/* content */}
           <Separator color="border.1" />
+          <BaseControl
+            p={2}
+            width="100%"
+            onClick={() => onItemClick('search')}
+            alignItems="center"
+          >
+            <Grid singleRow alignItems="center" columnGap="small">
+              <Icon sizeVariant="medium" color="text.3">
+                <SearchSvg />
+              </Icon>
+            </Grid>
+          </BaseControl>
           <BaseControl
             p={2}
             width="100%"
