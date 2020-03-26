@@ -19,6 +19,8 @@ router.get(
         'text.textValue': searchKey,
       }).populate('page')
 
+      // TODO: ONLY RETURNS RESULTS WITH ACCOUNT ID
+
       if (results) {
         let _results = {
           count: results.length,
@@ -30,6 +32,7 @@ router.get(
         */
         _results = results.reduce((acc, curr) => {
           if (!acc.results[curr.page._id]) {
+            //   const _entries = new Map()
             // init result
             acc.results[curr.page._id] = {
               page: curr.page.name,

@@ -20,7 +20,7 @@ import _ from 'lodash'
 
 const Search = ({ onClick, menuItem }) => {
   const { path, navigate } = useNavigationContext()
-  const { searchTerm } = useEntryContext()
+  // const { searchTerm, searchCache } = useEntryContext()
 
   const [value, setValue] = useState({
     textValue: '',
@@ -40,7 +40,7 @@ const Search = ({ onClick, menuItem }) => {
   }
 
   const onSearchClick = () => {
-    navigate(`/search/${searchTerm}`)
+    navigate(`/search/${value.textValue}`)
   }
 
   const clear = () => {

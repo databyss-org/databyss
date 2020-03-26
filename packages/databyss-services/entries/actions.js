@@ -11,7 +11,7 @@ export function onSearchEntries(string) {
     entries.searchEntries(string).then(res => {
       dispatch({
         type: CACHE_RESULTS,
-        payload: { results: res },
+        payload: { results: res, query: string },
       })
     })
   }

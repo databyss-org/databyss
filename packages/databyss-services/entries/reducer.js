@@ -2,23 +2,25 @@ import { SEARCH_ENTRY, CACHE_RESULTS } from './constants'
 import { ResourcePending } from '../lib/ResourcePending'
 
 export const initialState = {
-  searchResults: [],
-  searchTerm: '',
+  searchCache: {},
 }
 
 export default (state, action) => {
   switch (action.type) {
     case SEARCH_ENTRY: {
+      const _cache = state.searchCache
+      _cache[action.payload.query] = new ResourcePending()
       return {
         ...state,
-        searchTerm: action.payload.query,
-        searchResults: new ResourcePending(),
+        searchCache: _cache,
       }
     }
     case CACHE_RESULTS: {
+      const _cache = state.searchCache
+      _cache[action.payload.query] = action.payload.results
       return {
         ...state,
-        searchResults: action.payload.results,
+        searchCache: _cache,
       }
     }
     default:

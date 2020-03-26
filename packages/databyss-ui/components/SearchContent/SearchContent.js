@@ -62,7 +62,6 @@ const SearchContent = () => {
         })}
       </View>
     ))
-    console.log(Object.values(results))
     return <View>{_Pages}</View>
   }
 
