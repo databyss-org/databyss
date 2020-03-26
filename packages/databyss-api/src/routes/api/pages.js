@@ -83,11 +83,21 @@ router.post(
             const ranges = !_.isEmpty(entries[e].ranges)
               ? entries[e].ranges
               : []
+
+            // get blockId of current block
+            const _block = _.pickBy(blocks, _block => {
+              return _block.refId === entryId
+              //  return true
+            })
+
+            console.log(Object.keys(_block)[0])
+
             // ENTRY WITH ID
             const entryFields = {
               text: { textValue: text, ranges },
               _id: entryId,
               page: _id,
+              block: Object.keys(_block)[0],
               account: req.account._id,
             }
             let entryResponse = await Entry.findOne({ _id: entryId })

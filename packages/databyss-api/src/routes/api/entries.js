@@ -41,6 +41,7 @@ router.get(
                 {
                   entryId: curr._id,
                   text: curr.text.textValue,
+                  blockId: curr.block,
                 },
               ],
             }
@@ -51,6 +52,7 @@ router.get(
             _entries.push({
               entryId: curr._id,
               text: curr.text.textValue,
+              blockId: curr.block,
             })
             acc.results[curr.page._id].entries = _entries
           }

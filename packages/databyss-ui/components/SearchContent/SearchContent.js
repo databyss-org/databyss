@@ -1,20 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Highlighter from 'react-highlight-words'
-import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import {
-  useEntryContext,
-  EntrySearchLoader,
-} from '@databyss-org/services/entries/EntryProvider'
+import { EntrySearchLoader } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
   Text,
   View,
-  TextInput,
-  List,
   BaseControl,
   Grid,
   Icon,
-  Separator,
   ScrollView,
 } from '@databyss-org/ui/primitives'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
@@ -25,10 +18,10 @@ const SearchContent = () => {
   /*
     todo: gets two different search queries
   */
-  const { type, id } = getTokensFromPath()
+  const { id } = getTokensFromPath()
 
-  const onEntryClick = _id => {
-    navigate(`/pages/${_id}`)
+  const onEntryClick = (pageId, blockId) => {
+    navigate(`/pages/${pageId}#${blockId}`)
   }
   /*
   use same route to update name, just pass it name 
@@ -47,7 +40,10 @@ const SearchContent = () => {
         </View>
         {r.entries.map((e, k) => {
           return (
-            <BaseControl key={k} onClick={() => onEntryClick(r.pageId)}>
+            <BaseControl
+              key={k}
+              onClick={() => onEntryClick(r.pageId, e.blockId)}
+            >
               <View p="small" ml="small">
                 <Text>
                   <Highlighter

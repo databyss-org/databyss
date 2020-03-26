@@ -24,7 +24,16 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
 
   const getTokensFromPath = () => {
     const _path = state.path.split('/')
-    return { type: _path[1], id: _path[2] }
+    let _id = _path[2]
+    let _anchor = ''
+
+    if (_id && _id.includes('#')) {
+      const _str = _id.split('#')
+      _id = _str[0]
+      _anchor = _str[1]
+    }
+
+    return { type: _path[1], id: _id, anchor: _anchor }
   }
 
   return (

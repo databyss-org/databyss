@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import * as Scroll from 'react-scroll'
+
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { View, ScrollView } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
@@ -6,17 +8,22 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 
+const scroller = Scroll.scroller
+var scroll = Scroll.animateScroll
+const Element = Scroll.Element
+
 const PageContent = () => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
-  const { path, navigate } = useNavigationContext()
+  const { path, navigate, getTokensFromPath } = useNavigationContext()
   const [readOnly, setReadOnly] = useState(false)
+
+  const { type, id, anchor } = getTokensFromPath()
 
   const _pathList = path.split('/')
   if (_pathList[1].length === 0) {
     navigate(`/pages/${account.defaultPage}`)
   }
-  const pageId = _pathList[2]
 
   const onHeaderClick = bool => {
     if (readOnly !== bool) {
@@ -29,18 +36,38 @@ const PageContent = () => {
   */
 
   return (
-    <ScrollView p="medium" flex="1" maxHeight="98vh">
-      {pageId && (
-        <PageLoader pageId={pageId}>
-          {page => (
-            <View>
-              <PageHeader pageId={pageId} isFocused={onHeaderClick} />
-              <PageBody page={page} readOnly={readOnly} />
-            </View>
-          )}
+    <View m="medium" p="small" flex="1" maxHeight="100vh">
+      {id && (
+        <PageLoader pageId={id}>
+          {page => {
+            useEffect(() => {
+              // if anchor link exists, scroll to anchor
+              if (anchor) {
+                scroller.scrollTo(anchor, {
+                  duration: 1500,
+                  smooth: true,
+                  containerId: 'pageContainer',
+                })
+              }
+            }, [])
+
+            return (
+              <Element
+                id="pageContainer"
+                className="element"
+                style={{
+                  height: '100vh',
+                  overflow: 'scroll',
+                }}
+              >
+                <PageHeader pageId={id} isFocused={onHeaderClick} />
+                <PageBody page={page} readOnly={readOnly} />
+              </Element>
+            )
+          }}
         </PageLoader>
       )}
-    </ScrollView>
+    </View>
   )
 }
 

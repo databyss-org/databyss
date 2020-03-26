@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import * as Scroll from 'react-scroll'
 import css from '@styled-system/css'
 import { isMobileOs } from '@databyss-org/ui/'
 import { Text, View, Grid } from '@databyss-org/ui/primitives'
@@ -8,6 +9,8 @@ import { useEditorContext } from '@databyss-org/ui/editor/EditorProvider'
 import { newBlockMenu } from '@databyss-org/ui/editor/state/page/actions'
 import EditorBlockMenu from './Menu/EditorBlockMenu'
 import { hasSelection } from './slate/slateUtils'
+
+const Element = Scroll.Element
 
 const TextBlock = ({ children, variant, color }) => (
   <Text variant={variant} color={color}>
@@ -97,7 +100,7 @@ export const EditorBlock = ({ children, node }) => {
   return !isMobileOs() ? (
     <Grid
       singleRow
-      mb="tiny"
+      mb="small"
       flexWrap="nowrap"
       columnGap="small"
       position="relative"
@@ -120,10 +123,12 @@ export const EditorBlock = ({ children, node }) => {
       {_children}
     </Grid>
   ) : (
-    <View mb="tiny">{_children}</View>
+    <View mb="small">{_children}</View>
   )
 }
 
 export const renderBlock = ({ node, children }) => (
-  <EditorBlock node={node}>{children}</EditorBlock>
+  <Element name={node.key} id={node.key} className="element">
+    <EditorBlock node={node}>{children}</EditorBlock>
+  </Element>
 )

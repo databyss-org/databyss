@@ -13,6 +13,10 @@ const EntrySchema = new mongoose.Schema({
     ref: 'page',
     // required: true,
   },
+  block: {
+    type: Schema.Types.ObjectId,
+    ref: 'block',
+  },
   text: {
     type: RichText.schema,
     default: () => new RichText(),
