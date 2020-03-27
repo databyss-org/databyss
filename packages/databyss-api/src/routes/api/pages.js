@@ -85,10 +85,11 @@ router.post(
               : []
 
             // get blockId of current block
-            const _block = _.pickBy(blocks, _block => {
-              return _block.refId === entryId
+            const _block = _.pickBy(
+              blocks,
+              _block => _block.refId === entryId
               //  return true
-            })
+            )
 
             // ENTRY WITH ID
             const entryFields = {

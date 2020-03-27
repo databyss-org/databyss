@@ -10,6 +10,33 @@ import PageBody from './PageBody'
 const scroller = Scroll.scroller
 const Element = Scroll.Element
 
+const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
+  useEffect(() => {
+    // if anchor link exists, scroll to anchor
+    if (anchor) {
+      scroller.scrollTo(anchor, {
+        duration: 1500,
+        smooth: true,
+        containerId: 'pageContainer',
+      })
+    }
+  }, [])
+
+  return (
+    <Element
+      id="pageContainer"
+      className="element"
+      style={{
+        height: '100vh',
+        overflow: 'scroll',
+      }}
+    >
+      <PageHeader pageId={id} isFocused={onHeaderClick} />
+      <PageBody page={page} readOnly={readOnly} />
+    </Element>
+  )
+}
+
 const PageContent = () => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
@@ -37,32 +64,15 @@ const PageContent = () => {
     <View m="medium" p="small" flex="1" maxHeight="100vh">
       {id && (
         <PageLoader pageId={id}>
-          {page => {
-            useEffect(() => {
-              // if anchor link exists, scroll to anchor
-              if (anchor) {
-                scroller.scrollTo(anchor, {
-                  duration: 1500,
-                  smooth: true,
-                  containerId: 'pageContainer',
-                })
-              }
-            }, [])
-
-            return (
-              <Element
-                id="pageContainer"
-                className="element"
-                style={{
-                  height: '100vh',
-                  overflow: 'scroll',
-                }}
-              >
-                <PageHeader pageId={id} isFocused={onHeaderClick} />
-                <PageBody page={page} readOnly={readOnly} />
-              </Element>
-            )
-          }}
+          {page => (
+            <PageContainer
+              anchor={anchor}
+              id={id}
+              onHeaderClick={onHeaderClick}
+              page={page}
+              readOnly={readOnly}
+            />
+          )}
         </PageLoader>
       )}
     </View>

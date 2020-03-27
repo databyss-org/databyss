@@ -15,21 +15,19 @@ const headerMap = type => {
   return 'Databyss'
 }
 
-const Header = ({ onHeaderClick, menuItem }) => {
-  return (
-    <BaseControl p={2} width="100%" onClick={() => onHeaderClick()}>
-      <View>
-        <Grid singleRow alignItems="center" columnGap="small">
-          <Icon sizeVariant="medium" color="text.3">
-            <ArrowLeft />
-          </Icon>
-          <Text variant="uiTextLarge" color="text.2">
-            {headerMap(menuItem)}
-          </Text>
-        </Grid>
-      </View>
-    </BaseControl>
-  )
-}
+const Header = ({ onHeaderClick, menuItem }) => (
+  <BaseControl p={2} width="100%" onClick={() => onHeaderClick()}>
+    <View>
+      <Grid singleRow alignItems="center" columnGap="small">
+        <Icon sizeVariant="medium" color="text.3">
+          <ArrowLeft />
+        </Icon>
+        <Text variant="uiTextLarge" color="text.2">
+          {headerMap(menuItem)}
+        </Text>
+      </Grid>
+    </View>
+  </BaseControl>
+)
 
 export default Header

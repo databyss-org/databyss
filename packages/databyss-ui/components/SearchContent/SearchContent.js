@@ -50,26 +50,24 @@ const SearchContent = () => {
               </Grid>
             </BaseControl>
           </View>
-          {r.entries.map((e, k) => {
-            return (
-              <BaseControl
-                hoverColor="background.2"
-                activeColor="background.3"
-                key={k}
-                onClick={() => onEntryClick(r.pageId, e.blockId)}
-              >
-                <View p="small" ml="small">
-                  <Text>
-                    <Highlighter
-                      searchWords={[id]}
-                      autoEscape={true}
-                      textToHighlight={e.text}
-                    />
-                  </Text>
-                </View>
-              </BaseControl>
-            )
-          })}
+          {r.entries.map((e, k) => (
+            <BaseControl
+              hoverColor="background.2"
+              activeColor="background.3"
+              key={k}
+              onClick={() => onEntryClick(r.pageId, e.blockId)}
+            >
+              <View p="small" ml="small">
+                <Text>
+                  <Highlighter
+                    searchWords={[id]}
+                    autoEscape
+                    textToHighlight={e.text}
+                  />
+                </Text>
+              </View>
+            </BaseControl>
+          ))}
         </View>
       ))
     ) : (
@@ -82,14 +80,12 @@ const SearchContent = () => {
     <ScrollView p="medium" flex="1" maxHeight="98vh">
       <View p="medium">
         <Text variant="bodyLarge" color="text.3">
-          "{id}"
+          &quot;{id}&quot;
         </Text>
       </View>
 
       <EntrySearchLoader query={id}>
-        {results => {
-          return ComposeResults(results)
-        }}
+        {results => ComposeResults(results)}
       </EntrySearchLoader>
     </ScrollView>
   )

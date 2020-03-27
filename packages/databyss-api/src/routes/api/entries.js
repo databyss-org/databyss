@@ -13,7 +13,7 @@ router.get(
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
     try {
-      var searchKey = new RegExp(req.params.string, 'i')
+      const searchKey = new RegExp(req.params.string, 'i')
 
       const results = await Entry.find({
         'text.textValue': searchKey,
@@ -59,11 +59,10 @@ router.get(
         }, _results)
 
         return res.json(_results)
-      } else {
-        return res
-          .status(400)
-          .json({ msg: 'There is no entries for this search' })
       }
+      return res
+        .status(400)
+        .json({ msg: 'There is no entries for this search' })
     } catch (err) {
       console.error(err.message)
       return res.status(500).send('Server Error')

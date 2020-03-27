@@ -14,13 +14,6 @@ export const defaultProps = {
   height: '100vh',
 }
 
-const headerMap = type => {
-  if (type) {
-    return { pages: 'Pages', search: 'Search' }[type]
-  }
-  return 'Databyss'
-}
-
 const Section = ({ children, title, variant, ...others }) => (
   <View mb="medium" {...others}>
     <View mb="small">

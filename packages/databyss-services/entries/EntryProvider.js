@@ -1,13 +1,9 @@
 import React, { createContext, useContext } from 'react'
-import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
-import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
-
-import reducer, { initialState } from './reducer'
-
-import { onSearchEntries } from './actions'
 import makeLoader from '@databyss-org/ui/components/Loaders/makeLoader'
+import reducer, { initialState } from './reducer'
+import { onSearchEntries } from './actions'
 
 const useReducer = createReducer()
 
@@ -22,7 +18,6 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     if (!_results) {
       return dispatch(onSearchEntries(query))
     }
-    return
   }, 250)
 
   return (

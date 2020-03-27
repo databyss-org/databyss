@@ -12,7 +12,6 @@ import {
 } from '@databyss-org/ui/primitives'
 import SearchIcon from '@databyss-org/ui/assets/search.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
-import _ from 'lodash'
 
 const Search = ({ onClick, menuItem }) => {
   const { navigate } = useNavigationContext()
@@ -81,38 +80,36 @@ const Search = ({ onClick, menuItem }) => {
         menuItem === 'search' && (
           <View height="40px" pt="medium" pb="medium">
             <EntrySearchLoader query={value.textValue}>
-              {results => {
-                return (
-                  <BaseControl onClick={onSearchClick}>
-                    <Separator color="border.1" />
-                    <View justifyContent="center" p="small" position="relative">
-                      <Grid singleRow alignItems="center" p="small">
-                        <View>
-                          <Grid columnGap="none">
-                            <Text variant="uiTextTiny" color="text.2">
-                              A
-                            </Text>
-                            <Text variant="uiTextTinyItalic" color="text.2">
-                              a
-                            </Text>
-                          </Grid>
-                        </View>
-
-                        <Text variant="uiTextSmall" color="text.2">
-                          {results.count}{' '}
-                          {results.count !== 1 ? 'entries' : 'entry'}
-                        </Text>
-                        <View position="absolute" right="0px">
+              {results => (
+                <BaseControl onClick={onSearchClick}>
+                  <Separator color="border.1" />
+                  <View justifyContent="center" p="small" position="relative">
+                    <Grid singleRow alignItems="center" p="small">
+                      <View>
+                        <Grid columnGap="none">
                           <Text variant="uiTextTiny" color="text.2">
-                            ENTER
+                            A
                           </Text>
-                        </View>
-                      </Grid>
-                    </View>
-                    <Separator color="border.1" />
-                  </BaseControl>
-                )
-              }}
+                          <Text variant="uiTextTinyItalic" color="text.2">
+                            a
+                          </Text>
+                        </Grid>
+                      </View>
+
+                      <Text variant="uiTextSmall" color="text.2">
+                        {results.count}{' '}
+                        {results.count !== 1 ? 'entries' : 'entry'}
+                      </Text>
+                      <View position="absolute" right="0px">
+                        <Text variant="uiTextTiny" color="text.2">
+                          ENTER
+                        </Text>
+                      </View>
+                    </Grid>
+                  </View>
+                  <Separator color="border.1" />
+                </BaseControl>
+              )}
             </EntrySearchLoader>
           </View>
         )}
