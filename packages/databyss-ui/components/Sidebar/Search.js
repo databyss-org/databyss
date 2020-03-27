@@ -67,6 +67,11 @@ const Search = ({ onClick, menuItem }) => {
             variant="bodyNormal"
             value={value}
             onChange={onChange}
+            onKeyDown={e => {
+              if (e.key === 'Enter') {
+                onSearchClick()
+              }
+            }}
           />
           <View position="absolute" right="small">
             <BaseControl onClick={clear}>
@@ -85,9 +90,28 @@ const Search = ({ onClick, menuItem }) => {
                 return (
                   <BaseControl onClick={onSearchClick}>
                     <Separator color="border.1" />
-                    <View justifyContent="center" p="small">
+                    <View justifyContent="center" p="small" position="relative">
                       <Grid singleRow alignItems="center" p="small">
-                        <Text>{results.count} entries</Text>
+                        <View>
+                          <Grid columnGap="none">
+                            <Text variant="uiTextTiny" color="text.2">
+                              A
+                            </Text>
+                            <Text variant="uiTextTinyItalic" color="text.2">
+                              a
+                            </Text>
+                          </Grid>
+                        </View>
+
+                        <Text variant="uiTextSmall" color="text.2">
+                          {results.count}{' '}
+                          {results.count !== 1 ? 'entries' : 'entry'}
+                        </Text>
+                        <View position="absolute" right="0px">
+                          <Text variant="uiTextTiny" color="text.2">
+                            ENTER
+                          </Text>
+                        </View>
                       </Grid>
                     </View>
                     <Separator color="border.1" />

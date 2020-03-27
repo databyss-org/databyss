@@ -23,41 +23,58 @@ const SearchContent = () => {
   const onEntryClick = (pageId, blockId) => {
     navigate(`/pages/${pageId}#${blockId}`)
   }
+
+  const onPageClick = pageId => {
+    navigate(`/pages/${pageId}`)
+  }
   /*
   use same route to update name, just pass it name 
   */
 
   const ComposeResults = ({ results }) => {
-    const _Pages = Object.values(results).map((r, i) => (
-      <View key={i} mb="medium">
-        <View height="40px">
-          <Grid singleRow alignItems="center" columnGap="small">
-            <Icon sizeVariant="small" color="text.3">
-              <PageSvg />
-            </Icon>
-            <Text variant="bodyLarge">{r.page}</Text>
-          </Grid>
-        </View>
-        {r.entries.map((e, k) => {
-          return (
+    const _Pages = Object.values(results).length ? (
+      Object.values(results).map((r, i) => (
+        <View key={i} mb="medium">
+          <View height="40px">
             <BaseControl
-              key={k}
-              onClick={() => onEntryClick(r.pageId, e.blockId)}
+              hoverColor="background.2"
+              activeColor="background.3"
+              key={`pageHeader-${i}`}
+              onClick={() => onPageClick(r.pageId)}
             >
-              <View p="small" ml="small">
-                <Text>
-                  <Highlighter
-                    searchWords={[id]}
-                    autoEscape={true}
-                    textToHighlight={e.text}
-                  />
-                </Text>
-              </View>
+              <Grid singleRow alignItems="center" columnGap="small">
+                <Icon sizeVariant="small" color="text.3">
+                  <PageSvg />
+                </Icon>
+                <Text variant="bodyLarge">{r.page}</Text>
+              </Grid>
             </BaseControl>
-          )
-        })}
-      </View>
-    ))
+          </View>
+          {r.entries.map((e, k) => {
+            return (
+              <BaseControl
+                hoverColor="background.2"
+                activeColor="background.3"
+                key={k}
+                onClick={() => onEntryClick(r.pageId, e.blockId)}
+              >
+                <View p="small" ml="small">
+                  <Text>
+                    <Highlighter
+                      searchWords={[id]}
+                      autoEscape={true}
+                      textToHighlight={e.text}
+                    />
+                  </Text>
+                </View>
+              </BaseControl>
+            )
+          })}
+        </View>
+      ))
+    ) : (
+      <Text>no results found</Text>
+    )
     return <View>{_Pages}</View>
   }
 

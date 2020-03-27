@@ -18,7 +18,7 @@ const PageContent = () => {
   const { path, navigate, getTokensFromPath } = useNavigationContext()
   const [readOnly, setReadOnly] = useState(false)
 
-  const { type, id, anchor } = getTokensFromPath()
+  const { id, anchor } = getTokensFromPath()
 
   const _pathList = path.split('/')
   if (_pathList[1].length === 0) {
