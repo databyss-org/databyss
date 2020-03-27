@@ -18,6 +18,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     if (!_results) {
       return dispatch(onSearchEntries(query))
     }
+    return null
   }, 250)
 
   return (
