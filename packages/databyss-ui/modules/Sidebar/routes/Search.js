@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import {
-  useEntryContext,
-  EntrySearchLoader,
-} from '@databyss-org/services/entries/EntryProvider'
+import { EntrySearchLoader } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
   Text,
   View,
   TextInput,
-  List,
   BaseControl,
   Grid,
   Icon,
@@ -19,8 +15,7 @@ import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import _ from 'lodash'
 
 const Search = ({ onClick, menuItem }) => {
-  const { path, navigate } = useNavigationContext()
-  // const { searchTerm, searchCache } = useEntryContext()
+  const { navigate } = useNavigationContext()
 
   const [value, setValue] = useState({
     textValue: '',

@@ -17,9 +17,8 @@ router.get(
 
       const results = await Entry.find({
         'text.textValue': searchKey,
+        account: req.account._id,
       }).populate('page')
-
-      // TODO: ONLY RETURNS RESULTS WITH ACCOUNT ID
 
       if (results) {
         let _results = {

@@ -90,8 +90,6 @@ router.post(
               //  return true
             })
 
-            console.log(Object.keys(_block)[0])
-
             // ENTRY WITH ID
             const entryFields = {
               text: { textValue: text, ranges },

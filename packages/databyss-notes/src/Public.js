@@ -1,6 +1,5 @@
 import React from 'react'
 import { View, Icon, Text, Grid } from '@databyss-org/ui/primitives'
-
 import Login from '@databyss-org/ui/modules/Login/Login'
 import LogoSvg from '@databyss-org/ui/assets/databyss.svg'
 

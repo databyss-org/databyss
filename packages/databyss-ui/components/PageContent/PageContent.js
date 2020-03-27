@@ -1,15 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import * as Scroll from 'react-scroll'
-
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { View, ScrollView } from '@databyss-org/ui/primitives'
+import { View } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 
 const scroller = Scroll.scroller
-var scroll = Scroll.animateScroll
 const Element = Scroll.Element
 
 const PageContent = () => {

@@ -1,24 +1,14 @@
 import React, { useState } from 'react'
 import css from '@styled-system/css'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { newPage } from '@databyss-org/services/pages/_helpers'
-import {
-  Text,
-  View,
-  List,
-  BaseControl,
-  Grid,
-  Icon,
-  Separator,
-} from '@databyss-org/ui/primitives'
-import ArrowLeft from '@databyss-org/ui/assets/arrowLeft.svg'
-import Plus from '@databyss-org/ui/assets/plus.svg'
+import { Text, View, List, Separator } from '@databyss-org/ui/primitives'
 import SidebarList from './SidebarList'
 import SidebarCollapsed from './SidebarCollapsed'
 import { darkTheme } from '../../theming/theme'
-import Search from './Search'
+import Search from './routes/Search'
+import Footer from '../../components/Sidebar/Footer'
+import Header from '../../components/Sidebar/Header'
 
 export const defaultProps = {
   height: '100vh',
@@ -41,52 +31,6 @@ const Section = ({ children, title, variant, ...others }) => (
     {children}
   </View>
 )
-
-const BottomInfoText = ({ text }) => (
-  <Text color="text.3" variant="uiTextSmall" p="tiny">
-    {text}
-  </Text>
-)
-
-const BottomInfo = ({ setMenuItem }) => {
-  const { navigate } = useNavigationContext()
-  const { setPage } = usePageContext()
-  const onNewPageClick = () => {
-    const _page = newPage()
-    setPage(_page)
-    navigate(`/pages/${_page.page._id}`)
-    setMenuItem('pages')
-  }
-
-  return (
-    <View alignItems="stretch" flexGrow={1} width="100%" p="medium">
-      <Separator color="border.1" />
-
-      <View p="small">
-        <BottomInfoText text="Syntax Guide" />
-      </View>
-      <Separator color="border.1" />
-      <View p="small">
-        <BottomInfoText text="@ source" />
-        <BottomInfoText text="// location" />
-        <BottomInfoText text="# topic" />
-      </View>
-      <Separator color="border.1" />
-      <BaseControl width="100%" onClick={onNewPageClick}>
-        <View p="medium" pl="small">
-          <Grid singleRow alignItems="center" columnGap="small">
-            <Icon sizeVariant="medium" color="text.3">
-              <Plus />
-            </Icon>
-            <Text variant="uiTextSmall" color="text.3">
-              New Page
-            </Text>
-          </Grid>
-        </View>
-      </BaseControl>
-    </View>
-  )
-}
 
 Section.defaultProps = {
   variant: 'heading3',
@@ -156,6 +100,7 @@ const Sidebar = () => {
   return menuOpen ? (
     <View
       {...defaultProps}
+      position="relative"
       css={css({
         width: '300px',
       })}
@@ -178,26 +123,15 @@ const Sidebar = () => {
           alignItems="center"
         >
           {/* header */}
-          <BaseControl p={2} width="100%" onClick={() => onHeaderClick()}>
-            <View>
-              <Grid singleRow alignItems="center" columnGap="small">
-                <Icon sizeVariant="medium" color="text.3">
-                  <ArrowLeft />
-                </Icon>
-                <Text variant="uiTextLarge" color="text.2">
-                  {headerMap(menuItem)}
-                </Text>
-              </Grid>
-            </View>
-          </BaseControl>
+          <Header onHeaderClick={onHeaderClick} menuItem={menuItem} />
           {/* content */}
           {menuItem !== 'search' && <Separator color="border.1" />}
           <Search menuItem={menuItem} onClick={() => setMenuItem('search')} />
           <SidebarContent />
         </List>
         {/* footer  */}
-        <View position="fixed" bottom={0} left={0} width="300px">
-          <BottomInfo setMenuItem={setMenuItem} />
+        <View position="absolute" bottom={0} left={0} width="300px">
+          <Footer setMenuItem={setMenuItem} />
         </View>
       </View>
     </View>

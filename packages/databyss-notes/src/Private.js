@@ -16,7 +16,13 @@ const Private = () => {
       <EntryProvider>
         <SourceProvider>
           <TopicProvider>
-            <View flexDirection="row" display="flex" width="100vw">
+            <View
+              flexDirection="row"
+              id="this-id"
+              display="flex"
+              width="100vw"
+              height="100vh"
+            >
               <Sidebar />
               {type !== 'search' && <PageContent key={path} />}
               {type === 'search' && <SearchContent key={path} />}
