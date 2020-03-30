@@ -37,8 +37,8 @@ Section.defaultProps = {
   variant: 'heading3',
 }
 
-const SidebarCollapsed = ({ onToggleMenuOpen, setMenuItem }) => {
-  const { navigate } = useNavigationContext()
+const SidebarCollapsed = ({ onToggleMenuOpen }) => {
+  const { navigate, navigateSidebar } = useNavigationContext()
   const { setPage } = usePageContext()
   const onNewPageClick = () => {
     const _page = newPage()
@@ -47,7 +47,7 @@ const SidebarCollapsed = ({ onToggleMenuOpen, setMenuItem }) => {
   }
 
   const onItemClick = item => {
-    setMenuItem(item)
+    navigateSidebar(`/${item}`)
     onToggleMenuOpen()
   }
 

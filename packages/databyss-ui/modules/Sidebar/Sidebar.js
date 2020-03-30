@@ -3,7 +3,7 @@ import css from '@styled-system/css'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { Text, View, List, Separator } from '@databyss-org/ui/primitives'
-import SidebarList from './SidebarList'
+import SidebarList from './routes/SidebarList'
 import SidebarCollapsed from './SidebarCollapsed'
 import { darkTheme } from '../../theming/theme'
 import Search from './routes/Search'
@@ -30,9 +30,9 @@ Section.defaultProps = {
 }
 
 const Sidebar = () => {
-  const { navigate } = useNavigationContext()
+  const { navigate, navigateSidebar, getSidebarPath } = useNavigationContext()
+  const menuItem = getSidebarPath()
   const [menuOpen, toggleMenuOpen] = useState(true)
-  const [menuItem, setMenuItem] = useState(false)
 
   const onToggleMenuOpen = () => {
     toggleMenuOpen(!menuOpen)
@@ -57,16 +57,8 @@ const Sidebar = () => {
 
             return SidebarList({
               menuItems: _menuItems,
-              menuItem,
               menuOpen,
               onToggleMenuOpen,
-              onItemClick: id => {
-                // if no id is passed, menu will go back to default content
-                if (!id) {
-                  return setMenuItem(false)
-                }
-                return navigate(`/pages/${id}`)
-              },
             })
           }}
         </PagesLoader>
@@ -75,17 +67,17 @@ const Sidebar = () => {
     if (menuItem === 'search') {
       return null
     }
+
     return SidebarList({
       menuOpen,
       menuItem,
       onToggleMenuOpen,
-      onItemClick: setMenuItem,
     })
   }
 
   const onHeaderClick = () => {
     if (menuItem) {
-      return setMenuItem(false)
+      return navigateSidebar('/')
     }
     return toggleMenuOpen(!menuOpen)
   }
@@ -116,23 +108,24 @@ const Sidebar = () => {
           alignItems="center"
         >
           {/* header */}
-          <Header onHeaderClick={onHeaderClick} menuItem={menuItem} />
+          <Header onHeaderClick={onHeaderClick} />
           {/* content */}
           {menuItem !== 'search' && <Separator color="border.1" />}
-          <Search menuItem={menuItem} onClick={() => setMenuItem('search')} />
+          <Search
+            onClick={() => {
+              navigateSidebar('/search')
+            }}
+          />
           <SidebarContent />
         </List>
         {/* footer  */}
         <View position="absolute" bottom={0} left={0} width="300px">
-          <Footer setMenuItem={setMenuItem} />
+          <Footer />
         </View>
       </View>
     </View>
   ) : (
-    <SidebarCollapsed
-      onToggleMenuOpen={onToggleMenuOpen}
-      setMenuItem={setMenuItem}
-    />
+    <SidebarCollapsed onToggleMenuOpen={onToggleMenuOpen} />
   )
 }
 

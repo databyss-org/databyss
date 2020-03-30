@@ -22,6 +22,8 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
   const hideModal = () => dispatch(actions.hideModal())
   const navigate = options => dispatch(actions.navigate(options))
 
+  const navigateSidebar = options => dispatch(actions.navigateSidebar(options))
+
   const getTokensFromPath = () => {
     const _path = state.path.split('/')
     let _id = _path[2]
@@ -36,9 +38,26 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
     return { type: _path[1], id: _id, anchor: _anchor }
   }
 
+  const getSidebarPath = () => {
+    const _path = state.sidebarPath.split('/')
+    let type = _path[1]
+    if (type) {
+      return type
+    }
+    return null
+  }
+
   return (
     <NavigationContext.Provider
-      value={{ ...state, showModal, hideModal, navigate, getTokensFromPath }}
+      value={{
+        ...state,
+        showModal,
+        hideModal,
+        navigate,
+        getTokensFromPath,
+        navigateSidebar,
+        getSidebarPath,
+      }}
     >
       {children}
 

@@ -1,4 +1,9 @@
-import { SHOW_MODAL, DISMISS_MODAL, NAVIGATE } from './constants'
+import {
+  SHOW_MODAL,
+  DISMISS_MODAL,
+  NAVIGATE,
+  NAVIGATE_SIDEBAR,
+} from './constants'
 
 export function showModal({ component, props, dismiss }) {
   return {
@@ -20,6 +25,13 @@ export function hideModal() {
 export function navigate(path) {
   return {
     type: NAVIGATE,
+    payload: { path },
+  }
+}
+
+export function navigateSidebar(path) {
+  return {
+    type: NAVIGATE_SIDEBAR,
     payload: { path },
   }
 }

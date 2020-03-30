@@ -14,7 +14,7 @@ const PageBody = ({ page, readOnly }) => (
     editableReducer={slateReducer}
   >
     {!readOnly && <AutoSave />}
-    <EditorPage autoFocus>
+    <EditorPage>
       <SlateContentEditable readOnly={readOnly} />
     </EditorPage>
   </EditorProvider>

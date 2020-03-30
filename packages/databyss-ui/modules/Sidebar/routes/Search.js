@@ -13,8 +13,10 @@ import {
 import SearchIcon from '@databyss-org/ui/assets/search.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 
-const Search = ({ onClick, menuItem }) => {
-  const { navigate } = useNavigationContext()
+const Search = ({ onClick }) => {
+  const { navigate, getSidebarPath, navigateSidebar } = useNavigationContext()
+
+  const menuItem = getSidebarPath()
 
   const [value, setValue] = useState({
     textValue: '',

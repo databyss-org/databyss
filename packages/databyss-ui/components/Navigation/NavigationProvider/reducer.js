@@ -1,8 +1,14 @@
-import { SHOW_MODAL, DISMISS_MODAL, NAVIGATE } from './constants'
+import {
+  SHOW_MODAL,
+  DISMISS_MODAL,
+  NAVIGATE,
+  NAVIGATE_SIDEBAR,
+} from './constants'
 
 export const initialState = {
   modals: [],
   path: '/',
+  sidebarPath: '/',
 }
 
 export default (state, action) => {
@@ -28,6 +34,15 @@ export default (state, action) => {
         ...state,
         path: action.payload.path,
       }
+    }
+    case NAVIGATE_SIDEBAR: {
+      if (state.sidebarPath !== action.payload.path) {
+        return {
+          ...state,
+          sidebarPath: action.payload.path,
+        }
+      }
+      return state
     }
     default:
       return state

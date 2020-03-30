@@ -18,14 +18,14 @@ const FooterText = ({ text }) => (
   </Text>
 )
 
-const Footer = ({ setMenuItem }) => {
-  const { navigate } = useNavigationContext()
+const Footer = () => {
+  const { navigate, navigateSidebar } = useNavigationContext()
   const { setPage } = usePageContext()
   const onNewPageClick = () => {
     const _page = newPage()
     setPage(_page)
     navigate(`/pages/${_page.page._id}`)
-    setMenuItem('pages')
+    navigateSidebar('/pages')
   }
 
   return (

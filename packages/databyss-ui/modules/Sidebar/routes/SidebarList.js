@@ -45,31 +45,32 @@ const menuSvgs = type =>
     topics: <TopicSvg />,
   }[type])
 
-const SidebarList = ({
-  menuItems = defaultMenu,
-  menuItem,
-  menuOpen,
-  //   onToggleMenuOpen,
-  onItemClick,
-}) => {
-  const { getTokensFromPath } = useNavigationContext()
+const SidebarList = ({ menuItems = defaultMenu, menuOpen }) => {
+  const {
+    getTokensFromPath,
+    getSidebarPath,
+    navigateSidebar,
+    navigate,
+  } = useNavigationContext()
+
+  const menuItem = getSidebarPath()
 
   const tokens = getTokensFromPath()
 
   const onClick = item => {
-    // if no id is passed, pass the item type
     if (!item.id) {
-      return onItemClick(item.type)
+      return navigateSidebar(`/${item.type}`)
     }
     // dispatch id to fetch
-    return onItemClick(item.id)
+    return navigate(`/pages/${item.id}`)
   }
 
   const padding = 24
   const headerHeight = 66
   const footerHeight = 238
+  const searchBar = 56
 
-  const totalHeight = pxUnits(padding + headerHeight + footerHeight)
+  const totalHeight = pxUnits(padding + headerHeight + footerHeight + searchBar)
 
   return (
     <View
