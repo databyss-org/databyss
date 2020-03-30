@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react'
-import * as Scroll from 'react-scroll'
+import React, { useState, useEffect, useRef } from 'react'
 import css from '@styled-system/css'
 import { isMobileOs } from '@databyss-org/ui/'
 import { Text, View, Grid } from '@databyss-org/ui/primitives'
@@ -7,10 +6,9 @@ import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { useEditorContext } from '@databyss-org/ui/editor/EditorProvider'
 import { newBlockMenu } from '@databyss-org/ui/editor/state/page/actions'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import EditorBlockMenu from './Menu/EditorBlockMenu'
 import { hasSelection } from './slate/slateUtils'
-
-const Element = Scroll.Element
 
 const TextBlock = ({ children, variant, color }) => (
   <Text variant={variant} color={color}>
@@ -52,6 +50,17 @@ const textSelector = ({ children, type }) => {
 
 export const EditorBlock = ({ children, node }) => {
   const [menuActive, setMenuActive] = useState(false)
+  const blockEl = useRef(null)
+  const { registerBlockRef } = usePageContext()
+
+  useEffect(
+    () => {
+      if (blockEl.current) {
+        registerBlockRef(node.key, blockEl)
+      }
+    },
+    [blockEl]
+  )
 
   const [editorState, dispatchEditor] = useEditorContext()
   const { editableState, showNewBlockMenu, activeBlockId } = editorState
@@ -86,6 +95,7 @@ export const EditorBlock = ({ children, node }) => {
 
   const _children = (
     <View
+      ref={blockEl}
       flexShrink={1}
       overflow="visible"
       justifyContent="center"
@@ -127,8 +137,6 @@ export const EditorBlock = ({ children, node }) => {
   )
 }
 
-export const renderBlock = ({ node, children }) => (
-  <Element name={node.key} id={node.key} className="element">
-    <EditorBlock node={node}>{children}</EditorBlock>
-  </Element>
-)
+export const renderBlock = ({ node, children }) => {
+  return <EditorBlock node={node}>{children}</EditorBlock>
+}

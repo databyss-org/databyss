@@ -4,7 +4,7 @@ import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../lib/ResourcePending'
 import Page from './Page'
 
-import { fetchPageHeaders, fetchPage, savePage } from './actions'
+import { fetchPageHeaders, fetchPage, savePage, registerRef } from './actions'
 
 interface PropsType {
   children: JSX.Element
@@ -15,6 +15,7 @@ interface ContextType {
   setPage: (page: Page) => void
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
+  registerBlockRef: (id: string, refOne: React.Ref<HTMLInputElement>) => void
 }
 
 const useReducer = createReducer()
@@ -60,8 +61,30 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     return null
   }
 
+  const registerBlockRef = (id: string, ref: React.Ref<HTMLInputElement>) => {
+    dispatch(registerRef(id, ref))
+    return null
+  }
+
+  const getBlockRef = (id: string) => {
+    if (state.refDict[id]) {
+      return state.refDict[id]
+    }
+    return null
+    //   console.log(state.refDict)
+  }
+
   return (
-    <PageContext.Provider value={{ getPages, getPage, setPage, refreshPages }}>
+    <PageContext.Provider
+      value={{
+        getPages,
+        getPage,
+        setPage,
+        registerBlockRef,
+        getBlockRef,
+        refreshPages,
+      }}
+    >
       {children}
     </PageContext.Provider>
   )

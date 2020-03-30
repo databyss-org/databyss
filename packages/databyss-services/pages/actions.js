@@ -6,6 +6,7 @@ import {
   CACHE_PAGE,
   CACHE_PAGE_HEADERS,
   FETCH_PAGE_HEADERS,
+  REGISTER_REF,
 } from './constants'
 
 export function fetchPage(_id) {
@@ -71,6 +72,15 @@ export function seedPage(page, cache) {
       if (Object.keys(cache).length === 0 || !cache) {
         dispatch(fetchPageHeaders())
       }
+    })
+  }
+}
+
+export function registerRef(id, ref) {
+  return dispatch => {
+    dispatch({
+      type: REGISTER_REF,
+      payload: { id, ref },
     })
   }
 }

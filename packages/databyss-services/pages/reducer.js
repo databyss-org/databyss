@@ -6,12 +6,14 @@ import {
   CACHE_PAGE,
   CACHE_PAGE_HEADERS,
   FETCH_PAGE_HEADERS,
+  REGISTER_REF,
 } from './constants'
 
 export const initialState = {
   isLoading: false,
   cache: {},
   headerCache: null,
+  refDict: {},
 }
 
 export default (state, action) => {
@@ -39,6 +41,16 @@ export default (state, action) => {
       return {
         ...state,
         headerCache: new ResourcePending(),
+      }
+    }
+
+    case REGISTER_REF: {
+      const _dict = state.refDict
+      _dict[action.payload.id] = action.payload.ref
+
+      return {
+        ...state,
+        refDict: _dict,
       }
     }
 

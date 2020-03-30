@@ -15,9 +15,6 @@ import PageSvg from '@databyss-org/ui/assets/page.svg'
 const SearchContent = () => {
   const { getTokensFromPath, navigate } = useNavigationContext()
 
-  /*
-    todo: gets two different search queries
-  */
   const { id } = getTokensFromPath()
 
   const onEntryClick = (pageId, blockId) => {

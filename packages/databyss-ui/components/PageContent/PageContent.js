@@ -1,39 +1,35 @@
 import React, { useState, useEffect } from 'react'
-import * as Scroll from 'react-scroll'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { View } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 
-const scroller = Scroll.scroller
-const Element = Scroll.Element
-
 const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
+  const { getBlockRef } = usePageContext()
   useEffect(() => {
     // if anchor link exists, scroll to anchor
     if (anchor) {
-      scroller.scrollTo(anchor, {
-        duration: 1500,
-        smooth: true,
-        containerId: 'pageContainer',
-      })
+      const _ref = getBlockRef(anchor)
+      if (_ref) {
+        setTimeout(() => {
+          _ref.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+          })
+        }, 20)
+      }
     }
   }, [])
 
   return (
-    <Element
-      id="pageContainer"
-      className="element"
-      style={{
-        height: '100vh',
-        overflow: 'scroll',
-      }}
-    >
+    <View height="100vh" overflow="scroll" p="medium" id="here">
       <PageHeader pageId={id} isFocused={onHeaderClick} />
       <PageBody page={page} readOnly={readOnly} />
-    </Element>
+    </View>
   )
 }
 
@@ -61,7 +57,7 @@ const PageContent = () => {
   */
 
   return (
-    <View m="medium" p="small" flex="1" maxHeight="100vh">
+    <View flex="1" maxHeight="100vh">
       {id && (
         <PageLoader pageId={id}>
           {page => (

@@ -231,7 +231,6 @@
     "react-native": "0.60.4",
     "react-router": "^5.0.1",
     "react-router-dom": "^5.0.1",
-    "react-scroll": "^1.7.16",
     "react-styleguidist": "^9.1.5",
     "react-svg-loader": "^3.0.3",
     "react-test-renderer": "16.9.0",
