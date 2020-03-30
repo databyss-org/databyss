@@ -88,7 +88,7 @@ const SidebarList = ({
         const _isActive = item.id === tokens.id && tokens.id
         acc.push(
           <BaseControl
-            backgroundColor={_isActive ? 'background.2' : 'background.0'}
+            backgroundColor={_isActive ? 'background.1' : 'background.0'}
             p={2}
             key={index}
             width="100%"

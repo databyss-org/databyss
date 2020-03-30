@@ -27,9 +27,6 @@ const SearchContent = () => {
   const onPageClick = pageId => {
     navigate(`/pages/${pageId}`)
   }
-  /*
-  use same route to update name, just pass it name 
-  */
 
   const ComposeResults = ({ results }) => {
     const _Pages = Object.values(results).length ? (

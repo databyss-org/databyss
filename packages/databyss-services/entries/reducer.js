@@ -1,4 +1,4 @@
-import { SEARCH_ENTRY, CACHE_RESULTS } from './constants'
+import { SEARCH_ENTRY, CACHE_ENTRY_RESULTS } from './constants'
 import { ResourcePending } from '../lib/ResourcePending'
 
 export const initialState = {
@@ -15,7 +15,7 @@ export default (state, action) => {
         searchCache: _cache,
       }
     }
-    case CACHE_RESULTS: {
+    case CACHE_ENTRY_RESULTS: {
       const _cache = state.searchCache
       _cache[action.payload.query] = action.payload.results
       return {

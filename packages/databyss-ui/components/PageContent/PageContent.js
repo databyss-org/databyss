@@ -28,7 +28,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
       className="element"
       style={{
         height: '100vh',
-        overflow: 'scroll',
+        overflowY: 'scroll',
       }}
     >
       <PageHeader pageId={id} isFocused={onHeaderClick} />
