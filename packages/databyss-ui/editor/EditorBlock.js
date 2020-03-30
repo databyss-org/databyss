@@ -53,9 +53,11 @@ export const EditorBlock = ({ children, node }) => {
   const blockEl = useRef(null)
 
   let registerBlockRef = null
+  const pageContext = usePageContext()
+
   // check if in page context
-  if (usePageContext()) {
-    const { registerBlockRef } = usePageContext()
+  if (pageContext) {
+    registerBlockRef = pageContext.registerBlockRef
   }
 
   useEffect(
