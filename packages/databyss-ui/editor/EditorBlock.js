@@ -51,11 +51,16 @@ const textSelector = ({ children, type }) => {
 export const EditorBlock = ({ children, node }) => {
   const [menuActive, setMenuActive] = useState(false)
   const blockEl = useRef(null)
-  const { registerBlockRef } = usePageContext()
+
+  let registerBlockRef = null
+  // check if in page context
+  if (usePageContext()) {
+    const { registerBlockRef } = usePageContext()
+  }
 
   useEffect(
     () => {
-      if (blockEl.current) {
+      if (blockEl.current && registerBlockRef) {
         registerBlockRef(node.key, blockEl)
       }
     },
