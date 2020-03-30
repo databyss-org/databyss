@@ -137,6 +137,6 @@ export const EditorBlock = ({ children, node }) => {
   )
 }
 
-export const renderBlock = ({ node, children }) => {
-  return <EditorBlock node={node}>{children}</EditorBlock>
-}
+export const renderBlock = ({ node, children }) => (
+  <EditorBlock node={node}>{children}</EditorBlock>
+)

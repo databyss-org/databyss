@@ -14,7 +14,7 @@ import SearchIcon from '@databyss-org/ui/assets/search.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 
 const Search = ({ onClick }) => {
-  const { navigate, getSidebarPath, navigateSidebar } = useNavigationContext()
+  const { navigate, getSidebarPath } = useNavigationContext()
 
   const menuItem = getSidebarPath()
 

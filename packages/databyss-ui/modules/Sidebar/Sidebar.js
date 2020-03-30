@@ -30,7 +30,7 @@ Section.defaultProps = {
 }
 
 const Sidebar = () => {
-  const { navigate, navigateSidebar, getSidebarPath } = useNavigationContext()
+  const { navigateSidebar, getSidebarPath } = useNavigationContext()
   const menuItem = getSidebarPath()
   const [menuOpen, toggleMenuOpen] = useState(true)
 

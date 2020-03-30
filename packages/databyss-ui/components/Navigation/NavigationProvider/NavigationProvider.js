@@ -40,7 +40,7 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
 
   const getSidebarPath = () => {
     const _path = state.sidebarPath.split('/')
-    let type = _path[1]
+    const type = _path[1]
     if (type) {
       return type
     }
