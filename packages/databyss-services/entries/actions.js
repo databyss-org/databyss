@@ -1,6 +1,6 @@
 import * as entries from './'
 
-import { SEARCH_ENTRY, CACHE_RESULTS } from './constants'
+import { SEARCH_ENTRY, CACHE_ENTRY_RESULTS } from './constants'
 
 export function onSearchEntries(string) {
   return async dispatch => {
@@ -10,7 +10,7 @@ export function onSearchEntries(string) {
     })
     entries.searchEntries(string).then(res => {
       dispatch({
-        type: CACHE_RESULTS,
+        type: CACHE_ENTRY_RESULTS,
         payload: { results: res, query: string },
       })
     })

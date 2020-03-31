@@ -83,6 +83,7 @@ const SlateContentEditable = forwardRef(
     const { activeBlockId, editableState, blocks, page } = editorState
 
     const editableRef = useRef(null)
+    const isInKeypressRef = useRef(false)
 
     const checkSelectedBlockChanged = _nextEditableState => {
       const _nextActiveBlock = findActiveBlock(_nextEditableState.value)
@@ -258,6 +259,12 @@ const SlateContentEditable = forwardRef(
     }
 
     const onKeyUp = (event, editor, next) => {
+      // to avoid responding to keyUp events initiated outside of the editor,
+      //   only respond if isInKeyPress is true
+      if (!isInKeypressRef.current) {
+        return next()
+      }
+      isInKeypressRef.current = false
       if (event.key === 'Enter') {
         // IF WE HAVE ATOMIC BLOCK HIGHLIGHTED
         // PREVENT NEW BLOCK
@@ -323,6 +330,7 @@ const SlateContentEditable = forwardRef(
     }
 
     const onKeyDown = (event, editor, next) => {
+      isInKeypressRef.current = true
       if (hotKeys.isCopy(event)) {
         return onCopy(event, editor, next)
       }
