@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useEffect } from 'react'
+import React, { createContext, useContext, useRef } from 'react'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../lib/ResourcePending'
 import Page from './Page'
 
-import { fetchPageHeaders, fetchPage, savePage, registerRef } from './actions'
+import { fetchPageHeaders, fetchPage, savePage } from './actions'
 
 interface PropsType {
   children: JSX.Element
@@ -25,6 +25,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   children,
   initialState,
 }: PropsType) => {
+  const refDictRef = useRef({})
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const setPage = (page: Page): void => {
@@ -62,16 +63,14 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   }
 
   const registerBlockRef = (id: string, ref: React.Ref<HTMLInputElement>) => {
-    dispatch(registerRef(id, ref))
-    return null
+    refDictRef.current[id] = ref
   }
 
   const getBlockRef = (id: string) => {
-    if (state.refDict[id]) {
-      return state.refDict[id]
+    if (refDictRef.current[id]) {
+      return refDictRef.current[id]
     }
     return null
-    //   console.log(state.refDict)
   }
 
   return (
