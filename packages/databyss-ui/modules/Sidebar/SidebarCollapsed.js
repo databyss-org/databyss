@@ -37,8 +37,13 @@ Section.defaultProps = {
   variant: 'heading3',
 }
 
-const SidebarCollapsed = ({ onToggleMenuOpen }) => {
-  const { navigate, navigateSidebar } = useNavigationContext()
+const SidebarCollapsed = () => {
+  const {
+    navigate,
+    navigateSidebar,
+    isMenuOpen,
+    setMenuOpen,
+  } = useNavigationContext()
   const { setPage } = usePageContext()
   const onNewPageClick = () => {
     const _page = newPage()
@@ -48,7 +53,7 @@ const SidebarCollapsed = ({ onToggleMenuOpen }) => {
 
   const onItemClick = item => {
     navigateSidebar(`/${item}`)
-    onToggleMenuOpen()
+    setMenuOpen(!isMenuOpen)
   }
 
   return (
@@ -76,7 +81,7 @@ const SidebarCollapsed = ({ onToggleMenuOpen }) => {
           <BaseControl
             p={2}
             width="100%"
-            onClick={() => onToggleMenuOpen()}
+            onClick={() => setMenuOpen(!isMenuOpen)}
             alignItems="center"
           >
             <Grid singleRow alignItems="flex-end" columnGap="small">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import css from '@styled-system/css'
 import { isMobileOs } from '@databyss-org/ui/'
 import { Text, View, Grid } from '@databyss-org/ui/primitives'
@@ -50,24 +50,8 @@ const textSelector = ({ children, type }) => {
 
 export const EditorBlock = ({ children, node }) => {
   const [menuActive, setMenuActive] = useState(false)
-  const blockEl = useRef(null)
 
-  let registerBlockRef = null
   const pageContext = usePageContext()
-
-  // check if in page context
-  if (pageContext) {
-    registerBlockRef = pageContext.registerBlockRef
-  }
-
-  useEffect(
-    () => {
-      if (blockEl.current && registerBlockRef) {
-        registerBlockRef(node.key, blockEl)
-      }
-    },
-    [blockEl]
-  )
 
   const [editorState, dispatchEditor] = useEditorContext()
   const { editableState, showNewBlockMenu, activeBlockId } = editorState
@@ -102,7 +86,11 @@ export const EditorBlock = ({ children, node }) => {
 
   const _children = (
     <View
-      ref={blockEl}
+      ref={ref =>
+        pageContext &&
+        !pageContext.getBlockRef(node.key) &&
+        pageContext.registerBlockRef(node.key, ref)
+      }
       flexShrink={1}
       overflow="visible"
       justifyContent="center"

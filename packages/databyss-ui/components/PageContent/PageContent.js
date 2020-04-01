@@ -15,12 +15,18 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
     if (anchor) {
       const _ref = getBlockRef(anchor)
       if (_ref) {
-        setTimeout(() => {
-          _ref.current.scrollIntoView({
+        window.requestAnimationFrame(() => {
+          _ref.scrollIntoView({
             behavior: 'smooth',
             block: 'start',
           })
-        }, 20)
+        })
+        // setTimeout(() => {
+        //   _ref.scrollIntoView({
+        //     behavior: 'smooth',
+        //     block: 'start',
+        //   })
+        // }, 20)
       }
     }
   }, [])

@@ -45,7 +45,7 @@ const menuSvgs = type =>
     topics: <TopicSvg />,
   }[type])
 
-const SidebarList = ({ menuItems = defaultMenu, menuOpen }) => {
+const SidebarList = ({ menuItems = defaultMenu }) => {
   const {
     getTokensFromPath,
     getSidebarPath,
@@ -94,7 +94,6 @@ const SidebarList = ({ menuItems = defaultMenu, menuOpen }) => {
             key={index}
             width="100%"
             onClick={() => onClick(item)}
-            alignItems={!menuOpen && 'center'}
           >
             <View>
               <Grid singleRow alignItems="center" columnGap="small">

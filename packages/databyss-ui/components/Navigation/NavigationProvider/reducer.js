@@ -3,11 +3,13 @@ import {
   DISMISS_MODAL,
   NAVIGATE,
   NAVIGATE_SIDEBAR,
+  TOGGLE_MENU,
 } from './constants'
 
 export const initialState = {
   modals: [],
   path: '/',
+  menuOpen: true,
   sidebarPath: '/',
 }
 
@@ -43,6 +45,12 @@ export default (state, action) => {
         }
       }
       return state
+    }
+    case TOGGLE_MENU: {
+      return {
+        ...state,
+        menuOpen: action.payload.bool,
+      }
     }
     default:
       return state

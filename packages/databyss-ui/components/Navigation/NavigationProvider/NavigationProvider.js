@@ -19,6 +19,8 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
   )
 
   const showModal = options => dispatch(actions.showModal(options))
+  const setMenuOpen = bool => dispatch(actions.menuOpen(bool))
+
   const hideModal = () => dispatch(actions.hideModal())
   const navigate = options => dispatch(actions.navigate(options))
 
@@ -51,6 +53,8 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
     <NavigationContext.Provider
       value={{
         ...state,
+        setMenuOpen,
+        isMenuOpen: state.menuOpen,
         showModal,
         hideModal,
         navigate,

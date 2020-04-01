@@ -15,6 +15,7 @@ interface ContextType {
   setPage: (page: Page) => void
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
+  clearBlockDict: () => void
   registerBlockRef: (id: string, refOne: React.Ref<HTMLInputElement>) => void
 }
 
@@ -73,6 +74,10 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     return null
   }
 
+  const clearBlockDict = () => {
+    refDictRef.current = {}
+  }
+
   return (
     <PageContext.Provider
       value={{
@@ -81,6 +86,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         setPage,
         registerBlockRef,
         getBlockRef,
+        clearBlockDict,
         refreshPages,
       }}
     >

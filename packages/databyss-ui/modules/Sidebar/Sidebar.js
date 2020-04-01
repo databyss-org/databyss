@@ -1,12 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import css from '@styled-system/css'
-import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { Text, View, List, Separator } from '@databyss-org/ui/primitives'
-import SidebarList from './routes/SidebarList'
+import SidebarList from '../../components/Sidebar/SidebarList'
 import SidebarCollapsed from './SidebarCollapsed'
 import { darkTheme } from '../../theming/theme'
 import Search from './routes/Search'
+import Pages from './routes/Pages'
+
 import Footer from '../../components/Sidebar/Footer'
 import Header from '../../components/Sidebar/Header'
 
@@ -30,59 +31,26 @@ Section.defaultProps = {
 }
 
 const Sidebar = () => {
-  const { navigateSidebar, getSidebarPath } = useNavigationContext()
+  const {
+    navigateSidebar,
+    getSidebarPath,
+    isMenuOpen,
+    setMenuOpen,
+  } = useNavigationContext()
   const menuItem = getSidebarPath()
-  const [menuOpen, toggleMenuOpen] = useState(true)
-
-  const onToggleMenuOpen = () => {
-    toggleMenuOpen(!menuOpen)
-  }
 
   /*
   if item active in menuItem, SidebarContent will compose a list to pass to SidebarList
   */
 
-  const SidebarContent = () => {
-    if (menuItem === 'pages') {
-      return (
-        <PagesLoader>
-          {pages => {
-            const _menuItems = Object.values(pages).map(p => ({
-              text: p.name,
-              type: 'pages',
-              id: p._id,
-            }))
-            // alphabetize list
-            _menuItems.sort((a, b) => (a.text > b.text ? 1 : -1))
-
-            return SidebarList({
-              menuItems: _menuItems,
-              menuOpen,
-              onToggleMenuOpen,
-            })
-          }}
-        </PagesLoader>
-      )
-    }
-    if (menuItem === 'search') {
-      return null
-    }
-
-    return SidebarList({
-      menuOpen,
-      menuItem,
-      onToggleMenuOpen,
-    })
-  }
-
   const onHeaderClick = () => {
     if (menuItem) {
       return navigateSidebar('/')
     }
-    return toggleMenuOpen(!menuOpen)
+    return setMenuOpen(!isMenuOpen)
   }
 
-  return menuOpen ? (
+  return isMenuOpen ? (
     <View
       {...defaultProps}
       position="relative"
@@ -109,14 +77,18 @@ const Sidebar = () => {
         >
           {/* header */}
           <Header onHeaderClick={onHeaderClick} />
-          {/* content */}
+          {/* search bar */}
           {menuItem !== 'search' && <Separator color="border.1" />}
           <Search
             onClick={() => {
               navigateSidebar('/search')
             }}
           />
-          <SidebarContent />
+          {/* content */}
+          {/* default content */}
+          {!menuItem && <SidebarList menuItem={menuItem} />}
+
+          {menuItem === 'pages' && <Pages />}
         </List>
         {/* footer  */}
         <View position="absolute" bottom={0} left={0} width="300px">
@@ -125,7 +97,7 @@ const Sidebar = () => {
       </View>
     </View>
   ) : (
-    <SidebarCollapsed onToggleMenuOpen={onToggleMenuOpen} />
+    <SidebarCollapsed />
   )
 }
 
