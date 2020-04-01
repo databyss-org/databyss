@@ -8,6 +8,15 @@ const EntrySchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: 'account',
   },
+  page: {
+    type: Schema.Types.ObjectId,
+    ref: 'page',
+    // required: true,
+  },
+  block: {
+    type: Schema.Types.ObjectId,
+    ref: 'block',
+  },
   text: {
     type: RichText.schema,
     default: () => new RichText(),

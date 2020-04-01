@@ -19,17 +19,49 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
   )
 
   const showModal = options => dispatch(actions.showModal(options))
+  const setMenuOpen = bool => dispatch(actions.menuOpen(bool))
+
   const hideModal = () => dispatch(actions.hideModal())
   const navigate = options => dispatch(actions.navigate(options))
 
+  const navigateSidebar = options => dispatch(actions.navigateSidebar(options))
+
   const getTokensFromPath = () => {
     const _path = state.path.split('/')
-    return { type: _path[1], id: _path[2] }
+    let _id = _path[2]
+    let _anchor = ''
+
+    if (_id && _id.includes('#')) {
+      const _str = _id.split('#')
+      _id = _str[0]
+      _anchor = _str[1]
+    }
+
+    return { type: _path[1], id: _id, anchor: _anchor }
+  }
+
+  const getSidebarPath = () => {
+    const _path = state.sidebarPath.split('/')
+    const type = _path[1]
+    if (type) {
+      return type
+    }
+    return null
   }
 
   return (
     <NavigationContext.Provider
-      value={{ ...state, showModal, hideModal, navigate, getTokensFromPath }}
+      value={{
+        ...state,
+        setMenuOpen,
+        isMenuOpen: state.menuOpen,
+        showModal,
+        hideModal,
+        navigate,
+        getTokensFromPath,
+        navigateSidebar,
+        getSidebarPath,
+      }}
     >
       {children}
 

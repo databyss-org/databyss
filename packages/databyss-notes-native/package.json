@@ -2,7 +2,7 @@
   "name": "@databyss-org/notes-native",
   "author": "databyss-org",
   "license": "MIT",
-  "version": "1.1.67",
+  "version": "1.1.69",
   "private": true,
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
   },
   "peerDependencies": {
     "react": "16.9.0",
-    "@databyss-org/ui": "1.1.67"
+    "@databyss-org/ui": "1.1.69"
   },
   "publishConfig": {
     "access": "public"

@@ -6,6 +6,7 @@ import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { useEditorContext } from '@databyss-org/ui/editor/EditorProvider'
 import { newBlockMenu } from '@databyss-org/ui/editor/state/page/actions'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import EditorBlockMenu from './Menu/EditorBlockMenu'
 import { hasSelection } from './slate/slateUtils'
 
@@ -50,6 +51,8 @@ const textSelector = ({ children, type }) => {
 export const EditorBlock = ({ children, node }) => {
   const [menuActive, setMenuActive] = useState(false)
 
+  const pageContext = usePageContext()
+
   const [editorState, dispatchEditor] = useEditorContext()
   const { editableState, showNewBlockMenu, activeBlockId } = editorState
 
@@ -83,6 +86,11 @@ export const EditorBlock = ({ children, node }) => {
 
   const _children = (
     <View
+      ref={ref =>
+        pageContext &&
+        !pageContext.getBlockRef(node.key) &&
+        pageContext.registerBlockRef(node.key, ref)
+      }
       flexShrink={1}
       overflow="visible"
       justifyContent="center"
@@ -97,7 +105,7 @@ export const EditorBlock = ({ children, node }) => {
   return !isMobileOs() ? (
     <Grid
       singleRow
-      mb="tiny"
+      mb="small"
       flexWrap="nowrap"
       columnGap="small"
       position="relative"
@@ -120,7 +128,7 @@ export const EditorBlock = ({ children, node }) => {
       {_children}
     </Grid>
   ) : (
-    <View mb="tiny">{_children}</View>
+    <View mb="small">{_children}</View>
   )
 }
 

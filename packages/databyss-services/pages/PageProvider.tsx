@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect } from 'react'
+import React, { createContext, useContext, useRef } from 'react'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../lib/ResourcePending'
@@ -11,10 +11,17 @@ interface PropsType {
   initialState: any
 }
 
+interface RefDict {
+  [key: string]: React.Ref<HTMLInputElement>
+}
+
 interface ContextType {
   setPage: (page: Page) => void
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
+  clearBlockDict: () => void
+  registerBlockRef: (id: string, refOne: React.Ref<HTMLInputElement>) => void
+  getBlockRef: (id: string) => React.Ref<HTMLInputElement>
 }
 
 const useReducer = createReducer()
@@ -24,6 +31,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   children,
   initialState,
 }: PropsType) => {
+  const refDictRef = useRef<RefDict>({})
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const setPage = (page: Page): void => {
@@ -43,13 +51,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     return null
   }
 
-  const refreshPages = () => {
-    if (!(state.headerCache instanceof ResourcePending)) {
-      dispatch(fetchPageHeaders())
-    }
-    return null
-  }
-
   const getPage = (id: string): Page | ResourcePending | null => {
     if (state.cache[id]) {
       return state.cache[id]
@@ -60,8 +61,32 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     return null
   }
 
+  const registerBlockRef = (id: string, ref: React.Ref<HTMLInputElement>) => {
+    refDictRef.current[id] = ref
+  }
+
+  const getBlockRef = (id: string) => {
+    if (refDictRef.current[id]) {
+      return refDictRef.current[id]
+    }
+    return null
+  }
+
+  const clearBlockDict = () => {
+    refDictRef.current = {}
+  }
+
   return (
-    <PageContext.Provider value={{ getPages, getPage, setPage, refreshPages }}>
+    <PageContext.Provider
+      value={{
+        getPages,
+        getPage,
+        setPage,
+        registerBlockRef,
+        getBlockRef,
+        clearBlockDict,
+      }}
+    >
       {children}
     </PageContext.Provider>
   )

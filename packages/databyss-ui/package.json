@@ -2,7 +2,7 @@
   "name": "@databyss-org/ui",
   "author": "databyss-org",
   "license": "MIT",
-  "version": "1.1.67",
+  "version": "1.1.69",
   "private": false,
   "repository": {
     "type": "git",
@@ -13,8 +13,8 @@
   },
   "main": "index.js",
   "peerDependencies": {
-    "@databyss-org/services": "1.1.67",
-    "@databyss-org/ui": "1.1.67",
+    "@databyss-org/services": "1.1.69",
+    "@databyss-org/ui": "1.1.69",
     "@storybook/react": "5.2.1",
     "react": "16.9.0",
     "react-dom": "16.9.0",
@@ -63,6 +63,7 @@
     "react-scrolllock": "^4.0.1",
     "react-select": "^3.0.4",
     "react-svg-loader": "^2.1.0",
+    "react-highlight-words": "^0.16.0",
     "react-textarea-autosize": "^7.1.0",
     "react-use": "^11.0.0",
     "redux-logger": "^3.0.6",

@@ -12,6 +12,7 @@ export const initialState = {
   isLoading: false,
   cache: {},
   headerCache: null,
+  refDict: {},
 }
 
 export default (state, action) => {
