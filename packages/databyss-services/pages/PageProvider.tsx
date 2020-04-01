@@ -11,12 +11,17 @@ interface PropsType {
   initialState: any
 }
 
+interface RefDict {
+  [key: string]: React.Ref<HTMLInputElement>
+}
+
 interface ContextType {
   setPage: (page: Page) => void
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
   clearBlockDict: () => void
   registerBlockRef: (id: string, refOne: React.Ref<HTMLInputElement>) => void
+  getBlockRef: (id: string) => React.Ref<HTMLInputElement>
 }
 
 const useReducer = createReducer()
@@ -26,7 +31,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   children,
   initialState,
 }: PropsType) => {
-  const refDictRef = useRef({})
+  const refDictRef = useRef<RefDict>({})
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const setPage = (page: Page): void => {
@@ -43,13 +48,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
       dispatch(fetchPageHeaders())
     }
 
-    return null
-  }
-
-  const refreshPages = () => {
-    if (!(state.headerCache instanceof ResourcePending)) {
-      dispatch(fetchPageHeaders())
-    }
     return null
   }
 
@@ -87,7 +85,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         registerBlockRef,
         getBlockRef,
         clearBlockDict,
-        refreshPages,
       }}
     >
       {children}
