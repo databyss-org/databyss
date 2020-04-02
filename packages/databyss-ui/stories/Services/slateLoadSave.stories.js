@@ -11,7 +11,7 @@ import PageProvider, {
 import SessionProvider, {
   useSessionContext,
 } from '@databyss-org/services/session/SessionProvider'
-import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { NavigationRouter } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
@@ -47,7 +47,7 @@ const ProviderDecorator = storyFn => (
             initialState={sourceInitialState}
             reducer={sourceReducer}
           >
-            <NavigationProvider>{storyFn()}</NavigationProvider>
+            <NavigationRouter>{storyFn()}</NavigationRouter>
           </SourceProvider>
         </TopicProvider>
       </PageProvider>
