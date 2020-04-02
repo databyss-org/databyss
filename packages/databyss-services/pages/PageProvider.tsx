@@ -85,7 +85,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         registerBlockRef,
         getBlockRef,
         clearBlockDict,
-        refreshPages,
       }}
     >
       {children}
