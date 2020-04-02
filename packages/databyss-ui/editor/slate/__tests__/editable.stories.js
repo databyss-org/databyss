@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Grid, RichTextInput } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
-import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { NavigationRouter } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import TopicProvider from '@databyss-org/services/topics/TopicProvider'
 import topicReducer, {
   initialState as topicInitialState,
@@ -142,7 +142,7 @@ storiesOf('Cypress//Tests', module)
           initialState={sourceInitialState}
           reducer={sourceReducer}
         >
-          <NavigationProvider>
+          <NavigationRouter>
             <EditorProvider
               initialState={initialState}
               editableReducer={slateReducer}
@@ -150,7 +150,7 @@ storiesOf('Cypress//Tests', module)
             >
               <EditableTest />
             </EditorProvider>
-          </NavigationProvider>
+          </NavigationRouter>
         </SourceProvider>
       </TopicProvider>
     )
@@ -179,7 +179,7 @@ storiesOf('Cypress//Tests', module)
           initialState={sourceInitialState}
           reducer={sourceReducer}
         >
-          <NavigationProvider>
+          <NavigationRouter>
             <EditorProvider
               initialState={emptyInitialState}
               editableReducer={slateReducer}
@@ -187,7 +187,7 @@ storiesOf('Cypress//Tests', module)
             >
               <EditableTest />
             </EditorProvider>
-          </NavigationProvider>
+          </NavigationRouter>
         </SourceProvider>
       </TopicProvider>
     )
