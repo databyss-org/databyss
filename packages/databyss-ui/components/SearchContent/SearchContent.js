@@ -1,5 +1,6 @@
 import React from 'react'
 import Highlighter from 'react-highlight-words'
+import { useParams, Router } from '@reach/router'
 import { EntrySearchLoader } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
@@ -12,10 +13,17 @@ import {
 } from '@databyss-org/ui/primitives'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 
-const SearchContent = () => {
-  const { getTokensFromPath, navigate } = useNavigationContext()
+export const SearchRouter = () => {
+  return (
+    <Router>
+      <SearchContent path=":query" />
+    </Router>
+  )
+}
 
-  const { id } = getTokensFromPath()
+const SearchContent = () => {
+  const { navigate } = useNavigationContext()
+  const { query } = useParams()
 
   const onEntryClick = (pageId, blockId) => {
     navigate(`/pages/${pageId}#${blockId}`)
@@ -54,7 +62,7 @@ const SearchContent = () => {
               <View p="small" ml="small">
                 <Text>
                   <Highlighter
-                    searchWords={[id]}
+                    searchWords={[query]}
                     autoEscape
                     textToHighlight={e.text}
                   />
@@ -74,11 +82,10 @@ const SearchContent = () => {
     <ScrollView p="medium" flex="1" maxHeight="98vh">
       <View p="medium">
         <Text variant="bodyLarge" color="text.3">
-          &quot;{id}&quot;
+          &quot;{query}&quot;
         </Text>
       </View>
-
-      <EntrySearchLoader query={id}>
+      <EntrySearchLoader query={query}>
         {results => ComposeResults(results)}
       </EntrySearchLoader>
     </ScrollView>

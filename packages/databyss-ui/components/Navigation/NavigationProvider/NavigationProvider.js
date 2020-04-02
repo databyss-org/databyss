@@ -1,7 +1,10 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
+import { useNavigate } from '@reach/router'
 import componentMap from './componentMap'
 import reducer, { initialState } from './reducer'
+import { Router } from '@reach/router'
+import { View } from '@databyss-org/ui/primitives'
 import * as actions from './actions'
 
 const useReducer = createReducer()
@@ -18,11 +21,17 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
     { name: 'NavigationProvider' }
   )
 
+  const navigateRouter = useNavigate()
+
   const showModal = options => dispatch(actions.showModal(options))
   const setMenuOpen = bool => dispatch(actions.menuOpen(bool))
 
   const hideModal = () => dispatch(actions.hideModal())
-  const navigate = options => dispatch(actions.navigate(options))
+  const navigate = options => {
+    navigateRouter(options, { replace: true })
+    // TODO: remove next line
+    return dispatch(actions.navigate(options))
+  }
 
   const navigateSidebar = options => dispatch(actions.navigateSidebar(options))
 
@@ -74,6 +83,16 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
     </NavigationContext.Provider>
   )
 }
+
+const NavigationWrapper = ({ _children, ...other }) => {
+  return <NavigationProvider {...other}>{_children}</NavigationProvider>
+}
+
+export const NavigationRouter = ({ children }) => (
+  <Router>
+    <NavigationWrapper default _children={children} />
+  </Router>
+)
 
 export const useNavigationContext = () => useContext(NavigationContext)
 

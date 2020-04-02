@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react'
+import { useParams, useLocation } from '@reach/router'
+
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { View } from '@databyss-org/ui/primitives'
+import { View, Text } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
+
+export const Page = ({ children }) => {
+  return <View>{children}</View>
+}
 
 const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
   const { getBlockRef } = usePageContext()
@@ -21,12 +27,6 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
             block: 'start',
           })
         })
-        // setTimeout(() => {
-        //   _ref.scrollIntoView({
-        //     behavior: 'smooth',
-        //     block: 'start',
-        //   })
-        // }, 20)
       }
     }
   }, [])
@@ -40,17 +40,10 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
 }
 
 const PageContent = () => {
-  const { getSession } = useSessionContext()
-  const { account } = getSession()
-  const { path, navigate, getTokensFromPath } = useNavigationContext()
+  // get page id and anchor from url
+  const { id } = useParams()
+  const anchor = useLocation().hash.substring(1)
   const [readOnly, setReadOnly] = useState(false)
-
-  const { id, anchor } = getTokensFromPath()
-
-  const _pathList = path.split('/')
-  if (_pathList[1].length === 0) {
-    navigate(`/pages/${account.defaultPage}`)
-  }
 
   const onHeaderClick = bool => {
     if (readOnly !== bool) {
@@ -63,7 +56,7 @@ const PageContent = () => {
   */
 
   return (
-    <View flex="1" maxHeight="100vh">
+    <View flex="1" height="100vh">
       {id && (
         <PageLoader pageId={id}>
           {page => (
