@@ -11,6 +11,7 @@ const App = ({ children }) => (
   <View flexDirection="row" display="flex" width="100vw" height="100vh">
     <Sidebar />
     <div style={{ width: '100%' }}>{children}</div>
+
     {/* TODO: replace div with View */}
     {/* <View id="mainid">{children}</View> */}
   </View>
