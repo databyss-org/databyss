@@ -27,8 +27,6 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
   const hideModal = () => dispatch(actions.hideModal())
   const navigate = options => {
     navigateRouter(options, { replace: true })
-    // TODO: remove next line
-    return dispatch(actions.navigate(options))
   }
 
   const navigateSidebar = options => dispatch(actions.navigateSidebar(options))
