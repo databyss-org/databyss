@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useLocation } from '@reach/router'
-
+import { useParams, useLocation, Router } from '@reach/router'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { View, Text } from '@databyss-org/ui/primitives'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { View } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 
-export const Page = ({ children }) => {
-  return <View>{children}</View>
-}
+export const PageRouter = () => (
+  <Router>
+    <PageContent path=":id" />
+  </Router>
+)
 
 const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
   const { getBlockRef } = usePageContext()
@@ -32,7 +31,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
   }, [])
 
   return (
-    <View height="100vh" overflow="scroll" p="medium" id="here">
+    <View height="100vh" overflow="scroll" p="medium">
       <PageHeader pageId={id} isFocused={onHeaderClick} />
       <PageBody page={page} readOnly={readOnly} />
     </View>

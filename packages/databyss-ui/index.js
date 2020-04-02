@@ -40,7 +40,7 @@ export { default as Raw } from './components/Viewport/Raw'
 export { default as ThemedViewport } from './components/Viewport/ThemedViewport'
 export { default as Viewport } from './components/Viewport/Viewport'
 export { default as Sidebar } from './modules/Sidebar/Sidebar'
-export { Page } from '././components/PageContent/PageContent'
+export { PageRouter } from '././components/PageContent/PageContent'
 export { default as PageContent } from './components/PageContent/PageContent'
 export {
   default as SearchContent,

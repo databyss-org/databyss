@@ -1,10 +1,8 @@
 import React, { createContext, useContext } from 'react'
+import { useNavigate, Router } from '@reach/router'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import { useNavigate } from '@reach/router'
 import componentMap from './componentMap'
 import reducer, { initialState } from './reducer'
-import { Router } from '@reach/router'
-import { View } from '@databyss-org/ui/primitives'
 import * as actions from './actions'
 
 const useReducer = createReducer()
@@ -84,9 +82,9 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
   )
 }
 
-const NavigationWrapper = ({ _children, ...other }) => {
-  return <NavigationProvider {...other}>{_children}</NavigationProvider>
-}
+const NavigationWrapper = ({ _children, ...other }) => (
+  <NavigationProvider {...other}>{_children}</NavigationProvider>
+)
 
 export const NavigationRouter = ({ children }) => (
   <Router>
