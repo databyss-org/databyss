@@ -13,12 +13,11 @@ import {
 } from '@databyss-org/ui/primitives'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 
-export const SearchRouter = () =>
-  y(
-    <Router>
-      <SearchContent path=":query" />
-    </Router>
-  )
+export const SearchRouter = () => (
+  <Router>
+    <SearchContent path=":query" />
+  </Router>
+)
 
 const SearchContent = () => {
   const { navigate } = useNavigationContext()
