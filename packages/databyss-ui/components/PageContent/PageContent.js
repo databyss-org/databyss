@@ -9,7 +9,7 @@ import PageBody from './PageBody'
 
 export const PageRouter = () => (
   <Router>
-    <PageContent path=":id" />
+    <PageContent path=':id' />
   </Router>
 )
 
@@ -31,7 +31,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
   }, [])
 
   return (
-    <View height="100vh" overflow="scroll" p="medium">
+    <View height='100vh' overflow='scroll' p='medium'>
       <PageHeader pageId={id} isFocused={onHeaderClick} />
       <PageBody page={page} readOnly={readOnly} />
     </View>
@@ -55,7 +55,7 @@ const PageContent = () => {
   */
 
   return (
-    <View flex="1" height="100vh">
+    <View flex='1' height='100vh'>
       {id && (
         <PageLoader pageId={id}>
           {page => (

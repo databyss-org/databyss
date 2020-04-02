@@ -15,7 +15,7 @@ import PageSvg from '@databyss-org/ui/assets/page.svg'
 
 export const SearchRouter = () => (
   <Router>
-    <SearchContent path=":query" />
+    <SearchContent path=':query' />
   </Router>
 )
 
@@ -34,30 +34,30 @@ const SearchContent = () => {
   const ComposeResults = ({ results }) => {
     const _Pages = Object.values(results).length ? (
       Object.values(results).map((r, i) => (
-        <View key={i} mb="medium">
-          <View height="40px">
+        <View key={i} mb='medium'>
+          <View height='40px'>
             <BaseControl
-              hoverColor="background.2"
-              activeColor="background.3"
+              hoverColor='background.2'
+              activeColor='background.3'
               key={`pageHeader-${i}`}
               onClick={() => onPageClick(r.pageId)}
             >
-              <Grid singleRow alignItems="center" columnGap="small">
-                <Icon sizeVariant="small" color="text.3">
+              <Grid singleRow alignItems='center' columnGap='small'>
+                <Icon sizeVariant='small' color='text.3'>
                   <PageSvg />
                 </Icon>
-                <Text variant="bodyLarge">{r.page}</Text>
+                <Text variant='bodyLarge'>{r.page}</Text>
               </Grid>
             </BaseControl>
           </View>
           {r.entries.map((e, k) => (
             <BaseControl
-              hoverColor="background.2"
-              activeColor="background.3"
+              hoverColor='background.2'
+              activeColor='background.3'
               key={k}
               onClick={() => onEntryClick(r.pageId, e.blockId)}
             >
-              <View p="small" ml="small">
+              <View p='small' ml='small'>
                 <Text>
                   <Highlighter
                     searchWords={[query]}
@@ -77,9 +77,9 @@ const SearchContent = () => {
   }
 
   return (
-    <ScrollView p="medium" flex="1" maxHeight="98vh">
-      <View p="medium">
-        <Text variant="bodyLarge" color="text.3">
+    <ScrollView p='medium' flex='1' maxHeight='98vh'>
+      <View p='medium'>
+        <Text variant='bodyLarge' color='text.3'>
           &quot;{query}&quot;
         </Text>
       </View>
