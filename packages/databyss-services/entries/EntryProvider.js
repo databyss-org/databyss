@@ -41,11 +41,4 @@ EntryProvider.defaultProps = {
   reducer,
 }
 
-export const EntrySearchLoader = makeLoader(({ query }) => {
-  const { searchEntries, searchCache } = useEntryContext()
-  searchEntries(query)
-
-  return searchCache[query]
-})
-
 export default EntryProvider

@@ -3,9 +3,7 @@ import { ResourcePending } from '@databyss-org/services/lib/ResourcePending'
 import ErrorFallback from '../Notify/ErrorFallback'
 import Loading from '../Notify/LoadingFallback'
 
-const makeLoader = getResource => ({ children, ...others }) => {
-  const resource = getResource(others)
-
+const makeLoader = (resource, children) => {
   if (!resource || resource instanceof ResourcePending) {
     return <Loading />
   }
