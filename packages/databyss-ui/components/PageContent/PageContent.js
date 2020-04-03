@@ -8,7 +8,7 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 
-const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
+const PageContainer = ({ anchor, id, onHeaderClick, page }) => {
   const { getBlockRef } = usePageContext()
   useEffect(() => {
     // if anchor link exists, scroll to anchor
@@ -34,7 +34,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
   return (
     <View height="100vh" overflow="scroll" p="medium" id="here">
       <PageHeader pageId={id} isFocused={onHeaderClick} />
-      <PageBody page={page} readOnly={readOnly} />
+      <PageBody page={page} />
     </View>
   )
 }
@@ -43,7 +43,7 @@ const PageContent = () => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
   const { path, navigate, getTokensFromPath } = useNavigationContext()
-  const [readOnly, setReadOnly] = useState(false)
+  // const [readOnly, setReadOnly] = useState(false)
 
   const { id, anchor } = getTokensFromPath()
 
@@ -53,9 +53,9 @@ const PageContent = () => {
   }
 
   const onHeaderClick = bool => {
-    if (readOnly !== bool) {
-      setReadOnly(bool)
-    }
+    // if (readOnly !== bool) {
+    //   setReadOnly(bool)
+    // }
   }
 
   /*
@@ -72,7 +72,6 @@ const PageContent = () => {
               id={id}
               onHeaderClick={onHeaderClick}
               page={page}
-              readOnly={readOnly}
             />
           )}
         </PageLoader>

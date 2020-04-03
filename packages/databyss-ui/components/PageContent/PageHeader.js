@@ -24,8 +24,9 @@ const PageHeader = ({ isFocused, pageId }) => {
     const _pageData = {
       page: { name: pageName.textValue, _id: pageId },
     }
+    console.log('here on blur header')
     setPage(_pageData)
-    isFocused(false)
+    //  isFocused(false)
   }
   /*
   header input too long maxwidth 500
@@ -37,7 +38,7 @@ const PageHeader = ({ isFocused, pageId }) => {
       <Text variant="bodyLarge" color="text.3" maxWidth={pxUnits(500)}>
         <TextControl
           onBlur={onBlur}
-          onFocus={() => isFocused(true)}
+          //  onFocus={() => isFocused(true)}
           value={pageName}
           onChange={onPageNameChange}
           labelVariant="bodyLarge"

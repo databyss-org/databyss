@@ -1,51 +1,93 @@
-import { useEffect } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import cloneDeep from 'clone-deep'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorContext } from './EditorProvider'
+import { Text, View, TextControl } from '@databyss-org/ui/primitives'
 
-const AutoSave = ({ interval }) => {
+const AutoSave = ({ children, interval, onSave }) => {
+  const [active, setActive] = useState(true)
   const { setPage, getPage } = usePageContext()
   const [, , editorStateRef] = useEditorContext()
-  const { modals } = useNavigationContext()
+  const timeoutRef = useRef()
 
+  /* on unmount save and cancel timeout */
   useEffect(
-    () => {
-      // if modal is present, turn off autosave
-      const hasModal = modals.length > 0
-      let _timer
-      if (!hasModal && !_timer) {
-        _timer = setInterval(() => {
-          const _page = cloneDeep(editorStateRef.current)
-          delete _page.page.name
-          // preserve name from page cache
-          const _name = getPage(_page.page._id).page.name
-          _page.page.name = _name
-          // TODO: check if values have changed before saving
-          setPage(_page)
-        }, interval * 1000)
-      }
-      if (hasModal) {
-        clearInterval(_timer)
-        _timer = null
-      }
-      // on unmount clear autosave
-      return () => {
-        const _page = cloneDeep(editorStateRef.current)
-        delete _page.page.name
-        const _name = getPage(_page.page._id).page.name
-        _page.page.name = _name
-        setPage(_page)
-        clearInterval(_timer)
+    () => () => {
+      if (timeoutRef.current) {
+        onSave()
+        clearTimeout(timeoutRef.current)
       }
     },
-    [modals]
+    []
   )
-  return null
+
+  /* */
+  useEffect(
+    () => {
+      if (!active && timeoutRef.current) {
+        onSave()
+        clearTimeout(timeoutRef.current)
+        console.log('disabled')
+      }
+    },
+    [active]
+  )
+
+  /* debounce key press events */
+  // useEffect(
+  //   () => {
+  //     if (keyEvent && active) {
+  //       onSaveEvent()
+  //       onKeyEvent()
+  //     }
+  //   },
+  //   [keyEvent]
+  // )
+
+  const onKeyEvent = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    timeoutRef.current = setTimeout(() => {
+      onSave()
+    }, interval * 1000)
+  }
+
+  /* dispatch save event */
+  // const onSave = () => {
+  //   if (saveFunction) {
+  //     saveFunction()
+  //   }
+  //   console.log('emit save')
+  //   const _page = cloneDeep(editorStateRef.current)
+  //   delete _page.page.name
+  //   // preserve name from page cache
+  //   const _name = getPage(_page.page._id).page.name
+  //   _page.page.name = _name
+  //     setPage(_page)
+  // }
+
+  const onBlur = () => {
+    setActive(false)
+  }
+
+  return (
+    <View
+      onBlur={onBlur}
+      onClick={() => setActive(true)}
+      onKeyPress={onKeyEvent}
+    >
+      {React.cloneElement(children, {
+        readOnly: !active,
+        /*more listeners*/
+      })}
+    </View>
+  )
 }
 
 AutoSave.defaultProps = {
-  interval: 10,
+  interval: 3,
 }
 
 export default AutoSave

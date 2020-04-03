@@ -30,7 +30,7 @@ import {
 
 import { isBlockEmpty, isEmptyAndAtomic } from './slate/slateUtils'
 
-const EditorPage = ({ children, autoFocus }) => {
+const EditorPage = ({ children, autoFocus, readOnly }) => {
   const [editorState, dispatchEditor] = useEditorContext()
   const { setSource, state: sourceState } = useSourceContext()
   const { setTopic, state: topicState } = useTopicContext()
@@ -225,6 +225,7 @@ const EditorPage = ({ children, autoFocus }) => {
     // onSelectionChange,
     onDirtyAtomic,
     onEditAtomic,
+    readOnly,
   })
 }
 

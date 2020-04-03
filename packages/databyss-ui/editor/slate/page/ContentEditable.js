@@ -70,6 +70,7 @@ const SlateContentEditable = forwardRef(
       onDirtyAtomic,
       onEditAtomic,
       readOnly,
+      onKeyPress,
       ...others
     },
     ref
@@ -330,6 +331,10 @@ const SlateContentEditable = forwardRef(
     }
 
     const onKeyDown = (event, editor, next) => {
+      if (onKeyPress) {
+        onKeyPress()
+      }
+
       isInKeypressRef.current = true
       if (hotKeys.isCopy(event)) {
         return onCopy(event, editor, next)
