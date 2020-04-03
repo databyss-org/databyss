@@ -1,14 +1,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { NavigationRouter } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { ThemeProvider } from '@databyss-org/ui/theming'
 import App from './src/App'
 
 ReactDOM.render(
   <ThemeProvider>
-    <NavigationRouter>
+    <NavigationProvider>
       <App />
-    </NavigationRouter>
+    </NavigationProvider>
   </ThemeProvider>,
   document.getElementById('root')
 )

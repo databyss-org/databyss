@@ -6,8 +6,7 @@ import SessionProvider, {
 } from '@databyss-org/services/session/SessionProvider'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import * as actions from '@databyss-org/services/session/mocks/actions'
-import {
-  NavigationRouter,
+import NavigationProvider {
   useNavigationContext,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { ViewportDecorator, NotifyDecorator } from '../decorators'
@@ -47,12 +46,12 @@ storiesOf('Components|Login', module)
   .addDecorator(NotifyDecorator)
   .addDecorator(ViewportDecorator)
   .add('default', () => (
-    <NavigationRouter>
+    <NavigationProvider>
       <LoginDemo />
-    </NavigationRouter>
+    </NavigationProvider>
   ))
   .add('signup', () => (
-    <NavigationRouter initialPath="/signup">
+    <NavigationProvider initialPath="/signup">
       <LoginDemo />
-    </NavigationRouter>
+    </NavigationProvider>
   ))

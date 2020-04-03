@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react'
-import { useNavigate, Router } from '@reach/router'
+import { useNavigate, useLocation, Router } from '@reach/router'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import componentMap from './componentMap'
 import reducer, { initialState } from './reducer'
@@ -8,6 +8,14 @@ import * as actions from './actions'
 const useReducer = createReducer()
 
 export const NavigationContext = createContext()
+
+const withRouter = Wrapped => ({ children }) => (
+  <Router>
+    <Wrapped default>
+      {React.cloneElement(React.Children.only(children), { default: true })}
+    </Wrapped>
+  </Router>
+)
 
 const NavigationProvider = ({ children, componentMap, initialPath }) => {
   const [state, dispatch] = useReducer(
@@ -18,6 +26,8 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
     },
     { name: 'NavigationProvider' }
   )
+
+  const location = useLocation()
 
   const navigateRouter = useNavigate()
 
@@ -32,7 +42,7 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
   const navigateSidebar = options => dispatch(actions.navigateSidebar(options))
 
   const getTokensFromPath = () => {
-    const _path = state.path.split('/')
+    const _path = location.pathname.split('/')
     let _id = _path[2]
     let _anchor = ''
 
@@ -58,6 +68,7 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
     <NavigationContext.Provider
       value={{
         ...state,
+        location,
         setMenuOpen,
         isMenuOpen: state.menuOpen,
         showModal,
@@ -80,16 +91,6 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
   )
 }
 
-const NavigationWrapper = ({ _children, ...other }) => (
-  <NavigationProvider {...other}>{_children}</NavigationProvider>
-)
-
-export const NavigationRouter = ({ children }) => (
-  <Router>
-    <NavigationWrapper default _children={children} />
-  </Router>
-)
-
 export const useNavigationContext = () => useContext(NavigationContext)
 
 NavigationProvider.defaultProps = {
@@ -97,4 +98,4 @@ NavigationProvider.defaultProps = {
   initialState,
 }
 
-export default NavigationProvider
+export default withRouter(NavigationProvider)
