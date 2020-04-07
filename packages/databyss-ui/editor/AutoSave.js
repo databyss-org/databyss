@@ -17,17 +17,17 @@ const AutoSave = ({ children, interval, onSave }) => {
     []
   )
 
-  const onEvent = () => {
+  const onEvent = e => {
+    // e.preventDefault()
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
     }
 
     // triggers save event on leading edge of keystrokes
     if (time + interval * 1000 - Date.now() < 0) {
-      //    window.requestAnimationFrame(() => onSave())
+      clearTimeout(timeoutRef.current)
       setTimeout(() => onSave(), 500)
       setTime(Date.now())
-      clearTimeout(timeoutRef.current)
     }
 
     // triggers save event on trailing edge of keystrokes
@@ -37,7 +37,10 @@ const AutoSave = ({ children, interval, onSave }) => {
   }
 
   return (
-    <View onKeyUp={onEvent} onClick={onEvent}>
+    <View
+      onKeyUp={() => window.requestAnimationFrame(() => onEvent())}
+      onClick={() => window.requestAnimationFrame(() => onEvent())}
+    >
       {React.cloneElement(children)}
     </View>
   )

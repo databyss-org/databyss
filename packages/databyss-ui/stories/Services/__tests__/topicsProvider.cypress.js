@@ -22,10 +22,13 @@ context('Editor - Topics Provider', () => {
   it('Edits Topics sources', () => {
     cy.get('@editor')
       .type('{rightarrow}')
+      .endOfLine()
       .endOfDoc()
       .newLine()
+      .wait(500)
       .type('#this is a new topic')
       .newLine()
+      .wait(500)
       .type('this is a regular entry')
       .setSelection('this is a new topic')
       .get('[data-test-atomic-edit="open"]')
