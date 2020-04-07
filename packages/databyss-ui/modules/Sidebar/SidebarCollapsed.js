@@ -44,9 +44,11 @@ const SidebarCollapsed = () => {
     isMenuOpen,
     setMenuOpen,
   } = useNavigationContext()
-  const { setPage } = usePageContext()
+  const { setPage, setPageHeader } = usePageContext()
   const onNewPageClick = () => {
     const _page = newPage()
+    /* initialize new page */
+    setPageHeader(_page)
     setPage(_page)
     navigate(`/pages/${_page.page._id}`)
   }

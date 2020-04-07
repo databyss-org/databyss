@@ -70,7 +70,6 @@ const SlateContentEditable = forwardRef(
       onDirtyAtomic,
       onEditAtomic,
       readOnly,
-      onKeyPress,
       ...others
     },
     ref
@@ -331,10 +330,6 @@ const SlateContentEditable = forwardRef(
     }
 
     const onKeyDown = (event, editor, next) => {
-      if (onKeyPress) {
-        onKeyPress()
-      }
-
       isInKeypressRef.current = true
       if (hotKeys.isCopy(event)) {
         return onCopy(event, editor, next)
@@ -525,13 +520,24 @@ const SlateContentEditable = forwardRef(
       }
     }
 
+    const onBlur = (e, editor) => {
+      // checks if target is within editor
+      setTimeout(() => {
+        const _activeEl = document.activeElement
+        const _editorEl = editor.el
+        var _targetInEditor = _editorEl.contains(_activeEl)
+        // sets editor.value.selection.isFocused to false
+        if (!_targetInEditor) {
+          editor.blur()
+          onEditableStateChange({ value: editor.value })
+        }
+      }, 10)
+    }
+
     return (
       <Editor
         value={_editableState.value}
-        onBlur={(e, editor) => {
-          editor.blur()
-          onEditableStateChange({ value: editor.value })
-        }}
+        onBlur={onBlur}
         onPaste={onPaste}
         onCut={onCut}
         onDrop={e => e.preventDefault()}

@@ -120,7 +120,6 @@ const LoadAndSave = () => {
               reducer={reducer}
               editableReducer={slateReducer}
             >
-              {/* <AutoSave /> */}
               <PageWithAutosave setSlateDocument={setSlateDocument} />
               <View
                 overflow="scroll"
