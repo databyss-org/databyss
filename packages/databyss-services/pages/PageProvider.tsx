@@ -40,13 +40,11 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const setPage = (page: Page): void => {
-    console.log('reducer', page)
     // window.requestAnimationFrame(() => dispatch(savePage(page)))
     dispatch(savePage(page))
   }
 
   const setPageHeader = (page: Page): void => {
-    // window.requestAnimationFrame(() => dispatch(savePage(page)))
     dispatch(savePageHeader(page))
   }
 

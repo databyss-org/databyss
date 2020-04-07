@@ -27,28 +27,10 @@ export default (state, action) => {
     }
     case CACHE_PAGE: {
       const _state = cloneDeep(state)
-      const _statePage = _state.cache[action.payload.id]
-
-      let _page = action.payload.body
-      console.log(_page)
-
-      // if only title is passed, preserve page content
-      if (!_page.blocks) {
-        _page = _statePage
-        console.log('before', _page.page.name)
-        _page.page.name = action.payload.body.page.name
-        console.log('after', _page.page.name)
-
-        console.log(action.payload.body.page.name)
-        //   const _page
-      }
-      console.log(_page)
+      const _page = action.payload.body
 
       _state.cache[action.payload.id] = _page
-      if (_state.headerCache) {
-        console.log('updates header')
-        _state.headerCache[_page.page._id] = _page.page
-      }
+
       return {
         ..._state,
       }
