@@ -525,7 +525,7 @@ const SlateContentEditable = forwardRef(
       setTimeout(() => {
         const _activeEl = document.activeElement
         const _editorEl = editor.el
-        var _targetInEditor = _editorEl.contains(_activeEl)
+        const _targetInEditor = _editorEl.contains(_activeEl)
         // sets editor.value.selection.isFocused to false
         if (!_targetInEditor) {
           editor.blur()

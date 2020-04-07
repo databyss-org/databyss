@@ -17,8 +17,7 @@ const AutoSave = ({ children, interval, onSave }) => {
     []
   )
 
-  const onEvent = e => {
-    // e.preventDefault()
+  const onEvent = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
     }
@@ -39,7 +38,10 @@ const AutoSave = ({ children, interval, onSave }) => {
   return (
     <View
       onKeyUp={() => window.requestAnimationFrame(() => onEvent())}
-      onClick={() => window.requestAnimationFrame(() => onEvent())}
+      onClick={() => {
+        console.log('clicked')
+        window.requestAnimationFrame(() => onEvent())
+      }}
     >
       {React.cloneElement(children)}
     </View>

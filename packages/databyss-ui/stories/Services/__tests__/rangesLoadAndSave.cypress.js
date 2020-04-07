@@ -28,6 +28,7 @@ context('Editor - Load and Save Ranges', () => {
       .toggleItalic()
       .setSelection('limitation')
       .toggleLocation()
+      .click()
 
     // wait for autosave
     cy.wait(3000)
