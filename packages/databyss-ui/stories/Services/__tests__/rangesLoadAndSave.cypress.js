@@ -6,7 +6,7 @@ import {
 } from '@databyss-org/ui/editor/slate/__tests__/_helpers'
 import { authenticate } from './_helpers'
 
-context('Editor - Sources Provider', () => {
+context('Editor - Load and Save Ranges', () => {
   beforeEach(() => {
     authenticate()
     cy.visit(
