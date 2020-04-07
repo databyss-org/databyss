@@ -39,7 +39,6 @@ const AutoSave = ({ children, interval, onSave }) => {
     <View
       onKeyUp={() => window.requestAnimationFrame(() => onEvent())}
       onClick={() => {
-        console.log('clicked')
         window.requestAnimationFrame(() => onEvent())
       }}
     >
