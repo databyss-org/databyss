@@ -30,7 +30,7 @@ context('Editor - Sources Provider', () => {
       .toggleLocation()
 
     // wait for autosave
-    cy.wait(11000)
+    cy.wait(3000)
 
     // reload the page
     cy.reload().wait(2000)

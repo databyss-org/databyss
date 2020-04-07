@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { Text, View, TextControl } from '@databyss-org/ui/primitives'
 import AutoSave from '@databyss-org/ui/editor/AutoSave'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 
-const PageHeader = ({ pageId }) => {
-  return (
-    <PagesLoader>
-      {pages => <PageHeaderContent pageHeader={pages[pageId]} />}
-    </PagesLoader>
-  )
-}
+const PageHeader = ({ pageId }) => (
+  <PagesLoader>
+    {pages => <PageHeaderContent pageHeader={pages[pageId]} />}
+  </PagesLoader>
+)
 
 const PageHeaderContent = ({ pageHeader }) => {
   const [pageName, setPageName] = useState({ textValue: pageHeader.name })

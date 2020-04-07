@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import cloneDeep from 'clone-deep'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
@@ -79,6 +80,25 @@ const PageBlocks = () => {
   )
 }
 
+const PageWithAutosave = ({ setSlateDocument }) => {
+  const { setPage } = usePageContext()
+  const [, , editorStateRef] = useEditorContext()
+
+  const onSave = () => {
+    const _page = cloneDeep(editorStateRef.current)
+    // delete _page.page.name
+    setPage(_page)
+  }
+
+  return (
+    <AutoSave onSave={onSave}>
+      <EditorPage autoFocus>
+        <SlateContentEditable onDocumentChange={setSlateDocument} />
+      </EditorPage>
+    </AutoSave>
+  )
+}
+
 const LoadAndSave = () => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
@@ -100,10 +120,8 @@ const LoadAndSave = () => {
               reducer={reducer}
               editableReducer={slateReducer}
             >
-              <AutoSave />
-              <EditorPage autoFocus>
-                <SlateContentEditable onDocumentChange={setSlateDocument} />
-              </EditorPage>
+              {/* <AutoSave /> */}
+              <PageWithAutosave setSlateDocument={setSlateDocument} />
               <View
                 overflow="scroll"
                 flexShrink={1}

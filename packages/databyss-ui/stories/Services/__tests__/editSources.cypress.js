@@ -73,7 +73,7 @@ context('Editor - Sources Provider', () => {
       buttonList[4].click()
     })
     // wait for autosave
-    cy.wait(11000)
+    cy.wait(3000)
 
     // reload the page
     cy.reload().wait(2000)

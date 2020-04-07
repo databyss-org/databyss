@@ -1,18 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect } from 'react'
 import cloneDeep from 'clone-deep'
 import EditorProvider, {
   pageReducer,
   useEditorContext,
 } from '@databyss-org/ui/editor/EditorProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { Text, View, TextControl } from '@databyss-org/ui/primitives'
 import AutoSave from '@databyss-org/ui/editor/AutoSave'
 import EditorPage from '@databyss-org/ui/editor/EditorPage'
 import SlateContentEditable from '@databyss-org/ui/editor/slate/page/ContentEditable'
 import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
 
 const PageWithAutosave = () => {
-  const { setPage, getPage } = usePageContext()
+  const { setPage } = usePageContext()
   const [, , editorStateRef] = useEditorContext()
 
   const onSave = () => {

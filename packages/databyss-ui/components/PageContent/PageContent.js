@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { View } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
@@ -10,6 +10,7 @@ import PageBody from './PageBody'
 
 const PageContainer = ({ anchor, id, page }) => {
   const { getBlockRef } = usePageContext()
+
   useEffect(() => {
     // if anchor link exists, scroll to anchor
     if (anchor) {

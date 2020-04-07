@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react'
-import _ from 'lodash'
 import { View } from '@databyss-org/ui/primitives'
 
 const AutoSave = ({ children, interval, onSave }) => {
@@ -24,8 +23,8 @@ const AutoSave = ({ children, interval, onSave }) => {
 
     // triggers save event on leading edge of keystrokes
     if (time + interval * 1000 - Date.now() < 0) {
-      //  onSave()
-      //  setTime(Date.now())
+      onSave()
+      setTime(Date.now())
       clearTimeout(timeoutRef.current)
     }
 
