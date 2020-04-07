@@ -4,7 +4,12 @@ import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../lib/ResourcePending'
 import Page from './Page'
 
-import { fetchPageHeaders, fetchPage, savePage } from './actions'
+import {
+  fetchPageHeaders,
+  fetchPage,
+  savePage,
+  savePageHeader,
+} from './actions'
 
 interface PropsType {
   children: JSX.Element
@@ -35,8 +40,14 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const setPage = (page: Page): void => {
+    console.log('reducer', page)
     // window.requestAnimationFrame(() => dispatch(savePage(page)))
     dispatch(savePage(page))
+  }
+
+  const setPageHeader = (page: Page): void => {
+    // window.requestAnimationFrame(() => dispatch(savePage(page)))
+    dispatch(savePageHeader(page))
   }
 
   const getPages = () => {
@@ -82,6 +93,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         getPages,
         getPage,
         setPage,
+        setPageHeader,
         registerBlockRef,
         getBlockRef,
         clearBlockDict,

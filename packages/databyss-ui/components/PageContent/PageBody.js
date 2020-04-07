@@ -16,63 +16,28 @@ const PageWithAutosave = () => {
   const [, , editorStateRef] = useEditorContext()
 
   const onSave = () => {
-    console.log('emit autosave')
     const _page = cloneDeep(editorStateRef.current)
-    delete _page.page.name
-    // preserve name from page cache
-    const _name = getPage(_page.page._id).page.name
-    _page.page.name = _name
+    // delete _page.page.name
+
     setPage(_page)
   }
 
   return (
     <AutoSave onSave={onSave}>
       <EditorPage>
-        <SlateContentEditable
-        // readOnly={readOnly}
-        // onBlur={() => {
-        //   console.log('BLURRED')
-        //   readOnly = true
-        // }}
-        // onFocus={() => {
-        //   console.log('IN FOCUS')
-        //   readOnly = false
-        // }}
-        // onBlur={() => setReadOnly(true)}
-        // onFocus={() => setReadOnly(false)}
-        />
+        <SlateContentEditable />
       </EditorPage>
     </AutoSave>
   )
 }
 
 const PageBody = ({ page }) => {
-  const [keyEvent, setKeyEvent] = useState(false)
-  const [readOnly, setReadOnly] = useState(false)
-  // const readOnly = useRef()
-
   const { clearBlockDict } = usePageContext()
 
   /* on unmount */
   useEffect(() => () => clearBlockDict(), [])
 
-  const onKeyPress = () => {
-    setKeyEvent(true)
-  }
-
-  const keySaveEvent = () => {
-    setKeyEvent(false)
-  }
-
-  // console.log(readOnly)
-
-  // useEffect(
-  //   () => {
-  //     console.log('IN EFFECT')
-  //     //   console.log(readOnly.current)
-  //   },
-  //   [readOnly]
-  // )
+  console.log('in body', page)
 
   return (
     <EditorProvider

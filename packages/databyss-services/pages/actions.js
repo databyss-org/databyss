@@ -6,6 +6,7 @@ import {
   CACHE_PAGE,
   CACHE_PAGE_HEADERS,
   FETCH_PAGE_HEADERS,
+  SET_PAGE_HEADER,
 } from './constants'
 
 export function fetchPage(_id) {
@@ -60,6 +61,18 @@ export function savePage(state) {
     dispatch({
       type: CACHE_PAGE,
       payload: { body, id: body.page._id },
+    })
+    services.savePage(body)
+  }
+}
+
+export function savePageHeader(state) {
+  console.log('HERE IN PAGE HEADER')
+  const body = cloneDeep(state)
+  return dispatch => {
+    dispatch({
+      type: SET_PAGE_HEADER,
+      payload: { title: body.page.name, id: body.page._id },
     })
     services.savePage(body)
   }

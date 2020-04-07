@@ -8,7 +8,7 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 
-const PageContainer = ({ anchor, id, onHeaderClick, page }) => {
+const PageContainer = ({ anchor, id, page }) => {
   const { getBlockRef } = usePageContext()
   useEffect(() => {
     // if anchor link exists, scroll to anchor
@@ -21,19 +21,13 @@ const PageContainer = ({ anchor, id, onHeaderClick, page }) => {
             block: 'start',
           })
         })
-        // setTimeout(() => {
-        //   _ref.scrollIntoView({
-        //     behavior: 'smooth',
-        //     block: 'start',
-        //   })
-        // }, 20)
       }
     }
   }, [])
 
   return (
     <View height="100vh" overflow="scroll" p="medium" id="here">
-      <PageHeader pageId={id} isFocused={onHeaderClick} />
+      <PageHeader pageId={id} />
       <PageBody page={page} />
     </View>
   )
@@ -43,19 +37,12 @@ const PageContent = () => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
   const { path, navigate, getTokensFromPath } = useNavigationContext()
-  // const [readOnly, setReadOnly] = useState(false)
 
   const { id, anchor } = getTokensFromPath()
 
   const _pathList = path.split('/')
   if (_pathList[1].length === 0) {
     navigate(`/pages/${account.defaultPage}`)
-  }
-
-  const onHeaderClick = bool => {
-    // if (readOnly !== bool) {
-    //   setReadOnly(bool)
-    // }
   }
 
   /*
@@ -66,14 +53,7 @@ const PageContent = () => {
     <View flex="1" maxHeight="100vh">
       {id && (
         <PageLoader pageId={id}>
-          {page => (
-            <PageContainer
-              anchor={anchor}
-              id={id}
-              onHeaderClick={onHeaderClick}
-              page={page}
-            />
-          )}
+          {page => <PageContainer anchor={anchor} id={id} page={page} />}
         </PageLoader>
       )}
     </View>
