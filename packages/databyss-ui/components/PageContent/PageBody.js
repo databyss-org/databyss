@@ -34,10 +34,8 @@ const PageWithAutosave = () => {
 const PageBody = ({ page }) => {
   const { clearBlockDict } = usePageContext()
 
-  /* on unmount */
+  /* on unmount clear entry refs dictionary */
   useEffect(() => () => clearBlockDict(), [])
-
-  console.log('in body', page)
 
   return (
     <EditorProvider

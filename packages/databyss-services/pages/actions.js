@@ -67,7 +67,6 @@ export function savePage(state) {
 }
 
 export function savePageHeader(state) {
-  console.log('HERE IN PAGE HEADER')
   const body = cloneDeep(state)
   return dispatch => {
     dispatch({
