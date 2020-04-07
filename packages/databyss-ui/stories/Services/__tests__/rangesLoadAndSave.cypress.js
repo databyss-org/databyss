@@ -28,8 +28,6 @@ context('Editor - Load and Save Ranges', () => {
       .toggleItalic()
       .setSelection('limitation')
       .toggleLocation()
-      .endOfDoc()
-      .newLine()
 
     // wait for autosave
     cy.wait(3000)
@@ -57,7 +55,6 @@ context('Editor - Load and Save Ranges', () => {
               {' of third-order thought to '}
               <mark type="italic">assertion</mark>
             </block>
-            <block type="ENTRY" data={{ refId: refIdList[2], type: 'ENTRY' }} />
           </document>
         </value>
       )

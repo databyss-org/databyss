@@ -106,11 +106,19 @@ Cypress.Commands.add(
     prevSubject: 'element',
   },
   subject => {
-    return cy.get(subject).trigger('keydown', {
-      keyCode: 66,
-      key: 'b',
-      [modKeys(IS_LINUX)]: true,
-    })
+    return cy
+      .get(subject)
+      .trigger('keydown', {
+        keyCode: 66,
+        key: 'b',
+        [modKeys(IS_LINUX)]: true,
+      })
+      .wait(30)
+      .trigger('keyup', {
+        keyCode: 66,
+        key: 'b',
+        [modKeys(IS_LINUX)]: true,
+      })
   }
 )
 
@@ -120,11 +128,19 @@ Cypress.Commands.add(
     prevSubject: 'element',
   },
   subject => {
-    return cy.get(subject).trigger('keydown', {
-      keyCode: 73,
-      key: 'i',
-      [modKeys(IS_LINUX)]: true,
-    })
+    return cy
+      .get(subject)
+      .trigger('keydown', {
+        keyCode: 73,
+        key: 'i',
+        [modKeys(IS_LINUX)]: true,
+      })
+      .wait(30)
+      .trigger('keyup', {
+        keyCode: 73,
+        key: 'i',
+        [modKeys(IS_LINUX)]: true,
+      })
   }
 )
 
@@ -148,11 +164,19 @@ Cypress.Commands.add(
     prevSubject: 'element',
   },
   subject => {
-    return cy.get(subject).trigger('keydown', {
-      keyCode: 75,
-      key: 'k',
-      [modKeys(IS_LINUX)]: true,
-    })
+    return cy
+      .get(subject)
+      .trigger('keydown', {
+        keyCode: 75,
+        key: 'k',
+        [modKeys(IS_LINUX)]: true,
+      })
+      .wait(30)
+      .trigger('keyup', {
+        keyCode: 75,
+        key: 'k',
+        [modKeys(IS_LINUX)]: true,
+      })
   }
 )
 
