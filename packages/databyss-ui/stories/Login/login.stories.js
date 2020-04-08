@@ -6,9 +6,10 @@ import SessionProvider, {
 } from '@databyss-org/services/session/SessionProvider'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import * as actions from '@databyss-org/services/session/mocks/actions'
-import NavigationProvider {
+import NavigationProvider, {
   useNavigationContext,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+
 import { ViewportDecorator, NotifyDecorator } from '../decorators'
 
 export const SessionInfo = () => {
