@@ -46,9 +46,9 @@ const Box = ({ children, ...others }) => (
   </View>
 )
 
-const Editor = () => (
+const Editor = ({ init }) => (
   <EditorProvider
-    initialState={emptyInitialState}
+    initialState={init}
     editableReducer={slateReducer}
     reducer={reducer}
   >
@@ -146,6 +146,7 @@ storiesOf('Cypress//Tests', module)
         }
         return null
       }, data)
+
     return (
       <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
         <SourceProvider
@@ -153,7 +154,7 @@ storiesOf('Cypress//Tests', module)
           reducer={sourceReducer}
         >
           <NavigationProvider>
-            <Editor />
+            <Editor init={initialState} />
           </NavigationProvider>
         </SourceProvider>
       </TopicProvider>
@@ -185,7 +186,7 @@ storiesOf('Cypress//Tests', module)
           reducer={sourceReducer}
         >
           <NavigationProvider>
-            <Editor />
+            <Editor init={emptyInitialState} />
           </NavigationProvider>
         </SourceProvider>
       </TopicProvider>
