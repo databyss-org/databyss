@@ -1,7 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
-import makeLoader from '@databyss-org/ui/components/Loaders/makeLoader'
 import reducer, { initialState } from './reducer'
 import { onSearchEntries } from './actions'
 

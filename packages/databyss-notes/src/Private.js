@@ -1,10 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Router } from '@reach/router'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { PageProvider } from '@databyss-org/services'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import TopicProvider from '@databyss-org/services/topics/TopicProvider'
 import EntryProvider from '@databyss-org/services/entries/EntryProvider'
-import { Sidebar, PageRouter, SearchRouter } from '@databyss-org/ui'
+import {
+  Sidebar,
+  PageRouter,
+  SearchRouter,
+  useNavigationContext,
+} from '@databyss-org/ui'
 import { View } from '@databyss-org/ui/primitives'
 
 const App = ({ children }) => (
@@ -17,21 +23,34 @@ const App = ({ children }) => (
   </View>
 )
 
-const Private = () => (
-  <PageProvider>
-    <EntryProvider>
-      <SourceProvider>
-        <TopicProvider>
-          <Router>
-            <App path="/">
-              <PageRouter path="pages/*" />
-              <SearchRouter path="search/*" />
-            </App>
-          </Router>
-        </TopicProvider>
-      </SourceProvider>
-    </EntryProvider>
-  </PageProvider>
-)
+const Private = () => {
+  const { location, navigate } = useNavigationContext()
+  const { getSession } = useSessionContext()
+  const { account } = getSession()
+
+  // Navigate to default page is nothing in path
+  useEffect(() => {
+    if (location.pathname === '/') {
+      navigate(`/pages/${account.defaultPage}`)
+    }
+  }, [])
+
+  return (
+    <PageProvider>
+      <EntryProvider>
+        <SourceProvider>
+          <TopicProvider>
+            <Router>
+              <App path="/">
+                <PageRouter path="pages/*" />
+                <SearchRouter path="search/*" />
+              </App>
+            </Router>
+          </TopicProvider>
+        </SourceProvider>
+      </EntryProvider>
+    </PageProvider>
+  )
+}
 
 export default Private
