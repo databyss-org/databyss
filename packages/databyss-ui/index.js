@@ -35,6 +35,11 @@ export { default as ContentNav } from './components/Navigation/ContentNav'
 export { default as PageNav } from './components/Navigation/PageNav'
 export { default as Link } from './components/Navigation/Link'
 
+export {
+  default as NavigationProvider,
+  useNavigationContext,
+} from './components/Navigation/NavigationProvider/NavigationProvider'
+
 export { default as Content } from './components/Viewport/Content'
 export { default as Raw } from './components/Viewport/Raw'
 export { default as ThemedViewport } from './components/Viewport/ThemedViewport'
