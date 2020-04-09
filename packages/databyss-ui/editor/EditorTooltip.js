@@ -26,7 +26,7 @@ const _css = position => ({
   ...position,
 })
 
-const getPosition = (editor, menuRef) => {
+export const getPosition = (editor, menuRef) => {
   const menu = menuRef.current
   if (!menu) return null
   const native = window.getSelection()
