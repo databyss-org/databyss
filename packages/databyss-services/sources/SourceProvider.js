@@ -2,8 +2,9 @@ import React, { createContext, useContext } from 'react'
 import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import _ from 'lodash'
+import makeLoader from '@databyss-org/ui/components/Loaders/makeLoader'
 
+import _ from 'lodash'
 import reducer, { initialState } from './reducer'
 
 import {
@@ -57,7 +58,13 @@ const SourceProvider = ({ children, initialState, reducer }) => {
   }
 
   const searchSource = query => {
+    if (!query) return null
+    if (state.searchCache[query]) {
+      return state.searchCache[query]
+    }
+
     dispatch(fetchSourceQuery(query))
+    return null
   }
 
   const removeCacheValue = id => {
@@ -110,5 +117,11 @@ export const withSource = Wrapped => ({ sourceId, ...others }) => (
     {source => <Wrapped source={source} {...others} />}
   </SourceLoader>
 )
+
+export const SearchSourceLoader = makeLoader(({ query }) => {
+  const { state, searchSource } = useSourceContext()
+  searchSource(query)
+  return state.searchCache[query]
+})
 
 export default SourceProvider

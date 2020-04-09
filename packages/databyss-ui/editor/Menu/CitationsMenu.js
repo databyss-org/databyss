@@ -1,6 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react'
 import styledCss from '@styled-system/css'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import {
+  useSourceContext,
+  SearchSourceLoader,
+} from '@databyss-org/services/sources/SourceProvider'
 import theme, { borderRadius, darkTheme } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import {
@@ -98,20 +101,40 @@ export const getPosition = (editor, menuRef) => {
   //   }
 }
 
+const ComposeResults = ({ results }) => {
+  const onClick = vol => {
+    // TODO: COMPOSE DATA
+    // SET DISPATCHES IN EDITOR AND SOURCE PROVIDER
+    console.log(vol)
+  }
+
+  return (
+    <List verticalItemPadding={1} horizontalItemPadding={1}>
+      {Object.keys(results).map((author, i) => {
+        return (
+          <View key={i}>
+            <Text>{author}</Text>
+            {results[author].map((volume, k) => {
+              return (
+                <BaseControl onClick={() => onClick(volume)} key={k}>
+                  <View p="tiny">
+                    <Text variant="uiTextSmall">{volume.volumeInfo.title}</Text>
+                  </View>
+                </BaseControl>
+              )
+            })}
+          </View>
+        )
+      })}
+    </List>
+  )
+}
+
 export const Citations = ({ editor }) => {
-  const { searchSource } = useSourceContext()
-  const [didstuff, setdidstuff] = useState(false)
   const menuRef = useRef(null)
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [menuActive, setMenuActive] = useState(false)
   const [sourceQuery, setSourceQuery] = useState(null)
-
-  useEffect(
-    () => {
-      searchSource(sourceQuery)
-    },
-    [sourceQuery]
-  )
 
   // set menu active and search query
   useEffect(
@@ -120,6 +143,7 @@ export const Citations = ({ editor }) => {
         editor.value.anchorBlock &&
         editor.value.anchorBlock.text.charAt(0) === '@'
       ) {
+        // TODO: DEBOUNCE SEARCH
         setSourceQuery(editor.value.anchorBlock.text.substring(1))
         return setMenuActive(true)
       }
@@ -151,33 +175,9 @@ export const Citations = ({ editor }) => {
       ref={menuRef}
       css={styledCss(_css(position, menuActive))}
     >
-      <List verticalItemPadding={1} horizontalItemPadding={1}>
-        <BaseControl>
-          <View p="tiny">
-            <Text variant="uiTextSmall">author item</Text>
-          </View>
-        </BaseControl>
-        <BaseControl>
-          <View p="tiny">
-            <Text variant="uiTextSmall">author item</Text>
-          </View>
-        </BaseControl>
-        <BaseControl>
-          <View p="tiny">
-            <Text variant="uiTextSmall">author item</Text>
-          </View>
-        </BaseControl>
-        <BaseControl>
-          <View p="tiny">
-            <Text variant="uiTextSmall">author item</Text>
-          </View>
-        </BaseControl>
-        <BaseControl>
-          <View p="tiny">
-            <Text variant="uiTextSmall">author item</Text>
-          </View>
-        </BaseControl>
-      </List>
+      <SearchSourceLoader query={sourceQuery}>
+        {results => <ComposeResults results={results} />}
+      </SearchSourceLoader>
     </View>
   )
 }

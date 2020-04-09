@@ -16,7 +16,8 @@ export const deleteSource = id => httpDelete(`/sources/${id}`)
 
 export const getPageSources = id => httpGet(`/sources/pages/${id}`)
 
-export const searchSource = query =>
-  request(
+export const searchSource = query => {
+  return request(
     `https://www.googleapis.com/books/v1/volumes?q=${query}&key=AIzaSyCCoJxl3VhVwvM4v4cHSPJY6hsK-kh5VBk`
   )
+}

@@ -1,13 +1,16 @@
+import { ResourcePending } from '../lib/ResourcePending'
 import {
   CACHE_SOURCE,
   SAVE_SOURCE,
   REMOVE_SOURCE,
   GET_ALL_SOURCES,
   CACHE_SOURCES,
+  CACHE_SEARCH_QUERY,
 } from './constants'
 
 export const initialState = {
   cache: {},
+  searchCache: {},
 }
 
 export default (state, action) => {
@@ -59,6 +62,18 @@ export default (state, action) => {
         cache: _cache,
       }
     }
+
+    case CACHE_SEARCH_QUERY: {
+      const _query = action.payload.query
+      const _cache = state.searchCache
+      _cache[_query] = action.payload.results
+
+      return {
+        ...state,
+        searchCache: _cache,
+      }
+    }
+
     default:
       return state
   }
