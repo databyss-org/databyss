@@ -9,6 +9,8 @@ import {
   FETCH_PAGE_SOURCES,
   CACHE_SOURCES,
   FETCH_SOURCE_FROM_LIST,
+  SEARCH_SOURCE,
+  CACHE_SEARCH_RESULTS,
 } from './constants'
 
 export function fetchSource(id) {
@@ -101,6 +103,21 @@ export function fetchSourcesFromList(list) {
     sources.getSourceFromList(list).then(sources => {
       dispatch({
         type: CACHE_SOURCES,
+        payload: { sources },
+      })
+    })
+  }
+}
+
+export function fetchSourceQuery(query) {
+  return async dispatch => {
+    dispatch({
+      type: SEARCH_SOURCE,
+      payload: {},
+    })
+    sources.searchSource(query).then(sources => {
+      dispatch({
+        type: CACHE_SEARCH_RESULTS,
         payload: { sources },
       })
     })

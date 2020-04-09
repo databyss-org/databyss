@@ -13,6 +13,7 @@ import {
   fetchAllSources,
   fetchPageSources,
   fetchSourcesFromList,
+  fetchSourceQuery,
 } from './actions'
 
 const useReducer = createReducer()
@@ -55,6 +56,10 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     }
   }
 
+  const searchSource = query => {
+    dispatch(fetchSourceQuery(query))
+  }
+
   const removeCacheValue = id => {
     if (state.cache[id]) {
       dispatch(removeSourceFromCache(id))
@@ -71,6 +76,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
         getAllSources,
         getPageSources,
         getSourcesFromList,
+        searchSource,
       }}
     >
       {children}
