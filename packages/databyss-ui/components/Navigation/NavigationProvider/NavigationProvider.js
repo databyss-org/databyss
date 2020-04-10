@@ -36,7 +36,7 @@ const NavigationProvider = ({ children, componentMap, initialPath }) => {
 
   const hideModal = () => dispatch(actions.hideModal())
   const navigate = options => {
-    navigateRouter(options, { replace: true })
+    navigateRouter(options)
   }
 
   const navigateSidebar = options => dispatch(actions.navigateSidebar(options))
