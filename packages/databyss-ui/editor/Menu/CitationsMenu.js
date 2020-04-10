@@ -234,12 +234,21 @@ export const Citations = ({
       maxWidth="500px"
       minWidth="300px"
       maxHeight="200px"
+      minHeight="32px"
       ref={menuRef}
       css={styledCss(_css(position, menuActive))}
     >
-      <SearchSourceLoader query={sourceQuery}>
-        {results => <ComposeResults results={results} onClick={onClick} />}
-      </SearchSourceLoader>
+      {sourceQuery ? (
+        <SearchSourceLoader query={sourceQuery}>
+          {results => <ComposeResults results={results} onClick={onClick} />}
+        </SearchSourceLoader>
+      ) : (
+        <View p="small">
+          <Text variant="uiTextSmall" color="text.3">
+            type title and/or author for suggestions...
+          </Text>
+        </View>
+      )}
     </View>
   )
 }
