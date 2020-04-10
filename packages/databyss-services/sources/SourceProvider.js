@@ -26,6 +26,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
 
   // provider methods
   const setSource = source => {
+    console.log('THIS IS A SOURCE', source)
     if (_.isEqual(state.cache[source._id], source)) {
       return
     }

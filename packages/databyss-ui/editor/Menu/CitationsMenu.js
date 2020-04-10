@@ -13,6 +13,7 @@ import {
   List,
   BaseControl,
 } from '@databyss-org/ui/primitives'
+import { lineStateToSlate } from './../slate/markup'
 import { isMobileOs } from '@databyss-org/ui/'
 
 // import { getPosition } from './../EditorTooltip'
@@ -101,12 +102,12 @@ export const getPosition = (editor, menuRef) => {
   //   }
 }
 
-const ComposeResults = ({ results }) => {
-  const onClick = vol => {
-    // TODO: COMPOSE DATA
-    // SET DISPATCHES IN EDITOR AND SOURCE PROVIDER
-    console.log(vol)
-  }
+const ComposeResults = ({ results, onClick }) => {
+  // const onClick = vol => {
+  //   // TODO: COMPOSE DATA
+  //   // SET DISPATCHES IN EDITOR AND SOURCE PROVIDER
+  //   console.log(vol)
+  // }
 
   return (
     <List verticalItemPadding={1} horizontalItemPadding={1}>
@@ -130,7 +131,14 @@ const ComposeResults = ({ results }) => {
   )
 }
 
-export const Citations = ({ editor }) => {
+export const Citations = ({
+  editor,
+  setBlockType,
+  updateAtomic,
+  changeContent,
+}) => {
+  const { setSource } = useSourceContext()
+
   const menuRef = useRef(null)
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [menuActive, setMenuActive] = useState(false)
@@ -165,6 +173,59 @@ export const Citations = ({ editor }) => {
     [editor.value.selection, menuActive]
   )
 
+  const onClick = vol => {
+    console.log(vol)
+
+    const splitName = name => ({
+      firstName: {
+        textValue: name
+          .split(' ')
+          .slice(0, -1)
+          .join(' '),
+      },
+      lastName: {
+        textValue: name
+          .split(' ')
+          .slice(-1)
+          .join(' '),
+      },
+    })
+
+    const text = { textValue: `@${vol.volumeInfo.title}`, ranges: [] }
+
+    const _id = editor.value.anchorBlock.key
+    const _refId = editor.value.anchorBlock.data.get('refId')
+
+    // create new slate node
+    const _node = lineStateToSlate(text)
+    // set node data attributes
+    _node.type = 'ENTRY'
+    _node.key = _id
+    _node.data = { refId: _refId, type: 'ENTRY' }
+    // replace node
+    editor.replaceNodeByKey(_id, _node)
+    // update content in slate
+    changeContent(text.textValue, { value: editor.value }, text.ranges)
+    // update block to atomic
+    setBlockType('SOURCE', _id)
+    // set source details in source cache
+    setTimeout(() => {
+      // compose source data
+      const _data = {
+        _id: _refId,
+        text: { textValue: vol.volumeInfo.title, ranges: [] },
+        authors: [splitName(vol.volumeInfo.authors[0])],
+      }
+      setSource(_data)
+
+      // setSource({
+      //   _id: _refId,
+      //   text: { textValue: text.textValue.substring(1), ranges: text.ranges },
+      //   //  citations: [{ textValue: 'text value', ranges: [] }],
+      //   authors: [splitName(vol.volumeInfo.authors[0])],
+    }, 20)
+  }
+
   return (
     <View
       overflowX="hidden"
@@ -176,7 +237,7 @@ export const Citations = ({ editor }) => {
       css={styledCss(_css(position, menuActive))}
     >
       <SearchSourceLoader query={sourceQuery}>
-        {results => <ComposeResults results={results} />}
+        {results => <ComposeResults results={results} onClick={onClick} />}
       </SearchSourceLoader>
     </View>
   )
