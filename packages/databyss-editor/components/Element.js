@@ -79,40 +79,20 @@ const Element = ({ attributes, children, element }) => {
           flexDirection="row"
           alignItems="center"
           borderRadius="default"
-          contentEditable="false"
-          suppressContentEditableWarning
-          css={{ userSelect: 'none', cursor: 'pointer' }}
           overflow="hidden"
           borderRadiusVariant="default"
           onMouseDown={onClick}
           pl="tiny"
           pr="0"
           ml="tinyNegative"
-          backgroundColor={isSelected ? 'background.3' : ''}
         >
           <Text
             variant={getAtomicStyle(element.type)}
             css={{ whiteSpace: 'nowrap' }}
             overflow="hidden"
           >
-            <RawHtml _html={{ __html: element.character }} {...attributes} />
+            {children}
           </Text>
-          {children}
-          {isSelected && (
-            <View
-              display="inline"
-              borderLeft="1px solid"
-              borderColor="background.4"
-              ml="10px"
-              padding="1px"
-            >
-              <Button variant="editSource" data-test-atomic-edit="open">
-                <Icon sizeVariant="tiny" color="background.5">
-                  <PenSVG />
-                </Icon>
-              </Button>
-            </View>
-          )}
         </View>
       ) : (
         <Text {...attributes}>{children}</Text>

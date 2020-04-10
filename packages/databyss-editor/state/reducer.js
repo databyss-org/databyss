@@ -12,6 +12,22 @@ export default (state, action) =>
 
     switch (action.type) {
       case SPLIT: {
+        const _text =
+          state.entityCache[
+            state.blockCache[state.blocks[payload.index]._id].entityId
+          ].text.textValue
+        // don't allow SPLIT inside atomic
+        if (
+          isAtomicInlineType(
+            state.blockCache[state.blocks[payload.index]._id].type
+          ) &&
+          state.selection.focus.offset > 0 &&
+          state.selection.focus.offset < _text.length - 1
+        ) {
+          draft.preventDefault = true
+          break
+        }
+
         // add or insert a new block
         const _id = ObjectId().toHexString()
         const entityId = ObjectId().toHexString()
@@ -27,17 +43,10 @@ export default (state, action) =>
             text: payload.previous,
           }
         } else {
-          // if not atomic, update split block
-          if (
-            !isAtomicInlineType(
-              state.blockCache[state.blocks[payload.index]._id].type
-            )
-          ) {
-            draft.entityCache[
-              state.blockCache[state.blocks[payload.index]._id].entityId
-            ].text =
-              payload.previous
-          }
+          draft.entityCache[
+            state.blockCache[state.blocks[payload.index]._id].entityId
+          ].text =
+            payload.previous
 
           // insert/add split below
           if (payload.index === draft.blocks.length - 1) {

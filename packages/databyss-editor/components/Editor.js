@@ -5,18 +5,9 @@ import { isAtomicInlineType } from '../lib/util'
 import Leaf from './Leaf'
 import Element from './Element'
 
-export const withInline = editor => {
-  const { isInline, isVoid } = editor
-  editor.isInline = element =>
-    isAtomicInlineType(element.type) ? true : isInline(element)
-  editor.isVoid = element =>
-    isAtomicInlineType(element.type) ? true : isVoid(element)
-  return editor
-}
-
 const Editor = ({ children, ...others }) => {
   const readOnly = !others.onChange
-  const editor = useMemo(() => withInline(withReact(createEditor())), [])
+  const editor = useMemo(() => withReact(createEditor()))
   const renderElement = useCallback(
     props => <Element readOnly={readOnly} {...props} />,
     []

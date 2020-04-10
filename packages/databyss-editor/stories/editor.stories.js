@@ -6,9 +6,16 @@ import ContentEditable from '../components/ContentEditable'
 import { stateToSlate } from '../lib/slateUtils'
 import Editor from '../components/Editor'
 import EditorProvider from '../state/EditorProvider'
-import initialState from './fixtures/basic'
+import basicFixture from './fixtures/basic'
+import noAtomicsFixture from './fixtures/no-atomics'
 
-const App = () => {
+const Standalone = ({ initialState }) => (
+  <EditorProvider initialState={initialState}>
+    <ContentEditable />
+  </EditorProvider>
+)
+
+const SideBySide = ({ initialState }) => {
   const [editorState, setEditorState] = useState([])
   return (
     <Grid>
@@ -29,4 +36,8 @@ const App = () => {
 
 storiesOf('Components|Editor', module)
   .addDecorator(ViewportDecorator)
-  .add('Basic', () => <App />)
+  .add('Basic', () => <SideBySide initialState={basicFixture} />)
+  .add('Basic (standalone)', () => <Standalone initialState={basicFixture} />)
+  .add('No Atomics (standalone)', () => (
+    <Standalone initialState={noAtomicsFixture} />
+  ))

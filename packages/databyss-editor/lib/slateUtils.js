@@ -4,6 +4,9 @@ import { serialize } from './inlineSerializer'
 import { isAtomicInlineType } from './util'
 
 export const flattenNode = node => {
+  if (!node) {
+    return null
+  }
   if (typeof node.text === 'string') {
     return node.text
   } else if (typeof node.character === 'string') {
@@ -29,16 +32,19 @@ export const flattenNodeToPoint = (editor, point) => {
 export const flattenOffset = (editor, point) =>
   flattenNodeToPoint(editor, point).length
 
-export const slateSelectionToStateSelection = editor => ({
-  anchor: {
-    index: editor.selection.anchor.path[0],
-    offset: flattenOffset(editor, editor.selection.anchor),
-  },
-  focus: {
-    index: editor.selection.focus.path[0],
-    offset: flattenOffset(editor, editor.selection.focus),
-  },
-})
+export const slateSelectionToStateSelection = editor =>
+  editor.selection
+    ? {
+        anchor: {
+          index: editor.selection.anchor.path[0],
+          offset: flattenOffset(editor, editor.selection.anchor),
+        },
+        focus: {
+          index: editor.selection.focus.path[0],
+          offset: flattenOffset(editor, editor.selection.focus),
+        },
+      }
+    : null
 
 // this doesn't work when a node has > 1 text children
 // TODO: create an editor, insert fragment and moveFocusForward to get
@@ -60,27 +66,9 @@ export const entities = type =>
 export const stateBlockToSlateBlock = block => {
   // convert state and apply markup values
   const _childrenText = stateToSlateMarkup(block.text)
-  const __childrenText = _childrenText.map(c => {
-    if (!c.type) {
-      return c
-    }
-    return { type: c.type, children: [{ text: c.text }] }
-  })
-
-  const _children = isAtomicInlineType(block.type)
-    ? [
-        { text: '', type: 'spacer' },
-        {
-          character: serialize({ children: __childrenText }),
-          type: block.type,
-          children: [{ text: '' }],
-        },
-        { text: '' },
-      ]
-    : _childrenText
-
   const _data = {
-    children: _children,
+    children: _childrenText,
+    type: block.type,
     isBlock: true,
   }
   return _data
@@ -105,6 +93,9 @@ export const stateToSlate = initState => {
 export const getRangesFromSlate = node => {
   let _offset = 0
   const _ranges = []
+  if (!node) {
+    return _ranges
+  }
   node.children.forEach(n => {
     if (!n.text) {
       return

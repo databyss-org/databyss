@@ -114,6 +114,9 @@ const ContentEditable = () => {
 
   const onChange = value => {
     const selection = slateSelectionToStateSelection(editor)
+    if (!selection) {
+      return
+    }
     const focusIndex = selection.focus.index
 
     const payload = {
@@ -179,6 +182,7 @@ const ContentEditable = () => {
       state.operations.forEach(op => {
         const _block = stateBlockToSlateBlock(op.block)
         draft[op.index].children = _block.children
+        draft[op.index].type = _block.type
         draft[op.index].isBlock = _block.isBlock
       })
     }
