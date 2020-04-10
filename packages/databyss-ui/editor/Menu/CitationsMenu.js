@@ -35,6 +35,21 @@ const _css = (position, active) => ({
   ...position,
 })
 
+const splitName = name => ({
+  firstName: {
+    textValue: name
+      .split(' ')
+      .slice(0, -1)
+      .join(' '),
+  },
+  lastName: {
+    textValue: name
+      .split(' ')
+      .slice(-1)
+      .join(' '),
+  },
+})
+
 export const getPosition = (editor, menuRef) => {
   const menu = menuRef.current
   if (!menu) return null
@@ -174,23 +189,6 @@ export const Citations = ({
   )
 
   const onClick = vol => {
-    console.log(vol)
-
-    const splitName = name => ({
-      firstName: {
-        textValue: name
-          .split(' ')
-          .slice(0, -1)
-          .join(' '),
-      },
-      lastName: {
-        textValue: name
-          .split(' ')
-          .slice(-1)
-          .join(' '),
-      },
-    })
-
     const text = { textValue: `@${vol.volumeInfo.title}`, ranges: [] }
 
     const _id = editor.value.anchorBlock.key
@@ -204,6 +202,7 @@ export const Citations = ({
     _node.data = { refId: _refId, type: 'ENTRY' }
     // replace node
     editor.replaceNodeByKey(_id, _node)
+
     // update content in slate
     changeContent(text.textValue, { value: editor.value }, text.ranges)
     // update block to atomic
@@ -214,15 +213,17 @@ export const Citations = ({
       const _data = {
         _id: _refId,
         text: { textValue: vol.volumeInfo.title, ranges: [] },
-        authors: [splitName(vol.volumeInfo.authors[0])],
+        authors:
+          vol.volumeInfo.authors &&
+          vol.volumeInfo.authors.map(a => splitName(a)),
       }
+      // update in cache
       setSource(_data)
 
-      // setSource({
-      //   _id: _refId,
-      //   text: { textValue: text.textValue.substring(1), ranges: text.ranges },
-      //   //  citations: [{ textValue: 'text value', ranges: [] }],
-      //   authors: [splitName(vol.volumeInfo.authors[0])],
+      // replace cursor at end of node
+      const _tempNode = editor.value.document.getNode(_id)
+      editor.focus()
+      editor.moveToEndOfNode(_tempNode)
     }, 20)
   }
 
