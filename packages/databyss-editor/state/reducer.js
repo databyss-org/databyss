@@ -1,7 +1,15 @@
 import ObjectId from 'bson-objectid'
 import { produce } from 'immer'
-import { SPLIT, MERGE, SET_CONTENT, REMOVE, CLEAR } from './constants'
+import {
+  SPLIT,
+  MERGE,
+  SET_CONTENT,
+  REMOVE,
+  CLEAR,
+  SET_SELECTION,
+} from './constants'
 import { isAtomicInlineType } from '../lib/util'
+import { entityForBlockIndex, selectionHasRange } from './util'
 
 export default (state, action) =>
   produce(state, draft => {
@@ -91,10 +99,10 @@ export default (state, action) =>
           break
         }
 
-        const _entity =
-          draft.entityCache[
-            state.blockCache[state.blocks[payload.index]._id].entityId
-          ]
+        const _entity = entityForBlockIndex(draft, payload.index)
+        // draft.entityCache[
+        //   state.blockCache[state.blocks[payload.index]._id].entityId
+        // ]
 
         // update node text
         if (!_mergingIntoAtomic) {
@@ -124,10 +132,10 @@ export default (state, action) =>
 
         // update node text
         // TODO: handle type changing if text includes type operator
-        const _entity =
-          draft.entityCache[
-            state.blockCache[state.blocks[payload.index]._id].entityId
-          ]
+        const _entity = entityForBlockIndex(draft, payload.index)
+        // draft.entityCache[
+        //   state.blockCache[state.blocks[payload.index]._id].entityId
+        // ]
         _entity.text = payload.text
 
         // push update operation back to editor
@@ -169,6 +177,44 @@ export default (state, action) =>
           block: _entity,
         })
         break
+      }
+      case SET_SELECTION: {
+        const { selection } = payload
+        const _hasRange = selectionHasRange(selection)
+        const _entity = entityForBlockIndex(draft, selection.focus.index)
+        const _previousEntity = entityForBlockIndex(
+          draft,
+          state.selection.focus.index
+        )
+        const _selectionIndexHasChanged =
+          selection.focus.index !== state.selection.focus.index
+
+        if (isAtomicInlineType(_entity.type)) {
+          const _isActive =
+            !_hasRange &&
+            selection.focus.offset < _entity.text.textValue.length &&
+            selection.focus.offset > 0
+
+          // only push an update if the `isActive` has changed
+          if (_selectionIndexHasChanged || _entity.isActive !== _isActive) {
+            _entity.isActive = _isActive
+            draft.operations.push({
+              index: selection.focus.index,
+              block: _entity,
+            })
+          }
+        }
+        // if we've moved selection index,
+        //   check previous selection for active entity, deactivate if necessary
+        if (_selectionIndexHasChanged) {
+          if (_previousEntity.isActive) {
+            _previousEntity.isActive = false
+            draft.operations.push({
+              index: state.selection.focus.index,
+              block: _previousEntity,
+            })
+          }
+        }
       }
       default:
     }

@@ -184,6 +184,7 @@ const ContentEditable = () => {
         draft[op.index].children = _block.children
         draft[op.index].type = _block.type
         draft[op.index].isBlock = _block.isBlock
+        draft[op.index].isActive = _block.isActive
       })
     }
   )

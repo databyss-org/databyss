@@ -70,6 +70,7 @@ export const stateBlockToSlateBlock = block => {
     children: _childrenText,
     type: block.type,
     isBlock: true,
+    isActive: block.isActive,
   }
   return _data
 }
