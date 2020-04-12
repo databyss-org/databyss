@@ -6,7 +6,7 @@ import Element from './Element'
 
 const Editor = ({ children, ...others }) => {
   const readOnly = !others.onChange
-  const editor = useMemo(() => withReact(createEditor()))
+  const editor = useMemo(() => withReact(createEditor()), [])
   const renderElement = useCallback(
     props => <Element readOnly={readOnly} {...props} />,
     []

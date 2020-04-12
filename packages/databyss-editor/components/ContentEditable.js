@@ -25,7 +25,7 @@ const ContentEditable = () => {
     remove,
   } = useEditorContext()
 
-  const editor = useMemo(() => withReact(createEditor()))
+  const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
