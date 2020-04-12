@@ -3,7 +3,7 @@ import { createEditor, Node, Transforms, Point } from 'slate'
 import { withReact } from 'slate-react'
 import { produce } from 'immer'
 import { useEditorContext } from '../state/EditorProvider'
-import Editor, { withInline } from './Editor'
+import Editor from './Editor'
 import {
   stateToSlate,
   getRangesFromSlate,
@@ -25,7 +25,7 @@ const ContentEditable = () => {
     remove,
   } = useEditorContext()
 
-  const editor = useMemo(() => withInline(withReact(createEditor())), [])
+  const editor = useMemo(() => withReact(createEditor()))
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 

@@ -1,7 +1,6 @@
 import React, { useMemo, useCallback } from 'react'
 import { createEditor } from 'slate'
 import { Slate, Editable, withReact } from 'slate-react'
-import { isAtomicInlineType } from '../lib/util'
 import Leaf from './Leaf'
 import Element from './Element'
 
