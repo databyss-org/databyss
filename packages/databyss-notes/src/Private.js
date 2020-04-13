@@ -23,6 +23,19 @@ const App = ({ children }) => (
   </View>
 )
 
+const NotFoundRedirect = () => {
+  const { navigate } = useNavigationContext()
+  const { getSession } = useSessionContext()
+  const { account } = getSession()
+
+  // if no page found, navigate to default page
+  useEffect(() => {
+    navigate(`/pages/${account.defaultPage}`)
+  }, [])
+
+  return null
+}
+
 const Private = () => {
   const { location, navigate } = useNavigationContext()
   const { getSession } = useSessionContext()
@@ -42,6 +55,7 @@ const Private = () => {
           <TopicProvider>
             <Router>
               <App path="/">
+                <NotFoundRedirect default />
                 <PageRouter path="pages/*" />
                 <SearchRouter path="search/*" />
               </App>
