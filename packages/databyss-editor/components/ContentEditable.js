@@ -8,6 +8,7 @@ import {
   stateToSlate,
   getRangesFromSlate,
   slateSelectionToStateSelection,
+  stateSelectionToSlateSelection,
   flattenNode,
   flattenOffset,
   stateBlockToSlateBlock,
@@ -180,20 +181,33 @@ const ContentEditable = () => {
     state.preventDefault ? valueRef.current : editor.children,
     draft => {
       state.operations.forEach(op => {
-        const _block = stateBlockToSlateBlock(op.block)
-        draft[op.index].children = _block.children
-        draft[op.index].type = _block.type
-        draft[op.index].isBlock = _block.isBlock
-        draft[op.index].isActive = _block.isActive
+        if (op.block) {
+          // block update
+          const _block = stateBlockToSlateBlock(op.block)
+          draft[op.index].children = _block.children
+          draft[op.index].type = _block.type
+          draft[op.index].isBlock = _block.isBlock
+          draft[op.index].isActive = _block.isActive
+        } else if (op.selection) {
+          // selection update
+        } else {
+          throw new Error('Invalid operation', op)
+        }
       })
     }
   )
 
-  const nextSelection = state.preventDefault
+  // by default, let selection remain uncontrolled
+  // NOTE: preventDefault will rollback selection to that of previous render
+  let nextSelection = state.preventDefault
     ? selectionRef.current
     : editor.selection
-  // TODO: use controlled selection from `state`, but we need to transform
-  //  it back to a Slate-friendly format
+
+  // if there were any update operations,
+  //   sync the Slate selection to the state selection
+  if (state.operations.length) {
+    nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
+  }
 
   valueRef.current = nextValue
   selectionRef.current = nextSelection

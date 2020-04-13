@@ -18,6 +18,9 @@ export default (state, action) =>
 
     const { payload } = action
 
+    // default nextSelection to `payload.selection` (which may be undef)
+    const nextSelection = payload.selection
+
     switch (action.type) {
       case SPLIT: {
         const _text =
@@ -100,9 +103,6 @@ export default (state, action) =>
         }
 
         const _entity = entityForBlockIndex(draft, payload.index)
-        // draft.entityCache[
-        //   state.blockCache[state.blocks[payload.index]._id].entityId
-        // ]
 
         // update node text
         if (!_mergingIntoAtomic) {
@@ -133,9 +133,6 @@ export default (state, action) =>
         // update node text
         // TODO: handle type changing if text includes type operator
         const _entity = entityForBlockIndex(draft, payload.index)
-        // draft.entityCache[
-        //   state.blockCache[state.blocks[payload.index]._id].entityId
-        // ]
         _entity.text = payload.text
 
         // push update operation back to editor
@@ -219,14 +216,13 @@ export default (state, action) =>
       default:
     }
 
-    // always update the selection if included in payload
-    // (unless we're doing `preventDefault`)
-    if (action.payload.selection && !draft.preventDefault) {
-      draft.selection = action.payload.selection
+    // update the selection unless we're doing `preventDefault`
+    if (nextSelection && !draft.preventDefault) {
+      draft.selection = nextSelection
     }
 
     if (draft.selection.focus.index !== state.selection.focus.index) {
-      console.log('blur', state.selection.focus.index)
+      // console.log('blur', state.selection.focus.index)
       // TODO: transform block type if symbol is present
     }
 

@@ -1,7 +1,5 @@
 import { Editor } from 'slate'
-import { stateToSlateMarkup } from './markup'
-import { serialize } from './inlineSerializer'
-import { isAtomicInlineType } from './util'
+import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
 export const flattenNode = node => {
   if (!node) {
@@ -46,19 +44,20 @@ export const slateSelectionToStateSelection = editor =>
       }
     : null
 
-// this doesn't work when a node has > 1 text children
-// TODO: create an editor, insert fragment and moveFocusForward to get
-// correct paths and offsets
-export const stateSelectionToSlateSelection = selection => ({
-  anchor: {
-    path: [selection.anchor.index, 0],
-    offset: selection.anchor.offset,
-  },
-  focus: {
-    path: [selection.focus.index, 0],
-    offset: selection.focus.offset,
-  },
-})
+export const stateSelectionToSlateSelection = (children, selection) => {
+  const _selection = {
+    anchor: statePointToSlatePoint(children, selection.anchor),
+    focus: statePointToSlatePoint(children, selection.focus),
+  }
+  // For selections, Slate Point must have length 2
+  if (_selection.anchor.path.length === 1) {
+    _selection.anchor.path.push(0)
+  }
+  if (_selection.focus.path.length === 1) {
+    _selection.focus.path.push(0)
+  }
+  return _selection
+}
 
 export const entities = type =>
   ({ SOURCE: 'sources', TOPIC: 'topics', ENTRY: 'entries' }[type])

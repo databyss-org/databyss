@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { RawHtml, Text, Button, Icon, View } from '@databyss-org/ui/primitives'
+import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { Node, Range } from 'slate'
@@ -15,7 +15,10 @@ export const getAtomicStyle = type =>
 const Element = ({ attributes, children, element }) => {
   const editor = useEditor()
 
-  const onClick = () => {
+  const onAtomicMouseDown = e => {
+    if (element.isActive) {
+      e.preventDefault()
+    }
     console.log('LAUNCH MODAL')
   }
 
@@ -49,6 +52,11 @@ const Element = ({ attributes, children, element }) => {
     [editor.selection, element]
   )
 
+  const onPressEditAtomic = e => {
+    console.log('button')
+    e.stopPropagation()
+  }
+
   const blockMenuWidth = editorMarginMenuItemHeight + 6
 
   const _selHasRange = selectionHasRange(slateSelectionToStateSelection(editor))
@@ -78,40 +86,33 @@ const Element = ({ attributes, children, element }) => {
         )}
       {isAtomicInlineType(element.type) ? (
         <View
+          alignSelf="flex-start"
           flexWrap="nowrap"
-          display="inline-flex"
-          flexDirection="row"
+          display="inline"
           alignItems="center"
           borderRadius="default"
-          overflow="hidden"
           borderRadiusVariant="default"
-          onMouseDown={onClick}
+          onMouseDown={onAtomicMouseDown}
           pl="tiny"
           pr="0"
           ml="tinyNegative"
           backgroundColor={element.isActive ? 'background.3' : 'transparent'}
-          alignSelf="flex-start"
           css={{
             cursor: _selHasRange ? 'text' : 'pointer',
-            caretColor: element.isActive ? 'transparent' : 'currentcolor',
+            // caretColor: element.isActive ? 'transparent' : 'currentcolor',
           }}
         >
-          <Text
-            variant={getAtomicStyle(element.type)}
-            css={{ whiteSpace: 'nowrap' }}
-            overflow="hidden"
-          >
+          <Text variant={getAtomicStyle(element.type)} display="inline">
             {children}
           </Text>
           {element.isActive && (
-            <View
-              display="inline"
-              borderLeft="1px solid"
-              borderColor="background.4"
-              ml="10px"
-              padding="1px"
-            >
-              <Button variant="editSource" data-test-atomic-edit="open">
+            <View display="inline">
+              <Button
+                variant="editSource"
+                data-test-atomic-edit="open"
+                onPress={onPressEditAtomic}
+                css={{ zIndex: 1000 }}
+              >
                 <Icon sizeVariant="tiny" color="background.5">
                   <PenSVG />
                 </Icon>
