@@ -99,7 +99,7 @@ const Element = ({ attributes, children, element }) => {
           backgroundColor={element.isActive ? 'background.3' : 'transparent'}
           css={{
             cursor: _selHasRange ? 'text' : 'pointer',
-            // caretColor: element.isActive ? 'transparent' : 'currentcolor',
+            caretColor: element.isActive ? 'transparent' : 'currentcolor',
           }}
         >
           <Text variant={getAtomicStyle(element.type)} display="inline">
