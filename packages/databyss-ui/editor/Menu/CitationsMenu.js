@@ -4,6 +4,8 @@ import {
   useSourceContext,
   SearchSourceLoader,
 } from '@databyss-org/services/sources/SourceProvider'
+import google from '@databyss-org/ui/assets/google.png'
+
 import theme, { borderRadius, darkTheme } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import {
@@ -20,6 +22,12 @@ import { isMobileOs } from '@databyss-org/ui/'
 // import { getPosition } from './../EditorTooltip'
 
 const _mobile = isMobileOs()
+
+const GoogleFooter = () => (
+  <div>
+    <img src={google} alt="powered by Google" />
+  </div>
+)
 
 const _css = (position, active) => ({
   paddingLeft: 'small',
@@ -264,19 +272,30 @@ export const Citations = ({
 
   return (
     <View
-      overflowX="hidden"
-      overflowY="scroll"
       maxWidth="500px"
       minWidth="300px"
-      maxHeight="200px"
       minHeight="32px"
       ref={menuRef}
       css={styledCss(_css(position, menuActive))}
     >
       {sourceQuery ? (
-        <SearchSourceLoader query={sourceQuery}>
-          {results => <ComposeResults results={results} onClick={onClick} />}
-        </SearchSourceLoader>
+        <View>
+          <View overflowX="hidden" overflowY="scroll" maxHeight="200px">
+            <SearchSourceLoader query={sourceQuery}>
+              {results => (
+                <ComposeResults results={results} onClick={onClick} />
+              )}
+            </SearchSourceLoader>
+          </View>
+          <View
+            p="small"
+            borderTopWidth="1px"
+            borderColor="border.2"
+            borderStyle="solid"
+          >
+            <GoogleFooter />
+          </View>
+        </View>
       ) : (
         <View p="small">
           <Text variant="uiTextSmall" color="text.2">
