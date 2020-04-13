@@ -17,6 +17,8 @@ import {
 } from '@databyss-org/ui/primitives'
 import { lineStateToSlate } from './../slate/markup'
 
+const MENU_HEIGHT = 200
+
 const _css = (position, active) => ({
   paddingLeft: 'small',
   paddingRight: 'small',
@@ -61,7 +63,7 @@ export const getPosition = (editor, menuRef) => {
       const _windowHeight = window.innerHeight
 
       // check if menu should be above text
-      const _menuTop = _windowHeight < _rect.bottom + 42
+      const _menuTop = _windowHeight < _rect.bottom + MENU_HEIGHT
 
       // set dropdown position
       const left = _rect.left + 12
@@ -172,7 +174,7 @@ export const Citations = ({ editor, setBlockType, changeContent }) => {
         // if cursor is near window bottom set menu above cursor
         if (_position) {
           if (_position.displayAbove && sourcesLoaded) {
-            _position.top -= 204
+            _position.top -= MENU_HEIGHT + 4
           }
           setPosition(_position)
         }
@@ -233,7 +235,11 @@ export const Citations = ({ editor, setBlockType, changeContent }) => {
     >
       {sourceQuery ? (
         <View>
-          <View overflowX="hidden" overflowY="scroll" maxHeight="200px">
+          <View
+            overflowX="hidden"
+            overflowY="scroll"
+            maxHeight={pxUnits(MENU_HEIGHT)}
+          >
             <SearchSourceLoader query={sourceQuery}>
               {results => {
                 setSourcesLoaded(true)
