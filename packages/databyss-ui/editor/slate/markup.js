@@ -74,7 +74,6 @@ export const stateToSlateMarkup = state => {
   // select correct range and apply marks
 
   const reducer = (acc, curr) => {
-    console.log(curr)
     const anchor = new Point({ path: [0], offset: curr.offset })
     const focus = new Point({ path: [0], offset: curr.length + curr.offset })
 

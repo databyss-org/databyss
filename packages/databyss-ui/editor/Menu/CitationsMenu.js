@@ -6,10 +6,9 @@ import {
 } from '@databyss-org/services/sources/SourceProvider'
 import google from '@databyss-org/ui/assets/google.png'
 
-import theme, { borderRadius, darkTheme } from '@databyss-org/ui/theming/theme'
+import theme, { borderRadius } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import {
-  Button,
   Grid,
   Text,
   View,
@@ -17,24 +16,12 @@ import {
   BaseControl,
 } from '@databyss-org/ui/primitives'
 import { lineStateToSlate } from './../slate/markup'
-import { isMobileOs } from '@databyss-org/ui/'
-
-// import { getPosition } from './../EditorTooltip'
-
-const _mobile = isMobileOs()
-
-const GoogleFooter = () => (
-  <div>
-    <img src={google} alt="powered by Google" />
-  </div>
-)
 
 const _css = (position, active) => ({
   paddingLeft: 'small',
   paddingRight: 'small',
   backgroundColor: 'background.0',
   zIndex: 1,
-  pointerEvents: 'none',
   marginTop: pxUnits(-6),
   position: 'absolute',
   opacity: active ? 1 : 0,
@@ -62,116 +49,103 @@ const splitName = name => ({
 export const getPosition = (editor, menuRef) => {
   const menu = menuRef.current
   if (!menu) return null
-  // const native = window.getSelection()
-  // const range = native.getRangeAt(0)
-  //  const rect = range.getBoundingClientRect()
-
-  // let menuTopOffset = 0
-  //   if (rect.top < menu.offsetHeight) {
-  //     menuTopOffset = 62
-  //   }
 
   if (editor.value.anchorBlock) {
     const _path = [editor.value.selection.start.path.get(0), 0]
 
-    // // eslint-disable-next-line
+    // eslint-disable-next-line
     const _node = editor.findDOMNode(_path)
 
     if (_node) {
       const _rect = _node.getBoundingClientRect()
+      const _windowHeight = window.innerHeight
+
+      // check if menu should be above text
+      const _menuTop = _windowHeight < _rect.bottom + 42
 
       // set dropdown position
       const left = _rect.left + 12
-      const top = _rect.bottom + 12
+      const top = _menuTop ? _rect.top - 36 : _rect.bottom + 12
 
-      const _position = { top, left }
+      const _position = { top, left, displayAbove: _menuTop }
       return _position
     }
     return null
   }
   return null
-
-  //   const isMobileNewLine = rect.width === 0
-  //   const _mobileOffsetHeight = isMobileNewLine
-  //     ? `${_node.getBoundingClientRect().top + 32}px`
-  //     : `${rect.bottom + window.pageYOffset + 10 + menuTopOffset}px`
-  //   // menu offset to prevent overflow
-  //   let menuLeftOffset = 0
-
-  //   if (menu.offsetWidth / 2 > rect.left + rect.width / 2) {
-  //     menuLeftOffset =
-  //       menu.offsetWidth / 2 - (rect.left + rect.width / 2) + space.small
-  //   }
-
-  //   if (rect.left + rect.width / 2 + menu.offsetWidth / 2 > window.innerWidth) {
-  //     menuLeftOffset =
-  //       window.innerWidth -
-  //       (rect.left + rect.width / 2 + menu.offsetWidth / 2) -
-  //       space.small
-  //   }
-
-  //   return {
-  //     top: _mobile
-  //       ? _mobileOffsetHeight
-  //       : pxUnits(
-  //           rect.top + window.pageYOffset - menu.offsetHeight + menuTopOffset
-  //         ),
-  //     left: pxUnits(
-  //       rect.left +
-  //         window.pageXOffset -
-  //         menu.offsetWidth / 2 +
-  //         rect.width / 2 +
-  //         menuLeftOffset
-  //     ),
-  //   }
 }
 
-const ComposeResults = ({ results, onClick }) => {
+/* composes title from google api data */
+const _title = vol => {
+  const _author = vol.volumeInfo.authors && splitName(vol.volumeInfo.authors[0])
+  const _authorText = _author
+    ? `${_author.lastName.textValue}, ${_author.firstName.textValue}.`
+    : ''
+  const _titleText = vol.volumeInfo.title
+
+  const _yearText = vol.volumeInfo.publishedDate
+    ? vol.volumeInfo.publishedDate.substring(0, 4)
+    : ''
+
+  const _ranges = [
+    {
+      length: _titleText.length,
+      offset: _authorText ? _authorText.length + 1 : 0,
+      marks: ['italic'],
+    },
+  ]
+
+  return {
+    textValue: `@${_authorText} ${_titleText} (${_yearText})`,
+    ranges: _ranges,
+  }
+}
+
+const GoogleFooter = () => (
+  <div>
+    <img src={google} alt="powered by Google" />
+  </div>
+)
+
+const ComposeResults = ({ results, onClick, unmount }) => {
+  useEffect(() => () => unmount(), [])
   return (
     <List verticalItemPadding={1} horizontalItemPadding={1}>
-      {Object.keys(results).map((author, i) => {
-        return (
-          <View key={i}>
-            <Text variant="uiTextSmall" color="text.2">
-              {author}
-            </Text>
-            <List verticalItemPadding={'tiny'}>
-              {results[author].map((volume, k) => {
-                return (
-                  <BaseControl onClick={() => onClick(volume)} key={k}>
-                    <View p="tiny" pr="tiny">
-                      <Grid columnGap="none">
-                        <Text variant="uiTextSmallItalic" color="text.2">
-                          {volume.volumeInfo.title}&emsp;
-                        </Text>
-                        <Text variant="uiTextSmall" color="text.2">
-                          ({volume.volumeInfo.publishedDate &&
-                            volume.volumeInfo.publishedDate.substring(0, 4)})
-                        </Text>
-                      </Grid>
-                    </View>
-                  </BaseControl>
-                )
-              })}
-            </List>
-          </View>
-        )
-      })}
+      {Object.keys(results).map((author, i) => (
+        <View key={i}>
+          <Text variant="uiTextSmall" color="text.2">
+            {author}
+          </Text>
+          <List verticalItemPadding="tiny">
+            {results[author].map((volume, k) => (
+              <BaseControl onClick={() => onClick(volume)} key={k}>
+                <View p="tiny" pr="tiny">
+                  <Grid columnGap="none">
+                    <Text variant="uiTextSmallItalic" color="text.2">
+                      {volume.volumeInfo.title}&emsp;
+                    </Text>
+                    <Text variant="uiTextSmall" color="text.2">
+                      ({volume.volumeInfo.publishedDate &&
+                        volume.volumeInfo.publishedDate.substring(0, 4)})
+                    </Text>
+                  </Grid>
+                </View>
+              </BaseControl>
+            ))}
+          </List>
+        </View>
+      ))}
     </List>
   )
 }
 
-export const Citations = ({
-  editor,
-  setBlockType,
-  updateAtomic,
-  changeContent,
-}) => {
+export const Citations = ({ editor, setBlockType, changeContent }) => {
   const { setSource } = useSourceContext()
 
   const menuRef = useRef(null)
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [menuActive, setMenuActive] = useState(false)
+  const [sourcesLoaded, setSourcesLoaded] = useState(false)
   const [sourceQuery, setSourceQuery] = useState(null)
 
   // set menu active and search query
@@ -182,11 +156,10 @@ export const Citations = ({
         editor.value.anchorBlock.text.charAt(0) === '@' &&
         editor.value.selection.isFocused
       ) {
-        // TODO: DEBOUNCE SEARCH
         setSourceQuery(editor.value.anchorBlock.text.substring(1))
         return setMenuActive(true)
       }
-      setMenuActive(false)
+      return setMenuActive(false)
     },
     [editor.value.anchorBlock]
   )
@@ -196,43 +169,20 @@ export const Citations = ({
     () => {
       if (menuActive) {
         const _position = getPosition(editor, menuRef)
+        // if cursor is near window bottom set menu above cursor
         if (_position) {
+          if (_position.displayAbove && sourcesLoaded) {
+            _position.top -= 204
+          }
           setPosition(_position)
         }
       }
     },
-    [editor.value.selection, menuActive]
+    [editor.value.selection, menuActive, sourcesLoaded]
   )
 
   const onClick = vol => {
-    /* composes title from google api data*/
-    const _title = () => {
-      const _author =
-        vol.volumeInfo.authors && splitName(vol.volumeInfo.authors[0])
-      const _authorText = _author
-        ? `${_author.lastName.textValue}, ${_author.firstName.textValue}.`
-        : ''
-      const _titleText = vol.volumeInfo.title
-
-      const _yearText = vol.volumeInfo.publishedDate
-        ? vol.volumeInfo.publishedDate.substring(0, 4)
-        : ''
-
-      const _ranges = [
-        {
-          length: _titleText.length,
-          offset: _authorText ? _authorText.length + 1 : 0,
-          marks: ['italic'],
-        },
-      ]
-
-      return {
-        textValue: `@${_authorText} ${_titleText} (${_yearText})`,
-        ranges: _ranges,
-      }
-    }
-
-    const text = _title()
+    const text = _title(vol)
 
     const _id = editor.value.anchorBlock.key
     const _refId = editor.value.anchorBlock.data.get('refId')
@@ -275,26 +225,39 @@ export const Citations = ({
       maxWidth="500px"
       minWidth="300px"
       minHeight="32px"
+      shadowVariant="modal"
       ref={menuRef}
-      css={styledCss(_css(position, menuActive))}
+      css={styledCss(
+        _css({ top: position.top, left: position.left }, menuActive)
+      )}
     >
       {sourceQuery ? (
         <View>
           <View overflowX="hidden" overflowY="scroll" maxHeight="200px">
             <SearchSourceLoader query={sourceQuery}>
-              {results => (
-                <ComposeResults results={results} onClick={onClick} />
-              )}
+              {results => {
+                setSourcesLoaded(true)
+                return (
+                  <ComposeResults
+                    results={results}
+                    onClick={onClick}
+                    unmount={() => setSourcesLoaded(false)}
+                  />
+                )
+              }}
             </SearchSourceLoader>
           </View>
-          <View
-            p="small"
-            borderTopWidth="1px"
-            borderColor="border.2"
-            borderStyle="solid"
-          >
-            <GoogleFooter />
-          </View>
+
+          {sourcesLoaded && (
+            <View
+              p="small"
+              borderTopWidth="1px"
+              borderColor="border.2"
+              borderStyle="solid"
+            >
+              <GoogleFooter />{' '}
+            </View>
+          )}
         </View>
       ) : (
         <View p="small">

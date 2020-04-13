@@ -1,4 +1,3 @@
-import { ResourcePending } from '../lib/ResourcePending'
 import {
   CACHE_SOURCE,
   SAVE_SOURCE,

@@ -246,7 +246,6 @@ const SlateContentEditable = forwardRef(
           <CitationsMenu
             editor={editor}
             setBlockType={onSetBlockType}
-            updateAtomic={onEditAtomic}
             changeContent={onActiveBlockContentChange}
           />
         </React.Fragment>

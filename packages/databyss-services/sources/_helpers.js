@@ -4,7 +4,7 @@ export const composeResults = results => {
   _results = results.items.reduce((acc, curr) => {
     const _authors = curr.volumeInfo.authors
     if (_authors) {
-      _authors.map(a => {
+      _authors.forEach(a => {
         if (!acc[a]) {
           acc[a] = [curr]
         } else {

@@ -3,7 +3,6 @@ import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import makeLoader from '@databyss-org/ui/components/Loaders/makeLoader'
-
 import _ from 'lodash'
 import reducer, { initialState } from './reducer'
 
@@ -57,7 +56,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     }
   }
 
-  const searchSource = query => {
+  const searchSource = _.debounce(query => {
     if (!query) return null
     if (state.searchCache[query]) {
       return state.searchCache[query]
@@ -65,7 +64,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
 
     dispatch(fetchSourceQuery(query))
     return null
-  }
+  }, 750)
 
   const removeCacheValue = id => {
     if (state.cache[id]) {
