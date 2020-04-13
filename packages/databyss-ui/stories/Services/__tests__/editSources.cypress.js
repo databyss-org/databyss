@@ -69,9 +69,8 @@ context('Editor - Sources Provider', () => {
       .type(secondSource.citation)
       .wait(1000)
 
-    cy.get('button').then(buttonList => {
-      buttonList[4].click()
-    })
+    cy.get('[data-test-dismiss-modal="true"]').click()
+
     // wait for autosave
     cy.wait(11000)
 
@@ -102,9 +101,8 @@ context('Editor - Sources Provider', () => {
       .then(str => {
         expect(str).to.deep.equal(firstSource.citation)
       })
-    cy.get('button').then(buttonList => {
-      buttonList[4].click()
-    })
+
+    cy.get('[data-test-dismiss-modal="true"]').click()
 
     cy.get('@editor')
       .focus()
