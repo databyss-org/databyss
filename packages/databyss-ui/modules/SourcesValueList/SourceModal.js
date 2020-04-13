@@ -28,7 +28,6 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
 
   const onBlur = () => {
     if (values) {
-      console.log(values)
       setSource(values)
     }
   }
