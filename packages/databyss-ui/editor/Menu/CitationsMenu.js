@@ -174,7 +174,7 @@ export const Citations = ({ editor, setBlockType, changeContent }) => {
         // if cursor is near window bottom set menu above cursor
         if (_position) {
           if (_position.displayAbove && sourcesLoaded) {
-            _position.top -= MENU_HEIGHT + 4
+            _position.top -= MENU_HEIGHT + 22
           }
           setPosition(_position)
         }
@@ -234,7 +234,7 @@ export const Citations = ({ editor, setBlockType, changeContent }) => {
       )}
     >
       {sourceQuery ? (
-        <View>
+        <View p={sourcesLoaded && 'small'}>
           <View
             overflowX="hidden"
             overflowY="scroll"
