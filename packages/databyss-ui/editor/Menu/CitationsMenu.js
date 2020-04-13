@@ -8,6 +8,7 @@ import theme, { borderRadius, darkTheme } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import {
   Button,
+  Grid,
   Text,
   View,
   List,
@@ -118,27 +119,33 @@ export const getPosition = (editor, menuRef) => {
 }
 
 const ComposeResults = ({ results, onClick }) => {
-  // const onClick = vol => {
-  //   // TODO: COMPOSE DATA
-  //   // SET DISPATCHES IN EDITOR AND SOURCE PROVIDER
-  //   console.log(vol)
-  // }
-
   return (
     <List verticalItemPadding={1} horizontalItemPadding={1}>
       {Object.keys(results).map((author, i) => {
         return (
           <View key={i}>
-            <Text>{author}</Text>
-            {results[author].map((volume, k) => {
-              return (
-                <BaseControl onClick={() => onClick(volume)} key={k}>
-                  <View p="tiny">
-                    <Text variant="uiTextSmall">{volume.volumeInfo.title}</Text>
-                  </View>
-                </BaseControl>
-              )
-            })}
+            <Text variant="uiTextSmall" color="text.2">
+              {author}
+            </Text>
+            <List verticalItemPadding={'tiny'}>
+              {results[author].map((volume, k) => {
+                return (
+                  <BaseControl onClick={() => onClick(volume)} key={k}>
+                    <View p="tiny" pr="tiny">
+                      <Grid columnGap="none">
+                        <Text variant="uiTextSmallItalic" color="text.2">
+                          {volume.volumeInfo.title}&emsp;
+                        </Text>
+                        <Text variant="uiTextSmall" color="text.2">
+                          ({volume.volumeInfo.publishedDate &&
+                            volume.volumeInfo.publishedDate.substring(0, 4)})
+                        </Text>
+                      </Grid>
+                    </View>
+                  </BaseControl>
+                )
+              })}
+            </List>
           </View>
         )
       })}
@@ -164,7 +171,8 @@ export const Citations = ({
     () => {
       if (
         editor.value.anchorBlock &&
-        editor.value.anchorBlock.text.charAt(0) === '@'
+        editor.value.anchorBlock.text.charAt(0) === '@' &&
+        editor.value.selection.isFocused
       ) {
         // TODO: DEBOUNCE SEARCH
         setSourceQuery(editor.value.anchorBlock.text.substring(1))
@@ -189,7 +197,34 @@ export const Citations = ({
   )
 
   const onClick = vol => {
-    const text = { textValue: `@${vol.volumeInfo.title}`, ranges: [] }
+    /* composes title from google api data*/
+    const _title = () => {
+      const _author =
+        vol.volumeInfo.authors && splitName(vol.volumeInfo.authors[0])
+      const _authorText = _author
+        ? `${_author.lastName.textValue}, ${_author.firstName.textValue}.`
+        : ''
+      const _titleText = vol.volumeInfo.title
+
+      const _yearText = vol.volumeInfo.publishedDate
+        ? vol.volumeInfo.publishedDate.substring(0, 4)
+        : ''
+
+      const _ranges = [
+        {
+          length: _titleText.length,
+          offset: _authorText ? _authorText.length + 1 : 0,
+          marks: ['italic'],
+        },
+      ]
+
+      return {
+        textValue: `@${_authorText} ${_titleText} (${_yearText})`,
+        ranges: _ranges,
+      }
+    }
+
+    const text = _title()
 
     const _id = editor.value.anchorBlock.key
     const _refId = editor.value.anchorBlock.data.get('refId')
@@ -212,7 +247,7 @@ export const Citations = ({
       // compose source data
       const _data = {
         _id: _refId,
-        text: { textValue: vol.volumeInfo.title, ranges: [] },
+        text: { textValue: text.textValue.substring(1), ranges: text.ranges },
         authors:
           vol.volumeInfo.authors &&
           vol.volumeInfo.authors.map(a => splitName(a)),
@@ -244,7 +279,7 @@ export const Citations = ({
         </SearchSourceLoader>
       ) : (
         <View p="small">
-          <Text variant="uiTextSmall" color="text.3">
+          <Text variant="uiTextSmall" color="text.2">
             type title and/or author for suggestions...
           </Text>
         </View>
