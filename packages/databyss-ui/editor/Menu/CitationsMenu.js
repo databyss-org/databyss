@@ -1,11 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react'
 import styledCss from '@styled-system/css'
+import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import {
   useSourceContext,
   SearchSourceLoader,
 } from '@databyss-org/services/sources/SourceProvider'
 import google from '@databyss-org/ui/assets/google.png'
-
+import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import theme, { borderRadius } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import {
@@ -115,7 +116,7 @@ const GoogleFooter = () => (
 
 const ComposeResults = ({ results, onClick, unmount }) => {
   useEffect(() => () => unmount(), [])
-  return (
+  return !_.isEmpty(results) ? (
     <List verticalItemPadding={1} horizontalItemPadding={1}>
       {Object.keys(results).map((author, i) => (
         <View key={i}>
@@ -142,6 +143,8 @@ const ComposeResults = ({ results, onClick, unmount }) => {
         </View>
       ))}
     </List>
+  ) : (
+    <Text variant="uiTextSmall">no results found</Text>
   )
 }
 
@@ -153,6 +156,15 @@ export const Citations = ({ editor, setBlockType, changeContent }) => {
   const [menuActive, setMenuActive] = useState(false)
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
   const [sourceQuery, setSourceQuery] = useState(null)
+
+  useEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      setMenuActive(false)
+    }
+  })
+
+  // prevents scroll if modal is visible
+  useEventListener('wheel', e => menuActive && e.preventDefault(), editor.el)
 
   // set menu active and search query
   useEffect(
@@ -228,57 +240,65 @@ export const Citations = ({ editor, setBlockType, changeContent }) => {
     }, 20)
   }
 
-  return (
-    <View
-      maxWidth="500px"
-      minWidth="300px"
-      minHeight="32px"
-      shadowVariant="modal"
-      ref={menuRef}
-      css={styledCss(
-        _css({ top: position.top, left: position.left }, menuActive)
-      )}
-    >
-      {sourceQuery ? (
-        <View p={sourcesLoaded && 'small'}>
-          <View
-            overflowX="hidden"
-            overflowY="scroll"
-            maxHeight={pxUnits(MENU_HEIGHT)}
-          >
-            <SearchSourceLoader query={sourceQuery}>
-              {results => {
-                setSourcesLoaded(true)
-                return (
-                  <ComposeResults
-                    results={results}
-                    onClick={onClick}
-                    unmount={() => setSourcesLoaded(false)}
-                  />
-                )
-              }}
-            </SearchSourceLoader>
-          </View>
+  const onClickAway = () => {
+    if (menuActive) {
+      setMenuActive(false)
+    }
+  }
 
-          {sourcesLoaded && (
+  return (
+    <ClickAwayListener onClickAway={onClickAway}>
+      <View
+        maxWidth="500px"
+        minWidth="300px"
+        minHeight="32px"
+        shadowVariant="modal"
+        ref={menuRef}
+        css={styledCss(
+          _css({ top: position.top, left: position.left }, menuActive)
+        )}
+      >
+        {sourceQuery ? (
+          <View p={sourcesLoaded && 'small'}>
             <View
-              p="small"
-              borderTopWidth="1px"
-              borderColor="border.2"
-              borderStyle="solid"
+              overflowX="hidden"
+              overflowY="scroll"
+              maxHeight={pxUnits(MENU_HEIGHT)}
             >
-              <GoogleFooter />{' '}
+              <SearchSourceLoader query={sourceQuery}>
+                {results => {
+                  setSourcesLoaded(true)
+                  return (
+                    <ComposeResults
+                      results={results}
+                      onClick={onClick}
+                      unmount={() => setSourcesLoaded(false)}
+                    />
+                  )
+                }}
+              </SearchSourceLoader>
             </View>
-          )}
-        </View>
-      ) : (
-        <View p="small">
-          <Text variant="uiTextSmall" color="text.2">
-            type title and/or author for suggestions...
-          </Text>
-        </View>
-      )}
-    </View>
+
+            {sourcesLoaded && (
+              <View
+                p="small"
+                borderTopWidth="1px"
+                borderColor="border.2"
+                borderStyle="solid"
+              >
+                <GoogleFooter />{' '}
+              </View>
+            )}
+          </View>
+        ) : (
+          <View p="small">
+            <Text variant="uiTextSmall" color="text.2">
+              type title and/or author for suggestions...
+            </Text>
+          </View>
+        )}
+      </View>
+    </ClickAwayListener>
   )
 }
 

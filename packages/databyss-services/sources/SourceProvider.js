@@ -29,7 +29,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
       return
     }
     // add or update source and set cache value
-    // add set timeout to prevent focus issue with line content editable on tab
+    // add set timeout to prevent focus issue with line content editable on ta
     window.requestAnimationFrame(() => dispatch(saveSource(source)))
   }
 
