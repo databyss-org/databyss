@@ -34,7 +34,7 @@ export const pageMiddleware = async (req, res, next) => {
   })
 
   if (!page) {
-    return res.status(400).json({ msg: 'There is no page for this id' })
+    return res.status(404).json({ msg: 'There is no page for this id' })
   }
 
   req.page = page
