@@ -124,7 +124,7 @@ export function fetchSourceQuery(query) {
         type: CACHE_SEARCH_QUERY,
         payload: {
           query,
-          results: composeResults(results),
+          results: composeResults(results, query),
         },
       })
     })

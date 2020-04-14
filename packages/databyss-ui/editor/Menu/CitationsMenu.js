@@ -80,9 +80,13 @@ export const getPosition = (editor, menuRef) => {
 /* composes title from google api data */
 const _title = vol => {
   const _author = vol.volumeInfo.authors && splitName(vol.volumeInfo.authors[0])
+
   const _authorText = _author
-    ? `${_author.lastName.textValue}, ${_author.firstName.textValue}.`
+    ? `${_author.lastName.textValue}${
+        _author.firstName.textValue ? ',' : '.'
+      }${_author.firstName.textValue && _author.firstName.textValue + '.'}`
     : ''
+
   const _titleText = vol.volumeInfo.title
 
   const _yearText = vol.volumeInfo.publishedDate
@@ -110,6 +114,7 @@ const GoogleFooter = () => (
 )
 
 const ComposeResults = ({ results, onClick, unmount }) => {
+  console.log(results)
   useEffect(() => () => unmount(), [])
   return (
     <List verticalItemPadding={1} horizontalItemPadding={1}>
@@ -123,11 +128,11 @@ const ComposeResults = ({ results, onClick, unmount }) => {
               <BaseControl onClick={() => onClick(volume)} key={k}>
                 <View p="tiny" pr="tiny">
                   <Grid columnGap="none">
-                    <Text variant="uiTextSmallItalic" color="text.2">
-                      {volume.volumeInfo.title}&emsp;
-                    </Text>
                     <Text variant="uiTextSmall" color="text.2">
-                      ({volume.volumeInfo.publishedDate &&
+                      <i>{volume.volumeInfo.title}</i>
+                      {volume.volumeInfo.subtitle &&
+                        `: ${volume.volumeInfo.subtitle}`}&emsp;({volume
+                        .volumeInfo.publishedDate &&
                         volume.volumeInfo.publishedDate.substring(0, 4)})
                     </Text>
                   </Grid>
