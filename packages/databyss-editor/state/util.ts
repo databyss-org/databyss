@@ -1,7 +1,15 @@
 import { Entity, Selection } from '../interfaces'
 
-export const entityForBlockIndex = (state: any, blockIndex: number): Entity =>
-  state.entityCache[state.blockCache[state.blocks[blockIndex]._id].entityId]
+export const entityForBlockIndex = (
+  state: any,
+  blockIndex: number
+): Entity | null => {
+  const _block = state.blocks[blockIndex]
+  if (!_block) {
+    return null
+  }
+  return state.entityCache[state.blockCache[_block._id].entityId]
+}
 
 // returns false if selection anchor and focus are equal, otherwise true
 export const selectionHasRange = (selection: Selection): boolean =>

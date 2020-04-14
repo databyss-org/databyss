@@ -204,7 +204,7 @@ export default (state, action) =>
         // if we've moved selection index,
         //   check previous selection for active entity, deactivate if necessary
         if (_selectionIndexHasChanged) {
-          if (_previousEntity.isActive) {
+          if (_previousEntity && _previousEntity.isActive) {
             _previousEntity.isActive = false
             draft.operations.push({
               index: state.selection.focus.index,
