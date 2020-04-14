@@ -28,7 +28,7 @@ export const flattenNodeToPoint = (editor, point) => {
 }
 
 export const flattenOffset = (editor, point) =>
-  flattenNodeToPoint(editor, point).length
+  (flattenNodeToPoint(editor, point) || '').length
 
 export const slateSelectionToStateSelection = editor =>
   editor.selection

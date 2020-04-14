@@ -155,7 +155,9 @@ const ContentEditable = () => {
     }
     if (
       editor.operations.find(
-        op => op.type === 'insert_text' || op.type === 'remove_text'
+        op =>
+          (op.type === 'insert_text' || op.type === 'remove_text') &&
+          op.text.length
       )
     ) {
       // update target node
@@ -181,18 +183,11 @@ const ContentEditable = () => {
     state.preventDefault ? valueRef.current : editor.children,
     draft => {
       state.operations.forEach(op => {
-        if (op.block) {
-          // block update
-          const _block = stateBlockToSlateBlock(op.block)
-          draft[op.index].children = _block.children
-          draft[op.index].type = _block.type
-          draft[op.index].isBlock = _block.isBlock
-          draft[op.index].isActive = _block.isActive
-        } else if (op.selection) {
-          // selection update
-        } else {
-          throw new Error('Invalid operation', op)
-        }
+        const _block = stateBlockToSlateBlock(op.block)
+        draft[op.index].children = _block.children
+        draft[op.index].type = _block.type
+        draft[op.index].isBlock = _block.isBlock
+        draft[op.index].isActive = _block.isActive
       })
     }
   )

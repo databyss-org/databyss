@@ -48,6 +48,10 @@ const moveToStart = editor => {
 export const statePointToSlatePoint = (children, point) => {
   const { index, offset: flatOffset } = point
 
+  if (!children[index]) {
+    return { path: [index, 0], offset: 0 }
+  }
+
   const _editor = createEditor()
   const _text = {
     children: children[index].children,
