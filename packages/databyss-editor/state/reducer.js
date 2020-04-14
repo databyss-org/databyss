@@ -9,7 +9,12 @@ import {
   SET_SELECTION,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
-import { entityForBlockIndex, selectionHasRange } from './util'
+import {
+  entityForBlockIndex,
+  selectionHasRange,
+  symbolToAtomicType,
+  blockAtIndex,
+} from './util'
 
 export default (state, action) =>
   produce(state, draft => {
@@ -222,8 +227,33 @@ export default (state, action) =>
     }
 
     if (draft.selection.focus.index !== state.selection.focus.index) {
-      // console.log('blur', state.selection.focus.index)
-      // TODO: transform block type if symbol is present
+      const _entity = entityForBlockIndex(draft, state.selection.focus.index)
+      // check if current text should be converted to atomic block
+      if (
+        _entity &&
+        !isAtomicInlineType(_entity.type) &&
+        !_entity.text.textValue.match(`\n`)
+      ) {
+        const _atomicType = symbolToAtomicType(_entity.text.textValue.charAt(0))
+        if (_atomicType) {
+          // push atomic block change to entityCache and editor operations
+          const _nextEntity = {
+            text: {
+              textValue: _entity.text.textValue.substring(1).trim(),
+              ranges: _entity.text.ranges,
+            },
+            type: _atomicType,
+            _id: _entity._id,
+          }
+          const _block = blockAtIndex(draft, state.selection.focus.index)
+          _block.type = _atomicType
+          draft.entityCache[_entity._id] = _nextEntity
+          draft.operations.push({
+            index: state.selection.focus.index,
+            block: _nextEntity,
+          })
+        }
+      }
     }
 
     return draft

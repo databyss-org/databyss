@@ -13,6 +13,7 @@ import {
   flattenOffset,
   stateBlockToSlateBlock,
 } from '../lib/slateUtils'
+import { symbolToAtomicType } from '../state/util'
 
 const ContentEditable = () => {
   const {
@@ -47,7 +48,7 @@ const ContentEditable = () => {
         editor.selection.focus.path[1] === 0 &&
         editor.selection.focus.offset === 0
       const _doubleLineBreak = _nextIsBreak || _prevIsBreak || _atBlockStart
-      if (!_doubleLineBreak) {
+      if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
         // we're not creating a new block, so just insert a carriage return
         event.preventDefault()
         Transforms.insertText(editor, `\n`)
@@ -82,6 +83,7 @@ const ContentEditable = () => {
           unit: 'character',
           reverse: true,
         })
+        return
       }
       // handle end of atomic
       if (
@@ -95,6 +97,7 @@ const ContentEditable = () => {
           unit: 'character',
           reverse: true,
         })
+        return
       }
       // handle after atomic
       if (
