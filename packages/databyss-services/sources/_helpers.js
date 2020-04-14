@@ -24,6 +24,7 @@ export const composeResults = (results, query) => {
   })
 
   let _results = {}
+  // organizes according to author(s)
   _results = _filteredResults.reduce((acc, curr) => {
     const _authors = curr.volumeInfo.authors
     if (_authors) {
@@ -33,18 +34,20 @@ export const composeResults = (results, query) => {
         acc[_authorsString] = [curr]
       } else {
         const _curr = acc[_authorsString]
-        console.log(
-          _curr.filter(c => {
-            const _currentTitle = c.volumeInfo.title
-            // console.log(c.volumeInfo.title)
-            acc[_authorsString].forEach(_vol => {
-              console.log(_vol.volumeInfo.title === _currentTitle)
-            })
-            return true
-          })
-        )
-        _curr.push(curr)
-        acc[_authorsString] = _curr
+        // checks for duplicates
+        const _isDuplicated =
+          _curr.filter(
+            () =>
+              acc[_authorsString].filter(_vol => {
+                return _vol.volumeInfo.title === curr.volumeInfo.title
+              }).length > 0
+          ).length > 0
+
+        // if not a duplicate, push to author array
+        if (!_isDuplicated) {
+          _curr.push(curr)
+          acc[_authorsString] = _curr
+        }
       }
     }
     return acc

@@ -114,7 +114,6 @@ const GoogleFooter = () => (
 )
 
 const ComposeResults = ({ results, onClick, unmount }) => {
-  console.log(results)
   useEffect(() => () => unmount(), [])
   return (
     <List verticalItemPadding={1} horizontalItemPadding={1}>
@@ -219,7 +218,9 @@ export const Citations = ({ editor, setBlockType, changeContent }) => {
       }
       // update in cache
       setSource(_data)
+    }, 500)
 
+    setTimeout(() => {
       // replace cursor at end of node
       const _tempNode = editor.value.document.getNode(_id)
       editor.focus()
