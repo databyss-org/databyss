@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react'
 import styledCss from '@styled-system/css'
+import _ from 'lodash'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import {
   useSourceContext,
@@ -83,9 +84,9 @@ const _title = vol => {
   const _author = vol.volumeInfo.authors && splitName(vol.volumeInfo.authors[0])
 
   const _authorText = _author
-    ? `${_author.lastName.textValue}${
-        _author.firstName.textValue ? ',' : '.'
-      }${_author.firstName.textValue && _author.firstName.textValue + '.'}`
+    ? _author.lastName.textValue +
+      (_author.firstName.textValue ? ',' : '.') +
+      (_author.firstName.textValue ? `${_author.firstName.textValue}.` : '')
     : ''
 
   const _titleText = vol.volumeInfo.title

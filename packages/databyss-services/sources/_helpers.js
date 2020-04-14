@@ -38,9 +38,9 @@ export const composeResults = (results, query) => {
         const _isDuplicated =
           _curr.filter(
             () =>
-              acc[_authorsString].filter(_vol => {
-                return _vol.volumeInfo.title === curr.volumeInfo.title
-              }).length > 0
+              acc[_authorsString].filter(
+                _vol => _vol.volumeInfo.title === curr.volumeInfo.title
+              ).length > 0
           ).length > 0
 
         // if not a duplicate, push to author array
