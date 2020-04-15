@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useLocation, Router } from '@reach/router'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { View } from '@databyss-org/ui/primitives'
+import { View, Grid } from '@databyss-org/ui/primitives'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import Trash from './Trash'
 
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
@@ -31,8 +34,17 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
   }, [])
 
   return (
-    <View height="100vh" overflow="scroll" p="medium">
-      <PageHeader pageId={id} isFocused={onHeaderClick} />
+    <View height="100vh" overflow="scroll" p="medium" id="here">
+      <View
+        mr="large"
+        alignItems="center"
+        id="inheader"
+        flexDirection="row"
+        justifyContent="space-between"
+      >
+        <PageHeader pageId={id} isFocused={onHeaderClick} />
+        <Trash />
+      </View>
       <PageBody page={page} readOnly={readOnly} />
     </View>
   )

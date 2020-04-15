@@ -33,9 +33,13 @@ const AutoSave = ({ interval }) => {
       return () => {
         const _page = cloneDeep(editorStateRef.current)
         delete _page.page.name
-        const _name = getPage(_page.page._id).page.name
-        _page.page.name = _name
-        setPage(_page)
+        const _pageState = getPage(_page.page._id)
+        if (_pageState) {
+          const _name = _pageState.page.name
+          _page.page.name = _name
+          setPage(_page)
+        }
+
         clearInterval(_timer)
       }
     },

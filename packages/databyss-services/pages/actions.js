@@ -6,6 +6,7 @@ import {
   CACHE_PAGE,
   CACHE_PAGE_HEADERS,
   FETCH_PAGE_HEADERS,
+  DELETE_PAGE,
 } from './constants'
 
 export function fetchPage(_id) {
@@ -72,5 +73,15 @@ export function seedPage(page, cache) {
         dispatch(fetchPageHeaders())
       }
     })
+  }
+}
+
+export function deletePage(id) {
+  return dispatch => {
+    dispatch({
+      type: DELETE_PAGE,
+      payload: { id },
+    })
+    services.deletePage(id).then(() => dispatch(fetchPageHeaders()))
   }
 }
