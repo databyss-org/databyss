@@ -291,7 +291,7 @@ router.get(
       })
 
       if (!pageResponse) {
-        return res.status(400).json({ msg: 'There is no page for this id' })
+        return res.status(404).json({ msg: 'There is no page for this id' })
       }
 
       const page = {
@@ -356,12 +356,12 @@ router.get(
 // @access   private
 router.delete('/:id', auth, async (req, res) => {
   try {
-    const page = await Page.find({ user: req.user.id })
+    const page = await Page.deleteOne({ _id: req.params.id })
     if (!page) {
-      return res.status(400).json({ msg: 'There are no pages' })
+      return res.status(404).json({ msg: 'There are no pages' })
     }
 
-    return res.json(page)
+    return res.status(200)
   } catch (err) {
     console.error(err.message)
     return res.status(500).send('Server Error')
