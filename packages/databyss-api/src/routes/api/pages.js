@@ -37,7 +37,7 @@ router.post(
       entries = !_.isEmpty(entries) ? entries : {}
       locations = !_.isEmpty(locations) ? locations : {}
 
-      const { name, _id } = page
+      const { name, _id, archive } = page
 
       // ADD SOURCES
       if (!_.isEmpty(sources)) {
@@ -237,6 +237,7 @@ router.post(
       const pageFields = {
         ...(name && { name }),
         ...(pageBlocks && { blocks: pageBlocks }),
+        ...(archive && { archive: true }),
         account: req.account._id,
       }
 
@@ -327,7 +328,9 @@ router.get(
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
     try {
-      const pageResponse = await Page.find({ account: req.account._id })
+      const pageResponse = await Page.find({
+        account: req.account._id,
+      })
 
       if (!pageResponse) {
         return res

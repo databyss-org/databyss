@@ -7,6 +7,7 @@ import {
   CACHE_PAGE_HEADERS,
   FETCH_PAGE_HEADERS,
   DELETE_PAGE,
+  ARCHIVE_PAGE,
 } from './constants'
 
 export function fetchPage(_id) {
@@ -83,5 +84,19 @@ export function deletePage(id) {
       payload: { id },
     })
     services.deletePage(id).then(() => dispatch(fetchPageHeaders()))
+  }
+}
+
+export function onArchivePage(id, page) {
+  const _page = cloneDeep(page)
+  _page.page.archive = true
+  console.log(_page)
+
+  return dispatch => {
+    dispatch({
+      type: ARCHIVE_PAGE,
+      payload: { id },
+    })
+    services.savePage(_page)
   }
 }
