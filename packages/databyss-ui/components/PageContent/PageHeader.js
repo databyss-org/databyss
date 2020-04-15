@@ -33,7 +33,7 @@ const PageHeader = ({ isFocused, pageId }) => {
   */
 
   return (
-    <View p="medium">
+    <View p="medium" flex="1" maxWidth="500px">
       <Text variant="bodyLarge" color="text.3" maxWidth={pxUnits(500)}>
         <TextControl
           onBlur={onBlur}
