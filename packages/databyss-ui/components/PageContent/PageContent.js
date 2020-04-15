@@ -37,7 +37,6 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
       <View
         mr="large"
         alignItems="center"
-        id="inheader"
         flexDirection="row"
         justifyContent="space-between"
       >
