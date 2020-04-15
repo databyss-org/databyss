@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { View, Grid } from '@databyss-org/ui/primitives'
+import { View } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import Trash from './Trash'
+import { ArchiveBin } from './ArchiveBin'
 
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
@@ -41,7 +41,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
         justifyContent="space-between"
       >
         <PageHeader pageId={id} isFocused={onHeaderClick} />
-        <Trash />
+        <ArchiveBin />
       </View>
       <PageBody page={page} readOnly={readOnly} />
     </View>
