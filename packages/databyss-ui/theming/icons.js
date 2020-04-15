@@ -19,6 +19,10 @@ const iconSizeVariants = {
   large: {
     ...icon(50),
   },
+  title: {
+    width: 130,
+    height: 28,
+  },
 }
 
 export default {
