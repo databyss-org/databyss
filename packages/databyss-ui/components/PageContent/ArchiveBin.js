@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { BaseControl, Icon } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 
-export const Trash = () => {
+export const ArchiveBin = () => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
 
@@ -14,16 +14,11 @@ export const Trash = () => {
   const { id } = getTokensFromPath()
 
   const { archivePage } = usePageContext()
-  //   useEffect(() => {
-  //     removePage('page')
-  //   }, [])
 
   const onClick = () => {
     if (account.defaultPage !== id) {
       navigate(`/pages/${account.defaultPage}`)
       window.requestAnimationFrame(() => archivePage(id))
-
-      //   window.requestAnimationFrame(removePage(id))
     } else {
       console.log('default page cant be deleted')
     }
@@ -37,5 +32,3 @@ export const Trash = () => {
     </BaseControl>
   )
 }
-
-export default Trash

@@ -1,4 +1,4 @@
-import { httpGet, httpPost } from '../lib/requestApi'
+import { httpGet, httpPost, httpDelete } from '../lib/requestApi'
 
 // TODO: Add native versions of these
 
