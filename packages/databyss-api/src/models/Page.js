@@ -22,6 +22,10 @@ const PageSchema = new Schema({
       },
     },
   ],
+  archive: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 /* eslint-disable prefer-arrow-callback */

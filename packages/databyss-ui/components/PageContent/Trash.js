@@ -13,7 +13,7 @@ export const Trash = () => {
 
   const { id } = getTokensFromPath()
 
-  const { removePage } = usePageContext()
+  const { archivePage } = usePageContext()
   //   useEffect(() => {
   //     removePage('page')
   //   }, [])
@@ -21,7 +21,9 @@ export const Trash = () => {
   const onClick = () => {
     if (account.defaultPage !== id) {
       navigate(`/pages/${account.defaultPage}`)
-      window.requestAnimationFrame(() => removePage(id))
+      window.requestAnimationFrame(() => archivePage(id))
+
+      //   window.requestAnimationFrame(removePage(id))
     } else {
       console.log('default page cant be deleted')
     }
