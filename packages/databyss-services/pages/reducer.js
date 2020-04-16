@@ -67,8 +67,6 @@ export default (state, action) => {
       const _cache = state.cache
       if (_cache[action.payload.id]) {
         _cache[action.payload.id] = action.payload.page
-        console.log(action.payload.page)
-        //   delete _cache[action.payload.id]
       }
       const _headerCache = state.headerCache
       if (_headerCache[action.payload.id]) {
@@ -84,13 +82,15 @@ export default (state, action) => {
     case CACHE_PAGE_HEADERS: {
       const _cache = {}
       // filter archived pages
-      action.payload.filter(p => !p.archive).forEach(
-        page =>
-          (_cache[page._id] = {
-            name: page.name,
-            _id: page._id,
-          })
-      )
+      action.payload
+        .filter(p => !p.archive)
+        .forEach(
+          page =>
+            (_cache[page._id] = {
+              name: page.name,
+              _id: page._id,
+            })
+        )
       return {
         ...state,
         headerCache: _cache,
