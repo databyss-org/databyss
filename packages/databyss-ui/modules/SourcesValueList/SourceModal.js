@@ -86,7 +86,6 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
                       id="citation"
                       rich
                       gridFlexWrap="nowrap"
-                      multiline
                       paddingVariant="tiny"
                       onBlur={onBlur}
                     />

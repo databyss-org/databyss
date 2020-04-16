@@ -8,7 +8,10 @@ import Topic from '../../models/Topic'
 import Location from '../../models/Location'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
-import pageMiddleware from '../../middleware/pageMiddleware'
+import {
+  pageCreatorMiddleware,
+  pageMiddleware,
+} from '../../middleware/pageMiddleware'
 import ApiError from '../../lib/ApiError'
 import {
   getBlockItemsFromId,
@@ -23,7 +26,7 @@ const router = express.Router()
 // @access   private
 router.post(
   '/',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageCreatorMiddleware],
   async (req, res) => {
     try {
       const { blocks, page } = req.body.data
@@ -259,16 +262,10 @@ router.post(
 // @access   private
 router.get(
   '/:id',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
   async (req, res) => {
     try {
-      const page = await Page.findOne({
-        _id: req.params.id,
-      })
-
-      if (!page) {
-        return res.status(400).json({ msg: 'There is no page for this id' })
-      }
+      const page = req.page
 
       return res.json(page)
     } catch (err) {
@@ -283,16 +280,10 @@ router.get(
 // @access   private
 router.get(
   '/populate/:id',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
   async (req, res) => {
     try {
-      const pageResponse = await Page.findOne({
-        _id: req.params.id,
-      })
-
-      if (!pageResponse) {
-        return res.status(400).json({ msg: 'There is no page for this id' })
-      }
+      const pageResponse = req.page
 
       const page = {
         _id: pageResponse._id,

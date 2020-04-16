@@ -46,6 +46,16 @@ const Box = ({ children, ...others }) => (
   </View>
 )
 
+const Editor = ({ init }) => (
+  <EditorProvider
+    initialState={init}
+    editableReducer={slateReducer}
+    reducer={reducer}
+  >
+    <EditableTest />
+  </EditorProvider>
+)
+
 const EditableTest = () => {
   const [slateDocument, setSlateDocument] = useState({})
   const [editorState] = useEditorContext()
@@ -136,6 +146,7 @@ storiesOf('Cypress//Tests', module)
         }
         return null
       }, data)
+
     return (
       <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
         <SourceProvider
@@ -143,13 +154,7 @@ storiesOf('Cypress//Tests', module)
           reducer={sourceReducer}
         >
           <NavigationProvider>
-            <EditorProvider
-              initialState={initialState}
-              editableReducer={slateReducer}
-              reducer={reducer}
-            >
-              <EditableTest />
-            </EditorProvider>
+            <Editor init={initialState} />
           </NavigationProvider>
         </SourceProvider>
       </TopicProvider>
@@ -173,6 +178,7 @@ storiesOf('Cypress//Tests', module)
         }
         return null
       }, data)
+
     return (
       <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
         <SourceProvider
@@ -180,13 +186,7 @@ storiesOf('Cypress//Tests', module)
           reducer={sourceReducer}
         >
           <NavigationProvider>
-            <EditorProvider
-              initialState={emptyInitialState}
-              editableReducer={slateReducer}
-              reducer={reducer}
-            >
-              <EditableTest />
-            </EditorProvider>
+            <Editor init={emptyInitialState} />
           </NavigationProvider>
         </SourceProvider>
       </TopicProvider>
