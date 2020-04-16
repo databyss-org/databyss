@@ -36,7 +36,11 @@ const ModalView = ({
           <Text variant="uiTextNormal">{title}</Text>
         </View>
         <View flexBasis="25%" paddingRight="small" alignItems="flex-end">
-          <Button variant="uiTextButton" onPress={onDismiss}>
+          <Button
+            data-test-dismiss-modal
+            variant="uiTextButton"
+            onPress={onDismiss}
+          >
             {dismissChild}
           </Button>
         </View>

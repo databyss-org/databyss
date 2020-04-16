@@ -13,7 +13,7 @@ export const getRangesFromBlock = block => {
           // compile full text
           text += n.text
           let range = {}
-          if (n.marks.length) {
+          if (n.marks && n.marks.length) {
             const _nodes = cloneDeep(nodes)
 
             // find length of all previous nodes

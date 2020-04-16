@@ -16,6 +16,7 @@ import {
 import { findActiveBlock, isAtomicInlineType } from './reducer'
 import { useEditorContext } from '../../EditorProvider'
 import FormatMenu from '../../Menu/FormatMenu'
+import CitationsMenu from '../../Menu/CitationsMenu'
 import hotKeys, { formatHotKeys, navHotKeys } from './../hotKeys'
 import { renderBlock } from './../../EditorBlock'
 
@@ -69,6 +70,7 @@ const SlateContentEditable = forwardRef(
       onCutBlocks,
       onDirtyAtomic,
       onEditAtomic,
+      onSetBlockType,
       readOnly,
       ...others
     },
@@ -241,6 +243,11 @@ const SlateContentEditable = forwardRef(
         <React.Fragment>
           {children}
           <FormatMenu editor={editor} />
+          <CitationsMenu
+            editor={editor}
+            setBlockType={onSetBlockType}
+            changeContent={onActiveBlockContentChange}
+          />
         </React.Fragment>
       )
     }

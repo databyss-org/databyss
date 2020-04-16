@@ -1,4 +1,6 @@
 import * as sources from './'
+import { composeResults } from './_helpers'
+import { ResourcePending } from '../lib/ResourcePending'
 
 import {
   FETCH_SOURCE,
@@ -9,6 +11,7 @@ import {
   FETCH_PAGE_SOURCES,
   CACHE_SOURCES,
   FETCH_SOURCE_FROM_LIST,
+  CACHE_SEARCH_QUERY,
 } from './constants'
 
 export function fetchSource(id) {
@@ -102,6 +105,27 @@ export function fetchSourcesFromList(list) {
       dispatch({
         type: CACHE_SOURCES,
         payload: { sources },
+      })
+    })
+  }
+}
+
+export function fetchSourceQuery(query) {
+  return async dispatch => {
+    dispatch({
+      type: CACHE_SEARCH_QUERY,
+      payload: {
+        query,
+        results: new ResourcePending(),
+      },
+    })
+    sources.searchSource(query).then(results => {
+      dispatch({
+        type: CACHE_SEARCH_QUERY,
+        payload: {
+          query,
+          results: composeResults(results, query),
+        },
       })
     })
   }

@@ -214,7 +214,7 @@ const EditorPage = ({ children, autoFocus }) => {
     onBlockBlur,
     OnToggleMark,
     onHotKey,
-    //  onSetBlockType,
+    onSetBlockType,
     deleteBlockByKey,
     deleteBlocksByKeys,
     onCutBlocks,

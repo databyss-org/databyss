@@ -2,8 +2,8 @@ import React, { createContext, useContext } from 'react'
 import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '@databyss-org/services/lib/createReducer'
+import makeLoader from '@databyss-org/ui/components/Loaders/makeLoader'
 import _ from 'lodash'
-
 import reducer, { initialState } from './reducer'
 
 import {
@@ -13,6 +13,7 @@ import {
   fetchAllSources,
   fetchPageSources,
   fetchSourcesFromList,
+  fetchSourceQuery,
 } from './actions'
 
 const useReducer = createReducer()
@@ -28,7 +29,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
       return
     }
     // add or update source and set cache value
-    // add set timeout to prevent focus issue with line content editable on tab
+    // add set timeout to prevent focus issue with line content editable on ta
     window.requestAnimationFrame(() => dispatch(saveSource(source)))
   }
 
@@ -55,6 +56,16 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     }
   }
 
+  const searchSource = _.debounce(query => {
+    if (!query) return null
+    if (state.searchCache[query]) {
+      return state.searchCache[query]
+    }
+
+    dispatch(fetchSourceQuery(query))
+    return null
+  }, 750)
+
   const removeCacheValue = id => {
     if (state.cache[id]) {
       dispatch(removeSourceFromCache(id))
@@ -71,6 +82,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
         getAllSources,
         getPageSources,
         getSourcesFromList,
+        searchSource,
       }}
     >
       {children}
@@ -84,25 +96,5 @@ SourceProvider.defaultProps = {
   initialState,
   reducer,
 }
-
-export const SourceLoader = ({ sourceId, children }) => {
-  const { getSource } = useSourceContext()
-  const source = getSource(sourceId)
-
-  if (source instanceof Error) {
-    return <ErrorFallback error={source} />
-  }
-  // const child = React.Children.only(children)
-  if (typeof children !== 'function') {
-    throw new Error('Child must be a function')
-  }
-  return source ? children(source) : <Loading />
-}
-
-export const withSource = Wrapped => ({ sourceId, ...others }) => (
-  <SourceLoader sourceId={sourceId}>
-    {source => <Wrapped source={source} {...others} />}
-  </SourceLoader>
-)
 
 export default SourceProvider

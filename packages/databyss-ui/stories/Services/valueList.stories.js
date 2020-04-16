@@ -8,8 +8,9 @@ import ObjectId from 'bson-objectid'
 
 import SourceProvider, {
   useSourceContext,
-  withSource,
 } from '@databyss-org/services/sources/SourceProvider'
+
+import { withSource } from '@databyss-org/ui/components/Loaders'
 
 import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
