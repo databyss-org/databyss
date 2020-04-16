@@ -1,6 +1,7 @@
 import React from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import makeLoader from './makeLoader'
 
 export const PageLoader = ({ children, pageId }) => {
@@ -27,4 +28,21 @@ export const EntrySearchLoader = ({ query, children }) => {
   const { searchEntries, searchCache } = useEntryContext()
   searchEntries(query)
   return makeLoader(searchCache[query], children)
+}
+
+export const SourceLoader = ({ sourceId, children }) => {
+  const { getSource } = useSourceContext()
+  return makeLoader(getSource(sourceId), children)
+}
+
+export const withSource = Wrapped => ({ sourceId, ...others }) => (
+  <SourceLoader sourceId={sourceId}>
+    {source => <Wrapped source={source} {...others} />}
+  </SourceLoader>
+)
+
+export const SearchSourceLoader = ({ query, children }) => {
+  const { state, searchSource } = useSourceContext()
+  searchSource(query)
+  return makeLoader(state.searchCache[query], children)
 }

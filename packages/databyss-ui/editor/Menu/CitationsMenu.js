@@ -2,10 +2,8 @@ import React, { useRef, useState, useEffect } from 'react'
 import styledCss from '@styled-system/css'
 import _ from 'lodash'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
-import {
-  useSourceContext,
-  SearchSourceLoader,
-} from '@databyss-org/services/sources/SourceProvider'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { SearchSourceLoader } from '@databyss-org/ui/components/Loaders'
 import google from '@databyss-org/ui/assets/google.png'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import theme, { borderRadius } from '@databyss-org/ui/theming/theme'

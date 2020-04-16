@@ -97,30 +97,4 @@ SourceProvider.defaultProps = {
   reducer,
 }
 
-export const SourceLoader = ({ sourceId, children }) => {
-  const { getSource } = useSourceContext()
-  const source = getSource(sourceId)
-
-  if (source instanceof Error) {
-    return <ErrorFallback error={source} />
-  }
-  // const child = React.Children.only(children)
-  if (typeof children !== 'function') {
-    throw new Error('Child must be a function')
-  }
-  return source ? children(source) : <Loading />
-}
-
-export const withSource = Wrapped => ({ sourceId, ...others }) => (
-  <SourceLoader sourceId={sourceId}>
-    {source => <Wrapped source={source} {...others} />}
-  </SourceLoader>
-)
-
-export const SearchSourceLoader = makeLoader(({ query }) => {
-  const { state, searchSource } = useSourceContext()
-  searchSource(query)
-  return state.searchCache[query]
-})
-
 export default SourceProvider

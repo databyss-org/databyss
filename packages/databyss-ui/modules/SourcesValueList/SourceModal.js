@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import SourceProvider, {
   useSourceContext,
-  SourceLoader,
 } from '@databyss-org/services/sources/SourceProvider'
+import { SourceLoader } from '@databyss-org/ui/components/Loaders'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
