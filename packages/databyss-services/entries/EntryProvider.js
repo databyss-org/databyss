@@ -1,7 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
-import makeLoader from '@databyss-org/ui/components/Loaders/makeLoader'
 import reducer, { initialState } from './reducer'
 import { onSearchEntries } from './actions'
 
@@ -40,12 +39,5 @@ EntryProvider.defaultProps = {
   initialState,
   reducer,
 }
-
-export const EntrySearchLoader = makeLoader(({ query }) => {
-  const { searchEntries, searchCache } = useEntryContext()
-  searchEntries(query)
-
-  return searchCache[query]
-})
 
 export default EntryProvider

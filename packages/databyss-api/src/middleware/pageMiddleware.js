@@ -1,7 +1,7 @@
-// const ApiError = require('./../routes/api/ApiError')
+import mongoose from 'mongoose'
 import Page from './../models/Page'
 
-const pageMiddleware = async (req, res, next) => {
+export const pageCreatorMiddleware = async (req, res, next) => {
   const { _id } = req.body.data.page
   let pageResponse = await Page.findOne({ _id })
 
@@ -22,4 +22,22 @@ const pageMiddleware = async (req, res, next) => {
   return next()
 }
 
-export default pageMiddleware
+export const pageMiddleware = async (req, res, next) => {
+  const _id = req.params.id
+
+  if (!mongoose.Types.ObjectId.isValid(_id)) {
+    return res.status(404).json({ msg: 'id not valid' })
+  }
+
+  const page = await Page.findOne({
+    _id,
+  })
+
+  if (!page) {
+    return res.status(404).json({ msg: 'There is no page for this id' })
+  }
+
+  req.page = page
+
+  return next()
+}

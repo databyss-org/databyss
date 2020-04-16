@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { EntrySearchLoader } from '@databyss-org/services/entries/EntryProvider'
+import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
   Text,

@@ -1,14 +1,12 @@
 import {
   SHOW_MODAL,
   DISMISS_MODAL,
-  NAVIGATE,
   NAVIGATE_SIDEBAR,
   TOGGLE_MENU,
 } from './constants'
 
 export const initialState = {
   modals: [],
-  path: '/',
   menuOpen: true,
   sidebarPath: '/',
 }
@@ -29,12 +27,6 @@ export default (state, action) => {
       return {
         ...state,
         modals: state.modals.slice(0, -1),
-      }
-    }
-    case NAVIGATE: {
-      return {
-        ...state,
-        path: action.payload.path,
       }
     }
     case NAVIGATE_SIDEBAR: {
