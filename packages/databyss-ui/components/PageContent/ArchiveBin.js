@@ -31,9 +31,5 @@ export const ArchiveBin = () => {
         <TrashSvg />
       </Icon>
     </BaseControl>
-<<<<<<< HEAD
   ) : null
-=======
-  )
->>>>>>> 8f7d086945454043a5c1a0c4102878f949844145
 }
