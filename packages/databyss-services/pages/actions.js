@@ -90,12 +90,11 @@ export function deletePage(id) {
 export function onArchivePage(id, page) {
   const _page = cloneDeep(page)
   _page.page.archive = true
-  console.log(_page)
 
   return dispatch => {
     dispatch({
       type: ARCHIVE_PAGE,
-      payload: { id },
+      payload: { id, page: _page },
     })
     services.savePage(_page)
   }

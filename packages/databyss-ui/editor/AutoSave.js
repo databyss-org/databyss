@@ -34,7 +34,7 @@ const AutoSave = ({ interval }) => {
         const _page = cloneDeep(editorStateRef.current)
         delete _page.page.name
         const _pageState = getPage(_page.page._id)
-        if (_pageState) {
+        if (_pageState && !_pageState.page.archive) {
           const _name = _pageState.page.name
           _page.page.name = _name
           setPage(_page)

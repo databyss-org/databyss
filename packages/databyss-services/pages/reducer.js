@@ -66,7 +66,9 @@ export default (state, action) => {
     case ARCHIVE_PAGE: {
       const _cache = state.cache
       if (_cache[action.payload.id]) {
-        delete _cache[action.payload.id]
+        _cache[action.payload.id] = action.payload.page
+        console.log(action.payload.page)
+        //   delete _cache[action.payload.id]
       }
       const _headerCache = state.headerCache
       if (_headerCache[action.payload.id]) {

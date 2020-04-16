@@ -16,19 +16,20 @@ export const ArchiveBin = () => {
   const { archivePage } = usePageContext()
 
   const onClick = () => {
-    if (account.defaultPage !== id) {
-      navigate(`/pages/${account.defaultPage}`)
-      window.requestAnimationFrame(() => archivePage(id))
-    } else {
-      console.log('default page cant be deleted')
-    }
+    navigate(`/pages/${account.defaultPage}`)
+    window.requestAnimationFrame(() => archivePage(id))
   }
 
-  return (
-    <BaseControl onClick={onClick}>
+  return account.defaultPage !== id ? (
+    <BaseControl
+      onClick={onClick}
+      hoverColor={'background.2'}
+      p="tiny"
+      title="Archive Page"
+    >
       <Icon sizeVariant="small" color="text.3">
         <TrashSvg />
       </Icon>
     </BaseControl>
-  )
+  ) : null
 }
