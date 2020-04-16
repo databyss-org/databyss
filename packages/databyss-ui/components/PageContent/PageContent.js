@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useLocation, Router } from '@reach/router'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { View } from '@databyss-org/ui/primitives'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { ArchiveBin } from './ArchiveBin'
 
@@ -12,7 +10,7 @@ import PageBody from './PageBody'
 
 export const PageRouter = () => (
   <Router>
-    <PageContent path=':id' />
+    <PageContent path=":id" />
   </Router>
 )
 
@@ -34,12 +32,12 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
   }, [])
 
   return (
-    <View height='100vh' overflow='scroll' p='medium'>
+    <View height="100vh" overflow="scroll" p="medium">
       <View
-        mr='large'
-        alignItems='center'
-        flexDirection='row'
-        justifyContent='space-between'
+        mr="large"
+        alignItems="center"
+        flexDirection="row"
+        justifyContent="space-between"
       >
         <PageHeader pageId={id} isFocused={onHeaderClick} />
         <ArchiveBin />
@@ -66,7 +64,7 @@ const PageContent = () => {
   */
 
   return (
-    <View flex='1' height='100vh'>
+    <View flex="1" height="100vh">
       {id && (
         <PageLoader pageId={id}>
           {page => (

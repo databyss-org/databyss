@@ -23,7 +23,7 @@ export const ArchiveBin = () => {
   return account.defaultPage !== id ? (
     <BaseControl
       onClick={onClick}
-      hoverColor={'background.2'}
+      hoverColor="background.2"
       p="tiny"
       title="Archive Page"
     >

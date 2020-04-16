@@ -82,15 +82,13 @@ export default (state, action) => {
     case CACHE_PAGE_HEADERS: {
       const _cache = {}
       // filter archived pages
-      action.payload
-        .filter(p => !p.archive)
-        .forEach(
-          page =>
-            (_cache[page._id] = {
-              name: page.name,
-              _id: page._id,
-            })
-        )
+      action.payload.filter(p => !p.archive).forEach(
+        page =>
+          (_cache[page._id] = {
+            name: page.name,
+            _id: page._id,
+          })
+      )
       return {
         ...state,
         headerCache: _cache,
