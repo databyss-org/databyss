@@ -1,8 +1,5 @@
 import React, { createContext, useContext } from 'react'
-import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
-import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import makeLoader from '@databyss-org/ui/components/Loaders/makeLoader'
 import _ from 'lodash'
 import reducer, { initialState } from './reducer'
 

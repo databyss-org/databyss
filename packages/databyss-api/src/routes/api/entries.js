@@ -14,7 +14,6 @@ router.get(
   async (req, res) => {
     try {
       const searchKey = new RegExp(req.params.string, 'i')
-
       const results = await Entry.find({
         'text.textValue': searchKey,
         account: req.account._id,
@@ -25,11 +24,15 @@ router.get(
           count: results.length,
           results: {},
         }
-
         /*
         compose results
         */
         _results = results.reduce((acc, curr) => {
+          // only show results with associated page
+          if (!curr.page) {
+            _results.count -= 1
+            return acc
+          }
           if (!acc.results[curr.page._id]) {
             //   const _entries = new Map()
             // init result

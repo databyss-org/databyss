@@ -8,12 +8,17 @@ import {
   Grid,
   Icon,
 } from '@databyss-org/ui/primitives'
+import LogoSvg from '@databyss-org/ui/assets/logo1.svg'
 
 const headerMap = type => {
   if (type) {
     return { pages: 'Pages', search: 'Search' }[type]
   }
-  return 'Databyss'
+  return (
+    <Icon sizeVariant="title" color="text.3">
+      <LogoSvg />
+    </Icon>
+  )
 }
 
 const Header = ({ onHeaderClick }) => {
@@ -21,13 +26,13 @@ const Header = ({ onHeaderClick }) => {
   const menuItem = getSidebarPath()
 
   return (
-    <BaseControl p={2} width="100%" onClick={() => onHeaderClick()}>
+    <BaseControl p={1} width="100%" onClick={() => onHeaderClick()}>
       <View>
-        <Grid singleRow alignItems="center" columnGap="small">
+        <Grid singleRow columnGap="none" alignItems="center">
           <Icon sizeVariant="medium" color="text.3">
             <ArrowLeft />
           </Icon>
-          <Text variant="uiTextLarge" color="text.2">
+          <Text variant="uiTextLarge" color="text.2" ml="tiny">
             {headerMap(menuItem)}
           </Text>
         </Grid>

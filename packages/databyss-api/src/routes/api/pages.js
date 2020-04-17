@@ -37,7 +37,7 @@ router.post(
       entries = !_.isEmpty(entries) ? entries : {}
       locations = !_.isEmpty(locations) ? locations : {}
 
-      const { name, _id } = page
+      const { name, _id, archive } = page
 
       // ADD SOURCES
       if (!_.isEmpty(sources)) {
@@ -237,6 +237,7 @@ router.post(
       const pageFields = {
         ...(name && { name }),
         ...(pageBlocks && { blocks: pageBlocks }),
+        ...(archive && { archive: true }),
         account: req.account._id,
       }
 
@@ -327,7 +328,9 @@ router.get(
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
     try {
-      const pageResponse = await Page.find({ account: req.account._id })
+      const pageResponse = await Page.find({
+        account: req.account._id,
+      })
 
       if (!pageResponse) {
         return res
@@ -347,12 +350,12 @@ router.get(
 // @access   private
 router.delete('/:id', auth, async (req, res) => {
   try {
-    const page = await Page.find({ user: req.user.id })
+    const page = await Page.deleteOne({ _id: req.params.id })
     if (!page) {
-      return res.status(400).json({ msg: 'There are no pages' })
+      return res.status(404).json({ msg: 'There are no pages' })
     }
 
-    return res.json(page)
+    return res.status(200)
   } catch (err) {
     console.error(err.message)
     return res.status(500).send('Server Error')

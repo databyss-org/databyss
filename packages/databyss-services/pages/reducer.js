@@ -6,6 +6,8 @@ import {
   CACHE_PAGE,
   CACHE_PAGE_HEADERS,
   FETCH_PAGE_HEADERS,
+  DELETE_PAGE,
+  ARCHIVE_PAGE,
 } from './constants'
 
 export const initialState = {
@@ -43,9 +45,44 @@ export default (state, action) => {
       }
     }
 
+    case DELETE_PAGE: {
+      const _cache = state.cache
+      if (_cache[action.payload.id]) {
+        delete _cache[action.payload.id]
+      }
+
+      const _headerCache = state.headerCache
+      if (_headerCache[action.payload.id]) {
+        delete _headerCache[action.payload.id]
+      }
+
+      return {
+        ...state,
+        cache: _cache,
+        headerCache: _headerCache,
+      }
+    }
+
+    case ARCHIVE_PAGE: {
+      const _cache = state.cache
+      if (_cache[action.payload.id]) {
+        _cache[action.payload.id] = action.payload.page
+      }
+      const _headerCache = state.headerCache
+      if (_headerCache[action.payload.id]) {
+        delete _headerCache[action.payload.id]
+      }
+      return {
+        ...state,
+        cache: _cache,
+        headerCache: _headerCache,
+      }
+    }
+
     case CACHE_PAGE_HEADERS: {
       const _cache = {}
-      action.payload.forEach(
+      // filter archived pages
+      action.payload.filter(p => !p.archive).forEach(
         page =>
           (_cache[page._id] = {
             name: page.name,

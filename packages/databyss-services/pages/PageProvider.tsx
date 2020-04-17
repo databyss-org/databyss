@@ -4,7 +4,13 @@ import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../lib/ResourcePending'
 import Page from './Page'
 
-import { fetchPageHeaders, fetchPage, savePage } from './actions'
+import {
+  fetchPageHeaders,
+  fetchPage,
+  savePage,
+  deletePage,
+  onArchivePage,
+} from './actions'
 
 interface PropsType {
   children: JSX.Element
@@ -76,6 +82,14 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     refDictRef.current = {}
   }
 
+  const removePage = (id: string) => {
+    dispatch(deletePage(id))
+  }
+
+  const archivePage = (id: string) => {
+    dispatch(onArchivePage(id, state.cache[id]))
+  }
+
   return (
     <PageContext.Provider
       value={{
@@ -85,6 +99,8 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         registerBlockRef,
         getBlockRef,
         clearBlockDict,
+        removePage,
+        archivePage,
       }}
     >
       {children}
