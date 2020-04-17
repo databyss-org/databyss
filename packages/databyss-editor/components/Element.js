@@ -1,20 +1,24 @@
 import React, { useEffect, useState } from 'react'
-import { RawHtml, Text, Button, Icon, View } from '@databyss-org/ui/primitives'
+import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { Node, Range } from 'slate'
-import { useSelected, ReactEditor, useEditor } from 'slate-react'
+import { ReactEditor, useEditor } from 'slate-react'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
+import { slateSelectionToStateSelection } from '../lib/slateUtils'
+import { selectionHasRange } from '../state/util'
 
 export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
 
 const Element = ({ attributes, children, element }) => {
   const editor = useEditor()
-  const isSelected = useSelected()
 
-  const onClick = () => {
+  const onAtomicMouseDown = e => {
+    if (element.isActive) {
+      e.preventDefault()
+    }
     console.log('LAUNCH MODAL')
   }
 
@@ -48,7 +52,14 @@ const Element = ({ attributes, children, element }) => {
     [editor.selection, element]
   )
 
+  const onPressEditAtomic = e => {
+    console.log('button')
+    e.stopPropagation()
+  }
+
   const blockMenuWidth = editorMarginMenuItemHeight + 6
+
+  const _selHasRange = selectionHasRange(slateSelectionToStateSelection(editor))
 
   return (
     <View
@@ -60,53 +71,48 @@ const Element = ({ attributes, children, element }) => {
       position="relative"
       justifyContent="center"
     >
-      {element.isBlock && (
-        <View
-          position="absolute"
-          width="100%"
-          contentEditable="false"
-          readonly
-          suppressContentEditableWarning
-          left={blockMenuWidth * -1}
-        >
-          <BlockMenu element={element} showButton={showNewBlockMenu} />
-        </View>
-      )}
+      {element.isBlock &&
+        !_selHasRange && (
+          <View
+            position="absolute"
+            width="100%"
+            contentEditable="false"
+            readonly
+            suppressContentEditableWarning
+            left={blockMenuWidth * -1}
+          >
+            <BlockMenu element={element} showButton={showNewBlockMenu} />
+          </View>
+        )}
       {isAtomicInlineType(element.type) ? (
         <View
+          alignSelf="flex-start"
           flexWrap="nowrap"
-          display="inline-flex"
-          flexDirection="row"
+          display="inline"
           alignItems="center"
           borderRadius="default"
-          contentEditable="false"
-          suppressContentEditableWarning
-          css={{ userSelect: 'none', cursor: 'pointer' }}
-          overflow="hidden"
           borderRadiusVariant="default"
-          onMouseDown={onClick}
+          onMouseDown={onAtomicMouseDown}
           pl="tiny"
           pr="0"
           ml="tinyNegative"
-          backgroundColor={isSelected ? 'background.3' : ''}
+          backgroundColor={element.isActive ? 'background.3' : 'transparent'}
+          css={{
+            cursor: _selHasRange ? 'text' : 'pointer',
+            caretColor: element.isActive ? 'transparent' : 'currentcolor',
+          }}
         >
-          <Text
-            variant={getAtomicStyle(element.type)}
-            css={{ whiteSpace: 'nowrap' }}
-            overflow="hidden"
-          >
-            <RawHtml _html={{ __html: element.character }} {...attributes} />
+          <Text variant={getAtomicStyle(element.type)} display="inline">
+            {children}
           </Text>
-          {children}
-          {isSelected && (
-            <View
-              display="inline"
-              borderLeft="1px solid"
-              borderColor="background.4"
-              ml="10px"
-              padding="1px"
-            >
-              <Button variant="editSource" data-test-atomic-edit="open">
+          {element.isActive && (
+            <View display="inline">
+              <Button
+                variant="editSource"
+                data-test-atomic-edit="open"
+                onPress={onPressEditAtomic}
+                css={{ zIndex: 1000 }}
+              >
                 <Icon sizeVariant="tiny" color="background.5">
                   <PenSVG />
                 </Icon>

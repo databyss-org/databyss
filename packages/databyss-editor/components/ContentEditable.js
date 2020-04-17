@@ -3,15 +3,17 @@ import { createEditor, Node, Transforms, Point } from 'slate'
 import { withReact } from 'slate-react'
 import { produce } from 'immer'
 import { useEditorContext } from '../state/EditorProvider'
-import Editor, { withInline } from './Editor'
+import Editor from './Editor'
 import {
   stateToSlate,
   getRangesFromSlate,
   slateSelectionToStateSelection,
+  stateSelectionToSlateSelection,
   flattenNode,
   flattenOffset,
   stateBlockToSlateBlock,
 } from '../lib/slateUtils'
+import { symbolToAtomicType } from '../state/util'
 
 const ContentEditable = () => {
   const {
@@ -25,7 +27,7 @@ const ContentEditable = () => {
     remove,
   } = useEditorContext()
 
-  const editor = useMemo(() => withInline(withReact(createEditor())), [])
+  const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
@@ -46,7 +48,7 @@ const ContentEditable = () => {
         editor.selection.focus.path[1] === 0 &&
         editor.selection.focus.offset === 0
       const _doubleLineBreak = _nextIsBreak || _prevIsBreak || _atBlockStart
-      if (!_doubleLineBreak) {
+      if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
         // we're not creating a new block, so just insert a carriage return
         event.preventDefault()
         Transforms.insertText(editor, `\n`)
@@ -81,6 +83,7 @@ const ContentEditable = () => {
           unit: 'character',
           reverse: true,
         })
+        return
       }
       // handle end of atomic
       if (
@@ -94,6 +97,7 @@ const ContentEditable = () => {
           unit: 'character',
           reverse: true,
         })
+        return
       }
       // handle after atomic
       if (
@@ -114,6 +118,9 @@ const ContentEditable = () => {
 
   const onChange = value => {
     const selection = slateSelectionToStateSelection(editor)
+    if (!selection) {
+      return
+    }
     const focusIndex = selection.focus.index
 
     const payload = {
@@ -151,7 +158,9 @@ const ContentEditable = () => {
     }
     if (
       editor.operations.find(
-        op => op.type === 'insert_text' || op.type === 'remove_text'
+        op =>
+          (op.type === 'insert_text' || op.type === 'remove_text') &&
+          op.text.length
       )
     ) {
       // update target node
@@ -179,16 +188,24 @@ const ContentEditable = () => {
       state.operations.forEach(op => {
         const _block = stateBlockToSlateBlock(op.block)
         draft[op.index].children = _block.children
+        draft[op.index].type = _block.type
         draft[op.index].isBlock = _block.isBlock
+        draft[op.index].isActive = _block.isActive
       })
     }
   )
 
-  const nextSelection = state.preventDefault
+  // by default, let selection remain uncontrolled
+  // NOTE: preventDefault will rollback selection to that of previous render
+  let nextSelection = state.preventDefault
     ? selectionRef.current
     : editor.selection
-  // TODO: use controlled selection from `state`, but we need to transform
-  //  it back to a Slate-friendly format
+
+  // if there were any update operations,
+  //   sync the Slate selection to the state selection
+  if (state.operations.length) {
+    nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
+  }
 
   valueRef.current = nextValue
   selectionRef.current = nextSelection

@@ -1,5 +1,6 @@
 {
   "testFiles": "**/*.cypress.js",
+  "ignoreTestFiles": "**/databyss-ui/editor/**/*.cypress.js",
   "integrationFolder": "packages",
   "viewportWidth": 1700,
   "viewportHeight": 1200,

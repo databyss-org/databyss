@@ -75,7 +75,9 @@
           "<rootDir>/**/*.test.js"
         ],
         "testPathIgnorePatterns": [
-          "/databyss-api/"
+          "/databyss-api/",
+          "/databyss-ui/editor/",
+          "storyshots.test.js"
         ],
         "testEnvironment": "jsdom",
         "testURL": "http://localhost",
@@ -106,29 +108,6 @@
         "globalSetup": "<rootDir>/packages/databyss-api/__tests__/globalSetup.js",
         "globalTeardown": "<rootDir>/packages/databyss-api/__tests__/globalTeardown.js",
         "testTimeout": 30000
-      },
-      {
-        "displayName": "test-selenium",
-        "testEnvironment": "node",
-        "testMatch": [
-          "<rootDir>/packages/databyss-ui/**/*.seleniumtest.js"
-        ],
-        "moduleFileExtensions": [
-          "js"
-        ],
-        "globalSetup": "<rootDir>/config/sauce/globalSetup.js",
-        "globalTeardown": "<rootDir>/config/sauce/globalTeardown.js"
-      },
-      {
-        "displayName": "checkversion",
-        "runner": "./tests/checkversion.runner.js",
-        "testMatch": [
-          "<rootDir>/**/package.json"
-        ],
-        "testPathIgnorePatterns": [
-          "/node_modules/",
-          "/build/"
-        ]
       }
     ]
   },

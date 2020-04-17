@@ -1,7 +1,20 @@
 import ObjectId from 'bson-objectid'
 import { produce } from 'immer'
-import { SPLIT, MERGE, SET_CONTENT, REMOVE, CLEAR } from './constants'
+import {
+  SPLIT,
+  MERGE,
+  SET_CONTENT,
+  REMOVE,
+  CLEAR,
+  SET_SELECTION,
+} from './constants'
 import { isAtomicInlineType } from '../lib/util'
+import {
+  entityForBlockIndex,
+  selectionHasRange,
+  symbolToAtomicType,
+  blockAtIndex,
+} from './util'
 
 export default (state, action) =>
   produce(state, draft => {
@@ -10,8 +23,27 @@ export default (state, action) =>
 
     const { payload } = action
 
+    // default nextSelection to `payload.selection` (which may be undef)
+    const nextSelection = payload.selection
+
     switch (action.type) {
       case SPLIT: {
+        const _text =
+          state.entityCache[
+            state.blockCache[state.blocks[payload.index]._id].entityId
+          ].text.textValue
+        // don't allow SPLIT inside atomic
+        if (
+          isAtomicInlineType(
+            state.blockCache[state.blocks[payload.index]._id].type
+          ) &&
+          state.selection.focus.offset > 0 &&
+          state.selection.focus.offset < _text.length - 1
+        ) {
+          draft.preventDefault = true
+          break
+        }
+
         // add or insert a new block
         const _id = ObjectId().toHexString()
         const entityId = ObjectId().toHexString()
@@ -27,17 +59,10 @@ export default (state, action) =>
             text: payload.previous,
           }
         } else {
-          // if not atomic, update split block
-          if (
-            !isAtomicInlineType(
-              state.blockCache[state.blocks[payload.index]._id].type
-            )
-          ) {
-            draft.entityCache[
-              state.blockCache[state.blocks[payload.index]._id].entityId
-            ].text =
-              payload.previous
-          }
+          draft.entityCache[
+            state.blockCache[state.blocks[payload.index]._id].entityId
+          ].text =
+            payload.previous
 
           // insert/add split below
           if (payload.index === draft.blocks.length - 1) {
@@ -82,10 +107,7 @@ export default (state, action) =>
           break
         }
 
-        const _entity =
-          draft.entityCache[
-            state.blockCache[state.blocks[payload.index]._id].entityId
-          ]
+        const _entity = entityForBlockIndex(draft, payload.index)
 
         // update node text
         if (!_mergingIntoAtomic) {
@@ -114,11 +136,7 @@ export default (state, action) =>
         }
 
         // update node text
-        // TODO: handle type changing if text includes type operator
-        const _entity =
-          draft.entityCache[
-            state.blockCache[state.blocks[payload.index]._id].entityId
-          ]
+        const _entity = entityForBlockIndex(draft, payload.index)
         _entity.text = payload.text
 
         // push update operation back to editor
@@ -161,18 +179,81 @@ export default (state, action) =>
         })
         break
       }
+      case SET_SELECTION: {
+        const { selection } = payload
+        const _hasRange = selectionHasRange(selection)
+        const _entity = entityForBlockIndex(draft, selection.focus.index)
+        const _previousEntity = entityForBlockIndex(
+          draft,
+          state.selection.focus.index
+        )
+        const _selectionIndexHasChanged =
+          selection.focus.index !== state.selection.focus.index
+
+        if (isAtomicInlineType(_entity.type)) {
+          const _isActive =
+            !_hasRange &&
+            selection.focus.offset < _entity.text.textValue.length &&
+            selection.focus.offset > 0
+
+          // only push an update if the `isActive` has changed
+          if (_selectionIndexHasChanged || _entity.isActive !== _isActive) {
+            _entity.isActive = _isActive
+            draft.operations.push({
+              index: selection.focus.index,
+              block: _entity,
+            })
+          }
+        }
+        // if we've moved selection index,
+        //   check previous selection for active entity, deactivate if necessary
+        if (_selectionIndexHasChanged) {
+          if (_previousEntity && _previousEntity.isActive) {
+            _previousEntity.isActive = false
+            draft.operations.push({
+              index: state.selection.focus.index,
+              block: _previousEntity,
+            })
+          }
+        }
+        break
+      }
       default:
     }
 
-    // always update the selection if included in payload
-    // (unless we're doing `preventDefault`)
-    if (action.payload.selection && !draft.preventDefault) {
-      draft.selection = action.payload.selection
+    // update the selection unless we're doing `preventDefault`
+    if (nextSelection && !draft.preventDefault) {
+      draft.selection = nextSelection
     }
 
     if (draft.selection.focus.index !== state.selection.focus.index) {
-      console.log('blur', state.selection.focus.index)
-      // TODO: transform block type if symbol is present
+      const _entity = entityForBlockIndex(draft, state.selection.focus.index)
+      // check if current text should be converted to atomic block
+      if (
+        _entity &&
+        !isAtomicInlineType(_entity.type) &&
+        !_entity.text.textValue.match(`\n`)
+      ) {
+        const _atomicType = symbolToAtomicType(_entity.text.textValue.charAt(0))
+        if (_atomicType) {
+          // push atomic block change to entityCache and editor operations
+          const _nextEntity = {
+            text: {
+              textValue: _entity.text.textValue.substring(1).trim(),
+              ranges: _entity.text.ranges,
+            },
+            type: _atomicType,
+            _id: _entity._id,
+          }
+          const _block = blockAtIndex(draft, state.selection.focus.index)
+          _block.type = _atomicType
+          draft.entityCache[_entity._id] = _nextEntity
+          draft.operations.push({
+            index: state.selection.focus.index,
+            block: _nextEntity,
+          })
+        }
+      }
     }
 
     return draft

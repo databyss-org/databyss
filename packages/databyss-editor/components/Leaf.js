@@ -1,8 +1,8 @@
 import React from 'react'
-import { View, Text } from '@databyss-org/ui/primitives'
+import { View } from '@databyss-org/ui/primitives'
 
 const Leaf = ({ attributes, children, leaf }) => {
-  let _children = React.cloneElement(children)
+  let _children = children
 
   if (leaf.bold) {
     _children = <strong>{children}</strong>
@@ -23,14 +23,6 @@ const Leaf = ({ attributes, children, leaf }) => {
       >
         {_children}
       </View>
-    )
-  }
-
-  if (leaf.type === 'spacer') {
-    return (
-      <Text display="inline" {...attributes} variant="bodyHeader">
-        {_children}
-      </Text>
     )
   }
 
