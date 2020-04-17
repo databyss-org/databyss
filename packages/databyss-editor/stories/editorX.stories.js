@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react'
+import React, { useState, useMemo } from 'react'
 import { storiesOf } from '@storybook/react'
 import { Editable, withReact, Slate } from 'slate-react'
 import { createEditor } from 'slate'

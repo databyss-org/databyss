@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { Editor } from 'slate-react'
 import { Value } from 'slate'

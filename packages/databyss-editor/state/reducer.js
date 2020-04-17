@@ -136,7 +136,6 @@ export default (state, action) =>
         }
 
         // update node text
-        // TODO: handle type changing if text includes type operator
         const _entity = entityForBlockIndex(draft, payload.index)
         _entity.text = payload.text
 
@@ -217,6 +216,7 @@ export default (state, action) =>
             })
           }
         }
+        break
       }
       default:
     }
