@@ -156,6 +156,7 @@ const ContentEditable = () => {
       })
       return
     }
+
     if (
       editor.operations.find(
         op =>
@@ -174,6 +175,24 @@ const ContentEditable = () => {
       })
       return
     }
+
+    // set_node is called on format change transforms
+    if (editor.operations.find(op => op.type === 'set_node')) {
+      // node should not be updated if a toggle mark occured
+      if (Node.string(value[focusIndex])) {
+        // update target node
+        setContent({
+          ...payload,
+          index: focusIndex,
+          text: {
+            textValue: Node.string(value[focusIndex]),
+            ranges: getRangesFromSlate(value[focusIndex]),
+          },
+        })
+        return
+      }
+    }
+
     // else just update selection
     setSelection(selection)
   }
