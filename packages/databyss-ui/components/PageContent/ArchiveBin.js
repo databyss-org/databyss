@@ -5,7 +5,7 @@ import { BaseControl, Icon } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 
-export const ArchiveBin = () => {
+export const ArchiveBin = ({ pages }) => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
 
@@ -13,14 +13,24 @@ export const ArchiveBin = () => {
 
   const { id } = getTokensFromPath()
 
-  const { archivePage } = usePageContext()
+  const { archivePage, setDefaultPage } = usePageContext()
+
+  const canBeArchived = Object.keys(pages).length > 1
 
   const onClick = () => {
-    navigate(`/pages/${account.defaultPage}`)
-    window.requestAnimationFrame(() => archivePage(id))
+    let redirect = account.defaultPage
+    // if default page is archived set new page as default page
+    if (account.defaultPage === id) {
+      const _pages = pages
+      delete _pages[id]
+      redirect = Object.keys(_pages)[0]
+      setDefaultPage(redirect)
+    }
+    navigate(`/pages/${redirect}`)
+    setTimeout(() => archivePage(id), 50)
   }
 
-  return account.defaultPage !== id ? (
+  return canBeArchived ? (
     <BaseControl
       onClick={onClick}
       hoverColor="background.2"

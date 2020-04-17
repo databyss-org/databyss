@@ -10,6 +10,7 @@ import {
   savePage,
   deletePage,
   onArchivePage,
+  onSetDefaultPage,
 } from './actions'
 
 interface PropsType {
@@ -90,6 +91,10 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(onArchivePage(id, state.cache[id]))
   }
 
+  const setDefaultPage = (id: string) => {
+    dispatch(onSetDefaultPage(id))
+  }
+
   return (
     <PageContext.Provider
       value={{
@@ -101,6 +106,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         clearBlockDict,
         removePage,
         archivePage,
+        setDefaultPage,
       }}
     >
       {children}
