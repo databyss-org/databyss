@@ -2,7 +2,7 @@
 
 /* eslint-disable func-names */
 
-import { matchWithoutId } from './_helpers'
+import { matchWithoutId } from '../../editor/slate/__tests__/_helpers'
 
 const expected = {
   authors: [
