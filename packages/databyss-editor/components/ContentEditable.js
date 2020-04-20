@@ -35,8 +35,11 @@ const ContentEditable = () => {
   const selectionRef = useRef(null)
 
   if (!valueRef.current) {
-    console.log('HERE ONE')
     editor.children = stateToSlate(state)
+  }
+
+  if (editor) {
+    console.log(editor.children[1].children)
   }
 
   const onKeyDown = event => {

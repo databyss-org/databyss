@@ -23,8 +23,8 @@ export default {
         textValue:
           'Stamenov, Language Structure, Discourse and the Access to Consciousness',
         ranges: [
-          { offset: 3, length: 2, mark: 'italic' },
-          { offset: 0, length: 2, mark: 'bold' },
+          // { offset: 3, length: 2, mark: 'italic' },
+          // { offset: 0, length: 2, mark: 'bold' },
         ],
       },
     },
@@ -38,6 +38,11 @@ export default {
             offset: 7,
             length: 10,
             mark: 'bold',
+          },
+          {
+            offset: 7,
+            length: 10,
+            mark: 'italic',
           },
         ],
       },

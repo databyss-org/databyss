@@ -138,7 +138,7 @@ export default (state, action) =>
         // update node text
         const _entity = entityForBlockIndex(draft, payload.index)
         _entity.text = payload.text
-
+        console.log(_entity.text)
         // push update operation back to editor
         draft.operations.push({
           index: payload.index,

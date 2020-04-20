@@ -1,4 +1,4 @@
-import { Editor } from 'slate'
+import { Editor, Transforms } from 'slate'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
@@ -116,7 +116,6 @@ export const getRangesFromSlate = node => {
     _offset += _textLength
   })
 
-  console.log('ranges', _ranges)
   return _ranges
 }
 
@@ -145,6 +144,13 @@ const isMarkActive = (editor, format) => {
 }
 
 export const toggleMark = (editor, format) => {
+  // console.log('frag', Editor.fragment(editor, editor.selection))
+
+  Transforms.move(editor, { distance: 1, edge: 'anchor' })
+  // console.log('leading edge is empty')
+  //  console.log('frag', _frag)
+  Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
+
   const isActive = isMarkActive(editor, format)
   if (isActive) {
     Editor.removeMark(editor, format)

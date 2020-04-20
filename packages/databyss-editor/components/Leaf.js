@@ -4,6 +4,8 @@ import { View } from '@databyss-org/ui/primitives'
 const Leaf = ({ attributes, children, leaf }) => {
   let _children = children
 
+  // console.log(children)
+  // console.log(leaf)
   if (leaf.italic) {
     //  console.log(_children)
     _children = <em>{_children}</em>
