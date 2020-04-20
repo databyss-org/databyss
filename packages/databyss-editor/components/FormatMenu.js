@@ -51,6 +51,7 @@ const formatActions = isMobileNewLine => [
 ]
 
 const formatActionButtons = () =>
+  // placeholder for mobile actions
   true
     ? formatActions(true).reduce((acc, a, i) => {
         if (a.type === 'DIVIDER') {

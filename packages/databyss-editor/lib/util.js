@@ -21,3 +21,17 @@ export const getEntityAtIndex = (state, index) => {
     isEmpty: entity.text.textValue.length === 0,
   }
 }
+
+export const getSelectionIndicies = selection => {
+  let anchorIdx = selection.anchor.index
+  const focusIdx = selection.focus.index
+
+  const _idx = Array(focusIdx - anchorIdx + 1)
+    .fill()
+    .map(() => {
+      const idx = anchorIdx
+      anchorIdx += 1
+      return idx
+    })
+  return _idx
+}

@@ -13,6 +13,7 @@ import {
   flattenOffset,
   stateBlockToSlateBlock,
 } from '../lib/slateUtils'
+import { getSelectionIndicies } from '../lib/util'
 import { symbolToAtomicType } from '../state/util'
 
 const ContentEditable = () => {
@@ -178,19 +179,24 @@ const ContentEditable = () => {
 
     // set_node is called on format change transforms
     if (editor.operations.find(op => op.type === 'set_node')) {
-      // node should not be updated if a toggle mark occured
-      if (Node.string(value[focusIndex])) {
-        // update target node
-        setContent({
-          ...payload,
-          index: focusIndex,
-          text: {
-            textValue: Node.string(value[focusIndex]),
-            ranges: getRangesFromSlate(value[focusIndex]),
-          },
-        })
-        return
-      }
+      // get indexies of selected nodes
+      const _blocksChanged = getSelectionIndicies(selection)
+
+      _blocksChanged.forEach(idx => {
+        // node should not be updated if a toggle mark occured
+        if (Node.string(value[idx])) {
+          // update target node
+          setContent({
+            ...payload,
+            index: idx,
+            text: {
+              textValue: Node.string(value[idx]),
+              ranges: getRangesFromSlate(value[idx]),
+            },
+          })
+        }
+      })
+      return
     }
 
     // else just update selection

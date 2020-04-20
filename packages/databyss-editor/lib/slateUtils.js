@@ -1,4 +1,5 @@
 import { Editor } from 'slate'
+import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
 export const flattenNode = node => {
@@ -115,4 +116,15 @@ export const isFormatActive = (editor, format) => {
     mode: 'all',
   })
   return !!match
+}
+
+/*
+checks selection for inline types
+*/
+export const isSelectionAtomic = editor => {
+  const _frag = Editor.fragment(editor, editor.selection)
+  return !_frag.reduce(
+    (acc, curr) => acc * !isAtomicInlineType(curr.type),
+    true
+  )
 }

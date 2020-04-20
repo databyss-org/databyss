@@ -7,14 +7,15 @@ import theme, { borderRadius, darkTheme } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { ReactEditor, useSlate } from 'slate-react'
 import { Editor, Range } from 'slate'
+import { isSelectionAtomic } from './../lib/slateUtils'
 
 const isBackwards = () => {
   const selection = window.getSelection()
-  let range = document.createRange()
+  const range = document.createRange()
   range.setStart(selection.anchorNode, selection.anchorOffset)
   range.setEnd(selection.focusNode, selection.focusOffset)
 
-  let backwards = range.collapsed
+  const backwards = range.collapsed
   range.detach()
   return backwards
 }
@@ -58,7 +59,8 @@ const HoveringToolbar = ({ children }) => {
       !selection ||
       !ReactEditor.isFocused(editor) ||
       Range.isCollapsed(selection) ||
-      Editor.string(editor, selection) === ''
+      Editor.string(editor, selection) === '' ||
+      isSelectionAtomic(editor)
     ) {
       el.removeAttribute('style')
       return
