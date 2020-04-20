@@ -84,7 +84,9 @@ const MarkButton = ({ type, label, variant, ...others }) => {
   const toggleFormat = format => {
     Transforms.setNodes(
       editor,
-      { [format]: isActive ? null : true, type: !isActive ? format : null },
+      {
+        [format]: isActive ? null : true,
+      },
       { match: SlateText.isText, split: true }
     )
   }

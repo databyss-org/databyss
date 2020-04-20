@@ -12,8 +12,10 @@ import {
   flattenNode,
   flattenOffset,
   stateBlockToSlateBlock,
+  toggleMark,
 } from '../lib/slateUtils'
 import { getSelectionIndicies } from '../lib/util'
+import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType } from '../state/util'
 
 const ContentEditable = () => {
@@ -37,6 +39,21 @@ const ContentEditable = () => {
   }
 
   const onKeyDown = event => {
+    if (Hotkeys.isBold(event)) {
+      toggleMark(editor, 'bold')
+      return
+    }
+
+    if (Hotkeys.isItalic(event)) {
+      toggleMark(editor, 'italic')
+      return
+    }
+
+    if (Hotkeys.isLocation(event)) {
+      toggleMark(editor, 'location')
+      return
+    }
+
     if (event.key === 'Enter') {
       if (getEntityAtIndex(editor.selection.focus.path[0]).isAtomic) {
         return

@@ -75,8 +75,6 @@ const HoveringToolbar = ({ children }) => {
 
     const domRange = domSelection.getRangeAt(0)
 
-    //  let rect = domRange.getBoundingClientRect()
-
     // get selected dom nodes
     const _rects = domRange.getClientRects()
     const _length = _rects.length

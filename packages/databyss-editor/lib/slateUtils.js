@@ -91,6 +91,8 @@ export const stateToSlate = initState => {
   return _state
 }
 
+const allowedRanges = ['bold', 'italic', 'location']
+
 export const getRangesFromSlate = node => {
   let _offset = 0
   const _ranges = []
@@ -102,9 +104,13 @@ export const getRangesFromSlate = node => {
       return
     }
     const _textLength = n.text.length
-    if (n.type) {
-      _ranges.push({ offset: _offset, length: _textLength, mark: n.type })
-    }
+
+    Object.keys(n).forEach(prop => {
+      if (allowedRanges.includes(prop) && n[prop]) {
+        _ranges.push({ offset: _offset, length: _textLength, mark: prop })
+      }
+    })
+
     _offset += _textLength
   })
   return _ranges
@@ -127,4 +133,18 @@ export const isSelectionAtomic = editor => {
     (acc, curr) => acc * !isAtomicInlineType(curr.type),
     true
   )
+}
+
+const isMarkActive = (editor, format) => {
+  const marks = Editor.marks(editor)
+  return marks ? marks[format] === true : false
+}
+
+export const toggleMark = (editor, format) => {
+  const isActive = isMarkActive(editor, format)
+  if (isActive) {
+    Editor.removeMark(editor, format)
+  } else {
+    Editor.addMark(editor, format, true)
+  }
 }
