@@ -82,13 +82,20 @@ const MarkButton = ({ type, label, variant, ...others }) => {
   const isActive = isFormatActive(editor, type)
 
   const toggleFormat = format => {
+    // console.log('selection', editor)
+    // console.log('before', editor.children[1])
     Transforms.setNodes(
       editor,
       {
         [format]: isActive ? null : true,
       },
-      { match: SlateText.isText, split: true }
+      {
+        match: SlateText.isText,
+        at: editor.selection,
+        split: true,
+      }
     )
+    // console.log('after', editor.children[1])
   }
 
   const actions = type =>

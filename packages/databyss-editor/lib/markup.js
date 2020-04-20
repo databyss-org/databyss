@@ -17,7 +17,7 @@ export const applyRange = (editor, range) => {
   // add type to be used for html seralizer in atomic blocks
   Transforms.setNodes(
     editor,
-    { [range.mark]: true, type: range.mark },
+    { [range.mark]: true },
     {
       at: _range,
       match: node => Text.isText(node),
@@ -81,6 +81,7 @@ export const stateToSlateMarkup = blockData => {
 
   // apply all ranges as marks
   moveToStart(_editor)
+
   blockData.ranges.forEach(range => applyRange(_editor, range))
 
   const { children } = _editor.children[0]

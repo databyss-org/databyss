@@ -65,6 +65,7 @@ export const entities = type =>
 
 export const stateBlockToSlateBlock = block => {
   // convert state and apply markup values
+
   const _childrenText = stateToSlateMarkup(block.text)
   const _data = {
     children: _childrenText,
@@ -72,6 +73,7 @@ export const stateBlockToSlateBlock = block => {
     isBlock: true,
     isActive: block.isActive,
   }
+
   return _data
 }
 
@@ -113,6 +115,8 @@ export const getRangesFromSlate = node => {
 
     _offset += _textLength
   })
+
+  console.log('ranges', _ranges)
   return _ranges
 }
 

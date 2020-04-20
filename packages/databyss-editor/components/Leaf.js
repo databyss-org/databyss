@@ -4,12 +4,13 @@ import { View } from '@databyss-org/ui/primitives'
 const Leaf = ({ attributes, children, leaf }) => {
   let _children = children
 
-  if (leaf.bold) {
-    _children = <strong>{children}</strong>
+  if (leaf.italic) {
+    //  console.log(_children)
+    _children = <em>{_children}</em>
   }
 
-  if (leaf.italic) {
-    _children = <em>{children}</em>
+  if (leaf.bold) {
+    _children = <strong>{_children}</strong>
   }
 
   if (leaf.location) {
