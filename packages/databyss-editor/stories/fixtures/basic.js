@@ -34,16 +34,16 @@ export default {
       text: {
         textValue: `On the limitation of \nthird-order thought to assertion`,
         ranges: [
-          {
-            offset: 7,
-            length: 10,
-            mark: 'bold',
-          },
-          {
-            offset: 7,
-            length: 10,
-            mark: 'italic',
-          },
+          // {
+          //   offset: 7,
+          //   length: 10,
+          //   mark: 'bold',
+          // },
+          // {
+          //   offset: 7,
+          //   length: 10,
+          //   mark: 'italic',
+          // },
         ],
       },
     },

@@ -38,10 +38,6 @@ const ContentEditable = () => {
     editor.children = stateToSlate(state)
   }
 
-  if (editor) {
-    console.log(editor.children[1].children)
-  }
-
   const onKeyDown = event => {
     if (Hotkeys.isBold(event)) {
       toggleMark(editor, 'bold')
@@ -251,6 +247,11 @@ const ContentEditable = () => {
   //   sync the Slate selection to the state selection
   if (state.operations.length) {
     nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
+
+    // BUG: Transforms create an empty leaf selection
+    Transforms.setSelection(editor, nextSelection)
+    Transforms.move(editor, { distance: 1, edge: 'anchor' })
+    Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
   }
 
   valueRef.current = nextValue
@@ -265,7 +266,7 @@ const ContentEditable = () => {
     <Editor
       editor={editor}
       value={nextValue}
-      selection={nextSelection}
+      //  selection={nextSelection}
       onChange={onChange}
       onKeyDown={onKeyDown}
     />

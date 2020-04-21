@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button, Text, View } from '@databyss-org/ui/primitives'
 import { useEditor } from 'slate-react'
-import { Transforms, Text as SlateText, Editor } from 'slate'
 import { isMobileOs } from '@databyss-org/ui/'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import HoveringToolbar from './HoveringToolbar'
@@ -81,36 +80,8 @@ const MarkButton = ({ type, label, variant, ...others }) => {
   const editor = useEditor()
   const isActive = isFormatActive(editor, type)
 
-  // const isFormatActive = (editor, format) => {
-  //   const [match] = Editor.nodes(editor, {
-  //     match: n => n[format] === true,
-  //     mode: 'all',
-  //   })
-  //   return !!match
-  // }
-
   const toggleFormat = format => {
-    // const isActive = isFormatActive(editor, format)
-    // console.log(Editor.fragment(editor, editor.selection))
-    // console.log(isActive)
-    // Transforms.setNodes(
-    //   editor,
-    //   { [format]: isActive ? null : true },
-    //   { match: Text.isText, split: true }
-    // )
-
     toggleMark(editor, format)
-    // Transforms.setNodes(
-    //   editor,
-    //   {
-    //     [format]: isActive ? null : true,
-    //   },
-    //   {
-    //     match: SlateText.isText,
-    //     //  at: editor.selection,
-    //     split: true,
-    //   }
-    // )
   }
 
   const actions = type =>

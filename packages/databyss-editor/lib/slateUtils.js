@@ -1,4 +1,4 @@
-import { Editor, Transforms } from 'slate'
+import { Editor } from 'slate'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
@@ -144,12 +144,16 @@ const isMarkActive = (editor, format) => {
 }
 
 export const toggleMark = (editor, format) => {
-  // console.log('frag', Editor.fragment(editor, editor.selection))
+  // BUG: removes leaf node left in selection fragment
 
-  Transforms.move(editor, { distance: 1, edge: 'anchor' })
-  // console.log('leading edge is empty')
-  //  console.log('frag', _frag)
-  Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
+  // console.log('frag before', Editor.fragment(editor, editor.selection))
+
+  // Transforms.move(editor, { distance: 1, edge: 'anchor' })
+  // Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
+
+  console.log('selection', editor.selection)
+
+  // console.log('frag after', Editor.fragment(editor, editor.selection))
 
   const isActive = isMarkActive(editor, format)
   if (isActive) {
