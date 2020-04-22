@@ -95,20 +95,20 @@ export const stateToSlate = initState => {
 
 const allowedRanges = ['bold', 'italic', 'location']
 
-export const getRangesFromSlate = node => {
+export const slateRangesToStateRanges = node => {
   let _offset = 0
   const _ranges = []
   if (!node) {
     return _ranges
   }
-  node.children.forEach(n => {
-    if (!n.text) {
+  node.children.forEach(child => {
+    if (!child.text) {
       return
     }
-    const _textLength = n.text.length
+    const _textLength = child.text.length
 
-    Object.keys(n).forEach(prop => {
-      if (allowedRanges.includes(prop) && n[prop]) {
+    Object.keys(child).forEach(prop => {
+      if (allowedRanges.includes(prop)) {
         _ranges.push({ offset: _offset, length: _textLength, mark: prop })
       }
     })

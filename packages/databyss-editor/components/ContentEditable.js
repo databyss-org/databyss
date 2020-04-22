@@ -6,7 +6,7 @@ import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
   stateToSlate,
-  getRangesFromSlate,
+  slateRangesToStateRanges,
   slateSelectionToStateSelection,
   stateSelectionToSlateSelection,
   flattenNode,
@@ -14,7 +14,7 @@ import {
   stateBlockToSlateBlock,
   toggleMark,
 } from '../lib/slateUtils'
-import { getSelectionIndicies } from '../lib/util'
+import { getSelectedIndicies } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType } from '../state/util'
 
@@ -29,6 +29,7 @@ const ContentEditable = () => {
     clear,
     remove,
   } = useEditorContext()
+  console.log('ContentEditable.render', state.preventDefault)
 
   const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
@@ -152,7 +153,7 @@ const ContentEditable = () => {
         index: focusIndex,
         text: {
           textValue: flattenNode(value[focusIndex]),
-          ranges: getRangesFromSlate(value[focusIndex]),
+          ranges: slateRangesToStateRanges(value[focusIndex]),
         },
         blockDelta: valueRef.current.length - value.length,
       })
@@ -165,11 +166,11 @@ const ContentEditable = () => {
         index: focusIndex - 1,
         text: {
           textValue: flattenNode(value[focusIndex]),
-          ranges: getRangesFromSlate(value[focusIndex]),
+          ranges: slateRangesToStateRanges(value[focusIndex]),
         },
         previous: {
           textValue: flattenNode(value[focusIndex - 1]),
-          ranges: getRangesFromSlate(value[focusIndex - 1]),
+          ranges: slateRangesToStateRanges(value[focusIndex - 1]),
         },
       })
       return
@@ -188,7 +189,7 @@ const ContentEditable = () => {
         index: focusIndex,
         text: {
           textValue: Node.string(value[focusIndex]),
-          ranges: getRangesFromSlate(value[focusIndex]),
+          ranges: slateRangesToStateRanges(value[focusIndex]),
         },
       })
       return
@@ -197,7 +198,7 @@ const ContentEditable = () => {
     // set_node is called on format change transforms
     if (editor.operations.find(op => op.type === 'set_node')) {
       // get indexies of selected nodes
-      const _blocksChanged = getSelectionIndicies(selection)
+      const _blocksChanged = getSelectedIndicies(selection)
 
       _blocksChanged.forEach(idx => {
         // node should not be updated if a toggle mark occured
@@ -208,7 +209,7 @@ const ContentEditable = () => {
             index: idx,
             text: {
               textValue: Node.string(value[idx]),
-              ranges: getRangesFromSlate(value[idx]),
+              ranges: slateRangesToStateRanges(value[idx]),
             },
           })
         }
@@ -248,11 +249,18 @@ const ContentEditable = () => {
   if (state.operations.length) {
     nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
 
-    // BUG: Transforms create an empty leaf selection
-    Transforms.setSelection(editor, nextSelection)
+    // HACK:
+    // There is a bug in Slate that causes unexpected behavior when creating a
+    // selection by doing `Transforms.move` on the anchor and focus. If the
+    // selection falls on a range that already has a mark, the focus gets the
+    // correct path (pointing within the mark leaf) but the anchor gets the parent
+    // path. The fix for this is to overshoot the anchor by 1
+    // and then correct the offset with an additional move.
     Transforms.move(editor, { distance: 1, edge: 'anchor' })
     Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
   }
+
+  Transforms.setSelection(editor, nextSelection)
 
   valueRef.current = nextValue
   selectionRef.current = nextSelection

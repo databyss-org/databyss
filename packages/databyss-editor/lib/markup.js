@@ -7,20 +7,25 @@ const moveToStart = editor => {
 }
 
 export const applyRange = (editor, range) => {
+  moveToStart(editor)
+
   // move anchor and focus to highlight text to add mark
-
-  // BUG: Transform.move leaves empty leaf node
   Transforms.move(editor, { distance: range.offset + 1, edge: 'anchor' })
-
   Transforms.move(editor, {
     distance: range.offset + range.length,
     edge: 'focus',
   })
-  // BUG: Transform.move must be toggled in order to create the correct slelection
+
+  // HACK:
+  // There is a bug in Slate that causes unexpected behavior when creating a
+  // selection by doing `Transforms.move` on the anchor and focus. If the
+  // selection falls on a range that already has a mark, the focus gets the
+  // correct path (pointing within the mark leaf) but the anchor gets the parent
+  // path. The fix for this is to overshoot the anchor by 1 (we do that above)
+  // and correct the offset with an additional move, below.
   Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
 
   toggleMark(editor, range.mark)
-  moveToStart(editor)
 
   return editor
 }
@@ -63,10 +68,7 @@ export const stateToSlateMarkup = blockData => {
   // apply all ranges as marks
   moveToStart(_editor)
 
-  blockData.ranges.reduce((acc, curr) => {
-    applyRange(acc, curr)
-    return acc
-  }, _editor)
+  blockData.ranges.forEach(range => applyRange(_editor, range))
 
   const { children } = _editor.children[0]
 

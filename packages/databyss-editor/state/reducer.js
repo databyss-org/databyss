@@ -131,6 +131,7 @@ export default (state, action) =>
             state.blockCache[state.blocks[payload.index]._id].type
           )
         ) {
+          console.log(state.blockCache[state.blocks[payload.index]._id].type)
           draft.preventDefault = true
           break
         }
