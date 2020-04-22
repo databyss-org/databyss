@@ -126,7 +126,7 @@ export default (state, action) =>
         break
       }
       case SET_CONTENT: {
-        // prevent default is prevent if operation includes atomic
+        // preventDefault if operation includes atomic
         if (
           payload.operations.find(op =>
             isAtomicInlineType(
