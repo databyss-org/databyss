@@ -1,48 +1,33 @@
-import { createEditor, Transforms, Text } from 'slate'
-
-export const applyRange = (editor, range) => {
-  // move anchor and focus to highlight text to add mark
-  Transforms.move(editor, { distance: range.offset, edge: 'anchor' })
-  Transforms.move(editor, {
-    distance: range.offset + range.length,
-    edge: 'focus',
-  })
-  const _anchor = editor.selection.anchor
-  const _focus = editor.selection.focus
-  const _range = {
-    anchor: _anchor,
-    focus: _focus,
-  }
-
-  // add type to be used for html seralizer in atomic blocks
-  Transforms.setNodes(
-    editor,
-    { [range.mark]: true, type: range.mark },
-    {
-      at: _range,
-      match: node => Text.isText(node),
-      split: true,
-    }
-  )
-
-  // move anchor and focus back to start
-  Transforms.move(editor, {
-    distance: range.offset,
-    edge: 'anchor',
-    reverse: true,
-  })
-  Transforms.move(editor, {
-    distance: range.offset + range.length,
-    edge: 'focus',
-    reverse: true,
-  })
-
-  return editor
-}
+import { createEditor, Transforms } from 'slate'
+import { toggleMark } from './slateUtils'
 
 const moveToStart = editor => {
   const _zero = { path: [0], offset: 0 }
   Transforms.setSelection(editor, { anchor: _zero, focus: _zero })
+}
+
+export const applyRange = (editor, range) => {
+  moveToStart(editor)
+
+  // move anchor and focus to highlight text to add mark
+  Transforms.move(editor, { distance: range.offset + 1, edge: 'anchor' })
+  Transforms.move(editor, {
+    distance: range.offset + range.length,
+    edge: 'focus',
+  })
+
+  // HACK:
+  // There is a bug in Slate that causes unexpected behavior when creating a
+  // selection by doing `Transforms.move` on the anchor and focus. If the
+  // selection falls on a range that already has a mark, the focus gets the
+  // correct path (pointing within the mark leaf) but the anchor gets the parent
+  // path. The fix for this is to overshoot the anchor by 1 (we do that above)
+  // and correct the offset with an additional move, below.
+  Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
+
+  toggleMark(editor, range.mark)
+
+  return editor
 }
 
 export const statePointToSlatePoint = (children, point) => {
@@ -63,6 +48,7 @@ export const statePointToSlatePoint = (children, point) => {
     edge: 'focus',
     unit: 'character',
   })
+
   const { path, offset } = _editor.selection.focus
   const _path = [...path]
   _path[0] = index
@@ -81,6 +67,7 @@ export const stateToSlateMarkup = blockData => {
 
   // apply all ranges as marks
   moveToStart(_editor)
+
   blockData.ranges.forEach(range => applyRange(_editor, range))
 
   const { children } = _editor.children[0]

@@ -126,23 +126,27 @@ export default (state, action) =>
         break
       }
       case SET_CONTENT: {
+        // preventDefault if operation includes atomic
         if (
-          isAtomicInlineType(
-            state.blockCache[state.blocks[payload.index]._id].type
+          payload.operations.find(op =>
+            isAtomicInlineType(
+              state.blockCache[state.blocks[op.index]._id].type
+            )
           )
         ) {
           draft.preventDefault = true
           break
         }
 
-        // update node text
-        const _entity = entityForBlockIndex(draft, payload.index)
-        _entity.text = payload.text
-
-        // push update operation back to editor
-        draft.operations.push({
-          index: payload.index,
-          block: _entity,
+        payload.operations.forEach(op => {
+          // update node text
+          const _entity = entityForBlockIndex(draft, op.index)
+          _entity.text = op.text
+          // push update operation back to editor
+          draft.operations.push({
+            index: op.index,
+            block: _entity,
+          })
         })
         break
       }

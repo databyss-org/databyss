@@ -6,13 +6,16 @@ import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
   stateToSlate,
-  getRangesFromSlate,
+  slateRangesToStateRanges,
   slateSelectionToStateSelection,
   stateSelectionToSlateSelection,
   flattenNode,
   flattenOffset,
   stateBlockToSlateBlock,
+  toggleMark,
 } from '../lib/slateUtils'
+import { getSelectedIndicies } from '../lib/util'
+import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType } from '../state/util'
 
 const ContentEditable = () => {
@@ -36,6 +39,21 @@ const ContentEditable = () => {
   }
 
   const onKeyDown = event => {
+    if (Hotkeys.isBold(event)) {
+      toggleMark(editor, 'bold')
+      return
+    }
+
+    if (Hotkeys.isItalic(event)) {
+      toggleMark(editor, 'italic')
+      return
+    }
+
+    if (Hotkeys.isLocation(event)) {
+      toggleMark(editor, 'location')
+      return
+    }
+
     if (event.key === 'Enter') {
       if (getEntityAtIndex(editor.selection.focus.path[0]).isAtomic) {
         return
@@ -121,6 +139,7 @@ const ContentEditable = () => {
     if (!selection) {
       return
     }
+
     const focusIndex = selection.focus.index
 
     const payload = {
@@ -134,7 +153,7 @@ const ContentEditable = () => {
         index: focusIndex,
         text: {
           textValue: flattenNode(value[focusIndex]),
-          ranges: getRangesFromSlate(value[focusIndex]),
+          ranges: slateRangesToStateRanges(value[focusIndex]),
         },
         blockDelta: valueRef.current.length - value.length,
       })
@@ -147,15 +166,16 @@ const ContentEditable = () => {
         index: focusIndex - 1,
         text: {
           textValue: flattenNode(value[focusIndex]),
-          ranges: getRangesFromSlate(value[focusIndex]),
+          ranges: slateRangesToStateRanges(value[focusIndex]),
         },
         previous: {
           textValue: flattenNode(value[focusIndex - 1]),
-          ranges: getRangesFromSlate(value[focusIndex - 1]),
+          ranges: slateRangesToStateRanges(value[focusIndex - 1]),
         },
       })
       return
     }
+
     if (
       editor.operations.find(
         op =>
@@ -165,15 +185,45 @@ const ContentEditable = () => {
     ) {
       // update target node
       setContent({
-        ...payload,
-        index: focusIndex,
-        text: {
-          textValue: Node.string(value[focusIndex]),
-          ranges: getRangesFromSlate(value[focusIndex]),
-        },
+        selection,
+        operations: [
+          {
+            ...payload,
+            index: focusIndex,
+            text: {
+              textValue: Node.string(value[focusIndex]),
+              ranges: slateRangesToStateRanges(value[focusIndex]),
+            },
+          },
+        ],
       })
       return
     }
+
+    // set_node is called on format change transforms
+    if (editor.operations.find(op => op.type === 'set_node')) {
+      // get indexies of selected nodes
+      const _blocksChanged = getSelectedIndicies(selection)
+
+      const _operations = []
+      _blocksChanged.forEach(idx => {
+        // node should not be updated if a toggle mark occured
+        if (Node.string(value[idx])) {
+          // push operation to array
+          _operations.push({
+            ...payload,
+            index: idx,
+            text: {
+              textValue: Node.string(value[idx]),
+              ranges: slateRangesToStateRanges(value[idx]),
+            },
+          })
+          setContent({ selection, operations: _operations })
+        }
+      })
+      return
+    }
+
     // else just update selection
     setSelection(selection)
   }
@@ -205,7 +255,19 @@ const ContentEditable = () => {
   //   sync the Slate selection to the state selection
   if (state.operations.length) {
     nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
+
+    // HACK:
+    // There is a bug in Slate that causes unexpected behavior when creating a
+    // selection by doing `Transforms.move` on the anchor and focus. If the
+    // selection falls on a range that already has a mark, the focus gets the
+    // correct path (pointing within the mark leaf) but the anchor gets the parent
+    // path. The fix for this is to overshoot the anchor by 1
+    // and then correct the offset with an additional move.
+    Transforms.move(editor, { distance: 1, edge: 'anchor' })
+    Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
   }
+
+  Transforms.setSelection(editor, nextSelection)
 
   valueRef.current = nextValue
   selectionRef.current = nextSelection
@@ -219,7 +281,7 @@ const ContentEditable = () => {
     <Editor
       editor={editor}
       value={nextValue}
-      selection={nextSelection}
+      //  selection={nextSelection}
       onChange={onChange}
       onKeyDown={onKeyDown}
     />

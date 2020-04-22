@@ -26,6 +26,8 @@
     "escape-html": "^1.0.3",
     "immer": "^5.3.6",
     "is-hotkey": "^0.1.5",
+    "emotion-theming": "^10.0.10",
+    "@styled-system/css": "^5.0.23",
     "lodash": "^4.17.15",
     "lorem-ipsum": "^2.0.3",
     "slate": "^0.57.1",

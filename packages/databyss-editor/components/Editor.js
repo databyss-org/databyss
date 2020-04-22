@@ -3,6 +3,7 @@ import { createEditor } from 'slate'
 import { Slate, Editable, withReact } from 'slate-react'
 import Leaf from './Leaf'
 import Element from './Element'
+import FormatMenu from './FormatMenu'
 
 const Editor = ({ children, ...others }) => {
   const readOnly = !others.onChange
@@ -18,6 +19,7 @@ const Editor = ({ children, ...others }) => {
   return (
     <Slate editor={editor} {...slateProps}>
       {children}
+      <FormatMenu />
       <Editable
         renderElement={renderElement}
         renderLeaf={renderLeaf}

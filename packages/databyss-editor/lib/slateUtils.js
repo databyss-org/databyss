@@ -1,4 +1,5 @@
 import { Editor } from 'slate'
+import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
 export const flattenNode = node => {
@@ -64,6 +65,7 @@ export const entities = type =>
 
 export const stateBlockToSlateBlock = block => {
   // convert state and apply markup values
+
   const _childrenText = stateToSlateMarkup(block.text)
   const _data = {
     children: _childrenText,
@@ -71,6 +73,7 @@ export const stateBlockToSlateBlock = block => {
     isBlock: true,
     isActive: block.isActive,
   }
+
   return _data
 }
 
@@ -90,21 +93,61 @@ export const stateToSlate = initState => {
   return _state
 }
 
-export const getRangesFromSlate = node => {
+const allowedRanges = ['bold', 'italic', 'location']
+
+export const slateRangesToStateRanges = node => {
   let _offset = 0
   const _ranges = []
   if (!node) {
     return _ranges
   }
-  node.children.forEach(n => {
-    if (!n.text) {
+  node.children.forEach(child => {
+    if (!child.text) {
       return
     }
-    const _textLength = n.text.length
-    if (n.type) {
-      _ranges.push({ offset: _offset, length: _textLength, mark: n.type })
-    }
+    const _textLength = child.text.length
+
+    Object.keys(child).forEach(prop => {
+      if (allowedRanges.includes(prop)) {
+        _ranges.push({ offset: _offset, length: _textLength, mark: prop })
+      }
+    })
+
     _offset += _textLength
   })
+
   return _ranges
+}
+
+export const isFormatActive = (editor, format) => {
+  const [match] = Editor.nodes(editor, {
+    match: n => n[format] === true,
+    mode: 'all',
+  })
+  return !!match
+}
+
+/*
+checks selection for inline types
+*/
+export const isSelectionAtomic = editor => {
+  const _frag = Editor.fragment(editor, editor.selection)
+  return !_frag.reduce(
+    (acc, curr) => acc * !isAtomicInlineType(curr.type),
+    true
+  )
+}
+
+const isMarkActive = (editor, format) => {
+  const marks = Editor.marks(editor)
+  return marks ? marks[format] === true : false
+}
+
+export const toggleMark = (editor, format) => {
+  const isActive = isMarkActive(editor, format)
+  if (isActive) {
+    Editor.removeMark(editor, format)
+  } else {
+    Editor.addMark(editor, format, true)
+  }
 }

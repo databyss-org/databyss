@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 export const splice = (src, idx, rem, str) =>
   src.slice(0, idx) + str + src.slice(idx + Math.abs(rem))
 
@@ -21,3 +23,7 @@ export const getEntityAtIndex = (state, index) => {
     isEmpty: entity.text.textValue.length === 0,
   }
 }
+
+// returns an array of indicies covered by selection
+export const getSelectedIndicies = selection =>
+  _.range(selection.anchor.index, selection.focus.index + 1)
