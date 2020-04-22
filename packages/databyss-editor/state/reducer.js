@@ -126,24 +126,28 @@ export default (state, action) =>
         break
       }
       case SET_CONTENT: {
-        if (
-          isAtomicInlineType(
-            state.blockCache[state.blocks[payload.index]._id].type
-          )
-        ) {
-          draft.preventDefault = true
-          break
-        }
+        payload.operations.forEach(op => {
+          if (
+            isAtomicInlineType(
+              state.blockCache[state.blocks[op.index]._id].type
+            )
+          ) {
+            draft.preventDefault = true
+            return
+          }
 
-        // update node text
-        const _entity = entityForBlockIndex(draft, payload.index)
-        _entity.text = payload.text
-        // push update operation back to editor
-        draft.operations.push({
-          index: payload.index,
-          block: _entity,
+          // update node text
+          const _entity = entityForBlockIndex(draft, op.index)
+          _entity.text = op.text
+          // push update operation back to editor
+          draft.operations.push({
+            index: op.index,
+            block: _entity,
+          })
+          return
         })
         break
+        //    payload.transformArray
       }
       case REMOVE: {
         delete draft.entityCache[

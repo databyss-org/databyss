@@ -26,6 +26,11 @@ export type Transform = {
   blockDelta?: number
 }
 
+export type TransformArray = {
+  selection: Selection
+  operations: [Transform]
+}
+
 type ContextType = {
   state: any
   split: (transform: Transform) => void
@@ -84,10 +89,10 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
   /**
    * Set block content at `index` to `text`
    */
-  const setContent = (transform: Transform): void =>
+  const setContent = (transformArray: TransformArray): void =>
     dispatch({
       type: SET_CONTENT,
-      payload: transform,
+      payload: transformArray,
     })
 
   /**

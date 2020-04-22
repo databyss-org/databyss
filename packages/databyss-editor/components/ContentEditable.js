@@ -29,7 +29,6 @@ const ContentEditable = () => {
     clear,
     remove,
   } = useEditorContext()
-  console.log('ContentEditable.render', state.preventDefault)
 
   const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
@@ -140,6 +139,7 @@ const ContentEditable = () => {
     if (!selection) {
       return
     }
+
     const focusIndex = selection.focus.index
 
     const payload = {
@@ -185,37 +185,42 @@ const ContentEditable = () => {
     ) {
       // update target node
       setContent({
-        ...payload,
-        index: focusIndex,
-        text: {
-          textValue: Node.string(value[focusIndex]),
-          ranges: slateRangesToStateRanges(value[focusIndex]),
-        },
-      })
-      return
-    }
-
-    // set_node is called on format change transforms
-    if (editor.operations.find(op => op.type === 'set_node')) {
-      // get indexies of selected nodes
-      const _blocksChanged = getSelectedIndicies(selection)
-
-      _blocksChanged.forEach(idx => {
-        // node should not be updated if a toggle mark occured
-        if (Node.string(value[idx])) {
-          // update target node
-          setContent({
+        selection,
+        operations: [
+          {
             ...payload,
-            index: idx,
+            index: focusIndex,
             text: {
-              textValue: Node.string(value[idx]),
-              ranges: slateRangesToStateRanges(value[idx]),
+              textValue: Node.string(value[focusIndex]),
+              ranges: slateRangesToStateRanges(value[focusIndex]),
             },
-          })
-        }
+          },
+        ],
       })
       return
     }
+
+    // // set_node is called on format change transforms
+    // if (editor.operations.find(op => op.type === 'set_node')) {
+    //   // get indexies of selected nodes
+    //   const _blocksChanged = getSelectedIndicies(selection)
+
+    //   _blocksChanged.forEach(idx => {
+    //     // node should not be updated if a toggle mark occured
+    //     if (Node.string(value[idx])) {
+    //       // update target node
+    //       setContent({
+    //         ...payload,
+    //         index: idx,
+    //         text: {
+    //           textValue: Node.string(value[idx]),
+    //           ranges: slateRangesToStateRanges(value[idx]),
+    //         },
+    //       })
+    //     }
+    //   })
+    //   return
+    // }
 
     // else just update selection
     setSelection(selection)
