@@ -126,17 +126,19 @@ export default (state, action) =>
         break
       }
       case SET_CONTENT: {
-        payload.operations.forEach(op => {
-          if (
+        // prevent default is prevent if operation includes atomic
+        if (
+          payload.operations.find(op =>
             isAtomicInlineType(
               state.blockCache[state.blocks[op.index]._id].type
             )
-          ) {
-            console.log('GETS HERE')
-            draft.preventDefault = true
-            return
-          }
+          )
+        ) {
+          draft.preventDefault = true
+          break
+        }
 
+        payload.operations.forEach(op => {
           // update node text
           const _entity = entityForBlockIndex(draft, op.index)
           _entity.text = op.text
