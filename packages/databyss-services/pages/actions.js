@@ -8,6 +8,7 @@ import {
   FETCH_PAGE_HEADERS,
   DELETE_PAGE,
   ARCHIVE_PAGE,
+  SET_DEFAULT_PAGE,
 } from './constants'
 
 export function fetchPage(_id) {
@@ -97,5 +98,15 @@ export function onArchivePage(id, page) {
       payload: { id, page: _page },
     })
     services.savePage(_page)
+  }
+}
+
+export function onSetDefaultPage(id) {
+  services.setDefaultPage(id)
+
+  return dispatch => {
+    dispatch({
+      type: SET_DEFAULT_PAGE,
+    })
   }
 }

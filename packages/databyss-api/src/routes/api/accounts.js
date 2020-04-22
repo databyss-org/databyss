@@ -26,6 +26,31 @@ router.post('/', auth, async (req, res) => {
   }
 })
 
+// @route POST api/accounts/page/:id
+// @desc  set new default page
+router.post(
+  '/page/:id',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  async (req, res) => {
+    try {
+      const account = await Account.findOne({ _id: req.account.id })
+
+      account.defaultPage = req.params.id
+
+      await Account.findOneAndUpdate(
+        { _id: req.account.id },
+        { $set: account },
+        { new: true }
+      )
+
+      return res.status(200)
+    } catch (err) {
+      console.error(err.message)
+      return res.status(500).send('Server Error')
+    }
+  }
+)
+
 // @route GET api/accounts/
 // @desc  get account info
 router.get(

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useLocation, Router } from '@reach/router'
-import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import { PagesLoader, PageLoader } from '@databyss-org/ui/components/Loaders'
 import { View } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { ArchiveBin } from './ArchiveBin'
@@ -40,7 +40,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
         justifyContent="space-between"
       >
         <PageHeader pageId={id} isFocused={onHeaderClick} />
-        <ArchiveBin />
+        <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
       </View>
       <PageBody page={page} readOnly={readOnly} />
     </View>
