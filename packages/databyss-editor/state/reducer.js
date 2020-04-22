@@ -132,6 +132,7 @@ export default (state, action) =>
               state.blockCache[state.blocks[op.index]._id].type
             )
           ) {
+            console.log('GETS HERE')
             draft.preventDefault = true
             return
           }
@@ -147,7 +148,6 @@ export default (state, action) =>
           return
         })
         break
-        //    payload.transformArray
       }
       case REMOVE: {
         delete draft.entityCache[

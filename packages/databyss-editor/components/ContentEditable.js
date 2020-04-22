@@ -14,7 +14,7 @@ import {
   stateBlockToSlateBlock,
   toggleMark,
 } from '../lib/slateUtils'
-import { getSelectedIndicies } from '../lib/util'
+import { getSelectedIndicies, isAtomicInlineType } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType } from '../state/util'
 
@@ -200,27 +200,29 @@ const ContentEditable = () => {
       return
     }
 
-    // // set_node is called on format change transforms
-    // if (editor.operations.find(op => op.type === 'set_node')) {
-    //   // get indexies of selected nodes
-    //   const _blocksChanged = getSelectedIndicies(selection)
+    // set_node is called on format change transforms
+    if (editor.operations.find(op => op.type === 'set_node')) {
+      // get indexies of selected nodes
+      const _blocksChanged = getSelectedIndicies(selection)
 
-    //   _blocksChanged.forEach(idx => {
-    //     // node should not be updated if a toggle mark occured
-    //     if (Node.string(value[idx])) {
-    //       // update target node
-    //       setContent({
-    //         ...payload,
-    //         index: idx,
-    //         text: {
-    //           textValue: Node.string(value[idx]),
-    //           ranges: slateRangesToStateRanges(value[idx]),
-    //         },
-    //       })
-    //     }
-    //   })
-    //   return
-    // }
+      const _operations = []
+      _blocksChanged.forEach(idx => {
+        // node should not be updated if a toggle mark occured
+        if (Node.string(value[idx])) {
+          // push operation to array
+          _operations.push({
+            ...payload,
+            index: idx,
+            text: {
+              textValue: Node.string(value[idx]),
+              ranges: slateRangesToStateRanges(value[idx]),
+            },
+          })
+          setContent({ selection, operations: _operations })
+        }
+      })
+      return
+    }
 
     // else just update selection
     setSelection(selection)
