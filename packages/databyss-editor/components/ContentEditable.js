@@ -14,7 +14,7 @@ import {
   stateBlockToSlateBlock,
   toggleMark,
 } from '../lib/slateUtils'
-import { getSelectedIndicies, isAtomicInlineType } from '../lib/util'
+import { getSelectedIndicies } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType } from '../state/util'
 

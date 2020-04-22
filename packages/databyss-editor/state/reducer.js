@@ -147,7 +147,6 @@ export default (state, action) =>
             index: op.index,
             block: _entity,
           })
-          return
         })
         break
       }
