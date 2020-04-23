@@ -27,3 +27,16 @@ export const selectionHasRange = (selection: Selection): boolean =>
   selection &&
   (selection.anchor.index !== selection.focus.index ||
     selection.anchor.offset !== selection.focus.offset)
+
+// returns a list of indecies indicationg where ref values exsit
+export const getIndeciesForRefId = (state: any, refId: string) => {
+  const { blockCache, blocks } = state
+  const matches = []
+  Object.keys(blockCache).forEach(id => {
+    if (blockCache[id].entityId === refId) {
+      matches.push(blocks.findIndex(b => b._id === id))
+    }
+  })
+
+  return matches
+}

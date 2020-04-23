@@ -24,6 +24,7 @@ export type Transform = {
   previous?: Text
   // number of blocks added or removed
   blockDelta?: number
+  isRefEntity?: boolean
 }
 
 export type TransformArray = {

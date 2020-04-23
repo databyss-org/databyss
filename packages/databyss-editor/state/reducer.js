@@ -14,6 +14,7 @@ import {
   selectionHasRange,
   symbolToAtomicType,
   blockAtIndex,
+  getIndeciesForRefId,
 } from './util'
 
 export default (state, action) =>
@@ -128,10 +129,11 @@ export default (state, action) =>
       case SET_CONTENT: {
         // preventDefault if operation includes atomic
         if (
-          payload.operations.find(op =>
-            isAtomicInlineType(
-              state.blockCache[state.blocks[op.index]._id].type
-            )
+          payload.operations.find(
+            op =>
+              isAtomicInlineType(
+                state.blockCache[state.blocks[op.index]._id].type
+              ) && !op.isRefEntity
           )
         ) {
           draft.preventDefault = true
@@ -142,10 +144,19 @@ export default (state, action) =>
           // update node text
           const _entity = entityForBlockIndex(draft, op.index)
           _entity.text = op.text
-          // push update operation back to editor
-          draft.operations.push({
-            index: op.index,
-            block: _entity,
+          let index = []
+          if (op.isRefEntity) {
+            // find every ref entity at index
+            index = getIndeciesForRefId(state, _entity._id)
+          } else {
+            // update only given entinty
+            index = [op.index]
+          }
+          index.forEach(i => {
+            draft.operations.push({
+              index: i,
+              block: _entity,
+            })
           })
         })
         break

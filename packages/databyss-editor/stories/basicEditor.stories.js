@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { storiesOf } from '@storybook/react'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
@@ -8,15 +8,11 @@ import TopicProvider from '@databyss-org/services/topics/TopicProvider'
 import topicReducer, {
   initialState as topicInitialState,
 } from '@databyss-org/services/topics/reducer'
-import { View, Grid } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ContentEditable from '../components/ContentEditable'
-import { stateToSlate } from '../lib/slateUtils'
-// import Editor from '../components/Editor'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
-import noAtomicsFixture from './fixtures/no-atomics'
 import fetchMock from 'fetch-mock'
 
 const _source = {

@@ -4,8 +4,8 @@ import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { Node, Range } from 'slate'
 import { ReactEditor, useEditor } from 'slate-react'
-import { useEditorContext } from '../state/EditorProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useEditorContext } from '../state/EditorProvider'
 
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
@@ -33,20 +33,23 @@ const Element = ({ attributes, children, element }) => {
         const { showModal } = navigationContext
 
         const onUpdate = atomic => {
+          console.log(atomic)
+
           const selection = editorContext.state.selection
-          // setContent({
-          //   selection,
-          //   index,
-          //   text: {
-          //     textValue: 'updated value',
-          //     ranges: [],
-          //   },
-          // })
-          //   console.log(_state)
-          console.log('updated')
-          // setContent({})
-          // if (atomic) {
-          //   dispatchEditor(updateAtomic({ atomic, type }, { value }))
+          setContent({
+            selection,
+            operations: [
+              {
+                selection,
+                index,
+                isRefEntity: true,
+                text: {
+                  textValue: 'updated value',
+                  ranges: [],
+                },
+              },
+            ],
+          })
         }
 
         showModal({
