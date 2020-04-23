@@ -4,22 +4,60 @@ import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { Node, Range } from 'slate'
 import { ReactEditor, useEditor } from 'slate-react'
+import { useEditorContext } from '../state/EditorProvider'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
 import { slateSelectionToStateSelection } from '../lib/slateUtils'
-import { selectionHasRange } from '../state/util'
+import { selectionHasRange, entityForBlockIndex } from '../state/util'
 
 export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
 
 const Element = ({ attributes, children, element }) => {
   const editor = useEditor()
+  const editorContext = useEditorContext()
+
+  const navigationContext = useNavigationContext()
 
   const onAtomicMouseDown = e => {
     if (element.isActive) {
       e.preventDefault()
+      if (navigationContext) {
+        const index = editorContext.state.selection.anchor.index
+        const _entity = entityForBlockIndex(editorContext.state, index)
+        const refId = _entity._id
+        const type = _entity.type
+        const setContent = editorContext.setContent
+        const { showModal } = navigationContext
+
+        const onUpdate = atomic => {
+          const selection = editorContext.state.selection
+          // setContent({
+          //   selection,
+          //   index,
+          //   text: {
+          //     textValue: 'updated value',
+          //     ranges: [],
+          //   },
+          // })
+          //   console.log(_state)
+          console.log('updated')
+          // setContent({})
+          // if (atomic) {
+          //   dispatchEditor(updateAtomic({ atomic, type }, { value }))
+        }
+
+        showModal({
+          component: type,
+          props: {
+            onUpdate,
+            refId,
+          },
+        })
+      }
     }
-    console.log('LAUNCH MODAL')
   }
 
   const [showNewBlockMenu, setShowNewBlockMenu] = useState(false)
