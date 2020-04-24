@@ -37,8 +37,11 @@ const ContentEditable = () => {
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
-  const { setSource } = useSourceContext()
-  const { setTopic } = useTopicContext()
+  const sourceContext = useSourceContext()
+  const topicContext = useTopicContext()
+
+  // const { setSource } = useSourceContext()
+  // const { setTopic } = useTopicContext()
 
   if (!valueRef.current) {
     editor.children = stateToSlate(state)
@@ -47,7 +50,10 @@ const ContentEditable = () => {
   // if new atomic block has been added, save atomic
   useEffect(
     () => {
-      if (state.newEntities.length) {
+      if (state.newEntities.length && sourceContext && topicContext) {
+        const { setSource } = sourceContext
+        const { setTopic } = topicContext
+
         state.newEntities.forEach(entity => {
           const _data = {
             _id: entity._id,

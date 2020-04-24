@@ -5,8 +5,9 @@ import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { Node, Range, Transforms } from 'slate'
 import { ReactEditor, useEditor } from 'slate-react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { useEditorContext } from '../state/EditorProvider'
+import useEventListener from '@databyss-org/ui/lib/useEventListener'
 
+import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -120,6 +121,18 @@ const Element = ({ attributes, children, element }) => {
   const blockMenuWidth = editorMarginMenuItemHeight + 6
 
   const _selHasRange = selectionHasRange(slateSelectionToStateSelection(editor))
+
+  // open modal on atomic key press 'enter'
+  useEventListener('keydown', e => {
+    if (
+      e.key === 'Enter' &&
+      isAtomicInlineType(element.type) &&
+      element.isActive &&
+      ReactEditor.isFocused(editor)
+    ) {
+      onAtomicMouseDown(e)
+    }
+  })
 
   return (
     <View
