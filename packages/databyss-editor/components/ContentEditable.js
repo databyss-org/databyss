@@ -2,6 +2,8 @@ import React, { useMemo, useRef, useEffect } from 'react'
 import { createEditor, Node, Transforms, Point } from 'slate'
 import { withReact } from 'slate-react'
 import { produce } from 'immer'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -35,29 +37,34 @@ const ContentEditable = () => {
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
+  const { setSource } = useSourceContext()
+  const { setTopic } = useTopicContext()
+
   if (!valueRef.current) {
     editor.children = stateToSlate(state)
   }
 
+  // if new atomic block has been added, save atomic
   useEffect(
     () => {
       if (state.newEntities.length) {
         state.newEntities.forEach(entity => {
           const _data = {
             _id: entity._id,
-            text: { textValue: entity.textValue, ranges: entity.ranges },
+            text: {
+              textValue: entity.text.textValue,
+              ranges: entity.text.ranges,
+            },
           }
-          // ;({
-          //   SOURCE: () => {
-          //     setSource(_data)
-          //   },
-          //   TOPIC: () => {
-          //     setTopic(_data)
-          //   },
-          // }[atomic.type]())
-          console.log('remove entity from que')
+          ;({
+            SOURCE: () => {
+              setSource(_data)
+            },
+            TOPIC: () => {
+              setTopic(_data)
+            },
+          }[entity.type]())
           removeEntityFromQueue(entity._id)
-          // dispatchEditor(removeAtomicFromQueue(atomic._id))
         })
       }
     },
