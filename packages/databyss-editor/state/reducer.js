@@ -276,6 +276,8 @@ export default (state, action) =>
             index: state.selection.focus.index,
             block: _nextEntity,
           })
+
+          // push updates to new entity queueu
           const _newEntities = state.newEntities
           _newEntities.push(_nextEntity)
           draft.newEntities = _newEntities

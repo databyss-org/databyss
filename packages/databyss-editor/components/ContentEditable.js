@@ -273,9 +273,6 @@ const ContentEditable = () => {
         draft[op.index].children = _block.children
         draft[op.index].type = _block.type
         draft[op.index].isBlock = _block.isBlock
-        // prevent current block from being set to active
-
-        // remove this an put in reducer
         draft[op.index].isActive = _block.isActive
       })
     }

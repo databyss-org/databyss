@@ -22,25 +22,24 @@ const Element = ({ attributes, children, element }) => {
   const editor = useEditor()
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
-  const elementRef = useRef(null)
 
   const onAtomicMouseDown = e => {
     if (element.isActive) {
       e.preventDefault()
 
+      // dispatch modal if editor is in provider
       if (navigationContext) {
         const index = editorContext.state.selection.anchor.index
         const _entity = entityForBlockIndex(editorContext.state, index)
         const refId = _entity._id
         const type = _entity.type
+        let offset
+        let selection
         const { setContent, state } = editorContext
         const { showModal } = navigationContext
 
-        // compose modal dismiss callback
+        // compose modal dismiss callback function
         const onUpdate = atomic => {
-          let offset
-          let selection
-
           // if atomic is saved, update content
           if (atomic) {
             const _selection = state.selection
@@ -48,7 +47,6 @@ const Element = ({ attributes, children, element }) => {
               selection: _selection,
               operations: [
                 {
-                  //  selection,
                   index,
                   isRefEntity: true,
                   text: atomic.text,
@@ -61,6 +59,7 @@ const Element = ({ attributes, children, element }) => {
           } else {
             offset = Node.string(element).length
           }
+
           // on dismiss refocus editor at end of atomic
           window.requestAnimationFrame(() => {
             selection = {
@@ -76,6 +75,7 @@ const Element = ({ attributes, children, element }) => {
           })
         }
 
+        // dispatch modal
         showModal({
           component: type,
           props: {
@@ -123,7 +123,6 @@ const Element = ({ attributes, children, element }) => {
 
   return (
     <View
-      ref={elementRef}
       ml={element.isBlock ? blockMenuWidth : 0}
       pt="small"
       pb="small"
