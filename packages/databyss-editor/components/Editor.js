@@ -1,7 +1,6 @@
 import React, { useMemo, useCallback } from 'react'
 import { createEditor } from 'slate'
 import { Slate, Editable, withReact } from 'slate-react'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
@@ -15,9 +14,7 @@ const Editor = ({ children, ...others }) => {
   )
   const renderLeaf = useCallback(props => <Leaf {...props} />, [])
 
-  const { onKeyDown, onFocus, ...slateProps } = others
-  const { modals } = useNavigationContext()
-  console.log('IS READ ONLY', modals.length > 0)
+  const { onKeyDown, ...slateProps } = others
 
   return (
     <Slate editor={editor} {...slateProps}>
@@ -26,9 +23,8 @@ const Editor = ({ children, ...others }) => {
       <Editable
         renderElement={renderElement}
         renderLeaf={renderLeaf}
-        readOnly={readOnly || modals.length > 0}
+        readOnly={readOnly}
         onKeyDown={onKeyDown}
-        onFocus={onFocus}
       />
     </Slate>
   )

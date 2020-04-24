@@ -27,47 +27,6 @@ const Element = ({ attributes, children, element }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
   const elementRef = useRef(null)
-  const [focusPending, setFocusPending] = useState(false)
-
-  useEffect(
-    () => () => {
-      setTimeout(() => {
-        //   if (focusPending) {
-        //     const index = editorContext.state.selection.anchor.index
-        //     const offset = Node.string(editor.children[index]).length
-        //     const _sel = {
-        //       anchor: { index, offset },
-        //       focus: { index, offset },
-        //     }
-        //     const _slateSelection = stateSelectionToSlateSelection(
-        //       editor.children,
-        //       _sel
-        //     )
-        //     Transforms.setSelection(editor, _slateSelection)
-        //   }
-      }, 200)
-    },
-    [focusPending]
-  )
-
-  // console.log(focusPending)
-
-  // useEffect(
-  //   () => {
-  //     console.log('HOOK', focusPending)
-  //     if (focusPending) {
-  //       const _text = Node.string(element)
-  //       const _currentPath = ReactEditor.findPath(editor, element)
-  //       console.log(_text)
-  //       console.log(_currentPath[0])
-  //     }
-
-  //     // const entity = getEntityAtIndex(editorContext.state, _currentPath[0])
-  //     //    console.log(entity)
-  //     //  console.log(element)
-  //   },
-  //   [element]
-  // )
 
   const onAtomicMouseDown = e => {
     if (element.isActive) {
@@ -78,16 +37,19 @@ const Element = ({ attributes, children, element }) => {
         const _entity = entityForBlockIndex(editorContext.state, index)
         const refId = _entity._id
         const type = _entity.type
-        const { setContent, setSelection, state } = editorContext
+        const { setContent, state } = editorContext
         const { showModal } = navigationContext
-        setFocusPending(true)
 
+        // compose modal dismiss callback
         const onUpdate = atomic => {
+          let offset
+          let selection
+
+          // if atomic is saved, update content
           if (atomic) {
-            const selection = state.selection
+            const _selection = state.selection
             setContent({
-              selection,
-              //  restoreSelection: true,
+              selection: _selection,
               operations: [
                 {
                   //  selection,
@@ -98,73 +60,26 @@ const Element = ({ attributes, children, element }) => {
               ],
             })
 
-            setTimeout(() => {
-              //  console.log('before', editor.selection)
-              //  ReactEditor.focus(editor)
-
-              //  console.log('after', editor.selection)
-
-              const _offset = atomic.text.textValue.length
-
-              const _sel = {
-                anchor: { index, offset: _offset },
-                focus: { index, offset: _offset },
-              }
-
-              const _slateSelection = stateSelectionToSlateSelection(
-                editor.children,
-                _sel
-              )
-              Transforms.select(editor, _slateSelection)
-              ReactEditor.focus(editor)
-            }, 10)
-
-            // setTimeout(() => {
-            //   console.log(elementRef.current)
-            //   const _currentPath = ReactEditor.findPath(editor, element)
-
-            //   console.log(_currentPath)
-            //   const _node = Node.get(editor, _currentPath)
-            //   //  console.log(Node.get(editor, _currentPath))
-            //   console.log(_node)
-            //   console.log(ReactEditor.toDOMNode(editor, element))
-            // }, 500)
-            // console.log(ReactEditor.isFocused(editor))
-            //  ReactEditor.focus(editor)
-
-            // console.log(ReactEditor.toDOMNode(editor, element))
-
-            // setTimeout(() => {
-            //   console.log('in timeout')
-
-            //   const _offset = atomic.text.textValue.length
-
-            //   const _sel = {
-            //     anchor: { index, offset: _offset },
-            //     focus: { index, offset: _offset },
-            //   }
-
-            //   const _slateSelection = stateSelectionToSlateSelection(
-            //     editor.children,
-            //     _sel
-            //   )
-            //   Transforms.setSelection(editor, _slateSelection)
-            //   //  ReactEditor.focus(editor)
-            // }, 10000)
+            // set offset for selection
+            offset = atomic.text.textValue.length
           } else {
-            setFocusPending(false)
+            offset = Node.string(element).length
           }
+          // on dismiss refocus editor at end of atomic
+          window.requestAnimationFrame(() => {
+            selection = {
+              anchor: { index, offset },
+              focus: { index, offset },
+            }
+            const _slateSelection = stateSelectionToSlateSelection(
+              editor.children,
+              selection
+            )
+            Transforms.select(editor, _slateSelection)
+            ReactEditor.focus(editor)
+          })
         }
 
-        // const _currentPath = ReactEditor.findPath(editor, element)
-
-        // console.log(_currentPath)
-        // const _node = Node.get(editor, _currentPath)
-        // //  console.log(Node.get(editor, _currentPath))
-        // console.log(_node)
-        // console.log(ReactEditor.toDOMNode(editor, element))
-
-        // dispatch navigation modal
         showModal({
           component: type,
           props: {

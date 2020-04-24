@@ -7,6 +7,7 @@ import {
   REMOVE,
   CLEAR,
   SET_SELECTION,
+  DEQUEUE_NEW_ENTITY,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -23,7 +24,6 @@ export default (state, action) =>
     draft.preventDefault = false
 
     const { payload } = action
-    draft.restoreSelection = payload.restoreSelection || state.restoreSelection
 
     // default nextSelection to `payload.selection` (which may be undef)
     const nextSelection = payload.selection
@@ -34,6 +34,7 @@ export default (state, action) =>
           state.entityCache[
             state.blockCache[state.blocks[payload.index]._id].entityId
           ].text.textValue
+
         // don't allow SPLIT inside atomic
         if (
           isAtomicInlineType(
@@ -145,19 +146,15 @@ export default (state, action) =>
           // update node text
           const _entity = entityForBlockIndex(draft, op.index)
           _entity.text = op.text
-          let index = []
           if (op.isRefEntity) {
-            // find every ref entity at index
-            //index = getIndeciesForRefId(state, _entity._id)
             getIndeciesForRefId(state, _entity._id).forEach(i =>
               draft.operations.push({
                 index: i,
-                block: _entity,
-                preventActive: i === op.index ? false : true,
+                block: { ..._entity, isActive: false },
               })
             )
           } else {
-            // update only given entinty
+            // update only given entity
             draft.operations.push({
               index: op.index,
               block: _entity,
@@ -166,6 +163,13 @@ export default (state, action) =>
         })
         break
       }
+      case DEQUEUE_NEW_ENTITY: {
+        let _entityQueue = state.newEntities
+        _entityQueue = _entityQueue.filter(q => q._id !== payload.id)
+        draft.newEntities = _entityQueue
+        break
+      }
+
       case REMOVE: {
         delete draft.entityCache[
           state.blockCache[state.blocks[payload.index]._id].entityId
@@ -200,16 +204,6 @@ export default (state, action) =>
         break
       }
       case SET_SELECTION: {
-        if (draft.restoreSelection) {
-          console.log('DID BAIL')
-          //   draft.restoreSelection = false
-
-          //     draft.operations.push({
-          //       index: state.selection.focus.index,
-          // //      block: _entity,
-          //     })
-          break
-        }
         const { selection } = payload
         const _hasRange = selectionHasRange(selection)
         const _entity = entityForBlockIndex(draft, selection.focus.index)
@@ -252,17 +246,9 @@ export default (state, action) =>
     }
 
     // update the selection unless we're doing `preventDefault`
-    if (nextSelection && !draft.preventDefault && !draft.restoreSelection) {
-      console.log('SETTING IT HERE')
+    if (nextSelection && !draft.preventDefault) {
       draft.selection = nextSelection
-    } else if (state.restoreSelection) {
-      console.log('restoring selection')
-      draft.restoreSelection = false
     }
-
-    // if (draft.restoreSelection) {
-    //   draft.restoreSelection = false
-    // }
 
     if (draft.selection.focus.index !== state.selection.focus.index) {
       const _entity = entityForBlockIndex(draft, state.selection.focus.index)
@@ -290,6 +276,9 @@ export default (state, action) =>
             index: state.selection.focus.index,
             block: _nextEntity,
           })
+          const _newEntities = state.newEntities
+          _newEntities.push(_nextEntity)
+          draft.newEntities = _newEntities
         }
       }
     }
