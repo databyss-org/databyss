@@ -1,7 +1,8 @@
 import React, { useMemo, useRef } from 'react'
 import { createEditor, Node, Transforms, Point } from 'slate'
-import { withReact } from 'slate-react'
+import { ReactEditor, withReact } from 'slate-react'
 import { produce } from 'immer'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -135,7 +136,14 @@ const ContentEditable = () => {
   }
 
   const onChange = value => {
+    console.log('in on change', editor)
+
+    console.log('ON CHANGE OPERATIONS', editor.operations)
     const selection = slateSelectionToStateSelection(editor)
+
+    // console.log(value)
+    // console.log('IN HOOK SELECTION', editor.selection)
+    // console.log(ReactEditor.isFocused(editor))
     if (!selection) {
       return
     }
@@ -224,8 +232,9 @@ const ContentEditable = () => {
       return
     }
 
-    // else just update selection
-    setSelection(selection)
+    if (editor.operations.find(op => op.type === 'set_selection')) {
+      setSelection(selection)
+    }
   }
 
   // Use immer to produce the next `value`
@@ -240,7 +249,12 @@ const ContentEditable = () => {
         draft[op.index].children = _block.children
         draft[op.index].type = _block.type
         draft[op.index].isBlock = _block.isBlock
-        draft[op.index].isActive = _block.isActive
+        // prevent current block from being set to active
+
+        // remove this an put in reducer
+        if (!op.preventActive) {
+          draft[op.index].isActive = _block.isActive
+        }
       })
     }
   )
@@ -256,6 +270,7 @@ const ContentEditable = () => {
   if (state.operations.length) {
     nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
 
+    console.log('next selection', nextSelection)
     // HACK:
     // There is a bug in Slate that causes unexpected behavior when creating a
     // selection by doing `Transforms.move` on the anchor and focus. If the
@@ -263,11 +278,19 @@ const ContentEditable = () => {
     // correct path (pointing within the mark leaf) but the anchor gets the parent
     // path. The fix for this is to overshoot the anchor by 1
     // and then correct the offset with an additional move.
+
     Transforms.move(editor, { distance: 1, edge: 'anchor' })
     Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
   }
 
+  // if (nextSelection) {
+  // ReactEditor.focus(editor)
+  // }
+
+  // console.log(document.activeElement)
+  // console.log('BEFORE SET', editor.selection)
   Transforms.setSelection(editor, nextSelection)
+  // console.log('AFTER SET', editor.selection)
 
   valueRef.current = nextValue
   selectionRef.current = nextSelection
@@ -277,11 +300,27 @@ const ContentEditable = () => {
     editor.operations = []
   }
 
+  console.log(editor.operations)
+
   return (
     <Editor
       editor={editor}
       value={nextValue}
-      //  selection={nextSelection}
+      onFocus={() => {
+        console.log('in on focus', nextSelection)
+        console.log('editor focus', editor.selection)
+        Transforms.select(editor, nextSelection)
+        // Transforms.setSelection(editor, nextSelection)
+        console.log('editor focus', editor.selection)
+
+        // setTimeout(() => {
+
+        //   Transforms.setSelection(editor, nextSelection)
+        // }, 50)
+        // console.log('in on focus', nextSelection)
+        // console.log('focus')
+      }}
+      // selection={nextSelection}
       onChange={onChange}
       onKeyDown={onKeyDown}
     />

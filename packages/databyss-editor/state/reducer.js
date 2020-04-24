@@ -23,6 +23,7 @@ export default (state, action) =>
     draft.preventDefault = false
 
     const { payload } = action
+    draft.restoreSelection = payload.restoreSelection || state.restoreSelection
 
     // default nextSelection to `payload.selection` (which may be undef)
     const nextSelection = payload.selection
@@ -147,17 +148,21 @@ export default (state, action) =>
           let index = []
           if (op.isRefEntity) {
             // find every ref entity at index
-            index = getIndeciesForRefId(state, _entity._id)
+            //index = getIndeciesForRefId(state, _entity._id)
+            getIndeciesForRefId(state, _entity._id).forEach(i =>
+              draft.operations.push({
+                index: i,
+                block: _entity,
+                preventActive: i === op.index ? false : true,
+              })
+            )
           } else {
             // update only given entinty
-            index = [op.index]
-          }
-          index.forEach(i => {
             draft.operations.push({
-              index: i,
+              index: op.index,
               block: _entity,
             })
-          })
+          }
         })
         break
       }
@@ -195,6 +200,16 @@ export default (state, action) =>
         break
       }
       case SET_SELECTION: {
+        if (draft.restoreSelection) {
+          console.log('DID BAIL')
+          //   draft.restoreSelection = false
+
+          //     draft.operations.push({
+          //       index: state.selection.focus.index,
+          // //      block: _entity,
+          //     })
+          break
+        }
         const { selection } = payload
         const _hasRange = selectionHasRange(selection)
         const _entity = entityForBlockIndex(draft, selection.focus.index)
@@ -237,9 +252,17 @@ export default (state, action) =>
     }
 
     // update the selection unless we're doing `preventDefault`
-    if (nextSelection && !draft.preventDefault) {
+    if (nextSelection && !draft.preventDefault && !draft.restoreSelection) {
+      console.log('SETTING IT HERE')
       draft.selection = nextSelection
+    } else if (state.restoreSelection) {
+      console.log('restoring selection')
+      draft.restoreSelection = false
     }
+
+    // if (draft.restoreSelection) {
+    //   draft.restoreSelection = false
+    // }
 
     if (draft.selection.focus.index !== state.selection.focus.index) {
       const _entity = entityForBlockIndex(draft, state.selection.focus.index)
