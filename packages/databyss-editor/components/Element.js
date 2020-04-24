@@ -13,11 +13,7 @@ import {
   slateSelectionToStateSelection,
   stateSelectionToSlateSelection,
 } from '../lib/slateUtils'
-import {
-  selectionHasRange,
-  entityForBlockIndex,
-  getEntityAtIndex,
-} from '../state/util'
+import { selectionHasRange, entityForBlockIndex } from '../state/util'
 
 export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
@@ -124,8 +120,6 @@ const Element = ({ attributes, children, element }) => {
   const blockMenuWidth = editorMarginMenuItemHeight + 6
 
   const _selHasRange = selectionHasRange(slateSelectionToStateSelection(editor))
-
-  // console.log(element)
 
   return (
     <View

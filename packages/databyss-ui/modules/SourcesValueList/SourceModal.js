@@ -32,7 +32,7 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
     }
   }
 
-  const onDismiss = e => {
+  const onDismiss = () => {
     if (values) {
       // updates in source provider
       setSource(values)

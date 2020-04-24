@@ -1,5 +1,6 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
+import fetchMock from 'fetch-mock'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
@@ -13,7 +14,6 @@ import NavigationProvider from '@databyss-org/ui/components/Navigation/Navigatio
 import ContentEditable from '../components/ContentEditable'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
-import fetchMock from 'fetch-mock'
 
 const _source = {
   _id: '5e3b2000fda293001813b1d6',
