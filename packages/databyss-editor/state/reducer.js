@@ -7,6 +7,7 @@ import {
   REMOVE,
   CLEAR,
   SET_SELECTION,
+  DEQUEUE_NEW_ENTITY,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -14,6 +15,7 @@ import {
   selectionHasRange,
   symbolToAtomicType,
   blockAtIndex,
+  getIndeciesForRefId,
 } from './util'
 
 export default (state, action) =>
@@ -32,6 +34,7 @@ export default (state, action) =>
           state.entityCache[
             state.blockCache[state.blocks[payload.index]._id].entityId
           ].text.textValue
+
         // don't allow SPLIT inside atomic
         if (
           isAtomicInlineType(
@@ -128,10 +131,11 @@ export default (state, action) =>
       case SET_CONTENT: {
         // preventDefault if operation includes atomic
         if (
-          payload.operations.find(op =>
-            isAtomicInlineType(
-              state.blockCache[state.blocks[op.index]._id].type
-            )
+          payload.operations.find(
+            op =>
+              isAtomicInlineType(
+                state.blockCache[state.blocks[op.index]._id].type
+              ) && !op.isRefEntity
           )
         ) {
           draft.preventDefault = true
@@ -142,14 +146,30 @@ export default (state, action) =>
           // update node text
           const _entity = entityForBlockIndex(draft, op.index)
           _entity.text = op.text
-          // push update operation back to editor
-          draft.operations.push({
-            index: op.index,
-            block: _entity,
-          })
+          if (op.isRefEntity) {
+            getIndeciesForRefId(state, _entity._id).forEach(i =>
+              draft.operations.push({
+                index: i,
+                block: { ..._entity, isActive: false },
+              })
+            )
+          } else {
+            // update only given entity
+            draft.operations.push({
+              index: op.index,
+              block: _entity,
+            })
+          }
         })
         break
       }
+      case DEQUEUE_NEW_ENTITY: {
+        let _entityQueue = state.newEntities
+        _entityQueue = _entityQueue.filter(q => q._id !== payload.id)
+        draft.newEntities = _entityQueue
+        break
+      }
+
       case REMOVE: {
         delete draft.entityCache[
           state.blockCache[state.blocks[payload.index]._id].entityId
@@ -159,10 +179,12 @@ export default (state, action) =>
         break
       }
       case CLEAR: {
-        // delete the current entity
-        delete draft.entityCache[
-          state.blockCache[state.blocks[payload.index]._id].entityId
-        ]
+        // unless it's an atomic type, delete the current entity
+        if (entityForBlockIndex(state, payload.index).type === 'ENTRY') {
+          delete draft.entityCache[
+            state.blockCache[state.blocks[payload.index]._id].entityId
+          ]
+        }
         // create a new entity
         const type = 'ENTRY'
         const entityId = ObjectId().toHexString()
@@ -256,6 +278,11 @@ export default (state, action) =>
             index: state.selection.focus.index,
             block: _nextEntity,
           })
+
+          // push updates to new entity queueu
+          const _newEntities = state.newEntities
+          _newEntities.push(_nextEntity)
+          draft.newEntities = _newEntities
         }
       }
     }

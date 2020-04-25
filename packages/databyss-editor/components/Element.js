@@ -2,24 +2,90 @@ import React, { useEffect, useState } from 'react'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
-import { Node, Range } from 'slate'
+import { Node, Range, Transforms } from 'slate'
 import { ReactEditor, useEditor } from 'slate-react'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import useEventListener from '@databyss-org/ui/lib/useEventListener'
+
+import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
-import { slateSelectionToStateSelection } from '../lib/slateUtils'
-import { selectionHasRange } from '../state/util'
+import {
+  slateSelectionToStateSelection,
+  stateSelectionToSlateSelection,
+} from '../lib/slateUtils'
+import { selectionHasRange, entityForBlockIndex } from '../state/util'
 
 export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
 
 const Element = ({ attributes, children, element }) => {
   const editor = useEditor()
+  const editorContext = useEditorContext()
+  const navigationContext = useNavigationContext()
 
   const onAtomicMouseDown = e => {
     if (element.isActive) {
       e.preventDefault()
+
+      // dispatch modal if editor is in provider
+      if (navigationContext) {
+        const index = editorContext.state.selection.anchor.index
+        const _entity = entityForBlockIndex(editorContext.state, index)
+        const refId = _entity._id
+        const type = _entity.type
+        let offset
+        let selection
+        const { setContent, state } = editorContext
+        const { showModal } = navigationContext
+
+        // compose modal dismiss callback function
+        const onUpdate = atomic => {
+          // if atomic is saved, update content
+          if (atomic) {
+            const _selection = state.selection
+            setContent({
+              selection: _selection,
+              operations: [
+                {
+                  index,
+                  isRefEntity: true,
+                  text: atomic.text,
+                },
+              ],
+            })
+
+            // set offset for selection
+            offset = atomic.text.textValue.length
+          } else {
+            offset = Node.string(element).length
+          }
+
+          // on dismiss refocus editor at end of atomic
+          window.requestAnimationFrame(() => {
+            selection = {
+              anchor: { index, offset },
+              focus: { index, offset },
+            }
+            const _slateSelection = stateSelectionToSlateSelection(
+              editor.children,
+              selection
+            )
+            Transforms.select(editor, _slateSelection)
+            ReactEditor.focus(editor)
+          })
+        }
+
+        // dispatch modal
+        showModal({
+          component: type,
+          props: {
+            onUpdate,
+            refId,
+          },
+        })
+      }
     }
-    console.log('LAUNCH MODAL')
   }
 
   const [showNewBlockMenu, setShowNewBlockMenu] = useState(false)
@@ -52,14 +118,21 @@ const Element = ({ attributes, children, element }) => {
     [editor.selection, element]
   )
 
-  const onPressEditAtomic = e => {
-    console.log('button')
-    e.stopPropagation()
-  }
-
   const blockMenuWidth = editorMarginMenuItemHeight + 6
 
   const _selHasRange = selectionHasRange(slateSelectionToStateSelection(editor))
+
+  // open modal on atomic key press 'enter'
+  useEventListener('keydown', e => {
+    if (
+      e.key === 'Enter' &&
+      isAtomicInlineType(element.type) &&
+      element.isActive &&
+      ReactEditor.isFocused(editor)
+    ) {
+      onAtomicMouseDown(e)
+    }
+  })
 
   return (
     <View
@@ -93,6 +166,7 @@ const Element = ({ attributes, children, element }) => {
           borderRadius="default"
           borderRadiusVariant="default"
           onMouseDown={onAtomicMouseDown}
+          data-test-atomic-edit="open"
           pl="tiny"
           pr="0"
           ml="tinyNegative"
@@ -107,12 +181,7 @@ const Element = ({ attributes, children, element }) => {
           </Text>
           {element.isActive && (
             <View display="inline">
-              <Button
-                variant="editSource"
-                data-test-atomic-edit="open"
-                onPress={onPressEditAtomic}
-                css={{ zIndex: 1000 }}
-              >
+              <Button variant="editSource" onPress={onAtomicMouseDown}>
                 <Icon sizeVariant="tiny" color="background.5">
                   <PenSVG />
                 </Icon>

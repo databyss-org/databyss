@@ -31,6 +31,7 @@
     "lodash": "^4.17.15",
     "lorem-ipsum": "^2.0.3",
     "slate": "^0.57.1",
-    "slate-react": "^0.57.1"
+    "slate-react": "^0.57.1",
+    "fetch-mock": "^8.0.1"
   }
 }

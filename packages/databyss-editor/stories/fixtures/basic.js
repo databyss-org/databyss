@@ -90,6 +90,10 @@ export default {
       type: 'ENTRY',
       entityId: '5e482019a22c0a42ee20a748',
     },
+    '5e48cdc1dbce857f65e46620': {
+      type: 'SOURCE',
+      entityId: '5e3b2000fda293001813b1d6',
+    },
   },
   blocks: [
     {
@@ -106,6 +110,9 @@ export default {
     },
     {
       _id: '5e36ff96b21e9400186c3126',
+    },
+    {
+      _id: '5e48cdc1dbce857f65e46620',
     },
   ],
 }

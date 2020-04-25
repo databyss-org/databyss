@@ -7,6 +7,7 @@ import {
   SET_CONTENT,
   REMOVE,
   CLEAR,
+  DEQUEUE_NEW_ENTITY,
 } from './constants'
 import { Text, Selection, Entity } from '../interfaces'
 import * as util from '../lib/util'
@@ -24,6 +25,7 @@ export type Transform = {
   previous?: Text
   // number of blocks added or removed
   blockDelta?: number
+  isRefEntity?: boolean
 }
 
 export type TransformArray = {
@@ -120,6 +122,12 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
       payload: { index },
     })
 
+  const removeEntityFromQueue = (id: number): void =>
+    dispatch({
+      type: DEQUEUE_NEW_ENTITY,
+      payload: { id },
+    })
+
   useEffect(
     () => {
       onChange(state)
@@ -138,6 +146,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
         getEntityAtIndex,
         remove,
         clear,
+        removeEntityFromQueue,
       }}
     >
       {children}

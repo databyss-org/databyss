@@ -1,7 +1,9 @@
-import React, { useMemo, useRef } from 'react'
+import React, { useMemo, useRef, useEffect } from 'react'
 import { createEditor, Node, Transforms, Point } from 'slate'
 import { withReact } from 'slate-react'
 import { produce } from 'immer'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -28,15 +30,52 @@ const ContentEditable = () => {
     getEntityAtIndex,
     clear,
     remove,
+    removeEntityFromQueue,
   } = useEditorContext()
 
   const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
+  const sourceContext = useSourceContext()
+  const topicContext = useTopicContext()
+
+  // const { setSource } = useSourceContext()
+  // const { setTopic } = useTopicContext()
+
   if (!valueRef.current) {
     editor.children = stateToSlate(state)
   }
+
+  // if new atomic block has been added, save atomic
+  useEffect(
+    () => {
+      if (state.newEntities.length && sourceContext && topicContext) {
+        const { setSource } = sourceContext
+        const { setTopic } = topicContext
+
+        state.newEntities.forEach(entity => {
+          const _data = {
+            _id: entity._id,
+            text: {
+              textValue: entity.text.textValue,
+              ranges: entity.text.ranges,
+            },
+          }
+          ;({
+            SOURCE: () => {
+              setSource(_data)
+            },
+            TOPIC: () => {
+              setTopic(_data)
+            },
+          }[entity.type]())
+          removeEntityFromQueue(entity._id)
+        })
+      }
+    },
+    [state.newEntities.length]
+  )
 
   const onKeyDown = event => {
     if (Hotkeys.isBold(event)) {
@@ -136,6 +175,7 @@ const ContentEditable = () => {
 
   const onChange = value => {
     const selection = slateSelectionToStateSelection(editor)
+
     if (!selection) {
       return
     }
@@ -224,7 +264,6 @@ const ContentEditable = () => {
       return
     }
 
-    // else just update selection
     setSelection(selection)
   }
 
@@ -273,7 +312,6 @@ const ContentEditable = () => {
   selectionRef.current = nextSelection
 
   if (state.preventDefault) {
-    console.log('preventDefault')
     editor.operations = []
   }
 
@@ -281,7 +319,6 @@ const ContentEditable = () => {
     <Editor
       editor={editor}
       value={nextValue}
-      //  selection={nextSelection}
       onChange={onChange}
       onKeyDown={onKeyDown}
     />
