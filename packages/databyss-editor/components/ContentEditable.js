@@ -302,7 +302,6 @@ const ContentEditable = () => {
     // correct path (pointing within the mark leaf) but the anchor gets the parent
     // path. The fix for this is to overshoot the anchor by 1
     // and then correct the offset with an additional move.
-
     Transforms.move(editor, { distance: 1, edge: 'anchor' })
     Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
   }
@@ -313,7 +312,6 @@ const ContentEditable = () => {
   selectionRef.current = nextSelection
 
   if (state.preventDefault) {
-    console.log('preventDefault')
     editor.operations = []
   }
 
@@ -321,7 +319,6 @@ const ContentEditable = () => {
     <Editor
       editor={editor}
       value={nextValue}
-      // selection={nextSelection}
       onChange={onChange}
       onKeyDown={onKeyDown}
     />

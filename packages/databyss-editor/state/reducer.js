@@ -179,10 +179,12 @@ export default (state, action) =>
         break
       }
       case CLEAR: {
-        // delete the current entity
-        delete draft.entityCache[
-          state.blockCache[state.blocks[payload.index]._id].entityId
-        ]
+        // unless it's an atomic type, delete the current entity
+        if (entityForBlockIndex(state, payload.index).type === 'ENTRY') {
+          delete draft.entityCache[
+            state.blockCache[state.blocks[payload.index]._id].entityId
+          ]
+        }
         // create a new entity
         const type = 'ENTRY'
         const entityId = ObjectId().toHexString()

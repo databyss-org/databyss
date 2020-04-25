@@ -181,7 +181,7 @@ const Element = ({ attributes, children, element }) => {
           </Text>
           {element.isActive && (
             <View display="inline">
-              <Button variant="editSource" css={{ zIndex: 1000 }}>
+              <Button variant="editSource" onPress={onAtomicMouseDown}>
                 <Icon sizeVariant="tiny" color="background.5">
                   <PenSVG />
                 </Icon>

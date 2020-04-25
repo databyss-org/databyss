@@ -2,15 +2,26 @@ import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Grid } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
+import fetchMock from 'fetch-mock'
+import SourceProvider from '@databyss-org/services/sources/SourceProvider'
+import sourceReducer, {
+  initialState as sourceInitialState,
+} from '@databyss-org/services/sources/reducer'
+import TopicProvider from '@databyss-org/services/topics/TopicProvider'
+import topicReducer, {
+  initialState as topicInitialState,
+} from '@databyss-org/services/topics/reducer'
+import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ContentEditable from '../components/ContentEditable'
 import { stateToSlate } from '../lib/slateUtils'
 import Editor from '../components/Editor'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
+import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import noAtomicsFixture from './fixtures/no-atomics'
 
-const Standalone = ({ initialState }) => (
-  <EditorProvider initialState={initialState}>
+const EditorWithProvider = props => (
+  <EditorProvider {...props}>
     <ContentEditable />
   </EditorProvider>
 )
@@ -20,12 +31,10 @@ const SideBySide = ({ initialState }) => {
   return (
     <Grid>
       <View width="40%">
-        <EditorProvider
+        <EditorWithProvider
           initialState={initialState}
           onChange={s => setEditorState(stateToSlate(s))}
-        >
-          <ContentEditable />
-        </EditorProvider>
+        />
       </View>
       <View width="40%">
         <Editor value={editorState} />
@@ -34,10 +43,54 @@ const SideBySide = ({ initialState }) => {
   )
 }
 
+const EditorWithModals = ({ initialState }) => (
+  <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
+    <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+      <NavigationProvider>
+        <EditorWithProvider initialState={initialState} />
+      </NavigationProvider>
+    </SourceProvider>
+  </TopicProvider>
+)
+
 storiesOf('Components|Editor', module)
   .addDecorator(ViewportDecorator)
   .add('Basic', () => <SideBySide initialState={basicFixture} />)
-  .add('Basic (standalone)', () => <Standalone initialState={basicFixture} />)
-  .add('No Atomics (standalone)', () => (
-    <Standalone initialState={noAtomicsFixture} />
+  .add('Basic (standalone)', () => (
+    <EditorWithProvider initialState={basicFixture} />
   ))
+  .add('No Atomics (standalone)', () => (
+    <EditorWithProvider initialState={noAtomicsFixture} />
+  ))
+  .add('With Ref Modals', () => {
+    let data = {}
+    fetchMock
+      .restore()
+      .post(url => {
+        if (url === 'http://localhost:5000/api/sources') {
+          //  data = JSON.parse(opt.body).data
+          return true
+        }
+        return null
+      }, 200)
+      .get(url => {
+        if (url.includes('http://localhost:5000/api/sources')) {
+          return true
+        }
+        return null
+      }, sourceFixture)
+      .get(url => {
+        if (url.includes('http://localhost:5000/api/topics')) {
+          return true
+        }
+        return null
+      }, topicFixture)
+      .post((url, opt) => {
+        if (url === 'http://localhost:5000/api/topics') {
+          data = JSON.parse(opt.body).data
+          return true
+        }
+        return null
+      }, data)
+    return <EditorWithModals initialState={basicFixture} />
+  })
