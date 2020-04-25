@@ -63,34 +63,25 @@ storiesOf('Components|Editor', module)
     <EditorWithProvider initialState={noAtomicsFixture} />
   ))
   .add('With Ref Modals', () => {
-    let data = {}
     fetchMock
       .restore()
       .post(url => {
-        if (url === 'http://localhost:5000/api/sources') {
-          //  data = JSON.parse(opt.body).data
+        if (url.includes('/api/sources') || url.includes('/api/topics')) {
           return true
         }
         return null
       }, 200)
       .get(url => {
-        if (url.includes('http://localhost:5000/api/sources')) {
+        if (url.includes('/api/sources')) {
           return true
         }
         return null
       }, sourceFixture)
       .get(url => {
-        if (url.includes('http://localhost:5000/api/topics')) {
+        if (url.includes('/api/topics')) {
           return true
         }
         return null
       }, topicFixture)
-      .post((url, opt) => {
-        if (url === 'http://localhost:5000/api/topics') {
-          data = JSON.parse(opt.body).data
-          return true
-        }
-        return null
-      }, data)
     return <EditorWithModals initialState={basicFixture} />
   })
