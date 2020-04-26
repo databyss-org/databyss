@@ -109,6 +109,7 @@ const Login = ({ pending, signupFlow }) => {
           <GoogleLogin
             clientId="282602380521-soik6nealmn1vgu50ohc37vmors61b6h.apps.googleusercontent.com"
             buttonText="Login"
+            uxMode="redirect"
             render={({ onClick }) => (
               <Button
                 variant="primaryUi"
@@ -122,6 +123,7 @@ const Login = ({ pending, signupFlow }) => {
             onSuccess={onGoogleResponse}
             onFailure={onGoogleResponse}
             cookiePolicy="single_host_origin"
+            isSignedIn
           />
           {isEmailFlow ? (
             <FormFieldList mt="none">
