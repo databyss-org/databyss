@@ -120,7 +120,6 @@ export function fetchSourceQuery(query) {
       },
     })
     sources.searchSource(query).then(results => {
-      console.log(results)
       dispatch({
         type: CACHE_SEARCH_QUERY,
         payload: {
