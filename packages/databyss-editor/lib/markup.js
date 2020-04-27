@@ -25,10 +25,11 @@ export const applyRange = (editor, range) => {
   Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
 
   // apply marks array
-  range.marks &&
+  if (range.marks) {
     range.marks.forEach(mark => {
       toggleMark(editor, mark)
     })
+  }
 
   return editor
 }

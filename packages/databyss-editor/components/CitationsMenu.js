@@ -1,9 +1,8 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import styledCss from '@styled-system/css'
 import _ from 'lodash'
 import { useEditor, ReactEditor } from 'slate-react'
-import { Transforms } from 'slate'
-import { Node } from 'slate'
+import { Node, Transforms } from 'slate'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { SearchSourceLoader } from '@databyss-org/ui/components/Loaders'
@@ -150,12 +149,9 @@ const ComposeResults = ({ results, onClick, unmount }) => {
   )
 }
 
-export const Citations = ({ setBlockType, changeContent }) => {
-  // const { setSource } = useSourceContext()
-
+export const Citations = () => {
   const sourceContext = useSourceContext()
 
-  const menuRef = useRef(null)
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [menuActive, setMenuActive] = useState(false)
   // todo set this back to false
@@ -168,11 +164,6 @@ export const Citations = ({ setBlockType, changeContent }) => {
 
   useEffect(
     () => {
-      //   // SET REF FOR EDITOR
-      //   if (!editorEl.current) {
-      //     editorEl.current = ReactEditor.toDOMNode(editor, editor)
-      //   }
-
       if (editorContext && ReactEditor.isFocused(editor)) {
         // get current input value
         const _index = editorContext.state.selection.anchor.index
@@ -180,9 +171,9 @@ export const Citations = ({ setBlockType, changeContent }) => {
         const _text = Node.string(_node)
         if (_text.charAt(0) === '@') {
           setSourceQuery(_text.substring(1))
-          !menuActive && setMenuActive(true)
-        } else {
-          menuActive && setMenuActive(false)
+          if (!menuActive) setMenuActive(true)
+        } else if (menuActive) {
+          setMenuActive(false)
         }
       } else if (menuActive) {
         setMenuActive(false)
@@ -231,7 +222,7 @@ export const Citations = ({ setBlockType, changeContent }) => {
     const { setContent } = editorContext
     const { setSource } = sourceContext
 
-    let selection = {
+    const selection = {
       anchor: { index, offset },
       focus: { index, offset },
     }
@@ -252,6 +243,7 @@ export const Citations = ({ setBlockType, changeContent }) => {
 
     ReactEditor.focus(editor)
     window.requestAnimationFrame(() => {
+      // set selection at end of new atomic block
       const _slateSelection = stateSelectionToSlateSelection(
         editor.children,
         selection
