@@ -151,10 +151,8 @@ export const Citations = () => {
 
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [menuActive, setMenuActive] = useState(false)
-  // todo set this back to false
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
   const [sourceQuery, setSourceQuery] = useState(null)
-  // const editorEl = useRef(null)
 
   const editor = useEditor()
   const editorContext = useEditorContext()
