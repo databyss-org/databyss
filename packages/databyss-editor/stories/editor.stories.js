@@ -3,6 +3,7 @@ import { storiesOf } from '@storybook/react'
 import { View, Grid } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import fetchMock from 'fetch-mock'
+import request from '@databyss-org/services/lib/request'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
@@ -19,6 +20,20 @@ import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import noAtomicsFixture from './fixtures/no-atomics'
+
+const _res = {
+  totalItems: 1,
+  items: [
+    {
+      volumeInfo: {
+        title: 'Jacques Derrida',
+        authors: ['Geoffrey Bennington', 'Jacques Derrida'],
+        publisher: 'University of Chicago Press',
+        publishedDate: '1999-06-15',
+      },
+    },
+  ],
+}
 
 const EditorWithProvider = props => (
   <EditorProvider {...props}>
@@ -83,5 +98,12 @@ storiesOf('Components|Editor', module)
         }
         return null
       }, topicFixture)
+      .get(url => {
+        if (url.includes('googleapis')) {
+          return true
+        }
+        return null
+      }, _res)
+
     return <EditorWithModals initialState={basicFixture} />
   })

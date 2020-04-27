@@ -254,6 +254,7 @@ export default (state, action) =>
 
     if (draft.selection.focus.index !== state.selection.focus.index) {
       const _entity = entityForBlockIndex(draft, state.selection.focus.index)
+
       // check if current text should be converted to atomic block
       if (
         _entity &&
@@ -261,6 +262,7 @@ export default (state, action) =>
         !_entity.text.textValue.match(`\n`)
       ) {
         const _atomicType = symbolToAtomicType(_entity.text.textValue.charAt(0))
+
         if (_atomicType) {
           // push atomic block change to entityCache and editor operations
           const _nextEntity = {
@@ -271,6 +273,7 @@ export default (state, action) =>
             type: _atomicType,
             _id: _entity._id,
           }
+
           const _block = blockAtIndex(draft, state.selection.focus.index)
           _block.type = _atomicType
           draft.entityCache[_entity._id] = _nextEntity
@@ -283,6 +286,13 @@ export default (state, action) =>
           const _newEntities = state.newEntities
           _newEntities.push(_nextEntity)
           draft.newEntities = _newEntities
+        }
+      }
+      // if next selection doesnt exist, replace selection with origin
+      if (!entityForBlockIndex(draft, draft.selection.focus.index)) {
+        draft.selection = {
+          anchor: { offset: 0, index: 0 },
+          focus: { offset: 0, index: 0 },
         }
       }
     }

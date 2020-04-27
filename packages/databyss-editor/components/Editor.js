@@ -4,6 +4,7 @@ import { Slate, Editable, withReact } from 'slate-react'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
+import CitationsMenu from './CitationsMenu'
 
 const Editor = ({ children, ...others }) => {
   const readOnly = !others.onChange
@@ -20,6 +21,7 @@ const Editor = ({ children, ...others }) => {
     <Slate editor={editor} {...slateProps}>
       {children}
       <FormatMenu />
+      <CitationsMenu />
       <Editable
         renderElement={renderElement}
         renderLeaf={renderLeaf}
