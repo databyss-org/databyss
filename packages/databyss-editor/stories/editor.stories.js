@@ -20,6 +20,20 @@ import basicFixture from './fixtures/basic'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import noAtomicsFixture from './fixtures/no-atomics'
 
+const _res = {
+  totalItems: 1,
+  items: [
+    {
+      volumeInfo: {
+        title: 'Jacques Derrida',
+        authors: ['Geoffrey Bennington', 'Jacques Derrida'],
+        publisher: 'University of Chicago Press',
+        publishedDate: '1999-06-15',
+      },
+    },
+  ],
+}
+
 const EditorWithProvider = props => (
   <EditorProvider {...props}>
     <ContentEditable />
@@ -83,5 +97,12 @@ storiesOf('Components|Editor', module)
         }
         return null
       }, topicFixture)
+      .get(url => {
+        if (url.includes('googleapis')) {
+          return true
+        }
+        return null
+      }, _res)
+
     return <EditorWithModals initialState={basicFixture} />
   })

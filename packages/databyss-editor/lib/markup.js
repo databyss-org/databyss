@@ -8,7 +8,6 @@ const moveToStart = editor => {
 
 export const applyRange = (editor, range) => {
   moveToStart(editor)
-
   // move anchor and focus to highlight text to add mark
   Transforms.move(editor, { distance: range.offset + 1, edge: 'anchor' })
   Transforms.move(editor, {
@@ -25,7 +24,12 @@ export const applyRange = (editor, range) => {
   // and correct the offset with an additional move, below.
   Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
 
-  toggleMark(editor, range.mark)
+  // apply marks array
+  if (range.marks) {
+    range.marks.forEach(mark => {
+      toggleMark(editor, mark)
+    })
+  }
 
   return editor
 }
