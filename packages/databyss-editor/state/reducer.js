@@ -18,6 +18,42 @@ import {
   getIndeciesForRefId,
 } from './util'
 
+export const bakeAtomicBlock = ({ state, draft, index }) => {
+  const _entity = entityForBlockIndex(draft, index)
+
+  // check if current text should be converted to atomic block
+  if (
+    _entity &&
+    !isAtomicInlineType(_entity.type) &&
+    !_entity.text.textValue.match(`\n`)
+  ) {
+    const _atomicType = symbolToAtomicType(_entity.text.textValue.charAt(0))
+
+    if (_atomicType) {
+      // push atomic block change to entityCache and editor operations
+      const _nextEntity = {
+        text: {
+          textValue: _entity.text.textValue.substring(1).trim(),
+          ranges: _entity.text.ranges,
+        },
+        type: _atomicType,
+        _id: _entity._id,
+      }
+
+      const _block = blockAtIndex(draft, state.selection.focus.index)
+      _block.type = _atomicType
+      draft.entityCache[_entity._id] = _nextEntity
+      draft.operations.push({
+        index: state.selection.focus.index,
+        block: _nextEntity,
+      })
+
+      return _nextEntity
+    }
+    return null
+  }
+}
+
 export default (state, action) =>
   produce(state, draft => {
     draft.operations = []
@@ -146,6 +182,7 @@ export default (state, action) =>
           // update node text
           const _entity = entityForBlockIndex(draft, op.index)
           _entity.text = op.text
+
           if (op.isRefEntity) {
             getIndeciesForRefId(state, _entity._id).forEach(i =>
               draft.operations.push({
@@ -153,6 +190,8 @@ export default (state, action) =>
                 block: { ..._entity, isActive: false },
               })
             )
+          } else if (op.withBakeAtomic) {
+            bakeAtomicBlock({ state, draft, index: op.index })
           } else {
             // update only given entity
             draft.operations.push({
@@ -253,47 +292,26 @@ export default (state, action) =>
     }
 
     if (draft.selection.focus.index !== state.selection.focus.index) {
-      const _entity = entityForBlockIndex(draft, state.selection.focus.index)
-
-      // check if current text should be converted to atomic block
-      if (
-        _entity &&
-        !isAtomicInlineType(_entity.type) &&
-        !_entity.text.textValue.match(`\n`)
-      ) {
-        const _atomicType = symbolToAtomicType(_entity.text.textValue.charAt(0))
-
-        if (_atomicType) {
-          // push atomic block change to entityCache and editor operations
-          const _nextEntity = {
-            text: {
-              textValue: _entity.text.textValue.substring(1).trim(),
-              ranges: _entity.text.ranges,
-            },
-            type: _atomicType,
-            _id: _entity._id,
-          }
-
-          const _block = blockAtIndex(draft, state.selection.focus.index)
-          _block.type = _atomicType
-          draft.entityCache[_entity._id] = _nextEntity
-          draft.operations.push({
-            index: state.selection.focus.index,
-            block: _nextEntity,
-          })
-
-          // push updates to new entity queueu
-          const _newEntities = state.newEntities
-          _newEntities.push(_nextEntity)
-          draft.newEntities = _newEntities
-        }
+      // push updates to new entity queue
+      const _bakedEntity = bakeAtomicBlock({
+        state,
+        draft,
+        index: state.selection.focus.index,
+      })
+      if (_bakedEntity) {
+        draft.newEntities.push(_bakedEntity)
       }
-      // if next selection doesnt exist, replace selection with origin
-      if (!entityForBlockIndex(draft, draft.selection.focus.index)) {
-        draft.selection = {
-          anchor: { offset: 0, index: 0 },
-          focus: { offset: 0, index: 0 },
-        }
+    }
+
+    // VALIDATE SELECTION
+    // if next selection doesnt exist, replace selection with origin
+    if (
+      !entityForBlockIndex(draft, draft.selection.focus.index) ||
+      !entityForBlockIndex(draft, draft.selection.anchor.index)
+    ) {
+      draft.selection = {
+        anchor: { offset: 0, index: 0 },
+        focus: { offset: 0, index: 0 },
       }
     }
 

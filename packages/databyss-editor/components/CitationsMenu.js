@@ -222,14 +222,12 @@ export const Citations = () => {
 
     setContent({
       // force reducer block blur to set atomic
-      selection: {
-        anchor: { index: index + 1, offset },
-        focus: { index: index + 1, offset },
-      },
+      selection,
       operations: [
         {
           index,
           text,
+          withBakeAtomic: true,
         },
       ],
     })
