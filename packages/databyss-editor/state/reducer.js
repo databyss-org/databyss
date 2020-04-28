@@ -50,8 +50,8 @@ export const bakeAtomicBlock = ({ state, draft, index }) => {
 
       return _nextEntity
     }
-    return null
   }
+  return null
 }
 
 export default (state, action) =>
