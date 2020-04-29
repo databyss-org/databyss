@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Grid, Text } from '@databyss-org/ui/primitives'
+import { View, Grid, Text, Button } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import fetchMock from 'fetch-mock'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
@@ -23,6 +23,7 @@ import { initialState as pageInitialState } from '@databyss-org/services/pages/r
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import ContentEditable from '../components/ContentEditable'
 import { stateToSlate } from '../lib/slateUtils'
+import { withMetaData } from '../lib/util'
 import Editor from '../components/Editor'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
@@ -39,7 +40,6 @@ const EditorWithProvider = props => {
   const { account } = getSession()
   const { setPage } = usePageContext()
 
-  console.log(account.defaultPage)
   return (
     <PageLoader pageId={account.defaultPage}>
       {page => {
@@ -48,11 +48,16 @@ const EditorWithProvider = props => {
           setPage(connectedFixture(account.defaultPage))
           return null
         }
-        console.log(props)
+
         return (
-          <EditorProvider {...props}>
-            <ContentEditable />
-          </EditorProvider>
+          <View>
+            <Button onClick={() => setPage(page)}>
+              <Text>Save Page</Text>
+            </Button>
+            <EditorProvider initialState={withMetaData(page)}>
+              <ContentEditable />
+            </EditorProvider>
+          </View>
         )
       }}
     </PageLoader>

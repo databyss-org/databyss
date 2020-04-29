@@ -62,6 +62,7 @@ export const statePointToSlatePoint = (children, point) => {
 }
 
 export const stateToSlateMarkup = blockData => {
+  console.log(blockData)
   // create temp editor and insert the text value
   const _editor = createEditor()
   const _text = {
