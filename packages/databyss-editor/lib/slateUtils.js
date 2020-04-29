@@ -144,8 +144,6 @@ const isMarkActive = (editor, format) => {
 }
 
 export const toggleMark = (editor, format) => {
-  // console.log(Editor.fragment(editor, editor.selection))
-
   const isActive = isMarkActive(editor, format)
   if (isActive) {
     Editor.removeMark(editor, format)

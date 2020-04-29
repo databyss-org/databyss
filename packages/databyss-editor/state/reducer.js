@@ -313,13 +313,6 @@ export default (state, action) =>
         anchor: { offset: 0, index: 0 },
         focus: { offset: 0, index: 0 },
       }
-      // if next selection doesnt exist, replace selection with origin
-      if (!entityForBlockIndex(draft, draft.selection.focus.index)) {
-        draft.selection = {
-          anchor: { offset: 0, index: 0 },
-          focus: { offset: 0, index: 0 },
-        }
-      }
     }
 
     return draft
