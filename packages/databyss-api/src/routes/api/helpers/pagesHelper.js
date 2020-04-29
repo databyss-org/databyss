@@ -47,6 +47,7 @@ export const populateRefEntities = (list, type) =>
       }
       return {
         textValue: entity.text.textValue,
+        type,
         _id,
         ranges: entity.text.ranges,
       }
@@ -58,6 +59,16 @@ export const dictionaryFromList = list => {
   list.forEach(b => {
     if (b) {
       result[b._id] = b
+    }
+  })
+  return result
+}
+
+export const composeBlockList = list => {
+  const result = {}
+  list.forEach(b => {
+    if (b) {
+      result[b._id] = { type: b.type, entityId: b.refId }
     }
   })
   return result
