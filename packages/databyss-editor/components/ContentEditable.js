@@ -323,10 +323,6 @@ const ContentEditable = () => {
     editor.operations = []
   }
 
-  if (editor.selection) {
-    console.log(SlateEditor.fragment(editor, editor.selection))
-  }
-
   return (
     <Editor
       editor={editor}
