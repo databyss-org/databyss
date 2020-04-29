@@ -21,8 +21,6 @@ import { useEditorContext } from '../state/EditorProvider'
 import { getEntityAtIndex } from '../lib/util'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 
-// import { lineStateToSlate } from './../slate/markup'
-
 const MENU_HEIGHT = 200
 
 const _css = (position, active) => ({
@@ -55,7 +53,6 @@ const splitName = name => ({
 })
 
 export const getPosition = editor => {
-  console.log('GETTING POISITON')
   if (editor.selection) {
     const _activeNode = editor.children[editor.selection.anchor.path[0]]
     const _node = ReactEditor.toDOMNode(editor, _activeNode)
@@ -154,10 +151,8 @@ export const Citations = () => {
 
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [menuActive, setMenuActive] = useState(false)
-  // todo set this back to false
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
   const [sourceQuery, setSourceQuery] = useState(null)
-  // const editorEl = useRef(null)
 
   const editor = useEditor()
   const editorContext = useEditorContext()
@@ -214,8 +209,6 @@ export const Citations = () => {
     const index = editorContext.state.selection.anchor.index
     const entity = getEntityAtIndex(editorContext.state, index)
 
-    console.log(entity)
-
     const text = _title(vol)
     const offset = text.textValue.length
 
@@ -229,14 +222,12 @@ export const Citations = () => {
 
     setContent({
       // force reducer block blur to set atomic
-      selection: {
-        anchor: { index: index + 1, offset },
-        focus: { index: index + 1, offset },
-      },
+      selection,
       operations: [
         {
           index,
           text,
+          withBakeAtomic: true,
         },
       ],
     })

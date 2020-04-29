@@ -109,7 +109,7 @@ export const slateRangesToStateRanges = node => {
 
     Object.keys(child).forEach(prop => {
       if (allowedRanges.includes(prop)) {
-        _ranges.push({ offset: _offset, length: _textLength, mark: prop })
+        _ranges.push({ offset: _offset, length: _textLength, marks: [prop] })
       }
     })
 
@@ -144,6 +144,8 @@ const isMarkActive = (editor, format) => {
 }
 
 export const toggleMark = (editor, format) => {
+  // console.log(Editor.fragment(editor, editor.selection))
+
   const isActive = isMarkActive(editor, format)
   if (isActive) {
     Editor.removeMark(editor, format)
