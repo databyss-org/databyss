@@ -21,11 +21,6 @@ import { useEditorContext } from '../state/EditorProvider'
 import { getEntityAtIndex } from '../lib/util'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 
-<<<<<<< HEAD
-// import { lineStateToSlate } from './../slate/markup'
-
-=======
->>>>>>> 08b4462cb31143d2e0d7020cfcfa411ffca5c9a9
 const MENU_HEIGHT = 200
 
 const _css = (position, active) => ({
@@ -58,10 +53,6 @@ const splitName = name => ({
 })
 
 export const getPosition = editor => {
-<<<<<<< HEAD
-  console.log('GETTING POISITON')
-=======
->>>>>>> 08b4462cb31143d2e0d7020cfcfa411ffca5c9a9
   if (editor.selection) {
     const _activeNode = editor.children[editor.selection.anchor.path[0]]
     const _node = ReactEditor.toDOMNode(editor, _activeNode)
