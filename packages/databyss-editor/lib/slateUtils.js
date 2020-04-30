@@ -87,7 +87,6 @@ export const stateToSlate = initState => {
     // get block ref and id
     const _block = initState.blockCache[b._id]
     const _blockData = initState.entityCache[_block.entityId]
-
     return stateBlockToSlateBlock(_blockData)
   })
 

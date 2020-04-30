@@ -4,7 +4,7 @@ import { httpGet, httpPost, httpDelete } from '../lib/requestApi'
 
 export const getPage = _id => httpGet(`/pages/${_id}`)
 
-export const savePage = data => httpPost('/pages/', { data })
+export const savePage = data => httpPost('/pages', { data })
 
 export const loadPage = id => httpGet(`/pages/populate/${id}`)
 
