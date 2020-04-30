@@ -54,11 +54,11 @@ export default pageId => ({
     },
   },
   blockCache: {
-    blockOneId: {
+    [blockOneId]: {
       type: 'SOURCE',
       entityId: sourceId,
     },
-    blockTwoId: {
+    [blockTwoId]: {
       type: 'ENTRY',
       entityId: entryId,
     },

@@ -28,10 +28,8 @@ export const getEntityAtIndex = (state, index) => {
 export const getSelectedIndicies = selection =>
   _.range(selection.anchor.index, selection.focus.index + 1)
 
-export const withMetaData = state => {
-  return {
-    ...state,
-    newEntities: [],
-    operations: [],
-  }
-}
+export const withMetaData = state => ({
+  ...state,
+  newEntities: [],
+  operations: [],
+})

@@ -1,11 +1,7 @@
 import express from 'express'
 import _ from 'lodash'
 import Page from '../../models/Page'
-import Source from '../../models/Source'
-import Entry from '../../models/Entry'
 import Block from '../../models/Block'
-import Topic from '../../models/Topic'
-import Location from '../../models/Location'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import {
@@ -87,7 +83,7 @@ router.delete('/:id', auth, async (req, res) => {
 // @desc     Adds Page
 // @access   private
 router.post(
-  '/v2/',
+  '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageCreatorMiddleware],
   async (req, res) => {
     try {
@@ -96,15 +92,16 @@ router.post(
 
       const { name, _id, archive } = page
 
-      // SAVE ENTITIES in DB
+      // SAVE ENTITIES
       const _fields = ['ENTRY', 'SOURCE', 'TOPIC', 'LOCATION']
+
       await Promise.all(
         _fields.map(async entity => {
           // filter entityCache by type
           const _entities = _.pickBy(entityCache, v => v.type === entity)
           if (!_.isEmpty(_entities)) {
-            // save entity
-            return await Promise.all(
+            // save entities
+            return Promise.all(
               Object.values(_entities).map(async e => {
                 const _entityId = e._id
                 const text = e.text
@@ -134,6 +131,7 @@ router.post(
                   return _entity
                 }
                 // ADD NEW ENTITY
+                /* eslint new-cap: 1 */
                 _entity = new modelDict(entity)(entityFields)
                 await _entity.save()
 
@@ -152,6 +150,7 @@ router.post(
           ...blockCache[b],
           _id: b,
         }))
+
         await Promise.all(
           _blocks.map(async block => {
             const { _id, type, entityId } = block
@@ -196,7 +195,6 @@ router.post(
 
       // SAVE PAGE FIELDS
 
-      // if name is passed, save name
       const pageFields = {
         ...(name && { name }),
         ...(blocks && { blocks }),
@@ -225,7 +223,7 @@ router.post(
 // @desc     return populated state
 // @access   private
 router.get(
-  '/populate-x/:id',
+  '/populate/:id',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
   async (req, res) => {
     try {
@@ -238,16 +236,18 @@ router.get(
 
       const blockList = await getBlockItemsFromId(pageResponse.blocks)
 
-      const blocks = await Promise.all(
+      let blocks = []
+      await Promise.all(
         ['SOURCE', 'ENTRY', 'TOPIC', 'LOCATION'].map(async t => {
           const list = blockList.filter(b => b.type === t)
           const populated = await populateRefEntities(list, t)
-          return dictionaryFromList(populated)
+          return populated.forEach(b => blocks.push(b))
         })
       )
+      // convert block list to list of key value pairs
+      blocks = blocks.map(b => dictionaryFromList([b]))
 
       const entityCache = {}
-
       blocks.forEach(b => {
         if (!_.isEmpty(b)) {
           const _entityData = Object.values(b)[0]
@@ -256,6 +256,7 @@ router.get(
             textValue: _entityData.textValue,
             ranges: _entityData.ranges,
           }
+
           entityCache[Object.keys(b)[0]] = { type, _id, text }
         }
       })

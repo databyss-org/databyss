@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Grid, Text, Button } from '@databyss-org/ui/primitives'
+import { View, Text, Button } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
-import fetchMock from 'fetch-mock'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
   useSessionContext,
@@ -22,28 +21,24 @@ import PageProvider, {
 import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import ContentEditable from '../components/ContentEditable'
-import { stateToSlate } from '../lib/slateUtils'
 import { withMetaData } from '../lib/util'
-import Editor from '../components/Editor'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
-import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import connectedFixture from './fixtures/connectedState'
-import noAtomicsFixture from './fixtures/no-atomics'
 
 const LoginRequired = () => (
   <Text>You must login before running this story</Text>
 )
 
-const EditorWithProvider = props => {
+const EditorWithProvider = () => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
   const { setPage } = usePageContext()
+  const [pageState, setPageState] = useState(null)
 
   return (
     <PageLoader pageId={account.defaultPage}>
       {page => {
-        console.log(page)
         if (page.page.name !== 'test document') {
           setPage(connectedFixture(account.defaultPage))
           return null
@@ -51,10 +46,13 @@ const EditorWithProvider = props => {
 
         return (
           <View>
-            <Button onClick={() => setPage(page)}>
+            <Button onClick={() => setPage(pageState)}>
               <Text>Save Page</Text>
             </Button>
-            <EditorProvider initialState={withMetaData(page)}>
+            <EditorProvider
+              onChange={setPageState}
+              initialState={withMetaData(page)}
+            >
               <ContentEditable />
             </EditorProvider>
           </View>
@@ -64,7 +62,7 @@ const EditorWithProvider = props => {
   )
 }
 
-const EditorWithModals = ({ initialState }) => (
+const EditorWithModals = () => (
   <ServiceProvider>
     <SessionProvider unauthorizedChildren={<LoginRequired />}>
       <PageProvider initialState={pageInitialState}>
@@ -74,7 +72,7 @@ const EditorWithModals = ({ initialState }) => (
             reducer={sourceReducer}
           >
             <NavigationProvider>
-              <EditorWithProvider initialState={initialState} />
+              <EditorWithProvider />
             </NavigationProvider>
           </SourceProvider>
         </TopicProvider>
@@ -85,6 +83,4 @@ const EditorWithModals = ({ initialState }) => (
 
 storiesOf('Services|Page', module)
   .addDecorator(ViewportDecorator)
-  .add('Slate 5', () => {
-    return <EditorWithModals initialState={basicFixture} />
-  })
+  .add('Slate 5', () => <EditorWithModals initialState={basicFixture} />)
