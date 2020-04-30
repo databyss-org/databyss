@@ -109,7 +109,7 @@ export const slateRangesToStateRanges = node => {
 
     Object.keys(child).forEach(prop => {
       if (allowedRanges.includes(prop)) {
-        _ranges.push({ offset: _offset, length: _textLength, mark: prop })
+        _ranges.push({ offset: _offset, length: _textLength, marks: [prop] })
       }
     })
 

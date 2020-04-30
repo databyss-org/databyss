@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useEffect } from 'react'
+import _ from 'lodash'
 import { createEditor, Node, Transforms, Point } from 'slate'
 import { withReact } from 'slate-react'
 import { produce } from 'immer'
@@ -294,7 +295,10 @@ const ContentEditable = () => {
   //   sync the Slate selection to the state selection
   if (state.operations.length) {
     nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
+  }
 
+  if (!_.isEqual(editor.selection, nextSelection)) {
+    Transforms.setSelection(editor, nextSelection)
     // HACK:
     // There is a bug in Slate that causes unexpected behavior when creating a
     // selection by doing `Transforms.move` on the anchor and focus. If the
@@ -305,8 +309,6 @@ const ContentEditable = () => {
     Transforms.move(editor, { distance: 1, edge: 'anchor' })
     Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
   }
-
-  Transforms.setSelection(editor, nextSelection)
 
   valueRef.current = nextValue
   selectionRef.current = nextSelection
