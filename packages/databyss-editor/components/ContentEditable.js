@@ -20,7 +20,7 @@ import { getSelectedIndicies } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType } from '../state/util'
 
-const ContentEditable = () => {
+const ContentEditable = ({ onDocumentChange }) => {
   const {
     state,
     split,
@@ -174,6 +174,10 @@ const ContentEditable = () => {
   }
 
   const onChange = value => {
+    if (onDocumentChange) {
+      onDocumentChange(value)
+    }
+
     const selection = slateSelectionToStateSelection(editor)
 
     if (!selection) {
@@ -317,6 +321,7 @@ const ContentEditable = () => {
 
   return (
     <Editor
+      autofocus
       editor={editor}
       value={nextValue}
       onChange={onChange}
