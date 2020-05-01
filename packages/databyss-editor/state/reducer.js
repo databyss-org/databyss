@@ -16,6 +16,8 @@ import {
   symbolToAtomicType,
   blockAtIndex,
   getIndeciesForRefId,
+  offsetRanges,
+  removeLocationMark,
 } from './util'
 
 export const bakeAtomicBlock = ({ state, draft, index }) => {
@@ -34,7 +36,7 @@ export const bakeAtomicBlock = ({ state, draft, index }) => {
       const _nextEntity = {
         text: {
           textValue: _entity.text.textValue.substring(1).trim(),
-          ranges: _entity.text.ranges,
+          ranges: removeLocationMark(offsetRanges(_entity.text.ranges, 1)),
         },
         type: _atomicType,
         _id: _entity._id,

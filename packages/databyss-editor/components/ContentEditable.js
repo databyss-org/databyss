@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useEffect } from 'react'
 import _ from 'lodash'
-import { createEditor, Node, Transforms, Point } from 'slate'
+import { createEditor, Node, Transforms, Point, Range } from 'slate'
 import { withReact } from 'slate-react'
 import { produce } from 'immer'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
@@ -306,8 +306,12 @@ const ContentEditable = () => {
     // correct path (pointing within the mark leaf) but the anchor gets the parent
     // path. The fix for this is to overshoot the anchor by 1
     // and then correct the offset with an additional move.
-    Transforms.move(editor, { distance: 1, edge: 'anchor' })
-    Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
+    if (Range.isExpanded(editor.selection)) {
+      Transforms.move(editor, { distance: 1, edge: 'anchor' })
+      Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
+    }
+    // Transforms.move(editor, { distance: 1, edge: 'anchor' })
+    // Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
   }
 
   valueRef.current = nextValue

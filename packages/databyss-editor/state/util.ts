@@ -40,3 +40,9 @@ export const getIndeciesForRefId = (state: any, refId: string) => {
 
   return matches
 }
+
+export const offsetRanges = (ranges: any, offset: any) =>
+  ranges.map(r => ({ ...r, offset: r.offset - 1 }))
+
+export const removeLocationMark = (ranges: any) =>
+  ranges.filter(r => !r.marks.includes('location'))
