@@ -17,19 +17,8 @@ export default {
       type: 'ENTRY',
       _id: '5e3f829ce5447c0018baebed',
       text: {
-        textValue: `On the limitation of \nthird-order thought to assertion`,
-        ranges: [
-          {
-            offset: 7,
-            length: 10,
-            marks: ['bold'],
-          },
-          {
-            offset: 7,
-            length: 10,
-            marks: ['italic'],
-          },
-        ],
+        textValue: '',
+        ranges: [],
       },
     },
   },

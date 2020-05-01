@@ -80,12 +80,12 @@ const EditorWithProvider = ({ initialState }) => {
         </EditorProvider>
       </Box>
       <Grid>
-        <Box maxWidth="450px" overflow="scroll" flexShrink={1}>
+        <Box maxWidth="400px" overflow="scroll" flexShrink={1}>
           <Text variant="uiTextLargeSemibold">Page State</Text>
 
           <pre id="pageDocument">{JSON.stringify(pageState, null, 2)}</pre>
         </Box>
-        <Box maxWidth="450px" overflow="scroll" flexShrink={1}>
+        <Box maxWidth="400px" overflow="scroll" flexShrink={1}>
           <Text variant="uiTextLargeSemibold">Slate State</Text>
           <pre id="slateDocument">{JSON.stringify(slateState, null, 2)}</pre>
         </Box>
