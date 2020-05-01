@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Text, Button } from '@databyss-org/ui/primitives'
-import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
+import {
+  ViewportDecorator,
+  NotifyDecorator,
+} from '@databyss-org/ui/stories/decorators'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
   useSessionContext,
@@ -31,6 +35,8 @@ const LoginRequired = () => (
 )
 
 const EditorWithProvider = () => {
+  const { notify } = useNotifyContext()
+
   const { getSession } = useSessionContext()
   const { account } = getSession()
   const { setPage } = usePageContext()
@@ -44,9 +50,16 @@ const EditorWithProvider = () => {
           return null
         }
 
+        const onClick = e => {
+          e.preventDefault()
+          setPage(pageState)
+          console.log('consoled')
+          notify('Page saved! Do a browser reload to verify')
+        }
+
         return (
           <View>
-            <Button onClick={() => setPage(pageState)}>
+            <Button onClick={onClick}>
               <Text>Save Page</Text>
             </Button>
             <EditorProvider
@@ -82,5 +95,6 @@ const EditorWithModals = () => (
 )
 
 storiesOf('Services|Page', module)
+  .addDecorator(NotifyDecorator)
   .addDecorator(ViewportDecorator)
   .add('Slate 5', () => <EditorWithModals initialState={basicFixture} />)
