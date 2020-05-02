@@ -58,7 +58,6 @@ export function fetchPageHeaders() {
 
 export function savePage(state) {
   const body = cloneDeep(state)
-  delete body.editableState
   return dispatch => {
     dispatch({
       type: CACHE_PAGE,
