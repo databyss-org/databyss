@@ -96,8 +96,8 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
             onClick={() => onClick(item)}
           >
             <View>
-              <Grid singleRow alignItems="center" columnGap="small">
-                <Icon sizeVariant="tiny" color="text.3">
+              <Grid singleRow flexWrap="nowrap" columnGap="small">
+                <Icon sizeVariant="tiny" color="text.3" mt={pxUnits(2)}>
                   {menuSvgs(item.type)}
                 </Icon>
                 <Text
