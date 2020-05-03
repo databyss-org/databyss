@@ -31,7 +31,7 @@ const PageHeader = ({ isFocused, pageId }) => {
   */
 
   return (
-    <View p="medium" flexGrow={1}>
+    <View p="medium" flexGrow={1} ml="extraSmall">
       <TextInput
         onBlur={updatePageName}
         onFocus={() => isFocused(true)}
