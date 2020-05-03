@@ -44,7 +44,6 @@ const PageHeader = ({ isFocused, pageId }) => {
     <View p="medium" flexGrow={1} ml="extraSmall">
       <TextInput
         onBlur={updatePageName}
-        autoFocus
         onFocus={() => isFocused(true)}
         onKeyDown={e => {
           if (e.key === 'Enter') {
