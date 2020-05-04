@@ -46,7 +46,7 @@ export const offsetRanges = (ranges: Range, _offset: number) =>
   ranges.map(r => {
     let length = r.length
     let offset = r.offset
-    // if offset is position zero, shift lenght instead of offset
+    // if offset is position zero, shift length instead of offset
     if (!offset) {
       length = length - 1
     } else {
