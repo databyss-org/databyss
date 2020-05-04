@@ -1,4 +1,4 @@
-import { Entity, Selection, Block } from '../interfaces'
+import { Entity, Selection, Block, Range } from '../interfaces'
 
 export const symbolToAtomicType = (symbol: string): string =>
   ({ '@': 'SOURCE', '#': 'TOPIC' }[symbol])
@@ -41,8 +41,19 @@ export const getIndeciesForRefId = (state: any, refId: string) => {
   return matches
 }
 
-export const offsetRanges = (ranges: any, offset: any) =>
-  ranges.map(r => ({ ...r, offset: r.offset - 1 }))
+// shifts the range left `offset`
+export const offsetRanges = (ranges: Range, _offset: number) =>
+  ranges.map(r => {
+    let length = r.length
+    let offset = r.offset
+    // if offset is position zero, shift lenght instead of offset
+    if (!offset) {
+      length = length - 1
+    } else {
+      offset = offset - _offset
+    }
+    return { ...r, length, offset }
+  })
 
-export const removeLocationMark = (ranges: any) =>
+export const removeLocationMark = (ranges: Range) =>
   ranges.filter(r => !r.marks.includes('location'))

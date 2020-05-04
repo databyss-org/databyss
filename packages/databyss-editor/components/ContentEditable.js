@@ -299,14 +299,16 @@ const ContentEditable = () => {
 
   if (!_.isEqual(editor.selection, nextSelection)) {
     Transforms.setSelection(editor, nextSelection)
-    // HACK:
-    // There is a bug in Slate that causes unexpected behavior when creating a
-    // selection by doing `Transforms.move` on the anchor and focus. If the
-    // selection falls on a range that already has a mark, the focus gets the
-    // correct path (pointing within the mark leaf) but the anchor gets the parent
-    // path. The fix for this is to overshoot the anchor by 1
-    // and then correct the offset with an additional move.
+    // HACK only needs to be applied when editor is focused and Range is expanded (applying formats and marks)
     if (editor.selection && Range.isExpanded(editor.selection)) {
+      // HACK:
+      // There is a bug in Slate that causes unexpected behavior when creating a
+      // selection by doing `Transforms.move` on the anchor and focus. If the
+      // selection falls on a range that already has a mark, the focus gets the
+      // correct path (pointing within the mark leaf) but the anchor gets the parent
+      // path. The fix for this is to overshoot the anchor by 1
+      // and then correct the offset with an additional move.
+
       Transforms.move(editor, { distance: 1, edge: 'anchor' })
       Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
     }

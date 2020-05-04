@@ -35,7 +35,9 @@ export const bakeAtomicBlock = ({ state, draft, index }) => {
       // push atomic block change to entityCache and editor operations
       const _nextEntity = {
         text: {
+          // ranges need to account for the removal of the first string `@` or `#`
           textValue: _entity.text.textValue.substring(1).trim(),
+          // location marks are not allowed in atomic types
           ranges: removeLocationMark(offsetRanges(_entity.text.ranges, 1)),
         },
         type: _atomicType,
