@@ -19,6 +19,7 @@ import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import blankState from './fixtures/blankState'
+import { toSlateJson } from './__tests__/__helpers'
 
 const _res = {
   totalItems: 1,
@@ -49,6 +50,14 @@ const EditorWithProvider = ({ initialState }) => {
     const { entityCache, blockCache, blocks } = state
     setPageState({ entityCache, blockCache, blocks })
   }
+
+  const _value = (
+    <body>
+      <entity type="SOURCE">something</entity>
+    </body>
+  )
+
+  toSlateJson(_value)
 
   // convert our state > slate
   // compare _slate with acutal slate
@@ -82,7 +91,6 @@ const EditorWithProvider = ({ initialState }) => {
       <Grid>
         <Box maxWidth="400px" overflow="scroll" flexShrink={1}>
           <Text variant="uiTextLargeSemibold">Page State</Text>
-
           <pre id="pageDocument">{JSON.stringify(pageState, null, 2)}</pre>
         </Box>
         <Box maxWidth="400px" overflow="scroll" flexShrink={1}>

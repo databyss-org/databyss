@@ -16951,6 +16951,13 @@ slate-hyperscript@^0.13.8:
   dependencies:
     is-plain-object "^2.0.4"
 
+slate-hyperscript@^0.57.2:
+  version "0.57.2"
+  resolved "https://registry.yarnpkg.com/slate-hyperscript/-/slate-hyperscript-0.57.2.tgz#de268aa418977617769967bfb33de7788cdd9fc0"
+  integrity sha512-p5eQpdhEEfzKMFY2A8A5EWvE5kXKW+wEZWu1DAeMQqyYV1azdpKZP61YWvo3VtfYzGchTIEY/wUZJOh7tXJ2nw==
+  dependencies:
+    is-plain-object "^3.0.0"
+
 slate-insert-block-on-enter@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/slate-insert-block-on-enter/-/slate-insert-block-on-enter-0.4.0.tgz#6facd63d152c0448c8e39afa0bef4bbf8309da61"
