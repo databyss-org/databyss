@@ -34,7 +34,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
   return (
     <View height="100vh" overflow="scroll" p="medium">
       <View
-        mr="large"
+        mr="medium"
         alignItems="center"
         flexDirection="row"
         justifyContent="space-between"
