@@ -41,8 +41,14 @@ const ContentEditable = ({ onDocumentChange }) => {
   const sourceContext = useSourceContext()
   const topicContext = useTopicContext()
 
-  // const { setSource } = useSourceContext()
-  // const { setTopic } = useTopicContext()
+  useEffect(
+    () => {
+      if (onDocumentChange) {
+        onDocumentChange(editor.children)
+      }
+    },
+    [editor.operations]
+  )
 
   if (!valueRef.current) {
     editor.children = stateToSlate(state)
@@ -79,7 +85,6 @@ const ContentEditable = ({ onDocumentChange }) => {
   )
 
   const onKeyDown = event => {
-    console.log(event.key)
     if (Hotkeys.isBold(event)) {
       toggleMark(editor, 'bold')
       return
@@ -176,10 +181,6 @@ const ContentEditable = ({ onDocumentChange }) => {
   }
 
   const onChange = value => {
-    if (onDocumentChange) {
-      onDocumentChange(value)
-    }
-
     const selection = slateSelectionToStateSelection(editor)
 
     if (!selection) {

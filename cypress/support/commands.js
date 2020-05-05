@@ -258,12 +258,15 @@ Cypress.Commands.add('getEditor', selector => {
 })
 
 Cypress.Commands.add('typeInSlate', { prevSubject: true }, (subject, text) => {
-  return cy.wrap(subject).then(subject => {
-    subject[0].dispatchEvent(
-      new InputEvent('beforeinput', { inputType: 'insertText', data: text })
-    )
-    return subject
-  })
+  return cy
+    .wrap(subject)
+    .then(subject => {
+      subject[0].dispatchEvent(
+        new InputEvent('beforeinput', { inputType: 'insertText', data: text })
+      )
+      return subject
+    })
+    .wait(300)
 })
 
 Cypress.Commands.add('clearInSlate', { prevSubject: true }, subject => {
@@ -286,12 +289,3 @@ Cypress.Commands.add('linebreak', { prevSubject: true }, subject => {
     })
     .wait(300)
 })
-
-// // slateEditor.spec.js
-// cy.getEditor('[data-testid=slateEditor1] [contenteditable]').typeInSlate(
-//   'Some input text '
-// )
-
-// cy.getEditor('[data-testid=slateEditor2] [contenteditable]')
-//   .clearInSlate()
-//   .typeInSlate('http://httpbin.org/status/409')

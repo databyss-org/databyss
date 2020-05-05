@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Grid, Text } from '@databyss-org/ui/primitives'
+import { View, Text } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import fetchMock from 'fetch-mock'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
@@ -13,13 +13,10 @@ import topicReducer, {
 } from '@databyss-org/services/topics/reducer'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ContentEditable from '../components/ContentEditable'
-import { stateToSlate } from '../lib/slateUtils'
-import Editor from '../components/Editor'
 import EditorProvider from '../state/EditorProvider'
-import basicFixture from './fixtures/basic'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import blankState from './fixtures/blankState'
-import { toSlateJson } from './__tests__/__helpers'
+import { slateToJSXString } from './__tests__/__helpers'
 
 const _res = {
   totalItems: 1,
@@ -51,54 +48,31 @@ const EditorWithProvider = ({ initialState }) => {
     setPageState({ entityCache, blockCache, blocks })
   }
 
-  const _value = (
-    <body>
-      <entity type="SOURCE">something</entity>
-    </body>
-  )
-
-  toSlateJson(_value)
-
-  // convert our state > slate
-  // compare _slate with acutal slate
-
-  // const slateDocCleanup = value => {
-  //   const _val = value.map(node => {
-  //     if (isAtomicInlineType(node.blockType)) {
-  //       let _node = { ...node, text: node.children[1].character }
-  //       delete _node.children
-  //       return _node
-  //     }
-  //     if (node.children.length === 1 && node.children[0].text.length === 0) {
-  //       return { ...node, children: [] }
-  //     }
-  //     return node
-  //   })
-  //   setSlateDocument(_val)
-  // }
+  // console.log(slateToJSX())
 
   const onDocumentChange = val => {
-    console.log(val)
     setSlateState(val)
   }
   return (
-    <Grid maxWidth="900px">
+    <View maxWidth="900px">
       <Box>
         <EditorProvider onChange={onChange} initialState={initialState}>
           <ContentEditable onDocumentChange={onDocumentChange} />
         </EditorProvider>
       </Box>
-      <Grid>
-        <Box maxWidth="400px" overflow="scroll" flexShrink={1}>
-          <Text variant="uiTextLargeSemibold">Page State</Text>
-          <pre id="pageDocument">{JSON.stringify(pageState, null, 2)}</pre>
-        </Box>
-        <Box maxWidth="400px" overflow="scroll" flexShrink={1}>
-          <Text variant="uiTextLargeSemibold">Slate State</Text>
-          <pre id="slateDocument">{JSON.stringify(slateState, null, 2)}</pre>
-        </Box>
-      </Grid>
-    </Grid>
+      <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
+        <Text variant="uiTextLargeSemibold">Page State</Text>
+        <pre id="pageDocument">{JSON.stringify(pageState, null, 2)}</pre>
+      </Box>
+      <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
+        <Text variant="uiTextLargeSemibold">Slate State</Text>
+        <pre id="slateDocument">{JSON.stringify(slateState, null, 2)}</pre>
+      </Box>
+      <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
+        <Text variant="uiTextLargeSemibold">JSX State</Text>
+        <pre id="jsxDocument">{slateState && slateToJSXString(slateState)}</pre>
+      </Box>
+    </View>
   )
 }
 

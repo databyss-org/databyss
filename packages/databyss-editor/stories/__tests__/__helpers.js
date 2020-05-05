@@ -1,17 +1,46 @@
 import { jsx } from 'slate-hyperscript'
+import { Text } from 'slate'
 import ReactDOMServer from 'react-dom/server'
-import { isAtomicInlineType } from './../../lib/util'
 
-import { Editor } from 'slate'
+export const matchExpectedJson = (expectedJSX, actualString) => {
+  const expectedString = ReactDOMServer.renderToStaticMarkup(expectedJSX)
 
-// export const toSlateJson = hyperscript => {
-//   const editor = new Editor()
-//   editor.setValue(hyperscript)
-//   return editor.value.toJSON()
-// }
+  const expected = toSlateJson(expectedString)
 
-export const matchExpectedJson = expectedJson => $actual => {
-  expect(JSON.parse($actual.text())).to.deep.equal(expectedJson)
+  const actual = toSlateJson(actualString)
+
+  expect(actual).to.deep.equal(expected)
+}
+
+const serialize = node => {
+  if (Text.isText(node)) {
+    let _text = node.text
+    // we must follow the hierarchy of bold > italic > location
+    if (node.location) {
+      _text = `<location>${_text}</location>`
+    }
+    if (node.italic) {
+      _text = `<italic>${_text}</italic>`
+    }
+    if (node.bold) {
+      _text = `<bold>${_text}</bold>`
+    }
+    return _text
+  }
+
+  const children = node.children.map(n => serialize(n)).join('')
+  switch (node.type) {
+    case 'body':
+      return `<body>${children}</body>`
+    case 'ENTRY':
+      return `<entity type=${node.type}>${children}</entity>`
+    case 'SOURCE':
+      return `<entity type=${node.type}>${children}</entity>`
+    case 'TOPIC':
+      return `<entity type=${node.type}>${children}</entity>`
+    default:
+      return children
+  }
 }
 
 export const deserialize = el => {
@@ -22,50 +51,38 @@ export const deserialize = el => {
   }
 
   const children = Array.from(el.childNodes).map(deserialize)
+
   switch (el.nodeName) {
     case 'BODY':
       return jsx('fragment', {}, children)
-
-    case 'BLOCKQUOTE':
-      return jsx('element', { type: 'stuff' }, children)
-    case 'P':
-      return jsx('element', { type: 'paragraph' }, children)
     case 'ENTITY':
       const type = el.getAttribute('type')
-      if (isAtomicInlineType(type)) {
-        return jsx(
-          'text',
-          {
-            blockType: type,
-            isBlock: true,
-            // _id: el.getAttribute('blockId'),
-            // entityId: el.getAttribute('entityId'),
-          },
-          el.textContent
-        )
-      } else {
-        return jsx(
-          'element',
-          {
-            blockType: type,
-            isBlock: true,
-            // _id: el.getAttribute('blockid'),
-            // entityId: el.getAttribute('entityId'),
-          },
-          children
-        )
-      }
+      return jsx('element', { type, isBlock: true }, children)
     case 'BOLD':
-      return jsx('text', { bold: true, type: 'bold' }, children)
+      return jsx('text', { bold: true }, children)
+    case 'ITALIC':
+      return jsx('text', { italic: true }, children)
+    case 'LOCATION':
+      return jsx('text', { location: true }, children)
+
     default:
       return el.textContent
   }
 }
 
-export const toSlateJson = value => {
-  const _string = ReactDOMServer.renderToStaticMarkup(value)
-  const document = new DOMParser().parseFromString(_string, 'text/html')
+// converts slate state to a JSX string
+export const slateToJSXString = slateState => {
+  const editor = {
+    type: 'body',
+    children: slateState,
+  }
+  const doc = new DOMParser().parseFromString(serialize(editor), 'text/html')
 
-  console.log(document)
-  console.log(deserialize(document.body))
+  return `<body>${doc.body.innerHTML}</body>`
+}
+
+// converts JSX to Slate JSON value
+export const toSlateJson = string => {
+  const document = new DOMParser().parseFromString(string, 'text/html')
+  return deserialize(document.body)
 }

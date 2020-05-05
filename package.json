@@ -224,7 +224,6 @@
     "slate-auto-replace": "^0.12.1",
     "slate-dev-environment": "^0.2.2",
     "slate-html-serializer": "^0.8.10",
-    "slate-hyperscript": "^0.57.2",
     "slate-insert-block-on-enter": "^0.4.0",
     "spawnd": "^4.0.0",
     "start-server-and-test": "^1.10.2",
