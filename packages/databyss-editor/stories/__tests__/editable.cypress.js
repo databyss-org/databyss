@@ -1,6 +1,8 @@
+/** @jsx jsx */
 /* eslint-disable func-names */
-import React from 'react'
-import { matchExpectedJson } from './__helpers'
+
+import { jsx } from './hyperscript'
+import { sanitizeEditorChildren } from './__helpers'
 
 context('Editor Slate V2', () => {
   beforeEach(() => {
@@ -12,12 +14,11 @@ context('Editor Slate V2', () => {
 
     cy.get('#slateDocument').as('slateDocument')
     cy.get('#pageDocument').as('pageDocument')
-    cy.get('#jsxDocument').as('jsxDocument')
   })
 
-  it('renders the contenteditable container', () => {
-    cy.get('@editor').should('have.attr', 'role')
-  })
+  // it('renders the contenteditable container', () => {
+  //   cy.get('@editor').should('have.attr', 'role')
+  // })
 
   it('should input an entry, source and topic', () => {
     cy.wait(200)
@@ -26,20 +27,28 @@ context('Editor Slate V2', () => {
       .linebreak()
       .typeInSlate('@this is a source text')
       .linebreak()
-      .typeInSlate('#this is a topic text')
-      .type('{uparrow}')
+      .typeInSlate('this is a topic text')
+      .linebreak()
       .wait(500)
 
     const expected = (
-      <body>
-        <entity type="ENTRY">Some input text </entity>
-        <entity type="SOURCE">this is a source text</entity>
-        <entity type="TOPIC">this is a topic text</entity>
-      </body>
+      <editor>
+        <block type="ENTRY">Some input text </block>
+        <block type="SOURCE">this is a source text</block>
+        <block type="TOPIC">this is a topic text</block>
+        <block type="ENTRY">
+          <cursor />
+        </block>
+      </editor>
     )
 
-    cy.get('@jsxDocument').then(jsxDoc => {
-      matchExpectedJson(expected, jsxDoc.text())
+    cy.get('@slateDocument').then(slateDoc => {
+      const editor = JSON.parse(slateDoc.text())
+      assert.deepEqual(
+        sanitizeEditorChildren(editor.children),
+        sanitizeEditorChildren(expected.children)
+      )
+      assert.deepEqual(editor.selection, expected.selection)
     })
   })
 })
