@@ -325,7 +325,6 @@ const ContentEditable = ({ onDocumentChange }) => {
 
   return (
     <Editor
-      autofocus
       editor={editor}
       value={nextValue}
       onChange={onChange}
