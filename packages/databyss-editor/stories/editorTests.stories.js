@@ -68,10 +68,6 @@ const EditorWithProvider = ({ initialState }) => {
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{JSON.stringify(slateState, null, 2)}</pre>
       </Box>
-      <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
-        <Text variant="uiTextLargeSemibold">JSX State</Text>
-        <pre id="jsxDocument">{slateState && slateToJSXString(slateState)}</pre>
-      </Box>
     </View>
   )
 }
