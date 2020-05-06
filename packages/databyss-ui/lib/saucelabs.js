@@ -14,7 +14,8 @@ const accessKey = process.env.SAUCE_ACCESS_KEY
 export const startSession = process.env.LOCAL_ENV
   ? async () => {
       jest.setTimeout(800000)
-      const _builder = await new Builder().forBrowser(SAFARI).build()
+      const _builder = await new Builder().forBrowser(CHROME).build()
+      console.log('IN PUBILDJ')
       return _builder
     }
   : async (name, platformName = OSX, browserName = SAFARI) => {

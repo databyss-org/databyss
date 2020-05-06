@@ -48,7 +48,8 @@
     "cy:wait-for-api": "start-server-and-test start:server:test http://0.0.0.0:5000/api/ping/ storybook",
     "cy:wait-for-storybook": "start-server-and-test storybook http-get://0.0.0.0:6006/iframe.html?id=cypress-tests--slate cy:run",
     "sauce:proxy": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/SauceConnect.js",
-    "sauce:dev-server": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/sauce-dev-server.js"
+    "sauce:dev-server": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/sauce-dev-server.js",
+    "test:sel:local": "LOCAL_ENV=true node packages/databyss-editor/stories/__tests__/editor.seleniumtest.js"
   },
   "jest": {
     "projects": [
