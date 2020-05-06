@@ -16,7 +16,6 @@ import ContentEditable from '../components/ContentEditable'
 import EditorProvider from '../state/EditorProvider'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import blankState from './fixtures/blankState'
-import { slateToJSXString } from './__tests__/__helpers'
 
 const _res = {
   totalItems: 1,

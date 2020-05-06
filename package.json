@@ -12,7 +12,7 @@
   "license": "MIT",
   "private": true,
   "engines": {
-    "node": "10.x"
+    "node": "14.x"
   },
   "scripts": {
     "build": "bash scripts/build.sh",
@@ -48,8 +48,7 @@
     "cy:wait-for-api": "start-server-and-test start:server:test http://0.0.0.0:5000/api/ping/ storybook",
     "cy:wait-for-storybook": "start-server-and-test storybook http-get://0.0.0.0:6006/iframe.html?id=cypress-tests--slate cy:run",
     "sauce:proxy": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/SauceConnect.js",
-    "sauce:dev-server": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/sauce-dev-server.js",
-    "test:sel:local": "LOCAL_ENV=true node packages/databyss-editor/stories/__tests__/editor.seleniumtest.js"
+    "sauce:dev-server": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/sauce-dev-server.js"
   },
   "jest": {
     "projects": [
@@ -109,6 +108,18 @@
         "globalSetup": "<rootDir>/packages/databyss-api/__tests__/globalSetup.js",
         "globalTeardown": "<rootDir>/packages/databyss-api/__tests__/globalTeardown.js",
         "testTimeout": 30000
+      },
+      {
+        "displayName": "test-selenium",
+        "testEnvironment": "node",
+        "testMatch": [
+          "<rootDir>/packages/databyss-editor/**/*.seleniumtest.js"
+        ],
+        "moduleFileExtensions": [
+          "js"
+        ],
+        "globalSetup": "<rootDir>/config/sauce/globalSetup.js",
+        "globalTeardown": "<rootDir>/config/sauce/globalTeardown.js"
       }
     ]
   },

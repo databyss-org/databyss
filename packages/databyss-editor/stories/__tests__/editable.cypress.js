@@ -35,7 +35,7 @@ context('Editor Slate V2', () => {
       <editor>
         <block type="ENTRY">Some input text </block>
         <block type="SOURCE">this is a source text</block>
-        <block type="TOPIC">this is a topic text</block>
+        <block type="ENTRY">this is a topic text</block>
         <block type="ENTRY">
           <cursor />
         </block>
