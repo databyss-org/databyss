@@ -100,7 +100,6 @@ const ContentEditable = ({ onDocumentChange }) => {
       return
     }
 
-    console.log('keydown', event.key)
     if (event.key === 'Enter') {
       if (getEntityAtIndex(editor.selection.focus.path[0]).isAtomic) {
         return
