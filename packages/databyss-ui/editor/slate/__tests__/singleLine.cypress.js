@@ -33,7 +33,7 @@ context('Editor', () => {
       <value>
         <document>
           <block type="TEXT">
-            {'this value should be'}
+            this value should be
             <mark type="italic"> in italics</mark>{' '}
             <mark type="bold">and in bold</mark>
           </block>

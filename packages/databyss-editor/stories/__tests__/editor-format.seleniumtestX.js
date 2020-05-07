@@ -18,7 +18,7 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('editor selenium', () => {
   beforeEach(async done => {
-    driver = await startSession('Slate-5-basic-win-chrome', WIN, CHROME)
+    driver = await startSession('Slate-5-win-chrome', WIN, CHROME)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     editor = await getEditor(driver)
 
@@ -33,71 +33,67 @@ describe('editor selenium', () => {
     await driver.quit()
   })
 
-  // it('should input an entry, source and topic', async () => {
-  //   await sleep(300)
-  //   await editor.sendKeys('this is an example of an entry text')
-  //   await editor.sendKeys(Key.ENTER)
-  //   await sleep(1000)
-  //   await editor.sendKeys(Key.ENTER)
-  //   await sleep(1000)
-  // THE LINE AFTER AN ENTRY DOES NOT REMOVE /n
-  //   await editor.sendKeys('@this is an example of a source text')
-  //   await editor.sendKeys(Key.ENTER)
-  //   await editor.sendKeys('#this is an example of a topic text')
-  //   await editor.sendKeys(Key.ENTER)
-  //   await sleep(3000)
+  it('should input an entry, source and topic', async () => {
+    await sleep(300)
+    await editor.sendKeys('this is an example of an entry text')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('@this is an example of a source text')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('#this is an example of a topic text')
+    await editor.sendKeys(Key.ENTER)
+    await sleep(3000)
 
-  //   const actual = JSON.parse(await slateDocument.getText())
+    const actual = JSON.parse(await slateDocument.getText())
 
-  //   const expected = (
-  //     <editor>
-  //       <block type="ENTRY">this is an example of an entry text</block>
-  //       <block type="SOURCE">this is an example of a source text</block>
-  //       <block type="TOPIC">this is an example of a topic text</block>
-  //       <block type="ENTRY">
-  //         <cursor />
-  //       </block>
-  //     </editor>
-  //   )
+    const expected = (
+      <editor>
+        <block type="ENTRY">this is an example of an entry text</block>
+        <block type="SOURCE">this is an example of a source text</block>
+        <block type="TOPIC">this is an example of a topic text</block>
+        <block type="ENTRY">
+          <cursor />
+        </block>
+      </editor>
+    )
 
-  //   assert.deepEqual(
-  //     sanitizeEditorChildren(actual.children),
-  //     sanitizeEditorChildren(expected.children)
-  //   )
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
 
-  //   assert.deepEqual(actual.selection, expected.selection)
-  // })
+    assert.deepEqual(actual.selection, expected.selection)
+  })
 
-  // it('should allow a return within an entry', async () => {
-  //   await sleep(300)
-  //   await editor.sendKeys('this is an entry text')
-  //   await editor.sendKeys(Key.ENTER)
-  //   await editor.sendKeys('this should be on the same block')
-  //   await editor.sendKeys(Key.ENTER)
-  //   await sleep(1000)
-  //   await editor.sendKeys(Key.ENTER)
-  //   await sleep(500)
+  it('should allow a return within an entry', async () => {
+    await sleep(300)
+    await editor.sendKeys('this is an entry text')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('this should be on the same block')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys(Key.ENTER)
+    await sleep(500)
 
-  //   const actual = JSON.parse(await slateDocument.getText())
+    const actual = JSON.parse(await slateDocument.getText())
 
-  //   const expected = (
-  //     <editor>
-  //       <block type="ENTRY">
-  //         this is an entry text{'\n'}this should be on the same block<cursor />
-  //       </block>
-  //       <block type="ENTRY">
-  //         <cursor />
-  //       </block>
-  //     </editor>
-  //   )
+    const expected = (
+      <editor>
+        <block type="ENTRY">
+          this is an entry text{'\n'}this should be on the same block<cursor />
+        </block>
+        <block type="ENTRY">
+          <cursor />
+        </block>
+      </editor>
+    )
 
-  //   assert.deepEqual(
-  //     sanitizeEditorChildren(actual.children),
-  //     sanitizeEditorChildren(expected.children)
-  //   )
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
 
-  //   assert.deepEqual(actual.selection, expected.selection)
-  // })
+    assert.deepEqual(actual.selection, expected.selection)
+  })
 
   // THIS FAILS
   // it('Should not allow content change on atomic blocks', async () => {
@@ -129,6 +125,36 @@ describe('editor selenium', () => {
 
   //   assert.deepEqual(actual.selection, expected.selection)
   // })
+
+  it('should allow a return within an entry', async () => {
+    await sleep(300)
+    await editor.sendKeys('this is an entry text')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('this should be on the same block')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys(Key.ENTER)
+    await sleep(500)
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="ENTRY">
+          this is an entry text{'\n'}this should be on the same block<cursor />
+        </block>
+        <block type="ENTRY">
+          <cursor />
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
 
   it('should allow backspace on entry', async () => {
     await sleep(300)

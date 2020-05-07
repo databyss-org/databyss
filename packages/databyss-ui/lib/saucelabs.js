@@ -23,7 +23,7 @@ export const startSession = process.env.LOCAL_ENV
       const _builder = await new Builder()
         .forBrowser(CHROME)
         // uncomment next line for headless
-        //   .setChromeOptions(new chrome.Options().headless().windowSize(screen))
+        .setChromeOptions(new chrome.Options().headless().windowSize(screen))
         .build()
       return _builder
     }
