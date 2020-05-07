@@ -1,10 +1,16 @@
 import webdriver, { Builder } from 'selenium-webdriver'
+import chrome from 'selenium-webdriver/chrome'
 
 export const CHROME = 'chrome'
 export const FIREFOX = 'firefox'
 export const SAFARI = 'safari'
 export const WIN = 'Windows 10'
 export const OSX = 'OS X 10.14'
+
+const screen = {
+  width: 640,
+  height: 480,
+}
 
 const username = process.env.SAUCE_USERNAME
 const accessKey = process.env.SAUCE_ACCESS_KEY
@@ -14,7 +20,11 @@ const accessKey = process.env.SAUCE_ACCESS_KEY
 export const startSession = process.env.LOCAL_ENV
   ? async () => {
       jest.setTimeout(800000)
-      const _builder = await new Builder().forBrowser(SAFARI).build()
+      const _builder = await new Builder()
+        .forBrowser(CHROME)
+        // uncomment next line for headless
+        //   .setChromeOptions(new chrome.Options().headless().windowSize(screen))
+        .build()
       return _builder
     }
   : async (name, platformName = OSX, browserName = SAFARI) => {
