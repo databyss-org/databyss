@@ -60,7 +60,11 @@ workflows:
   version: 2
   lint-and-test:
     jobs:
-      - jest
+      - jest: 
+          yarn: true
+          start: yarn cy:wait-for-api
+          wait-on: -t 300000 http://localhost:6006
+          command: yarn cy:run
       # enable cypress tests by uncommenting code
       # - cypress/run:
       #     executor: base-10
