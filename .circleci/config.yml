@@ -62,8 +62,8 @@ jobs:
           background: true
 
       - run: 
-        name: wait on storybook server
-        command: ./node_modules/.bin/wait-on http://localhost:6006
+          name: wait on storybook server
+          command: ./node_modules/.bin/wait-on http://localhost:6006
 
       # run tests!
       - run: yarn test
