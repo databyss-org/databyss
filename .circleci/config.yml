@@ -60,7 +60,7 @@ jobs:
         command: yarn cy:wait-for-api
         background: true
 
-      -run: ./node_modules/.bin/wait-on -t 300000 http://localhost:6006
+      - run: wait-on -t 300000 http://localhost:6006
 
       # run tests!
       - run: yarn test
