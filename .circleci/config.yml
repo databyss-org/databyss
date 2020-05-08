@@ -54,6 +54,7 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+      - run: yarn cy:wait-for-api
       # run tests!
       - run: yarn test
 workflows:
@@ -61,9 +62,6 @@ workflows:
   lint-and-test:
     jobs:
       - jest: 
-          start: yarn cy:wait-for-api
-          wait-on: -t 300000 http://localhost:6006
-          command: yarn cy:run
       # enable cypress tests by uncommenting code
       # - cypress/run:
       #     executor: base-10
