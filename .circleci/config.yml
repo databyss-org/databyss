@@ -55,14 +55,14 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run: yarn cy:wait-for-api
-      
+
       # run tests!
       - run: yarn test
 workflows:
   version: 2
   lint-and-test:
     jobs:
-      - jest: 
+      - jest
       # enable cypress tests by uncommenting code
       # - cypress/run:
       #     executor: base-10
