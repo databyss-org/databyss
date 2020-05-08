@@ -61,7 +61,6 @@ workflows:
   lint-and-test:
     jobs:
       - jest: 
-          yarn: true
           start: yarn cy:wait-for-api
           wait-on: -t 300000 http://localhost:6006
           command: yarn cy:run
