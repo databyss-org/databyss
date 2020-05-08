@@ -11,6 +11,7 @@ export const getEditor = async driver => {
     until.elementLocated(By.css('[contenteditable="true"]')),
     waitUntilTime
   )
+
   const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
   return _driver
 }

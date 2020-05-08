@@ -46,7 +46,8 @@ storiesOf('Slate//Slate 5 Implementation', module)
     <View>
       <input type="text" />
       <Box>
-        <SlateDemo />
+        <div id="for-test" contenteditable="true" />
+        {/* <SlateDemo /> */}
       </Box>
     </View>
   ))

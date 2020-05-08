@@ -21,9 +21,11 @@ export const startSession = process.env.LOCAL_ENV
   ? async () => {
       jest.setTimeout(800000)
       const _builder = await new Builder()
-        .forBrowser(CHROME)
-        // uncomment next line for headless
-        .setChromeOptions(new chrome.Options().headless().windowSize(screen))
+        .forBrowser(SAFARI)
+        // .setChromeOptions(
+        //   process.env.HEADLESS &&
+        //     new chrome.Options().headless().windowSize(screen)
+        // )
         .build()
       return _builder
     }
