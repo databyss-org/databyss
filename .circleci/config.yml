@@ -59,7 +59,6 @@ jobs:
       - run:
         name: start storybook
         command: yarn cy:wait-for-api
-        background: true
 
       - run: wait-on http://localhost:6006
 
