@@ -24,5 +24,5 @@ module.exports = on => {
   on('file:preprocessor', webpack(options))
 
   // https://github.com/archfz/cypress-terminal-report
-  require('cypress-terminal-report').installPlugin(on)
+  // require('cypress-terminal-report').installPlugin(on)
 }
