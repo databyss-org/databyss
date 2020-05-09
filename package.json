@@ -153,7 +153,6 @@
     "cors": "^2.8.5",
     "create-jest-runner": "^0.5.3",
     "csvtojson": "^2.0.8",
-    "cypress-terminal-report": "^1.2.1",
     "docusaurus": "^1.12.0",
     "dotenv": "^8.0.0",
     "dotenv-expand": "^5.1.0",
