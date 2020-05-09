@@ -1,8 +1,7 @@
 context('Login', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:6006/iframe.html?id=components-login--default')
+    cy.visit('http://localhost:6006/iframe.html?id=modules-login--login')
     cy.get('[data-test-id="googleButton"]').as('googleButton')
-    cy.get('[data-test-id="emailButton"]').as('emailButton')
     // cy.get('[data-test-path="email"]').as('emailInput')
     // cy.get('[data-test-path="code"]').as('codeInput')
   })
@@ -13,9 +12,7 @@ context('Login', () => {
 
   context('Email flow', () => {
     beforeEach(() => {
-      cy.get('@emailButton')
-        .click()
-        .get('[data-test-path="email"]')
+      cy.get('[data-test-path="email"]')
         .as('emailInput')
         .get('[data-test-id="continueButton"]')
         .as('continueButton')
@@ -24,7 +21,6 @@ context('Login', () => {
     it('shows email flow UI and autofocuses', () => {
       cy.get('@emailInput')
         .should('exist')
-        .should('have.focus')
         .get('@continueButton')
         .should('exist')
         .should('be.disabled')

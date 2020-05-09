@@ -10,7 +10,11 @@ import NavigationProvider, {
   useNavigationContext,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 
-import { ViewportDecorator, NotifyDecorator } from '../decorators'
+import {
+  ViewportDecorator,
+  NotifyDecorator,
+  MemoryRouterWrapper,
+} from '../decorators'
 
 export const SessionInfo = () => {
   const { getSession, endSession } = useSessionContext()
@@ -28,10 +32,11 @@ export const SessionInfo = () => {
 }
 
 const LoginDemo = () => {
-  const { path } = useNavigationContext()
+  const { location } = useNavigationContext()
+  const { pathname } = location
   return (
     <ServiceProvider actions={{ session: actions }}>
-      <SessionProvider signUp={path === '/signup'}>
+      <SessionProvider signUp={pathname === '/signup'}>
         <List verticalItemPadding="small">
           <Text variant="uiTextNormalSemibold" data-test-id="authorized">
             Authorized
@@ -43,16 +48,22 @@ const LoginDemo = () => {
   )
 }
 
-storiesOf('Components|Login', module)
+const LoginDemoWithNavigation = () => (
+  <NavigationProvider>
+    <LoginDemo />
+  </NavigationProvider>
+)
+
+storiesOf('Modules|Login', module)
   .addDecorator(NotifyDecorator)
   .addDecorator(ViewportDecorator)
-  .add('default', () => (
-    <NavigationProvider>
-      <LoginDemo />
-    </NavigationProvider>
+  .add('login', () => (
+    <MemoryRouterWrapper>
+      <LoginDemoWithNavigation />
+    </MemoryRouterWrapper>
   ))
   .add('signup', () => (
-    <NavigationProvider initialPath="/signup">
-      <LoginDemo />
-    </NavigationProvider>
+    <MemoryRouterWrapper initialPath="/signup">
+      <LoginDemoWithNavigation />
+    </MemoryRouterWrapper>
   ))
