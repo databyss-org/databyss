@@ -3,8 +3,14 @@ import addons from '@storybook/addons'
 import Content from '@databyss-org/ui/components/Viewport/Content'
 import { View } from '@databyss-org/ui/primitives'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
+import {
+  createMemorySource,
+  createHistory,
+  LocationProvider,
+} from '@reach/router'
 import defaultTheme, { darkTheme } from '../theming/theme'
 import { ThemeProvider } from '../theming'
+import { createMemo } from 'react-use'
 
 // get channel to listen to event emitter
 const channel = addons.getChannel()
@@ -45,3 +51,10 @@ export const ContentDecorator = storyFn => <Content>{storyFn()}</Content>
 export const NotifyDecorator = storyFn => (
   <NotifyProvider envPrefix="STORYBOOK">{storyFn()}</NotifyProvider>
 )
+
+export const MemoryRouterWrapper = ({ initialPath, children }) => {
+  const source = createMemorySource(initialPath || '/')
+  const history = createHistory(source)
+
+  return <LocationProvider history={history}>{children}</LocationProvider>
+}
