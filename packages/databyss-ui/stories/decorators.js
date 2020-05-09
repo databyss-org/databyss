@@ -10,7 +10,6 @@ import {
 } from '@reach/router'
 import defaultTheme, { darkTheme } from '../theming/theme'
 import { ThemeProvider } from '../theming'
-import { createMemo } from 'react-use'
 
 // get channel to listen to event emitter
 const channel = addons.getChannel()
