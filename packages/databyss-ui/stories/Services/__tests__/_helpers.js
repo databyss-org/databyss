@@ -22,7 +22,7 @@ export const authenticate = () => {
     .type(`${random}@test.com`)
     .get('@continueButton')
     .click()
-    .wait(2000)
+    .wait(10000)
     .get('[data-test-path="code"]')
     .as('codeInput')
 
@@ -31,7 +31,7 @@ export const authenticate = () => {
     .type('test-code-42')
     .get('@continueButton')
     .click()
-    .wait(2000)
+    .wait(10000)
     .get('[data-test-session="true"]')
     .invoke('text')
     .as('session')
