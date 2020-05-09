@@ -25,17 +25,17 @@ const Login = ({ pending, signupFlow }) => {
   const [showRequestCode, setShowRequestCode] = useState(requestCode)
   const [values, setValues] = useState(initialFormState)
 
-  const onSubmit = ({ googleToken } = {}) => {
+  const onSubmit = ({ googleCode } = {}) => {
     if (
       (showRequestCode && !values.code.textValue.length) ||
-      (!googleToken && !values.email.textValue.length)
+      (!googleCode && !values.email.textValue.length)
     ) {
       return
     }
     getSession({
       email: values.email.textValue,
       code: values.code.textValue,
-      googleToken,
+      googleCode,
       retry: true,
     })
     setDidSubmit(true)
@@ -46,8 +46,10 @@ const Login = ({ pending, signupFlow }) => {
     setValues(initialFormState)
   }
 
-  const onGoogleResponse = ({ tokenId }) =>
-    tokenId && onSubmit({ googleToken: tokenId })
+  // const onGoogleResponse = ({ tokenId }) =>
+  //   tokenId && onSubmit({ googleToken: tokenId })
+
+  const onGoogleResponse = ({ code }) => code && onSubmit({ googleCode: code })
 
   const onChange = values => {
     setValues(values)
