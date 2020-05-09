@@ -25,7 +25,7 @@ export const fetchSession = ({
   // eslint-disable-next-line no-param-reassign
   _request = _request || request
 
-  const { code, googleToken, email } = credentials
+  const { code, googleCode, email } = credentials
 
   dispatch({ type: FETCH_SESSION, payload: { credentials } })
 
@@ -46,10 +46,10 @@ export const fetchSession = ({
       path += '/auth'
       options.headers['x-databyss-account'] = accountId
       options.headers['x-auth-token'] = authToken
-    } else if (googleToken) {
+    } else if (googleCode) {
       // google oAuth token
       path += '/users/google'
-      options.body = JSON.stringify({ token: googleToken })
+      options.body = JSON.stringify({ code: googleCode })
     } else if (code) {
       // code from email
       path += '/auth/code'

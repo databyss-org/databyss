@@ -3,44 +3,31 @@ import { Button, Text, Grid, View } from '@databyss-org/ui/primitives'
 import GoogleSvg from '@databyss-org/ui/assets/google_g.svg'
 import { getGapi } from '../../lib/gapi'
 
-// constructs the object passed to the `onSuccess` callback
-// this follows the format used by `react-google-login`
-// https://www.npmjs.com/package/react-google-login
-const formatResponse = res => {
-  const basicProfile = res.getBasicProfile()
-  const authResponse = res.getAuthResponse()
-  res.googleId = basicProfile.getId()
-  res.tokenObj = authResponse
-  res.tokenId = authResponse.id_token
-  res.accessToken = authResponse.access_token
-  res.profileObj = {
-    googleId: basicProfile.getId(),
-    imageUrl: basicProfile.getImageUrl(),
-    email: basicProfile.getEmail(),
-    name: basicProfile.getName(),
-    givenName: basicProfile.getGivenName(),
-    familyName: basicProfile.getFamilyName(),
-  }
-  return res
-}
-
 const GoogleLoginButton = ({
   onSuccess,
   onFailure,
   disabled,
   children,
+  onPress,
   ...others
 }) => {
   const buttonRef = useRef()
-  const [isReady, setIsReady] = useState(false)
+  const [GoogleAuth, setGoogleAuth] = useState(null)
 
-  const attachGapiToButton = GoogleAuth => {
-    GoogleAuth.attachClickHandler(
-      buttonRef.current,
-      {},
-      res => onSuccess(formatResponse(res)),
-      onFailure
-    )
+  const onButtonPress = () => {
+    if (onPress) {
+      onPress()
+    }
+    GoogleAuth.grantOfflineAccess({
+      prompt: 'select_account',
+      response_type: 'id_token',
+    })
+      .then(res => {
+        onSuccess({ code: res.code })
+      })
+      .catch(err => {
+        onFailure(err)
+      })
   }
 
   const initGapi = async () => {
@@ -50,9 +37,8 @@ const GoogleLoginButton = ({
         .init({
           client_id: process.env.GAPI_CLIENT_ID,
         })
-        .then(GoogleAuth => {
-          attachGapiToButton(GoogleAuth)
-          setIsReady(true)
+        .then(_googleAuth => {
+          setGoogleAuth(_googleAuth)
         })
     })
   }
@@ -60,11 +46,8 @@ const GoogleLoginButton = ({
   // on mount, initialize GAPI auth2 and signin2 services
   useEffect(
     () => {
-      // SKIP this if in TEST environment because GAPI breaks on Circle
-      if (process.env.NODE_ENV !== 'test') {
-        if (buttonRef.current) {
-          initGapi()
-        }
+      if (buttonRef.current) {
+        initGapi()
       }
     },
     [buttonRef.current]
@@ -73,8 +56,9 @@ const GoogleLoginButton = ({
   return (
     <Button
       variant="googleSignIn"
-      disabled={disabled || !isReady}
+      disabled={disabled || !GoogleAuth}
       ref={buttonRef}
+      onPress={onButtonPress}
       {...others}
     >
       <Grid colummGap="20px" singleRow alignItems="center">
