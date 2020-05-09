@@ -60,8 +60,11 @@ const GoogleLoginButton = ({
   // on mount, initialize GAPI auth2 and signin2 services
   useEffect(
     () => {
-      if (buttonRef.current) {
-        initGapi()
+      // SKIP this if in TEST environment because GAPI breaks on Circle
+      if (process.env.NODE_ENV !== 'test') {
+        if (buttonRef.current) {
+          initGapi()
+        }
       }
     },
     [buttonRef.current]
