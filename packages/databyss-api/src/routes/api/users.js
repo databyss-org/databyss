@@ -14,7 +14,7 @@ const router = express.Router()
 const oauth2Client = new google.auth.OAuth2(
   process.env.API_GOOGLE_CLIENT_ID,
   process.env.API_GOOGLE_CLIENT_SECRET,
-  'http://localhost:3000/oauth/google'
+  process.env.API_GOOGLE_REDIRECT_URI
 )
 
 // @route    POST api/users/google
@@ -22,7 +22,6 @@ const oauth2Client = new google.auth.OAuth2(
 // @access   Public
 router.post('/google', async (req, res) => {
   const code = querystring.unescape(req.body.code)
-  console.log('CODE', code)
 
   oauth2Client.getToken(code, async (err, tokens) => {
     if (err) {
@@ -32,7 +31,6 @@ router.post('/google', async (req, res) => {
     }
 
     const decoded = jwt.decode(tokens.id_token)
-    // console.log(decoded)
     const { name, email, sub } = decoded
     try {
       let user = await User.findOne({ googleId: sub })
