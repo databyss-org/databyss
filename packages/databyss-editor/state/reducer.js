@@ -16,6 +16,7 @@ import {
   symbolToAtomicType,
   blockAtIndex,
   getIndeciesForRefId,
+  cleanupState,
 } from './util'
 
 export const bakeAtomicBlock = ({ state, draft, index }) => {
@@ -315,5 +316,5 @@ export default (state, action) =>
       }
     }
 
-    return draft
+    return cleanupState(draft)
   })

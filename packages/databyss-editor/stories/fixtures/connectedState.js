@@ -8,9 +8,6 @@ const blockTwoId = ObjectId().toHexString()
 
 export default pageId => ({
   preventDefault: false,
-  showMenuActions: false,
-  showFormatMenu: false,
-  showNewBlockMenu: true,
   operations: [],
   selection: {
     anchor: {

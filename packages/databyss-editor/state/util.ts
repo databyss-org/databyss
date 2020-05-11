@@ -40,3 +40,24 @@ export const getIndeciesForRefId = (state: any, refId: string) => {
 
   return matches
 }
+
+export const cleanupState = (state: any) => {
+  // remove `blockCache` of id's not found in `blocks`
+  Object.keys(state.blockCache).forEach(id => {
+    if (state.blocks.filter(b => b._id === id).length === 0) {
+      delete state.blockCache[id]
+    }
+  })
+
+  // remove `entityCache` of id's not found in `blockCache`
+  Object.keys(state.entityCache).forEach(entId => {
+    if (
+      Object.values(state.blockCache).filter(v => v.entityId === entId)
+        .length === 0
+    ) {
+      delete state.entityCache[entId]
+    }
+  })
+
+  return state
+}
