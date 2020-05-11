@@ -1,8 +1,8 @@
 {
   "root": "build/",
   "routes": {
-    "/login": "login/index.html",
-    "/**": "index.html"
+    "/**": "index.html",
+    "/oauth/google": "oauth_google.html"
   },
   "https_only": true,
   "headers": {

@@ -53,6 +53,7 @@
     "lodash": "^4.17.15",
     "lorem-ipsum": "^2.0.3",
     "prop-types": "^15.7.2",
+    "query-string": "^6.12.1",
     "react-fast-compare": "^2.0.4",
     "react-highlight-words": "^0.16.0",
     "react-jss": "^8.6.1",

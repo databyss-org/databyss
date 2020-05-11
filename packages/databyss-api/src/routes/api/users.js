@@ -1,4 +1,5 @@
 import express from 'express'
+import querystring from 'querystring'
 import humanReadableIds from 'human-readable-ids'
 import jwt from 'jsonwebtoken'
 import { check, validationResult } from 'express-validator/check'
@@ -13,14 +14,15 @@ const router = express.Router()
 const oauth2Client = new google.auth.OAuth2(
   process.env.API_GOOGLE_CLIENT_ID,
   process.env.API_GOOGLE_CLIENT_SECRET,
-  'postmessage'
+  'http://localhost:3000/oauth/google'
 )
 
 // @route    POST api/users/google
 // @desc     create or get profile info for google user
 // @access   Public
 router.post('/google', async (req, res) => {
-  const { code } = req.body
+  const code = querystring.unescape(req.body.code)
+  console.log('CODE', code)
 
   oauth2Client.getToken(code, async (err, tokens) => {
     if (err) {
