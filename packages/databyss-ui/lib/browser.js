@@ -1,22 +1,31 @@
+// from https://stackoverflow.com/a/32261263
+// opens popup window in the center of the window passed as `win`
+export const openPopupWindow = ({ url, name, win, w, h }) => {
+  const y = win.top.outerHeight / 2 + win.top.screenY - h / 2
+  const x = win.top.outerWidth / 2 + win.top.screenX - w / 2
+  return win.open(
+    url,
+    name,
+    `toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width=${w}, height=${h}, top=${y}, left=${x}`
+  )
+}
+
 // OAuth Popup window
 // from: https://blog.leavemealone.app/how-to-oauth-popup/
 let windowObjectReference = null
 let previousUrl = null
 
 export const openOauthWindow = ({ url, name }) => {
-  // window features
-  const strWindowFeatures =
-    'toolbar=no, menubar=no, width=600, height=700, top=100, left=100'
-
+  const windowOptions = { url, name, win: window, w: 600, h: 650 }
   if (windowObjectReference === null || windowObjectReference.closed) {
     /* if the pointer to the window object in memory does not exist
      or if such pointer exists but the window was closed */
-    windowObjectReference = window.open(url, name, strWindowFeatures)
+    windowObjectReference = openPopupWindow(windowOptions)
   } else if (previousUrl !== url) {
     /* if the resource to load is different,
      then we load it in the already opened secondary window and then
      we bring such window back on top/in front of its parent window. */
-    windowObjectReference = window.open(url, name, strWindowFeatures)
+    windowObjectReference = openPopupWindow(windowOptions)
     windowObjectReference.focus()
   } else {
     /* else the window reference must exist and the window
