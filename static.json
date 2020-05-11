@@ -1,7 +1,7 @@
 {
   "root": "build/",
   "routes": {
-    "/login": "login/index.html",
+    "/oauth/google": "oauth_google.html",
     "/**": "index.html"
   },
   "https_only": true,

@@ -2,7 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import http from 'http'
 import bugsnag from './middleware/bugsnag'
-import ApiError from './lib/ApiError'
+// import ApiError from './lib/ApiError'
 import { connectDB } from './lib/db'
 
 // routes
@@ -41,6 +41,10 @@ const run = async () => {
   app.use(cors())
   app.use(express.json({ extended: false }))
 
+  app.get('/', (req, res) => {
+    res.redirect('https://app.databyss.org')
+  })
+
   // Define Routes
   app.use('/api/users', usersRoute)
   app.use('/api/auth', authRoute)
@@ -55,22 +59,19 @@ const run = async () => {
 
   // global error middleware
   // eslint-disable-next-line no-unused-vars
-  app.use((err, req, res) => {
-    if (err instanceof ApiError) {
-      res.status(err.status).send(err.message)
-    } else {
-      throw err
-    }
-  })
+  // app.use((err, req, res) => {
+  //   if (err instanceof ApiError) {
+  //     res.status(err.status).send(err.message)
+  //   } else {
+  //     console.error(err)
+  //     throw err
+  //   }
+  // })
 
   // This handles any errors that Express catches and must be the last middleware
   if (process.env.NODE_ENV !== 'test') {
     app.use(bugsnagMiddleware.errorHandler)
   }
-
-  app.get('/', (req, res) => {
-    res.status(200).send('Hello World!')
-  })
 
   return app
 }

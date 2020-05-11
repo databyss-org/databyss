@@ -1,66 +1,68 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Text, Grid, View } from '@databyss-org/ui/primitives'
+import queryString from 'query-string'
 import GoogleSvg from '@databyss-org/ui/assets/google_g.svg'
-import { getGapi } from '../../lib/gapi'
+import ObjectId from 'bson-objectid'
+import { openOauthWindow } from '../../lib/browser'
 
 const GoogleLoginButton = ({
   onSuccess,
   onFailure,
-  disabled,
   children,
   onPress,
   ...others
 }) => {
-  const buttonRef = useRef()
-  const [GoogleAuth, setGoogleAuth] = useState(null)
+  const [oauthHash] = useState(ObjectId().toHexString())
+
+  const makeOauthUrl = () => {
+    const url = 'https://accounts.google.com/signin/oauth/oauthchooseaccount'
+    const qs = {
+      scope: 'email profile',
+      access_type: 'online',
+      prompt: 'select_account',
+      response_type: 'code',
+      state: oauthHash,
+      redirect_uri: `${window.location.protocol}//${
+        window.location.host
+      }/oauth/google`,
+      client_id: process.env.GAPI_CLIENT_ID,
+      flowName: 'GeneralOAuthFlow',
+    }
+    return `${url}?${queryString.stringify(qs)}`
+  }
+
+  const onReceiveMessage = msg => {
+    if (!msg || !msg.data || !msg.data.code || !msg.data.state) {
+      return onFailure('bad response', msg)
+    }
+    if (msg.data.state !== oauthHash) {
+      return onFailure('bad oauth hash', msg.data.state)
+    }
+    if (msg && msg.data && msg.data.code) {
+      onSuccess({ code: msg.data.code })
+    }
+    return true
+  }
 
   const onButtonPress = () => {
     if (onPress) {
       onPress()
     }
-    GoogleAuth.grantOfflineAccess({
-      prompt: 'select_account',
-      response_type: 'id_token',
-    })
-      .then(res => {
-        onSuccess({ code: res.code })
-      })
-      .catch(err => {
-        onFailure(err)
-      })
-  }
-
-  const initGapi = async () => {
-    const gapi = await getGapi()
-    gapi.load('auth2', () => {
-      gapi.auth2
-        .init({
-          client_id: process.env.GAPI_CLIENT_ID,
-        })
-        .then(_googleAuth => {
-          setGoogleAuth(_googleAuth)
-        })
+    openOauthWindow({
+      url: makeOauthUrl(),
+      name: 'google_oauth',
     })
   }
 
-  // on mount, initialize GAPI auth2 and signin2 services
-  useEffect(
-    () => {
-      if (buttonRef.current) {
-        initGapi()
-      }
-    },
-    [buttonRef.current]
-  )
+  useEffect(() => {
+    window.addEventListener('message', evt => onReceiveMessage(evt), false)
+    return () => {
+      window.removeEventListener('message', onReceiveMessage)
+    }
+  }, [])
 
   return (
-    <Button
-      variant="googleSignIn"
-      disabled={disabled || !GoogleAuth}
-      ref={buttonRef}
-      onPress={onButtonPress}
-      {...others}
-    >
+    <Button variant="googleSignIn" onPress={onButtonPress} {...others}>
       <Grid colummGap="20px" singleRow alignItems="center">
         <View>
           <GoogleSvg />
