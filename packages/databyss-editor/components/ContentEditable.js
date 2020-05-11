@@ -21,7 +21,7 @@ import { getSelectedIndicies } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType } from '../state/util'
 
-const ContentEditable = () => {
+const ContentEditable = ({ onDocumentChange }) => {
   const {
     state,
     split,
@@ -41,8 +41,14 @@ const ContentEditable = () => {
   const sourceContext = useSourceContext()
   const topicContext = useTopicContext()
 
-  // const { setSource } = useSourceContext()
-  // const { setTopic } = useTopicContext()
+  useEffect(
+    () => {
+      if (onDocumentChange) {
+        onDocumentChange(editor)
+      }
+    },
+    [editor.operations]
+  )
 
   if (!valueRef.current) {
     editor.children = stateToSlate(state)

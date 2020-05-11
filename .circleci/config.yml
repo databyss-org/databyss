@@ -11,11 +11,13 @@ executors:
 orbs:
   # use Cypress orb from CircleCI registry
   cypress: cypress-io/cypress@1.13.0
+  wait-for: cobli/wait-for@0.0.2
+
 jobs:
   jest:
     docker:
       # specify the version you desire here
-      - image: circleci/node:10.16.0
+      - image: circleci/node:14.2.0
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -54,6 +56,15 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+      - run:
+          name: start storybook
+          command: yarn cy:wait-for-api
+          background: true
+
+      - run: 
+          name: wait on storybook server
+          command: ./node_modules/.bin/wait-on http://localhost:6006
+
       # run tests!
       - run: yarn test
 workflows:
@@ -61,9 +72,10 @@ workflows:
   lint-and-test:
     jobs:
       - jest
-      - cypress/run:
-          executor: base-10
-          yarn: true
-          start: yarn cy:wait-for-api
-          wait-on: -t 300000 http://localhost:6006
-          command: yarn cy:run
+      # enable cypress tests by uncommenting code
+      # - cypress/run:
+      #     executor: base-10
+      #     yarn: true
+      #     start: yarn cy:wait-for-api
+      #     wait-on: -t 300000 http://localhost:6006
+      #     command: yarn cy:run
