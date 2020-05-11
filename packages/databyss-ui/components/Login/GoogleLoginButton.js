@@ -39,7 +39,6 @@ const GoogleLoginButton = ({
       return onFailure('bad oauth hash', msg.data.state)
     }
     if (msg && msg.data && msg.data.code) {
-      console.log(msg.data.code)
       onSuccess({ code: msg.data.code })
     }
     return true
