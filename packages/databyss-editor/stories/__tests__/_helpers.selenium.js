@@ -15,6 +15,7 @@ export const getEditor = async driver => {
   const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
   return _driver
 }
+<<<<<<< HEAD
 
 export const toggleBold = actions =>
   actions
@@ -22,3 +23,5 @@ export const toggleBold = actions =>
     .sendKeys('b')
     .keyUp(Key.META)
     .perform()
+=======
+>>>>>>> next
