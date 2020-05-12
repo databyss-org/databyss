@@ -18,25 +18,25 @@ export const getEditor = async driver => {
 
 export const toggleBold = actions =>
   actions
-    .keyDown(Key.META)
+    .keyDown(CONTROL)
     .sendKeys('b')
-    .keyUp(Key.META)
+    .keyUp(CONTROL)
 
 export const toggleItalic = actions =>
   actions
-    .keyDown(Key.META)
+    .keyDown(CONTROL)
     .sendKeys('i')
-    .keyUp(Key.META)
+    .keyUp(CONTROL)
 
 export const toggleLocation = actions =>
   actions
-    .keyDown(Key.META)
+    .keyDown(CONTROL)
     .sendKeys('k')
-    .keyUp(Key.META)
+    .keyUp(CONTROL)
 
 export const singleHighlight = actions => {
   actions
-    .keyDown(Key.SHIFT)
+    .keyDown(CONTROL)
     .sendKeys(Key.ARROW_RIGHT)
-    .keyUp(Key.SHIFT)
+    .keyUp(CONTROL)
 }
