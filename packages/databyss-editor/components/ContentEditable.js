@@ -88,20 +88,21 @@ const ContentEditable = ({ onDocumentChange }) => {
     console.log(event.key)
 
     if (Hotkeys.isBold(event)) {
-      event.preventDefault()
       toggleMark(editor, 'bold')
+      event.preventDefault()
+
       return
     }
 
     if (Hotkeys.isItalic(event)) {
-      event.preventDefault()
       toggleMark(editor, 'italic')
+      event.preventDefault()
       return
     }
 
     if (Hotkeys.isLocation(event)) {
-      event.preventDefault()
       toggleMark(editor, 'location')
+      event.preventDefault()
       return
     }
 
@@ -186,8 +187,10 @@ const ContentEditable = ({ onDocumentChange }) => {
   }
 
   const onChange = value => {
+    console.log(editor)
     const selection = slateSelectionToStateSelection(editor)
 
+    console.log('on operations', editor.operations)
     if (!selection) {
       return
     }
