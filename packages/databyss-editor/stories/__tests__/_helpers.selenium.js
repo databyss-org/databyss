@@ -7,9 +7,9 @@ const waitUntilTime = 20000
 // console.log('is mac', IS_MAC)
 // console.log('is IOS', IS_IOS)
 
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.ALT
+// export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.ALT
 // export const CONTROL = IS_IOS || IS_MAC ? Key.META : Key.CONTROL
-//export const CONTROL = Key.META
+export const CONTROL = Key.COMMAND
 
 export const sleep = m => new Promise(r => setTimeout(r, m))
 
