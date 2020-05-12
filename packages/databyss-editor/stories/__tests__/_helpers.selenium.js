@@ -1,8 +1,14 @@
 import { Key, By, until } from 'selenium-webdriver'
+import { IS_IOS, IS_MAC } from 'slate-dev-environment'
+// import { IS_LINUX } from '@databyss-org/ui/lib/dom'
 
 const waitUntilTime = 20000
 
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
+// console.log('is mac', IS_MAC)
+// console.log('is IOS', IS_IOS)
+
+// export const CONTROL = IS_IOS || IS_MAC ? Key.META : Key.CONTROL
+export const CONTROL = Key.META
 
 export const sleep = m => new Promise(r => setTimeout(r, m))
 

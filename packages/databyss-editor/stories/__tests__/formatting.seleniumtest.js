@@ -26,19 +26,13 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 describe('format text in editor', () => {
   beforeEach(async done => {
     // OSX and safari are necessary
-    driver = await startSession('Slate-5-basic-osx-safari', OSX, SAFARI)
+    driver = await startSession('Slate-5-formatting-osx-safari', OSX, SAFARI)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     editor = await getEditor(driver)
 
     slateDocument = await driver.findElement(By.id('slateDocument'))
     await editor.click()
     actions = driver.actions()
-    //  await actions.click(editor)
-    //
-    // await editor.sendKeys('a')
-    // await editor.sendKeys(Key.BACK_SPACE)
-    //  await actions.click(editor)
-
     done()
   })
 
@@ -52,7 +46,6 @@ describe('format text in editor', () => {
     await toggleBold(actions)
     await actions.sendKeys('bold')
     await actions.perform()
-
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
