@@ -3,7 +3,7 @@
 import { By, Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, SAFARI } from '@databyss-org/ui/lib/saucelabs'
-import { jsx as h, withTest } from './hyperscript'
+import { jsx as h } from './hyperscript'
 import { sanitizeEditorChildren } from './__helpers'
 import {
   getEditor,
@@ -11,8 +11,8 @@ import {
   toggleBold,
   toggleItalic,
   toggleLocation,
+  singleHighlight,
 } from './_helpers.selenium'
-import { Editor } from 'slate'
 
 let driver
 let editor
@@ -32,8 +32,13 @@ describe('format text in editor', () => {
 
     slateDocument = await driver.findElement(By.id('slateDocument'))
     await editor.click()
-    actions = driver.actions({ bridge: true })
-    await actions.click(editor)
+    actions = driver.actions()
+    //  await actions.click(editor)
+    //
+    // await editor.sendKeys('a')
+    // await editor.sendKeys(Key.BACK_SPACE)
+    //  await actions.click(editor)
+
     done()
   })
 
@@ -43,9 +48,11 @@ describe('format text in editor', () => {
 
   it('toggle bold in entry using hotkeys', async () => {
     await sleep(300)
-    await editor.sendKeys('following text should be ')
+    await actions.sendKeys('following text should be ')
     await toggleBold(actions)
-    await editor.sendKeys('bold')
+    await actions.sendKeys('bold')
+    await actions.perform()
+
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
@@ -70,9 +77,11 @@ describe('format text in editor', () => {
 
   it('should toggle italic in entry using hotkeys', async () => {
     await sleep(300)
-    await editor.sendKeys('following text should be ')
+    await actions.sendKeys('following text should be ')
     await toggleItalic(actions)
-    await editor.sendKeys('italic')
+    await actions.sendKeys('italic')
+    await actions.perform()
+
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
@@ -97,9 +106,10 @@ describe('format text in editor', () => {
 
   it('should toggle location in entry using hotkeys', async () => {
     await sleep(300)
-    await editor.sendKeys('following text should be ')
+    await actions.sendKeys('following text should be ')
     await toggleLocation(actions)
-    await editor.sendKeys('location')
+    await actions.sendKeys('location')
+    await actions.perform()
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
@@ -124,15 +134,16 @@ describe('format text in editor', () => {
 
   it('should toggle location bold and italic in entry using hotkeys', async () => {
     await sleep(300)
-    await editor.sendKeys('following text should be ')
-    await toggleItalic(actions)
-    await editor.sendKeys('italic ')
+    await actions.sendKeys('following text should be ')
     await toggleBold(actions)
-    await editor.sendKeys('and bold ')
     await toggleItalic(actions)
+    await actions.sendKeys('bold and italic ')
+    await toggleItalic(actions)
+    await actions.sendKeys('and just bold ')
     await toggleLocation(actions)
-    await editor.sendKeys('and location')
-    await sleep(5000)
+    await actions.sendKeys('and location with bold')
+    await actions.perform()
+    await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
 
@@ -140,8 +151,131 @@ describe('format text in editor', () => {
       <editor>
         <block type="ENTRY">
           <text>following text should be </text>
-          <text location>location</text>
+          <text bold italic>
+            bold and italic{' '}
+          </text>
+          <text bold>and just bold </text>
+          <text bold location>
+            and location with bold
+          </text>
           <cursor />
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should toggle bold using the format toolbar', async () => {
+    await sleep(300)
+    await actions.sendKeys('first word should be bold')
+    await actions.sendKeys(Key.ARROW_UP)
+    await singleHighlight(actions)
+    await singleHighlight(actions)
+    await singleHighlight(actions)
+    await singleHighlight(actions)
+    await singleHighlight(actions)
+    await actions.perform()
+    await sleep(300)
+    await driver
+      .findElement(By.tagName('[data-test-format-menu="bold"]'))
+      .click()
+
+    await sleep(300)
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="ENTRY">
+          <text bold>
+            <anchor />
+            first<focus />
+          </text>
+          <text> word should be bold</text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should toggle italic using the format toolbar', async () => {
+    await sleep(300)
+    await actions.sendKeys('first word should be italic')
+    await actions.sendKeys(Key.ARROW_UP)
+    await singleHighlight(actions)
+    await singleHighlight(actions)
+    await singleHighlight(actions)
+    await singleHighlight(actions)
+    await singleHighlight(actions)
+    await actions.perform()
+    await sleep(300)
+    await driver
+      .findElement(By.tagName('[data-test-format-menu="italic"]'))
+      .click()
+
+    await sleep(300)
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="ENTRY">
+          <text italic>
+            <anchor />
+            first<focus />
+          </text>
+          <text> word should be italic</text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should toggle location using the format toolbar', async () => {
+    await sleep(300)
+    await actions.sendKeys('first word should be location')
+    await actions.sendKeys(Key.ARROW_UP)
+    await singleHighlight(actions)
+    await singleHighlight(actions)
+    await singleHighlight(actions)
+    await singleHighlight(actions)
+    await singleHighlight(actions)
+    await actions.perform()
+    await sleep(300)
+    await driver
+      .findElement(By.tagName('[data-test-format-menu="location"]'))
+      .click()
+
+    await sleep(300)
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="ENTRY">
+          <text location>
+            <anchor />
+            first<focus />
+          </text>
+          <text> word should be location</text>
         </block>
       </editor>
     )

@@ -15,13 +15,28 @@ export const getEditor = async driver => {
   const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
   return _driver
 }
-<<<<<<< HEAD
 
 export const toggleBold = actions =>
   actions
     .keyDown(Key.META)
     .sendKeys('b')
     .keyUp(Key.META)
-    .perform()
-=======
->>>>>>> next
+
+export const toggleItalic = actions =>
+  actions
+    .keyDown(Key.META)
+    .sendKeys('i')
+    .keyUp(Key.META)
+
+export const toggleLocation = actions =>
+  actions
+    .keyDown(Key.META)
+    .sendKeys('k')
+    .keyUp(Key.META)
+
+export const singleHighlight = actions => {
+  actions
+    .keyDown(Key.SHIFT)
+    .sendKeys(Key.ARROW_RIGHT)
+    .keyUp(Key.SHIFT)
+}
