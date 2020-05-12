@@ -85,6 +85,8 @@ const ContentEditable = ({ onDocumentChange }) => {
   )
 
   const onKeyDown = event => {
+    console.log(event.key)
+
     if (Hotkeys.isBold(event)) {
       event.preventDefault()
       toggleMark(editor, 'bold')
