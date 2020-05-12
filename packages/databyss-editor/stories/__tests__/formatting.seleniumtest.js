@@ -287,4 +287,76 @@ describe('format text in editor', () => {
 
     assert.deepEqual(actual.selection, expected.selection)
   })
+
+  it('should toggle a bold and italic within a source', async () => {
+    await sleep(300)
+    await actions.sendKeys('@this should be ')
+    await toggleBold(actions)
+    await actions.sendKeys('bold ')
+    await toggleItalic(actions)
+    await actions.sendKeys('and italic')
+    await actions.sendKeys(Key.ENTER)
+    await actions.perform()
+    await sleep(500)
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="SOURCE">
+          <text>this should be </text>
+          <text bold>bold </text>
+          <text bold italic>
+            and italic
+          </text>
+        </block>
+        <block type="ENTRY">
+          <cursor />
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should not allow locations on sources, allow italic and bold', async () => {
+    await sleep(300)
+    await actions.sendKeys('@this should not be ')
+    await toggleLocation(actions)
+    await actions.sendKeys('a location ')
+    await toggleBold(actions)
+    await toggleItalic(actions)
+    await actions.sendKeys('and allow italic and bold')
+    await actions.sendKeys(Key.ENTER)
+    await actions.perform()
+    await sleep(500)
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="SOURCE">
+          <text>this should not be a location </text>
+          <text bold italic>
+            and allow italic and bold
+          </text>
+        </block>
+        <block type="ENTRY">
+          <cursor />
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
 })
