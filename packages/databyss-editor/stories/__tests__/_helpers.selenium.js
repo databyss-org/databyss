@@ -1,6 +1,4 @@
 import { Key, By, until } from 'selenium-webdriver'
-import { IS_IOS, IS_MAC } from 'slate-dev-environment'
-// import { IS_LINUX } from '@databyss-org/ui/lib/dom'
 
 const waitUntilTime = 20000
 

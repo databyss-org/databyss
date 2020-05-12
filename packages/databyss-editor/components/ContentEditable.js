@@ -86,16 +86,19 @@ const ContentEditable = ({ onDocumentChange }) => {
 
   const onKeyDown = event => {
     if (Hotkeys.isBold(event)) {
+      event.preventDefault()
       toggleMark(editor, 'bold')
       return
     }
 
     if (Hotkeys.isItalic(event)) {
+      event.preventDefault()
       toggleMark(editor, 'italic')
       return
     }
 
     if (Hotkeys.isLocation(event)) {
+      event.preventDefault()
       toggleMark(editor, 'location')
       return
     }
