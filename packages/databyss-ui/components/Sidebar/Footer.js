@@ -50,7 +50,7 @@ const Footer = () => {
         my="small"
       >
         <Grid singleRow alignItems="center" columnGap="small">
-          <Icon sizeVariant="medium" color="text.3">
+          <Icon sizeVariant="large" color="text.3">
             <Plus />
           </Icon>
           <Text variant="uiTextSmall" color="text.3">

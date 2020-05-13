@@ -12,7 +12,7 @@ import {
 import { newPage } from '@databyss-org/services/pages/_helpers'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import Plus from '@databyss-org/ui/assets/plus.svg'
+import AddPageSvg from '@databyss-org/ui/assets/add_page.svg'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import MenuCollapseSvg from '@databyss-org/ui/assets/menu_collapse.svg'
@@ -68,13 +68,16 @@ const SidebarCollapsed = () => {
       height="100vh"
       borderRightColor="border.1"
       borderRightWidth={pxUnits(1)}
+      css={css({
+        width: '56px',
+      })}
     >
       <List
         verticalItemPadding={2}
         horizontalItemPadding={1}
         mt="none"
         mb="none"
-        p="small"
+        p="extraSmall"
       >
         {/* header */}
         <BaseControl
@@ -84,7 +87,7 @@ const SidebarCollapsed = () => {
           alignItems="center"
         >
           <Grid singleRow alignItems="flex-end" columnGap="small">
-            <Icon sizeVariant="small" color="text.3">
+            <Icon sizeVariant="medium" color="text.3">
               {isMenuOpen ? <MenuCollapseSvg /> : <MenuSvg />}
             </Icon>
           </Grid>
@@ -96,7 +99,7 @@ const SidebarCollapsed = () => {
           alignItems="center"
         >
           <Grid singleRow alignItems="center" columnGap="small">
-            <Icon sizeVariant="small" color="text.3">
+            <Icon sizeVariant="medium" color="text.3">
               <SearchSvg />
             </Icon>
           </Grid>
@@ -108,26 +111,26 @@ const SidebarCollapsed = () => {
           alignItems="center"
         >
           <Grid singleRow alignItems="center" columnGap="small">
-            <Icon sizeVariant="small" color="text.3">
+            <Icon sizeVariant="medium" color="text.3">
               <PagesSvg />
             </Icon>
           </Grid>
         </BaseControl>
+        <View position="fixed" bottom={0} left={0} width="56px">
+          <BaseControl
+            p={2}
+            width="100%"
+            onClick={() => onNewPageClick()}
+            alignItems="center"
+          >
+            <Grid singleRow alignItems="center" columnGap="small">
+              <Icon sizeVariant="medium" color="text.3">
+                <AddPageSvg />
+              </Icon>
+            </Grid>
+          </BaseControl>
+        </View>
       </List>
-      <View position="fixed" bottom={0} left={0} width="60px">
-        <BaseControl
-          p={2}
-          width="100%"
-          onClick={() => onNewPageClick()}
-          alignItems="center"
-        >
-          <Grid singleRow alignItems="center" columnGap="small">
-            <Icon sizeVariant="medium" color="text.3">
-              <Plus />
-            </Icon>
-          </Grid>
-        </BaseControl>
-      </View>
     </View>
   )
 }
