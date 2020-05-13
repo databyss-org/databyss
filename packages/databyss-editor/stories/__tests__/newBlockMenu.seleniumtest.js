@@ -5,13 +5,7 @@ import assert from 'assert'
 import { startSession, OSX, SAFARI } from '@databyss-org/ui/lib/saucelabs'
 import { jsx as h } from './hyperscript'
 import { sanitizeEditorChildren } from './__helpers'
-import {
-  getEditor,
-  sleep,
-  toggleBold,
-  toggleItalic,
-  toggleLocation,
-} from './_helpers.selenium'
+import { getEditor, sleep } from './_helpers.selenium'
 
 let driver
 let editor
