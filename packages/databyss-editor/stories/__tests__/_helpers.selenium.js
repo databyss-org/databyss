@@ -7,7 +7,12 @@ const waitUntilTime = 20000
 
 // export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.ALT
 // export const CONTROL = IS_IOS || IS_MAC ? Key.META : Key.CONTROL
-export const CONTROL = Key.COMMAND
+let CONTROL = Key.META
+
+if (process.env.NPM_BUILD_TARGET === 'TEST') {
+  console.log('IS IN ENVIRONTMENT')
+  CONTROL = Key.CONTROL
+}
 
 export const sleep = m => new Promise(r => setTimeout(r, m))
 
@@ -41,7 +46,7 @@ export const toggleLocation = actions =>
 
 export const singleHighlight = actions => {
   actions
-    .keyDown(CONTROL)
+    .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_RIGHT)
-    .keyUp(CONTROL)
+    .keyUp(Key.SHIFT)
 }

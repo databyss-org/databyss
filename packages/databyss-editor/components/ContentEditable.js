@@ -92,10 +92,10 @@ const ContentEditable = ({ onDocumentChange }) => {
   )
 
   const onKeyDown = event => {
-    console.log(event.key)
+    // console.log(event.key)
 
     if (Hotkeys.isBold(event)) {
-      console.log('TOGGLES BOLD')
+      // console.log('TOGGLES BOLD')
       event.preventDefault()
       toggleMark(editor, 'bold')
       return
@@ -195,9 +195,11 @@ const ContentEditable = ({ onDocumentChange }) => {
 
   const onChange = value => {
     const selection = slateSelectionToStateSelection(editor)
-    console.log('active marks', SlateEditor.marks(editor))
 
-    console.log('on operations', editor.operations)
+    // console.log('active marks', SlateEditor.marks(editor))
+
+    // console.log('on operations', editor.operations)
+
     if (!selection) {
       return
     }
@@ -286,10 +288,10 @@ const ContentEditable = ({ onDocumentChange }) => {
       })
     }
 
-    // if (!_.isEqual(selectionRef.current, editor.selection)) {
-    //   setSelection(selection)
-    // }
-    setSelection(selection)
+    if (!_.isEqual(selectionRef.current, editor.selection)) {
+      setSelection(selection)
+    }
+    // setSelection(selection)
   }
 
   // Use immer to produce the next `value`
