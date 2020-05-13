@@ -21,12 +21,7 @@ const Styled = styled(View, variants)
 const Icon = ({ children, color, sizeVariant, ...others }) => {
   const webProps = {
     css: css({
-      path: {
-        fill: color,
-      },
-      rect: {
-        stroke: color,
-      },
+      color,
     }),
   }
   const nativeProps = {}
@@ -40,7 +35,6 @@ const Icon = ({ children, color, sizeVariant, ...others }) => {
       {...others}
     >
       {React.cloneElement(Svg, {
-        fill: get(colors, color, 'black'),
         width: '100%',
         height: '100%',
       })}

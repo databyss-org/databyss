@@ -13,9 +13,10 @@ import { newPage } from '@databyss-org/services/pages/_helpers'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import Plus from '@databyss-org/ui/assets/plus.svg'
-import Databyss from '@databyss-org/ui/assets/databyss.svg'
-import PageSvg from '@databyss-org/ui/assets/page.svg'
+import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
+import MenuCollapseSvg from '@databyss-org/ui/assets/menu_collapse.svg'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 import { darkTheme } from '../../theming/theme'
 
 export const defaultProps = {
@@ -59,78 +60,72 @@ const SidebarCollapsed = () => {
   return (
     <View
       {...defaultProps}
-      css={css({
-        width: '60px',
-      })}
+      widthVariant="content"
+      theme={darkTheme}
+      bg="background.0"
+      // pt="medium"
+      height="100vh"
+      borderRightColor="border.1"
+      borderRightWidth={pxUnits(1)}
     >
-      <View
-        widthVariant="content"
-        theme={darkTheme}
-        bg="background.0"
-        pt="medium"
-        height="100vh"
+      <List
+        verticalItemPadding={2}
+        horizontalItemPadding={1}
+        mt="none"
+        mb="none"
+        p="small"
       >
-        <List
-          verticalItemPadding={2}
-          horizontalItemPadding={2}
-          mt="none"
-          mb="none"
-          p="small"
+        {/* header */}
+        <BaseControl
+          p={2}
+          width="100%"
+          onClick={() => setMenuOpen(!isMenuOpen)}
+          alignItems="center"
         >
-          {/* header */}
-          <BaseControl
-            p={2}
-            width="100%"
-            onClick={() => setMenuOpen(!isMenuOpen)}
-            alignItems="center"
-          >
-            <Grid singleRow alignItems="flex-end" columnGap="small">
-              <Icon sizeVariant="small" color="text.3">
-                <Databyss />
-              </Icon>
-            </Grid>
-          </BaseControl>
-          {/* content */}
-          <Separator color="border.1" />
-          <BaseControl
-            p={2}
-            width="100%"
-            onClick={() => onItemClick('search')}
-            alignItems="center"
-          >
-            <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant="small" color="text.3">
-                <SearchSvg />
-              </Icon>
-            </Grid>
-          </BaseControl>
-          <BaseControl
-            p={2}
-            width="100%"
-            onClick={() => onItemClick('pages')}
-            alignItems="center"
-          >
-            <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant="small" color="text.3">
-                <PageSvg />
-              </Icon>
-            </Grid>
-          </BaseControl>
-        </List>
-        <View position="fixed" bottom={0} left={0} width="60px">
-          <BaseControl
-            p={2}
-            width="100%"
-            onClick={() => onNewPageClick()}
-            alignItems="center"
-          >
-            <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant="medium" color="text.3">
-                <Plus />
-              </Icon>
-            </Grid>
-          </BaseControl>
-        </View>
+          <Grid singleRow alignItems="flex-end" columnGap="small">
+            <Icon sizeVariant="small" color="text.3">
+              <MenuCollapseSvg />
+            </Icon>
+          </Grid>
+        </BaseControl>
+        <BaseControl
+          p={2}
+          width="100%"
+          onClick={() => onItemClick('search')}
+          alignItems="center"
+        >
+          <Grid singleRow alignItems="center" columnGap="small">
+            <Icon sizeVariant="small" color="text.3">
+              <SearchSvg />
+            </Icon>
+          </Grid>
+        </BaseControl>
+        <BaseControl
+          p={2}
+          width="100%"
+          onClick={() => onItemClick('pages')}
+          alignItems="center"
+        >
+          <Grid singleRow alignItems="center" columnGap="small">
+            <Icon sizeVariant="small" color="text.3">
+              <PagesSvg />
+            </Icon>
+          </Grid>
+        </BaseControl>
+      </List>
+      <View position="fixed" bottom={0} left={0} width="60px">
+        <BaseControl
+          p={2}
+          width="100%"
+          onClick={() => onNewPageClick()}
+          alignItems="center"
+        >
+          <Grid singleRow alignItems="center" columnGap="small">
+            <Icon sizeVariant="medium" color="text.3">
+              <Plus />
+            </Icon>
+          </Grid>
+        </BaseControl>
       </View>
     </View>
   )

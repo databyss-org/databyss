@@ -51,51 +51,54 @@ const Sidebar = () => {
   }
 
   return isMenuOpen ? (
-    <View
-      {...defaultProps}
-      position="relative"
-      css={css({
-        width: '300px',
-      })}
-    >
+    <>
+      <SidebarCollapsed />
       <View
-        widthVariant="content"
-        theme={darkTheme}
-        bg="background.0"
-        pt="medium"
-        height="100vh"
+        {...defaultProps}
+        position="relative"
+        css={css({
+          width: '300px',
+        })}
       >
-        <List
-          verticalItemPadding={2}
-          horizontalItemPadding={2}
-          mt="none"
-          mb="none"
-          p="small"
-          pl="medium"
-          pr="medium"
-          alignItems="center"
+        <View
+          widthVariant="content"
+          theme={darkTheme}
+          bg="background.0"
+          pt="medium"
+          height="100vh"
         >
-          {/* header */}
-          <Header onHeaderClick={onHeaderClick} />
-          {/* search bar */}
-          {menuItem !== 'search' && <Separator color="border.1" />}
-          <Search
-            onClick={() => {
-              navigateSidebar('/search')
-            }}
-          />
-          {/* content */}
-          {/* default content */}
-          {!menuItem && <SidebarList menuItem={menuItem} />}
+          <List
+            verticalItemPadding={2}
+            horizontalItemPadding={2}
+            mt="none"
+            mb="none"
+            p="small"
+            pl="medium"
+            pr="medium"
+            alignItems="center"
+          >
+            {/* header */}
+            <Header onHeaderClick={onHeaderClick} />
+            {/* search bar */}
+            {menuItem !== 'search' && <Separator color="border.1" />}
+            <Search
+              onClick={() => {
+                navigateSidebar('/search')
+              }}
+            />
+            {/* content */}
+            {/* default content */}
+            {!menuItem && <SidebarList menuItem={menuItem} />}
 
-          {menuItem === 'pages' && <Pages />}
-        </List>
-        {/* footer  */}
-        <View position="absolute" bottom={0} left={0} width="300px">
-          <Footer />
+            {menuItem === 'pages' && <Pages />}
+          </List>
+          {/* footer  */}
+          <View position="absolute" bottom={0} left={0} width="300px">
+            <Footer />
+          </View>
         </View>
       </View>
-    </View>
+    </>
   ) : (
     <SidebarCollapsed />
   )
