@@ -1,13 +1,6 @@
 import React from 'react'
-import ArrowLeft from '@databyss-org/ui/assets/arrowLeft.svg'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import {
-  Text,
-  View,
-  BaseControl,
-  Grid,
-  Icon,
-} from '@databyss-org/ui/primitives'
+import { Text, View, BaseControl, Icon } from '@databyss-org/ui/primitives'
 import LogoSvg from '@databyss-org/ui/assets/logo1.svg'
 
 const headerMap = type => {
@@ -28,14 +21,7 @@ const Header = ({ onHeaderClick }) => {
   return (
     <BaseControl p={1} width="100%" onClick={() => onHeaderClick()}>
       <View>
-        <Grid singleRow columnGap="none" alignItems="center">
-          <Icon sizeVariant="medium" color="text.3">
-            <ArrowLeft />
-          </Icon>
-          <Text variant="uiTextLarge" color="text.2" ml="tiny">
-            {headerMap(menuItem)}
-          </Text>
-        </Grid>
+        <Text variant="uiTextLarge">{headerMap(menuItem)}</Text>
       </View>
     </BaseControl>
   )
