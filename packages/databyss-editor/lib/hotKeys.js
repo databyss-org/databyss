@@ -1,5 +1,6 @@
 import { isKeyHotkey } from 'is-hotkey'
-import { IS_LINUX, IS_MAC, IS_IOS } from '@databyss-org/ui/lib/dom'
+import { IS_LINUX } from '@databyss-org/ui/lib/dom'
+import { IS_IOS, IS_MAC } from 'slate-dev-environment'
 
 export const metaKey = IS_LINUX ? 'alt' : 'mod'
 export const START_OF_LINE = 'START_OF_LINE'
