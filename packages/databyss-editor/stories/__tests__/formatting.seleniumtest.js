@@ -74,7 +74,6 @@ describe('format text in editor', () => {
     await toggleItalic(actions)
     await actions.sendKeys('italic')
     await actions.perform()
-
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())

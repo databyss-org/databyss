@@ -145,7 +145,6 @@ const isMarkActive = (editor, format) => {
 
 export const toggleMark = (editor, format) => {
   const isActive = isMarkActive(editor, format)
-  console.log('IS ACTIVE', isActive)
   if (isActive) {
     Editor.removeMark(editor, format)
   } else {

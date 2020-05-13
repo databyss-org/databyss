@@ -1,6 +1,13 @@
 import React, { useMemo, useRef, useEffect } from 'react'
 import _ from 'lodash'
-import { createEditor, Node, Transforms, Point, Range } from 'slate'
+import {
+  createEditor,
+  Node,
+  Transforms,
+  Point,
+  Range,
+  Editor as SlateEditor,
+} from 'slate'
 import { withReact } from 'slate-react'
 import { produce } from 'immer'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
@@ -88,9 +95,9 @@ const ContentEditable = ({ onDocumentChange }) => {
     console.log(event.key)
 
     if (Hotkeys.isBold(event)) {
-      toggleMark(editor, 'bold')
+      console.log('TOGGLES BOLD')
       event.preventDefault()
-
+      toggleMark(editor, 'bold')
       return
     }
 
@@ -187,8 +194,8 @@ const ContentEditable = ({ onDocumentChange }) => {
   }
 
   const onChange = value => {
-    console.log(editor)
     const selection = slateSelectionToStateSelection(editor)
+    console.log('active marks', SlateEditor.marks(editor))
 
     console.log('on operations', editor.operations)
     if (!selection) {
@@ -274,11 +281,14 @@ const ContentEditable = ({ onDocumentChange }) => {
             },
           })
           setContent({ selection, operations: _operations })
+          return
         }
       })
-      return
     }
 
+    // if (!_.isEqual(selectionRef.current, editor.selection)) {
+    //   setSelection(selection)
+    // }
     setSelection(selection)
   }
 
