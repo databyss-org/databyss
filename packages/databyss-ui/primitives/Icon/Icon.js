@@ -18,11 +18,12 @@ const variants = variant({
 
 const Styled = styled(View, variants)
 
-const Icon = ({ children, color, sizeVariant, ...others }) => {
+const Icon = ({ children, color, sizeVariant, fill, stroke, ...others }) => {
   const webProps = {
     css: css({
       path: {
-        fill: color,
+        fill: fill ? color : 'none',
+        stroke: stroke ? color : 'none',
       },
     }),
   }
@@ -37,7 +38,8 @@ const Icon = ({ children, color, sizeVariant, ...others }) => {
       {...others}
     >
       {React.cloneElement(Svg, {
-        fill: get(colors, color, 'black'),
+        fill: get(colors, color, fill ? 'black' : 'none'),
+        stroke: get(colors, color, stroke ? 'black' : 'none'),
         width: '100%',
         height: '100%',
       })}

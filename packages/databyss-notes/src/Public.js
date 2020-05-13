@@ -1,7 +1,7 @@
 import React from 'react'
-import { View, Icon, Text, Grid } from '@databyss-org/ui/primitives'
+import { View, Text, Grid } from '@databyss-org/ui/primitives'
 import Login from '@databyss-org/ui/modules/Login/Login'
-import LogoSvg from '@databyss-org/ui/assets/databyss.svg'
+import { DatabyssIcon } from '@databyss-org/ui/assets/icons'
 
 const Public = props => (
   <React.Fragment>
@@ -16,15 +16,13 @@ const Public = props => (
       singleRow
     >
       <View flexGrow={0}>
-        <Icon
+        <DatabyssIcon
           sizeVariant="medium"
           color="white"
           paddingVariant="small"
           backgroundColor="text.2"
           borderRadius="default"
-        >
-          <LogoSvg />
-        </Icon>
+        />
       </View>
       <View flexGrow={0}>
         <Text variant="uiTextNormalSemibold" color="text.1">

@@ -1,7 +1,0 @@
-<svg width="9px" height="15px" viewBox="0 0 9 15" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <g id="arrow" transform="translate(0.000000, 1.000000)" fill="none" stroke-width="1" fill-rule="evenodd">
-      <g transform="translate(4.500000, 6.500000) rotate(-90.000000) translate(-4.500000, -6.500000) translate(-2.000000, 2.000000)">
-          <polyline points="0 9 6.5 0 13 9"></polyline>
-      </g>
-  </g>
-</svg>
