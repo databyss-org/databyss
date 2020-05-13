@@ -85,7 +85,7 @@ const SidebarCollapsed = () => {
             alignItems="center"
           >
             <Grid singleRow alignItems="flex-end" columnGap="small">
-              <Icon sizeVariant="medium" color="text.3">
+              <Icon sizeVariant="small" color="text.3">
                 <Databyss />
               </Icon>
             </Grid>
@@ -99,7 +99,7 @@ const SidebarCollapsed = () => {
             alignItems="center"
           >
             <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant="medium" color="text.3">
+              <Icon sizeVariant="small" color="text.3">
                 <SearchSvg />
               </Icon>
             </Grid>
@@ -111,7 +111,7 @@ const SidebarCollapsed = () => {
             alignItems="center"
           >
             <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant="medium" color="text.3">
+              <Icon sizeVariant="small" color="text.3">
                 <PageSvg />
               </Icon>
             </Grid>
