@@ -106,13 +106,6 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
                 >
                   {item.text}
                 </Text>
-                {!menuItem && (
-                  <View position="absolute" right="small">
-                    <Icon sizeVariant="small" color="text.3">
-                      <ArrowRight />
-                    </Icon>
-                  </View>
-                )}
               </Grid>
             </View>
           </BaseControl>

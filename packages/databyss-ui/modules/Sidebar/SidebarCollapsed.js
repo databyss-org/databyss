@@ -55,7 +55,6 @@ const SidebarCollapsed = () => {
 
   const onItemClick = item => {
     navigateSidebar(`/${item}`)
-    setMenuOpen(!isMenuOpen)
   }
 
   return (
@@ -116,21 +115,21 @@ const SidebarCollapsed = () => {
             </Icon>
           </Grid>
         </BaseControl>
-        <View position="fixed" bottom={0} left={0} width="56px">
-          <BaseControl
-            p={2}
-            width="100%"
-            onClick={() => onNewPageClick()}
-            alignItems="center"
-          >
-            <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant="medium" color="text.3">
-                <AddPageSvg />
-              </Icon>
-            </Grid>
-          </BaseControl>
-        </View>
       </List>
+      <View position="fixed" bottom={0} left={0} width="56px">
+        <BaseControl
+          p={2}
+          width="100%"
+          onClick={() => onNewPageClick()}
+          alignItems="center"
+        >
+          <Grid singleRow alignItems="center" columnGap="small">
+            <Icon sizeVariant="medium" color="text.3">
+              <AddPageSvg />
+            </Icon>
+          </Grid>
+        </BaseControl>
+      </View>
     </View>
   )
 }

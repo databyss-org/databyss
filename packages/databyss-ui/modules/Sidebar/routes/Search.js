@@ -55,7 +55,7 @@ const Search = ({ onClick }) => {
         p="small"
       >
         <Grid singleRow alignItems="center" columnGap="none">
-          <Icon sizeVariant="small" color="text.3" pr="small">
+          <Icon sizeVariant="medium" color="text.3" pr="small">
             <SearchIcon />
           </Icon>
           <TextInput

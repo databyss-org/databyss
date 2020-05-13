@@ -77,22 +77,14 @@ const Sidebar = () => {
             pr="medium"
             alignItems="center"
           >
-            {/* header */}
             <Header onHeaderClick={onHeaderClick} />
-            {/* search bar */}
-            {menuItem !== 'search' && <Separator color="border.1" />}
             <Search
               onClick={() => {
                 navigateSidebar('/search')
               }}
             />
-            {/* content */}
-            {/* default content */}
-            {!menuItem && <SidebarList menuItem={menuItem} />}
-
-            {menuItem === 'pages' && <Pages />}
+            {(menuItem === 'pages' || !menuItem) && <Pages />}
           </List>
-          {/* footer  */}
           <View position="absolute" bottom={0} left={0} width="300px">
             <Footer />
           </View>
