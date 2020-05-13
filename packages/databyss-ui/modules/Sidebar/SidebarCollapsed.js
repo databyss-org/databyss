@@ -16,6 +16,7 @@ import Plus from '@databyss-org/ui/assets/plus.svg'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import MenuCollapseSvg from '@databyss-org/ui/assets/menu_collapse.svg'
+import MenuSvg from '@databyss-org/ui/assets/menu.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { darkTheme } from '../../theming/theme'
 
@@ -84,7 +85,7 @@ const SidebarCollapsed = () => {
         >
           <Grid singleRow alignItems="flex-end" columnGap="small">
             <Icon sizeVariant="small" color="text.3">
-              <MenuCollapseSvg />
+              {isMenuOpen ? <MenuCollapseSvg /> : <MenuSvg />}
             </Icon>
           </Grid>
         </BaseControl>
