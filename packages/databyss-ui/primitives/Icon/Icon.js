@@ -24,6 +24,9 @@ const Icon = ({ children, color, sizeVariant, ...others }) => {
       path: {
         fill: color,
       },
+      rect: {
+        stroke: color,
+      },
     }),
   }
   const nativeProps = {}
