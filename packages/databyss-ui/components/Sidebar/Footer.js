@@ -42,17 +42,21 @@ const Footer = () => {
         <FooterText text="# topic" />
       </View>
       <Separator color="border.1" />
-      <BaseControl width="100%" onClick={onNewPageClick}>
-        <View p="medium" pl="small">
-          <Grid singleRow alignItems="center" columnGap="small">
-            <Icon sizeVariant="medium" color="text.3">
-              <Plus />
-            </Icon>
-            <Text variant="uiTextSmall" color="text.3">
-              New Page
-            </Text>
-          </Grid>
-        </View>
+      <BaseControl
+        width="100%"
+        onClick={onNewPageClick}
+        py="small"
+        px="small"
+        my="small"
+      >
+        <Grid singleRow alignItems="center" columnGap="small">
+          <Icon sizeVariant="medium" color="text.3">
+            <Plus />
+          </Icon>
+          <Text variant="uiTextSmall" color="text.3">
+            New Page
+          </Text>
+        </Grid>
       </BaseControl>
     </View>
   )
