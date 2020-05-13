@@ -76,6 +76,7 @@ module.exports = (proxy, allowedHost) => ({
     // Paths with dots should still use the history fallback.
     // See https://github.com/facebook/create-react-app/issues/387.
     disableDotRule: true,
+    rewrites: [{ from: /^\/oauth\/google$/, to: '/oauth_google.html' }],
   },
   public: allowedHost,
   proxy,

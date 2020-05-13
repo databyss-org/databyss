@@ -17,15 +17,10 @@ const withRouter = Wrapped => ({ children }) => (
   </Router>
 )
 
-const NavigationProvider = ({ children, componentMap, initialPath }) => {
-  const [state, dispatch] = useReducer(
-    reducer,
-    {
-      ...initialState,
-      path: initialPath || initialState.path,
-    },
-    { name: 'NavigationProvider' }
-  )
+const NavigationProvider = ({ children, componentMap }) => {
+  const [state, dispatch] = useReducer(reducer, initialState, {
+    name: 'NavigationProvider',
+  })
 
   const location = useLocation()
 

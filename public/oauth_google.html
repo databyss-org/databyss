@@ -1,0 +1,24 @@
+<script>
+  (
+    function() {
+      if (!window.location.search || !window.location.search.length) {
+        return
+      }
+      var qs = window.location.search
+        .replace('?', '')
+        .split('&')
+        .reduce(function(accum, curr) {
+          var keyvalue = curr.split('=')
+          accum[keyvalue[0]] = decodeURI(keyvalue[1])
+          return accum
+        }, {})
+      
+      if (window.opener) {
+        window.opener.postMessage(qs);
+        window.close()
+      } else {
+        console.log(qs)
+      }
+    }
+  )()
+</script>

@@ -17,3 +17,5 @@ import './commands'
 
 // drop TEST db
 // fetch('http://localhost:5000/api/_test/drop_test_db')
+
+// require('cypress-terminal-report').installSupport()

@@ -1,7 +1,9 @@
 import express from 'express'
-import axios from 'axios'
+import querystring from 'querystring'
 import humanReadableIds from 'human-readable-ids'
+import jwt from 'jsonwebtoken'
 import { check, validationResult } from 'express-validator/check'
+import { google } from 'googleapis'
 import { send } from '../../lib/sendgrid'
 import User from '../../models/User'
 import Login from '../../models/Login'
@@ -9,39 +11,43 @@ import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
 
 const router = express.Router()
 
+const oauth2Client = new google.auth.OAuth2(
+  process.env.API_GOOGLE_CLIENT_ID,
+  process.env.API_GOOGLE_CLIENT_SECRET,
+  process.env.API_GOOGLE_REDIRECT_URI
+)
+
 // @route    POST api/users/google
 // @desc     create or get profile info for google user
 // @access   Public
 router.post('/google', async (req, res) => {
-  const { token } = req.body
+  const code = querystring.unescape(req.body.code)
 
-  axios
-    .get(`https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=${token}`)
-    .then(async response => {
-      const id = response.data.sub
-      try {
-        let user = await User.findOne({ googleId: id })
+  oauth2Client.getToken(code, async (err, tokens) => {
+    if (err) {
+      console.error(err)
+      res.status(400).json({ msg: 'OAuth Error' })
+      return
+    }
 
-        if (!user) {
-          const { name, email, sub } = response.data
-          user = await User.create({
-            name,
-            email,
-            googleId: sub,
-          })
-        }
-
-        const session = await getSessionFromUserId(user._id)
-        return res.json({ data: { session } })
-      } catch (err) {
-        console.error(err.message)
-        return res.status(500).send('Server Error')
+    const decoded = jwt.decode(tokens.id_token)
+    const { name, email, sub } = decoded
+    try {
+      let user = await User.findOne({ googleId: sub })
+      if (!user) {
+        user = await User.create({
+          name,
+          email,
+          googleId: sub,
+        })
       }
-    })
-    .catch(err => {
+      const session = await getSessionFromUserId(user._id)
+      res.json({ data: { session } })
+    } catch (err) {
       console.error(err.message)
-      return res.status(400).json({ msg: 'There is no profile for this user' })
-    })
+      res.status(500).send('Server Error')
+    }
+  })
 })
 
 // @route    POST api/users/email
