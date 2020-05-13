@@ -1,13 +1,6 @@
 import React, { useMemo, useRef, useEffect } from 'react'
 import _ from 'lodash'
-import {
-  createEditor,
-  Node,
-  Transforms,
-  Point,
-  Range,
-  Editor as SlateEditor,
-} from 'slate'
+import { createEditor, Node, Transforms, Point, Range } from 'slate'
 import { withReact } from 'slate-react'
 import { produce } from 'immer'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
