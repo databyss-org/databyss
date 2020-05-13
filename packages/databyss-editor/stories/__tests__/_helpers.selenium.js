@@ -2,17 +2,14 @@ import { Key, By, until } from 'selenium-webdriver'
 
 const waitUntilTime = 20000
 
-// console.log('is mac', IS_MAC)
-// console.log('is IOS', IS_IOS)
-
 // export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.ALT
-// export const CONTROL = IS_IOS || IS_MAC ? Key.META : Key.CONTROL
+
 let CONTROL = Key.META
 
-if (process.env.NPM_BUILD_TARGET === 'TEST') {
-  console.log('IS IN ENVIRONTMENT')
-  CONTROL = Key.CONTROL
-}
+// if (process.env.NPM_BUILD_TARGET === 'TEST') {
+//   console.log('IS IN ENVIRONTMENT')
+//   CONTROL = Key.CONTROL
+// }
 
 export const sleep = m => new Promise(r => setTimeout(r, m))
 

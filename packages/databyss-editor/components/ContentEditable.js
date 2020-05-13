@@ -288,10 +288,7 @@ const ContentEditable = ({ onDocumentChange }) => {
       })
     }
 
-    if (!_.isEqual(selectionRef.current, editor.selection)) {
-      setSelection(selection)
-    }
-    // setSelection(selection)
+    setSelection(selection)
   }
 
   // Use immer to produce the next `value`
