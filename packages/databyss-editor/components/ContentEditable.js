@@ -276,6 +276,7 @@ const ContentEditable = ({ onDocumentChange }) => {
             },
           })
           setContent({ selection, operations: _operations })
+          /* eslint-disable-next-line no-useless-return */
           return
         }
       })
