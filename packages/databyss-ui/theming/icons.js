@@ -11,13 +11,13 @@ const iconSizeVariants = {
     ...icon(14),
   },
   small: {
-    ...icon(22),
+    ...icon(20),
   },
   medium: {
-    ...icon(32),
+    ...icon(26),
   },
   large: {
-    ...icon(50),
+    ...icon(32),
   },
   title: {
     width: 130,
