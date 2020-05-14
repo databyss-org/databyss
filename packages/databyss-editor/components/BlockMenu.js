@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Transforms, Text } from 'slate'
-import { useEditor } from 'slate-react'
+import { useEditor, ReactEditor } from 'slate-react'
 import buttons, {
   editorMarginMenuItemHeight,
 } from '@databyss-org/ui/theming/buttons'
@@ -44,6 +44,7 @@ const BlockMenu = ({ showButton }) => {
     e.preventDefault()
     actions(tag)()
     setShowMenuActions(false)
+    ReactEditor.focus(editor)
   }
 
   const menuActions = [

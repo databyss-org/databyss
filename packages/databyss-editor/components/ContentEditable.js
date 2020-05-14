@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useEffect } from 'react'
 import _ from 'lodash'
-import { createEditor, Node, Transforms, Point } from 'slate'
+import { createEditor, Node, Transforms, Point, Range } from 'slate'
 import { withReact } from 'slate-react'
 import { produce } from 'immer'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
@@ -86,17 +86,20 @@ const ContentEditable = ({ onDocumentChange }) => {
 
   const onKeyDown = event => {
     if (Hotkeys.isBold(event)) {
+      event.preventDefault()
       toggleMark(editor, 'bold')
       return
     }
 
     if (Hotkeys.isItalic(event)) {
       toggleMark(editor, 'italic')
+      event.preventDefault()
       return
     }
 
     if (Hotkeys.isLocation(event)) {
       toggleMark(editor, 'location')
+      event.preventDefault()
       return
     }
 
@@ -266,9 +269,10 @@ const ContentEditable = ({ onDocumentChange }) => {
             },
           })
           setContent({ selection, operations: _operations })
+          /* eslint-disable-next-line no-useless-return */
+          return
         }
       })
-      return
     }
 
     setSelection(selection)
@@ -305,15 +309,19 @@ const ContentEditable = ({ onDocumentChange }) => {
 
   if (!_.isEqual(editor.selection, nextSelection)) {
     Transforms.setSelection(editor, nextSelection)
-    // HACK:
-    // There is a bug in Slate that causes unexpected behavior when creating a
-    // selection by doing `Transforms.move` on the anchor and focus. If the
-    // selection falls on a range that already has a mark, the focus gets the
-    // correct path (pointing within the mark leaf) but the anchor gets the parent
-    // path. The fix for this is to overshoot the anchor by 1
-    // and then correct the offset with an additional move.
-    Transforms.move(editor, { distance: 1, edge: 'anchor' })
-    Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
+    // HACK only needs to be applied when editor is focused and Range is expanded (applying formats and marks)
+    if (editor.selection && Range.isExpanded(editor.selection)) {
+      // HACK:
+      // There is a bug in Slate that causes unexpected behavior when creating a
+      // selection by doing `Transforms.move` on the anchor and focus. If the
+      // selection falls on a range that already has a mark, the focus gets the
+      // correct path (pointing within the mark leaf) but the anchor gets the parent
+      // path. The fix for this is to overshoot the anchor by 1
+      // and then correct the offset with an additional move.
+
+      Transforms.move(editor, { distance: 1, edge: 'anchor' })
+      Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
+    }
   }
 
   valueRef.current = nextValue
