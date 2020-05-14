@@ -177,7 +177,9 @@ const Element = ({ attributes, children, element }) => {
         <View
           // registers atomic blocks
           ref={ref => {
-            pageContext && editorContext && registerBlockRef(ref)
+            if (pageContext && editorContext) {
+              registerBlockRef(ref)
+            }
           }}
           alignSelf="flex-start"
           flexWrap="nowrap"
