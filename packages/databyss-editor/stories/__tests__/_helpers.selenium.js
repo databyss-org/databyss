@@ -6,8 +6,6 @@ const waitUntilTime = 20000
 
 const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
 
-// const CONTROL = Key.CONTROL
-
 export const sleep = m => new Promise(r => setTimeout(r, m))
 
 export const getEditor = async driver => {

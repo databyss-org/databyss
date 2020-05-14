@@ -85,10 +85,7 @@ const ContentEditable = ({ onDocumentChange }) => {
   )
 
   const onKeyDown = event => {
-    // console.log(event.key)
-
     if (Hotkeys.isBold(event)) {
-      // console.log('TOGGLES BOLD')
       event.preventDefault()
       toggleMark(editor, 'bold')
       return
@@ -188,10 +185,6 @@ const ContentEditable = ({ onDocumentChange }) => {
 
   const onChange = value => {
     const selection = slateSelectionToStateSelection(editor)
-
-    // console.log('active marks', SlateEditor.marks(editor))
-
-    // console.log('on operations', editor.operations)
 
     if (!selection) {
       return
