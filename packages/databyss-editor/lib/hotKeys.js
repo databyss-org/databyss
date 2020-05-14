@@ -1,7 +1,9 @@
 import { isKeyHotkey } from 'is-hotkey'
 import { IS_LINUX, IS_MAC, IS_IOS } from '@databyss-org/ui/lib/dom'
 
-export const metaKey = IS_LINUX ? 'alt' : 'mod'
+// export const metaKey = IS_LINUX ? 'alt' : 'mod'
+
+export const metaKey = 'ctrl'
 
 // // for saucelabs environtment
 // console.log(process.env)

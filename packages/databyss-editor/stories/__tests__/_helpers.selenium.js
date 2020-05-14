@@ -4,7 +4,7 @@ const waitUntilTime = 20000
 
 // export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.ALT
 
-const CONTROL = Key.META
+const CONTROL = Key.CONTROL
 
 // if (process.env.NPM_BUILD_TARGET === 'TEST') {
 //   console.log('IS IN ENVIRONTMENT')
