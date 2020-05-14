@@ -2,14 +2,8 @@ import { Key, By, until } from 'selenium-webdriver'
 
 const waitUntilTime = 20000
 
-// export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.ALT
-
-const CONTROL = Key.CONTROL
-
-// if (process.env.NPM_BUILD_TARGET === 'TEST') {
-//   console.log('IS IN ENVIRONTMENT')
-//   CONTROL = Key.CONTROL
-// }
+// HACK: saucelabs environment double triggers meta key, use ctrl key instead
+const CONTROL = process.env.STORYBOOK_SAUCE ? Key.CONTROL : Key.META
 
 export const sleep = m => new Promise(r => setTimeout(r, m))
 

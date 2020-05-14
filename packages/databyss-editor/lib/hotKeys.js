@@ -1,16 +1,8 @@
 import { isKeyHotkey } from 'is-hotkey'
 import { IS_LINUX, IS_MAC, IS_IOS } from '@databyss-org/ui/lib/dom'
 
-// export const metaKey = IS_LINUX ? 'alt' : 'mod'
-
-export const metaKey = 'ctrl'
-
-// // for saucelabs environtment
-// console.log(process.env)
-
-// if (process.env.NPM_BUILD_TARGET === 'TEST') {
-//   metaKey = 'ctrl'
-// }
+// HACK: saucelabs environment double triggers meta key, use ctrl key instead
+export const metaKey = process.env.STORYBOOK_SAUCE ? 'ctrl' : 'mod'
 
 export const START_OF_LINE = 'START_OF_LINE'
 export const END_OF_LINE = 'END_OF_LINE'
