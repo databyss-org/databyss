@@ -13,7 +13,6 @@ import SlateContentEditable from '@databyss-org/ui/editor/slate/page/ContentEdit
 import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
 
 const PageBody = ({ page, readOnly }) => {
-  console.log(page)
   const { location } = useNavigationContext()
   const { clearBlockDict } = usePageContext()
   useEffect(() => () => clearBlockDict(), [])

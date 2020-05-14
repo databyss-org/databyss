@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { Node, Range, Transforms } from 'slate'
 import { ReactEditor, useEditor } from 'slate-react'
@@ -23,6 +24,7 @@ const Element = ({ attributes, children, element }) => {
   const editor = useEditor()
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
+  const pageContext = usePageContext()
 
   const onAtomicMouseDown = e => {
     if (element.isActive) {
@@ -134,6 +136,20 @@ const Element = ({ attributes, children, element }) => {
     }
   })
 
+  useEffect(() => {
+    if (pageContext && editorContext && attributes.ref.current) {
+      registerBlockRef()
+    }
+  })
+
+  const registerBlockRef = (ref = attributes.ref.current) => {
+    const _index = ReactEditor.findPath(editor, element)[0]
+    const _refId = editorContext.state.blocks[_index]._id
+    if (!pageContext.getBlockRef(_refId)) {
+      pageContext.registerBlockRef(_refId, ref)
+    }
+  }
+
   return (
     <View
       ml={element.isBlock ? blockMenuWidth : 0}
@@ -159,6 +175,10 @@ const Element = ({ attributes, children, element }) => {
         )}
       {isAtomicInlineType(element.type) ? (
         <View
+          // registers atomic blocks
+          ref={ref => {
+            registerBlockRef(ref)
+          }}
           alignSelf="flex-start"
           flexWrap="nowrap"
           display="inline"
