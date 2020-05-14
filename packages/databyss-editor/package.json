@@ -19,7 +19,8 @@
     "react": "16.9.0",
     "react-dom": "16.9.0",
     "react-native": "0.60.4",
-    "selenium-webdriver": "^4.0.0-alpha.7"
+    "selenium-webdriver": "^4.0.0-alpha.7",
+    "slate-dev-environment": "^0.2.2"
   },
   "dependencies": {
     "@styled-system/css": "^5.0.23",

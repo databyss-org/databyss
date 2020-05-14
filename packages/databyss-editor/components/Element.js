@@ -136,12 +136,6 @@ const Element = ({ attributes, children, element }) => {
     }
   })
 
-  useEffect(() => {
-    if (pageContext && editorContext && attributes.ref.current) {
-      registerBlockRef()
-    }
-  })
-
   const registerBlockRef = (ref = attributes.ref.current) => {
     const _index = ReactEditor.findPath(editor, element)[0]
     const _refId = editorContext.state.blocks[_index]._id
@@ -149,6 +143,12 @@ const Element = ({ attributes, children, element }) => {
       pageContext.registerBlockRef(_refId, ref)
     }
   }
+
+  useEffect(() => {
+    if (pageContext && editorContext && attributes.ref.current) {
+      registerBlockRef()
+    }
+  })
 
   return (
     <View
