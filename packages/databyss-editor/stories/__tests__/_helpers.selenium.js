@@ -3,7 +3,10 @@ import { Key, By, until } from 'selenium-webdriver'
 const waitUntilTime = 20000
 
 // HACK: saucelabs environment double triggers meta key, use ctrl key instead
-const CONTROL = process.env.STORYBOOK_SAUCE ? Key.CONTROL : Key.META
+
+const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
+
+// const CONTROL = Key.CONTROL
 
 export const sleep = m => new Promise(r => setTimeout(r, m))
 

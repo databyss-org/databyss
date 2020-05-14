@@ -32,7 +32,7 @@
     "test": "ENV_PREFIX=API_ NPM_BUILD_TARGET=TEST node scripts/test.js --maxWorkers=5",
     "test:local": "LOCAL_ENV=true yarn test",
     "test:selenium": "yarn test seleniumtest",
-    "test:selenium:local": "LOCAL_ENV=true yarn test seleniumtest",
+    "test:selenium:local": "SAUCE=no LOCAL_ENV=true yarn test seleniumtest",
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
     "styleguide:build": "NPM_BUILD_TARGET=TEST styleguidist build --config ./config/styleguide.config.js",
     "storybook": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public --ci",

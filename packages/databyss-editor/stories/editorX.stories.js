@@ -46,7 +46,12 @@ storiesOf('Slate//Slate 5 Implementation', module)
     <View>
       <input type="text" />
       <Box>
-        <SlateDemo />
+        <textarea onKeyDown={e => console.log('KEY DOWN FIRE', e.key)} />
+        {/* <div
+          onKeyDown={e => console.log('KEY DOWN FIRE', e.key)}
+          contentEditable="true"
+        /> */}
+        {/* <SlateDemo /> */}
       </Box>
     </View>
   ))
