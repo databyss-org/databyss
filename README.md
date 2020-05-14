@@ -89,7 +89,7 @@ Starts the Storybook server, which Cypress hits to access sandboxed UIs to test 
 Starts the Selenium tests using the Sauce Labs remote environment
 
 `test:selenium:local`
-Starts the Selenium tests in the local environment. The tests use `chromewebdriver` which can be found [here](https://chromedriver.chromium.org/downloads). ChromeDriver location must be in your `PATH` environment variable. If you wish to use another browser, configurations can be made in the Sauce Labs [config file](packages/databyss-ui/lib/saucelabs.js)
+Starts the Selenium tests in the local environment. The tests use `safari` webdriver. Must specify selenium test string with command with `-t` flag. Configurations can be made in the Sauce Labs [config file](packages/databyss-ui/lib/saucelabs.js)
 
 ### Utilities
 
