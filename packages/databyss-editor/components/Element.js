@@ -27,7 +27,7 @@ const Element = ({ attributes, children, element, state, setContent }) => {
       e.preventDefault()
       // dispatch modal if editor is in provider
       if (navigationContext) {
-        const index = state.selection.anchor.index
+        const index = ReactEditor.findPath(editor, element)[0]
         const _entity = entityForBlockIndex(state, index)
         const refId = _entity._id
         let offset
