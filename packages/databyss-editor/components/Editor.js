@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback, useRef } from 'react'
 import { createEditor } from 'slate'
 import { Slate, Editable, withReact } from 'slate-react'
 import Leaf from './Leaf'
@@ -9,23 +9,25 @@ import { useEditorContext } from '../state/EditorProvider'
 
 const Editor = ({ children, ...others }) => {
   const editorContext = useEditorContext()
-  let state
   let setContent
 
   const readOnly = !others.onChange
   const editor = useMemo(() => withReact(createEditor()), [])
+
+  // prevents elements from re-rendering on every state change
+  const pageState = useRef(null)
+  pageState.current = editorContext.state
+
   const renderElement = useCallback(
     props => {
-      // if inside of an editor context
       if (editorContext) {
-        state = editorContext.state
         setContent = editorContext.setContent
       }
       return (
         <Element
           readOnly={readOnly}
-          state={state}
           setContent={setContent}
+          state={pageState}
           {...props}
         />
       )

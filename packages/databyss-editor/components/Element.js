@@ -28,7 +28,7 @@ const Element = ({ attributes, children, element, state, setContent }) => {
       // dispatch modal if editor is in provider
       if (navigationContext) {
         const index = ReactEditor.findPath(editor, element)[0]
-        const _entity = entityForBlockIndex(state, index)
+        const _entity = entityForBlockIndex(state.current, index)
         const refId = _entity._id
         let offset
         let selection
@@ -37,7 +37,7 @@ const Element = ({ attributes, children, element, state, setContent }) => {
         const onUpdate = atomic => {
           // if atomic is saved, update content
           if (atomic) {
-            const _selection = state.selection
+            const _selection = state.current.selection
             setContent({
               selection: _selection,
               operations: [
