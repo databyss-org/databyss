@@ -138,20 +138,19 @@ const Element = ({ attributes, children, element }) => {
 
   const registerBlockRef = (ref = attributes.ref.current) => {
     const _index = ReactEditor.findPath(editor, element)[0]
-    const _refId = editorContext.state.blocks[_index]._id
-    if (!pageContext.getBlockRef(_refId)) {
-      pageContext.registerBlockRef(_refId, ref)
+    const _entity = editorContext.state.blocks[_index]
+    if (_entity && !pageContext.getBlockRef(_entity._id)) {
+      pageContext.registerBlockRef(_entity._id, ref)
     }
   }
 
-  useEffect(() => {
-    if (pageContext && editorContext && attributes.ref.current) {
-      registerBlockRef()
-    }
-  })
-
   return (
     <View
+      ref={ref => {
+        if (pageContext && editorContext) {
+          registerBlockRef(ref)
+        }
+      }}
       ml={element.isBlock ? blockMenuWidth : 0}
       pt="small"
       pb="small"
@@ -175,12 +174,6 @@ const Element = ({ attributes, children, element }) => {
         )}
       {isAtomicInlineType(element.type) ? (
         <View
-          // registers atomic blocks
-          ref={ref => {
-            if (pageContext && editorContext) {
-              registerBlockRef(ref)
-            }
-          }}
           alignSelf="flex-start"
           flexWrap="nowrap"
           display="inline"
