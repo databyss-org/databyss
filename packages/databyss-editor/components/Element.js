@@ -30,7 +30,6 @@ const Element = ({ attributes, children, element, state, setContent }) => {
         const index = state.selection.anchor.index
         const _entity = entityForBlockIndex(state, index)
         const refId = _entity._id
-        const type = _entity.type
         let offset
         let selection
         const { showModal } = navigationContext
@@ -70,7 +69,7 @@ const Element = ({ attributes, children, element, state, setContent }) => {
         }
         // dispatch modal
         showModal({
-          component: type,
+          component: element.type,
           props: {
             onUpdate,
             refId,
