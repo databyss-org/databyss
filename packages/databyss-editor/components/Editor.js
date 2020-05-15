@@ -5,7 +5,7 @@ import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
 import CitationsMenu from './CitationsMenu'
-import { useEditorContext, EditorContext } from '../state/EditorProvider'
+import { useEditorContext } from '../state/EditorProvider'
 
 const Editor = ({ children, ...others }) => {
   const editorContext = useEditorContext()

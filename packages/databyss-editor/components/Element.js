@@ -122,16 +122,16 @@ const Element = ({ attributes, children, element, state, setContent }) => {
   })
   const registerBlockRef = (ref = attributes.ref.current) => {
     const _index = ReactEditor.findPath(editor, element)[0]
-    const _entity = state.blocks[_index]
-    if (_entity) {
-      pageContext.registerBlockRef(_entity._id, ref)
-    }
+    //  const _entity = state.blocks[_index]
+    // if (_entity) {
+    pageContext.registerBlockRef(_index, ref)
+    //  }
   }
 
   return (
     <View
       ref={ref => {
-        if (pageContext) {
+        if (pageContext && ref) {
           registerBlockRef(ref)
         }
       }}
