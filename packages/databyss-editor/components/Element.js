@@ -33,7 +33,6 @@ const Element = ({ attributes, children, element, state, setContent }) => {
         const type = _entity.type
         let offset
         let selection
-        // const { setContent, state } = editorContext
         const { showModal } = navigationContext
         // compose modal dismiss callback function
         const onUpdate = atomic => {
@@ -122,10 +121,7 @@ const Element = ({ attributes, children, element, state, setContent }) => {
   })
   const registerBlockRef = (ref = attributes.ref.current) => {
     const _index = ReactEditor.findPath(editor, element)[0]
-    //  const _entity = state.blocks[_index]
-    // if (_entity) {
     pageContext.registerBlockRef(_index, ref)
-    //  }
   }
 
   return (
