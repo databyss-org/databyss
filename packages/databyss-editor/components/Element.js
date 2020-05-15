@@ -7,8 +7,6 @@ import { Node, Range, Transforms } from 'slate'
 import { ReactEditor, useEditor } from 'slate-react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
-
-import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -20,27 +18,23 @@ import { selectionHasRange, entityForBlockIndex } from '../state/util'
 export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
 
-const Element = ({ attributes, children, element }) => {
+const Element = ({ attributes, children, element, state, setContent }) => {
   const editor = useEditor()
-  const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
   const pageContext = usePageContext()
-
   const onAtomicMouseDown = e => {
     if (element.isActive) {
       e.preventDefault()
-
       // dispatch modal if editor is in provider
       if (navigationContext) {
-        const index = editorContext.state.selection.anchor.index
-        const _entity = entityForBlockIndex(editorContext.state, index)
+        const index = state.selection.anchor.index
+        const _entity = entityForBlockIndex(state, index)
         const refId = _entity._id
         const type = _entity.type
         let offset
         let selection
-        const { setContent, state } = editorContext
+        // const { setContent, state } = editorContext
         const { showModal } = navigationContext
-
         // compose modal dismiss callback function
         const onUpdate = atomic => {
           // if atomic is saved, update content
@@ -56,13 +50,11 @@ const Element = ({ attributes, children, element }) => {
                 },
               ],
             })
-
             // set offset for selection
             offset = atomic.text.textValue.length
           } else {
             offset = Node.string(element).length
           }
-
           // on dismiss refocus editor at end of atomic
           window.requestAnimationFrame(() => {
             selection = {
@@ -77,7 +69,6 @@ const Element = ({ attributes, children, element }) => {
             ReactEditor.focus(editor)
           })
         }
-
         // dispatch modal
         showModal({
           component: type,
@@ -89,9 +80,7 @@ const Element = ({ attributes, children, element }) => {
       }
     }
   }
-
   const [showNewBlockMenu, setShowNewBlockMenu] = useState(false)
-
   useEffect(
     () => {
       if (element.isBlock && editor.selection) {
@@ -106,7 +95,6 @@ const Element = ({ attributes, children, element }) => {
             _isEmptyAndActive = true
           }
         }
-
         const showButton =
           element.isBlock &&
           Node.string(element).length === 0 &&
@@ -119,11 +107,8 @@ const Element = ({ attributes, children, element }) => {
     },
     [editor.selection, element]
   )
-
   const blockMenuWidth = editorMarginMenuItemHeight + 6
-
   const _selHasRange = selectionHasRange(slateSelectionToStateSelection(editor))
-
   // open modal on atomic key press 'enter'
   useEventListener('keydown', e => {
     if (
@@ -135,11 +120,10 @@ const Element = ({ attributes, children, element }) => {
       onAtomicMouseDown(e)
     }
   })
-
   const registerBlockRef = (ref = attributes.ref.current) => {
     const _index = ReactEditor.findPath(editor, element)[0]
-    const _entity = editorContext.state.blocks[_index]
-    if (_entity && !pageContext.getBlockRef(_entity._id)) {
+    const _entity = state.blocks[_index]
+    if (_entity) {
       pageContext.registerBlockRef(_entity._id, ref)
     }
   }
@@ -147,7 +131,7 @@ const Element = ({ attributes, children, element }) => {
   return (
     <View
       ref={ref => {
-        if (pageContext && editorContext) {
+        if (pageContext) {
           registerBlockRef(ref)
         }
       }}
