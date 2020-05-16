@@ -17,7 +17,7 @@ const BlockMenuActions = ({ menuActionButtons, unmount }) => {
   )
 }
 
-const BlockMenu = ({ showButton }) => {
+const BlockMenu = () => {
   const [showMenuActions, setShowMenuActions] = useState(false)
   const editor = useEditor()
 
@@ -73,7 +73,7 @@ const BlockMenu = ({ showButton }) => {
     </Button>
   ))
 
-  return showButton ? (
+  return (
     <Grid singleRow columnGap="small">
       <View
         height={editorMarginMenuItemHeight}
@@ -105,7 +105,7 @@ const BlockMenu = ({ showButton }) => {
         )}
       </View>
     </Grid>
-  ) : null
+  )
 }
 
 export default BlockMenu
