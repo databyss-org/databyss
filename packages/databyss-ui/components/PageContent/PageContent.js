@@ -15,13 +15,11 @@ export const PageRouter = () => (
 )
 
 const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
-  const { getBlockRefByIndex } = usePageContext()
+  const { getBlockRef } = usePageContext()
   useEffect(() => {
     // if anchor link exists, scroll to anchor
     if (anchor) {
-      // get index value of anchor on page
-      const _index = page.blocks.findIndex(b => b._id === anchor)
-      const _ref = getBlockRefByIndex(_index)
+      const _ref = getBlockRef(anchor)
       if (_ref) {
         window.requestAnimationFrame(() => {
           _ref.scrollIntoView({
