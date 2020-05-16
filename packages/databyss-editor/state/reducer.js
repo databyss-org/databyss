@@ -249,45 +249,7 @@ export default (state, action) =>
         })
         break
       }
-      case SET_SELECTION: {
-        const { selection } = payload
-        const _hasRange = selectionHasRange(selection)
-        const _entity = entityForBlockIndex(draft, selection.focus.index)
-        const _previousEntity = entityForBlockIndex(
-          draft,
-          state.selection.focus.index
-        )
-        const _selectionIndexHasChanged =
-          selection.focus.index !== state.selection.focus.index
-
-        if (isAtomicInlineType(_entity.type)) {
-          const _isActive =
-            !_hasRange &&
-            selection.focus.offset < _entity.text.textValue.length &&
-            selection.focus.offset > 0
-
-          // only push an update if the `isActive` has changed
-          if (_selectionIndexHasChanged || _entity.isActive !== _isActive) {
-            _entity.isActive = _isActive
-            draft.operations.push({
-              index: selection.focus.index,
-              block: _entity,
-            })
-          }
-        }
-        // if we've moved selection index,
-        //   check previous selection for active entity, deactivate if necessary
-        if (_selectionIndexHasChanged) {
-          if (_previousEntity && _previousEntity.isActive) {
-            _previousEntity.isActive = false
-            draft.operations.push({
-              index: state.selection.focus.index,
-              block: _previousEntity,
-            })
-          }
-        }
-        break
-      }
+      case SET_SELECTION:
       default:
     }
 
@@ -319,6 +281,32 @@ export default (state, action) =>
         focus: { offset: 0, index: 0 },
       }
     }
+
+    // UPDATE BLOCK UI FLAGS
+    // flag currently selected block with `__showNewBlockMenu` if empty
+
+    // first reset `__showNewBlockMenu` on all other blocks
+    draft.blocks.forEach(block => {
+      block.__showNewBlockMenu = false
+      block.__isActive = false
+    })
+    const _selectedBlock = draft.blocks[draft.selection.focus.index]
+    const _selectedEntity = entityForBlockIndex(
+      draft,
+      draft.selection.focus.index
+    )
+
+    // show newBlockMenu if selection is collapsed and is empty
+    _selectedBlock.__showNewBlockMenu =
+      !selectionHasRange(draft.selection) &&
+      !_selectedEntity.text.textValue.length
+
+    // flag blocks with `__isActive` if selection is collapsed and within an atomic element
+    _selectedBlock.__isActive =
+      !selectionHasRange(draft.selection) &&
+      isAtomicInlineType(_selectedEntity.type) &&
+      draft.selection.focus.offset < _selectedEntity.text.textValue.length &&
+      draft.selection.focus.offset > 0
 
     return cleanupState(draft)
   })

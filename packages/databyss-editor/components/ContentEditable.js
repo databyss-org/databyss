@@ -1,10 +1,11 @@
 import React, { useMemo, useRef, useEffect } from 'react'
-import _ from 'lodash'
 import { createEditor, Node, Transforms, Point, Range } from 'slate'
-import { withReact } from 'slate-react'
+import { ReactEditor, withReact } from 'slate-react'
+import _ from 'lodash'
 import { produce } from 'immer'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -19,9 +20,15 @@ import {
 } from '../lib/slateUtils'
 import { getSelectedIndicies } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
-import { symbolToAtomicType } from '../state/util'
+import { symbolToAtomicType, selectionHasRange } from '../state/util'
+import { showAtomicModal } from '../lib/atomicModal'
 
 const ContentEditable = ({ onDocumentChange }) => {
+  const editorContext = useEditorContext()
+  const navigationContext = useNavigationContext()
+  const sourceContext = useSourceContext()
+  const topicContext = useTopicContext()
+
   const {
     state,
     split,
@@ -32,14 +39,11 @@ const ContentEditable = ({ onDocumentChange }) => {
     clear,
     remove,
     removeEntityFromQueue,
-  } = useEditorContext()
+  } = editorContext
 
   const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
-
-  const sourceContext = useSourceContext()
-  const topicContext = useTopicContext()
 
   useEffect(
     () => {
@@ -104,7 +108,17 @@ const ContentEditable = ({ onDocumentChange }) => {
     }
 
     if (event.key === 'Enter') {
-      if (getEntityAtIndex(editor.selection.focus.path[0]).isAtomic) {
+      const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
+      const _focusedEntity = getEntityAtIndex(editor.selection.focus.path[0])
+
+      if (_focusedEntity.isAtomic) {
+        if (
+          ReactEditor.isFocused(editor) &&
+          !selectionHasRange(state.selection) &&
+          _focusedBlock.__isActive
+        ) {
+          showAtomicModal({ editorContext, navigationContext, editor })
+        }
         return
       }
       const _text = Node.string(editor.children[editor.selection.focus.path[0]])
@@ -290,7 +304,6 @@ const ContentEditable = ({ onDocumentChange }) => {
         draft[op.index].children = _block.children
         draft[op.index].type = _block.type
         draft[op.index].isBlock = _block.isBlock
-        draft[op.index].isActive = _block.isActive
       })
     }
   )

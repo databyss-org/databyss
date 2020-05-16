@@ -17,6 +17,7 @@ import { stateToSlate } from '../lib/slateUtils'
 import Editor from '../components/Editor'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
+import blankFixture from './fixtures/blankState'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import noAtomicsFixture from './fixtures/no-atomics'
 
@@ -67,6 +68,35 @@ const EditorWithModals = ({ initialState }) => (
   </TopicProvider>
 )
 
+const initFetchMock = () => {
+  fetchMock
+    .restore()
+    .post(url => {
+      if (url.includes('/api/sources') || url.includes('/api/topics')) {
+        return true
+      }
+      return null
+    }, 200)
+    .get(url => {
+      if (url.includes('/api/sources')) {
+        return true
+      }
+      return null
+    }, sourceFixture)
+    .get(url => {
+      if (url.includes('/api/topics')) {
+        return true
+      }
+      return null
+    }, topicFixture)
+    .get(url => {
+      if (url.includes('googleapis')) {
+        return true
+      }
+      return null
+    }, _res)
+}
+
 storiesOf('Components|Editor', module)
   .addDecorator(ViewportDecorator)
   .add('Basic', () => <SideBySide initialState={basicFixture} />)
@@ -77,32 +107,10 @@ storiesOf('Components|Editor', module)
     <EditorWithProvider initialState={noAtomicsFixture} />
   ))
   .add('With Ref Modals', () => {
-    fetchMock
-      .restore()
-      .post(url => {
-        if (url.includes('/api/sources') || url.includes('/api/topics')) {
-          return true
-        }
-        return null
-      }, 200)
-      .get(url => {
-        if (url.includes('/api/sources')) {
-          return true
-        }
-        return null
-      }, sourceFixture)
-      .get(url => {
-        if (url.includes('/api/topics')) {
-          return true
-        }
-        return null
-      }, topicFixture)
-      .get(url => {
-        if (url.includes('googleapis')) {
-          return true
-        }
-        return null
-      }, _res)
-
+    initFetchMock()
     return <EditorWithModals initialState={basicFixture} />
+  })
+  .add('Blank', () => {
+    initFetchMock()
+    return <EditorWithModals initialState={blankFixture} />
   })
