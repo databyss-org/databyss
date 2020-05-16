@@ -1,5 +1,5 @@
 import { isKeyHotkey } from 'is-hotkey'
-import { IS_IOS, IS_MAC } from 'slate-dev-environment'
+import { IS_MAC, IS_IOS } from '@databyss-org/ui/lib/dom'
 
 // HACK: saucelabs environment double triggers meta key, use ctrl key instead
 export const metaKey = process.env.STORYBOOK_SAUCE ? 'ctrl' : 'mod'

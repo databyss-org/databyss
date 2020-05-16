@@ -5,44 +5,28 @@ export const newPage = () => {
   const _id = ObjectId().toHexString()
 
   const _page = {
-    preventDefault: false,
-    operations: [],
-    selection: {
-      anchor: {
-        index: 0,
-        offset: 0,
-      },
-      focus: {
-        index: 0,
-        offset: 0,
-      },
-    },
-    newEntities: [],
-    entityCache: {
-      [_refId]: {
-        type: 'ENTRY',
-        _id: _refId,
-        text: {
-          textValue: '',
-          ranges: [],
-        },
-      },
-    },
-    blockCache: {
-      [_id]: {
-        type: 'ENTRY',
-        entityId: _refId,
-      },
-    },
-    blocks: [
-      {
-        _id,
-      },
-    ],
     page: {
       _id: ObjectId().toHexString(),
       name: 'untitled',
+      blocks: [{ _id }],
     },
+    blocks: {
+      [_id]: {
+        type: 'ENTRY',
+        _id,
+        refId: _refId,
+      },
+    },
+    entries: {
+      [_refId]: {
+        textValue: '',
+        ranges: [],
+        _id: _refId,
+      },
+    },
+    sources: {},
+    topics: {},
   }
+
   return _page
 }

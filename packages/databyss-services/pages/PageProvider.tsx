@@ -28,7 +28,7 @@ interface ContextType {
   getPage: (id: string) => Page | ResourcePending | null
   clearBlockDict: () => void
   registerBlockRef: (id: string, refOne: React.Ref<HTMLInputElement>) => void
-  getBlockRefByIndex: (id: string) => React.Ref<HTMLInputElement>
+  getBlockRef: (id: string) => React.Ref<HTMLInputElement>
 }
 
 const useReducer = createReducer()
@@ -72,7 +72,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     refDictRef.current[id] = ref
   }
 
-  const getBlockRefByIndex = (id: string) => {
+  const getBlockRef = (id: string) => {
     if (refDictRef.current[id]) {
       return refDictRef.current[id]
     }
@@ -102,7 +102,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         getPage,
         setPage,
         registerBlockRef,
-        getBlockRefByIndex,
+        getBlockRef,
         clearBlockDict,
         removePage,
         archivePage,
