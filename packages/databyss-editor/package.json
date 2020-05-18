@@ -36,6 +36,7 @@
     "lorem-ipsum": "^2.0.3",
     "slate": "^0.57.2",
     "slate-hyperscript": "^0.57.2",
+    "slate-dev-environment": "^0.2.2",
     "slate-react": "^0.57.2",
     "yarn": "^1.22.4"
   }

@@ -14,6 +14,7 @@
   "main": "index.js",
   "peerDependencies": {
     "@databyss-org/services": "1.1.73",
+    "@databyss-org/editor": "1.1.73",
     "@databyss-org/ui": "1.1.73",
     "@storybook/react": "5.2.1",
     "react": "16.9.0",

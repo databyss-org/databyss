@@ -1,29 +1,31 @@
-import React, { useEffect } from 'react'
-import EditorProvider, {
-  pageReducer,
-} from '@databyss-org/ui/editor/EditorProvider'
+import React, { useEffect, useCallback } from 'react'
+import _ from 'lodash'
+import ContentEditable from '@databyss-org/editor/components/ContentEditable'
+import EditorProvider from '@databyss-org/editor/state/EditorProvider'
+import { withMetaData } from '@databyss-org/editor/lib/util'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui'
-import AutoSave from '@databyss-org/ui/editor/AutoSave'
-import EditorPage from '@databyss-org/ui/editor/EditorPage'
-import SlateContentEditable from '@databyss-org/ui/editor/slate/page/ContentEditable'
-import slateReducer from '@databyss-org/ui/editor/slate/page/reducer'
 
-const PageBody = ({ page, readOnly }) => {
+const PageBody = ({ page }) => {
   const { location } = useNavigationContext()
-  const { clearBlockDict } = usePageContext()
+  const { clearBlockDict, setPage } = usePageContext()
   useEffect(() => () => clearBlockDict(), [])
+
+  // debounced autosave occurs 3 seconds after editor is idle
+  const debouncedAutosave = useCallback(
+    _.debounce(pageState => {
+      setPage(pageState)
+    }, 3000),
+    []
+  )
+
   return (
     <EditorProvider
       key={location.pathname}
-      initialState={page}
-      reducer={pageReducer}
-      editableReducer={slateReducer}
+      onChange={debouncedAutosave}
+      initialState={withMetaData(page)}
     >
-      {!readOnly && <AutoSave />}
-      <EditorPage>
-        <SlateContentEditable readOnly={readOnly} />
-      </EditorPage>
+      <ContentEditable />
     </EditorProvider>
   )
 }
