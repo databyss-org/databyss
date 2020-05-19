@@ -103,14 +103,7 @@ export const getRangesFromBlock = value => {
           range = {
             offset: previousTextLength,
             length: n.text.length,
-            // TODO: get block marks
             marks: keys.map(k => k),
-            //  marks: Object.keys(n),
-            //  marks: n.marks.map(m =>{
-
-            //   m.type
-
-            // }),
           }
         }
 
@@ -119,14 +112,4 @@ export const getRangesFromBlock = value => {
       .filter(x => x.length != null),
     textValue: text,
   }
-}
-
-export const slateToState = (slate, _id) => {
-  const { ranges, textValue } = getRangesFromBlock(slate)
-  const response = {
-    _id,
-    textValue,
-    ranges,
-  }
-  return { [slate.key]: response }
 }
