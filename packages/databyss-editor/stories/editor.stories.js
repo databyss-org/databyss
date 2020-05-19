@@ -62,7 +62,12 @@ const EditorWithModals = ({ initialState }) => (
   <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
     <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
       <NavigationProvider>
-        <EditorWithProvider initialState={initialState} />
+        <EditorWithProvider
+          initialState={initialState}
+          onChange={(state, patches, inversePatches) => {
+            console.log(patches, inversePatches)
+          }}
+        />
       </NavigationProvider>
     </SourceProvider>
   </TopicProvider>
@@ -103,8 +108,8 @@ storiesOf('Components|Editor', module)
   .add('Basic (standalone)', () => (
     <EditorWithProvider
       initialState={basicFixture}
-      onChange={(state, patches) => {
-        console.log(state, patches)
+      onChange={(state, patches, inversePatches) => {
+        console.log(inversePatches)
       }}
     />
   ))
