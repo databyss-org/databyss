@@ -6,6 +6,8 @@ export const getPage = _id => httpGet(`/pages/${_id}`)
 
 export const savePage = data => httpPost('/pages', { data })
 
+export const savePatch = data => httpPatch('/pages', { data })
+
 export const loadPage = id => httpGet(`/pages/populate/${id}`)
 
 export const seedPage = data => httpPost(`/pages/`, { data })

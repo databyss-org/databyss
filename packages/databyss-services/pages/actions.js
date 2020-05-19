@@ -1,7 +1,8 @@
 import cloneDeep from 'clone-deep'
 import * as services from './'
-
+import { withWhitelist } from './_helpers'
 import {
+  PATCH,
   FETCH_PAGE,
   CACHE_PAGE,
   CACHE_PAGE_HEADERS,
@@ -53,6 +54,17 @@ export function fetchPageHeaders() {
           payload: e,
         })
       })
+  }
+}
+
+export function savePatch(patch) {
+  return dispatch => {
+    dispatch({
+      type: PATCH,
+      //  payload: { body, id: body.page._id },
+    })
+    console.log(withWhitelist(patch))
+    //  services.savePatch(patch)
   }
 }
 

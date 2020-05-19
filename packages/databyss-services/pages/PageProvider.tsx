@@ -8,6 +8,7 @@ import {
   fetchPageHeaders,
   fetchPage,
   savePage,
+  savePatch,
   deletePage,
   onArchivePage,
   onSetDefaultPage,
@@ -16,6 +17,17 @@ import {
 interface PropsType {
   children: JSX.Element
   initialState: any
+}
+
+interface Operation {
+  op: string
+  path: any
+  value: any
+}
+
+interface PatchType {
+  _id: string
+  patches: Array<Operation>
 }
 
 interface RefDict {
@@ -27,6 +39,7 @@ interface ContextType {
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
   clearBlockDict: () => void
+  setPatch: (patch: PatchType) => void
   registerBlockRef: (id: string, refOne: React.Ref<HTMLInputElement>) => void
   getBlockRefByIndex: (id: string) => React.Ref<HTMLInputElement>
 }
@@ -95,12 +108,17 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(onSetDefaultPage(id))
   }
 
+  const setPatch = (patch: PatchType) => {
+    dispatch(savePatch(patch))
+  }
+
   return (
     <PageContext.Provider
       value={{
         getPages,
         getPage,
         setPage,
+        setPatch,
         registerBlockRef,
         getBlockRefByIndex,
         clearBlockDict,
