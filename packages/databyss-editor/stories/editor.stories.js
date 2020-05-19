@@ -101,7 +101,12 @@ storiesOf('Components|Editor', module)
   .addDecorator(ViewportDecorator)
   .add('Basic', () => <SideBySide initialState={basicFixture} />)
   .add('Basic (standalone)', () => (
-    <EditorWithProvider initialState={basicFixture} />
+    <EditorWithProvider
+      initialState={basicFixture}
+      onChange={(state, patches) => {
+        console.log(state, patches)
+      }}
+    />
   ))
   .add('No Atomics (standalone)', () => (
     <EditorWithProvider initialState={noAtomicsFixture} />
