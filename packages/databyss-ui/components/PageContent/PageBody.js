@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react'
-import _ from 'lodash'
+import { throttle } from 'lodash'
 import ContentEditable from '@databyss-org/editor/components/ContentEditable'
 import EditorProvider from '@databyss-org/editor/state/EditorProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'
@@ -11,18 +11,19 @@ const PageBody = ({ page }) => {
   const { clearBlockDict, setPage } = usePageContext()
   useEffect(() => () => clearBlockDict(), [])
 
-  // debounced autosave occurs 3 seconds after editor is idle
-  const debouncedAutosave = useCallback(
-    _.debounce(pageState => {
-      setPage(pageState)
-    }, 3000),
+  // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
+  const throttledAutosave = useCallback(
+    throttle(({ state, patch }) => {
+      console.log('patch', patch)
+      setPage(state)
+    }, process.env.SAVE_PAGE_THROTTLE),
     []
   )
 
   return (
     <EditorProvider
       key={location.pathname}
-      onChange={debouncedAutosave}
+      onChange={throttledAutosave}
       initialState={withMetaData(page)}
     >
       <ContentEditable />
