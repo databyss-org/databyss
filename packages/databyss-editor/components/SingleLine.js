@@ -1,8 +1,16 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, {
+  useCallback,
+  useMemo,
+  useState,
+  useEffect,
+  forwardRef,
+  useRef,
+} from 'react'
 import isHotkey from 'is-hotkey'
-import { Editable, withReact, Slate } from 'slate-react'
-import { Editor, createEditor } from 'slate'
+import { Editable, withReact, Slate, ReactEditor } from 'slate-react'
+import { Editor, createEditor, Transforms } from 'slate'
 import { View, Text } from '@databyss-org/ui/primitives'
+import { stateToSlateMarkup, getRangesFromBlock } from '../lib/markup'
 
 const HOTKEYS = {
   'mod+b': 'bold',
@@ -70,51 +78,61 @@ const Leaf = ({ attributes, children, leaf }) => {
   )
 }
 
-const initialValue = [
-  {
-    children: [
-      { text: 'This is editable ' },
-      { text: 'rich', bold: true },
-      { text: ' text, ' },
-      { text: 'much', italic: true },
-      { text: ' better than a ', bold: true, italic: true },
-      { text: 'location ', location: true },
-      { text: 'all', location: true, bold: true, italic: true },
+const RichText = forwardRef(
+  ({ multiline, onChange, initialValue, id, overrideCss, onBlur }, ref) => {
+    const _el = useRef(ref)
+    // set initial value
 
-      { text: '!' },
-    ],
-  },
-]
+    const initValue = [
+      {
+        children: stateToSlateMarkup(initialValue),
+      },
+    ]
 
-const RichText = ({ multiline, onChange }) => {
-  const [value, setValue] = useState(initialValue)
+    const [value, setValue] = useState(initValue)
 
-  const renderLeaf = useCallback(props => <Leaf {...props} />, [])
-  const editor = useMemo(() => withReact(createEditor()), [])
+    const renderLeaf = useCallback(props => <Leaf {...props} />, [])
+    const editor = useMemo(() => withReact(createEditor()), [])
 
-  const onChangeEvent = value => {
-    console.log(value)
-    setValue(value)
+    const onChangeEvent = value => {
+      if (onChange) {
+        onChange(getRangesFromBlock(value))
+      }
+      setValue(value)
+    }
+
+    return (
+      <View ref={ref}>
+        <Slate editor={editor} value={value} onChange={onChangeEvent}>
+          <Editable
+            css={overrideCss}
+            id={id}
+            renderLeaf={renderLeaf}
+            placeholder="Enter some rich text…"
+            spellCheck
+            autoFocus
+            onKeyDown={event => {
+              if (event.key === 'Enter') {
+                event.preventDefault()
+
+                if (multiline) {
+                  Transforms.insertText(editor, `\n`)
+                }
+              }
+              for (const hotkey in HOTKEYS) {
+                if (isHotkey(hotkey, event)) {
+                  event.preventDefault()
+                  const mark = HOTKEYS[hotkey]
+                  toggleMark(editor, mark)
+                }
+              }
+            }}
+            onBlur={onBlur}
+          />
+        </Slate>
+      </View>
+    )
   }
-  return (
-    <Slate editor={editor} value={value} onChange={onChangeEvent}>
-      <Editable
-        renderLeaf={renderLeaf}
-        placeholder="Enter some rich text…"
-        spellCheck
-        autoFocus
-        onKeyDown={event => {
-          for (const hotkey in HOTKEYS) {
-            if (isHotkey(hotkey, event)) {
-              event.preventDefault()
-              const mark = HOTKEYS[hotkey]
-              toggleMark(editor, mark)
-            }
-          }
-        }}
-      />
-    </Slate>
-  )
-}
+)
 
 export default RichText
