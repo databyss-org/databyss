@@ -1,5 +1,6 @@
 import { createEditor, Transforms } from 'slate'
 import { toggleMark } from './slateUtils'
+import cloneDeep from 'clone-deep'
 
 const moveToStart = editor => {
   const _zero = { path: [0], offset: 0 }
@@ -77,4 +78,55 @@ export const stateToSlateMarkup = blockData => {
   const { children } = _editor.children[0]
 
   return children
+}
+
+export const getRangesFromBlock = value => {
+  const nodes = value[0].children
+  let text = ''
+  return {
+    ranges: nodes
+      .map((n, i) => {
+        const _nodes = cloneDeep(nodes)
+        const keys = Object.keys(n).filter(k => k !== 'text')
+
+        // compile full text
+        text += n.text
+        let range = {}
+        if (keys.length) {
+          // find length of all previous nodes
+          _nodes.splice(i)
+          const previousTextLength = _nodes.reduce(
+            (total, current) => total + current.text.length,
+            0
+          )
+          // create range object
+          range = {
+            offset: previousTextLength,
+            length: n.text.length,
+            // TODO: get block marks
+            marks: keys.map(k => k),
+            //  marks: Object.keys(n),
+            //  marks: n.marks.map(m =>{
+
+            //   m.type
+
+            // }),
+          }
+        }
+
+        return range
+      })
+      .filter(x => x.length != null),
+    textValue: text,
+  }
+}
+
+export const slateToState = (slate, _id) => {
+  const { ranges, textValue } = getRangesFromBlock(slate)
+  const response = {
+    _id,
+    textValue,
+    ranges,
+  }
+  return { [slate.key]: response }
 }
