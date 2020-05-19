@@ -79,7 +79,10 @@ const Leaf = ({ attributes, children, leaf }) => {
 }
 
 const RichText = forwardRef(
-  ({ multiline, onChange, initialValue, id, overrideCss, onBlur }, ref) => {
+  (
+    { multiline, onChange, initialValue, id, overrideCss, onBlur, placeholder },
+    ref
+  ) => {
     const _el = useRef(ref)
     // set initial value
 
@@ -108,7 +111,7 @@ const RichText = forwardRef(
             css={overrideCss}
             id={id}
             renderLeaf={renderLeaf}
-            placeholder="Enter some rich text…"
+            placeholder={placeholder}
             spellCheck
             autoFocus
             onKeyDown={event => {
