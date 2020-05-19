@@ -45,10 +45,16 @@ type ContextType = {
   clear: (index: number) => void
 }
 
+type OnChangeArgs = {
+  state: any
+  patch: Patch
+  inversePatch: Patch
+}
+
 type PropsType = {
   children: JSX.Element
   initialState: any
-  onChange: (state: any, patch: Patch, inversePatch: Patch) => void
+  onChange: (args: OnChangeArgs) => void
 }
 
 const useReducer = createReducer()
@@ -60,11 +66,11 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
   initialState,
   onChange,
 }) => {
-  const [state, dispatch] = useReducer(reducer, initialState, {
+  const [state, dispatch, stateRef] = useReducer(reducer, initialState, {
     initializer: null,
     name: 'EditorProvider',
     onChange: (patch: Patch, inversePatch: Patch) => {
-      onChange(state, patch, inversePatch)
+      onChange({ state: stateRef.current, patch, inversePatch })
     },
   })
 

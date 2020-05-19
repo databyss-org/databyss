@@ -13,9 +13,9 @@ const PageBody = ({ page }) => {
 
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
   console.log(process.env.SAVE_PAGE_THROTTLE)
-  const debouncedAutosave = useCallback(
-    throttle(editorState => {
-      setPage(editorState)
+  const throttledAutosave = useCallback(
+    throttle(({ state }) => {
+      setPage(state)
     }, process.env.SAVE_PAGE_THROTTLE),
     []
   )
@@ -23,7 +23,7 @@ const PageBody = ({ page }) => {
   return (
     <EditorProvider
       key={location.pathname}
-      onChange={debouncedAutosave}
+      onChange={throttledAutosave}
       initialState={withMetaData(page)}
     >
       <ContentEditable />

@@ -64,8 +64,8 @@ const EditorWithModals = ({ initialState }) => (
       <NavigationProvider>
         <EditorWithProvider
           initialState={initialState}
-          onChange={(state, patches, inversePatches) => {
-            console.log(patches, inversePatches)
+          onChange={({ patch, inversePatch }) => {
+            console.log(patch, inversePatch)
           }}
         />
       </NavigationProvider>
@@ -108,8 +108,8 @@ storiesOf('Components|Editor', module)
   .add('Basic (standalone)', () => (
     <EditorWithProvider
       initialState={basicFixture}
-      onChange={(state, patches, inversePatches) => {
-        console.log(inversePatches)
+      onChange={({ inversePatch }) => {
+        console.log(inversePatch)
       }}
     />
   ))
