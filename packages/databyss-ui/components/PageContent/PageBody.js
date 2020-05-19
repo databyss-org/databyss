@@ -12,9 +12,9 @@ const PageBody = ({ page }) => {
   useEffect(() => () => clearBlockDict(), [])
 
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
-  console.log(process.env.SAVE_PAGE_THROTTLE)
   const throttledAutosave = useCallback(
-    throttle(({ state }) => {
+    throttle(({ state, patch }) => {
+      console.log('patch', patch)
       setPage(state)
     }, process.env.SAVE_PAGE_THROTTLE),
     []
