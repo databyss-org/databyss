@@ -26,6 +26,7 @@ const PageBody = ({ page }) => {
           id: state.page._id,
           patch: operationsQueue.current,
         }
+
         setPatch(payload)
         operationsQueue.current = []
         // setPage(state)
@@ -36,6 +37,7 @@ const PageBody = ({ page }) => {
 
   const onChange = value => {
     const _value = addMetaData(value)
+
     // push changes to a queue
     operationsQueue.current = operationsQueue.current.concat(_value.patch)
     throttledAutosave(_value)

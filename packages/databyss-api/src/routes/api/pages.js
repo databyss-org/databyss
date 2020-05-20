@@ -90,32 +90,46 @@ router.patch(
       const _patches = req.body.data.patch
       if (_patches) {
         const _cache = {}
-        await Promise.all(
-          _patches.map(async p => {
-            const _prop = p.path[0]
-            switch (p.op) {
-              case 'replace': {
-                switch (_prop) {
-                  case 'entityCache': {
-                    console.log('replace in entity cache')
-                    await modelDict(p.value.type).findOneAndUpdate(
-                      { _id: p.path[1] },
-                      {
-                        text: {
-                          textValue: p.value.textValue,
-                          ranges: p.value.ranges,
-                        },
-                      }
-                    )
-                    return
-                  }
-                  case 'blockCache': {
-                    console.log('replace in block cache')
-                    const _blockId = p.path[1]
-                    const _type = p.value
-                    const _block = await Block.findOne({ _id: _blockId })
+        const starterPromise = Promise.resolve(null)
+
+        // https://jrsinclair.com/articles/2019/how-to-run-async-js-in-parallel-or-sequential/
+        _patches.reduce(
+          (p, spec) => p.then(() => runTask(spec)),
+          starterPromise
+        )
+
+        const runTask = async p => {
+          const _prop = p.path[0]
+          switch (p.op) {
+            case 'replace': {
+              switch (_prop) {
+                case 'entityCache': {
+                  console.log('replace in entity cache')
+                  await modelDict(p.value.type).findOneAndUpdate(
+                    { _id: p.path[1] },
+                    {
+                      text: {
+                        textValue: p.value.textValue,
+                        ranges: p.value.ranges,
+                      },
+                    }
+                  )
+                  return
+                }
+                case 'blockCache': {
+                  console.log('replace in block cache')
+                  const _blockId = p.path[1]
+                  const _type =
+                    typeof p.value === 'string' ? p.value : p.value.type
+
+                  const _block = await Block.findOne({ _id: _blockId })
+
+                  let _entityId
+                  if (p.value.entityId) {
+                    _entityId = p.value.entityId
+                  } else {
                     // get property name from DB
-                    const _entityId =
+                    _entityId =
                       _block[
                         {
                           ENTRY: 'entryId',
@@ -123,153 +137,138 @@ router.patch(
                           TOPIC: 'topicId',
                         }[_block.type]
                       ]
-                    // set property name
-                    const idType = {
-                      ENTRY: { entryId: _entityId },
-                      SOURCE: { sourceId: _entityId },
-                      TOPIC: { topicId: _entityId },
-                      AUTHOR: { authorId: _entityId },
-                      LOCATION: { locationId: _entityId },
-                    }[_type]
-
-                    const blockFields = {
-                      type: _type,
-                      _id: _blockId,
-                      user: req.user.id,
-                      account: req.account._id,
-                      ...idType,
-                    }
-
-                    // TODO: old idType still exists in database
-                    await Block.findOneAndUpdate(
-                      { _id: _blockId },
-                      blockFields,
-                      { new: true }
-                    )
-
-                    return
                   }
-                  case 'blocks': {
-                    console.log(p)
-                    console.log('!!!!!!!!! IN REPLACE BLOCKS')
-                    const _index = p.path[1]
-                    // insert block id into page
-                    const _page = await Page.findOne({ _id: req.page._id })
-                    const blocks = _page.blocks
-                    blocks.splice(_index, 1, { _id: p.value._id })
-                    await Page.findOneAndUpdate(
-                      { _id: req.page._id },
-                      { blocks }
-                    )
 
-                    console.log('BLOCKS IN REPLACE', blocks)
-                    return
+                  // set property name
+                  const idType = {
+                    ENTRY: { entryId: _entityId },
+                    SOURCE: { sourceId: _entityId },
+                    TOPIC: { topicId: _entityId },
+                    AUTHOR: { authorId: _entityId },
+                    LOCATION: { locationId: _entityId },
+                  }[_type]
+
+                  const blockFields = {
+                    type: _type,
+                    _id: _blockId,
+                    user: req.user.id,
+                    account: req.account._id,
+                    ...idType,
                   }
-                  default:
-                    return
+
+                  // TODO: old idType still exists in database
+                  await Block.findOneAndUpdate({ _id: _blockId }, blockFields, {
+                    new: true,
+                  })
+
+                  return
                 }
-              }
+                case 'blocks': {
+                  console.log('in replace blocks')
+                  const _index = p.path[1]
+                  // insert block id into page
+                  const _page = await Page.findOne({ _id: req.page._id })
+                  const blocks = _page.blocks
+                  blocks.splice(_index, 1, { _id: p.value._id })
+                  await Page.findOneAndUpdate({ _id: req.page._id }, { blocks })
 
-              case 'add': {
-                switch (_prop) {
-                  case 'blocks': {
-                    console.log('in blocks')
-                    console.log(p)
-                    const _index = p.path[1]
-                    // insert block id into page
-                    const _page = await Page.findOne({ _id: req.page._id })
-                    const blocks = _page.blocks
-                    console.log('before', blocks)
-                    blocks.splice(_index, 0, { _id: p.value._id })
-                    await Page.findOneAndUpdate(
-                      { _id: req.page._id },
-                      { blocks }
-                    )
-                    console.log('blocks in add', blocks)
-                    return
-                  }
-                  case 'blockCache': {
-                    console.log('in blockCache')
-                    const _type = p.value.type
-                    const _entityId = p.value.entityId
-                    const _blockId = p.path[1]
-
-                    // add entity id to temporary cache
-                    _cache[_entityId] = _blockId
-
-                    const idType = {
-                      ENTRY: { entryId: _entityId },
-                      SOURCE: { sourceId: _entityId },
-                      TOPIC: { topicId: _entityId },
-                      AUTHOR: { authorId: _entityId },
-                      LOCATION: { locationId: _entityId },
-                    }[_type]
-
-                    const blockFields = {
-                      type: _type,
-                      _id: _blockId,
-                      user: req.user.id,
-                      account: req.account._id,
-                      ...idType,
-                    }
-
-                    const _block = new Block(blockFields)
-                    await _block.save()
-                    return
-                  }
-                  case 'entityCache': {
-                    console.log('in entity')
-                    const entityFields = {
-                      text: p.value.text,
-                      _id: p.value._id,
-                      page: req.page._id,
-                      ...(_cache[p.value._id] && {
-                        block: _cache[p.value._id],
-                      }),
-                      account: req.account._id,
-                    }
-
-                    const _entity = new modelDict(p.value.type)(entityFields)
-                    await _entity.save()
-                    return
-                  }
-                  default:
-                    return
+                  return
                 }
+                default:
+                  return
               }
-
-              case 'remove': {
-                switch (_prop) {
-                  case 'entityCache': {
-                    console.log('IS IN REMOVE ENTITY CACHE')
-                    return
-                  }
-                  case 'blockCache': {
-                    console.log('IS IN REMOVE BLOCK CACHE')
-                    return
-                  }
-                  case 'blocks': {
-                    console.log('remove block from page')
-                    const _index = p.path[1]
-                    const _page = await Page.findOne({ _id: req.page._id })
-                    const blocks = _page.blocks
-                    blocks.splice(_index, 1)
-                    await Page.findOneAndUpdate(
-                      { _id: req.page._id },
-                      { blocks }
-                    )
-                    return
-                  }
-                  default:
-                    return
-                }
-              }
-              // todo case delete
-              default:
-                return
             }
-          })
-        )
+
+            case 'add': {
+              switch (_prop) {
+                case 'blocks': {
+                  console.log(' add in blocks')
+                  const _index = p.path[1]
+                  // insert block id into page
+                  const _page = await Page.findOne({ _id: req.page._id })
+                  const blocks = _page.blocks
+                  blocks.splice(_index, 0, { _id: p.value._id })
+                  await Page.findOneAndUpdate({ _id: req.page._id }, { blocks })
+                  return
+                }
+                case 'blockCache': {
+                  console.log('add in blockCache')
+                  const _type = p.value.type
+                  const _entityId = p.value.entityId
+                  const _blockId = p.path[1]
+
+                  // add entity id to temporary cache
+                  _cache[_entityId] = _blockId
+
+                  const idType = {
+                    ENTRY: { entryId: _entityId },
+                    SOURCE: { sourceId: _entityId },
+                    TOPIC: { topicId: _entityId },
+                    AUTHOR: { authorId: _entityId },
+                    LOCATION: { locationId: _entityId },
+                  }[_type]
+
+                  const blockFields = {
+                    type: _type,
+                    _id: _blockId,
+                    user: req.user.id,
+                    account: req.account._id,
+                    ...idType,
+                  }
+
+                  const _block = new Block(blockFields)
+                  await _block.save()
+                  return
+                }
+                case 'entityCache': {
+                  console.log('add in entity')
+                  const entityFields = {
+                    text: p.value.text,
+                    _id: p.value._id,
+                    page: req.page._id,
+                    ...(_cache[p.value._id] && {
+                      block: _cache[p.value._id],
+                    }),
+                    account: req.account._id,
+                  }
+
+                  const _entity = new modelDict(p.value.type)(entityFields)
+                  await _entity.save()
+                  return
+                }
+                default:
+                  return
+              }
+            }
+
+            case 'remove': {
+              switch (_prop) {
+                case 'entityCache': {
+                  console.log('IS IN REMOVE ENTITY CACHE')
+                  return
+                }
+                case 'blockCache': {
+                  console.log('IS IN REMOVE BLOCK CACHE')
+                  return
+                }
+                case 'blocks': {
+                  console.log('remove block from page')
+                  const _index = p.path[1]
+                  const _page = await Page.findOne({ _id: req.page._id })
+                  const blocks = _page.blocks
+                  blocks.splice(_index, 1)
+                  await Page.findOneAndUpdate({ _id: req.page._id }, { blocks })
+                  return
+                }
+                default:
+                  return
+              }
+            }
+            // todo case delete
+            default:
+              return
+          }
+        }
       }
 
       return res.json({ msg: 'success' })
