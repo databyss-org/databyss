@@ -114,7 +114,7 @@ router.patch(
                     const _blockId = p.path[1]
                     const _type = p.value
                     const _block = await Block.findOne({ _id: _blockId })
-
+                    // get property name from DB
                     const _entityId =
                       _block[
                         {
@@ -123,9 +123,7 @@ router.patch(
                           TOPIC: 'topicId',
                         }[_block.type]
                       ]
-
-                    //     console.log(_entityId)
-
+                    // set property name
                     const idType = {
                       ENTRY: { entryId: _entityId },
                       SOURCE: { sourceId: _entityId },
@@ -151,26 +149,43 @@ router.patch(
 
                     return
                   }
+                  case 'blocks': {
+                    console.log(p)
+                    console.log('!!!!!!!!! IN REPLACE BLOCKS')
+                    const _index = p.path[1]
+                    // insert block id into page
+                    const _page = await Page.findOne({ _id: req.page._id })
+                    const blocks = _page.blocks
+                    blocks.splice(_index, 1, { _id: p.value._id })
+                    await Page.findOneAndUpdate(
+                      { _id: req.page._id },
+                      { blocks }
+                    )
+
+                    console.log('BLOCKS IN REPLACE', blocks)
+                    return
+                  }
                   default:
                     return
                 }
-
-                return
               }
 
               case 'add': {
                 switch (_prop) {
                   case 'blocks': {
                     console.log('in blocks')
+                    console.log(p)
                     const _index = p.path[1]
                     // insert block id into page
                     const _page = await Page.findOne({ _id: req.page._id })
                     const blocks = _page.blocks
+                    console.log('before', blocks)
                     blocks.splice(_index, 0, { _id: p.value._id })
                     await Page.findOneAndUpdate(
                       { _id: req.page._id },
                       { blocks }
                     )
+                    console.log('blocks in add', blocks)
                     return
                   }
                   case 'blockCache': {
@@ -216,6 +231,33 @@ router.patch(
 
                     const _entity = new modelDict(p.value.type)(entityFields)
                     await _entity.save()
+                    return
+                  }
+                  default:
+                    return
+                }
+              }
+
+              case 'remove': {
+                switch (_prop) {
+                  case 'entityCache': {
+                    console.log('IS IN REMOVE ENTITY CACHE')
+                    return
+                  }
+                  case 'blockCache': {
+                    console.log('IS IN REMOVE BLOCK CACHE')
+                    return
+                  }
+                  case 'blocks': {
+                    console.log('remove block from page')
+                    const _index = p.path[1]
+                    const _page = await Page.findOne({ _id: req.page._id })
+                    const blocks = _page.blocks
+                    blocks.splice(_index, 1)
+                    await Page.findOneAndUpdate(
+                      { _id: req.page._id },
+                      { blocks }
+                    )
                     return
                   }
                   default:
