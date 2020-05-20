@@ -1,9 +1,22 @@
 import ObjectId from 'bson-objectid'
-import { pathMatch } from 'tough-cookie'
+
+export const withWhitelist = patch =>
+  patch.filter(
+    p =>
+      // blacklist if operation array includes `__`
+      !(
+        p.path
+          .map(k => typeof k === 'string' && k.includes('__'))
+          .filter(Boolean).length ||
+        // blacklist if it includes sleciton or operation
+        p.path.includes('selection') ||
+        p.path.includes('operations') ||
+        p.path.includes('preventDefault')
+      )
+  )
 
 export const addMetaData = ({ state, patch }) => {
   let _patch = withWhitelist(patch)
-
   // add type to 'entityCache' to operation 'replace'
   _patch = _patch.map(p => {
     if (p.path[0] !== 'entityCache' || p.op !== 'replace') {
@@ -17,22 +30,6 @@ export const addMetaData = ({ state, patch }) => {
   })
 
   return { state, patch: _patch }
-}
-
-export const withWhitelist = patch => {
-  return patch.filter(
-    p =>
-      // blacklist if operation array includes `__`
-      !(
-        p.path
-          .map(k => typeof k === 'string' && k.includes('__'))
-          .filter(Boolean).length ||
-        // blacklist if it includes sleciton or operation
-        p.path.includes('selection') ||
-        p.path.includes('operations') ||
-        p.path.includes('preventDefault')
-      )
-  )
 }
 
 export const newPage = () => {

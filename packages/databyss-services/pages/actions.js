@@ -1,6 +1,5 @@
 import cloneDeep from 'clone-deep'
 import * as services from './'
-import { withWhitelist } from './_helpers'
 import {
   PATCH,
   FETCH_PAGE,
@@ -61,9 +60,8 @@ export function savePatch(patch) {
   return dispatch => {
     dispatch({
       type: PATCH,
-      //   payload: patch,
+      payload: patch,
     })
-    console.log(patch)
     services.savePatch(patch)
   }
 }

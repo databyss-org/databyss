@@ -12,7 +12,7 @@ import {
 
 const PageBody = ({ page }) => {
   const { location } = useNavigationContext()
-  const { clearBlockDict, setPage, setPatch } = usePageContext()
+  const { clearBlockDict, setPatch } = usePageContext()
   useEffect(() => () => clearBlockDict(), [])
 
   const operationsQueue = useRef([])
@@ -26,15 +26,15 @@ const PageBody = ({ page }) => {
           id: state.page._id,
           patch: operationsQueue.current,
         }
-
         setPatch(payload)
         operationsQueue.current = []
-        // setPage(state)
       }
     }, process.env.SAVE_PAGE_THROTTLE),
     []
   )
 
+  // TODO: Not all events fire onchange even in editor
+  // state from provider is out of date
   const onChange = value => {
     const _value = addMetaData(value)
 
