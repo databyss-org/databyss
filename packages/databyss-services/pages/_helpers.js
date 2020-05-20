@@ -1,6 +1,24 @@
 import ObjectId from 'bson-objectid'
 import { pathMatch } from 'tough-cookie'
 
+export const addMetaData = ({ state, patch }) => {
+  let _patch = withWhitelist(patch)
+
+  // add type to 'entityCache' to operation 'replace'
+  _patch = _patch.map(p => {
+    if (p.path[0] !== 'entityCache' || p.op !== 'replace') {
+      return p
+    }
+
+    // look up in state
+    const _id = p.path[1]
+    const _type = state.entityCache[_id].type
+    return { ...p, value: { ...p.value, type: _type } }
+  })
+
+  return { state, patch: _patch }
+}
+
 export const withWhitelist = patch => {
   return patch.filter(
     p =>

@@ -94,36 +94,40 @@ router.patch(
           _patches.map(async p => {
             const _prop = p.path[0]
             switch (p.op) {
-              case 'replace':
+              case 'replace': {
                 console.log('in replace')
                 // replace in entity
                 if (_prop === 'entityCache') {
-                  const blockList = await getBlockItemsFromId(req.page.blocks)
-                  const block = blockList.filter(
-                    b => b.refId.toString() === p.path[1]
-                  )[0]
-
-                  await modelDict(block.type).findOneAndUpdate(
-                    { _id: block.refId },
-                    { text: p.value }
+                  await modelDict(p.value.type).findOneAndUpdate(
+                    { _id: p.path[1] },
+                    {
+                      text: {
+                        textValue: p.value.textValue,
+                        ranges: p.value.ranges,
+                      },
+                    }
                   )
                 }
-                break
+                return
+              }
 
-              case 'add':
+              case 'add': {
                 switch (_prop) {
-                  case 'blocks':
+                  case 'blocks': {
                     console.log('in blocks')
                     const _index = p.path[1]
                     // insert block id into page
-                    const blocks = req.page.blocks
+                    const _page = await Page.findOne({ _id: req.page._id })
+                    const blocks = _page.blocks
                     blocks.splice(_index, 0, { _id: p.value._id })
                     await Page.findOneAndUpdate(
                       { _id: req.page._id },
                       { blocks }
                     )
-                    break
-                  case 'blockCache':
+                    return
+                  }
+                  case 'blockCache': {
+                    console.log('in blockCache')
                     const _type = p.value.type
                     const _entityId = p.value.entityId
                     const _blockId = p.path[1]
@@ -149,8 +153,10 @@ router.patch(
 
                     const _block = new Block(blockFields)
                     await _block.save()
-                    break
-                  case 'entityCache':
+                    return
+                  }
+                  case 'entityCache': {
+                    console.log('in entity')
                     const entityFields = {
                       text: p.value.text,
                       _id: p.value._id,
@@ -163,12 +169,15 @@ router.patch(
 
                     const _entity = new modelDict(p.value.type)(entityFields)
                     await _entity.save()
-                    break
+                    return
+                  }
+                  default:
+                    return
                 }
-
-                // todo case delete
-
-                break
+              }
+              // todo case delete
+              default:
+                return
             }
           })
         )
