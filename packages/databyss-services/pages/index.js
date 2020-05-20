@@ -1,4 +1,4 @@
-import { httpGet, httpPost, httpDelete } from '../lib/requestApi'
+import { httpGet, httpPost, httpDelete, httpPatch } from '../lib/requestApi'
 
 // TODO: Add native versions of these
 
@@ -6,7 +6,7 @@ export const getPage = _id => httpGet(`/pages/${_id}`)
 
 export const savePage = data => httpPost('/pages', { data })
 
-export const savePatch = data => httpPatch('/pages', { data })
+export const savePatch = data => httpPatch(`/pages/${data.id}`, { data })
 
 export const loadPage = id => httpGet(`/pages/populate/${id}`)
 

@@ -79,6 +79,109 @@ router.delete('/:id', auth, async (req, res) => {
   }
 })
 
+// @route    PATCH api/page/:id
+// @desc     operation on page
+// @access   private
+router.patch(
+  '/:id',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
+  async (req, res) => {
+    try {
+      const _patches = req.body.data.patch
+      if (_patches) {
+        const _cache = {}
+        await Promise.all(
+          _patches.map(async p => {
+            const _prop = p.path[0]
+            switch (p.op) {
+              case 'replace':
+                console.log('in replace')
+                // replace in entity
+                if (_prop === 'entityCache') {
+                  const blockList = await getBlockItemsFromId(req.page.blocks)
+                  const block = blockList.filter(
+                    b => b.refId.toString() === p.path[1]
+                  )[0]
+
+                  await modelDict(block.type).findOneAndUpdate(
+                    { _id: block.refId },
+                    { text: p.value }
+                  )
+                }
+                break
+
+              case 'add':
+                switch (_prop) {
+                  case 'blocks':
+                    console.log('in blocks')
+                    const _index = p.path[1]
+                    // insert block id into page
+                    const blocks = req.page.blocks
+                    blocks.splice(_index, 0, { _id: p.value._id })
+                    await Page.findOneAndUpdate(
+                      { _id: req.page._id },
+                      { blocks }
+                    )
+                    break
+                  case 'blockCache':
+                    const _type = p.value.type
+                    const _entityId = p.value.entityId
+                    const _blockId = p.path[1]
+
+                    // add entity id to temporary cache
+                    _cache[_entityId] = _blockId
+
+                    const idType = {
+                      ENTRY: { entryId: _entityId },
+                      SOURCE: { sourceId: _entityId },
+                      TOPIC: { topicId: _entityId },
+                      AUTHOR: { authorId: _entityId },
+                      LOCATION: { locationId: _entityId },
+                    }[_type]
+
+                    const blockFields = {
+                      type: _type,
+                      _id: _blockId,
+                      user: req.user.id,
+                      account: req.account._id,
+                      ...idType,
+                    }
+
+                    const _block = new Block(blockFields)
+                    await _block.save()
+                    break
+                  case 'entityCache':
+                    const entityFields = {
+                      text: p.value.text,
+                      _id: p.value._id,
+                      page: req.page._id,
+                      ...(_cache[p.value._id] && {
+                        block: _cache[p.value._id],
+                      }),
+                      account: req.account._id,
+                    }
+
+                    const _entity = new modelDict(p.value.type)(entityFields)
+                    await _entity.save()
+                    break
+                }
+
+                // todo case delete
+
+                break
+            }
+          })
+        )
+      }
+
+      return res.json({ msg: 'success' })
+    } catch (err) {
+      console.error(err.message)
+      return res.status(500).send('Server Error')
+    }
+  }
+)
+
 // @route    POST api/pages
 // @desc     Adds Page
 // @access   private

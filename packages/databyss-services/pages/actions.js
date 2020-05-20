@@ -61,10 +61,10 @@ export function savePatch(patch) {
   return dispatch => {
     dispatch({
       type: PATCH,
-      //  payload: { body, id: body.page._id },
+      //   payload: patch,
     })
-    console.log(withWhitelist(patch))
-    //  services.savePatch(patch)
+    console.log(patch)
+    services.savePatch(patch)
   }
 }
 
