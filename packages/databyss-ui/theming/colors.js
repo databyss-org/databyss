@@ -4,8 +4,8 @@ import Color from 'color'
 let _c = {
   gray: [
     '#221F1B',
-    '#282625',
-    '#42403e',
+    '#2F2E2D',
+    '#3B3835',
     '#605a52',
     '#8a8175',
     '#D0CDC8',
