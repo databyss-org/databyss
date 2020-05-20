@@ -117,7 +117,7 @@ describe('new block menu actions', () => {
       <editor>
         <block type="ENTRY">
           <text location>
-            this should be a location <cursor />
+            this should be a location<cursor />
           </text>
         </block>
       </editor>
