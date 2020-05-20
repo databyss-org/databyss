@@ -108,8 +108,6 @@ describe('new block menu actions', () => {
       .findElement(By.tagName('[data-test-block-menu="LOCATION"]'))
       .click()
     await actions.sendKeys('this should be a location')
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys(Key.ENTER)
     await actions.perform()
     await sleep(3000)
 
@@ -118,10 +116,9 @@ describe('new block menu actions', () => {
     const expected = (
       <editor>
         <block type="ENTRY">
-          <text location>this should be a location</text>
-        </block>
-        <block type="ENTRY">
-          <cursor />
+          <text location>
+            this should be a location <cursor />
+          </text>
         </block>
       </editor>
     )
