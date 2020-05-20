@@ -44,9 +44,9 @@ const Search = ({ onClick }) => {
   }
 
   return (
-    <View height="40px" width="100%" m="small" onClick={onClick}>
+    <View height="38px" width="100%" px="small" my="small" onClick={onClick}>
       <View
-        backgroundColor="background.1"
+        backgroundColor="background.0"
         height="100%"
         justifyContent="center"
         position="relative"

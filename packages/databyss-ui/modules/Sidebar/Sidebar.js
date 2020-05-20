@@ -43,6 +43,8 @@ const Sidebar = () => {
   if item active in menuItem, SidebarContent will compose a list to pass to SidebarList
   */
 
+  const sidebarWidth = '240px'
+
   const onHeaderClick = () => {
     if (menuItem) {
       return navigateSidebar('/')
@@ -57,24 +59,18 @@ const Sidebar = () => {
         {...defaultProps}
         position="relative"
         css={css({
-          width: '300px',
+          width: sidebarWidth,
         })}
       >
         <View
           widthVariant="content"
           theme={darkTheme}
-          bg="background.0"
-          pt="medium"
+          bg="background.1"
           height="100vh"
         >
           <List
             verticalItemPadding={2}
             horizontalItemPadding={2}
-            mt="none"
-            mb="none"
-            p="small"
-            pl="medium"
-            pr="medium"
             alignItems="center"
           >
             <Header onHeaderClick={onHeaderClick} />
@@ -85,7 +81,7 @@ const Sidebar = () => {
             />
             {(menuItem === 'pages' || !menuItem) && <Pages />}
           </List>
-          <View position="absolute" bottom={0} left={0} width="300px">
+          <View position="absolute" bottom={0} left={0} width={sidebarWidth}>
             <Footer />
           </View>
         </View>

@@ -20,8 +20,8 @@ const iconSizeVariants = {
     ...icon(32),
   },
   title: {
-    width: 130,
-    height: 28,
+    width: 108,
+    height: 24,
   },
 }
 

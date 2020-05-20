@@ -89,21 +89,20 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
         const _isActive = item.id === tokens.id && tokens.id
         acc.push(
           <BaseControl
-            backgroundColor={_isActive ? 'background.1' : 'background.0'}
-            p={2}
+            backgroundColor={_isActive ? 'background.2' : 'transparent'}
+            hoverColor="background.2"
+            py={1}
+            px={2}
             key={index}
             width="100%"
             onClick={() => onClick(item)}
           >
             <View>
               <Grid singleRow flexWrap="nowrap" columnGap="small">
-                <Icon sizeVariant="tiny" color="text.3" mt={pxUnits(2)}>
+                <Icon sizeVariant="tiny" color="text.2" mt={pxUnits(2)}>
                   {menuSvgs(item.type)}
                 </Icon>
-                <Text
-                  variant={!_isActive ? 'uiTextSmall' : 'uiTextSmallSemibold'}
-                  color="text.2"
-                >
+                <Text variant="uiTextSmall" color="text.2">
                   {item.text}
                 </Text>
               </Grid>

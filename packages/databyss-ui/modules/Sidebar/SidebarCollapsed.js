@@ -62,8 +62,7 @@ const SidebarCollapsed = () => {
       {...defaultProps}
       widthVariant="content"
       theme={darkTheme}
-      bg="background.0"
-      // pt="medium"
+      bg="background.1"
       height="100vh"
       borderRightColor="border.1"
       borderRightWidth={pxUnits(1)}
