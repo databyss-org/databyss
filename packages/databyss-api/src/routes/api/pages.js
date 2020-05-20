@@ -95,19 +95,66 @@ router.patch(
             const _prop = p.path[0]
             switch (p.op) {
               case 'replace': {
-                console.log('in replace')
-                // replace in entity
-                if (_prop === 'entityCache') {
-                  await modelDict(p.value.type).findOneAndUpdate(
-                    { _id: p.path[1] },
-                    {
-                      text: {
-                        textValue: p.value.textValue,
-                        ranges: p.value.ranges,
-                      },
+                switch (_prop) {
+                  case 'entityCache': {
+                    console.log('replace in entity cache')
+                    await modelDict(p.value.type).findOneAndUpdate(
+                      { _id: p.path[1] },
+                      {
+                        text: {
+                          textValue: p.value.textValue,
+                          ranges: p.value.ranges,
+                        },
+                      }
+                    )
+                    return
+                  }
+                  case 'blockCache': {
+                    console.log('replace in block cache')
+                    const _blockId = p.path[1]
+                    const _type = p.value
+                    const _block = await Block.findOne({ _id: _blockId })
+
+                    const _entityId =
+                      _block[
+                        {
+                          ENTRY: 'entryId',
+                          SOURCE: 'sourceId',
+                          TOPIC: 'topicId',
+                        }[_block.type]
+                      ]
+
+                    //     console.log(_entityId)
+
+                    const idType = {
+                      ENTRY: { entryId: _entityId },
+                      SOURCE: { sourceId: _entityId },
+                      TOPIC: { topicId: _entityId },
+                      AUTHOR: { authorId: _entityId },
+                      LOCATION: { locationId: _entityId },
+                    }[_type]
+
+                    const blockFields = {
+                      type: _type,
+                      _id: _blockId,
+                      user: req.user.id,
+                      account: req.account._id,
+                      ...idType,
                     }
-                  )
+
+                    // TODO: old idType still exists in database
+                    await Block.findOneAndUpdate(
+                      { _id: _blockId },
+                      blockFields,
+                      { new: true }
+                    )
+
+                    return
+                  }
+                  default:
+                    return
                 }
+
                 return
               }
 
