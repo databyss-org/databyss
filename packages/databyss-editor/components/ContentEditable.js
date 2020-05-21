@@ -200,6 +200,8 @@ const ContentEditable = ({ onDocumentChange }) => {
   const onChange = value => {
     const selection = slateSelectionToStateSelection(editor)
 
+    selection._id = state.selection._id
+
     if (!selection) {
       return
     }

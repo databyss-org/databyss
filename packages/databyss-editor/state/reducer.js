@@ -71,6 +71,8 @@ export default (state, action, onChange) =>
 
       const { payload } = action
 
+      console.log(payload.selection)
+
       // default nextSelection to `payload.selection` (which may be undef)
       const nextSelection = payload.selection
 
@@ -259,6 +261,8 @@ export default (state, action, onChange) =>
         case SET_SELECTION:
         default:
       }
+
+      console.log(nextSelection)
 
       // update the selection unless we're doing `preventDefault`
       if (nextSelection && !draft.preventDefault) {

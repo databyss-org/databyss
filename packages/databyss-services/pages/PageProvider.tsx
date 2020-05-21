@@ -56,6 +56,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 
   const setPage = (page: Page): void => {
     // window.requestAnimationFrame(() => dispatch(savePage(page)))
+    console.log(page)
     dispatch(savePage(page))
   }
 

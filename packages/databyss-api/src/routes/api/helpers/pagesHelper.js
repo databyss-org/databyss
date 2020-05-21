@@ -4,6 +4,7 @@ import Entry from '../../../models/Entry'
 import Topic from '../../../models/Topic'
 import Location from '../../../models/Location'
 import Page from '../../../models/Page'
+import Selection from '../../../models/Selection'
 
 const BadRefId = require('../../../lib/BadRefId')
 
@@ -142,6 +143,12 @@ const replacePatch = async (p, req) => {
       const blocks = _page.blocks
       blocks.splice(_index, 1, { _id: p.value._id })
       await Page.findOneAndUpdate({ _id: req.page._id }, { blocks })
+
+      break
+    }
+    case 'selection': {
+      const _id = p.value._id
+      await Selection.findByIdAndUpdate({ _id }, { $set: p.value })
 
       break
     }
