@@ -40,8 +40,11 @@ interface ContextType {
   getPage: (id: string) => Page | ResourcePending | null
   clearBlockDict: () => void
   setPatch: (patch: PatchType) => void
-  registerBlockRef: (id: string, refOne: React.Ref<HTMLInputElement>) => void
-  getBlockRefByIndex: (id: string) => React.Ref<HTMLInputElement>
+  registerBlockRefByIndex: (
+    index: number,
+    refOne: React.Ref<HTMLInputElement>
+  ) => void
+  getBlockRefByIndex: (index: number) => React.Ref<HTMLInputElement>
 }
 
 const useReducer = createReducer()
@@ -82,13 +85,16 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     return null
   }
 
-  const registerBlockRef = (id: string, ref: React.Ref<HTMLInputElement>) => {
-    refDictRef.current[id] = ref
+  const registerBlockRefByIndex = (
+    index: number,
+    ref: React.Ref<HTMLInputElement>
+  ) => {
+    refDictRef.current[index] = ref
   }
 
-  const getBlockRefByIndex = (id: string) => {
-    if (refDictRef.current[id]) {
-      return refDictRef.current[id]
+  const getBlockRefByIndex = (index: number) => {
+    if (refDictRef.current[index]) {
+      return refDictRef.current[index]
     }
     return null
   }
@@ -120,7 +126,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         getPage,
         setPage,
         setPatch,
-        registerBlockRef,
+        registerBlockRefByIndex,
         getBlockRefByIndex,
         clearBlockDict,
         removePage,

@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 import Entry from './Entry'
 import Block from './Block'
-import Selection from './Selection'
 
 const Schema = mongoose.Schema
 

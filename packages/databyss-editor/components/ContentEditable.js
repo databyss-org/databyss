@@ -204,11 +204,14 @@ const ContentEditable = ({ onDocumentChange }) => {
 
   const onChange = value => {
     const selection = slateSelectionToStateSelection(editor)
-
-    selection._id = state.selection._id
+    // preserve selection id from DB
 
     if (!selection) {
       return
+    }
+
+    if (state.selection._id) {
+      selection._id = state.selection._id
     }
 
     const focusIndex = selection.focus.index
