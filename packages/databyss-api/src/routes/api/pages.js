@@ -90,23 +90,17 @@ router.patch(
     try {
       const _patches = req.body.data.patch
       if (_patches) {
-        const starterPromise = Promise.resolve(null)
-
         // temporary dictionary for entity and block ids
         const _cache = {}
 
-        // https://jrsinclair.com/articles/2019/how-to-run-async-js-in-parallel-or-sequential/
-        _patches.reduce(
-          (p, patch) =>
-            p.then(() =>
-              runPatches(patch, _cache, req).then(() => console.log('done'))
-            ),
-          starterPromise
-        )
+        for (let patch of _patches) {
+          await runPatches(patch, _cache, req)
+        }
+        return res.json({ msg: 'success' })
       }
+      return res.json({ msg: 'no patches found' })
 
       // TODO: response is sent before actions are executed
-      return res.json({ msg: 'success' })
     } catch (err) {
       console.error(err.message)
       return res.status(500).send('Server Error')
