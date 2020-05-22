@@ -16,6 +16,11 @@ let actions
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
 const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=services-auth--login'
 
+const LOCAL_URL_EDITOR =
+  'http://localhost:6006/iframe.html?id=services-auth--login'
+const PROXY_URL_EDITOR =
+  'http://0.0.0.0:8080/iframe.html?id=services-auth--login'
+
 const random = Math.random()
   .toString(36)
   .substring(7)
@@ -53,7 +58,7 @@ describe('connected editor', () => {
     await getElementByTag(driver, '[data-test-id="logoutButton"]')
 
     await driver.get(
-      'http://localhost:6006/iframe.html?id=services-page--slate-5'
+      process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
     )
 
     editor = await getEditor(driver)
