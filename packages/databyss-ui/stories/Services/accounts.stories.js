@@ -8,15 +8,19 @@ import { ViewportDecorator } from '../decorators'
 
 storiesOf('Services|Auth', module)
   .addDecorator(ViewportDecorator)
-  .add('Login', () => (
-    <View id="login-page">
-      <ServiceProvider>
-        <SessionProvider>
-          <Text variant="uiTextNormalSemibold" data-test-id="authorized">
-            Authorized
-          </Text>
-          <SessionInfo />
-        </SessionProvider>
-      </ServiceProvider>
-    </View>
-  ))
+  .add('Login', () => {
+    console.log(process.env)
+
+    return (
+      <View id="login-page">
+        <ServiceProvider>
+          <SessionProvider>
+            <Text variant="uiTextNormalSemibold" data-test-id="authorized">
+              Authorized
+            </Text>
+            <SessionInfo />
+          </SessionProvider>
+        </ServiceProvider>
+      </View>
+    )
+  })
