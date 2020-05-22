@@ -17,9 +17,9 @@ const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
 const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=services-auth--login'
 
 const LOCAL_URL_EDITOR =
-  'http://localhost:6006/iframe.html?id=services-auth--login'
+  'http://localhost:6006/iframe.html?id=services-page--slate-5'
 const PROXY_URL_EDITOR =
-  'http://0.0.0.0:8080/iframe.html?id=services-auth--login'
+  'http://0.0.0.0:8080/iframe.html?id=services-page--slate-5'
 
 const random = Math.random()
   .toString(36)
@@ -77,7 +77,7 @@ describe('connected editor', () => {
     await driver.quit()
   })
 
-  it('should login using email', async () => {
+  it('should login using email and be authenticated', async () => {
     await sleep(300)
     await actions.sendKeys('test')
     await actions.perform()
