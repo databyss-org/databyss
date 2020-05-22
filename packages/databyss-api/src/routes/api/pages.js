@@ -95,7 +95,7 @@ router.patch(
         // temporary dictionary for entity and block ids
         const _cache = {}
         for (const patch of _patches) {
-          /* eslint no-await-in-loop: 1 */
+          /* eslint-disable-next-line no-await-in-loop no-restricted-syntax */
           await runPatches(patch, _cache, req)
         }
         return res.json({ msg: 'success' })

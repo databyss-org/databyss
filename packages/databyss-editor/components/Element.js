@@ -53,7 +53,7 @@ const Element = ({ attributes, children, element }) => {
           justifyContent="center"
         >
           {/* on initialization block does not have '__showNewBlockMenu' */}
-          {/* eslint no-prototype-builtins: 1 */}
+          {/* eslint-disable-next-line no-prototype-builtins */}
           {(block.__showNewBlockMenu ||
             !block.hasOwnProperty('__showNewBlockMenu')) && (
             <View
