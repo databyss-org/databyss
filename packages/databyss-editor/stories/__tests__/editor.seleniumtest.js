@@ -282,8 +282,9 @@ describe('editor selenium', () => {
     await actions.sendKeys(Key.ENTER)
     await actions.sendKeys('this is the second entry block')
     await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys(Key.ENTER)
     await actions.sendKeys('@source text')
+    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ARROW_UP)
     await actions.sendKeys(Key.ARROW_UP)
     await actions.sendKeys(Key.ARROW_UP)
     await actions.perform()
@@ -298,6 +299,7 @@ describe('editor selenium', () => {
         </block>
         <block type="ENTRY">this is the second entry block</block>
         <block type="SOURCE">source text</block>
+        <block type="ENTRY" />
       </editor>
     )
 
