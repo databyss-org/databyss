@@ -104,6 +104,7 @@ describe('editor selenium', () => {
     await actions.sendKeys(Key.ENTER)
     await actions.sendKeys('this is an entry example')
     await actions.sendKeys(Key.ARROW_UP)
+    await sleep(300)
     await actions.sendKeys('this text should not be allowed')
     await actions.sendKeys(Key.ARROW_DOWN)
     await actions.perform()
@@ -288,7 +289,6 @@ describe('editor selenium', () => {
     await sleep(300)
     await actions.sendKeys(Key.ARROW_UP)
     await actions.perform()
-
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
