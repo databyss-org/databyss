@@ -95,6 +95,7 @@ router.patch(
         // temporary dictionary for entity and block ids
         const _cache = {}
         for (const patch of _patches) {
+          /* eslint no-await-in-loop: 1 */
           await runPatches(patch, _cache, req)
         }
         return res.json({ msg: 'success' })
@@ -177,6 +178,7 @@ router.post(
                 }
                 // ADD NEW ENTITY
                 /* eslint new-cap: 1 */
+
                 _entity = new modelDict(entity)(entityFields)
                 await _entity.save()
 

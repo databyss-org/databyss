@@ -18,6 +18,16 @@ export const getEditor = async driver => {
   return _driver
 }
 
+export const getElementByTag = async (driver, tag) => {
+  const el = await driver.wait(
+    until.elementLocated(By.tagName(tag)),
+    waitUntilTime
+  )
+
+  const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
+  return _driver
+}
+
 export const toggleBold = actions =>
   actions
     .keyDown(CONTROL)
