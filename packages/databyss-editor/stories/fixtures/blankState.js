@@ -31,6 +31,8 @@ export default {
   blocks: [
     {
       _id: '5e48cdc1dbce857f65e4662d',
+      // __showNewBlockMenu: false,
+      // __isActive: false,
     },
   ],
 }

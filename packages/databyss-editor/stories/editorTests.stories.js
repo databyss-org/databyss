@@ -38,7 +38,7 @@ const Box = ({ children, ...others }) => (
 )
 
 const EditorWithProvider = ({ initialState }) => {
-  const [pageState, setPageState] = useState(null)
+  const [, setPageState] = useState(null)
   const [slateState, setSlateState] = useState(null)
 
   // manipulating the state effects reducer
@@ -58,10 +58,6 @@ const EditorWithProvider = ({ initialState }) => {
         <EditorProvider onChange={onChange} initialState={initialState}>
           <ContentEditable onDocumentChange={onDocumentChange} />
         </EditorProvider>
-      </Box>
-      <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
-        <Text variant="uiTextLargeSemibold">Page State</Text>
-        <pre id="pageDocument">{JSON.stringify(pageState, null, 2)}</pre>
       </Box>
       <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
         <Text variant="uiTextLargeSemibold">Slate State</Text>

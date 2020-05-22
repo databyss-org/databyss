@@ -8,11 +8,11 @@ import { startSession, OSX, SAFARI } from '@databyss-org/ui/lib/saucelabs'
 import { getEditor, getElementByTag, sleep } from './_helpers.selenium'
 
 let driver
-// let editor
+let editor
 // let slateDocument
 let emailButton
 // let emailTextField
-// let actions
+let actions
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
 const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=services-auth--login'
 
@@ -62,8 +62,8 @@ describe('connected editor', () => {
     // TODO: add autosave to story
 
     // slateDocument = await driver.findElement(By.id('slateDocument'))
-    // await editor.click()
-    // actions = driver.actions()
+    await editor.click()
+    actions = driver.actions()
 
     done()
   })
@@ -74,6 +74,8 @@ describe('connected editor', () => {
 
   it('should login using email', async () => {
     await sleep(300)
+    await actions.sendKeys('test')
+    await actions.perform()
 
     assert.deepEqual(true, true)
   })

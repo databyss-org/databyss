@@ -35,6 +35,7 @@ const Element = ({ attributes, children, element }) => {
       const selHasRange = selectionHasRange(
         slateSelectionToStateSelection(editor)
       )
+
       return (
         <View
           ref={ref => {
@@ -51,7 +52,8 @@ const Element = ({ attributes, children, element }) => {
           position="relative"
           justifyContent="center"
         >
-          {block.__showNewBlockMenu && (
+          {(block.__showNewBlockMenu ||
+            !block.hasOwnProperty('__showNewBlockMenu')) && (
             <View
               position="absolute"
               width="100%"

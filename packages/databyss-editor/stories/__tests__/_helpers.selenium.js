@@ -10,7 +10,7 @@ export const sleep = m => new Promise(r => setTimeout(r, m))
 
 export const getEditor = async driver => {
   const el = await driver.wait(
-    until.elementLocated(By.css('[contenteditable="true"]')),
+    until.elementLocated(By.tagName('[contenteditable="true"]')),
     waitUntilTime
   )
 
