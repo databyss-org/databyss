@@ -25,7 +25,7 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 describe('connected editor', () => {
   beforeEach(async done => {
     // OSX and safari are necessary
-    driver = await startSession('Slate-5-basic-osx-safari', OSX, SAFARI)
+    driver = await startSession('Slate-5-database-connector', OSX, SAFARI)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     // LOGIN FLOW

@@ -5,9 +5,9 @@ import buttons, {
   editorMarginMenuItemHeight,
 } from '@databyss-org/ui/theming/buttons'
 import { View, Button, Icon, Grid } from '@databyss-org/ui/primitives'
-import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 import Close from '@databyss-org/ui/assets/close-menu.svg'
 import AddSvg from '@databyss-org/ui/assets/add.svg'
+import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 
 const BlockMenuActions = ({ menuActionButtons, unmount }) => {
   useEffect(() => () => unmount(), [])

@@ -31,7 +31,6 @@ describe('format text in editor', () => {
     editor = await getEditor(driver)
 
     slateDocument = await driver.findElement(By.id('slateDocument'))
-    await editor.click()
     actions = driver.actions()
     done()
   })
