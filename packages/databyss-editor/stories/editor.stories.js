@@ -37,7 +37,7 @@ const _res = {
 
 const EditorWithProvider = props => (
   <EditorProvider {...props}>
-    <ContentEditable />
+    <ContentEditable autofocus />
   </EditorProvider>
 )
 

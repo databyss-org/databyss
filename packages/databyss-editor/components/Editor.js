@@ -6,7 +6,7 @@ import Element from './Element'
 import FormatMenu from './FormatMenu'
 import CitationsMenu from './CitationsMenu'
 
-const Editor = ({ children, ...others }) => {
+const Editor = ({ children, autofocus, ...others }) => {
   const readOnly = !others.onChange
   const editor = useMemo(() => withReact(createEditor()), [])
   const renderElement = useCallback(
@@ -26,7 +26,7 @@ const Editor = ({ children, ...others }) => {
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         readOnly={readOnly}
-        autoFocus
+        autoFocus={autofocus}
         onKeyDown={onKeyDown}
       />
     </Slate>

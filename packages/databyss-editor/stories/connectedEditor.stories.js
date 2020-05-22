@@ -66,7 +66,7 @@ const EditorWithProvider = () => {
               onChange={setPageState}
               initialState={withMetaData(page)}
             >
-              <ContentEditable />
+              <ContentEditable autofocus />
             </EditorProvider>
           </View>
         )

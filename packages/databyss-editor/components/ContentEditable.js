@@ -23,7 +23,7 @@ import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 
-const ContentEditable = ({ onDocumentChange }) => {
+const ContentEditable = ({ onDocumentChange, autofocus }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
   const sourceContext = useSourceContext()
@@ -204,12 +204,12 @@ const ContentEditable = ({ onDocumentChange }) => {
 
   const onChange = value => {
     const selection = slateSelectionToStateSelection(editor)
-    // preserve selection id from DB
 
     if (!selection) {
       return
     }
 
+    // preserve selection id from DB
     if (state.selection._id) {
       selection._id = state.selection._id
     }
@@ -357,6 +357,7 @@ const ContentEditable = ({ onDocumentChange }) => {
   return (
     <Editor
       editor={editor}
+      autofocus={autofocus}
       value={nextValue}
       onChange={onChange}
       onKeyDown={onKeyDown}

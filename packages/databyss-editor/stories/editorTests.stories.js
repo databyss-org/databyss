@@ -56,7 +56,7 @@ const EditorWithProvider = ({ initialState }) => {
     <View maxWidth="900px">
       <Box>
         <EditorProvider onChange={onChange} initialState={initialState}>
-          <ContentEditable onDocumentChange={onDocumentChange} />
+          <ContentEditable onDocumentChange={onDocumentChange} autofocus />
         </EditorProvider>
       </Box>
       <Box maxHeight="300px" overflow="scroll" flexShrink={1}>

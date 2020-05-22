@@ -120,7 +120,6 @@ router.post(
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageCreatorMiddleware],
   async (req, res) => {
     try {
-      // TODO: SAVE SELECTION
       const { blocks, page, blockCache, entityCache, selection } = req.body.data
 
       if (selection) {
@@ -320,12 +319,6 @@ router.get(
           entityCache[Object.keys(b)[0]] = { type, _id, text }
         }
       })
-
-      // // TODO: SAVE SELECTION
-      // const selection = {
-      //   anchor: { index: 0, offset: 0 },
-      //   focus: { index: 0, offset: 0 },
-      // }
 
       const response = {
         page: { _id: page._id, name: page.name },
