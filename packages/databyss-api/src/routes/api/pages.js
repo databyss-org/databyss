@@ -94,11 +94,11 @@ router.patch(
       if (_patches) {
         // temporary dictionary for entity and block ids
         const _cache = {}
-        /*eslint-disable */
+        /* eslint-disable */
         for (const patch of _patches) {
           await runPatches(patch, _cache, req)
         }
-        /*eslint-enable */
+        /* eslint-enable */
 
         return res.json({ msg: 'success' })
       }
