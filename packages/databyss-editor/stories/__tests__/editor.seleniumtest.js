@@ -100,13 +100,15 @@ describe('editor selenium', () => {
 
   it('Should not allow content change on atomic blocks', async () => {
     await sleep(300)
-    await actions.sendKeys('@this is an example of a source text')
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys('this is an entry example')
-    await actions.sendKeys(Key.ARROW_UP).pause(100)
-    await actions.sendKeys('this text should not be allowed')
-    await actions.sendKeys(Key.ARROW_DOWN)
-    await actions.perform()
+    await actions
+      .sendKeys('@this is an example of a source text')
+      .sendKeys(Key.ENTER)
+      .sendKeys('this is an entry example')
+      .sendKeys(Key.ARROW_UP)
+      .pause(100)
+      .sendKeys('this text should not be allowed')
+      .sendKeys(Key.ARROW_DOWN)
+      .perform()
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
@@ -283,10 +285,11 @@ describe('editor selenium', () => {
     await actions.sendKeys('this is the second entry block')
     await actions.sendKeys(Key.ENTER)
     await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys('@source text')
-    await actions.sendKeys(Key.ARROW_UP).pause(100)
-    await actions.sendKeys(Key.ARROW_UP).pause(100)
-    await actions.perform()
+    await actions
+      .sendKeys('@source text')
+      .sendKeys(Key.ARROW_UP)
+      .sendKeys(Key.ARROW_UP)
+      .perform()
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
