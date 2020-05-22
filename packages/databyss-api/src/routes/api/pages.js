@@ -122,6 +122,7 @@ router.post(
     try {
       const { blocks, page, blockCache, entityCache, selection } = req.body.data
 
+      // SAVE SELECTION
       if (selection) {
         let _selection = await Selection.findOne({ _id: selection._id })
         if (_selection) {
@@ -134,8 +135,6 @@ router.post(
           await _selection.save()
         }
       }
-
-      // SAVE SELECTION
 
       const { name, _id, archive } = page
 
@@ -291,6 +290,15 @@ router.get(
         if (_selection) {
           page.selection = _selection
         }
+      } else {
+        // initialize new selection
+        let _selection = {
+          anchor: { offset: 0, index: 0 },
+          focus: { offset: 0, index: 0 },
+        }
+        _selection = new Selection(_selection)
+        await _selection.save()
+        page.selection = _selection
       }
 
       const blockList = await getBlockItemsFromId(pageResponse.blocks)

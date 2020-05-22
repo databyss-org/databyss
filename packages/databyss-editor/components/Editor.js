@@ -26,7 +26,8 @@ const Editor = ({ children, autofocus, ...others }) => {
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         readOnly={readOnly}
-        autoFocus={autofocus}
+        autoFocus
+        // autoFocus={autofocus}
         onKeyDown={onKeyDown}
       />
     </Slate>

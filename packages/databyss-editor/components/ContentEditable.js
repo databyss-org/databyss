@@ -57,10 +57,12 @@ const ContentEditable = ({ onDocumentChange, autofocus }) => {
   if (!valueRef.current) {
     editor.children = stateToSlate(state)
     // load selection from DB
-    editor.selection = stateSelectionToSlateSelection(
-      editor.children,
-      state.selection
-    )
+    if (state.selection) {
+      editor.selection = stateSelectionToSlateSelection(
+        editor.children,
+        state.selection
+      )
+    }
   }
 
   // if new atomic block has been added, save atomic
