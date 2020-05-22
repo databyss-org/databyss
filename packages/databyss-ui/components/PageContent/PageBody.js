@@ -49,7 +49,7 @@ const PageBody = ({ page }) => {
       onChange={onChange}
       initialState={withMetaData(page)}
     >
-      <ContentEditable autofocus={true} />
+      <ContentEditable autofocus />
     </EditorProvider>
   )
 }
