@@ -10,7 +10,8 @@ import { getEditor, sleep } from './_helpers.selenium'
 let driver
 let editor
 let slateDocument
-let actions
+
+// let actions
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=cypress-tests--slate-5'
 const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=cypress-tests--slate-5'
 
@@ -25,24 +26,22 @@ describe('editor selenium', () => {
     editor = await getEditor(driver)
 
     slateDocument = await driver.findElement(By.id('slateDocument'))
-    actions = driver.actions()
+    //   actions = driver.actions()
     done()
   })
 
   afterEach(async () => {
     await driver.quit()
   })
-
   it('should input an entry, source and topic', async () => {
     await sleep(300)
-    await actions.sendKeys('this is an example of an entry text')
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys('@this is an example of a source text')
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys('#this is an example of a topic text')
-    await actions.sendKeys(Key.ENTER)
-    await actions.perform()
+    await editor.sendKeys('this is an example of an entry text')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('@this is an example of a source text')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('#this is an example of a topic text')
+    await editor.sendKeys(Key.ENTER)
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
@@ -68,13 +67,12 @@ describe('editor selenium', () => {
 
   it('should allow a return within an entry', async () => {
     await sleep(300)
-    await actions.sendKeys('this is an entry text')
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys('this should be on the same block')
-    await actions.sendKeys(Key.ENTER)
+    await editor.sendKeys('this is an entry text')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('this should be on the same block')
+    await editor.sendKeys(Key.ENTER)
     await sleep(1000)
-    await actions.sendKeys(Key.ENTER)
-    await actions.perform()
+    await editor.sendKeys(Key.ENTER)
     await sleep(500)
 
     const actual = JSON.parse(await slateDocument.getText())
@@ -100,15 +98,14 @@ describe('editor selenium', () => {
 
   it('Should not allow content change on atomic blocks', async () => {
     await sleep(300)
-    await actions
-      .sendKeys('@this is an example of a source text')
-      .sendKeys(Key.ENTER)
-      .sendKeys('this is an entry example')
-      .sendKeys(Key.ARROW_UP)
-      .pause(100)
-      .sendKeys('this text should not be allowed')
-      .sendKeys(Key.ARROW_DOWN)
-      .perform()
+    await editor.sendKeys('@this is an example of a source text')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('this is an entry example')
+    await editor.sendKeys(Key.ARROW_UP)
+    await sleep(300)
+    await editor.sendKeys('this text should not be allowed')
+    await editor.sendKeys(Key.ARROW_DOWN)
+
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
@@ -135,12 +132,11 @@ describe('editor selenium', () => {
 
   it('should allow backspace on entry', async () => {
     await sleep(300)
-    await actions.sendKeys('this is an entry text')
-    await actions.sendKeys(Key.BACK_SPACE)
-    await actions.sendKeys(Key.BACK_SPACE)
-    await actions.sendKeys(Key.BACK_SPACE)
-    await actions.sendKeys(Key.BACK_SPACE)
-    await actions.perform()
+    await editor.sendKeys('this is an entry text')
+    await editor.sendKeys(Key.BACK_SPACE)
+    await editor.sendKeys(Key.BACK_SPACE)
+    await editor.sendKeys(Key.BACK_SPACE)
+    await editor.sendKeys(Key.BACK_SPACE)
     await sleep(500)
 
     const actual = JSON.parse(await slateDocument.getText())
@@ -163,12 +159,12 @@ describe('editor selenium', () => {
 
   it('should remove the atomic block on backspace and allow an entry', async () => {
     await sleep(300)
-    await actions.sendKeys('@this is an atomic text')
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys(Key.BACK_SPACE)
-    await actions.sendKeys(Key.BACK_SPACE)
-    await actions.sendKeys('this is an entry text')
-    await actions.perform()
+    await editor.sendKeys('@this is an atomic text')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys(Key.BACK_SPACE)
+    await editor.sendKeys(Key.BACK_SPACE)
+    await editor.sendKeys('this is an entry text')
+
     await sleep(500)
 
     const actual = JSON.parse(await slateDocument.getText())
@@ -191,16 +187,16 @@ describe('editor selenium', () => {
 
   it('should merge two entry blocks on backspace', async () => {
     await sleep(300)
-    await actions.sendKeys('this is the first entry block')
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys('move')
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.BACK_SPACE)
-    await actions.perform()
+    await editor.sendKeys('this is the first entry block')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('move')
+    await editor.sendKeys(Key.ARROW_LEFT)
+    await editor.sendKeys(Key.ARROW_LEFT)
+    await editor.sendKeys(Key.ARROW_LEFT)
+    await editor.sendKeys(Key.ARROW_LEFT)
+    await editor.sendKeys(Key.BACK_SPACE)
+
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
@@ -223,12 +219,11 @@ describe('editor selenium', () => {
 
   it('should move the caret left and right', async () => {
     await sleep(300)
-    await actions.sendKeys('this is an entry text')
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.perform()
+    await editor.sendKeys('this is an entry text')
+    await editor.sendKeys(Key.ARROW_LEFT)
+    await editor.sendKeys(Key.ARROW_LEFT)
+    await editor.sendKeys(Key.ARROW_LEFT)
+    await editor.sendKeys(Key.ARROW_LEFT)
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
@@ -251,12 +246,11 @@ describe('editor selenium', () => {
 
   it('should move the caret to the left', async () => {
     await sleep(300)
-    await actions.sendKeys('this is an entry text')
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.perform()
+    await editor.sendKeys('this is an entry text')
+    await editor.sendKeys(Key.ARROW_LEFT)
+    await editor.sendKeys(Key.ARROW_LEFT)
+    await editor.sendKeys(Key.ARROW_LEFT)
+    await editor.sendKeys(Key.ARROW_LEFT)
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
@@ -279,17 +273,15 @@ describe('editor selenium', () => {
 
   it('should move the caret up and down', async () => {
     await sleep(300)
-    await actions.sendKeys('this is an entry block')
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys('this is the second entry block')
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys(Key.ENTER)
-    await actions
-      .sendKeys('@source text')
-      .sendKeys(Key.ARROW_UP)
-      .sendKeys(Key.ARROW_UP)
-      .perform()
+    await editor.sendKeys('this is an entry block')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('this is the second entry block')
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys(Key.ENTER)
+    await editor.sendKeys('@source text')
+    await editor.sendKeys(Key.ARROW_UP)
+    await editor.sendKeys(Key.ARROW_UP)
     await sleep(300)
 
     const actual = JSON.parse(await slateDocument.getText())
