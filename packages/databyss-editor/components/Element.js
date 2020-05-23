@@ -57,7 +57,7 @@ const Element = ({ attributes, children, element }) => {
           {/* on initialization block does not have '__showNewBlockMenu' */}
           {(block.__showNewBlockMenu ||
             (ReactEditor.findPath(editor, element)[0] === 0 &&
-              !Node.string(element).length) && (
+              !Node.string(element).length)) && (
             <View
               position="absolute"
               width="100%"
@@ -69,6 +69,7 @@ const Element = ({ attributes, children, element }) => {
               <BlockMenu element={element} />
             </View>
           )}
+
           {isAtomicInlineType(element.type) ? (
             <View
               alignSelf="flex-start"
