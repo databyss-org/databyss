@@ -54,10 +54,11 @@ const Element = ({ attributes, children, element }) => {
           position="relative"
           justifyContent="center"
         >
-          {/* on initialization block does not have '__showNewBlockMenu' */}
-          {(block.__showNewBlockMenu ||
+          {/* on initialization block does not have '__showNewBlockMenu' */
+          (block.__showNewBlockMenu ||
             (ReactEditor.findPath(editor, element)[0] === 0 &&
               !Node.string(element).length)) && (
+            //  eslint-disable-next-line react/jsx-indent
             <View
               position="absolute"
               width="100%"
