@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
+import { throttle } from 'lodash'
 import { storiesOf } from '@storybook/react'
 import { View, Text, Button } from '@databyss-org/ui/primitives'
 import {
@@ -29,70 +30,111 @@ import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
 import connectedFixture from './fixtures/connectedState'
+import {
+  withWhitelist,
+  addMetaData,
+} from '@databyss-org/services/pages/_helpers'
 
 const LoginRequired = () => (
   <Text>You must login before running this story</Text>
 )
 
-const EditorWithProvider = () => {
-  const { notify } = useNotifyContext()
+const Box = ({ children, ...others }) => (
+  <View borderVariant="thinDark" paddingVariant="tiny" width="100%" {...others}>
+    {children}
+  </View>
+)
 
+const PageWithAutosave = ({ page }) => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
-  const { setPage } = usePageContext()
+  const { setPage, setPatch } = usePageContext()
   const [pageState, setPageState] = useState(null)
+  const [counter, setCounter] = useState(0)
+
+  const operationsQueue = useRef([])
+
+  if (page.page.name !== 'test document') {
+    setPage(connectedFixture(account.defaultPage))
+    return null
+  }
+
+  const throttledAutosave = useCallback(
+    throttle(({ state, patch }) => {
+      const _patch = withWhitelist(patch)
+      if (_patch.length) {
+        const payload = {
+          id: state.page._id,
+          patch: operationsQueue.current,
+        }
+        setPatch(payload)
+        operationsQueue.current = []
+      }
+    }, 1000),
+    []
+  )
+
+  const onDocumentChange = val => {
+    setPageState(val)
+    setCounter(counter + 1)
+  }
+
+  const onChange = value => {
+    const _value = addMetaData(value)
+    // push changes to a queue
+    operationsQueue.current = operationsQueue.current.concat(_value.patch)
+    throttledAutosave(_value)
+  }
 
   return (
-    <PageLoader pageId={account.defaultPage}>
-      {page => {
-        if (page.page.name !== 'test document') {
-          setPage(connectedFixture(account.defaultPage))
-          return null
-        }
-
-        const onClick = e => {
-          e.preventDefault()
-          setPage(pageState)
-          console.log('consoled')
-          notify('Page saved! Do a browser reload to verify')
-        }
-
-        return (
-          <View>
-            <Button onClick={onClick}>
-              <Text>Save Page</Text>
-            </Button>
-            <EditorProvider
-              onChange={setPageState}
-              initialState={withMetaData(page)}
-            >
-              <ContentEditable autofocus />
-            </EditorProvider>
-          </View>
-        )
-      }}
-    </PageLoader>
+    <View>
+      <EditorProvider onChange={onChange} initialState={withMetaData(page)}>
+        <ContentEditable onDocumentChange={onDocumentChange} autofocus />
+      </EditorProvider>
+      <Box maxHeight="300px" overflow="scroll" flexShrink={1} key={counter}>
+        <Text variant="uiTextLargeSemibold">Slate State</Text>
+        <pre id="slateDocument">{JSON.stringify(pageState, null, 2)}</pre>
+      </Box>
+    </View>
   )
 }
 
-const EditorWithModals = () => (
-  <ServiceProvider>
-    <SessionProvider unauthorizedChildren={<LoginRequired />}>
-      <PageProvider initialState={pageInitialState}>
-        <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
-          <SourceProvider
-            initialState={sourceInitialState}
-            reducer={sourceReducer}
+const EditorWithProvider = () => {
+  const { getSession } = useSessionContext()
+  const { account } = getSession()
+
+  return (
+    <View>
+      <PageLoader pageId={account.defaultPage}>
+        {page => <PageWithAutosave page={page} />}
+      </PageLoader>
+    </View>
+  )
+}
+
+const EditorWithModals = () => {
+  return (
+    <ServiceProvider>
+      <SessionProvider unauthorizedChildren={<LoginRequired />}>
+        <PageProvider initialState={pageInitialState}>
+          <TopicProvider
+            initialState={topicInitialState}
+            reducer={topicReducer}
           >
-            <NavigationProvider>
-              <EditorWithProvider />
-            </NavigationProvider>
-          </SourceProvider>
-        </TopicProvider>
-      </PageProvider>
-    </SessionProvider>
-  </ServiceProvider>
-)
+            <SourceProvider
+              initialState={sourceInitialState}
+              reducer={sourceReducer}
+            >
+              <NavigationProvider>
+                <EditorWithProvider />
+              </NavigationProvider>
+            </SourceProvider>
+          </TopicProvider>
+        </PageProvider>
+      </SessionProvider>
+    </ServiceProvider>
+  )
+}
 
 storiesOf('Services|Page', module)
   .addDecorator(NotifyDecorator)

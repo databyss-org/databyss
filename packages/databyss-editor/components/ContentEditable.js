@@ -45,14 +45,16 @@ const ContentEditable = ({ onDocumentChange, autofocus }) => {
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
-  useEffect(
-    () => {
-      if (onDocumentChange) {
-        onDocumentChange(editor)
-      }
-    },
-    [editor.operations]
-  )
+  // useEffect(
+  //   () => {
+  //     if (onDocumentChange) {
+  //       onDocumentChange(editor)
+  //     }
+  //   },
+  //   [editor.operations]
+  // )
+
+  // console.log(editor)
 
   if (!valueRef.current) {
     editor.children = stateToSlate(state)
@@ -205,6 +207,10 @@ const ContentEditable = ({ onDocumentChange, autofocus }) => {
   }
 
   const onChange = value => {
+    if (onDocumentChange) {
+      onDocumentChange(editor)
+    }
+
     const selection = slateSelectionToStateSelection(editor)
 
     if (!selection) {
