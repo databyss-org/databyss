@@ -6,10 +6,13 @@ const entryId = ObjectId().toHexString()
 const blockOneId = ObjectId().toHexString()
 const blockTwoId = ObjectId().toHexString()
 
+const selectionId = ObjectId().toHexString()
+
 export default pageId => ({
   preventDefault: false,
   operations: [],
   selection: {
+    _id: selectionId,
     anchor: {
       index: 0,
       offset: 0,

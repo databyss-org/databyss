@@ -1,12 +1,15 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { throttle } from 'lodash'
 import { storiesOf } from '@storybook/react'
-import { View, Text, Button } from '@databyss-org/ui/primitives'
+import { View, Text } from '@databyss-org/ui/primitives'
 import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
-import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
+import {
+  withWhitelist,
+  addMetaData,
+} from '@databyss-org/services/pages/_helpers'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
   useSessionContext,
@@ -30,10 +33,6 @@ import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
 import connectedFixture from './fixtures/connectedState'
-import {
-  withWhitelist,
-  addMetaData,
-} from '@databyss-org/services/pages/_helpers'
 
 const LoginRequired = () => (
   <Text>You must login before running this story</Text>
@@ -46,18 +45,11 @@ const Box = ({ children, ...others }) => (
 )
 
 const PageWithAutosave = ({ page }) => {
-  const { getSession } = useSessionContext()
-  const { account } = getSession()
-  const { setPage, setPatch } = usePageContext()
+  const { setPatch } = usePageContext()
   const [pageState, setPageState] = useState(null)
   const [counter, setCounter] = useState(0)
 
   const operationsQueue = useRef([])
-
-  if (page.page.name !== 'test document') {
-    setPage(connectedFixture(account.defaultPage))
-    return null
-  }
 
   const throttledAutosave = useCallback(
     throttle(({ state, patch }) => {
@@ -75,7 +67,9 @@ const PageWithAutosave = ({ page }) => {
   )
 
   const onDocumentChange = val => {
-    setPageState(val)
+    if (counter > 0) {
+      setPageState(val)
+    }
     setCounter(counter + 1)
   }
 
@@ -91,7 +85,7 @@ const PageWithAutosave = ({ page }) => {
       <EditorProvider onChange={onChange} initialState={withMetaData(page)}>
         <ContentEditable onDocumentChange={onDocumentChange} autofocus />
       </EditorProvider>
-      <Box maxHeight="300px" overflow="scroll" flexShrink={1} key={counter}>
+      <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{JSON.stringify(pageState, null, 2)}</pre>
       </Box>
@@ -102,39 +96,42 @@ const PageWithAutosave = ({ page }) => {
 const EditorWithProvider = () => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
+  const { setPage } = usePageContext()
 
   return (
     <View>
       <PageLoader pageId={account.defaultPage}>
-        {page => <PageWithAutosave page={page} />}
+        {page => {
+          if (page.page.name !== 'test document') {
+            setPage(connectedFixture(account.defaultPage))
+            return null
+          }
+
+          return <PageWithAutosave page={page} />
+        }}
       </PageLoader>
     </View>
   )
 }
 
-const EditorWithModals = () => {
-  return (
-    <ServiceProvider>
-      <SessionProvider unauthorizedChildren={<LoginRequired />}>
-        <PageProvider initialState={pageInitialState}>
-          <TopicProvider
-            initialState={topicInitialState}
-            reducer={topicReducer}
+const EditorWithModals = () => (
+  <ServiceProvider>
+    <SessionProvider unauthorizedChildren={<LoginRequired />}>
+      <PageProvider initialState={pageInitialState}>
+        <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
+          <SourceProvider
+            initialState={sourceInitialState}
+            reducer={sourceReducer}
           >
-            <SourceProvider
-              initialState={sourceInitialState}
-              reducer={sourceReducer}
-            >
-              <NavigationProvider>
-                <EditorWithProvider />
-              </NavigationProvider>
-            </SourceProvider>
-          </TopicProvider>
-        </PageProvider>
-      </SessionProvider>
-    </ServiceProvider>
-  )
-}
+            <NavigationProvider>
+              <EditorWithProvider />
+            </NavigationProvider>
+          </SourceProvider>
+        </TopicProvider>
+      </PageProvider>
+    </SessionProvider>
+  </ServiceProvider>
+)
 
 storiesOf('Services|Page', module)
   .addDecorator(NotifyDecorator)

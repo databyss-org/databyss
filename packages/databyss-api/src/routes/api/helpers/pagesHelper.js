@@ -148,7 +148,9 @@ const replacePatch = async (p, req) => {
     }
     case 'selection': {
       const _id = p.value._id
-      await Selection.findByIdAndUpdate({ _id }, { $set: p.value })
+      if (_id) {
+        await Selection.findByIdAndUpdate({ _id }, { $set: p.value })
+      }
 
       break
     }

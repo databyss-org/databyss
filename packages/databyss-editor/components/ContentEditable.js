@@ -54,16 +54,15 @@ const ContentEditable = ({ onDocumentChange, autofocus }) => {
   //   [editor.operations]
   // )
 
-  // console.log(editor)
-
   if (!valueRef.current) {
     editor.children = stateToSlate(state)
     // load selection from DB
     if (state.selection) {
-      editor.selection = stateSelectionToSlateSelection(
+      const selection = stateSelectionToSlateSelection(
         editor.children,
         state.selection
       )
+      Transforms.select(editor, selection)
     }
   }
 
@@ -356,6 +355,7 @@ const ContentEditable = ({ onDocumentChange, autofocus }) => {
   }
 
   valueRef.current = nextValue
+
   selectionRef.current = nextSelection
 
   if (state.preventDefault) {
