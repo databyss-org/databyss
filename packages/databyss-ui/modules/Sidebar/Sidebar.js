@@ -30,6 +30,8 @@ Section.defaultProps = {
   variant: 'heading3',
 }
 
+export const sidebarWidth = 240
+
 const Sidebar = () => {
   const {
     navigateSidebar,
@@ -42,8 +44,6 @@ const Sidebar = () => {
   /*
   if item active in menuItem, SidebarContent will compose a list to pass to SidebarList
   */
-
-  const sidebarWidth = '240px'
 
   const onHeaderClick = () => {
     if (menuItem) {
@@ -81,9 +81,6 @@ const Sidebar = () => {
             />
             {(menuItem === 'pages' || !menuItem) && <Pages />}
           </List>
-          <View position="absolute" bottom={0} left={0} width={sidebarWidth}>
-            <Footer />
-          </View>
         </View>
       </View>
     </>
