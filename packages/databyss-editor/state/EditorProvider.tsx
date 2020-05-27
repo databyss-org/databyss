@@ -57,8 +57,6 @@ type PropsType = {
   onChange: (args: OnChangeArgs) => void
 }
 
-let count = 0
-
 const useReducer = createReducer()
 
 export const EditorContext = createContext<ContextType | null>(null)
@@ -72,8 +70,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
     initializer: null,
     name: 'EditorProvider',
     onChange: (patch: Patch, inversePatch: Patch) => {
-      count += 1
-      onChange({ state: stateRef.current, patch, inversePatch, count })
+      onChange({ state: stateRef.current, patch, inversePatch })
     },
   })
 

@@ -45,15 +45,6 @@ const ContentEditable = ({ onDocumentChange, autofocus }) => {
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
-  // useEffect(
-  //   () => {
-  //     if (onDocumentChange) {
-  //       onDocumentChange(editor)
-  //     }
-  //   },
-  //   [editor.operations]
-  // )
-
   if (!valueRef.current) {
     editor.children = stateToSlate(state)
     // load selection from DB
