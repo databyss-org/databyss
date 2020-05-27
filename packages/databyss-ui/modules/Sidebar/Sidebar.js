@@ -1,14 +1,11 @@
 import React from 'react'
 import css from '@styled-system/css'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { Text, View, List, Separator } from '@databyss-org/ui/primitives'
-import SidebarList from '../../components/Sidebar/SidebarList'
+import { Text, View, List } from '@databyss-org/ui/primitives'
 import SidebarCollapsed from './SidebarCollapsed'
 import { darkTheme } from '../../theming/theme'
 import Search from './routes/Search'
 import Pages from './routes/Pages'
-
-import Footer from '../../components/Sidebar/Footer'
 import Header from '../../components/Sidebar/Header'
 
 export const defaultProps = {
@@ -33,24 +30,12 @@ Section.defaultProps = {
 export const sidebarWidth = 240
 
 const Sidebar = () => {
-  const {
-    navigateSidebar,
-    getSidebarPath,
-    isMenuOpen,
-    setMenuOpen,
-  } = useNavigationContext()
+  const { navigateSidebar, getSidebarPath, isMenuOpen } = useNavigationContext()
   const menuItem = getSidebarPath()
 
   /*
   if item active in menuItem, SidebarContent will compose a list to pass to SidebarList
   */
-
-  const onHeaderClick = () => {
-    if (menuItem) {
-      return navigateSidebar('/')
-    }
-    return setMenuOpen(!isMenuOpen)
-  }
 
   return isMenuOpen ? (
     <>
@@ -73,7 +58,7 @@ const Sidebar = () => {
             horizontalItemPadding={2}
             alignItems="center"
           >
-            <Header onHeaderClick={onHeaderClick} />
+            <Header />
             <Search
               onClick={() => {
                 navigateSidebar('/search')

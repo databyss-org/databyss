@@ -67,7 +67,7 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
 
   const padding = 24
   const headerHeight = 66
-  const footerHeight = 238
+  const footerHeight = 48
   const searchBar = 56
 
   const totalHeight = pxUnits(padding + headerHeight + footerHeight + searchBar)
