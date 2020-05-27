@@ -62,7 +62,9 @@ export function savePatch(patch) {
       type: PATCH,
       payload: patch,
     })
-    services.savePatch(patch)
+    services.savePatch(patch).then(p => {
+      console.log(p)
+    })
   }
 }
 
