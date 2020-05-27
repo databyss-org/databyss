@@ -47,7 +47,7 @@ const Box = ({ children, ...others }) => (
 const PageWithAutosave = ({ page }) => {
   const { setPatch } = usePageContext()
   const [pageState, setPageState] = useState(null)
-  const [counter, setCounter] = useState(0)
+  // const [counter, setCounter] = useState(0)
 
   const operationsQueue = useRef([])
 
@@ -62,15 +62,12 @@ const PageWithAutosave = ({ page }) => {
         setPatch(payload)
         operationsQueue.current = []
       }
-    }, 1000),
+    }, 5000),
     []
   )
 
   const onDocumentChange = val => {
-    if (counter > 0) {
-      setPageState(val)
-    }
-    setCounter(counter + 1)
+    setPageState(JSON.stringify(val, null, 2))
   }
 
   const onChange = value => {
@@ -87,7 +84,8 @@ const PageWithAutosave = ({ page }) => {
       </EditorProvider>
       <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
         <Text variant="uiTextLargeSemibold">Slate State</Text>
-        <pre id="slateDocument">{JSON.stringify(pageState, null, 2)}</pre>
+
+        <pre id="slateDocument">{pageState}</pre>
       </Box>
     </View>
   )

@@ -15,14 +15,17 @@ export const withWhitelist = patch =>
       )
   )
 
-export const addMetaData = ({ state, patch }) => {
+export const addMetaData = ({ state, patch, count }) => {
+  // TODO: REMOVE COUNT
+
   let _patch = withWhitelist(patch)
   // add type to 'entityCache' to operation 'replace'
   _patch = _patch.map(p => {
     let _p = p
     // add selection
+
     if (_p.path[0] === 'selection') {
-      _p = { ..._p, value: { ..._p.value, _id: state.selection._id } }
+      _p = { ..._p, value: { ..._p.value, _id: state.selection._id }, count }
     }
 
     if (p.path[0] !== 'entityCache' || p.op !== 'replace') {
@@ -32,7 +35,7 @@ export const addMetaData = ({ state, patch }) => {
     // look up in state
     const _id = _p.path[1]
     const _type = state.entityCache[_id].type
-    return { ..._p, value: { ..._p.value, type: _type } }
+    return { ..._p, value: { ..._p.value, type: _type }, count }
   })
 
   return { state, patch: _patch }

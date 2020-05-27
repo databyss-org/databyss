@@ -58,8 +58,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const setPage = (page: Page): void => {
-    // window.requestAnimationFrame(() => dispatch(savePage(page)))
-    console.log(page)
     dispatch(savePage(page))
   }
 

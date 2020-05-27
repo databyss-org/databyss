@@ -57,6 +57,8 @@ type PropsType = {
   onChange: (args: OnChangeArgs) => void
 }
 
+let count = 0
+
 const useReducer = createReducer()
 
 export const EditorContext = createContext<ContextType | null>(null)
@@ -70,7 +72,8 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
     initializer: null,
     name: 'EditorProvider',
     onChange: (patch: Patch, inversePatch: Patch) => {
-      onChange({ state: stateRef.current, patch, inversePatch })
+      count += 1
+      onChange({ state: stateRef.current, patch, inversePatch, count })
     },
   })
 
@@ -140,17 +143,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
       type: DEQUEUE_NEW_ENTITY,
       payload: { id },
     })
-
-  // propagate change patches to parent
-  // console.log('generate', generate(observer))
-
-  // useEffect(
-  //   () => {
-  //     changeCountRef.current.count += 1
-  //     // onChange(state)
-  //   },
-  //   [state]
-  // )
 
   return (
     <EditorContext.Provider

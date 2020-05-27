@@ -3,8 +3,6 @@ import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from 'slate-react'
-import { Node } from 'slate'
-
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEditorContext } from '../state/EditorProvider'
@@ -54,11 +52,7 @@ const Element = ({ attributes, children, element }) => {
           position="relative"
           justifyContent="center"
         >
-          {/* on initialization block does not have '__showNewBlockMenu' */
-          (block.__showNewBlockMenu ||
-            (ReactEditor.findPath(editor, element)[0] === 0 &&
-              !Node.string(element).length)) && (
-            //  eslint-disable-next-line react/jsx-indent
+          {block.__showNewBlockMenu && (
             <View
               position="absolute"
               width="100%"

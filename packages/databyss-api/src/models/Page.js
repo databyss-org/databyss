@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import Entry from './Entry'
 import Block from './Block'
+import Selection from './Selection'
 
 const Schema = mongoose.Schema
 
@@ -57,7 +58,17 @@ PageSchema.method('addEntry', async function(values = {}) {
 
 PageSchema.static('create', async (values = {}) => {
   const Page = mongoose.model('page', PageSchema)
-  const instance = new Page(values)
+
+  // add the selection
+  let selection = new Selection({
+    anchor: { offset: 0, index: 0 },
+    focus: { offset: 0, index: 0 },
+  })
+
+  selection = new Selection(selection)
+  await selection.save()
+
+  const instance = new Page({ ...values, selection })
 
   // add an empty entry
   instance.addEntry()

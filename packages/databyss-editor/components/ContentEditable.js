@@ -62,6 +62,7 @@ const ContentEditable = ({ onDocumentChange, autofocus }) => {
         editor.children,
         state.selection
       )
+
       Transforms.select(editor, selection)
     }
   }

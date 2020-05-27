@@ -17,6 +17,8 @@ const PageBody = ({ page }) => {
 
   const operationsQueue = useRef([])
 
+  // TODO: enqueue patch to web worker for off-thread background processing
+
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
   const throttledAutosave = useCallback(
     throttle(({ state, patch }) => {
