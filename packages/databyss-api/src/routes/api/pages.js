@@ -101,7 +101,7 @@ router.patch(
         for (const patch of _patches) {
           await runPatches(patch, req)
           //  await sleep(100)
-          //   console.log(patch.count)
+          console.log(patch.count)
         }
         /* eslint-enable */
         console.log('SUCCESS')
