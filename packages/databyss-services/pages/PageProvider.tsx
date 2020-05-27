@@ -27,7 +27,7 @@ interface Operation {
 
 interface PatchType {
   _id: string
-  patches: Array<Operation>
+  operations: Array<Operation>
 }
 
 interface RefDict {
