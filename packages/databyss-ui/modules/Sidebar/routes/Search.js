@@ -12,6 +12,8 @@ import {
 } from '@databyss-org/ui/primitives'
 import SearchIcon from '@databyss-org/ui/assets/search.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
+import { theme } from '@databyss-org/ui/theming'
+import styledCss from '@styled-system/css'
 
 const Search = ({ onClick }) => {
   const { navigate, getSidebarPath } = useNavigationContext()
@@ -61,6 +63,7 @@ const Search = ({ onClick }) => {
           <TextInput
             placeholder="Search"
             variant="bodyNormal"
+            color="text.2"
             value={value}
             onChange={onChange}
             onKeyDown={e => {
@@ -68,6 +71,12 @@ const Search = ({ onClick }) => {
                 onSearchClick()
               }
             }}
+            concatCss={styledCss({
+              '::placeholder': {
+                color: 'text.3',
+                opacity: 0.6,
+              },
+            })(theme)}
           />
           <View position="absolute" right="small">
             <BaseControl onClick={clear}>
