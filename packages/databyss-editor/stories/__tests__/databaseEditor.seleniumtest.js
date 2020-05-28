@@ -273,7 +273,7 @@ describe('connected editor', () => {
     await driver.navigate().refresh()
 
     editor = await getEditor(driver)
-    await sleep(2000)
+    await editor.sendKeys(Key.ARROW_LEFT)
     await editor.sendKeys(Key.ENTER)
 
     citationsField = await getElementById(driver, 'citation')
