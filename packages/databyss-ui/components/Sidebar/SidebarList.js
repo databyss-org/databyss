@@ -89,8 +89,7 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
         const _isActive = item.id === tokens.id && tokens.id
         acc.push(
           <BaseControl
-            backgroundColor={_isActive ? 'background.2' : 'transparent'}
-            hoverColor="background.2"
+            backgroundColor={_isActive ? 'control.1' : 'transparent'}
             py={1}
             px={2}
             key={index}

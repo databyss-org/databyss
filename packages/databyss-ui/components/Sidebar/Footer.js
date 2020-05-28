@@ -43,7 +43,6 @@ const Footer = () => {
         width="100%"
         onClick={() => onNewPageClick()}
         flexDirection="row"
-        hoverColor="#8a81754d"
       >
         <Grid singleRow alignItems="center" columnGap="small">
           <View p="extraSmall">

@@ -58,16 +58,8 @@ const SidebarCollapsed = () => {
         width: sidebarCollapsedWidth,
       })}
     >
-      <List
-        verticalItemPadding={2}
-        horizontalItemPadding={1}
-        mt="none"
-        mb="none"
-        p="extraSmall"
-      >
-        {/* header */}
+      <List verticalItemPadding={2} horizontalItemPadding={1} m="none">
         <BaseControl
-          p={2}
           width="100%"
           onClick={() => setMenuOpen(!isMenuOpen)}
           alignItems="center"
@@ -79,7 +71,6 @@ const SidebarCollapsed = () => {
           </Grid>
         </BaseControl>
         <BaseControl
-          p={2}
           width="100%"
           onClick={() => onItemClick('search')}
           alignItems="center"
@@ -91,7 +82,6 @@ const SidebarCollapsed = () => {
           </Grid>
         </BaseControl>
         <BaseControl
-          p={2}
           width="100%"
           onClick={() => onItemClick('pages')}
           alignItems="center"
