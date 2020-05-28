@@ -36,7 +36,7 @@ const random = Math.random()
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('connected editor', () => {
-  beforeAll(async done => {
+  beforeEach(async done => {
     // OSX and safari are necessary
     driver = await startSession('Slate-5-database-connector', OSX, SAFARI)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
@@ -76,12 +76,12 @@ describe('connected editor', () => {
     done()
   })
 
-  // afterEach(async () => {
-  //   // const clearButton = await getElementById(driver, 'clear-state')
-  //   // clearButton.click()
-  //   // sleep(500)
-  //   await driver.quit()
-  // })
+  afterEach(async () => {
+    // const clearButton = await getElementById(driver, 'clear-state')
+    // clearButton.click()
+    // sleep(500)
+    await driver.close()
+  })
 
   it('should toggle bold and save changes', async () => {
     await sleep(300)
