@@ -77,9 +77,9 @@ describe('connected editor', () => {
   })
 
   afterEach(async () => {
-    const clearButton = await getElementById(driver, 'clear-state')
-    clearButton.click()
-    sleep(500)
+    // const clearButton = await getElementById(driver, 'clear-state')
+    // clearButton.click()
+    // sleep(500)
     await driver.quit()
   })
 
@@ -230,4 +230,110 @@ describe('connected editor', () => {
 
     assert.deepEqual(actual.selection, expected.selection)
   })
+
+  it('should insert atomic source and edit source fields', async () => {
+    await sleep(300)
+    await actions.sendKeys('@this is a test source')
+    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ARROW_LEFT)
+    await actions.sendKeys(Key.ARROW_LEFT)
+    await actions.sendKeys(Key.ENTER)
+    //   await sleep(500)
+    // await actions.sendKeys(Key.ARROW_DOWN)
+    // await actions.sendKeys(' with more text')
+    await actions.perform()
+    await sleep(5000)
+
+    let citationsField = await getElementByTag(
+      driver,
+      '[data-test-path="citations[0]"]'
+    )
+
+    await citationsField.sendKeys('new citation')
+
+    let firstName = await getElementByTag(
+      driver,
+      '[data-test-path="authors[0].firstName"]'
+    )
+
+    await firstName.sendKeys('authors first name')
+
+    let lastName = await getElementByTag(
+      driver,
+      '[data-test-path="authors[0].lastName"]'
+    )
+
+    await lastName.sendKeys('authors last name')
+
+    let doneButton = await getElementByTag(
+      driver,
+      '[data-test-dismiss-modal="true"]'
+    )
+    await doneButton.click()
+
+    await sleep(300)
+
+    // refresh page
+    await driver.get(
+      process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
+    )
+
+    editor = await getEditor(driver)
+    await editor.sendKeys(Key.ENTER)
+
+    citationsField = await getElementById(driver, 'citation')
+
+    citationsField = await citationsField.getText()
+
+    firstName = await getElementById(driver, 'firstName')
+
+    firstName = await firstName.getAttribute('value')
+
+    lastName = await getElementById(driver, 'lastName')
+
+    lastName = await lastName.getAttribute('value')
+
+    doneButton = await getElementByTag(
+      driver,
+      '[data-test-dismiss-modal="true"]'
+    )
+    await doneButton.click()
+    await sleep(500)
+
+    assert.equal(citationsField, 'new citation')
+
+    assert.equal(firstName, 'authors first name')
+
+    assert.equal(lastName, 'authors last name')
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="SOURCE">
+          <text>
+            this is a test source<cursor />
+          </text>
+        </block>
+        <block type="ENTRY">
+          <text />
+        </block>
+      </editor>
+    )
+    // check if editor has correct value
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  // actions = driver.actions()
+  // await actions.sendKeys(Key.ENTER)
+  // await sleep(5000)
+
+  // check if source fields has correct values
 })
