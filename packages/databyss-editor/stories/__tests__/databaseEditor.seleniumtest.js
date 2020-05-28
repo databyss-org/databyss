@@ -76,7 +76,7 @@ describe('connected editor', () => {
     done()
   })
 
-  afterEach(async () => {
+  afterAll(async () => {
     // const clearButton = await getElementById(driver, 'clear-state')
     // clearButton.click()
     // sleep(500)
