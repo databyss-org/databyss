@@ -82,9 +82,6 @@ router.delete('/:id', auth, async (req, res) => {
   }
 })
 
-// TODO: use this in webworker testing
-// const sleep = m => new Promise(r => setTimeout(r, m))
-
 // @route    PATCH api/page/:id
 // @desc     operation on page
 // @access   private
@@ -97,14 +94,10 @@ router.patch(
       if (_patches) {
         // temporary dictionary for entity and block ids
         /* eslint-disable */
-        console.log('start patches')
         for (const patch of _patches) {
           await runPatches(patch, req)
-          //  await sleep(100)
-          console.log(patch.count)
         }
         /* eslint-enable */
-        console.log('SUCCESS')
         return res.json({ msg: 'success' })
       }
 

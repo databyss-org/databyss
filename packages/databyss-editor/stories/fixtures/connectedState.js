@@ -1,10 +1,8 @@
 import ObjectId from 'bson-objectid'
 
-const sourceId = ObjectId().toHexString()
 const entryId = ObjectId().toHexString()
 
 const blockOneId = ObjectId().toHexString()
-const blockTwoId = ObjectId().toHexString()
 
 const selectionId = ObjectId().toHexString()
 
@@ -24,41 +22,17 @@ export default pageId => ({
   },
   newEntities: [], // renamed from `newAtomics`
   entityCache: {
-    [sourceId]: {
-      type: 'SOURCE',
-      _id: sourceId,
-      text: {
-        textValue:
-          'Stamenov, Language Structure, Discourse and the Access to Consciousness',
-        ranges: [{ offset: 0, length: 8, marks: ['bold'] }],
-      },
-    },
     [entryId]: {
       type: 'ENTRY',
       _id: entryId,
       text: {
-        textValue: `On the limitation of \nthird-order thought to assertion`,
-        ranges: [
-          {
-            offset: 7,
-            length: 10,
-            marks: ['bold'],
-          },
-          {
-            offset: 7,
-            length: 10,
-            marks: ['italic'],
-          },
-        ],
+        textValue: '',
+        ranges: [],
       },
     },
   },
   blockCache: {
     [blockOneId]: {
-      type: 'SOURCE',
-      entityId: sourceId,
-    },
-    [blockTwoId]: {
       type: 'ENTRY',
       entityId: entryId,
     },
@@ -66,9 +40,6 @@ export default pageId => ({
   blocks: [
     {
       _id: blockOneId,
-    },
-    {
-      _id: blockTwoId,
     },
   ],
   page: {
