@@ -76,12 +76,12 @@ describe('connected editor', () => {
     done()
   })
 
-  afterEach(async () => {
-    // const clearButton = await getElementById(driver, 'clear-state')
-    // clearButton.click()
-    // sleep(500)
-    await driver.quit()
-  })
+  // afterEach(async () => {
+  //   // const clearButton = await getElementById(driver, 'clear-state')
+  //   // clearButton.click()
+  //   // sleep(500)
+  //   await driver.quit()
+  // })
 
   it('should toggle bold and save changes', async () => {
     await sleep(300)
