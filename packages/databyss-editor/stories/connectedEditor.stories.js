@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react'
 import { throttle } from 'lodash'
 import { storiesOf } from '@storybook/react'
-import { View, Text } from '@databyss-org/ui/primitives'
+import { View, Text, Button } from '@databyss-org/ui/primitives'
 import {
   ViewportDecorator,
   NotifyDecorator,
@@ -96,6 +96,15 @@ const EditorWithProvider = () => {
 
   return (
     <View>
+      <Button
+        id="clear-state"
+        mb="small"
+        onClick={() => {
+          setPage(connectedFixture(account.defaultPage))
+        }}
+      >
+        <Text>clear state</Text>
+      </Button>
       <PageLoader pageId={account.defaultPage}>
         {page => {
           if (page.page.name !== 'test document') {
