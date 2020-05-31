@@ -293,10 +293,11 @@ export default (state, action, onChange) =>
       // flag currently selected block with `__showNewBlockMenu` if empty
 
       // first reset `__showNewBlockMenu` on all other blocks
-      draft.blocks.forEach(block => {
-        block.__showNewBlockMenu = false
-        block.__isActive = false
-      })
+      // PERF: just set the last active to false (avoid looping through all blocks)
+      // draft.blocks.forEach(block => {
+      //   block.__showNewBlockMenu = false
+      //   block.__isActive = false
+      // })
       const _selectedBlock = draft.blocks[draft.selection.focus.index]
       const _selectedEntity = entityForBlockIndex(
         draft,
@@ -315,7 +316,9 @@ export default (state, action, onChange) =>
         draft.selection.focus.offset < _selectedEntity.text.textValue.length &&
         draft.selection.focus.offset > 0
 
-      return cleanupState(draft)
+      // PERF: move cleanupState to background web worker
+      // return cleanupState(draft)
+      return draft
     },
     onChange
   )

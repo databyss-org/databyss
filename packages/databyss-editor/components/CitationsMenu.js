@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import styledCss from '@styled-system/css'
 import _ from 'lodash'
 import { useEditor, ReactEditor } from 'slate-react'
@@ -177,11 +177,13 @@ export const Citations = () => {
     [editor.selection]
   )
 
-  useEventListener('keydown', e => {
+  const onKeyDown = useCallback(e => {
     if (e.key === 'Escape') {
       setMenuActive(false)
     }
-  })
+  }, [])
+
+  useEventListener('keydown', onKeyDown)
 
   // prevents scroll if modal is visible
   //  useEventListener('wheel', e => menuActive && e.preventDefault(), editor.el)

@@ -14,6 +14,7 @@ export const flattenNode = node => {
   return node.children.map(flattenNode).join('')
 }
 
+// PERF: warning, very slow!
 export const flattenNodeToPoint = (editor, point) => {
   const anchor = {
     path: [point.path[0], 0],
@@ -63,7 +64,7 @@ export const stateSelectionToSlateSelection = (children, selection) => {
 export const entities = type =>
   ({ SOURCE: 'sources', TOPIC: 'topics', ENTRY: 'entries' }[type])
 
-export const stateBlockToSlateBlock = block => {
+export const stateBlockToSlateBlock = (block, index) => {
   // convert state and apply markup values
 
   const _childrenText = stateToSlateMarkup(block.text)
@@ -71,6 +72,7 @@ export const stateBlockToSlateBlock = block => {
     children: _childrenText,
     type: block.type,
     isBlock: true,
+    index,
   }
 
   return _data
@@ -82,11 +84,11 @@ convert page state to a slate value on initial mount
 
 export const stateToSlate = initState => {
   const _blocks = initState.blocks
-  const _state = _blocks.map(b => {
+  const _state = _blocks.map((b, idx) => {
     // get block ref and id
     const _block = initState.blockCache[b._id]
     const _blockData = initState.entityCache[_block.entityId]
-    return stateBlockToSlateBlock(_blockData)
+    return stateBlockToSlateBlock(_blockData, idx)
   })
 
   return _state

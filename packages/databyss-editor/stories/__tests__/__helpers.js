@@ -5,12 +5,14 @@ import cloneDeep from 'clone-deep'
 export const SMALL = 'SMALL'
 export const MED = 'MED'
 export const LARGE = 'LARGE'
+export const X_LARGE = 'X_LARGE'
 
 export const getBlockSize = size =>
   ({
     SMALL: 5,
     MED: 50,
     LARGE: 100,
+    X_LARGE: 1000,
   }[size])
 
 const ipsum = new LoremIpsum({

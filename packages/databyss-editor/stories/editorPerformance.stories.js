@@ -16,7 +16,13 @@ import ContentEditable from '../components/ContentEditable'
 import EditorProvider from '../state/EditorProvider'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import blankState from './fixtures/blankState'
-import { SMALL, MED, LARGE, generateState } from './__tests__/__helpers'
+import {
+  SMALL,
+  MED,
+  LARGE,
+  X_LARGE,
+  generateState,
+} from './__tests__/__helpers'
 import FPSStats from './__tests__/FPS'
 
 const _res = {
@@ -51,22 +57,23 @@ const EditorWithProvider = () => {
   const timeDelta = useRef(null)
 
   const onDocumentChange = () => {
+    // PERF: need to do this without `setState`s
     // if document was loaded and timeDelta was set
     // get loading time
-    if (
-      //  loading &&
-      timeDelta.current
-    ) {
-      window.requestAnimationFrame(() => {
-        setLoading(false)
-        const _delta = (Date.now() - timeDelta.current) / 1000
-        // throttle double onChange events
-        if (_delta < 10000) {
-          setTime(_delta)
-        }
-        timeDelta.current = null
-      })
-    }
+    // if (
+    //   //  loading &&
+    //   timeDelta.current
+    // ) {
+    //   window.requestAnimationFrame(() => {
+    //     setLoading(false)
+    //     const _delta = (Date.now() - timeDelta.current) / 1000
+    //     // throttle double onChange events
+    //     if (_delta < 10000) {
+    //       setTime(_delta)
+    //     }
+    //     timeDelta.current = null
+    //   })
+    // }
   }
 
   const onBlockSizeClick = size => {
@@ -81,7 +88,7 @@ const EditorWithProvider = () => {
     () => {
       if (blockSize) {
         // force rerender
-        window.requestAnimationFrame(() => setProviderKey(providerKey + 1))
+        // window.requestAnimationFrame(() => setProviderKey(providerKey + 1))
         setEditbleState(generateState(blockSize))
       }
     },
@@ -120,7 +127,15 @@ const EditorWithProvider = () => {
           onClick={() => onBlockSizeClick(LARGE)}
           disabled={blockSize === LARGE}
         >
-          <Text>100 Blocks</Text>
+          <Text>100</Text>
+        </Button>
+        <Button
+          id="xlarge-blocks"
+          mr="small"
+          onClick={() => onBlockSizeClick(X_LARGE)}
+          disabled={blockSize === X_LARGE}
+        >
+          <Text>1000</Text>
         </Button>
         <Button mr="small" id="set-fps" onClick={() => setActive(!active)}>
           <Text>{active ? 'Stop' : 'Start FPS'}</Text>

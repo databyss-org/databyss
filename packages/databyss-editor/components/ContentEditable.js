@@ -309,10 +309,11 @@ const ContentEditable = ({ onDocumentChange, autofocus }) => {
     state.preventDefault ? valueRef.current : editor.children,
     draft => {
       state.operations.forEach(op => {
-        const _block = stateBlockToSlateBlock(op.block)
+        const _block = stateBlockToSlateBlock(op.block, op.index)
         draft[op.index].children = _block.children
         draft[op.index].type = _block.type
         draft[op.index].isBlock = _block.isBlock
+        draft[op.index].index = op.index
       })
     }
   )

@@ -8,7 +8,6 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
-import { slateSelectionToStateSelection } from '../lib/slateUtils'
 import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 
@@ -16,33 +15,36 @@ export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
 
 const Element = ({ attributes, children, element }) => {
-  const editor = useEditor()
+  // const editor = useEditor()
   const editorContext = useEditorContext()
-  const navigationContext = useNavigationContext()
-  const pageContext = usePageContext()
+  // PERF: usePageContext and useNavigationContext are slow, even they do nothing.
+  //   Maybe try useCallback and refs?
+  // const navigationContext = useNavigationContext()
+  // const pageContext = usePageContext()
 
-  const onAtomicMouseDown = e => {
-    e.preventDefault()
-    showAtomicModal({ editorContext, navigationContext, editor })
-  }
+  // const onAtomicMouseDown = e => {
+  //   e.preventDefault()
+  //   showAtomicModal({ editorContext, navigationContext, editor })
+  // }
 
-  const block =
-    editorContext.state.blocks[ReactEditor.findPath(editor, element)[0]]
+  const { index } = element
+  const block = editorContext.state.blocks[index]
+
+  const { selection } = editorContext.state
+  const selHasRange =
+    (selection.focus.index === index || selection.anchor.index === index) &&
+    selectionHasRange(selection)
 
   return useMemo(
     () => {
       const blockMenuWidth = editorMarginMenuItemHeight + 6
-      const selHasRange = selectionHasRange(
-        slateSelectionToStateSelection(editor)
-      )
 
       return (
         <View
           ref={ref => {
-            if (pageContext) {
-              const _index = ReactEditor.findPath(editor, element)[0]
-              pageContext.registerBlockRefByIndex(_index, ref)
-            }
+            // if (pageContext) {
+            //   pageContext.registerBlockRefByIndex(index, ref)
+            // }
           }}
           ml={element.isBlock ? blockMenuWidth : 0}
           pt="small"
@@ -105,7 +107,7 @@ const Element = ({ attributes, children, element }) => {
         </View>
       )
     },
-    [block, element]
+    [block, element, selHasRange]
   )
 }
 
