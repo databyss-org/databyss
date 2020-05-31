@@ -22,6 +22,7 @@ const Editor = ({ children, editor, autofocus, ...others }) => {
       <FormatMenu />
       <CitationsMenu />
       <Editable
+        spellCheck={process.env.NODE_ENV !== 'test'}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         readOnly={readOnly}
