@@ -16,7 +16,6 @@ dist
 .env.test.local
 .env.production.local
 .eslintcache
-/app.json
 
 # script binaries
 scripts/bin/
