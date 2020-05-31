@@ -30,7 +30,7 @@ const dotenvFiles = [
 // https://github.com/motdotla/dotenv-expand
 dotenvFiles.forEach(dotenvFile => {
   if (fs.existsSync(dotenvFile)) {
-    console.log('PROCESS ENV', dotenvFile)
+    console.log('PROCESS ENV', dotenvFile, process.env.HEROKU_PR_NUMBER)
     require('dotenv-expand')(
       require('dotenv').config({
         path: dotenvFile,
