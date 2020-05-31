@@ -12,9 +12,11 @@ then
   npm run storybook:build
 elif [ $NPM_DEPLOY_TARGET == NOTES_APP ]
 then
+  cp packages/databyss-notes/app.json ./
   ENV_PREFIX=REACT_APP_ NPM_BUILD_TARGET=NOTES_APP node scripts/build.js
 elif [ $NPM_DEPLOY_TARGET == API_SERVER ]
 then
+  cp packages/databyss-api/app.json ./
   ENV_PREFIX=API_ NPM_BUILD_TARGET=API_SERVER BABEL_ENV=production webpack --config packages/databyss-api/webpack.config.js --mode=production
 else
   echo 'ERROR: NO TARGETS FOUND'
