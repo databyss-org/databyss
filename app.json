@@ -1,7 +1,7 @@
 {
   "buildpacks": [
     {
-      "url": "https://github.com/databyss-org/heroku-buildpack-monorepo.git"
+      "url": "https://github.com/databyss-org/heroku-buildpack-monorepo.git#v9.0.1"
     }
   ]
 }
