@@ -75,28 +75,12 @@ Object.keys(process.env)
     process.env[nextKey] = process.env[key]
   })
 
-// If we are building for a review app, we have three variables at our disposal:
-// HEROKU_APP_NAME, HEROKU_BRANCH, HEROKU_PR_NUMBER
-// https://devcenter.heroku.com/articles/github-integration-review-apps#injected-environment-variables
-// Look for these tokens in the `value` param and replace them with the current ENV
-function replaceHerokuReviewAppTokens(value) {
-  let _value = value
-  ;['HEROKU_APP_NAME', 'HEROKU_BRANCH', 'HEROKU_PR_NUMBER'].forEach(key => {
-    if (process.env[key]) {
-      _value = _value.replace(`\${${key}}`, process.env[key])
-    }
-  })
-  return _value
-}
-
 function getClientEnvironment(publicUrl) {
   const raw = Object.keys(process.env)
     .filter(key => ENV_PREFIX.test(key))
     .reduce(
       (env, key) => {
-        env[key.replace(ENV_PREFIX, '')] = replaceHerokuReviewAppTokens(
-          process.env[key]
-        )
+        env[key.replace(ENV_PREFIX, '')] = process.env[key]
         return env
       },
       {
