@@ -246,7 +246,7 @@ describe('connected editor', () => {
 
     // forces blur event
     await citationsField.sendKeys('\t')
-    // await sleep(500)
+    await sleep(1000)
 
     let firstName = await getElementById(driver, 'firstName')
 
