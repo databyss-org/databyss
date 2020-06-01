@@ -1,5 +1,5 @@
 import ObjectId from 'bson-objectid'
-import { produce, enablePatches } from 'immer'
+import { produceWithPatches, enablePatches } from 'immer'
 import {
   SPLIT,
   MERGE,
@@ -62,8 +62,8 @@ export const bakeAtomicBlock = ({ state, draft, index }) => {
 
 enablePatches()
 
-export default (state, action, onChange) =>
-  produce(
+export default (state, action, onChange) => {
+  const [nextState, patches, inversePatches] = produceWithPatches(
     state,
     draft => {
       draft.operations = []
@@ -316,6 +316,8 @@ export default (state, action, onChange) =>
         draft.selection.focus.offset > 0
 
       return cleanupState(draft)
-    },
-    onChange
+    }
   )
+  onChange({ state: nextState, patches, inversePatches })
+  return nextState
+}

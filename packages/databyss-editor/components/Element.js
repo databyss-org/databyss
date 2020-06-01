@@ -26,8 +26,9 @@ const Element = ({ attributes, children, element }) => {
     showAtomicModal({ editorContext, navigationContext, editor })
   }
 
-  const block =
-    editorContext.state.blocks[ReactEditor.findPath(editor, element)[0]]
+  const block = editorContext
+    ? editorContext.state.blocks[ReactEditor.findPath(editor, element)[0]]
+    : {}
 
   return useMemo(
     () => {
