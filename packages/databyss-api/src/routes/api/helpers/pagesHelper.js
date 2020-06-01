@@ -5,8 +5,7 @@ import Topic from '../../../models/Topic'
 import Location from '../../../models/Location'
 import Page from '../../../models/Page'
 import Selection from '../../../models/Selection'
-
-const BadRefId = require('../../../lib/BadRefId')
+import BadRefId from '../../../lib/BadRefId'
 
 export const modelDict = type =>
   ({
