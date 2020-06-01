@@ -190,8 +190,8 @@ const addPatch = async (p, req) => {
         }),
         account: req.account._id,
       }
-      /* eslint-disable-next-line new-cap */
-      const _entity = new modelDict(p.value.type)(entityFields)
+      const Model = modelDict(p.value.type)
+      const _entity = new Model(entityFields)
 
       await _entity.save()
       break
