@@ -8,6 +8,7 @@ import {
   fetchPageHeaders,
   fetchPage,
   savePage,
+  savePatch,
   deletePage,
   onArchivePage,
   onSetDefaultPage,
@@ -16,6 +17,17 @@ import {
 interface PropsType {
   children: JSX.Element
   initialState: any
+}
+
+interface Operation {
+  op: string
+  path: any
+  value: any
+}
+
+interface PatchType {
+  _id: string
+  operations: Array<Operation>
 }
 
 interface RefDict {
@@ -27,8 +39,12 @@ interface ContextType {
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
   clearBlockDict: () => void
-  registerBlockRef: (id: string, refOne: React.Ref<HTMLInputElement>) => void
-  getBlockRef: (id: string) => React.Ref<HTMLInputElement>
+  setPatch: (patch: PatchType) => void
+  registerBlockRefByIndex: (
+    index: number,
+    refOne: React.Ref<HTMLInputElement>
+  ) => void
+  getBlockRefByIndex: (index: number) => React.Ref<HTMLInputElement>
 }
 
 const useReducer = createReducer()
@@ -42,7 +58,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   const [state, dispatch] = useReducer(reducer, initialState)
 
   const setPage = (page: Page): void => {
-    // window.requestAnimationFrame(() => dispatch(savePage(page)))
     dispatch(savePage(page))
   }
 
@@ -68,13 +83,16 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     return null
   }
 
-  const registerBlockRef = (id: string, ref: React.Ref<HTMLInputElement>) => {
-    refDictRef.current[id] = ref
+  const registerBlockRefByIndex = (
+    index: number,
+    ref: React.Ref<HTMLInputElement>
+  ) => {
+    refDictRef.current[index] = ref
   }
 
-  const getBlockRef = (id: string) => {
-    if (refDictRef.current[id]) {
-      return refDictRef.current[id]
+  const getBlockRefByIndex = (index: number) => {
+    if (refDictRef.current[index]) {
+      return refDictRef.current[index]
     }
     return null
   }
@@ -95,14 +113,19 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(onSetDefaultPage(id))
   }
 
+  const setPatch = (patch: PatchType) => {
+    dispatch(savePatch(patch))
+  }
+
   return (
     <PageContext.Provider
       value={{
         getPages,
         getPage,
         setPage,
-        registerBlockRef,
-        getBlockRef,
+        setPatch,
+        registerBlockRefByIndex,
+        getBlockRefByIndex,
         clearBlockDict,
         removePage,
         archivePage,

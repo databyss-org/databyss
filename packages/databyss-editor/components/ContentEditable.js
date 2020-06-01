@@ -23,7 +23,7 @@ import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 
-const ContentEditable = ({ onDocumentChange }) => {
+const ContentEditable = ({ onDocumentChange, autofocus }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
   const sourceContext = useSourceContext()
@@ -45,17 +45,17 @@ const ContentEditable = ({ onDocumentChange }) => {
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
-  useEffect(
-    () => {
-      if (onDocumentChange) {
-        onDocumentChange(editor)
-      }
-    },
-    [editor.operations]
-  )
-
   if (!valueRef.current) {
     editor.children = stateToSlate(state)
+    // load selection from DB
+    if (state.selection) {
+      const selection = stateSelectionToSlateSelection(
+        editor.children,
+        state.selection
+      )
+
+      Transforms.select(editor, selection)
+    }
   }
 
   // if new atomic block has been added, save atomic
@@ -198,10 +198,19 @@ const ContentEditable = ({ onDocumentChange }) => {
   }
 
   const onChange = value => {
+    if (onDocumentChange) {
+      onDocumentChange(editor)
+    }
+
     const selection = slateSelectionToStateSelection(editor)
 
     if (!selection) {
       return
+    }
+
+    // preserve selection id from DB
+    if (state.selection._id) {
+      selection._id = state.selection._id
     }
 
     const focusIndex = selection.focus.index
@@ -338,6 +347,7 @@ const ContentEditable = ({ onDocumentChange }) => {
   }
 
   valueRef.current = nextValue
+
   selectionRef.current = nextSelection
 
   if (state.preventDefault) {
@@ -347,6 +357,7 @@ const ContentEditable = ({ onDocumentChange }) => {
   return (
     <Editor
       editor={editor}
+      autofocus={autofocus}
       value={nextValue}
       onChange={onChange}
       onKeyDown={onKeyDown}

@@ -2,6 +2,8 @@ import express from 'express'
 import _ from 'lodash'
 import Page from '../../models/Page'
 import Block from '../../models/Block'
+import Selection from '../../models/Selection'
+
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import {
@@ -15,6 +17,7 @@ import {
   populateRefEntities,
   composeBlockList,
   modelDict,
+  runPatches,
 } from './helpers/pagesHelper'
 
 const router = express.Router()
@@ -79,6 +82,35 @@ router.delete('/:id', auth, async (req, res) => {
   }
 })
 
+// @route    PATCH api/page/:id
+// @desc     operation on page
+// @access   private
+router.patch(
+  '/:id',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
+  async (req, res) => {
+    try {
+      const _patches = req.body.data.patch
+      if (_patches) {
+        // temporary dictionary for entity and block ids
+        /* eslint-disable */
+        for (const patch of _patches) {
+          await runPatches(patch, req)
+        }
+        /* eslint-enable */
+        return res.json({ msg: 'success' })
+      }
+
+      return res.json({ msg: 'no patches found' })
+
+      // TODO: response is sent before actions are executed
+    } catch (err) {
+      console.error(err.message)
+      return res.status(500).send('Server Error')
+    }
+  }
+)
+
 // @route    POST api/pages
 // @desc     Adds Page
 // @access   private
@@ -87,8 +119,21 @@ router.post(
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageCreatorMiddleware],
   async (req, res) => {
     try {
-      // TODO: SAVE SELECTION
-      const { blocks, page, blockCache, entityCache } = req.body.data
+      const { blocks, page, blockCache, entityCache, selection } = req.body.data
+
+      // SAVE SELECTION
+      if (selection) {
+        let _selection = await Selection.findOne({ _id: selection._id })
+        if (_selection) {
+          await Selection.findByIdAndUpdate(
+            { _id: selection._id },
+            { $set: selection }
+          )
+        } else {
+          _selection = new Selection(selection)
+          await _selection.save()
+        }
+      }
 
       const { name, _id, archive } = page
 
@@ -132,6 +177,7 @@ router.post(
                 }
                 // ADD NEW ENTITY
                 /* eslint new-cap: 1 */
+
                 _entity = new modelDict(entity)(entityFields)
                 await _entity.save()
 
@@ -197,6 +243,7 @@ router.post(
 
       const pageFields = {
         ...(name && { name }),
+        ...(selection && { selection }),
         ...(blocks && { blocks }),
         ...(archive && { archive: true }),
         account: req.account._id,
@@ -234,6 +281,25 @@ router.get(
         blocks: pageResponse.blocks,
       }
 
+      // load selection
+      if (pageResponse.selection._id) {
+        const _selection = await Selection.findOne({
+          _id: pageResponse.selection._id,
+        })
+        if (_selection) {
+          page.selection = _selection
+        }
+      } else {
+        // initialize new selection
+        let _selection = {
+          anchor: { offset: 0, index: 0 },
+          focus: { offset: 0, index: 0 },
+        }
+        _selection = new Selection(_selection)
+        await _selection.save()
+        page.selection = _selection
+      }
+
       const blockList = await getBlockItemsFromId(pageResponse.blocks)
 
       let blocks = []
@@ -261,18 +327,12 @@ router.get(
         }
       })
 
-      // TODO: SAVE SELECTION
-      const selection = {
-        anchor: { index: 0, offset: 0 },
-        focus: { index: 0, offset: 0 },
-      }
-
       const response = {
         page: { _id: page._id, name: page.name },
         blocks: page.blocks,
         blockCache: composeBlockList(blockList),
         entityCache,
-        selection,
+        selection: page.selection,
       }
 
       return res.json(response)

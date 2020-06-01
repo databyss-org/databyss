@@ -10,7 +10,8 @@ import { getEditor, sleep } from './_helpers.selenium'
 let driver
 let editor
 let slateDocument
-let actions
+
+// let actions
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=cypress-tests--slate-5'
 const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=cypress-tests--slate-5'
 
@@ -21,19 +22,17 @@ describe('editor selenium', () => {
     // OSX and safari are necessary
     driver = await startSession('Slate-5-basic-osx-safari', OSX, SAFARI)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
+
     editor = await getEditor(driver)
 
     slateDocument = await driver.findElement(By.id('slateDocument'))
-    await editor.click()
-    actions = driver.actions({ bridge: true })
-    await actions.click(editor)
+    //   actions = driver.actions()
     done()
   })
 
   afterEach(async () => {
     await driver.quit()
   })
-
   it('should input an entry, source and topic', async () => {
     await sleep(300)
     await editor.sendKeys('this is an example of an entry text')
@@ -103,6 +102,7 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.ENTER)
     await editor.sendKeys('this is an entry example')
     await editor.sendKeys(Key.ARROW_UP)
+    await sleep(300)
     await editor.sendKeys('this text should not be allowed')
     await editor.sendKeys(Key.ARROW_DOWN)
 
