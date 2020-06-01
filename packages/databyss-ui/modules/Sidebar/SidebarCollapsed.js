@@ -39,11 +39,36 @@ Section.defaultProps = {
 export const sidebarCollapsedWidth = 56
 
 const SidebarCollapsed = () => {
-  const { navigateSidebar, isMenuOpen, setMenuOpen } = useNavigationContext()
+  const {
+    navigateSidebar,
+    getSidebarPath,
+    isMenuOpen,
+    setMenuOpen,
+  } = useNavigationContext()
 
   const onItemClick = item => {
     navigateSidebar(`/${item}`)
   }
+
+  const isActiveItem = item => getSidebarPath() === item
+
+  const sideBarCollapsedItems = [
+    {
+      name: 'menuCollapse',
+      icon: isMenuOpen ? <MenuCollapseSvg /> : <MenuSvg />,
+      onClick: () => setMenuOpen(!isMenuOpen),
+    },
+    {
+      name: 'search',
+      icon: <SearchSvg />,
+      onClick: () => onItemClick('search'),
+    },
+    {
+      name: 'pages',
+      icon: <PagesSvg />,
+      onClick: () => onItemClick('pages'),
+    },
+  ]
 
   return (
     <View
@@ -59,39 +84,24 @@ const SidebarCollapsed = () => {
       })}
     >
       <List verticalItemPadding={2} horizontalItemPadding={1} m="none">
-        <BaseControl
-          width="100%"
-          onClick={() => setMenuOpen(!isMenuOpen)}
-          alignItems="center"
-        >
-          <Grid singleRow alignItems="flex-end" columnGap="small">
-            <Icon sizeVariant="medium" color="text.3">
-              {isMenuOpen ? <MenuCollapseSvg /> : <MenuSvg />}
-            </Icon>
-          </Grid>
-        </BaseControl>
-        <BaseControl
-          width="100%"
-          onClick={() => onItemClick('search')}
-          alignItems="center"
-        >
-          <Grid singleRow alignItems="center" columnGap="small">
-            <Icon sizeVariant="medium" color="text.3">
-              <SearchSvg />
-            </Icon>
-          </Grid>
-        </BaseControl>
-        <BaseControl
-          width="100%"
-          onClick={() => onItemClick('pages')}
-          alignItems="center"
-        >
-          <Grid singleRow alignItems="center" columnGap="small">
-            <Icon sizeVariant="medium" color="text.3">
-              <PagesSvg />
-            </Icon>
-          </Grid>
-        </BaseControl>
+        {sideBarCollapsedItems.map(item => (
+          <BaseControl
+            key={item.name}
+            width="100%"
+            onClick={item.onClick}
+            alignItems="center"
+            borderWidth="3px"
+            borderLeftColor={
+              isActiveItem(item.name) ? 'purple.1' : 'transparent'
+            }
+          >
+            <Grid singleRow alignItems="center" columnGap="small">
+              <Icon sizeVariant="medium" color="text.3">
+                {item.icon}
+              </Icon>
+            </Grid>
+          </BaseControl>
+        ))}
       </List>
       <Footer />
     </View>
