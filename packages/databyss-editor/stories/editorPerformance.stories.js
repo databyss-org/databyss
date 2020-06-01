@@ -169,7 +169,7 @@ const EditorWithProvider = () => {
   )
 }
 
-const EditorWithModals = ({ initialState }) => (
+const EditorWithModals = () => (
   <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
     <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
       <NavigationProvider>

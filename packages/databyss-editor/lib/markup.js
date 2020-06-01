@@ -1,6 +1,6 @@
 import { createEditor, Transforms } from 'slate'
-import { toggleMark } from './slateUtils'
 import cloneDeep from 'clone-deep'
+import { toggleMark } from './slateUtils'
 
 const moveToStart = editor => {
   const _zero = { path: [0], offset: 0 }

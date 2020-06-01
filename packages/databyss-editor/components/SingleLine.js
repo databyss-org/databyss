@@ -1,21 +1,13 @@
-import React, {
-  useCallback,
-  useMemo,
-  useState,
-  useEffect,
-  forwardRef,
-  useRef,
-} from 'react'
-import isHotkey from 'is-hotkey'
-import { Editable, withReact, Slate, ReactEditor } from 'slate-react'
+import React, { useCallback, useMemo, useState, forwardRef } from 'react'
+import { Editable, withReact, Slate } from 'slate-react'
 import { Editor, createEditor, Transforms } from 'slate'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { stateToSlateMarkup, getRangesFromBlock } from '../lib/markup'
+import Hotkeys from './../lib/hotKeys'
 
-const HOTKEYS = {
-  'mod+b': 'bold',
-  'mod+i': 'italic',
-  'mod+k': 'location',
+const isMarkActive = (editor, format) => {
+  const marks = Editor.marks(editor)
+  return marks ? marks[format] === true : false
 }
 
 const toggleMark = (editor, format) => {
@@ -26,11 +18,6 @@ const toggleMark = (editor, format) => {
   } else {
     Editor.addMark(editor, format, true)
   }
-}
-
-const isMarkActive = (editor, format) => {
-  const marks = Editor.marks(editor)
-  return marks ? marks[format] === true : false
 }
 
 const Leaf = ({ attributes, children, leaf }) => {
@@ -83,7 +70,6 @@ const RichText = forwardRef(
     { multiline, onChange, initialValue, id, overrideCss, onBlur, placeholder },
     ref
   ) => {
-    const _el = useRef(ref)
     // set initial value
 
     const initValue = [
@@ -122,12 +108,20 @@ const RichText = forwardRef(
                   Transforms.insertText(editor, `\n`)
                 }
               }
-              for (const hotkey in HOTKEYS) {
-                if (isHotkey(hotkey, event)) {
-                  event.preventDefault()
-                  const mark = HOTKEYS[hotkey]
-                  toggleMark(editor, mark)
-                }
+
+              if (Hotkeys.isBold(event)) {
+                event.preventDefault()
+                toggleMark(editor, 'bold')
+              }
+
+              if (Hotkeys.isItalic(event)) {
+                toggleMark(editor, 'italic')
+                event.preventDefault()
+              }
+
+              if (Hotkeys.isLocation(event)) {
+                toggleMark(editor, 'location')
+                event.preventDefault()
               }
             }}
             onBlur={onBlur}
