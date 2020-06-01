@@ -1,21 +1,15 @@
 import React from 'react'
 import css from '@styled-system/css'
-import {
-  Text,
-  View,
-  List,
-  BaseControl,
-  Grid,
-  Icon,
-} from '@databyss-org/ui/primitives'
+import { Text, View, List } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import MenuCollapseSvg from '@databyss-org/ui/assets/menu_collapse.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
+import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
+import Footer from '@databyss-org/ui/components/Sidebar/Footer'
 import { darkTheme } from '../../theming/theme'
-import Footer from '../../components/Sidebar/Footer'
 
 export const defaultProps = {
   height: '100vh',
@@ -50,8 +44,6 @@ const SidebarCollapsed = () => {
     navigateSidebar(`/${item}`)
   }
 
-  const isActiveItem = item => getSidebarPath() === item
-
   const sideBarCollapsedItems = [
     {
       name: 'menuCollapse',
@@ -70,6 +62,13 @@ const SidebarCollapsed = () => {
     },
   ]
 
+  const getBorderPosition = itemName => {
+    const itemIndex = sideBarCollapsedItems
+      .map(item => item.name)
+      .indexOf(itemName)
+    return 12 + itemIndex * 60
+  }
+
   return (
     <View
       {...defaultProps}
@@ -85,22 +84,13 @@ const SidebarCollapsed = () => {
     >
       <List verticalItemPadding={2} horizontalItemPadding={1} m="none">
         {sideBarCollapsedItems.map(item => (
-          <BaseControl
+          <SidebarIconButton
             key={item.name}
-            width="100%"
+            icon={item.icon}
+            isActive={getSidebarPath() === item.name}
             onClick={item.onClick}
-            alignItems="center"
-            borderWidth="3px"
-            borderLeftColor={
-              isActiveItem(item.name) ? 'purple.1' : 'transparent'
-            }
-          >
-            <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant="medium" color="text.3">
-                {item.icon}
-              </Icon>
-            </Grid>
-          </BaseControl>
+            borderPosition={getBorderPosition(item.name)}
+          />
         ))}
       </List>
       <Footer />
