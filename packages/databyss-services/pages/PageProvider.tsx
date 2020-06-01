@@ -39,17 +39,12 @@ interface ContextType {
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
   clearBlockDict: () => void
-<<<<<<< HEAD
-  registerBlockRef: (id: string, refOne: React.Ref<HTMLInputElement>) => void
-  getBlockRefByIndex: (id: string) => React.Ref<HTMLInputElement>
-=======
   setPatch: (patch: PatchType) => void
   registerBlockRefByIndex: (
     index: number,
     refOne: React.Ref<HTMLInputElement>
   ) => void
   getBlockRefByIndex: (index: number) => React.Ref<HTMLInputElement>
->>>>>>> next
 }
 
 const useReducer = createReducer()
