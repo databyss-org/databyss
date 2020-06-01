@@ -58,6 +58,7 @@ module.exports = webpackEnv => {
     : isEnvDevelopment && ''
   // Get environment variables to inject into our app.
   const env = getClientEnvironment(publicUrl)
+  console.log('CLIENT ENV', env)
 
   return {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',

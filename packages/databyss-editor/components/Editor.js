@@ -1,14 +1,13 @@
-import React, { useMemo, useCallback } from 'react'
-import { createEditor } from 'slate'
-import { Slate, Editable, withReact } from 'slate-react'
+import React, { useCallback } from 'react'
+import { Slate, Editable } from 'slate-react'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
 import CitationsMenu from './CitationsMenu'
 
-const Editor = ({ children, ...others }) => {
+const Editor = ({ children, editor, autofocus, ...others }) => {
   const readOnly = !others.onChange
-  const editor = useMemo(() => withReact(createEditor()), [])
+  // const editor = useMemo(() => withReact(createEditor()), [])
   const renderElement = useCallback(
     props => <Element readOnly={readOnly} {...props} />,
     []
@@ -23,9 +22,11 @@ const Editor = ({ children, ...others }) => {
       <FormatMenu />
       <CitationsMenu />
       <Editable
+        spellCheck={process.env.NODE_ENV !== 'test'}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         readOnly={readOnly}
+        autoFocus={autofocus}
         onKeyDown={onKeyDown}
       />
     </Slate>

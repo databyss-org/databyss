@@ -1,11 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
+import { throttle } from 'lodash'
 import { storiesOf } from '@storybook/react'
 import { View, Text, Button } from '@databyss-org/ui/primitives'
 import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
-import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
+import {
+  withWhitelist,
+  addMetaData,
+} from '@databyss-org/services/pages/_helpers'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
   useSessionContext,
@@ -34,44 +38,84 @@ const LoginRequired = () => (
   <Text>You must login before running this story</Text>
 )
 
-const EditorWithProvider = () => {
-  const { notify } = useNotifyContext()
+const Box = ({ children, ...others }) => (
+  <View borderVariant="thinDark" paddingVariant="tiny" width="100%" {...others}>
+    {children}
+  </View>
+)
 
+const PageWithAutosave = ({ page }) => {
+  const { setPatch } = usePageContext()
+  const [pageState, setPageState] = useState(null)
+
+  const operationsQueue = useRef([])
+
+  const throttledAutosave = useCallback(
+    throttle(({ state, patch }) => {
+      const _patch = withWhitelist(patch)
+      if (_patch.length) {
+        const payload = {
+          id: state.page._id,
+          patch: operationsQueue.current,
+        }
+        setPatch(payload)
+        operationsQueue.current = []
+      }
+    }, 500),
+    []
+  )
+
+  const onDocumentChange = val => {
+    setPageState(JSON.stringify(val, null, 2))
+  }
+
+  const onChange = value => {
+    const _value = addMetaData(value)
+    // push changes to a queue
+    operationsQueue.current = operationsQueue.current.concat(_value.patch)
+    throttledAutosave(_value)
+  }
+
+  return (
+    <View>
+      <EditorProvider onChange={onChange} initialState={withMetaData(page)}>
+        <ContentEditable onDocumentChange={onDocumentChange} autofocus />
+      </EditorProvider>
+      <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
+        <Text variant="uiTextLargeSemibold">Slate State</Text>
+        <pre id="slateDocument">{pageState}</pre>
+      </Box>
+    </View>
+  )
+}
+
+const EditorWithProvider = () => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
   const { setPage } = usePageContext()
-  const [pageState, setPageState] = useState(null)
 
   return (
-    <PageLoader pageId={account.defaultPage}>
-      {page => {
-        if (page.page.name !== 'test document') {
+    <View>
+      <Button
+        id="clear-state"
+        mb="small"
+        onClick={() => {
           setPage(connectedFixture(account.defaultPage))
-          return null
-        }
+        }}
+      >
+        <Text>clear state</Text>
+      </Button>
+      <PageLoader pageId={account.defaultPage}>
+        {page => {
+          if (page.page.name !== 'test document') {
+            setPage(connectedFixture(account.defaultPage))
+            return null
+          }
 
-        const onClick = e => {
-          e.preventDefault()
-          setPage(pageState)
-          console.log('consoled')
-          notify('Page saved! Do a browser reload to verify')
-        }
-
-        return (
-          <View>
-            <Button onClick={onClick}>
-              <Text>Save Page</Text>
-            </Button>
-            <EditorProvider
-              onChange={setPageState}
-              initialState={withMetaData(page)}
-            >
-              <ContentEditable />
-            </EditorProvider>
-          </View>
-        )
-      }}
-    </PageLoader>
+          return <PageWithAutosave page={page} />
+        }}
+      </PageLoader>
+    </View>
   )
 }
 

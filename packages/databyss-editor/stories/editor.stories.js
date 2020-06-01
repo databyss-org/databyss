@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
+import { createEditor } from 'slate'
+import { withReact } from 'slate-react'
 import { storiesOf } from '@storybook/react'
 import { View, Grid } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
@@ -37,22 +39,29 @@ const _res = {
 
 const EditorWithProvider = props => (
   <EditorProvider {...props}>
-    <ContentEditable />
+    <ContentEditable autofocus />
   </EditorProvider>
 )
 
 const SideBySide = ({ initialState }) => {
+  const editor = useMemo(() => withReact(createEditor()), [])
   const [editorState, setEditorState] = useState([])
   return (
     <Grid>
       <View width="40%">
         <EditorWithProvider
           initialState={initialState}
-          onChange={s => setEditorState(stateToSlate(s))}
+          onChange={s => {
+            if (!s) {
+              return
+            }
+            // console.log(s)
+            setEditorState(stateToSlate(s.state))
+          }}
         />
       </View>
       <View width="40%">
-        <Editor value={editorState} />
+        <Editor editor={editor} value={editorState} />
       </View>
     </Grid>
   )
@@ -62,7 +71,12 @@ const EditorWithModals = ({ initialState }) => (
   <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
     <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
       <NavigationProvider>
-        <EditorWithProvider initialState={initialState} />
+        <EditorWithProvider
+          initialState={initialState}
+          onChange={({ patch, inversePatch }) => {
+            console.log(patch, inversePatch)
+          }}
+        />
       </NavigationProvider>
     </SourceProvider>
   </TopicProvider>
@@ -99,9 +113,14 @@ const initFetchMock = () => {
 
 storiesOf('Components|Editor', module)
   .addDecorator(ViewportDecorator)
-  .add('Basic', () => <SideBySide initialState={basicFixture} />)
+  .add('Basic', () => <SideBySide initialState={blankFixture} />)
   .add('Basic (standalone)', () => (
-    <EditorWithProvider initialState={basicFixture} />
+    <EditorWithProvider
+      initialState={basicFixture}
+      onChange={({ inversePatch }) => {
+        console.log(inversePatch)
+      }}
+    />
   ))
   .add('No Atomics (standalone)', () => (
     <EditorWithProvider initialState={noAtomicsFixture} />

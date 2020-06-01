@@ -1,5 +1,5 @@
 import ObjectId from 'bson-objectid'
-import { produce } from 'immer'
+import { produceWithPatches, enablePatches } from 'immer'
 import {
   SPLIT,
   MERGE,
@@ -19,6 +19,7 @@ import {
   offsetRanges,
   removeLocationMark,
   cleanupState,
+  blockValue,
 } from './util'
 
 export const bakeAtomicBlock = ({ state, draft, index }) => {
@@ -59,8 +60,10 @@ export const bakeAtomicBlock = ({ state, draft, index }) => {
   return null
 }
 
-export default (state, action) =>
-  produce(state, draft => {
+enablePatches()
+
+export default (state, action, onChange) => {
+  const [nextState, patch, inversePatch] = produceWithPatches(state, draft => {
     draft.operations = []
     draft.preventDefault = false
 
@@ -125,17 +128,19 @@ export default (state, action) =>
         // push updates operation back to editor
         draft.operations.push({
           index: payload.index,
-          block:
+          block: blockValue(
             draft.entityCache[
               draft.blockCache[draft.blocks[payload.index]._id].entityId
-            ],
+            ]
+          ),
         })
         draft.operations.push({
           index: payload.index + 1,
-          block:
+          block: blockValue(
             draft.entityCache[
               draft.blockCache[draft.blocks[payload.index + 1]._id].entityId
-            ],
+            ]
+          ),
         })
         break
       }
@@ -201,7 +206,7 @@ export default (state, action) =>
             // update only given entity
             draft.operations.push({
               index: op.index,
-              block: _entity,
+              block: blockValue(_entity),
             })
           }
         })
@@ -245,7 +250,7 @@ export default (state, action) =>
         // push update operation back to editor
         draft.operations.push({
           index: payload.index,
-          block: _entity,
+          block: blockValue(_entity),
         })
         break
       }
@@ -310,3 +315,6 @@ export default (state, action) =>
 
     return cleanupState(draft)
   })
+  onChange({ state: nextState, patch, inversePatch })
+  return nextState
+}

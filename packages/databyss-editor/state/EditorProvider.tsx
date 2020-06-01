@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect } from 'react'
+import { Patch } from 'immer'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import {
   SET_SELECTION,
@@ -44,10 +45,16 @@ type ContextType = {
   clear: (index: number) => void
 }
 
+type OnChangeArgs = {
+  state: any
+  patch: Patch
+  inversePatch: Patch
+}
+
 type PropsType = {
   children: JSX.Element
   initialState: any
-  onChange: Function
+  onChange: (args: OnChangeArgs) => void
 }
 
 const useReducer = createReducer()
@@ -59,7 +66,11 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
   initialState,
   onChange,
 }) => {
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [state, dispatch] = useReducer(reducer, initialState, {
+    initializer: null,
+    name: 'EditorProvider',
+    onChange,
+  })
 
   const setSelection = (selection: Selection) =>
     dispatch({
@@ -127,13 +138,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
       type: DEQUEUE_NEW_ENTITY,
       payload: { id },
     })
-
-  useEffect(
-    () => {
-      onChange(state)
-    },
-    [state]
-  )
 
   return (
     <EditorContext.Provider
