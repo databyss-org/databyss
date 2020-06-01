@@ -48,9 +48,9 @@ export const offsetRanges = (ranges: Array<Range>, _offset: number) =>
     let offset = r.offset
     // if offset is position zero, shift length instead of offset
     if (!offset) {
-      length = length - 1
+      length -= 1
     } else {
-      offset = offset - _offset
+      offset -= _offset
     }
     return { ...r, length, offset }
   })
@@ -78,3 +78,6 @@ export const cleanupState = (state: any) => {
 
   return state
 }
+
+// returns a shallow clone of the block so immer.patch isn't confused
+export const blockValue = (block: any) => ({ ...block })

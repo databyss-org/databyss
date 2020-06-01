@@ -37,7 +37,7 @@ const _res = {
 
 const EditorWithProvider = props => (
   <EditorProvider {...props}>
-    <ContentEditable />
+    <ContentEditable autofocus />
   </EditorProvider>
 )
 
@@ -62,7 +62,12 @@ const EditorWithModals = ({ initialState }) => (
   <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
     <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
       <NavigationProvider>
-        <EditorWithProvider initialState={initialState} />
+        <EditorWithProvider
+          initialState={initialState}
+          onChange={({ patch, inversePatch }) => {
+            console.log(patch, inversePatch)
+          }}
+        />
       </NavigationProvider>
     </SourceProvider>
   </TopicProvider>
@@ -101,7 +106,12 @@ storiesOf('Components|Editor', module)
   .addDecorator(ViewportDecorator)
   .add('Basic', () => <SideBySide initialState={basicFixture} />)
   .add('Basic (standalone)', () => (
-    <EditorWithProvider initialState={basicFixture} />
+    <EditorWithProvider
+      initialState={basicFixture}
+      onChange={({ inversePatch }) => {
+        console.log(inversePatch)
+      }}
+    />
   ))
   .add('No Atomics (standalone)', () => (
     <EditorWithProvider initialState={noAtomicsFixture} />

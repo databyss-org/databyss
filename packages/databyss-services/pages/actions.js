@@ -1,7 +1,7 @@
 import cloneDeep from 'clone-deep'
 import * as services from './'
-
 import {
+  PATCH,
   FETCH_PAGE,
   CACHE_PAGE,
   CACHE_PAGE_HEADERS,
@@ -9,6 +9,7 @@ import {
   DELETE_PAGE,
   ARCHIVE_PAGE,
   SET_DEFAULT_PAGE,
+  QUEUE_PATCH,
 } from './constants'
 
 export function fetchPage(_id) {
@@ -52,6 +53,46 @@ export function fetchPageHeaders() {
           type: CACHE_PAGE_HEADERS,
           payload: e,
         })
+      })
+  }
+}
+
+const queue = []
+let busy = false
+
+export function savePatch(patch) {
+  // if patch is sent, add to queue
+  if (patch) {
+    queue.push(patch)
+  }
+  // if server has not completed previous request bail action
+  if (busy) {
+    return dispatch => {
+      dispatch({
+        type: QUEUE_PATCH,
+      })
+    }
+  }
+  // perform first batch of patches in queue
+  busy = true
+  const _patch = queue.shift()
+  return dispatch => {
+    dispatch({
+      type: PATCH,
+    })
+    services
+      .savePatch(_patch)
+      .then(() => {
+        busy = false
+        // repeat function with no patch variable if patches are still in queue
+        if (queue.length) {
+          dispatch(savePatch())
+        }
+      })
+      .catch(() => {
+        // if error set the patch back to the queue
+        busy = false
+        queue.unshift(_patch)
       })
   }
 }

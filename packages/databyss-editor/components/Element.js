@@ -4,6 +4,7 @@ import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from 'slate-react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
@@ -18,6 +19,7 @@ const Element = ({ attributes, children, element }) => {
   const editor = useEditor()
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
+  const pageContext = usePageContext()
 
   const onAtomicMouseDown = e => {
     e.preventDefault()
@@ -33,8 +35,15 @@ const Element = ({ attributes, children, element }) => {
       const selHasRange = selectionHasRange(
         slateSelectionToStateSelection(editor)
       )
+
       return (
         <View
+          ref={ref => {
+            if (pageContext) {
+              const _index = ReactEditor.findPath(editor, element)[0]
+              pageContext.registerBlockRefByIndex(_index, ref)
+            }
+          }}
           ml={element.isBlock ? blockMenuWidth : 0}
           pt="small"
           pb="small"
@@ -55,6 +64,7 @@ const Element = ({ attributes, children, element }) => {
               <BlockMenu element={element} />
             </View>
           )}
+
           {isAtomicInlineType(element.type) ? (
             <View
               alignSelf="flex-start"

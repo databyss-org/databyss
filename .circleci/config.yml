@@ -57,8 +57,17 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run:
+          name: start api server
+          command: yarn start:server:test
+          background: true
+
+      - run: 
+          name: wait on api server
+          command: ./node_modules/.bin/wait-on http://0.0.0.0:5000/api/ping/
+
+      - run:
           name: start storybook
-          command: yarn cy:wait-for-api
+          command: yarn storybook
           background: true
 
       - run: 
