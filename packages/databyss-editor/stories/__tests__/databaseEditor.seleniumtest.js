@@ -240,17 +240,15 @@ describe('connected editor', () => {
     await actions.perform()
     await sleep(5000)
 
-    let citationsField = await getElementByTag(
-      driver,
-      '[data-test-path="citations[0]"]'
-    )
+    let citationsField = await getElementById(driver, 'citation')
 
     await citationsField.sendKeys('new citation')
 
-    let firstName = await getElementByTag(
-      driver,
-      '[data-test-path="authors[0].firstName"]'
-    )
+    // forces blur event
+    await citationsField.sendKeys('\t')
+    // await sleep(500)
+
+    let firstName = await getElementById(driver, 'firstName')
 
     await firstName.sendKeys('authors first name')
 
@@ -292,6 +290,8 @@ describe('connected editor', () => {
       driver,
       '[data-test-dismiss-modal="true"]'
     )
+
+    await sleep(4000)
     await doneButton.click()
     await sleep(500)
 

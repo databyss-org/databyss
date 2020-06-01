@@ -75,6 +75,6 @@ describe('editor performance', () => {
 
     await sleep(3000)
 
-    assert.equal(_averageTime < 0.2, true)
+    assert.equal(_averageTime < 0.3, true)
   })
 })
