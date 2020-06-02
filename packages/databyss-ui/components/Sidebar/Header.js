@@ -15,7 +15,7 @@ const Header = () => {
       hoverColor="transparent"
       onClick={() => onHeaderClick()}
     >
-      <View px={2} py={1} width="100%">
+      <View px="em" py="small" width="100%">
         <Text variant="uiTextLarge">
           <Icon sizeVariant="title" color="text.3">
             <LogoSvg />

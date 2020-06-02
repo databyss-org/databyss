@@ -7,7 +7,6 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import Databyss from '@databyss-org/ui/assets/databyss.svg'
-import ArrowRight from '@databyss-org/ui/assets/arrowRight.svg'
 import {
   Text,
   View,
@@ -48,12 +47,9 @@ const menuSvgs = type =>
 const SidebarList = ({ menuItems = defaultMenu }) => {
   const {
     getTokensFromPath,
-    getSidebarPath,
     navigateSidebar,
     navigate,
   } = useNavigationContext()
-
-  const menuItem = getSidebarPath()
 
   const tokens = getTokensFromPath()
 
@@ -90,8 +86,8 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
         acc.push(
           <BaseControl
             backgroundColor={_isActive ? 'control.1' : 'transparent'}
-            py={1}
-            px={2}
+            py="small"
+            px="em"
             key={index}
             width="100%"
             onClick={() => onClick(item)}
