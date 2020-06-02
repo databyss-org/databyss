@@ -23,7 +23,7 @@ import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 
-const ContentEditable = ({ onDocumentChange, autofocus }) => {
+const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
   const sourceContext = useSourceContext()
@@ -361,6 +361,7 @@ const ContentEditable = ({ onDocumentChange, autofocus }) => {
       value={nextValue}
       onChange={onChange}
       onKeyDown={onKeyDown}
+      readonly={readonly}
     />
   )
 }

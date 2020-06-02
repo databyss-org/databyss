@@ -37,7 +37,6 @@ const PageBody = ({ page }) => {
   // state from provider is out of date
   const onChange = value => {
     const _value = addMetaData(value)
-
     // push changes to a queue
     operationsQueue.current = operationsQueue.current.concat(_value.patch)
     throttledAutosave(_value)

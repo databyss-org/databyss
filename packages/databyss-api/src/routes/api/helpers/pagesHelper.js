@@ -121,7 +121,8 @@ const addOrReplaceBlock = async (p, req) => {
   // insert block id into page
   const _page = await Page.findOne({ _id: req.page._id })
   const blocks = _page.blocks
-  blocks.splice(_index, 1, { _id: p.value._id })
+  const _removeBlockCount = p.op === 'add' ? 0 : 1
+  blocks.splice(_index, _removeBlockCount, { _id: p.value._id })
   await _page.save()
 }
 
