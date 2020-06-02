@@ -3,6 +3,8 @@ import { Grid, View, Icon, BaseControl } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { timing } from '@databyss-org/ui/theming/theme'
 
+export const sideBarIconBtnHeight = 60
+
 const SidebarIconButton = ({
   icon,
   onClick,
@@ -28,6 +30,7 @@ const SidebarIconButton = ({
       onClick={onClick}
       alignItems="center"
       hoverColor="transparent"
+      height={sideBarIconBtnHeight}
       {...others}
     >
       <Grid singleRow alignItems="center" columnGap="small">
