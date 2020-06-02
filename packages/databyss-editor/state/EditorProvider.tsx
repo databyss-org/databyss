@@ -66,10 +66,12 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
   initialState,
   onChange,
 }) => {
-  const [state, dispatch] = useReducer(reducer, initialState, {
+  const [state, dispatch, stateRef] = useReducer(reducer, initialState, {
     initializer: null,
     name: 'EditorProvider',
-    onChange,
+    onChange: (patch: Patch, inversePatch: Patch) => {
+      onChange({ state: stateRef.current, patch, inversePatch })
+    },
   })
 
   const setSelection = (selection: Selection) =>
