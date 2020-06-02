@@ -15,21 +15,6 @@ export const defaultProps = {
   height: '100vh',
 }
 
-const Section = ({ children, title, variant, ...others }) => (
-  <View mb="medium" {...others}>
-    <View mb="small">
-      <Text variant={variant} color="text.3">
-        {title}
-      </Text>
-    </View>
-    {children}
-  </View>
-)
-
-Section.defaultProps = {
-  variant: 'heading3',
-}
-
 export const sidebarCollapsedWidth = 56
 
 const SidebarCollapsed = () => {
@@ -66,7 +51,9 @@ const SidebarCollapsed = () => {
     const itemIndex = sideBarCollapsedItems
       .map(item => item.name)
       .indexOf(itemName)
-    return 12 + itemIndex * 60
+    const startPosition = 12
+
+    return startPosition + itemIndex * 60
   }
 
   return (

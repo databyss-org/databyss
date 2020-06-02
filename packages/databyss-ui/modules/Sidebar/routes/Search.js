@@ -78,13 +78,15 @@ const Search = ({ onClick }) => {
               },
             })(theme)}
           />
-          <View position="absolute" right="small">
-            <BaseControl onClick={clear}>
-              <Icon sizeVariant="tiny" color="text.3">
-                <CloseSvg />
-              </Icon>
-            </BaseControl>
-          </View>
+          {value.textValue && (
+            <View position="absolute" right="small">
+              <BaseControl onClick={clear}>
+                <Icon sizeVariant="tiny" color="text.3">
+                  <CloseSvg />
+                </Icon>
+              </BaseControl>
+            </View>
+          )}
         </Grid>
       </View>
       {value.textValue &&
