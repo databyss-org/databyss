@@ -27,7 +27,7 @@ const SidebarCollapsed = () => {
     setMenuOpen,
   } = useNavigationContext()
 
-  const [activeItem, setActiveItem] = useState(getTokensFromPath().type)
+  const [activeItem, setActiveItem] = useState('pages')
 
   const onItemClick = item => {
     if (activeItem === item) {
@@ -42,23 +42,29 @@ const SidebarCollapsed = () => {
   }
 
   useEffect(
-    () => setActiveItem(getSidebarPath() ? getSidebarPath() : 'pages'),
-    [activeItem]
+    () =>
+      setActiveItem(
+        getSidebarPath() ? getSidebarPath() : getTokensFromPath().type
+      ),
+    [navigateSidebar]
   )
 
   const sideBarCollapsedItems = [
     {
       name: 'menuCollapse',
+      title: 'Collapse menu',
       icon: <MenuSvg />,
       onClick: () => setMenuOpen(!isMenuOpen),
     },
     {
       name: 'search',
+      title: 'Search',
       icon: <SearchSvg />,
       onClick: () => onItemClick('search'),
     },
     {
       name: 'pages',
+      title: 'Pages',
       icon: <PagesSvg />,
       onClick: () => onItemClick('pages'),
     },
@@ -90,6 +96,7 @@ const SidebarCollapsed = () => {
         {sideBarCollapsedItems.map(item => (
           <SidebarIconButton
             key={item.name}
+            title={item.title}
             icon={item.icon}
             isActive={activeItem === item.name}
             onClick={item.onClick}
