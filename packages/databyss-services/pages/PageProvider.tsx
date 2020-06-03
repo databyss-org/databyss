@@ -81,6 +81,8 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     [state.cache]
   )
 
+  const hasPendingPatches = state.patchQueueSize
+
   const setPage = (page: Page): void => {
     dispatch(savePage(page))
   }
@@ -160,6 +162,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         archivePage,
         setDefaultPage,
         onPageCached,
+        hasPendingPatches,
       }}
     >
       {children}

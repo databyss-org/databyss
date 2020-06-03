@@ -8,6 +8,8 @@ import {
   FETCH_PAGE_HEADERS,
   DELETE_PAGE,
   ARCHIVE_PAGE,
+  PATCH,
+  QUEUE_PATCH,
 } from './constants'
 
 export const initialState = {
@@ -15,10 +17,18 @@ export const initialState = {
   cache: {},
   headerCache: null,
   refDict: {},
+  patchQueueSize: 0,
 }
 
 export default (state, action) => {
   switch (action.type) {
+    case PATCH:
+    case QUEUE_PATCH: {
+      return {
+        ...state,
+        patchQueueSize: action.payload.queueSize,
+      }
+    }
     case FETCH_PAGE: {
       const _state = cloneDeep(state)
       _state.cache[action.payload.id] = new ResourcePending()
