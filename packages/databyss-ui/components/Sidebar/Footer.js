@@ -25,6 +25,7 @@ const Footer = () => {
     const _page = newPage()
     setPage(_page)
     navigate(`/pages/${_page.page._id}`)
+    window.requestAnimationFrame(() => navigate(`/pages/${_page.page._id}`))
     navigateSidebar('/pages')
   }
 
