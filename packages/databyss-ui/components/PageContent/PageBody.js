@@ -33,7 +33,6 @@ const PageBody = ({ page }) => {
     []
   )
 
-  // TODO: Not all events fire onchange even in editor
   // state from provider is out of date
   const onChange = value => {
     const _value = addMetaData(value)
