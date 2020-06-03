@@ -34,7 +34,7 @@ describe('editor performance', () => {
     driver = await startSession('Slate-5-basic-osx-safari', OSX, SAFARI)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     await sleep(1000)
-    editor = await getEditor(driver)
+    // editor = await getEditor(driver)
 
     // buttons
     clearBlocksButton = await getElementById(driver, 'clear-blocks')
@@ -57,7 +57,7 @@ describe('editor performance', () => {
   })
   it('should test for loading time', async () => {
     await sleep(300)
-    let _times = []
+    const _times = []
     /* eslint-disable no-await-in-loop */
     for (let i = 0; i < SAMPLE_SIZE; i += 1) {
       await clearBlocksButton.click()
