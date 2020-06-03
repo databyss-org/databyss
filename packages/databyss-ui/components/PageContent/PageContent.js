@@ -16,6 +16,16 @@ export const PageRouter = () => (
 
 const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
   const { getBlockRefByIndex, hasPendingPatches } = usePageContext()
+
+  const [pendingPatches, setPendingPatches] = useState(hasPendingPatches)
+
+  useEffect(
+    () => {
+      setPendingPatches(hasPendingPatches)
+    },
+    [hasPendingPatches]
+  )
+
   useEffect(() => {
     // if anchor link exists, scroll to anchor
     if (anchor) {
@@ -44,7 +54,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
       >
         <PageHeader pageId={id} isFocused={onHeaderClick} />
         <Text color="gray.4" pr="medium">
-          {hasPendingPatches ? 'Saving...' : 'All changes saved'}
+          {pendingPatches ? 'Saving...' : 'All changes saved'}
         </Text>
         <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
       </View>

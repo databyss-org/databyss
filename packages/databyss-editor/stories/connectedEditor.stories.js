@@ -51,11 +51,11 @@ const PageWithAutosave = ({ page }) => {
   const operationsQueue = useRef([])
 
   const throttledAutosave = useCallback(
-    throttle(({ state, patch }) => {
+    throttle(({ nextState, patch }) => {
       const _patch = withWhitelist(patch)
       if (_patch.length) {
         const payload = {
-          id: state.page._id,
+          id: nextState.page._id,
           patch: operationsQueue.current,
         }
         setPatch(payload)
@@ -70,10 +70,10 @@ const PageWithAutosave = ({ page }) => {
   }
 
   const onChange = value => {
-    const _value = addMetaData(value)
+    const patch = addMetaData(value)
     // push changes to a queue
-    operationsQueue.current = operationsQueue.current.concat(_value.patch)
-    throttledAutosave(_value)
+    operationsQueue.current = operationsQueue.current.concat(patch)
+    throttledAutosave({ ...value, patch })
   }
 
   return (
