@@ -23,8 +23,10 @@ const Footer = () => {
   const { setPage, onPageCached } = usePageContext()
   const onNewPageClick = () => {
     const _page = newPage()
-    setPage(_page)
-    onPageCached(_page.page._id, () => navigate(`/pages/${_page.page._id}`))
+    setPage(_page).then(() => {
+      navigate(`/pages/${_page.page._id}`)
+    })
+    //  onPageCached(_page.page._id, () => navigate(`/pages/${_page.page._id}`))
     //  navigate(`/pages/${_page.page._id}`)
     // window.requestAnimationFrame(() => navigate(`/pages/${_page.page._id}`))
     navigateSidebar('/pages')

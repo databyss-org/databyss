@@ -178,7 +178,7 @@ router.post(
                 // ADD NEW ENTITY
                 /* eslint new-cap: 1 */
                 const Model = modelDict(entity)
-                const _entity = new Model(entityFields)
+                _entity = new Model(entityFields)
 
                 //  _entity = new modelDict(entity)(entityFields)
                 await _entity.save()

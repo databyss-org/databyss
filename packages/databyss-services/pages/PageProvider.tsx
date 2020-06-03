@@ -81,8 +81,11 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     [state.cache]
   )
 
-  const setPage = (page: Page): void => {
-    dispatch(savePage(page))
+  const setPage = (page: Page): Promise<void> => {
+    return new Promise(res => {
+      onPageCached(page.page._id, res)
+      dispatch(savePage(page))
+    })
   }
 
   const getPages = () => {
