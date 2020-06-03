@@ -78,10 +78,6 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
       p={pxUnits(0)}
     >
       {menuItems.reduce((acc, item, index) => {
-        if (index) {
-          acc.push(<Separator color="border.1" key={`separator-top${index}`} />)
-        }
-
         const _isActive = item.id === tokens.id && tokens.id
         acc.push(
           <BaseControl

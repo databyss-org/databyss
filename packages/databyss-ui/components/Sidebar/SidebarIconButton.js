@@ -11,6 +11,7 @@ const SidebarIconButton = ({
   onClick,
   isActive,
   borderPosition,
+  title,
   ...others
 }) => {
   const { isMenuOpen } = useNavigationContext()
@@ -37,7 +38,7 @@ const SidebarIconButton = ({
         {...others}
       >
         <Grid singleRow alignItems="center" columnGap="small">
-          <Icon sizeVariant="medium" color="text.3">
+          <Icon sizeVariant="medium" color="text.3" title={title}>
             {icon}
           </Icon>
         </Grid>
