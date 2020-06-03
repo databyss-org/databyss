@@ -14,7 +14,6 @@ import SearchIcon from '@databyss-org/ui/assets/search.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { theme } from '@databyss-org/ui/theming'
 import styledCss from '@styled-system/css'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 
 const Search = ({ onClick }) => {
   const { navigate, getSidebarPath } = useNavigationContext()
