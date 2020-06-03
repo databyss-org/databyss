@@ -1,10 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import css from '@styled-system/css'
 import { View, List } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
-import MenuCollapseSvg from '@databyss-org/ui/assets/menu_collapse.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton, {
@@ -23,6 +22,7 @@ const SidebarCollapsed = () => {
   const {
     navigateSidebar,
     getTokensFromPath,
+    getSidebarPath,
     isMenuOpen,
     setMenuOpen,
   } = useNavigationContext()
@@ -30,14 +30,26 @@ const SidebarCollapsed = () => {
   const [activeItem, setActiveItem] = useState(getTokensFromPath().type)
 
   const onItemClick = item => {
-    navigateSidebar(`/${item}`)
-    setActiveItem(item)
+    if (activeItem === item) {
+      return setMenuOpen(!isMenuOpen)
+    }
+    if (!isMenuOpen) {
+      return (
+        setMenuOpen(true) && navigateSidebar(`/${item}`) && setActiveItem(item)
+      )
+    }
+    return navigateSidebar(`/${item}`) && setActiveItem(item)
   }
+
+  useEffect(
+    () => setActiveItem(getSidebarPath() ? getSidebarPath() : 'pages'),
+    [activeItem]
+  )
 
   const sideBarCollapsedItems = [
     {
       name: 'menuCollapse',
-      icon: isMenuOpen ? <MenuCollapseSvg /> : <MenuSvg />,
+      icon: <MenuSvg />,
       onClick: () => setMenuOpen(!isMenuOpen),
     },
     {
