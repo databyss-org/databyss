@@ -10,16 +10,10 @@ const Header = () => {
   }
 
   return (
-    <BaseControl
-      width="100%"
-      hoverColor="transparent"
-      onClick={() => onHeaderClick()}
-    >
-      <View px="em" py="small" width="100%">
-        <Text variant="uiTextLarge">
-          <Icon sizeVariant="title" color="text.3">
-            <LogoSvg />
-          </Icon>
+    <BaseControl width="100%" onClick={() => onHeaderClick()}>
+      <View px="em" width="100%">
+        <Text variant="heading4" color="text.3">
+          Databyss
         </Text>
       </View>
     </BaseControl>
