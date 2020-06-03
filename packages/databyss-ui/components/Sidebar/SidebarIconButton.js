@@ -29,7 +29,6 @@ const SidebarIconButton = ({
       width="100%"
       onClick={onClick}
       alignItems="center"
-      hoverColor="transparent"
       height={sideBarIconBtnHeight}
       {...others}
     >
