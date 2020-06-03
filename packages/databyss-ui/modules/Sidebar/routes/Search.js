@@ -47,13 +47,7 @@ const Search = ({ onClick }) => {
   }
 
   return (
-    <View
-      height={pxUnits(38)}
-      width="100%"
-      px="small"
-      my="small"
-      onClick={onClick}
-    >
+    <View width="100%" px="small" my="small" onClick={onClick}>
       <View
         backgroundColor="background.0"
         height="100%"
@@ -61,9 +55,10 @@ const Search = ({ onClick }) => {
         position="relative"
         flex={1}
         borderVariant="thinLight"
-        p="small"
+        px="small"
+        py="extraSmall"
       >
-        <Grid singleRow alignItems="center" columnGap="none">
+        <Grid singleRow alignItems="center" columnGap="none" flexWrap="nowrap">
           <Icon sizeVariant="medium" color="text.3" pr="small">
             <SearchIcon />
           </Icon>
