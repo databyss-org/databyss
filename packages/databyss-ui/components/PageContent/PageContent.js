@@ -40,7 +40,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
         alignItems="center"
         flexDirection="row"
         justifyContent="space-between"
-        flexGrow="1"
+        // flexGrow="1"
       >
         <PageHeader pageId={id} isFocused={onHeaderClick} />
         <Text color="gray.4" pr="medium">
