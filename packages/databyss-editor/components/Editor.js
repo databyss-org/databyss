@@ -5,8 +5,6 @@ import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
 import CitationsMenu from './CitationsMenu'
-import { useEditorContext } from '../state/EditorProvider'
-import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 
 const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
   const readOnly = !others.onChange || readonly
@@ -19,19 +17,6 @@ const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
 
   const { onKeyDown, ...slateProps } = others
 
-  const editorContext = useEditorContext()
-
-  // HACK: zero width cursor
-  const onClick = () => {
-    if (!editor.selection && editorContext) {
-      const _sel = stateSelectionToSlateSelection(
-        editor.children,
-        editorContext.state.selection
-      )
-      Transforms.select(editor, _sel)
-    }
-  }
-
   return (
     <Slate editor={editor} {...slateProps}>
       {children}
@@ -39,7 +24,6 @@ const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
       <CitationsMenu />
       <Editable
         spellCheck={process.env.NODE_ENV !== 'test'}
-        onClick={onClick}
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         readOnly={readOnly}
