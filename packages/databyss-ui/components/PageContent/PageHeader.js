@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { Text, View, TextControl } from '@databyss-org/ui/primitives'
 
