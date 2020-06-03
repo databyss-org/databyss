@@ -43,6 +43,7 @@ const Footer = () => {
         width="100%"
         onClick={() => onNewPageClick()}
         flexDirection="row"
+        childViewProps={{ width: '100%' }}
       >
         <Grid singleRow alignItems="center" columnGap="small">
           <View p="extraSmall">
@@ -51,9 +52,18 @@ const Footer = () => {
             </Icon>
           </View>
           {isMenuOpen && (
-            <Text variant="uiTextNormal" color="text.2" ml="em">
-              New Page
-            </Text>
+            <View
+              flexDirection="row"
+              justifyContent="space-between"
+              flexGrow="1"
+            >
+              <Text variant="uiTextNormal" color="text.2" ml="em">
+                New Page
+              </Text>
+              <Text variant="uiTextNormal" color="text.3" mr="small">
+                ⌘+N
+              </Text>
+            </View>
           )}
         </Grid>
       </BaseControl>
