@@ -298,23 +298,26 @@ export default (state, action, onChange) =>
         block.__isActive = false
       })
       const _selectedBlock = draft.blocks[draft.selection.focus.index]
+
       const _selectedEntity = entityForBlockIndex(
         draft,
         draft.selection.focus.index
       )
 
-      // show newBlockMenu if selection is collapsed and is empty
-      _selectedBlock.__showNewBlockMenu =
-        !selectionHasRange(draft.selection) &&
-        !_selectedEntity.text.textValue.length
+      if (_selectedEntity) {
+        // show newBlockMenu if selection is collapsed and is empty
+        _selectedBlock.__showNewBlockMenu =
+          !selectionHasRange(draft.selection) &&
+          !_selectedEntity.text.textValue.length
 
-      // flag blocks with `__isActive` if selection is collapsed and within an atomic element
-      _selectedBlock.__isActive =
-        !selectionHasRange(draft.selection) &&
-        isAtomicInlineType(_selectedEntity.type) &&
-        draft.selection.focus.offset < _selectedEntity.text.textValue.length &&
-        draft.selection.focus.offset > 0
-
+        // flag blocks with `__isActive` if selection is collapsed and within an atomic element
+        _selectedBlock.__isActive =
+          !selectionHasRange(draft.selection) &&
+          isAtomicInlineType(_selectedEntity.type) &&
+          draft.selection.focus.offset <
+            _selectedEntity.text.textValue.length &&
+          draft.selection.focus.offset > 0
+      }
       return cleanupState(draft)
     },
     onChange

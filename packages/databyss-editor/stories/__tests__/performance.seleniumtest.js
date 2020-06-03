@@ -4,7 +4,11 @@ import assert from 'assert'
 import { startSession, OSX, SAFARI } from '@databyss-org/ui/lib/saucelabs'
 // import { jsx as h } from './hyperscript'
 // import { sanitizeEditorChildren } from './__helpers'
-import { getEditor, getElementById, sleep } from './_helpers.selenium'
+import {
+  // getEditor,
+  getElementById,
+  sleep,
+} from './_helpers.selenium'
 
 const SAMPLE_SIZE = 10
 let driver
