@@ -19,11 +19,11 @@ const PageBody = ({ page }) => {
 
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
   const throttledAutosave = useCallback(
-    throttle(({ state, patch }) => {
+    throttle(({ nextState, patch }) => {
       const _patch = withWhitelist(patch)
       if (_patch.length) {
         const payload = {
-          id: state.page._id,
+          id: nextState.page._id,
           patch: operationsQueue.current,
         }
         setPatch(payload)
@@ -35,10 +35,10 @@ const PageBody = ({ page }) => {
 
   // state from provider is out of date
   const onChange = value => {
-    const _value = addMetaData(value)
+    const patch = addMetaData(value)
     // push changes to a queue
-    operationsQueue.current = operationsQueue.current.concat(_value.patch)
-    throttledAutosave(_value)
+    operationsQueue.current = operationsQueue.current.concat(patch)
+    throttledAutosave({ ...value, patch })
   }
 
   return (

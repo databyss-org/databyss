@@ -28,6 +28,7 @@ const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
         readOnly={readOnly}
         autoFocus={autofocus}
         onKeyDown={onKeyDown}
+        css={{ flexGrow: 1 }}
       />
     </Slate>
   )
