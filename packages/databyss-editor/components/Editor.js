@@ -1,6 +1,5 @@
 import React, { useCallback } from 'react'
-import { Slate, Editable, ReactEditor } from 'slate-react'
-import { Transforms } from 'slate'
+import { Slate, Editable } from 'slate-react'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'

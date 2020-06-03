@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useRef, useEffect } from 'react'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../lib/ResourcePending'
@@ -34,6 +34,10 @@ interface RefDict {
   [key: string]: React.Ref<HTMLInputElement>
 }
 
+interface PageHookDict {
+  [key: string]: Function
+}
+
 interface ContextType {
   setPage: (page: Page) => void
   getPages: () => void
@@ -55,7 +59,27 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   initialState,
 }: PropsType) => {
   const refDictRef = useRef<RefDict>({})
+  const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
+
+  /*
+{'akldfjdsjaklfkjajlk' : callback}
+*/
+
   const [state, dispatch] = useReducer(reducer, initialState)
+
+  useEffect(
+    () => {
+      Object.keys(pageCachedHookRef.current).forEach(k => {
+        if (state.cache[k]) {
+          // execute callback
+          pageCachedHookRef.current[k]()
+          // remove from queue
+          delete pageCachedHookRef.current[k]
+        }
+      })
+    },
+    [state.cache]
+  )
 
   const setPage = (page: Page): void => {
     dispatch(savePage(page))
@@ -117,6 +141,11 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(savePatch(patch))
   }
 
+  const onPageCached = (id: string, callback: Function) => {
+    // add back to dictionary
+    pageCachedHookRef.current[id] = callback
+  }
+
   return (
     <PageContext.Provider
       value={{
@@ -130,6 +159,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         removePage,
         archivePage,
         setDefaultPage,
+        onPageCached,
       }}
     >
       {children}

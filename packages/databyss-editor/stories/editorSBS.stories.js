@@ -47,7 +47,7 @@ const Box = ({ children, ...others }) => (
 
 const PageWithAutosave = ({ page, refreshPage }) => {
   const { setPatch } = usePageContext()
-  const [pageState, setPageState] = useState(null)
+  const [, setPageState] = useState(null)
 
   const operationsQueue = useRef([])
 
@@ -88,16 +88,14 @@ const PageWithAutosave = ({ page, refreshPage }) => {
   )
 }
 
-const StaticPage = ({ page }) => {
-  return (
-    <Box width="400px" overflow="scroll" flexShrink={1}>
-      <Text variant="uiTextLarge">From database</Text>
-      <EditorProvider initialState={withMetaData(page)}>
-        <ContentEditable readonly />
-      </EditorProvider>
-    </Box>
-  )
-}
+const StaticPage = ({ page }) => (
+  <Box width="400px" overflow="scroll" flexShrink={1}>
+    <Text variant="uiTextLarge">From database</Text>
+    <EditorProvider initialState={withMetaData(page)}>
+      <ContentEditable readonly />
+    </EditorProvider>
+  </Box>
+)
 
 const EditorWithProvider = () => {
   const { getSession } = useSessionContext()
