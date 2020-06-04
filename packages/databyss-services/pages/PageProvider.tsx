@@ -61,10 +61,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   const refDictRef = useRef<RefDict>({})
   const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
 
-  /*
-{'akldfjdsjaklfkjajlk' : callback}
-*/
-
   const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(

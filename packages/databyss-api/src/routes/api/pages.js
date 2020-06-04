@@ -180,7 +180,6 @@ router.post(
                 const Model = modelDict(entity)
                 _entity = new Model(entityFields)
 
-                //  _entity = new modelDict(entity)(entityFields)
                 await _entity.save()
 
                 return _entity
