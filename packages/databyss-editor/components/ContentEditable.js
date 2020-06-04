@@ -23,7 +23,12 @@ import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 
-const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
+const ContentEditable = ({
+  onDocumentChange,
+  autofocus,
+  readonly,
+  onUnmount,
+}) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
   const sourceContext = useSourceContext()
@@ -57,6 +62,15 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
       Transforms.select(editor, selection)
     }
   }
+
+  useEffect(
+    () => () => {
+      if (onUnmount) {
+        onUnmount()
+      }
+    },
+    []
+  )
 
   // if new atomic block has been added, save atomic
   useEffect(

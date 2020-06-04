@@ -122,12 +122,15 @@ export function savePatch(patch) {
 
 export function savePage(state) {
   const body = cloneDeep(state)
+  delete body.updatePageInCache
   return dispatch => {
     dispatch({
       type: CACHE_PAGE,
       payload: { body, id: body.page._id },
     })
-    services.savePage(body)
+    if (!body.updatePageInCache) {
+      services.savePage(body)
+    }
   }
 }
 
