@@ -325,4 +325,119 @@ describe('connected editor', () => {
 
     assert.deepEqual(actual.selection, expected.selection)
   })
+
+  it('should test data integrity in round trip testing', async () => {
+    await sleep(300)
+    await actions.sendKeys('this is an entry with ')
+    await toggleBold(actions)
+    await actions.sendKeys('bold')
+    await toggleBold(actions)
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys('still within the same block')
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys('@this should toggle a source block')
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys(Key.ARROW_UP)
+    await sleep(1000)
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys(Key.ARROW_UP)
+    await sleep(1000)
+    await actions.sendKeys('#this should toggle a topics block')
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys('this entry is within two atomics')
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+
+    await actions.sendKeys(Key.ARROW_UP)
+    await sleep(1000)
+
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys(Key.BACK_SPACE)
+    await actions.sendKeys(' appended text')
+    await sleep(1000)
+    await actions.sendKeys(Key.ARROW_UP)
+    await sleep(1000)
+
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys('second middle entry')
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys(Key.ENTER)
+    await sleep(1000)
+    await actions.sendKeys(Key.ARROW_UP)
+    await sleep(1000)
+    await actions.sendKeys(Key.ARROW_UP)
+    await sleep(1000)
+    await actions.sendKeys(Key.BACK_SPACE)
+    await sleep(1000)
+
+    await actions.sendKeys(Key.ARROW_DOWN)
+    await sleep(1000)
+    await actions.sendKeys(Key.ARROW_DOWN)
+    await sleep(1000)
+    await actions.sendKeys(Key.ARROW_DOWN)
+    await sleep(1000)
+    await actions.sendKeys(Key.ARROW_DOWN)
+    await sleep(1000)
+    await actions.sendKeys('last entry')
+    await actions.perform()
+    await sleep(20000)
+
+    // refresh page
+    await driver.navigate().refresh()
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="ENTRY">
+          <text>this is an entry with </text>
+          <text bold>bold{'\n'}</text>
+          <text>still within the same block</text>
+        </block>
+        <block type="TOPIC">
+          <text>this should toggle a topics block</text>
+        </block>
+        <block type="ENTRY">
+          <text>this entry is within two atomics appended text</text>
+        </block>
+        <block type="ENTRY">
+          <text />
+        </block>
+        <block type="ENTRY">
+          <text>second middle entry</text>
+        </block>
+        <block type="SOURCE">
+          <text>this should toggle a source block</text>
+        </block>
+        <block type="ENTRY">
+          <text>
+            last entry<cursor />
+          </text>
+        </block>
+      </editor>
+    )
+    // // check if editor has correct value
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
 })
