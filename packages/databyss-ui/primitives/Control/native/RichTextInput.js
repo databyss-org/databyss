@@ -1,17 +1,11 @@
 import React, { forwardRef } from 'react'
-import slateReducer from '@databyss-org/ui/editor/slate/line/reducer'
-import EditorProvider, {
-  lineReducer,
-} from '@databyss-org/ui/editor/EditorProvider'
-import EditorLine from '@databyss-org/ui/editor/EditorLine'
-import SlateContentEditable from '@databyss-org/ui/editor/slate/line/ContentEditable'
+import SingleLine from '@databyss-org/editor/components/SingleLine'
 
 const RichTextInput = forwardRef(
-  ({ value, onChange, id, concatCss, onBlur, multiline, ...others }, ref) => {
-    const _onBlur = (event, editor, next) => {
+  ({ value, onChange, id, concatCss, onBlur, multiline }, ref) => {
+    const _onBlur = event => {
       onBlur(event)
-      setTimeout(() => editor.blur(), 50)
-      next()
+      //  setTimeout(() => editor.blur(), 50)
     }
 
     const _css = [
@@ -23,23 +17,16 @@ const RichTextInput = forwardRef(
     ].concat(concatCss)
 
     return (
-      <EditorProvider
-        initialState={value}
-        editableReducer={slateReducer}
-        reducer={lineReducer}
+      <SingleLine
+        onBlur={_onBlur}
+        multiline={multiline}
+        onChange={onChange}
+        initialValue={value}
+        id={id}
+        overrideCss={_css}
         name="RichTextInput"
-      >
-        <EditorLine onChange={onChange}>
-          <SlateContentEditable
-            id={id}
-            overrideCss={_css}
-            onBlur={_onBlur}
-            multiline={multiline}
-            {...others}
-            ref={ref}
-          />
-        </EditorLine>
-      </EditorProvider>
+        ref={ref}
+      />
     )
   }
 )
