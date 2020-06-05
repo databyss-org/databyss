@@ -23,6 +23,7 @@ import topicReducer, {
 } from '@databyss-org/services/topics/reducer'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
+import * as pageServices from '@databyss-org/services/pages/'
 import PageProvider, {
   usePageContext,
 } from '@databyss-org/services/pages/PageProvider'
@@ -44,24 +45,25 @@ const Box = ({ children, ...others }) => (
   </View>
 )
 
-const PageWithAutosave = ({ page }) => {
+const PageWithAutosave = ({ page, refreshPage }) => {
   const { setPatch } = usePageContext()
-  const [pageState, setPageState] = useState(null)
+  const [, setPageState] = useState(null)
 
   const operationsQueue = useRef([])
 
   const throttledAutosave = useCallback(
-    throttle(({ nextState, patch }) => {
+    throttle(({ state, patch }) => {
       const _patch = withWhitelist(patch)
       if (_patch.length) {
         const payload = {
-          id: nextState.page._id,
+          id: state.page._id,
           patch: operationsQueue.current,
         }
+        refreshPage()
         setPatch(payload)
         operationsQueue.current = []
       }
-    }, 500),
+    }, 3000),
     []
   )
 
@@ -70,51 +72,71 @@ const PageWithAutosave = ({ page }) => {
   }
 
   const onChange = value => {
-    const patch = addMetaData(value)
+    const _value = addMetaData(value)
     // push changes to a queue
-    operationsQueue.current = operationsQueue.current.concat(patch)
-    throttledAutosave({ ...value, patch })
+    operationsQueue.current = operationsQueue.current.concat(_value.patch)
+    throttledAutosave(_value)
   }
 
   return (
-    <View>
+    <Box width="400px" overflow="scroll" flexShrink={1}>
+      <Text variant="uiTextLarge">Editor</Text>
       <EditorProvider onChange={onChange} initialState={withMetaData(page)}>
         <ContentEditable onDocumentChange={onDocumentChange} autofocus />
       </EditorProvider>
-      <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
-        <Text variant="uiTextLargeSemibold">Slate State</Text>
-        <pre id="slateDocument">{pageState}</pre>
-      </Box>
-    </View>
+    </Box>
   )
 }
+
+const StaticPage = ({ page }) => (
+  <Box width="400px" overflow="scroll" flexShrink={1}>
+    <Text variant="uiTextLarge">From database</Text>
+    <EditorProvider initialState={withMetaData(page)}>
+      <ContentEditable readonly />
+    </EditorProvider>
+  </Box>
+)
 
 const EditorWithProvider = () => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
   const { setPage } = usePageContext()
+  const [_page, _setPage] = useState(null)
+
+  // PAGE GETS REFRESHED EVERY 5 SECONDS
+  const _refreshPage = useCallback(
+    throttle(() => {
+      _setPage(null)
+      pageServices.loadPage(account.defaultPage).then(p => _setPage(p))
+    }, 5000),
+    []
+  )
 
   return (
     <View>
-      <Button
-        id="clear-state"
-        mb="small"
-        onClick={() => {
-          setPage(connectedFixture(account.defaultPage))
-        }}
-      >
-        <Text>clear state</Text>
-      </Button>
-      <PageLoader pageId={account.defaultPage}>
-        {page => {
-          if (page.page.name !== 'test document') {
+      <View display="-webkit-box">
+        <Button
+          id="clear-state"
+          m="small"
+          onClick={() => {
             setPage(connectedFixture(account.defaultPage))
-            return null
-          }
-
-          return <PageWithAutosave page={page} />
-        }}
-      </PageLoader>
+          }}
+        >
+          <Text>clear state</Text>
+        </Button>
+      </View>
+      <View display="-webkit-box">
+        <PageLoader pageId={account.defaultPage}>
+          {page => {
+            if (page.page.name !== 'test document') {
+              setPage(connectedFixture(account.defaultPage))
+              return null
+            }
+            return <PageWithAutosave page={page} refreshPage={_refreshPage} />
+          }}
+        </PageLoader>
+        {_page && <StaticPage page={_page} />}
+      </View>
     </View>
   )
 }
@@ -141,4 +163,4 @@ const EditorWithModals = () => (
 storiesOf('Services|Page', module)
   .addDecorator(NotifyDecorator)
   .addDecorator(ViewportDecorator)
-  .add('Slate 5', () => <EditorWithModals initialState={basicFixture} />)
+  .add('Side by side', () => <EditorWithModals initialState={basicFixture} />)

@@ -15,7 +15,7 @@ export const withWhitelist = patch =>
       )
   )
 
-export const addMetaData = ({ state, patch }) => {
+export const addMetaData = ({ previousState, nextState, patch }) => {
   let _patch = withWhitelist(patch)
   // add type to 'entityCache' to operation 'replace'
   _patch = _patch.map(p => {
@@ -23,20 +23,20 @@ export const addMetaData = ({ state, patch }) => {
     // add selection
 
     if (_p.path[0] === 'selection') {
-      _p = { ..._p, value: { ..._p.value, _id: state.selection._id } }
+      _p = { ..._p, value: { ..._p.value, _id: nextState.selection._id } }
     }
 
     if (p.path[0] !== 'entityCache' || p.op !== 'replace') {
       return _p
     }
 
-    // look up in state
+    // look up in previousState
     const _id = _p.path[1]
-    const _type = state.entityCache[_id].type
+    const _type = previousState.entityCache[_id].type
     return { ..._p, value: { ..._p.value, type: _type } }
   })
 
-  return { state, patch: _patch }
+  return _patch
 }
 
 export const newPage = () => {

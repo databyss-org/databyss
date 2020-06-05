@@ -15,7 +15,6 @@ import NavigationProvider from '@databyss-org/ui/components/Navigation/Navigatio
 import ContentEditable from '../components/ContentEditable'
 import EditorProvider from '../state/EditorProvider'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
-import blankState from './fixtures/blankState'
 import { SMALL, MED, LARGE, generateState } from './__tests__/__helpers'
 import FPSStats from './__tests__/FPS'
 
@@ -209,5 +208,5 @@ storiesOf('Cypress//Tests', module)
         return null
       }, _res)
 
-    return <EditorWithModals initialState={blankState} />
+    return <EditorWithModals />
   })

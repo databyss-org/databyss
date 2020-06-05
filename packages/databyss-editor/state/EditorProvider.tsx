@@ -46,7 +46,8 @@ type ContextType = {
 }
 
 type OnChangeArgs = {
-  state: any
+  nextState: any
+  previousState: any
   patch: Patch
   inversePatch: Patch
 }

@@ -56,7 +56,6 @@ const Element = ({ attributes, children, element }) => {
           {block.__showNewBlockMenu && (
             <View
               position="absolute"
-              width="100%"
               contentEditable="false"
               readonly
               suppressContentEditableWarning

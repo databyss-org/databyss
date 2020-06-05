@@ -5,8 +5,8 @@ import Element from './Element'
 import FormatMenu from './FormatMenu'
 import CitationsMenu from './CitationsMenu'
 
-const Editor = ({ children, editor, autofocus, ...others }) => {
-  const readOnly = !others.onChange
+const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
+  const readOnly = !others.onChange || readonly
   // const editor = useMemo(() => withReact(createEditor()), [])
   const renderElement = useCallback(
     props => <Element readOnly={readOnly} {...props} />,
@@ -28,6 +28,7 @@ const Editor = ({ children, editor, autofocus, ...others }) => {
         readOnly={readOnly}
         autoFocus={autofocus}
         onKeyDown={onKeyDown}
+        css={{ flexGrow: 1 }}
       />
     </Slate>
   )
