@@ -129,6 +129,8 @@
     ]
   },
   "dependencies": {
+    "@databyss-org/slate": "^0.58.1-b2",
+    "@databyss-org/slate-react": "^0.58.1-b2",
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",
     "@babel/node": "^7.5.5",
