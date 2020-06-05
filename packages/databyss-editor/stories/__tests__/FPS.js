@@ -1,4 +1,5 @@
-'use strict'
+/* eslint-disable */
+
 // https://github.com/mrdoob/stats.js/
 
 Object.defineProperty(exports, '__esModule', {

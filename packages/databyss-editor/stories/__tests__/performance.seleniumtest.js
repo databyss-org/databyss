@@ -1,22 +1,25 @@
-/** @jsx h */
 /* eslint-disable func-names */
-import { By, Key } from 'selenium-webdriver'
+// import { By, Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, SAFARI } from '@databyss-org/ui/lib/saucelabs'
-import { jsx as h } from './hyperscript'
-import { sanitizeEditorChildren } from './__helpers'
-import { getEditor, getElementById, sleep } from './_helpers.selenium'
+// import { jsx as h } from './hyperscript'
+// import { sanitizeEditorChildren } from './__helpers'
+import {
+  // getEditor,
+  getElementById,
+  sleep,
+} from './_helpers.selenium'
 
 const SAMPLE_SIZE = 10
 let driver
-let editor
+// let editor
 let loadingTime
 let clearBlocksButton
-let fpsButton
+// let fpsButton
 let smallBlocksButton
-let medBlocksButton
-let largeBlocksButton
-let fpsRate
+// let medBlocksButton
+// let largeBlocksButton
+// let fpsRate
 
 function getAvg(threshold) {
   const total = threshold.reduce((acc, c) => acc + c, 0)
@@ -35,14 +38,14 @@ describe('editor performance', () => {
     driver = await startSession('Slate-5-basic-osx-safari', OSX, SAFARI)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     await sleep(1000)
-    editor = await getEditor(driver)
+    // editor = await getEditor(driver)
 
     // buttons
     clearBlocksButton = await getElementById(driver, 'clear-blocks')
-    fpsButton = await getElementById(driver, 'set-fps')
+    // fpsButton = await getElementById(driver, 'set-fps')
     smallBlocksButton = await getElementById(driver, 'small-blocks')
-    medBlocksButton = await getElementById(driver, 'med-blocks')
-    largeBlocksButton = await getElementById(driver, 'large-blocks')
+    // medBlocksButton = await getElementById(driver, 'med-blocks')
+    // largeBlocksButton = await getElementById(driver, 'large-blocks')
 
     // markers
     loadingTime = await getElementById(driver, 'loading-stats')
@@ -58,7 +61,8 @@ describe('editor performance', () => {
   })
   it('should test for loading time', async () => {
     await sleep(300)
-    let _times = []
+    const _times = []
+    /* eslint-disable no-await-in-loop */
     for (let i = 0; i < SAMPLE_SIZE; i += 1) {
       await clearBlocksButton.click()
       await smallBlocksButton.click()
@@ -68,9 +72,9 @@ describe('editor performance', () => {
 
     const _averageTime = getAvg(_times)
 
-    console.log(_averageTime)
+    // console.log(_averageTime)
     await sleep(3000)
 
-    assert.equal(_averageTime < 0.2, true)
+    assert.equal(_averageTime < 0.4, true)
   })
 })

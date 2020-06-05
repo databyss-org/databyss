@@ -70,21 +70,44 @@ export function savePatch(patch) {
     return dispatch => {
       dispatch({
         type: QUEUE_PATCH,
+        payload: {
+          queueSize: queue.length,
+        },
       })
     }
   }
   // perform first batch of patches in queue
   busy = true
-  const _patch = queue.shift()
+  let _patch = queue.shift()
+  let _batch = _patch.patch
+  const _pageId = _patch.id
+  while (queue.length) {
+    _patch = queue.shift()
+    if (_patch.id !== _pageId) {
+      queue.unshift(_patch)
+      break
+    }
+    _batch = _batch.concat(_patch.patch)
+  }
+  const _batchPatch = { id: _pageId, patch: _batch }
   return dispatch => {
     dispatch({
       type: PATCH,
+      payload: {
+        queueSize: queue.length,
+      },
     })
     services
-      .savePatch(_patch)
+      .savePatch(_batchPatch)
       .then(() => {
         busy = false
         // repeat function with no patch variable if patches are still in queue
+        dispatch({
+          type: PATCH,
+          payload: {
+            queueSize: queue.length,
+          },
+        })
         if (queue.length) {
           dispatch(savePatch())
         }
@@ -99,12 +122,15 @@ export function savePatch(patch) {
 
 export function savePage(state) {
   const body = cloneDeep(state)
+  delete body.updatePageInCache
   return dispatch => {
     dispatch({
       type: CACHE_PAGE,
       payload: { body, id: body.page._id },
     })
-    services.savePage(body)
+    if (!body.updatePageInCache) {
+      services.savePage(body)
+    }
   }
 }
 

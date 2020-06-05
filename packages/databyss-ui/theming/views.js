@@ -49,6 +49,7 @@ const hlineVariants = {
 }
 
 const widthVariants = {
+  none: {},
   content: {
     maxWidth: pxUnits(500),
   },

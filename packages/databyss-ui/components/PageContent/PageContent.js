@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useLocation, Router } from '@reach/router'
 import { PagesLoader, PageLoader } from '@databyss-org/ui/components/Loaders'
-import { View } from '@databyss-org/ui/primitives'
+import { View, Text } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { ArchiveBin } from './ArchiveBin'
 
@@ -15,7 +15,17 @@ export const PageRouter = () => (
 )
 
 const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
-  const { getBlockRefByIndex } = usePageContext()
+  const { getBlockRefByIndex, hasPendingPatches } = usePageContext()
+
+  const [pendingPatches, setPendingPatches] = useState(hasPendingPatches)
+
+  useEffect(
+    () => {
+      setPendingPatches(hasPendingPatches)
+    },
+    [hasPendingPatches]
+  )
+
   useEffect(() => {
     // if anchor link exists, scroll to anchor
     if (anchor) {
@@ -40,8 +50,12 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
         alignItems="center"
         flexDirection="row"
         justifyContent="space-between"
+        // flexGrow="1"
       >
         <PageHeader pageId={id} isFocused={onHeaderClick} />
+        <Text color="gray.4" pr="medium">
+          {pendingPatches ? 'Saving...' : 'All changes saved'}
+        </Text>
         <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
       </View>
       <PageBody page={page} readOnly={readOnly} />

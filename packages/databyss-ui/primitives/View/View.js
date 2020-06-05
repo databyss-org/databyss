@@ -90,6 +90,7 @@ export const defaultProps = {
   paddingVariant: 'none',
   borderVariant: 'none',
   shadowVariant: 'none',
+  widthVariant: 'none',
   flexGrow: 0,
   flexShrink: 0,
   flexBasis: 'auto',

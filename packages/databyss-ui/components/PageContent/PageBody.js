@@ -12,18 +12,23 @@ import {
 
 const PageBody = ({ page }) => {
   const { location } = useNavigationContext()
-  const { clearBlockDict, setPatch } = usePageContext()
+  const { clearBlockDict, setPatch, setPage } = usePageContext()
   useEffect(() => () => clearBlockDict(), [])
 
   const operationsQueue = useRef([])
+  const pageState = useRef(null)
+
+  const onUnmount = () => {
+    setPage({ ...pageState.current, updatePageInCache: true })
+  }
 
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
   const throttledAutosave = useCallback(
-    throttle(({ state, patch }) => {
+    throttle(({ nextState, patch }) => {
       const _patch = withWhitelist(patch)
       if (_patch.length) {
         const payload = {
-          id: state.page._id,
+          id: nextState.page._id,
           patch: operationsQueue.current,
         }
         setPatch(payload)
@@ -33,14 +38,13 @@ const PageBody = ({ page }) => {
     []
   )
 
-  // TODO: Not all events fire onchange even in editor
   // state from provider is out of date
   const onChange = value => {
-    const _value = addMetaData(value)
-
+    pageState.current = value.nextState
+    const patch = addMetaData(value)
     // push changes to a queue
-    operationsQueue.current = operationsQueue.current.concat(_value.patch)
-    throttledAutosave(_value)
+    operationsQueue.current = operationsQueue.current.concat(patch)
+    throttledAutosave({ ...value, patch })
   }
 
   return (
@@ -49,7 +53,7 @@ const PageBody = ({ page }) => {
       onChange={onChange}
       initialState={withMetaData(page)}
     >
-      <ContentEditable autofocus />
+      <ContentEditable onUnmount={onUnmount} autofocus />
     </EditorProvider>
   )
 }
