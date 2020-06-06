@@ -30,15 +30,14 @@ const SidebarCollapsed = () => {
   const [activeItem, setActiveItem] = useState('pages')
 
   const onItemClick = item => {
-    if (activeItem === item) {
-      return setMenuOpen(!isMenuOpen)
-    }
     if (!isMenuOpen) {
       return (
         setMenuOpen(true) && navigateSidebar(`/${item}`) && setActiveItem(item)
       )
     }
-    return navigateSidebar(`/${item}`) && setActiveItem(item)
+    return activeItem === item
+      ? setMenuOpen(!isMenuOpen)
+      : navigateSidebar(`/${item}`) && setActiveItem(item)
   }
 
   useEffect(

@@ -13,7 +13,6 @@ import {
   BaseControl,
   Grid,
   Icon,
-  Separator,
 } from '@databyss-org/ui/primitives'
 
 const defaultMenu = [
@@ -76,6 +75,7 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
       })}
       overflow="scroll"
       p={pxUnits(0)}
+      mt="extraSmall"
     >
       {menuItems.reduce((acc, item, index) => {
         const _isActive = item.id === tokens.id && tokens.id

@@ -1,6 +1,5 @@
 import React from 'react'
-import { Text, View, Icon, BaseControl } from '@databyss-org/ui/primitives'
-import LogoSvg from '@databyss-org/ui/assets/logo1.svg'
+import { Text, BaseControl } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 
 const Header = () => {
@@ -10,12 +9,15 @@ const Header = () => {
   }
 
   return (
-    <BaseControl width="100%" onClick={() => onHeaderClick()}>
-      <View px="em" width="100%">
-        <Text variant="heading4" color="text.3">
-          Databyss
-        </Text>
-      </View>
+    <BaseControl
+      width="100%"
+      onClick={() => onHeaderClick()}
+      px="em"
+      mb="extraSmall"
+    >
+      <Text variant="heading4" color="text.3">
+        Databyss
+      </Text>
     </BaseControl>
   )
 }
