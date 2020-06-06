@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Transforms, Text } from 'slate'
+import { Transforms, Text } from '@databyss-org/slate'
 import { useEditor, ReactEditor } from 'slate-react'
 import buttons, {
   editorMarginMenuItemHeight,

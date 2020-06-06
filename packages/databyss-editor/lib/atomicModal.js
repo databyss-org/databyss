@@ -1,4 +1,4 @@
-import { Transforms } from 'slate'
+import { Transforms } from '@databyss-org/slate'
 import { ReactEditor } from 'slate-react'
 import { stateSelectionToSlateSelection } from './slateUtils'
 import { entityForBlockIndex } from '../state/util'

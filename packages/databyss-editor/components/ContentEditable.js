@@ -1,5 +1,11 @@
 import React, { useMemo, useRef, useEffect } from 'react'
-import { createEditor, Node, Transforms, Point, Range } from 'slate'
+import {
+  createEditor,
+  Node,
+  Transforms,
+  Point,
+  Range,
+} from '@databyss-org/slate'
 import { ReactEditor, withReact } from 'slate-react'
 import _ from 'lodash'
 import { produce } from 'immer'
