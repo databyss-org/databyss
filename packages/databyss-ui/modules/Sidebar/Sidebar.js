@@ -1,5 +1,4 @@
 import React from 'react'
-import css from '@styled-system/css'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { Text, View, List } from '@databyss-org/ui/primitives'
 import SidebarCollapsed from './SidebarCollapsed'
@@ -7,6 +6,7 @@ import { darkTheme } from '../../theming/theme'
 import Search from './routes/Search'
 import Pages from './routes/Pages'
 import Header from '../../components/Sidebar/Header'
+import { sidebar } from '../../theming/components'
 
 export const defaultProps = {
   height: '100vh',
@@ -27,8 +27,6 @@ Section.defaultProps = {
   variant: 'heading3',
 }
 
-export const sidebarWidth = 240
-
 const Sidebar = () => {
   const { navigateSidebar, getSidebarPath, isMenuOpen } = useNavigationContext()
   const menuItem = getSidebarPath()
@@ -40,13 +38,7 @@ const Sidebar = () => {
   return isMenuOpen ? (
     <>
       <SidebarCollapsed />
-      <View
-        {...defaultProps}
-        position="relative"
-        css={css({
-          width: sidebarWidth,
-        })}
-      >
+      <View {...defaultProps} position="relative" width={sidebar.width}>
         <View
           widthVariant="content"
           theme={darkTheme}

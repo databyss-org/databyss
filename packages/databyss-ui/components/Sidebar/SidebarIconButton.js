@@ -3,8 +3,7 @@ import { Grid, View, Icon, BaseControl } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { timing } from '@databyss-org/ui/theming/theme'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-
-export const sideBarIconBtnHeight = 60
+import { sidebar } from '../../theming/components'
 
 const SidebarIconButton = ({
   icon,
@@ -34,7 +33,7 @@ const SidebarIconButton = ({
         width="100%"
         onClick={onClick}
         alignItems="center"
-        height={sideBarIconBtnHeight}
+        height={sidebar.iconBtnHeight}
         {...others}
       >
         <Grid singleRow alignItems="center" columnGap="small">

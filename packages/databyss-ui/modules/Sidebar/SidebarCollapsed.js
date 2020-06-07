@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import css from '@styled-system/css'
 import { View, List } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import SidebarIconButton, {
-  sideBarIconBtnHeight,
-} from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
+import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
 import { darkTheme } from '../../theming/theme'
+import { sidebar } from '../../theming/components'
 
 export const defaultProps = {
   height: '100vh',
 }
-
-export const sidebarCollapsedWidth = 56
 
 const SidebarCollapsed = () => {
   const {
@@ -75,7 +71,7 @@ const SidebarCollapsed = () => {
       .indexOf(itemName)
     const startPosition = 12
 
-    return startPosition + itemIndex * sideBarIconBtnHeight
+    return startPosition + itemIndex * sidebar.iconBtnHeight
   }
 
   return (
@@ -87,9 +83,7 @@ const SidebarCollapsed = () => {
       height="100vh"
       borderRightColor="border.1"
       borderRightWidth={pxUnits(1)}
-      css={css({
-        width: sidebarCollapsedWidth,
-      })}
+      width={sidebar.collapsedWidth}
     >
       <List verticalItemPadding={2} horizontalItemPadding={1} m="none">
         {sideBarCollapsedItems.map(item => (

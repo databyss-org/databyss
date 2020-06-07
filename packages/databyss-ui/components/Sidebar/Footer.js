@@ -11,8 +11,7 @@ import {
   Icon,
   Grid,
 } from '@databyss-org/ui/primitives'
-import { sidebarWidth } from '@databyss-org/ui/modules/Sidebar/Sidebar'
-import { sidebarCollapsedWidth } from '@databyss-org/ui/modules/Sidebar/SidebarCollapsed'
+import { sidebar } from '@databyss-org/ui/theming/components'
 
 const Footer = () => {
   const { navigate, navigateSidebar, isMenuOpen } = useNavigationContext()
@@ -31,8 +30,8 @@ const Footer = () => {
       left={0}
       width={
         isMenuOpen
-          ? sidebarWidth + sidebarCollapsedWidth
-          : sidebarCollapsedWidth
+          ? sidebar.width + sidebar.collapsedWidth
+          : sidebar.collapsedWidth
       }
       zIndex={1}
     >
