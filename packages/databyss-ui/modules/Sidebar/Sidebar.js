@@ -5,6 +5,8 @@ import SidebarCollapsed from './SidebarCollapsed'
 import { darkTheme } from '../../theming/theme'
 import Search from './routes/Search'
 import Pages from './routes/Pages'
+import Sources from './routes/Sources'
+import Topics from './routes/Topics'
 import Header from '../../components/Sidebar/Header'
 import { sidebar } from '../../theming/components'
 
@@ -62,6 +64,8 @@ const Sidebar = () => {
               }}
             />
             {(menuItem === 'pages' || !menuItem) && <Pages />}
+            {menuItem === 'sources' && <Sources />}
+            {menuItem === 'topics' && <Topics />}
           </List>
         </View>
       </View>

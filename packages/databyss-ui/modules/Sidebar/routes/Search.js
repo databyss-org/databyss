@@ -64,7 +64,9 @@ const Search = ({ onClick }) => {
             <SearchIcon />
           </Icon>
           <TextInput
-            placeholder="Search"
+            placeholder={
+              menuItem === 'search' ? 'Search' : `Search in ${menuItem}`
+            }
             variant="bodyNormal"
             color="text.2"
             value={{ textValue: searchTerm }}

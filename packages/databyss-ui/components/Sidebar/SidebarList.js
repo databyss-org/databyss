@@ -1,12 +1,10 @@
 import React from 'react'
-import css from '@styled-system/css'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import SourceSvg from '@databyss-org/ui/assets/source.svg'
-import AuthorSvg from '@databyss-org/ui/assets/author.svg'
+import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
+import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
-import Databyss from '@databyss-org/ui/assets/databyss.svg'
 import {
   Text,
   View,
@@ -15,49 +13,24 @@ import {
   Icon,
 } from '@databyss-org/ui/primitives'
 
-const defaultMenu = [
-  {
-    type: 'pages',
-    text: 'Pages',
-  },
-  // {
-  //   type: 'sources',
-  //   text: 'Sources',
-  // },
-  //   {
-  //     type: 'authors',
-  //     text: 'Authors',
-  //   },
-  //   {
-  //     type: 'topics',
-  //     text: 'Topics',
-  //   },
-]
-
 const menuSvgs = type =>
   ({
-    header: <Databyss />,
     pages: <PageSvg />,
-    sources: <SourceSvg />,
-    authors: <AuthorSvg />,
+    sources: <SourcesSvg />,
+    authors: <AuthorsSvg />,
     topics: <TopicSvg />,
   }[type])
 
-const SidebarList = ({ menuItems = defaultMenu }) => {
-  const {
-    getTokensFromPath,
-    navigateSidebar,
-    navigate,
-  } = useNavigationContext()
+const SidebarList = ({ menuItems }) => {
+  const { getTokensFromPath, navigate } = useNavigationContext()
 
   const tokens = getTokensFromPath()
 
   const onClick = item => {
-    if (!item.id) {
-      return navigateSidebar(`/${item.type}`)
-    }
     // dispatch id to fetch
-    return navigate(`/pages/${item.id}`)
+    if (item.id) {
+      return navigate(`/pages/${item.id}`)
+    }
   }
 
   const padding = 24
@@ -70,16 +43,15 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
   return (
     <View
       width="100%"
-      css={css({
-        height: `calc(100vh - ${totalHeight})`,
-      })}
+      height={`calc(100vh - ${totalHeight})`}
       overflow="scroll"
       p={pxUnits(0)}
       mt="extraSmall"
     >
-      {menuItems.reduce((acc, item, index) => {
-        const _isActive = item.id === tokens.id && tokens.id
-        acc.push(
+      {menuItems.map((item, index) => {
+        const _isActive = item.id === tokens.id
+
+        return (
           <BaseControl
             data-test-element={`page-sidebar-${index}`}
             backgroundColor={_isActive ? 'control.1' : 'transparent'}
@@ -101,9 +73,7 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
             </View>
           </BaseControl>
         )
-
-        return acc
-      }, [])}
+      })}
     </View>
   )
 }
