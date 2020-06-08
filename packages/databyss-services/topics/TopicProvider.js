@@ -1,12 +1,10 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useRef } from 'react'
 import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
-
 import reducer, { initialState } from './reducer'
-
-import { saveTopic, fetchTopic } from './actions'
+import { saveTopic, fetchTopic, getAllTopicsFromAPI } from './actions'
 
 const useReducer = createReducer()
 
@@ -14,6 +12,8 @@ export const TopicContext = createContext()
 
 const TopicProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
+
+  const isLoadedRef = useRef(null)
 
   // provider methods
   const setTopic = topic => {
@@ -33,12 +33,29 @@ const TopicProvider = ({ children, initialState, reducer }) => {
     return null
   }
 
+  const getAllTopics = () => {
+    // if topics are being loaded
+    if (state.isLoading) {
+      return null
+    }
+
+    // if topics have already been loaded
+    if (isLoadedRef.current) {
+      return state.cache
+    }
+
+    isLoadedRef.current = true
+    dispatch(getAllTopicsFromAPI())
+    return null
+  }
+
   return (
     <TopicContext.Provider
       value={{
         state,
         setTopic,
         getTopic,
+        getAllTopics,
       }}
     >
       {children}
