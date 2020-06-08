@@ -65,15 +65,6 @@ const SidebarCollapsed = () => {
     },
   ]
 
-  const getBorderPosition = itemName => {
-    const itemIndex = sideBarCollapsedItems
-      .map(item => item.name)
-      .indexOf(itemName)
-    const startPosition = 12
-
-    return startPosition + itemIndex * sidebar.iconBtnHeight
-  }
-
   return (
     <View
       {...defaultProps}
@@ -93,7 +84,6 @@ const SidebarCollapsed = () => {
             icon={item.icon}
             isActive={activeItem === item.name}
             onClick={item.onClick}
-            borderPosition={getBorderPosition(item.name)}
           />
         ))}
       </List>
