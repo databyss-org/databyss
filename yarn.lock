@@ -1222,7 +1222,20 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@databyss-org/slate@0.58.1-b2":
+"@databyss-org/slate-react@^0.58.1-b2":
+  version "0.58.1-b2"
+  resolved "https://registry.yarnpkg.com/@databyss-org/slate-react/-/slate-react-0.58.1-b2.tgz#81ec56aa73e4a72c924d25753c628f0523812682"
+  integrity sha512-DE7wh8sHJvVDKDomdp4gQ1J3vfFpBK8K/0/8jNjXs9zTOSaSxVLQM7D4sQUzA/3EWJQPT8XdY80W1cGNbmwvbw==
+  dependencies:
+    "@types/is-hotkey" "^0.1.1"
+    "@types/lodash" "^4.14.149"
+    direction "^1.0.3"
+    is-hotkey "^0.1.6"
+    is-plain-object "^3.0.0"
+    lodash "^4.17.4"
+    scroll-into-view-if-needed "^2.2.20"
+
+"@databyss-org/slate@0.58.1-b2", "@databyss-org/slate@^0.58.1-b2":
   version "0.58.1-b2"
   resolved "https://registry.yarnpkg.com/@databyss-org/slate/-/slate-0.58.1-b2.tgz#421d90f6f8df2d6d6252875287107e32e4da6000"
   integrity sha512-wZo5ktRF2KBB0tNnI+JJJzmFxNqTRsbYzC0osPXAEDMWfKZQKubB/o++ArJtGJ5YmqYaL0qOJNZPvpfosdICIA==

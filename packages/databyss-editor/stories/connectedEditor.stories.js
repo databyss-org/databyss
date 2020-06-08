@@ -48,7 +48,12 @@ const PageWithAutosave = ({ page }) => {
   const { setPatch } = usePageContext()
   const [pageState, setPageState] = useState(null)
 
+  const [isWorking, setIsWorking] = useState(false)
+  const [idleId, setIdleId] = useState(false)
+
   const operationsQueue = useRef([])
+
+  window.requestIdleCallback(() => setIsWorking(false), { timeout: 10000 })
 
   const throttledAutosave = useCallback(
     throttle(({ nextState, patch }) => {
@@ -70,6 +75,7 @@ const PageWithAutosave = ({ page }) => {
   }
 
   const onChange = value => {
+    setIsWorking(true)
     const patch = addMetaData(value)
     // push changes to a queue
     operationsQueue.current = operationsQueue.current.concat(patch)
@@ -85,6 +91,7 @@ const PageWithAutosave = ({ page }) => {
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{pageState}</pre>
       </Box>
+      {!isWorking && <View id="is-done-loading">has finished processing</View>}
     </View>
   )
 }
