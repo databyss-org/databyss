@@ -2,24 +2,19 @@ import React from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { newPage } from '@databyss-org/services/pages/_helpers'
+import AddPageSvg from '@databyss-org/ui/assets/add_page.svg'
 import {
   Text,
   View,
   BaseControl,
-  Grid,
-  Icon,
   Separator,
+  Icon,
+  Grid,
 } from '@databyss-org/ui/primitives'
-import Plus from '@databyss-org/ui/assets/plus.svg'
-
-const FooterText = ({ text }) => (
-  <Text color="text.3" variant="uiTextSmall" p="tiny">
-    {text}
-  </Text>
-)
+import { sidebar } from '@databyss-org/ui/theming/components'
 
 const Footer = () => {
-  const { navigate, navigateSidebar } = useNavigationContext()
+  const { navigate, navigateSidebar, isMenuOpen } = useNavigationContext()
   const { setPage } = usePageContext()
   const onNewPageClick = () => {
     const _page = newPage()
@@ -29,30 +24,47 @@ const Footer = () => {
   }
 
   return (
-    <View alignItems="stretch" flexGrow={1} width="100%" p="medium">
+    <View
+      position="absolute"
+      bottom={0}
+      left={0}
+      width={
+        isMenuOpen
+          ? sidebar.width + sidebar.collapsedWidth
+          : sidebar.collapsedWidth
+      }
+      zIndex={1}
+    >
       <Separator color="border.1" />
-
-      <View p="small">
-        <FooterText text="Syntax Guide" />
-      </View>
-      <Separator color="border.1" />
-      <View p="small">
-        <FooterText text="@ source" />
-        <FooterText text="// location" />
-        <FooterText text="# topic" />
-      </View>
-      <Separator color="border.1" />
-      <BaseControl width="100%" onClick={onNewPageClick}>
-        <View p="medium" pl="small">
-          <Grid singleRow alignItems="center" columnGap="small">
-            <Icon sizeVariant="medium" color="text.3">
-              <Plus />
+      <BaseControl
+        px="small"
+        py="extraSmall"
+        width="100%"
+        onClick={() => onNewPageClick()}
+        flexDirection="row"
+        childViewProps={{ width: '100%' }}
+      >
+        <Grid singleRow alignItems="center" columnGap="small">
+          <View p="extraSmall">
+            <Icon sizeVariant="medium" color="text.2">
+              <AddPageSvg />
             </Icon>
-            <Text variant="uiTextSmall" color="text.3">
-              New Page
-            </Text>
-          </Grid>
-        </View>
+          </View>
+          {isMenuOpen && (
+            <View
+              flexDirection="row"
+              justifyContent="space-between"
+              flexGrow="1"
+            >
+              <Text variant="uiTextNormal" color="text.2" ml="em">
+                New Page
+              </Text>
+              <Text variant="uiTextNormal" color="text.3" mr="small">
+                ⌘+N
+              </Text>
+            </View>
+          )}
+        </Grid>
       </BaseControl>
     </View>
   )

@@ -7,14 +7,12 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import Databyss from '@databyss-org/ui/assets/databyss.svg'
-import ArrowRight from '@databyss-org/ui/assets/arrowRight.svg'
 import {
   Text,
   View,
   BaseControl,
   Grid,
   Icon,
-  Separator,
 } from '@databyss-org/ui/primitives'
 
 const defaultMenu = [
@@ -48,12 +46,9 @@ const menuSvgs = type =>
 const SidebarList = ({ menuItems = defaultMenu }) => {
   const {
     getTokensFromPath,
-    getSidebarPath,
     navigateSidebar,
     navigate,
   } = useNavigationContext()
-
-  const menuItem = getSidebarPath()
 
   const tokens = getTokensFromPath()
 
@@ -67,7 +62,7 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
 
   const padding = 24
   const headerHeight = 66
-  const footerHeight = 238
+  const footerHeight = 48
   const searchBar = 56
 
   const totalHeight = pxUnits(padding + headerHeight + footerHeight + searchBar)
@@ -80,39 +75,27 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
       })}
       overflow="scroll"
       p={pxUnits(0)}
+      mt="extraSmall"
     >
       {menuItems.reduce((acc, item, index) => {
-        if (index) {
-          acc.push(<Separator color="border.1" key={`separator-top${index}`} />)
-        }
-
         const _isActive = item.id === tokens.id && tokens.id
         acc.push(
           <BaseControl
-            backgroundColor={_isActive ? 'background.1' : 'background.0'}
-            p={2}
+            backgroundColor={_isActive ? 'control.1' : 'transparent'}
+            py="small"
+            px="em"
             key={index}
             width="100%"
             onClick={() => onClick(item)}
           >
             <View>
               <Grid singleRow flexWrap="nowrap" columnGap="small">
-                <Icon sizeVariant="tiny" color="text.3" mt={pxUnits(2)}>
+                <Icon sizeVariant="tiny" color="text.2" mt={pxUnits(2)}>
                   {menuSvgs(item.type)}
                 </Icon>
-                <Text
-                  variant={!_isActive ? 'uiTextSmall' : 'uiTextSmallSemibold'}
-                  color="text.2"
-                >
+                <Text variant="uiTextSmall" color="text.2">
                   {item.text}
                 </Text>
-                {!menuItem && (
-                  <View position="absolute" right="small">
-                    <Icon sizeVariant="small" color="text.3">
-                      <ArrowRight />
-                    </Icon>
-                  </View>
-                )}
               </Grid>
             </View>
           </BaseControl>
