@@ -121,14 +121,19 @@ export function savePatch(patch) {
 }
 
 export function savePage(state) {
+  const id = state.page._id
   const body = cloneDeep(state)
+  if (state.updatePageInCache) {
+    // remove page title from payload to prevent name from being updated
+    delete body.page
+  }
   delete body.updatePageInCache
   return dispatch => {
     dispatch({
       type: CACHE_PAGE,
-      payload: { body, id: body.page._id },
+      payload: { body, id },
     })
-    if (!body.updatePageInCache) {
+    if (!state.updatePageInCache) {
       services.savePage(body)
     }
   }
