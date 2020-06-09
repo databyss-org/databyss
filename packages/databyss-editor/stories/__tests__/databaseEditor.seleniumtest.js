@@ -439,6 +439,10 @@ describe('connected editor', () => {
     await actions.perform()
     await actions.clear()
     await sleep(1000)
+    await actions.sendKeys(Key.ARROW_DOWN)
+    await actions.perform()
+    await actions.clear()
+    await sleep(1000)
     await actions.sendKeys('last entry')
     await actions.perform()
     await sleep(20000)
@@ -461,13 +465,16 @@ describe('connected editor', () => {
           <text>this should toggle a topics block</text>
         </block>
         <block type="ENTRY">
-          <text>this entry is within two atomics appended text</text>
+          <text />
         </block>
         <block type="ENTRY">
           <text>second middle entry</text>
         </block>
         <block type="ENTRY">
           <text />
+        </block>
+        <block type="ENTRY">
+          <text>this entry is within two atomics appended text</text>
         </block>
         <block type="SOURCE">
           <text>this should toggle a source block</text>
