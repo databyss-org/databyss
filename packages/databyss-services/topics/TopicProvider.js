@@ -4,7 +4,7 @@ import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
 import reducer, { initialState } from './reducer'
-import { saveTopic, fetchTopic, getAllTopicsFromAPI } from './actions'
+import { saveTopic, fetchTopic, fetchAllTopics } from './actions'
 
 const useReducer = createReducer()
 
@@ -45,7 +45,7 @@ const TopicProvider = ({ children, initialState, reducer }) => {
     }
 
     isLoadedRef.current = true
-    dispatch(getAllTopicsFromAPI())
+    dispatch(fetchAllTopics())
     return null
   }
 
