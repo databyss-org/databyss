@@ -46,7 +46,7 @@ export function saveTopic(topicFields) {
   }
 }
 
-export function getAllTopicsFromAPI() {
+export function fetchAllTopics() {
   return async dispatch => {
     dispatch({
       type: CLEAR_TOPICS,
@@ -57,7 +57,5 @@ export function getAllTopicsFromAPI() {
         payload: { topics },
       })
     })
-
-    // TODO: set error handler if failed save
   }
 }
