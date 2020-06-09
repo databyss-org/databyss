@@ -371,15 +371,6 @@ describe('connected editor', () => {
     await downKey(actions)
 
     await actions.sendKeys('last entry')
-    await upKey(actions)
-    await upKey(actions)
-    await upKey(actions)
-    await upKey(actions)
-    await upKey(actions)
-    await upKey(actions)
-    await upKey(actions)
-    await enterKey(actions)
-
     await actions.perform()
     await sleep(20000)
 
@@ -393,12 +384,7 @@ describe('connected editor', () => {
     const expected = (
       <editor>
         <block type="ENTRY">
-          <text />
-        </block>
-        <block type="ENTRY">
-          <text>
-            <cursor />this is an entry with{' '}
-          </text>
+          <text>this is an entry with </text>
           <text bold>bold{'\n'}</text>
           <text>still within the same block</text>
         </block>
@@ -418,7 +404,9 @@ describe('connected editor', () => {
           <text>this should toggle a source block</text>
         </block>
         <block type="ENTRY">
-          <text>last entry</text>
+          <text>
+            last entry<cursor />
+          </text>
         </block>
       </editor>
     )
