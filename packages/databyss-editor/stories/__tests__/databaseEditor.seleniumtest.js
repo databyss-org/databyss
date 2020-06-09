@@ -22,8 +22,6 @@ import {
 let driver
 let editor
 let slateDocument
-let emailButton
-// let emailTextField
 let actions
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
 const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=services-auth--login'
@@ -44,10 +42,6 @@ describe('connected editor', () => {
     // OSX and safari are necessary
     driver = await startSession('Slate-5-database-connector', OSX, SAFARI)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
-
-    // LOGIN FLOW
-    emailButton = await getElementByTag(driver, '[data-test-id="emailButton"]')
-    await emailButton.click()
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
@@ -98,9 +92,7 @@ describe('connected editor', () => {
     await sleep(7000)
 
     await driver.navigate().refresh()
-    // await driver.get(
-    //   process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
-    // )
+
     await sleep(300)
 
     slateDocument = await getElementById(driver, 'slateDocument')
