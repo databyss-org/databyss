@@ -70,4 +70,27 @@ router.get(
   }
 )
 
+// @route    GET api/topics
+// @desc     Get all topics
+// @access   Private
+router.get(
+  '/',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  async (req, res) => {
+    try {
+      const topicResponse = await Topic.find({ account: req.account._id })
+
+      if (!topicResponse) {
+        return res
+          .status(400)
+          .json({ msg: 'There are no topics associated with this account' })
+      }
+      return res.json(topicResponse)
+    } catch (err) {
+      console.error(err.message)
+      return res.status(500).send('Server Error')
+    }
+  }
+)
+
 export default router
