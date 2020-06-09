@@ -4,7 +4,12 @@ export const composeResults = (results, query) => {
 
   // query must be included in title, subtitile or author
   const _filteredResults = results.items.filter(q => {
-    const _inTitle = q.volumeInfo.title.toLowerCase().search(_query) > -1
+    const _inTitle = q.volumeInfo.title
+      .split(' ')
+      .reduce(
+        (acc, curr) => acc || _query.search(curr.toLowerCase()) > -1,
+        false
+      )
 
     const _inSubtitle = q.volumeInfo.subtitle
       ? q.volumeInfo.subtitle.toLowerCase().search(_query) > -1
