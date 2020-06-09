@@ -2,6 +2,8 @@ import { Key, By, until } from 'selenium-webdriver'
 
 const waitUntilTime = 20000
 
+const SLEEP_TIME = 500
+
 // HACK: saucelabs environment double triggers meta key, use ctrl key instead
 
 const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
@@ -58,4 +60,27 @@ export const singleHighlight = actions => {
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_RIGHT)
     .keyUp(Key.SHIFT)
+}
+
+const navigationActionsBuilder = async (actions, key) => {
+  await actions.sendKeys(key)
+  await actions.perform()
+  await actions.clear()
+  await sleep(SLEEP_TIME)
+}
+
+export const enterKey = async actions => {
+  await navigationActionsBuilder(actions, Key.ENTER)
+}
+
+export const upKey = async actions => {
+  await navigationActionsBuilder(actions, Key.ARROW_UP)
+}
+
+export const downKey = async actions => {
+  await navigationActionsBuilder(actions, Key.ARROW_DOWN)
+}
+
+export const backspaceKey = async actions => {
+  await navigationActionsBuilder(actions, Key.BACK_SPACE)
 }

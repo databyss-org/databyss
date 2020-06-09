@@ -179,6 +179,9 @@ module.exports = webpackEnv => {
       runtimeChunk: true,
     },
     resolve: {
+      alias: {
+        slate: '@databyss-org/slate',
+      },
       // This allows you to set a fallback for where Webpack should look for modules.
       // We placed these paths second because we want `node_modules` to "win"
       // if there are any conflicts. This matches Node resolution mechanism.

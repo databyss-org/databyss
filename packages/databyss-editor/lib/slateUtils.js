@@ -1,4 +1,4 @@
-import { Editor } from 'slate'
+import { Editor } from '@databyss-org/slate'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 

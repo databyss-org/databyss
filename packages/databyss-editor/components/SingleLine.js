@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState, forwardRef } from 'react'
 import { Editable, withReact, Slate } from 'slate-react'
-import { Editor, createEditor, Transforms } from 'slate'
+import { Editor, createEditor, Transforms } from '@databyss-org/slate'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { stateToSlateMarkup, getRangesFromBlock } from '../lib/markup'
 import Hotkeys from './../lib/hotKeys'

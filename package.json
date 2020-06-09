@@ -118,6 +118,9 @@
         "moduleFileExtensions": [
           "js"
         ],
+        "moduleNameMapper": {
+          "^slate$": "@databyss-org/slate"
+        },
         "globalSetup": "<rootDir>/config/sauce/globalSetup.js",
         "globalTeardown": "<rootDir>/config/sauce/globalTeardown.js"
       }

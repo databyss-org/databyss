@@ -13,6 +13,10 @@ import {
   toggleItalic,
   toggleLocation,
   getElementById,
+  enterKey,
+  upKey,
+  downKey,
+  backspaceKey,
 } from './_helpers.selenium'
 
 let driver
@@ -334,66 +338,38 @@ describe('connected editor', () => {
     await toggleBold(actions)
     await actions.sendKeys('bold')
     await toggleBold(actions)
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
+    await enterKey(actions)
     await actions.sendKeys('still within the same block')
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
+    await enterKey(actions)
+    await enterKey(actions)
     await actions.sendKeys('@this should toggle a source block')
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
-    await actions.sendKeys(Key.ARROW_UP)
-    await sleep(1000)
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
-    await actions.sendKeys(Key.ARROW_UP)
-    await sleep(1000)
+    await enterKey(actions)
+    await upKey(actions)
+    await enterKey(actions)
+    await upKey(actions)
     await actions.sendKeys('#this should toggle a topics block')
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
+    await enterKey(actions)
     await actions.sendKeys('this entry is within two atomics')
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
-
-    await actions.sendKeys(Key.ARROW_UP)
-    await sleep(1000)
-
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
-    await actions.sendKeys(Key.BACK_SPACE)
+    await enterKey(actions)
+    await enterKey(actions)
+    await backspaceKey(actions)
     await actions.sendKeys(' appended text')
-    await sleep(1000)
-    await actions.sendKeys(Key.ARROW_UP)
-    await sleep(1000)
-
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
+    //  await upKey(actions)
+    await enterKey(actions)
+    await enterKey(actions)
+    await enterKey(actions)
     await actions.sendKeys('second middle entry')
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
-    await actions.sendKeys(Key.ENTER)
-    await sleep(1000)
-    await actions.sendKeys(Key.ARROW_UP)
-    await sleep(1000)
-    await actions.sendKeys(Key.ARROW_UP)
-    await sleep(1000)
-    await actions.sendKeys(Key.BACK_SPACE)
-    await sleep(1000)
+    await enterKey(actions)
+    await enterKey(actions)
+    await upKey(actions)
+    await upKey(actions)
+    await backspaceKey(actions)
+    await downKey(actions)
+    await downKey(actions)
+    await downKey(actions)
+    await downKey(actions)
+    await downKey(actions)
 
-    await actions.sendKeys(Key.ARROW_DOWN)
-    await sleep(1000)
-    await actions.sendKeys(Key.ARROW_DOWN)
-    await sleep(1000)
-    await actions.sendKeys(Key.ARROW_DOWN)
-    await sleep(1000)
-    await actions.sendKeys(Key.ARROW_DOWN)
-    await sleep(1000)
     await actions.sendKeys('last entry')
     await actions.perform()
     await sleep(20000)
@@ -419,10 +395,10 @@ describe('connected editor', () => {
           <text>this entry is within two atomics appended text</text>
         </block>
         <block type="ENTRY">
-          <text />
+          <text>second middle entry</text>
         </block>
         <block type="ENTRY">
-          <text>second middle entry</text>
+          <text />
         </block>
         <block type="SOURCE">
           <text>this should toggle a source block</text>
