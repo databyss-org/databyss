@@ -1,16 +1,25 @@
 import React, { useState, useEffect } from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { Text, View, TextControl } from '@databyss-org/ui/primitives'
+import { View, TextInput } from '@databyss-org/ui/primitives'
+import { theme } from '@databyss-org/ui/theming'
+import styledCss from '@styled-system/css'
+
+const noPageTitle = 'untitled'
 
 const PageHeader = ({ isFocused, pageId }) => {
   const { getPage, setPage } = usePageContext()
-
   const [pageName, setPageName] = useState({ textValue: '' })
 
   useEffect(
     () => {
       const pageData = getPage(pageId)
-      setPageName({ textValue: pageData.page.name })
+      const pageDataName = pageData.page.name
+
+      if (pageDataName === noPageTitle) {
+        setPageName({ textValue: '' })
+      } else {
+        setPageName({ textValue: pageDataName })
+      }
     },
     [pageId]
   )
@@ -19,32 +28,42 @@ const PageHeader = ({ isFocused, pageId }) => {
     setPageName(val)
   }
 
-  const onBlur = () => {
+  const updatePageName = () => {
     const _pageData = {
-      page: { name: pageName.textValue, _id: pageId },
+      page: {
+        name: pageName.textValue ? pageName.textValue : noPageTitle,
+        _id: pageId,
+      },
     }
     setPage(_pageData)
     isFocused(false)
   }
   /*
-  header input too long maxwidth 500
   alphabatize pages
   */
 
   return (
-    <View p="medium" flex="1">
-      <Text variant="bodyLarge" color="text.3">
-        <TextControl
-          onBlur={onBlur}
-          onFocus={() => isFocused(true)}
-          value={pageName}
-          onChange={onPageNameChange}
-          labelVariant="bodyLarge"
-          inputVariant="bodyLarge"
-          labelColor="text.3"
-          activeLabelColor="text.1"
-        />
-      </Text>
+    <View p="medium" flexGrow={1} ml="extraSmall">
+      <TextInput
+        onBlur={updatePageName}
+        onFocus={() => isFocused(true)}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            updatePageName()
+          }
+        }}
+        value={pageName}
+        onChange={onPageNameChange}
+        placeholder="Enter title"
+        variant="bodyLarge"
+        color="text.3"
+        concatCss={styledCss({
+          '::placeholder': {
+            color: 'text.3',
+            opacity: 0.6,
+          },
+        })(theme)}
+      />
     </View>
   )
 }

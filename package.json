@@ -93,7 +93,8 @@
           "json",
           "ts",
           "tsx"
-        ]
+        ],
+        "testTimeout": 30000
       },
       {
         "displayName": "test-api",

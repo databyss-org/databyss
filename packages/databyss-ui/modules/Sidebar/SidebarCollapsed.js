@@ -1,137 +1,93 @@
-import React from 'react'
-import css from '@styled-system/css'
-import {
-  Text,
-  View,
-  List,
-  BaseControl,
-  Grid,
-  Icon,
-  Separator,
-} from '@databyss-org/ui/primitives'
-import { newPage } from '@databyss-org/services/pages/_helpers'
+import React, { useState, useEffect } from 'react'
+import { View, List } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import Plus from '@databyss-org/ui/assets/plus.svg'
-import Databyss from '@databyss-org/ui/assets/databyss.svg'
-import PageSvg from '@databyss-org/ui/assets/page.svg'
+import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
+import MenuSvg from '@databyss-org/ui/assets/menu.svg'
+import { pxUnits } from '@databyss-org/ui/theming/views'
+import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
+import Footer from '@databyss-org/ui/components/Sidebar/Footer'
 import { darkTheme } from '../../theming/theme'
+import { sidebar } from '../../theming/components'
 
 export const defaultProps = {
   height: '100vh',
 }
 
-const Section = ({ children, title, variant, ...others }) => (
-  <View mb="medium" {...others}>
-    <View mb="small">
-      <Text variant={variant} color="text.3">
-        {title}
-      </Text>
-    </View>
-    {children}
-  </View>
-)
-
-Section.defaultProps = {
-  variant: 'heading3',
-}
-
 const SidebarCollapsed = () => {
   const {
-    navigate,
     navigateSidebar,
+    getTokensFromPath,
+    getSidebarPath,
     isMenuOpen,
     setMenuOpen,
   } = useNavigationContext()
-  const { setPage } = usePageContext()
-  const onNewPageClick = () => {
-    const _page = newPage()
-    setPage(_page)
-    navigate(`/pages/${_page.page._id}`)
-  }
+
+  const [activeItem, setActiveItem] = useState('pages')
 
   const onItemClick = item => {
-    navigateSidebar(`/${item}`)
-    setMenuOpen(!isMenuOpen)
+    if (!isMenuOpen) {
+      return (
+        setMenuOpen(true) && navigateSidebar(`/${item}`) && setActiveItem(item)
+      )
+    }
+    return activeItem === item
+      ? setMenuOpen(!isMenuOpen)
+      : navigateSidebar(`/${item}`) && setActiveItem(item)
   }
+
+  useEffect(
+    () =>
+      setActiveItem(
+        getSidebarPath() ? getSidebarPath() : getTokensFromPath().type
+      ),
+    [navigateSidebar]
+  )
+
+  const sideBarCollapsedItems = [
+    {
+      name: 'menuCollapse',
+      title: 'Collapse menu',
+      icon: <MenuSvg />,
+      onClick: () => setMenuOpen(!isMenuOpen),
+    },
+    {
+      name: 'search',
+      title: 'Search',
+      icon: <SearchSvg />,
+      onClick: () => onItemClick('search'),
+    },
+    {
+      name: 'pages',
+      title: 'Pages',
+      icon: <PagesSvg />,
+      onClick: () => onItemClick('pages'),
+    },
+  ]
 
   return (
     <View
       {...defaultProps}
-      css={css({
-        width: '60px',
-      })}
+      widthVariant="content"
+      theme={darkTheme}
+      bg="background.1"
+      height="100vh"
+      borderRightColor="border.1"
+      borderRightWidth={pxUnits(1)}
+      width={sidebar.collapsedWidth}
     >
-      <View
-        widthVariant="content"
-        theme={darkTheme}
-        bg="background.0"
-        pt="medium"
-        height="100vh"
-      >
-        <List
-          verticalItemPadding={2}
-          horizontalItemPadding={2}
-          mt="none"
-          mb="none"
-          p="small"
-        >
-          {/* header */}
-          <BaseControl
-            p={2}
-            width="100%"
-            onClick={() => setMenuOpen(!isMenuOpen)}
-            alignItems="center"
-          >
-            <Grid singleRow alignItems="flex-end" columnGap="small">
-              <Icon sizeVariant="medium" color="text.3">
-                <Databyss />
-              </Icon>
-            </Grid>
-          </BaseControl>
-          {/* content */}
-          <Separator color="border.1" />
-          <BaseControl
-            p={2}
-            width="100%"
-            onClick={() => onItemClick('search')}
-            alignItems="center"
-          >
-            <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant="medium" color="text.3">
-                <SearchSvg />
-              </Icon>
-            </Grid>
-          </BaseControl>
-          <BaseControl
-            p={2}
-            width="100%"
-            onClick={() => onItemClick('pages')}
-            alignItems="center"
-          >
-            <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant="medium" color="text.3">
-                <PageSvg />
-              </Icon>
-            </Grid>
-          </BaseControl>
-        </List>
-        <View position="fixed" bottom={0} left={0} width="60px">
-          <BaseControl
-            p={2}
-            width="100%"
-            onClick={() => onNewPageClick()}
-            alignItems="center"
-          >
-            <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant="medium" color="text.3">
-                <Plus />
-              </Icon>
-            </Grid>
-          </BaseControl>
-        </View>
-      </View>
+      <List verticalItemPadding={2} horizontalItemPadding={1} m="none">
+        {sideBarCollapsedItems.map(item => (
+          <SidebarIconButton
+            key={item.name}
+            title={item.title}
+            icon={item.icon}
+            isActive={activeItem === item.name}
+            onClick={item.onClick}
+          />
+        ))}
+      </List>
+      <Footer />
     </View>
   )
 }
