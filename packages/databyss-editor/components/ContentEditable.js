@@ -109,6 +109,12 @@ const ContentEditable = ({
   )
 
   const onKeyDown = event => {
+    if (Hotkeys.isTab(event)) {
+      event.preventDefault()
+      Transforms.insertText(editor, `\t`)
+      return
+    }
+
     if (Hotkeys.isBold(event)) {
       event.preventDefault()
       toggleMark(editor, 'bold')
