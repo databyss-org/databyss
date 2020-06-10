@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import SidebarList from '../../../components/Sidebar/SidebarList'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import { fetchSourceQuery } from '@databyss-org/services//sources/actions.js'
 
 const menuItems = [
   {
@@ -14,12 +12,6 @@ const menuItems = [
   },
 ]
 
-const Sources = () => {
-  const { getAllSources, state } = useSourceContext()
-  useEffect(() => getAllSources(), [])
-  useEffect(() => console.log(state), [state])
-  console.log(state)
-  return <SidebarList menuItems={menuItems} />
-}
+const Sources = () => <SidebarList menuItems={menuItems} />
 
 export default Sources
