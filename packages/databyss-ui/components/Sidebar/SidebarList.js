@@ -26,10 +26,16 @@ const SidebarList = ({ menuItems }) => {
 
   const tokens = getTokensFromPath()
 
+  // dispatch id to fetch
   const onClick = item => {
-    // dispatch id to fetch
-    if (item.id) {
-      return navigate(`/pages/${item.id}`)
+    if (item.type === 'pages') {
+      navigate(`/pages/${item.id}`)
+    }
+    if (item.type === 'sources') {
+      navigate(`/sources/`)
+    }
+    if (item.type === 'topics') {
+      navigate(`/topics/`)
     }
   }
 
