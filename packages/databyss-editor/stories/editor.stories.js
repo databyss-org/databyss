@@ -1,4 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
+import { createEditor } from '@databyss-org/slate'
+import { withReact } from 'slate-react'
 import { storiesOf } from '@storybook/react'
 import { View, Grid } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
@@ -17,6 +19,7 @@ import { stateToSlate } from '../lib/slateUtils'
 import Editor from '../components/Editor'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
+import blankFixture from './fixtures/blankState'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import noAtomicsFixture from './fixtures/no-atomics'
 
@@ -36,22 +39,29 @@ const _res = {
 
 const EditorWithProvider = props => (
   <EditorProvider {...props}>
-    <ContentEditable />
+    <ContentEditable autofocus />
   </EditorProvider>
 )
 
 const SideBySide = ({ initialState }) => {
+  const editor = useMemo(() => withReact(createEditor()), [])
   const [editorState, setEditorState] = useState([])
   return (
     <Grid>
       <View width="40%">
         <EditorWithProvider
           initialState={initialState}
-          onChange={s => setEditorState(stateToSlate(s))}
+          onChange={s => {
+            if (!s) {
+              return
+            }
+            // console.log(s)
+            setEditorState(stateToSlate(s.state))
+          }}
         />
       </View>
       <View width="40%">
-        <Editor value={editorState} />
+        <Editor editor={editor} value={editorState} />
       </View>
     </Grid>
   )
@@ -61,48 +71,65 @@ const EditorWithModals = ({ initialState }) => (
   <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
     <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
       <NavigationProvider>
-        <EditorWithProvider initialState={initialState} />
+        <EditorWithProvider
+          initialState={initialState}
+          onChange={({ patch, inversePatch }) => {
+            console.log(patch, inversePatch)
+          }}
+        />
       </NavigationProvider>
     </SourceProvider>
   </TopicProvider>
 )
 
+const initFetchMock = () => {
+  fetchMock
+    .restore()
+    .post(url => {
+      if (url.includes('/api/sources') || url.includes('/api/topics')) {
+        return true
+      }
+      return null
+    }, 200)
+    .get(url => {
+      if (url.includes('/api/sources')) {
+        return true
+      }
+      return null
+    }, sourceFixture)
+    .get(url => {
+      if (url.includes('/api/topics')) {
+        return true
+      }
+      return null
+    }, topicFixture)
+    .get(url => {
+      if (url.includes('googleapis')) {
+        return true
+      }
+      return null
+    }, _res)
+}
+
 storiesOf('Components|Editor', module)
   .addDecorator(ViewportDecorator)
-  .add('Basic', () => <SideBySide initialState={basicFixture} />)
+  .add('Basic', () => <SideBySide initialState={blankFixture} />)
   .add('Basic (standalone)', () => (
-    <EditorWithProvider initialState={basicFixture} />
+    <EditorWithProvider
+      initialState={basicFixture}
+      onChange={({ inversePatch }) => {
+        console.log(inversePatch)
+      }}
+    />
   ))
   .add('No Atomics (standalone)', () => (
     <EditorWithProvider initialState={noAtomicsFixture} />
   ))
   .add('With Ref Modals', () => {
-    fetchMock
-      .restore()
-      .post(url => {
-        if (url.includes('/api/sources') || url.includes('/api/topics')) {
-          return true
-        }
-        return null
-      }, 200)
-      .get(url => {
-        if (url.includes('/api/sources')) {
-          return true
-        }
-        return null
-      }, sourceFixture)
-      .get(url => {
-        if (url.includes('/api/topics')) {
-          return true
-        }
-        return null
-      }, topicFixture)
-      .get(url => {
-        if (url.includes('googleapis')) {
-          return true
-        }
-        return null
-      }, _res)
-
+    initFetchMock()
     return <EditorWithModals initialState={basicFixture} />
+  })
+  .add('Blank', () => {
+    initFetchMock()
+    return <EditorWithModals initialState={blankFixture} />
   })

@@ -58,6 +58,7 @@ module.exports = webpackEnv => {
     : isEnvDevelopment && ''
   // Get environment variables to inject into our app.
   const env = getClientEnvironment(publicUrl)
+  console.log('CLIENT ENV', env)
 
   return {
     mode: isEnvProduction ? 'production' : isEnvDevelopment && 'development',
@@ -178,6 +179,9 @@ module.exports = webpackEnv => {
       runtimeChunk: true,
     },
     resolve: {
+      alias: {
+        slate: '@databyss-org/slate',
+      },
       // This allows you to set a fallback for where Webpack should look for modules.
       // We placed these paths second because we want `node_modules` to "win"
       // if there are any conflicts. This matches Node resolution mechanism.

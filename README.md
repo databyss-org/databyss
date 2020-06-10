@@ -85,6 +85,12 @@ Same as `yarn cy:run`, except it emits verbose debugging logs. To use, run it af
 `yarn storybook:cy`  
 Starts the Storybook server, which Cypress hits to access sandboxed UIs to test (like the editor). Called internally by `yarn cy` and `yarn cy:test`.
 
+`test:selenium`
+Starts the Selenium tests using the Sauce Labs remote environment
+
+`test:selenium:local`
+Starts the Selenium tests in the local environment. The tests use `safari` webdriver. Must specify selenium test string with command with `-t` flag. Configurations can be made in the Sauce Labs [config file](packages/databyss-ui/lib/saucelabs.js)
+
 ### Utilities
 
 `> yarn sync-versions`  

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useRef } from 'react'
+import React, { createContext, useContext, useRef, useEffect } from 'react'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../lib/ResourcePending'
@@ -8,6 +8,7 @@ import {
   fetchPageHeaders,
   fetchPage,
   savePage,
+  savePatch,
   deletePage,
   onArchivePage,
   onSetDefaultPage,
@@ -18,8 +19,23 @@ interface PropsType {
   initialState: any
 }
 
+interface Operation {
+  op: string
+  path: any
+  value: any
+}
+
+interface PatchType {
+  _id: string
+  operations: Array<Operation>
+}
+
 interface RefDict {
   [key: string]: React.Ref<HTMLInputElement>
+}
+
+interface PageHookDict {
+  [key: string]: Function
 }
 
 interface ContextType {
@@ -27,8 +43,12 @@ interface ContextType {
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
   clearBlockDict: () => void
-  registerBlockRef: (id: string, refOne: React.Ref<HTMLInputElement>) => void
-  getBlockRef: (id: string) => React.Ref<HTMLInputElement>
+  setPatch: (patch: PatchType) => void
+  registerBlockRefByIndex: (
+    index: number,
+    refOne: React.Ref<HTMLInputElement>
+  ) => void
+  getBlockRefByIndex: (index: number) => React.Ref<HTMLInputElement>
 }
 
 const useReducer = createReducer()
@@ -39,11 +59,31 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   initialState,
 }: PropsType) => {
   const refDictRef = useRef<RefDict>({})
+  const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
+
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  const setPage = (page: Page): void => {
-    // window.requestAnimationFrame(() => dispatch(savePage(page)))
-    dispatch(savePage(page))
+  useEffect(
+    () => {
+      Object.keys(pageCachedHookRef.current).forEach(k => {
+        if (state.cache[k]) {
+          // execute callback
+          pageCachedHookRef.current[k]()
+          // remove from queue
+          delete pageCachedHookRef.current[k]
+        }
+      })
+    },
+    [state.cache]
+  )
+
+  const hasPendingPatches = state.patchQueueSize
+
+  const setPage = (page: Page): Promise<void> => {
+    return new Promise(res => {
+      onPageCached(page.page._id, res)
+      dispatch(savePage(page))
+    })
   }
 
   const getPages = () => {
@@ -68,13 +108,16 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     return null
   }
 
-  const registerBlockRef = (id: string, ref: React.Ref<HTMLInputElement>) => {
-    refDictRef.current[id] = ref
+  const registerBlockRefByIndex = (
+    index: number,
+    ref: React.Ref<HTMLInputElement>
+  ) => {
+    refDictRef.current[index] = ref
   }
 
-  const getBlockRef = (id: string) => {
-    if (refDictRef.current[id]) {
-      return refDictRef.current[id]
+  const getBlockRefByIndex = (index: number) => {
+    if (refDictRef.current[index]) {
+      return refDictRef.current[index]
     }
     return null
   }
@@ -95,18 +138,30 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(onSetDefaultPage(id))
   }
 
+  const setPatch = (patch: PatchType) => {
+    dispatch(savePatch(patch))
+  }
+
+  const onPageCached = (id: string, callback: Function) => {
+    // add back to dictionary
+    pageCachedHookRef.current[id] = callback
+  }
+
   return (
     <PageContext.Provider
       value={{
         getPages,
         getPage,
         setPage,
-        registerBlockRef,
-        getBlockRef,
+        setPatch,
+        registerBlockRefByIndex,
+        getBlockRefByIndex,
         clearBlockDict,
         removePage,
         archivePage,
         setDefaultPage,
+        onPageCached,
+        hasPendingPatches,
       }}
     >
       {children}

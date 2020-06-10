@@ -35,6 +35,15 @@ export const httpPut = (path, body) =>
     body: JSON.stringify(body),
   })
 
+export const httpPatch = (path, body) =>
+  requestApi(path, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  })
+
 export const httpDelete = (path, body) =>
   requestApi(path, {
     method: 'DELETE',

@@ -1,7 +1,9 @@
 import { isKeyHotkey } from 'is-hotkey'
-import { IS_LINUX, IS_MAC, IS_IOS } from '@databyss-org/ui/lib/dom'
+import { IS_IOS, IS_MAC } from 'slate-dev-environment'
 
-export const metaKey = IS_LINUX ? 'alt' : 'mod'
+// HACK: saucelabs environment double triggers meta key, use ctrl key instead
+export const metaKey = process.env.STORYBOOK_SAUCE ? 'ctrl' : 'mod'
+
 export const START_OF_LINE = 'START_OF_LINE'
 export const END_OF_LINE = 'END_OF_LINE'
 export const START_OF_DOCUMENT = 'START_OF_DOCUMENT'
@@ -71,44 +73,3 @@ KEYS.forEach(key => {
  * @type {Object}
  */
 export default Hotkeys
-
-export const navHotKeys = (event, editor, onHotKey) => {
-  if (Hotkeys.isStartOfLine(event)) {
-    event.preventDefault()
-    onHotKey(START_OF_LINE, editor)
-  }
-
-  if (Hotkeys.isEndOfLine(event)) {
-    event.preventDefault()
-    onHotKey(END_OF_LINE, editor)
-  }
-  if (Hotkeys.isNextBlock(event)) {
-    event.preventDefault()
-    onHotKey(NEXT_BLOCK, editor)
-  }
-
-  if (Hotkeys.isPreviousBlock(event)) {
-    event.preventDefault()
-    onHotKey(PREVIOUS_BLOCK, editor)
-  }
-}
-
-export const formatHotKeys = (event, editor, onHotKey, OnToggleMark) => {
-  if (Hotkeys.isBold(event)) {
-    event.preventDefault()
-    OnToggleMark('bold', editor)
-  }
-
-  if (Hotkeys.isItalic(event)) {
-    event.preventDefault()
-    OnToggleMark('italic', editor)
-  }
-  if (Hotkeys.isStartOfDocument(event)) {
-    event.preventDefault()
-    onHotKey(START_OF_DOCUMENT, editor)
-  }
-  if (Hotkeys.isEndOfDocument(event)) {
-    event.preventDefault()
-    onHotKey(END_OF_DOCUMENT, editor)
-  }
-}

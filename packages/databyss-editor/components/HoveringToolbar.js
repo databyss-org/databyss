@@ -6,7 +6,7 @@ import styledCss from '@styled-system/css'
 import theme, { borderRadius, darkTheme } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { ReactEditor, useSlate } from 'slate-react'
-import { Editor, Range } from 'slate'
+import { Editor, Range } from '@databyss-org/slate'
 import { isSelectionAtomic } from './../lib/slateUtils'
 
 const isBackwards = () => {
