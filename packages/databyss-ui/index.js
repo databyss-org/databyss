@@ -24,3 +24,7 @@ export {
   default as SearchContent,
   SearchRouter,
 } from './components/SearchContent/SearchContent'
+export {
+  default as SourcesContent,
+  SourcesRouter,
+} from './components/SourcesContent/SourcesContent'
