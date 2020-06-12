@@ -33,33 +33,35 @@ export const composeResults = (results, query) => {
   }
   let _results = {}
   // organizes according to author(s)
-  _results = _filteredResults.reduce((acc, curr) => {
-    const _authors = curr.volumeInfo.authors
-    if (_authors) {
-      const _authorsString =
-        _authors.length > 1 ? _authors.join(', ') : _authors[0]
-      if (!acc[_authorsString]) {
-        acc[_authorsString] = [curr]
-      } else {
-        const _curr = acc[_authorsString]
-        // checks for duplicates
-        const _isDuplicated =
-          _curr.filter(
-            () =>
-              acc[_authorsString].filter(
-                _vol => _vol.volumeInfo.title === curr.volumeInfo.title
-              ).length > 0
-          ).length > 0
+  if (_filteredResults) {
+    _results = _filteredResults.reduce((acc, curr) => {
+      const _authors = curr.volumeInfo.authors
+      if (_authors) {
+        const _authorsString =
+          _authors.length > 1 ? _authors.join(', ') : _authors[0]
+        if (!acc[_authorsString]) {
+          acc[_authorsString] = [curr]
+        } else {
+          const _curr = acc[_authorsString]
+          // checks for duplicates
+          const _isDuplicated =
+            _curr.filter(
+              () =>
+                acc[_authorsString].filter(
+                  _vol => _vol.volumeInfo.title === curr.volumeInfo.title
+                ).length > 0
+            ).length > 0
 
-        // if not a duplicate, push to author array
-        if (!_isDuplicated) {
-          _curr.push(curr)
-          acc[_authorsString] = _curr
+          // if not a duplicate, push to author array
+          if (!_isDuplicated) {
+            _curr.push(curr)
+            acc[_authorsString] = _curr
+          }
         }
       }
-    }
-    return acc
-  }, _results)
+      return acc
+    }, _results)
+  }
 
   return _results
 }
