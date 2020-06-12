@@ -15,7 +15,7 @@ const makeLoader = (resource, children, onComponentUnmount) => {
         onComponentUnmount()
       }
     },
-    [resource]
+    []
   )
 
   if (!resource || resource instanceof ResourcePending) {
