@@ -5,7 +5,6 @@ import {
   Transforms,
   Point,
   Editor as SlateEditor,
-  Range,
 } from '@databyss-org/slate'
 import { ReactEditor, withReact } from 'slate-react'
 import _ from 'lodash'
@@ -30,12 +29,7 @@ import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 
-const ContentEditable = ({
-  onDocumentChange,
-  autofocus,
-  readonly,
-  onUnmount,
-}) => {
+const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
   const sourceContext = useSourceContext()
@@ -69,15 +63,6 @@ const ContentEditable = ({
       Transforms.select(editor, selection)
     }
   }
-
-  useEffect(
-    () => () => {
-      if (onUnmount) {
-        onUnmount()
-      }
-    },
-    []
-  )
 
   // if new atomic block has been added, save atomic
   useEffect(

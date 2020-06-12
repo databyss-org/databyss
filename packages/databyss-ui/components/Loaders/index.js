@@ -10,7 +10,7 @@ export const PageLoader = ({ children, pageId }) => {
   return makeLoader({
     resource: getPage(pageId),
     children,
-    onComponentUnmount: () => removePageFromCache(pageId),
+    onUnload: () => removePageFromCache(pageId),
   })
 }
 

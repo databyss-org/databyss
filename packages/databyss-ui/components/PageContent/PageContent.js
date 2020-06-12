@@ -82,7 +82,7 @@ const PageContent = () => {
   return (
     <View flex="1" height="100vh">
       {id && (
-        <PageLoader pageId={id}>
+        <PageLoader pageId={id} key={id}>
           {pageState => {
             const { page, ...pageContainerFields } = pageState
 

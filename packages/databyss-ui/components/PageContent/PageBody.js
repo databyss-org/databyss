@@ -12,15 +12,11 @@ import {
 
 const PageBody = ({ page }) => {
   const { location } = useNavigationContext()
-  const { clearBlockDict, setPatch, removePageFromCache } = usePageContext()
+  const { clearBlockDict, setPatch } = usePageContext()
   useEffect(() => () => clearBlockDict(), [])
 
   const operationsQueue = useRef([])
   const pageState = useRef(null)
-
-  const onUnmount = () => {
-    //   removePageFromCache(pageState.current._id)
-  }
 
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
   const throttledAutosave = useCallback(
@@ -54,7 +50,7 @@ const PageBody = ({ page }) => {
       onChange={onChange}
       initialState={withMetaData(page)}
     >
-      <ContentEditable onUnmount={onUnmount} autofocus />
+      <ContentEditable autofocus />
     </EditorProvider>
   )
 }
