@@ -24,6 +24,7 @@ import {
   stateBlockToSlateBlock,
   toggleMark,
 } from '../lib/slateUtils'
+import { replaceShortcut } from '../lib/editorShortcuts'
 import { getSelectedIndicies } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
@@ -95,6 +96,9 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
   )
 
   const onKeyDown = event => {
+    // em dash shortcut
+    replaceShortcut(editor, event)
+
     if (Hotkeys.isTab(event)) {
       event.preventDefault()
       Transforms.insertText(editor, `\t`)
@@ -117,31 +121,6 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
       toggleMark(editor, 'location')
       event.preventDefault()
       return
-    }
-
-    if (event.key === '-') {
-      // check for m-dash
-      const _offset = flattenOffset(editor, editor.selection.focus)
-      if (_offset > 0) {
-        Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
-        const _frag = SlateEditor.fragment(editor, editor.selection)
-        if (Node.string(_frag[0]) === '-') {
-          // replace text with em dash
-          Transforms.delete(editor, {
-            distance: 1,
-            unit: 'character',
-            reverse: true,
-          })
-          Transforms.insertText(editor, '\u2014')
-          Transforms.move(editor, {
-            distance: 1,
-            edge: 'anchor',
-            reverse: true,
-          })
-          event.preventDefault()
-        }
-        Transforms.move(editor, { distance: 1, edge: 'anchor' })
-      }
     }
 
     if (event.key === 'Enter') {

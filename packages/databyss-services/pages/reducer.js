@@ -39,9 +39,7 @@ export default (state, action) => {
     }
     case REMOVE_PAGE_FROM_CACHE: {
       const _cache = state.cache
-      console.log('before', _cache)
       delete _cache[action.payload.id]
-      console.log('after', _cache)
 
       return {
         cache: _cache,
