@@ -12,14 +12,14 @@ import {
 
 const PageBody = ({ page }) => {
   const { location } = useNavigationContext()
-  const { clearBlockDict, setPatch, setPage } = usePageContext()
+  const { clearBlockDict, setPatch, removePageFromCache } = usePageContext()
   useEffect(() => () => clearBlockDict(), [])
 
   const operationsQueue = useRef([])
   const pageState = useRef(null)
 
   const onUnmount = () => {
-    setPage({ ...pageState.current, updatePageInCache: true })
+    //   removePageFromCache(pageState.current._id)
   }
 
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
@@ -28,7 +28,7 @@ const PageBody = ({ page }) => {
       const _patch = withWhitelist(patch)
       if (_patch.length) {
         const payload = {
-          id: nextState.page._id,
+          id: nextState._id,
           patch: operationsQueue.current,
         }
         setPatch(payload)
@@ -41,6 +41,7 @@ const PageBody = ({ page }) => {
   // state from provider is out of date
   const onChange = value => {
     pageState.current = value.nextState
+
     const patch = addMetaData(value)
     // push changes to a queue
     operationsQueue.current = operationsQueue.current.concat(patch)

@@ -6,8 +6,10 @@ import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import makeLoader from './makeLoader'
 
 export const PageLoader = ({ children, pageId }) => {
-  const { getPage } = usePageContext()
-  return makeLoader(getPage(pageId), children)
+  const { getPage, removePageFromCache } = usePageContext()
+  return makeLoader(getPage(pageId), children, () =>
+    removePageFromCache(pageId)
+  )
 }
 
 export const withPage = Wrapped => ({ pageId, ...others }) => (

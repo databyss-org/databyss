@@ -10,6 +10,7 @@ import {
   ARCHIVE_PAGE,
   SET_DEFAULT_PAGE,
   QUEUE_PATCH,
+  REMOVE_PAGE_FROM_CACHE,
 } from './constants'
 
 export function fetchPage(_id) {
@@ -58,6 +59,8 @@ export function fetchPageHeaders() {
 }
 
 const queue = []
+let timeoutId = null
+
 let busy = false
 
 export function savePatch(patch) {
@@ -91,12 +94,6 @@ export function savePatch(patch) {
   }
   const _batchPatch = { id: _pageId, patch: _batch }
   return dispatch => {
-    dispatch({
-      type: PATCH,
-      payload: {
-        queueSize: queue.length,
-      },
-    })
     services
       .savePatch(_batchPatch)
       .then(() => {
@@ -115,7 +112,21 @@ export function savePatch(patch) {
       .catch(() => {
         // if error set the patch back to the queue
         busy = false
-        queue.unshift(_patch)
+        queue.unshift(_batchPatch)
+
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+        }
+
+        // TODO: CHANGE TIMEOUT TO ENV VARIABLE
+        timeoutId = setTimeout(() => dispatch(savePatch()), 3000)
+
+        dispatch({
+          type: QUEUE_PATCH,
+          payload: {
+            queueSize: queue.length,
+          },
+        })
       })
   }
 }
@@ -145,6 +156,15 @@ export function seedPage(page, cache) {
       if (Object.keys(cache).length === 0 || !cache) {
         dispatch(fetchPageHeaders())
       }
+    })
+  }
+}
+
+export function removePageIdFromCache(id) {
+  return dispatch => {
+    dispatch({
+      type: REMOVE_PAGE_FROM_CACHE,
+      payload: { id },
     })
   }
 }

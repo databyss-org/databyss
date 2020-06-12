@@ -1,9 +1,23 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ResourcePending } from '@databyss-org/services/lib/ResourcePending'
 import ErrorFallback from '../Notify/ErrorFallback'
 import Loading from '../Notify/LoadingFallback'
 
-const makeLoader = (resource, children) => {
+const makeLoader = (resource, children, onComponentUnmount) => {
+  useEffect(
+    () => () => {
+      if (
+        resource &&
+        !(resource instanceof ResourcePending) &&
+        !(resource instanceof Error) &&
+        onComponentUnmount
+      ) {
+        onComponentUnmount()
+      }
+    },
+    [resource]
+  )
+
   if (!resource || resource instanceof ResourcePending) {
     return <Loading />
   }

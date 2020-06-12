@@ -10,6 +10,7 @@ import {
   ARCHIVE_PAGE,
   PATCH,
   QUEUE_PATCH,
+  REMOVE_PAGE_FROM_CACHE,
 } from './constants'
 
 export const initialState = {
@@ -34,6 +35,17 @@ export default (state, action) => {
       _state.cache[action.payload.id] = new ResourcePending()
       return {
         ..._state,
+      }
+    }
+    case REMOVE_PAGE_FROM_CACHE: {
+      const _cache = state.cache
+      console.log('before', _cache)
+      delete _cache[action.payload.id]
+      console.log('after', _cache)
+
+      return {
+        cache: _cache,
+        ...state,
       }
     }
     case CACHE_PAGE: {

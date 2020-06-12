@@ -83,15 +83,22 @@ const PageContent = () => {
     <View flex="1" height="100vh">
       {id && (
         <PageLoader pageId={id}>
-          {page => (
-            <PageContainer
-              anchor={anchor}
-              id={id}
-              onHeaderClick={onHeaderClick}
-              page={page}
-              readOnly={readOnly}
-            />
-          )}
+          {pageState => {
+            const { page, ...pageContainerFields } = pageState
+
+            return (
+              <PageContainer
+                anchor={anchor}
+                id={id}
+                onHeaderClick={onHeaderClick}
+                page={{
+                  _id: page._id,
+                  ...pageContainerFields,
+                }}
+                readOnly={readOnly}
+              />
+            )
+          }}
         </PageLoader>
       )}
     </View>

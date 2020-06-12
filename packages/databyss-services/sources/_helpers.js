@@ -2,32 +2,35 @@
 export const composeResults = (results, query) => {
   const _query = query.toLowerCase()
 
+  let _filteredResults
   // query must be included in title, subtitile or author
-  const _filteredResults = results.items.filter(q => {
-    const _inTitle = q.volumeInfo.title
-      .split(' ')
-      .reduce(
-        (acc, curr) => acc || _query.search(curr.toLowerCase()) > -1,
-        false
-      )
+  if (results.items) {
+    _filteredResults = results.items.filter(q => {
+      const _inTitle = q.volumeInfo.title
+        .split(' ')
+        .reduce(
+          (acc, curr) => acc || _query.search(curr.toLowerCase()) > -1,
+          false
+        )
 
-    const _inSubtitle = q.volumeInfo.subtitle
-      ? q.volumeInfo.subtitle.toLowerCase().search(_query) > -1
-      : false
+      const _inSubtitle = q.volumeInfo.subtitle
+        ? q.volumeInfo.subtitle.toLowerCase().search(_query) > -1
+        : false
 
-    const _inAuthor = q.volumeInfo.authors
-      ? q.volumeInfo.authors.filter(
-          a =>
-            _query
-              .split(' ')
-              .filter(s => (s.length ? a.toLowerCase().search(s) > -1 : false))
-              .length > 0
-        ).length > 0
-      : false
+      const _inAuthor = q.volumeInfo.authors
+        ? q.volumeInfo.authors.filter(
+            a =>
+              _query
+                .split(' ')
+                .filter(
+                  s => (s.length ? a.toLowerCase().search(s) > -1 : false)
+                ).length > 0
+          ).length > 0
+        : false
 
-    return _inTitle || _inSubtitle || _inAuthor
-  })
-
+      return _inTitle || _inSubtitle || _inAuthor
+    })
+  }
   let _results = {}
   // organizes according to author(s)
   _results = _filteredResults.reduce((acc, curr) => {
