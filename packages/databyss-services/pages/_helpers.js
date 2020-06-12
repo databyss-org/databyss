@@ -26,6 +26,13 @@ export const addMetaData = ({ previousState, nextState, patch }) => {
       _p = { ..._p, value: { ..._p.value, _id: nextState.selection._id } }
     }
 
+    // add type and Id to "remove" of "entityCache"
+    if (p.path[0] === 'entityCache' && p.op === 'remove') {
+      const _id = _p.path[1]
+      const _type = previousState.entityCache[_id].type
+      return { ...p, value: { _id, type: _type } }
+    }
+
     if (p.path[0] !== 'entityCache' || p.op !== 'replace') {
       return _p
     }

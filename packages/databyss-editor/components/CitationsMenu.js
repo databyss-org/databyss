@@ -177,7 +177,7 @@ export const Citations = () => {
   )
 
   useEventListener('keydown', e => {
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' || e.key === 'Enter') {
       setMenuActive(false)
     }
   })

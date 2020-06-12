@@ -1,3 +1,4 @@
+import { isAtomicInlineType } from '@databyss-org/editor/lib/util'
 import Block from '../../../models/Block'
 import Source from '../../../models/Source'
 import Entry from '../../../models/Entry'
@@ -49,6 +50,7 @@ export const populateRefEntities = (list, type) =>
   Promise.all(
     list.map(async b => {
       const _id = b.refId
+
       const entity = await modelDict(type).findOne({ _id })
       if (!entity) {
         throw new BadRefId(b.refId, 500)
@@ -206,7 +208,11 @@ const removePatches = async (p, req) => {
 
   switch (_prop) {
     case 'entityCache': {
-      // TODO: REMOVE ENTITY FROM DB
+      // removes entries from DB
+      if (!isAtomicInlineType(p.value.type)) {
+        await Entry.findOneAndRemove({ _id: p.value._id })
+      }
+      // TODO: remove atomic types from DB if not linked to other pages
       break
     }
     case 'blockCache': {
