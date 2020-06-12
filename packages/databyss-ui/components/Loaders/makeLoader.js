@@ -3,7 +3,7 @@ import { ResourcePending } from '@databyss-org/services/lib/ResourcePending'
 import ErrorFallback from '../Notify/ErrorFallback'
 import Loading from '../Notify/LoadingFallback'
 
-const makeLoader = (resource, children, onComponentUnmount) => {
+const makeLoader = ({ resource, children, onComponentUnmount }) => {
   useEffect(
     () => () => {
       if (

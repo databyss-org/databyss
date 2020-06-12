@@ -7,9 +7,11 @@ import makeLoader from './makeLoader'
 
 export const PageLoader = ({ children, pageId }) => {
   const { getPage, removePageFromCache } = usePageContext()
-  return makeLoader(getPage(pageId), children, () =>
-    removePageFromCache(pageId)
-  )
+  return makeLoader({
+    resource: getPage(pageId),
+    children,
+    onComponentUnmount: () => removePageFromCache(pageId),
+  })
 }
 
 export const withPage = Wrapped => ({ pageId, ...others }) => (
@@ -20,7 +22,7 @@ export const withPage = Wrapped => ({ pageId, ...others }) => (
 
 export const PagesLoader = ({ children }) => {
   const { getPages } = usePageContext()
-  return makeLoader(getPages(), children)
+  return makeLoader({ resource: getPages(), children })
 }
 
 export const withPages = Wrapped => ({ ...others }) => (
@@ -30,12 +32,12 @@ export const withPages = Wrapped => ({ ...others }) => (
 export const EntrySearchLoader = ({ query, children }) => {
   const { searchEntries, searchCache } = useEntryContext()
   searchEntries(query)
-  return makeLoader(searchCache[query], children)
+  return makeLoader({ resource: searchCache[query], children })
 }
 
 export const SourceLoader = ({ sourceId, children }) => {
   const { getSource } = useSourceContext()
-  return makeLoader(getSource(sourceId), children)
+  return makeLoader({ resource: getSource(sourceId), children })
 }
 
 export const withSource = Wrapped => ({ sourceId, ...others }) => (
@@ -47,10 +49,10 @@ export const withSource = Wrapped => ({ sourceId, ...others }) => (
 export const SearchSourceLoader = ({ query, children }) => {
   const { state, searchSource } = useSourceContext()
   searchSource(query)
-  return makeLoader(state.searchCache[query], children)
+  return makeLoader({ resource: state.searchCache[query], children })
 }
 
 export const AllTopicsLoader = ({ children }) => {
   const { getAllTopics } = useTopicContext()
-  return makeLoader(getAllTopics(), children)
+  return makeLoader({ resource: getAllTopics(), children })
 }
