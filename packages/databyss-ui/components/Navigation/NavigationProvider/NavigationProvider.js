@@ -56,7 +56,7 @@ const NavigationProvider = ({ children, componentMap }) => {
     if (type) {
       return type
     }
-    return null
+    return getTokensFromPath().type
   }
 
   return (
