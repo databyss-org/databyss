@@ -59,7 +59,7 @@ describe('notes app', () => {
 
     editor = await getEditor(driver)
 
-    actions = driver.actions()
+    // actions = driver.actions()
 
     done()
   })
