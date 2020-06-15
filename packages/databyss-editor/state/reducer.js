@@ -1,5 +1,5 @@
 import ObjectId from 'bson-objectid'
-import { produce } from 'immer'
+import { produceWithPatches, enablePatches } from 'immer'
 import {
   SPLIT,
   MERGE,
@@ -16,6 +16,10 @@ import {
   symbolToAtomicType,
   blockAtIndex,
   getIndeciesForRefId,
+  offsetRanges,
+  removeLocationMark,
+  cleanupState,
+  blockValue,
 } from './util'
 
 export const bakeAtomicBlock = ({ state, draft, index }) => {
@@ -33,8 +37,10 @@ export const bakeAtomicBlock = ({ state, draft, index }) => {
       // push atomic block change to entityCache and editor operations
       const _nextEntity = {
         text: {
+          // ranges need to account for the removal of the first string `@` or `#`
           textValue: _entity.text.textValue.substring(1).trim(),
-          ranges: _entity.text.ranges,
+          // location marks are not allowed in atomic types
+          ranges: removeLocationMark(offsetRanges(_entity.text.ranges, 1)),
         },
         type: _atomicType,
         _id: _entity._id,
@@ -54,8 +60,10 @@ export const bakeAtomicBlock = ({ state, draft, index }) => {
   return null
 }
 
-export default (state, action) =>
-  produce(state, draft => {
+enablePatches()
+
+export default (state, action, onChange) => {
+  const [nextState, patch, inversePatch] = produceWithPatches(state, draft => {
     draft.operations = []
     draft.preventDefault = false
 
@@ -120,17 +128,19 @@ export default (state, action) =>
         // push updates operation back to editor
         draft.operations.push({
           index: payload.index,
-          block:
+          block: blockValue(
             draft.entityCache[
               draft.blockCache[draft.blocks[payload.index]._id].entityId
-            ],
+            ]
+          ),
         })
         draft.operations.push({
           index: payload.index + 1,
-          block:
+          block: blockValue(
             draft.entityCache[
               draft.blockCache[draft.blocks[payload.index + 1]._id].entityId
-            ],
+            ]
+          ),
         })
         break
       }
@@ -196,7 +206,7 @@ export default (state, action) =>
             // update only given entity
             draft.operations.push({
               index: op.index,
-              block: _entity,
+              block: blockValue(_entity),
             })
           }
         })
@@ -240,49 +250,11 @@ export default (state, action) =>
         // push update operation back to editor
         draft.operations.push({
           index: payload.index,
-          block: _entity,
+          block: blockValue(_entity),
         })
         break
       }
-      case SET_SELECTION: {
-        const { selection } = payload
-        const _hasRange = selectionHasRange(selection)
-        const _entity = entityForBlockIndex(draft, selection.focus.index)
-        const _previousEntity = entityForBlockIndex(
-          draft,
-          state.selection.focus.index
-        )
-        const _selectionIndexHasChanged =
-          selection.focus.index !== state.selection.focus.index
-
-        if (isAtomicInlineType(_entity.type)) {
-          const _isActive =
-            !_hasRange &&
-            selection.focus.offset < _entity.text.textValue.length &&
-            selection.focus.offset > 0
-
-          // only push an update if the `isActive` has changed
-          if (_selectionIndexHasChanged || _entity.isActive !== _isActive) {
-            _entity.isActive = _isActive
-            draft.operations.push({
-              index: selection.focus.index,
-              block: _entity,
-            })
-          }
-        }
-        // if we've moved selection index,
-        //   check previous selection for active entity, deactivate if necessary
-        if (_selectionIndexHasChanged) {
-          if (_previousEntity && _previousEntity.isActive) {
-            _previousEntity.isActive = false
-            draft.operations.push({
-              index: state.selection.focus.index,
-              block: _previousEntity,
-            })
-          }
-        }
-        break
-      }
+      case SET_SELECTION:
       default:
     }
 
@@ -315,5 +287,36 @@ export default (state, action) =>
       }
     }
 
-    return draft
+    // UPDATE BLOCK UI FLAGS
+    // flag currently selected block with `__showNewBlockMenu` if empty
+
+    // first reset `__showNewBlockMenu` on all other blocks
+    draft.blocks.forEach(block => {
+      block.__showNewBlockMenu = false
+      block.__isActive = false
+    })
+    const _selectedBlock = draft.blocks[draft.selection.focus.index]
+    const _selectedEntity = entityForBlockIndex(
+      draft,
+      draft.selection.focus.index
+    )
+
+    if (_selectedEntity) {
+      // show newBlockMenu if selection is collapsed and is empty
+      _selectedBlock.__showNewBlockMenu =
+        !selectionHasRange(draft.selection) &&
+        !_selectedEntity.text.textValue.length
+
+      // flag blocks with `__isActive` if selection is collapsed and within an atomic element
+      _selectedBlock.__isActive =
+        !selectionHasRange(draft.selection) &&
+        isAtomicInlineType(_selectedEntity.type) &&
+        draft.selection.focus.offset < _selectedEntity.text.textValue.length &&
+        draft.selection.focus.offset > 0
+    }
+
+    return cleanupState(draft)
   })
+  onChange({ previousState: state, nextState, patch, inversePatch })
+  return nextState
+}

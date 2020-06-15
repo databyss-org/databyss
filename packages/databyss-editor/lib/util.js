@@ -27,3 +27,9 @@ export const getEntityAtIndex = (state, index) => {
 // returns an array of indicies covered by selection
 export const getSelectedIndicies = selection =>
   _.range(selection.anchor.index, selection.focus.index + 1)
+
+export const withMetaData = state => ({
+  ...state,
+  newEntities: [],
+  operations: [],
+})

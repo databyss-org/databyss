@@ -18,8 +18,10 @@ const Footer = () => {
   const { setPage } = usePageContext()
   const onNewPageClick = () => {
     const _page = newPage()
-    setPage(_page)
-    navigate(`/pages/${_page.page._id}`)
+    setPage(_page).then(() => {
+      navigate(`/pages/${_page.page._id}`)
+    })
+
     navigateSidebar('/pages')
   }
 

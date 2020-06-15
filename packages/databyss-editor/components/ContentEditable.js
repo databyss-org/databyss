@@ -1,9 +1,17 @@
 import React, { useMemo, useRef, useEffect } from 'react'
-import { createEditor, Node, Transforms, Point } from 'slate'
-import { withReact } from 'slate-react'
+import {
+  createEditor,
+  Node,
+  Transforms,
+  Point,
+  Range,
+} from '@databyss-org/slate'
+import { ReactEditor, withReact } from 'slate-react'
+import _ from 'lodash'
 import { produce } from 'immer'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -18,9 +26,20 @@ import {
 } from '../lib/slateUtils'
 import { getSelectedIndicies } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
-import { symbolToAtomicType } from '../state/util'
+import { symbolToAtomicType, selectionHasRange } from '../state/util'
+import { showAtomicModal } from '../lib/atomicModal'
 
-const ContentEditable = () => {
+const ContentEditable = ({
+  onDocumentChange,
+  autofocus,
+  readonly,
+  onUnmount,
+}) => {
+  const editorContext = useEditorContext()
+  const navigationContext = useNavigationContext()
+  const sourceContext = useSourceContext()
+  const topicContext = useTopicContext()
+
   const {
     state,
     split,
@@ -31,21 +50,33 @@ const ContentEditable = () => {
     clear,
     remove,
     removeEntityFromQueue,
-  } = useEditorContext()
+  } = editorContext
 
   const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
-  const sourceContext = useSourceContext()
-  const topicContext = useTopicContext()
-
-  // const { setSource } = useSourceContext()
-  // const { setTopic } = useTopicContext()
-
   if (!valueRef.current) {
     editor.children = stateToSlate(state)
+    // load selection from DB
+    if (state.selection) {
+      const selection = stateSelectionToSlateSelection(
+        editor.children,
+        state.selection
+      )
+
+      Transforms.select(editor, selection)
+    }
   }
+
+  useEffect(
+    () => () => {
+      if (onUnmount) {
+        onUnmount()
+      }
+    },
+    []
+  )
 
   // if new atomic block has been added, save atomic
   useEffect(
@@ -79,22 +110,35 @@ const ContentEditable = () => {
 
   const onKeyDown = event => {
     if (Hotkeys.isBold(event)) {
+      event.preventDefault()
       toggleMark(editor, 'bold')
       return
     }
 
     if (Hotkeys.isItalic(event)) {
       toggleMark(editor, 'italic')
+      event.preventDefault()
       return
     }
 
     if (Hotkeys.isLocation(event)) {
       toggleMark(editor, 'location')
+      event.preventDefault()
       return
     }
 
     if (event.key === 'Enter') {
-      if (getEntityAtIndex(editor.selection.focus.path[0]).isAtomic) {
+      const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
+      const _focusedEntity = getEntityAtIndex(editor.selection.focus.path[0])
+
+      if (_focusedEntity.isAtomic) {
+        if (
+          ReactEditor.isFocused(editor) &&
+          !selectionHasRange(state.selection) &&
+          _focusedBlock.__isActive
+        ) {
+          showAtomicModal({ editorContext, navigationContext, editor })
+        }
         return
       }
       const _text = Node.string(editor.children[editor.selection.focus.path[0]])
@@ -174,10 +218,19 @@ const ContentEditable = () => {
   }
 
   const onChange = value => {
+    if (onDocumentChange) {
+      onDocumentChange(editor)
+    }
+
     const selection = slateSelectionToStateSelection(editor)
 
     if (!selection) {
       return
+    }
+
+    // preserve selection id from DB
+    if (state.selection._id) {
+      selection._id = state.selection._id
     }
 
     const focusIndex = selection.focus.index
@@ -259,9 +312,10 @@ const ContentEditable = () => {
             },
           })
           setContent({ selection, operations: _operations })
+          /* eslint-disable-next-line no-useless-return */
+          return
         }
       })
-      return
     }
 
     setSelection(selection)
@@ -279,7 +333,6 @@ const ContentEditable = () => {
         draft[op.index].children = _block.children
         draft[op.index].type = _block.type
         draft[op.index].isBlock = _block.isBlock
-        draft[op.index].isActive = _block.isActive
       })
     }
   )
@@ -294,21 +347,27 @@ const ContentEditable = () => {
   //   sync the Slate selection to the state selection
   if (state.operations.length) {
     nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
-
-    // HACK:
-    // There is a bug in Slate that causes unexpected behavior when creating a
-    // selection by doing `Transforms.move` on the anchor and focus. If the
-    // selection falls on a range that already has a mark, the focus gets the
-    // correct path (pointing within the mark leaf) but the anchor gets the parent
-    // path. The fix for this is to overshoot the anchor by 1
-    // and then correct the offset with an additional move.
-    Transforms.move(editor, { distance: 1, edge: 'anchor' })
-    Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
   }
 
-  Transforms.setSelection(editor, nextSelection)
+  if (!_.isEqual(editor.selection, nextSelection)) {
+    Transforms.setSelection(editor, nextSelection)
+    // HACK only needs to be applied when editor is focused and Range is expanded (applying formats and marks)
+    if (editor.selection && Range.isExpanded(editor.selection)) {
+      // HACK:
+      // There is a bug in Slate that causes unexpected behavior when creating a
+      // selection by doing `Transforms.move` on the anchor and focus. If the
+      // selection falls on a range that already has a mark, the focus gets the
+      // correct path (pointing within the mark leaf) but the anchor gets the parent
+      // path. The fix for this is to overshoot the anchor by 1
+      // and then correct the offset with an additional move.
+
+      Transforms.move(editor, { distance: 1, edge: 'anchor' })
+      Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
+    }
+  }
 
   valueRef.current = nextValue
+
   selectionRef.current = nextSelection
 
   if (state.preventDefault) {
@@ -318,9 +377,11 @@ const ContentEditable = () => {
   return (
     <Editor
       editor={editor}
+      autofocus={autofocus}
       value={nextValue}
       onChange={onChange}
       onKeyDown={onKeyDown}
+      readonly={readonly}
     />
   )
 }

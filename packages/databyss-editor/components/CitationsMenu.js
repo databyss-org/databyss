@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import styledCss from '@styled-system/css'
 import _ from 'lodash'
 import { useEditor, ReactEditor } from 'slate-react'
-import { Node, Transforms } from 'slate'
+import { Node, Transforms } from '@databyss-org/slate'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { SearchSourceLoader } from '@databyss-org/ui/components/Loaders'
@@ -18,7 +18,7 @@ import {
   BaseControl,
 } from '@databyss-org/ui/primitives'
 import { useEditorContext } from '../state/EditorProvider'
-import { getEntityAtIndex } from '../lib/util'
+import { getEntityAtIndex, isAtomicInlineType } from '../lib/util'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 
 const MENU_HEIGHT = 200
@@ -56,7 +56,6 @@ export const getPosition = editor => {
   if (editor.selection) {
     const _activeNode = editor.children[editor.selection.anchor.path[0]]
     const _node = ReactEditor.toDOMNode(editor, _activeNode)
-
     if (_node) {
       const _rect = _node.getBoundingClientRect()
       const _windowHeight = window.innerHeight
@@ -164,7 +163,7 @@ export const Citations = () => {
         const _index = editorContext.state.selection.anchor.index
         const _node = editor.children[_index]
         const _text = Node.string(_node)
-        if (_text.charAt(0) === '@') {
+        if (_text.charAt(0) === '@' && !isAtomicInlineType(_node.type)) {
           setSourceQuery(_text.substring(1))
           if (!menuActive) setMenuActive(true)
         } else if (menuActive) {

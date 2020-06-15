@@ -2,6 +2,7 @@ import React from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import makeLoader from './makeLoader'
 
 export const PageLoader = ({ children, pageId }) => {
@@ -45,4 +46,9 @@ export const SearchSourceLoader = ({ query, children }) => {
   const { state, searchSource } = useSourceContext()
   searchSource(query)
   return makeLoader(state.searchCache[query], children)
+}
+
+export const AllTopicsLoader = ({ children }) => {
+  const { getAllTopics } = useTopicContext()
+  return makeLoader(getAllTopics(), children)
 }
