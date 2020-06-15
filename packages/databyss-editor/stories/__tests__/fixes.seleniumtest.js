@@ -31,7 +31,7 @@ const random = Math.random()
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
-describe('github bug fixes', () => {
+describe('offline testing in editor', () => {
   beforeEach(async done => {
     // https://wiki.saucelabs.com/display/DOCS/Custom+Sauce+Labs+WebDriver+Extensions+for+Network+and+Log+Commands
     // Offline scripts only available in chrome
@@ -78,16 +78,9 @@ describe('github bug fixes', () => {
     await driver.quit()
   })
 
-  it('should fix 257', async () => {
+  it('save in offline mode', async () => {
     await sleep(300)
     await editor.sendKeys('This should test for')
-    // await actions.sendKeys('this is an entry with ')
-    // await toggleBold(actions)
-    // await actions.sendKeys('bold')
-
-    // await toggleBold(actions)
-
-    // await enterKey(actions)
 
     // toggle offline
     if (!process.env.LOCAL_ENV) {
