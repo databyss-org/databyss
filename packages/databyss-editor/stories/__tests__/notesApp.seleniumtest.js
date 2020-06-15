@@ -6,10 +6,9 @@ import {
   getEditor,
   getElementByTag,
   sleep,
-  toggleBold,
+  //  toggleBold,
   //   toggleItalic,
   //   toggleLocation,
-  //   getElementById,
   //   enterKey,
   //   upKey,
   //   downKey,
@@ -18,7 +17,7 @@ import {
 
 let driver
 let editor
-let actions
+// let actions
 const LOCAL_URL = 'http://localhost:3000'
 const PROXY_URL = 'http://0.0.0.0:3000'
 
@@ -58,10 +57,6 @@ describe('notes app', () => {
 
     await sleep(1000)
 
-    await driver.get(
-      process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
-    )
-
     editor = await getEditor(driver)
 
     actions = driver.actions()
@@ -74,35 +69,87 @@ describe('notes app', () => {
   })
 
   it('shoud switch page names', async () => {
-    await editor.sendKeys('the following text should be ')
-    await toggleBold(actions)
-    await actions.sendKeys('bold')
-    await actions.perform()
-    await sleep(7000)
+    let headerField = await getElementByTag(
+      driver,
+      '[data-test-element="page-header"]'
+    )
+    await headerField.sendKeys('First Test Page Title')
 
-    await driver.navigate().refresh()
+    editor.sendKeys('Editor test one')
+
+    await sleep(2000)
+
+    const newPageButton = await getElementByTag(
+      driver,
+      '[data-test-element="new-page-button"]'
+    )
+    // store first page id
+    let url = await driver.getCurrentUrl()
+    url = url.split('/')
+
+    const firstPageId = url[url.length - 1]
+
+    await newPageButton.click()
+    await sleep(2000)
+
+    headerField = await getElementByTag(
+      driver,
+      '[data-test-element="page-header"]'
+    )
+
+    await headerField.sendKeys('Second page title')
+
+    editor = await getEditor(driver)
+
+    editor.sendKeys('Editor test two')
+
+    url = await driver.getCurrentUrl()
+    url = url.split('/')
+
+    const secondPageId = url[url.length - 1]
+
+    await sleep(2000)
+
+    await driver.get(
+      process.env.LOCAL_ENV
+        ? `${LOCAL_URL_EDITOR}/pages/${firstPageId}`
+        : PROXY_URL_EDITOR
+    )
+
+    headerField = await getElementByTag(
+      driver,
+      '[data-test-element="page-header"]'
+    )
+
+    const firstHeaderField = await headerField.getAttribute('value')
+
+    editor = await getEditor(driver)
+
+    const firstEditorField = await editor.getAttribute('innerText')
+
+    await driver.get(
+      process.env.LOCAL_ENV
+        ? `${LOCAL_URL_EDITOR}/pages/${secondPageId}`
+        : PROXY_URL_EDITOR
+    )
+
+    headerField = await getElementByTag(
+      driver,
+      '[data-test-element="page-header"]'
+    )
+
+    const secondHeaderField = await headerField.getAttribute('value')
+
+    editor = await getEditor(driver)
+
+    const secondEditorField = await editor.getAttribute('innerText')
 
     await sleep(3000)
 
-    // slateDocument = await getElementById(driver, 'slateDocument')
+    assert.equal(firstHeaderField, 'First Test Page Title')
+    assert.equal(firstEditorField, 'Editor test one\n')
 
-    // const actual = JSON.parse(await slateDocument.getText())
-
-    // const expected = (
-    //   <editor>
-    //     <block type="ENTRY">
-    //       <text>the following text should be </text>
-    //       <text bold>bold</text>
-    //       <cursor />
-    //     </block>
-    //   </editor>
-    // )
-
-    // assert.deepEqual(
-    //   sanitizeEditorChildren(actual.children),
-    //   sanitizeEditorChildren(expected.children)
-    // )
-
-    assert.deepEqual(true, true)
+    assert.equal(secondHeaderField, 'Second page title')
+    assert.equal(secondEditorField, 'Editor test two\n')
   })
 })

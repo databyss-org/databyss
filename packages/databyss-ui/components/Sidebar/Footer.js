@@ -42,6 +42,7 @@ const Footer = () => {
         px="small"
         py="extraSmall"
         width="100%"
+        data-test-element="new-page-button"
         onClick={() => onNewPageClick()}
         flexDirection="row"
         childViewProps={{ width: '100%' }}

@@ -81,6 +81,7 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
         const _isActive = item.id === tokens.id && tokens.id
         acc.push(
           <BaseControl
+            data-test-element={`page-sidebar-${index}`}
             backgroundColor={_isActive ? 'control.1' : 'transparent'}
             py="small"
             px="em"
