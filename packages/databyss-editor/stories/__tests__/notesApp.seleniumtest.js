@@ -59,8 +59,6 @@ describe('notes app', () => {
 
     editor = await getEditor(driver)
 
-    // actions = driver.actions()
-
     done()
   })
 
@@ -116,6 +114,8 @@ describe('notes app', () => {
         : PROXY_URL_EDITOR
     )
 
+    await sleep(2000)
+
     headerField = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
@@ -132,6 +132,8 @@ describe('notes app', () => {
         ? `${LOCAL_URL_EDITOR}/pages/${secondPageId}`
         : PROXY_URL_EDITOR
     )
+
+    await sleep(2000)
 
     headerField = await getElementByTag(
       driver,
