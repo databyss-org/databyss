@@ -38,7 +38,7 @@ export default (state, action) => {
       }
     }
     case REMOVE_PAGE_FROM_CACHE: {
-      const _cache = state.cache
+      const _cache = cloneDeep(state.cache)
       delete _cache[action.payload.id]
 
       return {
