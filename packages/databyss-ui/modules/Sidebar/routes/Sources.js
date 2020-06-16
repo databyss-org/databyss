@@ -4,7 +4,7 @@ import SidebarList from '../../../components/Sidebar/SidebarList'
 const menuItems = [
   {
     type: 'sources',
-    text: 'All Sources',
+    text: 'All sources',
   },
   {
     type: 'authors',

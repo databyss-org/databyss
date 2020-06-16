@@ -55,7 +55,9 @@ const SidebarList = ({ menuItems }) => {
       mt="extraSmall"
     >
       {menuItems.map((item, index) => {
-        const _isActive = item.id === tokens.id
+        const _isActive = item.id
+          ? item.id === tokens.id
+          : item.type === tokens.type
 
         return (
           <BaseControl

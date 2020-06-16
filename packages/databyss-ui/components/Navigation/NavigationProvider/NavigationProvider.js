@@ -56,7 +56,7 @@ const NavigationProvider = ({ children }) => {
     if (type) {
       return type
     }
-    return getTokensFromPath().type
+    return getTokensFromPath().type ? getTokensFromPath().type : 'pages'
   }
 
   return (
