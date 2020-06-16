@@ -82,10 +82,10 @@ describe('notes app', () => {
       '[data-test-element="new-page-button"]'
     )
     // store first page id
-    let url = await driver.getCurrentUrl()
-    url = url.split('/')
+    let pageOneUrl = await driver.getCurrentUrl()
+    pageOneUrl = pageOneUrl.split('/')
 
-    const firstPageId = url[url.length - 1]
+    const firstPageId = pageOneUrl[pageOneUrl.length - 1]
 
     await newPageButton.click()
     await sleep(2000)
@@ -101,10 +101,10 @@ describe('notes app', () => {
 
     editor.sendKeys('Editor test two')
 
-    url = await driver.getCurrentUrl()
-    url = url.split('/')
+    let pageTwoUrl = await driver.getCurrentUrl()
+    pageTwoUrl = pageTwoUrl.split('/')
 
-    const secondPageId = url[url.length - 1]
+    const secondPageId = pageTwoUrl[pageTwoUrl.length - 1]
 
     await sleep(2000)
 
