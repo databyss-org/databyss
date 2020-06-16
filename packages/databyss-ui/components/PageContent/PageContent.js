@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useLocation, Router } from '@reach/router'
 import { PagesLoader, PageLoader } from '@databyss-org/ui/components/Loaders'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { ArchiveBin } from './ArchiveBin'
@@ -16,6 +17,7 @@ export const PageRouter = () => (
 
 const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
   const { getBlockRefByIndex, hasPendingPatches } = usePageContext()
+  const { isOnline } = useNotifyContext()
 
   const [pendingPatches, setPendingPatches] = useState(hasPendingPatches)
 
@@ -53,10 +55,13 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
         // flexGrow="1"
       >
         <PageHeader pageId={id} isFocused={onHeaderClick} />
-        <Text color="gray.4" pr="medium">
-          {pendingPatches ? 'Saving...' : 'All changes saved'}
+        <Text color={isOnline ? 'gray.4' : 'red.0'} pr="medium">
+          {isOnline && (pendingPatches ? 'Saving...' : 'All changes saved')}
+          {!isOnline && 'Offline'}
         </Text>
-        <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
+        <PagesLoader>
+          {pages => <ArchiveBin pages={pages} disabled={!isOnline} />}
+        </PagesLoader>
       </View>
       <PageBody page={page} readOnly={readOnly} />
     </View>

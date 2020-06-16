@@ -5,7 +5,7 @@ import { BaseControl, Icon } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 
-export const ArchiveBin = ({ pages }) => {
+export const ArchiveBin = ({ pages, disabled }) => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
 
@@ -32,6 +32,7 @@ export const ArchiveBin = ({ pages }) => {
 
   return canBeArchived ? (
     <BaseControl
+      disabled={disabled}
       onClick={onClick}
       hoverColor="background.2"
       p="tiny"

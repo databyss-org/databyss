@@ -5,6 +5,7 @@ import _ from 'lodash'
 import { produce } from 'immer'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
@@ -29,6 +30,7 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
   const navigationContext = useNavigationContext()
   const sourceContext = useSourceContext()
   const topicContext = useTopicContext()
+  const notifyContext = useNotifyContext()
 
   const {
     state,
@@ -62,7 +64,13 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
   // if new atomic block has been added, save atomic
   useEffect(
     () => {
-      if (state.newEntities.length && sourceContext && topicContext) {
+      if (
+        state.newEntities.length &&
+        sourceContext &&
+        topicContext &&
+        notifyContext &&
+        notifyContext.isOnline
+      ) {
         const { setSource } = sourceContext
         const { setTopic } = topicContext
 
@@ -86,7 +94,7 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
         })
       }
     },
-    [state.newEntities.length]
+    [state.newEntities.length, notifyContext]
   )
 
   const onKeyDown = event => {
@@ -121,11 +129,12 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
       const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
       const _focusedEntity = getEntityAtIndex(editor.selection.focus.path[0])
 
-      if (_focusedEntity.isAtomic) {
+      if (_focusedEntity.isAtomic && notifyContext) {
         if (
           ReactEditor.isFocused(editor) &&
           !selectionHasRange(state.selection) &&
-          _focusedBlock.__isActive
+          _focusedBlock.__isActive &&
+          notifyContext.isOnline
         ) {
           showAtomicModal({ editorContext, navigationContext, editor })
         }

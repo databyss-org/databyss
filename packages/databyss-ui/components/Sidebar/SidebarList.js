@@ -1,6 +1,8 @@
 import React from 'react'
 import css from '@styled-system/css'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
+
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
@@ -44,6 +46,8 @@ const menuSvgs = type =>
   }[type])
 
 const SidebarList = ({ menuItems = defaultMenu }) => {
+  const { isOnline } = useNotifyContext()
+
   const {
     getTokensFromPath,
     navigateSidebar,
@@ -81,6 +85,7 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
         const _isActive = item.id === tokens.id && tokens.id
         acc.push(
           <BaseControl
+            disabled={!isOnline}
             data-test-element={`page-sidebar-${index}`}
             backgroundColor={_isActive ? 'control.1' : 'transparent'}
             py="small"

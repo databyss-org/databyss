@@ -41,6 +41,12 @@ class NotifyProvider extends React.Component {
         console.error(error)
       })
     } else {
+      window.addEventListener('offline', () =>
+        this.hasInternetConnection(false)
+      )
+
+      window.addEventListener('online', () => this.hasInternetConnection(true))
+
       window.addEventListener('error', this.showUnhandledErrorDialog)
       window.addEventListener(
         'unhandledrejection',
@@ -51,6 +57,7 @@ class NotifyProvider extends React.Component {
   state = {
     dialogVisible: false,
     message: null,
+    isOnline: true,
   }
 
   componentDidCatch(error, info) {
@@ -66,6 +73,10 @@ class NotifyProvider extends React.Component {
 
   componentWillUnmount() {
     if (!IS_NATIVE) {
+      window.removeEventListener('offline', this.hasInternetConnection)
+
+      window.removeEventListener('online', this.hasInternetConnection)
+
       window.removeEventListener('error', this.showUnhandledErrorDialog)
       window.removeEventListener(
         'unhandledrejection',
@@ -75,7 +86,15 @@ class NotifyProvider extends React.Component {
   }
 
   showUnhandledErrorDialog = () => {
-    this.notify('😥something went wrong')
+    if (this.state.isOnline) {
+      this.notify('😥something went wrong')
+    }
+  }
+
+  hasInternetConnection = isOnline => {
+    this.setState({
+      isOnline,
+    })
   }
 
   notify = message => {
@@ -91,10 +110,11 @@ class NotifyProvider extends React.Component {
   }
 
   render() {
-    const { dialogVisible, message } = this.state
+    const { dialogVisible, message, isOnline } = this.state
+
     return (
       <NotifyContext.Provider
-        value={{ notify: this.notify, notifyError: this.notifyError }}
+        value={{ notify: this.notify, notifyError: this.notifyError, isOnline }}
       >
         {this.props.children}
         <Dialog

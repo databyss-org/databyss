@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from 'slate-react'
@@ -16,6 +17,7 @@ export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
 
 const Element = ({ attributes, children, element }) => {
+  const notifyContext = useNotifyContext()
   const editor = useEditor()
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
@@ -23,7 +25,9 @@ const Element = ({ attributes, children, element }) => {
 
   const onAtomicMouseDown = e => {
     e.preventDefault()
-    showAtomicModal({ editorContext, navigationContext, editor })
+    if (notifyContext && notifyContext.isOnline) {
+      showAtomicModal({ editorContext, navigationContext, editor })
+    }
   }
 
   const block = editorContext

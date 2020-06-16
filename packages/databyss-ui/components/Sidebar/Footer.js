@@ -1,6 +1,7 @@
 import React from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { newPage } from '@databyss-org/services/pages/_helpers'
 import AddPageSvg from '@databyss-org/ui/assets/add_page.svg'
 import {
@@ -15,6 +16,7 @@ import { sidebar } from '@databyss-org/ui/theming/components'
 
 const Footer = () => {
   const { navigate, navigateSidebar, isMenuOpen } = useNavigationContext()
+  const { isOnline } = useNotifyContext()
   const { setPage } = usePageContext()
   const onNewPageClick = () => {
     const _page = newPage()
@@ -40,6 +42,7 @@ const Footer = () => {
       <Separator color="border.1" />
       <BaseControl
         px="small"
+        disabled={!isOnline}
         py="extraSmall"
         width="100%"
         data-test-element="new-page-button"

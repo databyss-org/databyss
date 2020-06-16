@@ -128,7 +128,7 @@ describe('notes app', () => {
     let editorField = await editor.getAttribute('innerText')
 
     assert.equal(headerField, 'First Test Page Title')
-    assert.equal(editorField, 'Editor test one\n')
+    assert.equal(editorField, 'Editor test one')
 
     await driver.get(
       process.env.LOCAL_ENV
