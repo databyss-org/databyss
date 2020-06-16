@@ -52,7 +52,11 @@ const SidebarList = ({ menuItems }) => {
       {menuItems.map((item, index) => {
         const _isActive = item.id
           ? item.id === tokens.id
+<<<<<<< HEAD
           : item.type === tokens.type && !tokens.id
+=======
+          : item.type === tokens.type
+>>>>>>> Sorting sources entries alphabetically and styling
 
         if (item.text) {
           return (
