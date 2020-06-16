@@ -121,11 +121,14 @@ describe('notes app', () => {
       '[data-test-element="page-header"]'
     )
 
-    const firstHeaderField = await headerField.getAttribute('value')
+    headerField = await headerField.getAttribute('value')
 
     editor = await getEditor(driver)
 
-    const firstEditorField = await editor.getAttribute('innerText')
+    let editorField = await editor.getAttribute('innerText')
+
+    assert.equal(headerField, 'First Test Page Title')
+    assert.equal(editorField, 'Editor test one\n')
 
     await driver.get(
       process.env.LOCAL_ENV
@@ -140,18 +143,15 @@ describe('notes app', () => {
       '[data-test-element="page-header"]'
     )
 
-    const secondHeaderField = await headerField.getAttribute('value')
+    headerField = await headerField.getAttribute('value')
 
     editor = await getEditor(driver)
 
-    const secondEditorField = await editor.getAttribute('innerText')
+    editorField = await editor.getAttribute('innerText')
 
     await sleep(3000)
 
-    assert.equal(firstHeaderField, 'First Test Page Title')
-    assert.equal(firstEditorField, 'Editor test one\n')
-
-    assert.equal(secondHeaderField, 'Second page title')
-    assert.equal(secondEditorField, 'Editor test two\n')
+    assert.equal(headerField, 'Second page title')
+    assert.equal(editorField, 'Editor test two\n')
   })
 })
