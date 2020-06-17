@@ -146,7 +146,7 @@ describe('notes app', () => {
   })
 
   it('disable in offline mode', async () => {
-    let newPageButton = await getElementByTag(
+    const newPageButton = await getElementByTag(
       driver,
       '[data-test-element="new-page-button"]'
     )
