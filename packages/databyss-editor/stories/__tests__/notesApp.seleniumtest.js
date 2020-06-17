@@ -164,11 +164,6 @@ describe('notes app', () => {
       })
     }
 
-    newPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="new-page-button"]'
-    )
-
     let isEnabled = await newPageButton.isEnabled()
 
     assert.equal(isEnabled, false)
@@ -181,11 +176,6 @@ describe('notes app', () => {
     }
 
     await sleep(1000)
-
-    newPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="new-page-button"]'
-    )
 
     isEnabled = await newPageButton.isEnabled()
 
