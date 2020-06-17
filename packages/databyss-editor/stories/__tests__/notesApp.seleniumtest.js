@@ -21,8 +21,8 @@ let editor
 const LOCAL_URL = 'http://localhost:3000'
 const PROXY_URL = 'http://0.0.0.0:3000'
 
-const LOCAL_URL_EDITOR = 'http://localhost:3000'
-const PROXY_URL_EDITOR = 'http://0.0.0.0:3000'
+// const LOCAL_URL_EDITOR = 'http://localhost:3000'
+// const PROXY_URL_EDITOR = 'http://0.0.0.0:3000'
 
 const random = Math.random()
   .toString(36)
@@ -81,11 +81,11 @@ describe('notes app', () => {
       driver,
       '[data-test-element="new-page-button"]'
     )
-    // store first page id
-    let pageOneUrl = await driver.getCurrentUrl()
-    pageOneUrl = pageOneUrl.split('/')
+    // // store first page id
+    // let pageOneUrl = await driver.getCurrentUrl()
+    // pageOneUrl = pageOneUrl.split('/')
 
-    const firstPageId = pageOneUrl[pageOneUrl.length - 1]
+    // const firstPageId = pageOneUrl[pageOneUrl.length - 1]
 
     await newPageButton.click()
     await sleep(2000)
@@ -101,20 +101,16 @@ describe('notes app', () => {
 
     editor.sendKeys('Editor test two')
 
-    let pageTwoUrl = await driver.getCurrentUrl()
-    pageTwoUrl = pageTwoUrl.split('/')
-
-    const secondPageId = pageTwoUrl[pageTwoUrl.length - 1]
-
     await sleep(2000)
 
-    await driver.get(
-      process.env.LOCAL_ENV
-        ? `${LOCAL_URL_EDITOR}/pages/${firstPageId}`
-        : PROXY_URL_EDITOR
+    const firstPageButton = await getElementByTag(
+      driver,
+      '[data-test-element="page-sidebar-0"]'
     )
 
-    await sleep(2000)
+    await firstPageButton.click()
+
+    await sleep(1000)
 
     headerField = await getElementByTag(
       driver,
@@ -128,15 +124,18 @@ describe('notes app', () => {
     let editorField = await editor.getAttribute('innerText')
 
     assert.equal(headerField, 'First Test Page Title')
-    assert.equal(editorField, 'Editor test one')
+    assert.equal(editorField, 'Editor test one\n')
 
-    await driver.get(
-      process.env.LOCAL_ENV
-        ? `${LOCAL_URL_EDITOR}/pages/${secondPageId}`
-        : PROXY_URL_EDITOR
+    // Second page integrity test
+
+    const secondPageButton = await getElementByTag(
+      driver,
+      '[data-test-element="page-sidebar-1"]'
     )
 
-    await sleep(2000)
+    await secondPageButton.click()
+
+    await sleep(1000)
 
     headerField = await getElementByTag(
       driver,
@@ -149,9 +148,63 @@ describe('notes app', () => {
 
     editorField = await editor.getAttribute('innerText')
 
-    await sleep(3000)
+    await sleep(1000)
 
     assert.equal(headerField, 'Second page title')
     assert.equal(editorField, 'Editor test two\n')
+
+    // let pageTwoUrl = await driver.getCurrentUrl()
+    // pageTwoUrl = pageTwoUrl.split('/')
+
+    // const secondPageId = pageTwoUrl[pageTwoUrl.length - 1]
+
+    // await sleep(2000)
+
+    // await driver.get(
+    //   process.env.LOCAL_ENV
+    //     ? `${LOCAL_URL_EDITOR}/pages/${firstPageId}`
+    //     : PROXY_URL_EDITOR
+    // )
+
+    // await sleep(2000)
+
+    // headerField = await getElementByTag(
+    //   driver,
+    //   '[data-test-element="page-header"]'
+    // )
+
+    // headerField = await headerField.getAttribute('value')
+
+    // editor = await getEditor(driver)
+
+    // let editorField = await editor.getAttribute('innerText')
+
+    // assert.equal(headerField, 'First Test Page Title')
+    // assert.equal(editorField, 'Editor test one')
+
+    // await driver.get(
+    //   process.env.LOCAL_ENV
+    //     ? `${LOCAL_URL_EDITOR}/pages/${secondPageId}`
+    //     : PROXY_URL_EDITOR
+    // )
+
+    // await sleep(2000)
+
+    // headerField = await getElementByTag(
+    //   driver,
+    //   '[data-test-element="page-header"]'
+    // )
+
+    // headerField = await headerField.getAttribute('value')
+
+    // editor = await getEditor(driver)
+
+    // editorField = await editor.getAttribute('innerText')
+
+    // await sleep(3000)
+
+    // assert.equal(headerField, 'Second page title')
+    // assert.equal(editorField, 'Editor test two\n')
+    assert.equal(true, true)
   })
 })
