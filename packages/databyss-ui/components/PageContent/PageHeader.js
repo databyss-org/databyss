@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { View, TextInput, Text } from '@databyss-org/ui/primitives'
+import { View, TextInput } from '@databyss-org/ui/primitives'
 import { theme } from '@databyss-org/ui/theming'
 import styledCss from '@styled-system/css'
 
@@ -44,29 +44,27 @@ const PageHeader = ({ isFocused, pageId }) => {
 
   return (
     <View p="medium" flexGrow={1} ml="extraSmall">
-      {
-        <TextInput
-          data-test-element="page-header"
-          onBlur={updatePageName}
-          onFocus={() => isFocused(true)}
-          onKeyDown={e => {
-            if (e.key === 'Enter') {
-              updatePageName()
-            }
-          }}
-          value={pageName}
-          onChange={onPageNameChange}
-          placeholder="Enter title"
-          variant="bodyLarge"
-          color="text.3"
-          concatCss={styledCss({
-            '::placeholder': {
-              color: 'text.3',
-              opacity: 0.6,
-            },
-          })(theme)}
-        />
-      }
+      <TextInput
+        data-test-element="page-header"
+        onBlur={updatePageName}
+        onFocus={() => isFocused(true)}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            updatePageName()
+          }
+        }}
+        value={pageName}
+        onChange={onPageNameChange}
+        placeholder="Enter title"
+        variant="bodyLarge"
+        color="text.3"
+        concatCss={styledCss({
+          '::placeholder': {
+            color: 'text.3',
+            opacity: 0.6,
+          },
+        })(theme)}
+      />
     </View>
   )
 }

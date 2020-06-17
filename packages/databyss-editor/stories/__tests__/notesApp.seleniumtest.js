@@ -63,7 +63,7 @@ describe('notes app', () => {
     await driver.quit()
   })
 
-  it('shoud switch page names', async () => {
+  it('should switch page names', async () => {
     let headerField = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
@@ -143,6 +143,93 @@ describe('notes app', () => {
 
     assert.equal(headerField, 'Second page title')
     assert.equal(editorField, 'Editor test two')
+  })
+
+  it('disable in offline mode', async () => {
+    let headerField = await getElementByTag(
+      driver,
+      '[data-test-element="page-header"]'
+    )
+    await headerField.sendKeys('First Test Page Title')
+
+    editor.sendKeys('Editor test one')
+
+    await sleep(2000)
+
+    const newPageButton = await getElementByTag(
+      driver,
+      '[data-test-element="new-page-button"]'
+    )
+
+    await newPageButton.click()
+
+    await sleep(5000)
+
+    editor.sendKeys('Editor test two')
+
+    await sleep(5000)
+
+    // headerField = await getElementByTag(
+    //   driver,
+    //   '[data-test-element="page-header"]'
+    // )
+
+    // await headerField.sendKeys('Second page title')
+
+    // editor = await getEditor(driver)
+
+    // editor.sendKeys('Editor test two')
+
+    // await sleep(2000)
+
+    // const firstPageButton = await getElementByTag(
+    //   driver,
+    //   '[data-test-element="page-sidebar-0"]'
+    // )
+
+    // await firstPageButton.click()
+
+    // await sleep(1000)
+
+    // headerField = await getElementByTag(
+    //   driver,
+    //   '[data-test-element="page-header"]'
+    // )
+
+    // headerField = await headerField.getAttribute('value')
+
+    // editor = await getEditor(driver)
+
+    // let editorField = await editor.getAttribute('innerText')
+
+    // assert.equal(headerField, 'First Test Page Title')
+    // assert.equal(editorField, 'Editor test one')
+
+    // // Second page integrity test
+    // const secondPageButton = await getElementByTag(
+    //   driver,
+    //   '[data-test-element="page-sidebar-1"]'
+    // )
+
+    // await secondPageButton.click()
+
+    // await sleep(1000)
+
+    // headerField = await getElementByTag(
+    //   driver,
+    //   '[data-test-element="page-header"]'
+    // )
+
+    // headerField = await headerField.getAttribute('value')
+
+    // editor = await getEditor(driver)
+
+    // editorField = await editor.getAttribute('innerText')
+
+    // await sleep(1000)
+
+    // assert.equal(headerField, 'Second page title')
+    // assert.equal(editorField, 'Editor test two')
 
     assert.equal(true, true)
   })

@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
-import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from 'slate-react'

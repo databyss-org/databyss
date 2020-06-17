@@ -95,7 +95,7 @@ class NotifyProvider extends React.Component {
     if (!isOnline) {
       this.setState({
         dialogVisible: true,
-        message: 'offline, please reconnect',
+        message: 'offline please reconnect',
         isOnline,
       })
     } else {
@@ -131,6 +131,7 @@ class NotifyProvider extends React.Component {
           visible={dialogVisible}
           message={message}
           onDismiss={() => this.setState({ dialogVisible: false })}
+          {...!isOnline && { 'data-test-modal': 'offline' }}
         />
       </NotifyContext.Provider>
     )

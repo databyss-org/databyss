@@ -1,7 +1,6 @@
 import React from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { newPage } from '@databyss-org/services/pages/_helpers'
 import AddPageSvg from '@databyss-org/ui/assets/add_page.svg'
 import {
