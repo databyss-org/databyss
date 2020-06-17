@@ -65,14 +65,15 @@ const Sidebar = () => {
             />
             {(menuItem === 'pages' || !menuItem) && <Pages />}
             {menuItem === 'sources' && <Sources />}
+            {menuItem === 'authors' && <Sources />}
             {menuItem === 'topics' && <Topics />}
           </List>
         </View>
       </View>
     </>
   ) : (
-    <SidebarCollapsed />
-  )
+      <SidebarCollapsed />
+    )
 }
 
 export default Sidebar
