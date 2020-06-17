@@ -94,10 +94,7 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
         })
       }
     },
-    [
-      state.newEntities.length,
-      //  notifyContext
-    ]
+    [state.newEntities.length, notifyContext]
   )
 
   const onKeyDown = event => {
