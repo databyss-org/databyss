@@ -164,7 +164,7 @@ describe('notes app', () => {
       })
     }
 
-    let newPageButton = await getElementByTag(
+    newPageButton = await getElementByTag(
       driver,
       '[data-test-element="new-page-button"]'
     )
