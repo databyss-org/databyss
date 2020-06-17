@@ -155,6 +155,7 @@ describe('notes app', () => {
 
     await sleep(2000)
 
+    const editor = await getEditor(driver)
     editor.sendKeys('Offline test')
 
     // toggle offline
