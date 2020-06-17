@@ -17,7 +17,7 @@ const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=cypress-tests--slate-5'
 describe('new block menu actions', () => {
   beforeEach(async done => {
     // OSX and safari are necessary
-    driver = await startSession('Slate-5-formatting-osx-safari', OSX, SAFARI)
+    driver = await startSession('Slate-5-new-block-menu', OSX, SAFARI)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     editor = await getEditor(driver)
 
