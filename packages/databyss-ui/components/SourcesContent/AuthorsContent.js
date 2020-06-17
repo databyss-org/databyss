@@ -9,25 +9,32 @@ import {
 } from '@databyss-org/ui/primitives'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 
-export const SourcesRouter = () => (
+export const AuthorsRouter = () => (
   <Router>
-    <SourcesContent path="/" />
+    <AuthorsContent path="/" />
   </Router>
 )
 
-const SourcesContent = () => {
+const AuthorsContent = () => {
   const { getAllSources, state } = useSourceContext()
   useEffect(() => getAllSources(), [])
 
   const sourcesData = () =>
-    Object.entries(state.cache).map(([, value]) => ({
-      id: value._id,
-      text: value.text.textValue,
-    }))
+    Object.entries(state.cache).map(([, value]) => {
+      const author = value.authors[0]
+
+      return {
+        id: value._id,
+        text: value.text.textValue,
+        author: author
+          ? `${author.lastName.textValue}, ${author.firstName.textValue}`
+          : 'Unknown author',
+      }
+    })
 
   const ComposeResults = () => {
     const sortedSources = sourcesData().sort(
-      (a, b) => (a.text > b.text ? 1 : -1)
+      (a, b) => (a.author > b.author ? 1 : -1)
     )
 
     return sortedSources.map((entry, index) => (
@@ -39,7 +46,7 @@ const SourcesContent = () => {
           hoverColor="background.2"
           activeColor="background.3"
         >
-          <Text variant="bodyNormalSemibold">{entry.text}</Text>
+          <Text variant="bodyNormalSemibold">{entry.author}</Text>
         </BaseControl>
       </View>
     ))
@@ -49,7 +56,7 @@ const SourcesContent = () => {
     <ScrollView p="medium" flex="1" maxHeight="98vh">
       <View p="medium">
         <Text variant="bodyLarge" color="text.3">
-          All Sources
+          All Authors
         </Text>
       </View>
       <EntrySearchLoader>{ComposeResults}</EntrySearchLoader>
@@ -57,4 +64,4 @@ const SourcesContent = () => {
   )
 }
 
-export default SourcesContent
+export default AuthorsContent

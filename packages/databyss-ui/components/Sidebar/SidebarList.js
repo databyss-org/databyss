@@ -34,6 +34,9 @@ const SidebarList = ({ menuItems }) => {
     if (item.type === 'sources') {
       navigate(`/sources/`)
     }
+    if (item.type === 'authors') {
+      navigate(`/authors/`)
+    }
     if (item.type === 'topics') {
       navigate(`/topics/`)
     }
