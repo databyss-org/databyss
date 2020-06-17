@@ -52,6 +52,7 @@ const EditorWithProvider = ({ initialState }) => {
   const onDocumentChange = val => {
     setSlateState(val)
   }
+
   return (
     <View maxWidth="900px">
       <Box>
