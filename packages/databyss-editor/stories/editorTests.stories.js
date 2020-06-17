@@ -50,7 +50,7 @@ const EditorWithProvider = ({ initialState }) => {
   // console.log(slateToJSX())
 
   const onDocumentChange = val => {
-    setSlateState(val)
+    setSlateState(JSON.stringify(val, null, 2))
   }
 
   return (
@@ -62,7 +62,7 @@ const EditorWithProvider = ({ initialState }) => {
       </Box>
       <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
         <Text variant="uiTextLargeSemibold">Slate State</Text>
-        <pre id="slateDocument">{JSON.stringify(slateState, null, 2)}</pre>
+        <pre id="slateDocument">{slateState}</pre>
       </Box>
     </View>
   )
