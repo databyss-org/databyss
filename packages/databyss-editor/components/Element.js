@@ -17,7 +17,6 @@ export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
 
 const Element = ({ attributes, children, element }) => {
-  const notifyContext = useNotifyContext()
   const editor = useEditor()
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
@@ -25,9 +24,7 @@ const Element = ({ attributes, children, element }) => {
 
   const onAtomicMouseDown = e => {
     e.preventDefault()
-    if (notifyContext && notifyContext.isOnline) {
-      showAtomicModal({ editorContext, navigationContext, editor })
-    }
+    showAtomicModal({ editorContext, navigationContext, editor })
   }
 
   const block = editorContext

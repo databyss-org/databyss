@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { View, TextInput, Text } from '@databyss-org/ui/primitives'
 import { theme } from '@databyss-org/ui/theming'
 import styledCss from '@styled-system/css'
@@ -9,7 +8,6 @@ const noPageTitle = 'untitled'
 
 const PageHeader = ({ isFocused, pageId }) => {
   const { getPage, setPage } = usePageContext()
-  const { isOnline } = useNotifyContext()
   const [pageName, setPageName] = useState({ textValue: '' })
 
   useEffect(
@@ -46,8 +44,7 @@ const PageHeader = ({ isFocused, pageId }) => {
 
   return (
     <View p="medium" flexGrow={1} ml="extraSmall">
-      {// TODO: when offline, Title is not able to be updated
-      isOnline ? (
+      {
         <TextInput
           data-test-element="page-header"
           onBlur={updatePageName}
@@ -69,21 +66,7 @@ const PageHeader = ({ isFocused, pageId }) => {
             },
           })(theme)}
         />
-      ) : (
-        <Text
-          variant="bodyLarge"
-          color="text.3"
-          concatCss={styledCss({
-            '::placeholder': {
-              color: 'text.3',
-              opacity: 0.6,
-            },
-          })(theme)}
-          data-test-element="page-header"
-        >
-          {pageName.textValue}
-        </Text>
-      )}
+      }
     </View>
   )
 }

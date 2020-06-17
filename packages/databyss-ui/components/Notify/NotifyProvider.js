@@ -92,9 +92,18 @@ class NotifyProvider extends React.Component {
   }
 
   hasInternetConnection = isOnline => {
-    this.setState({
-      isOnline,
-    })
+    if (!isOnline) {
+      this.setState({
+        dialogVisible: true,
+        message: 'offline, please reconnect',
+        isOnline,
+      })
+    } else {
+      this.setState({
+        isOnline,
+        dialogVisible: false,
+      })
+    }
   }
 
   notify = message => {
@@ -118,6 +127,7 @@ class NotifyProvider extends React.Component {
       >
         {this.props.children}
         <Dialog
+          disableButton={!isOnline}
           visible={dialogVisible}
           message={message}
           onDismiss={() => this.setState({ dialogVisible: false })}

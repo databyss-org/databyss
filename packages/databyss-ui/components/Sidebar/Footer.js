@@ -16,7 +16,6 @@ import { sidebar } from '@databyss-org/ui/theming/components'
 
 const Footer = () => {
   const { navigate, navigateSidebar, isMenuOpen } = useNavigationContext()
-  const { isOnline } = useNotifyContext()
   const { setPage } = usePageContext()
   const onNewPageClick = () => {
     const _page = newPage()
@@ -42,7 +41,6 @@ const Footer = () => {
       <Separator color="border.1" />
       <BaseControl
         px="small"
-        disabled={!isOnline}
         py="extraSmall"
         width="100%"
         data-test-element="new-page-button"
