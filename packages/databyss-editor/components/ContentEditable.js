@@ -225,7 +225,7 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
         onDocumentChange(editor)
       }
     },
-    [editor.operations]
+    [editor.operations, editor.children]
   )
 
   const onChange = value => {
