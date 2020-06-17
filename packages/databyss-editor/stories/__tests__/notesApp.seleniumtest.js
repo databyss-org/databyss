@@ -146,91 +146,49 @@ describe('notes app', () => {
   })
 
   it('disable in offline mode', async () => {
-    let headerField = await getElementByTag(
-      driver,
-      '[data-test-element="page-header"]'
-    )
-    await headerField.sendKeys('First Test Page Title')
-
-    editor.sendKeys('Editor test one')
-
-    await sleep(2000)
-
-    const newPageButton = await getElementByTag(
+    let newPageButton = await getElementByTag(
       driver,
       '[data-test-element="new-page-button"]'
     )
 
     await newPageButton.click()
 
-    await sleep(5000)
+    await sleep(2000)
 
-    editor.sendKeys('Editor test two')
+    editor.sendKeys('Offline test')
 
-    await sleep(5000)
+    // toggle offline
+    if (!process.env.LOCAL_ENV) {
+      await driver.executeScript('sauce:throttleNetwork', {
+        condition: 'offline',
+      })
+    }
 
-    // headerField = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-header"]'
-    // )
+    let newPageButton = await getElementByTag(
+      driver,
+      '[data-test-element="new-page-button"]'
+    )
 
-    // await headerField.sendKeys('Second page title')
+    let isEnabled = await newPageButton.isEnabled()
 
-    // editor = await getEditor(driver)
+    assert.equal(isEnabled, false)
 
-    // editor.sendKeys('Editor test two')
+    //   toggle online
+    if (!process.env.LOCAL_ENV) {
+      await driver.executeScript('sauce:throttleNetwork', {
+        condition: 'online',
+      })
+    }
 
-    // await sleep(2000)
+    await sleep(1000)
 
-    // const firstPageButton = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-sidebar-0"]'
-    // )
+    newPageButton = await getElementByTag(
+      driver,
+      '[data-test-element="new-page-button"]'
+    )
 
-    // await firstPageButton.click()
+    isEnabled = await newPageButton.isEnabled()
 
-    // await sleep(1000)
-
-    // headerField = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-header"]'
-    // )
-
-    // headerField = await headerField.getAttribute('value')
-
-    // editor = await getEditor(driver)
-
-    // let editorField = await editor.getAttribute('innerText')
-
-    // assert.equal(headerField, 'First Test Page Title')
-    // assert.equal(editorField, 'Editor test one')
-
-    // // Second page integrity test
-    // const secondPageButton = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-sidebar-1"]'
-    // )
-
-    // await secondPageButton.click()
-
-    // await sleep(1000)
-
-    // headerField = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-header"]'
-    // )
-
-    // headerField = await headerField.getAttribute('value')
-
-    // editor = await getEditor(driver)
-
-    // editorField = await editor.getAttribute('innerText')
-
-    // await sleep(1000)
-
-    // assert.equal(headerField, 'Second page title')
-    // assert.equal(editorField, 'Editor test two')
-
-    assert.equal(true, true)
+    assert.equal(isEnabled, true)
   })
 })

@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react'
 import { Platform } from 'react-native'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import Control, { ControlNoFeedback } from './native/Control'
 import { View } from '../'
 
@@ -22,6 +23,8 @@ const BaseControl = forwardRef(
   ) => {
     // may not exist
     const navigationContext = useNavigationContext()
+
+    const notifyContext = useNotifyContext()
 
     const Styled = Platform.select({
       ios: disabled || noFeedback ? ControlNoFeedback : Control,
@@ -48,7 +51,7 @@ const BaseControl = forwardRef(
     return (
       <Styled
         onPress={disabled ? null : _onPress}
-        disabled={disabled}
+        disabled={disabled || (notifyContext && !notifyContext.isOnline)}
         opacity={disabled ? 0.5 : 1}
         ref={ref}
         href={href}
