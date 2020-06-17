@@ -10,6 +10,8 @@ import {
   PageRouter,
   SearchRouter,
   SourcesRouter,
+  AuthorsRouter,
+  TopicsRouter,
   useNavigationContext,
 } from '@databyss-org/ui'
 import { View } from '@databyss-org/ui/primitives'
@@ -60,6 +62,8 @@ const Private = () => {
                 <PageRouter path="pages/*" />
                 <SearchRouter path="search/*" />
                 <SourcesRouter path="sources/*" />
+                <AuthorsRouter path="authors/*" />
+                <TopicsRouter path="topics/*" />
               </App>
             </Router>
           </TopicProvider>
