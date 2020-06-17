@@ -159,12 +159,12 @@ describe('notes app', () => {
     editor.sendKeys('Offline test')
     await sleep(2000)
 
-    // // toggle offline
-    // if (!process.env.LOCAL_ENV) {
-    //   await driver.executeScript('sauce:throttleNetwork', {
-    //     condition: 'offline',
-    //   })
-    // }
+    // toggle offline
+    if (!process.env.LOCAL_ENV) {
+      await driver.executeScript('sauce:throttleNetwork', {
+        condition: 'offline',
+      })
+    }
 
     let isEnabled
 
@@ -177,12 +177,12 @@ describe('notes app', () => {
 
     assert.equal(isEnabled, false)
 
-    // //   toggle online
-    // if (!process.env.LOCAL_ENV) {
-    //   await driver.executeScript('sauce:throttleNetwork', {
-    //     condition: 'online',
-    //   })
-    // }
+    //   toggle online
+    if (!process.env.LOCAL_ENV) {
+      await driver.executeScript('sauce:throttleNetwork', {
+        condition: 'online',
+      })
+    }
 
     await sleep(1000)
 
