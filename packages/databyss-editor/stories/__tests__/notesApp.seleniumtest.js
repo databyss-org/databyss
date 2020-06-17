@@ -164,7 +164,14 @@ describe('notes app', () => {
       })
     }
 
-    let isEnabled = await newPageButton.isEnabled()
+    let isEnabled
+
+    try {
+      await newPageButton.click()
+      isEnabled = true
+    } catch {
+      isEnabled = false
+    }
 
     assert.equal(isEnabled, false)
 
@@ -177,7 +184,12 @@ describe('notes app', () => {
 
     await sleep(1000)
 
-    isEnabled = await newPageButton.isEnabled()
+    try {
+      await newPageButton.click()
+      isEnabled = true
+    } catch {
+      isEnabled = false
+    }
 
     assert.equal(isEnabled, true)
   })
