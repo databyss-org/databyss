@@ -59,9 +59,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
           {isOnline && (pendingPatches ? 'Saving...' : 'All changes saved')}
           {!isOnline && 'Offline'}
         </Text>
-        <PagesLoader>
-          {pages => <ArchiveBin pages={pages} disabled={!isOnline} />}
-        </PagesLoader>
+        <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
       </View>
       <PageBody page={page} readOnly={readOnly} />
     </View>
