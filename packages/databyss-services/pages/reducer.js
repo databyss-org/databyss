@@ -42,8 +42,8 @@ export default (state, action) => {
       delete _cache[action.payload.id]
 
       return {
-        cache: _cache,
         ...state,
+        cache: _cache,
       }
     }
     case CACHE_PAGE: {

@@ -76,7 +76,7 @@ describe('new block menu actions', () => {
     await actions.sendKeys('this should be a new topic')
     await actions.sendKeys(Key.ENTER)
     await actions.perform()
-    await sleep(300)
+    await sleep(500)
 
     const actual = JSON.parse(await slateDocument.getText())
 
