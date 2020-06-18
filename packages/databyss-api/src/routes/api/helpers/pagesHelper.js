@@ -1,3 +1,4 @@
+import { isAtomicInlineType } from '@databyss-org/editor/lib/util'
 import Block from '../../../models/Block'
 import Source from '../../../models/Source'
 import Entry from '../../../models/Entry'
@@ -6,7 +7,6 @@ import Location from '../../../models/Location'
 import Page from '../../../models/Page'
 import Selection from '../../../models/Selection'
 import BadRefId from '../../../lib/BadRefId'
-import { isAtomicInlineType } from '@databyss-org/editor/lib/util'
 
 export const modelDict = type =>
   ({
