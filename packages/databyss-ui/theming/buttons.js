@@ -113,7 +113,7 @@ const buttonThemes = {
   },
   externalLink: {},
   editorMarginMenuItem: {
-    hoverColor: 'background.4',
+    hoverColor: 'background.1',
     activeColor: 'background.1',
     textProps: {
       variant: 'uiTextSmall',
