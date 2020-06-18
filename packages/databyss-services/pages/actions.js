@@ -64,7 +64,6 @@ let timeoutId = null
 let busy = false
 
 export function savePatch(patch) {
-  console.log('Queue', queue)
   // if patch is sent, add to queue
   if (patch) {
     queue.push(patch)
@@ -80,59 +79,59 @@ export function savePatch(patch) {
       })
     }
   }
-  // perform first batch of patches in queue
-  busy = true
-  let _patch = queue.shift()
-  console.log('after shift', _patch)
-  let _batch = _patch.patch
-  const _pageId = _patch.id
-  while (queue.length) {
-    _patch = queue.shift()
-    if (_patch.id !== _pageId) {
-      queue.unshift(_patch)
-      break
+
+  if (queue.length) {
+    // perform first batch of patches in queue
+    busy = true
+    let _patch = queue.shift()
+    let _batch = _patch.patch
+    const _pageId = _patch.id
+    while (queue.length) {
+      _patch = queue.shift()
+      if (_patch.id !== _pageId) {
+        queue.unshift(_patch)
+        break
+      }
+      _batch = _batch.concat(_patch.patch)
     }
-    _batch = _batch.concat(_patch.patch)
-  }
-  const _batchPatch = { id: _pageId, patch: _batch }
-  return dispatch => {
-    services
-      .savePatch(_batchPatch)
-      .then(() => {
-        busy = false
-        // repeat function with no patch variable if patches are still in queue
-        dispatch({
-          type: PATCH,
-          payload: {
-            queueSize: queue.length,
-          },
+    const _batchPatch = { id: _pageId, patch: _batch }
+    return dispatch => {
+      services
+        .savePatch(_batchPatch)
+        .then(() => {
+          busy = false
+          // repeat function with no patch variable if patches are still in queue
+          dispatch({
+            type: PATCH,
+            payload: {
+              queueSize: queue.length,
+            },
+          })
+          if (queue.length) {
+            dispatch(savePatch())
+          }
         })
-        if (queue.length) {
-          dispatch(savePatch())
-        }
-      })
-      .catch(() => {
-        // if error set the patch back to the queue
-        busy = false
+        .catch(() => {
+          // if error set the patch back to the queue
+          busy = false
 
-        console.log('in catch', _batchPatch)
+          queue.unshift(_batchPatch)
 
-        queue.unshift(_batchPatch)
+          if (timeoutId) {
+            clearTimeout(timeoutId)
+          }
 
-        if (timeoutId) {
-          clearTimeout(timeoutId)
-        }
+          // TODO: CHANGE TIMEOUT TO ENV VARIABLE
+          timeoutId = setTimeout(() => dispatch(savePatch()), 3000)
 
-        // TODO: CHANGE TIMEOUT TO ENV VARIABLE
-        timeoutId = setTimeout(() => dispatch(savePatch()), 3000)
-
-        dispatch({
-          type: QUEUE_PATCH,
-          payload: {
-            queueSize: queue.length,
-          },
+          dispatch({
+            type: QUEUE_PATCH,
+            payload: {
+              queueSize: queue.length,
+            },
+          })
         })
-      })
+    }
   }
 }
 
