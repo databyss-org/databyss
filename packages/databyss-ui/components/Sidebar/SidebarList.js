@@ -26,24 +26,9 @@ const SidebarList = ({ menuItems }) => {
 
   const tokens = getTokensFromPath()
 
-  // dispatch id to fetch
   const onClick = item => {
-<<<<<<< HEAD
     if (item.id) {
       return navigate(`/${item.type}/${item.id}`)
-=======
-    if (item.type === 'pages') {
-      navigate(`/pages/${item.id}`)
-    }
-    if (item.type === 'sources') {
-      navigate(`/sources/`)
-    }
-    if (item.type === 'authors') {
-      navigate(`/authors/`)
-    }
-    if (item.type === 'topics') {
-      navigate(`/topics/`)
->>>>>>> Adding list of all authors with route
     }
     return navigate(`/${item.type}`)
   }
@@ -66,11 +51,7 @@ const SidebarList = ({ menuItems }) => {
       {menuItems.map((item, index) => {
         const _isActive = item.id
           ? item.id === tokens.id
-<<<<<<< HEAD
           : item.type === tokens.type && !tokens.id
-=======
-          : item.type === tokens.type
->>>>>>> Sorting sources entries alphabetically and styling
 
         if (item.text) {
           return (
