@@ -67,8 +67,8 @@ const Sidebar = () => {
       </View>
     </>
   ) : (
-      <SidebarCollapsed />
-    )
+    <SidebarCollapsed />
+  )
 }
 
 export default Sidebar
