@@ -13,7 +13,7 @@ router.post(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
-    const { text, _id } = req.body.data
+    const { text, _id, pageId } = req.body.data
 
     // res.status(200)
     const topicFields = {
@@ -26,6 +26,14 @@ router.post(
     try {
       let topic = await Topic.findOne({ _id })
       if (topic) {
+        const _pages = topic.pages ? topic.pages : []
+        // if page doesnt exist in topic page array, add to topic fields
+        if (pageId && !_pages.find(p => p._id.toString() === pageId)) {
+          const _pageField = { _id: pageId }
+          _pages.push(_pageField)
+          topicFields.pages = _pages
+        }
+
         topicFields._id = _id
         topic = await Topic.findOneAndUpdate(
           { _id },
@@ -34,6 +42,7 @@ router.post(
         ).then(response => res.json(response))
       } else {
         // if new topic has been added
+        topicFields.pages = [{ _id: pageId }]
         const topic = new Topic(topicFields)
         const post = await topic.save()
         res.json(post)
@@ -85,6 +94,7 @@ router.get(
           .status(400)
           .json({ msg: 'There are no topics associated with this account' })
       }
+
       return res.json(topicResponse)
     } catch (err) {
       console.error(err.message)

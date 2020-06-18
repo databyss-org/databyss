@@ -6,6 +6,7 @@ import Location from '../../../models/Location'
 import Page from '../../../models/Page'
 import Selection from '../../../models/Selection'
 import BadRefId from '../../../lib/BadRefId'
+import { isAtomicInlineType } from '@databyss-org/editor/lib/util'
 
 export const modelDict = type =>
   ({
@@ -207,13 +208,13 @@ const removePatches = async (p, req) => {
 
   switch (_prop) {
     case 'entityCache': {
-      if (p.value && p.value.type === 'SOURCE') {
+      if (p.value && isAtomicInlineType(p.value.type)) {
         const _id = p.path[1]
         // check if source exists in other pages
-        const source = await modelDict(p.value.type).findOne({ _id })
+        const atomic = await modelDict(p.value.type).findOne({ _id })
         // delete source from DB if it only appears once
-        if (source.pages && source.pages.length === 1) {
-          await source.deleteOne({
+        if (atomic.pages && atomic.pages.length === 1) {
+          await atomic.deleteOne({
             _id,
           })
         }
