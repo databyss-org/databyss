@@ -64,6 +64,7 @@ let timeoutId = null
 let busy = false
 
 export function savePatch(patch) {
+  console.log('Queue', queue)
   // if patch is sent, add to queue
   if (patch) {
     queue.push(patch)
