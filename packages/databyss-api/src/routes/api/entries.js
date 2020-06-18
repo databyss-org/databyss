@@ -24,17 +24,35 @@ router.get(
           count: results.length,
           results: {},
         }
+
+        // takes in a string of words and searches if query is found in string
+        const isInEntry = (string, query) =>
+          string
+            .split(/ |-/)
+            .reduce(
+              (bool, string) => (string.match(query) ? true : bool),
+              false
+            )
+
         /*
         compose results
         */
         _results = results.reduce((acc, curr) => {
+          // regex to be matched
+          const searchstring = new RegExp('^' + req.params.string + '$', 'i')
+
           // only show results with associated page
           if (!curr.page) {
             _results.count -= 1
             return acc
           }
+
           if (!acc.results[curr.page._id]) {
-            //   const _entries = new Map()
+            // bail if not exact word in entry
+            if (!isInEntry(curr.text.textValue, searchstring)) {
+              _results.count -= 1
+              return acc
+            }
             // init result
             acc.results[curr.page._id] = {
               page: curr.page.name,
@@ -48,7 +66,11 @@ router.get(
               ],
             }
           } else {
-            // populate results
+            // bail if not exact word in entry
+            if (!isInEntry(curr.text.textValue, searchstring)) {
+              _results.count -= 1
+              return acc
+            }
             const _entries = acc.results[curr.page._id].entries
 
             _entries.push({
