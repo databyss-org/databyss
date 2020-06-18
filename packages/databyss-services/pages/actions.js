@@ -82,6 +82,7 @@ export function savePatch(patch) {
   // perform first batch of patches in queue
   busy = true
   let _patch = queue.shift()
+  console.log('after shift', _patch)
   let _batch = _patch.patch
   const _pageId = _patch.id
   while (queue.length) {
@@ -112,6 +113,9 @@ export function savePatch(patch) {
       .catch(() => {
         // if error set the patch back to the queue
         busy = false
+
+        console.log('in catch', _batchPatch)
+
         queue.unshift(_batchPatch)
 
         if (timeoutId) {

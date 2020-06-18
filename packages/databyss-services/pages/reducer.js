@@ -52,7 +52,7 @@ export default (state, action) => {
 
       _state.cache[action.payload.id] = _pageState
       // update header cache as well
-      if (_state.headerCache && _pageState.page._id) {
+      if (_state.headerCache && _pageState.page && _pageState.page._id) {
         _state.headerCache[_pageState.page._id] = _pageState.page
       }
       return {
