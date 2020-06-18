@@ -8,6 +8,7 @@ import { View, Button, Icon, Grid } from '@databyss-org/ui/primitives'
 import Close from '@databyss-org/ui/assets/close-menu.svg'
 import AddSvg from '@databyss-org/ui/assets/add.svg'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
+import DropdownMenu from './DropdownMenu'
 
 const BlockMenuActions = ({ menuActionButtons, unmount }) => {
   useEffect(() => () => unmount(), [])
@@ -20,6 +21,7 @@ const BlockMenuActions = ({ menuActionButtons, unmount }) => {
 
 const BlockMenu = ({ element }) => {
   const [showMenuActions, setShowMenuActions] = useState(false)
+  const [openMenu, setOpenMenu] = useState(false)
   const editor = useEditor()
 
   const { buttonVariants } = buttons
@@ -89,6 +91,8 @@ const BlockMenu = ({ element }) => {
     </Button>
   ))
 
+  const onClick = () => setOpenMenu(!openMenu)
+
   return (
     <Grid singleRow columnGap="small">
       <View
@@ -98,19 +102,33 @@ const BlockMenu = ({ element }) => {
       >
         <Button
           variant="editorMarginMenu"
-          onClick={onShowActions}
+          onClick={onClick}
           data-test-block-menu="open"
         >
           <Icon
-            sizeVariant="tiny"
+            sizeVariant="medium"
             color={buttonVariants.editorMarginMenu.color}
           >
-            <View>{showMenuActions ? <Close /> : <AddSvg />}</View>
+            <AddSvg />
           </Icon>
         </Button>
       </View>
       <View justifyContent="center" height={editorMarginMenuItemHeight}>
-        {showMenuActions && (
+        {openMenu && (
+          <DropdownMenu>
+            {menuActions.map((a, i) => (
+              <Button
+                variant="editorMarginMenuItem"
+                data-test-block-menu={a.action}
+                key={i}
+                onMouseDown={e => onMenuAction(e, a.action)}
+              >
+                {a.label}
+              </Button>
+            ))}
+          </DropdownMenu>
+        )}
+        {/* {showMenuActions && (
           <BlockMenuActions
             unmount={
               () => null
@@ -118,7 +136,7 @@ const BlockMenu = ({ element }) => {
             }
             menuActionButtons={menuActionButtons}
           />
-        )}
+        )} */}
       </View>
     </Grid>
   )
