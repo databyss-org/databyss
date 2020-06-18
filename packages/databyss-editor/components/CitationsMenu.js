@@ -243,11 +243,13 @@ export const Citations = () => {
       // compose source data
       const _data = {
         _id: entity._id,
+        pageId: editorContext.state.page._id,
         text: { textValue: text.textValue.substring(1), ranges: text.ranges },
         authors:
           vol.volumeInfo.authors &&
           vol.volumeInfo.authors.map(a => splitName(a)),
       }
+
       // update in cache
       setSource(_data)
     })

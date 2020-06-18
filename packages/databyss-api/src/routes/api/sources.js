@@ -14,7 +14,7 @@ router.post(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
-    const { text, authors, citations, _id } = req.body.data
+    const { text, authors, citations, _id, pageId } = req.body.data
 
     const sourceFields = {
       text,
@@ -28,6 +28,14 @@ router.post(
     try {
       let source = await Source.findOne({ _id })
       if (source) {
+        const _pages = source.pages ? source.pages : []
+        // if page doesnt exist in source page array, add to source fields
+        if (pageId && !_pages.find(p => p._id.toString() === pageId)) {
+          const _pageField = { _id: pageId }
+          _pages.push(_pageField)
+          sourceFields.pages = _pages
+        }
+
         sourceFields._id = _id
         source = await Source.findOneAndUpdate(
           { _id },
@@ -35,9 +43,11 @@ router.post(
           { new: true }
         ).then(response => res.json(response))
       } else {
+        sourceFields.pages = [{ _id: pageId }]
         // if new source has been added
         const sources = new Source(sourceFields)
         const post = await sources.save()
+
         res.json(post)
       }
       return res.status(200)

@@ -190,6 +190,7 @@ const addPatch = async (p, req) => {
         }),
         account: req.account._id,
       }
+
       const Model = modelDict(p.value.type)
       const _entity = new Model(entityFields)
 
@@ -206,6 +207,17 @@ const removePatches = async (p, req) => {
 
   switch (_prop) {
     case 'entityCache': {
+      if (p.value && p.value.type === 'SOURCE') {
+        const _id = p.path[1]
+        // check if source exists in other pages
+        const source = await modelDict(p.value.type).findOne({ _id })
+        // delete source from DB if it only appears once
+        if (source.pages && source.pages.length === 1) {
+          await source.deleteOne({
+            _id,
+          })
+        }
+      }
       // TODO: REMOVE ENTITY FROM DB
       break
     }

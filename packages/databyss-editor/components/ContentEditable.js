@@ -65,6 +65,8 @@ const ContentEditable = ({
         state.selection
       )
 
+      console.log('GETS HERE', selection)
+
       Transforms.select(editor, selection)
     }
   }
@@ -92,6 +94,7 @@ const ContentEditable = ({
               textValue: entity.text.textValue,
               ranges: entity.text.ranges,
             },
+            pageId: state.page._id,
           }
           ;({
             SOURCE: () => {

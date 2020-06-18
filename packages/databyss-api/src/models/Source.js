@@ -50,6 +50,14 @@ const SourceSchema = new mongoose.Schema({
       ref: 'entry',
     },
   ],
+  pages: [
+    {
+      _id: {
+        type: Schema.Types.ObjectId,
+        ref: 'page',
+      },
+    },
+  ],
 })
 
 const Source = mongoose.models.Source || mongoose.model('source', SourceSchema)
