@@ -13,21 +13,25 @@ import DropdownMenu from './DropdownMenu'
 const BlockMenuActions = ({ menuActionButtons, unmount }) => {
   useEffect(() => () => unmount(), [])
   return (
-    <Grid singleRow columnGap="tiny">
+    <DropdownMenu
+      position={{
+        top: editorMarginMenuItemHeight,
+        left: editorMarginMenuItemHeight,
+      }}
+    >
       {menuActionButtons}
-    </Grid>
+    </DropdownMenu>
   )
 }
 
 const BlockMenu = ({ element }) => {
-  const [showMenuActions, setShowMenuActions] = useState(false)
-  const [openMenu, setOpenMenu] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
   const editor = useEditor()
 
   const { buttonVariants } = buttons
 
   const onShowActions = () => {
-    setShowMenuActions(!showMenuActions)
+    setShowMenu(!showMenu)
   }
 
   const actions = type =>
@@ -62,36 +66,55 @@ const BlockMenu = ({ element }) => {
 
     e.preventDefault()
     actions(tag)()
-    setShowMenuActions(false)
+    setShowMenu(false)
   }
 
   const menuActions = [
     {
+      action: '',
+      symbol: '/@',
+      shortcut: '//@',
+      label: ' End source',
+    },
+    {
+      action: '',
+      symbol: '/%',
+      shortcut: '//%',
+      label: ' End location',
+    },
+    {
       action: 'SOURCE',
-      label: '@ source',
+      symbol: '@',
+      shortcut: '@',
+      label: 'Source',
     },
     {
       action: 'TOPIC',
-      label: '# topic',
+      symbol: '#',
+      shortcut: '#',
+      label: 'Topic',
     },
     {
       action: 'LOCATION',
-      label: 'location',
+      symbol: '%',
+      shortcut: '%',
+      label: 'Location',
     },
   ]
 
-  const menuActionButtons = menuActions.map((a, i) => (
+  const menuActionButtons = menuActions.map((menuAction, i) => (
     <Button
       variant="editorMarginMenuItem"
-      data-test-block-menu={a.action}
+      data-test-block-menu={menuAction.action}
       key={i}
-      onMouseDown={e => onMenuAction(e, a.action)}
+      onMouseDown={e => onMenuAction(e, menuAction.action)}
     >
-      {a.label}
+      <View>
+        {menuAction.symbol}
+        {menuAction.label}
+      </View>
     </Button>
   ))
-
-  const onClick = () => setOpenMenu(!openMenu)
 
   return (
     <Grid singleRow columnGap="small">
@@ -102,8 +125,9 @@ const BlockMenu = ({ element }) => {
       >
         <Button
           variant="editorMarginMenu"
-          onClick={onClick}
+          onClick={onShowActions}
           data-test-block-menu="open"
+          aria-haspopup="true"
         >
           <Icon
             sizeVariant="medium"
@@ -114,21 +138,7 @@ const BlockMenu = ({ element }) => {
         </Button>
       </View>
       <View justifyContent="center" height={editorMarginMenuItemHeight}>
-        {openMenu && (
-          <DropdownMenu>
-            {menuActions.map((a, i) => (
-              <Button
-                variant="editorMarginMenuItem"
-                data-test-block-menu={a.action}
-                key={i}
-                onMouseDown={e => onMenuAction(e, a.action)}
-              >
-                {a.label}
-              </Button>
-            ))}
-          </DropdownMenu>
-        )}
-        {/* {showMenuActions && (
+        {showMenu && (
           <BlockMenuActions
             unmount={
               () => null
@@ -136,7 +146,7 @@ const BlockMenu = ({ element }) => {
             }
             menuActionButtons={menuActionButtons}
           />
-        )} */}
+        )}
       </View>
     </Grid>
   )
