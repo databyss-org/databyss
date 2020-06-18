@@ -57,8 +57,6 @@ const buttonVariants = {
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'background.3',
-    borderColor: 'background.2',
     borderWidth: pxUnits(1),
     color: 'text.2',
     borderRadius: pxUnits(editorMarginMenuItemHeight),
@@ -78,7 +76,6 @@ const buttonVariants = {
     borderRadius: pxUnits(5),
     height: pxUnits(editorMarginMenuItemHeight),
     color: 'text.2',
-    backgroundColor: 'background.3',
   },
   formatButton: {
     paddingBottom: pxUnits(6),
@@ -123,7 +120,7 @@ const buttonThemes = {
     },
   },
   editorMarginMenu: {
-    hoverColor: 'background.4',
+    hoverColor: 'control.1',
     activeColor: 'primary.2',
   },
   formatButton: {
