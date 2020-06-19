@@ -13,10 +13,16 @@ router.get(
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
     try {
-      const searchKey = new RegExp(req.params.string, 'i')
+      const queryArray = req.params.string.split(' ')
+
+      // use the $and operator to find regEx for multiple search words
       const results = await Entry.find({
-        'text.textValue': searchKey,
-        account: req.account._id,
+        $and: queryArray.map(q => ({
+          'text.textValue': {
+            $regex: new RegExp(`\\b${q}\\b.*`, 'i'),
+          },
+          account: req.account._id,
+        })),
       }).populate('page')
 
       if (results) {
@@ -26,11 +32,11 @@ router.get(
         }
 
         // takes in a string of words and searches if query is found in string
-        const isInEntry = (string, query) =>
+        const isInEntry = (string, regex) =>
           string
             .split(/ |-/)
             .reduce(
-              (bool, string) => (string.match(query) ? true : bool),
+              (bool, string) => (string.match(regex) ? true : bool),
               false
             )
 
@@ -38,8 +44,8 @@ router.get(
         compose results
         */
         _results = results.reduce((acc, curr) => {
-          // regex to be matched
-          const searchstring = new RegExp('^' + req.params.string + '$', 'i')
+          // create regEx or operator to find exact word match
+          const searchstring = new RegExp(`^${queryArray.join('|')}$`, 'i')
 
           // only show results with associated page
           if (!curr.page) {
