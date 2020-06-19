@@ -60,7 +60,7 @@ const SearchContent = () => {
               <View p="small" ml="small">
                 <Text>
                   <Highlighter
-                    searchWords={[query]}
+                    searchWords={query.split(' ')}
                     autoEscape
                     textToHighlight={e.text}
                   />

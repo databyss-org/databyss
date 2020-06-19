@@ -31,6 +31,7 @@ import { showAtomicModal } from '../lib/atomicModal'
 
 const ContentEditable = ({
   onDocumentChange,
+  focusIndex,
   autofocus,
   readonly,
   onUnmount,
@@ -64,10 +65,26 @@ const ContentEditable = ({
         editor.children,
         state.selection
       )
+      console.log(state.selection)
 
       Transforms.select(editor, selection)
     }
   }
+
+  // if focus index is provide, move caret
+  useEffect(
+    () => {
+      if (focusIndex && editor.children) {
+        const _point = { index: focusIndex, offset: 0 }
+        let _selection = { anchor: _point, focus: _point }
+        _selection = stateSelectionToSlateSelection(editor.children, _selection)
+        Transforms.select(editor, _selection)
+
+        // console.log('scroll to', _selection)
+      }
+    },
+    [focusIndex]
+  )
 
   useEffect(
     () => () => {

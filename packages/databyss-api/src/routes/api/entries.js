@@ -31,10 +31,10 @@ router.get(
           results: {},
         }
 
-        // takes in a string of words and searches if query is found in string
+        // takes in a string of words and searches if exact query is found in string
         const isInEntry = (string, regex) =>
           string
-            .split(/ |-/)
+            .split(/ |-|\n/)
             .reduce(
               (bool, string) => (string.match(regex) ? true : bool),
               false
