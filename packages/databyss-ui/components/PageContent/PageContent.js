@@ -34,15 +34,17 @@ const PageContainer = ({ anchor, id, onHeaderClick, page }) => {
     if (anchor) {
       // get index value of anchor on page
       const _index = page.blocks.findIndex(b => b._id === anchor)
-      setIndex(_index)
-      const _ref = getBlockRefByIndex(_index)
-      if (_ref) {
-        window.requestAnimationFrame(() => {
-          _ref.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
+      if (_index > -1) {
+        setIndex(_index)
+        const _ref = getBlockRefByIndex(_index)
+        if (_ref) {
+          window.requestAnimationFrame(() => {
+            _ref.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            })
           })
-        })
+        }
       }
     }
   }, [])

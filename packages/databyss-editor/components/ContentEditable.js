@@ -65,13 +65,11 @@ const ContentEditable = ({
         editor.children,
         state.selection
       )
-      console.log(state.selection)
-
       Transforms.select(editor, selection)
     }
   }
 
-  // if focus index is provide, move caret
+  // if focus index is provides, move caret
   useEffect(
     () => {
       if (focusIndex && editor.children) {
@@ -79,8 +77,6 @@ const ContentEditable = ({
         let _selection = { anchor: _point, focus: _point }
         _selection = stateSelectionToSlateSelection(editor.children, _selection)
         Transforms.select(editor, _selection)
-
-        // console.log('scroll to', _selection)
       }
     },
     [focusIndex]
