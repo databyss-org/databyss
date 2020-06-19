@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { Slate, Editable } from 'slate-react'
-import { Text } from 'slate'
+import { Text } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import Leaf from './Leaf'
 import Element from './Element'
