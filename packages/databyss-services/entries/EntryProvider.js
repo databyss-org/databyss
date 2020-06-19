@@ -2,7 +2,7 @@ import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
 import reducer, { initialState } from './reducer'
-import { onSearchEntries } from './actions'
+import { onSearchEntries, onSetQuery, onClearCache } from './actions'
 
 const useReducer = createReducer()
 
@@ -10,7 +10,7 @@ export const EntryContext = createContext()
 
 const EntryProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { searchCache } = state
+  const { searchCache, searchTerm } = state
 
   const searchEntries = _.debounce(query => {
     const _results = searchCache[query]
@@ -20,10 +20,21 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     return null
   }, 250)
 
+  const setQuery = query => {
+    dispatch(onSetQuery(query))
+  }
+
+  const clearSearchCache = () => {
+    dispatch(onClearCache())
+  }
+
   return (
     <EntryContext.Provider
       value={{
         state,
+        searchTerm,
+        clearSearchCache,
+        setQuery,
         searchCache,
         searchEntries,
       }}
