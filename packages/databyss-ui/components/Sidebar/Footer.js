@@ -1,5 +1,6 @@
 import React from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { newPage } from '@databyss-org/services/pages/_helpers'
 import AddPageSvg from '@databyss-org/ui/assets/add_page.svg'
@@ -15,8 +16,12 @@ import { sidebar } from '@databyss-org/ui/theming/components'
 
 const Footer = () => {
   const { navigate, navigateSidebar, isMenuOpen } = useNavigationContext()
+  const { clearSearchCache } = useEntryContext()
+
   const { setPage } = usePageContext()
   const onNewPageClick = () => {
+    // clears search cache
+    clearSearchCache()
     const _page = newPage()
     setPage(_page).then(() => {
       navigate(`/pages/${_page.page._id}`)
