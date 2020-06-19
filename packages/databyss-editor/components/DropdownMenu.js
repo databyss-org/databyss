@@ -22,9 +22,7 @@ const DropdownMenu = ({ children, position = { top: 0, left: 0 } }) => (
     shadowVariant="modal"
     css={styledCss(_css({ top: position.top, left: position.left }))}
   >
-    <List verticalItemPadding={1} horizontalItemPadding={1}>
-      {children}
-    </List>
+    <List>{children}</List>
   </View>
 )
 

@@ -4,11 +4,19 @@ import { useEditor, ReactEditor } from 'slate-react'
 import buttons, {
   editorMarginMenuItemHeight,
 } from '@databyss-org/ui/theming/buttons'
-import { View, Button, Icon, Grid } from '@databyss-org/ui/primitives'
+import {
+  View,
+  Button,
+  Icon,
+  Grid,
+  Separator,
+  Text as TextPrimitive,
+} from '@databyss-org/ui/primitives'
 import Close from '@databyss-org/ui/assets/close-menu.svg'
 import AddSvg from '@databyss-org/ui/assets/add.svg'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 import DropdownMenu from './DropdownMenu'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 
 const BlockMenuActions = ({ menuActionButtons, unmount }) => {
   useEffect(() => () => unmount(), [])
@@ -74,25 +82,25 @@ const BlockMenu = ({ element }) => {
       action: '',
       symbol: '/@',
       shortcut: '//@',
-      label: ' End source',
+      label: 'End source',
     },
     {
       action: '',
       symbol: '/%',
       shortcut: '//%',
-      label: ' End location',
-    },
-    {
-      action: 'SOURCE',
-      symbol: '@',
-      shortcut: '@',
-      label: 'Source',
+      label: 'End location',
     },
     {
       action: 'TOPIC',
       symbol: '#',
       shortcut: '#',
       label: 'Topic',
+    },
+    {
+      action: 'SOURCE',
+      symbol: '@',
+      shortcut: '@',
+      label: 'Source',
     },
     {
       action: 'LOCATION',
@@ -103,17 +111,39 @@ const BlockMenu = ({ element }) => {
   ]
 
   const menuActionButtons = menuActions.map((menuAction, i) => (
-    <Button
-      variant="editorMarginMenuItem"
-      data-test-block-menu={menuAction.action}
-      key={i}
-      onMouseDown={e => onMenuAction(e, menuAction.action)}
-    >
-      <View>
-        {menuAction.symbol}
-        {menuAction.label}
-      </View>
-    </Button>
+    <>
+      <Button
+        variant="editorMarginMenuItem"
+        data-test-block-menu={menuAction.action}
+        key={i}
+        onMouseDown={e => onMenuAction(e, menuAction.action)}
+        alignItems="flex-start"
+        childViewProps={{ width: '100%' }}
+      >
+        <View flexDirection="row" justifyContent="space-between" width="100%">
+          <View flexDirection="row">
+            <TextPrimitive
+              variant="uiTextSmall"
+              width={pxUnits(20)}
+              textAlign="center"
+              mr="small"
+              color="text.2"
+            >
+              {menuAction.symbol}
+            </TextPrimitive>
+            <TextPrimitive variant="uiTextSmall">
+              {menuAction.label}
+            </TextPrimitive>
+          </View>
+          <TextPrimitive variant="uiTextSmall" color="text.3">
+            {menuAction.shortcut}
+          </TextPrimitive>
+        </View>
+      </Button>
+      {menuAction.shortcut === '//%' && (
+        <Separator color="border.3" spacing="extraSmall" />
+      )}
+    </>
   ))
 
   return (
