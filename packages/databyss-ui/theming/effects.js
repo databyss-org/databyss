@@ -39,7 +39,7 @@ const shadows = [
   shadow(0, 3, 4.65, shadowColor, 0.29),
   shadow(0, 4, 4.65, shadowColor, 0.3),
   shadow(0, 4, 5.46, shadowColor, 0.32),
-  shadow(0, 3, 6, shadowColor, 0.2),
+  shadow(0, 3, 3, shadowColor, 0.2),
   // shadow(0, 5, 6.27, shadowColor, 0.34),
 ]
 

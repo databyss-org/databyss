@@ -73,7 +73,6 @@ const buttonVariants = {
     paddingRight: space.small,
     paddingTop: editorMarginMenuItemHeight / 2,
     paddingBottom: editorMarginMenuItemHeight / 2,
-    borderRadius: pxUnits(5),
     height: pxUnits(editorMarginMenuItemHeight),
     color: 'text.2',
   },

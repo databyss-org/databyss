@@ -18,7 +18,7 @@ import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 import DropdownMenu from './DropdownMenu'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 
-const BlockMenuActions = ({ menuActionButtons, unmount }) => {
+const BlockMenuActions = ({ menuActionButtons, unmount, showMenu }) => {
   useEffect(() => () => unmount(), [])
   return (
     <DropdownMenu
@@ -26,6 +26,8 @@ const BlockMenuActions = ({ menuActionButtons, unmount }) => {
         top: editorMarginMenuItemHeight,
         left: editorMarginMenuItemHeight,
       }}
+      py="extraSmall"
+      open={showMenu}
     >
       {menuActionButtons}
     </DropdownMenu>
@@ -175,6 +177,7 @@ const BlockMenu = ({ element }) => {
               //   dispatchEditor(onShowMenuActions(false, editableState))
             }
             menuActionButtons={menuActionButtons}
+            showMenu={showMenu}
           />
         )}
       </View>
