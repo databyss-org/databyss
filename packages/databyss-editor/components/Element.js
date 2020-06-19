@@ -17,8 +17,12 @@ export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
 
 const Element = ({ attributes, children, element }) => {
-  const { searchTerm } = useEntryContext()
+  const entryContext = useEntryContext()
+  let searchTerm = ''
 
+  if (entryContext) {
+    searchTerm = entryContext.searchTerm
+  }
   const editor = useEditor()
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()

@@ -8,7 +8,12 @@ import FormatMenu from './FormatMenu'
 import CitationsMenu from './CitationsMenu'
 
 const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
-  const { searchTerm } = useEntryContext()
+  const entryContext = useEntryContext()
+  let searchTerm = ''
+
+  if (entryContext) {
+    searchTerm = entryContext.searchTerm
+  }
 
   const readOnly = !others.onChange || readonly
   // const editor = useMemo(() => withReact(createEditor()), [])

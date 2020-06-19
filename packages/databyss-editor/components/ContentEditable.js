@@ -72,7 +72,7 @@ const ContentEditable = ({
   // if focus index is provides, move caret
   useEffect(
     () => {
-      if (focusIndex !== null && editor.children) {
+      if (typeof focusIndex == 'number' && editor.children) {
         const _point = { index: focusIndex, offset: 0 }
         let _selection = { anchor: _point, focus: _point }
         _selection = stateSelectionToSlateSelection(editor.children, _selection)
