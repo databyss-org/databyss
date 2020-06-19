@@ -23,23 +23,29 @@ const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
   const decorate = useCallback(
     ([node, path]) => {
       const ranges = []
-      if (searchTerm && Text.isText(node)) {
-        const { text } = node
-        const parts = text.split(searchTerm)
-        let offset = 0
+      // search each word individually
+      const _searchTerm = searchTerm.split(' ')
+      _searchTerm.forEach(word => {
+        if (word && Text.isText(node)) {
+          const { text } = node
+          // match exact word
+          const parts = text.split(new RegExp(`\\b${word}\\b`, 'i'))
+          let offset = 0
 
-        parts.forEach((part, i) => {
-          if (i !== 0) {
-            ranges.push({
-              anchor: { path, offset: offset - searchTerm.length },
-              focus: { path, offset },
-              highlight: true,
-            })
-          }
+          parts.forEach((part, i) => {
+            if (i !== 0) {
+              ranges.push({
+                anchor: { path, offset: offset - word.length },
+                focus: { path, offset },
+                highlight: true,
+              })
+            }
 
-          offset = offset + part.length + searchTerm.length
-        })
-      }
+            offset = offset + part.length + word.length
+          })
+        }
+      })
+
       return ranges
     },
     [searchTerm]
