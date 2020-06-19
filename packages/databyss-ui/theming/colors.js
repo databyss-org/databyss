@@ -49,7 +49,7 @@ _c = {
     )
   ),
   // borders [darkest...lightest]
-  border: [_c.black, _c.gray[3], _c.gray[5]],
+  border: [_c.black, _c.gray[3], _c.gray[5], _c.gray[6]],
   // application specific
   selectionHighlight: Color(_c.blue[3])
     .alpha(0.5)

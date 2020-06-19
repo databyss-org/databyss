@@ -2,7 +2,7 @@ import effects from './effects'
 import { border, borderRadius, pxUnits } from './views'
 import space from './space'
 
-export const editorMarginMenuItemHeight = 24
+export const editorMarginMenuItemHeight = 26
 
 const button = () => ({
   display: 'flex',
