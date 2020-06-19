@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -21,6 +21,11 @@ const Search = ({ onClick }) => {
   const { searchTerm, setQuery, clearSearchCache } = useEntryContext()
   const menuItem = getSidebarPath()
 
+  const clear = () => {
+    clearSearchCache()
+    setQuery({ textValue: '' })
+  }
+
   // reset search on unmount
   useEffect(() => () => clear(), [])
 
@@ -39,11 +44,6 @@ const Search = ({ onClick }) => {
 
   const onSearchClick = () => {
     navigate(`/search/${searchTerm}`)
-  }
-
-  const clear = () => {
-    clearSearchCache()
-    setQuery({ textValue: '' })
   }
 
   return (
