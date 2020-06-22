@@ -12,11 +12,10 @@ import {
   Separator,
   Text as TextPrimitive,
 } from '@databyss-org/ui/primitives'
-import Close from '@databyss-org/ui/assets/close-menu.svg'
 import AddSvg from '@databyss-org/ui/assets/add.svg'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 import DropdownMenu from './DropdownMenu'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 
 const BlockMenuActions = ({ menuActionButtons, unmount, showMenu }) => {
   useEffect(() => () => unmount(), [])
@@ -114,12 +113,11 @@ const BlockMenu = ({ element }) => {
     },
   ]
 
-  const menuActionButtons = menuActions.map((menuAction, i) => (
-    <>
+  const menuActionButtons = menuActions.map(menuAction => (
+    <React.Fragment key={menuAction.action}>
       <Button
         variant="editorMarginMenuItem"
         data-test-block-menu={menuAction.action}
-        key={i}
         onMouseDown={e => onMenuAction(e, menuAction.action)}
         alignItems="flex-start"
         childViewProps={{ width: '100%' }}
@@ -147,7 +145,7 @@ const BlockMenu = ({ element }) => {
       {menuAction.shortcut === '//%' && (
         <Separator color="border.3" spacing="extraSmall" />
       )}
-    </>
+    </React.Fragment>
   ))
 
   return (

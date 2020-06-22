@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import styledCss from '@styled-system/css'
 import _ from 'lodash'
 import { useEditor, ReactEditor } from 'slate-react'
 import { Node, Transforms } from '@databyss-org/slate'
@@ -8,7 +7,6 @@ import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { SearchSourceLoader } from '@databyss-org/ui/components/Loaders'
 import google from '@databyss-org/ui/assets/google.png'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
-import theme, { borderRadius } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import {
   Grid,
@@ -23,20 +21,6 @@ import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 import DropdownMenu from './DropdownMenu'
 
 const MENU_HEIGHT = 200
-
-const _css = (position, active) => ({
-  paddingLeft: 'small',
-  paddingRight: 'small',
-  backgroundColor: 'background.0',
-  zIndex: 'menu',
-  marginTop: pxUnits(-6),
-  position: 'absolute',
-  opacity: active ? 1 : 0,
-  transition: `opacity ${theme.timing.quick}ms ease`,
-  borderRadius,
-  pointerEvents: active ? 'all' : 'none',
-  ...position,
-})
 
 const splitName = name => ({
   firstName: {
@@ -265,15 +249,6 @@ export const Citations = () => {
 
   return (
     <ClickAwayListener onClickAway={onClickAway}>
-      {/* <View
-        maxWidth="500px"
-        minWidth="300px"
-        minHeight="32px"
-        shadowVariant="modal"
-        css={styledCss(
-          _css({ top: position.top, left: position.left }, menuActive)
-        )}
-      > */}
       <DropdownMenu
         position={{ top: position.top, left: position.left }}
         open={menuActive}
