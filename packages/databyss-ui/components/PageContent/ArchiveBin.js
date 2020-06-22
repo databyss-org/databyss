@@ -6,6 +6,7 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import DropdownMenu from '@databyss-org/editor/components/DropdownMenu'
+import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 
 export const ArchiveBin = ({ pages }) => {
   const { getSession } = useSessionContext()
@@ -54,29 +55,31 @@ export const ArchiveBin = ({ pages }) => {
         </Icon>
       </BaseControl>
       {showMenu && (
-        <DropdownMenu
-          open={showMenu}
-          position={{
-            top: 36,
-            right: 0,
-          }}
-        >
-          {menuItems.map(menuItem => (
-            <BaseControl
-              onClick={onClick}
-              hoverColor="background.1"
-              p="small"
-              title={menuItem.title}
-              key={menuItem.title}
-              childViewProps={{ flexDirection: 'row' }}
-            >
-              <Icon sizeVariant="small" color="text.1" mr="small">
-                {menuItem.icon}
-              </Icon>
-              <Text variant="uiTextSmall">{menuItem.title}</Text>
-            </BaseControl>
-          ))}
-        </DropdownMenu>
+        <ClickAwayListener onClickAway={() => setShowMenu(false)}>
+          <DropdownMenu
+            open={showMenu}
+            position={{
+              top: 36,
+              right: 0,
+            }}
+          >
+            {menuItems.map(menuItem => (
+              <BaseControl
+                onClick={onClick}
+                hoverColor="background.1"
+                p="small"
+                title={menuItem.title}
+                key={menuItem.title}
+                childViewProps={{ flexDirection: 'row' }}
+              >
+                <Icon sizeVariant="small" color="text.1" mr="small">
+                  {menuItem.icon}
+                </Icon>
+                <Text variant="uiTextSmall">{menuItem.title}</Text>
+              </BaseControl>
+            ))}
+          </DropdownMenu>
+        </ClickAwayListener>
       )}
     </View>
   ) : null
