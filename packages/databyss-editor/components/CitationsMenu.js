@@ -254,6 +254,7 @@ export const Citations = () => {
         open={menuActive}
         mt={pxUnits(-6)}
         minWidth="300px"
+        minHeight="32px"
       >
         {sourceQuery ? (
           <View p={sourcesLoaded && 'small'}>

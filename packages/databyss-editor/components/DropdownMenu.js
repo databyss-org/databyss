@@ -19,9 +19,9 @@ const DropdownMenu = forwardRef(
   (
     {
       children,
-      position = { top: 0, left: 0 },
+      position = { top: 0 },
       minWidth = pxUnits(200),
-      minHeight = pxUnits(32),
+      minHeight,
       maxWidth = pxUnits(500),
       open,
       ...others
@@ -34,7 +34,17 @@ const DropdownMenu = forwardRef(
       minWidth={minWidth}
       minHeight={minHeight}
       shadowVariant="modal"
-      css={styledCss(_css({ top: position.top, left: position.left }, open))}
+      css={styledCss(
+        _css(
+          {
+            top: position.top,
+            left: position.left,
+            right: position.right,
+            bottom: position.bottom,
+          },
+          open
+        )
+      )}
       {...others}
     >
       {children}
