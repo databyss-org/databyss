@@ -20,6 +20,7 @@ import {
 import { useEditorContext } from '../state/EditorProvider'
 import { getEntityAtIndex, isAtomicInlineType } from '../lib/util'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
+import DropdownMenu from './DropdownMenu'
 
 const MENU_HEIGHT = 200
 
@@ -263,7 +264,7 @@ export const Citations = () => {
 
   return (
     <ClickAwayListener onClickAway={onClickAway}>
-      <View
+      {/* <View
         maxWidth="500px"
         minWidth="300px"
         minHeight="32px"
@@ -271,6 +272,12 @@ export const Citations = () => {
         css={styledCss(
           _css({ top: position.top, left: position.left }, menuActive)
         )}
+      > */}
+      <DropdownMenu
+        position={{ top: position.top, left: position.left }}
+        open={menuActive}
+        mt={pxUnits(-6)}
+        minWidth="300px"
       >
         {sourceQuery ? (
           <View p={sourcesLoaded && 'small'}>
@@ -313,7 +320,7 @@ export const Citations = () => {
             </Text>
           </View>
         )}
-      </View>
+      </DropdownMenu>
     </ClickAwayListener>
   )
 }
