@@ -270,7 +270,7 @@ const ContentEditable = ({
     }
 
     /* 
-    HACK
+    HACK: 
     if "alt + e, i, u, `" are pressed twice in a row
     ignore set content or else selection is errored out
     */
