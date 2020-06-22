@@ -1,13 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { BaseControl, Icon } from '@databyss-org/ui/primitives'
+import { BaseControl, Icon, View, Text } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import TrashSvg from '@databyss-org/ui/assets/trash.svg'
+import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
+import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
+import DropdownMenu from '@databyss-org/editor/components/DropdownMenu'
 
 export const ArchiveBin = ({ pages }) => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
+  const [showMenu, setShowMenu] = useState(false)
 
   const { getTokensFromPath, navigate } = useNavigationContext()
 
@@ -30,16 +33,51 @@ export const ArchiveBin = ({ pages }) => {
     setTimeout(() => archivePage(id), 50)
   }
 
+  const menuItems = [
+    {
+      icon: <ArchiveSvg />,
+      title: 'Archive Page',
+      shortcut: '⌘ + Del',
+    },
+  ]
+
   return canBeArchived ? (
-    <BaseControl
-      onClick={onClick}
-      hoverColor="background.2"
-      p="tiny"
-      title="Archive Page"
-    >
-      <Icon sizeVariant="small" color="text.3">
-        <TrashSvg />
-      </Icon>
-    </BaseControl>
+    <View position="relative">
+      <BaseControl
+        onClick={() => setShowMenu(!showMenu)}
+        hoverColor="background.2"
+        p="tiny"
+        title="Archive Page"
+      >
+        <Icon sizeVariant="medium" color="text.1">
+          <MenuSvg />
+        </Icon>
+      </BaseControl>
+      {showMenu && (
+        <DropdownMenu
+          open={showMenu}
+          position={{
+            top: 36,
+            right: 0,
+          }}
+        >
+          {menuItems.map(menuItem => (
+            <BaseControl
+              onClick={onClick}
+              hoverColor="background.1"
+              p="small"
+              title={menuItem.title}
+              key={menuItem.title}
+              childViewProps={{ flexDirection: 'row' }}
+            >
+              <Icon sizeVariant="small" color="text.1" mr="small">
+                {menuItem.icon}
+              </Icon>
+              <Text variant="uiTextSmall">{menuItem.title}</Text>
+            </BaseControl>
+          ))}
+        </DropdownMenu>
+      )}
+    </View>
   ) : null
 }
