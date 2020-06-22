@@ -46,6 +46,8 @@ const BlockMenu = ({ element }) => {
 
   const actions = type =>
     ({
+      ENDSOURCE: () => undefined,
+      ENDLOCATION: () => undefined,
       SOURCE: () => editor.insertText('@'),
       TOPIC: () => editor.insertText('#'),
       LOCATION: () => {
@@ -81,13 +83,13 @@ const BlockMenu = ({ element }) => {
 
   const menuActions = [
     {
-      action: '',
+      action: 'ENDSOURCE',
       symbol: '/@',
       shortcut: '//@',
       label: 'End source',
     },
     {
-      action: '',
+      action: 'ENDLOCATION',
       symbol: '/%',
       shortcut: '//%',
       label: 'End location',

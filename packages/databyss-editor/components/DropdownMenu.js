@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, forwardRef } from 'react'
 import styledCss from '@styled-system/css'
 import theme, { borderRadius } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
@@ -14,25 +14,31 @@ const _css = (position, open) => ({
   ...position,
 })
 
-const DropdownMenu = ({
-  children,
-  position = { top: 0, left: 0 },
-  minWidth = pxUnits(200),
-  minHeight = pxUnits(32),
-  maxWidth = pxUnits(500),
-  open,
-  ...others
-}) => (
-  <View
-    maxWidth={maxWidth}
-    minWidth={minWidth}
-    minHeight={minHeight}
-    shadowVariant="modal"
-    css={styledCss(_css({ top: position.top, left: position.left }, open))}
-    {...others}
-  >
-    {children}
-  </View>
+const DropdownMenu = forwardRef(
+  (
+    {
+      children,
+      position = { top: 0, left: 0 },
+      minWidth = pxUnits(200),
+      minHeight = pxUnits(32),
+      maxWidth = pxUnits(500),
+      open,
+      ...others
+    },
+    ref
+  ) => (
+    <View
+      ref={ref}
+      maxWidth={maxWidth}
+      minWidth={minWidth}
+      minHeight={minHeight}
+      shadowVariant="modal"
+      css={styledCss(_css({ top: position.top, left: position.left }, open))}
+      {...others}
+    >
+      {children}
+    </View>
+  )
 )
 
 export default DropdownMenu
