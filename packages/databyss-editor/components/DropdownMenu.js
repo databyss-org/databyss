@@ -1,4 +1,4 @@
-import React, { useRef, forwardRef } from 'react'
+import React, { forwardRef } from 'react'
 import styledCss from '@styled-system/css'
 import theme, { borderRadius } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
@@ -9,8 +9,9 @@ const _css = (position, open) => ({
   zIndex: 1,
   position: 'absolute',
   opacity: open ? 1 : 0,
-  transition: `${theme.timing.quick}ms ease`,
+  transition: `opacity ${theme.timing.quick}ms ease`,
   borderRadius,
+  pointerEvents: open ? 'auto' : 'none',
   ...position,
 })
 
