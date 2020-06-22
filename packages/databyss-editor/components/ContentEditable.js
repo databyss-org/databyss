@@ -269,6 +269,26 @@ const ContentEditable = ({
       return
     }
 
+    /* 
+    HACK
+    if "alt + e, i, u, `" are pressed twice in a row
+    ignore set content or else selection is errored out
+    */
+    if (
+      editor.operations.find(
+        op =>
+          op.type === 'insert_text' &&
+          op.text.length &&
+          (editor.operations[0].text === '´' ||
+            editor.operations[0].text === 'ˆ' ||
+            editor.operations[0].text === '¨' ||
+            editor.operations[0].text === '`')
+      )
+    ) {
+      setSelection(selection)
+      return
+    }
+
     if (
       editor.operations.find(
         op =>
