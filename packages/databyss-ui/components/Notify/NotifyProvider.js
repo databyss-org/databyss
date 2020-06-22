@@ -1,11 +1,16 @@
 import React, { createContext, useContext } from 'react'
 import { Dialog } from '@databyss-org/ui/primitives'
-import { NotAuthorizedError } from '@databyss-org/services/lib/errors'
+import {
+  NotAuthorizedError,
+  NetworkUnavailableError,
+} from '@databyss-org/services/lib/errors'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
 import IS_NATIVE from '../../lib/isNative'
 
 const NotifyContext = createContext()
+
+const PING_ROUTE = process.env.API_URL + '/ping/'
 
 // from @bugsnag/plugin-react
 export const makeBugsnagReport = (client, error, info) => {
@@ -60,6 +65,23 @@ class NotifyProvider extends React.Component {
     isOnline: true,
   }
 
+  timeout() {
+    if (!this.state.isOnline) {
+      setTimeout(() => {
+        fetch(PING_ROUTE)
+          .then(() => {
+            this.setState({
+              isOnline: true,
+              dialogVisible: false,
+            })
+          })
+          .catch(() => {
+            this.timeout()
+          })
+      }, 1000)
+    }
+  }
+
   componentDidCatch(error, info) {
     if (error instanceof NotAuthorizedError) {
       // we don't need to notify, we should be redirecting
@@ -85,7 +107,15 @@ class NotifyProvider extends React.Component {
     }
   }
 
-  showUnhandledErrorDialog = () => {
+  showUnhandledErrorDialog = e => {
+    if (e && e.reason instanceof NetworkUnavailableError) {
+      this.setState({
+        dialogVisible: true,
+        message: 'offline please reconnect',
+        isOnline: false,
+      })
+      this.timeout()
+    }
     if (this.state.isOnline) {
       this.notify('😥something went wrong')
     }
