@@ -75,6 +75,9 @@ const borderRadiusVariants = {
   default: {
     borderRadius,
   },
+  round: {
+    borderRadius: '50%',
+  },
 }
 
 export default {

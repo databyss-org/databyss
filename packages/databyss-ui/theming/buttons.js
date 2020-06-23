@@ -52,30 +52,6 @@ const buttonVariants = {
     color: 'secondary.3',
     textDecoration: 'underline',
   },
-  editorMarginMenu: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: pxUnits(1),
-    color: 'text.2',
-    borderRadius: pxUnits(editorMarginMenuItemHeight),
-    width: pxUnits(editorMarginMenuItemHeight),
-    height: pxUnits(editorMarginMenuItemHeight),
-  },
-
-  editorMarginMenuItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingLeft: space.small,
-    paddingRight: space.small,
-    paddingTop: editorMarginMenuItemHeight / 2,
-    paddingBottom: editorMarginMenuItemHeight / 2,
-    height: pxUnits(editorMarginMenuItemHeight),
-    color: 'text.2',
-  },
   formatButton: {
     paddingBottom: pxUnits(6),
     paddingTop: pxUnits(6),
@@ -111,17 +87,6 @@ const buttonThemes = {
     activeColor: 'background.2',
   },
   externalLink: {},
-  editorMarginMenuItem: {
-    hoverColor: 'background.1',
-    activeColor: 'background.1',
-    textProps: {
-      variant: 'uiTextSmall',
-    },
-  },
-  editorMarginMenu: {
-    hoverColor: 'control.1',
-    activeColor: 'primary.2',
-  },
   formatButton: {
     textProps: {},
     hoverColor: 'background.1',
