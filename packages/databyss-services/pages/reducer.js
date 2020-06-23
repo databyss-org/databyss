@@ -8,7 +8,7 @@ import {
   FETCH_PAGE_HEADERS,
   DELETE_PAGE,
   ARCHIVE_PAGE,
-  PATCH,
+  // PATCH,
   QUEUE_PATCH,
 } from './constants'
 
