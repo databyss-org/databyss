@@ -288,6 +288,7 @@ const ContentEditable = ({
       payload.preventRerender = true
     }
 
+    // test
     if (
       editor.operations.find(
         op =>
