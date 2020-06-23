@@ -108,9 +108,22 @@ const ContentEditable = ({
     [state.newEntities.length]
   )
 
-  console.log('TEST HERE')
+  const inDeadKey = useRef(false)
 
   const onKeyDown = event => {
+    // if diacritics has been toggled, set dead key
+    if (event.key === 'Dead') {
+      inDeadKey.current = true
+    } else if (event.key !== 'Enter') {
+      inDeadKey.current = false
+    }
+
+    if (inDeadKey.current && event.key === 'Enter') {
+      inDeadKey.current = false
+      event.preventDefault()
+      return
+    }
+
     if (Hotkeys.isBold(event)) {
       event.preventDefault()
       toggleMark(editor, 'bold')
