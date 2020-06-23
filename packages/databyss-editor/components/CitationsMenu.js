@@ -15,10 +15,10 @@ import {
   List,
   BaseControl,
 } from '@databyss-org/ui/primitives'
+import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import { useEditorContext } from '../state/EditorProvider'
 import { getEntityAtIndex, isAtomicInlineType } from '../lib/util'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
-import DropdownContainer from './DropdownContainer'
 
 const MENU_HEIGHT = 200
 

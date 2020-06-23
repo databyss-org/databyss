@@ -5,8 +5,8 @@ import { BaseControl, Icon, View } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
-import DropdownContainer from '@databyss-org/editor/components/DropdownContainer'
-import DropdownListItem from '@databyss-org/editor/components/DropdownListItem'
+import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
+import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 
 export const ArchiveBin = ({ pages }) => {

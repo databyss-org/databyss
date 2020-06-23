@@ -1,26 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { Transforms, Text } from '@databyss-org/slate'
 import { useEditor, ReactEditor } from 'slate-react'
-import buttons, {
-  editorMarginMenuItemHeight,
-} from '@databyss-org/ui/theming/buttons'
+import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import {
   View,
-  Button,
+  BaseControl,
   Icon,
   Grid,
   Separator,
 } from '@databyss-org/ui/primitives'
 import AddSvg from '@databyss-org/ui/assets/add.svg'
+import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
+import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
-import DropdownContainer from './DropdownContainer'
-import DropdownListItem from './DropdownListItem'
 
 const BlockMenu = ({ element }) => {
   const [showMenu, setShowMenu] = useState(false)
   const editor = useEditor()
-
-  const { buttonVariants } = buttons
 
   const onShowActions = () => {
     setShowMenu(!showMenu)
@@ -131,19 +127,19 @@ const BlockMenu = ({ element }) => {
         width={editorMarginMenuItemHeight}
         justifyContent="center"
       >
-        <Button
-          variant="editorMarginMenu"
+        <BaseControl
           onClick={onShowActions}
           data-test-block-menu="open"
           aria-haspopup="true"
+          hoverColor="background.2"
+          activeColor="primary.2"
+          borderRadius="round"
+          alignItems="center"
         >
-          <Icon
-            sizeVariant="medium"
-            color={buttonVariants.editorMarginMenu.color}
-          >
+          <Icon sizeVariant="medium" color="text.2">
             <AddSvg />
           </Icon>
-        </Button>
+        </BaseControl>
       </View>
       <View justifyContent="center" height={editorMarginMenuItemHeight}>
         {showMenu && (

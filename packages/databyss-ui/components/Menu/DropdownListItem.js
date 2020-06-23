@@ -1,13 +1,17 @@
 import React from 'react'
-import { View, Text, Icon, Button } from '@databyss-org/ui/primitives'
+import { View, Text, Icon, BaseControl } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 
 const DropdownListItem = ({ menuItem, onClick }) => (
-  <Button
-    variant="editorMarginMenuItem"
+  <BaseControl
     data-test-block-menu={menuItem.action}
-    onMouseDown={onClick}
+    // onMouseDown={onClick}
+    onClick={onClick}
     childViewProps={{ width: '100%' }}
+    px="small"
+    py="extraSmall"
+    hoverColor="background.1"
+    activeColor="background.1"
   >
     <View
       flexDirection="row"
@@ -45,7 +49,7 @@ const DropdownListItem = ({ menuItem, onClick }) => (
         </Text>
       )}
     </View>
-  </Button>
+  </BaseControl>
 )
 
 export default DropdownListItem
