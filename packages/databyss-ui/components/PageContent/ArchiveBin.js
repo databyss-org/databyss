@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { BaseControl, Icon, View, Text } from '@databyss-org/ui/primitives'
+import { BaseControl, Icon, View } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
-import DropdownMenu from '@databyss-org/editor/components/DropdownMenu'
+import DropdownContainer from '@databyss-org/editor/components/DropdownContainer'
+import DropdownListItem from '@databyss-org/editor/components/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 
 export const ArchiveBin = ({ pages }) => {
@@ -37,8 +38,8 @@ export const ArchiveBin = ({ pages }) => {
   const menuItems = [
     {
       icon: <ArchiveSvg />,
-      title: 'Archive Page',
-      shortcut: '⌘ + Del',
+      label: 'Archive',
+      shortcut: 'Ctrl + ⌫',
     },
   ]
 
@@ -48,7 +49,7 @@ export const ArchiveBin = ({ pages }) => {
         onClick={() => setShowMenu(!showMenu)}
         hoverColor="background.2"
         p="tiny"
-        title="Archive Page"
+        label="Archive Page"
       >
         <Icon sizeVariant="medium" color="text.1">
           <MenuSvg />
@@ -56,29 +57,22 @@ export const ArchiveBin = ({ pages }) => {
       </BaseControl>
       {showMenu && (
         <ClickAwayListener onClickAway={() => setShowMenu(false)}>
-          <DropdownMenu
+          <DropdownContainer
             open={showMenu}
             position={{
               top: 36,
               right: 0,
             }}
+            py="extraSmall"
           >
             {menuItems.map(menuItem => (
-              <BaseControl
+              <DropdownListItem
+                menuItem={menuItem}
                 onClick={onClick}
-                hoverColor="background.1"
-                p="small"
-                title={menuItem.title}
-                key={menuItem.title}
-                childViewProps={{ flexDirection: 'row' }}
-              >
-                <Icon sizeVariant="small" color="text.1" mr="small">
-                  {menuItem.icon}
-                </Icon>
-                <Text variant="uiTextSmall">{menuItem.title}</Text>
-              </BaseControl>
+                key={menuItem.label}
+              />
             ))}
-          </DropdownMenu>
+          </DropdownContainer>
         </ClickAwayListener>
       )}
     </View>

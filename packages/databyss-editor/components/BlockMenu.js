@@ -10,28 +10,11 @@ import {
   Icon,
   Grid,
   Separator,
-  Text as TextPrimitive,
 } from '@databyss-org/ui/primitives'
 import AddSvg from '@databyss-org/ui/assets/add.svg'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
-import DropdownMenu from './DropdownMenu'
-
-const BlockMenuActions = ({ menuActionButtons, unmount, showMenu }) => {
-  useEffect(() => () => unmount(), [])
-  return (
-    <DropdownMenu
-      position={{
-        top: editorMarginMenuItemHeight,
-        left: editorMarginMenuItemHeight,
-      }}
-      py="extraSmall"
-      open={showMenu}
-    >
-      {menuActionButtons}
-    </DropdownMenu>
-  )
-}
+import DropdownContainer from './DropdownContainer'
+import DropdownListItem from './DropdownListItem'
 
 const BlockMenu = ({ element }) => {
   const [showMenu, setShowMenu] = useState(false)
@@ -80,73 +63,66 @@ const BlockMenu = ({ element }) => {
     setShowMenu(false)
   }
 
-  const menuActions = [
+  const menuItems = [
     {
       action: 'ENDSOURCE',
-      symbol: '/@',
-      shortcut: '//@',
+      textSymbol: '/@',
+      shortcut: '',
       label: 'End source',
     },
     {
       action: 'ENDLOCATION',
-      symbol: '/%',
-      shortcut: '//%',
+      textSymbol: '/%',
+      shortcut: '',
       label: 'End location',
     },
     {
       action: 'TOPIC',
-      symbol: '#',
-      shortcut: '#',
+      textSymbol: '#',
+      shortcut: 'Ctrl + 3',
       label: 'Topic',
     },
     {
       action: 'SOURCE',
-      symbol: '@',
-      shortcut: '@',
+      textSymbol: '@',
+      shortcut: 'Ctrl + 2',
       label: 'Source',
     },
     {
       action: 'LOCATION',
-      symbol: '%',
-      shortcut: '%',
+      textSymbol: '%',
+      shortcut: 'Ctrl + 5',
       label: 'Location',
     },
   ]
 
-  const menuActionButtons = menuActions.map(menuAction => (
-    <React.Fragment key={menuAction.action}>
-      <Button
-        variant="editorMarginMenuItem"
-        data-test-block-menu={menuAction.action}
-        onMouseDown={e => onMenuAction(e, menuAction.action)}
-        alignItems="flex-start"
-        childViewProps={{ width: '100%' }}
+  const BlockMenuActions = ({ menuItems, unmount, showMenu }) => {
+    useEffect(() => () => unmount(), [])
+
+    return (
+      <DropdownContainer
+        position={{
+          top: editorMarginMenuItemHeight,
+          left: editorMarginMenuItemHeight,
+        }}
+        py="extraSmall"
+        open={showMenu}
+        separatorAfterItemNr={1}
       >
-        <View flexDirection="row" justifyContent="space-between" width="100%">
-          <View flexDirection="row">
-            <TextPrimitive
-              variant="uiTextSmall"
-              width={pxUnits(20)}
-              textAlign="center"
-              mr="small"
-              color="text.2"
-            >
-              {menuAction.symbol}
-            </TextPrimitive>
-            <TextPrimitive variant="uiTextSmall">
-              {menuAction.label}
-            </TextPrimitive>
-          </View>
-          <TextPrimitive variant="uiTextSmall" color="text.3">
-            {menuAction.shortcut}
-          </TextPrimitive>
-        </View>
-      </Button>
-      {menuAction.shortcut === '//%' && (
-        <Separator color="border.3" spacing="extraSmall" />
-      )}
-    </React.Fragment>
-  ))
+        {menuItems.map(menuItem => (
+          <React.Fragment key={menuItem.action}>
+            <DropdownListItem
+              menuItem={menuItem}
+              onClick={e => onMenuAction(e, menuItem.action)}
+            />
+            {menuItem.action === 'ENDLOCATION' && (
+              <Separator color="border.3" spacing="extraSmall" />
+            )}
+          </React.Fragment>
+        ))}
+      </DropdownContainer>
+    )
+  }
 
   return (
     <Grid singleRow columnGap="small">
@@ -176,7 +152,7 @@ const BlockMenu = ({ element }) => {
               () => null
               //   dispatchEditor(onShowMenuActions(false, editableState))
             }
-            menuActionButtons={menuActionButtons}
+            menuItems={menuItems}
             showMenu={showMenu}
           />
         )}
