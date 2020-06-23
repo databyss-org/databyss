@@ -27,7 +27,7 @@ const _css = (position, active) => ({
   paddingLeft: 'small',
   paddingRight: 'small',
   backgroundColor: 'background.0',
-  zIndex: 1,
+  zIndex: 'menu',
   marginTop: pxUnits(-6),
   position: 'absolute',
   opacity: active ? 1 : 0,

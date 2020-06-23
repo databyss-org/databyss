@@ -35,7 +35,7 @@ const Footer = () => {
           ? sidebar.width + sidebar.collapsedWidth
           : sidebar.collapsedWidth
       }
-      zIndex={1}
+      zIndex="base"
     >
       <Separator color="border.1" />
       <BaseControl
