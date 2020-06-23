@@ -31,7 +31,7 @@ const _css = position => ({
   paddingLeft: 'small',
   paddingRight: 'small',
   backgroundColor: 'background.0',
-  zIndex: 1,
+  zIndex: 'menu',
   pointerEvents: 'none',
   marginTop: pxUnits(-6),
   position: 'absolute',

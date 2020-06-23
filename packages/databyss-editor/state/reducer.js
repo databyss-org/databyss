@@ -31,7 +31,7 @@ export const bakeAtomicBlock = ({ state, draft, index }) => {
     !isAtomicInlineType(_entity.type) &&
     !_entity.text.textValue.match(`\n`)
   ) {
-    const _atomicType = symbolToAtomicType(_entity.text.textValue.charAt(0))
+    let _atomicType = symbolToAtomicType(_entity.text.textValue.charAt(0))
 
     if (_atomicType) {
       // push atomic block change to entityCache and editor operations
@@ -46,9 +46,16 @@ export const bakeAtomicBlock = ({ state, draft, index }) => {
         _id: _entity._id,
       }
 
+      // revert block to entry if no text in atomic block
+      if (_nextEntity.text.textValue.length === 0) {
+        _atomicType = 'ENTRY'
+        _nextEntity.type = _atomicType
+      }
+
       const _block = blockAtIndex(draft, state.selection.focus.index)
       _block.type = _atomicType
       draft.entityCache[_entity._id] = _nextEntity
+
       draft.operations.push({
         index: state.selection.focus.index,
         block: _nextEntity,
@@ -278,7 +285,7 @@ export default (state, action, onChange) => {
         draft,
         index: state.selection.focus.index,
       })
-      if (_bakedEntity) {
+      if (_bakedEntity && isAtomicInlineType(_bakedEntity.type)) {
         draft.newEntities.push(_bakedEntity)
       }
     }
@@ -322,7 +329,6 @@ export default (state, action, onChange) => {
         draft.selection.focus.offset < _selectedEntity.text.textValue.length &&
         draft.selection.focus.offset > 0
     }
-
     return cleanupState(draft)
   })
   onChange({ previousState: state, nextState, patch, inversePatch })

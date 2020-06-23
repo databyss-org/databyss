@@ -54,7 +54,7 @@ const BaseControl = forwardRef(
         href={href}
         {...others}
       >
-        <View zIndex={1} {...childViewProps}>
+        <View zIndex="base" {...childViewProps}>
           {_children}
         </View>
       </Styled>

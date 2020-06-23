@@ -119,15 +119,27 @@ export function fetchSourceQuery(query) {
         results: new ResourcePending(),
       },
     })
-    sources.searchSource(query).then(results => {
-      dispatch({
-        type: CACHE_SEARCH_QUERY,
-        payload: {
-          query,
-          results: composeResults(results, query),
-        },
+    sources
+      .searchSource(query)
+      .then(results => {
+        dispatch({
+          type: CACHE_SEARCH_QUERY,
+          payload: {
+            query,
+            results: composeResults(results, query),
+          },
+        })
       })
-    })
+      .catch(() => {
+        // if offline
+        dispatch({
+          type: CACHE_SEARCH_QUERY,
+          payload: {
+            query,
+            results: [],
+          },
+        })
+      })
   }
 }
 
