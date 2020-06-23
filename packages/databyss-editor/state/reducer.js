@@ -66,6 +66,7 @@ export default (state, action, onChange) => {
   const [nextState, patch, inversePatch] = produceWithPatches(state, draft => {
     draft.operations = []
     draft.preventDefault = false
+    draft.preventRerender = false
 
     const { payload } = action
 
@@ -186,6 +187,13 @@ export default (state, action, onChange) => {
         ) {
           draft.preventDefault = true
           break
+        }
+
+        /*
+        prevent rerender if "alt + e, i, u, `" are pressed twice in a row (double diacritics insertion)
+        */
+        if (payload.operations.find(op => op.preventRerender)) {
+          draft.preventRerender = true
         }
 
         payload.operations.forEach(op => {
