@@ -22,7 +22,8 @@ export const initialState = {
 
 export default (state, action) => {
   switch (action.type) {
-    case PATCH:
+    // THIS CAUSES EDITOR TO RERENDER
+    //   case PATCH:
     case QUEUE_PATCH: {
       return {
         ...state,

@@ -108,6 +108,8 @@ const ContentEditable = ({
     [state.newEntities.length]
   )
 
+  console.log('TEST HERE')
+
   const onKeyDown = event => {
     if (Hotkeys.isBold(event)) {
       event.preventDefault()
