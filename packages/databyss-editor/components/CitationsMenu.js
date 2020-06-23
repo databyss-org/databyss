@@ -18,7 +18,7 @@ import {
 import { useEditorContext } from '../state/EditorProvider'
 import { isAtomicInlineType } from '../lib/util'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
-import DropdownMenu from './DropdownMenu'
+import DropdownContainer from './DropdownContainer'
 
 const MENU_HEIGHT = 200
 
@@ -99,7 +99,7 @@ const GoogleFooter = () => (
 const ComposeResults = ({ results, onClick, unmount }) => {
   useEffect(() => () => unmount(), [])
   return !_.isEmpty(results) ? (
-    <List verticalItemPadding={1} horizontalItemPadding={1}>
+    <List horizontalItemPadding={1}>
       {Object.keys(results).map((author, i) => (
         <View key={i}>
           <Text variant="uiTextSmall" color="text.2">
@@ -249,7 +249,7 @@ export const Citations = () => {
 
   return (
     <ClickAwayListener onClickAway={onClickAway}>
-      <DropdownMenu
+      <DropdownContainer
         position={{ top: position.top, left: position.left }}
         open={menuActive}
         mt={pxUnits(-6)}
@@ -297,7 +297,7 @@ export const Citations = () => {
             </Text>
           </View>
         )}
-      </DropdownMenu>
+      </DropdownContainer>
     </ClickAwayListener>
   )
 }

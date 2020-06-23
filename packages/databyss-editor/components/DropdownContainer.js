@@ -15,7 +15,7 @@ const _css = (position, open) => ({
   ...position,
 })
 
-const DropdownMenu = forwardRef(
+const DropdownContainer = forwardRef(
   (
     {
       children,
@@ -52,4 +52,4 @@ const DropdownMenu = forwardRef(
   )
 )
 
-export default DropdownMenu
+export default DropdownContainer
