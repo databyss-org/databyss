@@ -10,6 +10,7 @@ import {
   ARCHIVE_PAGE,
   // PATCH,
   QUEUE_PATCH,
+  REMOVE_PAGE_FROM_CACHE,
 } from './constants'
 
 export const initialState = {
@@ -22,8 +23,8 @@ export const initialState = {
 
 export default (state, action) => {
   switch (action.type) {
-    // THIS CAUSES EDITOR TO RERENDER
-    //   case PATCH:
+    // this causes editor to re-render
+    // case PATCH:
     case QUEUE_PATCH: {
       return {
         ...state,
@@ -37,12 +38,23 @@ export default (state, action) => {
         ..._state,
       }
     }
+    case REMOVE_PAGE_FROM_CACHE: {
+      const _cache = cloneDeep(state.cache)
+      delete _cache[action.payload.id]
+
+      return {
+        ...state,
+        cache: _cache,
+      }
+    }
     case CACHE_PAGE: {
       const _state = cloneDeep(state)
-      const _page = action.payload.body
-      _state.cache[action.payload.id] = _page
-      if (_state.headerCache) {
-        _state.headerCache[_page.page._id] = _page.page
+      const _pageState = action.payload.body
+
+      _state.cache[action.payload.id] = _pageState
+      // update header cache as well
+      if (_state.headerCache && _pageState.page && _pageState.page._id) {
+        _state.headerCache[_pageState.page._id] = _pageState.page
       }
       return {
         ..._state,

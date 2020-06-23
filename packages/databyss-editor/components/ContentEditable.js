@@ -252,7 +252,6 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
 
     const payload = {
       selection,
-      preventRerender: false,
     }
 
     if (value.length < valueRef.current.length) {
