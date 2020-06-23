@@ -99,11 +99,13 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
       inDeadKey.current = false
     }
 
+    // if diacritic is toggled and enter key is pressed, prevent default behavior
     if (inDeadKey.current && event.key === 'Enter') {
       inDeadKey.current = false
       event.preventDefault()
       return
     }
+
     // em dash shortcut
     replaceShortcut(editor, event)
 
@@ -283,25 +285,6 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
       return
     }
 
-    /* 
-    if "alt + e, i, u, `" are pressed twice in a row
-    ignore set content or else selection is errored out
-    */
-    if (
-      editor.operations.find(
-        op =>
-          op.type === 'insert_text' &&
-          op.text.length &&
-          (editor.operations[0].text === '´' ||
-            editor.operations[0].text === 'ˆ' ||
-            editor.operations[0].text === '¨' ||
-            editor.operations[0].text === '`')
-      )
-    ) {
-      payload.preventRerender = true
-    }
-
-    // test
     if (
       editor.operations.find(
         op =>
@@ -358,19 +341,18 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
   //   we loop through the operations in `state` and updating nodes in `value`
   // if `state.preventDefault` is set, use the previous `value` as the
   //   base for the `nextValue` instead of `editor.children`
-  const nextValue = state.preventRerender
-    ? editor.children
-    : produce(
-        state.preventDefault ? valueRef.current : editor.children,
-        draft => {
-          state.operations.forEach(op => {
-            const _block = stateBlockToSlateBlock(op.block)
-            draft[op.index].children = _block.children
-            draft[op.index].type = _block.type
-            draft[op.index].isBlock = _block.isBlock
-          })
-        }
-      )
+
+  const nextValue = produce(
+    state.preventDefault ? valueRef.current : editor.children,
+    draft => {
+      state.operations.forEach(op => {
+        const _block = stateBlockToSlateBlock(op.block)
+        draft[op.index].children = _block.children
+        draft[op.index].type = _block.type
+        draft[op.index].isBlock = _block.isBlock
+      })
+    }
+  )
 
   // by default, let selection remain uncontrolled
   // NOTE: preventDefault will rollback selection to that of previous render
