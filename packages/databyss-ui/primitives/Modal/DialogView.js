@@ -6,25 +6,27 @@ const DialogView = ({
   confirmButton,
   onDismiss,
   onConfirm,
-  disableButton,
+  showConfirmButton,
   ...others
 }) => (
   <View paddingVariant="medium" flexShrink={1} {...others}>
     <Text variant="uiTextNormal">{message}</Text>
-    <Grid singleColumn rowGap="tiny" mt="em">
-      {!disableButton &&
-        React.cloneElement(confirmButton, {
+    {showConfirmButton && (
+      <Grid singleColumn rowGap="tiny" mt="em">
+        {React.cloneElement(confirmButton, {
           flexGrow: 1,
           onPress: () => {
             onConfirm()
             onDismiss()
           },
         })}
-    </Grid>
+      </Grid>
+    )}
   </View>
 )
 
 DialogView.defaultProps = {
+  showConfirmButton: true,
   onConfirm: () => null,
   onDismiss: () => null,
   confirmButton: <Button variant="secondaryUi">Ok</Button>,

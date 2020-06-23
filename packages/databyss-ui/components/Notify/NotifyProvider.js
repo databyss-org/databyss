@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import { Dialog } from '@databyss-org/ui/primitives'
+import { ping } from '@databyss-org/services/lib/requestApi'
 import {
   NotAuthorizedError,
   NetworkUnavailableError,
@@ -9,8 +10,6 @@ import { formatComponentStack } from '@bugsnag/plugin-react'
 import IS_NATIVE from '../../lib/isNative'
 
 const NotifyContext = createContext()
-
-const PING_ROUTE = process.env.API_URL + '/ping/'
 
 // from @bugsnag/plugin-react
 export const makeBugsnagReport = (client, error, info) => {
@@ -46,11 +45,9 @@ class NotifyProvider extends React.Component {
         console.error(error)
       })
     } else {
-      window.addEventListener('offline', () =>
-        this.hasInternetConnection(false)
-      )
+      window.addEventListener('offline', () => this.setOnlineStatus(false))
 
-      window.addEventListener('online', () => this.hasInternetConnection(true))
+      window.addEventListener('online', () => this.setOnlineStatus(true))
 
       window.addEventListener('error', this.showUnhandledErrorDialog)
       window.addEventListener(
@@ -63,23 +60,6 @@ class NotifyProvider extends React.Component {
     dialogVisible: false,
     message: null,
     isOnline: true,
-  }
-
-  timeout() {
-    if (!this.state.isOnline) {
-      setTimeout(() => {
-        fetch(PING_ROUTE)
-          .then(() => {
-            this.setState({
-              isOnline: true,
-              dialogVisible: false,
-            })
-          })
-          .catch(() => {
-            this.timeout()
-          })
-      }, 1000)
-    }
   }
 
   componentDidCatch(error, info) {
@@ -95,9 +75,9 @@ class NotifyProvider extends React.Component {
 
   componentWillUnmount() {
     if (!IS_NATIVE) {
-      window.removeEventListener('offline', this.hasInternetConnection)
+      window.removeEventListener('offline', this.setOnlineStatus)
 
-      window.removeEventListener('online', this.hasInternetConnection)
+      window.removeEventListener('online', this.setOnlineStatus)
 
       window.removeEventListener('error', this.showUnhandledErrorDialog)
       window.removeEventListener(
@@ -107,32 +87,52 @@ class NotifyProvider extends React.Component {
     }
   }
 
-  showUnhandledErrorDialog = e => {
+  onUnhandledError = e => {
     if (e && e.reason instanceof NetworkUnavailableError) {
-      this.setState({
-        dialogVisible: true,
-        message: 'offline please reconnect',
-        isOnline: false,
-      })
-      this.timeout()
-    }
-    if (this.state.isOnline) {
-      this.notify('😥something went wrong')
+      this.showOfflineMessage()
+      this.checkOnlineStatus()
     }
   }
 
-  hasInternetConnection = isOnline => {
+  setOnlineStatus = isOnline => {
     if (!isOnline) {
-      this.setState({
-        dialogVisible: true,
-        message: 'offline please reconnect',
-        isOnline,
-      })
+      this.showOfflineMessage()
     } else {
       this.setState({
         isOnline,
         dialogVisible: false,
       })
+    }
+  }
+
+  showOfflineMessage = () => {
+    this.setState({
+      dialogVisible: true,
+      message: 'Offline, please reconnect.',
+      isOnline: false,
+    })
+  }
+
+  showUnhandledErrorDialog = () => {
+    if (this.state.isOnline) {
+      this.notify('😥something went wrong')
+    }
+  }
+
+  checkOnlineStatus() {
+    if (!this.state.isOnline) {
+      setTimeout(() => {
+        ping()
+          .then(() => {
+            this.setState({
+              isOnline: true,
+              dialogVisible: false,
+            })
+          })
+          .catch(() => {
+            this.checkOnlineStatus()
+          })
+      }, 1000)
     }
   }
 
@@ -157,7 +157,7 @@ class NotifyProvider extends React.Component {
       >
         {this.props.children}
         <Dialog
-          disableButton={!isOnline}
+          showConfirmButton={false}
           visible={dialogVisible}
           message={message}
           onDismiss={() => this.setState({ dialogVisible: false })}

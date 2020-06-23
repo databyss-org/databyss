@@ -52,10 +52,9 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
         alignItems="center"
         flexDirection="row"
         justifyContent="space-between"
-        // flexGrow="1"
       >
         <PageHeader pageId={id} isFocused={onHeaderClick} />
-        <Text color={isOnline ? 'gray.4' : 'red.0'} pr="medium">
+        <Text color="gray.5" pr="medium" variant="uiTextSmall">
           {isOnline && (pendingPatches ? 'Saving...' : 'All changes saved')}
           {!isOnline && 'Offline'}
         </Text>
