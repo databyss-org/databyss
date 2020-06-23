@@ -6,7 +6,12 @@ const _css = {
   width: `auto`,
 }
 const Dialog = ({ visible, ...others }) => (
-  <Modal widthVariant="dialog" concatCss={_css} visible={visible}>
+  <Modal
+    widthVariant="dialog"
+    concatCss={_css}
+    visible={visible}
+    zIndex="dialog"
+  >
     <DialogView {...others} />
   </Modal>
 )

@@ -35,13 +35,14 @@ const Footer = () => {
           ? sidebar.width + sidebar.collapsedWidth
           : sidebar.collapsedWidth
       }
-      zIndex={1}
+      zIndex="base"
     >
       <Separator color="border.1" />
       <BaseControl
         px="small"
         py="extraSmall"
         width="100%"
+        data-test-element="new-page-button"
         onClick={() => onNewPageClick()}
         flexDirection="row"
         childViewProps={{ width: '100%' }}

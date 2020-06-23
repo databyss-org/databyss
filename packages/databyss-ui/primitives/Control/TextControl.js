@@ -49,7 +49,7 @@ const TextControl = ({
         inputRef.current.focus()
       }
     },
-    zIndex: active ? 2 : 'unset',
+    zIndex: active ? 'activeControl' : 'unset',
   }
 
   useEffect(() => {

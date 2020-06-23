@@ -1,9 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ResourcePending } from '@databyss-org/services/lib/ResourcePending'
 import ErrorFallback from '../Notify/ErrorFallback'
 import Loading from '../Notify/LoadingFallback'
 
-const makeLoader = (resource, children) => {
+const MakeLoader = ({ resource, children, onUnload }) => {
+  useEffect(
+    () => () => {
+      if (onUnload) {
+        onUnload()
+      }
+    },
+    []
+  )
+
   if (!resource || resource instanceof ResourcePending) {
     return <Loading />
   }
@@ -19,4 +28,4 @@ const makeLoader = (resource, children) => {
   return children(resource)
 }
 
-export default makeLoader
+export default MakeLoader

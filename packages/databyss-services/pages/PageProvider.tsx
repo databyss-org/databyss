@@ -12,6 +12,7 @@ import {
   deletePage,
   onArchivePage,
   onSetDefaultPage,
+  removePageIdFromCache,
 } from './actions'
 
 interface PropsType {
@@ -147,6 +148,10 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     pageCachedHookRef.current[id] = callback
   }
 
+  const removePageFromCache = (id: string) => {
+    dispatch(removePageIdFromCache(id))
+  }
+
   return (
     <PageContext.Provider
       value={{
@@ -162,6 +167,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         setDefaultPage,
         onPageCached,
         hasPendingPatches,
+        removePageFromCache,
       }}
     >
       {children}
