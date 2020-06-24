@@ -108,7 +108,6 @@ const Login = ({ pending, signupFlow }) => {
 
   const signInOrSignUp = signupFlow ? 'Sign up ' : 'Sign in '
 
-  console.log(values.email.textValue)
   return (
     <ValueListProvider values={values} onChange={onChange} onSubmit={onSubmit}>
       <View widthVariant="dialog" alignItems="center" width="100%">
