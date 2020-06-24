@@ -88,7 +88,7 @@ export const populateRefEntities = (list, type, req) =>
         }
 
         if (!_block) {
-          _block = new Block({ _id: _blockId })
+          _block = new Block({ _id: b._id })
         }
         _block.overwrite(blockFields)
         await _block.save()
