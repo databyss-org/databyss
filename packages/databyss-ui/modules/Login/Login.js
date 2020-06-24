@@ -17,11 +17,17 @@ const initialFormState = {
   },
 }
 
+function validateEmail(email) {
+  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return re.test(String(email).toLowerCase())
+}
+
 const Login = ({ pending, signupFlow }) => {
   const { getSession, requestCode, session } = useSessionContext()
   const emailInputRef = useRef(null)
   const codeInputRef = useRef(null)
   const [didSubmit, setDidSubmit] = useState(false)
+  const [invalidEmail, setInvalidEmail] = useState(false)
   const [showRequestCode, setShowRequestCode] = useState(requestCode)
   const [values, setValues] = useState(initialFormState)
 
@@ -32,6 +38,13 @@ const Login = ({ pending, signupFlow }) => {
     ) {
       return
     }
+
+    if (!validateEmail(values.email.textValue)) {
+      setInvalidEmail(true)
+      return
+    }
+
+    values.email.textValue
     getSession({
       email: values.email.textValue,
       code: values.code.textValue,
@@ -68,6 +81,11 @@ const Login = ({ pending, signupFlow }) => {
   // reset TFA (request code) if email changes
   useEffect(
     () => {
+      // if valid email addres, enable button
+      if (invalidEmail && validateEmail(values.email.textValue)) {
+        setInvalidEmail(false)
+      }
+
       if (showRequestCode) {
         setValues({ ...values, code: { textValue: '' } })
         setShowRequestCode(false)
@@ -90,6 +108,7 @@ const Login = ({ pending, signupFlow }) => {
 
   const signInOrSignUp = signupFlow ? 'Sign up ' : 'Sign in '
 
+  console.log(values.email.textValue)
   return (
     <ValueListProvider values={values} onChange={onChange} onSubmit={onSubmit}>
       <View widthVariant="dialog" alignItems="center" width="100%">
@@ -113,6 +132,7 @@ const Login = ({ pending, signupFlow }) => {
           </View>
           <TextInputField
             label="Email"
+            hasError={invalidEmail}
             path="email"
             placeholder="Enter your email address"
             ref={emailInputRef}
@@ -139,7 +159,8 @@ const Login = ({ pending, signupFlow }) => {
               disabled={
                 pending ||
                 (showRequestCode && !values.code.textValue.length) ||
-                !values.email.textValue.length
+                !values.email.textValue.length ||
+                invalidEmail
               }
               data-test-id="continueButton"
             >

@@ -103,7 +103,7 @@ const EditorWithProvider = () => {
           setPage(corruptedPage(account.defaultPage))
         }}
       >
-        <Text>clear state</Text>
+        <Text>corrupt page</Text>
       </Button>
       <PageLoader pageId={account.defaultPage}>
         {page => {
@@ -141,6 +141,6 @@ const EditorWithModals = () => (
 storiesOf('Services|Page', module)
   .addDecorator(NotifyDecorator)
   .addDecorator(ViewportDecorator)
-  .add('Slate 5 - Error', () => (
+  .add('Slate 5 - Corrupted Page', () => (
     <EditorWithModals initialState={basicFixture} />
   ))

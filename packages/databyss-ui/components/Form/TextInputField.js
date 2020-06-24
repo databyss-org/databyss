@@ -6,9 +6,15 @@ import {
 import { View, Text, TextInput } from '../../primitives'
 
 const TextInputField = React.forwardRef(
-  ({ path, label, placeholder, ...others }, ref) => {
+  ({ path, label, placeholder, hasError, ...others }, ref) => {
     const { onSubmit } = useValueListContext()
     const [active, setActive] = useState(false)
+
+    const outlineColor = !hasError
+      ? active
+        ? 'activeFormField'
+        : 'formField'
+      : 'formError'
     return (
       <View {...others}>
         {label && (
@@ -23,7 +29,7 @@ const TextInputField = React.forwardRef(
         )}
         <View
           padding="small"
-          borderVariant={active ? 'activeFormField' : 'formField'}
+          borderVariant={outlineColor}
           backgroundColor={active ? 'background.0' : 'transparent'}
         >
           <ValueListItem path={path}>
