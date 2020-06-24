@@ -1,4 +1,4 @@
-import React, { useMemo, memo } from 'react'
+import React from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
@@ -29,12 +29,12 @@ export const withPages = Wrapped => ({ ...others }) => (
   <PagesLoader>{pages => <Wrapped pages={pages} {...others} />}</PagesLoader>
 )
 
-export const EntrySearchLoader = memo(({ query, children }) => {
+export const EntrySearchLoader = ({ query, children }) => {
   const { searchEntries, searchCache } = useEntryContext()
   searchEntries(query)
 
   return MakeLoader({ resource: searchCache[query], children })
-})
+}
 
 export const SourceLoader = ({ sourceId, children }) => {
   const { getSource } = useSourceContext()
