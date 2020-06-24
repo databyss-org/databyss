@@ -39,7 +39,9 @@ const Search = ({ onClick }) => {
   )
 
   const onChange = val => {
-    setQuery(val)
+    // whitelist alphanumeric, space and hyphen
+    const _val = { textValue: val.textValue.replace(/[^a-z0-9 -]/gi, '') }
+    setQuery(_val)
   }
 
   const onSearchClick = () => {
