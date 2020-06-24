@@ -44,7 +44,6 @@ const Login = ({ pending, signupFlow }) => {
       return
     }
 
-    values.email.textValue
     getSession({
       email: values.email.textValue,
       code: values.code.textValue,
