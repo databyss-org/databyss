@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import _ from 'lodash'
+// import _ from 'lodash'
 import reducer, { initialState } from './reducer'
 import { onSearchEntries, onSetQuery, onClearCache } from './actions'
 
