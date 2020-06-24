@@ -1,6 +1,10 @@
 import React, { createContext, useContext } from 'react'
 import { Dialog } from '@databyss-org/ui/primitives'
-import { NotAuthorizedError } from '@databyss-org/services/lib/errors'
+import { ping } from '@databyss-org/services/lib/requestApi'
+import {
+  NotAuthorizedError,
+  NetworkUnavailableError,
+} from '@databyss-org/services/lib/errors'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
 import IS_NATIVE from '../../lib/isNative'
@@ -41,6 +45,10 @@ class NotifyProvider extends React.Component {
         console.error(error)
       })
     } else {
+      window.addEventListener('offline', () => this.setOnlineStatus(false))
+
+      window.addEventListener('online', () => this.setOnlineStatus(true))
+
       window.addEventListener('error', this.showUnhandledErrorDialog)
       window.addEventListener(
         'unhandledrejection',
@@ -51,6 +59,7 @@ class NotifyProvider extends React.Component {
   state = {
     dialogVisible: false,
     message: null,
+    isOnline: true,
   }
 
   componentDidCatch(error, info) {
@@ -66,6 +75,10 @@ class NotifyProvider extends React.Component {
 
   componentWillUnmount() {
     if (!IS_NATIVE) {
+      window.removeEventListener('offline', this.setOnlineStatus)
+
+      window.removeEventListener('online', this.setOnlineStatus)
+
       window.removeEventListener('error', this.showUnhandledErrorDialog)
       window.removeEventListener(
         'unhandledrejection',
@@ -74,8 +87,53 @@ class NotifyProvider extends React.Component {
     }
   }
 
+  onUnhandledError = e => {
+    if (e && e.reason instanceof NetworkUnavailableError) {
+      this.showOfflineMessage()
+      this.checkOnlineStatus()
+    }
+  }
+
+  setOnlineStatus = isOnline => {
+    if (!isOnline) {
+      this.showOfflineMessage()
+    } else {
+      this.setState({
+        isOnline,
+        dialogVisible: false,
+      })
+    }
+  }
+
+  showOfflineMessage = () => {
+    this.setState({
+      dialogVisible: true,
+      message: 'Offline, please reconnect.',
+      isOnline: false,
+    })
+  }
+
   showUnhandledErrorDialog = () => {
-    this.notify('😥something went wrong')
+    if (this.state.isOnline) {
+      this.notify('😥something went wrong')
+    }
+  }
+
+  checkOnlineStatus() {
+    if (!this.state.isOnline) {
+      setTimeout(() => {
+        ping()
+          .then(() => {
+            this.setState({
+              isOnline: true,
+              dialogVisible: false,
+            })
+          })
+          .catch(() => {
+            this.checkOnlineStatus()
+          })
+      }, 1000)
+    }
   }
 
   notify = message => {
@@ -91,16 +149,19 @@ class NotifyProvider extends React.Component {
   }
 
   render() {
-    const { dialogVisible, message } = this.state
+    const { dialogVisible, message, isOnline } = this.state
+
     return (
       <NotifyContext.Provider
-        value={{ notify: this.notify, notifyError: this.notifyError }}
+        value={{ notify: this.notify, notifyError: this.notifyError, isOnline }}
       >
         {this.props.children}
         <Dialog
+          showConfirmButton={false}
           visible={dialogVisible}
           message={message}
           onDismiss={() => this.setState({ dialogVisible: false })}
+          {...!isOnline && { 'data-test-modal': 'offline' }}
         />
       </NotifyContext.Provider>
     )

@@ -12,15 +12,11 @@ import {
 
 const PageBody = ({ page, focusIndex }) => {
   const { location } = useNavigationContext()
-  const { clearBlockDict, setPatch, setPage } = usePageContext()
+  const { clearBlockDict, setPatch } = usePageContext()
   useEffect(() => () => clearBlockDict(), [])
 
   const operationsQueue = useRef([])
   const pageState = useRef(null)
-
-  const onUnmount = () => {
-    setPage({ ...pageState.current, updatePageInCache: true })
-  }
 
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
   const throttledAutosave = useCallback(
@@ -28,7 +24,7 @@ const PageBody = ({ page, focusIndex }) => {
       const _patch = withWhitelist(patch)
       if (_patch.length) {
         const payload = {
-          id: nextState.page._id,
+          id: nextState._id,
           patch: operationsQueue.current,
         }
         setPatch(payload)
@@ -41,6 +37,7 @@ const PageBody = ({ page, focusIndex }) => {
   // state from provider is out of date
   const onChange = value => {
     pageState.current = value.nextState
+
     const patch = addMetaData(value)
     // push changes to a queue
     operationsQueue.current = operationsQueue.current.concat(patch)
@@ -53,11 +50,7 @@ const PageBody = ({ page, focusIndex }) => {
       onChange={onChange}
       initialState={withMetaData(page)}
     >
-      <ContentEditable
-        onUnmount={onUnmount}
-        autofocus
-        focusIndex={focusIndex}
-      />
+      <ContentEditable autofocus focusIndex={focusIndex} />
     </EditorProvider>
   )
 }

@@ -38,8 +38,9 @@ export const applyRange = (editor, range) => {
 export const statePointToSlatePoint = (children, point) => {
   const { index, offset: flatOffset } = point
 
+  // if index does not exist in editor, reset selection at 0
   if (!children[index]) {
-    return { path: [index, 0], offset: 0 }
+    return { path: [0, 0], offset: 0 }
   }
 
   const _editor = createEditor()

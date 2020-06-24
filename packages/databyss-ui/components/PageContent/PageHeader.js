@@ -45,6 +45,7 @@ const PageHeader = ({ isFocused, pageId }) => {
   return (
     <View p="medium" flexGrow={1} ml="extraSmall">
       <TextInput
+        data-test-element="page-header"
         onBlur={updatePageName}
         onFocus={() => isFocused(true)}
         onKeyDown={e => {

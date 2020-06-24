@@ -12,13 +12,23 @@ const EntryProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { searchCache, searchTerm } = state
 
-  const searchEntries = _.debounce(query => {
+  // TODO: memoize for debounce to work
+
+  // const searchEntries = _.debounce(query => {
+  //   const _results = searchCache[query]
+  //   if (!_results) {
+  //     return dispatch(onSearchEntries(query))
+  //   }
+  //   return null
+  // }, 250)
+
+  const searchEntries = query => {
     const _results = searchCache[query]
     if (!_results) {
       return dispatch(onSearchEntries(query))
     }
     return null
-  }, 250)
+  }
 
   const setQuery = query => {
     dispatch(onSetQuery(query))

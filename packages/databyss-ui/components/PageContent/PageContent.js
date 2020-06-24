@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useLocation, Router } from '@reach/router'
 import { PagesLoader, PageLoader } from '@databyss-org/ui/components/Loaders'
+import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { ArchiveBin } from './ArchiveBin'
@@ -16,6 +17,7 @@ export const PageRouter = () => (
 
 const PageContainer = ({ anchor, id, onHeaderClick, page }) => {
   const { getBlockRefByIndex, hasPendingPatches } = usePageContext()
+  const { isOnline } = useNotifyContext()
 
   const [pendingPatches, setPendingPatches] = useState(hasPendingPatches)
 
@@ -56,11 +58,11 @@ const PageContainer = ({ anchor, id, onHeaderClick, page }) => {
         alignItems="center"
         flexDirection="row"
         justifyContent="space-between"
-        // flexGrow="1"
       >
         <PageHeader pageId={id} isFocused={onHeaderClick} />
-        <Text color="gray.4" pr="medium">
-          {pendingPatches ? 'Saving...' : 'All changes saved'}
+        <Text color="gray.5" pr="medium" variant="uiTextSmall">
+          {isOnline && (pendingPatches ? 'Saving...' : 'All changes saved')}
+          {!isOnline && 'Offline'}
         </Text>
         <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
       </View>
@@ -88,16 +90,23 @@ const PageContent = () => {
   return (
     <View flex="1" height="100vh">
       {id && (
-        <PageLoader pageId={id}>
-          {page => (
-            <PageContainer
-              anchor={anchor}
-              id={id}
-              onHeaderClick={onHeaderClick}
-              page={page}
-              readOnly={readOnly}
-            />
-          )}
+        <PageLoader pageId={id} key={id}>
+          {pageState => {
+            const { page, ...pageContainerFields } = pageState
+
+            return (
+              <PageContainer
+                anchor={anchor}
+                id={id}
+                onHeaderClick={onHeaderClick}
+                page={{
+                  _id: page._id,
+                  ...pageContainerFields,
+                }}
+                readOnly={readOnly}
+              />
+            )
+          }}
         </PageLoader>
       )}
     </View>

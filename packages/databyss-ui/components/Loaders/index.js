@@ -1,13 +1,17 @@
-import React from 'react'
+import React, { useMemo, memo } from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
-import makeLoader from './makeLoader'
+import MakeLoader from './MakeLoader'
 
 export const PageLoader = ({ children, pageId }) => {
-  const { getPage } = usePageContext()
-  return makeLoader(getPage(pageId), children)
+  const { getPage, removePageFromCache } = usePageContext()
+  return MakeLoader({
+    resource: getPage(pageId),
+    children,
+    onUnload: () => removePageFromCache(pageId),
+  })
 }
 
 export const withPage = Wrapped => ({ pageId, ...others }) => (
@@ -18,22 +22,23 @@ export const withPage = Wrapped => ({ pageId, ...others }) => (
 
 export const PagesLoader = ({ children }) => {
   const { getPages } = usePageContext()
-  return makeLoader(getPages(), children)
+  return MakeLoader({ resource: getPages(), children })
 }
 
 export const withPages = Wrapped => ({ ...others }) => (
   <PagesLoader>{pages => <Wrapped pages={pages} {...others} />}</PagesLoader>
 )
 
-export const EntrySearchLoader = ({ query, children }) => {
+export const EntrySearchLoader = memo(({ query, children }) => {
   const { searchEntries, searchCache } = useEntryContext()
   searchEntries(query)
-  return makeLoader(searchCache[query], children)
-}
+
+  return MakeLoader({ resource: searchCache[query], children })
+})
 
 export const SourceLoader = ({ sourceId, children }) => {
   const { getSource } = useSourceContext()
-  return makeLoader(getSource(sourceId), children)
+  return MakeLoader({ resource: getSource(sourceId), children })
 }
 
 export const withSource = Wrapped => ({ sourceId, ...others }) => (
@@ -45,10 +50,10 @@ export const withSource = Wrapped => ({ sourceId, ...others }) => (
 export const SearchSourceLoader = ({ query, children }) => {
   const { state, searchSource } = useSourceContext()
   searchSource(query)
-  return makeLoader(state.searchCache[query], children)
+  return MakeLoader({ resource: state.searchCache[query], children })
 }
 
 export const AllTopicsLoader = ({ children }) => {
   const { getAllTopics } = useTopicContext()
-  return makeLoader(getAllTopics(), children)
+  return MakeLoader({ resource: getAllTopics(), children })
 }

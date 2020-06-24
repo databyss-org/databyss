@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
   Text,
@@ -18,32 +17,32 @@ import styledCss from '@styled-system/css'
 
 const Search = ({ onClick }) => {
   const { navigate, getSidebarPath } = useNavigationContext()
-  const { searchTerm, setQuery, clearSearchCache } = useEntryContext()
+
   const menuItem = getSidebarPath()
 
-  const clear = () => {
-    clearSearchCache()
-    setQuery({ textValue: '' })
-  }
-
-  // reset search on unmount
-  useEffect(() => () => clear(), [])
+  const [value, setValue] = useState({
+    textValue: '',
+  })
 
   useEffect(
     () => {
       if (menuItem !== 'search') {
-        setQuery({ textValue: '' })
+        setValue({ textValue: '' })
       }
     },
     [menuItem]
   )
 
   const onChange = val => {
-    setQuery(val)
+    setValue(val)
   }
 
   const onSearchClick = () => {
-    navigate(`/search/${searchTerm}`)
+    navigate(`/search/${value.textValue}`)
+  }
+
+  const clear = () => {
+    setValue({ textValue: '' })
   }
 
   return (
@@ -66,7 +65,7 @@ const Search = ({ onClick }) => {
             placeholder="Search"
             variant="bodyNormal"
             color="text.2"
-            value={{ textValue: searchTerm }}
+            value={value}
             onChange={onChange}
             onKeyDown={e => {
               if (e.key === 'Enter') {
@@ -80,7 +79,7 @@ const Search = ({ onClick }) => {
               },
             })(theme)}
           />
-          {searchTerm && (
+          {value.textValue && (
             <View position="absolute" right="small">
               <BaseControl onClick={clear}>
                 <Icon sizeVariant="tiny" color="text.3">
@@ -91,10 +90,10 @@ const Search = ({ onClick }) => {
           )}
         </Grid>
       </View>
-      {searchTerm &&
+      {value.textValue &&
         menuItem === 'search' && (
           <View height="40px" pt="medium" pb="medium">
-            <EntrySearchLoader query={searchTerm}>
+            <EntrySearchLoader query={value.textValue}>
               {results => (
                 <BaseControl onClick={onSearchClick}>
                   <Separator color="border.1" />

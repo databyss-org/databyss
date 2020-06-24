@@ -1,11 +1,5 @@
 import React, { useMemo, useRef, useEffect } from 'react'
-import {
-  createEditor,
-  Node,
-  Transforms,
-  Point,
-  Range,
-} from '@databyss-org/slate'
+import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
 import { ReactEditor, withReact } from 'slate-react'
 import _ from 'lodash'
 import { produce } from 'immer'
@@ -24,6 +18,7 @@ import {
   stateBlockToSlateBlock,
   toggleMark,
 } from '../lib/slateUtils'
+import { replaceShortcut } from '../lib/editorShortcuts'
 import { getSelectedIndicies } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
@@ -34,7 +29,6 @@ const ContentEditable = ({
   focusIndex,
   autofocus,
   readonly,
-  onUnmount,
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
@@ -82,15 +76,6 @@ const ContentEditable = ({
     [focusIndex]
   )
 
-  useEffect(
-    () => () => {
-      if (onUnmount) {
-        onUnmount()
-      }
-    },
-    []
-  )
-
   // if new atomic block has been added, save atomic
   useEffect(
     () => {
@@ -122,6 +107,15 @@ const ContentEditable = ({
   )
 
   const onKeyDown = event => {
+    // em dash shortcut
+    replaceShortcut(editor, event)
+
+    if (Hotkeys.isTab(event)) {
+      event.preventDefault()
+      Transforms.insertText(editor, `\t`)
+      return
+    }
+
     if (Hotkeys.isBold(event)) {
       event.preventDefault()
       toggleMark(editor, 'bold')
@@ -229,6 +223,15 @@ const ContentEditable = ({
       }
     }
   }
+
+  useEffect(
+    () => {
+      if (onDocumentChange) {
+        onDocumentChange(editor)
+      }
+    },
+    [editor.operations, editor.children]
+  )
 
   const onChange = value => {
     if (onDocumentChange) {
@@ -364,19 +367,6 @@ const ContentEditable = ({
 
   if (!_.isEqual(editor.selection, nextSelection)) {
     Transforms.setSelection(editor, nextSelection)
-    // HACK only needs to be applied when editor is focused and Range is expanded (applying formats and marks)
-    if (editor.selection && Range.isExpanded(editor.selection)) {
-      // HACK:
-      // There is a bug in Slate that causes unexpected behavior when creating a
-      // selection by doing `Transforms.move` on the anchor and focus. If the
-      // selection falls on a range that already has a mark, the focus gets the
-      // correct path (pointing within the mark leaf) but the anchor gets the parent
-      // path. The fix for this is to overshoot the anchor by 1
-      // and then correct the offset with an additional move.
-
-      Transforms.move(editor, { distance: 1, edge: 'anchor' })
-      Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
-    }
   }
 
   valueRef.current = nextValue
