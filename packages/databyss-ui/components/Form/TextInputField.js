@@ -10,11 +10,12 @@ const TextInputField = React.forwardRef(
     const { onSubmit } = useValueListContext()
     const [active, setActive] = useState(false)
 
-    const outlineColor = !hasError
-      ? active
-        ? 'activeFormField'
-        : 'formField'
-      : 'formError'
+    let outlineColor = active ? 'activeFormField' : 'formField'
+
+    if (hasError) {
+      outlineColor = 'formError'
+    }
+
     return (
       <View {...others}>
         {label && (
