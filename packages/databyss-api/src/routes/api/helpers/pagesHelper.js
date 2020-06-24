@@ -49,17 +49,30 @@ export const getBlockItemsFromId = blocks => {
 export const populateRefEntities = (list, type) =>
   Promise.all(
     list.map(async b => {
-      const _id = b.refId
+      try {
+        const _id = b.refId
 
-      const entity = await modelDict(type).findOne({ _id })
-      if (!entity) {
-        throw new BadRefId(b.refId, 500)
-      }
-      return {
-        textValue: entity.text.textValue,
-        type,
-        _id,
-        ranges: entity.text.ranges,
+        const entity = await modelDict(type).findOne({ _id })
+        if (!entity) {
+          // const entityFields = {
+          //   text: {textValue: '', ranges: []},
+          //   _id,
+          //   page: _id,
+          //   block: _blockId,
+          //   account: req.account._id,
+          // }
+
+          //  const entry = new Entry({})
+          throw new BadRefId(b.refId, 500)
+        }
+        return {
+          textValue: entity.text.textValue,
+          type,
+          _id,
+          ranges: entity.text.ranges,
+        }
+      } catch (err) {
+        console.log(err._id)
       }
     })
   )
