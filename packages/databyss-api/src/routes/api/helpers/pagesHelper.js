@@ -46,7 +46,7 @@ export const getBlockItemsFromId = blocks => {
   return Promise.all(promises)
 }
 
-export const populateRefEntities = (list, type) =>
+export const populateRefEntities = (list, type, req) =>
   Promise.all(
     list.map(async b => {
       try {
@@ -54,15 +54,6 @@ export const populateRefEntities = (list, type) =>
 
         const entity = await modelDict(type).findOne({ _id })
         if (!entity) {
-          // const entityFields = {
-          //   text: {textValue: '', ranges: []},
-          //   _id,
-          //   page: _id,
-          //   block: _blockId,
-          //   account: req.account._id,
-          // }
-
-          //  const entry = new Entry({})
           throw new BadRefId(b.refId, 500)
         }
         return {
@@ -72,7 +63,43 @@ export const populateRefEntities = (list, type) =>
           ranges: entity.text.ranges,
         }
       } catch (err) {
-        console.log(err._id)
+        // if bad refID, create an empty entry block with current refID and update Block to have type 'ENTRY'
+        console.log(err)
+
+        // new entry fields
+        const entityFields = {
+          text: { textValue: '', ranges: [] },
+          _id: b.refId,
+          block: b._id,
+          page: req.page._id,
+          account: req.account._id,
+        }
+        const entry = new Entry(entityFields)
+        await entry.save()
+
+        // update block
+        let _block = await Block.findOne({ _id: b._id })
+
+        const blockFields = {
+          type: 'ENTRY',
+          user: req.user.id,
+          account: req.account._id,
+          entryId: b.refId,
+        }
+
+        if (!_block) {
+          _block = new Block({ _id: _blockId })
+        }
+        _block.overwrite(blockFields)
+        await _block.save()
+
+        // return new values
+        return {
+          textValue: '',
+          type: 'ENTRY',
+          _id: b.refId,
+          ranges: [],
+        }
       }
     })
   )
