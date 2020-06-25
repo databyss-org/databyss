@@ -99,32 +99,30 @@ const GoogleFooter = () => (
 const ComposeResults = ({ results, onClick, unmount }) => {
   useEffect(() => () => unmount(), [])
   return !_.isEmpty(results) ? (
-    <List horizontalItemPadding={1}>
-      {Object.keys(results).map((author, i) => (
-        <View key={i}>
-          <Text variant="uiTextSmall" color="text.2">
-            {author}
-          </Text>
-          <List verticalItemPadding="tiny">
-            {results[author].map((volume, k) => (
-              <BaseControl onClick={e => onClick(e, volume)} key={k}>
-                <View p="tiny" pr="tiny">
-                  <Grid columnGap="none">
-                    <Text variant="uiTextSmall" color="text.2">
-                      <i>{volume.volumeInfo.title}</i>
-                      {volume.volumeInfo.subtitle &&
-                        `: ${volume.volumeInfo.subtitle}`}&emsp;({volume
-                        .volumeInfo.publishedDate &&
-                        volume.volumeInfo.publishedDate.substring(0, 4)})
-                    </Text>
-                  </Grid>
-                </View>
-              </BaseControl>
-            ))}
-          </List>
-        </View>
-      ))}
-    </List>
+    Object.keys(results).map((author, i) => (
+      <View key={i}>
+        <Text variant="uiTextSmall" color="text.2">
+          {author}
+        </Text>
+        <List verticalItemPadding="tiny">
+          {results[author].map((volume, k) => (
+            <BaseControl onClick={e => onClick(e, volume)} key={k}>
+              <View p="tiny" pr="tiny">
+                <Grid columnGap="none">
+                  <Text variant="uiTextSmall" color="text.2">
+                    <i>{volume.volumeInfo.title}</i>
+                    {volume.volumeInfo.subtitle &&
+                      `: ${volume.volumeInfo.subtitle}`}&emsp;({volume
+                      .volumeInfo.publishedDate &&
+                      volume.volumeInfo.publishedDate.substring(0, 4)})
+                  </Text>
+                </Grid>
+              </View>
+            </BaseControl>
+          ))}
+        </List>
+      </View>
+    ))
   ) : (
     <Text variant="uiTextSmall">no results found</Text>
   )
@@ -254,6 +252,7 @@ export const Citations = () => {
         mt={pxUnits(-6)}
         minWidth="300px"
         minHeight="32px"
+        p="small"
       >
         {sourceQuery ? (
           <View p={sourcesLoaded && 'small'}>

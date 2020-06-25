@@ -101,7 +101,6 @@ const BlockMenu = ({ element }) => {
           top: editorMarginMenuItemHeight,
           left: editorMarginMenuItemHeight,
         }}
-        py="extraSmall"
         open={showMenu}
         separatorAfterItemNr={1}
       >

@@ -2,7 +2,7 @@ import React, { forwardRef } from 'react'
 import styledCss from '@styled-system/css'
 import theme, { borderRadius } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import { View } from '@databyss-org/ui/primitives'
+import { View, List } from '@databyss-org/ui/primitives'
 
 const _css = (position, open) => ({
   backgroundColor: 'background.0',
@@ -24,6 +24,8 @@ const DropdownContainer = forwardRef(
       minHeight,
       maxWidth = pxUnits(500),
       open,
+      verticalItemPadding,
+      horizontalItemPadding,
       ...others
     },
     ref
@@ -47,7 +49,12 @@ const DropdownContainer = forwardRef(
       )}
       {...others}
     >
-      {children}
+      <List
+        horizontalItemPadding={horizontalItemPadding}
+        verticalItemPadding={verticalItemPadding}
+      >
+        {children}
+      </List>
     </View>
   )
 )
