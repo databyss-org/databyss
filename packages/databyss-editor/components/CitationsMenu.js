@@ -250,7 +250,7 @@ export const Citations = () => {
         position={{ top: position.top, left: position.left }}
         open={menuActive}
         mt={pxUnits(-6)}
-        minWidth="dropdownMenuLg"
+        widthVariant="dropdownMenuLg"
         minHeight="32px"
         p="small"
       >
@@ -279,7 +279,7 @@ export const Citations = () => {
 
             {sourcesLoaded && (
               <View
-                p="small"
+                py="small"
                 borderTopWidth="1px"
                 borderColor="border.2"
                 borderStyle="solid"
