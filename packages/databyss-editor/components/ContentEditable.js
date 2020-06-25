@@ -24,7 +24,12 @@ import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 
-const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
+const ContentEditable = ({
+  onDocumentChange,
+  focusIndex,
+  autofocus,
+  readonly,
+}) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
   const sourceContext = useSourceContext()
@@ -54,10 +59,22 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
         editor.children,
         state.selection
       )
-
       Transforms.select(editor, selection)
     }
   }
+
+  // if focus index is provides, move caret
+  useEffect(
+    () => {
+      if (typeof focusIndex === 'number' && editor.children) {
+        const _point = { index: focusIndex, offset: 0 }
+        let _selection = { anchor: _point, focus: _point }
+        _selection = stateSelectionToSlateSelection(editor.children, _selection)
+        Transforms.select(editor, _selection)
+      }
+    },
+    [focusIndex]
+  )
 
   // if new atomic block has been added, save atomic
   useEffect(
@@ -89,7 +106,23 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
     [state.newEntities.length]
   )
 
+  const inDeadKey = useRef(false)
+
   const onKeyDown = event => {
+    // if diacritics has been toggled, set dead key
+    if (event.key === 'Dead') {
+      inDeadKey.current = true
+    } else if (event.key !== 'Enter') {
+      inDeadKey.current = false
+    }
+
+    // if diacritic is toggled and enter key is pressed, prevent default behavior
+    if (inDeadKey.current && event.key === 'Enter') {
+      inDeadKey.current = false
+      event.preventDefault()
+      return
+    }
+
     // em dash shortcut
     replaceShortcut(editor, event)
 
@@ -324,6 +357,7 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
   //   we loop through the operations in `state` and updating nodes in `value`
   // if `state.preventDefault` is set, use the previous `value` as the
   //   base for the `nextValue` instead of `editor.children`
+
   const nextValue = produce(
     state.preventDefault ? valueRef.current : editor.children,
     draft => {
