@@ -6,13 +6,13 @@ import {
 import { View, Text, TextInput } from '../../primitives'
 
 const TextInputField = React.forwardRef(
-  ({ path, label, placeholder, hasError, ...others }, ref) => {
+  ({ path, label, placeholder, errorMessage, ...others }, ref) => {
     const { onSubmit } = useValueListContext()
     const [active, setActive] = useState(false)
 
     let outlineColor = active ? 'activeFormField' : 'formField'
 
-    if (hasError) {
+    if (errorMessage) {
       outlineColor = 'formError'
     }
 
@@ -44,6 +44,13 @@ const TextInputField = React.forwardRef(
             />
           </ValueListItem>
         </View>
+        {errorMessage && (
+          <View m="tiny">
+            <Text variant="uiTextSmall" color={'red.0'}>
+              {errorMessage}
+            </Text>
+          </View>
+        )}
       </View>
     )
   }
