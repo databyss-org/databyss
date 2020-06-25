@@ -1,8 +1,8 @@
 import mongoose from 'mongoose'
+import ObjectId from 'bson-objectid'
 import Entry from './Entry'
 import Block from './Block'
 import Selection from './Selection'
-import ObjectId from 'bson-objectid'
 
 const Schema = mongoose.Schema
 
