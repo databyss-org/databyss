@@ -74,8 +74,13 @@ export const populateRefEntities = (list, type, req) =>
           page: req.page._id,
           account: req.account._id,
         }
-        const entry = new Entry(entityFields)
-        await entry.save()
+
+        let _entry = await Entry.findOne({ _id: b.refId })
+        if (!_entry) {
+          _entry = new Entry({ _id: b.refId })
+        }
+        _entry.overwrite(entityFields)
+        await _entry.save()
 
         // update block
         let _block = await Block.findOne({ _id: b._id })
