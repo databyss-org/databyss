@@ -111,6 +111,9 @@ const ContentEditable = ({
   const onKeyDown = event => {
     // if diacritics has been toggled, set dead key
     if (event.key === 'Dead') {
+      if (inDeadKey.current) {
+        event.preventDefault()
+      }
       inDeadKey.current = true
     } else if (event.key !== 'Enter') {
       inDeadKey.current = false
@@ -269,6 +272,7 @@ const ContentEditable = ({
 
     const payload = {
       selection,
+      preventRerender: false,
     }
 
     if (value.length < valueRef.current.length) {
@@ -299,6 +303,14 @@ const ContentEditable = ({
         },
       })
       return
+    }
+
+    if (
+      editor.operations.find(
+        op => op.type === 'insert_text' && op.text === '´' && op.text.length
+      )
+    ) {
+      payload.preventRerender = true
     }
 
     if (
@@ -358,17 +370,19 @@ const ContentEditable = ({
   // if `state.preventDefault` is set, use the previous `value` as the
   //   base for the `nextValue` instead of `editor.children`
 
-  const nextValue = produce(
-    state.preventDefault ? valueRef.current : editor.children,
-    draft => {
-      state.operations.forEach(op => {
-        const _block = stateBlockToSlateBlock(op.block)
-        draft[op.index].children = _block.children
-        draft[op.index].type = _block.type
-        draft[op.index].isBlock = _block.isBlock
-      })
-    }
-  )
+  const nextValue = state.preventRerender
+    ? editor.children
+    : produce(
+        state.preventDefault ? valueRef.current : editor.children,
+        draft => {
+          state.operations.forEach(op => {
+            const _block = stateBlockToSlateBlock(op.block)
+            draft[op.index].children = _block.children
+            draft[op.index].type = _block.type
+            draft[op.index].isBlock = _block.isBlock
+          })
+        }
+      )
 
   // by default, let selection remain uncontrolled
   // NOTE: preventDefault will rollback selection to that of previous render

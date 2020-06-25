@@ -10,7 +10,7 @@ import {
   ARCHIVE_PAGE,
   QUEUE_PATCH,
   REMOVE_PAGE_FROM_CACHE,
-  // PATCH,
+  PATCH,
 } from './constants'
 
 export const initialState = {
@@ -23,7 +23,11 @@ export const initialState = {
 
 export default (state, action) => {
   switch (action.type) {
-    //  case PATCH:
+    case PATCH:
+    // {
+    //   // state.patchQueueSize = action.payload.queueSize
+    //   return state
+    // }
     case QUEUE_PATCH: {
       return {
         ...state,

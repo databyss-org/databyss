@@ -13,7 +13,11 @@ export const ArchiveBin = ({ pages }) => {
 
   const { id } = getTokensFromPath()
 
-  const { archivePage, setDefaultPage } = usePageContext()
+  const archivePage = usePageContext(c => c.archivePage)
+
+  const setDefaultPage = usePageContext(c => c.setDefaultPage)
+
+  // const { archivePage, setDefaultPage } = usePageContext()
 
   const canBeArchived = Object.keys(pages).length > 1
 

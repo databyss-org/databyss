@@ -12,7 +12,12 @@ import {
 
 const PageBody = ({ page, focusIndex }) => {
   const { location } = useNavigationContext()
-  const { clearBlockDict, setPatch } = usePageContext()
+  // const { clearBlockDict, setPatch } = usePageContext()
+
+  const clearBlockDict = usePageContext(c => c.clearBlockDict)
+
+  const setPatch = usePageContext(c => c.setPatch)
+
   useEffect(() => () => clearBlockDict(), [])
 
   const operationsQueue = useRef([])

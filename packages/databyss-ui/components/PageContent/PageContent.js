@@ -16,7 +16,12 @@ export const PageRouter = () => (
 )
 
 const PageContainer = ({ anchor, id, onHeaderClick, page }) => {
-  const { getBlockRefByIndex, hasPendingPatches } = usePageContext()
+  // const { getBlockRefByIndex, hasPendingPatches } = usePageContext()
+
+  const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
+
+  const hasPendingPatches = usePageContext(c => c.hasPendingPatches)
+
   const { isOnline } = useNotifyContext()
 
   const [pendingPatches, setPendingPatches] = useState(0)

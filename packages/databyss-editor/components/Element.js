@@ -26,7 +26,8 @@ const Element = ({ attributes, children, element }) => {
   const editor = useEditor()
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
-  const pageContext = usePageContext()
+  const pageContext = null
+  // const pageContext = usePageContext()
 
   const onAtomicMouseDown = e => {
     e.preventDefault()
