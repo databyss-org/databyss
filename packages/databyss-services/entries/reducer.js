@@ -1,8 +1,14 @@
-import { SEARCH_ENTRY, CACHE_ENTRY_RESULTS } from './constants'
+import {
+  SEARCH_ENTRY,
+  CACHE_ENTRY_RESULTS,
+  SET_QUERY,
+  CLEAR_CACHE,
+} from './constants'
 import { ResourcePending } from '../lib/ResourcePending'
 
 export const initialState = {
   searchCache: {},
+  searchTerm: '',
 }
 
 export default (state, action) => {
@@ -21,6 +27,18 @@ export default (state, action) => {
       return {
         ...state,
         searchCache: _cache,
+      }
+    }
+    case SET_QUERY: {
+      return {
+        ...state,
+        searchTerm: action.payload.textValue,
+      }
+    }
+    case CLEAR_CACHE: {
+      return {
+        ...state,
+        searchCache: {},
       }
     }
     default:

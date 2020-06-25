@@ -27,7 +27,11 @@ const Leaf = ({ attributes, children, leaf }) => {
   }
 
   return (
-    <View display="inline" {...attributes}>
+    <View
+      display="inline"
+      backgroundColor={leaf.highlight && 'orange.3'}
+      {...attributes}
+    >
       {_children}
     </View>
   )

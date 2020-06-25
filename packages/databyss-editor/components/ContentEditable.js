@@ -24,7 +24,12 @@ import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 
-const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
+const ContentEditable = ({
+  onDocumentChange,
+  focusIndex,
+  autofocus,
+  readonly,
+}) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
   const sourceContext = useSourceContext()
@@ -54,10 +59,22 @@ const ContentEditable = ({ onDocumentChange, autofocus, readonly }) => {
         editor.children,
         state.selection
       )
-
       Transforms.select(editor, selection)
     }
   }
+
+  // if focus index is provides, move caret
+  useEffect(
+    () => {
+      if (typeof focusIndex === 'number' && editor.children) {
+        const _point = { index: focusIndex, offset: 0 }
+        let _selection = { anchor: _point, focus: _point }
+        _selection = stateSelectionToSlateSelection(editor.children, _selection)
+        Transforms.select(editor, _selection)
+      }
+    },
+    [focusIndex]
+  )
 
   // if new atomic block has been added, save atomic
   useEffect(
