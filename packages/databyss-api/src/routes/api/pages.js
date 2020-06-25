@@ -307,7 +307,7 @@ router.get(
       await Promise.all(
         ['SOURCE', 'ENTRY', 'TOPIC', 'LOCATION'].map(async t => {
           const list = blockList.filter(b => b.type === t)
-          const populated = await populateRefEntities(list, t)
+          const populated = await populateRefEntities(list, t, req)
           return populated.forEach(b => blocks.push(b))
         })
       )

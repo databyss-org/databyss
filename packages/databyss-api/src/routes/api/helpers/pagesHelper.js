@@ -6,7 +6,7 @@ import Topic from '../../../models/Topic'
 import Location from '../../../models/Location'
 import Page from '../../../models/Page'
 import Selection from '../../../models/Selection'
-import BadRefId from '../../../lib/BadRefId'
+// import BadRefId from '../../../lib/BadRefId'
 
 export const modelDict = type =>
   ({
@@ -22,6 +22,52 @@ const getIdType = type =>
     SOURCE: 'sourceId',
     TOPIC: 'topicId',
   }[type])
+
+const createEntryForMissingRef = async (blockData, req) => {
+  console.error('Missing Ref Id')
+
+  // if bad refID, create an empty entry block with current refID and update Block to have type 'ENTRY'
+
+  // new entry fields
+  const entityFields = {
+    text: { textValue: '', ranges: [] },
+    _id: blockData.refId,
+    block: blockData._id,
+    page: req.page._id,
+    account: req.account._id,
+  }
+
+  let _entry = await Entry.findOne({ _id: blockData.refId })
+  if (!_entry) {
+    _entry = new Entry({ _id: blockData.refId })
+  }
+  _entry.overwrite(entityFields)
+  await _entry.save()
+
+  // update block
+  let _block = await Block.findOne({ _id: blockData._id })
+
+  const blockFields = {
+    type: 'ENTRY',
+    user: req.user.id,
+    account: req.account._id,
+    entryId: blockData.refId,
+  }
+
+  if (!_block) {
+    _block = new Block({ _id: blockData._id })
+  }
+  _block.overwrite(blockFields)
+  await _block.save()
+
+  // return new values
+  return {
+    textValue: '',
+    type: 'ENTRY',
+    _id: blockData.refId,
+    ranges: [],
+  }
+}
 
 export const getBlockItemsFromId = blocks => {
   const promises = blocks.map(async b => {
@@ -46,14 +92,15 @@ export const getBlockItemsFromId = blocks => {
   return Promise.all(promises)
 }
 
-export const populateRefEntities = (list, type) =>
+export const populateRefEntities = (list, type, req) =>
   Promise.all(
     list.map(async b => {
       const _id = b.refId
 
-      const entity = await modelDict(type).findOne({ _id })
+      let entity = await modelDict(type).findOne({ _id })
       if (!entity) {
-        throw new BadRefId(b.refId, 500)
+        entity = await createEntryForMissingRef(b, req)
+        return entity
       }
       return {
         textValue: entity.text.textValue,
