@@ -10,7 +10,7 @@ import {
   addMetaData,
 } from '@databyss-org/services/pages/_helpers'
 
-const PageBody = ({ page }) => {
+const PageBody = ({ page, focusIndex }) => {
   const { location } = useNavigationContext()
   const { clearBlockDict, setPatch } = usePageContext()
   useEffect(() => () => clearBlockDict(), [])
@@ -50,7 +50,7 @@ const PageBody = ({ page }) => {
       onChange={onChange}
       initialState={withMetaData(page)}
     >
-      <ContentEditable autofocus />
+      <ContentEditable autofocus focusIndex={focusIndex} />
     </EditorProvider>
   )
 }

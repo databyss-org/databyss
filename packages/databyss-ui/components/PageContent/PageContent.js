@@ -15,11 +15,14 @@ export const PageRouter = () => (
   </Router>
 )
 
-const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
+const PageContainer = ({ anchor, id, onHeaderClick, page }) => {
   const { getBlockRefByIndex, hasPendingPatches } = usePageContext()
   const { isOnline } = useNotifyContext()
 
   const [pendingPatches, setPendingPatches] = useState(hasPendingPatches)
+
+  // index is used to set selection in slate
+  const [index, setIndex] = useState(null)
 
   useEffect(
     () => {
@@ -33,14 +36,17 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
     if (anchor) {
       // get index value of anchor on page
       const _index = page.blocks.findIndex(b => b._id === anchor)
-      const _ref = getBlockRefByIndex(_index)
-      if (_ref) {
-        window.requestAnimationFrame(() => {
-          _ref.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start',
+      if (_index > -1) {
+        setIndex(_index)
+        const _ref = getBlockRefByIndex(_index)
+        if (_ref) {
+          window.requestAnimationFrame(() => {
+            _ref.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            })
           })
-        })
+        }
       }
     }
   }, [])
@@ -60,7 +66,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page, readOnly }) => {
         </Text>
         <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
       </View>
-      <PageBody page={page} readOnly={readOnly} />
+      <PageBody page={page} focusIndex={index} />
     </View>
   )
 }

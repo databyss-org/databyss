@@ -30,9 +30,11 @@ export const withPages = Wrapped => ({ ...others }) => (
 )
 
 export const EntrySearchLoader = ({ query, children }) => {
-  const { searchEntries, searchCache } = useEntryContext()
+  const searchEntries = useEntryContext(c => c.searchEntries)
+  const resource = useEntryContext(c => c.searchCache[query])
   searchEntries(query)
-  return MakeLoader({ resource: searchCache[query], children })
+
+  return MakeLoader({ resource, children })
 }
 
 export const SourceLoader = ({ sourceId, children }) => {
