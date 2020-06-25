@@ -27,7 +27,7 @@ const _css = (position, active) => ({
   paddingLeft: 'small',
   paddingRight: 'small',
   backgroundColor: 'background.0',
-  zIndex: 1,
+  zIndex: 'menu',
   marginTop: pxUnits(-6),
   position: 'absolute',
   opacity: active ? 1 : 0,
@@ -81,7 +81,7 @@ const _title = vol => {
 
   const _authorText = _author
     ? _author.lastName.textValue +
-      (_author.firstName.textValue ? ',' : '.') +
+      (_author.firstName.textValue ? ', ' : '.') +
       (_author.firstName.textValue ? `${_author.firstName.textValue}.` : '')
     : ''
 
@@ -177,7 +177,7 @@ export const Citations = () => {
   )
 
   useEventListener('keydown', e => {
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' || e.key === 'Enter') {
       setMenuActive(false)
     }
   })

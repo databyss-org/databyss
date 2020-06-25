@@ -55,6 +55,7 @@ const SidebarList = ({ menuItems }) => {
 
         return (
           <BaseControl
+            data-test-element={`page-sidebar-${index}`}
             backgroundColor={_isActive ? 'control.1' : 'transparent'}
             py="small"
             px="em"

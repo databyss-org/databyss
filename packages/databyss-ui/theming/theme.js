@@ -7,6 +7,7 @@ import fonts from './fonts'
 import timing from './timing'
 import buttons from './buttons'
 import icons from './icons'
+import zIndex from './zindex'
 
 const theme = {
   /* space */
@@ -36,13 +37,8 @@ const theme = {
   /* icons */
   ...icons,
 
-  /* shadows (deprecated, use `effects`) */
-  lightShadow:
-    '0px 1px 3px 0px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 2px 1px -1px rgba(0, 0, 0, 0.12)',
-
-  zIndex: {
-    modalOverlay: 200,
-  },
+  /* zIndex */
+  zIndex,
 }
 
 export default theme

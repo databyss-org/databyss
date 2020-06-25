@@ -10,6 +10,7 @@ import {
   color,
   shadow,
 } from 'styled-system'
+import { zIndex } from '@databyss-org/ui/theming/system'
 import { ThemeProvider } from 'emotion-theming'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import fastCompare from 'react-fast-compare'
@@ -78,6 +79,7 @@ export const styleProps = compose(
   position,
   color,
   shadow,
+  zIndex,
   paddingVariant,
   borderVariant,
   hlineVariant,
