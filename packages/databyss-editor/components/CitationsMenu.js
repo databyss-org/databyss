@@ -5,7 +5,8 @@ import { Node, Transforms } from '@databyss-org/slate'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { SearchSourceLoader } from '@databyss-org/ui/components/Loaders'
-import google from '@databyss-org/ui/assets/google.png'
+import googleLogo from '@databyss-org/ui/assets/powered_by_google_on_white.png'
+import googleLogoRetina from '@databyss-org/ui/assets/powered_by_google_on_white_2x.png'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import {
@@ -91,9 +92,13 @@ const _title = vol => {
 }
 
 const GoogleFooter = () => (
-  <div>
-    <img src={google} alt="powered by Google" />
-  </div>
+  <img
+    srcSet={`${googleLogo}, ${googleLogoRetina} 2x`}
+    src={googleLogo}
+    alt="powered by Google"
+    width="112"
+    height="14"
+  />
 )
 
 const ComposeResults = ({ results, onClick, unmount }) => {
@@ -284,7 +289,7 @@ export const Citations = () => {
                 borderColor="border.2"
                 borderStyle="solid"
               >
-                <GoogleFooter />{' '}
+                <GoogleFooter />
               </View>
             )}
           </View>
