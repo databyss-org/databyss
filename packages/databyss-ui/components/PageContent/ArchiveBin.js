@@ -63,7 +63,6 @@ export const ArchiveBin = ({ pages }) => {
               top: 36,
               right: 0,
             }}
-            py="extraSmall"
           >
             {menuItems.map(menuItem => (
               <DropdownListItem
