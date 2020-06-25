@@ -1,6 +1,7 @@
-import React, { createContext, useContext } from 'react'
+import React, { useCallback } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
-// import _ from 'lodash'
+import { createContext, useContextSelector } from 'use-context-selector'
+import { debounce } from 'lodash'
 import reducer, { initialState } from './reducer'
 import { onSearchEntries, onSetQuery, onClearCache } from './actions'
 
@@ -14,21 +15,25 @@ const EntryProvider = ({ children, initialState, reducer }) => {
 
   // TODO: memoize for debounce to work
 
-  // const searchEntries = _.debounce(query => {
+  const searchEntries = useCallback(
+    debounce(query => {
+      const _results = searchCache[query]
+      if (!_results) {
+        return dispatch(onSearchEntries(query))
+      }
+      return null
+    }, 250),
+    [searchCache]
+  )
+
+  // const searchEntries = query => {
+  //   console.log('search')
   //   const _results = searchCache[query]
   //   if (!_results) {
   //     return dispatch(onSearchEntries(query))
   //   }
   //   return null
-  // }, 250)
-
-  const searchEntries = query => {
-    const _results = searchCache[query]
-    if (!_results) {
-      return dispatch(onSearchEntries(query))
-    }
-    return null
-  }
+  // }
 
   const setQuery = query => {
     dispatch(onSetQuery(query))
@@ -54,7 +59,8 @@ const EntryProvider = ({ children, initialState, reducer }) => {
   )
 }
 
-export const useEntryContext = () => useContext(EntryContext)
+export const useEntryContext = (selector = x => x) =>
+  useContextSelector(EntryContext, selector)
 
 EntryProvider.defaultProps = {
   initialState,
