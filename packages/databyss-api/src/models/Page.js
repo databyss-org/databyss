@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import Entry from './Entry'
 import Block from './Block'
 import Selection from './Selection'
+import ObjectId from 'bson-objectid'
 
 const Schema = mongoose.Schema
 
@@ -38,18 +39,26 @@ const PageSchema = new Schema({
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */
 PageSchema.method('addEntry', async function(values = {}) {
+  const _entryId = ObjectId().toHexString()
+  const _blockId = ObjectId().toHexString()
+
   // add the entry record
   const entry = await Entry.create({
+    _id: _entryId,
     account: this.account,
+    block: _blockId,
+    page: this._id,
     ...values,
   })
 
   // add the block record
   const block = await Block.create({
+    _id: _blockId,
     type: 'ENTRY',
     account: this.account,
     entryId: entry._id,
   })
+
   this.blocks.push({ _id: block._id })
 
   await this.save()
