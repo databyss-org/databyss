@@ -6,7 +6,7 @@ import { View, List } from '@databyss-org/ui/primitives'
 
 const _css = (position, open) => ({
   backgroundColor: 'background.0',
-  zIndex: 1,
+  zIndex: 'menu',
   position: 'absolute',
   opacity: open ? 1 : 0,
   transition: `opacity ${theme.timing.quick}ms ease`,
@@ -20,7 +20,7 @@ const DropdownContainer = forwardRef(
     {
       children,
       position = { top: 0 },
-      minWidth = 'dropdownMenuMd',
+      widthVariant = 'dropdownMenuMd',
       minHeight,
       maxWidth = pxUnits(500),
       open,
@@ -33,7 +33,7 @@ const DropdownContainer = forwardRef(
     <View
       ref={ref}
       maxWidth={maxWidth}
-      minWidth={minWidth}
+      widthVariant={widthVariant}
       minHeight={minHeight}
       shadowVariant="modal"
       css={styledCss(
