@@ -8,7 +8,6 @@ import {
   FETCH_PAGE_HEADERS,
   DELETE_PAGE,
   ARCHIVE_PAGE,
-  PATCH,
   QUEUE_PATCH,
   REMOVE_PAGE_FROM_CACHE,
 } from './constants'
@@ -23,7 +22,6 @@ export const initialState = {
 
 export default (state, action) => {
   switch (action.type) {
-    case PATCH:
     case QUEUE_PATCH: {
       return {
         ...state,

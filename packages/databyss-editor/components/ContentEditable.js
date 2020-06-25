@@ -106,7 +106,23 @@ const ContentEditable = ({
     [state.newEntities.length]
   )
 
+  const inDeadKey = useRef(false)
+
   const onKeyDown = event => {
+    // if diacritics has been toggled, set dead key
+    if (event.key === 'Dead') {
+      inDeadKey.current = true
+    } else if (event.key !== 'Enter') {
+      inDeadKey.current = false
+    }
+
+    // if diacritic is toggled and enter key is pressed, prevent default behavior
+    if (inDeadKey.current && event.key === 'Enter') {
+      inDeadKey.current = false
+      event.preventDefault()
+      return
+    }
+
     // em dash shortcut
     replaceShortcut(editor, event)
 
@@ -341,6 +357,7 @@ const ContentEditable = ({
   //   we loop through the operations in `state` and updating nodes in `value`
   // if `state.preventDefault` is set, use the previous `value` as the
   //   base for the `nextValue` instead of `editor.children`
+
   const nextValue = produce(
     state.preventDefault ? valueRef.current : editor.children,
     draft => {
