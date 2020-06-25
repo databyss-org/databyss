@@ -2,11 +2,10 @@ import React from 'react'
 import { View, Text, Icon, BaseControl } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 
-const DropdownListItem = ({ menuItem, onClick }) => (
+const DropdownListItem = ({ menuItem, onPress }) => (
   <BaseControl
     data-test-block-menu={menuItem.action}
-    // onMouseDown={onClick}
-    onClick={onClick}
+    onPress={onPress}
     childViewProps={{ width: '100%' }}
     px="small"
     py="extraSmall"

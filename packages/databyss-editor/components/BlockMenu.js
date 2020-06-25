@@ -102,13 +102,12 @@ const BlockMenu = ({ element }) => {
           left: editorMarginMenuItemHeight,
         }}
         open={showMenu}
-        separatorAfterItemNr={1}
       >
         {menuItems.map(menuItem => (
           <React.Fragment key={menuItem.action}>
             <DropdownListItem
               menuItem={menuItem}
-              onClick={e => onMenuAction(e, menuItem.action)}
+              onPress={e => onMenuAction(e, menuItem.action)}
             />
             {menuItem.action === 'ENDLOCATION' && (
               <Separator color="border.3" spacing="extraSmall" />
@@ -127,7 +126,7 @@ const BlockMenu = ({ element }) => {
         justifyContent="center"
       >
         <BaseControl
-          onClick={onShowActions}
+          onPress={onShowActions}
           data-test-block-menu="open"
           aria-haspopup="true"
           hoverColor="background.2"

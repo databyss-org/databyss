@@ -22,7 +22,7 @@ export const ArchiveBin = ({ pages }) => {
 
   const canBeArchived = Object.keys(pages).length > 1
 
-  const onClick = () => {
+  const onPress = () => {
     let redirect = account.defaultPage
     // if default page is archived set new page as default page
     if (account.defaultPage === id) {
@@ -39,14 +39,14 @@ export const ArchiveBin = ({ pages }) => {
     {
       icon: <ArchiveSvg />,
       label: 'Archive',
-      shortcut: 'Ctrl + ⌫',
+      shortcut: 'Ctrl + Del',
     },
   ]
 
   return canBeArchived ? (
     <View position="relative">
       <BaseControl
-        onClick={() => setShowMenu(!showMenu)}
+        onPress={() => setShowMenu(!showMenu)}
         hoverColor="background.2"
         p="tiny"
         label="Archive Page"
@@ -67,7 +67,7 @@ export const ArchiveBin = ({ pages }) => {
             {menuItems.map(menuItem => (
               <DropdownListItem
                 menuItem={menuItem}
-                onClick={onClick}
+                onPress={onPress}
                 key={menuItem.label}
               />
             ))}
