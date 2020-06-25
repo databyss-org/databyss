@@ -26,15 +26,6 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     [searchCache]
   )
 
-  // const searchEntries = query => {
-  //   console.log('search')
-  //   const _results = searchCache[query]
-  //   if (!_results) {
-  //     return dispatch(onSearchEntries(query))
-  //   }
-  //   return null
-  // }
-
   const setQuery = query => {
     dispatch(onSetQuery(query))
   }
