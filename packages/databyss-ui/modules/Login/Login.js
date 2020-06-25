@@ -130,7 +130,7 @@ const Login = ({ pending, signupFlow }) => {
           </View>
           <TextInputField
             label="Email"
-            errorMessage={invalidEmail && 'invalid email'}
+            errorMessage={invalidEmail && 'Please enter a valid email address'}
             path="email"
             placeholder="Enter your email address"
             ref={emailInputRef}
