@@ -46,7 +46,7 @@ const TextInputField = React.forwardRef(
         </View>
         {errorMessage && (
           <View m="tiny">
-            <Text variant="uiTextSmall" color={'red.0'}>
+            <Text variant="uiTextSmall" color="red.0">
               {errorMessage}
             </Text>
           </View>
