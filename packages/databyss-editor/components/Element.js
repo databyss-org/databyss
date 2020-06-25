@@ -3,6 +3,7 @@ import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from 'slate-react'
+import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEditorContext } from '../state/EditorProvider'
@@ -16,6 +17,12 @@ export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
 
 const Element = ({ attributes, children, element }) => {
+  const entryContext = useEntryContext()
+  let searchTerm = ''
+
+  if (entryContext) {
+    searchTerm = entryContext.searchTerm
+  }
   const editor = useEditor()
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
@@ -105,7 +112,8 @@ const Element = ({ attributes, children, element }) => {
         </View>
       )
     },
-    [block, element]
+    // search term updates element for highlight
+    [block, element, searchTerm]
   )
 }
 

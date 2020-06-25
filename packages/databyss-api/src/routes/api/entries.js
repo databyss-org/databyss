@@ -13,10 +13,16 @@ router.get(
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
     try {
-      const searchKey = new RegExp(req.params.string, 'i')
+      const queryArray = req.params.string.split(' ')
+
+      // use the $and operator to find regEx for multiple search words
       const results = await Entry.find({
-        'text.textValue': searchKey,
-        account: req.account._id,
+        $and: queryArray.map(q => ({
+          'text.textValue': {
+            $regex: new RegExp(`\\b${q}\\b.*`, 'i'),
+          },
+          account: req.account._id,
+        })),
       }).populate('page')
 
       if (results) {
@@ -24,17 +30,35 @@ router.get(
           count: results.length,
           results: {},
         }
+
+        // takes in a string of words and searches if exact query is found in string
+        const isInEntry = (string, regex) =>
+          string
+            .split(/ |-|\n/)
+            .reduce(
+              (bool, string) => (string.match(regex) ? true : bool),
+              false
+            )
+
         /*
         compose results
         */
         _results = results.reduce((acc, curr) => {
+          // create regEx or operator to find exact word match
+          const searchstring = new RegExp(`^${queryArray.join('|')}$`, 'i')
+
           // only show results with associated page
           if (!curr.page) {
             _results.count -= 1
             return acc
           }
+
           if (!acc.results[curr.page._id]) {
-            //   const _entries = new Map()
+            // bail if not exact word in entry
+            if (!isInEntry(curr.text.textValue, searchstring)) {
+              _results.count -= 1
+              return acc
+            }
             // init result
             acc.results[curr.page._id] = {
               page: curr.page.name,
@@ -48,7 +72,11 @@ router.get(
               ],
             }
           } else {
-            // populate results
+            // bail if not exact word in entry
+            if (!isInEntry(curr.text.textValue, searchstring)) {
+              _results.count -= 1
+              return acc
+            }
             const _entries = acc.results[curr.page._id].entries
 
             _entries.push({

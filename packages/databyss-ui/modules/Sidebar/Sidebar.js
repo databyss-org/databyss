@@ -40,7 +40,12 @@ const Sidebar = () => {
   return isMenuOpen ? (
     <>
       <SidebarCollapsed />
-      <View {...defaultProps} position="relative" width={sidebar.width}>
+      <View
+        {...defaultProps}
+        position="relative"
+        width={sidebar.width}
+        key={`sidebar-key-${menuItem}`}
+      >
         <View
           widthVariant="content"
           theme={darkTheme}

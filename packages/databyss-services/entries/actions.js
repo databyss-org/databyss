@@ -1,6 +1,11 @@
 import * as entries from './'
 
-import { SEARCH_ENTRY, CACHE_ENTRY_RESULTS } from './constants'
+import {
+  SEARCH_ENTRY,
+  CACHE_ENTRY_RESULTS,
+  SET_QUERY,
+  CLEAR_CACHE,
+} from './constants'
 
 export function onSearchEntries(string) {
   return async dispatch => {
@@ -13,6 +18,23 @@ export function onSearchEntries(string) {
         type: CACHE_ENTRY_RESULTS,
         payload: { results: res, query: string },
       })
+    })
+  }
+}
+
+export function onSetQuery(query) {
+  return dispatch => {
+    dispatch({
+      type: SET_QUERY,
+      payload: query,
+    })
+  }
+}
+
+export function onClearCache() {
+  return dispatch => {
+    dispatch({
+      type: CLEAR_CACHE,
     })
   }
 }

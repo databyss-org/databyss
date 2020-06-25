@@ -1,2 +1,4 @@
 export const SEARCH_ENTRY = 'SEARCH_ENTRY'
 export const CACHE_ENTRY_RESULTS = 'CACHE_ENTRY_RESULTS'
+export const SET_QUERY = 'SET_QUERY'
+export const CLEAR_CACHE = 'CLEAR_CACHE'
