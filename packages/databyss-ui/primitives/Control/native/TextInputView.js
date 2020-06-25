@@ -10,7 +10,7 @@ import { borderRadius } from '../../../theming/theme'
 const desktopInputCss = {
   display: 'flex',
   position: 'relative',
-  zIndex: 1,
+  zIndex: 'base',
   padding: '2px',
   paddingLeft: 'tiny',
   paddingRight: 'tiny',
@@ -27,7 +27,7 @@ const modalViewCss = (active, labelWidth) =>
   active
     ? {
         position: 'absolute',
-        zIndex: 2,
+        zIndex: 'activeControl',
         left: labelWidth ? `calc(${labelWidth} - 8px)` : '-5px',
         right: labelWidth ? '5px' : '-5px',
         padding: 'none',

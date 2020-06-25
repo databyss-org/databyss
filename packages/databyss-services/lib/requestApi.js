@@ -1,6 +1,8 @@
 import request from './request'
 import { getAuthToken, getAccountId } from './../session/clientStorage'
 
+export const ping = () => fetch(`${process.env.API_URL}/ping/`)
+
 export const requestApi = (path, options = { headers: {} }, responseIsJson) =>
   request(
     process.env.API_URL + path,

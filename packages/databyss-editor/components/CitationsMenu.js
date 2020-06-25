@@ -66,7 +66,7 @@ const _title = vol => {
 
   const _authorText = _author
     ? _author.lastName.textValue +
-      (_author.firstName.textValue ? ',' : '.') +
+      (_author.firstName.textValue ? ', ' : '.') +
       (_author.firstName.textValue ? `${_author.firstName.textValue}.` : '')
     : ''
 
@@ -160,7 +160,7 @@ export const Citations = () => {
   )
 
   useEventListener('keydown', e => {
-    if (e.key === 'Escape') {
+    if (e.key === 'Escape' || e.key === 'Enter') {
       setMenuActive(false)
     }
   })
