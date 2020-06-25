@@ -20,7 +20,7 @@ const DropdownContainer = forwardRef(
     {
       children,
       position = { top: 0 },
-      minWidth = pxUnits(200),
+      minWidth = 'dropdownMenuMd',
       minHeight,
       maxWidth = pxUnits(500),
       open,

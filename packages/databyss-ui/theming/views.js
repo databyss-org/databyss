@@ -57,6 +57,15 @@ const widthVariants = {
   form: {
     maxWidth: pxUnits(550),
   },
+  dropdownMenuSm: {
+    minWidth: pxUnits(100),
+  },
+  dropdownMenuMd: {
+    minWidth: pxUnits(200),
+  },
+  dropdownMenuLg: {
+    minWidth: pxUnits(300),
+  },
   modal: {
     maxWidth: pxUnits(850),
   },
