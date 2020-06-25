@@ -250,7 +250,7 @@ export const Citations = () => {
         position={{ top: position.top, left: position.left }}
         open={menuActive}
         mt={pxUnits(-6)}
-        minWidth="300px"
+        minWidth="dropdownMenuLg"
         minHeight="32px"
         p="small"
       >
