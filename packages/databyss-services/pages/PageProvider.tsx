@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useRef, useEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 import createReducer from '../lib/createReducer'
+import { createContext, useContextSelector } from 'use-context-selector'
 import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../lib/ResourcePending'
 import Page from './Page'
@@ -8,6 +9,7 @@ import {
   fetchPageHeaders,
   fetchPage,
   savePage,
+  savePageHeader,
   savePatch,
   deletePage,
   onArchivePage,
@@ -41,6 +43,7 @@ interface PageHookDict {
 
 interface ContextType {
   setPage: (page: Page) => void
+  setPageHeader: (page: Page) => void
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
   clearBlockDict: () => void
@@ -85,6 +88,10 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
       onPageCached(page.page._id, res)
       dispatch(savePage(page))
     })
+  }
+
+  const setPageHeader = (page: Page) => {
+    dispatch(savePageHeader(page))
   }
 
   const getPages = () => {
@@ -158,6 +165,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         getPages,
         getPage,
         setPage,
+        setPageHeader,
         setPatch,
         registerBlockRefByIndex,
         getBlockRefByIndex,
@@ -175,7 +183,8 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const usePageContext = () => useContext(PageContext)
+export const usePageContext = (selector = x => x) =>
+  useContextSelector(PageContext, selector)
 
 PageProvider.defaultProps = {
   initialState,

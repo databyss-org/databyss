@@ -19,7 +19,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page }) => {
   const { getBlockRefByIndex, hasPendingPatches } = usePageContext()
   const { isOnline } = useNotifyContext()
 
-  const [pendingPatches, setPendingPatches] = useState(hasPendingPatches)
+  const [pendingPatches, setPendingPatches] = useState(0)
 
   // index is used to set selection in slate
   const [index, setIndex] = useState(null)
