@@ -149,6 +149,20 @@ export const Citations = () => {
   const editor = useEditor()
   const editorContext = useEditorContext()
 
+  // set position of dropdown
+  const setMenuPosition = () => {
+    const _position = getPosition(editor)
+    // if cursor is near window bottom set menu above cursor
+
+    if (_position) {
+      if (_position.displayAbove && sourcesLoaded) {
+        _position.top -= MENU_HEIGHT + 22
+      }
+      setPosition(_position)
+      setMenuActive(true)
+    }
+  }
+
   useEffect(
     () => {
       if (editorContext && ReactEditor.isFocused(editor)) {
@@ -158,6 +172,7 @@ export const Citations = () => {
         const _text = Node.string(_node)
         if (_text.charAt(0) === '@' && !isAtomicInlineType(_node.type)) {
           setSourceQuery(_text.substring(1))
+          setMenuPosition()
           if (!menuActive) setMenuActive(true)
         } else if (menuActive) {
           setMenuActive(false)
@@ -177,24 +192,6 @@ export const Citations = () => {
 
   // prevents scroll if modal is visible
   //  useEventListener('wheel', e => menuActive && e.preventDefault(), editor.el)
-
-  // set position of dropdown
-  useEffect(
-    () => {
-      if (menuActive) {
-        const _position = getPosition(editor)
-        // if cursor is near window bottom set menu above cursor
-
-        if (_position) {
-          if (_position.displayAbove && sourcesLoaded) {
-            _position.top -= MENU_HEIGHT + 22
-          }
-          setPosition(_position)
-        }
-      }
-    },
-    [sourceQuery, menuActive, sourcesLoaded]
-  )
 
   const onClick = (e, vol) => {
     const index = editorContext.state.selection.anchor.index
