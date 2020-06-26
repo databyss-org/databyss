@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
-import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
+import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from 'slate-react'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -42,7 +42,7 @@ const Element = ({ attributes, children, element }) => {
 
   return useMemo(
     () => {
-      const blockMenuWidth = editorMarginMenuItemHeight + 6
+      const blockMenuWidth = menuLauncherSize + 6
       const selHasRange = selectionHasRange(
         slateSelectionToStateSelection(editor)
       )

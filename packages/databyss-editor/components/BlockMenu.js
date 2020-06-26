@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Transforms, Text } from '@databyss-org/slate'
 import { useEditor, ReactEditor } from 'slate-react'
-import { editorMarginMenuItemHeight } from '@databyss-org/ui/theming/buttons'
+import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import {
   View,
   BaseControl,
@@ -60,34 +60,31 @@ const BlockMenu = ({ element }) => {
   }
 
   const menuItems = [
-    {
-      action: 'ENDSOURCE',
-      textSymbol: '/@',
-      shortcut: '',
-      label: 'End source',
-    },
-    {
-      action: 'ENDLOCATION',
-      textSymbol: '/%',
-      shortcut: '',
-      label: 'End location',
-    },
+    // {
+    //   action: 'ENDSOURCE',
+    //   textSymbol: '/@',
+    //   shortcut: '',
+    //   label: 'End source',
+    // },
+    // {
+    //   action: 'ENDLOCATION',
+    //   textSymbol: '/%',
+    //   shortcut: '',
+    //   label: 'End location',
+    // },
     {
       action: 'TOPIC',
       textSymbol: '#',
-      shortcut: 'Ctrl + 3',
       label: 'Topic',
     },
     {
       action: 'SOURCE',
       textSymbol: '@',
-      shortcut: 'Ctrl + 2',
       label: 'Source',
     },
     {
       action: 'LOCATION',
       textSymbol: '%',
-      shortcut: 'Ctrl + 5',
       label: 'Location',
     },
   ]
@@ -98,10 +95,11 @@ const BlockMenu = ({ element }) => {
     return (
       <DropdownContainer
         position={{
-          top: editorMarginMenuItemHeight,
-          left: editorMarginMenuItemHeight,
+          top: menuLauncherSize,
+          left: menuLauncherSize,
         }}
         open={showMenu}
+        widthVariant="dropdownMenuSmall"
       >
         {menuItems.map(menuItem => (
           <React.Fragment key={menuItem.action}>
@@ -121,8 +119,8 @@ const BlockMenu = ({ element }) => {
   return (
     <Grid singleRow columnGap="small">
       <View
-        height={editorMarginMenuItemHeight}
-        width={editorMarginMenuItemHeight}
+        height={menuLauncherSize}
+        width={menuLauncherSize}
         justifyContent="center"
       >
         <BaseControl
@@ -139,7 +137,7 @@ const BlockMenu = ({ element }) => {
           </Icon>
         </BaseControl>
       </View>
-      <View justifyContent="center" height={editorMarginMenuItemHeight}>
+      <View justifyContent="center" height={menuLauncherSize}>
         {showMenu && (
           <BlockMenuActions
             unmount={

@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Button, Icon, Grid, Text } from '@databyss-org/ui/primitives'
 import PlusSvg from '../../assets/add.svg'
-import { editorMarginMenuItemHeight } from '../../theming/buttons'
+import { menuLauncherSize } from '../../theming/buttons'
 import { Section } from './'
 
 const MarkButton = ({ isActive, label, variant }) => (
@@ -66,8 +66,8 @@ export default () => (
         <View>
           <Button variant="editorMarginMenuItem">
             <Icon
-              width={editorMarginMenuItemHeight * 0.5}
-              height={editorMarginMenuItemHeight * 0.5}
+              width={menuLauncherSize * 0.5}
+              height={menuLauncherSize * 0.5}
               sizeVariant="tiny"
             >
               <PlusSvg />

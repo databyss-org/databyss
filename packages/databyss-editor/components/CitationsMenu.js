@@ -111,7 +111,11 @@ const ComposeResults = ({ results, onClick, unmount }) => {
         </Text>
         <List verticalItemPadding="tiny">
           {results[author].map((volume, k) => (
-            <BaseControl onClick={e => onClick(e, volume)} key={k}>
+            <BaseControl
+              onClick={e => onClick(e, volume)}
+              key={k}
+              hoverColor="background.1"
+            >
               <View p="tiny" pr="tiny">
                 <Grid columnGap="none">
                   <Text variant="uiTextSmall" color="text.2">
@@ -256,7 +260,7 @@ export const Citations = () => {
         position={{ top: position.top, left: position.left }}
         open={menuActive}
         mt={pxUnits(-6)}
-        widthVariant="dropdownMenuLg"
+        widthVariant="dropdownMenuLarge"
         minHeight="32px"
         p="small"
       >

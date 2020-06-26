@@ -8,6 +8,7 @@ import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
+import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 
 export const ArchiveBin = ({ pages }) => {
   const { getSession } = useSessionContext()
@@ -45,7 +46,13 @@ export const ArchiveBin = ({ pages }) => {
   ]
 
   return canBeArchived ? (
-    <View position="relative">
+    <View
+      position="relative"
+      height={menuLauncherSize}
+      width={menuLauncherSize}
+      alignItems="center"
+      justifyContent="center"
+    >
       <BaseControl
         onPress={() => setShowMenu(!showMenu)}
         hoverColor="background.2"
@@ -61,7 +68,7 @@ export const ArchiveBin = ({ pages }) => {
           <DropdownContainer
             open={showMenu}
             position={{
-              top: 36,
+              top: menuLauncherSize + 8,
               right: 0,
             }}
           >
