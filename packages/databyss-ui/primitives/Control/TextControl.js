@@ -43,8 +43,7 @@ const TextControl = ({
         setActive(true)
       }
     },
-    onMouseUp: event => {
-      event.preventDefault()
+    onMouseUp: () => {
       if (active) {
         inputRef.current.focus()
       }
