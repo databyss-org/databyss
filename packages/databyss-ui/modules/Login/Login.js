@@ -39,7 +39,7 @@ const Login = ({ pending, signupFlow }) => {
       return
     }
 
-    if (!validateEmail(values.email.textValue)) {
+    if (!googleCode && !validateEmail(values.email.textValue)) {
       setInvalidEmail(true)
       return
     }
