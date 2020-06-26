@@ -27,8 +27,9 @@ export const ArchiveBin = ({ pages }) => {
       redirect = Object.keys(_pages)[0]
       setDefaultPage(redirect)
     }
-    navigate(`/pages/${redirect}`)
-    setTimeout(() => archivePage(id), 50)
+    archivePage(id).then(() => {
+      navigate(`/pages/${redirect}`)
+    })
   }
 
   return canBeArchived ? (

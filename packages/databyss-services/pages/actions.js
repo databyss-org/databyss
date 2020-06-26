@@ -204,16 +204,22 @@ export function deletePage(id) {
   }
 }
 
-export function onArchivePage(id, page) {
+export function onArchivePage(id, page, callback) {
   const _page = cloneDeep(page)
   _page.page.archive = true
 
   return dispatch => {
     dispatch({
       type: ARCHIVE_PAGE,
-      payload: { id, page: _page },
+      payload: { id, page: new ResourcePending() },
     })
-    services.savePage(_page)
+    services.savePage(_page).then(() => {
+      callback()
+      dispatch({
+        type: ARCHIVE_PAGE,
+        payload: { id, page: _page },
+      })
+    })
   }
 }
 

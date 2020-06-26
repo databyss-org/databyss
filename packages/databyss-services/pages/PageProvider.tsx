@@ -152,9 +152,10 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   }
 
   const archivePage = useCallback(
-    (id: string) => {
-      dispatch(onArchivePage(id, state.cache[id]))
-    },
+    (id: string): Promise<void> =>
+      new Promise(res => {
+        dispatch(onArchivePage(id, state.cache[id], res))
+      }),
     [state.cache]
   )
 
