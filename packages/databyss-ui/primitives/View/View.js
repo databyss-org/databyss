@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, forwardRef } from 'react'
+import React, { useRef, useCallback, forwardRef } from 'react'
 import {
   space,
   layout,
@@ -137,25 +137,28 @@ const View = forwardRef(({ children, onLayout, ...others }, ref) => {
         _onLayout({ x, y, width, height })
       ),
   }
-  useEffect(() => {
-    if (IS_NATIVE) {
-      return () => null
-    }
-    function onWindowResize() {
-      if (!onLayout || !viewRef || !viewRef.current) {
-        // only do expensive dimension stuff if we care
-        return () => null
-      }
-      const { x, y, width, height } = viewRef.current.getBoundingClientRect()
-      _onLayout({ x, y, width, height })
-      return () => null
-    }
-    window.addEventListener('resize', onWindowResize)
-    onWindowResize()
-    return function cleanup() {
-      window.removeEventListener('resize', onWindowResize)
-    }
-  })
+  // useEffect(() => {
+  //   if (IS_NATIVE) {
+  //     return () => null
+  //   }
+  //   function onWindowResize() {
+  //     if (!onLayout || !viewRef || !viewRef.current) {
+  //       // only do expensive dimension stuff if we care
+  //       return () => null
+  //     }
+  //     const { x, y, width, height } = viewRef.current.getBoundingClientRect()
+  //     _onLayout({ x, y, width, height })
+  //     return () => null
+  //   }
+  //   window.addEventListener('resize', onWindowResize)
+  //   onWindowResize()
+  //   return function cleanup() {
+  //     window.removeEventListener('resize', onWindowResize)
+  //   }
+  // })
+  if (onLayout) {
+    console.warn('onLayout removed until optimized')
+  }
 
   const view = (
     <Styled
