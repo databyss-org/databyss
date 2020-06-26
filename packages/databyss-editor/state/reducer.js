@@ -73,7 +73,6 @@ export default (state, action, onChange) => {
   const [nextState, patch, inversePatch] = produceWithPatches(state, draft => {
     draft.operations = []
     draft.preventDefault = false
-    draft.preventRerender = false
 
     const { payload } = action
 
@@ -194,11 +193,6 @@ export default (state, action, onChange) => {
         ) {
           draft.preventDefault = true
           break
-        }
-
-        if (payload.operations.find(op => op.preventRerender)) {
-          draft.preventRerender = true
-          // break
         }
 
         payload.operations.forEach(op => {

@@ -83,37 +83,51 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 
   const hasPendingPatches = state.patchQueueSize
 
-  const setPage = (page: Page): Promise<void> =>
-    new Promise(res => {
-      onPageCached(page.page._id, res)
-      dispatch(savePage(page))
-    })
+  const onPageCached = (id: string, callback: Function) => {
+    // add back to dictionary
+    pageCachedHookRef.current[id] = callback
+  }
 
-  const setPageHeader = (page: Page) => {
+  const setPage = useCallback(
+    (page: Page): Promise<void> =>
+      new Promise(res => {
+        onPageCached(page.page._id, res)
+        dispatch(savePage(page))
+      }),
+    []
+  )
+
+  const setPageHeader = useCallback((page: Page) => {
     dispatch(savePageHeader(page))
-  }
+  }, [])
 
-  const getPages = () => {
-    if (state.headerCache) {
-      return state.headerCache
-    }
+  const getPages = useCallback(
+    () => {
+      if (state.headerCache) {
+        return state.headerCache
+      }
 
-    if (!(state.headerCache instanceof ResourcePending)) {
-      dispatch(fetchPageHeaders())
-    }
+      if (!(state.headerCache instanceof ResourcePending)) {
+        dispatch(fetchPageHeaders())
+      }
 
-    return null
-  }
+      return null
+    },
+    [state.headerCache]
+  )
 
-  const getPage = (id: string): Page | ResourcePending | null => {
-    if (state.cache[id]) {
-      return state.cache[id]
-    }
-    if (!(state.cache[id] instanceof ResourcePending)) {
-      dispatch(fetchPage(id))
-    }
-    return null
-  }
+  const getPage = useCallback(
+    (id: string): Page | ResourcePending | null => {
+      if (state.cache[id]) {
+        return state.cache[id]
+      }
+      if (!(state.cache[id] instanceof ResourcePending)) {
+        dispatch(fetchPage(id))
+      }
+      return null
+    },
+    [state.cache]
+  )
 
   const registerBlockRefByIndex = useCallback(
     (index: number, ref: React.Ref<HTMLInputElement>) => {
@@ -137,22 +151,20 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(deletePage(id))
   }
 
-  const archivePage = (id: string) => {
-    dispatch(onArchivePage(id, state.cache[id]))
-  }
+  const archivePage = useCallback(
+    (id: string) => {
+      dispatch(onArchivePage(id, state.cache[id]))
+    },
+    [state.cache]
+  )
 
-  const setDefaultPage = (id: string) => {
+  const setDefaultPage = useCallback((id: string) => {
     dispatch(onSetDefaultPage(id))
-  }
+  }, [])
 
   const setPatch = useCallback((patch: PatchType) => {
     dispatch(savePatch(patch))
   }, [])
-
-  const onPageCached = (id: string, callback: Function) => {
-    // add back to dictionary
-    pageCachedHookRef.current[id] = callback
-  }
 
   const removePageFromCache = (id: string) => {
     dispatch(removePageIdFromCache(id))

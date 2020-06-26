@@ -269,7 +269,6 @@ const ContentEditable = ({
 
     const payload = {
       selection,
-      preventRerender: false,
     }
 
     if (value.length < valueRef.current.length) {
@@ -300,14 +299,6 @@ const ContentEditable = ({
         },
       })
       return
-    }
-
-    if (
-      editor.operations.find(
-        op => op.type === 'insert_text' && op.text === '´' && op.text.length
-      )
-    ) {
-      payload.preventRerender = true
     }
 
     if (

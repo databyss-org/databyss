@@ -18,8 +18,6 @@ const Footer = () => {
   const { navigate, navigateSidebar, isMenuOpen } = useNavigationContext()
   const { clearSearchCache } = useEntryContext()
 
-  // const { setPage } = usePageContext()
-
   const setPage = usePageContext(c => c.setPage)
 
   const onNewPageClick = () => {
