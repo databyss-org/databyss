@@ -214,7 +214,9 @@ export function onArchivePage(id, page, callback) {
       payload: { id, page: new ResourcePending() },
     })
     services.savePage(_page).then(() => {
-      callback()
+      if (callback) {
+        callback()
+      }
       dispatch({
         type: ARCHIVE_PAGE,
         payload: { id, page: _page },

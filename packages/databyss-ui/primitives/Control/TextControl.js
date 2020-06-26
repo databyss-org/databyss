@@ -78,6 +78,7 @@ const TextControl = ({
           window.requestAnimationFrame(() => setActive(false))
         }}
         onChange={onChange}
+        active={active}
         value={value}
         color={active ? activeLabelColor : labelColor}
         multiline={multiline}

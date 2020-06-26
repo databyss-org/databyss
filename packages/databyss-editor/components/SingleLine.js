@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useState, forwardRef } from 'react'
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  forwardRef,
+} from 'react'
 import { Editable, withReact, Slate } from 'slate-react'
 import { Editor, createEditor, Transforms } from '@databyss-org/slate'
 import { View, Text } from '@databyss-org/ui/primitives'
@@ -67,7 +73,17 @@ const Leaf = ({ attributes, children, leaf }) => {
 
 const RichText = forwardRef(
   (
-    { multiline, onChange, initialValue, id, overrideCss, onBlur, placeholder },
+    {
+      multiline,
+      onChange,
+      initialValue,
+      id,
+      overrideCss,
+      onBlur,
+      onFocus,
+      placeholder,
+      setEditor,
+    },
     ref
   ) => {
     // set initial value
@@ -90,6 +106,13 @@ const RichText = forwardRef(
       setValue(value)
     }
 
+    // on mount, pass editor up
+    useEffect(() => {
+      if (editor && setEditor) {
+        setEditor(editor)
+      }
+    }, [])
+
     return (
       <View ref={ref}>
         <Slate editor={editor} value={value} onChange={onChangeEvent}>
@@ -99,7 +122,6 @@ const RichText = forwardRef(
             renderLeaf={renderLeaf}
             placeholder={placeholder}
             spellCheck
-            autoFocus
             onKeyDown={event => {
               if (event.key === 'Enter') {
                 event.preventDefault()
@@ -125,6 +147,7 @@ const RichText = forwardRef(
               }
             }}
             onBlur={onBlur}
+            onFocus={onFocus}
           />
         </Slate>
       </View>
