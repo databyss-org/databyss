@@ -36,6 +36,12 @@ export const ArchiveBin = ({ pages }) => {
     setTimeout(() => archivePage(id), 50)
   }
 
+  const handleEscKey = e => {
+    if (e.key === 'Escape') {
+      setShowMenu(false)
+    }
+  }
+
   const menuItems = [
     {
       icon: <ArchiveSvg />,
@@ -54,6 +60,7 @@ export const ArchiveBin = ({ pages }) => {
     >
       <BaseControl
         onPress={() => setShowMenu(!showMenu)}
+        onKeyDown={handleEscKey}
         hoverColor="background.2"
         p="tiny"
         label="Archive Page"
@@ -75,6 +82,7 @@ export const ArchiveBin = ({ pages }) => {
               <DropdownListItem
                 menuItem={menuItem}
                 onPress={onPress}
+                onKeyDown={handleEscKey}
                 key={menuItem.label}
               />
             ))}
