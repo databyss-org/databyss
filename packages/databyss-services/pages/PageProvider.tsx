@@ -115,12 +115,12 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     return null
   }
 
-  const registerBlockRefByIndex = (
-    index: number,
-    ref: React.Ref<HTMLInputElement>
-  ) => {
-    refDictRef.current[index] = ref
-  }
+  const registerBlockRefByIndex = useCallback(
+    (index: number, ref: React.Ref<HTMLInputElement>) => {
+      refDictRef.current[index] = ref
+    },
+    []
+  )
 
   const getBlockRefByIndex = useCallback((index: number) => {
     if (refDictRef.current[index]) {
