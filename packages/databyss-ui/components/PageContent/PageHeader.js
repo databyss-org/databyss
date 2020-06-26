@@ -7,7 +7,9 @@ import styledCss from '@styled-system/css'
 const noPageTitle = 'untitled'
 
 const PageHeader = ({ isFocused, pageId }) => {
-  const { getPage, setPage } = usePageContext()
+  const getPage = usePageContext(c => c.getPage)
+  const setPageHeader = usePageContext(c => c.setPageHeader)
+
   const [pageName, setPageName] = useState({ textValue: '' })
 
   useEffect(
@@ -35,7 +37,7 @@ const PageHeader = ({ isFocused, pageId }) => {
         _id: pageId,
       },
     }
-    setPage(_pageData)
+    setPageHeader(_pageData)
     isFocused(false)
   }
   /*

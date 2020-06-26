@@ -26,7 +26,10 @@ const Element = ({ attributes, children, element }) => {
   const editor = useEditor()
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
-  const pageContext = usePageContext()
+
+  const registerBlockRefByIndex = usePageContext(
+    c => c && c.registerBlockRefByIndex
+  )
 
   const onAtomicMouseDown = e => {
     e.preventDefault()
@@ -47,9 +50,9 @@ const Element = ({ attributes, children, element }) => {
       return (
         <View
           ref={ref => {
-            if (pageContext) {
+            if (registerBlockRefByIndex) {
               const _index = ReactEditor.findPath(editor, element)[0]
-              pageContext.registerBlockRefByIndex(_index, ref)
+              registerBlockRefByIndex(_index, ref)
             }
           }}
           ml={element.isBlock ? blockMenuWidth : 0}

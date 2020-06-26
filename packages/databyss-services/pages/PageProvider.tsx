@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useCallback } from 'react'
+import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../lib/ResourcePending'
@@ -8,6 +9,7 @@ import {
   fetchPageHeaders,
   fetchPage,
   savePage,
+  savePageHeader,
   savePatch,
   deletePage,
   onArchivePage,
@@ -41,6 +43,7 @@ interface PageHookDict {
 
 interface ContextType {
   setPage: (page: Page) => void
+  setPageHeader: (page: Page) => void
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
   clearBlockDict: () => void
@@ -80,73 +83,88 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 
   const hasPendingPatches = state.patchQueueSize
 
-  const setPage = (page: Page): Promise<void> => {
-    return new Promise(res => {
-      onPageCached(page.page._id, res)
-      dispatch(savePage(page))
-    })
+  const onPageCached = (id: string, callback: Function) => {
+    // add back to dictionary
+    pageCachedHookRef.current[id] = callback
   }
 
-  const getPages = () => {
-    if (state.headerCache) {
-      return state.headerCache
-    }
+  const setPage = useCallback(
+    (page: Page): Promise<void> =>
+      new Promise(res => {
+        onPageCached(page.page._id, res)
+        dispatch(savePage(page))
+      }),
+    []
+  )
 
-    if (!(state.headerCache instanceof ResourcePending)) {
-      dispatch(fetchPageHeaders())
-    }
+  const setPageHeader = useCallback((page: Page) => {
+    dispatch(savePageHeader(page))
+  }, [])
 
-    return null
-  }
+  const getPages = useCallback(
+    () => {
+      if (state.headerCache) {
+        return state.headerCache
+      }
 
-  const getPage = (id: string): Page | ResourcePending | null => {
-    if (state.cache[id]) {
-      return state.cache[id]
-    }
-    if (!(state.cache[id] instanceof ResourcePending)) {
-      dispatch(fetchPage(id))
-    }
-    return null
-  }
+      if (!(state.headerCache instanceof ResourcePending)) {
+        dispatch(fetchPageHeaders())
+      }
 
-  const registerBlockRefByIndex = (
-    index: number,
-    ref: React.Ref<HTMLInputElement>
-  ) => {
-    refDictRef.current[index] = ref
-  }
+      return null
+    },
+    [state.headerCache]
+  )
 
-  const getBlockRefByIndex = (index: number) => {
+  const getPage = useCallback(
+    (id: string): Page | ResourcePending | null => {
+      if (state.cache[id]) {
+        return state.cache[id]
+      }
+      if (!(state.cache[id] instanceof ResourcePending)) {
+        dispatch(fetchPage(id))
+      }
+      return null
+    },
+    [state.cache]
+  )
+
+  const registerBlockRefByIndex = useCallback(
+    (index: number, ref: React.Ref<HTMLInputElement>) => {
+      refDictRef.current[index] = ref
+    },
+    []
+  )
+
+  const getBlockRefByIndex = useCallback((index: number) => {
     if (refDictRef.current[index]) {
       return refDictRef.current[index]
     }
     return null
-  }
+  }, [])
 
-  const clearBlockDict = () => {
+  const clearBlockDict = useCallback(() => {
     refDictRef.current = {}
-  }
+  }, [])
 
   const removePage = (id: string) => {
     dispatch(deletePage(id))
   }
 
-  const archivePage = (id: string) => {
-    dispatch(onArchivePage(id, state.cache[id]))
-  }
+  const archivePage = useCallback(
+    (id: string) => {
+      dispatch(onArchivePage(id, state.cache[id]))
+    },
+    [state.cache]
+  )
 
-  const setDefaultPage = (id: string) => {
+  const setDefaultPage = useCallback((id: string) => {
     dispatch(onSetDefaultPage(id))
-  }
+  }, [])
 
-  const setPatch = (patch: PatchType) => {
+  const setPatch = useCallback((patch: PatchType) => {
     dispatch(savePatch(patch))
-  }
-
-  const onPageCached = (id: string, callback: Function) => {
-    // add back to dictionary
-    pageCachedHookRef.current[id] = callback
-  }
+  }, [])
 
   const removePageFromCache = (id: string) => {
     dispatch(removePageIdFromCache(id))
@@ -158,6 +176,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         getPages,
         getPage,
         setPage,
+        setPageHeader,
         setPatch,
         registerBlockRefByIndex,
         getBlockRefByIndex,
@@ -175,7 +194,8 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const usePageContext = () => useContext(PageContext)
+export const usePageContext = (selector = x => x) =>
+  PageContext && useContextSelector(PageContext, selector)
 
 PageProvider.defaultProps = {
   initialState,

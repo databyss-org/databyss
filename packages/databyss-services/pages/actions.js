@@ -1,5 +1,6 @@
 import cloneDeep from 'clone-deep'
 import * as services from './'
+import { ResourcePending } from './../lib/ResourcePending'
 import {
   PATCH,
   FETCH_PAGE,
@@ -85,7 +86,7 @@ export function savePatch(patch) {
       dispatch({
         type: PATCH,
         payload: {
-          queueSize: queue.length,
+          queueSize: 0,
         },
       })
     }
@@ -143,7 +144,7 @@ export function savePatch(patch) {
   }
 }
 
-export function savePage(state) {
+export function savePageHeader(state) {
   const id = state.page._id
   const body = cloneDeep(state)
 
@@ -153,6 +154,24 @@ export function savePage(state) {
       payload: { body, id },
     })
     services.savePage(body)
+  }
+}
+
+export function savePage(state) {
+  const id = state.page._id
+  const body = cloneDeep(state)
+
+  return dispatch => {
+    dispatch({
+      type: CACHE_PAGE,
+      payload: { body: new ResourcePending(), id },
+    })
+    services.savePage(body).then(() => {
+      dispatch({
+        type: CACHE_PAGE,
+        payload: { body, id },
+      })
+    })
   }
 }
 
