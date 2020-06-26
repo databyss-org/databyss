@@ -1,6 +1,7 @@
 import cloneDeep from 'clone-deep'
 import * as services from './'
 import { ResourcePending } from './../lib/ResourcePending'
+import { NetworkUnavailableError } from './errors'
 import {
   PATCH,
   FETCH_PAGE,
@@ -213,15 +214,20 @@ export function onArchivePage(id, page, callback) {
       type: ARCHIVE_PAGE,
       payload: { id, page: new ResourcePending() },
     })
-    services.savePage(_page).then(() => {
-      if (callback) {
-        callback()
-      }
-      dispatch({
-        type: ARCHIVE_PAGE,
-        payload: { id, page: _page },
+    services
+      .savePage(_page)
+      .then(() => {
+        if (callback) {
+          callback()
+        }
+        dispatch({
+          type: ARCHIVE_PAGE,
+          payload: { id, page: _page },
+        })
       })
-    })
+      .catch(err => {
+        throw new NetworkUnavailableError(err)
+      })
   }
 }
 
