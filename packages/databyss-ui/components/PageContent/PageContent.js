@@ -15,11 +15,8 @@ export const PageRouter = () => (
   </Router>
 )
 
-const PageContainer = ({ anchor, id, onHeaderClick, page }) => {
-  // const { getBlockRefByIndex, hasPendingPatches } = usePageContext()
-
+const PageContainer = React.memo(({ anchor, id, onHeaderClick, page }) => {
   const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
-
   const hasPendingPatches = usePageContext(c => c.hasPendingPatches)
 
   const { isOnline } = useNotifyContext()
@@ -74,7 +71,7 @@ const PageContainer = ({ anchor, id, onHeaderClick, page }) => {
       <PageBody page={page} focusIndex={index} />
     </View>
   )
-}
+}, (prev, next) => prev.page._id === next.page._id && prev.id === next.id && prev.anchor === next.anchor)
 
 const PageContent = () => {
   // get page id and anchor from url

@@ -24,10 +24,6 @@ export const initialState = {
 export default (state, action) => {
   switch (action.type) {
     case PATCH:
-    // {
-    //   // state.patchQueueSize = action.payload.queueSize
-    //   return state
-    // }
     case QUEUE_PATCH: {
       return {
         ...state,

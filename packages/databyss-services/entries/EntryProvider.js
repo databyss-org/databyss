@@ -13,8 +13,6 @@ const EntryProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { searchCache, searchTerm } = state
 
-  // TODO: memoize for debounce to work
-
   const searchEntries = useCallback(
     debounce(query => {
       const _results = searchCache[query]

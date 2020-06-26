@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from 'react'
-import createReducer from '../lib/createReducer'
+import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
+import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../lib/ResourcePending'
 import Page from './Page'
@@ -83,12 +83,11 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 
   const hasPendingPatches = state.patchQueueSize
 
-  const setPage = (page: Page): Promise<void> => {
-    return new Promise(res => {
+  const setPage = (page: Page): Promise<void> =>
+    new Promise(res => {
       onPageCached(page.page._id, res)
       dispatch(savePage(page))
     })
-  }
 
   const setPageHeader = (page: Page) => {
     dispatch(savePageHeader(page))
@@ -123,16 +122,16 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     refDictRef.current[index] = ref
   }
 
-  const getBlockRefByIndex = (index: number) => {
+  const getBlockRefByIndex = useCallback((index: number) => {
     if (refDictRef.current[index]) {
       return refDictRef.current[index]
     }
     return null
-  }
+  }, [])
 
-  const clearBlockDict = () => {
+  const clearBlockDict = useCallback(() => {
     refDictRef.current = {}
-  }
+  }, [])
 
   const removePage = (id: string) => {
     dispatch(deletePage(id))
@@ -146,9 +145,9 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(onSetDefaultPage(id))
   }
 
-  const setPatch = (patch: PatchType) => {
+  const setPatch = useCallback((patch: PatchType) => {
     dispatch(savePatch(patch))
-  }
+  }, [])
 
   const onPageCached = (id: string, callback: Function) => {
     // add back to dictionary

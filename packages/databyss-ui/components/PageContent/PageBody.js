@@ -12,10 +12,7 @@ import {
 
 const PageBody = ({ page, focusIndex }) => {
   const { location } = useNavigationContext()
-  // const { clearBlockDict, setPatch } = usePageContext()
-
   const clearBlockDict = usePageContext(c => c.clearBlockDict)
-
   const setPatch = usePageContext(c => c.setPatch)
 
   useEffect(() => () => clearBlockDict(), [])
@@ -60,4 +57,8 @@ const PageBody = ({ page, focusIndex }) => {
   )
 }
 
-export default PageBody
+export default React.memo(
+  PageBody,
+  (prev, next) =>
+    prev.page._id === next.page._id && prev.focusIndex === next.focusIndex
+)
