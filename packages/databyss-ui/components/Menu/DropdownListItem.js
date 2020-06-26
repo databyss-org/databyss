@@ -2,10 +2,11 @@ import React from 'react'
 import { View, Text, Icon, BaseControl } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 
-const DropdownListItem = ({ menuItem, onPress }) => (
+const DropdownListItem = ({ menuItem, onPress, onKeyDown }) => (
   <BaseControl
     data-test-block-menu={menuItem.action}
     onPress={onPress}
+    onKeyDown={onKeyDown}
     childViewProps={{ width: '100%' }}
     px="small"
     py="extraSmall"
@@ -31,12 +32,7 @@ const DropdownListItem = ({ menuItem, onPress }) => (
           </Text>
         )}
         {menuItem.icon && (
-          <Icon
-            sizeVariant="small"
-            width={pxUnits(20)}
-            mr="small"
-            color="text.2"
-          >
+          <Icon sizeVariant="small" mr="small" color="text.2">
             {menuItem.icon}
           </Icon>
         )}

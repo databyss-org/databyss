@@ -22,6 +22,12 @@ const BlockMenu = ({ element }) => {
     setShowMenu(!showMenu)
   }
 
+  const handleEscKey = e => {
+    if (e.key === 'Escape') {
+      setShowMenu(false)
+    }
+  }
+
   const actions = type =>
     ({
       ENDSOURCE: () => undefined,
@@ -106,6 +112,7 @@ const BlockMenu = ({ element }) => {
             <DropdownListItem
               menuItem={menuItem}
               onPress={e => onMenuAction(e, menuItem.action)}
+              onKeyDown={handleEscKey}
             />
             {menuItem.action === 'ENDLOCATION' && (
               <Separator color="border.3" spacing="extraSmall" />
@@ -125,6 +132,7 @@ const BlockMenu = ({ element }) => {
       >
         <BaseControl
           onPress={onShowActions}
+          onKeyDown={handleEscKey}
           data-test-block-menu="open"
           aria-haspopup="true"
           hoverColor="background.2"
