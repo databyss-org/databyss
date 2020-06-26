@@ -195,7 +195,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 }
 
 export const usePageContext = (selector = x => x) =>
-  useContextSelector(PageContext, selector)
+  PageContext && useContextSelector(PageContext, selector)
 
 PageProvider.defaultProps = {
   initialState,

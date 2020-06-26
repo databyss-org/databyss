@@ -26,12 +26,10 @@ const Element = ({ attributes, children, element }) => {
   const editor = useEditor()
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
-  const pageContext = usePageContext()
 
-  let registerBlockRefByIndex
-  if (pageContext) {
-    registerBlockRefByIndex = usePageContext(c => c.registerBlockRefByIndex)
-  }
+  const registerBlockRefByIndex = usePageContext(
+    c => c && c.registerBlockRefByIndex
+  )
 
   const onAtomicMouseDown = e => {
     e.preventDefault()
