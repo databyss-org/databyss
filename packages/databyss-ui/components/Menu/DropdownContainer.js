@@ -19,10 +19,10 @@ const DropdownContainer = forwardRef(
   (
     {
       children,
-      position = { top: 0 },
-      widthVariant = 'dropdownMenuMd',
+      position,
+      widthVariant,
       minHeight,
-      maxWidth = pxUnits(500),
+      maxWidth,
       open,
       verticalItemPadding,
       horizontalItemPadding,
@@ -58,5 +58,11 @@ const DropdownContainer = forwardRef(
     </View>
   )
 )
+
+DropdownContainer.defaultProps = {
+  position: { top: 0 },
+  widthVariant: 'dropdownMenuMedium',
+  maxWidth: pxUnits(500),
+}
 
 export default DropdownContainer
