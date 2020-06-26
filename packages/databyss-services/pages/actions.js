@@ -1,7 +1,7 @@
 import cloneDeep from 'clone-deep'
 import * as services from './'
 import { ResourcePending } from './../lib/ResourcePending'
-import { NetworkUnavailableError } from './errors'
+import { NetworkUnavailableError } from '../lib/errors'
 import {
   PATCH,
   FETCH_PAGE,
