@@ -133,7 +133,9 @@ const ComposeResults = ({ results, onClick, unmount }) => {
       </View>
     ))
   ) : (
-    <Text variant="uiTextSmall">no results found</Text>
+    <View py="small">
+      <Text variant="uiTextSmall">No results found</Text>
+    </View>
   )
 }
 
