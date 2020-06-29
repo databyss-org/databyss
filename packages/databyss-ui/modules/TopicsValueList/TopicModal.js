@@ -43,6 +43,8 @@ const TopicModal = ({ refId, visible, onUpdate, id }) => {
     onUpdate(values)
   }
 
+  console.log(values && values.text.textValue.length)
+
   return (
     <ModalWindow
       visible={visible}
@@ -51,6 +53,7 @@ const TopicModal = ({ refId, visible, onUpdate, id }) => {
       onDismiss={onDismiss}
       title="Edit Topic"
       dismissChild="done"
+      disabled={values && !values.text.textValue.length}
     >
       <TopicLoader topicId={refId}>
         {topic => (
