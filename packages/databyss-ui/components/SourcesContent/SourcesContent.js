@@ -1,20 +1,10 @@
 import React, { useEffect } from 'react'
 import { Router } from '@reach/router'
-<<<<<<< HEAD
-=======
-import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
-import {
-  Text,
-  View,
-  BaseControl,
-  ScrollView,
-} from '@databyss-org/ui/primitives'
->>>>>>> Adding list of all authors with route
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import {
   getSourcesData,
   sortEntriesAtoZ,
 } from '@databyss-org/services/sources/util'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
 
