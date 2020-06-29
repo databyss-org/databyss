@@ -1,7 +1,4 @@
-import {
-  NotAuthorizedError,
-  ResourceNotFoundError,
-} from '../../interfaces/errors'
+import { NotAuthorizedError, ResourceNotFoundError } from '../../interfaces'
 import { delay } from '../../lib/mocks'
 
 const validAuthToken = '5e1767601a16fb802874a5cd'

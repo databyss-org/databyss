@@ -4,7 +4,7 @@ import { ping } from '@databyss-org/services/lib/requestApi'
 import {
   NotAuthorizedError,
   NetworkUnavailableError,
-} from '@databyss-org/services/lib/errors'
+} from '@databyss-org/services/interfaces'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
 import IS_NATIVE from '../../lib/isNative'
