@@ -1,4 +1,5 @@
-import React, { createContext, useContext } from 'react'
+import React, { useCallback } from 'react'
+import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
 import reducer, { initialState } from './reducer'
@@ -20,23 +21,31 @@ export const SourceContext = createContext()
 const SourceProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  // provider methods
-  const setSource = source => {
-    if (_.isEqual(state.cache[source._id], source)) {
-      return
-    }
-    // add or update source and set cache value
-    // add set timeout to prevent focus issue with line content editable on ta
-    window.requestAnimationFrame(() => dispatch(saveSource(source)))
-  }
+  const { searchCache, cache } = state
 
-  const getSource = id => {
-    if (state.cache[id]) {
-      return state.cache[id]
-    }
-    dispatch(fetchSource(id))
-    return null
-  }
+  // provider methods
+  const setSource = useCallback(
+    source => {
+      if (_.isEqual(cache[source._id], source)) {
+        return
+      }
+      // add or update source and set cache value
+      // add set timeout to prevent focus issue with line content editable on ta
+      window.requestAnimationFrame(() => dispatch(saveSource(source)))
+    },
+    [cache]
+  )
+
+  const getSource = useCallback(
+    id => {
+      if (state.cache[id]) {
+        return state.cache[id]
+      }
+      dispatch(fetchSource(id))
+      return null
+    },
+    [cache]
+  )
 
   const getAllSources = () => {
     dispatch(fetchAllSources())
@@ -53,15 +62,23 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     }
   }
 
-  const searchSource = _.debounce(query => {
-    if (!query) return null
-    if (state.searchCache[query]) {
-      return state.searchCache[query]
-    }
+  const searchSource = useCallback(
+    _.debounce(query => {
+      if (!query) return null
+      if (state.searchCache[query]) {
+        return state.searchCache[query]
+      }
 
-    dispatch(fetchSourceQuery(query))
-    return null
-  }, 750)
+      dispatch(fetchSourceQuery(query))
+      return null
+    }, 750),
+    [searchCache]
+  )
+
+  const getSearchCache = useCallback(query => searchCache[query], [
+    // does a deep compare
+    JSON.stringify(searchCache),
+  ])
 
   const removeCacheValue = id => {
     if (state.cache[id]) {
@@ -80,6 +97,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
         getPageSources,
         getSourcesFromList,
         searchSource,
+        getSearchCache,
       }}
     >
       {children}
@@ -87,7 +105,10 @@ const SourceProvider = ({ children, initialState, reducer }) => {
   )
 }
 
-export const useSourceContext = () => useContext(SourceContext)
+// export const useSourceContext = () => useContext(SourceContext)
+
+export const useSourceContext = (selector = x => x) =>
+  SourceContext && useContextSelector(SourceContext, selector)
 
 SourceProvider.defaultProps = {
   initialState,

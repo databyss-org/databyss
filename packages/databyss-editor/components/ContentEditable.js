@@ -32,7 +32,9 @@ const ContentEditable = ({
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
-  const sourceContext = useSourceContext()
+
+  const setSource = useSourceContext(c => c && c.setSource)
+
   const topicContext = useTopicContext()
 
   const {
@@ -79,8 +81,7 @@ const ContentEditable = ({
   // if new atomic block has been added, save atomic
   useEffect(
     () => {
-      if (state.newEntities.length && sourceContext && topicContext) {
-        const { setSource } = sourceContext
+      if (state.newEntities.length && setSource && topicContext) {
         const { setTopic } = topicContext
 
         state.newEntities.forEach(entity => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styledCss from '@styled-system/css'
 import _ from 'lodash'
 import { useEditor, ReactEditor } from 'slate-react'
@@ -146,12 +146,13 @@ const ComposeResults = ({ results, onClick, unmount }) => {
 }
 
 export const Citations = () => {
-  const sourceContext = useSourceContext()
+  const setSource = useSourceContext(c => c && c.setSource)
 
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [menuActive, setMenuActive] = useState(false)
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
-  const [sourceQuery, setSourceQuery] = useState(null)
+
+  const soureQueryRef = useRef(null)
 
   const editor = useEditor()
   const editorContext = useEditorContext()
@@ -164,7 +165,8 @@ export const Citations = () => {
         const _node = editor.children[_index]
         const _text = Node.string(_node)
         if (_text.charAt(0) === '@' && !isAtomicInlineType(_node.type)) {
-          setSourceQuery(_text.substring(1))
+          //     setSourceQuery(_text.substring(1))
+          soureQueryRef.current = _text.substring(1)
           if (!menuActive) setMenuActive(true)
         } else if (menuActive) {
           setMenuActive(false)
@@ -200,7 +202,7 @@ export const Citations = () => {
         }
       }
     },
-    [sourceQuery, menuActive, sourcesLoaded]
+    [soureQueryRef.current, menuActive, sourcesLoaded]
   )
 
   const onClick = (e, vol) => {
@@ -212,7 +214,6 @@ export const Citations = () => {
     const offset = text.textValue.length
 
     const { setContent } = editorContext
-    const { setSource } = sourceContext
 
     const selection = {
       anchor: { index, offset },
@@ -272,15 +273,15 @@ export const Citations = () => {
           _css({ top: position.top, left: position.left }, menuActive)
         )}
       >
-        {sourceQuery ? (
+        {soureQueryRef.current ? (
           <View p={sourcesLoaded && 'small'}>
             <View
               overflowX="hidden"
               overflowY="scroll"
               maxHeight={pxUnits(MENU_HEIGHT)}
             >
-              {sourceContext && (
-                <SearchSourceLoader query={sourceQuery}>
+              {setSource && (
+                <SearchSourceLoader query={soureQueryRef.current}>
                   {results => {
                     setSourcesLoaded(true)
                     return (
