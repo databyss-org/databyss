@@ -1,0 +1,6 @@
+export type { Page } from './Page'
+export type { Text } from './Text'
+export type { Block } from './Block'
+export { BlockType } from './Block'
+export type { FSA } from './FSA'
+export type { Range } from './Range'

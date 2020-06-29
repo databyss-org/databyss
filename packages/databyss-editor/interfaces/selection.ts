@@ -1,7 +1,7 @@
 import { Point } from './point'
 
-export type Selection = {
+export interface Selection {
   anchor: Point
   focus: Point
-  _id: any
+  _id: string | null
 }

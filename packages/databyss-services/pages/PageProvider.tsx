@@ -3,7 +3,7 @@ import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../lib/ResourcePending'
-import Page from './Page'
+import { Page } from '../interfaces'
 
 import {
   fetchPageHeaders,

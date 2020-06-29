@@ -1,0 +1,25 @@
+import { Text } from '@databyss-org/services/interfaces'
+import { Block, Selection } from './'
+
+export interface PayloadOperation {
+  index: number
+  text: Text
+  isRefEntity?: boolean
+  withBakeAtomic?: boolean
+}
+
+export interface BackflowOperation {
+  index: number
+  block: Block
+}
+
+export interface EditorState {
+  preventDefault?: boolean
+  showMenuActions?: boolean
+  showFormatMenu?: boolean
+  showNewBlockMenu?: boolean
+  operations: BackflowOperation[]
+  selection: Selection
+  newEntities: Block[]
+  blocks: Block[]
+}
