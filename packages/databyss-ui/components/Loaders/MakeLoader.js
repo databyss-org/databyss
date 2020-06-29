@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { ResourcePending } from '@databyss-org/services/lib/ResourcePending'
+import { ResourcePending } from '@databyss-org/services/interfaces/ResourcePending'
 import ErrorFallback from '../Notify/ErrorFallback'
 import Loading from '../Notify/LoadingFallback'
 

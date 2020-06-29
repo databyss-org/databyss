@@ -1,32 +1,30 @@
 import mongoose from 'mongoose'
 import Page from './../models/Page'
+import { ResourceNotFoundError, UnauthorizedError } from '../lib/Errors'
+import wrap from '../lib/guardedAsync'
 
-export const pageCreatorMiddleware = async (req, res, next) => {
+export const pageCreatorMiddleware = wrap(async (req, res, next) => {
   const { _id } = req.body.data.page
-  let pageResponse = await Page.findOne({ _id })
+  let page = await Page.findOne({ _id })
 
-  if (pageResponse) {
-    if (req.account._id.toString() !== pageResponse.account.toString()) {
-      return res.status(401).json({ msg: 'authorization denied' })
-      // throw new ApiError('This page is private', 401)
-    }
-  } else {
-    pageResponse = new Page({
+  if (!page) {
+    page = new Page({
       _id,
       account: req.account._id,
     })
-    await pageResponse.save()
   }
-
-  req.page = pageResponse
+  if (req.account._id.toString() !== page.account.toString()) {
+    return next(new UnauthorizedError('You do not have access to this page.'))
+  }
+  req.page = page
   return next()
-}
+})
 
-export const pageMiddleware = async (req, res, next) => {
+export const pageMiddleware = wrap(async (req, res, next) => {
   const _id = req.params.id
 
   if (!mongoose.Types.ObjectId.isValid(_id)) {
-    return res.status(404).json({ msg: 'id not valid' })
+    return next(new ResourceNotFoundError('Invalid Page ID'))
   }
 
   const page = await Page.findOne({
@@ -34,10 +32,10 @@ export const pageMiddleware = async (req, res, next) => {
   })
 
   if (!page) {
-    return res.status(404).json({ msg: 'There is no page for this id' })
+    return next(new ResourceNotFoundError('There is no page for this ID'))
   }
 
   req.page = page
 
   return next()
-}
+})

@@ -1,6 +1,6 @@
 import * as sources from './'
 import { composeResults } from './_helpers'
-import { ResourcePending } from '../lib/ResourcePending'
+import { ResourcePending } from '../interfaces/ResourcePending'
 
 import {
   FETCH_SOURCE,

@@ -1,4 +1,4 @@
-import { Text } from './text'
+import { Text } from './Text'
 
 export enum BlockType {
   Entry = 'ENTRY',

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect } from 'react'
 import Login from '@databyss-org/ui/modules/Login/Login'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
-import { ResourcePending } from '../lib/ResourcePending'
+import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { useServiceContext } from '../'

@@ -1,5 +1,5 @@
 import request from '../lib/request'
-import { NotAuthorizedError } from '../lib/errors'
+import { NotAuthorizedError } from '../interfaces/errors'
 
 import {
   FETCH_SESSION,

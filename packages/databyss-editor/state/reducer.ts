@@ -14,7 +14,6 @@ import { isAtomicInlineType } from '../lib/util'
 import {
   selectionHasRange,
   symbolToAtomicType,
-  getIndeciesForRefId,
   offsetRanges,
   removeLocationMark,
   blockValue,

@@ -2,39 +2,14 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
-import { ResourcePending } from '../lib/ResourcePending'
-import { Page } from '../interfaces'
+import { ResourcePending } from '../interfaces/ResourcePending'
+import { Page, PageState, RefDict, PageHeader, PatchBatch } from '../interfaces'
 
-import {
-  fetchPageHeaders,
-  fetchPage,
-  savePage,
-  savePageHeader,
-  savePatch,
-  deletePage,
-  onArchivePage,
-  onSetDefaultPage,
-  removePageIdFromCache,
-} from './actions'
+import * as actions from './actions'
 
 interface PropsType {
   children: JSX.Element
-  initialState: any
-}
-
-interface Operation {
-  op: string
-  path: any
-  value: any
-}
-
-interface PatchType {
-  _id: string
-  operations: Array<Operation>
-}
-
-interface RefDict {
-  [key: string]: React.Ref<HTMLInputElement>
+  initialState: PageState
 }
 
 interface PageHookDict {
@@ -47,7 +22,7 @@ interface ContextType {
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
   clearBlockDict: () => void
-  setPatch: (patch: PatchType) => void
+  setPatch: (patches: PatchBatch) => void
   registerBlockRefByIndex: (
     index: number,
     refOne: React.Ref<HTMLInputElement>
@@ -91,13 +66,13 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   const setPage = useCallback(
     (page: Page): Promise<void> =>
       new Promise(res => {
-        onPageCached(page.page._id, res)
+        onPageCached(page._id, res)
         dispatch(savePage(page))
       }),
     []
   )
 
-  const setPageHeader = useCallback((page: Page) => {
+  const setPageHeader = useCallback((page: PageHeader) => {
     dispatch(savePageHeader(page))
   }, [])
 
@@ -122,7 +97,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         return state.cache[id]
       }
       if (!(state.cache[id] instanceof ResourcePending)) {
-        dispatch(fetchPage(id))
+        dispatch(actions.fetchPage(id))
       }
       return null
     },
@@ -148,26 +123,26 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   }, [])
 
   const removePage = (id: string) => {
-    dispatch(deletePage(id))
+    dispatch(actions.deletePage(id))
   }
 
   const archivePage = useCallback(
     (id: string) => {
-      dispatch(onArchivePage(id, state.cache[id]))
+      dispatch(actions.onArchivePage(id, state.cache[id]))
     },
     [state.cache]
   )
 
   const setDefaultPage = useCallback((id: string) => {
-    dispatch(onSetDefaultPage(id))
+    dispatch(actions.onSetDefaultPage(id))
   }, [])
 
-  const setPatch = useCallback((patch: PatchType) => {
-    dispatch(savePatch(patch))
+  const setPatch = useCallback((patches: PatchBatch) => {
+    dispatch(actions.savePatchBatch(patches))
   }, [])
 
   const removePageFromCache = (id: string) => {
-    dispatch(removePageIdFromCache(id))
+    dispatch(actions.removePageFromCache(id))
   }
 
   return (
@@ -195,7 +170,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 }
 
 export const usePageContext = (selector = x => x) =>
-  PageContext && useContextSelector(PageContext, selector)
+  useContextSelector(PageContext, selector)
 
 PageProvider.defaultProps = {
   initialState,

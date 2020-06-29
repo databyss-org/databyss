@@ -1,115 +1,8 @@
 import { isAtomicInlineType } from '@databyss-org/editor/lib/util'
 import Block from '../../../models/Block'
-import Source from '../../../models/Source'
-import Entry from '../../../models/Entry'
-import Topic from '../../../models/Topic'
-import Location from '../../../models/Location'
 import Page from '../../../models/Page'
 import Selection from '../../../models/Selection'
-// import BadRefId from '../../../lib/BadRefId'
-
-export const modelDict = type =>
-  ({
-    SOURCE: Source,
-    ENTRY: Entry,
-    TOPIC: Topic,
-    LOCATION: Location,
-  }[type])
-
-const getIdType = type =>
-  ({
-    ENTRY: 'entryId',
-    SOURCE: 'sourceId',
-    TOPIC: 'topicId',
-  }[type])
-
-const createEntryForMissingRef = async (blockData, req) => {
-  console.error('Missing Ref Id')
-
-  // if bad refID, create an empty entry block with current refID and update Block to have type 'ENTRY'
-
-  // new entry fields
-  const entityFields = {
-    text: { textValue: '', ranges: [] },
-    _id: blockData.refId,
-    block: blockData._id,
-    page: req.page._id,
-    account: req.account._id,
-  }
-
-  let _entry = await Entry.findOne({ _id: blockData.refId })
-  if (!_entry) {
-    _entry = new Entry({ _id: blockData.refId })
-  }
-  _entry.overwrite(entityFields)
-  await _entry.save()
-
-  // update block
-  let _block = await Block.findOne({ _id: blockData._id })
-
-  const blockFields = {
-    type: 'ENTRY',
-    user: req.user.id,
-    account: req.account._id,
-    entryId: blockData.refId,
-  }
-
-  if (!_block) {
-    _block = new Block({ _id: blockData._id })
-  }
-  _block.overwrite(blockFields)
-  await _block.save()
-
-  // return new values
-  return {
-    textValue: '',
-    type: 'ENTRY',
-    _id: blockData.refId,
-    ranges: [],
-  }
-}
-
-export const getBlockItemsFromId = blocks => {
-  const promises = blocks.map(async b => {
-    const _id = b._id.toString()
-    const block = await Block.findOne({
-      _id,
-    }).catch(err => console.log(err))
-    if (block) {
-      const { type, entryId, sourceId, authorId, topicId, locationId } = block
-      const response = { type, _id }
-      response.refId = {
-        ENTRY: entryId,
-        SOURCE: sourceId,
-        TOPIC: topicId,
-        LOCATION: locationId,
-        AUTHOR: authorId,
-      }[type]
-      return response
-    }
-    return {}
-  })
-  return Promise.all(promises)
-}
-
-export const populateRefEntities = (list, type, req) =>
-  Promise.all(
-    list.map(async b => {
-      const _id = b.refId
-
-      let entity = await modelDict(type).findOne({ _id })
-      if (!entity) {
-        entity = await createEntryForMissingRef(b, req)
-        return entity
-      }
-      return {
-        textValue: entity.text.textValue,
-        type,
-        _id,
-        ranges: entity.text.ranges,
-      }
-    })
-  )
+import { ApiError } from '../../../lib/Errors'
 
 export const dictionaryFromList = list => {
   const result = {}
@@ -131,40 +24,6 @@ export const composeBlockList = list => {
   return result
 }
 
-const addOrReplaceBlockCache = async (p, req) => {
-  const _blockId = p.path[1]
-  const _type = typeof p.value === 'string' ? p.value : p.value.type
-
-  let _block = await Block.findOne({ _id: _blockId })
-
-  // payload when replacing block may not cointain entity id
-  const _entityId = p.value.entityId
-    ? p.value.entityId
-    : _block[getIdType(_block.type)]
-
-  // set property name
-  const idType = {
-    ENTRY: { entryId: _entityId },
-    SOURCE: { sourceId: _entityId },
-    TOPIC: { topicId: _entityId },
-  }[_type]
-
-  const blockFields = {
-    type: _type,
-    user: req.user.id,
-    account: req.account._id,
-    ...idType,
-  }
-
-  if (!_block) {
-    _block = new Block({ _id: _blockId })
-  }
-
-  _block.overwrite(blockFields)
-
-  await _block.save()
-}
-
 const addOrReplaceBlock = async (p, req) => {
   const _index = p.path[1]
   // insert block id into page
@@ -178,22 +37,6 @@ const addOrReplaceBlock = async (p, req) => {
 const replacePatch = async (p, req) => {
   const _prop = p.path[0]
   switch (_prop) {
-    case 'entityCache': {
-      await modelDict(p.value.type).findOneAndUpdate(
-        { _id: p.path[1] },
-        {
-          text: {
-            textValue: p.value.textValue,
-            ranges: p.value.ranges,
-          },
-        }
-      )
-      break
-    }
-    case 'blockCache': {
-      await addOrReplaceBlockCache(p, req)
-      break
-    }
     case 'blocks': {
       await addOrReplaceBlock(p, req)
       break
@@ -203,11 +46,9 @@ const replacePatch = async (p, req) => {
       if (_id) {
         await Selection.update({ _id }, { $set: p.value })
       }
-
       break
     }
     default:
-      break
   }
 }
 
@@ -219,34 +60,7 @@ const addPatch = async (p, req) => {
       await addOrReplaceBlock(p, req)
       break
     }
-    case 'blockCache': {
-      await addOrReplaceBlockCache(p, req)
-      break
-    }
-    case 'entityCache': {
-      const _blockId = p.value._id
-
-      const idType = getIdType(p.value.type)
-
-      const _block = await Block.findOne({ [idType]: _blockId })
-
-      const entityFields = {
-        text: p.value.text ? p.value.text : p.value,
-        _id: p.path[1],
-        page: req.page._id,
-        ...(_block && {
-          block: _block._id,
-        }),
-        account: req.account._id,
-      }
-      const Model = modelDict(p.value.type)
-      const _entity = new Model(entityFields)
-
-      await _entity.save()
-      break
-    }
     default:
-      break
   }
 }
 
@@ -254,18 +68,6 @@ const removePatches = async (p, req) => {
   const _prop = p.path[0]
 
   switch (_prop) {
-    case 'entityCache': {
-      // removes entries from DB
-      if (!isAtomicInlineType(p.value.type)) {
-        await Entry.findOneAndRemove({ _id: p.value._id })
-      }
-      // TODO: remove atomic types from DB if not linked to other pages
-      break
-    }
-    case 'blockCache': {
-      // TODO: REMOVE BLOCK FROM DB
-      break
-    }
     case 'blocks': {
       const _index = p.path[1]
       const _page = await Page.findOne({ _id: req.page._id })
@@ -275,7 +77,6 @@ const removePatches = async (p, req) => {
       break
     }
     default:
-      break
   }
 }
 
@@ -294,6 +95,5 @@ export const runPatches = async (p, req) => {
       break
     }
     default:
-      break
   }
 }

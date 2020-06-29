@@ -6,10 +6,7 @@ import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
-import {
-  withWhitelist,
-  addMetaData,
-} from '@databyss-org/services/pages/_helpers'
+import { cleanupPatch, addMetaToPatch } from '../state/util'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
   useSessionContext,
@@ -52,7 +49,7 @@ const PageWithAutosave = ({ page }) => {
 
   const throttledAutosave = useCallback(
     throttle(({ nextState, patch }) => {
-      const _patch = withWhitelist(patch)
+      const _patch = cleanupPatch(patch)
       if (_patch.length) {
         const payload = {
           id: nextState.page._id,
@@ -70,7 +67,7 @@ const PageWithAutosave = ({ page }) => {
   }
 
   const onChange = value => {
-    const patch = addMetaData(value)
+    const patch = addMetaToPatch(value)
     // push changes to a queue
     operationsQueue.current = operationsQueue.current.concat(patch)
     throttledAutosave({ ...value, patch })

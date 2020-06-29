@@ -1,4 +1,5 @@
 import { BlockType } from '@databyss-org/services/interfaces'
+import { Patch } from 'immer'
 import { Selection, Block, Range, EditorState } from '../interfaces'
 
 export const symbolToAtomicType = (symbol: string): BlockType =>
@@ -29,3 +30,34 @@ export const removeLocationMark = (ranges: Array<Range>) =>
 
 // returns a shallow clone of the block so immer.patch isn't confused
 export const blockValue = (block: Block): Block => ({ ...block })
+
+// remove view-only props from patch
+export const cleanupPatch = (patches: Patch[]) =>
+  patches.filter(
+    p =>
+      // blacklist if operation array includes `__`
+      !(
+        p.path
+          .map(k => typeof k === 'string' && k.includes('__'))
+          .filter(Boolean).length ||
+        // blacklist if it includes sleciton or operation
+        //   p.path.includes('selection') ||
+        p.path.includes('operations') ||
+        p.path.includes('preventDefault')
+      )
+  )
+
+export const addMetaToPatch = ({
+  nextState,
+  patches,
+}: {
+  nextState: EditorState
+  patches: Patch[]
+}) =>
+  cleanupPatch(patches).map(_p => {
+    // add selection
+    if (_p.path[0] === 'selection') {
+      _p.value = { ..._p.value, _id: nextState.selection._id }
+    }
+    return _p
+  })

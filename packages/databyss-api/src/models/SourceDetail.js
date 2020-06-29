@@ -1,23 +1,23 @@
 import mongoose from 'mongoose'
-import RichText from './RichText'
+import Text from './Text'
 import Author from './Author'
 
 const Schema = mongoose.Schema
 
 const SourceSchema = new mongoose.Schema({
-  account: {
+  block: {
     type: Schema.Types.ObjectId,
-    ref: 'account',
+    ref: 'block',
   },
   resource: {
     type: String,
   },
   text: {
-    type: RichText.schema,
+    type: Text.schema,
     required: true,
   },
   citations: {
-    type: [RichText.schema],
+    type: [Text.schema],
     default: [],
   },
   authors: {
@@ -25,12 +25,6 @@ const SourceSchema = new mongoose.Schema({
     default: [],
   },
   date: {
-    type: String,
-  },
-  city: {
-    type: String,
-  },
-  publishingCompany: {
     type: String,
   },
   sourceType: {
@@ -44,14 +38,9 @@ const SourceSchema = new mongoose.Schema({
       type: String,
     },
   ],
-  entries: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'entry',
-    },
-  ],
 })
 
-const Source = mongoose.models.Source || mongoose.model('source', SourceSchema)
+const SourceDetail =
+  mongoose.models.Source || mongoose.model('sourceDetail', SourceSchema)
 
-export default Source
+export default SourceDetail
