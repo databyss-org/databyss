@@ -8,6 +8,8 @@ import {
   ScrollView,
 } from '@databyss-org/ui/primitives'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import IndexPageEntries from '../PageContent/IndexPageEntries'
+import IndexPageContent from '../PageContent/IndexPageContent'
 
 export const TopicsRouter = () => (
   <Router>
@@ -24,35 +26,12 @@ const TopicsContent = () => {
       text: value.text.textValue,
     }))
 
-  const ComposeResults = () => {
-    const sortedSources = topicsData().sort(
-      (a, b) => (a.text > b.text ? 1 : -1)
-    )
-
-    return sortedSources.map((entry, index) => (
-      <View key={index} mb="em">
-        <BaseControl
-          py="small"
-          px="small"
-          mx="em"
-          hoverColor="background.2"
-          activeColor="background.3"
-        >
-          <Text variant="bodyNormalSemibold">{entry.text}</Text>
-        </BaseControl>
-      </View>
-    ))
-  }
+  const sortedSources = topicsData().sort((a, b) => (a.text > b.text ? 1 : -1))
 
   return (
-    <ScrollView p="medium" flex="1" maxHeight="98vh">
-      <View p="medium">
-        <Text variant="bodyLarge" color="text.3">
-          All Topics
-        </Text>
-      </View>
-      <AllTopicsLoader>{ComposeResults}</AllTopicsLoader>
-    </ScrollView>
+    <IndexPageContent title="All Topics">
+      <IndexPageEntries entries={sortedSources} />
+    </IndexPageContent>
   )
 }
 
