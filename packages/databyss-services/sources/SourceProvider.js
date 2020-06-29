@@ -105,10 +105,8 @@ const SourceProvider = ({ children, initialState, reducer }) => {
   )
 }
 
-// export const useSourceContext = () => useContext(SourceContext)
-
 export const useSourceContext = (selector = x => x) =>
-  SourceContext && useContextSelector(SourceContext, selector)
+  useContextSelector(SourceContext, selector)
 
 SourceProvider.defaultProps = {
   initialState,

@@ -152,7 +152,7 @@ export const Citations = () => {
   const [menuActive, setMenuActive] = useState(false)
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
 
-  const soureQueryRef = useRef(null)
+  const [sourceQuery, setSourceQuery] = useState(null)
 
   const editor = useEditor()
   const editorContext = useEditorContext()
@@ -165,8 +165,7 @@ export const Citations = () => {
         const _node = editor.children[_index]
         const _text = Node.string(_node)
         if (_text.charAt(0) === '@' && !isAtomicInlineType(_node.type)) {
-          //     setSourceQuery(_text.substring(1))
-          soureQueryRef.current = _text.substring(1)
+          setSourceQuery(_text.substring(1))
           if (!menuActive) setMenuActive(true)
         } else if (menuActive) {
           setMenuActive(false)
@@ -202,7 +201,7 @@ export const Citations = () => {
         }
       }
     },
-    [soureQueryRef.current, menuActive, sourcesLoaded]
+    [sourceQuery, menuActive, sourcesLoaded]
   )
 
   const onClick = (e, vol) => {
@@ -273,7 +272,7 @@ export const Citations = () => {
           _css({ top: position.top, left: position.left }, menuActive)
         )}
       >
-        {soureQueryRef.current ? (
+        {sourceQuery ? (
           <View p={sourcesLoaded && 'small'}>
             <View
               overflowX="hidden"
@@ -281,7 +280,7 @@ export const Citations = () => {
               maxHeight={pxUnits(MENU_HEIGHT)}
             >
               {setSource && (
-                <SearchSourceLoader query={soureQueryRef.current}>
+                <SearchSourceLoader query={sourceQuery}>
                   {results => {
                     setSourcesLoaded(true)
                     return (
