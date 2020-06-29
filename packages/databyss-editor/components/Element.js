@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useEffect } from 'react'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
@@ -11,6 +11,7 @@ import { isAtomicInlineType } from '../lib/util'
 import { slateSelectionToStateSelection } from '../lib/slateUtils'
 import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
+import CitationsMenu from './CitationsMenu'
 
 export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
@@ -30,8 +31,16 @@ const Element = ({ attributes, children, element }) => {
     ? editorContext.state.blocks[ReactEditor.findPath(editor, element)[0]]
     : {}
 
+  useEffect(
+    () => () => {
+      console.log('unmounting')
+    },
+    []
+  )
+
   return useMemo(
     () => {
+      // console.log(block)
       const blockMenuWidth = menuLauncherSize + 6
       const selHasRange = selectionHasRange(
         slateSelectionToStateSelection(editor)
@@ -64,6 +73,8 @@ const Element = ({ attributes, children, element }) => {
               <BlockMenu element={element} />
             </View>
           )}
+
+          {block.__showCitationMenu && <CitationsMenu element={element} />}
 
           {isAtomicInlineType(element.type) ? (
             <View

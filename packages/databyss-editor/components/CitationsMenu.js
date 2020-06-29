@@ -47,18 +47,14 @@ export const getPosition = editor => {
       const _windowHeight = window.innerHeight
 
       // check if menu should be above text
-      const _menuTop = _windowHeight < _rect.bottom + MENU_HEIGHT
+      const isMenuTop = _windowHeight < _rect.bottom + MENU_HEIGHT
 
-      // set dropdown position
-      const left = _rect.left + 12
-      const top = _menuTop ? _rect.top - 36 : _rect.bottom + 12
-
-      const _position = { top, left, displayAbove: _menuTop }
-      return _position
+      if (isMenuTop) {
+        return { bottom: 40, left: 0 }
+      }
     }
-    return null
   }
-  return null
+  return { top: 40, left: 0 }
 }
 
 /* composes title from google api data */
@@ -101,9 +97,9 @@ const GoogleFooter = () => (
   />
 )
 
-const ComposeResults = ({ results, onClick, unmount }) => {
-  useEffect(() => () => unmount(), [])
-  return !_.isEmpty(results) ? (
+const ComposeResults = ({ results, onClick, unmount }) =>
+  // useEffect(() => () => unmount(), [])
+  !_.isEmpty(results) ? (
     Object.keys(results).map((author, i) => (
       <View key={i}>
         <Text variant="uiTextSmall" color="text.2">
@@ -137,12 +133,15 @@ const ComposeResults = ({ results, onClick, unmount }) => {
       <Text variant="uiTextSmall">No results found</Text>
     </View>
   )
-}
 
 export const Citations = () => {
   const sourceContext = useSourceContext()
 
-  const [position, setPosition] = useState({ top: 0, left: 0 })
+  const [position, setPosition] = useState({
+    top: 40,
+    left: 0,
+    bottom: undefined,
+  })
   const [menuActive, setMenuActive] = useState(false)
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
   const [sourceQuery, setSourceQuery] = useState(null)
@@ -153,14 +152,9 @@ export const Citations = () => {
   // set position of dropdown
   const setMenuPosition = () => {
     const _position = getPosition(editor)
-    // if cursor is near window bottom set menu above cursor
 
     if (_position) {
-      if (_position.displayAbove && sourcesLoaded) {
-        _position.top -= MENU_HEIGHT + 22
-      }
       setPosition(_position)
-      setMenuActive(true)
     }
   }
 
@@ -255,7 +249,11 @@ export const Citations = () => {
   return (
     <ClickAwayListener onClickAway={onClickAway}>
       <DropdownContainer
-        position={{ top: position.top, left: position.left }}
+        position={{
+          top: position.top,
+          left: position.left,
+          bottom: position.bottom,
+        }}
         open={menuActive}
         mt={pxUnits(-6)}
         widthVariant="dropdownMenuLarge"
@@ -271,16 +269,14 @@ export const Citations = () => {
             >
               {sourceContext && (
                 <SearchSourceLoader query={sourceQuery}>
-                  {results => {
-                    setSourcesLoaded(true)
-                    return (
-                      <ComposeResults
-                        results={results}
-                        onClick={onClick}
-                        unmount={() => setSourcesLoaded(false)}
-                      />
-                    )
-                  }}
+                  {results => (
+                    // setSourcesLoaded(true)
+                    <ComposeResults
+                      results={results}
+                      onClick={onClick}
+                      // unmount={() => setSourcesLoaded(false)}
+                    />
+                  )}
                 </SearchSourceLoader>
               )}
             </View>

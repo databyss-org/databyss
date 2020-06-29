@@ -3,7 +3,6 @@ import { Slate, Editable } from 'slate-react'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
-import CitationsMenu from './CitationsMenu'
 
 const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
   const readOnly = !others.onChange || readonly
@@ -20,7 +19,6 @@ const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
     <Slate editor={editor} {...slateProps}>
       {children}
       <FormatMenu />
-      <CitationsMenu />
       <Editable
         spellCheck={process.env.NODE_ENV !== 'test'}
         renderElement={renderElement}
