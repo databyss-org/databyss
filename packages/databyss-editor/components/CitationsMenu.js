@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import styledCss from '@styled-system/css'
 import _ from 'lodash'
 import { useEditor, ReactEditor } from 'slate-react'
