@@ -1,6 +1,7 @@
-import { BlockType } from '@databyss-org/services/interfaces'
+import { BlockType, Page } from '@databyss-org/services/interfaces'
 import { Patch } from 'immer'
 import { Selection, Block, Range, EditorState } from '../interfaces'
+import { OnChangeArgs } from './EditorProvider'
 
 export const symbolToAtomicType = (symbol: string): BlockType =>
   ({ '@': BlockType.Source, '#': BlockType.Topic }[symbol])
@@ -32,8 +33,8 @@ export const removeLocationMark = (ranges: Array<Range>) =>
 export const blockValue = (block: Block): Block => ({ ...block })
 
 // remove view-only props from patch
-export const cleanupPatch = (patches: Patch[]) =>
-  patches.filter(
+export const cleanupPatches = (patches: Patch[]) =>
+  patches?.filter(
     p =>
       // blacklist if operation array includes `__`
       !(
@@ -47,17 +48,28 @@ export const cleanupPatch = (patches: Patch[]) =>
       )
   )
 
-export const addMetaToPatch = ({
+export const addMetaToPatches = ({
   nextState,
   patches,
-}: {
-  nextState: EditorState
-  patches: Patch[]
-}) =>
-  cleanupPatch(patches).map(_p => {
+}: OnChangeArgs) =>
+  cleanupPatches(patches)?.map(_p => {
     // add selection
     if (_p.path[0] === 'selection') {
       _p.value = { ..._p.value, _id: nextState.selection._id }
     }
     return _p
   })
+
+export const editorStateToPage = (state: EditorState): Page => {
+  const { selection, blocks, pageHeader } = state
+  const { name, _id, archive } = pageHeader!
+  return { selection, blocks, name, _id, archive } as Page
+}
+
+export const pageToEditorState = (page: Page): EditorState => {
+  const { _id, name, archive, ...state } = page
+  return {
+    pageHeader: { _id, name, archive },
+    ...state
+  } as EditorState
+}

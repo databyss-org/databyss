@@ -1,37 +1,45 @@
-import { isAtomicInlineType } from '@databyss-org/editor/lib/util'
 import Block from '../../../models/Block'
 import Page from '../../../models/Page'
 import Selection from '../../../models/Selection'
-import { ApiError } from '../../../lib/Errors'
 
-export const dictionaryFromList = list => {
-  const result = {}
-  list.forEach(b => {
-    if (b) {
-      result[b._id] = b
-    }
-  })
-  return result
-}
-
-export const composeBlockList = list => {
-  const result = {}
-  list.forEach(b => {
-    if (b) {
-      result[b._id] = { type: b.type, entityId: b.refId }
-    }
-  })
-  return result
+const applyPatch = (node, path, value) => {
+  const key = path.shift()
+  // if path has length one, just set the value and return
+  if (path.length === 0) {
+    node[key] = value
+    return
+  }
+  // recurse
+  applyPatch(node[key], path, value)
 }
 
 const addOrReplaceBlock = async (p, req) => {
   const _index = p.path[1]
-  // insert block id into page
-  const _page = await Page.findOne({ _id: req.page._id })
-  const blocks = _page.blocks
+  const { blocks } = req.page
+
+  // if the blockId isn't in the patch, get it from the page
+  let _blockId = p.value._id
+  if (!_blockId) {
+    _blockId = blocks[_index]._id
+  }
+
+  // add or replace entry in blocks array
   const _removeBlockCount = p.op === 'add' ? 0 : 1
-  blocks.splice(_index, _removeBlockCount, { _id: p.value._id })
-  await _page.save()
+  blocks.splice(_index, _removeBlockCount, { _id: _blockId })
+
+  // add or update block
+  const _blockFields = {
+    _id: _blockId,
+    page: req.page._id,
+    account: req.account._id,
+  }
+  let _block = await Block.findOne({ _id: _blockId })
+  if (!_block) {
+    _block = new Block()
+  }
+  Object.assign(_block, _blockFields)
+  applyPatch(_block, p.path.slice(2), p.value)
+  await _block.save()
 }
 
 const replacePatch = async (p, req) => {
@@ -74,6 +82,7 @@ const removePatches = async (p, req) => {
       const blocks = _page.blocks
       blocks.splice(_index, 1)
       await _page.save()
+      // TODO: REMOVE BLOCK FROM DB
       break
     }
     default:

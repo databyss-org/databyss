@@ -22,7 +22,7 @@ interface ContextType {
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
   clearBlockDict: () => void
-  setPatch: (patches: PatchBatch) => void
+  setPatches: (patches: PatchBatch) => void
   registerBlockRefByIndex: (
     index: number,
     refOne: React.Ref<HTMLInputElement>
@@ -67,13 +67,13 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     (page: Page): Promise<void> =>
       new Promise(res => {
         onPageCached(page._id, res)
-        dispatch(savePage(page))
+        dispatch(actions.savePage(page))
       }),
     []
   )
 
   const setPageHeader = useCallback((page: PageHeader) => {
-    dispatch(savePageHeader(page))
+    dispatch(actions.savePageHeader(page))
   }, [])
 
   const getPages = useCallback(
@@ -83,7 +83,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
       }
 
       if (!(state.headerCache instanceof ResourcePending)) {
-        dispatch(fetchPageHeaders())
+        dispatch(actions.fetchPageHeaders())
       }
 
       return null
@@ -137,7 +137,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(actions.onSetDefaultPage(id))
   }, [])
 
-  const setPatch = useCallback((patches: PatchBatch) => {
+  const setPatches = useCallback((patches: PatchBatch) => {
     dispatch(actions.savePatchBatch(patches))
   }, [])
 
@@ -152,7 +152,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         getPage,
         setPage,
         setPageHeader,
-        setPatch,
+        setPatches,
         registerBlockRefByIndex,
         getBlockRefByIndex,
         clearBlockDict,

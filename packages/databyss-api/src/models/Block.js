@@ -9,7 +9,7 @@ const BlockSchema = new Schema({
   },
   text: {
     type: Text.schema,
-    required: true,
+    default: () => new Text(),
   },
   account: {
     type: Schema.Types.ObjectId,

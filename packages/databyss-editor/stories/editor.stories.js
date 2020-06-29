@@ -73,9 +73,9 @@ const EditorWithModals = ({ initialState }) => (
       <NavigationProvider>
         <EditorWithProvider
           initialState={initialState}
-          // onChange={({ patch, inversePatch }) => {
-          //   console.log(patch, inversePatch)
-          // }}
+          onChange={({ patch, inversePatch }) => {
+            console.log(patch, inversePatch)
+          }}
         />
       </NavigationProvider>
     </SourceProvider>

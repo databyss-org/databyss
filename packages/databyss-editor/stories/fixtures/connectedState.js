@@ -20,9 +20,9 @@ export default pageId => ({
       offset: 0,
     },
   },
-  newEntities: [], // renamed from `newAtomics`
-  entityCache: {
-    [entryId]: {
+  newEntities: [],
+  blocks: [
+    {
       type: 'ENTRY',
       _id: entryId,
       text: {
@@ -30,19 +30,8 @@ export default pageId => ({
         ranges: [],
       },
     },
-  },
-  blockCache: {
-    [blockOneId]: {
-      type: 'ENTRY',
-      entityId: entryId,
-    },
-  },
-  blocks: [
-    {
-      _id: blockOneId,
-    },
   ],
-  page: {
+  pageHeader: {
     _id: pageId,
     name: 'test document',
   },

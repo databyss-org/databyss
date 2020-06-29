@@ -1,7 +1,7 @@
 import express from 'express'
 import { bugsnagClient } from '../../middleware/bugsnag'
 
-import ApiError from '../../lib/ApiError'
+import { ApiError } from '../../lib/Errors'
 
 const delay = timer => new Promise(resolve => setTimeout(resolve, timer))
 
@@ -27,8 +27,6 @@ router.get('/api-error-await', async (req, res, next) => {
   try {
     await delay(100)
     throw new ApiError('Test throw ApiError after await', 505)
-    // eslint-disable-next-line no-unreachable
-    console.log('unreachable code')
   } catch (err) {
     next(err)
   }

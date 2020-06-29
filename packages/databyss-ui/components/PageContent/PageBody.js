@@ -10,7 +10,7 @@ import { cleanupPatch, addMetaToPatch } from '@databyss-org/editor/state/util'
 const PageBody = ({ page, focusIndex }) => {
   const { location } = useNavigationContext()
   const clearBlockDict = usePageContext(c => c.clearBlockDict)
-  const setPatch = usePageContext(c => c.setPatch)
+  const setPatches = usePageContext(c => c.setPatches)
 
   useEffect(() => () => clearBlockDict(), [])
 
@@ -26,7 +26,7 @@ const PageBody = ({ page, focusIndex }) => {
           id: nextState._id,
           patches: patchQueue.current,
         }
-        setPatch(payload)
+        setPatches(payload)
         patchQueue.current = []
       }
     }, process.env.SAVE_PAGE_THROTTLE),

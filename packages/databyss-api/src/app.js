@@ -2,17 +2,14 @@ import express from 'express'
 import cors from 'cors'
 import http from 'http'
 import bugsnag from './middleware/bugsnag'
-// import ApiError from './lib/ApiError'
+import { ApiError } from './lib/Errors'
 import { connectDB } from './lib/db'
 
 // routes
 import usersRoute from './routes/api/users'
 import authRoute from './routes/api/auth'
-import profileRoute from './routes/api/profile'
 import pagesRoute from './routes/api/pages'
 import accountsRoute from './routes/api/accounts'
-import sourcesRoute from './routes/api/sources'
-import topicsRoute from './routes/api/topics'
 import pingRoute from './routes/api/ping'
 import errorRoute from './routes/api/error'
 import entriesRoute from './routes/api/entries'
@@ -32,46 +29,46 @@ const run = async () => {
 
   // This must be the first piece of middleware in the stack.
   // It can only capture errors in downstream middleware
-  if (process.env.NODE_ENV !== 'test') {
-    bugsnagMiddleware = await bugsnag()
-    app.use(bugsnagMiddleware.requestHandler)
-  }
+  // if (process.env.NODE_ENV !== 'test') {
+  //   bugsnagMiddleware = await bugsnag()
+  //   app.use(bugsnagMiddleware.requestHandler)
+  // }
 
   // Init Middleware
   app.use(cors())
   app.use(express.json({ extended: false }))
 
-  app.get('/', (req, res) => {
+  app.get('/', (_req, res) => {
     res.redirect('https://app.databyss.org')
   })
 
   // Define Routes
   app.use('/api/users', usersRoute)
   app.use('/api/auth', authRoute)
-  app.use('/api/profile', profileRoute)
   app.use('/api/pages', pagesRoute)
   app.use('/api/accounts', accountsRoute)
-  app.use('/api/sources', sourcesRoute)
-  app.use('/api/topics', topicsRoute)
   app.use('/api/ping', pingRoute)
   app.use('/api/error', errorRoute)
   app.use('/api/entries', entriesRoute)
 
-  // global error middleware
-  // eslint-disable-next-line no-unused-vars
-  // app.use((err, req, res) => {
-  //   if (err instanceof ApiError) {
-  //     res.status(err.status).send(err.message)
-  //   } else {
-  //     console.error(err)
-  //     throw err
-  //   }
-  // })
-
   // This handles any errors that Express catches and must be the last middleware
-  if (process.env.NODE_ENV !== 'test') {
-    app.use(bugsnagMiddleware.errorHandler)
-  }
+  // if (
+  //   process.env.NODE_ENV !== 'test' &&
+  //   process.env.NODE_ENV !== 'development'
+  // ) {
+  //   app.use(bugsnagMiddleware.errorHandler)
+  // } else {
+  // global error middleware
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  app.use((err, _req, res, _next) => {
+    if (err instanceof ApiError) {
+      return res.status(err.status).json({ error: err })
+    }
+    console.error('ERR', err)
+    return res.status(500).json({ error: { message: err.message } })
+  })
+  // }
 
   return app
 }

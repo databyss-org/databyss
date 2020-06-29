@@ -6,7 +6,7 @@ import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
-import { cleanupPatch } from '../state/util'
+import { cleanupPatches } from '../state/util'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
   useSessionContext,
@@ -42,20 +42,20 @@ const Box = ({ children, ...others }) => (
 )
 
 const PageWithAutosave = ({ page }) => {
-  const { setPatch } = usePageContext()
+  const { setPatches } = usePageContext()
   const [pageState, setPageState] = useState(null)
 
   const operationsQueue = useRef([])
 
   const throttledAutosave = useCallback(
     throttle(({ nextState, patch }) => {
-      const _patch = cleanupPatch(patch)
+      const _patch = cleanupPatches(patch)
       if (_patch.length) {
         const payload = {
           id: nextState.page._id,
           patch: operationsQueue.current,
         }
-        setPatch(payload)
+        setPatches(payload)
         operationsQueue.current = []
       }
     }, 500),

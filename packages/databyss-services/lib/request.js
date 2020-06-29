@@ -27,7 +27,7 @@ function parseResponse(responseIsJson) {
     return response => response.json()
   }
   return response =>
-    response.headers.get('Content-Type').match('json')
+    response.headers.get('Content-Type')?.match('json')
       ? response.json()
       : response.text()
 }

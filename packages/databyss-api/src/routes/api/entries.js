@@ -1,5 +1,5 @@
 import express from 'express'
-import Entry from '../../models/Entry'
+import Block from '../../models/Block'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 
@@ -16,7 +16,7 @@ router.get(
       const queryArray = req.params.string.split(' ')
 
       // use the $and operator to find regEx for multiple search words
-      const results = await Entry.find({
+      const results = await Block.find({
         $and: queryArray.map(q => ({
           'text.textValue': {
             $regex: new RegExp(`\\b${q}\\b.*`, 'i'),

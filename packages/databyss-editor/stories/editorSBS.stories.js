@@ -6,7 +6,11 @@ import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
-import { cleanupPatch, addMetaToPatch } from '../state/util'
+import {
+  cleanupPatches,
+  addMetaToPatches,
+  editorStateToPage,
+} from '../state/util'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
   useSessionContext,
@@ -43,21 +47,21 @@ const Box = ({ children, ...others }) => (
 )
 
 const PageWithAutosave = ({ page, refreshPage }) => {
-  const { setPatch } = usePageContext()
+  const { setPatches } = usePageContext()
   const [, setPageState] = useState(null)
 
   const operationsQueue = useRef([])
 
   const throttledAutosave = useCallback(
     throttle(({ nextState, patch }) => {
-      const _patch = cleanupPatch(patch)
-      if (_patch.length) {
+      const _patch = cleanupPatches(patch)
+      if (_patch?.length) {
         const payload = {
           id: nextState.page._id,
           patch: operationsQueue.current,
         }
         refreshPage()
-        setPatch(payload)
+        setPatches(payload)
         operationsQueue.current = []
       }
     }, 3000),
@@ -69,7 +73,7 @@ const PageWithAutosave = ({ page, refreshPage }) => {
   }
 
   const onChange = value => {
-    const patch = addMetaToPatch(value)
+    const patch = addMetaToPatches(value)
     // push changes to a queue
     operationsQueue.current = operationsQueue.current.concat(patch)
     throttledAutosave({ ...value, patch })
@@ -109,6 +113,8 @@ const EditorWithProvider = () => {
     []
   )
 
+  const _defaultPage = editorStateToPage(connectedFixture(account.defaultPage))
+
   return (
     <View>
       <View display="-webkit-box">
@@ -116,7 +122,7 @@ const EditorWithProvider = () => {
           id="clear-state"
           m="small"
           onClick={() => {
-            setPage(connectedFixture(account.defaultPage))
+            setPage(_defaultPage)
           }}
         >
           <Text>clear state</Text>
@@ -125,8 +131,8 @@ const EditorWithProvider = () => {
       <View display="-webkit-box">
         <PageLoader pageId={account.defaultPage}>
           {page => {
-            if (page.page.name !== 'test document') {
-              setPage(connectedFixture(account.defaultPage))
+            if (page.name !== 'test document') {
+              setPage(_defaultPage)
               return null
             }
             return <PageWithAutosave page={page} refreshPage={_refreshPage} />

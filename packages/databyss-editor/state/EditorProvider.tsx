@@ -43,11 +43,11 @@ type ContextType = {
   clear: (index: number) => void
 }
 
-type OnChangeArgs = {
+export type OnChangeArgs = {
   nextState: EditorState
   previousState: EditorState
-  patch: Patch
-  inversePatch: Patch
+  patches: Patch[]
+  inversePatches: Patch[]
 }
 
 type PropsType = {

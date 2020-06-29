@@ -2,6 +2,7 @@
 
 import express from 'express'
 import Page from '../../models/Page'
+import Block from '../../models/Block'
 import Selection from '../../models/Selection'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
@@ -21,7 +22,7 @@ const router = express.Router()
 router.get(
   '/:id',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
-  wrap(async (req, res) => {
+  wrap(async (req, res, next) => {
     const page = req.page
     res.json(page).status(200)
   })
@@ -55,7 +56,7 @@ router.delete(
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
   wrap(async (req, res) => {
     req.page.delete()
-    res.status(200)
+    res.status(200).end()
   })
 )
 
@@ -66,17 +67,15 @@ router.patch(
   '/:id',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
   wrap(async (req, res, next) => {
-    const _patches = req.body.data.patch
-    if (!_patches) {
-      return next(new BadRequestError('missing patch data'))
+    const { patches } = req.body.data
+    if (!patches) {
+      return next(new BadRequestError('Missing patch data'))
     }
-    // temporary dictionary for entity and block ids
-    for (const patch of _patches) {
+    for (const patch of patches) {
       await runPatches(patch, req)
     }
-    return res.status(200)
-
-    // TODO: response is sent before actions are executed
+    await req.page.save()
+    res.status(200).end()
   })
 )
 
@@ -86,8 +85,8 @@ router.patch(
 router.post(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageCreatorMiddleware],
-  wrap(async (req, res) => {
-    const { selection, ...pageFields } = req.body.data
+  wrap(async (req, res, next) => {
+    const { selection, blocks, ...pageFields } = req.body.data
 
     // SAVE SELECTION
     if (selection) {
@@ -103,6 +102,18 @@ router.post(
       }
     }
 
+    // SAVE BLOCKS
+    pageFields.blocks = []
+    for (const _blockFields of blocks) {
+      let _block = await Block.findOne({ _id: _blockFields._id })
+      if (!_block) {
+        _block = new Block()
+      }
+      Object.assign(_block, { ..._blockFields, account: req.account._id })
+      await _block.save()
+      pageFields.blocks.push({ _id: _blockFields._id })
+    }
+
     Object.assign(req.page, { ...pageFields, account: req.account._id })
     res.json(await req.page.save()).status(200)
   })
@@ -114,11 +125,11 @@ router.post(
 router.get(
   '/populate/:id',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
-  wrap(async (req, res) => {
+  wrap(async (req, res, next) => {
     const { page } = req
     let selection = null
 
-    // load selection
+    // LOAD SELECTION
     if (page.selection._id) {
       selection = await Selection.findOne({
         _id: page.selection._id,
@@ -132,8 +143,18 @@ router.get(
       })
       await selection.save()
     }
+
+    // POPULATE BLOCKS
+    const blocks = []
+    for (const _block of page.blocks) {
+      blocks.push(await Block.findOne({ _id: _block._id }))
+    }
+
     const response = {
-      ...page,
+      _id: page._id,
+      name: page.name,
+      archive: page.archive,
+      blocks,
       selection,
     }
 

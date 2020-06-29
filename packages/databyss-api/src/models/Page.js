@@ -1,6 +1,5 @@
 import mongoose from 'mongoose'
 import ObjectId from 'bson-objectid'
-import Entry from './Entry'
 import Block from './Block'
 import Selection from './Selection'
 
@@ -38,31 +37,19 @@ const PageSchema = new Schema({
 
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */
-PageSchema.method('addEntry', async function(values = {}) {
-  const _entryId = ObjectId().toHexString()
-  const _blockId = ObjectId().toHexString()
-
-  // add the entry record
-  const entry = await Entry.create({
-    _id: _entryId,
-    account: this.account,
-    block: _blockId,
-    page: this._id,
-    ...values,
-  })
-
+PageSchema.method('addBlock', async function(values = {}) {
   // add the block record
   const block = await Block.create({
-    _id: _blockId,
+    page: this._id,
     type: 'ENTRY',
     account: this.account,
-    entryId: entry._id,
+    ...values,
   })
 
   this.blocks.push({ _id: block._id })
 
   await this.save()
-  return entry
+  return block
 })
 
 PageSchema.static('create', async (values = {}) => {
@@ -80,7 +67,7 @@ PageSchema.static('create', async (values = {}) => {
   const instance = new Page({ ...values, selection })
 
   // add an empty entry
-  instance.addEntry()
+  await instance.addBlock()
 
   await instance.save()
   return instance

@@ -1,4 +1,4 @@
-import { Text } from '@databyss-org/services/interfaces'
+import { Text, PageHeader } from '@databyss-org/services/interfaces'
 import { Block, Selection } from './'
 
 export interface PayloadOperation {
@@ -22,4 +22,5 @@ export interface EditorState {
   selection: Selection
   newEntities: Block[]
   blocks: Block[]
+  pageHeader?: PageHeader
 }

@@ -117,7 +117,8 @@ export function savePatchBatch(batch?: PatchBatch) {
       if (queue.length) {
         dispatch(savePatchBatch())
       }
-    } catch {
+    } catch (err) {
+      console.log(err)
       // if error set the patch back to the queue
       busy = false
       queue.unshift(_batchPatch)

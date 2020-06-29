@@ -3,8 +3,8 @@ import Page from './../models/Page'
 import { ResourceNotFoundError, UnauthorizedError } from '../lib/Errors'
 import wrap from '../lib/guardedAsync'
 
-export const pageCreatorMiddleware = wrap(async (req, res, next) => {
-  const { _id } = req.body.data.page
+export const pageCreatorMiddleware = wrap(async (req, _, next) => {
+  const { _id } = req.body.data
   let page = await Page.findOne({ _id })
 
   if (!page) {
@@ -34,7 +34,6 @@ export const pageMiddleware = wrap(async (req, res, next) => {
   if (!page) {
     return next(new ResourceNotFoundError('There is no page for this ID'))
   }
-
   req.page = page
 
   return next()

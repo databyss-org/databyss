@@ -29,7 +29,7 @@ export const initialState: PageState = {
 
 export default produce((draft: Draft<PageState>, action: FSA) => {
   let _headerCache: CacheDict<PageHeader> = {}
-  if ((draft.headerCache as CacheDict<PageHeader>).name) {
+  if (draft.headerCache && (draft.headerCache as CacheDict<PageHeader>).name) {
     _headerCache = draft.headerCache as CacheDict<PageHeader>
   }
   switch (action.type) {
