@@ -1,7 +1,7 @@
 import React from 'react'
-import SidebarList from '../../../components/Sidebar/SidebarList'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import SidebarList from '../../../components/Sidebar/SidebarList'
 
 const topicsOverview = [
   {
