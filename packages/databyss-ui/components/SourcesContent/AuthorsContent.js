@@ -8,6 +8,8 @@ import {
   ScrollView,
 } from '@databyss-org/ui/primitives'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import IndexPageEntries from '../PageContent/IndexPageEntries'
+import IndexPageContent from '../PageContent/IndexPageContent'
 
 export const AuthorsRouter = () => (
   <Router>
@@ -32,35 +34,14 @@ const AuthorsContent = () => {
       }
     })
 
-  const ComposeResults = () => {
-    const sortedSources = sourcesData().sort(
-      (a, b) => (a.author > b.author ? 1 : -1)
-    )
-
-    return sortedSources.map((entry, index) => (
-      <View key={index} mb="em">
-        <BaseControl
-          py="small"
-          px="small"
-          mx="em"
-          hoverColor="background.2"
-          activeColor="background.3"
-        >
-          <Text variant="bodyNormalSemibold">{entry.author}</Text>
-        </BaseControl>
-      </View>
-    ))
-  }
+  const sortedSources = sourcesData().sort(
+    (a, b) => (a.author > b.author ? 1 : -1)
+  )
 
   return (
-    <ScrollView p="medium" flex="1" maxHeight="98vh">
-      <View p="medium">
-        <Text variant="bodyLarge" color="text.3">
-          All Authors
-        </Text>
-      </View>
-      <EntrySearchLoader>{ComposeResults}</EntrySearchLoader>
-    </ScrollView>
+    <IndexPageContent title="All Authors">
+      <IndexPageEntries entries={sortedSources} page="authors" />
+    </IndexPageContent>
   )
 }
 
