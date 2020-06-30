@@ -51,7 +51,7 @@ const SidebarList = ({ menuItems }) => {
       {menuItems.map((item, index) => {
         const _isActive = item.id
           ? item.id === tokens.id
-          : item.type === tokens.type
+          : item.type === tokens.type && !tokens.id
 
         return (
           <BaseControl
@@ -66,7 +66,7 @@ const SidebarList = ({ menuItems }) => {
             <View>
               <Grid singleRow flexWrap="nowrap" columnGap="small">
                 <Icon sizeVariant="tiny" color="text.2" mt={pxUnits(2)}>
-                  {menuSvgs(item.type)}
+                  {item.icon ? item.icon : menuSvgs(item.type)}
                 </Icon>
                 <Text variant="uiTextSmall" color="text.2">
                   {item.text}
