@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
+import { uniqBy } from 'lodash'
 import SidebarList from '../../../components/Sidebar/SidebarList'
 
 const sourcesOverview = [
@@ -33,8 +34,10 @@ const Sources = () => {
     })
 
   const sortedSources = sourcesData().sort((a, b) => (a.text > b.text ? 1 : -1))
+  // remove duplicate values
+  const uniqueAuthorList = uniqBy(sortedSources, 'text')
 
-  return <SidebarList menuItems={[...sourcesOverview, ...sortedSources]} />
+  return <SidebarList menuItems={[...sourcesOverview, ...uniqueAuthorList]} />
 }
 
 export default Sources
