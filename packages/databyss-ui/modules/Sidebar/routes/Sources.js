@@ -19,7 +19,7 @@ const Sources = () => {
   useEffect(() => getAllSources(), [])
 
   const sourcesData = () =>
-    Object.entries(state.cache).map(([, value]) => {
+    Object.values(state.cache).map(value => {
       const author = value.authors?.[0]
       const firstName = author?.firstName?.textValue
       const lastName = author?.lastName?.textValue
