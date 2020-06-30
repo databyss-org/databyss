@@ -10,6 +10,7 @@ import {
   cleanupPatches,
   addMetaToPatches,
   editorStateToPage,
+  pageToEditorState,
 } from '../state/util'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
@@ -53,12 +54,12 @@ const PageWithAutosave = ({ page, refreshPage }) => {
   const operationsQueue = useRef([])
 
   const throttledAutosave = useCallback(
-    throttle(({ nextState, patch }) => {
-      const _patch = cleanupPatches(patch)
-      if (_patch?.length) {
+    throttle(({ nextState, patches }) => {
+      const _patches = cleanupPatches(patches)
+      if (_patches?.length) {
         const payload = {
-          id: nextState.page._id,
-          patch: operationsQueue.current,
+          id: nextState.pageHeader._id,
+          patches: operationsQueue.current,
         }
         refreshPage()
         setPatches(payload)
@@ -73,10 +74,10 @@ const PageWithAutosave = ({ page, refreshPage }) => {
   }
 
   const onChange = value => {
-    const patch = addMetaToPatches(value)
+    const patches = addMetaToPatches(value)
     // push changes to a queue
-    operationsQueue.current = operationsQueue.current.concat(patch)
-    throttledAutosave({ ...value, patch })
+    operationsQueue.current = operationsQueue.current.concat(patches)
+    throttledAutosave({ ...value, patches })
   }
 
   return (
@@ -135,7 +136,12 @@ const EditorWithProvider = () => {
               setPage(_defaultPage)
               return null
             }
-            return <PageWithAutosave page={page} refreshPage={_refreshPage} />
+            return (
+              <PageWithAutosave
+                page={pageToEditorState(page)}
+                refreshPage={_refreshPage}
+              />
+            )
           }}
         </PageLoader>
         {_page && <StaticPage page={_page} />}
