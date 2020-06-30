@@ -1,12 +1,5 @@
 import React from 'react'
 import { Router } from '@reach/router'
-import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
-import {
-  Text,
-  View,
-  BaseControl,
-  ScrollView,
-} from '@databyss-org/ui/primitives'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'

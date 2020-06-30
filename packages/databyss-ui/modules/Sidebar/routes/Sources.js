@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import SidebarList from '../../../components/Sidebar/SidebarList'
 
@@ -21,14 +20,14 @@ const Sources = () => {
 
   const sourcesData = () =>
     Object.entries(state.cache).map(([, value]) => {
-      const author = value.authors[0]
+      const author = value.authors?.[0]
+      const firstName = author?.firstName?.textValue
+      const lastName = author?.lastName?.textValue
 
       return {
         id: value._id,
         type: 'authors',
-        text: author
-          ? `${author.lastName.textValue}, ${author.firstName.textValue}`
-          : 'Unknown author',
+        text: author && `${lastName}${firstName && `, ${firstName}`}`,
         icon: <AuthorSvg />,
       }
     })
