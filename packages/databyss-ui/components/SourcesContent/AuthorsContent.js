@@ -1,12 +1,5 @@
 import React, { useEffect } from 'react'
 import { Router } from '@reach/router'
-import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
-import {
-  Text,
-  View,
-  BaseControl,
-  ScrollView,
-} from '@databyss-org/ui/primitives'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
@@ -23,14 +16,13 @@ const AuthorsContent = () => {
 
   const sourcesData = () =>
     Object.entries(state.cache).map(([, value]) => {
-      const author = value.authors[0]
+      const author = value.authors?.[0]
+      const firstName = author?.firstName?.textValue
+      const lastName = author?.lastName?.textValue
 
       return {
         id: value._id,
-        text: value.text.textValue,
-        author: author
-          ? `${author.lastName.textValue}, ${author.firstName.textValue}`
-          : 'Unknown author',
+        text: author && `${lastName}${firstName && `, ${firstName}`}`,
       }
     })
 

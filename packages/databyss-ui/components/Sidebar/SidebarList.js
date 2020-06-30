@@ -53,28 +53,31 @@ const SidebarList = ({ menuItems }) => {
           ? item.id === tokens.id
           : item.type === tokens.type && !tokens.id
 
-        return (
-          <BaseControl
-            data-test-element={`page-sidebar-${index}`}
-            backgroundColor={_isActive ? 'control.1' : 'transparent'}
-            py="small"
-            px="em"
-            key={index}
-            width="100%"
-            onClick={() => onClick(item)}
-          >
-            <View>
-              <Grid singleRow flexWrap="nowrap" columnGap="small">
-                <Icon sizeVariant="tiny" color="text.2" mt={pxUnits(2)}>
-                  {item.icon ? item.icon : menuSvgs(item.type)}
-                </Icon>
-                <Text variant="uiTextSmall" color="text.2">
-                  {item.text}
-                </Text>
-              </Grid>
-            </View>
-          </BaseControl>
-        )
+        if (item.text) {
+          return (
+            <BaseControl
+              data-test-element={`page-sidebar-${index}`}
+              backgroundColor={_isActive ? 'control.1' : 'transparent'}
+              py="small"
+              px="em"
+              key={index}
+              width="100%"
+              onClick={() => onClick(item)}
+            >
+              <View>
+                <Grid singleRow flexWrap="nowrap" columnGap="small">
+                  <Icon sizeVariant="tiny" color="text.2" mt={pxUnits(2)}>
+                    {item.icon ? item.icon : menuSvgs(item.type)}
+                  </Icon>
+                  <Text variant="uiTextSmall" color="text.2">
+                    {item.text}
+                  </Text>
+                </Grid>
+              </View>
+            </BaseControl>
+          )
+        }
+        return null
       })}
     </View>
   )
