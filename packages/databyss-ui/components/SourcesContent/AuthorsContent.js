@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Router } from '@reach/router'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { uniqBy } from 'lodash'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
 
@@ -26,13 +27,12 @@ const AuthorsContent = () => {
       }
     })
 
-  const sortedSources = sourcesData().sort(
-    (a, b) => (a.author > b.author ? 1 : -1)
-  )
+  const sortedSources = sourcesData().sort((a, b) => (a.text > b.text ? 1 : -1))
+  const uniqueAuthorList = uniqBy(sortedSources, 'text')
 
   return (
     <IndexPageContent title="All Authors">
-      <IndexPageEntries entries={sortedSources} page="authors" />
+      <IndexPageEntries entries={uniqueAuthorList} page="authors" />
     </IndexPageContent>
   )
 }
