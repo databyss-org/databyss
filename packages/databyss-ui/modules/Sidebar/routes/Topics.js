@@ -14,7 +14,7 @@ const Topics = () => {
   const { state } = useTopicContext()
 
   const topicsData = () =>
-    Object.entries(state.cache).map(([, value]) => ({
+    Object.values(state.cache).map(value => ({
       id: value._id,
       type: 'topics',
       text: value.text.textValue,
