@@ -69,7 +69,10 @@ const SidebarList = ({ menuItems }) => {
                   <Icon sizeVariant="tiny" color="text.2" mt={pxUnits(2)}>
                     {item.icon ? item.icon : menuSvgs(item.type)}
                   </Icon>
-                  <Text variant="uiTextSmall" color="text.2">
+                  <Text
+                    variant={_isActive ? 'uiTextSmallSemibold' : 'uiTextSmall'}
+                    color="text.2"
+                  >
                     {item.text}
                   </Text>
                 </Grid>
