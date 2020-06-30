@@ -15,7 +15,7 @@ const SourcesContent = () => {
   useEffect(() => getAllSources(), [])
 
   const sourcesData = () =>
-    Object.entries(state.cache).map(([, value]) => ({
+    Object.values(state.cache).map(value => ({
       id: value._id,
       text: value.text.textValue,
     }))
