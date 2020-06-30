@@ -48,6 +48,17 @@ const ControlList = ({ children, ...others }) => (
   </List>
 )
 
+const valuesToSource = values => {
+  const { authors, citations, ...blockFields } = values
+  return {
+    ...blockFields,
+    detail: {
+      authors,
+      citations,
+    },
+  }
+}
+
 const SourceForm = withSource(({ source }) => {
   const [values, setValues] = useState(source)
   const { setSource } = useSourceContext()
@@ -56,7 +67,7 @@ const SourceForm = withSource(({ source }) => {
     // update internal state
     setValues(_value)
     // update database
-    setSource(_value)
+    setSource(valuesToSource(_value))
   }
 
   return (

@@ -16,6 +16,9 @@ const BlockSchema = new Schema({
     ref: 'account',
     required: true,
   },
+  detail: {
+    type: Schema.Types.Mixed,
+  },
 })
 
 const Block = mongoose.models.Block || mongoose.model('block', BlockSchema)

@@ -45,6 +45,7 @@
       {
         "vars": "all",
         "args": "after-used",
+        "argsIgnorePattern": "^_", // ignore all arguments that start with "_"
         "ignoreRestSiblings": false 
     }],
     "prettier/prettier": [

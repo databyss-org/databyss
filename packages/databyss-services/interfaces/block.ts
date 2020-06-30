@@ -10,3 +10,17 @@ export interface Block {
   type: BlockType
   text: Text
 }
+
+export interface Author {
+  firstName: string
+  lastName: string
+}
+
+export interface SourceDetail {
+  authors: Author[]
+  citations: Text[]
+}
+
+export interface Source extends Block {
+  detail: SourceDetail
+}

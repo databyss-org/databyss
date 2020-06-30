@@ -128,16 +128,9 @@ const EditorWithModals = () => (
   <ServiceProvider>
     <SessionProvider unauthorizedChildren={<LoginRequired />}>
       <PageProvider initialState={pageInitialState}>
-        <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
-          <SourceProvider
-            initialState={sourceInitialState}
-            reducer={sourceReducer}
-          >
-            <NavigationProvider>
-              <EditorWithProvider />
-            </NavigationProvider>
-          </SourceProvider>
-        </TopicProvider>
+        <SourceProvider>
+          <EditorWithProvider />
+        </SourceProvider>
       </PageProvider>
     </SessionProvider>
   </ServiceProvider>
@@ -146,4 +139,8 @@ const EditorWithModals = () => (
 storiesOf('Services|Page', module)
   .addDecorator(NotifyDecorator)
   .addDecorator(ViewportDecorator)
-  .add('Slate 5', () => <EditorWithModals />)
+  .add('Slate 5', () => (
+    <NavigationProvider>
+      <EditorWithModals />
+    </NavigationProvider>
+  ))

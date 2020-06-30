@@ -3,7 +3,7 @@ import Page from './../models/Page'
 import { ResourceNotFoundError, UnauthorizedError } from '../lib/Errors'
 import wrap from '../lib/guardedAsync'
 
-export const pageCreatorMiddleware = wrap(async (req, _, next) => {
+export const pageCreatorMiddleware = wrap(async (req, _res, next) => {
   const { _id } = req.body.data
   let page = await Page.findOne({ _id })
 
@@ -20,7 +20,7 @@ export const pageCreatorMiddleware = wrap(async (req, _, next) => {
   return next()
 })
 
-export const pageMiddleware = wrap(async (req, res, next) => {
+export const pageMiddleware = wrap(async (req, _res, next) => {
   const _id = req.params.id
 
   if (!mongoose.Types.ObjectId.isValid(_id)) {

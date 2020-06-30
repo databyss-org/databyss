@@ -1,27 +1,43 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useEffect } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
 import reducer, { initialState } from './reducer'
+import { ResourceResponse, Source, SourceState } from '../interfaces'
 
 import {
   fetchSource,
   saveSource,
   removeSourceFromCache,
-  fetchAllSources,
-  fetchPageSources,
-  fetchSourcesFromList,
   fetchSourceQuery,
 } from './actions'
+import { SourceSearchResults } from '../interfaces/SourceState'
+
+interface PropsType {
+  children: JSX.Element
+  initialState: SourceState
+}
+
+interface ContextType {
+  state: SourceState
+  getSource: (id: string) => ResourceResponse<Source>
+  setSource: (source: Source) => void
+  removeCacheValue: (id: string) => void
+  searchSource: (query: string) => ResourceResponse<SourceSearchResults>
+}
 
 const useReducer = createReducer()
+export const SourceContext = createContext<ContextType>()
 
-export const SourceContext = createContext()
-
-const SourceProvider = ({ children, initialState, reducer }) => {
+const SourceProvider: React.FunctionComponent<PropsType> = ({
+  children,
+  initialState,
+}: PropsType) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
+  useEffect(() => () => console.log('SourceProvider.unmount', state.cache), [])
+
   // provider methods
-  const setSource = source => {
+  const setSource = (source: Source) => {
     if (_.isEqual(state.cache[source._id], source)) {
       return
     }
@@ -30,7 +46,8 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     window.requestAnimationFrame(() => dispatch(saveSource(source)))
   }
 
-  const getSource = id => {
+  const getSource = (id: string): ResourceResponse<Source> => {
+    console.log('getSource', state.cache[id])
     if (state.cache[id]) {
       return state.cache[id]
     }
@@ -38,22 +55,9 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     return null
   }
 
-  const getAllSources = () => {
-    dispatch(fetchAllSources())
-  }
-
-  const getPageSources = id => {
-    dispatch(fetchPageSources(id))
-  }
-
-  const getSourcesFromList = list => {
-    const _sourceList = list.filter(s => typeof state.cache[s] === 'undefined')
-    if (_sourceList.length > 0) {
-      dispatch(fetchSourcesFromList(_sourceList))
-    }
-  }
-
-  const searchSource = _.debounce(query => {
+  const searchSource = _.debounce((query: string): ResourceResponse<
+    SourceSearchResults
+  > => {
     if (!query) return null
     if (state.searchCache[query]) {
       return state.searchCache[query]
@@ -63,7 +67,7 @@ const SourceProvider = ({ children, initialState, reducer }) => {
     return null
   }, 750)
 
-  const removeCacheValue = id => {
+  const removeCacheValue = (id: string) => {
     if (state.cache[id]) {
       dispatch(removeSourceFromCache(id))
     }
@@ -76,9 +80,6 @@ const SourceProvider = ({ children, initialState, reducer }) => {
         getSource,
         setSource,
         removeCacheValue,
-        getAllSources,
-        getPageSources,
-        getSourcesFromList,
         searchSource,
       }}
     >
@@ -91,7 +92,6 @@ export const useSourceContext = () => useContext(SourceContext)
 
 SourceProvider.defaultProps = {
   initialState,
-  reducer,
 }
 
 export default SourceProvider

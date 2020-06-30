@@ -28,6 +28,7 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
 
   const onBlur = () => {
     if (values) {
+      // setSource(valuesToSource(values))
       setSource(values)
     }
   }
@@ -35,6 +36,7 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
   const onDismiss = () => {
     if (values) {
       // updates in source provider
+      // setSource(valuesToSource(values))
       setSource(values)
     }
     // hide modal in navProvider
@@ -77,7 +79,7 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
                       onBlur={onBlur}
                     />
                   </ValueListItem>
-                  <ValueListItem path="citations[0]">
+                  <ValueListItem path="detail.citations[0]">
                     <TextControl
                       labelProps={{
                         width: '25%',
@@ -90,7 +92,7 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
                       onBlur={onBlur}
                     />
                   </ValueListItem>
-                  <ValueListItem path="authors[0].firstName">
+                  <ValueListItem path="detail.authors[0].firstName">
                     <TextControl
                       labelProps={{
                         width: '25%',
@@ -102,7 +104,7 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
                       onBlur={onBlur}
                     />
                   </ValueListItem>
-                  <ValueListItem path="authors[0].lastName">
+                  <ValueListItem path="detail.authors[0].lastName">
                     <TextControl
                       labelProps={{
                         width: '25%',

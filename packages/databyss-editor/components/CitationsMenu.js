@@ -244,9 +244,11 @@ export const Citations = () => {
       const _data = {
         _id: entity._id,
         text: { textValue: text.textValue.substring(1), ranges: text.ranges },
-        authors:
-          vol.volumeInfo.authors &&
-          vol.volumeInfo.authors.map(a => splitName(a)),
+        detail: {
+          authors:
+            vol.volumeInfo.authors &&
+            vol.volumeInfo.authors.map(a => splitName(a)),
+        },
       }
       // update in cache
       setSource(_data)

@@ -1,7 +1,6 @@
 import express from 'express'
 import cors from 'cors'
 import http from 'http'
-import bugsnag from './middleware/bugsnag'
 import { ApiError } from './lib/Errors'
 import { connectDB } from './lib/db'
 
@@ -13,9 +12,9 @@ import accountsRoute from './routes/api/accounts'
 import pingRoute from './routes/api/ping'
 import errorRoute from './routes/api/error'
 import entriesRoute from './routes/api/entries'
+import sourcesRoute from './routes/api/sources'
 
 let app = null
-let bugsnagMiddleware
 
 const run = async () => {
   if (app) {
@@ -26,13 +25,6 @@ const run = async () => {
 
   // Connect Database
   await connectDB()
-
-  // This must be the first piece of middleware in the stack.
-  // It can only capture errors in downstream middleware
-  // if (process.env.NODE_ENV !== 'test') {
-  //   bugsnagMiddleware = await bugsnag()
-  //   app.use(bugsnagMiddleware.requestHandler)
-  // }
 
   // Init Middleware
   app.use(cors())
@@ -50,25 +42,17 @@ const run = async () => {
   app.use('/api/ping', pingRoute)
   app.use('/api/error', errorRoute)
   app.use('/api/entries', entriesRoute)
+  app.use('/api/sources', sourcesRoute)
 
-  // This handles any errors that Express catches and must be the last middleware
-  // if (
-  //   process.env.NODE_ENV !== 'test' &&
-  //   process.env.NODE_ENV !== 'development'
-  // ) {
-  //   app.use(bugsnagMiddleware.errorHandler)
-  // } else {
-  // global error middleware
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app.use((err, _req, res, _next) => {
     if (err instanceof ApiError) {
+      // TODO: log error on bugsnag
       return res.status(err.status).json({ error: err })
     }
     console.error('ERR', err)
+    // TODO: log error on bugsnag
     return res.status(500).json({ error: { message: err.message } })
   })
-  // }
 
   return app
 }

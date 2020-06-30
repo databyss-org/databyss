@@ -1,6 +1,6 @@
-import Block from '../../../models/Block'
-import Page from '../../../models/Page'
-import Selection from '../../../models/Selection'
+import Block from '../models/Block'
+import Page from '../models/Page'
+import Selection from '../models/Selection'
 
 const applyPatch = (node, path, value) => {
   const key = path.shift()
@@ -11,6 +11,15 @@ const applyPatch = (node, path, value) => {
   }
   // recurse
   applyPatch(node[key], path, value)
+}
+
+// same as Object.assign, but filters out unwanted fields
+const assignPatchValue = (obj, value) => {
+  Object.keys(value).forEach(key => {
+    if (!key.match(/^__/)) {
+      obj[key] = value[key]
+    }
+  })
 }
 
 const addOrReplaceBlock = async (p, req) => {
@@ -38,7 +47,12 @@ const addOrReplaceBlock = async (p, req) => {
     _block = new Block()
   }
   Object.assign(_block, _blockFields)
-  applyPatch(_block, p.path.slice(2), p.value)
+  // if it's an add or we're replacing the whole block, just assign the value
+  if (p.op === 'add' || p.path.length === 2) {
+    assignPatchValue(_block, p.value)
+  } else {
+    applyPatch(_block, p.path.slice(2), p.value)
+  }
   await _block.save()
 }
 

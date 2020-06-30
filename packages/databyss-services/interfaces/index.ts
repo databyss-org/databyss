@@ -4,18 +4,21 @@ export { ResourcePending } from './ResourcePending'
 export { NetworkUnavailableError, NotAuthorizedError, ResourceNotFoundError } from './Errors'
 export type { Page, PageHeader } from './Page'
 export type { Text } from './Text'
-export type { Block } from './Block'
+export type { Block, Source, SourceDetail, Author } from './Block'
 export { BlockType } from './Block'
 export type { FSA } from './FSA'
 export type { Range } from './Range'
 export type { PageState } from './PageState'
 export type { PatchBatch } from './Patch'
+export type { SourceState } from './SourceState'
+
+export type ResourceResponse<T> = T | ResourcePending | Error | null
 
 export interface CacheDict<T> {
-  [key: string]: T | ResourcePending | Error | null
+  [key: string]: ResourceResponse<T>
 }
 
-export type NullableCache<T> = CacheDict<T> | ResourcePending | Error | null
+export type NullableCache<T> = ResourceResponse<CacheDict<T>>
 
 interface RefDict {
   [key: string]: React.Ref<HTMLInputElement>

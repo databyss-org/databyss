@@ -12,7 +12,7 @@ import {
 } from '../../middleware/pageMiddleware'
 import { ApiError, BadRequestError } from '../../lib/Errors'
 import wrap from '../../lib/guardedAsync'
-import { runPatches } from './helpers/pagesHelper'
+import { runPatches } from '../../lib/pages'
 
 const router = express.Router()
 
@@ -22,7 +22,7 @@ const router = express.Router()
 router.get(
   '/:id',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
-  wrap(async (req, res, next) => {
+  wrap(async (req, res, _next) => {
     const page = req.page
     res.json(page).status(200)
   })
@@ -54,7 +54,7 @@ router.get(
 router.delete(
   '/:id',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
-  wrap(async (req, res) => {
+  wrap(async (req, res, _next) => {
     req.page.delete()
     res.status(200).end()
   })
@@ -85,7 +85,7 @@ router.patch(
 router.post(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageCreatorMiddleware],
-  wrap(async (req, res, next) => {
+  wrap(async (req, res, _next) => {
     const { selection, blocks, ...pageFields } = req.body.data
 
     // SAVE SELECTION
@@ -125,7 +125,7 @@ router.post(
 router.get(
   '/populate/:id',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
-  wrap(async (req, res, next) => {
+  wrap(async (req, res, _next) => {
     const { page } = req
     let selection = null
 
