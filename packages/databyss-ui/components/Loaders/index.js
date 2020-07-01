@@ -38,8 +38,7 @@ export const EntrySearchLoader = ({ query, children }) => {
 }
 
 export const SourceLoader = ({ sourceId, children }) => {
-  const { getSource, state } = useSourceContext()
-  console.log('SourceLoader', state)
+  const { getSource } = useSourceContext()
   return MakeLoader({ resource: getSource(sourceId), children })
 }
 
@@ -51,8 +50,8 @@ export const withSource = Wrapped => ({ sourceId, ...others }) => (
 
 export const SearchSourceLoader = ({ query, children }) => {
   const { state, searchSource } = useSourceContext()
-  // searchSource(query)
-  return MakeLoader({ resource: [], children })
+  searchSource(query)
+  return MakeLoader({ resource: state.searchCache[query], children })
 }
 
 export const AllTopicsLoader = ({ children }) => {

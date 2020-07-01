@@ -204,9 +204,8 @@ export const Citations = () => {
   )
 
   const onClick = (e, vol) => {
-    // e.preventDefault()
     const index = editorContext.state.selection.anchor.index
-    const entity = getEntityAtIndex(editorContext.state, index)
+    const entity = editorContext.state.blocks[index]
 
     const text = _title(vol)
     const offset = text.textValue.length

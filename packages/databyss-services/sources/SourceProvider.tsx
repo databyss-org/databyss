@@ -79,7 +79,7 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
       dispatch(fetchSourceQuery(query))
       return null
     }, 750),
-    [state.cache]
+    [state.searchCache]
   )
 
   const removeCacheValue = useCallback(

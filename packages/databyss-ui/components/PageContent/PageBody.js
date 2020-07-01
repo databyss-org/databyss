@@ -2,10 +2,13 @@ import React, { useEffect, useCallback, useRef } from 'react'
 import { throttle } from 'lodash'
 import ContentEditable from '@databyss-org/editor/components/ContentEditable'
 import EditorProvider from '@databyss-org/editor/state/EditorProvider'
-import { withMetaData } from '@databyss-org/editor/lib/util'
+import { withMetaData, pageToEditorState } from '@databyss-org/editor/lib/util'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui'
-import { cleanupPatch, addMetaToPatch } from '@databyss-org/editor/state/util'
+import {
+  cleanupPatches,
+  addMetaToPatches,
+} from '@databyss-org/editor/state/util'
 
 const PageBody = ({ page, focusIndex }) => {
   const { location } = useNavigationContext()
@@ -20,7 +23,7 @@ const PageBody = ({ page, focusIndex }) => {
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
   const throttledAutosave = useCallback(
     throttle(({ nextState, patches }) => {
-      const _patches = cleanupPatch(patches)
+      const _patches = cleanupPatches(patches)
       if (_patches.length) {
         const payload = {
           id: nextState._id,
@@ -37,7 +40,7 @@ const PageBody = ({ page, focusIndex }) => {
   const onChange = value => {
     pageState.current = value.nextState
 
-    const patches = addMetaToPatch(value)
+    const patches = addMetaToPatches(value)
     // push changes to a queue
     patchQueue.current = patchQueue.current.concat(patches)
     throttledAutosave({ ...value, patches })
@@ -47,7 +50,7 @@ const PageBody = ({ page, focusIndex }) => {
     <EditorProvider
       key={location.pathname}
       onChange={onChange}
-      initialState={withMetaData(page)}
+      initialState={pageToEditorState(withMetaData(page))}
     >
       <ContentEditable autofocus focusIndex={focusIndex} />
     </EditorProvider>

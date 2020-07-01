@@ -10,7 +10,9 @@ import {
   PageRouter,
   SearchRouter,
   useNavigationContext,
+  ModalManager,
 } from '@databyss-org/ui'
+
 import { View } from '@databyss-org/ui/primitives'
 
 const App = ({ children }) => (
@@ -60,6 +62,7 @@ const Private = () => {
                 <SearchRouter path="search/*" />
               </App>
             </Router>
+            <ModalManager />
           </TopicProvider>
         </SourceProvider>
       </EntryProvider>
