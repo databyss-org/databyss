@@ -72,6 +72,7 @@
     "redux-thunk": "^2.3.0",
     "selenium-webdriver": "^4.0.0-alpha.7",
     "styled-system": "^5.0.5",
+    "use-context-selector": "^1.1.1",
     "uuid": "3.3.3",
     "webpack-node-externals": "^1.7.2",
     "xss": "^1.0.6"

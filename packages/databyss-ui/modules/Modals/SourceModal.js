@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
-import SourceProvider, {
-  useSourceContext,
-} from '@databyss-org/services/sources/SourceProvider'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { SourceLoader } from '@databyss-org/ui/components/Loaders'
 import ValueListProvider, {
   ValueListItem,
@@ -28,7 +26,6 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
 
   const onBlur = () => {
     if (values) {
-      // setSource(valuesToSource(values))
       setSource(values)
     }
   }
@@ -36,7 +33,6 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
   const onDismiss = () => {
     if (values) {
       // updates in source provider
-      // setSource(valuesToSource(values))
       setSource(values)
     }
     // hide modal in navProvider
@@ -126,8 +122,4 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
   )
 }
 
-export default props => (
-  <SourceProvider>
-    <SourceModal {...props} />
-  </SourceProvider>
-)
+export default SourceModal

@@ -33,9 +33,8 @@ import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
-import basicFixture from './fixtures/basic'
 import connectedFixture from './fixtures/connectedState'
-import { enablePatches } from 'immer'
+import ModalManager from '@databyss-org/ui/modules/Modals/ModalManager'
 
 const LoginRequired = () => (
   <Text>You must login before running this story</Text>
@@ -130,6 +129,7 @@ const EditorWithModals = () => (
       <PageProvider initialState={pageInitialState}>
         <SourceProvider>
           <EditorWithProvider />
+          <ModalManager />
         </SourceProvider>
       </PageProvider>
     </SessionProvider>

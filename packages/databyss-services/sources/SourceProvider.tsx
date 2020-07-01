@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect } from 'react'
+import React, { createContext, useContext, useEffect, useCallback } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
 import reducer, { initialState } from './reducer'
@@ -26,7 +26,7 @@ interface ContextType {
 }
 
 const useReducer = createReducer()
-export const SourceContext = createContext<ContextType>()
+export const SourceContext = createContext<ContextType | null>(null)
 
 const SourceProvider: React.FunctionComponent<PropsType> = ({
   children,
@@ -34,44 +34,62 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
 }: PropsType) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  useEffect(() => () => console.log('SourceProvider.unmount', state.cache), [])
+  console.log('SourceProvider.render')
+
+  useEffect(
+    () => {
+      console.log('SourceProvider.reducer')
+      return () => console.log('SourceProvider.unmount')
+    },
+    [reducer]
+  )
 
   // provider methods
-  const setSource = (source: Source) => {
-    if (_.isEqual(state.cache[source._id], source)) {
-      return
-    }
-    // add or update source and set cache value
-    // add set timeout to prevent focus issue with line content editable on ta
-    window.requestAnimationFrame(() => dispatch(saveSource(source)))
-  }
+  const setSource = useCallback(
+    (source: Source) => {
+      if (_.isEqual(state.cache[source._id], source)) {
+        return
+      }
+      // add or update source and set cache value
+      // add set timeout to prevent focus issue with line content editable on ta
+      window.requestAnimationFrame(() => dispatch(saveSource(source)))
+    },
+    [state.cache]
+  )
 
-  const getSource = (id: string): ResourceResponse<Source> => {
-    console.log('getSource', state.cache[id])
-    if (state.cache[id]) {
-      return state.cache[id]
-    }
-    dispatch(fetchSource(id))
-    return null
-  }
+  const getSource = useCallback(
+    (id: string): ResourceResponse<Source> => {
+      console.log('getSource', state.cache[id])
+      if (state.cache[id]) {
+        return state.cache[id]
+      }
+      dispatch(fetchSource(id))
+      return null
+    },
+    [state.cache]
+  )
 
-  const searchSource = _.debounce((query: string): ResourceResponse<
-    SourceSearchResults
-  > => {
-    if (!query) return null
-    if (state.searchCache[query]) {
-      return state.searchCache[query]
-    }
+  const searchSource = useCallback(
+    _.debounce((query: string): ResourceResponse<SourceSearchResults> => {
+      if (!query) return null
+      if (state.searchCache[query]) {
+        return state.searchCache[query]
+      }
 
-    dispatch(fetchSourceQuery(query))
-    return null
-  }, 750)
+      dispatch(fetchSourceQuery(query))
+      return null
+    }, 750),
+    [state.cache]
+  )
 
-  const removeCacheValue = (id: string) => {
-    if (state.cache[id]) {
-      dispatch(removeSourceFromCache(id))
-    }
-  }
+  const removeCacheValue = useCallback(
+    (id: string) => {
+      if (state.cache[id]) {
+        dispatch(removeSourceFromCache(id))
+      }
+    },
+    [state.cache]
+  )
 
   return (
     <SourceContext.Provider

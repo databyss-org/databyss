@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import TopicProvider, {
+import {
   useTopicContext,
   TopicLoader,
 } from '@databyss-org/services/topics/TopicProvider'
@@ -87,8 +87,4 @@ const TopicModal = ({ refId, visible, onUpdate, id }) => {
   )
 }
 
-export default props => (
-  <TopicProvider>
-    <TopicModal {...props} />
-  </TopicProvider>
-)
+export default TopicModal
