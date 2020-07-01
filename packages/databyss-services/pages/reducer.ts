@@ -19,6 +19,7 @@ import {
   REMOVE_PAGE_FROM_CACHE,
   PATCH,
 } from './constants'
+import { resourceIsReady } from '../lib/util'
 
 export const initialState: PageState = {
   cache: {},
@@ -29,11 +30,7 @@ export const initialState: PageState = {
 
 export default produce((draft: Draft<PageState>, action: FSA) => {
   let _headerCache: CacheDict<PageHeader> = {}
-  if (
-    draft.headerCache &&
-    !(draft.headerCache instanceof ResourcePending) &&
-    !(draft.headerCache instanceof Error)
-  ) {
+  if (resourceIsReady(draft.headerCache)) {
     _headerCache = draft.headerCache as CacheDict<PageHeader>
   }
   switch (action.type) {
@@ -52,11 +49,15 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
     }
     case CACHE_PAGE: {
       const _page = action.payload.page
-      draft.cache[action.payload.id] = _page
+
+      // cache the page if it is in pending/error state or if it has blocks (e.g. not a header)
+      if (!resourceIsReady(_page) || _page.blocks) {
+        draft.cache[action.payload.id] = _page
+      }
 
       // update header cache as well
-      if ((_page as PageHeader).name) {
-        _headerCache[(_page as PageHeader)._id] = _page
+      if (resourceIsReady(_page)) {
+        _headerCache[_page._id] = _page
       }
       break
     }
@@ -73,8 +74,7 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
       break
     }
     case ARCHIVE_PAGE: {
-      draft.cache[action.payload.id] = action.payload.page
-      delete _headerCache[action.payload.id]
+      draft.cache[action.payload.id] = new ResourcePending()
       break
     }
 

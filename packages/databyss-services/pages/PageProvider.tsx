@@ -3,7 +3,14 @@ import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
-import { Page, PageState, RefDict, PageHeader, PatchBatch } from '../interfaces'
+import {
+  Page,
+  PageState,
+  RefDict,
+  PageHeader,
+  PatchBatch,
+  ResourceResponse,
+} from '../interfaces'
 
 import * as actions from './actions'
 
@@ -92,13 +99,11 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   )
 
   const getPage = useCallback(
-    (id: string): Page | ResourcePending | null => {
+    (id: string): ResourceResponse<Page> => {
       if (state.cache[id]) {
         return state.cache[id]
       }
-      if (!(state.cache[id] instanceof ResourcePending)) {
-        dispatch(actions.fetchPage(id))
-      }
+      dispatch(actions.fetchPage(id))
       return null
     },
     [state.cache]
@@ -127,9 +132,10 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   }
 
   const archivePage = useCallback(
-    (id: string) => {
-      dispatch(actions.onArchivePage(id, state.cache[id]))
-    },
+    (id: string): Promise<void> =>
+      new Promise(res => {
+        dispatch(actions.onArchivePage(id, state.cache[id], res))
+      }),
     [state.cache]
   )
 

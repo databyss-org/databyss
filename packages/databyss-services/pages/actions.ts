@@ -192,16 +192,17 @@ export function onArchivePage(id: string, page: Page, callback: Function) {
   return async (dispatch: Function) => {
     dispatch({
       type: ARCHIVE_PAGE,
-      payload: { id, page: new ResourcePending() },
+      payload: { id  },
     })
+    const _page = {...page, archive: true}
     try {
-      await services.savePage(page)
+      await services.savePage(_page)
       if (callback) {
         callback()
       }
       dispatch({
-        type: ARCHIVE_PAGE,
-        payload: { id, page },
+        type: CACHE_PAGE,
+        payload: { id, page: _page },
       })
     } catch(err) {
       throw new NetworkUnavailableError(err)
@@ -214,5 +215,6 @@ export function onSetDefaultPage(id: string) {
 
   return {
     type: SET_DEFAULT_PAGE,
+    payload: { id }
   }
 }
