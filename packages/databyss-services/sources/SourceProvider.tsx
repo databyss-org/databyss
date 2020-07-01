@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useCallback } from 'react'
+import React, { useContext, useEffect, useCallback } from 'react'
+import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
 import reducer, { initialState } from './reducer'
@@ -72,6 +73,14 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     [state.searchCache]
   )
 
+  const getSearchCache = useCallback(
+    (query: string) => state.searchCache[query],
+    [
+      // deep compare
+      JSON.stringify(state.searchCache),
+    ]
+  )
+
   const removeCacheValue = useCallback(
     (id: string) => {
       if (state.cache[id]) {
@@ -89,6 +98,7 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
         setSource,
         removeCacheValue,
         searchSource,
+        getSearchCache,
       }}
     >
       {children}
@@ -96,7 +106,8 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const useSourceContext = () => useContext(SourceContext)
+export const useSourceContext = (selector = x => x) =>
+  useContextSelector(SourceContext, selector)
 
 SourceProvider.defaultProps = {
   initialState,
