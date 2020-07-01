@@ -92,10 +92,8 @@ const removePatches = async (p, req) => {
   switch (_prop) {
     case 'blocks': {
       const _index = p.path[1]
-      const _page = await Page.findOne({ _id: req.page._id })
-      const blocks = _page.blocks
+      const { blocks } = req.page
       blocks.splice(_index, 1)
-      await _page.save()
       // TODO: REMOVE BLOCK FROM DB
       break
     }

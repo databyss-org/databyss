@@ -4,35 +4,38 @@ import Selection from './Selection'
 
 const Schema = mongoose.Schema
 
-const PageSchema = new Schema({
-  account: {
-    type: Schema.Types.ObjectId,
-    ref: 'account',
-    required: true,
-  },
-  name: {
-    type: String,
-    default: 'untitled',
-  },
-  blocks: [
-    {
+const PageSchema = new Schema(
+  {
+    account: {
+      type: Schema.Types.ObjectId,
+      ref: 'account',
+      required: true,
+    },
+    name: {
+      type: String,
+      default: 'untitled',
+    },
+    blocks: [
+      {
+        _id: {
+          type: Schema.Types.ObjectId,
+          ref: 'block',
+        },
+      },
+    ],
+    selection: {
       _id: {
         type: Schema.Types.ObjectId,
-        ref: 'block',
+        ref: 'selection',
       },
     },
-  ],
-  selection: {
-    _id: {
-      type: Schema.Types.ObjectId,
-      ref: 'selection',
+    archive: {
+      type: Boolean,
+      default: false,
     },
   },
-  archive: {
-    type: Boolean,
-    default: false,
-  },
-})
+  { versionKey: false }
+)
 
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */
