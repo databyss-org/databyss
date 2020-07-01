@@ -17,7 +17,7 @@ router.get(
       const queryArray = req.params.string.split(' ')
 
       // use the $and operator to find regEx for multiple search words
-      const results = await Block.find({
+      let results = await Block.find({
         $and: queryArray.map(q => ({
           'text.textValue': {
             $regex: new RegExp(`\\b${q}\\b.*`, 'i'),
@@ -26,6 +26,19 @@ router.get(
           type: 'ENTRY',
         })),
       }).populate('page')
+
+      // populate results with page
+      results = await Promise.all(
+        results.map(async r => {
+          // get page where entry is found
+          const _page = await Page.findOne({
+            blocks: { $in: [{ _id: r._id }] },
+            account: req.account._id,
+          })
+
+          return Object.assign({ page: _page }, r._doc)
+        })
+      )
 
       if (results) {
         let _results = {
@@ -45,38 +58,36 @@ router.get(
         /*
         compose results
         */
-        _results = await results.reduce(async (acc, curr) => {
+        _results = results.reduce((acc, curr) => {
           // create regEx or operator to find exact word match
           const searchstring = new RegExp(`^${queryArray.join('|')}$`, 'i')
 
-          // only show results with associated page
-
-          // get page where entry is found
-          const _page = await Page.findOne({
-            blocks: { $in: [{ _id: curr._id }] },
-            account: req.account._id,
-          })
-
-          if (!_page) {
+          // only show results with associated pages
+          if (!curr.page) {
             _results.count -= 1
             return acc
           }
 
-          if (!acc.results[_page._id]) {
+          const pageId = curr.page._id.toString()
+
+          // console.log('accumulater', acc)
+
+          if (!acc.results[pageId]) {
             // bail if not exact word in entry
             if (!isInEntry(curr.text.textValue, searchstring)) {
               _results.count -= 1
               return acc
             }
+
             // init result
-            acc.results[_page._id] = {
-              page: _page.name,
-              pageId: _page._id,
+            acc.results[pageId] = {
+              page: curr.page.name,
+              pageId: pageId,
               entries: [
                 {
                   entryId: curr._id,
                   text: curr.text.textValue,
-                  blockId: curr.block,
+                  //  blockId: curr.block,
                 },
               ],
             }
@@ -86,14 +97,14 @@ router.get(
               _results.count -= 1
               return acc
             }
-            const _entries = acc.results[_page._id].entries
+            const _entries = acc.results[pageId].entries
 
             _entries.push({
               entryId: curr._id,
               text: curr.text.textValue,
-              blockId: curr.block,
+              // blockId: curr.block,
             })
-            acc.results[_page._id].entries = _entries
+            acc.results[pageId].entries = _entries
           }
           return acc
         }, _results)
