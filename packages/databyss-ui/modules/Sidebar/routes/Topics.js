@@ -10,7 +10,7 @@ const topicsOverview = [
   },
 ]
 
-const Topics = () => {
+const Topics = ({ filterQuery }) => {
   const { state } = useTopicContext()
 
   const topicsData = () =>
@@ -21,10 +21,20 @@ const Topics = () => {
     }))
 
   const sortedSources = topicsData().sort((a, b) => (a.text > b.text ? 1 : -1))
+  const filteredEntries = sortedSources.filter(entry =>
+    entry.text?.toLowerCase().includes(filterQuery.textValue.toLowerCase())
+  )
 
   return (
     <AllTopicsLoader>
-      {() => <SidebarList menuItems={[...topicsOverview, ...sortedSources]} />}
+      {() => (
+        <SidebarList
+          menuItems={[
+            ...topicsOverview,
+            ...(filterQuery.textValue === '' ? sortedSources : filteredEntries),
+          ]}
+        />
+      )}
     </AllTopicsLoader>
   )
 }

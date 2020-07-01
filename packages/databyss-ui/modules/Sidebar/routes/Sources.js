@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
-import { uniqBy } from 'lodash'
+// import { uniqBy } from 'lodash'
 import SidebarList from '../../../components/Sidebar/SidebarList'
 
 const sourcesOverview = [
@@ -15,7 +15,7 @@ const sourcesOverview = [
   },
 ]
 
-const Sources = () => {
+const Sources = ({ filterQuery }) => {
   const { getAllSources, state } = useSourceContext()
   useEffect(() => getAllSources(), [])
 
@@ -34,10 +34,21 @@ const Sources = () => {
     })
 
   const sortedSources = sourcesData().sort((a, b) => (a.text > b.text ? 1 : -1))
-  // remove duplicate values
-  const uniqueAuthorList = uniqBy(sortedSources, 'text')
+  // remove duplicate entries
+  // const uniqueSourcesList = uniqBy(sortedSources, 'text')
 
-  return <SidebarList menuItems={[...sourcesOverview, ...uniqueAuthorList]} />
+  const filteredEntries = sortedSources.filter(entry =>
+    entry.text?.toLowerCase().includes(filterQuery.textValue.toLowerCase())
+  )
+
+  return (
+    <SidebarList
+      menuItems={[
+        ...sourcesOverview,
+        ...(filterQuery.textValue === '' ? sortedSources : filteredEntries),
+      ]}
+    />
+  )
 }
 
 export default Sources

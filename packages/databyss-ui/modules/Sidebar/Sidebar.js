@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { Text, View, List } from '@databyss-org/ui/primitives'
+import SearchInputContainer from '@databyss-org/ui/components/SearchContent/SearchInputContainer'
 import SidebarCollapsed from './SidebarCollapsed'
 import { darkTheme } from '../../theming/theme'
 import Search from './routes/Search'
@@ -30,13 +31,17 @@ Section.defaultProps = {
 }
 
 const Sidebar = () => {
-  const { navigateSidebar, getSidebarPath, isMenuOpen } = useNavigationContext()
+  const { getSidebarPath, isMenuOpen } = useNavigationContext()
   const menuItem = getSidebarPath()
+  const [filterQuery, setFilterQuery] = useState({ textValue: '' })
+
+  const clear = () => {
+    setFilterQuery({ textValue: '' })
+  }
 
   /*
   if item active in menuItem, SidebarContent will compose a list to pass to SidebarList
   */
-
   return isMenuOpen ? (
     <>
       <SidebarCollapsed />
@@ -58,15 +63,21 @@ const Sidebar = () => {
             alignItems="center"
           >
             <Header />
-            <Search
-              onClick={() => {
-                navigateSidebar('/search')
-              }}
-            />
-            {(menuItem === 'pages' || !menuItem) && <Pages />}
-            {menuItem === 'sources' && <Sources />}
-            {menuItem === 'authors' && <Sources />}
-            {menuItem === 'topics' && <Topics />}
+            {menuItem === 'search' ? (
+              <Search />
+            ) : (
+              <SearchInputContainer
+                placeholder={`Search ${menuItem}`}
+                onChange={setFilterQuery}
+                onClear={clear}
+              />
+            )}
+            {(menuItem === 'pages' || !menuItem) && (
+              <Pages filterQuery={filterQuery} />
+            )}
+            {menuItem === 'sources' && <Sources filterQuery={filterQuery} />}
+            {menuItem === 'authors' && <Sources filterQuery={filterQuery} />}
+            {menuItem === 'topics' && <Topics filterQuery={filterQuery} />}
           </List>
         </View>
       </View>
