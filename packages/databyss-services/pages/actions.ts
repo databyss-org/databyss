@@ -107,6 +107,7 @@ export function savePatchBatch(batch?: PatchBatch) {
     try {
       await services.savePatchBatch(_batchPatch)
     
+
       busy = false
       // repeat function with no patch variable if patches are still in queue
       dispatch({

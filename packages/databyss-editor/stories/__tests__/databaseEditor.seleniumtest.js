@@ -40,7 +40,7 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 describe('connected editor', () => {
   beforeEach(async done => {
     // OSX and safari are necessary
-    driver = await startSession('Slate-5-database-connector', OSX, SAFARI)
+    driver = await startSession('Slate-5-database-connected', OSX, SAFARI)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
@@ -89,7 +89,7 @@ describe('connected editor', () => {
     await toggleBold(actions)
     await actions.sendKeys('bold')
     await actions.perform()
-    await sleep(7000)
+    await sleep(3000)
 
     await driver.navigate().refresh()
 
@@ -364,10 +364,11 @@ describe('connected editor', () => {
 
     await actions.sendKeys('last entry')
     await actions.perform()
-    await sleep(20000)
+    await sleep(10000)
 
     // refresh page
     await driver.navigate().refresh()
+    await sleep(3000)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 

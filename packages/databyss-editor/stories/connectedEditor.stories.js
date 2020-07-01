@@ -12,9 +12,6 @@ import SessionProvider, {
   useSessionContext,
 } from '@databyss-org/services/session/SessionProvider'
 import TopicProvider from '@databyss-org/services/topics/TopicProvider'
-import topicReducer, {
-  initialState as topicInitialState,
-} from '@databyss-org/services/topics/reducer'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import PageProvider, {

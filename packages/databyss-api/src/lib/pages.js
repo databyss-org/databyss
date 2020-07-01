@@ -1,5 +1,4 @@
 import Block from '../models/Block'
-import Page from '../models/Page'
 import Selection from '../models/Selection'
 
 const applyPatch = (node, path, value) => {
@@ -67,6 +66,10 @@ const replacePatch = async (p, req) => {
       const _id = p.value._id
       if (_id) {
         await Selection.update({ _id }, { $set: p.value })
+
+        // if new selection._id is passed tag it to page
+        const { selection } = req.page
+        selection._id = _id
       }
       break
     }
