@@ -75,7 +75,7 @@ router.patch(
       await runPatches(patch, req)
     }
     await req.page.save()
-    res.status(200).end()
+    return res.status(200).end()
   })
 )
 

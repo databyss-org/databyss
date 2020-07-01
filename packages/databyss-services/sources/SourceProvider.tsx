@@ -50,7 +50,6 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
 
   const getSource = useCallback(
     (id: string): ResourceResponse<Source> => {
-      console.log('getSource', state.cache[id])
       if (state.cache[id]) {
         return state.cache[id]
       }

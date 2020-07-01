@@ -6,12 +6,6 @@ import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
-import {
-  cleanupPatches,
-  addMetaToPatches,
-  editorStateToPage,
-  pageToEditorState,
-} from '../state/util'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
   useSessionContext,
@@ -31,6 +25,12 @@ import PageProvider, {
 } from '@databyss-org/services/pages/PageProvider'
 import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import {
+  cleanupPatches,
+  addMetaToPatches,
+  editorStateToPage,
+  pageToEditorState,
+} from '../state/util'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
