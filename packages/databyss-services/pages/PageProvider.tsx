@@ -42,8 +42,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  console.log('PageProvider.render')
-
   useEffect(
     () => {
       Object.keys(pageCachedHookRef.current).forEach(k => {

@@ -21,6 +21,24 @@ const BlockSchema = new Schema({
   },
 })
 
-const Block = mongoose.models.Block || mongoose.model('block', BlockSchema)
+/* eslint-disable prefer-arrow-callback */
+/* eslint-disable func-names */
 
-export default Block
+// Because `detail` is a Mixed type, it doesn't get flagged for update correctly and
+// will not propagate to the server on a normal `save` call.
+// If Block has `detail` values in it, use this method instead of `save`.
+BlockSchema.method('saveWithDetail', async function() {
+  const Block = mongoose.model('block', BlockSchema)
+  await Block.replaceOne(
+    { _id: this._id },
+    {
+      text: this.text,
+      account: this.account,
+      detail: this.detail,
+      type: this.type,
+    },
+    { upsert: true }
+  )
+})
+
+export default mongoose.model('block', BlockSchema)

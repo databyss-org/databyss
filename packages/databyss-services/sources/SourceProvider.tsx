@@ -34,16 +34,6 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
 }: PropsType) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  console.log('SourceProvider.render')
-
-  useEffect(
-    () => {
-      console.log('SourceProvider.reducer')
-      return () => console.log('SourceProvider.unmount')
-    },
-    [reducer]
-  )
-
   // provider methods
   const setSource = useCallback(
     (source: Source) => {

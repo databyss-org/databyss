@@ -5,7 +5,7 @@ import { Page, PatchBatch, PageHeader } from '../interfaces'
 
 export const getPage = (_id: string): Promise<Page> => httpGet(`/pages/${_id}`)
 
-export const savePage = (data: Page | PageHeader) =>
+export const savePage = (data: Page | PageHeader): Promise<boolean> =>
   httpPost('/pages', { data })
 
 export const savePatchBatch = (data: PatchBatch) =>

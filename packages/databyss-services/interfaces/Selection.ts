@@ -1,4 +1,4 @@
-import { Point } from './point'
+import { Point } from './'
 
 export interface Selection {
   anchor: Point

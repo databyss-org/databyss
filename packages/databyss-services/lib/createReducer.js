@@ -22,8 +22,6 @@ const createReducer = (...middlewares) => {
     const ref = useRef((initializer || (value => value))(initialState))
     const [, setState] = useState(ref.current)
 
-    useEffect(() => console.log('createReducer.reducer'), [reducer])
-
     const dispatch = useCallback(
       action => {
         action.meta = { provider: name }
@@ -48,7 +46,6 @@ const createReducer = (...middlewares) => {
 
     useEffect(
       () => {
-        console.log('createReducer.dispatch')
         dispatchRef.current = composedMiddleware(
           {
             getState: () => ref.current,

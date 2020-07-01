@@ -1,45 +1,26 @@
 import ObjectId from 'bson-objectid'
-import { PageState } from '../interfaces'
+import { Page, BlockType } from '../interfaces'
 
-export const newPage = () => {
-  const _refId = ObjectId().toHexString()
-  const _id = ObjectId().toHexString()
-
-  const _page: Page = {
-    preventDefault: false,
-    operations: [],
-    selection: {
-      _id: ObjectId().toHexString(),
-      anchor: {
-        index: 0,
-        offset: 0,
-      },
-      focus: {
-        index: 0,
-        offset: 0,
-      },
+export const newPage = (): Page => ({
+  _id: new ObjectId().toHexString(),
+  name: 'untitled',
+  archive: false,
+  selection: {
+    _id: new ObjectId().toHexString(),
+    focus: {
+      offset: 0,
+      index: 0,
     },
-    newEntities: [],
-    blockCache: {
-      [_id]: {
-        type: 'ENTRY',
-        entityId: _refId,
-        _id: _refId,
-        text: {
-          textValue: '',
-          ranges: [],
-        },
-      },
+    anchor: {
+      offset: 0,
+      index: 0,
     },
-    blocks: [
-      {
-        _id,
-      },
-    ],
-    page: {
-      _id: ObjectId().toHexString(),
-      name: 'untitled',
+  },
+  blocks: [
+    {
+      _id: new ObjectId().toHexString(),
+      type: BlockType.Entry,
+      text: { textValue: '', ranges: [] },
     },
-  }
-  return _page
-}
+  ],
+})

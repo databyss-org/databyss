@@ -25,7 +25,7 @@ const Footer = () => {
     clearSearchCache()
     const _page = newPage()
     setPage(_page).then(() => {
-      navigate(`/pages/${_page.page._id}`)
+      navigate(`/pages/${_page._id}`)
     })
 
     navigateSidebar('/pages')

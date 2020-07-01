@@ -103,15 +103,18 @@ router.post(
     }
 
     // SAVE BLOCKS
-    pageFields.blocks = []
-    for (const _blockFields of blocks) {
-      let _block = await Block.findOne({ _id: _blockFields._id })
-      if (!_block) {
-        _block = new Block()
+    // if blocks are included, add and/or update them
+    if (blocks) {
+      pageFields.blocks = []
+      for (const _blockFields of blocks) {
+        let _block = await Block.findOne({ _id: _blockFields._id })
+        if (!_block) {
+          _block = new Block()
+        }
+        Object.assign(_block, { ..._blockFields, account: req.account._id })
+        await _block.save()
+        pageFields.blocks.push({ _id: _blockFields._id })
       }
-      Object.assign(_block, { ..._blockFields, account: req.account._id })
-      await _block.save()
-      pageFields.blocks.push({ _id: _blockFields._id })
     }
 
     Object.assign(req.page, { ...pageFields, account: req.account._id })

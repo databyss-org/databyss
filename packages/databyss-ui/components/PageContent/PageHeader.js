@@ -15,7 +15,7 @@ const PageHeader = ({ isFocused, pageId }) => {
   useEffect(
     () => {
       const pageData = getPage(pageId)
-      const pageDataName = pageData.page.name
+      const pageDataName = pageData.name
 
       if (pageDataName === noPageTitle) {
         setPageName({ textValue: '' })
@@ -32,10 +32,8 @@ const PageHeader = ({ isFocused, pageId }) => {
 
   const updatePageName = () => {
     const _pageData = {
-      page: {
-        name: pageName.textValue ? pageName.textValue : noPageTitle,
-        _id: pageId,
-      },
+      name: pageName.textValue ? pageName.textValue : noPageTitle,
+      _id: pageId,
     }
     setPageHeader(_pageData)
     isFocused(false)
@@ -57,7 +55,7 @@ const PageHeader = ({ isFocused, pageId }) => {
         }}
         value={pageName}
         onChange={onPageNameChange}
-        placeholder="Enter title"
+        placeholder="untitled"
         variant="bodyLarge"
         color="text.3"
         concatCss={styledCss({

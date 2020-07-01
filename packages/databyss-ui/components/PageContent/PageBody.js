@@ -2,13 +2,14 @@ import React, { useEffect, useCallback, useRef } from 'react'
 import { throttle } from 'lodash'
 import ContentEditable from '@databyss-org/editor/components/ContentEditable'
 import EditorProvider from '@databyss-org/editor/state/EditorProvider'
-import { withMetaData, pageToEditorState } from '@databyss-org/editor/lib/util'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { useNavigationContext } from '@databyss-org/ui'
+import { withMetaData } from '@databyss-org/editor/lib/util'
 import {
+  pageToEditorState,
   cleanupPatches,
   addMetaToPatches,
 } from '@databyss-org/editor/state/util'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useNavigationContext } from '@databyss-org/ui'
 
 const PageBody = ({ page, focusIndex }) => {
   const { location } = useNavigationContext()
@@ -26,7 +27,7 @@ const PageBody = ({ page, focusIndex }) => {
       const _patches = cleanupPatches(patches)
       if (_patches.length) {
         const payload = {
-          id: nextState._id,
+          id: nextState.pageHeader._id,
           patches: patchQueue.current,
         }
         setPatches(payload)

@@ -1,4 +1,4 @@
-import { Block } from './Block'
+import { Block, Selection } from './'
 
 export interface PageHeader {
   _id: string
@@ -8,4 +8,5 @@ export interface PageHeader {
 
 export interface Page extends PageHeader {
   blocks: Block[]
+  selection: Selection
 }
