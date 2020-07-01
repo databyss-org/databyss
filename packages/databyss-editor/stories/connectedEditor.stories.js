@@ -6,19 +6,11 @@ import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
-import {
-  cleanupPatches,
-  addMetaToPatches,
-  editorStateToPage,
-  pageToEditorState,
-} from '../state/util'
+import ModalManager from '@databyss-org/ui/modules/Modals/ModalManager'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
   useSessionContext,
 } from '@databyss-org/services/session/SessionProvider'
-import sourceReducer, {
-  initialState as sourceInitialState,
-} from '@databyss-org/services/sources/reducer'
 import TopicProvider from '@databyss-org/services/topics/TopicProvider'
 import topicReducer, {
   initialState as topicInitialState,
@@ -34,7 +26,12 @@ import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
 import connectedFixture from './fixtures/connectedState'
-import ModalManager from '@databyss-org/ui/modules/Modals/ModalManager'
+import {
+  cleanupPatches,
+  addMetaToPatches,
+  editorStateToPage,
+  pageToEditorState,
+} from '../state/util'
 
 const LoginRequired = () => (
   <Text>You must login before running this story</Text>
