@@ -1,5 +1,6 @@
 import express from 'express'
 import Block from '../../models/Block'
+import Page from '../../models/Page'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 
@@ -22,6 +23,7 @@ router.get(
             $regex: new RegExp(`\\b${q}\\b.*`, 'i'),
           },
           account: req.account._id,
+          type: 'ENTRY',
         })),
       }).populate('page')
 
@@ -43,26 +45,33 @@ router.get(
         /*
         compose results
         */
-        _results = results.reduce((acc, curr) => {
+        _results = await results.reduce(async (acc, curr) => {
           // create regEx or operator to find exact word match
           const searchstring = new RegExp(`^${queryArray.join('|')}$`, 'i')
 
           // only show results with associated page
-          if (!curr.page) {
+
+          // get page where entry is found
+          const _page = await Page.findOne({
+            blocks: { $in: [{ _id: curr._id }] },
+            account: req.account._id,
+          })
+
+          if (!_page) {
             _results.count -= 1
             return acc
           }
 
-          if (!acc.results[curr.page._id]) {
+          if (!acc.results[_page._id]) {
             // bail if not exact word in entry
             if (!isInEntry(curr.text.textValue, searchstring)) {
               _results.count -= 1
               return acc
             }
             // init result
-            acc.results[curr.page._id] = {
-              page: curr.page.name,
-              pageId: curr.page._id,
+            acc.results[_page._id] = {
+              page: _page.name,
+              pageId: _page._id,
               entries: [
                 {
                   entryId: curr._id,
@@ -77,14 +86,14 @@ router.get(
               _results.count -= 1
               return acc
             }
-            const _entries = acc.results[curr.page._id].entries
+            const _entries = acc.results[_page._id].entries
 
             _entries.push({
               entryId: curr._id,
               text: curr.text.textValue,
               blockId: curr.block,
             })
-            acc.results[curr.page._id].entries = _entries
+            acc.results[_page._id].entries = _entries
           }
           return acc
         }, _results)
