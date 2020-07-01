@@ -1,7 +1,6 @@
 import produce, { Draft } from 'immer'
 import {
   CACHE_SOURCE,
-  SAVE_SOURCE,
   REMOVE_SOURCE,
   CACHE_SOURCES,
   CACHE_SEARCH_QUERY,
@@ -26,10 +25,6 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
       Object.keys(sources).forEach(s => {
         draft.cache[s] = sources[s]
       })
-      break
-    }
-    case SAVE_SOURCE: {
-      draft.cache[action.payload.id] = action.payload.source
       break
     }
     case REMOVE_SOURCE: {

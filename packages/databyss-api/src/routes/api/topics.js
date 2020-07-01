@@ -14,14 +14,13 @@ router.post(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   wrap(async (req, res) => {
-    const { text, detail, _id } = req.body.data
+    const { text, _id } = req.body.data
 
     const blockFields = {
       account: req.account.id.toString(),
       _id,
       text,
-      type: 'SOURCE',
-      detail,
+      type: 'TOPIC',
     }
 
     let block = await Block.findOne({ _id })
@@ -29,7 +28,7 @@ router.post(
       block = new Block()
     }
     Object.assign(block, blockFields)
-    await block.saveWithDetail()
+    await block.save()
     res.status(200).end()
   })
 )
@@ -45,25 +44,22 @@ router.get(
       _id: req.params.id,
     })
 
-    if (!source || source.type !== 'SOURCE') {
-      return next(new ResourceNotFoundError('There is no source for this id'))
+    if (!source || source.type !== 'TOPIC') {
+      return next(new ResourceNotFoundError('There is no topic for this id'))
     }
 
     return res.json(source)
   })
 )
 
-// @route    GET api/sources
-// @desc     Get all sources in an account
+// @route    GET api/topics
+// @desc     Get all topics in an account
 // @access   Private
 router.get(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   wrap(async (req, res, _next) => {
-    const blocks = await Block.find({
-      account: req.account._id,
-      type: 'SOURCE',
-    })
+    const blocks = await Block.find({ account: req.account._id, type: 'TOPIC' })
 
     if (!blocks) {
       return res.json([])

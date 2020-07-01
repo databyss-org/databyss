@@ -60,6 +60,11 @@ export const SearchSourceLoader = ({ query, children }) => {
 }
 
 export const AllTopicsLoader = ({ children }) => {
-  const { getAllTopics } = useTopicContext()
-  return MakeLoader({ resource: getAllTopics(), children })
+  const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
+  return MakeLoader({ resource: getTopicHeaders(), children })
+}
+
+export const TopicLoader = ({ topicId, children }) => {
+  const getTopic = useTopicContext(c => c.getTopic)
+  return MakeLoader({ resource: getTopic(topicId), children })
 }

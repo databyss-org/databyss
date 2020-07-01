@@ -56,7 +56,6 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
 
       // update header cache as well
       if ((_page as PageHeader).name) {
-        console.log('update header')
         _headerCache[(_page as PageHeader)._id] = _page
       }
       break
@@ -74,7 +73,7 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
       break
     }
     case ARCHIVE_PAGE: {
-      ;(draft.cache[action.payload.id] as Page).archive = true
+      draft.cache[action.payload.id] = action.payload.page
       delete _headerCache[action.payload.id]
       break
     }

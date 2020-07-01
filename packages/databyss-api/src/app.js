@@ -13,6 +13,7 @@ import pingRoute from './routes/api/ping'
 import errorRoute from './routes/api/error'
 import entriesRoute from './routes/api/entries'
 import sourcesRoute from './routes/api/sources'
+import topicsRoute from './routes/api/topics'
 
 let app = null
 
@@ -43,6 +44,7 @@ const run = async () => {
   app.use('/api/error', errorRoute)
   app.use('/api/entries', entriesRoute)
   app.use('/api/sources', sourcesRoute)
+  app.use('/api/topics', topicsRoute)
 
   app.use((err, _req, res, _next) => {
     if (err instanceof ApiError) {

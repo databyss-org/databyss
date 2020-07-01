@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
-import {
-  useTopicContext,
-  TopicLoader,
-} from '@databyss-org/services/topics/TopicProvider'
+import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { TopicLoader } from '@databyss-org/ui/components/Loaders'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
@@ -22,7 +20,7 @@ const ControlList = ({ children, ...others }) => (
 )
 
 const TopicModal = ({ refId, visible, onUpdate, id }) => {
-  const { setTopic } = useTopicContext()
+  const setTopic = useTopicContext(c => c.setTopic)
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
 

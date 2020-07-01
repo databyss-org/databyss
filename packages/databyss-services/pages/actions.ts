@@ -1,5 +1,6 @@
 import * as services from '.'
 import { ResourcePending } from '../interfaces/ResourcePending'
+import { NetworkUnavailableError } from '../interfaces'
 import {
   PATCH,
   FETCH_PAGE,
@@ -187,11 +188,24 @@ export function deletePage(id: string) {
   }
 }
 
-export function onArchivePage(id: string, page: Page) {
-  services.savePage({ ...page, archive: true })
-  return {
-    type: ARCHIVE_PAGE,
-    payload: { id },
+export function onArchivePage(id: string, page: Page, callback: Function) {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: ARCHIVE_PAGE,
+      payload: { id, page: new ResourcePending() },
+    })
+    try {
+      await services.savePage(page)
+      if (callback) {
+        callback()
+      }
+      dispatch({
+        type: ARCHIVE_PAGE,
+        payload: { id, page },
+      })
+    } catch(err) {
+      throw new NetworkUnavailableError(err)
+    }
   }
 }
 

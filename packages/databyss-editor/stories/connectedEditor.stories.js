@@ -128,8 +128,10 @@ const EditorWithModals = () => (
     <SessionProvider unauthorizedChildren={<LoginRequired />}>
       <PageProvider initialState={pageInitialState}>
         <SourceProvider>
-          <EditorWithProvider />
-          <ModalManager />
+          <TopicProvider>
+            <EditorWithProvider />
+            <ModalManager />
+          </TopicProvider>
         </SourceProvider>
       </PageProvider>
     </SessionProvider>

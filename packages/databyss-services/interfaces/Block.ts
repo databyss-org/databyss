@@ -24,3 +24,5 @@ export interface SourceDetail {
 export interface Source extends Block {
   detail: SourceDetail
 }
+
+export interface Topic extends Block {}
