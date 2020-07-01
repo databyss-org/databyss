@@ -82,7 +82,7 @@ router.get(
             // init result
             acc.results[pageId] = {
               page: curr.page.name,
-              pageId: pageId,
+              pageId,
               entries: [
                 {
                   entryId: curr._id,
