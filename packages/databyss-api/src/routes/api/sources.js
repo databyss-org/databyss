@@ -1,11 +1,9 @@
 import express from 'express'
-import { merge } from 'lodash'
 import Block from '../../models/Block'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import wrap from '../../lib/guardedAsync'
 import { ResourceNotFoundError } from '../../lib/Errors'
-import { mixedValue } from '../../lib/util'
 
 const router = express.Router()
 
@@ -17,7 +15,6 @@ router.post(
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   wrap(async (req, res) => {
     const { text, detail, _id } = req.body.data
-    console.log('POST sources', detail)
 
     const blockFields = {
       account: req.account.id.toString(),
