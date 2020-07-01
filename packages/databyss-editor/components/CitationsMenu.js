@@ -146,11 +146,12 @@ const ComposeResults = ({ results, onClick, unmount }) => {
 }
 
 export const Citations = () => {
-  const sourceContext = useSourceContext()
+  const setSource = useSourceContext(c => c && c.setSource)
 
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [menuActive, setMenuActive] = useState(false)
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
+
   const [sourceQuery, setSourceQuery] = useState(null)
 
   const editor = useEditor()
@@ -211,7 +212,6 @@ export const Citations = () => {
     const offset = text.textValue.length
 
     const { setContent } = editorContext
-    const { setSource } = sourceContext
 
     const selection = {
       anchor: { index, offset },
@@ -280,7 +280,7 @@ export const Citations = () => {
               overflowY="scroll"
               maxHeight={pxUnits(MENU_HEIGHT)}
             >
-              {sourceContext && (
+              {setSource && (
                 <SearchSourceLoader query={sourceQuery}>
                   {results => {
                     setSourcesLoaded(true)
