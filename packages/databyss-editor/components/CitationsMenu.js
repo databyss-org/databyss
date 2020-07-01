@@ -18,7 +18,7 @@ import {
   BaseControl,
 } from '@databyss-org/ui/primitives'
 import { useEditorContext } from '../state/EditorProvider'
-import { getEntityAtIndex, isAtomicInlineType } from '../lib/util'
+import { isAtomicInlineType } from '../lib/util'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 
 const MENU_HEIGHT = 200

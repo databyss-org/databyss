@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import ObjectId from 'bson-objectid'
 import Block from './Block'
 import Selection from './Selection'
 

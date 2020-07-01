@@ -6,7 +6,6 @@ import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
-import { cleanupPatches } from '../state/util'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
   useSessionContext,
@@ -29,6 +28,7 @@ import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
+import { cleanupPatches } from '../state/util'
 import connectedFixture, { corruptedPage } from './fixtures/connectedState'
 
 const LoginRequired = () => (
