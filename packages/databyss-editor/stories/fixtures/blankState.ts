@@ -1,14 +1,11 @@
-import ObjectId from 'bson-objectid'
+import ObjectID from 'bson-objectid'
+import { EditorState, BlockType } from '../../interfaces'
 
-const entryId = ObjectId().toHexString()
-
-const selectionId = ObjectId().toHexString()
-
-export default pageId => ({
+const initialState: EditorState = {
   preventDefault: false,
   operations: [],
   selection: {
-    _id: selectionId,
+    _id: new ObjectID().toHexString(),
     anchor: {
       index: 0,
       offset: 0,
@@ -21,16 +18,14 @@ export default pageId => ({
   newEntities: [],
   blocks: [
     {
-      type: 'ENTRY',
-      _id: entryId,
+      _id: '5e48cdc1dbce857f65e4662d',
+      type: BlockType.Entry,
       text: {
         textValue: '',
         ranges: [],
       },
     },
   ],
-  pageHeader: {
-    _id: pageId,
-    name: 'test document',
-  },
-})
+}
+
+export default initialState
