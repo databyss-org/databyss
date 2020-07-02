@@ -49,6 +49,7 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
       onDismiss={onDismiss}
       title="Edit Source"
       dismissChild="done"
+      disabled={values && !values.text.textValue.length}
     >
       <SourceLoader sourceId={refId}>
         {source => (

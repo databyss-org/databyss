@@ -50,6 +50,7 @@ router.get(
         const isInEntry = (string, regex) =>
           string
             .split(/ |-|\n/)
+            .map(s => s.replace(/[^a-z0-9]/gi, ''))
             .reduce(
               (bool, string) => (string.match(regex) ? true : bool),
               false
