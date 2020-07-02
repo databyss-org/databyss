@@ -177,14 +177,6 @@ const ContentEditable = ({
         Transforms.insertText(editor, `\n`)
         return
       }
-      if (!_atBlockStart) {
-        // remove the hanging `\n`
-        Transforms.delete(editor, {
-          distance: 1,
-          unit: 'character',
-          reverse: _prevIsBreak,
-        })
-      }
       return
     }
     if (event.key === 'Backspace') {

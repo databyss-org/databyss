@@ -49,7 +49,7 @@ const TopicModal = ({ refId, visible, onUpdate, id }) => {
       onDismiss={onDismiss}
       title="Edit Topic"
       dismissChild="done"
-      canDismiss={values && !values.text.textValue.length}
+      canDismiss={values && values.text.textValue.length}
     >
       <TopicLoader topicId={refId}>
         {topic => {
