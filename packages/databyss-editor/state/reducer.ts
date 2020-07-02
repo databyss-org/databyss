@@ -119,12 +119,25 @@ export default (
 
           // push updates operation back to editor
           draft.operations.push({
-            index: payload.index,
-            block: blockValue(draft.blocks[payload.index]),
-          })
-          draft.operations.push({
             index: payload.index + 1,
             block: blockValue(draft.blocks[payload.index + 1]),
+          })
+
+          // HACK: fixes hanging character in a markup
+          const _prevTextValue = payload.previous.textValue
+
+          if (_prevTextValue.charAt(_prevTextValue.length - 1) === '\n') {
+            draft.blocks[
+              payload.index
+            ].text.textValue = _prevTextValue.substring(
+              0,
+              _prevTextValue.length - 1
+            )
+          }
+
+          draft.operations.push({
+            index: payload.index,
+            block: blockValue(draft.blocks[payload.index]),
           })
           break
         }
