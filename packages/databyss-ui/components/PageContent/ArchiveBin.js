@@ -47,7 +47,8 @@ export const ArchiveBin = ({ pages }) => {
     {
       icon: <ArchiveSvg />,
       label: 'Archive',
-      shortcut: 'Ctrl + Del',
+      // TODO: detect platform and render correct modifier key
+      // shortcut: 'Ctrl + Del',
     },
   ]
 
@@ -73,6 +74,7 @@ export const ArchiveBin = ({ pages }) => {
       {showMenu && (
         <ClickAwayListener onClickAway={() => setShowMenu(false)}>
           <DropdownContainer
+            widthVariant="dropdownMenuSmall"
             open={showMenu}
             position={{
               top: menuLauncherSize + 8,
