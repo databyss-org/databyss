@@ -3,34 +3,35 @@ import { throttle } from 'lodash'
 import ContentEditable from '@databyss-org/editor/components/ContentEditable'
 import EditorProvider from '@databyss-org/editor/state/EditorProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'
+import {
+  pageToEditorState,
+  cleanupPatches,
+  addMetaToPatches,
+} from '@databyss-org/editor/state/util'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui'
-import {
-  withWhitelist,
-  addMetaData,
-} from '@databyss-org/services/pages/_helpers'
 
 const PageBody = ({ page, focusIndex }) => {
   const { location } = useNavigationContext()
   const clearBlockDict = usePageContext(c => c.clearBlockDict)
-  const setPatch = usePageContext(c => c.setPatch)
+  const setPatches = usePageContext(c => c.setPatches)
 
   useEffect(() => () => clearBlockDict(), [])
 
-  const operationsQueue = useRef([])
+  const patchQueue = useRef([])
   const pageState = useRef(null)
 
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
   const throttledAutosave = useCallback(
-    throttle(({ nextState, patch }) => {
-      const _patch = withWhitelist(patch)
-      if (_patch.length) {
+    throttle(({ nextState, patches }) => {
+      const _patches = cleanupPatches(patches)
+      if (_patches.length) {
         const payload = {
-          id: nextState._id,
-          patch: operationsQueue.current,
+          id: nextState.pageHeader._id,
+          patches: patchQueue.current,
         }
-        setPatch(payload)
-        operationsQueue.current = []
+        setPatches(payload)
+        patchQueue.current = []
       }
     }, process.env.SAVE_PAGE_THROTTLE),
     []
@@ -40,17 +41,17 @@ const PageBody = ({ page, focusIndex }) => {
   const onChange = value => {
     pageState.current = value.nextState
 
-    const patch = addMetaData(value)
+    const patches = addMetaToPatches(value)
     // push changes to a queue
-    operationsQueue.current = operationsQueue.current.concat(patch)
-    throttledAutosave({ ...value, patch })
+    patchQueue.current = patchQueue.current.concat(patches)
+    throttledAutosave({ ...value, patches })
   }
 
   return (
     <EditorProvider
       key={location.pathname}
       onChange={onChange}
-      initialState={withMetaData(page)}
+      initialState={pageToEditorState(withMetaData(page))}
     >
       <ContentEditable autofocus focusIndex={focusIndex} />
     </EditorProvider>

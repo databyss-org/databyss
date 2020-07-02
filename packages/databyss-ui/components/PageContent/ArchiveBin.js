@@ -16,19 +16,18 @@ export const ArchiveBin = ({ pages }) => {
   const archivePage = usePageContext(c => c.archivePage)
   const setDefaultPage = usePageContext(c => c.setDefaultPage)
 
-  const canBeArchived = Object.keys(pages).length > 1
+  const canBeArchived = Object.values(pages).filter(p => !p.archive).length > 1
 
   const onClick = () => {
-    let redirect = account.defaultPage
-    // if default page is archived set new page as default page
-    if (account.defaultPage === id) {
-      const _pages = pages
-      delete _pages[id]
-      redirect = Object.keys(_pages)[0]
-      setDefaultPage(redirect)
-    }
-    navigate(`/pages/${redirect}`)
-    setTimeout(() => archivePage(id), 50)
+    archivePage(id).then(() => {
+      // if default page is archived set new page as default page
+      let redirect = account.defaultPage
+      if (account.defaultPage === id) {
+        redirect = Object.keys(pages).find(_id => _id !== id)
+        setDefaultPage(redirect)
+      }
+      navigate(`/pages/${redirect}`)
+    })
   }
 
   return canBeArchived ? (

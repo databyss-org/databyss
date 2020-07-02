@@ -4,7 +4,7 @@ import {
   ResourceNotFoundError,
   NetworkUnavailableError,
   NotAuthorizedError,
-} from '@databyss-org/services/lib/errors'
+} from '@databyss-org/services/interfaces'
 
 const ErrorFallback = ({ error, message, ...others }) => {
   let _message = message

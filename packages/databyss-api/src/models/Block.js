@@ -1,38 +1,47 @@
 import mongoose from 'mongoose'
+import Text from './Text'
 
 const Schema = mongoose.Schema
 
-const BlockSchema = new Schema({
-  type: {
-    type: String,
+const BlockSchema = new Schema(
+  {
+    type: {
+      type: String,
+    },
+    text: {
+      type: Text.schema,
+      default: () => new Text(),
+    },
+    account: {
+      type: Schema.Types.ObjectId,
+      ref: 'account',
+      required: true,
+    },
+    detail: {
+      type: Schema.Types.Mixed,
+    },
   },
-  entryId: {
-    type: Schema.Types.ObjectId,
-    ref: 'entry',
-  },
-  topicId: {
-    type: Schema.Types.ObjectId,
-    ref: 'topic',
-  },
-  locationId: {
-    type: Schema.Types.ObjectId,
-    ref: 'location',
-  },
-  sourceId: {
-    type: Schema.Types.ObjectId,
-    ref: 'source',
-  },
-  account: {
-    type: Schema.Types.ObjectId,
-    ref: 'account',
-    required: true,
-  },
-  authorId: {
-    type: Schema.Types.ObjectId,
-    ref: 'author',
-  },
+  { versionKey: false }
+)
+
+/* eslint-disable prefer-arrow-callback */
+/* eslint-disable func-names */
+
+// Because `detail` is a Mixed type, it doesn't get flagged for update correctly and
+// will not propagate to the server on a normal `save` call.
+// If Block has `detail` values in it, use this method instead of `save`.
+BlockSchema.method('saveWithDetail', async function() {
+  const Block = mongoose.model('block', BlockSchema)
+  await Block.replaceOne(
+    { _id: this._id },
+    {
+      text: this.text,
+      account: this.account,
+      detail: this.detail,
+      type: this.type,
+    },
+    { upsert: true }
+  )
 })
 
-const Block = mongoose.models.Block || mongoose.model('block', BlockSchema)
-
-export default Block
+export default mongoose.model('block', BlockSchema)

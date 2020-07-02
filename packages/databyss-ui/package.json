@@ -19,6 +19,7 @@
     "@storybook/react": "5.2.1",
     "react": "16.9.0",
     "react-dom": "16.9.0",
+    "@databyss-org/slate": "0.58.1-b2",
     "react-native": "0.60.4"
   },
   "dependencies": {
@@ -72,6 +73,7 @@
     "redux-thunk": "^2.3.0",
     "selenium-webdriver": "^4.0.0-alpha.7",
     "styled-system": "^5.0.5",
+    "use-context-selector": "^1.1.1",
     "uuid": "3.3.3",
     "webpack-node-externals": "^1.7.2",
     "xss": "^1.0.6"

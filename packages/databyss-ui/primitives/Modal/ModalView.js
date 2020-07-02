@@ -10,6 +10,7 @@ const ModalView = ({
   secondaryChild,
   onDismiss,
   children,
+  canDismiss,
   ...others
 }) => (
   <View
@@ -40,6 +41,7 @@ const ModalView = ({
             data-test-dismiss-modal
             variant="uiTextButton"
             onPress={onDismiss}
+            disabled={!canDismiss}
           >
             {dismissChild}
           </Button>

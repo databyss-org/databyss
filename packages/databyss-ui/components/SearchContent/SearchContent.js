@@ -55,7 +55,7 @@ const SearchContent = () => {
               hoverColor="background.2"
               activeColor="background.3"
               key={k}
-              onClick={() => onEntryClick(r.pageId, e.blockId)}
+              onClick={() => onEntryClick(r.pageId, e.entryId)}
             >
               <View p="small" ml="small">
                 <Text>

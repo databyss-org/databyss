@@ -1,96 +1,71 @@
 import express from 'express'
-import Topic from '../../models/Topic'
-
+import Block from '../../models/Block'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
+import wrap from '../../lib/guardedAsync'
+import { ResourceNotFoundError } from '../../lib/Errors'
 
 const router = express.Router()
 
-// @route    POST api/topics
-// @desc     Add Topic
+// @route    POST api/sources
+// @desc     Add Source
 // @access   Private
 router.post(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
-  async (req, res) => {
+  wrap(async (req, res) => {
     const { text, _id } = req.body.data
 
-    // res.status(200)
-    const topicFields = {
-      text,
+    const blockFields = {
       account: req.account.id.toString(),
       _id,
+      text,
+      type: 'TOPIC',
     }
 
-    // if topic exists update it and exit
-    try {
-      let topic = await Topic.findOne({ _id })
-      if (topic) {
-        topicFields._id = _id
-        topic = await Topic.findOneAndUpdate(
-          { _id },
-          { $set: topicFields },
-          { new: true }
-        ).then(response => res.json(response))
-      } else {
-        // if new topic has been added
-        const topic = new Topic(topicFields)
-        const post = await topic.save()
-        res.json(post)
-      }
-      return res.status(200)
-    } catch (err) {
-      console.error(err.message)
-      return res.status(500).send('Server error')
+    let block = await Block.findOne({ _id })
+    if (!block) {
+      block = new Block()
     }
-  }
+    Object.assign(block, blockFields)
+    await block.save()
+    res.status(200).end()
+  })
 )
 
-// @route    GET api/topics
-// @desc     Get topic by id
+// @route    GET api/sources/:id
+// @desc     Get source by id
 // @access   Private
 router.get(
   '/:id',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
-  async (req, res) => {
-    try {
-      const topic = await Topic.findOne({
-        _id: req.params.id,
-      })
+  wrap(async (req, res, next) => {
+    const source = await Block.findOne({
+      _id: req.params.id,
+    })
 
-      if (!topic) {
-        return res.status(404).json({ msg: 'There is no topic for this id' })
-      }
-
-      return res.json(topic)
-    } catch (err) {
-      console.error(err.message)
-      return res.status(500).send('Server error')
+    if (!source || source.type !== 'TOPIC') {
+      return next(new ResourceNotFoundError('There is no topic for this id'))
     }
-  }
+
+    return res.json(source)
+  })
 )
 
 // @route    GET api/topics
-// @desc     Get all topics
+// @desc     Get all topics in an account
 // @access   Private
 router.get(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
-  async (req, res) => {
-    try {
-      const topicResponse = await Topic.find({ account: req.account._id })
+  wrap(async (req, res, _next) => {
+    const blocks = await Block.find({ account: req.account._id, type: 'TOPIC' })
 
-      if (!topicResponse) {
-        return res
-          .status(400)
-          .json({ msg: 'There are no topics associated with this account' })
-      }
-      return res.json(topicResponse)
-    } catch (err) {
-      console.error(err.message)
-      return res.status(500).send('Server Error')
+    if (!blocks) {
+      return res.json([])
     }
-  }
+    return res.json(blocks)
+  })
 )
 
 export default router

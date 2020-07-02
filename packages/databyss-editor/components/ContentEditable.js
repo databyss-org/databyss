@@ -19,7 +19,7 @@ import {
   toggleMark,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
-import { getSelectedIndicies } from '../lib/util'
+import { getSelectedIndicies, isAtomic, isEmpty } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
@@ -32,7 +32,9 @@ const ContentEditable = ({
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
-  const sourceContext = useSourceContext()
+
+  const setSource = useSourceContext(c => c && c.setSource)
+
   const topicContext = useTopicContext()
 
   const {
@@ -41,7 +43,6 @@ const ContentEditable = ({
     merge,
     setContent,
     setSelection,
-    getEntityAtIndex,
     clear,
     remove,
     removeEntityFromQueue,
@@ -79,8 +80,7 @@ const ContentEditable = ({
   // if new atomic block has been added, save atomic
   useEffect(
     () => {
-      if (state.newEntities.length && sourceContext && topicContext) {
-        const { setSource } = sourceContext
+      if (state.newEntities.length && setSource && topicContext) {
         const { setTopic } = topicContext
 
         state.newEntities.forEach(entity => {
@@ -152,9 +152,8 @@ const ContentEditable = ({
 
     if (event.key === 'Enter') {
       const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
-      const _focusedEntity = getEntityAtIndex(editor.selection.focus.path[0])
 
-      if (_focusedEntity.isAtomic) {
+      if (isAtomic(_focusedBlock)) {
         if (
           ReactEditor.isFocused(editor) &&
           !selectionHasRange(state.selection) &&
@@ -196,9 +195,9 @@ const ContentEditable = ({
       // handle start of atomic
       if (
         editor.selection.focus.path[0] > 0 &&
-        getEntityAtIndex(editor.selection.focus.path[0]).isAtomic &&
+        isAtomic(state.blocks[editor.selection.focus.path[0]]) &&
         flattenOffset(editor, editor.selection.focus) === 0 &&
-        getEntityAtIndex(editor.selection.focus.path[0] - 1).isEmpty
+        isEmpty(state.blocks[editor.selection.focus.path[0] - 1])
       ) {
         event.preventDefault()
         remove(editor.selection.focus.path[0] - 1)
@@ -211,7 +210,7 @@ const ContentEditable = ({
       }
       // handle end of atomic
       if (
-        getEntityAtIndex(editor.selection.focus.path[0]).isAtomic &&
+        isAtomic(state.blocks[editor.selection.focus.path[0]]) &&
         flattenOffset(editor, editor.selection.focus) > 0
       ) {
         event.preventDefault()
@@ -226,8 +225,8 @@ const ContentEditable = ({
       // handle after atomic
       if (
         editor.selection.focus.path[0] > 0 &&
-        getEntityAtIndex(editor.selection.focus.path[0] - 1).isAtomic &&
-        getEntityAtIndex(editor.selection.focus.path[0]).isEmpty
+        isAtomic(state.blocks[editor.selection.focus.path[0] - 1]) &&
+        isEmpty(state.blocks[editor.selection.focus.path[0]])
       ) {
         event.preventDefault()
         remove(editor.selection.focus.path[0])

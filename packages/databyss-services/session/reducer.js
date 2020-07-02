@@ -6,7 +6,7 @@ import {
   FETCH_SESSION,
 } from './constants'
 
-import { ResourcePending } from '../lib/ResourcePending'
+import { ResourcePending } from '../interfaces/'
 
 export const initialState = {
   // session is either `null`, `ResourcePending`, `Error` or {user: {}, account: {}}

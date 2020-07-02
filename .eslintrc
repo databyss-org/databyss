@@ -38,12 +38,14 @@
     "no-param-reassign": ["error", { "props": false }], // Useful for mutating reduce accumulators, ex.
     "react-hooks/rules-of-hooks": "error",
     "jsx-a11y/anchor-is-valid": "off",
+    "default-case": "off", // switch mostly used for immer produce, which doesn't require a default
     "no-unused-vars": "off", // use Typescript check instead
     "@typescript-eslint/no-unused-vars": [
       "error", 
       {
         "vars": "all",
         "args": "after-used",
+        "argsIgnorePattern": "^_", // ignore all arguments that start with "_"
         "ignoreRestSiblings": false 
     }],
     "prettier/prettier": [

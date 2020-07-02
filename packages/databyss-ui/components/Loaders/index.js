@@ -38,7 +38,8 @@ export const EntrySearchLoader = ({ query, children }) => {
 }
 
 export const SourceLoader = ({ sourceId, children }) => {
-  const { getSource } = useSourceContext()
+  const getSource = useSourceContext(c => c.getSource)
+
   return MakeLoader({ resource: getSource(sourceId), children })
 }
 
@@ -49,12 +50,21 @@ export const withSource = Wrapped => ({ sourceId, ...others }) => (
 )
 
 export const SearchSourceLoader = ({ query, children }) => {
-  const { state, searchSource } = useSourceContext()
+  const searchSource = useSourceContext(c => c.searchSource)
+
+  const getSearchCache = useSourceContext(c => c.getSearchCache)
+
   searchSource(query)
-  return MakeLoader({ resource: state.searchCache[query], children })
+
+  return MakeLoader({ resource: getSearchCache(query), children })
 }
 
 export const AllTopicsLoader = ({ children }) => {
-  const { getAllTopics } = useTopicContext()
-  return MakeLoader({ resource: getAllTopics(), children })
+  const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
+  return MakeLoader({ resource: getTopicHeaders(), children })
+}
+
+export const TopicLoader = ({ topicId, children }) => {
+  const getTopic = useTopicContext(c => c.getTopic)
+  return MakeLoader({ resource: getTopic(topicId), children })
 }

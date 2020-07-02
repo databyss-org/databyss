@@ -18,7 +18,7 @@ import {
   BaseControl,
 } from '@databyss-org/ui/primitives'
 import { useEditorContext } from '../state/EditorProvider'
-import { getEntityAtIndex, isAtomicInlineType } from '../lib/util'
+import { isAtomicInlineType } from '../lib/util'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 
 const MENU_HEIGHT = 200
@@ -146,11 +146,12 @@ const ComposeResults = ({ results, onClick, unmount }) => {
 }
 
 export const Citations = () => {
-  const sourceContext = useSourceContext()
+  const setSource = useSourceContext(c => c && c.setSource)
 
   const [position, setPosition] = useState({ top: 0, left: 0 })
   const [menuActive, setMenuActive] = useState(false)
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
+
   const [sourceQuery, setSourceQuery] = useState(null)
 
   const editor = useEditor()
@@ -204,15 +205,13 @@ export const Citations = () => {
   )
 
   const onClick = (e, vol) => {
-    // e.preventDefault()
     const index = editorContext.state.selection.anchor.index
-    const entity = getEntityAtIndex(editorContext.state, index)
+    const entity = editorContext.state.blocks[index]
 
     const text = _title(vol)
     const offset = text.textValue.length
 
     const { setContent } = editorContext
-    const { setSource } = sourceContext
 
     const selection = {
       anchor: { index, offset },
@@ -244,9 +243,11 @@ export const Citations = () => {
       const _data = {
         _id: entity._id,
         text: { textValue: text.textValue.substring(1), ranges: text.ranges },
-        authors:
-          vol.volumeInfo.authors &&
-          vol.volumeInfo.authors.map(a => splitName(a)),
+        detail: {
+          authors:
+            vol.volumeInfo.authors &&
+            vol.volumeInfo.authors.map(a => splitName(a)),
+        },
       }
       // update in cache
       setSource(_data)
@@ -279,7 +280,7 @@ export const Citations = () => {
               overflowY="scroll"
               maxHeight={pxUnits(MENU_HEIGHT)}
             >
-              {sourceContext && (
+              {setSource && (
                 <SearchSourceLoader query={sourceQuery}>
                   {results => {
                     setSourcesLoaded(true)

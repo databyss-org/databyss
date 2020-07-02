@@ -1,10 +1,13 @@
 import { LoremIpsum } from 'lorem-ipsum'
+import words from 'an-array-of-english-words'
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 
 export const SMALL = 'SMALL'
 export const MED = 'MED'
 export const LARGE = 'LARGE'
+
+const testWords = words.filter(d => /\b[a-z]{1,6}\b/.test(d))
 
 export const getBlockSize = size =>
   ({
@@ -22,6 +25,7 @@ const ipsum = new LoremIpsum({
     max: 16,
     min: 4,
   },
+  words: testWords,
 })
 
 const initialState = {
@@ -29,6 +33,7 @@ const initialState = {
   operations: [],
   newEntities: [],
   selection: {
+    // _id: new ObjectID().toHexString(),
     anchor: {
       index: 0,
       offset: 0,
@@ -38,37 +43,27 @@ const initialState = {
       offset: 0,
     },
   },
-  entityCache: {},
-  blockCache: {},
   blocks: [],
-  page: {
-    _id: '5d6443bdd9ca9149d1a346c2',
-    name: 'document',
-    blocks: [],
+  pageHeader: {
+    _id: ObjectId().toHexString(),
+    name: 'test document',
   },
 }
 
-const generateBlock = (state, type) => {
+const generateBlock = (state, type, index) => {
   const _state = state
 
-  const refId = ObjectId().toHexString()
+  // const refId = ObjectId().toHexString()
   const _id = ObjectId().toHexString()
 
-  _state.entityCache[refId] = {
+  _state.blocks[index] = {
     type,
-    _id: refId,
+    _id,
     text: {
       textValue: ipsum.generateParagraphs(2),
       ranges: [],
     },
   }
-
-  _state.blockCache[_id] = {
-    type,
-    entityId: refId,
-  }
-
-  _state.blocks.push({ _id })
 
   return _state
 }
@@ -79,7 +74,7 @@ export const generateState = size => {
   let _state = cloneDeep(initialState)
   for (let i = 0; i < blockSize; i += 1) {
     const _type = types[Math.floor(Math.random() * types.length)]
-    _state = generateBlock(_state, _type)
+    _state = generateBlock(_state, _type, i)
   }
   return _state
 }

@@ -10,8 +10,7 @@ import {
   CLEAR,
   DEQUEUE_NEW_ENTITY,
 } from './constants'
-import { Text, Selection, Entity } from '../interfaces'
-import * as util from '../lib/util'
+import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
 
@@ -40,21 +39,20 @@ type ContextType = {
   merge: (transform: Transform) => void
   setContent: (transform: Transform) => void
   setSelection: (selection: Selection) => void
-  getEntityAtIndex: (index: number) => Entity
   remove: (index: number) => void
   clear: (index: number) => void
 }
 
-type OnChangeArgs = {
-  nextState: any
-  previousState: any
-  patch: Patch
-  inversePatch: Patch
+export type OnChangeArgs = {
+  nextState: EditorState
+  previousState: EditorState
+  patches: Patch[]
+  inversePatches: Patch[]
 }
 
 type PropsType = {
   children: JSX.Element
-  initialState: any
+  initialState: EditorState
   onChange: (args: OnChangeArgs) => void
 }
 
@@ -110,12 +108,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
     })
 
   /**
-   * Get the Entity at `index`
-   */
-  const getEntityAtIndex = (index: number): Entity =>
-    util.getEntityAtIndex(state, index)
-
-  /**
    * Remove the block at `index`
    */
   const remove = (index: number): void =>
@@ -148,7 +140,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
         setContent,
         split,
         merge,
-        getEntityAtIndex,
         remove,
         clear,
         removeEntityFromQueue,

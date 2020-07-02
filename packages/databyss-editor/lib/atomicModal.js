@@ -1,7 +1,6 @@
 import { Transforms } from '@databyss-org/slate'
 import { ReactEditor } from 'slate-react'
 import { stateSelectionToSlateSelection } from './slateUtils'
-import { entityForBlockIndex } from '../state/util'
 
 export const showAtomicModal = ({
   editorContext,
@@ -13,7 +12,7 @@ export const showAtomicModal = ({
     return
   }
   const index = editorContext.state.selection.anchor.index
-  const _entity = entityForBlockIndex(editorContext.state, index)
+  const _entity = editorContext.state.blocks[index]
   const refId = _entity._id
   const type = _entity.type
   let offset

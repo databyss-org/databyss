@@ -16,14 +16,16 @@ const EditFirstCitation = withSource(({ source }) => {
   const { setSource } = useSourceContext()
 
   const value = {
-    textValue: source.citations[0].textValue,
-    ranges: source.citations[0].ranges,
+    textValue: source.detail.citations[0].textValue,
+    ranges: source.detail.citations[0].ranges,
   }
 
   const updateSource = _value => {
     setSource({
       ...source,
-      citations: [_value],
+      detail: {
+        citations: [_value],
+      },
     })
   }
 
@@ -46,8 +48,19 @@ const SourcesDemo = () => {
 
   const { setSource } = useSourceContext()
 
+  const valuesToSource = values => {
+    const { authors, citations, ...blockFields } = values
+    return {
+      ...blockFields,
+      detail: {
+        authors,
+        citations,
+      },
+    }
+  }
+
   const setSourceFields = sourceFields => {
-    setSource(sourceFields)
+    setSource(valuesToSource(sourceFields))
   }
 
   const getSourceFields = id => {

@@ -1,7 +1,7 @@
-import React, { createContext, useContext } from 'react'
+import React from 'react'
+import { createContext, useContextSelector } from 'use-context-selector'
 import { useNavigate, useLocation, Router } from '@reach/router'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import componentMap from './componentMap'
 import reducer, { initialState } from './reducer'
 import * as actions from './actions'
 
@@ -17,7 +17,7 @@ const withRouter = Wrapped => ({ children }) => (
   </Router>
 )
 
-const NavigationProvider = ({ children, componentMap }) => {
+const NavigationProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState, {
     name: 'NavigationProvider',
   })
@@ -75,21 +75,14 @@ const NavigationProvider = ({ children, componentMap }) => {
       }}
     >
       {children}
-
-      {state.modals.map((modal, i) => {
-        const ModalComponent = componentMap[modal.component]
-        return (
-          <ModalComponent visible={modal.visible} key={i} {...modal.props} />
-        )
-      })}
     </NavigationContext.Provider>
   )
 }
 
-export const useNavigationContext = () => useContext(NavigationContext)
+export const useNavigationContext = (selector = x => x) =>
+  useContextSelector(NavigationContext, selector)
 
 NavigationProvider.defaultProps = {
-  componentMap,
   initialState,
 }
 

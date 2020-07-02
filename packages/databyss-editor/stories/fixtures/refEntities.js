@@ -12,7 +12,7 @@ export const sourceFixture = {
 export const topicFixture = {
   _id: '5e3b1bc48fb28680fe26437d',
   text: {
-    textValue: 'topic',
+    textValue: 'Some topic',
     ranges: [],
   },
 }
