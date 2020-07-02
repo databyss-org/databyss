@@ -28,7 +28,7 @@ import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
-import { cleanupPatches } from '../state/util'
+import { cleanupPatches, addMetaToPatches } from '../state/util'
 import connectedFixture, { corruptedPage } from './fixtures/connectedState'
 
 const LoginRequired = () => (
@@ -67,7 +67,7 @@ const PageWithAutosave = ({ page }) => {
   }
 
   const onChange = value => {
-    const patch = addMetaData(value)
+    const patch = addMetaToPatches(value)
     // push changes to a queue
     operationsQueue.current = operationsQueue.current.concat(patch)
     throttledAutosave({ ...value, patch })
