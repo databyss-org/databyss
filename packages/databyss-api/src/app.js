@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import http from 'http'
+import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { ApiError } from './lib/Errors'
 import { connectDB } from './lib/db'
 
@@ -27,6 +28,11 @@ const run = async () => {
   // Connect Database
   await connectDB()
 
+  // Init Bugsnag
+  if (process.env.NODE_ENV !== 'test') {
+    Bugsnag.init()
+  }
+
   // Init Middleware
   app.use(cors())
   app.use(express.json({ extended: false }))
@@ -52,7 +58,7 @@ const run = async () => {
       return res.status(err.status).json({ error: err })
     }
     console.error('ERR', err)
-    // TODO: log error on bugsnag
+    Bugsnag.client.notify(err)
     return res.status(500).json({ error: { message: err.message } })
   })
 

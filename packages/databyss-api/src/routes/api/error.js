@@ -1,5 +1,5 @@
 import express from 'express'
-import { bugsnagClient } from '../../middleware/bugsnag'
+import Bugsnag from '@databyss-org/services/lib/bugsnag'
 
 import { ApiError } from '../../lib/Errors'
 
@@ -8,7 +8,7 @@ const delay = timer => new Promise(resolve => setTimeout(resolve, timer))
 const router = express.Router()
 
 router.get('/', () => {
-  bugsnagClient.notify(new Error('Test notify error'))
+  Bugsnag.client.notify(new Error('Test notify error'))
 
   throw new Error('Test throw error')
 })
