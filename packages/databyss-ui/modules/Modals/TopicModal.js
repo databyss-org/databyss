@@ -25,13 +25,13 @@ const TopicModal = ({ refId, visible, onUpdate, id }) => {
   const { hideModal } = useNavigationContext()
 
   const onBlur = () => {
-    if (values) {
+    if (values && values.text.textValue.length) {
       setTopic(values)
     }
   }
 
   const onDismiss = () => {
-    if (values) {
+    if (values && values.text.textValue.length) {
       // updates in topic provider
       setTopic(values)
     }
@@ -49,38 +49,43 @@ const TopicModal = ({ refId, visible, onUpdate, id }) => {
       onDismiss={onDismiss}
       title="Edit Topic"
       dismissChild="done"
-      disabled={values && !values.text.textValue.length}
+      canDismiss={values && !values.text.textValue.length}
     >
       <TopicLoader topicId={refId}>
-        {topic => (
-          <ValueListProvider onChange={setValues} values={values || topic}>
-            <Grid>
-              <View
-                paddingVariant="none"
-                widthVariant="content"
-                backgroundColor="background.0"
-                width="100%"
-              >
-                <ControlList verticalItemPadding="tiny">
-                  <ValueListItem path="text">
-                    <TextControl
-                      labelProps={{
-                        width: '25%',
-                      }}
-                      label="Name"
-                      id="name"
-                      gridFlexWrap="nowrap"
-                      focusOnMount
-                      paddingVariant="tiny"
-                      rich
-                      onBlur={onBlur}
-                    />
-                  </ValueListItem>
-                </ControlList>
-              </View>
-            </Grid>
-          </ValueListProvider>
-        )}
+        {topic => {
+          if (!values) {
+            setValues(topic)
+          }
+          return (
+            <ValueListProvider onChange={setValues} values={values || topic}>
+              <Grid>
+                <View
+                  paddingVariant="none"
+                  widthVariant="content"
+                  backgroundColor="background.0"
+                  width="100%"
+                >
+                  <ControlList verticalItemPadding="tiny">
+                    <ValueListItem path="text">
+                      <TextControl
+                        labelProps={{
+                          width: '25%',
+                        }}
+                        label="Name"
+                        id="name"
+                        gridFlexWrap="nowrap"
+                        focusOnMount
+                        paddingVariant="tiny"
+                        rich
+                        onBlur={onBlur}
+                      />
+                    </ValueListItem>
+                  </ControlList>
+                </View>
+              </Grid>
+            </ValueListProvider>
+          )
+        }}
       </TopicLoader>
     </ModalWindow>
   )

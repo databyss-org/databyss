@@ -20,6 +20,7 @@ const ModalWindow = ({
   visible,
   onDismiss,
   widthVariant,
+  canDismiss,
   ...others
 }) => {
   const animations = makeAnimations({
@@ -52,6 +53,7 @@ const ModalWindow = ({
       widthVariant={_mobile ? 'none' : widthVariant}
       showOverlay={!_mobile}
       onDismiss={onDismiss}
+      canDismiss={canDismiss}
       onOpen={onOpen}
       visible={visible}
       {...(_mobile
@@ -64,7 +66,7 @@ const ModalWindow = ({
           }
         : {})}
     >
-      <ModalView {...others} onDismiss={onClose}>
+      <ModalView {...others} canDismiss={canDismiss} onDismiss={onClose}>
         {children}
       </ModalView>
     </Modal>
