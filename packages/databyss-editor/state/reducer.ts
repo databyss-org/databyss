@@ -123,7 +123,9 @@ export default (
             block: blockValue(draft.blocks[payload.index + 1]),
           })
 
-          // HACK: fixes hanging character in a markup
+          // HACK: workaround for a Slate bug
+          // see issue #3458: Arrow navigation issue with single-character text node adjacent to inline element
+          // https://github.com/ianstormtaylor/slate/issues/3458
           const _prevTextValue = payload.previous.textValue
 
           if (_prevTextValue.charAt(_prevTextValue.length - 1) === '\n') {
