@@ -10,7 +10,6 @@ const ModalView = ({
   secondaryChild,
   onDismiss,
   children,
-  disabled,
   canDismiss,
   ...others
 }) => (

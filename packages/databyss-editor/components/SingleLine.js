@@ -5,7 +5,7 @@ import React, {
   useState,
   forwardRef,
 } from 'react'
-import { Editable, withReact, Slate } from 'slate-react'
+import { Editable, withReact, Slate, ReactEditor } from 'slate-react'
 import { Editor, createEditor, Transforms } from '@databyss-org/slate'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { stateToSlateMarkup, getRangesFromBlock } from '../lib/markup'
@@ -75,6 +75,7 @@ const RichText = forwardRef(
   (
     {
       multiline,
+      active,
       onChange,
       initialValue,
       id,
@@ -82,7 +83,6 @@ const RichText = forwardRef(
       onBlur,
       onFocus,
       placeholder,
-      setEditor,
     },
     ref
   ) => {
@@ -106,12 +106,15 @@ const RichText = forwardRef(
       setValue(value)
     }
 
-    // on mount, pass editor up
-    useEffect(() => {
-      if (editor && setEditor) {
-        setEditor(editor)
-      }
-    }, [])
+    useEffect(
+      () => {
+        if (active && editor) {
+          ReactEditor.focus(editor)
+          Transforms.select(editor, Editor.end(editor, []))
+        }
+      },
+      [active]
+    )
 
     return (
       <View ref={ref}>

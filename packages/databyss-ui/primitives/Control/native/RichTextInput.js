@@ -1,6 +1,4 @@
-import React, { forwardRef, useEffect, useRef } from 'react'
-import { ReactEditor } from 'slate-react'
-import { Editor, Transforms } from '@databyss-org/slate'
+import React, { forwardRef } from 'react'
 import SingleLine from '@databyss-org/editor/components/SingleLine'
 
 const RichTextInput = forwardRef(
@@ -8,24 +6,9 @@ const RichTextInput = forwardRef(
     { value, onChange, id, concatCss, onBlur, onFocus, active, multiline },
     ref
   ) => {
-    const editorRef = useRef(null)
-
     const _onBlur = event => {
       onBlur(event)
     }
-
-    useEffect(
-      () => {
-        if (active && editorRef.current) {
-          ReactEditor.focus(editorRef.current)
-          Transforms.select(
-            editorRef.current,
-            Editor.end(editorRef.current, [])
-          )
-        }
-      },
-      [active]
-    )
 
     const _onFocus = event => {
       onFocus(event)
@@ -39,13 +22,10 @@ const RichTextInput = forwardRef(
       },
     ].concat(concatCss)
 
-    const setEditor = editor => {
-      editorRef.current = editor
-    }
-
     return (
       <SingleLine
         onFocus={_onFocus}
+        active={active}
         onBlur={_onBlur}
         multiline={multiline}
         onChange={onChange}
@@ -54,7 +34,6 @@ const RichTextInput = forwardRef(
         overrideCss={_css}
         name="RichTextInput"
         ref={ref}
-        setEditor={setEditor}
       />
     )
   }
