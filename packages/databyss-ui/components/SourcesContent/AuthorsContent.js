@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react'
 import { Router } from '@reach/router'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import { uniqBy } from 'lodash'
+import {
+  getSourcesData,
+  sortEntriesAtoZ,
+} from '@databyss-org/services/sources/util'
+import { groupBy, uniqBy } from 'lodash'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
 
@@ -15,24 +19,17 @@ const AuthorsContent = () => {
   const { getAllSources, state } = useSourceContext()
   useEffect(() => getAllSources(), [])
 
-  const sourcesData = () =>
-    Object.values(state.cache).map(value => {
-      const author = value.authors?.[0]
-      const firstName = author?.firstName?.textValue
-      const lastName = author?.lastName?.textValue
+  const authorList = getSourcesData(state.cache, 'authors')
+  const sortedAuthors = sortEntriesAtoZ(authorList)
 
-      return {
-        id: value._id,
-        text: author && `${lastName}${firstName && `, ${firstName}`}`,
-      }
-    })
-
-  const sortedSources = sourcesData().sort((a, b) => (a.text > b.text ? 1 : -1))
-  const uniqueAuthorList = uniqBy(sortedSources, 'text')
+  // const cleanSources = sourcesData().filter(entry => entry.text !== undefined)
+  // remove duplicate entries
+  // const uniqueAuthorList = uniqBy(sortedSources, 'text')
+  // const groupedAuthorList = groupBy(sortedSources, 'text')
 
   return (
     <IndexPageContent title="All Authors">
-      <IndexPageEntries entries={uniqueAuthorList} page="authors" />
+      <IndexPageEntries entries={sortedAuthors} page="authors" />
     </IndexPageContent>
   )
 }
