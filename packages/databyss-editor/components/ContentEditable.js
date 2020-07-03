@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useEffect, forwardRef } from 'react'
+import React, { useMemo, useRef, useEffect } from 'react'
 import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
 import { ReactEditor, withReact } from 'slate-react'
 import _ from 'lodash'
@@ -118,7 +118,7 @@ const ContentEditable = ({
 
   const onKeyDown = event => {
     // UI
-    if (event.key == 'ArrowUp') {
+    if (event.key === 'ArrowUp') {
       const _currentIndex = editor.selection.focus.path[0]
       const _atBlockStart =
         editor.selection.focus.path[1] === 0 &&
