@@ -21,11 +21,11 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
       if (pageDataName === noPageTitle) {
         setPageName({ textValue: '' })
         // if no page name is provided, focus on page name
-        if (ref.current) {
-          setTimeout(() => {
+        setTimeout(() => {
+          if (ref.current) {
             ref.current.focus()
-          }, 10)
-        }
+          }
+        }, 10)
       } else {
         setPageName({ textValue: pageDataName })
       }
