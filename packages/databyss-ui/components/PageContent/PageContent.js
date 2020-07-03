@@ -15,7 +15,7 @@ export const PageRouter = () => (
   </Router>
 )
 
-const PageContainer = React.memo(({ anchor, id, onHeaderClick, page }) => {
+const PageContainer = React.memo(({ anchor, id, page }) => {
   const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
   const hasPendingPatches = usePageContext(c => c.hasPendingPatches)
 
@@ -81,7 +81,6 @@ const PageContainer = React.memo(({ anchor, id, onHeaderClick, page }) => {
           ref={headerRef}
           pageId={id}
           onNavigateDownFromHeader={onNavigateDownToEditor}
-          isFocused={onHeaderClick}
         />
         <Text color="gray.5" pr="medium" variant="uiTextSmall">
           {isOnline && (pendingPatches ? 'Saving...' : 'All changes saved')}
@@ -103,13 +102,6 @@ const PageContent = () => {
   // get page id and anchor from url
   const { id } = useParams()
   const anchor = useLocation().hash.substring(1)
-  const [readOnly, setReadOnly] = useState(false)
-
-  const onHeaderClick = bool => {
-    if (readOnly !== bool) {
-      setReadOnly(bool)
-    }
-  }
 
   /*
   use same route to update name, just pass it name 
@@ -119,15 +111,7 @@ const PageContent = () => {
     <View flex="1" height="100vh">
       {id && (
         <PageLoader pageId={id} key={id}>
-          {page => (
-            <PageContainer
-              anchor={anchor}
-              id={id}
-              onHeaderClick={onHeaderClick}
-              page={page}
-              readOnly={readOnly}
-            />
-          )}
+          {page => <PageContainer anchor={anchor} id={id} page={page} />}
         </PageLoader>
       )}
     </View>
