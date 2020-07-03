@@ -1,5 +1,4 @@
 import { Platform } from 'react-native'
-import { isMobileOs } from '../lib/mediaQuery'
 
 export const serif = Platform.select({
   ios: 'Baskerville',
