@@ -4,7 +4,6 @@ export const getSourcesData = (sources, type, icon) =>
     const author = value.authors?.[0]
     const firstName = author?.firstName?.textValue
     const lastName = author?.lastName?.textValue
-    // debugger
 
     return {
       id: value._id,
