@@ -402,10 +402,30 @@ const ContentEditable = ({
   if (state.preventDefault) {
     editor.operations = []
   }
+  /*
+if focus event is fired and editor.selection is null, set focus at origin. this is used when editorRef.focus() is called by a parent component
+*/
+  const onFocus = () => {
+    setTimeout(() => {
+      if (!editor.selection) {
+        const _selection = {
+          anchor: { index: 0, offset: 0 },
+          focus: { index: 0, offset: 0 },
+        }
+        const _slateSelection = stateSelectionToSlateSelection(
+          editor.children,
+          _selection
+        )
+        Transforms.select(editor, _slateSelection)
+        ReactEditor.focus(editor)
+      }
+    }, 5)
+  }
 
   return (
     <Editor
       editor={editor}
+      onFocus={onFocus}
       autofocus={autofocus}
       value={nextValue}
       onChange={onChange}

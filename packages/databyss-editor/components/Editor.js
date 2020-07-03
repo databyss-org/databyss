@@ -7,7 +7,14 @@ import Element from './Element'
 import FormatMenu from './FormatMenu'
 import CitationsMenu from './CitationsMenu'
 
-const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
+const Editor = ({
+  children,
+  editor,
+  autofocus,
+  readonly,
+  onFocus,
+  ...others
+}) => {
   const entryContext = useEntryContext()
   let searchTerm = ''
 
@@ -62,6 +69,7 @@ const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
       <FormatMenu />
       <CitationsMenu />
       <Editable
+        onFocus={onFocus}
         decorate={decorate}
         spellCheck={process.env.NODE_ENV !== 'test'}
         renderElement={renderElement}
