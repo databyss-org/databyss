@@ -5,7 +5,6 @@ import {
   getSourcesData,
   sortEntriesAtoZ,
 } from '@databyss-org/services/sources/util'
-import { groupBy, uniqBy } from 'lodash'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
 
@@ -21,11 +20,6 @@ const AuthorsContent = () => {
 
   const authorList = getSourcesData(state.cache, 'authors')
   const sortedAuthors = sortEntriesAtoZ(authorList)
-
-  // const cleanSources = sourcesData().filter(entry => entry.text !== undefined)
-  // remove duplicate entries
-  // const uniqueAuthorList = uniqBy(sortedSources, 'text')
-  // const groupedAuthorList = groupBy(sortedSources, 'text')
 
   return (
     <IndexPageContent title="All Authors">

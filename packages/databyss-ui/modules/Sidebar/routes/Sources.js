@@ -6,7 +6,6 @@ import {
   sortEntriesAtoZ,
   filterEntries,
 } from '@databyss-org/services/sources/util'
-// import { uniqBy } from 'lodash'
 import SidebarList from '../../../components/Sidebar/SidebarList'
 
 const sourcesOverview = [
