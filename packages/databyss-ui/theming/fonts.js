@@ -140,10 +140,10 @@ const bodyText = size => ({
 })
 
 const bodyVariants = {
-  bodyLarge: bodyText(22),
-  bodyHeader: bodyHeader(20),
-  bodyNormal: bodyText(isMobileOs() ? 16 : 15),
-  bodySmall: bodyText(isMobileOs() ? 14 : 13),
+  bodyHeader: bodyHeader(26),
+  bodyLarge: bodyText(20),
+  bodyNormal: bodyText(16),
+  bodySmall: bodyText(14),
 }
 
 const bodyBoldVariants = Object.keys(bodyVariants).reduce(

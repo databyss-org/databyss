@@ -14,7 +14,7 @@ import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 
 export const getAtomicStyle = type =>
-  ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
+  ({ SOURCE: 'bodyNormalSemibold', TOPIC: 'bodyLarge' }[type])
 
 const Element = ({ attributes, children, element }) => {
   const entryContext = useEntryContext()

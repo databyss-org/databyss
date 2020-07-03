@@ -80,7 +80,7 @@ const SearchContent = () => {
   return (
     <ScrollView p="medium" flex="1" maxHeight="98vh">
       <View p="medium">
-        <Text variant="bodyLarge" color="text.3">
+        <Text variant="bodyHeader" color="text.3">
           &quot;{query}&quot;
         </Text>
       </View>
