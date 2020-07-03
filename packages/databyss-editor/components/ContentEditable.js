@@ -109,7 +109,7 @@ const ContentEditable = ({
   )
 
   useEffect(() => {
-    if (editor) {
+    if (editor && editorRef) {
       editorRef.current = ReactEditor.toDOMNode(editor, editor)
     }
   }, [])
