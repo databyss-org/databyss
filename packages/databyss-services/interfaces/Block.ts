@@ -12,8 +12,8 @@ export interface Block {
 }
 
 export interface Author {
-  firstName: string
-  lastName: string
+  firstName: Text
+  lastName: Text
 }
 
 export interface SourceDetail {

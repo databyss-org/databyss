@@ -21,6 +21,8 @@ export interface CacheDict<T> {
   [key: string]: ResourceResponse<T>
 }
 
+export type CacheList<T> = ResourceResponse<T[]>
+
 export type NullableCache<T> = ResourceResponse<CacheDict<T>>
 
 interface RefDict {

@@ -3,7 +3,7 @@ import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
 import reducer, { initialState } from './reducer'
-import { ResourceResponse, Source, SourceState } from '../interfaces'
+import { ResourceResponse, Source, SourceState, Author } from '../interfaces'
 
 import {
   fetchSource,
@@ -21,6 +21,7 @@ interface PropsType {
 interface ContextType {
   state: SourceState
   getSource: (id: string) => ResourceResponse<Source>
+  getAuthors: () => ResourceResponse<Author[]>
   setSource: (source: Source) => void
   removeCacheValue: (id: string) => void
   searchSource: (query: string) => ResourceResponse<SourceSearchResults>
@@ -87,6 +88,17 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
       }
     },
     [state.cache]
+  )
+
+  const getAuthors = useCallback(
+    (): ResourceResponse<Author[]> => {
+      if (state.authorHeaderCache) {
+        return state.authorHeaderCache
+      }
+
+      dispatch(fetchAuthorHeaders())
+      return null
+    }
   )
 
   return (
