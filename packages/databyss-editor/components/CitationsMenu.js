@@ -97,9 +97,9 @@ const GoogleFooter = () => (
   />
 )
 
-const ComposeResults = ({ results, onClick, unmount }) =>
-  // useEffect(() => () => unmount(), [])
-  !_.isEmpty(results) ? (
+const ComposeResults = ({ results, onClick, unmount }) => {
+  useEffect(() => () => unmount(), [])
+  return !_.isEmpty(results) ? (
     Object.keys(results).map((author, i) => (
       <View key={i}>
         <Text variant="uiTextSmall" color="text.2">
@@ -133,6 +133,7 @@ const ComposeResults = ({ results, onClick, unmount }) =>
       <Text variant="uiTextSmall">No results found</Text>
     </View>
   )
+}
 
 export const Citations = () => {
   const setSource = useSourceContext(c => c && c.setSource)
@@ -270,14 +271,16 @@ export const Citations = () => {
             >
               {setSource && (
                 <SearchSourceLoader query={sourceQuery}>
-                  {results => (
-                    // setSourcesLoaded(true)
-                    <ComposeResults
-                      results={results}
-                      onClick={onClick}
-                      // unmount={() => setSourcesLoaded(false)}
-                    />
-                  )}
+                  {results => {
+                    setSourcesLoaded(true)
+                    return (
+                      <ComposeResults
+                        results={results}
+                        onClick={onClick}
+                        unmount={() => setSourcesLoaded(false)}
+                      />
+                    )
+                  }}
                 </SearchSourceLoader>
               )}
             </View>
