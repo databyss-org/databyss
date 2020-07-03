@@ -13,7 +13,9 @@ const Pages = () => (
           id: p._id,
         }))
       // alphabetize list
-      _menuItems.sort((a, b) => (a.text > b.text ? 1 : -1))
+      _menuItems.sort(
+        (a, b) => (a.text.toLowerCase() > b.text.toLowerCase() ? 1 : -1)
+      )
 
       return <SidebarList menuItems={_menuItems} />
     }}
