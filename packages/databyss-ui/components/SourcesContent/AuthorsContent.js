@@ -5,10 +5,6 @@ import {
   getSourcesData,
   sortEntriesAtoZ,
 } from '@databyss-org/services/sources/util'
-<<<<<<< HEAD
-=======
-import { groupBy, uniqBy } from 'lodash'
->>>>>>> Helper function or getting and sorting entry data
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
 
