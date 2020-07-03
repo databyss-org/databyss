@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useEffect } from 'react'
+import React, { useMemo, useRef, useEffect, forwardRef } from 'react'
 import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
 import { ReactEditor, withReact } from 'slate-react'
 import _ from 'lodash'
@@ -29,6 +29,8 @@ const ContentEditable = ({
   focusIndex,
   autofocus,
   readonly,
+  onNavigateUpFromTop,
+  editorRef,
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
@@ -106,9 +108,25 @@ const ContentEditable = ({
     [state.newEntities.length]
   )
 
+  useEffect(() => {
+    if (editor) {
+      editorRef.current = ReactEditor.toDOMNode(editor, editor)
+    }
+  }, [])
+
   const inDeadKey = useRef(false)
 
   const onKeyDown = event => {
+    // UI
+    if (event.key == 'ArrowUp') {
+      const _currentIndex = editor.selection.focus.path[0]
+      const _atBlockStart =
+        editor.selection.focus.path[1] === 0 &&
+        editor.selection.focus.offset === 0
+      if (onNavigateUpFromTop && _atBlockStart && _currentIndex === 0) {
+        onNavigateUpFromTop()
+      }
+    }
     // if diacritics has been toggled, set dead key
     if (event.key === 'Dead') {
       inDeadKey.current = true

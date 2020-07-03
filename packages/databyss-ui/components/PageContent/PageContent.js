@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useLocation, Router } from '@reach/router'
 import { PagesLoader, PageLoader } from '@databyss-org/ui/components/Loaders'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
@@ -22,6 +22,8 @@ const PageContainer = React.memo(({ anchor, id, onHeaderClick, page }) => {
   const { isOnline } = useNotifyContext()
 
   const [pendingPatches, setPendingPatches] = useState(0)
+  const headerRef = useRef()
+  const editorRef = useRef()
 
   // index is used to set selection in slate
   const [index, setIndex] = useState(null)
@@ -53,6 +55,20 @@ const PageContainer = React.memo(({ anchor, id, onHeaderClick, page }) => {
     }
   }, [])
 
+  // focus header
+  const onNavigateUpFromEditor = () => {
+    if (headerRef.current) {
+      headerRef.current.focus()
+    }
+  }
+
+  // focus editor
+  const onNavigateDownToEditor = () => {
+    if (editorRef.current) {
+      editorRef.current.focus()
+    }
+  }
+
   return (
     <View height="100vh" overflow="scroll" p="medium">
       <View
@@ -61,14 +77,24 @@ const PageContainer = React.memo(({ anchor, id, onHeaderClick, page }) => {
         flexDirection="row"
         justifyContent="space-between"
       >
-        <PageHeader pageId={id} isFocused={onHeaderClick} />
+        <PageHeader
+          ref={headerRef}
+          pageId={id}
+          onNavigateDownFromHeader={onNavigateDownToEditor}
+          isFocused={onHeaderClick}
+        />
         <Text color="gray.5" pr="medium" variant="uiTextSmall">
           {isOnline && (pendingPatches ? 'Saving...' : 'All changes saved')}
           {!isOnline && 'Offline'}
         </Text>
         <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
       </View>
-      <PageBody page={page} focusIndex={index} />
+      <PageBody
+        editorRef={editorRef}
+        page={page}
+        focusIndex={index}
+        onNavigateUpFromEditor={onNavigateUpFromEditor}
+      />
     </View>
   )
 }, (prev, next) => prev.page._id === next.page._id && prev.id === next.id && prev.anchor === next.anchor)
