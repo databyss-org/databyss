@@ -62,9 +62,13 @@ const Footer = () => {
               <Text variant="uiTextNormal" color="text.2" ml="em">
                 New Page
               </Text>
+              {/* 
+              TODO: Only show this in electron app, when we get it, because we don't want
+                to override the standard browser hotkeys. Also make the modifier key
+                appropriate to the OS
               <Text variant="uiTextNormal" color="text.3" mr="small">
                 ⌘+N
-              </Text>
+              </Text> */}
             </View>
           )}
         </Grid>
