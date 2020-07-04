@@ -283,6 +283,10 @@ export default (
           !selectionHasRange(draft.selection) &&
           !_selectedBlock.text.textValue.length
 
+        _selectedBlock.__showCitationMenu = _selectedBlock.text.textValue.startsWith(
+          '@'
+        )
+
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element
         _selectedBlock.__isActive =
           !selectionHasRange(draft.selection) &&
