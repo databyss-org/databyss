@@ -96,7 +96,11 @@ const Element = ({ attributes, children, element }) => {
               }}
               {...(block.__isActive ? { onMouseDown: onAtomicMouseDown } : {})}
             >
-              <Text variant={getAtomicStyle(element.type)} display="inline">
+              <Text
+                variant={getAtomicStyle(element.type)}
+                color={element.type === 'SOURCE' && 'purple.0'}
+                display="inline"
+              >
                 {children}
               </Text>
               {block.__isActive && (

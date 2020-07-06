@@ -16,7 +16,7 @@ const SidebarIconButton = ({ icon, onClick, isActive, title, ...others }) => {
         {...others}
       >
         <View
-          bg="purple.2"
+          bg="purple.3"
           position="absolute"
           top="small"
           bottom="small"

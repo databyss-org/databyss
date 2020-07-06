@@ -87,7 +87,7 @@ const buttonVariants = {
   },
   editSource: {
     display: 'inline-block',
-    padding: 'extraSmall',
+    padding: `${pxUnits(space.tiny)} ${pxUnits(space.extraSmall)}`,
   },
 }
 
