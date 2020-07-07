@@ -1,35 +1,37 @@
 import React, { useEffect, useState } from 'react'
 import { Transforms, Text } from '@databyss-org/slate'
 import { useEditor, ReactEditor } from 'slate-react'
-import buttons, {
-  editorMarginMenuItemHeight,
-} from '@databyss-org/ui/theming/buttons'
-import { View, Button, Icon, Grid } from '@databyss-org/ui/primitives'
-import Close from '@databyss-org/ui/assets/close-menu.svg'
+import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
+import {
+  View,
+  BaseControl,
+  Icon,
+  Grid,
+  Separator,
+} from '@databyss-org/ui/primitives'
 import AddSvg from '@databyss-org/ui/assets/add.svg'
+import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
+import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 
-const BlockMenuActions = ({ menuActionButtons, unmount }) => {
-  useEffect(() => () => unmount(), [])
-  return (
-    <Grid singleRow columnGap="tiny">
-      {menuActionButtons}
-    </Grid>
-  )
-}
-
 const BlockMenu = ({ element }) => {
-  const [showMenuActions, setShowMenuActions] = useState(false)
+  const [showMenu, setShowMenu] = useState(false)
   const editor = useEditor()
 
-  const { buttonVariants } = buttons
-
   const onShowActions = () => {
-    setShowMenuActions(!showMenuActions)
+    setShowMenu(!showMenu)
+  }
+
+  const handleEscKey = e => {
+    if (e.key === 'Escape') {
+      setShowMenu(false)
+    }
   }
 
   const actions = type =>
     ({
+      ENDSOURCE: () => undefined,
+      ENDLOCATION: () => undefined,
       SOURCE: () => editor.insertText('@'),
       TOPIC: () => editor.insertText('#'),
       LOCATION: () => {
@@ -60,63 +62,98 @@ const BlockMenu = ({ element }) => {
 
     e.preventDefault()
     actions(tag)()
-    setShowMenuActions(false)
+    setShowMenu(false)
   }
 
-  const menuActions = [
-    {
-      action: 'SOURCE',
-      label: '@ source',
-    },
+  const menuItems = [
+    // {
+    //   action: 'ENDSOURCE',
+    //   textSymbol: '/@',
+    //   shortcut: '',
+    //   label: 'End source',
+    // },
+    // {
+    //   action: 'ENDLOCATION',
+    //   textSymbol: '/%',
+    //   shortcut: '',
+    //   label: 'End location',
+    // },
     {
       action: 'TOPIC',
-      label: '# topic',
+      textSymbol: '#',
+      label: 'Topic',
+    },
+    {
+      action: 'SOURCE',
+      textSymbol: '@',
+      label: 'Source',
     },
     {
       action: 'LOCATION',
-      label: 'location',
+      textSymbol: '%',
+      label: 'Location',
     },
   ]
 
-  const menuActionButtons = menuActions.map((a, i) => (
-    <Button
-      variant="editorMarginMenuItem"
-      data-test-block-menu={a.action}
-      key={i}
-      onMouseDown={e => onMenuAction(e, a.action)}
-    >
-      {a.label}
-    </Button>
-  ))
+  const BlockMenuActions = ({ menuItems, unmount, showMenu }) => {
+    useEffect(() => () => unmount(), [])
+
+    return (
+      <DropdownContainer
+        position={{
+          top: menuLauncherSize,
+          left: menuLauncherSize,
+        }}
+        open={showMenu}
+        widthVariant="dropdownMenuSmall"
+      >
+        {menuItems.map(menuItem => (
+          <React.Fragment key={menuItem.action}>
+            <DropdownListItem
+              menuItem={menuItem}
+              onPress={e => onMenuAction(e, menuItem.action)}
+              onKeyDown={handleEscKey}
+            />
+            {menuItem.action === 'ENDLOCATION' && (
+              <Separator color="border.3" spacing="extraSmall" />
+            )}
+          </React.Fragment>
+        ))}
+      </DropdownContainer>
+    )
+  }
 
   return (
     <Grid singleRow columnGap="small">
       <View
-        height={editorMarginMenuItemHeight}
-        width={editorMarginMenuItemHeight}
+        height={menuLauncherSize}
+        width={menuLauncherSize}
         justifyContent="center"
       >
-        <Button
-          variant="editorMarginMenu"
-          onClick={onShowActions}
+        <BaseControl
+          onPress={onShowActions}
+          onKeyDown={handleEscKey}
           data-test-block-menu="open"
+          aria-haspopup="true"
+          hoverColor="background.2"
+          activeColor="primary.2"
+          borderRadius="round"
+          alignItems="center"
         >
-          <Icon
-            sizeVariant="tiny"
-            color={buttonVariants.editorMarginMenu.color}
-          >
-            <View>{showMenuActions ? <Close /> : <AddSvg />}</View>
+          <Icon sizeVariant="medium" color="text.2">
+            <AddSvg />
           </Icon>
-        </Button>
+        </BaseControl>
       </View>
-      <View justifyContent="center" height={editorMarginMenuItemHeight}>
-        {showMenuActions && (
+      <View justifyContent="center" height={menuLauncherSize}>
+        {showMenu && (
           <BlockMenuActions
             unmount={
               () => null
               //   dispatchEditor(onShowMenuActions(false, editableState))
             }
-            menuActionButtons={menuActionButtons}
+            menuItems={menuItems}
+            showMenu={showMenu}
           />
         )}
       </View>
