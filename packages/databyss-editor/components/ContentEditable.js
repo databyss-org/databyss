@@ -1,5 +1,12 @@
 import React, { useMemo, useRef, useEffect } from 'react'
-import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
+import {
+  createEditor,
+  Node,
+  Text,
+  Transforms,
+  Editor as SlateEditor,
+  Point,
+} from '@databyss-org/slate'
 import { ReactEditor, withReact } from 'slate-react'
 import _ from 'lodash'
 import { produce } from 'immer'
@@ -19,7 +26,12 @@ import {
   toggleMark,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
-import { getSelectedIndicies, isAtomic, isEmpty } from '../lib/util'
+import {
+  getSelectedIndicies,
+  isAtomic,
+  isEmpty,
+  isAtomicInlineType,
+} from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
@@ -177,6 +189,10 @@ const ContentEditable = ({
         Transforms.insertText(editor, `\n`)
         return
       }
+
+      // for new entry, remove current marks
+      Object.keys(SlateEditor.marks(editor)).forEach(m => editor.removeMark(m))
+
       return
     }
     if (event.key === 'Backspace') {
@@ -344,22 +360,49 @@ const ContentEditable = ({
     setSelection(selection)
   }
 
-  // Use immer to produce the next `value`
-  //   we loop through the operations in `state` and updating nodes in `value`
-  // if `state.preventDefault` is set, use the previous `value` as the
-  //   base for the `nextValue` instead of `editor.children`
+  // only apply operations if atomic has been created
+  // if (state.operations.find(o => isAtomicInlineType(o.block.type))) {
+  state.operations.forEach(op => {
+    const _block = stateBlockToSlateBlock(op.block)
+    // clear current block
+    // Transforms.insertText(editor, '', { at: [op.index] })
 
-  const nextValue = produce(
-    state.preventDefault ? valueRef.current : editor.children,
-    draft => {
-      state.operations.forEach(op => {
-        const _block = stateBlockToSlateBlock(op.block)
-        draft[op.index].children = _block.children
-        draft[op.index].type = _block.type
-        draft[op.index].isBlock = _block.isBlock
-      })
-    }
-  )
+    // const _marks = {}
+
+    // Object.keys(SlateEditor.marks(editor)).forEach(m => (_marks[m] = false))
+
+    // console.log(_marks)
+    // sets node type
+    Transforms.setNodes(
+      editor,
+      { type: _block.type },
+      {
+        at: [op.index],
+      }
+    )
+    // inserts node
+    Transforms.insertFragment(editor, [_block], {
+      at: [op.index],
+      //  hanging: true,
+    })
+
+    const _sele = state.preventDefault ? selectionRef.current : editor.selection
+
+    console.log(_sele)
+
+    // Transforms.setSelection(
+    //   editor,
+    //   state.preventDefault ? selectionRef.current : editor.selection
+    // )
+    console.log(editor.children[0].children)
+    //  Transforms.removeNodes(editor, { at: [op.index, 0] })
+    //   console.log(editor.children[0])
+  })
+  //  }
+
+  // console.log(editor.children[0])
+
+  let nextValue = state.preventDefault ? valueRef.current : editor.children
 
   // by default, let selection remain uncontrolled
   // NOTE: preventDefault will rollback selection to that of previous render
