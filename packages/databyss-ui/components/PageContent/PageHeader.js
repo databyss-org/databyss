@@ -58,7 +58,7 @@ const PageHeader = ({ isFocused, pageId }) => {
         value={pageName}
         onChange={onPageNameChange}
         placeholder="Enter title"
-        variant="bodyHeader"
+        variant="bodyHeading1"
         color="text.3"
         concatCss={styledCss({
           '::placeholder': {

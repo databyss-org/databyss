@@ -124,7 +124,7 @@ const uiTextBoldUnderlineVariants = Object.keys(uiTextBoldVariants).reduce(
   {}
 )
 
-const bodyHeader = size => ({
+const bodyHeading = size => ({
   fontFamily: fonts.bodyFont,
   fontSize: size,
   lineHeight: pxUnits(size * 1.75),
@@ -139,8 +139,9 @@ const bodyText = size => ({
 })
 
 const bodyVariants = {
-  bodyHeader: bodyHeader(26),
-  bodyLarge: bodyText(20),
+  bodyHeading1: bodyHeading(26),
+  bodyHeading2: bodyHeading(22),
+  bodyHeading3: bodyText(18),
   bodyNormal: bodyText(16),
   bodySmall: bodyText(14),
 }

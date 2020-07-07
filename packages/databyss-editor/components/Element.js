@@ -14,7 +14,7 @@ import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 
 export const getAtomicStyle = type =>
-  ({ SOURCE: 'bodyNormalSemibold', TOPIC: 'bodyLarge' }[type])
+  ({ SOURCE: 'bodyHeading3', TOPIC: 'bodyHeading2' }[type])
 
 const Element = ({ attributes, children, element }) => {
   const entryContext = useEntryContext()
@@ -39,6 +39,8 @@ const Element = ({ attributes, children, element }) => {
   const block = editorContext
     ? editorContext.state.blocks[ReactEditor.findPath(editor, element)[0]]
     : {}
+
+  const isSourceType = element.type === 'SOURCE'
 
   return useMemo(
     () => {
@@ -81,12 +83,14 @@ const Element = ({ attributes, children, element }) => {
               flexWrap="nowrap"
               display="inline"
               alignItems="center"
-              borderRadius="default"
-              borderRadiusVariant="default"
+              borderRadius={block.__isActive ? 'default' : 'none'}
               data-test-atomic-edit="open"
               pl="tiny"
               pr="0"
               ml="tinyNegative"
+              borderBottom={
+                !block.__isActive && isSourceType ? '1px solid' : 'none'
+              }
               backgroundColor={
                 block.__isActive ? 'background.3' : 'transparent'
               }
@@ -96,11 +100,7 @@ const Element = ({ attributes, children, element }) => {
               }}
               {...(block.__isActive ? { onMouseDown: onAtomicMouseDown } : {})}
             >
-              <Text
-                variant={getAtomicStyle(element.type)}
-                color={element.type === 'SOURCE' && 'purple.0'}
-                display="inline"
-              >
+              <Text variant={getAtomicStyle(element.type)} display="inline">
                 {children}
               </Text>
               {block.__isActive && (

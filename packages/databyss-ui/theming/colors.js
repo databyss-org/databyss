@@ -15,7 +15,7 @@ let _c = {
   black: '#12100C',
   white: '#FDFDFC',
   blue: ['#4444BC', '#6C6CE0', '#7D7DE8', '#B6B6FB'],
-  purple: ['#54304b', '#591749', '#932A79', '#DD3CB4', '#C695D0'],
+  purple: ['#591749', '#932A79', '#DD3CB4', '#C695D0'],
   red: ['#FF4343'],
   green: ['#7AB814'],
   orange: ['#B82E00', '#E55E1A', '#EB9947', '#F7C96E'],
@@ -25,7 +25,7 @@ let _c = {
 // named color aliases
 _c = {
   ..._c,
-  pink: _c.purple[2],
+  pink: _c.purple[1],
   yellow: _c.orange[3],
 }
 
@@ -63,7 +63,7 @@ _c = {
 _c = {
   ..._c,
   focusOutlineColor: _c.pink,
-  entrySourceColor: _c.purple[1],
+  entrySourceColor: _c.purple[0],
 }
 
 // dark mode
