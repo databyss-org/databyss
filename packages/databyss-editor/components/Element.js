@@ -14,7 +14,7 @@ import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 
 export const getAtomicStyle = type =>
-  ({ SOURCE: 'bodyHeading3', TOPIC: 'bodyHeading2' }[type])
+  ({ SOURCE: 'bodyHeading3Underline', TOPIC: 'bodyHeading2' }[type])
 
 const Element = ({ attributes, children, element }) => {
   const entryContext = useEntryContext()
@@ -40,7 +40,7 @@ const Element = ({ attributes, children, element }) => {
     ? editorContext.state.blocks[ReactEditor.findPath(editor, element)[0]]
     : {}
 
-  const isSourceType = element.type === 'SOURCE'
+  const isHeading = element.type === ('SOURCE' || 'TOPIC')
 
   return useMemo(
     () => {
@@ -59,7 +59,7 @@ const Element = ({ attributes, children, element }) => {
           }}
           ml={element.isBlock ? blockMenuWidth : 0}
           pt="small"
-          pb="small"
+          pb="em"
           display={element.isBlock ? 'flex' : 'inline-flex'}
           maxWidth="100%"
           position="relative"
@@ -83,14 +83,11 @@ const Element = ({ attributes, children, element }) => {
               flexWrap="nowrap"
               display="inline"
               alignItems="center"
-              borderRadius={block.__isActive ? 'default' : 'none'}
+              borderRadius="default"
               data-test-atomic-edit="open"
               pl="tiny"
               pr="0"
               ml="tinyNegative"
-              borderBottom={
-                !block.__isActive && isSourceType ? '1px solid' : 'none'
-              }
               backgroundColor={
                 block.__isActive ? 'background.3' : 'transparent'
               }

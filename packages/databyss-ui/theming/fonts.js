@@ -35,6 +35,8 @@ export const underline = Platform.select({
   android: { textDecorationLine: 'underline' },
   default: {
     textDecoration: 'underline',
+    textDecorationSkipInk: 'none',
+    textDecorationSkip: 'none',
   },
 })
 
@@ -140,7 +142,7 @@ const bodyText = size => ({
 
 const bodyVariants = {
   bodyHeading1: bodyHeading(26),
-  bodyHeading2: bodyHeading(22),
+  bodyHeading2: bodyText(22),
   bodyHeading3: bodyText(18),
   bodyNormal: bodyText(16),
   bodySmall: bodyText(14),
