@@ -51,9 +51,11 @@ router.get(
 
     // group by authors and return array of authors
     const authorsDict = blocks.reduce((dict, block) => {
-      block.detail.authors.forEach(a => {
-        dict[a.firstName.textValue + a.lastName.textValue] = a
-      })
+      if (block.detail) {
+        block.detail.authors.forEach(a => {
+          dict[a.firstName.textValue + a.lastName.textValue] = a
+        })
+      }
       return dict
     }, {})
 
