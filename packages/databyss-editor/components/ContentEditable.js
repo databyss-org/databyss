@@ -1,15 +1,7 @@
 import React, { useMemo, useRef, useEffect } from 'react'
-import {
-  createEditor,
-  Node,
-  Text,
-  Transforms,
-  Editor as SlateEditor,
-  Point,
-} from '@databyss-org/slate'
+import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
 import { ReactEditor, withReact } from 'slate-react'
 import _ from 'lodash'
-import { produce } from 'immer'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -26,12 +18,7 @@ import {
   toggleMark,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
-import {
-  getSelectedIndicies,
-  isAtomic,
-  isEmpty,
-  isAtomicInlineType,
-} from '../lib/util'
+import { getSelectedIndicies, isAtomic, isEmpty } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
@@ -384,7 +371,7 @@ const ContentEditable = ({
     }
   })
 
-  let nextValue = state.preventDefault ? valueRef.current : editor.children
+  const nextValue = state.preventDefault ? valueRef.current : editor.children
 
   // by default, let selection remain uncontrolled
   // NOTE: preventDefault will rollback selection to that of previous render
