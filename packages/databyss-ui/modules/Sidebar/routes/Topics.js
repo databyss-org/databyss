@@ -1,8 +1,6 @@
 import React from 'react'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
-import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import {
-  getSourcesData,
   sortEntriesAtoZ,
   filterEntries,
 } from '@databyss-org/services/sources/util'
@@ -15,24 +13,27 @@ const topicsOverview = [
   },
 ]
 
-const Topics = ({ filterQuery }) => {
-  const { state } = useTopicContext()
-  const topicsData = getSourcesData(state.cache, 'topics')
-  const sortedTopics = sortEntriesAtoZ(topicsData)
-  const filteredEntries = filterEntries(sortedTopics, filterQuery)
+const Topics = ({ filterQuery }) => (
+  <AllTopicsLoader>
+    {topics => {
+      const topicsData = Object.values(topics).map(value => ({
+        text: value.text.textValue,
+        type: 'topics',
+        id: value._id,
+      }))
+      const sortedTopics = sortEntriesAtoZ(topicsData)
+      const filteredEntries = filterEntries(sortedTopics, filterQuery)
 
-  return (
-    <AllTopicsLoader>
-      {() => (
+      return (
         <SidebarList
           menuItems={[
             ...topicsOverview,
             ...(filterQuery.textValue === '' ? sortedTopics : filteredEntries),
           ]}
         />
-      )}
-    </AllTopicsLoader>
-  )
-}
+      )
+    }}
+  </AllTopicsLoader>
+)
 
 export default Topics
