@@ -113,10 +113,12 @@ const getCurrentSelection = state => {
       block: blocks[focus.index],
       offset: focus.offset,
     })
-    frag.push({
-      ...lastBlock,
-      _id: getId(lastBlock.type, blocks[focus.index]._id),
-    })
+    if (lastBlock) {
+      frag.push({
+        ...lastBlock,
+        _id: getId(lastBlock.type, blocks[focus.index]._id),
+      })
+    }
   }
 
   return frag
@@ -132,11 +134,15 @@ const ClickboardListener = () => {
     [state]
   )
 
+  const pasteHandler = () => {
+    console.log('HERE')
+  }
+
   useEventListener('copy', copyHandler)
 
   useEventListener('cut', copyHandler)
 
-  useEventListener('paste', copyHandler)
+  useEventListener('paste', pasteHandler)
 
   return null
 }
