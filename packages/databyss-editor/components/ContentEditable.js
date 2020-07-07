@@ -1,8 +1,6 @@
 import React, { useMemo, useRef, useEffect } from 'react'
 import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
 import { ReactEditor, withReact } from 'slate-react'
-import _ from 'lodash'
-import { produce } from 'immer'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -195,6 +193,7 @@ const ContentEditable = ({
         Transforms.insertText(editor, `\n`)
         return
       }
+
       return
     }
     if (event.key === 'Backspace') {
@@ -359,43 +358,50 @@ const ContentEditable = ({
       })
     }
 
-    setSelection(selection)
+    if (editor.operations.length) {
+      setSelection(selection)
+    }
   }
 
-  // Use immer to produce the next `value`
-  //   we loop through the operations in `state` and updating nodes in `value`
-  // if `state.preventDefault` is set, use the previous `value` as the
-  //   base for the `nextValue` instead of `editor.children`
+  if (state.preventDefault) {
+    editor.children = valueRef.current
+    editor.selection = selectionRef.current
+  }
 
-  const nextValue = produce(
-    state.preventDefault ? valueRef.current : editor.children,
-    draft => {
-      state.operations.forEach(op => {
-        const _block = stateBlockToSlateBlock(op.block)
-        draft[op.index].children = _block.children
-        draft[op.index].type = _block.type
-        draft[op.index].isBlock = _block.isBlock
-      })
-    }
-  )
+  // store selection because the Transforms below move it around
+  let nextSelection = editor.selection
 
-  // by default, let selection remain uncontrolled
-  // NOTE: preventDefault will rollback selection to that of previous render
-  let nextSelection = state.preventDefault
-    ? selectionRef.current
-    : editor.selection
+  state.operations.forEach(op => {
+    const _block = stateBlockToSlateBlock(op.block)
+
+    // clear current block
+    editor.children[op.index].children.forEach(() => {
+      Transforms.delete(editor, { at: [op.index, 0] })
+    })
+    // set block type
+    Transforms.setNodes(
+      editor,
+      { type: _block.type },
+      {
+        at: [op.index],
+      }
+    )
+    // inserts node
+    Transforms.insertFragment(editor, [_block], {
+      at: [op.index],
+    })
+  })
 
   // if there were any update operations,
   //   sync the Slate selection to the state selection
   if (state.operations.length) {
-    nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
+    nextSelection = stateSelectionToSlateSelection(
+      editor.children,
+      state.selection
+    )
   }
 
-  if (!_.isEqual(editor.selection, nextSelection)) {
-    Transforms.setSelection(editor, nextSelection)
-  }
-
-  valueRef.current = nextValue
+  valueRef.current = editor.children
 
   selectionRef.current = nextSelection
 
@@ -427,7 +433,8 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
       editor={editor}
       onFocus={onFocus}
       autofocus={autofocus}
-      value={nextValue}
+      value={editor.children}
+      selection={nextSelection}
       onChange={onChange}
       onKeyDown={onKeyDown}
       readonly={readonly}

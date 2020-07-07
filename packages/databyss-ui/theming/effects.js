@@ -31,15 +31,7 @@ const shadowColor = 'black'
 const shadows = [
   {}, // elevation 0, no shadow,
   shadow(0, 1, 1, shadowColor, 0.18),
-  shadow(0, 1, 1.41, shadowColor, 0.2),
-  shadow(0, 1, 2.22, shadowColor, 0.22),
-  shadow(0, 2, 2.62, shadowColor, 0.23),
-  shadow(0, 2, 3.84, shadowColor, 0.25),
-  shadow(0, 3, 4.65, shadowColor, 0.27),
-  shadow(0, 3, 4.65, shadowColor, 0.29),
-  shadow(0, 4, 4.65, shadowColor, 0.3),
-  shadow(0, 4, 5.46, shadowColor, 0.32),
-  shadow(0, 5, 6.27, shadowColor, 0.34),
+  shadow(0, 3, 3, shadowColor, 0.2),
 ]
 
 const effects = {
@@ -48,7 +40,7 @@ const effects = {
     backgroundColor: 'background.0',
   },
   modalShadow: {
-    ...shadows[10],
+    ...shadows[2],
     backgroundColor: 'background.0',
   },
 }
