@@ -8,8 +8,6 @@ import {
   Point,
 } from '@databyss-org/slate'
 import { ReactEditor, withReact } from 'slate-react'
-import _ from 'lodash'
-import { produce } from 'immer'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -190,9 +188,6 @@ const ContentEditable = ({
         return
       }
 
-      // for new entry, remove current marks
-      Object.keys(SlateEditor.marks(editor)).forEach(m => editor.removeMark(m))
-
       return
     }
     if (event.key === 'Backspace') {
@@ -357,22 +352,27 @@ const ContentEditable = ({
       })
     }
 
-    setSelection(selection)
+    if (editor.operations.length) {
+      setSelection(selection)
+    }
   }
 
-  // only apply operations if atomic has been created
-  // if (state.operations.find(o => isAtomicInlineType(o.block.type))) {
+  if (state.preventDefault) {
+    editor.children = valueRef.current
+    editor.selection = selectionRef.current
+  }
+
+  // store selection because the Transforms below move it around
+  let nextSelection = editor.selection
+
   state.operations.forEach(op => {
     const _block = stateBlockToSlateBlock(op.block)
+
     // clear current block
-    // Transforms.insertText(editor, '', { at: [op.index] })
-
-    // const _marks = {}
-
-    // Object.keys(SlateEditor.marks(editor)).forEach(m => (_marks[m] = false))
-
-    // console.log(_marks)
-    // sets node type
+    editor.children[op.index].children.forEach(() => {
+      Transforms.delete(editor, { at: [op.index, 0] })
+    })
+    // set block type
     Transforms.setNodes(
       editor,
       { type: _block.type },
@@ -383,44 +383,19 @@ const ContentEditable = ({
     // inserts node
     Transforms.insertFragment(editor, [_block], {
       at: [op.index],
-      //  hanging: true,
     })
-
-    const _sele = state.preventDefault ? selectionRef.current : editor.selection
-
-    console.log(_sele)
-
-    // Transforms.setSelection(
-    //   editor,
-    //   state.preventDefault ? selectionRef.current : editor.selection
-    // )
-    console.log(editor.children[0].children)
-    //  Transforms.removeNodes(editor, { at: [op.index, 0] })
-    //   console.log(editor.children[0])
   })
-  //  }
-
-  // console.log(editor.children[0])
-
-  let nextValue = state.preventDefault ? valueRef.current : editor.children
-
-  // by default, let selection remain uncontrolled
-  // NOTE: preventDefault will rollback selection to that of previous render
-  let nextSelection = state.preventDefault
-    ? selectionRef.current
-    : editor.selection
 
   // if there were any update operations,
   //   sync the Slate selection to the state selection
   if (state.operations.length) {
-    nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
+    nextSelection = stateSelectionToSlateSelection(
+      editor.children,
+      state.selection
+    )
   }
 
-  if (!_.isEqual(editor.selection, nextSelection)) {
-    Transforms.setSelection(editor, nextSelection)
-  }
-
-  valueRef.current = nextValue
+  valueRef.current = editor.children
 
   selectionRef.current = nextSelection
 
@@ -432,7 +407,8 @@ const ContentEditable = ({
     <Editor
       editor={editor}
       autofocus={autofocus}
-      value={nextValue}
+      value={editor.children}
+      selection={nextSelection}
       onChange={onChange}
       onKeyDown={onKeyDown}
       readonly={readonly}
