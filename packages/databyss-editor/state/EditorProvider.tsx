@@ -13,6 +13,7 @@ import {
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
+import ClickboardListener from './ClickboardListener'
 
 export type Transform = {
   // current selection
@@ -146,6 +147,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
       }}
     >
       {children}
+      <ClickboardListener />
     </EditorContext.Provider>
   )
 }
