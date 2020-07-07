@@ -384,10 +384,6 @@ const ContentEditable = ({
     )
   }
 
-  if (!_.isEqual(editor.selection, nextSelection)) {
-    Transforms.setSelection(editor, nextSelection)
-  }
-
   valueRef.current = editor.children
 
   selectionRef.current = nextSelection
@@ -401,6 +397,7 @@ const ContentEditable = ({
       editor={editor}
       autofocus={autofocus}
       value={editor.children}
+      selection={nextSelection}
       onChange={onChange}
       onKeyDown={onKeyDown}
       readonly={readonly}
