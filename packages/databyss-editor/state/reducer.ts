@@ -183,11 +183,6 @@ export default (
             const _block = draft.blocks[op.index]
             _block.text = op.text
 
-            // if (op.text.textValue.charAt(0) === '@') {
-            //   draft.preventDefault = true
-            //   console.log('HIT')
-            // }
-
             if (op.isRefEntity) {
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {

@@ -190,9 +190,6 @@ const ContentEditable = ({
         return
       }
 
-      // for new entry, remove current marks
-      Object.keys(SlateEditor.marks(editor)).forEach(m => editor.removeMark(m))
-
       return
     }
     if (event.key === 'Backspace') {
@@ -360,19 +357,16 @@ const ContentEditable = ({
     setSelection(selection)
   }
 
-  // only apply operations if atomic has been created
-  // if (state.operations.find(o => isAtomicInlineType(o.block.type))) {
   state.operations.forEach(op => {
     const _block = stateBlockToSlateBlock(op.block)
+    const _selection = state.preventDefault
+      ? selectionRef.current
+      : editor.selection
     // clear current block
-    // Transforms.insertText(editor, '', { at: [op.index] })
-
-    // const _marks = {}
-
-    // Object.keys(SlateEditor.marks(editor)).forEach(m => (_marks[m] = false))
-
-    // console.log(_marks)
-    // sets node type
+    editor.children[op.index].children.forEach(() => {
+      Transforms.delete(editor, { at: [op.index, 0] })
+    })
+    // set block type
     Transforms.setNodes(
       editor,
       { type: _block.type },
@@ -383,24 +377,12 @@ const ContentEditable = ({
     // inserts node
     Transforms.insertFragment(editor, [_block], {
       at: [op.index],
-      //  hanging: true,
     })
-
-    const _sele = state.preventDefault ? selectionRef.current : editor.selection
-
-    console.log(_sele)
-
-    // Transforms.setSelection(
-    //   editor,
-    //   state.preventDefault ? selectionRef.current : editor.selection
-    // )
-    console.log(editor.children[0].children)
-    //  Transforms.removeNodes(editor, { at: [op.index, 0] })
-    //   console.log(editor.children[0])
+    // reset selection
+    if (_selection) {
+      Transforms.select(editor, _selection)
+    }
   })
-  //  }
-
-  // console.log(editor.children[0])
 
   let nextValue = state.preventDefault ? valueRef.current : editor.children
 
