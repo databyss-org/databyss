@@ -50,7 +50,6 @@ const Element = ({ attributes, children, element }) => {
 
   return useMemo(
     () => {
-      // console.log(block)
       const blockMenuWidth = menuLauncherSize + 6
       const selHasRange = selectionHasRange(
         slateSelectionToStateSelection(editor)
@@ -84,7 +83,11 @@ const Element = ({ attributes, children, element }) => {
             </View>
           )}
 
-          {block.__showCitationMenu && <CitationsMenu element={element} />}
+          {block.__showCitationMenu && (
+            <View contentEditable="false" suppressContentEditableWarning>
+              <CitationsMenu element={element} />
+            </View>
+          )}
 
           {isAtomicInlineType(element.type) ? (
             <View
