@@ -1,12 +1,5 @@
 import React, { useMemo, useRef, useEffect } from 'react'
-import {
-  createEditor,
-  Node,
-  Text,
-  Transforms,
-  Editor as SlateEditor,
-  Point,
-} from '@databyss-org/slate'
+import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
 import { ReactEditor, withReact } from 'slate-react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
@@ -24,12 +17,7 @@ import {
   toggleMark,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
-import {
-  getSelectedIndicies,
-  isAtomic,
-  isEmpty,
-  isAtomicInlineType,
-} from '../lib/util'
+import { getSelectedIndicies, isAtomic, isEmpty } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
