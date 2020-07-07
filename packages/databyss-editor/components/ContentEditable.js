@@ -346,28 +346,31 @@ const ContentEditable = ({
 
   state.operations.forEach(op => {
     const _block = stateBlockToSlateBlock(op.block)
-    const _selection = state.preventDefault
-      ? selectionRef.current
-      : editor.selection
-    // clear current block
-    editor.children[op.index].children.forEach(() => {
-      Transforms.delete(editor, { at: [op.index, 0] })
-    })
-    // set block type
-    Transforms.setNodes(
-      editor,
-      { type: _block.type },
-      {
+    // if not equal, perform changes
+    if (!_.isEqual(_block, editor.children[op.index])) {
+      const _selection = state.preventDefault
+        ? selectionRef.current
+        : editor.selection
+      // clear current block
+      editor.children[op.index].children.forEach(() => {
+        Transforms.delete(editor, { at: [op.index, 0] })
+      })
+      // set block type
+      Transforms.setNodes(
+        editor,
+        { type: _block.type },
+        {
+          at: [op.index],
+        }
+      )
+      // inserts node
+      Transforms.insertFragment(editor, [_block], {
         at: [op.index],
+      })
+      // reset selection
+      if (_selection) {
+        Transforms.select(editor, _selection)
       }
-    )
-    // inserts node
-    Transforms.insertFragment(editor, [_block], {
-      at: [op.index],
-    })
-    // reset selection
-    if (_selection) {
-      Transforms.select(editor, _selection)
     }
   })
 
