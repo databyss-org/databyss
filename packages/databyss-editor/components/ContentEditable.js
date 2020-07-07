@@ -341,58 +341,54 @@ const ContentEditable = ({
       })
     }
 
-    setSelection(selection)
+    if (editor.operations.length) {
+      setSelection(selection)
+    }
   }
+
+  if (state.preventDefault) {
+    editor.children = valueRef.current
+    editor.selection = selectionRef.current
+  }
+
+  // store selection because the Transforms below move it around
+  let nextSelection = editor.selection
 
   state.operations.forEach(op => {
     const _block = stateBlockToSlateBlock(op.block)
-    // if not equal, perform changes
-    if (!_.isEqual(_block, editor.children[op.index])) {
-      const _selection = state.preventDefault
-        ? selectionRef.current
-        : editor.selection
-      // clear current block
-      editor.children[op.index].children.forEach(() => {
-        Transforms.delete(editor, { at: [op.index, 0] })
-      })
-      // set block type
-      Transforms.setNodes(
-        editor,
-        { type: _block.type },
-        {
-          at: [op.index],
-        }
-      )
-      // inserts node
-      Transforms.insertFragment(editor, [_block], {
+
+    // clear current block
+    editor.children[op.index].children.forEach(() => {
+      Transforms.delete(editor, { at: [op.index, 0] })
+    })
+    // set block type
+    Transforms.setNodes(
+      editor,
+      { type: _block.type },
+      {
         at: [op.index],
-      })
-      // reset selection
-      if (_selection) {
-        Transforms.select(editor, _selection)
       }
-    }
+    )
+    // inserts node
+    Transforms.insertFragment(editor, [_block], {
+      at: [op.index],
+    })
   })
-
-  const nextValue = state.preventDefault ? valueRef.current : editor.children
-
-  // by default, let selection remain uncontrolled
-  // NOTE: preventDefault will rollback selection to that of previous render
-  let nextSelection = state.preventDefault
-    ? selectionRef.current
-    : editor.selection
 
   // if there were any update operations,
   //   sync the Slate selection to the state selection
   if (state.operations.length) {
-    nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
+    nextSelection = stateSelectionToSlateSelection(
+      editor.children,
+      state.selection
+    )
   }
 
   if (!_.isEqual(editor.selection, nextSelection)) {
     Transforms.setSelection(editor, nextSelection)
   }
 
-  valueRef.current = nextValue
+  valueRef.current = editor.children
 
   selectionRef.current = nextSelection
 
@@ -404,7 +400,7 @@ const ContentEditable = ({
     <Editor
       editor={editor}
       autofocus={autofocus}
-      value={nextValue}
+      value={editor.children}
       onChange={onChange}
       onKeyDown={onKeyDown}
       readonly={readonly}
