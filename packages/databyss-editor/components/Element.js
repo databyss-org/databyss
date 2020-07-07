@@ -41,13 +41,6 @@ const Element = ({ attributes, children, element }) => {
     ? editorContext.state.blocks[ReactEditor.findPath(editor, element)[0]]
     : {}
 
-  useEffect(
-    () => () => {
-      console.log('unmounting')
-    },
-    []
-  )
-
   return useMemo(
     () => {
       const blockMenuWidth = menuLauncherSize + 6
