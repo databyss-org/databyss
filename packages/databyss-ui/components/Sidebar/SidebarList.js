@@ -66,12 +66,16 @@ const SidebarList = ({ menuItems }) => {
             >
               <View>
                 <Grid singleRow flexWrap="nowrap" columnGap="small">
-                  <Icon sizeVariant="tiny" color="text.2" mt={pxUnits(2)}>
+                  <Icon
+                    sizeVariant="tiny"
+                    color={_isActive ? 'text.1' : 'text.3'}
+                    mt={pxUnits(2)}
+                  >
                     {item.icon ? item.icon : menuSvgs(item.type)}
                   </Icon>
                   <Text
-                    variant={_isActive ? 'uiTextSmallSemibold' : 'uiTextSmall'}
-                    color="text.2"
+                    variant="uiTextSmall"
+                    color={_isActive ? 'text.1' : 'text.3'}
                   >
                     {item.text}
                   </Text>
