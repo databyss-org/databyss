@@ -11,7 +11,7 @@ import {
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui'
 
-const PageBody = ({ page, focusIndex }) => {
+const PageBody = ({ page, focusIndex, onNavigateUpFromEditor, editorRef }) => {
   const { location } = useNavigationContext()
   const clearBlockDict = usePageContext(c => c.clearBlockDict)
   const setPatches = usePageContext(c => c.setPatches)
@@ -53,7 +53,13 @@ const PageBody = ({ page, focusIndex }) => {
       onChange={onChange}
       initialState={pageToEditorState(withMetaData(page))}
     >
-      <ContentEditable autofocus focusIndex={focusIndex} />
+      <ContentEditable
+        autofocus
+        focusIndex={focusIndex}
+        onNavigateUpFromTop={onNavigateUpFromEditor}
+        active={false}
+        editorRef={editorRef}
+      />
     </EditorProvider>
   )
 }
