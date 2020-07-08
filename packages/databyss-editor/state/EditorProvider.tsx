@@ -9,11 +9,13 @@ import {
   REMOVE,
   CLEAR,
   DEQUEUE_NEW_ENTITY,
+  COPY,
+  PASTE,
 } from './constants'
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
-import ClickboardListener from './ClickboardListener'
+import { getCurrentSelection } from '../lib/clipboardUtils'
 
 export type Transform = {
   // current selection
@@ -42,6 +44,8 @@ type ContextType = {
   setSelection: (selection: Selection) => void
   remove: (index: number) => void
   clear: (index: number) => void
+  copy: (event: ClipboardEvent) => void
+  paste: (event: ClipboardEvent) => void
 }
 
 export type OnChangeArgs = {
@@ -133,10 +137,41 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
       payload: { id },
     })
 
+  const copy = (e: ClipboardEvent) => {
+    const _frag = getCurrentSelection(state)
+
+    // TODO: set plain text
+    e.clipboardData.setData('text/plain', 'Hello, world!')
+
+    // set application data for clipboard
+    e.clipboardData.setData('application/databyss-frag', JSON.stringify(_frag))
+
+    // TODO: SET HTML
+    dispatch({
+      type: COPY,
+      payload: {},
+    })
+  }
+
+  const paste = (e: ClipboardEvent) => {
+    const databyssDataTransfer = e.clipboardData.getData(
+      'application/databyss-frag'
+    )
+    if (databyssDataTransfer) {
+      const data = JSON.parse(databyssDataTransfer)
+      dispatch({
+        type: PASTE,
+        payload: { data, selection: state.selection },
+      })
+    }
+  }
+
   return (
     <EditorContext.Provider
       value={{
         state,
+        copy,
+        paste,
         setSelection,
         setContent,
         split,
@@ -147,7 +182,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
       }}
     >
       {children}
-      <ClickboardListener />
     </EditorContext.Provider>
   )
 }

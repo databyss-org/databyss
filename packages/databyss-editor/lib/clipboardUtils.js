@@ -1,15 +1,9 @@
-import React, { useCallback } from 'react'
+import { isAtomicInlineType } from './util'
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
-import useEventListener from '@databyss-org/ui/lib/useEventListener'
-import { useEditorContext } from './EditorProvider'
-import { isAtomicInlineType } from '../lib/util'
 
+// returns before and after value for block split at index `offset`
 const splitBlockAtOffset = ({ block, offset }) => {
-  // const _id = isAtomicInlineType(block.type)
-  //   ? block._id
-  //   : new ObjectId().toHexString()
-
   // if first block is atomic return
   if (isAtomicInlineType(block.type) || offset === 0) {
     return { before: null, after: { text: block.text, type: block.type } }
@@ -65,21 +59,24 @@ const splitBlockAtOffset = ({ block, offset }) => {
   }
 }
 
-const isSelectionCollapsed = selection => {
+// checks is state selection is collapsed
+export const isSelectionCollapsed = selection => {
   const { anchor, focus } = selection
   return anchor.index === focus.index && anchor.offset === focus.offset
 }
 
+// return atomic or new id
 const getId = (type, id) => {
   return isAtomicInlineType(type) ? id : new ObjectId().toHexString()
 }
 
-const getCurrentSelection = state => {
+// returns fragment in state selection
+export const getCurrentSelection = state => {
   if (isSelectionCollapsed(state.selection)) {
     return []
   }
 
-  const frag = []
+  let frag = []
 
   const { blocks, selection } = state
   const { anchor, focus } = selection
@@ -120,31 +117,8 @@ const getCurrentSelection = state => {
       })
     }
   }
+  // add metadata
+  frag = frag.map(b => ({ ...b, __showNewBlockMenu: false, __isActive: false }))
 
   return frag
 }
-
-const ClickboardListener = () => {
-  const { state } = useEditorContext()
-  const copyHandler = useCallback(
-    e => {
-      const _frag = getCurrentSelection(state)
-      console.log(_frag)
-    },
-    [state]
-  )
-
-  const pasteHandler = () => {
-    console.log('HERE')
-  }
-
-  useEventListener('copy', copyHandler)
-
-  useEventListener('cut', copyHandler)
-
-  useEventListener('paste', pasteHandler)
-
-  return null
-}
-
-export default ClickboardListener

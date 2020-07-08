@@ -9,8 +9,10 @@ import {
   CLEAR,
   SET_SELECTION,
   DEQUEUE_NEW_ENTITY,
+  PASTE,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
+import { isSelectionCollapsed } from '../lib/clipboardUtils'
 import {
   selectionHasRange,
   symbolToAtomicType,
@@ -74,13 +76,31 @@ export default (
     draft => {
       draft.operations = []
       draft.preventDefault = false
+      draft.resetState = false
 
       const { payload } = action
 
       // default nextSelection to `payload.selection` (which may be undef)
-      const nextSelection = payload.selection
+      let nextSelection = payload.selection
 
       switch (action.type) {
+        case PASTE: {
+          const _frag = payload.data
+
+          if (isSelectionCollapsed(state.selection)) {
+            const _index = state.selection.anchor.index
+            draft.blocks.splice(_index + 1, 0, ..._frag)
+            draft.resetState = true
+            const _selectionIndex = _index + _frag.length
+            const _offset = draft.blocks[_selectionIndex].text.textValue.length
+            const _nextSelection = {
+              anchor: { index: _selectionIndex, offset: _offset },
+              focus: { index: _selectionIndex, offset: _offset },
+            }
+            nextSelection = _nextSelection
+          }
+          break
+        }
         case SPLIT: {
           const _text = state.blocks[payload.index].text.textValue
 

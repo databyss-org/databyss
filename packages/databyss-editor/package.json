@@ -36,7 +36,7 @@
     "is-hotkey": "^0.1.5",
     "lodash": "^4.17.15",
     "lorem-ipsum": "^2.0.3",
-    "slate-react": "0.57.2",
+    "slate-react": "0.58.4",
     "slate-dev-environment": "^0.2.2",
     "slate-hyperscript": "^0.57.2",
     "yarn": "^1.22.4"

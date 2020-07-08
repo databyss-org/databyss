@@ -38,6 +38,7 @@ const ContentEditable = ({
   const topicContext = useTopicContext()
 
   const {
+    paste,
     state,
     split,
     merge,
@@ -52,7 +53,7 @@ const ContentEditable = ({
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
-  if (!valueRef.current) {
+  if (!valueRef.current || state.resetState) {
     editor.children = stateToSlate(state)
     // load selection from DB
     if (state.selection) {
