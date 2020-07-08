@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useMemo, useState, useEffect, useRef } from 'react'
+=======
+import React, { useMemo } from 'react'
+>>>>>>> focus editor and header with keyboard input (#305)
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
