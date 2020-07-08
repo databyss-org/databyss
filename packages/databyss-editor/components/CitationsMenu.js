@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import styledCss from '@styled-system/css'
 import _ from 'lodash'
 import { useEditor, ReactEditor } from 'slate-react'
 import { Node, Transforms } from '@databyss-org/slate'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { SearchSourceLoader } from '@databyss-org/ui/components/Loaders'
-import google from '@databyss-org/ui/assets/google.png'
+import googleLogo from '@databyss-org/ui/assets/powered_by_google_on_white.png'
+import googleLogoRetina from '@databyss-org/ui/assets/powered_by_google_on_white_2x.png'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
-import theme, { borderRadius } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import {
   Grid,
@@ -17,25 +16,12 @@ import {
   List,
   BaseControl,
 } from '@databyss-org/ui/primitives'
+import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import { useEditorContext } from '../state/EditorProvider'
 import { isAtomicInlineType } from '../lib/util'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 
 const MENU_HEIGHT = 200
-
-const _css = (position, active) => ({
-  paddingLeft: 'small',
-  paddingRight: 'small',
-  backgroundColor: 'background.0',
-  zIndex: 'menu',
-  marginTop: pxUnits(-6),
-  position: 'absolute',
-  opacity: active ? 1 : 0,
-  transition: `opacity ${theme.timing.quick}ms ease`,
-  borderRadius,
-  pointerEvents: active ? 'all' : 'none',
-  ...position,
-})
 
 const splitName = name => ({
   firstName: {
@@ -61,18 +47,14 @@ export const getPosition = editor => {
       const _windowHeight = window.innerHeight
 
       // check if menu should be above text
-      const _menuTop = _windowHeight < _rect.bottom + MENU_HEIGHT
+      const isMenuTop = _windowHeight < _rect.bottom + MENU_HEIGHT
 
-      // set dropdown position
-      const left = _rect.left + 12
-      const top = _menuTop ? _rect.top - 36 : _rect.bottom + 12
-
-      const _position = { top, left, displayAbove: _menuTop }
-      return _position
+      if (isMenuTop) {
+        return { bottom: 40, left: 0 }
+      }
     }
-    return null
   }
-  return null
+  return { top: 40, left: 0 }
 }
 
 /* composes title from google api data */
@@ -106,49 +88,61 @@ const _title = vol => {
 }
 
 const GoogleFooter = () => (
-  <div>
-    <img src={google} alt="powered by Google" />
-  </div>
+  <img
+    srcSet={`${googleLogo}, ${googleLogoRetina} 2x`}
+    src={googleLogo}
+    alt="powered by Google"
+    width="112"
+    height="14"
+  />
 )
 
 const ComposeResults = ({ results, onClick, unmount }) => {
   useEffect(() => () => unmount(), [])
   return !_.isEmpty(results) ? (
-    <List verticalItemPadding={1} horizontalItemPadding={1}>
-      {Object.keys(results).map((author, i) => (
-        <View key={i}>
-          <Text variant="uiTextSmall" color="text.2">
-            {author}
-          </Text>
-          <List verticalItemPadding="tiny">
-            {results[author].map((volume, k) => (
-              <BaseControl onClick={e => onClick(e, volume)} key={k}>
-                <View p="tiny" pr="tiny">
-                  <Grid columnGap="none">
-                    <Text variant="uiTextSmall" color="text.2">
-                      <i>{volume.volumeInfo.title}</i>
-                      {volume.volumeInfo.subtitle &&
-                        `: ${volume.volumeInfo.subtitle}`}&emsp;({volume
-                        .volumeInfo.publishedDate &&
-                        volume.volumeInfo.publishedDate.substring(0, 4)})
-                    </Text>
-                  </Grid>
-                </View>
-              </BaseControl>
-            ))}
-          </List>
-        </View>
-      ))}
-    </List>
+    Object.keys(results).map((author, i) => (
+      <View key={i}>
+        <Text variant="uiTextSmall" color="text.2">
+          {author}
+        </Text>
+        <List verticalItemPadding="tiny">
+          {results[author].map((volume, k) => (
+            <BaseControl
+              onClick={e => onClick(e, volume)}
+              key={k}
+              hoverColor="background.1"
+            >
+              <View p="tiny" pr="tiny">
+                <Grid columnGap="none">
+                  <Text variant="uiTextSmall" color="text.2">
+                    <i>{volume.volumeInfo.title}</i>
+                    {volume.volumeInfo.subtitle &&
+                      `: ${volume.volumeInfo.subtitle}`}&emsp;({volume
+                      .volumeInfo.publishedDate &&
+                      volume.volumeInfo.publishedDate.substring(0, 4)})
+                  </Text>
+                </Grid>
+              </View>
+            </BaseControl>
+          ))}
+        </List>
+      </View>
+    ))
   ) : (
-    <Text variant="uiTextSmall">no results found</Text>
+    <View py="small">
+      <Text variant="uiTextSmall">No results found</Text>
+    </View>
   )
 }
 
 export const Citations = () => {
   const setSource = useSourceContext(c => c && c.setSource)
 
-  const [position, setPosition] = useState({ top: 0, left: 0 })
+  const [position, setPosition] = useState({
+    top: 40,
+    left: 0,
+    bottom: undefined,
+  })
   const [menuActive, setMenuActive] = useState(false)
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
 
@@ -156,6 +150,15 @@ export const Citations = () => {
 
   const editor = useEditor()
   const editorContext = useEditorContext()
+
+  // set position of dropdown
+  const setMenuPosition = () => {
+    const _position = getPosition(editor)
+
+    if (_position) {
+      setPosition(_position)
+    }
+  }
 
   useEffect(
     () => {
@@ -166,6 +169,7 @@ export const Citations = () => {
         const _text = Node.string(_node)
         if (_text.charAt(0) === '@' && !isAtomicInlineType(_node.type)) {
           setSourceQuery(_text.substring(1))
+          setMenuPosition()
           if (!menuActive) setMenuActive(true)
         } else if (menuActive) {
           setMenuActive(false)
@@ -185,24 +189,6 @@ export const Citations = () => {
 
   // prevents scroll if modal is visible
   //  useEventListener('wheel', e => menuActive && e.preventDefault(), editor.el)
-
-  // set position of dropdown
-  useEffect(
-    () => {
-      if (menuActive) {
-        const _position = getPosition(editor)
-        // if cursor is near window bottom set menu above cursor
-
-        if (_position) {
-          if (_position.displayAbove && sourcesLoaded) {
-            _position.top -= MENU_HEIGHT + 22
-          }
-          setPosition(_position)
-        }
-      }
-    },
-    [sourceQuery, menuActive, sourcesLoaded]
-  )
 
   const onClick = (e, vol) => {
     const index = editorContext.state.selection.anchor.index
@@ -264,14 +250,17 @@ export const Citations = () => {
 
   return (
     <ClickAwayListener onClickAway={onClickAway}>
-      <View
-        maxWidth="500px"
-        minWidth="300px"
+      <DropdownContainer
+        position={{
+          top: position.top,
+          left: position.left,
+          bottom: position.bottom,
+        }}
+        open={menuActive}
+        mt={pxUnits(-6)}
+        widthVariant="dropdownMenuLarge"
         minHeight="32px"
-        shadowVariant="modal"
-        css={styledCss(
-          _css({ top: position.top, left: position.left }, menuActive)
-        )}
+        p="small"
       >
         {sourceQuery ? (
           <View p={sourcesLoaded && 'small'}>
@@ -298,12 +287,12 @@ export const Citations = () => {
 
             {sourcesLoaded && (
               <View
-                p="small"
+                py="small"
                 borderTopWidth="1px"
                 borderColor="border.2"
                 borderStyle="solid"
               >
-                <GoogleFooter />{' '}
+                <GoogleFooter />
               </View>
             )}
           </View>
@@ -314,7 +303,7 @@ export const Citations = () => {
             </Text>
           </View>
         )}
-      </View>
+      </DropdownContainer>
     </ClickAwayListener>
   )
 }

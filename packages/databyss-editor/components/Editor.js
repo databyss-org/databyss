@@ -6,9 +6,15 @@ import { useEditorContext } from '../state/EditorProvider'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
-import CitationsMenu from './CitationsMenu'
 
-const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
+const Editor = ({
+  children,
+  editor,
+  autofocus,
+  readonly,
+  onFocus,
+  ...others
+}) => {
   const entryContext = useEntryContext()
   const { copy, paste } = useEditorContext()
 
@@ -63,7 +69,6 @@ const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
     <Slate editor={editor} {...slateProps}>
       {children}
       <FormatMenu />
-      <CitationsMenu />
       <Editable
         onCopy={e => {
           e.preventDefault()
@@ -73,6 +78,7 @@ const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
           e.preventDefault()
           paste(e)
         }}
+        onFocus={onFocus}
         decorate={decorate}
         spellCheck={process.env.NODE_ENV !== 'test'}
         renderElement={renderElement}

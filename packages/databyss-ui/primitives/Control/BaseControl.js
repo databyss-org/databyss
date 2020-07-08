@@ -16,6 +16,7 @@ const BaseControl = forwardRef(
       noFeedback,
       childViewProps,
       href,
+      onKeyDown,
       ...others
     },
     ref
@@ -48,6 +49,7 @@ const BaseControl = forwardRef(
     return (
       <Styled
         onPress={disabled ? null : _onPress}
+        onKeyDown={onKeyDown}
         disabled={disabled}
         opacity={disabled ? 0.5 : 1}
         ref={ref}

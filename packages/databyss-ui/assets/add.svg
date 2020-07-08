@@ -1,1 +1,6 @@
-<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" class="svg-inline--fa fa-plus fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"></path></svg>
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M3 14a11 11 0 1122 0 11 11 0 01-22 0zm11-9.8a9.8 9.8 0 100 19.6 9.8 9.8 0 000-19.6z" fill="currentColor"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M7.2 14a6.8 6.8 0 1113.6 0 6.8 6.8 0 01-13.6 0zM14 8.4a5.6 5.6 0 100 11.2 5.6 5.6 0 000-11.2z" fill="currentColor"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M14 11.3c.3 0 .6.3.6.6v4.2a.6.6 0 01-1.2 0v-4.2c0-.3.3-.6.6-.6z" fill="currentColor"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M11.3 14c0-.3.3-.6.6-.6h4.2a.6.6 0 010 1.2h-4.2a.6.6 0 01-.6-.6z" fill="currentColor"/>
+</svg>
