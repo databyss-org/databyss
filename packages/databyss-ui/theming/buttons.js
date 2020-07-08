@@ -2,7 +2,7 @@ import effects from './effects'
 import { border, borderRadius, pxUnits } from './views'
 import space from './space'
 
-export const editorMarginMenuItemHeight = 24
+export const menuLauncherSize = 26
 
 const button = () => ({
   display: 'flex',
@@ -52,34 +52,6 @@ const buttonVariants = {
     color: 'secondary.3',
     textDecoration: 'underline',
   },
-  editorMarginMenu: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'background.3',
-    borderColor: 'background.2',
-    borderWidth: pxUnits(1),
-    color: 'text.2',
-    borderRadius: pxUnits(editorMarginMenuItemHeight),
-    width: pxUnits(editorMarginMenuItemHeight),
-    height: pxUnits(editorMarginMenuItemHeight),
-  },
-
-  editorMarginMenuItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingLeft: space.small,
-    paddingRight: space.small,
-    paddingTop: editorMarginMenuItemHeight / 2,
-    paddingBottom: editorMarginMenuItemHeight / 2,
-    borderRadius: pxUnits(5),
-    height: pxUnits(editorMarginMenuItemHeight),
-    color: 'text.2',
-    backgroundColor: 'background.3',
-  },
   formatButton: {
     paddingBottom: pxUnits(6),
     paddingTop: pxUnits(6),
@@ -115,17 +87,6 @@ const buttonThemes = {
     activeColor: 'background.2',
   },
   externalLink: {},
-  editorMarginMenuItem: {
-    hoverColor: 'background.4',
-    activeColor: 'background.1',
-    textProps: {
-      variant: 'uiTextSmall',
-    },
-  },
-  editorMarginMenu: {
-    hoverColor: 'background.4',
-    activeColor: 'primary.2',
-  },
   formatButton: {
     textProps: {},
     hoverColor: 'background.1',

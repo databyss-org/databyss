@@ -57,6 +57,15 @@ const widthVariants = {
   form: {
     maxWidth: pxUnits(550),
   },
+  dropdownMenuSmall: {
+    minWidth: pxUnits(120),
+  },
+  dropdownMenuMedium: {
+    minWidth: pxUnits(200),
+  },
+  dropdownMenuLarge: {
+    minWidth: pxUnits(300),
+  },
   modal: {
     maxWidth: pxUnits(850),
   },
@@ -74,6 +83,9 @@ const borderRadiusVariants = {
   },
   default: {
     borderRadius,
+  },
+  round: {
+    borderRadius: '50%',
   },
 }
 

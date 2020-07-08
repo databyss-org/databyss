@@ -5,7 +5,6 @@ import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
-import CitationsMenu from './CitationsMenu'
 
 const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
   const entryContext = useEntryContext()
@@ -60,7 +59,6 @@ const Editor = ({ children, editor, autofocus, readonly, ...others }) => {
     <Slate editor={editor} {...slateProps}>
       {children}
       <FormatMenu />
-      <CitationsMenu />
       <Editable
         decorate={decorate}
         spellCheck={process.env.NODE_ENV !== 'test'}
