@@ -40,7 +40,10 @@ const Element = ({ attributes, children, element }) => {
     ? editorContext.state.blocks[ReactEditor.findPath(editor, element)[0]]
     : {}
 
-  const isHeading = element.type === ('SOURCE' || 'TOPIC')
+  const elementIndex = ReactEditor.findPath(editor, element)[0]
+  const previousEntry = editor.children[elementIndex - 1]
+  const isPreviousBlockEntry = previousEntry?.type === 'ENTRY'
+  const isBlockHeader = element.type === 'TOPIC' || element.type === 'SOURCE'
 
   return useMemo(
     () => {
@@ -58,7 +61,7 @@ const Element = ({ attributes, children, element }) => {
             }
           }}
           ml={element.isBlock ? blockMenuWidth : 0}
-          pt="small"
+          pt={isPreviousBlockEntry && isBlockHeader ? 'medium' : 'small'}
           pb="em"
           display={element.isBlock ? 'flex' : 'inline-flex'}
           maxWidth="100%"
