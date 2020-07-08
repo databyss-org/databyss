@@ -88,11 +88,26 @@ export default (
           const _frag = payload.data
 
           if (isSelectionCollapsed(state.selection)) {
-            const _index = state.selection.anchor.index
-            draft.blocks.splice(_index + 1, 0, ..._frag)
+            const _isCurrentBlockEmpty = !state.blocks[
+              state.selection.anchor.index
+            ].text.textValue.length
+
+            const _spliceIndex = _isCurrentBlockEmpty
+              ? state.selection.anchor.index
+              : state.selection.anchor.index + 1
+
+            // insert block at index
+            draft.blocks.splice(
+              _spliceIndex,
+              _isCurrentBlockEmpty ? 1 : 0,
+              ..._frag
+            )
             draft.resetState = true
-            const _selectionIndex = _index + _frag.length
+
+            // set selection
+            const _selectionIndex = _spliceIndex + _frag.length - 1
             const _offset = draft.blocks[_selectionIndex].text.textValue.length
+
             const _nextSelection = {
               anchor: { index: _selectionIndex, offset: _offset },
               focus: { index: _selectionIndex, offset: _offset },
