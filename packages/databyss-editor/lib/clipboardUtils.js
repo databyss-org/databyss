@@ -9,6 +9,10 @@ const splitBlockAtOffset = ({ block, offset }) => {
     return { before: null, after: { text: block.text, type: block.type } }
   }
 
+  if (offset === block.text.textValue.length) {
+    return { before: { text: block.text, type: block.type }, after: null }
+  }
+
   const rangesForBlockBefore = []
   const rangesForBlockAfter = []
 
@@ -52,7 +56,7 @@ const splitBlockAtOffset = ({ block, offset }) => {
     after: {
       text: {
         textValue: block.text.textValue.substring(offset),
-        ranges: rangesForBlockBefore,
+        ranges: rangesForBlockAfter,
       },
       type: block.type,
     },
@@ -79,62 +83,75 @@ export const getCurrentSelection = state => {
   let frag = []
 
   const { blocks, selection } = state
-  // TODO: always put anchor before focus
+
   const { anchor, focus } = selection
+  let _anchor = anchor
+  let _focus = focus
+
+  // always put anchor before focus
+  if (anchor.index > focus.index) {
+    _focus = [_anchor, (_anchor = _focus)][0]
+  } else if (anchor.offset > focus.offset) {
+    _focus = [_anchor, (_anchor = _focus)][0]
+  }
 
   let _blocks = cloneDeep(blocks)
 
   // if selection is within the same block
-  if (anchor.index === focus.index) {
-    const _selectionLength = focus.offset - anchor.offset
-    const _block = blocks[anchor.index]
+  if (_anchor.index === _focus.index) {
+    const _selectionLength = _focus.offset - _anchor.offset
+    const _block = blocks[_anchor.index]
     // split block at anchor offset and use `after`
     let _firstSplit = splitBlockAtOffset({
       block: _block,
-      offset: anchor.offset,
+      offset: _anchor.offset,
     }).after
 
     // split block at length of selection and get `before`
     const _secondSplit = splitBlockAtOffset({
-      block: _firstSplit,
+      block: _firstSplit ? _firstSplit : _block,
       offset: _selectionLength,
     }).before
 
     // if selection is use the first split
     const _frag = _secondSplit ? _secondSplit : _firstSplit
-    frag.push({ ..._frag, _id: getId(_frag.type, blocks[anchor.index]._id) })
+
+    frag.push({ ..._frag, _id: getId(_frag.type, blocks[_anchor.index]._id) })
   }
 
   // if selection is more than one block
-  if (anchor.index < focus.index) {
+  if (_anchor.index < _focus.index) {
     // first block
     const { after: firstBlock } = splitBlockAtOffset({
-      block: blocks[anchor.index],
-      offset: anchor.offset,
+      block: blocks[_anchor.index],
+      offset: _anchor.offset,
     })
 
-    frag.push({
-      ...firstBlock,
-      _id: getId(firstBlock.type, blocks[anchor.index]._id),
-    })
+    if (firstBlock) {
+      frag.push({
+        ...firstBlock,
+        _id: getId(firstBlock.type, blocks[_anchor.index]._id),
+      })
+    }
 
-    const _sliceLength = focus.index - anchor.index
+    const _sliceLength = _focus.index - _anchor.index
 
     if (_sliceLength > 1) {
-      _blocks.splice(anchor.index + 1, _sliceLength - 1).forEach(b => {
+      _blocks.splice(_anchor.index + 1, _sliceLength - 1).forEach(b => {
         frag.push({ text: b.text, type: b.type, _id: getId(b.type, b._id) })
       })
     }
 
     // get in between frags
     const { before: lastBlock } = splitBlockAtOffset({
-      block: blocks[focus.index],
-      offset: focus.offset,
+      block: blocks[_focus.index],
+      offset: _focus.offset,
     })
+
     if (lastBlock) {
       frag.push({
         ...lastBlock,
-        _id: getId(lastBlock.type, blocks[focus.index]._id),
+        _id: getId(lastBlock.type, blocks[_focus.index]._id),
       })
     }
   }
@@ -153,7 +170,7 @@ const mergeBlocks = ({ firstBlock, secondBlock }) => {
       ...r,
       offset: r.offset + firstBlock.text.textValue.length,
     })),
-  ]
+  ].filter(r => r.length > 0)
 
   const mergedBlock = {
     text: {
@@ -167,14 +184,20 @@ const mergeBlocks = ({ firstBlock, secondBlock }) => {
 
 export const insertBlockAtIndex = ({ block, blockToInsert, index }) => {
   const splitBlock = splitBlockAtOffset({ block, offset: index })
-  let mergedBlock = mergeBlocks({
-    firstBlock: splitBlock.before,
-    secondBlock: blockToInsert,
-  })
-  mergedBlock = mergeBlocks({
-    firstBlock: mergedBlock,
-    secondBlock: splitBlock.after,
-  })
 
+  let mergedBlock
+  if (splitBlock.before) {
+    mergedBlock = mergeBlocks({
+      firstBlock: splitBlock.before,
+      secondBlock: blockToInsert,
+    })
+  }
+
+  if (splitBlock.after) {
+    mergedBlock = mergeBlocks({
+      firstBlock: mergedBlock ? mergedBlock : blockToInsert,
+      secondBlock: splitBlock.after,
+    })
+  }
   return mergedBlock
 }

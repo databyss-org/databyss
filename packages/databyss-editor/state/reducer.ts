@@ -89,11 +89,11 @@ export default (
 
           if (isSelectionCollapsed(state.selection)) {
             // if fragment length is greater than 1 split blocks and insert the fragment
-            if (_frag.length > 1) {
-              const _isCurrentBlockEmpty = !state.blocks[
-                state.selection.anchor.index
-              ].text.textValue.length
+            const _isCurrentBlockEmpty = !state.blocks[
+              state.selection.anchor.index
+            ].text.textValue.length
 
+            if (_frag.length > 1 || _isCurrentBlockEmpty) {
               const _spliceIndex = _isCurrentBlockEmpty
                 ? state.selection.anchor.index
                 : state.selection.anchor.index + 1
@@ -115,9 +115,9 @@ export default (
                 anchor: { index: _selectionIndex, offset: _offset },
                 focus: { index: _selectionIndex, offset: _offset },
               }
+              nextSelection = _nextSelection
             } else {
               // TODO: CHECK IF ATOMIC
-              draft.resetState = true
 
               // merge fragment at current block
               const { blocks, selection } = state
@@ -144,6 +144,7 @@ export default (
               nextSelection = _nextSelection
 
               // TODO: CREATE OPERATION
+              draft.resetState = true
             }
           }
 
