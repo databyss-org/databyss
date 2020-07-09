@@ -38,7 +38,6 @@ const ContentEditable = ({
   const topicContext = useTopicContext()
 
   const {
-    paste,
     state,
     split,
     merge,

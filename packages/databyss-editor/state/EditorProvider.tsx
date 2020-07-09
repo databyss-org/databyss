@@ -144,7 +144,10 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
     e.clipboardData.setData('text/plain', 'Hello, world!')
 
     // set application data for clipboard
-    e.clipboardData.setData('application/databyss-frag', JSON.stringify(_frag))
+    e.clipboardData.setData(
+      'application/x-databyss-frag',
+      JSON.stringify(_frag)
+    )
 
     console.log(_frag)
     // TODO: SET HTML
@@ -156,13 +159,15 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
 
   const paste = (e: ClipboardEvent) => {
     const databyssDataTransfer = e.clipboardData.getData(
-      'application/databyss-frag'
+      'application/x-databyss-frag'
     )
     if (databyssDataTransfer) {
       const data = JSON.parse(databyssDataTransfer)
       dispatch({
         type: PASTE,
-        payload: { data, selection: state.selection },
+        payload: {
+          data,
+        },
       })
     }
   }

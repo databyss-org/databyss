@@ -1,6 +1,6 @@
-import { isAtomicInlineType } from './util'
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
+import { isAtomicInlineType } from './util'
 
 // returns before and after value for block split at index `offset`
 const splitBlockAtOffset = ({ block, offset }) => {
@@ -70,9 +70,8 @@ export const isSelectionCollapsed = selection => {
 }
 
 // return atomic or new id
-const getId = (type, id) => {
-  return isAtomicInlineType(type) ? id : new ObjectId().toHexString()
-}
+const getId = (type, id) =>
+  isAtomicInlineType(type) ? id : new ObjectId().toHexString()
 
 // returns fragment in state selection
 export const getCurrentSelection = state => {
@@ -95,26 +94,26 @@ export const getCurrentSelection = state => {
     _focus = [_anchor, (_anchor = _focus)][0]
   }
 
-  let _blocks = cloneDeep(blocks)
+  const _blocks = cloneDeep(blocks)
 
   // if selection is within the same block
   if (_anchor.index === _focus.index) {
     const _selectionLength = _focus.offset - _anchor.offset
     const _block = blocks[_anchor.index]
     // split block at anchor offset and use `after`
-    let _firstSplit = splitBlockAtOffset({
+    const _firstSplit = splitBlockAtOffset({
       block: _block,
       offset: _anchor.offset,
     }).after
 
     // split block at length of selection and get `before`
     const _secondSplit = splitBlockAtOffset({
-      block: _firstSplit ? _firstSplit : _block,
+      block: _firstSplit || _block,
       offset: _selectionLength,
     }).before
 
     // if selection is use the first split
-    const _frag = _secondSplit ? _secondSplit : _firstSplit
+    const _frag = _secondSplit || _firstSplit
 
     frag.push({ ..._frag, _id: getId(_frag.type, blocks[_anchor.index]._id) })
   }
@@ -195,7 +194,7 @@ export const insertBlockAtIndex = ({ block, blockToInsert, index }) => {
 
   if (splitBlock.after) {
     mergedBlock = mergeBlocks({
-      firstBlock: mergedBlock ? mergedBlock : blockToInsert,
+      firstBlock: mergedBlock || blockToInsert,
       secondBlock: splitBlock.after,
     })
   }
