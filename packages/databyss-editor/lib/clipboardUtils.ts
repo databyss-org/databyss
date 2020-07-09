@@ -1,9 +1,27 @@
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
+import { BlockType } from '@databyss-org/services/interfaces'
+import { Text, Range, Selection, EditorState, Block } from '../interfaces'
 import { isAtomicInlineType } from './util'
 
+interface BasicBlock {
+  type: BlockType
+  text: Text
+}
+
+interface SplitBlocks {
+  before: BasicBlock | null
+  after: BasicBlock | null
+}
+
 // returns before and after value for block split at index `offset`
-const splitBlockAtOffset = ({ block, offset }) => {
+const splitBlockAtOffset = ({
+  block,
+  offset,
+}: {
+  block: BasicBlock
+  offset: number
+}): SplitBlocks => {
   // if first block is atomic return
   if (isAtomicInlineType(block.type) || offset === 0) {
     return { before: null, after: { text: block.text, type: block.type } }
@@ -13,10 +31,10 @@ const splitBlockAtOffset = ({ block, offset }) => {
     return { before: { text: block.text, type: block.type }, after: null }
   }
 
-  let rangesForBlockBefore = []
-  let rangesForBlockAfter = []
+  let rangesForBlockBefore: Range[] = []
+  let rangesForBlockAfter: Range[] = []
 
-  block.text.ranges.forEach(r => {
+  block.text.ranges.forEach((r: Range) => {
     if (r.offset > offset) {
       rangesForBlockAfter.push({
         offset: r.offset - offset,
@@ -68,22 +86,22 @@ const splitBlockAtOffset = ({ block, offset }) => {
 }
 
 // checks is state selection is collapsed
-export const isSelectionCollapsed = selection => {
+export const isSelectionCollapsed = (selection: Selection): boolean => {
   const { anchor, focus } = selection
   return anchor.index === focus.index && anchor.offset === focus.offset
 }
 
 // return atomic or new id
-const getId = (type, id) =>
+const getId = (type: BlockType, id: string): string =>
   isAtomicInlineType(type) ? id : new ObjectId().toHexString()
 
 // returns fragment in state selection
-export const getCurrentSelection = state => {
+export const getCurrentSelection = (state: EditorState): Block[] => {
   if (isSelectionCollapsed(state.selection)) {
     return []
   }
 
-  let frag = []
+  let frag: Block[] = []
 
   const { blocks, selection } = state
 
@@ -119,7 +137,9 @@ export const getCurrentSelection = state => {
     // if selection is use the first split
     const _frag = _secondSplit || _firstSplit
 
-    frag.push({ ..._frag, _id: getId(_frag.type, blocks[_anchor.index]._id) })
+    if (_frag) {
+      frag.push({ ..._frag, _id: getId(_frag.type, blocks[_anchor.index]._id) })
+    }
   }
 
   // if selection is more than one block
@@ -140,9 +160,11 @@ export const getCurrentSelection = state => {
     const _sliceLength = _focus.index - _anchor.index
 
     if (_sliceLength > 1) {
-      _blocks.splice(_anchor.index + 1, _sliceLength - 1).forEach(b => {
-        frag.push({ text: b.text, type: b.type, _id: getId(b.type, b._id) })
-      })
+      _blocks
+        .splice(_anchor.index + 1, _sliceLength - 1)
+        .forEach((b: Block) => {
+          frag.push({ text: b.text, type: b.type, _id: getId(b.type, b._id) })
+        })
     }
 
     // get in between frags
@@ -164,12 +186,18 @@ export const getCurrentSelection = state => {
   return frag
 }
 
-const mergeBlocks = ({ firstBlock, secondBlock }) => {
+const mergeBlocks = ({
+  firstBlock,
+  secondBlock,
+}: {
+  firstBlock: BasicBlock | Block
+  secondBlock: BasicBlock | Block
+}): BasicBlock => {
   const mergedTextValue = firstBlock.text.textValue + secondBlock.text.textValue
 
   const mergedRanges = [
     ...firstBlock.text.ranges,
-    ...secondBlock.text.ranges.map(r => ({
+    ...secondBlock.text.ranges.map((r: Range) => ({
       ...r,
       offset: r.offset + firstBlock.text.textValue.length,
     })),
@@ -180,12 +208,21 @@ const mergeBlocks = ({ firstBlock, secondBlock }) => {
       textValue: mergedTextValue,
       ranges: mergedRanges,
     },
+    type: firstBlock.type,
   }
 
   return mergedBlock
 }
 
-export const insertBlockAtIndex = ({ block, blockToInsert, index }) => {
+export const insertBlockAtIndex = ({
+  block,
+  blockToInsert,
+  index,
+}: {
+  block: Block
+  blockToInsert: Block
+  index: number
+}): Block => {
   const splitBlock = splitBlockAtOffset({ block, offset: index })
 
   let mergedBlock
