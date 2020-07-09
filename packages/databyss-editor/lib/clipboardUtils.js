@@ -13,8 +13,8 @@ const splitBlockAtOffset = ({ block, offset }) => {
     return { before: { text: block.text, type: block.type }, after: null }
   }
 
-  const rangesForBlockBefore = []
-  const rangesForBlockAfter = []
+  let rangesForBlockBefore = []
+  let rangesForBlockAfter = []
 
   block.text.ranges.forEach(r => {
     if (r.offset > offset) {
@@ -44,6 +44,10 @@ const splitBlockAtOffset = ({ block, offset }) => {
       })
     }
   })
+
+  rangesForBlockBefore = rangesForBlockBefore.filter(r => r.length > 0)
+
+  rangesForBlockAfter = rangesForBlockAfter.filter(r => r.length > 0)
 
   return {
     before: {
