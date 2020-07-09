@@ -91,7 +91,7 @@ export const getCurrentSelection = state => {
   // always put anchor before focus
   if (anchor.index > focus.index) {
     _focus = [_anchor, (_anchor = _focus)][0]
-  } else if (anchor.offset > focus.offset) {
+  } else if (anchor.offset > focus.offset && anchor.index === focus.index) {
     _focus = [_anchor, (_anchor = _focus)][0]
   }
 

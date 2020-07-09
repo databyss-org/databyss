@@ -87,13 +87,17 @@ export default (
         case PASTE: {
           const _frag = payload.data
 
-          if (isSelectionCollapsed(state.selection)) {
+          if (isSelectionCollapsed(state.selection) && _frag.length) {
             // if fragment length is greater than 1 split blocks and insert the fragment
             const _isCurrentBlockEmpty = !state.blocks[
               state.selection.anchor.index
             ].text.textValue.length
 
-            if (_frag.length > 1 || _isCurrentBlockEmpty) {
+            if (
+              _frag.length > 1 ||
+              _isCurrentBlockEmpty ||
+              isAtomicInlineType(_frag[0].type)
+            ) {
               const _spliceIndex = _isCurrentBlockEmpty
                 ? state.selection.anchor.index
                 : state.selection.anchor.index + 1
@@ -117,8 +121,6 @@ export default (
               }
               nextSelection = _nextSelection
             } else {
-              // TODO: CHECK IF ATOMIC
-
               // merge fragment at current block
               const { blocks, selection } = state
               const { anchor } = selection
