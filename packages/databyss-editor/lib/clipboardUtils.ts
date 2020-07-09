@@ -95,6 +95,24 @@ export const isSelectionCollapsed = (selection: Selection): boolean => {
 const getId = (type: BlockType, id: string): string =>
   isAtomicInlineType(type) ? id : new ObjectId().toHexString()
 
+// always have the anchor come before the focus
+const sortSelection = (selection: Selection): Selection => {
+  const { anchor, focus } = selection
+  let _anchor = anchor
+  let _focus = focus
+  // always put anchor before focus
+  if (anchor.index > focus.index) {
+    _focus = [_anchor, (_anchor = _focus)][0]
+  } else if (anchor.offset > focus.offset && anchor.index === focus.index) {
+    _focus = [_anchor, (_anchor = _focus)][0]
+  }
+
+  return {
+    anchor: _anchor,
+    focus: _focus,
+  }
+}
+
 // returns fragment in state selection
 export const getCurrentSelection = (state: EditorState): Block[] => {
   if (isSelectionCollapsed(state.selection)) {
@@ -105,27 +123,18 @@ export const getCurrentSelection = (state: EditorState): Block[] => {
 
   const { blocks, selection } = state
 
-  const { anchor, focus } = selection
-  let _anchor = anchor
-  let _focus = focus
-
-  // always put anchor before focus
-  if (anchor.index > focus.index) {
-    _focus = [_anchor, (_anchor = _focus)][0]
-  } else if (anchor.offset > focus.offset && anchor.index === focus.index) {
-    _focus = [_anchor, (_anchor = _focus)][0]
-  }
+  const { anchor, focus } = sortSelection(selection)
 
   const _blocks = cloneDeep(blocks)
 
   // if selection is within the same block
-  if (_anchor.index === _focus.index) {
-    const _selectionLength = _focus.offset - _anchor.offset
-    const _block = blocks[_anchor.index]
+  if (anchor.index === focus.index) {
+    const _selectionLength = focus.offset - anchor.offset
+    const _block = blocks[anchor.index]
     // split block at anchor offset and use `after`
     const _firstSplit = splitBlockAtOffset({
       block: _block,
-      offset: _anchor.offset,
+      offset: anchor.offset,
     }).after
 
     // split block at length of selection and get `before`
@@ -138,45 +147,43 @@ export const getCurrentSelection = (state: EditorState): Block[] => {
     const _frag = _secondSplit || _firstSplit
 
     if (_frag) {
-      frag.push({ ..._frag, _id: getId(_frag.type, blocks[_anchor.index]._id) })
+      frag.push({ ..._frag, _id: getId(_frag.type, blocks[anchor.index]._id) })
     }
   }
 
   // if selection is more than one block
-  if (_anchor.index < _focus.index) {
+  if (anchor.index < focus.index) {
     // first block
     const { after: firstBlock } = splitBlockAtOffset({
-      block: blocks[_anchor.index],
-      offset: _anchor.offset,
+      block: blocks[anchor.index],
+      offset: anchor.offset,
     })
 
     if (firstBlock) {
       frag.push({
         ...firstBlock,
-        _id: getId(firstBlock.type, blocks[_anchor.index]._id),
+        _id: getId(firstBlock.type, blocks[anchor.index]._id),
       })
     }
 
-    const _sliceLength = _focus.index - _anchor.index
+    const _sliceLength = focus.index - anchor.index
 
     if (_sliceLength > 1) {
-      _blocks
-        .splice(_anchor.index + 1, _sliceLength - 1)
-        .forEach((b: Block) => {
-          frag.push({ text: b.text, type: b.type, _id: getId(b.type, b._id) })
-        })
+      _blocks.splice(anchor.index + 1, _sliceLength - 1).forEach((b: Block) => {
+        frag.push({ text: b.text, type: b.type, _id: getId(b.type, b._id) })
+      })
     }
 
     // get in between frags
     const { before: lastBlock } = splitBlockAtOffset({
-      block: blocks[_focus.index],
-      offset: _focus.offset,
+      block: blocks[focus.index],
+      offset: focus.offset,
     })
 
     if (lastBlock) {
       frag.push({
         ...lastBlock,
-        _id: getId(lastBlock.type, blocks[_focus.index]._id),
+        _id: getId(lastBlock.type, blocks[focus.index]._id),
       })
     }
   }
@@ -240,4 +247,84 @@ export const insertBlockAtIndex = ({
     })
   }
   return mergedBlock
+}
+
+export const deleteBlocksAtSelection = ({
+  state,
+  draftState,
+}: {
+  state: EditorState
+  draftState: EditorState
+}) => {
+  if (isSelectionCollapsed(draftState.selection)) {
+    return
+  }
+  const { selection, blocks } = state
+  const { anchor, focus } = sortSelection(selection)
+
+  // console.log(JSON.stringify(draftState.blocks))
+
+  // check if index spans over more than one block
+  if (focus.index === anchor.index) {
+    let _newBlock
+    const _currentBlock = blocks[anchor.index]
+    // if selection spans over entire block, delete block contents
+    if (focus.offset - anchor.offset === _currentBlock.text.textValue.length) {
+      console.log('WOW HERE')
+      _newBlock = { text: { textValue: '', ranges: [] } }
+    } else {
+      // if not, split block at anchor offset
+      const { before, after } = splitBlockAtOffset({
+        block: _currentBlock,
+        offset: anchor.offset,
+      })
+
+      let lastBlockFragment
+      // if `after` exists, split `after` at focus offset - before block length
+      if (after) {
+        let { after: _lastBlockFragment } = splitBlockAtOffset({
+          block: after,
+          offset: focus.offset - anchor.offset,
+        })
+        lastBlockFragment = _lastBlockFragment
+      }
+
+      // take that result and merge it with `before` if `before` exists
+      if (before && lastBlockFragment) {
+        _newBlock = mergeBlocks({
+          firstBlock: before,
+          secondBlock: lastBlockFragment,
+        })
+      } else if (before) {
+        _newBlock = before
+      } else if (lastBlockFragment) {
+        _newBlock = lastBlockFragment
+      }
+    }
+
+    // replace block
+    draftState.blocks[anchor.index] = {
+      ...draftState.blocks[anchor.index],
+      ..._newBlock,
+    }
+    // replace selection
+    const _offset = anchor.offset
+    const _index = anchor.index
+    const _selection = {
+      anchor: { offset: _offset, index: _index },
+      focus: { offset: _offset, index: _index },
+    }
+    draftState.selection = _selection
+    draftState.resetState = true
+  }
+  // TODO: if selection spans over multiple blocks
+
+  // if `before`
+  // split first block at anchor
+
+  // if `before` set first half equal to anchor index
+
+  // split last block at offset
+
+  //if `after` set second half equal to focus index
 }

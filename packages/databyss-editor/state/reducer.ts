@@ -12,7 +12,11 @@ import {
   PASTE,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
-import { isSelectionCollapsed, insertBlockAtIndex } from '../lib/clipboardUtils'
+import {
+  isSelectionCollapsed,
+  insertBlockAtIndex,
+  deleteBlocksAtSelection,
+} from '../lib/clipboardUtils'
 import {
   selectionHasRange,
   symbolToAtomicType,
@@ -87,20 +91,25 @@ export default (
         case PASTE: {
           const _frag = payload.data
 
-          if (isSelectionCollapsed(state.selection) && _frag.length) {
+          if (!isSelectionCollapsed(state.selection)) {
+            deleteBlocksAtSelection({ state: state, draftState: draft })
+          }
+
+          if (_frag.length) {
             // if fragment length is greater than 1 split blocks and insert the fragment
-            const _isCurrentBlockEmpty = !state.blocks[
-              state.selection.anchor.index
+            const _isCurrentBlockEmpty = !draft.blocks[
+              draft.selection.anchor.index
             ].text.textValue.length
 
+            // splice blocks at current index
             if (
               _frag.length > 1 ||
               _isCurrentBlockEmpty ||
               isAtomicInlineType(_frag[0].type)
             ) {
               const _spliceIndex = _isCurrentBlockEmpty
-                ? state.selection.anchor.index
-                : state.selection.anchor.index + 1
+                ? draft.selection.anchor.index
+                : draft.selection.anchor.index + 1
 
               // insert block at index
               draft.blocks.splice(
@@ -122,7 +131,7 @@ export default (
               nextSelection = _nextSelection
             } else {
               // merge fragment at current block
-              const { blocks, selection } = state
+              const { blocks, selection } = draft
               const { anchor } = selection
               const _index = anchor.index
               const _mergedBlock = insertBlockAtIndex({
@@ -145,7 +154,7 @@ export default (
               }
               nextSelection = _nextSelection
 
-              // TODO: CREATE OPERATION
+              // TODO: create operation instead of remounting state
               draft.resetState = true
             }
           }
