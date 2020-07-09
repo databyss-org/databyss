@@ -12,7 +12,7 @@ import {
   PASTE,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
-import { isSelectionCollapsed } from '../lib/clipboardUtils'
+import { isSelectionCollapsed, insertBlockAtIndex } from '../lib/clipboardUtils'
 import {
   selectionHasRange,
   symbolToAtomicType,
@@ -88,32 +88,65 @@ export default (
           const _frag = payload.data
 
           if (isSelectionCollapsed(state.selection)) {
-            const _isCurrentBlockEmpty = !state.blocks[
-              state.selection.anchor.index
-            ].text.textValue.length
+            // if fragment length is greater than 1 split blocks and insert the fragment
+            if (_frag.length > 1) {
+              const _isCurrentBlockEmpty = !state.blocks[
+                state.selection.anchor.index
+              ].text.textValue.length
 
-            const _spliceIndex = _isCurrentBlockEmpty
-              ? state.selection.anchor.index
-              : state.selection.anchor.index + 1
+              const _spliceIndex = _isCurrentBlockEmpty
+                ? state.selection.anchor.index
+                : state.selection.anchor.index + 1
 
-            // insert block at index
-            draft.blocks.splice(
-              _spliceIndex,
-              _isCurrentBlockEmpty ? 1 : 0,
-              ..._frag
-            )
-            draft.resetState = true
+              // insert block at index
+              draft.blocks.splice(
+                _spliceIndex,
+                _isCurrentBlockEmpty ? 1 : 0,
+                ..._frag
+              )
+              draft.resetState = true
 
-            // set selection
-            const _selectionIndex = _spliceIndex + _frag.length - 1
-            const _offset = draft.blocks[_selectionIndex].text.textValue.length
+              // set selection
+              const _selectionIndex = _spliceIndex + _frag.length - 1
+              const _offset =
+                draft.blocks[_selectionIndex].text.textValue.length
 
-            const _nextSelection = {
-              anchor: { index: _selectionIndex, offset: _offset },
-              focus: { index: _selectionIndex, offset: _offset },
+              const _nextSelection = {
+                anchor: { index: _selectionIndex, offset: _offset },
+                focus: { index: _selectionIndex, offset: _offset },
+              }
+            } else {
+              // TODO: CHECK IF ATOMIC
+              draft.resetState = true
+
+              // merge fragment at current block
+              const { blocks, selection } = state
+              const { anchor } = selection
+              const _index = anchor.index
+              const _mergedBlock = insertBlockAtIndex({
+                block: blocks[_index],
+                blockToInsert: _frag[0],
+                index: anchor.offset,
+              })
+
+              // insert new block at current index
+              draft.blocks.splice(anchor.index, 1, {
+                ...blocks[_index],
+                ..._mergedBlock,
+              })
+
+              const _offset = anchor.offset + _frag[0].text.textValue.length
+
+              const _nextSelection = {
+                anchor: { index: _index, offset: _offset },
+                focus: { index: _index, offset: _offset },
+              }
+              nextSelection = _nextSelection
+
+              // TODO: CREATE OPERATION
             }
-            nextSelection = _nextSelection
           }
+
           break
         }
         case SPLIT: {

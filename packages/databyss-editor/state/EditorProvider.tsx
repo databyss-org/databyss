@@ -146,6 +146,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
     // set application data for clipboard
     e.clipboardData.setData('application/databyss-frag', JSON.stringify(_frag))
 
+    console.log(_frag)
     // TODO: SET HTML
     dispatch({
       type: COPY,
