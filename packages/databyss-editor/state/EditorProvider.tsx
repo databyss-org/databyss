@@ -153,7 +153,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
 
     dispatch({
       type: CUT,
-      payload: {},
     })
   }
 
@@ -163,7 +162,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
 
     dispatch({
       type: COPY,
-      payload: {},
     })
   }
 

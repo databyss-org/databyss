@@ -86,7 +86,7 @@ export default (
       const { payload } = action
 
       // default nextSelection to `payload.selection` (which may be undef)
-      let nextSelection = payload.selection
+      let nextSelection = payload?.selection
 
       switch (action.type) {
         case CUT: {
