@@ -99,6 +99,9 @@ const getId = (type: BlockType, id: string): string =>
 export const resetIds = (fragment: Block[]): Block[] =>
   fragment.map(block => ({ ...block, _id: getId(block.type, block._id) }))
 
+const addBlockData = (frag: Block[]): Block[] =>
+  frag.map(b => ({ ...b, __showNewBlockMenu: false, __isActive: false }))
+
 // always have the anchor come before the focus
 const sortSelection = (selection: Selection): Selection => {
   const { anchor, focus } = selection
@@ -192,7 +195,7 @@ export const getCurrentSelection = (state: EditorState): Block[] => {
     }
   }
   // add metadata
-  frag = frag.map(b => ({ ...b, __showNewBlockMenu: false, __isActive: false }))
+  frag = addBlockData(frag)
 
   return frag
 }
@@ -363,4 +366,20 @@ export const deleteBlocksAtSelection = ({
     // remove all the the blocks in between the selection
     draftState.blocks.splice(anchor.index + 1, numberOfBlocksToRemove)
   }
+}
+
+export const databyssFragToPlainText = (fragment: Block[]): string => {
+  return fragment.reduce(
+    (acc, curr) => acc + (acc.length ? '\n' : '') + curr.text.textValue,
+    ''
+  )
+}
+
+export const plainTextToDatabyssFrag = (text: string): Block[] => {
+  const _frag = text.split('\n').map(f => ({
+    text: { textValue: f, ranges: [] },
+    type: 'ENTRY',
+    _id: new ObjectId().toHexString(),
+  }))
+  return addBlockData(_frag)
 }
