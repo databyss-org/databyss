@@ -82,13 +82,7 @@ convert page state to a slate value on initial mount
 
 export const stateToSlate = initState => {
   const _blocks = initState.blocks
-  const _state = _blocks.map(b => {
-    // get block ref and id
-    const _block = initState.blockCache[b._id]
-    const _blockData = initState.entityCache[_block.entityId]
-    return stateBlockToSlateBlock(_blockData)
-  })
-
+  const _state = _blocks.map(_block => stateBlockToSlateBlock(_block))
   return _state
 }
 

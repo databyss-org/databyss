@@ -1,5 +1,11 @@
-import React, { useCallback, useMemo, useState, forwardRef } from 'react'
-import { Editable, withReact, Slate } from 'slate-react'
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  forwardRef,
+} from 'react'
+import { Editable, withReact, Slate, ReactEditor } from 'slate-react'
 import { Editor, createEditor, Transforms } from '@databyss-org/slate'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { stateToSlateMarkup, getRangesFromBlock } from '../lib/markup'
@@ -61,7 +67,17 @@ const Leaf = ({ attributes, children, leaf }) => {
 
 const RichText = forwardRef(
   (
-    { multiline, onChange, initialValue, id, overrideCss, onBlur, placeholder },
+    {
+      multiline,
+      active,
+      onChange,
+      initialValue,
+      id,
+      overrideCss,
+      onBlur,
+      onFocus,
+      placeholder,
+    },
     ref
   ) => {
     // set initial value
@@ -84,6 +100,16 @@ const RichText = forwardRef(
       setValue(value)
     }
 
+    useEffect(
+      () => {
+        if (active && editor) {
+          ReactEditor.focus(editor)
+          Transforms.select(editor, Editor.end(editor, []))
+        }
+      },
+      [active]
+    )
+
     return (
       <View ref={ref}>
         <Slate editor={editor} value={value} onChange={onChangeEvent}>
@@ -93,7 +119,6 @@ const RichText = forwardRef(
             renderLeaf={renderLeaf}
             placeholder={placeholder}
             spellCheck
-            autoFocus
             onKeyDown={event => {
               if (event.key === 'Enter') {
                 event.preventDefault()
@@ -119,6 +144,7 @@ const RichText = forwardRef(
               }
             }}
             onBlur={onBlur}
+            onFocus={onFocus}
           />
         </Slate>
       </View>

@@ -1,68 +1,57 @@
 import mongoose from 'mongoose'
-import ObjectId from 'bson-objectid'
-import Entry from './Entry'
 import Block from './Block'
 import Selection from './Selection'
 
 const Schema = mongoose.Schema
 
-const PageSchema = new Schema({
-  account: {
-    type: Schema.Types.ObjectId,
-    ref: 'account',
-    required: true,
-  },
-  name: {
-    type: String,
-    default: 'untitled',
-  },
-  blocks: [
-    {
+const PageSchema = new Schema(
+  {
+    account: {
+      type: Schema.Types.ObjectId,
+      ref: 'account',
+      required: true,
+    },
+    name: {
+      type: String,
+      default: 'untitled',
+    },
+    blocks: [
+      {
+        _id: {
+          type: Schema.Types.ObjectId,
+          ref: 'block',
+        },
+      },
+    ],
+    selection: {
       _id: {
         type: Schema.Types.ObjectId,
-        ref: 'block',
+        ref: 'selection',
       },
     },
-  ],
-  selection: {
-    _id: {
-      type: Schema.Types.ObjectId,
-      ref: 'selection',
+    archive: {
+      type: Boolean,
+      default: false,
     },
   },
-  archive: {
-    type: Boolean,
-    default: false,
-  },
-})
+  { versionKey: false }
+)
 
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */
-PageSchema.method('addEntry', async function(values = {}) {
-  const _entryId = ObjectId().toHexString()
-  const _blockId = ObjectId().toHexString()
-
-  // add the entry record
-  const entry = await Entry.create({
-    _id: _entryId,
-    account: this.account,
-    block: _blockId,
-    page: this._id,
-    ...values,
-  })
-
+PageSchema.method('addBlock', async function(values = {}) {
   // add the block record
   const block = await Block.create({
-    _id: _blockId,
+    page: this._id,
     type: 'ENTRY',
     account: this.account,
-    entryId: entry._id,
+    ...values,
   })
 
   this.blocks.push({ _id: block._id })
 
   await this.save()
-  return entry
+  return block
 })
 
 PageSchema.static('create', async (values = {}) => {
@@ -80,7 +69,7 @@ PageSchema.static('create', async (values = {}) => {
   const instance = new Page({ ...values, selection })
 
   // add an empty entry
-  instance.addEntry()
+  await instance.addBlock()
 
   await instance.save()
   return instance

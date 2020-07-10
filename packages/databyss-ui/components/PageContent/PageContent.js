@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useLocation, Router } from '@reach/router'
 import { PagesLoader, PageLoader } from '@databyss-org/ui/components/Loaders'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
@@ -15,13 +15,15 @@ export const PageRouter = () => (
   </Router>
 )
 
-const PageContainer = React.memo(({ anchor, id, onHeaderClick, page }) => {
+const PageContainer = React.memo(({ anchor, id, page }) => {
   const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
   const hasPendingPatches = usePageContext(c => c.hasPendingPatches)
 
   const { isOnline } = useNotifyContext()
 
   const [pendingPatches, setPendingPatches] = useState(0)
+  const headerRef = useRef()
+  const editorRef = useRef()
 
   // index is used to set selection in slate
   const [index, setIndex] = useState(null)
@@ -53,6 +55,20 @@ const PageContainer = React.memo(({ anchor, id, onHeaderClick, page }) => {
     }
   }, [])
 
+  // focus header
+  const onNavigateUpFromEditor = () => {
+    if (headerRef.current) {
+      headerRef.current.focus()
+    }
+  }
+
+  // focus editor
+  const onNavigateDownToEditor = () => {
+    if (editorRef.current) {
+      editorRef.current.focus()
+    }
+  }
+
   return (
     <View height="100vh" overflow="scroll" p="medium">
       <View
@@ -61,14 +77,23 @@ const PageContainer = React.memo(({ anchor, id, onHeaderClick, page }) => {
         flexDirection="row"
         justifyContent="space-between"
       >
-        <PageHeader pageId={id} isFocused={onHeaderClick} />
+        <PageHeader
+          ref={headerRef}
+          pageId={id}
+          onNavigateDownFromHeader={onNavigateDownToEditor}
+        />
         <Text color="gray.5" pr="medium" variant="uiTextSmall">
           {isOnline && (pendingPatches ? 'Saving...' : 'All changes saved')}
           {!isOnline && 'Offline'}
         </Text>
         <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
       </View>
-      <PageBody page={page} focusIndex={index} />
+      <PageBody
+        editorRef={editorRef}
+        page={page}
+        focusIndex={index}
+        onNavigateUpFromEditor={onNavigateUpFromEditor}
+      />
     </View>
   )
 }, (prev, next) => prev.page._id === next.page._id && prev.id === next.id && prev.anchor === next.anchor)
@@ -77,13 +102,6 @@ const PageContent = () => {
   // get page id and anchor from url
   const { id } = useParams()
   const anchor = useLocation().hash.substring(1)
-  const [readOnly, setReadOnly] = useState(false)
-
-  const onHeaderClick = bool => {
-    if (readOnly !== bool) {
-      setReadOnly(bool)
-    }
-  }
 
   /*
   use same route to update name, just pass it name 
@@ -93,22 +111,7 @@ const PageContent = () => {
     <View flex="1" height="100vh">
       {id && (
         <PageLoader pageId={id} key={id}>
-          {pageState => {
-            const { page, ...pageContainerFields } = pageState
-
-            return (
-              <PageContainer
-                anchor={anchor}
-                id={id}
-                onHeaderClick={onHeaderClick}
-                page={{
-                  _id: page._id,
-                  ...pageContainerFields,
-                }}
-                readOnly={readOnly}
-              />
-            )
-          }}
+          {page => <PageContainer anchor={anchor} id={id} page={page} />}
         </PageLoader>
       )}
     </View>

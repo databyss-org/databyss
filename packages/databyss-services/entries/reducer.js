@@ -4,7 +4,7 @@ import {
   SET_QUERY,
   CLEAR_CACHE,
 } from './constants'
-import { ResourcePending } from '../lib/ResourcePending'
+import { ResourcePending } from '../interfaces/ResourcePending'
 
 export const initialState = {
   searchCache: {},

@@ -6,7 +6,7 @@ import FormFieldList from '@databyss-org/ui/components/Form/FormFieldList'
 import ValueListProvider from '@databyss-org/ui/components/ValueList/ValueListProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import GoogleLoginButton from '@databyss-org/ui/components/Login/GoogleLoginButton'
-import { NotAuthorizedError } from '@databyss-org/services/lib/errors'
+import { NotAuthorizedError } from '@databyss-org/services/interfaces'
 
 const initialFormState = {
   email: {

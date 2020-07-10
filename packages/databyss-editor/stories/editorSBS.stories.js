@@ -6,10 +6,6 @@ import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
-import {
-  withWhitelist,
-  addMetaData,
-} from '@databyss-org/services/pages/_helpers'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
   useSessionContext,
@@ -29,6 +25,12 @@ import PageProvider, {
 } from '@databyss-org/services/pages/PageProvider'
 import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import {
+  cleanupPatches,
+  addMetaToPatches,
+  editorStateToPage,
+  pageToEditorState,
+} from '../state/util'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
@@ -46,21 +48,21 @@ const Box = ({ children, ...others }) => (
 )
 
 const PageWithAutosave = ({ page, refreshPage }) => {
-  const { setPatch } = usePageContext()
+  const { setPatches } = usePageContext()
   const [, setPageState] = useState(null)
 
   const operationsQueue = useRef([])
 
   const throttledAutosave = useCallback(
-    throttle(({ nextState, patch }) => {
-      const _patch = withWhitelist(patch)
-      if (_patch.length) {
+    throttle(({ nextState, patches }) => {
+      const _patches = cleanupPatches(patches)
+      if (_patches?.length) {
         const payload = {
-          id: nextState.page._id,
-          patch: operationsQueue.current,
+          id: nextState.pageHeader._id,
+          patches: operationsQueue.current,
         }
         refreshPage()
-        setPatch(payload)
+        setPatches(payload)
         operationsQueue.current = []
       }
     }, 3000),
@@ -72,10 +74,10 @@ const PageWithAutosave = ({ page, refreshPage }) => {
   }
 
   const onChange = value => {
-    const patch = addMetaData(value)
+    const patches = addMetaToPatches(value)
     // push changes to a queue
-    operationsQueue.current = operationsQueue.current.concat(patch)
-    throttledAutosave({ ...value, patch })
+    operationsQueue.current = operationsQueue.current.concat(patches)
+    throttledAutosave({ ...value, patches })
   }
 
   return (
@@ -112,6 +114,8 @@ const EditorWithProvider = () => {
     []
   )
 
+  const _defaultPage = editorStateToPage(connectedFixture(account.defaultPage))
+
   return (
     <View>
       <View display="-webkit-box">
@@ -119,7 +123,7 @@ const EditorWithProvider = () => {
           id="clear-state"
           m="small"
           onClick={() => {
-            setPage(connectedFixture(account.defaultPage))
+            setPage(_defaultPage)
           }}
         >
           <Text>clear state</Text>
@@ -128,11 +132,16 @@ const EditorWithProvider = () => {
       <View display="-webkit-box">
         <PageLoader pageId={account.defaultPage}>
           {page => {
-            if (page.page.name !== 'test document') {
-              setPage(connectedFixture(account.defaultPage))
+            if (page.name !== 'test document') {
+              setPage(_defaultPage)
               return null
             }
-            return <PageWithAutosave page={page} refreshPage={_refreshPage} />
+            return (
+              <PageWithAutosave
+                page={pageToEditorState(page)}
+                refreshPage={_refreshPage}
+              />
+            )
           }}
         </PageLoader>
         {_page && <StaticPage page={_page} />}

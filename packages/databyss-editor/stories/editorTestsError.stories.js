@@ -6,10 +6,6 @@ import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
-import {
-  withWhitelist,
-  addMetaData,
-} from '@databyss-org/services/pages/_helpers'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
   useSessionContext,
@@ -32,6 +28,7 @@ import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
+import { cleanupPatches, addMetaToPatches } from '../state/util'
 import connectedFixture, { corruptedPage } from './fixtures/connectedState'
 
 const LoginRequired = () => (
@@ -45,20 +42,20 @@ const Box = ({ children, ...others }) => (
 )
 
 const PageWithAutosave = ({ page }) => {
-  const { setPatch } = usePageContext()
+  const { setPatches } = usePageContext()
   const [pageState, setPageState] = useState(null)
 
   const operationsQueue = useRef([])
 
   const throttledAutosave = useCallback(
     throttle(({ nextState, patch }) => {
-      const _patch = withWhitelist(patch)
+      const _patch = cleanupPatches(patch)
       if (_patch.length) {
         const payload = {
           id: nextState.page._id,
           patch: operationsQueue.current,
         }
-        setPatch(payload)
+        setPatches(payload)
         operationsQueue.current = []
       }
     }, 500),
@@ -70,7 +67,7 @@ const PageWithAutosave = ({ page }) => {
   }
 
   const onChange = value => {
-    const patch = addMetaData(value)
+    const patch = addMetaToPatches(value)
     // push changes to a queue
     operationsQueue.current = operationsQueue.current.concat(patch)
     throttledAutosave({ ...value, patch })

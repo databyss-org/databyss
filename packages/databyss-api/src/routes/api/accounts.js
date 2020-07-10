@@ -1,7 +1,7 @@
 import express from 'express'
 import auth from '../../middleware/auth'
 import Account from '../../models/Account'
-import ApiError from '../../lib/ApiError'
+import { ApiError } from '../../lib/Errors'
 import accountMiddleware from '../../middleware/accountMiddleware'
 
 const router = express.Router()

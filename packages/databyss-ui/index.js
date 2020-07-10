@@ -8,7 +8,10 @@ export { isMobile, isMobileOs, isMobileOrMobileOs } from './lib/mediaQuery'
 export {
   default as NavigationProvider,
   useNavigationContext,
-} from './components/Navigation/NavigationProvider/NavigationProvider'
+} from './components/Navigation/NavigationProvider'
+
+/* modules */
+export { default as ModalManager } from './modules/Modals/ModalManager'
 
 export { default as Content } from './components/Viewport/Content'
 export { default as Raw } from './components/Viewport/Raw'

@@ -3,7 +3,7 @@ import {
   ResourceNotFoundError,
   NotAuthorizedError,
   NetworkUnavailableError,
-} from './errors'
+} from '../interfaces'
 
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
@@ -27,7 +27,7 @@ function parseResponse(responseIsJson) {
     return response => response.json()
   }
   return response =>
-    response.headers.get('Content-Type').match('json')
+    response.headers.get('Content-Type')?.match('json')
       ? response.json()
       : response.text()
 }

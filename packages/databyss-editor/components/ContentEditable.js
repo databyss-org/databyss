@@ -1,8 +1,6 @@
 import React, { useMemo, useRef, useEffect } from 'react'
 import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
 import { ReactEditor, withReact } from 'slate-react'
-import _ from 'lodash'
-import { produce } from 'immer'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -19,7 +17,7 @@ import {
   toggleMark,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
-import { getSelectedIndicies } from '../lib/util'
+import { getSelectedIndicies, isAtomic, isEmpty } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
@@ -29,10 +27,14 @@ const ContentEditable = ({
   focusIndex,
   autofocus,
   readonly,
+  onNavigateUpFromTop,
+  editorRef,
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
-  const sourceContext = useSourceContext()
+
+  const setSource = useSourceContext(c => c && c.setSource)
+
   const topicContext = useTopicContext()
 
   const {
@@ -41,7 +43,6 @@ const ContentEditable = ({
     merge,
     setContent,
     setSelection,
-    getEntityAtIndex,
     clear,
     remove,
     removeEntityFromQueue,
@@ -79,8 +80,7 @@ const ContentEditable = ({
   // if new atomic block has been added, save atomic
   useEffect(
     () => {
-      if (state.newEntities.length && sourceContext && topicContext) {
-        const { setSource } = sourceContext
+      if (state.newEntities.length && setSource && topicContext) {
         const { setTopic } = topicContext
 
         state.newEntities.forEach(entity => {
@@ -106,9 +106,25 @@ const ContentEditable = ({
     [state.newEntities.length]
   )
 
+  useEffect(() => {
+    if (editor && editorRef) {
+      editorRef.current = ReactEditor.toDOMNode(editor, editor)
+    }
+  }, [])
+
   const inDeadKey = useRef(false)
 
   const onKeyDown = event => {
+    // UI
+    if (event.key === 'ArrowUp') {
+      const _currentIndex = editor.selection.focus.path[0]
+      const _atBlockStart =
+        editor.selection.focus.path[1] === 0 &&
+        editor.selection.focus.offset === 0
+      if (onNavigateUpFromTop && _atBlockStart && _currentIndex === 0) {
+        onNavigateUpFromTop()
+      }
+    }
     // if diacritics has been toggled, set dead key
     if (event.key === 'Dead') {
       inDeadKey.current = true
@@ -152,9 +168,8 @@ const ContentEditable = ({
 
     if (event.key === 'Enter') {
       const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
-      const _focusedEntity = getEntityAtIndex(editor.selection.focus.path[0])
 
-      if (_focusedEntity.isAtomic) {
+      if (isAtomic(_focusedBlock)) {
         if (
           ReactEditor.isFocused(editor) &&
           !selectionHasRange(state.selection) &&
@@ -178,14 +193,7 @@ const ContentEditable = ({
         Transforms.insertText(editor, `\n`)
         return
       }
-      if (!_atBlockStart) {
-        // remove the hanging `\n`
-        Transforms.delete(editor, {
-          distance: 1,
-          unit: 'character',
-          reverse: _prevIsBreak,
-        })
-      }
+
       return
     }
     if (event.key === 'Backspace') {
@@ -196,9 +204,9 @@ const ContentEditable = ({
       // handle start of atomic
       if (
         editor.selection.focus.path[0] > 0 &&
-        getEntityAtIndex(editor.selection.focus.path[0]).isAtomic &&
+        isAtomic(state.blocks[editor.selection.focus.path[0]]) &&
         flattenOffset(editor, editor.selection.focus) === 0 &&
-        getEntityAtIndex(editor.selection.focus.path[0] - 1).isEmpty
+        isEmpty(state.blocks[editor.selection.focus.path[0] - 1])
       ) {
         event.preventDefault()
         remove(editor.selection.focus.path[0] - 1)
@@ -211,7 +219,7 @@ const ContentEditable = ({
       }
       // handle end of atomic
       if (
-        getEntityAtIndex(editor.selection.focus.path[0]).isAtomic &&
+        isAtomic(state.blocks[editor.selection.focus.path[0]]) &&
         flattenOffset(editor, editor.selection.focus) > 0
       ) {
         event.preventDefault()
@@ -226,8 +234,8 @@ const ContentEditable = ({
       // handle after atomic
       if (
         editor.selection.focus.path[0] > 0 &&
-        getEntityAtIndex(editor.selection.focus.path[0] - 1).isAtomic &&
-        getEntityAtIndex(editor.selection.focus.path[0]).isEmpty
+        isAtomic(state.blocks[editor.selection.focus.path[0] - 1]) &&
+        isEmpty(state.blocks[editor.selection.focus.path[0]])
       ) {
         event.preventDefault()
         remove(editor.selection.focus.path[0])
@@ -350,55 +358,83 @@ const ContentEditable = ({
       })
     }
 
-    setSelection(selection)
+    if (editor.operations.length) {
+      setSelection(selection)
+    }
   }
 
-  // Use immer to produce the next `value`
-  //   we loop through the operations in `state` and updating nodes in `value`
-  // if `state.preventDefault` is set, use the previous `value` as the
-  //   base for the `nextValue` instead of `editor.children`
+  if (state.preventDefault) {
+    editor.children = valueRef.current
+    editor.selection = selectionRef.current
+  }
 
-  const nextValue = produce(
-    state.preventDefault ? valueRef.current : editor.children,
-    draft => {
-      state.operations.forEach(op => {
-        const _block = stateBlockToSlateBlock(op.block)
-        draft[op.index].children = _block.children
-        draft[op.index].type = _block.type
-        draft[op.index].isBlock = _block.isBlock
-      })
-    }
-  )
+  // store selection because the Transforms below move it around
+  let nextSelection = editor.selection
 
-  // by default, let selection remain uncontrolled
-  // NOTE: preventDefault will rollback selection to that of previous render
-  let nextSelection = state.preventDefault
-    ? selectionRef.current
-    : editor.selection
+  state.operations.forEach(op => {
+    const _block = stateBlockToSlateBlock(op.block)
+
+    // clear current block
+    editor.children[op.index].children.forEach(() => {
+      Transforms.delete(editor, { at: [op.index, 0] })
+    })
+    // set block type
+    Transforms.setNodes(
+      editor,
+      { type: _block.type },
+      {
+        at: [op.index],
+      }
+    )
+    // inserts node
+    Transforms.insertFragment(editor, [_block], {
+      at: [op.index],
+    })
+  })
 
   // if there were any update operations,
   //   sync the Slate selection to the state selection
   if (state.operations.length) {
-    nextSelection = stateSelectionToSlateSelection(nextValue, state.selection)
+    nextSelection = stateSelectionToSlateSelection(
+      editor.children,
+      state.selection
+    )
   }
 
-  if (!_.isEqual(editor.selection, nextSelection)) {
-    Transforms.setSelection(editor, nextSelection)
-  }
-
-  valueRef.current = nextValue
+  valueRef.current = editor.children
 
   selectionRef.current = nextSelection
 
   if (state.preventDefault) {
     editor.operations = []
   }
+  /*
+if focus event is fired and editor.selection is null, set focus at origin. this is used when editorRef.focus() is called by a parent component
+*/
+  const onFocus = () => {
+    setTimeout(() => {
+      if (!editor.selection) {
+        const _selection = {
+          anchor: { index: 0, offset: 0 },
+          focus: { index: 0, offset: 0 },
+        }
+        const _slateSelection = stateSelectionToSlateSelection(
+          editor.children,
+          _selection
+        )
+        Transforms.select(editor, _slateSelection)
+        ReactEditor.focus(editor)
+      }
+    }, 5)
+  }
 
   return (
     <Editor
       editor={editor}
+      onFocus={onFocus}
       autofocus={autofocus}
-      value={nextValue}
+      value={editor.children}
+      selection={nextSelection}
       onChange={onChange}
       onKeyDown={onKeyDown}
       readonly={readonly}

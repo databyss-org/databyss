@@ -31,6 +31,7 @@ const Modal = ({
   children,
   visible,
   onDismiss,
+  canDismiss,
   onOpen,
   showOverlay,
   overrideCss,
@@ -45,12 +46,13 @@ const Modal = ({
     ref.parentNode.style.position = 'relative'
     ref.parentNode.style.zIndex = css({ zIndex })(theme).zIndex
   })
+
   return (
     <StyledReactModal
       isOpen={visible}
       appElement={document.getElementById('root')}
       onAfterOpen={onOpen}
-      onRequestClose={onDismiss}
+      onRequestClose={canDismiss ? onDismiss : () => {}}
       shadowVariant="modal"
       backgroundColor="background.0"
       css={overrideCss || [_css].concat(concatCss)}

@@ -43,8 +43,7 @@ const TextControl = ({
         setActive(true)
       }
     },
-    onMouseUp: event => {
-      event.preventDefault()
+    onMouseUp: () => {
       if (active) {
         inputRef.current.focus()
       }
@@ -78,6 +77,7 @@ const TextControl = ({
           window.requestAnimationFrame(() => setActive(false))
         }}
         onChange={onChange}
+        active={active}
         value={value}
         color={active ? activeLabelColor : labelColor}
         multiline={multiline}

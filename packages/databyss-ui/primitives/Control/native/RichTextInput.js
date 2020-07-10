@@ -2,10 +2,16 @@ import React, { forwardRef } from 'react'
 import SingleLine from '@databyss-org/editor/components/SingleLine'
 
 const RichTextInput = forwardRef(
-  ({ value, onChange, id, concatCss, onBlur, multiline }, ref) => {
+  (
+    { value, onChange, id, concatCss, onBlur, onFocus, active, multiline },
+    ref
+  ) => {
     const _onBlur = event => {
       onBlur(event)
-      //  setTimeout(() => editor.blur(), 50)
+    }
+
+    const _onFocus = event => {
+      onFocus(event)
     }
 
     const _css = [
@@ -18,6 +24,8 @@ const RichTextInput = forwardRef(
 
     return (
       <SingleLine
+        onFocus={_onFocus}
+        active={active}
         onBlur={_onBlur}
         multiline={multiline}
         onChange={onChange}

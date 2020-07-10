@@ -2,7 +2,7 @@ import React from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { newPage } from '@databyss-org/services/pages/_helpers'
+import { newPage } from '@databyss-org/services/pages/util'
 import AddPageSvg from '@databyss-org/ui/assets/add_page.svg'
 import {
   Text,
@@ -25,7 +25,7 @@ const Footer = () => {
     clearSearchCache()
     const _page = newPage()
     setPage(_page).then(() => {
-      navigate(`/pages/${_page.page._id}`)
+      navigate(`/pages/${_page._id}`)
     })
 
     navigateSidebar('/pages')
@@ -68,9 +68,13 @@ const Footer = () => {
               <Text variant="uiTextNormal" color="text.2" ml="em">
                 New Page
               </Text>
+              {/* 
+              TODO: Only show this in electron app, when we get it, because we don't want
+                to override the standard browser hotkeys. Also make the modifier key
+                appropriate to the OS
               <Text variant="uiTextNormal" color="text.3" mr="small">
                 ⌘+N
-              </Text>
+              </Text> */}
             </View>
           )}
         </Grid>
