@@ -84,7 +84,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   }, [])
 
   const getPages = useCallback(
-    () => {
+    (): ResourceResponse<PageHeader> => {
       if (state.headerCache) {
         return state.headerCache
       }

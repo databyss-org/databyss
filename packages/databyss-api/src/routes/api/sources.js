@@ -34,6 +34,61 @@ router.post(
   })
 )
 
+// @route    GET api/sources/authors
+// @desc     Get all authors in an account
+// @access   Private
+
+router.get(
+  '/authors',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  wrap(async (req, res, _next) => {
+    const blocks = await Block.find({
+      account: req.account._id,
+      type: 'SOURCE',
+    })
+    if (!blocks) {
+      return res.json([])
+    }
+
+    // group by authors and return array of authors
+    const authorsDict = blocks.reduce((dict, block) => {
+      block.detail.authors.forEach(a => {
+        dict[a.firstName.textValue + a.lastName.textValue] = a
+      })
+      return dict
+    }, {})
+
+    return res.json(Object.values(authorsDict))
+  })
+)
+
+// @route    GET api/sources
+// @desc     Get all sources in an account with only author and citation info
+// @access   Private
+router.get(
+  '/sources',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  wrap(async (req, res, _next) => {
+    const blocks = await Block.find({
+      account: req.account._id,
+      type: 'SOURCE',
+    })
+    if (!blocks) {
+      return res.json([])
+    }
+
+    // group by authors and return array of authors
+    const authorsDict = blocks.reduce((dict, block) => {
+      block.detail.authors.forEach(a => {
+        dict[a.firstName.textValue + a.lastName.textValue] = a
+      })
+      return dict
+    }, {})
+
+    return res.json(Object.values(authorsDict))
+  })
+)
+
 // @route    GET api/sources/:id
 // @desc     Get source by id
 // @access   Private

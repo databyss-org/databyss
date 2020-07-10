@@ -5,6 +5,8 @@ import {
   CACHE_SOURCES,
   CACHE_SEARCH_QUERY,
   FETCH_SEARCH_QUERY,
+  FETCH_AUTHOR_HEADERS,
+  CACHE_AUTHOR_HEADERS,
 } from './constants'
 import { FSA, SourceState } from '../interfaces'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -12,6 +14,7 @@ import { ResourcePending } from '../interfaces/ResourcePending'
 export const initialState: SourceState = {
   cache: {},
   searchCache: {},
+  authorsHeaderCache: null,
 }
 
 export default produce((draft: Draft<SourceState>, action: FSA) => {
@@ -39,6 +42,14 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
     case CACHE_SEARCH_QUERY: {
       const { query } = action.payload
       draft.searchCache[query] = action.payload.results
+      break
+    }
+    case FETCH_AUTHOR_HEADERS: {
+      draft.authorsHeaderCache = new ResourcePending()
+      break
+    }
+    case CACHE_AUTHOR_HEADERS: {
+      draft.authorsHeaderCache = action.payload.results
       break
     }
   }

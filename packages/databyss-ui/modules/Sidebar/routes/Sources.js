@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import React from 'react'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import {
-  getSourcesData,
   sortEntriesAtoZ,
   filterEntries,
 } from '@databyss-org/services/sources/util'
+import { AuthorsLoader } from '@databyss-org/ui/components/Loaders'
 import SidebarList from '../../../components/Sidebar/SidebarList'
 
 const sourcesOverview = [
@@ -19,22 +18,31 @@ const sourcesOverview = [
   },
 ]
 
-const Sources = ({ filterQuery }) => {
-  const { getAllSources, state } = useSourceContext()
-  useEffect(() => getAllSources(), [])
+const Sources = ({ filterQuery }) => (
+  <AuthorsLoader>
+    {authors => {
+      const authorData = Object.values(authors).map(value => {
+        const shortFirstName = value.firstName?.textValue.charAt(0)
+        const lastName = value.lastName?.textValue
+        return {
+          text: `${lastName}${shortFirstName && `, ${shortFirstName}.`}`,
+          type: 'authors',
+          icon: <AuthorSvg />,
+        }
+      })
+      const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
+      const filteredEntries = filterEntries(sortedAuthors, filterQuery)
 
-  const sourcesData = getSourcesData(state.cache, 'authors', <AuthorSvg />)
-  const sortedSources = sortEntriesAtoZ(sourcesData)
-  const filteredEntries = filterEntries(sortedSources, filterQuery)
-
-  return (
-    <SidebarList
-      menuItems={[
-        ...sourcesOverview,
-        ...(filterQuery.textValue === '' ? sortedSources : filteredEntries),
-      ]}
-    />
-  )
-}
+      return (
+        <SidebarList
+          menuItems={[
+            ...sourcesOverview,
+            ...(filterQuery.textValue === '' ? sortedAuthors : filteredEntries),
+          ]}
+        />
+      )
+    }}
+  </AuthorsLoader>
+)
 
 export default Sources

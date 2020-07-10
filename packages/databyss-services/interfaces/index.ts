@@ -23,6 +23,8 @@ export interface CacheDict<T> {
 
 export type NullableCache<T> = ResourceResponse<CacheDict<T>>
 
+export type CacheList<T> = ResourceResponse<T[]>
+
 interface RefDict {
   [key: string]: React.Ref<HTMLInputElement>
 }
