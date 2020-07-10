@@ -1,8 +1,10 @@
+import ReactDOMServer from 'react-dom/server'
 import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { Text, Range, Selection, EditorState, Block } from '../interfaces'
 import { isAtomicInlineType } from './util'
+import { stateToHTMLString } from './slateUtils'
 
 interface BasicBlock {
   type: BlockType
@@ -379,7 +381,7 @@ export const deleteBlocksAtSelection = ({
 
 export const databyssFragToPlainText = (fragment: Block[]): string => {
   return fragment.reduce(
-    (acc, curr) => acc + (acc.length ? '\n' : '') + curr.text.textValue,
+    (acc, curr) => acc + (acc.length ? '\n\n' : '') + curr.text.textValue,
     ''
   )
 }
@@ -391,4 +393,8 @@ export const plainTextToDatabyssFrag = (text: string): Block[] => {
     _id: new ObjectId().toHexString(),
   }))
   return addBlockData(_frag)
+}
+
+export const databyssFragToHtmlString = (frag: Block[]): string => {
+  return stateToHTMLString(frag)
 }

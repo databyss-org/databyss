@@ -22,6 +22,7 @@ import {
   resetIds,
   databyssFragToPlainText,
   plainTextToDatabyssFrag,
+  databyssFragToHtmlString,
 } from '../lib/clipboardUtils'
 
 export type Transform = {
@@ -179,9 +180,8 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
 
     console.log(_frag)
 
-    // TODO: SET HTML
-    // const _html = ReactDOMServer.renderToStaticMarkup(<strong>test</strong>)
-    // e.clipboardData.setData('text/html', _html)
+    // SET HTML
+    e.clipboardData.setData('text/html', databyssFragToHtmlString(_frag))
 
     dispatch({
       type: COPY,

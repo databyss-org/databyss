@@ -1,4 +1,5 @@
-import { Editor } from '@databyss-org/slate'
+import { Editor, Node, Text } from '@databyss-org/slate'
+import escapeHtml from 'escape-html'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
@@ -143,4 +144,38 @@ export const toggleMark = (editor, format) => {
   } else {
     Editor.addMark(editor, format, true)
   }
+}
+
+// serialize slate node to html
+const serialize = node => {
+  if (Text.isText(node)) {
+    let _children = node.text
+    if (node.bold) {
+      _children = `<strong>${_children}</strong>`
+    }
+    if (node.italic) {
+      _children = `<i>${_children}</i>`
+    }
+    return _children
+  }
+
+  const children = node.children.map(n => serialize(n)).join('')
+
+  switch (node.type) {
+    case 'SOURCE':
+      return `<u style="font-size:18pt">${children}</u>`
+    default:
+      return children
+  }
+}
+
+export const stateToHTMLString = frag => {
+  const _innerHtml = frag
+    .map(b => {
+      const _slateNode = stateBlockToSlateBlock(b)
+      return `<p>${serialize(_slateNode)}</p></br>`
+    })
+    .join('')
+
+  return `<span>${_innerHtml}</span>`
 }
