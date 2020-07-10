@@ -163,7 +163,7 @@ const serialize = node => {
 
   switch (node.type) {
     case 'SOURCE':
-      return `<u style="font-size:18pt">${children}</u>`
+      return `<u>${children}</u>`
     default:
       return children
   }
