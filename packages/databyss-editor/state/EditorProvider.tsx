@@ -149,14 +149,17 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
   const cut = (e: ClipboardEvent) => {
     const _frag = getCurrentSelection(state)
 
-    // TODO: set plain text
-    e.clipboardData.setData('text/plain', 'Hello, world!')
+    // set plain text
+    e.clipboardData.setData('text/plain', databyssFragToPlainText(_frag))
 
     // set application data for clipboard
     e.clipboardData.setData(
       'application/x-databyss-frag',
       JSON.stringify(_frag)
     )
+
+    // SET HTML
+    e.clipboardData.setData('text/html', databyssFragToHtmlString(_frag))
 
     console.log(_frag)
     // TODO: SET HTML
@@ -179,9 +182,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
     )
 
     console.log(_frag)
-
-    // SET HTML
-    e.clipboardData.setData('text/html', databyssFragToHtmlString(_frag))
 
     dispatch({
       type: COPY,
