@@ -266,28 +266,18 @@ export const deleteBlocksAtSelection = ({
   if (isSelectionCollapsed(draftState.selection)) {
     return
   }
+
   const { selection, blocks } = state
   const { anchor, focus } = sortSelection(selection)
 
-  // set selection
-  const _offset = anchor.offset
-  const _index = anchor.index
-  const _selection = {
-    anchor: { offset: _offset, index: _index },
-    focus: { offset: _offset, index: _index },
-  }
-  draftState.selection = _selection
-
-  // TODO: create operation for this mutation
-  draftState.resetState = true
-
+  // console.log(JSON.stringify(_selection))
   // check if index spans over more than one block
   if (focus.index === anchor.index) {
     let _newBlock
     const _currentBlock = blocks[anchor.index]
     // if selection spans over entire block, delete block contents
+
     if (focus.offset - anchor.offset === _currentBlock.text.textValue.length) {
-      console.log('WOW HERE')
       _newBlock = { text: { textValue: '', ranges: [] } }
     } else {
       // if not, split block at anchor offset
@@ -324,7 +314,6 @@ export const deleteBlocksAtSelection = ({
       ...draftState.blocks[anchor.index],
       ..._newBlock,
     }
-    // replace selection
   } else {
     const emptyBlock = { text: { textValue: '', ranges: [] } }
     // split focus and anchor block
@@ -338,10 +327,12 @@ export const deleteBlocksAtSelection = ({
 
     _anchorBlock = isAtomicInlineType(_anchorBlock.type)
       ? _anchorBlock
-      : { ..._anchorBlock, ..._splitAnchorBlock.before } || {
-          ..._anchorBlock,
-          ...emptyBlock,
-        }
+      : _splitAnchorBlock.before
+        ? { ..._anchorBlock, ..._splitAnchorBlock.before }
+        : {
+            ..._anchorBlock,
+            ...emptyBlock,
+          }
 
     const _splitFocusBlock = splitBlockAtOffset({
       block: _focusBlock,
@@ -350,10 +341,12 @@ export const deleteBlocksAtSelection = ({
 
     _focusBlock = isAtomicInlineType(_focusBlock.type)
       ? _focusBlock
-      : { ..._focusBlock, ..._splitFocusBlock.after } || {
-          ..._focusBlock,
-          ...emptyBlock,
-        }
+      : _splitFocusBlock.after
+        ? { ..._focusBlock, ..._splitFocusBlock.after }
+        : {
+            ..._focusBlock,
+            ...emptyBlock,
+          }
 
     // replace blocks in the draftState
 
@@ -366,6 +359,20 @@ export const deleteBlocksAtSelection = ({
     // remove all the the blocks in between the selection
     draftState.blocks.splice(anchor.index + 1, numberOfBlocksToRemove)
   }
+  // replace selection
+
+  // set selection
+  const _offset = anchor.offset
+  const _index = anchor.index
+  const _selection = {
+    anchor: { offset: _offset, index: _index },
+    focus: { offset: _offset, index: _index },
+  }
+
+  draftState.selection = _selection
+
+  // TODO: create operation for this mutation
+  draftState.resetState = true
 }
 
 export const databyssFragToPlainText = (fragment: Block[]): string => {

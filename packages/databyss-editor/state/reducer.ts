@@ -135,7 +135,6 @@ export default (
               }
               nextSelection = _nextSelection
             } else {
-              console.log('merge')
               // merge fragment at current block
               const { blocks, selection } = draft
               const { anchor } = selection
