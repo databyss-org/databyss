@@ -35,7 +35,8 @@ export const underline = Platform.select({
   android: { textDecorationLine: 'underline' },
   default: {
     textDecoration: 'underline',
-    textUnderlinePosition: 'under',
+    textDecorationSkipInk: 'none',
+    textDecorationSkip: 'none',
   },
 })
 
