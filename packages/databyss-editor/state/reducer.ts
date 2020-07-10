@@ -10,6 +10,7 @@ import {
   SET_SELECTION,
   DEQUEUE_NEW_ENTITY,
   PASTE,
+  CUT,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -88,6 +89,10 @@ export default (
       let nextSelection = payload.selection
 
       switch (action.type) {
+        case CUT: {
+          deleteBlocksAtSelection({ state: state, draftState: draft })
+          break
+        }
         case PASTE: {
           const _frag = payload.data
 
@@ -130,6 +135,7 @@ export default (
               }
               nextSelection = _nextSelection
             } else {
+              console.log('merge')
               // merge fragment at current block
               const { blocks, selection } = draft
               const { anchor } = selection
@@ -380,5 +386,6 @@ export default (
   if (onChange) {
     onChange({ previousState: state, nextState, patches, inversePatches })
   }
+
   return nextState
 }

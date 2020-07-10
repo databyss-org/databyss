@@ -10,12 +10,13 @@ import {
   CLEAR,
   DEQUEUE_NEW_ENTITY,
   COPY,
+  CUT,
   PASTE,
 } from './constants'
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
-import { getCurrentSelection } from '../lib/clipboardUtils'
+import { getCurrentSelection, resetIds } from '../lib/clipboardUtils'
 
 export type Transform = {
   // current selection
@@ -45,6 +46,7 @@ type ContextType = {
   remove: (index: number) => void
   clear: (index: number) => void
   copy: (event: ClipboardEvent) => void
+  cut: (event: ClipboardEvent) => void
   paste: (event: ClipboardEvent) => void
 }
 
@@ -137,6 +139,26 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
       payload: { id },
     })
 
+  const cut = (e: ClipboardEvent) => {
+    const _frag = getCurrentSelection(state)
+
+    // TODO: set plain text
+    e.clipboardData.setData('text/plain', 'Hello, world!')
+
+    // set application data for clipboard
+    e.clipboardData.setData(
+      'application/x-databyss-frag',
+      JSON.stringify(_frag)
+    )
+
+    console.log(_frag)
+    // TODO: SET HTML
+    dispatch({
+      type: CUT,
+      payload: {},
+    })
+  }
+
   const copy = (e: ClipboardEvent) => {
     const _frag = getCurrentSelection(state)
 
@@ -162,7 +184,9 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
       'application/x-databyss-frag'
     )
     if (databyssDataTransfer) {
-      const data = JSON.parse(databyssDataTransfer)
+      let data = JSON.parse(databyssDataTransfer)
+      data = resetIds(data)
+
       dispatch({
         type: PASTE,
         payload: {
@@ -177,6 +201,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
       value={{
         state,
         copy,
+        cut,
         paste,
         setSelection,
         setContent,

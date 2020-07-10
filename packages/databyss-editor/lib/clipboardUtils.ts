@@ -95,6 +95,10 @@ export const isSelectionCollapsed = (selection: Selection): boolean => {
 const getId = (type: BlockType, id: string): string =>
   isAtomicInlineType(type) ? id : new ObjectId().toHexString()
 
+// takes blocks array and resets the id's for non atomic types
+export const resetIds = (fragment: Block[]): Block[] =>
+  fragment.map(block => ({ ...block, _id: getId(block.type, block._id) }))
+
 // always have the anchor come before the focus
 const sortSelection = (selection: Selection): Selection => {
   const { anchor, focus } = selection
@@ -262,7 +266,17 @@ export const deleteBlocksAtSelection = ({
   const { selection, blocks } = state
   const { anchor, focus } = sortSelection(selection)
 
-  // console.log(JSON.stringify(draftState.blocks))
+  // set selection
+  const _offset = anchor.offset
+  const _index = anchor.index
+  const _selection = {
+    anchor: { offset: _offset, index: _index },
+    focus: { offset: _offset, index: _index },
+  }
+  draftState.selection = _selection
+
+  // TODO: create operation for this mutation
+  draftState.resetState = true
 
   // check if index spans over more than one block
   if (focus.index === anchor.index) {
@@ -308,23 +322,45 @@ export const deleteBlocksAtSelection = ({
       ..._newBlock,
     }
     // replace selection
-    const _offset = anchor.offset
-    const _index = anchor.index
-    const _selection = {
-      anchor: { offset: _offset, index: _index },
-      focus: { offset: _offset, index: _index },
-    }
-    draftState.selection = _selection
-    draftState.resetState = true
+  } else {
+    const emptyBlock = { text: { textValue: '', ranges: [] } }
+    // split focus and anchor block
+    let _anchorBlock = blocks[anchor.index]
+    let _focusBlock = blocks[focus.index]
+
+    const _splitAnchorBlock = splitBlockAtOffset({
+      block: _anchorBlock,
+      offset: anchor.offset,
+    })
+
+    _anchorBlock = isAtomicInlineType(_anchorBlock.type)
+      ? _anchorBlock
+      : { ..._anchorBlock, ..._splitAnchorBlock.before } || {
+          ..._anchorBlock,
+          ...emptyBlock,
+        }
+
+    const _splitFocusBlock = splitBlockAtOffset({
+      block: _focusBlock,
+      offset: focus.offset,
+    })
+
+    _focusBlock = isAtomicInlineType(_focusBlock.type)
+      ? _focusBlock
+      : { ..._focusBlock, ..._splitFocusBlock.after } || {
+          ..._focusBlock,
+          ...emptyBlock,
+        }
+
+    // replace blocks in the draftState
+
+    // replace block
+    draftState.blocks[anchor.index] = _anchorBlock
+    draftState.blocks[focus.index] = _focusBlock
+
+    const numberOfBlocksToRemove = focus.index - anchor.index - 1
+
+    // remove all the the blocks in between the selection
+    draftState.blocks.splice(anchor.index + 1, numberOfBlocksToRemove)
   }
-  // TODO: if selection spans over multiple blocks
-
-  // if `before`
-  // split first block at anchor
-
-  // if `before` set first half equal to anchor index
-
-  // split last block at offset
-
-  //if `after` set second half equal to focus index
 }

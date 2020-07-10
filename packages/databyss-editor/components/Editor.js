@@ -16,7 +16,7 @@ const Editor = ({
   ...others
 }) => {
   const entryContext = useEntryContext()
-  const { copy, paste } = useEditorContext()
+  const { copy, paste, cut } = useEditorContext()
 
   let searchTerm = ''
 
@@ -77,6 +77,10 @@ const Editor = ({
         onPaste={e => {
           e.preventDefault()
           paste(e)
+        }}
+        onCut={e => {
+          e.preventDefault()
+          cut(e)
         }}
         onFocus={onFocus}
         decorate={decorate}
