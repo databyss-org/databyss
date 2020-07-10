@@ -1,5 +1,4 @@
-import { Editor, Node, Text } from '@databyss-org/slate'
-import escapeHtml from 'escape-html'
+import { Editor, Text } from '@databyss-org/slate'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
@@ -173,7 +172,7 @@ export const stateToHTMLString = frag => {
   const _innerHtml = frag
     .map(b => {
       const _slateNode = stateBlockToSlateBlock(b)
-      return `<p>${serialize(_slateNode)}</p></br>`
+      return `<p>${serialize(_slateNode)}</p>`
     })
     .join('')
 

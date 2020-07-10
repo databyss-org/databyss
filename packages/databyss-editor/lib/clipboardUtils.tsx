@@ -381,7 +381,7 @@ export const deleteBlocksAtSelection = ({
 
 export const databyssFragToPlainText = (fragment: Block[]): string => {
   return fragment.reduce(
-    (acc, curr) => acc + (acc.length ? '\n\n' : '') + curr.text.textValue,
+    (acc, curr) => acc + (acc.length ? '\n' : '') + curr.text.textValue,
     ''
   )
 }

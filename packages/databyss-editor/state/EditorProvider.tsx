@@ -174,6 +174,8 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
 
     const plainTextDataTransfer = e.clipboardData.getData('text/plain')
 
+    // TODO: html parser for rich text
+
     if (databyssDataTransfer) {
       let data = JSON.parse(databyssDataTransfer)
       data = resetIds(data)
@@ -187,11 +189,11 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
     }
 
     if (plainTextDataTransfer) {
-      const _frag = plainTextToDatabyssFrag(plainTextDataTransfer)
+      const data = plainTextToDatabyssFrag(plainTextDataTransfer)
       dispatch({
         type: PASTE,
         payload: {
-          data: _frag,
+          data,
         },
       })
       return
