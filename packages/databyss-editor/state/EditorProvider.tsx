@@ -1,4 +1,5 @@
 import React, { createContext, useContext } from 'react'
+import ReactDOMServer from 'react-dom/server'
 import { Patch } from 'immer'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import {
@@ -177,7 +178,11 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
     )
 
     console.log(_frag)
+
     // TODO: SET HTML
+    // const _html = ReactDOMServer.renderToStaticMarkup(<strong>test</strong>)
+    // e.clipboardData.setData('text/html', _html)
+
     dispatch({
       type: COPY,
       payload: {},

@@ -270,8 +270,8 @@ export const deleteBlocksAtSelection = ({
   const { selection, blocks } = state
   const { anchor, focus } = sortSelection(selection)
 
-  // console.log(JSON.stringify(_selection))
-  // check if index spans over more than one block
+  // check if selection is within a block
+  // if so delete selection and merge block fragments
   if (focus.index === anchor.index) {
     let _newBlock
     const _currentBlock = blocks[anchor.index]
@@ -315,7 +315,10 @@ export const deleteBlocksAtSelection = ({
       ..._newBlock,
     }
   } else {
+    // if selection spans over multiple blocks
+
     const emptyBlock = { text: { textValue: '', ranges: [] } }
+
     // split focus and anchor block
     let _anchorBlock = blocks[anchor.index]
     let _focusBlock = blocks[focus.index]
@@ -349,8 +352,6 @@ export const deleteBlocksAtSelection = ({
           }
 
     // replace blocks in the draftState
-
-    // replace block
     draftState.blocks[anchor.index] = _anchorBlock
     draftState.blocks[focus.index] = _focusBlock
 
@@ -359,7 +360,8 @@ export const deleteBlocksAtSelection = ({
     // remove all the the blocks in between the selection
     draftState.blocks.splice(anchor.index + 1, numberOfBlocksToRemove)
   }
-  // replace selection
+
+  // replace selection in draft
 
   // set selection
   const _offset = anchor.offset
