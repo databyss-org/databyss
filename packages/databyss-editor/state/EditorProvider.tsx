@@ -23,6 +23,7 @@ import {
   databyssFragToPlainText,
   plainTextToDatabyssFrag,
   databyssFragToHtmlString,
+  cutOrCopyEventHandler,
 } from '../lib/clipboardUtils'
 
 export type Transform = {
@@ -148,21 +149,8 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
 
   const cut = (e: ClipboardEvent) => {
     const _frag = getCurrentSelection(state)
+    cutOrCopyEventHandler(e, _frag)
 
-    // set plain text
-    e.clipboardData.setData('text/plain', databyssFragToPlainText(_frag))
-
-    // set application data for clipboard
-    e.clipboardData.setData(
-      'application/x-databyss-frag',
-      JSON.stringify(_frag)
-    )
-
-    // SET HTML
-    e.clipboardData.setData('text/html', databyssFragToHtmlString(_frag))
-
-    console.log(_frag)
-    // TODO: SET HTML
     dispatch({
       type: CUT,
       payload: {},
@@ -171,17 +159,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
 
   const copy = (e: ClipboardEvent) => {
     const _frag = getCurrentSelection(state)
-
-    // set plain text
-    e.clipboardData.setData('text/plain', databyssFragToPlainText(_frag))
-
-    // set application data for clipboard
-    e.clipboardData.setData(
-      'application/x-databyss-frag',
-      JSON.stringify(_frag)
-    )
-
-    console.log(_frag)
+    cutOrCopyEventHandler(e, _frag)
 
     dispatch({
       type: COPY,

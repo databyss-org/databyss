@@ -398,3 +398,20 @@ export const plainTextToDatabyssFrag = (text: string): Block[] => {
 export const databyssFragToHtmlString = (frag: Block[]): string => {
   return stateToHTMLString(frag)
 }
+
+export const cutOrCopyEventHandler = (
+  e: ClipboardEvent,
+  fragment: Block[]
+): void => {
+  // set plain text
+  e.clipboardData.setData('text/plain', databyssFragToPlainText(fragment))
+
+  // set application data for clipboard
+  e.clipboardData.setData(
+    'application/x-databyss-frag',
+    JSON.stringify(fragment)
+  )
+
+  // SET HTML
+  e.clipboardData.setData('text/html', databyssFragToHtmlString(fragment))
+}
