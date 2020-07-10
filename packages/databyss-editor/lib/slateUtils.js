@@ -149,6 +149,7 @@ export const toggleMark = (editor, format) => {
 const serialize = node => {
   if (Text.isText(node)) {
     let _children = node.text
+
     if (node.bold) {
       _children = `<strong>${_children}</strong>`
     }
@@ -175,6 +176,7 @@ export const stateToHTMLString = frag => {
       return `<p>${serialize(_slateNode)}</p>`
     })
     .join('')
+    .replace(/\n/g, '<br />')
 
   return `<span>${_innerHtml}</span>`
 }
