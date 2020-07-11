@@ -12,6 +12,7 @@ import {
   Grid,
   Icon,
 } from '@databyss-org/ui/primitives'
+import { useLocation } from '@reach/router'
 
 const menuSvgs = type =>
   ({
@@ -22,15 +23,15 @@ const menuSvgs = type =>
   }[type])
 
 const SidebarList = ({ menuItems }) => {
-  const { getTokensFromPath, navigate } = useNavigationContext()
-
+  const { getTokensFromPath } = useNavigationContext()
+  const location = useLocation()
   const tokens = getTokensFromPath()
 
-  const onClick = item => {
+  const getHref = item => {
     if (item.id) {
-      return navigate(`/${item.type}/${item.id}`)
+      return `${item.route}/${item.id}`
     }
-    return navigate(`/${item.type}`)
+    return `${item.route}`
   }
 
   const padding = 24
@@ -51,7 +52,7 @@ const SidebarList = ({ menuItems }) => {
       {menuItems.map((item, index) => {
         const _isActive = item.id
           ? item.id === tokens.id
-          : item.type === tokens.type && !tokens.id
+          : item.route === location.pathname
 
         if (item.text) {
           return (
@@ -62,25 +63,26 @@ const SidebarList = ({ menuItems }) => {
               px="em"
               key={index}
               width="100%"
-              onClick={() => onClick(item)}
+              href={getHref(item)}
+              css={{
+                textDecoration: 'none',
+              }}
             >
-              <View>
-                <Grid singleRow flexWrap="nowrap" columnGap="small">
-                  <Icon
-                    sizeVariant="tiny"
-                    color={_isActive ? 'text.1' : 'text.3'}
-                    mt={pxUnits(2)}
-                  >
-                    {item.icon ? item.icon : menuSvgs(item.type)}
-                  </Icon>
-                  <Text
-                    variant="uiTextSmall"
-                    color={_isActive ? 'text.1' : 'text.3'}
-                  >
-                    {item.text}
-                  </Text>
-                </Grid>
-              </View>
+              <Grid singleRow flexWrap="nowrap" columnGap="small">
+                <Icon
+                  sizeVariant="tiny"
+                  color={_isActive ? 'text.1' : 'text.3'}
+                  mt={pxUnits(2)}
+                >
+                  {item.icon ? item.icon : menuSvgs(item.type)}
+                </Icon>
+                <Text
+                  variant="uiTextSmall"
+                  color={_isActive ? 'text.1' : 'text.3'}
+                >
+                  {item.text}
+                </Text>
+              </Grid>
             </BaseControl>
           )
         }

@@ -1,10 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Router } from '@reach/router'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import {
-  getSourcesData,
-  sortEntriesAtoZ,
-} from '@databyss-org/services/sources/util'
+import { sortEntriesAtoZ } from '@databyss-org/services/sources/util'
+import { AuthorsLoader } from '@databyss-org/ui/components/Loaders'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
 
@@ -14,18 +11,26 @@ export const AuthorsRouter = () => (
   </Router>
 )
 
-const AuthorsContent = () => {
-  const { getAllSources, state } = useSourceContext()
-  useEffect(() => getAllSources(), [])
+const AuthorsContent = () => (
+  <AuthorsLoader>
+    {authors => {
+      const authorData = Object.values(authors).map(value => {
+        const firstName = value.firstName?.textValue
+        const lastName = value.lastName?.textValue
+        return {
+          text: `${lastName}${firstName && `, ${firstName}`}`,
+          type: 'authors',
+        }
+      })
+      const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
 
-  const authorList = getSourcesData(state.cache, 'authors')
-  const sortedAuthors = sortEntriesAtoZ(authorList)
-
-  return (
-    <IndexPageContent title="All Authors">
-      <IndexPageEntries entries={sortedAuthors} page="authors" />
-    </IndexPageContent>
-  )
-}
+      return (
+        <IndexPageContent title="All Authors">
+          <IndexPageEntries entries={sortedAuthors} />
+        </IndexPageContent>
+      )
+    }}
+  </AuthorsLoader>
+)
 
 export default AuthorsContent

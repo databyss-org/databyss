@@ -39,14 +39,10 @@ const SidebarCollapsed = () => {
   }
 
   useEffect(
-    () => {
-      if (getSidebarPath() === 'authors') {
-        return setActiveItem('sources')
-      }
-      return setActiveItem(
+    () =>
+      setActiveItem(
         getSidebarPath() ? getSidebarPath() : getTokensFromPath().type
-      )
-    },
+      ),
     [navigateSidebar]
   )
 

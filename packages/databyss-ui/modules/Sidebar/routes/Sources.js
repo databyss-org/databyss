@@ -11,10 +11,12 @@ const sourcesOverview = [
   {
     type: 'sources',
     text: 'All sources',
+    route: '/sources',
   },
   {
     type: 'authors',
     text: 'All authors',
+    route: '/sources/authors',
   },
 ]
 
@@ -22,11 +24,19 @@ const Sources = ({ filterQuery }) => (
   <AuthorsLoader>
     {authors => {
       const authorData = Object.values(authors).map(value => {
-        const shortFirstName = value.firstName?.textValue.charAt(0)
+        const firstName = value.firstName?.textValue
+        const shortFirstName = `${firstName?.charAt(0)}.`
         const lastName = value.lastName?.textValue
+
+        // Remove whitespace and special characters from name and turn to lowercase
+        const cleanNames = name => name.replace(/[^\w]/gi, '').toLowerCase()
+        const authorParam = `${cleanNames(lastName)}-${cleanNames(firstName)}`
+
         return {
-          text: `${lastName}${shortFirstName && `, ${shortFirstName}.`}`,
+          text: `${lastName}${shortFirstName && `, ${shortFirstName}`}`,
           type: 'authors',
+          route: '/sources/authors',
+          id: authorParam,
           icon: <AuthorSvg />,
         }
       })

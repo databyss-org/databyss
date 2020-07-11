@@ -10,6 +10,7 @@ const topicsOverview = [
   {
     type: 'topics',
     text: 'All Topics',
+    route: '/topics',
   },
 ]
 
@@ -19,9 +20,10 @@ const Topics = ({ filterQuery }) => (
       const topicsData = Object.values(topics).map(value => ({
         text: value.text.textValue,
         type: 'topics',
+        route: '/topics',
         id: value._id,
       }))
-      const sortedTopics = sortEntriesAtoZ(topicsData)
+      const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
       const filteredEntries = filterEntries(sortedTopics, filterQuery)
 
       return (

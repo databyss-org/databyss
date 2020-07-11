@@ -18,7 +18,7 @@ const TopicsContent = () => (
         text: value.text.textValue,
         id: value._id,
       }))
-      const sortedTopics = sortEntriesAtoZ(topicsData)
+      const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
       return (
         <IndexPageContent title="All Topics">
           <IndexPageEntries entries={sortedTopics} />
