@@ -13,10 +13,11 @@ const Pages = ({ filterQuery }) => (
         const _menuItems = Object.values(pages).map(p => ({
           text: p.name,
           type: 'pages',
+          route: '/pages',
           id: p._id,
         }))
         // alphabetize list
-        const sortedPages = sortEntriesAtoZ(_menuItems)
+        const sortedPages = sortEntriesAtoZ(_menuItems, 'text')
         const filteredEntries = filterEntries(sortedPages, filterQuery)
 
         return (

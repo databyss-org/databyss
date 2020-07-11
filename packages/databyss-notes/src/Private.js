@@ -64,7 +64,7 @@ const Private = () => {
                 <PageRouter path="pages/*" />
                 <SearchRouter path="search/*" />
                 <SourcesRouter path="sources/*" />
-                <AuthorsRouter path="authors/*" />
+                <AuthorsRouter path="sources/authors/*" />
                 <TopicsRouter path="topics/*" />
               </App>
             </Router>

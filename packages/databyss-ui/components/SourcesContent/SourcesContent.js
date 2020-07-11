@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Router } from '@reach/router'
 import {
   getSourcesData,
@@ -19,11 +19,10 @@ export const SourcesRouter = () => (
 )
 
 const SourcesContent = () => {
-  const { getAllSources, state } = useSourceContext()
-  useEffect(() => getAllSources(), [])
+  const { state } = useSourceContext()
 
   const sourcesData = getSourcesData(state.cache)
-  const sortedSources = sortEntriesAtoZ(sourcesData)
+  const sortedSources = sortEntriesAtoZ(sourcesData, 'text')
 
   return (
     <IndexPageContent title="All Sources">

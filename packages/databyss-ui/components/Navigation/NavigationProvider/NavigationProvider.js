@@ -1,6 +1,6 @@
 import React from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
-import { useNavigate, useLocation, Router } from '@reach/router'
+import { useNavigate, useLocation, Router, useParams } from '@reach/router'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import reducer, { initialState } from './reducer'
 import * as actions from './actions'
@@ -41,6 +41,10 @@ const NavigationProvider = ({ children }) => {
     let _id = _path[2]
     let _anchor = ''
 
+    if (_id === 'authors') {
+      _id = _path[3]
+    }
+
     if (_id && _id.includes('#')) {
       const _str = _id.split('#')
       _id = _str[0]
@@ -56,6 +60,7 @@ const NavigationProvider = ({ children }) => {
     if (type) {
       return type
     }
+
     return getTokensFromPath().type ? getTokensFromPath().type : 'pages'
   }
 
