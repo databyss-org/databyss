@@ -23,6 +23,12 @@ const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=cypress-tests--slate-5'
 
 // export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
+// add metadata to tests
+jasmine.getEnv().addReporter({
+  specStarted: result => (jasmine.currentTest = result),
+  specDone: result => (jasmine.currentTest = result),
+})
+
 describe('format text in editor', () => {
   beforeEach(async done => {
     // OSX and safari are necessary
