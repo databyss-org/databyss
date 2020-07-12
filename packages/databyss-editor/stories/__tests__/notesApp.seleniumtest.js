@@ -6,6 +6,7 @@ import {
   getEditor,
   getElementByTag,
   sleep,
+  retry,
   //  toggleBold,
   //   toggleItalic,
   //   toggleLocation,
@@ -17,7 +18,7 @@ import {
 
 let driver
 let editor
-// let actions
+
 const LOCAL_URL = 'http://localhost:3000'
 const PROXY_URL = 'http://0.0.0.0:3000'
 
@@ -31,9 +32,14 @@ describe('notes app', () => {
   beforeEach(async done => {
     // OSX and chrome are necessary
     driver = await startSession({ platformName: OSX, browserName: CHROME })
-    await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
-    const emailField = await getElementByTag(driver, '[data-test-path="email"]')
+    let emailField
+
+    await retry(async () => {
+      await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
+      emailField = await getElementByTag(driver, '[data-test-path="email"]')
+    })
+
     await emailField.sendKeys(`${random}@test.com`)
 
     let continueButton = await getElementByTag(

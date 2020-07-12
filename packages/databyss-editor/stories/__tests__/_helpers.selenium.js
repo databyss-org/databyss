@@ -10,6 +10,19 @@ const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
 
 export const sleep = m => new Promise(r => setTimeout(r, m))
 
+export const retry = (asyncFunction, times = 3) => {
+  try {
+    await asyncFunction()
+  } catch (err) {
+    if (times === 0) {
+      throw err
+    }
+    console.warn(err)
+    console.log(`RETRYING ${times} more times`)
+    retry(asyncFunction, times)
+  }
+}
+
 export const getEditor = async driver => {
   const el = await driver.wait(
     until.elementLocated(By.tagName('[contenteditable="true"]')),
