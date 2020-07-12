@@ -26,7 +26,7 @@ const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=cypress-tests--slate-5'
 describe('format text in editor', () => {
   beforeEach(async done => {
     // OSX and safari are necessary
-    driver = await startSession('Slate-5-formatting-osx-safari', OSX, SAFARI)
+    driver = await startSession(jasmine.currentTest.fullName, OSX, SAFARI)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     editor = await getEditor(driver)
 
@@ -172,7 +172,7 @@ describe('format text in editor', () => {
     await singleHighlight(actions)
     await singleHighlight(actions)
     await actions.perform()
-    await sleep(600)
+    await sleep(300)
     await driver
       .findElement(By.tagName('[data-test-format-menu="bold"]'))
       .click()
@@ -211,7 +211,7 @@ describe('format text in editor', () => {
     await singleHighlight(actions)
     await singleHighlight(actions)
     await actions.perform()
-    await sleep(600)
+    await sleep(300)
     await driver
       .findElement(By.tagName('[data-test-format-menu="italic"]'))
       .click()
@@ -250,7 +250,7 @@ describe('format text in editor', () => {
     await singleHighlight(actions)
     await singleHighlight(actions)
     await actions.perform()
-    await sleep(600)
+    await sleep(300)
     await driver
       .findElement(By.tagName('[data-test-format-menu="location"]'))
       .click()

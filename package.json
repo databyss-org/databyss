@@ -69,7 +69,8 @@
           "<rootDir>/config/polyfills.js"
         ],
         "setupFilesAfterEnv": [
-          "<rootDir>/config/jest/registerRequireContextHook.js"
+          "<rootDir>/config/jest/registerRequireContextHook.js",
+          "<rootDir>/config/jest/addJasmineReporter.js"
         ],
         "testMatch": [
           "<rootDir>/**/*.test.js"
