@@ -2,7 +2,7 @@
 /* eslint-disable func-names */
 import { By, Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, OSX, SAFARI } from '@databyss-org/ui/lib/saucelabs'
+import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import { jsx as h } from './hyperscript'
 import { sanitizeEditorChildren } from './__helpers'
 import {
@@ -23,16 +23,10 @@ const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=cypress-tests--slate-5'
 
 // export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
-// add metadata to tests
-jasmine.getEnv().addReporter({
-  specStarted: result => (jasmine.currentTest = result),
-  specDone: result => (jasmine.currentTest = result),
-})
-
 describe('format text in editor', () => {
   beforeEach(async done => {
     // OSX and safari are necessary
-    driver = await startSession(jasmine.currentTest.fullName, OSX, SAFARI)
+    driver = await startSession()
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     editor = await getEditor(driver)
 
