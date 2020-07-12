@@ -10,7 +10,7 @@ const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
 
 export const sleep = m => new Promise(r => setTimeout(r, m))
 
-export const retry = (asyncFunction, times = 3) => {
+export const retry = async (asyncFunction, times = 3) => {
   try {
     await asyncFunction()
   } catch (err) {
@@ -19,7 +19,7 @@ export const retry = (asyncFunction, times = 3) => {
     }
     console.warn(err)
     console.log(`RETRYING ${times} more times`)
-    retry(asyncFunction, times)
+    await retry(asyncFunction, times)
   }
 }
 
