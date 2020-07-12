@@ -28,13 +28,22 @@ if (jasmine) {
 }
 /* eslint-enable no-undef */
 
+const sessionDefaults = {
+  platformName: OSX,
+  browserName: SAFARI,
+}
+
 export const startSession = process.env.LOCAL_ENV
   ? async () => {
       jest.setTimeout(800000)
       const _builder = await new Builder().forBrowser(SAFARI).build()
       return _builder
     }
-  : async ({ name, platformName = OSX, browserName = SAFARI }) => {
+  : async (options = {}) => {
+      const { name, platformName, browserName } = {
+        ...sessionDefaults,
+        ...options,
+      }
       jest.setTimeout(800000)
       const driver = await new webdriver.Builder()
         .withCapabilities({
