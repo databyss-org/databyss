@@ -2,7 +2,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import { jsx as h } from './hyperscript'
 import { sanitizeEditorChildren } from './__helpers'
 import {
