@@ -19,6 +19,7 @@ import {
   selectAll,
   upShiftKey,
   rightShiftKey,
+  leftShiftKey,
 } from './_helpers.selenium'
 
 let driver
@@ -357,6 +358,70 @@ describe('editor clipboard', () => {
           <text>
             <cursor />this is a source test with appended text
           </text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should copy atomic and entry fragment and paste it on an empty block', async () => {
+    await sleep(3000)
+    await actions.sendKeys('@this is a source text')
+    await enterKey(actions)
+    await actions.sendKeys('with frag')
+    await actions.sendKeys(Key.ARROW_LEFT)
+    await actions.sendKeys(Key.ARROW_LEFT)
+    await actions.sendKeys(Key.ARROW_LEFT)
+    await actions.sendKeys(Key.ARROW_LEFT)
+    await actions.sendKeys(Key.ARROW_LEFT)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+
+    await copy(actions)
+    await downKey(actions)
+    await downKey(actions)
+
+    await enterKey(actions)
+    await enterKey(actions)
+
+    await paste(actions)
+
+    await sleep(5000)
+
+    await driver.navigate().refresh()
+
+    await sleep(5000)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="SOURCE">
+          <text>this is a source text</text>
+        </block>
+        <block type="ENTRY">
+          <text>with frag</text>
+        </block>
+        <block type="SOURCE">
+          <text>
+            <cursor />this is a source text
+          </text>
+        </block>
+        <block type="ENTRY">
+          <text>with</text>
         </block>
       </editor>
     )
