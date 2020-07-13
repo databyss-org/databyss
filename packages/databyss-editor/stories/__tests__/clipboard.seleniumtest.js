@@ -21,6 +21,7 @@ import {
   rightShiftKey,
   leftShiftKey,
   downShiftKey,
+  rightKey,
 } from './_helpers.selenium'
 
 let driver
@@ -551,6 +552,58 @@ describe('editor clipboard', () => {
         </block>
         <block type="SOURCE">
           <text>this is another source text</text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should prevent a paste from occuring in an atomic', async () => {
+    await sleep(3000)
+    await actions.sendKeys('@this is a source text')
+    await enterKey(actions)
+    await actions.sendKeys('entry text')
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+
+    await copy(actions)
+    await upKey(actions)
+    await upKey(actions)
+    await paste(actions)
+    await rightKey(actions)
+    await rightKey(actions)
+    await rightKey(actions)
+    await rightKey(actions)
+
+    await paste(actions)
+
+    await sleep(5000)
+
+    await driver.navigate().refresh()
+
+    await sleep(500)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="SOURCE">
+          <text>
+            this<cursor /> is a source text
+          </text>
+        </block>
+        <block type="ENTRY">
+          <text>entry text</text>
         </block>
       </editor>
     )

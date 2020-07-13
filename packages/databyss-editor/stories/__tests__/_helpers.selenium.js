@@ -85,6 +85,10 @@ export const downKey = async actions => {
   await navigationActionsBuilder(actions, Key.ARROW_DOWN)
 }
 
+export const rightKey = async actions => {
+  await navigationActionsBuilder(actions, Key.ARROW_RIGHT)
+}
+
 export const backspaceKey = async actions => {
   await navigationActionsBuilder(actions, Key.BACK_SPACE)
 }

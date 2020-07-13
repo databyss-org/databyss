@@ -113,7 +113,7 @@ const addBlockData = (frag: Block[]): Block[] =>
   frag.map(b => ({ ...b, __showNewBlockMenu: false, __isActive: false }))
 
 // always have the anchor come before the focus
-const sortSelection = (selection: Selection): Selection => {
+export const sortSelection = (selection: Selection): Selection => {
   const { anchor, focus } = selection
   let _anchor = anchor
   let _focus = focus
@@ -170,7 +170,6 @@ export const getCurrentSelection = (state: EditorState): Block[] => {
 
   // if selection is more than one block
   if (anchor.index < focus.index) {
-    console.log('HERE')
     // first block
     const { after: firstBlock } = splitBlockAtOffset({
       block: blocks[anchor.index],

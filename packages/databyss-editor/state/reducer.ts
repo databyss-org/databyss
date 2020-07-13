@@ -17,6 +17,7 @@ import {
   isSelectionCollapsed,
   insertBlockAtIndex,
   deleteBlocksAtSelection,
+  sortSelection
 } from '../lib/clipboardUtils'
 import {
   selectionHasRange,
@@ -96,6 +97,18 @@ export default (
         case PASTE: {
           const _frag = payload.data
 
+          // check if paste is occuring on an atomic block
+
+          const {anchor: _startAnchor} = sortSelection(state.selection)
+          const _startBlock = state.blocks[_startAnchor.index]
+
+          // if selection in the middle of atomic prevent paste
+          if(!isSelectionCollapsed(state.selection) || _startBlock.text.textValue.length !== _startAnchor.offset){            
+            if( isAtomicInlineType(_startBlock.type)){
+              break
+            }
+          }
+
           if (!isSelectionCollapsed(state.selection)) {
             deleteBlocksAtSelection({ state: state, draftState: draft })
           }
@@ -110,7 +123,9 @@ export default (
             if (
               _frag.length > 1 ||
               _isCurrentBlockEmpty ||
-              isAtomicInlineType(_frag[0].type)
+              isAtomicInlineType(_frag[0].type) ||
+              isAtomicInlineType(_startBlock.type)
+
             ) {
               const _spliceIndex = _isCurrentBlockEmpty
                 ? draft.selection.anchor.index
