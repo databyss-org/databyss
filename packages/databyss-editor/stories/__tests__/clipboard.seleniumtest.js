@@ -20,6 +20,7 @@ import {
   upShiftKey,
   rightShiftKey,
   leftShiftKey,
+  downShiftKey,
 } from './_helpers.selenium'
 
 let driver
@@ -422,6 +423,134 @@ describe('editor clipboard', () => {
         </block>
         <block type="ENTRY">
           <text>with</text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should select an atomic fragment and paste the whole atomic block', async () => {
+    await sleep(3000)
+    await actions.sendKeys('@this is a source text')
+    await enterKey(actions)
+    await actions.sendKeys('in between text')
+    await enterKey(actions)
+    await enterKey(actions)
+
+    await actions.sendKeys('@this is another source text')
+
+    await upKey(actions)
+    await selectAll(actions)
+
+    await downShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+
+    await copy(actions)
+    await downKey(actions)
+    await downKey(actions)
+
+    await paste(actions)
+
+    await sleep(1000)
+
+    await driver.navigate().refresh()
+
+    await sleep(500)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="SOURCE">
+          <text>this is a source text</text>
+        </block>
+        <block type="ENTRY">
+          <text>in between text</text>
+        </block>
+        <block type="SOURCE">
+          <text>
+            this is another source text<cursor />
+          </text>
+        </block>
+        <block type="SOURCE">
+          <text>this is a source text</text>
+        </block>
+        <block type="ENTRY">
+          <text>in between text</text>
+        </block>
+        <block type="SOURCE">
+          <text>this is another source text</text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should have a multi-block selection with atomics and paste the whole atomic blocks', async () => {
+    await sleep(3000)
+    await actions.sendKeys('@this is a source text')
+    await enterKey(actions)
+    await actions.sendKeys('in between text')
+    await enterKey(actions)
+    await enterKey(actions)
+
+    await actions.sendKeys('@this is another source text')
+
+    await upKey(actions)
+    await selectAll(actions)
+
+    await copy(actions)
+    await downKey(actions)
+    await downKey(actions)
+
+    await paste(actions)
+
+    await sleep(1000)
+
+    await driver.navigate().refresh()
+
+    await sleep(500)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="SOURCE">
+          <text>this is a source text</text>
+        </block>
+        <block type="ENTRY">
+          <text>in between text</text>
+        </block>
+        <block type="SOURCE">
+          <text>
+            this is another source text<cursor />
+          </text>
+        </block>
+        <block type="SOURCE">
+          <text>this is a source text</text>
+        </block>
+        <block type="ENTRY">
+          <text>in between text</text>
+        </block>
+        <block type="SOURCE">
+          <text>this is another source text</text>
         </block>
       </editor>
     )

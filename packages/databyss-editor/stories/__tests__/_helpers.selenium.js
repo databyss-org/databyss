@@ -151,3 +151,23 @@ export const leftShiftKey = async actions => {
   await actions.clear()
   await sleep(SLEEP_TIME)
 }
+
+export const downShiftKey = async actions => {
+  await actions
+    .keyDown(Key.SHIFT)
+    .sendKeys(Key.ARROW_DOWN)
+    .keyUp(Key.SHIFT)
+    .perform()
+
+  await actions.clear()
+  await sleep(SLEEP_TIME)
+}
+
+// export const upKey = async actions => {
+//   await actions
+//     .keyUp(Key.ARROW_UP)
+//     .perform()
+
+//   await actions.clear()
+//   await sleep(SLEEP_TIME)
+// }

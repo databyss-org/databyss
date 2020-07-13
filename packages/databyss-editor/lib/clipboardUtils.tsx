@@ -24,8 +24,16 @@ const splitBlockAtOffset = ({
   block: BasicBlock
   offset: number
 }): SplitBlocks => {
+  // if entire atomic is selected
+  if (
+    isAtomicInlineType(block.type) &&
+    offset !== 0
+    //  offset === block.text.textValue.length
+  ) {
+    return { before: { text: block.text, type: block.type }, after: null }
+  }
   // if first block is atomic return
-  if (isAtomicInlineType(block.type) || offset === 0) {
+  if (offset === 0) {
     return { before: null, after: { text: block.text, type: block.type } }
   }
 
@@ -162,6 +170,7 @@ export const getCurrentSelection = (state: EditorState): Block[] => {
 
   // if selection is more than one block
   if (anchor.index < focus.index) {
+    console.log('HERE')
     // first block
     const { after: firstBlock } = splitBlockAtOffset({
       block: blocks[anchor.index],
