@@ -17,6 +17,7 @@ import {
   upKey,
   downKey,
   backspaceKey,
+  tabKey,
 } from './_helpers.selenium'
 
 let driver
@@ -243,18 +244,16 @@ describe('connected editor', () => {
     await name.click()
     await actions.sendKeys(Key.ARROW_RIGHT)
 
-    await actions.sendKeys('\t')
+    await tabKey(actions)
 
     await actions.sendKeys('new citation')
-    await actions.sendKeys('\t')
+    await tabKey(actions)
 
     await actions.sendKeys('authors first name')
-
-    await actions.sendKeys('\t')
-
+    await tabKey(actions)
     await actions.sendKeys('authors last name')
-    await actions.sendKeys('\t')
-    await actions.sendKeys('\t')
+    await tabKey(actions)
+    await tabKey(actions)
 
     await actions.perform()
 

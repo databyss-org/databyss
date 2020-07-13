@@ -2,7 +2,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, OSX, SAFARI } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import { jsx as h } from './hyperscript'
 import { sanitizeEditorChildren } from './__helpers'
 import {
@@ -45,7 +45,7 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 describe('editor clipboard', () => {
   beforeEach(async done => {
     // OSX and safari are necessary
-    driver = await startSession('Slate-5-clipboard', OSX, SAFARI)
+    driver = await startSession('Slate-5-clipboard', OSX, CHROME)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
