@@ -40,7 +40,28 @@ const random = Math.random()
   .toString(36)
   .substring(7)
 
-export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
+const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
+
+// export const copy = actions =>
+//   actions
+//     .keyDown(CONTROL)
+//     .sendKeys('c')
+//     .keyUp(CONTROL)
+//     .pause(70)
+
+//     export const selectAll = actions =>
+//     actions
+//       .keyDown(CONTROL)
+//       .sendKeys('a')
+//       .keyUp(CONTROL)
+//       .pause(70)
+
+//       export const paste = actions =>
+//   actions
+//     .keyDown(CONTROL)
+//     .sendKeys('v')
+//     .keyUp(CONTROL)
+//     .pause(70)
 
 describe('editor clipboard', () => {
   beforeEach(async done => {
@@ -74,7 +95,12 @@ describe('editor clipboard', () => {
 
     editor = await getEditor(driver)
 
-    actions = driver.actions()
+    editor.click()
+
+    actions = driver.actions({ bridge: true })
+    await actions.click(editor)
+
+    //   actions = driver.actions()
 
     done()
   })
@@ -92,6 +118,7 @@ describe('editor clipboard', () => {
     // TODO: FIX CURSOR POSITION FOR THIS TEST
     await sleep(300)
     await actions.sendKeys('this text will be pasted with ')
+
     await toggleBold(actions)
     await actions.sendKeys('bold ')
     await selectAll(actions)
@@ -226,7 +253,7 @@ describe('editor clipboard', () => {
   })
 
   it('should copy two entry fragments and paste them within an entry', async () => {
-    await sleep(300)
+    await sleep(3000)
     await actions.sendKeys('this is a test')
     await enterKey(actions)
     await enterKey(actions)
