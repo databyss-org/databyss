@@ -84,3 +84,55 @@ export const downKey = async actions => {
 export const backspaceKey = async actions => {
   await navigationActionsBuilder(actions, Key.BACK_SPACE)
 }
+
+export const selectAll = async actions => {
+  await actions
+    .keyDown(CONTROL)
+    .sendKeys('a')
+    .keyUp(CONTROL)
+    .perform()
+  await actions.clear()
+  await sleep(SLEEP_TIME)
+}
+
+export const copy = async actions => {
+  await actions
+    .keyDown(CONTROL)
+    .sendKeys('c')
+    .keyUp(CONTROL)
+    .perform()
+  await actions.clear()
+  await sleep(SLEEP_TIME)
+}
+
+export const paste = async actions => {
+  await actions
+    .keyDown(CONTROL)
+    .sendKeys('v')
+    .keyUp(CONTROL)
+    .perform()
+  await actions.clear()
+  await sleep(SLEEP_TIME)
+}
+
+export const upShiftKey = async actions => {
+  await actions
+    .keyDown(Key.SHIFT)
+    .sendKeys(Key.ARROW_UP)
+    .keyUp(Key.SHIFT)
+    .perform()
+
+  await actions.clear()
+  await sleep(SLEEP_TIME)
+}
+
+export const rightShiftKey = async actions => {
+  await actions
+    .keyDown(Key.SHIFT)
+    .sendKeys(Key.ARROW_RIGHT)
+    .keyUp(Key.SHIFT)
+    .perform()
+
+  await actions.clear()
+  await sleep(SLEEP_TIME)
+}
