@@ -40,33 +40,10 @@ const random = Math.random()
   .toString(36)
   .substring(7)
 
-const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
-
-// export const copy = actions =>
-//   actions
-//     .keyDown(CONTROL)
-//     .sendKeys('c')
-//     .keyUp(CONTROL)
-//     .pause(70)
-
-//     export const selectAll = actions =>
-//     actions
-//       .keyDown(CONTROL)
-//       .sendKeys('a')
-//       .keyUp(CONTROL)
-//       .pause(70)
-
-//       export const paste = actions =>
-//   actions
-//     .keyDown(CONTROL)
-//     .sendKeys('v')
-//     .keyUp(CONTROL)
-//     .pause(70)
-
 describe('editor clipboard', () => {
   beforeEach(async done => {
     // OSX and safari are necessary
-    driver = await startSession('Slate-5-clipboard', OSX, CHROME)
+    driver = await startSession('Slate-5-clipboard', WIN, CHROME)
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
