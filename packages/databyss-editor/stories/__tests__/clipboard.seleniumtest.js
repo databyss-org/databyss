@@ -253,6 +253,8 @@ describe('editor clipboard', () => {
 
     await copy(actions)
     await downKey(actions)
+    await downKey(actions)
+
     await enterKey(actions)
     await enterKey(actions)
     await actions.sendKeys('this is the third block')
