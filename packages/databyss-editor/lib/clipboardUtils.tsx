@@ -28,7 +28,7 @@ const splitBlockAtOffset = ({
   if (
     isAtomicInlineType(block.type) &&
     offset !== 0
-    //  offset === block.text.textValue.length
+    // offset !== block.text.textValue.length
   ) {
     return { before: { text: block.text, type: block.type }, after: null }
   }
@@ -171,10 +171,12 @@ export const getCurrentSelection = (state: EditorState): Block[] => {
   // if selection is more than one block
   if (anchor.index < focus.index) {
     // first block
-    const { after: firstBlock } = splitBlockAtOffset({
-      block: blocks[anchor.index],
-      offset: anchor.offset,
-    })
+    const { after: firstBlock } = isAtomicInlineType(blocks[anchor.index].type)
+      ? { after: blocks[anchor.index] }
+      : splitBlockAtOffset({
+          block: blocks[anchor.index],
+          offset: anchor.offset,
+        })
 
     if (firstBlock) {
       frag.push({

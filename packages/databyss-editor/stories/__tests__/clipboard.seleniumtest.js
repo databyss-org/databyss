@@ -105,7 +105,7 @@ describe('editor clipboard', () => {
     await actions.sendKeys(Key.ARROW_RIGHT)
     await paste(actions)
     //  await actions.perform()
-    await sleep(3000)
+    await sleep(500)
 
     await driver.navigate().refresh()
 
@@ -197,7 +197,7 @@ describe('editor clipboard', () => {
     await actions.sendKeys(Key.ARROW_LEFT)
     await paste(actions)
     //  await actions.perform()
-    await sleep(3000)
+    await sleep(500)
 
     await driver.navigate().refresh()
 
@@ -266,7 +266,7 @@ describe('editor clipboard', () => {
 
     await paste(actions)
 
-    await sleep(4000)
+    await sleep(1000)
 
     await driver.navigate().refresh()
 
@@ -307,7 +307,7 @@ describe('editor clipboard', () => {
   })
 
   it('should copy an atomic block and maintain atomic id integrity', async () => {
-    await sleep(3000)
+    await sleep(1000)
     await actions.sendKeys('@this is a source test')
     await enterKey(actions)
     await upKey(actions)
@@ -399,11 +399,11 @@ describe('editor clipboard', () => {
 
     await paste(actions)
 
-    await sleep(5000)
+    await sleep(500)
 
     await driver.navigate().refresh()
 
-    await sleep(5000)
+    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -437,7 +437,7 @@ describe('editor clipboard', () => {
   })
 
   it('should select an atomic fragment and paste the whole atomic block', async () => {
-    await sleep(3000)
+    await sleep(1000)
     await actions.sendKeys('@this is a source text')
     await enterKey(actions)
     await actions.sendKeys('in between text')
@@ -503,7 +503,7 @@ describe('editor clipboard', () => {
   })
 
   it('should have a multi-block selection with atomics and paste the whole atomic blocks', async () => {
-    await sleep(3000)
+    await sleep(1000)
     await actions.sendKeys('@this is a source text')
     await enterKey(actions)
     await actions.sendKeys('in between text')
@@ -585,7 +585,7 @@ describe('editor clipboard', () => {
 
     await paste(actions)
 
-    await sleep(5000)
+    await sleep(500)
 
     await driver.navigate().refresh()
 
