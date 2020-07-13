@@ -10,13 +10,10 @@ import {
   getElementByTag,
   sleep,
   toggleBold,
-  toggleItalic,
-  toggleLocation,
   getElementById,
   enterKey,
   upKey,
   downKey,
-  backspaceKey,
   paste,
   copy,
   selectAll,
@@ -294,6 +291,72 @@ describe('editor clipboard', () => {
         </block>
         <block type="ENTRY">
           <text>within the second </text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should copy an atomic block and maintain atomic id integrity', async () => {
+    await sleep(3000)
+    await actions.sendKeys('@this is a source test')
+    await enterKey(actions)
+    await upKey(actions)
+    await rightShiftKey(actions)
+
+    await copy(actions)
+    await downKey(actions)
+    await downKey(actions)
+    await actions.sendKeys('some inbetween text')
+    await enterKey(actions)
+    await enterKey(actions)
+
+    await paste(actions)
+
+    const atomic = await getElementByTag(
+      driver,
+      '[data-test-atomic-edit="open"]'
+    )
+
+    await atomic.click()
+    await atomic.click()
+
+    await actions.sendKeys(' with appended text').perform()
+
+    const doneButton = await getElementByTag(
+      driver,
+      '[data-test-dismiss-modal="true"]'
+    )
+    await doneButton.click()
+
+    await sleep(1000)
+
+    await driver.navigate().refresh()
+
+    await sleep(5000)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="SOURCE">
+          <text>this is a source test with appended text</text>
+        </block>
+        <block type="ENTRY">
+          <text>some inbetween text</text>
+        </block>
+        <block type="SOURCE">
+          <text>
+            <cursor />this is a source test with appended text
+          </text>
         </block>
       </editor>
     )
