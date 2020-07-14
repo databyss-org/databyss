@@ -294,7 +294,12 @@ export const deleteBlocksAtSelection = ({
       // if not, split block at anchor offset if its not atomic
       const { before, after } = isAtomicInlineType(_currentBlock.type)
         ? {
-            before: { text: { textValue: '', ranges: [] }, type: 'ENTRY' },
+            // reset block
+            before: {
+              text: { textValue: '', ranges: [] },
+              type: 'ENTRY',
+              _id: new ObjectId().toHexString(),
+            },
             after: null,
           }
         : splitBlockAtOffset({
@@ -340,7 +345,14 @@ export const deleteBlocksAtSelection = ({
     let _focusBlock = blocks[focus.index]
 
     const _splitAnchorBlock = isAtomicInlineType(_anchorBlock.type)
-      ? { before: { ...emptyBlock, type: 'ENTRY' }, after: null }
+      ? {
+          before: {
+            ...emptyBlock,
+            type: 'ENTRY',
+            _id: new ObjectId().toHexString(),
+          },
+          after: null,
+        }
       : splitBlockAtOffset({
           block: _anchorBlock,
           offset: anchor.offset,

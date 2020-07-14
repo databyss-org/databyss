@@ -15,6 +15,7 @@ import {
   downKey,
   paste,
   copy,
+  cut,
   selectAll,
   upShiftKey,
   rightShiftKey,
@@ -571,6 +572,115 @@ describe('editor clipboard', () => {
         </block>
         <block type="ENTRY">
           <text>entry text</text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should remove an atomic fragment on a cut', async () => {
+    await sleep(3000)
+    await actions.sendKeys('@this is a source text')
+    await enterKey(actions)
+    await leftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await cut(actions)
+    await downKey(actions)
+    await paste(actions)
+    await sleep(3000)
+    await driver.navigate().refresh()
+
+    await sleep(500)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="ENTRY">
+          <text>
+            <cursor />
+          </text>
+        </block>
+        <block type="SOURCE">
+          <text>this is a source text</text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should remove a multi-line atomic fragment on a cut', async () => {
+    await sleep(3000)
+    await sendKeys(actions, 'this is an entry')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '@this is a source text')
+    await enterKey(actions)
+    await sendKeys(actions, 'has frag')
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await leftShiftKey(actions)
+    await cut(actions)
+    await downKey(actions)
+    await downKey(actions)
+    await paste(actions)
+
+    await sleep(3000)
+
+    await driver.navigate().refresh()
+
+    await sleep(500)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="ENTRY">
+          <text>this is an entry</text>
+        </block>
+        <block type="ENTRY">
+          <text>
+            <anchor />
+          </text>
+        </block>
+        <block type="ENTRY">
+          <text>
+            {' '}
+            fr<focus />ag
+          </text>
+        </block>
+        <block type="SOURCE">
+          <text>this is a source text</text>
+        </block>
+        <block type="ENTRY">
+          <text>has</text>
         </block>
       </editor>
     )

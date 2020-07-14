@@ -121,6 +121,16 @@ export const copy = async actions => {
   await sleep(SLEEP_TIME)
 }
 
+export const cut = async actions => {
+  await actions
+    .keyDown(CONTROL)
+    .sendKeys('x')
+    .keyUp(CONTROL)
+    .perform()
+  await actions.clear()
+  await sleep(SLEEP_TIME)
+}
+
 export const paste = async actions => {
   await actions
     .keyDown(CONTROL)
