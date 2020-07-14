@@ -395,6 +395,7 @@ export const deleteBlocksAtSelection = ({
   const _offset = anchor.offset
   const _index = anchor.index
   const _selection = {
+    _id: draftState.selection._id,
     anchor: { offset: _offset, index: _index },
     focus: { offset: _offset, index: _index },
   }

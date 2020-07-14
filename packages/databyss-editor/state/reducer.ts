@@ -145,6 +145,7 @@ export default (
                 draft.blocks[_selectionIndex].text.textValue.length
 
               const _nextSelection = {
+                _id: draft.selection._id,
                 anchor: { index: _selectionIndex, offset: _offset },
                 focus: { index: _selectionIndex, offset: _offset },
               }
@@ -169,6 +170,7 @@ export default (
               const _offset = anchor.offset + _frag[0].text.textValue.length
 
               const _nextSelection = {
+                _id: draft.selection._id,
                 anchor: { index: _index, offset: _offset },
                 focus: { index: _index, offset: _offset },
               }

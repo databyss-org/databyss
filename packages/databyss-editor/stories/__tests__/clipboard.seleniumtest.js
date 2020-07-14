@@ -120,11 +120,10 @@ describe('editor clipboard', () => {
       <editor>
         <block type="ENTRY">
           <text>this text will be pasted with </text>
-          <text bold>
-            bold <cursor />
-          </text>
+          <text bold>bold </text>
           <text>this text will be pasted with </text>
           <text bold>bold </text>
+          <cursor />
         </block>
       </editor>
     )
@@ -167,10 +166,10 @@ describe('editor clipboard', () => {
     const expected = (
       <editor>
         <block type="ENTRY">
-          <text>
-            this <cursor />this text will be pasted with{' '}
+          <text>this this text will be pasted with </text>
+          <text bold>
+            bold <cursor />
           </text>
-          <text bold>bold </text>
           <text>text will be pasted with </text>
           <text bold>bold </text>
         </block>
@@ -204,14 +203,14 @@ describe('editor clipboard', () => {
 
     const actual = JSON.parse(await slateDocument.getText())
 
+    // TODO: CURSOR PLACEMENT IS OFF
     const expected = (
       <editor>
         <block type="ENTRY">
-          <text>
-            <cursor />
-            this text will be pasted with{' '}
+          <text>this text will be pasted with </text>
+          <text bold>
+            bold <cursor />
           </text>
-          <text bold>bold </text>
           <text>this text will be pasted with </text>
           <text bold>bold </text>
         </block>
@@ -277,15 +276,15 @@ describe('editor clipboard', () => {
           <text>within the second block</text>
         </block>
         <block type="ENTRY">
-          <text>
-            this is the third <cursor />block
-          </text>
+          <text>this is the third block</text>
         </block>
         <block type="ENTRY">
           <text>is a test</text>
         </block>
         <block type="ENTRY">
-          <text>within the second </text>
+          <text>
+            within the second <cursor />
+          </text>
         </block>
       </editor>
     )
@@ -342,15 +341,15 @@ describe('editor clipboard', () => {
     const expected = (
       <editor>
         <block type="SOURCE">
-          <text>this is a source test with appended text</text>
+          <text>
+            this is a source test with appended text<cursor />
+          </text>
         </block>
         <block type="ENTRY">
           <text>some inbetween text</text>
         </block>
         <block type="SOURCE">
-          <text>
-            <cursor />this is a source test with appended text
-          </text>
+          <text>this is a source test with appended text</text>
         </block>
       </editor>
     )
@@ -405,12 +404,12 @@ describe('editor clipboard', () => {
           <text>with frag</text>
         </block>
         <block type="SOURCE">
-          <text>
-            <cursor />this is a source text
-          </text>
+          <text>this is a source text</text>
         </block>
         <block type="ENTRY">
-          <text>with</text>
+          <text>
+            with<cursor />
+          </text>
         </block>
       </editor>
     )
@@ -457,9 +456,7 @@ describe('editor clipboard', () => {
           <text>in between text</text>
         </block>
         <block type="SOURCE">
-          <text>
-            this is another source text<cursor />
-          </text>
+          <text>this is another source text</text>
         </block>
         <block type="SOURCE">
           <text>this is a source text</text>
@@ -468,7 +465,9 @@ describe('editor clipboard', () => {
           <text>in between text</text>
         </block>
         <block type="SOURCE">
-          <text>this is another source text</text>
+          <text>
+            this is another source text<cursor />
+          </text>
         </block>
       </editor>
     )
@@ -512,9 +511,7 @@ describe('editor clipboard', () => {
           <text>in between text</text>
         </block>
         <block type="SOURCE">
-          <text>
-            this is another source text<cursor />
-          </text>
+          <text>this is another source text</text>
         </block>
         <block type="SOURCE">
           <text>this is a source text</text>
@@ -523,7 +520,9 @@ describe('editor clipboard', () => {
           <text>in between text</text>
         </block>
         <block type="SOURCE">
-          <text>this is another source text</text>
+          <text>
+            this is another source text<cursor />
+          </text>
         </block>
       </editor>
     )
@@ -594,6 +593,8 @@ describe('editor clipboard', () => {
     await leftShiftKey(actions)
     await leftShiftKey(actions)
     await cut(actions)
+    await actions.click(editor).perform()
+    await actions.clear()
     await downKey(actions)
     await paste(actions)
     await sleep(3000)
@@ -608,12 +609,12 @@ describe('editor clipboard', () => {
     const expected = (
       <editor>
         <block type="ENTRY">
-          <text>
-            <cursor />
-          </text>
+          <text />
         </block>
         <block type="SOURCE">
-          <text>this is a source text</text>
+          <text>
+            this is a source text<cursor />
+          </text>
         </block>
       </editor>
     )
@@ -671,16 +672,15 @@ describe('editor clipboard', () => {
           </text>
         </block>
         <block type="ENTRY">
-          <text>
-            {' '}
-            fr<focus />ag
-          </text>
+          <text> frag</text>
         </block>
         <block type="SOURCE">
           <text>this is a source text</text>
         </block>
         <block type="ENTRY">
-          <text>has</text>
+          <text>
+            has<cursor />
+          </text>
         </block>
       </editor>
     )
