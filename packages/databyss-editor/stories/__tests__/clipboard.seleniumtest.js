@@ -105,7 +105,7 @@ describe('editor clipboard', () => {
 
     await rightKey(actions)
     await paste(actions)
-    await sleep(500)
+    await sleep(3000)
 
     await driver.navigate().refresh()
 
@@ -193,7 +193,7 @@ describe('editor clipboard', () => {
     await copy(actions)
     await leftKey(actions)
     await paste(actions)
-    await sleep(500)
+    await sleep(3000)
 
     await driver.navigate().refresh()
 
@@ -258,7 +258,7 @@ describe('editor clipboard', () => {
     await leftKey(actions)
     await leftKey(actions)
     await paste(actions)
-    await sleep(1000)
+    await sleep(3000)
     await driver.navigate().refresh()
 
     await sleep(500)
@@ -310,6 +310,7 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await enterKey(actions)
     await paste(actions)
+    await sleep(3000)
 
     const atomic = await getElementByTag(
       driver,
@@ -384,8 +385,7 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await enterKey(actions)
     await paste(actions)
-
-    await sleep(500)
+    await sleep(3000)
 
     await driver.navigate().refresh()
 
@@ -439,7 +439,7 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await downKey(actions)
     await paste(actions)
-    await sleep(1000)
+    await sleep(3000)
     await driver.navigate().refresh()
     await sleep(500)
 
@@ -494,7 +494,7 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await downKey(actions)
     await paste(actions)
-    await sleep(1000)
+    await sleep(3000)
     await driver.navigate().refresh()
     await sleep(500)
 
@@ -553,7 +553,7 @@ describe('editor clipboard', () => {
     await rightKey(actions)
     await rightKey(actions)
     await paste(actions)
-    await sleep(500)
+    await sleep(3000)
     await driver.navigate().refresh()
 
     await sleep(500)
