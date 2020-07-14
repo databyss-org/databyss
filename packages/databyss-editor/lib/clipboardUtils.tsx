@@ -403,7 +403,8 @@ export const deleteBlocksAtSelection = ({
   draftState.selection = _selection
 
   // TODO: create operation for this mutation
-  draftState.resetState = true
+
+  draftState.operations.reloadAll = true
 }
 
 export const databyssFragToPlainText = (fragment: Block[]): string => {

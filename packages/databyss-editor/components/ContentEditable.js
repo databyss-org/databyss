@@ -52,7 +52,7 @@ const ContentEditable = ({
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
-  if (!valueRef.current || state.resetState) {
+  if (!valueRef.current || state.operations.reloadAll) {
     editor.children = stateToSlate(state)
     // load selection from DB
     if (state.selection) {

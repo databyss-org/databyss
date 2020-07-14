@@ -82,7 +82,6 @@ export default (
     draft => {
       draft.operations = []
       draft.preventDefault = false
-      draft.resetState = false
 
       const { payload } = action
 
@@ -137,7 +136,8 @@ export default (
                 _isCurrentBlockEmpty ? 1 : 0,
                 ..._frag
               )
-              draft.resetState = true
+
+              draft.operations.reloadAll = true
 
               // set selection
               const _selectionIndex = _spliceIndex + _frag.length - 1
@@ -177,7 +177,7 @@ export default (
               nextSelection = _nextSelection
 
               // TODO: create operation instead of remounting state
-              draft.resetState = true
+              draft.operations.reloadAll = true
             }
           }
 
