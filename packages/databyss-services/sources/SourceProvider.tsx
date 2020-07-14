@@ -1,9 +1,15 @@
-import React, { useContext, useEffect, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
 import reducer, { initialState } from './reducer'
-import { ResourceResponse, Source, SourceState, Author } from '../interfaces'
+import {
+  ResourceResponse,
+  Source,
+  SourceState,
+  Author,
+  SourceCitations,
+} from '../interfaces'
 
 import {
   fetchSource,
@@ -11,6 +17,7 @@ import {
   removeSourceFromCache,
   fetchSourceQuery,
   fetchAuthorHeaders,
+  fetchSourceCitations,
 } from './actions'
 import { SourceSearchResults } from '../interfaces/SourceState'
 
@@ -26,6 +33,7 @@ interface ContextType {
   removeCacheValue: (id: string) => void
   searchSource: (query: string) => ResourceResponse<SourceSearchResults>
   getAuthors: () => ResourceResponse<Author[]>
+  getSourceCitations: () => ResourceResponse<SourceCitations[]>
 }
 
 const useReducer = createReducer()
@@ -91,6 +99,18 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     [state.cache]
   )
 
+  const getSourceCitations = useCallback(
+    (): ResourceResponse<Author[]> => {
+      if (state.sourceHeaderCache) {
+        return state.sourceHeaderCache
+      }
+
+      dispatch(fetchSourceCitations())
+      return null
+    },
+    [state.sourceHeaderCache]
+  )
+
   const getAuthors = useCallback(
     (): ResourceResponse<Author[]> => {
       if (state.authorsHeaderCache) {
@@ -113,6 +133,7 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
         searchSource,
         getSearchCache,
         getAuthors,
+        getSourceCitations,
       }}
     >
       {children}

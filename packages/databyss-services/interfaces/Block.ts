@@ -16,9 +16,19 @@ export interface Author {
   lastName: Text
 }
 
+export interface Citations {
+  format: string
+  text: Text
+}
+
 export interface SourceDetail {
   authors: Author[]
-  citations: Text[]
+  citations: Citations[]
+}
+
+export interface SourceCitations {
+  text: Text
+  citations: Citations[]
 }
 
 export interface Source extends Block {
