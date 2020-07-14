@@ -69,6 +69,10 @@ const navigationActionsBuilder = async (actions, key) => {
   await sleep(SLEEP_TIME)
 }
 
+export const sendKeys = async (actions, keys) => {
+  await navigationActionsBuilder(actions, keys)
+}
+
 export const enterKey = async actions => {
   await navigationActionsBuilder(actions, Key.ENTER)
 }
@@ -87,6 +91,10 @@ export const downKey = async actions => {
 
 export const rightKey = async actions => {
   await navigationActionsBuilder(actions, Key.ARROW_RIGHT)
+}
+
+export const leftKey = async actions => {
+  await navigationActionsBuilder(actions, Key.ARROW_LEFT)
 }
 
 export const backspaceKey = async actions => {

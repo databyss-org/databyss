@@ -1,6 +1,5 @@
 /** @jsx h */
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import { jsx as h } from './hyperscript'
@@ -22,6 +21,8 @@ import {
   leftShiftKey,
   downShiftKey,
   rightKey,
+  sendKeys,
+  leftKey,
 } from './_helpers.selenium'
 
 let driver
@@ -94,17 +95,16 @@ describe('editor clipboard', () => {
   it('should copy a whole block and paste it at the end of the same block', async () => {
     // TODO: FIX CURSOR POSITION FOR THIS TEST
     await sleep(300)
-    await actions.sendKeys('this text will be pasted with ')
+    await sendKeys(actions, 'this text will be pasted with ')
 
     await toggleBold(actions)
-    await actions.sendKeys('bold ')
+    await sendKeys(actions, 'bold ')
     await selectAll(actions)
 
     await copy(actions)
 
-    await actions.sendKeys(Key.ARROW_RIGHT)
+    await rightKey(actions)
     await paste(actions)
-    //  await actions.perform()
     await sleep(500)
 
     await driver.navigate().refresh()
@@ -138,22 +138,21 @@ describe('editor clipboard', () => {
 
   it('should copy a whole block and paste it in the middle of a block', async () => {
     await sleep(300)
-    await actions.sendKeys('this text will be pasted with ')
+    await sendKeys(actions, 'this text will be pasted with ')
     await toggleBold(actions)
-    await actions.sendKeys('bold ')
+    await sendKeys(actions, 'bold ')
     await selectAll(actions)
 
     await copy(actions)
 
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_RIGHT)
-    await actions.sendKeys(Key.ARROW_RIGHT)
-    await actions.sendKeys(Key.ARROW_RIGHT)
-    await actions.sendKeys(Key.ARROW_RIGHT)
-    await actions.sendKeys(Key.ARROW_RIGHT)
+    await leftKey(actions)
+    await rightKey(actions)
+    await rightKey(actions)
+    await rightKey(actions)
+    await rightKey(actions)
+    await rightKey(actions)
 
     await paste(actions)
-    //  await actions.perform()
     await sleep(3000)
 
     await driver.navigate().refresh()
@@ -187,16 +186,13 @@ describe('editor clipboard', () => {
 
   it('should copy a whole block and paste it at the start of a block', async () => {
     await sleep(300)
-    await actions.sendKeys('this text will be pasted with ')
+    await sendKeys(actions, 'this text will be pasted with ')
     await toggleBold(actions)
-    await actions.sendKeys('bold ')
+    await sendKeys(actions, 'bold ')
     await selectAll(actions)
-
     await copy(actions)
-
-    await actions.sendKeys(Key.ARROW_LEFT)
+    await leftKey(actions)
     await paste(actions)
-    //  await actions.perform()
     await sleep(500)
 
     await driver.navigate().refresh()
@@ -231,17 +227,15 @@ describe('editor clipboard', () => {
 
   it('should copy two entry fragments and paste them within an entry', async () => {
     await sleep(3000)
-    await actions.sendKeys('this is a test')
+    await sendKeys(actions, 'this is a test')
     await enterKey(actions)
     await enterKey(actions)
-    await actions.sendKeys('within the second block')
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.perform()
-    await actions.clear()
+    await sendKeys(actions, 'within the second block')
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
 
     await upShiftKey(actions)
     await upShiftKey(actions)
@@ -257,17 +251,14 @@ describe('editor clipboard', () => {
 
     await enterKey(actions)
     await enterKey(actions)
-    await actions.sendKeys('this is the third block')
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-
+    await sendKeys(actions, 'this is the third block')
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
     await paste(actions)
-
     await sleep(1000)
-
     await driver.navigate().refresh()
 
     await sleep(500)
@@ -308,18 +299,16 @@ describe('editor clipboard', () => {
 
   it('should copy an atomic block and maintain atomic id integrity', async () => {
     await sleep(1000)
-    await actions.sendKeys('@this is a source test')
+    await sendKeys(actions, '@this is a source test')
     await enterKey(actions)
     await upKey(actions)
     await rightShiftKey(actions)
-
     await copy(actions)
     await downKey(actions)
     await downKey(actions)
-    await actions.sendKeys('some inbetween text')
+    await sendKeys(actions, 'some inbetween text')
     await enterKey(actions)
     await enterKey(actions)
-
     await paste(actions)
 
     const atomic = await getElementByTag(
@@ -330,7 +319,7 @@ describe('editor clipboard', () => {
     await atomic.click()
     await atomic.click()
 
-    await actions.sendKeys(' with appended text').perform()
+    await sendKeys(actions, ' with appended text').perform()
 
     const doneButton = await getElementByTag(
       driver,
@@ -374,14 +363,14 @@ describe('editor clipboard', () => {
 
   it('should copy atomic and entry fragment and paste it on an empty block', async () => {
     await sleep(3000)
-    await actions.sendKeys('@this is a source text')
+    await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
     await actions.sendKeys('with frag')
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
     await leftShiftKey(actions)
     await leftShiftKey(actions)
     await leftShiftKey(actions)
@@ -389,14 +378,11 @@ describe('editor clipboard', () => {
     await leftShiftKey(actions)
     await leftShiftKey(actions)
     await leftShiftKey(actions)
-
     await copy(actions)
     await downKey(actions)
     await downKey(actions)
-
     await enterKey(actions)
     await enterKey(actions)
-
     await paste(actions)
 
     await sleep(500)
@@ -438,31 +424,23 @@ describe('editor clipboard', () => {
 
   it('should select an atomic fragment and paste the whole atomic block', async () => {
     await sleep(1000)
-    await actions.sendKeys('@this is a source text')
+    await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
-    await actions.sendKeys('in between text')
+    await sendKeys(actions, 'in between text')
     await enterKey(actions)
     await enterKey(actions)
-
-    await actions.sendKeys('@this is another source text')
-
+    await sendKeys(actions, '@this is another source text')
     await upKey(actions)
     await selectAll(actions)
-
     await downShiftKey(actions)
     await leftShiftKey(actions)
     await leftShiftKey(actions)
-
     await copy(actions)
     await downKey(actions)
     await downKey(actions)
-
     await paste(actions)
-
     await sleep(1000)
-
     await driver.navigate().refresh()
-
     await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
@@ -509,22 +487,15 @@ describe('editor clipboard', () => {
     await actions.sendKeys('in between text')
     await enterKey(actions)
     await enterKey(actions)
-
     await actions.sendKeys('@this is another source text')
-
     await upKey(actions)
     await selectAll(actions)
-
     await copy(actions)
     await downKey(actions)
     await downKey(actions)
-
     await paste(actions)
-
     await sleep(1000)
-
     await driver.navigate().refresh()
-
     await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
@@ -573,7 +544,6 @@ describe('editor clipboard', () => {
     await leftShiftKey(actions)
     await leftShiftKey(actions)
     await leftShiftKey(actions)
-
     await copy(actions)
     await upKey(actions)
     await upKey(actions)
@@ -582,11 +552,8 @@ describe('editor clipboard', () => {
     await rightKey(actions)
     await rightKey(actions)
     await rightKey(actions)
-
     await paste(actions)
-
     await sleep(500)
-
     await driver.navigate().refresh()
 
     await sleep(500)
