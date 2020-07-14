@@ -11,6 +11,7 @@ import {
 } from '@databyss-org/services/sources/util'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
+import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 
 export const SourcesRouter = () => (
   <Router>
@@ -18,17 +19,25 @@ export const SourcesRouter = () => (
   </Router>
 )
 
-const SourcesContent = () => {
-  const { state } = useSourceContext()
+const SourcesContent = () => (
+  <SourceCitationsLoader>
+    {sourceCitations => {
+      const sourcesData = Object.values(sourceCitations).map(value => ({
+        text: value.text,
+        citations: value.citations?.map(citation => citation.text?.textValue),
+        type: 'sources',
+      }))
+      console.log(sourcesData)
 
-  const sourcesData = getSourcesData(state.cache)
-  const sortedSources = sortEntriesAtoZ(sourcesData, 'text')
+      const sortedSources = sortEntriesAtoZ(sourcesData, 'text')
 
-  return (
-    <IndexPageContent title="All Sources">
-      <IndexPageEntries entries={sortedSources} />
-    </IndexPageContent>
-  )
-}
+      return (
+        <IndexPageContent title="Sources">
+          <IndexPageEntries entries={sortedSources} />
+        </IndexPageContent>
+      )
+    }}
+  </SourceCitationsLoader>
+)
 
 export default SourcesContent

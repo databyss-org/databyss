@@ -25,7 +25,7 @@ const AuthorsContent = () => (
       const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
 
       return (
-        <IndexPageContent title="All Authors">
+        <IndexPageContent title="Authors">
           <IndexPageEntries entries={sortedAuthors} />
         </IndexPageContent>
       )
