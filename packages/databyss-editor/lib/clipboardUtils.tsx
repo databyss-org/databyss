@@ -288,15 +288,19 @@ export const deleteBlocksAtSelection = ({
     let _newBlock
     const _currentBlock = blocks[anchor.index]
     // if selection spans over entire block, delete block contents
-
     if (focus.offset - anchor.offset === _currentBlock.text.textValue.length) {
       _newBlock = { text: { textValue: '', ranges: [] } }
     } else {
-      // if not, split block at anchor offset
-      const { before, after } = splitBlockAtOffset({
-        block: _currentBlock,
-        offset: anchor.offset,
-      })
+      // if not, split block at anchor offset if its not atomic
+      const { before, after } = isAtomicInlineType(_currentBlock.type)
+        ? {
+            before: { text: { textValue: '', ranges: [] }, type: 'ENTRY' },
+            after: null,
+          }
+        : splitBlockAtOffset({
+            block: _currentBlock,
+            offset: anchor.offset,
+          })
 
       let lastBlockFragment
       // if `after` exists, split `after` at focus offset - before block length
@@ -335,19 +339,19 @@ export const deleteBlocksAtSelection = ({
     let _anchorBlock = blocks[anchor.index]
     let _focusBlock = blocks[focus.index]
 
-    const _splitAnchorBlock = splitBlockAtOffset({
-      block: _anchorBlock,
-      offset: anchor.offset,
-    })
+    const _splitAnchorBlock = isAtomicInlineType(_anchorBlock.type)
+      ? { before: { ...emptyBlock, type: 'ENTRY' }, after: null }
+      : splitBlockAtOffset({
+          block: _anchorBlock,
+          offset: anchor.offset,
+        })
 
-    _anchorBlock = isAtomicInlineType(_anchorBlock.type)
-      ? _anchorBlock
-      : _splitAnchorBlock.before
-        ? { ..._anchorBlock, ..._splitAnchorBlock.before }
-        : {
-            ..._anchorBlock,
-            ...emptyBlock,
-          }
+    _anchorBlock = _splitAnchorBlock.before
+      ? { ..._anchorBlock, ..._splitAnchorBlock.before }
+      : {
+          ..._anchorBlock,
+          ...emptyBlock,
+        }
 
     const _splitFocusBlock = splitBlockAtOffset({
       block: _focusBlock,

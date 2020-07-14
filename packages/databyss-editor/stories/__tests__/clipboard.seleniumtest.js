@@ -320,7 +320,7 @@ describe('editor clipboard', () => {
     await atomic.click()
     await atomic.click()
 
-    await sendKeys(actions, ' with appended text').perform()
+    await sendKeys(actions, ' with appended text')
 
     const doneButton = await getElementByTag(
       driver,
