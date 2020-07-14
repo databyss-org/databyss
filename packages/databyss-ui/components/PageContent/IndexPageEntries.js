@@ -7,14 +7,18 @@ const IndexPageEntries = ({ entries }) =>
       return (
         <View key={index} mb="em">
           <BaseControl
-            py="small"
-            px="small"
+            p="small"
             mx="em"
             hoverColor="background.2"
             activeColor="background.3"
           >
             <Text variant="bodyNormalSemibold">{entry.text}</Text>
           </BaseControl>
+          {entry.citations && (
+            <Text px="small" mx="em" variant="bodySmall" color="text.2">
+              {entry.citations}
+            </Text>
+          )}
         </View>
       )
     }
