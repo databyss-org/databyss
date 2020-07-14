@@ -48,7 +48,6 @@ router.get(
     if (!blocks) {
       return res.json([])
     }
-
     // group by authors and return array of authors
     const authorsDict = blocks.reduce((dict, block) => {
       if (block.detail) {
@@ -60,6 +59,32 @@ router.get(
     }, {})
 
     return res.json(Object.values(authorsDict))
+  })
+)
+
+// @route    GET api/sources
+// @desc     Get all sources citations in an account
+// @access   Private
+router.get(
+  '/citations',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  wrap(async (req, res, _next) => {
+    const blocks = await Block.find({
+      account: req.account._id,
+      type: 'SOURCE',
+    })
+    if (!blocks) {
+      return res.json([])
+    }
+
+    const sourcesCitations = blocks.map(block => {
+      const sourcesCitationsDict = {
+        text: block.text.textValue,
+        citations: block.detail?.citations,
+      }
+      return sourcesCitationsDict
+    })
+    return res.json(sourcesCitations)
   })
 )
 

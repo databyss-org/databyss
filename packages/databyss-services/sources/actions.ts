@@ -9,8 +9,10 @@ import {
   FETCH_SEARCH_QUERY,
   FETCH_AUTHOR_HEADERS,
   CACHE_AUTHOR_HEADERS,
+  FETCH_SOURCE_CITATIONS,
+  CACHE_SOURCE_CITATIONS,
 } from './constants'
-import { Source, Author } from '../interfaces'
+import { Source, Author, SourceCitations } from '../interfaces'
 
 export function fetchSource(id: string) {
   return async (dispatch: Function) => {
@@ -105,6 +107,28 @@ export function fetchAuthorHeaders() {
     } catch (err) {
       dispatch({
         type: CACHE_AUTHOR_HEADERS,
+        payload: {
+          err,
+        },
+      })
+    }
+  }
+}
+
+export function fetchSourceCitations() {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: FETCH_SOURCE_CITATIONS,
+    })
+    try {
+      const sourceCitations: SourceCitations[] = await services.getSourceCitations()
+      dispatch({
+        type: CACHE_SOURCE_CITATIONS,
+        payload: { results: sourceCitations },
+      })
+    } catch (err) {
+      dispatch({
+        type: CACHE_SOURCE_CITATIONS,
         payload: {
           err,
         },
