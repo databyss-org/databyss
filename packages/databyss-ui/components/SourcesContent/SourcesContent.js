@@ -1,17 +1,9 @@
 import React from 'react'
 import { Router } from '@reach/router'
-import {
-  getSourcesData,
-  sortEntriesAtoZ,
-} from '@databyss-org/services/sources/util'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import {
-  getSourcesData,
-  sortEntriesAtoZ,
-} from '@databyss-org/services/sources/util'
+import { sortEntriesAtoZ } from '@databyss-org/services/sources/util'
+import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
-import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 
 export const SourcesRouter = () => (
   <Router>
