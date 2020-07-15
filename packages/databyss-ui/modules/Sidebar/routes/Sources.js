@@ -28,18 +28,22 @@ const Sources = ({ filterQuery }) => (
         const shortFirstName = `${firstName?.charAt(0)}.`
         const lastName = value.lastName?.textValue
 
-        // Remove whitespace and special characters from name and turn to lowercase
-        const cleanNames = name => name.replace(/[^\w]/gi, '').toLowerCase()
-        const authorParam = `${cleanNames(lastName)}-${cleanNames(firstName)}`
+        // Remove whitespace and special characters from name
+        const cleanNames = name => name.replace(/[^\w]/gi, '')
+        const authorParams = new URLSearchParams({
+          firstName: cleanNames(firstName),
+          lastName: cleanNames(lastName),
+        })
 
         return {
           text: `${lastName}${shortFirstName && `, ${shortFirstName}`}`,
           type: 'authors',
           route: '/sources/authors',
-          id: authorParam,
+          params: authorParams.toString(),
           icon: <AuthorSvg />,
         }
       })
+
       const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
       const filteredEntries = filterEntries(sortedAuthors, filterQuery)
 

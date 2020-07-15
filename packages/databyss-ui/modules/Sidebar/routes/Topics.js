@@ -22,6 +22,7 @@ const Topics = ({ filterQuery }) => (
         type: 'topics',
         route: '/topics',
         id: value._id,
+        params: value._id,
       }))
       const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
       const filteredEntries = filterEntries(sortedTopics, filterQuery)
