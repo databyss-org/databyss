@@ -5,7 +5,7 @@ const IndexPageEntries = ({ entries }) =>
   entries.map((entry, index) => {
     if (entry.text) {
       return (
-        <View key={index} mb="em">
+        <View key={index} mb="em" widthVariant="content">
           <BaseControl
             p="small"
             mx="em"
