@@ -15,6 +15,7 @@ const Pages = ({ filterQuery }) => (
           type: 'pages',
           route: '/pages',
           id: p._id,
+          params: p._id,
         }))
         // alphabetize list
         const sortedPages = sortEntriesAtoZ(_menuItems, 'text')

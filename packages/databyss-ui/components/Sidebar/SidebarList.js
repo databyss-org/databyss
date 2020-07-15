@@ -28,8 +28,8 @@ const SidebarList = ({ menuItems }) => {
   const tokens = getTokensFromPath()
 
   const getHref = item => {
-    if (item.id) {
-      return `${item.route}/${item.id}`
+    if (item.params) {
+      return `${item.route}/${item.params}`
     }
     return `${item.route}`
   }
@@ -50,8 +50,8 @@ const SidebarList = ({ menuItems }) => {
       mt="extraSmall"
     >
       {menuItems.map((item, index) => {
-        const _isActive = item.id
-          ? item.id === tokens.id
+        const _isActive = item.params
+          ? item.params === tokens.params
           : item.route === location.pathname
 
         if (item.text) {

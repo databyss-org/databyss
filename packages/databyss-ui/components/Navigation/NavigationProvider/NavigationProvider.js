@@ -1,6 +1,6 @@
 import React from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
-import { useNavigate, useLocation, Router, useParams } from '@reach/router'
+import { useNavigate, useLocation, Router } from '@reach/router'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import reducer, { initialState } from './reducer'
 import * as actions from './actions'
@@ -38,20 +38,20 @@ const NavigationProvider = ({ children }) => {
 
   const getTokensFromPath = () => {
     const _path = location.pathname.split('/')
-    let _id = _path[2]
+    let _params = _path[2]
     let _anchor = ''
 
-    if (_id === 'authors') {
-      _id = _path[3]
+    if (_params === 'authors') {
+      _params = _path[3]
     }
 
-    if (_id && _id.includes('#')) {
-      const _str = _id.split('#')
-      _id = _str[0]
+    if (_params && _params.includes('#')) {
+      const _str = _params.split('#')
+      _params = _str[0]
       _anchor = _str[1]
     }
 
-    return { type: _path[1], id: _id, anchor: _anchor }
+    return { type: _path[1], params: _params, anchor: _anchor }
   }
 
   const getSidebarPath = () => {
