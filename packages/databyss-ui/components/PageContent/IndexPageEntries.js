@@ -12,7 +12,15 @@ const IndexPageEntries = ({ entries }) =>
             hoverColor="background.2"
             activeColor="background.3"
           >
-            <Text variant="bodyNormalSemibold">{entry.text}</Text>
+            <Text
+              variant={
+                entry.type === 'sources'
+                  ? 'bodyNormalUnderline'
+                  : 'bodyNormalSemibold'
+              }
+            >
+              {entry.text}
+            </Text>
           </BaseControl>
           {entry.citations && (
             <Text px="small" mx="em" variant="bodySmall" color="text.2">

@@ -8,7 +8,9 @@ export const getSourcesData = (sources, type, icon) =>
   }))
 
 export const sortEntriesAtoZ = (entries, sortBy) =>
-  entries.sort((a, b) => (a[sortBy] > b[sortBy] ? 1 : -1))
+  entries.sort(
+    (a, b) => (a[sortBy].toLowerCase() > b[sortBy].toLowerCase() ? 1 : -1)
+  )
 
 export const filterEntries = (entries, filterQuery) =>
   entries.filter(entry =>
