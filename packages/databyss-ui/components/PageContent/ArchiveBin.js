@@ -17,7 +17,7 @@ export const ArchiveBin = ({ pages }) => {
 
   const { getTokensFromPath, navigate } = useNavigationContext()
 
-  const { id } = getTokensFromPath()
+  const { params } = getTokensFromPath()
 
   const archivePage = usePageContext(c => c.archivePage)
   const setDefaultPage = usePageContext(c => c.setDefaultPage)
@@ -25,11 +25,11 @@ export const ArchiveBin = ({ pages }) => {
   const canBeArchived = Object.values(pages).filter(p => !p.archive).length > 1
 
   const onPress = () => {
-    archivePage(id).then(() => {
+    archivePage(params).then(() => {
       // if default page is archived set new page as default page
       let redirect = account.defaultPage
-      if (account.defaultPage === id) {
-        redirect = Object.keys(pages).find(_id => _id !== id)
+      if (account.defaultPage === params) {
+        redirect = Object.keys(pages).find(_id => _id !== params)
         setDefaultPage(redirect)
       }
       navigate(`/pages/${redirect}`)

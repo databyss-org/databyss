@@ -1,15 +1,8 @@
 import React from 'react'
-import { Router } from '@reach/router'
 import { sortEntriesAtoZ } from '@databyss-org/services/sources/util'
 import { AuthorsLoader } from '@databyss-org/ui/components/Loaders'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
-
-export const AuthorsRouter = () => (
-  <Router>
-    <AuthorsContent path="/" />
-  </Router>
-)
 
 const AuthorsContent = () => (
   <AuthorsLoader>
