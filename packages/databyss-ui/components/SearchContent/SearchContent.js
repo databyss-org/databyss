@@ -46,7 +46,7 @@ const SearchContent = () => {
                 <Icon sizeVariant="small" color="text.3">
                   <PageSvg />
                 </Icon>
-                <Text variant="bodyLarge">{r.page}</Text>
+                <Text variant="bodyHeading3">{r.page}</Text>
               </Grid>
             </BaseControl>
           </View>
@@ -80,7 +80,7 @@ const SearchContent = () => {
   return (
     <ScrollView p="medium" flex="1" maxHeight="98vh">
       <View p="medium">
-        <Text variant="bodyLarge" color="text.3">
+        <Text variant="bodyHeading1" color="text.3">
           &quot;{query}&quot;
         </Text>
       </View>

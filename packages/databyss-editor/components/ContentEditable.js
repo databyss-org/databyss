@@ -27,6 +27,8 @@ const ContentEditable = ({
   focusIndex,
   autofocus,
   readonly,
+  onNavigateUpFromTop,
+  editorRef,
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
@@ -104,9 +106,25 @@ const ContentEditable = ({
     [state.newEntities.length]
   )
 
+  useEffect(() => {
+    if (editor && editorRef) {
+      editorRef.current = ReactEditor.toDOMNode(editor, editor)
+    }
+  }, [])
+
   const inDeadKey = useRef(false)
 
   const onKeyDown = event => {
+    // UI
+    if (event.key === 'ArrowUp') {
+      const _currentIndex = editor.selection.focus.path[0]
+      const _atBlockStart =
+        editor.selection.focus.path[1] === 0 &&
+        editor.selection.focus.offset === 0
+      if (onNavigateUpFromTop && _atBlockStart && _currentIndex === 0) {
+        onNavigateUpFromTop()
+      }
+    }
     // if diacritics has been toggled, set dead key
     if (event.key === 'Dead') {
       inDeadKey.current = true
@@ -390,10 +408,30 @@ const ContentEditable = ({
   if (state.preventDefault) {
     editor.operations = []
   }
+  /*
+if focus event is fired and editor.selection is null, set focus at origin. this is used when editorRef.focus() is called by a parent component
+*/
+  const onFocus = () => {
+    setTimeout(() => {
+      if (!editor.selection) {
+        const _selection = {
+          anchor: { index: 0, offset: 0 },
+          focus: { index: 0, offset: 0 },
+        }
+        const _slateSelection = stateSelectionToSlateSelection(
+          editor.children,
+          _selection
+        )
+        Transforms.select(editor, _slateSelection)
+        ReactEditor.focus(editor)
+      }
+    }, 5)
+  }
 
   return (
     <Editor
       editor={editor}
+      onFocus={onFocus}
       autofocus={autofocus}
       value={editor.children}
       selection={nextSelection}

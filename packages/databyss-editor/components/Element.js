@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react'
+import React, { useMemo } from 'react'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
@@ -15,7 +15,7 @@ import { showAtomicModal } from '../lib/atomicModal'
 import CitationsMenu from './CitationsMenu'
 
 export const getAtomicStyle = type =>
-  ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
+  ({ SOURCE: 'bodyHeading3Underline', TOPIC: 'bodyHeading2' }[type])
 
 const Element = ({ attributes, children, element }) => {
   const entryContext = useEntryContext()
@@ -41,6 +41,11 @@ const Element = ({ attributes, children, element }) => {
     ? editorContext.state.blocks[ReactEditor.findPath(editor, element)[0]]
     : {}
 
+  const elementIndex = ReactEditor.findPath(editor, element)[0]
+  const previousEntry = editor.children[elementIndex - 1]
+  const isPreviousBlockEntry = previousEntry?.type === 'ENTRY'
+  const isBlockHeader = element.type === 'TOPIC' || element.type === 'SOURCE'
+
   return useMemo(
     () => {
       const blockMenuWidth = menuLauncherSize + 6
@@ -57,8 +62,8 @@ const Element = ({ attributes, children, element }) => {
             }
           }}
           ml={element.isBlock ? blockMenuWidth : 0}
-          pt="small"
-          pb="small"
+          pt={isPreviousBlockEntry && isBlockHeader ? 'medium' : 'small'}
+          pb="em"
           display={element.isBlock ? 'flex' : 'inline-flex'}
           maxWidth="100%"
           position="relative"
@@ -89,7 +94,6 @@ const Element = ({ attributes, children, element }) => {
               display="inline"
               alignItems="center"
               borderRadius="default"
-              borderRadiusVariant="default"
               data-test-atomic-edit="open"
               pl="tiny"
               pr="0"
