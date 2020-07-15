@@ -76,7 +76,6 @@ const Sidebar = () => {
               <Pages filterQuery={filterQuery} />
             )}
             {menuItem === 'sources' && <Sources filterQuery={filterQuery} />}
-            {menuItem === 'authors' && <Sources filterQuery={filterQuery} />}
             {menuItem === 'topics' && <Topics filterQuery={filterQuery} />}
           </List>
         </View>
