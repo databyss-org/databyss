@@ -25,18 +25,23 @@ const Sources = ({ filterQuery }) => (
     {authors => {
       const authorData = Object.values(authors).map(value => {
         const firstName = value.firstName?.textValue
-        const shortFirstName = `${firstName?.charAt(0)}.`
+        const shortFirstName = `${firstName.charAt(0)}.`
         const lastName = value.lastName?.textValue
 
-        // Remove whitespace and special characters from name
-        const cleanNames = name => name.replace(/[^\w]/gi, '')
+        const getShortAuthorName = () => {
+          if (lastName && firstName) {
+            return `${lastName}, ${shortFirstName}`
+          }
+          return lastName || shortFirstName
+        }
+
         const authorParams = new URLSearchParams({
-          firstName: cleanNames(firstName),
-          lastName: cleanNames(lastName),
+          firstName: encodeURIComponent(firstName),
+          lastName: encodeURIComponent(lastName),
         })
 
         return {
-          text: `${lastName}${shortFirstName && `, ${shortFirstName}`}`,
+          text: getShortAuthorName(),
           type: 'authors',
           route: '/sources/authors',
           params: authorParams.toString(),
