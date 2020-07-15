@@ -6,27 +6,38 @@ import accountMiddleware from '../../middleware/accountMiddleware'
 
 const router = express.Router()
 
-// @route    GET api/entries/search/:string
+// @route    POST api/entries/search/
 // @desc     Searches entries
 // @access   Private
-router.get(
-  '/search/:string',
+router.post(
+  '/search/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   async (req, res) => {
     try {
-      const queryArray = req.params.string.split(' ')
+      // todo: regex escape function
+      const queryArray = req.body.data
+        .replace(/[^a-z0-9À-ú -]/gi, '')
+        .split(' ')
+
+      console.log(queryArray)
+
+      //  const queryArray = req.params.string.split(' ')
 
       // use the $and operator to find regEx for multiple search words
       let results = await Block.find({
-        $and: queryArray.map(q => ({
-          'text.textValue': {
-            $regex: new RegExp(`\\b${q}\\b.*`, 'i'),
-          },
-          account: req.account._id,
-          type: 'ENTRY',
-        })),
+        $and: queryArray
+          .map(q => ({
+            $text: {
+              $search: q,
+            },
+          }))
+          .concat({
+            account: req.account._id,
+            type: 'ENTRY',
+          }),
       }).populate('page')
 
+      console.log(results)
       // populate results with page
       results = await Promise.all(
         results.map(async r => {
@@ -50,7 +61,7 @@ router.get(
         const isInEntry = (string, regex) =>
           string
             .split(/ |-|\n/)
-            .map(s => s.replace(/[^a-z0-9]/gi, ''))
+            .map(s => s.replace(/[^a-z0-9À-ú]/gi, ''))
             .reduce(
               (bool, string) => (string.match(regex) ? true : bool),
               false
