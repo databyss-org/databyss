@@ -1,19 +1,61 @@
 import React from 'react'
 import { useParams } from '@reach/router'
+import { sortEntriesAtoZ } from '@databyss-org/services/sources/util'
+import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import IndexPageContent from '../PageContent/IndexPageContent'
+import IndexPageEntries from '../PageContent/IndexPageEntries'
 
 const AuthorCitations = () => {
   const { query } = useParams()
   const params = new URLSearchParams(query)
-  const authorFirstName = params.get('firstName')
-  const authorLastName = params.get('lastName')
+  const authorQueryFirstName = params.get('firstName')
+  const authorQueryLastName = params.get('lastName')
+
+  const composeAuthorName = (firstName, lastName) => {
+    if (firstName && lastName) {
+      return `${lastName}, ${firstName}`
+    }
+    return lastName || firstName
+  }
 
   return (
-    <IndexPageContent
-      title={`${authorLastName}${authorFirstName &&
-        authorLastName &&
-        ','} ${authorFirstName}`}
-    />
+    <SourceCitationsLoader>
+      {sourceCitations => {
+        const authorCitationsData = Object.values(sourceCitations).map(
+          value => {
+            const authorFirstName = value.author?.firstName?.textValue
+            const authorLastName = value.author?.lastName?.textValue
+
+            if (
+              authorFirstName === authorQueryFirstName &&
+              authorLastName === authorQueryLastName
+            ) {
+              return {
+                text: value.text,
+                citations: value.citations?.map(
+                  citation => citation.text?.textValue
+                ),
+                type: 'authors',
+              }
+            }
+            return {}
+          }
+        )
+
+        const sortedAuthorCitations = sortEntriesAtoZ(
+          authorCitationsData,
+          'text'
+        )
+
+        return (
+          <IndexPageContent
+            title={composeAuthorName(authorQueryFirstName, authorQueryLastName)}
+          >
+            <IndexPageEntries entries={sortedAuthorCitations} />
+          </IndexPageContent>
+        )
+      }}
+    </SourceCitationsLoader>
   )
 }
 
