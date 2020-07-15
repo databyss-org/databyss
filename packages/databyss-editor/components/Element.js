@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect, useRef } from 'react'
+import { debounce } from 'lodash'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
@@ -14,6 +15,8 @@ import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import CitationsMenu from './CitationsMenu'
 
+const SPELLCHECK_DEBOUNCE_TIME = 1000
+
 export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeading3Underline', TOPIC: 'bodyHeading2' }[type])
 
@@ -25,7 +28,9 @@ const Element = ({ attributes, children, element }) => {
     searchTerm = entryContext.searchTerm
   }
   const editor = useEditor()
+
   const editorContext = useEditorContext()
+
   const navigationContext = useNavigationContext()
 
   const registerBlockRefByIndex = usePageContext(
@@ -46,6 +51,25 @@ const Element = ({ attributes, children, element }) => {
   const isPreviousBlockEntry = previousEntry?.type === 'ENTRY'
   const isBlockHeader = element.type === 'TOPIC' || element.type === 'SOURCE'
 
+  // spellcheck is debounced on element change
+  let [spellCheck, setSpellCheck] = useState(true)
+  let spellCheckTimeoutRef = useRef()
+
+  useEffect(
+    () => {
+      if (spellCheckTimeoutRef.current) {
+        setSpellCheck(false)
+        clearTimeout(spellCheckTimeoutRef.current)
+      }
+      spellCheckTimeoutRef.current = setTimeout(() => {
+        if (!spellCheck) {
+          setSpellCheck(true)
+        }
+      }, SPELLCHECK_DEBOUNCE_TIME)
+    },
+    [element]
+  )
+
   return useMemo(
     () => {
       const blockMenuWidth = menuLauncherSize + 6
@@ -65,6 +89,7 @@ const Element = ({ attributes, children, element }) => {
           pt={isPreviousBlockEntry && isBlockHeader ? 'medium' : 'small'}
           pb="em"
           display={element.isBlock ? 'flex' : 'inline-flex'}
+          spellCheck={spellCheck}
           maxWidth="100%"
           position="relative"
           justifyContent="center"
@@ -121,13 +146,15 @@ const Element = ({ attributes, children, element }) => {
               )}
             </View>
           ) : (
-            <Text {...attributes}>{children}</Text>
+            <Text onChange={() => console.log('text.change')} {...attributes}>
+              {children}
+            </Text>
           )}
         </View>
       )
     },
     // search term updates element for highlight
-    [block, element, searchTerm]
+    [block, element, searchTerm, spellCheck]
   )
 }
 
