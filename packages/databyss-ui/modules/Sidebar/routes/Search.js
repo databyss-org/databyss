@@ -1,5 +1,4 @@
-import React, { useEffect, useRef } from 'react'
-import { unescape } from 'lodash'
+import React, { useEffect } from 'react'
 import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -45,12 +44,12 @@ const Search = ({ onClick }) => {
   }
 
   const onSearchClick = () => {
-    navigate(`/search/${searchTerm}`)
+    // encode the search term and remove '?'
+    navigate(`/search/${encodeURI(searchTerm.replace(/\?/g, ''))}`)
   }
 
   return (
     <View width="100%" px="small" my="small" onClick={onClick}>
-      <p> a&#771;</p>
       <View
         backgroundColor="background.0"
         height="100%"

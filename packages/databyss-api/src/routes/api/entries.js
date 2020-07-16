@@ -16,22 +16,18 @@ router.post(
     try {
       // todo: regex escape function
       const queryArray = req.body.data
-        .replace(/[^a-z0-9À-ú -]/gi, '')
+        .replace(/[^a-z0-9À-ú - ]/gi, '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
         .split(' ')
 
-      // use the $and operator to find regEx for multiple search words
       let results = await Block.find({
-        $and: queryArray
-          .map(q => ({
-            $text: {
-              $search: q,
-            },
-          }))
-          .concat({
-            account: req.account._id,
-            type: 'ENTRY',
-          }),
-      }).populate('page')
+        $text: {
+          $search: queryArray.join(' '),
+        },
+        account: req.account._id,
+        type: 'ENTRY',
+      })
 
       // populate results with page
       results = await Promise.all(
@@ -52,22 +48,35 @@ router.post(
           results: {},
         }
 
-        // takes in a string of words and searches if exact query is found in string
+        // checks if exact words are in result
         const isInEntry = (string, regex) =>
           string
-            .split(/ |-|\n/)
-            .map(s => s.replace(/[^a-z0-9À-ú]/gi, ''))
-            .reduce(
-              (bool, string) => (string.match(regex) ? true : bool),
-              false
-            )
+            .replace(/[^a-z0-9À-ú ]/gi, '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .match(regex)
 
         /*
         compose results
         */
         _results = results.reduce((acc, curr) => {
           // create regEx or operator to find exact word match
-          const searchstring = new RegExp(`^${queryArray.join('|')}$`, 'i')
+
+          const searchstring = new RegExp(
+            queryArray.length > 1
+              ? `^${queryArray
+                  .map(
+                    q =>
+                      `(?=.*\\b${q
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')}\\b.*)`
+                  )
+                  .join('')}.*$`
+              : `\\b${queryArray[0]
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')}\\b`,
+            'i'
+          )
 
           // only show results with associated pages
           if (!curr.page) {

@@ -51,8 +51,8 @@ const Element = ({ attributes, children, element }) => {
   const isBlockHeader = element.type === 'TOPIC' || element.type === 'SOURCE'
 
   // spellcheck is debounced on element change
-  let [spellCheck, setSpellCheck] = useState(true)
-  let spellCheckTimeoutRef = useRef()
+  const [spellCheck, setSpellCheck] = useState(true)
+  const spellCheckTimeoutRef = useRef()
 
   useEffect(
     () => {
