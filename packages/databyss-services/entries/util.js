@@ -37,7 +37,7 @@ export const createIndexPageEntries = ({ text, type, id, citations }) =>
   })
 
 export const sortEntriesAtoZ = (entries, sortBy) =>
-  entries.sort(
+  entries?.sort(
     (a, b) => (a[sortBy]?.toLowerCase() > b[sortBy]?.toLowerCase() ? 1 : -1)
   )
 

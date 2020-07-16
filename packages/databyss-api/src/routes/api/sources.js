@@ -81,7 +81,7 @@ router.get(
       const sourcesCitationsDict = {
         text: block.text.textValue,
         citations: block.detail?.citations,
-        author: block.detail?.authors[0],
+        authors: block.detail?.authors,
       }
       return sourcesCitationsDict
     })
