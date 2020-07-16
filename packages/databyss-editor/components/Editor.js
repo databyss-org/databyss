@@ -41,11 +41,11 @@ const Editor = ({
       // search each word individually
       const _searchTerm = searchTerm.split(' ')
 
-      //  console.log(_searchTerm)
       _searchTerm.forEach(word => {
         if (word && Text.isText(node)) {
           const { text } = node
 
+          // normalize diactritics
           const parts = text
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')

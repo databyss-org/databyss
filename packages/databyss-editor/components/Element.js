@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
-import { debounce } from 'lodash'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'

@@ -19,10 +19,6 @@ router.post(
         .replace(/[^a-z0-9À-ú -]/gi, '')
         .split(' ')
 
-      console.log(queryArray)
-
-      //  const queryArray = req.params.string.split(' ')
-
       // use the $and operator to find regEx for multiple search words
       let results = await Block.find({
         $and: queryArray
@@ -37,7 +33,6 @@ router.post(
           }),
       }).populate('page')
 
-      console.log(results)
       // populate results with page
       results = await Promise.all(
         results.map(async r => {
