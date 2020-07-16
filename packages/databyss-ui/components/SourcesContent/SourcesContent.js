@@ -11,7 +11,7 @@ export const SourcesRouter = () => (
   <Router>
     <SourcesContent path="/" />
     <AuthorsContent path="/authors" />
-    <AuthorCitations path="/authors/:query" />
+    <AuthorCitations path=":query" />
   </Router>
 )
 

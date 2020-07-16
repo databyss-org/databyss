@@ -8,8 +8,8 @@ import IndexPageEntries from '../PageContent/IndexPageEntries'
 const AuthorCitations = () => {
   const { query } = useParams()
   const params = new URLSearchParams(query)
-  const authorQueryFirstName = params.get('firstName')
-  const authorQueryLastName = params.get('lastName')
+  const authorQueryFirstName = params.get('author_first')
+  const authorQueryLastName = params.get('author_last')
 
   const composeAuthorName = (firstName, lastName) => {
     if (firstName && lastName) {
