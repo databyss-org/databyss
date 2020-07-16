@@ -3,9 +3,10 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import {
   sortEntriesAtoZ,
   filterEntries,
-} from '@databyss-org/services/sources/util'
+  createSidebarListItems,
+} from '@databyss-org/services/entries/util'
 import { AuthorsLoader } from '@databyss-org/ui/components/Loaders'
-import SidebarList from '../../../components/Sidebar/SidebarList'
+import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 
 const sourcesOverview = [
   {
@@ -40,13 +41,13 @@ const Sources = ({ filterQuery }) => (
           author_last: encodeURIComponent(lastName),
         })
 
-        return {
+        return createSidebarListItems({
           text: getShortAuthorName(),
           type: 'authors',
           route: '/sources',
           params: authorParams.toString(),
           icon: <AuthorSvg />,
-        }
+        })
       })
 
       const sortedAuthors = sortEntriesAtoZ(authorData, 'text')

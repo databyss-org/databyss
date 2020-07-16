@@ -1,7 +1,10 @@
 import React from 'react'
 import { Router } from '@reach/router'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
-import { sortEntriesAtoZ } from '@databyss-org/services/sources/util'
+import {
+  sortEntriesAtoZ,
+  createIndexPageEntries,
+} from '@databyss-org/services/entries/util'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
 
@@ -14,11 +17,14 @@ export const TopicsRouter = () => (
 const TopicsContent = () => (
   <AllTopicsLoader>
     {topics => {
-      const topicsData = Object.values(topics).map(value => ({
-        text: value.text.textValue,
-        id: value._id,
-      }))
+      const topicsData = Object.values(topics).map(value =>
+        createIndexPageEntries({
+          text: value.text.textValue,
+          id: value._id,
+        })
+      )
       const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
+
       return (
         <IndexPageContent title="All Topics">
           <IndexPageEntries entries={sortedTopics} />

@@ -1,5 +1,8 @@
 import React from 'react'
-import { sortEntriesAtoZ } from '@databyss-org/services/sources/util'
+import {
+  sortEntriesAtoZ,
+  createIndexPageEntries,
+} from '@databyss-org/services/entries/util'
 import { AuthorsLoader } from '@databyss-org/ui/components/Loaders'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
@@ -10,10 +13,10 @@ const AuthorsContent = () => (
       const authorData = Object.values(authors).map(value => {
         const firstName = value.firstName?.textValue
         const lastName = value.lastName?.textValue
-        return {
+        return createIndexPageEntries({
           text: `${lastName}${firstName && `, ${firstName}`}`,
           type: 'authors',
-        }
+        })
       })
       const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
 
