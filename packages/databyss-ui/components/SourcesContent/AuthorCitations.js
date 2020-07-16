@@ -26,13 +26,13 @@ const AuthorCitations = () => {
       {sourceCitations => {
         const authorCitationsData = Object.values(sourceCitations).map(
           value => {
-            const authorFirstName = value.author?.firstName?.textValue
-            const authorLastName = value.author?.lastName?.textValue
+            const isCurrentAuthor = value.authors.some(
+              author =>
+                author.firstName?.textValue === authorQueryFirstName &&
+                author.lastName?.textValue === authorQueryLastName
+            )
 
-            if (
-              authorFirstName === authorQueryFirstName &&
-              authorLastName === authorQueryLastName
-            ) {
+            if (isCurrentAuthor) {
               return createIndexPageEntries({
                 text: value.text,
                 citations: value.citations?.map(
