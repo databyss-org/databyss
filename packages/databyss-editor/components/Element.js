@@ -146,9 +146,7 @@ const Element = ({ attributes, children, element }) => {
               )}
             </View>
           ) : (
-            <Text onChange={() => console.log('text.change')} {...attributes}>
-              {children}
-            </Text>
+            <Text {...attributes}>{children}</Text>
           )}
         </View>
       )

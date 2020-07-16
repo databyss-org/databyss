@@ -37,6 +37,10 @@ const PageBody = ({ page, focusIndex, onNavigateUpFromEditor, editorRef }) => {
     []
   )
 
+  stack = []
+
+  stack.push({ inverse, patch })
+
   // state from provider is out of date
   const onChange = value => {
     pageState.current = value.nextState
