@@ -36,14 +36,14 @@ const Sources = ({ filterQuery }) => (
         }
 
         const authorParams = new URLSearchParams({
-          firstName: encodeURIComponent(firstName),
-          lastName: encodeURIComponent(lastName),
+          author_first: encodeURIComponent(firstName),
+          author_last: encodeURIComponent(lastName),
         })
 
         return {
           text: getShortAuthorName(),
           type: 'authors',
-          route: '/sources/authors',
+          route: '/sources',
           params: authorParams.toString(),
           icon: <AuthorSvg />,
         }
