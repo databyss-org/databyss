@@ -39,7 +39,6 @@ const Search = ({ onClick }) => {
   )
 
   const onChange = val => {
-    // TODO: URL ENCODE SEARCH
     setQuery(val)
   }
 
