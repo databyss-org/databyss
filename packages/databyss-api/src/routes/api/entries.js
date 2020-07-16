@@ -17,8 +17,6 @@ router.post(
       // todo: regex escape function
       const queryArray = req.body.data
         .replace(/[^a-z0-9À-ú- ]/gi, '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
         .split(' ')
 
       let results = await Block.find({
@@ -85,8 +83,6 @@ router.post(
           }
 
           const pageId = curr.page._id.toString()
-
-          // console.log('accumulater', acc)
 
           if (!acc.results[pageId]) {
             // bail if not exact word in entry
