@@ -16,7 +16,7 @@ router.post(
     try {
       // todo: regex escape function
       const queryArray = req.body.data
-        .replace(/[^a-z0-9À-ú - ]/gi, '')
+        .replace(/[^a-z0-9À-ú- ]/gi, '')
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .split(' ')
@@ -51,7 +51,7 @@ router.post(
         // checks if exact words are in result
         const isInEntry = (string, regex) =>
           string
-            .replace(/[^a-z0-9À-ú ]/gi, '')
+            .replace(/[^a-z0-9À-ú- ]/gi, '')
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
             .match(regex)
