@@ -1,6 +1,9 @@
 import React from 'react'
 import { useParams } from '@reach/router'
-import { sortEntriesAtoZ } from '@databyss-org/services/sources/util'
+import {
+  sortEntriesAtoZ,
+  createIndexPageEntries,
+} from '@databyss-org/services/entries/util'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import IndexPageContent from '../PageContent/IndexPageContent'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
@@ -30,13 +33,13 @@ const AuthorCitations = () => {
               authorFirstName === authorQueryFirstName &&
               authorLastName === authorQueryLastName
             ) {
-              return {
+              return createIndexPageEntries({
                 text: value.text,
                 citations: value.citations?.map(
                   citation => citation.text?.textValue
                 ),
                 type: 'authors',
-              }
+              })
             }
             return {}
           }

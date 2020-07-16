@@ -11,6 +11,7 @@ const IndexPageEntries = ({ entries }) =>
             mx="em"
             hoverColor="background.2"
             activeColor="background.3"
+            userSelect="auto"
           >
             <Text
               variant={
