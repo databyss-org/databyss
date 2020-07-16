@@ -4,7 +4,7 @@ import { pxUnits } from '@databyss-org/ui/theming/views'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
-import TopicSvg from '@databyss-org/ui/assets/topic.svg'
+import TopicsSvg from '@databyss-org/ui/assets/topics.svg'
 import {
   Text,
   View,
@@ -19,7 +19,7 @@ const menuSvgs = type =>
     pages: <PageSvg />,
     sources: <SourcesSvg />,
     authors: <AuthorsSvg />,
-    topics: <TopicSvg />,
+    topics: <TopicsSvg />,
   }[type])
 
 const SidebarList = ({ menuItems }) => {
