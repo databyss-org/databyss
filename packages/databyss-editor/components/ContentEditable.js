@@ -21,6 +21,7 @@ import { getSelectedIndicies, isAtomic, isEmpty } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
+import { useHistoryContext } from '../history/EditorHistory'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -36,6 +37,7 @@ const ContentEditable = ({
   const setSource = useSourceContext(c => c && c.setSource)
 
   const topicContext = useTopicContext()
+  const { undo } = useHistoryContext()
 
   const {
     state,
@@ -115,6 +117,12 @@ const ContentEditable = ({
   const inDeadKey = useRef(false)
 
   const onKeyDown = event => {
+    if (Hotkeys.isUndo(event)) {
+      event.preventDefault()
+      undo()
+      return
+    }
+
     // UI
     if (event.key === 'ArrowUp') {
       const _currentIndex = editor.selection.focus.path[0]
@@ -292,6 +300,7 @@ const ContentEditable = ({
       })
       return
     }
+
     if (value.length > valueRef.current.length) {
       // block was added, so do a split
       split({
@@ -358,7 +367,7 @@ const ContentEditable = ({
       })
     }
 
-    if (editor.operations.length) {
+    if (editor.operations.length && !_.isEqual(state.selection, selection)) {
       setSelection(selection)
     }
   }

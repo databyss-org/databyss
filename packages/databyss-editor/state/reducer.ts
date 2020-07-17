@@ -91,8 +91,13 @@ export default (
 
       switch (action.type) {
         case APPLY_PATCH: {
-          applyPatches(draft, payload.patches.reverse())
+          applyPatches(draft, payload.patches.reverse().filter(
+            p => p.path[0] === 'blocks'
+             || p.path[0] === 'selection'
+          )
+        )
           draft.operations.reloadAll = true
+
           break
         }
         case CUT: {
@@ -407,10 +412,7 @@ export default (
   )
 
   if (onChange) {
-    onChange({ previousState: state, nextState,...(action.type !== APPLY_PATCH ? {patches, inversePatches} : {
-			patches: [],
-			inversePatches: []
-		}) })
+    onChange({ previousState: state, nextState, patches, inversePatches, historyAction: action.type === APPLY_PATCH })
   }
 
   return nextState

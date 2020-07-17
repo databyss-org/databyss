@@ -70,6 +70,7 @@ export type OnChangeArgs = {
   previousState: EditorState
   patches: Patch[]
   inversePatches: Patch[]
+  historyAction: boolean
 }
 
 export interface RefInputHandles {

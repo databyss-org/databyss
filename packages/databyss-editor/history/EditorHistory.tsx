@@ -47,18 +47,21 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
   const forkOnChange = ({
     inversePatches,
     patches,
+    historyAction,
     ...others
   }: OnChangeArgs) => {
     const { onChange } = children.props
     // push to a patch batch
-    undoPatchQueue.current = undoPatchQueue.current.concat(
-      inversePatches.filter(
-        p => p.path[0] === 'blocks'
-        // || p.path[0] === 'selection'
+    if (!historyAction) {
+      undoPatchQueue.current = undoPatchQueue.current.concat(
+        inversePatches.filter(
+          p => p.path[0] === 'blocks' || p.path[0] === 'selection'
+        )
       )
-    )
-    // group events on a throttle
-    trottleUndoStack()
+      // group events on a throttle
+      trottleUndoStack()
+    }
+
     onChange({ inversePatches, patches, ...others })
   }
 
