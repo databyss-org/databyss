@@ -1,4 +1,9 @@
-import React, { createContext, useContext } from 'react'
+import React, {
+  createContext,
+  useContext,
+  forwardRef,
+  useImperativeHandle,
+} from 'react'
 import ReactDOMServer from 'react-dom/server'
 import { Patch } from 'immer'
 import createReducer from '@databyss-org/services/lib/createReducer'
@@ -25,6 +30,7 @@ import {
   databyssFragToHtmlString,
   cutOrCopyEventHandler,
 } from '../lib/clipboardUtils'
+import { Function } from '@babel/types'
 
 export type Transform = {
   // current selection
@@ -65,8 +71,13 @@ export type OnChangeArgs = {
   inversePatches: Patch[]
 }
 
+export interface RefInputHandles {
+  applyPatch(): void
+}
+
 type PropsType = {
   children: JSX.Element
+  ref?: React.RefObject<RefInputHandles>
   initialState: EditorState
   onChange: (args: OnChangeArgs) => void
 }
@@ -75,154 +86,159 @@ const useReducer = createReducer()
 
 export const EditorContext = createContext<ContextType | null>(null)
 
-const EditorProvider: React.FunctionComponent<PropsType> = ({
-  children,
-  initialState,
-  onChange,
-}) => {
-  const [state, dispatch] = useReducer(reducer, initialState, {
-    initializer: null,
-    name: 'EditorProvider',
-    onChange,
-  })
-
-  const setSelection = (selection: Selection) =>
-    dispatch({
-      type: SET_SELECTION,
-      payload: { selection },
+const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
+  ({ children, initialState, onChange }, ref) => {
+    const [state, dispatch] = useReducer(reducer, initialState, {
+      initializer: null,
+      name: 'EditorProvider',
+      onChange,
     })
 
-  /**
-   * Split the block at `index` into two blocks
-   * Text in `previous` becomes new text in block at `index`
-   * Text in `text` becomes new text in block after `index`
-   */
-  const split = (transform: Transform): void =>
-    dispatch({
-      type: SPLIT,
-      payload: transform,
-    })
+    useImperativeHandle(ref, () => ({
+      applyPatch: () => {
+        console.log('apply patch')
+      },
+    }))
 
-  /**
-   * Merge content into the block at `index`
-   * Expects `text` to be the merged content
-   */
-  const merge = (transform: Transform): void =>
-    dispatch({
-      type: MERGE,
-      payload: transform,
-    })
+    const setSelection = (selection: Selection) =>
+      dispatch({
+        type: SET_SELECTION,
+        payload: { selection },
+      })
 
-  /**
-   * Set block content at `index` to `text`
-   */
-  const setContent = (transformArray: TransformArray): void =>
-    dispatch({
-      type: SET_CONTENT,
-      payload: transformArray,
-    })
+    /**
+     * Split the block at `index` into two blocks
+     * Text in `previous` becomes new text in block at `index`
+     * Text in `text` becomes new text in block after `index`
+     */
+    const split = (transform: Transform): void =>
+      dispatch({
+        type: SPLIT,
+        payload: transform,
+      })
 
-  /**
-   * Remove the block at `index`
-   */
-  const remove = (index: number): void =>
-    dispatch({
-      type: REMOVE,
-      payload: { index },
-    })
+    /**
+     * Merge content into the block at `index`
+     * Expects `text` to be the merged content
+     */
+    const merge = (transform: Transform): void =>
+      dispatch({
+        type: MERGE,
+        payload: transform,
+      })
 
-  /**
-   * Clear the block at `index`
-   * resets the type to `ENTRY`
-   */
-  const clear = (index: number): void =>
-    dispatch({
-      type: CLEAR,
-      payload: { index },
-    })
+    /**
+     * Set block content at `index` to `text`
+     */
+    const setContent = (transformArray: TransformArray): void =>
+      dispatch({
+        type: SET_CONTENT,
+        payload: transformArray,
+      })
 
-  const removeEntityFromQueue = (id: number): void =>
-    dispatch({
-      type: DEQUEUE_NEW_ENTITY,
-      payload: { id },
-    })
+    /**
+     * Remove the block at `index`
+     */
+    const remove = (index: number): void =>
+      dispatch({
+        type: REMOVE,
+        payload: { index },
+      })
 
-  const cut = (e: ClipboardEvent) => {
-    const _frag = getCurrentSelection(state)
-    cutOrCopyEventHandler(e, _frag)
+    /**
+     * Clear the block at `index`
+     * resets the type to `ENTRY`
+     */
+    const clear = (index: number): void =>
+      dispatch({
+        type: CLEAR,
+        payload: { index },
+      })
 
-    dispatch({
-      type: CUT,
-    })
-  }
+    const removeEntityFromQueue = (id: number): void =>
+      dispatch({
+        type: DEQUEUE_NEW_ENTITY,
+        payload: { id },
+      })
 
-  const copy = (e: ClipboardEvent) => {
-    const _frag = getCurrentSelection(state)
-    cutOrCopyEventHandler(e, _frag)
+    const cut = (e: ClipboardEvent) => {
+      const _frag = getCurrentSelection(state)
+      cutOrCopyEventHandler(e, _frag)
 
-    dispatch({
-      type: COPY,
-    })
-  }
+      dispatch({
+        type: CUT,
+      })
+    }
 
-  const paste = (e: ClipboardEvent) => {
-    const databyssDataTransfer = e.clipboardData.getData(
-      'application/x-databyss-frag'
+    const copy = (e: ClipboardEvent) => {
+      const _frag = getCurrentSelection(state)
+      cutOrCopyEventHandler(e, _frag)
+
+      dispatch({
+        type: COPY,
+      })
+    }
+
+    const paste = (e: ClipboardEvent) => {
+      const databyssDataTransfer = e.clipboardData.getData(
+        'application/x-databyss-frag'
+      )
+
+      const plainTextDataTransfer = e.clipboardData.getData('text/plain')
+
+      // TODO: html parser for rich text
+
+      if (databyssDataTransfer) {
+        let data = JSON.parse(databyssDataTransfer)
+        data = resetIds(data)
+        dispatch({
+          type: PASTE,
+          payload: {
+            data,
+          },
+        })
+        return
+      }
+
+      if (plainTextDataTransfer) {
+        const data = plainTextToDatabyssFrag(plainTextDataTransfer)
+        dispatch({
+          type: PASTE,
+          payload: {
+            data,
+          },
+        })
+        return
+      }
+    }
+
+    return (
+      <EditorContext.Provider
+        value={{
+          state,
+          copy,
+          cut,
+          paste,
+          setSelection,
+          setContent,
+          split,
+          merge,
+          remove,
+          clear,
+          removeEntityFromQueue,
+        }}
+      >
+        {children}
+      </EditorContext.Provider>
     )
-
-    const plainTextDataTransfer = e.clipboardData.getData('text/plain')
-
-    // TODO: html parser for rich text
-
-    if (databyssDataTransfer) {
-      let data = JSON.parse(databyssDataTransfer)
-      data = resetIds(data)
-      dispatch({
-        type: PASTE,
-        payload: {
-          data,
-        },
-      })
-      return
-    }
-
-    if (plainTextDataTransfer) {
-      const data = plainTextToDatabyssFrag(plainTextDataTransfer)
-      dispatch({
-        type: PASTE,
-        payload: {
-          data,
-        },
-      })
-      return
-    }
   }
-
-  return (
-    <EditorContext.Provider
-      value={{
-        state,
-        copy,
-        cut,
-        paste,
-        setSelection,
-        setContent,
-        split,
-        merge,
-        remove,
-        clear,
-        removeEntityFromQueue,
-      }}
-    >
-      {children}
-    </EditorContext.Provider>
-  )
-}
+)
 
 export const useEditorContext = () => useContext(EditorContext)
 
 EditorProvider.defaultProps = {
   onChange: () => null,
+  // ref: PropTypes.object,
   initialState,
 }
 
