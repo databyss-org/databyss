@@ -8,14 +8,14 @@ import {
   addMetaToPatches,
 } from '@databyss-org/editor/state/util'
 
-const THROTTLE_UNDO = 1000
+const THROTTLE_UNDO = 2000
 
 type ContextType = {
   undo: () => void
   redo: () => void
 }
 
-type UndoType = Array<Patch[]>
+type UndoType = Patch[][]
 
 type PropsType = {
   children: JSX.Element
@@ -25,12 +25,21 @@ export const HistoryContext = createContext<ContextType | null>(null)
 
 const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
   const childRef = useRef<RefInputHandles>(null)
-  const patchQueue = useRef<Patch[]>([])
+  const undoPatchQueue = useRef<Patch[]>([])
   const undoStack = useRef<UndoType>([])
 
   const undo = () => {
     const _undoBatch = undoStack.current.pop()
-    console.log('IS UNDO', _undoBatch)
+
+    if (_undoBatch && _undoBatch.length && childRef.current) {
+      if (childRef.current) {
+        childRef.current.applyPatch(_undoBatch)
+      }
+    }
+
+    // if(_undoBatch?.length && childRef.current){
+    //   childRef.current?.applyPatch(_undoBatch)
+    // }
   }
 
   const redo = () => {}
@@ -41,21 +50,21 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
     ...others
   }: OnChangeArgs) => {
     const { onChange } = children.props
-    const _patches = addMetaToPatches({
-      inversePatches,
-      patches,
-      ...others,
-    })
     // push to a patch batch
-    patchQueue.current = patchQueue.current.concat(_patches)
+    undoPatchQueue.current = undoPatchQueue.current.concat(
+      inversePatches.filter(
+        p => p.path[0] === 'blocks'
+        // || p.path[0] === 'selection'
+      )
+    )
     // group events on a throttle
     trottleUndoStack()
     onChange({ inversePatches, patches, ...others })
   }
 
   const trottleUndoStack = throttle(() => {
-    undoStack.current.push(patchQueue.current)
-    patchQueue.current = []
+    undoStack.current.push(undoPatchQueue.current)
+    undoPatchQueue.current = []
   }, THROTTLE_UNDO)
 
   return (

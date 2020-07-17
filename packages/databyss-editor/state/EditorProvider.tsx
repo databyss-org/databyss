@@ -5,7 +5,7 @@ import React, {
   useImperativeHandle,
 } from 'react'
 import ReactDOMServer from 'react-dom/server'
-import { Patch } from 'immer'
+import { Patch, applyPatches } from 'immer'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import {
   SET_SELECTION,
@@ -18,6 +18,7 @@ import {
   COPY,
   CUT,
   PASTE,
+  APPLY_PATCH,
 } from './constants'
 import { Text, Selection, Block, EditorState } from '../interfaces'
 import initialState from './initialState'
@@ -72,7 +73,7 @@ export type OnChangeArgs = {
 }
 
 export interface RefInputHandles {
-  applyPatch(): void
+  applyPatch: (patches: Patch[]) => void
 }
 
 type PropsType = {
@@ -95,8 +96,11 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     })
 
     useImperativeHandle(ref, () => ({
-      applyPatch: () => {
-        console.log('apply patch')
+      applyPatch: (patches: Patch[]) => {
+        dispatch({
+          type: APPLY_PATCH,
+          payload: { patches },
+        })
       },
     }))
 

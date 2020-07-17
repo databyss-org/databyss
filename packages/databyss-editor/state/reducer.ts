@@ -1,5 +1,5 @@
 import ObjectId from 'bson-objectid'
-import { produceWithPatches, enablePatches } from 'immer'
+import { produceWithPatches, enablePatches, applyPatches } from 'immer'
 import { FSA, BlockType, Block } from '@databyss-org/services/interfaces'
 import {
   SPLIT,
@@ -11,6 +11,7 @@ import {
   DEQUEUE_NEW_ENTITY,
   PASTE,
   CUT,
+  APPLY_PATCH
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -89,6 +90,11 @@ export default (
       let nextSelection = payload?.selection
 
       switch (action.type) {
+        case APPLY_PATCH: {
+          applyPatches(draft, payload.patches.reverse())
+          draft.operations.reloadAll = true
+          break
+        }
         case CUT: {
           deleteBlocksAtSelection({ state: state, draftState: draft })
           break
@@ -399,8 +405,12 @@ export default (
       return draft
     }
   )
+
   if (onChange) {
-    onChange({ previousState: state, nextState, patches, inversePatches })
+    onChange({ previousState: state, nextState,...(action.type !== APPLY_PATCH ? {patches, inversePatches} : {
+			patches: [],
+			inversePatches: []
+		}) })
   }
 
   return nextState
