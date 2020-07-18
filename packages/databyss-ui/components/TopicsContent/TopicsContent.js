@@ -1,6 +1,7 @@
 import React from 'react'
 import { Router } from '@reach/router'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
+import TopicDetails from '@databyss-org/ui/components/TopicsContent/TopicDetails'
 import {
   sortEntriesAtoZ,
   createIndexPageEntries,
@@ -11,6 +12,7 @@ import IndexPageContent from '../PageContent/IndexPageContent'
 export const TopicsRouter = () => (
   <Router>
     <TopicsContent path="/" />
+    <TopicDetails path=":id" />
   </Router>
 )
 
