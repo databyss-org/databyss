@@ -1,4 +1,4 @@
-import { ResourcePending } from '../interfaces'
+import { ResourcePending } from '../interfaces/ResourcePending'
 
 export const resourceIsReady = resource =>
   resource &&
