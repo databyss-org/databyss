@@ -10,20 +10,41 @@ import {
   FETCH_SOURCE_CITATIONS,
   CACHE_SOURCE_CITATIONS,
 } from './constants'
-import { FSA, SourceState } from '../interfaces'
+import {
+  FSA,
+  SourceState,
+  SourceCitationHeader,
+  CacheDict,
+} from '../interfaces'
 import { ResourcePending } from '../interfaces/ResourcePending'
+import { resourceIsReady, getAuthorsFromSources } from '../lib/util'
 
 export const initialState: SourceState = {
   cache: {},
   searchCache: {},
   authorsHeaderCache: null,
-  sourceHeaderCache: null,
+  citationHeaderCache: null,
 }
 
 export default produce((draft: Draft<SourceState>, action: FSA) => {
+  let _citationHeaderCache: CacheDict<SourceCitationHeader> = {}
+
+  if (resourceIsReady(draft.citationHeaderCache)) {
+    _citationHeaderCache = draft.citationHeaderCache as CacheDict<
+      SourceCitationHeader
+    >
+  }
+
   switch (action.type) {
     case CACHE_SOURCE: {
-      draft.cache[action.payload.id] = action.payload.source
+      const _source = action.payload.source
+      draft.cache[action.payload.id] = _source
+
+      if (!resourceIsReady(_source)) {
+        _citationHeaderCache[_source] = _source
+        getAuthorsFromSources(Object.values(_citationHeaderCache))
+      }
+
       break
     }
     case CACHE_SOURCES: {
@@ -56,11 +77,14 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
       break
     }
     case FETCH_SOURCE_CITATIONS: {
-      draft.sourceHeaderCache = new ResourcePending()
+      draft.citationHeaderCache = new ResourcePending()
       break
     }
     case CACHE_SOURCE_CITATIONS: {
-      draft.sourceHeaderCache = action.payload.results
+      action.payload.results.forEach((source: SourceCitationHeader) => {
+        _citationHeaderCache[source._id] = source
+      })
+      draft.citationHeaderCache = _citationHeaderCache
       break
     }
   }

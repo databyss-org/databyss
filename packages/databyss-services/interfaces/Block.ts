@@ -26,10 +26,7 @@ export interface SourceDetail {
   citations: Citations[]
 }
 
-export interface SourceCitations {
-  text: Text
-  citations: Citations[]
-}
+export interface SourceCitationHeader extends Source {}
 
 export interface Source extends Block {
   detail: SourceDetail

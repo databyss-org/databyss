@@ -23,8 +23,10 @@ const SourcesContent = () => (
     {sourceCitations => {
       const sourcesData = Object.values(sourceCitations).map(value =>
         createIndexPageEntries({
-          text: value.text,
-          citations: value.citations?.map(citation => citation.text?.textValue),
+          text: value.text.textValue,
+          citations: value.detail.citations?.map(
+            citation => citation.text?.textValue
+          ),
           type: 'sources',
         })
       )

@@ -1,4 +1,5 @@
 import express from 'express'
+import { pick } from 'lodash'
 import Block from '../../models/Block'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
@@ -78,11 +79,13 @@ router.get(
     }
 
     const sourcesCitations = blocks.map(block => {
-      const sourcesCitationsDict = {
-        text: block.text.textValue,
-        citations: block.detail?.citations,
-        authors: block.detail?.authors,
-      }
+      const sourcesCitationsDict = pick(block, [
+        '_id',
+        'text',
+        'detail.authors',
+        'detail.citations',
+      ])
+
       return sourcesCitationsDict
     })
     return res.json(sourcesCitations)
