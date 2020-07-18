@@ -38,7 +38,10 @@ export default produce((draft: Draft<TopicState>, action: FSA) => {
       break
     }
     case CACHE_TOPIC_HEADERS: {
-      draft.headerCache = action.payload.topics
+      action.payload.topics.forEach((topic: Topic) => {
+        _headerCache[topic._id] = topic
+      })
+      draft.headerCache = _headerCache
       break
     }
   }
