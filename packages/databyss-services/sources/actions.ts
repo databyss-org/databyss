@@ -12,7 +12,7 @@ import {
   FETCH_SOURCE_CITATIONS,
   CACHE_SOURCE_CITATIONS,
 } from './constants'
-import { Source, Author, SourceCitations } from '../interfaces'
+import { Source, Author, SourceCitationHeader } from '../interfaces'
 
 export function fetchSource(id: string) {
   return async (dispatch: Function) => {
@@ -121,7 +121,7 @@ export function fetchSourceCitations() {
       type: FETCH_SOURCE_CITATIONS,
     })
     try {
-      const sourceCitations: SourceCitations[] = await services.getSourceCitations()
+      const sourceCitations: SourceCitationHeader[] = await services.getSourceCitations()
       dispatch({
         type: CACHE_SOURCE_CITATIONS,
         payload: { results: sourceCitations },

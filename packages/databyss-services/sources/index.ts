@@ -1,6 +1,6 @@
 import { httpGet, httpPost, httpDelete } from '../lib/requestApi'
 import request from '../lib/request'
-import { Source, Author, SourceCitations } from '../interfaces'
+import { Source, Author, SourceCitationHeader } from '../interfaces'
 
 // TODO: Add native versions of these
 
@@ -11,7 +11,7 @@ export const setSource = (data: Source) => httpPost('/sources', { data })
 
 export const getSources = (): Promise<Source[]> => httpGet('/sources')
 
-export const getSourceCitations = (): Promise<SourceCitations[]> =>
+export const getSourceCitations = (): Promise<SourceCitationHeader[]> =>
   httpGet('/sources/citations')
 
 export const deleteSource = (_id: string) => httpDelete(`/sources/${_id}`)

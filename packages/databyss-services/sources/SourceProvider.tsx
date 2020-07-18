@@ -8,7 +8,7 @@ import {
   Source,
   SourceState,
   Author,
-  SourceCitations,
+  SourceCitationHeader,
 } from '../interfaces'
 
 import {
@@ -33,7 +33,7 @@ interface ContextType {
   removeCacheValue: (id: string) => void
   searchSource: (query: string) => ResourceResponse<SourceSearchResults>
   getAuthors: () => ResourceResponse<Author[]>
-  getSourceCitations: () => ResourceResponse<SourceCitations[]>
+  getSourceCitations: () => ResourceResponse<SourceCitationHeader[]>
 }
 
 const useReducer = createReducer()
@@ -100,15 +100,15 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
   )
 
   const getSourceCitations = useCallback(
-    (): ResourceResponse<Author[]> => {
-      if (state.sourceHeaderCache) {
-        return state.sourceHeaderCache
+    (): ResourceResponse<SourceCitationHeader> => {
+      if (state.citationHeaderCache) {
+        return state.citationHeaderCache
       }
 
       dispatch(fetchSourceCitations())
       return null
     },
-    [state.sourceHeaderCache]
+    [state.citationHeaderCache]
   )
 
   const getAuthors = useCallback(
