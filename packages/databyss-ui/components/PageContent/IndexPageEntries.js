@@ -23,11 +23,11 @@ const IndexPageEntries = ({ entries }) =>
               {entry.text}
             </Text>
           </BaseControl>
-          {entry.citations && (
-            <Text px="small" mx="em" variant="bodySmall" color="text.2">
-              {entry.citations}
+          {entry.citations?.map((citation, i) => (
+            <Text key={i} px="small" mx="em" variant="bodySmall" color="text.2">
+              {citation}
             </Text>
-          )}
+          ))}
         </View>
       )
     }
