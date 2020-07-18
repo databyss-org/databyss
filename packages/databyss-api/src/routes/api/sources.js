@@ -1,5 +1,6 @@
 import express from 'express'
 import { pick } from 'lodash'
+import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
 import Block from '../../models/Block'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
@@ -50,14 +51,7 @@ router.get(
       return res.json([])
     }
     // group by authors and return array of authors
-    const authorsDict = blocks.reduce((dict, block) => {
-      if (block.detail) {
-        block.detail.authors.forEach(a => {
-          dict[a.firstName.textValue + a.lastName.textValue] = a
-        })
-      }
-      return dict
-    }, {})
+    const authorsDict = getAuthorsFromSources(blocks)
 
     return res.json(Object.values(authorsDict))
   })
