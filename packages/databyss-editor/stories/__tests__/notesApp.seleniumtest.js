@@ -29,8 +29,8 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('notes app', () => {
   beforeEach(async done => {
-    // OSX and safari are necessary
-    driver = await startSession('Notes app', OSX, CHROME)
+    // OSX and chrome are necessary
+    driver = await startSession({ platformName: OSX, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')

@@ -37,14 +37,11 @@ const Element = ({ attributes, children, element }) => {
     showAtomicModal({ editorContext, navigationContext, editor })
   }
 
-  const block = editorContext
-    ? editorContext.state.blocks[ReactEditor.findPath(editor, element)[0]]
+  const blockIndex = ReactEditor.findPath(editor, element)[0]
+  const block = editorContext ? editorContext.state.blocks[blockIndex] : {}
+  const previousBlock = editorContext
+    ? editorContext.state.blocks[blockIndex - 1]
     : {}
-
-  const elementIndex = ReactEditor.findPath(editor, element)[0]
-  const previousEntry = editor.children[elementIndex - 1]
-  const isPreviousBlockEntry = previousEntry?.type === 'ENTRY'
-  const isBlockHeader = element.type === 'TOPIC' || element.type === 'SOURCE'
 
   return useMemo(
     () => {
@@ -52,6 +49,9 @@ const Element = ({ attributes, children, element }) => {
       const selHasRange = selectionHasRange(
         slateSelectionToStateSelection(editor)
       )
+
+      const vpad =
+        block.type === 'ENTRY' || block.type === previousBlock?.type ? 0 : 3
 
       return (
         <View
@@ -62,7 +62,7 @@ const Element = ({ attributes, children, element }) => {
             }
           }}
           ml={element.isBlock ? blockMenuWidth : 0}
-          pt={isPreviousBlockEntry && isBlockHeader ? 'medium' : 'small'}
+          pt={vpad}
           pb="em"
           display={element.isBlock ? 'flex' : 'inline-flex'}
           maxWidth="100%"
