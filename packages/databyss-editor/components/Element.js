@@ -51,7 +51,7 @@ const Element = ({ attributes, children, element }) => {
       )
 
       const vpad =
-        block.type === 'ENTRY' || block.type === previousBlock?.type ? 0 : 2
+        block.type === 'ENTRY' || block.type === previousBlock?.type ? 0 : 3
 
       return (
         <View
