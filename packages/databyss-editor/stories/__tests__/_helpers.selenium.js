@@ -23,10 +23,6 @@ export const retry = async (asyncFunction, times = 3) => {
   }
 }
 
-export const withRetry = (asyncFunction, times = 3) => async () => {
-  await retry(asyncFunction, times)
-}
-
 export const getEditor = async driver => {
   const el = await driver.wait(
     until.elementLocated(By.tagName('[contenteditable="true"]')),
