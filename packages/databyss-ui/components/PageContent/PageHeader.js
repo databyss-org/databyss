@@ -55,9 +55,6 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
         ref={ref}
         data-test-element="page-header"
         onKeyDown={e => {
-          if (e.key === 'Enter') {
-            //     updatePageName()
-          }
           if (e.key === 'ArrowDown' || e.key === 'Enter') {
             if (onNavigateDownFromHeader) {
               e.preventDefault()
@@ -68,8 +65,8 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
         }}
         value={pageName}
         onChange={onPageNameChange}
-        placeholder="untitled"
-        variant="bodyLarge"
+        placeholder={noPageTitle}
+        variant="bodyHeading1"
         color="text.3"
         concatCss={styledCss({
           '::placeholder': {

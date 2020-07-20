@@ -1,5 +1,4 @@
 import { Platform } from 'react-native'
-import { isMobileOs } from '../lib/mediaQuery'
 
 export const serif = Platform.select({
   ios: 'Baskerville',
@@ -36,6 +35,8 @@ export const underline = Platform.select({
   android: { textDecorationLine: 'underline' },
   default: {
     textDecoration: 'underline',
+    textDecorationSkipInk: 'none',
+    textDecorationSkip: 'none',
   },
 })
 
@@ -125,7 +126,7 @@ const uiTextBoldUnderlineVariants = Object.keys(uiTextBoldVariants).reduce(
   {}
 )
 
-const bodyHeader = size => ({
+const bodyHeading = size => ({
   fontFamily: fonts.bodyFont,
   fontSize: size,
   lineHeight: pxUnits(size * 1.75),
@@ -140,10 +141,11 @@ const bodyText = size => ({
 })
 
 const bodyVariants = {
-  bodyLarge: bodyText(22),
-  bodyHeader: bodyHeader(20),
-  bodyNormal: bodyText(isMobileOs() ? 16 : 15),
-  bodySmall: bodyText(isMobileOs() ? 14 : 13),
+  bodyHeading1: bodyHeading(26),
+  bodyHeading2: bodyText(22),
+  bodyHeading3: bodyText(18),
+  bodyNormal: bodyText(16),
+  bodySmall: bodyText(14),
 }
 
 const bodyBoldVariants = Object.keys(bodyVariants).reduce(

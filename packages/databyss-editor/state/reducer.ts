@@ -405,6 +405,5 @@ export default (
   if (onChange) {
     onChange({ previousState: state, nextState, patches, inversePatches })
   }
-
   return nextState
 }

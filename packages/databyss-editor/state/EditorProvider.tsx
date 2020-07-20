@@ -14,7 +14,7 @@ import {
   CUT,
   PASTE,
 } from './constants'
-import { Text, Selection, Block, EditorState } from '../interfaces'
+import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
 import {

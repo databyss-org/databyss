@@ -35,7 +35,7 @@ describe('offline testing in editor', () => {
   beforeEach(async done => {
     // https://wiki.saucelabs.com/display/DOCS/Custom+Sauce+Labs+WebDriver+Extensions+for+Network+and+Log+Commands
     // Offline scripts only available in chrome
-    driver = await startSession('Slate 5 - offline', OSX, CHROME)
+    driver = await startSession({ platformName: OSX, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')

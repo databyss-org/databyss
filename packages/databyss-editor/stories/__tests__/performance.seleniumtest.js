@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 // import { By, Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, OSX, SAFARI } from '@databyss-org/ui/lib/saucelabs'
+import { startSession } from '@databyss-org/ui/lib/saucelabs'
 // import { jsx as h } from './hyperscript'
 // import { sanitizeEditorChildren } from './__helpers'
 import {
@@ -35,7 +35,7 @@ const PROXY_URL =
 describe('editor performance', () => {
   beforeEach(async done => {
     // OSX and safari are necessary
-    driver = await startSession('Slate-5-basic-osx-safari', OSX, SAFARI)
+    driver = await startSession()
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
     await sleep(1000)
     // editor = await getEditor(driver)

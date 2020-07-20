@@ -97,7 +97,7 @@ export default () => (
     <Section title="Body Text">
       <Grid>
         <View mr="medium">
-          <TextVariant variant="bodyLarge">BodyLarge</TextVariant>
+          <TextVariant variant="bodyHeading3">bodyHeading3</TextVariant>
           <TextVariant variant="bodyNormal">BodyNormal</TextVariant>
           <TextVariant variant="bodySmall">BodySmall</TextVariant>
         </View>
