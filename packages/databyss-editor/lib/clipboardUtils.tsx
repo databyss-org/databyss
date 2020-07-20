@@ -187,8 +187,7 @@ export const getFragmentForCurrentSelection = (state: EditorState): Block[] => {
       }
       // get in between frags
       else if (index > anchor.index && index < focus.index) {
-        const _sliceLength = focus.index - anchor.index
-
+        const _sliceLength = focus.index - anchor.index - 1
         if (_sliceLength > 1) {
           _blocks
             .splice(anchor.index + 1, _sliceLength - 1)
@@ -221,6 +220,7 @@ export const getFragmentForCurrentSelection = (state: EditorState): Block[] => {
   // add metadata
   frag = addBlockUIFields(frag)
 
+  console.log(frag)
   return frag
 }
 
