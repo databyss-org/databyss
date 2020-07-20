@@ -13,8 +13,11 @@ import { slateSelectionToStateSelection } from '../lib/slateUtils'
 import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import CitationsMenu from './CitationsMenu'
+<<<<<<< HEAD
 
 const SPELLCHECK_DEBOUNCE_TIME = 1000
+=======
+>>>>>>> master
 
 export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeading3Underline', TOPIC: 'bodyHeading2' }[type])
@@ -41,14 +44,12 @@ const Element = ({ attributes, children, element }) => {
     showAtomicModal({ editorContext, navigationContext, editor })
   }
 
-  const block = editorContext
-    ? editorContext.state.blocks[ReactEditor.findPath(editor, element)[0]]
+  const blockIndex = ReactEditor.findPath(editor, element)[0]
+  const block = editorContext ? editorContext.state.blocks[blockIndex] : {}
+  const previousBlock = editorContext
+    ? editorContext.state.blocks[blockIndex - 1]
     : {}
 
-  const elementIndex = ReactEditor.findPath(editor, element)[0]
-  const previousEntry = editor.children[elementIndex - 1]
-  const isPreviousBlockEntry = previousEntry?.type === 'ENTRY'
-  const isBlockHeader = element.type === 'TOPIC' || element.type === 'SOURCE'
 
   // spellcheck is debounced on element change
   const [spellCheck, setSpellCheck] = useState(true)
@@ -76,6 +77,9 @@ const Element = ({ attributes, children, element }) => {
         slateSelectionToStateSelection(editor)
       )
 
+      const vpad =
+        block.type === 'ENTRY' || block.type === previousBlock?.type ? 0 : 3
+
       return (
         <View
           ref={ref => {
@@ -85,7 +89,7 @@ const Element = ({ attributes, children, element }) => {
             }
           }}
           ml={element.isBlock ? blockMenuWidth : 0}
-          pt={isPreviousBlockEntry && isBlockHeader ? 'medium' : 'small'}
+          pt={vpad}
           pb="em"
           display={element.isBlock ? 'flex' : 'inline-flex'}
           spellCheck={spellCheck}
