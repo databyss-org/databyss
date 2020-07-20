@@ -13,11 +13,8 @@ import { slateSelectionToStateSelection } from '../lib/slateUtils'
 import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import CitationsMenu from './CitationsMenu'
-<<<<<<< HEAD
 
 const SPELLCHECK_DEBOUNCE_TIME = 1000
-=======
->>>>>>> master
 
 export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeading3Underline', TOPIC: 'bodyHeading2' }[type])
@@ -49,7 +46,6 @@ const Element = ({ attributes, children, element }) => {
   const previousBlock = editorContext
     ? editorContext.state.blocks[blockIndex - 1]
     : {}
-
 
   // spellcheck is debounced on element change
   const [spellCheck, setSpellCheck] = useState(true)
