@@ -16,6 +16,8 @@ please see our [CONTRIBUTING](CONTRIBUTING.md) guide.
 - [databyss-services](packages/databyss-services)
 - [databyss-stories-native](packages/databyss-stories-native)
 - [databyss-ui](packages/databyss-ui)
+- [databyss-api](packages/databyss-api)
+- [databyss-pdf-api](packages/databyss-pdf-api)
 
 ## Available Scripts
 
@@ -57,6 +59,10 @@ cf `seed:testdb`
 
 `> yarn seed:testdb`  
 Deletes the TEST database and resets it with some sample data. You must run `start:server:test` before running this.
+
+`> yarn start:pdf-api:test`  
+Starts the PDF annotations parsing webservice locally.
+
 
 ### Testing
 
