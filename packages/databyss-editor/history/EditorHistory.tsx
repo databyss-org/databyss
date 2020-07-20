@@ -51,13 +51,18 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
     ...others
   }: OnChangeArgs) => {
     const { onChange } = children.props
+
     // push to a patch batch
     if (!historyAction) {
+      // filter out any path that doesnt contain `blocks` or `selection` and does not contain `__` metadata
       undoPatchQueue.current = undoPatchQueue.current.concat(
         inversePatches.filter(
-          p => p.path[0] === 'blocks' || p.path[0] === 'selection'
+          p =>
+            (p.path[0] === 'blocks' || p.path[0] === 'selection') &&
+            !p.path.find(_p => typeof _p === 'string' && _p.search('__') !== -1)
         )
       )
+
       // group events on a throttle
       trottleUndoStack()
     }

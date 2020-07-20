@@ -91,11 +91,21 @@ export default (
 
       switch (action.type) {
         case APPLY_PATCH: {
-          applyPatches(draft, payload.patches.reverse().filter(
-            p => p.path[0] === 'blocks'
-             || p.path[0] === 'selection'
-          )
-        )
+          // todo: if selection is included in in patches payload, remove all selection patches, and append latest selection patches except for the last one
+          payload.patches.forEach(p=> {
+            if(p.path[0] === 'blocks'
+            || p.path[0] === 'selection'){
+              console.log(p)
+             applyPatches(draft, [p] )
+            }
+          })
+        //   applyPatches(draft, payload.patches
+        //    // .reverse()
+        //     .filter(
+        //     p => p.path[0] === 'blocks'
+        //      || p.path[0] === 'selection'
+        //   )
+        // )
           draft.operations.reloadAll = true
 
           break
