@@ -137,8 +137,6 @@ export const getFragmentForCurrentSelection = (state: EditorState): Block[] => {
 
   const { anchor, focus } = sortSelection(selection)
 
-  const _blocks = cloneDeep(blocks)
-
   // if selection is within the same block
   if (anchor.index === focus.index) {
     const _selectionLength = focus.offset - anchor.offset
@@ -168,7 +166,7 @@ export const getFragmentForCurrentSelection = (state: EditorState): Block[] => {
 
   // if selection is more than one block
   if (anchor.index < focus.index) {
-    blocks.forEach((block, index) => {
+    blocks.forEach((block: Block, index: number) => {
       // first block
       if (index === anchor.index) {
         const { after: firstBlock } = isAtomicInlineType(block.type)
@@ -187,17 +185,14 @@ export const getFragmentForCurrentSelection = (state: EditorState): Block[] => {
       }
       // get in between frags
       else if (index > anchor.index && index < focus.index) {
-        const _sliceLength = focus.index - anchor.index - 1
+        const _sliceLength = focus.index - anchor.index
+        //   console.log(_sliceLength)
         if (_sliceLength > 1) {
-          _blocks
-            .splice(anchor.index + 1, _sliceLength - 1)
-            .forEach((b: Block) => {
-              frag.push({
-                text: b.text,
-                type: b.type,
-                _id: fragmentId(b.type, b._id),
-              })
-            })
+          frag.push({
+            text: block.text,
+            type: block.type,
+            _id: fragmentId(block.type, block._id),
+          })
         }
       }
 
@@ -220,7 +215,6 @@ export const getFragmentForCurrentSelection = (state: EditorState): Block[] => {
   // add metadata
   frag = addBlockUIFields(frag)
 
-  console.log(frag)
   return frag
 }
 
