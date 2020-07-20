@@ -18,12 +18,13 @@ import { Text, Selection, Block, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
 import {
-  getCurrentSelection,
+  getFragmentForCurrentSelection,
   resetIds,
   databyssFragToPlainText,
   plainTextToDatabyssFrag,
   databyssFragToHtmlString,
   cutOrCopyEventHandler,
+  pasteEventHandler,
 } from '../lib/clipboardUtils'
 
 export type Transform = {
@@ -148,7 +149,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
     })
 
   const cut = (e: ClipboardEvent) => {
-    const _frag = getCurrentSelection(state)
+    const _frag = getFragmentForCurrentSelection(state)
     cutOrCopyEventHandler(e, _frag)
 
     dispatch({
@@ -157,7 +158,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
   }
 
   const copy = (e: ClipboardEvent) => {
-    const _frag = getCurrentSelection(state)
+    const _frag = getFragmentForCurrentSelection(state)
     cutOrCopyEventHandler(e, _frag)
 
     dispatch({
@@ -166,35 +167,14 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
   }
 
   const paste = (e: ClipboardEvent) => {
-    const databyssDataTransfer = e.clipboardData.getData(
-      'application/x-databyss-frag'
-    )
-
-    const plainTextDataTransfer = e.clipboardData.getData('text/plain')
-
-    // TODO: html parser for rich text
-
-    if (databyssDataTransfer) {
-      let data = JSON.parse(databyssDataTransfer)
-      data = resetIds(data)
+    const data = pasteEventHandler(e)
+    if (data) {
       dispatch({
         type: PASTE,
         payload: {
           data,
         },
       })
-      return
-    }
-
-    if (plainTextDataTransfer) {
-      const data = plainTextToDatabyssFrag(plainTextDataTransfer)
-      dispatch({
-        type: PASTE,
-        payload: {
-          data,
-        },
-      })
-      return
     }
   }
 

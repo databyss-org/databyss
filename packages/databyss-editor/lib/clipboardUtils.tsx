@@ -16,7 +16,7 @@ interface SplitBlocks {
   after: BasicBlock | null
 }
 
-// returns before and after value for block split at index `offset`
+// returns before and after value for block split at `offset`
 const splitBlockAtOffset = ({
   block,
   offset,
@@ -25,14 +25,11 @@ const splitBlockAtOffset = ({
   offset: number
 }): SplitBlocks => {
   // if entire atomic is selected
-  if (
-    isAtomicInlineType(block.type) &&
-    offset !== 0
-    // offset !== block.text.textValue.length
-  ) {
+  if (isAtomicInlineType(block.type) && offset !== 0) {
     return { before: { text: block.text, type: block.type }, after: null }
   }
-  // if first block is atomic return
+
+  // if offset is at start of block, return block value
   if (offset === 0) {
     return { before: null, after: { text: block.text, type: block.type } }
   }
@@ -102,36 +99,34 @@ export const isSelectionCollapsed = (selection: Selection): boolean => {
 }
 
 // return atomic or new id
-const getId = (type: BlockType, id: string): string =>
+const fragmentId = (type: BlockType, id: string): string =>
   isAtomicInlineType(type) ? id : new ObjectId().toHexString()
 
 // takes blocks array and resets the id's for non atomic types
 export const resetIds = (fragment: Block[]): Block[] =>
-  fragment.map(block => ({ ...block, _id: getId(block.type, block._id) }))
+  fragment.map(block => ({ ...block, _id: fragmentId(block.type, block._id) }))
 
-const addBlockData = (frag: Block[]): Block[] =>
+const addBlockUIFields = (frag: Block[]): Block[] =>
   frag.map(b => ({ ...b, __showNewBlockMenu: false, __isActive: false }))
 
 // always have the anchor come before the focus
 export const sortSelection = (selection: Selection): Selection => {
   const { anchor, focus } = selection
-  let _anchor = anchor
-  let _focus = focus
-  // always put anchor before focus
-  if (anchor.index > focus.index) {
-    _focus = [_anchor, (_anchor = _focus)][0]
-  } else if (anchor.offset > focus.offset && anchor.index === focus.index) {
-    _focus = [_anchor, (_anchor = _focus)][0]
-  }
 
-  return {
-    anchor: _anchor,
-    focus: _focus,
+  if (
+    anchor.index > focus.index ||
+    (anchor.offset > focus.offset && anchor.index === focus.index)
+  ) {
+    return {
+      anchor: focus,
+      focus: anchor,
+    }
   }
+  return { anchor, focus }
 }
 
 // returns fragment in state selection
-export const getCurrentSelection = (state: EditorState): Block[] => {
+export const getFragmentForCurrentSelection = (state: EditorState): Block[] => {
   if (isSelectionCollapsed(state.selection)) {
     return []
   }
@@ -164,106 +159,120 @@ export const getCurrentSelection = (state: EditorState): Block[] => {
     const _frag = _secondSplit || _firstSplit
 
     if (_frag) {
-      frag.push({ ..._frag, _id: getId(_frag.type, blocks[anchor.index]._id) })
+      frag.push({
+        ..._frag,
+        _id: fragmentId(_frag.type, blocks[anchor.index]._id),
+      })
     }
   }
 
   // if selection is more than one block
   if (anchor.index < focus.index) {
-    // first block
-    const { after: firstBlock } = isAtomicInlineType(blocks[anchor.index].type)
-      ? { after: blocks[anchor.index] }
-      : splitBlockAtOffset({
-          block: blocks[anchor.index],
-          offset: anchor.offset,
+    blocks.forEach((block, index) => {
+      // first block
+      if (index === anchor.index) {
+        const { after: firstBlock } = isAtomicInlineType(block.type)
+          ? { after: block }
+          : splitBlockAtOffset({
+              block: block,
+              offset: anchor.offset,
+            })
+
+        if (firstBlock) {
+          frag.push({
+            ...firstBlock,
+            _id: fragmentId(firstBlock.type, block._id),
+          })
+        }
+      }
+      // get in between frags
+      else if (index > anchor.index && index < focus.index) {
+        const _sliceLength = focus.index - anchor.index
+
+        if (_sliceLength > 1) {
+          _blocks
+            .splice(anchor.index + 1, _sliceLength - 1)
+            .forEach((b: Block) => {
+              frag.push({
+                text: b.text,
+                type: b.type,
+                _id: fragmentId(b.type, b._id),
+              })
+            })
+        }
+      }
+
+      // last block
+      else if (index === focus.index) {
+        const { before: lastBlock } = splitBlockAtOffset({
+          block: block,
+          offset: focus.offset,
         })
 
-    if (firstBlock) {
-      frag.push({
-        ...firstBlock,
-        _id: getId(firstBlock.type, blocks[anchor.index]._id),
-      })
-    }
-
-    const _sliceLength = focus.index - anchor.index
-
-    if (_sliceLength > 1) {
-      _blocks.splice(anchor.index + 1, _sliceLength - 1).forEach((b: Block) => {
-        frag.push({ text: b.text, type: b.type, _id: getId(b.type, b._id) })
-      })
-    }
-
-    // get in between frags
-    const { before: lastBlock } = splitBlockAtOffset({
-      block: blocks[focus.index],
-      offset: focus.offset,
+        if (lastBlock) {
+          frag.push({
+            ...lastBlock,
+            _id: fragmentId(lastBlock.type, block._id),
+          })
+        }
+      }
     })
-
-    if (lastBlock) {
-      frag.push({
-        ...lastBlock,
-        _id: getId(lastBlock.type, blocks[focus.index]._id),
-      })
-    }
   }
   // add metadata
-  frag = addBlockData(frag)
+  frag = addBlockUIFields(frag)
 
   return frag
 }
 
-const mergeBlocks = ({
-  firstBlock,
-  secondBlock,
-}: {
-  firstBlock: BasicBlock | Block
-  secondBlock: BasicBlock | Block
-}): BasicBlock => {
-  const mergedTextValue = firstBlock.text.textValue + secondBlock.text.textValue
+const mergeText = ({ a, b }: { a: Text; b: Text }): Text => {
+  const mergedTextValue = a.textValue + b.textValue
 
   const mergedRanges = [
-    ...firstBlock.text.ranges,
-    ...secondBlock.text.ranges.map((r: Range) => ({
+    ...a.ranges,
+    ...b.ranges.map((r: Range) => ({
       ...r,
-      offset: r.offset + firstBlock.text.textValue.length,
+      offset: r.offset + a.textValue.length,
     })),
   ].filter(r => r.length > 0)
 
-  const mergedBlock = {
-    text: {
-      textValue: mergedTextValue,
-      ranges: mergedRanges,
-    },
-    type: firstBlock.type,
+  const mergedText = {
+    textValue: mergedTextValue,
+    ranges: mergedRanges,
   }
 
-  return mergedBlock
+  return mergedText
 }
 
-export const insertBlockAtIndex = ({
+export const insertText = ({
   block,
-  blockToInsert,
+  text,
   index,
 }: {
   block: Block
-  blockToInsert: Block
+  text: Text
   index: number
 }): Block => {
   const splitBlock = splitBlockAtOffset({ block, offset: index })
 
   let mergedBlock
   if (splitBlock.before) {
-    mergedBlock = mergeBlocks({
-      firstBlock: splitBlock.before,
-      secondBlock: blockToInsert,
-    })
+    mergedBlock = {
+      text: mergeText({
+        a: splitBlock.before.text,
+        b: text,
+      }),
+      type: 'ENTRY',
+    }
   }
 
   if (splitBlock.after) {
-    mergedBlock = mergeBlocks({
-      firstBlock: mergedBlock || blockToInsert,
-      secondBlock: splitBlock.after,
-    })
+    mergedBlock = {
+      text: mergeText({
+        a: mergedBlock ? mergedBlock.text : text,
+        b: splitBlock.after.text,
+      }),
+      type: 'ENTRY',
+    }
   }
   return mergedBlock
 }
@@ -319,10 +328,13 @@ export const deleteBlocksAtSelection = ({
 
       // take that result and merge it with `before` if `before` exists
       if (before && lastBlockFragment) {
-        _newBlock = mergeBlocks({
-          firstBlock: before,
-          secondBlock: lastBlockFragment,
-        })
+        _newBlock = {
+          text: mergeText({
+            a: before.text,
+            b: lastBlockFragment.text,
+          }),
+          type: 'ENTRY',
+        }
       } else if (before) {
         _newBlock = before
       } else if (lastBlockFragment) {
@@ -420,7 +432,7 @@ export const plainTextToDatabyssFrag = (text: string): Block[] => {
     type: 'ENTRY',
     _id: new ObjectId().toHexString(),
   }))
-  return addBlockData(_frag)
+  return addBlockUIFields(_frag)
 }
 
 export const databyssFragToHtmlString = (frag: Block[]): string => {
@@ -442,4 +454,29 @@ export const cutOrCopyEventHandler = (
 
   // SET HTML
   e.clipboardData.setData('text/html', databyssFragToHtmlString(fragment))
+}
+
+export const pasteEventHandler = (e: ClipboardEvent): Block[] | null => {
+  // databyss paste fragment
+  const databyssDataTransfer = e.clipboardData.getData(
+    'application/x-databyss-frag'
+  )
+
+  if (databyssDataTransfer) {
+    let data = JSON.parse(databyssDataTransfer)
+    data = resetIds(data)
+    return data
+  }
+
+  // plaintext text fragment
+  const plainTextDataTransfer = e.clipboardData.getData('text/plain')
+
+  if (plainTextDataTransfer) {
+    const data = plainTextToDatabyssFrag(plainTextDataTransfer)
+    return data
+  }
+
+  // TODO: HTML paste fragment
+
+  return null
 }
