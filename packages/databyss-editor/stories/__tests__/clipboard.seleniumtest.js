@@ -45,7 +45,7 @@ const random = Math.random()
 describe('editor clipboard', () => {
   beforeEach(async done => {
     // OSX and safari are necessary
-    driver = await startSession('Slate-5-clipboard', WIN, CHROME)
+    driver = await startSession({ platformName: WIN, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')

@@ -52,13 +52,7 @@ const Leaf = ({ attributes, children, leaf }) => {
 
   if (leaf.location) {
     _children = (
-      <View
-        {...attributes}
-        borderBottom="1px dashed"
-        borderColor="text.4"
-        display="inline"
-        borderRadius={0}
-      >
+      <View {...attributes} color="text.3" display="inline" borderRadius={0}>
         {_children}
       </View>
     )

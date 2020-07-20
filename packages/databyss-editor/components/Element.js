@@ -15,7 +15,7 @@ import { showAtomicModal } from '../lib/atomicModal'
 import CitationsMenu from './CitationsMenu'
 
 export const getAtomicStyle = type =>
-  ({ SOURCE: 'bodyHeaderUnderline', TOPIC: 'bodyHeader' }[type])
+  ({ SOURCE: 'bodyHeading3Underline', TOPIC: 'bodyHeading2' }[type])
 
 const Element = ({ attributes, children, element }) => {
   const entryContext = useEntryContext()
@@ -37,8 +37,10 @@ const Element = ({ attributes, children, element }) => {
     showAtomicModal({ editorContext, navigationContext, editor })
   }
 
-  const block = editorContext
-    ? editorContext.state.blocks[ReactEditor.findPath(editor, element)[0]]
+  const blockIndex = ReactEditor.findPath(editor, element)[0]
+  const block = editorContext ? editorContext.state.blocks[blockIndex] : {}
+  const previousBlock = editorContext
+    ? editorContext.state.blocks[blockIndex - 1]
     : {}
 
   return useMemo(
@@ -47,6 +49,9 @@ const Element = ({ attributes, children, element }) => {
       const selHasRange = selectionHasRange(
         slateSelectionToStateSelection(editor)
       )
+
+      const vpad =
+        block.type === 'ENTRY' || block.type === previousBlock?.type ? 0 : 3
 
       return (
         <View
@@ -57,8 +62,8 @@ const Element = ({ attributes, children, element }) => {
             }
           }}
           ml={element.isBlock ? blockMenuWidth : 0}
-          pt="small"
-          pb="small"
+          pt={vpad}
+          pb="em"
           display={element.isBlock ? 'flex' : 'inline-flex'}
           maxWidth="100%"
           position="relative"
@@ -89,7 +94,6 @@ const Element = ({ attributes, children, element }) => {
               display="inline"
               alignItems="center"
               borderRadius="default"
-              borderRadiusVariant="default"
               data-test-atomic-edit="open"
               pl="tiny"
               pr="0"

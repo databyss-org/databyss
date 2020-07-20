@@ -20,16 +20,17 @@ import {
   PASTE,
   APPLY_PATCH,
 } from './constants'
-import { Text, Selection, Block, EditorState } from '../interfaces'
+import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
 import {
-  getCurrentSelection,
+  getFragmentForCurrentSelection,
   resetIds,
   databyssFragToPlainText,
   plainTextToDatabyssFrag,
   databyssFragToHtmlString,
   cutOrCopyEventHandler,
+  pasteEventHandler,
 } from '../lib/clipboardUtils'
 import { Function } from '@babel/types'
 
@@ -131,7 +132,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
         type: MERGE,
         payload: transform,
       })
-
     /**
      * Set block content at `index` to `text`
      */
@@ -167,16 +167,15 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       })
 
     const cut = (e: ClipboardEvent) => {
-      const _frag = getCurrentSelection(state)
+      const _frag = getFragmentForCurrentSelection(state)
       cutOrCopyEventHandler(e, _frag)
-
       dispatch({
         type: CUT,
       })
     }
 
     const copy = (e: ClipboardEvent) => {
-      const _frag = getCurrentSelection(state)
+      const _frag = getFragmentForCurrentSelection(state)
       cutOrCopyEventHandler(e, _frag)
 
       dispatch({
@@ -185,35 +184,14 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     }
 
     const paste = (e: ClipboardEvent) => {
-      const databyssDataTransfer = e.clipboardData.getData(
-        'application/x-databyss-frag'
-      )
-
-      const plainTextDataTransfer = e.clipboardData.getData('text/plain')
-
-      // TODO: html parser for rich text
-
-      if (databyssDataTransfer) {
-        let data = JSON.parse(databyssDataTransfer)
-        data = resetIds(data)
+      const data = pasteEventHandler(e)
+      if (data) {
         dispatch({
           type: PASTE,
           payload: {
             data,
           },
         })
-        return
-      }
-
-      if (plainTextDataTransfer) {
-        const data = plainTextToDatabyssFrag(plainTextDataTransfer)
-        dispatch({
-          type: PASTE,
-          payload: {
-            data,
-          },
-        })
-        return
       }
     }
 

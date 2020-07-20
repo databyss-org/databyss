@@ -55,7 +55,7 @@ const EditorWithProvider = ({ initialState }) => {
 
   return (
     <View maxWidth="900px">
-      <Box>
+      <Box pt="medium">
         <EditorProvider onChange={onChange} initialState={initialState}>
           <ContentEditable onDocumentChange={onDocumentChange} autofocus />
         </EditorProvider>

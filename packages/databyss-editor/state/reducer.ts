@@ -16,7 +16,7 @@ import {
 import { isAtomicInlineType } from '../lib/util'
 import {
   isSelectionCollapsed,
-  insertBlockAtIndex,
+  insertText,
   deleteBlocksAtSelection,
   sortSelection
 } from '../lib/clipboardUtils'
@@ -107,6 +107,10 @@ export default (
         case PASTE: {
           const _frag = payload.data
 
+          if(!_frag.length){
+            break
+          }
+
           // check if paste is occuring on an atomic block
 
           const {anchor: _startAnchor} = sortSelection(state.selection)
@@ -123,7 +127,7 @@ export default (
             deleteBlocksAtSelection({ state: state, draftState: draft })
           }
 
-          if (_frag.length) {
+    
             // if fragment length is greater than 1 split blocks and insert the fragment
             const _isCurrentBlockEmpty = !draft.blocks[
               draft.selection.anchor.index
@@ -166,9 +170,9 @@ export default (
               const { blocks, selection } = draft
               const { anchor } = selection
               const _index = anchor.index
-              const _mergedBlock = insertBlockAtIndex({
+              const _mergedBlock = insertText({
                 block: blocks[_index],
-                blockToInsert: _frag[0],
+                text: _frag[0].text,
                 index: anchor.offset,
               })
 
@@ -190,8 +194,7 @@ export default (
               // TODO: create operation instead of remounting state
               draft.operations.reloadAll = true
             }
-          }
-
+        
           break
         }
         case SPLIT: {
@@ -414,6 +417,5 @@ export default (
   if (onChange) {
     onChange({ previousState: state, nextState, patches, inversePatches, historyAction: action.type === APPLY_PATCH })
   }
-
   return nextState
 }
