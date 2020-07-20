@@ -37,7 +37,9 @@ const ContentEditable = ({
   const setSource = useSourceContext(c => c && c.setSource)
 
   const topicContext = useTopicContext()
-  const { undo } = useHistoryContext()
+  const historyContext = useHistoryContext()
+
+  // const { undo } = useHistoryContext()
 
   const {
     state,
@@ -117,9 +119,9 @@ const ContentEditable = ({
   const inDeadKey = useRef(false)
 
   const onKeyDown = event => {
-    if (Hotkeys.isUndo(event)) {
+    if (Hotkeys.isUndo(event) && historyContext) {
       event.preventDefault()
-      undo()
+      historyContext.undo()
       return
     }
 
