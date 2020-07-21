@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect, useRef } from 'react'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
@@ -14,6 +14,8 @@ import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import CitationsMenu from './CitationsMenu'
 
+const SPELLCHECK_DEBOUNCE_TIME = 1000
+
 export const getAtomicStyle = type =>
   ({ SOURCE: 'bodyHeading3Underline', TOPIC: 'bodyHeading2' }[type])
 
@@ -25,7 +27,9 @@ const Element = ({ attributes, children, element }) => {
     searchTerm = entryContext.searchTerm
   }
   const editor = useEditor()
+
   const editorContext = useEditorContext()
+
   const navigationContext = useNavigationContext()
 
   const registerBlockRefByIndex = usePageContext(
@@ -42,6 +46,25 @@ const Element = ({ attributes, children, element }) => {
   const previousBlock = editorContext
     ? editorContext.state.blocks[blockIndex - 1]
     : {}
+
+  // spellcheck is debounced on element change
+  const [spellCheck, setSpellCheck] = useState(true)
+  const spellCheckTimeoutRef = useRef()
+
+  useEffect(
+    () => {
+      if (spellCheckTimeoutRef.current) {
+        setSpellCheck(false)
+        clearTimeout(spellCheckTimeoutRef.current)
+      }
+      spellCheckTimeoutRef.current = setTimeout(() => {
+        if (!spellCheck) {
+          setSpellCheck(true)
+        }
+      }, SPELLCHECK_DEBOUNCE_TIME)
+    },
+    [element]
+  )
 
   return useMemo(
     () => {
@@ -65,6 +88,7 @@ const Element = ({ attributes, children, element }) => {
           pt={vpad}
           pb="em"
           display={element.isBlock ? 'flex' : 'inline-flex'}
+          spellCheck={spellCheck}
           maxWidth="100%"
           position="relative"
           justifyContent="center"
@@ -127,7 +151,7 @@ const Element = ({ attributes, children, element }) => {
       )
     },
     // search term updates element for highlight
-    [block, element, searchTerm]
+    [block, element, searchTerm, spellCheck]
   )
 }
 

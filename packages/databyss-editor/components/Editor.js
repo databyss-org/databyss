@@ -17,8 +17,12 @@ const Editor = ({
   const entryContext = useEntryContext()
   let searchTerm = ''
 
+  function escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+  }
+
   if (entryContext) {
-    searchTerm = entryContext.searchTerm
+    searchTerm = escapeRegExp(entryContext.searchTerm)
   }
 
   const readOnly = !others.onChange || readonly
@@ -36,11 +40,24 @@ const Editor = ({
       const ranges = []
       // search each word individually
       const _searchTerm = searchTerm.split(' ')
+
       _searchTerm.forEach(word => {
         if (word && Text.isText(node)) {
           const { text } = node
-          // match exact word
-          const parts = text.split(new RegExp(`\\b${word}\\b`, 'i'))
+
+          // normalize diactritics
+          const parts = text
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .split(
+              new RegExp(
+                `\\b${word
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')}\\b`,
+                'i'
+              )
+            )
+
           let offset = 0
 
           parts.forEach((part, i) => {

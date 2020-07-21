@@ -102,7 +102,7 @@ describe('editor selenium', () => {
     await editor.sendKeys(Key.ENTER)
     await editor.sendKeys('this is an entry example')
     await editor.sendKeys(Key.ARROW_UP)
-    await sleep(300)
+    await sleep(500)
     await editor.sendKeys('this text should not be allowed')
     await editor.sendKeys(Key.ARROW_DOWN)
 
