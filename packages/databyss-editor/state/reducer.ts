@@ -92,10 +92,10 @@ export default (
       switch (action.type) {
         case APPLY_PATCH: {
           // todo: if selection is included in in patches payload, remove all selection patches, and append latest selection patches except for the last one
-          payload.patches.forEach(p=> {
+          payload.patches.reverse().forEach(p=> {
             if(p.path[0] === 'blocks'
             || p.path[0] === 'selection'){
-              console.log(p)
+           //   console.log(p)
              applyPatches(draft, [p] )
             }
           })
@@ -111,7 +111,7 @@ export default (
           break
         }
         case CUT: {
-          deleteBlocksAtSelection({ state: state, draftState: draft })
+          deleteBlocksAtSelection({  draftState: draft })
           break
         }
         case PASTE: {
@@ -134,7 +134,7 @@ export default (
           }
 
           if (!isSelectionCollapsed(state.selection)) {
-            deleteBlocksAtSelection({ state: state, draftState: draft })
+            deleteBlocksAtSelection({ draftState: draft })
           }
 
     

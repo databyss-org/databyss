@@ -332,7 +332,7 @@ describe('editor clipboard', () => {
 
     await driver.navigate().refresh()
 
-    await sleep(5000)
+    await sleep(3000)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 

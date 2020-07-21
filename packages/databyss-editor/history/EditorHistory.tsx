@@ -8,7 +8,7 @@ import {
   addMetaToPatches,
 } from '@databyss-org/editor/state/util'
 
-const THROTTLE_UNDO = 2000
+const THROTTLE_UNDO = 1000
 
 type ContextType = {
   undo: () => void
@@ -29,7 +29,18 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
   const undoStack = useRef<UndoType>([])
 
   const undo = () => {
-    const _undoBatch = undoStack.current.pop()
+    // get pending from queue
+    let _undoBatch
+
+    if (undoPatchQueue.current.length) {
+      console.log('HAS LENGTH')
+      _undoBatch = undoPatchQueue.current
+      undoPatchQueue.current = []
+    } else {
+      _undoBatch = undoStack.current.pop()
+    }
+
+    //  const
 
     if (_undoBatch && _undoBatch.length && childRef.current) {
       if (childRef.current) {
