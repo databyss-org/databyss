@@ -2,7 +2,6 @@ import produce, { Draft } from 'immer'
 import {
   CACHE_SOURCE,
   REMOVE_SOURCE,
-  CACHE_SOURCES,
   CACHE_SEARCH_QUERY,
   FETCH_SEARCH_QUERY,
   FETCH_AUTHOR_HEADERS,
@@ -15,6 +14,7 @@ import {
   SourceState,
   SourceCitationHeader,
   CacheDict,
+  Author,
 } from '../interfaces'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import { resourceIsReady, getAuthorsFromSources } from '../lib/util'
@@ -39,21 +39,17 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
     case CACHE_SOURCE: {
       const _source = action.payload.source
       draft.cache[action.payload.id] = _source
-
-      if (!resourceIsReady(_source)) {
-        _citationHeaderCache[_source] = _source
-        getAuthorsFromSources(Object.values(_citationHeaderCache))
+      if (resourceIsReady(_source)) {
+        _citationHeaderCache[_source._id] = _source
+        draft.citationHeaderCache = _citationHeaderCache
+        draft.authorsHeaderCache = getAuthorsFromSources(
+          Object.values(_citationHeaderCache)
+        )
       }
 
       break
     }
-    case CACHE_SOURCES: {
-      const { sources } = action.payload
-      Object.keys(sources).forEach(s => {
-        draft.cache[s] = sources[s]
-      })
-      break
-    }
+
     case REMOVE_SOURCE: {
       delete draft.cache[action.payload.id]
       break
@@ -73,7 +69,15 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
       break
     }
     case CACHE_AUTHOR_HEADERS: {
-      draft.authorsHeaderCache = action.payload.results
+      draft.authorsHeaderCache = action.payload.results.reduce(
+        (dict: CacheDict<Author>, author: Author) => {
+          dict[
+            `${author.firstName.textValue}${author.lastName.textValue}`
+          ] = author
+          return dict
+        },
+        {}
+      )
       break
     }
     case FETCH_SOURCE_CITATIONS: {
