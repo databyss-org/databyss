@@ -1,47 +1,69 @@
-import ReactDOMServer from 'react-dom/server'
 import ObjectId from 'bson-objectid'
-import cloneDeep from 'clone-deep'
-import { BlockType } from '@databyss-org/services/interfaces'
-import { Text, Range, Selection, EditorState, Block } from '../interfaces'
+// import { BlockType } from '@databyss-org/services/interfaces'
+import {
+  // Text,
+  // Range,
+  Selection,
+  EditorState,
+  // Block
+} from '../interfaces'
 import { isAtomicInlineType } from './util'
 import { stateToHTMLString } from './slateUtils'
+
+export interface Range {
+  offset: number
+  length: number
+  marks: Array<string>
+}
+
+export interface Text {
+  textValue: string
+  ranges: Array<Range>
+}
+
+export enum BlockType {
+  Entry = 'ENTRY',
+  Source = 'SOURCE',
+  Topic = 'TOPIC',
+}
+
+export interface Block {
+  _id: string
+  type: BlockType
+  text: Text
+}
 
 interface BasicBlock {
   type: BlockType
   text: Text
 }
 
-interface SplitBlocks {
-  before: BasicBlock | null
-  after: BasicBlock | null
+interface SplitText {
+  before: Text | null
+  after: Text | null
 }
 
 // returns before and after value for block split at `offset`
-const splitBlockAtOffset = ({
-  block,
+const splitTextAtOffset = ({
+  text,
   offset,
 }: {
-  block: BasicBlock
+  text: Text
   offset: number
-}): SplitBlocks => {
-  // if entire atomic is selected
-  if (isAtomicInlineType(block.type) && offset !== 0) {
-    return { before: { text: block.text, type: block.type }, after: null }
-  }
-
+}): SplitText => {
   // if offset is at start of block, return block value
   if (offset === 0) {
-    return { before: null, after: { text: block.text, type: block.type } }
+    return { before: null, after: text }
   }
 
-  if (offset === block.text.textValue.length) {
-    return { before: { text: block.text, type: block.type }, after: null }
+  if (offset === text.textValue.length) {
+    return { before: text, after: null }
   }
 
   let rangesForBlockBefore: Range[] = []
   let rangesForBlockAfter: Range[] = []
 
-  block.text.ranges.forEach((r: Range) => {
+  text.ranges.forEach((r: Range) => {
     if (r.offset > offset) {
       rangesForBlockAfter.push({
         offset: r.offset - offset,
@@ -76,18 +98,13 @@ const splitBlockAtOffset = ({
 
   return {
     before: {
-      text: {
-        textValue: block.text.textValue.substring(0, offset),
-        ranges: rangesForBlockBefore,
-      },
-      type: block.type,
+      textValue: text.textValue.substring(0, offset),
+      ranges: rangesForBlockBefore,
     },
+
     after: {
-      text: {
-        textValue: block.text.textValue.substring(offset),
-        ranges: rangesForBlockAfter,
-      },
-      type: block.type,
+      textValue: text.textValue.substring(offset),
+      ranges: rangesForBlockAfter,
     },
   }
 }
@@ -142,24 +159,29 @@ export const getFragmentForCurrentSelection = (state: EditorState): Block[] => {
     const _selectionLength = focus.offset - anchor.offset
     const _block = blocks[anchor.index]
     // split block at anchor offset and use `after`
-    const _firstSplit = splitBlockAtOffset({
-      block: _block,
-      offset: anchor.offset,
-    }).after
+    const _firstTextSplit = isAtomicInlineType(_block.type)
+      ? _block.text
+      : splitTextAtOffset({
+          text: _block.text,
+          offset: anchor.offset,
+        }).after
 
     // split block at length of selection and get `before`
-    const _secondSplit = splitBlockAtOffset({
-      block: _firstSplit || _block,
-      offset: _selectionLength,
-    }).before
+    const _secondTextSplit = isAtomicInlineType(_block.type)
+      ? _block.text
+      : splitTextAtOffset({
+          text: _firstTextSplit || _block.text,
+          offset: _selectionLength,
+        }).before
 
-    // if selection is use the first split
-    const _frag = _secondSplit || _firstSplit
+    // if text frag has no `second split` use the first split (whole block was selected)
+    const _textFrag = _secondTextSplit || _firstTextSplit
 
-    if (_frag) {
+    if (_textFrag) {
       frag.push({
-        ..._frag,
-        _id: fragmentId(_frag.type, blocks[anchor.index]._id),
+        text: _textFrag,
+        type: _block.type,
+        _id: fragmentId(_block.type, _block._id),
       })
     }
   }
@@ -169,24 +191,24 @@ export const getFragmentForCurrentSelection = (state: EditorState): Block[] => {
     blocks.forEach((block: Block, index: number) => {
       // first block
       if (index === anchor.index) {
-        const { after: firstBlock } = isAtomicInlineType(block.type)
-          ? { after: block }
-          : splitBlockAtOffset({
-              block: block,
+        const { after: firstTextFrag } = isAtomicInlineType(block.type)
+          ? { after: block.text }
+          : splitTextAtOffset({
+              text: block.text,
               offset: anchor.offset,
             })
 
-        if (firstBlock) {
+        if (firstTextFrag) {
           frag.push({
-            ...firstBlock,
-            _id: fragmentId(firstBlock.type, block._id),
+            text: firstTextFrag,
+            type: block.type,
+            _id: fragmentId(block.type, block._id),
           })
         }
       }
       // get in between frags
       else if (index > anchor.index && index < focus.index) {
         const _sliceLength = focus.index - anchor.index
-        //   console.log(_sliceLength)
         if (_sliceLength > 1) {
           frag.push({
             text: block.text,
@@ -198,15 +220,20 @@ export const getFragmentForCurrentSelection = (state: EditorState): Block[] => {
 
       // last block
       else if (index === focus.index) {
-        const { before: lastBlock } = splitBlockAtOffset({
-          block: block,
-          offset: focus.offset,
-        })
+        const { before: lastTextFrag } = isAtomicInlineType(block.type)
+          ? { before: block.text }
+          : splitTextAtOffset({
+              text: block.text,
+              //  type: block.type,
+              //  block: block,
+              offset: focus.offset,
+            })
 
-        if (lastBlock) {
+        if (lastTextFrag) {
           frag.push({
-            ...lastBlock,
-            _id: fragmentId(lastBlock.type, block._id),
+            text: lastTextFrag,
+            type: block.type,
+            _id: fragmentId(block.type, block._id),
           })
         }
       }
@@ -245,56 +272,70 @@ export const insertText = ({
   block: Block
   text: Text
   index: number
-}): Block => {
-  const splitBlock = splitBlockAtOffset({ block, offset: index })
+}): { text: Text; type: BlockType } => {
+  const splitText = splitTextAtOffset({
+    text: block.text,
+    offset: index,
+  })
 
   let mergedBlock
-  if (splitBlock.before) {
+
+  if (splitText.before) {
     mergedBlock = {
       text: mergeText({
-        a: splitBlock.before.text,
+        a: splitText.before,
         b: text,
       }),
-      type: 'ENTRY',
+      type: BlockType.Entry,
     }
   }
 
-  if (splitBlock.after) {
+  if (splitText.after) {
     mergedBlock = {
       text: mergeText({
         a: mergedBlock ? mergedBlock.text : text,
-        b: splitBlock.after.text,
+        b: splitText.after,
       }),
-      type: 'ENTRY',
+      type: BlockType.Entry,
     }
   }
-  return mergedBlock
+
+  return (
+    mergedBlock || {
+      type: BlockType.Entry,
+      text: { textValue: '', ranges: [] },
+    }
+  )
 }
 
 export const deleteBlocksAtSelection = ({
-  state,
   draftState,
 }: {
-  state: EditorState
   draftState: EditorState
 }) => {
   if (isSelectionCollapsed(draftState.selection)) {
     return
   }
 
-  const { selection, blocks } = state
+  const { selection, blocks } = draftState
   const { anchor, focus } = sortSelection(selection)
 
   // check if selection is within a block
-  // if so delete selection and merge block fragments
   if (focus.index === anchor.index) {
+    // delete selection and merge block fragments
     let _newBlock
     const _currentBlock = blocks[anchor.index]
     // if selection spans over entire block, delete block contents
     if (focus.offset - anchor.offset === _currentBlock.text.textValue.length) {
       _newBlock = { text: { textValue: '', ranges: [] } }
     } else {
-      // if not, split block at anchor offset if its not atomic
+      // split block at anchor offset
+      const _splitText = splitTextAtOffset({
+        text: _currentBlock.text,
+        offset: anchor.offset,
+      })
+
+      //  check block for atomic
       const { before, after } = isAtomicInlineType(_currentBlock.type)
         ? {
             // reset block
@@ -305,27 +346,27 @@ export const deleteBlocksAtSelection = ({
             },
             after: null,
           }
-        : splitBlockAtOffset({
-            block: _currentBlock,
-            offset: anchor.offset,
-          })
+        : {
+            before: { text: _splitText.before, type: 'ENTRY' },
+            after: { text: _splitText.after, type: 'ENTRY' },
+          }
 
       let lastBlockFragment
       // if `after` exists, split `after` at focus offset - before block length
       if (after) {
-        let { after: _lastBlockFragment } = splitBlockAtOffset({
-          block: after,
+        let { after: _lastTextFragment } = splitTextAtOffset({
+          text: after.text || { textValue: '', ranges: [] },
           offset: focus.offset - anchor.offset,
         })
-        lastBlockFragment = _lastBlockFragment
+        lastBlockFragment = { text: _lastTextFragment, type: BlockType.Entry }
       }
 
       // take that result and merge it with `before` if `before` exists
       if (before && lastBlockFragment) {
         _newBlock = {
           text: mergeText({
-            a: before.text,
-            b: lastBlockFragment.text,
+            a: before.text || { textValue: '', ranges: [] },
+            b: lastBlockFragment.text || { textValue: '', ranges: [] },
           }),
           type: 'ENTRY',
         }
@@ -343,13 +384,20 @@ export const deleteBlocksAtSelection = ({
     }
   } else {
     // if selection spans over multiple blocks
-
     const emptyBlock = { text: { textValue: '', ranges: [] } }
 
     // split focus and anchor block
     let _anchorBlock = blocks[anchor.index]
     let _focusBlock = blocks[focus.index]
 
+    const splitAnchorText = splitTextAtOffset({
+      text: _anchorBlock.text,
+      offset: anchor.offset,
+    })
+
+    /*
+    if anchor block is atomic, remove entire block and reset id
+    */
     const _splitAnchorBlock = isAtomicInlineType(_anchorBlock.type)
       ? {
           before: {
@@ -359,10 +407,20 @@ export const deleteBlocksAtSelection = ({
           },
           after: null,
         }
-      : splitBlockAtOffset({
-          block: _anchorBlock,
-          offset: anchor.offset,
-        })
+      : {
+          before: splitAnchorText.before
+            ? {
+                text: splitAnchorText.before,
+                type: BlockType.Entry,
+              }
+            : null,
+          after: splitAnchorText.after
+            ? {
+                text: splitAnchorText.after,
+                type: BlockType.Entry,
+              }
+            : null,
+        }
 
     _anchorBlock = _splitAnchorBlock.before
       ? { ..._anchorBlock, ..._splitAnchorBlock.before }
@@ -371,15 +429,18 @@ export const deleteBlocksAtSelection = ({
           ...emptyBlock,
         }
 
-    const _splitFocusBlock = splitBlockAtOffset({
-      block: _focusBlock,
+    /*
+    if focus block is atomic, remove entire block and reset id
+    */
+    const _splitFocusText = splitTextAtOffset({
+      text: _focusBlock.text,
       offset: focus.offset,
     })
 
     _focusBlock = isAtomicInlineType(_focusBlock.type)
       ? _focusBlock
-      : _splitFocusBlock.after
-        ? { ..._focusBlock, ..._splitFocusBlock.after }
+      : _splitFocusText.after
+        ? { ..._focusBlock, text: _splitFocusText.after }
         : {
             ..._focusBlock,
             ...emptyBlock,
@@ -396,7 +457,6 @@ export const deleteBlocksAtSelection = ({
   }
 
   // replace selection in draft
-
   // set selection
   const _offset = anchor.offset
   const _index = anchor.index
@@ -423,7 +483,7 @@ export const databyssFragToPlainText = (fragment: Block[]): string => {
 export const plainTextToDatabyssFrag = (text: string): Block[] => {
   const _frag = text.split('\n').map(f => ({
     text: { textValue: f, ranges: [] },
-    type: 'ENTRY',
+    type: BlockType.Entry,
     _id: new ObjectId().toHexString(),
   }))
   return addBlockUIFields(_frag)

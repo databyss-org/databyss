@@ -90,7 +90,7 @@ export default (
 
       switch (action.type) {
         case CUT: {
-          deleteBlocksAtSelection({ state: state, draftState: draft })
+          deleteBlocksAtSelection({  draftState: draft })
           break
         }
         case PASTE: {
@@ -113,7 +113,7 @@ export default (
           }
 
           if (!isSelectionCollapsed(state.selection)) {
-            deleteBlocksAtSelection({ state: state, draftState: draft })
+            deleteBlocksAtSelection({ draftState: draft })
           }
 
     
