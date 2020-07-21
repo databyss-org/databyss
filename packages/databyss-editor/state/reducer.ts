@@ -11,7 +11,8 @@ import {
   DEQUEUE_NEW_ENTITY,
   PASTE,
   CUT,
-  APPLY_PATCH
+  UNDO,
+  REDO,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -90,22 +91,24 @@ export default (
       let nextSelection = payload?.selection
 
       switch (action.type) {
-        case APPLY_PATCH: {
-          // todo: if selection is included in in patches payload, remove all selection patches, and append latest selection patches except for the last one
+        case UNDO: {
           payload.patches.reverse().forEach(p=> {
             if(p.path[0] === 'blocks'
             || p.path[0] === 'selection'){
-              console.log(p)
              applyPatches(draft, [p] )
             }
           })
-        //   applyPatches(draft, payload.patches
-        //    // .reverse()
-        //     .filter(
-        //     p => p.path[0] === 'blocks'
-        //      || p.path[0] === 'selection'
-        //   )
-        // )
+          draft.operations.reloadAll = true
+
+          break
+        }
+        case REDO: {
+          payload.patches.reverse().forEach(p=> {
+            if(p.path[0] === 'blocks'
+            || p.path[0] === 'selection'){
+             applyPatches(draft, [p] )
+            }
+          })
           draft.operations.reloadAll = true
 
           break
@@ -424,8 +427,20 @@ export default (
     }
   )
 
+  /*
+historyActions need to bypass the EditorHistory history stack, clipboard actions need to reversed for the hisotry stack
+  */
+
   if (onChange) {
-    onChange({ previousState: state, nextState, patches, inversePatches, historyAction: action.type === APPLY_PATCH, clipboardAction: action.type === PASTE })
+    onChange({ 
+      previousState: state, 
+      nextState, 
+      patches, 
+      inversePatches,
+      undoAction: action.type === UNDO, 
+      redoAction: action.type === REDO, 
+      clipboardAction: action.type === PASTE 
+    })
   }
   return nextState
 }

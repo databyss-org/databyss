@@ -18,7 +18,8 @@ import {
   COPY,
   CUT,
   PASTE,
-  APPLY_PATCH,
+  UNDO,
+  REDO,
 } from './constants'
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
@@ -71,11 +72,14 @@ export type OnChangeArgs = {
   previousState: EditorState
   patches: Patch[]
   inversePatches: Patch[]
-  historyAction: boolean
+  undoAction: boolean
+  redoAction: boolean
+  clipboardAction: boolean
 }
 
 export interface RefInputHandles {
-  applyPatch: (patches: Patch[]) => void
+  undo: (patches: Patch[]) => void
+  redo: (patches: Patch[]) => void
 }
 
 type PropsType = {
@@ -98,9 +102,15 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     })
 
     useImperativeHandle(ref, () => ({
-      applyPatch: (patches: Patch[]) => {
+      undo: (patches: Patch[]) => {
         dispatch({
-          type: APPLY_PATCH,
+          type: UNDO,
+          payload: { patches },
+        })
+      },
+      redo: (patches: Patch[]) => {
+        dispatch({
+          type: REDO,
           payload: { patches },
         })
       },

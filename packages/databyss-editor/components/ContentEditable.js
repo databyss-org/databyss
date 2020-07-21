@@ -129,6 +129,11 @@ const ContentEditable = ({
       return
     }
 
+    if (Hotkeys.isRedo(event) && historyContext) {
+      event.preventDefault()
+      historyContext.redo()
+    }
+
     // UI
     if (event.key === 'ArrowUp') {
       const _currentIndex = editor.selection.focus.path[0]
