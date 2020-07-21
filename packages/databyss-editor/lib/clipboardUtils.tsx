@@ -43,7 +43,7 @@ interface SplitText {
   after: Text | null
 }
 
-// returns before and after value for block split at `offset`
+// returns before and after value for text split at `offset`
 const splitTextAtOffset = ({
   text,
   offset,
@@ -51,7 +51,7 @@ const splitTextAtOffset = ({
   text: Text
   offset: number
 }): SplitText => {
-  // if offset is at start of block, return block value
+  // if offset is at start of text, return text value
   if (offset === 0) {
     return { before: null, after: text }
   }
