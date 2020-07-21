@@ -224,8 +224,6 @@ export const getFragmentForCurrentSelection = (state: EditorState): Block[] => {
           ? { before: block.text }
           : splitTextAtOffset({
               text: block.text,
-              //  type: block.type,
-              //  block: block,
               offset: focus.offset,
             })
 
