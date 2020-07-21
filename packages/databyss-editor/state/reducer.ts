@@ -95,7 +95,7 @@ export default (
           payload.patches.reverse().forEach(p=> {
             if(p.path[0] === 'blocks'
             || p.path[0] === 'selection'){
-           //   console.log(p)
+              console.log(p)
              applyPatches(draft, [p] )
             }
           })
@@ -425,7 +425,7 @@ export default (
   )
 
   if (onChange) {
-    onChange({ previousState: state, nextState, patches, inversePatches, historyAction: action.type === APPLY_PATCH })
+    onChange({ previousState: state, nextState, patches, inversePatches, historyAction: action.type === APPLY_PATCH, clipboardAction: action.type === PASTE })
   }
   return nextState
 }

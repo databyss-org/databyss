@@ -59,20 +59,25 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
     inversePatches,
     patches,
     historyAction,
+    clipboardAction,
     ...others
   }: OnChangeArgs) => {
+    // console.log(inversePatches)
     const { onChange } = children.props
-
+    // console.log(clipboardAction)
     // push to a patch batch
     if (!historyAction) {
-      // filter out any path that doesnt contain `blocks` or `selection` and does not contain `__` metadata
-      undoPatchQueue.current = undoPatchQueue.current.concat(
-        inversePatches.filter(
-          p =>
-            (p.path[0] === 'blocks' || p.path[0] === 'selection') &&
-            !p.path.find(_p => typeof _p === 'string' && _p.search('__') !== -1)
-        )
+      const _filteredPatches = inversePatches.filter(
+        p =>
+          (p.path[0] === 'blocks' || p.path[0] === 'selection') &&
+          !p.path.find(_p => typeof _p === 'string' && _p.search('__') !== -1)
       )
+
+      if (clipboardAction) {
+        _filteredPatches.reverse()
+      }
+      // filter out any path that doesnt contain `blocks` or `selection` and does not contain `__` metadata
+      undoPatchQueue.current = undoPatchQueue.current.concat(_filteredPatches)
 
       // group events on a throttle
       trottleUndoStack()
