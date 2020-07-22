@@ -436,7 +436,11 @@ export const deleteBlocksAtSelection = ({
     })
 
     _focusBlock = isAtomicInlineType(_focusBlock.type)
-      ? _focusBlock
+      ? {
+          ...emptyBlock,
+          type: 'ENTRY',
+          _id: new ObjectId().toHexString(),
+        }
       : _splitFocusText.after
         ? { ..._focusBlock, text: _splitFocusText.after }
         : {

@@ -692,4 +692,60 @@ describe('editor clipboard', () => {
 
     assert.deepEqual(actual.selection, expected.selection)
   })
+  it('should cut an atomic in a multi block selection', async () => {
+    await sleep(1000)
+    await sendKeys(actions, 'this is an entry')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '@this is a source text')
+    await upKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await cut(actions)
+    await downKey(actions)
+    await paste(actions)
+    await sleep(3000)
+
+    await driver.navigate().refresh()
+
+    await sleep(500)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const expected = (
+      <editor>
+        <block type="ENTRY">
+          <text>this is an </text>
+        </block>
+        <block type="ENTRY">
+          <text>entry</text>
+        </block>
+        <block type="SOURCE">
+          <text>
+            this is a source text<cursor />
+          </text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
 })
