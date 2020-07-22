@@ -75,9 +75,37 @@ export const pageToEditorState = (page: Page): EditorState => {
 }
       // filter out any path that doesnt contain `blocks` or `selection` and does not contain `__` metadata
 
-export const filterInversePatches = (patches: Patch[]): Patch[]=> patches.filter(
+export const filterInversePatches = (patches: Patch[]): Patch[]=> { 
+  
+  const _patches = patches.filter(
     p =>
       (p.path[0] === 'blocks' || p.path[0] === 'selection') &&
       !p.path.find(_p => typeof _p === 'string' && _p.search('__') !== -1)
   )
+  return _patches}
 
+/*
+patches must occur in specific order
+remove patches must occur from reverse order
+add patches must occur in chronological order
+*/
+export const checkPatchesOrder = (patches: Patch[]) => {
+  const _patches = patches
+
+  // if 'remove' check for block index in reverse order
+  const _removeBlockPatches =  patches.filter(p=>  p.path[0] === 'blocks' && (p.op === 'remove'||p.op === 'replace'))
+
+  // if patches contain 'blocks' and 'remove' check order to see if patches must be reversed
+  if(_removeBlockPatches.length > 1 && _removeBlockPatches.filter(p=> p.op === 'remove') && _removeBlockPatches[0].path[1] < _removeBlockPatches[_removeBlockPatches.length-1].path[1]){
+   return  _patches.reverse()
+  }
+
+  
+  const _addBlockPatches =  _patches.filter(p=> p.path[0] === 'blocks' &&( p.op === 'add' || p.op ==='replace' ) )
+// if patches cointain blocks and 'add', patches must be in chronological order
+  if(_addBlockPatches.length> 1 && _addBlockPatches.filter(p=> p.op === 'add') && _addBlockPatches[0].path[1] > _addBlockPatches[_addBlockPatches.length-1].path[1]){
+  return  _patches.reverse()
+
+  }
+  return _patches
+}

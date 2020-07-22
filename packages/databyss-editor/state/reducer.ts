@@ -27,6 +27,7 @@ import {
   offsetRanges,
   removeLocationMark,
   blockValue,
+  checkPatchesOrder,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
@@ -92,7 +93,8 @@ export default (
 
       switch (action.type) {
         case UNDO: {
-          payload.patches.reverse().forEach(p=> {
+
+          checkPatchesOrder(payload.patches).forEach(p=> {
             if(p.path[0] === 'blocks'
             || p.path[0] === 'selection'){
              applyPatches(draft, [p] )
@@ -103,7 +105,7 @@ export default (
           break
         }
         case REDO: {
-          payload.patches.reverse().forEach(p=> {
+          checkPatchesOrder(payload.patches).forEach(p=> {
             if(p.path[0] === 'blocks'
             || p.path[0] === 'selection'){
              applyPatches(draft, [p] )
@@ -436,8 +438,9 @@ historyActions need to bypass the EditorHistory history stack, clipboard actions
       previousState: state, 
       nextState, 
       patches, 
-      ...(action.type !== PASTE ? 
-        {inversePatches}: {inversePatches: inversePatches.reverse()}),
+      inversePatches,
+      // ...(action.type !== PASTE ? 
+      //   {inversePatches}: {inversePatches: inversePatches.reverse()}),
       undoAction: action.type === UNDO, 
       redoAction: action.type === REDO, 
     })

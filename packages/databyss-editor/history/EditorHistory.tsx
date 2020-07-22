@@ -1,13 +1,8 @@
 import React, { createContext, useContext, useRef } from 'react'
 import { OnChangeArgs, RefInputHandles } from '../state/EditorProvider'
-import { debounce, throttle } from 'lodash'
+import { throttle } from 'lodash'
 import { Patch } from 'immer'
-import {
-  pageToEditorState,
-  cleanupPatches,
-  addMetaToPatches,
-  filterInversePatches,
-} from '@databyss-org/editor/state/util'
+import { filterInversePatches } from '@databyss-org/editor/state/util'
 
 const THROTTLE_UNDO = 1000
 
@@ -32,23 +27,18 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
 
   const undo = () => {
     let _undoBatch
-    // if pending patches, undo pending patches
+    // if pending patches, undo pending patches first
     if (undoPatchQueue.current.length) {
       _undoBatch = undoPatchQueue.current
       undoPatchQueue.current = []
     } else {
-      // remove from stack
+      // remove pop undo from stack
       _undoBatch = undoStack.current.pop()
     }
-
-    //  const
 
     if (_undoBatch && _undoBatch.length && childRef.current) {
       if (childRef.current) {
         childRef.current.undo(_undoBatch)
-        // window.requestAnimationFrame(() =>
-        //   redoStack.current.push(_undoBatch.reverse())
-        // )
       }
     }
   }
@@ -59,11 +49,6 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
     if (_redoBatch && _redoBatch.length && childRef.current) {
       // apply redo
       childRef.current.redo(_redoBatch)
-      // place patch back in undo stack
-      //   undoStack.current.push(_redoBatch)
-
-      // //  console.log(redoStack.current)
-      // console.log('HAS REDO')
     }
   }
 
@@ -92,7 +77,6 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
       // if a history event, push to redo stack
       const _filteredPatches = filterInversePatches(inversePatches)
 
-      // TODO: CLIPBOARD ACTIONS ARE REVERSED
       redoStack.current.push(_filteredPatches)
     }
 
