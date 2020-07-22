@@ -24,6 +24,8 @@ const BlockSchema = new Schema(
   { versionKey: false }
 )
 
+BlockSchema.index({ 'text.textValue': 'text' })
+
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */
 
