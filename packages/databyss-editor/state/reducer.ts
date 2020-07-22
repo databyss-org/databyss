@@ -1,5 +1,5 @@
 import ObjectId from 'bson-objectid'
-import { produceWithPatches, enablePatches, applyPatches } from 'immer'
+import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
 import { FSA, BlockType, Block } from '@databyss-org/services/interfaces'
 import {
   SPLIT,
@@ -93,13 +93,7 @@ export default (
 
       switch (action.type) {
         case UNDO: {
-          // try{
-          //   applyPatches(draft, payload.patches )
-          // } catch {
-          //   applyPatches(draft, payload.patches.reverse() )
-          // }
-
-          checkPatchesOrder(payload.patches).forEach(p=> {
+          payload.patches.forEach((p: Patch)=> {
             if(p.path[0] === 'blocks'
             || p.path[0] === 'selection'){
              applyPatches(draft, [p] )
@@ -110,13 +104,7 @@ export default (
           break
         }
         case REDO: {
-          // try{
-          //   applyPatches(draft, payload.patches )
-          // } catch {
-          //   applyPatches(draft, payload.patches.reverse() )
-          // }
-
-          checkPatchesOrder(payload.patches).forEach(p=> {
+          payload.patches.forEach((p: Patch)=> {
             if(p.path[0] === 'blocks'
             || p.path[0] === 'selection'){
              applyPatches(draft, [p] )

@@ -59,8 +59,6 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
     redoAction,
     ...others
   }: OnChangeArgs) => {
-    // console.log('PATCHES', patches)
-    // console.log(inversePatches)
     const { onChange } = children.props
     // push to a patch batch if not a history action
     if (!undoAction) {
@@ -110,9 +108,6 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
 
 export const useHistoryContext = () => useContext(HistoryContext)
 
-HistoryProvider.defaultProps = {
-  // onChange: () => null,
-  // initialState,
-}
+HistoryProvider.defaultProps = {}
 
 export default HistoryProvider
