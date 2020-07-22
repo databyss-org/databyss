@@ -39,13 +39,12 @@ const Search = ({ onClick }) => {
   )
 
   const onChange = val => {
-    // whitelist alphanumeric, space and hyphen
-    const _val = { textValue: val.textValue.replace(/[^a-z0-9 -]/gi, '') }
-    setQuery(_val)
+    setQuery(val)
   }
 
   const onSearchClick = () => {
-    navigate(`/search/${searchTerm}`)
+    // encode the search term and remove '?'
+    navigate(`/search/${encodeURI(searchTerm.replace(/\?/g, ''))}`)
   }
 
   return (
