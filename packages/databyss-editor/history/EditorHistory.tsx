@@ -72,7 +72,6 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
     patches,
     undoAction,
     redoAction,
-    clipboardAction,
     ...others
   }: OnChangeArgs) => {
     const { onChange } = children.props
@@ -85,11 +84,6 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
 
       const _filteredPatches = filterInversePatches(inversePatches)
 
-      // clipboard actions need to be reversed
-      if (clipboardAction) {
-        _filteredPatches.reverse()
-      }
-
       undoPatchQueue.current = undoPatchQueue.current.concat(_filteredPatches)
 
       // group events on a throttle
@@ -98,12 +92,7 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
       // if a history event, push to redo stack
       const _filteredPatches = filterInversePatches(inversePatches)
 
-      // console.log(_filteredPatches)
-
-      // if (clipboardAction) {
-      //   console.log('REVERSE IF CLIPBOARD')
-      //   _filteredPatches.reverse()
-      // }
+      // TODO: CLIPBOARD ACTIONS ARE REVERSED
       redoStack.current.push(_filteredPatches)
     }
 

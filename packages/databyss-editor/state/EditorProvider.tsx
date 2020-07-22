@@ -74,7 +74,6 @@ export type OnChangeArgs = {
   inversePatches: Patch[]
   undoAction: boolean
   redoAction: boolean
-  clipboardAction: boolean
 }
 
 export interface RefInputHandles {

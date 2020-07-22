@@ -436,10 +436,10 @@ historyActions need to bypass the EditorHistory history stack, clipboard actions
       previousState: state, 
       nextState, 
       patches, 
-      inversePatches,
+      ...(action.type !== PASTE ? 
+        {inversePatches}: {inversePatches: inversePatches.reverse()}),
       undoAction: action.type === UNDO, 
       redoAction: action.type === REDO, 
-      clipboardAction: action.type === PASTE 
     })
   }
   return nextState
