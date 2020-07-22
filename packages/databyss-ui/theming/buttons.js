@@ -38,10 +38,14 @@ const buttonVariants = {
     color: 'secondary.3',
   },
   googleSignIn: {
-    ...button(),
     ...border(1, 'gray.5'),
     backgroundColor: '#ffffff',
     color: 'gray.3',
+  },
+  pinkHighlighted: {
+    ...button(),
+    backgroundColor: 'purple.1',
+    color: 'text.6',
   },
   uiTextButton: {
     ...textButton(),
@@ -75,6 +79,10 @@ const buttonThemes = {
   googleSignIn: {
     hoverColor: 'secondary.1',
     activeColor: 'secondary.2',
+  },
+  pinkHighlighted: {
+    hoverColor: 'purple.2',
+    activeColor: 'purple.0',
   },
   primaryExternal: {},
   secondaryExternal: {},

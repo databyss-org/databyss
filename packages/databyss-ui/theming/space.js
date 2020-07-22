@@ -4,7 +4,8 @@ space.none = space[0]
 space.small = space[1]
 space.em = space[2]
 space.medium = space[3]
-space.large = space[5]
+space.large = space[4]
+space.extraLarge = space[5]
 space.tiny = 3.0
 space.extraSmall = 5.0
 
