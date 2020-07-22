@@ -40,8 +40,6 @@ const ContentEditable = ({
   const topicContext = useTopicContext()
   const historyContext = useHistoryContext()
 
-  // const { undo } = useHistoryContext()
-
   const {
     state,
     split,
@@ -378,7 +376,10 @@ const ContentEditable = ({
       })
     }
 
-    if (editor.operations.length && !_.isEqual(state.selection, selection)) {
+    if (
+      editor.operations.length
+      //       && !_.isEqual(state.selection, selection)
+    ) {
       setSelection(selection)
     }
   }

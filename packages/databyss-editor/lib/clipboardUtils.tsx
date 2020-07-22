@@ -318,6 +318,24 @@ export const deleteBlocksAtSelection = ({
   const { selection, blocks } = draftState
   const { anchor, focus } = sortSelection(selection)
 
+  // replace selection in draft
+  // set selection
+  const _offset = anchor.offset
+  const _index = anchor.index
+  const _selection = {
+    _id: draftState.selection._id,
+    anchor: { offset: _offset, index: _index },
+    focus: { offset: _offset, index: _index },
+  }
+
+  console.log('INDEX', _selection)
+
+  draftState.selection = _selection
+
+  // TODO: create operation for this mutation
+
+  draftState.operations.reloadAll = true
+
   // check if selection is within a block
   if (focus.index === anchor.index) {
     // delete selection and merge block fragments
@@ -449,30 +467,15 @@ export const deleteBlocksAtSelection = ({
           }
 
     // replace blocks in the draftState
-    draftState.blocks[anchor.index] = _anchorBlock
     draftState.blocks[focus.index] = _focusBlock
 
     const numberOfBlocksToRemove = focus.index - anchor.index - 1
 
     // remove all the the blocks in between the selection
     draftState.blocks.splice(anchor.index + 1, numberOfBlocksToRemove)
+
+    draftState.blocks[anchor.index] = _anchorBlock
   }
-
-  // replace selection in draft
-  // set selection
-  const _offset = anchor.offset
-  const _index = anchor.index
-  const _selection = {
-    _id: draftState.selection._id,
-    anchor: { offset: _offset, index: _index },
-    focus: { offset: _offset, index: _index },
-  }
-
-  draftState.selection = _selection
-
-  // TODO: create operation for this mutation
-
-  draftState.operations.reloadAll = true
 }
 
 export const databyssFragToPlainText = (fragment: Block[]): string => {

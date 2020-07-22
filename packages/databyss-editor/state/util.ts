@@ -82,6 +82,11 @@ export const filterInversePatches = (patches: Patch[]): Patch[]=> {
       (p.path[0] === 'blocks' || p.path[0] === 'selection') &&
       !p.path.find(_p => typeof _p === 'string' && _p.search('__') !== -1)
   )
+  // if only a selection patch was sent dont return any patches
+
+  if (_patches.length === 1 && _patches[0].path[0] === 'selection'){
+    return []
+  }
   return _patches}
 
 /*
@@ -92,20 +97,42 @@ add patches must occur in chronological order
 export const checkPatchesOrder = (patches: Patch[]) => {
   const _patches = patches
 
-  // if 'remove' check for block index in reverse order
-  const _removeBlockPatches =  patches.filter(p=>  p.path[0] === 'blocks' && (p.op === 'remove'||p.op === 'replace'))
+  //patches must be in following order
+  // selection is first
+  // 
 
-  // if patches contain 'blocks' and 'remove' check order to see if patches must be reversed
-  if(_removeBlockPatches.length > 1 && _removeBlockPatches.filter(p=> p.op === 'remove') && _removeBlockPatches[0].path[1] < _removeBlockPatches[_removeBlockPatches.length-1].path[1]){
-   return  _patches.reverse()
-  }
+//   // if 'remove' check for block index in reverse order
+//   const _removeBlockPatches =  patches.filter(p=>  p.path[0] === 'blocks' && (p.op === 'remove'||p.op === 'replace'))
+
+
+//     // if patches contain 'blocks' and 'remove' check order to see if patches must be reversed
+//     if(_removeBlockPatches.length > 1 && _removeBlockPatches.filter(p=> p.op === 'remove') ){
+
+//       const _filteredPatches = _removeBlockPatches.filter(p=> p.path[0]==='blocks')
+//      // console.log('HITTT',_filteredPatches)
+//       if(   _filteredPatches[0].path[1] < _filteredPatches[_filteredPatches.length-1].path[1]){
+//         console.log("reverse",JSON.parse(JSON.stringify( _patches)))
+//                 return  _patches.reverse()
+//       }
+//      // _removeBlockPatches
+    
+
+    
+//     }
 
   
-  const _addBlockPatches =  _patches.filter(p=> p.path[0] === 'blocks' &&( p.op === 'add' || p.op ==='replace' ) )
-// if patches cointain blocks and 'add', patches must be in chronological order
-  if(_addBlockPatches.length> 1 && _addBlockPatches.filter(p=> p.op === 'add') && _addBlockPatches[0].path[1] > _addBlockPatches[_addBlockPatches.length-1].path[1]){
-  return  _patches.reverse()
+//   const _addBlockPatches =  _patches.filter(p=> p.path[0] === 'blocks' &&( p.op === 'add' || p.op ==='replace' ) )
+// // if patches cointain blocks and 'add', patches must be in chronological order
+// if(_addBlockPatches.length> 1 && _addBlockPatches.filter(p=> p.op === 'add') ){
 
-  }
+//   const _filteredPatches = _addBlockPatches.filter(p=> p.path[0]==='blocks')
+
+//   if(_filteredPatches[0].path[1] > _filteredPatches[_filteredPatches.length-1].path[1])
+//   console.log("reverse 2",JSON.parse(JSON.stringify( _patches)))
+
+//   return  _patches.reverse()
+
+// }
+
   return _patches
 }

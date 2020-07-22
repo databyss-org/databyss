@@ -93,6 +93,11 @@ export default (
 
       switch (action.type) {
         case UNDO: {
+          // try{
+          //   applyPatches(draft, payload.patches )
+          // } catch {
+          //   applyPatches(draft, payload.patches.reverse() )
+          // }
 
           checkPatchesOrder(payload.patches).forEach(p=> {
             if(p.path[0] === 'blocks'
@@ -105,6 +110,12 @@ export default (
           break
         }
         case REDO: {
+          // try{
+          //   applyPatches(draft, payload.patches )
+          // } catch {
+          //   applyPatches(draft, payload.patches.reverse() )
+          // }
+
           checkPatchesOrder(payload.patches).forEach(p=> {
             if(p.path[0] === 'blocks'
             || p.path[0] === 'selection'){
@@ -430,7 +441,7 @@ export default (
   )
 
   /*
-historyActions need to bypass the EditorHistory history stack, clipboard actions need to reversed for the hisotry stack
+historyActions need to bypass the EditorHistory history stack
   */
 
   if (onChange) {
@@ -439,8 +450,6 @@ historyActions need to bypass the EditorHistory history stack, clipboard actions
       nextState, 
       patches, 
       inversePatches,
-      // ...(action.type !== PASTE ? 
-      //   {inversePatches}: {inversePatches: inversePatches.reverse()}),
       undoAction: action.type === UNDO, 
       redoAction: action.type === REDO, 
     })
