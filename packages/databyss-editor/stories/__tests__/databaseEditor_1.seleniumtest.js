@@ -79,7 +79,6 @@ describe('connected editor', () => {
     await clearButton.click()
     await driver.navigate().refresh()
 
-    // sleep(500)
     await driver.quit()
   })
 
