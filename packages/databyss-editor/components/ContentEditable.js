@@ -33,6 +33,8 @@ const ContentEditable = ({
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
 
+  // this is a test
+
   const setSource = useSourceContext(c => c && c.setSource)
 
   const topicContext = useTopicContext()
