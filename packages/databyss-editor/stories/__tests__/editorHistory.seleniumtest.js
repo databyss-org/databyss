@@ -14,6 +14,11 @@ import {
   sendKeys,
   undo,
   redo,
+  cut,
+  upShiftKey,
+  leftKey,
+  paste,
+  rightShiftKey,
 } from './_helpers.selenium'
 
 let driver
@@ -244,6 +249,123 @@ describe('editor history', () => {
           <text>
             <cursor />
           </text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should redo a multiblock cut with an atomic', async () => {
+    await sleep(300)
+    await sendKeys(actions, 'one')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, 'two')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, 'three')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '@test source')
+    await enterKey(actions)
+    await upShiftKey(actions)
+    await upShiftKey(actions)
+    await upShiftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await cut(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await paste(actions)
+    await sleep(2000)
+    await paste(actions)
+    await sleep(2000)
+    await paste(actions)
+    await sleep(2000)
+    await undo(actions)
+    await sleep(2000)
+    await undo(actions)
+    await sleep(2000)
+    await undo(actions)
+    await sleep(3000)
+
+    // checks before redo
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    let actual = JSON.parse(await slateDocument.getText())
+
+    let expected = (
+      <editor>
+        <block type="ENTRY">
+          <text>
+            one<cursor />
+          </text>
+        </block>
+        <block type="ENTRY">
+          <text>tw</text>
+        </block>
+        <block type="ENTRY">
+          <text />
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+
+    await redo(actions)
+    await redo(actions)
+
+    await sleep(3000)
+
+    await driver.navigate().refresh()
+    await sleep(3000)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    actual = JSON.parse(await slateDocument.getText())
+
+    expected = (
+      <editor>
+        <block type="ENTRY">
+          <text>one</text>
+        </block>
+        <block type="ENTRY">
+          <text>o</text>
+        </block>
+        <block type="ENTRY">
+          <text>three</text>
+        </block>
+        <block type="SOURCE">
+          <text>test source</text>
+        </block>
+        <block type="ENTRY">
+          <text>o</text>
+        </block>
+        <block type="ENTRY">
+          <text>three</text>
+        </block>
+        <block type="SOURCE">
+          <text>
+            test source<cursor />
+          </text>
+        </block>
+        <block type="ENTRY">
+          <text>tw</text>
+        </block>
+        <block type="ENTRY">
+          <text />
         </block>
       </editor>
     )
