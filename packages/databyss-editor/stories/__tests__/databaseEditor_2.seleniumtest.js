@@ -8,6 +8,7 @@ import { sanitizeEditorChildren } from './__helpers'
 import {
   getEditor,
   getElementByTag,
+  sendKeys,
   sleep,
   toggleBold,
   getElementById,
@@ -16,6 +17,8 @@ import {
   downKey,
   backspaceKey,
   tabKey,
+  leftKey,
+  rightKey,
 } from './_helpers.selenium'
 
 let driver
@@ -69,6 +72,9 @@ describe('connected editor', () => {
     editor = await getEditor(driver)
 
     actions = driver.actions()
+    await actions.click(editor)
+    await actions.perform()
+    await actions.clear()
 
     done()
   })
@@ -85,32 +91,25 @@ describe('connected editor', () => {
 
   it('should insert atomic source and edit source fields', async () => {
     await sleep(300)
-    await actions.sendKeys('@this is a test')
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ENTER)
-    await actions.perform()
-    await actions.clear()
+    await sendKeys(actions, '@this is a test')
+    await enterKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await enterKey(actions)
     await sleep(1000)
 
     const name = await getElementByTag(driver, '[data-test-path="text"]')
 
     await name.click()
-    await actions.sendKeys(Key.ARROW_RIGHT)
-
+    await rightKey(actions)
     await tabKey(actions)
-
-    await actions.sendKeys('new citation')
+    await sendKeys(actions, 'new citation')
     await tabKey(actions)
-
-    await actions.sendKeys('authors first name')
+    await sendKeys(actions, 'authors first name')
     await tabKey(actions)
-    await actions.sendKeys('authors last name')
+    await sendKeys(actions, 'authors last name')
     await tabKey(actions)
     await tabKey(actions)
-
-    await actions.perform()
 
     let doneButton = await getElementByTag(
       driver,
@@ -124,8 +123,12 @@ describe('connected editor', () => {
     await driver.navigate().refresh()
 
     editor = await getEditor(driver)
-    await editor.sendKeys(Key.ARROW_LEFT)
-    await editor.sendKeys(Key.ENTER)
+    actions = driver.actions()
+    await actions.click(editor)
+    await actions.perform()
+    await actions.clear()
+    await leftKey(actions)
+    await enterKey(actions)
 
     let citationsField = await getElementById(driver, 'citation')
 
@@ -181,31 +184,30 @@ describe('connected editor', () => {
 
   it('should test data integrity in round trip testing', async () => {
     await sleep(300)
-    await actions.sendKeys('this is an entry with ')
+    await sendKeys(actions, 'this is an entry with ')
     await toggleBold(actions)
-    await actions.sendKeys('bold')
+    await sendKeys(actions, 'bold')
     await toggleBold(actions)
     await enterKey(actions)
-    await actions.sendKeys('still within the same block')
+    await sendKeys(actions, 'still within the same block')
     await enterKey(actions)
     await enterKey(actions)
-    await actions.sendKeys('@this should toggle a source block')
+    await sendKeys(actions, '@this should toggle a source block')
     await enterKey(actions)
     await upKey(actions)
     await enterKey(actions)
     await upKey(actions)
-    await actions.sendKeys('#this should toggle a topics block')
+    await sendKeys(actions, '#this should toggle a topics block')
     await enterKey(actions)
-    await actions.sendKeys('this entry is within two atomics')
+    await sendKeys(actions, 'this entry is within two atomics')
     await enterKey(actions)
     await enterKey(actions)
     await backspaceKey(actions)
-    await actions.sendKeys(' appended text')
-    //  await upKey(actions)
+    await sendKeys(actions, ' appended text')
     await enterKey(actions)
     await enterKey(actions)
     await enterKey(actions)
-    await actions.sendKeys('second middle entry')
+    await sendKeys(actions, 'second middle entry')
     await enterKey(actions)
     await enterKey(actions)
     await upKey(actions)
@@ -216,9 +218,7 @@ describe('connected editor', () => {
     await downKey(actions)
     await downKey(actions)
     await downKey(actions)
-
-    await actions.sendKeys('last entry')
-    await actions.perform()
+    await sendKeys(actions, 'last entry')
     await sleep(20000)
 
     // refresh page
