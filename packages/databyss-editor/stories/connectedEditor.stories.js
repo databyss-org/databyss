@@ -6,6 +6,7 @@ import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
+import HistoryProvider from '@databyss-org/editor/history/EditorHistory'
 import ModalManager from '@databyss-org/ui/modules/Modals/ModalManager'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
@@ -74,9 +75,11 @@ const PageWithAutosave = ({ page }) => {
 
   return (
     <View>
-      <EditorProvider onChange={onChange} initialState={withMetaData(page)}>
-        <ContentEditable onDocumentChange={onDocumentChange} autofocus />
-      </EditorProvider>
+      <HistoryProvider>
+        <EditorProvider onChange={onChange} initialState={withMetaData(page)}>
+          <ContentEditable onDocumentChange={onDocumentChange} autofocus />
+        </EditorProvider>
+      </HistoryProvider>
       <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{pageState}</pre>
