@@ -8,6 +8,7 @@ import { sanitizeEditorChildren } from './__helpers'
 import {
   getEditor,
   getElementByTag,
+  sendKeys,
   sleep,
   toggleBold,
   toggleItalic,
@@ -66,6 +67,9 @@ describe('connected editor', () => {
     editor = await getEditor(driver)
 
     actions = driver.actions()
+    await actions.click(editor)
+    await actions.perform()
+    await actions.clear()
 
     done()
   })
@@ -81,10 +85,9 @@ describe('connected editor', () => {
 
   it('should toggle bold and save changes', async () => {
     await sleep(300)
-    await actions.sendKeys('the following text should be ')
+    await sendKeys(actions, 'the following text should be ')
     await toggleBold(actions)
-    await actions.sendKeys('bold')
-    await actions.perform()
+    await sendKeys(actions, 'bold')
     await sleep(3000)
 
     await driver.navigate().refresh()
@@ -115,10 +118,9 @@ describe('connected editor', () => {
 
   it('should toggle italic and save changes', async () => {
     await sleep(300)
-    await actions.sendKeys('the following text should be ')
+    await sendKeys(actions, 'the following text should be ')
     await toggleItalic(actions)
-    await actions.sendKeys('italic')
-    await actions.perform()
+    await sendKeys(actions, 'italic')
     await sleep(7000)
 
     await driver.navigate().refresh()
@@ -147,10 +149,9 @@ describe('connected editor', () => {
 
   it('should toggle location and save changes', async () => {
     await sleep(300)
-    await actions.sendKeys('the following text should be ')
+    await sendKeys(actions, 'the following text should be ')
     await toggleLocation(actions)
-    await actions.sendKeys('location')
-    await actions.perform()
+    await sendKeys(actions, 'location')
     await sleep(7000)
 
     await driver.get(
@@ -181,15 +182,14 @@ describe('connected editor', () => {
 
   it('should toggle location bold and italic in entry using hotkeys', async () => {
     await sleep(300)
-    await actions.sendKeys('following text should be ')
+    await sendKeys(actions, 'following text should be ')
     await toggleBold(actions)
     await toggleItalic(actions)
-    await actions.sendKeys('bold and italic ')
+    await await sendKeys(actions, 'bold and italic ')
     await toggleItalic(actions)
-    await actions.sendKeys('and just bold ')
+    await await sendKeys(actions, 'and just bold ')
     await toggleLocation(actions)
-    await actions.sendKeys('and location with bold')
-    await actions.perform()
+    await await sendKeys(actions, 'and location with bold')
     await sleep(15000)
 
     await driver.navigate().refresh()
