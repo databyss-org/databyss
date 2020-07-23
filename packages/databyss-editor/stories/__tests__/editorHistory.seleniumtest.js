@@ -109,6 +109,11 @@ describe('editor history', () => {
     await undo(actions)
     await undo(actions)
     await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
 
     await sleep(3000)
     await driver.navigate().refresh()
@@ -163,6 +168,13 @@ describe('editor history', () => {
     await undo(actions)
     await undo(actions)
     await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
+    await undo(actions)
+
     await sleep(3000)
 
     // checks before redo
@@ -201,6 +213,12 @@ describe('editor history', () => {
     await redo(actions)
     await redo(actions)
     await redo(actions)
+    await redo(actions)
+    await redo(actions)
+    await redo(actions)
+    await redo(actions)
+    await redo(actions)
+
     await sleep(3000)
 
     await driver.navigate().refresh()
