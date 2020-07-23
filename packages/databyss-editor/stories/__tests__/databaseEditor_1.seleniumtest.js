@@ -66,7 +66,6 @@ describe('connected editor', () => {
     editor = await getEditor(driver)
 
     actions = driver.actions()
-    await actions.click(editor)
 
     done()
   })
