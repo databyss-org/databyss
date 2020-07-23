@@ -65,9 +65,14 @@ describe('editor history', () => {
     )
 
     editor = await getEditor(driver)
+    editor.click()
 
     actions = driver.actions()
 
+    actions = driver.actions({ bridge: true })
+    await actions.click(editor)
+    await actions.perform()
+    await actions.clear()
     done()
   })
 
