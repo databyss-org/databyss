@@ -6,7 +6,6 @@ import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
-import HistoryProvider from '../history/EditorHistory'
 import ModalManager from '@databyss-org/ui/modules/Modals/ModalManager'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
@@ -20,6 +19,7 @@ import PageProvider, {
 } from '@databyss-org/services/pages/PageProvider'
 import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import HistoryProvider from '../history/EditorHistory'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
