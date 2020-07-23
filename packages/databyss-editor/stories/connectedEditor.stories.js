@@ -6,7 +6,7 @@ import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
-import HistoryProvider from '@databyss-org/editor/history/EditorHistory'
+import HistoryProvider from '../history/EditorHistory'
 import ModalManager from '@databyss-org/ui/modules/Modals/ModalManager'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SessionProvider, {
