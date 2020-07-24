@@ -5,6 +5,7 @@ import {
   createIndexPageEntries,
 } from '@databyss-org/services/entries/util'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
+import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import IndexPageContent from '../PageContent/IndexPageContent'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 
@@ -38,7 +39,7 @@ const AuthorCitations = () => {
                 citations: value.detail?.citations?.map(
                   citation => citation.text?.textValue
                 ),
-                type: 'authors',
+                type: 'sources',
               })
             }
             return {}
@@ -54,7 +55,10 @@ const AuthorCitations = () => {
           <IndexPageContent
             title={composeAuthorName(authorQueryFirstName, authorQueryLastName)}
           >
-            <IndexPageEntries entries={sortedAuthorCitations} />
+            <IndexPageEntries
+              entries={sortedAuthorCitations}
+              icon={<SourceSvg />}
+            />
           </IndexPageContent>
         )
       }}
