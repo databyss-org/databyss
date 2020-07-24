@@ -40,19 +40,6 @@ router.post(
         })
       )
 
-      // populate results with page
-      results = await Promise.all(
-        results.map(async r => {
-          // get page where entry is found
-          const _page = await Page.findOne({
-            blocks: { $in: [{ _id: r._id }] },
-            account: req.account._id,
-          })
-
-          return Object.assign({ page: _page }, r._doc)
-        })
-      )
-
       if (results) {
         let _results = {
           count: results.length,
