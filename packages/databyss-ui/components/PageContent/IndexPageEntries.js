@@ -1,7 +1,7 @@
 import React from 'react'
-import { Text, View, BaseControl } from '@databyss-org/ui/primitives'
+import { Text, View, BaseControl, Icon } from '@databyss-org/ui/primitives'
 
-const IndexPageEntries = ({ entries }) =>
+const IndexPageEntries = ({ entries, icon }) =>
   entries.map((entry, index) => {
     if (entry.text) {
       return (
@@ -12,7 +12,18 @@ const IndexPageEntries = ({ entries }) =>
             hoverColor="background.2"
             activeColor="background.3"
             userSelect="auto"
+            childViewProps={{ flexDirection: 'row' }}
           >
+            {icon && (
+              <Icon
+                sizeVariant="small"
+                color="text.3"
+                mt="tiny"
+                mr="extraSmall"
+              >
+                {icon}
+              </Icon>
+            )}
             <Text
               variant={
                 entry.type === 'sources'

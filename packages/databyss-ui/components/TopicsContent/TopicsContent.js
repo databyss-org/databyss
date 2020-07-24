@@ -6,6 +6,7 @@ import {
   sortEntriesAtoZ,
   createIndexPageEntries,
 } from '@databyss-org/services/entries/util'
+import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
 
@@ -21,7 +22,7 @@ const TopicsContent = () => (
     {topics => {
       const topicsData = Object.values(topics).map(value =>
         createIndexPageEntries({
-          text: value.text.textValue,
+          text: value.text?.textValue,
           id: value._id,
         })
       )
@@ -29,7 +30,7 @@ const TopicsContent = () => (
 
       return (
         <IndexPageContent title="All Topics">
-          <IndexPageEntries entries={sortedTopics} />
+          <IndexPageEntries entries={sortedTopics} icon={<TopicSvg />} />
         </IndexPageContent>
       )
     }}
