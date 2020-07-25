@@ -3,12 +3,12 @@ import { View, Text, Icon } from '@databyss-org/ui/primitives'
 import Navbar from '@databyss-org/ui/modules/Homepage/Navbar'
 import SignUpForm from '@databyss-org/ui/modules/Homepage/SignUpForm'
 import LogoSvg from '@databyss-org/ui/assets/logo_new.svg'
-import { pxUnits } from '@databyss-org/ui/theming/views'
-// import { useMediaQuery } from 'react-responsive'
+import { pxUnits, borderRadius } from '@databyss-org/ui/theming/views'
 import imgSourceSelection from '@databyss-org/ui/assets/promo_source_selection.png'
+import theme from '@databyss-org/ui/theming/theme'
 
 const HeroText = () => (
-  <View alignItems="center" mt="large">
+  <View alignItems="center" mt="extraLarge">
     <View flexDirection="row" alignItems="center" mb="large">
       <Icon color="text.6" sizeVariant="logo" mr="small">
         <LogoSvg />
@@ -49,13 +49,15 @@ const FeatureDescription = () => (
       width="60%"
       css={{
         alignSelf: 'flex-start',
+        boxShadow: theme.buttonShadow.boxShadow,
+        borderRadius,
       }}
     />
   </>
 )
 
 const Homepage = () => (
-  <>
+  <View minHeight="100vh" width="100%">
     <View p="large" pb="extraLarge" width="100%" backgroundColor="background.6">
       <Navbar />
       <HeroText />
@@ -69,7 +71,7 @@ const Homepage = () => (
     >
       <FeatureDescription />
     </View>
-  </>
+  </View>
 )
 
 export default Homepage

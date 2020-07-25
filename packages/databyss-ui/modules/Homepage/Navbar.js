@@ -11,12 +11,26 @@ const navLinks = [
   { name: 'About', route: '/about' },
 ]
 
-const Navbar = () => {
+const Navbar = ({ lightTheme }) => {
   const location = useLocation()
   const isActiveLink = route => route === location.pathname
 
+  const getTextColor = isActiveLink => {
+    if (lightTheme) {
+      return isActiveLink ? 'text.2' : 'text.3'
+    }
+    return isActiveLink ? 'text.5' : 'text.4'
+  }
+
   return (
-    <View flexDirection="row" justifyContent="flex-end" width="100%">
+    <View
+      flexDirection="row"
+      justifyContent="flex-end"
+      width="100%"
+      position="absolute"
+      top="medium"
+      right="medium"
+    >
       <View flexDirection="row" maxWidth="400px">
         {navLinks.map((link, index) => (
           <BaseControl
@@ -36,7 +50,10 @@ const Navbar = () => {
               },
             }}
           >
-            <Text color="text.5" variant="uiTextNormal">
+            <Text
+              color={getTextColor(isActiveLink(link.route))}
+              variant="uiTextNormal"
+            >
               {link.name}
             </Text>
           </BaseControl>

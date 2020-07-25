@@ -7,6 +7,8 @@ import ValueListProvider from '@databyss-org/ui/components/ValueList/ValueListPr
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import GoogleLoginButton from '@databyss-org/ui/components/Login/GoogleLoginButton'
 import { NotAuthorizedError } from '@databyss-org/services/interfaces'
+import { pxUnits } from '@databyss-org/ui/theming/views'
+import Navbar from '@databyss-org/ui/modules/Homepage/Navbar'
 
 const initialFormState = {
   email: {
@@ -108,98 +110,109 @@ const Login = ({ pending, signupFlow }) => {
   const signInOrSignUp = signupFlow ? 'Sign up ' : 'Sign in '
 
   return (
-    <ValueListProvider values={values} onChange={onChange} onSubmit={onSubmit}>
-      <View widthVariant="dialog" alignItems="center" width="100%">
-        <Text variant="heading2" color="gray.3">
-          {signupFlow ? 'Sign Up' : 'Log In'}
-        </Text>
-        <FormFieldList mt="medium" mb="medium" width="100%">
-          <GoogleLoginButton
-            data-test-id="googleButton"
-            disabled={pending}
-            onSuccess={onGoogleResponse}
-            onFailure={onGoogleResponse}
-            onPress={onGoogleRequest}
-          >
-            {signInOrSignUp}
-            with Google
-          </GoogleLoginButton>
-
-          <View mt="medium" mb="small">
-            <View hlineVariant="thinLight" />
-          </View>
-          <TextInputField
-            label="Email"
-            errorMessage={invalidEmail && 'Please enter a valid email address'}
-            path="email"
-            placeholder="Enter your email address"
-            ref={emailInputRef}
-          />
-          {showRequestCode && (
-            <React.Fragment>
-              <View alignItems="center">
-                <Text variant="uiTextNormal">
-                  We just sent you a temporary login code.
-                </Text>
-                <Text variant="uiTextNormal">Please check your inbox.</Text>
-              </View>
-              <TextInputField
-                path="code"
-                placeholder="Paste login code"
-                ref={codeInputRef}
-              />
-            </React.Fragment>
-          )}
-          <View>
-            <Button
-              variant="secondaryUi"
-              onPress={onSubmit}
-              disabled={
-                pending ||
-                (showRequestCode && !values.code.textValue.length) ||
-                !values.email.textValue.length ||
-                invalidEmail
-              }
-              data-test-id="continueButton"
+    <>
+      <Navbar lightTheme />
+      <ValueListProvider
+        values={values}
+        onChange={onChange}
+        onSubmit={onSubmit}
+      >
+        <View widthVariant="dialog" alignItems="center" minWidth={pxUnits(320)}>
+          <Text variant="heading2" color="gray.3">
+            {signupFlow ? 'Sign Up' : 'Log In'}
+          </Text>
+          <FormFieldList mt="medium" mb="medium" width="100%">
+            <GoogleLoginButton
+              data-test-id="googleButton"
+              disabled={pending}
+              onSuccess={onGoogleResponse}
+              onFailure={onGoogleResponse}
+              onPress={onGoogleRequest}
             >
-              {pending ? (
-                <Loading size={18} />
-              ) : (
-                `${signInOrSignUp} with ${
-                  showRequestCode ? 'Login Code' : 'Email'
-                }`
+              {signInOrSignUp}
+              with Google
+            </GoogleLoginButton>
+
+            <View mt="medium" mb="small">
+              <View hlineVariant="thinLight" />
+            </View>
+            <TextInputField
+              label="Email"
+              errorMessage={
+                invalidEmail && 'Please enter a valid email address'
+              }
+              path="email"
+              placeholder="Enter your email address"
+              ref={emailInputRef}
+            />
+            {showRequestCode && (
+              <React.Fragment>
+                <View alignItems="center">
+                  <Text variant="uiTextNormal">
+                    We just sent you a temporary login code.
+                  </Text>
+                  <Text variant="uiTextNormal">Please check your inbox.</Text>
+                </View>
+                <TextInputField
+                  path="code"
+                  placeholder="Paste login code"
+                  ref={codeInputRef}
+                />
+              </React.Fragment>
+            )}
+            <View>
+              <Button
+                variant="secondaryUi"
+                onPress={onSubmit}
+                disabled={
+                  pending ||
+                  (showRequestCode && !values.code.textValue.length) ||
+                  !values.email.textValue.length ||
+                  invalidEmail
+                }
+                data-test-id="continueButton"
+              >
+                {pending ? (
+                  <Loading size={18} />
+                ) : (
+                  `${signInOrSignUp} with ${
+                    showRequestCode ? 'Login Code' : 'Email'
+                  }`
+                )}
+              </Button>
+            </View>
+            {didSubmit &&
+              session instanceof NotAuthorizedError && (
+                <View alignItems="center">
+                  <Text
+                    color="red.0"
+                    variant="uiTextNormal"
+                    data-test-id="errorMessage"
+                  >
+                    {showRequestCode
+                      ? 'Code is invalid or expired'
+                      : 'Please enter a valid email'}
+                  </Text>
+                </View>
               )}
+          </FormFieldList>
+          <View flexDirection="horizontal" alignItems="center">
+            <Text variant="uiTextSmall" mr="tiny" color="gray.3">
+              {signupFlow
+                ? 'Already have an account?'
+                : "Don't have an account?"}
+            </Text>
+            <Button
+              variant="uiLink"
+              textVariant="uiTextSmall"
+              href={signupFlow ? '/' : '/signup'}
+            >
+              {signupFlow ? 'Log In' : 'Sign Up'}
             </Button>
           </View>
-          {didSubmit &&
-            session instanceof NotAuthorizedError && (
-              <View alignItems="center">
-                <Text
-                  color="red.0"
-                  variant="uiTextNormal"
-                  data-test-id="errorMessage"
-                >
-                  {showRequestCode
-                    ? 'Code is invalid or expired'
-                    : 'Please enter a valid email'}
-                </Text>
-              </View>
-            )}
-        </FormFieldList>
-        <View flexDirection="horizontal" alignItems="center">
-          <Text variant="uiTextSmall" mr="tiny" color="gray.3">
-            {signupFlow ? 'Already have an account?' : "Don't have an account?"}
-          </Text>
-          <Button
-            variant="uiLink"
-            textVariant="uiTextSmall"
-            href={signupFlow ? '/' : '/signup'}
-          >
-            {signupFlow ? 'Log In' : 'Sign Up'}
-          </Button>
         </View>
-      </View>
-    </ValueListProvider>
+      </ValueListProvider>
+    </>
   )
 }
 
