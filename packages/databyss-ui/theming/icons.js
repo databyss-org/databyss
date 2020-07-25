@@ -23,6 +23,9 @@ const iconSizeVariants = {
     width: 108,
     height: 24,
   },
+  logo: {
+    ...icon(72),
+  },
 }
 
 export default {
