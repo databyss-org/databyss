@@ -31,8 +31,10 @@ const Sources = ({ filterQuery }) => (
         {authors => {
           const authorData = Object.values(authors).map(value => {
             const firstName = value.firstName?.textValue
-            const shortFirstName = `${firstName?.charAt(0)}.`
             const lastName = value.lastName?.textValue
+            const shortFirstName = `${
+              lastName ? firstName?.charAt(0) + '.' : firstName
+            }`
 
             const getShortAuthorName = () => {
               if (lastName && firstName) {
