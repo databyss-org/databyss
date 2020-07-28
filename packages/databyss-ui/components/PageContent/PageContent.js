@@ -76,7 +76,14 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
   }
 
   return (
-    <View height="100vh" overflow="scroll" p="medium">
+    <View
+      height="100vh"
+      overflow="scroll"
+      pl="medium"
+      pr="medium"
+      pb="medium"
+      zIndex={1}
+    >
       <PageSticky page={editorState} />
       <View
         mr="medium"
@@ -89,11 +96,11 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
           pageId={id}
           onNavigateDownFromHeader={onNavigateDownToEditor}
         />
-        <Text color="gray.5" pr="medium" variant="uiTextSmall">
+        {/* <Text color="gray.5" pr="medium" variant="uiTextSmall">
           {isOnline && (pendingPatches ? 'Saving...' : 'All changes saved')}
           {!isOnline && 'Offline'}
-        </Text>
-        <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
+        </Text> */}
+        {/* <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader> */}
       </View>
       <PageBody
         onEditorChange={onEditorChange}
