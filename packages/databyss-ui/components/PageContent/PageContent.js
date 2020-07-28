@@ -37,9 +37,9 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
             if (editorWindowRef.current) {
               // to compensate for the sticky header
               // https://github.com/iamdustan/smoothscroll/issues/47#issuecomment-350810238
-              let item = _ref
-              let wrapper = editorWindowRef.current
-              let count = item.offsetTop - wrapper.scrollTop - 60
+              const item = _ref
+              const wrapper = editorWindowRef.current
+              const count = item.offsetTop - wrapper.scrollTop - 60
               wrapper.scrollBy({ top: count, left: 0, behavior: 'smooth' })
             }
           })
