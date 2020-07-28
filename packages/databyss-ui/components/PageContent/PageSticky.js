@@ -1,3 +1,4 @@
+/* eslint-disable react/no-danger */
 import React, { useEffect, useRef, useState } from 'react'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
@@ -34,10 +35,8 @@ const PageSticky = ({ page }) => {
       alignItems="center"
       flexDirection="row"
       justifyContent="space-between"
+      p="medium"
       pb="small"
-      pr="medium"
-      pt="medium"
-      pl="medium"
       ml="extraSmall"
       ref={stickyRef}
       backgroundColor="gray.7"
@@ -45,7 +44,7 @@ const PageSticky = ({ page }) => {
       top={0}
       zIndex={2}
     >
-      <Text color="gray.4" pl="medium">
+      <Text color="gray.4" pl="medium" variant="textSmall">
         <div
           dangerouslySetInnerHTML={{ __html: getPagePath(page, pageName) }}
         />

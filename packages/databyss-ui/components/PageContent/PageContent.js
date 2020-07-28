@@ -19,6 +19,7 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
   const [editorState, setEditorState] = useState(null)
   const headerRef = useRef()
   const editorRef = useRef()
+  const editorWindowRef = useRef()
 
   // index is used to set selection in slate
   const [index, setIndex] = useState(null)
@@ -33,16 +34,21 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
         const _ref = getBlockRefByIndex(_index)
         if (_ref) {
           window.requestAnimationFrame(() => {
-            _ref.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start',
-            })
+            if (editorWindowRef.current) {
+              // to compensate for the sticky header
+              // https://github.com/iamdustan/smoothscroll/issues/47#issuecomment-350810238
+              let item = _ref
+              let wrapper = editorWindowRef.current
+              let count = item.offsetTop - wrapper.scrollTop - 60
+              wrapper.scrollBy({ top: count, left: 0, behavior: 'smooth' })
+            }
           })
         }
       }
     }
   }, [])
 
+  // console.log(editorWindowRef)
   // focus header
   const onNavigateUpFromEditor = () => {
     if (headerRef.current) {
@@ -62,7 +68,7 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
   }
 
   return (
-    <View height="100vh" overflow="scroll">
+    <View height="100vh" overflow="scroll" ref={editorWindowRef}>
       <PageSticky page={editorState} />
       <View pl="medium" pr="medium" pb="medium" zIndex={1}>
         <View

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef, forwardRef } from 'react'
+import React, { useEffect, useCallback, useRef } from 'react'
 import { throttle } from 'lodash'
 import ContentEditable from '@databyss-org/editor/components/ContentEditable'
 import EditorProvider from '@databyss-org/editor/state/EditorProvider'
