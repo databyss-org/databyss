@@ -36,7 +36,7 @@ const PageSticky = ({ page }) => {
       flexDirection="row"
       justifyContent="space-between"
       p="medium"
-      pb="small"
+      pl="none"
       ml="extraSmall"
       ref={stickyRef}
       backgroundColor="gray.7"
@@ -44,7 +44,7 @@ const PageSticky = ({ page }) => {
       top={0}
       zIndex={2}
     >
-      <Text color="gray.4" pl="medium" variant="textSmall">
+      <Text color="gray.4" pl="medium" variant="uiTextSmall">
         <div
           dangerouslySetInnerHTML={{ __html: getPagePath(page, pageName) }}
         />
