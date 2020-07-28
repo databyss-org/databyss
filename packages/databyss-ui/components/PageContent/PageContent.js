@@ -76,39 +76,42 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
   }
 
   return (
-    <View
-      height="100vh"
-      overflow="scroll"
-      pl="medium"
-      pr="medium"
-      pb="medium"
-      zIndex={1}
-    >
+    <View>
       <PageSticky page={editorState} />
+
       <View
-        mr="medium"
-        alignItems="center"
-        flexDirection="row"
-        justifyContent="space-between"
+        height="100vh"
+        overflow="scroll"
+        pl="medium"
+        pr="medium"
+        pb="medium"
+        zIndex={1}
       >
-        <PageHeader
-          ref={headerRef}
-          pageId={id}
-          onNavigateDownFromHeader={onNavigateDownToEditor}
-        />
-        {/* <Text color="gray.5" pr="medium" variant="uiTextSmall">
+        <View
+          mr="medium"
+          alignItems="center"
+          flexDirection="row"
+          justifyContent="space-between"
+        >
+          <PageHeader
+            ref={headerRef}
+            pageId={id}
+            onNavigateDownFromHeader={onNavigateDownToEditor}
+          />
+          {/* <Text color="gray.5" pr="medium" variant="uiTextSmall">
           {isOnline && (pendingPatches ? 'Saving...' : 'All changes saved')}
           {!isOnline && 'Offline'}
         </Text> */}
-        {/* <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader> */}
+          {/* <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader> */}
+        </View>
+        <PageBody
+          onEditorChange={onEditorChange}
+          editorRef={editorRef}
+          page={page}
+          focusIndex={index}
+          onNavigateUpFromEditor={onNavigateUpFromEditor}
+        />
       </View>
-      <PageBody
-        onEditorChange={onEditorChange}
-        editorRef={editorRef}
-        page={page}
-        focusIndex={index}
-        onNavigateUpFromEditor={onNavigateUpFromEditor}
-      />
     </View>
   )
 }, (prev, next) => prev.page._id === next.page._id && prev.id === next.id && prev.anchor === next.anchor)

@@ -58,19 +58,18 @@ const PageSticky = ({ page }) => {
       alignItems="center"
       flexDirection="row"
       justifyContent="space-between"
-      pb="medium"
+      pb="small"
+      pr="medium"
       pt="medium"
       pl="medium"
-      //  pr="medium"
       ml="extraSmall"
-      mt="medium"
       ref={stickyRef}
       backgroundColor="gray.7"
       position="sticky"
       top={0}
       zIndex={2}
     >
-      <Text color="gray.4">
+      <Text color="gray.4" pl="medium">
         <div
           dangerouslySetInnerHTML={{ __html: getPagePath(page, pageName) }}
         />
