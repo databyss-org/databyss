@@ -11,7 +11,7 @@ const getBlockPrefix = (type: string): string =>
     TOPIC: '#',
   }[type])
 
-export const getPagePath = (page: EditorState): string => {
+export const getPagePath = (page: EditorState, pageName: string): string => {
   if (!page) {
     return ''
   }
@@ -29,8 +29,6 @@ export const getPagePath = (page: EditorState): string => {
       // if atomic type is not found in our current atomics array, push to array
       const _idx = _currentAtomics.findIndex(b => b.type === _block.type)
       if (_idx < 0) {
-        console.log(stateBlockToHtml(_block))
-        console.log(_block)
         _currentAtomics.push(_block)
       }
     }
@@ -38,8 +36,8 @@ export const getPagePath = (page: EditorState): string => {
 
   const _path: string[] = []
   // add page name as first path
-  if (page.pageHeader && page.pageHeader.name) {
-    _path.push(page.pageHeader.name)
+  if (pageName) {
+    _path.push(pageName)
   }
   _currentAtomics.reverse().forEach(_block => {
     _path.push(`${getBlockPrefix(_block.type)} ${stateBlockToHtml(_block)}`)
