@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useLocation, Router } from '@reach/router'
-import { PagesLoader, PageLoader } from '@databyss-org/ui/components/Loaders'
-import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
-import { View, Text } from '@databyss-org/ui/primitives'
+import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import { View } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { ArchiveBin } from './ArchiveBin'
-
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
@@ -18,24 +15,13 @@ export const PageRouter = () => (
 
 const PageContainer = React.memo(({ anchor, id, page }) => {
   const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
-  const hasPendingPatches = usePageContext(c => c.hasPendingPatches)
 
-  const { isOnline } = useNotifyContext()
-
-  const [pendingPatches, setPendingPatches] = useState(0)
   const [editorState, setEditorState] = useState(null)
   const headerRef = useRef()
   const editorRef = useRef()
 
   // index is used to set selection in slate
   const [index, setIndex] = useState(null)
-
-  useEffect(
-    () => {
-      setPendingPatches(hasPendingPatches)
-    },
-    [hasPendingPatches]
-  )
 
   useEffect(() => {
     // if anchor link exists, scroll to anchor
@@ -76,17 +62,9 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
   }
 
   return (
-    <View>
+    <View height="100vh" overflow="scroll">
       <PageSticky page={editorState} />
-
-      <View
-        height="100vh"
-        overflow="scroll"
-        pl="medium"
-        pr="medium"
-        pb="medium"
-        zIndex={1}
-      >
+      <View pl="medium" pr="medium" pb="medium" zIndex={1}>
         <View
           mr="medium"
           alignItems="center"
@@ -98,11 +76,6 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
             pageId={id}
             onNavigateDownFromHeader={onNavigateDownToEditor}
           />
-          {/* <Text color="gray.5" pr="medium" variant="uiTextSmall">
-          {isOnline && (pendingPatches ? 'Saving...' : 'All changes saved')}
-          {!isOnline && 'Offline'}
-        </Text> */}
-          {/* <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader> */}
         </View>
         <PageBody
           onEditorChange={onEditorChange}
