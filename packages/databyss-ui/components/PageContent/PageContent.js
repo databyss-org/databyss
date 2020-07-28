@@ -39,7 +39,7 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
               // https://github.com/iamdustan/smoothscroll/issues/47#issuecomment-350810238
               const item = _ref
               const wrapper = editorWindowRef.current
-              const count = item.offsetTop - wrapper.scrollTop - 60
+              const count = item.offsetTop - wrapper.scrollTop - 74
               wrapper.scrollBy({ top: count, left: 0, behavior: 'smooth' })
             }
           })
