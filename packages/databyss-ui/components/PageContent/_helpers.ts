@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { Block } from '@databyss-org/services/interfaces/'
 import { isAtomicInlineType } from '@databyss-org/editor/lib/util'
 import { EditorState } from '../../../databyss-editor/interfaces/index'
+import { stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils.js'
 
 const getBlockPrefix = (type: string): string =>
   ({
@@ -28,6 +29,8 @@ export const getPagePath = (page: EditorState): string => {
       // if atomic type is not found in our current atomics array, push to array
       const _idx = _currentAtomics.findIndex(b => b.type === _block.type)
       if (_idx < 0) {
+        console.log(stateBlockToHtml(_block))
+        console.log(_block)
         _currentAtomics.push(_block)
       }
     }
@@ -39,7 +42,7 @@ export const getPagePath = (page: EditorState): string => {
     _path.push(page.pageHeader.name)
   }
   _currentAtomics.reverse().forEach(_block => {
-    _path.push(`${getBlockPrefix(_block.type)} ${_block.text.textValue}`)
+    _path.push(`${getBlockPrefix(_block.type)} ${stateBlockToHtml(_block)}`)
   })
 
   return _path.join(' / ')

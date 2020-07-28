@@ -1,4 +1,5 @@
 import { Editor } from '@databyss-org/slate'
+import { Text } from 'slate'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
@@ -143,4 +144,33 @@ export const toggleMark = (editor, format) => {
   } else {
     Editor.addMark(editor, format, true)
   }
+}
+
+// serialize slate node to html
+const serialize = node => {
+  if (Text.isText(node)) {
+    let _children = node.text
+
+    if (node.bold) {
+      _children = `<strong>${_children}</strong>`
+    }
+    if (node.italic) {
+      _children = `<i>${_children}</i>`
+    }
+    return _children
+  }
+
+  const children = node.children.map(n => serialize(n)).join('')
+
+  switch (node.type) {
+    case 'SOURCE':
+      return `<u>${children}</u>`
+    default:
+      return children
+  }
+}
+
+export const stateBlockToHtml = stateBlock => {
+  const _slateNode = stateBlockToSlateBlock(stateBlock)
+  return serialize(_slateNode)
 }

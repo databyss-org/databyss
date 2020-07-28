@@ -6,7 +6,9 @@ const PageSticky = ({ page }) => {
   // TODO: get page header from page cache
   return (
     <View pl="medium" ml="extraSmall">
-      <Text>{getPagePath(page)}</Text>
+      <Text color="gray.4">
+        <div dangerouslySetInnerHTML={{ __html: getPagePath(page) }} />
+      </Text>
     </View>
   )
 }
