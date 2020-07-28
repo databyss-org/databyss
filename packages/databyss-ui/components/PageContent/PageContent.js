@@ -8,6 +8,7 @@ import { ArchiveBin } from './ArchiveBin'
 
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
+import PageSticky from './PageSticky'
 
 export const PageRouter = () => (
   <Router>
@@ -22,6 +23,7 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
   const { isOnline } = useNotifyContext()
 
   const [pendingPatches, setPendingPatches] = useState(0)
+  const [editorState, setEditorState] = useState(null)
   const headerRef = useRef()
   const editorRef = useRef()
 
@@ -69,8 +71,13 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
     }
   }
 
+  const onEditorChange = editorStateRef => {
+    setEditorState(editorStateRef?.state)
+  }
+
   return (
     <View height="100vh" overflow="scroll" p="medium">
+      <PageSticky page={editorState} />
       <View
         mr="medium"
         alignItems="center"
@@ -89,6 +96,7 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
         <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
       </View>
       <PageBody
+        onEditorChange={onEditorChange}
         editorRef={editorRef}
         page={page}
         focusIndex={index}
