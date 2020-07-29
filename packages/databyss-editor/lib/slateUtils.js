@@ -145,8 +145,8 @@ export const toggleMark = (editor, format) => {
   }
 }
 
-// serialize slate node to html
-const serialize = node => {
+// serialize slate node to html for page path header
+const serializeHeader = node => {
   if (Text.isText(node)) {
     let _children = node.text
 
@@ -159,17 +159,17 @@ const serialize = node => {
     return _children
   }
 
-  const children = node.children.map(n => serialize(n)).join('')
+  const children = node.children.map(n => serializeHeader(n)).join('')
 
   switch (node.type) {
-    case 'SOURCE':
-      return `<u>${children}</u>`
+    // case 'SOURCE':
+    //   return `<u>${children}</u>`
     default:
       return children
   }
 }
 
-export const stateBlockToHtml = stateBlock => {
+export const stateBlockToHtmlHeader = stateBlock => {
   const _slateNode = stateBlockToSlateBlock(stateBlock)
-  return serialize(_slateNode)
+  return serializeHeader(_slateNode)
 }
