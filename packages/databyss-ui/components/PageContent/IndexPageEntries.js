@@ -5,22 +5,16 @@ const IndexPageEntries = ({ entries, icon }) =>
   entries.map((entry, index) => {
     if (entry.text) {
       return (
-        <View key={index} mb="em" widthVariant="content">
+        <View key={index} mb="em" px="medium" widthVariant="content">
           <BaseControl
-            p="small"
-            mx="em"
+            py="small"
             hoverColor="background.2"
             activeColor="background.3"
             userSelect="auto"
             childViewProps={{ flexDirection: 'row' }}
           >
             {icon && (
-              <Icon
-                sizeVariant="small"
-                color="text.3"
-                mt="tiny"
-                mr="extraSmall"
-              >
+              <Icon sizeVariant="small" color="text.3" mt="tiny" mr="tiny">
                 {icon}
               </Icon>
             )}
@@ -35,7 +29,7 @@ const IndexPageEntries = ({ entries, icon }) =>
             </Text>
           </BaseControl>
           {entry.citations?.map((citation, i) => (
-            <Text key={i} px="small" mx="em" variant="bodySmall" color="text.2">
+            <Text key={i} ml="medium" variant="bodySmall" color="text.2">
               {citation}
             </Text>
           ))}
