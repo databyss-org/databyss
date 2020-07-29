@@ -72,13 +72,8 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
       draft.authorsHeaderCache = action.payload.results.reduce(
         (dict: CacheDict<Author>, author: Author) => {
           dict[
-            `${
-              author.firstName
-                ? author.firstName.textValue
-                : '' + author.lastName
-                  ? author.lastName.textValue
-                  : ''
-            }`
+            `${author.firstName?.textValue || ''} ${author.lastName?.textValue ||
+              ''} `
           ] = author
           return dict
         },

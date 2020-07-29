@@ -17,10 +17,17 @@ const AuthorsContent = () => (
       <AuthorsLoader>
         {authors => {
           const authorData = Object.values(authors).map(value => {
-            const firstName = value.firstName?.textValue
-            const lastName = value.lastName?.textValue
+            const getAuthorName = () => {
+              const firstName = value.firstName?.textValue
+              const lastName = value.lastName?.textValue
+              if (lastName && firstName) {
+                return `${lastName}, ${firstName}`
+              }
+              return lastName || firstName
+            }
+
             return createIndexPageEntries({
-              text: `${lastName}${firstName && `, ${firstName}`}`,
+              text: getAuthorName(),
               type: 'authors',
             })
           })

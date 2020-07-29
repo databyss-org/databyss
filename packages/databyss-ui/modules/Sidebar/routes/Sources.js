@@ -44,8 +44,8 @@ const Sources = ({ filterQuery }) => (
             }
 
             const authorParams = new URLSearchParams({
-              author_first: encodeURIComponent(firstName),
-              author_last: encodeURIComponent(lastName),
+              author_first: encodeURIComponent(firstName || ''),
+              author_last: encodeURIComponent(lastName || ''),
             })
 
             return createSidebarListItems({
