@@ -9,15 +9,16 @@ export const getAuthorsFromSources = blocks =>
   blocks.reduce((dict, block) => {
     if (block.detail) {
       block.detail.authors.forEach(a => {
-        dict[
-          `${
-            a.firstName
-              ? a.firstName.textValue
-              : '' + a.lastName
-                ? a.lastName.textValue
-                : ''
-          }`
-        ] = a
+        const firstName = a.firstName?.textValue
+        const lastName = a.lastName?.textValue
+
+        if (firstName && lastName) {
+          return (dict[firstName + lastName] = a)
+        }
+        if (firstName || lastName) {
+          return (dict[firstName || lastName] = a)
+        }
+        return ''
       })
     }
     return dict
