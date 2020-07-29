@@ -103,7 +103,6 @@ const Element = ({ attributes, children, element }) => {
           maxWidth="100%"
           position="relative"
           justifyContent="center"
-          id="is-atomic"
           {...isAtomicClosure(previousBlock?.type) && {
             pt: '4',
           }}
