@@ -162,7 +162,7 @@ const Element = ({ attributes, children, element }) => {
               {block.__isActive &&
                 !isAtomicClosure(element.type) && (
                   <View display="inline">
-                    <Button variant={'editSource'} onPress={onAtomicMouseDown}>
+                    <Button variant="editSource" onPress={onAtomicMouseDown}>
                       <Icon sizeVariant="tiny" color="background.5">
                         <PenSVG />
                       </Icon>
@@ -177,7 +177,7 @@ const Element = ({ attributes, children, element }) => {
       )
     },
     // search term updates element for highlight
-    [block, element, searchTerm, spellCheck]
+    [block, element, searchTerm, spellCheck, previousBlock]
   )
 }
 
