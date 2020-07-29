@@ -33,7 +33,7 @@ const Sources = ({ filterQuery }) => (
             const firstName = value.firstName?.textValue
             const lastName = value.lastName?.textValue
             const shortFirstName = `${
-              lastName ? firstName?.charAt(0) + '.' : firstName
+              lastName ? `${firstName?.charAt(0)}.` : firstName
             }`
 
             const getShortAuthorName = () => {
