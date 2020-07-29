@@ -6,6 +6,7 @@ import LogoSvg from '@databyss-org/ui/assets/logo_new.svg'
 import { pxUnits, borderRadius } from '@databyss-org/ui/theming/views'
 import imgSourceSelection from '@databyss-org/ui/assets/promo_source_selection.png'
 import theme from '@databyss-org/ui/theming/theme'
+import backgroundImage from '@databyss-org/ui/assets/stone_bg.jpg'
 
 const HeroText = () => (
   <View alignItems="center" mt="extraLarge">
@@ -24,9 +25,9 @@ const HeroText = () => (
       maxWidth={pxUnits(560)}
       mb={pxUnits(48)}
     >
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nec
-      euismod quam. Curabitur at euismod tortor. Mauris vitae sem augue. Sed
-      interdum augue ac ex lobortis gravida.
+      A note-taking application with the feel of a word-processor. Your notes
+      can be organized by source, topic and location. PDF highlights can be
+      extracted, searched and edited.
     </Text>
   </View>
 )
@@ -58,7 +59,14 @@ const FeatureDescription = () => (
 
 const Homepage = () => (
   <View minHeight="100vh" width="100%">
-    <View p="large" pb="extraLarge" width="100%" backgroundColor="background.6">
+    <View
+      p="large"
+      pb="extraLarge"
+      width="100%"
+      css={{
+        background: `url(${backgroundImage})`,
+      }}
+    >
       <Navbar />
       <HeroText />
       <SignUpForm />
