@@ -61,6 +61,10 @@ const buttonVariants = {
     display: 'inline-block',
     padding: `${pxUnits(space.tiny)} ${pxUnits(space.extraSmall)}`,
   },
+  endAtomic: {
+    display: 'inline-block',
+    padding: `${pxUnits(10)} ${pxUnits(10)}`,
+  },
 }
 
 const buttonThemes = {
@@ -93,6 +97,11 @@ const buttonThemes = {
     activeColor: 'background.2',
   },
   editSource: {
+    textProps: {},
+    hoverColor: 'background.3',
+    activeColor: 'background.4',
+  },
+  endAtomic: {
     textProps: {},
     hoverColor: 'background.3',
     activeColor: 'background.4',

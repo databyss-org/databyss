@@ -17,7 +17,18 @@ import CitationsMenu from './CitationsMenu'
 const SPELLCHECK_DEBOUNCE_TIME = 1000
 
 export const getAtomicStyle = type =>
-  ({ SOURCE: 'bodyHeading3Underline', TOPIC: 'bodyHeading2' }[type])
+  ({
+    SOURCE: 'bodyHeading3Underline',
+    TOPIC: 'bodyHeading2',
+    END_TOPIC: 'uiTextSmall',
+    END_SOURCE: 'uiTextSmall',
+  }[type])
+
+export const isAtomicClosure = type =>
+  ({
+    END_TOPIC: true,
+    END_SOURCE: true,
+  }[type])
 
 const Element = ({ attributes, children, element }) => {
   const entryContext = useEntryContext()
@@ -92,6 +103,15 @@ const Element = ({ attributes, children, element }) => {
           maxWidth="100%"
           position="relative"
           justifyContent="center"
+          id="is-atomic"
+          {...isAtomicClosure(previousBlock?.type) && {
+            pt: '4',
+          }}
+          {...isAtomicClosure(element.type) && {
+            borderBottomWidth: '2px',
+            borderBottomColor: 'gray.5',
+            pb: 'small',
+          }}
         >
           {block.__showNewBlockMenu && (
             <View
@@ -120,7 +140,7 @@ const Element = ({ attributes, children, element }) => {
               borderRadius="default"
               data-test-atomic-edit="open"
               pl="tiny"
-              pr="0"
+              pr={!isAtomicClosure(element.type) ? '0' : 'tiny'}
               ml="tinyNegative"
               backgroundColor={
                 block.__isActive ? 'background.3' : 'transparent'
@@ -129,20 +149,27 @@ const Element = ({ attributes, children, element }) => {
                 cursor: selHasRange ? 'text' : 'pointer',
                 caretColor: block.__isActive ? 'transparent' : 'currentcolor',
               }}
-              {...(block.__isActive ? { onMouseDown: onAtomicMouseDown } : {})}
+              {...(block.__isActive && !isAtomicClosure(element.type)
+                ? { onMouseDown: onAtomicMouseDown }
+                : {})}
             >
-              <Text variant={getAtomicStyle(element.type)} display="inline">
+              <Text
+                variant={getAtomicStyle(element.type)}
+                color={`${isAtomicClosure(element.type) ? 'gray.4' : ''}`}
+                display="inline"
+              >
                 {children}
               </Text>
-              {block.__isActive && (
-                <View display="inline">
-                  <Button variant="editSource" onPress={onAtomicMouseDown}>
-                    <Icon sizeVariant="tiny" color="background.5">
-                      <PenSVG />
-                    </Icon>
-                  </Button>
-                </View>
-              )}
+              {block.__isActive &&
+                !isAtomicClosure(element.type) && (
+                  <View display="inline">
+                    <Button variant={'editSource'} onPress={onAtomicMouseDown}>
+                      <Icon sizeVariant="tiny" color="background.5">
+                        <PenSVG />
+                      </Icon>
+                    </Button>
+                  </View>
+                )}
             </View>
           ) : (
             <Text {...attributes}>{children}</Text>

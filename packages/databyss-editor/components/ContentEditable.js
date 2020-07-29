@@ -21,6 +21,7 @@ import { getSelectedIndicies, isAtomic, isEmpty } from '../lib/util'
 import Hotkeys from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
+import { isAtomicClosure } from './Element'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -173,7 +174,8 @@ const ContentEditable = ({
         if (
           ReactEditor.isFocused(editor) &&
           !selectionHasRange(state.selection) &&
-          _focusedBlock.__isActive
+          _focusedBlock.__isActive &&
+          !isAtomicClosure(_focusedBlock.type)
         ) {
           showAtomicModal({ editorContext, navigationContext, editor })
         }

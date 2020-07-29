@@ -83,6 +83,21 @@ export const bakeAtomicClosureBlock = ({
     // change cursor to end of atomic position
 
     if (_atomicClosureType) {
+      // if atomic is not set yet, set selection at tend of atomic
+      if (!isAtomicInlineType(_block.type)) {
+        draft.selection = {
+          anchor: {
+            offset: atomicClosureText(_atomicClosureType).length,
+            index,
+          },
+          focus: {
+            offset: atomicClosureText(_atomicClosureType).length,
+            index,
+          },
+          _id: draft.selection._id,
+        }
+      }
+
       // replace block in state.blocks and push editor operation
       draft.blocks[index] = {
         text: {
@@ -95,11 +110,13 @@ export const bakeAtomicClosureBlock = ({
         _id: _block._id,
       }
 
-      draft.operations.push({
-        index,
-        block: draft.blocks[index],
-      })
-
+      // if type is not set, push to operations
+      if (!isAtomicInlineType(_block.type)) {
+        draft.operations.push({
+          index,
+          block: draft.blocks[index],
+        })
+      }
       return draft.blocks[index]
     }
   }
@@ -122,7 +139,7 @@ export default (
       const { payload } = action
 
       // default nextSelection to `payload.selection` (which may be undef)
-      const nextSelection = payload.selection
+      let nextSelection = payload.selection
 
       switch (action.type) {
         case SPLIT: {
@@ -229,6 +246,8 @@ export default (
 
             // check for atomic closure
             if (bakeAtomicClosureBlock({ draft, index: op.index })) {
+              // set selection at end of atomic
+              nextSelection = draft.selection
               return
             }
 
