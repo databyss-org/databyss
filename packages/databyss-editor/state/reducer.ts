@@ -14,6 +14,8 @@ import { isAtomicInlineType } from '../lib/util'
 import {
   selectionHasRange,
   symbolToAtomicType,
+  symbolToAtomicClosureType,
+  atomicClosureText,
   offsetRanges,
   removeLocationMark,
   blockValue,
@@ -48,6 +50,48 @@ export const bakeAtomicBlock = ({
           ranges: removeLocationMark(offsetRanges(_block.text.ranges, 1)),
         },
         type: _atomicType,
+        _id: _block._id,
+      }
+
+      draft.operations.push({
+        index,
+        block: draft.blocks[index],
+      })
+
+      return draft.blocks[index]
+    }
+  }
+  return null
+}
+
+export const bakeAtomicClosureBlock = ({
+  draft,
+  index,
+}: {
+  draft: EditorState
+  index: number
+}): Block | null => {
+  const _block = draft.blocks[index]
+  // check if current text should be converted to atomic block
+  if (_block && _block.text.textValue.length > 1) {
+    const _atomicClosureType = symbolToAtomicClosureType(
+      _block.text.textValue.substring(0, 2)
+    )
+
+    // TODO: check to see if theres an opening atomic and get atomic text to change text
+
+    // change cursor to end of atomic position
+
+    if (_atomicClosureType) {
+      // replace block in state.blocks and push editor operation
+      draft.blocks[index] = {
+        text: {
+          // ranges need to account for the removal of the first string `@` or `#`
+          textValue: atomicClosureText(_atomicClosureType),
+          // location marks are not allowed in atomic types
+          ranges: [],
+        },
+        type: _atomicClosureType,
         _id: _block._id,
       }
 
@@ -183,6 +227,11 @@ export default (
             const _block = draft.blocks[op.index]
             _block.text = op.text
 
+            // check for atomic closure
+            if (bakeAtomicClosureBlock({ draft, index: op.index })) {
+              return
+            }
+
             if (op.isRefEntity) {
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {
@@ -244,11 +293,18 @@ export default (
       }
 
       if (draft.selection.focus.index !== state.selection.focus.index) {
+        // check for atomic closure on block blur
+        bakeAtomicClosureBlock({
+          draft,
+          index: state.selection.focus.index,
+        })
+
         // push updates to new entity queue
         const _baked = bakeAtomicBlock({
           draft,
           index: state.selection.focus.index,
         })
+
         if (_baked && isAtomicInlineType(_baked.type)) {
           draft.newEntities.push(_baked)
         }

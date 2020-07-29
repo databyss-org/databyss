@@ -10,6 +10,10 @@ export const isAtomicInlineType = (type: BlockType) => {
       return true
     case BlockType.Topic:
       return true
+    case BlockType.EndTopic:
+      return true
+    case BlockType.EndSource:
+      return true
     default:
       return false
   }

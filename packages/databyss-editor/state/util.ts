@@ -3,6 +3,16 @@ import { Patch } from 'immer'
 import { Selection, Block, Range, EditorState } from '../interfaces'
 import { OnChangeArgs } from './EditorProvider'
 
+export const symbolToAtomicClosureType = (symbol: string): BlockType =>
+  ({ '/@': BlockType.EndSource, '/#': BlockType.EndTopic }[symbol])
+
+
+  export const atomicClosureText = (type: BlockType): string =>
+  ({ [BlockType.EndSource]: '/@ insert source ending here', [BlockType.EndTopic]:'/# insert ending topic here' }[type])
+
+
+
+
 export const symbolToAtomicType = (symbol: string): BlockType =>
   ({ '@': BlockType.Source, '#': BlockType.Topic }[symbol])
 
