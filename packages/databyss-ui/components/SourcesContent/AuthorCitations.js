@@ -29,8 +29,10 @@ const AuthorCitations = () => {
           value => {
             const isCurrentAuthor = value.detail?.authors?.some(
               author =>
-                author.firstName?.textValue === authorQueryFirstName &&
-                author.lastName?.textValue === authorQueryLastName
+                author.firstName?.textValue ===
+                  (authorQueryFirstName || undefined) &&
+                author.lastName?.textValue ===
+                  (authorQueryLastName || undefined)
             )
 
             if (isCurrentAuthor) {

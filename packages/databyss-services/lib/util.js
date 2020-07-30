@@ -10,8 +10,8 @@ export const getAuthorsFromSources = blocks =>
     if (block.detail) {
       block.detail.authors.forEach(author => {
         dict[
-          `${author.firstName?.textValue || ''} ${author.lastName?.textValue ||
-            ''} `
+          `${author.firstName?.textValue || ''}${author.lastName?.textValue ||
+            ''}`
         ] = author
       })
     }
