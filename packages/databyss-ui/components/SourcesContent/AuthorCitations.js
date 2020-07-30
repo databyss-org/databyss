@@ -27,13 +27,22 @@ const AuthorCitations = () => {
       {sourceCitations => {
         const authorCitationsData = Object.values(sourceCitations).map(
           value => {
-            const isCurrentAuthor = value.detail?.authors?.some(
-              author =>
-                author.firstName?.textValue ===
-                  (authorQueryFirstName || undefined) &&
-                author.lastName?.textValue ===
-                  (authorQueryLastName || undefined)
-            )
+            const isCurrentAuthor = value.detail?.authors?.some(author => {
+              const firstName = author.firstName?.textValue
+              const lastName = author.lastName?.textValue
+              // If firstName or LastName is missing, only check the one defined
+              if (firstName === undefined && lastName) {
+                return lastName === authorQueryLastName
+              }
+              if (lastName === undefined && firstName) {
+                return firstName === authorQueryFirstName
+              }
+
+              return (
+                firstName === authorQueryFirstName &&
+                lastName === authorQueryLastName
+              )
+            })
 
             if (isCurrentAuthor) {
               return createIndexPageEntries({
