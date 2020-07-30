@@ -15,7 +15,7 @@ import {
   selectionHasRange,
   symbolToAtomicType,
   symbolToAtomicClosureType,
-  atomicClosureText,
+  getClosureText,
   offsetRanges,
   removeLocationMark,
   blockValue,
@@ -87,11 +87,11 @@ export const bakeAtomicClosureBlock = ({
       if (!isAtomicInlineType(_block.type)) {
         draft.selection = {
           anchor: {
-            offset: atomicClosureText(_atomicClosureType).length,
+            offset: getClosureText(_atomicClosureType, draft).length,
             index,
           },
           focus: {
-            offset: atomicClosureText(_atomicClosureType).length,
+            offset: getClosureText(_atomicClosureType, draft).length,
             index,
           },
           _id: draft.selection._id,
@@ -102,7 +102,7 @@ export const bakeAtomicClosureBlock = ({
       draft.blocks[index] = {
         text: {
           // ranges need to account for the removal of the first string `@` or `#`
-          textValue: atomicClosureText(_atomicClosureType),
+          textValue: getClosureText(_atomicClosureType, draft),
           // location marks are not allowed in atomic types
           ranges: [],
         },

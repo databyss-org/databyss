@@ -30,8 +30,8 @@ const BlockMenu = ({ element }) => {
 
   const actions = type =>
     ({
-      ENDSOURCE: () => undefined,
-      ENDLOCATION: () => undefined,
+      ENDSOURCE: () => editor.insertText('/@'),
+      ENDLOCATION: () => editor.insertText('/#'),
       SOURCE: () => editor.insertText('@'),
       TOPIC: () => editor.insertText('#'),
       LOCATION: () => {
@@ -66,18 +66,18 @@ const BlockMenu = ({ element }) => {
   }
 
   const menuItems = [
-    // {
-    //   action: 'ENDSOURCE',
-    //   textSymbol: '/@',
-    //   shortcut: '',
-    //   label: 'End source',
-    // },
-    // {
-    //   action: 'ENDLOCATION',
-    //   textSymbol: '/%',
-    //   shortcut: '',
-    //   label: 'End location',
-    // },
+    {
+      action: 'ENDSOURCE',
+      textSymbol: '/@',
+      shortcut: '',
+      label: 'End source',
+    },
+    {
+      action: 'ENDLOCATION',
+      textSymbol: '/%',
+      shortcut: '',
+      label: 'End location',
+    },
     {
       action: 'TOPIC',
       textSymbol: '#',

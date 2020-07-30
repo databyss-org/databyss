@@ -178,7 +178,7 @@ const Element = ({ attributes, children, element }) => {
       )
     },
     // search term updates element for highlight
-    [block, element, searchTerm, spellCheck, previousBlock]
+    [block, element, searchTerm, spellCheck, previousBlock?.type]
   )
 }
 
