@@ -179,6 +179,10 @@ const ContentEditable = ({
         ) {
           showAtomicModal({ editorContext, navigationContext, editor })
         }
+
+        if (_focusedBlock.__isActive && isAtomicClosure(_focusedBlock.type)) {
+          event.preventDefault()
+        }
         return
       }
       const _text = Node.string(editor.children[editor.selection.focus.path[0]])
