@@ -1297,6 +1297,19 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
+"@databyss-org/slate-react@0.57.2-b1":
+  version "0.57.2-b1"
+  resolved "https://registry.yarnpkg.com/@databyss-org/slate-react/-/slate-react-0.57.2-b1.tgz#bd977af64386332b5d58a49a765e2bd7de44bc43"
+  integrity sha512-MBSZEnKqd0gsIEk2xHrYlhbxW/3BFgtlwmKtVwcN3IJ1ZH4Hp9+HRCe5zWgoKx03s4p6IHz7I9JxEo+xv5WjHQ==
+  dependencies:
+    "@types/is-hotkey" "^0.1.1"
+    "@types/lodash" "^4.14.149"
+    direction "^1.0.3"
+    is-hotkey "^0.1.6"
+    is-plain-object "^3.0.0"
+    lodash "^4.17.4"
+    scroll-into-view-if-needed "^2.2.20"
+
 "@databyss-org/slate@0.58.1-b2":
   version "0.58.1-b2"
   resolved "https://registry.yarnpkg.com/@databyss-org/slate/-/slate-0.58.1-b2.tgz#421d90f6f8df2d6d6252875287107e32e4da6000"
@@ -17445,19 +17458,6 @@ slate-hyperscript@^0.57.2:
   integrity sha512-aUY+nXw9s9Fv0uEO7sBdRVQ9IJbKM/CaYixlUKFk+7lRZsBpplqSrb4XHL7cLPVmWIckjU4I2eCXoezNKsrgwQ==
   dependencies:
     is-plain-object "^3.0.0"
-
-slate-react@0.58.4:
-  version "0.58.4"
-  resolved "https://registry.yarnpkg.com/slate-react/-/slate-react-0.58.4.tgz#ecde34dd322af8413c2f23f0f0a577fed2422f46"
-  integrity sha512-3JXWHVPmYrR/EMcH1qtmwXZtYxxCtuokQg+r/4wD1Ab9J3zRmW4UGLoaRP9/uQrZOAOvr8mMh4IgmrxV2dQskw==
-  dependencies:
-    "@types/is-hotkey" "^0.1.1"
-    "@types/lodash" "^4.14.149"
-    direction "^1.0.3"
-    is-hotkey "^0.1.6"
-    is-plain-object "^3.0.0"
-    lodash "^4.17.4"
-    scroll-into-view-if-needed "^2.2.20"
 
 slice-ansi@0.0.4:
   version "0.0.4"

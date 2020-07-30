@@ -5,7 +5,12 @@ import React, {
   useState,
   forwardRef,
 } from 'react'
-import { Editable, withReact, Slate, ReactEditor } from 'slate-react'
+import {
+  Editable,
+  withReact,
+  Slate,
+  ReactEditor,
+} from '@databyss-org/slate-react'
 import { Editor, createEditor, Transforms } from '@databyss-org/slate'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { stateToSlateMarkup, getRangesFromBlock } from '../lib/markup'

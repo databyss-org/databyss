@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Text, View } from '@databyss-org/ui/primitives'
-import { useEditor } from 'slate-react'
+import { useEditor } from '@databyss-org/slate-react'
 import { isMobileOs } from '@databyss-org/ui/'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import HoveringToolbar from './HoveringToolbar'

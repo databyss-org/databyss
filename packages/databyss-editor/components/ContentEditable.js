@@ -1,6 +1,6 @@
 import React, { useMemo, useRef, useEffect } from 'react'
 import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
-import { ReactEditor, withReact } from 'slate-react'
+import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
