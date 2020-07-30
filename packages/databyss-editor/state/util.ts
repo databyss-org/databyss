@@ -29,7 +29,7 @@ const getOpenAtomicText = (state: EditorState): string => {
 
   const getOpenText = (
     blocks: Block[],
-    // _currentAtomics: Block[] = [],
+    openType: string = '',
     _ignoreType: string[] = []
   ): string => {
     if (!blocks.length) {
@@ -37,32 +37,36 @@ const getOpenAtomicText = (state: EditorState): string => {
     }
     const _block = blocks.shift()
     if (_block) {
-      let _closureType = getClosureType(
+      const _openType = getClosureType(
         symbolToAtomicClosureType(_block.text.textValue)
       )
       // if current block is a closing block
-      if (_closureType) {
-        _ignoreType.push(_closureType)
-        return getOpenText(blocks, _ignoreType)
+      if (_openType) {
+        openType = _openType
+        //  _ignoreType.push(_closureType)
+        return getOpenText(blocks, openType, _ignoreType)
       }
 
       if (isAtomicInlineType(_block.type)) {
         //  check if type is closure type
-        _closureType = getClosureType(_block.type)
+        const _closureType = getClosureType(_block.type)
         // current atomic block is a closing block ignore that block type
         if (_closureType) {
-          return getOpenText(blocks, _ignoreType)
+          _ignoreType.push(_closureType)
+          return getOpenText(blocks, openType, _ignoreType)
         }
 
-        // return current block to close
-        if (_ignoreType.findIndex(b => b === _block.type) > -1) {
+        // return current block to close if its not ignored and is in currently open
+        if (
+          _ignoreType.findIndex(t => t === _block.type) < 0 &&
+          openType === _block.type
+        ) {
           return _block.text.textValue
         }
       }
     }
-    return getOpenText(blocks, _ignoreType)
+    return getOpenText(blocks, openType, _ignoreType)
   }
-
   return getOpenText(_blocks)
 }
 
@@ -102,7 +106,6 @@ export const getOpenAtomics = (state: EditorState): Block[] => {
 
         // ignore any types that have been closed
         if (_ignoreType.findIndex(b => b === _block.type) > -1) {
-          console.log(_block.text.textValue)
           return findPath(blocks, _currentAtomics, _ignoreType)
         }
         // if atomic type is not found in our current atomics array and is not closed, push to array

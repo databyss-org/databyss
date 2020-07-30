@@ -16,6 +16,7 @@ import {
   symbolToAtomicType,
   symbolToAtomicClosureType,
   getClosureText,
+  getClosureType,
   offsetRanges,
   removeLocationMark,
   blockValue,
@@ -72,6 +73,10 @@ export const bakeAtomicClosureBlock = ({
   index: number
 }): Block | null => {
   const _block = draft.blocks[index]
+  if (getClosureType(_block.type)) {
+    return null
+  }
+  // console.log(JSON.stringify(_block))
   // check if current text should be converted to atomic block
   if (_block && _block.text.textValue.length > 1) {
     const _atomicClosureType = symbolToAtomicClosureType(
@@ -117,6 +122,7 @@ export const bakeAtomicClosureBlock = ({
           block: draft.blocks[index],
         })
       }
+
       return draft.blocks[index]
     }
   }
@@ -369,6 +375,7 @@ export default (
           draft.selection.focus.offset < _selectedBlock.text.textValue.length &&
           draft.selection.focus.offset > 0
       }
+
       return draft
     }
   )
