@@ -73,7 +73,9 @@ export const bakeAtomicClosureBlock = ({
   index: number
 }): Block | null => {
   const _block = draft.blocks[index]
-  if (getClosureType(_block.type)) {
+
+  // if block has already been tagged as closing or if block does not yet exist, bail on operation
+  if (!_block || getClosureType(_block.type)) {
     return null
   }
   // console.log(JSON.stringify(_block))
