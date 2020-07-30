@@ -179,7 +179,7 @@ const ContentEditable = ({
         ) {
           showAtomicModal({ editorContext, navigationContext, editor })
         }
-
+        // if closure block is highlighted prevent `enter` key
         if (_focusedBlock.__isActive && isAtomicClosure(_focusedBlock.type)) {
           event.preventDefault()
         }

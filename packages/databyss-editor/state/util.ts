@@ -16,7 +16,7 @@ export const symbolToAtomicClosureType = (symbol: string): BlockType => {
 /*
 if current index is a closing atomic text, return text which tag is closing
 */
-const getOpenAtomicText = (state: EditorState): string => {
+export const getOpenAtomicText = (state: EditorState): string => {
   if (!state) {
     return ''
   }

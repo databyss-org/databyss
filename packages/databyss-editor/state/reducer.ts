@@ -13,6 +13,7 @@ import {
 import { isAtomicInlineType } from '../lib/util'
 import {
   selectionHasRange,
+  getOpenAtomicText,
   symbolToAtomicType,
   symbolToAtomicClosureType,
   getClosureText,
@@ -74,8 +75,15 @@ export const bakeAtomicClosureBlock = ({
 }): Block | null => {
   const _block = draft.blocks[index]
 
-  // if block has already been tagged as closing or if block does not yet exist, bail on operation
-  if (!_block || getClosureType(_block.type)) {
+  // if block has already been tagged as closing
+  // if block does not yet exist
+  // if theres no atomic to close
+  // bail on operation
+  if (
+    !_block ||
+    getClosureType(_block.type) ||
+    !getOpenAtomicText(draft).length
+  ) {
     return null
   }
   // console.log(JSON.stringify(_block))
