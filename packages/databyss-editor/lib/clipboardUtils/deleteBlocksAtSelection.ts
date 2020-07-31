@@ -18,7 +18,6 @@ const deleteSelectionWithinBlock = ({
   anchor: Point
   focus: Point
 }) => {
-  console.log('deleteSelectionWithinBlock')
   const { index } = anchor
   const block = blocks[index]
 
