@@ -5,6 +5,7 @@ import SignUpForm from '@databyss-org/ui/modules/Homepage/SignUpForm'
 import LogoSvg from '@databyss-org/ui/assets/logo_new.svg'
 import { pxUnits, borderRadius } from '@databyss-org/ui/theming/views'
 import imgSourceSelection from '@databyss-org/ui/assets/promo_source_selection.png'
+import PDFSvg from '@databyss-org/ui/assets/add_document.svg'
 import theme from '@databyss-org/ui/theming/theme'
 import backgroundImage from '@databyss-org/ui/assets/stone_bg.jpg'
 import { useMediaQuery } from 'react-responsive'
@@ -34,18 +35,18 @@ const HeroText = ({ isMobile }) => (
       maxWidth={pxUnits(560)}
       mb={pxUnits(48)}
     >
-      A note-taking application with the feel of a word-processor. Your notes
-      can be organized by source, topic and location. PDF highlights can be
-      extracted, searched and edited.
+      You research, dabble, experiment, and get lost in your thoughts. Databyss
+      is a note-taking application that helps you leave traces so you can jump
+      from project to project with ease and precision.
     </Text>
   </View>
 )
 
 const FeatureDescription = ({ isTablet }) => (
   <>
-    <View flexShrink="1" mr="large">
+    <View flexShrink="1" mr="large" justifyContent="center">
       <Text variant="heading3" color="text.1" mb="medium">
-        Add Sources
+        Import PDF Annotations
       </Text>
       <Text variant="uiTextMedium" color="text.3" mb="large">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas nec
@@ -53,16 +54,7 @@ const FeatureDescription = ({ isTablet }) => (
         interdum augue ac ex lobortis gravida.
       </Text>
     </View>
-    <img
-      src={imgSourceSelection}
-      alt="Dropdown menu for sources"
-      width={isTablet ? '60%' : '100%'}
-      css={{
-        alignSelf: 'flex-start',
-        boxShadow: theme.buttonShadow.boxShadow,
-        borderRadius,
-      }}
-    />
+    <PDFSvg width={isTablet ? 375 : 200} height="200px" />
   </>
 )
 
@@ -109,7 +101,7 @@ const Homepage = () => {
               mb="medium"
               textAlign="center"
             >
-              Deep Search
+              All Your Sources In One Place
             </Text>
             <Text
               variant="uiTextMedium"
