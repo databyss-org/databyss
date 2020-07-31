@@ -7,7 +7,7 @@ export const resourceIsReady = resource =>
 
 export const getAuthorsFromSources = blocks =>
   blocks.reduce((dict, block) => {
-    if (block.detail) {
+    if (block.detail?.authors) {
       block.detail.authors.forEach(author => {
         dict[
           `${author.firstName?.textValue || ''}${author.lastName?.textValue ||
