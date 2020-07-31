@@ -4,7 +4,7 @@ export { ResourcePending } from './ResourcePending'
 export { NetworkUnavailableError, NotAuthorizedError, ResourceNotFoundError } from './Errors'
 export type { Page, PageHeader } from './Page'
 export type { Text } from './Text'
-export type { Block, Source, SourceDetail, Author, Topic } from './Block'
+export type { Block, Source, SourceDetail, Author, Topic, SourceCitationHeader } from './Block'
 export { BlockType } from './Block'
 export type { FSA } from './FSA'
 export type { Range } from './Range'
@@ -22,6 +22,8 @@ export interface CacheDict<T> {
 }
 
 export type NullableCache<T> = ResourceResponse<CacheDict<T>>
+
+export type CacheList<T> = ResourceResponse<T[]>
 
 interface RefDict {
   [key: string]: React.Ref<HTMLInputElement>

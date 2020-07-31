@@ -106,7 +106,7 @@ describe('editor selenium', () => {
     await editor.sendKeys('this text should not be allowed')
     await editor.sendKeys(Key.ARROW_DOWN)
 
-    await sleep(300)
+    await sleep(500)
 
     const actual = JSON.parse(await slateDocument.getText())
 
