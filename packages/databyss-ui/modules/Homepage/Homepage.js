@@ -5,6 +5,7 @@ import SignUpForm from '@databyss-org/ui/modules/Homepage/SignUpForm'
 import LogoSvg from '@databyss-org/ui/assets/logo_new.svg'
 import { pxUnits, borderRadius } from '@databyss-org/ui/theming/views'
 import imgSourceSelection from '@databyss-org/ui/assets/promo_source_selection.png'
+import SourceDropdownSvg from '@databyss-org/ui/assets/source_dropdown.svg'
 import PDFSvg from '@databyss-org/ui/assets/add_document.svg'
 import theme from '@databyss-org/ui/theming/theme'
 import backgroundImage from '@databyss-org/ui/assets/stone_bg.jpg'
@@ -63,12 +64,12 @@ const Homepage = () => {
   const isTablet = useMediaQuery({ minWidth: 768 })
   const isDesktop = useMediaQuery({ minWidth: 1024 })
 
-  const getMargins = () => {
+  const getContentSpacing = () => {
     if (isDesktop) {
       return 'extraLarge'
     }
     if (isTablet) {
-      return 'extraLarge'
+      return 'large'
     }
     return 'none'
   }
@@ -87,7 +88,7 @@ const Homepage = () => {
         <HeroText isMobile={isMobile} />
         <SignUpForm />
       </View>
-      <View backgroundColor="background.1" m={getMargins()}>
+      <View backgroundColor="background.1" m={getContentSpacing()}>
         <View
           backgroundColor="background.2"
           p="large"
@@ -132,6 +133,36 @@ const Homepage = () => {
           flexDirection={isTablet ? 'row' : 'column'}
         >
           <FeatureDescription isTablet={isTablet} />
+        </View>
+      </View>
+      <View flexGrow="1" flexDirection={isTablet ? 'row' : 'column'}>
+        <View
+          backgroundColor="purple.4"
+          px={isDesktop ? 'extraLarge' : 'medium'}
+          py="large"
+        >
+          <SourceDropdownSvg width="440px" height="240px" />
+        </View>
+        <View
+          backgroundColor="purple.5"
+          py="large"
+          flexShrink="3"
+          justifyContent="center"
+        >
+          <View
+            mt={isTablet ? 'none' : 'large'}
+            justifyContent="center"
+            px={isDesktop ? 'extraLarge' : 'medium'}
+          >
+            <Text variant="heading3" color="text.1" mb="medium">
+              Search For Sources
+            </Text>
+            <Text variant="uiTextMedium" color="text.3" mb="large">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas
+              nec euismod quam. Curabitur at euismod tortor. Mauris vitae sem
+              augue. Sed interdum augue ac ex lobortis gravida.
+            </Text>
+          </View>
         </View>
       </View>
     </View>
