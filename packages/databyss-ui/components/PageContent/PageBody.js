@@ -16,7 +16,7 @@ const PageBody = ({
   focusIndex,
   onNavigateUpFromEditor,
   editorRef,
-  onEditorChange,
+  onEditorPathChange,
 }) => {
   const { location } = useNavigationContext()
   const clearBlockDict = usePageContext(c => c.clearBlockDict)
@@ -46,7 +46,11 @@ const PageBody = ({
 
   // state from provider is out of date
   const onChange = value => {
-    requestAnimationFrame(() => onEditorChange(editorStateRef.current))
+    if (editorStateRef.current?.pagePath) {
+      requestAnimationFrame(() =>
+        onEditorPathChange(editorStateRef.current.pagePath)
+      )
+    }
 
     pageState.current = value.nextState
 

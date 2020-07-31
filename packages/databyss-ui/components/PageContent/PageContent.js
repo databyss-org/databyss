@@ -16,7 +16,7 @@ export const PageRouter = () => (
 const PageContainer = React.memo(({ anchor, id, page }) => {
   const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
 
-  const [editorState, setEditorState] = useState(null)
+  const [editorPath, setEditorPath] = useState(null)
   const headerRef = useRef()
   const editorRef = useRef()
   const editorWindowRef = useRef()
@@ -48,7 +48,6 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
     }
   }, [])
 
-  // console.log(editorWindowRef)
   // focus header
   const onNavigateUpFromEditor = () => {
     if (headerRef.current) {
@@ -63,13 +62,9 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
     }
   }
 
-  const onEditorChange = editorStateRef => {
-    setEditorState(editorStateRef?.state)
-  }
-
   return (
     <View height="100vh" overflow="scroll" ref={editorWindowRef}>
-      <PageSticky page={editorState} />
+      <PageSticky pagePath={editorPath} pageId={page._id} />
       <View pl="medium" pr="medium" pb="medium" zIndex={1}>
         <View
           mr="medium"
@@ -84,7 +79,7 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
           />
         </View>
         <PageBody
-          onEditorChange={onEditorChange}
+          onEditorPathChange={setEditorPath}
           editorRef={editorRef}
           page={page}
           focusIndex={index}

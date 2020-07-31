@@ -18,6 +18,7 @@ import {
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
+import { getPagePath } from '../../databyss-ui/components/PageContent/_helpers'
 
 export type Transform = {
   // current selection
@@ -56,7 +57,7 @@ export type OnChangeArgs = {
 }
 
 export interface RefInputHandles {
-  state: EditorState
+  pagePath: string
 }
 
 type PropsType = {
@@ -81,7 +82,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     useImperativeHandle(
       ref,
       () => ({
-        state,
+        pagePath: getPagePath(state),
       }),
       [JSON.stringify(state.selection)]
     )
