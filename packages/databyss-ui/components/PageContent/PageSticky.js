@@ -4,7 +4,6 @@ import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { getPagePath } from './_helpers'
 import { ArchiveBin } from './ArchiveBin'
 
 const PageSticky = ({ pagePath, pageId }) => {
@@ -16,7 +15,7 @@ const PageSticky = ({ pagePath, pageId }) => {
   const [pendingPatches, setPendingPatches] = useState(0)
 
   const stickyRef = useRef()
-  let currentPath = []
+  const currentPath = []
 
   useEffect(
     () => {
