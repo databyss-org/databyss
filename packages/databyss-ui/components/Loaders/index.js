@@ -67,3 +67,13 @@ export const TopicLoader = ({ topicId, children }) => {
   const getTopic = useTopicContext(c => c.getTopic)
   return MakeLoader({ resource: getTopic(topicId), children })
 }
+
+export const AuthorsLoader = ({ children }) => {
+  const getAuthors = useSourceContext(c => c.getAuthors)
+  return MakeLoader({ resource: getAuthors(), children })
+}
+
+export const SourceCitationsLoader = ({ children }) => {
+  const getSourceCitations = useSourceContext(c => c.getSourceCitations)
+  return MakeLoader({ resource: getSourceCitations(), children })
+}

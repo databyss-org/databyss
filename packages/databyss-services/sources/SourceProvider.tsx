@@ -1,15 +1,23 @@
-import React, { useContext, useEffect, useCallback } from 'react'
+import React, { useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
 import reducer, { initialState } from './reducer'
-import { ResourceResponse, Source, SourceState } from '../interfaces'
+import {
+  ResourceResponse,
+  Source,
+  SourceState,
+  Author,
+  SourceCitationHeader,
+} from '../interfaces'
 
 import {
   fetchSource,
   saveSource,
   removeSourceFromCache,
   fetchSourceQuery,
+  fetchAuthorHeaders,
+  fetchSourceCitations,
 } from './actions'
 import { SourceSearchResults } from '../interfaces/SourceState'
 
@@ -24,6 +32,8 @@ interface ContextType {
   setSource: (source: Source) => void
   removeCacheValue: (id: string) => void
   searchSource: (query: string) => ResourceResponse<SourceSearchResults>
+  getAuthors: () => ResourceResponse<Author[]>
+  getSourceCitations: () => ResourceResponse<SourceCitationHeader[]>
 }
 
 const useReducer = createReducer()
@@ -89,6 +99,30 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     [state.cache]
   )
 
+  const getSourceCitations = useCallback(
+    (): ResourceResponse<SourceCitationHeader> => {
+      if (state.citationHeaderCache) {
+        return state.citationHeaderCache
+      }
+
+      dispatch(fetchSourceCitations())
+      return null
+    },
+    [state.citationHeaderCache]
+  )
+
+  const getAuthors = useCallback(
+    (): ResourceResponse<Author[]> => {
+      if (state.authorsHeaderCache) {
+        return state.authorsHeaderCache
+      }
+
+      dispatch(fetchAuthorHeaders())
+      return null
+    },
+    [state.authorsHeaderCache]
+  )
+
   return (
     <SourceContext.Provider
       value={{
@@ -98,6 +132,8 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
         removeCacheValue,
         searchSource,
         getSearchCache,
+        getAuthors,
+        getSourceCitations,
       }}
     >
       {children}

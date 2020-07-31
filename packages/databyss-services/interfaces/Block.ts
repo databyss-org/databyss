@@ -12,14 +12,21 @@ export interface Block {
 }
 
 export interface Author {
-  firstName: string
-  lastName: string
+  firstName: Text
+  lastName: Text
+}
+
+export interface Citations {
+  format: string
+  text: Text
 }
 
 export interface SourceDetail {
   authors: Author[]
-  citations: Text[]
+  citations: Citations[]
 }
+
+export interface SourceCitationHeader extends Source {}
 
 export interface Source extends Block {
   detail: SourceDetail
