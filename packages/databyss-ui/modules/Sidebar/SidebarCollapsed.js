@@ -3,6 +3,8 @@ import { View, List } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
+import TopicSvg from '@databyss-org/ui/assets/topic.svg'
+import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
@@ -62,6 +64,18 @@ const SidebarCollapsed = () => {
       title: 'Pages',
       icon: <PagesSvg />,
       onClick: () => onItemClick('pages'),
+    },
+    {
+      name: 'sources',
+      title: 'Sources',
+      icon: <SourceSvg />,
+      onClick: () => onItemClick('sources'),
+    },
+    {
+      name: 'topics',
+      title: 'Topics',
+      icon: <TopicSvg />,
+      onClick: () => onItemClick('topics'),
     },
   ]
 

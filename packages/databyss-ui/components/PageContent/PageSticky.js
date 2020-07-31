@@ -4,10 +4,9 @@ import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { getPagePath } from './_helpers'
 import { ArchiveBin } from './ArchiveBin'
 
-const PageSticky = ({ page }) => {
+const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
   const hasPendingPatches = usePageContext(c => c.hasPendingPatches)
   // get page name from headerCache
@@ -16,7 +15,7 @@ const PageSticky = ({ page }) => {
   const [pendingPatches, setPendingPatches] = useState(0)
 
   const stickyRef = useRef()
-  let pageName = ''
+  const currentPath = []
 
   useEffect(
     () => {
@@ -26,8 +25,14 @@ const PageSticky = ({ page }) => {
   )
 
   const pages = getPages()
-  if (page) {
-    pageName = pages[page.pageHeader._id].name
+  // get page title
+  if (pages[pageId].name) {
+    currentPath.push(pages[pageId].name)
+  }
+
+  // get page path
+  if (pagePath) {
+    currentPath.push(pagePath)
   }
 
   return (
@@ -45,9 +50,7 @@ const PageSticky = ({ page }) => {
       zIndex={2}
     >
       <Text color="gray.4" pl="medium" variant="uiTextSmall">
-        <div
-          dangerouslySetInnerHTML={{ __html: getPagePath(page, pageName) }}
-        />
+        <div dangerouslySetInnerHTML={{ __html: currentPath.join(' / ') }} />
       </Text>
       <View
         width={200}

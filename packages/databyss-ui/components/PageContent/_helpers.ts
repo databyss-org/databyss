@@ -12,7 +12,7 @@ const getBlockPrefix = (type: string): string =>
     TOPIC: '#',
   }[type])
 
-export const getPagePath = (page: EditorState, pageName: string): string => {
+export const getPagePath = (page: EditorState): string => {
   if (!page) {
     return ''
   }
@@ -20,10 +20,7 @@ export const getPagePath = (page: EditorState, pageName: string): string => {
   const _currentAtomics = getOpenAtomics(page)
 
   const _path: string[] = []
-  // add page name as first path
-  if (pageName) {
-    _path.push(pageName)
-  }
+
   _currentAtomics.reverse().forEach(_block => {
     _path.push(
       `${getBlockPrefix(_block.type)} ${stateBlockToHtmlHeader(_block)}`
