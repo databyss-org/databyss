@@ -6,6 +6,7 @@ import {
   MERGE,
   SET_CONTENT,
   REMOVE,
+  REMOVE_AT_SELECTION,
   CLEAR,
   SET_SELECTION,
   DEQUEUE_NEW_ENTITY,
@@ -90,7 +91,7 @@ export default (
 
       switch (action.type) {
         case CUT: {
-          deleteBlocksAtSelection({  draftState: draft })
+          deleteBlocksAtSelection(draft)
           break
         }
         case PASTE: {
@@ -113,76 +114,73 @@ export default (
           }
 
           if (!isSelectionCollapsed(state.selection)) {
-            deleteBlocksAtSelection({ draftState: draft })
+            deleteBlocksAtSelection(draft)
           }
 
+          const _isCurrentBlockEmpty = !draft.blocks[
+            draft.selection.anchor.index
+          ].text.textValue.length
     
-            // if fragment length is greater than 1 split blocks and insert the fragment
-            const _isCurrentBlockEmpty = !draft.blocks[
-              draft.selection.anchor.index
-            ].text.textValue.length
+          // if fragment contains multiple blocks, the cursor block is empty, the cursor block is atomic, or the 
+          // fragment starts with an atomic, do not split the cursor block...
+          if (
+            _frag.length > 1 ||
+            _isCurrentBlockEmpty ||
+            isAtomicInlineType(_frag[0].type) ||
+            isAtomicInlineType(_startBlock.type)
 
-            // splice blocks at current index
-            if (
-              _frag.length > 1 ||
-              _isCurrentBlockEmpty ||
-              isAtomicInlineType(_frag[0].type) ||
-              isAtomicInlineType(_startBlock.type)
+          ) {
+            // if cursor block is empty, start inserting the fragments here
+            // otherwise, insert them on the following line
+            const _spliceIndex = _isCurrentBlockEmpty
+              ? draft.selection.anchor.index
+              : draft.selection.anchor.index + 1
 
-            ) {
-              const _spliceIndex = _isCurrentBlockEmpty
-                ? draft.selection.anchor.index
-                : draft.selection.anchor.index + 1
+            // insert blocks at index
+            draft.blocks.splice(
+              _spliceIndex,
+              _isCurrentBlockEmpty ? 1 : 0,
+              ..._frag
+            )
 
-              // insert block at index
-              draft.blocks.splice(
-                _spliceIndex,
-                _isCurrentBlockEmpty ? 1 : 0,
-                ..._frag
-              )
+            draft.operations.reloadAll = true
 
-              draft.operations.reloadAll = true
+            // set selection
+            const _selectionIndex = _spliceIndex + _frag.length - 1
+            const _offset =
+              draft.blocks[_selectionIndex].text.textValue.length
 
-              // set selection
-              const _selectionIndex = _spliceIndex + _frag.length - 1
-              const _offset =
-                draft.blocks[_selectionIndex].text.textValue.length
-
-              const _nextSelection = {
-                _id: draft.selection._id,
-                anchor: { index: _selectionIndex, offset: _offset },
-                focus: { index: _selectionIndex, offset: _offset },
-              }
-              nextSelection = _nextSelection
-            } else {
-              // merge fragment at current block
-              const { blocks, selection } = draft
-              const { anchor } = selection
-              const _index = anchor.index
-              const _mergedBlock = insertText({
-                block: blocks[_index],
-                text: _frag[0].text,
-                index: anchor.offset,
-              })
-
-              // insert new block at current index
-              draft.blocks.splice(anchor.index, 1, {
-                ...blocks[_index],
-                ..._mergedBlock,
-              })
-
-              const _offset = anchor.offset + _frag[0].text.textValue.length
-
-              const _nextSelection = {
-                _id: draft.selection._id,
-                anchor: { index: _index, offset: _offset },
-                focus: { index: _index, offset: _offset },
-              }
-              nextSelection = _nextSelection
-
-              // TODO: create operation instead of remounting state
-              draft.operations.reloadAll = true
+            const _nextSelection = {
+              _id: draft.selection._id,
+              anchor: { index: _selectionIndex, offset: _offset },
+              focus: { index: _selectionIndex, offset: _offset },
             }
+            nextSelection = _nextSelection
+
+          } else {
+            // we have some text in our fragment to insert at the cursor, so do the split and insert
+            insertText({
+              block: draft.blocks[draft.selection.anchor.index],
+              text: _frag[0].text,
+              offset: draft.selection.anchor.offset,
+            })
+
+            const _cursor = {
+              index: draft.selection.anchor.index,
+              offset: draft.selection.anchor.offset + _frag[0].text.textValue.length
+            }
+
+            nextSelection = {
+              _id: draft.selection._id,
+              anchor: _cursor,
+              focus: _cursor,
+            }
+
+            draft.operations.push({
+              index: state.selection.anchor.index,
+              block: blockValue(draft.blocks[state.selection.anchor.index]),
+            })
+          }
         
           break
         }
@@ -318,7 +316,17 @@ export default (
           )
           break
         }
-
+        case REMOVE_AT_SELECTION: {
+          deleteBlocksAtSelection(draft)
+          if (state.selection.anchor.index === state.selection.focus.index) {
+            draft.operations.push({
+              index: state.selection.anchor.index,
+              block: blockValue(draft.blocks[state.selection.anchor.index]),
+            })
+          }
+          // draft.preventDefault = true
+          break
+        }
         case REMOVE: {
           draft.blocks.splice(payload.index, 1)
           break

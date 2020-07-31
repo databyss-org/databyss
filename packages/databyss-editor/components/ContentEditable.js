@@ -45,6 +45,7 @@ const ContentEditable = ({
     setSelection,
     clear,
     remove,
+    removeAtSelection,
     removeEntityFromQueue,
   } = editorContext
 
@@ -199,6 +200,8 @@ const ContentEditable = ({
     if (event.key === 'Backspace') {
       // if we have text selected, handle this separately
       if (!Point.equals(editor.selection.focus, editor.selection.anchor)) {
+        event.preventDefault()
+        removeAtSelection()
         return
       }
       // handle start of atomic
