@@ -50,7 +50,10 @@ const PageSticky = ({ pagePath, pageId }) => {
       zIndex={2}
     >
       <Text color="gray.4" pl="medium" variant="uiTextSmall">
-        <div dangerouslySetInnerHTML={{ __html: currentPath.join(' / ') }} />
+        <div
+          data-test-element="editor-sticky-header"
+          dangerouslySetInnerHTML={{ __html: currentPath.join(' / ') }}
+        />
       </Text>
       <View
         width={200}
