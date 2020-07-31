@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Transforms, Text } from '@databyss-org/slate'
-import { useEditorContext } from '../state/EditorProvider'
 import { useEditor, ReactEditor } from 'slate-react'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import {
@@ -13,6 +12,7 @@ import {
 import AddSvg from '@databyss-org/ui/assets/add.svg'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
+import { useEditorContext } from '../state/EditorProvider'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 import { getOpenAtomics } from '../state/util'
 
