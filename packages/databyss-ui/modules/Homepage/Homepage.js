@@ -36,9 +36,8 @@ const HeroText = ({ isMobile }) => (
       maxWidth={pxUnits(560)}
       mb={pxUnits(48)}
     >
-      You research, dabble, experiment, and get lost in your thoughts. Databyss
-      is a note-taking application that helps you leave traces so you can jump
-      from project to project with ease and precision.
+      You research, dabble, experiment, take notes, and get lost in your
+      thoughts. Databyss is your new word-processor.
     </Text>
   </View>
 )
@@ -88,7 +87,7 @@ const Homepage = () => {
         <HeroText isMobile={isMobile} />
         <SignUpForm />
       </View>
-      <View backgroundColor="background.1" m={getContentSpacing()}>
+      <View backgroundColor="background.1" m={getContentSpacing()} mb="none">
         <View
           backgroundColor="background.2"
           p="large"
@@ -129,7 +128,7 @@ const Homepage = () => {
         <View
           flexGrow="1"
           px={isTablet ? 'none' : 'medium'}
-          py="large"
+          py="extraLarge"
           flexDirection={isTablet ? 'row' : 'column'}
         >
           <FeatureDescription isTablet={isTablet} />
