@@ -9,6 +9,8 @@ import {
   Sidebar,
   PageRouter,
   SearchRouter,
+  SourcesRouter,
+  TopicsRouter,
   useNavigationContext,
   ModalManager,
 } from '@databyss-org/ui'
@@ -60,6 +62,8 @@ const Private = () => {
                 <NotFoundRedirect default />
                 <PageRouter path="pages/*" />
                 <SearchRouter path="search/*" />
+                <SourcesRouter path="sources/*" />
+                <TopicsRouter path="topics/*" />
               </App>
             </Router>
             <ModalManager />

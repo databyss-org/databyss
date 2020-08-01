@@ -28,7 +28,11 @@ const SidebarIconButton = ({ icon, onClick, isActive, title, ...others }) => {
           }}
         />
         <Grid singleRow alignItems="center" columnGap="small">
-          <Icon sizeVariant="medium" color="text.3" title={title}>
+          <Icon
+            sizeVariant="medium"
+            color={isActive && isMenuOpen ? 'text.2' : 'text.3'}
+            title={title}
+          >
             {icon}
           </Icon>
         </Grid>

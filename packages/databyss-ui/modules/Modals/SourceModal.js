@@ -80,7 +80,7 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
                         onBlur={onBlur}
                       />
                     </ValueListItem>
-                    <ValueListItem path="detail.citations[0]">
+                    <ValueListItem path="detail.citations[0].text">
                       <TextControl
                         labelProps={{
                           width: '25%',

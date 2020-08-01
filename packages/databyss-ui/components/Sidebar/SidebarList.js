@@ -1,12 +1,10 @@
 import React from 'react'
-import css from '@styled-system/css'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import SourceSvg from '@databyss-org/ui/assets/source.svg'
-import AuthorSvg from '@databyss-org/ui/assets/author.svg'
+import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
+import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
-import TopicSvg from '@databyss-org/ui/assets/topic.svg'
-import Databyss from '@databyss-org/ui/assets/databyss.svg'
+import TopicsSvg from '@databyss-org/ui/assets/topics.svg'
 import {
   Text,
   View,
@@ -14,50 +12,26 @@ import {
   Grid,
   Icon,
 } from '@databyss-org/ui/primitives'
-
-const defaultMenu = [
-  {
-    type: 'pages',
-    text: 'Pages',
-  },
-  // {
-  //   type: 'sources',
-  //   text: 'Sources',
-  // },
-  //   {
-  //     type: 'authors',
-  //     text: 'Authors',
-  //   },
-  //   {
-  //     type: 'topics',
-  //     text: 'Topics',
-  //   },
-]
+import { useLocation } from '@reach/router'
 
 const menuSvgs = type =>
   ({
-    header: <Databyss />,
     pages: <PageSvg />,
-    sources: <SourceSvg />,
-    authors: <AuthorSvg />,
-    topics: <TopicSvg />,
+    sources: <SourcesSvg />,
+    authors: <AuthorsSvg />,
+    topics: <TopicsSvg />,
   }[type])
 
-const SidebarList = ({ menuItems = defaultMenu }) => {
-  const {
-    getTokensFromPath,
-    navigateSidebar,
-    navigate,
-  } = useNavigationContext()
-
+const SidebarList = ({ menuItems }) => {
+  const { getTokensFromPath } = useNavigationContext()
+  const location = useLocation()
   const tokens = getTokensFromPath()
 
-  const onClick = item => {
-    if (!item.id) {
-      return navigateSidebar(`/${item.type}`)
+  const getHref = item => {
+    if (item.params) {
+      return `${item.route}/${item.params}`
     }
-    // dispatch id to fetch
-    return navigate(`/pages/${item.id}`)
+    return `${item.route}`
   }
 
   const padding = 24
@@ -70,40 +44,50 @@ const SidebarList = ({ menuItems = defaultMenu }) => {
   return (
     <View
       width="100%"
-      css={css({
-        height: `calc(100vh - ${totalHeight})`,
-      })}
+      height={`calc(100vh - ${totalHeight})`}
       overflow="scroll"
       p={pxUnits(0)}
       mt="extraSmall"
     >
-      {menuItems.reduce((acc, item, index) => {
-        const _isActive = item.id === tokens.id && tokens.id
-        acc.push(
-          <BaseControl
-            data-test-element={`page-sidebar-${index}`}
-            backgroundColor={_isActive ? 'control.1' : 'transparent'}
-            py="small"
-            px="em"
-            key={index}
-            width="100%"
-            onClick={() => onClick(item)}
-          >
-            <View>
+      {menuItems.map((item, index) => {
+        const _isActive = item.params
+          ? item.params === tokens.params
+          : item.route === location.pathname
+
+        if (item.text) {
+          return (
+            <BaseControl
+              data-test-element={`page-sidebar-${index}`}
+              backgroundColor={_isActive ? 'control.1' : 'transparent'}
+              py="small"
+              px="em"
+              key={index}
+              width="100%"
+              href={getHref(item)}
+              css={{
+                textDecoration: 'none',
+              }}
+            >
               <Grid singleRow flexWrap="nowrap" columnGap="small">
-                <Icon sizeVariant="tiny" color="text.2" mt={pxUnits(2)}>
-                  {menuSvgs(item.type)}
+                <Icon
+                  sizeVariant="tiny"
+                  color={_isActive ? 'text.1' : 'text.3'}
+                  mt={pxUnits(2)}
+                >
+                  {item.icon ? item.icon : menuSvgs(item.type)}
                 </Icon>
-                <Text variant="uiTextSmall" color="text.2">
+                <Text
+                  variant="uiTextSmall"
+                  color={_isActive ? 'text.1' : 'text.3'}
+                >
                   {item.text}
                 </Text>
               </Grid>
-            </View>
-          </BaseControl>
-        )
-
-        return acc
-      }, [])}
+            </BaseControl>
+          )
+        }
+        return null
+      })}
     </View>
   )
 }
