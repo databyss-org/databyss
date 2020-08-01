@@ -1,4 +1,5 @@
 import React, { createContext, useContext } from 'react'
+import ReactDOMServer from 'react-dom/server'
 import { Patch } from 'immer'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import {
@@ -9,10 +10,19 @@ import {
   REMOVE,
   CLEAR,
   DEQUEUE_NEW_ENTITY,
+  COPY,
+  CUT,
+  PASTE,
+  REMOVE_AT_SELECTION,
 } from './constants'
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
+import {
+  cutOrCopyEventHandler,
+  pasteEventHandler,
+  getFragmentAtSelection,
+} from '../lib/clipboardUtils'
 
 export type Transform = {
   // current selection
@@ -40,7 +50,11 @@ type ContextType = {
   setContent: (transform: Transform) => void
   setSelection: (selection: Selection) => void
   remove: (index: number) => void
+  removeAtSelection: () => void
   clear: (index: number) => void
+  copy: (event: ClipboardEvent) => void
+  cut: (event: ClipboardEvent) => void
+  paste: (event: ClipboardEvent) => void
 }
 
 export type OnChangeArgs = {
@@ -117,6 +131,14 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
     })
 
   /**
+   * Remove text currently selected. May span multiple blocks
+   */
+  const removeAtSelection = (): void =>
+    dispatch({
+      type: REMOVE_AT_SELECTION,
+    })
+
+  /**
    * Clear the block at `index`
    * resets the type to `ENTRY`
    */
@@ -132,15 +154,49 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
       payload: { id },
     })
 
+  const cut = (e: ClipboardEvent) => {
+    const _frag = getFragmentAtSelection(state)
+    cutOrCopyEventHandler(e, _frag)
+
+    dispatch({
+      type: CUT,
+    })
+  }
+
+  const copy = (e: ClipboardEvent) => {
+    const _frag = getFragmentAtSelection(state)
+    cutOrCopyEventHandler(e, _frag)
+
+    dispatch({
+      type: COPY,
+    })
+  }
+
+  const paste = (e: ClipboardEvent) => {
+    const data = pasteEventHandler(e)
+    if (data) {
+      dispatch({
+        type: PASTE,
+        payload: {
+          data,
+        },
+      })
+    }
+  }
+
   return (
     <EditorContext.Provider
       value={{
         state,
+        copy,
+        cut,
+        paste,
         setSelection,
         setContent,
         split,
         merge,
         remove,
+        removeAtSelection,
         clear,
         removeEntityFromQueue,
       }}
