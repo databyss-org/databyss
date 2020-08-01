@@ -169,7 +169,7 @@ const ContentEditable = ({
 
     // don't allow a printable key to "overwrite" a selection that spans multiple blocks
     if (
-      isPrintable(event.keyCode) &&
+      isPrintable(event) &&
       editor.selection.focus.path[0] !== editor.selection.anchor.path[0]
     ) {
       event.preventDefault()

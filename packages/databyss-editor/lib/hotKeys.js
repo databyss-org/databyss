@@ -74,11 +74,19 @@ KEYS.forEach(key => {
  */
 export default Hotkeys
 
-export const isPrintable = keycode =>
-  (keycode > 47 && keycode < 58) || // number keys
-  keycode === 32 ||
-  keycode === 13 || // spacebar & return key(s) (if you want to allow carriage returns)
-  (keycode > 64 && keycode < 91) || // letter keys
-  (keycode > 95 && keycode < 112) || // numpad keys
-  (keycode > 185 && keycode < 193) || // ;=,-./` (in order)
-  (keycode > 218 && keycode < 223) // [\]' (in order)
+// tries to determine whether this keyboard event will print a character
+export const isPrintable = event => {
+  const code = event.keyCode
+  const modified =
+    event.getModifierState('Control') || event.getModifierState('Meta')
+  return (
+    !modified &&
+    ((code > 47 && code < 58) || // number keys
+    code === 32 ||
+    code === 13 || // spacebar & return key(s) (if you want to allow carriage returns)
+    (code > 64 && code < 91) || // letter keys
+    (code > 95 && code < 112) || // numpad keys
+    (code > 185 && code < 193) || // ;=,-./` (in order)
+      (code > 218 && code < 223)) // [\]' (in order)
+  )
+}

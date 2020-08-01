@@ -3,7 +3,7 @@ import { Patch } from 'immer'
 import { Selection, Block, Range, EditorState } from '../interfaces'
 import { OnChangeArgs } from './EditorProvider'
 
-export const symbolToAtomicType = (symbol: string): BlockType =>
+export const symbolToAtomicType = (symbol: string): BlockType => 
   ({ '@': BlockType.Source, '#': BlockType.Topic }[symbol])
 
 // returns false if selection anchor and focus are equal, otherwise true
@@ -72,4 +72,21 @@ export const pageToEditorState = (page: Page): EditorState => {
     pageHeader: { _id, name, archive },
     ...state
   } as EditorState
+}
+
+// if the current state selection doesn't span multiple blocks, push an update
+// operation for the current block
+export const pushSingleBlockOperation = ({
+  stateSelection,
+  draft,
+}: {
+  stateSelection: Selection
+  draft: EditorState
+}) => {
+  if (stateSelection.anchor.index === stateSelection.focus.index) {
+    draft.operations.push({
+      index: stateSelection.anchor.index,
+      block: blockValue(draft.blocks[stateSelection.anchor.index]),
+    })
+  }
 }

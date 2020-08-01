@@ -26,6 +26,7 @@ import {
   offsetRanges,
   removeLocationMark,
   blockValue,
+  pushSingleBlockOperation
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
@@ -92,6 +93,7 @@ export default (
       switch (action.type) {
         case CUT: {
           deleteBlocksAtSelection(draft)
+          pushSingleBlockOperation({ stateSelection: state.selection, draft })
           break
         }
         case PASTE: {
@@ -318,13 +320,7 @@ export default (
         }
         case REMOVE_AT_SELECTION: {
           deleteBlocksAtSelection(draft)
-          if (state.selection.anchor.index === state.selection.focus.index) {
-            draft.operations.push({
-              index: state.selection.anchor.index,
-              block: blockValue(draft.blocks[state.selection.anchor.index]),
-            })
-          }
-          // draft.preventDefault = true
+          pushSingleBlockOperation({ stateSelection: state.selection, draft })
           break
         }
         case REMOVE: {
