@@ -18,7 +18,7 @@ import {
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
 import { getSelectedIndicies, isAtomic, isEmpty } from '../lib/util'
-import Hotkeys from './../lib/hotKeys'
+import Hotkeys, { isPrintable } from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 
@@ -45,6 +45,7 @@ const ContentEditable = ({
     setSelection,
     clear,
     remove,
+    removeAtSelection,
     removeEntityFromQueue,
   } = editorContext
 
@@ -166,6 +167,15 @@ const ContentEditable = ({
       return
     }
 
+    // don't allow a printable key to "overwrite" a selection that spans multiple blocks
+    if (
+      isPrintable(event) &&
+      editor.selection.focus.path[0] !== editor.selection.anchor.path[0]
+    ) {
+      event.preventDefault()
+      return
+    }
+
     if (event.key === 'Enter') {
       const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
 
@@ -197,8 +207,10 @@ const ContentEditable = ({
       return
     }
     if (event.key === 'Backspace') {
-      // if we have text selected, handle this separately
+      // if there is a selection, handle the delete operation in our state
       if (!Point.equals(editor.selection.focus, editor.selection.anchor)) {
+        event.preventDefault()
+        removeAtSelection()
         return
       }
       // handle start of atomic

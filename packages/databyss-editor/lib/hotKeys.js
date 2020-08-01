@@ -73,3 +73,20 @@ KEYS.forEach(key => {
  * @type {Object}
  */
 export default Hotkeys
+
+// tries to determine whether this keyboard event will print a character
+export const isPrintable = event => {
+  const code = event.keyCode
+  const modified =
+    event.getModifierState('Control') || event.getModifierState('Meta')
+  return (
+    !modified &&
+    ((code > 47 && code < 58) || // number keys
+    code === 32 ||
+    code === 13 || // spacebar & return key(s) (if you want to allow carriage returns)
+    (code > 64 && code < 91) || // letter keys
+    (code > 95 && code < 112) || // numpad keys
+    (code > 185 && code < 193) || // ;=,-./` (in order)
+      (code > 218 && code < 223)) // [\]' (in order)
+  )
+}

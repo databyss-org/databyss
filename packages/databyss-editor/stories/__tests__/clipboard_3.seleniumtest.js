@@ -260,7 +260,7 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await paste(actions)
 
-    await sleep(3000)
+    await sleep(5000)
 
     await driver.navigate().refresh()
 
@@ -274,11 +274,6 @@ describe('editor clipboard', () => {
       <editor>
         <block type="ENTRY">
           <text>this is an entry</text>
-        </block>
-        <block type="ENTRY">
-          <text>
-            <anchor />
-          </text>
         </block>
         <block type="ENTRY">
           <text> frag</text>

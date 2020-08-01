@@ -68,6 +68,9 @@ const Element = ({ attributes, children, element }) => {
 
   return useMemo(
     () => {
+      if (!block) {
+        return null
+      }
       const blockMenuWidth = menuLauncherSize + 6
       const selHasRange = selectionHasRange(
         slateSelectionToStateSelection(editor)

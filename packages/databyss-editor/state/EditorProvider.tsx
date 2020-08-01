@@ -13,18 +13,15 @@ import {
   COPY,
   CUT,
   PASTE,
+  REMOVE_AT_SELECTION,
 } from './constants'
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
 import {
-  getFragmentForCurrentSelection,
-  resetIds,
-  databyssFragToPlainText,
-  plainTextToDatabyssFrag,
-  databyssFragToHtmlString,
   cutOrCopyEventHandler,
   pasteEventHandler,
+  getFragmentAtSelection,
 } from '../lib/clipboardUtils'
 
 export type Transform = {
@@ -53,6 +50,7 @@ type ContextType = {
   setContent: (transform: Transform) => void
   setSelection: (selection: Selection) => void
   remove: (index: number) => void
+  removeAtSelection: () => void
   clear: (index: number) => void
   copy: (event: ClipboardEvent) => void
   cut: (event: ClipboardEvent) => void
@@ -133,6 +131,14 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
     })
 
   /**
+   * Remove text currently selected. May span multiple blocks
+   */
+  const removeAtSelection = (): void =>
+    dispatch({
+      type: REMOVE_AT_SELECTION,
+    })
+
+  /**
    * Clear the block at `index`
    * resets the type to `ENTRY`
    */
@@ -149,7 +155,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
     })
 
   const cut = (e: ClipboardEvent) => {
-    const _frag = getFragmentForCurrentSelection(state)
+    const _frag = getFragmentAtSelection(state)
     cutOrCopyEventHandler(e, _frag)
 
     dispatch({
@@ -158,7 +164,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
   }
 
   const copy = (e: ClipboardEvent) => {
-    const _frag = getFragmentForCurrentSelection(state)
+    const _frag = getFragmentAtSelection(state)
     cutOrCopyEventHandler(e, _frag)
 
     dispatch({
@@ -190,6 +196,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = ({
         split,
         merge,
         remove,
+        removeAtSelection,
         clear,
         removeEntityFromQueue,
       }}
