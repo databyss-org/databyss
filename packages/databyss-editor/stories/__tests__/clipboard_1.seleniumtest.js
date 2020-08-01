@@ -245,7 +245,7 @@ describe('editor clipboard', () => {
     await cut(actions)
     await downKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await sleep(5000)
 
     await driver.navigate().refresh()
 
