@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react'
-import { Slate, Editable } from 'slate-react'
+import { Slate, Editable } from '@databyss-org/slate-react'
 import { Text } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { useEditorContext } from '../state/EditorProvider'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
@@ -15,6 +16,8 @@ const Editor = ({
   ...others
 }) => {
   const entryContext = useEntryContext()
+  const { copy, paste, cut } = useEditorContext()
+
   let searchTerm = ''
 
   function escapeRegExp(string) {
@@ -84,6 +87,18 @@ const Editor = ({
       {children}
       <FormatMenu />
       <Editable
+        onCopy={e => {
+          e.preventDefault()
+          copy(e)
+        }}
+        onPaste={e => {
+          e.preventDefault()
+          paste(e)
+        }}
+        onCut={e => {
+          e.preventDefault()
+          cut(e)
+        }}
         onFocus={onFocus}
         decorate={decorate}
         spellCheck={process.env.NODE_ENV !== 'test'}

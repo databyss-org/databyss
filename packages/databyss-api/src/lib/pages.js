@@ -1,6 +1,12 @@
 import Block from '../models/Block'
 import Selection from '../models/Selection'
 
+export const getAtomicClosureText = (type, text) =>
+  ({
+    END_SOURCE: `/@ ${text}`,
+    END_TOPIC: `/# ${text}`,
+  }[type])
+
 const applyPatch = (node, path, value) => {
   const key = path.shift()
   // if path has length one, just set the value and return
@@ -33,7 +39,16 @@ const addOrReplaceBlock = async (p, req) => {
 
   // add or replace entry in blocks array
   const _removeBlockCount = p.op === 'add' ? 0 : 1
-  blocks.splice(_index, _removeBlockCount, { _id: _blockId })
+  blocks.splice(_index, _removeBlockCount, {
+    _id: _blockId,
+    type: p.value.type ? p.value.type : 'ENTRY',
+  })
+
+  // TODO ON BLOCK SPLIT (ENTER) DOES NOT PASS A `TYPE`
+
+  if (p.value.type?.match(/^END_/)) {
+    return
+  }
 
   // add or update block
   const _blockFields = {
@@ -41,6 +56,7 @@ const addOrReplaceBlock = async (p, req) => {
     page: req.page._id,
     account: req.account._id,
   }
+
   let _block = await Block.findOne({ _id: _blockId })
   if (!_block) {
     _block = new Block()

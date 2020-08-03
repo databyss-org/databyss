@@ -225,3 +225,20 @@ export const pageToEditorState = (page: Page): EditorState => {
     ...state,
   } as EditorState
 }
+
+// if the current state selection doesn't span multiple blocks, push an update
+// operation for the current block
+export const pushSingleBlockOperation = ({
+  stateSelection,
+  draft,
+}: {
+  stateSelection: Selection
+  draft: EditorState
+}) => {
+  if (stateSelection.anchor.index === stateSelection.focus.index) {
+    draft.operations.push({
+      index: stateSelection.anchor.index,
+      block: blockValue(draft.blocks[stateSelection.anchor.index]),
+    })
+  }
+}

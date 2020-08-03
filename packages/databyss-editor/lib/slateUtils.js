@@ -169,7 +169,42 @@ const serializeHeader = node => {
   }
 }
 
+// serialize slate node to html
+const serialize = node => {
+  if (Text.isText(node)) {
+    let _children = node.text
+
+    if (node.bold) {
+      _children = `<strong>${_children}</strong>`
+    }
+    if (node.italic) {
+      _children = `<i>${_children}</i>`
+    }
+    return _children
+  }
+
+  const children = node.children.map(n => serialize(n)).join('')
+
+  switch (node.type) {
+    case 'SOURCE':
+      return `<u>${children}</u>`
+    default:
+      return children
+  }
+}
+
 export const stateBlockToHtmlHeader = stateBlock => {
   const _slateNode = stateBlockToSlateBlock(stateBlock)
   return serializeHeader(_slateNode)
+}
+export const stateToHTMLString = frag => {
+  const _innerHtml = frag
+    .map(b => {
+      const _slateNode = stateBlockToSlateBlock(b)
+      return `<p>${serialize(_slateNode)}</p>`
+    })
+    .join('')
+    .replace(/\n/g, '<br />')
+
+  return `<span>${_innerHtml}</span>`
 }

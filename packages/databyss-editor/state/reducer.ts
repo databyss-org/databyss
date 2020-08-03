@@ -6,11 +6,20 @@ import {
   MERGE,
   SET_CONTENT,
   REMOVE,
+  REMOVE_AT_SELECTION,
   CLEAR,
   SET_SELECTION,
   DEQUEUE_NEW_ENTITY,
+  PASTE,
+  CUT,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
+import {
+  isSelectionCollapsed,
+  insertText,
+  deleteBlocksAtSelection,
+  sortSelection
+} from '../lib/clipboardUtils'
 import {
   selectionHasRange,
   getOpenAtomicText,
@@ -18,9 +27,11 @@ import {
   symbolToAtomicClosureType,
   getClosureText,
   getClosureType,
+  getOpenAtomics,
   offsetRanges,
   removeLocationMark,
   blockValue,
+  pushSingleBlockOperation
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
@@ -86,7 +97,7 @@ export const bakeAtomicClosureBlock = ({
   ) {
     return null
   }
-  // console.log(JSON.stringify(_block))
+
   // check if current text should be converted to atomic block
   if (_block && _block.text.textValue.length > 1) {
     const _atomicClosureType = symbolToAtomicClosureType(
@@ -113,6 +124,10 @@ export const bakeAtomicClosureBlock = ({
         }
       }
 
+      // the atomic block which is being closed
+      const _openAtomic = getOpenAtomics(draft).find(b=> b.type ===getClosureType(_atomicClosureType) )
+
+
       // replace block in state.blocks and push editor operation
       draft.blocks[index] = {
         text: {
@@ -122,7 +137,8 @@ export const bakeAtomicClosureBlock = ({
           ranges: [],
         },
         type: _atomicClosureType,
-        _id: _block._id,
+        // duplicate id for atomic which block is closing
+        _id: _openAtomic._id,
       }
 
       // if type is not set, push to operations
@@ -155,9 +171,104 @@ export default (
       const { payload } = action
 
       // default nextSelection to `payload.selection` (which may be undef)
-      let nextSelection = payload.selection
+      let nextSelection = payload?.selection
 
       switch (action.type) {
+        case CUT: {
+          deleteBlocksAtSelection(draft)
+          pushSingleBlockOperation({ stateSelection: state.selection, draft })
+          break
+        }
+        case PASTE: {
+          const _frag = payload.data
+
+          if(!_frag.length){
+            break
+          }
+
+          // check if paste is occuring on an atomic block
+
+          const {anchor: _startAnchor} = sortSelection(state.selection)
+          const _startBlock = state.blocks[_startAnchor.index]
+
+          // if selection in the middle of atomic prevent paste
+          if(!isSelectionCollapsed(state.selection) || _startBlock.text.textValue.length !== _startAnchor.offset){            
+            if( isAtomicInlineType(_startBlock.type)){
+              break
+            }
+          }
+
+          if (!isSelectionCollapsed(state.selection)) {
+            deleteBlocksAtSelection(draft)
+          }
+
+          const _isCurrentBlockEmpty = !draft.blocks[
+            draft.selection.anchor.index
+          ].text.textValue.length
+    
+          // if fragment contains multiple blocks, the cursor block is empty, the cursor block is atomic, or the 
+          // fragment starts with an atomic, do not split the cursor block...
+          if (
+            _frag.length > 1 ||
+            _isCurrentBlockEmpty ||
+            isAtomicInlineType(_frag[0].type) ||
+            isAtomicInlineType(_startBlock.type)
+
+          ) {
+            // if cursor block is empty, start inserting the fragments here
+            // otherwise, insert them on the following line
+            const _spliceIndex = _isCurrentBlockEmpty
+              ? draft.selection.anchor.index
+              : draft.selection.anchor.index + 1
+
+            // insert blocks at index
+            draft.blocks.splice(
+              _spliceIndex,
+              _isCurrentBlockEmpty ? 1 : 0,
+              ..._frag
+            )
+
+            draft.operations.reloadAll = true
+
+            // set selection
+            const _selectionIndex = _spliceIndex + _frag.length - 1
+            const _offset =
+              draft.blocks[_selectionIndex].text.textValue.length
+
+            const _nextSelection = {
+              _id: draft.selection._id,
+              anchor: { index: _selectionIndex, offset: _offset },
+              focus: { index: _selectionIndex, offset: _offset },
+            }
+            nextSelection = _nextSelection
+
+          } else {
+            // we have some text in our fragment to insert at the cursor, so do the split and insert
+            insertText({
+              block: draft.blocks[draft.selection.anchor.index],
+              text: _frag[0].text,
+              offset: draft.selection.anchor.offset,
+            })
+
+            const _cursor = {
+              index: draft.selection.anchor.index,
+              offset: draft.selection.anchor.offset + _frag[0].text.textValue.length
+            }
+
+            nextSelection = {
+              _id: draft.selection._id,
+              anchor: _cursor,
+              focus: _cursor,
+            }
+
+            draft.operations.push({
+              index: state.selection.anchor.index,
+              block: blockValue(draft.blocks[state.selection.anchor.index]),
+            })
+          }
+        
+          break
+        }
         case SPLIT: {
           const _text = state.blocks[payload.index].text.textValue
 
@@ -184,7 +295,10 @@ export default (
             draft.blocks.splice(payload.index, 0, _block)
             _block.text = payload.previous
           } else {
+            // do not allow content change if previous block is closure type
+           if(!getClosureType(draft.blocks[payload.index].type)){
             draft.blocks[payload.index].text = payload.previous
+           }
 
             // insert/add split below
             if (payload.index === draft.blocks.length - 1) {
@@ -214,6 +328,14 @@ export default (
             )
           }
 
+          // do not allow operation push if previous block is a closure type
+          if(getClosureType(draft.blocks[payload.index].type)){
+             break
+          }
+
+          /*
+          if previous value is an atomic closure, dont push operation
+          */
           draft.operations.push({
             index: payload.index,
             block: blockValue(draft.blocks[payload.index]),
@@ -297,7 +419,11 @@ export default (
           )
           break
         }
-
+        case REMOVE_AT_SELECTION: {
+          deleteBlocksAtSelection(draft)
+          pushSingleBlockOperation({ stateSelection: state.selection, draft })
+          break
+        }
         case REMOVE: {
           draft.blocks.splice(payload.index, 1)
           break

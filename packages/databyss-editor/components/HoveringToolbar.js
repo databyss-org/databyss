@@ -5,7 +5,7 @@ import { Grid, View } from '@databyss-org/ui/primitives'
 import styledCss from '@styled-system/css'
 import theme, { borderRadius, darkTheme } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import { ReactEditor, useSlate } from 'slate-react'
+import { ReactEditor, useSlate } from '@databyss-org/slate-react'
 import { Editor, Range } from '@databyss-org/slate'
 import { isSelectionAtomic } from './../lib/slateUtils'
 
