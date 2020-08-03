@@ -18,7 +18,7 @@ import {
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
-import { getPagePath } from '../../databyss-ui/components/PageContent/_helpers'
+import { getPagePath } from '../lib/util'
 
 export type Transform = {
   // current selection
@@ -57,7 +57,7 @@ export type OnChangeArgs = {
 }
 
 export interface RefInputHandles {
-  pagePath: string
+  pagePath: string[]
 }
 
 type PropsType = {
