@@ -8,15 +8,17 @@ import { sanitizeEditorChildren } from './__helpers'
 import {
   getEditor,
   getElementByTag,
+  sendKeys,
   sleep,
   toggleBold,
-  toggleItalic,
-  toggleLocation,
   getElementById,
   enterKey,
   upKey,
   downKey,
   backspaceKey,
+  tabKey,
+  leftKey,
+  rightKey,
 } from './_helpers.selenium'
 
 let driver
@@ -70,6 +72,9 @@ describe('connected editor', () => {
     editor = await getEditor(driver)
 
     actions = driver.actions()
+    await actions.click(editor)
+    await actions.perform()
+    await actions.clear()
 
     done()
   })
@@ -79,184 +84,30 @@ describe('connected editor', () => {
     await clearButton.click()
     await driver.navigate().refresh()
 
-    // sleep(500)
     await driver.quit()
   })
 
-  it('should toggle bold and save changes', async () => {
-    await sleep(300)
-    await actions.sendKeys('the following text should be ')
-    await toggleBold(actions)
-    await actions.sendKeys('bold')
-    await actions.perform()
-    await sleep(3000)
-
-    await driver.navigate().refresh()
-
-    await sleep(300)
-
-    slateDocument = await getElementById(driver, 'slateDocument')
-
-    const actual = JSON.parse(await slateDocument.getText())
-
-    const expected = (
-      <editor>
-        <block type="ENTRY">
-          <text>the following text should be </text>
-          <text bold>bold</text>
-          <cursor />
-        </block>
-      </editor>
-    )
-
-    assert.deepEqual(
-      sanitizeEditorChildren(actual.children),
-      sanitizeEditorChildren(expected.children)
-    )
-
-    assert.deepEqual(actual.selection, expected.selection)
-  })
-
-  it('should toggle italic and save changes', async () => {
-    await sleep(300)
-    await actions.sendKeys('the following text should be ')
-    await toggleItalic(actions)
-    await actions.sendKeys('italic')
-    await actions.perform()
-    await sleep(7000)
-
-    await driver.navigate().refresh()
-
-    slateDocument = await getElementById(driver, 'slateDocument')
-
-    const actual = JSON.parse(await slateDocument.getText())
-
-    const expected = (
-      <editor>
-        <block type="ENTRY">
-          <text>the following text should be </text>
-          <text italic>italic</text>
-          <cursor />
-        </block>
-      </editor>
-    )
-
-    assert.deepEqual(
-      sanitizeEditorChildren(actual.children),
-      sanitizeEditorChildren(expected.children)
-    )
-
-    assert.deepEqual(actual.selection, expected.selection)
-  })
-
-  it('should toggle location and save changes', async () => {
-    await sleep(300)
-    await actions.sendKeys('the following text should be ')
-    await toggleLocation(actions)
-    await actions.sendKeys('location')
-    await actions.perform()
-    await sleep(7000)
-
-    await driver.get(
-      process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
-    )
-
-    slateDocument = await getElementById(driver, 'slateDocument')
-
-    const actual = JSON.parse(await slateDocument.getText())
-
-    const expected = (
-      <editor>
-        <block type="ENTRY">
-          <text>the following text should be </text>
-          <text location>location</text>
-          <cursor />
-        </block>
-      </editor>
-    )
-
-    assert.deepEqual(
-      sanitizeEditorChildren(actual.children),
-      sanitizeEditorChildren(expected.children)
-    )
-
-    assert.deepEqual(actual.selection, expected.selection)
-  })
-
-  it('should toggle location bold and italic in entry using hotkeys', async () => {
-    await sleep(300)
-    await actions.sendKeys('following text should be ')
-    await toggleBold(actions)
-    await toggleItalic(actions)
-    await actions.sendKeys('bold and italic ')
-    await toggleItalic(actions)
-    await actions.sendKeys('and just bold ')
-    await toggleLocation(actions)
-    await actions.sendKeys('and location with bold')
-    await actions.perform()
-    await sleep(15000)
-
-    await driver.navigate().refresh()
-
-    slateDocument = await getElementById(driver, 'slateDocument')
-
-    const actual = JSON.parse(await slateDocument.getText())
-
-    const expected = (
-      <editor>
-        <block type="ENTRY">
-          <text>following text should be </text>
-          <text bold italic>
-            bold and italic{' '}
-          </text>
-          <text bold>and just bold </text>
-          <text bold location>
-            and location with bold
-          </text>
-          <cursor />
-        </block>
-      </editor>
-    )
-
-    assert.deepEqual(
-      sanitizeEditorChildren(actual.children),
-      sanitizeEditorChildren(expected.children)
-    )
-
-    assert.deepEqual(actual.selection, expected.selection)
-  })
-
-  // TODO: THIS TEST FAILS BECAUSE OF THE SINGLE LINE SLATE EDITOR
   it('should insert atomic source and edit source fields', async () => {
     await sleep(300)
-    await actions.sendKeys('@this is a test')
-    await actions.sendKeys(Key.ENTER)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ARROW_LEFT)
-    await actions.sendKeys(Key.ENTER)
-    await actions.perform()
-    await actions.clear()
+    await sendKeys(actions, '@this is a test')
+    await enterKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await enterKey(actions)
     await sleep(1000)
 
     const name = await getElementByTag(driver, '[data-test-path="text"]')
 
     await name.click()
-    await actions.sendKeys(Key.ARROW_RIGHT)
-
-    await actions.sendKeys('\t')
-
-    await actions.sendKeys('new citation')
-    await actions.sendKeys('\t')
-
-    await actions.sendKeys('authors first name')
-
-    await actions.sendKeys('\t')
-
-    await actions.sendKeys('authors last name')
-    await actions.sendKeys('\t')
-    await actions.sendKeys('\t')
-
-    await actions.perform()
+    await rightKey(actions)
+    await tabKey(actions)
+    await sendKeys(actions, 'new citation')
+    await tabKey(actions)
+    await sendKeys(actions, 'authors first name')
+    await tabKey(actions)
+    await sendKeys(actions, 'authors last name')
+    await tabKey(actions)
+    await tabKey(actions)
 
     let doneButton = await getElementByTag(
       driver,
@@ -270,8 +121,12 @@ describe('connected editor', () => {
     await driver.navigate().refresh()
 
     editor = await getEditor(driver)
-    await editor.sendKeys(Key.ARROW_LEFT)
-    await editor.sendKeys(Key.ENTER)
+    actions = driver.actions()
+    await actions.click(editor)
+    await actions.perform()
+    await actions.clear()
+    await leftKey(actions)
+    await enterKey(actions)
 
     let citationsField = await getElementById(driver, 'citation')
 
@@ -327,31 +182,30 @@ describe('connected editor', () => {
 
   it('should test data integrity in round trip testing', async () => {
     await sleep(300)
-    await actions.sendKeys('this is an entry with ')
+    await sendKeys(actions, 'this is an entry with ')
     await toggleBold(actions)
-    await actions.sendKeys('bold')
+    await sendKeys(actions, 'bold')
     await toggleBold(actions)
     await enterKey(actions)
-    await actions.sendKeys('still within the same block')
+    await sendKeys(actions, 'still within the same block')
     await enterKey(actions)
     await enterKey(actions)
-    await actions.sendKeys('@this should toggle a source block')
+    await sendKeys(actions, '@this should toggle a source block')
     await enterKey(actions)
     await upKey(actions)
     await enterKey(actions)
     await upKey(actions)
-    await actions.sendKeys('#this should toggle a topics block')
+    await sendKeys(actions, '#this should toggle a topics block')
     await enterKey(actions)
-    await actions.sendKeys('this entry is within two atomics')
+    await sendKeys(actions, 'this entry is within two atomics')
     await enterKey(actions)
     await enterKey(actions)
     await backspaceKey(actions)
-    await actions.sendKeys(' appended text')
-    //  await upKey(actions)
+    await sendKeys(actions, ' appended text')
     await enterKey(actions)
     await enterKey(actions)
     await enterKey(actions)
-    await actions.sendKeys('second middle entry')
+    await sendKeys(actions, 'second middle entry')
     await enterKey(actions)
     await enterKey(actions)
     await upKey(actions)
@@ -362,9 +216,7 @@ describe('connected editor', () => {
     await downKey(actions)
     await downKey(actions)
     await downKey(actions)
-
-    await actions.sendKeys('last entry')
-    await actions.perform()
+    await sendKeys(actions, 'last entry')
     await sleep(20000)
 
     // refresh page

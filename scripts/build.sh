@@ -3,7 +3,7 @@ set -x # echo every command
 set -o pipefail # fail immediately in pipeline
 
 cleanup() {
-  if [ ! -z $HEROKU_APP_NAME ]
+  if [ ! -z $CLEANUP_SOURCE_FILES ] || [ ! -z $HEROKU_APP_NAME ]
   then
     rm -rf node_modules
     rm -rf packages

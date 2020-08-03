@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@databyss-org/slate": "0.58.1-b2",
+    "@databyss-org/slate-react": "0.57.2-b1",
     "an-array-of-english-words": "^2.0.0",
     "@styled-system/css": "^5.0.23",
     "add": "^2.0.6",
@@ -36,7 +37,6 @@
     "is-hotkey": "^0.1.5",
     "lodash": "^4.17.15",
     "lorem-ipsum": "^2.0.3",
-    "slate-react": "0.57.2",
     "slate-dev-environment": "^0.2.2",
     "slate-hyperscript": "^0.57.2",
     "yarn": "^1.22.4"

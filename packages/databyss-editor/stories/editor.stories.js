@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { createEditor } from '@databyss-org/slate'
-import { withReact } from 'slate-react'
+import { withReact } from '@databyss-org/slate-react'
 import { storiesOf } from '@storybook/react'
 import { View, Grid } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
