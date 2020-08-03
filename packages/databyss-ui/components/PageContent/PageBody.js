@@ -10,7 +10,7 @@ import {
   addMetaToPatches,
 } from '@databyss-org/editor/state/util'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { useNavigationContext } from '@databyss-org/ui'
+import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
 
 const PageBody = ({
   page,
@@ -68,6 +68,7 @@ const PageBody = ({
         onChange={onChange}
         initialState={pageToEditorState(withMetaData(page))}
       >
+        <PDFDropZoneManager />
         <ContentEditable
           autofocus
           focusIndex={focusIndex}
