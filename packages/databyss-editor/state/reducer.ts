@@ -27,6 +27,7 @@ import {
   symbolToAtomicClosureType,
   getClosureText,
   getClosureType,
+  atomicClosureText,
   getOpenAtomics,
   offsetRanges,
   removeLocationMark,
@@ -393,12 +394,29 @@ export default (
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {
                 if (_b._id === _block._id) {
-                  const _nextBlock = { ..._block, __isActive: false }
+                  let _nextBlock = { ..._block, __isActive: false }
+
+
+                  // if atomic type is closure, get updated text value and overwrite `nextBlock`
+                  const _type = draft.blocks[_idx].type
+
+                  if(getClosureType(_type)){
+                    _nextBlock = {
+                      ..._nextBlock,
+                      ...draft.blocks[_idx], 
+                      text: {
+                      textValue: atomicClosureText(_type,_block.text.textValue ), 
+                      ranges: []
+                      } 
+                    }
+                    }  
+
                   draft.blocks[_idx] = _nextBlock
                   draft.operations.push({
                     index: _idx,
                     block: _nextBlock,
                   })
+                  
                 }
               })
             } else if (op.withBakeAtomic) {
@@ -429,8 +447,9 @@ export default (
           break
         }
         case CLEAR: {
+          const _oldBlock = draft.blocks[payload.index]
           // create a new entity
-          const _block: Block = {
+          let _block: Block = {
             type: BlockType.Entry,
             _id: new ObjectId().toHexString(),
             text: { textValue: '', ranges: [] },
@@ -442,6 +461,27 @@ export default (
             index: payload.index,
             block: blockValue(_block),
           })
+
+          /*
+          check if next block with same id is a closure block and clear that block as well
+          */
+          const _idx = draft.blocks.findIndex(b=> (b._id === _oldBlock._id)
+          )
+
+          if(_idx > -1 && getClosureType(draft.blocks[_idx].type)){
+            _block = {
+              type: BlockType.Entry,
+              _id: new ObjectId().toHexString(),
+              text: { textValue: '', ranges: [] },
+            }
+            draft.blocks[_idx] = _block
+            draft.operations.push({
+              index: _idx,
+              block: blockValue(_block),
+            })
+          }
+
+
           break
         }
         case SET_SELECTION:
