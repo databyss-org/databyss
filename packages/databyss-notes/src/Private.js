@@ -11,6 +11,7 @@ import {
   SearchRouter,
   useNavigationContext,
   ModalManager,
+  PDFDropZoneManager,
 } from '@databyss-org/ui'
 
 import { View } from '@databyss-org/ui/primitives'
@@ -62,6 +63,7 @@ const Private = () => {
                 <SearchRouter path="search/*" />
               </App>
             </Router>
+            <PDFDropZoneManager/>
             <ModalManager />
           </TopicProvider>
         </SourceProvider>
