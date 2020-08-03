@@ -13,6 +13,7 @@ import {
   TopicsRouter,
   useNavigationContext,
   ModalManager,
+  PDFDropZoneManager,
 } from '@databyss-org/ui'
 
 import { View } from '@databyss-org/ui/primitives'
@@ -66,6 +67,7 @@ const Private = () => {
                 <TopicsRouter path="topics/*" />
               </App>
             </Router>
+            <PDFDropZoneManager/>
             <ModalManager />
           </TopicProvider>
         </SourceProvider>

@@ -12,6 +12,7 @@ export {
 
 /* modules */
 export { default as ModalManager } from './modules/Modals/ModalManager'
+export { default as PDFDropZoneManager } from './components/PDFDropZone/PDFDropZoneManager'
 
 export { default as Content } from './components/Viewport/Content'
 export { default as Raw } from './components/Viewport/Raw'
