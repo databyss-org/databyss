@@ -32,7 +32,7 @@ const PageSticky = ({ pagePath, pageId }) => {
 
   // get page path
   if (pagePath) {
-    currentPath.push(pagePath)
+    currentPath.push(...pagePath)
   }
 
   return (
