@@ -15,10 +15,11 @@ import {
   undo,
   redo,
   cut,
-  upShiftKey,
   leftKey,
   paste,
-  rightShiftKey,
+  upKey,
+  rightKey,
+  downShiftKey,
 } from './_helpers.selenium'
 
 let driver
@@ -274,11 +275,14 @@ describe('editor history', () => {
     await enterKey(actions)
     await sendKeys(actions, '@test source')
     await enterKey(actions)
-    await upShiftKey(actions)
-    await upShiftKey(actions)
-    await upShiftKey(actions)
-    await rightShiftKey(actions)
-    await rightShiftKey(actions)
+    await upKey(actions)
+    await upKey(actions)
+    await upKey(actions)
+    await rightKey(actions)
+    await rightKey(actions)
+    await downShiftKey(actions)
+    await downShiftKey(actions)
+    await downShiftKey(actions)
     await cut(actions)
     await leftKey(actions)
     await leftKey(actions)
@@ -310,9 +314,6 @@ describe('editor history', () => {
         </block>
         <block type="ENTRY">
           <text>tw</text>
-        </block>
-        <block type="ENTRY">
-          <text />
         </block>
       </editor>
     )
@@ -357,15 +358,15 @@ describe('editor history', () => {
           <text>three</text>
         </block>
         <block type="SOURCE">
+          <text>test source</text>
+        </block>
+        <block type="ENTRY">
           <text>
-            test source<cursor />
+            <cursor />
           </text>
         </block>
         <block type="ENTRY">
           <text>tw</text>
-        </block>
-        <block type="ENTRY">
-          <text />
         </block>
       </editor>
     )
