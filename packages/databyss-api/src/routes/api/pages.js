@@ -157,8 +157,6 @@ router.get(
           textValue: getAtomicClosureText(_block.type, _rec.text.textValue),
           ranges: [],
         }
-        // check for atomic block closure
-        //   _rec.text = { textValue: `/${getBlockSymbol(_rec.type)} ${_rec.text.textValue}` }
         _rec.type = _block.type
       }
 

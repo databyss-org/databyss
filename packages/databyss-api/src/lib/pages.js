@@ -44,8 +44,6 @@ const addOrReplaceBlock = async (p, req) => {
     type: p.value.type ? p.value.type : 'ENTRY',
   })
 
-  // TODO ON BLOCK SPLIT (ENTER) DOES NOT PASS A `TYPE`
-
   if (p.value.type?.match(/^END_/)) {
     return
   }
