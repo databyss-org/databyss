@@ -20,6 +20,7 @@ import {
   PASTE,
   UNDO,
   REDO,
+  REMOVE_AT_SELECTION,
 } from './constants'
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
@@ -32,8 +33,8 @@ import {
   databyssFragToHtmlString,
   cutOrCopyEventHandler,
   pasteEventHandler,
+  getFragmentAtSelection,
 } from '../lib/clipboardUtils'
-import { Function } from '@babel/types'
 
 export type Transform = {
   // current selection
@@ -61,6 +62,7 @@ type ContextType = {
   setContent: (transform: Transform) => void
   setSelection: (selection: Selection) => void
   remove: (index: number) => void
+  removeAtSelection: () => void
   clear: (index: number) => void
   copy: (event: ClipboardEvent) => void
   cut: (event: ClipboardEvent) => void
@@ -158,6 +160,14 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
         type: REMOVE,
         payload: { index },
       })
+    
+    /**
+     * Remove text currently selected. May span multiple blocks
+    */
+    const removeAtSelection = (): void =>
+    dispatch({
+      type: REMOVE_AT_SELECTION,
+    })
 
     /**
      * Clear the block at `index`
@@ -176,7 +186,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       })
 
     const cut = (e: ClipboardEvent) => {
-      const _frag = getFragmentForCurrentSelection(state)
+      const _frag = getFragmentAtSelection(state)
       cutOrCopyEventHandler(e, _frag)
       dispatch({
         type: CUT,
@@ -184,7 +194,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     }
 
     const copy = (e: ClipboardEvent) => {
-      const _frag = getFragmentForCurrentSelection(state)
+      const _frag = getFragmentAtSelection(state)
       cutOrCopyEventHandler(e, _frag)
 
       dispatch({
@@ -216,6 +226,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           split,
           merge,
           remove,
+          removeAtSelection,
           clear,
           removeEntityFromQueue,
         }}

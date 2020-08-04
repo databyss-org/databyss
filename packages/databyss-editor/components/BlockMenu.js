@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Transforms, Text } from '@databyss-org/slate'
-import { useEditor, ReactEditor } from 'slate-react'
+import { useEditor, ReactEditor } from '@databyss-org/slate-react'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import {
   View,
