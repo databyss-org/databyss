@@ -80,6 +80,17 @@ const PDFDropZoneManager = () => {
     return file
   }
 
+  // modal methods
+  const showAlert = (heading, message) => {
+    showModal({
+      component: 'INFO',
+      props: {
+        heading,
+        message,
+      },
+    })
+  }
+
   // drag handlers
   const onDragOver = event => {
     event.stopPropagation()
@@ -105,10 +116,7 @@ const PDFDropZoneManager = () => {
 
     if (!file) {
       setDropAreaVisibility(false)
-      showAlert(
-        '⚠️ Unable to parse document',
-        'Ensure to use a PDF document.'
-      )
+      showAlert('⚠️ Unable to parse document', 'Ensure to use a PDF document.')
       return
     }
 
@@ -149,17 +157,6 @@ const PDFDropZoneManager = () => {
       removeDragEventHandlers()
     }
   }, [])
-
-  // modal methods
-  const showAlert = (heading, message) => {
-    showModal({
-      component: 'INFO',
-      props: {
-        heading,
-        message
-      }
-    })
-  }
 
   const getLabel = () => (hasParsed ? '' : 'Drop your PDF here')
 

@@ -15,7 +15,7 @@ const InfoModal = ({ id, visible, heading, message }) => {
       title={heading}
       widthVariant="dialog"
       dismissChild="OK"
-      canDismiss={true}
+      canDismiss
     >
       <Text variant="bodyNormal">{message}</Text>
     </ModalWindow>
