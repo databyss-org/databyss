@@ -2,14 +2,16 @@ import { ResourcePending } from './ResourcePending'
 
 export { ResourcePending } from './ResourcePending'
 export { NetworkUnavailableError, NotAuthorizedError, ResourceNotFoundError } from './Errors'
-export type { Page, PageHeader } from './Page'
+import{ Page, PageHeader } from './Page'
+
 export type { Text } from './Text'
-export type { Block, Source, SourceDetail, Author, Topic, SourceCitationHeader } from './Block'
+import { Block } from './Block'
+import { Selection } from './Selection';
+export type { Source, SourceDetail, Author, Topic } from './Block'
 export { BlockType } from './Block'
 export type { FSA } from './FSA'
 export type { Range } from './Range'
-export type { Point } from './Point'
-export type { Selection } from './Selection'
+import { Point } from './Point';
 export type { PageState } from './PageState'
 export type { PatchBatch } from './Patch'
 export type { SourceState } from './SourceState'
@@ -28,3 +30,10 @@ export type CacheList<T> = ResourceResponse<T[]>
 interface RefDict {
   [key: string]: React.Ref<HTMLInputElement>
 }
+
+
+export type Block = Block
+export type Point = Point
+export type PageHeader = PageHeader
+export type Page = Page
+export type Selection= Selection

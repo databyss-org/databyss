@@ -4,8 +4,6 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from 'react'
-import ReactDOMServer from 'react-dom/server'
-import { Patch, applyPatches } from 'immer'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import {
   SET_SELECTION,
@@ -22,15 +20,12 @@ import {
   REDO,
   REMOVE_AT_SELECTION,
 } from './constants'
+import { Patch } from 'immer'
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
+import { getPagePath } from '../lib/util'
 import {
-  getFragmentForCurrentSelection,
-  resetIds,
-  databyssFragToPlainText,
-  plainTextToDatabyssFrag,
-  databyssFragToHtmlString,
   cutOrCopyEventHandler,
   pasteEventHandler,
   getFragmentAtSelection,
@@ -81,9 +76,11 @@ export type OnChangeArgs = {
 export interface RefInputHandles {
   undo: (patches: Patch[]) => void
   redo: (patches: Patch[]) => void
+  pagePath: string[]
 }
 
 type PropsType = {
+  ref?: React.RefObject<RefInputHandles>
   children: JSX.Element
   ref?: React.RefObject<RefInputHandles>
   initialState: EditorState
@@ -102,20 +99,25 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       onChange,
     })
 
-    useImperativeHandle(ref, () => ({
-      undo: (patches: Patch[]) => {
-        dispatch({
-          type: UNDO,
-          payload: { patches },
-        })
-      },
-      redo: (patches: Patch[]) => {
-        dispatch({
-          type: REDO,
-          payload: { patches },
-        })
-      },
-    }))
+    useImperativeHandle(
+      ref,
+      () => ({
+        undo: (patches: Patch[]) => {
+          dispatch({
+            type: UNDO,
+            payload: { patches },
+          })
+        },
+        redo: (patches: Patch[]) => {
+          dispatch({
+            type: REDO,
+            payload: { patches },
+          })
+        },
+        pagePath: getPagePath(state),
+      }),
+      [JSON.stringify(state.selection)]
+    )
 
     const setSelection = (selection: Selection) =>
       dispatch({
@@ -160,14 +162,14 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
         type: REMOVE,
         payload: { index },
       })
-    
+
     /**
      * Remove text currently selected. May span multiple blocks
-    */
+     */
     const removeAtSelection = (): void =>
-    dispatch({
-      type: REMOVE_AT_SELECTION,
-    })
+      dispatch({
+        type: REMOVE_AT_SELECTION,
+      })
 
     /**
      * Clear the block at `index`

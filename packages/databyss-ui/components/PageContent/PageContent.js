@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useLocation, Router } from '@reach/router'
-import { PagesLoader, PageLoader } from '@databyss-org/ui/components/Loaders'
-import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
-import { View, Text } from '@databyss-org/ui/primitives'
+import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import { View } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { ArchiveBin } from './ArchiveBin'
-
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
+import PageSticky from './PageSticky'
 
 export const PageRouter = () => (
   <Router>
@@ -17,23 +15,14 @@ export const PageRouter = () => (
 
 const PageContainer = React.memo(({ anchor, id, page }) => {
   const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
-  const hasPendingPatches = usePageContext(c => c.hasPendingPatches)
 
-  const { isOnline } = useNotifyContext()
-
-  const [pendingPatches, setPendingPatches] = useState(0)
+  const [editorPath, setEditorPath] = useState(null)
   const headerRef = useRef()
   const editorRef = useRef()
+  const editorWindowRef = useRef()
 
   // index is used to set selection in slate
   const [index, setIndex] = useState(null)
-
-  useEffect(
-    () => {
-      setPendingPatches(hasPendingPatches)
-    },
-    [hasPendingPatches]
-  )
 
   useEffect(() => {
     // if anchor link exists, scroll to anchor
@@ -45,10 +34,14 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
         const _ref = getBlockRefByIndex(_index)
         if (_ref) {
           window.requestAnimationFrame(() => {
-            _ref.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start',
-            })
+            if (editorWindowRef.current) {
+              // to compensate for the sticky header
+              // https://github.com/iamdustan/smoothscroll/issues/47#issuecomment-350810238
+              const item = _ref
+              const wrapper = editorWindowRef.current
+              const count = item.offsetTop - wrapper.scrollTop - 74
+              wrapper.scrollBy({ top: count, left: 0, behavior: 'smooth' })
+            }
           })
         }
       }
@@ -70,30 +63,29 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
   }
 
   return (
-    <View height="100vh" overflow="scroll" p="medium">
-      <View
-        mr="medium"
-        alignItems="center"
-        flexDirection="row"
-        justifyContent="space-between"
-      >
-        <PageHeader
-          ref={headerRef}
-          pageId={id}
-          onNavigateDownFromHeader={onNavigateDownToEditor}
+    <View height="100vh" overflow="scroll" ref={editorWindowRef}>
+      <PageSticky pagePath={editorPath} pageId={page._id} />
+      <View pl="medium" pr="medium" pb="medium" zIndex={1}>
+        <View
+          mr="medium"
+          alignItems="center"
+          flexDirection="row"
+          justifyContent="space-between"
+        >
+          <PageHeader
+            ref={headerRef}
+            pageId={id}
+            onNavigateDownFromHeader={onNavigateDownToEditor}
+          />
+        </View>
+        <PageBody
+          onEditorPathChange={setEditorPath}
+          editorRef={editorRef}
+          page={page}
+          focusIndex={index}
+          onNavigateUpFromEditor={onNavigateUpFromEditor}
         />
-        <Text color="gray.5" pr="medium" variant="uiTextSmall">
-          {isOnline && (pendingPatches ? 'Saving...' : 'All changes saved')}
-          {!isOnline && 'Offline'}
-        </Text>
-        <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
       </View>
-      <PageBody
-        editorRef={editorRef}
-        page={page}
-        focusIndex={index}
-        onNavigateUpFromEditor={onNavigateUpFromEditor}
-      />
     </View>
   )
 }, (prev, next) => prev.page._id === next.page._id && prev.id === next.id && prev.anchor === next.anchor)
