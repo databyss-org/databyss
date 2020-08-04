@@ -105,10 +105,7 @@ export const bakeAtomicClosureBlock = ({
       _block.text.textValue.substring(0, 2)
     )
 
-    // TODO: check to see if theres an opening atomic and get atomic text to change text
-
     // change cursor to end of atomic position
-
     if (_atomicClosureType) {
       // if atomic is not set yet, set selection at tend of atomic
       if (!isAtomicInlineType(_block.type)) {
@@ -125,22 +122,67 @@ export const bakeAtomicClosureBlock = ({
         }
       }
 
-      // the atomic block which is being closed
+      // get the atomic block which is being closed
       const _openAtomic = getOpenAtomics(draft).find(b=> b.type ===getClosureType(_atomicClosureType) )
 
+      if(_openAtomic) {
+        // replace block in state.blocks and push editor operation
+        draft.blocks[index] = {
+          text: {
+            // ranges need to account for the removal of the first string `@` or `#`
+            textValue: getClosureText(_atomicClosureType, draft),
+            // location marks are not allowed in atomic types
+            ranges: [],
+          },
+          type: _atomicClosureType,
+          // duplicate id for atomic which block is closing
+          _id: _openAtomic._id,
+        }
+        // perform a closure block lookahead to see if current block has already been closed and remove that block
+        if(draft.blocks.length > index + 1){
+     //     console.log(JSON.parse(JSON.stringify(_blocks)))
 
-      // replace block in state.blocks and push editor operation
-      draft.blocks[index] = {
-        text: {
-          // ranges need to account for the removal of the first string `@` or `#`
-          textValue: getClosureText(_atomicClosureType, draft),
-          // location marks are not allowed in atomic types
-          ranges: [],
-        },
-        type: _atomicClosureType,
-        // duplicate id for atomic which block is closing
-        _id: _openAtomic._id,
+          // find next index where same id exists
+          const _idx = draft.blocks.findIndex((b, i)=> b._id === _openAtomic._id && i > index)
+          // if id exists in document and next instance is an atomic closure, remove that block and replace it with an empty block
+          if(_idx > -1){
+            const _nextBlock = draft.blocks[_idx]
+            if(getClosureType(_nextBlock.type)){
+              let _newBlock: Block = {
+                type: BlockType.Entry,
+                _id: new ObjectId().toHexString(),
+                text: { textValue: '', ranges: [] },
+              }
+              draft.blocks[_idx] = _newBlock
+    
+              // push update operation back to editor
+              draft.operations.push({
+                index: _idx,
+                block: blockValue(_newBlock),
+              })
+
+
+
+            }
+         //   console.log(JSON.parse(JSON.stringify(_nextBlock)))
+
+          }
+
+        }
+
+
+     //   let _blocks = [...page.blocks].reverse()
+             // let _block: Block = {
+        //   type: BlockType.Entry,
+        //   _id: new ObjectId().toHexString(),
+        //   text: { textValue: '', ranges: [] },
+        // }
+
       }
+
+
+
+
 
       // if type is not set, push to operations
       if (!isAtomicInlineType(_block.type)) {

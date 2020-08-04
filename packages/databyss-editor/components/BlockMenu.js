@@ -82,7 +82,7 @@ const BlockMenu = ({ element }) => {
       action: 'END_TOPIC',
       textSymbol: '/#',
       shortcut: '',
-      label: 'End location',
+      label: 'End topic',
       closureType: 'TOPIC',
     },
   ]
