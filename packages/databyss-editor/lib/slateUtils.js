@@ -1,4 +1,4 @@
-import { Editor, Text } from '@databyss-org/slate'
+import { Text, Editor } from '@databyss-org/slate'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
@@ -145,6 +145,30 @@ export const toggleMark = (editor, format) => {
   }
 }
 
+// serialize slate node to html for page path header
+const serializeHeader = node => {
+  if (Text.isText(node)) {
+    let _children = node.text
+
+    if (node.bold) {
+      _children = `<strong>${_children}</strong>`
+    }
+    if (node.italic) {
+      _children = `<i>${_children}</i>`
+    }
+    return _children
+  }
+
+  const children = node.children.map(n => serializeHeader(n)).join('')
+
+  switch (node.type) {
+    // case 'SOURCE':
+    //   return `<u>${children}</u>`
+    default:
+      return children
+  }
+}
+
 // serialize slate node to html
 const serialize = node => {
   if (Text.isText(node)) {
@@ -169,6 +193,10 @@ const serialize = node => {
   }
 }
 
+export const stateBlockToHtmlHeader = stateBlock => {
+  const _slateNode = stateBlockToSlateBlock(stateBlock)
+  return serializeHeader(_slateNode)
+}
 export const stateToHTMLString = frag => {
   const _innerHtml = frag
     .map(b => {
