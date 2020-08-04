@@ -1,6 +1,5 @@
-import * as sources from '.'
+import * as services from '.'
 import { composeResults } from './_helpers'
-
 import {
   FETCH_SOURCE,
   SAVE_SOURCE,
@@ -8,8 +7,12 @@ import {
   REMOVE_SOURCE,
   CACHE_SEARCH_QUERY,
   FETCH_SEARCH_QUERY,
+  FETCH_AUTHOR_HEADERS,
+  CACHE_AUTHOR_HEADERS,
+  FETCH_SOURCE_CITATIONS,
+  CACHE_SOURCE_CITATIONS,
 } from './constants'
-import { Source } from '../interfaces'
+import { Source, Author, SourceCitationHeader } from '../interfaces'
 
 export function fetchSource(id: string) {
   return async (dispatch: Function) => {
@@ -19,7 +22,7 @@ export function fetchSource(id: string) {
     })
 
     try {
-      const source: Source = await sources.getSource(id)
+      const source: Source = await services.getSource(id)
       dispatch({
         type: CACHE_SOURCE,
         payload: { source, id },
@@ -42,7 +45,7 @@ export function saveSource(sourceFields: Source) {
       type: SAVE_SOURCE,
       payload: { source: sourceFields, id: sourceFields._id },
     })
-    sources.setSource(sourceFields).then(() => {
+    services.setSource(sourceFields).then(() => {
       dispatch({
         type: CACHE_SOURCE,
         payload: { source: sourceFields, id: sourceFields._id },
@@ -69,7 +72,7 @@ export function fetchSourceQuery(query: string) {
       },
     })
     try {
-      const results = await sources.searchSource(query)
+      const results = await services.searchSource(query)
       dispatch({
         type: CACHE_SEARCH_QUERY,
         payload: {
@@ -84,6 +87,50 @@ export function fetchSourceQuery(query: string) {
         payload: {
           query,
           results: [],
+        },
+      })
+    }
+  }
+}
+
+export function fetchAuthorHeaders() {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: FETCH_AUTHOR_HEADERS,
+    })
+    try {
+      const authors: Author[] = await services.getAuthors()
+      dispatch({
+        type: CACHE_AUTHOR_HEADERS,
+        payload: { results: authors },
+      })
+    } catch (err) {
+      dispatch({
+        type: CACHE_AUTHOR_HEADERS,
+        payload: {
+          err,
+        },
+      })
+    }
+  }
+}
+
+export function fetchSourceCitations() {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: FETCH_SOURCE_CITATIONS,
+    })
+    try {
+      const sourceCitations: SourceCitationHeader[] = await services.getSourceCitations()
+      dispatch({
+        type: CACHE_SOURCE_CITATIONS,
+        payload: { results: sourceCitations },
+      })
+    } catch (err) {
+      dispatch({
+        type: CACHE_SOURCE_CITATIONS,
+        payload: {
+          err,
         },
       })
     }

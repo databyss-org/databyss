@@ -5,19 +5,15 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import {
   Text,
   View,
-  TextInput,
   BaseControl,
   Grid,
-  Icon,
   Separator,
 } from '@databyss-org/ui/primitives'
-import SearchIcon from '@databyss-org/ui/assets/search.svg'
-import CloseSvg from '@databyss-org/ui/assets/close.svg'
-import { theme } from '@databyss-org/ui/theming'
-import styledCss from '@styled-system/css'
+import SearchInputContainer from '@databyss-org/ui/components/SearchContent/SearchInputContainer'
 
-const Search = ({ onClick }) => {
+const Search = () => {
   const { navigate, getSidebarPath } = useNavigationContext()
+
   const { searchTerm, setQuery, clearSearchCache } = useEntryContext()
   const menuItem = getSidebarPath()
 
@@ -29,15 +25,6 @@ const Search = ({ onClick }) => {
   // reset search on unmount
   useEffect(() => () => clear(), [])
 
-  useEffect(
-    () => {
-      if (menuItem !== 'search') {
-        setQuery({ textValue: '' })
-      }
-    },
-    [menuItem]
-  )
-
   const onChange = val => {
     setQuery(val)
   }
@@ -48,50 +35,17 @@ const Search = ({ onClick }) => {
   }
 
   return (
-    <View width="100%" px="small" my="small" onClick={onClick}>
-      <View
-        backgroundColor="background.0"
-        height="100%"
-        justifyContent="center"
-        position="relative"
-        flex={1}
-        borderVariant="thinLight"
-        px="small"
-        py="extraSmall"
-      >
-        <Grid singleRow alignItems="center" columnGap="none" flexWrap="nowrap">
-          <Icon sizeVariant="medium" color="text.3" pr="small">
-            <SearchIcon />
-          </Icon>
-          <TextInput
-            placeholder="Search"
-            variant="bodyNormal"
-            color="text.2"
-            value={{ textValue: searchTerm }}
-            onChange={onChange}
-            onKeyDown={e => {
-              if (e.key === 'Enter') {
-                onSearchClick()
-              }
-            }}
-            concatCss={styledCss({
-              '::placeholder': {
-                color: 'text.3',
-                opacity: 0.6,
-              },
-            })(theme)}
-          />
-          {searchTerm && (
-            <View position="absolute" right="small">
-              <BaseControl onClick={clear}>
-                <Icon sizeVariant="tiny" color="text.3">
-                  <CloseSvg />
-                </Icon>
-              </BaseControl>
-            </View>
-          )}
-        </Grid>
-      </View>
+    <SearchInputContainer
+      placeholder="Search"
+      value={{ textValue: searchTerm }}
+      onChange={onChange}
+      onKeyDown={e => {
+        if (e.key === 'Enter') {
+          onSearchClick()
+        }
+      }}
+      onClear={clear}
+    >
       {searchTerm &&
         menuItem === 'search' && (
           <View height="40px" pt="medium" pb="medium">
@@ -129,7 +83,7 @@ const Search = ({ onClick }) => {
             </EntrySearchLoader>
           </View>
         )}
-    </View>
+    </SearchInputContainer>
   )
 }
 

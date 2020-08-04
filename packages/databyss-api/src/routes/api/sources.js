@@ -1,4 +1,6 @@
 import express from 'express'
+import { pick } from 'lodash'
+import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
 import Block from '../../models/Block'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
@@ -31,6 +33,57 @@ router.post(
     Object.assign(block, blockFields)
     await block.saveWithDetail()
     res.status(200).end()
+  })
+)
+
+// @route    GET api/sources/authors
+// @desc     Get all authors in an account
+// @access   Private
+router.get(
+  '/authors',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  wrap(async (req, res, _next) => {
+    const blocks = await Block.find({
+      account: req.account._id,
+      type: 'SOURCE',
+    })
+    if (!blocks) {
+      return res.json([])
+    }
+    // group by authors and return array of authors
+
+    const authorsDict = getAuthorsFromSources(blocks)
+
+    return res.json(Object.values(authorsDict))
+  })
+)
+
+// @route    GET api/sources
+// @desc     Get all sources citations in an account
+// @access   Private
+router.get(
+  '/citations',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  wrap(async (req, res, _next) => {
+    const blocks = await Block.find({
+      account: req.account._id,
+      type: 'SOURCE',
+    })
+    if (!blocks) {
+      return res.json([])
+    }
+
+    const sourcesCitations = blocks.map(block => {
+      const sourcesCitationsDict = pick(block, [
+        '_id',
+        'text',
+        'detail.authors',
+        'detail.citations',
+      ])
+
+      return sourcesCitationsDict
+    })
+    return res.json(sourcesCitations)
   })
 )
 

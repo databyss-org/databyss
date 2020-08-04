@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import _ from 'lodash'
-import { useEditor, ReactEditor } from 'slate-react'
+import { useEditor, ReactEditor } from '@databyss-org/slate-react'
 import { Node, Transforms } from '@databyss-org/slate'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
