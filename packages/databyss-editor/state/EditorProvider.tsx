@@ -4,8 +4,6 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from 'react'
-import ReactDOMServer from 'react-dom/server'
-import { Patch } from 'immer'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import {
   SET_SELECTION,
@@ -18,8 +16,11 @@ import {
   COPY,
   CUT,
   PASTE,
+  UNDO,
+  REDO,
   REMOVE_AT_SELECTION,
 } from './constants'
+import { Patch } from 'immer'
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
@@ -68,14 +69,18 @@ export type OnChangeArgs = {
   previousState: EditorState
   patches: Patch[]
   inversePatches: Patch[]
+  undoAction: boolean
+  redoAction: boolean
 }
 
-export interface RefInputHandles {
+export interface EditorRef {
+  undo: (patches: Patch[]) => void
+  redo: (patches: Patch[]) => void
   pagePath: string[]
 }
 
 type PropsType = {
-  ref?: React.RefObject<RefInputHandles>
+  ref?: React.RefObject<EditorRef>
   children: JSX.Element
   initialState: EditorState
   onChange: (args: OnChangeArgs) => void
@@ -96,6 +101,18 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     useImperativeHandle(
       ref,
       () => ({
+        undo: (patches: Patch[]) => {
+          dispatch({
+            type: UNDO,
+            payload: { patches },
+          })
+        },
+        redo: (patches: Patch[]) => {
+          dispatch({
+            type: REDO,
+            payload: { patches },
+          })
+        },
         pagePath: getPagePath(state),
       }),
       [JSON.stringify(state.selection)]
@@ -127,7 +144,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
         type: MERGE,
         payload: transform,
       })
-
     /**
      * Set block content at `index` to `text`
      */
@@ -173,7 +189,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     const cut = (e: ClipboardEvent) => {
       const _frag = getFragmentAtSelection(state)
       cutOrCopyEventHandler(e, _frag)
-
       dispatch({
         type: CUT,
       })
@@ -227,6 +242,7 @@ export const useEditorContext = () => useContext(EditorContext)
 
 EditorProvider.defaultProps = {
   onChange: () => null,
+  // ref: PropTypes.object,
   initialState,
 }
 

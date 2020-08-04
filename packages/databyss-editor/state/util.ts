@@ -73,6 +73,21 @@ export const pageToEditorState = (page: Page): EditorState => {
     ...state
   } as EditorState
 }
+      // filter out any path that doesnt contain `blocks` or `selection` and does not contain `__` metadata
+
+export const filterInversePatches = (patches: Patch[]): Patch[]=> { 
+  
+  const _patches = patches.filter(
+    p =>
+      (p.path[0] === 'blocks' || p.path[0] === 'selection') &&
+      !p.path.find(_p => typeof _p === 'string' && _p.search('__') !== -1)
+  )
+  // if only a selection patch was sent dont return any patches
+
+  if (_patches.length === 1 && _patches[0].path[0] === 'selection'){
+    return []
+  }
+  return _patches}
 
 // if the current state selection doesn't span multiple blocks, push an update
 // operation for the current block

@@ -1,5 +1,5 @@
 import ObjectId from 'bson-objectid'
-import { produceWithPatches, enablePatches } from 'immer'
+import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
 import { FSA, BlockType, Block } from '@databyss-org/services/interfaces'
 import {
   SPLIT,
@@ -12,6 +12,8 @@ import {
   DEQUEUE_NEW_ENTITY,
   PASTE,
   CUT,
+  UNDO,
+  REDO,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -91,6 +93,28 @@ export default (
       let nextSelection = payload?.selection
 
       switch (action.type) {
+        case UNDO: {
+          payload.patches.forEach((p: Patch)=> {
+            if(p.path[0] === 'blocks'
+            || p.path[0] === 'selection'){
+             applyPatches(draft, [p] )
+            }
+          })
+          draft.operations.reloadAll = true
+
+          break
+        }
+        case REDO: {
+          payload.patches.forEach((p: Patch)=> {
+            if(p.path[0] === 'blocks'
+            || p.path[0] === 'selection'){
+             applyPatches(draft, [p] )
+            }
+          })
+          draft.operations.reloadAll = true
+
+          break
+        }
         case CUT: {
           deleteBlocksAtSelection(draft)
           pushSingleBlockOperation({ stateSelection: state.selection, draft })
@@ -406,8 +430,20 @@ export default (
       return draft
     }
   )
+
+  /*
+historyActions need to bypass the EditorHistory history stack
+  */
+
   if (onChange) {
-    onChange({ previousState: state, nextState, patches, inversePatches })
+    onChange({ 
+      previousState: state, 
+      nextState, 
+      patches, 
+      inversePatches,
+      undoAction: action.type === UNDO, 
+      redoAction: action.type === REDO, 
+    })
   }
   return nextState
 }
