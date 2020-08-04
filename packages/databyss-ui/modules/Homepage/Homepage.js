@@ -1,46 +1,14 @@
 import React from 'react'
-import { View, Text, Icon } from '@databyss-org/ui/primitives'
-import Navbar from '@databyss-org/ui/modules/Homepage/Navbar'
-import SignUpForm from '@databyss-org/ui/modules/Homepage/SignUpForm'
-import LogoSvg from '@databyss-org/ui/assets/logo_new.svg'
-import { pxUnits, borderRadius } from '@databyss-org/ui/theming/views'
+import { View, Text } from '@databyss-org/ui/primitives'
+import Hero from '@databyss-org/ui/modules/Homepage/Hero/Hero'
+import HighlightedFeature from '@databyss-org/ui/modules/Homepage/Features/HighlightedFeature'
 import imgSourceSelection from '@databyss-org/ui/assets/promo_source_selection.png'
 import SourceDropdownSvg from '@databyss-org/ui/assets/source_dropdown.svg'
 import PDFSvg from '@databyss-org/ui/assets/add_document.svg'
-import theme from '@databyss-org/ui/theming/theme'
-import backgroundImage from '@databyss-org/ui/assets/stone_bg.jpg'
 import { useMediaQuery } from 'react-responsive'
-
-const HeroText = ({ isMobile }) => (
-  <View alignItems="center" mt="extraLarge">
-    <View flexDirection="row" alignItems="center" mb="large">
-      <Icon
-        color="text.6"
-        sizeVariant={isMobile ? 'logoSmall' : 'logoLarge'}
-        mr="small"
-      >
-        <LogoSvg />
-      </Icon>
-      <Text
-        variant={isMobile ? 'heading2' : 'heading1'}
-        color="text.6"
-        textAlign="center"
-      >
-        Databyss
-      </Text>
-    </View>
-    <Text
-      variant="uiTextMedium"
-      color="text.5"
-      textAlign="center"
-      maxWidth={pxUnits(560)}
-      mb={pxUnits(48)}
-    >
-      You research, dabble, experiment, take notes, and get lost in your
-      thoughts. Databyss is your new word-processor.
-    </Text>
-  </View>
-)
+import LogoSvg from '@databyss-org/ui/assets/logo_new.svg'
+import Navbar from '@databyss-org/ui/modules/Homepage/Hero/Navbar'
+import backgroundImage from '@databyss-org/ui/assets/stone_bg.jpg'
 
 const FeatureDescription = ({ isTablet }) => (
   <>
@@ -57,6 +25,13 @@ const FeatureDescription = ({ isTablet }) => (
     <PDFSvg width={isTablet ? 375 : 200} height="200px" />
   </>
 )
+
+const navLinks = [
+  { name: 'Home', route: '/' },
+  { name: 'Signup', route: '/signup' },
+  { name: 'Log in', route: '/login' },
+  { name: 'About', route: '/about' },
+]
 
 const Homepage = () => {
   const isMobile = useMediaQuery({ maxWidth: 425 })
@@ -79,52 +54,38 @@ const Homepage = () => {
         p="large"
         pb="extraLarge"
         width="100%"
+        alignItems="center"
         css={{
           background: `url(${backgroundImage})`,
         }}
       >
-        <Navbar />
-        <HeroText isMobile={isMobile} />
-        <SignUpForm />
+        <Navbar navLinks={navLinks} />
+        <Hero
+          isMobile={isMobile}
+          logoSrc={<LogoSvg />}
+          title="Databyss"
+          headline="You research, dabble, experiment, take notes, and get lost in your thoughts. Databyss is your new word-processor."
+          buttonText={
+            <>
+              <Text variant="uiTextNormalSemibold" color="text.5">
+                Sign up
+              </Text>{' '}
+              <Text variant="uiTextNormal" color="text.5">
+                &nbsp;(for free)
+              </Text>
+            </>
+          }
+          buttonHref="https://app.databyss.org/signup"
+        />
       </View>
+
       <View backgroundColor="background.1" m={getContentSpacing()} mb="none">
-        <View
+        <HighlightedFeature
           backgroundColor="background.2"
-          p="large"
-          alignItems="center"
-          css={{ borderRadius }}
-        >
-          <View widthVariant="modal">
-            <Text
-              variant="heading3"
-              color="text.1"
-              mb="medium"
-              textAlign="center"
-            >
-              All Your Sources In One Place
-            </Text>
-            <Text
-              variant="uiTextMedium"
-              color="text.3"
-              textAlign="center"
-              mb="large"
-            >
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas
-              nec euismod quam. Curabitur at euismod tortor. Mauris vitae sem
-              augue. Sed interdum augue ac ex lobortis gravida.
-            </Text>
-            <img
-              src={imgSourceSelection}
-              alt="Deep search"
-              width="100%"
-              css={{
-                alignSelf: 'flex-start',
-                boxShadow: theme.buttonShadow.boxShadow,
-                borderRadius,
-              }}
-            />
-          </View>
-        </View>
+          imgSrc={imgSourceSelection}
+          title="The Basics"
+          description="Databyss gives you the freedom to organize notes hierarchically (as a long stream of thought) or to build a network of associations by linking sections of your work to sources, topics, and authors."
+        />
         <View
           flexGrow="1"
           px={isTablet ? 'none' : 'medium'}

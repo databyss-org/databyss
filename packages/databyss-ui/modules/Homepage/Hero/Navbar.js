@@ -4,14 +4,7 @@ import theme, { timing } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { useLocation } from '@reach/router'
 
-const navLinks = [
-  { name: 'Home', route: '/' },
-  { name: 'Signup', route: '/signup' },
-  { name: 'Log in', route: '/login' },
-  { name: 'About', route: '/about' },
-]
-
-const Navbar = ({ lightTheme }) => {
+const Navbar = ({ lightTheme, navLinks }) => {
   const location = useLocation()
   const isActiveLink = route => route === location.pathname
 

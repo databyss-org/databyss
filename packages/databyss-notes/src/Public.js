@@ -4,7 +4,7 @@ import Login from '@databyss-org/ui/modules/Login/Login'
 import { Router } from '@reach/router'
 
 const Public = () => (
-  <Router>
+  <Router style={{ width: '100%' }}>
     <Homepage path="/" />
     <Login path="/login" />
     <Login signupFlow path="/signup" />
