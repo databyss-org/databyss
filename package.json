@@ -29,7 +29,7 @@
     "start:server": "ENV_PREFIX=API_ NPM_DEPLOY_TARGET=API_SERVER NPM_BUILD_TARGET=API_SERVER babel-node --config-file ./packages/databyss-api/babel.config.js packages/databyss-api/server.js",
     "metro:stories": "react-native start --reset-cache --config packages/databyss-stories-native/metro.config.js",
     "metro:notes": "react-native start --reset-cache --config packages/databyss-notes-native/metro.config.js",
-    "test": "ENV_PREFIX=API_ NPM_BUILD_TARGET=TEST node scripts/test.js --maxWorkers=1",
+    "test": "ENV_PREFIX=API_ NPM_BUILD_TARGET=TEST node scripts/test.js --maxWorkers=5",
     "test:local": "LOCAL_ENV=true yarn test",
     "test:selenium": "yarn test seleniumtest",
     "test:selenium:local": "SAUCE=no LOCAL_ENV=true yarn test seleniumtest",
