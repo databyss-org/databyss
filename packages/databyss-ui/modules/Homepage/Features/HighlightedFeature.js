@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { borderRadius } from '@databyss-org/ui/theming/views'
 import theme from '@databyss-org/ui/theming/theme'
+import FeatureHeading from '@databyss-org/ui/modules/Homepage/Features/FeatureHeading'
 
 const HighlightedFeature = ({
   backgroundColor,
@@ -15,13 +16,12 @@ const HighlightedFeature = ({
     alignItems="center"
     css={{ borderRadius }}
   >
-    <View widthVariant="modal">
-      <Text variant="heading3" color="text.1" mb="medium" textAlign="center">
-        {title}
-      </Text>
-      <Text variant="uiTextMedium" color="text.3" textAlign="center" mb="large">
-        {description}
-      </Text>
+    <View widthVariant="modal" alignItems="center">
+      <FeatureHeading
+        textAlign="center"
+        title={title}
+        description={description}
+      />
       <img
         src={imgSrc}
         alt="Deep search"
