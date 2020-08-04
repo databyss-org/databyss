@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 
 import * as services from '@databyss-org/services/pdf'
 
+import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
 import { View } from '../../primitives'
 import InfoModal from '../../modules/Modals/InfoModal'
 import styled from '../../primitives/styled'
@@ -31,27 +32,14 @@ const isAcceptableFile = item =>
 
 // component
 const PDFDropZoneManager = () => {
+  const { showModal } = useNavigationContext()
+
   const [isDropAreaVisible, setDropAreaVisibility] = useState(false)
 
   const [isParsing, setParsing] = useState(false)
   const [hasParsed, setParsed] = useState(false)
 
-  const [modalHeading, setModalHeading] = useState('')
-  const [modalMessage, setModalMessage] = useState('')
-  const [isModalVisible, setModalVisibility] = useState(false)
-
-  const onDragOver = event => {
-    event.stopPropagation()
-    event.preventDefault()
-    setDropAreaVisibility(true)
-  }
-
-  const onDragLeave = event => {
-    event.stopPropagation()
-    event.preventDefault()
-    setDropAreaVisibility(false)
-  }
-
+  // utils
   const getFileToProcess = event => {
     const filesToProcess = []
 
@@ -92,10 +80,17 @@ const PDFDropZoneManager = () => {
     return file
   }
 
-  const showModal = (title, message) => {
-    setModalHeading(title)
-    setModalMessage(message)
-    setModalVisibility(true)
+  // drag handlers
+  const onDragOver = event => {
+    event.stopPropagation()
+    event.preventDefault()
+    setDropAreaVisibility(true)
+  }
+
+  const onDragLeave = event => {
+    event.stopPropagation()
+    event.preventDefault()
+    setDropAreaVisibility(false)
   }
 
   const onFileDrop = async event => {
@@ -110,7 +105,10 @@ const PDFDropZoneManager = () => {
 
     if (!file) {
       setDropAreaVisibility(false)
-      showModal('⚠️ Unable to parse document', 'Ensure to use a PDF document.')
+      showAlert(
+        '⚠️ Unable to parse document',
+        'Ensure to use a PDF document.'
+      )
       return
     }
 
@@ -120,7 +118,7 @@ const PDFDropZoneManager = () => {
       // TODO: parse annotations and add them to current page
       console.log('response:', response)
     } catch (error) {
-      showModal(
+      showAlert(
         '⚠️ An error occured',
         'Unable to obtain annotations from this document. Please try again later, or try with another document.'
       )
@@ -131,6 +129,7 @@ const PDFDropZoneManager = () => {
     }
   }
 
+  // init/cleanup methods
   const addDragEventHandlers = () => {
     window.addEventListener('dragover', onDragOver)
     window.addEventListener('dragleave', onDragLeave)
@@ -151,10 +150,22 @@ const PDFDropZoneManager = () => {
     }
   }, [])
 
+  // modal methods
+  const showAlert = (heading, message) => {
+    showModal({
+      component: 'INFO',
+      props: {
+        heading,
+        message
+      }
+    })
+  }
+
   const getLabel = () => (hasParsed ? '' : 'Drop your PDF here')
 
   const getPointerEvents = () => (isParsing ? 'all' : 'none')
 
+  // render
   const render = () => (
     <StyledView className="pdf-drop-zone-manager">
       <DashedArea
@@ -163,12 +174,7 @@ const PDFDropZoneManager = () => {
         isParsing={isParsing}
         pointerEvents={getPointerEvents()}
       />
-      <InfoModal
-        id="pdfDropZoneModal"
-        visible={isModalVisible}
-        heading={modalHeading}
-        message={modalMessage}
-      />
+      <InfoModal id="pdfDropZoneModal" />
     </StyledView>
   )
 
