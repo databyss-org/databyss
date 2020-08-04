@@ -148,6 +148,16 @@ export const getClosureType = (type: BlockType): BlockType => {
   return _text
 }
 
+export const getClosureTypeFromOpeningType = (type: BlockType): BlockType => {
+  const _selector: { [key: string]: BlockType } = {
+    SOURCE: BlockType.EndSource,
+    TOPIC: BlockType.EndTopic,
+  }
+  const _type: BlockType = _selector[type]
+
+  return _type
+}
+
 export const symbolToAtomicType = (symbol: string): BlockType => {
   const getSymbolObj: { [key: string]: BlockType } = {
     '@': BlockType.Source,

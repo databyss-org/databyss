@@ -25,6 +25,7 @@ import {
   getOpenAtomicText,
   symbolToAtomicType,
   symbolToAtomicClosureType,
+  getClosureTypeFromOpeningType,
   getClosureText,
   getClosureType,
   atomicClosureText,
@@ -72,6 +73,24 @@ export const bakeAtomicBlock = ({
         block: draft.blocks[index],
       })
 
+      // perform a lookahead for the next atomic which is type XXX or END_XXX
+      const _idx = draft.blocks.findIndex((b, i)=> i > index && (b.type === _atomicType ||b.type === getClosureTypeFromOpeningType(_atomicType) ))
+      if(_idx > -1){
+        // if next atomic value is closure value, clear closure block
+        if(getClosureType(draft.blocks[_idx].type)){
+          let _newBlock: Block = {
+            type: BlockType.Entry,
+            _id: new ObjectId().toHexString(),
+            text: { textValue: '', ranges: [] },
+          }
+          draft.blocks[_idx] = _newBlock
+          // push update operation back to editor
+          draft.operations.push({
+            index: _idx,
+            block: blockValue(_newBlock),
+          })
+        }
+      }
       return draft.blocks[index]
     }
   }
@@ -140,8 +159,6 @@ export const bakeAtomicClosureBlock = ({
         }
         // perform a closure block lookahead to see if current block has already been closed and remove that block
         if(draft.blocks.length > index + 1){
-     //     console.log(JSON.parse(JSON.stringify(_blocks)))
-
           // find next index where same id exists
           const _idx = draft.blocks.findIndex((b, i)=> b._id === _openAtomic._id && i > index)
           // if id exists in document and next instance is an atomic closure, remove that block and replace it with an empty block
@@ -160,30 +177,10 @@ export const bakeAtomicClosureBlock = ({
                 index: _idx,
                 block: blockValue(_newBlock),
               })
-
-
-
             }
-         //   console.log(JSON.parse(JSON.stringify(_nextBlock)))
-
           }
-
         }
-
-
-     //   let _blocks = [...page.blocks].reverse()
-             // let _block: Block = {
-        //   type: BlockType.Entry,
-        //   _id: new ObjectId().toHexString(),
-        //   text: { textValue: '', ranges: [] },
-        // }
-
       }
-
-
-
-
-
       // if type is not set, push to operations
       if (!isAtomicInlineType(_block.type)) {
         draft.operations.push({
