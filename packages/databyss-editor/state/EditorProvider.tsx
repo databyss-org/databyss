@@ -73,16 +73,15 @@ export type OnChangeArgs = {
   redoAction: boolean
 }
 
-export interface RefInputHandles {
+export interface EditorRef {
   undo: (patches: Patch[]) => void
   redo: (patches: Patch[]) => void
   pagePath: string[]
 }
 
 type PropsType = {
-  ref?: React.RefObject<RefInputHandles>
+  ref?: React.RefObject<EditorRef>
   children: JSX.Element
-  ref?: React.RefObject<RefInputHandles>
   initialState: EditorState
   onChange: (args: OnChangeArgs) => void
 }

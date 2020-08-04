@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useRef } from 'react'
-import { OnChangeArgs, RefInputHandles } from '../state/EditorProvider'
+import { OnChangeArgs, EditorRef } from '../state/EditorProvider'
 import { throttle } from 'lodash'
 import { Patch } from 'immer'
 import { filterInversePatches } from '@databyss-org/editor/state/util'
@@ -20,7 +20,7 @@ type PropsType = {
 export const HistoryContext = createContext<ContextType | null>(null)
 
 const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
-  const childRef = useRef<RefInputHandles>(null)
+  const childRef = useRef<EditorRef>(null)
   const undoPatchQueue = useRef<Patch[]>([])
   const undoStack = useRef<UndoType>([])
   const redoStack = useRef<UndoType>([])
@@ -74,7 +74,7 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
       )
 
       // group events on a throttle
-      trottleUndoStack()
+      throttleUndoStack()
     } else {
       // if a history event, push to redo stack
       const _filteredPatches = filterInversePatches(inversePatches)
@@ -84,7 +84,7 @@ const HistoryProvider: React.FunctionComponent<PropsType> = ({ children }) => {
     onChange({ inversePatches, patches, ...others })
   }
 
-  const trottleUndoStack = throttle(() => {
+  const throttleUndoStack = throttle(() => {
     if (undoPatchQueue.current.length) {
       undoStack.current.push(undoPatchQueue.current.reverse())
       undoPatchQueue.current = []
