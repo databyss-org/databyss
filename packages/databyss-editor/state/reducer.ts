@@ -396,7 +396,7 @@ export default (
         if (_baked && isAtomicInlineType(_baked.type)) {
           draft.newEntities.push(_baked)
           draft.operations.push({
-            index: payload.index,
+            index: state.selection.focus.index,
             block: blockValue(_baked),
           })
         }
