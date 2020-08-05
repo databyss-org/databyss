@@ -32,6 +32,9 @@ import {
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
+// if block at @index in @draft.blocks starts with an atomic identifier character,
+// e.g. @ or #, convert the block to the appropriate atomic type and return it.
+// otherwise return null
 export const bakeAtomicBlock = ({
   draft,
   index,
@@ -43,35 +46,31 @@ export const bakeAtomicBlock = ({
 
   // check if current text should be converted to atomic block
   if (
-    _block &&
-    _block.text.textValue.trim().length > 1 &&
-    !isAtomicInlineType(_block.type) &&
-    !_block.text.textValue.match(`\n`)
+    !_block ||
+    _block.text.textValue.trim().length < 1 ||
+    isAtomicInlineType(_block.type) ||
+    _block.text.textValue.match(`\n`)
   ) {
-    const _atomicType = symbolToAtomicType(_block.text.textValue.charAt(0))
-
-    if (_atomicType) {
-      // replace block in state.blocks and push editor operation
-      draft.blocks[index] = {
-        text: {
-          // ranges need to account for the removal of the first string `@` or `#`
-          textValue: _block.text.textValue.substring(1).trim(),
-          // location marks are not allowed in atomic types
-          ranges: removeLocationMark(offsetRanges(_block.text.ranges, 1)),
-        },
-        type: _atomicType,
-        _id: _block._id,
-      }
-
-      draft.operations.push({
-        index,
-        block: draft.blocks[index],
-      })
-
-      return draft.blocks[index]
-    }
+    return null
   }
-  return null
+  const _atomicType = symbolToAtomicType(_block.text.textValue.charAt(0))
+
+  if (!_atomicType) {
+    return null
+  }
+  // replace block in state.blocks and push editor operation
+  draft.blocks[index] = {
+    text: {
+      // ranges need to account for the removal of the first string `@` or `#`
+      textValue: _block.text.textValue.substring(1).trim(),
+      // location marks are not allowed in atomic types
+      ranges: removeLocationMark(offsetRanges(_block.text.ranges, 1)),
+    },
+    type: _atomicType,
+    _id: _block._id,
+  }
+
+  return draft.blocks[index]
 }
 
 enablePatches()
@@ -168,6 +167,16 @@ export default (
               _isCurrentBlockEmpty ? 1 : 0,
               ..._frag
             )
+
+            // bake atomic blocks if there were any in the paste
+            // this is useful when importing from external source, like PDF
+            draft.blocks.forEach((_, index: number) => {
+              const _baked = bakeAtomicBlock({ draft, index })
+              if (_baked) {
+                draft.blocks[index] = _baked
+                draft.newEntities.push(_baked)
+              }
+            })
 
             draft.operations.reloadAll = true
 
@@ -309,7 +318,7 @@ export default (
 
           payload.operations.forEach((op: PayloadOperation) => {
             // update node text
-            const _block = draft.blocks[op.index]
+            let _block = draft.blocks[op.index]
             _block.text = op.text
 
             if (op.isRefEntity) {
@@ -324,15 +333,17 @@ export default (
                   })
                 }
               })
-            } else if (op.withBakeAtomic) {
-              bakeAtomicBlock({ draft, index: op.index })
-            } else {
-              // update only given entity
-              draft.operations.push({
-                index: op.index,
-                block: blockValue(_block),
-              })
+              return
             }
+            
+            if (op.withBakeAtomic) {
+              _block = bakeAtomicBlock({ draft, index: op.index })
+            }
+            // update only given entity
+            draft.operations.push({
+              index: op.index,
+              block: blockValue(_block),
+            })
           })
           break
         }
@@ -377,13 +388,17 @@ export default (
       }
 
       if (draft.selection.focus.index !== state.selection.focus.index) {
-        // push updates to new entity queue
         const _baked = bakeAtomicBlock({
           draft,
           index: state.selection.focus.index,
         })
+        // if baked, push updates to editor and newEntities queue
         if (_baked && isAtomicInlineType(_baked.type)) {
           draft.newEntities.push(_baked)
+          draft.operations.push({
+            index: payload.index,
+            block: blockValue(_baked),
+          })
         }
       }
 
