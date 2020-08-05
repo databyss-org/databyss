@@ -39,6 +39,9 @@ import {
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
+// if block at @index in @draft.blocks starts with an atomic identifier character,
+// e.g. @ or #, convert the block to the appropriate atomic type and return it.
+// otherwise return null.
 export const bakeAtomicBlock = ({
   draft,
   index,
