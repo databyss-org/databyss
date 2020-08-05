@@ -8,13 +8,8 @@ import {
   sleep,
   sendKeys,
   enterKey,
-  //  toggleBold,
-  //   toggleItalic,
-  //   toggleLocation,
-  //   enterKey,
-  //   upKey,
-  //   downKey,
-  //   backspaceKey,
+  upKey,
+  downKey,
 } from './_helpers.selenium'
 
 let driver
@@ -95,6 +90,7 @@ describe('app sticky header', () => {
     await sendKeys(actions, '/#')
     await enterKey(actions)
     await sendKeys(actions, 'last entry')
+    await sleep(10000)
 
     // get page path
     let headerSticky = await getElementByTag(
@@ -105,6 +101,51 @@ describe('app sticky header', () => {
     headerSticky = await headerSticky.getAttribute('innerText')
 
     assert.equal(headerSticky, 'this is a page title / @ this is a test source')
+
+    await upKey(actions)
+    await upKey(actions)
+    headerSticky = await getElementByTag(
+      driver,
+      '[data-test-element="editor-sticky-header"]'
+    )
+    headerSticky = await headerSticky.getAttribute('innerText')
+    assert.equal(
+      headerSticky,
+      'this is a page title / @ this is a test source / # this is a topic'
+    )
+
+    await upKey(actions)
+    await upKey(actions)
+    headerSticky = await getElementByTag(
+      driver,
+      '[data-test-element="editor-sticky-header"]'
+    )
+    headerSticky = await headerSticky.getAttribute('innerText')
+    assert.equal(headerSticky, 'this is a page title / @ this is a test source')
+
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '/@')
+    await downKey(actions)
+    headerSticky = await getElementByTag(
+      driver,
+      '[data-test-element="editor-sticky-header"]'
+    )
+    headerSticky = await headerSticky.getAttribute('innerText')
+    assert.equal(headerSticky, 'this is a page title / # this is a topic')
+
+    await downKey(actions)
+
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '/#')
+
+    headerSticky = await getElementByTag(
+      driver,
+      '[data-test-element="editor-sticky-header"]'
+    )
+    headerSticky = await headerSticky.getAttribute('innerText')
+    assert.equal(headerSticky, 'this is a page title')
 
     // let headerSticky = await getElementByTag(
     //     driver,
