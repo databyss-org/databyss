@@ -4,10 +4,7 @@
 #
 
 version: 2.1
-executors:
-  base-10:
-    docker:
-      - image: cypress/base:10.16.0
+
 orbs:
   queue: eddiewebb/queue@1.5.0
 
@@ -84,7 +81,6 @@ jobs:
       # run tests!
       - run: yarn test
 workflows:
-  version: 2
   lint-and-test:
     jobs:
       - queue/block_workflow:
