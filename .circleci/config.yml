@@ -90,6 +90,6 @@ workflows:
       - queue/block_workflow:
           consider-branch: false
           time: '30'
-      - jest
+      - jest:
         requires:
           - queue/block_workflow
