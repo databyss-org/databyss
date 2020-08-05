@@ -24,10 +24,6 @@ jobs:
     working_directory: ~/repo
 
     steps:
-      - queue/block_workflow:
-          consider-branch: false
-          time: '30'
-
       - checkout
 
       - run:
@@ -91,4 +87,9 @@ workflows:
   version: 2
   lint-and-test:
     jobs:
+      - queue/block_workflow:
+          consider-branch: false
+          time: '30'
       - jest
+          requires:
+            - queue/block_workflow
