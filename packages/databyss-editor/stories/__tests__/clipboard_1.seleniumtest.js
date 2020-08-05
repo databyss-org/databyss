@@ -35,12 +35,11 @@ const LOCAL_URL_EDITOR =
 const PROXY_URL_EDITOR =
   'http://0.0.0.0:8080/iframe.html?id=services-page--slate-5'
 
-const random = Math.random()
-  .toString(36)
-  .substring(7)
-
 describe('editor clipboard', () => {
   beforeEach(async done => {
+    const random = Math.random()
+      .toString(36)
+      .substring(7)
     // OSX and safari are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
