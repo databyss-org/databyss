@@ -299,6 +299,16 @@ export default (
               ..._frag
             )
 
+            // bake atomic blocks if there were any in the paste
+            // this is useful when importing from external source, like PDF
+            draft.blocks.forEach((_, index: number) => {
+              const _baked = bakeAtomicBlock({ draft, index })
+              if (_baked) {
+                draft.blocks[index] = _baked
+                draft.newEntities.push(_baked)
+              }
+            })
+
             draft.operations.reloadAll = true
 
             // set selection
