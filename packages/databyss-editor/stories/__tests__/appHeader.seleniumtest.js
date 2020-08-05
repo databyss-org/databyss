@@ -66,6 +66,7 @@ describe('app sticky header', () => {
   })
 
   it('should render correct editor path for cursor', async () => {
+    await sleep(500)
     await sendKeys(actions, 'this is a page title')
     await enterKey(actions)
     await sendKeys(actions, 'this is a test entry')
