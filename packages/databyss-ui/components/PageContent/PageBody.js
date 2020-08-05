@@ -47,6 +47,7 @@ const PageBody = ({
 
   // state from provider is out of date
   const onChange = value => {
+    //  console.log(editorStateRef)
     if (editorStateRef.current?.pagePath) {
       requestAnimationFrame(() =>
         onEditorPathChange(editorStateRef.current.pagePath)
@@ -62,9 +63,8 @@ const PageBody = ({
   }
 
   return (
-    <HistoryProvider>
+    <HistoryProvider ref={editorStateRef}>
       <EditorProvider
-        ref={editorStateRef}
         key={location.pathname}
         onChange={onChange}
         initialState={pageToEditorState(withMetaData(page))}
