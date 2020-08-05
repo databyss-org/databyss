@@ -1,8 +1,8 @@
 import React from 'react'
 import { View } from '@databyss-org/ui/primitives'
 import { borderRadius, pxUnits } from '@databyss-org/ui/theming/views'
-import theme from '@databyss-org/ui/theming/theme'
 import FeatureHeading from '@databyss-org/ui/modules/Homepage/Features/FeatureHeading'
+import FeatureImg from '@databyss-org/ui/modules/Homepage/Features/FeatureImg'
 import { largeDesktopBreakpoint } from '@databyss-org/ui/theming/mediaBreakpoints'
 
 const HighlightedFeature = ({
@@ -10,10 +10,13 @@ const HighlightedFeature = ({
   title,
   description,
   imgSrc,
+  imgAlt,
+  svgImg,
 }) => (
   <View
     backgroundColor={backgroundColor}
     p="large"
+    mb="extraLarge"
     alignItems="center"
     maxWidth={pxUnits(largeDesktopBreakpoint.minWidth)}
     width="100%"
@@ -25,16 +28,7 @@ const HighlightedFeature = ({
         title={title}
         description={description}
       />
-      <img
-        src={imgSrc}
-        alt="Deep search"
-        width="100%"
-        css={{
-          alignSelf: 'flex-start',
-          boxShadow: theme.buttonShadow.boxShadow,
-          borderRadius,
-        }}
-      />
+      <FeatureImg imgSrc={imgSrc} imgAlt={imgAlt} svgImg={svgImg} />
     </View>
   </View>
 )

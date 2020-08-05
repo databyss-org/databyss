@@ -1,6 +1,7 @@
 import React from 'react'
 import { View } from '@databyss-org/ui/primitives'
 import FeatureHeading from '@databyss-org/ui/modules/Homepage/Features/FeatureHeading'
+import FeatureImg from '@databyss-org/ui/modules/Homepage/Features/FeatureImg'
 import { useMediaQuery } from 'react-responsive'
 import {
   tabletBreakpoint,
@@ -8,92 +9,65 @@ import {
   largeDesktopBreakpoint,
 } from '@databyss-org/ui/theming/mediaBreakpoints'
 
-const StandardFeature = ({ isTablet, img, title, description }) => (
-  <View
-    flexGrow="1"
-    px={isTablet ? 'none' : 'medium'}
-    py="extraLarge"
-    flexDirection={isTablet ? 'row' : 'column'}
-  >
-    <View flexShrink="1" mr="large" justifyContent="center">
-      <FeatureHeading title={title} description={description} />
-    </View>
-    {img}
-  </View>
-)
-
-const DualColorBgFeature = ({
-  isTablet,
-  isDesktop,
-  isLargeDesktop,
-  title,
-  description,
-  img,
-  leftBgColor,
-  rightBgColor,
-}) => (
-  <View flexGrow="1" flexDirection={isTablet ? 'row' : 'column'}>
-    <View
-      backgroundColor={leftBgColor}
-      flexGrow="1"
-      px={isDesktop ? 'extraLarge' : 'medium'}
-      py="large"
-      alignItems={isLargeDesktop ? 'flex-end' : 'center'}
-    >
-      {img}
-    </View>
-    <View
-      backgroundColor={rightBgColor}
-      py="large"
-      flexGrow="1"
-      flexShrink="3"
-      justifyContent="center"
-    >
-      <View
-        mt={isTablet ? 'none' : 'large'}
-        justifyContent="center"
-        px={isDesktop ? 'extraLarge' : 'medium'}
-      >
-        <FeatureHeading title={title} description={description} />
-      </View>
-    </View>
-  </View>
-)
-
 const Feature = ({
-  variant,
-  img,
+  svgImg,
   title,
   description,
   leftBgColor,
   rightBgColor,
+  descriptionColor,
+  imgSrc,
+  imgAlt,
+  imgOnRightSide,
+  noBg,
 }) => {
   const isTablet = useMediaQuery(tabletBreakpoint)
   const isDesktop = useMediaQuery(desktopBreakpoint)
   const isLargeDesktop = useMediaQuery(largeDesktopBreakpoint)
 
-  if (variant === 'dualColorBg') {
-    return (
-      <DualColorBgFeature
-        isTablet={isTablet}
-        isDesktop={isDesktop}
-        isLargeDesktop={isLargeDesktop}
-        img={img}
-        title={title}
-        description={description}
-        leftBgColor={leftBgColor}
-        rightBgColor={rightBgColor}
-      />
-    )
-  }
   return (
-    <StandardFeature
-      isTablet={isTablet}
-      img={img}
-      title={title}
-      description={description}
-    />
+    <View
+      flexGrow="1"
+      flexDirection={isTablet ? 'row' : 'column'}
+      mb="extraLarge"
+    >
+      <View
+        backgroundColor={noBg ? 'inherit' : leftBgColor}
+        flexGrow="1"
+        px={isDesktop ? 'extraLarge' : 'medium'}
+        py={noBg ? 'none' : 'large'}
+        alignItems={isLargeDesktop ? 'flex-end' : 'center'}
+        flexBasis={isTablet ? '50%' : 'auto'}
+        order={imgOnRightSide && 2}
+      >
+        <FeatureImg imgSrc={imgSrc} imgAlt={imgAlt} svgImg={svgImg} />
+      </View>
+      <View
+        backgroundColor={noBg ? 'inherit' : rightBgColor}
+        py={noBg ? 'none' : 'large'}
+        flexGrow="1"
+        flexShrink="3"
+        justifyContent="center"
+        order={imgOnRightSide && 1}
+      >
+        <View
+          mt={isTablet || imgOnRightSide ? 'none' : 'large'}
+          justifyContent="center"
+          px={isDesktop ? 'extraLarge' : 'medium'}
+        >
+          <FeatureHeading
+            title={title}
+            description={description}
+            descriptionColor={descriptionColor}
+          />
+        </View>
+      </View>
+    </View>
   )
+}
+
+Feature.defaultProps = {
+  descriptionColor: 'text.3',
 }
 
 export default Feature
