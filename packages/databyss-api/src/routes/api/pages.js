@@ -150,7 +150,7 @@ router.get(
     // POPULATE BLOCKS
     const blocks = []
     for (const _block of page.blocks) {
-      blocks.push(await Block.findOne({ _id: _block._id })).select('text type')
+      blocks.push(await Block.findOne({ _id: _block._id }).select('text type'))
     }
 
     const response = {
