@@ -9,9 +9,7 @@ executors:
     docker:
       - image: cypress/base:10.16.0
 orbs:
-  # use Cypress orb from CircleCI registry
-  cypress: cypress-io/cypress@1.13.0
-  wait-for: cobli/wait-for@0.0.2
+  queue: eddiewebb/queue@1.5.0
 
 jobs:
   jest:
@@ -26,6 +24,10 @@ jobs:
     working_directory: ~/repo
 
     steps:
+      - queue/block_workflow:
+          consider-branch: false
+          time: '30'
+
       - checkout
 
       - run:
@@ -90,10 +92,3 @@ workflows:
   lint-and-test:
     jobs:
       - jest
-      # enable cypress tests by uncommenting code
-      # - cypress/run:
-      #     executor: base-10
-      #     yarn: true
-      #     start: yarn cy:wait-for-api
-      #     wait-on: -t 300000 http://localhost:6006
-      #     command: yarn cy:run
