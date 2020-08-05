@@ -227,6 +227,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           state,
           copy,
           cut,
+          insert,
           paste,
           setSelection,
           setContent,
