@@ -21,14 +21,13 @@ let editor
 const LOCAL_URL = 'http://localhost:3000'
 const PROXY_URL = 'http://0.0.0.0:3000'
 
-const random = Math.random()
-  .toString(36)
-  .substring(7)
-
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('notes app', () => {
   beforeEach(async done => {
+    const random = Math.random()
+      .toString(36)
+      .substring(7)
     // OSX and chrome are necessary
     driver = await startSession({ platformName: OSX, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
