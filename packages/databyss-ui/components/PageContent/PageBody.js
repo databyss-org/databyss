@@ -62,9 +62,8 @@ const PageBody = ({
   }
 
   return (
-    <HistoryProvider>
+    <HistoryProvider ref={editorStateRef}>
       <EditorProvider
-        ref={editorStateRef}
         key={location.pathname}
         onChange={onChange}
         initialState={pageToEditorState(withMetaData(page))}
