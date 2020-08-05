@@ -12,6 +12,9 @@ import {
   enterKey,
   sleep,
   getElementById,
+  upKey,
+  backspaceKey,
+  leftKey,
 } from './_helpers.selenium'
 
 let driver
@@ -81,8 +84,6 @@ describe('atomic closure', () => {
 
   /* 
   TODO:
-  - open source, open topic, close topic and close source
-  - open source, close source, delete source, check for closure
   - open source, close source, close source before other closure, check for last closure to be deleted
   */
 
@@ -180,6 +181,232 @@ describe('atomic closure', () => {
           <text>
             /@ this is an opening source<cursor />
           </text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should delete a closure on atomic deletion', async () => {
+    await sendKeys(actions, '@this is an opening source')
+    await enterKey(actions)
+    await sendKeys(actions, 'this is an entry')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '#this is a topic')
+    await enterKey(actions)
+    await sendKeys(actions, 'this is another entry')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, 'this is another entry')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '/#')
+    await sleep(3000)
+
+    await driver.navigate().refresh()
+
+    await sleep(300)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    let actual = JSON.parse(await slateDocument.getText())
+
+    let expected = (
+      <editor>
+        <block type="SOURCE">
+          <text>this is an opening source</text>
+        </block>
+        <block type="ENTRY">
+          <text>this is an entry</text>
+        </block>
+        <block type="TOPIC">
+          <text>this is a topic</text>
+        </block>
+        <block type="ENTRY">
+          <text>this is another entry</text>
+        </block>
+        <block type="ENTRY">
+          <text>this is another entry</text>
+        </block>
+        <block type="END_TOPIC">
+          <text>
+            /# this is a topic<cursor />
+          </text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+
+    await sleep(300)
+
+    // remove topic closure
+    await upKey(actions)
+    await upKey(actions)
+    await upKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await backspaceKey(actions)
+    await sleep(3000)
+
+    await driver.navigate().refresh()
+
+    await sleep(300)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    actual = JSON.parse(await slateDocument.getText())
+
+    expected = (
+      <editor>
+        <block type="SOURCE">
+          <text>this is an opening source</text>
+        </block>
+        <block type="ENTRY">
+          <text>this is an entry</text>
+        </block>
+        <block type="ENTRY">
+          <text>
+            <cursor />
+          </text>
+        </block>
+        <block type="ENTRY">
+          <text>this is another entry</text>
+        </block>
+        <block type="ENTRY">
+          <text>this is another entry</text>
+        </block>
+        <block type="ENTRY">
+          <text />
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should overwrite a previously closed atomic', async () => {
+    await sendKeys(actions, '@this is an opening source')
+    await enterKey(actions)
+    await sendKeys(actions, 'this is an entry')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '#this is a topic')
+    await enterKey(actions)
+    await sendKeys(actions, 'this is another entry')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, 'this is another entry')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '/#')
+    await sleep(3000)
+
+    await driver.navigate().refresh()
+
+    await sleep(300)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    let actual = JSON.parse(await slateDocument.getText())
+
+    let expected = (
+      <editor>
+        <block type="SOURCE">
+          <text>this is an opening source</text>
+        </block>
+        <block type="ENTRY">
+          <text>this is an entry</text>
+        </block>
+        <block type="TOPIC">
+          <text>this is a topic</text>
+        </block>
+        <block type="ENTRY">
+          <text>this is another entry</text>
+        </block>
+        <block type="ENTRY">
+          <text>this is another entry</text>
+        </block>
+        <block type="END_TOPIC">
+          <text>
+            /# this is a topic<cursor />
+          </text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+
+    await sleep(300)
+
+    // overwrite existing closure
+
+    await enterKey(actions)
+    await upKey(actions)
+    await upKey(actions)
+    await enterKey(actions)
+    await upKey(actions)
+    await sendKeys(actions, '/#')
+
+    await driver.navigate().refresh()
+
+    await sleep(300)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    actual = JSON.parse(await slateDocument.getText())
+
+    expected = (
+      <editor>
+        <block type="SOURCE">
+          <text>this is an opening source</text>
+        </block>
+        <block type="ENTRY">
+          <text>this is an entry</text>
+        </block>
+        <block type="TOPIC">
+          <text>this is a topic</text>
+        </block>
+        <block type="ENTRY">
+          <text>this is another entry</text>
+        </block>
+        <block type="END_TOPIC">
+          <text>
+            /# this is a topic<cursor />
+          </text>
+        </block>
+        <block type="ENTRY">
+          <text>this is another entry</text>
+        </block>
+        <block type="ENTRY">
+          <text />
+        </block>
+        <block type="ENTRY">
+          <text />
         </block>
       </editor>
     )
