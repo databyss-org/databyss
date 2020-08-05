@@ -15,6 +15,7 @@ import {
   tabletBreakpoint,
   desktopBreakpoint,
 } from '@databyss-org/ui/theming/mediaBreakpoints'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 
 const navLinks = [
   { name: 'Home', route: '/' },
@@ -69,7 +70,12 @@ const Homepage = () => {
         />
       </View>
 
-      <View backgroundColor="background.1" m={getContentSpacing()} mb="none">
+      <View
+        backgroundColor="background.1"
+        m={getContentSpacing()}
+        mb="none"
+        alignItems="center"
+      >
         <HighlightedFeature
           backgroundColor="background.2"
           imgSrc={imgSourceSelection}
@@ -78,7 +84,12 @@ const Homepage = () => {
         />
         <Feature
           isTablet={isTablet}
-          img={<PDFSvg width={isTablet ? 375 : 200} height="200px" />}
+          img={
+            <PDFSvg
+              width={isTablet ? pxUnits(375) : pxUnits(200)}
+              height={pxUnits(240)}
+            />
+          }
           title="Import PDF Annotations"
           description="Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them."
         />
@@ -87,13 +98,23 @@ const Homepage = () => {
         variant="dualColorBg"
         isTablet={isTablet}
         isDesktop={isDesktop}
-        img={<SourceDropdownSvg width="440px" height="240px" />}
+        img={
+          <SourceDropdownSvg
+            width={isTablet ? pxUnits(440) : pxUnits(320)}
+            height={pxUnits(240)}
+          />
+        }
         leftBgColor="purple.4"
         rightBgColor="purple.5"
         title="Add Sources"
         description="To add a new source and find the bibliographical data of the text you are annotating, press @ on a new line to search using Google Books, Cross Ref, and/or Open Library."
       />
-      <View backgroundColor="background.1" mx={getContentSpacing()} mb="none">
+      <View
+        backgroundColor="background.1"
+        mx={getContentSpacing()}
+        mb="none"
+        alignItems="center"
+      >
         <Feature
           isTablet={isTablet}
           img={<PDFSvg width={isTablet ? 375 : 200} height="200px" />}

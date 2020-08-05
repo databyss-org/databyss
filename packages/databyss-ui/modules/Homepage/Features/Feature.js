@@ -5,6 +5,7 @@ import { useMediaQuery } from 'react-responsive'
 import {
   tabletBreakpoint,
   desktopBreakpoint,
+  largeDesktopBreakpoint,
 } from '@databyss-org/ui/theming/mediaBreakpoints'
 
 const StandardFeature = ({ isTablet, img, title, description }) => (
@@ -24,6 +25,7 @@ const StandardFeature = ({ isTablet, img, title, description }) => (
 const DualColorBgFeature = ({
   isTablet,
   isDesktop,
+  isLargeDesktop,
   title,
   description,
   img,
@@ -33,14 +35,17 @@ const DualColorBgFeature = ({
   <View flexGrow="1" flexDirection={isTablet ? 'row' : 'column'}>
     <View
       backgroundColor={leftBgColor}
+      flexGrow="1"
       px={isDesktop ? 'extraLarge' : 'medium'}
       py="large"
+      alignItems={isLargeDesktop ? 'flex-end' : 'center'}
     >
       {img}
     </View>
     <View
       backgroundColor={rightBgColor}
       py="large"
+      flexGrow="1"
       flexShrink="3"
       justifyContent="center"
     >
@@ -65,12 +70,14 @@ const Feature = ({
 }) => {
   const isTablet = useMediaQuery(tabletBreakpoint)
   const isDesktop = useMediaQuery(desktopBreakpoint)
+  const isLargeDesktop = useMediaQuery(largeDesktopBreakpoint)
 
   if (variant === 'dualColorBg') {
     return (
       <DualColorBgFeature
         isTablet={isTablet}
         isDesktop={isDesktop}
+        isLargeDesktop={isLargeDesktop}
         img={img}
         title={title}
         description={description}

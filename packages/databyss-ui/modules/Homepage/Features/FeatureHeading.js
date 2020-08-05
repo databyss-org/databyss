@@ -1,5 +1,6 @@
 import React from 'react'
 import { Text, View } from '@databyss-org/ui/primitives'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 
 const FeatureHeading = ({
   title,
@@ -7,7 +8,7 @@ const FeatureHeading = ({
   descriptionColor,
   textAlign,
 }) => (
-  <View widthVariant="content">
+  <View maxWidth={pxUnits(560)}>
     <Text variant="heading3" color="text.1" mb="medium" textAlign={textAlign}>
       {title}
     </Text>
