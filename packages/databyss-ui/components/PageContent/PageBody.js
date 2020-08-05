@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useRef } from 'react'
 import { throttle } from 'lodash'
 import ContentEditable from '@databyss-org/editor/components/ContentEditable'
 import EditorProvider from '@databyss-org/editor/state/EditorProvider'
+import HistoryProvider from '@databyss-org/editor/history/EditorHistory'
 import { withMetaData } from '@databyss-org/editor/lib/util'
 import {
   pageToEditorState,
@@ -61,20 +62,21 @@ const PageBody = ({
   }
 
   return (
-    <EditorProvider
-      ref={editorStateRef}
-      key={location.pathname}
-      onChange={onChange}
-      initialState={pageToEditorState(withMetaData(page))}
-    >
-      <ContentEditable
-        autofocus
-        focusIndex={focusIndex}
-        onNavigateUpFromTop={onNavigateUpFromEditor}
-        active={false}
-        editorRef={editorRef}
-      />
-    </EditorProvider>
+    <HistoryProvider ref={editorStateRef}>
+      <EditorProvider
+        key={location.pathname}
+        onChange={onChange}
+        initialState={pageToEditorState(withMetaData(page))}
+      >
+        <ContentEditable
+          autofocus
+          focusIndex={focusIndex}
+          onNavigateUpFromTop={onNavigateUpFromEditor}
+          active={false}
+          editorRef={editorRef}
+        />
+      </EditorProvider>
+    </HistoryProvider>
   )
 }
 

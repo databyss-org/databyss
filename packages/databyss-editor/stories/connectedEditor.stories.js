@@ -19,6 +19,7 @@ import PageProvider, {
 } from '@databyss-org/services/pages/PageProvider'
 import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import HistoryProvider from '../history/EditorHistory'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
@@ -74,9 +75,11 @@ const PageWithAutosave = ({ page }) => {
 
   return (
     <View>
-      <EditorProvider onChange={onChange} initialState={withMetaData(page)}>
-        <ContentEditable onDocumentChange={onDocumentChange} autofocus />
-      </EditorProvider>
+      <HistoryProvider>
+        <EditorProvider onChange={onChange} initialState={withMetaData(page)}>
+          <ContentEditable onDocumentChange={onDocumentChange} autofocus />
+        </EditorProvider>
+      </HistoryProvider>
       <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{pageState}</pre>
