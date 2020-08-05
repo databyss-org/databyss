@@ -92,11 +92,13 @@ const PDFDropZoneManager = () => {
 
   const toDatabyssBlocks = (fileName, annotations) => {
     // create response object with source as first item
-    let response = [{
-      _id: new ObjectId().toHexString(),
-      type: BlockType.Entry,
-      text: { textValue: `@${fileName}`, ranges: [] },
-    }]
+    const response = [
+      {
+        _id: new ObjectId().toHexString(),
+        type: BlockType.Entry,
+        text: { textValue: `@${fileName}`, ranges: [] },
+      },
+    ]
 
     // loop through annotations
     const offset = 0
@@ -113,7 +115,7 @@ const PDFDropZoneManager = () => {
           type: BlockType.Entry,
           text: {
             textValue: `p. ${page} ${sourceText}`,
-            ranges: [{ offset, length, marks }]
+            ranges: [{ offset, length, marks }],
           },
         })
       }
@@ -125,11 +127,11 @@ const PDFDropZoneManager = () => {
           type: BlockType.Entry,
           text: {
             textValue: `p. ${page} [${contents}]`,
-            ranges: [{ offset, length, marks }]
+            ranges: [{ offset, length, marks }],
           },
         })
       }
-    });
+    })
 
     return response
   }
@@ -185,7 +187,7 @@ const PDFDropZoneManager = () => {
         showAlert(
           '⚠️ An error occured',
           'Unable to insert annotations. Please try again later, or try with another document.'
-        )  
+        )
       }
     } catch (error) {
       showAlert(
@@ -224,7 +226,7 @@ const PDFDropZoneManager = () => {
 
   // render methods
   const getLabel = () => (hasParsed ? '' : 'Drop your PDF here')
-  
+
   const render = () => (
     <StyledView className="pdf-drop-zone-manager">
       <DashedArea
