@@ -5,8 +5,8 @@ import React, { useState, useEffect } from 'react'
 import ObjectId from 'bson-objectid'
 
 import { BlockType } from '@databyss-org/services/interfaces'
+import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
 import * as services from '@databyss-org/services/pdf'
-// import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 
 import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
 import { View } from '../../primitives'
@@ -27,6 +27,7 @@ const viewStyles = () => ({
   left: '50%',
   marginLeft: '-48%',
   overflow: 'hidden',
+  pointerEvents: 'none',
   width: '96%',
   zIndex: '10',
 })
@@ -39,7 +40,7 @@ const isAcceptableFile = item =>
 
 // component
 const PDFDropZoneManager = () => {
-  // const pageContext = usePageContext()
+  const editorContext = useEditorContext()
 
   const { showModal } = useNavigationContext()
 
@@ -177,9 +178,15 @@ const PDFDropZoneManager = () => {
       setParsing(true)
       const response = await services.fetchAnnotations(file)
       const blocks = toDatabyssBlocks(file.name, response.annotations)
-      console.log('blocks:', blocks);
-      // TODO: insert in current editor
 
+      try {
+        editorContext.insert(blocks)
+      } catch (error) {
+        showAlert(
+          '⚠️ An error occured',
+          'Unable to insert annotations. Please try again later, or try with another document.'
+        )  
+      }
     } catch (error) {
       showAlert(
         '⚠️ An error occured',
@@ -217,8 +224,6 @@ const PDFDropZoneManager = () => {
 
   // render methods
   const getLabel = () => (hasParsed ? '' : 'Drop your PDF here')
-
-  const getPointerEvents = () => (isParsing ? 'all' : 'none')
   
   const render = () => (
     <StyledView className="pdf-drop-zone-manager">
@@ -226,7 +231,6 @@ const PDFDropZoneManager = () => {
         label={getLabel()}
         isVisible={isDropAreaVisible}
         isParsing={isParsing}
-        pointerEvents={getPointerEvents()}
       />
       <InfoModal id="pdfDropZoneModal" />
     </StyledView>
