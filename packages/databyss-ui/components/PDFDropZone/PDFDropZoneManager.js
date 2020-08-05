@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from 'react'
 
+import ObjectId from 'bson-objectid'
+
+import { BlockType } from '@databyss-org/services/interfaces'
 import * as services from '@databyss-org/services/pdf'
 // import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 
@@ -86,6 +89,50 @@ const PDFDropZoneManager = () => {
     return file
   }
 
+  const toDatabyssBlocks = (fileName, annotations) => {
+    // create response object with source as first item
+    let response = [{
+      _id: new ObjectId().toHexString(),
+      type: BlockType.Entry,
+      text: { textValue: `@${fileName}`, ranges: [] },
+    }]
+
+    // loop through annotations
+    const offset = 0
+    const charsBeforePageNumber = 3
+    const marks = ['location']
+    annotations.forEach(a => {
+      const { page, sourceText, contents } = a
+      const length = page.toString().length + charsBeforePageNumber
+
+      // source text
+      if (sourceText) {
+        response.push({
+          _id: new ObjectId().toHexString(),
+          type: BlockType.Entry,
+          text: {
+            textValue: `p. ${page} ${sourceText}`,
+            ranges: [{ offset, length, marks }]
+          },
+        })
+      }
+
+      // annotation contents
+      if (contents) {
+        response.push({
+          _id: new ObjectId().toHexString(),
+          type: BlockType.Entry,
+          text: {
+            textValue: `p. ${page} [${contents}]`,
+            ranges: [{ offset, length, marks }]
+          },
+        })
+      }
+    });
+
+    return response
+  }
+
   // modal methods
   const showAlert = (heading, message) => {
     showModal({
@@ -129,8 +176,10 @@ const PDFDropZoneManager = () => {
     try {
       setParsing(true)
       const response = await services.fetchAnnotations(file)
-      // TODO: parse annotations and add them to current page
-      console.log('response:', response)
+      const blocks = toDatabyssBlocks(file.name, response.annotations)
+      console.log('blocks:', blocks);
+      // TODO: insert in current editor
+
     } catch (error) {
       showAlert(
         '⚠️ An error occured',
@@ -157,18 +206,20 @@ const PDFDropZoneManager = () => {
   }
 
   useEffect(() => {
+    // init
     addDragEventHandlers()
 
     return () => {
+      // cleanup
       removeDragEventHandlers()
     }
   }, [])
 
+  // render methods
   const getLabel = () => (hasParsed ? '' : 'Drop your PDF here')
 
   const getPointerEvents = () => (isParsing ? 'all' : 'none')
-
-  // render
+  
   const render = () => (
     <StyledView className="pdf-drop-zone-manager">
       <DashedArea
