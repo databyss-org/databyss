@@ -21,6 +21,9 @@ const PageSchema = new Schema(
           type: Schema.Types.ObjectId,
           ref: 'block',
         },
+        type: {
+          type: String,
+        },
       },
     ],
     selection: {
@@ -48,7 +51,7 @@ PageSchema.method('addBlock', async function(values = {}) {
     ...values,
   })
 
-  this.blocks.push({ _id: block._id })
+  this.blocks.push({ _id: block._id, type: 'ENTRY' })
 
   await this.save()
   return block

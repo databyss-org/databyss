@@ -3,7 +3,7 @@
   "plugins": [
     "eslint-plugin-prettier",
     "@typescript-eslint",
-    "react-hooks", 
+    "react-hooks",
     "cypress"
   ],
   "parser": "@typescript-eslint/parser",
@@ -41,13 +41,14 @@
     "default-case": "off", // switch mostly used for immer produce, which doesn't require a default
     "no-unused-vars": "off", // use Typescript check instead
     "@typescript-eslint/no-unused-vars": [
-      "error", 
+      "error",
       {
         "vars": "all",
         "args": "after-used",
         "argsIgnorePattern": "^_", // ignore all arguments that start with "_"
-        "ignoreRestSiblings": false 
-    }],
+        "ignoreRestSiblings": false
+      }
+    ],
     "prettier/prettier": [
       "error",
       {

@@ -12,7 +12,7 @@ import {
 } from '../../middleware/pageMiddleware'
 import { ApiError, BadRequestError } from '../../lib/Errors'
 import wrap from '../../lib/guardedAsync'
-import { runPatches } from '../../lib/pages'
+import { runPatches, getAtomicClosureText } from '../../lib/pages'
 
 const router = express.Router()
 
@@ -150,7 +150,17 @@ router.get(
     // POPULATE BLOCKS
     const blocks = []
     for (const _block of page.blocks) {
-      blocks.push(await Block.findOne({ _id: _block._id }).select('text type'))
+      const _rec = await Block.findOne({ _id: _block._id }).select('text type')
+      // check for atomic block closure
+      if (_block.type?.match(/^END_/)) {
+        _rec.text = {
+          textValue: getAtomicClosureText(_block.type, _rec.text.textValue),
+          ranges: [],
+        }
+        _rec.type = _block.type
+      }
+
+      blocks.push(_rec)
     }
 
     const response = {

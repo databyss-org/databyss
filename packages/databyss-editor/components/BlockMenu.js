@@ -12,11 +12,15 @@ import {
 import AddSvg from '@databyss-org/ui/assets/add.svg'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
+import { useEditorContext } from '../state/EditorProvider'
 import { stateSelectionToSlateSelection } from '../lib/slateUtils'
+import { getOpenAtomics } from '../state/util'
 
 const BlockMenu = ({ element }) => {
   const [showMenu, setShowMenu] = useState(false)
   const editor = useEditor()
+
+  const editorContext = useEditorContext()
 
   const onShowActions = () => {
     setShowMenu(!showMenu)
@@ -30,8 +34,8 @@ const BlockMenu = ({ element }) => {
 
   const actions = type =>
     ({
-      ENDSOURCE: () => undefined,
-      ENDLOCATION: () => undefined,
+      END_SOURCE: () => editor.insertText('/@'),
+      END_TOPIC: () => editor.insertText('/#'),
       SOURCE: () => editor.insertText('@'),
       TOPIC: () => editor.insertText('#'),
       LOCATION: () => {
@@ -65,19 +69,34 @@ const BlockMenu = ({ element }) => {
     setShowMenu(false)
   }
 
+  // only display closure items that are currently open
+  let _closureItems = [
+    {
+      action: 'END_SOURCE',
+      textSymbol: '/@',
+      shortcut: '',
+      label: 'End source',
+      closureType: 'SOURCE',
+    },
+    {
+      action: 'END_TOPIC',
+      textSymbol: '/#',
+      shortcut: '',
+      label: 'End topic',
+      closureType: 'TOPIC',
+    },
+  ]
+
+  if (editorContext) {
+    // filter out items not currently open
+    const _openAtomics = getOpenAtomics(editorContext.state)
+    _closureItems = _closureItems.filter(
+      i => _openAtomics.findIndex(j => j.type === i.closureType) > -1
+    )
+  }
+
   const menuItems = [
-    // {
-    //   action: 'ENDSOURCE',
-    //   textSymbol: '/@',
-    //   shortcut: '',
-    //   label: 'End source',
-    // },
-    // {
-    //   action: 'ENDLOCATION',
-    //   textSymbol: '/%',
-    //   shortcut: '',
-    //   label: 'End location',
-    // },
+    ..._closureItems,
     {
       action: 'TOPIC',
       textSymbol: '#',
@@ -107,16 +126,16 @@ const BlockMenu = ({ element }) => {
         open={showMenu}
         widthVariant="dropdownMenuSmall"
       >
-        {menuItems.map(menuItem => (
+        {menuItems.map((menuItem, i) => (
           <React.Fragment key={menuItem.action}>
             <DropdownListItem
               menuItem={menuItem}
               onPress={e => onMenuAction(e, menuItem.action)}
               onKeyDown={handleEscKey}
             />
-            {menuItem.action === 'ENDLOCATION' && (
+            {_closureItems.length && _closureItems.length - 1 === i ? (
               <Separator color="border.3" spacing="extraSmall" />
-            )}
+            ) : null}
           </React.Fragment>
         ))}
       </DropdownContainer>
