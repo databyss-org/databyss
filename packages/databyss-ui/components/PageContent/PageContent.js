@@ -9,92 +9,86 @@ import PageSticky from './PageSticky'
 
 export const PageRouter = () => (
   <Router>
-    <PageContent path=':id' />
+    <PageContent path=":id" />
   </Router>
 )
 
-const PageContainer = React.memo(
-  ({ anchor, id, page }) => {
-    const getBlockRefByIndex = usePageContext((c) => c.getBlockRefByIndex)
+const PageContainer = React.memo(({ anchor, id, page }) => {
+  const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
 
-    const [editorPath, setEditorPath] = useState(null)
-    const headerRef = useRef()
-    const editorRef = useRef()
-    const editorWindowRef = useRef()
+  const [editorPath, setEditorPath] = useState(null)
+  const headerRef = useRef()
+  const editorRef = useRef()
+  const editorWindowRef = useRef()
 
-    // index is used to set selection in slate
-    const [index, setIndex] = useState(null)
+  // index is used to set selection in slate
+  const [index, setIndex] = useState(null)
 
-    useEffect(() => {
-      // if anchor link exists, scroll to anchor
-      if (anchor) {
-        // get index value of anchor on page
-        const _index = page.blocks.findIndex((b) => b._id === anchor)
-        if (_index > -1) {
-          setIndex(_index)
-          const _ref = getBlockRefByIndex(_index)
-          if (_ref) {
-            window.requestAnimationFrame(() => {
-              if (editorWindowRef.current) {
-                // to compensate for the sticky header
-                // https://github.com/iamdustan/smoothscroll/issues/47#issuecomment-350810238
-                const item = _ref
-                const wrapper = editorWindowRef.current
-                const count = item.offsetTop - wrapper.scrollTop - 74
-                wrapper.scrollBy({ top: count, left: 0, behavior: 'smooth' })
-              }
-            })
-          }
+  useEffect(() => {
+    // if anchor link exists, scroll to anchor
+    if (anchor) {
+      // get index value of anchor on page
+      const _index = page.blocks.findIndex(b => b._id === anchor)
+      if (_index > -1) {
+        setIndex(_index)
+        const _ref = getBlockRefByIndex(_index)
+        if (_ref) {
+          window.requestAnimationFrame(() => {
+            if (editorWindowRef.current) {
+              // to compensate for the sticky header
+              // https://github.com/iamdustan/smoothscroll/issues/47#issuecomment-350810238
+              const item = _ref
+              const wrapper = editorWindowRef.current
+              const count = item.offsetTop - wrapper.scrollTop - 74
+              wrapper.scrollBy({ top: count, left: 0, behavior: 'smooth' })
+            }
+          })
         }
       }
-    }, [])
-
-    // focus header
-    const onNavigateUpFromEditor = () => {
-      if (headerRef.current) {
-        headerRef.current.focus()
-      }
     }
+  }, [])
 
-    // focus editor
-    const onNavigateDownToEditor = () => {
-      if (editorRef.current) {
-        editorRef.current.focus()
-      }
+  // focus header
+  const onNavigateUpFromEditor = () => {
+    if (headerRef.current) {
+      headerRef.current.focus()
     }
+  }
 
-    return (
-      <View height='100vh' overflow='scroll' ref={editorWindowRef}>
-        <PageSticky pagePath={editorPath} pageId={page._id} />
-        <View pl='medium' pr='medium' pb='medium' zIndex={1}>
-          <View
-            mr='medium'
-            alignItems='center'
-            flexDirection='row'
-            justifyContent='space-between'
-          >
-            <PageHeader
-              ref={headerRef}
-              pageId={id}
-              onNavigateDownFromHeader={onNavigateDownToEditor}
-            />
-          </View>
-          <PageBody
-            onEditorPathChange={setEditorPath}
-            editorRef={editorRef}
-            page={page}
-            focusIndex={index}
-            onNavigateUpFromEditor={onNavigateUpFromEditor}
+  // focus editor
+  const onNavigateDownToEditor = () => {
+    if (editorRef.current) {
+      editorRef.current.focus()
+    }
+  }
+
+  return (
+    <View height="100vh" overflow="scroll" ref={editorWindowRef}>
+      <PageSticky pagePath={editorPath} pageId={page._id} />
+      <View pl="medium" pr="medium" pb="medium" zIndex={1}>
+        <View
+          mr="medium"
+          alignItems="center"
+          flexDirection="row"
+          justifyContent="space-between"
+        >
+          <PageHeader
+            ref={headerRef}
+            pageId={id}
+            onNavigateDownFromHeader={onNavigateDownToEditor}
           />
         </View>
+        <PageBody
+          onEditorPathChange={setEditorPath}
+          editorRef={editorRef}
+          page={page}
+          focusIndex={index}
+          onNavigateUpFromEditor={onNavigateUpFromEditor}
+        />
       </View>
-    )
-  },
-  (prev, next) =>
-    prev.page._id === next.page._id &&
-    prev.id === next.id &&
-    prev.anchor === next.anchor
-)
+    </View>
+  )
+}, (prev, next) => prev.page._id === next.page._id && prev.id === next.id && prev.anchor === next.anchor)
 
 const PageContent = () => {
   // get page id and anchor from url
@@ -106,10 +100,10 @@ const PageContent = () => {
   */
 
   return (
-    <View flex='1' height='100vh'>
+    <View flex="1" height="100vh">
       {id && (
         <PageLoader pageId={id} key={id}>
-          {(page) => <PageContainer anchor={anchor} id={id} page={page} />}
+          {page => <PageContainer anchor={anchor} id={id} page={page} />}
         </PageLoader>
       )}
     </View>
