@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react'
 
+import ObjectId from 'bson-objectid'
+
 import { BlockType } from '@databyss-org/services/interfaces'
 import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
 import * as services from '@databyss-org/services/pdf'
@@ -92,6 +94,7 @@ const PDFDropZoneManager = () => {
     // create response object with source as first item
     const response = [
       {
+        _id: new ObjectId().toHexString(),
         type: BlockType.Entry,
         text: { textValue: `@${fileName}`, ranges: [] },
       },
@@ -108,6 +111,7 @@ const PDFDropZoneManager = () => {
       // source text
       if (sourceText) {
         response.push({
+          _id: new ObjectId().toHexString(),
           type: BlockType.Entry,
           text: {
             textValue: `p. ${page} ${sourceText}`,
@@ -119,6 +123,7 @@ const PDFDropZoneManager = () => {
       // annotation contents
       if (contents) {
         response.push({
+          _id: new ObjectId().toHexString(),
           type: BlockType.Entry,
           text: {
             textValue: `p. ${page} [${contents}]`,
