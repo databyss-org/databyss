@@ -1,9 +1,7 @@
 /* eslint-disable prefer-promise-reject-errors */
 
 // TODO: make env vars?
-const host = 'http://localhost'
-const port = 5005
-const URL = `${host}:${port}/api/pdf/parse`
+const URL = `${process.env.PDF_API_URL}/pdf/parse`
 
 export const fetchAnnotations = (file: File): Promise<any> =>
   new Promise((resolve, reject) => {
