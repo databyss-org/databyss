@@ -5,7 +5,7 @@ import { useNavigationContext } from '../../components/Navigation/NavigationProv
 /**
  * Registers modals so they are easily shown from anywhere.
  * For example: `showModal({ component: TOPIC })`
- * 
+ *
  * Whenever new modals are created, ensure to add them to the `modalMap`.
  */
 const ModalManager = () => {
