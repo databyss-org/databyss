@@ -30,8 +30,7 @@ then
   cleanup
 elif [ $NPM_DEPLOY_TARGET == PDF_API ]
 then
-  # note this webpack build shares the config with API_SERVER
-  ENV_PREFIX=API_ NPM_BUILD_TARGET=PDF_API BABEL_ENV=production webpack --config packages/databyss-api/webpack.config.js --mode=production
+  ENV_PREFIX=API_ NPM_BUILD_TARGET=PDF_API BABEL_ENV=production webpack --config packages/databyss-pdf-api/webpack.config.js --mode=production
   cleanup
 else
   echo 'ERROR: NO TARGETS FOUND'
