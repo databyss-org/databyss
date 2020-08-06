@@ -1,6 +1,5 @@
 /* eslint-disable prefer-promise-reject-errors */
 
-// TODO: make env vars?
 const URL = `${process.env.PDF_API_URL}/pdf/parse`
 
 export const fetchAnnotations = (file: File): Promise<any> =>
