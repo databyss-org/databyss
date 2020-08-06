@@ -89,7 +89,8 @@ function getAppBuild(deployTarget) {
     case 'NOTES_APP': {
       return resolveApp('build')
     }
-    case 'API_SERVER': {
+    case 'API_SERVER':
+    case 'PDF_API': {
       return resolveApp('build/api')
     }
     case 'TEST': {
