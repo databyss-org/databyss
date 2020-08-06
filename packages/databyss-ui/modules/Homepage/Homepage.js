@@ -28,7 +28,6 @@ const navLinks = [
 const Homepage = () => {
   const isTablet = useMediaQuery(tabletBreakpoint)
   const isDesktop = useMediaQuery(desktopBreakpoint)
-  const isLargeDesktop = useMediaQuery(largeDesktopBreakpoint)
 
   const getContentSpacing = () => {
     if (isDesktop) {
@@ -69,33 +68,26 @@ const Homepage = () => {
           buttonHref="https://app.databyss.org/signup"
         />
       </View>
-
-      <View
-        backgroundColor="background.1"
-        m={getContentSpacing()}
-        mb="none"
-        alignItems={isLargeDesktop ? 'center' : 'flex-start'}
-      >
-        <HighlightedFeature
-          backgroundColor="background.2"
-          imgSrc={imgSourceSelection}
-          imgAlt="Interface of the App"
-          title="The Basics"
-          description="Databyss gives you the freedom to organize notes hierarchically (as a long stream of thought) or to build a network of associations by linking sections of your work to sources, topics, and authors."
-        />
-        <Feature
-          noBg
-          svgImg={
-            <PDFSvg
-              width={isTablet ? pxUnits(375) : pxUnits(200)}
-              height={pxUnits(240)}
-            />
-          }
-          imgOnRightSide
-          title="Import PDF Annotations"
-          description="Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them."
-        />
-      </View>
+      <HighlightedFeature
+        backgroundColor="background.2"
+        margin={getContentSpacing()}
+        imgSrc={imgSourceSelection}
+        imgAlt="Interface of the App"
+        title="The Basics"
+        description="Databyss gives you the freedom to organize notes hierarchically (as a long stream of thought) or to build a network of associations by linking sections of your work to sources, topics, and authors."
+      />
+      <Feature
+        noBg
+        svgImg={
+          <PDFSvg
+            width={isTablet ? pxUnits(375) : pxUnits(200)}
+            height={pxUnits(240)}
+          />
+        }
+        imgOnRightSide
+        title="Import PDF Annotations"
+        description="Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them."
+      />
       <Feature
         svgImg={
           <SourceDropdownSvg
@@ -109,20 +101,14 @@ const Homepage = () => {
         title="Add Sources"
         description="To add a new source and find the bibliographical data of the text you are annotating, press @ on a new line to search using Google Books, Cross Ref, and/or Open Library."
       />
-      <View
-        backgroundColor="background.1"
-        mx={getContentSpacing()}
-        mb="none"
-        alignItems={isLargeDesktop ? 'center' : 'flex-start'}
-      >
-        <Feature
-          imgSrc={imgSearchFeature}
-          imgOnRightSide
-          noBg
-          title="Global Search"
-          description="Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases."
-        />
-      </View>
+      <Feature
+        noBg
+        imgSrc={imgSearchFeature}
+        marginX={getContentSpacing()}
+        imgOnRightSide
+        title="Global Search"
+        description="Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases."
+      />
     </View>
   )
 }
