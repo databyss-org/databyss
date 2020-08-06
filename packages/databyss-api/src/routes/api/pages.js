@@ -150,7 +150,7 @@ router.get(
     // POPULATE BLOCKS
     const blocks = []
     for (const _block of page.blocks) {
-      const _rec = await Block.findOne({ _id: _block._id })
+      const _rec = await Block.findOne({ _id: _block._id }).select('text type')
       // check for atomic block closure
       if (_block.type?.match(/^END_/)) {
         _rec.text = {
