@@ -172,7 +172,10 @@ const PDFDropZoneManager = () => {
 
     if (!file) {
       setDropAreaVisibility(false)
-      showAlert('⚠️ Unable to parse document', 'Ensure to use a PDF document.')
+      showAlert(
+        '⚠️ Unable to import file',
+        'We are only able to import PDF files at this time. Please ensure to use a PDF document.'
+      )
       return
     }
 
