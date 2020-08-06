@@ -5,6 +5,7 @@ import React, {
   useImperativeHandle,
 } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
+import { Patch } from 'immer'
 import {
   SET_SELECTION,
   SPLIT,
@@ -20,7 +21,6 @@ import {
   REDO,
   REMOVE_AT_SELECTION,
 } from './constants'
-import { Patch } from 'immer'
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
@@ -54,10 +54,11 @@ type ContextType = {
   state: any
   split: (transform: Transform) => void
   merge: (transform: Transform) => void
-  setContent: (transform: Transform) => void
+  setContent: (transformArray: TransformArray) => void
   setSelection: (selection: Selection) => void
   remove: (index: number) => void
   removeAtSelection: () => void
+  removeEntityFromQueue: (id: number) => void
   clear: (index: number) => void
   copy: (event: ClipboardEvent) => void
   cut: (event: ClipboardEvent) => void

@@ -11,6 +11,9 @@ export interface Block {
   _id: string
   type: BlockType
   text: Text
+  __showCitationMenu?: boolean
+  __showNewBlockMenu?: boolean
+  __isActive?: boolean
 }
 
 export interface Author {
