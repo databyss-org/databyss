@@ -111,7 +111,8 @@ function getAppDevPublic(deployTarget) {
       return resolveApp('build')
     }
     case 'TEST':
-    case 'API_SERVER': {
+    case 'API_SERVER':
+    case 'PDF_API': {
       return null
     }
     default: {
