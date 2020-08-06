@@ -41,7 +41,14 @@ const Hero = ({ logoSrc, title, headline, buttonText, buttonHref }) => {
           textDecoration: 'none',
         }}
       >
-        {buttonText}
+        <Text variant="uiTextNormalSemibold" color="text.5">
+          {buttonText.bold}
+        </Text>
+        {buttonText.normal && (
+          <Text variant="uiTextNormal" color="text.5">
+            &nbsp;{buttonText.normal}
+          </Text>
+        )}
       </Button>
     </View>
   )

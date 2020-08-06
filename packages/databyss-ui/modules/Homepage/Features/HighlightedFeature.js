@@ -1,10 +1,9 @@
 import React from 'react'
 import { View } from '@databyss-org/ui/primitives'
-import { borderRadius, pxUnits } from '@databyss-org/ui/theming/views'
+import { borderRadius } from '@databyss-org/ui/theming/views'
 import FeatureHeading from '@databyss-org/ui/modules/Homepage/Features/FeatureHeading'
 import FeatureImg from '@databyss-org/ui/modules/Homepage/Features/FeatureImg'
-import { largeDesktopBreakpoint } from '@databyss-org/ui/theming/mediaBreakpoints'
-import { useMediaQuery } from 'react-responsive'
+import { featureContentMaxWidth } from '@databyss-org/ui/modules/Homepage/Features/Feature'
 
 const HighlightedFeature = ({
   backgroundColor,
@@ -14,40 +13,35 @@ const HighlightedFeature = ({
   imgAlt,
   svgImg,
   margin,
-}) => {
-  const isLargeDesktop = useMediaQuery(largeDesktopBreakpoint)
-
-  return (
+  children,
+}) => (
+  <View backgroundColor="background.1" m={margin} mb="none" alignItems="center">
     <View
-      backgroundColor="background.1"
-      m={margin}
-      mb="none"
-      alignItems={isLargeDesktop ? 'center' : 'flex-start'}
+      backgroundColor={backgroundColor}
+      p="large"
+      mb="extraLarge"
+      alignItems="center"
+      maxWidth={featureContentMaxWidth}
+      width="100%"
+      css={{ borderRadius }}
     >
-      <View
-        backgroundColor={backgroundColor}
-        p="large"
-        mb="extraLarge"
-        alignItems="center"
-        maxWidth={pxUnits(largeDesktopBreakpoint.minWidth)}
-        width="100%"
-        css={{ borderRadius }}
-      >
-        <View widthVariant="modal" alignItems="center">
-          <FeatureHeading
-            textAlign="center"
-            title={title}
-            description={description}
-          />
+      <View widthVariant="modal" alignItems="center">
+        <FeatureHeading
+          textAlign="center"
+          title={title}
+          description={description}
+        />
+        {children || (
           <FeatureImg imgSrc={imgSrc} imgAlt={imgAlt} svgImg={svgImg} />
-        </View>
+        )}
       </View>
     </View>
-  )
-}
+  </View>
+)
 
 HighlightedFeature.defaultProps = {
   margin: 'large',
+  backgroundColor: 'background.2',
 }
 
 export default HighlightedFeature

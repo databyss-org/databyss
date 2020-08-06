@@ -12,14 +12,20 @@ const FeatureHeading = ({
     <Text variant="heading3" color="text.1" mb="medium" textAlign={textAlign}>
       {title}
     </Text>
-    <Text
-      variant="uiTextMedium"
-      color={descriptionColor || 'text.3'}
-      mb="large"
-      textAlign={textAlign}
-    >
-      {description}
-    </Text>
+    {description && (
+      <Text
+        variant="uiTextMedium"
+        color={descriptionColor || 'text.3'}
+        mb="large"
+        textAlign={textAlign}
+        css={{
+          maxHeight: pxUnits(334),
+          overflow: 'scroll',
+        }}
+      >
+        {description}
+      </Text>
+    )}
   </View>
 )
 

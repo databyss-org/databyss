@@ -24,7 +24,7 @@ function validateEmail(email) {
   return re.test(String(email).toLowerCase())
 }
 
-const Login = ({ pending, signupFlow }) => {
+const Login = ({ pending, signupFlow, navLinks }) => {
   const { getSession, requestCode, session } = useSessionContext()
   const emailInputRef = useRef(null)
   const codeInputRef = useRef(null)
@@ -111,7 +111,7 @@ const Login = ({ pending, signupFlow }) => {
 
   return (
     <>
-      <Navbar lightTheme />
+      {navLinks && <Navbar lightTheme />}
       <ValueListProvider
         values={values}
         onChange={onChange}

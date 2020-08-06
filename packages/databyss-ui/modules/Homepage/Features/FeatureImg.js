@@ -8,11 +8,12 @@ const FeatureImg = ({ imgSrc, imgAlt, svgImg }) => (
       <img
         src={imgSrc}
         alt={imgAlt}
-        width="100%"
         css={{
           alignSelf: 'flex-start',
           boxShadow: theme.buttonShadow.boxShadow,
           borderRadius,
+          maxWidth: '100%',
+          maxHeight: '100%',
         }}
       />
     )}

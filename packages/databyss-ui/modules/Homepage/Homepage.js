@@ -1,9 +1,10 @@
 import React from 'react'
-import { View, Text } from '@databyss-org/ui/primitives'
+import { View } from '@databyss-org/ui/primitives'
 import Hero from '@databyss-org/ui/modules/Homepage/Hero/Hero'
 import HighlightedFeature from '@databyss-org/ui/modules/Homepage/Features/HighlightedFeature'
 import imgSourceSelection from '@databyss-org/ui/assets/promo_source_selection.png'
 import imgSearchFeature from '@databyss-org/ui/assets/search_feature.png'
+import imgMessyNotes from '@databyss-org/ui/assets/messy_notes.jpg'
 import SourceDropdownSvg from '@databyss-org/ui/assets/source_dropdown.svg'
 import PDFSvg from '@databyss-org/ui/assets/add_document.svg'
 import { useMediaQuery } from 'react-responsive'
@@ -14,7 +15,6 @@ import Feature from '@databyss-org/ui/modules/Homepage/Features/Feature'
 import {
   tabletBreakpoint,
   desktopBreakpoint,
-  largeDesktopBreakpoint,
 } from '@databyss-org/ui/theming/mediaBreakpoints'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 
@@ -22,7 +22,6 @@ const navLinks = [
   { name: 'Home', route: '/' },
   { name: 'Signup', route: '/signup' },
   { name: 'Log in', route: '/login' },
-  { name: 'About', route: '/about' },
 ]
 
 const Homepage = () => {
@@ -55,21 +54,11 @@ const Homepage = () => {
           logoSrc={<LogoSvg />}
           title="Databyss"
           headline="You research, dabble, experiment, take notes, and get lost in your thoughts. Databyss is your new word-processor."
-          buttonText={
-            <>
-              <Text variant="uiTextNormalSemibold" color="text.5">
-                Sign up
-              </Text>{' '}
-              <Text variant="uiTextNormal" color="text.5">
-                &nbsp;(for free)
-              </Text>
-            </>
-          }
+          buttonText={{ bold: 'Sign up', normal: '(for free)' }}
           buttonHref="https://app.databyss.org/signup"
         />
       </View>
       <HighlightedFeature
-        backgroundColor="background.2"
         margin={getContentSpacing()}
         imgSrc={imgSourceSelection}
         imgAlt="Interface of the App"
@@ -104,10 +93,28 @@ const Homepage = () => {
       <Feature
         noBg
         imgSrc={imgSearchFeature}
-        marginX={getContentSpacing()}
         imgOnRightSide
         title="Global Search"
         description="Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases."
+      />
+      <Feature
+        imgSrc={imgMessyNotes}
+        alignContent="flex-start"
+        leftBgColor="background.2"
+        rightBgColor="background.3"
+        descriptionColor="text.2"
+        title="About Databyss"
+        description="Three years ago, I began reading the work of the French philosopher Jacques Derrida—commonly referred to as the father of deconstruction. I was so enamored with his writing, and felt like I was learning so much, that I wanted to make sure I took very good notes.  So I began by annotating the insides of my books, appending page numbers and notes wherever I could find an empty space. As I continued reading, I started filling so many blank pages that I realized, with dismay, that it was going to be extremely hard for me to retrace my steps. How was I possibly going to remember which page it was that Derrida discussed Justice, Descartes, or the Trace?
+
+        I decided to transcribe my notes onto a word-processor so that they would be searchable. One of the unique things about Derrida’s writing is that he will return to the same ideas in many of the texts he has written. For example, you often find him talking about Justice in a paper that isn’t specifically about Justice. I realized that if I wanted to understand what Derrida thinks about Justice, it would be quite helpful to organize my notes by concept or motif (rather than by source text). I opened up a .pages file and started creating these headings as I transcribed my notes. I ended up creating 841 motifs/concepts by the end of the process. As I transcribed my notes I would copy and paste each one into all the motifs that seemed relevant. 
+        
+        I could not use Zotero or Mendeley for this type of organization because these applications place the organizing buckets, specifically the bibliographical material, in the central position. You can take notes in these apps, but notes remain encumbered within bibliographical buckets. And there is no way to read a series of notes one after the other, which was the main purpose of organizing the notes the way I did. I needed all the bibliographical information there, but I needed it hidden, so that I could streamline the process of note-taking and note-reading.
+        
+        When I finished reading over 100 texts by Derrida, I had written a 2500 single-spaced .pages document. I was able to search motifs/concepts by pressing open apple F, but this was very limiting. Additionally, sometimes I wanted to read the notes from a single text, but that was utterly impossible. My friend Paul solved these problems by developing the website returntocinder.com. He compiled my notes so that they could be organized by both motif and source text. 
+        
+        Databyss combines the simple yet organized style of note-taking I developed with the rendering and search capacities of returntocinder.com. As I went through the process of organizing my notes, I discovered, by way of trial and error, many helpful shorthands and stylistic efficiencies that can help other researchers. Databyss hopes to make it easy for a user to apply all the information necessary to ensure that their notes can be traced down in various ways: by motif, by source, by page number, by phrase.
+        
+        ——Jake Reeder, Ph.D. "
       />
     </View>
   )

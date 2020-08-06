@@ -10,6 +10,9 @@ import {
 } from '@databyss-org/ui/theming/mediaBreakpoints'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 
+export const featureContentMaxWidth = pxUnits(1200)
+export const featureContentMaxHeight = pxUnits(460)
+
 const Feature = ({
   svgImg,
   title,
@@ -22,6 +25,7 @@ const Feature = ({
   imgOnRightSide,
   noBg,
   marginX,
+  alignContent,
 }) => {
   const isTablet = useMediaQuery(tabletBreakpoint)
   const isDesktop = useMediaQuery(desktopBreakpoint)
@@ -32,14 +36,19 @@ const Feature = ({
       backgroundColor="background.1"
       mx={marginX}
       mb="none"
-      alignItems={isLargeDesktop ? 'center' : 'flex-start'}
+      alignItems="center"
     >
       <View
         flexGrow="1"
         width="100%"
         flexDirection={isTablet ? 'row' : 'column'}
         mb="extraLarge"
-        maxWidth={pxUnits(largeDesktopBreakpoint.minWidth)}
+        maxHeight={featureContentMaxHeight}
+        maxWidth={
+          noBg
+            ? featureContentMaxWidth
+            : pxUnits(largeDesktopBreakpoint.minWidth)
+        }
       >
         <View
           backgroundColor={noBg ? 'inherit' : leftBgColor}
@@ -47,8 +56,10 @@ const Feature = ({
           px={isDesktop ? 'extraLarge' : 'medium'}
           py={noBg ? 'none' : 'large'}
           alignItems="center"
+          justifyContent="center"
           flexBasis={isTablet ? '50%' : 'auto'}
           order={imgOnRightSide && 2}
+          flexDirection="row"
         >
           <FeatureImg imgSrc={imgSrc} imgAlt={imgAlt} svgImg={svgImg} />
         </View>
@@ -57,11 +68,12 @@ const Feature = ({
           py={noBg ? 'none' : 'large'}
           flexGrow="1"
           flexShrink="1"
-          justifyContent="center"
+          justifyContent={alignContent}
           order={imgOnRightSide && 1}
           alignItems={
             isLargeDesktop && imgOnRightSide ? 'flex-end' : 'flex-start'
           }
+          maxHeight={featureContentMaxHeight}
         >
           <View
             mt={isTablet || imgOnRightSide ? 'none' : 'large'}
@@ -83,6 +95,7 @@ const Feature = ({
 Feature.defaultProps = {
   descriptionColor: 'text.3',
   marginX: 'none',
+  alignContent: 'center',
 }
 
 export default Feature
