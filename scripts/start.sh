@@ -2,11 +2,12 @@ set -e # fail immediately
 set -x # echo every command
 set -o pipefail # fail immediately in pipeline
 
-# if the NPM_DEPLOY_TARGET env var is STYLEGUIDE, build the styleguide
-# otherwise, run build.js (from create-react-app)
 if [ $NPM_DEPLOY_TARGET == API_SERVER ]
 then
   NPM_BUILD_TARGET=API_SERVER node build/api/app.js
+elif [ $NPM_DEPLOY_TARGET == PDF_API ]
+then
+  NPM_BUILD_TARGET=PDF_API node build/pdf-api/app.js
 else
   echo 'ERROR: NO VALID TARGETS FOUND'
   exit 1

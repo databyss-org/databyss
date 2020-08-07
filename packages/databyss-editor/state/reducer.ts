@@ -39,6 +39,9 @@ import {
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
+// if block at @index in @draft.blocks starts with an atomic identifier character,
+// e.g. @ or #, convert the block to the appropriate atomic type and return it.
+// otherwise return null.
 export const bakeAtomicBlock = ({
   draft,
   index,
@@ -298,6 +301,16 @@ export default (
               _isCurrentBlockEmpty ? 1 : 0,
               ..._frag
             )
+
+            // bake atomic blocks if there were any in the paste
+            // this is useful when importing from external source, like PDF
+            draft.blocks.forEach((_, index: number) => {
+              const _baked = bakeAtomicBlock({ draft, index })
+              if (_baked) {
+                draft.blocks[index] = _baked
+                draft.newEntities.push(_baked)
+              }
+            })
 
             draft.operations.reloadAll = true
 

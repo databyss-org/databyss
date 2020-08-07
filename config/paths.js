@@ -71,7 +71,8 @@ function getAppIndexJs(deployTarget) {
       return resolveApp('packages/databyss-notes/index.js')
     }
     case 'TEST':
-    case 'API_SERVER': {
+    case 'API_SERVER':
+    case 'PDF_API': {
       return null
     }
     default: {
@@ -88,7 +89,8 @@ function getAppBuild(deployTarget) {
     case 'NOTES_APP': {
       return resolveApp('build')
     }
-    case 'API_SERVER': {
+    case 'API_SERVER':
+    case 'PDF_API': {
       return resolveApp('build/api')
     }
     case 'TEST': {
@@ -109,7 +111,8 @@ function getAppDevPublic(deployTarget) {
       return resolveApp('build')
     }
     case 'TEST':
-    case 'API_SERVER': {
+    case 'API_SERVER':
+    case 'PDF_API': {
       return null
     }
     default: {

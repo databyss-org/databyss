@@ -9,7 +9,6 @@ const envDefines = Object.keys(env.raw).reduce((accum, key) => {
   }
   return accum
 }, {})
-console.log('ENV', envDefines)
 
 module.exports = {
   target: 'node',
