@@ -30,9 +30,12 @@ then
   cleanup
 elif [ $NPM_DEPLOY_TARGET == PDF_API ]
 then
+  rm -rf ./build/pdf-api
   ENV_PREFIX=API_ NPM_BUILD_TARGET=PDF_API BABEL_ENV=production webpack --config packages/databyss-pdf-api/webpack.config.js --mode=production
   mkdir ./build/pdf-api/bin
   cp -R ./node_modules/puppeteer/.local-chromium ./build/pdf-api/bin/
+  cp -R ./packages/databyss-pdf-api/view ./build/pdf-api/
+  cp -R ./node_modules/pdfjs-dist ./build/pdf-api/
   cleanup
 else
   echo 'ERROR: NO TARGETS FOUND'

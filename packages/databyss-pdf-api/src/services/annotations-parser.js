@@ -10,7 +10,11 @@ const pdfjsParser = require('./pdfjs-parser')
 // constants
 const annotationsTypes = ['Text', 'Highlight', 'Underline', 'Stamp']
 const protocol = 'file://'
-const viewURL = `${protocol}${__dirname}/../../view/index.html`
+const viewPath =
+  process.env.NODE_ENV === 'production'
+    ? path.resolve(process.cwd(), './build/pdf-api/view/index.html')
+    : path.resolve(__dirname, '../../view/index.html')
+const viewURL = `${protocol}${viewPath}`
 
 // methods definitions
 export const parse = async docPath => {
@@ -72,7 +76,10 @@ async function parse1stPass(pdfPath) {
 
   let executablePath = process.env.CHROMIUM_BIN
   if (executablePath) {
-    executablePath = `build/pdf-api/bin/.local-chromium/${executablePath}`
+    executablePath = path.resolve(
+      process.cwd(),
+      `./build/pdf-api/bin/.local-chromium/${executablePath}`
+    )
     console.log(`Chromium executable: ${executablePath}`)
   }
 
@@ -135,7 +142,7 @@ async function parse1stPass(pdfPath) {
   return promise
 }
 
-async function parse2ndPass(path) {
+async function parse2ndPass(pdfPath) {
   console.log(`🔍 Fetching second pass of annotations`)
 
   // Annotations obtained from modified pdfjs are incomplete:
@@ -143,7 +150,7 @@ async function parse2ndPass(path) {
   // Go through a second pass to obtain those texts,
   // then merge them with obtained annotations in first pass.
 
-  return pdfjsParser.parse(path)
+  return pdfjsParser.parse(pdfPath)
 }
 
 /**

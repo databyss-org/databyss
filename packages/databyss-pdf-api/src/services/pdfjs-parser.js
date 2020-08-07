@@ -12,7 +12,7 @@ export async function parse(path) {
   try {
     pdf = await loadPDF(path)
   } catch (error) {
-    return Promise.reject(error.message)
+    return Promise.reject(error)
   }
 
   numPages = pdf.numPages
@@ -20,13 +20,13 @@ export async function parse(path) {
   try {
     await getAllPages(pdf)
   } catch (error) {
-    return Promise.reject(error.message)
+    return Promise.reject(error)
   }
 
   try {
     await getAllAnnotations()
   } catch (error) {
-    return Promise.reject(error.message)
+    return Promise.reject(error)
   }
 
   return Promise.resolve(prepareResponse())
