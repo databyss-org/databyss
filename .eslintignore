@@ -5,4 +5,4 @@ node_modules
 *.snap
 
 # databyss-pdf-api
-/packages/databyss-pdf-api/src/services/view/lib
+/packages/databyss-pdf-api/view
