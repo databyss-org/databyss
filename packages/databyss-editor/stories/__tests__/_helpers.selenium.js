@@ -185,6 +185,28 @@ export const downShiftKey = async actions => {
   await sleep(SLEEP_TIME)
 }
 
+export const undo = async actions => {
+  await actions
+    .keyDown(CONTROL)
+    .sendKeys('z')
+    .keyUp(CONTROL)
+    .perform()
+  await actions.clear()
+  await sleep(SLEEP_TIME)
+}
+
+export const redo = async actions => {
+  await actions
+    .keyDown(CONTROL)
+    .keyDown(Key.SHIFT)
+    .sendKeys('z')
+    .keyUp(Key.SHIFT)
+    .keyUp(CONTROL)
+    .perform()
+  await actions.clear()
+  await sleep(SLEEP_TIME)
+}
+
 // export const upKey = async actions => {
 //   await actions
 //     .keyUp(Key.ARROW_UP)

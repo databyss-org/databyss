@@ -21,6 +21,8 @@ import { getSelectedIndicies, isAtomic, isEmpty } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
+import { isAtomicClosure } from './Element'
+import { useHistoryContext } from '../history/EditorHistory'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -36,6 +38,7 @@ const ContentEditable = ({
   const setSource = useSourceContext(c => c && c.setSource)
 
   const topicContext = useTopicContext()
+  const historyContext = useHistoryContext()
 
   const {
     state,
@@ -62,6 +65,9 @@ const ContentEditable = ({
         state.selection
       )
       Transforms.select(editor, selection)
+      if (!state.operations.reloadAll) {
+        setSelection(state.selection)
+      }
     }
   }
 
@@ -116,6 +122,17 @@ const ContentEditable = ({
   const inDeadKey = useRef(false)
 
   const onKeyDown = event => {
+    if (Hotkeys.isUndo(event) && historyContext) {
+      event.preventDefault()
+      historyContext.undo()
+      return
+    }
+
+    if (Hotkeys.isRedo(event) && historyContext) {
+      event.preventDefault()
+      historyContext.redo()
+    }
+
     // UI
     if (event.key === 'ArrowUp') {
       const _currentIndex = editor.selection.focus.path[0]
@@ -183,9 +200,14 @@ const ContentEditable = ({
         if (
           ReactEditor.isFocused(editor) &&
           !selectionHasRange(state.selection) &&
-          _focusedBlock.__isActive
+          _focusedBlock.__isActive &&
+          !isAtomicClosure(_focusedBlock.type)
         ) {
           showAtomicModal({ editorContext, navigationContext, editor })
+        }
+        // if closure block is highlighted prevent `enter` key
+        if (_focusedBlock.__isActive && isAtomicClosure(_focusedBlock.type)) {
+          event.preventDefault()
         }
         return
       }
@@ -304,6 +326,7 @@ const ContentEditable = ({
       })
       return
     }
+
     if (value.length > valueRef.current.length) {
       // block was added, so do a split
       split({

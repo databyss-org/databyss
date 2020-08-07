@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useRef } from 'react'
 import { throttle } from 'lodash'
 import ContentEditable from '@databyss-org/editor/components/ContentEditable'
 import EditorProvider from '@databyss-org/editor/state/EditorProvider'
+import HistoryProvider from '@databyss-org/editor/history/EditorHistory'
 import { withMetaData } from '@databyss-org/editor/lib/util'
 import {
   pageToEditorState,
@@ -11,7 +12,13 @@ import {
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useNavigationContext } from '@databyss-org/ui'
 
-const PageBody = ({ page, focusIndex, onNavigateUpFromEditor, editorRef }) => {
+const PageBody = ({
+  page,
+  focusIndex,
+  onNavigateUpFromEditor,
+  editorRef,
+  onEditorPathChange,
+}) => {
   const { location } = useNavigationContext()
   const clearBlockDict = usePageContext(c => c.clearBlockDict)
   const setPatches = usePageContext(c => c.setPatches)
@@ -20,6 +27,7 @@ const PageBody = ({ page, focusIndex, onNavigateUpFromEditor, editorRef }) => {
 
   const patchQueue = useRef([])
   const pageState = useRef(null)
+  const editorStateRef = useRef()
 
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
   const throttledAutosave = useCallback(
@@ -39,6 +47,12 @@ const PageBody = ({ page, focusIndex, onNavigateUpFromEditor, editorRef }) => {
 
   // state from provider is out of date
   const onChange = value => {
+    if (editorStateRef.current?.pagePath) {
+      requestAnimationFrame(() =>
+        onEditorPathChange(editorStateRef.current.pagePath)
+      )
+    }
+
     pageState.current = value.nextState
 
     const patches = addMetaToPatches(value)
@@ -48,19 +62,21 @@ const PageBody = ({ page, focusIndex, onNavigateUpFromEditor, editorRef }) => {
   }
 
   return (
-    <EditorProvider
-      key={location.pathname}
-      onChange={onChange}
-      initialState={pageToEditorState(withMetaData(page))}
-    >
-      <ContentEditable
-        autofocus
-        focusIndex={focusIndex}
-        onNavigateUpFromTop={onNavigateUpFromEditor}
-        active={false}
-        editorRef={editorRef}
-      />
-    </EditorProvider>
+    <HistoryProvider ref={editorStateRef}>
+      <EditorProvider
+        key={location.pathname}
+        onChange={onChange}
+        initialState={pageToEditorState(withMetaData(page))}
+      >
+        <ContentEditable
+          autofocus
+          focusIndex={focusIndex}
+          onNavigateUpFromTop={onNavigateUpFromEditor}
+          active={false}
+          editorRef={editorRef}
+        />
+      </EditorProvider>
+    </HistoryProvider>
   )
 }
 
