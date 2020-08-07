@@ -2,7 +2,7 @@ import React from 'react'
 import { borderRadius } from '@databyss-org/ui/theming/views'
 import theme from '@databyss-org/ui/theming/theme'
 
-const FeatureImg = ({ imgSrc, imgAlt, svgImg }) => (
+const FeatureImg = ({ imgSrc, imgAlt, svgImg, maxHeight }) => (
   <>
     {imgSrc && (
       <img
@@ -13,7 +13,7 @@ const FeatureImg = ({ imgSrc, imgAlt, svgImg }) => (
           boxShadow: theme.buttonShadow.boxShadow,
           borderRadius,
           maxWidth: '100%',
-          maxHeight: '100%',
+          maxHeight: maxHeight || '100%',
         }}
       />
     )}

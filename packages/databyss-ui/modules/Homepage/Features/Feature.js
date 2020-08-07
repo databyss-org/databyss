@@ -11,7 +11,7 @@ import {
 import { pxUnits } from '@databyss-org/ui/theming/views'
 
 export const featureContentMaxWidth = pxUnits(1200)
-export const featureContentMaxHeight = pxUnits(460)
+export const featureContentMaxHeight = pxUnits(560)
 
 const Feature = ({
   svgImg,
@@ -32,18 +32,12 @@ const Feature = ({
   const isLargeDesktop = useMediaQuery(largeDesktopBreakpoint)
 
   return (
-    <View
-      backgroundColor="background.1"
-      mx={marginX}
-      mb="none"
-      alignItems="center"
-    >
+    <View backgroundColor="background.1" mx={marginX} alignItems="center">
       <View
         flexGrow="1"
         width="100%"
         flexDirection={isTablet ? 'row' : 'column'}
         mb="extraLarge"
-        maxHeight={featureContentMaxHeight}
         maxWidth={
           noBg
             ? featureContentMaxWidth
@@ -60,8 +54,18 @@ const Feature = ({
           flexBasis={isTablet ? '50%' : 'auto'}
           order={imgOnRightSide && 2}
           flexDirection="row"
+          maxHeight={featureContentMaxHeight}
         >
-          <FeatureImg imgSrc={imgSrc} imgAlt={imgAlt} svgImg={svgImg} />
+          <FeatureImg
+            imgSrc={imgSrc}
+            imgAlt={imgAlt}
+            svgImg={svgImg}
+            maxHeight={
+              isTablet
+                ? '100%'
+                : `calc(${featureContentMaxHeight} - ${pxUnits(64)})`
+            }
+          />
         </View>
         <View
           backgroundColor={noBg ? 'inherit' : rightBgColor}
@@ -76,7 +80,6 @@ const Feature = ({
           maxHeight={featureContentMaxHeight}
         >
           <View
-            mt={isTablet || imgOnRightSide ? 'none' : 'large'}
             justifyContent="center"
             px={isDesktop ? 'extraLarge' : 'medium'}
           >

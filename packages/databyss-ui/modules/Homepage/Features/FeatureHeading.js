@@ -1,6 +1,10 @@
 import React from 'react'
 import { Text, View } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
+import {
+  featureContentMaxHeight,
+  featureContentMaxWidth,
+} from '@databyss-org/ui/modules/Homepage/Features/Feature'
 
 const FeatureHeading = ({
   title,
@@ -8,7 +12,7 @@ const FeatureHeading = ({
   descriptionColor,
   textAlign,
 }) => (
-  <View maxWidth={pxUnits(560)}>
+  <View maxWidth={featureContentMaxWidth}>
     <Text variant="heading3" color="text.1" mb="medium" textAlign={textAlign}>
       {title}
     </Text>
@@ -19,7 +23,7 @@ const FeatureHeading = ({
         mb="large"
         textAlign={textAlign}
         css={{
-          maxHeight: pxUnits(334),
+          maxHeight: `calc(${featureContentMaxHeight} - ${pxUnits(124)})`,
           overflow: 'scroll',
         }}
       >
