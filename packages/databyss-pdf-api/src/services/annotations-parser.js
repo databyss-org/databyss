@@ -74,7 +74,7 @@ async function parse1stPass(pdfPath) {
   if (executablePath) {
     executablePath = path.resolve(
       __dirname,
-      `../../bin/.local-chromium/${executablePath}`
+      `./bin/.local-chromium/${executablePath}`
     )
     console.log(`Chromium executable: ${executablePath}`)
   }
