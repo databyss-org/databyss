@@ -7,7 +7,7 @@ then
   NPM_BUILD_TARGET=API_SERVER node build/api/app.js
 elif [ $NPM_DEPLOY_TARGET == PDF_API ]
 then
-  NPM_BUILD_TARGET=PDF_API node build/api/app.js
+  NPM_BUILD_TARGET=PDF_API node build/pdf-api/app.js
 else
   echo 'ERROR: NO VALID TARGETS FOUND'
   exit 1

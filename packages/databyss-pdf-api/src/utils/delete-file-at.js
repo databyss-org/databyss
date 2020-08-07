@@ -7,7 +7,7 @@ const fs = require('fs')
  * @param {object} options Additional options
  * - `verbose`: Whether or not the method logs to the console. Defaults to `true`
  */
-module.exports = async (filePath, options) => {
+export default async (filePath, options) => {
   const verbose = options && options.verbose ? options.verbose : true
 
   if (verbose) {

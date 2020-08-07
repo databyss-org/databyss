@@ -3,18 +3,19 @@
 
 const chromium = require('chrome-aws-lambda')
 const signals = require('signals')
+const path = require('path')
 
 const pdfjsParser = require('./pdfjs-parser')
 
 // constants
 const annotationsTypes = ['Text', 'Highlight', 'Underline', 'Stamp']
 const protocol = 'file://'
-const viewURL = `${protocol}${__dirname}/view/index.html`
+const viewURL = `${protocol}${__dirname}/../../view/index.html`
 
 // methods definitions
-const parse = async path => {
+export const parse = async docPath => {
   // ensure to add protocol to temp path for uploaded file
-  const pdfPath = `${protocol}${path}`
+  const pdfPath = `${protocol}${docPath}`
 
   // calculate parsing duration
   const startTime = new Date().getTime()
@@ -44,7 +45,7 @@ const parse = async path => {
   })
 }
 
-async function parse1stPass(path) {
+async function parse1stPass(pdfPath) {
   // create signal emitter for exposed function to be able to sent its data
   const firstPassObtained = new signals.Signal()
 
@@ -69,13 +70,21 @@ async function parse1stPass(path) {
     firstPassObtained.add(onFirstPassComplete)
   })
 
+  const executablePath = process.env.CHROMIUM_BIN
+  if (executablePath) {
+    console.log(`Chromium executable: ${executablePath}`)
+  }
+
   // init headless browser (puppeteer)
   const browser = await chromium.puppeteer.launch({
-    // required
-    executablePath: await chromium.executablePath,
+    ...(executablePath
+      ? {
+          executablePath,
+        }
+      : {}),
 
     // necessary so local files can be loaded
-    args: ['--disable-web-security'],
+    args: ['--disable-web-security', '--no-sandbox'],
 
     defaultViewport: chromium.defaultViewport,
     headless: true,
@@ -110,12 +119,14 @@ async function parse1stPass(path) {
   console.log(`⏳ Loading view from "${viewURL}"...`)
   await page.goto(viewURL, { waitUntil: 'networkidle0' })
 
-  // FIXME: throws an error because of an undefined reference (async causes issue?)
-  // load pdf path from view
-  await page.evaluate(async path => {
-    console.log(`⏳ Waiting for view to load PDF from "${path}"...`)
-    await window.loadPDF(path)
-  }, path)
+  // evaluate arg must be a template string to avoid babel rewriting async
+  // https://github.com/puppeteer/puppeteer/issues/1665#issuecomment-354241717
+  await page.evaluate(
+    `(async () => {
+      console.log('⏳ Waiting for view to load PDF from "${pdfPath}"...')
+      await window.loadPDF('${pdfPath}')
+    })()`
+  )
   console.log('✅ Triggered view to load PDF...')
 
   await browser.close()
@@ -194,6 +205,3 @@ function mergeAnnotations(annotations1, annotations2) {
 
   return response
 }
-
-// module
-module.exports.parse = parse

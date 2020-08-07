@@ -10,7 +10,7 @@ module.exports = api => {
       },
     ],
   ]
-  const ignore = ['**/node_modules', './src/services', './src/utils']
+  const ignore = ['**/node_modules', './view']
 
   return {
     presets,

@@ -2,13 +2,11 @@
 
 const pdfjs = require('pdfjs-dist/es5/build/pdf.js')
 
-module.exports = { parse }
-
 let numPages = 0
 let allPagesData = []
 
 // public api
-async function parse(path) {
+export async function parse(path) {
   let pdf
 
   try {

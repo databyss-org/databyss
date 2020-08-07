@@ -4,7 +4,7 @@ import multipart from 'connect-multiparty'
 import { ApiError } from '@databyss-org/api/src/lib/Errors'
 import wrap from '@databyss-org/api/src/lib/guardedAsync'
 
-import annotationsParser from '../../services/annotations-parser'
+import { parse } from '../../services/annotations-parser'
 
 import deleteFileAt from '../../utils/delete-file-at'
 import getTimeSince from '../../utils/get-time-since'
@@ -24,7 +24,7 @@ router.post(
     console.log(`📑 Parsing "${pdf.originalFilename}" from ${pdf.path}...`)
 
     try {
-      const parsedData = await annotationsParser.parse(pdf.path)
+      const parsedData = await parse(pdf.path)
 
       // clean up uploaded file
       await deleteFileAt(pdf.path)
