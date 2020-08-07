@@ -72,10 +72,7 @@ async function parse1stPass(pdfPath) {
 
   let executablePath = process.env.CHROMIUM_BIN
   if (executablePath) {
-    executablePath = path.resolve(
-      __dirname,
-      `./bin/.local-chromium/${executablePath}`
-    )
+    executablePath = `build/pdf-api/bin/.local-chromium/${executablePath}`
     console.log(`Chromium executable: ${executablePath}`)
   }
 
