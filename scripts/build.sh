@@ -36,7 +36,7 @@ then
   cp -R ./node_modules/puppeteer/.local-chromium ./build/pdf-api/bin/
   cp -R ./packages/databyss-pdf-api/view ./build/pdf-api/
   mkdir ./build/pdf-api/node_modules
-  cp -R ./node_modules/pdfjs-dist ./build/pdf-api/node_modules
+  cp -R ./node_modules/pdfjs-dist ./build/pdf-api/node_modules/
   cleanup
 else
   echo 'ERROR: NO TARGETS FOUND'
