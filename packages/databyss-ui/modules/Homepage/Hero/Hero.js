@@ -1,24 +1,25 @@
 import React from 'react'
-import { View, Text, Icon, Button } from '@databyss-org/ui/primitives'
+import { View, Text, Button } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import { mobileBreakpoint } from '@databyss-org/ui/theming/mediaBreakpoints'
+import { tabletBreakpoint } from '@databyss-org/ui/theming/mediaBreakpoints'
 import { useMediaQuery } from 'react-responsive'
 
 const Hero = ({ logoSrc, title, headline, buttonText, buttonHref }) => {
-  const isMobile = useMediaQuery(mobileBreakpoint)
+  const isTablet = useMediaQuery(tabletBreakpoint)
 
   return (
     <View alignItems="center" mt="extraLarge" widthVariant="content">
       <View flexDirection="row" alignItems="center" mb="large">
-        <Icon
-          color="text.6"
-          sizeVariant={isMobile ? 'logoSmall' : 'logoLarge'}
-          mr="small"
-        >
-          {logoSrc}
-        </Icon>
+        <View mr="em">
+          <img
+            src={logoSrc}
+            width={isTablet ? pxUnits(72) : pxUnits(64)}
+            height="auto"
+            alt="Logo"
+          />
+        </View>
         <Text
-          variant={isMobile ? 'heading2' : 'heading1'}
+          variant={isTablet ? 'heading1' : 'heading2'}
           color="text.6"
           textAlign="center"
         >

@@ -3,7 +3,7 @@ import { Text, View } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import {
   featureContentMaxHeight,
-  featureContentMaxWidth,
+  featureHeadingMaxWidth,
 } from '@databyss-org/ui/modules/Homepage/Features/Feature'
 
 const FeatureHeading = ({
@@ -12,7 +12,7 @@ const FeatureHeading = ({
   descriptionColor,
   textAlign,
 }) => (
-  <View maxWidth={featureContentMaxWidth}>
+  <View maxWidth={featureHeadingMaxWidth}>
     <Text variant="heading3" color="text.1" mb="medium" textAlign={textAlign}>
       {title}
     </Text>

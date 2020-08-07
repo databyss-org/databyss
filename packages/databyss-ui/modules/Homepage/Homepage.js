@@ -8,7 +8,7 @@ import imgMessyNotes from '@databyss-org/ui/assets/messy_notes.jpg'
 import SourceDropdownSvg from '@databyss-org/ui/assets/source_dropdown.svg'
 import PDFSvg from '@databyss-org/ui/assets/add_document.svg'
 import { useMediaQuery } from 'react-responsive'
-import LogoSvg from '@databyss-org/ui/assets/logo_new.svg'
+import logo from '@databyss-org/ui/assets/logo_new.png'
 import Navbar from '@databyss-org/ui/modules/Homepage/Hero/Navbar'
 import backgroundImage from '@databyss-org/ui/assets/stone_bg.jpg'
 import Feature from '@databyss-org/ui/modules/Homepage/Features/Feature'
@@ -21,8 +21,8 @@ import FAQ from '@databyss-org/ui/modules/Homepage/FAQ/FAQ'
 
 const navLinks = [
   { name: 'Home', route: '/' },
-  { name: 'Signup', route: '/signup' },
-  { name: 'Log in', route: '/login' },
+  { name: 'Sign Up', route: 'https://app.databyss.org/signup' },
+  { name: 'Log in', route: 'https://app.databyss.org/' },
 ]
 
 const questionsAndAnswers = [
@@ -65,9 +65,9 @@ const Homepage = () => {
       >
         <Navbar navLinks={navLinks} />
         <Hero
-          logoSrc={<LogoSvg />}
+          logoSrc={logo}
           title="Databyss"
-          headline="You research, dabble, experiment, take notes, and get lost in your thoughts. Databyss is your new word-processor."
+          headline="You research, dabble, take notes, and get lost in your thoughts. Databyss is your new word-processor."
           buttonText={{ bold: 'Sign up', normal: '(for free)' }}
           buttonHref="https://app.databyss.org/signup"
         />

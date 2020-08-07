@@ -12,6 +12,7 @@ import { pxUnits } from '@databyss-org/ui/theming/views'
 
 export const featureContentMaxWidth = pxUnits(1200)
 export const featureContentMaxHeight = pxUnits(560)
+export const featureHeadingMaxWidth = pxUnits(560)
 
 const Feature = ({
   svgImg,
