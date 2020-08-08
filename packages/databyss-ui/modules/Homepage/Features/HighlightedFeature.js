@@ -14,6 +14,7 @@ const HighlightedFeature = ({
   svgImg,
   margin,
   children,
+  videoSrc,
 }) => (
   <View backgroundColor="background.1" m={margin} mb="none" alignItems="center">
     <View
@@ -33,6 +34,20 @@ const HighlightedFeature = ({
         />
         {children || (
           <FeatureImg imgSrc={imgSrc} imgAlt={imgAlt} svgImg={svgImg} />
+        )}
+        {videoSrc && (
+          <video
+            src={videoSrc}
+            width="100%"
+            height="100%"
+            autoPlay
+            loop
+            muted
+            preload="auto"
+            css={{
+              borderRadius,
+            }}
+          />
         )}
       </View>
     </View>

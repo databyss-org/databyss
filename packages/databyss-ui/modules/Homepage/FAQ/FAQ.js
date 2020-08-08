@@ -2,7 +2,10 @@ import React from 'react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { useMediaQuery } from 'react-responsive'
 import FeatureHeading from '@databyss-org/ui/modules/Homepage/Features/FeatureHeading'
-import { featureContentMaxWidth } from '@databyss-org/ui/modules/Homepage/Features/Feature'
+import {
+  featureContentMaxWidth,
+  featureHeadingMaxWidth,
+} from '@databyss-org/ui/modules/Homepage/Features/Feature'
 import {
   desktopBreakpoint,
   tabletBreakpoint,
@@ -47,15 +50,16 @@ const FAQ = ({
         <View
           flexDirection={isDesktop ? 'row' : 'column'}
           justifyContent="space-between"
+          flexWrap="wrap"
         >
           {questionsAndAnswers.map(questionAndAnswer => (
             <View
               widthVariant="content"
               mb="medium"
-              maxWidth={isDesktop ? '50%' : '100%'}
+              maxWidth={featureHeadingMaxWidth}
               css={{
-                '&:nth-child(even)': {
-                  paddingLeft: isDesktop && '32px',
+                '&:nth-child(odd)': {
+                  marginRight: isDesktop && '32px',
                 },
               }}
             >

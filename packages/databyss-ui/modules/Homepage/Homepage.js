@@ -5,6 +5,8 @@ import HighlightedFeature from '@databyss-org/ui/modules/Homepage/Features/Highl
 import imgSourceSelection from '@databyss-org/ui/assets/promo_source_selection.png'
 import imgSearchFeature from '@databyss-org/ui/assets/search_feature.png'
 import imgMessyNotes from '@databyss-org/ui/assets/messy_notes.jpg'
+import pdfVideo from '@databyss-org/ui/assets/pdf_annotations.mp4'
+import sourceVideo from '@databyss-org/ui/assets/enter_source.mp4'
 import SourceDropdownSvg from '@databyss-org/ui/assets/source_dropdown.svg'
 import PDFSvg from '@databyss-org/ui/assets/add_document.svg'
 import { useMediaQuery } from 'react-responsive'
@@ -35,6 +37,16 @@ const questionsAndAnswers = [
     question: 'Ut wisi enim ad minim veniam, quis nostrud exercitation?',
     answer:
       'At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt.',
+  },
+  {
+    question: 'Ut wisi enim ad minim veniam, quis nostrud exercitation?',
+    answer:
+      'At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt.',
+  },
+  {
+    question: 'Mauris in egestas ligula. Phasellus euismod nisi tortor?',
+    answer:
+      'Vestibulum faucibus erat vel dui fermentum rhoncus. Nunc ut lorem quis dui semper vehicula. Praesent sit amet vestibulum lorem. Vestibulum tempor nulla vitae augue vehicula, aliquam venenatis sapien porttitor. Phasellus viverra dignissim eros, nec consequat massa tempus pellentesque.',
   },
 ]
 
@@ -81,12 +93,7 @@ const Homepage = () => {
       />
       <Feature
         noBg
-        svgImg={
-          <PDFSvg
-            width={isTablet ? pxUnits(375) : pxUnits(200)}
-            height={pxUnits(240)}
-          />
-        }
+        videoSrc={pdfVideo}
         imgOnRightSide
         title="Import PDF Annotations"
         description="Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them."

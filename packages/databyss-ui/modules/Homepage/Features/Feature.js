@@ -8,7 +8,7 @@ import {
   desktopBreakpoint,
   largeDesktopBreakpoint,
 } from '@databyss-org/ui/theming/mediaBreakpoints'
-import { pxUnits } from '@databyss-org/ui/theming/views'
+import { pxUnits, borderRadius } from '@databyss-org/ui/theming/views'
 
 export const featureContentMaxWidth = pxUnits(1200)
 export const featureContentMaxHeight = pxUnits(560)
@@ -27,6 +27,7 @@ const Feature = ({
   noBg,
   marginX,
   alignContent,
+  videoSrc,
 }) => {
   const isTablet = useMediaQuery(tabletBreakpoint)
   const isDesktop = useMediaQuery(desktopBreakpoint)
@@ -56,17 +57,38 @@ const Feature = ({
           order={imgOnRightSide && 2}
           flexDirection="row"
           maxHeight={featureContentMaxHeight}
+          css={{
+            borderRadius: isLargeDesktop
+              ? `${borderRadius} 0 0 ${borderRadius}`
+              : '0',
+          }}
         >
-          <FeatureImg
-            imgSrc={imgSrc}
-            imgAlt={imgAlt}
-            svgImg={svgImg}
-            maxHeight={
-              isTablet
-                ? '100%'
-                : `calc(${featureContentMaxHeight} - ${pxUnits(64)})`
-            }
-          />
+          {(imgSrc || svgImg) && (
+            <FeatureImg
+              imgSrc={imgSrc}
+              imgAlt={imgAlt}
+              svgImg={svgImg}
+              maxHeight={
+                isTablet
+                  ? '100%'
+                  : `calc(${featureContentMaxHeight} - ${pxUnits(64)})`
+              }
+            />
+          )}
+          {videoSrc && (
+            <video
+              src={videoSrc}
+              width="100%"
+              height="100%"
+              autoPlay
+              loop
+              muted
+              preload="auto"
+              css={{
+                borderRadius,
+              }}
+            />
+          )}
         </View>
         <View
           backgroundColor={noBg ? 'inherit' : rightBgColor}
@@ -79,6 +101,11 @@ const Feature = ({
             isLargeDesktop && imgOnRightSide ? 'flex-end' : 'flex-start'
           }
           maxHeight={featureContentMaxHeight}
+          css={{
+            borderRadius: isLargeDesktop
+              ? `0 ${borderRadius} ${borderRadius} 0`
+              : '0',
+          }}
         >
           <View
             justifyContent="center"
