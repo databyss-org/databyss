@@ -32,7 +32,7 @@ router.post(
         results.map(async r => {
           // get page where entry is found
           const _page = await Page.findOne({
-            blocks: { $in: [{ _id: r._id }] },
+            'blocks._id': r._id,
             account: req.account._id,
           })
 
