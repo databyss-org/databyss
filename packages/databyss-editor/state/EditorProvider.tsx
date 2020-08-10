@@ -4,7 +4,9 @@ import React, {
   forwardRef,
   useImperativeHandle,
 } from 'react'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import createReducer from '@databyss-org/services/lib/createReducer'
+import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { Patch } from 'immer'
 import {
   SET_SELECTION,
@@ -24,7 +26,7 @@ import {
 import { Text, Selection, EditorState } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
-import { getPagePath } from '../lib/util'
+import { getPagePath, indexPage } from '../lib/util'
 import {
   cutOrCopyEventHandler,
   pasteEventHandler,
@@ -63,6 +65,7 @@ type ContextType = {
   copy: (event: ClipboardEvent) => void
   cut: (event: ClipboardEvent) => void
   paste: (event: ClipboardEvent) => void
+  onBlockRelationsChange: () => void
 }
 
 export type OnChangeArgs = {
@@ -98,6 +101,29 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       name: 'EditorProvider',
       onChange,
     })
+    const setBlockRelations = useEntryContext(c => c && c.setBlockRelations)
+
+    const getPages = usePageContext(c => c && c.getPages)
+
+    const pages = getPages()
+    let _pageName = ''
+    // get page title
+    if (pages[state.pageHeader._id].name) {
+      _pageName = pages[state.pageHeader._id].name
+    }
+
+    // this should be run if number of blocks changes
+    // or when an atomic is created or removed
+    // or clipboard or history action
+    const onBlockRelationsChange = () => {
+      if (setBlockRelations) {
+        setTimeout(() => {
+          setBlockRelations(
+            indexPage({ pageHeader: _pageName, blocks: state.blocks })
+          )
+        }, 100)
+      }
+    }
 
     useImperativeHandle(
       ref,
@@ -130,21 +156,24 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
      * Text in `previous` becomes new text in block at `index`
      * Text in `text` becomes new text in block after `index`
      */
-    const split = (transform: Transform): void =>
+    const split = (transform: Transform): void => {
+      onBlockRelationsChange()
       dispatch({
         type: SPLIT,
         payload: transform,
       })
-
+    }
     /**
      * Merge content into the block at `index`
      * Expects `text` to be the merged content
      */
-    const merge = (transform: Transform): void =>
+    const merge = (transform: Transform): void => {
+      onBlockRelationsChange()
       dispatch({
         type: MERGE,
         payload: transform,
       })
+    }
     /**
      * Set block content at `index` to `text`
      */
@@ -157,19 +186,23 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     /**
      * Remove the block at `index`
      */
-    const remove = (index: number): void =>
+    const remove = (index: number): void => {
+      onBlockRelationsChange()
       dispatch({
         type: REMOVE,
         payload: { index },
       })
+    }
 
     /**
      * Remove text currently selected. May span multiple blocks
      */
-    const removeAtSelection = (): void =>
+    const removeAtSelection = (): void => {
+      onBlockRelationsChange()
       dispatch({
         type: REMOVE_AT_SELECTION,
       })
+    }
 
     /**
      * Clear the block at `index`
@@ -188,6 +221,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       })
 
     const cut = (e: ClipboardEvent) => {
+      onBlockRelationsChange()
       const _frag = getFragmentAtSelection(state)
       cutOrCopyEventHandler(e, _frag)
       dispatch({
@@ -196,6 +230,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     }
 
     const copy = (e: ClipboardEvent) => {
+      onBlockRelationsChange()
       const _frag = getFragmentAtSelection(state)
       cutOrCopyEventHandler(e, _frag)
 
@@ -205,6 +240,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     }
 
     const paste = (e: ClipboardEvent) => {
+      onBlockRelationsChange()
       const data = pasteEventHandler(e)
       if (data) {
         dispatch({
@@ -231,6 +267,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           removeAtSelection,
           clear,
           removeEntityFromQueue,
+          onBlockRelationsChange,
         }}
       >
         {children}

@@ -1,10 +1,39 @@
 import _ from 'lodash'
 import { Block } from '@databyss-org/services/interfaces/'
 import { stateBlockToHtmlHeader } from '@databyss-org/editor/lib/slateUtils.js'
-import { BlockType, Selection, EditorState } from '../interfaces'
-import { getClosureType } from '../state/util'
+import { BlockType, Selection, EditorState, Text } from '../interfaces'
+import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
 
 type _Block = Block & { closed?: boolean }
+
+type CurrentAtomics = {
+  [BlockType.Source]: Block | null
+  [BlockType.Topic]: Block | null
+}
+
+// {
+//   blockId: block._id,
+//   relatedBlockId: value._id,
+//   blockText: block.text,
+//   relation: {
+//     type: 'HEADING',
+//     pageHeader,
+//     blockIndex: index,
+//   },
+// }
+
+type BlockRelations = {
+  blockId: string
+  relatedBlockId: string
+  blockText: Text
+  relatedTo: {
+    _id: string
+    relationshipType: string
+    blockType: string
+    pageHeader: string
+    blockIndex: number
+  }
+}
 
 export const splice = (src, idx, rem, str) =>
   src.slice(0, idx) + str + src.slice(idx + Math.abs(rem))
@@ -98,4 +127,50 @@ export const getPagePath = (page: EditorState): string[] => {
   })
 
   return _path
+}
+
+export const indexPage = ({
+  pageHeader,
+  blocks,
+}: {
+  pageHeader: string
+  blocks: Block[]
+}): BlockRelations[] => {
+  const currentAtomics = {
+    [BlockType.Source]: null,
+    [BlockType.Topic]: null,
+  }
+
+  const blockRelations: BlockRelations[] = []
+
+  blocks.forEach((block, index) => {
+    const _closureType: BlockType = getClosureType(block.type)
+
+    const _openerType = getClosureTypeFromOpeningType(block.type)
+
+    if (_closureType) {
+      currentAtomics[_closureType] = null
+    } else if (_openerType) {
+      currentAtomics[block.type] = block
+    } else {
+      for (const [, value] of Object.entries(currentAtomics)) {
+        if (value) {
+          blockRelations.push({
+            blockId: block._id,
+            relatedBlockId: value._id,
+            blockText: block.text,
+            relatedTo: {
+              _id: block._id,
+              blockType: value.type,
+              relationshipType: 'HEADING',
+              pageHeader,
+              blockIndex: index,
+            },
+          })
+        }
+      }
+    }
+  })
+
+  return blockRelations
 }

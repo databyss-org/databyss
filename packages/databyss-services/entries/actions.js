@@ -5,6 +5,7 @@ import {
   CACHE_ENTRY_RESULTS,
   SET_QUERY,
   CLEAR_CACHE,
+  SET_BLOCK_RELATIONS,
 } from './constants'
 
 export function onSearchEntries(string) {
@@ -36,5 +37,21 @@ export function onClearCache() {
     dispatch({
       type: CLEAR_CACHE,
     })
+  }
+}
+
+export function onSetBlockRelations(blocksRelationArray) {
+  return async dispatch => {
+    dispatch({
+      type: SET_BLOCK_RELATIONS,
+      payload: { data: blocksRelationArray },
+    })
+    entries.setBlockRelations(blocksRelationArray)
+    // .then(res => {
+    //   dispatch({
+    //     type: CACHE_ENTRY_RESULTS,
+    //     payload: { results: res, query: string },
+    //   })
+    // })
   }
 }

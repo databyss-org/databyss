@@ -20,6 +20,12 @@
     }
   },
   "rules": {
+    "no-restricted-syntax": [
+      "error",
+      "ForInStatement",
+      "LabeledStatement",
+      "WithStatement"
+    ],
     "no-return-assign": ["error", "except-parens"], // Default option
     "no-console": "off", // Console logs are too useful and are removed in prod anyway
     "global-require": "off", // Useful for images, assets, etc

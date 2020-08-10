@@ -50,6 +50,7 @@ const ContentEditable = ({
     remove,
     removeAtSelection,
     removeEntityFromQueue,
+    onBlockRelationsChange,
   } = editorContext
 
   const editor = useMemo(() => withReact(createEditor()), [])
@@ -88,6 +89,8 @@ const ContentEditable = ({
   useEffect(
     () => {
       if (state.newEntities.length && setSource && topicContext) {
+        // run block relation algorith
+        onBlockRelationsChange()
         const { setTopic } = topicContext
 
         state.newEntities.forEach(entity => {

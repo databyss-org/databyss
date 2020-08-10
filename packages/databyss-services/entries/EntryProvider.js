@@ -3,7 +3,12 @@ import createReducer from '@databyss-org/services/lib/createReducer'
 import { createContext, useContextSelector } from 'use-context-selector'
 import { debounce } from 'lodash'
 import reducer, { initialState } from './reducer'
-import { onSearchEntries, onSetQuery, onClearCache } from './actions'
+import {
+  onSearchEntries,
+  onSetQuery,
+  onClearCache,
+  onSetBlockRelations,
+} from './actions'
 
 const useReducer = createReducer()
 
@@ -32,6 +37,10 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     dispatch(onClearCache())
   }
 
+  const setBlockRelations = blockRelationsArray => {
+    dispatch(onSetBlockRelations(blockRelationsArray))
+  }
+
   return (
     <EntryContext.Provider
       value={{
@@ -39,6 +48,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
         searchTerm,
         clearSearchCache,
         setQuery,
+        setBlockRelations,
         searchCache,
         searchEntries,
       }}
