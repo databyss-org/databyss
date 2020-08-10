@@ -52,13 +52,14 @@ const FAQ = ({
           justifyContent="space-between"
           flexWrap="wrap"
         >
-          {questionsAndAnswers.map(questionAndAnswer => (
+          {questionsAndAnswers.map((questionAndAnswer, i) => (
             <View
+              key={i}
               widthVariant="content"
               mb="medium"
               maxWidth={featureHeadingMaxWidth}
               css={{
-                '&:nth-child(odd)': {
+                '&:nth-of-type(odd)': {
                   marginRight: isDesktop && '32px',
                 },
               }}
