@@ -21,7 +21,7 @@ import {
   REDO,
   REMOVE_AT_SELECTION,
 } from './constants'
-import { Text, Selection, EditorState } from '../interfaces'
+import { Text, Selection, EditorState, Block } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
 import { getPagePath } from '../lib/util'
@@ -63,6 +63,7 @@ type ContextType = {
   copy: (event: ClipboardEvent) => void
   cut: (event: ClipboardEvent) => void
   paste: (event: ClipboardEvent) => void
+  insert: (blocks: Block[]) => void
 }
 
 export type OnChangeArgs = {
@@ -204,15 +205,19 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       })
     }
 
+    const insert = (blocks: Block[]) => {
+      dispatch({
+        type: PASTE,
+        payload: {
+          data: blocks,
+        },
+      })
+    }
+
     const paste = (e: ClipboardEvent) => {
       const data = pasteEventHandler(e)
       if (data) {
-        dispatch({
-          type: PASTE,
-          payload: {
-            data,
-          },
-        })
+        insert(data)
       }
     }
 
@@ -222,6 +227,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           state,
           copy,
           cut,
+          insert,
           paste,
           setSelection,
           setContent,

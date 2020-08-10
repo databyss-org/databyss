@@ -33,9 +33,7 @@ dotenvFiles.forEach(dotenvFile => {
     const _env = require('dotenv').config({
       path: dotenvFile,
     })
-    console.log('ENV', _env)
-    const _expandedEnv = require('dotenv-expand')(_env)
-    console.log('EXPANDED ENV', _expandedEnv)
+    require('dotenv-expand')(_env)
   }
 })
 

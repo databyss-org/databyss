@@ -3,3 +3,6 @@ build
 dist
 node_modules
 *.snap
+
+# databyss-pdf-api
+/packages/databyss-pdf-api/view
