@@ -6,6 +6,25 @@ import accountMiddleware from '../../middleware/accountMiddleware'
 
 const router = express.Router()
 
+// @route    POST api/entries/relations/
+// @desc     posts block relations
+// @access   Private
+router.post(
+  '/relations/',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  async (req, res) => {
+    try {
+      const relationshipArray = req.body.data
+
+      console.log(relationshipArray)
+      return res.status(200)
+    } catch (err) {
+      console.error(err.message)
+      return res.status(500).send('Server Error')
+    }
+  }
+)
+
 // @route    POST api/entries/search/
 // @desc     Searches entries
 // @access   Private
