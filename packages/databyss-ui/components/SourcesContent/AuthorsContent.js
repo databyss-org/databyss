@@ -33,9 +33,17 @@ const AuthorsContent = () => (
           })
           const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
 
+          const onAuthorClick = i => {
+            console.log('CLICKED', i)
+          }
+
           return (
             <IndexPageContent title="All Authors">
-              <IndexPageEntries entries={sortedAuthors} icon={<AuthorSvg />} />
+              <IndexPageEntries
+                onClick={onAuthorClick}
+                entries={sortedAuthors}
+                icon={<AuthorSvg />}
+              />
             </IndexPageContent>
           )
         }}

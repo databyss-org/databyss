@@ -6,6 +6,8 @@ import {
   SET_QUERY,
   CLEAR_CACHE,
   SET_BLOCK_RELATIONS,
+  FETCH_BLOCK_RELATIONS,
+  CACHE_BLOCK_RELATIONS,
 } from './constants'
 
 export function onSearchEntries(string) {
@@ -53,5 +55,20 @@ export function onSetBlockRelations(blocksRelationArray) {
     //     payload: { results: res, query: string },
     //   })
     // })
+  }
+}
+
+export function fetchBlockRelations(queryId) {
+  return async dispatch => {
+    dispatch({
+      type: FETCH_BLOCK_RELATIONS,
+      payload: queryId,
+    })
+    entries.getBlockRelations(queryId).then(res => {
+      dispatch({
+        type: CACHE_BLOCK_RELATIONS,
+        payload: { results: res, queryId },
+      })
+    })
   }
 }

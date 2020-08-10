@@ -1,8 +1,13 @@
+/* eslint-disable no-restricted-syntax, no-await-in-loop */
 import express from 'express'
 import Block from '../../models/Block'
 import Page from '../../models/Page'
+import BlockRelations from '../../models/BlockRelations'
+
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
+import wrap from '../../lib/guardedAsync'
+import { addRelationships } from '../../lib/entries'
 
 const router = express.Router()
 
@@ -12,17 +17,80 @@ const router = express.Router()
 router.post(
   '/relations/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
-  async (req, res) => {
-    try {
-      const relationshipArray = req.body.data
-
-      console.log(relationshipArray)
-      return res.status(200)
-    } catch (err) {
-      console.error(err.message)
-      return res.status(500).send('Server Error')
+  wrap(async (req, res, _next) => {
+    const relationshipArray = req.body.data
+    for (const relationship of relationshipArray) {
+      await addRelationships(relationship, req)
     }
-  }
+    return res.status(200)
+  })
+)
+
+// @route    GET api/entries/relations/:id
+// @desc     gets atomic block relations
+// @access   Private
+router.get(
+  '/relations/:id',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  wrap(async (req, res, _next) => {
+    const atomicId = req.params.id
+
+    console.log(atomicId)
+    const results = await BlockRelations.find({
+      relatedBlockId: atomicId,
+      accountId: req.account._id,
+    })
+
+    // TODO: SORT results
+
+    console.log(results)
+    if (results) {
+      let _results = {
+        count: results.length,
+        results: {},
+      }
+
+      // _entries.push({
+      //   entryId: curr._id,
+      //   text: curr.text.textValue,
+      //   pageIndex: curr.relation.pageIndex
+      // })
+
+      _results = results.reduce((acc, curr) => {
+        // bail if not found
+        // if (!curr.page) {
+        //   _results.count -= 1
+        //   return acc
+        // }
+
+        if (!acc.results[curr.relatedTo.pageHeader]) {
+          // init result
+          acc.results[curr.relatedTo.pageHeader] = [
+            {
+              entryId: curr.blockId,
+              text: curr.blockText,
+              pageIndex: curr.relatedTo.blockIndex,
+            },
+          ]
+        } else {
+          const _entries = acc.results[curr.relatedTo.pageHeader]
+
+          _entries.push({
+            entryId: curr.blockId,
+            text: curr.blockText,
+            pageIndex: curr.relatedTo.blockIndex,
+          })
+          acc.results[curr.relatedTo.pageHeader] = _entries
+        }
+        return acc
+      }, _results)
+
+      console.log(_results)
+      return res.json(_results)
+    }
+
+    return res.status(400).json({ msg: 'There is no entries for this search' })
+  })
 )
 
 // @route    POST api/entries/search/

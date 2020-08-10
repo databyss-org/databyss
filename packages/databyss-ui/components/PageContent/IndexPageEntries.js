@@ -1,12 +1,17 @@
 import React from 'react'
 import { Text, View, BaseControl, Icon } from '@databyss-org/ui/primitives'
 
-const IndexPageEntries = ({ entries, icon }) =>
+const IndexPageEntries = ({ entries, icon, onClick }) =>
   entries.map((entry, index) => {
     if (entry.text) {
       return (
         <View key={index} mb="em" px="medium" widthVariant="content">
           <BaseControl
+            onClick={() => {
+              if (onClick) {
+                onClick(entry)
+              }
+            }}
             py="small"
             hoverColor="background.2"
             activeColor="background.3"

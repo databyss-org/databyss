@@ -9,6 +9,7 @@ import { ResourcePending } from '../interfaces/ResourcePending'
 export const initialState = {
   searchCache: {},
   searchTerm: '',
+  blockRelationsSearchCache: {},
 }
 
 export default (state, action) => {

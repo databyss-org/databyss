@@ -8,6 +8,7 @@ import {
   onSetQuery,
   onClearCache,
   onSetBlockRelations,
+  fetchBlockRelations,
 } from './actions'
 
 const useReducer = createReducer()
@@ -16,7 +17,7 @@ export const EntryContext = createContext()
 
 const EntryProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { searchCache, searchTerm } = state
+  const { searchCache, searchTerm, blockRelationsSearchCache } = state
 
   const searchEntries = useCallback(
     debounce(query => {
@@ -41,6 +42,15 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     dispatch(onSetBlockRelations(blockRelationsArray))
   }
 
+  const findBlockRelations = query => {
+    // fetch block relations from the server
+    if (blockRelationsSearchCache[query.relatedBlockId]) {
+      return blockRelationsSearchCache[query.relatedBlockId]
+    }
+    dispatch(fetchBlockRelations(query))
+    return null
+  }
+
   return (
     <EntryContext.Provider
       value={{
@@ -51,6 +61,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
         setBlockRelations,
         searchCache,
         searchEntries,
+        findBlockRelations,
       }}
     >
       {children}

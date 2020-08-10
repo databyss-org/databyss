@@ -23,7 +23,7 @@ const BlockRelationsSchema = new Schema({
       type: Number,
     },
   },
-  blockText: Text,
+  blockText: { type: Text.schema },
   accountId: { type: Schema.Types.ObjectId },
 })
 
