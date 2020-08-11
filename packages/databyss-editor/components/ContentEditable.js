@@ -89,7 +89,7 @@ const ContentEditable = ({
   useEffect(
     () => {
       if (state.newEntities.length && setSource && topicContext) {
-        // run block relation algorith
+        // run block relation algorithm
         onBlockRelationsChange()
         const { setTopic } = topicContext
 

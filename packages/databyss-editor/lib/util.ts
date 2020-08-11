@@ -133,44 +133,46 @@ export const indexPage = ({
   pageHeader,
   blocks,
 }: {
-  pageHeader: PageHeader
+  pageHeader: PageHeader | null
   blocks: Block[]
 }): BlockRelations[] => {
   const currentAtomics = {
     [BlockType.Source]: null,
     [BlockType.Topic]: null,
   }
-
   const blockRelations: BlockRelations[] = []
 
-  blocks.forEach((block, index) => {
-    const _closureType: BlockType = getClosureType(block.type)
+  if (pageHeader) {
+    blocks.forEach((block, index) => {
+      const _closureType: BlockType = getClosureType(block.type)
 
-    const _openerType = getClosureTypeFromOpeningType(block.type)
+      const _openerType = getClosureTypeFromOpeningType(block.type)
 
-    if (_closureType) {
-      currentAtomics[_closureType] = null
-    } else if (_openerType) {
-      currentAtomics[block.type] = block
-    } else {
-      for (const [, value] of Object.entries(currentAtomics)) {
-        if (value) {
-          blockRelations.push({
-            blockId: block._id,
-            relatedBlockId: value._id,
-            blockText: block.text,
-            relatedTo: {
-              _id: block._id,
-              blockType: value.type,
-              relationshipType: 'HEADING',
-              pageHeader,
-              blockIndex: index,
-            },
-          })
+      if (_closureType) {
+        currentAtomics[_closureType] = null
+      } else if (_openerType) {
+        currentAtomics[block.type] = block
+      } else {
+        for (const [, value] of Object.entries(currentAtomics)) {
+          if (value) {
+            blockRelations.push({
+              blockId: block._id,
+              relatedBlockId: value._id,
+              blockText: block.text,
+              relatedTo: {
+                _id: block._id,
+                blockType: value.type,
+                relationshipType: 'HEADING',
+                pageHeader,
+                blockIndex: index,
+              },
+            })
+          }
         }
       }
-    }
-  })
+    })
+  }
 
+  console.log(blockRelations)
   return blockRelations
 }

@@ -35,10 +35,27 @@ router.get(
   wrap(async (req, res, _next) => {
     const atomicId = req.params.id
 
-    const results = await BlockRelations.find({
+    let results = await BlockRelations.find({
       relatedBlockId: atomicId,
       accountId: req.account._id,
     })
+
+    console.log(results)
+
+    // populate results with page
+    results = await Promise.all(
+      results.map(async r => {
+        // get page where entry is found
+        const _page = await Page.findOne({
+          blocks: { $in: [{ _id: r._id }] },
+          account: req.account._id,
+        })
+
+        return Object.assign({ page: _page }, r._doc)
+      })
+    )
+
+    console.log('after', results)
 
     // TODO: SORT results
     // TODO: only show results attached to a page, results may have been deleted

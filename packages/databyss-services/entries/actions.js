@@ -48,7 +48,10 @@ export function onSetBlockRelations(blocksRelationArray) {
       type: SET_BLOCK_RELATIONS,
       payload: { data: blocksRelationArray },
     })
-    entries.setBlockRelations(blocksRelationArray)
+    if (blocksRelationArray.length > 0) {
+      entries.setBlockRelations(blocksRelationArray)
+    }
+
     // .then(res => {
     //   dispatch({
     //     type: CACHE_ENTRY_RESULTS,

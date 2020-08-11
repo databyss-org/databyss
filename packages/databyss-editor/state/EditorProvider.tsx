@@ -7,6 +7,7 @@ import React, {
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { PageHeader } from '@databyss-org/services/interfaces/Page'
 import { Patch } from 'immer'
 import {
   SET_SELECTION,
@@ -101,12 +102,13 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       name: 'EditorProvider',
       onChange,
     })
+
     const setBlockRelations = useEntryContext(c => c && c.setBlockRelations)
 
     const getPages = usePageContext(c => c && c.getPages)
 
     const pages = getPages()
-    let _pageHeader = {}
+    let _pageHeader: PageHeader | null = null
     // get page title
     if (pages[state.pageHeader._id]) {
       _pageHeader = pages[state.pageHeader._id]
