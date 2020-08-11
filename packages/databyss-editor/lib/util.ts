@@ -64,7 +64,11 @@ const composeBlockRelation = (
       _id: currentBlock._id,
       relationshipType: 'HEADING',
       blockType: atomicBlock.type,
-      pageHeader,
+      pageHeader: {
+        name: pageHeader.name,
+        _id: pageHeader._id,
+        archive: pageHeader.archive,
+      },
       // replace these properties upstream
       blockIndex: 0,
     },
@@ -201,7 +205,11 @@ export const indexPage = ({
                 _id: block._id,
                 blockType: value.type,
                 relationshipType: 'HEADING',
-                pageHeader,
+                pageHeader: {
+                  name: pageHeader.name,
+                  _id: pageHeader._id,
+                  archive: pageHeader.archive,
+                },
                 blockIndex: index,
               },
             })
