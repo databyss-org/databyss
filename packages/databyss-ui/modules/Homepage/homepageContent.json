@@ -9,8 +9,8 @@
     "sections": [
         {
             "component": "Hero",
-            "backgroundImgSrc": "/public/stone_bg.5744c9f6.jpg",
-            "logoSrc": "/public/logo_new.81b8c3b6.png",
+            "backgroundImgSrc": "/homepage/stone_bg.jpg",
+            "logoSrc": "/homepage/logo_new.png",
             "title": "Databyss",
             "headline": "You research, dabble, experiment, take notes, and get lost in your thoughts. Databyss is your new word-processor.",
             "buttonText": {
@@ -35,7 +35,7 @@
         },
         {
             "component": "HighlightedFeature",
-            "imgSrc": "/public/promo_source_selection.22bc3c1e.png",
+            "imgSrc": "/homepage/promo_source_selection.png",
             "imgAlt": "Interface of the App",
             "imgHasBoxShadow": true,
             "title": "The Basics",
@@ -43,7 +43,7 @@
         },
         {
             "component": "DefaultFeature",
-            "videoSrc": "/static/media/pdf_annotations.35db4f3a.mp4",
+            "videoSrc": "/static/media/pdf_annotations.mp4",
             "title": "Import PDF Annotations",
             "description": "Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them."
         },
@@ -51,7 +51,7 @@
             "component": "DualBgFeature",
             "leftBgColor": "purple.4",
             "rightBgColor": "purple.5",
-            "imgSrc": "/public/sources_dropdown.c86e351d.png",
+            "imgSrc": "/homepage/sources_dropdown.png",
             "imgAlt": "Dropdown menu when searching for sources",
             "imgMaxHeight": "260px",
             "title": "Add Sources",
@@ -59,7 +59,7 @@
         },
         {
             "component": "DefaultFeature",
-            "imgSrc": "/public/search_feature.293865c0.png",
+            "imgSrc": "/homepage/search_feature.png",
             "imgAlt": "Example of a search result",
             "imgHasBoxShadow": true,
             "title": "Global Search",
@@ -67,7 +67,7 @@
         },
         {
             "component": "DualBgFeature",
-            "imgSrc": "/public/messy_notes.8e146370.jpg",
+            "imgSrc": "/homepage/messy_notes.jpg",
             "imgAlt": "Messy notes",
             "leftBgColor": "background.2",
             "rightBgColor": "background.3",

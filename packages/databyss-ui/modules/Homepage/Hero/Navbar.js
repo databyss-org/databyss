@@ -2,11 +2,10 @@ import React from 'react'
 import { BaseControl, View, Text } from '@databyss-org/ui/primitives'
 import theme, { timing } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import { useLocation } from '@reach/router'
 
 const Navbar = ({ lightTheme, navLinks }) => {
-  const location = useLocation()
-  const isActiveLink = route => route === location.pathname
+  // const location = useLocation()
+  const isActiveLink = () => false // route => route === location.pathname
 
   const getTextColor = isActiveLink => {
     if (lightTheme) {
