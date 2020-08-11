@@ -35,7 +35,6 @@ router.get(
   wrap(async (req, res, _next) => {
     const atomicId = req.params.id
 
-    console.log(atomicId)
     const results = await BlockRelations.find({
       relatedBlockId: atomicId,
       accountId: req.account._id,
@@ -44,18 +43,11 @@ router.get(
     // TODO: SORT results
     // TODO: only show results attached to a page, results may have been deleted
 
-    console.log(results)
     if (results) {
       let _results = {
         count: results.length,
         results: {},
       }
-
-      // _entries.push({
-      //   entryId: curr._id,
-      //   text: curr.text.textValue,
-      //   pageIndex: curr.relation.pageIndex
-      // })
 
       _results = results.reduce((acc, curr) => {
         // bail if not found
@@ -64,29 +56,30 @@ router.get(
         //   return acc
         // }
 
-        if (!acc.results[curr.relatedTo.pageHeader]) {
+        if (!acc.results[curr.relatedTo.pageHeader._id]) {
           // init result
-          acc.results[curr.relatedTo.pageHeader] = [
+          acc.results[curr.relatedTo.pageHeader._id] = [
             {
+              pageHeader: curr.relatedTo.pageHeader,
               entryId: curr.blockId,
               text: curr.blockText,
               pageIndex: curr.relatedTo.blockIndex,
             },
           ]
         } else {
-          const _entries = acc.results[curr.relatedTo.pageHeader]
+          const _entries = acc.results[curr.relatedTo.pageHeader._id]
 
           _entries.push({
+            pageHeader: curr.relatedTo.pageHeader,
             entryId: curr.blockId,
             text: curr.blockText,
             pageIndex: curr.relatedTo.blockIndex,
           })
-          acc.results[curr.relatedTo.pageHeader] = _entries
+          acc.results[curr.relatedTo.pageHeader._id] = _entries
         }
         return acc
       }, _results)
 
-      console.log(_results)
       return res.json(_results)
     }
 

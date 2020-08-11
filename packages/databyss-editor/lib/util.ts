@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { Block } from '@databyss-org/services/interfaces/'
+import { Block, PageHeader } from '@databyss-org/services/interfaces/'
 import { stateBlockToHtmlHeader } from '@databyss-org/editor/lib/slateUtils.js'
 import { BlockType, Selection, EditorState, Text } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
@@ -30,7 +30,7 @@ type BlockRelations = {
     _id: string
     relationshipType: string
     blockType: string
-    pageHeader: string
+    pageHeader: PageHeader
     blockIndex: number
   }
 }
@@ -133,7 +133,7 @@ export const indexPage = ({
   pageHeader,
   blocks,
 }: {
-  pageHeader: string
+  pageHeader: PageHeader
   blocks: Block[]
 }): BlockRelations[] => {
   const currentAtomics = {

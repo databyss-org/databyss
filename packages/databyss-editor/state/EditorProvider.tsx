@@ -106,10 +106,10 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     const getPages = usePageContext(c => c && c.getPages)
 
     const pages = getPages()
-    let _pageName = ''
+    let _pageHeader = {}
     // get page title
-    if (pages[state.pageHeader._id].name) {
-      _pageName = pages[state.pageHeader._id].name
+    if (pages[state.pageHeader._id]) {
+      _pageHeader = pages[state.pageHeader._id]
     }
 
     // this should be run if number of blocks changes
@@ -119,7 +119,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       if (setBlockRelations) {
         setTimeout(() => {
           setBlockRelations(
-            indexPage({ pageHeader: _pageName, blocks: state.blocks })
+            indexPage({ pageHeader: _pageHeader, blocks: state.blocks })
           )
         }, 100)
       }

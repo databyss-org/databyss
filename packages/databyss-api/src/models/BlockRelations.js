@@ -17,7 +17,10 @@ const BlockRelationsSchema = new Schema({
       enum: ['SOURCE', 'TOPIC'],
     },
     pageHeader: {
-      type: String,
+      name: {
+        type: String,
+      },
+      _id: Schema.Types.ObjectId,
     },
     blockIndex: {
       type: Number,

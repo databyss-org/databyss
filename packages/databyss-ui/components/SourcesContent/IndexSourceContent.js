@@ -6,10 +6,19 @@ import {
   Icon,
   Grid,
 } from '@databyss-org/ui/primitives'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 
 const IndexSourceContent = ({ relations }) => {
-  console.log(relations)
+  const { navigate } = useNavigationContext()
+
+  const onPageClick = pageId => {
+    navigate(`/pages/${pageId}`)
+  }
+
+  const onEntryClick = (pageId, entryId) => {
+    navigate(`/pages/${pageId}#${entryId}`)
+  }
 
   // TODO: HAVE PAGE ID IN SEARCH RESTULS
   // TODO: CLICK ON PAGE LINK
@@ -20,13 +29,15 @@ const IndexSourceContent = ({ relations }) => {
           hoverColor="background.2"
           activeColor="background.3"
           key={`pageHeader-${i}`}
-          // onClick={() => onPageClick(r.pageId)}
+          onClick={() => onPageClick(r)}
         >
           <Grid singleRow alignItems="center" columnGap="small">
             <Icon sizeVariant="small" color="text.3">
               <PageSvg />
             </Icon>
-            <Text variant="bodyHeading3">{r}</Text>
+            <Text variant="bodyHeading3">
+              {relations.results[r][0].pageHeader.name}
+            </Text>
           </Grid>
         </BaseControl>
       </View>
@@ -36,10 +47,8 @@ const IndexSourceContent = ({ relations }) => {
           hoverColor="background.2"
           activeColor="background.3"
           key={k}
-          //   onClick={() => onEntryClick(r.pageId, e.entryId)}
+          onClick={() => onEntryClick(r, e.entryId)}
         >
-          {console.log(e)}
-          {console.log(relations.results[r])}
           <View p="small" ml="small">
             <Text>{e.text.textValue}</Text>
           </View>
