@@ -3,6 +3,8 @@ import {
   CACHE_ENTRY_RESULTS,
   SET_QUERY,
   CLEAR_CACHE,
+  FETCH_BLOCK_RELATIONS,
+  CACHE_BLOCK_RELATIONS,
 } from './constants'
 import { ResourcePending } from '../interfaces/ResourcePending'
 
@@ -40,6 +42,22 @@ export default (state, action) => {
       return {
         ...state,
         searchCache: {},
+      }
+    }
+    case FETCH_BLOCK_RELATIONS: {
+      const _cache = state.blockRelationsSearchCache
+      _cache[action.payload] = new ResourcePending()
+      return {
+        ...state,
+        blockRelationsSearchCache: _cache,
+      }
+    }
+    case CACHE_BLOCK_RELATIONS: {
+      const _cache = state.blockRelationsSearchCache
+      _cache[action.payload.queryId] = action.payload.results
+      return {
+        ...state,
+        blockRelationsSearchCache: _cache,
       }
     }
     default:

@@ -59,6 +59,7 @@ export function onSetBlockRelations(blocksRelationArray) {
 }
 
 export function fetchBlockRelations(queryId) {
+  // console.log(queryId)
   return async dispatch => {
     dispatch({
       type: FETCH_BLOCK_RELATIONS,

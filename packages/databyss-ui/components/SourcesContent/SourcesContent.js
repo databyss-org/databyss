@@ -40,6 +40,8 @@ const SourcesContentBody = (sourceCitations, navigate) => {
     navigate(`sources/citations/${source.id}`)
   }
 
+  console.log(sortedSources)
+
   return (
     <IndexPageContent title="All Sources">
       <IndexPageEntries

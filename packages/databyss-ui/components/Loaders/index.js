@@ -77,3 +77,13 @@ export const SourceCitationsLoader = ({ children }) => {
   const getSourceCitations = useSourceContext(c => c.getSourceCitations)
   return MakeLoader({ resource: getSourceCitations(), children })
 }
+
+export const BlockRelationsLoader = ({ children, atomicId }) => {
+  const findBlockRelations = useEntryContext(c => c.findBlockRelations)
+
+  // console.log(findBlockRelations(atomicId))
+  return MakeLoader({
+    resource: findBlockRelations(atomicId),
+    children,
+  })
+}

@@ -19,6 +19,8 @@ const EntryProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { searchCache, searchTerm, blockRelationsSearchCache } = state
 
+  // console.log(blockRelationsSearchCache)
+
   const searchEntries = useCallback(
     debounce(query => {
       const _results = searchCache[query]
@@ -44,8 +46,9 @@ const EntryProvider = ({ children, initialState, reducer }) => {
 
   const findBlockRelations = query => {
     // fetch block relations from the server
-    if (blockRelationsSearchCache[query.relatedBlockId]) {
-      return blockRelationsSearchCache[query.relatedBlockId]
+    const _results = blockRelationsSearchCache[query]
+    if (_results) {
+      return blockRelationsSearchCache[query]
     }
     dispatch(fetchBlockRelations(query))
     return null

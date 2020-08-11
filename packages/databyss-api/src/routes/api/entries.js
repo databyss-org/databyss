@@ -42,6 +42,7 @@ router.get(
     })
 
     // TODO: SORT results
+    // TODO: only show results attached to a page, results may have been deleted
 
     console.log(results)
     if (results) {
