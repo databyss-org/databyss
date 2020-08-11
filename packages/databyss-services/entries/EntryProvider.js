@@ -9,6 +9,7 @@ import {
   onClearCache,
   onSetBlockRelations,
   fetchBlockRelations,
+  onClearBlockRelationsCache,
 } from './actions'
 
 const useReducer = createReducer()
@@ -54,6 +55,10 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     return null
   }
 
+  const clearBlockRelationsCache = () => {
+    dispatch(onClearBlockRelationsCache())
+  }
+
   return (
     <EntryContext.Provider
       value={{
@@ -65,6 +70,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
         searchCache,
         searchEntries,
         findBlockRelations,
+        clearBlockRelationsCache,
       }}
     >
       {children}

@@ -152,7 +152,9 @@ export const indexPage = ({
         currentAtomics[_closureType] = null
       } else if (_openerType) {
         currentAtomics[block.type] = block
-      } else {
+      }
+      // if current block is not empty
+      else if (block.text.textValue.length) {
         for (const [, value] of Object.entries(currentAtomics)) {
           if (value) {
             blockRelations.push({

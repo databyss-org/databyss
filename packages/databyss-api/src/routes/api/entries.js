@@ -41,22 +41,18 @@ router.get(
       accountId: req.account._id,
     })
 
-    console.log(results)
-
     // populate results with page
     results = await Promise.all(
       results.map(async r => {
         // get page where entry is found
         const _page = await Page.findOne({
-          blocks: { $in: [{ _id: r._id }] },
+          blocks: { $in: [{ _id: r.blockId, type: 'ENTRY' }] },
           account: req.account._id,
         })
 
         return Object.assign({ page: _page }, r._doc)
       })
     )
-
-    console.log('after', results)
 
     // TODO: SORT results
     // TODO: only show results attached to a page, results may have been deleted
@@ -69,10 +65,10 @@ router.get(
 
       _results = results.reduce((acc, curr) => {
         // bail if not found
-        // if (!curr.page) {
-        //   _results.count -= 1
-        //   return acc
-        // }
+        if (!curr.page) {
+          _results.count -= 1
+          return acc
+        }
 
         if (!acc.results[curr.relatedTo.pageHeader._id]) {
           // init result
@@ -131,7 +127,7 @@ router.post(
         results.map(async r => {
           // get page where entry is found
           const _page = await Page.findOne({
-            blocks: { $in: [{ _id: r._id }] },
+            blocks: { $in: [{ _id: r._id, type: 'ENTRY' }] },
             account: req.account._id,
           })
 

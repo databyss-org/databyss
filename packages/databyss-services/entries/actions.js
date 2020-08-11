@@ -8,6 +8,7 @@ import {
   SET_BLOCK_RELATIONS,
   FETCH_BLOCK_RELATIONS,
   CACHE_BLOCK_RELATIONS,
+  CLEAR_BLOCK_RELATIONS_CACHE,
 } from './constants'
 
 export function onSearchEntries(string) {
@@ -39,6 +40,12 @@ export function onClearCache() {
     dispatch({
       type: CLEAR_CACHE,
     })
+  }
+}
+
+export function onClearBlockRelationsCache() {
+  return dispatch => {
+    dispatch({ type: CLEAR_BLOCK_RELATIONS_CACHE })
   }
 }
 

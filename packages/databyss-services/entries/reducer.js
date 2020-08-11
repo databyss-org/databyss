@@ -5,6 +5,7 @@ import {
   CLEAR_CACHE,
   FETCH_BLOCK_RELATIONS,
   CACHE_BLOCK_RELATIONS,
+  CLEAR_BLOCK_RELATIONS_CACHE,
 } from './constants'
 import { ResourcePending } from '../interfaces/ResourcePending'
 
@@ -42,6 +43,12 @@ export default (state, action) => {
       return {
         ...state,
         searchCache: {},
+      }
+    }
+    case CLEAR_BLOCK_RELATIONS_CACHE: {
+      return {
+        ...state,
+        blockRelationsSearchCache: {},
       }
     }
     case FETCH_BLOCK_RELATIONS: {
