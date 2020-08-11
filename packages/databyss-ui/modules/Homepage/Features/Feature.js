@@ -24,6 +24,7 @@ const Feature = ({
   imgAlt,
   imgWidth,
   imgHeight,
+  imgMaxHeight,
   imgHasBoxShadow,
   marginX,
   alignContent,
@@ -33,6 +34,15 @@ const Feature = ({
   const isTablet = useMediaQuery(tabletBreakpoint)
   const isDesktop = useMediaQuery(desktopBreakpoint)
   const isLargeDesktop = useMediaQuery(largeDesktopBreakpoint)
+
+  const getImgMaxHeight = () => {
+    if (imgMaxHeight) {
+      return imgMaxHeight
+    }
+    return isTablet
+      ? '100%'
+      : `calc(${featureContentMaxHeight} - ${pxUnits(64)})`
+  }
 
   return (
     <View backgroundColor="background.1" mx={marginX} alignItems="center">
@@ -84,7 +94,6 @@ const Feature = ({
           justifyContent="center"
           flexBasis={isTablet ? '50%' : 'auto'}
           order={type === 'dualBg' && 1}
-          flexDirection="row"
           maxHeight={featureContentMaxHeight}
           css={{
             borderRadius: isLargeDesktop
@@ -99,11 +108,7 @@ const Feature = ({
               width={imgWidth}
               height={imgHeight}
               imgHasBoxShadow={imgHasBoxShadow}
-              maxHeight={
-                isTablet
-                  ? '100%'
-                  : `calc(${featureContentMaxHeight} - ${pxUnits(64)})`
-              }
+              maxHeight={getImgMaxHeight()}
             />
           )}
           {videoSrc && (

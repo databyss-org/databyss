@@ -1,7 +1,6 @@
 import React from 'react'
 import { borderRadius } from '@databyss-org/ui/theming/views'
 import theme from '@databyss-org/ui/theming/theme'
-import Feature from './Feature'
 
 const FeatureImg = ({
   imgSrc,
@@ -19,7 +18,7 @@ const FeatureImg = ({
         width={width}
         height={height}
         css={{
-          alignSelf: 'flex-start',
+          alignSelf: 'center',
           boxShadow: imgHasBoxShadow && theme.buttonShadow.boxShadow,
           borderRadius,
           maxWidth: '100%',
