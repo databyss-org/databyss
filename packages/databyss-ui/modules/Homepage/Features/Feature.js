@@ -44,6 +44,13 @@ const Feature = ({
       : `calc(${featureContentMaxHeight} - ${pxUnits(64)})`
   }
 
+  const formatDescriptionText = description => {
+    if (Array.isArray(description)) {
+      return description.map(text => <p>{text}</p>)
+    }
+    return description
+  }
+
   return (
     <View backgroundColor="background.1" mx={marginX} alignItems="center">
       <View
@@ -80,7 +87,7 @@ const Feature = ({
           >
             <FeatureHeading
               title={title}
-              description={description}
+              description={formatDescriptionText(description)}
               descriptionColor={type === 'dualBg' ? 'text.2' : descriptionColor}
             />
           </View>
