@@ -39,13 +39,18 @@ const StyledView = styled(View, viewStyles)
 const isAcceptableFile = item =>
   ACCEPTABLE_KINDS.includes(item.kind) && ACCEPTABLE_TYPES.includes(item.type)
 
-const humanReadableFileSize = (bytes) => {
+const humanReadableFileSize = bytes => {
   const units = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
 
   const exponent = Math.floor(Math.log(bytes) / Math.log(1000))
+  /* eslint-disable no-restricted-properties */
   const significand = (bytes / Math.pow(1000, exponent)).toFixed(1)
+  /* eslint-enable no-restricted-properties */
 
+  // non breakable space is necessary
+  /* eslint-disable no-irregular-whitespace */
   return `${significand} ${units[exponent]}B`
+  /* eslint-enable no-irregular-whitespace */
 }
 
 // component
@@ -193,7 +198,11 @@ const PDFDropZoneManager = () => {
       setDropAreaVisibility(false)
       showAlert(
         '⚠️ Unable to import file',
-        `The size of "${file.name}" (${humanReadableFileSize(file.size)}) exceeds the maximum file size currently allowed (${humanReadableFileSize(MAX_FILE_SIZE)}). Reduce the file size, or choose another document.`
+        `The size of "${file.name}" ` +
+          `(${humanReadableFileSize(file.size)}) ` +
+          `exceeds the maximum file size currently allowed ` +
+          `(${humanReadableFileSize(MAX_FILE_SIZE)}). ` +
+          `Reduce the file size, or choose another document.`
       )
       return
     }
