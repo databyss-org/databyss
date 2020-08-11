@@ -23,18 +23,26 @@ const Answer = ({ answer }) => (
   </Text>
 )
 
-const FAQ = ({
-  title,
-  description,
-  descriptionColor,
-  marginX,
-  questionsAndAnswers,
-}) => {
+const FAQ = ({ title, description, descriptionColor, questionsAndAnswers }) => {
   const isDesktop = useMediaQuery(desktopBreakpoint)
   const isTablet = useMediaQuery(tabletBreakpoint)
 
+  const getContentSpacing = () => {
+    if (isDesktop) {
+      return 'extraLarge'
+    }
+    if (isTablet) {
+      return 'large'
+    }
+    return 'none'
+  }
+
   return (
-    <View backgroundColor="background.1" mx={marginX} alignItems="center">
+    <View
+      backgroundColor="background.1"
+      mx={getContentSpacing()}
+      alignItems="center"
+    >
       <View
         flexGrow="1"
         width="100%"

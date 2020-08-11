@@ -15,7 +15,6 @@ export const featureContentMaxHeight = pxUnits(560)
 export const featureHeadingMaxWidth = pxUnits(560)
 
 const Feature = ({
-  svgImg,
   title,
   description,
   leftBgColor,
@@ -23,11 +22,13 @@ const Feature = ({
   descriptionColor,
   imgSrc,
   imgAlt,
-  imgOnRightSide,
-  noBg,
+  imgWidth,
+  imgHeight,
+  imgHasBoxShadow,
   marginX,
   alignContent,
   videoSrc,
+  type,
 }) => {
   const isTablet = useMediaQuery(tabletBreakpoint)
   const isDesktop = useMediaQuery(desktopBreakpoint)
@@ -41,20 +42,48 @@ const Feature = ({
         flexDirection={isTablet ? 'row' : 'column'}
         mb="extraLarge"
         maxWidth={
-          noBg
-            ? featureContentMaxWidth
-            : pxUnits(largeDesktopBreakpoint.minWidth)
+          type === 'dualBg'
+            ? pxUnits(largeDesktopBreakpoint.minWidth)
+            : featureContentMaxWidth
         }
       >
         <View
-          backgroundColor={noBg ? 'inherit' : leftBgColor}
+          backgroundColor={type === 'dualBg' ? rightBgColor : 'inherit'}
+          py={type === 'default' ? 'none' : 'large'}
+          flexGrow="1"
+          flexShrink="1"
+          justifyContent={alignContent}
+          order={type === 'dualBg' && 2}
+          alignItems={
+            isLargeDesktop && type === 'default' ? 'flex-end' : 'flex-start'
+          }
+          maxHeight={featureContentMaxHeight}
+          css={{
+            borderRadius: isLargeDesktop
+              ? `0 ${borderRadius} ${borderRadius} 0`
+              : '0',
+          }}
+        >
+          <View
+            justifyContent="center"
+            px={isDesktop ? 'extraLarge' : 'medium'}
+          >
+            <FeatureHeading
+              title={title}
+              description={description}
+              descriptionColor={type === 'dualBg' ? 'text.2' : descriptionColor}
+            />
+          </View>
+        </View>
+        <View
+          backgroundColor={type === 'dualBg' ? leftBgColor : 'inherit'}
           flexGrow="1"
           px={isDesktop ? 'extraLarge' : 'medium'}
-          py={noBg ? 'none' : 'large'}
+          py={type === 'dualBg' ? 'large' : 'none'}
           alignItems="center"
           justifyContent="center"
           flexBasis={isTablet ? '50%' : 'auto'}
-          order={imgOnRightSide && 2}
+          order={type === 'dualBg' && 1}
           flexDirection="row"
           maxHeight={featureContentMaxHeight}
           css={{
@@ -63,11 +92,13 @@ const Feature = ({
               : '0',
           }}
         >
-          {(imgSrc || svgImg) && (
+          {imgSrc && (
             <FeatureImg
               imgSrc={imgSrc}
               imgAlt={imgAlt}
-              svgImg={svgImg}
+              width={imgWidth}
+              height={imgHeight}
+              imgHasBoxShadow={imgHasBoxShadow}
               maxHeight={
                 isTablet
                   ? '100%'
@@ -90,34 +121,6 @@ const Feature = ({
             />
           )}
         </View>
-        <View
-          backgroundColor={noBg ? 'inherit' : rightBgColor}
-          py={noBg ? 'none' : 'large'}
-          flexGrow="1"
-          flexShrink="1"
-          justifyContent={alignContent}
-          order={imgOnRightSide && 1}
-          alignItems={
-            isLargeDesktop && imgOnRightSide ? 'flex-end' : 'flex-start'
-          }
-          maxHeight={featureContentMaxHeight}
-          css={{
-            borderRadius: isLargeDesktop
-              ? `0 ${borderRadius} ${borderRadius} 0`
-              : '0',
-          }}
-        >
-          <View
-            justifyContent="center"
-            px={isDesktop ? 'extraLarge' : 'medium'}
-          >
-            <FeatureHeading
-              title={title}
-              description={description}
-              descriptionColor={descriptionColor}
-            />
-          </View>
-        </View>
       </View>
     </View>
   )
@@ -127,6 +130,9 @@ Feature.defaultProps = {
   descriptionColor: 'text.3',
   marginX: 'none',
   alignContent: 'center',
+  type: 'default',
+  leftBgColor: 'purple.4',
+  rightBgColor: 'purple.5',
 }
 
 export default Feature

@@ -1,0 +1,93 @@
+{
+    "title": "Databyss",
+    "meta": [
+        {
+            "name": "description",
+            "content": "You research, dabble, take notes, and get lost in your thoughts. Databyss is your new word-processor."
+        }
+    ],
+    "sections": [
+        {
+            "component": "Hero",
+            "backgroundImgSrc": "/public/stone_bg.5744c9f6.jpg",
+            "logoSrc": "/public/logo_new.81b8c3b6.png",
+            "title": "Databyss",
+            "headline": "You research, dabble, experiment, take notes, and get lost in your thoughts. Databyss is your new word-processor.",
+            "buttonText": {
+                "bold": "Sign up",
+                "normal": "(for free)"
+            },
+            "buttonHref": "https://app.databyss.org/signup",
+            "navLinks": [
+                {
+                    "name": "Home",
+                    "route": "/"
+                },
+                {
+                    "name": "Sign Up",
+                    "route": "https://app.databyss.org/signup"
+                },
+                {
+                    "name": "Log in",
+                    "route": "https://app.databyss.org/"
+                }
+            ]
+        },
+        {
+            "component": "HighlightedFeature",
+            "imgSrc": "/public/promo_source_selection.22bc3c1e.png",
+            "imgAlt": "Interface of the App",
+            "imgHasBoxShadow": true,
+            "title": "The Basics",
+            "description": "Databyss gives you the freedom to organize notes hierarchically (as a long stream of thought) or to build a network of associations by linking sections of your work to sources, topics, and authors."
+        },
+        {
+            "component": "DefaultFeature",
+            "videoSrc": "/static/media/pdf_annotations.35db4f3a.mp4",
+            "title": "Import PDF Annotations",
+            "description": "Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them."
+        },
+        {
+            "component": "DualBgFeature",
+            "leftBgColor": "purple.4",
+            "rightBgColor": "purple.5",
+            "imgSrc": "/public/sources_dropdown.c86e351d.png",
+            "imgAlt": "Dropdown menu when searching for sources",
+            "title": "Add Sources",
+            "description": "To add a new source and find the bibliographical data of the text you are annotating, press @ on a new line to search using Google Books, Cross Ref, and/or Open Library."
+        },
+        {
+            "component": "DefaultFeature",
+            "imgSrc": "/public/search_feature.293865c0.png",
+            "imgAlt": "Example of a search result",
+            "imgHasBoxShadow": true,
+            "title": "Global Search",
+            "description": "Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases."
+        },
+        {
+            "component": "DualBgFeature",
+            "imgSrc": "/public/messy_notes.8e146370.jpg",
+            "imgAlt": "Messy notes",
+            "leftBgColor": "background.2",
+            "rightBgColor": "background.3",
+            "alignContent": "flex-start",
+            "title": "About Databyss",
+            "description": "Three years ago, I began reading the work of the French philosopher Jacques Derrida—commonly referred to as the father of deconstruction. I was so enamored with his writing, and felt like I was learning so much, that I wanted to make sure I took very good notes. So I began by annotating the insides of my books, appending page numbers and notes wherever I could find an empty space. As I continued reading, I started filling so many blank pages that I realized, with dismay, that it was going to be extremely hard for me to retrace my steps. How was I possibly going to remember which page it was that Derrida discussed Justice, Descartes, or the Trace?\nI decided to transcribe my notes onto a word-processor so that they would be searchable. One of the unique things about Derrida’s writing is that he will return to the same ideas in many of the texts he has written. For example, you often find him talking about Justice in a paper that isn’t specifically about Justice. I realized that if I wanted to understand what Derrida thinks about Justice, it would be quite helpful to organize my notes by concept or motif (rather than by source text). I opened up a .pages file and started creating these headings as I transcribed my notes. I ended up creating 841 motifs/concepts by the end of the process. As I transcribed my notes I would copy and paste each one into all the motifs that seemed relevant.\nI could not use Zotero or Mendeley for this type of organization because these applications place the organizing buckets, specifically the bibliographical material, in the central position. You can take notes in these apps, but notes remain encumbered within bibliographical buckets. And there is no way to read a series of notes one after the other, which was the main purpose of organizing the notes the way I did. I needed all the bibliographical information there, but I needed it hidden, so that I could streamline the process of note-taking and note-reading.\nWhen I finished reading over 100 texts by Derrida, I had written a 2500 single-spaced .pages document. I was able to search motifs/concepts by pressing open apple F, but this was very limiting. Additionally, sometimes I wanted to read the notes from a single text, but that was utterly impossible. My friend Paul solved these problems by developing the website returntocinder.com. He compiled my notes so that they could be organized by both motif and source text.\nDatabyss combines the simple yet organized style of note-taking I developed with the rendering and search capacities of returntocinder.com. As I went through the process of organizing my notes, I discovered, by way of trial and error, many helpful shorthands and stylistic efficiencies that can help other researchers. Databyss hopes to make it easy for a user to apply all the information necessary to ensure that their notes can be traced down in various ways: by motif, by source, by page number, by phrase.\n——Jake Reeder, Ph.D."
+        },
+        {
+            "component": "FAQ",
+            "title": "About Databyss",
+            "description": "Have any doubt? Here you can find the most commonly asked questions",
+            "questionsAndAnswers": [
+                {
+                    "question": "At vero eos et accusam et justo duo dolores et ea rebum?",
+                    "answer": "Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat."
+                },
+                {
+                    "question": "Ut wisi enim ad minim veniam, quis nostrud exercitation?",
+                    "answer": "At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt."
+                }
+            ]
+        }
+    ]
+}

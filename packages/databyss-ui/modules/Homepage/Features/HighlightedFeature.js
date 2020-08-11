@@ -4,6 +4,11 @@ import { borderRadius } from '@databyss-org/ui/theming/views'
 import FeatureHeading from '@databyss-org/ui/modules/Homepage/Features/FeatureHeading'
 import FeatureImg from '@databyss-org/ui/modules/Homepage/Features/FeatureImg'
 import { featureContentMaxWidth } from '@databyss-org/ui/modules/Homepage/Features/Feature'
+import { useMediaQuery } from 'react-responsive'
+import {
+  tabletBreakpoint,
+  desktopBreakpoint,
+} from '@databyss-org/ui/theming/mediaBreakpoints'
 
 const HighlightedFeature = ({
   backgroundColor,
@@ -11,48 +16,74 @@ const HighlightedFeature = ({
   description,
   imgSrc,
   imgAlt,
-  svgImg,
-  margin,
-  children,
+  imgWidth,
+  imgHeight,
+  imgMaxHeight,
   videoSrc,
-}) => (
-  <View backgroundColor="background.1" m={margin} mb="none" alignItems="center">
+}) => {
+  const isTablet = useMediaQuery(tabletBreakpoint)
+  const isDesktop = useMediaQuery(desktopBreakpoint)
+
+  const getContentSpacing = () => {
+    if (isDesktop) {
+      return 'extraLarge'
+    }
+    if (isTablet) {
+      return 'large'
+    }
+    return 'none'
+  }
+
+  return (
     <View
-      backgroundColor={backgroundColor}
-      p="large"
-      mb="extraLarge"
+      backgroundColor="background.1"
+      m={getContentSpacing()}
+      mb="none"
       alignItems="center"
-      maxWidth={featureContentMaxWidth}
-      width="100%"
-      css={{ borderRadius }}
     >
-      <View widthVariant="modal" alignItems="center">
-        <FeatureHeading
-          textAlign="center"
-          title={title}
-          description={description}
-        />
-        {children || (
-          <FeatureImg imgSrc={imgSrc} imgAlt={imgAlt} svgImg={svgImg} />
-        )}
-        {videoSrc && (
-          <video
-            src={videoSrc}
-            width="100%"
-            height="100%"
-            autoPlay
-            loop
-            muted
-            preload="auto"
-            css={{
-              borderRadius,
-            }}
+      <View
+        backgroundColor={backgroundColor}
+        p="large"
+        mb="extraLarge"
+        alignItems="center"
+        maxWidth={featureContentMaxWidth}
+        width="100%"
+        css={{ borderRadius }}
+      >
+        <View widthVariant="modal" alignItems="center">
+          <FeatureHeading
+            textAlign="center"
+            title={title}
+            description={description}
           />
-        )}
+          {imgSrc && (
+            <FeatureImg
+              imgSrc={imgSrc}
+              imgAlt={imgAlt}
+              maxHeight={imgMaxHeight}
+              width={imgWidth}
+              height={imgHeight}
+            />
+          )}
+          {videoSrc && (
+            <video
+              src={videoSrc}
+              width="100%"
+              height="100%"
+              autoPlay
+              loop
+              muted
+              preload="auto"
+              css={{
+                borderRadius,
+              }}
+            />
+          )}
+        </View>
       </View>
     </View>
-  </View>
-)
+  )
+}
 
 HighlightedFeature.defaultProps = {
   margin: 'large',
