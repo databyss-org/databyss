@@ -12,7 +12,7 @@ import { isAtomicInlineType } from '../lib/util'
 import { slateSelectionToStateSelection } from '../lib/slateUtils'
 import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
-import CitationsMenu from './CitationsMenu'
+import { SuggestMenu, GoogleBooks } from './Suggest'
 
 const SPELLCHECK_DEBOUNCE_TIME = 1000
 
