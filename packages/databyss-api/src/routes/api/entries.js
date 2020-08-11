@@ -17,12 +17,13 @@ const router = express.Router()
 router.post(
   '/relations/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
-  wrap(async (req, res, _next) => {
+  wrap(async (req, res) => {
     const relationshipArray = req.body.data
     for (const relationship of relationshipArray) {
       await addRelationships(relationship, req)
     }
-    return res.status(200)
+
+    return res.status(200).end()
   })
 )
 
