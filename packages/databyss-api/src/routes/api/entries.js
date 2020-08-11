@@ -54,8 +54,10 @@ router.get(
       })
     )
 
-    // TODO: SORT results
-    // TODO: only show results attached to a page, results may have been deleted
+    // sort according to block index
+    results.sort(
+      (a, b) => (a.relatedTo.blockIndex > b.relatedTo.blockIndex ? 1 : -1)
+    )
 
     if (results) {
       let _results = {

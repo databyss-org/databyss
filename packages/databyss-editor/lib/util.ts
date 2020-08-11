@@ -11,17 +11,6 @@ type CurrentAtomics = {
   [BlockType.Topic]: Block | null
 }
 
-// {
-//   blockId: block._id,
-//   relatedBlockId: value._id,
-//   blockText: block.text,
-//   relation: {
-//     type: 'HEADING',
-//     pageHeader,
-//     blockIndex: index,
-//   },
-// }
-
 type BlockRelations = {
   blockId: string
   relatedBlockId: string
