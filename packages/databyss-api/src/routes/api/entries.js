@@ -46,7 +46,7 @@ router.get(
       results.map(async r => {
         // get page where entry is found
         const _page = await Page.findOne({
-          blocks: { $in: [{ _id: r.blockId, type: 'ENTRY' }] },
+          'blocks._id': r.blockId,
           account: req.account._id,
         })
 
@@ -129,7 +129,7 @@ router.post(
         results.map(async r => {
           // get page where entry is found
           const _page = await Page.findOne({
-            blocks: { $in: [{ _id: r._id, type: 'ENTRY' }] },
+            'blocks._id': r._id,
             account: req.account._id,
           })
 

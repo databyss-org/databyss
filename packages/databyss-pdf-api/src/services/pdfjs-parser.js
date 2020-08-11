@@ -1,0 +1,142 @@
+/* eslint no-use-before-define: ["error", { "functions": false }] */
+
+const pdfjs = require('pdfjs-dist/es5/build/pdf.js')
+
+let numPages = 0
+let allPagesData = []
+
+// public api
+export async function parse(path) {
+  let pdf
+
+  try {
+    pdf = await loadPDF(path)
+  } catch (error) {
+    return Promise.reject(error)
+  }
+
+  numPages = pdf.numPages
+
+  try {
+    await getAllPages(pdf)
+  } catch (error) {
+    return Promise.reject(error)
+  }
+
+  try {
+    await getAllAnnotations()
+  } catch (error) {
+    return Promise.reject(error)
+  }
+
+  return Promise.resolve(prepareResponse())
+}
+
+// private methods
+function loadPDF(path) {
+  return new Promise((resolve, reject) => {
+    const loadingTask = pdfjs.getDocument(path)
+    loadingTask.promise.then(pdf => resolve(pdf)).catch(reject)
+  })
+}
+
+function getAllPages(pdf) {
+  allPagesData.length = 0
+  allPagesData = []
+
+  return new Promise((resolve, reject) => {
+    const allPromises = []
+    /* eslint-disable no-plusplus */
+    for (let i = 0; i < numPages; i++) {
+      const pageNumber = i + 1 // note: pages are 1-based
+      /* eslint-disable no-loop-func */
+      const page = pdf
+        .getPage(pageNumber)
+        .then(pageContent => {
+          allPagesData.push({
+            data: pageContent,
+            pageNumber: pageContent.pageNumber,
+          })
+        })
+        .catch(reject)
+      /* eslint-enable no-loop-func */
+      allPromises.push(page)
+    }
+    /* eslint-enable no-plusplus */
+    Promise.all(allPromises)
+      .then(() => {
+        allPagesData.sort(sortByPageNumber)
+        resolve(allPagesData)
+      })
+      .catch(reject)
+  })
+}
+
+function getAllAnnotations() {
+  return new Promise((resolve, reject) => {
+    const allPromises = []
+    allPagesData.forEach(page => {
+      const { data } = page
+      const annotationPromise = data
+        .getAnnotations('print')
+        .then(annotations => {
+          page.numAnnotations = annotations.length
+          page.annotations = []
+          if (page.numAnnotations) {
+            annotations.forEach(annotation => {
+              page.annotations.push(parseAnnotation(annotation))
+            })
+          }
+        })
+        .catch(reject)
+      allPromises.push(annotationPromise)
+    })
+    Promise.all(allPromises)
+      .then(() => resolve(allPagesData))
+      .catch(reject)
+  })
+}
+
+function parseAnnotation(data) {
+  const response = {
+    data,
+    id: data.id,
+    type: data.subtype,
+    author: data.title,
+    contents: data.contents,
+  }
+
+  if (data.parentId) {
+    response.parentId = data.parentId
+  }
+
+  return response
+}
+
+function prepareResponse() {
+  const allAnnotations = []
+
+  // get annotations from page data
+  allPagesData.forEach(pageData => {
+    allAnnotations.push(...pageData.annotations)
+  })
+
+  // clone to ensure not to touch raw data
+  const response = allAnnotations.slice()
+  response.forEach(annotation => {
+    // remove superfluous property
+    delete annotation.data
+  })
+
+  return response
+}
+
+function sortByPageNumber(a, b) {
+  if (a.pageNumber < b.pageNumber) {
+    return -1
+  }
+  if (a.pageNumber > b.pageNumber) {
+    return 1
+  }
+  return 0
+}

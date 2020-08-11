@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import { Block, PageHeader } from '@databyss-org/services/interfaces/'
+import { Block } from '@databyss-org/services/interfaces/'
+import { PageHeader } from '@databyss-org/services/interfaces/Page'
 import { stateBlockToHtmlHeader } from '@databyss-org/editor/lib/slateUtils.js'
 import { BlockType, Selection, EditorState, Text } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
@@ -11,7 +12,7 @@ type CurrentAtomics = {
   [BlockType.Topic]: Block | null
 }
 
-type BlockRelations = {
+export type BlockRelations = {
   blockId: string
   relatedBlockId: string
   blockText: Text
@@ -22,6 +23,11 @@ type BlockRelations = {
     pageHeader: PageHeader
     blockIndex: number
   }
+}
+
+export type PagePath = {
+  path: string[]
+  blockRelations: BlockRelations[]
 }
 
 export const splice = (src, idx, rem, str) =>
@@ -45,6 +51,28 @@ export const isAtomicInlineType = (type: BlockType) => {
 export const isAtomic = (block: Block) => isAtomicInlineType(block.type)
 export const isEmpty = (block: Block) => block.text.textValue.length === 0
 
+const composeBlockRelation = (
+  currentBlock: Block,
+  atomicBlock: Block,
+  pageHeader: PageHeader
+): BlockRelations => {
+  const _blockRelation: BlockRelations = {
+    blockId: currentBlock._id,
+    relatedBlockId: atomicBlock._id,
+    blockText: currentBlock.text,
+    relatedTo: {
+      _id: currentBlock._id,
+      relationshipType: 'HEADING',
+      blockType: atomicBlock.type,
+      pageHeader,
+      // replace these properties upstream
+      blockIndex: 0,
+    },
+  }
+
+  return _blockRelation
+}
+
 // returns an array of indicies covered by selection
 export const getSelectedIndicies = (selection: Selection) =>
   _.range(selection.anchor.index, selection.focus.index + 1)
@@ -61,16 +89,21 @@ const getBlockPrefix = (type: string): string =>
     TOPIC: '#',
   }[type])
 
-export const getPagePath = (page: EditorState): string[] => {
+export const getPagePath = (
+  page: EditorState,
+  pageHeader: PageHeader | null
+): PagePath => {
   if (!page) {
-    return []
+    return { path: [], blockRelations: [] }
   }
 
-  // TODO: bail on seleciton not being collapsed
   const _index = page.selection.anchor.index
 
+  const _currentBlock = page.blocks[_index]
+  const _blockRelations: BlockRelations[] = []
+
   // trim blocks to remove content after anchor
-  let _blocks = [...page.blocks].reverse()
+  const _blocks = [...page.blocks].reverse()
   _blocks.splice(0, _blocks.length - 1 - _index)
 
   const findPath = (
@@ -91,6 +124,19 @@ export const getPagePath = (page: EditorState): string[] => {
           const type = getClosureType(_block.type)
           // if not a closure block push to array
           if (!type) {
+            // get block relations if current block is not atomic
+            if (pageHeader && !isAtomicInlineType(_currentBlock.type)) {
+              const _relation = composeBlockRelation(
+                _currentBlock,
+                _block,
+                pageHeader
+              )
+              _relation.relatedTo.blockIndex = _index
+              // push to block relations
+              _blockRelations.push(_relation)
+            }
+
+            // add to current atomic
             _currentAtomics.push(_block)
           } else {
             // if closure exist, create a block placeholder
@@ -107,7 +153,6 @@ export const getPagePath = (page: EditorState): string[] => {
   const _path: string[] = []
 
   _currentAtomics.reverse().forEach(_block => {
-    //   console.log(_block.type)
     if (!_block.closed) {
       _path.push(
         `${getBlockPrefix(_block.type)} ${stateBlockToHtmlHeader(_block)}`
@@ -115,7 +160,9 @@ export const getPagePath = (page: EditorState): string[] => {
     }
   })
 
-  return _path
+  // todo: optomize this
+  console.log(_blockRelations)
+  return { path: _path, blockRelations: _blockRelations }
 }
 
 export const indexPage = ({
@@ -125,7 +172,7 @@ export const indexPage = ({
   pageHeader: PageHeader | null
   blocks: Block[]
 }): BlockRelations[] => {
-  const currentAtomics = {
+  const currentAtomics: CurrentAtomics = {
     [BlockType.Source]: null,
     [BlockType.Topic]: null,
   }
@@ -164,6 +211,5 @@ export const indexPage = ({
     })
   }
 
-  console.log(blockRelations)
   return blockRelations
 }

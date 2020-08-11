@@ -3,6 +3,9 @@ import React, {
   useContext,
   forwardRef,
   useImperativeHandle,
+  useState,
+  useRef,
+  useEffect,
 } from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import createReducer from '@databyss-org/services/lib/createReducer'
@@ -24,10 +27,10 @@ import {
   REDO,
   REMOVE_AT_SELECTION,
 } from './constants'
-import { Text, Selection, EditorState } from '../interfaces'
+import { Text, Selection, EditorState, Block } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
-import { getPagePath, indexPage } from '../lib/util'
+import { getPagePath, indexPage, PagePath, BlockRelations } from '../lib/util'
 import {
   cutOrCopyEventHandler,
   pasteEventHandler,
@@ -67,6 +70,7 @@ type ContextType = {
   cut: (event: ClipboardEvent) => void
   paste: (event: ClipboardEvent) => void
   onBlockRelationsChange: () => void
+  insert: (blocks: Block[]) => void
 }
 
 export type OnChangeArgs = {
@@ -81,7 +85,7 @@ export type OnChangeArgs = {
 export interface EditorRef {
   undo: (patches: Patch[]) => void
   redo: (patches: Patch[]) => void
-  pagePath: string[]
+  pagePath: PagePath
 }
 
 type PropsType = {
@@ -114,16 +118,41 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       _pageHeader = pages[state.pageHeader._id]
     }
 
+    /*
+    get the page and block relations at current index
+    */
+
+    const pagePathRef = useRef(getPagePath(state, _pageHeader))
+    const stateRef = useRef(state)
+    stateRef.current = state
+
+    useEffect(
+      () => {
+        setTimeout(() => {
+          pagePathRef.current = getPagePath(stateRef.current, _pageHeader)
+        }, 100)
+      },
+      [JSON.stringify(state.selection.anchor)]
+    )
+
     // this should be run if number of blocks changes
     // or when an atomic is created or removed
     // or clipboard or history action
-    const onBlockRelationsChange = () => {
+    const onBlockRelationsChange = (
+      currentBlockRelations: BlockRelations[] | void
+    ) => {
       if (setBlockRelations) {
-        setTimeout(() => {
-          setBlockRelations(
-            indexPage({ pageHeader: _pageHeader, blocks: state.blocks })
-          )
-        }, 100)
+        // when indexing the whole page
+        if (!currentBlockRelations) {
+          setTimeout(() => {
+            setBlockRelations(
+              indexPage({ pageHeader: _pageHeader, blocks: state.blocks })
+            )
+          }, 100)
+        } else {
+          // if block relations are passed, push relations upstream
+          setBlockRelations(currentBlockRelations)
+        }
       }
     }
 
@@ -142,9 +171,9 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
             payload: { patches },
           })
         },
-        pagePath: getPagePath(state),
+        pagePath: pagePathRef.current,
       }),
-      [JSON.stringify(state.selection)]
+      [pagePathRef.current]
     )
 
     const setSelection = (selection: Selection) =>
@@ -179,11 +208,14 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     /**
      * Set block content at `index` to `text`
      */
-    const setContent = (transformArray: TransformArray): void =>
+    const setContent = (transformArray: TransformArray): void => {
+      // recalculate block relations
+      onBlockRelationsChange(pagePathRef.current.blockRelations)
       dispatch({
         type: SET_CONTENT,
         payload: transformArray,
       })
+    }
 
     /**
      * Remove the block at `index`
@@ -241,16 +273,20 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       })
     }
 
+    const insert = (blocks: Block[]) => {
+      dispatch({
+        type: PASTE,
+        payload: {
+          data: blocks,
+        },
+      })
+    }
+
     const paste = (e: ClipboardEvent) => {
       onBlockRelationsChange()
       const data = pasteEventHandler(e)
       if (data) {
-        dispatch({
-          type: PASTE,
-          payload: {
-            data,
-          },
-        })
+        insert(data)
       }
     }
 
@@ -260,6 +296,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           state,
           copy,
           cut,
+          insert,
           paste,
           setSelection,
           setContent,
