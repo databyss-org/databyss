@@ -26,7 +26,7 @@ const PageSticky = ({ pagePath, pageId }) => {
 
   const pages = getPages()
   // get page title
-  if (pages[pageId].name) {
+  if (pages && pages[pageId].name) {
     currentPath.push(pages[pageId].name)
   }
 
