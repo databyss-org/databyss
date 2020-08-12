@@ -6,10 +6,7 @@ import {
   featureContentMaxWidth,
   featureHeadingMaxWidth,
 } from '@databyss-org/ui/modules/Homepage/Features/Feature'
-import {
-  desktopBreakpoint,
-  tabletBreakpoint,
-} from '@databyss-org/ui/theming/mediaBreakpoints'
+import breakpoints from '@databyss-org/ui/theming/responsive'
 
 const Question = ({ question }) => (
   <Text variant="uiTextLargeSemibold" color="text.1" mb="em">
@@ -24,8 +21,8 @@ const Answer = ({ answer }) => (
 )
 
 const FAQ = ({ title, description, descriptionColor, questionsAndAnswers }) => {
-  const isDesktop = useMediaQuery(desktopBreakpoint)
-  const isTablet = useMediaQuery(tabletBreakpoint)
+  const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
+  const isDesktop = useMediaQuery({ minWidth: breakpoints.desktop })
 
   const getContentSpacing = () => {
     if (isDesktop) {

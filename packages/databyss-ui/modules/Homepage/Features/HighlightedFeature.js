@@ -5,10 +5,7 @@ import FeatureHeading from '@databyss-org/ui/modules/Homepage/Features/FeatureHe
 import FeatureImg from '@databyss-org/ui/modules/Homepage/Features/FeatureImg'
 import { featureContentMaxWidth } from '@databyss-org/ui/modules/Homepage/Features/Feature'
 import { useMediaQuery } from 'react-responsive'
-import {
-  tabletBreakpoint,
-  desktopBreakpoint,
-} from '@databyss-org/ui/theming/mediaBreakpoints'
+import breakpoints from '@databyss-org/ui/theming/responsive'
 
 const HighlightedFeature = ({
   backgroundColor,
@@ -21,8 +18,8 @@ const HighlightedFeature = ({
   imgMaxHeight,
   videoSrc,
 }) => {
-  const isTablet = useMediaQuery(tabletBreakpoint)
-  const isDesktop = useMediaQuery(desktopBreakpoint)
+  const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
+  const isDesktop = useMediaQuery({ minWidth: breakpoints.desktop })
 
   const getContentSpacing = () => {
     if (isDesktop) {

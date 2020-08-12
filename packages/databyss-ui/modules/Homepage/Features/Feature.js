@@ -3,11 +3,7 @@ import { View } from '@databyss-org/ui/primitives'
 import FeatureHeading from '@databyss-org/ui/modules/Homepage/Features/FeatureHeading'
 import FeatureImg from '@databyss-org/ui/modules/Homepage/Features/FeatureImg'
 import { useMediaQuery } from 'react-responsive'
-import {
-  tabletBreakpoint,
-  desktopBreakpoint,
-  largeDesktopBreakpoint,
-} from '@databyss-org/ui/theming/mediaBreakpoints'
+import breakpoints from '@databyss-org/ui/theming/responsive'
 import { pxUnits, borderRadius } from '@databyss-org/ui/theming/views'
 
 export const featureContentMaxWidth = pxUnits(1200)
@@ -31,9 +27,9 @@ const Feature = ({
   videoSrc,
   type,
 }) => {
-  const isTablet = useMediaQuery(tabletBreakpoint)
-  const isDesktop = useMediaQuery(desktopBreakpoint)
-  const isLargeDesktop = useMediaQuery(largeDesktopBreakpoint)
+  const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
+  const isDesktop = useMediaQuery({ minWidth: breakpoints.desktop })
+  const isLargeDesktop = useMediaQuery({ minWidth: breakpoints.largeDesktop })
 
   const getImgMaxHeight = () => {
     if (imgMaxHeight) {
@@ -59,9 +55,7 @@ const Feature = ({
         flexDirection={isTablet ? 'row' : 'column'}
         mb="extraLarge"
         maxWidth={
-          type === 'dualBg'
-            ? pxUnits(largeDesktopBreakpoint.minWidth)
-            : featureContentMaxWidth
+          type === 'dualBg' ? breakpoints.largeDesktop : featureContentMaxWidth
         }
       >
         <View

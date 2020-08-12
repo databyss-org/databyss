@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, Button } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import { tabletBreakpoint } from '@databyss-org/ui/theming/mediaBreakpoints'
+import breakpoints from '@databyss-org/ui/theming/responsive'
 import { useMediaQuery } from 'react-responsive'
 import Navbar from '@databyss-org/ui/modules/Homepage/Hero/Navbar'
 
@@ -15,7 +15,7 @@ const Hero = ({
   backgroundColor,
   navLinks,
 }) => {
-  const isTablet = useMediaQuery(tabletBreakpoint)
+  const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
 
   return (
     <View
