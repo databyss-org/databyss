@@ -54,78 +54,80 @@ const Feature = ({
         width="100%"
         flexDirection={isTablet ? 'row' : 'column'}
         mb="extraLarge"
-        maxWidth={
-          type === 'dualBg' ? breakpoints.largeDesktop : featureContentMaxWidth
-        }
+        maxWidth={type === 'dualBg' ? 'none' : featureContentMaxWidth}
       >
         <View
           backgroundColor={type === 'dualBg' ? rightBgColor : 'inherit'}
-          py={type === 'default' ? 'none' : 'large'}
-          flexGrow="1"
-          flexShrink="1"
-          justifyContent={alignContent}
+          width={isTablet ? '50%' : '100%'}
           order={type === 'dualBg' && 2}
-          alignItems={
-            isLargeDesktop && type === 'default' ? 'flex-end' : 'flex-start'
-          }
-          maxHeight={featureContentMaxHeight}
-          css={{
-            borderRadius: isLargeDesktop
-              ? `0 ${borderRadius} ${borderRadius} 0`
-              : '0',
-          }}
         >
           <View
-            justifyContent="center"
-            px={isDesktop ? 'extraLarge' : 'medium'}
+            backgroundColor={type === 'dualBg' ? rightBgColor : 'inherit'}
+            py={type === 'default' ? 'none' : 'large'}
+            flexGrow="1"
+            flexShrink="1"
+            justifyContent={alignContent}
+            alignItems={
+              isLargeDesktop && type === 'default' ? 'flex-end' : 'flex-start'
+            }
+            maxHeight={featureContentMaxHeight}
+            maxWidth={`calc(${featureContentMaxWidth} / 2)`}
           >
-            <FeatureHeading
-              title={title}
-              description={formatDescriptionText(description)}
-              descriptionColor={type === 'dualBg' ? 'text.2' : descriptionColor}
-            />
+            <View
+              justifyContent="center"
+              px={isDesktop ? 'extraLarge' : 'medium'}
+            >
+              <FeatureHeading
+                title={title}
+                description={formatDescriptionText(description)}
+                descriptionColor={
+                  type === 'dualBg' ? 'text.2' : descriptionColor
+                }
+              />
+            </View>
           </View>
         </View>
         <View
           backgroundColor={type === 'dualBg' ? leftBgColor : 'inherit'}
-          flexGrow="1"
-          px={isDesktop ? 'extraLarge' : 'medium'}
-          py={type === 'dualBg' ? 'large' : 'none'}
-          alignItems="center"
-          justifyContent="center"
-          flexBasis={isTablet ? '50%' : 'auto'}
+          width={isTablet ? '50%' : '100%'}
           order={type === 'dualBg' && 1}
-          maxHeight={featureContentMaxHeight}
-          css={{
-            borderRadius: isLargeDesktop
-              ? `${borderRadius} 0 0 ${borderRadius}`
-              : '0',
-          }}
+          alignItems={isTablet ? 'flex-end' : 'center'}
         >
-          {imgSrc && (
-            <FeatureImg
-              imgSrc={imgSrc}
-              imgAlt={imgAlt}
-              width={imgWidth}
-              height={imgHeight}
-              imgHasBoxShadow={imgHasBoxShadow}
-              maxHeight={getImgMaxHeight()}
-            />
-          )}
-          {videoSrc && (
-            <video
-              src={videoSrc}
-              width="100%"
-              height="100%"
-              autoPlay
-              loop
-              muted
-              preload="auto"
-              css={{
-                borderRadius,
-              }}
-            />
-          )}
+          <View
+            flexGrow="1"
+            px={isDesktop ? 'extraLarge' : 'medium'}
+            py={type === 'dualBg' ? 'large' : 'none'}
+            alignItems="center"
+            justifyContent="center"
+            flexBasis={isTablet ? '50%' : 'auto'}
+            maxHeight={featureContentMaxHeight}
+            maxWidth={`calc(${featureContentMaxWidth} / 2)`}
+          >
+            {imgSrc && (
+              <FeatureImg
+                imgSrc={imgSrc}
+                imgAlt={imgAlt}
+                width={imgWidth}
+                height={imgHeight}
+                imgHasBoxShadow={imgHasBoxShadow}
+                maxHeight={getImgMaxHeight()}
+              />
+            )}
+            {videoSrc && (
+              <video
+                src={videoSrc}
+                width="100%"
+                height="100%"
+                autoPlay
+                loop
+                muted
+                preload="auto"
+                css={{
+                  borderRadius,
+                }}
+              />
+            )}
+          </View>
         </View>
       </View>
     </View>
