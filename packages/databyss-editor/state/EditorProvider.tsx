@@ -111,7 +111,10 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
 
     const getPages = usePageContext(c => c && c.getPages)
 
-    const pages = getPages && getPages()
+    let pages
+    if (getPages) {
+      pages = getPages()
+    }
 
     let _pageHeader: PageHeader | null = null
     // get page title
