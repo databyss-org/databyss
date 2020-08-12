@@ -5,11 +5,13 @@ import {
   createIndexPageEntries,
 } from '@databyss-org/services/entries/util'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import IndexPageContent from '../PageContent/IndexPageContent'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 
 const AuthorCitations = () => {
+  const { navigate } = useNavigationContext()
   const { query } = useParams()
   const params = new URLSearchParams(query)
   const authorQueryFirstName = params.get('author_first')
@@ -46,6 +48,7 @@ const AuthorCitations = () => {
 
             if (isCurrentAuthor) {
               return createIndexPageEntries({
+                id: value._id,
                 text: value.text.textValue,
                 citations: value.detail?.citations?.map(
                   citation => citation.text?.textValue
@@ -62,11 +65,16 @@ const AuthorCitations = () => {
           'text'
         )
 
+        const onCitationClick = c => {
+          navigate(`/sources/citations/${c.id}`)
+        }
+
         return (
           <IndexPageContent
             title={composeAuthorName(authorQueryFirstName, authorQueryLastName)}
           >
             <IndexPageEntries
+              onClick={onCitationClick}
               entries={sortedAuthorCitations}
               icon={<SourceSvg />}
             />
