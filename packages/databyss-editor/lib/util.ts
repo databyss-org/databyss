@@ -164,8 +164,6 @@ export const getPagePath = (
     }
   })
 
-  // todo: optomize this
-  console.log(_blockRelations)
   return { path: _path, blockRelations: _blockRelations }
 }
 
