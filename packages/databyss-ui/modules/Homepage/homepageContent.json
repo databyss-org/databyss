@@ -12,17 +12,13 @@
             "backgroundImgSrc": "/homepage/stone_bg.jpg",
             "logoSrc": "/homepage/logo_new.png",
             "title": "Databyss",
-            "headline": "You research, dabble, experiment, take notes, and get lost in your thoughts. Databyss is your new word-processor.",
+            "headline": "You research, dabble, take notes, and get lost in your thoughts. Databyss is your new word-processor.",
             "buttonText": {
                 "bold": "Sign up",
                 "normal": "(for free)"
             },
             "buttonHref": "https://app.databyss.org/signup",
             "navLinks": [
-                {
-                    "name": "Home",
-                    "route": "/"
-                },
                 {
                     "name": "Sign Up",
                     "route": "https://app.databyss.org/signup"
@@ -43,7 +39,7 @@
         },
         {
             "component": "DefaultFeature",
-            "videoSrc": "/static/media/pdf_annotations.mp4",
+            "videoSrc": "/homepage/pdf_annotations.mp4",
             "title": "Import PDF Annotations",
             "description": "Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them."
         },

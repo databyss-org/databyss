@@ -25,11 +25,9 @@ const Public = props => (
         <View mr="small">
           <img width={pxUnits(26)} src="/homepage/logo_new.png" alt="Logo" />
         </View>
-        {/* <View flexGrow={0}> */}
         <Text variant="uiTextMediumSemibold" color="text.1">
           Databyss
         </Text>
-        {/* </View> */}
       </Button>
     </Grid>
     <Login {...props} />

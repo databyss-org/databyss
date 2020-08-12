@@ -7,7 +7,7 @@ import FAQ from '@databyss-org/ui/modules/Homepage/FAQ/FAQ'
 import homepageContent from '@databyss-org/ui/modules/Homepage/homepageContent.json'
 
 const Homepage = () => (
-  <View minHeight="100vh" width="100%">
+  <View minHeight="100vh" width="100%" backgroundColor="background.1">
     {homepageContent.sections.map(section => {
       if (section.component === 'Hero') {
         return (
