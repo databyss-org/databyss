@@ -12,8 +12,11 @@ import IndexPageEntries from '../PageContent/IndexPageEntries'
 
 const AuthorCitations = () => {
   const { navigate } = useNavigationContext()
+  // replace this
   const { query } = useParams()
   const params = new URLSearchParams(query)
+  console.log(params)
+  // to here
   const authorQueryFirstName = params.get('author_first')
   const authorQueryLastName = params.get('author_last')
 

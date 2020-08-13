@@ -647,6 +647,7 @@ export default (
       nextState,
       patches,
       inversePatches,
+      type: action.type,
       undoAction: action.type === UNDO,
       redoAction: action.type === REDO,
     })

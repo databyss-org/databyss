@@ -135,6 +135,7 @@ export const getPagePath = (
                 _block,
                 pageHeader
               )
+
               _relation.relatedTo.blockIndex = _index
               // push to block relations
               _blockRelations.push(_relation)

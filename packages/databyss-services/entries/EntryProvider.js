@@ -41,6 +41,8 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     dispatch(onClearCache())
   }
 
+  // TODO: accumulate and debounce
+  // TODO: block relations should have an id for source name and page name in order to not have to update the block relations in the editor provider
   const setBlockRelations = blockRelationsArray => {
     dispatch(onSetBlockRelations(blockRelationsArray))
   }
