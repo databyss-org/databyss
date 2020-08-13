@@ -1,11 +1,9 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useParams } from '@reach/router'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import {
   BlockRelationsLoader,
   SourceCitationsLoader,
 } from '@databyss-org/ui/components/Loaders'
-import { Text, View, BaseControl, Icon } from '@databyss-org/ui/primitives'
 import IndexPageContent from '../PageContent/IndexPageContent'
 import IndexSourceContent from './IndexSourceContent'
 

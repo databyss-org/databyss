@@ -39,10 +39,10 @@ const AuthorsContent = () => {
             const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
 
             const onAuthorClick = i => {
-              const _url = `author_first=${
+              const _url = `firstName=${
                 i.name.firstName ? i.name.firstName.textValue : ''
-              }&author_last=${i.name.lastName ? i.name.lastName.textValue : ''}`
-              navigate(`/sources/${_url}`)
+              }&lastName=${i.name.lastName ? i.name.lastName.textValue : ''}`
+              navigate(`/sources?${_url}`)
             }
 
             return (

@@ -10,15 +10,12 @@ import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import IndexPageContent from '../PageContent/IndexPageContent'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 
-const AuthorCitations = () => {
+const AuthorCitations = ({ _query }) => {
   const { navigate } = useNavigationContext()
-  // replace this
-  const { query } = useParams()
-  const params = new URLSearchParams(query)
-  console.log(params)
-  // to here
-  const authorQueryFirstName = params.get('author_first')
-  const authorQueryLastName = params.get('author_last')
+  const { firstName, lastName } = _query
+
+  const authorQueryFirstName = firstName
+  const authorQueryLastName = lastName
 
   const composeAuthorName = (firstName, lastName) => {
     if (firstName && lastName) {
@@ -69,7 +66,7 @@ const AuthorCitations = () => {
         )
 
         const onCitationClick = c => {
-          navigate(`/sources/citations/${c.id}`)
+          navigate(`/sources/${c.id}`)
         }
 
         return (

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Router } from '@reach/router'
+import { Router, useLocation } from '@reach/router'
 import {
   sortEntriesAtoZ,
   createIndexPageEntries,
@@ -20,13 +20,14 @@ import IndexPageContent from '../PageContent/IndexPageContent'
 export const SourcesRouter = () => (
   <Router>
     <SourcesContent path="/" />
-    <SourcesCitations path="/citations/:query" />
+    <SourcesCitations path="/:query" />
     <AuthorsContent path="/authors" />
-    <AuthorCitations path=":query" />
   </Router>
 )
 
 const SourcesContentBody = (sourceCitations, navigate) => {
+  // const location = useLocation()
+  // console.log(location)
   const sourcesData = Object.values(sourceCitations).map(value =>
     createIndexPageEntries({
       id: value._id,
@@ -41,7 +42,7 @@ const SourcesContentBody = (sourceCitations, navigate) => {
   const sortedSources = sortEntriesAtoZ(sourcesData, 'text')
 
   const onSourceClick = source => {
-    navigate(`sources/citations/${source.id}`)
+    navigate(`sources/${source.id}`)
   }
 
   return (
@@ -57,6 +58,14 @@ const SourcesContentBody = (sourceCitations, navigate) => {
 
 const SourcesContent = () => {
   const navigate = useNavigationContext(c => c.navigate)
+
+  const getQueryParams = useNavigationContext(c => c.getQueryParams)
+
+  // if author is provided in the url `.../sources?firstName=''&lastName='' render authors
+  const _queryParams = getQueryParams()
+  if (Object.keys(_queryParams).length) {
+    return <AuthorCitations _query={_queryParams} />
+  }
   return (
     <SourceCitationsLoader>
       {source => SourcesContentBody(source, navigate)}
