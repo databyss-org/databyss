@@ -1,5 +1,5 @@
 import React from 'react'
-import { Router, useLocation } from '@reach/router'
+import { Router } from '@reach/router'
 import {
   sortEntriesAtoZ,
   createIndexPageEntries,

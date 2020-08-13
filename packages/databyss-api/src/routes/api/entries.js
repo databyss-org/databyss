@@ -18,9 +18,19 @@ router.post(
   '/relations/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   wrap(async (req, res) => {
-    const relationshipArray = req.body.data
-    for (const relationship of relationshipArray) {
-      await addRelationships(relationship, req)
+    const { blocksRelationArray, clearPageRelationships } = req.body.data
+
+    // clear all block relationships associated to page id
+    if (clearPageRelationships) {
+      await BlockRelations.deleteMany({
+        'relatedTo.pageHeader._id': clearPageRelationships,
+        accountId: req.account._id,
+      })
+    }
+    if (blocksRelationArray.length) {
+      for (const relationship of blocksRelationArray) {
+        await addRelationships(relationship, req)
+      }
     }
 
     return res.status(200).end()

@@ -49,22 +49,17 @@ export function onClearBlockRelationsCache() {
   }
 }
 
-export function onSetBlockRelations(blocksRelationArray) {
+export function onSetBlockRelations(blocksRelation) {
   return async dispatch => {
     dispatch({
       type: SET_BLOCK_RELATIONS,
-      payload: { data: blocksRelationArray },
+      payload: { data: blocksRelation },
     })
-    if (blocksRelationArray.length > 0) {
-      entries.setBlockRelations(blocksRelationArray)
-    }
-
-    // .then(res => {
-    //   dispatch({
-    //     type: CACHE_ENTRY_RESULTS,
-    //     payload: { results: res, query: string },
-    //   })
-    // })
+    if (
+      blocksRelation.blocksRelationArray.length > 0 ||
+      blocksRelation.clearPageRelationships
+    )
+      entries.setBlockRelations(blocksRelation)
   }
 }
 

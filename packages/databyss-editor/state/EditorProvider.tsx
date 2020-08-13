@@ -29,7 +29,7 @@ import {
 import { Text, Selection, EditorState, Block } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
-import { getPagePath, indexPage, PagePath, BlockRelations } from '../lib/util'
+import { getPagePath, indexPage, PagePath } from '../lib/util'
 import {
   cutOrCopyEventHandler,
   pasteEventHandler,
@@ -104,6 +104,7 @@ const isSetBlockRelations = [
   CUT,
   COPY,
   PASTE,
+  DEQUEUE_NEW_ENTITY,
 ]
 
 export const EditorContext = createContext<ContextType | null>(null)
@@ -116,6 +117,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     const pageHeaders = useRef<PageHeader | null>(getPages ? getPages() : null)
     const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
 
+    // TODO: if source is from google menu, run empty action in order to run page indexing
     // TODO: when page name changes, block relation needs to run whole page
     useEffect(
       () => {
@@ -140,19 +142,29 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
 
       if (onChange) {
         if (setBlockRelations) {
-          const _idx = isSetBlockRelations.findIndex(t => t === props.type)
-          if (_idx > -1) {
-            setBlockRelations(
-              indexPage({
+          // if last action was whitelisted, set block relations
+          if (isSetBlockRelations.findIndex(t => t === props.type) > -1) {
+            setBlockRelations({
+              blocksRelationArray: indexPage({
                 pageHeader: _pageHeader,
                 blocks: props.nextState.blocks,
-              })
-            )
+              }),
+            })
           } else if (props.type === SET_CONTENT && pagePathRef.current) {
             /*
             get the page and block relations at current index
             */
-            setBlockRelations(pagePathRef.current.blockRelations)
+            setBlockRelations({
+              blocksRelationArray: pagePathRef.current.blockRelations,
+            })
+          } else if (props.type === CLEAR && pagePathRef.current) {
+            setBlockRelations({
+              clearPageRelationships: _pageHeader._id,
+              blocksRelationArray: indexPage({
+                pageHeader: _pageHeader,
+                blocks: props.nextState.blocks,
+              }),
+            })
           }
         }
 

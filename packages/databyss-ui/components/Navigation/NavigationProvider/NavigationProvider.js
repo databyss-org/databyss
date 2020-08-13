@@ -65,9 +65,7 @@ const NavigationProvider = ({ children }) => {
     return getTokensFromPath().type ? getTokensFromPath().type : 'pages'
   }
 
-  const getQueryParams = () => {
-    return queryString.parse(location.search)
-  }
+  const getQueryParams = () => queryString.parse(location.search)
 
   return (
     <NavigationContext.Provider

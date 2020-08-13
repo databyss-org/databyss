@@ -20,8 +20,6 @@ const EntryProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { searchCache, searchTerm, blockRelationsSearchCache } = state
 
-  // console.log(blockRelationsSearchCache)
-
   const searchEntries = useCallback(
     debounce(query => {
       const _results = searchCache[query]
