@@ -47,7 +47,7 @@ const PageSticky = ({ pagePath, pageId }) => {
       backgroundColor="gray.7"
       position="sticky"
       top={0}
-      zIndex={2}
+      zIndex="sticky"
     >
       <Text color="gray.4" pl="medium" variant="uiTextSmall">
         <div

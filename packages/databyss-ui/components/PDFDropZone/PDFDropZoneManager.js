@@ -29,7 +29,6 @@ const viewStyles = () => ({
   overflow: 'hidden',
   pointerEvents: 'none',
   width: '96%',
-  zIndex: '10',
 })
 
 const StyledView = styled(View, viewStyles)
