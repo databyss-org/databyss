@@ -31,8 +31,7 @@
         },
         {
             "component": "HighlightedFeature",
-            "imgSrc": "/homepage/promo_source_selection.png",
-            "imgAlt": "Interface of the App",
+            "videoSrc": "/homepage/homepage_video.mp4",
             "imgHasBoxShadow": true,
             "title": "The Basics",
             "description": "Databyss gives you the freedom to organize notes hierarchically (as a long stream of thought) or to build a network of associations by linking sections of your work to sources, topics, and authors."

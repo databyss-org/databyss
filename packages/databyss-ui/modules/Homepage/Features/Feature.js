@@ -42,7 +42,7 @@ const Feature = ({
 
   const formatDescriptionText = description => {
     if (Array.isArray(description)) {
-      return description.map(text => <p>{text}</p>)
+      return description.map((text, i) => <p key={i}>{text}</p>)
     }
     return description
   }
