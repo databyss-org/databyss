@@ -12,6 +12,7 @@ import {
   List,
 } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { widthVariants, pxUnits } from '@databyss-org/ui/theming/views'
 
 const ControlList = ({ children, ...others }) => (
   <List horizontalItemPadding="small" {...others}>
@@ -61,7 +62,9 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
               <Grid>
                 <View
                   paddingVariant="none"
-                  widthVariant="content"
+                  maxWidth={`calc(${widthVariants.form.maxWidth} - ${pxUnits(
+                    48
+                  )})`}
                   backgroundColor="background.0"
                   width="100%"
                 >

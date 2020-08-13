@@ -51,12 +51,7 @@ const Sidebar = () => {
         width={sidebar.width}
         key={`sidebar-key-${menuItem}`}
       >
-        <View
-          widthVariant="content"
-          theme={darkTheme}
-          bg="background.1"
-          height="100vh"
-        >
+        <View theme={darkTheme} bg="background.1" height="100vh">
           <List
             verticalItemPadding={2}
             horizontalItemPadding={2}
