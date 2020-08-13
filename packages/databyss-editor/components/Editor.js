@@ -2,6 +2,7 @@ import React, { useCallback } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
 import { Text } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { widthVariants } from '@databyss-org/ui/theming/views'
 import { useEditorContext } from '../state/EditorProvider'
 import Leaf from './Leaf'
 import Element from './Element'
@@ -107,7 +108,7 @@ const Editor = ({
         readOnly={readOnly}
         autoFocus={autofocus}
         onKeyDown={onKeyDown}
-        css={{ flexGrow: 1 }}
+        css={{ flexGrow: 1, maxWidth: widthVariants.content.maxWidth }}
       />
     </Slate>
   )
