@@ -214,6 +214,9 @@ export default (
   action: FSA,
   onChange?: Function
 ): EditorState => {
+  let clearBlockRelations = false
+
+
   const [nextState, patches, inversePatches] = produceWithPatches(
     state,
     (draft) => {
@@ -469,6 +472,7 @@ export default (
             if (bakeAtomicClosureBlock({ draft, index: op.index })) {
               // set selection at end of atomic
               nextSelection = draft.selection
+              clearBlockRelations = true
               return
             }
 
@@ -641,6 +645,7 @@ export default (
   historyActions need to bypass the EditorHistory history stack
   */
 
+
   if (onChange) {
     onChange({
       previousState: state,
@@ -648,6 +653,8 @@ export default (
       patches,
       inversePatches,
       type: action.type,
+      clearBlockRelations,
+      // todo: remove these history actions
       undoAction: action.type === UNDO,
       redoAction: action.type === REDO,
     })

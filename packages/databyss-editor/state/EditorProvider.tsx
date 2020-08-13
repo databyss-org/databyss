@@ -106,9 +106,9 @@ const isSetBlockRelations = [
   CUT,
   COPY,
   PASTE,
-  DEQUEUE_NEW_ENTITY,
-  INDEX_BLOCK_RELATIONS,
 ]
+
+const isClearBlockRelations = [CLEAR, DEQUEUE_NEW_ENTITY, INDEX_BLOCK_RELATIONS]
 
 export const EditorContext = createContext<ContextType | null>(null)
 
@@ -120,8 +120,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     const pageHeaders = useRef<PageHeader | null>(getPages ? getPages() : null)
     const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
 
-    // TODO: if source is from google menu, run empty action in order to run page indexing
-    // TODO: when page name changes, block relation needs to run whole page
+    // TODO: remove page name from block relations schema
     useEffect(
       () => {
         if (getPages) {
@@ -153,20 +152,24 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
                 blocks: props.nextState.blocks,
               }),
             })
-          } else if (props.type === SET_CONTENT && pagePathRef.current) {
-            /*
-            get the page and block relations at current index
-            */
-            setBlockRelations({
-              blocksRelationArray: pagePathRef.current.blockRelations,
-            })
-          } else if (props.type === CLEAR && pagePathRef.current) {
+          } else if (
+            (isClearBlockRelations.findIndex(t => t === props.type) > -1 ||
+              props.clearBlockRelations) &&
+            pagePathRef.current
+          ) {
             setBlockRelations({
               clearPageRelationships: _pageHeader._id,
               blocksRelationArray: indexPage({
                 pageHeader: _pageHeader,
                 blocks: props.nextState.blocks,
               }),
+            })
+          } else if (props.type === SET_CONTENT && pagePathRef.current) {
+            /*
+            get the page and block relations at current index
+            */
+            setBlockRelations({
+              blocksRelationArray: pagePathRef.current.blockRelations,
             })
           }
         }
