@@ -50,7 +50,6 @@ router.get(
     if (!blocks) {
       return res.json([])
     }
-
     // group by authors and return array of authors
 
     const authorsDict = getAuthorsFromSources(blocks)

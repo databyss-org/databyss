@@ -13,10 +13,6 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
 
-// TODO: CHANGE AuthorCitations TO QUERY STRING
-// '/sources?author...'
-// change SourcesCitations to path=":query"
-
 export const SourcesRouter = () => (
   <Router>
     <SourcesContent path="/" />
@@ -26,8 +22,6 @@ export const SourcesRouter = () => (
 )
 
 const SourcesContentBody = (sourceCitations, navigate) => {
-  // const location = useLocation()
-  // console.log(location)
   const sourcesData = Object.values(sourceCitations).map(value =>
     createIndexPageEntries({
       id: value._id,
