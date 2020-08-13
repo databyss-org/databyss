@@ -49,10 +49,10 @@ const hlineVariants = {
   thickLight: hline(3, 'border.2'),
 }
 
-export const widthVariants = {
+const widthVariants = {
   none: {},
   content: {
-    maxWidth: pxUnits(500),
+    maxWidth: pxUnits(600),
   },
   form: {
     maxWidth: pxUnits(550),

@@ -103,7 +103,7 @@ const Element = ({ attributes, children, element }) => {
           pb="em"
           display={element.isBlock ? 'flex' : 'inline-flex'}
           spellCheck={spellCheck}
-          maxWidth="100%"
+          widthVariant="content"
           position="relative"
           justifyContent="center"
           {...isAtomicClosure(previousBlock?.type) && {
