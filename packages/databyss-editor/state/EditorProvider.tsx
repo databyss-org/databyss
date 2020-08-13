@@ -120,13 +120,14 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     // TODO: when page name changes, block relation needs to run whole page
     useEffect(
       () => {
-        pageHeaders.current = getPages()
+        if (getPages) {
+          pageHeaders.current = getPages()
+        }
       },
-      [getPages()]
+      [getPages ? getPages() : null]
     )
 
     const forkOnChange = props => {
-      //  const _pages = getUpdatedPageName()
       let _pageHeader: PageHeader | null = null
       // get current page title
       if (
@@ -139,20 +140,23 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       pagePathRef.current = getPagePath(props.nextState, _pageHeader)
 
       if (onChange) {
-        const _idx = isSetBlockRelations.findIndex(t => t === props.type)
-        if (_idx > -1) {
-          setBlockRelations(
-            indexPage({
-              pageHeader: _pageHeader,
-              blocks: props.nextState.blocks,
-            })
-          )
-        } else if (props.type === SET_CONTENT && pagePathRef.current) {
-          /*
-          get the page and block relations at current index
-          */
-          setBlockRelations(pagePathRef.current.blockRelations)
+        if (setBlockRelations) {
+          const _idx = isSetBlockRelations.findIndex(t => t === props.type)
+          if (_idx > -1) {
+            setBlockRelations(
+              indexPage({
+                pageHeader: _pageHeader,
+                blocks: props.nextState.blocks,
+              })
+            )
+          } else if (props.type === SET_CONTENT && pagePathRef.current) {
+            /*
+            get the page and block relations at current index
+            */
+            setBlockRelations(pagePathRef.current.blockRelations)
+          }
         }
+
         onChange(props)
       }
     }
