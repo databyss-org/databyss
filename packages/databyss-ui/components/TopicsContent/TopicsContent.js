@@ -1,6 +1,7 @@
 import React from 'react'
 import { Router } from '@reach/router'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import TopicDetails from '@databyss-org/ui/components/TopicsContent/TopicDetails'
 import {
   sortEntriesAtoZ,
@@ -17,24 +18,35 @@ export const TopicsRouter = () => (
   </Router>
 )
 
-const TopicsContent = () => (
-  <AllTopicsLoader>
-    {topics => {
-      const topicsData = Object.values(topics).map(value =>
-        createIndexPageEntries({
-          text: value.text?.textValue,
-          id: value._id,
-        })
-      )
-      const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
+const TopicsContent = () => {
+  const navigate = useNavigationContext(c => c.navigate)
+  return (
+    <AllTopicsLoader>
+      {topics => {
+        const topicsData = Object.values(topics).map(value =>
+          createIndexPageEntries({
+            text: value.text?.textValue,
+            id: value._id,
+          })
+        )
+        const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
 
-      return (
-        <IndexPageContent title="All Topics">
-          <IndexPageEntries entries={sortedTopics} icon={<TopicSvg />} />
-        </IndexPageContent>
-      )
-    }}
-  </AllTopicsLoader>
-)
+        const onTopicClick = topic => {
+          navigate(`/topics/${topic.id}`)
+        }
+
+        return (
+          <IndexPageContent title="All Topics">
+            <IndexPageEntries
+              onClick={onTopicClick}
+              entries={sortedTopics}
+              icon={<TopicSvg />}
+            />
+          </IndexPageContent>
+        )
+      }}
+    </AllTopicsLoader>
+  )
+}
 
 export default TopicsContent
