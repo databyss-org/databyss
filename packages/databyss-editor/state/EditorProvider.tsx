@@ -25,6 +25,7 @@ import {
   UNDO,
   REDO,
   REMOVE_AT_SELECTION,
+  INDEX_BLOCK_RELATIONS,
 } from './constants'
 import { Text, Selection, EditorState, Block } from '../interfaces'
 import initialState from './initialState'
@@ -69,6 +70,7 @@ type ContextType = {
   cut: (event: ClipboardEvent) => void
   paste: (event: ClipboardEvent) => void
   insert: (blocks: Block[]) => void
+  indexBlockRelations: () => void
 }
 
 export type OnChangeArgs = {
@@ -105,6 +107,7 @@ const isSetBlockRelations = [
   COPY,
   PASTE,
   DEQUEUE_NEW_ENTITY,
+  INDEX_BLOCK_RELATIONS,
 ]
 
 export const EditorContext = createContext<ContextType | null>(null)
@@ -305,6 +308,12 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       }
     }
 
+    const indexBlockRelations = () => {
+      dispatch({
+        type: INDEX_BLOCK_RELATIONS,
+      })
+    }
+
     return (
       <EditorContext.Provider
         value={{
@@ -321,6 +330,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           removeAtSelection,
           clear,
           removeEntityFromQueue,
+          indexBlockRelations,
         }}
       >
         {children}

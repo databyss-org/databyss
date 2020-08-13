@@ -88,9 +88,6 @@ const ContentEditable = ({
   useEffect(
     () => {
       if (state.newEntities.length && setSource && topicContext) {
-        // run block relation algorithm
-        // TODO: MAKE SURE THIS RUNS IN THE EDITOR REDUCER
-        // onBlockRelationsChange()
         const { setTopic } = topicContext
 
         state.newEntities.forEach(entity => {

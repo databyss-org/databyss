@@ -197,7 +197,7 @@ export const Citations = () => {
     const text = _title(vol)
     const offset = text.textValue.length
 
-    const { setContent } = editorContext
+    const { setContent, indexBlockRelations } = editorContext
 
     const selection = {
       anchor: { index, offset },
@@ -218,6 +218,7 @@ export const Citations = () => {
 
     ReactEditor.focus(editor)
     window.requestAnimationFrame(() => {
+      indexBlockRelations()
       // set selection at end of new atomic block
       const _slateSelection = stateSelectionToSlateSelection(
         editor.children,
