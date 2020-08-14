@@ -120,6 +120,7 @@ const RichText = forwardRef(
         <Slate editor={editor} value={value} onChange={onChangeEvent}>
           <Editable
             css={overrideCss}
+            style={{ overflowWrap: 'anywhere' }}
             id={id}
             renderLeaf={renderLeaf}
             placeholder={placeholder}
