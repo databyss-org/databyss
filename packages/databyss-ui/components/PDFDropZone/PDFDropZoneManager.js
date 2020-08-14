@@ -18,6 +18,7 @@ import DashedArea from './DashedArea'
 // constants
 const ACCEPTABLE_KINDS = ['file']
 const ACCEPTABLE_TYPES = ['application/pdf']
+const MAX_FILE_SIZE = 7500000 // 7.5 mb // TODO: use env var for this
 
 // styled components
 const viewStyles = () => ({
@@ -29,7 +30,6 @@ const viewStyles = () => ({
   overflow: 'hidden',
   pointerEvents: 'none',
   width: '96%',
-  zIndex: '10',
 })
 
 const StyledView = styled(View, viewStyles)
@@ -37,6 +37,20 @@ const StyledView = styled(View, viewStyles)
 // methods
 const isAcceptableFile = item =>
   ACCEPTABLE_KINDS.includes(item.kind) && ACCEPTABLE_TYPES.includes(item.type)
+
+const humanReadableFileSize = bytes => {
+  const units = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+
+  const exponent = Math.floor(Math.log(bytes) / Math.log(1000))
+  /* eslint-disable no-restricted-properties */
+  const significand = (bytes / Math.pow(1000, exponent)).toFixed(1)
+  /* eslint-enable no-restricted-properties */
+
+  // non breakable space is necessary
+  /* eslint-disable no-irregular-whitespace */
+  return `${significand} ${units[exponent]}B`
+  /* eslint-enable no-irregular-whitespace */
+}
 
 // component
 const PDFDropZoneManager = () => {
@@ -175,6 +189,19 @@ const PDFDropZoneManager = () => {
       showAlert(
         '⚠️ Unable to import file',
         'We are only able to import PDF files at this time. Please ensure to use a PDF document.'
+      )
+      return
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      setDropAreaVisibility(false)
+      showAlert(
+        '⚠️ Unable to import file',
+        `The size of "${file.name}" ` +
+          `(${humanReadableFileSize(file.size)}) ` +
+          `exceeds the maximum file size currently allowed ` +
+          `(${humanReadableFileSize(MAX_FILE_SIZE)}). ` +
+          `Reduce the file size, or choose another document.`
       )
       return
     }
