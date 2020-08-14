@@ -136,24 +136,22 @@ const MetadataModal = ({ id, visible, metadata, dismissCallback }) => {
     )
   }
 
-  const renderISSNFields = () => {
+  const renderISSNFields = () => (
     // if (values.issnList && values.issnList.length > 1) {
-      // TODO: render drop down menu instead?
+    // TODO: render drop down menu instead?
     // }
 
-    return (
-      <ValueListItem path="issn">
-        <TextControl
-          labelProps={{ width: '25%' }}
-          label="ISSN"
-          id="issn"
-          gridFlexWrap="nowrap"
-          paddingVariant="tiny"
-          rich
-        />
-      </ValueListItem>
-    )
-  }
+    <ValueListItem path="issn">
+      <TextControl
+        labelProps={{ width: '25%' }}
+        label="ISSN"
+        id="issn"
+        gridFlexWrap="nowrap"
+        paddingVariant="tiny"
+        rich
+      />
+    </ValueListItem>
+  )
 
   const render = () => (
     <ModalWindow

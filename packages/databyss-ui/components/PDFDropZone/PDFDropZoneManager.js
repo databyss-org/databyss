@@ -101,6 +101,20 @@ const hasEnoughMetadata = data =>
   data.hasOwnProperty('author') || data.hasOwnProperty('title')
 /* eslint-enable no-prototype-builtins */
 
+const humanReadableFileSize = bytes => {
+  const units = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+
+  const exponent = Math.floor(Math.log(bytes) / Math.log(1000))
+  /* eslint-disable no-restricted-properties */
+  const significand = (bytes / Math.pow(1000, exponent)).toFixed(1)
+  /* eslint-enable no-restricted-properties */
+
+  // non breakable space is necessary
+  /* eslint-disable no-irregular-whitespace */
+  return `${significand} ${units[exponent]}B`
+  /* eslint-enable no-irregular-whitespace */
+}
+
 const getFileToProcess = event => {
   const filesToProcess = []
 
@@ -267,7 +281,7 @@ const PDFDropZoneManager = () => {
       editorContext.insert(blocks)
     } catch (error) {
       showAlert(
-        '(!) An error occured',
+        '⚠️ An error occured',
         'Unable to insert annotations. Please try again later, or try with another document.'
       )
     }
@@ -305,10 +319,10 @@ const PDFDropZoneManager = () => {
       return
     }
 
-if (file.size > MAX_FILE_SIZE) {
+    if (file.size > MAX_FILE_SIZE) {
       setDropAreaVisibility(false)
       showAlert(
-        '(!) Unable to import file',
+        '⚠️ Unable to import file',
         `The size of "${file.name}" ` +
           `(${humanReadableFileSize(file.size)}) ` +
           `exceeds the maximum file size currently allowed ` +
