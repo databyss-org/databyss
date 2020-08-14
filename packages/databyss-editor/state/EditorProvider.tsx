@@ -127,11 +127,12 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     */
 
     const forkOnChange = props => {
-      const _pageId = props.nextState.pageHeader._id
       pagePathRef.current = getPagePath(props.nextState)
 
       if (onChange) {
         if (setBlockRelations) {
+          const _pageId = props.nextState.pageHeader._id
+
           // if last action was whitelisted, set block relations
           if (isSetBlockRelations.findIndex(t => t === props.type) > -1) {
             setBlockRelations({
