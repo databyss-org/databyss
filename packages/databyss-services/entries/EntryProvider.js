@@ -13,6 +13,8 @@ import {
   onClearBlockRelationsCache,
 } from './actions'
 
+const THROTTLE_BLOCK_RELATIONS = 1000
+
 const useReducer = createReducer()
 
 export const EntryContext = createContext()
@@ -47,7 +49,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
       dispatch(onSetBlockRelations(blockRelationsQueueRef.current))
       blockRelationsQueueRef.current = []
     }
-  }, 3000)
+  }, THROTTLE_BLOCK_RELATIONS)
 
   // TODO: block relations should have an id for source name and page name in order to not have to update the block relations in the editor provider
   const setBlockRelations = blockRelations => {
@@ -60,8 +62,6 @@ const EntryProvider = ({ children, initialState, reducer }) => {
       blockRelationsQueueRef.current = _arr
       throttleBlockRelations()
     }
-
-    // dispatch(onSetBlockRelations(blockRelations))
   }
 
   const findBlockRelations = query => {
