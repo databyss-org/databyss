@@ -103,9 +103,7 @@ const isSetBlockRelations = [
   MERGE,
   REMOVE,
   REMOVE_AT_SELECTION,
-  CUT,
   COPY,
-  PASTE,
 ]
 
 /*
