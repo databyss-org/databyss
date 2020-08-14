@@ -45,6 +45,7 @@ const DashedArea = props => {
 
   const render = () => (
     <StyledArea
+      zIndex="modal"
       className="dashed-area"
       bottom={getBottom()}
       opacity={getOpacity()}
