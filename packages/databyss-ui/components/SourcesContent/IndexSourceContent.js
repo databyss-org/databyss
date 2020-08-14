@@ -34,7 +34,7 @@ const IndexSourceContent = ({ relations }) => {
               <PageSvg />
             </Icon>
             <Text variant="bodyHeading3">
-              {relations.results[r][0].pageHeader.name}
+              {relations.results[r][0].pageHeader}
             </Text>
           </Grid>
         </BaseControl>

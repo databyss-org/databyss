@@ -20,7 +20,7 @@ export type BlockRelations = {
     _id: string
     relationshipType: string
     blockType: string
-    pageHeader: PageHeader
+    pageId: string
     blockIndex: number
   }
 }
@@ -54,7 +54,7 @@ export const isEmpty = (block: Block) => block.text.textValue.length === 0
 const composeBlockRelation = (
   currentBlock: Block,
   atomicBlock: Block,
-  pageHeader: PageHeader
+  pageId: string
 ): BlockRelations => {
   const _blockRelation: BlockRelations = {
     blockId: currentBlock._id,
@@ -64,12 +64,7 @@ const composeBlockRelation = (
       _id: currentBlock._id,
       relationshipType: 'HEADING',
       blockType: atomicBlock.type,
-      pageHeader: {
-        name: pageHeader.name,
-        _id: pageHeader._id,
-        archive: pageHeader.archive,
-      },
-      // replace these properties upstream
+      pageId,
       blockIndex: 0,
     },
   }
@@ -95,7 +90,7 @@ const getBlockPrefix = (type: string): string =>
 
 export const getPagePath = (
   page: EditorState,
-  pageHeader: PageHeader | null
+  pageId: string | null
 ): PagePath => {
   if (!page) {
     return { path: [], blockRelations: [] }
@@ -129,11 +124,11 @@ export const getPagePath = (
           // if not a closure block push to array
           if (!type) {
             // get block relations if current block is not atomic
-            if (pageHeader && !isAtomicInlineType(_currentBlock.type)) {
+            if (pageId && !isAtomicInlineType(_currentBlock.type)) {
               const _relation = composeBlockRelation(
                 _currentBlock,
                 _block,
-                pageHeader
+                pageId
               )
 
               _relation.relatedTo.blockIndex = _index
@@ -169,10 +164,10 @@ export const getPagePath = (
 }
 
 export const indexPage = ({
-  pageHeader,
+  pageId,
   blocks,
 }: {
-  pageHeader: PageHeader | null
+  pageId: string | null
   blocks: Block[]
 }): BlockRelations[] => {
   const currentAtomics: CurrentAtomics = {
@@ -181,7 +176,7 @@ export const indexPage = ({
   }
   const blockRelations: BlockRelations[] = []
 
-  if (pageHeader) {
+  if (pageId) {
     blocks.forEach((block, index) => {
       const _closureType: BlockType = getClosureType(block.type)
 
@@ -204,11 +199,7 @@ export const indexPage = ({
                 _id: block._id,
                 blockType: value.type,
                 relationshipType: 'HEADING',
-                pageHeader: {
-                  name: pageHeader.name,
-                  _id: pageHeader._id,
-                  archive: pageHeader.archive,
-                },
+                pageId,
                 blockIndex: index,
               },
             })

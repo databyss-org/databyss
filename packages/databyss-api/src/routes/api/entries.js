@@ -25,8 +25,9 @@ router.post(
 
       // clear all block relationships associated to page id
       if (clearPageRelationships) {
+        console.log(clearPageRelationships)
         await BlockRelations.deleteMany({
-          'relatedTo.pageHeader._id': clearPageRelationships,
+          'relatedTo.pageId': clearPageRelationships,
           accountId: req.account._id,
         })
       }
@@ -86,26 +87,26 @@ router.get(
           return acc
         }
 
-        if (!acc.results[curr.relatedTo.pageHeader._id]) {
+        if (!acc.results[curr.relatedTo.pageId]) {
           // init result
-          acc.results[curr.relatedTo.pageHeader._id] = [
+          acc.results[curr.relatedTo.pageId] = [
             {
-              pageHeader: curr.relatedTo.pageHeader,
+              pageHeader: curr.page.name,
               entryId: curr.blockId,
               text: curr.blockText,
               pageIndex: curr.relatedTo.blockIndex,
             },
           ]
         } else {
-          const _entries = acc.results[curr.relatedTo.pageHeader._id]
+          const _entries = acc.results[curr.relatedTo.pageId]
 
           _entries.push({
-            pageHeader: curr.relatedTo.pageHeader,
+            pageHeader: curr.page.name,
             entryId: curr.blockId,
             text: curr.blockText,
             pageIndex: curr.relatedTo.blockIndex,
           })
-          acc.results[curr.relatedTo.pageHeader._id] = _entries
+          acc.results[curr.relatedTo.pageId] = _entries
         }
         return acc
       }, _results)

@@ -118,31 +118,12 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
   ({ children, initialState, onChange }, ref) => {
     const setBlockRelations = useEntryContext(c => c && c.setBlockRelations)
     // get the current page header
-    const getPages = usePageContext(c => c && c.getPages)
-    const pageHeaders = useRef<PageHeader | null>(getPages ? getPages() : null)
+
     const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
 
-    // TODO: remove page name from block relations schema
-    useEffect(
-      () => {
-        if (getPages) {
-          pageHeaders.current = getPages()
-        }
-      },
-      [getPages ? getPages() : null]
-    )
-
     const forkOnChange = props => {
-      let _pageHeader: PageHeader | null = null
-      // get current page title
-      if (
-        pageHeaders.current &&
-        pageHeaders.current[props.nextState.pageHeader._id]
-      ) {
-        _pageHeader = pageHeaders.current[props.nextState.pageHeader._id]
-      }
-
-      pagePathRef.current = getPagePath(props.nextState, _pageHeader)
+      const _pageId = props.nextState.pageHeader._id
+      pagePathRef.current = getPagePath(props.nextState, _pageId)
 
       if (onChange) {
         if (setBlockRelations) {
@@ -150,7 +131,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           if (isSetBlockRelations.findIndex(t => t === props.type) > -1) {
             setBlockRelations({
               blocksRelationArray: indexPage({
-                pageHeader: _pageHeader,
+                pageId: _pageId,
                 blocks: props.nextState.blocks,
               }),
             })
@@ -160,9 +141,9 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
             pagePathRef.current
           ) {
             setBlockRelations({
-              clearPageRelationships: _pageHeader._id,
+              clearPageRelationships: _pageId,
               blocksRelationArray: indexPage({
-                pageHeader: _pageHeader,
+                pageId: _pageId,
                 blocks: props.nextState.blocks,
               }),
             })
