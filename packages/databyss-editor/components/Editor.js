@@ -107,6 +107,7 @@ const Editor = ({
         readOnly={readOnly}
         autoFocus={autofocus}
         onKeyDown={onKeyDown}
+        style={{ overflowWrap: 'anywhere' }}
         css={{ flexGrow: 1 }}
       />
     </Slate>
