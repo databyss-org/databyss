@@ -78,8 +78,10 @@ export type OnChangeArgs = {
   previousState: EditorState
   patches: Patch[]
   inversePatches: Patch[]
-  undoAction: boolean
-  redoAction: boolean
+  type: string
+  clearBlockRelations: boolean
+  // undoAction: boolean
+  // redoAction: boolean
 }
 
 export interface EditorRef {

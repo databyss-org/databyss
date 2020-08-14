@@ -55,11 +55,7 @@ export function onSetBlockRelations(blocksRelation) {
       type: SET_BLOCK_RELATIONS,
       payload: { data: blocksRelation },
     })
-    if (
-      blocksRelation.blocksRelationArray.length > 0 ||
-      blocksRelation.clearPageRelationships
-    )
-      entries.setBlockRelations(blocksRelation)
+    if (blocksRelation.length > 0) entries.setBlockRelations(blocksRelation)
   }
 }
 

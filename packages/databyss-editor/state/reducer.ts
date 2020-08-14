@@ -654,9 +654,6 @@ export default (
       inversePatches,
       type: action.type,
       clearBlockRelations,
-      // todo: remove these history actions
-      undoAction: action.type === UNDO,
-      redoAction: action.type === REDO,
     })
   }
   return nextState

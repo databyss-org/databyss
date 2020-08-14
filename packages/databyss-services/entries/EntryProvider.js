@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useRef } from 'react'
+import { throttle } from 'lodash'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { createContext, useContextSelector } from 'use-context-selector'
 import { debounce } from 'lodash'
@@ -20,6 +21,8 @@ const EntryProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { searchCache, searchTerm, blockRelationsSearchCache } = state
 
+  const blockRelationsQueueRef = useRef([])
+
   const searchEntries = useCallback(
     debounce(query => {
       const _results = searchCache[query]
@@ -39,10 +42,26 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     dispatch(onClearCache())
   }
 
-  // TODO: accumulate and debounce
+  const throttleBlockRelations = throttle(() => {
+    if (blockRelationsQueueRef.current.length) {
+      dispatch(onSetBlockRelations(blockRelationsQueueRef.current))
+      blockRelationsQueueRef.current = []
+    }
+  }, 3000)
+
   // TODO: block relations should have an id for source name and page name in order to not have to update the block relations in the editor provider
-  const setBlockRelations = blockRelationsArray => {
-    dispatch(onSetBlockRelations(blockRelationsArray))
+  const setBlockRelations = blockRelations => {
+    if (
+      blockRelations.blocksRelationArray.length ||
+      blockRelations.clearPageRelationships
+    ) {
+      const _arr = blockRelationsQueueRef.current
+      _arr.push(blockRelations)
+      blockRelationsQueueRef.current = _arr
+      throttleBlockRelations()
+    }
+
+    // dispatch(onSetBlockRelations(blockRelations))
   }
 
   const findBlockRelations = query => {
