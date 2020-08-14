@@ -60,7 +60,6 @@ const FAQ = ({ title, description, descriptionColor, questionsAndAnswers }) => {
           {questionsAndAnswers.map((questionAndAnswer, i) => (
             <View
               key={i}
-              widthVariant="content"
               mb="medium"
               maxWidth={featureHeadingMaxWidth}
               css={{

@@ -29,7 +29,7 @@ const Hero = ({
       }}
     >
       <Navbar navLinks={navLinks} />
-      <View alignItems="center" mt="extraLarge" widthVariant="content">
+      <View alignItems="center" mt="extraLarge" widthVariant="headline">
         <View flexDirection="row" alignItems="center" mb="large">
           <View mr="em">
             <img
