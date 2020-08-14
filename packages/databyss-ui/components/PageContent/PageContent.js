@@ -65,7 +65,7 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
   return (
     <View height="100vh" overflow="scroll" ref={editorWindowRef}>
       <PageSticky pagePath={editorPath} pageId={page._id} />
-      <View pl="medium" pr="medium" pb="medium" zIndex={1}>
+      <View pl="medium" pr="medium" pb="medium">
         <View
           mr="medium"
           alignItems="center"
