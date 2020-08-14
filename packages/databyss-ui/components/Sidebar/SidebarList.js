@@ -66,6 +66,7 @@ const SidebarList = ({ menuItems }) => {
               href={getHref(item)}
               css={{
                 textDecoration: 'none',
+                boxSizing: 'border-box',
               }}
             >
               <Grid singleRow flexWrap="nowrap" columnGap="small">

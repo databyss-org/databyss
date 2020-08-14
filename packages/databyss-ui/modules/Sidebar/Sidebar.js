@@ -52,11 +52,7 @@ const Sidebar = () => {
         key={`sidebar-key-${menuItem}`}
       >
         <View theme={darkTheme} bg="background.1" height="100vh">
-          <List
-            verticalItemPadding={2}
-            horizontalItemPadding={2}
-            alignItems="center"
-          >
+          <List verticalItemPadding={2} horizontalItemPadding={2}>
             <Header />
             {menuItem === 'search' ? (
               <Search />
