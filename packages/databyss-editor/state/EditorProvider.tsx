@@ -111,7 +111,13 @@ const isSetBlockRelations = [
 /*
 actions to clear block relations, then set new relations
 */
-const isClearBlockRelations = [CLEAR, DEQUEUE_NEW_ENTITY, INDEX_BLOCK_RELATIONS]
+const isClearBlockRelations = [
+  CUT,
+  PASTE,
+  CLEAR,
+  DEQUEUE_NEW_ENTITY,
+  INDEX_BLOCK_RELATIONS,
+]
 
 export const EditorContext = createContext<ContextType | null>(null)
 
