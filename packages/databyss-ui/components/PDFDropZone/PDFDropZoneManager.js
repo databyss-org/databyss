@@ -6,6 +6,7 @@ import ObjectId from 'bson-objectid'
 
 import { BlockType } from '@databyss-org/services/interfaces'
 import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import * as services from '@databyss-org/services/pdf'
 
 import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
@@ -35,26 +36,129 @@ const viewStyles = () => ({
 const StyledView = styled(View, viewStyles)
 
 // methods
+const buildSource = data => {
+  // TODO: check if data could be used as is
+
+  // NOTE: cannot prefer const, as we may assign props dynamically
+  /* eslint-disable prefer-const */
+  let response = {}
+  if (data.authors) {
+    response.authors = data.authors
+  }
+  if (data.year) {
+    response.year = data.year
+  }
+  if (data.doi) {
+    response.doi = data.doi
+  }
+  if (data.issn) {
+    response.issn = data.issn
+  }
+  return response
+  /* eslint-enable prefer-const */
+}
+
+const buildEntryText = data => {
+  let text = ''
+
+  // add author(s)
+  const firstAuthor = data.authors[0]
+  text += `${firstAuthor.lastName}, `
+  text += `${firstAuthor.firstName.substr(0, 1)}.`
+  if (data.authors.length > 1) {
+    text += ' et al.'
+  }
+  text += ', '
+
+  // get title index before adding other content
+  const titleStartIndex = text.length
+
+  // add title
+  text += `${data.title}`
+
+  // add year
+  if (data.year) {
+    text += ` (${data.year})`
+  }
+
+  return {
+    textValue: `${text}`,
+    ranges: [
+      {
+        offset: titleStartIndex,
+        length: data.title.length,
+        marks: ['italic'],
+      },
+    ],
+  }
+}
+
 const isAcceptableFile = item =>
   ACCEPTABLE_KINDS.includes(item.kind) && ACCEPTABLE_TYPES.includes(item.type)
 
-const humanReadableFileSize = bytes => {
-  const units = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
+/* eslint-disable no-prototype-builtins */
+const hasEnoughMetadata = data =>
+  data.hasOwnProperty('author') || data.hasOwnProperty('title')
+/* eslint-enable no-prototype-builtins */
 
-  const exponent = Math.floor(Math.log(bytes) / Math.log(1000))
-  /* eslint-disable no-restricted-properties */
-  const significand = (bytes / Math.pow(1000, exponent)).toFixed(1)
-  /* eslint-enable no-restricted-properties */
+const getFileToProcess = event => {
+  const filesToProcess = []
 
-  // non breakable space is necessary
-  /* eslint-disable no-irregular-whitespace */
-  return `${significand} ${units[exponent]}B`
-  /* eslint-enable no-irregular-whitespace */
+  if (event.dataTransfer.items) {
+    // Use DataTransferItemList interface to access the file(s)
+    const numItems = event.dataTransfer.items.length
+    for (let i = 0; i < numItems; i++) {
+      const item = event.dataTransfer.items[i]
+      if (isAcceptableFile(item)) {
+        filesToProcess.push(item.getAsFile())
+      }
+    }
+  } else {
+    // Use DataTransfer interface to access the file(s)
+    const numItems = event.dataTransfer.files.length
+    for (let i = 0; i < numItems; i++) {
+      const item = event.dataTransfer.files[i]
+      if (isAcceptableFile(item)) {
+        filesToProcess.push(item)
+      }
+    }
+  }
+
+  if (filesToProcess.length === 0) {
+    return null
+  }
+
+  const file = filesToProcess[0]
+
+  // TODO: handle multiple files at once?
+  if (filesToProcess.length > 1) {
+    console.warn(
+      `Multiple files are not handled at this time. ` +
+        `"${file.name}" will be parsed.`
+    )
+  }
+
+  return file
+}
+
+const findMatchesInCrossref = (crossref, metadata) => {
+  const { title } = metadata.fromPDF
+  const matches = []
+  crossref.message.items.forEach(element => {
+    if (element.title && Array.isArray(element.title)) {
+      const elementTitle = element.title[0]
+      if (elementTitle === title.src || elementTitle === title.text) {
+        matches.push(element)
+      }
+    }
+  })
+  return matches
 }
 
 // component
 const PDFDropZoneManager = () => {
   const editorContext = useEditorContext()
+  const setSource = useSourceContext(c => c && c.setSource)
 
   const { showModal } = useNavigationContext()
 
@@ -64,55 +168,34 @@ const PDFDropZoneManager = () => {
   const [hasParsed, setParsed] = useState(false)
 
   // utils
-  const getFileToProcess = event => {
-    const filesToProcess = []
+  const buildEntryBlock = data => {
+    const response = { _id: new ObjectId().toHexString() }
 
-    if (event.dataTransfer.items) {
-      // Use DataTransferItemList interface to access the file(s)
-      const numItems = event.dataTransfer.items.length
-      for (let i = 0; i < numItems; i++) {
-        const item = event.dataTransfer.items[i]
-        if (isAcceptableFile(item)) {
-          filesToProcess.push(item.getAsFile())
-        }
-      }
+    if (typeof data === 'string') {
+      // filename only
+      response.type = BlockType.Entry
+      response.text = { textValue: `@${data}`, ranges: [] }
     } else {
-      // Use DataTransfer interface to access the file(s)
-      const numItems = event.dataTransfer.files.length
-      for (let i = 0; i < numItems; i++) {
-        const item = event.dataTransfer.files[i]
-        if (isAcceptableFile(item)) {
-          filesToProcess.push(item)
-        }
+      // complete metadata
+      const source = buildSource(data)
+      setSource(source)
+
+      response.type = BlockType.Source
+      response.text = buildEntryText(data)
+      response.detail = {
+        authors: data.authors,
+        doi: data.doi,
+        issn: data.issn,
+        year: data.year,
       }
     }
 
-    if (filesToProcess.length === 0) {
-      return null
-    }
-
-    const file = filesToProcess[0]
-
-    // TODO: handle multiple files at once?
-    if (filesToProcess.length > 1) {
-      console.warn(
-        `Multiple files are not handled at this time. ` +
-          `"${file.name}" will be parsed.`
-      )
-    }
-
-    return file
+    return response
   }
 
-  const toDatabyssBlocks = (fileName, annotations) => {
+  const toDatabyssBlocks = (entryBlock, annotations) => {
     // create response object with source as first item
-    const response = [
-      {
-        _id: new ObjectId().toHexString(),
-        type: BlockType.Entry,
-        text: { textValue: `@${fileName}`, ranges: [] },
-      },
-    ]
+    const response = [entryBlock]
 
     // loop through annotations
     const offset = 0
@@ -161,6 +244,35 @@ const PDFDropZoneManager = () => {
     })
   }
 
+  const showMetadataModal = async metadata =>
+    new Promise((resolve, reject) => {
+      try {
+        showModal({
+          component: 'METADATA',
+          props: {
+            metadata,
+            dismissCallback: response => {
+              resolve(response)
+            },
+          },
+        })
+      } catch (error) {
+        reject(error)
+      }
+    })
+
+  // content methods
+  const insert = blocks => {
+    try {
+      editorContext.insert(blocks)
+    } catch (error) {
+      showAlert(
+        '(!) An error occured',
+        'Unable to insert annotations. Please try again later, or try with another document.'
+      )
+    }
+  }
+
   // drag handlers
   const onDragOver = event => {
     event.stopPropagation()
@@ -193,10 +305,10 @@ const PDFDropZoneManager = () => {
       return
     }
 
-    if (file.size > MAX_FILE_SIZE) {
+if (file.size > MAX_FILE_SIZE) {
       setDropAreaVisibility(false)
       showAlert(
-        '⚠️ Unable to import file',
+        '(!) Unable to import file',
         `The size of "${file.name}" ` +
           `(${humanReadableFileSize(file.size)}) ` +
           `exceeds the maximum file size currently allowed ` +
@@ -207,19 +319,54 @@ const PDFDropZoneManager = () => {
     }
 
     try {
+      // show spinner
       setParsing(true)
-      const response = await services.fetchAnnotations(file)
-      const blocks = toDatabyssBlocks(file.name, response.annotations)
 
-      try {
-        editorContext.insert(blocks)
-      } catch (error) {
-        showAlert(
-          '⚠️ An error occured',
-          'Unable to insert annotations. Please try again later, or try with another document.'
+      // parse pdf annotations
+      const response = await services.fetchAnnotations(file)
+
+      const metadata = {
+        fromPDF: response.metadata,
+        fromCrossref: null,
+      }
+
+      if (hasEnoughMetadata(metadata.fromPDF)) {
+        // get additional metadata from crossref
+        const crossref = await services.fetchMetadata(metadata.fromPDF)
+
+        // find in crossref the item(s) that match the title in metadata.fromPDF
+        const matches = findMatchesInCrossref(crossref, metadata)
+
+        // select first match
+        if (matches.length > 0) {
+          metadata.fromCrossref = matches[0]
+          if (matches.length > 1) {
+            // TODO: show modal to select if more than one match?
+            console.warn(
+              'More than one item provided by Crossref matched the PDF. Using first one found.'
+            )
+          }
+        }
+      } else {
+        console.warn(
+          'Not enough PDF metadata to attempt to get additional info from Crossref.'
         )
       }
+
+      let entryBlock
+      if (metadata.fromCrossref) {
+        const detailedMetadata = await showMetadataModal(metadata)
+        entryBlock = buildEntryBlock(detailedMetadata)
+      } else {
+        entryBlock = buildEntryBlock(file.name)
+      }
+
+      const blocks = toDatabyssBlocks(entryBlock, response.annotations)
+      insert(blocks)
     } catch (error) {
+      // TODO: log only if in dev mode
+      console.log('error:', error)
+
       showAlert(
         '⚠️ An error occured',
         'Unable to obtain annotations from this document. Please try again later, or try with another document.'
