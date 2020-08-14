@@ -4,12 +4,9 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useRef,
-  useEffect,
 } from 'react'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
-import { PageHeader } from '@databyss-org/services/interfaces/Page'
 import { Patch } from 'immer'
 import {
   SET_SELECTION,
@@ -80,8 +77,6 @@ export type OnChangeArgs = {
   inversePatches: Patch[]
   type: string
   clearBlockRelations: boolean
-  // undoAction: boolean
-  // redoAction: boolean
 }
 
 export interface EditorRef {
@@ -99,6 +94,9 @@ type PropsType = {
 
 const useReducer = createReducer()
 
+/*
+actions to set block relations
+*/
 const isSetBlockRelations = [
   SPLIT,
   PASTE,
@@ -110,6 +108,9 @@ const isSetBlockRelations = [
   PASTE,
 ]
 
+/*
+actions to clear block relations, then set new relations
+*/
 const isClearBlockRelations = [CLEAR, DEQUEUE_NEW_ENTITY, INDEX_BLOCK_RELATIONS]
 
 export const EditorContext = createContext<ContextType | null>(null)
@@ -121,9 +122,13 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
 
     const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
 
+    /*
+    intercepts onChange props and runs the block relations algorithm, dispatches block relations
+    */
+
     const forkOnChange = props => {
       const _pageId = props.nextState.pageHeader._id
-      pagePathRef.current = getPagePath(props.nextState, _pageId)
+      pagePathRef.current = getPagePath(props.nextState)
 
       if (onChange) {
         if (setBlockRelations) {

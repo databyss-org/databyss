@@ -57,8 +57,6 @@ const HistoryProvider: React.FunctionComponent<PropsType> = forwardRef(
     const forkOnChange = ({
       inversePatches,
       patches,
-      // undoAction,
-      // redoAction,
       type,
       ...others
     }: OnChangeArgs) => {

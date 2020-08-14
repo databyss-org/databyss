@@ -1,8 +1,7 @@
 import React, { useCallback, useRef } from 'react'
-import { throttle } from 'lodash'
+import { throttle, debounce } from 'lodash'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { createContext, useContextSelector } from 'use-context-selector'
-import { debounce } from 'lodash'
 import reducer, { initialState } from './reducer'
 import {
   onSearchEntries,

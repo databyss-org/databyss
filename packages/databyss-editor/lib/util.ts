@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import { Block } from '@databyss-org/services/interfaces/'
-import { PageHeader } from '@databyss-org/services/interfaces/Page'
 import { stateBlockToHtmlHeader } from '@databyss-org/editor/lib/slateUtils.js'
 import { BlockType, Selection, EditorState, Text } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
@@ -82,19 +81,24 @@ export const withMetaData = (state: EditorState) => ({
   operations: [],
 })
 
-const getBlockPrefix = (type: string): string =>
-  ({
-    SOURCE: '@',
-    TOPIC: '#',
-  }[type])
+const getBlockPrefix = (type: BlockType): string =>{
+  const _type: {[key:string]: string} = {
+    [BlockType.Source]: '@',
+    [BlockType.Topic]: '#',
+  }
+  const _str = _type[type]
+  return _str
+}
 
-export const getPagePath = (
-  page: EditorState,
-  pageId: string | null
-): PagePath => {
+/*
+takes a page state, and returns the current atomic path and block relations for current block
+*/
+export const getPagePath = (page: EditorState): PagePath => {
   if (!page) {
     return { path: [], blockRelations: [] }
   }
+
+  const pageId = page.pageHeader?._id
 
   const _index = page.selection.anchor.index
 
@@ -162,7 +166,9 @@ export const getPagePath = (
 
   return { path: _path, blockRelations: _blockRelations }
 }
-
+/*
+takes blocks array and returns all current block relations array
+*/
 export const indexPage = ({
   pageId,
   blocks,

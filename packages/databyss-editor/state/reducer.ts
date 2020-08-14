@@ -216,7 +216,6 @@ export default (
 ): EditorState => {
   let clearBlockRelations = false
 
-
   const [nextState, patches, inversePatches] = produceWithPatches(
     state,
     (draft) => {
@@ -472,6 +471,9 @@ export default (
             if (bakeAtomicClosureBlock({ draft, index: op.index })) {
               // set selection at end of atomic
               nextSelection = draft.selection
+
+              // if an atomic closure has been created, re-run the block relations algorithm and clear current block relations
+
               clearBlockRelations = true
               return
             }
