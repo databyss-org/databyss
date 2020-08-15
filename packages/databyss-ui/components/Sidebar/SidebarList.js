@@ -34,10 +34,10 @@ const SidebarList = ({ menuItems }) => {
     return `${item.route}`
   }
 
-  const padding = 24
-  const headerHeight = 66
+  const padding = 22
+  const headerHeight = 34
   const footerHeight = 48
-  const searchBar = 56
+  const searchBar = 54
 
   const totalHeight = pxUnits(padding + headerHeight + footerHeight + searchBar)
 
