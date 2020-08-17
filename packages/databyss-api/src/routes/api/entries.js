@@ -50,7 +50,7 @@ router.get(
   wrap(async (req, res, _next) => {
     const atomicId = req.params.id
 
-    let results = await BlockRelations.find({
+    const results = await BlockRelations.find({
       relatedBlockId: atomicId,
       accountId: req.account._id,
     })
