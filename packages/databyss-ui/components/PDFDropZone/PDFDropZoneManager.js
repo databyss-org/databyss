@@ -250,7 +250,7 @@ const PDFDropZoneManager = () => {
   }
 
   // modal methods
-  const showAlert = (heading, message) => {
+  const showAlert = (heading, message, error) => {
     showModal({
       component: 'INFO',
       props: {
@@ -258,6 +258,10 @@ const PDFDropZoneManager = () => {
         message,
       },
     })
+
+    if (error && process.env.NODE_ENV !== 'production') {
+      console.error(error)
+    }
   }
 
   const showMetadataModal = async metadata =>
@@ -284,7 +288,8 @@ const PDFDropZoneManager = () => {
     } catch (error) {
       showAlert(
         '⚠️ An error occured',
-        'Unable to insert annotations. Please try again later, or try with another document.'
+        'Unable to insert annotations. Please try again later, or try with another document.',
+        error
       )
     }
   }
@@ -380,12 +385,10 @@ const PDFDropZoneManager = () => {
       const blocks = toDatabyssBlocks(entryBlock, response.annotations)
       insert(blocks)
     } catch (error) {
-      // TODO: log only if in dev mode
-      console.log('error:', error)
-
       showAlert(
         '⚠️ An error occured',
-        'Unable to obtain annotations from this document. Please try again later, or try with another document.'
+        'Unable to obtain annotations from this document. Please try again later, or try with another document.',
+        error
       )
     } finally {
       setParsing(false)
