@@ -6,7 +6,7 @@ import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
 
 type _Block = Block & { closed?: boolean }
 
-type CurrentAtomics = {
+export type CurrentAtomics = {
   [BlockType.Source]: Block | null
   [BlockType.Topic]: Block | null
 }

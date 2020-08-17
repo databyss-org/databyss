@@ -509,6 +509,9 @@ export default (
                 }
               })
             } else if (op.withBakeAtomic) {
+              // reset block relations
+
+              clearBlockRelations = true
               bakeAtomicBlock({ draft, index: op.index })
             } else {
               // update only given entity

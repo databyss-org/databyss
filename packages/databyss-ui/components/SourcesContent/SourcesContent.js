@@ -58,7 +58,7 @@ const SourcesContent = () => {
   // if author is provided in the url `.../sources?firstName=''&lastName='' render authors
   const _queryParams = getQueryParams()
   if (Object.keys(_queryParams).length) {
-    return <AuthorCitations _query={_queryParams} />
+    return <AuthorCitations query={_queryParams} />
   }
   return (
     <SourceCitationsLoader>

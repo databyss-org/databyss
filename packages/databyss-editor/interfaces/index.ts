@@ -3,6 +3,7 @@ export type {
   PayloadOperation,
   BackflowOperation,
 } from './EditorState'
+export type { CurrentAtomics, BlockRelations, PagePath } from '../lib/util'
 export type {
   Range,
   Text,

@@ -8,9 +8,13 @@ import {
 } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 
 const IndexSourceContent = ({ relations }) => {
+  const { getPages } = usePageContext()
   const { navigate } = useNavigationContext()
+
+  const pages = getPages()
 
   const onPageClick = pageId => {
     navigate(`/pages/${pageId}`)
@@ -33,9 +37,7 @@ const IndexSourceContent = ({ relations }) => {
             <Icon sizeVariant="small" color="text.3">
               <PageSvg />
             </Icon>
-            <Text variant="bodyHeading3">
-              {relations.results[r][0].pageHeader}
-            </Text>
+            <Text variant="bodyHeading3">{pages[r].name}</Text>
           </Grid>
         </BaseControl>
       </View>
@@ -48,7 +50,7 @@ const IndexSourceContent = ({ relations }) => {
           onClick={() => onEntryClick(r, e.entryId)}
         >
           <View p="small" ml="small">
-            <Text>{e.text.textValue}</Text>
+            <Text>{e.blockText.textValue}</Text>
           </View>
         </BaseControl>
       ))}

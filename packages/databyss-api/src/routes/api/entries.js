@@ -12,7 +12,7 @@ import { addRelationships } from '../../lib/entries'
 const router = express.Router()
 
 // @route    POST api/entries/relations/
-// @desc     posts block relations
+// @desc     creates on or more block relations
 // @access   Private
 router.post(
   '/relations/',
@@ -41,8 +41,8 @@ router.post(
   })
 )
 
-// @route    GET api/entries/relations/:id
-// @desc     gets atomic block relations
+// @desc get all blocks related to block with @id
+// @returns {dictionary} pageid => BlockRelation[]
 // @access   Private
 router.get(
   '/relations/:id',
@@ -54,19 +54,6 @@ router.get(
       relatedBlockId: atomicId,
       accountId: req.account._id,
     })
-
-    // populate results with page
-    results = await Promise.all(
-      results.map(async r => {
-        // get page where entry is found
-        const _page = await Page.findOne({
-          'blocks._id': r.blockId,
-          account: req.account._id,
-        })
-
-        return Object.assign({ page: _page }, r._doc)
-      })
-    )
 
     // sort according to block index
     results.sort(
@@ -80,31 +67,13 @@ router.get(
       }
 
       _results = results.reduce((acc, curr) => {
-        // bail if not found
-        if (!curr.page) {
-          _results.count -= 1
-          return acc
-        }
-
         if (!acc.results[curr.relatedTo.pageId]) {
           // init result
-          acc.results[curr.relatedTo.pageId] = [
-            {
-              pageHeader: curr.page.name,
-              entryId: curr.blockId,
-              text: curr.blockText,
-              pageIndex: curr.relatedTo.blockIndex,
-            },
-          ]
+          acc.results[curr.relatedTo.pageId] = [curr]
         } else {
           const _entries = acc.results[curr.relatedTo.pageId]
 
-          _entries.push({
-            pageHeader: curr.page.name,
-            entryId: curr.blockId,
-            text: curr.blockText,
-            pageIndex: curr.relatedTo.blockIndex,
-          })
+          _entries.push(curr)
           acc.results[curr.relatedTo.pageId] = _entries
         }
         return acc

@@ -2,6 +2,7 @@ import React from 'react'
 import {
   TopicLoader,
   BlockRelationsLoader,
+  PagesLoader,
 } from '@databyss-org/ui/components/Loaders'
 
 import { useParams } from '@reach/router'
@@ -17,9 +18,13 @@ const TopicDetails = () => {
 
         return (
           <IndexPageContent title={topicTitle}>
-            <BlockRelationsLoader atomicId={id}>
-              {relations => <IndexSourceContent relations={relations} />}
-            </BlockRelationsLoader>
+            <PagesLoader>
+              {() => (
+                <BlockRelationsLoader atomicId={id}>
+                  {relations => <IndexSourceContent relations={relations} />}
+                </BlockRelationsLoader>
+              )}
+            </PagesLoader>
           </IndexPageContent>
         )
       }}

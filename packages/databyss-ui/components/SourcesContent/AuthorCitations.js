@@ -9,9 +9,9 @@ import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import IndexPageContent from '../PageContent/IndexPageContent'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 
-const AuthorCitations = ({ _query }) => {
+const AuthorCitations = ({ query }) => {
   const { navigate } = useNavigationContext()
-  const { firstName, lastName } = _query
+  const { firstName, lastName } = query
 
   const authorQueryFirstName = firstName
   const authorQueryLastName = lastName
