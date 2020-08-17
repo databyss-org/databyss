@@ -1,11 +1,11 @@
-import BlockRelations from '../models/BlockRelations'
+import BlockRelation from '../models/BlockRelation'
 
 // TODO API DOESNT COMPILE TYPESCRIPT
 export const addRelationships = async (relationship, req) => {
   const { blockId, relatedBlockId } = relationship
   // find relationship
 
-  await BlockRelations.replaceOne(
+  await BlockRelation.replaceOne(
     {
       blockId,
       relatedBlockId,

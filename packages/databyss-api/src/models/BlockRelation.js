@@ -3,7 +3,7 @@ import Text from './Text'
 
 const Schema = mongoose.Schema
 
-const BlockRelationsSchema = new Schema({
+const BlockRelationSchema = new Schema({
   blockId: { type: Schema.Types.ObjectId },
   relatedBlockId: { type: Schema.Types.ObjectId },
   relatedTo: {
@@ -25,10 +25,10 @@ const BlockRelationsSchema = new Schema({
   accountId: { type: Schema.Types.ObjectId },
 })
 
-BlockRelationsSchema.index({ blockId: 1, relatedBlockId: 1 }, { unique: true })
+BlockRelationSchema.index({ blockId: 1, relatedBlockId: 1 }, { unique: true })
 
-const BlockRelations =
-  mongoose.models.BlockRelations ||
-  mongoose.model('blockRelations', BlockRelationsSchema)
+const BlockRelation =
+  mongoose.models.BlockRelation ||
+  mongoose.model('blockRelation', BlockRelationSchema)
 
-export default BlockRelations
+export default BlockRelation

@@ -2,7 +2,7 @@
 import express from 'express'
 import Block from '../../models/Block'
 import Page from '../../models/Page'
-import BlockRelations from '../../models/BlockRelations'
+import BlockRelation from '../../models/BlockRelation'
 
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
@@ -25,7 +25,7 @@ router.post(
 
       // clear all block relationships associated to page id
       if (clearPageRelationships) {
-        await BlockRelations.deleteMany({
+        await BlockRelation.deleteMany({
           'relatedTo.pageId': clearPageRelationships,
           accountId: req.account._id,
         })
@@ -50,7 +50,7 @@ router.get(
   wrap(async (req, res, _next) => {
     const atomicId = req.params.id
 
-    const results = await BlockRelations.find({
+    const results = await BlockRelation.find({
       relatedBlockId: atomicId,
       accountId: req.account._id,
     })
