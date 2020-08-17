@@ -36,23 +36,31 @@ const viewStyles = () => ({
 const StyledView = styled(View, viewStyles)
 
 // methods
-const buildSource = data => {
-  // TODO: check if data could be used as is
-
+const buildSourceDetail = data => {
   // NOTE: cannot prefer const, as we may assign props dynamically
   /* eslint-disable prefer-const */
   let response = {}
   if (data.authors) {
-    response.authors = data.authors
+    response.authors = []
+    data.authors.forEach(authorData => {
+      let author = {}
+      if (authorData.firstName) {
+        author.firstName = { textValue: authorData.firstName }
+      }
+      if (authorData.lastName) {
+        author.lastName = { textValue: authorData.lastName }
+      }
+      response.authors.push(author)
+    });
   }
   if (data.year) {
-    response.year = data.year
+    response.year = { textValue: data.year }
   }
   if (data.doi) {
-    response.doi = data.doi
+    response.doi = { textValue: data.doi }
   }
   if (data.issn) {
-    response.issn = data.issn
+    response.issn = { textValue: data.issn }
   }
   return response
   /* eslint-enable prefer-const */
@@ -191,17 +199,11 @@ const PDFDropZoneManager = () => {
       response.text = { textValue: `@${data}`, ranges: [] }
     } else {
       // complete metadata
-      const source = buildSource(data)
-      setSource(source)
-
       response.type = BlockType.Source
       response.text = buildEntryText(data)
-      response.detail = {
-        authors: data.authors,
-        doi: data.doi,
-        issn: data.issn,
-        year: data.year,
-      }
+      response.detail = buildSourceDetail(data)
+
+      setSource(response)
     }
 
     return response
