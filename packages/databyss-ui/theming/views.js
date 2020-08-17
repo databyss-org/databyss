@@ -51,6 +51,9 @@ const hlineVariants = {
 
 const widthVariants = {
   none: {},
+  headline: {
+    maxWidth: pxUnits(500),
+  },
   content: {
     maxWidth: pxUnits(500),
   },

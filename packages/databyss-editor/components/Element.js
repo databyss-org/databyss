@@ -113,7 +113,7 @@ const Element = ({ attributes, children, element }) => {
             borderBottomWidth: '2px',
             borderBottomColor: 'gray.5',
             pb: 'small',
-            mr: 'extraLarge',
+            mr: 'largest',
           }}
         >
           {block.__showNewBlockMenu && (

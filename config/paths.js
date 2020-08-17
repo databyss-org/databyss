@@ -64,8 +64,8 @@ const resolveModule = (resolveFn, filePath) => {
 
 function getAppIndexJs(deployTarget) {
   switch (deployTarget) {
-    case 'LOGIN_APP': {
-      return resolveApp('packages/databyss-login/index.js')
+    case 'HOMEPAGE': {
+      return resolveApp('packages/databyss-homepage/index.js')
     }
     case 'NOTES_APP': {
       return resolveApp('packages/databyss-notes/index.js')
@@ -83,9 +83,7 @@ function getAppIndexJs(deployTarget) {
 
 function getAppBuild(deployTarget) {
   switch (deployTarget) {
-    case 'LOGIN_APP': {
-      return resolveApp('build/login')
-    }
+    case 'HOMEPAGE':
     case 'NOTES_APP': {
       return resolveApp('build')
     }
@@ -102,32 +100,13 @@ function getAppBuild(deployTarget) {
   }
 }
 
-function getAppDevPublic(deployTarget) {
-  switch (deployTarget) {
-    case 'LOGIN_APP': {
-      return resolveApp('public')
-    }
-    case 'NOTES_APP': {
-      return resolveApp('build')
-    }
-    case 'TEST':
-    case 'API_SERVER':
-    case 'PDF_API': {
-      return null
-    }
-    default: {
-      throw new Error(`Invalid deployTarget: ${deployTarget}`)
-    }
-  }
-}
-
 // config after eject: we're in ./config/
 module.exports = {
   dotenv: resolveApp('.env'),
   appPath: resolveApp('.'),
   appBuild: getAppBuild(process.env.NPM_BUILD_TARGET),
   appPublic: resolveApp('public'),
-  appDevPublic: getAppDevPublic(process.env.NPM_BUILD_TARGET),
+  appDevPublic: resolveApp('public'),
   appHtml: resolveApp('public/index.html'),
   appIndexJs: getAppIndexJs(process.env.NPM_BUILD_TARGET),
   appPackageJson: resolveApp('package.json'),

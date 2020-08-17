@@ -253,7 +253,7 @@ module.exports = webpackEnv => {
               loader: require.resolve('url-loader'),
               options: {
                 limit: 10000,
-                name: 'public/[name].[hash:8].[ext]',
+                name: 'public/[name].[ext]',
               },
             },
             // Process application JS with Babel.

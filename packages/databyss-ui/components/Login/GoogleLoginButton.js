@@ -62,7 +62,12 @@ const GoogleLoginButton = ({
   }, [])
 
   return (
-    <Button variant="googleSignIn" onPress={onButtonPress} {...others}>
+    <Button
+      variant="googleSignIn"
+      onPress={onButtonPress}
+      {...others}
+      alignItems="center"
+    >
       <Grid colummGap="20px" singleRow alignItems="center">
         <View>
           <GoogleSvg />
