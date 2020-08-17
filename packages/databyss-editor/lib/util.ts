@@ -1,33 +1,8 @@
 import _ from 'lodash'
 import { Block } from '@databyss-org/services/interfaces/'
 import { stateBlockToHtmlHeader } from '@databyss-org/editor/lib/slateUtils.js'
-import { BlockType, Selection, EditorState, Text } from '../interfaces'
+import { BlockType, Selection, EditorState, BlockRelation, PagePath } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
-
-type _Block = Block & { closed?: boolean }
-
-export type CurrentAtomics = {
-  [BlockType.Source]: Block | null
-  [BlockType.Topic]: Block | null
-}
-
-export type BlockRelations = {
-  blockId: string
-  relatedBlockId: string
-  blockText: Text
-  relatedTo: {
-    _id: string
-    relationshipType: string
-    blockType: string
-    pageId: string
-    blockIndex: number
-  }
-}
-
-export type PagePath = {
-  path: string[]
-  blockRelations: BlockRelations[]
-}
 
 export const splice = (src, idx, rem, str) =>
   src.slice(0, idx) + str + src.slice(idx + Math.abs(rem))
@@ -54,8 +29,8 @@ const composeBlockRelation = (
   currentBlock: Block,
   atomicBlock: Block,
   pageId: string
-): BlockRelations => {
-  const _blockRelation: BlockRelations = {
+): BlockRelation => {
+  const _blockRelation: BlockRelation = {
     blockId: currentBlock._id,
     relatedBlockId: atomicBlock._id,
     blockText: currentBlock.text,
@@ -103,11 +78,13 @@ export const getPagePath = (page: EditorState): PagePath => {
   const _index = page.selection.anchor.index
 
   const _currentBlock = page.blocks[_index]
-  const _blockRelations: BlockRelations[] = []
+  const _blockRelations: BlockRelation[] = []
 
   // trim blocks to remove content after anchor
   const _blocks = [...page.blocks].reverse()
   _blocks.splice(0, _blocks.length - 1 - _index)
+
+  type _Block = Block & { closed?: boolean }
 
   const findPath = (
     blocks: _Block[],
@@ -175,12 +152,14 @@ export const indexPage = ({
 }: {
   pageId: string | null
   blocks: Block[]
-}): BlockRelations[] => {
-  const currentAtomics: CurrentAtomics = {
+}): BlockRelation[] => {
+  const currentAtomics: {
+    [key: string]: Block | null
+  } = {
     [BlockType.Source]: null,
     [BlockType.Topic]: null,
   }
-  const blockRelations: BlockRelations[] = []
+  const blockRelations: BlockRelation[] = []
 
   if (pageId) {
     blocks.forEach((block, index) => {
