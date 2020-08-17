@@ -107,7 +107,7 @@ const Editor = ({
         readOnly={readOnly}
         autoFocus={autofocus}
         onKeyDown={onKeyDown}
-        style={{ overflowWrap: 'anywhere' }}
+        style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
         css={{ flexGrow: 1 }}
       />
     </Slate>
