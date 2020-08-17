@@ -51,7 +51,7 @@ const buildSourceDetail = data => {
         author.lastName = { textValue: authorData.lastName }
       }
       response.authors.push(author)
-    });
+    })
   }
   if (data.year) {
     response.year = { textValue: data.year }
