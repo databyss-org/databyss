@@ -22,14 +22,14 @@ const menuSvgs = type =>
     topics: <TopicsSvg />,
   }[type])
 
-const SidebarList = ({ menuItems }) => {
+const SidebarList = ({ menuItems, query }) => {
   const { getTokensFromPath } = useNavigationContext()
   const location = useLocation()
   const tokens = getTokensFromPath()
 
   const getHref = item => {
     if (item.params) {
-      return `${item.route}/${item.params}`
+      return `${item.route}${query ? '?' : '/'}${item.params}`
     }
     return `${item.route}`
   }

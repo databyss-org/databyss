@@ -1,10 +1,90 @@
+/* eslint-disable no-restricted-syntax, no-await-in-loop */
 import express from 'express'
 import Block from '../../models/Block'
 import Page from '../../models/Page'
+import BlockRelation from '../../models/BlockRelation'
+
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
+import wrap from '../../lib/guardedAsync'
+import { addRelationships } from '../../lib/entries'
 
 const router = express.Router()
+
+// @route    POST api/entries/relations/
+// @desc     creates on or more block relations
+// @access   Private
+router.post(
+  '/relations/',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  wrap(async (req, res) => {
+    const payloadArray = req.body.data
+
+    for (const payload of payloadArray) {
+      const { blocksRelationArray, clearPageRelationships } = payload
+
+      // clear all block relationships associated to page id
+      if (clearPageRelationships) {
+        await BlockRelation.deleteMany({
+          'relatedTo.pageId': clearPageRelationships,
+          accountId: req.account._id,
+        })
+      }
+      if (blocksRelationArray.length) {
+        for (const relationship of blocksRelationArray) {
+          await addRelationships(relationship, req)
+        }
+      }
+    }
+
+    return res.status(200).end()
+  })
+)
+
+// @desc get all blocks related to block with @id
+// @returns {dictionary} pageid => BlockRelation[]
+// @access   Private
+router.get(
+  '/relations/:id',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  wrap(async (req, res, _next) => {
+    const atomicId = req.params.id
+
+    const results = await BlockRelation.find({
+      relatedBlockId: atomicId,
+      accountId: req.account._id,
+    })
+
+    // sort according to block index
+    results.sort(
+      (a, b) => (a.relatedTo.blockIndex > b.relatedTo.blockIndex ? 1 : -1)
+    )
+
+    if (results) {
+      let _results = {
+        count: results.length,
+        results: {},
+      }
+
+      _results = results.reduce((acc, curr) => {
+        if (!acc.results[curr.relatedTo.pageId]) {
+          // init result
+          acc.results[curr.relatedTo.pageId] = [curr]
+        } else {
+          const _entries = acc.results[curr.relatedTo.pageId]
+
+          _entries.push(curr)
+          acc.results[curr.relatedTo.pageId] = _entries
+        }
+        return acc
+      }, _results)
+
+      return res.json(_results)
+    }
+
+    return res.status(400).json({ msg: 'There is no entries for this search' })
+  })
+)
 
 // @route    POST api/entries/search/
 // @desc     Searches entries
