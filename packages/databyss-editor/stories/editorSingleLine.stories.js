@@ -10,7 +10,7 @@ const Box = ({ children, ...others }) => (
   </View>
 )
 
-storiesOf('Cypress//Tests', module)
+storiesOf('Selenium//Tests', module)
   .addDecorator(ViewportDecorator)
   .add('Slate 5 - single', () => {
     const _initial = {
