@@ -1,9 +1,17 @@
 /* eslint no-use-before-define: ["error", { "functions": false }] */
 
 const pdfjs = require('pdfjs-dist/es5/build/pdf.js')
+const he = require('he')
 
 let numPages = 0
+let metadata = {}
 let allPagesData = []
+
+// utils
+function stripOfHTML(source) {
+  const striped = source.replace(/<[^>]+>/g, '')
+  return he.decode(striped)
+}
 
 // public api
 export async function parse(path) {
@@ -16,6 +24,12 @@ export async function parse(path) {
   }
 
   numPages = pdf.numPages
+
+  try {
+    await getMetadata(pdf)
+  } catch (error) {
+    return Promise.reject(error)
+  }
 
   try {
     await getAllPages(pdf)
@@ -37,6 +51,27 @@ function loadPDF(path) {
   return new Promise((resolve, reject) => {
     const loadingTask = pdfjs.getDocument(path)
     loadingTask.promise.then(pdf => resolve(pdf)).catch(reject)
+  })
+}
+
+function getMetadata(pdf) {
+  return new Promise((resolve, reject) => {
+    pdf
+      .getMetadata()
+      .then(data => {
+        metadata = {}
+        if (data.info.Author) {
+          metadata.author = data.info.Author
+        }
+        if (data.info.Title) {
+          metadata.title = {
+            src: data.info.Title,
+            text: stripOfHTML(data.info.Title),
+          }
+        }
+        resolve(metadata)
+      })
+      .catch(reject)
   })
 }
 
@@ -122,13 +157,13 @@ function prepareResponse() {
   })
 
   // clone to ensure not to touch raw data
-  const response = allAnnotations.slice()
-  response.forEach(annotation => {
+  const annotations = allAnnotations.slice()
+  annotations.forEach(annotation => {
     // remove superfluous property
     delete annotation.data
   })
 
-  return response
+  return { metadata, annotations }
 }
 
 function sortByPageNumber(a, b) {
