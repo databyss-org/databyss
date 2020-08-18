@@ -26,6 +26,7 @@ const Pages = ({ filterQuery }) => (
 
         return (
           <SidebarList
+            data-test-element="sidebar-pages-list"
             menuItems={
               filterQuery.textValue === '' ? sortedPages : filteredEntries
             }

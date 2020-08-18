@@ -64,7 +64,7 @@ export const ArchiveBin = ({ pages }) => {
         onKeyDown={handleEscKey}
         hoverColor="background.2"
         p="tiny"
-        data-test-element="archive-button"
+        data-test-element="archive-dropdown"
         label="Archive Page"
       >
         <Icon sizeVariant="medium" color="text.1">
@@ -83,7 +83,7 @@ export const ArchiveBin = ({ pages }) => {
           >
             {menuItems.map(menuItem => (
               <DropdownListItem
-                menuItem={menuItem}
+                menuItem={{ ...menuItem, action: 'archive' }}
                 onPress={onPress}
                 onKeyDown={handleEscKey}
                 key={menuItem.label}

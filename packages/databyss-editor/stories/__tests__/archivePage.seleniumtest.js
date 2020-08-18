@@ -2,23 +2,9 @@
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
-import {
-  getEditor,
-  getElementByTag,
-  sleep,
-  sendKeys,
-  enterKey,
-  //  toggleBold,
-  //   toggleItalic,
-  //   toggleLocation,
-  //   enterKey,
-  //   upKey,
-  //   downKey,
-  //   backspaceKey,
-} from './_helpers.selenium'
+import { getElementByTag, sleep, sendKeys, enterKey } from './_helpers.selenium'
 
 let driver
-let editor
 let actions
 const LOCAL_URL = 'http://localhost:3000'
 const PROXY_URL = 'http://0.0.0.0:3000'
@@ -57,8 +43,6 @@ describe('archive page', () => {
 
     actions = driver.actions()
 
-    //  editor = await getEditor(driver)
-
     done()
   })
 
@@ -95,87 +79,33 @@ describe('archive page', () => {
     await enterKey(actions)
 
     // refresh and archive the page
+    await driver.navigate().refresh()
+    await sleep(2000)
 
     // check sidebar list for archived page
 
-    // let headerField = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-header"]'
-    // )
-    // await headerField.sendKeys('First Test Page Title')
+    const archiveDropdown = await getElementByTag(
+      driver,
+      '[data-test-element="archive-dropdown"]'
+    )
+    await archiveDropdown.click()
 
-    // editor.sendKeys('Editor test one')
+    const archiveButton = await getElementByTag(
+      driver,
+      '[data-test-block-menu="archive"]'
+    )
+    await archiveButton.click()
 
-    // await sleep(2000)
+    await sleep(2000)
 
-    // const newPageButton = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="new-page-button"]'
-    // )
+    const pagesSidebarList = await getElementByTag(
+      driver,
+      '[data-test-element="sidebar-pages-list"]'
+    )
 
-    // await newPageButton.click()
-    // await sleep(2000)
+    const _sidebarList = await pagesSidebarList.getText()
 
-    // headerField = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-header"]'
-    // )
-
-    // await headerField.sendKeys('Second page title')
-
-    // editor = await getEditor(driver)
-
-    // editor.sendKeys('Editor test two')
-
-    // await sleep(2000)
-
-    // const firstPageButton = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-sidebar-0"]'
-    // )
-
-    // await firstPageButton.click()
-
-    // await sleep(1000)
-
-    // headerField = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-header"]'
-    // )
-
-    // headerField = await headerField.getAttribute('value')
-
-    // editor = await getEditor(driver)
-
-    // let editorField = await editor.getAttribute('innerText')
-
-    // assert.equal(headerField, 'First Test Page Title')
-    // assert.equal(editorField, 'Editor test one')
-
-    // // Second page integrity test
-    // const secondPageButton = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-sidebar-1"]'
-    // )
-
-    // await secondPageButton.click()
-
-    // await sleep(1000)
-
-    // headerField = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-header"]'
-    // )
-
-    // headerField = await headerField.getAttribute('value')
-
-    // editor = await getEditor(driver)
-
-    // editorField = await editor.getAttribute('innerText')
-
-    // await sleep(1000)
-
-    // assert.equal(headerField, 'Second page title')
-    assert.equal(true, true)
+    // make sure second page does not appear on the sidebar
+    assert.equal(_sidebarList, 'this is the first page title')
   })
 })
