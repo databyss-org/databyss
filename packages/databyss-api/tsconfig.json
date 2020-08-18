@@ -1,0 +1,10 @@
+{
+  "extends": "../../config/tsconfig.json",
+  "include": [
+    "./**/*",
+  ],
+  "compilerOptions": {
+    "composite": true,
+  },
+  "references": []
+}
