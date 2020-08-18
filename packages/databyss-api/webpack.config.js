@@ -26,6 +26,7 @@ module.exports = {
   },
   plugins: [new webpack.DefinePlugin(envDefines)],
   resolve: {
+    extensions: ['.js', '.ts'],
     alias: {
       deepmerge$: 'deepmerge/dist/umd.js',
     },
