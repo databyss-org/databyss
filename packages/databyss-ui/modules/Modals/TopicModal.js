@@ -7,7 +7,6 @@ import ValueListProvider, {
 import {
   ModalWindow,
   View,
-  Grid,
   TextControl,
   List,
 } from '@databyss-org/ui/primitives'
@@ -58,31 +57,28 @@ const TopicModal = ({ refId, visible, onUpdate, id }) => {
           }
           return (
             <ValueListProvider onChange={setValues} values={values || topic}>
-              <Grid>
-                <View
-                  paddingVariant="none"
-                  widthVariant="content"
-                  backgroundColor="background.0"
-                  width="100%"
-                >
-                  <ControlList verticalItemPadding="tiny">
-                    <ValueListItem path="text">
-                      <TextControl
-                        labelProps={{
-                          width: '25%',
-                        }}
-                        label="Name"
-                        id="name"
-                        gridFlexWrap="nowrap"
-                        focusOnMount
-                        paddingVariant="tiny"
-                        rich
-                        onBlur={onBlur}
-                      />
-                    </ValueListItem>
-                  </ControlList>
-                </View>
-              </Grid>
+              <View
+                paddingVariant="none"
+                backgroundColor="background.0"
+                width="100%"
+              >
+                <ControlList verticalItemPadding="tiny">
+                  <ValueListItem path="text">
+                    <TextControl
+                      labelProps={{
+                        width: '25%',
+                      }}
+                      label="Name"
+                      id="name"
+                      gridFlexWrap="nowrap"
+                      focusOnMount
+                      paddingVariant="tiny"
+                      rich
+                      onBlur={onBlur}
+                    />
+                  </ValueListItem>
+                </ControlList>
+              </View>
             </ValueListProvider>
           )
         }}

@@ -34,10 +34,10 @@ const SidebarList = ({ menuItems, query }) => {
     return `${item.route}`
   }
 
-  const padding = 24
-  const headerHeight = 66
+  const padding = 26
+  const headerHeight = 34
   const footerHeight = 48
-  const searchBar = 56
+  const searchBar = 54
 
   const totalHeight = pxUnits(padding + headerHeight + footerHeight + searchBar)
 
@@ -66,6 +66,7 @@ const SidebarList = ({ menuItems, query }) => {
               href={getHref(item)}
               css={{
                 textDecoration: 'none',
+                boxSizing: 'border-box',
               }}
             >
               <Grid singleRow flexWrap="nowrap" columnGap="small">
