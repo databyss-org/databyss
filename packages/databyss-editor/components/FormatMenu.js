@@ -49,8 +49,11 @@ const formatActions = isMobileNewLine => [
   },
 ]
 
+/* eslint-disable */
 const formatActionButtons = () =>
   // placeholder for mobile actions
+
+  // FIXME: if this is always true, there should not be a check
   true
     ? formatActions(true).reduce((acc, a, i) => {
         if (a.type === 'DIVIDER') {
@@ -75,6 +78,8 @@ const formatActionButtons = () =>
         )
       }, [])
     : []
+
+/* eslint-enable */
 
 const MarkButton = ({ type, label, variant, ...others }) => {
   const editor = useEditor()

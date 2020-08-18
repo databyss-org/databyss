@@ -1,4 +1,5 @@
-'use strict'
+/* eslint no-use-before-define: ["error", { "functions": false }] */
+/* eslint-disable import/no-extraneous-dependencies */
 
 // Do this as the first thing so that any code reading it knows the right env.
 process.env.BABEL_ENV = 'production'
@@ -49,12 +50,13 @@ const config = configFactory('production')
 // We require that you explicitly set browsers and do not fall back to
 // browserslist defaults.
 const { checkBrowsers } = require('react-dev-utils/browsersHelper')
+
 checkBrowsers(paths.appPath, isInteractive)
-  .then(() => {
+  .then(() =>
     // First, read the current file sizes in build directory.
     // This lets us display how much they changed later.
-    return measureFileSizesBeforeBuild(paths.appBuild)
-  })
+    measureFileSizesBeforeBuild(paths.appBuild)
+  )
   .then(previousFileSizes => {
     // Remove all content but keep the directory so that
     // if you're in it, you don't end up in Trash
@@ -69,6 +71,7 @@ checkBrowsers(paths.appPath, isInteractive)
       if (warnings.length) {
         console.log(chalk.yellow('Compiled with warnings.\n'))
         console.log(warnings.join('\n\n'))
+        /* eslint-disable prefer-template */
         console.log(
           '\nSearch for the ' +
             chalk.underline(chalk.yellow('keywords')) +
@@ -79,6 +82,7 @@ checkBrowsers(paths.appPath, isInteractive)
             chalk.cyan('// eslint-disable-next-line') +
             ' to the line before.\n'
         )
+        /* eslint-enable prefer-template */
       } else {
         console.log(chalk.green('Compiled successfully.\n'))
       }
