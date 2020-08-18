@@ -16,7 +16,7 @@ const topicsOverview = [
   },
 ]
 
-const Topics = ({ filterQuery }) => (
+const Topics = ({ filterQuery, height, hasIndexPage }) => (
   <AllTopicsLoader>
     {topics => {
       const topicsData = Object.values(topics).map(value =>
@@ -35,9 +35,10 @@ const Topics = ({ filterQuery }) => (
       return (
         <SidebarList
           menuItems={[
-            ...topicsOverview,
+            ...(hasIndexPage ? topicsOverview : ''),
             ...(filterQuery.textValue === '' ? sortedTopics : filteredEntries),
           ]}
+          height={height}
         />
       )
     }}

@@ -10,6 +10,10 @@ import {
   Separator,
 } from '@databyss-org/ui/primitives'
 import SearchInputContainer from '@databyss-org/ui/components/SearchContent/SearchInputContainer'
+import Pages from '@databyss-org/ui/modules/Sidebar/routes/Pages'
+import Sources from '@databyss-org/ui/modules/Sidebar/routes/Sources'
+import Topics from '@databyss-org/ui/modules/Sidebar/routes/Topics'
+import { sidebarListHeight } from '@databyss-org/ui/modules/Sidebar/Sidebar'
 
 const Search = () => {
   const { navigate, getSidebarPath } = useNavigationContext()
@@ -48,7 +52,12 @@ const Search = () => {
     >
       {searchTerm &&
         menuItem === 'search' && (
-          <View height="40px" pt="medium" pb="medium">
+          <View
+            height={sidebarListHeight}
+            pt="medium"
+            pb="medium"
+            overflow="scroll"
+          >
             <EntrySearchLoader query={searchTerm}>
               {results => (
                 <BaseControl onClick={onSearchClick}>
@@ -81,6 +90,9 @@ const Search = () => {
                 </BaseControl>
               )}
             </EntrySearchLoader>
+            <Pages filterQuery={{ textValue: searchTerm }} />
+            <Sources filterQuery={{ textValue: searchTerm }} />
+            <Topics filterQuery={{ textValue: searchTerm }} />
           </View>
         )}
     </SearchInputContainer>

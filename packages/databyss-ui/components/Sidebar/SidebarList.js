@@ -22,7 +22,7 @@ const menuSvgs = type =>
     topics: <TopicsSvg />,
   }[type])
 
-const SidebarList = ({ menuItems, query }) => {
+const SidebarList = ({ menuItems, query, height }) => {
   const { getTokensFromPath } = useNavigationContext()
   const location = useLocation()
   const tokens = getTokensFromPath()
@@ -34,17 +34,10 @@ const SidebarList = ({ menuItems, query }) => {
     return `${item.route}`
   }
 
-  const padding = 26
-  const headerHeight = 34
-  const footerHeight = 48
-  const searchBar = 54
-
-  const totalHeight = pxUnits(padding + headerHeight + footerHeight + searchBar)
-
   return (
     <View
       width="100%"
-      height={`calc(100vh - ${totalHeight})`}
+      height={height}
       overflow="scroll"
       p={pxUnits(0)}
       mt="extraSmall"

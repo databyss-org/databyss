@@ -7,7 +7,7 @@ import {
 } from '@databyss-org/services/entries/util'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 
-const Pages = ({ filterQuery }) => (
+const Pages = ({ filterQuery, height }) => (
   <>
     <PagesLoader>
       {pages => {
@@ -29,6 +29,7 @@ const Pages = ({ filterQuery }) => (
             menuItems={
               filterQuery.textValue === '' ? sortedPages : filteredEntries
             }
+            height={height}
           />
         )
       }}

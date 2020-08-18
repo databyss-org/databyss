@@ -24,7 +24,7 @@ const sourcesOverview = [
   },
 ]
 
-const Sources = ({ filterQuery }) => (
+const Sources = ({ filterQuery, hasIndexPage, height }) => (
   <SourceCitationsLoader>
     {() => (
       <AuthorsLoader>
@@ -64,11 +64,12 @@ const Sources = ({ filterQuery }) => (
             <SidebarList
               query
               menuItems={[
-                ...sourcesOverview,
+                ...(hasIndexPage ? sourcesOverview : ''),
                 ...(filterQuery.textValue === ''
                   ? sortedAuthors
                   : filteredEntries),
               ]}
+              height={height}
             />
           )
         }}
