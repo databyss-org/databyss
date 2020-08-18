@@ -90,6 +90,7 @@ const SuggestMenu = ({ children }) => {
 
   const onDismiss = () => {
     setMenuActive(false)
+    ReactEditor.focus(editor)
   }
 
   return (
