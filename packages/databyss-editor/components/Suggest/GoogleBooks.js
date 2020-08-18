@@ -71,14 +71,7 @@ const GoogleFooter = () => (
   />
 )
 
-const GoogleBooks = ({
-  editorContext,
-  editor,
-  unmount,
-  menuHeight,
-  dismiss,
-  query,
-}) => {
+const GoogleBooks = ({ editorContext, editor, menuHeight, dismiss, query }) => {
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
   const setSource = useSourceContext(c => c && c.setSource)
 
@@ -134,7 +127,7 @@ const GoogleBooks = ({
     dismiss()
   }
 
-  useEffect(() => () => unmount(), [])
+  useEffect(() => () => setSourcesLoaded(false), [])
 
   const _renderResults = results =>
     !_.isEmpty(results) ? (
