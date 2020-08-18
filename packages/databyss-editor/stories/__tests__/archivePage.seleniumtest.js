@@ -107,5 +107,17 @@ describe('archive page', () => {
 
     // make sure second page does not appear on the sidebar
     assert.equal(_sidebarList, 'this is the first page title')
+
+    sleep(5000)
+
+    // assure archive dropdown is not visible if one page exists
+    let isElementVisible = true
+    try {
+      await getElementByTag(driver, '[[data-test-element="archive-dropdown"]')
+    } catch (err) {
+      isElementVisible = false
+    }
+
+    assert.equal(isElementVisible, false)
   })
 })
