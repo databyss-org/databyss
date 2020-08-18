@@ -67,9 +67,9 @@ const buildResponse = state => {
     })
   })
 
-  response.doi = state.doi.textValue
-  response.issn = state.issn.textValue
-  response.year = state.year.textValue
+  response.doi = state.doi?.textValue
+  response.issn = state.issn?.textValue
+  response.year = state.year?.textValue
 
   return response
 }
