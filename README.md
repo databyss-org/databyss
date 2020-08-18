@@ -73,24 +73,6 @@ This runs `eslint` on the entire codebase and reports problems.
 Runs the linter and the [Jest](https://jestjs.io/) test runner in the interactive watch mode. It is a good idea to have this running while you develop to catch problems and ensure everything is passing before you make a PR.  
 cf [Contributing doc](CONTRIBUTING.md#writing-tests)
 
-`> yarn cy`  
-Runs the [Cypress](https://www.cypress.io) test runner in interactive watch mode. Like `yarn:test`, it's a good idea to have this running if you're working on UI tasks.
-
-`> yarn cy:test`  
-Runs all of the Cypress tests from `yarn cy` but in a headless (text-only) mode.
-
-`> yarn cy:open`  
-Used internally by `yarn cy` to open the Cypress test runner interface.
-
-`> yarn cy:run`  
-Used internally by `yarn cy:test` to start the test runner.
-
-`yarn cy:run:debug`  
-Same as `yarn cy:run`, except it emits verbose debugging logs. To use, run it after running `yarn storybook:cy`.
-
-`yarn storybook:cy`  
-Starts the Storybook server, which Cypress hits to access sandboxed UIs to test (like the editor). Called internally by `yarn cy` and `yarn cy:test`.
-
 `test:selenium`
 Starts the Selenium tests using the Sauce Labs remote environment
 

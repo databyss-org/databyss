@@ -9,9 +9,9 @@ let actions
 
 // let actions
 const LOCAL_URL =
-  'http://localhost:6006/iframe.html?id=cypress-tests--valuelist-controller'
+  'http://localhost:6006/iframe.html?id=selenium-tests--valuelist-controller'
 const PROXY_URL =
-  'http://0.0.0.0:8080/iframe.html?id=cypress-tests--valuelist-controller'
+  'http://0.0.0.0:8080/iframe.html?id=selenium-tests--valuelist-controller'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 

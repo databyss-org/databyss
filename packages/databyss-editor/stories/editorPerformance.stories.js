@@ -178,7 +178,7 @@ const EditorWithModals = () => (
   </TopicProvider>
 )
 
-storiesOf('Cypress//Tests', module)
+storiesOf('Selenium//Tests', module)
   .addDecorator(ViewportDecorator)
   .add('Slate 5 - Editor Performance', () => {
     fetchMock

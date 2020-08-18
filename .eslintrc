@@ -3,14 +3,12 @@
   "plugins": [
     "eslint-plugin-prettier",
     "@typescript-eslint",
-    "react-hooks",
-    "cypress"
+    "react-hooks"
   ],
   "parser": "@typescript-eslint/parser",
   "env": {
     "jest": true,
-    "browser": true,
-    "cypress/globals": true
+    "browser": true
   },
   "settings": {
     "import/resolver": {

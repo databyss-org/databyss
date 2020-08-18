@@ -11,8 +11,8 @@ let driver
 let editor
 let slateDocument
 let actions
-const LOCAL_URL = 'http://localhost:6006/iframe.html?id=cypress-tests--slate-5'
-const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=cypress-tests--slate-5'
+const LOCAL_URL = 'http://localhost:6006/iframe.html?id=selenium-tests--slate-5'
+const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=selenium-tests--slate-5'
 
 describe('new block menu actions', () => {
   beforeEach(async done => {
