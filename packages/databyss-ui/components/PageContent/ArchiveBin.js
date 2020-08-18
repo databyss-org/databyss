@@ -64,6 +64,7 @@ export const ArchiveBin = ({ pages }) => {
         onKeyDown={handleEscKey}
         hoverColor="background.2"
         p="tiny"
+        data-test-element="archive-button"
         label="Archive Page"
       >
         <Icon sizeVariant="medium" color="text.1">
