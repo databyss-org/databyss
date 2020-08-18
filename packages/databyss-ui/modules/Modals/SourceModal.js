@@ -7,12 +7,10 @@ import ValueListProvider, {
 import {
   ModalWindow,
   View,
-  Grid,
   TextControl,
   List,
 } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { widthVariants, pxUnits } from '@databyss-org/ui/theming/views'
 
 const ControlList = ({ children, ...others }) => (
   <List horizontalItemPadding="small" {...others}>
@@ -59,70 +57,65 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
           }
           return (
             <ValueListProvider onChange={setValues} values={values || source}>
-              <Grid>
-                <View
-                  paddingVariant="none"
-                  maxWidth={`calc(${widthVariants.form.maxWidth} - ${pxUnits(
-                    48
-                  )})`}
-                  backgroundColor="background.0"
-                  width="100%"
-                >
-                  <ControlList verticalItemPadding="tiny">
-                    <ValueListItem path="text">
-                      <TextControl
-                        labelProps={{
-                          width: '25%',
-                        }}
-                        label="Name"
-                        id="name"
-                        gridFlexWrap="nowrap"
-                        focusOnMount
-                        paddingVariant="tiny"
-                        rich
-                        onBlur={onBlur}
-                      />
-                    </ValueListItem>
-                    <ValueListItem path="detail.citations[0].text">
-                      <TextControl
-                        labelProps={{
-                          width: '25%',
-                        }}
-                        label="Citation"
-                        id="citation"
-                        rich
-                        gridFlexWrap="nowrap"
-                        paddingVariant="tiny"
-                        onBlur={onBlur}
-                      />
-                    </ValueListItem>
-                    <ValueListItem path="detail.authors[0].firstName">
-                      <TextControl
-                        labelProps={{
-                          width: '25%',
-                        }}
-                        label="Author (First Name)"
-                        id="firstName"
-                        gridFlexWrap="nowrap"
-                        paddingVariant="tiny"
-                        onBlur={onBlur}
-                      />
-                    </ValueListItem>
-                    <ValueListItem path="detail.authors[0].lastName">
-                      <TextControl
-                        labelProps={{
-                          width: '25%',
-                        }}
-                        label="Author (Last Name)"
-                        id="lastName"
-                        gridFlexWrap="nowrap"
-                        paddingVariant="tiny"
-                        onBlur={onBlur}
-                      />
-                    </ValueListItem>
-                  </ControlList>
-                </View>
-              </Grid>
+              <View
+                paddingVariant="none"
+                backgroundColor="background.0"
+                width="100%"
+              >
+                <ControlList verticalItemPadding="tiny">
+                  <ValueListItem path="text">
+                    <TextControl
+                      labelProps={{
+                        width: '25%',
+                      }}
+                      label="Name"
+                      id="name"
+                      gridFlexWrap="nowrap"
+                      focusOnMount
+                      paddingVariant="tiny"
+                      rich
+                      onBlur={onBlur}
+                    />
+                  </ValueListItem>
+                  <ValueListItem path="detail.citations[0].text">
+                    <TextControl
+                      labelProps={{
+                        width: '25%',
+                      }}
+                      label="Citation"
+                      id="citation"
+                      rich
+                      gridFlexWrap="nowrap"
+                      paddingVariant="tiny"
+                      onBlur={onBlur}
+                    />
+                  </ValueListItem>
+                  <ValueListItem path="detail.authors[0].firstName">
+                    <TextControl
+                      labelProps={{
+                        width: '25%',
+                      }}
+                      label="Author (First Name)"
+                      id="firstName"
+                      gridFlexWrap="nowrap"
+                      paddingVariant="tiny"
+                      onBlur={onBlur}
+                    />
+                  </ValueListItem>
+                  <ValueListItem path="detail.authors[0].lastName">
+                    <TextControl
+                      labelProps={{
+                        width: '25%',
+                      }}
+                      label="Author (Last Name)"
+                      id="lastName"
+                      gridFlexWrap="nowrap"
+                      paddingVariant="tiny"
+                      onBlur={onBlur}
+                    />
+                  </ValueListItem>
+                </ControlList>
+              </View>
             </ValueListProvider>
           )
         }}
