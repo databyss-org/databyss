@@ -57,7 +57,7 @@ const SearchContent = () => {
               key={k}
               onClick={() => onEntryClick(r.pageId, e.entryId)}
             >
-              <View p="small" ml="small">
+              <View p="tiny">
                 <Text>
                   <Highlighter
                     searchWords={query
@@ -74,7 +74,7 @@ const SearchContent = () => {
     ) : (
       <Text>no results found</Text>
     )
-    return <View>{_Pages}</View>
+    return <View px="medium">{_Pages}</View>
   }
 
   return (
