@@ -14,8 +14,8 @@
             "title": "Databyss",
             "headline": "You research, dabble, take notes, and get lost in your thoughts. Databyss is your new word-processor.",
             "buttonText": {
-                "bold": "Sign up",
-                "normal": "(for free)"
+                "bold": "Get Started",
+                "normal": ""
             },
             "buttonHref": "https://app.databyss.org/signup",
             "navLinks": [
