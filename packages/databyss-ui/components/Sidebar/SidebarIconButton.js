@@ -18,7 +18,6 @@ const SidebarIconButton = ({
     <>
       <BaseControl
         data-test-sidebar-element={name}
-        id="sidebar-button"
         width="100%"
         onClick={onClick}
         alignItems="center"
