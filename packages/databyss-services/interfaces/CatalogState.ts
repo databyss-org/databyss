@@ -1,4 +1,4 @@
-import { Text, CacheDict } from './'
+import { Text, CacheDict, Source } from './'
 
 export enum CatalogType {
   OpenLibrary = 'OPEN_LIBRARY',
@@ -8,7 +8,8 @@ export enum CatalogType {
 
 export interface CatalogResult {
   title: Text
-  meta: any
+  source: Source
+  apiResult: any
 }
 
 export interface GroupedCatalogResults {
@@ -19,4 +20,14 @@ export interface CatalogState {
   searchCache: {
     [catalogType: string]: CacheDict<GroupedCatalogResults>
   }
+}
+
+export interface CatalogService {
+  search: (query: string) => any
+  getResults: (apiResults: any) => Array<any>
+  getAuthors: (apiResult: any) => string[]
+  getTitle: (apiResult: any) => string
+  getSubtitle: (apiResult: any) => string
+  sourceFromResult: (apiResult: any) => Source
+  titleFromResult: (apiResult: any) => Text
 }

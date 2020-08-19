@@ -14,51 +14,6 @@ import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { textToHtml } from '@databyss-org/services/block/serialize'
 
-const splitName = name => ({
-  firstName: {
-    textValue: name
-      .split(' ')
-      .slice(0, -1)
-      .join(' '),
-  },
-  lastName: {
-    textValue: name
-      .split(' ')
-      .slice(-1)
-      .join(' '),
-  },
-})
-
-/* composes title from google api data */
-const _title = vol => {
-  const _author = vol.volumeInfo.authors && splitName(vol.volumeInfo.authors[0])
-
-  const _authorText = _author
-    ? _author.lastName.textValue +
-      (_author.firstName.textValue ? ', ' : '.') +
-      (_author.firstName.textValue ? `${_author.firstName.textValue}.` : '')
-    : ''
-
-  const _titleText = vol.volumeInfo.title
-
-  const _yearText = vol.volumeInfo.publishedDate
-    ? vol.volumeInfo.publishedDate.substring(0, 4)
-    : ''
-
-  const _ranges = [
-    {
-      length: _titleText.length,
-      offset: _authorText ? _authorText.length + 1 : 0,
-      marks: ['italic'],
-    },
-  ]
-
-  return {
-    textValue: `${_authorText} ${_titleText} (${_yearText})`,
-    ranges: _ranges,
-  }
-}
-
 const GoogleFooter = () => (
   <img
     srcSet={`${googleLogo}, ${googleLogoRetina} 2x`}
@@ -73,19 +28,8 @@ const GoogleBooks = ({ menuHeight, dismiss, query, selectSource }) => {
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
   const setSource = useSourceContext(c => c && c.setSource)
 
-  const onClick = vol => {
-    const text = _title(vol)
-
-    selectSource({
-      text,
-      type: 'SOURCE',
-      detail: {
-        authors:
-          vol.volumeInfo.authors &&
-          vol.volumeInfo.authors.map(a => splitName(a)),
-      },
-    })
-
+  const onPress = result => {
+    selectSource({ ...result.source })
     dismiss()
   }
 
@@ -101,7 +45,7 @@ const GoogleBooks = ({ menuHeight, dismiss, query, selectSource }) => {
           <List verticalItemPadding="none">
             {results[author].map((result, k) => (
               <BaseControl
-                onPress={() => onClick(result.meta)}
+                onPress={() => onPress(result)}
                 key={k}
                 hoverColor="background.1"
               >
