@@ -3,7 +3,7 @@ import { ResourcePending } from '@databyss-org/services/interfaces/ResourcePendi
 import ErrorFallback from '../Notify/ErrorFallback'
 import Loading from '../Notify/LoadingFallback'
 
-const MakeLoader = ({ resource, children, onUnload }) => {
+const MakeLoader = ({ resource, children, onUnload, LoadingFallback }) => {
   useEffect(
     () => () => {
       if (onUnload) {
@@ -12,9 +12,8 @@ const MakeLoader = ({ resource, children, onUnload }) => {
     },
     []
   )
-
   if (!resource || resource instanceof ResourcePending) {
-    return <Loading />
+    return LoadingFallback && LoadingFallback
   }
 
   if (resource instanceof Error) {
@@ -26,6 +25,10 @@ const MakeLoader = ({ resource, children, onUnload }) => {
   }
 
   return children(resource)
+}
+
+MakeLoader.defaultProps = {
+  LoadingFallback: <Loading />,
 }
 
 export default MakeLoader

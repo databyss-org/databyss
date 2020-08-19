@@ -7,9 +7,9 @@ import {
 } from '@databyss-org/services/entries/util'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 
-const Pages = ({ filterQuery, height }) => (
+const Pages = ({ filterQuery, height, LoadingFallback }) => (
   <>
-    <PagesLoader>
+    <PagesLoader LoadingFallback={LoadingFallback}>
       {pages => {
         const _menuItems = Object.values(pages).map(p =>
           createSidebarListItems({

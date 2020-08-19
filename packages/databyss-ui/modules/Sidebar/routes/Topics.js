@@ -16,8 +16,8 @@ const topicsOverview = [
   },
 ]
 
-const Topics = ({ filterQuery, height, hasIndexPage }) => (
-  <AllTopicsLoader>
+const Topics = ({ filterQuery, height, hasIndexPage, LoadingFallback }) => (
+  <AllTopicsLoader LoadingFallback={LoadingFallback}>
     {topics => {
       const topicsData = Object.values(topics).map(value =>
         createSidebarListItems({

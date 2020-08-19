@@ -24,10 +24,10 @@ const sourcesOverview = [
   },
 ]
 
-const Sources = ({ filterQuery, hasIndexPage, height }) => (
-  <SourceCitationsLoader>
+const Sources = ({ filterQuery, hasIndexPage, height, LoadingFallback }) => (
+  <SourceCitationsLoader LoadingFallback={LoadingFallback}>
     {() => (
-      <AuthorsLoader>
+      <AuthorsLoader LoadingFallback={LoadingFallback}>
         {authors => {
           const authorData = Object.values(authors).map(value => {
             const firstName = value.firstName?.textValue

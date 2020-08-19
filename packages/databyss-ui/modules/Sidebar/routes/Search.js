@@ -1,11 +1,5 @@
 import React from 'react'
-import {
-  EntrySearchLoader,
-  // AuthorsLoader,
-  // SourceCitationsLoader,
-  // PagesLoader,
-  // AllTopicsLoader,
-} from '@databyss-org/ui/components/Loaders'
+import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
@@ -95,9 +89,18 @@ const Search = ({ onClick }) => {
                 </BaseControl>
               )}
             </EntrySearchLoader>
-            <Pages filterQuery={{ textValue: searchTerm }} />
-            <Sources filterQuery={{ textValue: searchTerm }} />
-            <Topics filterQuery={{ textValue: searchTerm }} />
+            <Pages
+              filterQuery={{ textValue: searchTerm }}
+              LoadingFallback={false}
+            />
+            <Sources
+              filterQuery={{ textValue: searchTerm }}
+              LoadingFallback={false}
+            />
+            <Topics
+              filterQuery={{ textValue: searchTerm }}
+              LoadingFallback={false}
+            />
           </View>
         )}
     </SearchInputContainer>
