@@ -42,9 +42,12 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
       if (resourceIsReady(_source)) {
         _citationHeaderCache[_source._id] = _source
         draft.citationHeaderCache = _citationHeaderCache
-        draft.authorsHeaderCache = getAuthorsFromSources(
-          Object.values(_citationHeaderCache)
-        )
+        // only populate header if header has been loaded
+        if (draft.authorsHeaderCache){
+          draft.authorsHeaderCache = getAuthorsFromSources(
+            Object.values(_citationHeaderCache)
+          )
+        }
       }
 
       break

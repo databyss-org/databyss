@@ -47,7 +47,7 @@ const IndexSourceContent = ({ relations }) => {
           hoverColor="background.2"
           activeColor="background.3"
           key={k}
-          onClick={() => onEntryClick(r, e.entryId)}
+          onClick={() => onEntryClick(r, e.blockId)}
         >
           <View p="small" ml="small">
             <Text>{e.blockText.textValue}</Text>
