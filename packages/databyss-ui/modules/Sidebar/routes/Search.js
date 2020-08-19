@@ -15,7 +15,7 @@ import Sources from '@databyss-org/ui/modules/Sidebar/routes/Sources'
 import Topics from '@databyss-org/ui/modules/Sidebar/routes/Topics'
 import { sidebarListHeight } from '@databyss-org/ui/modules/Sidebar/Sidebar'
 
-const Search = () => {
+const Search = ({ onClick }) => {
   const { navigate, getSidebarPath } = useNavigationContext()
 
   const { searchTerm, setQuery, clearSearchCache } = useEntryContext()
@@ -49,6 +49,8 @@ const Search = () => {
         }
       }}
       onClear={clear}
+      onClick={onClick}
+      autoFocus={menuItem === 'search'}
     >
       {searchTerm &&
         menuItem === 'search' && (

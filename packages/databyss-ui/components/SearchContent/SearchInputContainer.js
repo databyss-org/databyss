@@ -18,6 +18,8 @@ const SearchInputContainer = ({
   onKeyDown,
   onClear,
   children,
+  onClick,
+  autoFocus,
 }) => {
   const [value, setValue] = useState({ textValue: '' })
 
@@ -26,7 +28,7 @@ const SearchInputContainer = ({
   useEffect(() => debounced(value), [value])
 
   return (
-    <View width="100%" px="small" my="small">
+    <View width="100%" px="small" my="small" onClick={onClick}>
       <View
         backgroundColor="background.0"
         height="100%"
@@ -43,6 +45,7 @@ const SearchInputContainer = ({
           </Icon>
           <TextInput
             placeholder={placeholder}
+            autoFocus={autoFocus}
             variant="bodyNormal"
             color="text.2"
             value={value}
