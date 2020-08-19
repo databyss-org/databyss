@@ -18,7 +18,7 @@ const PROXY_URL = 'http://0.0.0.0:3000'
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('entry search', () => {
-  beforeAll(async done => {
+  beforeEach(async done => {
     const random = Math.random()
       .toString(36)
       .substring(7)
@@ -52,13 +52,13 @@ describe('entry search', () => {
     done()
   })
 
-  afterAll(async () => {
+  afterEach(async () => {
     await driver.quit()
   })
 
   // should search an entry at the middle of an entry
   // should search an entry at the end of an entry
-  it('should search entries in multiple pages and verify accurate cursor positioning', async () => {
+  it('should test the integrity of search results', async () => {
     // populate a page
     await sleep(500)
     await sendKeys(actions, 'this is the first page title')
@@ -73,15 +73,12 @@ describe('entry search', () => {
       'something keyword appears at the start of an entry'
     )
     // create a new page and populate the page
-
     let newPageButton = await getElementByTag(
       driver,
       '[data-test-element="new-page-button"]'
     )
-
     await newPageButton.click()
     await sleep(2000)
-
     await sendKeys(actions, 'this is the second page title')
     await enterKey(actions)
     await sendKeys(
@@ -93,16 +90,13 @@ describe('entry search', () => {
     await enterKey(actions)
     await sendKeys(actions, '@this is another test source')
     await enterKey(actions)
-
     // create a third page
     newPageButton = await getElementByTag(
       driver,
       '[data-test-element="new-page-button"]'
     )
-
     await newPageButton.click()
     await sleep(2000)
-
     await sendKeys(actions, 'this is the third page title')
     await enterKey(actions)
     await sendKeys(actions, '@this is another test source')
@@ -110,75 +104,57 @@ describe('entry search', () => {
     await sendKeys(actions, 'keyword appears at the end of an entry something')
     await enterKey(actions)
     await enterKey(actions)
-
     // refresh and archive the page
     await driver.navigate().refresh()
     await sleep(2000)
-
     // click on sidebar entry search
     const searchSidebarButton = await getElementByTag(
       driver,
       '[data-test-sidebar-element="search"]'
     )
-
     await searchSidebarButton.click()
-
     // click on sidebar entry search
     const searchInput = await getElementByTag(
       driver,
       '[data-test-element="search-input"]'
     )
     await searchInput.click()
-
     await sleep(1000)
     await sendKeys(actions, 'something')
     await enterKey(actions)
     await sleep(1000)
 
-    const searchPageResultsTitle = await driver.findElements(
-      By.tagName('[data-test-element="search-result-page"]')
-    )
-
-    // check the length of
-    assert.equal(searchPageResultsTitle.length, 3)
-  })
-
-  it('should verify correct pages appear on search results', async () => {
     // results can be in random order
     const searchPageResultsTitle = await driver.findElements(
       By.tagName('[data-test-element="search-result-page"]')
     )
-
+    // check the length of
+    assert.equal(searchPageResultsTitle.length, 3)
+    // should verify correct pages appear on search results
     // a combination of all three page headers
     const pageHeaders =
       'this is the third page title this is the second page title this is the first page title'
-
     const firstPageTitle = await searchPageResultsTitle[0].getAttribute(
       'innerText'
     )
-
     const secondPageTitle = await searchPageResultsTitle[1].getAttribute(
       'innerText'
     )
-
     const thirdPageTitle = await searchPageResultsTitle[2].getAttribute(
       'innerText'
     )
-
     // check first title
     assert.equal(pageHeaders.includes(firstPageTitle.trim()), true)
     // check second title
     assert.equal(pageHeaders.includes(secondPageTitle.trim()), true)
     // check third title
     assert.equal(pageHeaders.includes(thirdPageTitle.trim()), true)
-  })
 
-  it('it should click on the first result and verify anchor hyperlink works', async () => {
+    // it should click on the first result and verify anchor hyperlink works
     // results can be in random order
     const entrySearchResult = await driver.findElements(
       By.tagName('[data-test-element="search-result-entries"]')
     )
-
     await entrySearchResult[0].click()
     await sleep(2000)
     // highlights current anchor position
@@ -189,11 +165,9 @@ describe('entry search', () => {
     await rightShiftKey(actions)
     await rightShiftKey(actions)
     await rightShiftKey(actions)
-
     const _selection = await driver.executeScript(
       'return window.getSelection().toString()'
     )
-
     // check highlight for correct words
     assert.equal(_selection, 'keyword')
   })
