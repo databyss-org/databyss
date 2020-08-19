@@ -4,12 +4,21 @@ import { pxUnits } from '@databyss-org/ui/theming/views'
 import { timing } from '@databyss-org/ui/theming/theme'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 
-const SidebarIconButton = ({ icon, onClick, isActive, title, ...others }) => {
+const SidebarIconButton = ({
+  icon,
+  onClick,
+  isActive,
+  title,
+  name,
+  ...others
+}) => {
   const { isMenuOpen } = useNavigationContext()
 
   return (
     <>
       <BaseControl
+        data-test-sidebar-element={name}
+        id="sidebar-button"
         width="100%"
         onClick={onClick}
         alignItems="center"

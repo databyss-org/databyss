@@ -1,8 +1,14 @@
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
+import { Key, By } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
-import { getElementByTag, sleep, sendKeys, enterKey } from './_helpers.selenium'
+import {
+  getElementByTag,
+  sleep,
+  sendKeys,
+  enterKey,
+  rightShiftKey,
+} from './_helpers.selenium'
 
 let driver
 let actions
@@ -12,7 +18,7 @@ const PROXY_URL = 'http://0.0.0.0:3000'
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('entry search', () => {
-  beforeEach(async done => {
+  beforeAll(async done => {
     const random = Math.random()
       .toString(36)
       .substring(7)
@@ -46,7 +52,7 @@ describe('entry search', () => {
     done()
   })
 
-  afterEach(async () => {
+  afterAll(async () => {
     await driver.quit()
   })
 
@@ -99,53 +105,96 @@ describe('entry search', () => {
 
     await sendKeys(actions, 'this is the third page title')
     await enterKey(actions)
+    await sendKeys(actions, '@this is another test source')
+    await enterKey(actions)
     await sendKeys(actions, 'keyword appears at the end of an entry something')
     await enterKey(actions)
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, '@this is another test source')
     await enterKey(actions)
 
     // refresh and archive the page
     await driver.navigate().refresh()
     await sleep(2000)
 
-    // check sidebar list for archived page
+    // click on sidebar entry search
+    const searchSidebarButton = await getElementByTag(
+      driver,
+      '[data-test-sidebar-element="search"]'
+    )
 
-    // const archiveDropdown = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="archive-dropdown"]'
-    // )
-    // await archiveDropdown.click()
+    await searchSidebarButton.click()
 
-    // const archiveButton = await getElementByTag(
-    //   driver,
-    //   '[data-test-block-menu="archive"]'
-    // )
-    // await archiveButton.click()
+    // click on sidebar entry search
+    const searchInput = await getElementByTag(
+      driver,
+      '[data-test-element="search-input"]'
+    )
+    await searchInput.click()
 
-    // await sleep(2000)
+    await sleep(1000)
+    await sendKeys(actions, 'something')
+    await enterKey(actions)
+    await sleep(1000)
 
-    // const pagesSidebarList = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="sidebar-pages-list"]'
-    // )
+    const searchPageResultsTitle = await driver.findElements(
+      By.tagName('[data-test-element="search-result-page"]')
+    )
 
-    // const _sidebarList = await pagesSidebarList.getText()
+    // check the length of
+    assert.equal(searchPageResultsTitle.length, 3)
+  })
 
-    // // make sure second page does not appear on the sidebar
-    // assert.equal(_sidebarList, 'this is the first page title')
+  it('should verify correct pages appear on search results', async () => {
+    // results can be in random order
+    const searchPageResultsTitle = await driver.findElements(
+      By.tagName('[data-test-element="search-result-page"]')
+    )
 
-    // sleep(5000)
+    // a combination of all three page headers
+    const pageHeaders =
+      'this is the third page title this is the second page title this is the first page title'
 
-    // // assure archive dropdown is not visible if one page exists
-    // let isElementVisible = true
-    // try {
-    //   await getElementByTag(driver, '[[data-test-element="archive-dropdown"]')
-    // } catch (err) {
-    //   isElementVisible = false
-    // }
+    const firstPageTitle = await searchPageResultsTitle[0].getAttribute(
+      'innerText'
+    )
 
-    assert.equal(false, false)
+    const secondPageTitle = await searchPageResultsTitle[1].getAttribute(
+      'innerText'
+    )
+
+    const thirdPageTitle = await searchPageResultsTitle[2].getAttribute(
+      'innerText'
+    )
+
+    // check first title
+    assert.equal(pageHeaders.includes(firstPageTitle.trim()), true)
+    // check second title
+    assert.equal(pageHeaders.includes(secondPageTitle.trim()), true)
+    // check third title
+    assert.equal(pageHeaders.includes(thirdPageTitle.trim()), true)
+  })
+
+  it('it should click on the first result and verify anchor hyperlink works', async () => {
+    // results can be in random order
+    const entrySearchResult = await driver.findElements(
+      By.tagName('[data-test-element="search-result-entries"]')
+    )
+
+    await entrySearchResult[0].click()
+    await sleep(2000)
+    // highlights current anchor position
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+    await rightShiftKey(actions)
+
+    const _selection = await driver.executeScript(
+      'return window.getSelection().toString()'
+    )
+
+    // check highlight for correct words
+    assert.equal(_selection, 'keyword')
   })
 })
