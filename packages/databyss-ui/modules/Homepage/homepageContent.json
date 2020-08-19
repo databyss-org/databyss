@@ -3,7 +3,7 @@
     "meta": [
         {
             "name": "description",
-            "content": "You research, dabble, take notes, and get lost in your thoughts. Databyss is your new word-processor."
+            "content": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word-processor."
         }
     ],
     "sections": [
@@ -12,10 +12,10 @@
             "backgroundImgSrc": "/homepage/stone_bg.jpg",
             "logoSrc": "/homepage/logo_new.png",
             "title": "Databyss",
-            "headline": "You research, dabble, take notes, and get lost in your thoughts. Databyss is your new word-processor.",
+            "headline": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word-processor.",
             "buttonText": {
-                "bold": "Sign up",
-                "normal": "(for free)"
+                "bold": "Get Started",
+                "normal": ""
             },
             "buttonHref": "https://app.databyss.org/signup",
             "navLinks": [

@@ -97,7 +97,7 @@ describe('editor selenium', () => {
     assert.deepEqual(actual.selection, expected.selection)
   })
 
-  it('Should not allow content change on atomic blocks', async () => {
+  it('should not allow content change on atomic blocks', async () => {
     await sleep(300)
     await editor.sendKeys('@this is an example of a source text')
     await editor.sendKeys(Key.ENTER)
@@ -106,8 +106,9 @@ describe('editor selenium', () => {
     await sleep(500)
     await editor.sendKeys('this text should not be allowed')
     await editor.sendKeys(Key.ARROW_DOWN)
+    await editor.sendKeys(Key.ARROW_DOWN)
 
-    await sleep(300)
+    await sleep(500)
 
     const actual = JSON.parse(await slateDocument.getText())
 
