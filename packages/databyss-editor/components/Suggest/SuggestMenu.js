@@ -88,9 +88,13 @@ const SuggestMenu = ({ children }) => {
     }
   }
 
+  const onFocusEditor = () => {
+    ReactEditor.focus(editor)
+  }
+
   const onDismiss = () => {
     setMenuActive(false)
-    ReactEditor.focus(editor)
+    onFocusEditor()
   }
 
   return (
@@ -114,6 +118,8 @@ const SuggestMenu = ({ children }) => {
             dismiss: onDismiss,
             query,
             menuHeight: MENU_HEIGHT,
+            focusEditor: onFocusEditor,
+            active: menuActive,
           })
         ) : (
           <View p="small">

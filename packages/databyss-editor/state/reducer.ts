@@ -257,8 +257,6 @@ export default (
           const _frag = payload.data
           const { replace } = payload
 
-          console.log('PASTE', _frag, replace )
-
           if (!_frag.length) {
             break
           }

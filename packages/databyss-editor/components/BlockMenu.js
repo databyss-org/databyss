@@ -129,7 +129,7 @@ const BlockMenu = ({ element }) => {
         {menuItems.map((menuItem, i) => (
           <React.Fragment key={menuItem.action}>
             <DropdownListItem
-              menuItem={menuItem}
+              {...menuItem}
               onPress={e => onMenuAction(e, menuItem.action)}
               onKeyDown={handleEscKey}
             />

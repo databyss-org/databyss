@@ -19,6 +19,8 @@ export type { PageState } from './PageState'
 export type { PatchBatch } from './Patch'
 export type { SourceState } from './SourceState'
 export type { TopicState } from './TopicState'
+export type { CatalogState, CatalogResult, GroupedCatalogResults } from './CatalogState'
+export { CatalogType } from './CatalogState'
 export type ResourceResponse<T> = T | ResourcePending | Error | null
 export interface CacheDict<T> {
   [key: string]: ResourceResponse<T>

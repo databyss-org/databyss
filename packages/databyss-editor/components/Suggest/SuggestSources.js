@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import ObjectId from 'bson-objectid'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
@@ -6,10 +6,25 @@ import { Separator } from '@databyss-org/ui/primitives'
 import { prefixSearch } from '@databyss-org/services/block/filter'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useEditorContext } from '../../state/EditorProvider'
+import { GoogleBooks } from './'
 
-const SuggestSources = ({ query, dismiss }) => {
+const LOCAL_SOURCES = 'LOCAL_SOURCES'
+const OPEN_LIBRARY = 'OPEN_LIBRARY'
+const CROSSREF = 'CROSSREF'
+const GOOGLE_BOOKS = 'GOOGLE_BOOKS'
+
+const SuggestSources = ({ query, dismiss, focusEditor, active, ...others }) => {
   const setSource = useSourceContext(c => c && c.setSource)
   const { replace } = useEditorContext()
+  const [mode, setMode] = useState(LOCAL_SOURCES)
+
+  useEffect(
+    () => {
+      // reset menu when active state changes
+      setMode(LOCAL_SOURCES)
+    },
+    [active]
+  )
 
   const onSourceSelected = source => {
     if (!source._id) {
@@ -21,20 +36,26 @@ const SuggestSources = ({ query, dismiss }) => {
   }
 
   const _composeLocalSources = _sourcesDict => {
-    const _sources = Object.values(_sourcesDict)
+    let _sources = Object.values(_sourcesDict)
     if (!_sources.length) {
       return []
     }
-    return _sources
+    _sources = _sources
       .filter(prefixSearch(query))
+      .slice(0, 4)
       .map(s => (
         <DropdownListItem
-          menuItem={{ label: s.text.textValue }}
+          label={s.text.textValue}
           key={s._id}
           onPress={() => onSourceSelected({ ...s, type: 'SOURCE' })}
         />
       ))
-      .concat(<Separator color="border.3" spacing="extraSmall" key="sep" />)
+    if (!_sources.length) {
+      return []
+    }
+    return _sources.concat(
+      <Separator color="border.3" spacing="extraSmall" key="sep" />
+    )
   }
 
   const _menuItems = [
@@ -52,23 +73,34 @@ const SuggestSources = ({ query, dismiss }) => {
     },
   ]
 
-  return (
-    <SourceCitationsLoader>
-      {_sourceCitations =>
-        _composeLocalSources(_sourceCitations).concat(
-          _menuItems.map(menuItem => (
-            <DropdownListItem
-              menuItem={menuItem}
-              key={menuItem.action}
-              onPress={e => {
-                console.log(menuItem.action)
-              }}
-            />
-          ))
-        )
-      }
-    </SourceCitationsLoader>
-  )
+  return {
+    GOOGLE_BOOKS: () => (
+      <GoogleBooks
+        query={query}
+        selectSource={onSourceSelected}
+        dismiss={dismiss}
+        {...others}
+      />
+    ),
+    LOCAL_SOURCES: () => (
+      <SourceCitationsLoader>
+        {_sourceCitations =>
+          _composeLocalSources(_sourceCitations).concat(
+            _menuItems.map(menuItem => (
+              <DropdownListItem
+                {...menuItem}
+                key={menuItem.action}
+                onPress={() => {
+                  setMode(menuItem.action)
+                  focusEditor()
+                }}
+              />
+            ))
+          )
+        }
+      </SourceCitationsLoader>
+    ),
+  }[mode]()
 }
 
 export default SuggestSources
