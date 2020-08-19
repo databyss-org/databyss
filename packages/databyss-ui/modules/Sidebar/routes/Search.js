@@ -1,5 +1,11 @@
-import React, { useEffect } from 'react'
-import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
+import React from 'react'
+import {
+  EntrySearchLoader,
+  // AuthorsLoader,
+  // SourceCitationsLoader,
+  // PagesLoader,
+  // AllTopicsLoader,
+} from '@databyss-org/ui/components/Loaders'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
@@ -25,9 +31,6 @@ const Search = ({ onClick }) => {
     clearSearchCache()
     setQuery({ textValue: '' })
   }
-
-  // reset search on unmount
-  useEffect(() => () => clear(), [])
 
   const onChange = val => {
     setQuery(val)
