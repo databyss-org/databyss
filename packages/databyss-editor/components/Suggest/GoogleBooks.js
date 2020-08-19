@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import googleLogo from '@databyss-org/ui/assets/powered_by_google_on_white.png'
 import googleLogoRetina from '@databyss-org/ui/assets/powered_by_google_on_white_2x.png'
 import {
-  Grid,
   Text,
   View,
   List,
@@ -95,24 +94,20 @@ const GoogleBooks = ({ menuHeight, dismiss, query, selectSource }) => {
   const _renderResults = results =>
     !_.isEmpty(results) ? (
       Object.keys(results).map((author, i) => (
-        <View key={i}>
+        <View key={i} mb="tiny">
           <Text variant="uiTextSmall" color="text.2">
             {author}
           </Text>
-          <List verticalItemPadding="tiny">
+          <List verticalItemPadding="none">
             {results[author].map((result, k) => (
               <BaseControl
                 onPress={() => onClick(result.meta)}
                 key={k}
                 hoverColor="background.1"
               >
-                <View p="tiny" pr="tiny">
-                  <Grid columnGap="none">
-                    <Text variant="uiTextSmall" color="text.2">
-                      <RawHtml html={textToHtml(result.title)} />
-                    </Text>
-                  </Grid>
-                </View>
+                <Text variant="uiTextSmall" color="text.2">
+                  <RawHtml html={textToHtml(result.title)} />
+                </Text>
               </BaseControl>
             ))}
           </List>
