@@ -93,7 +93,7 @@ const SourceForm = ({ initialSource }) => {
   )
 }
 
-storiesOf('Cypress//Tests', module)
+storiesOf('Selenium//Tests', module)
   .addDecorator(ViewportDecorator)
   .add('ValueList Controller', () => (
     <View>

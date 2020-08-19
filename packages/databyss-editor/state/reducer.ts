@@ -214,6 +214,8 @@ export default (
   action: FSA,
   onChange?: Function
 ): EditorState => {
+  let clearBlockRelations = false
+
   const [nextState, patches, inversePatches] = produceWithPatches(
     state,
     (draft) => {
@@ -469,6 +471,10 @@ export default (
             if (bakeAtomicClosureBlock({ draft, index: op.index })) {
               // set selection at end of atomic
               nextSelection = draft.selection
+
+              // if an atomic closure has been created, re-run the block relations algorithm and clear current block relations
+
+              clearBlockRelations = true
               return
             }
 
@@ -503,6 +509,9 @@ export default (
                 }
               })
             } else if (op.withBakeAtomic) {
+              // reset block relations
+
+              clearBlockRelations = true
               bakeAtomicBlock({ draft, index: op.index })
             } else {
               // update only given entity
@@ -641,14 +650,15 @@ export default (
   historyActions need to bypass the EditorHistory history stack
   */
 
+
   if (onChange) {
     onChange({
       previousState: state,
       nextState,
       patches,
       inversePatches,
-      undoAction: action.type === UNDO,
-      redoAction: action.type === REDO,
+      type: action.type,
+      clearBlockRelations,
     })
   }
   return nextState

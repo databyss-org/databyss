@@ -100,7 +100,7 @@ const PageContent = () => {
   */
 
   return (
-    <View flex="1" height="100vh">
+    <View flex="1" height="100vh" backgroundColor="background.1">
       {id && (
         <PageLoader pageId={id} key={id}>
           {page => <PageContainer anchor={anchor} id={id} page={page} />}

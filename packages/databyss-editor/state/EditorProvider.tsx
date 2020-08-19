@@ -3,8 +3,10 @@ import React, {
   useContext,
   forwardRef,
   useImperativeHandle,
+  useRef,
 } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
+import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { Patch } from 'immer'
 import {
   SET_SELECTION,
@@ -24,7 +26,7 @@ import {
 import { Text, Selection, EditorState, Block } from '../interfaces'
 import initialState from './initialState'
 import reducer from './reducer'
-import { getPagePath } from '../lib/util'
+import { getPagePath, indexPage, PagePath } from '../lib/util'
 import {
   cutOrCopyEventHandler,
   pasteEventHandler,
@@ -71,14 +73,14 @@ export type OnChangeArgs = {
   previousState: EditorState
   patches: Patch[]
   inversePatches: Patch[]
-  undoAction: boolean
-  redoAction: boolean
+  type: string
+  clearBlockRelations: boolean
 }
 
 export interface EditorRef {
   undo: (patches: Patch[]) => void
   redo: (patches: Patch[]) => void
-  pagePath: string[]
+  pagePath: PagePath
 }
 
 type PropsType = {
@@ -90,14 +92,81 @@ type PropsType = {
 
 const useReducer = createReducer()
 
+/*
+actions to set block relations
+*/
+const isSetBlockRelations = [
+  SPLIT,
+  PASTE,
+  MERGE,
+  REMOVE,
+  REMOVE_AT_SELECTION,
+  COPY,
+]
+
+/*
+actions to clear block relations, then set new relations
+*/
+const isClearBlockRelations = [CUT, PASTE, CLEAR, DEQUEUE_NEW_ENTITY]
+
 export const EditorContext = createContext<ContextType | null>(null)
 
 const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
   ({ children, initialState, onChange }, ref) => {
+    const setBlockRelations = useEntryContext(c => c && c.setBlockRelations)
+    // get the current page header
+
+    const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
+
+    /*
+    intercepts onChange props and runs the block relations algorithm, dispatches block relations
+    */
+
+    const forkOnChange = props => {
+      pagePathRef.current = getPagePath(props.nextState)
+
+      if (onChange) {
+        if (setBlockRelations) {
+          const _pageId = props.nextState.pageHeader._id
+
+          // if last action was whitelisted, set block relations
+          if (isSetBlockRelations.findIndex(t => t === props.type) > -1) {
+            setBlockRelations({
+              blocksRelationArray: indexPage({
+                pageId: _pageId,
+                blocks: props.nextState.blocks,
+              }),
+            })
+          } else if (
+            (isClearBlockRelations.findIndex(t => t === props.type) > -1 ||
+              props.clearBlockRelations) &&
+            pagePathRef.current
+          ) {
+            setBlockRelations({
+              clearPageRelationships: _pageId,
+              blocksRelationArray: indexPage({
+                pageId: _pageId,
+                blocks: props.nextState.blocks,
+              }),
+            })
+          } else if (props.type === SET_CONTENT && pagePathRef.current) {
+            /*
+            get the page and block relations at current index
+            */
+            setBlockRelations({
+              blocksRelationArray: pagePathRef.current.blockRelations,
+            })
+          }
+        }
+
+        onChange(props)
+      }
+    }
+
     const [state, dispatch] = useReducer(reducer, initialState, {
       initializer: null,
       name: 'EditorProvider',
-      onChange,
+      onChange: forkOnChange,
     })
 
     useImperativeHandle(
@@ -115,9 +184,9 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
             payload: { patches },
           })
         },
-        pagePath: getPagePath(state),
+        pagePath: pagePathRef.current,
       }),
-      [JSON.stringify(state.selection)]
+      [pagePathRef.current]
     )
 
     const setSelection = (selection: Selection) =>
@@ -131,46 +200,52 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
      * Text in `previous` becomes new text in block at `index`
      * Text in `text` becomes new text in block after `index`
      */
-    const split = (transform: Transform): void =>
+    const split = (transform: Transform): void => {
       dispatch({
         type: SPLIT,
         payload: transform,
       })
-
+    }
     /**
      * Merge content into the block at `index`
      * Expects `text` to be the merged content
      */
-    const merge = (transform: Transform): void =>
+    const merge = (transform: Transform): void => {
       dispatch({
         type: MERGE,
         payload: transform,
       })
+    }
     /**
      * Set block content at `index` to `text`
      */
-    const setContent = (transformArray: TransformArray): void =>
+    const setContent = (transformArray: TransformArray): void => {
+      // recalculate block relations
+      // onBlockRelationsChange(pagePathRef.current.blockRelations)
       dispatch({
         type: SET_CONTENT,
         payload: transformArray,
       })
+    }
 
     /**
      * Remove the block at `index`
      */
-    const remove = (index: number): void =>
+    const remove = (index: number): void => {
       dispatch({
         type: REMOVE,
         payload: { index },
       })
+    }
 
     /**
      * Remove text currently selected. May span multiple blocks
      */
-    const removeAtSelection = (): void =>
+    const removeAtSelection = (): void => {
       dispatch({
         type: REMOVE_AT_SELECTION,
       })
+    }
 
     /**
      * Clear the block at `index`

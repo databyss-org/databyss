@@ -3,14 +3,12 @@
   "plugins": [
     "eslint-plugin-prettier",
     "@typescript-eslint",
-    "react-hooks",
-    "cypress"
+    "react-hooks"
   ],
   "parser": "@typescript-eslint/parser",
   "env": {
     "jest": true,
-    "browser": true,
-    "cypress/globals": true
+    "browser": true
   },
   "settings": {
     "import/resolver": {
@@ -20,6 +18,13 @@
     }
   },
   "rules": {
+    "no-restricted-syntax": [
+      "error",
+      "ForInStatement",
+      "LabeledStatement",
+      "WithStatement"
+    ],
+    // for...in and for...of are useful for iteration; prefer functional iterators for mutations, but with modern immutable patterns like immer, mutations are often in-place in the draft
     "no-return-assign": ["error", "except-parens"], // Default option
     "no-console": "off", // Console logs are too useful and are removed in prod anyway
     "global-require": "off", // Useful for images, assets, etc

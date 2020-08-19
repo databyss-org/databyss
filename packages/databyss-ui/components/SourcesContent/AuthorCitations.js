@@ -1,19 +1,20 @@
 import React from 'react'
-import { useParams } from '@reach/router'
 import {
   sortEntriesAtoZ,
   createIndexPageEntries,
 } from '@databyss-org/services/entries/util'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import IndexPageContent from '../PageContent/IndexPageContent'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 
-const AuthorCitations = () => {
-  const { query } = useParams()
-  const params = new URLSearchParams(query)
-  const authorQueryFirstName = params.get('author_first')
-  const authorQueryLastName = params.get('author_last')
+const AuthorCitations = ({ query }) => {
+  const { navigate } = useNavigationContext()
+  const { firstName, lastName } = query
+
+  const authorQueryFirstName = firstName
+  const authorQueryLastName = lastName
 
   const composeAuthorName = (firstName, lastName) => {
     if (firstName && lastName) {
@@ -46,6 +47,7 @@ const AuthorCitations = () => {
 
             if (isCurrentAuthor) {
               return createIndexPageEntries({
+                id: value._id,
                 text: value.text.textValue,
                 citations: value.detail?.citations?.map(
                   citation => citation.text?.textValue
@@ -62,11 +64,16 @@ const AuthorCitations = () => {
           'text'
         )
 
+        const onCitationClick = c => {
+          navigate(`/sources/${c.id}`)
+        }
+
         return (
           <IndexPageContent
             title={composeAuthorName(authorQueryFirstName, authorQueryLastName)}
           >
             <IndexPageEntries
+              onClick={onCitationClick}
               entries={sortedAuthorCitations}
               icon={<SourceSvg />}
             />

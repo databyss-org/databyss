@@ -57,17 +57,16 @@ const HistoryProvider: React.FunctionComponent<PropsType> = forwardRef(
     const forkOnChange = ({
       inversePatches,
       patches,
-      undoAction,
-      redoAction,
+      type,
       ...others
     }: OnChangeArgs) => {
       const { onChange } = children.props
       // push to a patch batch if not a history action
-      if (!undoAction) {
+      if (!(type === 'UNDO')) {
         const _filteredPatches = filterInversePatches(inversePatches)
 
         // if action is not a redo action, clear redo stack
-        if (!redoAction && _filteredPatches.length) {
+        if (!(type === 'REDO') && _filteredPatches.length) {
           redoStack.current = []
         }
 

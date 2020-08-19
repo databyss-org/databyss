@@ -5,6 +5,10 @@ import {
   CACHE_ENTRY_RESULTS,
   SET_QUERY,
   CLEAR_CACHE,
+  SET_BLOCK_RELATIONS,
+  FETCH_BLOCK_RELATIONS,
+  CACHE_BLOCK_RELATIONS,
+  CLEAR_BLOCK_RELATIONS_CACHE,
 } from './constants'
 
 export function onSearchEntries(string) {
@@ -35,6 +39,38 @@ export function onClearCache() {
   return dispatch => {
     dispatch({
       type: CLEAR_CACHE,
+    })
+  }
+}
+
+export function onClearBlockRelationsCache() {
+  return dispatch => {
+    dispatch({ type: CLEAR_BLOCK_RELATIONS_CACHE })
+  }
+}
+
+export function onSetBlockRelations(blocksRelation) {
+  return async dispatch => {
+    dispatch({
+      type: SET_BLOCK_RELATIONS,
+      payload: { data: blocksRelation },
+    })
+    if (blocksRelation.length > 0) entries.setBlockRelations(blocksRelation)
+  }
+}
+
+export function fetchBlockRelations(queryId) {
+  // console.log(queryId)
+  return async dispatch => {
+    dispatch({
+      type: FETCH_BLOCK_RELATIONS,
+      payload: queryId,
+    })
+    entries.getBlockRelations(queryId).then(res => {
+      dispatch({
+        type: CACHE_BLOCK_RELATIONS,
+        payload: { results: res, queryId },
+      })
     })
   }
 }

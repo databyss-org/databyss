@@ -23,7 +23,13 @@ export const createSidebarListItems = ({
     icon,
   })
 
-export const createIndexPageEntries = ({ text, type, id, citations }) =>
+export const createIndexPageEntries = ({
+  text,
+  type,
+  id,
+  citations,
+  ...others
+}) =>
   // {
   //   text: string,
   //   type: 'sources' | 'authors' | 'topics' | 'pages',
@@ -34,6 +40,7 @@ export const createIndexPageEntries = ({ text, type, id, citations }) =>
     type,
     citations,
     id,
+    ...others,
   })
 
 export const sortEntriesAtoZ = (entries, sortBy) =>

@@ -1,26 +1,26 @@
 import React from 'react'
+import { useParams } from '@reach/router'
 import {
-  TopicLoader,
   BlockRelationsLoader,
+  SourceCitationsLoader,
   PagesLoader,
 } from '@databyss-org/ui/components/Loaders'
-
-import { useParams } from '@reach/router'
 import IndexPageContent from '../PageContent/IndexPageContent'
-import IndexSourceContent from '../SourcesContent/IndexSourceContent'
+import IndexSourceContent from './IndexSourceContent'
 
-const TopicDetails = () => {
-  const { id } = useParams()
+const SourcesCitations = () => {
+  const { query } = useParams()
+
   return (
-    <TopicLoader topicId={id}>
-      {topic => {
-        const topicTitle = topic.text.textValue
+    <SourceCitationsLoader>
+      {sourceCitations => {
+        const _header = sourceCitations[query].text.textValue
 
         return (
-          <IndexPageContent title={topicTitle}>
+          <IndexPageContent title={_header}>
             <PagesLoader>
               {() => (
-                <BlockRelationsLoader atomicId={id}>
+                <BlockRelationsLoader atomicId={query}>
                   {relations => <IndexSourceContent relations={relations} />}
                 </BlockRelationsLoader>
               )}
@@ -28,8 +28,8 @@ const TopicDetails = () => {
           </IndexPageContent>
         )
       }}
-    </TopicLoader>
+    </SourceCitationsLoader>
   )
 }
 
-export default TopicDetails
+export default SourcesCitations

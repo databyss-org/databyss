@@ -82,7 +82,6 @@ const SidebarCollapsed = () => {
   return (
     <View
       {...defaultProps}
-      widthVariant="content"
       theme={darkTheme}
       bg="background.1"
       height="100vh"

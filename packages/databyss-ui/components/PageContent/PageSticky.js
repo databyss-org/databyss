@@ -26,13 +26,13 @@ const PageSticky = ({ pagePath, pageId }) => {
 
   const pages = getPages()
   // get page title
-  if (pages[pageId].name) {
+  if (pages && pages[pageId].name) {
     currentPath.push(pages[pageId].name)
   }
 
   // get page path
   if (pagePath) {
-    currentPath.push(...pagePath)
+    currentPath.push(...pagePath.path)
   }
 
   return (

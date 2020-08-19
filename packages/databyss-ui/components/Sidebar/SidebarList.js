@@ -22,22 +22,22 @@ const menuSvgs = type =>
     topics: <TopicsSvg />,
   }[type])
 
-const SidebarList = ({ menuItems, ...others }) => {
+const SidebarList = ({ menuItems, query, ...others }) => {
   const { getTokensFromPath } = useNavigationContext()
   const location = useLocation()
   const tokens = getTokensFromPath()
 
   const getHref = item => {
     if (item.params) {
-      return `${item.route}/${item.params}`
+      return `${item.route}${query ? '?' : '/'}${item.params}`
     }
     return `${item.route}`
   }
 
-  const padding = 24
-  const headerHeight = 66
+  const padding = 26
+  const headerHeight = 34
   const footerHeight = 48
-  const searchBar = 56
+  const searchBar = 54
 
   const totalHeight = pxUnits(padding + headerHeight + footerHeight + searchBar)
 
@@ -67,6 +67,7 @@ const SidebarList = ({ menuItems, ...others }) => {
               href={getHref(item)}
               css={{
                 textDecoration: 'none',
+                boxSizing: 'border-box',
               }}
             >
               <Grid singleRow flexWrap="nowrap" columnGap="small">
