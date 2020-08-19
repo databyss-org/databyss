@@ -29,8 +29,11 @@ export default produce((draft: Draft<TopicState>, action: FSA) => {
     }
     case CACHE_TOPIC: {
       draft.cache[action.payload.id] = action.payload.topic
-      _headerCache[action.payload.id] = action.payload.topic
-      draft.headerCache = _headerCache
+      // only populate header if header has been loaded
+      if (draft.headerCache) {
+        _headerCache[action.payload.id] = action.payload.topic
+        draft.headerCache = _headerCache
+      }
       break
     }
     case FETCH_TOPIC_HEADERS: {

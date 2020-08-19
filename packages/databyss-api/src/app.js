@@ -36,7 +36,9 @@ const run = async () => {
 
   // Init Middleware
   app.use(cors())
-  app.use(express.json({ extended: false }))
+
+  // set the max limit to 50mb
+  app.use(express.json({ extended: false, limit: '50mb' }))
 
   app.get('/', (_req, res) => {
     res.redirect('https://app.databyss.org')
