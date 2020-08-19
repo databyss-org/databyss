@@ -8,6 +8,10 @@ import {
   sendKeys,
   enterKey,
   rightShiftKey,
+  upKey,
+  rightKey,
+  tabKey,
+  downKey,
 } from './_helpers.selenium'
 
 let driver
@@ -56,8 +60,8 @@ describe('block indexing', () => {
     await driver.quit()
   })
 
-  //   3)  Tests for indexing [adding a topic, adds it to the index, clicking on it should show results, clicking on results should show page with correct entries]
-  // 4) Check for indexing closure accuracy [delete an atomic, it should remove all entries from that atomic; if you add an end atomic, it should only show entries up until that end atomic; if you delete an end atomic, it should carry on until there's another atomic] 5) Click on all authors brings up all authors, clicking on all sources brings up all sources, clicking on all topics brings up all topics 6) Clicking on an author in all authors, should bring you to that author's entry result page (same for all sources, and all topics)
+  // Tests for indexing [adding a topic, adds it to the index, clicking on it should show results, clicking on results should show page with correct entries]
+  // Check for indexing closure accuracy [delete an atomic, it should remove all entries from that atomic; if you add an end atomic, it should only show entries up until that end atomic; if you delete an end atomic, it should carry on until there's another atomic] 5) Click on all authors brings up all authors, clicking on all sources brings up all sources, clicking on all topics brings up all topics 6) Clicking on an author in all authors, should bring you to that author's entry result page (same for all sources, and all topics)
 
   it('should test block indexing', async () => {
     // populate a page
@@ -67,6 +71,32 @@ describe('block indexing', () => {
 
     await sendKeys(actions, '@this is an opening source')
     await enterKey(actions)
+    await upKey(actions)
+    // edits the author
+    await rightKey(actions)
+    await rightKey(actions)
+    await enterKey(actions)
+    await sleep(1000)
+    const name = await getElementByTag(driver, '[data-test-path="text"]')
+
+    await name.click()
+    await rightKey(actions)
+    await tabKey(actions)
+    await sendKeys(actions, 'author citation')
+    await tabKey(actions)
+    await sendKeys(actions, 'Jaques')
+    await tabKey(actions)
+    await sendKeys(actions, 'Derrida')
+    await tabKey(actions)
+    await tabKey(actions)
+
+    const doneButton = await getElementByTag(
+      driver,
+      '[data-test-dismiss-modal="true"]'
+    )
+    await doneButton.click()
+    await sleep(1000)
+    await downKey(actions)
     await sendKeys(actions, 'this is an entry')
     await enterKey(actions)
     await enterKey(actions)
@@ -82,6 +112,8 @@ describe('block indexing', () => {
     await enterKey(actions)
     await sendKeys(actions, 'fourth entry not in atomic')
     await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, '/@')
     await enterKey(actions)
     await sendKeys(actions, '#this is the second topic')
     await enterKey(actions)
@@ -141,5 +173,36 @@ describe('block indexing', () => {
     )
     // check highlight for correct words
     assert.equal(_selection, 'second')
+
+    const sourcesSidebarButton = await getElementByTag(
+      driver,
+      '[data-test-sidebar-element="sources"]'
+    )
+    await sourcesSidebarButton.click()
+    await sleep(1000)
+
+    // assure two topics are show in sidebar
+    const authorSidebarButton = await getElementByTag(
+      driver,
+      '[data-test-element="page-sidebar-2"]'
+    )
+
+    await authorSidebarButton.click()
+    await sleep(1000)
+    const authorSorces = await driver.findElements(
+      By.tagName('[data-test-element="source-results"]')
+    )
+
+    await authorSorces[0].click()
+    await sleep(1000)
+    //  data-test-element="source-results"
+    const citationsResults = await driver.findElements(
+      By.tagName('[data-test-element="atomic-result-item"]')
+    )
+
+    assert.equal(citationsResults.length, 4)
+
+    // await citationsResults[0].click()
+    // await sleep(10000)
   })
 })

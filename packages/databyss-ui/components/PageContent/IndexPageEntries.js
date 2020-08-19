@@ -7,6 +7,7 @@ const IndexPageEntries = ({ entries, icon, onClick }) =>
       return (
         <View key={index} mb="em" px="medium" widthVariant="content">
           <BaseControl
+            data-test-element="source-results"
             onClick={() => {
               if (onClick) {
                 onClick(entry)
