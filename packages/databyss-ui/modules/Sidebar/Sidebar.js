@@ -68,10 +68,18 @@ const Sidebar = () => {
               <Pages filterQuery={filterQuery} height={sidebarListHeight} />
             )}
             {menuItem === 'sources' && (
-              <Sources filterQuery={filterQuery} height={sidebarListHeight} />
+              <Sources
+                filterQuery={filterQuery}
+                height={sidebarListHeight}
+                hasIndexPage
+              />
             )}
             {menuItem === 'topics' && (
-              <Topics filterQuery={filterQuery} height={sidebarListHeight} />
+              <Topics
+                filterQuery={filterQuery}
+                height={sidebarListHeight}
+                hasIndexPage
+              />
             )}
           </List>
         </View>
