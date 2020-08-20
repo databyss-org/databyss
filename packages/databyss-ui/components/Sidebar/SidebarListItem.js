@@ -1,6 +1,5 @@
 import React from 'react'
 import { Text, BaseControl, Grid } from '@databyss-org/ui/primitives'
-import { sidebar } from '../../theming/components'
 
 const SidebarListItem = ({
   isActive,

@@ -3,15 +3,13 @@ import Highlighter from 'react-highlight-words'
 import { useParams, Router } from '@reach/router'
 import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import {
-  Text,
-  View,
-  BaseControl,
-  Grid,
-  Icon,
-  ScrollView,
-} from '@databyss-org/ui/primitives'
+import { Text, View, ScrollView } from '@databyss-org/ui/primitives'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
+import {
+  SearchResultsContainer,
+  SearchResultTitle,
+  SearchResultDetails,
+} from '@databyss-org/ui/components/SearchContent/SearchResults'
 
 export const SearchRouter = () => (
   <Router>
@@ -34,44 +32,30 @@ const SearchContent = () => {
   const ComposeResults = ({ results }) => {
     const _Pages = Object.values(results).length ? (
       Object.values(results).map((r, i) => (
-        <View key={i} mb="medium">
-          <View height="40px">
-            <BaseControl
-              data-test-element="search-result-page"
-              hoverColor="background.2"
-              activeColor="background.3"
-              key={`pageHeader-${i}`}
-              onClick={() => onPageClick(r.pageId)}
-            >
-              <Grid singleRow alignItems="center" columnGap="small">
-                <Icon sizeVariant="small" color="text.3">
-                  <PageSvg />
-                </Icon>
-                <Text variant="bodyHeading3">{r.page}</Text>
-              </Grid>
-            </BaseControl>
-          </View>
+        <SearchResultsContainer key={i}>
+          <SearchResultTitle
+            onPress={() => onPageClick(r.pageId)}
+            text={r.page}
+            icon={<PageSvg />}
+            dataTestElement="search-result-page"
+          />
+
           {r.entries.map((e, k) => (
-            <BaseControl
-              data-test-element="search-result-entries"
-              hoverColor="background.2"
-              activeColor="background.3"
+            <SearchResultDetails
               key={k}
-              onClick={() => onEntryClick(r.pageId, e.entryId)}
-            >
-              <View p="tiny">
-                <Text>
-                  <Highlighter
-                    searchWords={query
-                      .split(' ')
-                      .map(q => new RegExp(`\\b${q}\\b`, 'i'))}
-                    textToHighlight={e.text}
-                  />
-                </Text>
-              </View>
-            </BaseControl>
+              dataTestElement="search-result-entries"
+              onPress={() => onEntryClick(r.pageId, e.entryId)}
+              text={
+                <Highlighter
+                  searchWords={query
+                    .split(' ')
+                    .map(q => new RegExp(`\\b${q}\\b`, 'i'))}
+                  textToHighlight={e.text}
+                />
+              }
+            />
           ))}
-        </View>
+        </SearchResultsContainer>
       ))
     ) : (
       <Text>no results found</Text>
