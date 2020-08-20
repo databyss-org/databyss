@@ -1,19 +1,14 @@
 import React from 'react'
-import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import {
-  Text,
-  View,
-  BaseControl,
-  Grid,
-  Separator,
-} from '@databyss-org/ui/primitives'
+import { Text, View } from '@databyss-org/ui/primitives'
 import SearchInputContainer from '@databyss-org/ui/components/SearchContent/SearchInputContainer'
 import Pages from '@databyss-org/ui/modules/Sidebar/routes/Pages'
 import Sources from '@databyss-org/ui/modules/Sidebar/routes/Sources'
 import Topics from '@databyss-org/ui/modules/Sidebar/routes/Topics'
 import { sidebarListHeight } from '@databyss-org/ui/modules/Sidebar/Sidebar'
+import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
+import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
 
 const Search = ({ onClick }) => {
   const { navigate, getSidebarPath } = useNavigationContext()
@@ -57,33 +52,32 @@ const Search = ({ onClick }) => {
             pb="medium"
             overflow="scroll"
           >
-            <BaseControl onClick={onSearchClick}>
-              <Separator color="border.1" />
-              <View justifyContent="center" p="small" position="relative">
-                <Grid singleRow alignItems="center" p="small">
-                  <View>
-                    <Grid columnGap="none">
-                      <Text variant="uiTextTiny" color="text.2">
-                        A
-                      </Text>
-                      <Text variant="uiTextTinyItalic" color="text.2">
-                        a
-                      </Text>
-                    </Grid>
-                  </View>
-
-                  <Text variant="uiTextSmall" color="text.2">
-                    Text search
+            <SidebarListItem
+              onPress={onSearchClick}
+              text="Find in notes"
+              id="sidebarListItem-entry-search"
+              icon={
+                <View
+                  flexDirection="row"
+                  alignItems="center"
+                  justifyContent="center"
+                  width={iconSizeVariants.tiny.width}
+                >
+                  <Text variant="uiTextTiny" color="text.3">
+                    A
                   </Text>
-                  <View position="absolute" right="0px">
-                    <Text variant="uiTextTiny" color="text.2">
-                      ENTER
-                    </Text>
-                  </View>
-                </Grid>
+                  <Text variant="uiTextTinyItalic" color="text.3">
+                    a
+                  </Text>
+                </View>
+              }
+            >
+              <View>
+                <Text variant="uiTextTiny" color="text.3">
+                  ENTER
+                </Text>
               </View>
-              <Separator color="border.1" />
-            </BaseControl>
+            </SidebarListItem>
             <Pages
               filterQuery={{ textValue: searchTerm }}
               LoadingFallback={false}

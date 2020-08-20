@@ -5,14 +5,9 @@ import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import TopicsSvg from '@databyss-org/ui/assets/topics.svg'
-import {
-  Text,
-  View,
-  BaseControl,
-  Grid,
-  Icon,
-} from '@databyss-org/ui/primitives'
+import { View, Icon } from '@databyss-org/ui/primitives'
 import { useLocation } from '@reach/router'
+import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 
 const menuSvgs = type =>
   ({
@@ -49,20 +44,13 @@ const SidebarList = ({ menuItems, query, height }) => {
 
         if (item.text) {
           return (
-            <BaseControl
-              data-test-element={`page-sidebar-${index}`}
-              backgroundColor={_isActive ? 'control.1' : 'transparent'}
-              py="small"
-              px="em"
-              key={index}
-              width="100%"
+            <SidebarListItem
+              isActive={_isActive}
+              text={item.text}
               href={getHref(item)}
-              css={{
-                textDecoration: 'none',
-                boxSizing: 'border-box',
-              }}
-            >
-              <Grid singleRow flexWrap="nowrap" columnGap="small">
+              key={`${item.type}-${index}`}
+              index={index}
+              icon={
                 <Icon
                   sizeVariant="tiny"
                   color={_isActive ? 'text.1' : 'text.3'}
@@ -70,14 +58,8 @@ const SidebarList = ({ menuItems, query, height }) => {
                 >
                   {item.icon ? item.icon : menuSvgs(item.type)}
                 </Icon>
-                <Text
-                  variant="uiTextSmall"
-                  color={_isActive ? 'text.1' : 'text.3'}
-                >
-                  {item.text}
-                </Text>
-              </Grid>
-            </BaseControl>
+              }
+            />
           )
         }
         return null
