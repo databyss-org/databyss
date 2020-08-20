@@ -34,6 +34,11 @@ export const pageMiddleware = wrap(async (req, _res, next) => {
   if (!page) {
     return next(new ResourceNotFoundError('There is no page for this ID'))
   }
+
+  if (!(req.account._id.toString() === page.account.toString())) {
+    return next(new UnauthorizedError())
+  }
+
   req.page = page
 
   return next()
