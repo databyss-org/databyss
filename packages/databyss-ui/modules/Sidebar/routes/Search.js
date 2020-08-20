@@ -11,8 +11,8 @@ import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
 
 const Search = ({ onClick }) => {
-  const { navigate, getSidebarPath } = useNavigationContext()
-
+  const { navigate, getSidebarPath, getTokensFromPath } = useNavigationContext()
+  const { params } = getTokensFromPath()
   const { searchTerm, setQuery, clearSearchCache } = useEntryContext()
   const menuItem = getSidebarPath()
 
@@ -25,9 +25,11 @@ const Search = ({ onClick }) => {
     setQuery(val)
   }
 
+  const encodedSearchTerm = encodeURI(searchTerm.replace(/\?/g, ''))
+
   const onSearchClick = () => {
     // encode the search term and remove '?'
-    navigate(`/search/${encodeURI(searchTerm.replace(/\?/g, ''))}`)
+    navigate(`/search/${encodedSearchTerm}`)
   }
 
   return (
@@ -54,6 +56,7 @@ const Search = ({ onClick }) => {
           >
             <SidebarListItem
               onPress={onSearchClick}
+              isActive={encodedSearchTerm === params}
               text="Find in notes"
               id="sidebarListItem-entry-search"
               icon={
