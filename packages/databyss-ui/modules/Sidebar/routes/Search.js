@@ -4,7 +4,10 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import { Text, View } from '@databyss-org/ui/primitives'
 import SearchInputContainer from '@databyss-org/ui/components/SearchContent/SearchInputContainer'
 import Pages from '@databyss-org/ui/modules/Sidebar/routes/Pages'
-import Sources from '@databyss-org/ui/modules/Sidebar/routes/Sources'
+import Authors, {
+  SourceTitles,
+} from '@databyss-org/ui/modules/Sidebar/routes/Sources'
+
 import Topics from '@databyss-org/ui/modules/Sidebar/routes/Topics'
 import { sidebarListHeight } from '@databyss-org/ui/modules/Sidebar/Sidebar'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
@@ -85,7 +88,11 @@ const Search = ({ onClick }) => {
               filterQuery={{ textValue: searchTerm }}
               LoadingFallback={false}
             />
-            <Sources
+            <Authors
+              filterQuery={{ textValue: searchTerm }}
+              LoadingFallback={false}
+            />
+            <SourceTitles
               filterQuery={{ textValue: searchTerm }}
               LoadingFallback={false}
             />

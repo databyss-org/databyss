@@ -1,5 +1,6 @@
 import React from 'react'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
+import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import {
   sortEntriesAtoZ,
   filterEntries,
@@ -24,7 +25,35 @@ const sourcesOverview = [
   },
 ]
 
-const Sources = ({ filterQuery, hasIndexPage, height, LoadingFallback }) => (
+export const SourceTitles = ({ filterQuery, height, LoadingFallback }) => (
+  <SourceCitationsLoader LoadingFallback={LoadingFallback}>
+    {sources => {
+      const sourceData = Object.values(sources).map(value =>
+        createSidebarListItems({
+          text: value.text.textValue,
+          type: 'sources',
+          route: '/sources',
+          id: value._id,
+          params: value._id,
+          icon: <SourceSvg />,
+        })
+      )
+      const sortedSources = sortEntriesAtoZ(sourceData, 'text')
+      const filteredEntries = filterEntries(sortedSources, filterQuery)
+
+      return (
+        <SidebarList
+          menuItems={[
+            ...(filterQuery.textValue === '' ? sortedSources : filteredEntries),
+          ]}
+          height={height}
+        />
+      )
+    }}
+  </SourceCitationsLoader>
+)
+
+const Authors = ({ filterQuery, hasIndexPage, height, LoadingFallback }) => (
   <SourceCitationsLoader LoadingFallback={LoadingFallback}>
     {() => (
       <AuthorsLoader LoadingFallback={LoadingFallback}>
@@ -78,4 +107,4 @@ const Sources = ({ filterQuery, hasIndexPage, height, LoadingFallback }) => (
   </SourceCitationsLoader>
 )
 
-export default Sources
+export default Authors
