@@ -57,7 +57,7 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
 
   // focus editor
   const onNavigateDownToEditor = () => {
-    if (editorRef.current) {
+    if (editorRef.current?.focus) {
       editorRef.current.focus()
     }
   }

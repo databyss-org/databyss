@@ -1,6 +1,10 @@
 import mongoose from 'mongoose'
 import Page from './../models/Page'
-import { ResourceNotFoundError, UnauthorizedError } from '../lib/Errors'
+import {
+  ResourceNotFoundError,
+  UnauthorizedError,
+  InsufficientPermissionError,
+} from '../lib/Errors'
 import wrap from '../lib/guardedAsync'
 
 export const pageCreatorMiddleware = wrap(async (req, _res, next) => {
@@ -34,6 +38,11 @@ export const pageMiddleware = wrap(async (req, _res, next) => {
   if (!page) {
     return next(new ResourceNotFoundError('There is no page for this ID'))
   }
+
+  if (!(req.account._id.toString() === page.account.toString())) {
+    return next(new InsufficientPermissionError())
+  }
+
   req.page = page
 
   return next()
