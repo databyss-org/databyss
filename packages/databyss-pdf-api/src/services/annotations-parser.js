@@ -35,8 +35,12 @@ export const parse = async docPath => {
 
   // 2nd pass: normal pdfjs to get all popup contents
   let secondPass
+  let metadata
   try {
-    secondPass = await parse2ndPass(pdfPath)
+    const secondPassData = await parse2ndPass(pdfPath)
+    metadata = secondPassData.metadata
+    secondPass = secondPassData.annotations
+
     console.log(`✅ 2nd pass completed`)
   } catch (error) {
     return Promise.reject(`Second pass has failed: ${error.message}`)
@@ -44,6 +48,7 @@ export const parse = async docPath => {
 
   // return parsed data
   return Promise.resolve({
+    metadata,
     annotations: mergeAnnotations(firstPass, secondPass),
     startTime,
   })

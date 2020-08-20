@@ -92,6 +92,7 @@ const SidebarCollapsed = () => {
       <List verticalItemPadding={2} horizontalItemPadding={1} m="none">
         {sideBarCollapsedItems.map(item => (
           <SidebarIconButton
+            name={item.name}
             key={item.name}
             title={item.title}
             icon={item.icon}

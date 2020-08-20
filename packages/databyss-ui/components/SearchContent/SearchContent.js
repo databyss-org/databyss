@@ -37,6 +37,7 @@ const SearchContent = () => {
         <View key={i} mb="medium">
           <View height="40px">
             <BaseControl
+              data-test-element="search-result-page"
               hoverColor="background.2"
               activeColor="background.3"
               key={`pageHeader-${i}`}
@@ -52,6 +53,7 @@ const SearchContent = () => {
           </View>
           {r.entries.map((e, k) => (
             <BaseControl
+              data-test-element="search-result-entries"
               hoverColor="background.2"
               activeColor="background.3"
               key={k}

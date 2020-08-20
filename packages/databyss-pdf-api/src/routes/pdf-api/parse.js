@@ -37,6 +37,7 @@ router.post(
       // respond with data
       const jsonResponse = {
         message,
+        metadata: parsedData.metadata,
         numAnnotations: parsedData.annotations.length,
         annotations: parsedData.annotations,
       }

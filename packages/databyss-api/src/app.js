@@ -11,6 +11,7 @@ import authRoute from './routes/api/auth'
 import pagesRoute from './routes/api/pages'
 import accountsRoute from './routes/api/accounts'
 import pingRoute from './routes/api/ping'
+import echoRoute from './routes/api/echo'
 import errorRoute from './routes/api/error'
 import entriesRoute from './routes/api/entries'
 import sourcesRoute from './routes/api/sources'
@@ -35,7 +36,9 @@ const run = async () => {
 
   // Init Middleware
   app.use(cors())
-  app.use(express.json({ extended: false }))
+
+  // set the max limit to 50mb
+  app.use(express.json({ extended: false, limit: '50mb' }))
 
   app.get('/', (_req, res) => {
     res.redirect('https://app.databyss.org')
@@ -47,6 +50,7 @@ const run = async () => {
   app.use('/api/pages', pagesRoute)
   app.use('/api/accounts', accountsRoute)
   app.use('/api/ping', pingRoute)
+  app.use('/api/echo', echoRoute)
   app.use('/api/error', errorRoute)
   app.use('/api/entries', entriesRoute)
   app.use('/api/sources', sourcesRoute)

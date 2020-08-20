@@ -6,7 +6,10 @@ import { onShutdown } from 'node-graceful-shutdown'
 import '../../config/env'
 import { closeDB } from './src/lib/db'
 
-const watchPath = path.resolve(process.cwd(), 'packages/databyss-api/src')
+const watchPaths = [
+  path.resolve(process.cwd(), 'packages/databyss-api/src'),
+  path.resolve(process.cwd(), 'packages/databyss-services'),
+]
 let httpServer = null
 
 const start = () =>
@@ -28,11 +31,13 @@ const restart = async () => {
   mongoose.connection.models = {}
   mongoose.models = {}
 
-  console.log('Reloading', watchPath)
+  console.log('Reloading...')
   Object.keys(require.cache).forEach(id => {
-    if (id.startsWith(watchPath)) {
-      delete require.cache[id]
-    }
+    watchPaths.forEach(path => {
+      if (id.startsWith(path)) {
+        delete require.cache[id]
+      }
+    })
   })
 
   console.log('shutting down server...')
@@ -49,9 +54,9 @@ onShutdown('database', async () => {
 
 start().then(() => {
   // watch for changes
-  const watcher = chokidar.watch(watchPath)
+  const watcher = chokidar.watch(watchPaths)
   watcher.on('ready', () => {
-    console.log('watching for changes in', watchPath)
+    console.log('watching for changes in', watchPaths)
     watcher.on('all', (event, at) => {
       console.log(`detected ${event}: ${at}`)
       restart()

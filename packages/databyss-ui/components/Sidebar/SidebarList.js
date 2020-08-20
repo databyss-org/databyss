@@ -17,7 +17,7 @@ const menuSvgs = type =>
     topics: <TopicsSvg />,
   }[type])
 
-const SidebarList = ({ menuItems, query, height }) => {
+const SidebarList = ({ menuItems, query, height, ...others }) => {
   const { getTokensFromPath } = useNavigationContext()
   const location = useLocation()
   const tokens = getTokensFromPath()
@@ -36,6 +36,7 @@ const SidebarList = ({ menuItems, query, height }) => {
       overflow="scroll"
       p={pxUnits(0)}
       mt="extraSmall"
+      {...others}
     >
       {menuItems.map((item, index) => {
         const _isActive = item.params

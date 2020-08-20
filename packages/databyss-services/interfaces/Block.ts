@@ -28,7 +28,10 @@ export interface Citations {
 
 export interface SourceDetail {
   authors: Author[]
-  citations: Citations[]
+  citations?: Citations[]
+  doi?: string
+  issn?: string
+  year?: number
 }
 
 export interface SourceCitationHeader extends Source {}

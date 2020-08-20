@@ -50,6 +50,11 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
     case CACHE_PAGE: {
       const _page = action.payload.page
 
+      // do not cache if page has been archived
+      if (_page.archive) {
+        break
+      }
+
       // cache the page if it is in pending/error state or if it has blocks (e.g. not a header)
       if (!resourceIsReady(_page) || _page.blocks) {
         draft.cache[action.payload.id] = _page
@@ -75,6 +80,8 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
     }
     case ARCHIVE_PAGE: {
       draft.cache[action.payload.id] = new ResourcePending()
+      delete _headerCache[action.payload.id]
+
       break
     }
 

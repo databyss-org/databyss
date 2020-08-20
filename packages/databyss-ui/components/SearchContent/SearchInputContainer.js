@@ -37,6 +37,7 @@ const SearchInputContainer = ({
           <SearchIcon />
         </Icon>
         <TextInput
+          data-test-element="search-input"
           placeholder={placeholder}
           autoFocus={autoFocus}
           variant="bodyNormal"
