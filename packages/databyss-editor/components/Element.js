@@ -59,17 +59,23 @@ const Element = ({ attributes, children, element }) => {
     : {}
 
   // spellcheck is debounced on element change
+  // state is used to trigger a re-render
   const [spellCheck, setSpellCheck] = useState(true)
+  // ref is used to keep current in `setTimeout`
+  const spellCheckRef = useRef(true)
   const spellCheckTimeoutRef = useRef()
 
   useEffect(
     () => {
       if (spellCheckTimeoutRef.current) {
+        spellCheckRef.current = false
         setSpellCheck(false)
         clearTimeout(spellCheckTimeoutRef.current)
       }
+
       spellCheckTimeoutRef.current = setTimeout(() => {
-        if (!spellCheck) {
+        if (!spellCheckRef.current) {
+          spellCheckRef.current = true
           setSpellCheck(true)
         }
       }, SPELLCHECK_DEBOUNCE_TIME)
