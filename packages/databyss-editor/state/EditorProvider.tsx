@@ -31,6 +31,7 @@ import {
   cutOrCopyEventHandler,
   pasteEventHandler,
   getFragmentAtSelection,
+  isSelectionCollapsed,
 } from '../lib/clipboardUtils'
 
 export type Transform = {
@@ -309,6 +310,10 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     }
 
     const paste = (e: ClipboardEvent) => {
+      // if text is highlighted, remove current selection before paste
+      if (!isSelectionCollapsed(state.selection)) {
+        removeAtSelection()
+      }
       const data = pasteEventHandler(e)
       if (data) {
         insert(data)

@@ -24,40 +24,44 @@ const IndexSourceContent = ({ relations }) => {
     navigate(`/pages/${pageId}#${entryId}`)
   }
 
-  const _results = Object.keys(relations.results).map((r, i) => (
-    <View key={i} mb="medium">
-      <View height="40px">
-        <BaseControl
-          data-test-element="atomic-results"
-          hoverColor="background.2"
-          activeColor="background.3"
-          key={`pageHeader-${i}`}
-          onClick={() => onPageClick(r)}
-        >
-          <Grid singleRow alignItems="center" columnGap="small">
-            <Icon sizeVariant="small" color="text.3">
-              <PageSvg />
-            </Icon>
-            <Text variant="bodyHeading3">{pages[r].name}</Text>
-          </Grid>
-        </BaseControl>
-      </View>
+  const _results = Object.keys(relations.results)
+    // filter out results not associated to a page
+    // page may have been archived
+    .filter(r => pages[r]?.name)
+    .map((r, i) => (
+      <View key={i} mb="medium">
+        <View height="40px">
+          <BaseControl
+            data-test-element="atomic-results"
+            hoverColor="background.2"
+            activeColor="background.3"
+            key={`pageHeader-${i}`}
+            onClick={() => onPageClick(r)}
+          >
+            <Grid singleRow alignItems="center" columnGap="small">
+              <Icon sizeVariant="small" color="text.3">
+                <PageSvg />
+              </Icon>
+              <Text variant="bodyHeading3">{pages[r].name}</Text>
+            </Grid>
+          </BaseControl>
+        </View>
 
-      {relations.results[r].map((e, k) => (
-        <BaseControl
-          data-test-element="atomic-result-item"
-          hoverColor="background.2"
-          activeColor="background.3"
-          key={k}
-          onClick={() => onEntryClick(r, e.blockId)}
-        >
-          <View p="small" ml="small">
-            <Text>{e.blockText.textValue}</Text>
-          </View>
-        </BaseControl>
-      ))}
-    </View>
-  ))
+        {relations.results[r].map((e, k) => (
+          <BaseControl
+            data-test-element="atomic-result-item"
+            hoverColor="background.2"
+            activeColor="background.3"
+            key={k}
+            onClick={() => onEntryClick(r, e.blockId)}
+          >
+            <View p="small" ml="small">
+              <Text>{e.blockText.textValue}</Text>
+            </View>
+          </BaseControl>
+        ))}
+      </View>
+    ))
   return <View>{_results}</View>
 }
 
