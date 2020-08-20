@@ -1,4 +1,5 @@
 import React from 'react'
+import { Text } from '@databyss-org/ui/primitives'
 import googleLogo from '@databyss-org/ui/assets/powered_by_google_on_white.png'
 import googleLogoRetina from '@databyss-org/ui/assets/powered_by_google_on_white_2x.png'
 import { GOOGLE_BOOKS, OPEN_LIBRARY } from './SuggestSources'
@@ -13,6 +14,7 @@ const footerMap = {
       height="14"
     />
   ),
+  [OPEN_LIBRARY]: () => <Text variant="uiTextSmall">Open Library</Text>,
 }
 
 const CatalogFooter = ({ type }) => footerMap[type]()

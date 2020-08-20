@@ -28,6 +28,5 @@ export interface CatalogService {
   getAuthors: (apiResult: any) => string[]
   getTitle: (apiResult: any) => string
   getSubtitle: (apiResult: any) => string
-  sourceFromResult: (apiResult: any) => Source
-  titleFromResult: (apiResult: any) => Text
+  getPublishedYear: (apiResult: any) => string
 }
