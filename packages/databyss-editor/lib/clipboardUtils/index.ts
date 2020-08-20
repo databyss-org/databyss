@@ -76,11 +76,14 @@ export const databyssFragToPlainText = (fragment: Block[]): string =>
   )
 
 export const plainTextToDatabyssFrag = (text: string): Block[] => {
-  const _frag = text.split('\n').map(f => ({
-    text: { textValue: f, ranges: [] },
-    type: BlockType.Entry,
-    _id: new ObjectId().toHexString(),
-  }))
+  const _frag = text
+    .split('\n')
+    .filter(t => t.length)
+    .map(f => ({
+      text: { textValue: f, ranges: [] },
+      type: BlockType.Entry,
+      _id: new ObjectId().toHexString(),
+    }))
   return addBlockUIFields(_frag)
 }
 
