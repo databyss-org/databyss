@@ -6,12 +6,12 @@ import { Separator } from '@databyss-org/ui/primitives'
 import { prefixSearch } from '@databyss-org/services/block/filter'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useEditorContext } from '../../state/EditorProvider'
-import { GoogleBooks } from './'
+import { CatalogResults } from './'
 
-const LOCAL_SOURCES = 'LOCAL_SOURCES'
-const OPEN_LIBRARY = 'OPEN_LIBRARY'
-const CROSSREF = 'CROSSREF'
-const GOOGLE_BOOKS = 'GOOGLE_BOOKS'
+export const LOCAL_SOURCES = 'LOCAL_SOURCES'
+export const OPEN_LIBRARY = 'OPEN_LIBRARY'
+export const CROSSREF = 'CROSSREF'
+export const GOOGLE_BOOKS = 'GOOGLE_BOOKS'
 
 const SuggestSources = ({ query, dismiss, focusEditor, active, ...others }) => {
   const setSource = useSourceContext(c => c && c.setSource)
@@ -73,16 +73,8 @@ const SuggestSources = ({ query, dismiss, focusEditor, active, ...others }) => {
     },
   ]
 
-  return {
-    GOOGLE_BOOKS: () => (
-      <GoogleBooks
-        query={query}
-        selectSource={onSourceSelected}
-        dismiss={dismiss}
-        {...others}
-      />
-    ),
-    LOCAL_SOURCES: () => (
+  if (mode === LOCAL_SOURCES) {
+    return (
       <SourceCitationsLoader>
         {_sourceCitations =>
           _composeLocalSources(_sourceCitations).concat(
@@ -99,8 +91,18 @@ const SuggestSources = ({ query, dismiss, focusEditor, active, ...others }) => {
           )
         }
       </SourceCitationsLoader>
-    ),
-  }[mode]()
+    )
+  }
+
+  return (
+    <CatalogResults
+      type={mode}
+      query={query}
+      selectSource={onSourceSelected}
+      dismiss={dismiss}
+      {...others}
+    />
+  )
 }
 
 export default SuggestSources
