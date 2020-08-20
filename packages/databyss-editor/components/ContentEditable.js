@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useEffect } from 'react'
+import React, { useMemo, useRef, useEffect, useImperativeHandle } from 'react'
 import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
@@ -113,11 +113,22 @@ const ContentEditable = ({
     [state.newEntities.length]
   )
 
-  useEffect(() => {
-    if (editor && editorRef) {
-      editorRef.current = ReactEditor.toDOMNode(editor, editor)
-    }
-  }, [])
+  useImperativeHandle(editorRef, () => ({
+    focus: () => {
+      ReactEditor.focus(editor)
+      const _firstBlockText = state.blocks[0].text.textValue
+      // if first block is empty, set selection at origin
+      if (!_firstBlockText.length) {
+        const _point = { index: 0, offset: 0 }
+        const _sel = { focus: _point, anchor: _point }
+        // preserve selection id from DB
+        if (state.selection._id) {
+          _sel._id = state.selection._id
+        }
+        setSelection(_sel)
+      }
+    },
+  }))
 
   const inDeadKey = useRef(false)
 
