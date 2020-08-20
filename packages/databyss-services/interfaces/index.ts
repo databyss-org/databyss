@@ -4,7 +4,8 @@ export { ResourcePending } from './ResourcePending'
 export {
   NetworkUnavailableError,
   NotAuthorizedError,
-  ResourceNotFoundError,
+  InsufficientPermissionError,
+  ResourceNotFoundError
 } from './Errors'
 export type { Page, PageHeader } from './Page'
 export type { Point } from './Point'

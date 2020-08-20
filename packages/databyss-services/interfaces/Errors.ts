@@ -18,3 +18,10 @@ export class ResourceNotFoundError extends Error {
     this.message = message
   }
 }
+
+export class InsufficientPermissionError extends Error {
+  constructor(message = 'Not Authorized') {
+    super()
+    this.message = message
+  }
+}

@@ -3,6 +3,7 @@ import {
   ResourceNotFoundError,
   NotAuthorizedError,
   NetworkUnavailableError,
+  InsufficientPermissionError,
 } from '../interfaces'
 
 function checkStatus(response) {
@@ -11,6 +12,9 @@ function checkStatus(response) {
   }
   if (response.status === 401) {
     throw new NotAuthorizedError('Unauthorized')
+  }
+  if (response.status === 403) {
+    throw new InsufficientPermissionError()
   }
   if (response.status === 404) {
     throw new ResourceNotFoundError()
