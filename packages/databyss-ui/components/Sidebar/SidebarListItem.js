@@ -1,5 +1,6 @@
 import React from 'react'
 import { Text, BaseControl, Grid } from '@databyss-org/ui/primitives'
+import { sidebar } from '../../theming/components'
 
 const SidebarListItem = ({
   isActive,
@@ -28,9 +29,17 @@ const SidebarListItem = ({
       boxSizing: 'border-box',
     }}
   >
-    <Grid singleRow flexWrap="nowrap" columnGap="small">
+    <Grid singleRow flexWrap="nowrap" columnGap="small" maxWidth="100%">
       {icon}
-      <Text variant="uiTextSmall" color={isActive ? 'text.1' : 'text.3'}>
+      <Text
+        variant="uiTextSmall"
+        color={isActive ? 'text.1' : 'text.3'}
+        css={{
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
         {text}
       </Text>
     </Grid>
