@@ -12,6 +12,8 @@ import {
   rightKey,
   tabKey,
   downKey,
+  leftKey,
+  backspaceKey,
 } from './_helpers.selenium'
 
 let driver
@@ -189,7 +191,7 @@ describe('block indexing', () => {
 
     await authorSidebarButton.click()
     await sleep(1000)
-    const authorSorces = await driver.findElements(
+    let authorSorces = await driver.findElements(
       By.tagName('[data-test-element="source-results"]')
     )
 
@@ -202,7 +204,33 @@ describe('block indexing', () => {
 
     assert.equal(citationsResults.length, 4)
 
-    // await citationsResults[0].click()
-    // await sleep(10000)
+    // remove author from page
+    await citationsResults[0].click()
+    await sleep(1000)
+    await leftKey(actions)
+    await backspaceKey(actions)
+
+    const allSources = await getElementByTag(
+      driver,
+      '[data-test-element="page-sidebar-0"]'
+    )
+
+    await allSources.click()
+    await sleep(1000)
+
+    authorSorces = await driver.findElements(
+      By.tagName('[data-test-element="source-results"]')
+    )
+
+    await authorSorces[0].click()
+    await sleep(1000)
+
+    // check for no results
+    const _results = await driver.findElements(
+      By.tagName('[data-test-element="atomic-results"]')
+    )
+
+    // assure no results appear under author
+    assert.equal(_results.length, 0)
   })
 })
