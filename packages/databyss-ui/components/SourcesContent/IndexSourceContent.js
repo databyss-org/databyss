@@ -28,6 +28,7 @@ const IndexSourceContent = ({ relations }) => {
     <View key={i} mb="medium">
       <View height="40px">
         <BaseControl
+          data-test-element="atomic-results"
           hoverColor="background.2"
           activeColor="background.3"
           key={`pageHeader-${i}`}
@@ -44,6 +45,7 @@ const IndexSourceContent = ({ relations }) => {
 
       {relations.results[r].map((e, k) => (
         <BaseControl
+          data-test-element="atomic-result-item"
           hoverColor="background.2"
           activeColor="background.3"
           key={k}
