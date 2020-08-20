@@ -30,7 +30,7 @@ export const getPosition = editor => {
   return { top: 40, left: 0 }
 }
 
-const SuggestMenu = ({ children }) => {
+const SuggestMenu = ({ children, placeholder }) => {
   const [position, setPosition] = useState({
     top: 40,
     left: 0,
@@ -59,7 +59,7 @@ const SuggestMenu = ({ children }) => {
         const _index = editorContext.state.selection.anchor.index
         const _node = editor.children[_index]
         const _text = Node.string(_node)
-        if (_text.charAt(0) === '@' && !isAtomicInlineType(_node.type)) {
+        if (!isAtomicInlineType(_node.type)) {
           setQuery(_text.substring(1))
           setMenuPosition()
           if (!menuActive) setMenuActive(true)
@@ -124,7 +124,7 @@ const SuggestMenu = ({ children }) => {
         ) : (
           <View p="small">
             <Text variant="uiTextSmall" color="text.2">
-              type title and/or author for suggestions...
+              {placeholder}
             </Text>
           </View>
         )}

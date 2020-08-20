@@ -12,7 +12,7 @@ import { isAtomicInlineType } from '../lib/util'
 import { slateSelectionToStateSelection } from '../lib/slateUtils'
 import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
-import { SuggestMenu, SuggestSources } from './Suggest'
+import { SuggestMenu, SuggestSources, SuggestTopics } from './Suggest'
 
 const SPELLCHECK_DEBOUNCE_TIME = 1000
 
@@ -130,8 +130,16 @@ const Element = ({ attributes, children, element }) => {
 
           {block.__showCitationMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
-              <SuggestMenu>
+              <SuggestMenu placeholder="type title and/or author for suggestions...">
                 <SuggestSources />
+              </SuggestMenu>
+            </View>
+          )}
+
+          {block.__showTopicMenu && (
+            <View contentEditable="false" suppressContentEditableWarning>
+              <SuggestMenu placeholder="start typing topic for suggestions...">
+                <SuggestTopics />
               </SuggestMenu>
             </View>
           )}

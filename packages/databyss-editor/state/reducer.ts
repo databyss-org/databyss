@@ -636,6 +636,9 @@ export default (
         _selectedBlock.__showCitationMenu = _selectedBlock.text.textValue.startsWith(
           '@'
         )
+        _selectedBlock.__showTopicMenu = _selectedBlock.text.textValue.startsWith(
+          '#'
+        )
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element
         _selectedBlock.__isActive =
