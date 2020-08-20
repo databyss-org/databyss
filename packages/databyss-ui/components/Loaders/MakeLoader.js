@@ -18,7 +18,6 @@ const MakeLoader = ({ resource, children, onUnload }) => {
   }
 
   if (resource instanceof Error) {
-    console.log(resource)
     return <ErrorFallback error={resource} />
   }
 

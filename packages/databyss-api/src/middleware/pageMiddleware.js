@@ -40,7 +40,7 @@ export const pageMiddleware = wrap(async (req, _res, next) => {
   }
 
   if (!(req.account._id.toString() === page.account.toString())) {
-    return next(new InsufficientPermissionError('log out'))
+    return next(new InsufficientPermissionError())
   }
 
   req.page = page
