@@ -65,7 +65,7 @@ const SuggestSources = ({ query, dismiss, focusEditor, active, ...others }) => {
     },
     {
       action: 'CROSSREF',
-      label: 'Search CrossRef',
+      label: 'Search Crossref',
     },
     {
       action: 'GOOGLE_BOOKS',

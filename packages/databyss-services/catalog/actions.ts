@@ -1,5 +1,6 @@
 import googleBooks from './googleBooks'
 import openLibrary from './openLibrary'
+import crossref from './crossref'
 import { SEARCH_CATALOG, CACHE_SEARCH_RESULTS } from './constants'
 import {
   CatalogType,
@@ -15,6 +16,7 @@ import {
 const serviceMap: { [type: string]: CatalogService } = {
   [CatalogType.GoogleBooks]: googleBooks,
   [CatalogType.OpenLibrary]: openLibrary,
+  [CatalogType.Crossref]: crossref,
 }
 
 export function searchCatalog({
@@ -138,7 +140,7 @@ function sourceFromResult({
   const _authorText = _names
     ? _names[1] +
       (_names[0] ? ', ' : '.') +
-      (_names[0] ? `${_names[0].replace('.', '')}.` : '')
+      (_names[0] ? `${_names[0].charAt(0)}.` : '')
     : ''
 
   const _text = titleFromResult({ service, result })

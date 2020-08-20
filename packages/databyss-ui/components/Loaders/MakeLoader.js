@@ -14,7 +14,7 @@ const MakeLoader = ({ resource, children, onUnload }) => {
   )
 
   if (!resource || resource instanceof ResourcePending) {
-    return <Loading />
+    return <Loading padding="small" />
   }
 
   if (resource instanceof Error) {

@@ -9,11 +9,31 @@ const crossref: CatalogService = {
     )
     return results
   },
-  getResults: (apiResults: any) => apiResults.docs,
-  getAuthors: (apiResult: any) => apiResult.author_name || [],
-  getTitle: (apiResult: any) => apiResult.title,
-  getSubtitle: (apiResult: any) => apiResult.subtitle,
-  getPublishedYear: (apiResult: any) => apiResult.first_publish_year,
+  getResults: (apiResults: any) => apiResults.message.items,
+  getAuthors: (apiResult: any) => (apiResult.author || []).map(authorName),
+  getTitle: (apiResult: any) => apiResult.title ? apiResult.title[0] : '',
+  getSubtitle: (apiResult: any) => apiResult.subtitle?.[0],
+  getPublishedYear: (apiResult: any) => {
+    return apiResult.issued?.['date-parts']?.[0]?.[0] ||
+      apiResult['published-print']?.['date-parts']?.[0]?.[0] ||
+      apiResult['published-online']?.['date-parts']?.[0]?.[0] ||
+      apiResult['approved']?.['date-parts']?.[0]?.[0] ||
+      apiResult['created']?.['date-parts']?.[0]?.[0]
+  },
 }
 
 export default crossref
+
+function authorName(crossrefAuthor: any): string {
+  let _name = ''
+  if (crossrefAuthor.given) {
+    _name += crossrefAuthor.given
+  }
+  if (crossrefAuthor.family) {
+    if (_name.length) {
+      _name += ' '
+    }
+    _name  += crossrefAuthor.family
+  }
+  return _name
+}
