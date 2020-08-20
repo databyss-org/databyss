@@ -79,6 +79,8 @@ const ContentEditable = ({
         let _selection = { anchor: _point, focus: _point }
         _selection = stateSelectionToSlateSelection(editor.children, _selection)
         Transforms.select(editor, _selection)
+        // push selection to reducer
+        setSelection(_selection)
       }
     },
     [focusIndex]
