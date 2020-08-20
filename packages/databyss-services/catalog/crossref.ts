@@ -1,10 +1,10 @@
 import request from '../lib/request'
 import { GroupedCatalogResults, CatalogService } from '../interfaces'
 
-const openLibrary: CatalogService = {
+const crossref: CatalogService = {
   search: async (query: string): Promise<GroupedCatalogResults> => {
     const results = await request(
-      `http://openlibrary.org/search.json?q=${encodeURIComponent(query)}`,
+      `https://api.crossref.org/works?query=${encodeURIComponent(query)}`,
       { includeUserAgent: true }
     )
     return results
@@ -16,4 +16,4 @@ const openLibrary: CatalogService = {
   getPublishedYear: (apiResult: any) => apiResult.first_publish_year,
 }
 
-export default openLibrary
+export default crossref
