@@ -33,14 +33,7 @@ function parseResponse(responseIsJson) {
 }
 
 function request(uri, options, responseIsJson) {
-  const { includeUserAgent, ..._options } = options
-  if (includeUserAgent && process.env.USER_AGENT) {
-    _options.headers = {
-      ...(request.headers || {}),
-      'User-Agent': process.env.USER_AGENT,
-    }
-  }
-  const promise = fetch(uri, _options)
+  const promise = fetch(uri, options)
     .catch(err => {
       throw new NetworkUnavailableError(err)
     })

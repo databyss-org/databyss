@@ -3,10 +3,11 @@ import { GroupedCatalogResults, CatalogService } from '../interfaces'
 
 const crossref: CatalogService = {
   search: async (query: string): Promise<GroupedCatalogResults> => {
-    const results = await request(
-      `https://api.crossref.org/works?query=${encodeURIComponent(query)}`,
-      { includeUserAgent: true }
-    )
+    let _uri = `https://api.crossref.org/works?query=${encodeURIComponent(query)}`
+    if (process.env.CITEBOT_EMAIL) {
+      _uri += `&mailto=${process.env.CITEBOT_EMAIL}`
+    }
+    const results = await request(_uri)
     return results
   },
   getResults: (apiResults: any) => apiResults.message.items,
