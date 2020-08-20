@@ -1,5 +1,4 @@
 import { httpGet, httpPost, httpDelete } from '../lib/requestApi'
-import request from '../lib/request'
 import { Source, Author, SourceCitationHeader } from '../interfaces'
 
 // TODO: Add native versions of these
@@ -20,8 +19,3 @@ export const getAuthors = (): Promise<Author[]> => httpGet('/sources/authors')
 
 export const getPageSources = (_id: string): Promise<Source[]> =>
   httpGet(`/sources/pages/${_id}`)
-
-export const searchSource = (query: string) =>
-  request(
-    `https://www.googleapis.com/books/v1/volumes?q=${query}&key=AIzaSyCCoJxl3VhVwvM4v4cHSPJY6hsK-kh5VBk`
-  )

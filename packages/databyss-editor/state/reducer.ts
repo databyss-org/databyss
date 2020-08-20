@@ -255,6 +255,7 @@ export default (
         }
         case PASTE: {
           const _frag = payload.data
+          const { replace } = payload
 
           if (!_frag.length) {
             break
@@ -279,28 +280,30 @@ export default (
             deleteBlocksAtSelection(draft)
           }
 
-          const _isCurrentBlockEmpty = !draft.blocks[
+          const _replace = replace || !draft.blocks[
             draft.selection.anchor.index
           ].text.textValue.length
 
-          // if fragment contains multiple blocks, the cursor block is empty, the cursor block is atomic, or the
-          // fragment starts with an atomic, do not split the cursor block...
+
+          // if replacing, fragment contains multiple blocks, the cursor block is empty, 
+          // the cursor block is atomic, or the fragment starts with an atomic, 
+          // do not split the cursor block...
           if (
             _frag.length > 1 ||
-            _isCurrentBlockEmpty ||
+            _replace ||
             isAtomicInlineType(_frag[0].type) ||
             isAtomicInlineType(_startBlock.type)
           ) {
-            // if cursor block is empty, start inserting the fragments here
+            // if replacing or cursor block is empty, start inserting the fragments here
             // otherwise, insert them on the following line
-            const _spliceIndex = _isCurrentBlockEmpty
+            const _spliceIndex = _replace
               ? draft.selection.anchor.index
               : draft.selection.anchor.index + 1
 
             // insert blocks at index
             draft.blocks.splice(
               _spliceIndex,
-              _isCurrentBlockEmpty ? 1 : 0,
+              _replace ? 1 : 0,
               ..._frag
             )
 

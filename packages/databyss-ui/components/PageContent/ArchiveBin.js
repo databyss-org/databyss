@@ -83,7 +83,8 @@ export const ArchiveBin = ({ pages }) => {
           >
             {menuItems.map(menuItem => (
               <DropdownListItem
-                menuItem={{ ...menuItem, action: 'archive' }}
+                {...menuItem}
+                action="archive"
                 onPress={onPress}
                 onKeyDown={handleEscKey}
                 key={menuItem.label}

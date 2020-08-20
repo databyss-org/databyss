@@ -3,6 +3,7 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
 import MakeLoader from './MakeLoader'
 
 export const PageLoader = ({ children, pageId }) => {
@@ -48,14 +49,12 @@ export const withSource = Wrapped => ({ sourceId, ...others }) => (
   </SourceLoader>
 )
 
-export const SearchSourceLoader = ({ query, children }) => {
-  const searchSource = useSourceContext(c => c.searchSource)
-
-  const getSearchCache = useSourceContext(c => c.getSearchCache)
-
-  searchSource(query)
-
-  return MakeLoader({ resource: getSearchCache(query), children })
+export const CatalogSearchLoader = ({ query, type, children }) => {
+  const searchCatalog = useCatalogContext(c => c && c.searchCatalog)
+  if (!searchCatalog) {
+    return children
+  }
+  return MakeLoader({ resource: searchCatalog({ query, type }), children })
 }
 
 export const AllTopicsLoader = ({ children }) => {

@@ -15,11 +15,9 @@ import {
   fetchSource,
   saveSource,
   removeSourceFromCache,
-  fetchSourceQuery,
   fetchAuthorHeaders,
   fetchSourceCitations,
 } from './actions'
-import { SourceSearchResults } from '../interfaces/SourceState'
 
 interface PropsType {
   children: JSX.Element
@@ -31,7 +29,6 @@ interface ContextType {
   getSource: (id: string) => ResourceResponse<Source>
   setSource: (source: Source) => void
   removeCacheValue: (id: string) => void
-  searchSource: (query: string) => ResourceResponse<SourceSearchResults>
   getAuthors: () => ResourceResponse<Author[]>
   getSourceCitations: () => ResourceResponse<SourceCitationHeader[]>
 }
@@ -67,27 +64,6 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
       return null
     },
     [state.cache]
-  )
-
-  const searchSource = useCallback(
-    _.debounce((query: string): ResourceResponse<SourceSearchResults> => {
-      if (!query) return null
-      if (state.searchCache[query]) {
-        return state.searchCache[query]
-      }
-
-      dispatch(fetchSourceQuery(query))
-      return null
-    }, 750),
-    [state.searchCache]
-  )
-
-  const getSearchCache = useCallback(
-    (query: string) => state.searchCache[query],
-    [
-      // deep compare
-      JSON.stringify(state.searchCache),
-    ]
   )
 
   const removeCacheValue = useCallback(
@@ -130,8 +106,6 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
         getSource,
         setSource,
         removeCacheValue,
-        searchSource,
-        getSearchCache,
         getAuthors,
         getSourceCitations,
       }}
