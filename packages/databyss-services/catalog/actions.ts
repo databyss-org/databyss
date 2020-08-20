@@ -81,7 +81,7 @@ function composeResults({
     return {}
   }
 
-  // at least one query term must be included* in title, subtitile or author
+  // all query terms must be included* in one of: title, subtitile or author
   // *included as prefix search
   const _queryTerms = _query.split(/\b/)
   const _filteredResults = _allResults.filter(_apiResult => {
@@ -90,11 +90,11 @@ function composeResults({
       service.getSubtitle(_apiResult),
     ].concat(service.getAuthors(_apiResult))
     return _queryTerms.reduce((qacc: Boolean, qcurr: string) => 
-      (qacc || _resultFields.reduce(
+      (qacc && _resultFields.reduce(
         (racc: Boolean, rcurr: string) =>
           racc || (rcurr && rcurr.match(new RegExp(`\\b${qcurr}`, 'i'))),
         false)
-    ), false)
+    ), true)
   })
 
   if (!_filteredResults) {
