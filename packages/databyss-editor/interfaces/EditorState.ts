@@ -23,4 +23,10 @@ export interface EditorState {
   newEntities: Block[]
   blocks: Block[]
   pageHeader?: PageHeader
+  /**
+   * Dictionary
+   * - keys are entity names (e.g. topic or source text)
+   * - values are blocks
+   */
+  entitySuggestionCache: { [text: string]: Block }
 }

@@ -4,7 +4,7 @@ import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
 import { prefixSearch } from '@databyss-org/services/block/filter'
 import { useEditorContext } from '../../state/EditorProvider'
 
-const SuggestTopics = ({ query, dismiss }) => {
+const SuggestTopics = ({ query, dismiss, onSuggestions }) => {
   const { replace } = useEditorContext()
 
   const onTopicSelected = topic => {
@@ -31,7 +31,17 @@ const SuggestTopics = ({ query, dismiss }) => {
     return _topics
   }
 
-  return <AllTopicsLoader>{_composeLocalTopics}</AllTopicsLoader>
+  return (
+    <AllTopicsLoader
+      onLoad={resources => onSuggestions(Object.values(resources))}
+    >
+      {_composeLocalTopics}
+    </AllTopicsLoader>
+  )
+}
+
+SuggestTopics.defaultProps = {
+  onSuggestions: () => null,
 }
 
 export default SuggestTopics

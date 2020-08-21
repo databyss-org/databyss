@@ -62,6 +62,13 @@ const Element = ({ attributes, children, element }) => {
   const [spellCheck, setSpellCheck] = useState(true)
   const spellCheckTimeoutRef = useRef()
 
+  const onTopicSuggestions = topics => {
+    if (!editorContext) {
+      return
+    }
+    editorContext.cacheEntitySuggestions(topics)
+  }
+
   useEffect(
     () => {
       if (spellCheckTimeoutRef.current) {
@@ -139,7 +146,7 @@ const Element = ({ attributes, children, element }) => {
           {block.__showTopicMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu placeholder="start typing topic for suggestions...">
-                <SuggestTopics />
+                <SuggestTopics onSuggestions={onTopicSuggestions} />
               </SuggestMenu>
             </View>
           )}

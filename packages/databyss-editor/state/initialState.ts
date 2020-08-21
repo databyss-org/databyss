@@ -19,6 +19,7 @@ const initialState: EditorState = {
   },
   newEntities: [],
   blocks: [],
+  entitySuggestionCache: {},
 }
 
 export default initialState
