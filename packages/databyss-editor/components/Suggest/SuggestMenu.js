@@ -97,6 +97,10 @@ const SuggestMenu = ({ children, placeholder }) => {
     onFocusEditor()
   }
 
+  const onSuggestionsChanged = suggestions => {
+    setMenuActive(suggestions?.length)
+  }
+
   return (
     <ClickAwayListener onClickAway={onClickAway}>
       <DropdownContainer
@@ -120,6 +124,7 @@ const SuggestMenu = ({ children, placeholder }) => {
             menuHeight: MENU_HEIGHT,
             focusEditor: onFocusEditor,
             active: menuActive,
+            onSuggestionsChanged,
           })
         ) : (
           <View p="small">

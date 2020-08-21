@@ -36,7 +36,7 @@ const MakeLoader = ({ resource, children, onUnload, onLoad }) => {
   }
 
   if (typeof children !== 'function') {
-    throw new Error('Child must be a function')
+    return children
   }
 
   return children(resource)
