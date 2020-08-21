@@ -1,4 +1,7 @@
+import React from 'react'
+import ReactDOMServer from 'react-dom/server'
 import { Text, Editor } from '@databyss-org/slate'
+import { View } from '@databyss-org/ui/primitives'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
@@ -169,8 +172,39 @@ const serializeHeader = node => {
   }
 }
 
+// serialize slate node to html for search results
+// TODO: this can probably be combined with the header html serializer
+const serializeResults = node => {
+  if (Text.isText(node)) {
+    let _children = node.text
+
+    if (node.bold) {
+      _children = `<strong>${_children}</strong>`
+    }
+    if (node.italic) {
+      _children = `<i>${_children}</i>`
+    }
+    if (node.highlight) {
+      // TODO: this should be dynamic
+      _children = `<span style="background-color:#F7C96E">${_children}</span>`
+      // _children = ReactDOMServer.renderToString(
+      //   <View display="inline" backgroundColor="orange.3">
+      //     {_children}
+      //   </View>
+      // )
+    }
+    return _children
+  }
+
+  const children = node.children.map(n => serializeResults(n)).join('')
+  switch (node.type) {
+    default:
+      return children
+  }
+}
+
 // serialize slate node to html
-const serialize = node => {
+export const serialize = node => {
   if (Text.isText(node)) {
     let _children = node.text
 
@@ -197,6 +231,7 @@ export const stateBlockToHtmlHeader = stateBlock => {
   const _slateNode = stateBlockToSlateBlock(stateBlock)
   return serializeHeader(_slateNode)
 }
+
 export const stateToHTMLString = frag => {
   const _innerHtml = frag
     .map(b => {
@@ -207,4 +242,9 @@ export const stateToHTMLString = frag => {
     .replace(/\n/g, '<br />')
 
   return `<span>${_innerHtml}</span>`
+}
+
+export const stateBlocktoHtmlResults = stateBlock => {
+  const _slateNode = stateBlockToSlateBlock(stateBlock)
+  return serializeResults(_slateNode)
 }

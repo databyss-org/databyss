@@ -61,6 +61,7 @@ const SearchContent = () => {
             >
               <View p="small" ml="small">
                 <Text>
+                  {console.log(e.text)}
                   <Highlighter
                     searchWords={query
                       .split(' ')
