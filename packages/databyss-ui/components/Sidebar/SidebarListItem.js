@@ -30,15 +30,7 @@ const SidebarListItem = ({
   >
     <Grid singleRow flexWrap="nowrap" columnGap="small" maxWidth="100%">
       {icon}
-      <Text
-        variant="uiTextSmall"
-        color={isActive ? 'text.1' : 'text.3'}
-        css={{
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-        }}
-      >
+      <Text variant="uiTextSmall" color={isActive ? 'text.1' : 'text.3'}>
         {text}
       </Text>
     </Grid>
