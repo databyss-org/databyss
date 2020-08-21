@@ -27,7 +27,7 @@ const DropdownListItem = ({
       width="100%"
       alignItems="center"
     >
-      <View flexDirection="row" alignItems="center">
+      <View flexDirection="row" alignItems="center" flexShrink={1}>
         {textSymbol && (
           <Text
             variant="uiTextSmall"
