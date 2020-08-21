@@ -33,22 +33,22 @@ router.post(
   })
 )
 
-// @route    GET api/sources/:id
-// @desc     Get source by id
+// @route    GET api/topic/:id
+// @desc     Get topic by id
 // @access   Private
 router.get(
   '/:id',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   wrap(async (req, res, next) => {
-    const source = await Block.findOne({
+    const topic = await Block.findOne({
       _id: req.params.id,
     })
 
-    if (!source || source.type !== 'TOPIC') {
+    if (!topic || topic.type !== 'TOPIC') {
       return next(new ResourceNotFoundError('There is no topic for this id'))
     }
 
-    return res.json(source)
+    return res.json(topic)
   })
 )
 

@@ -23,3 +23,10 @@ export class UnauthorizedError extends ApiError {
     super(_message, status)
   }
 }
+
+export class InsufficientPermissionError extends ApiError {
+  constructor(message, status = 403) {
+    const _message = `Not authorized. ${message}`
+    super(_message, status)
+  }
+}

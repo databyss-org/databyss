@@ -94,7 +94,7 @@ const TextControl = ({
       tabIndex={-1}
       userSelect="auto"
       onFocus={() => {
-        if (!active && inputRef.current) {
+        if (!active && inputRef.current?.focus) {
           inputRef.current.focus()
           window.requestAnimationFrame(() => setActive(true))
         }

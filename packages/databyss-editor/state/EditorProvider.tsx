@@ -31,6 +31,7 @@ import {
   cutOrCopyEventHandler,
   pasteEventHandler,
   getFragmentAtSelection,
+  isSelectionCollapsed,
 } from '../lib/clipboardUtils'
 
 export type Transform = {
@@ -66,6 +67,7 @@ type ContextType = {
   cut: (event: ClipboardEvent) => void
   paste: (event: ClipboardEvent) => void
   insert: (blocks: Block[]) => void
+  replace: (blocks: Block[]) => void
 }
 
 export type OnChangeArgs = {
@@ -280,6 +282,11 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       })
     }
 
+    /**
+     * Insert one or more blocks at the current selection.
+     * If inserting multiple blocks and current selection has text,
+     * blocks are inserted below the current selection block.
+     * */
     const insert = (blocks: Block[]) => {
       dispatch({
         type: PASTE,
@@ -289,7 +296,24 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       })
     }
 
+    /**
+     * Replace current selection block with one or more blocks
+     * */
+    const replace = (blocks: Block[]) => {
+      dispatch({
+        type: PASTE,
+        payload: {
+          data: blocks,
+          replace: true,
+        },
+      })
+    }
+
     const paste = (e: ClipboardEvent) => {
+      // if text is highlighted, remove current selection before paste
+      if (!isSelectionCollapsed(state.selection)) {
+        removeAtSelection()
+      }
       const data = pasteEventHandler(e)
       if (data) {
         insert(data)
@@ -303,6 +327,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           copy,
           cut,
           insert,
+          replace,
           paste,
           setSelection,
           setContent,

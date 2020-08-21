@@ -4,6 +4,7 @@ import {
   ResourceNotFoundError,
   NetworkUnavailableError,
   NotAuthorizedError,
+  InsufficientPermissionError,
 } from '@databyss-org/services/interfaces'
 
 const ErrorFallback = ({ error, message, ...others }) => {
@@ -15,6 +16,8 @@ const ErrorFallback = ({ error, message, ...others }) => {
       _message = 'Network error'
     } else if (error instanceof NotAuthorizedError) {
       _message = 'Not Authorized, please log in'
+    } else if (error instanceof InsufficientPermissionError) {
+      _message = 'Not Authorized'
     }
   }
 

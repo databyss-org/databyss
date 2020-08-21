@@ -23,25 +23,31 @@ const IndexSourceContent = ({ relations }) => {
     navigate(`/pages/${pageId}#${entryId}`)
   }
 
-  const _results = Object.keys(relations.results).map((r, i) => (
-    <SearchResultsContainer key={i}>
-      <SearchResultTitle
-        key={`pageHeader-${i}`}
-        onPress={() => onPageClick(r)}
-        icon={<PageSvg />}
-        text={pages[r].name}
-      />
-
-      {relations.results[r].map((e, k) => (
-        <SearchResultDetails
-          key={k}
-          onPress={() => onEntryClick(r, e.blockId)}
-          text={e.blockText.textValue}
+  const _results = Object.keys(relations.results)
+    // filter out results not associated to a page
+    // page may have been archived
+    .filter(r => pages[r]?.name)
+    .map((r, i) => (
+      <SearchResultsContainer key={i}>
+        <SearchResultTitle
+          key={`pageHeader-${i}`}
+          onPress={() => onPageClick(r)}
+          icon={<PageSvg />}
+          text={pages[r].name}
+          dataTestElement="atomic-results"
         />
-      ))}
-    </SearchResultsContainer>
-  ))
-  return <View px="medium">{_results}</View>
+
+        {relations.results[r].map((e, k) => (
+          <SearchResultDetails
+            key={k}
+            onPress={() => onEntryClick(r, e.blockId)}
+            text={e.blockText.textValue}
+            dataTestElement="atomic-result-item"
+          />
+        ))}
+      </SearchResultsContainer>
+    ))
+  return <View>{_results}</View>
 }
 
 export default IndexSourceContent

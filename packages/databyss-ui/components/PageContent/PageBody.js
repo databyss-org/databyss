@@ -3,6 +3,7 @@ import { throttle } from 'lodash'
 import ContentEditable from '@databyss-org/editor/components/ContentEditable'
 import EditorProvider from '@databyss-org/editor/state/EditorProvider'
 import HistoryProvider from '@databyss-org/editor/history/EditorHistory'
+import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'
 import {
   pageToEditorState,
@@ -62,22 +63,24 @@ const PageBody = ({
   }
 
   return (
-    <HistoryProvider ref={editorStateRef}>
-      <EditorProvider
-        key={location.pathname}
-        onChange={onChange}
-        initialState={pageToEditorState(withMetaData(page))}
-      >
-        <PDFDropZoneManager />
-        <ContentEditable
-          autofocus
-          focusIndex={focusIndex}
-          onNavigateUpFromTop={onNavigateUpFromEditor}
-          active={false}
-          editorRef={editorRef}
-        />
-      </EditorProvider>
-    </HistoryProvider>
+    <CatalogProvider>
+      <HistoryProvider ref={editorStateRef}>
+        <EditorProvider
+          key={location.pathname}
+          onChange={onChange}
+          initialState={pageToEditorState(withMetaData(page))}
+        >
+          <PDFDropZoneManager />
+          <ContentEditable
+            autofocus
+            focusIndex={focusIndex}
+            onNavigateUpFromTop={onNavigateUpFromEditor}
+            active={false}
+            editorRef={editorRef}
+          />
+        </EditorProvider>
+      </HistoryProvider>
+    </CatalogProvider>
   )
 }
 

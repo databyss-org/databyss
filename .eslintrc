@@ -45,6 +45,7 @@
     "jsx-a11y/anchor-is-valid": "off",
     "default-case": "off", // switch mostly used for immer produce, which doesn't require a default
     "no-unused-vars": "off", // use Typescript check instead
+    "no-use-before-define": ["error", { "functions": false }], // hoisting is useful for keeping exported functions at the beginning of the file
     "@typescript-eslint/no-unused-vars": [
       "error",
       {

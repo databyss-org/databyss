@@ -1,12 +1,9 @@
 import * as services from '.'
-import { composeResults } from './_helpers'
 import {
   FETCH_SOURCE,
   SAVE_SOURCE,
   CACHE_SOURCE,
   REMOVE_SOURCE,
-  CACHE_SEARCH_QUERY,
-  FETCH_SEARCH_QUERY,
   FETCH_AUTHOR_HEADERS,
   CACHE_AUTHOR_HEADERS,
   FETCH_SOURCE_CITATIONS,
@@ -60,36 +57,6 @@ export function removeSourceFromCache(id: string) {
       type: REMOVE_SOURCE,
       payload: { id },
     })
-  }
-}
-
-export function fetchSourceQuery(query: string) {
-  return async (dispatch: Function) => {
-    dispatch({
-      type: FETCH_SEARCH_QUERY,
-      payload: {
-        query,
-      },
-    })
-    try {
-      const results = await services.searchSource(query)
-      dispatch({
-        type: CACHE_SEARCH_QUERY,
-        payload: {
-          query,
-          results: composeResults(results, query),
-        },
-      })
-    } catch {
-      // if offline
-      dispatch({
-        type: CACHE_SEARCH_QUERY,
-        payload: {
-          query,
-          results: [],
-        },
-      })
-    }
   }
 }
 

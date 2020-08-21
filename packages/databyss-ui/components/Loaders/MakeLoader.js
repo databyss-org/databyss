@@ -28,7 +28,7 @@ const MakeLoader = ({ resource, children, onUnload, LoadingFallback }) => {
 }
 
 MakeLoader.defaultProps = {
-  LoadingFallback: <Loading />,
+  LoadingFallback: <Loading padding="small" />,
 }
 
 export default MakeLoader
