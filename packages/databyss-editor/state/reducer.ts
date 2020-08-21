@@ -69,7 +69,6 @@ export const bakeAtomicBlock = ({
       // if there's a match and the atomic type matches, use the cached 
       // block's _id and textValue (to correct casing differences)
       const _suggestion = draft.entitySuggestionCache?.[_atomicTextValue.toLowerCase()]
-      console.log('suggestion', JSON.stringify(_suggestion))
       if (_suggestion?.type === _atomicType) {
         _atomicId = _suggestion._id
         _atomicTextValue = _suggestion.text.textValue

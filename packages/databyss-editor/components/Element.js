@@ -62,11 +62,11 @@ const Element = ({ attributes, children, element }) => {
   const [spellCheck, setSpellCheck] = useState(true)
   const spellCheckTimeoutRef = useRef()
 
-  const onTopicSuggestions = topics => {
+  const onSuggestions = blocks => {
     if (!editorContext) {
       return
     }
-    editorContext.cacheEntitySuggestions(topics)
+    editorContext.cacheEntitySuggestions(blocks)
   }
 
   useEffect(
@@ -138,7 +138,7 @@ const Element = ({ attributes, children, element }) => {
           {block.__showCitationMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu placeholder="type title and/or author for suggestions...">
-                <SuggestSources />
+                <SuggestSources onSuggestions={onSuggestions} />
               </SuggestMenu>
             </View>
           )}
@@ -146,7 +146,7 @@ const Element = ({ attributes, children, element }) => {
           {block.__showTopicMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu placeholder="start typing topic for suggestions...">
-                <SuggestTopics onSuggestions={onTopicSuggestions} />
+                <SuggestTopics onSuggestions={onSuggestions} />
               </SuggestMenu>
             </View>
           )}
