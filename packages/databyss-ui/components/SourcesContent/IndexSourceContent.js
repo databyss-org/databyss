@@ -47,7 +47,7 @@ const IndexSourceContent = ({ relations }) => {
         ))}
       </SearchResultsContainer>
     ))
-  return <View>{_results}</View>
+  return <View px="medium">{_results}</View>
 }
 
 export default IndexSourceContent
