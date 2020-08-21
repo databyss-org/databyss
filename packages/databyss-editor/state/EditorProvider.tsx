@@ -22,6 +22,7 @@ import {
   UNDO,
   REDO,
   REMOVE_AT_SELECTION,
+  CACHE_ENTITY_SUGGESTIONS,
 } from './constants'
 import { Text, Selection, EditorState, Block } from '../interfaces'
 import initialState from './initialState'
@@ -68,6 +69,7 @@ type ContextType = {
   paste: (event: ClipboardEvent) => void
   insert: (blocks: Block[]) => void
   replace: (blocks: Block[]) => void
+  cacheEntitySuggestions: (blocks: Block[]) => void
 }
 
 export type OnChangeArgs = {
@@ -320,6 +322,13 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       }
     }
 
+    const cacheEntitySuggestions = (blocks: Block[]) => {
+      dispatch({
+        type: CACHE_ENTITY_SUGGESTIONS,
+        payload: { blocks },
+      })
+    }
+
     return (
       <EditorContext.Provider
         value={{
@@ -337,6 +346,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           removeAtSelection,
           clear,
           removeEntityFromQueue,
+          cacheEntitySuggestions,
         }}
       >
         {children}

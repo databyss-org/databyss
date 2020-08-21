@@ -34,7 +34,7 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
 
   switch (action.type) {
     case CACHE_SOURCE: {
-      const _source = action.payload.source
+      const _source = { ...action.payload.source, type: 'SOURCE' }
       draft.cache[action.payload.id] = _source
       if (resourceIsReady(_source)) {
         _citationHeaderCache[_source._id] = _source

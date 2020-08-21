@@ -3,7 +3,7 @@ import { ResourcePending } from '@databyss-org/services/interfaces/ResourcePendi
 import ErrorFallback from '../Notify/ErrorFallback'
 import Loading from '../Notify/LoadingFallback'
 
-const MakeLoader = ({ resource, children, onUnload }) => {
+const MakeLoader = ({ resource, children, onUnload, onLoad }) => {
   useEffect(
     () => () => {
       if (onUnload) {
@@ -11,6 +11,20 @@ const MakeLoader = ({ resource, children, onUnload }) => {
       }
     },
     []
+  )
+
+  useEffect(
+    () => {
+      if (
+        onLoad &&
+        resource &&
+        !(resource instanceof ResourcePending) &&
+        !(resource instanceof Error)
+      ) {
+        onLoad(resource)
+      }
+    },
+    [resource]
   )
 
   if (!resource || resource instanceof ResourcePending) {
@@ -22,7 +36,7 @@ const MakeLoader = ({ resource, children, onUnload }) => {
   }
 
   if (typeof children !== 'function') {
-    throw new Error('Child must be a function')
+    return children
   }
 
   return children(resource)

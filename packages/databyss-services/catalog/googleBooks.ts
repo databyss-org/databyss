@@ -1,5 +1,6 @@
 import request from '../lib/request'
 import { GroupedCatalogResults, CatalogService } from '../interfaces'
+import { stripText as c } from './util'
 
 const googleBooks: CatalogService = {
   search: async (query: string): Promise<GroupedCatalogResults> => {
@@ -11,11 +12,11 @@ const googleBooks: CatalogService = {
     return results
   },
   getResults: (apiResults: any) => apiResults.items,
-  getAuthors: (apiResult: any) => apiResult.volumeInfo.authors || [],
-  getTitle: (apiResult: any) => apiResult.volumeInfo.title,
-  getSubtitle: (apiResult: any) => apiResult.volumeInfo.subtitle,
+  getAuthors: (apiResult: any) => c(apiResult.volumeInfo.authors || []),
+  getTitle: (apiResult: any) => c(apiResult.volumeInfo.title),
+  getSubtitle: (apiResult: any) => c(apiResult.volumeInfo.subtitle),
   getPublishedYear: (apiResult: any) =>
-    apiResult.volumeInfo.publishedDate.substring(0, 4),
+    apiResult.volumeInfo.publishedDate?.substring(0, 4),
 }
 
 export default googleBooks

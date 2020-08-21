@@ -57,9 +57,9 @@ export const CatalogSearchLoader = ({ query, type, children }) => {
   return MakeLoader({ resource: searchCatalog({ query, type }), children })
 }
 
-export const AllTopicsLoader = ({ children }) => {
+export const AllTopicsLoader = ({ children, ...others }) => {
   const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
-  return MakeLoader({ resource: getTopicHeaders(), children })
+  return MakeLoader({ resource: getTopicHeaders(), children, ...others })
 }
 
 export const TopicLoader = ({ topicId, children }) => {
@@ -72,9 +72,9 @@ export const AuthorsLoader = ({ children }) => {
   return MakeLoader({ resource: getAuthors(), children })
 }
 
-export const SourceCitationsLoader = ({ children }) => {
+export const SourceCitationsLoader = ({ children, ...others }) => {
   const getSourceCitations = useSourceContext(c => c.getSourceCitations)
-  return MakeLoader({ resource: getSourceCitations(), children })
+  return MakeLoader({ resource: getSourceCitations(), children, ...others })
 }
 
 export const BlockRelationsLoader = ({ children, atomicId }) => {

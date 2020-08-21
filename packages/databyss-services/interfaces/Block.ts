@@ -12,6 +12,7 @@ export interface Block {
   type: BlockType
   text: Text
   __showCitationMenu?: boolean
+  __showTopicMenu?: boolean
   __showNewBlockMenu?: boolean
   __isActive?: boolean
 }
