@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
-import { prefixSearch } from '@databyss-org/services/block/filter'
+import { prefixSearchAll } from '@databyss-org/services/block/filter'
 import { useEditorContext } from '../../state/EditorProvider'
 
 const SuggestTopics = ({
@@ -23,7 +23,7 @@ const SuggestTopics = ({
     if (!_topics.length) {
       return []
     }
-    return _topics.filter(prefixSearch(query)).slice(0, 4)
+    return _topics.filter(prefixSearchAll(query)).slice(0, 4)
   }
 
   const onTopicsLoaded = topicsDict => {
@@ -35,6 +35,9 @@ const SuggestTopics = ({
 
   useEffect(
     () => {
+      if (!suggestions?.length) {
+        return
+      }
       const _nextSuggestions = filterSuggestions(suggestions)
       onSuggestionsChanged(_nextSuggestions)
       setFilteredSuggestions(_nextSuggestions)

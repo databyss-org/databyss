@@ -3,7 +3,7 @@ import ObjectId from 'bson-objectid'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { Separator } from '@databyss-org/ui/primitives'
-import { prefixSearch } from '@databyss-org/services/block/filter'
+import { prefixSearchAll } from '@databyss-org/services/block/filter'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useEditorContext } from '../../state/EditorProvider'
 import { CatalogResults } from './'
@@ -48,7 +48,7 @@ const SuggestSources = ({
       return []
     }
     _sources = _sources
-      .filter(prefixSearch(query))
+      .filter(prefixSearchAll(query))
       .slice(0, 4)
       .map(s => (
         <DropdownListItem
