@@ -83,12 +83,12 @@
             "description": "Have any doubt? Here you can find the most commonly asked questions",
             "questionsAndAnswers": [
                 {
-                    "question": "At vero eos et accusam et justo duo dolores et ea rebum?",
-                    "answer": "Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat."
+                    "question": "What can I use databyss for?",
+                    "answer": "Databyss works extremely well to record notes of any genre of study or reflection. One way to think about Databyss is that it functions as a searchable record of the margin notes you once left in your books. You can record quotations, link them to the source text, and include a formatted page or chapter location. Since Databyss also allows you to search topics as if they were files, you can keep dream books in Databyss, phone records, journal entries or any other kind of every-day record keeping. Since Databyss has the feel of a word-processor, you can also write your novels, romantic emails, or political rants here."
                 },
                 {
-                    "question": "Ut wisi enim ad minim veniam, quis nostrud exercitation?",
-                    "answer": "At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt."
+                    "question": "What is the difference between Cross Ref, Open Library, and Google Books?",
+                    "answer": "Cross Ref, Open Library and Google Books are all unique databases that store the bibliographical material of 100,000s of books, journal articles, and more. If you are trying to decide which to use, a good rule of thumb is to use Open Library or Google Books for books and Cross Ref to search for your journal article. Though often times all three might carry the information you're looking for. We should note that Google Books sets a limit on the number of searches allowed (1000) for those using their API, and it may be out of service more often than not."
                 }
             ]
         }
