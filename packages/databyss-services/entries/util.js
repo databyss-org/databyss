@@ -48,7 +48,11 @@ export const sortEntriesAtoZ = (entries, sortBy) =>
     (a, b) => (a[sortBy]?.toLowerCase() > b[sortBy]?.toLowerCase() ? 1 : -1)
   )
 
-export const filterEntries = (entries, filterQuery) =>
-  entries.filter(entry =>
-    entry.text?.toLowerCase().includes(filterQuery.textValue.toLowerCase())
+export const filterEntries = (entries, filterQuery) => {
+  const cleanString = string =>
+    // remove any character that is not a letter, digit, '_', or '-' for better comparison
+    string.replace(/[^A-zÀ-ÿ\d_-]+/gi, '').toLowerCase()
+  return entries.filter(entry =>
+    cleanString(entry.text)?.includes(cleanString(filterQuery.textValue))
   )
+}
