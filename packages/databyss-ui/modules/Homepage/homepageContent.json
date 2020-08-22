@@ -80,7 +80,7 @@
         {
             "component": "FAQ",
             "title": "FAQ",
-            "description": "Have any doubt? Here you can find the most commonly asked questions",
+            "description": "",
             "questionsAndAnswers": [
                 {
                     "question": "What can I use Databyss for?",
