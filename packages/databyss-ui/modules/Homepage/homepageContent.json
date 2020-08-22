@@ -88,7 +88,7 @@
                 },
                 {
                     "question": "What is the difference between Cross Ref, Open Library, and Google Books?",
-                    "answer": "Cross Ref, Open Library and Google Books are unique databases that store the bibliographical material of 100,000s of books, journal articles, and more. If you are trying to decide which to use, a good rule of thumb is to use Open Library or Google Books for books and Cross Ref to search for your journal article. Though often times all three might carry the information you're looking for. We should note that Google Books sets a limit on the number of searches allowed (1000) for websites using their API, and it may be out of service more often than not."
+                    "answer": "Cross Ref, Open Library and Google Books are unique databases that store the bibliographical material of 100,000s of books, journal articles, and more. If you are trying to decide which to use, a good rule of thumb is to use Open Library or Google Books for books and Cross Ref to search for your journal article. (Often times, all three databases might carry the information you're looking for.) We should note that Google Books sets a limit on the number of searches allowed (1000) for websites using their API, and it may be out of service more often than not."
                 }
             ]
         }
