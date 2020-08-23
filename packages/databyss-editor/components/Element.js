@@ -12,7 +12,7 @@ import { isAtomicInlineType } from '../lib/util'
 import { slateSelectionToStateSelection } from '../lib/slateUtils'
 import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
-import { SuggestMenu, SuggestSources } from './Suggest'
+import { SuggestMenu, SuggestSources, SuggestTopics } from './Suggest'
 
 const SPELLCHECK_DEBOUNCE_TIME = 1000
 
@@ -64,6 +64,13 @@ const Element = ({ attributes, children, element }) => {
   // ref is used to keep current in `setTimeout`
   const spellCheckRef = useRef(true)
   const spellCheckTimeoutRef = useRef()
+
+  const onSuggestions = blocks => {
+    if (!editorContext) {
+      return
+    }
+    editorContext.cacheEntitySuggestions(blocks)
+  }
 
   useEffect(
     () => {
@@ -136,8 +143,16 @@ const Element = ({ attributes, children, element }) => {
 
           {block.__showCitationMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
-              <SuggestMenu>
-                <SuggestSources />
+              <SuggestMenu placeholder="type title and/or author for suggestions...">
+                <SuggestSources onSuggestions={onSuggestions} />
+              </SuggestMenu>
+            </View>
+          )}
+
+          {block.__showTopicMenu && (
+            <View contentEditable="false" suppressContentEditableWarning>
+              <SuggestMenu placeholder="start typing topic for suggestions...">
+                <SuggestTopics onSuggestions={onSuggestions} />
               </SuggestMenu>
             </View>
           )}

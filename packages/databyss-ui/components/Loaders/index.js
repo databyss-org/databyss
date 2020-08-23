@@ -4,7 +4,7 @@ import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
-import MakeLoader from './MakeLoader'
+import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 
 export const PageLoader = ({ children, pageId, LoadingFallback }) => {
   const { getPage, removePageFromCache } = usePageContext()
@@ -89,13 +89,14 @@ export const CatalogSearchLoader = ({
   )
 }
 
-export const AllTopicsLoader = ({ children, LoadingFallback }) => {
+export const AllTopicsLoader = ({ children, LoadingFallback, ...others }) => {
   const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
   return (
     <MakeLoader
       resource={getTopicHeaders()}
       children={children}
       LoadingFallback={LoadingFallback}
+      {...others}
     />
   )
 }
@@ -122,13 +123,18 @@ export const AuthorsLoader = ({ children, LoadingFallback }) => {
   )
 }
 
-export const SourceCitationsLoader = ({ children, LoadingFallback }) => {
+export const SourceCitationsLoader = ({
+  children,
+  LoadingFallback,
+  ...others
+}) => {
   const getSourceCitations = useSourceContext(c => c.getSourceCitations)
   return (
     <MakeLoader
       resource={getSourceCitations()}
       children={children}
       LoadingFallback={LoadingFallback}
+      {...others}
     />
   )
 }

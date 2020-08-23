@@ -3,7 +3,7 @@ import ObjectId from 'bson-objectid'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { Separator } from '@databyss-org/ui/primitives'
-import { prefixSearch } from '@databyss-org/services/block/filter'
+import { prefixSearchAll } from '@databyss-org/services/block/filter'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useEditorContext } from '../../state/EditorProvider'
 import { CatalogResults } from './'
@@ -13,7 +13,14 @@ export const OPEN_LIBRARY = 'OPEN_LIBRARY'
 export const CROSSREF = 'CROSSREF'
 export const GOOGLE_BOOKS = 'GOOGLE_BOOKS'
 
-const SuggestSources = ({ query, dismiss, focusEditor, active, ...others }) => {
+const SuggestSources = ({
+  query,
+  dismiss,
+  focusEditor,
+  active,
+  onSuggestions,
+  ...others
+}) => {
   const setSource = useSourceContext(c => c && c.setSource)
   const { replace } = useEditorContext()
   const [mode, setMode] = useState(LOCAL_SOURCES)
@@ -41,7 +48,7 @@ const SuggestSources = ({ query, dismiss, focusEditor, active, ...others }) => {
       return []
     }
     _sources = _sources
-      .filter(prefixSearch(query))
+      .filter(prefixSearchAll(query))
       .slice(0, 4)
       .map(s => (
         <DropdownListItem
@@ -75,7 +82,9 @@ const SuggestSources = ({ query, dismiss, focusEditor, active, ...others }) => {
 
   if (mode === LOCAL_SOURCES) {
     return (
-      <SourceCitationsLoader>
+      <SourceCitationsLoader
+        onLoad={resources => onSuggestions(Object.values(resources))}
+      >
         {_sourceCitations =>
           _composeLocalSources(_sourceCitations).concat(
             _menuItems.map(menuItem => (

@@ -1,5 +1,6 @@
 import request from '../lib/request'
 import { GroupedCatalogResults, CatalogService } from '../interfaces'
+import { stripText as c } from './util'
 
 const openLibrary: CatalogService = {
   search: async (query: string): Promise<GroupedCatalogResults> => {
@@ -9,9 +10,9 @@ const openLibrary: CatalogService = {
     return results
   },
   getResults: (apiResults: any) => apiResults.docs,
-  getAuthors: (apiResult: any) => apiResult.author_name || [],
-  getTitle: (apiResult: any) => apiResult.title,
-  getSubtitle: (apiResult: any) => apiResult.subtitle,
+  getAuthors: (apiResult: any) => c(apiResult.author_name || []),
+  getTitle: (apiResult: any) => c(apiResult.title),
+  getSubtitle: (apiResult: any) => c(apiResult.subtitle),
   getPublishedYear: (apiResult: any) => apiResult.first_publish_year,
 }
 

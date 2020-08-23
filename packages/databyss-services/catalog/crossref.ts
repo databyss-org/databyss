@@ -1,5 +1,6 @@
 import request from '../lib/request'
 import { GroupedCatalogResults, CatalogService } from '../interfaces'
+import { stripText as c } from './util'
 
 const crossref: CatalogService = {
   search: async (query: string): Promise<GroupedCatalogResults> => {
@@ -11,9 +12,9 @@ const crossref: CatalogService = {
     return results
   },
   getResults: (apiResults: any) => apiResults.message.items,
-  getAuthors: (apiResult: any) => (apiResult.author || []).map(authorName),
-  getTitle: (apiResult: any) => apiResult.title ? apiResult.title[0] : '',
-  getSubtitle: (apiResult: any) => apiResult.subtitle?.[0],
+  getAuthors: (apiResult: any) => c((apiResult.author || []).map(authorName)),
+  getTitle: (apiResult: any) => c(apiResult.title ? apiResult.title[0] : ''),
+  getSubtitle: (apiResult: any) => c(apiResult.subtitle?.[0]),
   getPublishedYear: (apiResult: any) => {
     return apiResult.issued?.['date-parts']?.[0]?.[0] ||
       apiResult['published-print']?.['date-parts']?.[0]?.[0] ||
