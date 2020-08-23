@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useCallback, useState } from 'react'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { Text, View } from '@databyss-org/ui/primitives'
@@ -7,7 +7,7 @@ import Pages from '@databyss-org/ui/modules/Sidebar/routes/Pages'
 import Authors, {
   SourceTitles,
 } from '@databyss-org/ui/modules/Sidebar/routes/Sources'
-
+import { debounce } from 'lodash'
 import Topics from '@databyss-org/ui/modules/Sidebar/routes/Topics'
 import { sidebarListHeight } from '@databyss-org/ui/modules/Sidebar/Sidebar'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
@@ -19,13 +19,16 @@ const Search = ({ onClick }) => {
   const { searchTerm, setQuery, clearSearchCache } = useEntryContext()
   const menuItem = getSidebarPath()
 
+  const [value, setValue] = useState({ textValue: searchTerm })
+
+  // wait until user stopped typing for 250ms before setting the value
+  const debounced = useCallback(debounce(val => setQuery(val), 200), [setQuery])
+  useEffect(() => debounced(value), [value])
+
   const clear = () => {
     clearSearchCache()
     setQuery({ textValue: '' })
-  }
-
-  const onChange = val => {
-    setQuery(val)
+    setValue({ textValue: '' })
   }
 
   const encodedSearchTerm = encodeURI(searchTerm.replace(/\?/g, ''))
@@ -38,8 +41,8 @@ const Search = ({ onClick }) => {
   return (
     <SearchInputContainer
       placeholder="Search"
-      value={{ textValue: searchTerm }}
-      onChange={onChange}
+      value={value}
+      onChange={setValue}
       onKeyDown={e => {
         if (e.key === 'Enter') {
           onSearchClick()
