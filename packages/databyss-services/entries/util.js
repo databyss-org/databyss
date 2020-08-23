@@ -49,10 +49,13 @@ export const sortEntriesAtoZ = (entries, sortBy) =>
   )
 
 export const filterEntries = (entries, filterQuery) => {
-  const cleanString = string =>
-    // remove any character that is not a letter, digit, '_', or '-' for better comparison
-    string.replace(/[^A-zÀ-ÿ\d_-]+/gi, '').toLowerCase()
-  return entries.filter(entry =>
-    cleanString(entry.text)?.includes(cleanString(filterQuery.textValue))
-  )
+  const findEntry = query => entry =>
+    query
+      .split(' ')
+      .reduce(
+        (qacc, qcurr) =>
+          Boolean(qacc && entry.text.match(new RegExp(`\\b${qcurr}`, 'i'))),
+        true
+      )
+  return entries.filter(findEntry(filterQuery.textValue))
 }
