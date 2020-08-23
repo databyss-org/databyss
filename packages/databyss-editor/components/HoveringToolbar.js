@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import ReactDOM from 'react-dom'
 import { ThemeProvider } from 'emotion-theming'
 import { Grid, View } from '@databyss-org/ui/primitives'
@@ -7,17 +7,24 @@ import theme, { borderRadius, darkTheme } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { ReactEditor, useSlate } from '@databyss-org/slate-react'
 import { Editor, Range } from '@databyss-org/slate'
-import { isSelectionAtomic } from './../lib/slateUtils'
+import {
+  isSelectionAtomic,
+  slateSelectionToStateSelection,
+} from './../lib/slateUtils'
 
 const isBackwards = () => {
   const selection = window.getSelection()
   const range = document.createRange()
-  range.setStart(selection.anchorNode, selection.anchorOffset)
-  range.setEnd(selection.focusNode, selection.focusOffset)
+  try {
+    range.setStart(selection.anchorNode, selection.anchorOffset)
+    range.setEnd(selection.focusNode, selection.focusOffset)
 
-  const backwards = range.collapsed
-  range.detach()
-  return backwards
+    const backwards = range.collapsed
+    range.detach()
+    return backwards
+  } catch {
+    return false
+  }
 }
 
 const Portal = ({ children }) => ReactDOM.createPortal(children, document.body)
@@ -46,6 +53,20 @@ const _position = { top: -200, left: -200 }
 const HoveringToolbar = ({ children }) => {
   const ref = useRef()
   const editor = useSlate()
+  const [isSelectionBackwards, setIsSelectionBackwards] = useState(false)
+
+  const _selection = slateSelectionToStateSelection(editor)
+
+  // if selection is backwards, keep that in local state, rerenders will reset backwards selection
+  useEffect(
+    () => {
+      if (editor.selection && !Range.isCollapsed(editor.selection)) {
+        const __isBackwards = isBackwards()
+        setIsSelectionBackwards(__isBackwards)
+      }
+    },
+    [JSON.stringify(_selection)]
+  )
 
   useEffect(() => {
     const el = ref.current
@@ -69,7 +90,7 @@ const HoveringToolbar = ({ children }) => {
     // TODO
     // Range.isBackward(selection) does not work
 
-    const _isBackwards = isBackwards()
+    const _isBackwards = isSelectionBackwards
 
     const domSelection = window.getSelection()
 
