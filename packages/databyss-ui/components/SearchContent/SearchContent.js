@@ -1,5 +1,4 @@
 import React from 'react'
-import Highlighter from 'react-highlight-words'
 import { useParams, Router } from '@reach/router'
 import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -10,8 +9,10 @@ import {
   Grid,
   Icon,
   ScrollView,
+  RawHtml,
 } from '@databyss-org/ui/primitives'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
+import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 
 export const SearchRouter = () => (
   <Router>
@@ -61,11 +62,11 @@ const SearchContent = () => {
             >
               <View p="small" ml="small">
                 <Text>
-                  <Highlighter
-                    searchWords={query
-                      .split(' ')
-                      .map(q => new RegExp(`\\b${q}\\b`, 'i'))}
-                    textToHighlight={e.text}
+                  <RawHtml
+                    html={slateBlockToHtmlWithSearch(
+                      { text: e.text, type: 'ENTRY' },
+                      query
+                    )}
                   />
                 </Text>
               </View>

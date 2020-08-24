@@ -129,6 +129,7 @@ router.post(
         // checks if exact words are in result
         const isInEntry = (string, regex) =>
           string
+            .replace(/(\n|\t)/g, ' ')
             .replace(/[^a-z0-9À-ú- ]/gi, '')
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
@@ -178,7 +179,7 @@ router.post(
               entries: [
                 {
                   entryId: curr._id,
-                  text: curr.text.textValue,
+                  text: curr.text,
                   //  blockId: curr.block,
                 },
               ],
@@ -193,7 +194,7 @@ router.post(
 
             _entries.push({
               entryId: curr._id,
-              text: curr.text.textValue,
+              text: curr.text,
               // blockId: curr.block,
             })
             acc.results[pageId].entries = _entries

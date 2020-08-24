@@ -15,7 +15,6 @@ const SourcesCitations = () => {
     <SourceCitationsLoader>
       {sourceCitations => {
         const _header = sourceCitations[query].text.textValue
-
         return (
           <IndexPageContent title={_header}>
             <PagesLoader>

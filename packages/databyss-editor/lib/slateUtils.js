@@ -65,7 +65,6 @@ export const entities = type =>
 
 export const stateBlockToSlateBlock = block => {
   // convert state and apply markup values
-
   const _childrenText = stateToSlateMarkup(block.text)
   const _data = {
     children: _childrenText,
@@ -169,8 +168,42 @@ const serializeHeader = node => {
   }
 }
 
+// serialize slate node to html for search results
+const serializeResults = node => {
+  if (Text.isText(node)) {
+    // replace line breaks
+    let _children = node.text.replace(/\n/g, '</br>')
+
+    if (node.bold) {
+      _children = `<strong>${_children}</strong>`
+    }
+    if (node.italic) {
+      _children = `<i>${_children}</i>`
+    }
+    if (node.location) {
+      _children = `<span style="color:#A19A91">${_children}</span>`
+    }
+    if (node.highlight) {
+      // TODO: this should be dynamic
+      _children = `<span style="background-color:#F7C96E">${_children}</span>`
+      // _children = ReactDOMServer.renderToString(
+      //   <View display="inline" backgroundColor="orange.3">
+      //     {_children}
+      //   </View>
+      // )
+    }
+    return _children
+  }
+
+  const children = node.children.map(n => serializeResults(n)).join('')
+  switch (node.type) {
+    default:
+      return children
+  }
+}
+
 // serialize slate node to html
-const serialize = node => {
+export const serialize = node => {
   if (Text.isText(node)) {
     let _children = node.text
 
@@ -197,6 +230,7 @@ export const stateBlockToHtmlHeader = stateBlock => {
   const _slateNode = stateBlockToSlateBlock(stateBlock)
   return serializeHeader(_slateNode)
 }
+
 export const stateToHTMLString = frag => {
   const _innerHtml = frag
     .map(b => {
@@ -207,4 +241,10 @@ export const stateToHTMLString = frag => {
     .replace(/\n/g, '<br />')
 
   return `<span>${_innerHtml}</span>`
+}
+
+export const stateBlocktoHtmlResults = stateBlock => {
+  const _slateNode = stateBlockToSlateBlock(stateBlock)
+
+  return serializeResults(_slateNode)
 }
