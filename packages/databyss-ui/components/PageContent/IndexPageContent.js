@@ -1,12 +1,13 @@
 import React from 'react'
 import { Text, View, ScrollView } from '@databyss-org/ui/primitives'
-import { pxUnits } from '@databyss-org/ui/theming/views'
+import { pxUnits, widthVariants } from '@databyss-org/ui/theming/views'
 
 const IndexPageContent = ({ title, children }) => (
   <ScrollView
     p="medium"
     flex="1"
     maxHeight="98vh"
+    maxWidth={widthVariants.content.maxWidth}
     css={{
       overflowWrap: 'anywhere',
       wordBreak: 'break-word',

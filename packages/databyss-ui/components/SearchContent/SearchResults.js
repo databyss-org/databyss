@@ -6,9 +6,12 @@ import {
   Grid,
   Icon,
 } from '@databyss-org/ui/primitives'
+import { widthVariants } from '@databyss-org/ui/theming/views'
 
 export const SearchResultsContainer = ({ children }) => (
-  <View mb="medium">{children}</View>
+  <View mb="medium" maxWidth={widthVariants.content.maxWidth}>
+    {children}
+  </View>
 )
 
 export const SearchResultTitle = ({ onPress, text, icon, dataTestElement }) => (
