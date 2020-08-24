@@ -173,7 +173,6 @@ const serializeHeader = node => {
 }
 
 // serialize slate node to html for search results
-// TODO: this can probably be combined with the header html serializer
 const serializeResults = node => {
   if (Text.isText(node)) {
     // replace line breaks
