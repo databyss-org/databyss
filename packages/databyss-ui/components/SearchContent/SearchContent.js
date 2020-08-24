@@ -1,5 +1,4 @@
 import React from 'react'
-import Highlighter from 'react-highlight-words'
 import { useParams, Router } from '@reach/router'
 import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'

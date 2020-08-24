@@ -240,7 +240,6 @@ export const slateBlockToHtmlWithSearch = (block: Block, query: string): string 
 
     _block.text.ranges = [..._block.text.ranges, ...ranges]
 
-
     const _frag = stateBlocktoHtmlResults(_block)
 
     return _frag

@@ -68,7 +68,6 @@ export const entities = type =>
 
 export const stateBlockToSlateBlock = block => {
   // convert state and apply markup values
-
   const _childrenText = stateToSlateMarkup(block.text)
   const _data = {
     children: _childrenText,
@@ -176,7 +175,6 @@ const serializeHeader = node => {
 const serializeResults = node => {
   if (Text.isText(node)) {
     // replace line breaks
-
     let _children = node.text.replace(/\n/g, '</br>')
 
     if (node.bold) {
