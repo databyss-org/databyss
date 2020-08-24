@@ -9,9 +9,9 @@ import MenuSvg from '@databyss-org/ui/assets/menu.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
+import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { darkTheme } from '../../theming/theme'
 import { sidebar } from '../../theming/components'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 
 export const defaultProps = {
   height: '100vh',
@@ -27,7 +27,7 @@ const SidebarCollapsed = () => {
   } = useNavigationContext()
 
   const [activeItem, setActiveItem] = useState('pages')
-  const { setQuery, clearSearchCache } = useEntryContext()
+  const { setQuery, searchTerm, clearSearchCache } = useEntryContext()
 
   const clearSearch = () => {
     clearSearchCache()
@@ -114,7 +114,9 @@ const SidebarCollapsed = () => {
             key={item.name}
             title={item.title}
             icon={item.icon}
-            isActive={activeItem === item.name}
+            isActive={
+              searchTerm ? item.name === 'search' : item.name === activeItem
+            }
             onClick={item.onClick}
           />
         ))}
