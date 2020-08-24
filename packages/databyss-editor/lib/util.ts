@@ -201,6 +201,9 @@ export const indexPage = ({
 
 export const slateBlockToHtmlWithSearch = (block: Block, query: string): string => {
   const _block = block
+
+  if(query){
+  // add query markup to results
   const _searchTerm = query.split(' ')
   const ranges: Range[] = []
 
@@ -239,8 +242,8 @@ export const slateBlockToHtmlWithSearch = (block: Block, query: string): string 
 
 
     _block.text.ranges = [..._block.text.ranges, ...ranges]
-
-    const _frag = stateBlocktoHtmlResults(_block)
+  }
+   const _frag = stateBlocktoHtmlResults(_block)
 
     return _frag
 }

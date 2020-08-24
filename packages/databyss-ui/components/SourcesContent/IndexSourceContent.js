@@ -5,10 +5,12 @@ import {
   BaseControl,
   Icon,
   Grid,
+  RawHtml,
 } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 
 const IndexSourceContent = ({ relations }) => {
   const { getPages } = usePageContext()
@@ -56,7 +58,14 @@ const IndexSourceContent = ({ relations }) => {
             onClick={() => onEntryClick(r, e.blockId)}
           >
             <View p="small" ml="small">
-              <Text>{e.blockText.textValue}</Text>
+              <Text>
+                <RawHtml
+                  html={slateBlockToHtmlWithSearch({
+                    text: e.blockText,
+                    type: 'ENTRY',
+                  })}
+                />
+              </Text>
             </View>
           </BaseControl>
         ))}
