@@ -56,7 +56,6 @@
     "prop-types": "^15.7.2",
     "query-string": "^6.12.1",
     "react-fast-compare": "^2.0.4",
-    "react-highlight-words": "^0.16.0",
     "react-jss": "^8.6.1",
     "react-keyed-flatten-children": "^1.1.0",
     "react-modal": "^3.8.1",
