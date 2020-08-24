@@ -14,6 +14,7 @@ import {
   CUT,
   UNDO,
   REDO,
+  CACHE_ENTITY_SUGGESTIONS
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -61,16 +62,28 @@ export const bakeAtomicBlock = ({
     const _atomicType = symbolToAtomicType(_block.text.textValue.charAt(0))
 
     if (_atomicType) {
+      let _atomicId = _block._id
+      let _atomicTextValue = _block.text.textValue.substring(1).trim()
+
+      // check entitySuggestionCache for an atomic with the identical name
+      // if there's a match and the atomic type matches, use the cached 
+      // block's _id and textValue (to correct casing differences)
+      const _suggestion = draft.entitySuggestionCache?.[_atomicTextValue.toLowerCase()]
+      if (_suggestion?.type === _atomicType) {
+        _atomicId = _suggestion._id
+        _atomicTextValue = _suggestion.text.textValue
+      }
+
       // replace block in state.blocks and push editor operation
       draft.blocks[index] = {
         text: {
           // ranges need to account for the removal of the first string `@` or `#`
-          textValue: _block.text.textValue.substring(1).trim(),
+          textValue: _atomicTextValue,
           // location marks are not allowed in atomic types
           ranges: removeLocationMark(offsetRanges(_block.text.ranges, 1)),
         },
         type: _atomicType,
-        _id: _block._id,
+        _id: _atomicId,
       }
 
       draft.operations.push({
@@ -255,6 +268,7 @@ export default (
         }
         case PASTE: {
           const _frag = payload.data
+          const { replace } = payload
 
           if (!_frag.length) {
             break
@@ -279,28 +293,30 @@ export default (
             deleteBlocksAtSelection(draft)
           }
 
-          const _isCurrentBlockEmpty = !draft.blocks[
+          const _replace = replace || !draft.blocks[
             draft.selection.anchor.index
           ].text.textValue.length
 
-          // if fragment contains multiple blocks, the cursor block is empty, the cursor block is atomic, or the
-          // fragment starts with an atomic, do not split the cursor block...
+
+          // if replacing, fragment contains multiple blocks, the cursor block is empty, 
+          // the cursor block is atomic, or the fragment starts with an atomic, 
+          // do not split the cursor block...
           if (
             _frag.length > 1 ||
-            _isCurrentBlockEmpty ||
+            _replace ||
             isAtomicInlineType(_frag[0].type) ||
             isAtomicInlineType(_startBlock.type)
           ) {
-            // if cursor block is empty, start inserting the fragments here
+            // if replacing or cursor block is empty, start inserting the fragments here
             // otherwise, insert them on the following line
-            const _spliceIndex = _isCurrentBlockEmpty
+            const _spliceIndex = _replace
               ? draft.selection.anchor.index
               : draft.selection.anchor.index + 1
 
             // insert blocks at index
             draft.blocks.splice(
               _spliceIndex,
-              _isCurrentBlockEmpty ? 1 : 0,
+              _replace ? 1 : 0,
               ..._frag
             )
 
@@ -574,6 +590,14 @@ export default (
 
           break
         }
+        case CACHE_ENTITY_SUGGESTIONS: {
+          const blocks: Block[] = payload.blocks
+          draft.entitySuggestionCache = draft.entitySuggestionCache || {}
+          blocks.forEach(block => {
+            draft.entitySuggestionCache[block.text.textValue.toLowerCase()] = block
+          })
+          break
+        }
         case SET_SELECTION:
         default:
       }
@@ -632,6 +656,9 @@ export default (
 
         _selectedBlock.__showCitationMenu = _selectedBlock.text.textValue.startsWith(
           '@'
+        )
+        _selectedBlock.__showTopicMenu = _selectedBlock.text.textValue.startsWith(
+          '#'
         )
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element

@@ -22,6 +22,7 @@ import {
   UNDO,
   REDO,
   REMOVE_AT_SELECTION,
+  CACHE_ENTITY_SUGGESTIONS,
 } from './constants'
 import { Text, Selection, EditorState, Block } from '../interfaces'
 import initialState from './initialState'
@@ -67,6 +68,8 @@ type ContextType = {
   cut: (event: ClipboardEvent) => void
   paste: (event: ClipboardEvent) => void
   insert: (blocks: Block[]) => void
+  replace: (blocks: Block[]) => void
+  cacheEntitySuggestions: (blocks: Block[]) => void
 }
 
 export type OnChangeArgs = {
@@ -281,11 +284,29 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       })
     }
 
+    /**
+     * Insert one or more blocks at the current selection.
+     * If inserting multiple blocks and current selection has text,
+     * blocks are inserted below the current selection block.
+     * */
     const insert = (blocks: Block[]) => {
       dispatch({
         type: PASTE,
         payload: {
           data: blocks,
+        },
+      })
+    }
+
+    /**
+     * Replace current selection block with one or more blocks
+     * */
+    const replace = (blocks: Block[]) => {
+      dispatch({
+        type: PASTE,
+        payload: {
+          data: blocks,
+          replace: true,
         },
       })
     }
@@ -301,6 +322,13 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       }
     }
 
+    const cacheEntitySuggestions = (blocks: Block[]) => {
+      dispatch({
+        type: CACHE_ENTITY_SUGGESTIONS,
+        payload: { blocks },
+      })
+    }
+
     return (
       <EditorContext.Provider
         value={{
@@ -308,6 +336,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           copy,
           cut,
           insert,
+          replace,
           paste,
           setSelection,
           setContent,
@@ -317,6 +346,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           removeAtSelection,
           clear,
           removeEntityFromQueue,
+          cacheEntitySuggestions,
         }}
       >
         {children}
