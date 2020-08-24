@@ -62,14 +62,8 @@ storiesOf('Selenium//Tests', module)
 
     _block.text.ranges = [..._block.text.ranges, ...ranges]
 
-    console.log(_block)
-
     // stateBlockToSlateBlock
     const _frag = stateBlocktoHtmlResults(_block)
-
-    console.log(_frag)
-
-    console.log(ranges)
 
     return (
       <View>
