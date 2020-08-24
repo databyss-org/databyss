@@ -49,26 +49,28 @@ const IndexSourceContent = ({ relations }) => {
           </BaseControl>
         </View>
 
-        {relations.results[r].map((e, k) => (
-          <BaseControl
-            data-test-element="atomic-result-item"
-            hoverColor="background.2"
-            activeColor="background.3"
-            key={k}
-            onClick={() => onEntryClick(r, e.blockId)}
-          >
-            <View p="small" ml="small">
-              <Text>
-                <RawHtml
-                  html={slateBlockToHtmlWithSearch({
-                    text: e.blockText,
-                    type: 'ENTRY',
-                  })}
-                />
-              </Text>
-            </View>
-          </BaseControl>
-        ))}
+        {relations.results[r]
+          .filter(e => e.blockText.textValue.length)
+          .map((e, k) => (
+            <BaseControl
+              data-test-element="atomic-result-item"
+              hoverColor="background.2"
+              activeColor="background.3"
+              key={k}
+              onClick={() => onEntryClick(r, e.blockId)}
+            >
+              <View p="small" ml="small">
+                <Text>
+                  <RawHtml
+                    html={slateBlockToHtmlWithSearch({
+                      text: e.blockText,
+                      type: 'ENTRY',
+                    })}
+                  />
+                </Text>
+              </View>
+            </BaseControl>
+          ))}
       </View>
     ))
   return <View>{_results}</View>
