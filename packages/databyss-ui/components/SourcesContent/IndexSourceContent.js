@@ -30,6 +30,8 @@ const IndexSourceContent = ({ relations }) => {
     // filter out results not associated to a page
     // page may have been archived
     .filter(r => pages[r]?.name)
+    // filter out results if no entries are included
+    .filter(r => relations.results[r].length)
     .map((r, i) => (
       <View key={i} mb="medium">
         <View height="40px">
