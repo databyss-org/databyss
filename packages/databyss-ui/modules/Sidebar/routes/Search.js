@@ -14,7 +14,13 @@ import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
 
 const Search = ({ onClick }) => {
-  const { navigate, getSidebarPath, getTokensFromPath } = useNavigationContext()
+  const {
+    navigate,
+    navigateSidebar,
+    getSidebarPath,
+    getTokensFromPath,
+  } = useNavigationContext()
+
   const { params } = getTokensFromPath()
   const { searchTerm, setQuery, clearSearchCache } = useEntryContext()
   const menuItem = getSidebarPath()
@@ -36,6 +42,7 @@ const Search = ({ onClick }) => {
   const onSearchClick = () => {
     // encode the search term and remove '?'
     navigate(`/search/${encodedSearchTerm}`)
+    navigateSidebar('/search')
   }
 
   return (
@@ -52,59 +59,58 @@ const Search = ({ onClick }) => {
       onClick={onClick}
       autoFocus={menuItem === 'search'}
     >
-      {searchTerm &&
-        menuItem === 'search' && (
-          <View
-            height={sidebarListHeight}
-            pt="medium"
-            pb="medium"
-            overflow="scroll"
-          >
-            <SidebarListItem
-              onPress={onSearchClick}
-              isActive={encodedSearchTerm === params}
-              text="Find in notes"
-              id="sidebarListItem-entry-search"
-              icon={
-                <View
-                  flexDirection="row"
-                  alignItems="center"
-                  justifyContent="center"
-                  width={iconSizeVariants.tiny.width}
-                >
-                  <Text variant="uiTextTiny" color="text.3">
-                    A
-                  </Text>
-                  <Text variant="uiTextTinyItalic" color="text.3">
-                    a
-                  </Text>
-                </View>
-              }
-            >
-              <View>
+      {searchTerm && (
+        <View
+          height={sidebarListHeight}
+          pt="medium"
+          pb="medium"
+          overflow="scroll"
+        >
+          <SidebarListItem
+            onPress={onSearchClick}
+            isActive={encodedSearchTerm === params}
+            text="Find in notes"
+            id="sidebarListItem-entry-search"
+            icon={
+              <View
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="center"
+                width={iconSizeVariants.tiny.width}
+              >
                 <Text variant="uiTextTiny" color="text.3">
-                  ENTER
+                  A
+                </Text>
+                <Text variant="uiTextTinyItalic" color="text.3">
+                  a
                 </Text>
               </View>
-            </SidebarListItem>
-            <Pages
-              filterQuery={{ textValue: searchTerm }}
-              LoadingFallback={false}
-            />
-            <Authors
-              filterQuery={{ textValue: searchTerm }}
-              LoadingFallback={false}
-            />
-            <SourceTitles
-              filterQuery={{ textValue: searchTerm }}
-              LoadingFallback={false}
-            />
-            <Topics
-              filterQuery={{ textValue: searchTerm }}
-              LoadingFallback={false}
-            />
-          </View>
-        )}
+            }
+          >
+            <View>
+              <Text variant="uiTextTiny" color="text.3">
+                ENTER
+              </Text>
+            </View>
+          </SidebarListItem>
+          <Pages
+            filterQuery={{ textValue: searchTerm }}
+            LoadingFallback={false}
+          />
+          <Authors
+            filterQuery={{ textValue: searchTerm }}
+            LoadingFallback={false}
+          />
+          <SourceTitles
+            filterQuery={{ textValue: searchTerm }}
+            LoadingFallback={false}
+          />
+          <Topics
+            filterQuery={{ textValue: searchTerm }}
+            LoadingFallback={false}
+          />
+        </View>
+      )}
     </SearchInputContainer>
   )
 }

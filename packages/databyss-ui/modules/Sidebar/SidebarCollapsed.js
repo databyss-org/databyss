@@ -11,6 +11,7 @@ import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconBu
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
 import { darkTheme } from '../../theming/theme'
 import { sidebar } from '../../theming/components'
+import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 
 export const defaultProps = {
   height: '100vh',
@@ -26,6 +27,12 @@ const SidebarCollapsed = () => {
   } = useNavigationContext()
 
   const [activeItem, setActiveItem] = useState('pages')
+  const { setQuery, clearSearchCache } = useEntryContext()
+
+  const clearSearch = () => {
+    clearSearchCache()
+    setQuery({ textValue: '' })
+  }
 
   const onItemClick = item => {
     if (!isMenuOpen) {
@@ -51,7 +58,9 @@ const SidebarCollapsed = () => {
       name: 'menuCollapse',
       title: 'Collapse menu',
       icon: <MenuSvg />,
-      onClick: () => setMenuOpen(!isMenuOpen),
+      onClick: () => {
+        setMenuOpen(!isMenuOpen)
+      },
     },
     {
       name: 'search',
@@ -63,19 +72,28 @@ const SidebarCollapsed = () => {
       name: 'pages',
       title: 'Pages',
       icon: <PagesSvg />,
-      onClick: () => onItemClick('pages'),
+      onClick: () => {
+        onItemClick('pages')
+        clearSearch()
+      },
     },
     {
       name: 'sources',
       title: 'Sources',
       icon: <SourceSvg />,
-      onClick: () => onItemClick('sources'),
+      onClick: () => {
+        onItemClick('sources')
+        clearSearch()
+      },
     },
     {
       name: 'topics',
       title: 'Topics',
       icon: <TopicSvg />,
-      onClick: () => onItemClick('topics'),
+      onClick: () => {
+        onItemClick('topics')
+        clearSearch()
+      },
     },
   ]
 

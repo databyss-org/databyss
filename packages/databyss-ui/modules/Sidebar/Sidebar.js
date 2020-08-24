@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { Text, View, List } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/views'
+import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import SidebarCollapsed from './SidebarCollapsed'
 import { darkTheme } from '../../theming/theme'
 import Search from './routes/Search'
@@ -40,7 +41,8 @@ export const sidebarListHeight = `calc(100vh - ${pxUnits(
 )})`
 
 const Sidebar = () => {
-  const { navigateSidebar, getSidebarPath, isMenuOpen } = useNavigationContext()
+  const { getSidebarPath, isMenuOpen } = useNavigationContext()
+  const { searchTerm } = useEntryContext()
   const menuItem = getSidebarPath()
   const [filterQuery] = useState({ textValue: '' })
 
@@ -59,28 +61,26 @@ const Sidebar = () => {
         <View theme={darkTheme} bg="background.1" height="100vh">
           <List verticalItemPadding={2} horizontalItemPadding={2}>
             <Header />
-            <Search
-              onClick={() => {
-                navigateSidebar('/search')
-              }}
-            />
-            {(menuItem === 'pages' || !menuItem) && (
+            <Search />
+            {((menuItem === 'pages' && !searchTerm) || !menuItem) && (
               <Pages filterQuery={filterQuery} height={sidebarListHeight} />
             )}
-            {menuItem === 'sources' && (
-              <Sources
-                filterQuery={filterQuery}
-                height={sidebarListHeight}
-                hasIndexPage
-              />
-            )}
-            {menuItem === 'topics' && (
-              <Topics
-                filterQuery={filterQuery}
-                height={sidebarListHeight}
-                hasIndexPage
-              />
-            )}
+            {menuItem === 'sources' &&
+              !searchTerm && (
+                <Sources
+                  filterQuery={filterQuery}
+                  height={sidebarListHeight}
+                  hasIndexPage
+                />
+              )}
+            {menuItem === 'topics' &&
+              !searchTerm && (
+                <Topics
+                  filterQuery={filterQuery}
+                  height={sidebarListHeight}
+                  hasIndexPage
+                />
+              )}
           </List>
         </View>
       </View>
