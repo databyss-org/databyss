@@ -10,8 +10,10 @@ import {
   Grid,
   Icon,
   ScrollView,
+  RawHtml,
 } from '@databyss-org/ui/primitives'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
+import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 
 export const SearchRouter = () => (
   <Router>
@@ -61,12 +63,11 @@ const SearchContent = () => {
             >
               <View p="small" ml="small">
                 <Text>
-                  {console.log(e.text)}
-                  <Highlighter
-                    searchWords={query
-                      .split(' ')
-                      .map(q => new RegExp(`\\b${q}\\b`, 'i'))}
-                    textToHighlight={e.text}
+                  <RawHtml
+                    html={slateBlockToHtmlWithSearch(
+                      { text: e.text, type: 'ENTRY' },
+                      query
+                    )}
                   />
                 </Text>
               </View>

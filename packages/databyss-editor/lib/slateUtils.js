@@ -176,13 +176,18 @@ const serializeHeader = node => {
 // TODO: this can probably be combined with the header html serializer
 const serializeResults = node => {
   if (Text.isText(node)) {
-    let _children = node.text
+    // replace line breaks
+
+    let _children = node.text.replace(/\n/g, '</br>')
 
     if (node.bold) {
       _children = `<strong>${_children}</strong>`
     }
     if (node.italic) {
       _children = `<i>${_children}</i>`
+    }
+    if (node.location) {
+      _children = `<span style="color:#A19A91">${_children}</span>`
     }
     if (node.highlight) {
       // TODO: this should be dynamic
@@ -246,5 +251,6 @@ export const stateToHTMLString = frag => {
 
 export const stateBlocktoHtmlResults = stateBlock => {
   const _slateNode = stateBlockToSlateBlock(stateBlock)
+
   return serializeResults(_slateNode)
 }

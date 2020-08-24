@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { Block } from '@databyss-org/services/interfaces/'
-import { stateBlockToHtmlHeader } from '@databyss-org/editor/lib/slateUtils.js'
-import { BlockType, Selection, EditorState, BlockRelation, PagePath } from '../interfaces'
+import { stateBlockToHtmlHeader, stateBlocktoHtmlResults } from '@databyss-org/editor/lib/slateUtils.js'
+import { BlockType, Selection, EditorState, BlockRelation, PagePath, Range } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
 
 export const splice = (src, idx, rem, str) =>
@@ -195,4 +195,53 @@ export const indexPage = ({
   }
 
   return blockRelations
+}
+
+
+
+export const slateBlockToHtmlWithSearch = (block: Block, query: string): string => {
+  const _block = block
+  const _searchTerm = query.split(' ')
+  const ranges: Range[] = []
+
+
+    // add search ranges to block
+    _searchTerm.forEach(word => {
+      // normalize diactritics
+      const parts = _block.text.textValue
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .split(
+          new RegExp(
+            `\\b${word.normalize('NFD').replace(/[\u0300-\u036f]/g, '')}\\b`,
+            'i'
+          )
+        )
+
+
+      let offset = 0
+
+      parts.forEach((part, i) => {
+        const length = word.length
+
+        if (i !== 0) {
+          ranges.push({
+            offset: offset - word.length,
+            length,
+            marks: ['highlight'],
+          })
+        }
+
+        offset = offset + part.length + word.length
+      })
+    })
+
+
+
+    _block.text.ranges = [..._block.text.ranges, ...ranges]
+
+
+    const _frag = stateBlocktoHtmlResults(_block)
+
+    return _frag
 }
