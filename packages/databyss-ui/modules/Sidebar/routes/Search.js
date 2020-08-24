@@ -27,7 +27,7 @@ const Search = ({ onClick }) => {
 
   const [value, setValue] = useState({ textValue: searchTerm })
 
-  // wait until user stopped typing for 250ms before setting the value
+  // wait until user stopped typing for 200ms before setting the value
   const debounced = useCallback(debounce(val => setQuery(val), 200), [setQuery])
   useEffect(() => debounced(value), [value])
 
@@ -46,26 +46,22 @@ const Search = ({ onClick }) => {
   }
 
   return (
-    <SearchInputContainer
-      placeholder="Search"
-      value={value}
-      onChange={setValue}
-      onKeyDown={e => {
-        if (e.key === 'Enter') {
-          onSearchClick()
-        }
-      }}
-      onClear={clear}
-      onClick={onClick}
-      autoFocus={menuItem === 'search'}
-    >
+    <>
+      <SearchInputContainer
+        placeholder="Search"
+        value={value}
+        onChange={setValue}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            onSearchClick()
+          }
+        }}
+        onClear={clear}
+        onClick={onClick}
+        autoFocus={menuItem === 'search'}
+      />
       {searchTerm && (
-        <View
-          height={sidebarListHeight}
-          pt="medium"
-          pb="medium"
-          overflow="scroll"
-        >
+        <View height={sidebarListHeight} overflow="scroll">
           <SidebarListItem
             onPress={onSearchClick}
             isActive={encodedSearchTerm === params}
@@ -111,7 +107,7 @@ const Search = ({ onClick }) => {
           />
         </View>
       )}
-    </SearchInputContainer>
+    </>
   )
 }
 

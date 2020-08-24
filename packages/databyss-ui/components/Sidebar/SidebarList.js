@@ -51,7 +51,6 @@ const SidebarList = ({ menuItems, query, height, ...others }) => {
       height={height}
       overflow="scroll"
       p={pxUnits(0)}
-      mt="extraSmall"
       {...others}
     >
       {menuItems.map((item, index) => {

@@ -10,6 +10,7 @@ import SearchIcon from '@databyss-org/ui/assets/search.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { theme } from '@databyss-org/ui/theming'
 import styledCss from '@styled-system/css'
+import { pxUnits } from '@databyss-org/ui/theming/views'
 
 const SearchInputContainer = ({
   placeholder,
@@ -21,7 +22,7 @@ const SearchInputContainer = ({
   autoFocus,
   value,
 }) => (
-  <View width="100%" px="small" my="small" onClick={onClick}>
+  <View width="100%" px="small" mt="small" mb={pxUnits(12)} onClick={onClick}>
     <View
       backgroundColor="background.0"
       height="100%"
