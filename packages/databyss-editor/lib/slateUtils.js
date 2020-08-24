@@ -1,7 +1,4 @@
-import React from 'react'
-import ReactDOMServer from 'react-dom/server'
 import { Text, Editor } from '@databyss-org/slate'
-import { View } from '@databyss-org/ui/primitives'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
