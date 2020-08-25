@@ -1,4 +1,4 @@
-/* eslint-disable no-nested-ternary */
+/* eslint-disable no-nested-ternary, prefer-template */
 const fs = require('fs')
 const isWsl = require('is-wsl')
 const path = require('path')
@@ -80,8 +80,8 @@ module.exports = webpackEnv => {
       // Note: instead of the default WebpackDevServer client, we use a custom one
       // to bring better experience for Create React App users. You can replace
       // the line below with these two lines if you prefer the stock client:
-      `${require.resolve('webpack-dev-server/client')}?/`,
-      require.resolve('webpack/hot/dev-server'),
+      isEnvDevelopment && require.resolve('webpack-dev-server/client') + '?/',
+      isEnvDevelopment && require.resolve('webpack/hot/dev-server'),
       // isEnvDevelopment &&
       //   require.resolve('react-dev-utils/webpackHotDevClient'),
       // Finally, this is your app's code:

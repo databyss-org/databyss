@@ -6,8 +6,6 @@ import {
   InsufficientPermissionError,
 } from '../interfaces'
 
-const FETCH_TIMEOUT = 5000
-
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response
