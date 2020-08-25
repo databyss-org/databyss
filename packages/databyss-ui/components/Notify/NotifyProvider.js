@@ -9,6 +9,8 @@ import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
 import IS_NATIVE from '../../lib/isNative'
 
+const CHECK_ONLINE_INTERVAL = 500
+
 const NotifyContext = createContext()
 
 // from @bugsnag/plugin-react
@@ -49,11 +51,8 @@ class NotifyProvider extends React.Component {
 
       window.addEventListener('online', () => this.setOnlineStatus(true))
 
-      window.addEventListener('error', this.showUnhandledErrorDialog)
-      window.addEventListener(
-        'unhandledrejection',
-        this.showUnhandledErrorDialog
-      )
+      window.addEventListener('error', this.onUnhandledError)
+      window.addEventListener('unhandledrejection', this.onUnhandledError)
     }
   }
   state = {
@@ -85,18 +84,22 @@ class NotifyProvider extends React.Component {
 
       window.removeEventListener('online', this.setOnlineStatus)
 
-      window.removeEventListener('error', this.showUnhandledErrorDialog)
-      window.removeEventListener(
-        'unhandledrejection',
-        this.showUnhandledErrorDialog
-      )
+      window.removeEventListener('error', this.onUnhandledError)
+      window.removeEventListener('unhandledrejection', this.onUnhandledError)
     }
   }
 
   onUnhandledError = e => {
-    if (e && e.reason instanceof NetworkUnavailableError) {
+    if (
+      e &&
+      (e.reason instanceof NetworkUnavailableError ||
+        e.error instanceof NetworkUnavailableError) &&
+      this.state.isOnline
+    ) {
       this.showOfflineMessage()
       this.checkOnlineStatus()
+    } else {
+      this.showUnhandledErrorDialog()
     }
   }
 
@@ -138,7 +141,7 @@ class NotifyProvider extends React.Component {
           .catch(() => {
             this.checkOnlineStatus()
           })
-      }, 1000)
+      }, CHECK_ONLINE_INTERVAL)
     }
   }
 
