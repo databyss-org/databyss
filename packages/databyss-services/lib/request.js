@@ -38,25 +38,24 @@ function parseResponse(responseIsJson) {
       : response.text()
 }
 
-function request(uri, options, responseIsJson) {
-  const controller = new AbortController()
-  const { signal } = controller.signal
-  const timeoutId = setTimeout(() => {
-    controller.abort()
+function request(uri, options = {}, responseIsJson) {
+  const { timeout, ..._options } = options
+  const _controller = new AbortController()
+  const _timeoutId = setTimeout(() => {
+    _controller.abort()
     throw new NetworkUnavailableError('request timed out')
-  }, FETCH_TIMEOUT)
-  const promise = fetch(uri, { ...options, signal })
+  }, timeout || process.env.FETCH_TIMEOUT)
+
+  return fetch(uri, { ..._options, signal: _controller.signal })
     .catch(err => {
       throw new NetworkUnavailableError(err)
     })
     .then(response => {
-      clearTimeout(timeoutId)
+      clearTimeout(_timeoutId)
       return response
     })
     .then(checkStatus)
     .then(parseResponse(responseIsJson))
-
-  return promise
 }
 
 export function getJson(uri) {
