@@ -1,9 +1,17 @@
 import React, { useState } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { BaseControl, Icon, View } from '@databyss-org/ui/primitives'
+import {
+  BaseControl,
+  Icon,
+  View,
+  SwitchControl,
+  Text,
+  Separator,
+} from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
+import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
@@ -14,6 +22,7 @@ export const ArchiveBin = ({ pages }) => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
   const [showMenu, setShowMenu] = useState(false)
+  const [pagePublic, setPagePublic] = useState(false)
 
   const { getTokensFromPath, navigate } = useNavigationContext()
 
@@ -24,7 +33,7 @@ export const ArchiveBin = ({ pages }) => {
 
   const canBeArchived = Object.values(pages).filter(p => !p.archive).length > 1
 
-  const onPress = () => {
+  const onArchivePress = () => {
     archivePage(params).then(() => {
       // if default page is archived set new page as default page
       let redirect = account.defaultPage
@@ -42,16 +51,37 @@ export const ArchiveBin = ({ pages }) => {
     }
   }
 
+  const onCopyLink = () => {
+    console.log('COPY LINK')
+  }
+
   const menuItems = [
     {
-      icon: <ArchiveSvg />,
-      label: 'Archive',
+      icon: <LinkSvg />,
+      label: 'Copy link',
+      action: () => onCopyLink(),
+
       // TODO: detect platform and render correct modifier key
       // shortcut: 'Ctrl + Del',
     },
   ]
 
-  return canBeArchived ? (
+  if (canBeArchived) {
+    menuItems.push({
+      icon: <ArchiveSvg />,
+      label: 'Archive',
+      action: () => onArchivePress(),
+      // TODO: detect platform and render correct modifier key
+      // shortcut: 'Ctrl + Del',
+    })
+  }
+
+  const togglePublicPage = () => {
+    console.log('SET PAGE')
+    setPagePublic(!pagePublic)
+  }
+
+  return (
     <View
       position="relative"
       height={menuLauncherSize}
@@ -74,18 +104,30 @@ export const ArchiveBin = ({ pages }) => {
       {showMenu && (
         <ClickAwayListener onClickAway={() => setShowMenu(false)}>
           <DropdownContainer
-            widthVariant="dropdownMenuSmall"
+            widthVariant="dropdownMenuMedium"
             open={showMenu}
             position={{
               top: menuLauncherSize + 8,
               right: 0,
             }}
           >
+            <View
+              flexDirection="row"
+              mx="small"
+              my="small"
+              justifyContent="space-between"
+              bottomBorder="1px"
+              alignItems="center"
+            >
+              <Text variant="uiTextSmall">Page is public</Text>
+              <SwitchControl value={pagePublic} onChange={togglePublicPage} />
+            </View>
+            <Separator color="border.2" />
             {menuItems.map(menuItem => (
               <DropdownListItem
                 {...menuItem}
                 action="archive"
-                onPress={onPress}
+                onPress={() => menuItem.action()}
                 onKeyDown={handleEscKey}
                 key={menuItem.label}
               />
@@ -94,5 +136,5 @@ export const ArchiveBin = ({ pages }) => {
         </ClickAwayListener>
       )}
     </View>
-  ) : null
+  )
 }
