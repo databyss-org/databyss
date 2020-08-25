@@ -26,14 +26,14 @@ const Search = ({ onClick }) => {
   const menuItem = getSidebarPath()
 
   const [value, setValue] = useState({ textValue: searchTerm })
-
   const [startedTyping, setStartedTyping] = useState(false)
 
   // wait until user stopped typing for 200ms before setting the value
   const debounced = useCallback(
     debounce(val => {
       setQuery(val)
-      if (val.textValue) {
+      // only run when the user typed the first letter in search input
+      if (val.textValue && !value.textValue) {
         setStartedTyping(true)
       }
     }, 200),
@@ -48,7 +48,7 @@ const Search = ({ onClick }) => {
 
   useEffect(
     () => {
-      if (value.textValue) {
+      if (startedTyping) {
         navigateSidebar('/search')
       }
     },
@@ -84,53 +84,54 @@ const Search = ({ onClick }) => {
         onClick={onClick}
         autoFocus={menuItem === 'search'}
       />
-      {searchTerm && (
-        <View height={sidebarListHeight} overflow="scroll">
-          <SidebarListItem
-            onPress={onSearchClick}
-            isActive={encodedSearchTerm === params}
-            text="Find in notes"
-            id="sidebarListItem-entry-search"
-            icon={
-              <View
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="center"
-                width={iconSizeVariants.tiny.width}
-              >
+      {searchTerm &&
+        menuItem === 'search' && (
+          <View height={sidebarListHeight} overflow="scroll">
+            <SidebarListItem
+              onPress={onSearchClick}
+              isActive={encodedSearchTerm === params}
+              text="Find in notes"
+              id="sidebarListItem-entry-search"
+              icon={
+                <View
+                  flexDirection="row"
+                  alignItems="center"
+                  justifyContent="center"
+                  width={iconSizeVariants.tiny.width}
+                >
+                  <Text variant="uiTextTiny" color="text.3">
+                    A
+                  </Text>
+                  <Text variant="uiTextTinyItalic" color="text.3">
+                    a
+                  </Text>
+                </View>
+              }
+            >
+              <View>
                 <Text variant="uiTextTiny" color="text.3">
-                  A
-                </Text>
-                <Text variant="uiTextTinyItalic" color="text.3">
-                  a
+                  ENTER
                 </Text>
               </View>
-            }
-          >
-            <View>
-              <Text variant="uiTextTiny" color="text.3">
-                ENTER
-              </Text>
-            </View>
-          </SidebarListItem>
-          <Pages
-            filterQuery={{ textValue: searchTerm }}
-            LoadingFallback={false}
-          />
-          <Authors
-            filterQuery={{ textValue: searchTerm }}
-            LoadingFallback={false}
-          />
-          <SourceTitles
-            filterQuery={{ textValue: searchTerm }}
-            LoadingFallback={false}
-          />
-          <Topics
-            filterQuery={{ textValue: searchTerm }}
-            LoadingFallback={false}
-          />
-        </View>
-      )}
+            </SidebarListItem>
+            <Pages
+              filterQuery={{ textValue: searchTerm }}
+              LoadingFallback={false}
+            />
+            <Authors
+              filterQuery={{ textValue: searchTerm }}
+              LoadingFallback={false}
+            />
+            <SourceTitles
+              filterQuery={{ textValue: searchTerm }}
+              LoadingFallback={false}
+            />
+            <Topics
+              filterQuery={{ textValue: searchTerm }}
+              LoadingFallback={false}
+            />
+          </View>
+        )}
     </>
   )
 }

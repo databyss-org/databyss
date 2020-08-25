@@ -9,7 +9,6 @@ import MenuSvg from '@databyss-org/ui/assets/menu.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { darkTheme } from '../../theming/theme'
 import { sidebar } from '../../theming/components'
 
@@ -27,12 +26,6 @@ const SidebarCollapsed = () => {
   } = useNavigationContext()
 
   const [activeItem, setActiveItem] = useState('pages')
-  const { setQuery, clearSearchCache } = useEntryContext()
-
-  const clearSearch = () => {
-    clearSearchCache()
-    setQuery({ textValue: '' })
-  }
 
   const onItemClick = item => {
     if (!isMenuOpen) {
@@ -74,7 +67,6 @@ const SidebarCollapsed = () => {
       icon: <PagesSvg />,
       onClick: () => {
         onItemClick('pages')
-        clearSearch()
       },
     },
     {
@@ -83,7 +75,6 @@ const SidebarCollapsed = () => {
       icon: <SourceSvg />,
       onClick: () => {
         onItemClick('sources')
-        clearSearch()
       },
     },
     {
@@ -92,7 +83,6 @@ const SidebarCollapsed = () => {
       icon: <TopicSvg />,
       onClick: () => {
         onItemClick('topics')
-        clearSearch()
       },
     },
   ]
