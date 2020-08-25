@@ -12,7 +12,8 @@ import {
   SET_DEFAULT_PAGE,
   QUEUE_PATCH,
   REMOVE_PAGE_FROM_CACHE,
-  SET_PAGE_PUBLIC
+  SET_PAGE_PUBLIC,
+  CACHE_PUBLIC_PAGE,
 } from './constants'
 import { PatchBatch, PageHeader, Page } from '../interfaces'
 
@@ -222,10 +223,30 @@ export function onSetDefaultPage(id: string) {
 }
 
 
+
+
+// export function setPagePublic(id: string, boolean: boolean) {
+//   // return async (dispatch: Function) => {
+//   //   dispatch({
+//   //   type: SET_PAGE_PUBLIC,
+//   //   payload: { id, isPublic: boolean }
+//   //   })
+//   // //  const _res = await services.setPagePublic(id, boolean)
+
+//   // //  console.log(_res)
+//   // }
+// }
+
 export function setPagePublic(id: string, boolean: boolean) {
-  services.setPagePublic(id, boolean)
-  return {
+  return async (dispatch: Function) => {
+    dispatch({
     type: SET_PAGE_PUBLIC,
     payload: { id, isPublic: boolean }
+    })
+   const _res = await services.setPagePublic(id, boolean)
+   dispatch({
+    type:  CACHE_PUBLIC_PAGE,
+    payload: { id, accountId: _res.accountId }
+    })
   }
 }

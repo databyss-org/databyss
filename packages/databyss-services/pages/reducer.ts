@@ -18,6 +18,7 @@ import {
   QUEUE_PATCH,
   REMOVE_PAGE_FROM_CACHE,
   PATCH,
+  CACHE_PUBLIC_PAGE,
 } from './constants'
 import { resourceIsReady } from '../lib/util'
 
@@ -95,6 +96,15 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
           })
       )
       draft.headerCache = _headerCache
+      break
+    }
+
+    case CACHE_PUBLIC_PAGE: {
+      draft.cache[action.payload.id] = {
+        ...draft.cache[action.payload.id],
+        publicAccountId: action.payload.accountId,
+      }
+      break
     }
   }
 })

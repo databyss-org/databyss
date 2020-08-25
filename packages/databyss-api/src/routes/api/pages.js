@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
 
 import express from 'express'
+import ObjectId from 'bson-objectid'
 import Page from '../../models/Page'
 import Block from '../../models/Block'
 import Selection from '../../models/Selection'
@@ -182,9 +183,21 @@ router.post(
   '/:id/public',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
   wrap(async (req, res, _next) => {
-    console.log('page ', req.page)
-    console.log('data', req.body.data)
-    res.json({ data: 'test' }).status(200)
+    // create a new account
+    const _sharedAccount = new ObjectId().toHexString()
+
+    await Page.replaceOne(
+      {
+        _id: req.page._id,
+      },
+      {
+        ...req.page._doc,
+        sharedWith: [{ account: _sharedAccount, role: 'VIEW' }],
+      },
+      { upsert: true }
+    )
+
+    res.json({ accountId: _sharedAccount }).status(200)
   })
 )
 
