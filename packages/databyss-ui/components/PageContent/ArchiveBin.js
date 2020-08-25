@@ -22,7 +22,7 @@ export const ArchiveBin = ({ pages }) => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
   const [showMenu, setShowMenu] = useState(false)
-  const [pagePublic, setPagePublic] = useState(false)
+  const [isPagePublic, setIsPagePublic] = useState(false)
 
   const { getTokensFromPath, navigate } = useNavigationContext()
 
@@ -30,6 +30,8 @@ export const ArchiveBin = ({ pages }) => {
 
   const archivePage = usePageContext(c => c.archivePage)
   const setDefaultPage = usePageContext(c => c.setDefaultPage)
+
+  const setPagePublic = usePageContext(c => c.setPagePublic)
 
   const canBeArchived = Object.values(pages).filter(p => !p.archive).length > 1
 
@@ -77,8 +79,9 @@ export const ArchiveBin = ({ pages }) => {
   }
 
   const togglePublicPage = () => {
-    console.log('SET PAGE')
-    setPagePublic(!pagePublic)
+    console.log('SET PAGE', params)
+    setPagePublic(params, !isPagePublic)
+    setIsPagePublic(!isPagePublic)
   }
 
   return (
@@ -120,7 +123,7 @@ export const ArchiveBin = ({ pages }) => {
               alignItems="center"
             >
               <Text variant="uiTextSmall">Page is public</Text>
-              <SwitchControl value={pagePublic} onChange={togglePublicPage} />
+              <SwitchControl value={isPagePublic} onChange={togglePublicPage} />
             </View>
             <Separator color="border.2" />
             {menuItems.map(menuItem => (

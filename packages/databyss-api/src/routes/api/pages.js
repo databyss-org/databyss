@@ -175,4 +175,17 @@ router.get(
   })
 )
 
+// @route    POST api/pages/:id/public
+// @desc     makes a page public or private
+// @access   private
+router.post(
+  '/:id/public',
+  [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
+  wrap(async (req, res, _next) => {
+    console.log('page ', req.page)
+    console.log('data', req.body.data)
+    res.json({ data: 'test' }).status(200)
+  })
+)
+
 export default router

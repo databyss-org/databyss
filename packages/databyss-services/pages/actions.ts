@@ -12,6 +12,7 @@ import {
   SET_DEFAULT_PAGE,
   QUEUE_PATCH,
   REMOVE_PAGE_FROM_CACHE,
+  SET_PAGE_PUBLIC
 } from './constants'
 import { PatchBatch, PageHeader, Page } from '../interfaces'
 
@@ -217,5 +218,14 @@ export function onSetDefaultPage(id: string) {
   return {
     type: SET_DEFAULT_PAGE,
     payload: { id }
+  }
+}
+
+
+export function setPagePublic(id: string, boolean: boolean) {
+  services.setPagePublic(id, boolean)
+  return {
+    type: SET_PAGE_PUBLIC,
+    payload: { id, isPublic: boolean }
   }
 }

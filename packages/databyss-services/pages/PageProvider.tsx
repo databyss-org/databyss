@@ -24,6 +24,7 @@ interface PageHookDict {
 }
 
 interface ContextType {
+  setPagePublic: (id: string, bool: boolean) => void
   setPage: (page: Page) => void
   setPageHeader: (page: Page) => void
   getPages: () => void
@@ -151,6 +152,10 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(actions.removePageFromCache(id))
   }
 
+  const setPagePublic = (id: string, bool: boolean) => {
+    dispatch(actions.setPagePublic(id, bool))
+  }
+
   return (
     <PageContext.Provider
       value={{
@@ -166,6 +171,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         archivePage,
         setDefaultPage,
         onPageCached,
+        setPagePublic,
         hasPendingPatches,
         removePageFromCache,
       }}
