@@ -73,6 +73,7 @@ const Search = ({ onClick }) => {
     <>
       <SearchInputContainer
         placeholder="Search"
+        textColor={menuItem === 'search' ? 'text.2' : 'text.3'}
         value={value}
         onChange={setValue}
         onKeyDown={e => {

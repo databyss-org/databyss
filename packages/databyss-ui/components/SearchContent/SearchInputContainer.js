@@ -21,6 +21,7 @@ const SearchInputContainer = ({
   onClick,
   autoFocus,
   value,
+  textColor,
 }) => (
   <View width="100%" px="small" mt="small" mb={pxUnits(12)} onClick={onClick}>
     <View
@@ -42,7 +43,7 @@ const SearchInputContainer = ({
           placeholder={placeholder}
           autoFocus={autoFocus}
           variant="bodyNormal"
-          color="text.2"
+          color={textColor}
           value={value}
           onChange={onChange}
           onKeyDown={onKeyDown}
@@ -67,5 +68,9 @@ const SearchInputContainer = ({
     {children}
   </View>
 )
+
+SearchInputContainer.defaultProps = {
+  textColor: 'text.2',
+}
 
 export default SearchInputContainer
