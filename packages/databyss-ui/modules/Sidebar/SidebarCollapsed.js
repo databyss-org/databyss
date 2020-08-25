@@ -27,7 +27,7 @@ const SidebarCollapsed = () => {
   } = useNavigationContext()
 
   const [activeItem, setActiveItem] = useState('pages')
-  const { setQuery, searchTerm, clearSearchCache } = useEntryContext()
+  const { setQuery, clearSearchCache } = useEntryContext()
 
   const clearSearch = () => {
     clearSearchCache()
@@ -114,9 +114,7 @@ const SidebarCollapsed = () => {
             key={item.name}
             title={item.title}
             icon={item.icon}
-            isActive={
-              searchTerm ? item.name === 'search' : item.name === activeItem
-            }
+            isActive={item.name === activeItem}
             onClick={item.onClick}
           />
         ))}

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react'
+import React, { useEffect, useCallback, useState, useRef } from 'react'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { Text, View } from '@databyss-org/ui/primitives'
@@ -27,9 +27,33 @@ const Search = ({ onClick }) => {
 
   const [value, setValue] = useState({ textValue: searchTerm })
 
+  const [startedTyping, setStartedTyping] = useState(false)
+
   // wait until user stopped typing for 200ms before setting the value
-  const debounced = useCallback(debounce(val => setQuery(val), 200), [setQuery])
-  useEffect(() => debounced(value), [value])
+  const debounced = useCallback(
+    debounce(val => {
+      setQuery(val)
+      if (val.textValue) {
+        setStartedTyping(true)
+      }
+    }, 200),
+    [setQuery]
+  )
+  useEffect(
+    () => {
+      debounced(value)
+    },
+    [value]
+  )
+
+  useEffect(
+    () => {
+      if (value.textValue) {
+        navigateSidebar('/search')
+      }
+    },
+    [startedTyping]
+  )
 
   const clear = () => {
     clearSearchCache()
