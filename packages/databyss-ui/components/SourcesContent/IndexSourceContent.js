@@ -1,5 +1,5 @@
 import React from 'react'
-import { View } from '@databyss-org/ui/primitives'
+import { View, RawHtml } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
@@ -8,6 +8,7 @@ import {
   SearchResultTitle,
   SearchResultDetails,
 } from '@databyss-org/ui/components/SearchContent/SearchResults'
+import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 
 const IndexSourceContent = ({ relations }) => {
   const { getPages } = usePageContext()
@@ -27,6 +28,8 @@ const IndexSourceContent = ({ relations }) => {
     // filter out results not associated to a page
     // page may have been archived
     .filter(r => pages[r]?.name)
+    // filter out results if no entries are included
+    .filter(r => relations.results[r].length)
     .map((r, i) => (
       <SearchResultsContainer key={i}>
         <SearchResultTitle
@@ -37,14 +40,23 @@ const IndexSourceContent = ({ relations }) => {
           dataTestElement="atomic-results"
         />
 
-        {relations.results[r].map((e, k) => (
-          <SearchResultDetails
-            key={k}
-            onPress={() => onEntryClick(r, e.blockId)}
-            text={e.blockText.textValue}
-            dataTestElement="atomic-result-item"
-          />
-        ))}
+        {relations.results[r]
+          .filter(e => e.blockText.textValue.length)
+          .map((e, k) => (
+            <SearchResultDetails
+              key={k}
+              onPress={() => onEntryClick(r, e.blockId)}
+              text={
+                <RawHtml
+                  html={slateBlockToHtmlWithSearch({
+                    text: e.blockText,
+                    type: 'ENTRY',
+                  })}
+                />
+              }
+              dataTestElement="atomic-result-item"
+            />
+          ))}
       </SearchResultsContainer>
     ))
   return <View px="medium">{_results}</View>
