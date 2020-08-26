@@ -56,7 +56,7 @@ export const startSession = process.env.LOCAL_ENV
             username,
             accessKey,
             seleniumVersion: '3.141.59',
-            build: 'databyss-org/ui',
+            build: 'databyss-org/databyss',
             name: name || getDefaultSessionName(),
             maxDuration: 10800,
             idleTimeout: 120,
