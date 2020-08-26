@@ -41,7 +41,7 @@
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
     "styleguide:build": "NPM_BUILD_TARGET=TEST styleguidist build --config ./config/styleguide.config.js",
     "storybook": "NODE_ENV=test NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public --ci",
-    "storybook:sauce": "ENV_PREFIX=REACT_APP_ REACT_APP_META_USE_CTRL=true NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 8080 -s ./packages/databyss-ui/public --ci",
+    "storybook:sauce": "ENV_PREFIX=REACT_APP_ REACT_APP_META_USE_CTRL=true NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 8080 -s ./packages/databyss-ui/public --ci --quiet",
     "storybook:build": "NPM_BUILD_TARGET=TEST build-storybook -o build -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss",
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
     "lint": "eslint . --cache && echo \"eslint: no lint errors\"",

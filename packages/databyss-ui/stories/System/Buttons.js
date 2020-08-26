@@ -1,21 +1,6 @@
 import React from 'react'
-import { View, Button, Icon, Grid, Text } from '@databyss-org/ui/primitives'
-import PlusSvg from '../../assets/add.svg'
-import { menuLauncherSize } from '../../theming/buttons'
+import { View, Button, Grid } from '@databyss-org/ui/primitives'
 import { Section } from './'
-
-const MarkButton = ({ isActive, label, variant }) => (
-  <Button variant="formatButton">
-    <Text
-      variant={variant}
-      pr="extraSmall"
-      pl="extraSmall"
-      color={isActive ? 'primary.1' : 'text.1'}
-    >
-      {label}
-    </Text>
-  </Button>
-)
 
 export default () => (
   <React.Fragment>
