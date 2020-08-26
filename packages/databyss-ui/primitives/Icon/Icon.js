@@ -18,7 +18,7 @@ const variants = variant({
 
 const Styled = styled(View, variants)
 
-const Icon = ({ children, color, sizeVariant, theme, ...others }) => {
+const Icon = ({ children, color, sizeVariant, theme, alt, ...others }) => {
   const webProps = {
     css: css({
       path: {
