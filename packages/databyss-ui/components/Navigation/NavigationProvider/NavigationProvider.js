@@ -39,11 +39,11 @@ const NavigationProvider = ({ children }) => {
 
   const getTokensFromPath = () => {
     const _path = location.pathname.split('/')
-    let _params = _path[2]
+    let _params = _path[3]
     let _anchor = ''
 
     if (_params === 'authors') {
-      _params = _path[3]
+      _params = _path[4]
     }
 
     if (_params && _params.includes('#')) {
@@ -52,7 +52,7 @@ const NavigationProvider = ({ children }) => {
       _anchor = _str[1]
     }
 
-    return { type: _path[1], params: _params, anchor: _anchor }
+    return { type: _path[2], params: _params, anchor: _anchor }
   }
 
   const getSidebarPath = () => {

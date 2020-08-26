@@ -1,6 +1,7 @@
 import React from 'react'
 import { Router } from '@reach/router'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import TopicDetails from '@databyss-org/ui/components/TopicsContent/TopicDetails'
 import {
@@ -19,6 +20,8 @@ export const TopicsRouter = () => (
 )
 
 const TopicsContent = () => {
+  const { getSession } = useSessionContext()
+  const { account } = getSession()
   const navigate = useNavigationContext(c => c.navigate)
   return (
     <AllTopicsLoader>
@@ -32,7 +35,7 @@ const TopicsContent = () => {
         const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
 
         const onTopicClick = topic => {
-          navigate(`/topics/${topic.id}`)
+          navigate(`/${account._id}/topics/${topic.id}`)
         }
 
         return (

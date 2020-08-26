@@ -8,22 +8,25 @@ import {
   RawHtml,
 } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 
 const IndexSourceContent = ({ relations }) => {
+  const { getSession } = useSessionContext()
+  const { account } = getSession()
   const { getPages } = usePageContext()
   const { navigate } = useNavigationContext()
 
   const pages = getPages()
 
   const onPageClick = pageId => {
-    navigate(`/pages/${pageId}`)
+    navigate(`/${account._id}/pages/${pageId}`)
   }
 
   const onEntryClick = (pageId, entryId) => {
-    navigate(`/pages/${pageId}#${entryId}`)
+    navigate(`/${account._id}/pages/${pageId}#${entryId}`)
   }
 
   const _results = Object.keys(relations.results)

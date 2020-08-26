@@ -58,7 +58,7 @@ const Private = () => {
         <SourceProvider>
           <TopicProvider>
             <Router>
-              <App path="/">
+              <App path="/:accountId">
                 <NotFoundRedirect default />
                 <PageRouter path="pages/*" />
                 <SearchRouter path="search/*" />

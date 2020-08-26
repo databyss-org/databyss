@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import {
   sortEntriesAtoZ,
   createIndexPageEntries,
@@ -14,6 +15,8 @@ import IndexPageContent from '../PageContent/IndexPageContent'
 
 const AuthorsContent = () => {
   const { navigate } = useNavigationContext()
+  const { getSession } = useSessionContext()
+  const { account } = getSession()
 
   return (
     <SourceCitationsLoader>
@@ -42,7 +45,7 @@ const AuthorsContent = () => {
               const _url = `firstName=${
                 i.name.firstName ? i.name.firstName.textValue : ''
               }&lastName=${i.name.lastName ? i.name.lastName.textValue : ''}`
-              navigate(`/sources?${_url}`)
+              navigate(`/${account._id}/sources?${_url}`)
             }
 
             return (

@@ -1,5 +1,6 @@
 import React from 'react'
 import { Router } from '@reach/router'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import {
   sortEntriesAtoZ,
   createIndexPageEntries,
@@ -22,6 +23,8 @@ export const SourcesRouter = () => (
 )
 
 const SourcesContentBody = (sourceCitations, navigate) => {
+  const { getSession } = useSessionContext()
+  const { account } = getSession()
   const sourcesData = Object.values(sourceCitations).map(value =>
     createIndexPageEntries({
       id: value._id,
@@ -36,7 +39,7 @@ const SourcesContentBody = (sourceCitations, navigate) => {
   const sortedSources = sortEntriesAtoZ(sourcesData, 'text')
 
   const onSourceClick = source => {
-    navigate(`sources/${source.id}`)
+    navigate(`/${account._id}/sources/${source.id}`)
   }
 
   return (

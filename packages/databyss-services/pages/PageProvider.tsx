@@ -110,13 +110,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     [JSON.stringify(state.cache)]
   )
 
-  useEffect(
-    () => {
-      console.log(state.cache)
-    },
-    [state.cache]
-  )
-
   const registerBlockRefByIndex = useCallback(
     (index: number, ref: React.Ref<HTMLInputElement>) => {
       refDictRef.current[index] = ref

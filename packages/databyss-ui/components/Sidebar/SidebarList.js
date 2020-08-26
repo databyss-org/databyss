@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
@@ -23,6 +24,8 @@ const menuSvgs = type =>
   }[type])
 
 const SidebarList = ({ menuItems, query, ...others }) => {
+  const { getSession } = useSessionContext()
+  const { account } = getSession()
   const { getTokensFromPath } = useNavigationContext()
   const location = useLocation()
   const tokens = getTokensFromPath()
@@ -64,7 +67,7 @@ const SidebarList = ({ menuItems, query, ...others }) => {
               px="em"
               key={index}
               width="100%"
-              href={getHref(item)}
+              href={`/${account._id}${getHref(item)}`}
               css={{
                 textDecoration: 'none',
                 boxSizing: 'border-box',
