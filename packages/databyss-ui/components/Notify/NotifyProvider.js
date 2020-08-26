@@ -178,7 +178,6 @@ class NotifyProvider extends React.Component {
 }
 
 NotifyProvider.defaultProps = {
-  envPrefix: 'REACT_APP',
   options: {},
 }
 
