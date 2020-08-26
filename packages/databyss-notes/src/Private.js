@@ -34,7 +34,7 @@ const NotFoundRedirect = () => {
 
   // if no page found, navigate to default page
   useEffect(() => {
-    navigate(`/pages/${account.defaultPage}`)
+    navigate(`/${account._id}/pages/${account.defaultPage}`)
   }, [])
 
   return null
@@ -48,7 +48,7 @@ const Private = () => {
   // Navigate to default page is nothing in path
   useEffect(() => {
     if (location.pathname === '/') {
-      navigate(`/pages/${account.defaultPage}`)
+      navigate(`/${account._id}/pages/${account.defaultPage}`)
     }
   }, [])
 

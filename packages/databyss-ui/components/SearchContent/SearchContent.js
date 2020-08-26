@@ -2,6 +2,7 @@ import React from 'react'
 import { useParams, Router } from '@reach/router'
 import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import {
   Text,
   View,
@@ -21,15 +22,17 @@ export const SearchRouter = () => (
 )
 
 const SearchContent = () => {
+  const { getSession } = useSessionContext()
+  const { account } = getSession()
   const { navigate } = useNavigationContext()
   const { query } = useParams()
 
   const onEntryClick = (pageId, blockId) => {
-    navigate(`/pages/${pageId}#${blockId}`)
+    navigate(`/${account._id}/pages/${pageId}#${blockId}`)
   }
 
   const onPageClick = pageId => {
-    navigate(`/pages/${pageId}`)
+    navigate(`/${account._id}/pages/${pageId}`)
   }
 
   const ComposeResults = ({ results }) => {

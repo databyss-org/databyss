@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
@@ -12,6 +13,8 @@ import {
 import SearchInputContainer from '@databyss-org/ui/components/SearchContent/SearchInputContainer'
 
 const Search = () => {
+  const { getSession } = useSessionContext()
+  const { account } = getSession()
   const { navigate, getSidebarPath } = useNavigationContext()
 
   const { searchTerm, setQuery, clearSearchCache } = useEntryContext()
@@ -31,7 +34,9 @@ const Search = () => {
 
   const onSearchClick = () => {
     // encode the search term and remove '?'
-    navigate(`/search/${encodeURI(searchTerm.replace(/\?/g, ''))}`)
+    navigate(
+      `/${account._id}/search/${encodeURI(searchTerm.replace(/\?/g, ''))}`
+    )
   }
 
   return (
