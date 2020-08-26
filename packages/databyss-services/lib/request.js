@@ -6,6 +6,8 @@ import {
   InsufficientPermissionError,
 } from '../interfaces'
 
+const FETCH_TIMEOUT = process.env.FETCH_TIMEOUT
+
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response
@@ -37,10 +39,9 @@ function parseResponse(responseIsJson) {
 }
 
 function request(uri, options = {}, responseIsJson) {
-  console.log(process.env)
   const { timeout, ..._options } = options
   const _controller = new AbortController()
-  const _timeoutDuration = timeout || process.env.FETCH_TIMEOUT
+  const _timeoutDuration = timeout || FETCH_TIMEOUT
   const _timeoutId = setTimeout(() => {
     _controller.abort()
     throw new NetworkUnavailableError(
