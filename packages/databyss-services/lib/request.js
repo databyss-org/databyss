@@ -39,7 +39,7 @@ function parseResponse(responseIsJson) {
 function request(uri, options = {}, responseIsJson) {
   const { timeout, ..._options } = options
   const _controller = new AbortController()
-  const _timeoutDuration = timeout || process.env.FETCH_TIMEOUT
+  const _timeoutDuration = timeout || process.env.API_URL
   const _timeoutId = setTimeout(() => {
     _controller.abort()
     throw new NetworkUnavailableError(
