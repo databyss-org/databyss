@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import {
@@ -18,6 +18,19 @@ import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 
+function copyToClipboard(text) {
+  var dummy = document.createElement('textarea')
+  // to avoid breaking orgain page when copying more words
+  // cant copy when adding below this code
+  // dummy.style.display = 'none'
+  document.body.appendChild(dummy)
+  //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
+  dummy.value = text
+  dummy.select()
+  document.execCommand('copy')
+  document.body.removeChild(dummy)
+}
+
 export const ArchiveBin = ({ pages }) => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
@@ -30,10 +43,18 @@ export const ArchiveBin = ({ pages }) => {
 
   const archivePage = usePageContext(c => c.archivePage)
   const setDefaultPage = usePageContext(c => c.setDefaultPage)
+  const getPage = usePageContext(c => c.getPage)
 
   const setPagePublic = usePageContext(c => c.setPagePublic)
 
   const canBeArchived = Object.values(pages).filter(p => !p.archive).length > 1
+
+  // if page is shared, toggle public page
+  useEffect(() => {
+    if (pages[params].publicAccountId) {
+      setIsPagePublic(true)
+    }
+  }, [])
 
   const onArchivePress = () => {
     archivePage(params).then(() => {
@@ -54,7 +75,23 @@ export const ArchiveBin = ({ pages }) => {
   }
 
   const onCopyLink = () => {
-    console.log('COPY LINK')
+    const _page = getPage(params)
+    let _accountId
+    // if account is shared, get public account
+    if (_page?.publicAccountId) {
+      _accountId = _page.publicAccountId
+    } else {
+      // if account is private, get private account
+      _accountId = account._id
+    }
+
+    // generate url and copy to clipboard
+    const getUrl = window.location
+    const baseUrl = `${getUrl.protocol}//${
+      getUrl.host
+    }/${_accountId}/pages/${params}`
+
+    copyToClipboard(baseUrl)
   }
 
   const menuItems = [
@@ -79,8 +116,11 @@ export const ArchiveBin = ({ pages }) => {
   }
 
   const togglePublicPage = () => {
-    console.log('SET PAGE', params)
-    setPagePublic(params, !isPagePublic)
+    if (isPagePublic) {
+      setPagePublic(params, !isPagePublic)
+    } else {
+      setPagePublic(params, !isPagePublic)
+    }
     setIsPagePublic(!isPagePublic)
   }
 

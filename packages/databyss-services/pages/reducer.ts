@@ -88,13 +88,14 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
 
     case CACHE_PAGE_HEADERS: {
       // filter archived pages
-      action.payload.filter((p: PageHeader) => !p.archive).forEach(
-        (page: PageHeader) =>
-          (_headerCache[page._id] = {
+      action.payload
+        .filter((p: PageHeader) => !p.archive)
+        .forEach((page: PageHeader) => {
+          _headerCache[page._id] = {
             name: page.name,
             _id: page._id,
-          })
-      )
+          }
+        })
       draft.headerCache = _headerCache
       break
     }
@@ -104,6 +105,12 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
         ...draft.cache[action.payload.id],
         publicAccountId: action.payload.accountId,
       }
+
+      // draft.headerCache[action.payload.id] = {
+      //   ...draft.headerCache[action.payload.id],
+      //   publicAccountId: action.payload.accountId,
+      // }
+
       break
     }
   }

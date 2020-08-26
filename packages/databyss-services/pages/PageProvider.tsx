@@ -107,6 +107,13 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
       dispatch(actions.fetchPage(id))
       return null
     },
+    [JSON.stringify(state.cache)]
+  )
+
+  useEffect(
+    () => {
+      console.log(state.cache)
+    },
     [state.cache]
   )
 

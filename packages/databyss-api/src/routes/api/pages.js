@@ -131,6 +131,7 @@ router.get(
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
   wrap(async (req, res, _next) => {
     const { page } = req
+
     let selection = null
 
     // LOAD SELECTION
@@ -170,6 +171,8 @@ router.get(
       archive: page.archive,
       blocks,
       selection,
+      // TODO: this onlyl returns the first value in the array
+      publicAccountId: page.sharedWith?.[0]?.account,
     }
 
     return res.json(response).status(200)
@@ -184,7 +187,18 @@ router.post(
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
   wrap(async (req, res, _next) => {
     // create a new account
-    const _sharedAccount = new ObjectId().toHexString()
+    const { isPublic } = req.body.data
+
+    let _sharedAccount
+    let sharedWith = []
+
+    if (isPublic) {
+      // create shared account id
+      _sharedAccount = new ObjectId().toHexString()
+      sharedWith = [{ account: _sharedAccount, role: 'VIEW' }]
+    } else {
+      console.log('remove')
+    }
 
     await Page.replaceOne(
       {
@@ -192,11 +206,11 @@ router.post(
       },
       {
         ...req.page._doc,
-        sharedWith: [{ account: _sharedAccount, role: 'VIEW' }],
+        sharedWith,
       },
       { upsert: true }
     )
-
+    // TODO: sharedWith is an array
     res.json({ accountId: _sharedAccount }).status(200)
   })
 )
