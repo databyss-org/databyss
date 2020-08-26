@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState, useRef } from 'react'
+import React, { useEffect, useCallback, useState } from 'react'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { Text, View } from '@databyss-org/ui/primitives'
@@ -13,7 +13,7 @@ import { sidebarListHeight } from '@databyss-org/ui/modules/Sidebar/Sidebar'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
 
-const Search = ({ onClick }) => {
+const Search = () => {
   const {
     navigate,
     navigateSidebar,
@@ -26,16 +26,11 @@ const Search = ({ onClick }) => {
   const menuItem = getSidebarPath()
 
   const [value, setValue] = useState({ textValue: searchTerm })
-  const [startedTyping, setStartedTyping] = useState(false)
 
   // wait until user stopped typing for 200ms before setting the value
   const debounced = useCallback(
     debounce(val => {
       setQuery(val)
-      // only run when the user typed the first letter in search input
-      if (val.textValue && !value.textValue) {
-        setStartedTyping(true)
-      }
     }, 200),
     [setQuery]
   )
@@ -44,15 +39,6 @@ const Search = ({ onClick }) => {
       debounced(value)
     },
     [value]
-  )
-
-  useEffect(
-    () => {
-      if (startedTyping) {
-        navigateSidebar('/search')
-      }
-    },
-    [startedTyping]
   )
 
   const clear = () => {
@@ -73,7 +59,6 @@ const Search = ({ onClick }) => {
     <>
       <SearchInputContainer
         placeholder="Search"
-        textColor={menuItem === 'search' ? 'text.2' : 'text.3'}
         value={value}
         onChange={setValue}
         onKeyDown={e => {
@@ -82,8 +67,9 @@ const Search = ({ onClick }) => {
           }
         }}
         onClear={clear}
-        onClick={onClick}
+        onClick={() => navigateSidebar('/search')}
         autoFocus={menuItem === 'search'}
+        textColor={menuItem === 'search' ? 'text.2' : 'text.3'}
       />
       {searchTerm &&
         menuItem === 'search' && (
