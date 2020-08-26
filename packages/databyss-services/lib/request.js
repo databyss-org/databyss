@@ -8,6 +8,14 @@ import {
 
 const FETCH_TIMEOUT = process.env.FETCH_TIMEOUT
 
+console.log('BUGSNAG_RELEASE_STAGE', process.env.BUGSNAG_RELEASE_STAGE)
+console.log('BUGSNAG_KEY', process.env.BUGSNAG_KEY)
+console.log('FETCH_TIMEOUT', process.env.FETCH_TIMEOUT)
+console.log('API_URL', process.env.API_URL)
+console.log('CIRCLECI_API_KEY', process.env.CIRCLECI_API_KEY)
+console.log('REACT_APP_FETCH_TIMEOUT', process.env.REACT_APP_FETCH_TIMEOUT)
+console.log('REACT_APP_BUGSNAG_KEY', process.env.REACT_APP_BUGSNAG_KEY)
+
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response
