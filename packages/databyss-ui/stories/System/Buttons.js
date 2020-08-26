@@ -61,30 +61,5 @@ export default () => (
         </View>
       </Grid>
     </Section>
-    <Section title="Editor Buttons">
-      <Grid mb="small" rowGap="small" columnGap="small">
-        <View>
-          <Button variant="editorMarginMenuItem">
-            <Icon
-              width={menuLauncherSize * 0.5}
-              height={menuLauncherSize * 0.5}
-              sizeVariant="tiny"
-            >
-              <PlusSvg />
-            </Icon>
-          </Button>
-        </View>
-        <View>
-          <MarkButton label="b" variant="uiTextBold" />
-        </View>
-      </Grid>
-    </Section>
-    <Section title="Editor Menu Buttons">
-      <Grid mb="small" rowGap="small" columnGap="small">
-        <View>
-          <Button variant="editorMarginMenuItem">button action</Button>
-        </View>
-      </Grid>
-    </Section>
   </React.Fragment>
 )
