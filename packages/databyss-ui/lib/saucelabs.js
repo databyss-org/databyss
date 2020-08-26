@@ -59,7 +59,7 @@ export const startSession = process.env.LOCAL_ENV
             build: 'databyss-org/ui',
             name: name || getDefaultSessionName(),
             maxDuration: 10800,
-            idleTimeout: 1000,
+            idleTimeout: 120,
           },
         })
         .usingServer('https://ondemand.saucelabs.com/wd/hub')
