@@ -10,7 +10,7 @@ export const PageLoader = ({ children, pageId, LoadingFallback }) => {
   const { getPage, removePageFromCache } = usePageContext()
   return (
     <MakeLoader
-      resource={getPage(pageId)}
+      resources={getPage(pageId)}
       children={children}
       onUnload={() => removePageFromCache(pageId)}
       loadingFallback={LoadingFallback}
@@ -28,7 +28,7 @@ export const PagesLoader = ({ children, LoadingFallback }) => {
   const { getPages } = usePageContext()
   return (
     <MakeLoader
-      resource={getPages()}
+      resources={getPages()}
       children={children}
       LoadingFallback={LoadingFallback}
     />
@@ -41,11 +41,13 @@ export const withPages = Wrapped => ({ ...others }) => (
 
 export const EntrySearchLoader = ({ query, children, LoadingFallback }) => {
   const searchEntries = useEntryContext(c => c.searchEntries)
-  const resource = useEntryContext(c => c.searchCache[query.replace(/\?/g, '')])
+  const resources = useEntryContext(
+    c => c.searchCache[query.replace(/\?/g, '')]
+  )
   searchEntries(query.replace(/\?/g, ''))
   return (
     <MakeLoader
-      resource={resource}
+      resources={resources}
       children={children}
       LoadingFallback={LoadingFallback}
     />
@@ -57,7 +59,7 @@ export const SourceLoader = ({ sourceId, children, LoadingFallback }) => {
 
   return (
     <MakeLoader
-      resource={getSource(sourceId)}
+      resources={getSource(sourceId)}
       children={children}
       LoadingFallback={LoadingFallback}
     />
@@ -82,7 +84,7 @@ export const CatalogSearchLoader = ({
   }
   return (
     <MakeLoader
-      resource={searchCatalog({ query, type })}
+      resources={searchCatalog({ query, type })}
       children={children}
       LoadingFallback={LoadingFallback}
     />
@@ -93,7 +95,7 @@ export const AllTopicsLoader = ({ children, LoadingFallback, ...others }) => {
   const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
   return (
     <MakeLoader
-      resource={getTopicHeaders()}
+      resources={getTopicHeaders()}
       children={children}
       LoadingFallback={LoadingFallback}
       {...others}
@@ -105,7 +107,7 @@ export const TopicLoader = ({ topicId, children, LoadingFallback }) => {
   const getTopic = useTopicContext(c => c.getTopic)
   return (
     <MakeLoader
-      resource={getTopic(topicId)}
+      resources={getTopic(topicId)}
       children={children}
       LoadingFallback={LoadingFallback}
     />
@@ -116,7 +118,7 @@ export const AuthorsLoader = ({ children, LoadingFallback }) => {
   const getAuthors = useSourceContext(c => c.getAuthors)
   return (
     <MakeLoader
-      resource={getAuthors()}
+      resources={getAuthors()}
       children={children}
       LoadingFallback={LoadingFallback}
     />
@@ -131,12 +133,28 @@ export const SourceCitationsLoader = ({
   const getSourceCitations = useSourceContext(c => c.getSourceCitations)
   return (
     <MakeLoader
-      resource={getSourceCitations()}
+      resources={getSourceCitations()}
       children={children}
       LoadingFallback={LoadingFallback}
       {...others}
     />
   )
+}
+
+export const SearchAllLoader = ({ children, ...others }) => {
+  const getAuthors = useSourceContext(c => c.getAuthors)
+  const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
+  const { getPages } = usePageContext()
+  const getSourceCitations = useSourceContext(c => c.getSourceCitations)
+
+  const sourceCitations = getSourceCitations()
+  const authors = getAuthors()
+  const topics = getTopicHeaders()
+  const pages = getPages()
+
+  const allResources = [{ sourceCitations }, { authors }, { topics }, { pages }]
+
+  return <MakeLoader resources={allResources} children={children} {...others} />
 }
 
 export const BlockRelationsLoader = ({
@@ -151,7 +169,7 @@ export const BlockRelationsLoader = ({
   )
   return (
     <MakeLoader
-      resource={findBlockRelations(atomicId)}
+      resources={findBlockRelations(atomicId)}
       onUnload={() => clearBlockRelationsCache()}
       children={children}
       LoadingFallback={LoadingFallback}
