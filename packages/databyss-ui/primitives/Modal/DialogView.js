@@ -1,4 +1,5 @@
 import React from 'react'
+import nl2br from 'react-nl2br'
 import { View, Text, Grid, Button } from '../'
 
 const DialogView = ({
@@ -10,7 +11,7 @@ const DialogView = ({
   ...others
 }) => (
   <View paddingVariant="medium" flexShrink={1} {...others}>
-    <Text variant="uiTextNormal">{message}</Text>
+    <Text variant="uiTextNormal">{nl2br(message)}</Text>
     {showConfirmButton && (
       <Grid singleColumn rowGap="tiny" mt="em">
         {React.cloneElement(confirmButton, {

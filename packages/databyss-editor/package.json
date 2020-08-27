@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@databyss-org/slate": "0.58.1-b2",
-    "@databyss-org/slate-react": "0.57.2-b3",
+    "@databyss-org/slate-react": "0.57.2-b4",
     "an-array-of-english-words": "^2.0.0",
     "@styled-system/css": "^5.0.23",
     "add": "^2.0.6",

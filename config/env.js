@@ -60,6 +60,8 @@ if (process.env.ENV_PREFIX) {
   ENV_PREFIX = new RegExp(`^${process.env.ENV_PREFIX}`, 'i')
 }
 
+console.log('ENV_PREFIX', ENV_PREFIX)
+
 // For more configurability, we customize the `env.js` script to
 // remove the prefix from environment variables targets, so you only have
 // to do `process.env.API_URL` instead of `process.env.REACT_APP_API_URL`
