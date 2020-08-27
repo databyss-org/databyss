@@ -25,19 +25,22 @@ const sourcesOverview = [
   },
 ]
 
-export const SourceTitles = ({ filterQuery, height, LoadingFallback }) => (
-  <SourceCitationsLoader LoadingFallback={LoadingFallback}>
+export const getSourceTitlesData = sources =>
+  Object.values(sources).map(value =>
+    createSidebarListItems({
+      text: value.text.textValue,
+      type: 'sources',
+      route: '/sources',
+      id: value._id,
+      params: value._id,
+      icon: <SourceSvg />,
+    })
+  )
+
+export const SourceTitles = ({ filterQuery, height }) => (
+  <SourceCitationsLoader>
     {sources => {
-      const sourceData = Object.values(sources).map(value =>
-        createSidebarListItems({
-          text: value.text.textValue,
-          type: 'sources',
-          route: '/sources',
-          id: value._id,
-          params: value._id,
-          icon: <SourceSvg />,
-        })
-      )
+      const sourceData = getSourceTitlesData(sources)
       const sortedSources = sortEntriesAtoZ(sourceData, 'text')
       const filteredEntries = filterEntries(sortedSources, filterQuery)
 
@@ -53,39 +56,41 @@ export const SourceTitles = ({ filterQuery, height, LoadingFallback }) => (
   </SourceCitationsLoader>
 )
 
-const Authors = ({ filterQuery, hasIndexPage, height, LoadingFallback }) => (
-  <SourceCitationsLoader LoadingFallback={LoadingFallback}>
+export const getAuthorData = authors =>
+  Object.values(authors).map(value => {
+    const firstName = value.firstName?.textValue
+    const lastName = value.lastName?.textValue
+    const shortFirstName = `${
+      lastName ? `${firstName?.charAt(0)}.` : firstName
+    }`
+
+    const getShortAuthorName = () => {
+      if (lastName && firstName) {
+        return `${lastName}, ${shortFirstName}`
+      }
+      return lastName || shortFirstName
+    }
+
+    const authorParams = new URLSearchParams({
+      firstName: encodeURIComponent(firstName || ''),
+      lastName: encodeURIComponent(lastName || ''),
+    })
+
+    return createSidebarListItems({
+      text: getShortAuthorName(),
+      type: 'authors',
+      route: '/sources',
+      params: authorParams.toString(),
+      icon: <AuthorSvg />,
+    })
+  })
+
+const Authors = ({ filterQuery, hasIndexPage, height }) => (
+  <SourceCitationsLoader>
     {() => (
-      <AuthorsLoader LoadingFallback={LoadingFallback}>
+      <AuthorsLoader>
         {authors => {
-          const authorData = Object.values(authors).map(value => {
-            const firstName = value.firstName?.textValue
-            const lastName = value.lastName?.textValue
-            const shortFirstName = `${
-              lastName ? `${firstName?.charAt(0)}.` : firstName
-            }`
-
-            const getShortAuthorName = () => {
-              if (lastName && firstName) {
-                return `${lastName}, ${shortFirstName}`
-              }
-              return lastName || shortFirstName
-            }
-
-            const authorParams = new URLSearchParams({
-              firstName: encodeURIComponent(firstName || ''),
-              lastName: encodeURIComponent(lastName || ''),
-            })
-
-            return createSidebarListItems({
-              text: getShortAuthorName(),
-              type: 'authors',
-              route: '/sources',
-              params: authorParams.toString(),
-              icon: <AuthorSvg />,
-            })
-          })
-
+          const authorData = getAuthorData(authors)
           const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
           const filteredEntries = filterEntries(sortedAuthors, filterQuery)
 

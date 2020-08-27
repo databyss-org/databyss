@@ -27,18 +27,21 @@ const MakeLoader = ({ resources, children, onUnload, onLoad }) => {
     [resources]
   )
 
-  const isLoading = Array.isArray(resources)
-    ? resources.some(resource => {
-        const resourceProperty = Object.values(resource)[0]
-        return !resourceProperty || resourceProperty instanceof ResourcePending
-      })
-    : !resources || resources instanceof ResourcePending
+  const isLoading = () => {
+    if (resources instanceof Object) {
+      const resourceProperties = Object.values(resources)[0]
+      return (
+        !resourceProperties || resourceProperties instanceof ResourcePending
+      )
+    }
+    return !resources || resources instanceof ResourcePending
+  }
+  const errors =
+    resources instanceof Object
+      ? Object.values(resources)[0] instanceof Error
+      : resources instanceof Error
 
-  const errors = Array.isArray(resources)
-    ? resources.some(resource => Object.values(resource)[0] instanceof Error)
-    : resources instanceof Error
-
-  if (isLoading) {
+  if (isLoading()) {
     return <Loading padding="small" />
   }
 
