@@ -31,7 +31,9 @@ const MakeLoader = ({ resources, children, onUnload, onLoad }) => {
     if (resources instanceof Object) {
       const resourceProperties = Object.values(resources)[0]
       return (
-        !resourceProperties || resourceProperties instanceof ResourcePending
+        resourceProperties === undefined ||
+        resourceProperties === null ||
+        resourceProperties instanceof ResourcePending
       )
     }
     return !resources || resources instanceof ResourcePending
