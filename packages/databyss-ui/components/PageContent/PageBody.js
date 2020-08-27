@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useRef } from 'react'
 import { throttle } from 'lodash'
 import ContentEditable from '@databyss-org/editor/components/ContentEditable'
 import EditorProvider from '@databyss-org/editor/state/EditorProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import HistoryProvider from '@databyss-org/editor/history/EditorHistory'
 import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'
@@ -20,6 +21,7 @@ const PageBody = ({
   editorRef,
   onEditorPathChange,
 }) => {
+  const { isPublicAccount } = useSessionContext()
   const { location } = useNavigationContext()
   const clearBlockDict = usePageContext(c => c.clearBlockDict)
   const setPatches = usePageContext(c => c.setPatches)
@@ -77,6 +79,7 @@ const PageBody = ({
             onNavigateUpFromTop={onNavigateUpFromEditor}
             active={false}
             editorRef={editorRef}
+            readonly={isPublicAccount()}
           />
         </EditorProvider>
       </HistoryProvider>

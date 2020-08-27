@@ -15,9 +15,10 @@ const StyledInput = styled('input', styleProps)
 const StyledTextarea = styled(Textarea, styleProps)
 
 const TextInput = forwardRef(
-  ({ value, onChange, multiline, concatCss, ...others }, ref) =>
+  ({ value, onChange, multiline, concatCss, readonly, ...others }, ref) =>
     multiline ? (
       <StyledTextarea
+        readOnly={readonly}
         onChange={e => onChange({ textValue: e.target.value })}
         inputRef={ref || undefined}
         css={[resetCss].concat(concatCss)}
@@ -26,6 +27,7 @@ const TextInput = forwardRef(
       />
     ) : (
       <StyledInput
+        readOnly={readonly}
         type="text"
         value={value.textValue}
         onChange={e => onChange({ textValue: e.target.value })}

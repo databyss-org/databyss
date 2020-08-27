@@ -4,6 +4,7 @@ import {
   REQUEST_CODE,
   END_SESSION,
   FETCH_SESSION,
+  CACHE_PUBLIC_SESSION,
 } from './constants'
 
 import { ResourcePending } from '../interfaces/'
@@ -66,6 +67,7 @@ export default (state, action) => {
         lastCredentials: null,
       }
     }
+
     case DENY_ACCESS: {
       return {
         ...state,
@@ -78,6 +80,17 @@ export default (state, action) => {
         ...state,
         session: null,
         lastCredentials: null,
+      }
+    }
+    case CACHE_PUBLIC_SESSION: {
+      return {
+        ...state,
+        session: {
+          ...state.session,
+          publicAccount: {
+            _id: action.payload.publicAccount,
+          },
+        },
       }
     }
 

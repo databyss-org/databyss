@@ -1,5 +1,10 @@
 import request from './request'
-import { getAuthToken, getAccountId } from './../session/clientStorage'
+import {
+  getAuthToken,
+  getAccountId,
+  getPublicAccountId,
+} from './../session/clientStorage'
+import { getAccountFromLocation } from '../session/_helpers'
 
 export const ping = () => fetch(`${process.env.API_URL}/ping/`)
 
@@ -12,6 +17,7 @@ export const requestApi = (path, options = { headers: {} }, responseIsJson) =>
         ...options.headers,
         'x-auth-token': `${getAuthToken()}`,
         'x-databyss-account': `${getAccountId()}`,
+        'x-databyss-as-account': `${getAccountFromLocation()}`,
       },
     },
     responseIsJson

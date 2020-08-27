@@ -14,6 +14,7 @@ import {
 import { ApiError, BadRequestError } from '../../lib/Errors'
 import wrap from '../../lib/guardedAsync'
 import { runPatches, getAtomicClosureText } from '../../lib/pages'
+import Account from '../../models/Account'
 
 const router = express.Router()
 
@@ -29,13 +30,23 @@ router.get(
   })
 )
 
-// @route    GET api/page
+// @route    GET api/pages
 // @desc     returns all pages associated with account
 // @access   private
 router.get(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
   wrap(async (req, res, next) => {
+    // favor shared account first
+    if (req.asAccount) {
+      const pageResponse = await Page.find({
+        'sharedWith.account': req.asAccount,
+      })
+      if (pageResponse) {
+        return res.json(pageResponse).status(200)
+      }
+    }
+
     const pageResponse = await Page.find({
       account: req.account._id,
     })
@@ -193,11 +204,15 @@ router.post(
     let sharedWith = []
 
     if (isPublic) {
-      // create shared account id
+      // create a public account
       _sharedAccount = new ObjectId().toHexString()
+      const _account = new Account({ _id: _sharedAccount, isPublic: true })
+      await _account.save()
+
       sharedWith = [{ account: _sharedAccount, role: 'VIEW' }]
     } else {
-      console.log('remove')
+      // TODO: REMOVE IS PUBLIC
+      //    console.log('remove')
     }
 
     await Page.replaceOne(
@@ -210,7 +225,6 @@ router.post(
       },
       { upsert: true }
     )
-    // TODO: sharedWith is an array
     res.json({ accountId: _sharedAccount }).status(200)
   })
 )

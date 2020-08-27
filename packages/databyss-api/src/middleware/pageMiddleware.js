@@ -25,6 +25,16 @@ export const pageCreatorMiddleware = wrap(async (req, _res, next) => {
 })
 
 export const pageMiddleware = wrap(async (req, _res, next) => {
+  if (req.asAccount) {
+    const pageResponse = await Page.find({
+      'sharedWith.account': req.asAccount,
+    })
+    if (pageResponse) {
+      req.page = pageResponse[0]
+      return next()
+    }
+  }
+
   const _id = req.params.id
 
   if (!mongoose.Types.ObjectId.isValid(_id)) {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Text, View, List } from '@databyss-org/ui/primitives'
 import SearchInputContainer from '@databyss-org/ui/components/SearchContent/SearchInputContainer'
 import SidebarCollapsed from './SidebarCollapsed'
@@ -32,6 +33,7 @@ Section.defaultProps = {
 
 const Sidebar = () => {
   const { getSidebarPath, isMenuOpen } = useNavigationContext()
+  const { isPublicAccount } = useSessionContext()
   const menuItem = getSidebarPath()
   const [filterQuery, setFilterQuery] = useState({ textValue: '' })
 
@@ -63,9 +65,10 @@ const Sidebar = () => {
                 onClear={clear}
               />
             )}
-            {(menuItem === 'pages' || !menuItem) && (
-              <Pages filterQuery={filterQuery} />
-            )}
+            {!isPublicAccount() &&
+              (menuItem === 'pages' || !menuItem) && (
+                <Pages filterQuery={filterQuery} />
+              )}
             {menuItem === 'sources' && <Sources filterQuery={filterQuery} />}
             {menuItem === 'topics' && <Topics filterQuery={filterQuery} />}
           </List>

@@ -7,6 +7,7 @@ import {
   DENY_ACCESS,
   REQUEST_CODE,
   END_SESSION,
+  CACHE_PUBLIC_SESSION,
 } from './constants'
 
 import {
@@ -17,6 +18,8 @@ import {
   setAccountId,
   deleteAccountId,
 } from './clientStorage'
+
+import { getAccountFromLocation } from './_helpers'
 
 export const fetchSession = ({
   _request,
@@ -59,7 +62,10 @@ export const fetchSession = ({
       path += '/users/email'
       options.body = JSON.stringify({ email })
     } else {
-      throw new NotAuthorizedError()
+      // get account from url
+      const _accountId = getAccountFromLocation()
+      path += '/auth'
+      options.headers['x-databyss-as-account'] = _accountId
     }
 
     const res = await _request(path, options, true)
@@ -72,6 +78,12 @@ export const fetchSession = ({
         payload: {
           session: res.data.session,
         },
+      })
+    } else if (res.data?.isPublic) {
+      // cache public account info in session state
+      dispatch({
+        type: CACHE_PUBLIC_SESSION,
+        payload: { publicAccount: res.data.accountId },
       })
     } else {
       // assume TFA, request code

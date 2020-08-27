@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, List } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
@@ -24,6 +25,7 @@ const SidebarCollapsed = () => {
     isMenuOpen,
     setMenuOpen,
   } = useNavigationContext()
+  const { isPublicAccount } = useSessionContext()
 
   const [activeItem, setActiveItem] = useState('pages')
 
@@ -46,7 +48,7 @@ const SidebarCollapsed = () => {
     [navigateSidebar]
   )
 
-  const sideBarCollapsedItems = [
+  let sideBarCollapsedItems = [
     {
       name: 'menuCollapse',
       title: 'Collapse menu',
@@ -78,6 +80,13 @@ const SidebarCollapsed = () => {
       onClick: () => onItemClick('topics'),
     },
   ]
+
+  // if account is public, remove the pages icon
+  if (isPublicAccount()) {
+    sideBarCollapsedItems = sideBarCollapsedItems.filter(
+      i => i.name !== 'pages'
+    )
+  }
 
   return (
     <View

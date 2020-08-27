@@ -100,16 +100,9 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
       break
     }
 
+    // TODO: SET_PUBLIC_PAGE IS SETTING publicAccountId TO RESOURCE PENDING AND place that in a loader
     case CACHE_PUBLIC_PAGE: {
-      draft.cache[action.payload.id] = {
-        ...draft.cache[action.payload.id],
-        publicAccountId: action.payload.accountId,
-      }
-
-      // draft.headerCache[action.payload.id] = {
-      //   ...draft.headerCache[action.payload.id],
-      //   publicAccountId: action.payload.accountId,
-      // }
+      draft.cache[action.payload.id].publicAccountId = action.payload.accountId
 
       break
     }

@@ -29,6 +29,12 @@ const SessionProvider = ({
   })
   const { session: actions } = useServiceContext()
 
+  const isPublicAccount = () => {
+    if (state.session.publicAccount?._id) {
+      return true
+    }
+    return false
+  }
   // credentials can be:
   // - `undefined` if we're just reloading
   // - `code` if we're logging in from an email link or code
@@ -69,7 +75,9 @@ const SessionProvider = ({
   }
 
   return (
-    <SessionContext.Provider value={{ ...state, getSession, endSession }}>
+    <SessionContext.Provider
+      value={{ ...state, getSession, endSession, isPublicAccount }}
+    >
       {_children}
     </SessionContext.Provider>
   )
