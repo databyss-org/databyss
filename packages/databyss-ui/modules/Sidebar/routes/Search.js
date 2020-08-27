@@ -12,6 +12,7 @@ import Topics from '@databyss-org/ui/modules/Sidebar/routes/Topics'
 import { sidebarListHeight } from '@databyss-org/ui/modules/Sidebar/Sidebar'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
+import SidebarSearchResults from '../../../components/Sidebar/SidebarSearchResults'
 
 const Search = () => {
   const {
@@ -101,7 +102,7 @@ const Search = () => {
                 </Text>
               </View>
             </SidebarListItem>
-            <Pages
+            {/* <Pages
               filterQuery={{ textValue: searchTerm }}
               LoadingFallback={false}
             />
@@ -116,7 +117,8 @@ const Search = () => {
             <Topics
               filterQuery={{ textValue: searchTerm }}
               LoadingFallback={false}
-            />
+            /> */}
+            <SidebarSearchResults />
           </View>
         )}
     </>
