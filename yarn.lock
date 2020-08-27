@@ -15782,6 +15782,11 @@ react-native@0.60.4:
     stacktrace-parser "^0.1.3"
     whatwg-fetch "^3.0.0"
 
+react-nl2br@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/react-nl2br/-/react-nl2br-0.6.0.tgz#07c4f93bd60eba530457dab624fc76df70a5735f"
+  integrity sha512-lV9qo3ft9e6NJU3/9ZJ0yr622nWehuUBUHwV67iUtpzEhq1E0Jx/jnUwuuBRTV3iTYrjUR5z5sJfyEqGl/LvuQ==
+
 react-node-resolver@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/react-node-resolver/-/react-node-resolver-2.0.1.tgz#1f0cc83938bf590a1cf42006b23f6b8f68e7b886"

@@ -117,7 +117,8 @@ class NotifyProvider extends React.Component {
   showOfflineMessage = () => {
     this.setState({
       dialogVisible: true,
-      message: 'Offline, please reconnect.',
+      message:
+        "Offline, please reconnect.\n Your changes will be saved when you are back online, so don't reload the page.",
       isOnline: false,
     })
   }

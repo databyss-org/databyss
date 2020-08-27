@@ -61,6 +61,7 @@
     "react-modal": "^3.8.1",
     "react-native-svg": "^9.6.4",
     "react-native-web": "^0.11.0",
+    "react-nl2br": "^0.6.0",
     "react-responsive": "^8.1.0",
     "react-scrolllock": "^4.0.1",
     "react-select": "^3.0.4",
