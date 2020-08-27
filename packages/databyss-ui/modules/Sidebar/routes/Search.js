@@ -3,15 +3,11 @@ import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { Text, View } from '@databyss-org/ui/primitives'
 import SearchInputContainer from '@databyss-org/ui/components/SearchContent/SearchInputContainer'
-import Pages from '@databyss-org/ui/modules/Sidebar/routes/Pages'
-import Authors, {
-  SourceTitles,
-} from '@databyss-org/ui/modules/Sidebar/routes/Sources'
 import { debounce } from 'lodash'
-import Topics from '@databyss-org/ui/modules/Sidebar/routes/Topics'
 import { sidebarListHeight } from '@databyss-org/ui/modules/Sidebar/Sidebar'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
+import SidebarSearchResults from '../../../components/Sidebar/SidebarSearchResults'
 
 const Search = () => {
   const {
@@ -101,22 +97,7 @@ const Search = () => {
                 </Text>
               </View>
             </SidebarListItem>
-            <Pages
-              filterQuery={{ textValue: searchTerm }}
-              LoadingFallback={false}
-            />
-            <Authors
-              filterQuery={{ textValue: searchTerm }}
-              LoadingFallback={false}
-            />
-            <SourceTitles
-              filterQuery={{ textValue: searchTerm }}
-              LoadingFallback={false}
-            />
-            <Topics
-              filterQuery={{ textValue: searchTerm }}
-              LoadingFallback={false}
-            />
+            <SidebarSearchResults filterQuery={{ textValue: searchTerm }} />
           </View>
         )}
     </>

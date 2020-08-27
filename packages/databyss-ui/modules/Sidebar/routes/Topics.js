@@ -16,19 +16,22 @@ const topicsOverview = [
   },
 ]
 
-const Topics = ({ filterQuery, height, hasIndexPage, LoadingFallback }) => (
-  <AllTopicsLoader LoadingFallback={LoadingFallback}>
+export const getTopicsData = topics =>
+  Object.values(topics).map(value =>
+    createSidebarListItems({
+      text: value.text.textValue,
+      type: 'topics',
+      route: '/topics',
+      id: value._id,
+      params: value._id,
+      icon: <TopicSvg />,
+    })
+  )
+
+const Topics = ({ filterQuery, height, hasIndexPage }) => (
+  <AllTopicsLoader>
     {topics => {
-      const topicsData = Object.values(topics).map(value =>
-        createSidebarListItems({
-          text: value.text.textValue,
-          type: 'topics',
-          route: '/topics',
-          id: value._id,
-          params: value._id,
-          icon: <TopicSvg />,
-        })
-      )
+      const topicsData = getTopicsData(topics)
       const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
       const filteredEntries = filterEntries(sortedTopics, filterQuery)
 
