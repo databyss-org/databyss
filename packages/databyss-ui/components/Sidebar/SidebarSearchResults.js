@@ -15,10 +15,10 @@ import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 const SidebarSearchResults = ({ filterQuery, height }) => (
   <SearchAllLoader>
     {results => {
-      const sourceTitlesData = getSourceTitlesData(results.sourceCitations)
-      const pagesData = getPagesData(results.pages)
-      const authorsData = getAuthorData(results.authors)
-      const topicsData = getTopicsData(results.topics)
+      const sourceTitlesData = getSourceTitlesData(results[0])
+      const authorsData = getAuthorData(results[1])
+      const topicsData = getTopicsData(results[2])
+      const pagesData = getPagesData(results[3])
 
       const allResults = [
         ...sourceTitlesData,

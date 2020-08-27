@@ -27,23 +27,15 @@ const MakeLoader = ({ resources, children, onUnload, onLoad }) => {
     [resources]
   )
 
-  const isLoading = () => {
-    if (resources instanceof Object) {
-      const resourceProperties = Object.values(resources)[0]
-      return (
-        resourceProperties === undefined ||
-        resourceProperties === null ||
-        resourceProperties instanceof ResourcePending
-      )
-    }
-    return !resources || resources instanceof ResourcePending
-  }
-  const errors =
-    resources instanceof Object
-      ? Object.values(resources)[0] instanceof Error
-      : resources instanceof Error
+  const isLoading = Array.isArray(resources)
+    ? resources.some(r => !r || r instanceof ResourcePending)
+    : !resources || resources instanceof ResourcePending
 
-  if (isLoading()) {
+  const errors = Array.isArray(resources)
+    ? resources.some(r => r && r instanceof Error)
+    : resources instanceof Error
+
+  if (isLoading) {
     return <Loading padding="small" />
   }
 
@@ -52,10 +44,7 @@ const MakeLoader = ({ resources, children, onUnload, onLoad }) => {
       <ErrorFallback
         error={
           Array.isArray(resources)
-            ? resources.filter(
-                resource =>
-                  resource && Object.values(resource)[0] instanceof Error
-              )
+            ? resources.filter(r => r && r instanceof Error)
             : resources
         }
       />

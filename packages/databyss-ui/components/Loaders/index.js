@@ -105,7 +105,7 @@ export const SearchAllLoader = ({ children, ...others }) => {
   const topics = getTopicHeaders()
   const pages = getPages()
 
-  const allResources = { sourceCitations, authors, topics, pages }
+  const allResources = [sourceCitations, authors, topics, pages]
 
   return <MakeLoader resources={allResources} children={children} {...others} />
 }
