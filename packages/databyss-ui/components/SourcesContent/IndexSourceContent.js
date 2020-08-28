@@ -21,11 +21,11 @@ const IndexSourceContent = ({ relations }) => {
   const pages = getPages()
 
   const onPageClick = pageId => {
-    navigate(`/${getCurrentAccount()}/pages/${pageId}`)
+    navigate(`/pages/${pageId}`)
   }
 
   const onEntryClick = (pageId, entryId) => {
-    navigate(`/${getCurrentAccount()}/pages/${pageId}#${entryId}`)
+    navigate(`/pages/${pageId}#${entryId}`)
   }
 
   const _results = Object.keys(relations.results)

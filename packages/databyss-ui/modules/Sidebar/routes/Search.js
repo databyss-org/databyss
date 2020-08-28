@@ -34,11 +34,7 @@ const Search = () => {
 
   const onSearchClick = () => {
     // encode the search term and remove '?'
-    navigate(
-      `/${getCurrentAccount()}/search/${encodeURI(
-        searchTerm.replace(/\?/g, '')
-      )}`
-    )
+    navigate(`/search/${encodeURI(searchTerm.replace(/\?/g, ''))}`)
   }
 
   return (

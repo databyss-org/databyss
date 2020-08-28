@@ -66,7 +66,7 @@ const SidebarList = ({ menuItems, query, ...others }) => {
               px="em"
               key={index}
               width="100%"
-              href={`/${getCurrentAccount()}${getHref(item)}`}
+              href={`${getHref(item)}`}
               css={{
                 textDecoration: 'none',
                 boxSizing: 'border-box',

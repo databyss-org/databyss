@@ -64,7 +64,7 @@ export const ArchiveBin = ({ pages }) => {
         redirect = Object.keys(pages).find(_id => _id !== params)
         setDefaultPage(redirect)
       }
-      navigate(`/${account._id}/pages/${redirect}`)
+      navigate(`/pages/${redirect}`)
     })
   }
 
@@ -94,6 +94,7 @@ export const ArchiveBin = ({ pages }) => {
     copyToClipboard(baseUrl)
   }
 
+  // TODO: make the copy link a loader
   const menuItems = [
     {
       icon: <LinkSvg />,

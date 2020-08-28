@@ -44,7 +44,8 @@ const AuthorsContent = () => {
               const _url = `firstName=${
                 i.name.firstName ? i.name.firstName.textValue : ''
               }&lastName=${i.name.lastName ? i.name.lastName.textValue : ''}`
-              navigate(`/${getCurrentAccount()}/sources?${_url}`)
+
+              navigate(`/sources?${_url}`)
             }
 
             return (

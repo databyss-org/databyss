@@ -27,11 +27,11 @@ const SearchContent = () => {
   const { query } = useParams()
 
   const onEntryClick = (pageId, blockId) => {
-    navigate(`/${getCurrentAccount()}/pages/${pageId}#${blockId}`)
+    navigate(`/pages/${pageId}#${blockId}`)
   }
 
   const onPageClick = pageId => {
-    navigate(`/${getCurrentAccount()}/pages/${pageId}`)
+    navigate(`/pages/${pageId}`)
   }
 
   const ComposeResults = ({ results }) => {

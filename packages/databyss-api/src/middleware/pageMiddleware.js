@@ -41,7 +41,10 @@ export const pageMiddleware = wrap(async (req, _res, next) => {
 
   // check if page is the same page if on public account
   if (
-    page.sharedWith.find(s => s.account.toString() === req.asAccount.toString())
+    req.asAccount &&
+    page?.sharedWith.find(
+      s => s.account.toString() === req?.asAccount.toString()
+    )
   ) {
     page.readOnly = true
   } else if (!(req.account._id.toString() === page.account.toString())) {

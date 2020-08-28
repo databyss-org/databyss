@@ -34,7 +34,7 @@ const TopicsContent = () => {
         const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
 
         const onTopicClick = topic => {
-          navigate(`/${getCurrentAccount()}/topics/${topic.id}`)
+          navigate(`/topics/${topic.id}`)
         }
 
         return (

@@ -5,6 +5,7 @@ import { useNavigate, useLocation, Router } from '@reach/router'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import reducer, { initialState } from './reducer'
 import * as actions from './actions'
+import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 
 const useReducer = createReducer()
 
@@ -23,6 +24,8 @@ const NavigationProvider = ({ children }) => {
     name: 'NavigationProvider',
   })
 
+  // const { getCurrentAccount } = useSessionContext()
+
   const location = useLocation()
 
   const navigateRouter = useNavigate()
@@ -31,8 +34,12 @@ const NavigationProvider = ({ children }) => {
   const setMenuOpen = bool => dispatch(actions.menuOpen(bool))
 
   const hideModal = () => dispatch(actions.hideModal())
-  const navigate = options => {
-    navigateRouter(options)
+  const navigate = (url, options) => {
+    if (options?.hasAccount) {
+      navigateRouter(url)
+      return
+    }
+    navigateRouter(`/${getAccountFromLocation()}${url}`)
   }
 
   const navigateSidebar = options => dispatch(actions.navigateSidebar(options))

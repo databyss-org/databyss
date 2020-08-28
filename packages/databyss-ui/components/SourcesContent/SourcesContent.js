@@ -38,7 +38,7 @@ const SourcesContentBody = (sourceCitations, navigate) => {
   const sortedSources = sortEntriesAtoZ(sourcesData, 'text')
 
   const onSourceClick = source => {
-    navigate(`/${getCurrentAccount()}/sources/${source.id}`)
+    navigate(`/sources/${source.id}`)
   }
 
   return (

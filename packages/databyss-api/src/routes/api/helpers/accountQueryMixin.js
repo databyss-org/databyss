@@ -13,7 +13,7 @@ export const getBlockRelationsAccountQueryMixin = req =>
         blockId: { $in: req.publicPages[0].blocks.map(b => b._id) },
       }
     : {
-        account: req.account._id,
+        accountId: req.account._id,
       }
 
 export const getPageAccountQueryMixin = req =>

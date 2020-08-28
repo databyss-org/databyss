@@ -67,7 +67,7 @@ const AuthorCitations = ({ query }) => {
         )
 
         const onCitationClick = c => {
-          navigate(`/${getCurrentAccount()}/sources/${c.id}`)
+          navigate(`/sources/${c.id}`)
         }
 
         return (
