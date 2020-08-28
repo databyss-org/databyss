@@ -23,8 +23,7 @@ export const SourcesRouter = () => (
 )
 
 const SourcesContentBody = (sourceCitations, navigate) => {
-  const { getSession } = useSessionContext()
-  const { account } = getSession()
+  const { getCurrentAccount } = useSessionContext()
   const sourcesData = Object.values(sourceCitations).map(value =>
     createIndexPageEntries({
       id: value._id,
@@ -39,7 +38,7 @@ const SourcesContentBody = (sourceCitations, navigate) => {
   const sortedSources = sortEntriesAtoZ(sourcesData, 'text')
 
   const onSourceClick = source => {
-    navigate(`/${account._id}/sources/${source.id}`)
+    navigate(`/${getCurrentAccount()}/sources/${source.id}`)
   }
 
   return (

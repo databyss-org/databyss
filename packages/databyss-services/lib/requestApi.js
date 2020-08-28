@@ -8,20 +8,31 @@ import { getAccountFromLocation } from '../session/_helpers'
 
 export const ping = () => fetch(`${process.env.API_URL}/ping/`)
 
-export const requestApi = (path, options = { headers: {} }, responseIsJson) =>
-  request(
+export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
+  // TODO:
+  const _accountId = getAccountId()
+  const _accountFromLocation = getAccountFromLocation()
+  // if getaccountid same as account from location only include x-databyss-account else only include x-databyss-as-account
+  const _account =
+    _accountId === _accountFromLocation
+      ? {
+          'x-databyss-account': `${getAccountId()}`,
+        }
+      : { 'x-databyss-as-account': `${getAccountFromLocation()}` }
+
+  return request(
     process.env.API_URL + path,
     {
       ...options,
       headers: {
         ...options.headers,
         'x-auth-token': `${getAuthToken()}`,
-        'x-databyss-account': `${getAccountId()}`,
-        'x-databyss-as-account': `${getAccountFromLocation()}`,
+        ..._account,
       },
     },
     responseIsJson
   )
+}
 
 export const httpGet = path => requestApi(path)
 

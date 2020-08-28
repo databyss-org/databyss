@@ -12,8 +12,7 @@ import IndexPageEntries from '../PageContent/IndexPageEntries'
 
 const AuthorCitations = ({ query }) => {
   const { navigate } = useNavigationContext()
-  const { getSession } = useSessionContext()
-  const { account } = getSession()
+  const { getCurrentAccount } = useSessionContext()
   const { firstName, lastName } = query
 
   const authorQueryFirstName = firstName
@@ -68,7 +67,7 @@ const AuthorCitations = ({ query }) => {
         )
 
         const onCitationClick = c => {
-          navigate(`/${account._id}/sources/${c.id}`)
+          navigate(`/${getCurrentAccount()}/sources/${c.id}`)
         }
 
         return (

@@ -35,16 +35,11 @@ router.get(
 // @access   private
 router.get(
   '/',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, next) => {
     // favor shared account first
-    if (req.asAccount) {
-      const pageResponse = await Page.find({
-        'sharedWith.account': req.asAccount,
-      })
-      if (pageResponse) {
-        return res.json(pageResponse).status(200)
-      }
+    if (req.asAccount && req.publicPages) {
+      return res.json(req.publicPages).status(200)
     }
 
     const pageResponse = await Page.find({
@@ -139,7 +134,7 @@ router.post(
 // @access   private
 router.get(
   '/populate/:id',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC']), pageMiddleware],
   wrap(async (req, res, _next) => {
     const { page } = req
 

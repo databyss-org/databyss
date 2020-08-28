@@ -14,19 +14,18 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 
 const IndexSourceContent = ({ relations }) => {
-  const { getSession } = useSessionContext()
-  const { account } = getSession()
+  const { getCurrentAccount } = useSessionContext()
   const { getPages } = usePageContext()
   const { navigate } = useNavigationContext()
 
   const pages = getPages()
 
   const onPageClick = pageId => {
-    navigate(`/${account._id}/pages/${pageId}`)
+    navigate(`/${getCurrentAccount()}/pages/${pageId}`)
   }
 
   const onEntryClick = (pageId, entryId) => {
-    navigate(`/${account._id}/pages/${pageId}#${entryId}`)
+    navigate(`/${getCurrentAccount()}/pages/${pageId}#${entryId}`)
   }
 
   const _results = Object.keys(relations.results)

@@ -20,8 +20,7 @@ export const TopicsRouter = () => (
 )
 
 const TopicsContent = () => {
-  const { getSession } = useSessionContext()
-  const { account } = getSession()
+  const { getCurrentAccount } = useSessionContext()
   const navigate = useNavigationContext(c => c.navigate)
   return (
     <AllTopicsLoader>
@@ -35,7 +34,7 @@ const TopicsContent = () => {
         const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
 
         const onTopicClick = topic => {
-          navigate(`/${account._id}/topics/${topic.id}`)
+          navigate(`/${getCurrentAccount()}/topics/${topic.id}`)
         }
 
         return (

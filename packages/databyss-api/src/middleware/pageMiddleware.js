@@ -25,20 +25,20 @@ export const pageCreatorMiddleware = wrap(async (req, _res, next) => {
 })
 
 export const pageMiddleware = wrap(async (req, _res, next) => {
-  if (req.asAccount) {
-    const pageResponse = await Page.find({
-      'sharedWith.account': req.asAccount,
-    })
-    if (pageResponse) {
-      req.page = pageResponse[0]
-      return next()
-    }
-  }
-
   const _id = req.params.id
 
   if (!mongoose.Types.ObjectId.isValid(_id)) {
     return next(new ResourceNotFoundError('Invalid Page ID'))
+  }
+
+  // // REMOVE THIS
+  if (req.asAccount && req.publicPages) {
+    const publicId = req.publicPages[0]._id
+    if (publicId.toString() === _id.toString()) {
+      req.page = req.publicPages[0]
+      return next()
+    }
+    return next(new InsufficientPermissionError())
   }
 
   const page = await Page.findOne({
@@ -48,6 +48,18 @@ export const pageMiddleware = wrap(async (req, _res, next) => {
   if (!page) {
     return next(new ResourceNotFoundError('There is no page for this ID'))
   }
+
+  // todo IMPLEMENT THIS
+  // if (
+  //   page.sharedWith.find(
+  //     s => s.account.toString() === req.asAccount._id.toString()
+
+  //   )
+  // ) {
+  //   page.readOnly = true // TODO: use roles here
+  // } else if (!(req.account._id.toString() === page.account.toString())) {
+  //   return next(new InsufficientPermissionError())
+  // }
 
   if (!(req.account._id.toString() === page.account.toString())) {
     return next(new InsufficientPermissionError())

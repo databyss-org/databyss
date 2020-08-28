@@ -1,4 +1,6 @@
 import Account from '../models/Account'
+import Page from '../models/Page'
+
 import { checkForPublicAccount } from './_helpers'
 
 function checkRequiredRoles(requiredRoles, userRoles) {
@@ -7,8 +9,15 @@ function checkRequiredRoles(requiredRoles, userRoles) {
 
 const accountMiddleware = requiredRoles => async (req, res, next) => {
   // if in shared account, favor shared account
-  if (req.asAccount) {
-    return next()
+  // check required roles for 'PUBLIC'
+  if (req.asAccount && checkRequiredRoles(requiredRoles, 'PUBLIC')) {
+    const pageResponse = await Page.find({
+      'sharedWith.account': req.asAccount,
+    })
+    if (pageResponse) {
+      req.publicPages = pageResponse
+      return next()
+    }
   }
 
   // get account id from header

@@ -15,8 +15,7 @@ import IndexPageContent from '../PageContent/IndexPageContent'
 
 const AuthorsContent = () => {
   const { navigate } = useNavigationContext()
-  const { getSession } = useSessionContext()
-  const { account } = getSession()
+  const { getCurrentAccount } = useSessionContext()
 
   return (
     <SourceCitationsLoader>
@@ -45,7 +44,7 @@ const AuthorsContent = () => {
               const _url = `firstName=${
                 i.name.firstName ? i.name.firstName.textValue : ''
               }&lastName=${i.name.lastName ? i.name.lastName.textValue : ''}`
-              navigate(`/${account._id}/sources?${_url}`)
+              navigate(`/${getCurrentAccount()}/sources?${_url}`)
             }
 
             return (

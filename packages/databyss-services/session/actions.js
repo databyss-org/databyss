@@ -45,10 +45,17 @@ export const fetchSession = ({
     const authToken = getAuthToken()
     const accountId = getAccountId()
     if (authToken && accountId) {
-      // if we have the token, try to use it
-      path += '/auth'
-      options.headers['x-databyss-account'] = accountId
-      options.headers['x-auth-token'] = authToken
+      if (accountId !== getAccountFromLocation()) {
+        // get account from url
+        const _accountId = getAccountFromLocation()
+        path += '/auth'
+        options.headers['x-databyss-as-account'] = _accountId
+      } else {
+        // if we have the token, try to use it
+        path += '/auth'
+        options.headers['x-databyss-account'] = accountId
+        options.headers['x-auth-token'] = authToken
+      }
     } else if (googleCode) {
       // google oAuth token
       path += '/users/google'

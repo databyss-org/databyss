@@ -16,7 +16,7 @@ import {
 import { sidebar } from '@databyss-org/ui/theming/components'
 
 const Footer = () => {
-  const { getSession } = useSessionContext()
+  const { getSession, isPublicAccount } = useSessionContext()
   const { account } = getSession()
   const { navigate, navigateSidebar, isMenuOpen } = useNavigationContext()
   const { clearSearchCache } = useEntryContext()
@@ -34,7 +34,7 @@ const Footer = () => {
     navigateSidebar('/pages')
   }
 
-  return (
+  return !isPublicAccount() ? (
     <View
       position="absolute"
       bottom={0}
@@ -84,7 +84,7 @@ const Footer = () => {
         </Grid>
       </BaseControl>
     </View>
-  )
+  ) : null
 }
 
 export default Footer

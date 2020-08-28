@@ -22,17 +22,16 @@ export const SearchRouter = () => (
 )
 
 const SearchContent = () => {
-  const { getSession } = useSessionContext()
-  const { account } = getSession()
+  const { getCurrentAccount } = useSessionContext()
   const { navigate } = useNavigationContext()
   const { query } = useParams()
 
   const onEntryClick = (pageId, blockId) => {
-    navigate(`/${account._id}/pages/${pageId}#${blockId}`)
+    navigate(`/${getCurrentAccount()}/pages/${pageId}#${blockId}`)
   }
 
   const onPageClick = pageId => {
-    navigate(`/${account._id}/pages/${pageId}`)
+    navigate(`/${getCurrentAccount()}/pages/${pageId}`)
   }
 
   const ComposeResults = ({ results }) => {

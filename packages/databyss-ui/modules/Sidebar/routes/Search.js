@@ -13,7 +13,7 @@ import {
 import SearchInputContainer from '@databyss-org/ui/components/SearchContent/SearchInputContainer'
 
 const Search = () => {
-  const { getSession } = useSessionContext()
+  const { getSession, getCurrentAccount } = useSessionContext()
   const { account } = getSession()
   const { navigate, getSidebarPath } = useNavigationContext()
 
@@ -35,7 +35,9 @@ const Search = () => {
   const onSearchClick = () => {
     // encode the search term and remove '?'
     navigate(
-      `/${account._id}/search/${encodeURI(searchTerm.replace(/\?/g, ''))}`
+      `/${getCurrentAccount()}/search/${encodeURI(
+        searchTerm.replace(/\?/g, '')
+      )}`
     )
   }
 

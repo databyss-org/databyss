@@ -6,6 +6,7 @@ import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import wrap from '../../lib/guardedAsync'
 import { ResourceNotFoundError } from '../../lib/Errors'
+import { getBlockAccountQueryMixin } from './helpers/accountQueryMixin'
 
 const router = express.Router()
 
@@ -41,12 +42,29 @@ router.post(
 // @access   Private
 router.get(
   '/authors',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
     const blocks = await Block.find({
-      account: req.account._id,
       type: 'SOURCE',
+      ...getBlockAccountQueryMixin(req),
     })
+
+    // let blocks
+    // // if req.page is provided by account middleware, page is a shared page
+    // if (req?.page?.blocks.length) {
+    //   const _ids = req.page.blocks.map(b => b._id)
+    //   blocks = await Block.find({
+    //     _id: { $in: _ids },
+    //     type: 'SOURCE',
+    //   })
+    // } else {
+    //   // if not shared assume user account
+    //   blocks = await Block.find({
+    //     account: req.account._id,
+    //     type: 'SOURCE',
+    //   })
+    // }
+
     if (!blocks) {
       return res.json([])
     }
@@ -63,12 +81,28 @@ router.get(
 // @access   Private
 router.get(
   '/citations',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
     const blocks = await Block.find({
-      account: req.account._id,
       type: 'SOURCE',
+      ...getBlockAccountQueryMixin(req),
     })
+    // if req.page is provided by account middleware, page is a shared page
+
+    // if (req?.page?.blocks.length) {
+    //   const _ids = req.page.blocks.map(b => b._id)
+    //   blocks = await Block.find({
+    //     _id: { $in: _ids },
+    //     type: 'SOURCE',
+    //   })
+    // } else {
+    //   // if not shared assume user account
+    //   blocks = await Block.find({
+    //     account: req.account._id,
+    //     type: 'SOURCE',
+    //   })
+    // }
+
     if (!blocks) {
       return res.json([])
     }
