@@ -31,16 +31,6 @@ export const pageMiddleware = wrap(async (req, _res, next) => {
     return next(new ResourceNotFoundError('Invalid Page ID'))
   }
 
-  // // REMOVE THIS
-  if (req.asAccount && req.publicPages) {
-    const publicId = req.publicPages[0]._id
-    if (publicId.toString() === _id.toString()) {
-      req.page = req.publicPages[0]
-      return next()
-    }
-    return next(new InsufficientPermissionError())
-  }
-
   const page = await Page.findOne({
     _id,
   })
@@ -49,19 +39,12 @@ export const pageMiddleware = wrap(async (req, _res, next) => {
     return next(new ResourceNotFoundError('There is no page for this ID'))
   }
 
-  // todo IMPLEMENT THIS
-  // if (
-  //   page.sharedWith.find(
-  //     s => s.account.toString() === req.asAccount._id.toString()
-
-  //   )
-  // ) {
-  //   page.readOnly = true // TODO: use roles here
-  // } else if (!(req.account._id.toString() === page.account.toString())) {
-  //   return next(new InsufficientPermissionError())
-  // }
-
-  if (!(req.account._id.toString() === page.account.toString())) {
+  // check if page is the same page if on public account
+  if (
+    page.sharedWith.find(s => s.account.toString() === req.asAccount.toString())
+  ) {
+    page.readOnly = true
+  } else if (!(req.account._id.toString() === page.account.toString())) {
     return next(new InsufficientPermissionError())
   }
 

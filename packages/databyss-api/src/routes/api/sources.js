@@ -49,22 +49,6 @@ router.get(
       ...getBlockAccountQueryMixin(req),
     })
 
-    // let blocks
-    // // if req.page is provided by account middleware, page is a shared page
-    // if (req?.page?.blocks.length) {
-    //   const _ids = req.page.blocks.map(b => b._id)
-    //   blocks = await Block.find({
-    //     _id: { $in: _ids },
-    //     type: 'SOURCE',
-    //   })
-    // } else {
-    //   // if not shared assume user account
-    //   blocks = await Block.find({
-    //     account: req.account._id,
-    //     type: 'SOURCE',
-    //   })
-    // }
-
     if (!blocks) {
       return res.json([])
     }
@@ -87,21 +71,6 @@ router.get(
       type: 'SOURCE',
       ...getBlockAccountQueryMixin(req),
     })
-    // if req.page is provided by account middleware, page is a shared page
-
-    // if (req?.page?.blocks.length) {
-    //   const _ids = req.page.blocks.map(b => b._id)
-    //   blocks = await Block.find({
-    //     _id: { $in: _ids },
-    //     type: 'SOURCE',
-    //   })
-    // } else {
-    //   // if not shared assume user account
-    //   blocks = await Block.find({
-    //     account: req.account._id,
-    //     type: 'SOURCE',
-    //   })
-    // }
 
     if (!blocks) {
       return res.json([])

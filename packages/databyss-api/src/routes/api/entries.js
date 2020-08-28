@@ -55,8 +55,6 @@ router.get(
   wrap(async (req, res, _next) => {
     const atomicId = req.params.id
 
-    // TODO if else
-    // if atomic id is in page.publicPages, find block relation by page id
     const results = await BlockRelation.find({
       relatedBlockId: atomicId,
       ...getBlockRelationsAccountQueryMixin(req),
@@ -112,7 +110,6 @@ router.post(
           $search: queryArray.join(' '),
         },
         ...getBlockAccountQueryMixin(req),
-        // $in: [list of blocks from shared page instead of account]
         type: 'ENTRY',
       })
 
