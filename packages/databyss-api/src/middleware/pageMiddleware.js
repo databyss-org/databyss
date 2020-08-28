@@ -26,11 +26,9 @@ export const pageCreatorMiddleware = wrap(async (req, _res, next) => {
 
 export const pageMiddleware = wrap(async (req, _res, next) => {
   const _id = req.params.id
-
   if (!mongoose.Types.ObjectId.isValid(_id)) {
     return next(new ResourceNotFoundError('Invalid Page ID'))
   }
-
   const page = await Page.findOne({
     _id,
   })
@@ -47,7 +45,7 @@ export const pageMiddleware = wrap(async (req, _res, next) => {
     )
   ) {
     page.readOnly = true
-  } else if (!(req.account._id.toString() === page.account.toString())) {
+  } else if (!(req?.account?._id.toString() === page.account.toString())) {
     return next(new InsufficientPermissionError())
   }
 

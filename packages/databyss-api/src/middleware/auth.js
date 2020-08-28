@@ -5,15 +5,16 @@ import { checkForPublicAccount } from './_helpers'
 dotenv.config()
 
 async function auth(req, res, next) {
+  // check if current account is public account
+  const _isPublic = await checkForPublicAccount(req, res)
+  if (_isPublic) {
+    return next()
+  }
+
   // Get token from header
   const token = req.header('x-auth-token')
   // Check if not token
   if (!token || token === 'null') {
-    // check if current account is public account
-    const _isPublic = await checkForPublicAccount(req)
-    if (_isPublic) {
-      return next()
-    }
     return res.status(401).json({ msg: 'No token, authorization denied' })
   }
 

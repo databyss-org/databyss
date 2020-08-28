@@ -137,7 +137,6 @@ router.get(
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC']), pageMiddleware],
   wrap(async (req, res, _next) => {
     const { page } = req
-
     let selection = null
 
     // LOAD SELECTION

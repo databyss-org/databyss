@@ -44,8 +44,14 @@ export const fetchSession = ({
   try {
     const authToken = getAuthToken()
     const accountId = getAccountId()
+
     if (authToken && accountId) {
-      if (accountId !== getAccountFromLocation()) {
+      // if not at at root path '/' and accountID is not the same as the one in the url, set as guest account
+      if (
+        getAccountFromLocation() &&
+        (accountId !== getAccountFromLocation() ||
+          !window.location.pathname === '/')
+      ) {
         // get account from url
         const _accountId = getAccountFromLocation()
         path += '/auth'

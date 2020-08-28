@@ -87,6 +87,10 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
     }
 
     case CACHE_PAGE_HEADERS: {
+      if (action.payload instanceof Error) {
+        break
+      }
+
       // filter archived pages
       action.payload
         .filter((p: PageHeader) => !p.archive)

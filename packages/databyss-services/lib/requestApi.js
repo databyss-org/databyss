@@ -1,9 +1,5 @@
 import request from './request'
-import {
-  getAuthToken,
-  getAccountId,
-  getPublicAccountId,
-} from './../session/clientStorage'
+import { getAuthToken, getAccountId } from './../session/clientStorage'
 import { getAccountFromLocation } from '../session/_helpers'
 
 export const ping = () => fetch(`${process.env.API_URL}/ping/`)

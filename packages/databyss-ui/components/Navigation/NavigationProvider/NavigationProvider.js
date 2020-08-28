@@ -24,8 +24,6 @@ const NavigationProvider = ({ children }) => {
     name: 'NavigationProvider',
   })
 
-  // const { getCurrentAccount } = useSessionContext()
-
   const location = useLocation()
 
   const navigateRouter = useNavigate()
