@@ -51,8 +51,8 @@ router.get(
     const atomicId = req.params.id
 
     const results = await BlockRelation.find({
-      relatedBlockId: atomicId,
-      accountId: req.account._id,
+      relatedBlock: atomicId,
+      account: req.account._id,
     })
 
     // sort according to block index
@@ -65,14 +65,14 @@ router.get(
       }
 
       _results = results.reduce((acc, curr) => {
-        if (!acc.results[curr.pageId]) {
+        if (!acc.results[curr.page]) {
           // init result
-          acc.results[curr.pageId] = [curr]
+          acc.results[curr.page] = [curr]
         } else {
-          const _entries = acc.results[curr.pageId]
+          const _entries = acc.results[curr.page]
 
           _entries.push(curr)
-          acc.results[curr.pageId] = _entries
+          acc.results[curr.page] = _entries
         }
         return acc
       }, _results)
@@ -80,7 +80,9 @@ router.get(
       return res.json(_results)
     }
 
-    return res.status(400).json({ msg: 'There is no entries for this search' })
+    return res
+      .status(400)
+      .json({ msg: 'There are no relations for this block' })
   })
 )
 

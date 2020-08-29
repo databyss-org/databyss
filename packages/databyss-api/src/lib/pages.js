@@ -181,12 +181,11 @@ export const copyPage = async ({ pageId, toAccountId }) => {
   for (const _blockRelation of _blockRelations) {
     const _blockRelationObj = _blockRelation.toObject()
     _blockRelationObj._id = new ObjectID().toHexString()
-    _blockRelationObj.accountId = toAccountId
+    _blockRelationObj.account = toAccountId
     _blockRelationObj.pageId = _pageObj._id
-    _blockRelationObj.blockId = _blockIdMap[_blockRelation.blockId]
-    _blockRelationObj.relatedBlockId =
-      _blockIdMap[_blockRelation.relatedBlockId]
-    if (!_blockRelationObj.blockId || !_blockRelationObj.relatedBlockId) {
+    _blockRelationObj.block = _blockIdMap[_blockRelation.block]
+    _blockRelationObj.relatedBlock = _blockIdMap[_blockRelation.relatedBlock]
+    if (!_blockRelationObj.block || !_blockRelationObj.relatedBlock) {
       throw new Error('Missing blockIdMap entry or entries')
     }
     await new BlockRelation(_blockRelationObj).save()

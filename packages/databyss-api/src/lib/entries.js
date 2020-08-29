@@ -2,17 +2,17 @@ import BlockRelation from '../models/BlockRelation'
 
 // TODO API DOESNT COMPILE TYPESCRIPT
 export const addRelationships = async (relationship, req) => {
-  const { blockId, relatedBlockId } = relationship
+  const { block, relatedBlock } = relationship
   // find relationship
 
   await BlockRelation.replaceOne(
     {
-      blockId,
-      relatedBlockId,
+      block,
+      relatedBlock,
     },
     {
       ...relationship,
-      accountId: req.account._id,
+      account: req.account._id,
     },
     { upsert: true }
   )

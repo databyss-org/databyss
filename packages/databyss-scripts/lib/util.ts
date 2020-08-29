@@ -3,6 +3,10 @@ import ObjectID from 'bson-objectid'
 
 const fs = require('fs')
 
+export interface EnvDict {
+  [key: string]: string
+}
+
 export function objectId(): string {
   return new ObjectID().toHexString()
 }

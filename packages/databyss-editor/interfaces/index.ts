@@ -14,12 +14,12 @@ export type {
 export { BlockType } from '@databyss-org/services/interfaces'
 
 export type BlockRelation = {
-  blockId: string
-  relatedBlockId: string
+  block: string
+  relatedBlock: string
   blockText: Text
   relationshipType: string
   relatedBlockType: string
-  pageId: string
+  page: string
   blockIndex: number
 }
 

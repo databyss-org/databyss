@@ -1,5 +1,8 @@
 import mongoose from 'mongoose'
 import Page from './Page'
+import Block from './Block'
+import BlockRelation from './BlockRelation'
+import User from './User'
 import { copyPage } from '../lib/pages'
 
 const Schema = mongoose.Schema
@@ -48,6 +51,15 @@ AccountSchema.static('create', async (values = {}) => {
   }
   await instance.save()
   return instance
+})
+
+AccountSchema.post('remove', async doc => {
+  console.log(`Account hook [remove]: ${doc._id}`)
+  // delete all Page, Block and BlockRelation records in account
+  await Page.deleteMany({ account: doc._id })
+  await Block.deleteMany({ account: doc._id })
+  await BlockRelation.deleteMany({ account: doc._id })
+  await User.deleteMany({ defaultAccount: doc._id })
 })
 
 /* eslint-disable prefer-arrow-callback */

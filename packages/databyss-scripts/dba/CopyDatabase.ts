@@ -40,10 +40,11 @@ class CopyDatabase extends ServerProcess {
     }'`
 
     try {
-      this.emit('stdout', 'DUMPING DATA...')
+      this.emit('stdout', '🔄 DUMPING DATA...')
       await this.exec(dumpCmd)
-      this.emit('stdout', 'RESTORING DATA...')
+      this.emit('stdout', '🔄 RESTORING DATA...')
       await this.exec(restoreCmd)
+      this.emit('stdout', `✅ Database copied.`)
       this.emit('end', true)
     } catch (err) {
       this.emit('stderr', err)

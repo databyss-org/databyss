@@ -31,12 +31,12 @@ const composeBlockRelation = (
   pageId: string
 ): BlockRelation => {
   const _blockRelation: BlockRelation = {
-    blockId: currentBlock._id,
-    relatedBlockId: atomicBlock._id,
+    block: currentBlock._id,
+    relatedBlock: atomicBlock._id,
     blockText: currentBlock.text,
     relationshipType: 'HEADING',
     relatedBlockType: atomicBlock.type,
-    pageId,
+    page: pageId,
     blockIndex: 0,
   }
 
@@ -174,12 +174,12 @@ export const indexPage = ({
         for (const [, value] of Object.entries(currentAtomics)) {
           if (value) {
             blockRelations.push({
-              blockId: block._id,
-              relatedBlockId: value._id,
+              block: block._id,
+              relatedBlock: value._id,
               blockText: block.text,
               relatedBlockType: value.type,
               relationshipType: 'HEADING',
-              pageId,
+              page: pageId,
               blockIndex: index,
             })
           }
