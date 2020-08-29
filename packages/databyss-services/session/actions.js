@@ -50,10 +50,10 @@ export const fetchSession = ({
       // google oAuth token
       path += '/users/google'
       options.body = JSON.stringify({ code: googleCode })
-    } else if (code) {
+    } else if (code && email) {
       // code from email
       path += '/auth/code'
-      options.body = JSON.stringify({ code })
+      options.body = JSON.stringify({ code, email })
     } else if (email) {
       // register with email
       path += '/users/email'

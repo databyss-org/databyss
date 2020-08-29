@@ -26,7 +26,7 @@ router.post(
       // clear all block relationships associated to page id
       if (clearPageRelationships) {
         await BlockRelation.deleteMany({
-          'relatedTo.pageId': clearPageRelationships,
+          pageId: clearPageRelationships,
           accountId: req.account._id,
         })
       }
@@ -56,9 +56,7 @@ router.get(
     })
 
     // sort according to block index
-    results.sort(
-      (a, b) => (a.relatedTo.blockIndex > b.relatedTo.blockIndex ? 1 : -1)
-    )
+    results.sort((a, b) => (a.blockIndex > b.blockIndex ? 1 : -1))
 
     if (results) {
       let _results = {
@@ -67,14 +65,14 @@ router.get(
       }
 
       _results = results.reduce((acc, curr) => {
-        if (!acc.results[curr.relatedTo.pageId]) {
+        if (!acc.results[curr.pageId]) {
           // init result
-          acc.results[curr.relatedTo.pageId] = [curr]
+          acc.results[curr.pageId] = [curr]
         } else {
-          const _entries = acc.results[curr.relatedTo.pageId]
+          const _entries = acc.results[curr.pageId]
 
           _entries.push(curr)
-          acc.results[curr.relatedTo.pageId] = _entries
+          acc.results[curr.pageId] = _entries
         }
         return acc
       }, _results)

@@ -1,6 +1,11 @@
 import { parse } from 'dotenv'
+import ObjectID from 'bson-objectid'
 
 const fs = require('fs')
+
+export function objectId(): string {
+  return new ObjectID().toHexString()
+}
 
 export function getEnv(envName: string): { [key: string]: string } {
   const dotenvFiles = [`.env.${envName}.local`, `.env.${envName}`]

@@ -48,4 +48,4 @@ class ServerProcess extends EventEmitter {
   }
 }
 
-module.exports = ServerProcess
+export default ServerProcess

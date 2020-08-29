@@ -46,7 +46,8 @@
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
     "lint": "eslint . --cache && echo \"eslint: no lint errors\"",
     "sauce:proxy": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/SauceConnect.js",
-    "sauce:dev-server": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/sauce-dev-server.js"
+    "sauce:dev-server": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/sauce-dev-server.js",
+    "script": "babel-node --config-file ./packages/databyss-scripts/babel.config.js --extensions \".js,.ts\" ./packages/databyss-scripts/run.js"
   },
   "jest": {
     "projects": [

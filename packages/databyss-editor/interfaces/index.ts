@@ -17,13 +17,10 @@ export type BlockRelation = {
   blockId: string
   relatedBlockId: string
   blockText: Text
-  relatedTo: {
-    _id: string
-    relationshipType: string
-    blockType: string
-    pageId: string
-    blockIndex: number
-  }
+  relationshipType: string
+  relatedBlockType: string
+  pageId: string
+  blockIndex: number
 }
 
 export type PagePath = {

@@ -77,14 +77,17 @@ router.post(
       }
 
       const token = await getTokenFromUserId(user._id)
-      const login = new Login({
+      const loginObj = {
+        email,
         code:
           process.env.NODE_ENV === 'test'
             ? 'test-code-42'
             : humanReadableIds.hri.random(),
         token,
+      }
+      await Login.replaceOne({ email, code: loginObj.code }, loginObj, {
+        upsert: true,
       })
-      login.save()
       const msg = {
         to: email,
         from: process.env.TRANSACTIONAL_EMAIL_SENDER,
@@ -92,7 +95,7 @@ router.post(
           ? 'd-9e03c4ebd5a24560b6e02a15af4b9b2e'
           : 'd-845a6d7d37c14d828191b6c7933b20f7',
         dynamic_template_data: {
-          code: login.code,
+          code: loginObj.code,
           url: process.env.LOGIN_URL,
         },
       }
