@@ -24,7 +24,9 @@ const SidebarList = ({ menuItems, query, height, ...others }) => {
 
   const getHref = item => {
     if (item.params) {
-      return `${item.route}${query ? '?' : '/'}${item.params}`
+      return `${item.route}${query || item.type === 'authors' ? '?' : '/'}${
+        item.params
+      }`
     }
     return `${item.route}`
   }
