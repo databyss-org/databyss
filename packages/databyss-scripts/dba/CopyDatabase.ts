@@ -7,37 +7,37 @@ interface EnvDict {
 }
 
 interface JobArgs {
-  fromEnv: string
-  toEnv: string
+  envName: string
+  fromDb: string
+  toDb: string
 }
 
 class CopyDatabase extends ServerProcess {
   args: JobArgs
-  fromEnv: EnvDict
-  toEnv: EnvDict
-  tmpDir: { name: string, removeCallback: Function }
-  fromDb: string | undefined
-  toDb: string | undefined
+  env: EnvDict
+  tmpDir: { name: string; removeCallback: Function }
 
   constructor(args: JobArgs) {
     super()
     this.args = args
-    this.fromEnv = getEnv(args.fromEnv)
-    this.toEnv = getEnv(args.toEnv)
-    this.fromDb = this.fromEnv.API_MONGO_URI.match(/\/([^/]+?)\?/)?.[1]
-    this.toDb = this.toEnv.API_MONGO_URI.match(/\/([^/]+?)\?/)?.[1]
+    this.env = getEnv(args.envName)
     this.tmpDir = tmp.dirSync({ unsafeCleanup: true })
   }
   async run() {
     this.emit(
       'stdout',
-      `Copying from ENV "${this.args.fromEnv}" to "${this.args.toEnv}"`
+      `Copying database "${this.args.fromDb}" to "${this.args.toDb}"`
     )
-    this.emit('stdout', `${this.fromDb} => ${this.fromDb}`)
     this.emit('stdout', `temp dir: ${this.tmpDir.name}`)
 
-    const dumpCmd = `mongodump --ssl --db=${this.fromDb} --out=${this.tmpDir.name} ${this.fromEnv.API_MONGO_URI}`
-    const restoreCmd = `mongorestore --ssl --drop --nsFrom='${this.fromDb}.*' --nsTo='${this.toDb}.*' ${this.toEnv.API_MONGO_URI} ${this.tmpDir.name}`
+    const dumpCmd = `mongodump --ssl --db=${this.args.fromDb} --out=${
+      this.tmpDir.name
+    } ${this.env.API_MONGO_URI}`
+    const restoreCmd = `mongorestore --ssl --drop --nsFrom='${
+      this.args.fromDb
+    }.*' --nsTo='${this.args.toDb}.*' '${this.env.API_MONGO_URI}' '${
+      this.tmpDir.name
+    }'`
 
     try {
       this.emit('stdout', 'DUMPING DATA...')
