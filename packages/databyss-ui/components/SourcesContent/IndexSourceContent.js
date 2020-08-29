@@ -1,15 +1,13 @@
 import React from 'react'
-import {
-  Text,
-  View,
-  BaseControl,
-  Icon,
-  Grid,
-  RawHtml,
-} from '@databyss-org/ui/primitives'
+import { View, RawHtml } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import {
+  SearchResultsContainer,
+  SearchResultTitle,
+  SearchResultDetails,
+} from '@databyss-org/ui/components/SearchContent/SearchResults'
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 
 const IndexSourceContent = ({ relations }) => {
@@ -33,49 +31,35 @@ const IndexSourceContent = ({ relations }) => {
     // filter out results if no entries are included
     .filter(r => relations.results[r].length)
     .map((r, i) => (
-      <View key={i} mb="medium">
-        <View height="40px">
-          <BaseControl
-            data-test-element="atomic-results"
-            hoverColor="background.2"
-            activeColor="background.3"
-            key={`pageHeader-${i}`}
-            onClick={() => onPageClick(r)}
-          >
-            <Grid singleRow alignItems="center" columnGap="small">
-              <Icon sizeVariant="small" color="text.3">
-                <PageSvg />
-              </Icon>
-              <Text variant="bodyHeading3">{pages[r].name}</Text>
-            </Grid>
-          </BaseControl>
-        </View>
+      <SearchResultsContainer key={i}>
+        <SearchResultTitle
+          key={`pageHeader-${i}`}
+          onPress={() => onPageClick(r)}
+          icon={<PageSvg />}
+          text={pages[r].name}
+          dataTestElement="atomic-results"
+        />
 
         {relations.results[r]
           .filter(e => e.blockText.textValue.length)
           .map((e, k) => (
-            <BaseControl
-              data-test-element="atomic-result-item"
-              hoverColor="background.2"
-              activeColor="background.3"
+            <SearchResultDetails
               key={k}
-              onClick={() => onEntryClick(r, e.blockId)}
-            >
-              <View p="small" ml="small">
-                <Text>
-                  <RawHtml
-                    html={slateBlockToHtmlWithSearch({
-                      text: e.blockText,
-                      type: 'ENTRY',
-                    })}
-                  />
-                </Text>
-              </View>
-            </BaseControl>
+              onPress={() => onEntryClick(r, e.blockId)}
+              text={
+                <RawHtml
+                  html={slateBlockToHtmlWithSearch({
+                    text: e.blockText,
+                    type: 'ENTRY',
+                  })}
+                />
+              }
+              dataTestElement="atomic-result-item"
+            />
           ))}
-      </View>
+      </SearchResultsContainer>
     ))
-  return <View>{_results}</View>
+  return <View px="medium">{_results}</View>
 }
 
 export default IndexSourceContent

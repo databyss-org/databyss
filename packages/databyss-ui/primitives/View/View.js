@@ -71,6 +71,14 @@ export const widthVariant = variant({
   },
 })
 
+export const wrapVariant = variant({
+  prop: 'wrapVariant',
+  scale: 'wrapVariants',
+  variants: {
+    default: {},
+  },
+})
+
 export const styleProps = compose(
   space,
   layout,
@@ -85,7 +93,8 @@ export const styleProps = compose(
   hlineVariant,
   shadowVariant,
   widthVariant,
-  borderRadiusVariant
+  borderRadiusVariant,
+  wrapVariant
 )
 
 export const defaultProps = {
@@ -93,6 +102,7 @@ export const defaultProps = {
   borderVariant: 'none',
   shadowVariant: 'none',
   widthVariant: 'none',
+  wrapVariant: 'wrapAnywhere',
   flexGrow: 0,
   flexShrink: 0,
   flexBasis: 'auto',
