@@ -3,7 +3,7 @@ const path = require('path')
 const fs = require('fs')
 const download = require('download')
 const os = require('os')
-const ServerProcess = require('./lib/ServerProcess')
+const ServerProcess = require('./ServerProcess')
 
 const IS_CI =
   process.env.CI &&
