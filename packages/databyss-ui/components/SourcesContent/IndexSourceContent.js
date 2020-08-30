@@ -45,7 +45,7 @@ const IndexSourceContent = ({ relations }) => {
           .map((e, k) => (
             <SearchResultDetails
               key={k}
-              onPress={() => onEntryClick(r, e.blockId)}
+              onPress={() => onEntryClick(r, e.block)}
               text={
                 <RawHtml
                   html={slateBlockToHtmlWithSearch({

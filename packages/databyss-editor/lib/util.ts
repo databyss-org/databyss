@@ -31,16 +31,13 @@ const composeBlockRelation = (
   pageId: string
 ): BlockRelation => {
   const _blockRelation: BlockRelation = {
-    blockId: currentBlock._id,
-    relatedBlockId: atomicBlock._id,
+    block: currentBlock._id,
+    relatedBlock: atomicBlock._id,
     blockText: currentBlock.text,
-    relatedTo: {
-      _id: currentBlock._id,
-      relationshipType: 'HEADING',
-      blockType: atomicBlock.type,
-      pageId,
-      blockIndex: 0,
-    },
+    relationshipType: 'HEADING',
+    relatedBlockType: atomicBlock.type,
+    page: pageId,
+    blockIndex: 0,
   }
 
   return _blockRelation
@@ -112,7 +109,7 @@ export const getPagePath = (page: EditorState): PagePath => {
                 pageId
               )
 
-              _relation.relatedTo.blockIndex = _index
+              _relation.blockIndex = _index
               // push to block relations
               _blockRelations.push(_relation)
             }
@@ -177,16 +174,13 @@ export const indexPage = ({
         for (const [, value] of Object.entries(currentAtomics)) {
           if (value) {
             blockRelations.push({
-              blockId: block._id,
-              relatedBlockId: value._id,
+              block: block._id,
+              relatedBlock: value._id,
               blockText: block.text,
-              relatedTo: {
-                _id: block._id,
-                blockType: value.type,
-                relationshipType: 'HEADING',
-                pageId,
-                blockIndex: index,
-              },
+              relatedBlockType: value.type,
+              relationshipType: 'HEADING',
+              page: pageId,
+              blockIndex: index,
             })
           }
         }
