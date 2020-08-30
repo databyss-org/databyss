@@ -30,9 +30,9 @@ const run = async () => {
   await connectDB()
 
   // Init Bugsnag
-  if (process.env.NODE_ENV !== 'test') {
-    Bugsnag.init()
-  }
+  // if (process.env.NODE_ENV !== 'test') {
+  Bugsnag.init()
+  // }
 
   // Init Middleware
   app.use(cors())
