@@ -153,7 +153,7 @@ export const copyPage = async ({ pageId, toAccountId }) => {
     _id: { $in: _page.blocks.map(b => b._id) },
   })
   const _blockRelations = await BlockRelation.find({
-    pageId: _page._id,
+    page: _page._id,
   })
   // Reset Page, Block and BlockRelation _ids and account
   const _pageObj = _page.toObject()
@@ -182,7 +182,7 @@ export const copyPage = async ({ pageId, toAccountId }) => {
     const _blockRelationObj = _blockRelation.toObject()
     _blockRelationObj._id = new ObjectID().toHexString()
     _blockRelationObj.account = toAccountId
-    _blockRelationObj.pageId = _pageObj._id
+    _blockRelationObj.page = _pageObj._id
     _blockRelationObj.block = _blockIdMap[_blockRelation.block]
     _blockRelationObj.relatedBlock = _blockIdMap[_blockRelation.relatedBlock]
     if (!_blockRelationObj.block || !_blockRelationObj.relatedBlock) {

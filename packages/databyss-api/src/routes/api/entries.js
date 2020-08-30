@@ -26,8 +26,8 @@ router.post(
       // clear all block relationships associated to page id
       if (clearPageRelationships) {
         await BlockRelation.deleteMany({
-          pageId: clearPageRelationships,
-          accountId: req.account._id,
+          page: clearPageRelationships,
+          account: req.account._id,
         })
       }
       if (blocksRelationArray.length) {
