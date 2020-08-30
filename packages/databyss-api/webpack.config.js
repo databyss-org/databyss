@@ -32,6 +32,7 @@ module.exports = {
       new BugsnagSourceMapUploaderPlugin({
         apiKey: process.env.API_BUGSNAG_KEY,
         publicPath: 'build/api',
+        overwrite: true,
       }),
   ].filter(Boolean),
   resolve: {
