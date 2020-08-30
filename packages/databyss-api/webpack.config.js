@@ -12,6 +12,7 @@ const envDefines = Object.keys(env.raw).reduce((accum, key) => {
 
 module.exports = {
   target: 'node',
+  devtool: 'inline-source-map',
   entry: {
     app: path.resolve(__dirname, './src/app.js'),
   },
