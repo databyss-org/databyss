@@ -1,8 +1,16 @@
 import Account from '../models/Account'
-import { UnauthorizedError } from '../lib/Errors'
+import mongoose from 'mongoose'
+
+// import { UnauthorizedError } from '../lib/Errors'
 
 export const checkForPublicAccount = async (req, res) => {
   const accountId = req.header('x-databyss-as-account')
+
+  if (!mongoose.Types.ObjectId.isValid(accountId)) {
+    return false
+  }
+
+
   if (accountId) {
     // check if account exists
     const _account = await Account.findOne({ _id: accountId })
