@@ -92,10 +92,19 @@ const borderRadiusVariants = {
   },
 }
 
+const wrapVariants = {
+  none: {},
+  wrapAnywhere: {
+    overflowWrap: 'anywhere',
+    wordBreak: 'break-word',
+  },
+}
+
 export default {
   paddingVariants,
   borderVariants,
   widthVariants,
   hlineVariants,
   borderRadiusVariants,
+  wrapVariants,
 }

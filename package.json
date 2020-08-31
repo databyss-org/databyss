@@ -40,13 +40,14 @@
     "test:selenium:local": "SAUCE=no LOCAL_ENV=true yarn test seleniumtest",
     "styleguide": "NPM_BUILD_TARGET=TEST styleguidist server --config ./config/styleguide.config.js",
     "styleguide:build": "NPM_BUILD_TARGET=TEST styleguidist build --config ./config/styleguide.config.js",
-    "storybook": "NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public --ci",
-    "storybook:sauce": "STORYBOOK_SAUCE=true NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 8080 -s ./packages/databyss-ui/public --ci --quiet",
+    "storybook": "NODE_ENV=test NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 6006 -s ./packages/databyss-ui/public --ci",
+    "storybook:sauce": "ENV_PREFIX=REACT_APP_ REACT_APP_META_USE_CTRL=true NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 8080 -s ./packages/databyss-ui/public --ci --quiet",
     "storybook:build": "NPM_BUILD_TARGET=TEST build-storybook -o build -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss",
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
     "lint": "eslint . --cache && echo \"eslint: no lint errors\"",
     "sauce:proxy": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/SauceConnect.js",
-    "sauce:dev-server": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/sauce-dev-server.js"
+    "sauce:dev-server": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/sauce-dev-server.js",
+    "script": "babel-node --config-file ./packages/databyss-scripts/babel.config.js --extensions \".js,.ts\" ./packages/databyss-scripts/run.js"
   },
   "jest": {
     "projects": [
@@ -247,6 +248,7 @@
     "url-loader": "0.6.2",
     "uuid": "3.3.3",
     "webpack": "^4.33.0",
+    "webpack-bugsnag-plugins": "^1.4.3",
     "webpack-cli": "^3.3.3",
     "webpack-dev-server": "3.2.1",
     "webpack-manifest-plugin": "^2.0.4",

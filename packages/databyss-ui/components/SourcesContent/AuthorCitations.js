@@ -11,10 +11,10 @@ import IndexPageEntries from '../PageContent/IndexPageEntries'
 
 const AuthorCitations = ({ query }) => {
   const { navigate } = useNavigationContext()
-  const { firstName, lastName } = query
 
-  const authorQueryFirstName = firstName
-  const authorQueryLastName = lastName
+  const params = new URLSearchParams(query)
+  const authorQueryFirstName = params.get('firstName')
+  const authorQueryLastName = params.get('lastName')
 
   const composeAuthorName = (firstName, lastName) => {
     if (firstName && lastName) {

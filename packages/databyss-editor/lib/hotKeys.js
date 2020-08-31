@@ -2,7 +2,7 @@ import { isKeyHotkey } from 'is-hotkey'
 import { IS_IOS, IS_MAC } from 'slate-dev-environment'
 
 // HACK: saucelabs environment double triggers meta key, use ctrl key instead
-export const metaKey = process.env.STORYBOOK_SAUCE ? 'ctrl' : 'mod'
+export const metaKey = process.env.META_USE_CTRL ? 'ctrl' : 'mod'
 
 export const START_OF_LINE = 'START_OF_LINE'
 export const END_OF_LINE = 'END_OF_LINE'

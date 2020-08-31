@@ -3,7 +3,7 @@ const icon = size => ({
   height: size,
 })
 
-const iconSizeVariants = {
+export const iconSizeVariants = {
   extraTiny: {
     ...icon(8),
   },

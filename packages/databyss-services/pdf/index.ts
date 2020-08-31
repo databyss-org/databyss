@@ -12,6 +12,7 @@ export const fetchAnnotations = (file: File): Promise<any> => {
     {
       method: 'POST',
       body: formData,
+      timeout: 30000,
     },
     false
   )
@@ -43,7 +44,7 @@ export const fetchMetadata = (data: Metadata): Promise<any> => {
 
   return request(
     url,
-    { method: 'GET' },
+    { method: 'GET', timeout: 30000 },
     true
   )
 }

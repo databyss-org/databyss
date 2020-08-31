@@ -2,7 +2,8 @@ import request from './request'
 import { getAuthToken, getAccountId } from './../session/clientStorage'
 import { getAccountFromLocation } from '../session/_helpers'
 
-export const ping = () => fetch(`${process.env.API_URL}/ping/`)
+export const ping = () =>
+  request(`${process.env.API_URL}/ping/`, { timeout: 5000 })
 
 export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
   const _accountId = getAccountId()

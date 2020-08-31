@@ -1,5 +1,6 @@
 const webpack = require('webpack')
 const path = require('path')
+const { BugsnagSourceMapUploaderPlugin } = require('webpack-bugsnag-plugins')
 const getClientEnvironment = require('../../config/env')
 
 const env = getClientEnvironment()
@@ -12,6 +13,7 @@ const envDefines = Object.keys(env.raw).reduce((accum, key) => {
 
 module.exports = {
   target: 'node',
+  devtool: 'source-map',
   entry: {
     app: path.resolve(__dirname, './src/app.js'),
   },
@@ -24,7 +26,15 @@ module.exports = {
   optimization: {
     minimize: false,
   },
-  plugins: [new webpack.DefinePlugin(envDefines)],
+  plugins: [
+    new webpack.DefinePlugin(envDefines),
+    process.env.API_BUGSNAG_KEY &&
+      new BugsnagSourceMapUploaderPlugin({
+        apiKey: process.env.API_BUGSNAG_KEY,
+        publicPath: 'build/api',
+        overwrite: true,
+      }),
+  ].filter(Boolean),
   resolve: {
     extensions: ['.js', '.ts'],
     alias: {

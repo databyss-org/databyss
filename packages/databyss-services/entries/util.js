@@ -48,7 +48,14 @@ export const sortEntriesAtoZ = (entries, sortBy) =>
     (a, b) => (a[sortBy]?.toLowerCase() > b[sortBy]?.toLowerCase() ? 1 : -1)
   )
 
-export const filterEntries = (entries, filterQuery) =>
-  entries.filter(entry =>
-    entry.text?.toLowerCase().includes(filterQuery.textValue.toLowerCase())
-  )
+export const filterEntries = (entries, filterQuery) => {
+  const findEntry = query => entry =>
+    query
+      .split(' ')
+      .reduce(
+        (qacc, qcurr) =>
+          Boolean(qacc && entry.text.match(new RegExp(`\\b${qcurr}`, 'i'))),
+        true
+      )
+  return entries.filter(findEntry(filterQuery.textValue))
+}

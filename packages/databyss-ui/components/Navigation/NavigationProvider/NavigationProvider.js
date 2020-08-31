@@ -1,5 +1,4 @@
 import React from 'react'
-import queryString from 'query-string'
 import { createContext, useContextSelector } from 'use-context-selector'
 import { useNavigate, useLocation, Router } from '@reach/router'
 import createReducer from '@databyss-org/services/lib/createReducer'
@@ -70,7 +69,7 @@ const NavigationProvider = ({ children }) => {
     return getTokensFromPath().type ? getTokensFromPath().type : 'pages'
   }
 
-  const getQueryParams = () => queryString.parse(location.search)
+  const getQueryParams = () => decodeURIComponent(location.search)
 
   return (
     <NavigationContext.Provider

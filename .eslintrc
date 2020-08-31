@@ -18,13 +18,14 @@
     }
   },
   "rules": {
+    // for...in and for...of are useful for iteration; prefer functional iterators for mutations, but with modern immutable patterns like immer, mutations are often in-place in the draft
     "no-restricted-syntax": [
       "error",
       "ForInStatement",
       "LabeledStatement",
       "WithStatement"
     ],
-    // for...in and for...of are useful for iteration; prefer functional iterators for mutations, but with modern immutable patterns like immer, mutations are often in-place in the draft
+    "no-await-in-loop": "off", // this is needed for synchronous iteration where order matters
     "no-return-assign": ["error", "except-parens"], // Default option
     "no-console": "off", // Console logs are too useful and are removed in prod anyway
     "global-require": "off", // Useful for images, assets, etc
