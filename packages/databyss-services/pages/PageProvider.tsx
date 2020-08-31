@@ -24,7 +24,7 @@ interface PageHookDict {
 }
 
 interface ContextType {
-  setPagePublic: (id: string, bool: boolean) => void
+  setPagePublic: (id: string, bool: boolean, accountId: string) => void
   setPage: (page: Page) => void
   setPageHeader: (page: Page) => void
   getPages: () => void
@@ -152,8 +152,8 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(actions.removePageFromCache(id))
   }
 
-  const setPagePublic = (id: string, bool: boolean) => {
-    dispatch(actions.setPagePublic(id, bool))
+  const setPagePublic = (id: string, bool: boolean, accountId: string) => {
+    dispatch(actions.setPagePublic(id, bool, accountId))
   }
 
   return (

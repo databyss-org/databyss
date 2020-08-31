@@ -19,8 +19,8 @@ router.post('/', auth, async (req, res) => {
       .status(200)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
-    throw new Error('err')
+    return res.status(500).send('Server Error')
+    // throw new Error('err')
   }
 })
 

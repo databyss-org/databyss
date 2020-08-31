@@ -222,14 +222,14 @@ export function onSetDefaultPage(id: string) {
   }
 }
 
-export function setPagePublic(id: string, boolean: boolean) {
+export function setPagePublic(id: string, boolean: boolean, accountId: string) {
   return async (dispatch: Function) => {
     // TODO: loader
     dispatch({
     type: SET_PAGE_PUBLIC,
     payload: { id, isPublic: boolean }
     })
-   const _res = await services.setPagePublic(id, boolean)
+   const _res = await services.setPagePublic(id, boolean, accountId)
 
    dispatch({
     type:  CACHE_PUBLIC_PAGE,

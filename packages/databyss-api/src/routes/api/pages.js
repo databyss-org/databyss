@@ -192,7 +192,7 @@ router.post(
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
   wrap(async (req, res, _next) => {
     // create a new account
-    const { isPublic } = req.body.data
+    const { isPublic, accountId } = req.body.data
 
     let _sharedAccount
     let sharedWith = []
@@ -205,8 +205,14 @@ router.post(
 
       sharedWith = [{ account: _sharedAccount, role: 'VIEW' }]
     } else {
-      // TODO: REMOVE IS PUBLIC
-      //    console.log('remove')
+      // remove public account
+      await Account.replaceOne(
+        {
+          _id: accountId,
+        },
+        { isPublic: false },
+        { upsert: true }
+      )
     }
 
     await Page.replaceOne(

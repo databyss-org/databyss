@@ -119,7 +119,10 @@ export const ArchiveBin = ({ pages }) => {
 
   const togglePublicPage = () => {
     if (isPagePublic) {
-      setPagePublic(params, !isPagePublic)
+      const _page = getPage(params)
+      // if account is shared, get public account
+      const _accountId = _page.publicAccountId
+      setPagePublic(params, !isPagePublic, _accountId)
     } else {
       setPagePublic(params, !isPagePublic)
     }

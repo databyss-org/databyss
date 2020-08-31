@@ -1,9 +1,10 @@
 import Account from '../models/Account'
 import mongoose from 'mongoose'
+import { InsufficientPermissionError } from '../lib/Errors'
 
 // import { UnauthorizedError } from '../lib/Errors'
 
-export const checkForPublicAccount = async (req, res) => {
+export const checkForPublicAccount = async (req) => {
   const accountId = req.header('x-databyss-as-account')
 
   if (!mongoose.Types.ObjectId.isValid(accountId)) {
@@ -20,7 +21,8 @@ export const checkForPublicAccount = async (req, res) => {
       req.asAccount = accountId
       return req
     } else {
-      return res.status(401).json({ msg: 'Not authorized' })
+      return new InsufficientPermissionError()
+      // return res.status(401).json({ msg: 'Not authorized' })
     }
   }
   // if it doesnt exist or is private, return false
