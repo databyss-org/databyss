@@ -8,13 +8,11 @@ import {
   RawHtml,
 } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 
 const IndexSourceContent = ({ relations }) => {
-  const { getCurrentAccount } = useSessionContext()
   const { getPages } = usePageContext()
   const { navigate } = useNavigationContext()
 

@@ -1,5 +1,4 @@
 import React from 'react'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import {
   sortEntriesAtoZ,
   createIndexPageEntries,
@@ -15,7 +14,6 @@ import IndexPageContent from '../PageContent/IndexPageContent'
 
 const AuthorsContent = () => {
   const { navigate } = useNavigationContext()
-  const { getCurrentAccount } = useSessionContext()
 
   return (
     <SourceCitationsLoader>

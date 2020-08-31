@@ -1,7 +1,6 @@
 import React from 'react'
 import { Router } from '@reach/router'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import TopicDetails from '@databyss-org/ui/components/TopicsContent/TopicDetails'
 import {
@@ -20,7 +19,6 @@ export const TopicsRouter = () => (
 )
 
 const TopicsContent = () => {
-  const { getCurrentAccount } = useSessionContext()
   const navigate = useNavigationContext(c => c.navigate)
   return (
     <AllTopicsLoader>

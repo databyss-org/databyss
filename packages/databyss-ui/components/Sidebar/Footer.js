@@ -16,8 +16,7 @@ import {
 import { sidebar } from '@databyss-org/ui/theming/components'
 
 const Footer = () => {
-  const { getSession, isPublicAccount } = useSessionContext()
-  const { account } = getSession()
+  const { isPublicAccount } = useSessionContext()
   const { navigate, navigateSidebar, isMenuOpen } = useNavigationContext()
   const { clearSearchCache } = useEntryContext()
 

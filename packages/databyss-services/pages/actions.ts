@@ -222,21 +222,6 @@ export function onSetDefaultPage(id: string) {
   }
 }
 
-
-
-
-// export function setPagePublic(id: string, boolean: boolean) {
-//   // return async (dispatch: Function) => {
-//   //   dispatch({
-//   //   type: SET_PAGE_PUBLIC,
-//   //   payload: { id, isPublic: boolean }
-//   //   })
-//   // //  const _res = await services.setPagePublic(id, boolean)
-
-//   // //  console.log(_res)
-//   // }
-// }
-
 export function setPagePublic(id: string, boolean: boolean) {
   return async (dispatch: Function) => {
     // TODO: loader

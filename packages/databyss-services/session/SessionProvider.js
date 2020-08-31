@@ -39,9 +39,8 @@ const SessionProvider = ({
   const getCurrentAccount = () => {
     if (state.session.publicAccount?._id) {
       return state.session.publicAccount._id
-    } else {
-      return state.session.account._id
     }
+    return state.session.account._id
   }
   // credentials can be:
   // - `undefined` if we're just reloading

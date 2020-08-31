@@ -3,9 +3,9 @@ import queryString from 'query-string'
 import { createContext, useContextSelector } from 'use-context-selector'
 import { useNavigate, useLocation, Router } from '@reach/router'
 import createReducer from '@databyss-org/services/lib/createReducer'
+import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import reducer, { initialState } from './reducer'
 import * as actions from './actions'
-import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 
 const useReducer = createReducer()
 

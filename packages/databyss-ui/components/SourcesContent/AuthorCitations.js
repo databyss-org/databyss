@@ -3,7 +3,6 @@ import {
   sortEntriesAtoZ,
   createIndexPageEntries,
 } from '@databyss-org/services/entries/util'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
@@ -12,7 +11,6 @@ import IndexPageEntries from '../PageContent/IndexPageEntries'
 
 const AuthorCitations = ({ query }) => {
   const { navigate } = useNavigationContext()
-  const { getCurrentAccount } = useSessionContext()
   const { firstName, lastName } = query
 
   const authorQueryFirstName = firstName

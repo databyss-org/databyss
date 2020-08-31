@@ -8,8 +8,6 @@ export const checkForPublicAccount = async (req, res) => {
     const _account = await Account.findOne({ _id: accountId })
     // check it account is public
     // if account is public return token as req.asAccount
-
-    console.log(_account)
     if (_account?.isPublic) {
       req.asAccount = accountId
       return req
