@@ -1,10 +1,8 @@
 import mongoose from 'mongoose'
 
-const dbURI = process.env.MONGO_URI
-
 const dB = mongoose
 
-export const connectDB = async () => {
+export const connectDB = async (dbURI = process.env.MONGO_URI) => {
   try {
     await dB.connect(
       dbURI,

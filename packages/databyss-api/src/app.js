@@ -30,9 +30,9 @@ const run = async () => {
   await connectDB()
 
   // Init Bugsnag
-  if (process.env.NODE_ENV !== 'test') {
-    Bugsnag.init()
-  }
+  // if (process.env.NODE_ENV !== 'test') {
+  Bugsnag.init()
+  // }
 
   // Init Middleware
   app.use(cors())
@@ -57,12 +57,11 @@ const run = async () => {
   app.use('/api/topics', topicsRoute)
 
   app.use((err, _req, res, _next) => {
+    Bugsnag.client.notify(err)
     if (err instanceof ApiError) {
-      // TODO: log error on bugsnag
       return res.status(err.status).json({ error: err })
     }
     console.error('ERR', err)
-    Bugsnag.client.notify(err)
     return res.status(500).json({ error: { message: err.message } })
   })
 

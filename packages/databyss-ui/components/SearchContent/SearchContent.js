@@ -2,16 +2,14 @@ import React from 'react'
 import { useParams, Router } from '@reach/router'
 import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import {
-  Text,
-  View,
-  BaseControl,
-  Grid,
-  Icon,
-  ScrollView,
-  RawHtml,
-} from '@databyss-org/ui/primitives'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
+import {
+  SearchResultsContainer,
+  SearchResultTitle,
+  SearchResultDetails,
+} from '@databyss-org/ui/components/SearchContent/SearchResults'
+import { Text, View, ScrollView, RawHtml } from '@databyss-org/ui/primitives'
+
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 
 export const SearchRouter = () => (
@@ -35,49 +33,35 @@ const SearchContent = () => {
   const ComposeResults = ({ results }) => {
     const _Pages = Object.values(results).length ? (
       Object.values(results).map((r, i) => (
-        <View key={i} mb="medium">
-          <View height="40px">
-            <BaseControl
-              data-test-element="search-result-page"
-              hoverColor="background.2"
-              activeColor="background.3"
-              key={`pageHeader-${i}`}
-              onClick={() => onPageClick(r.pageId)}
-            >
-              <Grid singleRow alignItems="center" columnGap="small">
-                <Icon sizeVariant="small" color="text.3">
-                  <PageSvg />
-                </Icon>
-                <Text variant="bodyHeading3">{r.page}</Text>
-              </Grid>
-            </BaseControl>
-          </View>
+        <SearchResultsContainer key={i}>
+          <SearchResultTitle
+            onPress={() => onPageClick(r.pageId)}
+            text={r.page}
+            icon={<PageSvg />}
+            dataTestElement="search-result-page"
+          />
+
           {r.entries.map((e, k) => (
-            <BaseControl
-              data-test-element="search-result-entries"
-              hoverColor="background.2"
-              activeColor="background.3"
+            <SearchResultDetails
               key={k}
-              onClick={() => onEntryClick(r.pageId, e.entryId)}
-            >
-              <View p="small" ml="small">
-                <Text>
-                  <RawHtml
-                    html={slateBlockToHtmlWithSearch(
-                      { text: e.text, type: 'ENTRY' },
-                      query
-                    )}
-                  />
-                </Text>
-              </View>
-            </BaseControl>
+              dataTestElement="search-result-entries"
+              onPress={() => onEntryClick(r.pageId, e.entryId)}
+              text={
+                <RawHtml
+                  html={slateBlockToHtmlWithSearch(
+                    { text: e.text, type: 'ENTRY' },
+                    query
+                  )}
+                />
+              }
+            />
           ))}
-        </View>
+        </SearchResultsContainer>
       ))
     ) : (
       <Text>no results found</Text>
     )
-    return <View>{_Pages}</View>
+    return <View px="medium">{_Pages}</View>
   }
 
   return (

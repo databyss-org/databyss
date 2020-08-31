@@ -2,8 +2,11 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
-import { View, Text } from '@databyss-org/ui/primitives'
+import { View, Text, Icon } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import OnlineSvg from '@databyss-org/ui/assets/online.svg'
+import OfflineSvg from '@databyss-org/ui/assets/offline.svg'
+import LoadingSvg from '@databyss-org/ui/assets/loading.svg'
 import { ArchiveBin } from './ArchiveBin'
 
 const PageSticky = ({ pagePath, pageId }) => {
@@ -55,17 +58,23 @@ const PageSticky = ({ pagePath, pageId }) => {
           dangerouslySetInnerHTML={{ __html: currentPath.join(' / ') }}
         />
       </Text>
-      <View
-        width={200}
-        alignItems="center"
-        justifyContent="flex-end"
-        flexDirection="row"
-      >
-        <Text color="gray.5" pr="medium" variant="uiTextSmall">
-          {isOnline && (pendingPatches ? 'Saving...' : 'All changes saved')}
-          {!isOnline && 'Offline'}
-        </Text>
-        <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
+      <View alignItems="center" justifyContent="flex-end" flexDirection="row">
+        {isOnline && pendingPatches ? (
+          <Icon sizeVariant="tiny" color="gray.5" title="Saving...">
+            <LoadingSvg />
+          </Icon>
+        ) : null}
+        <Icon
+          sizeVariant="small"
+          color="gray.5"
+          title={isOnline ? 'Online' : 'Offline'}
+          ml="small"
+        >
+          {isOnline ? <OnlineSvg /> : <OfflineSvg />}
+        </Icon>
+        <View ml="em">
+          <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
+        </View>
       </View>
     </View>
   )

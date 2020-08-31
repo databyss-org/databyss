@@ -1,6 +1,9 @@
 import mongoose from 'mongoose'
 
 const LoginSchema = new mongoose.Schema({
+  email: {
+    type: String,
+  },
   code: {
     type: String,
   },
@@ -12,6 +15,8 @@ const LoginSchema = new mongoose.Schema({
     default: Date.now,
   },
 })
+
+LoginSchema.index({ email: 1, code: 1 }, { unique: true })
 
 const Login = mongoose.models.Login || mongoose.model('login', LoginSchema)
 

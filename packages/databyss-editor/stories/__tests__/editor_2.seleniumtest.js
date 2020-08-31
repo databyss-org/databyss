@@ -159,7 +159,7 @@ describe('editor selenium', () => {
     await editor.sendKeys('@source text')
     await editor.sendKeys(Key.ARROW_UP)
     await editor.sendKeys(Key.ARROW_UP)
-    await sleep(300)
+    await sleep(1000)
 
     const actual = JSON.parse(await slateDocument.getText())
 

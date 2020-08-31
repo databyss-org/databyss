@@ -8,6 +8,7 @@ import { send } from '../../lib/sendgrid'
 import User from '../../models/User'
 import Login from '../../models/Login'
 import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
+import wrap from '../../lib/guardedAsync'
 
 const router = express.Router()
 
@@ -20,19 +21,20 @@ const oauth2Client = new google.auth.OAuth2(
 // @route    POST api/users/google
 // @desc     create or get profile info for google user
 // @access   Public
-router.post('/google', async (req, res) => {
-  const code = querystring.unescape(req.body.code)
+router.post(
+  '/google',
+  wrap(async (req, res) => {
+    const code = querystring.unescape(req.body.code)
 
-  oauth2Client.getToken(code, async (err, tokens) => {
-    if (err) {
-      console.error(err)
-      res.status(400).json({ msg: 'OAuth Error' })
-      return
-    }
+    oauth2Client.getToken(code, async (err, tokens) => {
+      if (err) {
+        console.error(err)
+        res.status(400).json({ msg: 'OAuth Error' })
+        return
+      }
 
-    const decoded = jwt.decode(tokens.id_token)
-    const { name, email, sub } = decoded
-    try {
+      const decoded = jwt.decode(tokens.id_token)
+      const { name, email, sub } = decoded
       let user = await User.findOne({ googleId: sub })
       if (!user) {
         user = await User.create({
@@ -43,12 +45,9 @@ router.post('/google', async (req, res) => {
       }
       const session = await getSessionFromUserId(user._id)
       res.json({ data: { session } })
-    } catch (err) {
-      console.error(err.message)
-      res.status(500).send('Server Error')
-    }
+    })
   })
-})
+)
 
 // @route    POST api/users/email
 // @desc     creates new user and sends email
@@ -56,7 +55,7 @@ router.post('/google', async (req, res) => {
 router.post(
   '/email',
   [check('email', 'Please include a valid email').isEmail()],
-  async (req, res) => {
+  wrap(async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() })
@@ -65,45 +64,43 @@ router.post(
     const { email } = req.body
     let emailExists = false
 
-    try {
-      let user = await User.findOne({ email })
-      if (!user) {
-        // Creates new user
-        user = await User.create({
-          email,
-        })
-      } else {
-        emailExists = true
-      }
-
-      const token = await getTokenFromUserId(user._id)
-      const login = new Login({
-        code:
-          process.env.NODE_ENV === 'test'
-            ? 'test-code-42'
-            : humanReadableIds.hri.random(),
-        token,
+    let user = await User.findOne({ email })
+    if (!user) {
+      // Creates new user
+      user = await User.create({
+        email,
       })
-      login.save()
-      const msg = {
-        to: email,
-        from: process.env.TRANSACTIONAL_EMAIL_SENDER,
-        templateId: emailExists
-          ? 'd-9e03c4ebd5a24560b6e02a15af4b9b2e'
-          : 'd-845a6d7d37c14d828191b6c7933b20f7',
-        dynamic_template_data: {
-          code: login.code,
-          url: process.env.LOGIN_URL,
-        },
-      }
-      send(msg)
-      res.status(200).json({})
-      return res.status(200)
-    } catch (err) {
-      console.error(err.message)
-      return res.status(500).send('Server error')
+    } else {
+      emailExists = true
     }
-  }
+
+    const token = await getTokenFromUserId(user._id)
+    const loginObj = {
+      email,
+      code:
+        process.env.NODE_ENV === 'test'
+          ? 'test-code-42'
+          : humanReadableIds.hri.random(),
+      token,
+    }
+    await Login.replaceOne({ email, code: loginObj.code }, loginObj, {
+      upsert: true,
+    })
+    const msg = {
+      to: email,
+      from: process.env.TRANSACTIONAL_EMAIL_SENDER,
+      templateId: emailExists
+        ? 'd-9e03c4ebd5a24560b6e02a15af4b9b2e'
+        : 'd-845a6d7d37c14d828191b6c7933b20f7',
+      dynamic_template_data: {
+        code: loginObj.code,
+        url: process.env.LOGIN_URL,
+      },
+    }
+    send(msg)
+    res.status(200).json({})
+    return res.status(200)
+  })
 )
 
 export default router

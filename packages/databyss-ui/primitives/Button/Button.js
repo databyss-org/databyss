@@ -58,6 +58,10 @@ const Button = forwardRef(
       )
     }
 
+    if (!buttonThemes[variant]) {
+      throw new Error(`Invalid button variant: ${variant}`)
+    }
+
     return (
       <StyledControl
         variant={variant}
