@@ -12,9 +12,7 @@ export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
   // if getaccountid same as account from location only include x-databyss-account else only include x-databyss-as-account
   // does not apply to storybook login
   const _account =
-    _accountId === _accountFromLocation ||
-    process.env.STORYBOOK ||
-    process.env.STORYBOOK_SAUCE
+    _accountId === _accountFromLocation || process.env.STORYBOOK
       ? {
           'x-databyss-account': `${getAccountId()}`,
         }
