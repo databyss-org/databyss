@@ -148,7 +148,7 @@ describe('block indexing', () => {
       By.tagName('[data-test-element="atomic-results"]')
     )
 
-    await sleep(1000)
+    await sleep(10000)
 
     // check for that topic exists on page
     assert.equal(topicResults.length, 1)

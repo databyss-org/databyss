@@ -44,7 +44,6 @@ router.get(
   '/:id',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, next) => {
-    console.log(req.publicPages[0].blocks)
     const topic = await Block.findOne({
       _id: req.params.id,
     })

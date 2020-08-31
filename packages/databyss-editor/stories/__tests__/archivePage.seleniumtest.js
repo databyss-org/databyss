@@ -84,7 +84,7 @@ describe('archive page', () => {
 
     // check sidebar list for archived page
 
-    const archiveDropdown = await getElementByTag(
+    let archiveDropdown = await getElementByTag(
       driver,
       '[data-test-element="archive-dropdown"]'
     )
@@ -110,8 +110,14 @@ describe('archive page', () => {
 
     // assure archive dropdown is not visible if one page exists
     let isElementVisible = true
+
+    archiveDropdown = await getElementByTag(
+      driver,
+      '[data-test-element="archive-dropdown"]'
+    )
+    await archiveDropdown.click()
     try {
-      await getElementByTag(driver, '[data-test-element="archive-dropdown"]')
+      await getElementByTag(driver, '[data-test-block-menu="archive"]')
     } catch (err) {
       isElementVisible = false
     }

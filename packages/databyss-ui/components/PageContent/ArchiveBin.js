@@ -100,7 +100,7 @@ export const ArchiveBin = ({ pages }) => {
       icon: <LinkSvg />,
       label: 'Copy link',
       action: () => onCopyLink(),
-
+      actionType: 'copy-link',
       // TODO: detect platform and render correct modifier key
       // shortcut: 'Ctrl + Del',
     },
@@ -111,6 +111,7 @@ export const ArchiveBin = ({ pages }) => {
       icon: <ArchiveSvg />,
       label: 'Archive',
       action: () => onArchivePress(),
+      actionType: 'archive',
       // TODO: detect platform and render correct modifier key
       // shortcut: 'Ctrl + Del',
     })
@@ -170,7 +171,7 @@ export const ArchiveBin = ({ pages }) => {
             {menuItems.map(menuItem => (
               <DropdownListItem
                 {...menuItem}
-                action="archive"
+                action={menuItem.actionType}
                 onPress={() => menuItem.action()}
                 onKeyDown={handleEscKey}
                 key={menuItem.label}
