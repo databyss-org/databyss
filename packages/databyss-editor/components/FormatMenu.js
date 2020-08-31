@@ -136,6 +136,7 @@ const isBackwards = () => {
 }
 
 const FormatMenu = () => {
+  const ref = useRef()
   const editor = useSlate()
   const [menuActive, setMenuActive] = useState(false)
   const [isSelectionBackwards, setIsSelectionBackwards] = useState(false)
@@ -143,8 +144,6 @@ const FormatMenu = () => {
     top: -200,
     left: -200,
   })
-  // const [menuActive, setMenuActive] = useState(false)
-  const ref = useRef()
 
   const { selection } = editor
   const _selection = slateSelectionToStateSelection(editor)
@@ -179,29 +178,35 @@ const FormatMenu = () => {
     [JSON.stringify(_selection)]
   )
 
-  useEffect(() => {
-    if (
-      !selection ||
-      !ReactEditor.isFocused(editor) ||
-      Range.isCollapsed(selection) ||
-      Editor.string(editor, selection) === '' ||
-      isSelectionAtomic(editor)
-    ) {
-      setMenuActive(false)
+  const dontShowMenu =
+    !selection ||
+    !ReactEditor.isFocused(editor) ||
+    Range.isCollapsed(selection) ||
+    Editor.string(editor, selection) === '' ||
+    isSelectionAtomic(editor)
+
+  useEffect(
+    () => {
+      if (dontShowMenu) {
+        setMenuActive(false)
+      }
+    },
+    [editor.selection]
+  )
+
+  useEventListener('mouseup', e => {
+    const isTextSelected = window.getSelection().isCollapsed === false
+
+    if (isTextSelected) {
+      getPosition()
+      setMenuActive(true)
     }
   })
 
-  useEventListener('mouseup', e => {
-    setMenuActive(true)
-    getPosition()
-  })
-
   return (
-    menuActive && (
-      <HoveringToolbar showToolbar={menuActive} position={position} ref={ref}>
-        {formatActionButtons()}
-      </HoveringToolbar>
-    )
+    <HoveringToolbar showToolbar={menuActive} position={position} ref={ref}>
+      {formatActionButtons()}
+    </HoveringToolbar>
   )
 }
 
