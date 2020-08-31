@@ -56,7 +56,7 @@ router.get(
     const atomicId = req.params.id
 
     const results = await BlockRelation.find({
-      relatedBlockId: atomicId,
+      relatedBlock: atomicId,
       ...getBlockRelationsAccountQueryMixin(req),
     })
 

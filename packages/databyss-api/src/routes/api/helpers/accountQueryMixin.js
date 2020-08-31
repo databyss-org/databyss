@@ -10,10 +10,10 @@ export const getBlockAccountQueryMixin = req =>
 export const getBlockRelationsAccountQueryMixin = req =>
   req.asAccount && req.publicPages
     ? {
-        blockId: { $in: req.publicPages[0].blocks.map(b => b._id) },
+        block: { $in: req.publicPages[0].blocks.map(b => b._id) },
       }
     : {
-        accountId: req.account._id,
+        account: req.account._id,
       }
 
 export const getPageAccountQueryMixin = req =>
