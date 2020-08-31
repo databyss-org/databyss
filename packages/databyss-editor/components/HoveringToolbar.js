@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { forwardRef } from 'react'
 import ReactDOM from 'react-dom'
 import { ThemeProvider } from 'emotion-theming'
 import { Grid, View } from '@databyss-org/ui/primitives'
@@ -12,112 +12,115 @@ import {
   slateSelectionToStateSelection,
 } from './../lib/slateUtils'
 
-const isBackwards = () => {
-  const selection = window.getSelection()
-  const range = document.createRange()
-  try {
-    range.setStart(selection.anchorNode, selection.anchorOffset)
-    range.setEnd(selection.focusNode, selection.focusOffset)
+// const isBackwards = () => {
+//   const selection = window.getSelection()
+//   const range = document.createRange()
+//   try {
+//     range.setStart(selection.anchorNode, selection.anchorOffset)
+//     range.setEnd(selection.focusNode, selection.focusOffset)
 
-    const backwards = range.collapsed
-    range.detach()
-    return backwards
-  } catch {
-    return false
-  }
-}
+//     const backwards = range.collapsed
+//     range.detach()
+//     return backwards
+//   } catch {
+//     return false
+//   }
+// }
 
 const Portal = ({ children }) => ReactDOM.createPortal(children, document.body)
 
-const _activeCss = {
-  pointerEvents: 'all',
-  opacity: 1,
-}
-
-const _css = position => ({
+const _css = (position, showToolbar) => ({
   paddingLeft: 'small',
   paddingRight: 'small',
   backgroundColor: 'background.0',
   zIndex: 'menu',
-  pointerEvents: 'none',
+  pointerEvents: showToolbar ? 'all' : 'none',
   marginTop: pxUnits(-6),
   position: 'absolute',
-  opacity: 0,
+  opacity: showToolbar ? 1 : 0,
   transition: `opacity ${theme.timing.quick}ms ease`,
   borderRadius,
   ...position,
 })
 
-const _position = { top: -200, left: -200 }
+const HoveringToolbar = forwardRef(
+  ({ children, position, showToolbar }, ref) => (
+    // const ref = useRef()
+    // const editor = useSlate()
+    // const [isSelectionBackwards, setIsSelectionBackwards] = useState(false)
 
-const HoveringToolbar = ({ children }) => {
-  const ref = useRef()
-  const editor = useSlate()
-  const [isSelectionBackwards, setIsSelectionBackwards] = useState(false)
+    // const _selection = slateSelectionToStateSelection(editor)
 
-  const _selection = slateSelectionToStateSelection(editor)
+    // if selection is backwards, keep that in local state, rerenders will reset backwards selection
+    // useEffect(
+    //   () => {
+    //     if (editor.selection && !Range.isCollapsed(editor.selection)) {
+    //       const __isBackwards = isBackwards()
+    //       setIsSelectionBackwards(__isBackwards)
+    //     }
+    //   },
+    //   [JSON.stringify(_selection)]
+    // )
 
-  // if selection is backwards, keep that in local state, rerenders will reset backwards selection
-  useEffect(
-    () => {
-      if (editor.selection && !Range.isCollapsed(editor.selection)) {
-        const __isBackwards = isBackwards()
-        setIsSelectionBackwards(__isBackwards)
-      }
-    },
-    [JSON.stringify(_selection)]
-  )
+    // useEffect(() => {
+    //   const el = ref.current
+    //   const { selection } = editor
 
-  useEffect(() => {
-    const el = ref.current
-    const { selection } = editor
+    //   if (!el) {
+    //     return
+    //   }
 
-    if (!el) {
-      return
-    }
-
-    if (
-      !selection ||
-      !ReactEditor.isFocused(editor) ||
-      Range.isCollapsed(selection) ||
-      Editor.string(editor, selection) === '' ||
-      isSelectionAtomic(editor)
-    ) {
-      el.removeAttribute('style')
-      return
-    }
+    //   if (
+    //     !selection ||
+    //     !ReactEditor.isFocused(editor) ||
+    //     Range.isCollapsed(selection) ||
+    //     Editor.string(editor, selection) === '' ||
+    //     isSelectionAtomic(editor)
+    //   ) {
+    //     el.removeAttribute('style')
+    //     return
+    //   }
 
     // TODO
     // Range.isBackward(selection) does not work
 
-    const _isBackwards = isSelectionBackwards
+    // const _isBackwards = isSelectionBackwards
 
-    const domSelection = window.getSelection()
+    // const domSelection = window.getSelection()
 
-    const domRange = domSelection.getRangeAt(0)
+    // const domRange = domSelection.getRangeAt(0)
 
     // get selected dom nodes
-    const _rects = domRange.getClientRects()
-    const _length = _rects.length
-    const rect = !_isBackwards ? _rects[_length - 1] : _rects[0]
+    // const _rects = domRange.getClientRects()
+    // const _length = _rects.length
+    // const rect = !_isBackwards ? _rects[_length - 1] : _rects[0]
 
-    el.style.opacity = 1
-    el.style.top = `${rect.top + window.pageYOffset - el.offsetHeight}px`
-    el.style.left = `${rect.left +
-      window.pageXOffset +
-      (_isBackwards ? 0 : rect.width)}px`
-  })
+    // el.style.opacity = 1
+    // el.style.top = pxUnits(rect.top + window.pageYOffset - el.clientHeight)
+    // el.style.left = pxUnits(
+    //   rect.left + window.pageXOffset + (_isBackwards ? 0 : rect.width)
+    // )
 
-  return (
     <Portal>
       <ThemeProvider theme={darkTheme}>
         <View
-          css={[
-            styledCss(_css(_position))(darkTheme),
-            styledCss(_activeCss)(darkTheme),
-          ]}
-          //   {...others}
+          css={styledCss(
+            _css(
+              {
+                top: position.top,
+                left: position.left,
+                right: position.right,
+                bottom: position.bottom,
+              },
+              showToolbar
+            )
+          )}
           ref={ref}
+          // css={[
+          //   styledCss(_css(_position))(darkTheme),
+          //   styledCss(_activeCss)(darkTheme),
+          // ]}
+          //   {...others}
         >
           <Grid singleRow columnGap={0} flexWrap="nowrap">
             {children}
@@ -126,6 +129,13 @@ const HoveringToolbar = ({ children }) => {
       </ThemeProvider>
     </Portal>
   )
+)
+
+HoveringToolbar.defaultProps = {
+  position: {
+    top: -200,
+    left: -200,
+  },
 }
 
 export default HoveringToolbar
