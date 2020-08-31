@@ -18,6 +18,7 @@ export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
         }
       : { 'x-databyss-as-account': `${getAccountFromLocation()}` }
 
+  console.log(_account)
   return request(
     process.env.API_URL + path,
     {
