@@ -3,6 +3,8 @@ import { useParams, useLocation, Router } from '@reach/router'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { View } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
@@ -17,6 +19,8 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
   const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
 
   const [editorPath, setEditorPath] = useState(null)
+  const { isPublicAccount } = useSessionContext()
+
   const headerRef = useRef()
   const editorRef = useRef()
   const editorWindowRef = useRef()
@@ -64,7 +68,9 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
 
   return (
     <View height="100vh" overflow="scroll" ref={editorWindowRef}>
-      <PageSticky pagePath={editorPath} pageId={page._id} />
+      {!isPublicAccount() && (
+        <PageSticky pagePath={editorPath} pageId={page._id} />
+      )}
       <View pl="medium" pr="medium" pb="medium">
         <View
           mr="medium"

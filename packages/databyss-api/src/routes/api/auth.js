@@ -10,12 +10,17 @@ const router = express.Router()
 // @access   Public
 router.post('/', auth, async (req, res) => {
   try {
-    const session = await getSessionFromUserId(req.user.id)
-    res.json({ data: { session } })
+    if (req?.user) {
+      const session = await getSessionFromUserId(req.user.id)
+      return res.json({ data: { session } })
+    }
+    return res
+      .json({ data: { isPublic: true, accountId: req.asAccount } })
+      .status(200)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server Error')
-    throw new Error('err')
+    return res.status(500).send('Server Error')
+    // throw new Error('err')
   }
 })
 

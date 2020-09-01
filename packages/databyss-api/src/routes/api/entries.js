@@ -8,6 +8,11 @@ import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import wrap from '../../lib/guardedAsync'
 import { addRelationships } from '../../lib/entries'
+import {
+  getBlockRelationsAccountQueryMixin,
+  getBlockAccountQueryMixin,
+  getPageAccountQueryMixin,
+} from './helpers/accountQueryMixin'
 
 const router = express.Router()
 
@@ -46,13 +51,13 @@ router.post(
 // @access   Private
 router.get(
   '/relations/:id',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
     const atomicId = req.params.id
 
     const results = await BlockRelation.find({
       relatedBlock: atomicId,
-      account: req.account._id,
+      ...getBlockRelationsAccountQueryMixin(req),
     })
 
     // sort according to block index
@@ -91,7 +96,7 @@ router.get(
 // @access   Private
 router.post(
   '/search/',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   async (req, res) => {
     try {
       // todo: regex escape function
@@ -99,11 +104,12 @@ router.post(
         .replace(/[^a-z0-9À-ú- ]/gi, '')
         .split(' ')
 
+      // list of blocks
       let results = await Block.find({
         $text: {
           $search: queryArray.join(' '),
         },
-        account: req.account._id,
+        ...getBlockAccountQueryMixin(req),
         type: 'ENTRY',
       })
 
@@ -113,7 +119,7 @@ router.post(
           // get page where entry is found
           const _page = await Page.findOne({
             'blocks._id': r._id,
-            account: req.account._id,
+            ...getPageAccountQueryMixin(req),
           })
 
           return Object.assign({ page: _page }, r._doc)
