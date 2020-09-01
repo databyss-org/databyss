@@ -8,8 +8,6 @@ import {
 
 const FETCH_TIMEOUT = process.env.FETCH_TIMEOUT
 
-console.log(process.env)
-
 function checkStatus(response) {
   if (response.status >= 200 && response.status < 300) {
     return response
