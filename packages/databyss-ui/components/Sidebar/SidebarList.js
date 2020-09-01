@@ -5,14 +5,9 @@ import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import TopicsSvg from '@databyss-org/ui/assets/topics.svg'
-import {
-  Text,
-  View,
-  BaseControl,
-  Grid,
-  Icon,
-} from '@databyss-org/ui/primitives'
+import { View, Icon } from '@databyss-org/ui/primitives'
 import { useLocation } from '@reach/router'
+import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 
 const menuSvgs = type =>
   ({
@@ -22,70 +17,63 @@ const menuSvgs = type =>
     topics: <TopicsSvg />,
   }[type])
 
-const SidebarList = ({ menuItems, query, ...others }) => {
+const SidebarList = ({ menuItems, query, height, ...others }) => {
   const { getTokensFromPath } = useNavigationContext()
   const location = useLocation()
   const tokens = getTokensFromPath()
 
   const getHref = item => {
     if (item.params) {
-      return `${item.route}${query ? '?' : '/'}${item.params}`
+      return `${item.route}${query || item.type === 'authors' ? '?' : '/'}${
+        item.params
+      }`
     }
     return `${item.route}`
   }
 
-  const padding = 26
-  const headerHeight = 34
-  const footerHeight = 48
-  const searchBar = 54
-
-  const totalHeight = pxUnits(padding + headerHeight + footerHeight + searchBar)
+  const getActiveItem = item => {
+    // For authors the url structure changes to query parameters separated by '?'
+    if (location.search) {
+      return `?${item.params}` === location.search
+    }
+    // For topics, pages, and search, the url is separated by id or search param with a '/'
+    if (item.params) {
+      return item.params === tokens.params
+    }
+    // For index pages
+    if (!location.search) {
+      return item.route === location.pathname
+    }
+    return false
+  }
 
   return (
     <View
       width="100%"
-      height={`calc(100vh - ${totalHeight})`}
+      height={height}
       overflow="scroll"
       p={pxUnits(0)}
-      mt="extraSmall"
       {...others}
     >
       {menuItems.map((item, index) => {
-        const _isActive = item.params
-          ? item.params === tokens.params
-          : item.route === location.pathname
-
         if (item.text) {
           return (
-            <BaseControl
-              data-test-element={`page-sidebar-${index}`}
-              backgroundColor={_isActive ? 'control.1' : 'transparent'}
-              py="small"
-              px="em"
-              key={index}
-              width="100%"
+            <SidebarListItem
+              isActive={getActiveItem(item)}
+              text={item.text}
               href={getHref(item)}
-              css={{
-                textDecoration: 'none',
-                boxSizing: 'border-box',
-              }}
-            >
-              <Grid singleRow flexWrap="nowrap" columnGap="small">
+              key={`${item.type}-${index}`}
+              index={index}
+              icon={
                 <Icon
                   sizeVariant="tiny"
-                  color={_isActive ? 'text.1' : 'text.3'}
+                  color={getActiveItem(item) ? 'text.1' : 'text.3'}
                   mt={pxUnits(2)}
                 >
                   {item.icon ? item.icon : menuSvgs(item.type)}
                 </Icon>
-                <Text
-                  variant="uiTextSmall"
-                  color={_isActive ? 'text.1' : 'text.3'}
-                >
-                  {item.text}
-                </Text>
-              </Grid>
-            </BaseControl>
+              }
+            />
           )
         }
         return null

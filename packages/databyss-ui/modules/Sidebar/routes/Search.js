@@ -1,89 +1,106 @@
-import React, { useEffect } from 'react'
-import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
+import React, { useEffect, useCallback, useState } from 'react'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import {
-  Text,
-  View,
-  BaseControl,
-  Grid,
-  Separator,
-} from '@databyss-org/ui/primitives'
+import { Text, View } from '@databyss-org/ui/primitives'
 import SearchInputContainer from '@databyss-org/ui/components/SearchContent/SearchInputContainer'
+import { debounce } from 'lodash'
+import { sidebarListHeight } from '@databyss-org/ui/modules/Sidebar/Sidebar'
+import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
+import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
+import SidebarSearchResults from '../../../components/Sidebar/SidebarSearchResults'
 
 const Search = () => {
-  const { navigate, getSidebarPath } = useNavigationContext()
+  const {
+    navigate,
+    navigateSidebar,
+    getSidebarPath,
+    getTokensFromPath,
+  } = useNavigationContext()
 
+  const { params } = getTokensFromPath()
   const { searchTerm, setQuery, clearSearchCache } = useEntryContext()
   const menuItem = getSidebarPath()
+
+  const [value, setValue] = useState({ textValue: searchTerm })
+
+  // wait until user stopped typing for 200ms before setting the value
+  const debounced = useCallback(
+    debounce(val => {
+      setQuery(val)
+    }, 200),
+    [setQuery]
+  )
+  useEffect(
+    () => {
+      debounced(value)
+    },
+    [value]
+  )
 
   const clear = () => {
     clearSearchCache()
     setQuery({ textValue: '' })
+    setValue({ textValue: '' })
   }
 
-  // reset search on unmount
-  useEffect(() => () => clear(), [])
-
-  const onChange = val => {
-    setQuery(val)
-  }
+  const encodedSearchTerm = encodeURI(searchTerm.replace(/\?/g, ''))
 
   const onSearchClick = () => {
     // encode the search term and remove '?'
-    navigate(`/search/${encodeURI(searchTerm.replace(/\?/g, ''))}`)
+    navigate(`/search/${encodedSearchTerm}`)
+    navigateSidebar('/search')
   }
 
   return (
-    <SearchInputContainer
-      placeholder="Search"
-      value={{ textValue: searchTerm }}
-      onChange={onChange}
-      onKeyDown={e => {
-        if (e.key === 'Enter') {
-          onSearchClick()
-        }
-      }}
-      onClear={clear}
-    >
+    <>
+      <SearchInputContainer
+        placeholder="Search"
+        value={value}
+        onChange={setValue}
+        onKeyDown={e => {
+          if (e.key === 'Enter') {
+            onSearchClick()
+          }
+        }}
+        onClear={clear}
+        onClick={() => navigateSidebar('/search')}
+        autoFocus={menuItem === 'search'}
+        textColor={menuItem === 'search' ? 'text.2' : 'text.3'}
+      />
       {searchTerm &&
         menuItem === 'search' && (
-          <View height="40px" pt="medium" pb="medium">
-            <EntrySearchLoader query={searchTerm}>
-              {results => (
-                <BaseControl onClick={onSearchClick}>
-                  <Separator color="border.1" />
-                  <View justifyContent="center" p="small" position="relative">
-                    <Grid singleRow alignItems="center" p="small">
-                      <View>
-                        <Grid columnGap="none">
-                          <Text variant="uiTextTiny" color="text.2">
-                            A
-                          </Text>
-                          <Text variant="uiTextTinyItalic" color="text.2">
-                            a
-                          </Text>
-                        </Grid>
-                      </View>
-
-                      <Text variant="uiTextSmall" color="text.2">
-                        {results.count}{' '}
-                        {results.count !== 1 ? 'entries' : 'entry'}
-                      </Text>
-                      <View position="absolute" right="0px">
-                        <Text variant="uiTextTiny" color="text.2">
-                          ENTER
-                        </Text>
-                      </View>
-                    </Grid>
-                  </View>
-                  <Separator color="border.1" />
-                </BaseControl>
-              )}
-            </EntrySearchLoader>
+          <View height={sidebarListHeight} overflow="scroll">
+            <SidebarListItem
+              onPress={onSearchClick}
+              isActive={encodedSearchTerm === params}
+              text="Find in notes"
+              id="sidebarListItem-entry-search"
+              icon={
+                <View
+                  flexDirection="row"
+                  alignItems="center"
+                  justifyContent="center"
+                  width={iconSizeVariants.tiny.width}
+                >
+                  <Text variant="uiTextTiny" color="text.3">
+                    A
+                  </Text>
+                  <Text variant="uiTextTinyItalic" color="text.3">
+                    a
+                  </Text>
+                </View>
+              }
+            >
+              <View>
+                <Text variant="uiTextTiny" color="text.3">
+                  ENTER
+                </Text>
+              </View>
+            </SidebarListItem>
+            <SidebarSearchResults filterQuery={{ textValue: searchTerm }} />
           </View>
         )}
-    </SearchInputContainer>
+    </>
   )
 }
 

@@ -24,8 +24,8 @@ router.post('/', auth, async (req, res) => {
 // @access   Public
 router.post('/code', async (req, res) => {
   try {
-    const { code } = req.body
-    const query = Login.findOne({ code })
+    const { code, email } = req.body
+    const query = Login.findOne({ email, code })
     query.exec((err, login) => {
       if (err) {
         console.error(err.message)

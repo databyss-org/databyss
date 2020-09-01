@@ -1,4 +1,7 @@
+import ObjectID from 'bson-objectid'
 import Block from '../models/Block'
+import BlockRelation from '../models/BlockRelation'
+import Page from '../models/Page'
 import Selection from '../models/Selection'
 
 export const getAtomicClosureText = (type, text) =>
@@ -134,4 +137,59 @@ export const runPatches = async (p, req) => {
     }
     default:
   }
+}
+
+/**
+ * Copies page with @pageId to account with _id @toAccountId
+ * Also copies all referenced Blocks and BlockRelations
+ * @returns new page _id
+ */
+export const copyPage = async ({ pageId, toAccountId }) => {
+  // Load Page, Block, and BlockRelation records...
+  const _page = await Page.findOne({
+    _id: pageId,
+  })
+  const _blocks = await Block.find({
+    _id: { $in: _page.blocks.map(b => b._id) },
+  })
+  const _blockRelations = await BlockRelation.find({
+    page: _page._id,
+  })
+  // Reset Page, Block and BlockRelation _ids and account
+  const _pageObj = _page.toObject()
+  _pageObj._id = new ObjectID().toHexString()
+  _pageObj.account = toAccountId
+  delete _pageObj.selection
+
+  // map of original block _ids to copied block _ids
+  const _blockIdMap = {}
+
+  for (const _block of _blocks) {
+    const _blockObj = _block.toObject()
+    _blockObj._id = new ObjectID().toHexString()
+    _blockObj.account = toAccountId
+    await new Block(_blockObj).save()
+    _blockIdMap[_block._id] = _blockObj._id
+    const _pageBlock = _pageObj.blocks.find(
+      b => b._id.toString() === _block._id.toString()
+    )
+    _pageBlock._id = _blockObj._id
+  }
+
+  await new Page(_pageObj).save()
+
+  for (const _blockRelation of _blockRelations) {
+    const _blockRelationObj = _blockRelation.toObject()
+    _blockRelationObj._id = new ObjectID().toHexString()
+    _blockRelationObj.account = toAccountId
+    _blockRelationObj.page = _pageObj._id
+    _blockRelationObj.block = _blockIdMap[_blockRelation.block]
+    _blockRelationObj.relatedBlock = _blockIdMap[_blockRelation.relatedBlock]
+    if (!_blockRelationObj.block || !_blockRelationObj.relatedBlock) {
+      throw new Error('Missing blockIdMap entry or entries')
+    }
+    await new BlockRelation(_blockRelationObj).save()
+  }
+
+  return _pageObj._id
 }
