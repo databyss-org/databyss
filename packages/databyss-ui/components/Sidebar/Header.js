@@ -4,6 +4,7 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 
 const Header = () => {
   const { navigateSidebar } = useNavigationContext()
+
   const onHeaderClick = () => {
     navigateSidebar('/')
   }

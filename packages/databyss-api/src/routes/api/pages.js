@@ -176,7 +176,6 @@ router.get(
       archive: page.archive,
       blocks,
       selection,
-      // TODO: this onlyl returns the first value in the array
       publicAccountId: page.sharedWith?.[0]?.account,
     }
 
