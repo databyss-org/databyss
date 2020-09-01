@@ -3,14 +3,13 @@ import { Button, Text, View } from '@databyss-org/ui/primitives'
 import { useEditor, ReactEditor, useSlate } from '@databyss-org/slate-react'
 import { isMobileOs } from '@databyss-org/ui/'
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import { Node, Editor, Range } from '@databyss-org/slate'
+import { Editor, Range } from '@databyss-org/slate'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import HoveringToolbar from './HoveringToolbar'
 import {
   isFormatActive,
   toggleMark,
   isSelectionAtomic,
-  slateSelectionToStateSelection,
 } from './../lib/slateUtils'
 
 const mobileActions = [
@@ -120,20 +119,8 @@ const MarkButton = ({ type, label, variant, ...others }) => {
   )
 }
 
-const isBackwards = () => {
-  const selection = window.getSelection()
-  const range = document.createRange()
-  try {
-    range.setStart(selection.anchorNode, selection.anchorOffset)
-    range.setEnd(selection.focusNode, selection.focusOffset)
-
-    const backwards = range.collapsed
-    range.detach()
-    return backwards
-  } catch {
-    return false
-  }
-}
+const isBackwards = domSelection =>
+  domSelection.anchorOffset - domSelection.focusOffset > 0
 
 const FormatMenu = () => {
   const ref = useRef()
@@ -146,12 +133,12 @@ const FormatMenu = () => {
   })
 
   const { selection } = editor
-  const _selection = slateSelectionToStateSelection(editor)
+  const domSelection = window.getSelection()
 
   const getPosition = () => {
     const el = ref.current
     const _isBackwards = isSelectionBackwards
-    const domSelection = window.getSelection()
+
     const domRange = domSelection.getRangeAt(0)
 
     // get selected dom nodes
@@ -171,22 +158,22 @@ const FormatMenu = () => {
   useEffect(
     () => {
       if (editor.selection && !Range.isCollapsed(editor.selection)) {
-        const __isBackwards = isBackwards()
+        const __isBackwards = isBackwards(domSelection)
         setIsSelectionBackwards(__isBackwards)
       }
     },
-    [JSON.stringify(_selection)]
+    [domSelection.isCollapsed]
   )
-
-  const dontShowMenu =
-    !selection ||
-    !ReactEditor.isFocused(editor) ||
-    Range.isCollapsed(selection) ||
-    Editor.string(editor, selection) === '' ||
-    isSelectionAtomic(editor)
 
   useEffect(
     () => {
+      const dontShowMenu =
+        !selection ||
+        !ReactEditor.isFocused(editor) ||
+        Range.isCollapsed(selection) ||
+        Editor.string(editor, selection) === '' ||
+        isSelectionAtomic(editor)
+
       if (dontShowMenu) {
         setMenuActive(false)
       }
@@ -194,8 +181,8 @@ const FormatMenu = () => {
     [editor.selection]
   )
 
-  useEventListener('mouseup', e => {
-    const isTextSelected = window.getSelection().isCollapsed === false
+  useEventListener('mouseup', () => {
+    const isTextSelected = domSelection.isCollapsed === false
 
     if (isTextSelected) {
       getPosition()
