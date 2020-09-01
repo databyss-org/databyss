@@ -46,6 +46,7 @@ export const pageMiddleware = wrap(async (req, _res, next) => {
   ) {
     page.readOnly = true
   } else if (!(req?.account?._id.toString() === page.account.toString())) {
+    // TODO: this throws 'Report not sent due to beforeSend callback' on server
     return next(new InsufficientPermissionError())
   }
 

@@ -6,12 +6,9 @@ dotenv.config()
 
 async function auth(req, res, next) {
   // check if current account is public account
-  const _isPublic = await checkForPublicAccount(req)
+  const reqHasSharedAccount = await checkForPublicAccount(req)
 
-  if (_isPublic) {
-    if (_isPublic instanceof Error) {
-      return res.status(401).json({ msg: 'Not authorized' })
-    }
+  if (reqHasSharedAccount) {
     return next()
   }
 

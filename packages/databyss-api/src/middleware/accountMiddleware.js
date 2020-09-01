@@ -1,6 +1,5 @@
 import Account from '../models/Account'
 import Page from '../models/Page'
-import { ApiError } from '../lib/Errors'
 
 function checkRequiredRoles(requiredRoles, userRoles) {
   return requiredRoles.filter(value => userRoles.includes(value)).length > 0

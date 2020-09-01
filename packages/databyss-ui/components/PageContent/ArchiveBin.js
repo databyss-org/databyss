@@ -194,7 +194,9 @@ export const ArchiveBin = ({ pages }) => {
               bottomBorder="1px"
               alignItems="center"
             >
-              <Text variant="uiTextSmall">Page is public</Text>
+              <Text variant="uiTextSmall">
+                Page is {isPagePublic ? 'public' : 'private'}
+              </Text>
               <SwitchControl value={isPagePublic} onChange={togglePublicPage} />
             </View>
             {getPublicAccount(params).length || menuItems.length ? (
