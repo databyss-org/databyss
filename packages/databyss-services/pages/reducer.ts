@@ -18,6 +18,7 @@ import {
   QUEUE_PATCH,
   REMOVE_PAGE_FROM_CACHE,
   PATCH,
+  SET_PAGE_PUBLIC,
   CACHE_PUBLIC_PAGE,
 } from './constants'
 import { resourceIsReady } from '../lib/util'
@@ -103,7 +104,10 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
       draft.headerCache = _headerCache
       break
     }
-
+    case SET_PAGE_PUBLIC: {
+      draft.cache[action.payload.id].publicAccountId = new ResourcePending()
+      break
+    }
     // TODO: SET_PUBLIC_PAGE IS SETTING publicAccountId TO RESOURCE PENDING AND place that in a loader
     case CACHE_PUBLIC_PAGE: {
       draft.cache[action.payload.id].publicAccountId = action.payload.accountId

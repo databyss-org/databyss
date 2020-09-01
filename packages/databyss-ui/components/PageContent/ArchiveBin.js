@@ -8,7 +8,10 @@ import {
   SwitchControl,
   Text,
   Separator,
+  Dialog,
+  Button,
 } from '@databyss-org/ui/primitives'
+import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
@@ -36,6 +39,7 @@ export const ArchiveBin = ({ pages }) => {
   const { account } = getSession()
   const [showMenu, setShowMenu] = useState(false)
   const [isPagePublic, setIsPagePublic] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
 
   const { getTokensFromPath, navigate } = useNavigationContext()
 
@@ -46,6 +50,8 @@ export const ArchiveBin = ({ pages }) => {
   const getPage = usePageContext(c => c.getPage)
 
   const setPagePublic = usePageContext(c => c.setPagePublic)
+
+  const getPublicAccount = usePageContext(c => c.getPublicAccount)
 
   const canBeArchived = Object.values(pages).filter(p => !p.archive).length > 1
 
@@ -92,19 +98,11 @@ export const ArchiveBin = ({ pages }) => {
     }/${_accountId}/pages/${params}`
 
     copyToClipboard(baseUrl)
+    setShowMenu(false)
+    setIsVisible(true)
   }
 
-  // TODO: make the copy link a loader
-  const menuItems = [
-    {
-      icon: <LinkSvg />,
-      label: 'Copy link',
-      action: () => onCopyLink(),
-      actionType: 'copy-link',
-      // TODO: detect platform and render correct modifier key
-      // shortcut: 'Ctrl + Del',
-    },
-  ]
+  const menuItems = []
 
   if (canBeArchived) {
     menuItems.push({
@@ -128,6 +126,35 @@ export const ArchiveBin = ({ pages }) => {
     }
     setIsPagePublic(!isPagePublic)
   }
+
+  const SharedPageLoader = ({ children }) => (
+    <MakeLoader resources={getPublicAccount(params)} children={children} />
+  )
+
+  const DropdownList = () => (
+    <>
+      <SharedPageLoader>
+        {res =>
+          res.length ? (
+            <DropdownListItem
+              icon={<LinkSvg />}
+              action="copy-link"
+              label="Copy public link"
+              onPress={onCopyLink}
+            />
+          ) : null
+        }
+      </SharedPageLoader>
+      {menuItems.map(menuItem => (
+        <DropdownListItem
+          {...menuItem}
+          action={menuItem.actionType}
+          onPress={() => menuItem.action()}
+          key={menuItem.label}
+        />
+      ))}
+    </>
+  )
 
   return (
     <View
@@ -170,19 +197,20 @@ export const ArchiveBin = ({ pages }) => {
               <Text variant="uiTextSmall">Page is public</Text>
               <SwitchControl value={isPagePublic} onChange={togglePublicPage} />
             </View>
-            <Separator color="border.2" />
-            {menuItems.map(menuItem => (
-              <DropdownListItem
-                {...menuItem}
-                action={menuItem.actionType}
-                onPress={() => menuItem.action()}
-                onKeyDown={handleEscKey}
-                key={menuItem.label}
-              />
-            ))}
+            {getPublicAccount(params).length || menuItems.length ? (
+              <Separator color="border.2" />
+            ) : null}
+            <DropdownList />
           </DropdownContainer>
         </ClickAwayListener>
       )}
+      <Dialog
+        visible={isVisible}
+        onDismiss={() => setIsVisible(false)}
+        name="Ok Dialog"
+        message="copied to clipboard"
+        confirmButton={<Button variant="secondaryUi">Ok</Button>}
+      />
     </View>
   )
 }

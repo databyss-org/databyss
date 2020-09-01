@@ -36,6 +36,7 @@ interface ContextType {
     refOne: React.Ref<HTMLInputElement>
   ) => void
   getBlockRefByIndex: (index: number) => React.Ref<HTMLInputElement>
+  getPublicAccount: (id: string) => string | string[]
 }
 
 const useReducer = createReducer()
@@ -156,6 +157,12 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(actions.setPagePublic(id, bool, accountId))
   }
 
+  const getPublicAccount = useCallback(
+    (id: string) =>
+      state.cache[id].publicAccountId ? state.cache[id].publicAccountId : [],
+    [JSON.stringify(state.cache)]
+  )
+
   return (
     <PageContext.Provider
       value={{
@@ -174,6 +181,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         setPagePublic,
         hasPendingPatches,
         removePageFromCache,
+        getPublicAccount,
       }}
     >
       {children}
