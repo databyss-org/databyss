@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
+import { debounce } from 'lodash'
 import { Text } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useEditorContext } from '../state/EditorProvider'
@@ -25,7 +26,7 @@ const Editor = ({
   }
 
   if (entryContext) {
-    searchTerm = escapeRegExp(entryContext.searchTerm)
+    searchTerm = escapeRegExp(entryContext.pageSearchTerm)
   }
 
   const readOnly = !others.onChange || readonly
@@ -41,6 +42,10 @@ const Editor = ({
   const decorate = useCallback(
     ([node, path]) => {
       const ranges = []
+
+      if (!searchTerm.length) {
+        return ranges
+      }
       // search each word individually
       const _searchTerm = searchTerm.split(' ')
 
@@ -61,19 +66,21 @@ const Editor = ({
               )
             )
 
-          let offset = 0
+          if (parts.length > 1) {
+            let offset = 0
 
-          parts.forEach((part, i) => {
-            if (i !== 0) {
-              ranges.push({
-                anchor: { path, offset: offset - word.length },
-                focus: { path, offset },
-                highlight: true,
-              })
-            }
+            parts.forEach((part, i) => {
+              if (i !== 0) {
+                ranges.push({
+                  anchor: { path, offset: offset - word.length },
+                  focus: { path, offset },
+                  highlight: true,
+                })
+              }
 
-            offset = offset + part.length + word.length
-          })
+              offset = offset + part.length + word.length
+            })
+          }
         }
       })
 

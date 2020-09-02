@@ -6,12 +6,14 @@ import {
   FETCH_BLOCK_RELATIONS,
   CACHE_BLOCK_RELATIONS,
   CLEAR_BLOCK_RELATIONS_CACHE,
+  SET_PAGE_QUERY,
 } from './constants'
 import { ResourcePending } from '../interfaces/ResourcePending'
 
 export const initialState = {
   searchCache: {},
   searchTerm: '',
+  pageSearchTerm: '',
   blockRelationsSearchCache: {},
 }
 
@@ -37,6 +39,12 @@ export default (state, action) => {
       return {
         ...state,
         searchTerm: action.payload.textValue,
+      }
+    }
+    case SET_PAGE_QUERY: {
+      return {
+        ...state,
+        pageSearchTerm: action.payload.textValue,
       }
     }
     case CLEAR_CACHE: {

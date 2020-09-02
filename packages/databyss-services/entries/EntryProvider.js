@@ -10,6 +10,7 @@ import {
   onSetBlockRelations,
   fetchBlockRelations,
   onClearBlockRelationsCache,
+  onSetPageQuery,
 } from './actions'
 
 const THROTTLE_BLOCK_RELATIONS = 1000
@@ -20,7 +21,12 @@ export const EntryContext = createContext()
 
 const EntryProvider = ({ children, initialState, reducer }) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { searchCache, searchTerm, blockRelationsSearchCache } = state
+  const {
+    searchCache,
+    searchTerm,
+    blockRelationsSearchCache,
+    pageSearchTerm,
+  } = state
 
   const blockRelationsQueueRef = useRef([])
 
@@ -35,10 +41,14 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     [searchCache]
   )
 
+  // this value is used to calculate ranges on active page
+  // value is debounced in order to allow atomics to be cached
+  const setPageQuery = debounce(query => dispatch(onSetPageQuery(query)), 500)
+
   const setQuery = query => {
     dispatch(onSetQuery(query))
+    setPageQuery(query)
   }
-
   const clearSearchCache = () => {
     dispatch(onClearCache())
   }
@@ -82,6 +92,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
       value={{
         state,
         searchTerm,
+        pageSearchTerm,
         clearSearchCache,
         setQuery,
         setBlockRelations,

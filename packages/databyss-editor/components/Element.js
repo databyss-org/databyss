@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect, useRef } from 'react'
+import React, { useMemo, useState, useEffect, useRef, useCallback } from 'react'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
@@ -35,7 +35,7 @@ const Element = ({ attributes, children, element }) => {
   let searchTerm = ''
 
   if (entryContext) {
-    searchTerm = entryContext.searchTerm
+    searchTerm = entryContext.pageSearchTerm
   }
   const editor = useEditor()
 
@@ -88,6 +88,25 @@ const Element = ({ attributes, children, element }) => {
       }, SPELLCHECK_DEBOUNCE_TIME)
     },
     [element]
+  )
+
+  // trigger element re-render when search term is in element
+  const isSearchInEntry = useCallback(
+    () =>
+      searchTerm.length &&
+      searchTerm.split(' ').reduce((acc, curr) => {
+        const match = block.text.textValue
+          .replace(/(\n|\t)/g, ' ')
+          .replace(/[^a-z0-9À-ú- ]/gi, '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .match(curr)
+        if (match) {
+          return true
+        }
+        return acc
+      }, false),
+    [searchTerm, block.text.textValue]
   )
 
   return useMemo(
@@ -204,7 +223,7 @@ const Element = ({ attributes, children, element }) => {
       )
     },
     // search term updates element for highlight
-    [block, element, searchTerm, spellCheck, previousBlock?.type]
+    [block, element, isSearchInEntry, spellCheck, previousBlock?.type]
   )
 }
 

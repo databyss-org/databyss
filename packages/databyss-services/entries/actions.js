@@ -9,6 +9,7 @@ import {
   FETCH_BLOCK_RELATIONS,
   CACHE_BLOCK_RELATIONS,
   CLEAR_BLOCK_RELATIONS_CACHE,
+  SET_PAGE_QUERY,
 } from './constants'
 
 export function onSearchEntries(string) {
@@ -30,6 +31,15 @@ export function onSetQuery(query) {
   return dispatch => {
     dispatch({
       type: SET_QUERY,
+      payload: query,
+    })
+  }
+}
+
+export function onSetPageQuery(query) {
+  return dispatch => {
+    dispatch({
+      type: SET_PAGE_QUERY,
       payload: query,
     })
   }
