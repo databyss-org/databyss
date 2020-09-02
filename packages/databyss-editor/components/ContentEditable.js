@@ -208,7 +208,6 @@ const ContentEditable = ({
 
     if (event.key === 'Enter') {
       const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
-
       if (isAtomic(_focusedBlock)) {
         if (
           ReactEditor.isFocused(editor) &&
