@@ -18,7 +18,7 @@ const AuthorsContent = () => {
   return (
     <SourceCitationsLoader>
       {() => (
-        <AuthorsLoader>
+        <AuthorsLoader filtered>
           {authors => {
             const authorData = Object.values(authors).map(value => {
               const getAuthorName = () => {

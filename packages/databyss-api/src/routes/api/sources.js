@@ -6,7 +6,11 @@ import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import wrap from '../../lib/guardedAsync'
 import { ResourceNotFoundError } from '../../lib/Errors'
-import { getBlockAccountQueryMixin } from './helpers/accountQueryMixin'
+import {
+  getBlockAccountQueryMixin,
+  getPageAccountQueryMixin,
+} from './helpers/accountQueryMixin'
+import Page from '../../models/Page'
 
 const router = express.Router()
 
@@ -44,7 +48,7 @@ router.get(
   '/authors',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
-    const blocks = await Block.find({
+    let blocks = await Block.find({
       type: 'SOURCE',
       ...getBlockAccountQueryMixin(req),
     })
@@ -52,8 +56,23 @@ router.get(
     if (!blocks) {
       return res.json([])
     }
-    // group by authors and return array of authors
 
+    // add 'isInPage' property which tags if author appears in page
+    blocks = await Promise.all(
+      blocks.map(async b => {
+        let isInPage = false
+        const _page = await Page.findOne({
+          'blocks._id': b._id,
+          ...getPageAccountQueryMixin(req),
+        })
+        if (_page) {
+          isInPage = true
+        }
+        return { ...b._doc, isInPage }
+      })
+    )
+
+    // group by authors and return array of authors
     const authorsDict = getAuthorsFromSources(blocks)
 
     return res.json(Object.values(authorsDict))
@@ -67,7 +86,7 @@ router.get(
   '/citations',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
-    const blocks = await Block.find({
+    let blocks = await Block.find({
       type: 'SOURCE',
       ...getBlockAccountQueryMixin(req),
     })
@@ -76,16 +95,33 @@ router.get(
       return res.json([])
     }
 
+    // add 'isInPage' property which tags if author appears in page
+    blocks = await Promise.all(
+      blocks.map(async b => {
+        let isInPage = false
+        const _page = await Page.findOne({
+          'blocks._id': b._id,
+          ...getPageAccountQueryMixin(req),
+        })
+        if (_page) {
+          isInPage = true
+        }
+        return { ...b._doc, isInPage }
+      })
+    )
+
     const sourcesCitations = blocks.map(block => {
       const sourcesCitationsDict = pick(block, [
         '_id',
         'text',
         'detail.authors',
         'detail.citations',
+        'isInPage',
       ])
 
       return sourcesCitationsDict
     })
+
     return res.json(sourcesCitations)
   })
 )

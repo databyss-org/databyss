@@ -89,7 +89,7 @@ export const getAuthorData = authors =>
 const Authors = ({ filterQuery, hasIndexPage, height }) => (
   <SourceCitationsLoader>
     {() => (
-      <AuthorsLoader>
+      <AuthorsLoader filtered>
         {authors => {
           const authorData = getAuthorData(authors)
           const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
