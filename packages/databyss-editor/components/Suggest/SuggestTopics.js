@@ -47,13 +47,16 @@ const SuggestTopics = ({
 
   return (
     <AllTopicsLoader onLoad={onTopicsLoaded}>
-      {filteredSuggestions.map(s => (
-        <DropdownListItem
-          label={s.text.textValue}
-          key={s._id}
-          onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
-        />
-      ))}
+      {filteredSuggestions.length
+        ? filteredSuggestions.map(s => (
+            // eslint-disable-next-line react/jsx-indent
+            <DropdownListItem
+              label={s.text.textValue}
+              key={s._id}
+              onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
+            />
+          ))
+        : null}
     </AllTopicsLoader>
   )
 }
