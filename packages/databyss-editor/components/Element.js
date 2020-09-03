@@ -115,8 +115,8 @@ const Element = ({ attributes, children, element }) => {
             }
           }}
           ml={element.isBlock ? blockMenuWidth : 0}
-          pt={vpad}
-          pb="em"
+          mt={vpad}
+          mb="em"
           display={element.isBlock ? 'flex' : 'inline-flex'}
           spellCheck={spellCheck}
           widthVariant="content"
