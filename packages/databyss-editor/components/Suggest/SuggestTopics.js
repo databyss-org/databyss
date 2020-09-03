@@ -17,6 +17,7 @@ const SuggestTopics = ({
 
   const [suggestions, setSuggestions] = useState([])
   const [filteredSuggestions, setFilteredSuggestions] = useState([])
+  const [isDrowpdownVisible, setDropdownVisisble] = useState(true)
 
   const onTopicSelected = topic => {
     // check document to see if page should be added to topic cache
@@ -54,11 +55,20 @@ const SuggestTopics = ({
     [query]
   )
 
-  console.log(filteredSuggestions)
+  useEffect(
+    () => {
+      if (filteredSuggestions.length) {
+        setDropdownVisisble(true)
+      } else {
+        setDropdownVisisble(false)
+      }
+    },
+    [filteredSuggestions.length]
+  )
 
   return (
     <AllTopicsLoader onLoad={onTopicsLoaded}>
-      {filteredSuggestions.length
+      {isDrowpdownVisible
         ? filteredSuggestions.map(s => {
             return (
               // eslint-disable-next-line react/jsx-indent
