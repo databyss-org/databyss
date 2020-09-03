@@ -6,6 +6,7 @@ import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import wrap from '../../lib/guardedAsync'
 import { ResourceNotFoundError } from '../../lib/Errors'
+import { getBlockAccountQueryMixin } from './helpers/accountQueryMixin'
 
 const router = express.Router()
 
@@ -41,12 +42,13 @@ router.post(
 // @access   Private
 router.get(
   '/authors',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
     const blocks = await Block.find({
-      account: req.account._id,
       type: 'SOURCE',
+      ...getBlockAccountQueryMixin(req),
     })
+
     if (!blocks) {
       return res.json([])
     }
@@ -63,12 +65,13 @@ router.get(
 // @access   Private
 router.get(
   '/citations',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
     const blocks = await Block.find({
-      account: req.account._id,
       type: 'SOURCE',
+      ...getBlockAccountQueryMixin(req),
     })
+
     if (!blocks) {
       return res.json([])
     }

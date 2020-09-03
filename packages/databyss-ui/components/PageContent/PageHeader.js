@@ -1,6 +1,7 @@
 import React, { useState, useEffect, forwardRef, useCallback } from 'react'
 import { throttle } from 'lodash'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { View, TextInput } from '@databyss-org/ui/primitives'
 import { theme } from '@databyss-org/ui/theming'
 import styledCss from '@styled-system/css'
@@ -8,6 +9,7 @@ import styledCss from '@styled-system/css'
 const noPageTitle = 'untitled'
 
 const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
+  const { isPublicAccount } = useSessionContext()
   const getPage = usePageContext(c => c.getPage)
   const setPageHeader = usePageContext(c => c.setPageHeader)
 
@@ -52,6 +54,7 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
   return (
     <View p="medium" flexGrow={1} ml="extraSmall">
       <TextInput
+        readonly={isPublicAccount()}
         ref={ref}
         data-test-element="page-header"
         onKeyDown={e => {

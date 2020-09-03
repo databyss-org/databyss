@@ -2,6 +2,7 @@ import React from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import { useNavigate, useLocation, Router } from '@reach/router'
 import createReducer from '@databyss-org/services/lib/createReducer'
+import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import reducer, { initialState } from './reducer'
 import * as actions from './actions'
 
@@ -30,19 +31,23 @@ const NavigationProvider = ({ children }) => {
   const setMenuOpen = bool => dispatch(actions.menuOpen(bool))
 
   const hideModal = () => dispatch(actions.hideModal())
-  const navigate = options => {
-    navigateRouter(options)
+  const navigate = (url, options) => {
+    if (options?.hasAccount) {
+      navigateRouter(url)
+      return
+    }
+    navigateRouter(`/${getAccountFromLocation()}${url}`)
   }
 
   const navigateSidebar = options => dispatch(actions.navigateSidebar(options))
 
   const getTokensFromPath = () => {
     const _path = location.pathname.split('/')
-    let _params = _path[2]
+    let _params = _path[3]
     let _anchor = ''
 
     if (_params === 'authors') {
-      _params = _path[3]
+      _params = _path[4]
     }
 
     if (_params && _params.includes('#')) {
@@ -51,7 +56,7 @@ const NavigationProvider = ({ children }) => {
       _anchor = _str[1]
     }
 
-    return { type: _path[1], params: _params, anchor: _anchor }
+    return { type: _path[2], params: _params, anchor: _anchor }
   }
 
   const getSidebarPath = () => {

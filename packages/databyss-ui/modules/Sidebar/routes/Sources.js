@@ -80,7 +80,8 @@ export const getAuthorData = authors =>
       text: getShortAuthorName(),
       type: 'authors',
       route: '/sources',
-      params: authorParams.toString(),
+      // TODO remove replace statement
+      params: authorParams.toString().replace('25', ''),
       icon: <AuthorSvg />,
     })
   })

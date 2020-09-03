@@ -4,6 +4,7 @@ import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from '@databyss-org/slate-react'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEditorContext } from '../state/EditorProvider'
@@ -31,6 +32,8 @@ export const isAtomicClosure = type =>
   }[type])
 
 const Element = ({ attributes, children, element }) => {
+  const sessionContext = useSessionContext()
+
   const entryContext = useEntryContext()
   let searchTerm = ''
 
@@ -129,17 +132,18 @@ const Element = ({ attributes, children, element }) => {
             mr: 'largest',
           }}
         >
-          {block.__showNewBlockMenu && (
-            <View
-              position="absolute"
-              contentEditable="false"
-              readonly
-              suppressContentEditableWarning
-              left={blockMenuWidth * -1}
-            >
-              <BlockMenu element={element} />
-            </View>
-          )}
+          {block.__showNewBlockMenu &&
+            !sessionContext?.isPublicAccount() && (
+              <View
+                position="absolute"
+                contentEditable="false"
+                readonly
+                suppressContentEditableWarning
+                left={blockMenuWidth * -1}
+              >
+                <BlockMenu element={element} />
+              </View>
+            )}
 
           {block.__showCitationMenu && (
             <View contentEditable="false" suppressContentEditableWarning>

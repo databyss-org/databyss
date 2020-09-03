@@ -66,7 +66,7 @@ describe('app sticky header', () => {
   })
 
   it('should render correct editor path for cursor', async () => {
-    await sleep(500)
+    await sleep(2000)
     await sendKeys(actions, 'this is a page title')
     await enterKey(actions)
     await sendKeys(actions, 'this is a test entry')
@@ -91,7 +91,7 @@ describe('app sticky header', () => {
     await sendKeys(actions, '/#')
     await enterKey(actions)
     await sendKeys(actions, 'last entry')
-    await sleep(10000)
+    await sleep(2000)
 
     // get page path
     let headerSticky = await getElementByTag(

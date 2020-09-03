@@ -9,7 +9,6 @@ import Private from './Private'
 const App = () => {
   const { location } = useNavigationContext()
   const urlParams = new URLSearchParams(location.search)
-
   return (
     <NotifyProvider>
       <ServiceProvider>

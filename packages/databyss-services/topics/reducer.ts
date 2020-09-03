@@ -28,6 +28,10 @@ export default produce((draft: Draft<TopicState>, action: FSA) => {
       break
     }
     case CACHE_TOPIC: {
+      if (action.payload.topic instanceof Error) {
+        draft.cache[action.payload.id] = action.payload.topic
+        break
+      }
       const _topic: Block = { ...action.payload.topic, type: 'TOPIC' }
       draft.cache[action.payload.id] = _topic
       // only populate header if header has been loaded
@@ -42,6 +46,10 @@ export default produce((draft: Draft<TopicState>, action: FSA) => {
       break
     }
     case CACHE_TOPIC_HEADERS: {
+      if (action.payload.topics instanceof Error) {
+        draft.headerCache = action.payload.topics
+        break
+      }
       action.payload.topics.forEach((topic: Topic) => {
         _headerCache[topic._id] = topic
       })
