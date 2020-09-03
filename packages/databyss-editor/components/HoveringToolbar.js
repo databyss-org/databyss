@@ -27,17 +27,19 @@ const HoveringToolbar = forwardRef(
     <Portal>
       <ThemeProvider theme={darkTheme}>
         <View
-          css={styledCss(
-            _css(
-              {
-                top: position.top,
-                left: position.left,
-                right: position.right,
-                bottom: position.bottom,
-              },
-              showToolbar
-            )
-          )}
+          css={[
+            styledCss(
+              _css(
+                {
+                  top: position.top,
+                  left: position.left,
+                  right: position.right,
+                  bottom: position.bottom,
+                },
+                showToolbar
+              )
+            )(darkTheme),
+          ]}
           ref={ref}
         >
           <Grid singleRow columnGap={0} flexWrap="nowrap">

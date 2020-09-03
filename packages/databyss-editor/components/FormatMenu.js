@@ -144,13 +144,17 @@ const FormatMenu = () => {
     // get selected dom nodes
     const _rects = domRange.getClientRects()
     const _length = _rects.length
-    const rect = !_isBackwards ? _rects[_length - 1] : _rects[0]
+    // get the correct position if you select an empty space
+    const backwardsRect =
+      editor.getFragment(selection)[0]?.children[0].text === ''
+        ? _rects[2]
+        : _rects[0]
+
+    const rect = !_isBackwards ? _rects[_length - 1] : backwardsRect
 
     return setPosition({
-      top: pxUnits(rect.top + window.pageYOffset - el?.clientHeight),
-      left: pxUnits(
-        rect.left + window.pageXOffset + (_isBackwards ? 0 : rect.width)
-      ),
+      top: pxUnits(rect.top - el?.clientHeight),
+      left: pxUnits(rect.left + (_isBackwards ? 0 : rect.width)),
     })
   }
 
