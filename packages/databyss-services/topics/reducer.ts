@@ -6,6 +6,8 @@ import {
   CACHE_TOPIC,
   FETCH_TOPIC_HEADERS,
   CACHE_TOPIC_HEADERS,
+  REMOVE_PAGE_FROM_HEADER,
+  ADD_PAGE_TO_HEADER,
 } from './constants'
 
 export const initialState: TopicState = {
@@ -57,6 +59,31 @@ export default produce((draft: Draft<TopicState>, action: FSA) => {
         _headerCache[topic._id] = topic
       })
       draft.headerCache = _headerCache
+      break
+    }
+
+    case REMOVE_PAGE_FROM_HEADER: {
+      const _inPages = _headerCache[action.payload.id]?.isInPages
+      if(_inPages){
+        const _index = _inPages.findIndex(p=> p === action.payload.pageId)
+        if(_index>-1){
+          _headerCache[action.payload.id]?.isInPages.splice(_index, 1)
+
+        }
+      }
+    
+      break
+    }
+    case ADD_PAGE_TO_HEADER: {
+      const _inPages = _headerCache[action.payload.id]?.isInPages
+      if(_inPages){
+        const _index = _inPages.findIndex(p=> p === action.payload.pageId)
+        if(_index<0){
+          _headerCache[action.payload.id]?.isInPages.push(action.payload.pageId)
+
+        }
+      }
+    
       break
     }
   }

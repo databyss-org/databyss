@@ -1,9 +1,15 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
 import reducer, { initialState } from './reducer'
-import { saveTopic, fetchTopic, fetchTopicHeaders } from './actions'
+import {
+  saveTopic,
+  fetchTopic,
+  fetchTopicHeaders,
+  removePageFromHeaders,
+  addPageToHeaders,
+} from './actions'
 import {
   TopicState,
   ResourceResponse,
@@ -24,6 +30,8 @@ interface ContextType {
   getTopic: (id: string) => ResourceResponse<Topic>
   setTopic: (topic: Topic) => void
   getTopicHeaders: (id: string) => ResourceResponse<CacheDict<Topic>>
+  removePageFromCacheHeader: (id: string, pageId: string) => void
+  addPageToCacheHeader: (id: string, pageId: string) => void
 }
 
 export const TopicContext = createContext<ContextType | null>(null)
@@ -33,8 +41,6 @@ const TopicProvider: React.FunctionComponent<PropsType> = ({
   initialState,
 }: PropsType) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-
-  console.log(state)
 
   // provider methods
   const setTopic = (topic: Topic) => {
@@ -66,6 +72,16 @@ const TopicProvider: React.FunctionComponent<PropsType> = ({
     return null
   }
 
+  const removePageFromCacheHeader = useCallback(
+    (id: string, pageId: string) => dispatch(removePageFromHeaders(id, pageId)),
+    [state.cache]
+  )
+
+  const addPageToCacheHeader = useCallback(
+    (id: string, pageId: string) => dispatch(addPageToHeaders(id, pageId)),
+    [state.cache]
+  )
+
   return (
     <TopicContext.Provider
       value={{
@@ -73,6 +89,8 @@ const TopicProvider: React.FunctionComponent<PropsType> = ({
         setTopic,
         getTopic,
         getTopicHeaders,
+        removePageFromCacheHeader,
+        addPageToCacheHeader,
       }}
     >
       {children}

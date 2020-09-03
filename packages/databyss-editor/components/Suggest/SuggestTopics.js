@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
 import { prefixSearchAll } from '@databyss-org/services/block/filter'
+
 import { useEditorContext } from '../../state/EditorProvider'
+import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 
 const SuggestTopics = ({
   query,
@@ -10,11 +12,18 @@ const SuggestTopics = ({
   onSuggestions,
   onSuggestionsChanged,
 }) => {
-  const { replace } = useEditorContext()
+  const { replace, state } = useEditorContext()
+  const addPageToCacheHeader = useTopicContext(c => c && c.addPageToCacheHeader)
+
   const [suggestions, setSuggestions] = useState([])
   const [filteredSuggestions, setFilteredSuggestions] = useState([])
 
   const onTopicSelected = topic => {
+    // check document to see if page should be added to topic cache
+    if (state.blocks.filter(b => b._id === topic._id).length < 1) {
+      addPageToCacheHeader(topic._id, state.pageHeader._id)
+    }
+
     replace([topic])
     dismiss()
   }
@@ -45,17 +54,21 @@ const SuggestTopics = ({
     [query]
   )
 
+  console.log(filteredSuggestions)
+
   return (
     <AllTopicsLoader onLoad={onTopicsLoaded}>
       {filteredSuggestions.length
-        ? filteredSuggestions.map(s => (
-            // eslint-disable-next-line react/jsx-indent
-            <DropdownListItem
-              label={s.text.textValue}
-              key={s._id}
-              onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
-            />
-          ))
+        ? filteredSuggestions.map(s => {
+            return (
+              // eslint-disable-next-line react/jsx-indent
+              <DropdownListItem
+                label={s.text.textValue}
+                key={s._id}
+                onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
+              />
+            )
+          })
         : null}
     </AllTopicsLoader>
   )

@@ -35,10 +35,14 @@ export interface SourceDetail {
   year?: number
 }
 
-export interface SourceCitationHeader extends Source {}
+export interface SourceCitationHeader extends Source {
+  isInPages?: string[]
+}
 
 export interface Source extends Block {
   detail: SourceDetail
 }
 
-export interface Topic extends Block {}
+export interface Topic extends Block {
+  isInPages?: string[]
+}
