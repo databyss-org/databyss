@@ -32,7 +32,10 @@ export default produce((draft: Draft<TopicState>, action: FSA) => {
         draft.cache[action.payload.id] = action.payload.topic
         break
       }
-      const _topic: Block = { ...action.payload.topic, type: 'TOPIC' }
+      const _topic: Block = {
+        ...action.payload.topic,
+        type: 'TOPIC',
+      }
       draft.cache[action.payload.id] = _topic
       // only populate header if header has been loaded
       if (draft.headerCache) {

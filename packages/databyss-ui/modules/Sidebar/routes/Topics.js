@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
 import {
   sortEntriesAtoZ,
@@ -28,24 +28,34 @@ export const getTopicsData = topics =>
     })
   )
 
-const Topics = ({ filterQuery, height, hasIndexPage }) => (
-  <AllTopicsLoader filtered>
-    {topics => {
-      const topicsData = getTopicsData(topics)
-      const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
-      const filteredEntries = filterEntries(sortedTopics, filterQuery)
+const Topics = ({ filterQuery, height, hasIndexPage }) => {
+  useEffect(
+    () => () => {
+      console.log('UNMOUNT')
+    },
+    []
+  )
+  return (
+    <AllTopicsLoader filtered>
+      {topics => {
+        const topicsData = getTopicsData(topics)
+        const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
+        const filteredEntries = filterEntries(sortedTopics, filterQuery)
 
-      return (
-        <SidebarList
-          menuItems={[
-            ...(hasIndexPage ? topicsOverview : ''),
-            ...(filterQuery.textValue === '' ? sortedTopics : filteredEntries),
-          ]}
-          height={height}
-        />
-      )
-    }}
-  </AllTopicsLoader>
-)
+        return (
+          <SidebarList
+            menuItems={[
+              ...(hasIndexPage ? topicsOverview : ''),
+              ...(filterQuery.textValue === ''
+                ? sortedTopics
+                : filteredEntries),
+            ]}
+            height={height}
+          />
+        )
+      }}
+    </AllTopicsLoader>
+  )
+}
 
 export default Topics

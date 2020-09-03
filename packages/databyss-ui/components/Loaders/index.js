@@ -73,7 +73,7 @@ export const AllTopicsLoader = ({ children, filtered, ...others }) => {
 
   let _resource = getTopicHeaders()
   if (filtered && isResourceReady(_resource)) {
-    _resource = pickBy(_resource, topic => topic.isInPage)
+    _resource = pickBy(_resource, topic => topic.isInPages?.length)
   }
 
   return <MakeLoader resources={_resource} children={children} {...others} />
@@ -91,7 +91,7 @@ export const AuthorsLoader = ({ children, filtered }) => {
   let _results = getAuthors()
   // if filtered is pass as a prop, remove resource that dont appear on a page
   if (filtered && isResourceReady(_results)) {
-    _results = pickBy(_results, author => author.isInPage)
+    _results = pickBy(_results, author => author.isInPages?.length)
   }
   return <MakeLoader resources={_results} children={children} />
 }
@@ -100,7 +100,7 @@ export const SourceCitationsLoader = ({ children, filtered, ...others }) => {
   const getSourceCitations = useSourceContext(c => c.getSourceCitations)
   let _resource = getSourceCitations()
   if (filtered && isResourceReady(_resource)) {
-    _resource = pickBy(_resource, citation => citation.isInPage)
+    _resource = pickBy(_resource, citation => citation.isInPages?.length)
   }
   return <MakeLoader resources={_resource} children={children} {...others} />
 }

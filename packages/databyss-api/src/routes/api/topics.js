@@ -84,18 +84,18 @@ router.get(
       return res.json([])
     }
 
-    // add 'isInPage' property which tags if author appears in page
+    // add 'isInPages' property which tags if author appears in page
     blocks = await Promise.all(
       blocks.map(async b => {
-        let isInPage = false
-        const _page = await Page.findOne({
+        let isInPages = []
+        const _pages = await Page.find({
           'blocks._id': b._id,
           ...getPageAccountQueryMixin(req),
         })
-        if (_page) {
-          isInPage = true
+        if (_pages) {
+          isInPages = _pages.map(p => p._id)
         }
-        return { ...b._doc, isInPage }
+        return { ...b._doc, isInPages }
       })
     )
 

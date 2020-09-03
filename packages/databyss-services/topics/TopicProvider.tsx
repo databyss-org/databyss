@@ -34,6 +34,8 @@ const TopicProvider: React.FunctionComponent<PropsType> = ({
 }: PropsType) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
+  console.log(state)
+
   // provider methods
   const setTopic = (topic: Topic) => {
     if (_.isEqual(state.cache[topic._id], topic)) {

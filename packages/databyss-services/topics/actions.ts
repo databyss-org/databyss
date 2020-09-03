@@ -38,7 +38,10 @@ export function saveTopic(topic: Topic) {
       type: CACHE_TOPIC,
       payload: { topic, id: topic._id },
     })
-    services.setTopic(topic)
+    services.setTopic(topic).then(() => {
+      // reset page headers
+      dispatch(fetchTopicHeaders())
+    })
     // TODO: set error handler if failed save
   }
 }

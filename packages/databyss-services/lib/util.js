@@ -12,7 +12,7 @@ export const getAuthorsFromSources = blocks =>
         dict[
           `${author.firstName?.textValue || ''}${author.lastName?.textValue ||
             ''}`
-        ] = { ...author, isInPage: block?.isInPage }
+        ] = { ...author, isInPages: block?.isInPages }
       })
     }
     return dict

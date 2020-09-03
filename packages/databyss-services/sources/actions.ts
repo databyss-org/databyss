@@ -47,6 +47,9 @@ export function saveSource(sourceFields: Source) {
         type: CACHE_SOURCE,
         payload: { source: sourceFields, id: sourceFields._id },
       })
+      // reset headers
+      dispatch(fetchAuthorHeaders())
+      dispatch(fetchSourceCitations())
     })
   }
 }
