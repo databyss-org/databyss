@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
 import { prefixSearchAll } from '@databyss-org/services/block/filter'
-
-import { useEditorContext } from '../../state/EditorProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { useEditorContext } from '../../state/EditorProvider'
 
 const SuggestTopics = ({
   query,
@@ -69,16 +68,14 @@ const SuggestTopics = ({
   return (
     <AllTopicsLoader onLoad={onTopicsLoaded}>
       {isDrowpdownVisible
-        ? filteredSuggestions.map(s => {
-            return (
-              // eslint-disable-next-line react/jsx-indent
-              <DropdownListItem
-                label={s.text.textValue}
-                key={s._id}
-                onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
-              />
-            )
-          })
+        ? filteredSuggestions.map(s => (
+            // eslint-disable-next-line react/jsx-indent
+            <DropdownListItem
+              label={s.text.textValue}
+              key={s._id}
+              onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
+            />
+          ))
         : null}
     </AllTopicsLoader>
   )
