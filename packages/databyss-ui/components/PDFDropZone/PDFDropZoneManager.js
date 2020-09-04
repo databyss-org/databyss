@@ -6,6 +6,7 @@ import ObjectId from 'bson-objectid'
 
 import { BlockType } from '@databyss-org/services/interfaces'
 import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import * as services from '@databyss-org/services/pdf'
 
@@ -182,6 +183,7 @@ const PDFDropZoneManager = () => {
   const editorContext = useEditorContext()
   const setSource = useSourceContext(c => c && c.setSource)
 
+  const { isPublicAccount } = useSessionContext()
   const { showModal } = useNavigationContext()
 
   const [isDropAreaVisible, setDropAreaVisibility] = useState(false)
@@ -411,6 +413,10 @@ const PDFDropZoneManager = () => {
   }
 
   useEffect(() => {
+    if (isPublicAccount()) {
+      return
+    }
+
     // init
     addDragEventHandlers()
 
@@ -423,7 +429,7 @@ const PDFDropZoneManager = () => {
   // render methods
   const getLabel = () => (hasParsed ? '' : 'Drop your PDF here')
 
-  const render = () => (
+  const renderComponent = () => (
     <StyledView className="pdf-drop-zone-manager">
       <DashedArea
         label={getLabel()}
@@ -433,6 +439,11 @@ const PDFDropZoneManager = () => {
       <InfoModal id="pdfDropZoneModal" />
     </StyledView>
   )
+
+  /* eslint-disable consistent-return */
+  // eslint hates on a perfectly valid if/else statement
+  const render = () => !isPublicAccount() ? renderComponent() : null
+  /* eslint-enable consistent-return */
 
   return render()
 }
