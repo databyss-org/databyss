@@ -10,6 +10,7 @@ import {
   isFormatActive,
   toggleMark,
   isSelectionAtomic,
+  slateSelectionToStateSelection,
 } from './../lib/slateUtils'
 
 const mobileActions = [
@@ -119,25 +120,26 @@ const MarkButton = ({ type, label, variant, ...others }) => {
   )
 }
 
-const isBackwards = domSelection =>
-  domSelection.anchorOffset - domSelection.focusOffset > 0
+const isBackwards = stateSelection => {
+  if (stateSelection.anchor.index === stateSelection.focus.index) {
+    return stateSelection.anchor.offset - stateSelection.focus.offset > 0
+  }
+  return stateSelection.anchor.index > stateSelection.focus.index
+}
 
 const FormatMenu = () => {
   const ref = useRef()
   const editor = useSlate()
   const [menuActive, setMenuActive] = useState(false)
-  const [isSelectionBackwards, setIsSelectionBackwards] = useState(false)
   const [position, setPosition] = useState({
     top: -200,
     left: -200,
   })
-
+  const stateSelection = slateSelectionToStateSelection(editor)
   const { selection } = editor
-  const domSelection = window.getSelection()
 
-  const getPosition = () => {
+  const updatePosition = (domSelection, isBackwards) => {
     const el = ref.current
-    const _isBackwards = isSelectionBackwards
 
     const domRange = domSelection.getRangeAt(0)
 
@@ -146,30 +148,28 @@ const FormatMenu = () => {
     const _length = _rects.length
 
     const blocks = editor.getFragment(selection)
+
     // get the correct position if you select an empty space
     const backwardsRect =
       blocks[0]?.children[0].text === '' && _rects.length > 1
         ? _rects[1]
         : _rects[0]
 
-    const rect = _isBackwards ? backwardsRect : _rects[_length - 1]
+    const rect = isBackwards ? backwardsRect : _rects[_length - 1]
+
+    // console.log('domSelection', domSelection)
+    // console.log('_selection', stateSelection)
+    // console.log('isSelectionBackwards', isSelectionBackwards)
+    // console.log('blocks', blocks)
+    // console.log('domRange', domRange)
+    // console.log('_rects', _rects)
+    // console.log('rect', rect)
 
     return setPosition({
       top: pxUnits(rect.top - el?.clientHeight),
-      left: pxUnits(rect.left + (_isBackwards ? 0 : rect.width)),
+      left: pxUnits(rect.left + (isBackwards ? 0 : rect.width)),
     })
   }
-
-  // if selection is backwards, keep that in local state, rerenders will reset backwards selection
-  useEffect(
-    () => {
-      if (editor.selection && !Range.isCollapsed(editor.selection)) {
-        const __isBackwards = isBackwards(domSelection)
-        setIsSelectionBackwards(__isBackwards)
-      }
-    },
-    [domSelection.isCollapsed]
-  )
 
   useEffect(
     () => {
@@ -188,10 +188,12 @@ const FormatMenu = () => {
   )
 
   useEventListener('mouseup', () => {
+    const domSelection = window.getSelection()
     const isTextSelected = domSelection.isCollapsed === false
 
     if (isTextSelected) {
-      getPosition()
+      const __isBackwards = isBackwards(stateSelection)
+      updatePosition(domSelection, __isBackwards)
       setMenuActive(true)
     }
   })
