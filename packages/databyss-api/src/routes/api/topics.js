@@ -64,7 +64,17 @@ router.get(
       return next(new ResourceNotFoundError('There is no topic for this id'))
     }
 
-    return res.json(topic)
+    // populates current pages
+    let isInPages = []
+    const _pages = await Page.find({
+      'blocks._id': topic._id,
+      ...getPageAccountQueryMixin(req),
+    })
+    if (_pages) {
+      isInPages = _pages.map(p => p._id)
+    }
+
+    return res.json({ ...topic._doc, isInPages })
   })
 )
 

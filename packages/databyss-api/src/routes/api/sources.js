@@ -141,7 +141,17 @@ router.get(
       return next(new ResourceNotFoundError('There is no source for this id'))
     }
 
-    return res.json(source)
+    // populates current pages
+    let isInPages = []
+    const _pages = await Page.find({
+      'blocks._id': source._id,
+      ...getPageAccountQueryMixin(req),
+    })
+    if (_pages) {
+      isInPages = _pages.map(p => p._id)
+    }
+
+    return res.json({ ...source._doc, isInPages })
   })
 )
 
