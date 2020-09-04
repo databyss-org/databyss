@@ -51,15 +51,32 @@ export const bakeAtomicBlock = ({
   index: number
 }): Block | null => {
   const _block = draft.blocks[index]
-
   // check if current text should be converted to atomic block
   if (
     _block &&
-    _block.text.textValue.trim().length > 1 &&
     !isAtomicInlineType(_block.type) &&
     !_block.text.textValue.match(`\n`)
   ) {
     const _atomicType = symbolToAtomicType(_block.text.textValue.charAt(0))
+
+    // if current block is empty with n atomic prefix, replace block with new empty block
+    if( _block.text.textValue.trim().length < 2 && _atomicType){
+      // create a new entity
+      let _block: Block = {
+        type: BlockType.Entry,
+        _id: new ObjectId().toHexString(),
+        text: { textValue: '', ranges: [] },
+      }
+      draft.blocks[index] = _block
+
+      // push update operation back to editor
+      draft.operations.push({
+        index: index,
+        block: blockValue(_block),
+      })
+      return null
+    }
+
 
     if (_atomicType) {
       let _atomicId = _block._id

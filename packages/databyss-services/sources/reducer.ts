@@ -6,6 +6,8 @@ import {
   CACHE_AUTHOR_HEADERS,
   FETCH_SOURCE_CITATIONS,
   CACHE_SOURCE_CITATIONS,
+  REMOVE_PAGE_FROM_HEADERS,
+  ADD_PAGE_TO_HEADER
 } from './constants'
 import {
   FSA,
@@ -73,6 +75,35 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
     }
     case FETCH_SOURCE_CITATIONS: {
       draft.citationHeaderCache = new ResourcePending()
+      break
+    }
+    case REMOVE_PAGE_FROM_HEADERS: {
+      const _inPages = _citationHeaderCache[action.payload.id]?.isInPages
+      if(_inPages){
+        const _index = _inPages.findIndex(p=> p === action.payload.pageId)
+        if(_index>-1){
+          _citationHeaderCache[action.payload.id]?.isInPages.splice(_index, 1)
+         draft.authorsHeaderCache = getAuthorsFromSources(
+              Object.values(_citationHeaderCache)
+            )
+        }
+      }
+    
+      break
+    }
+    case ADD_PAGE_TO_HEADER: {
+      if(_citationHeaderCache){
+        const _inPages = _citationHeaderCache[action.payload.id]?.isInPages
+        if(_inPages){
+          const _index = _inPages.findIndex(p=> p === action.payload.pageId)
+          if(_index<0){
+            _citationHeaderCache[action.payload.id].isInPages.push(action.payload.pageId)
+           draft.authorsHeaderCache = getAuthorsFromSources(
+                Object.values(_citationHeaderCache)
+              )
+          }
+        }
+      }
       break
     }
     case CACHE_SOURCE_CITATIONS: {

@@ -1,10 +1,12 @@
 import React from 'react'
+import { pickBy } from 'lodash'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
+import { isResourceReady } from './_helpers'
 
 export const PageLoader = ({ children, pageId }) => {
   const { getPage, removePageFromCache } = usePageContext()
@@ -66,32 +68,41 @@ export const CatalogSearchLoader = ({ query, type, children }) => {
   )
 }
 
-export const AllTopicsLoader = ({ children, ...others }) => {
+export const AllTopicsLoader = ({ children, filtered, ...others }) => {
   const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
-  return (
-    <MakeLoader resources={getTopicHeaders()} children={children} {...others} />
-  )
+
+  let _resource = getTopicHeaders()
+  if (filtered && isResourceReady(_resource)) {
+    _resource = pickBy(_resource, topic => topic.isInPages?.length)
+  }
+
+  return <MakeLoader resources={_resource} children={children} {...others} />
 }
 
 export const TopicLoader = ({ topicId, children }) => {
   const getTopic = useTopicContext(c => c.getTopic)
+
   return <MakeLoader resources={getTopic(topicId)} children={children} />
 }
 
-export const AuthorsLoader = ({ children }) => {
+export const AuthorsLoader = ({ children, filtered }) => {
   const getAuthors = useSourceContext(c => c.getAuthors)
-  return <MakeLoader resources={getAuthors()} children={children} />
+
+  let _results = getAuthors()
+  // if filtered is pass as a prop, remove resource that dont appear on a page
+  if (filtered && isResourceReady(_results)) {
+    _results = pickBy(_results, author => author.isInPages?.length)
+  }
+  return <MakeLoader resources={_results} children={children} />
 }
 
-export const SourceCitationsLoader = ({ children, ...others }) => {
+export const SourceCitationsLoader = ({ children, filtered, ...others }) => {
   const getSourceCitations = useSourceContext(c => c.getSourceCitations)
-  return (
-    <MakeLoader
-      resources={getSourceCitations()}
-      children={children}
-      {...others}
-    />
-  )
+  let _resource = getSourceCitations()
+  if (filtered && isResourceReady(_resource)) {
+    _resource = pickBy(_resource, citation => citation.isInPages?.length)
+  }
+  return <MakeLoader resources={_resource} children={children} {...others} />
 }
 
 export const SearchAllLoader = ({ children, ...others }) => {

@@ -22,7 +22,11 @@ const SuggestSources = ({
   ...others
 }) => {
   const setSource = useSourceContext(c => c && c.setSource)
-  const { replace } = useEditorContext()
+
+  const addPageToCacheHeader = useSourceContext(
+    c => c && c.addPageToCacheHeader
+  )
+  const { replace, state } = useEditorContext()
   const [mode, setMode] = useState(LOCAL_SOURCES)
 
   useEffect(
@@ -38,6 +42,11 @@ const SuggestSources = ({
       source._id = new ObjectId().toHexString()
       setSource(source)
     }
+    // check document to see if page should be added to source cache
+    if (state.blocks.filter(b => b._id === source._id).length < 1) {
+      addPageToCacheHeader(source._id, state.pageHeader._id)
+    }
+
     replace([source])
     dismiss()
   }

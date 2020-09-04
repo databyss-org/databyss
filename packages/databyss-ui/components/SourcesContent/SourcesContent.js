@@ -61,7 +61,7 @@ const SourcesContent = () => {
     return <AuthorCitations query={_queryParams} />
   }
   return (
-    <SourceCitationsLoader>
+    <SourceCitationsLoader filtered>
       {source => SourcesContentBody(source, navigate)}
     </SourceCitationsLoader>
   )

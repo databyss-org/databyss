@@ -21,7 +21,7 @@ export const TopicsRouter = () => (
 const TopicsContent = () => {
   const navigate = useNavigationContext(c => c.navigate)
   return (
-    <AllTopicsLoader>
+    <AllTopicsLoader filtered>
       {topics => {
         const topicsData = Object.values(topics).map(value =>
           createIndexPageEntries({

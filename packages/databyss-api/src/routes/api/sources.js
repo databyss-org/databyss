@@ -6,7 +6,11 @@ import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import wrap from '../../lib/guardedAsync'
 import { ResourceNotFoundError } from '../../lib/Errors'
-import { getBlockAccountQueryMixin } from './helpers/accountQueryMixin'
+import {
+  getBlockAccountQueryMixin,
+  getPageAccountQueryMixin,
+} from './helpers/accountQueryMixin'
+import Page from '../../models/Page'
 
 const router = express.Router()
 
@@ -44,7 +48,7 @@ router.get(
   '/authors',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
-    const blocks = await Block.find({
+    let blocks = await Block.find({
       type: 'SOURCE',
       ...getBlockAccountQueryMixin(req),
     })
@@ -52,8 +56,23 @@ router.get(
     if (!blocks) {
       return res.json([])
     }
-    // group by authors and return array of authors
 
+    // add 'isInPage' property which tags if author appears in page
+    blocks = await Promise.all(
+      blocks.map(async b => {
+        let isInPages = []
+        const _pages = await Page.find({
+          'blocks._id': b._id,
+          ...getPageAccountQueryMixin(req),
+        })
+        if (_pages) {
+          isInPages = _pages.map(p => p._id)
+        }
+        return { ...b._doc, isInPages }
+      })
+    )
+
+    // group by authors and return array of authors
     const authorsDict = getAuthorsFromSources(blocks)
 
     return res.json(Object.values(authorsDict))
@@ -67,7 +86,7 @@ router.get(
   '/citations',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
-    const blocks = await Block.find({
+    let blocks = await Block.find({
       type: 'SOURCE',
       ...getBlockAccountQueryMixin(req),
     })
@@ -76,16 +95,33 @@ router.get(
       return res.json([])
     }
 
+    // add 'isInPage' property which tags if author appears in page
+    blocks = await Promise.all(
+      blocks.map(async b => {
+        let isInPages = []
+        const _pages = await Page.find({
+          'blocks._id': b._id,
+          ...getPageAccountQueryMixin(req),
+        })
+        if (_pages) {
+          isInPages = _pages.map(p => p._id)
+        }
+        return { ...b._doc, isInPages }
+      })
+    )
+
     const sourcesCitations = blocks.map(block => {
       const sourcesCitationsDict = pick(block, [
         '_id',
         'text',
         'detail.authors',
         'detail.citations',
+        'isInPages',
       ])
 
       return sourcesCitationsDict
     })
+
     return res.json(sourcesCitations)
   })
 )
@@ -105,7 +141,17 @@ router.get(
       return next(new ResourceNotFoundError('There is no source for this id'))
     }
 
-    return res.json(source)
+    // populates current pages
+    let isInPages = []
+    const _pages = await Page.find({
+      'blocks._id': source._id,
+      ...getPageAccountQueryMixin(req),
+    })
+    if (_pages) {
+      isInPages = _pages.map(p => p._id)
+    }
+
+    return res.json({ ...source._doc, isInPages })
   })
 )
 

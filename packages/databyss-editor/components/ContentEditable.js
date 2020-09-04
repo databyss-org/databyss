@@ -37,6 +37,14 @@ const ContentEditable = ({
 
   const setSource = useSourceContext(c => c && c.setSource)
 
+  const removePageFromSourceCacheHeader = useSourceContext(
+    c => c && c.removePageFromCacheHeader
+  )
+
+  const removePageFromTopicCacheHeader = useTopicContext(
+    c => c && c.removePageFromCacheHeader
+  )
+
   const topicContext = useTopicContext()
   const historyContext = useHistoryContext()
 
@@ -208,7 +216,6 @@ const ContentEditable = ({
 
     if (event.key === 'Enter') {
       const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
-
       if (isAtomic(_focusedBlock)) {
         if (
           ReactEditor.isFocused(editor) &&
@@ -265,12 +272,33 @@ const ContentEditable = ({
         return
       }
       // handle end of atomic
+      const _currentBlock = state.blocks[editor.selection.focus.path[0]]
       if (
-        isAtomic(state.blocks[editor.selection.focus.path[0]]) &&
+        isAtomic(_currentBlock) &&
         flattenOffset(editor, editor.selection.focus) > 0
       ) {
         event.preventDefault()
         clear(editor.selection.focus.path[0])
+        // check to see if block is atomic and was the last block on the page
+        if (state.blocks.filter(b => b._id === _currentBlock._id).length < 2) {
+          // if so, remove page from atomic cache
+
+          ;({
+            SOURCE: () => {
+              removePageFromSourceCacheHeader(
+                _currentBlock._id,
+                state.pageHeader._id
+              )
+            },
+            TOPIC: () => {
+              removePageFromTopicCacheHeader(
+                _currentBlock._id,
+                state.pageHeader._id
+              )
+            },
+          }[_currentBlock.type]())
+        }
+
         Transforms.delete(editor, {
           distance: 1,
           unit: 'character',
