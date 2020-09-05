@@ -1,5 +1,6 @@
 import express from 'express'
 import Block from '../../models/Block'
+import Page from '../../models/Page'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import wrap from '../../lib/guardedAsync'
@@ -7,7 +8,10 @@ import {
   ResourceNotFoundError,
   InsufficientPermissionError,
 } from '../../lib/Errors'
-import { getBlockAccountQueryMixin } from './helpers/accountQueryMixin'
+import {
+  getBlockAccountQueryMixin,
+  getPageAccountQueryMixin,
+} from './helpers/accountQueryMixin'
 
 const router = express.Router()
 
@@ -60,7 +64,17 @@ router.get(
       return next(new ResourceNotFoundError('There is no topic for this id'))
     }
 
-    return res.json(topic)
+    // populates current pages
+    let isInPages = []
+    const _pages = await Page.find({
+      'blocks._id': topic._id,
+      ...getPageAccountQueryMixin(req),
+    })
+    if (_pages) {
+      isInPages = _pages.map(p => p._id)
+    }
+
+    return res.json({ ...topic._doc, isInPages })
   })
 )
 
@@ -71,7 +85,7 @@ router.get(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
-    const blocks = await Block.find({
+    let blocks = await Block.find({
       type: 'TOPIC',
       ...getBlockAccountQueryMixin(req),
     })
@@ -79,6 +93,22 @@ router.get(
     if (!blocks) {
       return res.json([])
     }
+
+    // add 'isInPages' property which tags if author appears in page
+    blocks = await Promise.all(
+      blocks.map(async b => {
+        let isInPages = []
+        const _pages = await Page.find({
+          'blocks._id': b._id,
+          ...getPageAccountQueryMixin(req),
+        })
+        if (_pages) {
+          isInPages = _pages.map(p => p._id)
+        }
+        return { ...b._doc, isInPages }
+      })
+    )
+
     return res.json(blocks)
   })
 )

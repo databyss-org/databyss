@@ -108,8 +108,9 @@ export function savePatchBatch(batch?: PatchBatch) {
   return async (dispatch: Function) => {
     try {
       await services.savePatchBatch(_batchPatch)
-    
 
+
+      
       busy = false
       // repeat function with no patch variable if patches are still in queue
       dispatch({
@@ -120,7 +121,7 @@ export function savePatchBatch(batch?: PatchBatch) {
       })
       if (queue.length) {
         dispatch(savePatchBatch())
-      }
+      } 
     } catch (err) {
       console.log(err)
       // if error set the patch back to the queue

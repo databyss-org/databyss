@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
 import { prefixSearchAll } from '@databyss-org/services/block/filter'
+import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useEditorContext } from '../../state/EditorProvider'
 
 const SuggestTopics = ({
@@ -10,11 +11,19 @@ const SuggestTopics = ({
   onSuggestions,
   onSuggestionsChanged,
 }) => {
-  const { replace } = useEditorContext()
+  const { replace, state } = useEditorContext()
+  const addPageToCacheHeader = useTopicContext(c => c && c.addPageToCacheHeader)
+
   const [suggestions, setSuggestions] = useState([])
   const [filteredSuggestions, setFilteredSuggestions] = useState([])
+  const [isDrowpdownVisible, setDropdownVisisble] = useState(true)
 
   const onTopicSelected = topic => {
+    // check document to see if page should be added to topic cache
+    if (state.blocks.filter(b => b._id === topic._id).length < 1) {
+      addPageToCacheHeader(topic._id, state.pageHeader._id)
+    }
+
     replace([topic])
     dismiss()
   }
@@ -45,15 +54,29 @@ const SuggestTopics = ({
     [query]
   )
 
+  useEffect(
+    () => {
+      if (filteredSuggestions.length) {
+        setDropdownVisisble(true)
+      } else {
+        setDropdownVisisble(false)
+      }
+    },
+    [filteredSuggestions.length]
+  )
+
   return (
     <AllTopicsLoader onLoad={onTopicsLoaded}>
-      {filteredSuggestions.map(s => (
-        <DropdownListItem
-          label={s.text.textValue}
-          key={s._id}
-          onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
-        />
-      ))}
+      {isDrowpdownVisible
+        ? filteredSuggestions.map(s => (
+            // eslint-disable-next-line react/jsx-indent
+            <DropdownListItem
+              label={s.text.textValue}
+              key={s._id}
+              onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
+            />
+          ))
+        : null}
     </AllTopicsLoader>
   )
 }

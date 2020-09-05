@@ -5,6 +5,8 @@ import {
   CACHE_TOPIC,
   FETCH_TOPIC_HEADERS,
   CACHE_TOPIC_HEADERS,
+  REMOVE_PAGE_FROM_HEADER,
+  ADD_PAGE_TO_HEADER,
 } from './constants'
 import { Topic } from '../interfaces'
 
@@ -38,7 +40,10 @@ export function saveTopic(topic: Topic) {
       type: CACHE_TOPIC,
       payload: { topic, id: topic._id },
     })
-    services.setTopic(topic)
+    services.setTopic(topic).then(() => {
+      // reset page headers
+      dispatch(fetchTopicHeaders())
+    })
     // TODO: set error handler if failed save
   }
 }
@@ -60,5 +65,23 @@ export function fetchTopicHeaders() {
         payload: { topics: err },
       })
     }
+  }
+}
+
+export function removePageFromHeaders(id: string, pageId: string) {
+  return (dispatch: Function) => {
+    dispatch({
+      type: REMOVE_PAGE_FROM_HEADER,
+      payload: { id, pageId },
+    })
+  }
+}
+
+export function addPageToHeaders(id: string, pageId: string) {
+  return (dispatch: Function) => {
+    dispatch({
+      type: ADD_PAGE_TO_HEADER,
+      payload: { id, pageId },
+    })
   }
 }
