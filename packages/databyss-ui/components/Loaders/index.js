@@ -133,7 +133,6 @@ export const SearchAllLoader = ({ children, filtered, ...others }) => {
 
   const allResources = [sourceCitations, authors, topics, pages]
 
-  console.log(allResources)
   return <MakeLoader resources={allResources} children={children} {...others} />
 }
 
