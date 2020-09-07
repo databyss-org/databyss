@@ -48,29 +48,36 @@ router.get(
   '/authors',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
-    let blocks = await Block.find({
-      type: 'SOURCE',
-      ...getBlockAccountQueryMixin(req),
-    })
+    const blocks = await Block.aggregate([
+      {
+        $match: {
+          type: 'SOURCE',
+          ...getPageAccountQueryMixin(req),
+        },
+      },
+      {
+        // appends all the pages block appears in in an array 'isInPages'
+        $lookup: {
+          from: 'pages',
+          localField: '_id',
+          foreignField: 'blocks._id',
+          as: 'isInPages',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          detail: 1,
+          isInPages: '$isInPages._id',
+        },
+      },
+    ])
 
     if (!blocks) {
       return res.json([])
     }
-
-    // add 'isInPage' property which tags if author appears in page
-    blocks = await Promise.all(
-      blocks.map(async b => {
-        let isInPages = []
-        const _pages = await Page.find({
-          'blocks._id': b._id,
-          ...getPageAccountQueryMixin(req),
-        })
-        if (_pages) {
-          isInPages = _pages.map(p => p._id)
-        }
-        return { ...b._doc, isInPages }
-      })
-    )
 
     // group by authors and return array of authors
     const authorsDict = getAuthorsFromSources(blocks)
@@ -86,29 +93,36 @@ router.get(
   '/citations',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
-    let blocks = await Block.find({
-      type: 'SOURCE',
-      ...getBlockAccountQueryMixin(req),
-    })
+    const blocks = await Block.aggregate([
+      {
+        $match: {
+          type: 'SOURCE',
+          ...getPageAccountQueryMixin(req),
+        },
+      },
+      {
+        // appends all the pages block appears in in an array 'isInPages'
+        $lookup: {
+          from: 'pages',
+          localField: '_id',
+          foreignField: 'blocks._id',
+          as: 'isInPages',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          detail: 1,
+          isInPages: '$isInPages._id',
+        },
+      },
+    ])
 
     if (!blocks) {
       return res.json([])
     }
-
-    // add 'isInPage' property which tags if author appears in page
-    blocks = await Promise.all(
-      blocks.map(async b => {
-        let isInPages = []
-        const _pages = await Page.find({
-          'blocks._id': b._id,
-          ...getPageAccountQueryMixin(req),
-        })
-        if (_pages) {
-          isInPages = _pages.map(p => p._id)
-        }
-        return { ...b._doc, isInPages }
-      })
-    )
 
     const sourcesCitations = blocks.map(block => {
       const sourcesCitationsDict = pick(block, [

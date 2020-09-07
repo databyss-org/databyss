@@ -105,19 +105,35 @@ export const SourceCitationsLoader = ({ children, filtered, ...others }) => {
   return <MakeLoader resources={_resource} children={children} {...others} />
 }
 
-export const SearchAllLoader = ({ children, ...others }) => {
+export const SearchAllLoader = ({ children, filtered, ...others }) => {
   const getAuthors = useSourceContext(c => c.getAuthors)
   const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
   const { getPages } = usePageContext()
   const getSourceCitations = useSourceContext(c => c.getSourceCitations)
 
-  const sourceCitations = getSourceCitations()
-  const authors = getAuthors()
-  const topics = getTopicHeaders()
+  let sourceCitations = getSourceCitations()
+  if (filtered && isResourceReady(sourceCitations)) {
+    sourceCitations = pickBy(
+      sourceCitations,
+      citation => citation.isInPages?.length
+    )
+  }
+
+  let authors = getAuthors()
+  if (filtered && isResourceReady(authors)) {
+    authors = pickBy(authors, author => author.isInPages?.length)
+  }
+
+  let topics = getTopicHeaders()
+  if (filtered && isResourceReady(topics)) {
+    topics = pickBy(topics, topic => topic.isInPages?.length)
+  }
+
   const pages = getPages()
 
   const allResources = [sourceCitations, authors, topics, pages]
 
+  console.log(allResources)
   return <MakeLoader resources={allResources} children={children} {...others} />
 }
 
