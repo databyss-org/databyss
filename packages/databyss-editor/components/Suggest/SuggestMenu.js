@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useEditor, ReactEditor } from '@databyss-org/slate-react'
-import { Node } from '@databyss-org/slate'
+import { Node, Editor } from '@databyss-org/slate'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import { pxUnits } from '@databyss-org/ui/theming/views'
@@ -8,6 +8,7 @@ import { Text, View } from '@databyss-org/ui/primitives'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import { useEditorContext } from '../../state/EditorProvider'
 import { isAtomicInlineType } from '../../lib/util'
+import { getClosureType } from '../../state/util'
 
 const MENU_HEIGHT = 200
 
@@ -24,6 +25,14 @@ export const getPosition = editor => {
 
       if (isMenuTop) {
         return { bottom: 40, left: 0 }
+      }
+      // if previous block is an atomic closure block move offest down 15px
+      const _prev = Editor.previous(editor)
+      if (_prev) {
+        const _idx = _prev[1]
+        if (getClosureType(editor.children[_idx[0]].type)) {
+          return { top: 65, left: 0 }
+        }
       }
     }
   }
