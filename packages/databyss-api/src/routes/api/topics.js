@@ -8,10 +8,7 @@ import {
   ResourceNotFoundError,
   InsufficientPermissionError,
 } from '../../lib/Errors'
-import {
-  getBlockAccountQueryMixin,
-  getPageAccountQueryMixin,
-} from './helpers/accountQueryMixin'
+import { getPageAccountQueryMixin } from './helpers/accountQueryMixin'
 
 const router = express.Router()
 

@@ -6,10 +6,7 @@ import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import wrap from '../../lib/guardedAsync'
 import { ResourceNotFoundError } from '../../lib/Errors'
-import {
-  getBlockAccountQueryMixin,
-  getPageAccountQueryMixin,
-} from './helpers/accountQueryMixin'
+import { getPageAccountQueryMixin } from './helpers/accountQueryMixin'
 import Page from '../../models/Page'
 
 const router = express.Router()
