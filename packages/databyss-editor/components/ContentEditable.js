@@ -251,6 +251,15 @@ const ContentEditable = ({
         Transforms.move(editor, { unit: 'character', distance: 1 })
         return
       }
+      // if return is pressed in the middle of an entry
+      if (
+        ((_nextIsBreak && !_prevIsBreak) || (!_nextIsBreak && _prevIsBreak)) &&
+        _text.length !== _offset
+      ) {
+        event.preventDefault()
+        Transforms.insertText(editor, `\n`)
+        return
+      }
 
       return
     }
