@@ -117,8 +117,12 @@ export const getPagePath = (page: EditorState): PagePath => {
             // add to current atomic
             _currentAtomics.push(_block)
           } else {
+            // if closure type and block has been closed ignore
+            // else push to current atomic array
+           if(_currentAtomics.findIndex((b)=> b.type=== type)<0){
             // if closure exist, create a block placeholder
             _currentAtomics.push({ ..._block, closed: true, type })
+           }
           }
         }
       }
