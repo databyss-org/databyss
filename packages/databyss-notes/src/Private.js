@@ -1,26 +1,35 @@
 import React, { useEffect } from 'react'
 import { Router } from '@reach/router'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+
 import { PageProvider } from '@databyss-org/services'
+import { sidebar } from '@databyss-org/ui/theming/components'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { View } from '@databyss-org/ui/primitives'
+import EntryProvider from '@databyss-org/services/entries/EntryProvider'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import TopicProvider from '@databyss-org/services/topics/TopicProvider'
-import EntryProvider from '@databyss-org/services/entries/EntryProvider'
 import {
-  Sidebar,
+  isMobile,
+  ModalManager,
   PageRouter,
   SearchRouter,
+  Sidebar,
   SourcesRouter,
   TopicsRouter,
   useNavigationContext,
-  ModalManager,
 } from '@databyss-org/ui'
 
-import { View } from '@databyss-org/ui/primitives'
+const getStyles = () => {
+  const width = isMobile()
+    ? `calc(100vw - ${sidebar.collapsedWidth}px)`
+    : '100%'
+  return { width }
+}
 
 const App = ({ children }) => (
   <View flexDirection="row" display="flex" width="100vw" height="100vh">
     <Sidebar />
-    <div style={{ width: '100%' }}>{children}</div>
+    <div style={getStyles()}>{children}</div>
 
     {/* TODO: replace div with View */}
     {/* <View id="mainid">{children}</View> */}

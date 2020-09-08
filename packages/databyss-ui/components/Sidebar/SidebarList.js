@@ -1,13 +1,17 @@
 import React from 'react'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useLocation } from '@reach/router'
+
 import { pxUnits } from '@databyss-org/ui/theming/views'
-import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { View, Icon } from '@databyss-org/ui/primitives'
+import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
+
 import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
+import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import TopicsSvg from '@databyss-org/ui/assets/topics.svg'
-import { View, Icon } from '@databyss-org/ui/primitives'
-import { useLocation } from '@reach/router'
-import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
+
+import { isMobile } from '../../lib/mediaQuery'
 
 const menuSvgs = type =>
   ({
@@ -18,7 +22,7 @@ const menuSvgs = type =>
   }[type])
 
 const SidebarList = ({ menuItems, query, height, ...others }) => {
-  const { getTokensFromPath } = useNavigationContext()
+  const { getTokensFromPath, isMenuOpen, setMenuOpen } = useNavigationContext()
   const location = useLocation()
   const tokens = getTokensFromPath()
 
@@ -47,6 +51,12 @@ const SidebarList = ({ menuItems, query, height, ...others }) => {
     return false
   }
 
+  const onItemPress = () => {
+    if (isMenuOpen && isMobile()) {
+      setMenuOpen(false)
+    }
+  }
+
   return (
     <View
       width="100%"
@@ -64,6 +74,7 @@ const SidebarList = ({ menuItems, query, height, ...others }) => {
               href={getHref(item)}
               key={`${item.type}-${index}`}
               index={index}
+              onPress={onItemPress}
               icon={
                 <Icon
                   sizeVariant="tiny"

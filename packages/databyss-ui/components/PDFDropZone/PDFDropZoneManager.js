@@ -413,12 +413,10 @@ const PDFDropZoneManager = () => {
   }
 
   useEffect(() => {
-    if (isPublicAccount()) {
-      return
+    if (!isPublicAccount()) {
+      // init
+      addDragEventHandlers()
     }
-
-    // init
-    addDragEventHandlers()
 
     return () => {
       // cleanup
@@ -440,10 +438,7 @@ const PDFDropZoneManager = () => {
     </StyledView>
   )
 
-  /* eslint-disable consistent-return */
-  // eslint hates on a perfectly valid if/else statement
-  const render = () => !isPublicAccount() ? renderComponent() : null
-  /* eslint-enable consistent-return */
+  const render = () => (!isPublicAccount() ? renderComponent() : null)
 
   return render()
 }

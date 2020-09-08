@@ -1,6 +1,9 @@
 import React from 'react'
 import { useParams, Router } from '@reach/router'
+
 import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
+import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
+import { Text, View, ScrollView, RawHtml } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import {
@@ -8,10 +11,19 @@ import {
   SearchResultTitle,
   SearchResultDetails,
 } from '@databyss-org/ui/components/SearchContent/SearchResults'
-import { Text, View, ScrollView, RawHtml } from '@databyss-org/ui/primitives'
 
-import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
+import { isMobile } from '../../lib/mediaQuery'
+import { sidebar } from '../../theming/components'
+import { widthVariants } from '../../theming/views'
 
+const getStyles = () => {
+  if (isMobile()) {
+    return { width: `calc(100vw - ${sidebar.collapsedWidth}px)` }
+  }
+  return widthVariants.content
+}
+
+// components
 export const SearchRouter = () => (
   <Router>
     <SearchContent path=":query" />
@@ -65,7 +77,7 @@ const SearchContent = () => {
   }
 
   return (
-    <ScrollView p="medium" flex="1" maxHeight="98vh">
+    <ScrollView p="medium" flex="1" maxHeight="98vh" style={getStyles()}>
       <View p="medium">
         <Text variant="bodyHeading1" color="text.3">
           &quot;{query}&quot;
