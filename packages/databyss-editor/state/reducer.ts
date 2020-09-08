@@ -401,11 +401,19 @@ export default (
           }
 
           // add or insert a new block
+          const __text = payload.text
+          if(__text.textValue.charAt(0) === '\n'){
+            // prevent first character of new block being a new line
+            __text.textValue = payload.text.textValue.substring(1)
+            __text.ranges =  offsetRanges(payload.text.ranges, 1)
+          }
+   
+
           const _id = new ObjectId().toHexString()
           const _block: Block = {
             type: BlockType.Entry,
             _id,
-            text: payload.text,
+            text: __text,
           }
 
           if (payload.previous.textValue.length === 0) {
@@ -671,12 +679,13 @@ export default (
           !selectionHasRange(draft.selection) &&
           !_selectedBlock.text.textValue.length
 
+        // do not allow menu if current block contains a line break
         _selectedBlock.__showCitationMenu = _selectedBlock.text.textValue.startsWith(
           '@'
-        )
+        ) && !(_selectedBlock.text.textValue.search('\n') > -1)
         _selectedBlock.__showTopicMenu = _selectedBlock.text.textValue.startsWith(
           '#'
-        )
+        ) && !(_selectedBlock.text.textValue.search('\n') > -1)
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element
         _selectedBlock.__isActive =

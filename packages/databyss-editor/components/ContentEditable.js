@@ -256,11 +256,14 @@ const ContentEditable = ({
         ((_nextIsBreak && !_prevIsBreak) || (!_nextIsBreak && _prevIsBreak)) &&
         _text.length !== _offset
       ) {
+        // look behind two characters to see if its a double enter
+        if (_prevIsBreak && _text.charAt(_offset - 2) === `\n`) {
+          return
+        }
         event.preventDefault()
         Transforms.insertText(editor, `\n`)
         return
       }
-
       return
     }
     if (event.key === 'Backspace') {
