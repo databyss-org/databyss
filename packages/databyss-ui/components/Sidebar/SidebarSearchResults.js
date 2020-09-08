@@ -13,7 +13,7 @@ import { getTopicsData } from '@databyss-org/ui/modules/Sidebar/routes/Topics'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 
 const SidebarSearchResults = ({ filterQuery, height }) => (
-  <SearchAllLoader>
+  <SearchAllLoader filtered>
     {results => {
       const sourceTitlesData = getSourceTitlesData(results[0])
       const authorsData = getAuthorData(results[1])
