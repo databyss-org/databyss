@@ -446,11 +446,13 @@ export default (
           const _prevTextValue = payload.previous.textValue
 
           if (_prevTextValue.charAt(_prevTextValue.length - 1) === '\n') {
+            // if end of previous block is to new lines, remove two '\n'
+            const returnsToRemove = (_prevTextValue.charAt(_prevTextValue.length - 2) === '\n') ? 2:1
             draft.blocks[
               payload.index
             ].text.textValue = _prevTextValue.substring(
               0,
-              _prevTextValue.length - 1
+              _prevTextValue.length - returnsToRemove
             )
           }
 
