@@ -1,4 +1,5 @@
 import { Text, Editor } from '@databyss-org/slate'
+import hash from 'object-hash'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
@@ -63,9 +64,51 @@ export const stateSelectionToSlateSelection = (children, selection) => {
 export const entities = type =>
   ({ SOURCE: 'sources', TOPIC: 'topics', ENTRY: 'entries' }[type])
 
+// map between state block stringifies and slate block values
+const slateBlockMap = {}
+
 export const stateBlockToSlateBlock = block => {
   // convert state and apply markup values
-  const _childrenText = stateToSlateMarkup(block.text)
+
+  let _childrenText
+
+  // let _childrenText =
+  //   slateBlockMap[
+  //     hash(block.text, {
+  //       excludeKeys: key => {
+  //         if (
+  //           key === 'prototype' ||
+  //           key === '__proto__' ||
+  //           key === 'constructor' ||
+  //           key === '_id'
+  //         ) {
+  //           return true
+  //         }
+  //         return false
+  //       },
+  //     })
+  //   ]
+
+  if (!_childrenText) {
+    _childrenText = stateToSlateMarkup(block.text)
+    // slateBlockMap[
+    //   hash(block.text, {
+    //     excludeKeys: key => {
+    //       if (
+    //         key === 'prototype' ||
+    //         key === '__proto__' ||
+    //         key === 'constructor' ||
+    //         key === '_id'
+    //       ) {
+    //         return true
+    //       }
+    //       return false
+    //     },
+    //   })
+    // ] = _childrenText
+  }
+
+  // _childrenText = stateToSlateMarkup(block.text)
   const _data = {
     children: _childrenText,
     type: block.type,

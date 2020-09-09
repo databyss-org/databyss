@@ -205,6 +205,7 @@
     "mini-css-extract-plugin": "^0.7.0",
     "mongoose": "^5.6.5",
     "object-assign": "4.1.1",
+    "object-hash": "^2.0.3",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "pnp-webpack-plugin": "^1.5.0",
     "postcss-flexbugs-fixes": "^4.1.0",
