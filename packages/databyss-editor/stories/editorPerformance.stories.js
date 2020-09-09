@@ -73,7 +73,9 @@ const EditorWithProvider = () => {
     timeDelta.current = Date.now()
     setTime(null)
     //  setLoading(true)
-    setBlockSize(size)
+    window.requestAnimationFrame(() => setBlockSize(size))
+
+    // setBlockSize(size)
   }
 
   useEffect(
@@ -124,7 +126,15 @@ const EditorWithProvider = () => {
         <Button mr="small" id="set-fps" onClick={() => setActive(!active)}>
           <Text>{active ? 'Stop' : 'Start FPS'}</Text>
         </Button>
-        <Button mr="small" id="clear-blocks" onClick={() => setBlockSize(null)}>
+        <Button
+          mr="small"
+          id="clear-blocks"
+          onClick={() => {
+            setEditbleState(null)
+
+            setBlockSize(null)
+          }}
+        >
           <Text>clear blocks</Text>
         </Button>
       </View>
@@ -156,7 +166,7 @@ const EditorWithProvider = () => {
         </View>
       </View>
       <Box key={providerKey} onKeyDown={onKeyDown} onMouseDown={onKeyDown}>
-        {blockSize ? (
+        {blockSize && editableState ? (
           <EditorProvider initialState={editableState}>
             <ContentEditable onDocumentChange={onDocumentChange} autofocus />
           </EditorProvider>

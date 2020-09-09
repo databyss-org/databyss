@@ -93,6 +93,18 @@ const Element = ({ attributes, children, element }) => {
     [element]
   )
 
+  const elementRef = useRef(element)
+  const blockRef = useRef(block)
+  const searchTermRef = useRef(searchTerm)
+  const spellCheckStateRef = useRef(spellCheck)
+
+  const compareInputs = (oldInput, newInput, prefix) => {
+    if (oldInput !== newInput) {
+      console.log(`${prefix} - The input changed`)
+      console.log('Old value:', oldInput)
+      console.log('New value:', newInput)
+    }
+  }
   return useMemo(
     () => {
       if (!block) {
@@ -102,6 +114,19 @@ const Element = ({ attributes, children, element }) => {
       const selHasRange = selectionHasRange(
         slateSelectionToStateSelection(editor)
       )
+
+      //  [block, element, searchTerm, spellCheck, previousBlock?.type]
+
+      // compareInputs = (oldInputs, newInputs, prefix)
+      if (blockRef.current) {
+        compareInputs(blockRef.current, block, 'block')
+      }
+      blockRef.current = block
+      // console.log('IN MEMO')
+      // console.log(block)
+      // console.log(element)
+      // console.log(searchTerm)
+      // console.log(spellCheck)
 
       const vpad =
         block.type === 'ENTRY' || block.type === previousBlock?.type ? 0 : 3
