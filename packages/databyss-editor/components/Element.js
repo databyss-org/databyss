@@ -93,18 +93,18 @@ const Element = ({ attributes, children, element }) => {
     [element]
   )
 
-  const elementRef = useRef(element)
-  const blockRef = useRef(block)
-  const searchTermRef = useRef(searchTerm)
-  const spellCheckStateRef = useRef(spellCheck)
+  // const elementRef = useRef(element)
+  // const blockRef = useRef(block)
+  // const searchTermRef = useRef(searchTerm)
+  // const spellCheckStateRef = useRef(spellCheck)
 
-  const compareInputs = (oldInput, newInput, prefix) => {
-    if (oldInput !== newInput) {
-      console.log(`${prefix} - The input changed`)
-      console.log('Old value:', oldInput)
-      console.log('New value:', newInput)
-    }
-  }
+  // const compareInputs = (oldInput, newInput, prefix) => {
+  //   if (oldInput !== newInput) {
+  //     console.log(`${prefix} - The input changed`)
+  //     console.log('Old value:', oldInput)
+  //     console.log('New value:', newInput)
+  //   }
+  // }
 
   return useMemo(
     () => {
