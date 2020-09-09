@@ -52,7 +52,7 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
   }
 
   return (
-    <View p="medium" flexGrow={1} ml="extraSmall">
+    <View p="medium" width="100%" ml="extraSmall">
       <TextInput
         readonly={isPublicAccount()}
         ref={ref}

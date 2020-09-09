@@ -77,6 +77,7 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
           alignItems="center"
           flexDirection="row"
           justifyContent="space-between"
+          width="100%"
         >
           <PageHeader
             ref={headerRef}

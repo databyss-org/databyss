@@ -27,7 +27,13 @@ const getStyles = () => {
 }
 
 const App = ({ children }) => (
-  <View flexDirection="row" display="flex" width="100vw" height="100vh">
+  <View
+    display="flex"
+    flexDirection="row"
+    width="100vw"
+    height="100vh"
+    overflowX="hidden"
+  >
     <Sidebar />
     <div style={getStyles()}>{children}</div>
 
