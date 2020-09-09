@@ -105,6 +105,7 @@ const Element = ({ attributes, children, element }) => {
       console.log('New value:', newInput)
     }
   }
+
   return useMemo(
     () => {
       if (!block) {
@@ -115,14 +116,29 @@ const Element = ({ attributes, children, element }) => {
         slateSelectionToStateSelection(editor)
       )
 
-      console.log('in')
-      //  [block, element, searchTerm, spellCheck, previousBlock?.type]
-
-      // compareInputs = (oldInputs, newInputs, prefix)
+      console.log('in memo')
       if (blockRef.current) {
         compareInputs(blockRef.current, block, 'block')
       }
-      // blockRef.current = block
+      blockRef.current = block
+
+      if (elementRef.current) {
+        compareInputs(elementRef.current, element, 'element')
+      }
+      elementRef.current = element
+
+      if (searchTermRef.current) {
+        compareInputs(searchTermRef.current, searchTerm, 'search term')
+      }
+      searchTermRef.current = searchTerm
+
+      if (spellCheckStateRef.current) {
+        compareInputs(spellCheckStateRef.current, spellCheck, 'spell check')
+      }
+      spellCheckStateRef.current = spellCheck
+
+      //  const searchTermRef = useRef(searchTerm)
+
       // console.log('IN MEMO')
       // console.log(block)
       // console.log(element)

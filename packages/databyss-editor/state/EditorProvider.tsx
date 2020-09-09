@@ -4,6 +4,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useRef,
+  useMemo,
 } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
@@ -34,7 +35,6 @@ import {
   getFragmentAtSelection,
   isSelectionCollapsed,
 } from '../lib/clipboardUtils'
-import { initial } from 'lodash'
 
 export type Transform = {
   // current selection
@@ -335,28 +335,31 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       })
     }
 
-    return (
-      <EditorContext.Provider
-        value={{
-          state,
-          copy,
-          cut,
-          insert,
-          replace,
-          paste,
-          setSelection,
-          setContent,
-          split,
-          merge,
-          remove,
-          removeAtSelection,
-          clear,
-          removeEntityFromQueue,
-          cacheEntitySuggestions,
-        }}
-      >
-        {children}
-      </EditorContext.Provider>
+    return useMemo(
+      () => (
+        <EditorContext.Provider
+          value={{
+            state,
+            copy,
+            cut,
+            insert,
+            replace,
+            paste,
+            setSelection,
+            setContent,
+            split,
+            merge,
+            remove,
+            removeAtSelection,
+            clear,
+            removeEntityFromQueue,
+            cacheEntitySuggestions,
+          }}
+        >
+          {children}
+        </EditorContext.Provider>
+      ),
+      [state]
     )
   }
 )

@@ -35,6 +35,8 @@ const ContentEditable = ({
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
 
+  console.log('IN CONTENT EDTIABLE')
+
   const setSource = useSourceContext(c => c && c.setSource)
 
   const removePageFromSourceCacheHeader = useSourceContext(
@@ -338,189 +340,196 @@ const ContentEditable = ({
     [editor.operations, editor.children]
   )
 
-  const onChange = value => {
-    if (onDocumentChange) {
-      onDocumentChange(editor)
-    }
+  return useMemo(
+    () => {
+      const onChange = value => {
+        if (onDocumentChange) {
+          onDocumentChange(editor)
+        }
 
-    const selection = slateSelectionToStateSelection(editor)
+        const selection = slateSelectionToStateSelection(editor)
 
-    if (!selection) {
-      return
-    }
+        if (!selection) {
+          return
+        }
 
-    // preserve selection id from DB
-    if (state.selection._id) {
-      selection._id = state.selection._id
-    }
+        // preserve selection id from DB
+        if (state.selection._id) {
+          selection._id = state.selection._id
+        }
 
-    const focusIndex = selection.focus.index
+        const focusIndex = selection.focus.index
 
-    const payload = {
-      selection,
-    }
+        const payload = {
+          selection,
+        }
 
-    if (value.length < valueRef.current.length) {
-      // block was removed, so do a merge
-      merge({
-        ...payload,
-        index: focusIndex,
-        text: {
-          textValue: flattenNode(value[focusIndex]),
-          ranges: slateRangesToStateRanges(value[focusIndex]),
-        },
-        blockDelta: valueRef.current.length - value.length,
-      })
-      return
-    }
-
-    if (value.length > valueRef.current.length) {
-      // block was added, so do a split
-      split({
-        ...payload,
-        index: focusIndex - 1,
-        text: {
-          textValue: flattenNode(value[focusIndex]),
-          ranges: slateRangesToStateRanges(value[focusIndex]),
-        },
-        previous: {
-          textValue: flattenNode(value[focusIndex - 1]),
-          ranges: slateRangesToStateRanges(value[focusIndex - 1]),
-        },
-      })
-      return
-    }
-
-    if (
-      editor.operations.find(
-        op =>
-          (op.type === 'insert_text' || op.type === 'remove_text') &&
-          op.text.length
-      )
-    ) {
-      // update target node
-      setContent({
-        selection,
-        operations: [
-          {
+        if (value.length < valueRef.current.length) {
+          // block was removed, so do a merge
+          merge({
             ...payload,
             index: focusIndex,
             text: {
-              textValue: Node.string(value[focusIndex]),
+              textValue: flattenNode(value[focusIndex]),
               ranges: slateRangesToStateRanges(value[focusIndex]),
             },
-          },
-        ],
-      })
-      return
-    }
-
-    // set_node is called on format change transforms
-    if (editor.operations.find(op => op.type === 'set_node')) {
-      // get indexies of selected nodes
-      const _blocksChanged = getSelectedIndicies(selection)
-
-      const _operations = []
-      _blocksChanged.forEach(idx => {
-        // node should not be updated if a toggle mark occured
-        if (Node.string(value[idx])) {
-          // push operation to array
-          _operations.push({
-            ...payload,
-            index: idx,
-            text: {
-              textValue: Node.string(value[idx]),
-              ranges: slateRangesToStateRanges(value[idx]),
-            },
+            blockDelta: valueRef.current.length - value.length,
           })
-          setContent({ selection, operations: _operations })
-          /* eslint-disable-next-line no-useless-return */
           return
         }
-      })
-    }
 
-    if (editor.operations.length) {
-      setSelection(selection)
-    }
-  }
+        if (value.length > valueRef.current.length) {
+          // block was added, so do a split
+          split({
+            ...payload,
+            index: focusIndex - 1,
+            text: {
+              textValue: flattenNode(value[focusIndex]),
+              ranges: slateRangesToStateRanges(value[focusIndex]),
+            },
+            previous: {
+              textValue: flattenNode(value[focusIndex - 1]),
+              ranges: slateRangesToStateRanges(value[focusIndex - 1]),
+            },
+          })
+          return
+        }
 
-  if (state.preventDefault) {
-    editor.children = valueRef.current
-    editor.selection = selectionRef.current
-  }
+        if (
+          editor.operations.find(
+            op =>
+              (op.type === 'insert_text' || op.type === 'remove_text') &&
+              op.text.length
+          )
+        ) {
+          // update target node
+          setContent({
+            selection,
+            operations: [
+              {
+                ...payload,
+                index: focusIndex,
+                text: {
+                  textValue: Node.string(value[focusIndex]),
+                  ranges: slateRangesToStateRanges(value[focusIndex]),
+                },
+              },
+            ],
+          })
+          return
+        }
 
-  // store selection because the Transforms below move it around
-  let nextSelection = editor.selection
+        // set_node is called on format change transforms
+        if (editor.operations.find(op => op.type === 'set_node')) {
+          // get indexies of selected nodes
+          const _blocksChanged = getSelectedIndicies(selection)
 
-  state.operations.forEach(op => {
-    const _block = stateBlockToSlateBlock(op.block)
+          const _operations = []
+          _blocksChanged.forEach(idx => {
+            // node should not be updated if a toggle mark occured
+            if (Node.string(value[idx])) {
+              // push operation to array
+              _operations.push({
+                ...payload,
+                index: idx,
+                text: {
+                  textValue: Node.string(value[idx]),
+                  ranges: slateRangesToStateRanges(value[idx]),
+                },
+              })
+              setContent({ selection, operations: _operations })
+              /* eslint-disable-next-line no-useless-return */
+              return
+            }
+          })
+        }
 
-    // clear current block
-    editor.children[op.index].children.forEach(() => {
-      Transforms.delete(editor, { at: [op.index, 0] })
-    })
-    // set block type
-    Transforms.setNodes(
-      editor,
-      { type: _block.type },
-      {
-        at: [op.index],
+        if (editor.operations.length) {
+          setSelection(selection)
+        }
       }
-    )
-    // inserts node
-    Transforms.insertFragment(editor, [_block], {
-      at: [op.index],
-    })
-  })
 
-  // if there were any update operations,
-  //   sync the Slate selection to the state selection
-  if (state.operations.length) {
-    nextSelection = stateSelectionToSlateSelection(
-      editor.children,
-      state.selection
-    )
-  }
+      if (state.preventDefault) {
+        editor.children = valueRef.current
+        editor.selection = selectionRef.current
+      }
 
-  valueRef.current = editor.children
+      // store selection because the Transforms below move it around
+      let nextSelection = editor.selection
 
-  selectionRef.current = nextSelection
+      state.operations.forEach(op => {
+        const _block = stateBlockToSlateBlock(op.block)
 
-  if (state.preventDefault) {
-    editor.operations = []
-  }
-  /*
+        // clear current block
+        editor.children[op.index].children.forEach(() => {
+          Transforms.delete(editor, { at: [op.index, 0] })
+        })
+        // set block type
+        Transforms.setNodes(
+          editor,
+          { type: _block.type },
+          {
+            at: [op.index],
+          }
+        )
+        // inserts node
+        Transforms.insertFragment(editor, [_block], {
+          at: [op.index],
+        })
+      })
+
+      // if there were any update operations,
+      //   sync the Slate selection to the state selection
+      if (state.operations.length) {
+        nextSelection = stateSelectionToSlateSelection(
+          editor.children,
+          state.selection
+        )
+      }
+
+      valueRef.current = editor.children
+
+      selectionRef.current = nextSelection
+
+      if (state.preventDefault) {
+        editor.operations = []
+      }
+      /*
 if focus event is fired and editor.selection is null, set focus at origin. this is used when editorRef.focus() is called by a parent component
 */
-  const onFocus = () => {
-    setTimeout(() => {
-      if (!editor.selection) {
-        const _selection = {
-          anchor: { index: 0, offset: 0 },
-          focus: { index: 0, offset: 0 },
-        }
-        const _slateSelection = stateSelectionToSlateSelection(
-          editor.children,
-          _selection
-        )
-        Transforms.select(editor, _slateSelection)
-        ReactEditor.focus(editor)
+      const onFocus = () => {
+        setTimeout(() => {
+          if (!editor.selection) {
+            const _selection = {
+              anchor: { index: 0, offset: 0 },
+              focus: { index: 0, offset: 0 },
+            }
+            const _slateSelection = stateSelectionToSlateSelection(
+              editor.children,
+              _selection
+            )
+            Transforms.select(editor, _slateSelection)
+            ReactEditor.focus(editor)
+          }
+        }, 5)
       }
-    }, 5)
-  }
 
-  return (
-    <Editor
-      editor={editor}
-      onFocus={onFocus}
-      autofocus={autofocus}
-      value={editor.children}
-      selection={nextSelection}
-      onChange={onChange}
-      onKeyDown={onKeyDown}
-      readonly={readonly}
-    />
+      console.log('IN CONTENT EDTIABLE RENDER')
+
+      return (
+        <Editor
+          editor={editor}
+          onFocus={onFocus}
+          autofocus={autofocus}
+          value={editor.children}
+          selection={nextSelection}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          readonly={readonly}
+        />
+      )
+    },
+    [editor, state]
   )
 }
 

@@ -88,6 +88,8 @@ const Editor = ({
     [searchTerm]
   )
 
+  console.log('EDITOR RENDER')
+
   return (
     <Slate editor={editor} {...slateProps}>
       {children}
