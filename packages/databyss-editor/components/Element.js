@@ -115,35 +115,26 @@ const Element = ({ attributes, children, element }) => {
       const selHasRange = selectionHasRange(
         slateSelectionToStateSelection(editor)
       )
+      // check which variable is causing Element to rerender
+      // if (blockRef.current) {
+      //   compareInputs(blockRef.current, block, 'block')
+      // }
+      // blockRef.current = block
 
-      console.log('in memo')
-      if (blockRef.current) {
-        compareInputs(blockRef.current, block, 'block')
-      }
-      blockRef.current = block
+      // if (elementRef.current) {
+      //   compareInputs(elementRef.current, element, 'element')
+      // }
+      // elementRef.current = element
 
-      if (elementRef.current) {
-        compareInputs(elementRef.current, element, 'element')
-      }
-      elementRef.current = element
+      // if (searchTermRef.current) {
+      //   compareInputs(searchTermRef.current, searchTerm, 'search term')
+      // }
+      // searchTermRef.current = searchTerm
 
-      if (searchTermRef.current) {
-        compareInputs(searchTermRef.current, searchTerm, 'search term')
-      }
-      searchTermRef.current = searchTerm
-
-      if (spellCheckStateRef.current) {
-        compareInputs(spellCheckStateRef.current, spellCheck, 'spell check')
-      }
-      spellCheckStateRef.current = spellCheck
-
-      //  const searchTermRef = useRef(searchTerm)
-
-      // console.log('IN MEMO')
-      // console.log(block)
-      // console.log(element)
-      // console.log(searchTerm)
-      // console.log(spellCheck)
+      // if (spellCheckStateRef.current) {
+      //   compareInputs(spellCheckStateRef.current, spellCheck, 'spell check')
+      // }
+      // spellCheckStateRef.current = spellCheck
 
       const vpad =
         block.type === 'ENTRY' || block.type === previousBlock?.type ? 0 : 3

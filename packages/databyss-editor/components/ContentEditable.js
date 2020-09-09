@@ -35,8 +35,6 @@ const ContentEditable = ({
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
 
-  console.log('IN CONTENT EDTIABLE')
-
   const setSource = useSourceContext(c => c && c.setSource)
 
   const removePageFromSourceCacheHeader = useSourceContext(
@@ -513,8 +511,6 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
           }
         }, 5)
       }
-
-      console.log('IN CONTENT EDTIABLE RENDER')
 
       return (
         <Editor
