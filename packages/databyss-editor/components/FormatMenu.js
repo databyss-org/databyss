@@ -158,7 +158,7 @@ const FormatMenu = () => {
     const rect = isBackwards ? backwardsRect : _rects[_length - 1]
 
     return setPosition({
-      top: pxUnits(rect.top - el?.clientHeight),
+      top: pxUnits(rect.top + window.pageYOffset - el?.offsetHeight),
       left: pxUnits(rect.left + (isBackwards ? 0 : rect.width)),
     })
   }
