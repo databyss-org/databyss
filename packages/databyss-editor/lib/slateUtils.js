@@ -69,13 +69,10 @@ const slateBlockMap = {}
 
 export const stateBlockToSlateBlock = block => {
   // convert state and apply markup values
-
-  // let _childrenText
-  // console.log(JSON.stringify(block.text))
-  console.log(slateBlockMap)
-  let _childrenText =
+  // TODO: slateblockmap should contain an id to the attached block in order to cleanup unused blocks
+  const _slateBlock =
     slateBlockMap[
-      hash(block.text, {
+      hash(block, {
         excludeKeys: key => {
           if (
             key === 'prototype' ||
@@ -90,33 +87,73 @@ export const stateBlockToSlateBlock = block => {
       })
     ]
 
-  if (!_childrenText) {
-    _childrenText = stateToSlateMarkup(block.text)
-    slateBlockMap[
-      hash(block.text, {
-        excludeKeys: key => {
-          if (
-            key === 'prototype' ||
-            key === '__proto__' ||
-            key === 'constructor' ||
-            key === '_id'
-          ) {
-            return true
-          }
-          return false
-        },
-      })
-    ] = JSON.stringify(_childrenText)
-  } else {
-    _childrenText = JSON.parse(_childrenText)
+  if (_slateBlock) {
+    return JSON.parse(_slateBlock)
   }
 
-  // _childrenText = stateToSlateMarkup(block.text)
+  // let _childrenText
+  // console.log(JSON.stringify(block.text))
+  // console.log(slateBlockMap)
+  // let _childrenText =
+  //   slateBlockMap[
+  //     hash(block.text, {
+  //       excludeKeys: key => {
+  //         if (
+  //           key === 'prototype' ||
+  //           key === '__proto__' ||
+  //           key === 'constructor' ||
+  //           key === '_id'
+  //         ) {
+  //           return true
+  //         }
+  //         return false
+  //       },
+  //     })
+  //   ]
+
+  // if (!_childrenText) {
+  //   _childrenText = stateToSlateMarkup(block.text)
+  //   slateBlockMap[
+  //     hash(block.text, {
+  //       excludeKeys: key => {
+  //         if (
+  //           key === 'prototype' ||
+  //           key === '__proto__' ||
+  //           key === 'constructor' ||
+  //           key === '_id'
+  //         ) {
+  //           return true
+  //         }
+  //         return false
+  //       },
+  //     })
+  //   ] = JSON.stringify(_childrenText)
+  // } else {
+  //   _childrenText = JSON.parse(_childrenText)
+  // }
+
+  const _childrenText = stateToSlateMarkup(block.text)
   const _data = {
     children: _childrenText,
     type: block.type,
     isBlock: true,
   }
+
+  slateBlockMap[
+    hash(block, {
+      excludeKeys: key => {
+        if (
+          key === 'prototype' ||
+          key === '__proto__' ||
+          key === 'constructor' ||
+          key === '_id'
+        ) {
+          return true
+        }
+        return false
+      },
+    })
+  ] = JSON.stringify(_data)
 
   return _data
 }
