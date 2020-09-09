@@ -245,6 +245,12 @@ const ContentEditable = ({
         Transforms.insertText(editor, `\n`)
         return
       }
+      // if next character is a line break force the cursor down one position
+      if (_nextIsBreak && _text.length - 1 === _offset) {
+        event.preventDefault()
+        Transforms.move(editor, { unit: 'character', distance: 1 })
+        return
+      }
 
       return
     }
