@@ -138,6 +138,8 @@ const FormatMenu = () => {
   const { selection } = editor
   const domSelection = window.getSelection()
 
+  // window.addEventListener('scroll', e => console.log(e, 'scrolling'))
+
   const updatePosition = (domSelection, isBackwards) => {
     const el = ref.current
 
