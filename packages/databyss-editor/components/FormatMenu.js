@@ -106,6 +106,11 @@ const MarkButton = ({ type, label, variant, ...others }) => {
         e.preventDefault()
         actions(type)()
       }}
+      onKeyPress={e => {
+        if (e.key === 'Enter') {
+          actions(type)()
+        }
+      }}
       {...others}
     >
       <Text
@@ -197,7 +202,7 @@ const FormatMenu = () => {
     [editor.selection]
   )
 
-  useEventListener('mouseup', () => {
+  const openFormatMenu = () => {
     const domSelection = window.getSelection()
     const isTextSelected = domSelection.isCollapsed === false
 
@@ -207,6 +212,14 @@ const FormatMenu = () => {
       updatePosition(domSelection, __isBackwards)
       setMenuActive(true)
     }
+  }
+
+  useEventListener('mouseup', () => {
+    openFormatMenu()
+  })
+
+  useEventListener('keyup', () => {
+    openFormatMenu()
   })
 
   return (
