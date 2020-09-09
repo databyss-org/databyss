@@ -115,13 +115,14 @@ const Element = ({ attributes, children, element }) => {
         slateSelectionToStateSelection(editor)
       )
 
+      console.log('in')
       //  [block, element, searchTerm, spellCheck, previousBlock?.type]
 
       // compareInputs = (oldInputs, newInputs, prefix)
       if (blockRef.current) {
         compareInputs(blockRef.current, block, 'block')
       }
-      blockRef.current = block
+      // blockRef.current = block
       // console.log('IN MEMO')
       // console.log(block)
       // console.log(element)

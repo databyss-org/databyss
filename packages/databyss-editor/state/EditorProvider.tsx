@@ -25,7 +25,7 @@ import {
   CACHE_ENTITY_SUGGESTIONS,
 } from './constants'
 import { Text, Selection, EditorState, Block } from '../interfaces'
-import initialState from './initialState'
+import initialState, { addMetaDataToBlocks } from './initialState'
 import reducer from './reducer'
 import { getPagePath, indexPage, PagePath } from '../lib/util'
 import {
@@ -34,6 +34,7 @@ import {
   getFragmentAtSelection,
   isSelectionCollapsed,
 } from '../lib/clipboardUtils'
+import { initial } from 'lodash'
 
 export type Transform = {
   // current selection
@@ -117,6 +118,8 @@ export const EditorContext = createContext<ContextType | null>(null)
 const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
   ({ children, initialState, onChange }, ref) => {
     const setBlockRelations = useEntryContext(c => c && c.setBlockRelations)
+
+    //  console.log(initialState)
     // get the current page header
 
     const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
@@ -166,11 +169,15 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       }
     }
 
-    const [state, dispatch] = useReducer(reducer, initialState, {
-      initializer: null,
-      name: 'EditorProvider',
-      onChange: forkOnChange,
-    })
+    const [state, dispatch] = useReducer(
+      reducer,
+      addMetaDataToBlocks(initialState),
+      {
+        initializer: null,
+        name: 'EditorProvider',
+        onChange: forkOnChange,
+      }
+    )
 
     useImperativeHandle(
       ref,
