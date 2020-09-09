@@ -5,6 +5,7 @@ import { isMobileOs } from '@databyss-org/ui/'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { Range } from '@databyss-org/slate'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
+import { throttle } from 'lodash'
 import HoveringToolbar from './HoveringToolbar'
 import {
   isFormatActive,
@@ -138,8 +139,6 @@ const FormatMenu = () => {
   const { selection } = editor
   const domSelection = window.getSelection()
 
-  // window.addEventListener('scroll', e => console.log(e, 'scrolling'))
-
   const updatePosition = (domSelection, isBackwards) => {
     const el = ref.current
 
@@ -189,6 +188,11 @@ const FormatMenu = () => {
       if (dontShowMenu) {
         setMenuActive(false)
       }
+
+      window.addEventListener(
+        'scroll',
+        throttle(() => setMenuActive(false), 200)
+      )
     },
     [editor.selection]
   )
