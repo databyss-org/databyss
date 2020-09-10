@@ -1,4 +1,5 @@
 import { Text, Editor } from '@databyss-org/slate'
+import { pickBy } from 'lodash'
 import hash from 'object-hash'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
@@ -69,69 +70,40 @@ const slateBlockMap = {}
 
 export const stateBlockToSlateBlock = block => {
   // convert state and apply markup values
-  // TODO: slateblockmap should contain an id to the attached block in order to cleanup unused blocks
-  const _slateBlock =
-    slateBlockMap[
-      hash(block, {
-        excludeKeys: key => {
-          if (
-            key === 'prototype' ||
-            key === '__proto__' ||
-            key === 'constructor' ||
-            key === '_id'
-          ) {
-            return true
-          }
-          return false
-        },
-      })
-    ]
 
+  // calculate block hash
+  const _blockHash = hash(block, {
+    excludeKeys: key => {
+      if (
+        key === 'prototype' ||
+        key === '__proto__' ||
+        key === 'constructor' ||
+        key === '_id'
+      ) {
+        return true
+      }
+      return false
+    },
+  })
+
+  // look up block hash in blockCache
+  const _slateBlock = slateBlockMap[_blockHash]
+
+  // if block hash exists in dictionary, return the parsed data
   if (_slateBlock) {
-    return JSON.parse(_slateBlock)
+    return JSON.parse(_slateBlock.data)
   }
 
-  // let _childrenText
-  // console.log(JSON.stringify(block.text))
-  // console.log(slateBlockMap)
-  // let _childrenText =
-  //   slateBlockMap[
-  //     hash(block.text, {
-  //       excludeKeys: key => {
-  //         if (
-  //           key === 'prototype' ||
-  //           key === '__proto__' ||
-  //           key === 'constructor' ||
-  //           key === '_id'
-  //         ) {
-  //           return true
-  //         }
-  //         return false
-  //       },
-  //     })
-  //   ]
+  // CACHE CLEANUP
+  // look up any block in dicitonary by same block id
+  const _hash = pickBy(slateBlockMap, b => b._id === block._id)
 
-  // if (!_childrenText) {
-  //   _childrenText = stateToSlateMarkup(block.text)
-  //   slateBlockMap[
-  //     hash(block.text, {
-  //       excludeKeys: key => {
-  //         if (
-  //           key === 'prototype' ||
-  //           key === '__proto__' ||
-  //           key === 'constructor' ||
-  //           key === '_id'
-  //         ) {
-  //           return true
-  //         }
-  //         return false
-  //       },
-  //     })
-  //   ] = JSON.stringify(_childrenText)
-  // } else {
-  //   _childrenText = JSON.parse(_childrenText)
-  // }
+  // if value exists with same id, remove from dictionary
+  if (_hash) {
+    delete slateBlockMap[Object.keys(_hash)[0]]
+  }
 
+  // calculate slate data
   const _childrenText = stateToSlateMarkup(block.text)
   const _data = {
     children: _childrenText,
@@ -139,21 +111,11 @@ export const stateBlockToSlateBlock = block => {
     isBlock: true,
   }
 
-  slateBlockMap[
-    hash(block, {
-      excludeKeys: key => {
-        if (
-          key === 'prototype' ||
-          key === '__proto__' ||
-          key === 'constructor' ||
-          key === '_id'
-        ) {
-          return true
-        }
-        return false
-      },
-    })
-  ] = JSON.stringify(_data)
+  // add to blockCache dicitonary
+  slateBlockMap[_blockHash] = {
+    data: JSON.stringify(_data),
+    _id: block._id,
+  }
 
   return _data
 }
