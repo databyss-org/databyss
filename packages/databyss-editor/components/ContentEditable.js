@@ -142,193 +142,6 @@ const ContentEditable = ({
 
   const inDeadKey = useRef(false)
 
-  const onKeyDown = event => {
-    if (Hotkeys.isUndo(event) && historyContext) {
-      event.preventDefault()
-      historyContext.undo()
-      return
-    }
-
-    if (Hotkeys.isRedo(event) && historyContext) {
-      event.preventDefault()
-      historyContext.redo()
-    }
-
-    // UI
-    if (event.key === 'ArrowUp') {
-      const _currentIndex = editor.selection.focus.path[0]
-      const _atBlockStart =
-        editor.selection.focus.path[1] === 0 &&
-        editor.selection.focus.offset === 0
-      if (onNavigateUpFromTop && _atBlockStart && _currentIndex === 0) {
-        onNavigateUpFromTop()
-      }
-    }
-    // if diacritics has been toggled, set dead key
-    if (event.key === 'Dead') {
-      inDeadKey.current = true
-    } else if (event.key !== 'Enter') {
-      inDeadKey.current = false
-    }
-
-    // if diacritic is toggled and enter key is pressed, prevent default behavior
-    if (inDeadKey.current && event.key === 'Enter') {
-      inDeadKey.current = false
-      event.preventDefault()
-      return
-    }
-
-    // em dash shortcut
-    replaceShortcut(editor, event)
-
-    if (Hotkeys.isTab(event)) {
-      event.preventDefault()
-      Transforms.insertText(editor, `\t`)
-      return
-    }
-
-    if (Hotkeys.isBold(event)) {
-      event.preventDefault()
-      toggleMark(editor, 'bold')
-      return
-    }
-
-    if (Hotkeys.isItalic(event)) {
-      toggleMark(editor, 'italic')
-      event.preventDefault()
-      return
-    }
-
-    if (Hotkeys.isLocation(event)) {
-      toggleMark(editor, 'location')
-      event.preventDefault()
-      return
-    }
-
-    // don't allow a printable key to "overwrite" a selection that spans multiple blocks
-    if (
-      isPrintable(event) &&
-      editor.selection.focus.path[0] !== editor.selection.anchor.path[0]
-    ) {
-      event.preventDefault()
-      return
-    }
-
-    if (event.key === 'Enter') {
-      const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
-      if (isAtomic(_focusedBlock)) {
-        if (
-          ReactEditor.isFocused(editor) &&
-          !selectionHasRange(state.selection) &&
-          _focusedBlock.__isActive &&
-          !isAtomicClosure(_focusedBlock.type)
-        ) {
-          showAtomicModal({ editorContext, navigationContext, editor })
-        }
-        // if closure block is highlighted prevent `enter` key
-        if (_focusedBlock.__isActive && isAtomicClosure(_focusedBlock.type)) {
-          event.preventDefault()
-        }
-        return
-      }
-      const _text = Node.string(editor.children[editor.selection.focus.path[0]])
-      const _offset = flattenOffset(editor, editor.selection.focus)
-      const _prevIsBreak = _text.charAt(_offset - 1) === `\n`
-      const _nextIsBreak = _text.charAt(_offset) === `\n`
-      const _atBlockStart =
-        editor.selection.focus.path[1] === 0 &&
-        editor.selection.focus.offset === 0
-      const _doubleLineBreak = _nextIsBreak || _prevIsBreak || _atBlockStart
-      if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
-        // we're not creating a new block, so just insert a carriage return
-        event.preventDefault()
-        Transforms.insertText(editor, `\n`)
-        return
-      }
-      // if next character is a line break force the cursor down one position
-      if (_nextIsBreak && _text.length - 1 === _offset) {
-        event.preventDefault()
-        Transforms.move(editor, { unit: 'character', distance: 1 })
-        return
-      }
-
-      return
-    }
-    if (event.key === 'Backspace') {
-      // if there is a selection, handle the delete operation in our state
-      if (!Point.equals(editor.selection.focus, editor.selection.anchor)) {
-        event.preventDefault()
-        removeAtSelection()
-        return
-      }
-      // handle start of atomic
-      if (
-        editor.selection.focus.path[0] > 0 &&
-        isAtomic(state.blocks[editor.selection.focus.path[0]]) &&
-        flattenOffset(editor, editor.selection.focus) === 0 &&
-        isEmpty(state.blocks[editor.selection.focus.path[0] - 1])
-      ) {
-        event.preventDefault()
-        remove(editor.selection.focus.path[0] - 1)
-        Transforms.delete(editor, {
-          distance: 1,
-          unit: 'character',
-          reverse: true,
-        })
-        return
-      }
-      // handle end of atomic
-      const _currentBlock = state.blocks[editor.selection.focus.path[0]]
-      if (
-        isAtomic(_currentBlock) &&
-        flattenOffset(editor, editor.selection.focus) > 0
-      ) {
-        event.preventDefault()
-        clear(editor.selection.focus.path[0])
-        // check to see if block is atomic and was the last block on the page
-        if (state.blocks.filter(b => b._id === _currentBlock._id).length < 2) {
-          // if so, remove page from atomic cache
-
-          ;({
-            SOURCE: () => {
-              removePageFromSourceCacheHeader(
-                _currentBlock._id,
-                state.pageHeader._id
-              )
-            },
-            TOPIC: () => {
-              removePageFromTopicCacheHeader(
-                _currentBlock._id,
-                state.pageHeader._id
-              )
-            },
-          }[_currentBlock.type]())
-        }
-
-        Transforms.delete(editor, {
-          distance: 1,
-          unit: 'character',
-          reverse: true,
-        })
-        return
-      }
-      // handle after atomic
-      if (
-        editor.selection.focus.path[0] > 0 &&
-        isAtomic(state.blocks[editor.selection.focus.path[0] - 1]) &&
-        isEmpty(state.blocks[editor.selection.focus.path[0]])
-      ) {
-        event.preventDefault()
-        remove(editor.selection.focus.path[0])
-        Transforms.delete(editor, {
-          distance: 1,
-          unit: 'character',
-          reverse: true,
-        })
-      }
-    }
-  }
-
   useEffect(
     () => {
       if (onDocumentChange) {
@@ -447,6 +260,200 @@ const ContentEditable = ({
         }
       }
 
+      const onKeyDown = event => {
+        if (Hotkeys.isUndo(event) && historyContext) {
+          event.preventDefault()
+          historyContext.undo()
+          return
+        }
+
+        if (Hotkeys.isRedo(event) && historyContext) {
+          event.preventDefault()
+          historyContext.redo()
+        }
+
+        // UI
+        if (event.key === 'ArrowUp') {
+          const _currentIndex = editor.selection.focus.path[0]
+          const _atBlockStart =
+            editor.selection.focus.path[1] === 0 &&
+            editor.selection.focus.offset === 0
+          if (onNavigateUpFromTop && _atBlockStart && _currentIndex === 0) {
+            onNavigateUpFromTop()
+          }
+        }
+        // if diacritics has been toggled, set dead key
+        if (event.key === 'Dead') {
+          inDeadKey.current = true
+        } else if (event.key !== 'Enter') {
+          inDeadKey.current = false
+        }
+
+        // if diacritic is toggled and enter key is pressed, prevent default behavior
+        if (inDeadKey.current && event.key === 'Enter') {
+          inDeadKey.current = false
+          event.preventDefault()
+          return
+        }
+
+        // em dash shortcut
+        replaceShortcut(editor, event)
+
+        if (Hotkeys.isTab(event)) {
+          event.preventDefault()
+          Transforms.insertText(editor, `\t`)
+          return
+        }
+
+        if (Hotkeys.isBold(event)) {
+          event.preventDefault()
+          toggleMark(editor, 'bold')
+          return
+        }
+
+        if (Hotkeys.isItalic(event)) {
+          toggleMark(editor, 'italic')
+          event.preventDefault()
+          return
+        }
+
+        if (Hotkeys.isLocation(event)) {
+          toggleMark(editor, 'location')
+          event.preventDefault()
+          return
+        }
+
+        // don't allow a printable key to "overwrite" a selection that spans multiple blocks
+        if (
+          isPrintable(event) &&
+          editor.selection.focus.path[0] !== editor.selection.anchor.path[0]
+        ) {
+          event.preventDefault()
+          return
+        }
+
+        if (event.key === 'Enter') {
+          const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
+          if (isAtomic(_focusedBlock)) {
+            if (
+              ReactEditor.isFocused(editor) &&
+              !selectionHasRange(state.selection) &&
+              _focusedBlock.__isActive &&
+              !isAtomicClosure(_focusedBlock.type)
+            ) {
+              showAtomicModal({ editorContext, navigationContext, editor })
+            }
+            // if closure block is highlighted prevent `enter` key
+            if (
+              _focusedBlock.__isActive &&
+              isAtomicClosure(_focusedBlock.type)
+            ) {
+              event.preventDefault()
+            }
+            return
+          }
+          const _text = Node.string(
+            editor.children[editor.selection.focus.path[0]]
+          )
+          const _offset = flattenOffset(editor, editor.selection.focus)
+          const _prevIsBreak = _text.charAt(_offset - 1) === `\n`
+          const _nextIsBreak = _text.charAt(_offset) === `\n`
+          const _atBlockStart =
+            editor.selection.focus.path[1] === 0 &&
+            editor.selection.focus.offset === 0
+          const _doubleLineBreak = _nextIsBreak || _prevIsBreak || _atBlockStart
+          if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
+            // we're not creating a new block, so just insert a carriage return
+            event.preventDefault()
+            Transforms.insertText(editor, `\n`)
+            return
+          }
+          // if next character is a line break force the cursor down one position
+          if (_nextIsBreak && _text.length - 1 === _offset) {
+            event.preventDefault()
+            Transforms.move(editor, { unit: 'character', distance: 1 })
+            return
+          }
+
+          return
+        }
+        if (event.key === 'Backspace') {
+          // if there is a selection, handle the delete operation in our state
+          if (!Point.equals(editor.selection.focus, editor.selection.anchor)) {
+            event.preventDefault()
+            removeAtSelection()
+            return
+          }
+          // handle start of atomic
+          if (
+            editor.selection.focus.path[0] > 0 &&
+            isAtomic(state.blocks[editor.selection.focus.path[0]]) &&
+            flattenOffset(editor, editor.selection.focus) === 0 &&
+            isEmpty(state.blocks[editor.selection.focus.path[0] - 1])
+          ) {
+            event.preventDefault()
+            remove(editor.selection.focus.path[0] - 1)
+            Transforms.delete(editor, {
+              distance: 1,
+              unit: 'character',
+              reverse: true,
+            })
+            return
+          }
+          // handle end of atomic
+          const _currentBlock = state.blocks[editor.selection.focus.path[0]]
+          if (
+            isAtomic(_currentBlock) &&
+            flattenOffset(editor, editor.selection.focus) > 0
+          ) {
+            event.preventDefault()
+            clear(editor.selection.focus.path[0])
+            // check to see if block is atomic and was the last block on the page
+            if (
+              state.blocks.filter(b => b._id === _currentBlock._id).length < 2
+            ) {
+              // if so, remove page from atomic cache
+
+              ;({
+                SOURCE: () => {
+                  removePageFromSourceCacheHeader(
+                    _currentBlock._id,
+                    state.pageHeader._id
+                  )
+                },
+                TOPIC: () => {
+                  removePageFromTopicCacheHeader(
+                    _currentBlock._id,
+                    state.pageHeader._id
+                  )
+                },
+              }[_currentBlock.type]())
+            }
+
+            Transforms.delete(editor, {
+              distance: 1,
+              unit: 'character',
+              reverse: true,
+            })
+            return
+          }
+          // handle after atomic
+          if (
+            editor.selection.focus.path[0] > 0 &&
+            isAtomic(state.blocks[editor.selection.focus.path[0] - 1]) &&
+            isEmpty(state.blocks[editor.selection.focus.path[0]])
+          ) {
+            event.preventDefault()
+            remove(editor.selection.focus.path[0])
+            Transforms.delete(editor, {
+              distance: 1,
+              unit: 'character',
+              reverse: true,
+            })
+          }
+        }
+      }
+
       if (state.preventDefault) {
         editor.children = valueRef.current
         editor.selection = selectionRef.current
@@ -456,6 +463,8 @@ const ContentEditable = ({
       let nextSelection = editor.selection
 
       state.operations.forEach(op => {
+        // check to see if operation manipulation is needed
+
         const _block = stateBlockToSlateBlock(op.block)
 
         // clear current block

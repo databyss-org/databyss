@@ -96,7 +96,6 @@ const EditorWithProvider = () => {
     }
   }
 
-  console.log('IN PARENT ELEMENT')
   return useMemo(
     () => (
       <View maxWidth="900px">
