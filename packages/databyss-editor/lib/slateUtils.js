@@ -68,9 +68,8 @@ export const entities = type =>
 // map between state block stringifies and slate block values
 const slateBlockMap = {}
 
+// convert state and apply markup values
 export const stateBlockToSlateBlock = block => {
-  // convert state and apply markup values
-
   // calculate block hash
   const _blockHash = hash(block, {
     excludeKeys: key => {
