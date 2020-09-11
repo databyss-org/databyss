@@ -271,6 +271,9 @@ export const pushSingleBlockOperation = ({
  * @returns true if lines were trimmed
  */
 export const trimLeft = (block: Block): Boolean => {
+  if (!block) {
+    return false
+  }
   const _trim = block.text.textValue.match(/^\n+/)
   if (_trim) {
     block.text.textValue = block.text.textValue.substring(_trim[0].length)
@@ -286,6 +289,9 @@ export const trimLeft = (block: Block): Boolean => {
  * @returns true if lines were trimmed
  */
 export const trimRight = (block: Block): Boolean => {
+  if (!block) {
+    return false
+  }
   const _trim = block.text.textValue.match(/\n+$/)
   if (_trim) {
     // cleanup ranges
