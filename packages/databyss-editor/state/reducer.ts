@@ -546,13 +546,6 @@ export default (
 
               clearBlockRelations = true
               bakeAtomicBlock({ draft, index: op.index })
-            } else {
-              // update only given entity
-              console.log('HERE')
-              draft.operations.push({
-                index: op.index,
-                block: blockValue(_block),
-              })
             }
           })
           break
