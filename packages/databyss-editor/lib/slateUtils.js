@@ -90,6 +90,7 @@ export const stateBlockToSlateBlock = block => {
 
   // if block hash exists in dictionary, return the parsed data
   if (_slateBlock) {
+    console.log('FOUND')
     return JSON.parse(_slateBlock.data)
   }
 

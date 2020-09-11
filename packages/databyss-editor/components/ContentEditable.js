@@ -463,6 +463,7 @@ const ContentEditable = ({
       let nextSelection = editor.selection
 
       state.operations.forEach(op => {
+        console.log(op)
         const _block = stateBlockToSlateBlock(op.block)
         // clear current block
         editor.children[op.index].children.forEach(() => {
