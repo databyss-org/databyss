@@ -232,13 +232,26 @@ const ContentEditable = ({
         return
       }
       const _text = Node.string(editor.children[editor.selection.focus.path[0]])
-      const _offset = flattenOffset(editor, editor.selection.focus)
+      const _offset = parseInt(
+        flattenOffset(editor, editor.selection.focus),
+        10
+      )
       const _prevIsBreak = _text.charAt(_offset - 1) === `\n`
+      const _prevIsDoubleBreak =
+        _prevIsBreak && (_offset - 2 <= 0 || _text.charAt(_offset - 2) === `\n`)
       const _nextIsBreak = _text.charAt(_offset) === `\n`
-      const _atBlockStart =
-        editor.selection.focus.path[1] === 0 &&
-        editor.selection.focus.offset === 0
-      const _doubleLineBreak = _nextIsBreak || _prevIsBreak || _atBlockStart
+      const _nextIsDoubleBreak =
+        _nextIsBreak && _text.charAt(_offset + 1) === `\n`
+      const _atBlockStart = _offset === 0
+      const _atBlockEnd = _offset === _text.length
+      const _doubleLineBreak =
+        (_atBlockEnd && _prevIsBreak) ||
+        (_atBlockStart && _nextIsBreak) ||
+        (_prevIsBreak && _nextIsBreak) ||
+        _nextIsDoubleBreak ||
+        _prevIsDoubleBreak ||
+        _text.length === 0
+
       if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
         // we're not creating a new block, so just insert a carriage return
         event.preventDefault()

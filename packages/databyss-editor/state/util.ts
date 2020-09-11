@@ -264,3 +264,54 @@ export const pushSingleBlockOperation = ({
     })
   }
 }
+
+/**
+ * remove leading line break(s)
+ * @param block block to trim
+ * @returns true if lines were trimmed
+ */
+export const trimLeft = (block: Block): Boolean => {
+  const _trim = block.text.textValue.match(/^\n+/)
+  if (_trim) {
+    block.text.textValue = block.text.textValue.substring(_trim[0].length)
+    block.text.ranges = offsetRanges(block.text.ranges, _trim[0].length)
+    return true
+  }
+  return false
+}
+
+/**
+ * remove trailing line break(s)
+ * @param block block to trim
+ * @returns true if lines were trimmed
+ */
+export const trimRight = (block: Block): Boolean => {
+  const _trim = block.text.textValue.match(/\n+$/)
+  if (_trim) {
+    // cleanup ranges
+    block.text.ranges = block.text.ranges.filter(
+      r => r.offset <  block.text.textValue.length - _trim[0].length
+    )
+    block.text.textValue = block.text.textValue.substring(
+      0,
+      block.text.textValue.length - _trim[0].length
+    )
+    return true
+  }
+  return false
+}
+
+/**
+ * remove leading and/or trailing line break(s)
+ * @param draft
+ * @param atIndex
+ */
+export const trimLinebreaks = ({ draft, atIndex }: {
+  draft: EditorState,
+  atIndex: number
+}) => {
+  const _splitBefore = draft.blocks[atIndex]
+  const _splitAfter = draft.blocks[atIndex + 1]
+  trimLeft(_splitAfter)
+  trimRight(_splitBefore)
+}
