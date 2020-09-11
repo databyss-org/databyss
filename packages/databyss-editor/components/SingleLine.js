@@ -15,6 +15,7 @@ import { Editor, createEditor, Transforms } from '@databyss-org/slate'
 import { View, Text } from '@databyss-org/ui/primitives'
 import { stateToSlateMarkup, getRangesFromBlock } from '../lib/markup'
 import Hotkeys from './../lib/hotKeys'
+import { initial } from 'lodash'
 
 const isMarkActive = (editor, format) => {
   const marks = Editor.marks(editor)
@@ -89,7 +90,7 @@ const RichText = forwardRef(
 
     const initValue = [
       {
-        children: stateToSlateMarkup(initialValue),
+        children: stateToSlateMarkup({ text: initialValue }),
       },
     ]
 
