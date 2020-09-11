@@ -14,15 +14,16 @@ import {
   useNavigationContext,
   ModalManager,
 } from '@databyss-org/ui'
-import { sidebarTotalWidth } from '@databyss-org/ui/theming/components'
+
 import { View } from '@databyss-org/ui/primitives'
 
 const App = ({ children }) => (
-  <View flexDirection="row" display="flex" width="100vw" minHeight="100vh">
+  <View flexDirection="row" display="flex" width="100vw" height="100vh">
     <Sidebar />
-    <View id="mainid" ml={sidebarTotalWidth} flex="1" width="100%">
-      {children}
-    </View>
+    <div style={{ width: '100%' }}>{children}</div>
+
+    {/* TODO: replace div with View */}
+    {/* <View id="mainid">{children}</View> */}
   </View>
 )
 
@@ -60,7 +61,7 @@ const Private = () => {
       <EntryProvider>
         <SourceProvider>
           <TopicProvider>
-            <Router width="100%">
+            <Router>
               <App path="/:accountId">
                 <NotFoundRedirect default />
                 <PageRouter path="pages/*" />

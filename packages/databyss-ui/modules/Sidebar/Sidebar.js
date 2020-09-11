@@ -47,42 +47,42 @@ const Sidebar = () => {
   /*
   if item active in menuItem, SidebarContent will compose a list to pass to SidebarList
   */
-  return (
-    <View flexDirection="row" position="fixed" top="0" left="0">
+  return isMenuOpen ? (
+    <>
       <SidebarCollapsed />
-      {isMenuOpen && (
-        <View
-          {...defaultProps}
-          position="relative"
-          width={sidebar.width}
-          key={`sidebar-key-${menuItem}`}
-        >
-          <View theme={darkTheme} bg="background.1" height="100vh">
-            <List verticalItemPadding={2} horizontalItemPadding={2}>
-              <Header />
-              <Search />
-              {(menuItem === 'pages' || !menuItem) && (
-                <Pages filterQuery={filterQuery} height={sidebarListHeight} />
-              )}
-              {menuItem === 'sources' && (
-                <Sources
-                  filterQuery={filterQuery}
-                  height={sidebarListHeight}
-                  hasIndexPage
-                />
-              )}
-              {menuItem === 'topics' && (
-                <Topics
-                  filterQuery={filterQuery}
-                  height={sidebarListHeight}
-                  hasIndexPage
-                />
-              )}
-            </List>
-          </View>
+      <View
+        {...defaultProps}
+        position="relative"
+        width={sidebar.width}
+        key={`sidebar-key-${menuItem}`}
+      >
+        <View theme={darkTheme} bg="background.1" height="100vh">
+          <List verticalItemPadding={2} horizontalItemPadding={2}>
+            <Header />
+            <Search />
+            {(menuItem === 'pages' || !menuItem) && (
+              <Pages filterQuery={filterQuery} height={sidebarListHeight} />
+            )}
+            {menuItem === 'sources' && (
+              <Sources
+                filterQuery={filterQuery}
+                height={sidebarListHeight}
+                hasIndexPage
+              />
+            )}
+            {menuItem === 'topics' && (
+              <Topics
+                filterQuery={filterQuery}
+                height={sidebarListHeight}
+                hasIndexPage
+              />
+            )}
+          </List>
         </View>
-      )}
-    </View>
+      </View>
+    </>
+  ) : (
+    <SidebarCollapsed />
   )
 }
 
