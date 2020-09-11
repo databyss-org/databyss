@@ -464,25 +464,23 @@ const ContentEditable = ({
 
       state.operations.forEach(op => {
         // check to see if operation manipulation is needed
-
-        const _block = stateBlockToSlateBlock(op.block)
-
-        // clear current block
-        editor.children[op.index].children.forEach(() => {
-          Transforms.delete(editor, { at: [op.index, 0] })
-        })
-        // set block type
-        Transforms.setNodes(
-          editor,
-          { type: _block.type },
-          {
-            at: [op.index],
-          }
-        )
-        // inserts node
-        Transforms.insertFragment(editor, [_block], {
-          at: [op.index],
-        })
+        // const _block = stateBlockToSlateBlock(op.block)
+        // // clear current block
+        // editor.children[op.index].children.forEach(() => {
+        //   Transforms.delete(editor, { at: [op.index, 0] })
+        // })
+        // // set block type
+        // Transforms.setNodes(
+        //   editor,
+        //   { type: _block.type },
+        //   {
+        //     at: [op.index],
+        //   }
+        // )
+        // // inserts node
+        // Transforms.insertFragment(editor, [_block], {
+        //   at: [op.index],
+        // })
       })
 
       // if there were any update operations,
