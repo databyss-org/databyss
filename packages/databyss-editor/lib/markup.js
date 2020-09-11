@@ -71,11 +71,13 @@ function flattenRanges(ranges) {
     if (!nextRange) {
       // we're at the end
       flattened.push(range)
+      // eslint-disable-next-line no-continue
       continue
     }
     if (nextRange.offset >= range.offset + range.length) {
       // already flat
       flattened.push(range)
+      // eslint-disable-next-line no-continue
       continue
     }
     // skip nextRange in next loop because we're combining below
