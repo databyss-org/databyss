@@ -63,22 +63,98 @@ export const statePointToSlatePoint = (children, point) => {
   return selection.focus
 }
 
-export const stateToSlateMarkup = blockData => {
-  // create temp editor and insert the text value
-  const _editor = createEditor()
-  const _text = {
-    children: [{ text: blockData.textValue }],
+function flattenRanges(ranges) {
+  const flattened = []
+  for (let i = 0; i < ranges.length; i += 1) {
+    const range = ranges[i]
+    const nextRange = ranges[i + 1]
+    if (!nextRange) {
+      // we're at the end
+      flattened.push(range)
+      continue
+    }
+    if (nextRange.offset >= range.offset + range.length) {
+      // already flat
+      flattened.push(range)
+      continue
+    }
+    // skip nextRange in next loop because we're combining below
+    i += 1
+    const newLen1 = nextRange.offset - range.offset
+    // if current range extends before the next range, then we need block1
+    if (range.offset < nextRange.offset) {
+      const newBlock1 = {
+        ...range,
+        length: newLen1,
+      }
+      flattened.push(newBlock1)
+    }
+    const newMarks2 = [...nextRange.marks, ...range.marks]
+    let newLen2 = nextRange.length
+    // if next range extends beyond end of current range
+    if (range.offset + range.length < nextRange.offset + nextRange.length) {
+      newLen2 = range.offset + range.length - nextRange.offset
+    }
+    const newBlock2 = { ...nextRange, marks: newMarks2, length: newLen2 }
+    flattened.push(newBlock2)
+    // if current range extends beyond next range, we need a 3rd block
+    if (range.offset + range.length > nextRange.offset + nextRange.length) {
+      const newOffset3 = nextRange.offset + nextRange.length
+      const newLen3 = range.length - newOffset3
+      const newBlock3 = {
+        offset: newOffset3,
+        length: newLen3,
+        marks: range.marks,
+      }
+      flattened.push(newBlock3)
+    }
   }
-  Transforms.insertNodes(_editor, _text)
+  return flattened
+}
 
-  // apply all ranges as marks
-  moveToStart(_editor)
+export const stateToSlateMarkup = block => {
+  // flatten all ranges
+  const _ranges = flattenRanges(block.text.ranges)
 
-  blockData.ranges.forEach(range => applyRange(_editor, range))
+  const _text = block.text.textValue
 
-  const { children } = _editor.children[0]
+  let _currentIndex = 0
 
-  return children
+  const _children = []
+
+  // if ranges dont exist, return plain text
+  if (!_ranges.length) {
+    _children.push({ text: _text })
+  }
+
+  _ranges.forEach((b, i) => {
+    // if plain words exist
+    if (_currentIndex !== b.offset) {
+      const _plainTextLength = b.offset - _currentIndex
+      const _plainText = _text.substr(_currentIndex, _plainTextLength)
+      // push plain word and update current index
+      _children.push({ text: _plainText })
+      _currentIndex += _plainTextLength
+    }
+
+    const text = _text.substring(b.offset, b.offset + b.length)
+
+    const ranges = {}
+    b.marks.forEach(m => {
+      ranges[m] = true
+    })
+    _currentIndex += b.length
+    _children.push({ text, ...ranges })
+    // if last element in array, check for left over text
+    if (i === _ranges.length - 1) {
+      const _len = _text.length - _currentIndex
+      const _plainText = _text.substr(_currentIndex, _len)
+      if (_plainText.length) {
+        _children.push({ text: _plainText })
+      }
+    }
+  })
+  return _children
 }
 
 export const getRangesFromBlock = value => {
