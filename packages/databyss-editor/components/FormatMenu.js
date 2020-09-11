@@ -1,10 +1,17 @@
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Button, Text, View } from '@databyss-org/ui/primitives'
-import { useEditor } from '@databyss-org/slate-react'
+import { useEditor, ReactEditor, useSlate } from '@databyss-org/slate-react'
 import { isMobileOs } from '@databyss-org/ui/'
 import { pxUnits } from '@databyss-org/ui/theming/views'
+import { Range } from '@databyss-org/slate'
+import useEventListener from '@databyss-org/ui/lib/useEventListener'
+import { throttle } from 'lodash'
 import HoveringToolbar from './HoveringToolbar'
-import { isFormatActive, toggleMark } from './../lib/slateUtils'
+import {
+  isFormatActive,
+  toggleMark,
+  slateSelectionToStateSelection,
+} from './../lib/slateUtils'
 
 const mobileActions = [
   {
@@ -99,6 +106,11 @@ const MarkButton = ({ type, label, variant, ...others }) => {
         e.preventDefault()
         actions(type)()
       }}
+      onKeyPress={e => {
+        if (e.key === 'Enter') {
+          actions(type)()
+        }
+      }}
       {...others}
     >
       <Text
@@ -113,8 +125,108 @@ const MarkButton = ({ type, label, variant, ...others }) => {
   )
 }
 
-const FormatMenu = () => (
-  <HoveringToolbar>{formatActionButtons()}</HoveringToolbar>
-)
+const isBackwards = stateSelection => {
+  if (stateSelection.anchor.index === stateSelection.focus.index) {
+    return stateSelection.anchor.offset - stateSelection.focus.offset > 0
+  }
+  return stateSelection.anchor.index > stateSelection.focus.index
+}
+
+const FormatMenu = () => {
+  const ref = useRef()
+  const editor = useSlate()
+  const [menuActive, setMenuActive] = useState(false)
+  const [isSelectionBackwards, setIsSelectionBackwards] = useState(false)
+  const [position, setPosition] = useState({
+    top: -200,
+    left: -200,
+  })
+  const { selection } = editor
+  const domSelection = window.getSelection()
+
+  const updatePosition = (domSelection, isBackwards) => {
+    const el = ref.current
+
+    const domRange = domSelection.getRangeAt(0)
+    // get selected dom nodes
+    const _rects = domRange.getClientRects()
+    const _length = _rects.length
+
+    const blocks = editor.getFragment(selection)
+
+    // get the correct position if you select an empty space
+    const backwardsRect =
+      blocks[0]?.children[0].text === '' && _rects.length > 1
+        ? _rects[1]
+        : _rects[0]
+
+    const rect = isBackwards ? backwardsRect : _rects[_length - 1]
+
+    return setPosition({
+      top: pxUnits(rect.top + window.pageYOffset - el?.offsetHeight),
+      left: pxUnits(rect.left + (isBackwards ? 0 : rect.width)),
+    })
+  }
+
+  useEffect(
+    () => {
+      const stateSelection = slateSelectionToStateSelection(editor)
+
+      if (editor.selection && !Range.isCollapsed(editor.selection)) {
+        const __isBackwards = isBackwards(stateSelection)
+        setIsSelectionBackwards(__isBackwards)
+      }
+    },
+    [domSelection.isCollapsed]
+  )
+
+  useEffect(
+    () => {
+      const domSelection = window.getSelection()
+
+      const dontShowMenu =
+        !selection ||
+        !ReactEditor.isFocused(editor) ||
+        Range.isCollapsed(selection) ||
+        domSelection.isCollapsed === true
+
+      if (dontShowMenu) {
+        setMenuActive(false)
+      }
+
+      window.addEventListener(
+        'scroll',
+        throttle(() => setMenuActive(false), 200)
+      )
+    },
+    [editor.selection]
+  )
+
+  const openFormatMenu = () => {
+    const domSelection = window.getSelection()
+    const isTextSelected = domSelection.isCollapsed === false
+
+    if (isTextSelected) {
+      const __isBackwards = isSelectionBackwards
+
+      updatePosition(domSelection, __isBackwards)
+      setMenuActive(true)
+    }
+  }
+
+  useEventListener('mouseup', () => {
+    openFormatMenu()
+  })
+
+  useEventListener('keyup', () => {
+    openFormatMenu()
+  })
+
+  return (
+    <HoveringToolbar showToolbar={menuActive} position={position} ref={ref}>
+      {formatActionButtons()}
+    </HoveringToolbar>
+  )
+}
 
 export default FormatMenu
