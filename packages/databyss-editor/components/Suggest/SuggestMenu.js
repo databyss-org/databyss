@@ -3,7 +3,6 @@ import { useEditor, ReactEditor } from '@databyss-org/slate-react'
 import { Node, Editor } from '@databyss-org/slate'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 import { Text, View } from '@databyss-org/ui/primitives'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import { useEditorContext } from '../../state/EditorProvider'
@@ -119,7 +118,6 @@ const SuggestMenu = ({ children, placeholder }) => {
           bottom: position.bottom,
         }}
         open={menuActive}
-        mt={pxUnits(-6)}
         widthVariant="dropdownMenuLarge"
         minHeight="32px"
         p="small"
