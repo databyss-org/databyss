@@ -11,7 +11,6 @@ import {
   slateRangesToStateRanges,
   slateSelectionToStateSelection,
   stateSelectionToSlateSelection,
-  flattenNode,
   flattenOffset,
   stateBlockToSlateBlock,
   toggleMark,
@@ -157,7 +156,6 @@ const ContentEditable = ({
         if (onDocumentChange) {
           onDocumentChange(editor)
         }
-
         const selection = slateSelectionToStateSelection(editor)
 
         if (!selection) {
@@ -181,7 +179,7 @@ const ContentEditable = ({
             ...payload,
             index: focusIndex,
             text: {
-              textValue: flattenNode(value[focusIndex]),
+              textValue: Node.string(value[focusIndex]),
               ranges: slateRangesToStateRanges(value[focusIndex]),
             },
             blockDelta: valueRef.current.length - value.length,
@@ -195,11 +193,11 @@ const ContentEditable = ({
             ...payload,
             index: focusIndex - 1,
             text: {
-              textValue: flattenNode(value[focusIndex]),
+              textValue: Node.string(value[focusIndex]),
               ranges: slateRangesToStateRanges(value[focusIndex]),
             },
             previous: {
-              textValue: flattenNode(value[focusIndex - 1]),
+              textValue: Node.string(value[focusIndex - 1]),
               ranges: slateRangesToStateRanges(value[focusIndex - 1]),
             },
           })

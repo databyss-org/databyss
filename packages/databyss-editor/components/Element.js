@@ -11,8 +11,6 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
-import { slateSelectionToStateSelection } from '../lib/slateUtils'
-import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { SuggestMenu, SuggestSources, SuggestTopics } from './Suggest'
 

@@ -7,10 +7,7 @@ import theme, { borderRadius, darkTheme } from '@databyss-org/ui/theming/theme'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { ReactEditor, useSlate } from '@databyss-org/slate-react'
 import { Editor, Range } from '@databyss-org/slate'
-import {
-  isSelectionAtomic,
-  slateSelectionToStateSelection,
-} from './../lib/slateUtils'
+import { isSelectionAtomic } from './../lib/slateUtils'
 
 const isBackwards = () => {
   const selection = window.getSelection()
@@ -55,8 +52,6 @@ const HoveringToolbar = ({ children }) => {
   const editor = useSlate()
   const [isSelectionBackwards, setIsSelectionBackwards] = useState(false)
 
-  const _selection = slateSelectionToStateSelection(editor)
-
   // if selection is backwards, keep that in local state, rerenders will reset backwards selection
   useEffect(
     () => {
@@ -65,7 +60,7 @@ const HoveringToolbar = ({ children }) => {
         setIsSelectionBackwards(__isBackwards)
       }
     },
-    [JSON.stringify(_selection)]
+    [JSON.stringify(editor.selection)]
   )
 
   useEffect(() => {

@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect } from 'react'
-import { Slate, Editable, ReactEditor } from '@databyss-org/slate-react'
+import React, { useCallback } from 'react'
+import { Slate, Editable } from '@databyss-org/slate-react'
 import { Text } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useEditorContext } from '../state/EditorProvider'

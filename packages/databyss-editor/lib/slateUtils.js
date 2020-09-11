@@ -1,21 +1,8 @@
-import { Text, Editor } from '@databyss-org/slate'
+import MurmurHash3 from 'imurmurhash'
+import { Text, Editor, Node } from '@databyss-org/slate'
 import { pickBy } from 'lodash'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
-import MurmurHash3 from 'imurmurhash'
-
-// function filterObject(obj, key) {
-//   // eslint-disable-next-line no-restricted-syntax
-//   for (let i in obj) {
-//     if (!obj.hasOwnProperty(i)) continue
-//     if (typeof obj[i] == 'object') {
-//       filterObject(obj[i], key)
-//     } else if (i == key) {
-//       delete key
-//     }
-//   }
-//   return obj
-// }
 
 export const flattenNode = node => {
   if (!node) {
@@ -39,7 +26,7 @@ export const flattenNodeToPoint = (editor, point) => {
     offset: point.offset,
   }
   const _frag = Editor.fragment(editor, { anchor, focus })
-  const _string = flattenNode(_frag[0])
+  const _string = Node.string({ children: _frag })
   return _string
 }
 
@@ -94,7 +81,6 @@ export const stateBlockToSlateBlock = block => {
 
   // if block hash exists in dictionary, return the parsed data
   if (_slateBlock) {
-    // console.log('hit')
     return JSON.parse(_slateBlock.data)
   }
 
