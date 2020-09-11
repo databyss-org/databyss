@@ -6,7 +6,10 @@ import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import wrap from '../../lib/guardedAsync'
 import { ResourceNotFoundError } from '../../lib/Errors'
-import { getPageAccountQueryMixin } from './helpers/accountQueryMixin'
+import {
+  getPageAccountQueryMixin,
+  getBlockAccountQueryMixin,
+} from './helpers/accountQueryMixin'
 import Page from '../../models/Page'
 
 const router = express.Router()
@@ -49,7 +52,7 @@ router.get(
       {
         $match: {
           type: 'SOURCE',
-          ...getPageAccountQueryMixin(req),
+          ...getBlockAccountQueryMixin(req),
         },
       },
       {
@@ -94,7 +97,7 @@ router.get(
       {
         $match: {
           type: 'SOURCE',
-          ...getPageAccountQueryMixin(req),
+          ...getBlockAccountQueryMixin(req),
         },
       },
       {
