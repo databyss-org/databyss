@@ -67,7 +67,7 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
   }
 
   return (
-    <View overflow="scroll" ref={editorWindowRef}>
+    <View height="100vh" overflow="scroll" ref={editorWindowRef}>
       {!isPublicAccount() && (
         <PageSticky pagePath={editorPath} pageId={page._id} />
       )}
@@ -106,7 +106,7 @@ const PageContent = () => {
   */
 
   return (
-    <View flex="1" minHeight="100vh" backgroundColor="background.1">
+    <View flex="1" height="100vh" backgroundColor="background.1">
       {id && (
         <PageLoader pageId={id} key={id}>
           {page => <PageContainer anchor={anchor} id={id} page={page} />}

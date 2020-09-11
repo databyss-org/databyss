@@ -119,7 +119,6 @@ const SuggestMenu = ({ children, placeholder }) => {
           bottom: position.bottom,
         }}
         open={menuActive}
-        mt={pxUnits(-6)}
         widthVariant="dropdownMenuLarge"
         minHeight="32px"
         p="small"
