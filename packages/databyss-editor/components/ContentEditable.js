@@ -384,6 +384,7 @@ const ContentEditable = ({
             removeAtSelection()
             return
           }
+
           // handle start of atomic
           if (
             editor.selection.focus.path[0] > 0 &&
@@ -402,6 +403,7 @@ const ContentEditable = ({
           }
           // handle end of atomic
           const _currentBlock = state.blocks[editor.selection.focus.path[0]]
+
           if (
             isAtomic(_currentBlock) &&
             flattenOffset(editor, editor.selection.focus) > 0
@@ -463,7 +465,6 @@ const ContentEditable = ({
       let nextSelection = editor.selection
 
       state.operations.forEach(op => {
-        console.log(op)
         const _block = stateBlockToSlateBlock(op.block)
         // clear current block
         editor.children[op.index].children.forEach(() => {

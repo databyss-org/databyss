@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react'
-import { Slate, Editable } from '@databyss-org/slate-react'
+import React, { useCallback, useEffect } from 'react'
+import { Slate, Editable, ReactEditor } from '@databyss-org/slate-react'
 import { Text } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useEditorContext } from '../state/EditorProvider'
@@ -88,6 +88,12 @@ const Editor = ({
     [searchTerm]
   )
 
+  // useEffect(() => {
+  //   if (autofocus && !ReactEditor.isFocused(editor)) {
+  //     window.requestAnimationFrame(() => ReactEditor.focus(editor))
+  //   }
+  // }, [])
+
   return (
     <Slate editor={editor} {...slateProps}>
       {children}
@@ -111,6 +117,7 @@ const Editor = ({
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         readOnly={readOnly}
+        // TODO: optimize this
         autoFocus={autofocus}
         onKeyDown={onKeyDown}
         style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}

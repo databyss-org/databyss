@@ -1,8 +1,21 @@
 import { Text, Editor } from '@databyss-org/slate'
 import { pickBy } from 'lodash'
-import hash from 'object-hash'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
+import MurmurHash3 from 'imurmurhash'
+
+// function filterObject(obj, key) {
+//   // eslint-disable-next-line no-restricted-syntax
+//   for (let i in obj) {
+//     if (!obj.hasOwnProperty(i)) continue
+//     if (typeof obj[i] == 'object') {
+//       filterObject(obj[i], key)
+//     } else if (i == key) {
+//       delete key
+//     }
+//   }
+//   return obj
+// }
 
 export const flattenNode = node => {
   if (!node) {
@@ -70,27 +83,18 @@ const slateBlockMap = {}
 
 // convert state and apply markup values
 export const stateBlockToSlateBlock = block => {
-  // calculate block hash
-  const _blockHash = hash(block, {
-    excludeKeys: key => {
-      if (
-        key === 'prototype' ||
-        key === '__proto__' ||
-        key === 'constructor' ||
-        key === '_id'
-      ) {
-        return true
-      }
-      return false
-    },
-  })
+  // object hash
+  const _hashBlock = { text: block.text, type: block.type }
+  const str = JSON.stringify(_hashBlock)
+
+  const _blockHash = MurmurHash3(str).result()
 
   // look up block hash in blockCache
   const _slateBlock = slateBlockMap[_blockHash]
 
   // if block hash exists in dictionary, return the parsed data
   if (_slateBlock) {
-    console.log('FOUND')
+    // console.log('hit')
     return JSON.parse(_slateBlock.data)
   }
 

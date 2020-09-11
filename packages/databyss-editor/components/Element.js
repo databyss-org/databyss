@@ -3,6 +3,7 @@ import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from '@databyss-org/slate-react'
+import { Range } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -101,8 +102,8 @@ const Element = ({ attributes, children, element }) => {
   // const compareInputs = (oldInput, newInput, prefix) => {
   //   if (oldInput !== newInput) {
   //     console.log(`${prefix} - The input changed`)
-  //     console.log('Old value:', oldInput)
-  //     console.log('New value:', newInput)
+  //     // console.log('Old value:', oldInput)
+  //     // console.log('New value:', newInput)
   //   }
   // }
 
@@ -113,9 +114,9 @@ const Element = ({ attributes, children, element }) => {
       }
 
       const blockMenuWidth = menuLauncherSize + 6
-      const selHasRange = selectionHasRange(
-        slateSelectionToStateSelection(editor)
-      )
+
+      const selHasRange = !Range.isCollapsed(editor.selection)
+
       // check which variable is causing Element to rerender
       // if (blockRef.current) {
       //   compareInputs(blockRef.current, block, 'block')
