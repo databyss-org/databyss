@@ -55,7 +55,7 @@ const dialogs = {
     message: shortIpsum,
     showConfirmButtons: false,
   }),
-  error: onDismiss => ({
+  error: () => ({
     name: 'Error Dialog',
     message: '😱 So sorry, but Databyss has encountered an error.',
     confirmButtons: [
