@@ -43,16 +43,15 @@ const PageSticky = ({ pagePath, pageId }) => {
       alignItems="center"
       flexDirection="row"
       justifyContent="space-between"
-      p="medium"
-      pl="none"
-      ml="extraSmall"
+      py="medium"
+      mx="extraSmall"
       ref={stickyRef}
       backgroundColor="gray.7"
       position="sticky"
       top={0}
       zIndex="sticky"
     >
-      <Text color="gray.4" pl="medium" variant="uiTextSmall">
+      <Text color="gray.4" variant="uiTextSmall">
         <div
           data-test-element="editor-sticky-header"
           dangerouslySetInnerHTML={{ __html: currentPath.join(' / ') }}
