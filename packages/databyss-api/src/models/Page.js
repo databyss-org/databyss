@@ -11,6 +11,17 @@ const PageSchema = new Schema(
       ref: 'account',
       required: true,
     },
+    sharedWith: [
+      {
+        account: {
+          type: Schema.Types.ObjectId,
+        },
+        role: {
+          type: String,
+          enum: ['VIEW'],
+        },
+      },
+    ],
     name: {
       type: String,
       default: 'untitled',

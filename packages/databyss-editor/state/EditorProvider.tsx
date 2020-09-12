@@ -99,7 +99,7 @@ const useReducer = createReducer()
 /*
 actions to set block relations
 */
-const isSetBlockRelations = [SPLIT, MERGE, REMOVE, , COPY]
+const isSetBlockRelations: string[] = []
 
 /*
 actions to clear block relations, then set new relations
@@ -110,6 +110,9 @@ const isClearBlockRelations = [
   CLEAR,
   DEQUEUE_NEW_ENTITY,
   REMOVE_AT_SELECTION,
+  MERGE,
+  SPLIT,
+  REMOVE,
 ]
 
 export const EditorContext = createContext<ContextType | null>(null)

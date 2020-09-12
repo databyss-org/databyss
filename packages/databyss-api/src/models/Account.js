@@ -27,6 +27,9 @@ const AccountSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'page',
   },
+  isPublic: {
+    type: Boolean,
+  },
 })
 
 AccountSchema.static('create', async (values = {}) => {

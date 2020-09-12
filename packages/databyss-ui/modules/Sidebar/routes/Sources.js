@@ -80,7 +80,8 @@ export const getAuthorData = authors =>
       text: getShortAuthorName(),
       type: 'authors',
       route: '/sources',
-      params: authorParams.toString(),
+      // TODO remove replace statement
+      params: authorParams.toString().replace('25', ''),
       icon: <AuthorSvg />,
     })
   })
@@ -88,7 +89,7 @@ export const getAuthorData = authors =>
 const Authors = ({ filterQuery, hasIndexPage, height }) => (
   <SourceCitationsLoader>
     {() => (
-      <AuthorsLoader>
+      <AuthorsLoader filtered>
         {authors => {
           const authorData = getAuthorData(authors)
           const sortedAuthors = sortEntriesAtoZ(authorData, 'text')

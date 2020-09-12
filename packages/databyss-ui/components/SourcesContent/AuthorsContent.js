@@ -18,7 +18,7 @@ const AuthorsContent = () => {
   return (
     <SourceCitationsLoader>
       {() => (
-        <AuthorsLoader>
+        <AuthorsLoader filtered>
           {authors => {
             const authorData = Object.values(authors).map(value => {
               const getAuthorName = () => {
@@ -42,6 +42,7 @@ const AuthorsContent = () => {
               const _url = `firstName=${
                 i.name.firstName ? i.name.firstName.textValue : ''
               }&lastName=${i.name.lastName ? i.name.lastName.textValue : ''}`
+
               navigate(`/sources?${_url}`)
             }
 

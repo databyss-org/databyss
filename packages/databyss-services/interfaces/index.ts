@@ -5,7 +5,7 @@ export {
   NetworkUnavailableError,
   NotAuthorizedError,
   InsufficientPermissionError,
-  ResourceNotFoundError
+  ResourceNotFoundError,
 } from './Errors'
 export type { Page, PageHeader } from './Page'
 export type { Point } from './Point'

@@ -8,6 +8,8 @@ import {
   CACHE_AUTHOR_HEADERS,
   FETCH_SOURCE_CITATIONS,
   CACHE_SOURCE_CITATIONS,
+  REMOVE_PAGE_FROM_HEADERS,
+  ADD_PAGE_TO_HEADER,
 } from './constants'
 import { Source, Author, SourceCitationHeader } from '../interfaces'
 
@@ -47,6 +49,9 @@ export function saveSource(sourceFields: Source) {
         type: CACHE_SOURCE,
         payload: { source: sourceFields, id: sourceFields._id },
       })
+      // reset headers
+      dispatch(fetchAuthorHeaders())
+      dispatch(fetchSourceCitations())
     })
   }
 }
@@ -79,6 +84,24 @@ export function fetchAuthorHeaders() {
         },
       })
     }
+  }
+}
+
+export function removePageFromHeaders(id: string, pageId: string) {
+  return (dispatch: Function) => {
+    dispatch({
+      type: REMOVE_PAGE_FROM_HEADERS,
+      payload: { id, pageId },
+    })
+  }
+}
+
+export function addPageToHeaders(id: string, pageId: string) {
+  return (dispatch: Function) => {
+    dispatch({
+      type: ADD_PAGE_TO_HEADER,
+      payload: { id, pageId },
+    })
   }
 }
 

@@ -6,6 +6,11 @@ import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import wrap from '../../lib/guardedAsync'
 import { ResourceNotFoundError } from '../../lib/Errors'
+import {
+  getPageAccountQueryMixin,
+  getBlockAccountQueryMixin,
+} from './helpers/accountQueryMixin'
+import Page from '../../models/Page'
 
 const router = express.Router()
 
@@ -41,17 +46,40 @@ router.post(
 // @access   Private
 router.get(
   '/authors',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
-    const blocks = await Block.find({
-      account: req.account._id,
-      type: 'SOURCE',
-    })
+    const blocks = await Block.aggregate([
+      {
+        $match: {
+          type: 'SOURCE',
+          ...getBlockAccountQueryMixin(req),
+        },
+      },
+      {
+        // appends all the pages block appears in in an array 'isInPages'
+        $lookup: {
+          from: 'pages',
+          localField: '_id',
+          foreignField: 'blocks._id',
+          as: 'isInPages',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          detail: 1,
+          isInPages: '$isInPages._id',
+        },
+      },
+    ])
+
     if (!blocks) {
       return res.json([])
     }
-    // group by authors and return array of authors
 
+    // group by authors and return array of authors
     const authorsDict = getAuthorsFromSources(blocks)
 
     return res.json(Object.values(authorsDict))
@@ -63,12 +91,35 @@ router.get(
 // @access   Private
 router.get(
   '/citations',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
-    const blocks = await Block.find({
-      account: req.account._id,
-      type: 'SOURCE',
-    })
+    const blocks = await Block.aggregate([
+      {
+        $match: {
+          type: 'SOURCE',
+          ...getBlockAccountQueryMixin(req),
+        },
+      },
+      {
+        // appends all the pages block appears in in an array 'isInPages'
+        $lookup: {
+          from: 'pages',
+          localField: '_id',
+          foreignField: 'blocks._id',
+          as: 'isInPages',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          detail: 1,
+          isInPages: '$isInPages._id',
+        },
+      },
+    ])
+
     if (!blocks) {
       return res.json([])
     }
@@ -79,10 +130,12 @@ router.get(
         'text',
         'detail.authors',
         'detail.citations',
+        'isInPages',
       ])
 
       return sourcesCitationsDict
     })
+
     return res.json(sourcesCitations)
   })
 )
@@ -102,7 +155,17 @@ router.get(
       return next(new ResourceNotFoundError('There is no source for this id'))
     }
 
-    return res.json(source)
+    // populates current pages
+    let isInPages = []
+    const _pages = await Page.find({
+      'blocks._id': source._id,
+      ...getPageAccountQueryMixin(req),
+    })
+    if (_pages) {
+      isInPages = _pages.map(p => p._id)
+    }
+
+    return res.json({ ...source._doc, isInPages })
   })
 )
 

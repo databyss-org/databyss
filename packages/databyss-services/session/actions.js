@@ -7,6 +7,7 @@ import {
   DENY_ACCESS,
   REQUEST_CODE,
   END_SESSION,
+  CACHE_PUBLIC_SESSION,
 } from './constants'
 
 import {
@@ -17,6 +18,8 @@ import {
   setAccountId,
   deleteAccountId,
 } from './clientStorage'
+
+import { getAccountFromLocation } from './_helpers'
 
 export const fetchSession = ({
   _request,
@@ -41,11 +44,24 @@ export const fetchSession = ({
   try {
     const authToken = getAuthToken()
     const accountId = getAccountId()
+
     if (authToken && accountId) {
-      // if we have the token, try to use it
-      path += '/auth'
-      options.headers['x-databyss-account'] = accountId
-      options.headers['x-auth-token'] = authToken
+      // if not at at root path '/' and accountID is not the same as the one in the url, set as guest account
+      if (
+        getAccountFromLocation() &&
+        (accountId !== getAccountFromLocation() ||
+          !window.location.pathname === '/')
+      ) {
+        // get account from url
+        const _accountId = getAccountFromLocation()
+        path += '/auth'
+        options.headers['x-databyss-as-account'] = _accountId
+      } else {
+        // if we have the token, try to use it
+        path += '/auth'
+        options.headers['x-databyss-account'] = accountId
+        options.headers['x-auth-token'] = authToken
+      }
     } else if (googleCode) {
       // google oAuth token
       path += '/users/google'
@@ -59,7 +75,10 @@ export const fetchSession = ({
       path += '/users/email'
       options.body = JSON.stringify({ email })
     } else {
-      throw new NotAuthorizedError()
+      // get account from url
+      const _accountId = getAccountFromLocation()
+      path += '/auth'
+      options.headers['x-databyss-as-account'] = _accountId
     }
 
     const res = await _request(path, options, true)
@@ -72,6 +91,12 @@ export const fetchSession = ({
         payload: {
           session: res.data.session,
         },
+      })
+    } else if (res.data?.isPublic) {
+      // cache public account info in session state
+      dispatch({
+        type: CACHE_PUBLIC_SESSION,
+        payload: { publicAccount: res.data.accountId },
       })
     } else {
       // assume TFA, request code

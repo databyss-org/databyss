@@ -1,9 +1,17 @@
 import express from 'express'
 import Block from '../../models/Block'
+import Page from '../../models/Page'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import wrap from '../../lib/guardedAsync'
-import { ResourceNotFoundError } from '../../lib/Errors'
+import {
+  ResourceNotFoundError,
+  InsufficientPermissionError,
+} from '../../lib/Errors'
+import {
+  getPageAccountQueryMixin,
+  getBlockAccountQueryMixin,
+} from './helpers/accountQueryMixin'
 
 const router = express.Router()
 
@@ -38,17 +46,35 @@ router.post(
 // @access   Private
 router.get(
   '/:id',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, next) => {
     const topic = await Block.findOne({
       _id: req.params.id,
     })
 
+    // only allow results that appear on shared page
+    if (
+      req.publicPages &&
+      req.publicPages[0].blocks.filter(b => b._id !== req.params.id).length < 1
+    ) {
+      return next(new InsufficientPermissionError())
+    }
+
     if (!topic || topic.type !== 'TOPIC') {
       return next(new ResourceNotFoundError('There is no topic for this id'))
     }
 
-    return res.json(topic)
+    // populates current pages
+    let isInPages = []
+    const _pages = await Page.find({
+      'blocks._id': topic._id,
+      ...getPageAccountQueryMixin(req),
+    })
+    if (_pages) {
+      isInPages = _pages.map(p => p._id)
+    }
+
+    return res.json({ ...topic._doc, isInPages })
   })
 )
 
@@ -57,13 +83,39 @@ router.get(
 // @access   Private
 router.get(
   '/',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
-    const blocks = await Block.find({ account: req.account._id, type: 'TOPIC' })
+    const blocks = await Block.aggregate([
+      {
+        $match: {
+          type: 'TOPIC',
+          ...getBlockAccountQueryMixin(req),
+        },
+      },
+      {
+        // appends all the pages block appears in in an array 'isInPages'
+        $lookup: {
+          from: 'pages',
+          localField: '_id',
+          foreignField: 'blocks._id',
+          as: 'isInPages',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          type: 1,
+          isInPages: '$isInPages._id',
+        },
+      },
+    ])
 
     if (!blocks) {
       return res.json([])
     }
+
     return res.json(blocks)
   })
 )

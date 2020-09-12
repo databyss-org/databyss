@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useEditor, ReactEditor } from '@databyss-org/slate-react'
-import { Node } from '@databyss-org/slate'
+import { Node, Editor } from '@databyss-org/slate'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 import { Text, View } from '@databyss-org/ui/primitives'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import { useEditorContext } from '../../state/EditorProvider'
 import { isAtomicInlineType } from '../../lib/util'
+import { getClosureType } from '../../state/util'
 
 const MENU_HEIGHT = 200
 
@@ -25,6 +25,14 @@ export const getPosition = editor => {
       if (isMenuTop) {
         return { bottom: 40, left: 0 }
       }
+      // if previous block is an atomic closure block move offest down 15px
+      const _prev = Editor.previous(editor)
+      if (_prev) {
+        const _idx = _prev[1]
+        if (getClosureType(editor.children[_idx[0]].type)) {
+          return { top: 65, left: 0 }
+        }
+      }
     }
   }
   return { top: 40, left: 0 }
@@ -37,8 +45,8 @@ const SuggestMenu = ({ children, placeholder }) => {
     bottom: undefined,
   })
   const [menuActive, setMenuActive] = useState(false)
-
   const [query, setQuery] = useState(null)
+  const [hasSuggestions, setHasSuggestions] = useState(false)
 
   const editor = useEditor()
   const editorContext = useEditorContext()
@@ -98,7 +106,7 @@ const SuggestMenu = ({ children, placeholder }) => {
   }
 
   const onSuggestionsChanged = suggestions => {
-    setMenuActive(suggestions?.length)
+    setHasSuggestions(suggestions?.length)
   }
 
   return (
@@ -109,8 +117,7 @@ const SuggestMenu = ({ children, placeholder }) => {
           left: position.left,
           bottom: position.bottom,
         }}
-        open={menuActive}
-        mt={pxUnits(-6)}
+        open={menuActive && (!query || hasSuggestions)}
         widthVariant="dropdownMenuLarge"
         minHeight="32px"
         p="small"

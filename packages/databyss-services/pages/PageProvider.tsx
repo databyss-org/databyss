@@ -24,7 +24,7 @@ interface PageHookDict {
 }
 
 interface ContextType {
-  setPagePublic: (id: string, bool: boolean) => void
+  setPagePublic: (id: string, bool: boolean, accountId: string) => void
   setPage: (page: Page) => void
   setPageHeader: (page: Page) => void
   getPages: () => void
@@ -36,6 +36,7 @@ interface ContextType {
     refOne: React.Ref<HTMLInputElement>
   ) => void
   getBlockRefByIndex: (index: number) => React.Ref<HTMLInputElement>
+  getPublicAccount: (id: string) => string | string[]
 }
 
 const useReducer = createReducer()
@@ -107,7 +108,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
       dispatch(actions.fetchPage(id))
       return null
     },
-    [state.cache]
+    [JSON.stringify(state.cache)]
   )
 
   const registerBlockRefByIndex = useCallback(
@@ -152,9 +153,15 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(actions.removePageFromCache(id))
   }
 
-  const setPagePublic = (id: string, bool: boolean) => {
-    dispatch(actions.setPagePublic(id, bool))
+  const setPagePublic = (id: string, bool: boolean, accountId: string) => {
+    dispatch(actions.setPagePublic(id, bool, accountId))
   }
+
+  const getPublicAccount = useCallback(
+    (id: string) =>
+      state.cache[id].publicAccountId ? state.cache[id].publicAccountId : [],
+    [JSON.stringify(state.cache)]
+  )
 
   return (
     <PageContext.Provider
@@ -174,6 +181,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         setPagePublic,
         hasPendingPatches,
         removePageFromCache,
+        getPublicAccount,
       }}
     >
       {children}

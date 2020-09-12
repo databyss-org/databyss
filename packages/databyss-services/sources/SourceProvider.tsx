@@ -17,6 +17,8 @@ import {
   removeSourceFromCache,
   fetchAuthorHeaders,
   fetchSourceCitations,
+  removePageFromHeaders,
+  addPageToHeaders,
 } from './actions'
 
 interface PropsType {
@@ -31,6 +33,8 @@ interface ContextType {
   removeCacheValue: (id: string) => void
   getAuthors: () => ResourceResponse<Author[]>
   getSourceCitations: () => ResourceResponse<SourceCitationHeader[]>
+  removePageFromCacheHeader: (id: string, pageId: string) => void
+  addPageToCacheHeader: (id: string, pageId: string) => void
 }
 
 const useReducer = createReducer()
@@ -75,6 +79,16 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     [state.cache]
   )
 
+  const removePageFromCacheHeader = useCallback(
+    (id: string, pageId: string) => dispatch(removePageFromHeaders(id, pageId)),
+    [state.citationHeaderCache, state.citationHeaderCache]
+  )
+
+  const addPageToCacheHeader = useCallback(
+    (id: string, pageId: string) => dispatch(addPageToHeaders(id, pageId)),
+    [state.citationHeaderCache, state.citationHeaderCache]
+  )
+
   const getSourceCitations = useCallback(
     (): ResourceResponse<SourceCitationHeader> => {
       if (state.citationHeaderCache) {
@@ -108,6 +122,8 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
         removeCacheValue,
         getAuthors,
         getSourceCitations,
+        removePageFromCacheHeader,
+        addPageToCacheHeader,
       }}
     >
       {children}

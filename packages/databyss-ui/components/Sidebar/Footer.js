@@ -1,5 +1,6 @@
 import React from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { newPage } from '@databyss-org/services/pages/util'
@@ -15,6 +16,7 @@ import {
 import { sidebar } from '@databyss-org/ui/theming/components'
 
 const Footer = () => {
+  const { isPublicAccount } = useSessionContext()
   const { navigate, navigateSidebar, isMenuOpen } = useNavigationContext()
   const { clearSearchCache } = useEntryContext()
 
@@ -31,7 +33,7 @@ const Footer = () => {
     navigateSidebar('/pages')
   }
 
-  return (
+  return !isPublicAccount() ? (
     <View
       position="absolute"
       bottom={0}
@@ -81,7 +83,7 @@ const Footer = () => {
         </Grid>
       </BaseControl>
     </View>
-  )
+  ) : null
 }
 
 export default Footer

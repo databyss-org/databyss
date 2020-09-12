@@ -26,11 +26,9 @@ export const pageCreatorMiddleware = wrap(async (req, _res, next) => {
 
 export const pageMiddleware = wrap(async (req, _res, next) => {
   const _id = req.params.id
-
   if (!mongoose.Types.ObjectId.isValid(_id)) {
     return next(new ResourceNotFoundError('Invalid Page ID'))
   }
-
   const page = await Page.findOne({
     _id,
   })
@@ -39,7 +37,16 @@ export const pageMiddleware = wrap(async (req, _res, next) => {
     return next(new ResourceNotFoundError('There is no page for this ID'))
   }
 
-  if (!(req.account._id.toString() === page.account.toString())) {
+  // check if page is the same page if on public account
+  if (
+    req.asAccount &&
+    page?.sharedWith.find(
+      s => s.account.toString() === req?.asAccount.toString()
+    )
+  ) {
+    page.readOnly = true
+  } else if (!(req?.account?._id.toString() === page.account.toString())) {
+    // TODO: this throws 'Report not sent due to beforeSend callback' on server
     return next(new InsufficientPermissionError())
   }
 

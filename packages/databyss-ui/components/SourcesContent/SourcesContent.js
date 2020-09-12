@@ -36,7 +36,7 @@ const SourcesContentBody = (sourceCitations, navigate) => {
   const sortedSources = sortEntriesAtoZ(sourcesData, 'text')
 
   const onSourceClick = source => {
-    navigate(`sources/${source.id}`)
+    navigate(`/sources/${source.id}`)
   }
 
   return (
@@ -61,7 +61,7 @@ const SourcesContent = () => {
     return <AuthorCitations query={_queryParams} />
   }
   return (
-    <SourceCitationsLoader>
+    <SourceCitationsLoader filtered>
       {source => SourcesContentBody(source, navigate)}
     </SourceCitationsLoader>
   )

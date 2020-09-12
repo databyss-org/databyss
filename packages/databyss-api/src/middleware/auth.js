@@ -1,16 +1,21 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import { checkForPublicAccount } from './_helpers'
 
 dotenv.config()
 
-// const config = require('config');
+async function auth(req, res, next) {
+  // check if current account is public account
+  const reqHasSharedAccount = await checkForPublicAccount(req)
 
-function auth(req, res, next) {
+  if (reqHasSharedAccount) {
+    return next()
+  }
+
   // Get token from header
   const token = req.header('x-auth-token')
-
   // Check if not token
-  if (!token) {
+  if (!token || token === 'null') {
     return res.status(401).json({ msg: 'No token, authorization denied' })
   }
 

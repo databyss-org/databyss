@@ -1,6 +1,7 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
 
 import express from 'express'
+import ObjectId from 'bson-objectid'
 import Page from '../../models/Page'
 import Block from '../../models/Block'
 import Selection from '../../models/Selection'
@@ -13,6 +14,7 @@ import {
 import { ApiError, BadRequestError } from '../../lib/Errors'
 import wrap from '../../lib/guardedAsync'
 import { runPatches, getAtomicClosureText } from '../../lib/pages'
+import Account from '../../models/Account'
 
 const router = express.Router()
 
@@ -28,13 +30,18 @@ router.get(
   })
 )
 
-// @route    GET api/page
+// @route    GET api/pages
 // @desc     returns all pages associated with account
 // @access   private
 router.get(
   '/',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN'])],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, next) => {
+    // favor shared account first
+    if (req.asAccount && req.publicPages) {
+      return res.json(req.publicPages).status(200)
+    }
+
     const pageResponse = await Page.find({
       account: req.account._id,
     })
@@ -127,7 +134,7 @@ router.post(
 // @access   private
 router.get(
   '/populate/:id',
-  [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
+  [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC']), pageMiddleware],
   wrap(async (req, res, _next) => {
     const { page } = req
     let selection = null
@@ -169,6 +176,7 @@ router.get(
       archive: page.archive,
       blocks,
       selection,
+      publicAccountId: page.sharedWith?.[0]?.account,
     }
 
     return res.json(response).status(200)
@@ -182,9 +190,41 @@ router.post(
   '/:id/public',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageMiddleware],
   wrap(async (req, res, _next) => {
-    console.log('page ', req.page)
-    console.log('data', req.body.data)
-    res.json({ data: 'test' }).status(200)
+    // create a new account
+    const { isPublic, accountId } = req.body.data
+
+    let _sharedAccount
+    let sharedWith = []
+
+    if (isPublic) {
+      // create a public account
+      _sharedAccount = new ObjectId().toHexString()
+      const _account = new Account({ _id: _sharedAccount, isPublic: true })
+      await _account.save()
+
+      sharedWith = [{ account: _sharedAccount, role: 'VIEW' }]
+    } else {
+      // remove public account
+      await Account.replaceOne(
+        {
+          _id: accountId,
+        },
+        { isPublic: false },
+        { upsert: true }
+      )
+    }
+
+    await Page.replaceOne(
+      {
+        _id: req.page._id,
+      },
+      {
+        ...req.page._doc,
+        sharedWith,
+      },
+      { upsert: true }
+    )
+    res.json({ accountId: _sharedAccount }).status(200)
   })
 )
 

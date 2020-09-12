@@ -9,10 +9,12 @@ export const sourceFixture = {
   authors: [{ firstName: '', lastName: '' }],
 }
 
-export const topicFixture = {
-  _id: '5e3b1bc48fb28680fe26437d',
-  text: {
-    textValue: 'Some topic',
-    ranges: [],
+export const topicFixture = [
+  {
+    _id: '5e3b1bc48fb28680fe26437d',
+    text: {
+      textValue: 'Some topic',
+      ranges: [],
+    },
   },
-}
+]
