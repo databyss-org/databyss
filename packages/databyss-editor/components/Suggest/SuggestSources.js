@@ -18,7 +18,7 @@ const SuggestSources = ({
   dismiss,
   focusEditor,
   active,
-  onSuggestions,
+  onSuggestionsChanged,
   ...others
 }) => {
   const setSource = useSourceContext(c => c && c.setSource)
@@ -92,7 +92,7 @@ const SuggestSources = ({
   if (mode === LOCAL_SOURCES) {
     return (
       <SourceCitationsLoader
-        onLoad={resources => onSuggestions(Object.values(resources))}
+        onLoad={resources => onSuggestionsChanged(Object.values(resources))}
       >
         {_sourceCitations =>
           _composeLocalSources(_sourceCitations).concat(

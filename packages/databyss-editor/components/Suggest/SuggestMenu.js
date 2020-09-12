@@ -45,8 +45,8 @@ const SuggestMenu = ({ children, placeholder }) => {
     bottom: undefined,
   })
   const [menuActive, setMenuActive] = useState(false)
-
   const [query, setQuery] = useState(null)
+  const [hasSuggestions, setHasSuggestions] = useState(false)
 
   const editor = useEditor()
   const editorContext = useEditorContext()
@@ -106,7 +106,7 @@ const SuggestMenu = ({ children, placeholder }) => {
   }
 
   const onSuggestionsChanged = suggestions => {
-    setMenuActive(suggestions?.length)
+    setHasSuggestions(suggestions?.length)
   }
 
   return (
@@ -117,7 +117,7 @@ const SuggestMenu = ({ children, placeholder }) => {
           left: position.left,
           bottom: position.bottom,
         }}
-        open={menuActive}
+        open={menuActive && (!query || hasSuggestions)}
         widthVariant="dropdownMenuLarge"
         minHeight="32px"
         p="small"

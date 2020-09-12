@@ -5,18 +5,12 @@ import { prefixSearchAll } from '@databyss-org/services/block/filter'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useEditorContext } from '../../state/EditorProvider'
 
-const SuggestTopics = ({
-  query,
-  dismiss,
-  onSuggestions,
-  onSuggestionsChanged,
-}) => {
+const SuggestTopics = ({ query, dismiss, onSuggestionsChanged }) => {
   const { replace, state } = useEditorContext()
   const addPageToCacheHeader = useTopicContext(c => c && c.addPageToCacheHeader)
 
   const [suggestions, setSuggestions] = useState([])
   const [filteredSuggestions, setFilteredSuggestions] = useState([])
-  const [isDrowpdownVisible, setDropdownVisisble] = useState(true)
 
   const onTopicSelected = topic => {
     // check document to see if page should be added to topic cache
@@ -35,48 +29,32 @@ const SuggestTopics = ({
     return _topics.filter(prefixSearchAll(query)).slice(0, 4)
   }
 
-  const onTopicsLoaded = topicsDict => {
-    const _topics = Object.values(topicsDict)
-    onSuggestions(_topics)
-    setSuggestions(_topics)
-    setFilteredSuggestions(filterSuggestions(_topics))
+  const updateSuggestions = () => {
+    if (!suggestions?.length) {
+      return
+    }
+    const _nextSuggestions = filterSuggestions(suggestions)
+    onSuggestionsChanged(_nextSuggestions)
+    setFilteredSuggestions(_nextSuggestions)
   }
 
-  useEffect(
-    () => {
-      if (!suggestions?.length) {
-        return
-      }
-      const _nextSuggestions = filterSuggestions(suggestions)
-      onSuggestionsChanged(_nextSuggestions)
-      setFilteredSuggestions(_nextSuggestions)
-    },
-    [query]
-  )
+  const onTopicsLoaded = topicsDict => {
+    const _topics = Object.values(topicsDict)
+    setSuggestions(_topics)
+  }
 
-  useEffect(
-    () => {
-      if (filteredSuggestions.length) {
-        setDropdownVisisble(true)
-      } else {
-        setDropdownVisisble(false)
-      }
-    },
-    [filteredSuggestions.length]
-  )
+  useEffect(updateSuggestions, [query, suggestions])
 
   return (
     <AllTopicsLoader onLoad={onTopicsLoaded}>
-      {isDrowpdownVisible
-        ? filteredSuggestions.map(s => (
-            // eslint-disable-next-line react/jsx-indent
-            <DropdownListItem
-              label={s.text.textValue}
-              key={s._id}
-              onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
-            />
-          ))
-        : null}
+      {filteredSuggestions.map(s => (
+        // eslint-disable-next-line react/jsx-indent
+        <DropdownListItem
+          label={s.text.textValue}
+          key={s._id}
+          onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
+        />
+      ))}
     </AllTopicsLoader>
   )
 }
