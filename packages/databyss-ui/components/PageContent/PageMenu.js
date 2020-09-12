@@ -208,7 +208,7 @@ const PageMenu = ({ pages }) => {
                 {publicLinkItem}
               </>
             ) : null}
-            <Separator />
+            {menuItems.length ? <Separator /> : null}
             <DropdownList />
           </DropdownContainer>
         </ClickAwayListener>
