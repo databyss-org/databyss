@@ -19,8 +19,8 @@ const Separator = ({ spacing, color }) => (
 )
 
 Separator.defaultProps = {
-  spacing: 'none',
-  color: 'border.2',
+  spacing: 'tiny',
+  color: 'border.3',
 }
 
 export default Separator

@@ -21,6 +21,7 @@ const ToggleControl = ({
       label && label.length
         ? {
             flexDirection: alignLabel === 'left' ? 'row-reverse' : 'row',
+            justifyContent: 'space-between',
             flexWrap: 'nowrap',
             alignItems: 'center',
           }

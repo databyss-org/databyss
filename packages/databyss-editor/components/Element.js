@@ -115,6 +115,7 @@ const Element = ({ attributes, children, element }) => {
             }
           }}
           ml={element.isBlock ? blockMenuWidth : 0}
+          mr="large"
           pt={vpad}
           pb="em"
           display={element.isBlock ? 'flex' : 'inline-flex'}
