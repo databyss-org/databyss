@@ -67,11 +67,11 @@ const PageContainer = React.memo(({ anchor, id, page }) => {
   }
 
   return (
-    <View height="100vh" overflow="scroll" ref={editorWindowRef}>
-      {!isPublicAccount() && (
-        <PageSticky pagePath={editorPath} pageId={page._id} />
-      )}
+    <View height="100vh" overflowY="scroll" ref={editorWindowRef}>
       <View pl="medium" pr="medium" pb="medium">
+        {!isPublicAccount() && (
+          <PageSticky pagePath={editorPath} pageId={page._id} />
+        )}
         <View
           mr="medium"
           alignItems="center"
