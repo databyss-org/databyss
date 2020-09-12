@@ -96,6 +96,7 @@ const Control = forwardRef(
       <ThemeContext.Consumer>
         {theme => (
           <StyledComponent
+            onDragStart={e => e.preventDefault()}
             ref={ref}
             tabIndex={0}
             onClick={e => {
