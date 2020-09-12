@@ -125,7 +125,7 @@ class NotifyProvider extends React.Component {
 
   showUnhandledErrorDialog = () => {
     if (this.state.isOnline) {
-      this.notify('😱 So sorry, but Databyss has encountered an error.')
+      this.notify('😱 So sorry, but Databyss has encountered an error.', true)
     }
   }
 
@@ -185,6 +185,7 @@ class NotifyProvider extends React.Component {
       >
         {!this.state.hasError && this.props.children}
         <Dialog
+          showConfirmButtons={this.state.isOnline}
           confirmButtons={this.state.hasError ? errorConfirmButtons : []}
           onConfirm={() => this.setState({ dialogVisible: false })}
           visible={dialogVisible}
