@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import {
-  BaseControl,
-  Icon,
-  View,
-  SwitchControl,
-  Text,
-  Separator,
-  Dialog,
-  Button,
-} from '@databyss-org/ui/primitives'
+import { BaseControl, Icon, View, Separator } from '@databyss-org/ui/primitives'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
+import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
@@ -34,12 +26,12 @@ function copyToClipboard(text) {
   document.body.removeChild(dummy)
 }
 
-export const ArchiveBin = ({ pages }) => {
+const PageMenu = ({ pages }) => {
   const { getSession } = useSessionContext()
   const { account } = getSession()
   const [showMenu, setShowMenu] = useState(false)
   const [isPagePublic, setIsPagePublic] = useState(false)
-  const [isVisible, setIsVisible] = useState(false)
+  const [showCopiedCheck, setShowCopiedCheck] = useState(false)
 
   const { getTokensFromPath, navigate } = useNavigationContext()
 
@@ -98,8 +90,7 @@ export const ArchiveBin = ({ pages }) => {
     }/${_accountId}/pages/${params}`
 
     copyToClipboard(baseUrl)
-    setShowMenu(false)
-    setIsVisible(true)
+    setShowCopiedCheck(true)
   }
 
   const menuItems = []
@@ -125,35 +116,53 @@ export const ArchiveBin = ({ pages }) => {
       setPagePublic(params, !isPagePublic)
     }
     setIsPagePublic(!isPagePublic)
+    setShowCopiedCheck(false)
   }
 
   const SharedPageLoader = ({ children }) => (
     <MakeLoader resources={getPublicAccount(params)} children={children} />
   )
 
-  const DropdownList = () => (
-    <>
-      <SharedPageLoader>
-        {res =>
-          res.length ? (
-            <DropdownListItem
-              icon={<LinkSvg />}
-              action="copy-link"
-              label="Copy public link"
-              onPress={onCopyLink}
-            />
-          ) : null
-        }
-      </SharedPageLoader>
-      {menuItems.map(menuItem => (
-        <DropdownListItem
-          {...menuItem}
-          action={menuItem.actionType}
-          onPress={() => menuItem.action()}
-          key={menuItem.label}
-        />
-      ))}
-    </>
+  const DropdownList = () =>
+    menuItems.map(menuItem => (
+      <DropdownListItem
+        {...menuItem}
+        action={menuItem.actionType}
+        onPress={() => menuItem.action()}
+        key={menuItem.label}
+      />
+    ))
+
+  useEffect(
+    () => {
+      if (showCopiedCheck && !showMenu) {
+        setShowCopiedCheck(false)
+      }
+    },
+    [showMenu]
+  )
+
+  const publicLinkItem = showCopiedCheck ? (
+    <DropdownListItem
+      icon={<CheckSvg />}
+      iconColor="green.0"
+      action="none"
+      label="Link copied to clipboard"
+      onPress={() => null}
+    />
+  ) : (
+    <SharedPageLoader>
+      {res =>
+        res.length ? (
+          <DropdownListItem
+            icon={<LinkSvg />}
+            action="copy-link"
+            label="Copy link"
+            onPress={onCopyLink}
+          />
+        ) : null
+      }
+    </SharedPageLoader>
   )
 
   return (
@@ -186,33 +195,26 @@ export const ArchiveBin = ({ pages }) => {
               right: 0,
             }}
           >
-            <View
-              flexDirection="row"
-              mx="small"
-              my="small"
-              justifyContent="space-between"
-              bottomBorder="1px"
-              alignItems="center"
-            >
-              <Text variant="uiTextSmall">
-                Page is {isPagePublic ? 'public' : 'private'}
-              </Text>
-              <SwitchControl value={isPagePublic} onChange={togglePublicPage} />
-            </View>
-            {getPublicAccount(params).length || menuItems.length ? (
-              <Separator color="border.2" />
+            <DropdownListItem
+              label={isPagePublic ? 'Page is public' : 'Make page public '}
+              value={isPagePublic}
+              onPress={togglePublicPage}
+              action="togglePublic"
+              switchControl
+            />
+            {getPublicAccount(params).length ? (
+              <>
+                <Separator />
+                {publicLinkItem}
+              </>
             ) : null}
+            <Separator />
             <DropdownList />
           </DropdownContainer>
         </ClickAwayListener>
       )}
-      <Dialog
-        visible={isVisible}
-        onDismiss={() => setIsVisible(false)}
-        name="Ok Dialog"
-        message="copied to clipboard"
-        confirmButtons={[<Button variant="secondaryUi">Ok</Button>]}
-      />
     </View>
   )
 }
+
+export default PageMenu
