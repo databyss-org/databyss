@@ -40,7 +40,12 @@ const BaseControl = forwardRef(
         onPress(event)
       }
 
-      if (href && !event.defaultPrevented && navigationContext) {
+      if (
+        href &&
+        !href.match(/^http/) &&
+        !event.defaultPrevented &&
+        navigationContext
+      ) {
         event.preventDefault()
         navigationContext.navigate(href)
       }

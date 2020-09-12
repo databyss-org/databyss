@@ -114,6 +114,7 @@ const Control = forwardRef(
               !_mobile && css(controlCssDesktop(others, theme))(theme),
             ]}
             href={href}
+            target={href && href.match(/^http/) ? '_blank' : '_self'}
             disabled={disabled}
             {...others}
           >

@@ -211,7 +211,7 @@ export const ArchiveBin = ({ pages }) => {
         onDismiss={() => setIsVisible(false)}
         name="Ok Dialog"
         message="copied to clipboard"
-        confirmButton={<Button variant="secondaryUi">Ok</Button>}
+        confirmButtons={[<Button variant="secondaryUi">Ok</Button>]}
       />
     </View>
   )
