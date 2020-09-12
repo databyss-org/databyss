@@ -675,10 +675,10 @@ export default (
 
         _selectedBlock.__showCitationMenu = _selectedBlock.text.textValue.startsWith(
           '@'
-        )
+        ) && !_selectedBlock.text.textValue.match(`\n`)
         _selectedBlock.__showTopicMenu = _selectedBlock.text.textValue.startsWith(
           '#'
-        )
+        ) && !_selectedBlock.text.textValue.match(`\n`)
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element
         _selectedBlock.__isActive =
