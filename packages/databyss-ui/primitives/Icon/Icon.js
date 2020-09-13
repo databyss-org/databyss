@@ -18,14 +18,23 @@ const variants = variant({
 
 const Styled = styled(View, variants)
 
-const Icon = ({ children, color, sizeVariant, theme, ...others }) => {
-  const webProps = {
-    css: css({
-      path: {
-        fill: color,
-      },
-    }),
-  }
+const Icon = ({
+  children,
+  color,
+  sizeVariant,
+  theme,
+  useSvgColors,
+  ...others
+}) => {
+  const webProps = useSvgColors
+    ? {}
+    : {
+        css: css({
+          path: {
+            fill: color,
+          },
+        }),
+      }
   const nativeProps = {}
 
   const Svg = React.Children.only(children)
