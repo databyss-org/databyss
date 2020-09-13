@@ -9,10 +9,15 @@ export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
   const _accountId = getAccountId()
   const _accountFromLocation = getAccountFromLocation()
 
-  // if getaccountid same as account from location only include x-databyss-account else only include x-databyss-as-account
-  // does not apply to storybook login
+  // If accountId in local storage same as account from location
+  //   only include x-databyss-account else only include x-databyss-as-account.
+  // Exclude storybook context
+  // If account is not in location, we may still be redirecting from '/', so
+  //   use the account in local storage (assume private)
   const _account =
-    _accountId === _accountFromLocation || process.env.STORYBOOK
+    process.env.STORYBOOK ||
+    !_accountFromLocation ||
+    _accountId === _accountFromLocation
       ? {
           'x-databyss-account': `${getAccountId()}`,
         }
