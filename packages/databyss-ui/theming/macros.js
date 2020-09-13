@@ -79,5 +79,5 @@ export const commas = () => ({
 })
 
 export const focused = theme => ({
-  outline: `${theme.focusOutlineColor} auto 5px`,
+  outline: `${theme.colors.blue[2]} auto 5px`,
 })
