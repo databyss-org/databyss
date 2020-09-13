@@ -92,7 +92,7 @@ const StyledLink = styled('a', styleProps)
 const Control = forwardRef(
   ({ disabled, children, onPress, renderAsView, href, ...others }, ref) => {
     const StyledControl = href ? StyledLink : StyledButton
-    const StyledComponent = renderAsView || _mobile ? View : StyledControl
+    const StyledComponent = renderAsView ? View : StyledControl
     return (
       <ThemeContext.Consumer>
         {theme => (
