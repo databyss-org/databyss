@@ -171,6 +171,7 @@ class NotifyProvider extends React.Component {
         variant="uiLink"
         alignItems="center"
         href="https://forms.gle/z5Jcp4WK8MCwfpzy7"
+        target="_blank"
       >
         Support Request Form
       </Button>,
