@@ -66,6 +66,7 @@ const controlCss = props => ({
   position: 'relative',
   userSelect: props.userSelect,
   borderWidth: '1px',
+  textDecoration: 'none',
   '&:active': {
     backgroundColor: props.activeColor,
   },
