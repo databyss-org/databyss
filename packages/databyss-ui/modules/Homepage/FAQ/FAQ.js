@@ -7,16 +7,17 @@ import {
   featureHeadingMaxWidth,
 } from '@databyss-org/ui/modules/Homepage/Features/Feature'
 import breakpoints from '@databyss-org/ui/theming/responsive'
+import Markdown from '@databyss-org/ui/components/Util/Markdown'
 
 const Question = ({ question }) => (
   <Text variant="uiTextLargeSemibold" color="text.1" mb="em">
-    {question}
+    <Markdown source={question} />
   </Text>
 )
 
 const Answer = ({ answer }) => (
   <Text variant="uiTextNormal" color="text.3">
-    {answer}
+    <Markdown source={answer} />
   </Text>
 )
 

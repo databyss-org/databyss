@@ -6,6 +6,7 @@ import FeatureImg from '@databyss-org/ui/modules/Homepage/Features/FeatureImg'
 import { featureContentMaxWidth } from '@databyss-org/ui/modules/Homepage/Features/Feature'
 import { useMediaQuery } from 'react-responsive'
 import breakpoints from '@databyss-org/ui/theming/responsive'
+import Markdown from '@databyss-org/ui/components/Util/Markdown'
 
 const HighlightedFeature = ({
   backgroundColor,
@@ -51,7 +52,7 @@ const HighlightedFeature = ({
           <FeatureHeading
             textAlign="center"
             title={title}
-            description={description}
+            description={<Markdown source={description} />}
           />
           {imgSrc && (
             <FeatureImg
