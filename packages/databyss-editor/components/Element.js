@@ -92,19 +92,6 @@ const Element = ({ attributes, children, element }) => {
     [element]
   )
 
-  // const elementRef = useRef(element)
-  // const blockRef = useRef(block)
-  // const searchTermRef = useRef(searchTerm)
-  // const spellCheckStateRef = useRef(spellCheck)
-
-  // const compareInputs = (oldInput, newInput, prefix) => {
-  //   if (oldInput !== newInput) {
-  //     console.log(`${prefix} - The input changed`)
-  //     // console.log('Old value:', oldInput)
-  //     // console.log('New value:', newInput)
-  //   }
-  // }
-
   return useMemo(
     () => {
       if (!block) {
@@ -114,27 +101,6 @@ const Element = ({ attributes, children, element }) => {
       const blockMenuWidth = menuLauncherSize + 6
 
       const selHasRange = !Range.isCollapsed(editor.selection)
-
-      // check which variable is causing Element to rerender
-      // if (blockRef.current) {
-      //   compareInputs(blockRef.current, block, 'block')
-      // }
-      // blockRef.current = block
-
-      // if (elementRef.current) {
-      //   compareInputs(elementRef.current, element, 'element')
-      // }
-      // elementRef.current = element
-
-      // if (searchTermRef.current) {
-      //   compareInputs(searchTermRef.current, searchTerm, 'search term')
-      // }
-      // searchTermRef.current = searchTerm
-
-      // if (spellCheckStateRef.current) {
-      //   compareInputs(spellCheckStateRef.current, spellCheck, 'spell check')
-      // }
-      // spellCheckStateRef.current = spellCheck
 
       const vpad =
         block.type === 'ENTRY' || block.type === previousBlock?.type ? 2 : 3

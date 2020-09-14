@@ -88,12 +88,6 @@ const Editor = ({
     [searchTerm]
   )
 
-  // useEffect(() => {
-  //   if (autofocus && !ReactEditor.isFocused(editor)) {
-  //     window.requestAnimationFrame(() => ReactEditor.focus(editor))
-  //   }
-  // }, [])
-
   return (
     <Slate editor={editor} {...slateProps}>
       {children}
@@ -117,7 +111,6 @@ const Editor = ({
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         readOnly={readOnly}
-        // TODO: optimize this
         autoFocus={autofocus}
         onKeyDown={onKeyDown}
         style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}

@@ -13,11 +13,6 @@ const Leaf = ({ attributes, children, leaf }) => {
 
   if (leaf.location) {
     _children = <span style={{ color: '#A19A91' }}>{_children}</span>
-    // _children = (
-    //   <View {...attributes} color="text.3" display="inline" borderRadius={0}>
-    //     {_children}
-    //   </View>
-    // )
   }
 
   return (
@@ -27,13 +22,6 @@ const Leaf = ({ attributes, children, leaf }) => {
     >
       {_children}
     </span>
-    // <View
-    //   display="inline"
-    //   backgroundColor={leaf.highlight && 'orange.3'}
-    //   {...attributes}
-    // >
-    //   {_children}
-    // </View>
   )
 }
 
