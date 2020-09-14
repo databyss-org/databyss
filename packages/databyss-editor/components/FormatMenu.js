@@ -226,13 +226,7 @@ const FormatMenu = () => {
 
   useEventListener('wheel', () => {
     if (menuActive) {
-      window.requestAnimationFrame(() => {
-        const domSelection = window.getSelection()
-
-        const __isBackwards = isSelectionBackwards
-
-        updatePosition(domSelection, __isBackwards)
-      })
+      setMenuActive(false)
     }
   })
 
