@@ -37,13 +37,17 @@ const Editor = ({
     props => <Element readOnly={readOnly} {...props} />,
     []
   )
+
   const renderLeaf = useCallback(props => <Leaf {...props} />, [searchTerm])
 
   const { onKeyDown, ...slateProps } = others
-
   const decorate = useCallback(
     ([node, path]) => {
       const ranges = []
+
+      if (!searchTerm.length) {
+        return ranges
+      }
       // search each word individually
       const _searchTerm = searchTerm.split(' ')
 
@@ -64,19 +68,21 @@ const Editor = ({
               )
             )
 
-          let offset = 0
+          if (parts.length > 1) {
+            let offset = 0
 
-          parts.forEach((part, i) => {
-            if (i !== 0) {
-              ranges.push({
-                anchor: { path, offset: offset - word.length },
-                focus: { path, offset },
-                highlight: true,
-              })
-            }
+            parts.forEach((part, i) => {
+              if (i !== 0) {
+                ranges.push({
+                  anchor: { path, offset: offset - word.length },
+                  focus: { path, offset },
+                  highlight: true,
+                })
+              }
 
-            offset = offset + part.length + word.length
-          })
+              offset = offset + part.length + word.length
+            })
+          }
         }
       })
 

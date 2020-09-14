@@ -1,5 +1,4 @@
 import React from 'react'
-import { View } from '@databyss-org/ui/primitives'
 
 const Leaf = ({ attributes, children, leaf }) => {
   let _children = children
@@ -13,21 +12,16 @@ const Leaf = ({ attributes, children, leaf }) => {
   }
 
   if (leaf.location) {
-    _children = (
-      <View {...attributes} color="text.3" display="inline" borderRadius={0}>
-        {_children}
-      </View>
-    )
+    _children = <span style={{ color: '#A19A91' }}>{_children}</span>
   }
 
   return (
-    <View
-      display="inline"
-      backgroundColor={leaf.highlight && 'orange.3'}
+    <span
       {...attributes}
+      style={{ backgroundColor: leaf.highlight && '#F7C96E' }}
     >
       {_children}
-    </View>
+    </span>
   )
 }
 

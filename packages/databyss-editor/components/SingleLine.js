@@ -89,7 +89,7 @@ const RichText = forwardRef(
 
     const initValue = [
       {
-        children: stateToSlateMarkup(initialValue),
+        children: stateToSlateMarkup({ text: initialValue }),
       },
     ]
 

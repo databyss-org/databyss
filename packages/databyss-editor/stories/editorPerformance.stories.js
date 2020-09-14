@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Text, Button } from '@databyss-org/ui/primitives'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
@@ -48,7 +48,7 @@ const EditorWithProvider = () => {
   // const [active, setActive] = useState(false)
 
   const timeDelta = useRef(null)
-
+  // const [loading, setLoading] = useState(false)
   const onDocumentChange = () => {
     // if document was loaded and timeDelta was set
     // get loading time
@@ -73,7 +73,9 @@ const EditorWithProvider = () => {
     timeDelta.current = Date.now()
     setTime(null)
     //  setLoading(true)
-    setBlockSize(size)
+    window.requestAnimationFrame(() => setBlockSize(size))
+
+    // setBlockSize(size)
   }
 
   useEffect(
@@ -94,77 +96,88 @@ const EditorWithProvider = () => {
     }
   }
 
-  return (
-    <View maxWidth="900px">
-      <View display="-webkit-box">
-        <Button
-          id="small-blocks"
-          mr="small"
-          onClick={() => onBlockSizeClick(SMALL)}
-          disabled={blockSize === SMALL}
-        >
-          <Text>5 Blocks</Text>
-        </Button>
-        <Button
-          id="med-blocks"
-          mr="small"
-          onClick={() => onBlockSizeClick(MED)}
-          disabled={blockSize === MED}
-        >
-          <Text>50 Blocks</Text>
-        </Button>
-        <Button
-          id="large-blocks"
-          mr="small"
-          onClick={() => onBlockSizeClick(LARGE)}
-          disabled={blockSize === LARGE}
-        >
-          <Text>100 Blocks</Text>
-        </Button>
-        <Button mr="small" id="set-fps" onClick={() => setActive(!active)}>
-          <Text>{active ? 'Stop' : 'Start FPS'}</Text>
-        </Button>
-        <Button mr="small" id="clear-blocks" onClick={() => setBlockSize(null)}>
-          <Text>clear blocks</Text>
-        </Button>
-      </View>
+  return useMemo(
+    () => (
+      <View maxWidth="900px">
+        <View display="-webkit-box">
+          <Button
+            id="small-blocks"
+            mr="small"
+            onClick={() => onBlockSizeClick(SMALL)}
+            disabled={blockSize === SMALL}
+          >
+            <Text>5 Blocks</Text>
+          </Button>
+          <Button
+            id="med-blocks"
+            mr="small"
+            onClick={() => onBlockSizeClick(MED)}
+            disabled={blockSize === MED}
+          >
+            <Text>50 Blocks</Text>
+          </Button>
+          <Button
+            id="large-blocks"
+            mr="small"
+            onClick={() => onBlockSizeClick(LARGE)}
+            disabled={blockSize === LARGE}
+          >
+            <Text>100 Blocks</Text>
+          </Button>
+          <Button mr="small" id="set-fps" onClick={() => setActive(!active)}>
+            <Text>{active ? 'Stop' : 'Start FPS'}</Text>
+          </Button>
+          <Button
+            mr="small"
+            id="clear-blocks"
+            onClick={() => {
+              setEditbleState(null)
 
-      <View height="80px">
-        <View display="-webkit-box" m="small">
-          <Text mr="small" variant="uiTextNormal">
-            LOADING TIME:
-          </Text>
-          <View id="loading-stats">
-            {!time ? (
-              <Text variant="uiTextNormal">LOADING</Text>
-            ) : (
-              <Text variant="uiTextNormal">{time}</Text>
-            )}
+              setBlockSize(null)
+            }}
+          >
+            <Text>clear blocks</Text>
+          </Button>
+        </View>
+
+        <View height="80px">
+          <View display="-webkit-box" m="small">
+            <Text mr="small" variant="uiTextNormal">
+              LOADING TIME:
+            </Text>
+            <View id="loading-stats">
+              {!time ? (
+                <Text variant="uiTextNormal">LOADING</Text>
+              ) : (
+                <Text variant="uiTextNormal">{time}</Text>
+              )}
+            </View>
+          </View>
+          <View display="-webkit-box" m="small">
+            <Text mr="small" variant="uiTextNormal">
+              FPS(min):
+            </Text>
+            <View id="fps-stats">
+              {active && (
+                <Text variant="uiTextNormal">
+                  <FPSStats />
+                </Text>
+              )}
+            </View>
           </View>
         </View>
-        <View display="-webkit-box" m="small">
-          <Text mr="small" variant="uiTextNormal">
-            FPS(min):
-          </Text>
-          <View id="fps-stats">
-            {active && (
-              <Text variant="uiTextNormal">
-                <FPSStats />
-              </Text>
-            )}
-          </View>
-        </View>
+        <Box key={providerKey} onKeyDown={onKeyDown} onMouseDown={onKeyDown}>
+          {blockSize && editableState ? (
+            <EditorProvider initialState={editableState}>
+              <ContentEditable onDocumentChange={onDocumentChange} autofocus />
+            </EditorProvider>
+          ) : (
+            <Text>Click on blocks to load</Text>
+          )}
+        </Box>
       </View>
-      <Box key={providerKey} onKeyDown={onKeyDown} onMouseDown={onKeyDown}>
-        {blockSize ? (
-          <EditorProvider initialState={editableState}>
-            <ContentEditable onDocumentChange={onDocumentChange} autofocus />
-          </EditorProvider>
-        ) : (
-          <Text>Click on blocks to load</Text>
-        )}
-      </Box>
-    </View>
+    ),
+    [blockSize, active, providerKey, editableState, time]
   )
 }
 
