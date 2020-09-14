@@ -196,7 +196,9 @@ const FormatMenu = () => {
 
       window.addEventListener(
         'scroll',
-        throttle(() => setMenuActive(false), 200)
+        throttle(() => {
+          setMenuActive(false)
+        }, 200)
       )
     },
     [editor.selection]
@@ -220,6 +222,18 @@ const FormatMenu = () => {
 
   useEventListener('keyup', () => {
     openFormatMenu()
+  })
+
+  useEventListener('wheel', () => {
+    if (menuActive) {
+      window.requestAnimationFrame(() => {
+        const domSelection = window.getSelection()
+
+        const __isBackwards = isSelectionBackwards
+
+        updatePosition(domSelection, __isBackwards)
+      })
+    }
   })
 
   return (

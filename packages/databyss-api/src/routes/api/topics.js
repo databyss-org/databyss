@@ -107,6 +107,23 @@ router.get(
           text: 1,
           account: 1,
           type: 1,
+          // filter out archived pages,
+          isInPages: {
+            $filter: {
+              input: '$isInPages',
+              as: 'isInPages',
+              cond: { $eq: ['$$isInPages.archive', false] },
+            },
+          },
+        },
+      },
+      // remove page data and only allow _id
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          type: 1,
           isInPages: '$isInPages._id',
         },
       },
