@@ -45,11 +45,33 @@ const modals = {
 }
 
 const dialogs = {
-  ok: {
+  ok: onDismiss => ({
     name: 'Ok Dialog',
     message: shortIpsum,
-    confirmButton: <Button variant="secondaryUi">Ok</Button>,
-  },
+    onConfirm: onDismiss,
+  }),
+  nobtn: () => ({
+    name: 'No Confirm Button',
+    message: shortIpsum,
+    showConfirmButtons: false,
+  }),
+  error: () => ({
+    name: 'Error Dialog',
+    message: '😱 So sorry, but Databyss has encountered an error.',
+    confirmButtons: [
+      <Button
+        key="help"
+        variant="uiLink"
+        alignItems="center"
+        href="https://forms.gle/z5Jcp4WK8MCwfpzy7"
+      >
+        Support Request Form
+      </Button>,
+      <Button key="ok" onPress={() => window.location.reload()}>
+        Refresh and try again
+      </Button>,
+    ],
+  }),
 }
 
 export default () => {
@@ -143,14 +165,10 @@ export const Dialogs = () => {
             setVisible(true)
           }}
         >
-          {dialogs[key].name}
+          {dialogs[key]().name}
         </Button>
       ))}
-      <Dialog
-        visible={visible}
-        onDismiss={() => setVisible(false)}
-        {...dialogs[dialog]}
-      />
+      <Dialog visible={visible} {...dialogs[dialog](() => setVisible(false))} />
     </Section>
   )
 }

@@ -137,7 +137,7 @@ const Element = ({ attributes, children, element }) => {
       // spellCheckStateRef.current = spellCheck
 
       const vpad =
-        block.type === 'ENTRY' || block.type === previousBlock?.type ? 0 : 3
+        block.type === 'ENTRY' || block.type === previousBlock?.type ? 2 : 3
 
       return (
         <View
@@ -148,6 +148,7 @@ const Element = ({ attributes, children, element }) => {
             }
           }}
           ml={element.isBlock ? blockMenuWidth : 0}
+          mr="large"
           pt={vpad}
           pb="em"
           display={element.isBlock ? 'flex' : 'inline-flex'}

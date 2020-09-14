@@ -45,7 +45,7 @@ const Footer = () => {
       }
       zIndex="base"
     >
-      <Separator color="border.1" />
+      <Separator color="border.1" spacing="none" />
       <BaseControl
         px="small"
         py="extraSmall"

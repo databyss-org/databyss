@@ -17,13 +17,13 @@ const Public = props => (
       <Button
         variant="uiTextButton"
         href="https://www.databyss.org/"
-        childViewProps={{ flexDirection: 'row' }}
+        childViewProps={{ flexDirection: 'row', alignItems: 'center' }}
         css={{
           textDecoration: 'none',
         }}
       >
         <View mr="small">
-          <img width={pxUnits(26)} src="/homepage/logo_new.png" alt="Logo" />
+          <img width={pxUnits(30)} src="/homepage/logo-thick.png" alt="Logo" />
         </View>
         <Text variant="uiTextMediumSemibold" color="text.1">
           Databyss

@@ -1,5 +1,5 @@
 import React, { createContext, useContext } from 'react'
-import { Dialog } from '@databyss-org/ui/primitives'
+import { Dialog, Button } from '@databyss-org/ui/primitives'
 import { ping } from '@databyss-org/services/lib/requestApi'
 import {
   NotAuthorizedError,
@@ -23,7 +23,7 @@ export const makeBugsnagReport = (client, error, info) => {
   const report = new client.BugsnagReport(
     error.name,
     error.message,
-    client.BugsnagReport.getStacktrace(error),
+    client.BugsnagReport?.getStacktrace(error),
     handledState,
     error
   )
@@ -125,7 +125,7 @@ class NotifyProvider extends React.Component {
 
   showUnhandledErrorDialog = () => {
     if (this.state.isOnline) {
-      this.notify('😥something went wrong')
+      this.notify('😱 So sorry, but Databyss has encountered an error.', true)
     }
   }
 
@@ -146,20 +146,39 @@ class NotifyProvider extends React.Component {
     }
   }
 
-  notify = message => {
+  notify = (message, _error) => {
     this.setState({
       message,
       dialogVisible: true,
+      ...(_error
+        ? {
+            hasError: true,
+          }
+        : {}),
     })
   }
 
   notifyError = error => {
     this.bugsnagClient.notify(error)
-    this.notify(error.message)
+    this.notify(error.message, error)
   }
 
   render() {
     const { dialogVisible, message, isOnline } = this.state
+    const errorConfirmButtons = [
+      <Button
+        key="help"
+        variant="uiLink"
+        alignItems="center"
+        href="https://forms.gle/z5Jcp4WK8MCwfpzy7"
+        target="_blank"
+      >
+        Support Request Form
+      </Button>,
+      <Button key="ok" onPress={() => window.location.reload()}>
+        Refresh and try again
+      </Button>,
+    ]
 
     return (
       <NotifyContext.Provider
@@ -167,10 +186,11 @@ class NotifyProvider extends React.Component {
       >
         {!this.state.hasError && this.props.children}
         <Dialog
-          showConfirmButton={false}
+          showConfirmButtons={this.state.isOnline}
+          confirmButtons={this.state.hasError ? errorConfirmButtons : []}
+          onConfirm={() => this.setState({ dialogVisible: false })}
           visible={dialogVisible}
           message={message}
-          onDismiss={() => this.setState({ dialogVisible: false })}
           {...!isOnline && { 'data-test-modal': 'offline' }}
         />
       </NotifyContext.Provider>

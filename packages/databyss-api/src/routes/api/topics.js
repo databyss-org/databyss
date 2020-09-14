@@ -8,7 +8,10 @@ import {
   ResourceNotFoundError,
   InsufficientPermissionError,
 } from '../../lib/Errors'
-import { getPageAccountQueryMixin } from './helpers/accountQueryMixin'
+import {
+  getPageAccountQueryMixin,
+  getBlockAccountQueryMixin,
+} from './helpers/accountQueryMixin'
 
 const router = express.Router()
 
@@ -86,7 +89,7 @@ router.get(
       {
         $match: {
           type: 'TOPIC',
-          ...getPageAccountQueryMixin(req),
+          ...getBlockAccountQueryMixin(req),
         },
       },
       {

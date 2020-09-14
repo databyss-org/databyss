@@ -1,9 +1,5 @@
-import { macros, theme as defaultTheme } from './'
+import { theme as defaultTheme } from './'
 
-export default (theme = defaultTheme) => ({
-  root: {
-    '& *:focus': {
-      ...macros.focused(theme),
-    },
-  },
+export default (theme = defaultTheme, mergeStyles) => ({
+  root: mergeStyles ? mergeStyles(theme) : {},
 })

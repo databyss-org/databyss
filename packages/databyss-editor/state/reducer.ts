@@ -37,6 +37,9 @@ import {
   removeLocationMark,
   blockValue,
   pushSingleBlockOperation,
+  trimLinebreaks,
+  trimLeft,
+  trimRight,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
@@ -426,25 +429,13 @@ export default (
             }
           }
 
+          trimLinebreaks({ draft, atIndex: payload.index })
+
           // push updates operation back to editor
           draft.operations.push({
             index: payload.index + 1,
             block: blockValue(draft.blocks[payload.index + 1]),
           })
-
-          // HACK: workaround for a Slate bug
-          // see issue #3458: Arrow navigation issue with single-character text node adjacent to inline element
-          // https://github.com/ianstormtaylor/slate/issues/3458
-          const _prevTextValue = payload.previous.textValue
-
-          if (_prevTextValue.charAt(_prevTextValue.length - 1) === '\n') {
-            draft.blocks[
-              payload.index
-            ].text.textValue = _prevTextValue.substring(
-              0,
-              _prevTextValue.length - 1
-            )
-          }
 
           // do not allow operation push if previous block is a closure type
           if (getClosureType(draft.blocks[payload.index].type)) {
@@ -634,6 +625,17 @@ export default (
         if (_baked && isAtomicInlineType(_baked.type)) {
           draft.newEntities.push(_baked)
         }
+
+        // trim leading and trailing linebreaks
+        if (
+          trimLeft(draft.blocks[state.selection.focus.index]) ||
+          trimRight(draft.blocks[state.selection.focus.index])
+        ) {
+          draft.operations.push({
+            index: state.selection.focus.index,
+            block: blockValue(draft.blocks[state.selection.focus.index]),
+          })
+        }
       }
 
       // VALIDATE SELECTION
@@ -667,10 +669,10 @@ export default (
 
         _selectedBlock.__showCitationMenu = _selectedBlock.text.textValue.startsWith(
           '@'
-        )
+        ) && !_selectedBlock.text.textValue.match(`\n`)
         _selectedBlock.__showTopicMenu = _selectedBlock.text.textValue.startsWith(
           '#'
-        )
+        ) && !_selectedBlock.text.textValue.match(`\n`)
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element
         _selectedBlock.__isActive =

@@ -334,7 +334,10 @@ module.exports = webpackEnv => {
                   options: {
                     jsx: true, // true outputs JSX tags
                     svgo: {
-                      plugins: [{ removeViewBox: false }],
+                      plugins: [
+                        { removeViewBox: false },
+                        { mergePaths: false },
+                      ],
                     },
                   },
                 },

@@ -7,7 +7,7 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import OnlineSvg from '@databyss-org/ui/assets/online.svg'
 import OfflineSvg from '@databyss-org/ui/assets/offline.svg'
 import LoadingSvg from '@databyss-org/ui/assets/loading.svg'
-import { ArchiveBin } from './ArchiveBin'
+import PageMenu from './PageMenu'
 
 const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
@@ -43,16 +43,15 @@ const PageSticky = ({ pagePath, pageId }) => {
       alignItems="center"
       flexDirection="row"
       justifyContent="space-between"
-      p="medium"
-      pl="none"
-      ml="extraSmall"
+      py="medium"
+      px="small"
       ref={stickyRef}
       backgroundColor="gray.7"
       position="sticky"
       top={0}
       zIndex="sticky"
     >
-      <Text color="gray.4" pl="medium" variant="uiTextSmall">
+      <Text color="gray.4" variant="uiTextSmall">
         <div
           data-test-element="editor-sticky-header"
           dangerouslySetInnerHTML={{ __html: currentPath.join(' / ') }}
@@ -73,7 +72,7 @@ const PageSticky = ({ pagePath, pageId }) => {
           {isOnline ? <OnlineSvg /> : <OfflineSvg />}
         </Icon>
         <View ml="em">
-          <PagesLoader>{pages => <ArchiveBin pages={pages} />}</PagesLoader>
+          <PagesLoader>{pages => <PageMenu pages={pages} />}</PagesLoader>
         </View>
       </View>
     </View>

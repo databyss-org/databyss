@@ -1,18 +1,13 @@
 import React from 'react'
 import { Text, BaseControl } from '@databyss-org/ui/primitives'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 
 const Header = () => {
-  const { navigateSidebar } = useNavigationContext()
-
-  const onHeaderClick = () => {
-    navigateSidebar('/')
-  }
+  const { isPublicAccount } = useSessionContext()
 
   return (
     <BaseControl
-      width="100%"
-      onClick={() => onHeaderClick()}
+      href={isPublicAccount() ? 'https://www.databyss.org' : '/'}
       px="em"
       mb="extraSmall"
     >
