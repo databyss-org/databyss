@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { BaseControl, Icon, View, Separator } from '@databyss-org/ui/primitives'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
@@ -45,6 +47,10 @@ const PageMenu = ({ pages }) => {
 
   const getPublicAccount = usePageContext(c => c.getPublicAccount)
 
+  const resetSourceHeaders = useSourceContext(c => c.resetSourceHeaders)
+
+  const resetTopicHeaders = useTopicContext(c => c && c.resetTopicHeaders)
+
   const canBeArchived = Object.values(pages).filter(p => !p.archive).length > 1
 
   // if page is shared, toggle public page
@@ -56,6 +62,9 @@ const PageMenu = ({ pages }) => {
 
   const onArchivePress = () => {
     archivePage(params).then(() => {
+      // reset headers
+      resetSourceHeaders()
+      resetTopicHeaders()
       // if default page is archived set new page as default page
       let redirect = account.defaultPage
       if (account.defaultPage === params) {

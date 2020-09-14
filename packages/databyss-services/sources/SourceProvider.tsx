@@ -35,6 +35,7 @@ interface ContextType {
   getSourceCitations: () => ResourceResponse<SourceCitationHeader[]>
   removePageFromCacheHeader: (id: string, pageId: string) => void
   addPageToCacheHeader: (id: string, pageId: string) => void
+  resetSourceHeaders: () => void
 }
 
 const useReducer = createReducer()
@@ -113,6 +114,11 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     [state.authorsHeaderCache]
   )
 
+  const resetSourceHeaders = () => {
+    dispatch(fetchAuthorHeaders())
+    dispatch(fetchSourceCitations())
+  }
+
   return (
     <SourceContext.Provider
       value={{
@@ -124,6 +130,7 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
         getSourceCitations,
         removePageFromCacheHeader,
         addPageToCacheHeader,
+        resetSourceHeaders,
       }}
     >
       {children}
