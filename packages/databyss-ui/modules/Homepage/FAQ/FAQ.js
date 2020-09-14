@@ -15,11 +15,18 @@ const Question = ({ question }) => (
   </Text>
 )
 
-const Answer = ({ answer }) => (
-  <Text variant="uiTextNormal" color="text.3">
-    <Markdown source={answer} />
-  </Text>
-)
+const Answer = ({ answer }) => {
+  const _answer = Array.isArray(answer) ? answer : [answer]
+  return (
+    <Text variant="uiTextNormal" color="text.3">
+      {_answer.map((p, key) => (
+        <p key={key}>
+          <Markdown source={p} />
+        </p>
+      ))}
+    </Text>
+  )
+}
 
 const FAQ = ({ title, description, descriptionColor, questionsAndAnswers }) => {
   const isTablet = useMediaQuery({ minWidth: breakpoints.tablet })
