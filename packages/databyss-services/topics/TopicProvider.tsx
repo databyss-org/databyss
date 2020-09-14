@@ -32,6 +32,7 @@ interface ContextType {
   getTopicHeaders: (id: string) => ResourceResponse<CacheDict<Topic>>
   removePageFromCacheHeader: (id: string, pageId: string) => void
   addPageToCacheHeader: (id: string, pageId: string) => void
+  resetTopicHeaders: () => void
 }
 
 export const TopicContext = createContext<ContextType | null>(null)
@@ -82,6 +83,10 @@ const TopicProvider: React.FunctionComponent<PropsType> = ({
     [state.cache]
   )
 
+  const resetTopicHeaders = () => {
+    dispatch(fetchTopicHeaders())
+  }
+
   return (
     <TopicContext.Provider
       value={{
@@ -91,6 +96,7 @@ const TopicProvider: React.FunctionComponent<PropsType> = ({
         getTopicHeaders,
         removePageFromCacheHeader,
         addPageToCacheHeader,
+        resetTopicHeaders,
       }}
     >
       {children}
