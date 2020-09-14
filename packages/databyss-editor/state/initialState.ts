@@ -22,4 +22,17 @@ const initialState: EditorState = {
   entitySuggestionCache: {},
 }
 
+export const addMetaDataToBlocks = (init: EditorState) => {
+  let _blocks = init.blocks
+  _blocks = _blocks.map(b => ({
+    ...b,
+    __isActive: false,
+    __showNewBlockMenu: false,
+    __showCitationMenu: false,
+    __showTopicMenu: false,
+  }))
+  init.blocks = _blocks
+  return init
+}
+
 export default initialState

@@ -18,8 +18,8 @@ export const getBlockSize = size =>
 
 const ipsum = new LoremIpsum({
   sentencesPerParagraph: {
-    max: 8,
-    min: 4,
+    max: 6,
+    min: 2,
   },
   wordsPerSentence: {
     max: 16,
@@ -56,12 +56,40 @@ const generateBlock = (state, type, index) => {
   // const refId = ObjectId().toHexString()
   const _id = ObjectId().toHexString()
 
+  const _textVal = ipsum.generateParagraphs(2)
+
+  const rangeTypes = ['bold', 'location', 'italic']
+
+  const numberOfRanges = Math.floor(Math.random() * (_textVal.length / 35))
+
+  const generateRange = string => {
+    const _length = string.length
+    // generate range type
+    const _rangeType = rangeTypes[Math.floor(Math.random() * rangeTypes.length)]
+    // generate offset
+    const _offset = Math.floor(Math.random() * _length)
+    const _rangeLength = Math.floor((Math.random() * (_length - _offset)) / 6)
+    const _range = {
+      marks: [_rangeType],
+      offset: _offset,
+      length: _rangeLength,
+    }
+    return _range
+  }
+
+  const ranges = []
+
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < numberOfRanges; i++) {
+    ranges.push(generateRange(_textVal))
+  }
+
   _state.blocks[index] = {
     type,
     _id,
     text: {
       textValue: ipsum.generateParagraphs(2),
-      ranges: [],
+      ranges,
     },
   }
 
@@ -70,7 +98,7 @@ const generateBlock = (state, type, index) => {
 
 export const generateState = size => {
   const blockSize = getBlockSize(size)
-  const types = ['ENTRY', 'SOURCE', 'TOPIC']
+  const types = ['ENTRY', 'SOURCE', 'TOPIC', 'ENTRY', 'ENTRY', 'ENTRY']
   let _state = cloneDeep(initialState)
   for (let i = 0; i < blockSize; i += 1) {
     const _type = types[Math.floor(Math.random() * types.length)]

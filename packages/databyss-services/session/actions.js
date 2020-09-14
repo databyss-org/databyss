@@ -78,7 +78,9 @@ export const fetchSession = ({
       // get account from url
       const _accountId = getAccountFromLocation()
       path += '/auth'
-      options.headers['x-databyss-as-account'] = _accountId
+      if (_accountId) {
+        options.headers['x-databyss-as-account'] = _accountId
+      }
     }
 
     const res = await _request(path, options, true)

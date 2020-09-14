@@ -190,6 +190,7 @@
     "file-loader": "^4.0.0",
     "focus-trap-react": "^6.0.0",
     "html-webpack-plugin": "4.0.0-beta.5",
+    "imurmurhash": "^0.1.4",
     "is-hotkey": "^0.1.5",
     "is-wsl": "^2.0.0",
     "jest": "24.8.0",

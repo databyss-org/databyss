@@ -3,6 +3,7 @@ import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from '@databyss-org/slate-react'
+import { Range } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -10,8 +11,6 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
-import { slateSelectionToStateSelection } from '../lib/slateUtils'
-import { selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { SuggestMenu, SuggestSources, SuggestTopics } from './Suggest'
 
@@ -98,10 +97,10 @@ const Element = ({ attributes, children, element }) => {
       if (!block) {
         return null
       }
+
       const blockMenuWidth = menuLauncherSize + 6
-      const selHasRange = selectionHasRange(
-        slateSelectionToStateSelection(editor)
-      )
+
+      const selHasRange = !Range.isCollapsed(editor.selection)
 
       const vpad =
         block.type === 'ENTRY' || block.type === previousBlock?.type ? 2 : 3

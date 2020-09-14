@@ -49,12 +49,12 @@ describe('format text in editor', () => {
     await singleHighlight(actions)
     await singleHighlight(actions)
     await actions.perform()
-    await sleep(300)
+    await sleep(3000)
     await driver
       .findElement(By.tagName('[data-test-format-menu="italic"]'))
       .click()
 
-    await sleep(300)
+    await sleep(3000)
 
     const actual = JSON.parse(await slateDocument.getText())
 

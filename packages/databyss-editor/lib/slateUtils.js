@@ -1,4 +1,6 @@
-import { Text, Editor } from '@databyss-org/slate'
+import MurmurHash3 from 'imurmurhash'
+import { Text, Editor, Node } from '@databyss-org/slate'
+import { pickBy } from 'lodash'
 import { isAtomicInlineType } from './util'
 import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
 
@@ -24,7 +26,7 @@ export const flattenNodeToPoint = (editor, point) => {
     offset: point.offset,
   }
   const _frag = Editor.fragment(editor, { anchor, focus })
-  const _string = flattenNode(_frag[0])
+  const _string = Node.string({ children: _frag })
   return _string
 }
 
@@ -63,13 +65,47 @@ export const stateSelectionToSlateSelection = (children, selection) => {
 export const entities = type =>
   ({ SOURCE: 'sources', TOPIC: 'topics', ENTRY: 'entries' }[type])
 
+// map between state block stringifies and slate block values
+const slateBlockMap = {}
+
+// convert state and apply markup values
 export const stateBlockToSlateBlock = block => {
-  // convert state and apply markup values
-  const _childrenText = stateToSlateMarkup(block.text)
+  // object hash
+  const _hashBlock = { text: block.text, type: block.type }
+  const str = JSON.stringify(_hashBlock)
+
+  const _blockHash = MurmurHash3(str).result()
+
+  // look up block hash in blockCache
+  const _slateBlock = slateBlockMap[_blockHash]
+
+  // if block hash exists in dictionary, return the parsed data
+  if (_slateBlock) {
+    return JSON.parse(_slateBlock.data)
+  }
+
+  // CACHE CLEANUP
+  // look up any block in dicitonary by same block id
+  const _hash = pickBy(slateBlockMap, b => b._id === block._id)
+
+  // if value exists with same id, remove from dictionary
+  if (_hash) {
+    delete slateBlockMap[Object.keys(_hash)[0]]
+  }
+
+  // calculate slate data
+  const _childrenText = stateToSlateMarkup(block)
+
   const _data = {
     children: _childrenText,
     type: block.type,
     isBlock: true,
+  }
+
+  // add to blockCache dicitonary
+  slateBlockMap[_blockHash] = {
+    data: JSON.stringify(_data),
+    _id: block._id,
   }
 
   return _data

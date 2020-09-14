@@ -4,6 +4,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useRef,
+  useMemo,
 } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
@@ -25,7 +26,7 @@ import {
   CACHE_ENTITY_SUGGESTIONS,
 } from './constants'
 import { Text, Selection, EditorState, Block } from '../interfaces'
-import initialState from './initialState'
+import initialState, { addMetaDataToBlocks } from './initialState'
 import reducer from './reducer'
 import { getPagePath, indexPage, PagePath } from '../lib/util'
 import {
@@ -120,6 +121,8 @@ export const EditorContext = createContext<ContextType | null>(null)
 const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
   ({ children, initialState, onChange }, ref) => {
     const setBlockRelations = useEntryContext(c => c && c.setBlockRelations)
+
+    //  console.log(initialState)
     // get the current page header
 
     const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
@@ -169,11 +172,15 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       }
     }
 
-    const [state, dispatch] = useReducer(reducer, initialState, {
-      initializer: null,
-      name: 'EditorProvider',
-      onChange: forkOnChange,
-    })
+    const [state, dispatch] = useReducer(
+      reducer,
+      addMetaDataToBlocks(initialState),
+      {
+        initializer: null,
+        name: 'EditorProvider',
+        onChange: forkOnChange,
+      }
+    )
 
     useImperativeHandle(
       ref,
@@ -331,28 +338,31 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       })
     }
 
-    return (
-      <EditorContext.Provider
-        value={{
-          state,
-          copy,
-          cut,
-          insert,
-          replace,
-          paste,
-          setSelection,
-          setContent,
-          split,
-          merge,
-          remove,
-          removeAtSelection,
-          clear,
-          removeEntityFromQueue,
-          cacheEntitySuggestions,
-        }}
-      >
-        {children}
-      </EditorContext.Provider>
+    return useMemo(
+      () => (
+        <EditorContext.Provider
+          value={{
+            state,
+            copy,
+            cut,
+            insert,
+            replace,
+            paste,
+            setSelection,
+            setContent,
+            split,
+            merge,
+            remove,
+            removeAtSelection,
+            clear,
+            removeEntityFromQueue,
+            cacheEntitySuggestions,
+          }}
+        >
+          {children}
+        </EditorContext.Provider>
+      ),
+      [state]
     )
   }
 )
