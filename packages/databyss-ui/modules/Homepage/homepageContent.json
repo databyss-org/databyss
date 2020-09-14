@@ -50,7 +50,7 @@
             "imgAlt": "Dropdown menu when searching for sources",
             "imgMaxHeight": "260px",
             "title": "Add Sources",
-            "description": "To add a new source and find the bibliographical data of the text you are annotating, press @ on a new line to search using Google Books, Cross Ref, and/or Open Library."
+            "description": "To add a new source and find the bibliographical data of the text you are annotating, press @ on a new line to search using Open Library, Google Books, and Crossref."
         },
         {
             "component": "DefaultFeature",
@@ -83,11 +83,38 @@
             "questionsAndAnswers": [
                 {
                     "question": "What can I use Databyss for?",
-                    "answer": "Databyss works extremely well to record notes of any genre of study or reflection. One way to think about Databyss is that it functions as a searchable record of the margin notes you once left in your books. You can record quotations, link them to the source text, and include a formatted page or chapter location. Since Databyss also allows you to search topics as if they were files, you can keep dream books in Databyss, phone records, journal entries or any other kind of every-day record keeping. Since Databyss has the feel of a word-processor, you can also write your novels, romantic emails, or political rants here."
+                    "answer": "Databyss works extremely well to record notes of any genre of study or reflection. One way to think about Databyss is that it functions as a searchable record of the margin notes you once left in your books. You can record quotations, link them to the source text, and include a formatted page or chapter location. Since Databyss also allows you to search topics as if they were files, you can keep dream books in Databyss, phone records, journal entries or any other kind of every-day record keeping. Since Databyss has the feel of a word-processor, you can also write your novels, poems, or political rants here."
                 },
                 {
-                    "question": "What is the difference between Cross Ref, Open Library, and Google Books?",
-                    "answer": "Cross Ref, Open Library and Google Books are unique databases that store the bibliographical material of 100,000s of books, journal articles, and more. If you are trying to decide which to use, a good rule of thumb is to use Open Library or Google Books for books and Cross Ref to search for your journal article. (Often times, all three databases might carry the information you're looking for.) We should note that Google Books sets a limit on the number of searches allowed (1000) for websites using their API, and it may be out of service more often than not."
+                    "question": "How do I save my work?",
+                    "answer": "Databyss uses cloud-based architecture, meaning it constantly saves your work to the cloud in the background. From time to time, you may see a spinning icon in the upper-right corner of the page. This indicates that Databyss is sending your changes to the server to be saved. In other words, you don't need to do anything to save your work."
+                },
+                {
+                    "question": "Can I use Databyss offline?",
+                    "answer": "Databyss currently has no \"offline mode,\" so if you go offline, you'll see a message explaining that you must go online before continuing your work. When you go back online, Databyss saves the pending changes to the cloud. Rest assured that we are hard at work creating a true \"offline mode\" for our next release."
+                },
+                {
+                    "question": "How much does it cost?",
+                    "answer": "Databyss is *free-for-all*, that is, there is no fee to create an account or use the application. And Databyss is entirely open source. All of the application code is [on our GitHub](https://github.com/databyss-org/databyss), so if you are a developer and want to help out, we welcome your contributions. The organization behind Databyss (which is also called Databyss at the moment) is a non-profit entity whose mission is to maintain Databyss and related tools and services."
+                },
+                {
+                    "question": "How do you keep Databyss free?",
+                    "answer": "Databyss was conceived as a project to disseminate ideas and encourage communication, not as a product. It is privately funded by individuals aligned with this interest, and we will continue to seek like-minded people and organizations to sponsor its growth. If you are interested in contributing, please get in touch at [friendsof@databyss.org](mailto:friendsof@databyss.org)."
+                },
+                {
+                    "question": "Can I share my notes?",
+                    "answer": "Yes, you can! You can share a page by opening the menu in the top-right of the page (the one with three dots) and clicking the \"Make page public\" option. When you do that, an option will appear to \"Copy link\" — click that, and the URL to share the page will be copied to your clipboard. Anyone with this URL will have access to a read-only version of the page. They will see the page inside the full Databyss interface, including the Search, Topic and Source sidebars. However, the contents of these sidebars (the topics and sources listed) are limited to those that appear in the public page."
+                },
+                {
+                    "question": "Can pages be collaboratively edited?",
+                    "answer": "At this time, there is no way to invite another user to edit a page collaboratively in Databyss. We plan to add this feature in a subsequent release."
+                },
+                {
+                    "question": "Who is behind Databyss?",
+                    "answer": [
+                        "Jake Reeder is an adjunct professor of philosophy at Marist College. He received his Ph.D. from Birkbeck College where we wrote a dissertation on psychoanalysis and the case of Dr. Schreber. Since that time, he has read extensively in the fields of deconstruction, critical race theory, and feminism. The multidisciplinary nature of his interests and the accumulation of way too many notes inspired Jake to spearhead the creation of new digital humanities projects, like the collection of annotations to be found at [returntocinder.com](https://returntocinder.com).",
+                        "Paul Hine is a software developer with a background in building apps for web and mobile. He previously collaborated with Jake on [returntocinder.com](https://returntocinder.com) and [plainhoney.com](https://plainhoney.com). He is also a researcher at the Universitat Pompeu Fabra in Barcelona, where he just completed a master's program in Cognitive Systems and Interactive Media."
+                    ]
                 }
             ]
         }
