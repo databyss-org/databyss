@@ -13,7 +13,7 @@ export const getBlockSize = size =>
   ({
     SMALL: 5,
     MED: 50,
-    LARGE: 500,
+    LARGE: 100,
   }[size])
 
 const ipsum = new LoremIpsum({
