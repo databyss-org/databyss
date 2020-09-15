@@ -369,7 +369,7 @@ describe('atomic closure', () => {
     await upKey(actions)
     await upKey(actions)
     await enterKey(actions)
-    //    await enterKey(actions)
+    await enterKey(actions)
     await upKey(actions)
     await sendKeys(actions, '/#')
 

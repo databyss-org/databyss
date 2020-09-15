@@ -7,11 +7,10 @@ function composeMiddleware(chain) {
     chain.reduceRight((res, middleware) => middleware(context)(res), dispatch)
 }
 
-const logger = createLogger({
-  collapsed: true,
-})
-
 const createReducer = (...middlewares) => {
+  const logger = createLogger({
+    collapsed: true,
+  })
   const composedMiddleware = composeMiddleware([
     thunk,
     ...middlewares,

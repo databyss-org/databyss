@@ -11,6 +11,7 @@ export interface PayloadOperation {
 export interface BackflowOperation {
   index: number
   block: Block
+  insertBefore?: Boolean
 }
 
 export interface EditorState {

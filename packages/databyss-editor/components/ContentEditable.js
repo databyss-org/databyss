@@ -353,13 +353,26 @@ const ContentEditable = ({
           const _text = Node.string(
             editor.children[editor.selection.focus.path[0]]
           )
-          const _offset = flattenOffset(editor, editor.selection.focus)
+          const _offset = parseInt(
+            flattenOffset(editor, editor.selection.focus),
+            10
+          )
           const _prevIsBreak = _text.charAt(_offset - 1) === `\n`
+          const _prevIsDoubleBreak =
+            _prevIsBreak &&
+            (_offset - 2 <= 0 || _text.charAt(_offset - 2) === `\n`)
           const _nextIsBreak = _text.charAt(_offset) === `\n`
-          const _atBlockStart =
-            editor.selection.focus.path[1] === 0 &&
-            editor.selection.focus.offset === 0
-          const _doubleLineBreak = _nextIsBreak || _prevIsBreak || _atBlockStart
+          const _nextIsDoubleBreak =
+            _nextIsBreak && _text.charAt(_offset + 1) === `\n`
+          const _atBlockStart = _offset === 0
+          const _atBlockEnd = _offset === _text.length
+          const _doubleLineBreak =
+            (_atBlockEnd && _prevIsBreak) ||
+            (_atBlockStart && _nextIsBreak) ||
+            (_prevIsBreak && _nextIsBreak) ||
+            _nextIsDoubleBreak ||
+            _prevIsDoubleBreak ||
+            _text.length === 0
           if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
             // we're not creating a new block, so just insert a carriage return
             event.preventDefault()
@@ -464,22 +477,29 @@ const ContentEditable = ({
 
       state.operations.forEach(op => {
         const _block = stateBlockToSlateBlock(op.block)
-        // clear current block
-        editor.children[op.index].children.forEach(() => {
-          Transforms.delete(editor, { at: [op.index, 0] })
-        })
-        // set block type
-        Transforms.setNodes(
-          editor,
-          { type: _block.type },
-          {
+
+        if (op.insertBefore) {
+          Transforms.insertNodes(editor, [_block], {
             at: [op.index],
-          }
-        )
-        // inserts node
-        Transforms.insertFragment(editor, [_block], {
-          at: [op.index],
-        })
+          })
+        } else {
+          // clear current block
+          editor.children[op.index].children.forEach(() => {
+            Transforms.delete(editor, { at: [op.index, 0] })
+          })
+          // set block type
+          Transforms.setNodes(
+            editor,
+            { type: _block.type },
+            {
+              at: [op.index],
+            }
+          )
+          // inserts node
+          Transforms.insertFragment(editor, [_block], {
+            at: [op.index],
+          })
+        }
       })
 
       // if there were any update operations,
