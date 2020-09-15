@@ -464,6 +464,14 @@ const ContentEditable = ({
 
       state.operations.forEach(op => {
         const _block = stateBlockToSlateBlock(op.block)
+        // if new block was added in reducer
+        if (!editor.children[op.index]) {
+          Transforms.insertNodes(
+            editor,
+            { children: [], type: 'ENTRY', isBlock: true },
+            { at: [op.index] }
+          )
+        }
         // clear current block
         editor.children[op.index].children.forEach(() => {
           Transforms.delete(editor, { at: [op.index, 0] })
