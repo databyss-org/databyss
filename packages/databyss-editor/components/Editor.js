@@ -1,8 +1,9 @@
 import React, { useCallback } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { Text } from '@databyss-org/slate'
+import { Text, Node } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import linksFinder from 'links-finder'
 import { useEditorContext } from '../state/EditorProvider'
 import Leaf from './Leaf'
 import Element from './Element'
@@ -44,6 +45,32 @@ const Editor = ({
   const decorate = useCallback(
     ([node, path]) => {
       const ranges = []
+
+      // check for url in text
+      const _string = Node.string(node)
+
+      linksFinder.wrapLinks(_string, {
+        onMatch: link => {
+          // split string by link
+          const _parts = _string.split(link)
+          if (_parts.length > 1) {
+            let offset = 0
+
+            // add url link to markup
+            _parts.forEach((part, i) => {
+              if (i !== 0) {
+                ranges.push({
+                  anchor: { path, offset: offset - link.length },
+                  focus: { path, offset },
+                  url: link,
+                })
+              }
+
+              offset = offset + part.length + link.length
+            })
+          }
+        },
+      })
 
       if (!searchTerm.length) {
         return ranges
