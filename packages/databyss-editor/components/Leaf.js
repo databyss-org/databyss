@@ -1,6 +1,9 @@
 import React from 'react'
+import colors from '@databyss-org/ui/theming/colors'
 
 const Leaf = ({ attributes, children, leaf }) => {
+  const { blue, gray, orange } = colors
+
   let _children = children
 
   if (leaf.italic) {
@@ -12,7 +15,7 @@ const Leaf = ({ attributes, children, leaf }) => {
   }
 
   if (leaf.location) {
-    _children = <span style={{ color: '#A19A91' }}>{_children}</span>
+    _children = <span style={{ color: gray[4] }}>{_children}</span>
   }
 
   if (leaf.url) {
@@ -30,7 +33,7 @@ const Leaf = ({ attributes, children, leaf }) => {
         }}
         href={leaf.url}
         style={{
-          color: 'blue',
+          color: blue[2],
           cursor: 'pointer',
         }}
       >
@@ -42,7 +45,7 @@ const Leaf = ({ attributes, children, leaf }) => {
   return (
     <span
       {...attributes}
-      style={{ backgroundColor: leaf.highlight && '#F7C96E' }}
+      style={{ backgroundColor: leaf.highlight && orange[3] }}
     >
       {_children}
     </span>
