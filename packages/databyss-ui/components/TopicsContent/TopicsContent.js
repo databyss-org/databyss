@@ -1,4 +1,5 @@
 import React from 'react'
+import { Helmet } from 'react-helmet'
 import { Router } from '@reach/router'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -37,6 +38,10 @@ const TopicsContent = () => {
 
         return (
           <IndexPageContent title="All Topics">
+            <Helmet>
+              <meta charSet="utf-8" />
+              <title>Databyss: All Topics</title>
+            </Helmet>
             <IndexPageEntries
               onClick={onTopicClick}
               entries={sortedTopics}

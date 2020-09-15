@@ -1,4 +1,5 @@
 import React from 'react'
+import { Helmet } from 'react-helmet'
 import { Router } from '@reach/router'
 import {
   sortEntriesAtoZ,
@@ -41,6 +42,10 @@ const SourcesContentBody = (sourceCitations, navigate) => {
 
   return (
     <IndexPageContent title="All Sources">
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Databyss: All Sources</title>
+      </Helmet>
       <IndexPageEntries
         onClick={onSourceClick}
         entries={sortedSources}

@@ -3,6 +3,7 @@ import {
   sortEntriesAtoZ,
   createIndexPageEntries,
 } from '@databyss-org/services/entries/util'
+import { Helmet } from 'react-helmet'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import {
   AuthorsLoader,
@@ -48,6 +49,10 @@ const AuthorsContent = () => {
 
             return (
               <IndexPageContent title="All Authors">
+                <Helmet>
+                  <meta charSet="utf-8" />
+                  <title>Databyss: All Authors</title>
+                </Helmet>
                 <IndexPageEntries
                   onClick={onAuthorClick}
                   entries={sortedAuthors}
