@@ -40,7 +40,6 @@ import {
   trimLinebreaks,
   trimLeft,
   trimRight,
-  splitBlockAtEmptyLine,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
@@ -636,27 +635,6 @@ export default (
             index: state.selection.focus.index,
             block: blockValue(draft.blocks[state.selection.focus.index]),
           })
-        }
-
-        // if there are any empty lines in the block, split it into two
-        //   by setting the `insertAfter` bit on the operation
-        if (splitBlockAtEmptyLine({ draft, atIndex: state.selection.focus.index })) {
-          draft.operations.push({
-            index: state.selection.focus.index,
-            block: blockValue(draft.blocks[state.selection.focus.index]),
-          })
-          draft.operations.push({
-            index: state.selection.focus.index + 1,
-            block: blockValue(draft.blocks[state.selection.focus.index + 1]),
-            insertAfter: true
-          })
-
-          // if new selection index is greater than previous, increment by one
-          //   to accommodate the split
-          if (draft.selection.focus.index > state.selection.focus.index) {
-            draft.selection.anchor.index += 1
-            draft.selection.focus.index += 1
-          }
         }
       }
 
