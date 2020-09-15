@@ -1,8 +1,10 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
 import { Patch } from 'immer'
+import ObjectId from 'bson-objectid'
 import { Selection, Block, Range, EditorState } from '../interfaces'
 import { OnChangeArgs } from './EditorProvider'
 import { isAtomicInlineType } from '../lib/util'
+import { splitTextAtOffset } from '../lib/clipboardUtils'
 
 export const symbolToAtomicClosureType = (symbol: string): BlockType => {
   const _type: { [key: string]: BlockType } = {
@@ -320,4 +322,34 @@ export const trimLinebreaks = ({ draft, atIndex }: {
   const _splitAfter = draft.blocks[atIndex + 1]
   trimLeft(_splitAfter)
   trimRight(_splitBefore)
+}
+
+export const splitBlockAtEmptyLine = ({ draft, atIndex }: {
+  draft: EditorState,
+  atIndex: number
+}): Boolean => {
+  const _emptyLinePattern = /^\n./m
+  const _block = draft.blocks[atIndex]
+  const _match = _block?.text.textValue.match(_emptyLinePattern)
+  if (!_match) {
+    return false
+  }
+  const _offset = _match.index!
+  const { before, after } = splitTextAtOffset({ text: _block.text, offset: _offset + 1 })
+  // set current block text to first part of split
+  //   but remove the last 2 character (which are newlines)
+  _block.text.textValue = before.textValue.substring(0, _offset - 1)
+  _block.text.ranges = before.ranges
+
+  // make a new block to insert with second part of split
+  const _blockToInsert: Block = {
+    type: BlockType.Entry,
+    _id: new ObjectId().toHexString(),
+    text: after
+  }
+
+  // insert the block
+  draft.blocks.splice(atIndex + 1, 0, _blockToInsert)
+
+  return true
 }
