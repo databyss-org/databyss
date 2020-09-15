@@ -57,7 +57,7 @@
             "imgSrc": "/homepage/search_feature.png",
             "imgAlt": "Example of a search result",
             "imgHasBoxShadow": true,
-            "title": "Global Search",
+            "title": "Search Your Notes",
             "description": "Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases."
         },
         {
@@ -87,7 +87,7 @@
                 },
                 {
                     "question": "How do I save my work?",
-                    "answer": "Databyss uses cloud-based architecture, meaning it constantly saves your work to the cloud in the background. From time to time, you may see a spinning icon in the upper-right corner of the page. This indicates that Databyss is sending your changes to the server to be saved. In other words, you don't need to do anything to save your work."
+                    "answer": "Databyss uses cloud-based architecture, meaning it constantly saves your work to the cloud in the background. From time to time, you may see a spinning icon in the upper-right corner of the page. This indicates that Databyss is sending your changes to the server to be saved. In other words, you don't need to do anything to save your work. But, you should wait until this indicator disappears before closing the browser or navigating away from Databyss"
                 },
                 {
                     "question": "Can I use Databyss offline?",
@@ -95,7 +95,7 @@
                 },
                 {
                     "question": "How much does it cost?",
-                    "answer": "Databyss is *free-for-all*, that is, there is no fee to create an account or use the application. And Databyss is entirely open source. All of the application code is [on our GitHub](https://github.com/databyss-org/databyss), so if you are a developer and want to help out, we welcome your contributions. The organization behind Databyss (which is also called Databyss at the moment) is a non-profit entity whose mission is to maintain Databyss and related tools and services."
+                    "answer": "Databyss is *free-for-all*, that is, there is no fee to create an account or use the application. Databyss is a non-profit organization and Databyss is entirely open source. All of the application code is [on our GitHub](https://github.com/databyss-org/databyss), so if you are a developer and want to help out, we welcome your contributions."
                 },
                 {
                     "question": "How do you keep Databyss free?",
@@ -103,17 +103,17 @@
                 },
                 {
                     "question": "Can I share my notes?",
-                    "answer": "Yes, you can! You can share a page by opening the menu in the top-right of the page (the one with three dots) and clicking the \"Make page public\" option. When you do that, an option will appear to \"Copy link\" — click that, and the URL to share the page will be copied to your clipboard. Anyone with this URL will have access to a read-only version of the page. They will see the page inside the full Databyss interface, including the Search, Topic and Source sidebars. However, the contents of these sidebars (the topics and sources listed) are limited to those that appear in the public page."
+                    "answer": "Yes, you can! You can share a page by opening the menu in the top-right of the page (the one with three dots) and clicking the \"Make page public\" option. When you do that, an option will appear to \"Copy link\" — click that, and the URL to share your page will be copied to your clipboard. Anyone with this URL will have access to a read-only version of the page. Recepients of your page will be able to search kewyords, Topics and Sources specific to the page you sent."
                 },
                 {
                     "question": "Can pages be collaboratively edited?",
-                    "answer": "At this time, there is no way to invite another user to edit a page collaboratively in Databyss. We plan to add this feature in a subsequent release."
+                    "answer": "At this time, we don't offer this feature, but we plan to add it in a subsequent release."
                 },
                 {
                     "question": "Who is behind Databyss?",
                     "answer": [
-                        "Jake Reeder is an adjunct professor of philosophy at Marist College. He received his Ph.D. from Birkbeck College where we wrote a dissertation on psychoanalysis and the case of Dr. Schreber. Since that time, he has read extensively in the fields of deconstruction, critical race theory, and feminism. The multidisciplinary nature of his interests and the accumulation of way too many notes inspired Jake to spearhead the creation of new digital humanities projects, like the collection of annotations to be found at [returntocinder.com](https://returntocinder.com).",
-                        "Paul Hine is a software developer with a background in building apps for web and mobile. He previously collaborated with Jake on [returntocinder.com](https://returntocinder.com) and [plainhoney.com](https://plainhoney.com). He is also a researcher at the Universitat Pompeu Fabra in Barcelona, where he just completed a master's program in Cognitive Systems and Interactive Media."
+                        "Jake Reeder is an adjunct professor of philosophy at Marist College. He received his Ph.D. from Birkbeck College where we wrote a dissertation on the literary nature of Dr. Paul Schreber's *Memoirs of My Nervous Illness*, a famous text in the psychoanalytic canon. Since that time, he has read extensively in the fields of deconstruction, critical race theory, and gender studies. The multidisciplinary nature of his interests and the accumulation of way too many notes inspired Jake to spearhead the creation of new digital humanities projects, like the collection of annotations to be found at [returntocinder.com](https://returntocinder.com).",
+                        "Paul Hine is a software developer with a background in building apps for web and mobile. He previously collaborated with Jake on [returntocinder.com](https://returntocinder.com) and [plainhoney.com](https://plainhoney.com). He is also a researcher at the Universitat Pompeu Fabra in Barcelona, where he just completed a M.Sc. in Cognitive Systems and Interactive Media."
                     ]
                 }
             ]
