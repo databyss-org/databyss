@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useLocation, Router } from '@reach/router'
+
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { View } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
@@ -9,13 +10,14 @@ import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
 
+// components
 export const PageRouter = () => (
   <Router>
     <PageContent path=":id" />
   </Router>
 )
 
-const PageContainer = React.memo(({ anchor, id, page }) => {
+export const PageContainer = React.memo(({ anchor, id, page }) => {
   const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
 
   const [editorPath, setEditorPath] = useState(null)

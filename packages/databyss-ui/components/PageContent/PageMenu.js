@@ -39,15 +39,15 @@ const PageMenu = ({ pages }) => {
 
   const { params } = getTokensFromPath()
 
-  const archivePage = usePageContext(c => c.archivePage)
-  const setDefaultPage = usePageContext(c => c.setDefaultPage)
-  const getPage = usePageContext(c => c.getPage)
+  const archivePage = usePageContext(c => c && c.archivePage)
+  const setDefaultPage = usePageContext(c => c && c.setDefaultPage)
+  const getPage = usePageContext(c => c && c.getPage)
 
-  const setPagePublic = usePageContext(c => c.setPagePublic)
+  const setPagePublic = usePageContext(c => c && c.setPagePublic)
 
-  const getPublicAccount = usePageContext(c => c.getPublicAccount)
+  const getPublicAccount = usePageContext(c => c && c.getPublicAccount)
 
-  const resetSourceHeaders = useSourceContext(c => c.resetSourceHeaders)
+  const resetSourceHeaders = useSourceContext(c => c && c.resetSourceHeaders)
 
   const resetTopicHeaders = useTopicContext(c => c && c.resetTopicHeaders)
 

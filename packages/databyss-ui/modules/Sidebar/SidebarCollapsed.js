@@ -46,14 +46,14 @@ const SidebarCollapsed = () => {
     [navigateSidebar]
   )
 
+  const isIconButtonActive = item => activeItem === item.name && isMenuOpen
+
   const sideBarCollapsedItems = [
     {
       name: 'menuCollapse',
       title: 'Collapse menu',
       icon: <MenuSvg />,
-      onClick: () => {
-        setMenuOpen(!isMenuOpen)
-      },
+      onClick: () => setMenuOpen(!isMenuOpen),
     },
     {
       name: 'search',
@@ -65,25 +65,19 @@ const SidebarCollapsed = () => {
       name: 'pages',
       title: 'Pages',
       icon: <PagesSvg />,
-      onClick: () => {
-        onItemClick('pages')
-      },
+      onClick: () => onItemClick('pages'),
     },
     {
       name: 'sources',
       title: 'Sources',
       icon: <SourceSvg />,
-      onClick: () => {
-        onItemClick('sources')
-      },
+      onClick: () => onItemClick('sources'),
     },
     {
       name: 'topics',
       title: 'Topics',
       icon: <TopicSvg />,
-      onClick: () => {
-        onItemClick('topics')
-      },
+      onClick: () => onItemClick('topics'),
     },
   ]
 
@@ -104,7 +98,7 @@ const SidebarCollapsed = () => {
             key={item.name}
             title={item.title}
             icon={item.icon}
-            isActive={item.name === activeItem}
+            isActive={isIconButtonActive(item)}
             onClick={item.onClick}
           />
         ))}

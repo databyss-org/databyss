@@ -28,6 +28,10 @@ elif [ $NPM_DEPLOY_TARGET == HOMEPAGE ]
 then
   ENV_PREFIX=REACT_APP_ NPM_BUILD_TARGET=HOMEPAGE node scripts/build.js
   cleanup
+elif [ $NPM_DEPLOY_TARGET == MOBILE_VIEWER ]
+then
+  ENV_PREFIX=REACT_APP_ NPM_BUILD_TARGET=MOBILE_VIEWER node scripts/build.js
+  cleanup
 elif [ $NPM_DEPLOY_TARGET == API_SERVER ]
 then
   ENV_PREFIX=API_ NPM_BUILD_TARGET=API_SERVER BABEL_ENV=production webpack --config packages/databyss-api/webpack.config.js --mode=production

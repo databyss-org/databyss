@@ -10,6 +10,7 @@ import { isResourceReady } from './_helpers'
 
 export const PageLoader = ({ children, pageId }) => {
   const { getPage, removePageFromCache } = usePageContext()
+
   return (
     <MakeLoader
       resources={getPage(pageId)}

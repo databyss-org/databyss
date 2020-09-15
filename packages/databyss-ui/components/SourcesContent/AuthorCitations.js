@@ -26,6 +26,7 @@ const AuthorCitations = ({ query }) => {
   return (
     <SourceCitationsLoader>
       {sourceCitations => {
+        // TODO: replace with packages/databyss-mobile-viewer/utils/buildAuthorCitationData.js
         const authorCitationsData = Object.values(sourceCitations).map(
           value => {
             const isCurrentAuthor = value.detail?.authors?.some(author => {
