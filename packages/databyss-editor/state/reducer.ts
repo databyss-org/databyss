@@ -659,8 +659,8 @@ export default (
 
         // trim leading and trailing linebreaks
         if (
-          trimLeft(draft.blocks[state.selection.focus.index].text) ||
-          trimRight(draft.blocks[state.selection.focus.index].text)
+          trimLeft(draft.blocks[state.selection.focus.index]?.text) ||
+          trimRight(draft.blocks[state.selection.focus.index]?.text)
         ) {
           draft.operations.push({
             index: state.selection.focus.index,
