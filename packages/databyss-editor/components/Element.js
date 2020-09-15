@@ -103,7 +103,7 @@ const Element = ({ attributes, children, element }) => {
       const selHasRange = !Range.isCollapsed(editor.selection)
 
       const vpad =
-        block.type === 'ENTRY' || block.type === previousBlock?.type ? 2 : 3
+        block.type === 'ENTRY' || block.type === previousBlock?.type ? 1 : 3
 
       return (
         <View
