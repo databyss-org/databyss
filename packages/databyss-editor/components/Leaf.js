@@ -25,7 +25,6 @@ const Leaf = ({ attributes, children, leaf }) => {
             !(_url.indexOf('http://') === 0 || _url.indexOf('https://') === 0)
           ) {
             _url = `http://${_url}`
-            // do something here
           }
           window.open(_url, '_blank')
         }}
