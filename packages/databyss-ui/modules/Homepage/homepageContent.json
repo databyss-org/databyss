@@ -1,122 +1,135 @@
 {
-    "title": "Databyss",
-    "meta": [
+  "title": "Databyss",
+  "meta": [
+    {
+      "name": "description",
+      "content":
+        "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word-processor."
+    }
+  ],
+  "sections": [
+    {
+      "component": "Hero",
+      "backgroundImgSrc": "/homepage/stone_bg.jpg",
+      "logoSrc": "/homepage/logo_new.png",
+      "title": "Databyss",
+      "headline":
+        "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word-processor.",
+      "buttonText": {
+        "bold": "Get Started",
+        "normal": ""
+      },
+      "buttonHref": "https://app.databyss.org/signup",
+      "navLinks": [
         {
-            "name": "description",
-            "content": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word-processor."
+          "name": "Sign Up",
+          "route": "https://app.databyss.org/signup"
+        },
+        {
+          "name": "Log in",
+          "route": "https://app.databyss.org/"
         }
-    ],
-    "sections": [
+      ]
+    },
+    {
+      "component": "HighlightedFeature",
+      "videoSrc": "/homepage/homepage_video.mp4",
+      "imgHasBoxShadow": true,
+      "title": "The Basics",
+      "description":
+        "Databyss gives you the freedom to organize notes hierarchically (as a long stream of thought) or to build a network of associations by linking sections of your work to sources, topics, and authors."
+    },
+    {
+      "component": "DefaultFeature",
+      "videoSrc": "/homepage/pdf_annotations.mp4",
+      "title": "Import PDF Annotations",
+      "description":
+        "Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them."
+    },
+    {
+      "component": "DualBgFeature",
+      "leftBgColor": "purple.4",
+      "rightBgColor": "purple.5",
+      "imgSrc": "/homepage/sources_dropdown.png",
+      "imgAlt": "Dropdown menu when searching for sources",
+      "imgMaxHeight": "260px",
+      "title": "Add Sources",
+      "description":
+        "To add a new source and find the bibliographical data of the text you are annotating, press @ on a new line to search using Open Library, Google Books, and Crossref."
+    },
+    {
+      "component": "DefaultFeature",
+      "imgSrc": "/homepage/search_feature.png",
+      "imgAlt": "Example of a search result",
+      "imgHasBoxShadow": true,
+      "title": "Global Search",
+      "description":
+        "Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases."
+    },
+    {
+      "component": "DualBgFeature",
+      "imgSrc": "/homepage/messy_notes.jpg",
+      "imgAlt": "Messy notes",
+      "leftBgColor": "background.2",
+      "rightBgColor": "background.3",
+      "alignContent": "flex-start",
+      "title": "About Databyss",
+      "description": [
+        "Three years ago, I began reading and annotating the work of the philosopher Jacques Derrida—commonly referred to as the father of deconstruction. I started filling so many blank pages that I realized, with dismay, that it was going to be extremely hard for me or anyone else to retrace my steps and find my notes useful.",
+        "I decided to transcribe my notes onto a word-processor so that they would be searchable. I soon (well, not *so* soon) had written a 2500 page (single-spaced!) document. I was able to search it by pressing COMMAND+F, but this was very limiting. So, I began looking for software that would allow for deeper, more meaningful searches.",
+        "At the same time, I began adding more authors to my annotation project, so I now needed a precise bibliography for my notes. Apps like Zotero and Mendeley are great for this, and while they support notes, they force them into bibliographic buckets and are not the \"writing tool\" I was looking for. It seemed there was no suitable application, so I continued to use a word-processor in spite of its limitations.",
+        "I shared these limitations with Paul, who had helped me build [returntocinder.com](https://returntocinder.com), a web version of my Derrida notes. After months of discussions, we conceived of *Databyss*, a simple word-processor application with powerful organization and search features. Even in its beta form, I already use *Databyss* for all my annotation projects, for my class notes, and for basic everyday lists. Paul and I hope you will find it equally versatile and useful for your own projects.",
+        "——Jake Reeder, Ph.D."
+      ]
+    },
+    {
+      "component": "FAQ",
+      "title": "FAQ",
+      "description": "",
+      "questionsAndAnswers": [
         {
-            "component": "Hero",
-            "backgroundImgSrc": "/homepage/stone_bg.jpg",
-            "logoSrc": "/homepage/logo_new.png",
-            "title": "Databyss",
-            "headline": "Write and cite, research and re-search, and never get lost in Databyss. Welcome to your new word-processor.",
-            "buttonText": {
-                "bold": "Get Started",
-                "normal": ""
-            },
-            "buttonHref": "https://app.databyss.org/signup",
-            "navLinks": [
-                {
-                    "name": "Sign Up",
-                    "route": "https://app.databyss.org/signup"
-                },
-                {
-                    "name": "Log in",
-                    "route": "https://app.databyss.org/"
-                }
-            ]
+          "question": "What can I use Databyss for?",
+          "answer":
+            "Databyss works extremely well to record notes of any genre of study or reflection. One way to think about Databyss is that it functions as a searchable record of the margin notes you once left in your books. You can record quotations, link them to the source text, and include a formatted page or chapter location. Since Databyss also allows you to search topics as if they were files, you can keep dream books in Databyss, phone records, journal entries or any other kind of every-day record keeping. Since Databyss has the feel of a word-processor, you can also write your novels, poems, or political rants here."
         },
         {
-            "component": "HighlightedFeature",
-            "videoSrc": "/homepage/homepage_video.mp4",
-            "imgHasBoxShadow": true,
-            "title": "The Basics",
-            "description": "Databyss gives you the freedom to organize notes hierarchically (as a long stream of thought) or to build a network of associations by linking sections of your work to sources, topics, and authors."
+          "question": "How do I save my work?",
+          "answer":
+            "Databyss uses cloud-based architecture, meaning it constantly saves your work to the cloud in the background. From time to time, you may see a spinning icon in the upper-right corner of the page. This indicates that Databyss is sending your changes to the server to be saved. In other words, you don't need to do anything to save your work."
         },
         {
-            "component": "DefaultFeature",
-            "videoSrc": "/homepage/pdf_annotations.mp4",
-            "title": "Import PDF Annotations",
-            "description": "Drag highlighted and/or annotated PDF files into any Page. Databyss will extract all your margin notes and highlighted passages so you can easily edit and search them."
+          "question": "Can I use Databyss offline?",
+          "answer":
+            "Databyss currently has no \"offline mode,\" so if you go offline, you'll see a message explaining that you must go online before continuing your work. When you go back online, Databyss saves the pending changes to the cloud. Rest assured that we are hard at work creating a true \"offline mode\" for our next release."
         },
         {
-            "component": "DualBgFeature",
-            "leftBgColor": "purple.4",
-            "rightBgColor": "purple.5",
-            "imgSrc": "/homepage/sources_dropdown.png",
-            "imgAlt": "Dropdown menu when searching for sources",
-            "imgMaxHeight": "260px",
-            "title": "Add Sources",
-            "description": "To add a new source and find the bibliographical data of the text you are annotating, press @ on a new line to search using Open Library, Google Books, and Crossref."
+          "question": "How much does it cost?",
+          "answer":
+            "Databyss is *free-for-all*, that is, there is no fee to create an account or use the application. And Databyss is entirely open source. All of the application code is [on our GitHub](https://github.com/databyss-org/databyss), so if you are a developer and want to help out, we welcome your contributions. The organization behind Databyss (which is also called Databyss at the moment) is a non-profit entity whose mission is to maintain Databyss and related tools and services."
         },
         {
-            "component": "DefaultFeature",
-            "imgSrc": "/homepage/search_feature.png",
-            "imgAlt": "Example of a search result",
-            "imgHasBoxShadow": true,
-            "title": "Search Your Notes",
-            "description": "Tag your entries with source, topic, and/or author. Search through these classifications to find the entries associated with each one. If you click on one of the entries, Databyss will find the exact Page and location where it was entered. You can also search keyword(s) or phrases."
+          "question": "How do you keep Databyss free?",
+          "answer":
+            "Databyss was conceived as a project to disseminate ideas and encourage communication, not as a product. It is privately funded by individuals aligned with this interest, and we will continue to seek like-minded people and organizations to sponsor its growth. If you are interested in contributing, please get in touch at [friendsof@databyss.org](mailto:friendsof@databyss.org)."
         },
         {
-            "component": "DualBgFeature",
-            "imgSrc": "/homepage/messy_notes.jpg",
-            "imgAlt": "Messy notes",
-            "leftBgColor": "background.2",
-            "rightBgColor": "background.3",
-            "alignContent": "flex-start",
-            "title": "About Databyss",
-            "description": [
-                "Three years ago, I began reading and annotating the work of the philosopher Jacques Derrida—commonly referred to as the father of deconstruction. I started filling so many blank pages that I realized, with dismay, that it was going to be extremely hard for me or anyone else to retrace my steps and find my notes useful.",
-                "I decided to transcribe my notes onto a word-processor so that they would be searchable. I soon (well, not *so* soon) had written a 2500 page (single-spaced!) document. I was able to search it by pressing COMMAND+F, but this was very limiting. So, I began looking for software that would allow for deeper, more meaningful searches.",
-                "At the same time, I began adding more authors to my annotation project, so I now needed a precise bibliography for my notes. Apps like Zotero and Mendeley are great for this, and while they support notes, they force them into bibliographic buckets and are not the \"writing tool\" I was looking for. It seemed there was no suitable application, so I continued to use a word-processor in spite of its limitations.",
-                "I shared these limitations with Paul, who had helped me build [returntocinder.com](https://returntocinder.com), a web version of my Derrida notes. After months of discussions, we conceived of *Databyss*, a simple word-processor application with powerful organization and search features. Even in its beta form, I already use *Databyss* for all my annotation projects, for my class notes, and for basic everyday lists. Paul and I hope you will find it equally versatile and useful for your own projects.",
-                "——Jake Reeder, Ph.D."
-            ]
+          "question": "Can I share my notes?",
+          "answer":
+            "Yes, you can! You can share a page by opening the menu in the top-right of the page (the one with three dots) and clicking the \"Make page public\" option. When you do that, an option will appear to \"Copy link\" — click that, and the URL to share the page will be copied to your clipboard. Anyone with this URL will have access to a read-only version of the page. They will see the page inside the full Databyss interface, including the Search, Topic and Source sidebars. However, the contents of these sidebars (the topics and sources listed) are limited to those that appear in the public page."
         },
         {
-            "component": "FAQ",
-            "title": "FAQ",
-            "description": "",
-            "questionsAndAnswers": [
-                {
-                    "question": "What can I use Databyss for?",
-                    "answer": "Databyss works extremely well to record notes of any genre of study or reflection. One way to think about Databyss is that it functions as a searchable record of the margin notes you once left in your books. You can record quotations, link them to the source text, and include a formatted page or chapter location. Since Databyss also allows you to search topics as if they were files, you can keep dream books in Databyss, phone records, journal entries or any other kind of every-day record keeping. Since Databyss has the feel of a word-processor, you can also write your novels, poems, or political rants here."
-                },
-                {
-                    "question": "How do I save my work?",
-                    "answer": "Databyss uses cloud-based architecture, meaning it constantly saves your work to the cloud in the background. From time to time, you may see a spinning icon in the upper-right corner of the page. This indicates that Databyss is sending your changes to the server to be saved. In other words, you don't need to do anything to save your work. But, you should wait until this indicator disappears before closing the browser or navigating away from Databyss"
-                },
-                {
-                    "question": "Can I use Databyss offline?",
-                    "answer": "Databyss currently has no \"offline mode,\" so if you go offline, you'll see a message explaining that you must go online before continuing your work. When you go back online, Databyss saves the pending changes to the cloud. Rest assured that we are hard at work creating a true \"offline mode\" for our next release."
-                },
-                {
-                    "question": "How much does it cost?",
-                    "answer": "Databyss is *free-for-all*, that is, there is no fee to create an account or use the application. Databyss is a non-profit organization and Databyss is entirely open source. All of the application code is [on our GitHub](https://github.com/databyss-org/databyss), so if you are a developer and want to help out, we welcome your contributions."
-                },
-                {
-                    "question": "How do you keep Databyss free?",
-                    "answer": "Databyss was conceived as a project to disseminate ideas and encourage communication, not as a product. It is privately funded by individuals aligned with this interest, and we will continue to seek like-minded people and organizations to sponsor its growth. If you are interested in contributing, please get in touch at [friendsof@databyss.org](mailto:friendsof@databyss.org)."
-                },
-                {
-                    "question": "Can I share my notes?",
-                    "answer": "Yes, you can! You can share a page by opening the menu in the top-right of the page (the one with three dots) and clicking the \"Make page public\" option. When you do that, an option will appear to \"Copy link\" — click that, and the URL to share your page will be copied to your clipboard. Anyone with this URL will have access to a read-only version of the page. Recepients of your page will be able to search kewyords, Topics and Sources specific to the page you sent."
-                },
-                {
-                    "question": "Can pages be collaboratively edited?",
-                    "answer": "At this time, we don't offer this feature, but we plan to add it in a subsequent release."
-                },
-                {
-                    "question": "Who is behind Databyss?",
-                    "answer": [
-                        "Jake Reeder is an adjunct professor of philosophy at Marist College. He received his Ph.D. from Birkbeck College where we wrote a dissertation on the literary nature of Dr. Paul Schreber's *Memoirs of My Nervous Illness*, a famous text in the psychoanalytic canon. Since that time, he has read extensively in the fields of deconstruction, critical race theory, and gender studies. The multidisciplinary nature of his interests and the accumulation of way too many notes inspired Jake to spearhead the creation of new digital humanities projects, like the collection of annotations to be found at [returntocinder.com](https://returntocinder.com).",
-                        "Paul Hine is a software developer with a background in building apps for web and mobile. He previously collaborated with Jake on [returntocinder.com](https://returntocinder.com) and [plainhoney.com](https://plainhoney.com). He is also a researcher at the Universitat Pompeu Fabra in Barcelona, where he just completed a M.Sc. in Cognitive Systems and Interactive Media."
-                    ]
-                }
-            ]
+          "question": "Can pages be collaboratively edited?",
+          "answer":
+            "At this time, there is no way to invite another user to edit a page collaboratively in Databyss. We plan to add this feature in a subsequent release."
+        },
+        {
+          "question": "Who is behind Databyss?",
+          "answer": [
+            "Jake Reeder is an adjunct professor of philosophy at Marist College. He received his Ph.D. from Birkbeck College where we wrote a dissertation on psychoanalysis and the case of Dr. Schreber. Since that time, he has read extensively in the fields of deconstruction, critical race theory, and feminism. The multidisciplinary nature of his interests and the accumulation of way too many notes inspired Jake to spearhead the creation of new digital humanities projects, like the collection of annotations to be found at [returntocinder.com](https://returntocinder.com).",
+            "Paul Hine is a software developer with a background in building apps for web and mobile. He previously collaborated with Jake on [returntocinder.com](https://returntocinder.com) and [plainhoney.com](https://plainhoney.com). He is also a researcher at the Universitat Pompeu Fabra in Barcelona, where he just completed a master's program in Cognitive Systems and Interactive Media."
+          ]
         }
-    ]
+      ]
+    }
+  ]
 }
