@@ -25,7 +25,6 @@ const Leaf = ({ attributes, children, leaf }) => {
   }
 
   if (leaf.url) {
-    console.log(leaf.url)
     let _formattedUrl = leaf.url
     const _isEmail = _formattedUrl.match(_emailRegEx)
 
@@ -42,7 +41,6 @@ const Leaf = ({ attributes, children, leaf }) => {
       _formattedUrl = `http://${_formattedUrl}`
     }
 
-    console.log(_formattedUrl)
     _children = (
       <a
         onClick={() => window.open(_formattedUrl, '_blank')}
