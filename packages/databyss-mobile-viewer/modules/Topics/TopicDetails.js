@@ -32,7 +32,7 @@ const TopicDetails = () => {
 
   // render methods
   const renderTopicDetails = () => (
-    <ScrollView maxHeight={getScrollViewMaxHeight()} px="medium" py="large">
+    <ScrollView maxHeight={getScrollViewMaxHeight()} pr="medium" py="large">
       <PageProvider>
         <PagesLoader>
           {() => (

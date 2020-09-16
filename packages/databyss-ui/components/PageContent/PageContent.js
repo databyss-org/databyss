@@ -12,13 +12,13 @@ import PageSticky from './PageSticky'
 import { isMobile } from '../../lib/mediaQuery'
 
 // components
-export const PageRouter = () => (
+export const PageRouter = others => (
   <Router>
-    <PageContent path=":id" />
+    <PageContent path=":id" {...others} />
   </Router>
 )
 
-export const PageContainer = React.memo(({ anchor, id, page }) => {
+export const PageContainer = React.memo(({ anchor, id, page, ...others }) => {
   const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
 
   const [editorPath, setEditorPath] = useState(null)
@@ -70,11 +70,7 @@ export const PageContainer = React.memo(({ anchor, id, page }) => {
   }
 
   return (
-    <View
-      height="100vh"
-      overflowY={isMobile() ? 'visible' : 'scroll'}
-      ref={editorWindowRef}
-    >
+    <View height="100vh" overflowY="scroll" ref={editorWindowRef} {...others}>
       <View
         pl="medium"
         pr="medium"
@@ -100,7 +96,7 @@ export const PageContainer = React.memo(({ anchor, id, page }) => {
   )
 }, (prev, next) => prev.page._id === next.page._id && prev.id === next.id && prev.anchor === next.anchor)
 
-const PageContent = () => {
+const PageContent = others => {
   // get page id and anchor from url
   const { id } = useParams()
   const anchor = useLocation().hash.substring(1)
@@ -113,7 +109,9 @@ const PageContent = () => {
     <View flex="1" height="100vh" backgroundColor="background.1">
       {id && (
         <PageLoader pageId={id} key={id}>
-          {page => <PageContainer anchor={anchor} id={id} page={page} />}
+          {page => (
+            <PageContainer anchor={anchor} id={id} page={page} {...others} />
+          )}
         </PageLoader>
       )}
     </View>

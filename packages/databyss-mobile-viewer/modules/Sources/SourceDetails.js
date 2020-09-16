@@ -31,7 +31,7 @@ const SourceDetails = () => {
 
   // render methods
   const renderSourceDetails = () => (
-    <ScrollView maxHeight={getScrollViewMaxHeight()} px="medium" py="large">
+    <ScrollView maxHeight={getScrollViewMaxHeight()} pr="medium" py="large">
       <PageProvider>
         <PagesLoader>
           {() => (

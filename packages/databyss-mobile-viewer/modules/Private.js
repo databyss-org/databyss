@@ -37,7 +37,13 @@ const Private = () => {
 
   // render methods
   const render = () => (
-    <View minHeight="100vh" width="100%" backgroundColor="background.1">
+    <View
+      position="absolute"
+      top="0"
+      bottom="0"
+      width="100%"
+      backgroundColor="background.1"
+    >
       <Router>
         <RouterGroup path="/:accountId">
           <RouterGroup path="pages">

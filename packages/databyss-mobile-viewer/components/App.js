@@ -18,15 +18,17 @@ const App = () => {
   // render methods
   const render = () => (
     <ServiceProvider>
-      <Viewport p={0}>
-        <SessionProvider
-          signUp={isSignUp()}
-          code={urlParams.get('code')}
-          unauthorizedChildren={<Public />}
-        >
-          <Private />
-        </SessionProvider>
-      </Viewport>
+      <SessionProvider
+        signUp={isSignUp()}
+        code={urlParams.get('code')}
+        unauthorizedChildren={
+          <Viewport p={0}>
+            <Public />
+          </Viewport>
+        }
+      >
+        <Private />
+      </SessionProvider>
     </ServiceProvider>
   )
 
