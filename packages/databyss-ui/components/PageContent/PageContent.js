@@ -9,6 +9,7 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
+import { isMobile } from '../../lib/mediaQuery'
 
 // components
 export const PageRouter = () => (
@@ -21,7 +22,7 @@ export const PageContainer = React.memo(({ anchor, id, page }) => {
   const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
 
   const [editorPath, setEditorPath] = useState(null)
-  const { isPublicAccount } = useSessionContext()
+  const { isPublicAccount, isReadOnly } = useSessionContext()
 
   const headerRef = useRef()
   const editorRef = useRef()
@@ -71,9 +72,8 @@ export const PageContainer = React.memo(({ anchor, id, page }) => {
   return (
     <View height="100vh" overflowY="scroll" ref={editorWindowRef}>
       <View pl="medium" pr="medium" pb="medium">
-        {!isPublicAccount() && (
-          <PageSticky pagePath={editorPath} pageId={page._id} />
-        )}
+        {!isPublicAccount() &&
+          !isMobile() && <PageSticky pagePath={editorPath} pageId={page._id} />}
         <View
           mr="medium"
           alignItems="center"
