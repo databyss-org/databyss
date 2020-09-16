@@ -16,7 +16,12 @@ import {
   toggleMark,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
-import { getSelectedIndicies, isAtomic, isEmpty } from '../lib/util'
+import {
+  getSelectedIndicies,
+  isAtomic,
+  isEmpty,
+  isAtomicInlineType,
+} from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
 import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
@@ -448,6 +453,26 @@ const ContentEditable = ({
             Transforms.delete(editor, {
               distance: 1,
               unit: 'character',
+              reverse: true,
+            })
+          }
+
+          const _currentIndex = editor.selection.focus.path[0]
+          // if current offset is zero and previous or current block is atomic, move selection back one space
+          const _mergingIntoAtomic = isAtomicInlineType(
+            state.blocks[_currentIndex - 1].type
+          )
+          const _mergingAtomic = isAtomicInlineType(
+            state.blocks[_currentIndex].type
+          )
+          if (
+            (_mergingIntoAtomic || _mergingAtomic) &&
+            flattenOffset(editor, editor.selection.focus) === 0
+          ) {
+            event.preventDefault()
+            Transforms.move(editor, {
+              unit: 'character',
+              distance: 1,
               reverse: true,
             })
           }
