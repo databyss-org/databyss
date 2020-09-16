@@ -10,5 +10,5 @@ export const versionChecker = (req, res, next) => {
     return res.status(409).json({ msg: 'update version' })
   }
 
-  next()
+  return next()
 }
