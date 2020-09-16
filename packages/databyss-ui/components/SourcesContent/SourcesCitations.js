@@ -20,7 +20,7 @@ const SourcesCitations = () => {
           <IndexPageContent title={_header}>
             <Helmet>
               <meta charSet="utf-8" />
-              <title>{`Databyss: ${_header}`}</title>
+              <title>{_header}</title>
             </Helmet>
             <PagesLoader>
               {() => (

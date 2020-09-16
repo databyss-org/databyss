@@ -40,7 +40,7 @@ const TopicsContent = () => {
           <IndexPageContent title="All Topics">
             <Helmet>
               <meta charSet="utf-8" />
-              <title>Databyss: All Topics</title>
+              <title>All Topics</title>
             </Helmet>
             <IndexPageEntries
               onClick={onTopicClick}

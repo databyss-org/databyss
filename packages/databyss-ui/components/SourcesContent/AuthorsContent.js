@@ -51,7 +51,7 @@ const AuthorsContent = () => {
               <IndexPageContent title="All Authors">
                 <Helmet>
                   <meta charSet="utf-8" />
-                  <title>Databyss: All Authors</title>
+                  <title>All Authors</title>
                 </Helmet>
                 <IndexPageEntries
                   onClick={onAuthorClick}

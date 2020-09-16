@@ -76,10 +76,7 @@ const AuthorCitations = ({ query }) => {
             <Helmet>
               <meta charSet="utf-8" />
               <title>
-                {`Databyss: ${composeAuthorName(
-                  authorQueryFirstName,
-                  authorQueryLastName
-                )}`}
+                {composeAuthorName(authorQueryFirstName, authorQueryLastName)}
               </title>
             </Helmet>
             <IndexPageEntries

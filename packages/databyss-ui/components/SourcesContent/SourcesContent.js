@@ -44,7 +44,7 @@ const SourcesContentBody = (sourceCitations, navigate) => {
     <IndexPageContent title="All Sources">
       <Helmet>
         <meta charSet="utf-8" />
-        <title>Databyss: All Sources</title>
+        <title>All Sources</title>
       </Helmet>
       <IndexPageEntries
         onClick={onSourceClick}

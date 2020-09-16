@@ -69,7 +69,7 @@ const SearchContent = () => {
     <ScrollView p="medium" flex="1" maxHeight="100vh">
       <Helmet>
         <meta charSet="utf-8" />
-        <title>{`Databyss: ${query}`}</title>
+        <title>{query}</title>
       </Helmet>
       <View p="medium">
         <Text variant="bodyHeading1" color="text.3">

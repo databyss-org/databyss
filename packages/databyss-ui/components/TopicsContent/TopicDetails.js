@@ -20,7 +20,7 @@ const TopicDetails = () => {
           <IndexPageContent title={topicTitle}>
             <Helmet>
               <meta charSet="utf-8" />
-              <title>{`Databyss: ${topicTitle}`}</title>
+              <title>{topicTitle}</title>
             </Helmet>
             <PagesLoader>
               {() => (

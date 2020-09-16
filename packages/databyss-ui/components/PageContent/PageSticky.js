@@ -54,7 +54,7 @@ const PageSticky = ({ pagePath, pageId }) => {
     >
       <Helmet>
         <meta charSet="utf-8" />
-        <title>{`Databyss: ${currentPath[0]}`}</title>
+        <title>{currentPath[0]}</title>
       </Helmet>
       <Text color="gray.4" variant="uiTextSmall">
         <div
