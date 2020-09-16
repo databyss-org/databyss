@@ -28,9 +28,9 @@ elif [ $NPM_DEPLOY_TARGET == HOMEPAGE ]
 then
   ENV_PREFIX=REACT_APP_ NPM_BUILD_TARGET=HOMEPAGE node scripts/build.js
   cleanup
-elif [ $NPM_DEPLOY_TARGET == MOBILE_VIEWER ]
+elif [ $NPM_DEPLOY_TARGET == NOTES_MOBILE ]
 then
-  ENV_PREFIX=REACT_APP_ NPM_BUILD_TARGET=MOBILE_VIEWER node scripts/build.js
+  ENV_PREFIX=REACT_APP_ NPM_BUILD_TARGET=NOTES_MOBILE node scripts/build.js
   cleanup
 elif [ $NPM_DEPLOY_TARGET == API_SERVER ]
 then

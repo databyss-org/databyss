@@ -70,8 +70,8 @@ function getAppIndexJs(deployTarget) {
     case 'NOTES_APP': {
       return resolveApp('packages/databyss-notes/index.js')
     }
-    case 'MOBILE_VIEWER': {
-      return resolveApp('packages/databyss-mobile-viewer/index.js')
+    case 'NOTES_MOBILE': {
+      return resolveApp('packages/databyss-notes-mobile/index.js')
     }
     case 'TEST':
     case 'API_SERVER':
@@ -88,7 +88,7 @@ function getAppBuild(deployTarget) {
   switch (deployTarget) {
     case 'HOMEPAGE':
     case 'NOTES_APP':
-    case 'MOBILE_VIEWER': {
+    case 'NOTES_MOBILE': {
       return resolveApp('build')
     }
     case 'API_SERVER':
