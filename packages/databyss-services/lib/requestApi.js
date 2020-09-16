@@ -1,11 +1,13 @@
 import request from './request'
 import { getAuthToken, getAccountId } from './../session/clientStorage'
 import { getAccountFromLocation } from '../session/_helpers'
+import { version as databyssVersion } from './../package.json'
 
 export const ping = () =>
   request(`${process.env.API_URL}/ping/`, { timeout: 5000 })
 
 export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
+  // get current databyss version
   const _accountId = getAccountId()
   const _accountFromLocation = getAccountFromLocation()
 
@@ -30,6 +32,7 @@ export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
       headers: {
         ...options.headers,
         'x-auth-token': `${getAuthToken()}`,
+        'x-databyss-version': databyssVersion,
         ..._account,
       },
     },

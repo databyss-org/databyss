@@ -4,6 +4,7 @@ import { ping } from '@databyss-org/services/lib/requestApi'
 import {
   NotAuthorizedError,
   NetworkUnavailableError,
+  VersionConflict,
 } from '@databyss-org/services/interfaces'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
@@ -68,6 +69,9 @@ class NotifyProvider extends React.Component {
   }
 
   componentDidCatch(error, info) {
+    if (error instanceof VersionConflict) {
+      return
+    }
     if (error instanceof NotAuthorizedError) {
       // we don't need to notify, we should be redirecting
       return
@@ -90,6 +94,10 @@ class NotifyProvider extends React.Component {
   }
 
   onUnhandledError = e => {
+    if (e.error instanceof VersionConflict) {
+      window.location.reload()
+      return
+    }
     if (
       e &&
       (e.reason instanceof NetworkUnavailableError ||
