@@ -37,9 +37,10 @@ import {
   removeLocationMark,
   blockValue,
   pushSingleBlockOperation,
-  trimLinebreaks,
+  trim,
   trimLeft,
   trimRight,
+  splitBlockAtEmptyLine,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
@@ -408,50 +409,87 @@ export default (
           break
         }
         case SPLIT: {
-          const _text = state.blocks[payload.index].text.textValue
-
           // don't allow SPLIT inside atomic
           if (
             isAtomicInlineType(state.blocks[payload.index].type) &&
             state.selection.focus.offset > 0 &&
-            state.selection.focus.offset < _text.length - 1
+            state.selection.focus.offset < state.blocks[payload.index].text.textValue.length - 1
           ) {
             draft.preventDefault = true
             break
           }
 
+          const _leadingNext = trimLeft(payload.text)
+          trim(payload.text)
+          trim(payload.previous)
+
           // add or insert a new block
-          const _id = new ObjectId().toHexString()
           const _block: Block = {
             type: BlockType.Entry,
-            _id,
+            _id: new ObjectId().toHexString(),
             text: payload.text,
           }
 
+          let _insertAt = payload.index
+
           if (payload.previous.textValue.length === 0) {
             // insert empty entry above
-            draft.blocks.splice(payload.index, 0, _block)
+            draft.blocks.splice(_insertAt, 0, _block)
             _block.text = payload.previous
           } else {
             // do not allow content change if previous block is closure type
-            if (!getClosureType(draft.blocks[payload.index].type)) {
-              draft.blocks[payload.index].text = payload.previous
+            if (!getClosureType(draft.blocks[_insertAt].type)) {
+              draft.blocks[_insertAt].text = payload.previous
+            }
+
+            // if 2nd block in split has text, insert an empty block before it
+            if (payload.text.textValue.length) {
+              const _emptyBlock: Block = {
+                type: BlockType.Entry,
+                _id: new ObjectId().toHexString(),
+                text: { textValue: '', ranges: [] },
+              }
+              if (_insertAt === draft.blocks.length - 1) {
+                draft.blocks.push(_emptyBlock)
+              } else {
+                draft.blocks.splice(_insertAt + 1, 0, _emptyBlock)
+              }
+              
+              // add insertAfter operation to backflow with empty line
+              draft.operations.push({
+                index: _insertAt + 1,
+                insertBefore: true,
+                block: blockValue(_emptyBlock),
+              })
+
+              _insertAt += 1
+
+              // increment cursor
+              if (!_leadingNext) {
+                nextSelection = {
+                  _id: draft.selection._id,
+                  anchor: { index: _insertAt + 1, offset: 0 },
+                  focus: { index: _insertAt + 1, offset: 0 },
+                }
+              }
             }
 
             // insert/add split below
-            if (payload.index === draft.blocks.length - 1) {
+            if (_insertAt === draft.blocks.length - 1) {
               draft.blocks.push(_block)
             } else {
-              draft.blocks.splice(payload.index + 1, 0, _block)
+              draft.blocks.splice(_insertAt + 1, 0, _block)
             }
           }
 
-          trimLinebreaks({ draft, atIndex: payload.index })
-
-          // push updates operation back to editor
+          // push updates to both blocks involved in split
           draft.operations.push({
-            index: payload.index + 1,
-            block: blockValue(draft.blocks[payload.index + 1]),
+            index: _insertAt + 1,
+            block: blockValue(draft.blocks[_insertAt + 1]),
+          })
+          draft.operations.push({
+            index: payload.index,
+            block: blockValue(draft.blocks[payload.index]),
           })
 
           // do not allow operation push if previous block is a closure type
@@ -459,13 +497,6 @@ export default (
             break
           }
 
-          /*
-          if previous value is an atomic closure, dont push operation
-          */
-          draft.operations.push({
-            index: payload.index,
-            block: blockValue(draft.blocks[payload.index]),
-          })
           break
         }
         case MERGE: {
@@ -645,13 +676,37 @@ export default (
 
         // trim leading and trailing linebreaks
         if (
-          trimLeft(draft.blocks[state.selection.focus.index]) ||
-          trimRight(draft.blocks[state.selection.focus.index])
+          trimLeft(draft.blocks[state.selection.focus.index]?.text) ||
+          trimRight(draft.blocks[state.selection.focus.index]?.text)
         ) {
           draft.operations.push({
             index: state.selection.focus.index,
             block: blockValue(draft.blocks[state.selection.focus.index]),
           })
+        }
+
+        // if there are any empty lines in the block, split it into two
+        //   by setting the `insertBefore` bit on the operation
+        if (splitBlockAtEmptyLine({ draft, atIndex: state.selection.focus.index })) {
+          draft.operations.push({
+            index: state.selection.focus.index,
+            block: blockValue(draft.blocks[state.selection.focus.index]),
+          })
+          draft.operations.push({
+            index: state.selection.focus.index + 1,
+            block: blockValue(draft.blocks[state.selection.focus.index + 1]),
+            insertBefore: true
+          })
+
+          // if new selection index is greater than previous, increment by one
+          //   to accommodate the split
+          if (draft.selection.focus.index > state.selection.focus.index) {
+            draft.selection.anchor.index += 1
+            draft.selection.focus.index += 1
+          }
+
+          // re-index blockRelations because we have essentially performed a SPLIT
+          clearBlockRelations = true
         }
       }
 

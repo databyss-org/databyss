@@ -201,6 +201,7 @@
     "json-diff": "^0.5.4",
     "jsonwebtoken": "^8.5.1",
     "kill-port": "^1.5.1",
+    "links-finder": "^1.0.0",
     "lodash": "^4.17.15",
     "metro-react-native-babel-preset": "^0.55.0",
     "mini-css-extract-plugin": "^0.7.0",

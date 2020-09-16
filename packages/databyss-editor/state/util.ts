@@ -1,8 +1,10 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
+import ObjectId from 'bson-objectid'
 import { Patch } from 'immer'
-import { Selection, Block, Range, EditorState } from '../interfaces'
+import { Selection, Block, Range, EditorState, Text } from '../interfaces'
 import { OnChangeArgs } from './EditorProvider'
 import { isAtomicInlineType } from '../lib/util'
+import { splitTextAtOffset } from '../lib/clipboardUtils'
 
 export const symbolToAtomicClosureType = (symbol: string): BlockType => {
   const _type: { [key: string]: BlockType } = {
@@ -267,17 +269,17 @@ export const pushSingleBlockOperation = ({
 
 /**
  * remove leading line break(s)
- * @param block block to trim
+ * @param text text to trim
  * @returns true if lines were trimmed
  */
-export const trimLeft = (block: Block): Boolean => {
-  if (!block) {
+export const trimLeft = (text: Text): Boolean => {
+  if (!text) {
     return false
   }
-  const _trim = block.text.textValue.match(/^\n+/)
+  const _trim = text.textValue.match(/^\n+/)
   if (_trim) {
-    block.text.textValue = block.text.textValue.substring(_trim[0].length)
-    block.text.ranges = offsetRanges(block.text.ranges, _trim[0].length)
+    text.textValue = text.textValue.substring(_trim[0].length)
+    text.ranges = offsetRanges(text.ranges, _trim[0].length)
     return true
   }
   return false
@@ -285,22 +287,22 @@ export const trimLeft = (block: Block): Boolean => {
 
 /**
  * remove trailing line break(s)
- * @param block block to trim
+ * @param text text to trim
  * @returns true if lines were trimmed
  */
-export const trimRight = (block: Block): Boolean => {
-  if (!block) {
+export const trimRight = (text: Text): Boolean => {
+  if (!text) {
     return false
   }
-  const _trim = block.text.textValue.match(/\n+$/)
+  const _trim = text.textValue.match(/\n+$/)
   if (_trim) {
     // cleanup ranges
-    block.text.ranges = block.text.ranges.filter(
-      r => r.offset <  block.text.textValue.length - _trim[0].length
+    text.ranges = text.ranges.filter(
+      r => r.offset <  text.textValue.length - _trim[0].length
     )
-    block.text.textValue = block.text.textValue.substring(
+    text.textValue = text.textValue.substring(
       0,
-      block.text.textValue.length - _trim[0].length
+      text.textValue.length - _trim[0].length
     )
     return true
   }
@@ -309,15 +311,39 @@ export const trimRight = (block: Block): Boolean => {
 
 /**
  * remove leading and/or trailing line break(s)
- * @param draft
- * @param atIndex
+ * @param text text to trim
+ * @returns true if lines were trimmed
  */
-export const trimLinebreaks = ({ draft, atIndex }: {
+export const trim = (text: Text) => {
+  return trimLeft(text) || trimRight(text)
+}
+
+export const splitBlockAtEmptyLine = ({ draft, atIndex }: {
   draft: EditorState,
   atIndex: number
-}) => {
-  const _splitBefore = draft.blocks[atIndex]
-  const _splitAfter = draft.blocks[atIndex + 1]
-  trimLeft(_splitAfter)
-  trimRight(_splitBefore)
+}): Boolean => {
+  const _emptyLinePattern = /^\n./m
+  const _block = draft.blocks[atIndex]
+  const _match = _block?.text.textValue.match(_emptyLinePattern)
+  if (!_match) {
+    return false
+  }
+  const _offset = _match.index!
+  const { before, after } = splitTextAtOffset({ text: _block.text, offset: _offset + 1 })
+  // set current block text to first part of split
+  //   but remove the last 2 character (which are newlines)
+  _block.text.textValue = before.textValue.substring(0, _offset - 1)
+  _block.text.ranges = before.ranges
+
+  // make a new block to insert with second part of split
+  const _blockToInsert: Block = {
+    type: BlockType.Entry,
+    _id: new ObjectId().toHexString(),
+    text: after
+  }
+
+  // insert the block
+  draft.blocks.splice(atIndex + 1, 0, _blockToInsert)
+
+  return true
 }

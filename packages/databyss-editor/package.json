@@ -34,6 +34,7 @@
     "escape-html": "^1.0.3",
     "fetch-mock": "^8.0.1",
     "immer": "^6.0.5",
+    "links-finder": "^1.0.0",
     "imurmurhash": "^0.1.4",
     "is-hotkey": "^0.1.5",
     "lodash": "^4.17.15",
