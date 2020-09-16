@@ -460,7 +460,7 @@ const ContentEditable = ({
           const _currentIndex = editor.selection.focus.path[0]
           // if current offset is zero and previous or current block is atomic, move selection back one space
           const _mergingIntoAtomic = isAtomicInlineType(
-            state.blocks[_currentIndex - 1].type
+            state.blocks[_currentIndex - 1]?.type
           )
           const _mergingAtomic = isAtomicInlineType(
             state.blocks[_currentIndex].type
