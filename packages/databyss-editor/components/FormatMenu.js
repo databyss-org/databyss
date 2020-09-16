@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Button, Text, View } from '@databyss-org/ui/primitives'
 import { useEditor, ReactEditor, useSlate } from '@databyss-org/slate-react'
-import { isMobileOs } from '@databyss-org/ui/'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import { Range } from '@databyss-org/slate'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
@@ -13,34 +12,12 @@ import {
   slateSelectionToStateSelection,
 } from './../lib/slateUtils'
 
-const mobileActions = [
-  {
-    type: 'SOURCE',
-    label: '+ source',
-    variant: 'uiTextNormal',
-  },
-  {
-    type: 'TOPIC',
-    label: '+ topic',
-    variant: 'uiTextNormal',
-  },
-  {
-    type: 'LOCATION',
-    label: '+ location',
-    variant: 'uiTextNormal',
-  },
-]
-
-const desktopActions = [
+const formatActions = () => [
   {
     type: 'location',
     label: 'loc',
     variant: 'uiTextNormal',
   },
-]
-
-const formatActions = isMobileNewLine => [
-  ...(isMobileOs() && isMobileNewLine ? mobileActions : desktopActions),
   {
     type: 'DIVIDER',
   },

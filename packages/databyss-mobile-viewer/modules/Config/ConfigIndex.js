@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { Button, MobileView, ScrollView } from '@databyss-org/ui/primitives'
+import { Button, ScrollView } from '@databyss-org/ui/primitives'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-
+import { MobileView } from '../Mobile'
 import { getScrollViewMaxHeight } from '../../utils/getScrollViewMaxHeight'
 
 import ConfigMetadata from './ConfigMetadata'

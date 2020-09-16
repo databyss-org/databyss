@@ -1,12 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react'
 
-import { sans } from '../../theming/fonts'
-import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
+import { sans } from '@databyss-org/ui/theming/fonts'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 
-import Icon from '../Icon/Icon'
-import styled from '../styled'
-import Text from '../Text/Text'
-import View from '../View/View'
+import Icon from '@databyss-org/ui/primitives/Icon/Icon'
+import styled from '@databyss-org/ui/primitives/styled'
+import Text from '@databyss-org/ui/primitives/Text/Text'
+import View from '@databyss-org/ui/primitives/View/View'
 
 import { ViewHeaderHeight } from './ViewHeader'
 

@@ -1,7 +1,6 @@
 import React from 'react'
 import ObjectId from 'bson-objectid'
 
-import { MobileView } from '@databyss-org/ui/primitives'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
@@ -14,7 +13,7 @@ import {
   TabbedContent,
   TabHeight,
 } from '@databyss-org/ui/components/TabbedContent'
-
+import { MobileView } from '../Mobile'
 import { buildListItems } from '../../utils/buildListItems'
 import { getScrollViewMaxHeight } from '../../utils/getScrollViewMaxHeight'
 import { parseLocation } from '../../utils/parseLocation'

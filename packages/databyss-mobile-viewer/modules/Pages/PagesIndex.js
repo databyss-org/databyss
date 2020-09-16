@@ -1,9 +1,8 @@
 import React from 'react'
 
-import { MobileView } from '@databyss-org/ui/primitives'
 import { PageProvider } from '@databyss-org/services'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
-
+import { MobileView } from '../Mobile'
 import { buildListItems } from '../../utils/buildListItems'
 import NoResultsView from '../../components/NoResultsView'
 import ScrollableListView from '../../components/ScrollableListView'

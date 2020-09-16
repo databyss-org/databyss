@@ -22,7 +22,7 @@ export const PageContainer = React.memo(({ anchor, id, page }) => {
   const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
 
   const [editorPath, setEditorPath] = useState(null)
-  const { isPublicAccount, isReadOnly } = useSessionContext()
+  const { isPublicAccount } = useSessionContext()
 
   const headerRef = useRef()
   const editorRef = useRef()
@@ -70,22 +70,24 @@ export const PageContainer = React.memo(({ anchor, id, page }) => {
   }
 
   return (
-    <View height="100vh" overflowY="scroll" ref={editorWindowRef}>
-      <View pl="medium" pr="medium" pb="medium">
+    <View
+      height="100vh"
+      overflowY={isMobile() ? 'visible' : 'scroll'}
+      ref={editorWindowRef}
+    >
+      <View
+        pl="medium"
+        pr="medium"
+        pb="medium"
+        pt={isPublicAccount() || isMobile() ? 'large' : 'none'}
+      >
         {!isPublicAccount() &&
           !isMobile() && <PageSticky pagePath={editorPath} pageId={page._id} />}
-        <View
-          mr="medium"
-          alignItems="center"
-          flexDirection="row"
-          justifyContent="space-between"
-        >
-          <PageHeader
-            ref={headerRef}
-            pageId={id}
-            onNavigateDownFromHeader={onNavigateDownToEditor}
-          />
-        </View>
+        <PageHeader
+          ref={headerRef}
+          pageId={id}
+          onNavigateDownFromHeader={onNavigateDownToEditor}
+        />
         <PageBody
           onEditorPathChange={setEditorPath}
           editorRef={editorRef}

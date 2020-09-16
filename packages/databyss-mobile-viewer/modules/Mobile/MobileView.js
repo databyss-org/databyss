@@ -1,7 +1,7 @@
 import React from 'react'
 
-import styled from '../styled'
-import View from '../View/View'
+import styled from '@databyss-org/ui/primitives/styled'
+import View from '@databyss-org/ui/primitives/View/View'
 
 import ViewHeader from './ViewHeader'
 

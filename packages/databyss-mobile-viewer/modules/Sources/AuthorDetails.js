@@ -1,11 +1,10 @@
 import React from 'react'
 import { useParams } from '@reach/router'
 
-import { MobileView } from '@databyss-org/ui/primitives'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
-
+import { MobileView } from '../Mobile'
 import { buildAuthorCitationData } from '../../utils/buildAuthorCitationData'
 import { buildListItems } from '../../utils/buildListItems'
 import NoResultsView from '../../components/NoResultsView'

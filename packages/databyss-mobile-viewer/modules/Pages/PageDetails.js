@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { useParams, useLocation } from '@reach/router'
 
-import { MobileView, ScrollView } from '@databyss-org/ui/primitives'
+import { ScrollView } from '@databyss-org/ui/primitives'
 import { PageContainer } from '@databyss-org/ui/components/PageContent/PageContent'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 import PageProvider from '@databyss-org/services/pages/PageProvider'
+import { MobileView } from '../Mobile'
 
 import { getScrollViewMaxHeight } from '../../utils/getScrollViewMaxHeight'
 

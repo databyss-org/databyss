@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useParams } from '@reach/router'
 
-import { MobileView, ScrollView } from '@databyss-org/ui/primitives'
+import { ScrollView } from '@databyss-org/ui/primitives'
 import { PageProvider } from '@databyss-org/services'
 import EntryProvider from '@databyss-org/services/entries/EntryProvider'
 import IndexSourceContent from '@databyss-org/ui/components/SourcesContent/IndexSourceContent'
@@ -11,7 +11,7 @@ import {
   PagesLoader,
   TopicLoader,
 } from '@databyss-org/ui/components/Loaders'
-
+import { MobileView } from '../Mobile'
 import { getScrollViewMaxHeight } from '../../utils/getScrollViewMaxHeight'
 
 import TopicsMetadata from './TopicsMetadata'
