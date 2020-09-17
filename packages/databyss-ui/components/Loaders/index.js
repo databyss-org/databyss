@@ -10,6 +10,7 @@ import { isResourceReady } from './_helpers'
 
 export const PageLoader = ({ children, pageId }) => {
   const { getPage, removePageFromCache } = usePageContext()
+
   return (
     <MakeLoader
       resources={getPage(pageId)}
@@ -78,6 +79,9 @@ export const AllTopicsLoader = ({ children, filtered, ...others }) => {
 
   return <MakeLoader resources={_resource} children={children} {...others} />
 }
+AllTopicsLoader.defaultProps = {
+  filtered: true,
+}
 
 export const TopicLoader = ({ topicId, children }) => {
   const getTopic = useTopicContext(c => c.getTopic)
@@ -95,6 +99,9 @@ export const AuthorsLoader = ({ children, filtered }) => {
   }
   return <MakeLoader resources={_results} children={children} />
 }
+AuthorsLoader.defaultProps = {
+  filtered: true,
+}
 
 export const SourceCitationsLoader = ({ children, filtered, ...others }) => {
   const getSourceCitations = useSourceContext(c => c.getSourceCitations)
@@ -103,6 +110,9 @@ export const SourceCitationsLoader = ({ children, filtered, ...others }) => {
     _resource = pickBy(_resource, citation => citation.isInPages?.length)
   }
   return <MakeLoader resources={_resource} children={children} {...others} />
+}
+SourceCitationsLoader.defaultProps = {
+  filtered: true,
 }
 
 export const SearchAllLoader = ({ children, filtered, ...others }) => {

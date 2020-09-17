@@ -9,9 +9,6 @@
     "/**": {
       "Cache-Control": "no-cache, no-store, must-revalidate",
       "Strict-Transport-Security": "max-age=31536000"
-    },
-    "**.js": {
-      "Cache-Control": "public, max-age=86400"
     }
   }
 }

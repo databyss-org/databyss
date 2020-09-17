@@ -4,6 +4,7 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { Text, Node, Range } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import linksFinder from 'links-finder'
+import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import { useEditorContext } from '../state/EditorProvider'
 import Leaf from './Leaf'
 import Element from './Element'
@@ -152,7 +153,7 @@ const Editor = ({
   return (
     <Slate editor={editor} {...slateProps}>
       {children}
-      {!sessionContext?.isPublicAccount() && <FormatMenu />}
+      {!sessionContext?.isPublicAccount() && !isMobile() && <FormatMenu />}
       <Editable
         onCopy={e => {
           e.preventDefault()
