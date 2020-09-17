@@ -8,9 +8,10 @@ import {
   pxUnits,
 } from '@databyss-org/ui/primitives'
 import theme from '@databyss-org/ui/theming/theme'
-import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
+import LinkSvg from '@databyss-org/ui/assets/link.svg'
+import LogoutSvg from '@databyss-org/ui/assets/log-out.svg'
 import { ThemeProvider } from 'emotion-theming'
-import { borderRadius } from '@databyss-org/ui/theming/theme'
+import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import DropdownContainer from '../Menu/DropdownContainer'
 import DropdownListItem from '../Menu/DropdownListItem'
@@ -22,18 +23,19 @@ const Header = () => {
   const menuItems = [
     {
       label: 'sample@email.com',
-      //  action: () => console.log('pressed'),
-      //  actionType: 'archive',
-      // TODO: detect platform and render correct modifier key
-      // shortcut: 'Ctrl + Del',
+      disabled: true,
     },
     {
-      icon: <ArchiveSvg />,
-      label: 'Archive',
+      icon: <LinkSvg />,
+      label: 'Back to my Databyss',
       action: () => console.log('pressed'),
-      actionType: 'archive',
-      // TODO: detect platform and render correct modifier key
-      // shortcut: 'Ctrl + Del',
+      actionType: 'backToDatabyss',
+    },
+    {
+      icon: <LogoutSvg />,
+      label: 'Sign out',
+      action: () => console.log('pressed'),
+      actionType: 'logout',
     },
   ]
 
@@ -81,17 +83,21 @@ const Header = () => {
             <Text variant="heading4">J</Text>
           </View>
           <ThemeProvider theme={theme}>
-            <DropdownContainer
-              widthVariant="dropdownMenuMedium"
-              open={menuOpen}
-              mt={pxUnits(42)}
-              position={{
-                top: 0,
-                right: 0,
-              }}
-            >
-              <DropdownList />
-            </DropdownContainer>
+            {menuOpen && (
+              <ClickAwayListener onClickAway={() => setMenuOpen(false)}>
+                <DropdownContainer
+                  widthVariant="dropdownMenuMedium"
+                  open={menuOpen}
+                  mt={pxUnits(42)}
+                  position={{
+                    top: 0,
+                    right: 0,
+                  }}
+                >
+                  <DropdownList />
+                </DropdownContainer>
+              </ClickAwayListener>
+            )}
           </ThemeProvider>
         </BaseControl>
       </Grid>

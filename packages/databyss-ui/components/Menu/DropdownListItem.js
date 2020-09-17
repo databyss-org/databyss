@@ -19,6 +19,7 @@ const DropdownListItem = ({
   onKeyDown,
   switchControl,
   value,
+  ...others
 }) => (
   <BaseControl
     data-test-block-menu={action}
@@ -29,6 +30,7 @@ const DropdownListItem = ({
     py="extraSmall"
     hoverColor="background.1"
     activeColor="background.1"
+    {...others}
   >
     <View
       flexDirection="row"
