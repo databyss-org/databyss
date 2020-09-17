@@ -46,6 +46,8 @@ router.get(
       account: req.account._id,
     })
 
+    console.log(pageResponse)
+
     if (!pageResponse) {
       return next(
         new ApiError('There are no pages associated with this account', 404)

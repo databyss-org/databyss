@@ -69,8 +69,8 @@ const PageBody = ({
       <HistoryProvider ref={editorStateRef}>
         <EditorProvider
           key={location.pathname}
-          // if public account, disable on change
-          onChange={v => !isPublicAccount() && onChange(v)}
+          // if public or archived account, disable on change
+          onChange={v => !isPublicAccount() && !page.archive && onChange(v)}
           initialState={pageToEditorState(withMetaData(page))}
         >
           <PDFDropZoneManager />
@@ -80,7 +80,7 @@ const PageBody = ({
             onNavigateUpFromTop={onNavigateUpFromEditor}
             active={false}
             editorRef={editorRef}
-            readonly={isPublicAccount()}
+            readonly={isPublicAccount() || page.archive}
           />
         </EditorProvider>
       </HistoryProvider>

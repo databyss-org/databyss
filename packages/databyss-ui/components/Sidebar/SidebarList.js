@@ -4,6 +4,7 @@ import { pxUnits } from '@databyss-org/ui/theming/views'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
+import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import TopicsSvg from '@databyss-org/ui/assets/topics.svg'
 import { View, Icon } from '@databyss-org/ui/primitives'
 import { useLocation } from '@reach/router'
@@ -15,6 +16,7 @@ const menuSvgs = type =>
     sources: <SourcesSvg />,
     authors: <AuthorsSvg />,
     topics: <TopicsSvg />,
+    archive: <ArchiveSvg />,
   }[type])
 
 const SidebarList = ({ menuItems, query, height, ...others }) => {

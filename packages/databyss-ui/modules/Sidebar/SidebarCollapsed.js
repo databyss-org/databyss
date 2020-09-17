@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { View, List } from '@databyss-org/ui/primitives'
+import { View, List, Separator } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu.svg'
+import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
@@ -85,6 +86,14 @@ const SidebarCollapsed = () => {
         onItemClick('topics')
       },
     },
+    {
+      name: 'archive',
+      title: 'Archive',
+      icon: <ArchiveSvg />,
+      onClick: () => {
+        onItemClick('archive')
+      },
+    },
   ]
 
   return (
@@ -98,7 +107,7 @@ const SidebarCollapsed = () => {
       width={sidebar.collapsedWidth}
     >
       <List verticalItemPadding={2} horizontalItemPadding={1} m="none">
-        {sideBarCollapsedItems.map(item => (
+        {sideBarCollapsedItems.map((item, i) => (
           <SidebarIconButton
             name={item.name}
             key={item.name}
@@ -106,6 +115,7 @@ const SidebarCollapsed = () => {
             icon={item.icon}
             isActive={item.name === activeItem}
             onClick={item.onClick}
+            seperatorTop={sideBarCollapsedItems.length === i + 1}
           />
         ))}
       </List>

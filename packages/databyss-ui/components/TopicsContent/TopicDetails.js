@@ -18,7 +18,7 @@ const TopicDetails = () => {
 
         return (
           <IndexPageContent title={topicTitle}>
-            <PagesLoader>
+            <PagesLoader filtered>
               {() => (
                 <BlockRelationsLoader atomicId={id}>
                   {relations => <IndexSourceContent relations={relations} />}

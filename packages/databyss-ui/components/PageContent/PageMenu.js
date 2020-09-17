@@ -7,6 +7,7 @@ import { BaseControl, Icon, View, Separator } from '@databyss-org/ui/primitives'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
+import PageSvg from '@databyss-org/ui/assets/page.svg'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
@@ -55,23 +56,25 @@ const PageMenu = ({ pages }) => {
 
   // if page is shared, toggle public page
   useEffect(() => {
-    if (pages[params].publicAccountId) {
+    if (pages[params]?.publicAccountId) {
       setIsPagePublic(true)
     }
   }, [])
 
-  const onArchivePress = () => {
-    archivePage(params).then(() => {
+  const onArchivePress = bool => {
+    archivePage(params, bool).then(() => {
       // reset headers
       resetSourceHeaders()
       resetTopicHeaders()
-      // if default page is archived set new page as default page
-      let redirect = account.defaultPage
-      if (account.defaultPage === params) {
-        redirect = Object.keys(pages).find(_id => _id !== params)
-        setDefaultPage(redirect)
+      if (bool) {
+        // if default page is archived set new page as default page
+        let redirect = account.defaultPage
+        if (account.defaultPage === params) {
+          redirect = Object.keys(pages).find(_id => _id !== params)
+          setDefaultPage(redirect)
+        }
+        navigate(`/pages/${redirect}`)
       }
-      navigate(`/pages/${redirect}`)
     })
   }
 
@@ -81,8 +84,9 @@ const PageMenu = ({ pages }) => {
     }
   }
 
+  const _page = getPage(params)
+
   const onCopyLink = () => {
-    const _page = getPage(params)
     let _accountId
     // if account is shared, get public account
     if (_page?.publicAccountId) {
@@ -104,12 +108,23 @@ const PageMenu = ({ pages }) => {
 
   const menuItems = []
 
-  if (canBeArchived) {
+  if (canBeArchived && !_page.archive) {
     menuItems.push({
       icon: <ArchiveSvg />,
       label: 'Archive',
-      action: () => onArchivePress(),
+      action: () => onArchivePress(true),
       actionType: 'archive',
+      // TODO: detect platform and render correct modifier key
+      // shortcut: 'Ctrl + Del',
+    })
+  }
+
+  if (_page.archive) {
+    menuItems.push({
+      icon: <PageSvg />,
+      label: 'Restore Page',
+      action: () => onArchivePress(false),
+      actionType: 'restore',
       // TODO: detect platform and render correct modifier key
       // shortcut: 'Ctrl + Del',
     })
@@ -204,20 +219,22 @@ const PageMenu = ({ pages }) => {
               right: 0,
             }}
           >
-            <DropdownListItem
-              label={isPagePublic ? 'Page is public' : 'Make page public '}
-              value={isPagePublic}
-              onPress={togglePublicPage}
-              action="togglePublic"
-              switchControl
-            />
+            {!_page.archive && (
+              <DropdownListItem
+                label={isPagePublic ? 'Page is public' : 'Make page public '}
+                value={isPagePublic}
+                onPress={togglePublicPage}
+                action="togglePublic"
+                switchControl
+              />
+            )}
             {getPublicAccount(params).length ? (
               <>
                 <Separator />
                 {publicLinkItem}
               </>
             ) : null}
-            {menuItems.length ? <Separator /> : null}
+            {!_page.archive && menuItems.length ? <Separator /> : null}
             <DropdownList />
           </DropdownContainer>
         </ClickAwayListener>

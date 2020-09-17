@@ -8,6 +8,7 @@ import Search from './routes/Search'
 import Pages from './routes/Pages'
 import Sources from './routes/Sources'
 import Topics from './routes/Topics'
+import Archive from './routes/Archive'
 import Header from '../../components/Sidebar/Header'
 import { sidebar } from '../../theming/components'
 
@@ -76,6 +77,9 @@ const Sidebar = () => {
                 height={sidebarListHeight}
                 hasIndexPage
               />
+            )}
+            {menuItem === 'archive' && (
+              <Archive filterQuery={filterQuery} height={sidebarListHeight} />
             )}
           </List>
         </View>

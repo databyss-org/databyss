@@ -10,6 +10,7 @@ const SidebarIconButton = ({
   isActive,
   title,
   name,
+  seperatorTop,
   ...others
 }) => {
   const { isMenuOpen } = useNavigationContext()
@@ -21,7 +22,9 @@ const SidebarIconButton = ({
         width="100%"
         onClick={onClick}
         alignItems="center"
+        borderTopColor={seperatorTop && 'border.1'}
         {...others}
+        id="border-id"
       >
         <View
           bg="purple.2"

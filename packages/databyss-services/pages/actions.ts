@@ -192,13 +192,13 @@ export function deletePage(id: string) {
   }
 }
 
-export function onArchivePage(id: string, page: Page, callback: Function) {
+export function onArchivePage(id: string, page: Page, bool: boolean, callback: Function) {
   return async (dispatch: Function) => {
     dispatch({
       type: ARCHIVE_PAGE,
       payload: { id  },
     })
-    const _page = {...page, archive: true}
+    const _page = {...page, archive: bool}
     try {
       await services.savePage(_page)
       if (callback) {
