@@ -1,4 +1,5 @@
 import React from 'react'
+import { Helmet } from 'react-helmet'
 import {
   sortEntriesAtoZ,
   createIndexPageEntries,
@@ -73,6 +74,12 @@ const AuthorCitations = ({ query }) => {
           <IndexPageContent
             title={composeAuthorName(authorQueryFirstName, authorQueryLastName)}
           >
+            <Helmet>
+              <meta charSet="utf-8" />
+              <title>
+                {composeAuthorName(authorQueryFirstName, authorQueryLastName)}
+              </title>
+            </Helmet>
             <IndexPageEntries
               onClick={onCitationClick}
               entries={sortedAuthorCitations}

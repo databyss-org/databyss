@@ -182,6 +182,9 @@ const FormatMenu = () => {
   )
 
   const openFormatMenu = () => {
+    if (Range.isCollapsed(selection)) {
+      return
+    }
     const domSelection = window.getSelection()
     const isTextSelected = domSelection.isCollapsed === false
 

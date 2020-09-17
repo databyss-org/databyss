@@ -130,8 +130,11 @@ describe('atomic closure', () => {
           <text>this is another entry</text>
         </block>
         <block type="END_TOPIC">
+          <text>/# this is a topic</text>
+        </block>
+        <block type="ENTRY">
           <text>
-            /# this is a topic<cursor />
+            <cursor />
           </text>
         </block>
       </editor>
@@ -145,7 +148,6 @@ describe('atomic closure', () => {
     assert.deepEqual(actual.selection, expected.selection)
 
     // close source
-    await enterKey(actions)
     await sendKeys(actions, '/@')
     await sleep(3000)
 
@@ -178,8 +180,11 @@ describe('atomic closure', () => {
           <text>/# this is a topic</text>
         </block>
         <block type="END_SOURCE">
+          <text>/@ this is an opening source</text>
+        </block>
+        <block type="ENTRY">
           <text>
-            /@ this is an opening source<cursor />
+            <cursor />
           </text>
         </block>
       </editor>
@@ -236,8 +241,11 @@ describe('atomic closure', () => {
           <text>this is another entry</text>
         </block>
         <block type="END_TOPIC">
+          <text>/# this is a topic</text>
+        </block>
+        <block type="ENTRY">
           <text>
-            /# this is a topic<cursor />
+            <cursor />
           </text>
         </block>
       </editor>
@@ -293,6 +301,9 @@ describe('atomic closure', () => {
         <block type="ENTRY">
           <text />
         </block>
+        <block type="ENTRY">
+          <text />
+        </block>
       </editor>
     )
 
@@ -323,7 +334,7 @@ describe('atomic closure', () => {
 
     await driver.navigate().refresh()
 
-    await sleep(300)
+    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -351,6 +362,11 @@ describe('atomic closure', () => {
             /# this is a topic<cursor />
           </text>
         </block>
+        <block type="ENTRY">
+          <text>
+            <cursor />
+          </text>
+        </block>
       </editor>
     )
 
@@ -365,7 +381,6 @@ describe('atomic closure', () => {
 
     // overwrite existing closure
 
-    await enterKey(actions)
     await upKey(actions)
     await upKey(actions)
     await enterKey(actions)
@@ -396,12 +411,12 @@ describe('atomic closure', () => {
           <text>this is another entry</text>
         </block>
         <block type="END_TOPIC">
-          <text>
-            /# this is a topic<cursor />
-          </text>
+          <text>/# this is a topic</text>
         </block>
         <block type="ENTRY">
-          <text>this is another entry</text>
+          <text>
+            <cursor />this is another entry
+          </text>
         </block>
         <block type="ENTRY">
           <text />

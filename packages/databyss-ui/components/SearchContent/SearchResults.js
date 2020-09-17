@@ -36,7 +36,9 @@ export const SearchResultDetails = ({ onPress, dataTestElement, text }) => (
     data-test-element={dataTestElement}
     hoverColor="background.2"
     activeColor="background.3"
+    p="small"
     onPress={onPress}
+    mt="tiny"
   >
     <View p="tiny">
       <Text>{text}</Text>
