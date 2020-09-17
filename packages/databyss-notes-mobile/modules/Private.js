@@ -20,8 +20,7 @@ const RouterGroup = ({ children }) => <>{children}</>
 
 // component
 const Private = () => {
-  const { getSession } = useSessionContext()
-  const { account } = getSession()
+  const { getCurrentAccount } = useSessionContext()
 
   const [currentTab, setCurrentTab] = useState(Tabs.PAGES)
 
@@ -72,7 +71,7 @@ const Private = () => {
           <Redirect noThrow from="*" to="/pages" />
         </RouterGroup>
 
-        <Redirect noThrow from="*" to={`${account._id}/pages`} />
+        <Redirect noThrow from="*" to={`${getCurrentAccount()}/pages`} />
       </Router>
 
       <NavBar onChange={onNavBarChange} />

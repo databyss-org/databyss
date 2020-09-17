@@ -6,7 +6,10 @@ import {
 import { View, Text, TextInput } from '../../primitives'
 
 const TextInputField = React.forwardRef(
-  ({ path, label, placeholder, errorMessage, ...others }, ref) => {
+  (
+    { path, label, placeholder, errorMessage, textInputProps, ...others },
+    ref
+  ) => {
     const { onSubmit } = useValueListContext()
     const [active, setActive] = useState(false)
 
@@ -41,6 +44,7 @@ const TextInputField = React.forwardRef(
               onKeyUp={e => e.keyCode === 13 && onSubmit()}
               placeholder={placeholder}
               ref={ref}
+              {...textInputProps}
             />
           </ValueListItem>
         </View>
