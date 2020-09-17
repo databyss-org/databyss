@@ -22,10 +22,6 @@ const Header = () => {
 
   const menuItems = [
     {
-      label: 'sample@email.com',
-      disabled: true,
-    },
-    {
       icon: <LinkSvg />,
       label: 'Back to my Databyss',
       action: () => console.log('pressed'),
@@ -94,6 +90,12 @@ const Header = () => {
                     right: 0,
                   }}
                 >
+                  <View ml="small" height={pxUnits(34)} justifyContent="center">
+                    <Text color="text.2" variant="uiTextSmall">
+                      email@email.com
+                    </Text>
+                  </View>
+                  <Separator color="border.3" spacing="extraSmall" />
                   <DropdownList />
                 </DropdownContainer>
               </ClickAwayListener>
