@@ -15,8 +15,9 @@
       var mobileOsAgents = /ios|iphone|android|windows phone/i
       var isMobile = Math.max(window.innerWidth, window.innerHeight) < 1000
       var isMobileOs = navigator.userAgent.match(mobileOsAgents)
-      if (isMobile && isMobileOs) {
-        var redir = window.location.href.replace(window.location.host, '%MOBILE_HOST%')
+      var mobileHost = '%MOBILE_HOST%'
+      if (mobileHost && isMobile && isMobileOs) {
+        var redir = window.location.href.replace(window.location.host, mobileHost)
         window.location.replace(redir)
       }
     })()
