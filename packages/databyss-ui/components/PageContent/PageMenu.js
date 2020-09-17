@@ -117,6 +117,7 @@ const PageMenu = ({ pages }) => {
   const onPageDelete = () => {
     deletePage(params)
     navigate(`/pages/${account.defaultPage}`)
+    navigateSidebar('/pages')
 
     // delete page
   }
