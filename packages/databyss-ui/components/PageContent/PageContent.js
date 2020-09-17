@@ -12,9 +12,9 @@ import PageSticky from './PageSticky'
 import { isMobile } from '../../lib/mediaQuery'
 
 // components
-export const PageRouter = others => (
+export const PageRouter = () => (
   <Router>
-    <PageContent path=":id" {...others} />
+    <PageContent path=":id" />
   </Router>
 )
 

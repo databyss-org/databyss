@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useParams, useLocation } from '@reach/router'
 
-import { ScrollView } from '@databyss-org/ui/primitives'
 import { PageContainer } from '@databyss-org/ui/components/PageContent/PageContent'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
