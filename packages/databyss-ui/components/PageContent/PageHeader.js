@@ -53,7 +53,11 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
   }
 
   return (
-    <View p={isMobile() ? 'none' : 'medium'} flexGrow={1}>
+    <View
+      p={isMobile() ? 'none' : 'medium'}
+      flexGrow={1}
+      mb={isMobile() ? 'small' : 'none'}
+    >
       <TextInput
         readonly={isPublicAccount() || isMobile()}
         ref={ref}
