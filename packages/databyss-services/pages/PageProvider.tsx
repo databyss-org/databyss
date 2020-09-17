@@ -26,6 +26,7 @@ interface PageHookDict {
 interface ContextType {
   setPagePublic: (id: string, bool: boolean, accountId: string) => void
   setPage: (page: Page) => void
+  deletePage: (id: string) => void
   setPageHeader: (page: Page) => void
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
@@ -129,7 +130,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     refDictRef.current = {}
   }, [])
 
-  const removePage = (id: string) => {
+  const deletePage = (id: string) => {
     dispatch(actions.deletePage(id))
   }
 
@@ -174,7 +175,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         registerBlockRefByIndex,
         getBlockRefByIndex,
         clearBlockDict,
-        removePage,
+        deletePage,
         archivePage,
         setDefaultPage,
         onPageCached,

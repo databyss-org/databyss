@@ -9,6 +9,7 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
+import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
@@ -45,6 +46,7 @@ const PageMenu = ({ pages }) => {
   const { params } = getTokensFromPath()
 
   const archivePage = usePageContext(c => c.archivePage)
+  const deletePage = usePageContext(c => c.deletePage)
   const setDefaultPage = usePageContext(c => c.setDefaultPage)
   const getPage = usePageContext(c => c.getPage)
 
@@ -112,6 +114,13 @@ const PageMenu = ({ pages }) => {
     setShowCopiedCheck(true)
   }
 
+  const onPageDelete = () => {
+    deletePage(params)
+    navigate(`/pages/${account.defaultPage}`)
+
+    // delete page
+  }
+
   const menuItems = []
 
   if (canBeArchived && !_page.archive) {
@@ -126,11 +135,21 @@ const PageMenu = ({ pages }) => {
   }
 
   if (_page.archive) {
+    // add restore option
     menuItems.push({
       icon: <PageSvg />,
       label: 'Restore Page',
       action: () => onArchivePress(false),
       actionType: 'restore',
+      // TODO: detect platform and render correct modifier key
+      // shortcut: 'Ctrl + Del',
+    })
+    // add delete option
+    menuItems.push({
+      icon: <TrashSvg />,
+      label: 'Delete page forever',
+      action: () => onPageDelete(),
+      actionType: 'delete',
       // TODO: detect platform and render correct modifier key
       // shortcut: 'Ctrl + Del',
     })
