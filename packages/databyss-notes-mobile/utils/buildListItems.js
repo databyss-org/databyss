@@ -1,6 +1,7 @@
 /* eslint-disable no-plusplus */
 
 import { get } from 'lodash'
+import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 
 /**
  * @param {object} options Object containing these properties:
@@ -30,5 +31,5 @@ export const buildListItems = options => {
     })
   })
 
-  return response
+  return sortEntriesAtoZ(response, 'label')
 }
