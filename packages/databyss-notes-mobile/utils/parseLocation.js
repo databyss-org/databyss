@@ -1,7 +1,7 @@
 import NavBarItems from '../constants/NavBarItems'
 import SourcesMetadata from '../modules/Sources/SourcesMetadata'
 
-const getItemByUrl = url => NavBarItems.find(i => i.url === url)
+const getItemByUrl = url => NavBarItems().find(i => i.url === url)
 
 /**
  * @param {object} location Location provided by navigation context.

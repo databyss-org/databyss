@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import { styled, View } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 
 import { parseLocation } from '../utils/parseLocation'
@@ -9,8 +10,6 @@ import NavBarItems from '../constants/NavBarItems'
 import Tabs from '../constants/Tabs'
 
 export const NavBarHeight = 50
-
-const getItemByName = name => NavBarItems.find(i => i.name === name)
 
 // styled components
 const areaStyles = () => ({
@@ -46,7 +45,11 @@ const NavButton = styled(SidebarIconButton, buttonStyles)
 // component
 const NavBar = props => {
   const navigationContext = useNavigationContext()
+  const { isPublicAccount } = useSessionContext()
   const { location } = navigationContext
+
+  const navBarItems = NavBarItems(isPublicAccount())
+  const getItemByName = name => navBarItems.find(i => i.name === name)
 
   const [activeItem, setActiveItem] = useState(Tabs.PAGES)
 
@@ -98,7 +101,7 @@ const NavBar = props => {
   const render = () => (
     <Component bg="background.6">
       <List className="nav-bar-list">
-        {NavBarItems.map((item, index) => (
+        {navBarItems.map((item, index) => (
           <ListItem className="list-item" key={index}>
             <NavButton
               name={item.name}
