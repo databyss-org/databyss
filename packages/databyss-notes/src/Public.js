@@ -1,7 +1,6 @@
 import React from 'react'
 import { View, Text, Grid, pxUnits, Button } from '@databyss-org/ui/primitives'
 import Login from '@databyss-org/ui/modules/Login/Login'
-import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 
 const Public = props => (
   <React.Fragment>
