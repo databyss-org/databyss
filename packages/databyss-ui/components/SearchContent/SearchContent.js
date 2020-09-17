@@ -1,4 +1,5 @@
 import React from 'react'
+import { Helmet } from 'react-helmet'
 import { useParams, Router } from '@reach/router'
 import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -66,6 +67,10 @@ const SearchContent = () => {
 
   return (
     <ScrollView p="medium" flex="1" maxHeight="100vh">
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>{query}</title>
+      </Helmet>
       <View p="medium">
         <Text variant="bodyHeading1" color="text.3">
           &quot;{query}&quot;

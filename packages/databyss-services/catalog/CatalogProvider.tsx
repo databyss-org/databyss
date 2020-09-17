@@ -55,10 +55,12 @@ const CatalogProvider: React.FunctionComponent<PropsType> = ({
       GroupedCatalogResults
     > => {
       if (!query) return null
-      if (state.searchCache[type]?.[query]) {
-        return state.searchCache[type][query]
+      // allow only alphanumeric characters
+      const _query = query.replace(/[^a-z0-9 ]/gi, '')
+      if (state.searchCache[type]?.[_query]) {
+        return state.searchCache[type][_query]
       }
-      return _searchCatalog({ query, type })
+      return _searchCatalog({ query: _query, type })
     },
     [state.searchCache]
   )
