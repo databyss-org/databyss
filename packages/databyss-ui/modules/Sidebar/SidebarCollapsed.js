@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, List, Separator } from '@databyss-org/ui/primitives'
+import { View, List } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'

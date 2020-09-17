@@ -36,7 +36,11 @@ const PageMenu = ({ pages }) => {
   const [isPagePublic, setIsPagePublic] = useState(false)
   const [showCopiedCheck, setShowCopiedCheck] = useState(false)
 
-  const { getTokensFromPath, navigate } = useNavigationContext()
+  const {
+    getTokensFromPath,
+    navigate,
+    navigateSidebar,
+  } = useNavigationContext()
 
   const { params } = getTokensFromPath()
 
@@ -74,6 +78,8 @@ const PageMenu = ({ pages }) => {
           setDefaultPage(redirect)
         }
         navigate(`/pages/${redirect}`)
+      } else {
+        navigateSidebar('/pages')
       }
     })
   }
