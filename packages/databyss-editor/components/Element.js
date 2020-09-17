@@ -133,6 +133,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
           }}
         >
           {block.__showNewBlockMenu &&
+            !readOnly &&
             !sessionContext?.isPublicAccount() && (
               <View
                 position="absolute"
