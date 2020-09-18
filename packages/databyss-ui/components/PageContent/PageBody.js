@@ -68,15 +68,15 @@ const PageBody = ({
   }
 
   const render = () => {
-    const isReadOnly = isPublicAccount() || isMobile()
+    const isReadOnly = isPublicAccount() || isMobile() || page.archive
 
     return (
       <CatalogProvider>
         <HistoryProvider ref={editorStateRef}>
           <EditorProvider
             key={location.pathname}
-            // if public account, disable on change
-            onChange={v => !isPublicAccount() && onChange(v)}
+            // if read only, disable on change
+            onChange={v => !isReadOnly && onChange(v)}
             initialState={pageToEditorState(withMetaData(page))}
           >
             <PDFDropZoneManager />

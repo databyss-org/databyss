@@ -1,10 +1,8 @@
 import React, { useCallback } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { Text, Node, Range } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import linksFinder from 'links-finder'
-import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import { useEditorContext } from '../state/EditorProvider'
 import Leaf from './Leaf'
 import Element from './Element'
@@ -19,8 +17,6 @@ const Editor = ({
   ...others
 }) => {
   const entryContext = useEntryContext()
-  const sessionContext = useSessionContext()
-
   const { copy, paste, cut } = useEditorContext()
 
   let searchTerm = ''
@@ -153,7 +149,7 @@ const Editor = ({
   return (
     <Slate editor={editor} {...slateProps}>
       {children}
-      {!sessionContext?.isPublicAccount() && !isMobile() && <FormatMenu />}
+      {!readonly && <FormatMenu />}
       <Editable
         onCopy={e => {
           e.preventDefault()

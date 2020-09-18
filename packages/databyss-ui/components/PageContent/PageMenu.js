@@ -13,7 +13,9 @@ import {
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
+import PageSvg from '@databyss-org/ui/assets/page.svg'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
+import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
@@ -41,13 +43,18 @@ const PageMenu = ({ pages }) => {
   const [isPagePublic, setIsPagePublic] = useState(false)
   const [showCopiedCheck, setShowCopiedCheck] = useState(false)
 
-  const { getTokensFromPath, navigate } = useNavigationContext()
+  const {
+    getTokensFromPath,
+    navigate,
+    navigateSidebar,
+  } = useNavigationContext()
 
   const { params } = getTokensFromPath()
 
-  const archivePage = usePageContext(c => c && c.archivePage)
-  const setDefaultPage = usePageContext(c => c && c.setDefaultPage)
-  const getPage = usePageContext(c => c && c.getPage)
+  const archivePage = usePageContext(c => c.archivePage)
+  const deletePage = usePageContext(c => c.deletePage)
+  const setDefaultPage = usePageContext(c => c.setDefaultPage)
+  const getPage = usePageContext(c => c.getPage)
 
   const setPagePublic = usePageContext(c => c && c.setPagePublic)
 
@@ -61,23 +68,27 @@ const PageMenu = ({ pages }) => {
 
   // if page is shared, toggle public page
   useEffect(() => {
-    if (pages[params].publicAccountId) {
+    if (pages[params]?.publicAccountId) {
       setIsPagePublic(true)
     }
   }, [])
 
-  const onArchivePress = () => {
-    archivePage(params).then(() => {
+  const onArchivePress = bool => {
+    archivePage(params, bool).then(() => {
       // reset headers
       resetSourceHeaders()
       resetTopicHeaders()
-      // if default page is archived set new page as default page
-      let redirect = account.defaultPage
-      if (account.defaultPage === params) {
-        redirect = Object.keys(pages).find(_id => _id !== params)
-        setDefaultPage(redirect)
+      if (bool) {
+        // if default page is archived set new page as default page
+        let redirect = account.defaultPage
+        if (account.defaultPage === params) {
+          redirect = Object.keys(pages).find(_id => _id !== params)
+          setDefaultPage(redirect)
+        }
+        navigate(`/pages/${redirect}`)
+      } else {
+        navigateSidebar('/pages')
       }
-      navigate(`/pages/${redirect}`)
     })
   }
 
@@ -87,8 +98,9 @@ const PageMenu = ({ pages }) => {
     }
   }
 
+  const _page = getPage(params)
+
   const onCopyLink = () => {
-    const _page = getPage(params)
     let _accountId
     // if account is shared, get public account
     if (_page?.publicAccountId) {
@@ -108,14 +120,43 @@ const PageMenu = ({ pages }) => {
     setShowCopiedCheck(true)
   }
 
+  const onPageDelete = () => {
+    deletePage(params)
+    navigate(`/pages/${account.defaultPage}`)
+    navigateSidebar('/pages')
+
+    // delete page
+  }
+
   const menuItems = []
 
-  if (canBeArchived) {
+  if (canBeArchived && !_page.archive) {
     menuItems.push({
       icon: <ArchiveSvg />,
       label: 'Archive',
-      action: () => onArchivePress(),
+      action: () => onArchivePress(true),
       actionType: 'archive',
+      // TODO: detect platform and render correct modifier key
+      // shortcut: 'Ctrl + Del',
+    })
+  }
+
+  if (_page.archive) {
+    // add restore option
+    menuItems.push({
+      icon: <PageSvg />,
+      label: 'Restore Page',
+      action: () => onArchivePress(false),
+      actionType: 'restore',
+      // TODO: detect platform and render correct modifier key
+      // shortcut: 'Ctrl + Del',
+    })
+    // add delete option
+    menuItems.push({
+      icon: <TrashSvg />,
+      label: 'Delete page forever',
+      action: () => onPageDelete(),
+      actionType: 'delete',
       // TODO: detect platform and render correct modifier key
       // shortcut: 'Ctrl + Del',
     })
@@ -227,7 +268,7 @@ const PageMenu = ({ pages }) => {
                 {publicLinkItem}
               </>
             ) : null}
-            {menuItems.length ? <Separator /> : null}
+            {!_page.archive && menuItems.length ? <Separator /> : null}
             <DropdownList />
           </DropdownContainer>
         </ClickAwayListener>

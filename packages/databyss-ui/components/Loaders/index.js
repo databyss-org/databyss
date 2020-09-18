@@ -27,9 +27,20 @@ export const withPage = Wrapped => ({ pageId, ...others }) => (
   </PageLoader>
 )
 
-export const PagesLoader = ({ children }) => {
+export const PagesLoader = ({ children, filtered, archived }) => {
   const { getPages } = usePageContext()
-  return <MakeLoader resources={getPages()} children={children} />
+
+  let _resources = getPages()
+
+  if (filtered && isResourceReady(_resources)) {
+    _resources = pickBy(_resources, page => !page.archive)
+  }
+
+  if (archived && isResourceReady(_resources)) {
+    _resources = pickBy(_resources, page => page.archive)
+  }
+
+  return <MakeLoader resources={_resources} children={children} />
 }
 
 export const withPages = Wrapped => ({ ...others }) => (

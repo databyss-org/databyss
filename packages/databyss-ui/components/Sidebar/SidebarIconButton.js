@@ -60,11 +60,13 @@ const SidebarIconButton = ({
   name,
   onClick,
   title,
+  seperatorTop,
   ...others
 }) => (
   <>
     <BaseControl
       data-test-sidebar-element={name}
+      borderTopColor={seperatorTop && 'border.1'}
       alignItems="center"
       onClick={onClick}
       width="100%"
