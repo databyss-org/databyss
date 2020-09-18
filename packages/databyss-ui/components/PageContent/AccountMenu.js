@@ -94,7 +94,7 @@ const AccountMenu = () => {
                 <DropdownContainer
                   widthVariant="dropdownMenuMedium"
                   open={menuOpen}
-                  mt={pxUnits(42)}
+                  mt={pxUnits(34)}
                   position={{
                     top: 0,
                     right: 0,
