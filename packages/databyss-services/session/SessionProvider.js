@@ -36,10 +36,6 @@ const SessionProvider = ({
     return false
   }
 
-  const isLoggedIn = () => {
-    console.log(state)
-  }
-
   const getUserAccount = () => {
     if (state.userInfo) {
       return state.userInfo
@@ -106,7 +102,6 @@ const SessionProvider = ({
         isPublicAccount,
         getCurrentAccount,
         getUserAccount,
-        isLoggedIn,
         logout,
       }}
     >
