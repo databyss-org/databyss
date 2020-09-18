@@ -78,12 +78,12 @@ const AccountMenu = () => {
                 borderVariant="round"
                 borderRadius="50%"
                 backgroundColor="blue.2"
-                width={32}
-                height={32}
+                width={28}
+                height={28}
                 alignItems="center"
                 justifyContent="center"
               >
-                <Text variant="heading4" color="text.6">
+                <Text variant="uiTextLarge" color="text.6">
                   {userInfo.email[0].toUpperCase()}
                 </Text>
               </View>

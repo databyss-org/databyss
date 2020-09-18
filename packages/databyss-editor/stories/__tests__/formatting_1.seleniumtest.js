@@ -168,13 +168,12 @@ describe('format text in editor', () => {
     await actions.sendKeys(Key.ARROW_UP)
     await singleHighlight(actions)
     await sleep(300)
-
     await singleHighlight(actions)
     await singleHighlight(actions)
     await singleHighlight(actions)
     await singleHighlight(actions)
     await actions.perform()
-    await sleep(30000)
+    await sleep(300)
     await driver
       .findElement(By.tagName('[data-test-format-menu="bold"]'))
       .click()
