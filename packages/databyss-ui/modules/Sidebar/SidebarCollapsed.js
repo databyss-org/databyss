@@ -10,6 +10,7 @@ import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { darkTheme } from '../../theming/theme'
 import { sidebar } from '../../theming/components'
 
@@ -25,6 +26,8 @@ const SidebarCollapsed = () => {
     isMenuOpen,
     setMenuOpen,
   } = useNavigationContext()
+
+  const { isPublicAccount } = useSessionContext()
 
   const [activeItem, setActiveItem] = useState('pages')
 
@@ -80,15 +83,18 @@ const SidebarCollapsed = () => {
       icon: <TopicSvg />,
       onClick: () => onItemClick('topics'),
     },
-    {
+  ]
+
+  if (!isPublicAccount()) {
+    sideBarCollapsedItems.push({
       name: 'archive',
       title: 'Archive',
       icon: <ArchiveSvg />,
       onClick: () => {
         onItemClick('archive')
       },
-    },
-  ]
+    })
+  }
 
   return (
     <View
@@ -109,7 +115,9 @@ const SidebarCollapsed = () => {
             icon={item.icon}
             isActive={isIconButtonActive(item)}
             onClick={item.onClick}
-            seperatorTop={sideBarCollapsedItems.length === i + 1}
+            seperatorTop={
+              sideBarCollapsedItems.length === i + 1 && !isPublicAccount()
+            }
           />
         ))}
       </List>
