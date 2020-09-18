@@ -77,7 +77,7 @@ const AccountMenu = () => {
               <View
                 borderVariant="round"
                 borderRadius="50%"
-                backgroundColor="blue.2"
+                backgroundColor="blue.1"
                 width={28}
                 height={28}
                 alignItems="center"
