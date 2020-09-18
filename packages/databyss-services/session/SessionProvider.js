@@ -93,6 +93,10 @@ const SessionProvider = ({
     _children = <Loading />
   }
 
+  const logout = () => {
+    dispatch(actions.logout())
+  }
+
   return (
     <SessionContext.Provider
       value={{
@@ -103,6 +107,7 @@ const SessionProvider = ({
         getCurrentAccount,
         getUserAccount,
         isLoggedIn,
+        logout,
       }}
     >
       {_children}

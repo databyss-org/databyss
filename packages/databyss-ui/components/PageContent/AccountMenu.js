@@ -18,7 +18,7 @@ import { AccountLoader } from '../Loaders'
 
 const AccountMenu = () => {
   const { navigate } = useNavigationContext()
-  const { isPublicAccount } = useSessionContext()
+  const { isPublicAccount, logout } = useSessionContext()
   const [menuOpen, setMenuOpen] = useState(false)
 
   const navToDefaultPage = userInfo => {
@@ -29,6 +29,13 @@ const AccountMenu = () => {
     window.location.reload()
   }
 
+  const onLogout = () => {
+    logout()
+    window.requestAnimationFrame(
+      () => (window.location.href = 'https://databyss.org/')
+    )
+  }
+
   return getAuthToken() ? (
     <AccountLoader>
       {userInfo => {
@@ -36,7 +43,7 @@ const AccountMenu = () => {
           {
             icon: <LogoutSvg />,
             label: 'Sign out',
-            action: () => console.log('pressed'),
+            action: () => onLogout(),
             actionType: 'logout',
           },
         ]
