@@ -36,6 +36,10 @@ const SessionProvider = ({
     return false
   }
 
+  const isLoggedIn = () => {
+    console.log(state)
+  }
+
   const getCurrentAccount = () => {
     if (state.session.publicAccount?._id) {
       return state.session.publicAccount._id
@@ -89,6 +93,7 @@ const SessionProvider = ({
         endSession,
         isPublicAccount,
         getCurrentAccount,
+        isLoggedIn,
       }}
     >
       {_children}

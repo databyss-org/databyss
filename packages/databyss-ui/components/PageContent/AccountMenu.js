@@ -10,14 +10,13 @@ import {
 import theme from '@databyss-org/ui/theming/theme'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import LogoutSvg from '@databyss-org/ui/assets/log-out.svg'
-import { ThemeProvider } from 'emotion-theming'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import DropdownContainer from '../Menu/DropdownContainer'
 import DropdownListItem from '../Menu/DropdownListItem'
 
 const AccountMenu = () => {
-  const { isPublicAccount } = useSessionContext()
+  const { isPublicAccount, isLoggedIn, getSession } = useSessionContext()
   const [menuOpen, setMenuOpen] = useState(false)
   const menuItems = [
     {
@@ -48,6 +47,9 @@ const AccountMenu = () => {
       </View>
     ))
 
+  console.log(isLoggedIn())
+  console.log(isPublicAccount())
+  console.log(getSession())
   return (
     <View pl="em" mb="extraSmall" position="relative">
       <BaseControl onClick={() => setMenuOpen(true)}>
