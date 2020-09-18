@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React from 'react'
+import React, { useState, useImperativeHandle } from 'react'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
@@ -13,8 +13,11 @@ import {
   Grid,
   ScrollView,
   BaseControl,
+  TextInput,
+  withKeyboardNavigation,
 } from '@databyss-org/ui/primitives'
 import { loremIpsum } from 'lorem-ipsum'
+import { getNames } from 'country-list'
 import Alea from 'alea'
 import { Section } from './'
 import { darkTheme } from '../../theming/theme'
@@ -168,6 +171,79 @@ export const Sections = () => {
           ])}
         </List>
       </View>
+    </Section>
+  )
+}
+
+const ListItem = ({
+  children,
+  activeNavigationItem,
+  navigationItemRef,
+  navigationItemHandle,
+}) => {
+  const onPress = () => {
+    console.log('onpress', children)
+  }
+
+  useImperativeHandle(navigationItemHandle, () => ({
+    selectNavigationItem: onPress,
+  }))
+
+  return (
+    <BaseControl
+      bg={activeNavigationItem ? 'blue.3' : ''}
+      ref={navigationItemRef}
+      onPress={onPress}
+    >
+      <Text variant="uiTextSmall">{children}</Text>
+    </BaseControl>
+  )
+}
+
+const ListItemWithKeyboardNavigation = withKeyboardNavigation(ListItem)
+
+export const KeyboardNavigationList = () => {
+  const [query, setQuery] = useState({ textValue: '', ranges: [] })
+  const [hasFocus, setHasFocus] = useState(false)
+  return (
+    <Section title="Keyboard Navigation List">
+      <View bg="white" my="small">
+        <TextInput
+          variant="uiTextNormal"
+          value={query}
+          onChange={setQuery}
+          onFocus={() => {
+            setHasFocus(true)
+            console.log('focus')
+          }}
+          onBlur={() => {
+            setHasFocus(false)
+            console.log('blur')
+          }}
+        />
+      </View>
+      <ScrollView
+        height={250}
+        borderVariant="thinLight"
+        widthVariant="content"
+        backgroundColor="background.0"
+      >
+        <List
+          keyboardNavigation
+          keyboardEventsActive={hasFocus}
+          orderKey={query.textValue}
+        >
+          {getNames()
+            .filter(s =>
+              s.toLowerCase().startsWith(query.textValue.toLowerCase())
+            )
+            .map((item, idx) => (
+              <ListItemWithKeyboardNavigation key={idx}>
+                {item}
+              </ListItemWithKeyboardNavigation>
+            ))}
+        </List>
+      </ScrollView>
     </Section>
   )
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import flattenChildren from 'react-keyed-flatten-children'
+import { KeyboardNavigationProvider } from './KeyboardNavigationProvider'
 import { View } from '../'
 
 const List = ({
@@ -7,35 +8,57 @@ const List = ({
   horizontalItemPadding,
   verticalItemPadding,
   removeBorderRadius,
+  keyboardNavigation,
+  keyboardEventsActive,
+  orderKey,
+  onActiveItemChanged,
   ...others
-}) => (
-  <View
-    marginTop={verticalItemPadding}
-    marginBottom={verticalItemPadding}
-    {...others}
-  >
-    {React.Children.map(
-      flattenChildren(children),
-      child =>
-        child &&
-        React.cloneElement(child, {
-          ...(removeBorderRadius
-            ? {
-                borderRadius: 0,
-              }
-            : {}),
-          px: horizontalItemPadding,
-          py: verticalItemPadding,
-          ...child.props,
-        })
-    )}
-  </View>
-)
+}) => {
+  const _render = (
+    <View
+      marginTop={verticalItemPadding}
+      marginBottom={verticalItemPadding}
+      {...others}
+    >
+      {React.Children.map(
+        flattenChildren(children),
+        child =>
+          child &&
+          React.cloneElement(child, {
+            ...(removeBorderRadius
+              ? {
+                  borderRadius: 0,
+                }
+              : {}),
+            px: horizontalItemPadding,
+            py: verticalItemPadding,
+            ...child.props,
+          })
+      )}
+    </View>
+  )
+
+  if (keyboardNavigation) {
+    return (
+      <KeyboardNavigationProvider
+        keyboardEventsActive={keyboardEventsActive}
+        orderKey={orderKey}
+        onActiveItemChanged={onActiveItemChanged}
+      >
+        {_render}
+      </KeyboardNavigationProvider>
+    )
+  }
+
+  return _render
+}
 
 List.defaultProps = {
   horizontalItemPadding: 'tiny',
   verticalItemPadding: 'tiny',
   removeBorderRadius: true,
+  keyboardNavigation: false,
+  keyboardEventsActive: false,
 }
 
 export default List
