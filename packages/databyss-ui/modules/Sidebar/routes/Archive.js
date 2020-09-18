@@ -18,10 +18,11 @@ export const getPagesData = pages =>
     })
   )
 
-const Pages = ({ filterQuery, height }) => (
+const Archive = ({ filterQuery, height }) => (
   <>
-    <PagesLoader filtered>
+    <PagesLoader archived>
       {pages => {
+        console.log(pages)
         const _menuItems = getPagesData(pages)
         const sortedPages = sortEntriesAtoZ(_menuItems, 'text')
         const filteredEntries = filterEntries(sortedPages, filterQuery)
@@ -40,4 +41,4 @@ const Pages = ({ filterQuery, height }) => (
   </>
 )
 
-export default Pages
+export default Archive

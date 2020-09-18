@@ -59,7 +59,7 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
       mb={isMobile() ? 'small' : 'none'}
     >
       <TextInput
-        readonly={isPublicAccount() || isMobile()}
+        readonly={isPublicAccount() || isMobile() || getPage(pageId)?.archive}
         ref={ref}
         data-test-element="page-header"
         onKeyDown={e => {

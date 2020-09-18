@@ -6,6 +6,7 @@ import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu.svg'
+import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
@@ -79,6 +80,14 @@ const SidebarCollapsed = () => {
       icon: <TopicSvg />,
       onClick: () => onItemClick('topics'),
     },
+    {
+      name: 'archive',
+      title: 'Archive',
+      icon: <ArchiveSvg />,
+      onClick: () => {
+        onItemClick('archive')
+      },
+    },
   ]
 
   return (
@@ -92,7 +101,7 @@ const SidebarCollapsed = () => {
       width={sidebar.collapsedWidth}
     >
       <List verticalItemPadding={2} horizontalItemPadding={1} m="none">
-        {sideBarCollapsedItems.map(item => (
+        {sideBarCollapsedItems.map((item, i) => (
           <SidebarIconButton
             name={item.name}
             key={item.name}
@@ -100,6 +109,7 @@ const SidebarCollapsed = () => {
             icon={item.icon}
             isActive={isIconButtonActive(item)}
             onClick={item.onClick}
+            seperatorTop={sideBarCollapsedItems.length === i + 1}
           />
         ))}
       </List>
