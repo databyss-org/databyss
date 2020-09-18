@@ -1,6 +1,12 @@
 import React from 'react'
 import colors from '@databyss-org/ui/theming/colors'
 
+// check for email addresses
+const _emailRegEx = new RegExp(
+  /\b([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)\b/,
+  'gi'
+)
+
 const Leaf = ({ attributes, children, leaf }) => {
   const { blue, gray, orange } = colors
 
@@ -19,18 +25,25 @@ const Leaf = ({ attributes, children, leaf }) => {
   }
 
   if (leaf.url) {
+    let _formattedUrl = leaf.url
+    const _isEmail = _formattedUrl.match(_emailRegEx)
+
+    if (_isEmail) {
+      // add email prefix
+      _formattedUrl = `mailto:${_formattedUrl}`
+    } else if (
+      // validate url
+      !(
+        _formattedUrl.indexOf('http://') === 0 ||
+        _formattedUrl.indexOf('https://') === 0
+      )
+    ) {
+      _formattedUrl = `http://${_formattedUrl}`
+    }
+
     _children = (
       <a
-        onClick={() => {
-          // validate url
-          let _url = leaf.url
-          if (
-            !(_url.indexOf('http://') === 0 || _url.indexOf('https://') === 0)
-          ) {
-            _url = `http://${_url}`
-          }
-          window.open(_url, '_blank')
-        }}
+        onClick={() => window.open(_formattedUrl, '_blank')}
         href={leaf.url}
         style={{
           color: blue[2],

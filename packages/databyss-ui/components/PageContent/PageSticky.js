@@ -1,5 +1,6 @@
 /* eslint-disable react/no-danger */
 import React, { useEffect, useRef, useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { View, Text, Icon } from '@databyss-org/ui/primitives'
@@ -51,6 +52,10 @@ const PageSticky = ({ pagePath, pageId }) => {
       top={0}
       zIndex="sticky"
     >
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>{currentPath[0]}</title>
+      </Helmet>
       <Text color="gray.4" variant="uiTextSmall">
         <div
           data-test-element="editor-sticky-header"

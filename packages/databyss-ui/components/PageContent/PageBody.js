@@ -1,18 +1,21 @@
 import React, { useEffect, useCallback, useRef } from 'react'
 import { throttle } from 'lodash'
+
+import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { withMetaData } from '@databyss-org/editor/lib/util'
+import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
 import ContentEditable from '@databyss-org/editor/components/ContentEditable'
 import EditorProvider from '@databyss-org/editor/state/EditorProvider'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import HistoryProvider from '@databyss-org/editor/history/EditorHistory'
-import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
-import { withMetaData } from '@databyss-org/editor/lib/util'
 import {
-  pageToEditorState,
-  cleanupPatches,
   addMetaToPatches,
+  cleanupPatches,
+  pageToEditorState,
 } from '@databyss-org/editor/state/util'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
+
+import { isMobile } from '../../lib/mediaQuery'
 
 const PageBody = ({
   page,
@@ -64,28 +67,34 @@ const PageBody = ({
     throttledAutosave({ ...value, patches })
   }
 
-  return (
-    <CatalogProvider>
-      <HistoryProvider ref={editorStateRef}>
-        <EditorProvider
-          key={location.pathname}
-          // if public or archived account, disable on change
-          onChange={v => !isPublicAccount() && !page.archive && onChange(v)}
-          initialState={pageToEditorState(withMetaData(page))}
-        >
-          <PDFDropZoneManager />
-          <ContentEditable
-            autofocus
-            focusIndex={focusIndex}
-            onNavigateUpFromTop={onNavigateUpFromEditor}
-            active={false}
-            editorRef={editorRef}
-            readonly={isPublicAccount() || page.archive}
-          />
-        </EditorProvider>
-      </HistoryProvider>
-    </CatalogProvider>
-  )
+  const render = () => {
+    const isReadOnly = isPublicAccount() || isMobile() || page.archive
+
+    return (
+      <CatalogProvider>
+        <HistoryProvider ref={editorStateRef}>
+          <EditorProvider
+            key={location.pathname}
+            // if read only, disable on change
+            onChange={v => !isReadOnly && onChange(v)}
+            initialState={pageToEditorState(withMetaData(page))}
+          >
+            <PDFDropZoneManager />
+            <ContentEditable
+              autofocus
+              focusIndex={focusIndex}
+              onNavigateUpFromTop={onNavigateUpFromEditor}
+              active={false}
+              editorRef={editorRef}
+              readonly={isReadOnly}
+            />
+          </EditorProvider>
+        </HistoryProvider>
+      </CatalogProvider>
+    )
+  }
+
+  return render()
 }
 
 export default React.memo(

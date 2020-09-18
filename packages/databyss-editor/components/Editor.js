@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
-import { Text, Node } from '@databyss-org/slate'
+import { Text, Node, Range } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import linksFinder from 'links-finder'
 import { useEditorContext } from '../state/EditorProvider'
@@ -44,8 +44,35 @@ const Editor = ({
       const ranges = []
 
       if (Text.isText(node)) {
-        // check for url in text
         const _string = Node.string(node)
+
+        // check for email addresses
+        const _emailRegEx = new RegExp(
+          /\b([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)\b/,
+          'gi'
+        )
+        const emailMatches = [..._string.matchAll(_emailRegEx)]
+
+        if (emailMatches.length) {
+          emailMatches.forEach(e => {
+            const _parts = _string.split(e[0])
+            if (_parts.length > 1) {
+              let offset = 0
+              _parts.forEach((part, i) => {
+                if (i !== 0) {
+                  ranges.push({
+                    anchor: { path, offset: offset - e[0].length },
+                    focus: { path, offset },
+                    url: e[0],
+                  })
+                }
+                offset = offset + part.length + e[0].length
+              })
+            }
+          })
+        }
+
+        // check for url in text
         linksFinder.wrapLinks(_string, {
           onMatch: link => {
             // split string by link
@@ -56,11 +83,15 @@ const Editor = ({
               // add url link to markup
               _parts.forEach((part, i) => {
                 if (i !== 0) {
-                  ranges.push({
+                  const _range = {
                     anchor: { path, offset: offset - link.length },
                     focus: { path, offset },
                     url: link,
-                  })
+                  }
+                  // check to see if this range is already included as an email address range
+                  if (!ranges.filter(r => Range.includes(r, _range)).length) {
+                    ranges.push(_range)
+                  }
                 }
 
                 offset = offset + part.length + link.length

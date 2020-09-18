@@ -6,6 +6,7 @@ import { styleProps } from '../../Text/Text'
 const resetCss = {
   background: 'transparent',
   padding: 0,
+  margin: 0,
   outline: 'none',
   border: 'none',
   resize: 'none',

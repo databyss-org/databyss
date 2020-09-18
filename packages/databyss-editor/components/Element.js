@@ -30,7 +30,7 @@ export const isAtomicClosure = type =>
     END_SOURCE: true,
   }[type])
 
-const Element = ({ attributes, children, element }) => {
+const Element = ({ attributes, children, element, readOnly }) => {
   const sessionContext = useSessionContext()
 
   const entryContext = useEntryContext()
@@ -113,7 +113,7 @@ const Element = ({ attributes, children, element }) => {
               registerBlockRefByIndex(_index, ref)
             }
           }}
-          ml={element.isBlock ? blockMenuWidth : 0}
+          ml={element.isBlock && !readOnly ? 'medium' : 0}
           mr="large"
           pt={vpad}
           pb="em"
@@ -133,6 +133,7 @@ const Element = ({ attributes, children, element }) => {
           }}
         >
           {block.__showNewBlockMenu &&
+            !readOnly &&
             !sessionContext?.isPublicAccount() && (
               <View
                 position="absolute"

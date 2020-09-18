@@ -66,6 +66,9 @@ export const fetchSession = ({
       // google oAuth token
       path += '/users/google'
       options.body = JSON.stringify({ code: googleCode })
+      if (process.env.FORCE_MOBILE) {
+        options.headers['x-databyss-mobile'] = true
+      }
     } else if (code && email) {
       // code from email
       path += '/auth/code'

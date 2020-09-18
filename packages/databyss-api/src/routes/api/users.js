@@ -18,6 +18,14 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.API_GOOGLE_REDIRECT_URI
 )
 
+const oauth2ClientMobile =
+  process.env.API_GOOGLE_REDIRECT_URI_MOBILE &&
+  new google.auth.OAuth2(
+    process.env.API_GOOGLE_CLIENT_ID,
+    process.env.API_GOOGLE_CLIENT_SECRET,
+    process.env.API_GOOGLE_REDIRECT_URI_MOBILE
+  )
+
 // @route    POST api/users/google
 // @desc     create or get profile info for google user
 // @access   Public
@@ -25,8 +33,12 @@ router.post(
   '/google',
   wrap(async (req, res) => {
     const code = querystring.unescape(req.body.code)
+    const oauth =
+      oauth2ClientMobile && req.header('x-databyss-mobile')
+        ? oauth2ClientMobile
+        : oauth2Client
 
-    oauth2Client.getToken(code, async (err, tokens) => {
+    oauth.getToken(code, async (err, tokens) => {
       if (err) {
         console.error(err)
         res.status(400).json({ msg: 'OAuth Error' })
