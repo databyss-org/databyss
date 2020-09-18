@@ -167,12 +167,14 @@ describe('format text in editor', () => {
     await actions.sendKeys('first word should be bold')
     await actions.sendKeys(Key.ARROW_UP)
     await singleHighlight(actions)
+    await sleep(300)
+
     await singleHighlight(actions)
     await singleHighlight(actions)
     await singleHighlight(actions)
     await singleHighlight(actions)
     await actions.perform()
-    await sleep(300)
+    await sleep(30000)
     await driver
       .findElement(By.tagName('[data-test-format-menu="bold"]'))
       .click()
