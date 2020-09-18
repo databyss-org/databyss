@@ -5,6 +5,8 @@ import {
   END_SESSION,
   FETCH_SESSION,
   CACHE_PUBLIC_SESSION,
+  GET_USER_ACCOUNT,
+  CACHE_USER_ACCOUNT,
 } from './constants'
 
 import { ResourcePending } from '../interfaces/'
@@ -21,6 +23,7 @@ export const initialState = {
   //   to keep the challenge module (e.g. <Login />) mounted.
   // cleared when challenge is accepted or rejected
   lastCredentials: null,
+  userInfo: null,
 }
 
 export default (state, action) => {
@@ -40,6 +43,18 @@ export default (state, action) => {
   }
 
   switch (action.type) {
+    case CACHE_USER_ACCOUNT: {
+      return {
+        ...state,
+        userInfo: action.payload.data,
+      }
+    }
+    case GET_USER_ACCOUNT: {
+      return {
+        ...state,
+        userInfo: new ResourcePending(),
+      }
+    }
     case FETCH_SESSION: {
       const nextState = {
         ...state,

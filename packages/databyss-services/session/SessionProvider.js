@@ -40,6 +40,14 @@ const SessionProvider = ({
     console.log(state)
   }
 
+  const getUserAccount = () => {
+    if (state.userInfo) {
+      return state.userInfo
+    }
+    dispatch(actions.getUserAccount())
+    return null
+  }
+
   const getCurrentAccount = () => {
     if (state.session.publicAccount?._id) {
       return state.session.publicAccount._id
@@ -93,6 +101,7 @@ const SessionProvider = ({
         endSession,
         isPublicAccount,
         getCurrentAccount,
+        getUserAccount,
         isLoggedIn,
       }}
     >

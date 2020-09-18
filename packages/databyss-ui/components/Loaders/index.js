@@ -4,6 +4,7 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 import { isResourceReady } from './_helpers'
@@ -81,6 +82,11 @@ export const AllTopicsLoader = ({ children, filtered, ...others }) => {
 }
 AllTopicsLoader.defaultProps = {
   filtered: true,
+}
+
+export const AccountLoader = ({ children }) => {
+  const { getUserAccount } = useSessionContext()
+  return <MakeLoader resources={getUserAccount()} children={children} />
 }
 
 export const TopicLoader = ({ topicId, children }) => {
