@@ -4,7 +4,9 @@ import { ping } from '@databyss-org/services/lib/requestApi'
 import {
   NotAuthorizedError,
   NetworkUnavailableError,
-  VersionConflict,
+  VersionConflictError,
+  InsufficientPermissionError,
+  ResourceNotFoundError,
 } from '@databyss-org/services/interfaces'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
@@ -69,11 +71,16 @@ class NotifyProvider extends React.Component {
   }
 
   componentDidCatch(error, info) {
-    if (error instanceof VersionConflict) {
+    if (error instanceof VersionConflictError) {
+      window.location.reload()
       return
     }
-    if (error instanceof NotAuthorizedError) {
-      // we don't need to notify, we should be redirecting
+    if (
+      error instanceof NotAuthorizedError ||
+      error instanceof InsufficientPermissionError ||
+      error instanceof ResourceNotFoundError
+    ) {
+      // we don't need to notify, we should be showing authwall, 403 or 404
       return
     }
     this.bugsnagClient.notify(
@@ -94,7 +101,23 @@ class NotifyProvider extends React.Component {
   }
 
   onUnhandledError = e => {
-    if (e.error instanceof VersionConflict) {
+    if (
+      e &&
+      (e.reason instanceof NotAuthorizedError ||
+        e.error instanceof NotAuthorizedError ||
+        e.reason instanceof InsufficientPermissionError ||
+        e.error instanceof InsufficientPermissionError ||
+        e.reason instanceof ResourceNotFoundError ||
+        e.error instanceof ResourceNotFoundError)
+    ) {
+      // we don't need to notify, we should be showing authwall, 403 or 404
+      return
+    }
+    if (
+      e &&
+      (e.reason instanceof VersionConflictError ||
+        e.error instanceof VersionConflictError)
+    ) {
       window.location.reload()
       return
     }

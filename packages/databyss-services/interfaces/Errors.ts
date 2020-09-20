@@ -26,8 +26,8 @@ export class InsufficientPermissionError extends Error {
   }
 }
 
-export class VersionConflict extends Error {
-  constructor(message = 'Update Dataybyss') {
+export class VersionConflictError extends Error {
+  constructor(message = 'Version Conflict') {
     super()
     this.message = message
   }
