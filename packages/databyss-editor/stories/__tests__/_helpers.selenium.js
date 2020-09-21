@@ -65,13 +65,6 @@ export const singleHighlight = async actions => {
   await sleep(SLEEP_TIME)
 }
 
-// export const singleHighlight = actions => {
-//   actions
-//     .keyDown(Key.SHIFT)
-//     .sendKeys(Key.ARROW_RIGHT)
-//     .keyUp(Key.SHIFT)
-// }
-
 const navigationActionsBuilder = async (actions, key) => {
   await actions.sendKeys(key)
   await actions.perform()
