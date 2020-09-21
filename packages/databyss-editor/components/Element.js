@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
+import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from '@databyss-org/slate-react'
@@ -13,7 +14,6 @@ import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { SuggestMenu, SuggestSources, SuggestTopics } from './Suggest'
-import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 
 const SPELLCHECK_DEBOUNCE_TIME = 1000
 
