@@ -13,6 +13,7 @@ import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { SuggestMenu, SuggestSources, SuggestTopics } from './Suggest'
+import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 
 const SPELLCHECK_DEBOUNCE_TIME = 1000
 
@@ -113,7 +114,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
               registerBlockRefByIndex(_index, ref)
             }
           }}
-          ml={element.isBlock && !readOnly ? 'medium' : 0}
+          ml={element.isBlock && !(readOnly && isMobile()) ? 'medium' : 0}
           mr="large"
           pt={vpad}
           pb="em"
