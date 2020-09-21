@@ -47,7 +47,9 @@ router.post(
       }
 
       const decoded = jwt.decode(tokens.id_token)
-      const { name, email, sub } = decoded
+      const { name, email: _email, sub } = decoded
+
+      const email = _email?.toLowerCase()
       let user = await User.findOne({ googleId: sub })
       if (!user) {
         user = await User.create({
@@ -74,8 +76,10 @@ router.post(
       return res.status(400).json({ errors: errors.array() })
     }
 
-    const { email } = req.body
+    const { email: _email } = req.body
     let emailExists = false
+
+    const email = _email?.toLowerCase()
 
     let user = await User.findOne({ email })
     if (!user) {
