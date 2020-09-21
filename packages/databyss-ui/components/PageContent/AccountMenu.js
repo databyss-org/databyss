@@ -32,7 +32,7 @@ const AccountMenu = () => {
   const onLogout = () => {
     logout()
     window.requestAnimationFrame(
-      () => (window.location.href = 'https://databyss.org/')
+      () => (window.location.href = 'https://app.databyss.org/')
     )
   }
 
