@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import cloneDeep from 'clone-deep'
 import { Block } from '@databyss-org/services/interfaces/'
 import { stateBlockToHtmlHeader, stateBlocktoHtmlResults } from '@databyss-org/editor/lib/slateUtils.js'
 import { BlockType, Selection, EditorState, BlockRelation, PagePath, Range } from '../interfaces'
@@ -198,7 +199,7 @@ export const indexPage = ({
 
 
 export const slateBlockToHtmlWithSearch = (block: Block, query: string): string => {
-  const _block = block
+  const _block = cloneDeep(block)
 
   if(query){
   // add query markup to results

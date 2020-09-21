@@ -43,11 +43,14 @@ const Search = () => {
     setValue({ textValue: '' })
   }
 
+  // encode the search term and remove '?'
   const encodedSearchTerm = encodeURI(searchTerm.replace(/\?/g, ''))
 
   const onSearchClick = () => {
-    // encode the search term and remove '?'
-    navigate(`/search/${encodedSearchTerm}`)
+    // if not currently in search page, navigate to search page
+    if (params !== encodedSearchTerm) {
+      navigate(`/search/${encodedSearchTerm}`)
+    }
     navigateSidebar('/search')
   }
 
