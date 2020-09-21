@@ -9,6 +9,7 @@ import OnlineSvg from '@databyss-org/ui/assets/online.svg'
 import OfflineSvg from '@databyss-org/ui/assets/offline.svg'
 import LoadingSvg from '@databyss-org/ui/assets/loading.svg'
 import PageMenu from './PageMenu'
+import AccountMenu from './AccountMenu'
 
 const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
@@ -76,6 +77,7 @@ const PageSticky = ({ pagePath, pageId }) => {
         >
           {isOnline ? <OnlineSvg /> : <OfflineSvg />}
         </Icon>
+        <AccountMenu />
         <View ml="em">
           <PagesLoader>{pages => <PageMenu pages={pages} />}</PagesLoader>
         </View>

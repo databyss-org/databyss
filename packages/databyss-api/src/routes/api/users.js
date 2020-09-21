@@ -6,6 +6,7 @@ import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
 import { send } from '../../lib/sendgrid'
 import User from '../../models/User'
+import Account from '../../models/Account'
 import Login from '../../models/Login'
 import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
@@ -112,6 +113,39 @@ router.post(
     send(msg)
     res.status(200).json({})
     return res.status(200)
+  })
+)
+
+// @route    GET api/auth/user
+// @desc     return user information
+// @access   Public
+router.post(
+  '/',
+  wrap(async (req, res) => {
+    const { authToken } = req.body.data
+
+    try {
+      const decoded = jwt.verify(authToken, process.env.JWT_SECRET)
+
+      if (decoded) {
+        const user = await User.findOne({ _id: decoded.user.id }).select(
+          'defaultAccount email'
+        )
+        if (user) {
+          const account = await Account.findOne({
+            _id: user.defaultAccount,
+          }).select('defaultPage')
+          if (account) {
+            return res
+              .json({ data: { ...user._doc, ...account._doc } })
+              .status(200)
+          }
+        }
+      }
+      return res.status(401).json({ msg: 'Token is not valid' })
+    } catch (err) {
+      return res.status(401).json({ msg: 'Token is not valid' })
+    }
   })
 )
 

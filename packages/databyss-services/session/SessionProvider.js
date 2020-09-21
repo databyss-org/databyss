@@ -36,6 +36,14 @@ const SessionProvider = ({
     return false
   }
 
+  const getUserAccount = () => {
+    if (state.userInfo) {
+      return state.userInfo
+    }
+    dispatch(actions.getUserAccount())
+    return null
+  }
+
   const getCurrentAccount = () => {
     if (state.session.publicAccount?._id) {
       return state.session.publicAccount._id
@@ -81,6 +89,10 @@ const SessionProvider = ({
     _children = <Loading />
   }
 
+  const logout = () => {
+    dispatch(actions.logout())
+  }
+
   return (
     <SessionContext.Provider
       value={{
@@ -89,6 +101,8 @@ const SessionProvider = ({
         endSession,
         isPublicAccount,
         getCurrentAccount,
+        getUserAccount,
+        logout,
       }}
     >
       {_children}

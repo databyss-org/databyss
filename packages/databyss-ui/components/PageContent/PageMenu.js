@@ -3,7 +3,13 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { BaseControl, Icon, View, Separator } from '@databyss-org/ui/primitives'
+import {
+  BaseControl,
+  Icon,
+  View,
+  Separator,
+  pxUnits,
+} from '@databyss-org/ui/primitives'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
@@ -245,15 +251,17 @@ const PageMenu = ({ pages }) => {
               right: 0,
             }}
           >
-            {!_page.archive && (
-              <DropdownListItem
-                label={isPagePublic ? 'Page is public' : 'Make page public '}
-                value={isPagePublic}
-                onPress={togglePublicPage}
-                action="togglePublic"
-                switchControl
-              />
-            )}
+            <DropdownListItem
+              ml="small"
+              mr="small"
+              height={pxUnits(34)}
+              justifyContent="center"
+              label={isPagePublic ? 'Page is public' : 'Make page public '}
+              value={isPagePublic}
+              onPress={togglePublicPage}
+              action="togglePublic"
+              switchControl
+            />
             {getPublicAccount(params).length ? (
               <>
                 <Separator />

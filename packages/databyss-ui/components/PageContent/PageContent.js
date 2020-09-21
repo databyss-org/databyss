@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useLocation, Router } from '@reach/router'
-
+import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { View } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
 import { isMobile } from '../../lib/mediaQuery'
+import AccountMenu from './AccountMenu'
 
 // components
 export const PageRouter = () => (
@@ -79,6 +79,13 @@ export const PageContainer = React.memo(({ anchor, id, page, ...others }) => {
       >
         {!isPublicAccount() &&
           !isMobile() && <PageSticky pagePath={editorPath} pageId={page._id} />}
+        {getAuthToken() &&
+          isPublicAccount() &&
+          !isMobile() && (
+            <View position="absolute" right="extraLarge">
+              <AccountMenu />
+            </View>
+          )}
         <PageHeader
           ref={headerRef}
           pageId={id}

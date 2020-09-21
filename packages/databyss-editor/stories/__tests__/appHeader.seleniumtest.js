@@ -67,6 +67,12 @@ describe('app sticky header', () => {
 
   it('should render correct editor path for cursor', async () => {
     await sleep(2000)
+    const pageTitle = await getElementByTag(
+      driver,
+      '[data-test-element="page-header"]'
+    )
+    await pageTitle.click()
+    await sleep(500)
     await sendKeys(actions, 'this is a page title')
     await enterKey(actions)
     await sendKeys(actions, 'this is a test entry')
