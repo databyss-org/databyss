@@ -4,7 +4,7 @@ import { ApiError, BadRequestError } from '../lib/Errors'
 export const versionChecker = (req, res, next) => {
   const databyssVersion = req.header('x-databyss-version')
   // bail on checking version if asking for version
-  if (req.path === '/api/version') {
+  if (req.path.match(/^\/app\/version/)) {
     return next()
   }
   if (!databyssVersion) {
