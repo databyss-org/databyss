@@ -165,6 +165,10 @@ export const copyPage = async ({ pageId, toAccountId }) => {
   const _blockIdMap = {}
 
   for (const _block of _blocks) {
+    if (_block.type?.match(/^END_/)) {
+      // do not copy END_ blocks
+      continue
+    }
     const _blockObj = _block.toObject()
     _blockObj._id = new ObjectID().toHexString()
     _blockObj.account = toAccountId

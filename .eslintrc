@@ -25,6 +25,7 @@
       "LabeledStatement",
       "WithStatement"
     ],
+    "no-continue": "off", // if we're using for...of, we need continue
     "no-await-in-loop": "off", // this is needed for synchronous iteration where order matters
     "no-return-assign": ["error", "except-parens"], // Default option
     "no-console": "off", // Console logs are too useful and are removed in prod anyway
