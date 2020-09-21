@@ -116,9 +116,10 @@ router.post(
       // populate results with page
       results = await Promise.all(
         results.map(async r => {
-          // get page where entry is found
+          // get page where entry is found in non archived page
           const _page = await Page.findOne({
             'blocks._id': r._id,
+            archive: false,
             ...getPageAccountQueryMixin(req),
           })
 

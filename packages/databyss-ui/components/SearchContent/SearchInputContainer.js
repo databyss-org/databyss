@@ -16,6 +16,7 @@ const SearchInputContainer = ({
   placeholder,
   onChange,
   onKeyDown,
+  onFocus,
   onClear,
   children,
   onClick,
@@ -47,6 +48,7 @@ const SearchInputContainer = ({
           value={value}
           onChange={onChange}
           onKeyDown={onKeyDown}
+          onFocus={onFocus}
           concatCss={styledCss({
             '::placeholder': {
               color: 'text.3',

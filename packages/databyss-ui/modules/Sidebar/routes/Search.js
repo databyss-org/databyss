@@ -54,12 +54,19 @@ const Search = () => {
     navigateSidebar('/search')
   }
 
+  const onInputFocus = () => {
+    if (getSidebarPath() !== 'search') {
+      navigateSidebar('/search')
+    }
+  }
+
   return (
     <>
       <SearchInputContainer
         placeholder="Search"
         value={value}
         onChange={setValue}
+        onFocus={onInputFocus}
         onKeyDown={e => {
           if (e.key === 'Enter') {
             onSearchClick()
