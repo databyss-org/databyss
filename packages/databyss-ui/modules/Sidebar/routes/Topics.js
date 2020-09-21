@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
 import {
   sortEntriesAtoZ,
