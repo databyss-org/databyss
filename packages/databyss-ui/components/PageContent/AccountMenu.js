@@ -72,18 +72,18 @@ const AccountMenu = () => {
           ))
 
         return (
-          <View pl="em" mb="extraSmall" position="relative">
+          <View pl="em" my="extraSmall" position="relative">
             <BaseControl onClick={() => setMenuOpen(true)}>
               <View
                 borderVariant="round"
                 borderRadius="50%"
-                backgroundColor="blue.1"
-                width={28}
-                height={28}
+                backgroundColor="blue.0"
+                width={20}
+                height={20}
                 alignItems="center"
                 justifyContent="center"
               >
-                <Text variant="uiTextLarge" color="text.6">
+                <Text variant="uiText" color="text.6">
                   {userInfo.email[0].toUpperCase()}
                 </Text>
               </View>
