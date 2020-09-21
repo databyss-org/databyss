@@ -3,7 +3,10 @@ import { ApiError, BadRequestError } from '../lib/Errors'
 
 export const versionChecker = (req, res, next) => {
   const databyssVersion = req.header('x-databyss-version')
-  // header not sent, bail on checking version
+  // bail on checking version if asking for version
+  if (req.path === '/api/version') {
+    return next()
+  }
   if (!databyssVersion) {
     return next(new BadRequestError(`missing version in header`))
   }

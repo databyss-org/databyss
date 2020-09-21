@@ -11,6 +11,7 @@ import authRoute from './routes/api/auth'
 import pagesRoute from './routes/api/pages'
 import accountsRoute from './routes/api/accounts'
 import pingRoute from './routes/api/ping'
+import versionRoute from './routes/api/version'
 import echoRoute from './routes/api/echo'
 import errorRoute from './routes/api/error'
 import entriesRoute from './routes/api/entries'
@@ -51,6 +52,7 @@ const run = async () => {
   app.use('/api/pages', pagesRoute)
   app.use('/api/accounts', accountsRoute)
   app.use('/api/ping', pingRoute)
+  app.use('/api/version', versionRoute)
   app.use('/api/echo', echoRoute)
   app.use('/api/error', errorRoute)
   app.use('/api/entries', entriesRoute)
