@@ -61,10 +61,10 @@ const run = async () => {
 
   app.use((err, _req, res, _next) => {
     Bugsnag.client.notify(err)
-    console.error('ERR', err)
     if (err instanceof ApiError) {
       return res.status(err.status).json({ error: err })
     }
+    console.error('ERR', err)
     return res.status(500).json({ error: { message: err.message } })
   })
 
