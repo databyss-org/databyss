@@ -9,7 +9,6 @@ import {
   FETCH_PAGE_HEADERS,
   DELETE_PAGE,
   ARCHIVE_PAGE,
-  SET_DEFAULT_PAGE,
   QUEUE_PATCH,
   REMOVE_PAGE_FROM_CACHE,
   SET_PAGE_PUBLIC,
@@ -211,15 +210,6 @@ export function onArchivePage(id: string, page: Page, bool: boolean, callback: F
     } catch(err) {
       throw new NetworkUnavailableError(err)
     }
-  }
-}
-
-export function onSetDefaultPage(id: string) {
-  services.setDefaultPage(id)
-
-  return {
-    type: SET_DEFAULT_PAGE,
-    payload: { id }
   }
 }
 
