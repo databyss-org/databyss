@@ -31,9 +31,7 @@ const run = async () => {
   await connectDB()
 
   // Init Bugsnag
-  // if (process.env.NODE_ENV !== 'test') {
   Bugsnag.init()
-  // }
 
   // Init Middleware
   app.use(cors())
@@ -61,10 +59,10 @@ const run = async () => {
 
   app.use((err, _req, res, _next) => {
     Bugsnag.client.notify(err)
+    console.error('ERR', err)
     if (err instanceof ApiError) {
       return res.status(err.status).json({ error: err })
     }
-    console.error('ERR', err)
     return res.status(500).json({ error: { message: err.message } })
   })
 

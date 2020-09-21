@@ -3,9 +3,6 @@ import { getAuthToken, getAccountId } from './../session/clientStorage'
 import { getAccountFromLocation } from '../session/_helpers'
 import { version as databyssVersion } from './../package.json'
 
-export const ping = () =>
-  request(`${process.env.API_URL}/ping/`, { timeout: 5000 })
-
 export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
   // get current databyss version
   const _accountId = getAccountId()
@@ -39,6 +36,8 @@ export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
     responseIsJson
   )
 }
+
+export const ping = () => requestApi(`/ping`, { timeout: 2500 })
 
 export const httpGet = path => requestApi(path)
 

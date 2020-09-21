@@ -1,6 +1,6 @@
 import request from '../lib/request'
 import { NotAuthorizedError } from '../interfaces'
-
+import { version as databyssVersion } from '../package.json'
 import {
   FETCH_SESSION,
   CACHE_SESSION,
@@ -38,6 +38,7 @@ export const fetchSession = ({
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'x-databyss-version': databyssVersion,
     },
   }
 
