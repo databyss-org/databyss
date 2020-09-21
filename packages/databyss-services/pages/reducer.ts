@@ -52,11 +52,6 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
     case CACHE_PAGE: {
       const _page = action.payload.page
 
-      // do not cache if page has been archived
-      if (_page.archive) {
-        break
-      }
-
       // cache the page if it is in pending/error state or if it has blocks (e.g. not a header)
       if (!resourceIsReady(_page) || _page.blocks) {
         draft.cache[action.payload.id] = _page
@@ -92,15 +87,13 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
         break
       }
 
-      // filter archived pages
-      action.payload
-        .filter((p: PageHeader) => !p.archive)
-        .forEach((page: PageHeader) => {
-          _headerCache[page._id] = {
-            name: page.name,
-            _id: page._id,
-          }
-        })
+      action.payload.forEach((page: PageHeader) => {
+        _headerCache[page._id] = {
+          name: page.name,
+          _id: page._id,
+          archive: page.archive,
+        }
+      })
       draft.headerCache = _headerCache
       break
     }

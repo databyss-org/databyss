@@ -168,13 +168,30 @@ export const bakeAtomicClosureBlock = ({
       _block.text.textValue.substring(0, 2)
     )
 
-    // change cursor to end of atomic position
+    // change cursor position to update with atomic closure
     if (_atomicClosureType) {
-      // if atomic is not set yet, set selection at tend of atomic
       if (!isAtomicInlineType(_block.type)) {
+        // if on last block. add new block below
+        if((draft.blocks.length - 1 ) === index){
+      // create a new entity
+          let _newBlock: Block = {
+            type: BlockType.Entry,
+            _id: new ObjectId().toHexString(),
+            text: { textValue: '', ranges: [] },
+          }
+          draft.blocks[index+ 1] = _newBlock
+
+          // push update operation back to editor
+          draft.operations.push({
+            index: index+1,
+            block: blockValue(_newBlock),
+          })
+        }
+        // if in the middle of a page, set selection at start of next block
+
         const _cursor = {
-          offset: getClosureText(_atomicClosureType, draft).length,
-          index,
+          offset: 0,
+          index: index + 1,
         }
         draft.selection = {
           anchor: _cursor,

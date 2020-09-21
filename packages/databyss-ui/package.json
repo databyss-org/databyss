@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@bugsnag/plugin-react": "^6.4.0",
+    "react-helmet": "^6.1.0",
     "@emotion/core": "^10.0.14",
     "@emotion/native": "^10.0.14",
     "@emotion/styled": "^10.0.14",

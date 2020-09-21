@@ -6,6 +6,7 @@ import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu.svg'
+import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
@@ -46,14 +47,14 @@ const SidebarCollapsed = () => {
     [navigateSidebar]
   )
 
+  const isIconButtonActive = item => activeItem === item.name && isMenuOpen
+
   const sideBarCollapsedItems = [
     {
       name: 'menuCollapse',
       title: 'Collapse menu',
       icon: <MenuSvg />,
-      onClick: () => {
-        setMenuOpen(!isMenuOpen)
-      },
+      onClick: () => setMenuOpen(!isMenuOpen),
     },
     {
       name: 'search',
@@ -65,24 +66,26 @@ const SidebarCollapsed = () => {
       name: 'pages',
       title: 'Pages',
       icon: <PagesSvg />,
-      onClick: () => {
-        onItemClick('pages')
-      },
+      onClick: () => onItemClick('pages'),
     },
     {
       name: 'sources',
       title: 'Sources',
       icon: <SourceSvg />,
-      onClick: () => {
-        onItemClick('sources')
-      },
+      onClick: () => onItemClick('sources'),
     },
     {
       name: 'topics',
       title: 'Topics',
       icon: <TopicSvg />,
+      onClick: () => onItemClick('topics'),
+    },
+    {
+      name: 'archive',
+      title: 'Archive',
+      icon: <ArchiveSvg />,
       onClick: () => {
-        onItemClick('topics')
+        onItemClick('archive')
       },
     },
   ]
@@ -98,14 +101,15 @@ const SidebarCollapsed = () => {
       width={sidebar.collapsedWidth}
     >
       <List verticalItemPadding={2} horizontalItemPadding={1} m="none">
-        {sideBarCollapsedItems.map(item => (
+        {sideBarCollapsedItems.map((item, i) => (
           <SidebarIconButton
             name={item.name}
             key={item.name}
             title={item.title}
             icon={item.icon}
-            isActive={item.name === activeItem}
+            isActive={isIconButtonActive(item)}
             onClick={item.onClick}
+            seperatorTop={sideBarCollapsedItems.length === i + 1}
           />
         ))}
       </List>

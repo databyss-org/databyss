@@ -89,7 +89,6 @@ describe('app sticky header', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/#')
-    await enterKey(actions)
     await sendKeys(actions, 'last entry')
     await sleep(2000)
 

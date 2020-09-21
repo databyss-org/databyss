@@ -20,7 +20,7 @@ export const getPagesData = pages =>
 
 const Pages = ({ filterQuery, height }) => (
   <>
-    <PagesLoader>
+    <PagesLoader filtered>
       {pages => {
         const _menuItems = getPagesData(pages)
         const sortedPages = sortEntriesAtoZ(_menuItems, 'text')

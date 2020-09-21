@@ -196,16 +196,24 @@ export function deletePage(id: string) {
   }
 }
 
-export function onArchivePage(id: string, page: Page, callback: Function) {
+export function onArchivePage(id: string, page: Page, bool: boolean, callback: Function) {
   return async (dispatch: Function) => {
     dispatch({
       type: ARCHIVE_PAGE,
       payload: { id  },
     })
-    const _page = {...page, archive: true}
-    await services.savePage(_page)
-    if (callback) {
-      callback()
+    const _page = {...page, archive: bool}
+    try {
+      await services.savePage(_page)
+      if (callback) {
+        callback()
+      }
+      dispatch({
+        type: CACHE_PAGE,
+        payload: { id, page: _page },
+      })
+    } catch(err) {
+      throw new NetworkUnavailableError(err)
     }
     dispatch({
       type: CACHE_PAGE,
