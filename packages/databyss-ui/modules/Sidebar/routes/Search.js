@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState } from 'react'
+import React, { useEffect, useCallback, useState, useRef } from 'react'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { Text, View } from '@databyss-org/ui/primitives'
@@ -45,12 +45,21 @@ const Search = () => {
   }
 
   // encode the search term and remove '?'
-  const encodedSearchTerm = encodeURI(searchTerm.replace(/\?/g, ''))
+  const encodedSearchTerm = useRef(encodeURI(searchTerm.replace(/\?/g, '')))
+
+  useEffect(
+    () => {
+      encodedSearchTerm.current = encodeURI(
+        value.textValue.replace(/[^a-zA-Z0-9À-ž- ]/gi, '').replace(/\?/g, '')
+      )
+    },
+    [searchTerm, value]
+  )
 
   const onSearchClick = () => {
     // if not currently in search page, navigate to search page
-    if (params !== encodedSearchTerm) {
-      navigate(`/search/${encodedSearchTerm}`)
+    if (encodedSearchTerm.current && params !== encodedSearchTerm.current) {
+      navigate(`/search/${encodedSearchTerm.current}`)
     }
     navigateSidebar('/search')
   }
