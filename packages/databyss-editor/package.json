@@ -2,7 +2,7 @@
   "name": "@databyss-org/editor",
   "author": "databyss-org",
   "license": "MIT",
-  "version": "1.1.73",
+  "version": "1.1.76",
   "private": false,
   "repository": {
     "type": "git",
@@ -13,8 +13,8 @@
   },
   "main": "index.js",
   "peerDependencies": {
-    "@databyss-org/services": "1.1.73",
-    "@databyss-org/ui": "1.1.73",
+    "@databyss-org/services": "1.1.76",
+    "@databyss-org/ui": "1.1.76",
     "@storybook/react": "5.2.1",
     "react": "16.9.0",
     "react-dom": "16.9.0",
@@ -34,6 +34,7 @@
     "escape-html": "^1.0.3",
     "fetch-mock": "^8.0.1",
     "immer": "^6.0.5",
+    "links-finder": "^1.0.0",
     "imurmurhash": "^0.1.4",
     "is-hotkey": "^0.1.5",
     "lodash": "^4.17.15",

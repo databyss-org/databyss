@@ -55,11 +55,14 @@ export const toggleLocation = actions =>
     .sendKeys('k')
     .keyUp(CONTROL)
 
-export const singleHighlight = actions => {
-  actions
+export const singleHighlight = async actions => {
+  await actions
     .keyDown(Key.SHIFT)
     .sendKeys(Key.ARROW_RIGHT)
     .keyUp(Key.SHIFT)
+    .perform()
+  await actions.clear()
+  await sleep(SLEEP_TIME)
 }
 
 const navigationActionsBuilder = async (actions, key) => {

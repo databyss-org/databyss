@@ -39,6 +39,7 @@ const borderVariants = {
   formField: border(2, 'border.1'),
   formError: border(2, 'red.0'),
   activeFormField: border(2, 'primary.0'),
+  round: { borderRadius: '50%' },
 }
 
 const hlineVariants = {

@@ -43,12 +43,21 @@ const Search = () => {
     setValue({ textValue: '' })
   }
 
+  // encode the search term and remove '?'
   const encodedSearchTerm = encodeURI(searchTerm.replace(/\?/g, ''))
 
   const onSearchClick = () => {
-    // encode the search term and remove '?'
-    navigate(`/search/${encodedSearchTerm}`)
+    // if not currently in search page, navigate to search page
+    if (params !== encodedSearchTerm) {
+      navigate(`/search/${encodedSearchTerm}`)
+    }
     navigateSidebar('/search')
+  }
+
+  const onInputFocus = () => {
+    if (getSidebarPath() !== 'search') {
+      navigateSidebar('/search')
+    }
   }
 
   return (
@@ -57,6 +66,7 @@ const Search = () => {
         placeholder="Search"
         value={value}
         onChange={setValue}
+        onFocus={onInputFocus}
         onKeyDown={e => {
           if (e.key === 'Enter') {
             onSearchClick()

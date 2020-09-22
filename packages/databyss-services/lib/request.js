@@ -4,6 +4,8 @@ import {
   NotAuthorizedError,
   NetworkUnavailableError,
   InsufficientPermissionError,
+  VersionConflictError,
+  UnexpectedServerError,
 } from '../interfaces'
 
 const FETCH_TIMEOUT = process.env.FETCH_TIMEOUT
@@ -21,11 +23,10 @@ function checkStatus(response) {
   if (response.status === 404) {
     throw new ResourceNotFoundError()
   }
-  const errorMessage = response.statusText
-  const error = new Error(errorMessage)
-  console.error(error)
-  error.info = response
-  throw error
+  if (response.status === 409) {
+    throw new VersionConflictError()
+  }
+  throw new UnexpectedServerError(response.statusText, response)
 }
 
 function parseResponse(responseIsJson) {

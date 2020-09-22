@@ -6,6 +6,7 @@ import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
 import { send } from '../../lib/sendgrid'
 import User from '../../models/User'
+import Account from '../../models/Account'
 import Login from '../../models/Login'
 import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
@@ -18,6 +19,14 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.API_GOOGLE_REDIRECT_URI
 )
 
+const oauth2ClientMobile =
+  process.env.API_GOOGLE_REDIRECT_URI_MOBILE &&
+  new google.auth.OAuth2(
+    process.env.API_GOOGLE_CLIENT_ID,
+    process.env.API_GOOGLE_CLIENT_SECRET,
+    process.env.API_GOOGLE_REDIRECT_URI_MOBILE
+  )
+
 // @route    POST api/users/google
 // @desc     create or get profile info for google user
 // @access   Public
@@ -25,8 +34,12 @@ router.post(
   '/google',
   wrap(async (req, res) => {
     const code = querystring.unescape(req.body.code)
+    const oauth =
+      oauth2ClientMobile && req.header('x-databyss-mobile')
+        ? oauth2ClientMobile
+        : oauth2Client
 
-    oauth2Client.getToken(code, async (err, tokens) => {
+    oauth.getToken(code, async (err, tokens) => {
       if (err) {
         console.error(err)
         res.status(400).json({ msg: 'OAuth Error' })
@@ -34,7 +47,9 @@ router.post(
       }
 
       const decoded = jwt.decode(tokens.id_token)
-      const { name, email, sub } = decoded
+      const { name, email: _email, sub } = decoded
+
+      const email = _email?.toLowerCase()
       let user = await User.findOne({ googleId: sub })
       if (!user) {
         user = await User.create({
@@ -61,8 +76,10 @@ router.post(
       return res.status(400).json({ errors: errors.array() })
     }
 
-    const { email } = req.body
+    const { email: _email } = req.body
     let emailExists = false
+
+    const email = _email?.toLowerCase()
 
     let user = await User.findOne({ email })
     if (!user) {
@@ -100,6 +117,39 @@ router.post(
     send(msg)
     res.status(200).json({})
     return res.status(200)
+  })
+)
+
+// @route    GET api/auth/user
+// @desc     return user information
+// @access   Public
+router.post(
+  '/',
+  wrap(async (req, res) => {
+    const { authToken } = req.body.data
+
+    try {
+      const decoded = jwt.verify(authToken, process.env.JWT_SECRET)
+
+      if (decoded) {
+        const user = await User.findOne({ _id: decoded.user.id }).select(
+          'defaultAccount email'
+        )
+        if (user) {
+          const account = await Account.findOne({
+            _id: user.defaultAccount,
+          }).select('defaultPage')
+          if (account) {
+            return res
+              .json({ data: { ...user._doc, ...account._doc } })
+              .status(200)
+          }
+        }
+      }
+      return res.status(401).json({ msg: 'Token is not valid' })
+    } catch (err) {
+      return res.status(401).json({ msg: 'Token is not valid' })
+    }
   })
 )
 

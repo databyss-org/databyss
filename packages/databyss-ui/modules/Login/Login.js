@@ -47,7 +47,7 @@ const Login = ({ pending, signupFlow, navLinks }) => {
     }
 
     getSession({
-      email: values.email.textValue,
+      email: values.email.textValue.toLowerCase(),
       code: values.code.textValue,
       googleCode,
       retry: true,
@@ -137,6 +137,7 @@ const Login = ({ pending, signupFlow, navLinks }) => {
               <View hlineVariant="thinLight" />
             </View>
             <TextInputField
+              textInputProps={{ type: 'email' }}
               label="Email"
               errorMessage={
                 invalidEmail && 'Please enter a valid email address'
@@ -157,6 +158,7 @@ const Login = ({ pending, signupFlow, navLinks }) => {
                   path="code"
                   placeholder="Paste login code"
                   ref={codeInputRef}
+                  textInputProps={{ autoCapitalize: 'none' }}
                 />
               </React.Fragment>
             )}

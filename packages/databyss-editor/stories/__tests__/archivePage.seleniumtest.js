@@ -53,6 +53,12 @@ describe('archive page', () => {
   it('should archive a page and remove the page from the sidebar', async () => {
     // populate a page
     await sleep(500)
+    const pageTitle = await getElementByTag(
+      driver,
+      '[data-test-element="page-header"]'
+    )
+    await pageTitle.click()
+    await sleep(500)
     await sendKeys(actions, 'this is the first page title')
     await enterKey(actions)
     await sendKeys(actions, 'this is a test entry')

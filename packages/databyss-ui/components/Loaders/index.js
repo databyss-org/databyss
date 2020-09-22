@@ -4,12 +4,14 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 import { isResourceReady } from './_helpers'
 
 export const PageLoader = ({ children, pageId }) => {
   const { getPage, removePageFromCache } = usePageContext()
+
   return (
     <MakeLoader
       resources={getPage(pageId)}
@@ -25,9 +27,20 @@ export const withPage = Wrapped => ({ pageId, ...others }) => (
   </PageLoader>
 )
 
-export const PagesLoader = ({ children }) => {
+export const PagesLoader = ({ children, filtered, archived }) => {
   const { getPages } = usePageContext()
-  return <MakeLoader resources={getPages()} children={children} />
+
+  let _resources = getPages()
+
+  if (filtered && isResourceReady(_resources)) {
+    _resources = pickBy(_resources, page => !page.archive)
+  }
+
+  if (archived && isResourceReady(_resources)) {
+    _resources = pickBy(_resources, page => page.archive)
+  }
+
+  return <MakeLoader resources={_resources} children={children} />
 }
 
 export const withPages = Wrapped => ({ ...others }) => (
@@ -70,13 +83,21 @@ export const CatalogSearchLoader = ({ query, type, children }) => {
 
 export const AllTopicsLoader = ({ children, filtered, ...others }) => {
   const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
-
   let _resource = getTopicHeaders()
   if (filtered && isResourceReady(_resource)) {
     _resource = pickBy(_resource, topic => topic.isInPages?.length)
   }
 
   return <MakeLoader resources={_resource} children={children} {...others} />
+}
+
+AllTopicsLoader.defaultProps = {
+  filtered: true,
+}
+
+export const AccountLoader = ({ children }) => {
+  const { getUserAccount } = useSessionContext()
+  return <MakeLoader resources={getUserAccount()} children={children} />
 }
 
 export const TopicLoader = ({ topicId, children }) => {
@@ -95,6 +116,9 @@ export const AuthorsLoader = ({ children, filtered }) => {
   }
   return <MakeLoader resources={_results} children={children} />
 }
+AuthorsLoader.defaultProps = {
+  filtered: true,
+}
 
 export const SourceCitationsLoader = ({ children, filtered, ...others }) => {
   const getSourceCitations = useSourceContext(c => c.getSourceCitations)
@@ -103,6 +127,9 @@ export const SourceCitationsLoader = ({ children, filtered, ...others }) => {
     _resource = pickBy(_resource, citation => citation.isInPages?.length)
   }
   return <MakeLoader resources={_resource} children={children} {...others} />
+}
+SourceCitationsLoader.defaultProps = {
+  filtered: true,
 }
 
 export const SearchAllLoader = ({ children, filtered, ...others }) => {

@@ -1,0 +1,16 @@
+{
+  "name": "@databyss-org/notes-mobile",
+  "version": "1.1.76",
+  "private": true,
+  "dependencies": {
+    "bson-objectid": "^1.3.0",
+    "lodash": "^4.17.11",
+    "@reach/router": "^1.3.3"
+  },
+  "peerDependencies": {
+    "react": "16.9.0",
+    "react-dom": "16.9.0",
+    "@databyss-org/ui": "1.1.76",
+    "@databyss-org/services": "1.1.76"
+  }
+}

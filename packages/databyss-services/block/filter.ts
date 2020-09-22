@@ -6,8 +6,8 @@ import { Block } from '../interfaces'
  */
 export const prefixSearchAll = (query: string) => (block: Block) =>
   query
-    // only allow alphanumeric
-    .replace(/[^a-z0-9]/gi, '')
+    // only allow alphanumeric and space
+    .replace(/[^a-z0-9 ]/gi, '')
     .split(' ')
     .reduce(
       (qacc: Boolean, qcurr: string) =>

@@ -1,5 +1,6 @@
 /* eslint-disable react/no-danger */
 import React, { useEffect, useRef, useState } from 'react'
+import { Helmet } from 'react-helmet'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { View, Text, Icon } from '@databyss-org/ui/primitives'
@@ -8,6 +9,7 @@ import OnlineSvg from '@databyss-org/ui/assets/online.svg'
 import OfflineSvg from '@databyss-org/ui/assets/offline.svg'
 import LoadingSvg from '@databyss-org/ui/assets/loading.svg'
 import PageMenu from './PageMenu'
+import AccountMenu from './AccountMenu'
 
 const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
@@ -51,6 +53,10 @@ const PageSticky = ({ pagePath, pageId }) => {
       top={0}
       zIndex="sticky"
     >
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>{currentPath[0]}</title>
+      </Helmet>
       <Text color="gray.4" variant="uiTextSmall">
         <div
           data-test-element="editor-sticky-header"
@@ -71,6 +77,7 @@ const PageSticky = ({ pagePath, pageId }) => {
         >
           {isOnline ? <OnlineSvg /> : <OfflineSvg />}
         </Icon>
+        <AccountMenu />
         <View ml="em">
           <PagesLoader>{pages => <PageMenu pages={pages} />}</PagesLoader>
         </View>

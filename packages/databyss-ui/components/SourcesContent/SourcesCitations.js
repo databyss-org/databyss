@@ -5,6 +5,7 @@ import {
   SourceCitationsLoader,
   PagesLoader,
 } from '@databyss-org/ui/components/Loaders'
+import { Helmet } from 'react-helmet'
 import IndexPageContent from '../PageContent/IndexPageContent'
 import IndexSourceContent from './IndexSourceContent'
 
@@ -17,7 +18,11 @@ const SourcesCitations = () => {
         const _header = sourceCitations[query].text.textValue
         return (
           <IndexPageContent title={_header}>
-            <PagesLoader>
+            <Helmet>
+              <meta charSet="utf-8" />
+              <title>{_header}</title>
+            </Helmet>
+            <PagesLoader filtered>
               {() => (
                 <BlockRelationsLoader atomicId={query}>
                   {relations => <IndexSourceContent relations={relations} />}

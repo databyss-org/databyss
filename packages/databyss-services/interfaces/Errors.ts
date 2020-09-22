@@ -5,6 +5,16 @@ export class NetworkUnavailableError extends Error {
   }
 }
 
+export class UnexpectedServerError extends Error {
+  info: any
+
+  constructor(message = 'Unexpected Server Error', response: any) {
+    super()
+    this.message = message
+    this.info = response
+  }
+}
+
 export class NotAuthorizedError extends Error {
   constructor(message = 'Not Authorized') {
     super()
@@ -21,6 +31,13 @@ export class ResourceNotFoundError extends Error {
 
 export class InsufficientPermissionError extends Error {
   constructor(message = 'Not Authorized') {
+    super()
+    this.message = message
+  }
+}
+
+export class VersionConflictError extends Error {
+  constructor(message = 'Version Conflict') {
     super()
     this.message = message
   }

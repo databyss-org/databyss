@@ -10,6 +10,7 @@ const Grid = ({
   singleRow,
   singleColumn,
   overflow,
+  justifyContent,
   ...others
 }) => {
   const childrenWithLayout = React.Children.map(
@@ -31,6 +32,7 @@ const Grid = ({
   return (
     <View overflow={overflow} {...others}>
       <View
+        justifyContent={justifyContent}
         mr={singleColumn ? 0 : columnGapCorrection}
         mb={singleRow ? 0 : rowGapCorrection}
         flexDirection="row"

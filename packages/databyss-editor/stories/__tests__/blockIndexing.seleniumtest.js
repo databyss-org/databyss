@@ -68,6 +68,12 @@ describe('block indexing', () => {
   it('should test block indexing', async () => {
     // populate a page
     await sleep(500)
+    const pageTitle = await getElementByTag(
+      driver,
+      '[data-test-element="page-header"]'
+    )
+    await pageTitle.click()
+    await sleep(500)
     await sendKeys(actions, 'this is the first page title')
     await enterKey(actions)
 

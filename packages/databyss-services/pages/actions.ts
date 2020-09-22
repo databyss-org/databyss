@@ -9,7 +9,6 @@ import {
   FETCH_PAGE_HEADERS,
   DELETE_PAGE,
   ARCHIVE_PAGE,
-  SET_DEFAULT_PAGE,
   QUEUE_PATCH,
   REMOVE_PAGE_FROM_CACHE,
   SET_PAGE_PUBLIC,
@@ -34,6 +33,7 @@ export function fetchPage(_id: string) {
         type: CACHE_PAGE,
         payload: { page: e, id: _id },
       })
+      throw e
     }
   }
 }
@@ -54,6 +54,7 @@ export function fetchPageHeaders() {
         type: CACHE_PAGE_HEADERS,
         payload: e,
       })
+      throw e
     }
   }
 }
@@ -141,6 +142,8 @@ export function savePatchBatch(batch?: PatchBatch) {
           queueSize: queue.length,
         },
       })
+
+      throw err
     }
   }
 }
@@ -192,34 +195,21 @@ export function deletePage(id: string) {
   }
 }
 
-export function onArchivePage(id: string, page: Page, callback: Function) {
+export function onArchivePage(id: string, page: Page, bool: boolean, callback: Function) {
   return async (dispatch: Function) => {
     dispatch({
       type: ARCHIVE_PAGE,
       payload: { id  },
     })
-    const _page = {...page, archive: true}
-    try {
-      await services.savePage(_page)
-      if (callback) {
-        callback()
-      }
-      dispatch({
-        type: CACHE_PAGE,
-        payload: { id, page: _page },
-      })
-    } catch(err) {
-      throw new NetworkUnavailableError(err)
+    const _page = {...page, archive: bool}
+    await services.savePage({_id: page._id, name: page.name, archive: bool})
+    if (callback) {
+      callback()
     }
-  }
-}
-
-export function onSetDefaultPage(id: string) {
-  services.setDefaultPage(id)
-
-  return {
-    type: SET_DEFAULT_PAGE,
-    payload: { id }
+    dispatch({
+      type: CACHE_PAGE,
+      payload: { id, page: _page },
+    })
   }
 }
 

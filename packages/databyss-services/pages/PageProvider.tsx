@@ -26,6 +26,7 @@ interface PageHookDict {
 interface ContextType {
   setPagePublic: (id: string, bool: boolean, accountId: string) => void
   setPage: (page: Page) => void
+  deletePage: (id: string) => void
   setPageHeader: (page: Page) => void
   getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
@@ -129,21 +130,17 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     refDictRef.current = {}
   }, [])
 
-  const removePage = (id: string) => {
+  const deletePage = (id: string) => {
     dispatch(actions.deletePage(id))
   }
 
   const archivePage = useCallback(
-    (id: string): Promise<void> =>
+    (id: string, boolean: boolean): Promise<void> =>
       new Promise(res => {
-        dispatch(actions.onArchivePage(id, state.cache[id], res))
+        dispatch(actions.onArchivePage(id, state.cache[id], boolean, res))
       }),
     [state.cache]
   )
-
-  const setDefaultPage = useCallback((id: string) => {
-    dispatch(actions.onSetDefaultPage(id))
-  }, [])
 
   const setPatches = useCallback((patches: PatchBatch) => {
     dispatch(actions.savePatchBatch(patches))
@@ -174,9 +171,8 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         registerBlockRefByIndex,
         getBlockRefByIndex,
         clearBlockDict,
-        removePage,
+        deletePage,
         archivePage,
-        setDefaultPage,
         onPageCached,
         setPagePublic,
         hasPendingPatches,

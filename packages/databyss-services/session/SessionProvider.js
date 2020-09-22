@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect } from 'react'
+import React, { createContext, useContext, useEffect, useCallback } from 'react'
 import Login from '@databyss-org/ui/modules/Login/Login'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -34,6 +34,14 @@ const SessionProvider = ({
       return true
     }
     return false
+  }
+
+  const getUserAccount = () => {
+    if (state.userInfo) {
+      return state.userInfo
+    }
+    dispatch(actions.getUserAccount())
+    return null
   }
 
   const getCurrentAccount = () => {
@@ -81,14 +89,25 @@ const SessionProvider = ({
     _children = <Loading />
   }
 
+  const logout = () => {
+    dispatch(actions.logout())
+  }
+
+  const setDefaultPage = useCallback(id => {
+    dispatch(actions.onSetDefaultPage(id))
+  }, [])
+
   return (
     <SessionContext.Provider
       value={{
         ...state,
+        setDefaultPage,
         getSession,
         endSession,
         isPublicAccount,
         getCurrentAccount,
+        getUserAccount,
+        logout,
       }}
     >
       {_children}

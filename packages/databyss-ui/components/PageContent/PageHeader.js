@@ -5,6 +5,7 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { View, TextInput } from '@databyss-org/ui/primitives'
 import { theme } from '@databyss-org/ui/theming'
 import styledCss from '@styled-system/css'
+import { isMobile } from '../../lib/mediaQuery'
 
 const noPageTitle = 'untitled'
 
@@ -52,9 +53,13 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
   }
 
   return (
-    <View p="medium" flexGrow={1} ml="extraSmall">
+    <View
+      p={isMobile() ? 'none' : 'medium'}
+      flexGrow={1}
+      mb={isMobile() ? 'small' : 'none'}
+    >
       <TextInput
-        readonly={isPublicAccount()}
+        readonly={isPublicAccount() || isMobile() || getPage(pageId)?.archive}
         ref={ref}
         data-test-element="page-header"
         onKeyDown={e => {

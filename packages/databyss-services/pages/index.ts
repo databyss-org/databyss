@@ -18,7 +18,5 @@ export const getAllPages = (): Promise<PageHeader[]> => httpGet(`/pages/`)
 
 export const deletePage = (id: string) => httpDelete(`/pages/${id}`)
 
-export const setDefaultPage = (id: string) => httpPost(`/accounts/page/${id}`)
-
 export const setPagePublic = (id: string, bool: boolean, accountId: string) =>
   httpPost(`/pages/${id}/public/`, { data: { isPublic: bool, accountId } })

@@ -8,6 +8,9 @@ then
 elif [ $NPM_DEPLOY_TARGET == PDF_API ]
 then
   NPM_BUILD_TARGET=PDF_API node build/pdf-api/app.js
+elif [ $NPM_DEPLOY_TARGET == NOTES_MOBILE ]
+then
+  NPM_BUILD_TARGET=NOTES_MOBILE node build/notes-mobile/app.js
 else
   echo 'ERROR: NO VALID TARGETS FOUND'
   exit 1

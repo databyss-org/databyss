@@ -49,7 +49,7 @@ describe('format text in editor', () => {
     await singleHighlight(actions)
     await singleHighlight(actions)
     await actions.perform()
-    await sleep(3000)
+    await sleep(1000)
     await driver
       .findElement(By.tagName('[data-test-format-menu="italic"]'))
       .click()
@@ -88,7 +88,7 @@ describe('format text in editor', () => {
     await singleHighlight(actions)
     await singleHighlight(actions)
     await actions.perform()
-    await sleep(300)
+    await sleep(1000)
     await driver
       .findElement(By.tagName('[data-test-format-menu="location"]'))
       .click()

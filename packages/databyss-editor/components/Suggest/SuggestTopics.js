@@ -9,7 +9,7 @@ const SuggestTopics = ({ query, dismiss, onSuggestionsChanged }) => {
   const { replace, state } = useEditorContext()
   const addPageToCacheHeader = useTopicContext(c => c && c.addPageToCacheHeader)
 
-  const [suggestions, setSuggestions] = useState([])
+  const [suggestions, setSuggestions] = useState(null)
   const [filteredSuggestions, setFilteredSuggestions] = useState([])
 
   const onTopicSelected = topic => {
@@ -39,8 +39,10 @@ const SuggestTopics = ({ query, dismiss, onSuggestionsChanged }) => {
   }
 
   const onTopicsLoaded = topicsDict => {
-    const _topics = Object.values(topicsDict)
-    setSuggestions(_topics)
+    if (!suggestions) {
+      const _topics = Object.values(topicsDict)
+      setSuggestions(_topics)
+    }
   }
 
   useEffect(updateSuggestions, [query, suggestions])

@@ -1,6 +1,7 @@
 import request from '../lib/request'
+import { httpPost } from '../lib/requestApi'
 import { NotAuthorizedError } from '../interfaces'
-
+import { version as databyssVersion } from '../package.json'
 import {
   FETCH_SESSION,
   CACHE_SESSION,
@@ -8,6 +9,10 @@ import {
   REQUEST_CODE,
   END_SESSION,
   CACHE_PUBLIC_SESSION,
+  GET_USER_ACCOUNT,
+  CACHE_USER_ACCOUNT,
+  LOGOUT,
+  SET_DEFAULT_PAGE,
 } from './constants'
 
 import {
@@ -38,6 +43,7 @@ export const fetchSession = ({
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'x-databyss-version': databyssVersion,
     },
   }
 
@@ -66,6 +72,9 @@ export const fetchSession = ({
       // google oAuth token
       path += '/users/google'
       options.body = JSON.stringify({ code: googleCode })
+      if (process.env.FORCE_MOBILE) {
+        options.headers['x-databyss-mobile'] = true
+      }
     } else if (code && email) {
       // code from email
       path += '/auth/code'
@@ -127,4 +136,31 @@ export const endSession = () => {
   return {
     type: END_SESSION,
   }
+}
+
+export const getUserAccount = () => async dispatch => {
+  dispatch({ type: GET_USER_ACCOUNT })
+  const authToken = getAuthToken()
+  if (authToken) {
+    const data = { authToken }
+    const _res = await httpPost('/users', { data })
+    dispatch({ type: CACHE_USER_ACCOUNT, payload: _res })
+  } else {
+    dispatch({ type: CACHE_USER_ACCOUNT, payload: null })
+  }
+}
+
+export const logout = () => dispatch => {
+  deleteAuthToken()
+  deleteAccountId()
+  dispatch({ type: LOGOUT })
+}
+
+export const onSetDefaultPage = id => async dispatch => {
+  httpPost(`/accounts/page/${id}`).then(() => {
+    dispatch({
+      type: SET_DEFAULT_PAGE,
+      payload: { id },
+    })
+  })
 }

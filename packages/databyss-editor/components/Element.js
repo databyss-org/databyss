@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
+import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from '@databyss-org/slate-react'
@@ -30,7 +31,7 @@ export const isAtomicClosure = type =>
     END_SOURCE: true,
   }[type])
 
-const Element = ({ attributes, children, element }) => {
+const Element = ({ attributes, children, element, readOnly }) => {
   const sessionContext = useSessionContext()
 
   const entryContext = useEntryContext()
@@ -103,7 +104,7 @@ const Element = ({ attributes, children, element }) => {
       const selHasRange = !Range.isCollapsed(editor.selection)
 
       const vpad =
-        block.type === 'ENTRY' || block.type === previousBlock?.type ? 2 : 3
+        block.type === 'ENTRY' || block.type === previousBlock?.type ? 1 : 3
 
       return (
         <View
@@ -113,7 +114,7 @@ const Element = ({ attributes, children, element }) => {
               registerBlockRefByIndex(_index, ref)
             }
           }}
-          ml={element.isBlock ? blockMenuWidth : 0}
+          ml={element.isBlock && !(readOnly && isMobile()) ? 'medium' : 0}
           mr="large"
           pt={vpad}
           pb="em"
@@ -133,6 +134,7 @@ const Element = ({ attributes, children, element }) => {
           }}
         >
           {block.__showNewBlockMenu &&
+            !readOnly &&
             !sessionContext?.isPublicAccount() && (
               <View
                 position="absolute"

@@ -11,11 +11,13 @@ import authRoute from './routes/api/auth'
 import pagesRoute from './routes/api/pages'
 import accountsRoute from './routes/api/accounts'
 import pingRoute from './routes/api/ping'
+import versionRoute from './routes/api/version'
 import echoRoute from './routes/api/echo'
 import errorRoute from './routes/api/error'
 import entriesRoute from './routes/api/entries'
 import sourcesRoute from './routes/api/sources'
 import topicsRoute from './routes/api/topics'
+import { versionChecker } from './middleware/versionCheckMiddleware'
 
 let app = null
 
@@ -30,15 +32,15 @@ const run = async () => {
   await connectDB()
 
   // Init Bugsnag
-  // if (process.env.NODE_ENV !== 'test') {
   Bugsnag.init()
-  // }
 
   // Init Middleware
   app.use(cors())
 
   // set the max limit to 50mb
   app.use(express.json({ extended: false, limit: '50mb' }))
+
+  app.use(versionChecker)
 
   app.get('/', (_req, res) => {
     res.redirect('https://app.databyss.org')
@@ -50,6 +52,7 @@ const run = async () => {
   app.use('/api/pages', pagesRoute)
   app.use('/api/accounts', accountsRoute)
   app.use('/api/ping', pingRoute)
+  app.use('/api/version', versionRoute)
   app.use('/api/echo', echoRoute)
   app.use('/api/error', errorRoute)
   app.use('/api/entries', entriesRoute)
