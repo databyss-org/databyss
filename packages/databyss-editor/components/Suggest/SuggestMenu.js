@@ -109,6 +109,9 @@ const SuggestMenu = ({ children, placeholder }) => {
     setHasSuggestions(suggestions?.length)
   }
 
+  console.log('menu active', menuActive)
+  console.log('query', query)
+  console.log('has suggestions', hasSuggestions)
   return (
     <ClickAwayListener onClickAway={onClickAway}>
       <DropdownContainer
@@ -117,7 +120,7 @@ const SuggestMenu = ({ children, placeholder }) => {
           left: position.left,
           bottom: position.bottom,
         }}
-        open={menuActive && (!query || hasSuggestions)}
+        open={menuActive && (query || hasSuggestions)}
         widthVariant="dropdownMenuLarge"
         minHeight="32px"
         p="small"
