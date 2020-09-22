@@ -202,17 +202,9 @@ export function onArchivePage(id: string, page: Page, bool: boolean, callback: F
       payload: { id  },
     })
     const _page = {...page, archive: bool}
-    try {
-      await services.savePage(_page)
-      if (callback) {
-        callback()
-      }
-      dispatch({
-        type: CACHE_PAGE,
-        payload: { id, page: _page },
-      })
-    } catch(err) {
-      throw new NetworkUnavailableError(err)
+    await services.savePage({_id: page._id, name: page.name, archive: bool})
+    if (callback) {
+      callback()
     }
     dispatch({
       type: CACHE_PAGE,
