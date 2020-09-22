@@ -50,7 +50,7 @@ const ContentEditable = ({
     c => c && c.removePageFromCacheHeader
   )
 
-  const hasPendingPatches = usePageContext(c => c.hasPendingPatches)
+  const hasPendingPatches = usePageContext(c => c && c.hasPendingPatches)
 
   const topicContext = useTopicContext()
   const historyContext = useHistoryContext()
