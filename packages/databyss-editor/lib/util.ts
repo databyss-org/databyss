@@ -201,6 +201,7 @@ export const indexPage = ({
 export const slateBlockToHtmlWithSearch = (block: Block, query: string): string => {
   const _block = cloneDeep(block)
 
+
   if(query){
   // add query markup to results
   const _searchTerm = query.split(' ')
@@ -221,26 +222,30 @@ export const slateBlockToHtmlWithSearch = (block: Block, query: string): string 
         )
 
 
-      let offset = 0
+if(parts.length> 1){
 
-      parts.forEach((part, i) => {
-        const length = word.length
+    let offset = 0
 
-        if (i !== 0) {
-          ranges.push({
-            offset: offset - word.length,
-            length,
-            marks: ['highlight'],
-          })
-        }
+    parts.forEach((part, i) => {
+      const length = word.length
 
-        offset = offset + part.length + word.length
-      })
+      if (i !== 0) {
+        ranges.push({
+          offset: offset - word.length,
+          length,
+          marks: ['highlight'],
+        })
+      }
+
+      offset = offset + part.length + word.length
+    })
+  
+    }
     })
 
 
 
-    _block.text.ranges = [..._block.text.ranges, ...ranges]
+    _block.text.ranges = [...ranges, ..._block.text.ranges]
   }
    const _frag = stateBlocktoHtmlResults(_block)
 
