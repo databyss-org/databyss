@@ -26,7 +26,8 @@ const Search = () => {
   // wait until user stopped typing for 200ms before setting the value
   const debounced = useCallback(
     debounce(val => {
-      setQuery(val)
+      // only allow alphanumeric, hyphen and space
+      setQuery({ textValue: val.textValue.replace(/[^a-zA-Z0-9À-ž- ]/gi, '') })
     }, 200),
     [setQuery]
   )
