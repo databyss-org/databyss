@@ -170,11 +170,18 @@ const View = forwardRef(({ children, onLayout, ...others }, ref) => {
     console.warn('onLayout removed until optimized')
   }
 
+  // fixes white space in scroll bar when using external mouse
+  let _css = {}
+  if (others?.overflow === 'scroll') {
+    _css = { css: { '::-webkit-scrollbar': { display: 'none' } } }
+  }
+
   const view = (
     <Styled
       ref={forkRef(viewRef, ref)}
       {...defaultProps}
       {...(IS_NATIVE ? nativeProps : webProps)}
+      {..._css}
       {...others}
     >
       {children}
