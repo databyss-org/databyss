@@ -8,15 +8,17 @@ import {
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 
 export const getPagesData = pages =>
-  Object.values(pages).map(p =>
-    createSidebarListItems({
-      text: p.name,
-      type: 'pages',
-      route: '/pages',
-      id: p._id,
-      params: p._id,
-    })
-  )
+  Object.values(pages)
+    .filter(p => !p.archive)
+    .map(p =>
+      createSidebarListItems({
+        text: p.name,
+        type: 'pages',
+        route: '/pages',
+        id: p._id,
+        params: p._id,
+      })
+    )
 
 const Pages = ({ filterQuery, height }) => (
   <>

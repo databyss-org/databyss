@@ -12,6 +12,7 @@ import {
   GET_USER_ACCOUNT,
   CACHE_USER_ACCOUNT,
   LOGOUT,
+  SET_DEFAULT_PAGE,
 } from './constants'
 
 import {
@@ -153,4 +154,13 @@ export const logout = () => dispatch => {
   deleteAuthToken()
   deleteAccountId()
   dispatch({ type: LOGOUT })
+}
+
+export const onSetDefaultPage = id => async dispatch => {
+  httpPost(`/accounts/page/${id}`).then(() => {
+    dispatch({
+      type: SET_DEFAULT_PAGE,
+      payload: { id },
+    })
+  })
 }

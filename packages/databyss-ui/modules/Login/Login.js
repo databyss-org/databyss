@@ -47,7 +47,7 @@ const Login = ({ pending, signupFlow, navLinks }) => {
     }
 
     getSession({
-      email: values.email.textValue,
+      email: values.email.textValue.toLowerCase(),
       code: values.code.textValue,
       googleCode,
       retry: true,

@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
 import { Text, Button, Icon, View } from '@databyss-org/ui/primitives'
+import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from '@databyss-org/slate-react'
@@ -113,7 +114,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
               registerBlockRefByIndex(_index, ref)
             }
           }}
-          ml={element.isBlock && !readOnly ? 'medium' : 0}
+          ml={element.isBlock && !(readOnly && isMobile()) ? 'medium' : 0}
           mr="large"
           pt={vpad}
           pb="em"

@@ -142,10 +142,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     [state.cache]
   )
 
-  const setDefaultPage = useCallback((id: string) => {
-    dispatch(actions.onSetDefaultPage(id))
-  }, [])
-
   const setPatches = useCallback((patches: PatchBatch) => {
     dispatch(actions.savePatchBatch(patches))
   }, [])
@@ -177,7 +173,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         clearBlockDict,
         deletePage,
         archivePage,
-        setDefaultPage,
         onPageCached,
         setPagePublic,
         hasPendingPatches,
