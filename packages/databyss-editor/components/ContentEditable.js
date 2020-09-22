@@ -1,6 +1,7 @@
 import React, { useMemo, useRef, useEffect, useImperativeHandle } from 'react'
 import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -48,6 +49,8 @@ const ContentEditable = ({
   const removePageFromTopicCacheHeader = useTopicContext(
     c => c && c.removePageFromCacheHeader
   )
+
+  const hasPendingPatches = usePageContext(c => c.hasPendingPatches)
 
   const topicContext = useTopicContext()
   const historyContext = useHistoryContext()
@@ -101,7 +104,12 @@ const ContentEditable = ({
   // if new atomic block has been added, save atomic
   useEffect(
     () => {
-      if (state.newEntities.length && setSource && topicContext) {
+      if (
+        state.newEntities.length &&
+        setSource &&
+        topicContext &&
+        !hasPendingPatches
+      ) {
         const { setTopic } = topicContext
 
         state.newEntities.forEach(entity => {
