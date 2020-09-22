@@ -7,6 +7,7 @@ const BlockSchema = new Schema(
   {
     type: {
       type: String,
+      default: 'ENTRY',
     },
     text: {
       type: Text.schema,
