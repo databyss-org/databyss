@@ -120,7 +120,7 @@ router.post(
         }
         Object.assign(_block, { ..._blockFields, account: req.account._id })
         await _block.save()
-        pageFields.blocks.push({ _id: _blockFields._id })
+        pageFields.blocks.push(_blockFields)
       }
     }
 
