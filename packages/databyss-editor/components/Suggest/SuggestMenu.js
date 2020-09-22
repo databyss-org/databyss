@@ -106,7 +106,6 @@ const SuggestMenu = ({ children, placeholder, suggestType }) => {
   }
 
   const onSuggestionsChanged = suggestions => {
-    console.log(suggestions)
     setHasSuggestions(suggestions?.length)
   }
 
