@@ -152,12 +152,6 @@ export const copyPage = async ({ pageId, toAccountId }) => {
   const _blockRelations = await BlockRelation.find({
     page: _page._id,
   })
-  // Reset Page, Block and BlockRelation _ids and account
-  const _pageObj = _page.toObject()
-  _pageObj._id = new ObjectID().toHexString()
-  _pageObj.account = toAccountId
-  delete _pageObj.selection
-
   // map of original block _ids to copied block _ids
   const _blockIdMap = {}
 
@@ -186,6 +180,12 @@ export const copyPage = async ({ pageId, toAccountId }) => {
     _blockIdMap[_block._id] = _blockObj._id
     _pageBlock._id = _blockObj._id
   }
+
+  // Reset Page, Block and BlockRelation _ids and account
+  const _pageObj = _page.toObject()
+  _pageObj._id = new ObjectID().toHexString()
+  _pageObj.account = toAccountId
+  delete _pageObj.selection
 
   await new Page(_pageObj).save()
 
