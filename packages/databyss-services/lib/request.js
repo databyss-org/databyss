@@ -4,6 +4,7 @@ import {
   NotAuthorizedError,
   NetworkUnavailableError,
   InsufficientPermissionError,
+  VersionConflictError,
 } from '../interfaces'
 
 const FETCH_TIMEOUT = process.env.FETCH_TIMEOUT
@@ -20,6 +21,9 @@ function checkStatus(response) {
   }
   if (response.status === 404) {
     throw new ResourceNotFoundError()
+  }
+  if (response.status === 409) {
+    throw new VersionConflictError()
   }
   const errorMessage = response.statusText
   const error = new Error(errorMessage)

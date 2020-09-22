@@ -25,3 +25,10 @@ export class InsufficientPermissionError extends Error {
     this.message = message
   }
 }
+
+export class VersionConflictError extends Error {
+  constructor(message = 'Version Conflict') {
+    super()
+    this.message = message
+  }
+}

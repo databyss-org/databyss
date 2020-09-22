@@ -6,6 +6,7 @@ export {
   NotAuthorizedError,
   InsufficientPermissionError,
   ResourceNotFoundError,
+  VersionConflictError
 } from './Errors'
 export type { Page, PageHeader } from './Page'
 export type { Point } from './Point'

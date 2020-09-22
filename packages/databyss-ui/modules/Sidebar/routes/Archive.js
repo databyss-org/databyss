@@ -22,7 +22,6 @@ const Archive = ({ filterQuery, height }) => (
   <>
     <PagesLoader archived>
       {pages => {
-        console.log(pages)
         const _menuItems = getPagesData(pages)
         const sortedPages = sortEntriesAtoZ(_menuItems, 'text')
         const filteredEntries = filterEntries(sortedPages, filterQuery)
