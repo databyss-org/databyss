@@ -7,7 +7,6 @@ import ValueListProvider, {
 
 import { pxUnits } from '../../theming/views'
 import LabeledDropDownControl from '../../primitives/Control/LabeledDropDownControl'
-import styled from '../../primitives/styled'
 
 // consts
 const labelProps = { width: '25%' }
@@ -17,14 +16,17 @@ const publicationTypeOptions = [
   { id: 'journalArticle', label: 'Journal Article' },
 ]
 
-// styled components
-const legendStyles = () => ({
-  marginTop: pxUnits(20),
-})
-
-const Legend = styled(Text, legendStyles)
-
 // components
+const FormHeading = props => (
+  <Text
+    variant="uiTextHeading"
+    marginTop={pxUnits(20)}
+    {...props}
+  >
+    {props.children}
+  </Text>
+)
+
 const LabeledTextInput = props => (
   <ValueListItem path={props.path}>
     <TextControl
@@ -33,11 +35,19 @@ const LabeledTextInput = props => (
       id={props.id}
       gridFlexWrap="nowrap"
       paddingVariant="tiny"
-      // FIXME: poor should not lack contrast
       onBlur={props.onBlur}
       {...props}
     />
   </ValueListItem>
+)
+
+const Instructions = props => (
+  <Text
+    variant="bodySmall"
+    {...props}
+  >
+    {props.children}
+  </Text>
 )
 
 const EditSourceForm = props => {
@@ -52,16 +62,28 @@ const EditSourceForm = props => {
   // render methods
   const render = () => (
     <View
-      paddingLeft="none"
-      paddingRight="none"
+      paddingLeft="medium"
+      paddingRight="medium"
       paddingTop="none"
       paddingBottom="medium"
       backgroundColor="background.0"
       width="100%"
     >
       <ValueListProvider onChange={onChange} values={values}>
+        {/* NAME */}
+        <FormHeading>Name</FormHeading>
+        <Instructions>This is how this entry will show up in Databyss</Instructions>
+        <LabeledTextInput
+          path="detail.name"
+          id="name"
+          label="Name"
+          rich
+          onBlur={onTextInputBlur}
+        />
+        {/* NAME END */}
+
         {/* CITATION */}
-        <Legend variant="uiTextNormalSemibold">Citation</Legend>
+        <FormHeading>Citation</FormHeading>
         <LabeledTextInput
           path="text"
           id="citation"
@@ -74,7 +96,7 @@ const EditSourceForm = props => {
         {/* CITATION END */}
 
         {/* TITLE */}
-        <Legend variant="uiTextNormalSemibold">Title</Legend>
+        <FormHeading>Title</FormHeading>
         <LabeledTextInput
           path="detail.title"
           id="title"
@@ -84,7 +106,7 @@ const EditSourceForm = props => {
         {/* TITLE END */}
 
         {/* AUTHORS */}
-        <Legend variant="uiTextNormalSemibold">Author(s)</Legend>
+        <FormHeading>Author(s)</FormHeading>
         <LabeledTextInput
           path="detail.authors[0].lastName"
           id="lastName"
@@ -100,7 +122,7 @@ const EditSourceForm = props => {
         {/* AUTHORS END */}
 
         {/* PUBLICATION DETAILS */}
-        <Legend variant="uiTextNormalSemibold">Publication</Legend>
+        <FormHeading>Publication</FormHeading>
         <LabeledTextInput
           path="detail.yearPublished"
           id="yearPublished"
@@ -124,7 +146,7 @@ const EditSourceForm = props => {
         {/* PUBLICATION DETAILS END */}
 
         {/* PUBLISHER */}
-        <Legend variant="uiTextNormalSemibold">Publisher</Legend>
+        <FormHeading>Publisher</FormHeading>
         <LabeledTextInput
           path="detail.publisherName"
           id="publisherName"
@@ -151,7 +173,7 @@ const EditSourceForm = props => {
         />
         {/* PUBLISHER END */}
 
-        <Legend variant="uiTextNormalSemibold">Catalog Identifiers</Legend>
+        <FormHeading>Catalog Identifiers</FormHeading>
         <LabeledTextInput
           path="detail.isbn"
           id="isbn"
