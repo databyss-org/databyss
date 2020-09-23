@@ -104,7 +104,7 @@ const AccountMenu = () => {
                     justifyContent="center"
                     key="account-name"
                   >
-                    <Text color="text.2" variant="uiTextSmall">
+                    <Text color="text.3" variant="uiTextSmall">
                       {userInfo.email}
                     </Text>
                   </View>
