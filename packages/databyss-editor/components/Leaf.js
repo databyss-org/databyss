@@ -7,7 +7,7 @@ const _emailRegEx = new RegExp(
   'gi'
 )
 
-const Leaf = ({ attributes, children, leaf }) => {
+const Leaf = ({ attributes, children, leaf, readOnly }) => {
   const { blue, gray, orange } = colors
 
   let _children = children
@@ -43,12 +43,18 @@ const Leaf = ({ attributes, children, leaf }) => {
 
     _children = (
       <a
-        onClick={() => window.open(_formattedUrl, '_blank')}
+        target="_blank"
+        rel="noreferrer"
         href={leaf.url}
         style={{
           color: blue[2],
           cursor: 'pointer',
         }}
+        {...(!readOnly
+          ? {
+              onClick: () => window.open(_formattedUrl, '_blank'),
+            }
+          : {})}
       >
         {_children}
       </a>
