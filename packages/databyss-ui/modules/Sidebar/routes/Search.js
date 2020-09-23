@@ -89,7 +89,7 @@ const Search = () => {
       />
       {searchTerm &&
         menuItem === 'search' && (
-          <View height={sidebarListHeight} overflow="scroll">
+          <View height={sidebarListHeight} overflowY="auto">
             <SidebarListItem
               onPress={onSearchClick}
               isActive={encodedSearchTerm === params}

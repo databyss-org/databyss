@@ -114,6 +114,19 @@ export const defaultProps = {
 export const webProps = {
   css: {
     boxSizing: 'border-box',
+    // webkit scrollbars
+    '::-webkit-scrollbar': {
+      width: '0.7em',
+      background: 'transparent',
+    },
+    '::-webkit-scrollbar-track': {
+      background: 'transparent',
+    },
+    '::-webkit-scrollbar-thumb': {
+      background: '#00000033',
+    },
+    // firefox scrollbars
+    'scrollbar-color': '#00000033 transparent !important',
   },
 }
 
@@ -171,17 +184,11 @@ const View = forwardRef(({ children, onLayout, ...others }, ref) => {
   }
 
   // fixes white space in scroll bar when using external mouse
-  let _css = {}
-  if (others?.overflow === 'scroll') {
-    _css = { css: { '::-webkit-scrollbar': { display: 'none' } } }
-  }
-
   const view = (
     <Styled
       ref={forkRef(viewRef, ref)}
       {...defaultProps}
       {...(IS_NATIVE ? nativeProps : webProps)}
-      {..._css}
       {...others}
     >
       {children}

@@ -25,7 +25,6 @@ const DropdownContainer = forwardRef(
       maxWidth,
       open,
       verticalItemPadding,
-      horizontalItemPadding,
       ...others
     },
     ref
@@ -49,12 +48,7 @@ const DropdownContainer = forwardRef(
       )}
       {...others}
     >
-      <List
-        horizontalItemPadding={horizontalItemPadding}
-        verticalItemPadding={verticalItemPadding}
-      >
-        {children}
-      </List>
+      <List verticalItemPadding={verticalItemPadding}>{children}</List>
     </View>
   )
 )
