@@ -3,6 +3,7 @@ import { Slate, Editable } from '@databyss-org/slate-react'
 import { Text, Node, Range } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import linksFinder from 'links-finder'
+import matchAll from 'string.prototype.matchall'
 import { useEditorContext } from '../state/EditorProvider'
 import Leaf from './Leaf'
 import Element from './Element'
@@ -36,7 +37,10 @@ const Editor = ({
     []
   )
 
-  const renderLeaf = useCallback(props => <Leaf {...props} />, [searchTerm])
+  const renderLeaf = useCallback(
+    props => <Leaf {...props} readOnly={readOnly} />,
+    [searchTerm]
+  )
 
   const { onKeyDown, ...slateProps } = others
   const decorate = useCallback(
@@ -51,7 +55,7 @@ const Editor = ({
           /\b([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)\b/,
           'gi'
         )
-        const emailMatches = [..._string.matchAll(_emailRegEx)]
+        const emailMatches = [...matchAll(_string, _emailRegEx)]
 
         if (emailMatches.length) {
           emailMatches.forEach(e => {
