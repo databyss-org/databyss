@@ -42,5 +42,5 @@ export function textToHtml(text: Text): string {
     })
     _html = `${_before}${_openTags}${_segment}${_closeTags}${_after}`
   })
-  return _html
+  return _html.replace('\n', '<br />')
 }
