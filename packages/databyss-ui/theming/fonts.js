@@ -81,6 +81,12 @@ const uiTextVariants = {
   uiTextNormal: uiText(16),
   uiTextSmall: uiText(14),
   uiTextTiny: uiText(10),
+  uiTextHeading: {
+    fontFamily: fonts.uiFont,
+    fontSize: 14,
+    fontWeight: fontWeights.normal,
+    textTransform: 'uppercase',
+  }
 }
 
 const uiTextBoldVariants = Object.keys(uiTextVariants).reduce(
