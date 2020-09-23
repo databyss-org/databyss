@@ -32,7 +32,6 @@ const SearchContent = () => {
   }
 
   const ComposeResults = ({ results }) => {
-    console.log(results)
     const _Pages = Object.values(results).length ? (
       Object.values(results).map((r, i) => (
         <SearchResultsContainer key={i}>

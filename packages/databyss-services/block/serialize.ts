@@ -1,8 +1,10 @@
+import colors from '@databyss-org/ui/theming/colors'
 import { Text } from '../interfaces'
 
-const tags: { [mark: string]: string } = {
-  bold: 'strong',
-  italic: 'i',
+const tags: { [mark: string]: string[] } = {
+  bold: ['strong', 'strong'],
+  italic: ['i', 'i'],
+  highlight: [`span style="background-color: ${colors.orange[3]}"`, 'span'],
 }
 
 /**
@@ -34,8 +36,8 @@ export function textToHtml(text: Text): string {
     let _openTags = ''
     let _closeTags = ''
     _range.marks.forEach(_mark => {
-      _openTags += `<${tags[_mark]}>`
-      _closeTags = `</${tags[_mark]}>${_closeTags}`
+      _openTags += `<${tags[_mark][0]}>`
+      _closeTags = `</${tags[_mark][1]}>${_closeTags}`
     })
     _html = `${_before}${_openTags}${_segment}${_closeTags}${_after}`
   })

@@ -1,8 +1,13 @@
 import MurmurHash3 from 'imurmurhash'
 import { Text, Editor, Node } from '@databyss-org/slate'
 import { pickBy } from 'lodash'
+import { textToHtml } from '@databyss-org/services/block/serialize'
 import { isAtomicInlineType } from './util'
-import { stateToSlateMarkup, statePointToSlatePoint } from './markup'
+import {
+  stateToSlateMarkup,
+  statePointToSlatePoint,
+  flattenRanges,
+} from './markup'
 
 export const flattenNode = node => {
   if (!node) {
@@ -67,6 +72,15 @@ export const entities = type =>
 
 // map between state block stringifies and slate block values
 const slateBlockMap = {}
+
+export const stateBlockToHtml = block => {
+  const _text = block.text.textValue
+  const _ranges = flattenRanges(block.text.ranges)
+  return textToHtml({
+    textValue: _text,
+    ranges: _ranges,
+  })
+}
 
 // convert state and apply markup values
 export const stateBlockToSlateBlock = block => {
@@ -204,40 +218,6 @@ const serializeHeader = node => {
   }
 }
 
-// serialize slate node to html for search results
-const serializeResults = node => {
-  if (Text.isText(node)) {
-    // replace line breaks
-    let _children = node.text.replace(/\n/g, '</br>')
-
-    if (node.bold) {
-      _children = `<strong>${_children}</strong>`
-    }
-    if (node.italic) {
-      _children = `<i>${_children}</i>`
-    }
-    if (node.location) {
-      _children = `<span style="color:#A19A91">${_children}</span>`
-    }
-    if (node.highlight) {
-      // TODO: this should be dynamic
-      _children = `<span style="background-color:#F7C96E">${_children}</span>`
-      // _children = ReactDOMServer.renderToString(
-      //   <View display="inline" backgroundColor="orange.3">
-      //     {_children}
-      //   </View>
-      // )
-    }
-    return _children
-  }
-
-  const children = node.children.map(n => serializeResults(n)).join('')
-  switch (node.type) {
-    default:
-      return children
-  }
-}
-
 // serialize slate node to html
 export const serialize = node => {
   if (Text.isText(node)) {
@@ -277,10 +257,4 @@ export const stateToHTMLString = frag => {
     .replace(/\n/g, '<br />')
 
   return `<span>${_innerHtml}</span>`
-}
-
-export const stateBlocktoHtmlResults = stateBlock => {
-  const _slateNode = stateBlockToSlateBlock(stateBlock)
-
-  return serializeResults(_slateNode)
 }
