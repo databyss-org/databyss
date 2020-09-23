@@ -103,6 +103,7 @@ function flattenRanges(ranges) {
     if (range.offset + range.length > nextRange.offset + nextRange.length) {
       const newOffset3 = nextRange.offset + nextRange.length
       const newLen3 = range.length - newOffset3
+
       const newBlock3 = {
         offset: newOffset3,
         length: newLen3,

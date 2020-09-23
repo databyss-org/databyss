@@ -38,7 +38,7 @@ export const getPosition = editor => {
   return { top: 40, left: 0 }
 }
 
-const SuggestMenu = ({ children, placeholder }) => {
+const SuggestMenu = ({ children, placeholder, suggestType }) => {
   const [position, setPosition] = useState({
     top: 40,
     left: 0,
@@ -109,6 +109,12 @@ const SuggestMenu = ({ children, placeholder }) => {
     setHasSuggestions(suggestions?.length)
   }
 
+  // if topics and has no suggestions, remove menu,
+  // leave if sources for citations loader
+  const _showMenu =
+    suggestType === 'topics'
+      ? menuActive && (!query || hasSuggestions)
+      : menuActive
   return (
     <ClickAwayListener onClickAway={onClickAway}>
       <DropdownContainer
@@ -117,7 +123,7 @@ const SuggestMenu = ({ children, placeholder }) => {
           left: position.left,
           bottom: position.bottom,
         }}
-        open={menuActive && (!query || hasSuggestions)}
+        open={_showMenu}
         widthVariant="dropdownMenuLarge"
         minHeight="32px"
         p="small"
