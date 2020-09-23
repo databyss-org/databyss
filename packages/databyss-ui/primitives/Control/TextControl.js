@@ -1,13 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react'
-import BaseControl from './BaseControl'
-import TextInput from './native/TextInput'
-import RichTextInput from './native/RichTextInput'
 
-import TextInputView from './native/TextInputView'
+import { colors } from '../../theming'
+import { isMobileOs } from '../../lib/mediaQuery'
 import { View, Text, Grid } from '../'
 import IS_NATIVE from '../../lib/isNative'
 import theme from '../../theming/theme'
-import { isMobileOs } from '../../lib/mediaQuery'
+
+import BaseControl from './BaseControl'
+import RichTextInput from './native/RichTextInput'
+import TextInput from './native/TextInput'
+import TextInputView from './native/TextInputView'
 
 const TextControl = ({
   value,
@@ -103,6 +105,9 @@ const TextControl = ({
         {
           borderWidth: 0,
           position: active ? 'relative' : 'static',
+          '&:hover': {
+            backgroundColor: colors.gray[6],
+          },
         },
         css,
       ]}
@@ -137,7 +142,7 @@ TextControl.defaultProps = {
   labelVariant: 'uiTextSmall',
   labelColor: 'text.3',
   activeLabelColor: 'text.2',
-  inputVariant: isMobileOs() ? 'bodySmall' : 'bodyNormal',
+  inputVariant: isMobileOs() ? 'bodySmall' : 'uiTextNormal',
   gridFlexWrap: 'wrap',
   labelProps: {},
 }
