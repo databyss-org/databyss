@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import cloneDeep from 'clone-deep'
 import { Block } from '@databyss-org/services/interfaces/'
-import { stateBlockToHtmlHeader, stateBlocktoHtmlResults } from '@databyss-org/editor/lib/slateUtils.js'
+import { stateBlockToHtmlHeader, stateBlocktoHtmlResults, stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils.js'
 import { BlockType, Selection, EditorState, BlockRelation, PagePath, Range } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
 
@@ -201,7 +201,6 @@ export const indexPage = ({
 export const slateBlockToHtmlWithSearch = (block: Block, query: string): string => {
   const _block = cloneDeep(block)
 
-
   if(query){
   // add query markup to results
   const _searchTerm = query.split(' ')
@@ -222,31 +221,35 @@ export const slateBlockToHtmlWithSearch = (block: Block, query: string): string 
         )
 
 
-      if(parts.length> 1){
+      let offset = 0
 
-          let offset = 0
+      parts.forEach((part, i) => {
+        const length = word.length
 
-          parts.forEach((part, i) => {
-            const length = word.length
-
-            if (i !== 0) {
-              ranges.push({
-                offset: offset - word.length,
-                length,
-                marks: ['highlight'],
-              })
-            }
-
-            offset = offset + part.length + word.length
+        if (i !== 0) {
+          ranges.push({
+            offset: offset - word.length,
+            length,
+            marks: ['highlight'],
           })
-        
         }
+
+        offset = offset + part.length + word.length
+      })
     })
 
-    _block.text.ranges = [...ranges, ..._block.text.ranges]
+    const _ranges = [..._block.text.ranges, ...ranges]
+    // sort array by offset
+    _ranges.sort((a, b)=> {
+      // if offset equal, sort by length
+      if(a.offset === b.offset){
+        return b.length - a.length
+      }
+      return (a.offset > b.offset)? 1: -1
+    })
+    _block.text.ranges = _ranges
   }
+   const _frag = stateBlockToHtml(_block)
 
-  const _frag = stateBlocktoHtmlResults(_block)
-
-  return _frag
+    return _frag
 }
