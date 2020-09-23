@@ -5,6 +5,7 @@ const tags: { [mark: string]: string[] } = {
   bold: ['strong', 'strong'],
   italic: ['i', 'i'],
   highlight: [`span style="background-color: ${colors.orange[3]}"`, 'span'],
+  location: [`span style="color: ${colors.gray[4]}"`, 'span'],
 }
 
 /**
