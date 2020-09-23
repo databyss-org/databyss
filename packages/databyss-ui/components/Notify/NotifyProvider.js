@@ -4,14 +4,28 @@ import { ping } from '@databyss-org/services/lib/requestApi'
 import {
   NotAuthorizedError,
   NetworkUnavailableError,
+  VersionConflictError,
+  InsufficientPermissionError,
+  ResourceNotFoundError,
 } from '@databyss-org/services/interfaces'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
 import IS_NATIVE from '../../lib/isNative'
 
-const CHECK_ONLINE_INTERVAL = 500
+const CHECK_ONLINE_INTERVAL = 3000
 
 const NotifyContext = createContext()
+
+const instanceofAny = (objs, types) => {
+  for (const obj of objs) {
+    for (const t of types) {
+      if (obj instanceof t) {
+        return true
+      }
+    }
+  }
+  return false
+}
 
 // from @bugsnag/plugin-react
 export const makeBugsnagReport = (client, error, info) => {
@@ -48,11 +62,10 @@ class NotifyProvider extends React.Component {
       })
     } else {
       window.addEventListener('offline', () => this.setOnlineStatus(false))
-
       window.addEventListener('online', () => this.setOnlineStatus(true))
-
       window.addEventListener('error', this.onUnhandledError)
       window.addEventListener('unhandledrejection', this.onUnhandledError)
+      window.addEventListener('focus', this.onWindowFocus)
     }
   }
   state = {
@@ -68,8 +81,17 @@ class NotifyProvider extends React.Component {
   }
 
   componentDidCatch(error, info) {
-    if (error instanceof NotAuthorizedError) {
-      // we don't need to notify, we should be redirecting
+    if (error instanceof VersionConflictError) {
+      window.location.reload()
+      return
+    }
+    if (
+      instanceofAny(
+        [error],
+        [NotAuthorizedError, InsufficientPermissionError, ResourceNotFoundError]
+      )
+    ) {
+      // we don't need to notify, we should be showing authwall, 403 or 404
       return
     }
     this.bugsnagClient.notify(
@@ -81,19 +103,35 @@ class NotifyProvider extends React.Component {
   componentWillUnmount() {
     if (!IS_NATIVE) {
       window.removeEventListener('offline', this.setOnlineStatus)
-
       window.removeEventListener('online', this.setOnlineStatus)
-
       window.removeEventListener('error', this.onUnhandledError)
       window.removeEventListener('unhandledrejection', this.onUnhandledError)
+      window.removeEventListener('focus', this.onWindowFocus)
     }
+  }
+
+  onWindowFocus = () => {
+    ping().catch(this.onUnhandledError)
   }
 
   onUnhandledError = e => {
     if (
       e &&
-      (e.reason instanceof NetworkUnavailableError ||
-        e.error instanceof NetworkUnavailableError) &&
+      instanceofAny(
+        [e, e.reason, e.error],
+        [NotAuthorizedError, InsufficientPermissionError, ResourceNotFoundError]
+      )
+    ) {
+      // we don't need to notify, we should be showing authwall, 403 or 404
+      return
+    }
+    if (e && instanceofAny([e, e.reason, e.error], [VersionConflictError])) {
+      window.location.reload()
+      return
+    }
+    if (
+      e &&
+      instanceofAny([e, e.reason, e.error], [NetworkUnavailableError]) &&
       this.state.isOnline
     ) {
       this.showOfflineMessage()

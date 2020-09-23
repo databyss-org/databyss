@@ -31,9 +31,7 @@ const AccountMenu = () => {
 
   const onLogout = () => {
     logout()
-    window.requestAnimationFrame(
-      () => (window.location.href = 'https://app.databyss.org/')
-    )
+    window.requestAnimationFrame(() => (window.location.href = '/'))
   }
 
   return getAuthToken() ? (

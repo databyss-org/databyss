@@ -2,6 +2,7 @@ const scriptMap = {
   'copy-database': ['dba/CopyDatabase', ['envName', 'fromDb', 'toDb']],
   'copy-page': ['dba/CopyPage', ['envName', 'pageId', 'toAccountId']],
   'delete-account': ['dba/DeleteAccount', ['envName', 'accountId']],
+  'repair-blocks': ['repair/1.1.76_RepairBlocks', ['envName']],
 }
 
 function usageArgs(jobArgList) {

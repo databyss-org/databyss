@@ -34,6 +34,7 @@ export function fetchSource(id: string) {
           id,
         },
       })
+      throw err
     }
   }
 }
@@ -83,6 +84,7 @@ export function fetchAuthorHeaders() {
           err,
         },
       })
+      throw err
     }
   }
 }
@@ -123,6 +125,7 @@ export function fetchSourceCitations() {
           err,
         },
       })
+      throw err
     }
   }
 }

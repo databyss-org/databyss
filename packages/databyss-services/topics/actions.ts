@@ -30,6 +30,7 @@ export function fetchTopic(id: string) {
           id,
         },
       })
+      throw err
     }
   }
 }
@@ -44,7 +45,6 @@ export function saveTopic(topic: Topic) {
       // reset page headers
       dispatch(fetchTopicHeaders())
     })
-    // TODO: set error handler if failed save
   }
 }
 
@@ -64,6 +64,7 @@ export function fetchTopicHeaders() {
         type: CACHE_TOPIC_HEADERS,
         payload: { topics: err },
       })
+      throw err
     }
   }
 }

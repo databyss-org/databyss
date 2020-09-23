@@ -33,6 +33,7 @@ export function fetchPage(_id: string) {
         type: CACHE_PAGE,
         payload: { page: e, id: _id },
       })
+      throw e
     }
   }
 }
@@ -53,6 +54,7 @@ export function fetchPageHeaders() {
         type: CACHE_PAGE_HEADERS,
         payload: e,
       })
+      throw e
     }
   }
 }
@@ -140,6 +142,8 @@ export function savePatchBatch(batch?: PatchBatch) {
           queueSize: queue.length,
         },
       })
+
+      throw err
     }
   }
 }
@@ -198,18 +202,14 @@ export function onArchivePage(id: string, page: Page, bool: boolean, callback: F
       payload: { id  },
     })
     const _page = {...page, archive: bool}
-    try {
-      await services.savePage(_page)
-      if (callback) {
-        callback()
-      }
-      dispatch({
-        type: CACHE_PAGE,
-        payload: { id, page: _page },
-      })
-    } catch(err) {
-      throw new NetworkUnavailableError(err)
+    await services.savePage({_id: page._id, name: page.name, archive: bool})
+    if (callback) {
+      callback()
     }
+    dispatch({
+      type: CACHE_PAGE,
+      payload: { id, page: _page },
+    })
   }
 }
 
