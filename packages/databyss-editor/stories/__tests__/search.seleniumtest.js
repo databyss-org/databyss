@@ -60,7 +60,7 @@ describe('entry search', () => {
   // should search an entry at the end of an entry
   it('should test the integrity of search results', async () => {
     // populate a page
-    await sleep(500)
+    await sleep(1000)
     await sendKeys(actions, 'this is the first page title')
     await enterKey(actions)
     await sendKeys(actions, 'this is a test entry')

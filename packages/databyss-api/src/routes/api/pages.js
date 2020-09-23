@@ -93,7 +93,7 @@ router.post(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN']), pageCreatorMiddleware],
   wrap(async (req, res, _next) => {
-    const { selection, blocks, ...pageFields } = req.body.data
+    const { selection, ...pageFields } = req.body.data
 
     // SAVE SELECTION
     if (selection) {
@@ -106,21 +106,6 @@ router.post(
       } else {
         _selection = new Selection(selection)
         await _selection.save()
-      }
-    }
-
-    // SAVE BLOCKS
-    // if blocks are included, add and/or update them
-    if (blocks) {
-      pageFields.blocks = []
-      for (const _blockFields of blocks) {
-        let _block = await Block.findOne({ _id: _blockFields._id })
-        if (!_block) {
-          _block = new Block()
-        }
-        Object.assign(_block, { ..._blockFields, account: req.account._id })
-        await _block.save()
-        pageFields.blocks.push({ _id: _blockFields._id })
       }
     }
 

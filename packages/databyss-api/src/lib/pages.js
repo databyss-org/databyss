@@ -149,32 +149,43 @@ export const copyPage = async ({ pageId, toAccountId }) => {
   const _page = await Page.findOne({
     _id: pageId,
   })
-  const _blocks = await Block.find({
-    _id: { $in: _page.blocks.map(b => b._id) },
-  })
   const _blockRelations = await BlockRelation.find({
     page: _page._id,
   })
-  // Reset Page, Block and BlockRelation _ids and account
-  const _pageObj = _page.toObject()
-  _pageObj._id = new ObjectID().toHexString()
-  _pageObj.account = toAccountId
-  delete _pageObj.selection
-
   // map of original block _ids to copied block _ids
   const _blockIdMap = {}
 
-  for (const _block of _blocks) {
+  let _blockIndex = -1
+  for (const _pageBlock of _page.blocks) {
+    _blockIndex += 1
+
+    // for END_* blocks, find matching opener and use that _id
+    if (_pageBlock.type?.match(/^END_/)) {
+      const _openerType = _pageBlock.type.substring(4)
+      for (let _i = _blockIndex - 1; _i >= 0; _i -= 1) {
+        if (_page.blocks[_i].type === _openerType) {
+          _pageBlock._id = _page.blocks[_i]._id
+          break
+        }
+      }
+      continue
+    }
+
+    // for normal blocks, copy the Block as well
+    const _block = await Block.findOne({ _id: _pageBlock._id })
     const _blockObj = _block.toObject()
     _blockObj._id = new ObjectID().toHexString()
     _blockObj.account = toAccountId
     await new Block(_blockObj).save()
     _blockIdMap[_block._id] = _blockObj._id
-    const _pageBlock = _pageObj.blocks.find(
-      b => b._id.toString() === _block._id.toString()
-    )
     _pageBlock._id = _blockObj._id
   }
+
+  // Reset Page, Block and BlockRelation _ids and account
+  const _pageObj = _page.toObject()
+  _pageObj._id = new ObjectID().toHexString()
+  _pageObj.account = toAccountId
+  delete _pageObj.selection
 
   await new Page(_pageObj).save()
 
