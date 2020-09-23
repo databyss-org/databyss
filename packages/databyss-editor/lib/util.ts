@@ -222,43 +222,31 @@ export const slateBlockToHtmlWithSearch = (block: Block, query: string): string 
         )
 
 
-if(parts.length> 1){
+      if(parts.length> 1){
 
-    let offset = 0
+          let offset = 0
 
-    parts.forEach((part, i) => {
-      const length = word.length
+          parts.forEach((part, i) => {
+            const length = word.length
 
-      if (i !== 0) {
-        ranges.push({
-          offset: offset - word.length,
-          length,
-          marks: ['highlight'],
-        })
-      }
+            if (i !== 0) {
+              ranges.push({
+                offset: offset - word.length,
+                length,
+                marks: ['highlight'],
+              })
+            }
 
-      offset = offset + part.length + word.length
+            offset = offset + part.length + word.length
+          })
+        
+        }
     })
-  
-    }
-    })
 
-    const _ranges = [..._block.text.ranges, ...ranges]
-
-    // sort array by offset
-    _ranges.sort((a, b)=> {
-      // if offset equal, sort by length
-      if(a.offset === b.offset){
-        return b.length - a.length
-      }
-      
-      return (a.offset > b.offset)? 1: -1})
-
-
-    _block.text.ranges = _ranges
-
+    _block.text.ranges = [...ranges, ..._block.text.ranges]
   }
-   const _frag = stateBlocktoHtmlResults(_block)
 
-    return _frag
+  const _frag = stateBlocktoHtmlResults(_block)
+
+  return _frag
 }
