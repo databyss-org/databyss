@@ -53,7 +53,7 @@ const SidebarList = ({ menuItems, query, height, ...others }) => {
     <View
       width="100%"
       height={height}
-      overflow="scroll"
+      overflowY="auto"
       p={pxUnits(0)}
       {...others}
     >

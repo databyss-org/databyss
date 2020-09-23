@@ -17,18 +17,21 @@ const FeatureHeading = ({
       {title}
     </Text>
     {description && (
-      <Text
-        variant="uiTextMedium"
-        color={descriptionColor || 'text.3'}
-        mb="large"
-        textAlign={textAlign}
+      <View
+        overflowY="auto"
         css={{
           maxHeight: `calc(${featureContentMaxHeight} - ${pxUnits(124)})`,
-          overflow: 'scroll',
         }}
       >
-        {description}
-      </Text>
+        <Text
+          variant="uiTextMedium"
+          color={descriptionColor || 'text.3'}
+          mb="large"
+          textAlign={textAlign}
+        >
+          {description}
+        </Text>
+      </View>
     )}
   </View>
 )
