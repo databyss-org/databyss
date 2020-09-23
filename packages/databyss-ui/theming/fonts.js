@@ -86,7 +86,7 @@ const uiTextVariants = {
     fontSize: 14,
     fontWeight: fontWeights.normal,
     textTransform: 'uppercase',
-  }
+  },
 }
 
 const uiTextBoldVariants = Object.keys(uiTextVariants).reduce(

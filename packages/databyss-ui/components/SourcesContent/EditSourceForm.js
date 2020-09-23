@@ -18,11 +18,7 @@ const publicationTypeOptions = [
 
 // components
 const FormHeading = props => (
-  <Text
-    variant="uiTextHeading"
-    marginTop={pxUnits(20)}
-    {...props}
-  >
+  <Text variant="uiTextHeading" marginTop={pxUnits(20)} {...props}>
     {props.children}
   </Text>
 )
@@ -42,10 +38,7 @@ const LabeledTextInput = props => (
 )
 
 const Instructions = props => (
-  <Text
-    variant="bodySmall"
-    {...props}
-  >
+  <Text variant="bodySmall" {...props}>
     {props.children}
   </Text>
 )
@@ -72,7 +65,9 @@ const EditSourceForm = props => {
       <ValueListProvider onChange={onChange} values={values}>
         {/* NAME */}
         <FormHeading>Name</FormHeading>
-        <Instructions>This is how this entry will show up in Databyss</Instructions>
+        <Instructions>
+          This is how this entry will show up in Databyss
+        </Instructions>
         <LabeledTextInput
           path="detail.name"
           id="name"
