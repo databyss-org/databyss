@@ -243,9 +243,20 @@ if(parts.length> 1){
     }
     })
 
+    const _ranges = [..._block.text.ranges, ...ranges]
+
+    // sort array by offset
+    _ranges.sort((a, b)=> {
+      // if offset equal, sort by length
+      if(a.offset === b.offset){
+        return b.length - a.length
+      }
+      
+      return (a.offset > b.offset)? 1: -1})
 
 
-    _block.text.ranges = [...ranges, ..._block.text.ranges]
+    _block.text.ranges = _ranges
+
   }
    const _frag = stateBlocktoHtmlResults(_block)
 

@@ -102,7 +102,14 @@ function flattenRanges(ranges) {
     // if current range extends beyond next range, we need a 3rd block
     if (range.offset + range.length > nextRange.offset + nextRange.length) {
       const newOffset3 = nextRange.offset + nextRange.length
-      const newLen3 = range.length - newOffset3
+
+      let newLen3 = range.length - newOffset3
+
+      // if offests overlap, length should be sorted by longest first
+      if (range.offset === nextRange.offset) {
+        newLen3 = range.length - nextRange.length
+      }
+
       const newBlock3 = {
         offset: newOffset3,
         length: newLen3,

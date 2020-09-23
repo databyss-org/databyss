@@ -132,7 +132,7 @@ const ContentEditable = ({
         })
       }
     },
-    [state.newEntities.length]
+    [state.newEntities.length, hasPendingPatches]
   )
 
   useImperativeHandle(editorRef, () => ({
