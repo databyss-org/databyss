@@ -13,9 +13,10 @@ const tags: { [mark: string]: string[] } = {
  * TODO: add support for nested and overlapped ranges
  */
 export function textToHtml(text: Text): string {
-  let _html = text.textValue.replaceAll('\n', '<br />')
+  let _html = text.textValue
+
   if (!text.ranges.length) {
-    return _html
+    return _html.replaceAll('\n', '<br />')
   }
 
   // sort ranges by offset, descending
@@ -42,5 +43,5 @@ export function textToHtml(text: Text): string {
     })
     _html = `${_before}${_openTags}${_segment}${_closeTags}${_after}`
   })
-  return _html
+  return _html.replaceAll('\n', '<br />')
 }
