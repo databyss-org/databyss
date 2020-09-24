@@ -70,7 +70,7 @@ export const PageContainer = React.memo(({ anchor, id, page, ...others }) => {
   }
 
   return (
-    <View height="100vh" overflowY="scroll" ref={editorWindowRef} {...others}>
+    <View height="100vh" overflowY="auto" ref={editorWindowRef} {...others}>
       <View
         pl="medium"
         pr="medium"

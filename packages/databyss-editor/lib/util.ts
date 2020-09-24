@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import cloneDeep from 'clone-deep'
 import { Block } from '@databyss-org/services/interfaces/'
-import { stateBlockToHtmlHeader, stateBlocktoHtmlResults } from '@databyss-org/editor/lib/slateUtils.js'
+import { stateBlockToHtmlHeader, stateBlocktoHtmlResults, stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils.js'
 import { BlockType, Selection, EditorState, BlockRelation, PagePath, Range } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
 
@@ -238,11 +238,18 @@ export const slateBlockToHtmlWithSearch = (block: Block, query: string): string 
       })
     })
 
-
-
-    _block.text.ranges = [..._block.text.ranges, ...ranges]
+    const _ranges = [..._block.text.ranges, ...ranges]
+    // sort array by offset
+    _ranges.sort((a, b)=> {
+      // if offset equal, sort by length
+      if(a.offset === b.offset){
+        return b.length - a.length
+      }
+      return (a.offset > b.offset)? 1: -1
+    })
+    _block.text.ranges = _ranges
   }
-   const _frag = stateBlocktoHtmlResults(_block)
+   const _frag = stateBlockToHtml(_block)
 
     return _frag
 }

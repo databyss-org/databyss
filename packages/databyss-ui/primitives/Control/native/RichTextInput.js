@@ -17,7 +17,7 @@ const RichTextInput = forwardRef(
     const _css = [
       {
         display: 'flex',
-        overflow: 'scroll',
+        overflowY: 'auto',
         ...(!multiline ? { '::-webkit-scrollbar': { display: 'none' } } : {}),
       },
     ].concat(concatCss)

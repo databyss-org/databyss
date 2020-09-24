@@ -63,7 +63,7 @@ export const statePointToSlatePoint = (children, point) => {
   return selection.focus
 }
 
-function flattenRanges(ranges) {
+export function flattenRanges(ranges) {
   const flattened = []
   for (let i = 0; i < ranges.length; i += 1) {
     const range = ranges[i]
@@ -102,7 +102,7 @@ function flattenRanges(ranges) {
     // if current range extends beyond next range, we need a 3rd block
     if (range.offset + range.length > nextRange.offset + nextRange.length) {
       const newOffset3 = nextRange.offset + nextRange.length
-      const newLen3 = range.length - newOffset3
+      const newLen3 = range.offset + range.length - newOffset3
       const newBlock3 = {
         offset: newOffset3,
         length: newLen3,

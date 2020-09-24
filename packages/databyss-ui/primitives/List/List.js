@@ -24,10 +24,8 @@ const List = ({
                 borderRadius: 0,
               }
             : {}),
-          paddingLeft: horizontalItemPadding,
-          paddingRight: horizontalItemPadding,
-          paddingTop: verticalItemPadding,
-          paddingBottom: verticalItemPadding,
+          px: horizontalItemPadding,
+          py: verticalItemPadding,
           ...child.props,
         })
     )}
