@@ -75,13 +75,14 @@ router.get(
           acc.results[curr.page] = [curr]
         } else {
           const _entries = acc.results[curr.page]
-
           _entries.push(curr)
+          // sort the entries by page index value
+          _entries.sort((a, b) => (a.blockIndex > b.blockIndex ? 1 : -1))
+
           acc.results[curr.page] = _entries
         }
         return acc
       }, _results)
-
       return res.json(_results)
     }
 
@@ -104,7 +105,7 @@ router.post(
         .replace(/[^a-z0-9À-ú- ]/gi, '')
         .split(' ')
 
-      const _results = await Block.aggregate([
+      const results = await Block.aggregate([
         {
           $match: {
             $text: {
@@ -114,67 +115,34 @@ router.post(
             type: 'ENTRY',
           },
         },
-        // {
-        //   // appends all the pages block appears in in an array 'isInPages'
-        //   $lookup: {
-        //     from: 'pages',
-        //     localField: '_id',
-        //     foreignField: 'blocks._id',
-        //     as: 'isInPages',
-        //   },
-        // },
-        // {
-        //   $project: {
-        //     _id: 1,
-        //     text: 1,
-        //     account: 1,
-        //     type: 1,
-        //     // filter out archived pages,
-        //     isInPages: {
-        //       $filter: {
-        //         input: '$isInPages',
-        //         as: 'isInPages',
-        //         cond: { $eq: ['$$isInPages.archive', false] },
-        //       },
-        //     },
-        //   },
-        // },
-        // // remove page data and only allow _id
-        // {
-        //   $project: {
-        //     _id: 1,
-        //     text: 1,
-        //     account: 1,
-        //     type: 1,
-        //     isInPages: '$isInPages._id',
-        //   },
-        // },
-      ])
-
-      console.log(_results)
-
-      // list of blocks
-      let results = await Block.find({
-        $text: {
-          $search: queryArray.join(' '),
+        {
+          // appends all the pages block appears in in an array 'page'
+          $lookup: {
+            from: 'pages',
+            localField: '_id',
+            foreignField: 'blocks._id',
+            as: 'page',
+          },
         },
-        ...getBlockAccountQueryMixin(req),
-        type: 'ENTRY',
-      })
-
-      // populate results with page
-      results = await Promise.all(
-        results.map(async r => {
-          // get page where entry is found in non archived page
-          const _page = await Page.findOne({
-            'blocks._id': r._id,
-            archive: false,
-            ...getPageAccountQueryMixin(req),
-          })
-
-          return Object.assign({ page: _page }, r._doc)
-        })
-      )
+        // filter out archived pages,
+        {
+          $project: {
+            _id: 1,
+            text: 1,
+            account: 1,
+            type: 1,
+            page: {
+              $filter: {
+                input: '$page',
+                as: 'page',
+                cond: { $eq: ['$$page.archive', false] },
+              },
+            },
+          },
+        },
+        // unwindws page array to page object
+        { $unwind: '$page' },
+      ])
 
       if (results) {
         let _results = {
@@ -220,7 +188,10 @@ router.post(
           }
 
           const pageId = curr.page._id.toString()
-
+          // get index where block appears on page
+          const _blockIndex = curr.page.blocks.findIndex(
+            b => b._id.toString() === curr._id.toString()
+          )
           if (!acc.results[pageId]) {
             // bail if not exact word in entry
             if (!isInEntry(curr.text.textValue, searchstring)) {
@@ -236,6 +207,7 @@ router.post(
                 {
                   entryId: curr._id,
                   text: curr.text,
+                  index: _blockIndex,
                   //  blockId: curr.block,
                 },
               ],
@@ -251,8 +223,12 @@ router.post(
             _entries.push({
               entryId: curr._id,
               text: curr.text,
+              index: _blockIndex,
               // blockId: curr.block,
             })
+            // sort the entries by page index value
+            _entries.sort((a, b) => (a.index > b.index ? 1 : -1))
+
             acc.results[pageId].entries = _entries
           }
           return acc
@@ -260,6 +236,7 @@ router.post(
 
         return res.json(_results)
       }
+
       return res
         .status(400)
         .json({ msg: 'There is no entries for this search' })
