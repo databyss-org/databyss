@@ -13,7 +13,7 @@ const tags: { [mark: string]: string[] } = {
  * TODO: add support for nested and overlapped ranges
  */
 export function textToHtml(text: Text): string {
-  let _html = text.textValue.replace('\n', '<br />')
+  let _html = text.textValue.replaceAll('\n', '<br />')
   if (!text.ranges.length) {
     return _html
   }
