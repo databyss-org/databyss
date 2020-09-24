@@ -104,6 +104,55 @@ router.post(
         .replace(/[^a-z0-9À-ú- ]/gi, '')
         .split(' ')
 
+      const _results = await Block.aggregate([
+        {
+          $match: {
+            $text: {
+              $search: queryArray.join(' '),
+            },
+            ...getBlockAccountQueryMixin(req),
+            type: 'ENTRY',
+          },
+        },
+        // {
+        //   // appends all the pages block appears in in an array 'isInPages'
+        //   $lookup: {
+        //     from: 'pages',
+        //     localField: '_id',
+        //     foreignField: 'blocks._id',
+        //     as: 'isInPages',
+        //   },
+        // },
+        // {
+        //   $project: {
+        //     _id: 1,
+        //     text: 1,
+        //     account: 1,
+        //     type: 1,
+        //     // filter out archived pages,
+        //     isInPages: {
+        //       $filter: {
+        //         input: '$isInPages',
+        //         as: 'isInPages',
+        //         cond: { $eq: ['$$isInPages.archive', false] },
+        //       },
+        //     },
+        //   },
+        // },
+        // // remove page data and only allow _id
+        // {
+        //   $project: {
+        //     _id: 1,
+        //     text: 1,
+        //     account: 1,
+        //     type: 1,
+        //     isInPages: '$isInPages._id',
+        //   },
+        // },
+      ])
+
+      console.log(_results)
+
       // list of blocks
       let results = await Block.find({
         $text: {
