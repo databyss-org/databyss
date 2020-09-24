@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
 import express from 'express'
 import Block from '../../models/Block'
-import Page from '../../models/Page'
 import BlockRelation from '../../models/BlockRelation'
 
 import auth from '../../middleware/auth'
@@ -11,7 +10,6 @@ import { addRelationships } from '../../lib/entries'
 import {
   getBlockRelationsAccountQueryMixin,
   getBlockAccountQueryMixin,
-  getPageAccountQueryMixin,
 } from './helpers/accountQueryMixin'
 
 const router = express.Router()
