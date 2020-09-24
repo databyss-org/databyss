@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import Page from './../models/Page'
+import Block from './../models/Block'
 import {
   ResourceNotFoundError,
   UnauthorizedError,
@@ -15,6 +16,12 @@ export const pageCreatorMiddleware = wrap(async (req, _res, next) => {
     page = new Page({
       _id,
       account: req.account._id,
+    })
+    // save the first block
+    await Block.create({
+      page: _id,
+      account: req.account._id,
+      ...req.body.data.blocks[0],
     })
   }
   if (req.account._id.toString() !== page.account.toString()) {
