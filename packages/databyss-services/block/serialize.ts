@@ -42,6 +42,5 @@ export function textToHtml(text: Text): string {
     })
     _html = `${_before}${_openTags}${_segment}${_closeTags}${_after}`
   })
-  console.log(_html)
   return _html
 }
