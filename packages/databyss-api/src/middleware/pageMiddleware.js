@@ -21,7 +21,6 @@ export const pageCreatorMiddleware = wrap(async (req, _res, next) => {
     await Block.create({
       page: _id,
       account: req.account._id,
-      type: 'ENTRY',
       ...req.body.data.blocks[0],
     })
   }
