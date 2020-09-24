@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useRef } from 'react'
 import { throttle } from 'lodash'
-
+import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
@@ -72,6 +72,12 @@ const PageBody = ({
 
     return (
       <CatalogProvider>
+        {isReadOnly && (
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>{page.name}</title>
+          </Helmet>
+        )}
         <HistoryProvider ref={editorStateRef}>
           <EditorProvider
             key={location.pathname}

@@ -42,8 +42,7 @@ router.post(
         { $set: account },
         { new: true }
       )
-
-      return res.status(200)
+      return res.status(200).send()
     } catch (err) {
       console.error(err.message)
       return res.status(500).send('Server Error')
