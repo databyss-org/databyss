@@ -22,7 +22,7 @@ const BlockSchema = new Schema(
       type: Schema.Types.Mixed,
     },
   },
-  { versionKey: false }
+  { versionKey: false, timestamps: true }
 )
 
 BlockSchema.index({ 'text.textValue': 'text' })
