@@ -65,9 +65,9 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
       // update header cache as well
       if (resourceIsReady(_page)) {
         _headerCache[_page._id] = _page
-        // update name in cache
+        // update name in page cache
         if (_cache[_page._id]) {
-          _cache?[_page._id].name = _page.name
+          _cache[_page._id].name = _page.name
         }
       }
       break
