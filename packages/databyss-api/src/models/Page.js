@@ -48,7 +48,7 @@ const PageSchema = new Schema(
       default: false,
     },
   },
-  { versionKey: false }
+  { versionKey: false, timestamps: true }
 )
 
 /* eslint-disable prefer-arrow-callback */

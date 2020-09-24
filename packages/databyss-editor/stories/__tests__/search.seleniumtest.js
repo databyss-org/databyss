@@ -60,7 +60,12 @@ describe('entry search', () => {
   // should search an entry at the end of an entry
   it('should test the integrity of search results', async () => {
     // populate a page
-    await sleep(1000)
+    await sleep(500)
+    const pageTitle = await getElementByTag(
+      driver,
+      '[data-test-element="page-header"]'
+    )
+    await pageTitle.click()
     await sendKeys(actions, 'this is the first page title')
     await enterKey(actions)
     await sendKeys(actions, 'this is a test entry')
@@ -155,7 +160,15 @@ describe('entry search', () => {
     const entrySearchResult = await driver.findElements(
       By.tagName('[data-test-element="search-result-entries"]')
     )
-    await entrySearchResult[0].click()
+
+    const titleArray = [
+      firstPageTitle.trim(),
+      secondPageTitle.trim(),
+      thirdPageTitle.trim(),
+    ]
+    const _idx = titleArray.findIndex(t => t === 'this is the third page title')
+
+    await entrySearchResult[_idx].click()
     await sleep(2000)
     // highlights current anchor position
     await rightShiftKey(actions)
