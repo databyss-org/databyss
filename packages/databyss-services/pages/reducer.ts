@@ -32,8 +32,13 @@ export const initialState: PageState = {
 
 export default produce((draft: Draft<PageState>, action: FSA) => {
   let _headerCache: CacheDict<PageHeader> = {}
+  let _cache: CacheDict<Page> = {}
+
   if (resourceIsReady(draft.headerCache)) {
     _headerCache = draft.headerCache as CacheDict<PageHeader>
+  }
+  if (resourceIsReady(draft.cache)) {
+    _cache = draft.cache as CacheDict<Page>
   }
   switch (action.type) {
     case PATCH:
@@ -60,6 +65,10 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
       // update header cache as well
       if (resourceIsReady(_page)) {
         _headerCache[_page._id] = _page
+        // update name in cache
+        if (_cache[_page._id]) {
+          _cache?[_page._id].name = _page.name
+        }
       }
       break
     }
