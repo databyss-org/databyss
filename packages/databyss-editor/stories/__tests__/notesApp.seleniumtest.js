@@ -6,6 +6,7 @@ import {
   getEditor,
   getElementByTag,
   sleep,
+  isAppInNotesSaved,
   //  toggleBold,
   //   toggleItalic,
   //   toggleLocation,
@@ -51,8 +52,6 @@ describe('notes app', () => {
 
     await continueButton.click()
 
-    await sleep(1000)
-
     editor = await getEditor(driver)
 
     done()
@@ -70,8 +69,7 @@ describe('notes app', () => {
     await headerField.sendKeys('First Test Page Title')
 
     editor.sendKeys('Editor test one')
-
-    await sleep(2000)
+    await isAppInNotesSaved(driver)
 
     const newPageButton = await getElementByTag(
       driver,
@@ -79,7 +77,6 @@ describe('notes app', () => {
     )
 
     await newPageButton.click()
-    await sleep(2000)
 
     headerField = await getElementByTag(
       driver,
@@ -92,7 +89,7 @@ describe('notes app', () => {
 
     editor.sendKeys('Editor test two')
 
-    await sleep(2000)
+    await isAppInNotesSaved(driver)
 
     const firstPageButton = await getElementByTag(
       driver,
@@ -100,8 +97,6 @@ describe('notes app', () => {
     )
 
     await firstPageButton.click()
-
-    await sleep(1000)
 
     headerField = await getElementByTag(
       driver,
@@ -125,8 +120,6 @@ describe('notes app', () => {
 
     await secondPageButton.click()
 
-    await sleep(1000)
-
     headerField = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
@@ -137,8 +130,6 @@ describe('notes app', () => {
     editor = await getEditor(driver)
 
     editorField = await editor.getAttribute('innerText')
-
-    await sleep(1000)
 
     assert.equal(headerField, 'Second page title')
     assert.equal(editorField, 'Editor test two')
@@ -152,11 +143,9 @@ describe('notes app', () => {
 
     await newPageButton.click()
 
-    await sleep(1000)
-
     const editor = await getEditor(driver)
     editor.sendKeys('Offline test')
-    await sleep(2000)
+    await isAppInNotesSaved(driver)
 
     // toggle offline
     if (!process.env.LOCAL_ENV) {
@@ -183,7 +172,7 @@ describe('notes app', () => {
       })
     }
 
-    await sleep(1000)
+    await sleep(500)
 
     try {
       await newPageButton.click()
