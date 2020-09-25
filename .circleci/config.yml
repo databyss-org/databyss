@@ -37,6 +37,7 @@ jobs:
             fi
             git reset --hard "$CIRCLE_SHA1"
 
+      # https://circleci.com/docs/2.0/yarn/
       # Download and cache dependencies
       - restore_cache:
           name: Restore Yarn Package Cache
