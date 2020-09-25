@@ -20,6 +20,7 @@ import {
   sendKeys,
   leftKey,
   isSaved,
+  sleep,
 } from './_helpers.selenium'
 
 let driver
@@ -142,9 +143,9 @@ describe('editor clipboard', () => {
   })
 
   it('should prevent a paste from occuring in an atomic', async () => {
-    await actions.sendKeys('@this is a source text')
+    await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
-    await actions.sendKeys('entry text')
+    await sendKeys(actions, 'entry text')
     await leftShiftKey(actions)
     await leftShiftKey(actions)
     await leftShiftKey(actions)
@@ -160,6 +161,7 @@ describe('editor clipboard', () => {
     await paste(actions)
     await isSaved(driver)
     await driver.navigate().refresh()
+    await sleep(300)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
