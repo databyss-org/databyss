@@ -6,7 +6,6 @@ import {
   getEditor,
   isAppInNotesSaved,
   getElementByTag,
-  sleep,
   sendKeys,
   enterKey,
   rightShiftKey,
@@ -133,7 +132,6 @@ describe('entry search', () => {
     await getEditor(driver)
     await sendKeys(actions, 'something')
     await enterKey(actions)
-    await isAppInNotesSaved(driver)
 
     // results can be in random order
     const searchPageResultsTitle = await driver.findElements(
