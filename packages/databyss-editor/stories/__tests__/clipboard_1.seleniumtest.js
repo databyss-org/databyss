@@ -21,6 +21,7 @@ import {
   rightKey,
   sendKeys,
   leftKey,
+  isSaved,
 } from './_helpers.selenium'
 
 let driver
@@ -102,7 +103,7 @@ describe('editor clipboard', () => {
 
     await rightKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
 
     await driver.navigate().refresh()
 
@@ -149,7 +150,7 @@ describe('editor clipboard', () => {
     await rightKey(actions)
 
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
 
     await driver.navigate().refresh()
 
@@ -189,7 +190,7 @@ describe('editor clipboard', () => {
     await copy(actions)
     await leftKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
 
     await driver.navigate().refresh()
 
@@ -244,7 +245,7 @@ describe('editor clipboard', () => {
     await cut(actions)
     await downKey(actions)
     await paste(actions)
-    await sleep(5000)
+    await isSaved(driver)
 
     await driver.navigate().refresh()
 

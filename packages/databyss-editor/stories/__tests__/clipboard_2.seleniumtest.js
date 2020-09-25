@@ -21,6 +21,7 @@ import {
   downShiftKey,
   sendKeys,
   leftKey,
+  isSaved,
 } from './_helpers.selenium'
 
 let driver
@@ -122,7 +123,7 @@ describe('editor clipboard', () => {
     await leftKey(actions)
     await leftKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
     await driver.navigate().refresh()
 
     await sleep(500)
@@ -174,7 +175,7 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await enterKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
 
     const atomic = await getElementByTag(
       driver,
@@ -249,7 +250,7 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await enterKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
 
     await driver.navigate().refresh()
 
@@ -287,7 +288,7 @@ describe('editor clipboard', () => {
   })
 
   it('should select an atomic fragment and paste the whole atomic block', async () => {
-    await sleep(1000)
+    await sleep(500)
     await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
     await sendKeys(actions, 'in between text')
@@ -303,7 +304,7 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await downKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
     await driver.navigate().refresh()
     await sleep(500)
 

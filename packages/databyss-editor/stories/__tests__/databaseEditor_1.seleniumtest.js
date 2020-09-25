@@ -14,6 +14,7 @@ import {
   toggleItalic,
   toggleLocation,
   getElementById,
+  isSaved,
 } from './_helpers.selenium'
 
 let driver
@@ -94,8 +95,7 @@ describe('connected editor', () => {
     await sendKeys(actions, ' and the final text should be a ')
     await toggleLocation(actions)
     await sendKeys(actions, 'location')
-
-    await sleep(3000)
+    await isSaved(driver)
 
     await driver.navigate().refresh()
 
@@ -127,70 +127,6 @@ describe('connected editor', () => {
     assert.deepEqual(actual.selection, expected.selection)
   })
 
-  it('should toggle italic and save changes', async () => {
-    await sleep(300)
-    await sendKeys(actions, 'the following text should be ')
-    await toggleItalic(actions)
-    await sendKeys(actions, 'italic')
-    await sleep(7000)
-
-    await driver.navigate().refresh()
-
-    slateDocument = await getElementById(driver, 'slateDocument')
-
-    const actual = JSON.parse(await slateDocument.getText())
-
-    const expected = (
-      <editor>
-        <block type="ENTRY">
-          <text>the following text should be </text>
-          <text italic>italic</text>
-          <cursor />
-        </block>
-      </editor>
-    )
-
-    assert.deepEqual(
-      sanitizeEditorChildren(actual.children),
-      sanitizeEditorChildren(expected.children)
-    )
-
-    assert.deepEqual(actual.selection, expected.selection)
-  })
-
-  it('should toggle location and save changes', async () => {
-    await sleep(300)
-    await sendKeys(actions, 'the following text should be ')
-    await toggleLocation(actions)
-    await sendKeys(actions, 'location')
-    await sleep(7000)
-
-    await driver.get(
-      process.env.LOCAL_ENV ? LOCAL_URL_EDITOR : PROXY_URL_EDITOR
-    )
-
-    slateDocument = await getElementById(driver, 'slateDocument')
-
-    const actual = JSON.parse(await slateDocument.getText())
-
-    const expected = (
-      <editor>
-        <block type="ENTRY">
-          <text>the following text should be </text>
-          <text location>location</text>
-          <cursor />
-        </block>
-      </editor>
-    )
-
-    assert.deepEqual(
-      sanitizeEditorChildren(actual.children),
-      sanitizeEditorChildren(expected.children)
-    )
-
-    assert.deepEqual(actual.selection, expected.selection)
-  })
-
   it('should toggle location bold and italic in entry using hotkeys', async () => {
     await sleep(300)
     await sendKeys(actions, 'following text should be ')
@@ -201,7 +137,7 @@ describe('connected editor', () => {
     await await sendKeys(actions, 'and just bold ')
     await toggleLocation(actions)
     await await sendKeys(actions, 'and location with bold')
-    await sleep(15000)
+    await isSaved(driver)
 
     await driver.navigate().refresh()
 
