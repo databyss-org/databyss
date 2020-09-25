@@ -7,7 +7,6 @@ import { sanitizeEditorChildren } from './__helpers'
 import {
   getEditor,
   getElementByTag,
-  sleep,
   toggleBold,
   getElementById,
   enterKey,

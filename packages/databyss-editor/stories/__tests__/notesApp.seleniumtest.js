@@ -67,9 +67,10 @@ describe('notes app', () => {
       '[data-test-element="page-header"]'
     )
     await headerField.sendKeys('First Test Page Title')
-
-    editor.sendKeys('Editor test one')
+    await editor.click()
+    await editor.sendKeys('Editor test one')
     await isAppInNotesSaved(driver)
+    await sleep(1000)
 
     const newPageButton = await getElementByTag(
       driver,
@@ -87,9 +88,10 @@ describe('notes app', () => {
 
     editor = await getEditor(driver)
 
-    editor.sendKeys('Editor test two')
+    await editor.sendKeys('Editor test two')
 
     await isAppInNotesSaved(driver)
+    await sleep(1000)
 
     const firstPageButton = await getElementByTag(
       driver,
@@ -109,8 +111,8 @@ describe('notes app', () => {
 
     let editorField = await editor.getAttribute('innerText')
 
-    assert.equal(headerField, 'First Test Page Title')
-    assert.equal(editorField, 'Editor test one')
+    assert.equal(headerField.trim(), 'First Test Page Title')
+    assert.equal(editorField.trim(), 'Editor test one')
 
     // Second page integrity test
     const secondPageButton = await getElementByTag(
@@ -131,8 +133,8 @@ describe('notes app', () => {
 
     editorField = await editor.getAttribute('innerText')
 
-    assert.equal(headerField, 'Second page title')
-    assert.equal(editorField, 'Editor test two')
+    assert.equal(headerField.trim(), 'Second page title')
+    assert.equal(editorField.trim(), 'Editor test two')
   })
 
   it('disable in offline mode', async () => {
