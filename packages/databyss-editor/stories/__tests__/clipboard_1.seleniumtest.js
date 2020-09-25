@@ -92,7 +92,6 @@ describe('editor clipboard', () => {
 
   it('should copy a whole block and paste it at the end of the same block', async () => {
     // TODO: FIX CURSOR POSITION FOR THIS TEST
-    await sleep(300)
     await sendKeys(actions, 'this text will be pasted with ')
 
     await toggleBold(actions)
@@ -106,8 +105,6 @@ describe('editor clipboard', () => {
     await isSaved(driver)
 
     await driver.navigate().refresh()
-
-    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -134,7 +131,6 @@ describe('editor clipboard', () => {
   })
 
   it('should copy a whole block and paste it in the middle of a block', async () => {
-    await sleep(300)
     await sendKeys(actions, 'this text will be pasted with ')
     await toggleBold(actions)
     await sendKeys(actions, 'bold ')
@@ -153,8 +149,6 @@ describe('editor clipboard', () => {
     await isSaved(driver)
 
     await driver.navigate().refresh()
-
-    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -182,7 +176,6 @@ describe('editor clipboard', () => {
   })
 
   it('should copy a whole block and paste it at the start of a block', async () => {
-    await sleep(300)
     await sendKeys(actions, 'this text will be pasted with ')
     await toggleBold(actions)
     await sendKeys(actions, 'bold ')
@@ -193,8 +186,6 @@ describe('editor clipboard', () => {
     await isSaved(driver)
 
     await driver.navigate().refresh()
-
-    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -223,7 +214,6 @@ describe('editor clipboard', () => {
   })
 
   it('should cut an atomic in a multi block selection', async () => {
-    await sleep(1000)
     await sendKeys(actions, 'this is an entry')
     await enterKey(actions)
     await enterKey(actions)
@@ -248,8 +238,6 @@ describe('editor clipboard', () => {
     await isSaved(driver)
 
     await driver.navigate().refresh()
-
-    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 

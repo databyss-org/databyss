@@ -90,7 +90,6 @@ describe('editor clipboard', () => {
   })
 
   it('should have a multi-block selection with atomics and paste the whole atomic blocks', async () => {
-    await sleep(1000)
     await actions.sendKeys('@this is a source text')
     await enterKey(actions)
     await actions.sendKeys('in between text')
@@ -105,7 +104,6 @@ describe('editor clipboard', () => {
     await paste(actions)
     await isSaved(driver)
     await driver.navigate().refresh()
-    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -145,7 +143,6 @@ describe('editor clipboard', () => {
   })
 
   it('should prevent a paste from occuring in an atomic', async () => {
-    await sleep(3000)
     await actions.sendKeys('@this is a source text')
     await enterKey(actions)
     await actions.sendKeys('entry text')
@@ -164,8 +161,6 @@ describe('editor clipboard', () => {
     await paste(actions)
     await isSaved(driver)
     await driver.navigate().refresh()
-
-    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -193,7 +188,6 @@ describe('editor clipboard', () => {
   })
 
   it('should remove an atomic fragment on a cut', async () => {
-    await sleep(3000)
     await actions.sendKeys('@this is a source text')
     await enterKey(actions)
     await leftKey(actions)
@@ -208,8 +202,6 @@ describe('editor clipboard', () => {
     await paste(actions)
     await isSaved(driver)
     await driver.navigate().refresh()
-
-    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -237,7 +229,6 @@ describe('editor clipboard', () => {
   })
 
   it('should remove a multi-line atomic fragment on a cut', async () => {
-    await sleep(3000)
     await sendKeys(actions, 'this is an entry')
     await enterKey(actions)
     await enterKey(actions)
@@ -261,8 +252,6 @@ describe('editor clipboard', () => {
     await paste(actions)
     await isSaved(driver)
     await driver.navigate().refresh()
-
-    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 

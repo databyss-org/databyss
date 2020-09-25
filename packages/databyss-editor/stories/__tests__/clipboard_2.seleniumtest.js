@@ -91,7 +91,6 @@ describe('editor clipboard', () => {
   })
 
   it('should copy two entry fragments and paste them within an entry', async () => {
-    await sleep(3000)
     await sendKeys(actions, 'this is a test')
     await enterKey(actions)
     await enterKey(actions)
@@ -125,8 +124,6 @@ describe('editor clipboard', () => {
     await paste(actions)
     await isSaved(driver)
     await driver.navigate().refresh()
-
-    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -163,7 +160,6 @@ describe('editor clipboard', () => {
   })
 
   it('should copy an atomic block and maintain atomic id integrity', async () => {
-    await sleep(1000)
     await sendKeys(actions, '@this is a source test')
     await enterKey(actions)
     await upKey(actions)
@@ -193,11 +189,7 @@ describe('editor clipboard', () => {
     )
     await doneButton.click()
 
-    await sleep(1000)
-
     await driver.navigate().refresh()
-
-    await sleep(3000)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -228,7 +220,6 @@ describe('editor clipboard', () => {
   })
 
   it('should copy atomic and entry fragment and paste it on an empty block', async () => {
-    await sleep(3000)
     await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
     await actions.sendKeys('with frag')
@@ -253,8 +244,6 @@ describe('editor clipboard', () => {
     await isSaved(driver)
 
     await driver.navigate().refresh()
-
-    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -288,7 +277,6 @@ describe('editor clipboard', () => {
   })
 
   it('should select an atomic fragment and paste the whole atomic block', async () => {
-    await sleep(500)
     await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
     await sendKeys(actions, 'in between text')
@@ -306,7 +294,6 @@ describe('editor clipboard', () => {
     await paste(actions)
     await isSaved(driver)
     await driver.navigate().refresh()
-    await sleep(500)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
