@@ -81,11 +81,20 @@ describe('connected editor', () => {
     await driver.quit()
   })
 
-  it('should toggle bold and save changes', async () => {
+  it('should test editor and database sync and functionality', async () => {
     await sleep(300)
     await sendKeys(actions, 'the following text should be ')
     await toggleBold(actions)
     await sendKeys(actions, 'bold')
+    await toggleBold(actions)
+    await sendKeys(actions, ' the following text should be ')
+    await toggleItalic(actions)
+    await sendKeys(actions, 'italic')
+    await toggleItalic(actions)
+    await sendKeys(actions, ' and the final text should be a ')
+    await toggleLocation(actions)
+    await sendKeys(actions, 'location')
+
     await sleep(3000)
 
     await driver.navigate().refresh()
@@ -101,6 +110,10 @@ describe('connected editor', () => {
         <block type="ENTRY">
           <text>the following text should be </text>
           <text bold>bold</text>
+          <text> the following text should be </text>
+          <text italic>italic</text>
+          <text> and the final text should be a </text>
+          <text location>location</text>
           <cursor />
         </block>
       </editor>
