@@ -109,12 +109,11 @@ describe('archive page', () => {
     )
     await archiveButton.click()
 
-    const pagesSidebarList = await getElementByTag(
+    let pagesSidebarList = await getElementByTag(
       driver,
       '[data-test-element="sidebar-pages-list"]'
     )
-
-    const _sidebarList = await pagesSidebarList.getText()
+    let _sidebarList = await pagesSidebarList.getText()
 
     // make sure second page does not appear on the sidebar
     assert.equal(_sidebarList, 'this is the first page title')
@@ -134,5 +133,19 @@ describe('archive page', () => {
     }
 
     assert.equal(isElementVisible, false)
+
+    // click on archive sidebar
+    const archiveSidebarButton = await getElementByTag(
+      driver,
+      '[data-test-sidebar-element="archive"]'
+    )
+    await archiveSidebarButton.click()
+
+    pagesSidebarList = await getElementByTag(
+      driver,
+      '[data-test-element="sidebar-pages-list"]'
+    )
+
+    _sidebarList = await pagesSidebarList.getText()
   })
 })
