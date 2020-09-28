@@ -177,6 +177,8 @@ describe('archive page', () => {
     )
 
     _sidebarList = await pagesSidebarList.getText()
+
+    _sidebarList.replace('\n', '')
     // sidebar should contain both pages
     assert.equal(
       _sidebarList,
