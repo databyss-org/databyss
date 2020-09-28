@@ -191,6 +191,8 @@ describe('editor clipboard', () => {
       '[data-test-dismiss-modal="true"]'
     )
     await doneButton.click()
+    await isSaved(driver)
+    await sleep(1000)
 
     await driver.navigate().refresh()
 
