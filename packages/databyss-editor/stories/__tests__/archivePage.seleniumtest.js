@@ -151,6 +151,37 @@ describe('archive page', () => {
 
     _sidebarList = await pagesSidebarList.getText()
     assert.equal(_sidebarList, 'this is the second page title')
-    await sleep(30000)
+
+    const archivedPageButton = await getElementByTag(
+      driver,
+      '[data-test-element="page-sidebar-0"]'
+    )
+    await archivedPageButton.click()
+
+    archiveDropdown = await getElementByTag(
+      driver,
+      '[data-test-element="archive-dropdown"]'
+    )
+    await archiveDropdown.click()
+
+    // restore the page
+    const restoreButton = await getElementByTag(
+      driver,
+      '[data-test-block-menu="restore"]'
+    )
+    await restoreButton.click()
+
+    await getEditor(driver)
+
+    // should redirect to the pages sidebar
+
+    pagesSidebarList = await getElementByTag(
+      driver,
+      '[data-test-element="sidebar-pages-list"]'
+    )
+
+    console.log(pagesSidebarList.getText())
+
+    await sleep(3000)
   })
 })
