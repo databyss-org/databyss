@@ -118,21 +118,22 @@ describe('archive page', () => {
     // make sure second page does not appear on the sidebar
     assert.equal(_sidebarList, 'this is the first page title')
 
+    console.log(_sidebarList.length)
     // assure archive dropdown is not visible if one page exists
-    let isElementVisible = true
+    // let isElementVisible = true
 
-    archiveDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="archive-dropdown"]'
-    )
-    await archiveDropdown.click()
-    try {
-      await getElementByTag(driver, '[data-test-block-menu="archive"]')
-    } catch (err) {
-      isElementVisible = false
-    }
+    // archiveDropdown = await getElementByTag(
+    //   driver,
+    //   '[data-test-element="archive-dropdown"]'
+    // )
+    // await archiveDropdown.click()
+    // try {
+    //   await getElementByTag(driver, '[data-test-block-menu="archive"]')
+    // } catch (err) {
+    //   isElementVisible = false
+    // }
 
-    assert.equal(isElementVisible, false)
+    // assert.equal(isElementVisible, false)
 
     // click on archive sidebar
     const archiveSidebarButton = await getElementByTag(
@@ -146,6 +147,10 @@ describe('archive page', () => {
       '[data-test-element="sidebar-pages-list"]'
     )
 
+    //   data-test-element="page-sidebar-0"
+
     _sidebarList = await pagesSidebarList.getText()
+    assert.equal(_sidebarList, 'this is the second page title')
+    await sleep(30000)
   })
 })
