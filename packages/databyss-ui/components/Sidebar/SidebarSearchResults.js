@@ -32,6 +32,7 @@ const SidebarSearchResults = ({ filterQuery, height }) => (
 
       return (
         <SidebarList
+          data-test-element="search-results"
           menuItems={[
             ...(filterQuery.textValue === '' ? sortedSources : filteredEntries),
           ]}
