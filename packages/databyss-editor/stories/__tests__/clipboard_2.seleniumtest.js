@@ -21,6 +21,7 @@ import {
   sendKeys,
   leftKey,
   isSaved,
+  sleep,
 } from './_helpers.selenium'
 
 let driver
@@ -122,6 +123,8 @@ describe('editor clipboard', () => {
     await leftKey(actions)
     await paste(actions)
     await isSaved(driver)
+    await sleep(1000)
+
     await driver.navigate().refresh()
 
     slateDocument = await getElementById(driver, 'slateDocument')
@@ -171,6 +174,7 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await paste(actions)
     await isSaved(driver)
+    await sleep(1000)
 
     const atomic = await getElementByTag(
       driver,
@@ -187,6 +191,8 @@ describe('editor clipboard', () => {
       '[data-test-dismiss-modal="true"]'
     )
     await doneButton.click()
+    await isSaved(driver)
+    await sleep(1000)
 
     await driver.navigate().refresh()
 
@@ -241,6 +247,7 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await paste(actions)
     await isSaved(driver)
+    await sleep(1000)
 
     await driver.navigate().refresh()
 
@@ -292,6 +299,8 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await paste(actions)
     await isSaved(driver)
+    await sleep(1000)
+
     await driver.navigate().refresh()
 
     slateDocument = await getElementById(driver, 'slateDocument')

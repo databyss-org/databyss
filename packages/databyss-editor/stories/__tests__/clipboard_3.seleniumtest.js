@@ -103,6 +103,7 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await paste(actions)
     await isSaved(driver)
+    await sleep(1000)
     await driver.navigate().refresh()
 
     slateDocument = await getElementById(driver, 'slateDocument')
@@ -160,6 +161,7 @@ describe('editor clipboard', () => {
     await rightKey(actions)
     await paste(actions)
     await isSaved(driver)
+    await sleep(1000)
     await driver.navigate().refresh()
     await sleep(300)
 
@@ -202,6 +204,7 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await paste(actions)
     await isSaved(driver)
+    await sleep(1000)
     await driver.navigate().refresh()
 
     slateDocument = await getElementById(driver, 'slateDocument')
@@ -252,6 +255,7 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await paste(actions)
     await isSaved(driver)
+    await sleep(1000)
     await driver.navigate().refresh()
 
     slateDocument = await getElementById(driver, 'slateDocument')
