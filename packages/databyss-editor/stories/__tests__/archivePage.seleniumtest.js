@@ -2,7 +2,14 @@
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
-import { getElementByTag, sleep, sendKeys, enterKey } from './_helpers.selenium'
+import {
+  getElementByTag,
+  sleep,
+  sendKeys,
+  enterKey,
+  getEditor,
+  isAppInNotesSaved,
+} from './_helpers.selenium'
 
 let driver
 let actions
@@ -39,8 +46,8 @@ describe('archive page', () => {
 
     await continueButton.click()
 
-    await sleep(1000)
-
+    // wait for editor to be visible
+    await getEditor(driver)
     actions = driver.actions()
 
     done()
@@ -52,7 +59,6 @@ describe('archive page', () => {
 
   it('should archive a page and remove the page from the sidebar', async () => {
     // populate a page
-    await sleep(500)
     const pageTitle = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
@@ -74,7 +80,8 @@ describe('archive page', () => {
     )
 
     await newPageButton.click()
-    await sleep(2000)
+    // wait for editor to be visible
+    await getEditor(driver)
 
     await sendKeys(actions, 'this is the second page title')
     await enterKey(actions)
@@ -83,10 +90,10 @@ describe('archive page', () => {
     await enterKey(actions)
     await sendKeys(actions, '@this is another test source')
     await enterKey(actions)
+    await isAppInNotesSaved(driver)
 
     // refresh and archive the page
     await driver.navigate().refresh()
-    await sleep(2000)
 
     // check sidebar list for archived page
 
@@ -101,8 +108,6 @@ describe('archive page', () => {
       '[data-test-block-menu="archive"]'
     )
     await archiveButton.click()
-
-    await sleep(2000)
 
     const pagesSidebarList = await getElementByTag(
       driver,

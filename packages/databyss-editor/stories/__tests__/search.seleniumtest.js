@@ -3,8 +3,9 @@ import { Key, By } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
+  getEditor,
+  isAppInNotesSaved,
   getElementByTag,
-  sleep,
   sendKeys,
   enterKey,
   rightShiftKey,
@@ -45,7 +46,8 @@ describe('entry search', () => {
 
     await continueButton.click()
 
-    await sleep(1000)
+    // wait for editor to be visible
+    await getEditor(driver)
 
     actions = driver.actions()
 
@@ -60,7 +62,6 @@ describe('entry search', () => {
   // should search an entry at the end of an entry
   it('should test the integrity of search results', async () => {
     // populate a page
-    await sleep(500)
     const pageTitle = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
@@ -83,7 +84,8 @@ describe('entry search', () => {
       '[data-test-element="new-page-button"]'
     )
     await newPageButton.click()
-    await sleep(2000)
+    // wait for editor to be visible
+    await getEditor(driver)
     await sendKeys(actions, 'this is the second page title')
     await enterKey(actions)
     await sendKeys(
@@ -101,7 +103,8 @@ describe('entry search', () => {
       '[data-test-element="new-page-button"]'
     )
     await newPageButton.click()
-    await sleep(2000)
+    // wait for editor to be visible
+    await getEditor(driver)
     await sendKeys(actions, 'this is the third page title')
     await enterKey(actions)
     await sendKeys(actions, '@this is another test source')
@@ -109,9 +112,10 @@ describe('entry search', () => {
     await sendKeys(actions, 'keyword appears at the end of an entry something')
     await enterKey(actions)
     await enterKey(actions)
+    await isAppInNotesSaved(driver)
+
     // refresh and archive the page
     await driver.navigate().refresh()
-    await sleep(2000)
     // click on sidebar entry search
     const searchSidebarButton = await getElementByTag(
       driver,
@@ -124,10 +128,10 @@ describe('entry search', () => {
       '[data-test-element="search-input"]'
     )
     await searchInput.click()
-    await sleep(1000)
+    // wait for editor to be visible
+    await getEditor(driver)
     await sendKeys(actions, 'something')
     await enterKey(actions)
-    await sleep(1000)
 
     // results can be in random order
     const searchPageResultsTitle = await driver.findElements(
@@ -169,7 +173,8 @@ describe('entry search', () => {
     const _idx = titleArray.findIndex(t => t === 'this is the third page title')
 
     await entrySearchResult[_idx].click()
-    await sleep(2000)
+    // wait for editor to be visible
+    await getEditor(driver)
     // highlights current anchor position
     await rightShiftKey(actions)
     await rightShiftKey(actions)

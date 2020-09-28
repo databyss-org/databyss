@@ -37,6 +37,14 @@ export const getElementById = async (driver, id) => {
   return _driver
 }
 
+export const isSaved = async driver => {
+  await getElementById(driver, 'complete')
+}
+
+export const isAppInNotesSaved = async driver => {
+  await getElementById(driver, 'changes-saved')
+}
+
 export const toggleBold = actions =>
   actions
     .keyDown(CONTROL)
