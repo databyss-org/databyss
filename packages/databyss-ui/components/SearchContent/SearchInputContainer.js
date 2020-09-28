@@ -58,7 +58,10 @@ const SearchInputContainer = ({
         />
         {value.textValue && (
           <View position="absolute" right="small">
-            <BaseControl onClick={onClear}>
+            <BaseControl
+              data-test-element="clear-search-results"
+              onClick={onClear}
+            >
               <Icon sizeVariant="tiny" color="text.3">
                 <CloseSvg />
               </Icon>

@@ -1,5 +1,5 @@
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
+import { Key, By } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
@@ -103,7 +103,7 @@ describe('archive page', () => {
     )
     await archiveDropdown.click()
 
-    const archiveButton = await getElementByTag(
+    let archiveButton = await getElementByTag(
       driver,
       '[data-test-block-menu="archive"]'
     )
@@ -118,7 +118,6 @@ describe('archive page', () => {
     // make sure second page does not appear on the sidebar
     assert.equal(_sidebarList, 'this is the first page title')
 
-    console.log(_sidebarList.length)
     // assure archive dropdown is not visible if one page exists
     // let isElementVisible = true
 
@@ -147,12 +146,10 @@ describe('archive page', () => {
       '[data-test-element="sidebar-pages-list"]'
     )
 
-    //   data-test-element="page-sidebar-0"
-
     _sidebarList = await pagesSidebarList.getText()
     assert.equal(_sidebarList, 'this is the second page title')
 
-    const archivedPageButton = await getElementByTag(
+    let archivedPageButton = await getElementByTag(
       driver,
       '[data-test-element="page-sidebar-0"]'
     )
@@ -180,8 +177,126 @@ describe('archive page', () => {
       '[data-test-element="sidebar-pages-list"]'
     )
 
-    console.log(pagesSidebarList.getText())
+    _sidebarList = await pagesSidebarList.getText()
+    // sidebar should contain both pages
+    assert.equal(
+      _sidebarList,
+      'this is the first page titlethis is the second page title'
+    )
 
+    // archive the first page
+    const firstPageSidebarButton = await getElementByTag(
+      driver,
+      '[data-test-element="page-sidebar-0"]'
+    )
+
+    await firstPageSidebarButton.click()
+    await getEditor(driver)
+
+    archiveDropdown = await getElementByTag(
+      driver,
+      '[data-test-element="archive-dropdown"]'
+    )
+    await archiveDropdown.click()
+
+    archiveButton = await getElementByTag(
+      driver,
+      '[data-test-block-menu="archive"]'
+    )
+    await archiveButton.click()
+    await getEditor(driver)
+
+    // search for an atomic found in the archived page
+    const searchSidebarButton = await getElementByTag(
+      driver,
+      '[data-test-sidebar-element="search"]'
+    )
+
+    await searchSidebarButton.click()
+
+    let searchInput = await getElementByTag(
+      driver,
+      '[data-test-element="search-input"]'
+    )
+    await searchInput.click()
+    await sendKeys(actions, 'source')
+    await enterKey(actions)
+
+    // get the search results in list format
+    let searchPageResultsTitle = await driver.findElements(
+      By.tagName('[data-test-element="search-results"]')
+    )
+
+    // searching for 'source' should only result in one source, archived source should not appear
+    assert.equal(searchPageResultsTitle.length, 1)
+
+    // clear search results
+    const clearInput = await getElementByTag(
+      driver,
+      '[data-test-element="clear-search-results"]'
+    )
+
+    await clearInput.click()
+    // test the word 'entry'
+    // it should only have one search result
+
+    searchInput = await getElementByTag(
+      driver,
+      '[data-test-element="search-input"]'
+    )
+    await searchInput.click()
+    await sendKeys(actions, 'entry')
+    await enterKey(actions)
+    searchPageResultsTitle = await driver.findElements(
+      By.tagName('[data-test-element="search-result-page"]')
+    )
+
+    // check the length of search results
+    assert.equal(searchPageResultsTitle.length, 1)
+
+    archiveButton = await getElementByTag(
+      driver,
+      '[data-test-sidebar-element="archive"]'
+    )
+
+    await archiveButton.click()
+
+    archivedPageButton = await getElementByTag(
+      driver,
+      '[data-test-element="page-sidebar-0"]'
+    )
+    await archivedPageButton.click()
+
+    archiveDropdown = await getElementByTag(
+      driver,
+      '[data-test-element="archive-dropdown"]'
+    )
+    await archiveDropdown.click()
+
+    const deleteButton = await getElementByTag(
+      driver,
+      '[data-test-block-menu="delete"]'
+    )
+    await deleteButton.click()
+
+    // verify only one page exists
+    await getEditor(driver)
+    pagesSidebarList = await getElementByTag(
+      driver,
+      '[data-test-element="sidebar-pages-list"]'
+    )
+
+    _sidebarList = await pagesSidebarList.getText()
+    assert.equal(_sidebarList, 'this is the second page title')
+    await archiveButton.click()
+    // verify no pages are in archive bin
+    pagesSidebarList = await getElementByTag(
+      driver,
+      '[data-test-element="sidebar-pages-list"]'
+    )
+
+    _sidebarList = await pagesSidebarList.getText()
+    assert.equal(_sidebarList, '')
     await sleep(3000)
   })
 })
