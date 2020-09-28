@@ -73,8 +73,7 @@ describe('archive page', () => {
     await sendKeys(actions, '@this is a test source')
     await enterKey(actions)
     // create a new page and populate the page
-
-    const newPageButton = await getElementByTag(
+    let newPageButton = await getElementByTag(
       driver,
       '[data-test-element="new-page-button"]'
     )
@@ -297,6 +296,26 @@ describe('archive page', () => {
 
     _sidebarList = await pagesSidebarList.getText()
     assert.equal(_sidebarList, '')
-    await sleep(3000)
+
+    newPageButton = await getElementByTag(
+      driver,
+      '[data-test-element="new-page-button"]'
+    )
+
+    await newPageButton.click()
+    // wait for editor to be visible
+    await getEditor(driver)
+
+    await enterKey(actions)
+
+    await enterKey(actions)
+    await sendKeys(actions, '@this')
+
+    const suggestedSources = await driver.findElements(
+      By.tagName('[data-test-element="suggested-menu-sources"')
+    )
+
+    // check that the editor only shows one suggestion, the deleted page should not be shown
+    assert.equal(suggestedSources.length, 1)
   })
 })

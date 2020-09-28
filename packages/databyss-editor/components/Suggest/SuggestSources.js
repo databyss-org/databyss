@@ -61,6 +61,7 @@ const SuggestSources = ({
       .slice(0, 4)
       .map(s => (
         <DropdownListItem
+          data-test-element="suggested-menu-sources"
           label={s.text.textValue}
           key={s._id}
           onPress={() => onSourceSelected({ ...s, type: 'SOURCE' })}
@@ -100,6 +101,7 @@ const SuggestSources = ({
               <DropdownListItem
                 {...menuItem}
                 key={menuItem.action}
+                data-test-element="suggest-dropdown"
                 onPress={() => {
                   setMode(menuItem.action)
                   focusEditor()
