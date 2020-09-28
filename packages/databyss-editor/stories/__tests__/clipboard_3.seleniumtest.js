@@ -90,12 +90,12 @@ describe('editor clipboard', () => {
   })
 
   it('should have a multi-block selection with atomics and paste the whole atomic blocks', async () => {
-    await actions.sendKeys('@this is a source text')
+    await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
-    await actions.sendKeys('in between text')
+    await sendKeys(actions, 'in between text')
     await enterKey(actions)
     await enterKey(actions)
-    await actions.sendKeys('@this is another source text')
+    await sendKeys(actions, '@this is another source text')
     await upKey(actions)
     await selectAll(actions)
     await copy(actions)
@@ -189,7 +189,7 @@ describe('editor clipboard', () => {
   })
 
   it('should remove an atomic fragment on a cut', async () => {
-    await actions.sendKeys('@this is a source text')
+    await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
     await leftKey(actions)
     await leftShiftKey(actions)

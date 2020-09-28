@@ -221,7 +221,7 @@ describe('editor clipboard', () => {
   it('should copy atomic and entry fragment and paste it on an empty block', async () => {
     await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
-    await actions.sendKeys('with frag')
+    await sendKeys(actions, 'with frag')
     await leftKey(actions)
     await leftKey(actions)
     await leftKey(actions)
