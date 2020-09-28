@@ -37,12 +37,6 @@ const LabeledTextInput = props => (
   </ValueListItem>
 )
 
-const Instructions = props => (
-  <Text variant="bodySmall" {...props}>
-    {props.children}
-  </Text>
-)
-
 const EditSourceForm = props => {
   const { values, onChange } = props
 
@@ -63,24 +57,21 @@ const EditSourceForm = props => {
       width="100%"
     >
       <ValueListProvider onChange={onChange} values={values}>
-        {/* NAME */}
-        <FormHeading>Name</FormHeading>
-        <Instructions>
-          This is how this entry will show up in Databyss
-        </Instructions>
+        {/* DATABYSS NAME */}
+        <FormHeading>Databyss Name</FormHeading>
         <LabeledTextInput
-          path="detail.name"
+          path="text"
           id="name"
           label="Name"
           rich
           onBlur={onTextInputBlur}
         />
-        {/* NAME END */}
+        {/* DATABYSS NAME END */}
 
         {/* CITATION */}
         <FormHeading>Citation</FormHeading>
         <LabeledTextInput
-          path="text"
+          path="detail.citation"
           id="citation"
           label="Citation"
           onBlur={onTextInputBlur}
