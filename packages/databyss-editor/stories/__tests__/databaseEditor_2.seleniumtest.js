@@ -89,7 +89,7 @@ describe('connected editor', () => {
     await driver.quit()
   })
 
-  it('should insert atomic source and edit source fields', async () => {
+  it('should insert atomic source and edit source fields and test for suggestions', async () => {
     await sleep(300)
     await sendKeys(actions, '@this is a test')
     // verify if there are no suggestions the suggestion menu appears
@@ -281,6 +281,7 @@ describe('connected editor', () => {
 
     // refresh page
     await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 

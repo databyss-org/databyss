@@ -98,8 +98,7 @@ describe('connected editor', () => {
     await isSaved(driver)
 
     await driver.navigate().refresh()
-
-    await sleep(300)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -140,6 +139,7 @@ describe('connected editor', () => {
     await isSaved(driver)
 
     await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
