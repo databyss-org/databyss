@@ -33,9 +33,14 @@ const formatActions = () => [
   },
 ]
 
-const formatActionButtons = () =>
+const formatActionButtons = () => {
+
+}
+  // FIXME: this should be replaced with a valid condition, or be removed
+  const TRUE = true
+
   // placeholder for mobile actions
-  true
+  TRUE
     ? formatActions(true).reduce((acc, a, i) => {
         if (a.type === 'DIVIDER') {
           return acc.concat(
