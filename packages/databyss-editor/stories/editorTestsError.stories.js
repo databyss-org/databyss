@@ -97,7 +97,9 @@ const EditorWithProvider = () => {
         id="clear-state"
         mb="small"
         onClick={() => {
-          setPage(corruptedPage(account.defaultPage))
+          // setPage(corruptedPage(account.defaultPage))
+          const errorMessage = 'export \'corruptedPage\' was not found in \'./fixtures/connectedState\''
+          console.log('FIXME:', errorMessage)
         }}
       >
         <Text>corrupt page</Text>
