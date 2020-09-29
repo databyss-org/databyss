@@ -184,6 +184,11 @@ describe('editor clipboard', () => {
     await atomic.click()
     await atomic.click()
 
+    const source = await getElementByTag(driver, '[data-test-path="text"]')
+
+    // double click on atomic
+    await source.click()
+
     await sendKeys(actions, ' with appended text')
 
     const doneButton = await getElementByTag(
