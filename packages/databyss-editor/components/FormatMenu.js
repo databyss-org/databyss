@@ -34,13 +34,11 @@ const formatActions = () => [
 ]
 
 const formatActionButtons = () => {
-
-}
   // FIXME: this should be replaced with a valid condition, or be removed
-  const TRUE = true
+  const PLACEHOLDER = true
 
   // placeholder for mobile actions
-  TRUE
+  return PLACEHOLDER
     ? formatActions(true).reduce((acc, a, i) => {
         if (a.type === 'DIVIDER') {
           return acc.concat(
@@ -64,6 +62,7 @@ const formatActionButtons = () => {
         )
       }, [])
     : []
+}
 
 const MarkButton = ({ type, label, variant, ...others }) => {
   const editor = useEditor()
