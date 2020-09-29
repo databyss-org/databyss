@@ -105,9 +105,11 @@ describe('connected editor', () => {
     await tabKey(actions)
     await sendKeys(actions, 'new citation')
     await tabKey(actions)
-    await sendKeys(actions, 'authors first name')
     await tabKey(actions)
+
     await sendKeys(actions, 'authors last name')
+    await tabKey(actions)
+    await sendKeys(actions, 'authors first name')
     await tabKey(actions)
     await tabKey(actions)
 
@@ -118,6 +120,7 @@ describe('connected editor', () => {
     await doneButton.click()
 
     await isSaved(driver)
+    await sleep(1000)
 
     // refresh page
     await driver.navigate().refresh()
