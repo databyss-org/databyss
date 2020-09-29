@@ -29,7 +29,7 @@ import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
 import basicFixture from './fixtures/basic'
 import { cleanupPatches, addMetaToPatches } from '../state/util'
-import connectedFixture, { corruptedPage } from './fixtures/connectedState'
+import connectedFixture from './fixtures/connectedState'
 
 const LoginRequired = () => (
   <Text>You must login before running this story</Text>
@@ -98,7 +98,8 @@ const EditorWithProvider = () => {
         mb="small"
         onClick={() => {
           // setPage(corruptedPage(account.defaultPage))
-          const errorMessage = 'export \'corruptedPage\' was not found in \'./fixtures/connectedState\''
+          const errorMessage =
+            "export 'corruptedPage' was not found in './fixtures/connectedState'"
           console.log('FIXME:', errorMessage)
         }}
       >
