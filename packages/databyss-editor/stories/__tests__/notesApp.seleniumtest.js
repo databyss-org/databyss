@@ -6,6 +6,7 @@ import {
   getEditor,
   getElementByTag,
   sleep,
+  isAppInNotesSaved,
   //  toggleBold,
   //   toggleItalic,
   //   toggleLocation,
@@ -51,8 +52,6 @@ describe('notes app', () => {
 
     await continueButton.click()
 
-    await sleep(1000)
-
     editor = await getEditor(driver)
 
     done()
@@ -68,10 +67,10 @@ describe('notes app', () => {
       '[data-test-element="page-header"]'
     )
     await headerField.sendKeys('First Test Page Title')
-
-    editor.sendKeys('Editor test one')
-
-    await sleep(2000)
+    await editor.click()
+    await editor.sendKeys('Editor test one')
+    await isAppInNotesSaved(driver)
+    await sleep(1000)
 
     const newPageButton = await getElementByTag(
       driver,
@@ -79,7 +78,6 @@ describe('notes app', () => {
     )
 
     await newPageButton.click()
-    await sleep(2000)
 
     headerField = await getElementByTag(
       driver,
@@ -90,9 +88,10 @@ describe('notes app', () => {
 
     editor = await getEditor(driver)
 
-    editor.sendKeys('Editor test two')
+    await editor.sendKeys('Editor test two')
 
-    await sleep(2000)
+    await isAppInNotesSaved(driver)
+    await sleep(1000)
 
     const firstPageButton = await getElementByTag(
       driver,
@@ -100,8 +99,6 @@ describe('notes app', () => {
     )
 
     await firstPageButton.click()
-
-    await sleep(1000)
 
     headerField = await getElementByTag(
       driver,
@@ -114,8 +111,8 @@ describe('notes app', () => {
 
     let editorField = await editor.getAttribute('innerText')
 
-    assert.equal(headerField, 'First Test Page Title')
-    assert.equal(editorField, 'Editor test one')
+    assert.equal(headerField.trim(), 'First Test Page Title')
+    assert.equal(editorField.trim(), 'Editor test one')
 
     // Second page integrity test
     const secondPageButton = await getElementByTag(
@@ -124,8 +121,6 @@ describe('notes app', () => {
     )
 
     await secondPageButton.click()
-
-    await sleep(1000)
 
     headerField = await getElementByTag(
       driver,
@@ -138,10 +133,8 @@ describe('notes app', () => {
 
     editorField = await editor.getAttribute('innerText')
 
-    await sleep(1000)
-
-    assert.equal(headerField, 'Second page title')
-    assert.equal(editorField, 'Editor test two')
+    assert.equal(headerField.trim(), 'Second page title')
+    assert.equal(editorField.trim(), 'Editor test two')
   })
 
   it('disable in offline mode', async () => {
@@ -152,11 +145,9 @@ describe('notes app', () => {
 
     await newPageButton.click()
 
-    await sleep(1000)
-
     const editor = await getEditor(driver)
     editor.sendKeys('Offline test')
-    await sleep(2000)
+    await sleep(3000)
 
     // toggle offline
     if (!process.env.LOCAL_ENV) {
@@ -183,7 +174,7 @@ describe('notes app', () => {
       })
     }
 
-    await sleep(1000)
+    await sleep(500)
 
     try {
       await newPageButton.click()

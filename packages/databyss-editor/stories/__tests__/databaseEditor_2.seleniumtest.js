@@ -19,6 +19,7 @@ import {
   tabKey,
   leftKey,
   rightKey,
+  isSaved,
 } from './_helpers.selenium'
 
 let driver
@@ -95,7 +96,7 @@ describe('connected editor', () => {
     await leftKey(actions)
     await leftKey(actions)
     await enterKey(actions)
-    await sleep(1000)
+    await isSaved(driver)
 
     const name = await getElementByTag(driver, '[data-test-path="text"]')
 
@@ -116,7 +117,7 @@ describe('connected editor', () => {
     )
     await doneButton.click()
 
-    await sleep(1000)
+    await isSaved(driver)
 
     // refresh page
     await driver.navigate().refresh()
@@ -218,7 +219,7 @@ describe('connected editor', () => {
     await downKey(actions)
     await downKey(actions)
     await sendKeys(actions, 'last entry')
-    await sleep(20000)
+    await isSaved(driver)
 
     // refresh page
     await driver.navigate().refresh()

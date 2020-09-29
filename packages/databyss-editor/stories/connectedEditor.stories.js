@@ -43,6 +43,7 @@ const Box = ({ children, ...others }) => (
 
 const PageWithAutosave = ({ page }) => {
   const { setPatches } = usePageContext()
+  const hasPendingPatches = usePageContext(c => c && c.hasPendingPatches)
   const [pageState, setPageState] = useState(null)
 
   const operationsQueue = useRef([])
@@ -84,6 +85,11 @@ const PageWithAutosave = ({ page }) => {
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{pageState}</pre>
       </Box>
+      {!hasPendingPatches ? (
+        <Text id="complete" variant="uiText">
+          changes saved
+        </Text>
+      ) : null}
     </View>
   )
 }

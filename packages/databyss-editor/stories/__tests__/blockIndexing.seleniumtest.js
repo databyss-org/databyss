@@ -14,6 +14,8 @@ import {
   downKey,
   leftKey,
   backspaceKey,
+  getEditor,
+  isAppInNotesSaved,
 } from './_helpers.selenium'
 
 let driver
@@ -51,7 +53,7 @@ describe('block indexing', () => {
 
     await continueButton.click()
 
-    await sleep(1000)
+    await getEditor(driver)
 
     actions = driver.actions()
 
@@ -67,7 +69,6 @@ describe('block indexing', () => {
 
   it('should test block indexing', async () => {
     // populate a page
-    await sleep(500)
     const pageTitle = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
@@ -103,7 +104,7 @@ describe('block indexing', () => {
       '[data-test-dismiss-modal="true"]'
     )
     await doneButton.click()
-    await sleep(1000)
+    await sleep(500)
     await downKey(actions)
     await sendKeys(actions, 'this is an entry')
     await enterKey(actions)
@@ -129,11 +130,10 @@ describe('block indexing', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'second entry within topic')
-    await sleep(2000)
-
+    await isAppInNotesSaved(driver)
+    await sleep(1000)
     await driver.navigate().refresh()
-    await sleep(2000)
-
+    await getEditor(driver)
     const topicsSidebarButton = await getElementByTag(
       driver,
       '[data-test-sidebar-element="topics"]'
@@ -147,15 +147,11 @@ describe('block indexing', () => {
     )
 
     await secondTopic.click()
-
     await sleep(1000)
 
     const topicResults = await driver.findElements(
       By.tagName('[data-test-element="atomic-results"]')
     )
-
-    await sleep(10000)
-
     // check for that topic exists on page
     assert.equal(topicResults.length, 1)
 
@@ -167,7 +163,7 @@ describe('block indexing', () => {
     assert.equal(topicEntries.length, 2)
 
     await topicEntries[1].click()
-    await sleep(1000)
+    await getEditor(driver)
     await rightShiftKey(actions)
     await rightShiftKey(actions)
     await rightShiftKey(actions)
@@ -187,7 +183,6 @@ describe('block indexing', () => {
       '[data-test-sidebar-element="sources"]'
     )
     await sourcesSidebarButton.click()
-    await sleep(1000)
 
     // assure two topics are show in sidebar
     const authorSidebarButton = await getElementByTag(
@@ -196,13 +191,13 @@ describe('block indexing', () => {
     )
 
     await authorSidebarButton.click()
-    await sleep(1000)
     let authorSorces = await driver.findElements(
       By.tagName('[data-test-element="source-results"]')
     )
 
     await authorSorces[0].click()
     await sleep(1000)
+
     //  data-test-element="source-results"
     const citationsResults = await driver.findElements(
       By.tagName('[data-test-element="atomic-result-item"]')
@@ -212,9 +207,10 @@ describe('block indexing', () => {
 
     // remove author from page
     await citationsResults[0].click()
-    await sleep(1000)
+    await getEditor(driver)
     await leftKey(actions)
     await backspaceKey(actions)
+    await isAppInNotesSaved(driver)
 
     const allSources = await getElementByTag(
       driver,
@@ -222,14 +218,12 @@ describe('block indexing', () => {
     )
 
     await allSources.click()
-    await sleep(1000)
 
     authorSorces = await driver.findElements(
       By.tagName('[data-test-element="source-results"]')
     )
 
     await authorSorces[0].click()
-    await sleep(1000)
 
     // check for no results
     const _results = await driver.findElements(

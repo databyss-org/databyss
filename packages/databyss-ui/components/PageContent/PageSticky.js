@@ -68,7 +68,13 @@ const PageSticky = ({ pagePath, pageId }) => {
           <Icon sizeVariant="tiny" color="gray.5" title="Saving...">
             <LoadingSvg />
           </Icon>
-        ) : null}
+        ) : (
+          <View id="changes-saved">
+            {' '}
+            &nbsp;
+            {/* this is used in tests to confirm the page has been saved */}
+          </View>
+        )}
         <Icon
           sizeVariant="small"
           color="gray.5"
