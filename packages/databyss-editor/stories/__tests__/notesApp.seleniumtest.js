@@ -91,17 +91,16 @@ describe('notes app', () => {
     await sleep(1000)
 
     // verify that the topic sidebar has the new topic
-    const sidebarTopic = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-1"]'
+    const sidebarTopic = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
 
-    const sidebar = await sidebarTopic.getAttribute('innerText')
+    const sidebar = await sidebarTopic[1].getAttribute('innerText')
 
     assert.equal(sidebar.trim(), 'this is a new topic')
 
     // click on the topic in sidebar
-    await sidebarTopic.click()
+    await sidebarTopic[1].click()
     await sleep(1000)
 
     // get all search page results
@@ -158,27 +157,43 @@ describe('notes app', () => {
     await sleep(1000)
 
     // check if source is on sidebar
-    let sidebarSource = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-2"]'
+    let sidebarSource = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
 
-    sidebarSource = await sidebarSource.getAttribute('innerText')
+    sidebarSource = await sidebarSource[2].getAttribute('innerText')
 
     assert.equal(sidebarSource.trim(), 'Bookchin, M.')
     // delete the source and verify its removed from the sidebar
     await backspaceKey(actions)
     await backspaceKey(actions)
 
-    // check if its in sidebar
+    // check if the source exists in the sidebar, it should be removed
 
-    // TODO
-    const firstPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-0"]'
+    sidebarSource = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
 
-    await firstPageButton.click()
+    assert.equal(sidebarSource.length, 2)
+
+    await sendKeys(actions, 'Editor test two')
+
+    // click on sidebar for pages menu
+
+    const pagesSidebarButton = await getElementByTag(
+      driver,
+      '[data-test-sidebar-element="pages"]'
+    )
+
+    await pagesSidebarButton.click()
+    await sleep(500)
+
+    const firstPageButton = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
+    )
+    await firstPageButton[0].click()
+
+    await getEditor(driver)
 
     headerField = await getElementByTag(
       driver,
@@ -186,22 +201,15 @@ describe('notes app', () => {
     )
 
     headerField = await headerField.getAttribute('value')
-
-    editor = await getEditor(driver)
-
-    // let editorField = await editor.getAttribute('innerText')
 
     assert.equal(headerField.trim(), 'First Test Page Title')
 
-    // assert.equal(editorField.trim(), 'Editor test one')
-
     // Second page integrity test
-    const secondPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-1"]'
+    const secondPageButton = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
 
-    await secondPageButton.click()
+    await secondPageButton[1].click()
 
     headerField = await getElementByTag(
       driver,
@@ -212,10 +220,10 @@ describe('notes app', () => {
 
     editor = await getEditor(driver)
 
-    // editorField = await editor.getAttribute('innerText')
+    const editorField = await editor.getAttribute('innerText')
 
     assert.equal(headerField.trim(), 'Second page title')
-    // assert.equal(editorField.trim(), 'Editor test two')
+    assert.equal(editorField.trim(), 'Editor test two')
   })
 
   it('disable in offline mode', async () => {

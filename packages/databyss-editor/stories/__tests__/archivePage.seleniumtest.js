@@ -134,9 +134,9 @@ describe('archive page', () => {
 
     let archivedPageButton = await getElementByTag(
       driver,
-      '[data-test-element="page-sidebar-0"]'
+      '[data-test-element="page-sidebar-item"]'
     )
-    await archivedPageButton.click()
+    await archivedPageButton[0].click()
 
     archiveDropdown = await getElementByTag(
       driver,
@@ -170,12 +170,11 @@ describe('archive page', () => {
     )
 
     // archive the first page
-    const firstPageSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-0"]'
+    const firstPageSidebarButton = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
 
-    await firstPageSidebarButton.click()
+    await firstPageSidebarButton[0].click()
     await getEditor(driver)
 
     archiveDropdown = await getElementByTag(
@@ -246,11 +245,10 @@ describe('archive page', () => {
 
     await archiveButton.click()
 
-    archivedPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-0"]'
+    archivedPageButton = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
-    await archivedPageButton.click()
+    await archivedPageButton[0].click()
 
     archiveDropdown = await getElementByTag(
       driver,

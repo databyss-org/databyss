@@ -141,12 +141,11 @@ describe('block indexing', () => {
     await topicsSidebarButton.click()
 
     // assure two topics are show in sidebar
-    const secondTopic = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-2"]'
+    const secondTopic = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
 
-    await secondTopic.click()
+    await secondTopic[2].click()
     await sleep(1000)
 
     const topicResults = await driver.findElements(
@@ -185,12 +184,10 @@ describe('block indexing', () => {
     await sourcesSidebarButton.click()
 
     // assure two topics are show in sidebar
-    const authorSidebarButton = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-2"]'
+    const authorSidebarButton = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
-
-    await authorSidebarButton.click()
+    await authorSidebarButton[2].click()
     let authorSorces = await driver.findElements(
       By.tagName('[data-test-element="source-results"]')
     )
@@ -212,12 +209,11 @@ describe('block indexing', () => {
     await backspaceKey(actions)
     await isAppInNotesSaved(driver)
 
-    const allSources = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-0"]'
+    const allSources = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
 
-    await allSources.click()
+    await allSources[0].click()
 
     authorSorces = await driver.findElements(
       By.tagName('[data-test-element="source-results"]')

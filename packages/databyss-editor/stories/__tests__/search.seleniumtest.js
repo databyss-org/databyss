@@ -199,25 +199,22 @@ describe('entry search', () => {
     await sendKeys(actions, 'something')
     await enterKey(actions)
     // verify that a source is shown in the search results
-    let sourceResult = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-0"]'
+    let sourceResult = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
-    sourceResult = await sourceResult.getAttribute('innerText')
+    sourceResult = await sourceResult[0].getAttribute('innerText')
     assert.equal(sourceResult.trim(), 'this has keyword something in source')
 
-    let topicResult = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-1"]'
+    let topicResult = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
-    topicResult = await topicResult.getAttribute('innerText')
+    topicResult = await topicResult[1].getAttribute('innerText')
     assert.equal(topicResult.trim(), 'this is a topic with something keyword')
 
-    let pageResult = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-2"]'
+    let pageResult = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
-    pageResult = await pageResult.getAttribute('innerText')
+    pageResult = await pageResult[2].getAttribute('innerText')
     assert.equal(
       pageResult.trim(),
       'this is the third page title has keyword something'
