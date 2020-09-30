@@ -67,6 +67,8 @@ let busy = false
 // a PatchBatch is a list of patches that all apply to the same resource (Page)
 export function savePatchBatch(batch?: PatchBatch) {
   // if patch is sent, add to queue
+
+  console.log('ONE', queue)
   if (batch) {
     queue.push(batch)
   }
@@ -107,22 +109,43 @@ export function savePatchBatch(batch?: PatchBatch) {
   }
   const _batchPatch = { id: _pageId, patches: _patches }
   return async (dispatch: Function) => {
+    dispatch({
+      type: QUEUE_PATCH,
+      payload: {
+        queueSize: 1,
+      },
+    })
     try {
       await services.savePatchBatch(_batchPatch)
 
-
+      console.log('THREE')
       
       busy = false
       // repeat function with no patch variable if patches are still in queue
-      dispatch({
-        type: PATCH,
-        payload: {
-          queueSize: queue.length,
-        },
-      })
+      // dispatch({
+      //   type: PATCH,
+      //   payload: {
+      //     queueSize: queue.length?queue.length: 1,
+      //   },
+      // })
       if (queue.length) {
+        dispatch({
+          type: PATCH,
+          payload: {
+            queueSize: queue.length,
+          },
+        })
+
         dispatch(savePatchBatch())
-      } 
+      } else {
+        // clear patch batch
+        dispatch({
+          type: PATCH,
+          payload: {
+            queueSize: 0,
+          },
+        })
+      }
     } catch (err) {
       console.log(err)
       // if error set the patch back to the queue
