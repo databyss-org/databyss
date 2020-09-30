@@ -9,6 +9,7 @@ import {
   sendKeys,
   enterKey,
   rightShiftKey,
+  sleep,
 } from './_helpers.selenium'
 
 let driver
@@ -62,7 +63,7 @@ describe('entry search', () => {
   // should search an entry at the end of an entry
   it('should test the integrity of search results', async () => {
     // populate a page
-    const pageTitle = await getElementByTag(
+    let pageTitle = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
     )
@@ -72,12 +73,65 @@ describe('entry search', () => {
     await sendKeys(actions, 'this is a test entry')
     await enterKey(actions)
     await enterKey(actions)
-    await sendKeys(actions, '@this is a test source')
+    await sendKeys(actions, '@this has keyword something in source')
     await enterKey(actions)
     await sendKeys(
       actions,
       'something keyword appears at the start of an entry'
     )
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, 'this will also have keyword something')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, 'this keyword something will be searched')
+    await sleep(500)
+    // check for search results appearing in the same order as they appear on the page
+    let searchSidebarButton = await getElementByTag(
+      driver,
+      '[data-test-sidebar-element="search"]'
+    )
+    //  data-test-element="search-result-entries"
+
+    await searchSidebarButton.click()
+    // click on sidebar entry search
+    let searchInput = await getElementByTag(
+      driver,
+      '[data-test-element="search-input"]'
+    )
+    await searchInput.click()
+    // wait for editor to be visible
+    await sleep(500)
+    await sendKeys(actions, 'something')
+    await enterKey(actions)
+
+    // get the search results, they should be in the order of how they appear on the page
+    const searchPageEntryResults = await driver.findElements(
+      By.tagName('[data-test-element="search-result-entries"]')
+    )
+    assert.equal(searchPageEntryResults.length, 3)
+
+    // get text from entry search results
+    const results = await Promise.all(
+      searchPageEntryResults.map(async r => {
+        const _text = await r.getAttribute('innerText')
+        return _text.trim()
+      })
+    )
+    assert.equal(
+      results[0],
+      'something keyword appears at the start of an entry'
+    )
+    assert.equal(results[1], 'this will also have keyword something')
+    assert.equal(results[2], 'this keyword something will be searched')
+
+    // clear the search element
+    const clearButton = await getElementByTag(
+      driver,
+      '[data-test-element="clear-search-results"]'
+    )
+    await clearButton.click()
+
     // create a new page and populate the page
     let newPageButton = await getElementByTag(
       driver,
@@ -86,6 +140,11 @@ describe('entry search', () => {
     await newPageButton.click()
     // wait for editor to be visible
     await getEditor(driver)
+    pageTitle = await getElementByTag(
+      driver,
+      '[data-test-element="page-header"]'
+    )
+    await pageTitle.click()
     await sendKeys(actions, 'this is the second page title')
     await enterKey(actions)
     await sendKeys(
@@ -95,7 +154,7 @@ describe('entry search', () => {
     await enterKey(actions)
     await enterKey(actions)
     await enterKey(actions)
-    await sendKeys(actions, '@this is another test source')
+    await sendKeys(actions, '# this is a topic with something keyword')
     await enterKey(actions)
     // create a third page
     newPageButton = await getElementByTag(
@@ -105,7 +164,15 @@ describe('entry search', () => {
     await newPageButton.click()
     // wait for editor to be visible
     await getEditor(driver)
-    await sendKeys(actions, 'this is the third page title')
+    pageTitle = await getElementByTag(
+      driver,
+      '[data-test-element="page-header"]'
+    )
+    await pageTitle.click()
+    await sendKeys(
+      actions,
+      'this is the third page title has keyword something'
+    )
     await enterKey(actions)
     await sendKeys(actions, '@this is another test source')
     await enterKey(actions)
@@ -117,21 +184,43 @@ describe('entry search', () => {
     // refresh and archive the page
     await driver.navigate().refresh()
     // click on sidebar entry search
-    const searchSidebarButton = await getElementByTag(
+    searchSidebarButton = await getElementByTag(
       driver,
       '[data-test-sidebar-element="search"]'
     )
     await searchSidebarButton.click()
     // click on sidebar entry search
-    const searchInput = await getElementByTag(
+    searchInput = await getElementByTag(
       driver,
       '[data-test-element="search-input"]'
     )
     await searchInput.click()
-    // wait for editor to be visible
-    await getEditor(driver)
     await sendKeys(actions, 'something')
     await enterKey(actions)
+    // verify that a source is shown in the search results
+    let sourceResult = await getElementByTag(
+      driver,
+      '[data-test-element="page-sidebar-0"]'
+    )
+    sourceResult = await sourceResult.getAttribute('innerText')
+    assert.equal(sourceResult.trim(), 'this has keyword something in source')
+
+    let topicResult = await getElementByTag(
+      driver,
+      '[data-test-element="page-sidebar-1"]'
+    )
+    topicResult = await topicResult.getAttribute('innerText')
+    assert.equal(topicResult.trim(), 'this is a topic with something keyword')
+
+    let pageResult = await getElementByTag(
+      driver,
+      '[data-test-element="page-sidebar-2"]'
+    )
+    pageResult = await pageResult.getAttribute('innerText')
+    assert.equal(
+      pageResult.trim(),
+      'this is the third page title has keyword something'
+    )
 
     // results can be in random order
     const searchPageResultsTitle = await driver.findElements(
@@ -141,23 +230,50 @@ describe('entry search', () => {
     assert.equal(searchPageResultsTitle.length, 3)
     // should verify correct pages appear on search results
     // a combination of all three page headers
-    const pageHeaders =
-      'this is the third page title this is the second page title this is the first page title'
-    const firstPageTitle = await searchPageResultsTitle[0].getAttribute(
-      'innerText'
+
+    const pageTitleResults = await Promise.all(
+      searchPageResultsTitle.map(async r => {
+        const _text = await r.getAttribute('innerText')
+        return _text.trim()
+      })
     )
-    const secondPageTitle = await searchPageResultsTitle[1].getAttribute(
-      'innerText'
-    )
-    const thirdPageTitle = await searchPageResultsTitle[2].getAttribute(
-      'innerText'
-    )
+
     // check first title
-    assert.equal(pageHeaders.includes(firstPageTitle.trim()), true)
+    assert.equal(
+      pageTitleResults.includes('this is the first page title'),
+      true
+    )
     // check second title
-    assert.equal(pageHeaders.includes(secondPageTitle.trim()), true)
+    assert.equal(
+      pageTitleResults.includes('this is the second page title'),
+      true
+    )
     // check third title
-    assert.equal(pageHeaders.includes(thirdPageTitle.trim()), true)
+    assert.equal(
+      pageTitleResults.includes(
+        'this is the third page title has keyword something'
+      ),
+      true
+    )
+
+    // const pageHeaders =
+    //   'this is the third page title has keyword something this is the second page title this is the first page title'
+    // const firstPageTitle = await searchPageResultsTitle[0].getAttribute(
+    //   'innerText'
+    // )
+    // const secondPageTitle = await searchPageResultsTitle[1].getAttribute(
+    //   'innerText'
+    // )
+    // const thirdPageTitle = await searchPageResultsTitle[2].getAttribute(
+    //   'innerText'
+    // )
+
+    // // check first title
+    // assert.equal(pageHeaders.includes(firstPageTitle.trim()), true)
+    // // check second title
+    // assert.equal(pageHeaders.includes(secondPageTitle.trim()), true)
+    // // check third title
+    // assert.equal(pageHeaders.includes(thirdPageTitle.trim()), true)
 
     // it should click on the first result and verify anchor hyperlink works
     // results can be in random order
@@ -165,12 +281,16 @@ describe('entry search', () => {
       By.tagName('[data-test-element="search-result-entries"]')
     )
 
-    const titleArray = [
-      firstPageTitle.trim(),
-      secondPageTitle.trim(),
-      thirdPageTitle.trim(),
-    ]
-    const _idx = titleArray.findIndex(t => t === 'this is the third page title')
+    const entrySearchResultArray = await Promise.all(
+      entrySearchResult.map(async r => {
+        const _text = await r.getAttribute('innerText')
+        return _text.trim()
+      })
+    )
+
+    const _idx = entrySearchResultArray.findIndex(
+      e => e === 'keyword appears at the end of an entry something'
+    )
 
     await entrySearchResult[_idx].click()
     // wait for editor to be visible
