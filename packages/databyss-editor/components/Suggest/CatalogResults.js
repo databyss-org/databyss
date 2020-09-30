@@ -34,6 +34,7 @@ const CatalogResults = ({ menuHeight, type, dismiss, query, selectSource }) => {
           <List verticalItemPadding="none">
             {results[author].map((result, k) => (
               <BaseControl
+                data-test-catalog={type}
                 onPress={() => onPress(result)}
                 key={k}
                 hoverColor="background.1"
