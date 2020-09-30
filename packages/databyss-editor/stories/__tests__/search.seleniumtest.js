@@ -183,6 +183,7 @@ describe('entry search', () => {
 
     // refresh and archive the page
     await driver.navigate().refresh()
+
     // click on sidebar entry search
     searchSidebarButton = await getElementByTag(
       driver,

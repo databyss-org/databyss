@@ -158,7 +158,7 @@ describe('editor history', () => {
     await enterKey(actions)
     await isSaved(driver)
     await driver.navigate().refresh()
-    await sleep(500)
+    await getEditor(driver)
     await sendKeys(actions, 'this should eventually be undone')
     await enterKey(actions)
     await enterKey(actions)
@@ -226,7 +226,7 @@ describe('editor history', () => {
     await isSaved(driver)
 
     await driver.navigate().refresh()
-    await sleep(500)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -258,10 +258,6 @@ describe('editor history', () => {
     )
 
     assert.deepEqual(actual.selection, expected.selection)
-
-    await driver.navigate().refresh()
-
-    // should redo a multiblock cut with an atomic
   })
 
   it('should redo a multiblock cut with an atomic', async () => {
@@ -333,7 +329,7 @@ describe('editor history', () => {
     await sleep(3000)
 
     await driver.navigate().refresh()
-    await sleep(3000)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 

@@ -106,6 +106,7 @@ describe('editor clipboard', () => {
     await sleep(1000)
 
     await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -151,6 +152,7 @@ describe('editor clipboard', () => {
     await sleep(1000)
 
     await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -189,6 +191,7 @@ describe('editor clipboard', () => {
     await sleep(1000)
 
     await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -242,6 +245,7 @@ describe('editor clipboard', () => {
     await sleep(1000)
 
     await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
