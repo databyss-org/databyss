@@ -140,6 +140,9 @@ describe('block indexing', () => {
     )
     await topicsSidebarButton.click()
 
+    await sleep(2000)
+
+    // TODO: function should wait until element is located then remove sleep
     // assure two topics are show in sidebar
     const secondTopic = await driver.findElements(
       By.tagName('[data-test-element="page-sidebar-item"]')
@@ -182,12 +185,15 @@ describe('block indexing', () => {
       '[data-test-sidebar-element="sources"]'
     )
     await sourcesSidebarButton.click()
+    await sleep(1000)
 
     // assure two topics are show in sidebar
     const authorSidebarButton = await driver.findElements(
       By.tagName('[data-test-element="page-sidebar-item"]')
     )
+
     await authorSidebarButton[2].click()
+    await sleep(1000)
     let authorSorces = await driver.findElements(
       By.tagName('[data-test-element="source-results"]')
     )

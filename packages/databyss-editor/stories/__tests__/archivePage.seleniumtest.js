@@ -132,10 +132,10 @@ describe('archive page', () => {
     _sidebarList = await pagesSidebarList.getText()
     assert.equal(_sidebarList, 'this is the second page title')
 
-    let archivedPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="page-sidebar-item"]'
+    let archivedPageButton = await driver.findElements(
+      By.tagName('[data-test-element="page-sidebar-item"]')
     )
+
     await archivedPageButton[0].click()
 
     archiveDropdown = await getElementByTag(

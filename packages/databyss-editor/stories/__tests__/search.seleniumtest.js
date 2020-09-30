@@ -202,19 +202,20 @@ describe('entry search', () => {
     let sourceResult = await driver.findElements(
       By.tagName('[data-test-element="page-sidebar-item"]')
     )
-    sourceResult = await sourceResult[0].getAttribute('innerText')
+    sourceResult = await sourceResult[1].getAttribute('innerText')
+
     assert.equal(sourceResult.trim(), 'this has keyword something in source')
 
     let topicResult = await driver.findElements(
       By.tagName('[data-test-element="page-sidebar-item"]')
     )
-    topicResult = await topicResult[1].getAttribute('innerText')
+    topicResult = await topicResult[2].getAttribute('innerText')
     assert.equal(topicResult.trim(), 'this is a topic with something keyword')
 
     let pageResult = await driver.findElements(
       By.tagName('[data-test-element="page-sidebar-item"]')
     )
-    pageResult = await pageResult[2].getAttribute('innerText')
+    pageResult = await pageResult[3].getAttribute('innerText')
     assert.equal(
       pageResult.trim(),
       'this is the third page title has keyword something'
