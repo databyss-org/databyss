@@ -126,6 +126,7 @@ describe('editor clipboard', () => {
     await sleep(1000)
 
     await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -176,13 +177,18 @@ describe('editor clipboard', () => {
     await isSaved(driver)
     await sleep(1000)
 
-    const atomic = await getElementByTag(
-      driver,
-      '[data-test-atomic-edit="open"]'
-    )
+    let atomic = await getElementByTag(driver, '[data-test-atomic-edit="open"]')
 
     await atomic.click()
+
+    atomic = await getElementByTag(driver, '[data-test-atomic-edit="open"]')
+
     await atomic.click()
+
+    const source = await getElementByTag(driver, '[data-test-path="text"]')
+
+    // double click on atomic
+    await source.click()
 
     await sendKeys(actions, ' with appended text')
 
@@ -195,6 +201,7 @@ describe('editor clipboard', () => {
     await sleep(1000)
 
     await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -250,6 +257,7 @@ describe('editor clipboard', () => {
     await sleep(1000)
 
     await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -302,6 +310,7 @@ describe('editor clipboard', () => {
     await sleep(1000)
 
     await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
