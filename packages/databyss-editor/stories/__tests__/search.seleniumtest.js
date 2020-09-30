@@ -256,25 +256,6 @@ describe('entry search', () => {
       true
     )
 
-    // const pageHeaders =
-    //   'this is the third page title has keyword something this is the second page title this is the first page title'
-    // const firstPageTitle = await searchPageResultsTitle[0].getAttribute(
-    //   'innerText'
-    // )
-    // const secondPageTitle = await searchPageResultsTitle[1].getAttribute(
-    //   'innerText'
-    // )
-    // const thirdPageTitle = await searchPageResultsTitle[2].getAttribute(
-    //   'innerText'
-    // )
-
-    // // check first title
-    // assert.equal(pageHeaders.includes(firstPageTitle.trim()), true)
-    // // check second title
-    // assert.equal(pageHeaders.includes(secondPageTitle.trim()), true)
-    // // check third title
-    // assert.equal(pageHeaders.includes(thirdPageTitle.trim()), true)
-
     // it should click on the first result and verify anchor hyperlink works
     // results can be in random order
     const entrySearchResult = await driver.findElements(

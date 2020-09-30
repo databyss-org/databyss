@@ -7,6 +7,8 @@ import {
   getElementByTag,
   sleep,
   isAppInNotesSaved,
+  sendKeys,
+  enterKey,
   //  toggleBold,
   //   toggleItalic,
   //   toggleLocation,
@@ -18,7 +20,7 @@ import {
 
 let driver
 let editor
-// let actions
+let actions
 const LOCAL_URL = 'http://localhost:3000'
 const PROXY_URL = 'http://0.0.0.0:3000'
 
@@ -53,6 +55,7 @@ describe('notes app', () => {
     await continueButton.click()
 
     editor = await getEditor(driver)
+    actions = driver.actions()
 
     done()
   })
@@ -61,13 +64,15 @@ describe('notes app', () => {
     await driver.quit()
   })
 
-  it('should switch page names', async () => {
+  it('should switch page names and verify topics on the sidebar', async () => {
     let headerField = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
     )
-    await headerField.sendKeys('First Test Page Title')
-    await editor.click()
+    await headerField.click()
+    await sendKeys(actions, 'First Test Page Title')
+    await enterKey(actions)
+
     await editor.sendKeys('Editor test one')
     await isAppInNotesSaved(driver)
     await sleep(1000)
@@ -79,16 +84,18 @@ describe('notes app', () => {
 
     await newPageButton.click()
 
+    // wait for editor to be visible
+    await getEditor(driver)
     headerField = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
     )
+    await headerField.click()
 
-    await headerField.sendKeys('Second page title')
+    await sendKeys(actions, 'Second page title')
+    await enterKey(actions)
 
-    editor = await getEditor(driver)
-
-    await editor.sendKeys('Editor test two')
+    await sendKeys(actions, 'Editor test two')
 
     await isAppInNotesSaved(driver)
     await sleep(1000)
