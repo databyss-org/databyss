@@ -1,9 +1,10 @@
 /* eslint-disable func-names */
-import { Key, By } from 'selenium-webdriver'
+import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
+  getElementsByTag,
   sleep,
   sendKeys,
   enterKey,
@@ -144,21 +145,24 @@ describe('block indexing', () => {
 
     // TODO: function should wait until element is located then remove sleep
     // assure two topics are show in sidebar
-    const secondTopic = await driver.findElements(
-      By.tagName('[data-test-element="page-sidebar-item"]')
+    const secondTopic = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
     )
 
     await secondTopic[2].click()
     await sleep(1000)
 
-    const topicResults = await driver.findElements(
-      By.tagName('[data-test-element="atomic-results"]')
+    const topicResults = await await getElementsByTag(
+      driver,
+      '[data-test-element="atomic-results"]'
     )
     // check for that topic exists on page
     assert.equal(topicResults.length, 1)
 
-    const topicEntries = await driver.findElements(
-      By.tagName('[data-test-element="atomic-result-item"]')
+    const topicEntries = await getElementsByTag(
+      driver,
+      '[data-test-element="atomic-result-item"]'
     )
 
     // assure two results are listed under entry
@@ -188,22 +192,25 @@ describe('block indexing', () => {
     await sleep(1000)
 
     // assure two topics are show in sidebar
-    const authorSidebarButton = await driver.findElements(
-      By.tagName('[data-test-element="page-sidebar-item"]')
+    const authorSidebarButton = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
     )
 
     await authorSidebarButton[2].click()
     await sleep(1000)
-    let authorSorces = await driver.findElements(
-      By.tagName('[data-test-element="source-results"]')
+    let authorSorces = await getElementsByTag(
+      driver,
+      '[data-test-element="source-results"]'
     )
 
     await authorSorces[0].click()
     await sleep(1000)
 
     //  data-test-element="source-results"
-    const citationsResults = await driver.findElements(
-      By.tagName('[data-test-element="atomic-result-item"]')
+    const citationsResults = await getElementsByTag(
+      driver,
+      '[data-test-element="atomic-result-item"]'
     )
 
     assert.equal(citationsResults.length, 4)
@@ -215,21 +222,24 @@ describe('block indexing', () => {
     await backspaceKey(actions)
     await isAppInNotesSaved(driver)
 
-    const allSources = await driver.findElements(
-      By.tagName('[data-test-element="page-sidebar-item"]')
+    const allSources = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
     )
 
     await allSources[0].click()
 
-    authorSorces = await driver.findElements(
-      By.tagName('[data-test-element="source-results"]')
+    authorSorces = await getElementsByTag(
+      driver,
+      '[data-test-element="source-results"]'
     )
 
     await authorSorces[0].click()
 
     // check for no results
-    const _results = await driver.findElements(
-      By.tagName('[data-test-element="atomic-results"]')
+    const _results = await getElementsByTag(
+      driver,
+      '[data-test-element="atomic-results"]'
     )
 
     // assure no results appear under author

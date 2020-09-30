@@ -1,10 +1,11 @@
 /* eslint-disable func-names */
-import { Key, By } from 'selenium-webdriver'
+import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getEditor,
   getElementByTag,
+  getElementsByTag,
   sleep,
   isAppInNotesSaved,
   sendKeys,
@@ -91,8 +92,9 @@ describe('notes app', () => {
     await sleep(1000)
 
     // verify that the topic sidebar has the new topic
-    const sidebarTopic = await driver.findElements(
-      By.tagName('[data-test-element="page-sidebar-item"]')
+    const sidebarTopic = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
     )
 
     const sidebar = await sidebarTopic[1].getAttribute('innerText')
@@ -104,8 +106,9 @@ describe('notes app', () => {
     await sleep(1000)
 
     // get all search page results
-    const searchPageResultsTitle = await driver.findElements(
-      By.tagName('[data-test-element="atomic-results"]')
+    const searchPageResultsTitle = await getElementsByTag(
+      driver,
+      '[data-test-element="atomic-results"]'
     )
 
     await searchPageResultsTitle[0].click()
@@ -146,19 +149,20 @@ describe('notes app', () => {
     )
     await googleApi.click()
 
-    const firstResult = await getElementByTag(
+    const firstResult = await getElementsByTag(
       driver,
       '[data-test-catalog="GOOGLE_BOOKS"]'
     )
 
-    await firstResult.click()
+    await firstResult[0].click()
 
     await isAppInNotesSaved(driver)
     await sleep(1000)
 
     // check if source is on sidebar
-    let sidebarSource = await driver.findElements(
-      By.tagName('[data-test-element="page-sidebar-item"]')
+    let sidebarSource = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
     )
 
     sidebarSource = await sidebarSource[2].getAttribute('innerText')
@@ -170,8 +174,9 @@ describe('notes app', () => {
 
     // check if the source exists in the sidebar, it should be removed
 
-    sidebarSource = await driver.findElements(
-      By.tagName('[data-test-element="page-sidebar-item"]')
+    sidebarSource = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
     )
 
     assert.equal(sidebarSource.length, 2)
@@ -188,9 +193,11 @@ describe('notes app', () => {
     await pagesSidebarButton.click()
     await sleep(500)
 
-    const firstPageButton = await driver.findElements(
-      By.tagName('[data-test-element="page-sidebar-item"]')
+    const firstPageButton = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
     )
+
     await firstPageButton[0].click()
 
     await getEditor(driver)
@@ -205,8 +212,9 @@ describe('notes app', () => {
     assert.equal(headerField.trim(), 'First Test Page Title')
 
     // Second page integrity test
-    const secondPageButton = await driver.findElements(
-      By.tagName('[data-test-element="page-sidebar-item"]')
+    const secondPageButton = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
     )
 
     await secondPageButton[1].click()

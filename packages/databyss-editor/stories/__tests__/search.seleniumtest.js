@@ -1,11 +1,12 @@
 /* eslint-disable func-names */
-import { Key, By } from 'selenium-webdriver'
+import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getEditor,
   isAppInNotesSaved,
   getElementByTag,
+  getElementsByTag,
   sendKeys,
   enterKey,
   rightShiftKey,
@@ -106,9 +107,11 @@ describe('entry search', () => {
     await enterKey(actions)
 
     // get the search results, they should be in the order of how they appear on the page
-    const searchPageEntryResults = await driver.findElements(
-      By.tagName('[data-test-element="search-result-entries"]')
+    const searchPageEntryResults = await getElementsByTag(
+      driver,
+      '[data-test-element="search-result-entries"]'
     )
+
     assert.equal(searchPageEntryResults.length, 3)
 
     // get text from entry search results
@@ -199,22 +202,28 @@ describe('entry search', () => {
     await sendKeys(actions, 'something')
     await enterKey(actions)
     // verify that a source is shown in the search results
-    let sourceResult = await driver.findElements(
-      By.tagName('[data-test-element="page-sidebar-item"]')
+    let sourceResult = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
     )
+
     sourceResult = await sourceResult[1].getAttribute('innerText')
 
     assert.equal(sourceResult.trim(), 'this has keyword something in source')
 
-    let topicResult = await driver.findElements(
-      By.tagName('[data-test-element="page-sidebar-item"]')
+    let topicResult = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
     )
+
     topicResult = await topicResult[2].getAttribute('innerText')
     assert.equal(topicResult.trim(), 'this is a topic with something keyword')
 
-    let pageResult = await driver.findElements(
-      By.tagName('[data-test-element="page-sidebar-item"]')
+    let pageResult = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
     )
+
     pageResult = await pageResult[3].getAttribute('innerText')
     assert.equal(
       pageResult.trim(),
@@ -222,9 +231,11 @@ describe('entry search', () => {
     )
 
     // results can be in random order
-    const searchPageResultsTitle = await driver.findElements(
-      By.tagName('[data-test-element="search-result-page"]')
+    const searchPageResultsTitle = await getElementsByTag(
+      driver,
+      '[data-test-element="search-result-page"]'
     )
+
     // check the length of
     assert.equal(searchPageResultsTitle.length, 3)
     // should verify correct pages appear on search results
@@ -257,8 +268,9 @@ describe('entry search', () => {
 
     // it should click on the first result and verify anchor hyperlink works
     // results can be in random order
-    const entrySearchResult = await driver.findElements(
-      By.tagName('[data-test-element="search-result-entries"]')
+    const entrySearchResult = await getElementsByTag(
+      driver,
+      '[data-test-element="search-result-entries"]'
     )
 
     const entrySearchResultArray = await Promise.all(
