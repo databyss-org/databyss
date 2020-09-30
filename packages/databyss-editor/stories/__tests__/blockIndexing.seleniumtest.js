@@ -1,5 +1,5 @@
 /* eslint-disable func-names */
-import { Key } from 'selenium-webdriver'
+import { Key, By } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
@@ -236,10 +236,11 @@ describe('block indexing', () => {
 
     await authorSorces[0].click()
 
+    await sleep(500)
+
     // check for no results
-    const _results = await getElementsByTag(
-      driver,
-      '[data-test-element="atomic-results"]'
+    const _results = await driver.findElements(
+      By.tagName('[data-test-element="atomic-results"]')
     )
 
     // assure no results appear under author
