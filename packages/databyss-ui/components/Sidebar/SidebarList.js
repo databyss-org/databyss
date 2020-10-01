@@ -65,7 +65,6 @@ const SidebarList = ({ menuItems, query, height, ...others }) => {
               text={item.text}
               href={getHref(item)}
               key={`${item.type}-${index}`}
-              index={index}
               icon={
                 <Icon
                   sizeVariant="tiny"

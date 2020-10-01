@@ -2,7 +2,7 @@ import { Key, By, until } from 'selenium-webdriver'
 
 const waitUntilTime = 20000
 
-const SLEEP_TIME = 700
+const SLEEP_TIME = 300
 
 // HACK: saucelabs environment double triggers meta key, use ctrl key instead
 
@@ -39,8 +39,8 @@ export const getElementByTag = async (driver, tag) => {
     waitUntilTime
   )
 
-  const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
-  return _driver
+  // const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
+  return el
 }
 
 export const getElementById = async (driver, id) => {

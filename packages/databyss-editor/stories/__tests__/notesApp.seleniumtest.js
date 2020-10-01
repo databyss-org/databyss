@@ -5,20 +5,23 @@ import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getEditor,
   getElementByTag,
+  getElementsByTag,
   sleep,
   isAppInNotesSaved,
+  sendKeys,
+  enterKey,
   //  toggleBold,
   //   toggleItalic,
   //   toggleLocation,
   //   enterKey,
   //   upKey,
   //   downKey,
-  //   backspaceKey,
+  backspaceKey,
 } from './_helpers.selenium'
 
 let driver
 let editor
-// let actions
+let actions
 const LOCAL_URL = 'http://localhost:3000'
 const PROXY_URL = 'http://0.0.0.0:3000'
 
@@ -53,6 +56,7 @@ describe('notes app', () => {
     await continueButton.click()
 
     editor = await getEditor(driver)
+    actions = driver.actions()
 
     done()
   })
@@ -61,17 +65,55 @@ describe('notes app', () => {
     await driver.quit()
   })
 
-  it('should switch page names', async () => {
+  it('should switch page names and verify atomics appear on the sidebar', async () => {
+    // click on topics sidebar
+    const topicSidebarButton = await getElementByTag(
+      driver,
+      '[data-test-sidebar-element="topics"]'
+    )
+
+    await topicSidebarButton.click()
+
     let headerField = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
     )
-    await headerField.sendKeys('First Test Page Title')
-    await editor.click()
-    await editor.sendKeys('Editor test one')
+    await headerField.click()
+    await sendKeys(actions, 'First Test Page Title')
+    await enterKey(actions)
+
+    await sendKeys(actions, '#this is a new topic')
+    await enterKey(actions)
+    await sendKeys(actions, 'entries included within the topic')
+    await enterKey(actions)
+    await enterKey(actions)
+    await sendKeys(actions, 'more entries included within topic')
     await isAppInNotesSaved(driver)
+
+    // verify that the topic sidebar has the new topic
+    const sidebarTopic = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
+    )
+
+    const sidebar = await sidebarTopic[1].getAttribute('innerText')
+
+    assert.equal(sidebar.trim(), 'this is a new topic')
+
+    // click on the topic in sidebar
+    await sidebarTopic[1].click()
     await sleep(1000)
 
+    // get all search page results
+    const searchPageResultsTitle = await getElementsByTag(
+      driver,
+      '[data-test-element="atomic-results"]'
+    )
+
+    await searchPageResultsTitle[0].click()
+    await getEditor(driver)
+
+    // add second page
     const newPageButton = await getElementByTag(
       driver,
       '[data-test-element="new-page-button"]'
@@ -79,26 +121,84 @@ describe('notes app', () => {
 
     await newPageButton.click()
 
+    // wait for editor to be visible
+    await getEditor(driver)
+
+    const sourcesSidebarButton = await getElementByTag(
+      driver,
+      '[data-test-sidebar-element="sources"]'
+    )
+
+    await sourcesSidebarButton.click()
+
     headerField = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
     )
+    await headerField.click()
 
-    await headerField.sendKeys('Second page title')
+    await sendKeys(actions, 'Second page title')
+    await enterKey(actions)
 
-    editor = await getEditor(driver)
+    // select author from the google api
+    await sendKeys(actions, '@Murray Bookchin')
+    const googleApi = await getElementByTag(
+      driver,
+      '[data-test-block-menu="GOOGLE_BOOKS"]'
+    )
+    await googleApi.click()
 
-    await editor.sendKeys('Editor test two')
+    const firstResult = await getElementsByTag(
+      driver,
+      '[data-test-catalog="GOOGLE_BOOKS"]'
+    )
+
+    await firstResult[0].click()
 
     await isAppInNotesSaved(driver)
-    await sleep(1000)
 
-    const firstPageButton = await getElementByTag(
+    // check if source is on sidebar
+    let sidebarSource = await getElementsByTag(
       driver,
-      '[data-test-element="page-sidebar-0"]'
+      '[data-test-element="page-sidebar-item"]'
     )
 
-    await firstPageButton.click()
+    sidebarSource = await sidebarSource[2].getAttribute('innerText')
+
+    assert.equal(sidebarSource.trim(), 'Bookchin, M.')
+    // delete the source and verify its removed from the sidebar
+    await backspaceKey(actions)
+    await backspaceKey(actions)
+
+    // check if the source exists in the sidebar, it should be removed
+
+    sidebarSource = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
+    )
+
+    assert.equal(sidebarSource.length, 2)
+
+    await sendKeys(actions, 'Editor test two')
+
+    // click on sidebar for pages menu
+
+    const pagesSidebarButton = await getElementByTag(
+      driver,
+      '[data-test-sidebar-element="pages"]'
+    )
+
+    await pagesSidebarButton.click()
+    await sleep(500)
+
+    const firstPageButton = await getElementsByTag(
+      driver,
+      '[data-test-element="page-sidebar-item"]'
+    )
+
+    await firstPageButton[0].click()
+
+    await getEditor(driver)
 
     headerField = await getElementByTag(
       driver,
@@ -106,21 +206,16 @@ describe('notes app', () => {
     )
 
     headerField = await headerField.getAttribute('value')
-
-    editor = await getEditor(driver)
-
-    let editorField = await editor.getAttribute('innerText')
 
     assert.equal(headerField.trim(), 'First Test Page Title')
-    assert.equal(editorField.trim(), 'Editor test one')
 
     // Second page integrity test
-    const secondPageButton = await getElementByTag(
+    const secondPageButton = await getElementsByTag(
       driver,
-      '[data-test-element="page-sidebar-1"]'
+      '[data-test-element="page-sidebar-item"]'
     )
 
-    await secondPageButton.click()
+    await secondPageButton[1].click()
 
     headerField = await getElementByTag(
       driver,
@@ -131,7 +226,7 @@ describe('notes app', () => {
 
     editor = await getEditor(driver)
 
-    editorField = await editor.getAttribute('innerText')
+    const editorField = await editor.getAttribute('innerText')
 
     assert.equal(headerField.trim(), 'Second page title')
     assert.equal(editorField.trim(), 'Editor test two')
