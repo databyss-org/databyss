@@ -76,8 +76,6 @@ describe('atomic closure', () => {
   })
 
   afterEach(async () => {
-    await driver.navigate().refresh()
-
     await driver.quit()
   })
 

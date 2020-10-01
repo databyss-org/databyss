@@ -210,7 +210,7 @@ describe('archive page', () => {
     await enterKey(actions)
 
     // get the search results in list format
-    let searchPageResultsTitle = getElementsByTag(
+    let searchPageResultsTitle = await getElementsByTag(
       driver,
       '[data-test-element="search-results"]'
     )
