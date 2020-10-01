@@ -2,7 +2,7 @@ import { Key, By, until } from 'selenium-webdriver'
 
 const waitUntilTime = 20000
 
-const SLEEP_TIME = 100
+const SLEEP_TIME = 300
 
 // HACK: saucelabs environment double triggers meta key, use ctrl key instead
 
