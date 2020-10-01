@@ -1,6 +1,6 @@
 /** @jsx h */
 /* eslint-disable func-names */
-import { Key, By } from 'selenium-webdriver'
+import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import { jsx as h } from './hyperscript'
@@ -8,6 +8,7 @@ import { sanitizeEditorChildren } from './__helpers'
 import {
   getEditor,
   getElementByTag,
+  getElementsByTag,
   sendKeys,
   sleep,
   toggleBold,
@@ -80,12 +81,6 @@ describe('connected editor', () => {
   })
 
   afterEach(async () => {
-    const clearButton = await getElementById(driver, 'clear-state')
-    await clearButton.click()
-    await sleep(500)
-
-    await driver.navigate().refresh()
-
     await driver.quit()
   })
 
@@ -113,8 +108,9 @@ describe('connected editor', () => {
     await sendKeys(actions, '@test this')
 
     // verify both the sources appear in suggestions
-    const suggestions = await driver.findElements(
-      By.tagName('[data-test-element="suggested-menu-sources"]')
+    const suggestions = await getElementsByTag(
+      driver,
+      '[data-test-element="suggested-menu-sources"]'
     )
 
     assert.equal(suggestions.length, 2)
@@ -129,7 +125,6 @@ describe('connected editor', () => {
     // click on existing source
     await suggestions[suggestionIndex].click()
     await isSaved(driver)
-    await sleep(1000)
 
     // refresh page
     await driver.navigate().refresh()

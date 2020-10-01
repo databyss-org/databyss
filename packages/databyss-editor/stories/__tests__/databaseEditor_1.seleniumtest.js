@@ -75,10 +75,6 @@ describe('connected editor', () => {
   })
 
   afterEach(async () => {
-    const clearButton = await getElementById(driver, 'clear-state')
-    await clearButton.click()
-    await driver.navigate().refresh()
-
     await driver.quit()
   })
 

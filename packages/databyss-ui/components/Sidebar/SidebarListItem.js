@@ -1,17 +1,9 @@
 import React from 'react'
 import { Text, BaseControl, Grid } from '@databyss-org/ui/primitives'
 
-const SidebarListItem = ({
-  isActive,
-  text,
-  href,
-  index,
-  icon,
-  onPress,
-  children,
-}) => (
+const SidebarListItem = ({ isActive, text, href, icon, onPress, children }) => (
   <BaseControl
-    data-test-element={`page-sidebar-${index}`}
+    data-test-element="page-sidebar-item"
     backgroundColor={isActive ? 'control.1' : 'transparent'}
     py="small"
     px="em"

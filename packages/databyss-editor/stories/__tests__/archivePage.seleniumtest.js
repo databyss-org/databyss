@@ -1,9 +1,10 @@
 /* eslint-disable func-names */
-import { Key, By } from 'selenium-webdriver'
+import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
+  getElementsByTag,
   sleep,
   sendKeys,
   enterKey,
@@ -132,11 +133,12 @@ describe('archive page', () => {
     _sidebarList = await pagesSidebarList.getText()
     assert.equal(_sidebarList, 'this is the second page title')
 
-    let archivedPageButton = await getElementByTag(
+    let archivedPageButton = await getElementsByTag(
       driver,
-      '[data-test-element="page-sidebar-0"]'
+      '[data-test-element="page-sidebar-item"]'
     )
-    await archivedPageButton.click()
+
+    await archivedPageButton[0].click()
 
     archiveDropdown = await getElementByTag(
       driver,
@@ -170,12 +172,12 @@ describe('archive page', () => {
     )
 
     // archive the first page
-    const firstPageSidebarButton = await getElementByTag(
+    const firstPageSidebarButton = await getElementsByTag(
       driver,
-      '[data-test-element="page-sidebar-0"]'
+      '[data-test-element="page-sidebar-item"]'
     )
 
-    await firstPageSidebarButton.click()
+    await firstPageSidebarButton[0].click()
     await getEditor(driver)
 
     archiveDropdown = await getElementByTag(
@@ -208,8 +210,9 @@ describe('archive page', () => {
     await enterKey(actions)
 
     // get the search results in list format
-    let searchPageResultsTitle = await driver.findElements(
-      By.tagName('[data-test-element="search-results"]')
+    let searchPageResultsTitle = await getElementsByTag(
+      driver,
+      '[data-test-element="search-results"]'
     )
 
     // searching for 'source' should only result in one source, archived source should not appear
@@ -232,8 +235,9 @@ describe('archive page', () => {
     await searchInput.click()
     await sendKeys(actions, 'entry')
     await enterKey(actions)
-    searchPageResultsTitle = await driver.findElements(
-      By.tagName('[data-test-element="search-result-page"]')
+    searchPageResultsTitle = await getElementsByTag(
+      driver,
+      '[data-test-element="search-result-page"]'
     )
 
     // check the length of search results
@@ -246,11 +250,11 @@ describe('archive page', () => {
 
     await archiveButton.click()
 
-    archivedPageButton = await getElementByTag(
+    archivedPageButton = await getElementsByTag(
       driver,
-      '[data-test-element="page-sidebar-0"]'
+      '[data-test-element="page-sidebar-item"]'
     )
-    await archivedPageButton.click()
+    await archivedPageButton[0].click()
 
     archiveDropdown = await getElementByTag(
       driver,
@@ -297,8 +301,9 @@ describe('archive page', () => {
     await enterKey(actions)
     await sendKeys(actions, '@this')
 
-    const suggestedSources = await driver.findElements(
-      By.tagName('[data-test-element="suggested-menu-sources"')
+    const suggestedSources = await getElementsByTag(
+      driver,
+      '[data-test-element="suggested-menu-sources"]'
     )
 
     // check that the editor only shows one suggestion, the deleted page should not be shown

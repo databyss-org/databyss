@@ -21,7 +21,6 @@ import {
   sendKeys,
   leftKey,
   isSaved,
-  sleep,
 } from './_helpers.selenium'
 
 let driver
@@ -82,11 +81,6 @@ describe('editor clipboard', () => {
   })
 
   afterEach(async () => {
-    const clearButton = await getElementById(driver, 'clear-state')
-    await clearButton.click()
-    await driver.navigate().refresh()
-
-    // sleep(500)
     await driver.quit()
   })
 
@@ -123,7 +117,6 @@ describe('editor clipboard', () => {
     await leftKey(actions)
     await paste(actions)
     await isSaved(driver)
-    await sleep(1000)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -175,7 +168,6 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await paste(actions)
     await isSaved(driver)
-    await sleep(1000)
 
     let atomic = await getElementByTag(driver, '[data-test-atomic-edit="open"]')
 
@@ -198,7 +190,6 @@ describe('editor clipboard', () => {
     )
     await doneButton.click()
     await isSaved(driver)
-    await sleep(1000)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -254,7 +245,6 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await paste(actions)
     await isSaved(driver)
-    await sleep(1000)
 
     await driver.navigate().refresh()
     await getEditor(driver)
@@ -307,7 +297,6 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await paste(actions)
     await isSaved(driver)
-    await sleep(1000)
 
     await driver.navigate().refresh()
     await getEditor(driver)
