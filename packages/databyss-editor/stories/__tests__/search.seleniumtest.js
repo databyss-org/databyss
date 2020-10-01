@@ -70,6 +70,8 @@ describe('entry search', () => {
     )
     await pageTitle.click()
     await sendKeys(actions, 'this is the first page title')
+    await sleep(500)
+
     await enterKey(actions)
     await sendKeys(actions, 'this is a test entry')
     await enterKey(actions)
@@ -149,6 +151,7 @@ describe('entry search', () => {
     )
     await pageTitle.click()
     await sendKeys(actions, 'this is the second page title')
+    await sleep(500)
     await enterKey(actions)
     await sendKeys(
       actions,
@@ -176,6 +179,7 @@ describe('entry search', () => {
       actions,
       'this is the third page title has keyword something'
     )
+    await sleep(500)
     await enterKey(actions)
     await sendKeys(actions, '@this is another test source')
     await enterKey(actions)
@@ -211,20 +215,15 @@ describe('entry search', () => {
 
     assert.equal(sourceResult.trim(), 'this has keyword something in source')
 
-    let topicResult = await getElementsByTag(
+    const sidebarResults = await getElementsByTag(
       driver,
       '[data-test-element="page-sidebar-item"]'
     )
 
-    topicResult = await topicResult[2].getAttribute('innerText')
+    const topicResult = await sidebarResults[2].getAttribute('innerText')
     assert.equal(topicResult.trim(), 'this is a topic with something keyword')
 
-    let pageResult = await getElementsByTag(
-      driver,
-      '[data-test-element="page-sidebar-item"]'
-    )
-
-    pageResult = await pageResult[3].getAttribute('innerText')
+    const pageResult = await sidebarResults[3].getAttribute('innerText')
     assert.equal(
       pageResult.trim(),
       'this is the third page title has keyword something'
