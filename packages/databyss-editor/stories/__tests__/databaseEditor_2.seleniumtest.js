@@ -125,7 +125,6 @@ describe('connected editor', () => {
     // click on existing source
     await suggestions[suggestionIndex].click()
     await isSaved(driver)
-    await sleep(1000)
 
     // refresh page
     await driver.navigate().refresh()

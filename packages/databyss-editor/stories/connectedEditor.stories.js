@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react'
 import { throttle } from 'lodash'
 import { storiesOf } from '@storybook/react'
-import { View, Text, Button } from '@databyss-org/ui/primitives'
+import { View, Text } from '@databyss-org/ui/primitives'
 import {
   ViewportDecorator,
   NotifyDecorator,

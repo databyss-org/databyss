@@ -89,7 +89,6 @@ describe('notes app', () => {
     await enterKey(actions)
     await sendKeys(actions, 'more entries included within topic')
     await isAppInNotesSaved(driver)
-    await sleep(1000)
 
     // verify that the topic sidebar has the new topic
     const sidebarTopic = await getElementsByTag(
@@ -157,7 +156,6 @@ describe('notes app', () => {
     await firstResult[0].click()
 
     await isAppInNotesSaved(driver)
-    await sleep(1000)
 
     // check if source is on sidebar
     let sidebarSource = await getElementsByTag(

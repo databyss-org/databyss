@@ -132,7 +132,6 @@ describe('block indexing', () => {
     await enterKey(actions)
     await sendKeys(actions, 'second entry within topic')
     await isAppInNotesSaved(driver)
-    await sleep(1000)
     await driver.navigate().refresh()
     await getEditor(driver)
     const topicsSidebarButton = await getElementByTag(
@@ -236,7 +235,7 @@ describe('block indexing', () => {
 
     await authorSorces[0].click()
 
-    await sleep(500)
+    await sleep(1000)
 
     // check for no results
     const _results = await driver.findElements(
