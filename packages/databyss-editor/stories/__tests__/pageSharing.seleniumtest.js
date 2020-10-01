@@ -158,7 +158,6 @@ describe('page sharing', () => {
     // navigate to the private page url
     await driver.get(privatePageURL)
 
-    await sleep(6000)
     let body = await getElementByTag(driver, '[data-test-element="body"]')
 
     body = await body.getAttribute('innerText')
@@ -175,14 +174,16 @@ describe('page sharing', () => {
     )
     await topicsSidebarButton.click()
 
-    const topic = await getElementByTag(
+    await sleep(1000)
+
+    const topic = await getElementsByTag(
       driver,
-      '[data-test-element="page-sidebar-1"]'
+      '[data-test-element="page-sidebar-item"]'
     )
 
-    await topic.click()
+    await topic[1].click()
 
-    await sleep(6000)
+    await sleep(1000)
 
     const topicEntries = await getElementsByTag(
       driver,
@@ -208,14 +209,16 @@ describe('page sharing', () => {
     )
     await sourcesSidebarButton.click()
 
-    const allSources = await getElementByTag(
+    await sleep(1000)
+
+    const allSources = await getElementsByTag(
       driver,
-      '[data-test-element="page-sidebar-0"]'
+      '[data-test-element="page-sidebar-item"]'
     )
 
-    await allSources.click()
+    await allSources[0].click()
 
-    await sleep(6000)
+    await sleep(1000)
 
     const sourcesResults = await getElementsByTag(
       driver,
