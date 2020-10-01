@@ -71,7 +71,10 @@ const AccountMenu = () => {
 
         return (
           <View pl="em" my="extraSmall" position="relative">
-            <BaseControl onClick={() => setMenuOpen(true)}>
+            <BaseControl
+              onClick={() => setMenuOpen(true)}
+              data-test-element="account-menu"
+            >
               <View
                 borderVariant="round"
                 borderRadius="50%"
