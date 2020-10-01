@@ -122,7 +122,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
   ({ children, initialState, onChange }, ref) => {
     const setBlockRelations = useEntryContext(c => c && c.setBlockRelations)
 
-    //  console.log(initialState)
     // get the current page header
 
     const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
