@@ -18,10 +18,23 @@ const Search = () => {
   } = useNavigationContext()
 
   const { params } = getTokensFromPath()
-  const { searchTerm, setQuery, clearSearchCache } = useEntryContext()
+  const {
+    searchTerm,
+    setQuery,
+    clearSearchCache,
+    searchCache,
+  } = useEntryContext()
   const menuItem = getSidebarPath()
 
   const [value, setValue] = useState({ textValue: searchTerm })
+
+  const setSearchValue = val => {
+    setValue(val)
+    // if searchbar is cleared and the cache has results, clear results
+    if (!val.textValue.length && Object.keys(searchCache).length) {
+      clearSearchCache()
+    }
+  }
 
   // wait until user stopped typing for 200ms before setting the value
   const debounced = useCallback(
@@ -57,6 +70,8 @@ const Search = () => {
   )
 
   const onSearchClick = () => {
+    // clear cache to get updated results
+    clearSearchCache()
     // if not currently in search page, navigate to search page
     if (encodedSearchTerm.current && params !== encodedSearchTerm.current) {
       navigate(`/search/${encodedSearchTerm.current}`)
@@ -75,7 +90,7 @@ const Search = () => {
       <SearchInputContainer
         placeholder="Search"
         value={value}
-        onChange={setValue}
+        onChange={setSearchValue}
         onFocus={onInputFocus}
         onKeyDown={e => {
           if (e.key === 'Enter') {
