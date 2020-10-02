@@ -33,6 +33,7 @@ export const isAtomicClosure = type =>
 
 const Element = ({ attributes, children, element, readOnly }) => {
   const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
+  const _isPublic = isPublicAccount ? isPublicAccount() : null
 
   const entryContext = useEntryContext()
   let searchTerm = ''
@@ -135,7 +136,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
         >
           {block.__showNewBlockMenu &&
             !readOnly &&
-            !isPublicAccount() && (
+            !_isPublic && (
               <View
                 position="absolute"
                 contentEditable="false"
