@@ -15,7 +15,8 @@ import { isAtomicInlineType } from '../lib/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { SuggestMenu, SuggestSources, SuggestTopics } from './Suggest'
 
-const SPELLCHECK_DEBOUNCE_TIME = 1000
+// browser still takes some time to process the spellcheck
+const SPELLCHECK_DEBOUNCE_TIME = 300
 
 export const getAtomicStyle = type =>
   ({
