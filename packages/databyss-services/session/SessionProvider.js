@@ -37,7 +37,7 @@ const SessionProvider = ({
       }
       return false
     },
-    [state.session.publicAccount]
+    [state.session?.publicAccount]
   )
 
   const getUserAccount = useCallback(
@@ -58,7 +58,7 @@ const SessionProvider = ({
       }
       return state.session.account._id
     },
-    [state.session.publicAccount]
+    [state.session]
   )
   // credentials can be:
   // - `undefined` if we're just reloading
