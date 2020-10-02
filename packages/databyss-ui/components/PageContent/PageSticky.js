@@ -45,8 +45,6 @@ const PageSticky = ({ pagePath, pageId }) => {
     [hasPendingPatches]
   )
 
-  console.log(hasPendingPatches)
-
   const pages = getPages()
   // get page title
   if (pages && pages[pageId]?.name) {

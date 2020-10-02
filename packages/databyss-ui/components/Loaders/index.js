@@ -96,7 +96,7 @@ AllTopicsLoader.defaultProps = {
 }
 
 export const AccountLoader = ({ children }) => {
-  const { getUserAccount } = useSessionContext()
+  const getUserAccount = useSessionContext(c => c && c.getUserAccount)
   return <MakeLoader resources={getUserAccount()} children={children} />
 }
 

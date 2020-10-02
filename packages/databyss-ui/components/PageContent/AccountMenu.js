@@ -18,7 +18,8 @@ import { AccountLoader } from '../Loaders'
 
 const AccountMenu = () => {
   const { navigate } = useNavigationContext()
-  const { isPublicAccount, logout } = useSessionContext()
+  const logout = useSessionContext(c => c && c.logout)
+  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
   const [menuOpen, setMenuOpen] = useState(false)
 
   const navToDefaultPage = userInfo => {

@@ -37,7 +37,8 @@ function copyToClipboard(text) {
 }
 
 const PageMenu = ({ pages }) => {
-  const { getSession, setDefaultPage } = useSessionContext()
+  const getSession = useSessionContext(c => c && c.getSession)
+  const setDefaultPage = useSessionContext(c => c && c.setDefaultPage)
   const { account } = getSession()
   const [showMenu, setShowMenu] = useState(false)
   const [isPagePublic, setIsPagePublic] = useState(false)

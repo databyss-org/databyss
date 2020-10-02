@@ -26,8 +26,7 @@ const SidebarCollapsed = () => {
     isMenuOpen,
     setMenuOpen,
   } = useNavigationContext()
-
-  const { isPublicAccount } = useSessionContext()
+  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
 
   const [activeItem, setActiveItem] = useState('pages')
 

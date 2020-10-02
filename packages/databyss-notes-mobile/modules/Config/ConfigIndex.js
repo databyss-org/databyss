@@ -11,7 +11,7 @@ const headerItems = [ConfigMetadata]
 
 // component
 const ConfigIndex = () => {
-  const { endSession } = useSessionContext()
+  const endSession = useSessionContext(c => c && c.endSession)
 
   // render methods
   const render = () => (

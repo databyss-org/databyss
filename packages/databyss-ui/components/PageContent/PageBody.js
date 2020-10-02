@@ -24,7 +24,7 @@ const PageBody = ({
   editorRef,
   onEditorPathChange,
 }) => {
-  const { isPublicAccount } = useSessionContext()
+  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
   const { location } = useNavigationContext()
   const clearBlockDict = usePageContext(c => c.clearBlockDict)
   const setPatches = usePageContext(c => c.setPatches)

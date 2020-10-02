@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback } from 'react'
+import { createContext, useContextSelector } from 'use-context-selector'
 import Login from '@databyss-org/ui/modules/Login/Login'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -29,43 +30,55 @@ const SessionProvider = ({
   })
   const { session: actions } = useServiceContext()
 
-  const isPublicAccount = () => {
-    if (state.session.publicAccount?._id) {
-      return true
-    }
-    return false
-  }
+  const isPublicAccount = useCallback(
+    () => {
+      if (state.session.publicAccount?._id) {
+        return true
+      }
+      return false
+    },
+    [state.session.publicAccount]
+  )
 
-  const getUserAccount = () => {
-    if (state.userInfo) {
-      return state.userInfo
-    }
-    dispatch(actions.getUserAccount())
-    return null
-  }
+  const getUserAccount = useCallback(
+    () => {
+      if (state.userInfo) {
+        return state.userInfo
+      }
+      dispatch(actions.getUserAccount())
+      return null
+    },
+    [state.userInfo]
+  )
 
-  const getCurrentAccount = () => {
-    if (state.session.publicAccount?._id) {
-      return state.session.publicAccount._id
-    }
-    return state.session.account._id
-  }
+  const getCurrentAccount = useCallback(
+    () => {
+      if (state.session.publicAccount?._id) {
+        return state.session.publicAccount._id
+      }
+      return state.session.account._id
+    },
+    [state.session.publicAccount]
+  )
   // credentials can be:
   // - `undefined` if we're just reloading
   // - `code` if we're logging in from an email link or code
   // - `email` if we're registering a new user (TFA, will request code)
   // - `googleToken` if we're logging in with Google oAuth
-  const getSession = ({ retry, ...credentials } = {}) => {
-    if (state.session && !retry) {
-      return state.session
-    }
-    if (state.session instanceof ResourcePending && !retry) {
-      return state.session
-    }
-    // else fetch
-    dispatch(actions.fetchSession(credentials))
-    return null
-  }
+  const getSession = useCallback(
+    ({ retry, ...credentials } = {}) => {
+      if (state.session && !retry) {
+        return state.session
+      }
+      if (state.session instanceof ResourcePending && !retry) {
+        return state.session
+      }
+      // else fetch
+      dispatch(actions.fetchSession(credentials))
+      return null
+    },
+    [state.session]
+  )
 
   const endSession = () => dispatch(actions.endSession())
 
@@ -115,7 +128,10 @@ const SessionProvider = ({
   )
 }
 
-export const useSessionContext = () => useContext(SessionContext)
+export const useSessionContext = (selector = x => x) =>
+  useContextSelector(SessionContext, selector)
+
+// useContext(SessionContext)
 
 SessionProvider.defaultProps = {
   initialState,

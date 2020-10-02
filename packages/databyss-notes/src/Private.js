@@ -29,7 +29,8 @@ const App = ({ children }) => (
 
 const NotFoundRedirect = () => {
   const { navigate } = useNavigationContext()
-  const { getSession } = useSessionContext()
+  const getSession = useSessionContext(c => c && c.getSession)
+
   const { account } = getSession()
 
   // if no page found, navigate to default page
@@ -44,7 +45,7 @@ const NotFoundRedirect = () => {
 
 const Private = () => {
   const { location, navigate } = useNavigationContext()
-  const { getSession } = useSessionContext()
+  const getSession = useSessionContext(c => c && c.getSession)
   const { account } = getSession()
 
   // Navigate to default page is nothing in path

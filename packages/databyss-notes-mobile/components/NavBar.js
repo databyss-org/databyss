@@ -45,7 +45,8 @@ const NavButton = styled(SidebarIconButton, buttonStyles)
 // component
 const NavBar = props => {
   const navigationContext = useNavigationContext()
-  const { isPublicAccount } = useSessionContext()
+  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
+
   const { location } = navigationContext
 
   const navBarItems = NavBarItems(isPublicAccount())
