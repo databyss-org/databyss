@@ -129,10 +129,8 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     /*
     intercepts onChange props and runs the block relations algorithm, dispatches block relations
     */
-
     const forkOnChange = props => {
       pagePathRef.current = getPagePath(props.nextState)
-
       if (onChange) {
         if (setBlockRelations) {
           const _pageId = props.nextState.pageHeader._id
