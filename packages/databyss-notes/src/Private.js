@@ -20,7 +20,9 @@ import { View } from '@databyss-org/ui/primitives'
 const App = ({ children }) => (
   <View flexDirection="row" display="flex" width="100vw" height="100vh">
     <Sidebar />
-    <div style={{ width: '100%' }}>{children}</div>
+    <div style={{ width: '100%' }} data-test-element="body">
+      {children}
+    </div>
 
     {/* TODO: replace div with View */}
     {/* <View id="mainid">{children}</View> */}
