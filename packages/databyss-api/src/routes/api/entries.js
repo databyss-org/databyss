@@ -152,7 +152,7 @@ router.post(
         const isInEntry = (string, regex) =>
           string
             .replace(/(\n|\t)/g, ' ')
-            .replace(/[^a-z0-9À-ú- ]/gi, '')
+            .replace(/[^a-z0-9À-ú-/ ]/gi, '')
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
             .match(regex)
