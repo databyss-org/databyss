@@ -168,6 +168,7 @@ router.post(
 
           const pageId = curr.page._id.toString()
           // get index where block appears on page
+
           const _blockIndex = curr.page.blocks.findIndex(
             b => b._id.toString() === curr._id.toString()
           )
