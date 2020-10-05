@@ -10,7 +10,7 @@ import { isMobile } from '../../lib/mediaQuery'
 const noPageTitle = 'untitled'
 
 const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
-  const { isPublicAccount } = useSessionContext()
+  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
   const getPage = usePageContext(c => c.getPage)
   const setPageHeader = usePageContext(c => c.setPageHeader)
 

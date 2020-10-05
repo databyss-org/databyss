@@ -15,7 +15,8 @@ import { isAtomicInlineType } from '../lib/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { SuggestMenu, SuggestSources, SuggestTopics } from './Suggest'
 
-const SPELLCHECK_DEBOUNCE_TIME = 1000
+// browser still takes some time to process the spellcheck
+const SPELLCHECK_DEBOUNCE_TIME = 300
 
 export const getAtomicStyle = type =>
   ({
@@ -32,7 +33,8 @@ export const isAtomicClosure = type =>
   }[type])
 
 const Element = ({ attributes, children, element, readOnly }) => {
-  const sessionContext = useSessionContext()
+  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
+  const _isPublic = isPublicAccount ? isPublicAccount() : null
 
   const entryContext = useEntryContext()
   let searchTerm = ''
@@ -135,7 +137,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
         >
           {block.__showNewBlockMenu &&
             !readOnly &&
-            !sessionContext?.isPublicAccount() && (
+            !_isPublic && (
               <View
                 position="absolute"
                 contentEditable="false"

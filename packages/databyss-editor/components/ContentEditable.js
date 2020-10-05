@@ -91,9 +91,12 @@ const ContentEditable = ({
     () => {
       if (typeof focusIndex === 'number' && editor.children) {
         const _point = { index: focusIndex, offset: 0 }
-        let _selection = { anchor: _point, focus: _point }
-        _selection = stateSelectionToSlateSelection(editor.children, _selection)
-        Transforms.select(editor, _selection)
+        const _selection = { anchor: _point, focus: _point }
+        const _slateSelection = stateSelectionToSlateSelection(
+          editor.children,
+          _selection
+        )
+        Transforms.select(editor, _slateSelection)
         // push selection to reducer
         setSelection(_selection)
       }
