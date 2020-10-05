@@ -191,7 +191,7 @@ const ListItem = ({
 
   return (
     <BaseControl
-      bg={activeNavigationItem ? 'blue.3' : ''}
+      active={activeNavigationItem}
       ref={navigationItemRef}
       onPress={onPress}
     >

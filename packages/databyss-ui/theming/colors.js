@@ -41,7 +41,7 @@ _c = {
   secondary: [_c.blue[1], _c.gray[6], _c.gray[5], _c.blue[1]],
   // BaseControl colors [enabled, hover, active]
   control: [_c.transparent].concat(
-    [_c.gray[3], _c.gray[4]].map(c =>
+    [_c.gray[4], _c.gray[5]].map(c =>
       Color(c)
         .alpha(0.4)
         .rgb()

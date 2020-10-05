@@ -16,10 +16,10 @@ export const KeyboardNavigationProvider = ({
   keyboardEventsActive,
 }) => {
   const itemCountRef = useRef(0)
-  const activeIndexRef = useRef(0)
+  const activeIndexRef = useRef(-1)
   const orderKeyRef = useRef('')
   const activeItemRef = useRef()
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [, setActiveIndex] = useState(activeIndexRef.current)
 
   if (orderKeyRef.current !== orderKey) {
     itemCountRef.current = 0
@@ -40,7 +40,7 @@ export const KeyboardNavigationProvider = ({
 
   /**
    * Increments activeIndex by 1, wrapping to 0 at end of list
-   * Returns next activeIndex
+   * Calls setActiveIndex to re-render the children
    */
   const incrementActiveIndex = step => {
     activeIndexRef.current += step
@@ -51,7 +51,6 @@ export const KeyboardNavigationProvider = ({
       activeIndexRef.current = itemCountRef.current - 1
     }
     setActiveIndex(activeIndexRef.current)
-    return activeIndexRef.current
   }
 
   const onKeydown = useCallback(
@@ -86,6 +85,9 @@ export const KeyboardNavigationProvider = ({
         window.addEventListener('keydown', onKeydown)
       } else {
         window.removeEventListener('keydown', onKeydown)
+        activeItemRef.current = null
+        activeIndexRef.current = -1
+        setActiveIndex(activeIndexRef.current)
       }
       return () => {
         window.removeEventListener('keydown', onKeydown)
@@ -98,7 +100,7 @@ export const KeyboardNavigationProvider = ({
     () => {
       onActiveIndexChanged()
     },
-    [activeIndex]
+    [activeIndexRef.current]
   )
 
   useEffect(
@@ -112,7 +114,7 @@ export const KeyboardNavigationProvider = ({
     <KeyboardNavigationContext.Provider
       value={{
         getNextItemIndex,
-        activeIndex: keyboardEventsActive ? activeIndexRef.current : 0,
+        activeIndex: activeIndexRef.current,
         orderKey,
         keyboardEventsActive,
         setActiveItem,

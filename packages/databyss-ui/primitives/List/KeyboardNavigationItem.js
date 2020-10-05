@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react'
+import React, { useMemo, useState, useRef, useEffect } from 'react'
 import scrollIntoView from 'scroll-into-view-if-needed'
 import { useKeyboardNavigationContext } from './KeyboardNavigationProvider'
 
@@ -20,6 +20,16 @@ const KeyboardNavigationItem = ({ children }) => {
       scrollMode: 'if-needed',
     })
     setActiveItem({ navigationItemRef, navigationItemHandle })
+  }
+
+  // if we're the first item and activeIndex has been reset to -1, scroll to our ref to restore
+  // scroll to the top of the list
+  if (activeIndex < 0 && index === 0) {
+    scrollIntoView(navigationItemRef.current, {
+      block: 'nearest',
+      inline: 'nearest',
+      scrollMode: 'if-needed',
+    })
   }
 
   useEffect(
