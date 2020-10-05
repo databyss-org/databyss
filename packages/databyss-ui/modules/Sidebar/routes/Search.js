@@ -62,9 +62,7 @@ const Search = () => {
 
   useEffect(
     () => {
-      encodedSearchTerm.current = encodeURI(
-        value.textValue.replace(/[^a-zA-Z0-9À-ž- ]/gi, '').replace(/\?/g, '')
-      )
+      encodedSearchTerm.current = encodeURIComponent(value.textValue)
     },
     [searchTerm, value]
   )

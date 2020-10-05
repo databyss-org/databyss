@@ -23,6 +23,8 @@ const SearchContent = () => {
   const { navigate } = useNavigationContext()
   const { query } = useParams()
 
+  const _query = decodeURIComponent(query)
+
   const onEntryClick = (pageId, blockId) => {
     navigate(`/pages/${pageId}#${blockId}`)
   }
@@ -51,7 +53,7 @@ const SearchContent = () => {
                 <RawHtml
                   html={slateBlockToHtmlWithSearch(
                     { text: e.text, type: 'ENTRY' },
-                    query
+                    _query
                   )}
                 />
               }
@@ -69,14 +71,14 @@ const SearchContent = () => {
     <ScrollView p="medium" flex="1" maxHeight="100vh">
       <Helmet>
         <meta charSet="utf-8" />
-        <title>{query}</title>
+        <title>{_query}</title>
       </Helmet>
       <View p="medium">
         <Text variant="bodyHeading1" color="text.3">
-          &quot;{query}&quot;
+          &quot;{_query}&quot;
         </Text>
       </View>
-      <EntrySearchLoader query={query}>
+      <EntrySearchLoader query={_query}>
         {results => ComposeResults(results)}
       </EntrySearchLoader>
     </ScrollView>
