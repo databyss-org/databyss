@@ -182,6 +182,7 @@ router.post(
                   entryId: curr._id,
                   text: curr.text,
                   index: _blockIndex,
+                  textScore: curr.score,
                   //  blockId: curr.block,
                 },
               ],
@@ -203,10 +204,11 @@ router.post(
               entryId: curr._id,
               text: curr.text,
               index: _blockIndex,
+              textScore: curr.score,
             })
 
-            // sort the entries by page index value
-            _entries.sort((a, b) => (a.index > b.index ? 1 : -1))
+            // sort the entries by text score
+            _entries.sort((a, b) => (a.textScore < b.textScore ? 1 : -1))
             _data.entries = _entries
             _data.maxTextScore = _maxScore
 

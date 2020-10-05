@@ -25,7 +25,7 @@ const BlockSchema = new Schema(
   { versionKey: false, timestamps: true }
 )
 
-BlockSchema.index({ 'text.textValue': 'text' })
+BlockSchema.index({ 'text.textValue': 'text' }, { default_language: 'none' })
 
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */
