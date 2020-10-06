@@ -1,6 +1,4 @@
 import React from 'react'
-import { useParams } from '@reach/router'
-
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
@@ -21,15 +19,18 @@ const buildHeaderItems = (firstName, lastName) => [
 ]
 
 // component
-const AuthorDetails = () => {
-  const { firstName, lastName } = useParams()
+const AuthorDetails = ({ query }) => {
+  const params = new URLSearchParams(query)
+
+  const authorQueryFirstName = params.get('firstName')
+  const authorQueryLastName = params.get('lastName')
 
   // render methods
   const renderAuthorCitations = citations => {
     const authorCitations = buildAuthorCitationData(
       citations,
-      firstName,
-      lastName
+      authorQueryFirstName,
+      authorQueryLastName
     )
 
     const cleanCitations = authorCitations.filter(
@@ -53,7 +54,9 @@ const AuthorDetails = () => {
   }
 
   const render = () => (
-    <MobileView headerItems={buildHeaderItems(firstName, lastName)}>
+    <MobileView
+      headerItems={buildHeaderItems(authorQueryFirstName, authorQueryLastName)}
+    >
       <SourceProvider>
         <SourceCitationsLoader>
           {citations => renderAuthorCitations(citations)}
