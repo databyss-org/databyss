@@ -209,6 +209,14 @@ export const slateBlockToHtmlWithSearch = (block: Block, query: string): string 
 
     // add search ranges to block
       // add escape characters
+      /*
+      BUG: if query is multiple words, and split into individual words:
+      query.split(' ')
+
+      correct ranges will be applied but the function will fail on `flattenRanges` 
+
+      for now we can only have one range added
+      */
       const _word = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 
   
