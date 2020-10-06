@@ -21,11 +21,6 @@ export const KeyboardNavigationProvider = ({
   const activeItemRef = useRef()
   const [, setActiveIndex] = useState(activeIndexRef.current)
 
-  if (orderKeyRef.current !== orderKey) {
-    itemCountRef.current = 0
-    activeIndexRef.current = 0
-  }
-
   /**
    * Gets the next item index and increments the state.itemCount
    */
@@ -98,13 +93,18 @@ export const KeyboardNavigationProvider = ({
 
   useEffect(
     () => {
-      onActiveIndexChanged()
+      onActiveIndexChanged(activeIndexRef.current)
     },
     [activeIndexRef.current]
   )
 
   useEffect(
     () => {
+      if (orderKeyRef.current !== orderKey) {
+        itemCountRef.current = 0
+        activeIndexRef.current = -1
+        setActiveIndex(activeIndexRef.current)
+      }
       orderKeyRef.current = orderKey
     },
     [orderKey]
@@ -115,7 +115,8 @@ export const KeyboardNavigationProvider = ({
       value={{
         getNextItemIndex,
         activeIndex: activeIndexRef.current,
-        orderKey,
+        orderKey: orderKeyRef.current,
+        activeIndexRef,
         keyboardEventsActive,
         setActiveItem,
       }}

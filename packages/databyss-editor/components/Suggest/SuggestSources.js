@@ -19,6 +19,8 @@ const SuggestSources = ({
   focusEditor,
   active,
   onSuggestionsChanged,
+  resultsMode,
+  setResultsMode,
   ...others
 }) => {
   const setSource = useSourceContext(c => c && c.setSource)
@@ -27,12 +29,11 @@ const SuggestSources = ({
     c => c && c.addPageToCacheHeader
   )
   const { replace, state } = useEditorContext()
-  const [mode, setMode] = useState(LOCAL_SOURCES)
 
   useEffect(
     () => {
       // reset menu when active state changes
-      setMode(LOCAL_SOURCES)
+      setResultsMode(LOCAL_SOURCES)
     },
     [active]
   )
@@ -90,7 +91,9 @@ const SuggestSources = ({
     },
   ]
 
-  if (mode === LOCAL_SOURCES) {
+  const _mode = resultsMode || LOCAL_SOURCES
+
+  if (_mode === LOCAL_SOURCES) {
     return (
       <SourceCitationsLoader
         onLoad={resources => onSuggestionsChanged(Object.values(resources))}
@@ -103,7 +106,7 @@ const SuggestSources = ({
                 key={menuItem.action}
                 data-test-element="suggest-dropdown"
                 onPress={() => {
-                  setMode(menuItem.action)
+                  setResultsMode(menuItem.action)
                   focusEditor()
                 }}
               />
@@ -116,7 +119,7 @@ const SuggestSources = ({
 
   return (
     <CatalogResults
-      type={mode}
+      type={_mode}
       query={query}
       selectSource={onSourceSelected}
       dismiss={dismiss}
