@@ -99,15 +99,14 @@ router.post(
   async (req, res) => {
     try {
       // todo: regex escape function
-      const queryArray = req.body.data
-        .replace(/[^a-z0-9À-ú- ]/gi, '')
-        .split(' ')
+      const _query = decodeURIComponent(req.body.data)
 
       const results = await Block.aggregate([
         {
           $match: {
             $text: {
-              $search: queryArray.join(' '),
+              $search: _query,
+              $diacriticSensitive: false,
             },
             ...getBlockAccountQueryMixin(req),
             type: 'ENTRY',
@@ -125,6 +124,7 @@ router.post(
         // filter out archived pages,
         {
           $project: {
+            score: { $meta: 'textScore' },
             _id: 1,
             text: 1,
             account: 1,
@@ -138,6 +138,12 @@ router.post(
             },
           },
         },
+        // filter out matches below threshhold
+        // {
+        //   $match: {
+        //     score: { $gt: 1.0 },
+        //   },
+        // },
         // unwindws page array to page object
         { $unwind: '$page' },
       ])
@@ -145,40 +151,13 @@ router.post(
       if (results) {
         let _results = {
           count: results.length,
-          results: {},
+          results: new Map(),
         }
-
-        // checks if exact words are in result
-        const isInEntry = (string, regex) =>
-          string
-            .replace(/(\n|\t)/g, ' ')
-            .replace(/[^a-z0-9À-ú- ]/gi, '')
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .match(regex)
 
         /*
         compose results
         */
         _results = results.reduce((acc, curr) => {
-          // create regEx or operator to find exact word match
-
-          const searchstring = new RegExp(
-            queryArray.length > 1
-              ? `^${queryArray
-                  .map(
-                    q =>
-                      `(?=.*\\b${q
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')}\\b.*)`
-                  )
-                  .join('')}.*$`
-              : `\\b${queryArray[0]
-                  .normalize('NFD')
-                  .replace(/[\u0300-\u036f]/g, '')}\\b`,
-            'i'
-          )
-
           // only show results with associated pages
           if (!curr.page) {
             _results.count -= 1
@@ -187,50 +166,76 @@ router.post(
 
           const pageId = curr.page._id.toString()
           // get index where block appears on page
+
           const _blockIndex = curr.page.blocks.findIndex(
             b => b._id.toString() === curr._id.toString()
           )
-          if (!acc.results[pageId]) {
-            // bail if not exact word in entry
-            if (!isInEntry(curr.text.textValue, searchstring)) {
-              _results.count -= 1
-              return acc
-            }
-
+          if (!acc.results.get(pageId)) {
             // init result
-            acc.results[pageId] = {
+            const _data = {
               page: curr.page.name,
               pageId,
+              maxTextScore: curr.score,
               entries: [
                 {
                   entryId: curr._id,
                   text: curr.text,
                   index: _blockIndex,
+                  textScore: curr.score,
                   //  blockId: curr.block,
                 },
               ],
             }
+            acc.results.set(pageId, _data)
+            //      acc.results[pageId] = _data
           } else {
-            // bail if not exact word in entry
-            if (!isInEntry(curr.text.textValue, searchstring)) {
-              _results.count -= 1
-              return acc
+            const _data = acc.results.get(pageId)
+            const _entries = _data.entries
+
+            // have the max test score on the page dictionary
+            let _maxScore = _data.maxTextScore
+
+            if (curr.score > _maxScore) {
+              _maxScore = curr.score
             }
-            const _entries = acc.results[pageId].entries
 
             _entries.push({
               entryId: curr._id,
               text: curr.text,
               index: _blockIndex,
-              // blockId: curr.block,
+              textScore: curr.score,
             })
-            // sort the entries by page index value
-            _entries.sort((a, b) => (a.index > b.index ? 1 : -1))
 
-            acc.results[pageId].entries = _entries
+            // sort the entries by text score
+            _entries.sort((a, b) => (a.textScore < b.textScore ? 1 : -1))
+            _data.entries = _entries
+            _data.maxTextScore = _maxScore
+
+            acc.results.set(pageId, _data)
+
+            //     acc.results[pageId] = _data
           }
           return acc
         }, _results)
+
+        // sort the map according to the text score per page
+        _results.results = new Map(
+          [..._results.results].sort(([, v], [, v2]) => {
+            if (v.maxTextScore < v2.maxTextScore) {
+              return 1
+            }
+            if (v.maxTextScore > v2.maxTextScore) {
+              return -1
+            }
+            return 0
+          })
+        )
+
+        // convert from map back to object
+        _results = {
+          ..._results,
+          results: Object.fromEntries(_results.results),
+        }
 
         return res.json(_results)
       }
