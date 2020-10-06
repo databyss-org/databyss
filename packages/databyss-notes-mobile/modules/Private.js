@@ -54,7 +54,7 @@ const Private = () => {
             <SourcesIndex path="/" />
             <RouterGroup path="/authors">
               <SourcesIndex path="/" />
-              <AuthorDetails path="/:firstName/:lastName" />
+              <AuthorDetails path="/:query" />
             </RouterGroup>
             <SourceDetails path="/:sourceId" />
           </RouterGroup>

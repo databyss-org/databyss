@@ -1,6 +1,5 @@
 import React from 'react'
 import ObjectId from 'bson-objectid'
-
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
@@ -20,8 +19,18 @@ import { parseLocation } from '../../utils/parseLocation'
 import NoResultsView from '../../components/NoResultsView'
 import ScrollableListView from '../../components/ScrollableListView'
 import SourcesTabItems from '../../constants/SourcesTabItems'
+import AuthorDetails from './AuthorDetails'
 
 import SourcesMetadata from './SourcesMetadata'
+
+const getAuthorName = value => {
+  const firstName = value.firstName?.textValue
+  const lastName = value.lastName?.textValue
+  if (lastName && firstName) {
+    return `${lastName}, ${firstName}`
+  }
+  return lastName || firstName
+}
 
 // utils
 const buildAuthorList = data => {
@@ -30,12 +39,15 @@ const buildAuthorList = data => {
   const keys = Object.keys(data)
   keys.forEach(key => {
     const element = data[key]
-    const lastName = element.lastName.textValue
-    const firstName = element.firstName.textValue
+    const _url = `firstName=${
+      element?.firstName ? element.firstName.textValue : ''
+    }&lastName=${element?.lastName ? element.lastName.textValue : ''}`
+    const _label = getAuthorName(element)
     response.push({
       _id: new ObjectId().toHexString(),
-      label: `${lastName}, ${firstName}`,
-      href: `/sources/authors/${firstName}/${lastName}`,
+      label: _label,
+      href: `/sources/authors?${_url}`,
+      // href: `/sources/authors/${firstName}/${lastName}`,
       icon: <AuthorSvg />,
     })
   })
@@ -51,6 +63,15 @@ const headerItems = [SourcesMetadata]
 // component
 const SourcesIndex = () => {
   const navigationContext = useNavigationContext()
+
+  const getQueryParams = useNavigationContext(c => c.getQueryParams)
+
+  const _queryParams = getQueryParams()
+
+  if (Object.keys(_queryParams).length) {
+    return <AuthorDetails query={_queryParams} />
+  }
+
   const { location } = navigationContext
 
   const onTabbedContentChange = (itemId, itemIndex) => {
