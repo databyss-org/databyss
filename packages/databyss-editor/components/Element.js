@@ -152,10 +152,11 @@ const Element = ({ attributes, children, element, readOnly }) => {
           {block.__showCitationMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu
+                onSuggestions={onSuggestions}
                 placeholder="type title and/or author for suggestions..."
                 suggestType="sources"
               >
-                <SuggestSources onSuggestions={onSuggestions} />
+                <SuggestSources />
               </SuggestMenu>
             </View>
           )}
@@ -163,6 +164,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
           {block.__showTopicMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu
+                onSuggestions={onSuggestions}
                 placeholder="start typing topic for suggestions..."
                 suggestType="topics"
               >

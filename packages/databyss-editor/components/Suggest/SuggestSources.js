@@ -28,6 +28,7 @@ const SuggestSources = ({
   )
   const { replace, state } = useEditorContext()
   const [mode, setMode] = useState(LOCAL_SOURCES)
+  const [suggestions, setSuggestsions] = useState()
 
   useEffect(
     () => {
@@ -90,11 +91,16 @@ const SuggestSources = ({
     },
   ]
 
+  const onSourcesLoaded = resources => {
+    if (!suggestions) {
+      onSuggestionsChanged(Object.values(resources))
+      setSuggestsions(resources)
+    }
+  }
+
   if (mode === LOCAL_SOURCES) {
     return (
-      <SourceCitationsLoader
-        onLoad={resources => onSuggestionsChanged(Object.values(resources))}
-      >
+      <SourceCitationsLoader onLoad={onSourcesLoaded}>
         {_sourceCitations =>
           _composeLocalSources(_sourceCitations).concat(
             _menuItems.map(menuItem => (
