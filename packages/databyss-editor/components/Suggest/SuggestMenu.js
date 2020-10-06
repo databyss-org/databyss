@@ -38,7 +38,7 @@ export const getPosition = editor => {
   return { top: 40, left: 0 }
 }
 
-const SuggestMenu = ({ children, placeholder, suggestType }) => {
+const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
   const [position, setPosition] = useState({
     top: 40,
     left: 0,
@@ -106,6 +106,7 @@ const SuggestMenu = ({ children, placeholder, suggestType }) => {
   }
 
   const onSuggestionsChanged = suggestions => {
+    onSuggestions(suggestions)
     setHasSuggestions(suggestions?.length)
   }
 

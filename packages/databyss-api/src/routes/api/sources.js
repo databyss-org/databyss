@@ -68,6 +68,7 @@ router.get(
         $project: {
           _id: 1,
           text: 1,
+          type: 1,
           account: 1,
           detail: 1,
           // filter out archived pages,
@@ -86,6 +87,7 @@ router.get(
           _id: 1,
           text: 1,
           account: 1,
+          type: 1,
           detail: 1,
           isInPages: '$isInPages._id',
         },
@@ -131,6 +133,7 @@ router.get(
           _id: 1,
           text: 1,
           account: 1,
+          type: 1,
           detail: 1,
           // filter out archived pages,
           isInPages: {
@@ -148,6 +151,7 @@ router.get(
           _id: 1,
           text: 1,
           account: 1,
+          type: 1,
           detail: 1,
           isInPages: '$isInPages._id',
         },
@@ -162,6 +166,7 @@ router.get(
       const sourcesCitationsDict = pick(block, [
         '_id',
         'text',
+        'type',
         'detail.authors',
         'detail.citations',
         'isInPages',
