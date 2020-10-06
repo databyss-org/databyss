@@ -53,7 +53,8 @@ const SearchContent = () => {
                 <RawHtml
                   html={slateBlockToHtmlWithSearch(
                     { text: e.text, type: 'ENTRY' },
-                    _query
+                    // only allow alphanumeric, hyphen and space
+                    _query.replace(/[^a-zA-Z0-9À-ž-' ]/gi, '')
                   )}
                 />
               }

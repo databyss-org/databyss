@@ -203,19 +203,22 @@ export const slateBlockToHtmlWithSearch = (block: Block, query: string): string 
 
   if(query){
   // add query markup to results
-  const _searchTerm = query.split(' ')
+
   const ranges: Range[] = []
 
 
     // add search ranges to block
-    _searchTerm.forEach(word => {
+      // add escape characters
+      const _word = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
+
+  
       // normalize diactritics
       const parts = _block.text.textValue
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .split(
           new RegExp(
-            `\\b${word.normalize('NFD').replace(/[\u0300-\u036f]/g, '')}\\b`,
+            `\\b${_word.normalize('NFD').replace(/[\u0300-\u036f]/g, '')}\\b`,
             'i'
           )
         )
@@ -224,19 +227,18 @@ export const slateBlockToHtmlWithSearch = (block: Block, query: string): string 
       let offset = 0
 
       parts.forEach((part, i) => {
-        const length = word.length
+        const length = _word.length
 
         if (i !== 0) {
           ranges.push({
-            offset: offset - word.length,
+            offset: offset - _word.length,
             length,
             marks: ['highlight'],
           })
         }
 
-        offset = offset + part.length + word.length
+        offset = offset + part.length + _word.length
       })
-    })
 
     const _ranges = [..._block.text.ranges, ...ranges]
     // sort array by offset
@@ -247,6 +249,7 @@ export const slateBlockToHtmlWithSearch = (block: Block, query: string): string 
       }
       return (a.offset > b.offset)? 1: -1
     })
+
     _block.text.ranges = _ranges
   }
    const _frag = stateBlockToHtml(_block)

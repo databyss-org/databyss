@@ -113,7 +113,6 @@ const Editor = ({
       _searchTerm.forEach(word => {
         if (word && Text.isText(node)) {
           const { text } = node
-
           // normalize diactritics
           const parts = text
             .normalize('NFD')

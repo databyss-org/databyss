@@ -35,6 +35,7 @@ export function textToHtml(text: Text): string {
     const _before = _html.slice(0, _range.offset)
     const _segment = _html.slice(_range.offset, _range.offset + _range.length)
     const _after = _html.slice(_range.offset + _range.length)
+
     let _openTags = ''
     let _closeTags = ''
     _range.marks.forEach(_mark => {

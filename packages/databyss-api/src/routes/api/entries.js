@@ -101,13 +101,11 @@ router.post(
       // todo: regex escape function
       const _query = decodeURIComponent(req.body.data)
 
-      const queryArray = _query.replace(/[^a-z0-9À-ú-/ ]/gi, '').split(' ')
-
       const results = await Block.aggregate([
         {
           $match: {
             $text: {
-              $search: queryArray.join(' '),
+              $search: _query,
               $diacriticSensitive: false,
             },
             ...getBlockAccountQueryMixin(req),
