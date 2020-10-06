@@ -88,6 +88,7 @@ describe('entry search', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'this keyword something will be searched')
+    await isAppInNotesSaved(driver)
     await sleep(500)
     // check for search results appearing in the same order as they appear on the page
     let searchSidebarButton = await getElementByTag(
@@ -105,15 +106,16 @@ describe('entry search', () => {
     await searchInput.click()
     // wait for editor to be visible
     await sleep(500)
-    await sendKeys(actions, 'something')
+    await sendKeys(actions, 'something searched will')
     await enterKey(actions)
 
-    // get the search results, they should be in the order of how they appear on the page
+    // get the search results, they should be in the order of relevance
     const searchPageEntryResults = await getElementsByTag(
       driver,
       '[data-test-element="search-result-entries"]'
     )
 
+    await sleep(6000)
     assert.equal(searchPageEntryResults.length, 3)
 
     // get text from entry search results
@@ -123,12 +125,14 @@ describe('entry search', () => {
         return _text.trim()
       })
     )
+    assert.equal(results[0], 'this keyword something will be searched')
+
+    assert.equal(results[1], 'this will also have keyword something')
+
     assert.equal(
-      results[0],
+      results[2],
       'something keyword appears at the start of an entry'
     )
-    assert.equal(results[1], 'this will also have keyword something')
-    assert.equal(results[2], 'this keyword something will be searched')
 
     // clear the search element
     const clearButton = await getElementByTag(
@@ -162,6 +166,8 @@ describe('entry search', () => {
     await enterKey(actions)
     await sendKeys(actions, '# this is a topic with something keyword')
     await enterKey(actions)
+    await isAppInNotesSaved(driver)
+
     // create a third page
     newPageButton = await getElementByTag(
       driver,
