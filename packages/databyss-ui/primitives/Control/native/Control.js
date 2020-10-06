@@ -50,7 +50,7 @@ const controlCssDesktop = (props, theme) => ({
           backgroundColor: props.hoverColor,
         },
         '&:active': {
-          backgroundColor: props.activeColor,
+          backgroundColor: props.pressedColor,
         },
       }),
 })
@@ -68,7 +68,7 @@ const controlCss = props => ({
   borderWidth: '1px',
   textDecoration: 'none',
   '&:active': {
-    backgroundColor: props.activeColor,
+    backgroundColor: props.pressedColor,
   },
   '&:focus': {
     outline: 'none',
@@ -129,7 +129,8 @@ const Control = forwardRef(
 
 Control.defaultProps = {
   hoverColor: 'control.2',
-  activeColor: 'control.1',
+  activeColor: 'control.2',
+  pressedColor: 'control.1',
   borderRadius,
   userSelect: 'none',
 }

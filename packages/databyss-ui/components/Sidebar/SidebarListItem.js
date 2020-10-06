@@ -4,7 +4,7 @@ import { Text, BaseControl, Grid } from '@databyss-org/ui/primitives'
 const SidebarListItem = ({ isActive, text, href, icon, onPress, children }) => (
   <BaseControl
     data-test-element="page-sidebar-item"
-    backgroundColor={isActive ? 'control.1' : 'transparent'}
+    active={isActive}
     py="small"
     px="em"
     width="100%"
