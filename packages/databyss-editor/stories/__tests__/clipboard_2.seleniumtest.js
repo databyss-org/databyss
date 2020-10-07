@@ -21,6 +21,7 @@ import {
   sendKeys,
   leftKey,
   isSaved,
+  escapeKey,
 } from './_helpers.selenium'
 
 let driver
@@ -287,6 +288,7 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '@this is another source text')
+    await escapeKey(actions)
     await upKey(actions)
     await selectAll(actions)
     await downShiftKey(actions)

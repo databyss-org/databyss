@@ -106,6 +106,10 @@ export const upKey = async actions => {
   await navigationActionsBuilder(actions, Key.ARROW_UP)
 }
 
+export const escapeKey = async actions => {
+  await navigationActionsBuilder(actions, Key.ESCAPE)
+}
+
 export const tabKey = async actions => {
   await navigationActionsBuilder(actions, '\t')
 }

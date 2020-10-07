@@ -25,6 +25,8 @@ const DropdownContainer = forwardRef(
       maxWidth,
       open,
       verticalItemPadding,
+      onActiveIndexChanged,
+      orderKey,
       ...others
     },
     ref
@@ -48,7 +50,15 @@ const DropdownContainer = forwardRef(
       )}
       {...others}
     >
-      <List verticalItemPadding={verticalItemPadding}>{children}</List>
+      <List
+        verticalItemPadding={verticalItemPadding}
+        orderKey={orderKey}
+        keyboardEventsActive={open}
+        onActiveIndexChanged={onActiveIndexChanged}
+        keyboardNavigation
+      >
+        {children}
+      </List>
     </View>
   )
 )

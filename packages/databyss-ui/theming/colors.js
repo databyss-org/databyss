@@ -39,9 +39,9 @@ _c = {
   // control colors [enabled, hover, active, label]
   primary: [_c.blue[1], _c.blue[2], _c.blue[0], _c.white],
   secondary: [_c.blue[1], _c.gray[6], _c.gray[5], _c.blue[1]],
-  // BaseControl colors [enabled, hover, active]
+  // BaseControl colors [enabled, hover, pressed]
   control: [_c.transparent].concat(
-    [_c.gray[3], _c.gray[4]].map(c =>
+    [_c.gray[4], _c.gray[5]].map(c =>
       Color(c)
         .alpha(0.4)
         .rgb()
@@ -87,6 +87,15 @@ _c = {
       secondary: [_c.blue[1], _c.gray[2], _c.gray[0], _c.blue[2]],
       activeTextInputBackground: _c.black,
       pageBackground: _c.black,
+      // BaseControl colors [enabled, hover, pressed]
+      control: [_c.transparent].concat(
+        [_c.gray[4], _c.gray[3]].map(c =>
+          Color(c)
+            .alpha(0.4)
+            .rgb()
+            .string()
+        )
+      ),
     },
   },
 }

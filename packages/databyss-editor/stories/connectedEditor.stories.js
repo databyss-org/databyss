@@ -8,6 +8,7 @@ import {
 } from '@databyss-org/ui/stories/decorators'
 import ModalManager from '@databyss-org/ui/modules/Modals/ModalManager'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
+import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
 import SessionProvider, {
   useSessionContext,
 } from '@databyss-org/services/session/SessionProvider'
@@ -123,8 +124,10 @@ const EditorWithModals = () => (
       <PageProvider initialState={pageInitialState}>
         <SourceProvider>
           <TopicProvider>
-            <EditorWithProvider />
-            <ModalManager />
+            <CatalogProvider>
+              <EditorWithProvider />
+              <ModalManager />
+            </CatalogProvider>
           </TopicProvider>
         </SourceProvider>
       </PageProvider>

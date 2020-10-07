@@ -7,7 +7,12 @@ import Controls from './Controls'
 import Buttons from './Buttons'
 import Icons from './Icons'
 import TextInputs from './TextInputs'
-import List, { ItemSeparators, ComplexItems, Sections } from './List'
+import List, {
+  ItemSeparators,
+  ComplexItems,
+  Sections,
+  KeyboardNavigationList,
+} from './List'
 import Modals, { Editable as EditableModals, Dialogs } from './Modals'
 
 storiesOf('Design System|Buttons', module)
@@ -33,6 +38,7 @@ storiesOf('Design System|List', module)
   .add('Separators', () => <ItemSeparators />)
   .add('Complex', () => <ComplexItems />)
   .add('Sections', () => <Sections />)
+  .add('Keyboard Navigation', () => <KeyboardNavigationList />)
 storiesOf('Design System|Modals', module)
   .addDecorator(ViewportDecorator)
   .add('Default', () => <Modals />)

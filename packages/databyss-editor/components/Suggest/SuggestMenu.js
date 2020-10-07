@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useEditor, ReactEditor } from '@databyss-org/slate-react'
 import { Node, Editor } from '@databyss-org/slate'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
@@ -39,6 +39,7 @@ export const getPosition = editor => {
 }
 
 const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
+  const activeIndexRef = useRef(-1)
   const [position, setPosition] = useState({
     top: 40,
     left: 0,
@@ -47,6 +48,7 @@ const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
   const [menuActive, setMenuActive] = useState(false)
   const [query, setQuery] = useState(null)
   const [hasSuggestions, setHasSuggestions] = useState(false)
+  const [resultsMode, setResultsMode] = useState('')
 
   const editor = useEditor()
   const editorContext = useEditorContext()
@@ -82,7 +84,10 @@ const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
   )
 
   useEventListener('keydown', e => {
-    if (e.key === 'Escape' || e.key === 'Enter') {
+    if (
+      e.key === 'Escape' ||
+      (e.key === 'Enter' && activeIndexRef.current < 0)
+    ) {
       setMenuActive(false)
     }
   })
@@ -110,6 +115,10 @@ const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
     setHasSuggestions(suggestions?.length)
   }
 
+  const onActiveIndexChanged = index => {
+    activeIndexRef.current = index
+  }
+
   // if topics and has no suggestions, remove menu,
   // leave if sources for citations loader
   const _showMenu =
@@ -128,6 +137,8 @@ const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
         widthVariant="dropdownMenuLarge"
         minHeight="32px"
         p="small"
+        orderKey={query + resultsMode}
+        onActiveIndexChanged={onActiveIndexChanged}
       >
         {query ? (
           React.cloneElement(React.Children.only(children), {
@@ -139,6 +150,8 @@ const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
             focusEditor: onFocusEditor,
             active: menuActive,
             onSuggestionsChanged,
+            resultsMode,
+            setResultsMode,
           })
         ) : (
           <View p="small">

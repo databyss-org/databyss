@@ -21,3 +21,8 @@ export { default as TextInputView } from './Control/native/TextInputView'
 export { default as RawHtml } from './Text/RawHtml'
 export { default as Switch } from './Control/native/Switch'
 export { default as styled } from './styled'
+export { useKeyboardNavigationContext } from './List/KeyboardNavigationProvider'
+export {
+  withKeyboardNavigation,
+  default as KeyboardNavigationItem,
+} from './List/KeyboardNavigationItem'
