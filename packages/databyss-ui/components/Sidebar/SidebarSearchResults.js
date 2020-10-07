@@ -13,7 +13,7 @@ import { getTopicsData } from '@databyss-org/ui/modules/Sidebar/routes/Topics'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
-import { Text, View, ScrollView, List } from '@databyss-org/ui/primitives'
+import { Text, View } from '@databyss-org/ui/primitives'
 
 const FulltextSearchItem = props => (
   <SidebarListItem
