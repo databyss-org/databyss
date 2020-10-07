@@ -14,10 +14,12 @@ export const KeyboardNavigationProvider = ({
   onActiveIndexChanged,
   orderKey,
   keyboardEventsActive,
+  initialActiveIndex,
+  onItemSelected,
 }) => {
   const itemCountRef = useRef(0)
-  const activeIndexRef = useRef(-1)
-  const orderKeyRef = useRef('')
+  const activeIndexRef = useRef(initialActiveIndex)
+  const [orderKeyValue, setOrderKeyValue] = useState('')
   const activeItemRef = useRef()
   const [, setActiveIndex] = useState(activeIndexRef.current)
 
@@ -65,6 +67,7 @@ export const KeyboardNavigationProvider = ({
       ) {
         e.preventDefault()
         activeItemRef.current.navigationItemHandle.current.selectNavigationItem()
+        onItemSelected(activeItemRef.current)
       }
     },
     [itemCountRef]
@@ -80,9 +83,6 @@ export const KeyboardNavigationProvider = ({
         window.addEventListener('keydown', onKeydown)
       } else {
         window.removeEventListener('keydown', onKeydown)
-        activeItemRef.current = null
-        activeIndexRef.current = -1
-        setActiveIndex(activeIndexRef.current)
       }
       return () => {
         window.removeEventListener('keydown', onKeydown)
@@ -100,12 +100,9 @@ export const KeyboardNavigationProvider = ({
 
   useEffect(
     () => {
-      if (orderKeyRef.current !== orderKey) {
-        itemCountRef.current = 0
-        activeIndexRef.current = -1
-        setActiveIndex(activeIndexRef.current)
-      }
-      orderKeyRef.current = orderKey
+      itemCountRef.current = 0
+      activeIndexRef.current = initialActiveIndex
+      setOrderKeyValue(orderKey)
     },
     [orderKey]
   )
@@ -115,7 +112,7 @@ export const KeyboardNavigationProvider = ({
       value={{
         getNextItemIndex,
         activeIndex: activeIndexRef.current,
-        orderKey: orderKeyRef.current,
+        orderKey: orderKeyValue,
         activeIndexRef,
         keyboardEventsActive,
         setActiveItem,
@@ -128,6 +125,8 @@ export const KeyboardNavigationProvider = ({
 
 KeyboardNavigationProvider.defaultProps = {
   onActiveIndexChanged: () => null,
+  initialActiveIndex: -1, // nothing is selected by default
+  onItemSelected: () => null,
 }
 
 export const useKeyboardNavigationContext = () => {

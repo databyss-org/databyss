@@ -9,6 +9,7 @@ const KeyboardNavigationItem = ({ children }) => {
     activeIndex,
     orderKey,
     setActiveItem,
+    keyboardEventsActive,
   } = useKeyboardNavigationContext()
   const navigationItemRef = useRef()
   const navigationItemHandle = useRef()
@@ -43,7 +44,7 @@ const KeyboardNavigationItem = ({ children }) => {
   return useMemo(
     () =>
       React.cloneElement(React.Children.only(children), {
-        activeNavigationItem: activeIndex === index,
+        activeNavigationItem: keyboardEventsActive && activeIndex === index,
         navigationItemRef,
         navigationItemHandle,
       }),

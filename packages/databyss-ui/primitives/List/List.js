@@ -13,6 +13,8 @@ const List = ({
   orderKey,
   onActiveItemChanged,
   onActiveIndexChanged,
+  initialActiveIndex,
+  onItemSelected,
   ...others
 }) => {
   const _render = (
@@ -46,6 +48,8 @@ const List = ({
         orderKey={orderKey}
         onActiveItemChanged={onActiveItemChanged}
         onActiveIndexChanged={onActiveIndexChanged}
+        initialActiveIndex={initialActiveIndex}
+        onItemSelected={onItemSelected}
       >
         {_render}
       </KeyboardNavigationProvider>

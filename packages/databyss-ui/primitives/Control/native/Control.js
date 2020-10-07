@@ -1,6 +1,7 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, useImperativeHandle, useRef } from 'react'
 import css from '@styled-system/css'
 import { ThemeContext } from '@emotion/core'
+import forkRef from '@databyss-org/ui/lib/forkRef'
 import Color from 'color'
 import View, { styleProps, defaultProps, webProps } from '../../View/View'
 import styled from '../../styled'
@@ -90,7 +91,18 @@ const StyledButton = styled('button', styleProps)
 const StyledLink = styled('a', styleProps)
 
 const Control = forwardRef(
-  ({ disabled, children, onPress, renderAsView, href, ...others }, ref) => {
+  (
+    { disabled, children, onPress, renderAsView, href, handle, ...others },
+    ref
+  ) => {
+    const _childRef = useRef()
+    useImperativeHandle(handle, () => ({
+      press: () => {
+        if (_childRef.current?.click) {
+          _childRef.current.click()
+        }
+      },
+    }))
     const StyledControl = href ? StyledLink : StyledButton
     const StyledComponent = renderAsView ? View : StyledControl
     return (
@@ -98,7 +110,7 @@ const Control = forwardRef(
         {theme => (
           <StyledComponent
             onDragStart={e => e.preventDefault()}
-            ref={ref}
+            ref={forkRef(ref, _childRef)}
             tabIndex={0}
             onClick={e => {
               if (disabled) {
