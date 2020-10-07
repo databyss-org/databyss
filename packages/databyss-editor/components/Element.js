@@ -4,7 +4,7 @@ import { isMobile } from '@databyss-org/ui/lib/mediaQuery'
 import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from '@databyss-org/slate-react'
-import { Range } from '@databyss-org/slate'
+import { Range, Node } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -108,6 +108,10 @@ const Element = ({ attributes, children, element, readOnly }) => {
       const vpad =
         block.type === 'ENTRY' || block.type === previousBlock?.type ? 1 : 3
 
+      const _innerText = Node.string(children.props.node)
+      const _isLastCharacterNewLine =
+        _innerText.charAt(_innerText.length - 1) === `\n`
+
       return (
         <View
           ref={ref => {
@@ -148,7 +152,6 @@ const Element = ({ attributes, children, element, readOnly }) => {
                 <BlockMenu element={element} />
               </View>
             )}
-
           {block.__showCitationMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu
@@ -160,7 +163,6 @@ const Element = ({ attributes, children, element, readOnly }) => {
               </SuggestMenu>
             </View>
           )}
-
           {block.__showTopicMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
               <SuggestMenu
@@ -172,7 +174,6 @@ const Element = ({ attributes, children, element, readOnly }) => {
               </SuggestMenu>
             </View>
           )}
-
           {isAtomicInlineType(element.type) ? (
             <View
               alignSelf="flex-start"
@@ -215,6 +216,12 @@ const Element = ({ attributes, children, element, readOnly }) => {
             </View>
           ) : (
             <Text {...attributes}>{children}</Text>
+          )}
+          {/* HACK: if last character is new line break, add a zero width element, firefox does not like \n at the end of a block */}
+          {_isLastCharacterNewLine && (
+            <Text contentEditable="false" suppressContentEditableWarning>
+              {'\ufeff'}
+            </Text>
           )}
         </View>
       )
