@@ -41,7 +41,9 @@ const Search = () => {
   const debounced = useCallback(
     debounce(val => {
       // only allow alphanumeric, hyphen and space
-      setQuery({ textValue: val.textValue.replace(/[^a-zA-Z0-9À-ž- ]/gi, '') })
+      setQuery({
+        textValue: val.textValue.replace(/[^a-zA-Z0-9À-ž-'" ]/gi, ''),
+      })
     }, 200),
     [setQuery]
   )
@@ -63,9 +65,7 @@ const Search = () => {
 
   useEffect(
     () => {
-      encodedSearchTerm.current = encodeURI(
-        value.textValue.replace(/[^a-zA-Z0-9À-ž- ]/gi, '').replace(/\?/g, '')
-      )
+      encodedSearchTerm.current = encodeURIComponent(value.textValue)
     },
     [searchTerm, value]
   )

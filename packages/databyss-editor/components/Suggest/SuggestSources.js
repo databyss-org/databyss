@@ -29,6 +29,7 @@ const SuggestSources = ({
     c => c && c.addPageToCacheHeader
   )
   const { replace, state } = useEditorContext()
+  const [suggestions, setSuggestsions] = useState()
 
   useEffect(
     () => {
@@ -91,13 +92,17 @@ const SuggestSources = ({
     },
   ]
 
+  const onSourcesLoaded = resources => {
+    if (!suggestions) {
+      onSuggestionsChanged(Object.values(resources))
+      setSuggestsions(resources)
+    }
+  }
   const _mode = resultsMode || LOCAL_SOURCES
 
   if (_mode === LOCAL_SOURCES) {
     return (
-      <SourceCitationsLoader
-        onLoad={resources => onSuggestionsChanged(Object.values(resources))}
-      >
+      <SourceCitationsLoader onLoad={onSourcesLoaded}>
         {_sourceCitations =>
           _composeLocalSources(_sourceCitations).concat(
             _menuItems.map(menuItem => (
