@@ -1,8 +1,13 @@
 import React from 'react'
+
+import {
+  CROSSREF,
+  GOOGLE_BOOKS,
+  OPEN_LIBRARY,
+} from '@databyss-org/services/catalog/constants'
 import { Text } from '@databyss-org/ui/primitives'
 import googleLogo from '@databyss-org/ui/assets/powered_by_google_on_white.png'
 import googleLogoRetina from '@databyss-org/ui/assets/powered_by_google_on_white_2x.png'
-import { GOOGLE_BOOKS, OPEN_LIBRARY, CROSSREF } from './SuggestSources'
 
 const footerMap = {
   [GOOGLE_BOOKS]: () => (
