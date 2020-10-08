@@ -366,13 +366,29 @@ const ContentEditable = ({
             }
             return
           }
-          const _text = Node.string(
+          let _text = Node.string(
             editor.children[editor.selection.focus.path[0]]
           )
-          const _offset = parseInt(
+          let _offset = parseInt(
             flattenOffset(editor, editor.selection.focus),
             10
           )
+
+          // check if previous character is a white space, if so, remove whitespace and recalculate text and offset
+          const _prevWhiteSpace = _text.charAt(_offset - 1) === '\u2060'
+          if (_prevWhiteSpace) {
+            Transforms.delete(editor, {
+              distance: 1,
+              unit: 'character',
+              reverse: true,
+            })
+            _text = Node.string(editor.children[editor.selection.focus.path[0]])
+            _offset = parseInt(
+              flattenOffset(editor, editor.selection.focus),
+              10
+            )
+          }
+
           const _prevIsBreak = _text.charAt(_offset - 1) === `\n`
           const _prevIsDoubleBreak =
             _prevIsBreak &&
@@ -390,9 +406,9 @@ const ContentEditable = ({
             _prevIsDoubleBreak ||
             _text.length === 0
           if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
-            // we're not creating a new block, so just insert a carriage return
+            // we're not creating a new block, so just insert a carriage return and white space
             event.preventDefault()
-            Transforms.insertText(editor, `\n`)
+            Transforms.insertText(editor, `\n\u2060`)
             return
           }
           // if next character is a line break force the cursor down one position
