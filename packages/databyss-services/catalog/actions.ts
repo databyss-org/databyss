@@ -1,17 +1,23 @@
-import googleBooks from './googleBooks'
-import openLibrary from './openLibrary'
-import crossref from './crossref'
-import { SEARCH_CATALOG, CACHE_SEARCH_RESULTS } from './constants'
 import {
-  CatalogType,
-  NetworkUnavailableError,
-  CatalogService,
-  GroupedCatalogResults,
-  CatalogResult,
-  Source,
   BlockType,
+  CatalogResult,
+  CatalogService,
+  CatalogType,
+  GroupedCatalogResults,
+  NetworkUnavailableError,
+  Source,
   Text,
 } from '../interfaces'
+
+import { SEARCH_CATALOG, CACHE_SEARCH_RESULTS } from './constants'
+import crossref from './crossref'
+import googleBooks from './googleBooks'
+import openLibrary from './openLibrary'
+
+interface CatalogParsingParams {
+  service: CatalogService
+  result: any
+}
 
 const serviceMap: { [type: string]: CatalogService } = {
   [CatalogType.GoogleBooks]: googleBooks,
@@ -127,13 +133,9 @@ function composeResults({
 /**
  * composes Source from api result
  */
-function sourceFromResult({
-  service,
-  result,
-}: {
-  service: CatalogService
-  result: any
-}): Source {
+function sourceFromResult(options: CatalogParsingParams): Source {
+  const {service, result} = options
+
   const _authors = service.getAuthors(result)
   const _names = _authors.length && splitName(_authors[0])
 
@@ -162,6 +164,22 @@ function sourceFromResult({
           })
         : [],
       citations: [],
+      title: makeText(getOnlyTitle(options).textValue),
+
+      // publication details (common)
+      publicationType: service.getPublicationType(result),
+      publisherName: makeText(service.getPublisher(result)),
+      publisherPlace: makeText(service.getPublisherPlace(result)),
+      year: makeText(service.getPublishedYear(result)),
+
+      // publication details (book)
+      isbn: makeText(service.getISBN(result)),
+
+      // publication details (journal article)
+      issue: makeText(service.getIssue(result)),
+      volume: makeText(service.getVolume(result)),
+      doi: makeText(service.getDOI(result)),
+      issn: makeText(service.getISSN(result)),
     },
   }
 }
@@ -184,13 +202,9 @@ function splitName(name: string) {
  * @param result catalog API result
  * @returns Text with formatted source title
  */
-function titleFromResult({
-  service,
-  result,
-}: {
-  service: CatalogService
-  result: any
-}): Text {
+function titleFromResult(options: CatalogParsingParams): Text {
+  const {service, result} = options
+
   const _text: Text = {
     textValue: service.getTitle(result),
     ranges: [],
@@ -213,4 +227,26 @@ function titleFromResult({
   }
 
   return _text
+}
+
+function getOnlyTitle(options: CatalogParsingParams): Text {
+  const {service, result} = options
+
+  const _text: Text = {
+    textValue: service.getTitle(result),
+    ranges: [],
+  }
+
+  if (service.getSubtitle(result)) {
+    _text.textValue += `: ${service.getSubtitle(result)}`
+  }
+
+  return _text
+}
+
+function makeText(textValue: string): Text {
+  return {
+    textValue,
+    ranges: [],
+  }
 }

@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import ObjectId from 'bson-objectid'
-import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
-import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
-import { Separator } from '@databyss-org/ui/primitives'
+
+import {
+  CROSSREF,
+  GOOGLE_BOOKS,
+  OPEN_LIBRARY,
+} from '@databyss-org/services/catalog/constants'
 import { prefixSearchAll } from '@databyss-org/services/block/filter'
+import { Separator } from '@databyss-org/ui/primitives'
+import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
+
 import { useEditorContext } from '../../state/EditorProvider'
+
 import { CatalogResults } from './'
 
 export const LOCAL_SOURCES = 'LOCAL_SOURCES'
-export const OPEN_LIBRARY = 'OPEN_LIBRARY'
-export const CROSSREF = 'CROSSREF'
-export const GOOGLE_BOOKS = 'GOOGLE_BOOKS'
 
 const SuggestSources = ({
   query,
@@ -44,6 +49,7 @@ const SuggestSources = ({
       source._id = new ObjectId().toHexString()
       setSource(source)
     }
+
     // check document to see if page should be added to source cache
     if (state.blocks.filter(b => b._id === source._id).length < 1) {
       addPageToCacheHeader(source._id, state.pageHeader._id)
@@ -79,15 +85,15 @@ const SuggestSources = ({
 
   const _menuItems = [
     {
-      action: 'OPEN_LIBRARY',
+      action: OPEN_LIBRARY,
       label: 'Search Open Library',
     },
     {
-      action: 'CROSSREF',
+      action: CROSSREF,
       label: 'Search Crossref',
     },
     {
-      action: 'GOOGLE_BOOKS',
+      action: GOOGLE_BOOKS,
       label: 'Search Google Books',
     },
   ]

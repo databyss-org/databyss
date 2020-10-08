@@ -54,7 +54,6 @@ const DropDownControl = forwardRef((props, ref) => {
     onBlur,
     onChange,
     onFocus,
-    onSelectionChange,
     value,
     ...others
   } = props
@@ -137,7 +136,7 @@ const DropDownControl = forwardRef((props, ref) => {
   }
 
   const onInternalChange = event => {
-    if (onSelectionChange) {
+    if (onChange) {
       const { target } = event
       const item = getItemByValue(target.value)
       onChange(item)
