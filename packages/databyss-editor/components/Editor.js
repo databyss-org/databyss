@@ -104,6 +104,37 @@ const Editor = ({
           },
         })
       }
+      /*
+      adds a mark when a string ends in a \n
+      Leaf.js will insert a div in order for a line break to be detected, firefox ignores line breaks at the end of a string
+      */
+
+      if (Text.isText(node)) {
+        const _string = Node.string(node)
+
+        // check for line breaks not followed by text
+        const parts = _string
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .split(new RegExp(/(\n$)/, 'i'))
+
+        if (parts.length > 1) {
+          let offset = 0
+
+          parts.forEach((part, i) => {
+            if (i !== 0) {
+              ranges.push({
+                anchor: { path, offset: offset - 1 },
+                focus: { path, offset },
+                lineBreak: true,
+              })
+            }
+
+            offset = offset + part.length + 1
+          })
+        }
+      }
+
       if (!searchTerm.length) {
         return ranges
       }
@@ -174,7 +205,10 @@ const Editor = ({
         readOnly={readOnly}
         autoFocus={autofocus}
         onKeyDown={onKeyDown}
-        style={{ overflowWrap: 'anywhere', wordBreak: 'break-word' }}
+        style={{
+          overflowWrap: 'anywhere',
+          wordBreak: 'break-word',
+        }}
         css={{ flexGrow: 1 }}
       />
     </Slate>

@@ -12,6 +12,15 @@ const Leaf = ({ attributes, children, leaf, readOnly }) => {
 
   let _children = children
 
+  // if line break exists without any character following, wrap it in a div, firefox ignores line breaks at the end of a string
+  if (leaf.lineBreak) {
+    // detect firefox browser
+    if (navigator.userAgent.indexOf('Firefox') > -1) {
+      // wrap hanging new line in a div
+      _children = <div>{_children}</div>
+    }
+  }
+
   if (leaf.italic) {
     _children = <em>{_children}</em>
   }
@@ -64,7 +73,9 @@ const Leaf = ({ attributes, children, leaf, readOnly }) => {
   return (
     <span
       {...attributes}
-      style={{ backgroundColor: leaf.highlight && orange[3] }}
+      style={{
+        backgroundColor: leaf.highlight && orange[3],
+      }}
     >
       {_children}
     </span>
