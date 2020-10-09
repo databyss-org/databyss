@@ -412,7 +412,7 @@ const ContentEditable = ({
             if (navigator.userAgent.indexOf('Firefox') > -1) {
               Transforms.insertText(editor, `\n\u2060`)
             } else {
-              Transforms.insertText(editor, `\n\`)
+              Transforms.insertText(editor, `\n`)
             }
 
             return
