@@ -9,6 +9,7 @@ import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
 import { selectionHasRange } from '../state/util'
+import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 
 const Editor = ({
   children,
@@ -19,7 +20,7 @@ const Editor = ({
   ...others
 }) => {
   const entryContext = useEntryContext()
-  const { copy, paste, cut } = useEditorContext()
+  const { copy, paste, cut, state } = useEditorContext()
 
   let searchTerm = ''
 
@@ -105,17 +106,34 @@ const Editor = ({
           },
         })
       }
-   //   console.log(state.blocks[state.selection.anchor.index])
+
       // if an inline atomic is on current block, scan text and tag the text with a menu markup
-      console.log('HERE')
       if (Text.isText(node) && Range.isCollapsed(editor.selection)) {
         const _currentIndex = editor.selection.anchor.path[0]
         const _blockIndex = path[0]
         // if selection is on block being examined get current block
         if (_currentIndex === _blockIndex) {
-          const _string = Node.string(node)
+          const _currentBlock = state.blocks[_currentIndex]
+          if (
+            _currentBlock.__showInlineTopicMenu ||
+            _currentIndex.__showInlineCitationMenu
+          ) {
+            const { word, offset } =
+              _currentBlock.__showInlineTopicMenu ||
+              _currentIndex.__showInlineCitationMenu
 
-          console.log(_string)
+            const _sel = {
+              anchor: { index: _currentIndex, offset },
+              focus: { index: _currentIndex, offset: offset + word.length },
+            }
+            const selection = stateSelectionToSlateSelection(
+              editor.children,
+              _sel
+            )
+            selection.inlineAtomicMenu = true
+
+            ranges.push(selection)
+          }
         }
       }
 
@@ -162,10 +180,7 @@ const Editor = ({
 
       return ranges
     },
-    [
-      searchTerm,
-      // state.blocks[state.selection.anchor.index]
-    ]
+    [searchTerm, state.blocks[state.selection.anchor.index]]
   )
 
   return (
