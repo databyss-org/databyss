@@ -72,12 +72,18 @@ const EditSourceForm = props => {
   const isBook = checkIfBook(values.detail.publicationType)
   const isArticle = checkIfArticle(values.detail.publicationType)
 
-  const onAddAuthor = () => {
+  // people base methods
+  const addPersonTo = arrayPropName => {
     // deep clone to be able to modify
     const clone = cloneDeep(values)
 
+    // ensure array exists
+    if (!Array.isArray(clone.detail[arrayPropName])) {
+      clone.detail[arrayPropName] = []
+    }
+
     // add empty author element
-    clone.detail.authors.push({
+    clone.detail[arrayPropName].push({
       firstName: emptyText,
       lastName: emptyText,
     })
@@ -88,40 +94,12 @@ const EditSourceForm = props => {
     }
   }
 
-  const onMoveDown = index => {
-    // deep clone to be able to modify
-    const clone = cloneDeep(values)
-
-    // swap items
-    const targetIndex = index + 1
-    clone.detail.authors = swap(clone.detail.authors, index, targetIndex)
-
-    // dispatch change
-    if (onChange) {
-      onChange(clone)
-    }
-  }
-
-  const onMoveUp = index => {
-    // deep clone to be able to modify
-    const clone = cloneDeep(values)
-
-    // swap items
-    const targetIndex = index - 1
-    clone.detail.authors = swap(clone.detail.authors, index, targetIndex)
-
-    // dispatch change
-    if (onChange) {
-      onChange(clone)
-    }
-  }
-
-  const onDeleteAuthor = index => {
+  const removePersonFrom = (arrayPropName, index) => {
     // deep clone to be able to modify
     const clone = cloneDeep(values)
 
     // remove item at index
-    clone.detail.authors.splice(index, 1)
+    clone.detail[arrayPropName].splice(index, 1)
 
     // dispatch change
     if (onChange) {
@@ -129,7 +107,110 @@ const EditSourceForm = props => {
     }
   }
 
-  const onTextInputBlur = () => {
+  const movePersonIn = (arrayPropName, index, targetIndex) => {
+    // deep clone to be able to modify
+    const clone = cloneDeep(values)
+
+    // swap items
+    clone.detail[arrayPropName] = swap(
+      clone.detail[arrayPropName],
+      index,
+      targetIndex
+    )
+
+    // dispatch change
+    if (onChange) {
+      onChange(clone)
+    }
+  }
+
+  const movePersonDownIn = (arrayPropName, index) => {
+    movePersonIn(arrayPropName, index, index + 1)
+  }
+
+  const movePersonUpIn = (arrayPropName, index) => {
+    movePersonIn(arrayPropName, index, index - 1)
+  }
+
+  // author methods
+  const canDeleteAuthor = index => {
+    const { authors, editors } = values.detail
+
+    // if there are editors, it's ok to allow to delete all authors
+    const numEditors = editors ? editors.length : 0
+    if (numEditors > 0) {
+      return true
+    }
+
+    // prevent deletion if there is only one author left
+    return index > 0 || authors.length > 1
+  }
+
+  const onAddAuthor = () => {
+    addPersonTo('authors')
+  }
+
+  const onDeleteAuthor = index => {
+    removePersonFrom('authors', index)
+  }
+
+  const onMoveAuthorDown = index => {
+    movePersonDownIn('authors', index)
+  }
+
+  const onMoveAuthorUp = index => {
+    movePersonUpIn('authors', index)
+  }
+
+  // editor methods
+  const canDeleteEditor = index => {
+    const { authors, editors } = values.detail
+
+    // if there are authors, it's ok to allow to delete all editors
+    if (authors.length > 0) {
+      return true
+    }
+
+    // prevent deletion if there is only one editor left
+    const numEditors = editors ? editors.length : 0
+    return index > 0 || numEditors > 1
+  }
+
+  const onAddEditor = () => {
+    addPersonTo('editors')
+  }
+
+  const onDeleteEditor = index => {
+    removePersonFrom('editors', index)
+  }
+
+  const onMoveEditorDown = index => {
+    movePersonDownIn('editors', index)
+  }
+
+  const onMoveEditorUp = index => {
+    movePersonUpIn('editors', index)
+  }
+
+  // translator methods
+  const onAddTranslator = () => {
+    addPersonTo('translators')
+  }
+
+  const onDeleteTranslator = index => {
+    removePersonFrom('translators', index)
+  }
+
+  const onMoveTranslatorDown = index => {
+    movePersonDownIn('translators', index)
+  }
+
+  const onMoveTranslatorUp = index => {
+    movePersonUpIn('translators', index)
+  }
+
+  //
+  const onFieldBlur = () => {
     if (values && values.text.textValue.length && onChange) {
       onChange(values)
     }
@@ -144,7 +225,7 @@ const EditSourceForm = props => {
         id="name"
         label="Name"
         rich
-        onBlur={onTextInputBlur}
+        onBlur={onFieldBlur}
       />
     </>
   )
@@ -158,14 +239,14 @@ const EditSourceForm = props => {
         id="title"
         label="Title"
         multiline
-        onBlur={onTextInputBlur}
+        onBlur={onFieldBlur}
       />
 
       <LabeledTextInput
         path="detail.year"
         id="year"
         label="Year Published"
-        onBlur={onTextInputBlur}
+        onBlur={onFieldBlur}
       />
 
       <ValueListItem path="detail.publicationType">
@@ -186,7 +267,7 @@ const EditSourceForm = props => {
         path="detail.publisherName"
         id="publisherName"
         label="Publisher Name"
-        onBlur={onTextInputBlur}
+        onBlur={onFieldBlur}
       />
 
       <LabeledTextInput
@@ -194,7 +275,7 @@ const EditSourceForm = props => {
         id="publisherPlace"
         label="Place"
         multiline
-        onBlur={onTextInputBlur}
+        onBlur={onFieldBlur}
       />
     </>
   )
@@ -211,12 +292,12 @@ const EditSourceForm = props => {
             <EditAuthorFields
               firstNamePath={`detail.authors[${index}].firstName`}
               lastNamePath={`detail.authors[${index}].lastName`}
-              onBlur={onTextInputBlur}
+              onBlur={onFieldBlur}
               canMoveDown={index < lastIndex}
-              onMoveDown={() => onMoveDown(index)}
+              onMoveDown={() => onMoveAuthorDown(index)}
               canMoveUp={index > 0}
-              onMoveUp={() => onMoveUp(index)}
-              canDelete={index > 0 || numAuthors > 1}
+              onMoveUp={() => onMoveAuthorUp(index)}
+              canDelete={() => canDeleteAuthor(index)}
               onDelete={() => onDeleteAuthor(index)}
             />
           </View>
@@ -224,10 +305,81 @@ const EditSourceForm = props => {
       })}
 
       <View marginTop="5px">
-        <Button onPress={onAddAuthor}>Add author</Button>
+        <Button onPress={onAddAuthor}>Add Author</Button>
       </View>
     </>
   )
+
+  const renderEditorsSection = () => {
+    const { editors } = values.detail
+
+    return (
+      <>
+        <FormHeading>Editor(s)</FormHeading>
+
+        {editors
+          ? editors.map((editor, index) => {
+              const numEditors = editors.length
+              const lastIndex = numEditors - 1
+              return (
+                <View marginBottom="10px" key={index}>
+                  <EditAuthorFields
+                    firstNamePath={`detail.editors[${index}].firstName`}
+                    lastNamePath={`detail.editors[${index}].lastName`}
+                    onBlur={onFieldBlur}
+                    canMoveDown={index < lastIndex}
+                    onMoveDown={() => onMoveEditorDown(index)}
+                    canMoveUp={index > 0}
+                    onMoveUp={() => onMoveEditorUp(index)}
+                    canDelete={() => canDeleteEditor(index)}
+                    onDelete={() => onDeleteEditor(index)}
+                  />
+                </View>
+              )
+            })
+          : null}
+
+        <View marginTop="5px">
+          <Button onPress={onAddEditor}>Add Editor</Button>
+        </View>
+      </>
+    )
+  }
+
+  const renderTranslatorsSection = () => {
+    const { translators } = values.detail
+    return (
+      <>
+        <FormHeading>Translator(s)</FormHeading>
+
+        {translators
+          ? translators.map((translator, index) => {
+              const numTransators = translators.length
+              const lastIndex = numTransators - 1
+              return (
+                <View marginBottom="10px" key={index}>
+                  <EditAuthorFields
+                    firstNamePath={`detail.translators[${index}].firstName`}
+                    lastNamePath={`detail.translators[${index}].lastName`}
+                    onBlur={onFieldBlur}
+                    canMoveDown={index < lastIndex}
+                    onMoveDown={() => onMoveTranslatorDown(index)}
+                    canMoveUp={index > 0}
+                    onMoveUp={() => onMoveTranslatorUp(index)}
+                    canDelete
+                    onDelete={() => onDeleteTranslator(index)}
+                  />
+                </View>
+              )
+            })
+          : null}
+
+        <View marginTop="5px">
+          <Button onPress={onAddTranslator}>Add Translator</Button>
+        </View>
+      </>
+    )
+  }
 
   const renderCatalogIdentifiersSection = () => (
     <>
@@ -239,7 +391,7 @@ const EditSourceForm = props => {
           path="detail.isbn"
           id="isbn"
           label="ISBN"
-          onBlur={onTextInputBlur}
+          onBlur={onFieldBlur}
         />
       ) : null}
       {/* ISBN END */}
@@ -250,7 +402,7 @@ const EditSourceForm = props => {
           path="detail.issn"
           id="issn"
           label="ISSN"
-          onBlur={onTextInputBlur}
+          onBlur={onFieldBlur}
         />
       ) : null}
       {/* ISSN END */}
@@ -259,7 +411,7 @@ const EditSourceForm = props => {
         path="detail.doi"
         id="doi"
         label="DOI"
-        onBlur={onTextInputBlur}
+        onBlur={onFieldBlur}
       />
     </>
   )
@@ -271,7 +423,7 @@ const EditSourceForm = props => {
         path="detail.citation"
         id="citation"
         label="Citation"
-        onBlur={onTextInputBlur}
+        onBlur={onFieldBlur}
         rich
       />
       {/* TODO: render citation dynamically with citeproc-js */}
@@ -294,6 +446,10 @@ const EditSourceForm = props => {
         {renderPublicationSection()}
 
         {renderAuthorsSection()}
+
+        {renderEditorsSection()}
+
+        {renderTranslatorsSection()}
 
         {renderCatalogIdentifiersSection()}
 

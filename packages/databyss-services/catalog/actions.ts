@@ -163,6 +163,8 @@ function sourceFromResult(options: CatalogParsingParams): Source {
             }
           })
         : [],
+      editors: [],
+      translators: [],
       citations: [],
       title: makeText(getOnlyTitle(options).textValue),
 
