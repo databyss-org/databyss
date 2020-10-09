@@ -29,19 +29,6 @@ import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 
-function isCharacterKeyPress(evt) {
-  if (typeof evt.which == 'undefined') {
-    // This is IE, which only fires keypress events for printable keys
-    return true
-  } else if (typeof evt.which == 'number' && evt.which > 0) {
-    // In other browsers except old versions of WebKit, evt.which is
-    // only greater than zero if the keypress is a printable key.
-    // We need to filter out backspace and ctrl/alt/meta key combinations
-    return !evt.ctrlKey && !evt.metaKey && !evt.altKey && evt.which != 8
-  }
-  return false
-}
-
 const ContentEditable = ({
   onDocumentChange,
   focusIndex,
@@ -421,7 +408,13 @@ const ContentEditable = ({
           if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
             // we're not creating a new block, so just insert a carriage return and white space
             event.preventDefault()
-            Transforms.insertText(editor, `\n\u2060`)
+            // firefox HACK: firefox does not like trailing \n
+            if (navigator.userAgent.indexOf('Firefox') > -1) {
+              Transforms.insertText(editor, `\n\u2060`)
+            } else {
+              Transforms.insertText(editor, `\n\`)
+            }
+
             return
           }
           // if next character is a line break force the cursor down one position
@@ -533,10 +526,10 @@ const ContentEditable = ({
 
         if (String.fromCharCode(event.keyCode).match(/(\w|\s)/g)) {
           // pressed key is a char
-          let _text = Node.string(
+          const _text = Node.string(
             editor.children[editor.selection.focus.path[0]]
           )
-          let _offset = parseInt(
+          const _offset = parseInt(
             flattenOffset(editor, editor.selection.focus),
             10
           )
