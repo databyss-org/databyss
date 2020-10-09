@@ -173,6 +173,18 @@ const Element = ({ attributes, children, element, readOnly }) => {
             </View>
           )}
 
+          {block.__showInlineTopicMenu && (
+            <View contentEditable="false" suppressContentEditableWarning>
+              <SuggestMenu
+                onSuggestions={onSuggestions}
+                placeholder="start typing topic for suggestions..."
+                suggestType="topics"
+              >
+                <SuggestTopics onSuggestions={onSuggestions} />
+              </SuggestMenu>
+            </View>
+          )}
+
           {isAtomicInlineType(element.type) ? (
             <View
               alignSelf="flex-start"

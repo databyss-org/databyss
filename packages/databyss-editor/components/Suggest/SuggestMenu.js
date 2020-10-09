@@ -15,7 +15,24 @@ export const getPosition = editor => {
   if (editor.selection) {
     const _activeNode = editor.children[editor.selection.anchor.path[0]]
     const _node = ReactEditor.toDOMNode(editor, _activeNode)
+
+    // console.log(_node)
     if (_node) {
+      // const sel = window.getSelections()
+
+      // console.log(_node.firstChild)
+      // const range = document.createRange()
+      // range.setStart(_node.firstChild, 0)
+      // range.setEnd(_node.firstChild, 1)
+      // console.log(range)
+
+      // const sel = window.getSelection()
+      // console.log(sel)
+      // sel.removeAllRanges()
+      // sel.addRange(range)
+
+      // console.log(sel)
+
       const _rect = _node.getBoundingClientRect()
       const _windowHeight = window.innerHeight
 

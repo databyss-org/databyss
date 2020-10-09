@@ -41,6 +41,7 @@ import {
   trimLeft,
   trimRight,
   splitBlockAtEmptyLine,
+  getWordFromOffset,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 
@@ -734,6 +735,8 @@ export default (
       const _selectedBlock = draft.blocks[draft.selection.focus.index]
 
       if (_selectedBlock) {
+    
+
         // show newBlockMenu if selection is collapsed and is empty
         _selectedBlock.__showNewBlockMenu =
           !selectionHasRange(draft.selection) &&
@@ -746,6 +749,16 @@ export default (
           '#'
         ) && !_selectedBlock.text.textValue.match(`\n`)
 
+          const _currentWord = getWordFromOffset({text: _selectedBlock.text.textValue, offset: draft.selection.anchor.offset})
+        // show __showInlineCitationMenu if selection is collapsed, selection is within text precedded with a `@` and it is currently not tagged already  
+        _selectedBlock.__showInlineCitationMenu =   (!selectionHasRange(draft.selection) && !_selectedBlock.__showCitationMenu && _currentWord?.word.startsWith(
+          '@'
+        ) )?_currentWord: false
+
+        // show __showInlineTopicMenu if selection is collapsed, selection is within text precedded with a `#` and it is currently not tagged already  
+        _selectedBlock.__showInlineTopicMenu =   (!selectionHasRange(draft.selection) && !_selectedBlock.__showCitationMenu && _currentWord?.word.startsWith('#') )?_currentWord: false
+        
+
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element
         _selectedBlock.__isActive =
           !selectionHasRange(draft.selection) &&
@@ -753,6 +766,8 @@ export default (
           draft.selection.focus.offset < _selectedBlock.text.textValue.length &&
           draft.selection.focus.offset > 0
       }
+
+
 
       return draft
     }

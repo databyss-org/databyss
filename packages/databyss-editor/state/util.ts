@@ -347,3 +347,24 @@ export const splitBlockAtEmptyLine = ({ draft, atIndex }: {
 
   return true
 }
+
+
+export const getWordFromOffset = ({
+  text,
+  offset
+}: {
+  text: string 
+  offset: number
+}): {word: string, offset: number} | null => {
+  // split the text by space or new line
+  const words:Array<string> = text.split(/\s+/)
+  let _currentOffset = 0
+  for (let i=0; words.length; i++){
+    const _lastOffset = _currentOffset
+    _currentOffset+= words[i].length + 1
+    if(_currentOffset> offset){
+      return {word: words[i], offset:_lastOffset}
+    }
+  }
+  return null
+}

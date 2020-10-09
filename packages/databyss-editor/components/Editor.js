@@ -8,6 +8,7 @@ import { useEditorContext } from '../state/EditorProvider'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
+import { selectionHasRange } from '../state/util'
 
 const Editor = ({
   children,
@@ -104,6 +105,21 @@ const Editor = ({
           },
         })
       }
+   //   console.log(state.blocks[state.selection.anchor.index])
+      // if an inline atomic is on current block, scan text and tag the text with a menu markup
+      console.log('HERE')
+      if (Text.isText(node) && Range.isCollapsed(editor.selection)) {
+        const _currentIndex = editor.selection.anchor.path[0]
+        const _blockIndex = path[0]
+        // if selection is on block being examined get current block
+        if (_currentIndex === _blockIndex) {
+          const _string = Node.string(node)
+
+          console.log(_string)
+        }
+      }
+
+
       if (!searchTerm.length) {
         return ranges
       }
@@ -146,7 +162,10 @@ const Editor = ({
 
       return ranges
     },
-    [searchTerm]
+    [
+      searchTerm,
+      // state.blocks[state.selection.anchor.index]
+    ]
   )
 
   return (
