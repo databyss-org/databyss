@@ -293,6 +293,14 @@ const ContentEditable = ({
       }
 
       const onKeyDown = event => {
+        // if a character has been entered, check if white space exists (firefox fix), if it has, remove character
+        if (
+          String.fromCharCode(event.keyCode).match(/(\w|\s)/g) ||
+          event.key === 'Backspace'
+        ) {
+          firefoxWhitespaceFix(editor)
+        }
+
         if (Hotkeys.isUndo(event) && historyContext) {
           event.preventDefault()
           historyContext.undo()
@@ -384,25 +392,13 @@ const ContentEditable = ({
             }
             return
           }
-          let _text = Node.string(
+          const _text = Node.string(
             editor.children[editor.selection.focus.path[0]]
           )
-          let _offset = parseInt(
+          const _offset = parseInt(
             flattenOffset(editor, editor.selection.focus),
             10
           )
-
-          // check if previous character is a white space, if so, remove whitespace and recalculate text and offset
-
-          const shouldFixWhiteSpace = firefoxWhitespaceFix(editor)
-          if (shouldFixWhiteSpace) {
-            _text = Node.string(editor.children[editor.selection.focus.path[0]])
-            _offset = parseInt(
-              flattenOffset(editor, editor.selection.focus),
-              10
-            )
-          }
-
           const _prevIsBreak = _text.charAt(_offset - 1) === `\n`
           const _prevIsDoubleBreak =
             _prevIsBreak &&
@@ -423,7 +419,7 @@ const ContentEditable = ({
             // we're not creating a new block, so just insert a carriage return and white space
             event.preventDefault()
             // firefox HACK: firefox does not like trailing \n
-            if (navigator.userAgent.indexOf('Firefox') > -1) {
+            if (navigator.userAgent.indexOf('Firefox') > -1 && _atBlockEnd) {
               Transforms.insertText(editor, `\n\u2060`)
             } else {
               Transforms.insertText(editor, `\n`)
@@ -536,11 +532,6 @@ const ContentEditable = ({
               reverse: true,
             })
           }
-        }
-
-        // if a character has been entered, check if white space exists (firefox fix), if it has, remove character
-        if (String.fromCharCode(event.keyCode).match(/(\w|\s)/g)) {
-          firefoxWhitespaceFix(editor)
         }
       }
 
