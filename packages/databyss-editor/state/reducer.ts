@@ -751,12 +751,12 @@ export default (
 
           const _currentWord = getWordFromOffset({text: _selectedBlock.text.textValue, offset: draft.selection.anchor.offset})
         // show __showInlineCitationMenu if selection is collapsed, selection is within text precedded with a `@` and it is currently not tagged already  
-        _selectedBlock.__showInlineCitationMenu =   (!selectionHasRange(draft.selection) && !_selectedBlock.__showCitationMenu && _currentWord?.word.startsWith(
+        _selectedBlock.__showInlineCitationMenu = (!selectionHasRange(draft.selection) && !_selectedBlock.__showCitationMenu && _currentWord?.word.startsWith(
           '@'
         ) )?_currentWord: false
 
         // show __showInlineTopicMenu if selection is collapsed, selection is within text precedded with a `#` and it is currently not tagged already  
-        _selectedBlock.__showInlineTopicMenu =   (!selectionHasRange(draft.selection) && !_selectedBlock.__showCitationMenu && _currentWord?.word.startsWith('#') )?_currentWord: false
+        _selectedBlock.__showInlineTopicMenu = (!selectionHasRange(draft.selection) && !_selectedBlock.__showTopicMenu && _currentWord?.word.startsWith('#') )?_currentWord: false
         
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element

@@ -356,6 +356,9 @@ export const getWordFromOffset = ({
   text: string 
   offset: number
 }): {word: string, offset: number} | null => {
+  if(!text){
+    return null
+  }
   // split the text by space or new line
   const words:Array<string> = text.split(/\s+/)
   let _currentOffset = 0

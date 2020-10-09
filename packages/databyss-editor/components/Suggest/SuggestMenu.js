@@ -11,29 +11,25 @@ import { getClosureType } from '../../state/util'
 
 const MENU_HEIGHT = 200
 
-export const getPosition = editor => {
+export const getPosition = (editor, inlineAtomic) => {
   if (editor.selection) {
     const _activeNode = editor.children[editor.selection.anchor.path[0]]
     const _node = ReactEditor.toDOMNode(editor, _activeNode)
 
-    // console.log(_node)
     if (_node) {
-      // const sel = window.getSelections()
-
-      // console.log(_node.firstChild)
-      // const range = document.createRange()
-      // range.setStart(_node.firstChild, 0)
-      // range.setEnd(_node.firstChild, 1)
-      // console.log(range)
-
-      // const sel = window.getSelection()
-      // console.log(sel)
-      // sel.removeAllRanges()
-      // sel.addRange(range)
-
-      // console.log(sel)
-
       const _rect = _node.getBoundingClientRect()
+
+      if (inlineAtomic && document.getElementById('inline-atomic')) {
+        const _textNode = document
+          .getElementById('inline-atomic')
+          .getBoundingClientRect()
+        const relativePos = {
+          top: _textNode.top - _rect.top + 32,
+          left: _textNode.left - _rect.left,
+        }
+
+        return relativePos
+      }
       const _windowHeight = window.innerHeight
 
       // check if menu should be above text
@@ -55,7 +51,13 @@ export const getPosition = editor => {
   return { top: 40, left: 0 }
 }
 
-const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
+const SuggestMenu = ({
+  children,
+  placeholder,
+  onSuggestions,
+  suggestType,
+  inlineAtomic,
+}) => {
   const activeIndexRef = useRef(-1)
   const [position, setPosition] = useState({
     top: 40,
@@ -72,9 +74,10 @@ const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
 
   // set position of dropdown
   const setMenuPosition = () => {
-    const _position = getPosition(editor)
+    const _position = getPosition(editor, inlineAtomic)
 
     if (_position) {
+      console.log('position', _position)
       setPosition(_position)
     }
   }
@@ -82,23 +85,31 @@ const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
   useEffect(
     () => {
       if (editorContext && ReactEditor.isFocused(editor)) {
-        // get current input value
-        const _index = editorContext.state.selection.anchor.index
-        const _node = editor.children[_index]
-        const _text = Node.string(_node)
-        if (!isAtomicInlineType(_node.type)) {
-          setQuery(_text.substring(1))
-          setMenuPosition()
-          if (!menuActive) setMenuActive(true)
+        if (!inlineAtomic) {
+          // get current input value
+          const _index = editorContext.state.selection.anchor.index
+          const _node = editor.children[_index]
+          const _text = Node.string(_node)
+          if (!isAtomicInlineType(_node.type)) {
+            setQuery(_text.substring(1))
+            setMenuPosition()
+            if (!menuActive) setMenuActive(true)
+          } else if (menuActive) {
+            setMenuActive(false)
+          }
         } else if (menuActive) {
           setMenuActive(false)
+        } else {
+          setMenuPosition()
+          setMenuActive(true)
         }
-      } else if (menuActive) {
-        setMenuActive(false)
       }
     },
     [editor.selection]
   )
+
+  console.log(menuActive)
+  console.log(position)
 
   useEventListener('keydown', e => {
     if (
