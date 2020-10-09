@@ -29,6 +29,24 @@ import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 
+const firefoxWhitespaceFix = editor => {
+  // pressed key is a char
+  const _text = Node.string(editor.children[editor.selection.focus.path[0]])
+  const _offset = parseInt(flattenOffset(editor, editor.selection.focus), 10)
+
+  // check if previous character is a white space, if so, remove whitespace and recalculate text and offset
+  const _prevWhiteSpace = _text.charAt(_offset - 1) === '\u2060'
+  if (_prevWhiteSpace) {
+    Transforms.delete(editor, {
+      distance: 1,
+      unit: 'character',
+      reverse: true,
+    })
+    return true
+  }
+  return false
+}
+
 const ContentEditable = ({
   onDocumentChange,
   focusIndex,
@@ -375,13 +393,9 @@ const ContentEditable = ({
           )
 
           // check if previous character is a white space, if so, remove whitespace and recalculate text and offset
-          const _prevWhiteSpace = _text.charAt(_offset - 1) === '\u2060'
-          if (_prevWhiteSpace) {
-            Transforms.delete(editor, {
-              distance: 1,
-              unit: 'character',
-              reverse: true,
-            })
+
+          const shouldFixWhiteSpace = firefoxWhitespaceFix(editor)
+          if (shouldFixWhiteSpace) {
             _text = Node.string(editor.children[editor.selection.focus.path[0]])
             _offset = parseInt(
               flattenOffset(editor, editor.selection.focus),
@@ -524,25 +538,9 @@ const ContentEditable = ({
           }
         }
 
+        // if a character has been entered, check if white space exists (firefox fix), if it has, remove character
         if (String.fromCharCode(event.keyCode).match(/(\w|\s)/g)) {
-          // pressed key is a char
-          const _text = Node.string(
-            editor.children[editor.selection.focus.path[0]]
-          )
-          const _offset = parseInt(
-            flattenOffset(editor, editor.selection.focus),
-            10
-          )
-
-          // check if previous character is a white space, if so, remove whitespace and recalculate text and offset
-          const _prevWhiteSpace = _text.charAt(_offset - 1) === '\u2060'
-          if (_prevWhiteSpace) {
-            Transforms.delete(editor, {
-              distance: 1,
-              unit: 'character',
-              reverse: true,
-            })
-          }
+          firefoxWhitespaceFix(editor)
         }
       }
 
