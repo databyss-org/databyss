@@ -245,7 +245,7 @@ const EditSourceForm = props => {
       <LabeledTextInput
         path="detail.year"
         id="year"
-        label="Year Published"
+        label="Year"
         onBlur={onFieldBlur}
       />
 
@@ -266,7 +266,7 @@ const EditSourceForm = props => {
       <LabeledTextInput
         path="detail.publisherName"
         id="publisherName"
-        label="Publisher Name"
+        label="Publisher"
         onBlur={onFieldBlur}
       />
 
