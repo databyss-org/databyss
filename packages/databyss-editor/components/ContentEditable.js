@@ -29,6 +29,19 @@ import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 
+function isCharacterKeyPress(evt) {
+  if (typeof evt.which == 'undefined') {
+    // This is IE, which only fires keypress events for printable keys
+    return true
+  } else if (typeof evt.which == 'number' && evt.which > 0) {
+    // In other browsers except old versions of WebKit, evt.which is
+    // only greater than zero if the keypress is a printable key.
+    // We need to filter out backspace and ctrl/alt/meta key combinations
+    return !evt.ctrlKey && !evt.metaKey && !evt.altKey && evt.which != 8
+  }
+  return false
+}
+
 const ContentEditable = ({
   onDocumentChange,
   focusIndex,
@@ -513,6 +526,27 @@ const ContentEditable = ({
             Transforms.move(editor, {
               unit: 'character',
               distance: 1,
+              reverse: true,
+            })
+          }
+        }
+
+        if (String.fromCharCode(event.keyCode).match(/(\w|\s)/g)) {
+          // pressed key is a char
+          let _text = Node.string(
+            editor.children[editor.selection.focus.path[0]]
+          )
+          let _offset = parseInt(
+            flattenOffset(editor, editor.selection.focus),
+            10
+          )
+
+          // check if previous character is a white space, if so, remove whitespace and recalculate text and offset
+          const _prevWhiteSpace = _text.charAt(_offset - 1) === '\u2060'
+          if (_prevWhiteSpace) {
+            Transforms.delete(editor, {
+              distance: 1,
+              unit: 'character',
               reverse: true,
             })
           }
