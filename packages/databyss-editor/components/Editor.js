@@ -107,36 +107,37 @@ const Editor = ({
         })
       }
 
-      // if an inline atomic is on current block, scan text and tag the text with a menu markup
-      if (Text.isText(node) && Range.isCollapsed(editor.selection)) {
-        const _currentIndex = editor.selection.anchor.path[0]
-        const _blockIndex = path[0]
-        // if selection is on block being examined get current block
-        if (_currentIndex === _blockIndex) {
-          const _currentBlock = state.blocks[_currentIndex]
-          if (
-            _currentBlock.__showInlineTopicMenu ||
-            _currentIndex.__showInlineCitationMenu
-          ) {
-            const { word, offset } =
-              _currentBlock.__showInlineTopicMenu ||
-              _currentIndex.__showInlineCitationMenu
+      // // if an inline atomic is on current block, scan text and tag the text with a menu markup
+      // if (Text.isText(node) && Range.isCollapsed(editor.selection)) {
+      //   const _currentIndex = editor.selection.anchor.path[0]
+      //   const _blockIndex = path[0]
+      //   // if selection is on block being examined get current block
+      //   if (_currentIndex === _blockIndex) {
+      //     const _currentBlock = state.blocks[_currentIndex]
+      //     // if in current inline and range has not been activated, trigger inline markup
+      //     if (
+      //       (_currentBlock.__showInlineTopicMenu ||
+      //         _currentIndex.__showInlineCitationMenu) &&
+      //       !_currentBlock.__activeInline
+      //     ) {
+      //       const { word, offset } =
+      //         _currentBlock.__showInlineTopicMenu ||
+      //         _currentIndex.__showInlineCitationMenu
 
-            const _sel = {
-              anchor: { index: _currentIndex, offset },
-              focus: { index: _currentIndex, offset: offset + word.length },
-            }
-            const selection = stateSelectionToSlateSelection(
-              editor.children,
-              _sel
-            )
-            selection.inlineAtomicMenu = true
+      //       const _sel = {
+      //         anchor: { index: _currentIndex, offset },
+      //         focus: { index: _currentIndex, offset: offset + word.length },
+      //       }
+      //       const selection = stateSelectionToSlateSelection(
+      //         editor.children,
+      //         _sel
+      //       )
+      //       selection.inlineAtomicMenu = true
 
-            ranges.push(selection)
-          }
-        }
-      }
-
+      //       ranges.push(selection)
+      //     }
+      //   }
+      // }
 
       if (!searchTerm.length) {
         return ranges

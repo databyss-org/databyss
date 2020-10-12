@@ -586,6 +586,12 @@ export default (
 
               clearBlockRelations = true
               bakeAtomicBlock({ draft, index: op.index })
+            } else if (op.withRerender) {
+              // if operation requires re-render push operation upstream
+              draft.operations.push({
+                index: op.index,
+                block: _block,
+              })
             }
           })
           break
@@ -749,15 +755,50 @@ export default (
           '#'
         ) && !_selectedBlock.text.textValue.match(`\n`)
 
-          const _currentWord = getWordFromOffset({text: _selectedBlock.text.textValue, offset: draft.selection.anchor.offset})
-        // show __showInlineCitationMenu if selection is collapsed, selection is within text precedded with a `@` and it is currently not tagged already  
-        _selectedBlock.__showInlineCitationMenu = (!selectionHasRange(draft.selection) && !_selectedBlock.__showCitationMenu && _currentWord?.word.startsWith(
-          '@'
-        ) )?_currentWord: false
 
-        // show __showInlineTopicMenu if selection is collapsed, selection is within text precedded with a `#` and it is currently not tagged already  
-        _selectedBlock.__showInlineTopicMenu = (!selectionHasRange(draft.selection) && !_selectedBlock.__showTopicMenu && _currentWord?.word.startsWith('#') )?_currentWord: false
+        // // if currently in an inline atomic
+        // if(!(_selectedBlock.__showInlineTopicMenu || _selectedBlock.__showInlineCitationMenu)){
+
+
+
+
+
+
+        // // get if inline was active in the last pass
+        // _selectedBlock.__activeInline = (_selectedBlock.__showInlineTopicMenu || _selectedBlock.__showInlineCitationMenu)
+
+        // const _currentWord = getWordFromOffset({text: _selectedBlock.text.textValue, offset: draft.selection.anchor.offset})
+
+        // // show __showInlineCitationMenu if selection is collapsed, selection is within text precedded with a `@` and it is currently not tagged already  
+        // _selectedBlock.__showInlineCitationMenu = (!selectionHasRange(draft.selection) && !_selectedBlock.__showCitationMenu && _currentWord?.word.startsWith(
+        //   '@'
+        // ) )?_currentWord: false
+
+        // check if selected block has range type 'inlineAtomicMenu'
+        const _hasInlineMenuMark = _selectedBlock.text.ranges.reduce((acc, curr) => {
+          if (acc === true) {
+            return true
+          }
+          if (curr.marks.includes('inlineAtomicMenu')) {
+            return true
+          }
+          return false
+        }, false)
+
+
+        // show __showInlineTopicMenu if selection is collapsed, selection is within text precedded with a `#` and it is currently not tagged already
+        _selectedBlock.__showInlineTopicMenu = !selectionHasRange(draft.selection) && _hasInlineMenuMark
+
+         
+
+        // _selectedBlock.__showInlineTopicMenu = (!selectionHasRange(draft.selection) && !_selectedBlock.__showTopicMenu && _currentWord?.word.startsWith('#') )?_currentWord: false
         
+
+
+
+
+        // }
+
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element
         _selectedBlock.__isActive =

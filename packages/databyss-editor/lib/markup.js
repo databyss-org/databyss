@@ -1,6 +1,6 @@
-import { createEditor, Transforms } from '@databyss-org/slate'
+import { createEditor, Transforms, Editor } from '@databyss-org/slate'
 import cloneDeep from 'clone-deep'
-import { toggleMark } from './slateUtils'
+import { toggleMark, stateSelectionToSlateSelection } from './slateUtils'
 
 const moveToStart = editor => {
   const _zero = { path: [0], offset: 0 }
@@ -143,7 +143,14 @@ export const stateToSlateMarkup = block => {
 
     const ranges = {}
     b.marks.forEach(m => {
-      ranges[m] = true
+      // check if current mark is a tuple,
+      if (Array.isArray(m)) {
+        // if so, mark both items: atomic type, and id in slate block
+        ranges[m[0]] = true
+        ranges[m[1]] = true
+      } else {
+        ranges[m] = true
+      }
     })
     _currentIndex += b.length
     _children.push({ text, ...ranges })
@@ -191,4 +198,44 @@ export const getRangesFromBlock = value => {
       .filter(x => x.length != null),
     textValue: text,
   }
+}
+
+export const applyMarkAtIndexRange = ({ editor, range, index, mark }) => {
+  // const _oldSelection = editor.selection
+  console.log(index)
+  console.log(range)
+  // const _selection = {
+  //   anchor: { index: 0, offset: range.offset },
+  //   focus: { index: 0, offset: range.length + range.offset },
+  // }
+  // const _slateSelection = stateSelectionToSlateSelection(
+  //   [_oldBlock],
+  //   _selection
+  // )
+
+  console.log(Editor.leaf(editor, editor.selection))
+
+  // console.log(Node.fragment(_oldBlock))
+
+  const _zero = { path: [index], offset: 0 }
+  // Transforms.setSelection(editor, { anchor: _zero, focus: _zero })
+
+  // Transforms.move(editor, { distance: range.offset + 1, edge: 'anchor' })
+  // Transforms.move(editor, {
+  //   distance: range.offset + range.length,
+  //   edge: 'focus',
+  // })
+  // Transforms.move(editor, { distance: 1, edge: 'anchor', reverse: true })
+
+  // console.log(_slateSelection)
+  // console.log('before', editor.selection)
+  // Transforms.setSelection(editor, _slateSelection)
+  // Transforms.select(editor, _slateSelection)
+  // console.log(Range.isCollapsed(editor.selection))
+  // toggleMark(editor, mark)
+  // console.log(editor.operations)
+  // console.log(editor.selection)
+
+  // console.log('marks', editor.marks)
+  // console.log(editor.children[0].children[1])
 }

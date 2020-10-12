@@ -15,6 +15,7 @@ import {
   flattenOffset,
   stateBlockToSlateBlock,
   toggleMark,
+  isMarkActive,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
 import {
@@ -24,10 +25,16 @@ import {
   isAtomicInlineType,
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
-import { symbolToAtomicType, selectionHasRange } from '../state/util'
+import {
+  symbolToAtomicType,
+  selectionHasRange,
+  getWordFromOffset,
+  getTextOffsetWithRange,
+} from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
+import { applyMarkAtIndexRange } from '../lib/markup'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -59,6 +66,7 @@ const ContentEditable = ({
     state,
     split,
     merge,
+    replace,
     setContent,
     setSelection,
     clear,
@@ -166,12 +174,33 @@ const ContentEditable = ({
     [editor.operations, editor.children]
   )
 
+  // useEffect(
+  //   () => {
+  //     if (!selectionHasRange(state.selection)) {
+  //       const _currentBlock = state.blocks[state.selection.anchor.index]
+  //       // check if current word is precedded by a @ or # indicating an inline atomic
+  //       const _currentWord = getWordFromOffset({
+  //         text: _currentBlock.text.textValue,
+  //         offset: state.selection.anchor.offset,
+  //       })
+  //       if (_currentWord?.word.startsWith('@')) {
+  //         console.log(_currentWord)
+  //         // check if mark inlineAtomicMenu is active
+  //         // if not active, toggle mark
+  //       }
+  //     }
+  //   },
+  //   [state.selection]
+  // )
+
   return useMemo(
     () => {
       const onChange = value => {
         if (onDocumentChange) {
           onDocumentChange(editor)
         }
+        console.log('IN ON KEY DOWN', editor.selection)
+        console.log(editor.operations)
         const selection = slateSelectionToStateSelection(editor)
 
         if (!selection) {
@@ -183,6 +212,7 @@ const ContentEditable = ({
           selection._id = state.selection._id
         }
 
+        console.log(selection)
         const focusIndex = selection.focus.index
 
         const payload = {
@@ -346,8 +376,74 @@ const ContentEditable = ({
           return
         }
 
+        // check for inline atomics
+        if (event.key === '@' || event.key === '#') {
+          // check if its not at the start of a block
+          const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
+          const _offset = parseInt(
+            flattenOffset(editor, editor.selection.focus),
+            10
+          )
+          const _atBlockStart = _offset === 0
+          if (!_atBlockStart) {
+            // toggle the inline atomic block
+            if (!isMarkActive(editor, 'inlineAtomicMenu')) {
+              toggleMark(editor, 'inlineAtomicMenu')
+            }
+          }
+        }
+
         if (event.key === 'Enter') {
           const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
+
+          if (isMarkActive(editor, 'inlineAtomicMenu')) {
+            toggleMark(editor, 'inlineAtomicMenu')
+            // replace block with new block
+            // TODO: get atomic type to tag block with
+            const _ranges = _focusedBlock.text.ranges.map(r => {
+              if (r.marks[0] === 'inlineAtomicMenu') {
+                return { ...r, marks: ['inlineTopic'], _id: 'thisIsASampleId' }
+              }
+              return r
+            })
+
+            const _newBlock = {
+              ..._focusedBlock,
+              text: { ..._focusedBlock.text, ranges: _ranges },
+            }
+            setContent({
+              selection: state.selection,
+              operations: [
+                {
+                  index: editor.selection.focus.path[0],
+                  text: _newBlock.text,
+                  withRerender: true,
+                },
+              ],
+            })
+
+            // // get text with active `inlineAtomicMenu` mark
+            // const range = getTextOffsetWithRange({
+            //   text: _focusedBlock.text,
+            //   rangeType: 'inlineAtomicMenu',
+            // })
+
+            // remove all ranges with 'inlineAtomicMenu
+
+            // applyMarkAtIndexRange({
+            //   editor,
+            //   range,
+            //   index: editor.selection.anchor.path[0],
+            //   mark: 'inlineAtomicMenu',
+            // })
+            // nextSelection = stateSelectionToSlateSelection(
+            //   editor.children,
+            //   state.selection
+            // )
+
+            event.preventDefault()
+            return
+          }
           if (isAtomic(_focusedBlock)) {
             if (
               ReactEditor.isFocused(editor) &&

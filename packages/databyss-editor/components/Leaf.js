@@ -8,10 +8,11 @@ const _emailRegEx = new RegExp(
 )
 
 const Leaf = ({ attributes, children, leaf, readOnly }) => {
-  const { blue, gray, orange } = colors
+  const { blue, gray, orange, red } = colors
 
   let _children = children
 
+  console.log(leaf)
   if (leaf.inlineAtomicMenu) {
     _children = (
       <span
@@ -22,6 +23,18 @@ const Leaf = ({ attributes, children, leaf, readOnly }) => {
           backgroundColor: gray[6],
           borderRadius: '3px',
           padding: '3px',
+        }}
+      >
+        {_children}
+      </span>
+    )
+  }
+
+  if (leaf.inlineTopic) {
+    _children = (
+      <span
+        style={{
+          color: red[0],
         }}
       >
         {_children}

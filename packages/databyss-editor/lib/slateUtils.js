@@ -1,4 +1,5 @@
 import MurmurHash3 from 'imurmurhash'
+import mongoose from 'mongoose'
 import { Text, Editor, Node } from '@databyss-org/slate'
 import { pickBy } from 'lodash'
 import { textToHtml } from '@databyss-org/services/block/serialize'
@@ -135,7 +136,15 @@ export const stateToSlate = initState => {
   return _state
 }
 
-const allowedRanges = ['bold', 'italic', 'location']
+const allowedRanges = [
+  'bold',
+  'italic',
+  'location',
+  'inlineAtomicMenu',
+  'inlineTopic',
+]
+
+const allowedInlines = ['inlineTopic']
 
 export const slateRangesToStateRanges = node => {
   let _offset = 0
@@ -149,15 +158,35 @@ export const slateRangesToStateRanges = node => {
     }
     const _textLength = child.text.length
 
-    Object.keys(child).forEach(prop => {
-      if (allowedRanges.includes(prop)) {
-        _ranges.push({ offset: _offset, length: _textLength, marks: [prop] })
-      }
-    })
+    // check if object conatins an objectId
+    const _ids = Object.keys(child).filter(prop =>
+      mongoose.Types.ObjectId.isValid(prop)
+    )
+
+    // check if range is inline type
+    const _inlineType = Object.keys(child).filter(prop =>
+      allowedInlines.includes(prop)
+    )
+
+    if (_ids.length && _inlineType.length) {
+      // if object contains an object id, search for allowed atomic
+      _ranges.push({
+        offset: _offset,
+        length: _textLength,
+        marks: [[_inlineType[0], _ids[0]]],
+      })
+    } else {
+      Object.keys(child).forEach(prop => {
+        if (allowedRanges.includes(prop)) {
+          _ranges.push({ offset: _offset, length: _textLength, marks: [prop] })
+        }
+      })
+    }
 
     _offset += _textLength
   })
 
+  console.log('ranges ', _ranges)
   return _ranges
 }
 
@@ -180,18 +209,21 @@ export const isSelectionAtomic = editor => {
   )
 }
 
-const isMarkActive = (editor, format) => {
+export const isMarkActive = (editor, format) => {
   const marks = Editor.marks(editor)
   return marks ? marks[format] === true : false
 }
 
 export const toggleMark = (editor, format) => {
   const isActive = isMarkActive(editor, format)
+  console.log('is active', isActive)
+  console.log('FORMAT', format)
   if (isActive) {
     Editor.removeMark(editor, format)
   } else {
     Editor.addMark(editor, format, true)
   }
+  console.log(editor.operations)
 }
 
 // serialize slate node to html for page path header
