@@ -1,5 +1,11 @@
 import React, { useMemo, useRef, useEffect, useImperativeHandle } from 'react'
-import { createEditor, Node, Transforms, Point } from '@databyss-org/slate'
+import {
+  createEditor,
+  Node,
+  Transforms,
+  Point,
+  Editor as SlateEditor,
+} from '@databyss-org/slate'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
@@ -199,8 +205,6 @@ const ContentEditable = ({
         if (onDocumentChange) {
           onDocumentChange(editor)
         }
-        console.log('IN ON KEY DOWN', editor.selection)
-        console.log(editor.operations)
         const selection = slateSelectionToStateSelection(editor)
 
         if (!selection) {
@@ -212,7 +216,6 @@ const ContentEditable = ({
           selection._id = state.selection._id
         }
 
-        console.log(selection)
         const focusIndex = selection.focus.index
 
         const payload = {
@@ -305,6 +308,11 @@ const ContentEditable = ({
       }
 
       const onKeyDown = event => {
+        // never allow inline atomics to be entered manually
+        if (isPrintable(event) && isMarkActive(editor, 'inlineTopic')) {
+          toggleMark(editor, 'inlineTopic')
+        }
+
         if (Hotkeys.isUndo(event) && historyContext) {
           event.preventDefault()
           historyContext.undo()

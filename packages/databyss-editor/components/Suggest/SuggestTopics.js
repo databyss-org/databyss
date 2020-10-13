@@ -57,15 +57,17 @@ const SuggestTopics = ({
 
       // merge first block with topic value, add mark and id to second block
       _textBefore = mergeText(_textBefore, {
-        textValue: topic.text.textValue,
+        textValue: `#${topic.text.textValue}`,
         ranges: [
           {
             offset: 0,
-            length: topic.text.textValue.length,
+            length: topic.text.textValue.length + 1,
             marks: [['inlineTopic', topic._id]],
           },
         ],
       })
+      // append an empty space after merge
+      _textBefore = mergeText(_textBefore, { textValue: ' ', ranges: [] })
 
       // get the offset value where the cursor should be placed after operation
       const _caretOffest = _textBefore.textValue.length

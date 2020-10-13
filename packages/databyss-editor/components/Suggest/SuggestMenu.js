@@ -18,7 +18,6 @@ export const getPosition = (editor, inlineAtomic) => {
 
     if (_node) {
       const _rect = _node.getBoundingClientRect()
-      console.log('BEFORE')
       if (inlineAtomic && document.getElementById('inline-atomic')) {
         const _textNode = document
           .getElementById('inline-atomic')
@@ -28,7 +27,6 @@ export const getPosition = (editor, inlineAtomic) => {
           left: _textNode.left - _rect.left,
         }
 
-        console.log('AFTER')
         return relativePos
       }
       const _windowHeight = window.innerHeight

@@ -12,7 +12,6 @@ const Leaf = ({ attributes, children, leaf, readOnly }) => {
 
   let _children = children
 
-  console.log(leaf)
   if (leaf.inlineAtomicMenu) {
     _children = (
       <span

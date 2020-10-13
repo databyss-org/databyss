@@ -186,7 +186,6 @@ export const slateRangesToStateRanges = node => {
     _offset += _textLength
   })
 
-  console.log('ranges ', _ranges)
   return _ranges
 }
 
@@ -216,14 +215,11 @@ export const isMarkActive = (editor, format) => {
 
 export const toggleMark = (editor, format) => {
   const isActive = isMarkActive(editor, format)
-  console.log('is active', isActive)
-  console.log('FORMAT', format)
   if (isActive) {
     Editor.removeMark(editor, format)
   } else {
     Editor.addMark(editor, format, true)
   }
-  console.log(editor.operations)
 }
 
 // serialize slate node to html for page path header
