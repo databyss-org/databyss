@@ -147,7 +147,7 @@ export const stateToSlateMarkup = block => {
       if (Array.isArray(m)) {
         // if so, mark both items: atomic type, and id in slate block
         ranges[m[0]] = true
-        ranges[m[1]] = true
+        //  ranges[m[1]] = true
       } else {
         ranges[m] = true
       }

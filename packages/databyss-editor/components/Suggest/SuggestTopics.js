@@ -75,7 +75,7 @@ const SuggestTopics = ({
       })
 
       // append an empty space after merge
-      _textBefore = mergeText(_textBefore, { textValue: ' ', ranges: [] })
+      _textBefore = mergeText(_textBefore, { textValue: ' \ufeff', ranges: [] })
 
       // get the offset value where the cursor should be placed after operation
       const _caretOffest = _textBefore.textValue.length

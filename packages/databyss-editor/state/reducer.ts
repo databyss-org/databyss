@@ -590,134 +590,113 @@ export default (
 
               clearBlockRelations = true
               bakeAtomicBlock({ draft, index: op.index })
+
             } else if (op.convertInlineToAtomic){
-            /*
-              if flag `convertInlineToAtomic` is set, pull out text within range `inlineAtomicMenu`, look up in entityCache and set the markup with appropriate id and range
-            */
-            let _pushNewEntity = false
+              /*
+                if flag `convertInlineToAtomic` is set, pull out text within range `inlineAtomicMenu`, look up in entityCache and set the markup with appropriate id and range
+              */
+              let _pushNewEntity = false
 
-            // get the markup data, function returns: offset, length, text
-            const inlineMarkupData = getTextOffsetWithRange({
-              text: _block.text,
-              rangeType: 'inlineAtomicMenu',
-            })
-
-
-
-            // check if text is inline atomic type
-            const _atomicType =inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))
-
-            if(inlineMarkupData && _atomicType){
-              // text value with markup
-              let _atomicTextValue = inlineMarkupData?.text
-
-              // new Id for inline atomic
-              let _atomicId = new ObjectId().toHexString()
-
-              // check entitySuggestionCache for an atomic with the identical name
-              // if there's a match and the atomic type matches, use the cached 
-              // block's _id and textValue (to correct casing differences
-              const _suggestion = draft.entitySuggestionCache?.[inlineMarkupData.text.substring(1).toLowerCase()]
-              // if suggestion exists in cache, grab values
-              if (_suggestion?.type === _atomicType) {
-                _atomicId = _suggestion._id
-                _atomicTextValue = `#${_suggestion.text.textValue}`
-              } else {
-                // set flag to new push atomic entity to appropriate provider
-                _pushNewEntity = true
-              }
-
-
-              // get value before offset
-              let _textBefore = splitTextAtOffset({
+              // get the markup data, function returns: offset, length, text
+              const inlineMarkupData = getTextOffsetWithRange({
                 text: _block.text,
-                offset: inlineMarkupData.offset,
-              }).before
-
-              // get value after markup range
-              const _textAfter = splitTextAtOffset({
-                text: _block.text,
-                offset: inlineMarkupData.offset + inlineMarkupData.length,
-              }).after
-
-              // merge first block with atomic value, add mark and id to second block
-              _textBefore = mergeText(_textBefore, {
-                textValue: _atomicTextValue,
-                ranges: [
-                  {
-                    offset: 0,
-                    length: _atomicTextValue.length,
-                    marks: [['inlineTopic', _atomicId]],
-                  },
-                ],
+                rangeType: 'inlineAtomicMenu',
               })
 
-              // append an empty space after merge
-              _textBefore = mergeText(_textBefore, { textValue: ' ', ranges: [] })
-
-              // get the offset value where the cursor should be placed after operation
-              const _caretOffest = _textBefore.textValue.length 
 
 
-              // merge second block with first block
-              const _newText = mergeText(_textBefore, _textAfter)
+              // check if text is inline atomic type
+              const _atomicType =inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))
 
+              if(inlineMarkupData && _atomicType){
+                // text value with markup
+                let _atomicTextValue = inlineMarkupData?.text
 
-              _block.text = _newText
+                // new Id for inline atomic
+                let _atomicId = new ObjectId().toHexString()
 
-              // force a re-render
-              draft.operations.push({
-                index: op.index,
-                block: _block,
-              })
-              // update selection
-              const _nextSelection = {
-                _id: draft.selection._id,
-                anchor: { index: op.index, offset: _caretOffest },
-                focus: { index: op.index, offset: _caretOffest },
-              }
-              nextSelection = _nextSelection
-
-              if(_pushNewEntity){
-                const _entity = {
-                  type: _atomicType, 
-                  // remove atomic symbol
-                  text: {textValue: _atomicTextValue.substring(1), ranges: []},
-                  _id: _atomicId
+                // check entitySuggestionCache for an atomic with the identical name
+                // if there's a match and the atomic type matches, use the cached 
+                // block's _id and textValue (to correct casing differences
+                const _suggestion = draft.entitySuggestionCache?.[inlineMarkupData.text.substring(1).toLowerCase()]
+                // if suggestion exists in cache, grab values
+                if (_suggestion?.type === _atomicType) {
+                  _atomicId = _suggestion._id
+                  _atomicTextValue = `#${_suggestion.text.textValue}`
+                } else {
+                  // set flag to new push atomic entity to appropriate provider
+                  _pushNewEntity = true
                 }
-                draft.newEntities.push(_entity)
 
+
+                // get value before offset
+                let _textBefore = splitTextAtOffset({
+                  text: _block.text,
+                  offset: inlineMarkupData.offset,
+                }).before
+
+                // get value after markup range
+                const _textAfter = splitTextAtOffset({
+                  text: _block.text,
+                  offset: inlineMarkupData.offset + inlineMarkupData.length,
+                }).after
+
+                // merge first block with atomic value, add mark and id to second block
+                _textBefore = mergeText(_textBefore, {
+                  textValue: _atomicTextValue,
+                  ranges: [
+                    {
+                      offset: 0,
+                      length: _atomicTextValue.length,
+                      marks: [['inlineTopic', _atomicId]],
+                    },
+                  ],
+                })
+
+                // append an empty space after merge
+                _textBefore = mergeText(_textBefore, { textValue: ' \ufeff', ranges: [] })
+
+                // get the offset value where the cursor should be placed after operation
+                const _caretOffest = _textBefore.textValue.length 
+
+
+                // merge second block with first block
+                const _newText = mergeText(_textBefore, _textAfter)
+
+
+                _block.text = _newText
+
+                // force a re-render
+                draft.operations.push({
+                  index: op.index,
+                  block: _block,
+                })
+                // update selection
+                const _nextSelection = {
+                  _id: draft.selection._id,
+                  anchor: { index: op.index, offset: _caretOffest },
+                  focus: { index: op.index, offset: _caretOffest },
+                }
+                nextSelection = _nextSelection
+
+                if(_pushNewEntity){
+                  const _entity = {
+                    type: _atomicType, 
+                    // remove atomic symbol
+                    text: {textValue: _atomicTextValue.substring(1), ranges: []},
+                    _id: _atomicId
+                  }
+                  draft.newEntities.push(_entity)
+                }
               }
-
-     
-            }
-
-
-
-            // let _atomicId = _block._id
-            // let _atomicTextValue = _block.text.textValue.substring(1).trim()
-      
-            // // check entitySuggestionCache for an atomic with the identical name
-            // // if there's a match and the atomic type matches, use the cached 
-            // // block's _id and textValue (to correct casing differences)
-            // const _suggestion = draft.entitySuggestionCache?.[_atomicTextValue.toLowerCase()]
-            // if (_suggestion?.type === _atomicType) {
-            //   _atomicId = _suggestion._id
-            //   _atomicTextValue = _suggestion.text.textValue
-            // }
-      
-
-            /* text with 'inlineAtomicMenu' should be replaced the atomic type provided
-            if `TOPIC` replace with `inlineTopic` and appropriate id
-            if `SOURCE` replace with `inlineSource` and id
-            */
-
-            }else if (op.withRerender) {
+            } else if (op.withRerender) {
               // if operation requires re-render push operation upstream
               draft.operations.push({
                 index: op.index,
                 block: _block,
               })
+            } else {
+              console.log('CHECK WHERE SELECTION IS CURRENTLY AT')
             }
           })
           break

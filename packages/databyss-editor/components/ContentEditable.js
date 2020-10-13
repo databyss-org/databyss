@@ -181,25 +181,6 @@ const ContentEditable = ({
     [editor.operations, editor.children]
   )
 
-  // useEffect(
-  //   () => {
-  //     if (!selectionHasRange(state.selection)) {
-  //       const _currentBlock = state.blocks[state.selection.anchor.index]
-  //       // check if current word is precedded by a @ or # indicating an inline atomic
-  //       const _currentWord = getWordFromOffset({
-  //         text: _currentBlock.text.textValue,
-  //         offset: state.selection.anchor.offset,
-  //       })
-  //       if (_currentWord?.word.startsWith('@')) {
-  //         console.log(_currentWord)
-  //         // check if mark inlineAtomicMenu is active
-  //         // if not active, toggle mark
-  //       }
-  //     }
-  //   },
-  //   [state.selection]
-  // )
-
   return useMemo(
     () => {
       const onChange = value => {
@@ -314,6 +295,52 @@ const ContentEditable = ({
           toggleMark(editor, 'inlineTopic')
         }
 
+        console.log(isPrintable(event))
+        // never allow inline atomics to be entered manually
+        if (isPrintable(event) || event.key === 'Backspace') {
+          let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+          console.log(_currentLeaf)
+          const _anchor = editor.selection.anchor
+          const _isAnchorAtStartOfLeaf =
+            _anchor.offset === 0 && _anchor.path[1] !== 0
+          const _isAnchorAtEndOfLeaf =
+            _currentLeaf.text.length === _anchor.offset
+          if (_isAnchorAtStartOfLeaf) {
+            // jog the caret back and forward to reset current leaf
+            // current leaf will assume the end of last leaf
+            Transforms.move(editor, {
+              unit: 'character',
+              distance: 1,
+              reverse: true,
+            })
+            Transforms.move(editor, {
+              unit: 'character',
+              distance: 1,
+            })
+            _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
+          }
+          console.log(_currentLeaf)
+          // TODO: WORKING ON ENTER AT END OF AN ATOMIC
+
+          // if current or prevous leaf is inline
+          if (_currentLeaf.inlineTopic) {
+            // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
+            if (
+              event.key !== 'Backspace' &&
+              (_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf)
+            ) {
+              // if active inline mark from previous block, remove mark
+              if (SlateEditor.marks(editor).inlineTopic) {
+                toggleMark(editor, 'inlineTopic')
+              }
+            } else {
+              // if not on edge of node or a backspace event, prevent character
+              event.preventDefault()
+              return
+            }
+          }
+        }
+
         if (Hotkeys.isUndo(event) && historyContext) {
           event.preventDefault()
           historyContext.undo()
@@ -388,7 +415,6 @@ const ContentEditable = ({
         // check for inline atomics
         if (event.key === '@' || event.key === '#') {
           // check if its not at the start of a block
-          const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
           const _offset = parseInt(
             flattenOffset(editor, editor.selection.focus),
             10
@@ -407,79 +433,12 @@ const ContentEditable = ({
 
           const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
 
+          // let suggest menu handle event if caret is inside of a new active inline atomic
           if (_currentLeaf.inlineAtomicMenu) {
             event.preventDefault()
-
-            const _ranges = _focusedBlock.text.ranges.map(r => {
-              if (r.marks[0] === 'inlineAtomicMenu') {
-                return { ...r, marks: ['inlineTopic', 'thisIsASampleId'] }
-              }
-              return r
-            })
-            const _newBlock = {
-              ..._focusedBlock,
-              text: { ..._focusedBlock.text, ranges: _ranges },
-            }
-
-            // setContent({
-            //   selection: state.selection,
-            //   operations: [
-            //     {
-            //       index: editor.selection.focus.path[0],
-            //       text: _newBlock.text,
-            //       withRerender: true,
-            //     },
-            //   ],
-            // })
-            // toggleMark(editor, 'inlineAtomicMenu')
             return
           }
 
-          if (isMarkActive(editor, 'inlineAtomicMenu')) {
-            // event.preventDefault()
-            // toggleMark(editor, 'inlineAtomicMenu')
-            // return
-            //   // replace block with new block
-            //   // TODO: get atomic type to tag block with
-            //   const _ranges = _focusedBlock.text.ranges.map(r => {
-            //     if (r.marks[0] === 'inlineAtomicMenu') {
-            //       return { ...r, marks: ['inlineTopic'], _id: 'thisIsASampleId' }
-            //     }
-            //     return r
-            //   })
-            //   const _newBlock = {
-            //     ..._focusedBlock,
-            //     text: { ..._focusedBlock.text, ranges: _ranges },
-            //   }
-            //   setContent({
-            //     selection: state.selection,
-            //     operations: [
-            //       {
-            //         index: editor.selection.focus.path[0],
-            //         text: _newBlock.text,
-            //         withRerender: true,
-            //       },
-            //     ],
-            //   })
-            //   // // get text with active `inlineAtomicMenu` mark
-            //   // const range = getTextOffsetWithRange({
-            //   //   text: _focusedBlock.text,
-            //   //   rangeType: 'inlineAtomicMenu',
-            //   // })
-            //   // remove all ranges with 'inlineAtomicMenu
-            //   // applyMarkAtIndexRange({
-            //   //   editor,
-            //   //   range,
-            //   //   index: editor.selection.anchor.path[0],
-            //   //   mark: 'inlineAtomicMenu',
-            //   // })
-            //   // nextSelection = stateSelectionToSlateSelection(
-            //   //   editor.children,
-            //   //   state.selection
-            //   // )
-            //   event.preventDefault()
-            //   return
-          }
           if (isAtomic(_focusedBlock)) {
             if (
               ReactEditor.isFocused(editor) &&
