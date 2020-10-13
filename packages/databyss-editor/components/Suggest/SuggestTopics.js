@@ -6,7 +6,10 @@ import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
 import { prefixSearchAll } from '@databyss-org/services/block/filter'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useEditorContext } from '../../state/EditorProvider'
+import cloneDeep from 'clone-deep'
 import { toggleMark } from '../../lib/slateUtils'
+import { splitTextAtOffset, mergeText } from '../../lib/clipboardUtils'
+import { getTextOffsetWithRange } from '../../state/util'
 
 const SuggestTopics = ({
   query,
@@ -34,23 +37,58 @@ const SuggestTopics = ({
       const _index = state.selection.anchor.index
       const _stateBlock = state.blocks[_index]
 
-      // replace inlineAtomicMenu range with a tuple including the topic id
-      const _ranges = _stateBlock.text.ranges.map(r => {
-        if (r.marks[0] === 'inlineAtomicMenu') {
-          return { ...r, marks: [['inlineTopic', topic._id]] }
-        }
-        return r
+      // replace inner text with updated topic
+      const _markupTextValue = getTextOffsetWithRange({
+        text: _stateBlock.text,
+        rangeType: 'inlineAtomicMenu',
       })
+
+      // get value before offset
+      let _textBefore = splitTextAtOffset({
+        text: _stateBlock.text,
+        offset: _markupTextValue.offset,
+      }).before
+
+      // get value after markup range
+      const _textAfter = splitTextAtOffset({
+        text: _stateBlock.text,
+        offset: _markupTextValue.offset + _markupTextValue.length,
+      }).after
+
+      // merge first block with topic value, add mark and id to second block
+      _textBefore = mergeText(_textBefore, {
+        textValue: topic.text.textValue,
+        ranges: [
+          {
+            offset: 0,
+            length: topic.text.textValue.length,
+            marks: [['inlineTopic', topic._id]],
+          },
+        ],
+      })
+
+      // get the offset value where the cursor should be placed after operation
+      const _caretOffest = _textBefore.textValue.length
+
+      // merge second block with first block
+      const _newText = mergeText(_textBefore, _textAfter)
+
+      // create a new block with updated ranges
       const _newBlock = {
         ..._stateBlock,
-        text: { ..._stateBlock.text, ranges: _ranges },
+        text: _newText,
       }
+
       // toggle editor to remove active 'inlineAtomicMenu'
       Editor.removeMark(editor, 'inlineAtomicMenu')
 
-      // TODO: replace inner text with new text from the topic provider
+      // update the selection
+      const _sel = cloneDeep(state.selection)
+      _sel.anchor.offset = _caretOffest
+      _sel.focus.offset = _caretOffest
+
       setContent({
-        selection: state.selection,
+        selection: _sel,
         operations: [
           {
             index: _index,
