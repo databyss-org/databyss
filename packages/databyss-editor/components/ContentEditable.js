@@ -130,6 +130,7 @@ const ContentEditable = ({
         const { setTopic } = topicContext
 
         state.newEntities.forEach(entity => {
+          console.log(entity)
           const _data = {
             _id: entity._id,
             text: {
@@ -404,53 +405,80 @@ const ContentEditable = ({
         if (event.key === 'Enter') {
           const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
 
-          if (isMarkActive(editor, 'inlineAtomicMenu')) {
-            toggleMark(editor, 'inlineAtomicMenu')
-            // replace block with new block
-            // TODO: get atomic type to tag block with
+          const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+
+          if (_currentLeaf.inlineAtomicMenu) {
+            event.preventDefault()
+
             const _ranges = _focusedBlock.text.ranges.map(r => {
               if (r.marks[0] === 'inlineAtomicMenu') {
-                return { ...r, marks: ['inlineTopic'], _id: 'thisIsASampleId' }
+                return { ...r, marks: ['inlineTopic', 'thisIsASampleId'] }
               }
               return r
             })
-
             const _newBlock = {
               ..._focusedBlock,
               text: { ..._focusedBlock.text, ranges: _ranges },
             }
-            setContent({
-              selection: state.selection,
-              operations: [
-                {
-                  index: editor.selection.focus.path[0],
-                  text: _newBlock.text,
-                  withRerender: true,
-                },
-              ],
-            })
 
-            // // get text with active `inlineAtomicMenu` mark
-            // const range = getTextOffsetWithRange({
-            //   text: _focusedBlock.text,
-            //   rangeType: 'inlineAtomicMenu',
+            // setContent({
+            //   selection: state.selection,
+            //   operations: [
+            //     {
+            //       index: editor.selection.focus.path[0],
+            //       text: _newBlock.text,
+            //       withRerender: true,
+            //     },
+            //   ],
             // })
-
-            // remove all ranges with 'inlineAtomicMenu
-
-            // applyMarkAtIndexRange({
-            //   editor,
-            //   range,
-            //   index: editor.selection.anchor.path[0],
-            //   mark: 'inlineAtomicMenu',
-            // })
-            // nextSelection = stateSelectionToSlateSelection(
-            //   editor.children,
-            //   state.selection
-            // )
-
-            event.preventDefault()
+            // toggleMark(editor, 'inlineAtomicMenu')
             return
+          }
+
+          if (isMarkActive(editor, 'inlineAtomicMenu')) {
+            // event.preventDefault()
+            // toggleMark(editor, 'inlineAtomicMenu')
+            // return
+            //   // replace block with new block
+            //   // TODO: get atomic type to tag block with
+            //   const _ranges = _focusedBlock.text.ranges.map(r => {
+            //     if (r.marks[0] === 'inlineAtomicMenu') {
+            //       return { ...r, marks: ['inlineTopic'], _id: 'thisIsASampleId' }
+            //     }
+            //     return r
+            //   })
+            //   const _newBlock = {
+            //     ..._focusedBlock,
+            //     text: { ..._focusedBlock.text, ranges: _ranges },
+            //   }
+            //   setContent({
+            //     selection: state.selection,
+            //     operations: [
+            //       {
+            //         index: editor.selection.focus.path[0],
+            //         text: _newBlock.text,
+            //         withRerender: true,
+            //       },
+            //     ],
+            //   })
+            //   // // get text with active `inlineAtomicMenu` mark
+            //   // const range = getTextOffsetWithRange({
+            //   //   text: _focusedBlock.text,
+            //   //   rangeType: 'inlineAtomicMenu',
+            //   // })
+            //   // remove all ranges with 'inlineAtomicMenu
+            //   // applyMarkAtIndexRange({
+            //   //   editor,
+            //   //   range,
+            //   //   index: editor.selection.anchor.path[0],
+            //   //   mark: 'inlineAtomicMenu',
+            //   // })
+            //   // nextSelection = stateSelectionToSlateSelection(
+            //   //   editor.children,
+            //   //   state.selection
+            //   // )
+            //   event.preventDefault()
+            //   return
           }
           if (isAtomic(_focusedBlock)) {
             if (

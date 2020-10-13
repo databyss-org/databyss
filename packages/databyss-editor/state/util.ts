@@ -6,19 +6,18 @@ import { OnChangeArgs } from './EditorProvider'
 import { isAtomicInlineType } from '../lib/util'
 import { splitTextAtOffset } from '../lib/clipboardUtils'
 
-
+/*
+takes a text object and a range type and returns the length of the range, the location of the offset and the text contained within the range, this fuction works when text block has of of that range type
+*/
 export const getTextOffsetWithRange = ({ text, rangeType }: { text: Text, rangeType: string }) => {
   const _string = text.textValue
   let _ranges = text.ranges.filter(r=> r.marks.includes(rangeType))
   if(_ranges.length){
-    console.log(_ranges)
     // for now assume only one range is provided
     let _range = _ranges[0]
     const _textWithRange = _string.slice(_range.offset, _range.offset + _range.length)
 
     return {length:_range.length, offset: _range.offset, text: _textWithRange }
-    // console.log(text)
-    // const _textWithRange = _string.slice(_range.offset, _range.offset + _range.length)
   }
   return null
 }
