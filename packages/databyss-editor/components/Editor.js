@@ -17,6 +17,7 @@ const Editor = ({
   autofocus,
   readonly,
   onFocus,
+  onInlineAtomicClick,
   ...others
 }) => {
   const entryContext = useEntryContext()
@@ -39,8 +40,15 @@ const Editor = ({
     []
   )
 
+  const onInlineClick = useCallback(({ atomicType, id }) => {
+    console.log(id)
+    onInlineAtomicClick({ type: atomicType, refId: id })
+  }, [])
+
   const renderLeaf = useCallback(
-    props => <Leaf {...props} readOnly={readOnly} />,
+    props => (
+      <Leaf {...props} readOnly={readOnly} onInlineClick={onInlineClick} />
+    ),
     [searchTerm]
   )
 

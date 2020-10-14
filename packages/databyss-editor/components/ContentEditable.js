@@ -396,6 +396,8 @@ const ContentEditable = ({
           return
         }
 
+        // TODO: inline at start of \n will allow text to be entered with inline markup
+
         // em dash shortcut
         replaceShortcut(editor, event)
 
@@ -731,8 +733,25 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
         }, 5)
       }
 
+      const onInlineAtomicClick = inlineData => {
+        // pass editorContext
+        const inlineAtomicData = {
+          refId: inlineData.refId,
+          type: inlineData.type,
+        }
+
+        const modalData = {
+          editorContext,
+          editor,
+          navigationContext,
+          inlineAtomicData,
+        }
+        showAtomicModal(modalData)
+      }
+
       return (
         <Editor
+          onInlineAtomicClick={onInlineAtomicClick}
           editor={editor}
           onFocus={onFocus}
           autofocus={autofocus}
@@ -741,6 +760,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
           onChange={onChange}
           onKeyDown={onKeyDown}
           readonly={readonly}
+          onInlineAtomicClick={onInlineAtomicClick}
         />
       )
     },

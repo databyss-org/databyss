@@ -2,32 +2,23 @@ import { Transforms } from '@databyss-org/slate'
 import { ReactEditor } from '@databyss-org/slate-react'
 import { stateSelectionToSlateSelection } from './slateUtils'
 
-export const showAtomicModal = ({
+export const showInlineAtomicModal = ({
   editorContext,
   navigationContext,
   editor,
-  inlineAtomicData,
 }) => {
   // we need navigationContext and editorContext to show the modal
   if (!navigationContext || !editorContext) {
     return
   }
-  let refId
-  let type
+  const index = editorContext.state.selection.anchor.index
+  const _entity = editorContext.state.blocks[index]
+  const refId = _entity._id
+  const type = _entity.type
   let offset
   let selection
   const { setContent, state } = editorContext
   const { showModal } = navigationContext
-  const index = editorContext.state.selection.anchor.index
-  const _entity = editorContext.state.blocks[index]
-
-  if (!inlineAtomicData) {
-    refId = _entity._id
-    type = _entity.type
-  } else {
-    refId = inlineAtomicData.refId
-    type = inlineAtomicData.type
-  }
 
   // compose modal dismiss callback function
   const onUpdate = atomic => {
@@ -39,7 +30,7 @@ export const showAtomicModal = ({
         operations: [
           {
             index,
-            isRefEntity: atomic._id,
+            isRefEntity: true,
             text: atomic.text,
           },
         ],

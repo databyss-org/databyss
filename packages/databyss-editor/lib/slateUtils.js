@@ -158,22 +158,17 @@ export const slateRangesToStateRanges = node => {
     }
     const _textLength = child.text.length
 
-    // check if object conatins an objectId
-    const _ids = Object.keys(child).filter(prop =>
-      mongoose.Types.ObjectId.isValid(prop)
-    )
-
     // check if range is inline type
     const _inlineType = Object.keys(child).filter(prop =>
       allowedInlines.includes(prop)
     )
 
-    if (_ids.length && _inlineType.length) {
+    if (_inlineType.length) {
       // if object contains an object id, search for allowed atomic
       _ranges.push({
         offset: _offset,
         length: _textLength,
-        marks: [[_inlineType[0], _ids[0]]],
+        marks: [[_inlineType[0], child.atomicId]],
       })
     } else {
       Object.keys(child).forEach(prop => {

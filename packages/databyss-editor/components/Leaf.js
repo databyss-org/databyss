@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
 import React from 'react'
 import colors from '@databyss-org/ui/theming/colors'
 
@@ -7,7 +9,7 @@ const _emailRegEx = new RegExp(
   'gi'
 )
 
-const Leaf = ({ attributes, children, leaf, readOnly }) => {
+const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
   const { blue, gray, orange, red } = colors
 
   let _children = children
@@ -32,9 +34,13 @@ const Leaf = ({ attributes, children, leaf, readOnly }) => {
   if (leaf.inlineTopic) {
     _children = (
       <span
+        onClick={() =>
+          onInlineClick({ atomicType: 'TOPIC', id: leaf.atomicId })
+        }
         style={{
           color: red[0],
           caretColor: 'black',
+          cursor: 'pointer',
         }}
       >
         {_children}

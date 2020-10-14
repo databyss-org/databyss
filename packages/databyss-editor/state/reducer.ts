@@ -558,7 +558,8 @@ export default (
             if (op.isRefEntity) {
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {
-                if (_b._id === _block._id) {
+                // TODO: UPDATE TYPSCRIPT FOR refentity
+                if (_b._id === op.isRefEntity) {
                   let _nextBlock = { ..._block, __isActive: false }
 
                   // if atomic type is closure, get updated text value and overwrite `nextBlock`
@@ -583,6 +584,9 @@ export default (
                     index: _idx,
                     block: _nextBlock,
                   })
+                } else {
+                  // check text value to update any inline atomics found
+                  console.log(JSON.parse(JSON.stringify(_b)))
                 }
               })
             } else if (op.withBakeAtomic) {
