@@ -31,6 +31,7 @@ import {
   isAtomicInlineType,
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
+import cloneDeep from 'clone-deep'
 import {
   symbolToAtomicType,
   selectionHasRange,
@@ -41,6 +42,8 @@ import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import { applyMarkAtIndexRange } from '../lib/markup'
+import { splitTextAtOffset, mergeText } from '../lib/clipboardUtils'
+import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
 
 const ContentEditable = ({
   onDocumentChange,
@@ -284,6 +287,7 @@ const ContentEditable = ({
           })
         }
 
+        console.log(editor.operations)
         if (editor.operations.length) {
           setSelection(selection)
         }
@@ -291,13 +295,10 @@ const ContentEditable = ({
 
       const onKeyDown = event => {
         // never allow inline atomics to be entered manually
-        if (isPrintable(event) && isMarkActive(editor, 'inlineTopic')) {
-          toggleMark(editor, 'inlineTopic')
-        }
-
-        console.log(isPrintable(event))
-        // never allow inline atomics to be entered manually
-        if (isPrintable(event) || event.key === 'Backspace') {
+        if (
+          (isPrintable(event) || event.key === 'Backspace') &&
+          SlateEditor.marks(editor).inlineTopic
+        ) {
           let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
           console.log(_currentLeaf)
           const _anchor = editor.selection.anchor
@@ -322,6 +323,8 @@ const ContentEditable = ({
           console.log(_currentLeaf)
           // TODO: WORKING ON ENTER AT END OF AN ATOMIC
 
+          console.log('IS AT START', _isAnchorAtStartOfLeaf)
+          console.log('is at end', _isAnchorAtEndOfLeaf)
           // if current or prevous leaf is inline
           if (_currentLeaf.inlineTopic) {
             // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
@@ -330,15 +333,23 @@ const ContentEditable = ({
               (_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf)
             ) {
               // if active inline mark from previous block, remove mark
-              if (SlateEditor.marks(editor).inlineTopic) {
-                toggleMark(editor, 'inlineTopic')
+              if (event.key === 'Enter') {
+                console.log('ENTER WHILE DOING ')
               }
+              // if (SlateEditor.marks(editor).inlineTopic) {
+              //   toggleMark(editor, 'inlineTopic')
+              // }
             } else {
+              console.log('PREVENTS DEFAULT')
               // if not on edge of node or a backspace event, prevent character
               event.preventDefault()
               return
             }
           }
+        }
+
+        if (isPrintable(event) && isMarkActive(editor, 'inlineTopic')) {
+          toggleMark(editor, 'inlineTopic')
         }
 
         if (Hotkeys.isUndo(event) && historyContext) {
@@ -439,6 +450,13 @@ const ContentEditable = ({
             return
           }
 
+          // if (SlateEditor.marks(editor).inlineTopic) {
+          //   console.log('TOGGLING')
+          //   toggleMark(editor, 'inlineTopic')
+          // }
+
+          console.log('IN ENTER', _currentLeaf)
+
           if (isAtomic(_focusedBlock)) {
             if (
               ReactEditor.isFocused(editor) &&
@@ -481,6 +499,47 @@ const ContentEditable = ({
             _prevIsDoubleBreak ||
             _text.length === 0
           if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
+            if (_currentLeaf.inlineTopic) {
+              const { text, offsetAfterInsert } = insertTextAtOffset({
+                text: _focusedBlock.text,
+                offset: _offset,
+                textToInsert: { textValue: '\n\ufeff', ranges: [] },
+              })
+              // // edge case where enter is at the end of an inline atomic
+              // const { before, after } = splitTextAtOffset({
+              //   text: _focusedBlock.text,
+              //   offset: _offset,
+              // })
+              // const _beforeText = mergeText(before, {
+              //   textValue: '\n\ufeff',
+              //   ranges: [],
+              // })
+              // const _newOffset = _beforeText.textValue.length
+
+              // const _newText = mergeText(_beforeText, after)
+
+              const _newBlock = {
+                ..._focusedBlock,
+                text,
+              }
+              //  update the selection
+              const _sel = cloneDeep(state.selection)
+              _sel.anchor.offset = offsetAfterInsert
+              _sel.focus.offset = offsetAfterInsert
+
+              setContent({
+                selection: _sel,
+                operations: [
+                  {
+                    index: editor.selection.focus.path[0],
+                    text: _newBlock.text,
+                    withRerender: true,
+                  },
+                ],
+              })
+              event.preventDefault()
+              return
+            }
             // we're not creating a new block, so just insert a carriage return
             event.preventDefault()
             Transforms.insertText(editor, `\n`)

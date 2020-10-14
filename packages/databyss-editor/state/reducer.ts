@@ -696,6 +696,10 @@ export default (
                 block: _block,
               })
             } else {
+              // normally operations pass through
+
+              // check if any text is being entered in an inline atomic
+              console.log(JSON.parse(JSON.stringify(op.selection)))
               console.log('CHECK WHERE SELECTION IS CURRENTLY AT')
             }
           })
