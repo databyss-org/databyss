@@ -53,6 +53,7 @@ export const sortSelection = (selection: Selection): Selection => {
 export const mergeText = (a: Text, b: Text): Text => {
   const mergedTextValue = a.textValue + b.textValue
 
+  console.log(JSON.stringify(a.ranges))
   const mergedRanges = [
     ...a.ranges,
     ...b.ranges.map((r: Range) => ({
@@ -61,6 +62,7 @@ export const mergeText = (a: Text, b: Text): Text => {
     })),
   ].filter(r => r.length > 0)
 
+  console.log(mergedRanges)
   const mergedText = {
     textValue: mergedTextValue,
     ranges: mergedRanges,

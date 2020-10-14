@@ -34,6 +34,7 @@ const Leaf = ({ attributes, children, leaf, readOnly }) => {
       <span
         style={{
           color: red[0],
+          caretColor: 'black',
         }}
       >
         {_children}

@@ -45,6 +45,24 @@ import { applyMarkAtIndexRange } from '../lib/markup'
 import { splitTextAtOffset, mergeText } from '../lib/clipboardUtils'
 import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
 
+const firefoxWhitespaceFix = editor => {
+  // pressed key is a char
+  const _text = Node.string(editor.children[editor.selection.focus.path[0]])
+  const _offset = parseInt(flattenOffset(editor, editor.selection.focus), 10)
+
+  // check if previous character is a white space, if so, remove whitespace and recalculate text and offset
+  const _prevWhiteSpace = _text.charAt(_offset - 1) === '\u2060'
+  if (_prevWhiteSpace) {
+    Transforms.delete(editor, {
+      distance: 1,
+      unit: 'character',
+      reverse: true,
+    })
+    return true
+  }
+  return false
+}
+
 const ContentEditable = ({
   onDocumentChange,
   focusIndex,
@@ -294,6 +312,14 @@ const ContentEditable = ({
       }
 
       const onKeyDown = event => {
+        // if a character has been entered, check if white space exists (firefox fix), if it has, remove character
+        if (
+          String.fromCharCode(event.keyCode).match(/(\w|\s)/g) ||
+          event.key === 'Backspace'
+        ) {
+          firefoxWhitespaceFix(editor)
+        }
+
         // never allow inline atomics to be entered manually
         if (
           (isPrintable(event) || event.key === 'Backspace') &&
@@ -500,23 +526,16 @@ const ContentEditable = ({
             _text.length === 0
           if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
             if (_currentLeaf.inlineTopic) {
+              // // edge case where enter is at the end of an inline atomic
+              console.log(_focusedBlock)
+              const _textToInsert = _atBlockEnd ? '\n\u2060' : '\n'
               const { text, offsetAfterInsert } = insertTextAtOffset({
                 text: _focusedBlock.text,
                 offset: _offset,
-                textToInsert: { textValue: '\n\ufeff', ranges: [] },
+                textToInsert: { textValue: _textToInsert, ranges: [] },
               })
-              // // edge case where enter is at the end of an inline atomic
-              // const { before, after } = splitTextAtOffset({
-              //   text: _focusedBlock.text,
-              //   offset: _offset,
-              // })
-              // const _beforeText = mergeText(before, {
-              //   textValue: '\n\ufeff',
-              //   ranges: [],
-              // })
-              // const _newOffset = _beforeText.textValue.length
 
-              // const _newText = mergeText(_beforeText, after)
+              console.log('BEFORE TEXST', text.ranges)
 
               const _newBlock = {
                 ..._focusedBlock,
@@ -527,6 +546,7 @@ const ContentEditable = ({
               _sel.anchor.offset = offsetAfterInsert
               _sel.focus.offset = offsetAfterInsert
 
+              console.log('NEW BLOCK', _newBlock.text.ranges)
               setContent({
                 selection: _sel,
                 operations: [

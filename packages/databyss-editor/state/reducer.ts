@@ -654,7 +654,7 @@ export default (
                 })
 
                 // append an empty space after merge
-                _textBefore = mergeText(_textBefore, { textValue: ' \ufeff', ranges: [] })
+                _textBefore = mergeText(_textBefore, { textValue: ' \u2060', ranges: [] })
 
                 // get the offset value where the cursor should be placed after operation
                 const _caretOffest = _textBefore.textValue.length 
