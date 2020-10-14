@@ -151,7 +151,6 @@ const ContentEditable = ({
         const { setTopic } = topicContext
 
         state.newEntities.forEach(entity => {
-          console.log(entity)
           const _data = {
             _id: entity._id,
             text: {
@@ -305,7 +304,6 @@ const ContentEditable = ({
           })
         }
 
-        console.log(editor.operations)
         if (editor.operations.length) {
           setSelection(selection)
         }
@@ -319,14 +317,12 @@ const ContentEditable = ({
         ) {
           firefoxWhitespaceFix(editor)
         }
-
         // never allow inline atomics to be entered manually
         if (
           (isPrintable(event) || event.key === 'Backspace') &&
           SlateEditor.marks(editor).inlineTopic
         ) {
           let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
-          console.log(_currentLeaf)
           const _anchor = editor.selection.anchor
           const _isAnchorAtStartOfLeaf =
             _anchor.offset === 0 && _anchor.path[1] !== 0
@@ -346,28 +342,15 @@ const ContentEditable = ({
             })
             _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
           }
-          console.log(_currentLeaf)
-          // TODO: WORKING ON ENTER AT END OF AN ATOMIC
-
-          console.log('IS AT START', _isAnchorAtStartOfLeaf)
-          console.log('is at end', _isAnchorAtEndOfLeaf)
           // if current or prevous leaf is inline
           if (_currentLeaf.inlineTopic) {
-            // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
             if (
-              event.key !== 'Backspace' &&
-              (_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf)
+              !(
+                event.key !== 'Backspace' &&
+                (_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf)
+              )
             ) {
-              // if active inline mark from previous block, remove mark
-              if (event.key === 'Enter') {
-                console.log('ENTER WHILE DOING ')
-              }
-              // if (SlateEditor.marks(editor).inlineTopic) {
-              //   toggleMark(editor, 'inlineTopic')
-              // }
-            } else {
-              console.log('PREVENTS DEFAULT')
-              // if not on edge of node or a backspace event, prevent character
+              // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
               event.preventDefault()
               return
             }
@@ -535,8 +518,6 @@ const ContentEditable = ({
                 textToInsert: { textValue: _textToInsert, ranges: [] },
               })
 
-              console.log('BEFORE TEXST', text.ranges)
-
               const _newBlock = {
                 ..._focusedBlock,
                 text,
@@ -546,7 +527,6 @@ const ContentEditable = ({
               _sel.anchor.offset = offsetAfterInsert
               _sel.focus.offset = offsetAfterInsert
 
-              console.log('NEW BLOCK', _newBlock.text.ranges)
               setContent({
                 selection: _sel,
                 operations: [
