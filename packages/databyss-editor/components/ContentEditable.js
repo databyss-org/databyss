@@ -435,8 +435,14 @@ const ContentEditable = ({
           )
           const _atBlockStart = _offset === 0
           if (!_atBlockStart) {
+            // make sure this isnt an atomic closure
+            const _text = Node.string(
+              editor.children[editor.selection.focus.path[0]]
+            )
+            const _isClosure = _text.charAt(_offset - 1) === '/'
+            console.log(_isClosure)
             // toggle the inline atomic block
-            if (!isMarkActive(editor, 'inlineAtomicMenu')) {
+            if (!isMarkActive(editor, 'inlineAtomicMenu') && !_isClosure) {
               toggleMark(editor, 'inlineAtomicMenu')
             }
           }
