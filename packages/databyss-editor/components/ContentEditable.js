@@ -458,8 +458,6 @@ const ContentEditable = ({
           //   toggleMark(editor, 'inlineTopic')
           // }
 
-          console.log('IN ENTER', _currentLeaf)
-
           if (isAtomic(_focusedBlock)) {
             if (
               ReactEditor.isFocused(editor) &&

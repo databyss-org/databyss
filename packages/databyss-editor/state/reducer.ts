@@ -565,17 +565,14 @@ export default (
                 if (_b._id === op.isRefEntity) {
 
                   _block = draft.blocks[_idx]
-
                   _block.text = op.text
 
-    
-                  console.log('block', JSON.parse(JSON.stringify(_block)))
-
+  
                   let _nextBlock = { ..._block, __isActive: false }
 
                   // if atomic type is closure, get updated text value and overwrite `nextBlock`
                   const _type = draft.blocks[_idx].type
-console.log(_type)
+
                   if (getClosureType(_type)) {
                     _nextBlock = {
                       ..._nextBlock,
@@ -589,8 +586,7 @@ console.log(_type)
                       },
                     }
                   }
-                  console.log(JSON.parse(JSON.stringify(_nextBlock)))
-
+    
                   draft.blocks[_idx] = _nextBlock
                   draft.operations.push({
                     index: _idx,
