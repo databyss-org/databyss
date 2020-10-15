@@ -5,19 +5,20 @@ import { Selection, Block, Range, EditorState, Text } from '../interfaces'
 import { OnChangeArgs } from './EditorProvider'
 import { isAtomicInlineType } from '../lib/util'
 import { splitTextAtOffset } from '../lib/clipboardUtils'
+import { mergeText } from '../lib/clipboardUtils/index';
 
 /*
 takes a text object and a range type and returns the length of the range, the location of the offset and the text contained within the range, this fuction works when text block has of of that range type
 */
 export const getTextOffsetWithRange = ({ text, rangeType }: { text: Text, rangeType: string }) => {
   const _string = text.textValue
-  let _ranges = text.ranges.filter(r=> r.marks.includes(rangeType))
-  if(_ranges.length){
+  let _ranges = text.ranges.filter(r => r.marks.includes(rangeType))
+  if (_ranges.length) {
     // for now assume only one range is provided
     let _range = _ranges[0]
     const _textWithRange = _string.slice(_range.offset, _range.offset + _range.length)
 
-    return {length:_range.length, offset: _range.offset, text: _textWithRange }
+    return { length: _range.length, offset: _range.offset, text: _textWithRange }
   }
   return null
 }
@@ -315,7 +316,7 @@ export const trimRight = (text: Text): Boolean => {
   if (_trim) {
     // cleanup ranges
     text.ranges = text.ranges.filter(
-      r => r.offset <  text.textValue.length - _trim[0].length
+      r => r.offset < text.textValue.length - _trim[0].length
     )
     text.textValue = text.textValue.substring(
       0,
@@ -370,21 +371,70 @@ export const getWordFromOffset = ({
   text,
   offset
 }: {
-  text: string 
+  text: string
   offset: number
-}): {word: string, offset: number} | null => {
-  if(!text){
+}): { word: string, offset: number } | null => {
+  if (!text) {
     return null
   }
   // split the text by space or new line
-  const words:Array<string> = text.split(/\s+/)
+  const words: Array<string> = text.split(/\s+/)
   let _currentOffset = 0
-  for (let i=0; words.length >i; i++){
+  for (let i = 0; words.length > i; i++) {
     const _lastOffset = _currentOffset
-    _currentOffset+= words[i].length + 1
-    if(_currentOffset> offset){
-      return {word: words[i], offset:_lastOffset}
+    _currentOffset += words[i].length + 1
+    if (_currentOffset > offset) {
+      return { word: words[i], offset: _lastOffset }
     }
+  }
+  return null
+}
+
+export const replaceInlineText = ({
+  text,
+  refId,
+  newText
+}: {
+  text: Text
+  refId: string
+  newText: Text
+}) => {
+  const _textToInsert = {
+    textValue: `#${newText.textValue}`,
+    ranges: [{
+      length: newText.textValue.length + 1,
+      offset: 0,
+      marks: [['inlineTopic', refId]]
+    }]
+  }
+
+
+  const _rangesWithId = text.ranges.filter(r => r.marks[0][0] === 'inlineTopic' && r.marks[0][1] === refId)
+  // offset will be updated in loop
+  let _cumulativeOffset = 0
+  let _textToUpdate = text
+  _rangesWithId.forEach(r => {
+    const _splitText = splitTextAtOffset({ text: _textToUpdate, offset: r.offset + _cumulativeOffset })
+
+    // remove text from second half of split
+    const _textAfter = splitTextAtOffset({ text: _splitText.after, offset: r.length })
+
+    // insert text at offset
+    let _mergedText = mergeText(_splitText.before, _textToInsert)
+
+    // merge last half of text with new next
+    _mergedText = mergeText(_mergedText, _textAfter.after)
+
+    // update cumulative text
+    _textToUpdate = _mergedText
+
+    // update offset to current offset
+    // get difference of previous atomic to new atomic to update length of the atomic
+    const _diff = _textToInsert.textValue.length - r.length
+    _cumulativeOffset += _diff
+  })
+  if (_rangesWithId.length) {
+    return _textToUpdate
   }
   return null
 }

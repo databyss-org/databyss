@@ -45,7 +45,7 @@ import {
   getWordFromOffset,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
-import { getTextOffsetWithRange } from './util';
+import { getTextOffsetWithRange, replaceInlineText } from './util';
 import { mergeText } from '../lib/clipboardUtils/index';
 import { OPEN_LIBRARY } from '../components/Suggest/SuggestSources'
 
@@ -69,7 +69,7 @@ export const bakeAtomicBlock = ({
     const _atomicType = symbolToAtomicType(_block.text.textValue.charAt(0))
 
     // if current block is empty with n atomic prefix, replace block with new empty block
-    if( _block.text.textValue.trim().length < 2 && _atomicType){
+    if (_block.text.textValue.trim().length < 2 && _atomicType) {
       // create a new entity
       let _block: Block = {
         type: BlockType.Entry,
@@ -177,18 +177,18 @@ export const bakeAtomicClosureBlock = ({
     if (_atomicClosureType) {
       if (!isAtomicInlineType(_block.type)) {
         // if on last block. add new block below
-        if((draft.blocks.length - 1 ) === index){
-      // create a new entity
+        if ((draft.blocks.length - 1) === index) {
+          // create a new entity
           let _newBlock: Block = {
             type: BlockType.Entry,
             _id: new ObjectId().toHexString(),
             text: { textValue: '', ranges: [] },
           }
-          draft.blocks[index+ 1] = _newBlock
+          draft.blocks[index + 1] = _newBlock
 
           // push update operation back to editor
           draft.operations.push({
-            index: index+1,
+            index: index + 1,
             block: blockValue(_newBlock),
           })
         }
@@ -459,7 +459,7 @@ export default (
               } else {
                 draft.blocks.splice(_insertAt + 1, 0, _emptyBlock)
               }
-              
+
               // add insertAfter operation to backflow with empty line
               draft.operations.push({
                 index: _insertAt + 1,
@@ -542,7 +542,10 @@ export default (
           payload.operations.forEach((op: PayloadOperation) => {
             // update node text
             const _block = draft.blocks[op.index]
-            _block.text = op.text
+            // if operation is ref entity, handle seperatly
+            if (!op.isRefEntity) {
+              _block.text = op.text
+            }
 
             // check for atomic closure
             if (bakeAtomicClosureBlock({ draft, index: op.index })) {
@@ -559,7 +562,13 @@ export default (
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {
                 // TODO: UPDATE TYPSCRIPT FOR refentity
+                console.log('block', JSON.parse(JSON.stringify(_b)))
+                console.log('op.isRefEntity', JSON.parse(JSON.stringify(op.isRefEntity)))
+
                 if (_b._id === op.isRefEntity) {
+                  _block.text = op.text
+
+                  console.log('GETS IN FIRST IF')
                   let _nextBlock = { ..._block, __isActive: false }
 
                   // if atomic type is closure, get updated text value and overwrite `nextBlock`
@@ -585,8 +594,25 @@ export default (
                     block: _nextBlock,
                   })
                 } else {
+
                   // check text value to update any inline atomics found
-                  console.log(JSON.parse(JSON.stringify(_b)))
+                  const _newText = replaceInlineText({
+                    text: _b.text,
+                    refId: op.isRefEntity,
+                    newText: op.text,
+                  })
+
+                  if (_newText) {
+                    const _newBlock = {
+                      ...draft.blocks[_idx],
+                      text: _newText
+                    }
+                    draft.blocks[_idx] = _newBlock
+                    draft.operations.push({
+                      index: _idx,
+                      block: _newBlock,
+                    })
+                  }
                 }
               })
             } else if (op.withBakeAtomic) {
@@ -595,7 +621,7 @@ export default (
               clearBlockRelations = true
               bakeAtomicBlock({ draft, index: op.index })
 
-            } else if (op.convertInlineToAtomic){
+            } else if (op.convertInlineToAtomic) {
               /*
                 if flag `convertInlineToAtomic` is set, pull out text within range `inlineAtomicMenu`, look up in entityCache and set the markup with appropriate id and range
               */
@@ -610,9 +636,9 @@ export default (
 
 
               // check if text is inline atomic type
-              const _atomicType =inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))
+              const _atomicType = inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))
 
-              if(inlineMarkupData && _atomicType){
+              if (inlineMarkupData && _atomicType) {
                 // text value with markup
                 let _atomicTextValue = inlineMarkupData?.text
 
@@ -661,7 +687,7 @@ export default (
                 _textBefore = mergeText(_textBefore, { textValue: ' \u2060', ranges: [] })
 
                 // get the offset value where the cursor should be placed after operation
-                const _caretOffest = _textBefore.textValue.length 
+                const _caretOffest = _textBefore.textValue.length
 
 
                 // merge second block with first block
@@ -683,11 +709,11 @@ export default (
                 }
                 nextSelection = _nextSelection
 
-                if(_pushNewEntity){
+                if (_pushNewEntity) {
                   const _entity = {
-                    type: _atomicType, 
+                    type: _atomicType,
                     // remove atomic symbol
-                    text: {textValue: _atomicTextValue.substring(1), ranges: []},
+                    text: { textValue: _atomicTextValue.substring(1), ranges: [] },
                     _id: _atomicId
                   }
                   draft.newEntities.push(_entity)
@@ -703,8 +729,8 @@ export default (
               // normally operations pass through
 
               // check if any text is being entered in an inline atomic
-              console.log(JSON.parse(JSON.stringify(op.selection)))
-              console.log('CHECK WHERE SELECTION IS CURRENTLY AT')
+              // console.log(JSON.parse(JSON.stringify(op.selection)))
+              // // console.log('CHECK WHERE SELECTION IS CURRENTLY AT')
             }
           })
           break
@@ -854,7 +880,7 @@ export default (
       const _selectedBlock = draft.blocks[draft.selection.focus.index]
 
       if (_selectedBlock) {
-    
+
 
         // show newBlockMenu if selection is collapsed and is empty
         _selectedBlock.__showNewBlockMenu =
@@ -902,10 +928,10 @@ export default (
         // show __showInlineTopicMenu if selection is collapsed, selection is within text precedded with a `#` and it is currently not tagged already
         _selectedBlock.__showInlineTopicMenu = !selectionHasRange(draft.selection) && _hasInlineMenuMark
 
-         
+
 
         // _selectedBlock.__showInlineTopicMenu = (!selectionHasRange(draft.selection) && !_selectedBlock.__showTopicMenu && _currentWord?.word.startsWith('#') )?_currentWord: false
-        
+
 
 
 
