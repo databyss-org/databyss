@@ -39,7 +39,6 @@ const Editor = ({
   )
 
   const onInlineClick = useCallback(({ atomicType, id }) => {
-    console.log(id)
     onInlineAtomicClick({ type: atomicType, refId: id })
   }, [])
 

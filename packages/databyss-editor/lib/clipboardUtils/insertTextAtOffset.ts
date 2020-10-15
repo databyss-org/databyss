@@ -16,13 +16,10 @@ export default ({
   offsetAfterInsert: number
 } => {
   let _offset = textToInsert.textValue.length
-  console.log('text', text.ranges)
   const { before, after } = splitTextAtOffset({
     text,
     offset,
   })
-  console.log(before)
-  console.log('after', after)
   const _beforeText = mergeText(before, textToInsert)
 
   _offset = _beforeText.textValue.length

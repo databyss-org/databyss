@@ -54,7 +54,6 @@ const Element = ({ attributes, children, element, readOnly }) => {
 
   const onAtomicMouseDown = e => {
     e.preventDefault()
-    console.log({})
     showAtomicModal({ editorContext, navigationContext, editor })
   }
 
