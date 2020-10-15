@@ -541,7 +541,7 @@ export default (
 
           payload.operations.forEach((op: PayloadOperation) => {
             // update node text
-            const _block = draft.blocks[op.index]
+            let _block = draft.blocks[op.index]
             // if operation is ref entity, handle seperatly
             if (!op.isRefEntity) {
               _block.text = op.text
@@ -563,13 +563,19 @@ export default (
               draft.blocks.forEach((_b, _idx) => {
                 // TODO: UPDATE TYPSCRIPT FOR refentity
                 if (_b._id === op.isRefEntity) {
+
+                  _block = draft.blocks[_idx]
+
                   _block.text = op.text
+
+    
+                  console.log('block', JSON.parse(JSON.stringify(_block)))
 
                   let _nextBlock = { ..._block, __isActive: false }
 
                   // if atomic type is closure, get updated text value and overwrite `nextBlock`
                   const _type = draft.blocks[_idx].type
-
+console.log(_type)
                   if (getClosureType(_type)) {
                     _nextBlock = {
                       ..._nextBlock,
@@ -583,6 +589,7 @@ export default (
                       },
                     }
                   }
+                  console.log(JSON.parse(JSON.stringify(_nextBlock)))
 
                   draft.blocks[_idx] = _nextBlock
                   draft.operations.push({
@@ -685,10 +692,8 @@ export default (
                 // get the offset value where the cursor should be placed after operation
                 const _caretOffest = _textBefore.textValue.length
 
-
                 // merge second block with first block
                 const _newText = mergeText(_textBefore, _textAfter)
-
 
                 _block.text = _newText
 
