@@ -1,15 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react'
-import ObjectId from 'bson-objectid'
 import { Editor } from '@databyss-org/slate'
 import { useEditor } from '@databyss-org/slate-react'
+import cloneDeep from 'clone-deep'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
 import { prefixSearchAll } from '@databyss-org/services/block/filter'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useEditorContext } from '../../state/EditorProvider'
-import cloneDeep from 'clone-deep'
-import { toggleMark } from '../../lib/slateUtils'
 import { splitTextAtOffset, mergeText } from '../../lib/clipboardUtils'
 import { getTextOffsetWithRange } from '../../state/util'
 
@@ -138,23 +136,8 @@ const SuggestTopics = ({
   useEffect(updateSuggestions, [query, suggestions])
 
   const setCurrentTopicWithoutSuggestion = () => {
-    // generate new topic id
-    const _id = new ObjectId().toHexString()
-    // TODO: add space after
     const _index = state.selection.anchor.index
     const _stateBlock = state.blocks[_index]
-    // replace inlineAtomicMenu mark with new mark containing a new topic id
-    // const _ranges = _stateBlock.text.ranges.map(r => {
-    //   if (r.marks[0] === 'inlineAtomicMenu') {
-    //     return { ...r, marks: ['inlineTopic', _id] }
-    //   }
-    //   return r
-    // })
-    // // update ranges in block
-    // const _newBlock = {
-    //   ..._stateBlock,
-    //   text: { ..._stateBlock.text, ranges: _ranges },
-    // }
 
     // set the block with a re-render
     setContent({

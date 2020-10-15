@@ -1,5 +1,4 @@
 import MurmurHash3 from 'imurmurhash'
-import mongoose from 'mongoose'
 import { Text, Editor, Node } from '@databyss-org/slate'
 import { pickBy } from 'lodash'
 import { textToHtml } from '@databyss-org/services/block/serialize'

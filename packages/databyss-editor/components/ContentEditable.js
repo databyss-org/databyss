@@ -7,6 +7,7 @@ import {
   Editor as SlateEditor,
 } from '@databyss-org/slate'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
+import cloneDeep from 'clone-deep'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
@@ -31,18 +32,10 @@ import {
   isAtomicInlineType,
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
-import cloneDeep from 'clone-deep'
-import {
-  symbolToAtomicType,
-  selectionHasRange,
-  getWordFromOffset,
-  getTextOffsetWithRange,
-} from '../state/util'
+import { symbolToAtomicType, selectionHasRange } from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
-import { applyMarkAtIndexRange } from '../lib/markup'
-import { splitTextAtOffset, mergeText } from '../lib/clipboardUtils'
 import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
 
 const firefoxWhitespaceFix = editor => {
@@ -93,7 +86,6 @@ const ContentEditable = ({
     state,
     split,
     merge,
-    replace,
     setContent,
     setSelection,
     clear,
@@ -760,7 +752,6 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
           onChange={onChange}
           onKeyDown={onKeyDown}
           readonly={readonly}
-          onInlineAtomicClick={onInlineAtomicClick}
         />
       )
     },

@@ -14,7 +14,6 @@ import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { SuggestMenu, SuggestSources, SuggestTopics } from './Suggest'
-import { getWordFromOffset } from '../state/util'
 
 // browser still takes some time to process the spellcheck
 const SPELLCHECK_DEBOUNCE_TIME = 300
@@ -55,6 +54,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
 
   const onAtomicMouseDown = e => {
     e.preventDefault()
+    console.log({})
     showAtomicModal({ editorContext, navigationContext, editor })
   }
 

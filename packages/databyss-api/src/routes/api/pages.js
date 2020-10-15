@@ -153,9 +153,6 @@ router.get(
         }
         _rec.type = _block.type
       }
-      if (_rec.text.ranges.length) {
-        console.log(_rec.text.ranges)
-      }
       blocks.push(_rec)
     }
 

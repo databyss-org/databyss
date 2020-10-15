@@ -8,8 +8,6 @@ import { useEditorContext } from '../state/EditorProvider'
 import Leaf from './Leaf'
 import Element from './Element'
 import FormatMenu from './FormatMenu'
-import { selectionHasRange } from '../state/util'
-import { stateSelectionToSlateSelection } from '../lib/slateUtils'
 
 const Editor = ({
   children,
