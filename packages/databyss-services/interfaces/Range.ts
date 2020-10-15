@@ -1,5 +1,5 @@
 export interface Range {
   offset: number
   length: number
-  marks: Array<string>
+  marks: Array<string | Array<string>>
 }

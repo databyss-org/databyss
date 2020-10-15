@@ -504,7 +504,6 @@ const ContentEditable = ({
           if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
             if (_currentLeaf.inlineTopic) {
               // // edge case where enter is at the end of an inline atomic
-              console.log(_focusedBlock)
               const _textToInsert = _atBlockEnd ? '\n\u2060' : '\n'
               const { text, offsetAfterInsert } = insertTextAtOffset({
                 text: _focusedBlock.text,

@@ -4,8 +4,10 @@ import { Block, Selection } from './'
 export interface PayloadOperation {
   index: number
   text: Text
-  isRefEntity?: boolean
+  isRefEntity?: string
+  withRerender?: string
   withBakeAtomic?: boolean
+  convertInlineToAtomic?: boolean
 }
 
 export interface BackflowOperation {

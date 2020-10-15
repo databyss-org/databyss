@@ -562,13 +562,9 @@ export default (
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {
                 // TODO: UPDATE TYPSCRIPT FOR refentity
-                console.log('block', JSON.parse(JSON.stringify(_b)))
-                console.log('op.isRefEntity', JSON.parse(JSON.stringify(op.isRefEntity)))
-
                 if (_b._id === op.isRefEntity) {
                   _block.text = op.text
 
-                  console.log('GETS IN FIRST IF')
                   let _nextBlock = { ..._block, __isActive: false }
 
                   // if atomic type is closure, get updated text value and overwrite `nextBlock`
@@ -593,7 +589,7 @@ export default (
                     index: _idx,
                     block: _nextBlock,
                   })
-                } else {
+                } else if(op.isRefEntity) {
 
                   // check text value to update any inline atomics found
                   const _newText = replaceInlineText({
@@ -727,10 +723,10 @@ export default (
               })
             } else {
               // normally operations pass through
-
+              // TODO: Block text inserted at inline
+              console.log('CHECK TEXT')
               // check if any text is being entered in an inline atomic
-              // console.log(JSON.parse(JSON.stringify(op.selection)))
-              // // console.log('CHECK WHERE SELECTION IS CURRENTLY AT')
+          
             }
           })
           break
