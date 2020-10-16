@@ -1,12 +1,14 @@
 import React from 'react'
 import { pickBy } from 'lodash'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+
+import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
+
 import { isResourceReady } from './_helpers'
 
 export const PageLoader = ({ children, pageId }) => {

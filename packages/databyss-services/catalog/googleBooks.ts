@@ -3,8 +3,8 @@ import {
   CatalogType,
   GroupedCatalogResults, 
 } from '../interfaces'
-import { getPublicationTypeById } from '../citations/services/get-publication-type-by-id'
-import { normalizePublicationId } from '../citations/services/normalize-publication-id'
+import { getPublicationTypeById } from '../citations/services/getPublicationTypeById'
+import { normalizePublicationId } from '../citations/services/normalizePublicationId'
 import { PublicationTypeId } from '../citations/constants/PublicationTypeId'
 import request from '../lib/request'
 
