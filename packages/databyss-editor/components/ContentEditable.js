@@ -706,24 +706,26 @@ const ContentEditable = ({
             flattenOffset(editor, editor.selection.focus),
             10
           )
-          if (Range.isCollapsed(editor.selection) && _offset !== 0) {
-            const _prevCharIsAtomicInline = _text.charAt(_offset - 1) === '#'
-            if (
-              _prevCharIsAtomicInline &&
-              isMarkActive(editor, 'inlineAtomicMenu')
-            ) {
-              const _currentLeaf = Node.leaf(
-                editor,
-                editor.selection.anchor.path
-              )
-              if (_currentLeaf.inlineAtomicMenu) {
-                //    remove inline node
+          if (
+            Range.isCollapsed(editor.selection) &&
+            _offset !== 0 &&
+            _text.charAt(_offset - 1) === '#' &&
+            isMarkActive(editor, 'inlineAtomicMenu')
+          ) {
+            const _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
+            if (_currentLeaf.inlineAtomicMenu) {
+              //    remove inline node
+              if (_currentLeaf.text.length === 1) {
                 Transforms.removeNodes(editor, {
                   match: node => node === _currentLeaf,
                 })
+              } else {
+                console.log('should remove mark?')
+                event.preventDefault()
+                return
               }
-              event.preventDefault()
             }
+            event.preventDefault()
           }
         }
       }

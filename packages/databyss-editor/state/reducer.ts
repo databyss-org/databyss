@@ -45,7 +45,7 @@ import {
   getWordFromOffset,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
-import { getTextOffsetWithRange, replaceInlineText } from './util';
+import { getTextOffsetWithRange, replaceInlineText, getRangesAtPoint } from './util';
 import { mergeText } from '../lib/clipboardUtils/index';
 import { OPEN_LIBRARY } from '../components/Suggest/SuggestSources'
 
@@ -791,7 +791,36 @@ export default (
           })
           break
         }
-        case SET_SELECTION:
+        case SET_SELECTION: {
+          /* 
+            if selection is collapsed, check if we were in an `activeInlineMenu` trap focus until user bakes inline atomic
+          */
+          if(!selectionHasRange(draft.selection)){
+            const _activeRangesBefore =  getRangesAtPoint({ blocks: state.blocks, point: state.selection.anchor})
+            const _activeRangesAfter = getRangesAtPoint({ blocks: state.blocks, point: action.payload.selection.anchor})
+
+            const _activeInlineBefore = _activeRangesBefore.filter(r=> r.marks.includes("inlineAtomicMenu"))
+            const _activeInlineAfter = _activeRangesAfter.filter(r=> r.marks.includes("inlineAtomicMenu"))
+            // if active selection was 'inlineAtomicMenu and' before and not after, prevent default behavior
+            if(_activeInlineBefore.length &&    !_activeInlineAfter.length){
+              draft.preventDefault = true
+            }
+
+            /*
+            if seleciton after will results in the cursor being at the start of the inlineAtomicRange, prevent default
+            example: 
+            #|some text
+
+            do not allow cursor on other side of text
+            */
+            if(_activeInlineAfter.length){
+              const _inlineRange = _activeInlineAfter[_activeInlineAfter.findIndex(r=> r.marks.includes("inlineAtomicMenu"))]
+              if(_inlineRange.offset === action.payload.selection.anchor.offset){
+                draft.preventDefault = true
+              }
+            }
+          }
+        }
         default:
       }
 

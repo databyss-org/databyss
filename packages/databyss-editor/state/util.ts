@@ -1,7 +1,7 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
 import ObjectId from 'bson-objectid'
 import { Patch } from 'immer'
-import { Selection, Block, Range, EditorState, Text } from '../interfaces'
+import { Selection, Block, Range, EditorState, Text, Point } from '../interfaces'
 import { OnChangeArgs } from './EditorProvider'
 import { isAtomicInlineType } from '../lib/util'
 import { splitTextAtOffset } from '../lib/clipboardUtils'
@@ -398,7 +398,7 @@ export const replaceInlineText = ({
   text: Text
   refId: string
   newText: Text
-}) => {
+}): Text | null => {
   const _textToInsert = {
     textValue: `#${newText.textValue}`,
     ranges: [{
@@ -437,4 +437,21 @@ export const replaceInlineText = ({
     return _textToUpdate
   }
   return null
+}
+
+export const getRangesAtPoint = ({blocks, point}: {blocks: Block[], point: Point}): Range[] => {
+  const _currentBlockRanges = blocks[point.index].text.ranges
+
+  // find which ranges fall within current offset
+const _activeRanges = _currentBlockRanges.filter(r=> {
+  const {offset, length} = r
+  if(point.offset >= offset && (point.offset <= (offset + length))){
+    return true
+  }
+  return false
+})
+
+// console.log('ranges',_activeRanges)
+
+return _activeRanges
 }
