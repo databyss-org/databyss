@@ -725,7 +725,7 @@ export default (
             } else {
               // normally operations pass through
               // TODO: Block text inserted at inline
-              console.log('CHECK TEXT')
+           //   console.log('CHECK TEXT')
               // check if any text is being entered in an inline atomic
           
             }

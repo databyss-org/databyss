@@ -493,8 +493,25 @@ const ContentEditable = ({
             }
 
             // toggle the inline atomic block
+            // insert key manually to trigger an 'insert_text' command
             if (!isMarkActive(editor, 'inlineAtomicMenu') && !_isClosure) {
+              Transforms.insertText(editor, event.key)
+              Transforms.move(editor, {
+                unit: 'character',
+                distance: 1,
+                reverse: true,
+              })
+              Transforms.move(editor, {
+                unit: 'character',
+                distance: 1,
+                edge: 'focus',
+              })
               toggleMark(editor, 'inlineAtomicMenu')
+              Transforms.collapse(editor, {
+                edge: 'focus',
+              })
+              event.preventDefault()
+              return
             }
           }
         }
@@ -714,7 +731,7 @@ const ContentEditable = ({
           ) {
             const _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
             if (_currentLeaf.inlineAtomicMenu) {
-              //    remove inline node
+              // remove entire inline node if only the atomic symbol exists
               if (_currentLeaf.text.length === 1) {
                 Transforms.removeNodes(editor, {
                   match: node => node === _currentLeaf,
