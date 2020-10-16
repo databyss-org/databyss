@@ -4,6 +4,7 @@ import {
   Node,
   Transforms,
   Point,
+  Range,
   Editor as SlateEditor,
 } from '@databyss-org/slate'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
@@ -314,7 +315,8 @@ const ContentEditable = ({
         // never allow inline atomics to be entered manually
         if (
           (isPrintable(event) || event.key === 'Backspace') &&
-          SlateEditor.marks(editor).inlineTopic
+          SlateEditor.marks(editor).inlineTopic &&
+          Range.isCollapsed(editor.selection)
         ) {
           let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
           const _anchor = editor.selection.anchor
@@ -436,7 +438,7 @@ const ContentEditable = ({
         }
 
         // check for inline atomics
-        if (event.key === '#') {
+        if (event.key === '#' && Range.isCollapsed(editor.selection)) {
           // check if its not at the start of a block
           const _offset = parseInt(
             flattenOffset(editor, editor.selection.focus),
@@ -499,19 +501,16 @@ const ContentEditable = ({
 
         if (event.key === 'Enter') {
           const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
-
           const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
 
-          // let suggest menu handle event if caret is inside of a new active inline atomic
-          if (_currentLeaf.inlineAtomicMenu) {
+          if (
+            Range.isCollapsed(editor.selection) &&
+            _currentLeaf.inlineAtomicMenu
+          ) {
+            // let suggest menu handle event if caret is inside of a new active inline atomic
             event.preventDefault()
             return
           }
-
-          // if (SlateEditor.marks(editor).inlineTopic) {
-          //   console.log('TOGGLING')
-          //   toggleMark(editor, 'inlineTopic')
-          // }
 
           if (isAtomic(_focusedBlock)) {
             if (
@@ -555,7 +554,10 @@ const ContentEditable = ({
             _prevIsDoubleBreak ||
             _text.length === 0
           if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
-            if (_currentLeaf.inlineTopic) {
+            if (
+              Range.isCollapsed(editor.selection) &&
+              _currentLeaf.inlineTopic
+            ) {
               // // edge case where enter is at the end of an inline atomic
               const _textToInsert = _atBlockEnd ? '\n\u2060' : '\n'
               const { text, offsetAfterInsert } = insertTextAtOffset({
@@ -697,7 +699,6 @@ const ContentEditable = ({
             })
           }
           // check if `inlineAtomicMenu` is active and atomic symbol is going to be deleted, toggle mark and remove symbol
-
           const _text = Node.string(
             editor.children[editor.selection.focus.path[0]]
           )
@@ -705,7 +706,7 @@ const ContentEditable = ({
             flattenOffset(editor, editor.selection.focus),
             10
           )
-          if (_offset !== 0) {
+          if (Range.isCollapsed(editor.selection) && _offset !== 0) {
             const _prevCharIsAtomicInline = _text.charAt(_offset - 1) === '#'
             if (
               _prevCharIsAtomicInline &&
@@ -722,7 +723,6 @@ const ContentEditable = ({
                 })
               }
               event.preventDefault()
-              return
             }
           }
         }

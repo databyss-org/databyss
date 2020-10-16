@@ -542,7 +542,7 @@ export default (
           payload.operations.forEach((op: PayloadOperation) => {
             // update node text
             let _block = draft.blocks[op.index]
-            // if operation is ref entity, handle seperatly
+            // if operation is ref entity, handle separately
             if (!op.isRefEntity) {
               _block.text = op.text
             }
@@ -561,7 +561,6 @@ export default (
             if (op.isRefEntity) {
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {
-                // TODO: UPDATE TYPSCRIPT FOR refentity
                 if (_b._id === op.isRefEntity) {
 
                   _block = draft.blocks[_idx]

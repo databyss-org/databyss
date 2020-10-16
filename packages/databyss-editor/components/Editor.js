@@ -19,7 +19,7 @@ const Editor = ({
   ...others
 }) => {
   const entryContext = useEntryContext()
-  const { copy, paste, cut, state } = useEditorContext()
+  const { copy, paste, cut } = useEditorContext()
 
   let searchTerm = ''
 
@@ -186,7 +186,7 @@ const Editor = ({
 
       return ranges
     },
-    [searchTerm, state.blocks[state.selection.anchor.index]]
+    [searchTerm]
   )
 
   return (
