@@ -250,8 +250,10 @@ const ContentEditable = ({
         if (
           editor.operations.find(
             op =>
-              (op.type === 'insert_text' || op.type === 'remove_text') &&
-              op.text.length
+              (op.type === 'insert_text' ||
+                op.type === 'remove_text' ||
+                op.type === 'remove_node') &&
+              (op?.text?.length || op?.node?.text.length)
           )
         ) {
           // update target node
@@ -336,13 +338,17 @@ const ContentEditable = ({
           }
           // if current or prevous leaf is inline
           if (_currentLeaf.inlineTopic) {
+            // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
             if (
               !(
                 event.key !== 'Backspace' &&
                 (_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf)
               )
             ) {
-              // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
+              // remove inline node
+              Transforms.removeNodes(editor, {
+                match: node => node === _currentLeaf,
+              })
               event.preventDefault()
               return
             }
@@ -427,7 +433,7 @@ const ContentEditable = ({
         }
 
         // check for inline atomics
-        if (event.key === '@' || event.key === '#') {
+        if (event.key === '#') {
           // check if its not at the start of a block
           const _offset = parseInt(
             flattenOffset(editor, editor.selection.focus),
@@ -440,7 +446,6 @@ const ContentEditable = ({
               editor.children[editor.selection.focus.path[0]]
             )
             const _isClosure = _text.charAt(_offset - 1) === '/'
-            console.log(_isClosure)
             // toggle the inline atomic block
             if (!isMarkActive(editor, 'inlineAtomicMenu') && !_isClosure) {
               toggleMark(editor, 'inlineAtomicMenu')
