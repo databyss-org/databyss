@@ -4,6 +4,7 @@ import { ModalWindow } from '@databyss-org/ui/primitives'
 import { SourceLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import CitationProvider from '@databyss-org/services/citations/CitationProvider'
 
 import EditSourceForm from '../../components/SourcesContent/EditSourceForm'
 
@@ -41,7 +42,9 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
             setValues(source)
           }
           return (
-            <EditSourceForm values={values || source} onChange={setValues} />
+            <CitationProvider>
+              <EditSourceForm values={values || source} onChange={setValues} />
+            </CitationProvider>
           )
         }}
       </SourceLoader>

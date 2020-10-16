@@ -1,22 +1,33 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { cloneDeep } from 'lodash'
 
-import { Button, Text, TextControl, View } from '@databyss-org/ui/primitives'
 import { PublicationTypeId } from '@databyss-org/services/citations/constants/PublicationTypeId'
 import { PublicationTypes } from '@databyss-org/services/citations/constants/PublicationTypes'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
+import { useCitationContext } from '@databyss-org/services/citations/CitationProvider'
+import CitationStyleOptions, {
+  defaultCitationStyle,
+} from '@databyss-org/services/citations/constants/CitationStyleOptions'
 import EditAuthorFields from '@databyss-org/ui/components/SourcesContent/EditAuthorFields'
+import {
+  Button,
+  RawHtml,
+  Text,
+  TextControl,
+  View,
+} from '@databyss-org/ui/primitives'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
 
 import { pxUnits } from '../../theming/views'
 import LabeledDropDownControl from '../../primitives/Control/LabeledDropDownControl'
+import MakeLoader from '../Loaders/MakeLoader'
 
 // consts
+const emptyText = { textValue: '', ranges: [] }
 const labelProps = { width: '115px' }
 const publicationTypeOptions = sortEntriesAtoZ(PublicationTypes, 'label')
-const emptyText = { textValue: '', ranges: [] }
 
 // utils
 const checkIfBook = option => {
@@ -67,7 +78,15 @@ const LabeledTextInput = props => (
 )
 
 const EditSourceForm = props => {
+  const citationContext = useCitationContext()
+  const { generateCitation } = citationContext
+
   const { values, onChange } = props
+
+  // const [isParsingCitation, setParsingCitation] = useState(false)
+  const [citationStyleOption, setCitationStyleOption] = useState(
+    defaultCitationStyle
+  )
 
   const isBook = checkIfBook(values.detail.publicationType)
   const isArticle = checkIfArticle(values.detail.publicationType)
@@ -419,15 +438,32 @@ const EditSourceForm = props => {
   const renderCitationSection = () => (
     <>
       <FormHeading>Citation</FormHeading>
-      <LabeledTextInput
-        path="detail.citation"
-        id="citation"
-        label="Citation"
-        onBlur={onFieldBlur}
-        rich
+
+      <MakeLoader
+        resources={generateCitation(values.detail, {
+          styleId: citationStyleOption.id,
+        })}
+      >
+        {citation => (
+          <View marginTop={pxUnits(10)} marginBottom={pxUnits(10)}>
+            <RawHtml html={citation} />
+          </View>
+        )}
+      </MakeLoader>
+
+      <LabeledDropDownControl
+        label="Style"
+        labelProps={labelProps}
+        gridFlexWrap="nowrap"
+        paddingVariant="tiny"
+        value={citationStyleOption}
+        onChange={setCitationStyleOption}
+        dropDownProps={{
+          concatCss: { width: '75%' },
+          ctaLabel: 'Choose a citation style',
+          items: CitationStyleOptions,
+        }}
       />
-      {/* TODO: render citation dynamically with citeproc-js */}
-      {/* <RawHtml html={textToHtml(values.text)} /> */}
     </>
   )
 

@@ -27,7 +27,7 @@ const TextInput = forwardRef(
         inputRef={ref || undefined}
         css={[resetCss].concat(concatCss)}
         value={value.textValue}
-        autofocus={autoFocus}
+        autoFocus={autoFocus}
         {...others}
       />
     ) : (
