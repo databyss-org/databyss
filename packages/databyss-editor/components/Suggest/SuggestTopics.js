@@ -72,6 +72,7 @@ const SuggestTopics = ({
         ],
       })
 
+      // TODO: only add white space when at the end of block
       // append an empty space after merge
       _textBefore = mergeText(_textBefore, { textValue: ' \u2060', ranges: [] })
 

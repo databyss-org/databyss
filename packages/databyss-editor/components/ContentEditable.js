@@ -345,10 +345,13 @@ const ContentEditable = ({
                 (_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf)
               )
             ) {
-              // remove inline node
-              Transforms.removeNodes(editor, {
-                match: node => node === _currentLeaf,
-              })
+              if (event.key === 'Backspace') {
+                // remove inline node
+                Transforms.removeNodes(editor, {
+                  match: node => node === _currentLeaf,
+                })
+              }
+
               event.preventDefault()
               return
             }
@@ -445,7 +448,48 @@ const ContentEditable = ({
             const _text = Node.string(
               editor.children[editor.selection.focus.path[0]]
             )
+
             const _isClosure = _text.charAt(_offset - 1) === '/'
+
+            const _atBlockEnd = _offset === _text.length
+            // perform a lookahead to see if inline atomic should 'slurp' following word
+            if (!_atBlockEnd) {
+              const _text = Node.string(
+                editor.children[editor.selection.focus.path[0]]
+              )
+              const _offset = parseInt(
+                flattenOffset(editor, editor.selection.focus),
+                10
+              )
+
+              const _nextCharIsWhitespace = _text.charAt(_offset) === ' '
+              // if next character is not a whitespace, swollow next word into mark `inlineAtomicMenu`
+
+              if (
+                !_nextCharIsWhitespace &&
+                !isMarkActive(editor, 'inlineAtomicMenu')
+              ) {
+                Transforms.insertText(editor, event.key)
+                Transforms.move(editor, {
+                  unit: 'character',
+                  distance: 1,
+                  reverse: true,
+                })
+                Transforms.move(editor, {
+                  unit: 'word',
+                  distance: 1,
+                  edge: 'focus',
+                })
+                toggleMark(editor, 'inlineAtomicMenu')
+                // Editor.addMark(editor, 'inlineAtomicMenu', true)
+                Transforms.collapse(editor, {
+                  edge: 'focus',
+                })
+                event.preventDefault()
+                return
+              }
+            }
+
             // toggle the inline atomic block
             if (!isMarkActive(editor, 'inlineAtomicMenu') && !_isClosure) {
               toggleMark(editor, 'inlineAtomicMenu')
@@ -651,6 +695,35 @@ const ContentEditable = ({
               distance: 1,
               reverse: true,
             })
+          }
+          // check if `inlineAtomicMenu` is active and atomic symbol is going to be deleted, toggle mark and remove symbol
+
+          const _text = Node.string(
+            editor.children[editor.selection.focus.path[0]]
+          )
+          const _offset = parseInt(
+            flattenOffset(editor, editor.selection.focus),
+            10
+          )
+          if (_offset !== 0) {
+            const _prevCharIsAtomicInline = _text.charAt(_offset - 1) === '#'
+            if (
+              _prevCharIsAtomicInline &&
+              isMarkActive(editor, 'inlineAtomicMenu')
+            ) {
+              const _currentLeaf = Node.leaf(
+                editor,
+                editor.selection.anchor.path
+              )
+              if (_currentLeaf.inlineAtomicMenu) {
+                //    remove inline node
+                Transforms.removeNodes(editor, {
+                  match: node => node === _currentLeaf,
+                })
+              }
+              event.preventDefault()
+              return
+            }
           }
         }
       }

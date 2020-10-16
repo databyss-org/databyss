@@ -682,6 +682,7 @@ export default (
                   ],
                 })
 
+                // TODO: ONLY APPEND SPACE AND WHITE SPACE WHEN AT END OF BLOCK
                 // append an empty space after merge
                 _textBefore = mergeText(_textBefore, { textValue: ' \u2060', ranges: [] })
 
