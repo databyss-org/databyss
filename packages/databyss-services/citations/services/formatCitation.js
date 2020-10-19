@@ -32,6 +32,8 @@ const Styles = [
   },
 ]
 
+let cite = null
+
 /**
  * @param {object} csl An object formatted following the CSL-JSON schema.
  * See the <a href="https://citeproc-js.readthedocs.io/en/latest/csl-json/markup.html">CSL-JSON documentation</a>.
@@ -40,6 +42,8 @@ const Styles = [
  * - `styleId`: The citation style identifier. Defaults to "mla".
  */
 export async function formatCitation(csl, options) {
+  console.info('--- formatCitation ---')
+
   const outputType =
     options && options.outputType
       ? options.outputType
@@ -79,6 +83,10 @@ export async function formatCitation(csl, options) {
     )
   }
 
+  console.log('csl:', csl)
+  console.log('styleId:', styleId)
+  console.log('outputType:', outputType)
+
   return new Promise((resolve, reject) => {
     try {
       // cache to avoid fetching at every call
@@ -99,14 +107,31 @@ export async function formatCitation(csl, options) {
         styleConfig.templates.add(styleId, styleData)
       }
 
-      const cite = new Cite(csl)
+      const targetFormat = {
+        format: 'html',
+        template: styleId,
+      }
+
+      console.log('instanciate Cite()')
+      if (!cite) {
+        cite = new Cite(csl)
+      } else {
+        cite = cite.reset()
+        cite.set(csl)
+      }
+
+      console.log('cite.format()')
       const citation = cite.format(outputType, {
         format: 'html',
         template: styleId,
       })
 
+      console.log('formatted citation:', citation)
+
       resolve(citation)
     } catch (error) {
+      console.warn('Unable to format citation')
+
       reject(error)
     }
   })
