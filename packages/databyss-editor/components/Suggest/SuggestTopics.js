@@ -72,10 +72,6 @@ const SuggestTopics = ({
         ],
       })
 
-      // TODO: only add white space when at the end of block
-      // append an empty space after merge
-      _textBefore = mergeText(_textBefore, { textValue: ' \u2060', ranges: [] })
-
       // get the offset value where the cursor should be placed after operation
       const _caretOffest = _textBefore.textValue.length
 

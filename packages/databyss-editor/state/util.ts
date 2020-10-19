@@ -439,19 +439,136 @@ export const replaceInlineText = ({
   return null
 }
 
-export const getRangesAtPoint = ({blocks, point}: {blocks: Block[], point: Point}): Range[] => {
+export const getRangesAtPoint = ({ blocks, point }: { blocks: Block[], point: Point }): Range[] => {
   const _currentBlockRanges = blocks[point.index].text.ranges
 
   // find which ranges fall within current offset
-const _activeRanges = _currentBlockRanges.filter(r=> {
-  const {offset, length} = r
-  if(point.offset >= offset && (point.offset <= (offset + length))){
-    return true
+  const _activeRanges = _currentBlockRanges.filter(r => {
+    const { offset, length } = r
+    if (point.offset >= offset && (point.offset <= (offset + length))) {
+      return true
+    }
+    return false
+  })
+  return _activeRanges
+}
+
+export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
+  block: Block
+  index: number
+  draft: EditorState
+}) => {
+  /*
+    if flag `convertInlineToAtomic` is set, pull out text within range `inlineAtomicMenu`, look up in entityCache and set the markup with appropriate id and range
+  */
+  let _pushNewEntity = false
+
+  // get the markup data, function returns: offset, length, text
+  const inlineMarkupData = getTextOffsetWithRange({
+    text: block.text,
+    rangeType: 'inlineAtomicMenu',
+  })
+
+  // if the only text tagged with inlineAtomicMenu is the opener, remove mark and normalize the text
+  if (inlineMarkupData?.length === 1) {
+    console.log('HEREEE')
+    const ranges: Range[] = []
+    block.text.ranges.forEach(r => {
+      if (!r.marks.includes("inlineAtomicMenu")) {
+        ranges.push(r)
+      }
+    })
+
+    block.text.ranges = block.text.ranges.filter(r => !r.marks.includes("inlineAtomicMenu"))
+    // force a re-render
+    draft.operations.push({
+      index,
+      block,
+    })
+    return
   }
-  return false
-})
 
-// console.log('ranges',_activeRanges)
 
-return _activeRanges
+
+  // check if text is inline atomic type
+  const _atomicType = inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))
+  if (inlineMarkupData && _atomicType) {
+    // text value with markup
+    let _atomicTextValue = inlineMarkupData?.text
+
+    // new Id for inline atomic
+    let _atomicId = new ObjectId().toHexString()
+
+    // check entitySuggestionCache for an atomic with the identical name
+    // if there's a match and the atomic type matches, use the cached 
+    // block's _id and textValue (to correct casing differences
+    const _suggestion = draft.entitySuggestionCache?.[inlineMarkupData.text.substring(1).toLowerCase()]
+    // if suggestion exists in cache, grab values
+    if (_suggestion?.type === _atomicType) {
+      _atomicId = _suggestion._id
+      _atomicTextValue = `#${_suggestion.text.textValue}`
+    } else {
+      // set flag to new push atomic entity to appropriate provider
+      _pushNewEntity = true
+    }
+
+
+    // get value before offset
+    let _textBefore = splitTextAtOffset({
+      text: block.text,
+      offset: inlineMarkupData.offset,
+    }).before
+
+    // get value after markup range
+    const _textAfter = splitTextAtOffset({
+      text: block.text,
+      offset: inlineMarkupData.offset + inlineMarkupData.length,
+    }).after
+
+    // merge first block with atomic value, add mark and id to second block
+    _textBefore = mergeText(_textBefore, {
+      textValue: _atomicTextValue,
+      ranges: [
+        {
+          offset: 0,
+          length: _atomicTextValue.length,
+          marks: [['inlineTopic', _atomicId]],
+        },
+      ],
+    })
+
+
+    // get the offset value where the cursor should be placed after operation
+    const _caretOffest = _textBefore.textValue.length
+
+    // merge second block with first block
+    const _newText = mergeText(_textBefore, _textAfter)
+
+    block.text = _newText
+
+    // force a re-render
+    draft.operations.push({
+      index,
+      block,
+    })
+    // update selection
+    const _nextSelection = {
+      _id: draft.selection._id,
+      anchor: { index: index, offset: _caretOffest },
+      focus: { index: index, offset: _caretOffest },
+    }
+
+    // TODO: confirm this selection gets pushed upstream
+    draft.selection = _nextSelection
+
+    if (_pushNewEntity) {
+      const _entity = {
+        type: _atomicType,
+        // remove atomic symbol
+        text: { textValue: _atomicTextValue.substring(1), ranges: [] },
+        _id: _atomicId
+      }
+      draft.newEntities.push(_entity)
+    }
+  }
 }

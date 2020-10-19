@@ -43,6 +43,7 @@ import {
   trimRight,
   splitBlockAtEmptyLine,
   getWordFromOffset,
+  convertInlineToAtomicBlocks,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 import { getTextOffsetWithRange, replaceInlineText, getRangesAtPoint } from './util';
@@ -566,7 +567,7 @@ export default (
                   _block = draft.blocks[_idx]
                   _block.text = op.text
 
-  
+
                   let _nextBlock = { ..._block, __isActive: false }
 
                   // if atomic type is closure, get updated text value and overwrite `nextBlock`
@@ -585,13 +586,13 @@ export default (
                       },
                     }
                   }
-    
+
                   draft.blocks[_idx] = _nextBlock
                   draft.operations.push({
                     index: _idx,
                     block: _nextBlock,
                   })
-                } else if(op.isRefEntity) {
+                } else if (op.isRefEntity) {
 
                   // check text value to update any inline atomics found
                   const _newText = replaceInlineText({
@@ -620,102 +621,7 @@ export default (
               bakeAtomicBlock({ draft, index: op.index })
 
             } else if (op.convertInlineToAtomic) {
-              /*
-                if flag `convertInlineToAtomic` is set, pull out text within range `inlineAtomicMenu`, look up in entityCache and set the markup with appropriate id and range
-              */
-              let _pushNewEntity = false
-
-              // get the markup data, function returns: offset, length, text
-              const inlineMarkupData = getTextOffsetWithRange({
-                text: _block.text,
-                rangeType: 'inlineAtomicMenu',
-              })
-
-
-              // check if text is inline atomic type
-              const _atomicType = inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))
-
-              if (inlineMarkupData && _atomicType) {
-                // text value with markup
-                let _atomicTextValue = inlineMarkupData?.text
-
-                // new Id for inline atomic
-                let _atomicId = new ObjectId().toHexString()
-
-                // check entitySuggestionCache for an atomic with the identical name
-                // if there's a match and the atomic type matches, use the cached 
-                // block's _id and textValue (to correct casing differences
-                const _suggestion = draft.entitySuggestionCache?.[inlineMarkupData.text.substring(1).toLowerCase()]
-                // if suggestion exists in cache, grab values
-                if (_suggestion?.type === _atomicType) {
-                  _atomicId = _suggestion._id
-                  _atomicTextValue = `#${_suggestion.text.textValue}`
-                } else {
-                  // set flag to new push atomic entity to appropriate provider
-                  _pushNewEntity = true
-                }
-
-
-                // get value before offset
-                let _textBefore = splitTextAtOffset({
-                  text: _block.text,
-                  offset: inlineMarkupData.offset,
-                }).before
-
-                // get value after markup range
-                const _textAfter = splitTextAtOffset({
-                  text: _block.text,
-                  offset: inlineMarkupData.offset + inlineMarkupData.length,
-                }).after
-
-                // merge first block with atomic value, add mark and id to second block
-                _textBefore = mergeText(_textBefore, {
-                  textValue: _atomicTextValue,
-                  ranges: [
-                    {
-                      offset: 0,
-                      length: _atomicTextValue.length,
-                      marks: [['inlineTopic', _atomicId]],
-                    },
-                  ],
-                })
-
-
-                // TODO: ONLY APPEND SPACE AND WHITE SPACE WHEN AT END OF BLOCK
-                // append an empty space after merge
-                _textBefore = mergeText(_textBefore, { textValue: ' \u2060', ranges: [] })
-
-                // get the offset value where the cursor should be placed after operation
-                const _caretOffest = _textBefore.textValue.length
-
-                // merge second block with first block
-                const _newText = mergeText(_textBefore, _textAfter)
-
-                _block.text = _newText
-
-                // force a re-render
-                draft.operations.push({
-                  index: op.index,
-                  block: _block,
-                })
-                // update selection
-                const _nextSelection = {
-                  _id: draft.selection._id,
-                  anchor: { index: op.index, offset: _caretOffest },
-                  focus: { index: op.index, offset: _caretOffest },
-                }
-                nextSelection = _nextSelection
-
-                if (_pushNewEntity) {
-                  const _entity = {
-                    type: _atomicType,
-                    // remove atomic symbol
-                    text: { textValue: _atomicTextValue.substring(1), ranges: [] },
-                    _id: _atomicId
-                  }
-                  draft.newEntities.push(_entity)
-                }
-              }
+              convertInlineToAtomicBlocks({ block: _block, index: op.index, draft })
             } else if (op.withRerender) {
               // if operation requires re-render push operation upstream
               draft.operations.push({
@@ -725,9 +631,9 @@ export default (
             } else {
               // normally operations pass through
               // TODO: Block text inserted at inline
-             console.log('CHECK TEXT')
+              // console.log('CHECK TEXT')
               // check if any text is being entered in an inline atomic
-          
+
             }
           })
           break
@@ -795,29 +701,16 @@ export default (
           /* 
             if selection is collapsed, check if we were in an `activeInlineMenu` trap focus until user bakes inline atomic
           */
-          if(!selectionHasRange(draft.selection)){
-            const _activeRangesBefore =  getRangesAtPoint({ blocks: state.blocks, point: state.selection.anchor})
-            const _activeRangesAfter = getRangesAtPoint({ blocks: state.blocks, point: action.payload.selection.anchor})
+          if (!selectionHasRange(draft.selection)) {
+            const _activeRangesBefore = getRangesAtPoint({ blocks: state.blocks, point: state.selection.anchor })
+            const _activeRangesAfter = getRangesAtPoint({ blocks: state.blocks, point: action.payload.selection.anchor })
 
-            const _activeInlineBefore = _activeRangesBefore.filter(r=> r.marks.includes("inlineAtomicMenu"))
-            const _activeInlineAfter = _activeRangesAfter.filter(r=> r.marks.includes("inlineAtomicMenu"))
-            // if active selection was 'inlineAtomicMenu and' before and not after, prevent default behavior
-            if(_activeInlineBefore.length &&    !_activeInlineAfter.length){
-              draft.preventDefault = true
-            }
-
-            /*
-            if seleciton after will results in the cursor being at the start of the inlineAtomicRange, prevent default
-            example: 
-            #|some text
-
-            do not allow cursor on other side of text
-            */
-            if(_activeInlineAfter.length){
-              const _inlineRange = _activeInlineAfter[_activeInlineAfter.findIndex(r=> r.marks.includes("inlineAtomicMenu"))]
-              if(_inlineRange.offset === action.payload.selection.anchor.offset){
-                draft.preventDefault = true
-              }
+            const _activeInlineBefore = _activeRangesBefore.filter(r => r.marks.includes("inlineAtomicMenu"))
+            const _activeInlineAfter = _activeRangesAfter.filter(r => r.marks.includes("inlineAtomicMenu"))
+            // if active selection was 'inlineAtomicMenu and' before and not after, convert inlines to atomic
+            if (_activeInlineBefore.length && !_activeInlineAfter.length) {
+              const _index = draft.selection.anchor.index
+              convertInlineToAtomicBlocks({ block: draft.blocks[_index], index: _index, draft })
             }
           }
         }

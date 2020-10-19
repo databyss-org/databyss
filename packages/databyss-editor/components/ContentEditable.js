@@ -313,13 +313,52 @@ const ContentEditable = ({
           firefoxWhitespaceFix(editor)
         }
 
-        // if a space is entered and were currently creating an inline atomic, pass through normal text and toggle inline mark
         if (
-          event.key === ' ' &&
+          event.key === 'Escape' &&
           isMarkActive(editor, 'inlineAtomicMenu') &&
           Range.isCollapsed(editor.selection)
         ) {
+          const _index = state.selection.anchor.index
+          const _stateBlock = state.blocks[_index]
+          const _newRanges = _stateBlock.text.ranges.filter(
+            r => !r.marks.includes('inlineAtomicMenu')
+          )
+
+          // set the block with a re-render
+          setContent({
+            selection: state.selection,
+            operations: [
+              {
+                index: _index,
+                text: {
+                  textValue: _stateBlock.text.textValue,
+                  ranges: _newRanges,
+                },
+                withRerender: true,
+              },
+            ],
+          })
+        }
+
+        // if a space or arrow right key is entered and were currently creating an inline atomic, pass through normal text and remove inline mark
+        if (
+          (event.key === ' ' || event.key === 'ArrowRight') &&
+          isMarkActive(editor, 'inlineAtomicMenu') &&
+          Range.isCollapsed(editor.selection)
+        ) {
+          // check to see if were at the end of block
+          const _offset = parseInt(
+            flattenOffset(editor, editor.selection.focus),
+            10
+          )
+          const _text = Node.string(
+            editor.children[editor.selection.focus.path[0]]
+          )
+
+          const _atBlockEnd = _offset === _text.length
+
           const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+          // if only atomic symbol exists, remove mark
           if (_currentLeaf.inlineAtomicMenu && _currentLeaf.text.length === 1) {
             // remove inline mark
             Transforms.setNodes(
@@ -329,9 +368,30 @@ const ContentEditable = ({
                 match: node => node === _currentLeaf,
               }
             )
-            Transforms.insertText(editor, event.key)
+            if (event.key === ' ') {
+              Transforms.insertText(editor, event.key)
+            }
             event.preventDefault()
             return
+          } else if (
+            _currentLeaf.inlineAtomicMenu &&
+            _atBlockEnd &&
+            event.key === 'ArrowRight'
+          ) {
+            // if caret is at the end of a block, convert current inlineAtomicMenu to an inline block
+            const _index = state.selection.anchor.index
+            const _stateBlock = state.blocks[_index]
+            // set the block with a re-render
+            setContent({
+              selection: state.selection,
+              operations: [
+                {
+                  index: _index,
+                  text: _stateBlock.text,
+                  convertInlineToAtomic: true,
+                },
+              ],
+            })
           }
         }
 
@@ -376,7 +436,6 @@ const ContentEditable = ({
                   match: node => node === _currentLeaf,
                 })
               }
-
               event.preventDefault()
               return
             }
@@ -547,7 +606,22 @@ const ContentEditable = ({
             Range.isCollapsed(editor.selection) &&
             _currentLeaf.inlineAtomicMenu
           ) {
-            // let suggest menu handle event if caret is inside of a new active inline atomic
+            // let suggest menu handle event if caret is inside of a new active inline atomic and _currentLeaf has more than one character
+            if (_currentLeaf.text.length === 1) {
+              const _index = state.selection.anchor.index
+              const _stateBlock = state.blocks[_index]
+              // set the block with a re-render
+              setContent({
+                selection: state.selection,
+                operations: [
+                  {
+                    index: _index,
+                    text: _stateBlock.text,
+                    convertInlineToAtomic: true,
+                  },
+                ],
+              })
+            }
             event.preventDefault()
             return
           }
@@ -760,7 +834,20 @@ const ContentEditable = ({
                   match: node => node === _currentLeaf,
                 })
               } else {
-                console.log('should remove mark?')
+                // if atomic symbol is being removed, remove inlineAtomic mark from leaf
+                Transforms.setNodes(
+                  editor,
+                  { inlineAtomicMenu: false },
+                  {
+                    match: node => node === _currentLeaf,
+                  }
+                )
+                // allow backspace
+                Transforms.delete(editor, {
+                  distance: 1,
+                  unit: 'character',
+                  reverse: true,
+                })
                 event.preventDefault()
                 return
               }
