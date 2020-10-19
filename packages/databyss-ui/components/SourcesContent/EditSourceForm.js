@@ -83,7 +83,6 @@ const EditSourceForm = props => {
 
   const { values, onChange } = props
 
-  // const [isParsingCitation, setParsingCitation] = useState(false)
   const [citationStyleOption, setCitationStyleOption] = useState(
     defaultCitationStyle
   )
@@ -435,37 +434,36 @@ const EditSourceForm = props => {
     </>
   )
 
-  const renderCitationSection = () => (
-    <>
-      <FormHeading>Citation</FormHeading>
+  const renderCitationSection = () => {
+    const formatOptions = { styleId: citationStyleOption.id }
+    return (
+      <>
+        <FormHeading>Citation</FormHeading>
 
-      <MakeLoader
-        resources={generateCitation(values.detail, {
-          styleId: citationStyleOption.id,
-        })}
-      >
-        {citation => (
-          <View marginTop={pxUnits(10)} marginBottom={pxUnits(10)}>
-            <RawHtml html={citation} />
-          </View>
-        )}
-      </MakeLoader>
+        <MakeLoader resources={generateCitation(values.detail, formatOptions)}>
+          {citation => (
+            <View marginTop={pxUnits(10)} marginBottom={pxUnits(10)}>
+              <RawHtml html={citation} />
+            </View>
+          )}
+        </MakeLoader>
 
-      <LabeledDropDownControl
-        label="Style"
-        labelProps={labelProps}
-        gridFlexWrap="nowrap"
-        paddingVariant="tiny"
-        value={citationStyleOption}
-        onChange={setCitationStyleOption}
-        dropDownProps={{
-          concatCss: { width: '75%' },
-          ctaLabel: 'Choose a citation style',
-          items: CitationStyleOptions,
-        }}
-      />
-    </>
-  )
+        <LabeledDropDownControl
+          label="Style"
+          labelProps={labelProps}
+          gridFlexWrap="nowrap"
+          paddingVariant="tiny"
+          value={citationStyleOption}
+          onChange={setCitationStyleOption}
+          dropDownProps={{
+            concatCss: { width: '75%' },
+            ctaLabel: 'Choose a citation style',
+            items: CitationStyleOptions,
+          }}
+        />
+      </>
+    )
+  }
 
   const render = () => (
     <View

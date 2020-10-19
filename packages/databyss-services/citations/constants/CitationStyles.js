@@ -26,7 +26,6 @@ const CitationStyles = [
     name: 'Modern Language Association',
     shortName: 'MLA',
     url: `${zoteroBaseUrl}/mla`,
-    data: require('../assets/modern-language-association.csl'),
   },
   {
     id: CitationStyleIds.VANCOUVER,
