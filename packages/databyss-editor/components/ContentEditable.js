@@ -312,6 +312,29 @@ const ContentEditable = ({
         ) {
           firefoxWhitespaceFix(editor)
         }
+
+        // if a space is entered and were currently creating an inline atomic, pass through normal text and toggle inline mark
+        if (
+          event.key === ' ' &&
+          isMarkActive(editor, 'inlineAtomicMenu') &&
+          Range.isCollapsed(editor.selection)
+        ) {
+          const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+          if (_currentLeaf.inlineAtomicMenu && _currentLeaf.text.length === 1) {
+            // remove inline mark
+            Transforms.setNodes(
+              editor,
+              { inlineAtomicMenu: false },
+              {
+                match: node => node === _currentLeaf,
+              }
+            )
+            Transforms.insertText(editor, event.key)
+            event.preventDefault()
+            return
+          }
+        }
+
         // never allow inline atomics to be entered manually
         if (
           (isPrintable(event) || event.key === 'Backspace') &&

@@ -23,7 +23,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
           display: 'inline-block',
           backgroundColor: gray[6],
           borderRadius: '3px',
-          padding: '3px',
+          //    padding: '3px',
         }}
       >
         {_children}

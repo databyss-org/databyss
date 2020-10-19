@@ -632,7 +632,6 @@ export default (
               })
 
 
-
               // check if text is inline atomic type
               const _atomicType = inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))
 
@@ -681,6 +680,7 @@ export default (
                   ],
                 })
 
+
                 // TODO: ONLY APPEND SPACE AND WHITE SPACE WHEN AT END OF BLOCK
                 // append an empty space after merge
                 _textBefore = mergeText(_textBefore, { textValue: ' \u2060', ranges: [] })
@@ -725,7 +725,7 @@ export default (
             } else {
               // normally operations pass through
               // TODO: Block text inserted at inline
-           //   console.log('CHECK TEXT')
+             console.log('CHECK TEXT')
               // check if any text is being entered in an inline atomic
           
             }
