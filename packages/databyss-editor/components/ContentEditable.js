@@ -24,6 +24,7 @@ import {
   stateBlockToSlateBlock,
   toggleMark,
   isMarkActive,
+  isCurrentlyInInlineAtomicField,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
 import {
@@ -312,12 +313,7 @@ const ContentEditable = ({
         ) {
           firefoxWhitespaceFix(editor)
         }
-
-        if (
-          event.key === 'Escape' &&
-          isMarkActive(editor, 'inlineAtomicMenu') &&
-          Range.isCollapsed(editor.selection)
-        ) {
+        if (event.key === 'Escape' && isCurrentlyInInlineAtomicField(editor)) {
           const _index = state.selection.anchor.index
           const _stateBlock = state.blocks[_index]
           const _newRanges = _stateBlock.text.ranges.filter(
@@ -343,8 +339,7 @@ const ContentEditable = ({
         // if a space or arrow right key is entered and were currently creating an inline atomic, pass through normal text and remove inline mark
         if (
           (event.key === ' ' || event.key === 'ArrowRight') &&
-          isMarkActive(editor, 'inlineAtomicMenu') &&
-          Range.isCollapsed(editor.selection)
+          isCurrentlyInInlineAtomicField(editor)
         ) {
           // check to see if were at the end of block
           const _offset = parseInt(
@@ -551,7 +546,7 @@ const ContentEditable = ({
 
               if (
                 !_nextCharIsWhitespace &&
-                !isMarkActive(editor, 'inlineAtomicMenu')
+                !isCurrentlyInInlineAtomicField(editor)
               ) {
                 Transforms.insertText(editor, event.key)
                 Transforms.move(editor, {
@@ -576,7 +571,7 @@ const ContentEditable = ({
 
             // toggle the inline atomic block
             // insert key manually to trigger an 'insert_text' command
-            if (!isMarkActive(editor, 'inlineAtomicMenu') && !_isClosure) {
+            if (!isCurrentlyInInlineAtomicField(editor) && !_isClosure) {
               Transforms.insertText(editor, event.key)
               Transforms.move(editor, {
                 unit: 'character',
@@ -602,10 +597,7 @@ const ContentEditable = ({
           const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
           const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
 
-          if (
-            Range.isCollapsed(editor.selection) &&
-            _currentLeaf.inlineAtomicMenu
-          ) {
+          if (isCurrentlyInInlineAtomicField(editor)) {
             // let suggest menu handle event if caret is inside of a new active inline atomic and _currentLeaf has more than one character
             if (_currentLeaf.text.length === 1) {
               const _index = state.selection.anchor.index
@@ -821,10 +813,9 @@ const ContentEditable = ({
             10
           )
           if (
-            Range.isCollapsed(editor.selection) &&
+            isCurrentlyInInlineAtomicField(editor) &&
             _offset !== 0 &&
-            _text.charAt(_offset - 1) === '#' &&
-            isMarkActive(editor, 'inlineAtomicMenu')
+            _text.charAt(_offset - 1) === '#'
           ) {
             const _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
             if (_currentLeaf.inlineAtomicMenu) {

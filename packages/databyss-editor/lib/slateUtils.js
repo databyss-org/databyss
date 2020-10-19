@@ -1,5 +1,5 @@
 import MurmurHash3 from 'imurmurhash'
-import { Text, Editor, Node } from '@databyss-org/slate'
+import { Text, Editor, Node, Range } from '@databyss-org/slate'
 import { pickBy } from 'lodash'
 import { textToHtml } from '@databyss-org/services/block/serialize'
 import { isAtomicInlineType } from './util'
@@ -279,4 +279,14 @@ export const stateToHTMLString = frag => {
     .replace(/\n/g, '<br />')
 
   return `<span>${_innerHtml}</span>`
+}
+
+export const isCurrentlyInInlineAtomicField = editor => {
+  if (
+    isMarkActive(editor, 'inlineAtomicMenu') &&
+    Range.isCollapsed(editor.selection)
+  ) {
+    return true
+  }
+  return false
 }
