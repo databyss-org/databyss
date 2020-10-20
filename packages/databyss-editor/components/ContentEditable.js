@@ -543,11 +543,12 @@ const ContentEditable = ({
 
               const _nextCharIsWhitespace = _text.charAt(_offset) === ' '
               // if next character is not a whitespace, swollow next word into mark `inlineAtomicMenu`
-
               if (
                 !_nextCharIsWhitespace &&
                 !isCurrentlyInInlineAtomicField(editor)
               ) {
+                // get length of text to swollow
+                const _wordToSwollow = _text.slice(_offset).split(/\s+/)[0]
                 Transforms.insertText(editor, event.key)
                 Transforms.move(editor, {
                   unit: 'character',
@@ -555,12 +556,19 @@ const ContentEditable = ({
                   reverse: true,
                 })
                 Transforms.move(editor, {
-                  unit: 'word',
-                  distance: 1,
+                  unit: 'character',
+                  distance: _wordToSwollow.length + 1,
                   edge: 'focus',
                 })
+                // remove all active marks in current text
+                const _activeMarks = SlateEditor.marks(editor)
+                Object.keys(_activeMarks).forEach(m => {
+                  console.log(m)
+                  toggleMark(editor, m)
+                })
+                // activate inlineAtomicMenu
                 toggleMark(editor, 'inlineAtomicMenu')
-                // Editor.addMark(editor, 'inlineAtomicMenu', true)
+
                 Transforms.collapse(editor, {
                   edge: 'focus',
                 })
@@ -582,6 +590,12 @@ const ContentEditable = ({
                 unit: 'character',
                 distance: 1,
                 edge: 'focus',
+              })
+              // remove all active marks in current text
+              const _activeMarks = SlateEditor.marks(editor)
+              Object.keys(_activeMarks).forEach(m => {
+                console.log(m)
+                toggleMark(editor, m)
               })
               toggleMark(editor, 'inlineAtomicMenu')
               Transforms.collapse(editor, {
