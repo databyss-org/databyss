@@ -2,6 +2,7 @@
 
 import express from 'express'
 import ObjectId from 'bson-objectid'
+import { replaceInlineText } from '@databyss-org/editor/state/util'
 import Page from '../../models/Page'
 import Block from '../../models/Block'
 import Selection from '../../models/Selection'
@@ -15,6 +16,7 @@ import { ApiError, BadRequestError } from '../../lib/Errors'
 import wrap from '../../lib/guardedAsync'
 import { runPatches, getAtomicClosureText } from '../../lib/pages'
 import Account from '../../models/Account'
+import { getBlockAccountQueryMixin } from './helpers/accountQueryMixin'
 
 const router = express.Router()
 
@@ -152,6 +154,45 @@ router.get(
           ranges: [],
         }
         _rec.type = _block.type
+      }
+      // check for inline atomics
+      if (_block.type === 'ENTRY') {
+        const _inlineRanges = _rec.text.ranges.filter(r =>
+          r.marks.filter(m => m.includes('inlineTopic'))
+        )
+        // if inline ranges exist, update them
+        if (_inlineRanges.length) {
+          // get all topics from user
+          const allTopics = await Block.find({
+            type: 'TOPIC',
+            ...getBlockAccountQueryMixin(req),
+          })
+          // if list is populated, replace each text with updated inline
+          if (allTopics) {
+            _inlineRanges.forEach(r => {
+              if (r.marks[0].length === 2) {
+                const _inlineMark = r.marks[0]
+                const _inlineId = _inlineMark[1]
+                // find topic in array
+
+                // TODO: MAKE THE TOPIC ARRAY A DICITONARY INSTEAD
+                const _topicIndex = allTopics.findIndex(
+                  t => t._id.toString() === _inlineId
+                )
+                if (_topicIndex > -1) {
+                  const _topic = allTopics[_topicIndex]
+                  // replace inner text with updated text
+                  const _newText = replaceInlineText({
+                    text: _rec.text.toJSON(),
+                    refId: _inlineId,
+                    newText: _topic.text,
+                  })
+                  _rec.text = _newText
+                }
+              }
+            })
+          }
+        }
       }
       blocks.push(_rec)
     }
