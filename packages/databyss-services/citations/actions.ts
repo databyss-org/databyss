@@ -15,7 +15,6 @@ export interface CitationProcessOptions {
 
 export function processCitation(data: CitationDTO, hash: String) {
   return async (dispatch: Function) => {
-    console.info('--- actions.processCitation ---')
     dispatch({
       type: PROCESS_CITATION,
       payload: { hash },
@@ -25,7 +24,6 @@ export function processCitation(data: CitationDTO, hash: String) {
     const citation = await formatCitation(csl, data.options)
 
     // cache citation
-    console.log('obtained citation, cache it')
     dispatch({
       type: CACHE_CITATION,
       payload: {

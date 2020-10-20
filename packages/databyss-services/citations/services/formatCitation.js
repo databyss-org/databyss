@@ -42,8 +42,6 @@ let cite = null
  * - `styleId`: The citation style identifier. Defaults to "mla".
  */
 export async function formatCitation(csl, options) {
-  console.info('--- formatCitation ---')
-
   const outputType =
     options && options.outputType
       ? options.outputType
@@ -83,10 +81,6 @@ export async function formatCitation(csl, options) {
     )
   }
 
-  console.log('csl:', csl)
-  console.log('styleId:', styleId)
-  console.log('outputType:', outputType)
-
   return new Promise((resolve, reject) => {
     try {
       // cache to avoid fetching at every call
@@ -107,12 +101,6 @@ export async function formatCitation(csl, options) {
         styleConfig.templates.add(styleId, styleData)
       }
 
-      const targetFormat = {
-        format: 'html',
-        template: styleId,
-      }
-
-      console.log('instanciate Cite()')
       if (!cite) {
         cite = new Cite(csl)
       } else {
@@ -120,18 +108,13 @@ export async function formatCitation(csl, options) {
         cite.set(csl)
       }
 
-      console.log('cite.format()')
       const citation = cite.format(outputType, {
         format: 'html',
         template: styleId,
       })
 
-      console.log('formatted citation:', citation)
-
       resolve(citation)
     } catch (error) {
-      console.warn('Unable to format citation')
-
       reject(error)
     }
   })

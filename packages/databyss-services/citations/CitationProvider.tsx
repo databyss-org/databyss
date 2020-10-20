@@ -52,7 +52,6 @@ const CitationProvider: React.FunctionComponent<PropsType> = (
 
   const debouncedProcessCitation = useCallback(
     debounce((data: CitationDTO, hash: String) => {
-      console.info('--- CitationProvider.debouncedProcessCitation ---')
       dispatch(processCitation(data, hash))
       return null
     }, citationUpdateCooldown),
@@ -61,8 +60,6 @@ const CitationProvider: React.FunctionComponent<PropsType> = (
 
   const generateCitation = useCallback(
     (source: SourceDetail, options: CitationFormatOptions) => {
-      console.info('--- CitationProvider.generateCitation ---')
-
       const hash = generateHash(source, options)
       if (state.citationCache[hash]) {
         return state.citationCache[hash]
