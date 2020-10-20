@@ -1,6 +1,7 @@
 import { Transforms } from '@databyss-org/slate'
 import { ReactEditor } from '@databyss-org/slate-react'
 import { stateSelectionToSlateSelection } from './slateUtils'
+import { isAtomicInlineType } from './util'
 
 export const showAtomicModal = ({
   editorContext,
@@ -51,19 +52,23 @@ export const showAtomicModal = ({
       offset = _entity.text.textValue.length
     }
 
-    // on dismiss refocus editor at end of atomic
-    window.requestAnimationFrame(() => {
-      selection = {
-        anchor: { index, offset },
-        focus: { index, offset },
-      }
-      const _slateSelection = stateSelectionToSlateSelection(
-        editor.children,
-        selection
-      )
-      Transforms.select(editor, _slateSelection)
-      ReactEditor.focus(editor)
-    })
+    // current block type is atomic, set the focus
+    // if atomic is being updated from an atomic inline, reducer will handler the selection
+    if (isAtomicInlineType(_entity.type)) {
+      // on dismiss refocus editor at end of atomic
+      window.requestAnimationFrame(() => {
+        selection = {
+          anchor: { index, offset },
+          focus: { index, offset },
+        }
+        const _slateSelection = stateSelectionToSlateSelection(
+          editor.children,
+          selection
+        )
+        Transforms.select(editor, _slateSelection)
+        ReactEditor.focus(editor)
+      })
+    }
   }
 
   // dispatch modal

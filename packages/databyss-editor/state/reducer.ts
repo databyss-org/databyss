@@ -607,9 +607,28 @@ export default (
                       text: _newText
                     }
                     draft.blocks[_idx] = _newBlock
+
+
+                    if (_idx === state.selection.anchor.index) {
+                      // get current ranges for selection
+                      const _ranges = getRangesAtPoint({ blocks: draft.blocks, point: state.selection.anchor })
+
+                      // if current block has the selection and current inline is being updated, set the selection and a flag so the editor can update the selection
+                      if (_ranges.length) {
+                        const _point = { index: _idx, offset: _ranges[0].offset + _ranges[0].length }
+                        const _newSelection = {
+                          ...state.selection,
+                          anchor: _point,
+                          focus: _point
+                        }
+                        nextSelection = _newSelection
+                      }
+                    }
+
                     draft.operations.push({
                       index: _idx,
                       block: _newBlock,
+                      setSelection: _idx === state.selection.anchor.index
                     })
                   }
                 }

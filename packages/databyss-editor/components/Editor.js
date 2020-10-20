@@ -188,7 +188,6 @@ const Editor = ({
     },
     [searchTerm]
   )
-
   return (
     <Slate editor={editor} {...slateProps}>
       {children}

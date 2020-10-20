@@ -14,6 +14,8 @@ export interface BackflowOperation {
   index: number
   block: Block
   insertBefore?: Boolean
+  setSelection?: Boolean
+  reloadAll?: Boolean
 }
 
 export interface EditorState {

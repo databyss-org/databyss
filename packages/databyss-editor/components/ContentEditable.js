@@ -195,6 +195,24 @@ const ContentEditable = ({
     [editor.operations, editor.children]
   )
 
+  /*
+    this function must be outside of the useMemo in order to have up to date values
+  */
+  const onInlineAtomicClick = inlineData => {
+    // pass editorContext
+    const inlineAtomicData = {
+      refId: inlineData.refId,
+      type: inlineData.type,
+    }
+    const modalData = {
+      editorContext,
+      editor,
+      navigationContext,
+      inlineAtomicData,
+    }
+    showAtomicModal(modalData)
+  }
+
   return useMemo(
     () => {
       const onChange = value => {
@@ -249,6 +267,7 @@ const ContentEditable = ({
           return
         }
 
+        // TODO: remove node is needed for on key down operations which use leaf commands, update so this is not needed in the listener
         if (
           editor.operations.find(
             op =>
@@ -563,7 +582,6 @@ const ContentEditable = ({
                 // remove all active marks in current text
                 const _activeMarks = SlateEditor.marks(editor)
                 Object.keys(_activeMarks).forEach(m => {
-                  console.log(m)
                   toggleMark(editor, m)
                 })
                 // activate inlineAtomicMenu
@@ -594,7 +612,6 @@ const ContentEditable = ({
               // remove all active marks in current text
               const _activeMarks = SlateEditor.marks(editor)
               Object.keys(_activeMarks).forEach(m => {
-                console.log(m)
                 toggleMark(editor, m)
               })
               toggleMark(editor, 'inlineAtomicMenu')
@@ -902,6 +919,19 @@ const ContentEditable = ({
             at: [op.index],
           })
         }
+        // if reducer states to set the selection as an operation, perform seletion
+        if (op.setSelection) {
+          ReactEditor.focus(editor)
+
+          const _sel = stateSelectionToSlateSelection(
+            editor.children,
+            state.selection
+          )
+
+          window.requestAnimationFrame(() => {
+            Transforms.select(editor, _sel)
+          })
+        }
       })
 
       // if there were any update operations,
@@ -938,22 +968,6 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
             ReactEditor.focus(editor)
           }
         }, 5)
-      }
-
-      const onInlineAtomicClick = inlineData => {
-        // pass editorContext
-        const inlineAtomicData = {
-          refId: inlineData.refId,
-          type: inlineData.type,
-        }
-
-        const modalData = {
-          editorContext,
-          editor,
-          navigationContext,
-          inlineAtomicData,
-        }
-        showAtomicModal(modalData)
       }
 
       return (
