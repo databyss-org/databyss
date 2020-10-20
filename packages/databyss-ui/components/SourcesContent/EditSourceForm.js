@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { cloneDeep } from 'lodash'
 
+import { pruneCitation } from '@databyss-org/services/citations/services/pruneCitation'
 import { PublicationTypeId } from '@databyss-org/services/citations/constants/PublicationTypeId'
 import { PublicationTypes } from '@databyss-org/services/citations/constants/PublicationTypes'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
@@ -443,7 +444,7 @@ const EditSourceForm = props => {
         <MakeLoader resources={generateCitation(values.detail, formatOptions)}>
           {citation => (
             <View marginTop={pxUnits(10)} marginBottom={pxUnits(10)}>
-              <RawHtml html={citation} />
+              <RawHtml html={pruneCitation(citation, formatOptions.styleId)} />
             </View>
           )}
         </MakeLoader>
