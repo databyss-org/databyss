@@ -1,7 +1,11 @@
-// see :
-// - https://docs.cloudcite.net/csl
-// - https://github.com/citation-style-language/schema/blob/master/schemas/input/csl-data.json
-
+/**
+ * Converts a Databyss source detail object to a JSON CSL object.
+ * See :
+ * - https://docs.cloudcite.net/csl
+ * - https://github.com/citation-style-language/schema/blob/master/schemas/input/csl-data.json
+ *
+ * @param {SourceDetail} source A Databyss source detail object.
+ */
 export const toJsonCsl = source => {
   if (!source) {
     return null
@@ -17,7 +21,6 @@ export const toJsonCsl = source => {
     publicationType,
     publisherName,
     publisherPlace,
-    yearPublished,
     // catalog identifiers
     isbn,
     issn,
@@ -27,7 +30,11 @@ export const toJsonCsl = source => {
   const response = {}
 
   // === TITLE ===
-  response.title = title.textValue
+  if (validateTextValue(title)) {
+    response.title = title.textValue
+  } else {
+    response.title = ''
+  }
 
   // === PEOPLE ===
 
@@ -68,38 +75,48 @@ export const toJsonCsl = source => {
 
   // publication type
   // TODO: ensure if acceptable type
-  if (publicationType) {
+  if (publicationType && 'id' in publicationType) {
     response.type = publicationType.id
   }
 
   // publisher
-  if (publisherName) {
+  if (validateTextValue(publisherName)) {
     response.publisher = publisherName.textValue
   }
 
   // place
-  if (publisherPlace) {
+  if (validateTextValue(publisherPlace)) {
     response['publisher-place'] = publisherPlace.textValue
   }
 
   // year
-  // FIXME: year doesnt get parsed properly
-  if (yearPublished) {
+  if ('yearPublished' in source && 'textValue' in source.yearPublished) {
     response.issued = {
-      'date-parts': [[yearPublished.textValue]],
+      'date-parts': [[source.yearPublished.textValue]],
+    }
+  } else if ('year' in source && 'textValue' in source.year) {
+    response.issued = {
+      'date-parts': [[source.year.textValue]],
     }
   }
 
   // === CATALOG IDENTIFIERS ===
-  if (doi && doi.textValue !== '') {
+  if (validateTextValue(doi)) {
     response.DOI = doi.textValue
   }
-  if (issn && issn.textValue !== '') {
+  if (validateTextValue(issn)) {
     response.ISSN = issn.textValue
   }
-  if (isbn && isbn.textValue !== '') {
+  if (validateTextValue(isbn)) {
     response.ISBN = isbn.textValue
   }
 
   return response
+}
+
+function validateTextValue(prop) {
+  if (prop && 'textValue' in prop && prop.textValue !== '') {
+    return true
+  }
+  return false
 }
