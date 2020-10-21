@@ -36,6 +36,9 @@ const checkIfBook = detail => {
     return false
   }
   const { option } = detail.publicationType
+  if (!option) {
+    return false
+  }
   return (
     option.id === PublicationTypeId.BOOK ||
     option.id === PublicationTypeId.BOOK_SECTION
@@ -46,6 +49,9 @@ const checkIfArticle = detail => {
     return false
   }
   const { option } = detail.publicationType
+  if (!option) {
+    return false
+  }
   return (
     option.id === PublicationTypeId.JOURNAL_ARTICLE ||
     option.id === PublicationTypeId.NEWSPAPER_ARTICLE ||
