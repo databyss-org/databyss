@@ -6,10 +6,10 @@ import { PublicationTypeId } from '@databyss-org/services/citations/constants/Pu
 import { PublicationTypes } from '@databyss-org/services/citations/constants/PublicationTypes'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { useCitationContext } from '@databyss-org/services/citations/CitationProvider'
+import EditAuthorFields from '@databyss-org/ui/components/SourcesContent/EditAuthorFields'
 import CitationStyleOptions, {
   defaultCitationStyle,
 } from '@databyss-org/services/citations/constants/CitationStyleOptions'
-import EditAuthorFields from '@databyss-org/ui/components/SourcesContent/EditAuthorFields'
 import {
   Button,
   RawHtml,
@@ -31,19 +31,21 @@ const labelProps = { width: '115px' }
 const publicationTypeOptions = sortEntriesAtoZ(PublicationTypes, 'label')
 
 // utils
-const checkIfBook = option => {
-  if (!option) {
+const checkIfBook = detail => {
+  if (!detail || !('publicationType' in detail)) {
     return false
   }
+  const { option } = detail.publicationType
   return (
     option.id === PublicationTypeId.BOOK ||
     option.id === PublicationTypeId.BOOK_SECTION
   )
 }
-const checkIfArticle = option => {
-  if (!option) {
+const checkIfArticle = detail => {
+  if (!detail || !('publicationType' in detail)) {
     return false
   }
+  const { option } = detail.publicationType
   return (
     option.id === PublicationTypeId.JOURNAL_ARTICLE ||
     option.id === PublicationTypeId.NEWSPAPER_ARTICLE ||
@@ -88,8 +90,9 @@ const EditSourceForm = props => {
     defaultCitationStyle
   )
 
-  const isBook = checkIfBook(values.detail.publicationType)
-  const isArticle = checkIfArticle(values.detail.publicationType)
+  const hasDetail = 'detail' in values
+  const isBook = checkIfBook(values.detail)
+  const isArticle = checkIfArticle(values.detail)
 
   // people base methods
   const addPersonTo = arrayPropName => {
@@ -299,14 +302,30 @@ const EditSourceForm = props => {
     </>
   )
 
-  const renderAuthorsSection = () => (
-    <>
-      <FormHeading>Author(s)</FormHeading>
+  const renderAuthorsSection = () => {
+    if (!hasDetail) {
+      return null
+    }
 
-      {values.detail.authors.map((author, index) => {
-        const numAuthors = values.detail.authors.length
-        const lastIndex = numAuthors - 1
-        return (
+    const { authors } = values.detail
+
+    if (!('authors' in values.detail)) {
+      console.error('authors prop doesnt exist')
+    }
+
+    if (!authors) {
+      // FIXME: find a way to add authors
+      return null
+    }
+
+    const numAuthors = authors.length
+    const lastIndex = numAuthors - 1
+
+    return (
+      <>
+        <FormHeading>Author(s)</FormHeading>
+
+        {authors.map((author, index) => (
           <View marginBottom="10px" key={index}>
             <EditAuthorFields
               firstNamePath={`detail.authors[${index}].firstName`}
@@ -320,17 +339,26 @@ const EditSourceForm = props => {
               onDelete={() => onDeleteAuthor(index)}
             />
           </View>
-        )
-      })}
+        ))}
 
-      <View marginTop="5px">
-        <Button onPress={onAddAuthor}>Add Author</Button>
-      </View>
-    </>
-  )
+        <View marginTop="5px">
+          <Button onPress={onAddAuthor}>Add Author</Button>
+        </View>
+      </>
+    )
+  }
 
   const renderEditorsSection = () => {
+    if (!hasDetail) {
+      return null
+    }
+
     const { editors } = values.detail
+
+    if (!editors) {
+      // FIXME: find a way to add editors
+      return null
+    }
 
     return (
       <>
@@ -366,7 +394,17 @@ const EditSourceForm = props => {
   }
 
   const renderTranslatorsSection = () => {
+    if (!hasDetail) {
+      return null
+    }
+
     const { translators } = values.detail
+
+    if (!translators) {
+      // FIXME: find a way to add translators
+      return null
+    }
+
     return (
       <>
         <FormHeading>Translator(s)</FormHeading>
@@ -436,6 +474,10 @@ const EditSourceForm = props => {
   )
 
   const renderCitationSection = () => {
+    if (!hasDetail) {
+      return null
+    }
+
     const formatOptions = { styleId: citationStyleOption.id }
     return (
       <>
