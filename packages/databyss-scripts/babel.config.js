@@ -9,6 +9,7 @@ module.exports = api => {
         regenerator: true,
       },
     ],
+    ['@babel/plugin-proposal-class-properties'],
   ]
   const ignore = ['**/node_modules']
 
