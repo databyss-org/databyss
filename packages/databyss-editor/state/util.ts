@@ -410,7 +410,6 @@ export const replaceInlineText = ({
 
   const _rangesWithId = text.ranges.filter(r => r.marks[0][0] === 'inlineTopic' && r.marks[0][1] === refId)
 
-  // console.log(_rangesWithId)
   // offset will be updated in loop
   let _cumulativeOffset = 0
   let _textToUpdate = text

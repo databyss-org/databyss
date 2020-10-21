@@ -437,9 +437,13 @@ const ContentEditable = ({
             _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
           }
           // if current or prevous leaf is inline
-          if (_currentLeaf.inlineTopic) {
+          if (
+            _currentLeaf.inlineTopic
+            //     && event.key !== 'Enter'
+          ) {
             // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
             if (
+              //   event.key !== 'Enter' &&
               !(
                 event.key !== 'Backspace' &&
                 (_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf)
@@ -465,9 +469,14 @@ const ContentEditable = ({
               }
               // edge case: if anchor is on a new line with an inline atomic, the `\n` will be included in the inline markup, if offset is 1 in current anchor, performa lookback to see if previous character is a `\n` and if it has inlineAtomic mark
               else if (_anchor.offset === 1) {
+                let _charToInsert = String.fromCharCode(event.keyCode)
+
+                if (event.key === 'Enter') {
+                  _charToInsert = '\n'
+                }
                 const _isFirstCharNewLine = _currentLeaf.text.charAt(0) === '\n'
                 if (_isFirstCharNewLine) {
-                  Transforms.insertText(editor, event.key)
+                  Transforms.insertText(editor, _charToInsert)
                   Transforms.move(editor, {
                     unit: 'character',
                     distance: 2,
@@ -489,7 +498,6 @@ const ContentEditable = ({
                   })
                 }
               }
-
               event.preventDefault()
               return
             }
@@ -784,49 +792,13 @@ const ContentEditable = ({
                   ],
                 })
               }
-              // const { text, offsetAfterInsert } = insertTextAtOffset({
-              //   text: _focusedBlock.text,
-              //   offset: _offset,
-              //   textToInsert: {
-              //     textValue: _textToInsert,
-              //     ranges: [
-              //       {
-              //         length: 1,
-              //         offset: 0,
-              //         marks: [['inlineTopic', _currentLeaf.atomicId]],
-              //       },
-              //     ],
-              //   },
-              // })
-              // // TODO: merge offsets
-              // console.log(text)
-
-              // const _newBlock = {
-              //   ..._focusedBlock,
-              //   text,
-              // }
-              // //  update the selection
-              // const _sel = cloneDeep(state.selection)
-              // _sel.anchor.offset = offsetAfterInsert
-              // _sel.focus.offset = offsetAfterInsert
-
-              // setContent({
-              //   selection: _sel,
-              //   operations: [
-              //     {
-              //       index: editor.selection.focus.path[0],
-              //       text: _newBlock.text,
-              //       withRerender: true,
-              //     },
-              //   ],
-              // })
               event.preventDefault()
               return
             }
 
             // we're not creating a new block, so just insert a carriage return
-            event.preventDefault()
             Transforms.insertText(editor, `\n`)
+            event.preventDefault()
             return
           }
           // if next character is a line break force the cursor down one position
@@ -976,19 +948,20 @@ const ContentEditable = ({
             event.preventDefault()
           }
           // EDGE CASE
-          // TODO: check to make sure previous character is not a new line and next text is not an inline atomic
-
+          // check to make sure previous character is not a new line and next text is not an inline atomic
           // if so, merge the inline atomic to the new line
-          // TODO, MAKE SURE WERE NOT AT END OF BLOCK FOR THIS ACTION
-          console.log(_offset > 1)
-          console.log(_text.charAt(_offset - 2) === '\n')
-          if (_offset > 1 && _text.charAt(_offset - 2) === '\n') {
+          const _atBlockEnd = _offset === _text.length
+
+          if (
+            !_atBlockEnd &&
+            _offset > 1 &&
+            _text.charAt(_offset - 2) === '\n'
+          ) {
             Transforms.move(editor, {
               unit: 'character',
               distance: 1,
               //  reverse: true,
             })
-            // Transforms.move(editor, )
             const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
 
             Transforms.move(editor, {
@@ -1013,35 +986,7 @@ const ContentEditable = ({
                 reverse: true,
               })
               Transforms.insertText(editor, '\n')
-              // Transforms.move(editor, {
-              //   unit: 'character',
-              //   distance: 2,
-              //   edge: 'focus',
-              // })
-              //   Transforms.mergeNodes(editor)
-
-              // Transforms.setNodes(
-              //   editor,
-              //   {
-              //     inlineTopic: true,
-              //     atomicId: _currentLeaf.atomicId,
-              //   },
-              //   { at: editor.selection }
-              // )
-              // Transforms.collapse(editor, {
-              //   edge: 'focus',
-              // })
-              console.log(_currentLeaf)
-              console.log(Node.leaf(editor, editor.selection.focus.path))
               event.preventDefault()
-
-              // Transforms.setNodes(
-              //   editor,
-              //   { atomicId: false },
-              //   {
-              //     match: node => node === _currentLeaf,
-              //   }
-              // )
             }
           }
         }
@@ -1137,8 +1082,6 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
           }
         }, 5)
       }
-
-      console.log(state.blocks[0].text)
 
       return (
         <Editor
