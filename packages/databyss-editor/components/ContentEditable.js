@@ -274,7 +274,7 @@ const ContentEditable = ({
               (op.type === 'insert_text' ||
                 op.type === 'remove_text' ||
                 op.type === 'remove_node') &&
-              (op?.text?.length || op?.node?.text.length)
+              (op?.text?.length || op?.node?.text?.length)
           )
         ) {
           // update target node
