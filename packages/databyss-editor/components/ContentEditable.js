@@ -416,6 +416,7 @@ const ContentEditable = ({
           Range.isCollapsed(editor.selection)
         ) {
           let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+
           const _anchor = editor.selection.anchor
           const _isAnchorAtStartOfLeaf =
             _anchor.offset === 0 && _anchor.path[1] !== 0
@@ -445,17 +446,55 @@ const ContentEditable = ({
               )
             ) {
               if (event.key === 'Backspace') {
-                // remove inline node
-                Transforms.removeNodes(editor, {
-                  match: node => node === _currentLeaf,
-                })
+                // if first character in atomic is a new line, remove only the new line character
+                if (
+                  _anchor.offset === 1 &&
+                  _currentLeaf.text.charAt(0) === '\n'
+                ) {
+                  Transforms.delete(editor, {
+                    distance: 1,
+                    unit: 'character',
+                    reverse: true,
+                  })
+                } else {
+                  // if not a new line, remove entire node
+                  Transforms.removeNodes(editor, {
+                    match: node => node === _currentLeaf,
+                  })
+                }
               }
+              // edge case: if anchor is on a new line with an inline atomic, the `\n` will be included in the inline markup, if offset is 1 in current anchor, performa lookback to see if previous character is a `\n` and if it has inlineAtomic mark
+              else if (_anchor.offset === 1) {
+                const _isFirstCharNewLine = _currentLeaf.text.charAt(0) === '\n'
+                if (_isFirstCharNewLine) {
+                  Transforms.insertText(editor, event.key)
+                  Transforms.move(editor, {
+                    unit: 'character',
+                    distance: 2,
+                    reverse: true,
+                  })
+                  Transforms.move(editor, {
+                    unit: 'character',
+                    distance: 2,
+                    edge: 'focus',
+                  })
+                  // remove all active marks in current text
+                  const _activeMarks = SlateEditor.marks(editor)
+                  Object.keys(_activeMarks).forEach(m => {
+                    toggleMark(editor, m)
+                  })
+
+                  Transforms.collapse(editor, {
+                    edge: 'focus',
+                  })
+                }
+              }
+
               event.preventDefault()
               return
             }
           }
         }
-
         if (isPrintable(event) && isMarkActive(editor, 'inlineTopic')) {
           toggleMark(editor, 'inlineTopic')
         }
@@ -626,7 +665,7 @@ const ContentEditable = ({
 
         if (event.key === 'Enter') {
           const _focusedBlock = state.blocks[editor.selection.focus.path[0]]
-          const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+          let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
 
           if (isCurrentlyInInlineAtomicField(editor)) {
             // let suggest menu handle event if caret is inside of a new active inline atomic and _currentLeaf has more than one character
@@ -691,40 +730,100 @@ const ContentEditable = ({
             _prevIsDoubleBreak ||
             _text.length === 0
           if (!_doubleLineBreak && !symbolToAtomicType(_text.charAt(0))) {
+            // if at end of leaf but not at end of block, perform a lookahead to see if next block will be an inline atomic and update currentLeaf
+            const _anchor = editor.selection.anchor
+            const _isAnchorAtEndOfLeaf =
+              _currentLeaf.text.length === _anchor.offset
+            if (!_atBlockEnd && _isAnchorAtEndOfLeaf) {
+              Transforms.move(editor, {
+                unit: 'character',
+                distance: 1,
+              })
+              Transforms.move(editor, {
+                unit: 'character',
+                distance: 1,
+                reverse: true,
+              })
+              _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
+            }
             if (
               Range.isCollapsed(editor.selection) &&
               _currentLeaf.inlineTopic
             ) {
               // // edge case where enter is at the end of an inline atomic
               const _textToInsert = _atBlockEnd ? '\n\u2060' : '\n'
-              const { text, offsetAfterInsert } = insertTextAtOffset({
-                text: _focusedBlock.text,
-                offset: _offset,
-                textToInsert: { textValue: _textToInsert, ranges: [] },
-              })
-
-              const _newBlock = {
-                ..._focusedBlock,
-                text,
-              }
-              //  update the selection
-              const _sel = cloneDeep(state.selection)
-              _sel.anchor.offset = offsetAfterInsert
-              _sel.focus.offset = offsetAfterInsert
-
-              setContent({
-                selection: _sel,
-                operations: [
-                  {
-                    index: editor.selection.focus.path[0],
-                    text: _newBlock.text,
-                    withRerender: true,
+              if (!_atBlockEnd) {
+                Transforms.insertText(editor, _textToInsert)
+              } else {
+                const { text, offsetAfterInsert } = insertTextAtOffset({
+                  text: _focusedBlock.text,
+                  offset: _offset,
+                  textToInsert: {
+                    textValue: _textToInsert,
+                    ranges: [],
                   },
-                ],
-              })
+                })
+
+                const _newBlock = {
+                  ..._focusedBlock,
+                  text,
+                }
+                //  update the selection
+                const _sel = cloneDeep(state.selection)
+                _sel.anchor.offset = offsetAfterInsert
+                _sel.focus.offset = offsetAfterInsert
+
+                setContent({
+                  selection: _sel,
+                  operations: [
+                    {
+                      index: editor.selection.focus.path[0],
+                      text: _newBlock.text,
+                      withRerender: true,
+                    },
+                  ],
+                })
+              }
+              // const { text, offsetAfterInsert } = insertTextAtOffset({
+              //   text: _focusedBlock.text,
+              //   offset: _offset,
+              //   textToInsert: {
+              //     textValue: _textToInsert,
+              //     ranges: [
+              //       {
+              //         length: 1,
+              //         offset: 0,
+              //         marks: [['inlineTopic', _currentLeaf.atomicId]],
+              //       },
+              //     ],
+              //   },
+              // })
+              // // TODO: merge offsets
+              // console.log(text)
+
+              // const _newBlock = {
+              //   ..._focusedBlock,
+              //   text,
+              // }
+              // //  update the selection
+              // const _sel = cloneDeep(state.selection)
+              // _sel.anchor.offset = offsetAfterInsert
+              // _sel.focus.offset = offsetAfterInsert
+
+              // setContent({
+              //   selection: _sel,
+              //   operations: [
+              //     {
+              //       index: editor.selection.focus.path[0],
+              //       text: _newBlock.text,
+              //       withRerender: true,
+              //     },
+              //   ],
+              // })
               event.preventDefault()
               return
             }
+
             // we're not creating a new block, so just insert a carriage return
             event.preventDefault()
             Transforms.insertText(editor, `\n`)
@@ -876,6 +975,75 @@ const ContentEditable = ({
             }
             event.preventDefault()
           }
+          // EDGE CASE
+          // TODO: check to make sure previous character is not a new line and next text is not an inline atomic
+
+          // if so, merge the inline atomic to the new line
+          // TODO, MAKE SURE WERE NOT AT END OF BLOCK FOR THIS ACTION
+          console.log(_offset > 1)
+          console.log(_text.charAt(_offset - 2) === '\n')
+          if (_offset > 1 && _text.charAt(_offset - 2) === '\n') {
+            Transforms.move(editor, {
+              unit: 'character',
+              distance: 1,
+              //  reverse: true,
+            })
+            // Transforms.move(editor, )
+            const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+
+            Transforms.move(editor, {
+              unit: 'character',
+              distance: 1,
+              reverse: true,
+            })
+            if (_currentLeaf.inlineTopic) {
+              Transforms.delete(editor, {
+                distance: 2,
+                unit: 'character',
+                reverse: true,
+              })
+              Transforms.move(editor, {
+                unit: 'character',
+                distance: 1,
+                //   reverse: true,
+              })
+              Transforms.move(editor, {
+                unit: 'character',
+                distance: 1,
+                reverse: true,
+              })
+              Transforms.insertText(editor, '\n')
+              // Transforms.move(editor, {
+              //   unit: 'character',
+              //   distance: 2,
+              //   edge: 'focus',
+              // })
+              //   Transforms.mergeNodes(editor)
+
+              // Transforms.setNodes(
+              //   editor,
+              //   {
+              //     inlineTopic: true,
+              //     atomicId: _currentLeaf.atomicId,
+              //   },
+              //   { at: editor.selection }
+              // )
+              // Transforms.collapse(editor, {
+              //   edge: 'focus',
+              // })
+              console.log(_currentLeaf)
+              console.log(Node.leaf(editor, editor.selection.focus.path))
+              event.preventDefault()
+
+              // Transforms.setNodes(
+              //   editor,
+              //   { atomicId: false },
+              //   {
+              //     match: node => node === _currentLeaf,
+              //   }
+              // )
+            }
+          }
         }
       }
 
@@ -969,6 +1137,8 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
           }
         }, 5)
       }
+
+      console.log(state.blocks[0].text)
 
       return (
         <Editor

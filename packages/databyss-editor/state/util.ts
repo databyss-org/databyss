@@ -408,8 +408,9 @@ export const replaceInlineText = ({
     }]
   }
 
-
   const _rangesWithId = text.ranges.filter(r => r.marks[0][0] === 'inlineTopic' && r.marks[0][1] === refId)
+
+  // console.log(_rangesWithId)
   // offset will be updated in loop
   let _cumulativeOffset = 0
   let _textToUpdate = text
@@ -418,6 +419,12 @@ export const replaceInlineText = ({
 
     // remove text from second half of split
     const _textAfter = splitTextAtOffset({ text: _splitText.after, offset: r.length })
+
+    // if first character of inline text is a \n, make sure you keep the \n at start of text
+    if (_textAfter.before.textValue?.charAt(0) === '\n') {
+      _textToInsert.textValue = `\n${_textToInsert.textValue}`
+      _textToInsert.ranges[0].length += 1
+    }
 
     // insert text at offset
     let _mergedText = mergeText(_splitText.before, _textToInsert)
