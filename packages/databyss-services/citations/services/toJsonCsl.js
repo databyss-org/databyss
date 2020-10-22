@@ -84,8 +84,8 @@ export const toJsonCsl = source => {
   }
 
   // publication type
-  // TODO: ensure if acceptable type
-  if (publicationType && 'id' in publicationType) {
+  if (validateOption(source, 'publicationType')) {
+    // TODO: ensure if acceptable type
     response.type = publicationType.id
   }
 
@@ -141,12 +141,8 @@ function buildDateParts(source) {
   }
 
   let month = null
-  if (
-    'month' in source &&
-    'textValue' in source.month &&
-    source.month.textValue !== ''
-  ) {
-    month = source.month.textValue
+  if (validateOption(source, 'month')) {
+    month = source.month.id
   }
 
   if (!year && !month) {
@@ -156,6 +152,11 @@ function buildDateParts(source) {
   }
 
   return [[year, month]]
+}
+
+function validateOption(source, propName) {
+  const prop = source[propName]
+  return prop && 'id' in prop
 }
 
 function validatePeopleArray(source, propName) {

@@ -7,6 +7,8 @@ import { PublicationTypes } from '@databyss-org/services/citations/constants/Pub
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { useCitationContext } from '@databyss-org/services/citations/CitationProvider'
 import EditAuthorFields from '@databyss-org/ui/components/SourcesContent/EditAuthorFields'
+import MonthOptions from '@databyss-org/services/citations/constants/MonthOptions'
+import SeasonOptions from '@databyss-org/services/citations/constants/SeasonOptions'
 import CitationStyleOptions, {
   defaultCitationStyle,
 } from '@databyss-org/services/citations/constants/CitationStyleOptions'
@@ -278,13 +280,23 @@ const EditSourceForm = props => {
       />
 
       {isArticle ? (
-        <LabeledTextInput
-          path="detail.month"
-          id="month"
-          label="Month"
-          onBlur={onFieldBlur}
-        />
-      ) : null }
+        <ValueListItem path="detail.month">
+          <LabeledDropDownControl
+            label="Month"
+            labelProps={labelProps}
+            gridFlexWrap="nowrap"
+            paddingVariant="tiny"
+            dropDownProps={{
+              concatCss: { width: '75%' },
+              ctaLabel: 'Choose a month/season',
+              itemGroups: [
+                { label: 'Months', items: MonthOptions },
+                { label: 'Seasons', items: SeasonOptions },
+              ],
+            }}
+          />
+        </ValueListItem>
+      ) : null}
 
       <ValueListItem path="detail.publicationType">
         <LabeledDropDownControl
