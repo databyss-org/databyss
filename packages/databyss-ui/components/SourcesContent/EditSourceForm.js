@@ -534,7 +534,7 @@ const EditSourceForm = props => {
 
         <MakeLoader resources={generateCitation(values.detail, formatOptions)}>
           {citation => (
-            <View marginTop={pxUnits(10)} marginBottom={pxUnits(10)}>
+            <View marginTop={pxUnits(20)} marginBottom={pxUnits(20)}>
               <RawHtml html={pruneCitation(citation, formatOptions.styleId)} />
             </View>
           )}
