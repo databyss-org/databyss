@@ -351,6 +351,16 @@ export default (
             isAtomicInlineType(_frag[0].type) ||
             isAtomicInlineType(_startBlock.type)
           ) {
+
+            // check if we are pasting inside of an inline atomic field
+            const _ranges = getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor })
+            if (_ranges.filter(r => r.marks.includes("inlineAtomicMenu"))) {
+              /*
+              if pasting mutlipe blocks in an active inlineAtomicMenu, do not allow this action
+              */
+              break
+            }
+
             // if replacing or cursor block is empty, start inserting the fragments here
             // otherwise, insert them on the following line
             const _spliceIndex = _replace
@@ -388,6 +398,20 @@ export default (
             nextSelection = _nextSelection
           } else {
             // we have some text in our fragment to insert at the cursor, so do the split and insert
+
+
+            // check if we are pasting inside of an inline atomic field
+            const _ranges = getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor })
+            if (_ranges.filter(r => r.marks.includes("inlineAtomicMenu"))) {
+              /*
+              if pasting within an inlineAtomicMenu field
+              strip all text and carriage returns from text being pasted, add the mark `inlineAtomicMenu` to data being pasted
+              */
+              const _fragment = _frag[0].text
+              _fragment.textValue = _fragment.textValue.replaceAll('\n', ' ').trim()
+
+              _fragment.ranges = [{ offset: 0, length: _fragment.textValue.length, marks: ["inlineAtomicMenu"] }]
+            }
             insertText({
               block: draft.blocks[draft.selection.anchor.index],
               text: _frag[0].text,
