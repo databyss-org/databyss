@@ -1,4 +1,4 @@
-import { kebabCase } from 'lodash'
+import { flatten, kebabCase } from 'lodash'
 import React, { forwardRef, useState } from 'react'
 
 import { pxUnits } from '../../theming/views'
@@ -138,7 +138,30 @@ const DropDownControl = forwardRef((props, ref) => {
   }
 
   // utils
-  const getItemByValue = value => items.find(item => item.id === value)
+  const getItemByValue = value => {
+    let itemPool = []
+    if (items) {
+      itemPool = items
+    } else {
+      const allItems = []
+      itemGroups.forEach(itemGroup => {
+        allItems.push(itemGroup.items)
+      })
+      itemPool = flatten(allItems)
+    }
+
+    /* eslint-disable eqeqeq */
+    const response = itemPool.find(
+      item =>
+        // necessary to not use strict equality
+        // since type of value may differ from id
+        // but comparison is exactly what is needed
+        item.id == value
+    )
+    /* eslint-enable eqeqeq */
+
+    return response
+  }
 
   const getStyles = () => {
     const response = {}
@@ -161,10 +184,10 @@ const DropDownControl = forwardRef((props, ref) => {
 
   const getValue = () => {
     if (value && 'id' in value) {
-      return value
+      return value.id
     }
 
-    return null
+    return undefined
   }
 
   // events
