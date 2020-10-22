@@ -150,6 +150,7 @@ const SuggestTopics = ({
 
   useEventListener('keydown', e => {
     if (e.key === 'Enter') {
+      console.log('IS LISTENING')
       window.requestAnimationFrame(() => {
         if (!pendingSetContent.current) {
           setCurrentTopicWithoutSuggestion()
@@ -157,6 +158,8 @@ const SuggestTopics = ({
       })
     }
   })
+
+  console.log('GETS IN SUGGEST')
 
   return (
     <AllTopicsLoader onLoad={onTopicsLoaded}>

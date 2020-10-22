@@ -47,8 +47,7 @@ import {
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 import { getTextOffsetWithRange, replaceInlineText, getRangesAtPoint } from './util';
-import { mergeText } from '../lib/clipboardUtils/index';
-import { OPEN_LIBRARY } from '../components/Suggest/SuggestSources'
+import mergeInlineAtomicMenuRange from '../lib/clipboardUtils/mergeInlineAtomicMenuRange'
 
 // if block at @index in @draft.blocks starts with an atomic identifier character,
 // e.g. @ or #, convert the block to the appropriate atomic type and return it.
@@ -413,6 +412,7 @@ export default (
             const _ranges = getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor })
    
             if (_ranges.filter(r => r.marks.includes("inlineAtomicMenu")).length) {
+              console.log(_ranges.filter(r => r.marks.includes("inlineAtomicMenu")).length)
               /*
               if pasting within an inlineAtomicMenu field
               strip all text and carriage returns from text being pasted, add the mark `inlineAtomicMenu` to data being pasted
@@ -421,12 +421,26 @@ export default (
               _fragment.textValue = _fragment.textValue.replaceAll('\n', ' ').trim()
 
               _fragment.ranges = [{ offset: 0, length: _fragment.textValue.length, marks: ["inlineAtomicMenu"] }]
+              // insert pasted text
+              insertText({
+                block: draft.blocks[draft.selection.anchor.index],
+                text: _frag[0].text,
+                offset: draft.selection.anchor.offset,
+              })
+
+              // merge 'inlineAtomicMenu Ranges'
+
+              mergeInlineAtomicMenuRange({block: draft.blocks[draft.selection.anchor.index]})
+
+       
+            } else {
+              insertText({
+                block: draft.blocks[draft.selection.anchor.index],
+                text: _frag[0].text,
+                offset: draft.selection.anchor.offset,
+              })
             }
-            insertText({
-              block: draft.blocks[draft.selection.anchor.index],
-              text: _frag[0].text,
-              offset: draft.selection.anchor.offset,
-            })
+
 
             const _cursor = {
               index: draft.selection.anchor.index,
