@@ -7,7 +7,6 @@ import {
   makeEmptyBlock,
 } from './'
 import { isAtomicInlineType } from '../util'
-import { getRangesAtPoint } from '../../state/util'
 import adjustSelectionToIncludeInlineAtomics from './adjustSelectionToIncludeInlineAtomics'
 
 // updates block with selection removed
@@ -34,8 +33,6 @@ const deleteSelectionWithinBlock = ({
     blocks[index] = makeEmptyBlock()
     return
   }
-
-  adjustSelectionToIncludeInlineAtomics({ blocks, anchor, focus })
 
   // otherwise, split the text to remove selected range
   // we'll extract _beforeAnchor and  _afterFocus
@@ -109,6 +106,8 @@ export default (draft: EditorState) => {
 
   const { selection, blocks } = draft
   const { anchor, focus } = sortSelection(selection)
+
+  adjustSelectionToIncludeInlineAtomics({ blocks, anchor, focus })
 
   // check if selection is within a block
   if (focus.index === anchor.index) {
