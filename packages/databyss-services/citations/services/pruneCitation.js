@@ -13,6 +13,10 @@ export function pruneCitation(citation, styleId) {
   div.innerHTML = citation
   const cslEntries = div.getElementsByClassName('csl-entry')
 
+  if (!cslEntries[0]) {
+    return citation
+  }
+
   switch (styleId) {
     case CitationStyleIds.APA:
     case CitationStyleIds.CHICAGO:
