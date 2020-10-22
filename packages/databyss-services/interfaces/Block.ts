@@ -40,7 +40,7 @@ export interface SourceDetail {
   publisherName?: Text
   publisherPlace?: Text
   year?: Text
-  month?: Text
+  month?: SelectOption | null | undefined
   volume?: Text
   issue?: Text
 
