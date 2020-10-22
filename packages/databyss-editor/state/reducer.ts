@@ -61,9 +61,17 @@ export const bakeAtomicBlock = ({
 }): Block | null => {
   const _block = draft.blocks[index]
   // check if current text should be converted to atomic block
+
+  // check for inline atomic
+  const _doesBlockHaveInlineAtomicRange = !!_block?.text.ranges.filter(r =>
+    r.marks.length &&
+    r.marks.filter(i => Array.isArray(i) && i[0] === 'inlineTopic')).length
+
+
   if (
     _block &&
     !isAtomicInlineType(_block.type) &&
+    !_doesBlockHaveInlineAtomicRange &&
     !_block.text.textValue.match(`\n`)
   ) {
     const _atomicType = symbolToAtomicType(_block.text.textValue.charAt(0))
@@ -683,7 +691,6 @@ export default (
               })
             } else if (op.withBakeAtomic) {
               // reset block relations
-
               clearBlockRelations = true
               bakeAtomicBlock({ draft, index: op.index })
 
@@ -876,9 +883,15 @@ export default (
         _selectedBlock.__showCitationMenu = _selectedBlock.text.textValue.startsWith(
           '@'
         ) && !_selectedBlock.text.textValue.match(`\n`)
+
+        // block new topic menu if current range is inlineTopic
+        const _doesBlockHaveInlineAtomicRange = !!_selectedBlock.text.ranges.filter(r =>
+          r.marks.length &&
+          r.marks.filter(i => Array.isArray(i) && i[0] === 'inlineTopic')).length
+      
         _selectedBlock.__showTopicMenu = _selectedBlock.text.textValue.startsWith(
           '#'
-        ) && !_selectedBlock.text.textValue.match(`\n`)
+        ) && !_selectedBlock.text.textValue.match(`\n`) && !_doesBlockHaveInlineAtomicRange
 
 
         // // if currently in an inline atomic
