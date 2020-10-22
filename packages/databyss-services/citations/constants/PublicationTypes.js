@@ -147,3 +147,5 @@ export const PublicationTypes = [
     label: 'Dictionary Entry',
   },
 ]
+
+export const defaultPublicationType = PublicationTypes[3]
