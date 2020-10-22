@@ -21,6 +21,8 @@ export const toJsonCsl = source => {
     publicationType,
     publisherName,
     publisherPlace,
+    volume,
+    issue,
     // catalog identifiers
     isbn,
     issn,
@@ -39,7 +41,7 @@ export const toJsonCsl = source => {
   // === PEOPLE ===
 
   // authors
-  if (authors && Array.isArray(authors) && authors.length > 0) {
+  if (validatePeopleArray(source, 'authors')) {
     response.author = []
     authors.forEach(a => {
       response.author.push({
@@ -50,7 +52,7 @@ export const toJsonCsl = source => {
   }
 
   // editors
-  if (editors && Array.isArray(editors) && editors.length > 0) {
+  if (validatePeopleArray(source, 'editors')) {
     response.editor = []
     editors.forEach(e => {
       response.editor.push({
@@ -61,7 +63,7 @@ export const toJsonCsl = source => {
   }
 
   // translators
-  if (translators && Array.isArray(translators) && translators.length > 0) {
+  if (validatePeopleArray(source, 'translators')) {
     response.translator = []
     translators.forEach(t => {
       response.translator.push({
@@ -72,6 +74,14 @@ export const toJsonCsl = source => {
   }
 
   // === PUBLICATION ===
+
+  // date
+  const dateParts = buildDateParts(source)
+  if (dateParts) {
+    response.issued = {
+      'date-parts': dateParts,
+    }
+  }
 
   // publication type
   // TODO: ensure if acceptable type
@@ -89,15 +99,14 @@ export const toJsonCsl = source => {
     response['publisher-place'] = publisherPlace.textValue
   }
 
-  // year
-  if ('yearPublished' in source && 'textValue' in source.yearPublished) {
-    response.issued = {
-      'date-parts': [[source.yearPublished.textValue]],
-    }
-  } else if ('year' in source && 'textValue' in source.year) {
-    response.issued = {
-      'date-parts': [[source.year.textValue]],
-    }
+  // volume
+  if (validateTextValue(volume)) {
+    response.volume = volume.textValue
+  }
+
+  // issue
+  if (validateTextValue(issue)) {
+    response.issue = issue.textValue
   }
 
   // === CATALOG IDENTIFIERS ===
@@ -112,6 +121,46 @@ export const toJsonCsl = source => {
   }
 
   return response
+}
+
+// utils
+function buildDateParts(source) {
+  let year = null
+  if (
+    'yearPublished' in source &&
+    'textValue' in source.yearPublished &&
+    source.yearPublished.textValue !== ''
+  ) {
+    year = source.yearPublished.textValue
+  } else if (
+    'year' in source &&
+    'textValue' in source.year &&
+    source.year.textValue !== ''
+  ) {
+    year = source.year.textValue
+  }
+
+  let month = null
+  if (
+    'month' in source &&
+    'textValue' in source.month &&
+    source.month.textValue !== ''
+  ) {
+    month = source.month.textValue
+  }
+
+  if (!year && !month) {
+    return null
+  } else if (year && !month) {
+    return [[year]]
+  }
+
+  return [[year, month]]
+}
+
+function validatePeopleArray(source, propName) {
+  const array = source[propName]
+  return array && Array.isArray(array) && array.length > 0
 }
 
 function validateTextValue(prop) {

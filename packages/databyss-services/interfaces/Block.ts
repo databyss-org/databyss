@@ -40,13 +40,14 @@ export interface SourceDetail {
   publisherName?: Text
   publisherPlace?: Text
   year?: Text
+  month?: Text
+  volume?: Text
+  issue?: Text
 
-  // publication details (book)
+  // catalog identifiers (book)
   isbn?: Text
 
-  // publication details (journal article)
-  issue?: Text
-  volume?: Text
+  // catalog identifiers (articles)
   doi?: Text
   issn?: Text
 }

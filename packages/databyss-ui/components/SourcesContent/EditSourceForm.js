@@ -35,27 +35,27 @@ const checkIfBook = detail => {
   if (!detail || !('publicationType' in detail)) {
     return false
   }
-  const { option } = detail.publicationType
-  if (!option) {
+  const { publicationType } = detail
+  if (!publicationType) {
     return false
   }
   return (
-    option.id === PublicationTypeId.BOOK ||
-    option.id === PublicationTypeId.BOOK_SECTION
+    publicationType.id === PublicationTypeId.BOOK ||
+    publicationType.id === PublicationTypeId.BOOK_SECTION
   )
 }
 const checkIfArticle = detail => {
   if (!detail || !('publicationType' in detail)) {
     return false
   }
-  const { option } = detail.publicationType
-  if (!option) {
+  const { publicationType } = detail
+  if (!publicationType) {
     return false
   }
   return (
-    option.id === PublicationTypeId.JOURNAL_ARTICLE ||
-    option.id === PublicationTypeId.NEWSPAPER_ARTICLE ||
-    option.id === PublicationTypeId.MAGAZINE_ARTICLE
+    publicationType.id === PublicationTypeId.JOURNAL_ARTICLE ||
+    publicationType.id === PublicationTypeId.NEWSPAPER_ARTICLE ||
+    publicationType.id === PublicationTypeId.MAGAZINE_ARTICLE
   )
 }
 const swap = (array, indexA, indexB) => {
@@ -277,6 +277,15 @@ const EditSourceForm = props => {
         onBlur={onFieldBlur}
       />
 
+      {isArticle ? (
+        <LabeledTextInput
+          path="detail.month"
+          id="month"
+          label="Month"
+          onBlur={onFieldBlur}
+        />
+      ) : null }
+
       <ValueListItem path="detail.publicationType">
         <LabeledDropDownControl
           label="Publication type"
@@ -305,6 +314,26 @@ const EditSourceForm = props => {
         multiline
         onBlur={onFieldBlur}
       />
+
+      {isArticle ? (
+        <>
+          <LabeledTextInput
+            path="detail.volume"
+            id="volume"
+            label="Volume"
+            multiline
+            onBlur={onFieldBlur}
+          />
+
+          <LabeledTextInput
+            path="detail.issue"
+            id="issue"
+            label="Issue"
+            multiline
+            onBlur={onFieldBlur}
+          />
+        </>
+      ) : null}
     </>
   )
 
