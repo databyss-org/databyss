@@ -40,21 +40,53 @@ import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
 
-const firefoxWhitespaceFix = editor => {
-  // pressed key is a char
-  const _text = Node.string(editor.children[editor.selection.focus.path[0]])
-  const _offset = parseInt(flattenOffset(editor, editor.selection.focus), 10)
+const firefoxWhitespaceFix = (event, editor) => {
+  if (Range.isCollapsed(editor.selection)) {
+    // pressed key is a char
+    const _text = Node.string(editor.children[editor.selection.focus.path[0]])
+    const _offset = parseInt(flattenOffset(editor, editor.selection.focus), 10)
 
-  // check if previous character is a white space, if so, remove whitespace and recalculate text and offset
-  const _prevWhiteSpace = _text.charAt(_offset - 1) === '\u2060'
-  if (_prevWhiteSpace) {
-    Transforms.delete(editor, {
-      distance: 1,
-      unit: 'character',
-      reverse: true,
-    })
-    return true
+    // check if previous character is a white space, if so, remove whitespace and recalculate text and offset
+    const _prevWhiteSpace = _text.charAt(_offset - 1) === '\u2060'
+    if (_prevWhiteSpace) {
+      Transforms.delete(editor, {
+        distance: 1,
+        unit: 'character',
+        reverse: true,
+      })
+      return true
+    }
+
+    // Edge case: check if between a `\n` new line and the start of an inline atomic
+    const _prevNewLine = _text.charAt(_offset - 1) === '\n'
+    const _atBlockEnd = _offset === _text.length
+
+    // if were not at the end of a block and key is not backspace, check if inlineAtomic should be toggled
+    if (_prevNewLine && !_atBlockEnd && event.key !== 'Backspace') {
+      let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+      const _atLeafEnd =
+        _currentLeaf.text.length === editor.selection.focus.offset
+      // move selection forward one
+      if (_atLeafEnd && !_currentLeaf.inlineTopic) {
+        Transforms.move(editor, {
+          unit: 'character',
+          distance: 1,
+        })
+        _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+        Transforms.move(editor, {
+          unit: 'character',
+          distance: 1,
+          reverse: true,
+        })
+      }
+      // remove marks before text is entered
+      if (_currentLeaf.inlineTopic) {
+        SlateEditor.removeMark(editor, 'inlineTopic')
+        SlateEditor.removeMark(editor, 'atomicId')
+      }
+    }
   }
+
   return false
 }
 
@@ -330,7 +362,7 @@ const ContentEditable = ({
           String.fromCharCode(event.keyCode).match(/(\w|\s)/g) ||
           event.key === 'Backspace'
         ) {
-          firefoxWhitespaceFix(editor)
+          firefoxWhitespaceFix(event, editor)
         }
         if (event.key === 'Escape' && isCurrentlyInInlineAtomicField(editor)) {
           const _index = state.selection.anchor.index
