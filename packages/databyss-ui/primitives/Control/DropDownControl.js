@@ -1,3 +1,4 @@
+import { kebabCase } from 'lodash'
 import React, { forwardRef, useState } from 'react'
 
 import { pxUnits } from '../../theming/views'
@@ -45,12 +46,21 @@ const selectStyles = () => ({
 
 const StyleSelect = styled('select', selectStyles)
 
+// utils
+const validateItem = item => {
+  if (!item || (!('id' in item) || !('label' in item))) {
+    return false
+  }
+  return true
+}
+
 // component
 const DropDownControl = forwardRef((props, ref) => {
   const {
     concatCss,
     ctaLabel,
     items,
+    itemGroups,
     onBlur,
     onChange,
     onFocus,
@@ -67,27 +77,56 @@ const DropDownControl = forwardRef((props, ref) => {
       )
     }
   }
-  if (!items) {
-    throw new Error(
-      '<DropDownControl /> expected `items`, an array of items, ' +
-        'but none was provided.'
-    )
-  }
-  if (items !== undefined) {
-    if (!Array.isArray(items)) {
+  if (!itemGroups) {
+    if (!items) {
       throw new Error(
-        '<DropDownControl /> expected the `items` prop to be an array.'
+        '<DropDownControl /> expected `items`, an array of items, ' +
+          'but none was provided.'
       )
     }
-    items.forEach(item => {
-      /* eslint-disable no-prototype-builtins */
-      if (!item.hasOwnProperty('id') || !item.hasOwnProperty('label')) {
+    if (items !== undefined) {
+      if (!Array.isArray(items)) {
         throw new Error(
-          '<DropDownControl /> expected the `items` array to contain elements ' +
-            'with both the `id` and the `label` properties.'
+          '<DropDownControl /> expected the `items` prop to be an array.'
         )
       }
-      /* eslint-enable no-prototype-builtins */
+      items.forEach(item => {
+        if (!validateItem(item)) {
+          throw new Error(
+            '<DropDownControl /> expected the `items` array to contain elements ' +
+              'with both the `id` and the `label` properties.'
+          )
+        }
+      })
+    }
+  } else {
+    if (!Array.isArray(itemGroups)) {
+      throw new Error(
+        '<DropDownControl /> expected the `itemGroups` prop to be an array.'
+      )
+    }
+    itemGroups.forEach(itemGroup => {
+      if (!('label' in itemGroup) || !('items' in itemGroup)) {
+        throw new Error(
+          '<DropDownControl /> expected each item of the `itemGroups` property' +
+            'to contain both the `label` and the `items` properties.'
+        )
+      }
+      if (!Array.isArray(itemGroup.items)) {
+        throw new Error(
+          '<DropDownControl /> expected the `items` property ' +
+            'of each `itemGroups` entry ' +
+            'prop to be an array.'
+        )
+      }
+      itemGroup.items.forEach(item => {
+        if (!validateItem(item)) {
+          throw new Error(
+            '<DropDownControl /> expected each item group array ' +
+              'to contain elements with both the `id` and the `label` properties.'
+          )
+        }
+      })
     })
   }
   if (concatCss !== undefined) {
@@ -118,6 +157,14 @@ const DropDownControl = forwardRef((props, ref) => {
     }
 
     return response
+  }
+
+  const getValue = () => {
+    if (value && 'id' in value) {
+      return value
+    }
+
+    return null
   }
 
   // events
@@ -156,12 +203,29 @@ const DropDownControl = forwardRef((props, ref) => {
     )
   }
 
-  const renderOptions = () =>
-    props.items.map(item => (
+  const renderItems = items =>
+    items.map(item => (
       <option key={item.id} value={item.id}>
         {item.label}
       </option>
     ))
+
+  const renderItemGroups = itemGroups =>
+    itemGroups.map((itemGroup, index) => {
+      const itemGroupKey = `${index}-${kebabCase(itemGroup.label)}`
+      return (
+        <optgroup key={itemGroupKey} label={itemGroup.label}>
+          {renderItems(itemGroup.items)}
+        </optgroup>
+      )
+    })
+
+  const renderOptions = () => {
+    if (itemGroups) {
+      return renderItemGroups(itemGroups)
+    }
+    return renderItems(items)
+  }
 
   const render = () => (
     <StyleSelect
@@ -170,7 +234,7 @@ const DropDownControl = forwardRef((props, ref) => {
       onFocus={onInternalFocus}
       onBlur={onInternalBlur}
       css={getStyles()}
-      value={value.id}
+      value={getValue()}
       {...others}
     >
       {renderCTALabel()}
