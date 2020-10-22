@@ -471,7 +471,6 @@ export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
 
   // if the only text tagged with inlineAtomicMenu is the opener, remove mark and normalize the text
   if (inlineMarkupData?.length === 1) {
-    console.log('HEREEE')
     const ranges: Range[] = []
     block.text.ranges.forEach(r => {
       if (!r.marks.includes("inlineAtomicMenu")) {

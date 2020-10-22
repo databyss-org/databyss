@@ -314,6 +314,7 @@ export default (
           const _frag = payload.data
           const { replace } = payload
 
+
           if (!_frag.length) {
             break
           }
@@ -323,12 +324,20 @@ export default (
           const { anchor: _startAnchor } = sortSelection(state.selection)
           const _startBlock = state.blocks[_startAnchor.index]
 
-          // if selection in the middle of atomic prevent paste
+          // if selection in the middle of atomic or inline atomic prevent paste
           if (
             !isSelectionCollapsed(state.selection) ||
             _startBlock.text.textValue.length !== _startAnchor.offset
           ) {
-            if (isAtomicInlineType(_startBlock.type)) {
+
+            // check for inline atomic
+            const _isSelectionOnInlineAtomic = !!getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor }).filter(r =>
+                  r.marks.length &&
+                  r.marks.filter(i => Array.isArray(i) && i[0] === 'inlineTopic')
+              ).length
+
+
+            if (_isSelectionOnInlineAtomic || isAtomicInlineType(_startBlock.type)) {
               break
             }
           }
@@ -354,7 +363,7 @@ export default (
 
             // check if we are pasting inside of an inline atomic field
             const _ranges = getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor })
-            if (_ranges.filter(r => r.marks.includes("inlineAtomicMenu"))) {
+            if (_ranges.filter(r => r.marks.includes("inlineAtomicMenu")).length) {
               /*
               if pasting mutlipe blocks in an active inlineAtomicMenu, do not allow this action
               */
@@ -402,7 +411,8 @@ export default (
 
             // check if we are pasting inside of an inline atomic field
             const _ranges = getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor })
-            if (_ranges.filter(r => r.marks.includes("inlineAtomicMenu"))) {
+   
+            if (_ranges.filter(r => r.marks.includes("inlineAtomicMenu")).length) {
               /*
               if pasting within an inlineAtomicMenu field
               strip all text and carriage returns from text being pasted, add the mark `inlineAtomicMenu` to data being pasted

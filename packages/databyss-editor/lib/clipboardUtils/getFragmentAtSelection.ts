@@ -7,6 +7,7 @@ import {
   addBlockUIFields,
 } from './'
 import { isAtomicInlineType } from '../util'
+import adjustSelectionToIncludeInlineAtomics from './adjustSelectionToIncludeInlineAtomics'
 
 // returns fragment in state selection
 export default (state: EditorState): Block[] => {
@@ -17,8 +18,15 @@ export default (state: EditorState): Block[] => {
   let frag: Block[] = []
 
   const { blocks, selection } = state
-
-  const { anchor, focus } = sortSelection(selection)
+  /*
+  sort the selection and include inline atomics
+  */
+  const _selection = sortSelection(selection)
+  const { anchor, focus } = adjustSelectionToIncludeInlineAtomics({
+    anchor: _selection.anchor,
+    focus: _selection.focus,
+    blocks,
+  })
 
   // if selection is within the same block
   if (anchor.index === focus.index) {
