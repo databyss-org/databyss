@@ -11,6 +11,10 @@ const CitationStyleOptions = [
     label: getShortNameFor(CitationStyleIds.CHICAGO),
   },
   {
+    id: CitationStyleIds.HARVARD,
+    label: getShortNameFor(CitationStyleIds.HARVARD),
+  },
+  {
     id: CitationStyleIds.IEEE,
     label: getShortNameFor(CitationStyleIds.IEEE),
   },

@@ -19,6 +19,10 @@ const Styles = [
     data: null,
   },
   {
+    id: CitationStyleIds.HARVARD,
+    data: null,
+  },
+  {
     id: CitationStyleIds.IEEE,
     data: null,
   },

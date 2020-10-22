@@ -16,6 +16,12 @@ const CitationStyles = [
     url: `${zoteroBaseUrl}/chicago-fullnote-bibliography`,
   },
   {
+    id: CitationStyleIds.HARVARD,
+    name: 'Harvard Reference Format 1',
+    shortName: 'Harvard',
+    url: `${zoteroBaseUrl}/harvard1`,
+  },
+  {
     id: CitationStyleIds.IEEE,
     name: 'IEEE',
     shortName: 'IEEE',
