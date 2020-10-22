@@ -280,22 +280,24 @@ const EditSourceForm = props => {
       />
 
       {isArticle ? (
-        <ValueListItem path="detail.month">
-          <LabeledDropDownControl
-            label="Month"
-            labelProps={labelProps}
-            gridFlexWrap="nowrap"
-            paddingVariant="tiny"
-            dropDownProps={{
-              concatCss: { width: '75%' },
-              ctaLabel: 'Choose a month/season',
-              itemGroups: [
-                { label: 'Months', items: MonthOptions },
-                { label: 'Seasons', items: SeasonOptions },
-              ],
-            }}
-          />
-        </ValueListItem>
+        <View marginBottom="10px">
+          <ValueListItem path="detail.month">
+            <LabeledDropDownControl
+              label="Month"
+              labelProps={labelProps}
+              gridFlexWrap="nowrap"
+              paddingVariant="tiny"
+              dropDownProps={{
+                concatCss: { width: '75%' },
+                ctaLabel: 'Choose a month/season',
+                itemGroups: [
+                  { label: 'Months', items: MonthOptions },
+                  { label: 'Seasons', items: SeasonOptions },
+                ],
+              }}
+            />
+          </ValueListItem>
+        </View>
       ) : null}
 
       <ValueListItem path="detail.publicationType">
