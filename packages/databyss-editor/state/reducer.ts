@@ -357,23 +357,25 @@ export default (
             draft.selection.anchor.index
           ].text.textValue.length
 
+          const _rangesAtCurrentSelection = getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor })
+
+          /*
+            allow pasting an single atomic block in an inline field
+          */
+          const _isAtomicBeingPastedIntoInline = _frag.length === 1 && isAtomicInlineType(_frag[0].type) && !!_rangesAtCurrentSelection.filter(r => r.marks.includes("inlineAtomicMenu")).length
 
           // if replacing, fragment contains multiple blocks, the cursor block is empty, 
           // the cursor block is atomic, or the fragment starts with an atomic, 
           // do not split the cursor block...
           if (
-            _frag.length > 1 ||
+            !_isAtomicBeingPastedIntoInline &&(_frag.length > 1 ||
             _replace ||
             isAtomicInlineType(_frag[0].type) ||
-            isAtomicInlineType(_startBlock.type)
+            isAtomicInlineType(_startBlock.type))
           ) {
 
             // check if we are pasting inside of an inline atomic field
-            const _ranges = getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor })
-            if (_ranges.filter(r => r.marks.includes("inlineAtomicMenu")).length) {
-              /*
-              if pasting mutlipe blocks in an active inlineAtomicMenu, do not allow this action
-              */
+            if (_rangesAtCurrentSelection.filter(r => r.marks.includes("inlineAtomicMenu")).length) {
               break
             }
 
