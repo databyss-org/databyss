@@ -22,6 +22,7 @@ export interface CatalogState {
   }
 }
 
+// TODO: move to a ui-related location?
 export interface SelectOption {
   label: string
   id: string
@@ -41,6 +42,10 @@ export interface CatalogService {
   getPublisher: (apiResult: any) => string
   getPublisherPlace: (apiResult: any) => string
   getPublishedYear: (apiResult: any) => string
+  getPublishedMonth: (
+    apiResult: any,
+    publicationType: string
+  ) => SelectOption | null | undefined
 
   // publication details (book)
   getISBN: (apiResult: any) => string
