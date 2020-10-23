@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Editor } from '@databyss-org/slate'
+import { Editor, Transforms } from '@databyss-org/slate'
 import { useEditor } from '@databyss-org/slate-react'
 import cloneDeep from 'clone-deep'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
@@ -101,6 +101,16 @@ const SuggestTopics = ({
             withRerender: true,
           },
         ],
+      })
+      // Slate editor needs to retrigger current position
+      Transforms.move(editor, {
+        unit: 'character',
+        distance: 1,
+        reverse: true,
+      })
+      Transforms.move(editor, {
+        unit: 'character',
+        distance: 1,
       })
     }
 
