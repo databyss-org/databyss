@@ -40,6 +40,19 @@ import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
 
+function isCharacterKeyPress(evt) {
+  if (typeof evt.which === 'undefined') {
+    // This is IE, which only fires keypress events for printable keys
+    return true
+  } else if (typeof evt.which === 'number' && evt.which > 0) {
+    // In other browsers except old versions of WebKit, evt.which is
+    // only greater than zero if the keypress is a printable key.
+    // We need to filter out backspace and ctrl/alt/meta key combinations
+    return !evt.ctrlKey && !evt.metaKey && !evt.altKey && evt.which !== 8
+  }
+  return false
+}
+
 const insertTextWithInilneCorrection = (text, editor) => {
   if (Range.isCollapsed(editor.selection)) {
     const _atBlockStart =
@@ -80,7 +93,7 @@ const insertTextWithInilneCorrection = (text, editor) => {
   }
 }
 
-const firefoxWhitespaceFix = (event, editor) => {
+const inlineAtomicBlockCorrector = (event, editor) => {
   if (Range.isCollapsed(editor.selection)) {
     // pressed key is a char
     const _text = Node.string(editor.children[editor.selection.focus.path[0]])
@@ -126,6 +139,7 @@ const firefoxWhitespaceFix = (event, editor) => {
       }
       // remove marks before text is entered
       if (_currentLeaf.inlineTopic) {
+        console.log('CORRECT')
         SlateEditor.removeMark(editor, 'inlineTopic')
         SlateEditor.removeMark(editor, 'atomicId')
       }
@@ -403,11 +417,8 @@ const ContentEditable = ({
 
       const onKeyDown = event => {
         // if a character has been entered, check if white space exists (firefox fix), if it has, remove character
-        if (
-          String.fromCharCode(event.keyCode).match(/(\w|\s)/g) ||
-          event.key === 'Backspace'
-        ) {
-          firefoxWhitespaceFix(event, editor)
+        if (isCharacterKeyPress(event) || event.key === 'Backspace') {
+          inlineAtomicBlockCorrector(event, editor)
         }
         if (event.key === 'Escape' && isCurrentlyInInlineAtomicField(editor)) {
           const _index = state.selection.anchor.index
