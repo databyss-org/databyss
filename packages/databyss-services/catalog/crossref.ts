@@ -3,9 +3,12 @@ import {
   CatalogType,
   GroupedCatalogResults,
 } from '../interfaces'
+import { defaultMonthOption } from '../citations/constants/MonthOptions'
+import { defaultPublicationType } from '../citations/constants/PublicationTypes'
 import { getPublicationTypeById } from '../citations/services/getPublicationTypeById'
 import { normalizePublicationId } from '../citations/services/normalizePublicationId'
-import { PublicationTypeId } from '../citations/constants/PublicationTypeId'
+import findPublicationMonthOption from '../sources/services/findPublicationMonthOption'
+import isBook from '../sources/services/isBook'
 import request from '../lib/request'
 
 import { CROSSREF } from './constants'
@@ -36,8 +39,7 @@ const crossref: CatalogService = {
     const pubId = normalizePublicationId(apiResult.type, CatalogType.Crossref)
     const pubType = getPublicationTypeById(pubId)
     if (!pubType) {
-      // default to book
-      return getPublicationTypeById(PublicationTypeId.BOOK)
+      return defaultPublicationType
     }
     return pubType
   },
@@ -57,6 +59,19 @@ const crossref: CatalogService = {
       apiResult['published-online']?.['date-parts']?.[0]?.[0] ||
       apiResult['approved']?.['date-parts']?.[0]?.[0] ||
       apiResult['created']?.['date-parts']?.[0]?.[0]
+  },
+  getPublishedMonth: (apiResult: any, publicationType: string) => {
+    if (isBook(publicationType)) {
+      return defaultMonthOption
+    }
+
+    const rawMonth = apiResult.issued?.['date-parts']?.[0]?.[1] ||
+      apiResult['published-print']?.['date-parts']?.[0]?.[1] ||
+      apiResult['published-online']?.['date-parts']?.[0]?.[1] ||
+      apiResult['approved']?.['date-parts']?.[0]?.[1] ||
+      apiResult['created']?.['date-parts']?.[0]?.[1]
+
+    return findPublicationMonthOption(rawMonth)
   },
 
   // publication details (book)

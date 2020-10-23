@@ -3,9 +3,11 @@ import {
   CatalogType,
   GroupedCatalogResults,
 } from '../interfaces'
+import { defaultMonthOption } from '../citations/constants/MonthOptions'
+import { defaultPublicationType } from '../citations/constants/PublicationTypes'
 import { getPublicationTypeById } from '../citations/services/getPublicationTypeById'
 import { normalizePublicationId } from '../citations/services/normalizePublicationId'
-import { PublicationTypeId } from '../citations/constants/PublicationTypeId'
+import isBook from '../sources/services/isBook'
 import request from '../lib/request'
 
 import { OPEN_LIBRARY } from './constants'
@@ -32,8 +34,7 @@ const openLibrary: CatalogService = {
     const pubId = normalizePublicationId(apiResult.type, CatalogType.OpenLibrary)
     const pubType = getPublicationTypeById(pubId)
     if (!pubType) {
-      // default to book
-      return getPublicationTypeById(PublicationTypeId.BOOK)
+      return defaultPublicationType
     }
     return pubType
   },
@@ -76,6 +77,22 @@ const openLibrary: CatalogService = {
     return responseParts.join(', ')
   },
   getPublishedYear: (apiResult: any) => apiResult.first_publish_year,
+  getPublishedMonth: (apiResult: any, publicationType: string) => {
+    if (isBook(publicationType)) {
+      return defaultMonthOption
+    }
+
+    /*
+      All of the items returned by this catalog are books so far.
+      The few that have months have it in the `publish_date` array property,
+      and they are a string, e.g.
+      - publish_date: ['May 01, 2000']
+      - publish_date: ['March 1, 2000']
+      TODO: spend time figuring out how to parse this if it's useful
+    */
+
+    return defaultMonthOption
+  },
 
   // publication details (book)
   getISBN: (apiResult: any) => {

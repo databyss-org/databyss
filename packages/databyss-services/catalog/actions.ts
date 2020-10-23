@@ -149,6 +149,8 @@ function sourceFromResult(options: CatalogParsingParams): Source {
   _text.textValue = `${_authorText} ${_text.textValue}`
   _text.ranges[0].offset += _authorText.length + 1
 
+  const publicationType = service.getPublicationType(result)
+
   return {
     _id: '', // will be generated if imported
     type: BlockType.Source,
@@ -169,17 +171,18 @@ function sourceFromResult(options: CatalogParsingParams): Source {
       title: makeText(getOnlyTitle(options).textValue),
 
       // publication details (common)
-      publicationType: service.getPublicationType(result),
+      publicationType,
       publisherName: makeText(service.getPublisher(result)),
       publisherPlace: makeText(service.getPublisherPlace(result)),
       year: makeText(service.getPublishedYear(result)),
+      month: service.getPublishedMonth(result, publicationType),
+      volume: makeText(service.getVolume(result)),
+      issue: makeText(service.getIssue(result)),
 
       // publication details (book)
       isbn: makeText(service.getISBN(result)),
 
       // publication details (journal article)
-      issue: makeText(service.getIssue(result)),
-      volume: makeText(service.getVolume(result)),
       doi: makeText(service.getDOI(result)),
       issn: makeText(service.getISSN(result)),
     },

@@ -3,9 +3,11 @@ import {
   CatalogType,
   GroupedCatalogResults, 
 } from '../interfaces'
+import { defaultMonthOption } from '../citations/constants/MonthOptions'
+import { defaultPublicationType } from '../citations/constants/PublicationTypes'
 import { getPublicationTypeById } from '../citations/services/getPublicationTypeById'
 import { normalizePublicationId } from '../citations/services/normalizePublicationId'
-import { PublicationTypeId } from '../citations/constants/PublicationTypeId'
+import isBook from '../sources/services/isBook'
 import request from '../lib/request'
 
 import { GOOGLE_BOOKS } from './constants'
@@ -34,8 +36,7 @@ const googleBooks: CatalogService = {
     const pubId = normalizePublicationId(apiResult.kind, CatalogType.GoogleBooks)
     const pubType = getPublicationTypeById(pubId)
     if (!pubType) {
-      // default to book
-      return getPublicationTypeById(PublicationTypeId.BOOK)
+      return defaultPublicationType
     }
     return pubType
   },
@@ -48,6 +49,13 @@ const googleBooks: CatalogService = {
   },
   getPublishedYear: (apiResult: any) => {
     return apiResult.volumeInfo.publishedDate?.substring(0, 4)
+  },
+  getPublishedMonth: (apiResult: any, publicationType: string) => {
+    if (isBook(publicationType)) {
+      return defaultMonthOption
+    }
+
+    return findPublicationMonthOption(rawMonth)
   },
   
   // publication details (book)

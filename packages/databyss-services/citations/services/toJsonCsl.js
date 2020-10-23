@@ -1,3 +1,6 @@
+import { isEqual } from 'lodash'
+import { defaultMonthOption } from '../constants/MonthOptions'
+
 /**
  * Converts a Databyss source detail object to a JSON CSL object.
  * See :
@@ -141,7 +144,10 @@ function buildDateParts(source) {
   }
 
   let month = null
-  if (validateOption(source, 'month')) {
+  if (
+    validateOption(source, 'month') &&
+    !isEqual(source.month.id, defaultMonthOption)
+  ) {
     month = source.month.id
   }
 

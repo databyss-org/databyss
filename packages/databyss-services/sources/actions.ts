@@ -1,8 +1,7 @@
-import { defaultPublicationType } from '../citations/constants/PublicationTypes'
 import { Source, Author, SourceCitationHeader } from '../interfaces'
-import MonthOptions from '../citations/constants/MonthOptions'
 
 import * as services from '.'
+import buildSourceDetail from './services/buildSourceDetail'
 import {
   FETCH_SOURCE,
   SAVE_SOURCE,
@@ -46,22 +45,7 @@ export function saveSource(sourceFields: Source) {
   return async (dispatch: Function) => {
     // ensure to add necessary detail default properties
     if (!('detail' in sourceFields)) {
-      sourceFields.detail = {}
-    }
-    if (!('publicationType' in sourceFields.detail)) {
-      sourceFields.detail.publicationType = defaultPublicationType
-    }
-    if (!('month' in sourceFields.detail)) {
-      sourceFields.detail.month = MonthOptions[9]
-    }
-    if (!('authors' in sourceFields.detail)) {
-      sourceFields.detail.authors = []
-    }
-    if (!('editors' in sourceFields.detail)) {
-      sourceFields.detail.editors = []
-    }
-    if (!('translators' in sourceFields.detail)) {
-      sourceFields.detail.translators = []
+      sourceFields.detail = buildSourceDetail()
     }
 
     dispatch({
