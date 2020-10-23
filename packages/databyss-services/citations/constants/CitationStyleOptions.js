@@ -28,7 +28,7 @@ const CitationStyleOptions = [
   },
 ]
 
-export const defaultCitationStyle = CitationStyleOptions[3]
+export const defaultCitationStyle = CitationStyleOptions[4]
 
 function getShortNameFor(styleId) {
   return CitationStyles.find(style => style.id === styleId).shortName
