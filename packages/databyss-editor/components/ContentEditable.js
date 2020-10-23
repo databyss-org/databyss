@@ -40,6 +40,39 @@ import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
 import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
 
+const insertTextWithInilneCorrection = (text, editor) => {
+  if (Range.isCollapsed(editor.selection)) {
+    const _text = Node.string(editor.children[editor.selection.focus.path[0]])
+    const _offset = parseInt(flattenOffset(editor, editor.selection.focus), 10)
+
+    const _atBlockEnd = _offset === _text.length
+    const _atBlockStart =
+      editor.selection.focus.path[1] === 0 &&
+      editor.selection.focus.offset === 0
+    const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+    const _atLeafEnd =
+      _currentLeaf.text.length === editor.selection.focus.offset
+    const _atLeafStart = editor.selection.focus.offset === 0
+    // console.log('path', JSON.stringify(editor.selection.anchor))
+    // console.log('end', _atLeafEnd)
+    // console.log('start', _atLeafStart)
+    console.log(_currentLeaf)
+    if (_atLeafStart && !_atBlockStart && _currentLeaf.inlineTopic) {
+      Transforms.move(editor, {
+        unit: 'character',
+        distance: 1,
+        reverse: true,
+      })
+      Transforms.move(editor, {
+        unit: 'character',
+        distance: 1,
+      })
+    }
+    Transforms.insertText(editor, text)
+    console.log(Node.leaf(editor, editor.selection.focus.path))
+  }
+}
+
 const firefoxWhitespaceFix = (event, editor) => {
   if (Range.isCollapsed(editor.selection)) {
     // pressed key is a char
@@ -62,7 +95,15 @@ const firefoxWhitespaceFix = (event, editor) => {
     const _atBlockEnd = _offset === _text.length
 
     // if were not at the end of a block and key is not backspace, check if inlineAtomic should be toggled
-    if (_prevNewLine && !_atBlockEnd && event.key !== 'Backspace') {
+
+    console.log(event.key)
+    if (
+      _prevNewLine &&
+      !_atBlockEnd &&
+      event.key !== 'Backspace' &&
+      event.key !== 'Tab'
+    ) {
+      console.log('ignore for tab as well')
       let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
       const _atLeafEnd =
         _currentLeaf.text.length === editor.selection.focus.offset
@@ -534,7 +575,10 @@ const ContentEditable = ({
 
         if (Hotkeys.isTab(event)) {
           event.preventDefault()
-          Transforms.insertText(editor, `\t`)
+          insertTextWithInilneCorrection(`\t`, editor)
+
+          // Transforms.insertText(editor, `\t`)
+          console.log(SlateEditor.marks(editor))
           return
         }
 
