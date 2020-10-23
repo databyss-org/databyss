@@ -42,21 +42,13 @@ import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
 
 const insertTextWithInilneCorrection = (text, editor) => {
   if (Range.isCollapsed(editor.selection)) {
-    const _text = Node.string(editor.children[editor.selection.focus.path[0]])
-    const _offset = parseInt(flattenOffset(editor, editor.selection.focus), 10)
-
-    const _atBlockEnd = _offset === _text.length
     const _atBlockStart =
       editor.selection.focus.path[1] === 0 &&
       editor.selection.focus.offset === 0
-    const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
-    const _atLeafEnd =
-      _currentLeaf.text.length === editor.selection.focus.offset
+    let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
     const _atLeafStart = editor.selection.focus.offset === 0
-    // console.log('path', JSON.stringify(editor.selection.anchor))
-    // console.log('end', _atLeafEnd)
-    // console.log('start', _atLeafStart)
-    console.log(_currentLeaf)
+
+    // if current leaf is an inline and we are at the start edge of the leaf, jog editor back one space and forward in order to reset marks
     if (_atLeafStart && !_atBlockStart && _currentLeaf.inlineTopic) {
       Transforms.move(editor, {
         unit: 'character',
@@ -67,9 +59,24 @@ const insertTextWithInilneCorrection = (text, editor) => {
         unit: 'character',
         distance: 1,
       })
+      _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
     }
     Transforms.insertText(editor, text)
-    console.log(Node.leaf(editor, editor.selection.focus.path))
+    // if inserted text has inline mark, remove mark
+    if (_currentLeaf.inlineTopic) {
+      Transforms.move(editor, {
+        unit: 'character',
+        distance: text.length,
+        edge: 'anchor',
+        reverse: true,
+      })
+      SlateEditor.removeMark(editor, 'inlineTopic')
+      SlateEditor.removeMark(editor, 'atomicId')
+
+      Transforms.collapse(editor, {
+        edge: 'focus',
+      })
+    }
   }
 }
 
@@ -95,15 +102,12 @@ const firefoxWhitespaceFix = (event, editor) => {
     const _atBlockEnd = _offset === _text.length
 
     // if were not at the end of a block and key is not backspace, check if inlineAtomic should be toggled
-
-    console.log(event.key)
     if (
       _prevNewLine &&
       !_atBlockEnd &&
       event.key !== 'Backspace' &&
       event.key !== 'Tab'
     ) {
-      console.log('ignore for tab as well')
       let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
       const _atLeafEnd =
         _currentLeaf.text.length === editor.selection.focus.offset
@@ -576,9 +580,6 @@ const ContentEditable = ({
         if (Hotkeys.isTab(event)) {
           event.preventDefault()
           insertTextWithInilneCorrection(`\t`, editor)
-
-          // Transforms.insertText(editor, `\t`)
-          console.log(SlateEditor.marks(editor))
           return
         }
 
