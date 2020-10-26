@@ -5,13 +5,13 @@ const zoteroBaseUrl = 'https://www.zotero.org/styles'
 const CitationStyles = [
   {
     id: CitationStyleIds.APA,
-    name: 'American Psychological Association',
+    name: 'American Psychological Association 7th edition',
     shortName: 'APA',
     url: `${zoteroBaseUrl}/apa`,
   },
   {
     id: CitationStyleIds.CHICAGO,
-    name: 'Chicago Manual of Style',
+    name: 'Chicago Manual of Style 17th edition (full note)',
     shortName: 'Chicago',
     url: `${zoteroBaseUrl}/chicago-fullnote-bibliography`,
   },
@@ -29,9 +29,9 @@ const CitationStyles = [
   },
   {
     id: CitationStyleIds.MLA,
-    name: 'Modern Language Association',
+    name: 'Modern Language Association 8th edition',
     shortName: 'MLA',
-    url: `${zoteroBaseUrl}/mla`,
+    url: `${zoteroBaseUrl}/modern-language-association`,
   },
   {
     id: CitationStyleIds.VANCOUVER,
