@@ -1,3 +1,4 @@
+import { makeText } from '../block/makeText'
 import {
   BlockType,
   CatalogResult,
@@ -9,6 +10,7 @@ import {
   Text,
 } from '../interfaces'
 
+import { buildDatabyssName, buildFullTitle, buildOnlyTitle, splitName } from './util'
 import { SEARCH_CATALOG, CACHE_SEARCH_RESULTS } from './constants'
 import crossref from './crossref'
 import googleBooks from './googleBooks'
@@ -113,7 +115,7 @@ function composeResults({
   _filteredResults.forEach((_apiResult: any) => {
     const _authorsString = service.getAuthors(_apiResult).join(', ')
     const _result: CatalogResult = {
-      title: titleFromResult({ service, result: _apiResult }),
+      title: buildFullTitle({ service, result: _apiResult }),
       source: sourceFromResult({ service, result: _apiResult }),
       apiResult: _apiResult,
     }
@@ -137,24 +139,13 @@ function sourceFromResult(options: CatalogParsingParams): Source {
   const {service, result} = options
 
   const _authors = service.getAuthors(result)
-  const _names = _authors.length && splitName(_authors[0])
-
-  const _authorText = _names
-    ? _names[1] +
-      (_names[0] ? ', ' : '.') +
-      (_names[0] ? `${_names[0].charAt(0)}.` : '')
-    : ''
-
-  const _text = titleFromResult({ service, result })
-  _text.textValue = `${_authorText} ${_text.textValue}`
-  _text.ranges[0].offset += _authorText.length + 1
 
   const publicationType = service.getPublicationType(result)
 
   return {
     _id: '', // will be generated if imported
     type: BlockType.Source,
-    text: _text,
+    text: buildDatabyssName(options),
     detail: {
       authors: _authors.length
         ? _authors.map((_a: string) => {
@@ -168,7 +159,7 @@ function sourceFromResult(options: CatalogParsingParams): Source {
       editors: [],
       translators: [],
       citations: [],
-      title: makeText(getOnlyTitle(options).textValue),
+      title: makeText(buildOnlyTitle(options).textValue),
 
       // publication details (common)
       publicationType,
@@ -186,72 +177,5 @@ function sourceFromResult(options: CatalogParsingParams): Source {
       doi: makeText(service.getDOI(result)),
       issn: makeText(service.getISSN(result)),
     },
-  }
-}
-
-function splitName(name: string) {
-  return [
-    name
-      .split(' ')
-      .slice(0, -1)
-      .join(' '),
-    name
-      .split(' ')
-      .slice(-1)
-      .join(' '),
-  ]
-}
-
-/**
- * composes source title
- * @param result catalog API result
- * @returns Text with formatted source title
- */
-function titleFromResult(options: CatalogParsingParams): Text {
-  const {service, result} = options
-
-  const _text: Text = {
-    textValue: service.getTitle(result),
-    ranges: [],
-  }
-
-  if (service.getSubtitle(result)) {
-    _text.textValue += `: ${service.getSubtitle(result)}`
-  }
-
-  _text.ranges = [
-    {
-      offset: 0,
-      length: _text.textValue.length,
-      marks: ['italic'],
-    },
-  ]
-
-  if (service.getPublishedYear(result)) {
-    _text.textValue += ` (${service.getPublishedYear(result)})`
-  }
-
-  return _text
-}
-
-function getOnlyTitle(options: CatalogParsingParams): Text {
-  const {service, result} = options
-
-  const _text: Text = {
-    textValue: service.getTitle(result),
-    ranges: [],
-  }
-
-  if (service.getSubtitle(result)) {
-    _text.textValue += `: ${service.getSubtitle(result)}`
-  }
-
-  return _text
-}
-
-function makeText(textValue: string): Text {
-  return {
-    textValue,
-    ranges: [],
   }
 }
