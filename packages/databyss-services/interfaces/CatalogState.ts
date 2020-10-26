@@ -56,3 +56,8 @@ export interface CatalogService {
   getDOI: (apiResult: any) => string
   getISSN: (apiResult: any) => string
 }
+
+export interface CatalogParsingParams {
+  service: CatalogService
+  result: any
+}
