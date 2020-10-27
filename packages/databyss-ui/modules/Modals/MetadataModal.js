@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+import { buildDatabyssName } from '@databyss-org/services/catalog/util'
 import { makeText } from '@databyss-org/services/block/makeText'
 import { ModalWindow } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -20,20 +21,20 @@ const createAuthorFromCrossref = crossrefAuthor => ({
 })
 
 const createValueState = metadata => {
-  const titleTextControl = makeText(metadata.fromPDF.title.text)
-
-  // create state
-  const state = {
-    text: titleTextControl,
-    detail: buildSourceDetail(),
-  }
-
   // update props...
   const { fromCrossref } = metadata
   const { author } = fromCrossref
 
+  // create state
+  const state = {
+    text: buildDatabyssName({ service: crossref, result: fromCrossref }),
+    detail: buildSourceDetail(),
+  }
+
+  // update props...
+
   // ...title
-  state.detail.title = titleTextControl
+  state.detail.title = makeText(metadata.fromPDF.title.text)
 
   // ...authors
   if (author) {
