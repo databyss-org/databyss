@@ -184,6 +184,7 @@ const ContentEditable = ({
     remove,
     removeAtSelection,
     removeEntityFromQueue,
+    setInlineBlockRelations,
   } = editorContext
 
   const editor = useMemo(() => withReact(createEditor()), [])
@@ -247,7 +248,7 @@ const ContentEditable = ({
               setSource(_data)
             },
             TOPIC: () => {
-              setTopic(_data)
+              setInlineBlockRelations(() => setTopic(_data))
             },
           }[entity.type]())
           removeEntityFromQueue(entity._id)

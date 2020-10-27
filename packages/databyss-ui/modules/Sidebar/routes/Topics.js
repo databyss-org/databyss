@@ -33,7 +33,6 @@ const Topics = ({ filterQuery, height, hasIndexPage }) => (
     {topics => {
       const topicsData = getTopicsData(topics)
       const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
-      console.log(sortedTopics)
       const filteredEntries = filterEntries(sortedTopics, filterQuery)
 
       return (

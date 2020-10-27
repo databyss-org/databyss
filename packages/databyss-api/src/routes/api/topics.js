@@ -1,7 +1,6 @@
 import express from 'express'
 import mongoose from 'mongoose'
 import Block from '../../models/Block'
-import Page from '../../models/Page'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
 import wrap from '../../lib/guardedAsync'
@@ -9,10 +8,7 @@ import {
   ResourceNotFoundError,
   InsufficientPermissionError,
 } from '../../lib/Errors'
-import {
-  getPageAccountQueryMixin,
-  getBlockAccountQueryMixin,
-} from './helpers/accountQueryMixin'
+import { getBlockAccountQueryMixin } from './helpers/accountQueryMixin'
 
 const router = express.Router()
 
