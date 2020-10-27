@@ -10,6 +10,42 @@ export const splice = (src, idx, rem, str) =>
   src.slice(0, idx) + str + src.slice(idx + Math.abs(rem))
 
 
+const getInlineAtomicFromBlock = (block: Block): Range[] => {
+  const _inlineRanges = block.text.ranges.filter(r =>
+    r.marks.filter(m => Array.isArray(m) && m[0] ===(InlineTypes.InlineTopic)).length
+   )
+   return _inlineRanges
+}
+
+const getInlineBlockRelations = (block: Block, pageId: string, index: number) => {
+  const _blockRelations: BlockRelation[] = []
+
+  // find if any inline topics exist on block
+  const _inlineRanges = getInlineAtomicFromBlock(block)
+  if(_inlineRanges.length){
+    _inlineRanges.forEach(r=> {
+      if(typeof r.marks !== 'string'){
+        const _inlineRange: InlineRangeType = r.marks[0]
+        const _inlineType: InlineTypes = _inlineRange[0]
+        const type = getInlineAtomicType(_inlineType)
+        const _id = _inlineRange[1]
+        if(type){
+          const _relation = composeBlockRelation(
+            block,
+            {type, _id},
+            pageId,
+            'INLINE'
+          )
+          _relation.blockIndex = index
+          _blockRelations.push(_relation)
+        }
+      }
+    })
+  }
+  return _blockRelations
+}
+
+
 export const getInlineAtomicType = (type: InlineTypes): BlockType | null => {
   switch(type){
     case InlineTypes.InlineTopic: 
@@ -156,39 +192,17 @@ export const getPagePath = (page: EditorState): PagePath => {
     }
   })
 
+  let _inlineRelations: BlockRelation[] = []
   // inline block indexing
-
-  // find if any inline topics exist on block
-  
-  const _inlineRanges = _currentBlock.text.ranges.filter(r =>
-   r.marks.filter(m => Array.isArray(m) && m[0] ===(InlineTypes.InlineTopic)).length
-  )
-
-  
-  if(_inlineRanges.length){
-    _inlineRanges.forEach(r=> {
-      if(typeof r.marks !== 'string'){
-        const _inlineRange: InlineRangeType = r.marks[0]
-        const _inlineType: InlineTypes = _inlineRange[0]
-        const type = getInlineAtomicType(_inlineType)
-        const _id = _inlineRange[1]
-        if(type){
-          const _relation = composeBlockRelation(
-            _currentBlock,
-            {type, _id},
-            pageId,
-            'INLINE'
-          )
-          _relation.blockIndex = _index
-          _blockRelations.push(_relation)
-        }
-
-      }
-
-    })
+  if(pageId){
+    // returns an array of block relations
+    _inlineRelations = getInlineBlockRelations(_currentBlock, pageId, _index)
   }
+  if(_inlineRelations.length){
+    _blockRelations.push(..._inlineRelations)
+  }
+
   
-console.log(_blockRelations)
   return { path: _path, blockRelations: _blockRelations }
 }
 /*
@@ -222,7 +236,18 @@ export const indexPage = ({
       }
       // if current block is not empty
       else if (block.text.textValue.length) {
-        console.log('ALSO CHECK FOR INLINE ATOMICS')
+        // before indexing the atomic, check if block contains any inline atomics
+        let _inlineRelations: BlockRelation[] = []
+        // inline block indexing
+        if(pageId){
+          // returns an array of block relations
+          _inlineRelations = getInlineBlockRelations(block, pageId, index)
+        }
+        if(_inlineRelations.length){
+          blockRelations.push(..._inlineRelations)
+        }
+
+
         for (const [, value] of Object.entries(currentAtomics)) {
           if (value) {
             blockRelations.push({
