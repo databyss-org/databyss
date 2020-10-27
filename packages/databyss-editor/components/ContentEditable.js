@@ -139,7 +139,6 @@ const inlineAtomicBlockCorrector = (event, editor) => {
       }
       // remove marks before text is entered
       if (_currentLeaf.inlineTopic) {
-        console.log('CORRECT')
         SlateEditor.removeMark(editor, 'inlineTopic')
         SlateEditor.removeMark(editor, 'atomicId')
       }
@@ -673,7 +672,7 @@ const ContentEditable = ({
                   toggleMark(editor, m)
                 })
                 // activate inlineAtomicMenu
-                toggleMark(editor, 'inlineAtomicMenu')
+                SlateEditor.addMark(editor, 'inlineAtomicMenu', true)
 
                 Transforms.collapse(editor, {
                   edge: 'focus',
@@ -702,7 +701,7 @@ const ContentEditable = ({
               Object.keys(_activeMarks).forEach(m => {
                 toggleMark(editor, m)
               })
-              toggleMark(editor, 'inlineAtomicMenu')
+              SlateEditor.addMark(editor, 'inlineAtomicMenu', true)
               Transforms.collapse(editor, {
                 edge: 'focus',
               })
