@@ -192,10 +192,9 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           }
 
           // the newEntity array is clear and its not pending a save
-          if (!props.nextState.newEntities.length &&  !pendingAtomicSave.current && pagePathRef?.current.blockRelations.length) {
+          if (!props.nextState.newEntities.length && !pendingAtomicSave.current && pagePathRef?.current.blockRelations.length) {
             // set block relations and clear buffer
             blockRelationsBuffer.current.forEach(b=> setBlockRelations(b))
-
             // clear block relations buffer
             blockRelationsBuffer.current = []
           }
@@ -237,15 +236,16 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     const setInlineBlockRelations = (callback: Function) => {
       //  this function is only called after an async `setAtomic` function
 
-      // reset the pendingAtomicSave ref
-      pendingAtomicSave.current  = false
+
       // set block relations
       blockRelationsBuffer.current.forEach((b, i) =>  {
         // only fire the callback on the last block relation of the array
         const _fireCallback = i === blockRelationsBuffer.current.length - 1
-        
+
       setBlockRelations(b).then(()=> {
         if(callback && _fireCallback){
+          // reset the pendingAtomicSave ref
+          pendingAtomicSave.current  = false
           callback()
         }
       })})
