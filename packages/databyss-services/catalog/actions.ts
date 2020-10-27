@@ -151,15 +151,15 @@ function sourceFromResult(options: CatalogParsingParams): Source {
         ? _authors.map((_a: string) => {
             const _n = splitName(_a)
             return {
-              firstName: { textValue: _n[0], ranges: [] },
-              lastName: { textValue: _n[1], ranges: [] },
+              firstName: makeText(_n[0]),
+              lastName: makeText(_n[1]),
             }
           })
         : [],
       editors: [],
       translators: [],
       citations: [],
-      title: makeText(buildOnlyTitle(options).textValue),
+      title: buildOnlyTitle(options),
 
       // publication details (common)
       publicationType,
