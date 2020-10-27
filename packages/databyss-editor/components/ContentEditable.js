@@ -99,19 +99,24 @@ const ContentEditable = ({
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
-  if (!valueRef.current || state.operations.reloadAll) {
-    editor.children = stateToSlate(state)
-    // load selection from DB
-    if (state.selection) {
-      const selection = stateSelectionToSlateSelection(
-        editor.children,
-        state.selection
-      )
-      Transforms.select(editor, selection)
-      if (!state.operations.reloadAll) {
-        setSelection(state.selection)
+  try {
+    if (!valueRef.current || state.operations.reloadAll) {
+      editor.children = stateToSlate(state)
+      // load selection from DB
+      if (state.selection) {
+        const selection = stateSelectionToSlateSelection(
+          editor.children,
+          state.selection
+        )
+        Transforms.select(editor, selection)
+        if (!state.operations.reloadAll) {
+          setSelection(state.selection)
+        }
       }
     }
+  } catch (error) {
+    // FIXME: handle selection failure, to prevent page from breaking on load
+    console.warn(error)
   }
 
   // if focus index is provides, move caret
