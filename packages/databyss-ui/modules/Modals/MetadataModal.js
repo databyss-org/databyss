@@ -64,26 +64,6 @@ const createValueState = metadata => {
   return state
 }
 
-const buildResponse = state => {
-  const response = {}
-
-  response.title = state.title.textValue
-
-  response.authors = []
-  state.authors.forEach(author => {
-    response.authors.push({
-      firstName: author.firstName.textValue,
-      lastName: author.lastName.textValue,
-    })
-  })
-
-  response.doi = state.doi?.textValue
-  response.issn = state.issn?.textValue
-  response.year = state.year?.textValue
-
-  return response
-}
-
 // component
 const MetadataModal = ({ id, visible, metadata, dismissCallback }) => {
   const [values, setValues] = useState(createValueState(metadata))
@@ -92,10 +72,8 @@ const MetadataModal = ({ id, visible, metadata, dismissCallback }) => {
 
   const onDismiss = () => {
     if (dismissCallback) {
-      const response = buildResponse(values)
-      dismissCallback(response)
+      dismissCallback(values)
     }
-
     hideModal()
   }
 
