@@ -157,8 +157,8 @@ router.get(
       }
       // check for inline atomics
       if (_block.type === 'ENTRY') {
-        const _inlineRanges = _rec.text.ranges.filter(r =>
-          r.marks.filter(m => m.includes('inlineTopic'))
+        const _inlineRanges = _rec.text.ranges.filter(
+          r => r.marks.filter(m => m.includes('inlineTopic')).length
         )
         // if inline ranges exist, update them
         if (_inlineRanges.length) {

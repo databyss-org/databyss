@@ -1,12 +1,23 @@
 import _ from 'lodash'
 import cloneDeep from 'clone-deep'
-import { Block } from '@databyss-org/services/interfaces/'
-import { stateBlockToHtmlHeader, stateBlocktoHtmlResults, stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils.js'
+import { Block, RangeType } from '@databyss-org/services/interfaces/'
+import { stateBlockToHtmlHeader,  stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils.js'
 import { BlockType, Selection, EditorState, BlockRelation, PagePath, Range } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
+import { InlineTypes, InlineRangeType } from '../../databyss-services/interfaces/Range';
 
 export const splice = (src, idx, rem, str) =>
   src.slice(0, idx) + str + src.slice(idx + Math.abs(rem))
+
+
+export const getInlineAtomicType = (type: InlineTypes): BlockType | null => {
+  switch(type){
+    case InlineTypes.InlineTopic: 
+    return BlockType.Topic
+    default:
+      return null
+  }
+}
 
 export const isAtomicInlineType = (type: BlockType) => {
   switch (type) {
@@ -29,13 +40,14 @@ export const isEmpty = (block: Block) => block.text.textValue.length === 0
 const composeBlockRelation = (
   currentBlock: Block,
   atomicBlock: Block,
-  pageId: string
+  pageId: string,
+  relationshipType: string
 ): BlockRelation => {
   const _blockRelation: BlockRelation = {
     block: currentBlock._id,
     relatedBlock: atomicBlock._id,
     blockText: currentBlock.text,
-    relationshipType: 'HEADING',
+    relationshipType: relationshipType,
     relatedBlockType: atomicBlock.type,
     page: pageId,
     blockIndex: 0,
@@ -107,7 +119,8 @@ export const getPagePath = (page: EditorState): PagePath => {
               const _relation = composeBlockRelation(
                 _currentBlock,
                 _block,
-                pageId
+                pageId, 
+                'HEADING'
               )
 
               _relation.blockIndex = _index
@@ -143,6 +156,40 @@ export const getPagePath = (page: EditorState): PagePath => {
     }
   })
 
+  // inline block indexing
+
+  // find if any inline topics exist on block
+  
+  const _inlineRanges = _currentBlock.text.ranges.filter(r =>
+   r.marks.filter(m => Array.isArray(m) && m[0] ===(InlineTypes.InlineTopic)).length
+  )
+
+  console.log(_blockRelations)
+  
+  if(_inlineRanges.length){
+    _inlineRanges.forEach(r=> {
+      if(typeof r.marks !== 'string'){
+        const _inlineRange: InlineRangeType = r.marks[0]
+        const _inlineType: InlineTypes = _inlineRange[0]
+        const type = getInlineAtomicType(_inlineType)
+        const _id = _inlineRange[1]
+        if(type){
+          const _relation = composeBlockRelation(
+            _currentBlock,
+            {type, _id},
+            pageId,
+            'INLINE'
+          )
+          _relation.blockIndex = _index
+          _blockRelations.push(_relation)
+        }
+
+      }
+
+    })
+  }
+  
+
   return { path: _path, blockRelations: _blockRelations }
 }
 /*
@@ -176,6 +223,7 @@ export const indexPage = ({
       }
       // if current block is not empty
       else if (block.text.textValue.length) {
+        console.log('ALSO CHECK FOR INLINE ATOMICS')
         for (const [, value] of Object.entries(currentAtomics)) {
           if (value) {
             blockRelations.push({
