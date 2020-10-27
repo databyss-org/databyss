@@ -84,9 +84,11 @@ export const CatalogSearchLoader = ({ query, type, children }) => {
 export const AllTopicsLoader = ({ children, filtered, ...others }) => {
   const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
   let _resource = getTopicHeaders()
+  console.log('BEFORE', _resource)
   if (filtered && isResourceReady(_resource)) {
     _resource = pickBy(_resource, topic => topic.isInPages?.length)
   }
+  console.log('after', _resource)
 
   return <MakeLoader resources={_resource} children={children} {...others} />
 }

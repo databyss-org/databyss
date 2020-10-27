@@ -164,7 +164,6 @@ export const getPagePath = (page: EditorState): PagePath => {
    r.marks.filter(m => Array.isArray(m) && m[0] ===(InlineTypes.InlineTopic)).length
   )
 
-  console.log(_blockRelations)
   
   if(_inlineRanges.length){
     _inlineRanges.forEach(r=> {
@@ -189,7 +188,7 @@ export const getPagePath = (page: EditorState): PagePath => {
     })
   }
   
-
+console.log(_blockRelations)
   return { path: _path, blockRelations: _blockRelations }
 }
 /*

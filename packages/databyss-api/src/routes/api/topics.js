@@ -1,4 +1,5 @@
 import express from 'express'
+import mongoose from 'mongoose'
 import Block from '../../models/Block'
 import Page from '../../models/Page'
 import auth from '../../middleware/auth'
@@ -48,9 +49,68 @@ router.get(
   '/:id',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, next) => {
-    const topic = await Block.findOne({
-      _id: req.params.id,
-    })
+    let topic = await Block.aggregate([
+      {
+        $match: {
+          _id: mongoose.Types.ObjectId(req.params.id),
+          ...getBlockAccountQueryMixin(req),
+        },
+      },
+      {
+        // lookup  block in block relations and append local property 'isInPages'
+        $lookup: {
+          from: 'blockrelations',
+          localField: '_id',
+          foreignField: 'relatedBlock',
+          as: 'isInPages',
+        },
+      },
+      // remove block relations data and only allow page id
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          type: 1,
+          isInPages: '$isInPages.page',
+        },
+      },
+      {
+        // appends all the pages block appears as a block relation in in an array 'isInPages'
+        $lookup: {
+          from: 'pages',
+          localField: 'isInPages',
+          foreignField: '_id',
+          as: 'isInPages',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          type: 1,
+          // filter out archived pages,
+          isInPages: {
+            $filter: {
+              input: '$isInPages',
+              as: 'isInPages',
+              cond: { $eq: ['$$isInPages.archive', false] },
+            },
+          },
+        },
+      },
+      // remove page data and only allow _id
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          type: 1,
+          isInPages: '$isInPages._id',
+        },
+      },
+    ])
 
     // only allow results that appear on shared page
     if (
@@ -60,21 +120,14 @@ router.get(
       return next(new InsufficientPermissionError())
     }
 
+    // aggregate returns an array, this function should only return one value
+    topic = topic.length && topic[0]
+
     if (!topic || topic.type !== 'TOPIC') {
       return next(new ResourceNotFoundError('There is no topic for this id'))
     }
 
-    // populates current pages
-    let isInPages = []
-    const _pages = await Page.find({
-      'blocks._id': topic._id,
-      ...getPageAccountQueryMixin(req),
-    })
-    if (_pages) {
-      isInPages = _pages.map(p => p._id)
-    }
-
-    return res.json({ ...topic._doc, isInPages })
+    return res.json(topic)
   })
 )
 
@@ -85,6 +138,50 @@ router.get(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
+    // const blocks = await Block.aggregate([
+    //   {
+    //     $match: {
+    //       type: 'TOPIC',
+    //       ...getBlockAccountQueryMixin(req),
+    //     },
+    //   },
+    //   {
+    //     // appends all the pages block appears in in an array 'isInPages'
+    //     $lookup: {
+    //       from: 'pages',
+    //       localField: '_id',
+    //       foreignField: 'blocks._id',
+    //       as: 'isInPages',
+    //     },
+    //   },
+    //   {
+    //     $project: {
+    //       _id: 1,
+    //       text: 1,
+    //       account: 1,
+    //       type: 1,
+    //       // filter out archived pages,
+    //       isInPages: {
+    //         $filter: {
+    //           input: '$isInPages',
+    //           as: 'isInPages',
+    //           cond: { $eq: ['$$isInPages.archive', false] },
+    //         },
+    //       },
+    //     },
+    //   },
+    //   // remove page data and only allow _id
+    //   {
+    //     $project: {
+    //       _id: 1,
+    //       text: 1,
+    //       account: 1,
+    //       type: 1,
+    //       isInPages: '$isInPages._id',
+    //     },
+    //   },
+    // ])
+
     const blocks = await Block.aggregate([
       {
         $match: {
@@ -93,11 +190,30 @@ router.get(
         },
       },
       {
-        // appends all the pages block appears in in an array 'isInPages'
+        // lookup  block in block relations and append local property 'isInPages'
+        $lookup: {
+          from: 'blockrelations',
+          localField: '_id',
+          foreignField: 'relatedBlock',
+          as: 'isInPages',
+        },
+      },
+      // remove block relations data and only allow page id
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          type: 1,
+          isInPages: '$isInPages.page',
+        },
+      },
+      {
+        // appends all the pages block appears as a block relation in in an array 'isInPages'
         $lookup: {
           from: 'pages',
-          localField: '_id',
-          foreignField: 'blocks._id',
+          localField: 'isInPages',
+          foreignField: '_id',
           as: 'isInPages',
         },
       },
