@@ -190,7 +190,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
 
 
           }
-
           // the newEntity array is clear and its not pending a save
           if (!props.nextState.newEntities.length && !pendingAtomicSave.current && pagePathRef?.current.blockRelations.length) {
             // set block relations and clear buffer
@@ -235,6 +234,17 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
 
     const setInlineBlockRelations = (callback: Function) => {
       //  this function is only called after an async `setAtomic` function
+
+
+      // if nothing in the buffer and callback was provided, fire callback
+      if(!blockRelationsBuffer.current.length){
+        // reset the pendingAtomicSave ref
+          pendingAtomicSave.current  = false
+          if(callback){
+            callback()
+          }
+          return
+      }
 
 
       // set block relations

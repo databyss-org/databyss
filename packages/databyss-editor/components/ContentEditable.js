@@ -248,7 +248,10 @@ const ContentEditable = ({
               setSource(_data)
             },
             TOPIC: () => {
-              setInlineBlockRelations(() => setTopic(_data))
+              // requestAnimationFrame will allow the `forkOnChange` function in the editor provider to execute before setting the inline block relations
+              window.requestAnimationFrame(() => {
+                setInlineBlockRelations(() => setTopic(_data))
+              })
             },
           }[entity.type]())
           removeEntityFromQueue(entity._id)
