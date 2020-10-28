@@ -65,8 +65,7 @@ export const bakeAtomicBlock = ({
   // check for inline atomic
   const _doesBlockHaveInlineAtomicRange = !!_block?.text.ranges.filter(r =>
     r.marks.length &&
-    r.marks.filter(i => Array.isArray(i) && i[0] === 'inlineTopic')).length
-
+    r.marks.filter(i => Array.isArray(i) && i[0] === 'inlineTopic').length).length
 
   if (
     _block &&
