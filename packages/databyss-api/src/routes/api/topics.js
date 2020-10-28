@@ -122,7 +122,6 @@ router.get(
     if (!topic || topic.type !== 'TOPIC') {
       return next(new ResourceNotFoundError('There is no topic for this id'))
     }
-
     return res.json(topic)
   })
 )
@@ -177,6 +176,10 @@ router.get(
     //     },
     //   },
     // ])
+    /*
+    aggregate will perform a lookup in block relations and then lookup in the page.blocks,
+    the final step will join both these results
+    */
 
     const blocks = await Block.aggregate([
       {
@@ -229,6 +232,33 @@ router.get(
           },
         },
       },
+      // look up in pages table
+      {
+        // appends all the pages block appears in in an array 'appearsInPages'
+        $lookup: {
+          from: 'pages',
+          localField: '_id',
+          foreignField: 'blocks._id',
+          as: 'appearsInPages',
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          type: 1,
+          isInPages: 1,
+          // filter out archived pages,
+          appearsInPages: {
+            $filter: {
+              input: '$appearsInPages',
+              as: 'appearsInPages',
+              cond: { $eq: ['$$appearsInPages.archive', false] },
+            },
+          },
+        },
+      },
       // remove page data and only allow _id
       {
         $project: {
@@ -237,6 +267,17 @@ router.get(
           account: 1,
           type: 1,
           isInPages: '$isInPages._id',
+          appearsInPages: '$appearsInPages._id',
+        },
+      },
+      // join both lookups and remove duplicates
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          type: 1,
+          isInPages: { $setUnion: ['$isInPages', '$appearsInPages'] },
         },
       },
     ])
