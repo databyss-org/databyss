@@ -25,6 +25,7 @@ import {
   toggleMark,
   isMarkActive,
   isCurrentlyInInlineAtomicField,
+  getBlocksWithAtomicId,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
 import {
@@ -539,6 +540,23 @@ const ContentEditable = ({
             ) {
               if (event.key === 'Backspace') {
                 // remove inline node
+                const _blocksWithAtomicId = getBlocksWithAtomicId(
+                  state.blocks,
+                  _currentLeaf.atomicId
+                )
+                /*
+                  scan page for matching atomic ID's if there are less than two blocks, this delete will remove the atomic type from the header cache
+                */
+                if (_blocksWithAtomicId.length < 2) {
+                  // if so, remove page from atomic cache
+                  if (_currentLeaf.inlineTopic) {
+                    removePageFromTopicCacheHeader(
+                      _currentLeaf.atomicId,
+                      state.pageHeader._id
+                    )
+                  }
+                }
+
                 Transforms.removeNodes(editor, {
                   match: node => node === _currentLeaf,
                 })
@@ -868,11 +886,11 @@ const ContentEditable = ({
             clear(editor.selection.focus.path[0])
 
             // check to see if block is atomic and was the last block on the page ignoring closure blocks
-            if (
-              state.blocks.filter(
-                b => b._id === _currentBlock._id && b.text.textValue.charAt(0)
-              ) !== '/'
-            ) {
+            const _blocksWithAtomicId = getBlocksWithAtomicId(
+              state.blocks,
+              _currentBlock._id
+            )
+            if (_blocksWithAtomicId.length < 2) {
               // if so, remove page from atomic cache
               ;({
                 SOURCE: () => {

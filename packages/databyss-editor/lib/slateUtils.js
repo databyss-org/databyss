@@ -290,3 +290,29 @@ export const isCurrentlyInInlineAtomicField = editor => {
   }
   return false
 }
+
+/*
+returns all blocks which contain an inline or atomic block with provided id ignoring closure blocks
+*/
+
+export const getBlocksWithAtomicId = (blocks, id) => {
+  const _atomicBlocks = blocks.filter(
+    b => b._id === id && b.text.textValue.charAt(0) !== '/'
+  )
+
+  const _inlineBlocks = blocks.filter(
+    b =>
+      b.text.ranges.filter(
+        r =>
+          r.marks.filter(
+            m =>
+              Array.isArray(m) &&
+              m.length === 2 &&
+              m[0] === 'inlineTopic' &&
+              m[1] === id
+          ).length
+      ).length
+  )
+
+  return [..._atomicBlocks, ..._inlineBlocks]
+}
