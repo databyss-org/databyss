@@ -1,4 +1,4 @@
-const MonthOptions = [
+export const MonthOptions = [
   {
     id: 0,
     label: 'None',
@@ -52,7 +52,5 @@ const MonthOptions = [
     label: 'December',
   },
 ]
-
-export default MonthOptions
 
 export const defaultMonthOption = MonthOptions[0]

@@ -1,4 +1,4 @@
-const CitationStyleIds = {
+export const CitationStyleIds = {
   APA: 'apa',
   CHICAGO: 'chicago',
   HARVARD: 'harvard1',
@@ -6,5 +6,3 @@ const CitationStyleIds = {
   MLA: 'mla',
   VANCOUVER: 'vancouver',
 }
-
-export default CitationStyleIds

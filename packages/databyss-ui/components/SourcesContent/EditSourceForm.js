@@ -1,18 +1,14 @@
 import React, { useState } from 'react'
 import { cloneDeep } from 'lodash'
 
-import { pruneCitation } from '@databyss-org/services/citations/services/pruneCitation'
-import { PublicationTypes } from '@databyss-org/services/citations/constants/PublicationTypes'
+import { isArticle, isBook } from '@databyss-org/services/sources/lib'
+import { MonthOptions } from '@databyss-org/services/sources/constants/MonthOptions'
+import { pruneCitation } from '@databyss-org/services/citations/lib'
+import { PublicationTypes } from '@databyss-org/services/sources/constants/PublicationTypes'
+import { SeasonOptions } from '@databyss-org/services/sources/constants/SeasonOptions'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { useCitationContext } from '@databyss-org/services/citations/CitationProvider'
 import EditAuthorFields from '@databyss-org/ui/components/SourcesContent/EditAuthorFields'
-import isArticle from '@databyss-org/services/sources/services/isArticle'
-import isBook from '@databyss-org/services/sources/services/isBook'
-import MonthOptions from '@databyss-org/services/citations/constants/MonthOptions'
-import SeasonOptions from '@databyss-org/services/citations/constants/SeasonOptions'
-import CitationStyleOptions, {
-  defaultCitationStyle,
-} from '@databyss-org/services/citations/constants/CitationStyleOptions'
 import {
   Button,
   RawHtml,
@@ -23,9 +19,14 @@ import {
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
+import {
+  CitationStyleOptions,
+  defaultCitationStyle,
+} from '@databyss-org/services/citations/constants'
 
 import { pxUnits } from '../../theming/views'
 import LabeledDropDownControl from '../../primitives/Control/LabeledDropDownControl'
+
 import MakeLoader from '../Loaders/MakeLoader'
 
 // consts

@@ -1,7 +1,7 @@
-import CitationStyleIds from './CitationStyleIds'
-import CitationStyles from './CitationStyles'
+import { CitationStyleIds } from './CitationStyleIds'
+import { CitationStyles } from './CitationStyles'
 
-const CitationStyleOptions = [
+export const CitationStyleOptions = [
   {
     id: CitationStyleIds.APA,
     label: getShortNameFor(CitationStyleIds.APA),
@@ -33,5 +33,3 @@ export const defaultCitationStyle = CitationStyleOptions[4]
 function getShortNameFor(styleId) {
   return CitationStyles.find(style => style.id === styleId).shortName
 }
-
-export default CitationStyleOptions

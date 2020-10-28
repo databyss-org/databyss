@@ -1,5 +1,7 @@
 import { kebabCase } from 'lodash'
+
 import { CROSSREF, GOOGLE_BOOKS, OPEN_LIBRARY } from '../../catalog/constants'
+
 import { PublicationTypeId } from '../constants/PublicationTypeId'
 
 const allTypes = Object.values(PublicationTypeId)

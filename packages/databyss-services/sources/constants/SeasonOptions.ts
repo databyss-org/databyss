@@ -1,4 +1,4 @@
-const SeasonOptions = [
+export const SeasonOptions = [
   {
     id: 13,
     label: 'Spring',
@@ -16,5 +16,3 @@ const SeasonOptions = [
     label: 'Winter',
   },
 ]
-
-export default SeasonOptions

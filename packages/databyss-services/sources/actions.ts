@@ -1,7 +1,6 @@
 import { Source, Author, SourceCitationHeader } from '../interfaces'
 
 import * as services from '.'
-import buildSourceDetail from './services/buildSourceDetail'
 import {
   FETCH_SOURCE,
   SAVE_SOURCE,
@@ -14,6 +13,7 @@ import {
   REMOVE_PAGE_FROM_HEADERS,
   ADD_PAGE_TO_HEADER,
 } from './constants'
+import { buildSourceDetail } from './lib'
 
 export function fetchSource(id: string) {
   return async (dispatch: Function) => {

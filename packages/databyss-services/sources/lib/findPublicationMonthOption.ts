@@ -1,11 +1,8 @@
 /* eslint-disable eqeqeq */
+import { defaultMonthOption, MonthOptions } from '../constants/MonthOptions'
+import { SeasonOptions } from '../constants/SeasonOptions'
 
-import MonthOptions, {
-  defaultMonthOption,
-} from '../../citations/constants/MonthOptions'
-import SeasonOptions from '../../citations/constants/SeasonOptions'
-
-export default function findPublicationMonthOption(
+export function findPublicationMonthOption(
   value: String | Number
 ): SelectOption {
   // try months

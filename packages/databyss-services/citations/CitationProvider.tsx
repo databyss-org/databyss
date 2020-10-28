@@ -2,11 +2,12 @@ import { createContext, useContextSelector } from 'use-context-selector'
 import { debounce } from 'lodash'
 import MurmurHash3 from 'imurmurhash'
 import React, { useCallback } from 'react'
+
 import createReducer from '@databyss-org/services/lib/createReducer'
-import { SourceDetail } from '../interfaces'
+
+import { CitationFormatOptions, SourceDetail } from '../interfaces'
+
 import { CitationDTO, processCitation } from './actions'
-import { CitationFormatOptions } from '.'
-import CitationProcessStatus from './constants/CitationProcessStatus'
 import reducer from './reducer'
 
 interface PropsType {
@@ -39,7 +40,6 @@ const CitationProvider: React.FunctionComponent<PropsType> = (
   const [state, dispatch] = useReducer(
     reducer,
     {
-      status: CitationProcessStatus.IDLE,
       errorCount: 0,
       queue: {
         current: null,
