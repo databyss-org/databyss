@@ -191,7 +191,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
 
           }
           // the newEntity array is clear and its not pending a save
-          if (!props.nextState.newEntities.length && !pendingAtomicSave.current && pagePathRef?.current.blockRelations.length) {
+          if (!props.nextState.newEntities.length && !pendingAtomicSave.current) {
             // set block relations and clear buffer
             blockRelationsBuffer.current.forEach(b=> setBlockRelations(b))
             // clear block relations buffer
