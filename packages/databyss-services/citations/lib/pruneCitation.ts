@@ -1,4 +1,4 @@
-import CitationStyleIds from '../constants/CitationStyleIds'
+import { CitationStyleIds } from '../constants'
 
 /**
  * Trims the citation provided by CitationJS to remove the numbering.

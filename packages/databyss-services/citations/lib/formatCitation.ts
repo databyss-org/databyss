@@ -1,14 +1,12 @@
 import Cite from 'citation-js'
 
-import CitationStyles from '../constants/CitationStyles'
-import CitationStyleIds from '../constants/CitationStyleIds'
+import {
+  CitationOutputTypes,
+  CitationStyleIds,
+  CitationStyles,
+} from '../constants'
 
 // consts
-const OutputTypes = {
-  BIBLIOGRAPHY: 'bibliography',
-  CITATION: 'citation',
-}
-
 const Styles = [
   {
     id: CitationStyleIds.APA,
@@ -36,6 +34,7 @@ const Styles = [
   },
 ]
 
+// vars
 let cite = null
 
 /**
@@ -49,7 +48,7 @@ export async function formatCitation(csl, options) {
   const outputType =
     options && options.outputType
       ? options.outputType
-      : OutputTypes.BIBLIOGRAPHY
+      : CitationOutputTypes.BIBLIOGRAPHY
 
   const styleId =
     options && options.styleId ? options.styleId : CitationStyleIds.MLA
@@ -59,13 +58,13 @@ export async function formatCitation(csl, options) {
     throw new Error('formatCitation() expected a CSL JSON as first parameter.')
   }
   if (
-    outputType !== OutputTypes.BIBLIOGRAPHY &&
-    outputType !== OutputTypes.CITATION
+    outputType !== CitationOutputTypes.BIBLIOGRAPHY &&
+    outputType !== CitationOutputTypes.CITATION
   ) {
     throw new Error(
       'formatCitation() expected `options.outputType` ' +
-        `to either be "${OutputTypes.BIBLIOGRAPHY}", ` +
-        `or "${OutputTypes.CITATION}". ` +
+        `to either be "${CitationOutputTypes.BIBLIOGRAPHY}", ` +
+        `or "${CitationOutputTypes.CITATION}". ` +
         `Received "${outputType}". `
     )
   }

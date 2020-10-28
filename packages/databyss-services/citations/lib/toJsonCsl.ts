@@ -1,5 +1,6 @@
 import { isEqual } from 'lodash'
-import { defaultMonthOption } from '../constants/MonthOptions'
+
+import { defaultMonthOption } from '../../sources/constants/MonthOptions'
 
 /**
  * Converts a Databyss source detail object to a JSON CSL object.

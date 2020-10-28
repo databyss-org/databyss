@@ -1,6 +1,6 @@
-import { PublicationTypeId } from '../../citations/constants/PublicationTypeId';
+import { PublicationTypeId } from '../constants/PublicationTypeId'
 
-export default function isArticle(publicationType: string): Boolean {
+export function isArticle(publicationType: string): Boolean {
   return (
     publicationType === PublicationTypeId.JOURNAL_ARTICLE ||
     publicationType === PublicationTypeId.NEWSPAPER_ARTICLE ||

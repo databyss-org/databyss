@@ -1,17 +1,6 @@
-import { SourceDetail } from '../interfaces'
-import { CACHE_CITATION, PROCESS_CITATION } from './constants/Actions'
-import { CitationFormatOptions } from '.'
-import { formatCitation } from './services/formatCitation'
-import { toJsonCsl } from './services/toJsonCsl'
-
-export interface CitationDTO {
-  source: SourceDetail
-  options: CitationFormatOptions
-}
-
-export interface CitationProcessOptions {
-  hash: String
-}
+import { CitationDTO } from '../interfaces'
+import { CACHE_CITATION, PROCESS_CITATION } from './constants'
+import { formatCitation, toJsonCsl } from './lib'
 
 export function processCitation(data: CitationDTO, hash: String) {
   return async (dispatch: Function) => {

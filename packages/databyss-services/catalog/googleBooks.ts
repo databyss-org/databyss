@@ -3,11 +3,14 @@ import {
   CatalogType,
   GroupedCatalogResults, 
 } from '../interfaces'
-import { defaultMonthOption } from '../citations/constants/MonthOptions'
-import { defaultPublicationType } from '../citations/constants/PublicationTypes'
-import { getPublicationTypeById } from '../citations/services/getPublicationTypeById'
-import { normalizePublicationId } from '../citations/services/normalizePublicationId'
-import isBook from '../sources/services/isBook'
+import {
+  findPublicationMonthOption,
+  getPublicationTypeById,
+  isBook,
+  normalizePublicationId,
+} from '../sources/lib'
+import { defaultMonthOption } from '../sources/constants/MonthOptions'
+import { defaultPublicationType } from '../sources/constants/PublicationTypes'
 import request from '../lib/request'
 
 import { GOOGLE_BOOKS } from './constants'

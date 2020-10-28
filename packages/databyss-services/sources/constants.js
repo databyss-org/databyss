@@ -1,3 +1,5 @@
+// TODO: rename to `Actions.js` and move to `packages/databyss-services/sources/constants`
+
 export const FETCH_SOURCE = 'FETCH_SOURCE'
 export const GET_ALL_SOURCES = 'GET_ALL_SOURCES'
 export const SAVE_SOURCE = 'SAVE_SOURCE'

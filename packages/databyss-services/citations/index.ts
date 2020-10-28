@@ -1,12 +1,5 @@
-import { SourceDetail } from '../interfaces'
-
-import { formatCitation } from './services/formatCitation'
-import { toJsonCsl } from './services/toJsonCsl'
-
-export interface CitationFormatOptions {
-  styleId?: string
-  outputType?: string
-}
+import { CitationFormatOptions, SourceDetail } from '../interfaces'
+import { formatCitation, toJsonCsl } from './lib'
 
 export async function toCitation(
   source: SourceDetail,

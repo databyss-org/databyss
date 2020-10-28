@@ -1,8 +1,8 @@
-import CitationStyleIds from './CitationStyleIds'
+import { CitationStyleIds } from './CitationStyleIds'
 
 const zoteroBaseUrl = 'https://www.zotero.org/styles'
 
-const CitationStyles = [
+export const CitationStyles = [
   {
     id: CitationStyleIds.APA,
     name: 'American Psychological Association 7th edition',
@@ -40,5 +40,3 @@ const CitationStyles = [
     url: `${zoteroBaseUrl}/vancouver`,
   },
 ]
-
-export default CitationStyles

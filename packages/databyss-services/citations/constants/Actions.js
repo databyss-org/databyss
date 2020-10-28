@@ -1,5 +1,2 @@
 export const PROCESS_CITATION = 'PROCESS_CITATION'
 export const CACHE_CITATION = 'CACHE_CITATION'
-export const STOP_PROCESSING_CITATION = 'STOP_PROCESSING_CITATION'
-
-export const CITEPROC_ERROR = 'Item is undefined'
