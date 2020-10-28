@@ -198,7 +198,7 @@ describe('block indexing', () => {
 
     await authorSidebarButton[2].click()
     await sleep(1000)
-    let authorSorces = await getElementsByTag(
+    const authorSorces = await getElementsByTag(
       driver,
       '[data-test-element="source-results"]'
     )
@@ -218,6 +218,7 @@ describe('block indexing', () => {
     await citationsResults[0].click()
     await getEditor(driver)
     await leftKey(actions)
+
     await backspaceKey(actions)
     await isAppInNotesSaved(driver)
 
@@ -226,23 +227,7 @@ describe('block indexing', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
-    await allSources[0].click()
-
-    authorSorces = await getElementsByTag(
-      driver,
-      '[data-test-element="source-results"]'
-    )
-
-    await authorSorces[0].click()
-
-    await sleep(1000)
-
-    // check for no results
-    const _results = await driver.findElements(
-      By.tagName('[data-test-element="atomic-results"]')
-    )
-
-    // assure no results appear under author
-    assert.equal(_results.length, 0)
+    // author should not appear on sidebar
+    assert.equal(allSources.length, 2)
   })
 })

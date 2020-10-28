@@ -245,10 +245,12 @@ const ContentEditable = ({
           }
           ;({
             SOURCE: () => {
-              setSource(_data)
+              // requestAnimationFrame will allow the `forkOnChange` function in the editor provider to execute before setting the inline block relations
+              window.requestAnimationFrame(() => {
+                setInlineBlockRelations(() => setSource(_data))
+              })
             },
             TOPIC: () => {
-              // requestAnimationFrame will allow the `forkOnChange` function in the editor provider to execute before setting the inline block relations
               window.requestAnimationFrame(() => {
                 setInlineBlockRelations(() => setTopic(_data))
               })
@@ -862,13 +864,16 @@ const ContentEditable = ({
             flattenOffset(editor, editor.selection.focus) > 0
           ) {
             event.preventDefault()
+
             clear(editor.selection.focus.path[0])
-            // check to see if block is atomic and was the last block on the page
+
+            // check to see if block is atomic and was the last block on the page ignoring closure blocks
             if (
-              state.blocks.filter(b => b._id === _currentBlock._id).length < 2
+              state.blocks.filter(
+                b => b._id === _currentBlock._id && b.text.textValue.charAt(0)
+              ) !== '/'
             ) {
               // if so, remove page from atomic cache
-
               ;({
                 SOURCE: () => {
                   removePageFromSourceCacheHeader(
@@ -884,7 +889,6 @@ const ContentEditable = ({
                 },
               }[_currentBlock.type]())
             }
-
             Transforms.delete(editor, {
               distance: 1,
               unit: 'character',
