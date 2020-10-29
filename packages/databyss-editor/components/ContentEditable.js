@@ -512,10 +512,13 @@ const ContentEditable = ({
           SlateEditor.marks(editor).inlineTopic &&
           Range.isCollapsed(editor.selection)
         ) {
+          const _currentBlock = state.blocks[state.selection.anchor.index]
           let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
           const _anchor = editor.selection.anchor
           const _isAnchorAtStartOfLeaf =
-            _anchor.offset === 0 && _anchor.path[1] !== 0
+            _anchor.offset === 0 &&
+            (_anchor.path[1] !== 0 ||
+              _currentBlock.text.textValue.length === _currentLeaf.text.length)
           const _isAnchorAtEndOfLeaf =
             _currentLeaf.text.length === _anchor.offset
           if (_isAnchorAtStartOfLeaf) {
