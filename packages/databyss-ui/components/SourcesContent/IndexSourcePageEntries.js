@@ -1,18 +1,27 @@
 import React from 'react'
 
-import { Text, View, BaseControl, Icon } from '@databyss-org/ui/primitives'
+import {
+  Text,
+  View,
+  BaseControl,
+  Icon,
+  pxUnits,
+} from '@databyss-org/ui/primitives'
 import { defaultCitationStyle } from '@databyss-org/services/citations/constants'
 
-import CitationLoader from '../Citation/CitationLoader'
+import Citation from '../Citation/Citation'
 
 const IndexSourcePageEntries = ({ entries, icon, onClick }) => {
   const renderStyledCitation = entry => {
     const formatOptions = { styleId: defaultCitationStyle.id }
-
     return (
-      <CitationLoader
-        sourceDetail={entry.detail}
+      <Citation
+        citation={entry.citation}
         formatOptions={formatOptions}
+        childViewProps={{
+          marginTop: pxUnits(20),
+          marginBottom: pxUnits(20),
+        }}
       />
     )
   }

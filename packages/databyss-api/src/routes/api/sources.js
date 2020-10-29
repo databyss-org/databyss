@@ -1,16 +1,23 @@
 import express from 'express'
 import { pick } from 'lodash'
-import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
-import Block from '../../models/Block'
-import auth from '../../middleware/auth'
-import accountMiddleware from '../../middleware/accountMiddleware'
-import wrap from '../../lib/guardedAsync'
+
+import {
+  asyncForEach,
+  getAuthorsFromSources,
+} from '@databyss-org/services/lib/util'
+import { toCitation } from '@databyss-org/services/citations'
+
 import { ResourceNotFoundError } from '../../lib/Errors'
+import accountMiddleware from '../../middleware/accountMiddleware'
+import auth from '../../middleware/auth'
+import Block from '../../models/Block'
+import Page from '../../models/Page'
+import wrap from '../../lib/guardedAsync'
+
 import {
   getPageAccountQueryMixin,
   getBlockAccountQueryMixin,
 } from './helpers/accountQueryMixin'
-import Page from '../../models/Page'
 
 const router = express.Router()
 
@@ -172,8 +179,16 @@ router.get(
         'detail.citations',
         'isInPages',
       ])
+      sourcesCitationsDict.citation = ''
 
       return sourcesCitationsDict
+    })
+
+    await asyncForEach(sourcesCitations, async s => {
+      const { detail } = s
+      if (detail) {
+        s.citation = await toCitation(s.detail)
+      }
     })
 
     return res.json(sourcesCitations)
