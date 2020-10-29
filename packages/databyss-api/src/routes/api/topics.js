@@ -77,7 +77,21 @@ router.post(
           }
         })
         if (_inlineRanges.length) {
+          // update block
           await _block.save()
+          // update relation
+          await BlockRelation.replaceOne(
+            {
+              relatedBlock: _id,
+              account: req.account.id.toString(),
+              block: _block._id,
+            },
+            {
+              ...relation.toJSON(),
+              blockText: _block.text,
+            },
+            { upsert: true }
+          )
         }
       }
     }
