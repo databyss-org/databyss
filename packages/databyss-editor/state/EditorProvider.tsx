@@ -146,6 +146,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       if (onChange) {
         if (setBlockRelations) {
           // check if a new atomic has just been removed in the patches
+
           if(props.patches.filter(p=> p.op === 'replace' && p?.path[0] === 'newEntities' && p?.value.length === 0).length){
             // if it has been added, set a flag for pending atomic
             // useEffect inside of ContentEditable will set this flag to false, block relations must be set before the atomic is set in order to update the headers in the atomic cache
@@ -190,6 +191,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
 
 
           }
+
           // the newEntity array is clear and its not pending a save
           if (!props.nextState.newEntities.length && !pendingAtomicSave.current) {
             // set block relations and clear buffer

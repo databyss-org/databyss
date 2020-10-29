@@ -313,6 +313,18 @@ export const getBlocksWithAtomicId = (blocks, id) => {
           ).length
       ).length
   )
-
-  return [..._atomicBlocks, ..._inlineBlocks]
+  return { atomicBlocks: _atomicBlocks, inlineBlocks: _inlineBlocks }
 }
+
+export const getInlineFromBlock = (block, id) =>
+  block.text.ranges
+    .map(r =>
+      r.marks.filter(
+        m =>
+          Array.isArray(m) &&
+          m.length === 2 &&
+          m[0] === 'inlineTopic' &&
+          m[1] === id
+      )
+    )
+    .filter(r => r.length)

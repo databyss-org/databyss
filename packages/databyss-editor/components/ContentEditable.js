@@ -13,6 +13,7 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -26,6 +27,7 @@ import {
   isMarkActive,
   isCurrentlyInInlineAtomicField,
   getBlocksWithAtomicId,
+  getInlineFromBlock,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
 import {
@@ -161,6 +163,7 @@ const ContentEditable = ({
   const navigationContext = useNavigationContext()
 
   const setSource = useSourceContext(c => c && c.setSource)
+  const setBlockRelations = useEntryContext(c => c && c.setBlockRelations)
 
   const removePageFromSourceCacheHeader = useSourceContext(
     c => c && c.removePageFromCacheHeader
@@ -540,10 +543,12 @@ const ContentEditable = ({
             ) {
               if (event.key === 'Backspace') {
                 // remove inline node
-                const _blocksWithAtomicId = getBlocksWithAtomicId(
+
+                const { atomicBlocks, inlineBlocks } = getBlocksWithAtomicId(
                   state.blocks,
                   _currentLeaf.atomicId
                 )
+                const _blocksWithAtomicId = [...atomicBlocks, ...inlineBlocks]
                 /*
                   scan page for matching atomic ID's if there are less than two blocks, this delete will remove the atomic type from the header cache
                 */
@@ -555,6 +560,23 @@ const ContentEditable = ({
                       state.pageHeader._id
                     )
                   }
+                }
+                /*
+                scan block to see if this is the last instance of inline atomic, if so, remove block relation
+                */
+                const _currentBlock = state.blocks[state.selection.anchor.index]
+                const _inlineRangeMatch = getInlineFromBlock(
+                  _currentBlock,
+                  _currentLeaf.atomicId
+                )
+                if (_inlineRangeMatch.length < 2) {
+                  // clear this block relation
+                  const blockRelation = {
+                    block: _currentBlock._id,
+                    relatedBlock: _currentLeaf.atomicId,
+                    removeBlock: true,
+                  }
+                  setBlockRelations({ blocksRelationArray: [blockRelation] })
                 }
 
                 Transforms.removeNodes(editor, {
@@ -886,10 +908,12 @@ const ContentEditable = ({
             clear(editor.selection.focus.path[0])
 
             // check to see if block is atomic and was the last block on the page ignoring closure blocks
-            const _blocksWithAtomicId = getBlocksWithAtomicId(
+            const { atomicBlocks, inlineBlocks } = getBlocksWithAtomicId(
               state.blocks,
               _currentBlock._id
             )
+            const _blocksWithAtomicId = [...atomicBlocks, ...inlineBlocks]
+            console.log(_blocksWithAtomicId)
             if (_blocksWithAtomicId.length < 2) {
               // if so, remove page from atomic cache
               ;({

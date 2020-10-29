@@ -2,18 +2,25 @@ import BlockRelation from '../models/BlockRelation'
 
 // TODO API DOESNT COMPILE TYPESCRIPT
 export const addRelationships = async (relationship, req) => {
-  const { block, relatedBlock } = relationship
+  const { block, relatedBlock, removeBlock } = relationship
   // find relationship
 
-  await BlockRelation.replaceOne(
-    {
+  if (removeBlock) {
+    await BlockRelation.deleteOne({
       block,
       relatedBlock,
-    },
-    {
-      ...relationship,
-      account: req.account._id,
-    },
-    { upsert: true }
-  )
+    })
+  } else {
+    await BlockRelation.replaceOne(
+      {
+        block,
+        relatedBlock,
+      },
+      {
+        ...relationship,
+        account: req.account._id,
+      },
+      { upsert: true }
+    )
+  }
 }

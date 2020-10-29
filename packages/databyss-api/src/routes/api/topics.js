@@ -74,23 +74,17 @@ router.get(
         },
       },
       {
-        // appends all the pages block appears as a block relation in in an array 'isInPages'
+        // gets a list of all pages user is authorized to view
         $lookup: {
           from: 'pages',
-          let: {
-            id: '$isInPages', // local field
-          },
           pipeline: [
             {
               $match: {
-                'blocks._id': req.params.id,
                 ...getPageAccountQueryMixin(req),
               },
             },
           ],
-          // localField: 'isInPages',
-          // foreignField: '_id',
-          as: 'isInPages',
+          as: 'authorizedPages',
         },
       },
       {
@@ -99,12 +93,13 @@ router.get(
           text: 1,
           account: 1,
           type: 1,
-          // filter out archived pages,
-          isInPages: {
+          isInPages: 1,
+          // filter out archived pages
+          authorizedPages: {
             $filter: {
-              input: '$isInPages',
-              as: 'isInPages',
-              cond: { $eq: ['$$isInPages.archive', false] },
+              input: '$authorizedPages',
+              as: 'authorizedPages',
+              cond: { $eq: ['$$authorizedPages.archive', false] },
             },
           },
         },
@@ -116,7 +111,18 @@ router.get(
           text: 1,
           account: 1,
           type: 1,
-          isInPages: '$isInPages._id',
+          isInPages: 1,
+          authorizedPages: '$authorizedPages._id',
+        },
+      },
+      // only show pages which appear in the block relations and user is authorized to view
+      {
+        $project: {
+          _id: 1,
+          text: 1,
+          account: 1,
+          type: 1,
+          isInPages: { $setIntersection: ['$isInPages', '$authorizedPages'] },
         },
       },
     ])
@@ -147,49 +153,6 @@ router.get(
   '/',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
-    // const blocks = await Block.aggregate([
-    //   {
-    //     $match: {
-    //       type: 'TOPIC',
-    //       ...getBlockAccountQueryMixin(req),
-    //     },
-    //   },
-    //   {
-    //     // appends all the pages block appears in in an array 'isInPages'
-    //     $lookup: {
-    //       from: 'pages',
-    //       localField: '_id',
-    //       foreignField: 'blocks._id',
-    //       as: 'isInPages',
-    //     },
-    //   },
-    //   {
-    //     $project: {
-    //       _id: 1,
-    //       text: 1,
-    //       account: 1,
-    //       type: 1,
-    //       // filter out archived pages,
-    //       isInPages: {
-    //         $filter: {
-    //           input: '$isInPages',
-    //           as: 'isInPages',
-    //           cond: { $eq: ['$$isInPages.archive', false] },
-    //         },
-    //       },
-    //     },
-    //   },
-    //   // remove page data and only allow _id
-    //   {
-    //     $project: {
-    //       _id: 1,
-    //       text: 1,
-    //       account: 1,
-    //       type: 1,
-    //       isInPages: '$isInPages._id',
-    //     },
-    //   },
-    // ])
     /*
     aggregate will perform a lookup in block relations and then lookup in the page.blocks,
     the final step will join both these results
