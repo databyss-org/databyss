@@ -1,5 +1,6 @@
 import express from 'express'
 import mongoose from 'mongoose'
+import { replaceInlineText } from '@databyss-org/editor/state/util'
 import Block from '../../models/Block'
 import auth from '../../middleware/auth'
 import accountMiddleware from '../../middleware/accountMiddleware'
@@ -12,6 +13,7 @@ import {
   getBlockAccountQueryMixin,
   getPageAccountQueryMixin,
 } from './helpers/accountQueryMixin'
+import BlockRelation from '../../models/BlockRelation'
 
 const router = express.Router()
 
@@ -37,6 +39,49 @@ router.post(
     }
     Object.assign(block, blockFields)
     await block.save()
+
+    /*
+      find all inline block relations with associated id and update blocks
+    */
+    const _relations = await BlockRelation.find({
+      relatedBlock: _id,
+      account: req.account.id.toString(),
+      relationshipType: 'INLINE',
+    })
+
+    for (const relation of _relations) {
+      // get the block to update
+      const _block = await Block.findOne({
+        _id: relation.block,
+        account: req.account.id.toString(),
+      })
+      if (_block) {
+        // get all inline ranges from block
+        const _inlineRanges = _block.text.ranges.filter(
+          r => r.marks.filter(m => m.includes('inlineTopic')).length
+        )
+
+        _inlineRanges.forEach(r => {
+          // if inline range is matches the ID, update block
+          if (r.marks[0].length === 2) {
+            const _inlineMark = r.marks[0]
+            const _inlineId = _inlineMark[1]
+            if (_inlineId === _id) {
+              const _newText = replaceInlineText({
+                text: _block.text.toJSON(),
+                refId: _id,
+                newText: block.text,
+              })
+              Object.assign(_block, { text: _newText })
+            }
+          }
+        })
+        if (_inlineRanges.length) {
+          await _block.save()
+        }
+      }
+    }
+
     res.status(200).end()
   })
 )

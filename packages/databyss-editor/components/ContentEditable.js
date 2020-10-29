@@ -913,7 +913,6 @@ const ContentEditable = ({
               _currentBlock._id
             )
             const _blocksWithAtomicId = [...atomicBlocks, ...inlineBlocks]
-            console.log(_blocksWithAtomicId)
             if (_blocksWithAtomicId.length < 2) {
               // if so, remove page from atomic cache
               ;({
