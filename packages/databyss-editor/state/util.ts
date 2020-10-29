@@ -440,7 +440,12 @@ export const replaceInlineText = ({
 }
 
 export const getRangesAtPoint = ({ blocks, point }: { blocks: Block[], point: Point }): Range[] => {
-  const _currentBlockRanges = blocks[point.index].text.ranges
+  
+  const _currentBlockRanges = blocks[point.index]?.text.ranges
+
+  if(!_currentBlockRanges){
+    return []
+  }
 
   // find which ranges fall within current offset
   const _activeRanges = _currentBlockRanges.filter(r => {
