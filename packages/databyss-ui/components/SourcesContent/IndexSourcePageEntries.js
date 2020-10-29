@@ -1,11 +1,11 @@
 import React from 'react'
 
 import {
-  Text,
-  View,
   BaseControl,
   Icon,
   pxUnits,
+  Text,
+  View,
 } from '@databyss-org/ui/primitives'
 import { defaultCitationStyle } from '@databyss-org/services/citations/constants'
 
