@@ -169,6 +169,7 @@ router.get(
       return res.json([])
     }
 
+    // build responses
     const sourcesCitations = blocks.map(block => {
       const sourcesCitationsDict = pick(block, [
         '_id',
@@ -184,6 +185,7 @@ router.get(
       return sourcesCitationsDict
     })
 
+    // add formatted citation to each entry
     await asyncForEach(sourcesCitations, async s => {
       const { detail } = s
       if (detail) {

@@ -1,6 +1,7 @@
 import React from 'react'
 import { pickBy } from 'lodash'
 
+import { defaultCitationStyle } from '@databyss-org/services/citations/constants'
 import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
@@ -122,9 +123,20 @@ AuthorsLoader.defaultProps = {
   filtered: true,
 }
 
-export const SourceCitationsLoader = ({ children, filtered, ...others }) => {
+export const SourceCitationsLoader = ({
+  children,
+  filtered,
+  citationFormatOptions,
+  ...others
+}) => {
+  console.info('--- SourceCitationsLoader ---')
+  console.log('format options:', citationFormatOptions)
+
   const getSourceCitations = useSourceContext(c => c.getSourceCitations)
+
+  // TODO: pass citationFormatOptions.styleId to getSourceCitations()
   let _resource = getSourceCitations()
+
   if (filtered && isResourceReady(_resource)) {
     _resource = pickBy(_resource, citation => citation.isInPages?.length)
   }
@@ -132,6 +144,7 @@ export const SourceCitationsLoader = ({ children, filtered, ...others }) => {
 }
 SourceCitationsLoader.defaultProps = {
   filtered: true,
+  citationFormatOptions: { styleId: defaultCitationStyle.id },
 }
 
 export const SearchAllLoader = ({ children, filtered, ...others }) => {
