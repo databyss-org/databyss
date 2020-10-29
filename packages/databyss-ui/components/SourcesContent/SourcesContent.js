@@ -32,6 +32,7 @@ const SourcesContentBody = (sourceCitations, navigate) => {
       id: value._id,
       text: value.text?.textValue,
       detail: value.detail,
+      citation: value.citation,
       citations: value.detail?.citations?.map(
         citation => citation.text?.textValue
       ),
