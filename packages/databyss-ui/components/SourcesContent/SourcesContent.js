@@ -1,18 +1,22 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
 import { Router } from '@reach/router'
+
 import {
   sortEntriesAtoZ,
   createIndexPageEntries,
 } from '@databyss-org/services/entries/util'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
-import SourcesCitations from '@databyss-org/ui/components/SourcesContent/SourcesCitations'
-import AuthorsContent from '@databyss-org/ui/components/SourcesContent/AuthorsContent'
-import AuthorCitations from '@databyss-org/ui/components/SourcesContent/AuthorCitations'
-import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import IndexPageEntries from '../PageContent/IndexPageEntries'
+import AuthorCitations from '@databyss-org/ui/components/SourcesContent/AuthorCitations'
+import AuthorsContent from '@databyss-org/ui/components/SourcesContent/AuthorsContent'
+import CitationProvider from '@databyss-org/services/citations/CitationProvider'
+import SourcesCitations from '@databyss-org/ui/components/SourcesContent/SourcesCitations'
+import SourceSvg from '@databyss-org/ui/assets/source.svg'
+
 import IndexPageContent from '../PageContent/IndexPageContent'
+
+import IndexSourcePageEntries from './IndexSourcePageEntries'
 
 export const SourcesRouter = () => (
   <Router>
@@ -27,6 +31,7 @@ const SourcesContentBody = (sourceCitations, navigate) => {
     createIndexPageEntries({
       id: value._id,
       text: value.text?.textValue,
+      detail: value.detail,
       citations: value.detail?.citations?.map(
         citation => citation.text?.textValue
       ),
@@ -46,11 +51,13 @@ const SourcesContentBody = (sourceCitations, navigate) => {
         <meta charSet="utf-8" />
         <title>All Sources</title>
       </Helmet>
-      <IndexPageEntries
-        onClick={onSourceClick}
-        entries={sortedSources}
-        icon={<SourceSvg />}
-      />
+      <CitationProvider>
+        <IndexSourcePageEntries
+          onClick={onSourceClick}
+          entries={sortedSources}
+          icon={<SourceSvg />}
+        />
+      </CitationProvider>
     </IndexPageContent>
   )
 }
@@ -65,8 +72,10 @@ const SourcesContent = () => {
   if (Object.keys(_queryParams).length) {
     return <AuthorCitations query={_queryParams} />
   }
+
   return (
-    <SourceCitationsLoader filtered>
+    // <SourceCitationsLoader filtered>
+    <SourceCitationsLoader>
       {source => SourcesContentBody(source, navigate)}
     </SourceCitationsLoader>
   )

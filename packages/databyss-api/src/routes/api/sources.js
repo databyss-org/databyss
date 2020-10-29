@@ -167,6 +167,7 @@ router.get(
         '_id',
         'text',
         'type',
+        'detail',
         'detail.authors',
         'detail.citations',
         'isInPages',
