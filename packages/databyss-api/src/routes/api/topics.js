@@ -8,7 +8,10 @@ import {
   ResourceNotFoundError,
   InsufficientPermissionError,
 } from '../../lib/Errors'
-import { getBlockAccountQueryMixin } from './helpers/accountQueryMixin'
+import {
+  getBlockAccountQueryMixin,
+  getPageAccountQueryMixin,
+} from './helpers/accountQueryMixin'
 
 const router = express.Router()
 
@@ -49,7 +52,6 @@ router.get(
       {
         $match: {
           _id: mongoose.Types.ObjectId(req.params.id),
-          ...getBlockAccountQueryMixin(req),
         },
       },
       {
@@ -75,8 +77,19 @@ router.get(
         // appends all the pages block appears as a block relation in in an array 'isInPages'
         $lookup: {
           from: 'pages',
-          localField: 'isInPages',
-          foreignField: '_id',
+          let: {
+            id: '$isInPages', // local field
+          },
+          pipeline: [
+            {
+              $match: {
+                'blocks._id': req.params.id,
+                ...getPageAccountQueryMixin(req),
+              },
+            },
+          ],
+          // localField: 'isInPages',
+          // foreignField: '_id',
           as: 'isInPages',
         },
       },
@@ -111,7 +124,7 @@ router.get(
     // only allow results that appear on shared page
     if (
       req.publicPages &&
-      req.publicPages[0].blocks.filter(b => b._id !== req.params.id).length < 1
+      req.publicPages[0]?.blocks.filter(b => b._id !== req.params.id).length < 1
     ) {
       return next(new InsufficientPermissionError())
     }
@@ -122,6 +135,7 @@ router.get(
     if (!topic || topic.type !== 'TOPIC') {
       return next(new ResourceNotFoundError('There is no topic for this id'))
     }
+
     return res.json(topic)
   })
 )
