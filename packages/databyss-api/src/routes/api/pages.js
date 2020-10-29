@@ -2,7 +2,6 @@
 
 import express from 'express'
 import ObjectId from 'bson-objectid'
-import { replaceInlineText } from '@databyss-org/editor/state/util'
 import Page from '../../models/Page'
 import Block from '../../models/Block'
 import Selection from '../../models/Selection'
@@ -16,7 +15,6 @@ import { ApiError, BadRequestError } from '../../lib/Errors'
 import wrap from '../../lib/guardedAsync'
 import { runPatches, getAtomicClosureText } from '../../lib/pages'
 import Account from '../../models/Account'
-import { getBlockAccountQueryMixin } from './helpers/accountQueryMixin'
 
 const router = express.Router()
 
