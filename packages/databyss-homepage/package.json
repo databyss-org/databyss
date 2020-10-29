@@ -1,10 +1,10 @@
 {
   "name": "@databyss-org/homepage",
-  "version": "1.1.77",
+  "version": "1.1.78",
   "private": true,
   "peerDependencies": {
-    "@databyss-org/services": "1.1.77",
-    "@databyss-org/ui": "1.1.77",
+    "@databyss-org/services": "1.1.78",
+    "@databyss-org/ui": "1.1.78",
     "react": "16.9.0",
     "react-dom": "16.9.0"
   }
