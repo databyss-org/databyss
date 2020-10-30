@@ -1,5 +1,5 @@
 import MurmurHash3 from 'imurmurhash'
-import { Text, Editor, Node, Range } from '@databyss-org/slate'
+import { Text, Editor, Node, Range, Transforms } from '@databyss-org/slate'
 import { pickBy } from 'lodash'
 import { textToHtml } from '@databyss-org/services/block/serialize'
 import { isAtomicInlineType } from './util'
@@ -328,3 +328,121 @@ export const getInlineFromBlock = (block, id) =>
       )
     )
     .filter(r => r.length)
+
+export const isCharacterKeyPress = evt => {
+  if (typeof evt.which === 'undefined') {
+    // This is IE, which only fires keypress events for printable keys
+    return true
+  } else if (typeof evt.which === 'number' && evt.which > 0) {
+    const _which = evt.which
+    if (_which > 36 && _which < 41) {
+      return false
+    }
+    // In other browsers except old versions of WebKit, evt.which is
+    // only greater than zero if the keypress is a printable key.
+    // We need to filter out backspace and ctrl/alt/meta key combinations
+    return !evt.ctrlKey && !evt.metaKey && !evt.altKey && evt.which !== 8
+  }
+  return false
+}
+
+/*
+edge case for manually entereing text, this will not allow inline blocks
+*/
+export const insertTextWithInilneCorrection = (text, editor) => {
+  if (Range.isCollapsed(editor.selection)) {
+    const _atBlockStart =
+      editor.selection.focus.path[1] === 0 &&
+      editor.selection.focus.offset === 0
+    let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+    const _atLeafStart = editor.selection.focus.offset === 0
+
+    // if current leaf is an inline and we are at the start edge of the leaf, jog editor back one space and forward in order to reset marks
+    if (_atLeafStart && !_atBlockStart && _currentLeaf.inlineTopic) {
+      Transforms.move(editor, {
+        unit: 'character',
+        distance: 1,
+        reverse: true,
+      })
+      Transforms.move(editor, {
+        unit: 'character',
+        distance: 1,
+      })
+      _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+    }
+    Transforms.insertText(editor, text)
+    // if inserted text has inline mark, remove mark
+    if (_currentLeaf.inlineTopic) {
+      Transforms.move(editor, {
+        unit: 'character',
+        distance: text.length,
+        edge: 'anchor',
+        reverse: true,
+      })
+      Editor.removeMark(editor, 'inlineTopic')
+      Editor.removeMark(editor, 'atomicId')
+
+      Transforms.collapse(editor, {
+        edge: 'focus',
+      })
+    }
+  }
+}
+
+/*
+if character is being entered, run the editor through the correction to make sure no atomic inline is entered manually
+*/
+export const inlineAtomicBlockCorrector = (event, editor) => {
+  if (Range.isCollapsed(editor.selection)) {
+    // pressed key is a char
+    const _text = Node.string(editor.children[editor.selection.focus.path[0]])
+    const _offset = parseInt(flattenOffset(editor, editor.selection.focus), 10)
+
+    // check if previous character is a white space, if so, remove whitespace and recalculate text and offset
+    const _prevWhiteSpace = _text.charAt(_offset - 1) === '\u2060'
+    if (_prevWhiteSpace) {
+      Transforms.delete(editor, {
+        distance: 1,
+        unit: 'character',
+        reverse: true,
+      })
+      return true
+    }
+
+    // Edge case: check if between a `\n` new line and the start of an inline atomic
+    const _prevNewLine = _text.charAt(_offset - 1) === '\n'
+    const _atBlockEnd = _offset === _text.length
+
+    // if were not at the end of a block and key is not backspace, check if inlineAtomic should be toggled
+    if (
+      _prevNewLine &&
+      !_atBlockEnd &&
+      event.key !== 'Backspace' &&
+      event.key !== 'Tab'
+    ) {
+      let _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+      const _atLeafEnd =
+        _currentLeaf.text.length === editor.selection.focus.offset
+      // move selection forward one
+      if (_atLeafEnd && !_currentLeaf.inlineTopic) {
+        Transforms.move(editor, {
+          unit: 'character',
+          distance: 1,
+        })
+        _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+        Transforms.move(editor, {
+          unit: 'character',
+          distance: 1,
+          reverse: true,
+        })
+      }
+      // remove marks before text is entered
+      if (_currentLeaf.inlineTopic) {
+        Editor.removeMark(editor, 'inlineTopic')
+        Editor.removeMark(editor, 'atomicId')
+      }
+    }
+  }
+
+  return false
+}
