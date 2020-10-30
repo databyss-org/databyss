@@ -12,6 +12,7 @@ import {
 } from '@databyss-org/services/citations/constants'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import AuthorCitations from '@databyss-org/ui/components/SourcesContent/AuthorCitations'
 import AuthorsContent from '@databyss-org/ui/components/SourcesContent/AuthorsContent'
 import SourcesCitations from '@databyss-org/ui/components/SourcesContent/SourcesCitations'
@@ -53,10 +54,18 @@ const SourcesContent = () => {
   const navigate = useNavigationContext(c => c.navigate)
 
   const getQueryParams = useNavigationContext(c => c.getQueryParams)
+  const setPreferredCitationStyle = useSourceContext(
+    c => c.setPreferredCitationStyle
+  )
 
   const [citationStyleOption, setCitationStyleOption] = useState(
     defaultCitationStyle
   )
+
+  const onCitationStyleChange = value => {
+    setCitationStyleOption(value)
+    setPreferredCitationStyle(value.id)
+  }
 
   // if author is provided in the url `.../sources?firstName=''&lastName='' render authors
   const _queryParams = getQueryParams()
@@ -79,7 +88,7 @@ const SourcesContent = () => {
         <DropDownControl
           items={CitationStyleOptions}
           value={citationStyleOption}
-          onChange={setCitationStyleOption}
+          onChange={onCitationStyleChange}
         />
         <IndexSourcePageEntries
           onClick={onSourceClick}
@@ -91,10 +100,7 @@ const SourcesContent = () => {
   }
 
   const render = () => (
-    <SourceCitationsLoader
-      filtered
-      citationFormatOptions={{ styleId: citationStyleOption.id }}
-    >
+    <SourceCitationsLoader filtered>
       {source => renderBody(source, navigate)}
     </SourceCitationsLoader>
   )

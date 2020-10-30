@@ -115,12 +115,15 @@ export function addPageToHeaders(id: string, pageId: string) {
 }
 
 export function fetchSourceCitations() {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
     dispatch({
       type: FETCH_SOURCE_CITATIONS,
     })
     try {
-      const sourceCitations: SourceCitationHeader[] = await services.getSourceCitations()
+      const { preferredCitationStyle } = getState()
+      const sourceCitations: SourceCitationHeader[] = await services.getSourceCitations(
+        preferredCitationStyle
+      )
       dispatch({
         type: CACHE_SOURCE_CITATIONS,
         payload: { results: sourceCitations },

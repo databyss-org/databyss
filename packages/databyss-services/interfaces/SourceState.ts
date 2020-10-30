@@ -5,4 +5,5 @@ export interface SourceState {
   cache: CacheDict<Source>
   authorsHeaderCache: CacheList<Author>
   citationHeaderCache: NullableCache<SourceCitationHeader>
+  preferredCitationStyle: string
 }
