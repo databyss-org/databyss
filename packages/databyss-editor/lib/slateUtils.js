@@ -417,7 +417,7 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
     */
     if (_offset > 0 && event.key === 'Backspace') {
       const _prev = Editor.previous(editor)
-      if (_prev.length && Editor.previous(editor)[0]?.inlineTopic) {
+      if (_prev?.length && Editor.previous(editor)[0]?.inlineTopic) {
         Transforms.move(editor, {
           unit: 'character',
           distance: 1,

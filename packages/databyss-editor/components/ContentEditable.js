@@ -810,7 +810,7 @@ const ContentEditable = ({
             event.preventDefault()
 
             clear(editor.selection.focus.path[0])
-            if (!isAtomicInlineType(_currentBlock.type)) {
+            if (!isAtomicClosure(_currentBlock.type)) {
               // check to see if block is atomic and was the last block on the page ignoring closure blocks
               const { atomicBlocks, inlineBlocks } = getBlocksWithAtomicId(
                 state.blocks,
