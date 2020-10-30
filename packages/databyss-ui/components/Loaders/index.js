@@ -1,7 +1,6 @@
 import React from 'react'
 import { pickBy } from 'lodash'
 
-import { defaultCitationStyle } from '@databyss-org/services/citations/constants'
 import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
@@ -93,7 +92,6 @@ export const AllTopicsLoader = ({ children, filtered, ...others }) => {
 
   return <MakeLoader resources={_resource} children={children} {...others} />
 }
-
 AllTopicsLoader.defaultProps = {
   filtered: true,
 }
@@ -123,18 +121,9 @@ AuthorsLoader.defaultProps = {
   filtered: true,
 }
 
-export const SourceCitationsLoader = ({
-  children,
-  filtered,
-  citationFormatOptions,
-  ...others
-}) => {
-  console.info('--- SourceCitationsLoader ---')
-  console.log('format options:', citationFormatOptions)
-
+export const SourceCitationsLoader = ({ children, filtered, ...others }) => {
   const getSourceCitations = useSourceContext(c => c.getSourceCitations)
 
-  // TODO: pass citationFormatOptions.styleId to getSourceCitations()
   let _resource = getSourceCitations()
 
   if (filtered && isResourceReady(_resource)) {
@@ -144,7 +133,6 @@ export const SourceCitationsLoader = ({
 }
 SourceCitationsLoader.defaultProps = {
   filtered: true,
-  citationFormatOptions: { styleId: defaultCitationStyle.id },
 }
 
 export const SearchAllLoader = ({ children, filtered, ...others }) => {

@@ -116,7 +116,7 @@ router.get(
 // @desc     Get all sources citations in an account
 // @access   Private
 router.get(
-  '/citations',
+  '/citations/:citationStyleId',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
     const blocks = await Block.aggregate([
@@ -186,10 +186,11 @@ router.get(
     })
 
     // add formatted citation to each entry
+    const { citationStyleId } = req.params
     await asyncForEach(sourcesCitations, async s => {
       const { detail } = s
       if (detail) {
-        s.citation = await toCitation(s.detail)
+        s.citation = await toCitation(s.detail, { styleId: citationStyleId })
       }
     })
 
