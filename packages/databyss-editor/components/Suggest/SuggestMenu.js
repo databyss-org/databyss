@@ -27,6 +27,24 @@ export const getPosition = (editor, inlineAtomic) => {
           left: _textNode.left - _rect.left,
         }
 
+        const _windowHeight = window.innerHeight
+
+        // check if menu should be above text
+        const isMenuTop = _windowHeight < _rect.bottom + MENU_HEIGHT
+
+        if (isMenuTop) {
+          return { bottom: 40, left: _textNode.left - _rect.left }
+        }
+
+        // if previous block is an atomic closure block move offest down 20px
+        const _index = editor.selection.anchor.path[0]
+        if (_index > 0) {
+          const previousNode = editor.children[_index - 1]
+          if (getClosureType(previousNode.type)) {
+            relativePos.top += 20
+          }
+        }
+
         return relativePos
       }
       const _windowHeight = window.innerHeight
