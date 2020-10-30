@@ -334,6 +334,9 @@ export const isCharacterKeyPress = evt => {
     // This is IE, which only fires keypress events for printable keys
     return true
   } else if (typeof evt.which === 'number' && evt.which > 0) {
+    /*
+    return false if navigation keys
+    */
     const _which = evt.which
     if (_which > 36 && _which < 41) {
       return false
@@ -407,6 +410,24 @@ export const inlineAtomicBlockCorrector = (event, editor) => {
         reverse: true,
       })
       return true
+    }
+
+    /*
+    if offset is not zero and previous node is an atomic inline, move cursor to have active inline mark
+    */
+    if (_offset > 0 && event.key === 'Backspace') {
+      const _prev = Editor.previous(editor)
+      if (_prev.length && Editor.previous(editor)[0]?.inlineTopic) {
+        Transforms.move(editor, {
+          unit: 'character',
+          distance: 1,
+          reverse: true,
+        })
+        Transforms.move(editor, {
+          unit: 'character',
+          distance: 1,
+        })
+      }
     }
 
     // Edge case: check if between a `\n` new line and the start of an inline atomic

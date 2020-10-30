@@ -262,11 +262,11 @@ const ContentEditable = ({
           return
         }
 
-        // TODO: remove node is needed for on key down operations which use leaf commands, update so this is not needed in the listener
         if (
           editor.operations.find(
             op =>
               (op.type === 'insert_text' ||
+                op.type === 'insert_node' ||
                 op.type === 'remove_text' ||
                 op.type === 'remove_node') &&
               (op?.text?.length || op?.node?.text?.length)
@@ -320,10 +320,13 @@ const ContentEditable = ({
       }
 
       const onKeyDown = event => {
-        // if a character has been entered, check if white space exists (firefox fix), if it has, remove character
+        // if a character has been entered, check if the position needs to be corrected for inline atomics
         if (isCharacterKeyPress(event) || event.key === 'Backspace') {
           inlineAtomicBlockCorrector(event, editor)
         }
+        /*
+        if inline menu is open, escape key should not bake inine and remove range
+        */
         if (event.key === 'Escape' && isCurrentlyInInlineAtomicField(editor)) {
           const _index = state.selection.anchor.index
           const _stateBlock = state.blocks[_index]
@@ -434,11 +437,12 @@ const ContentEditable = ({
           if (_currentLeaf.inlineTopic) {
             // if not backspace event and caret was at the start or end of leaf, remove mark and allow character to pass through
             if (
-              !(
-                event.key !== 'Backspace' &&
-                (_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf)
-              )
+              !(_isAnchorAtStartOfLeaf || _isAnchorAtEndOfLeaf) ||
+              event.key === 'Backspace'
             ) {
+              /*
+              remove entire inline atomic, check page to see if its the last one, if so, remove from page
+              */
               if (event.key === 'Backspace') {
                 // remove inline node
 
@@ -480,6 +484,8 @@ const ContentEditable = ({
                 Transforms.removeNodes(editor, {
                   match: node => node === _currentLeaf,
                 })
+                event.preventDefault()
+                return
               }
               event.preventDefault()
               return
@@ -659,6 +665,8 @@ const ContentEditable = ({
 
           if (isCurrentlyInInlineAtomicField(editor)) {
             // let suggest menu handle event if caret is inside of a new active inline atomic and _currentLeaf has more than one character
+
+            // if only one character is within the inline range, remove mark from character
             if (_currentLeaf.text.length === 1) {
               const _index = state.selection.anchor.index
               const _stateBlock = state.blocks[_index]
@@ -802,29 +810,30 @@ const ContentEditable = ({
             event.preventDefault()
 
             clear(editor.selection.focus.path[0])
-
-            // check to see if block is atomic and was the last block on the page ignoring closure blocks
-            const { atomicBlocks, inlineBlocks } = getBlocksWithAtomicId(
-              state.blocks,
-              _currentBlock._id
-            )
-            const _blocksWithAtomicId = [...atomicBlocks, ...inlineBlocks]
-            if (_blocksWithAtomicId.length < 2) {
-              // if so, remove page from atomic cache
-              ;({
-                SOURCE: () => {
-                  removePageFromSourceCacheHeader(
-                    _currentBlock._id,
-                    state.pageHeader._id
-                  )
-                },
-                TOPIC: () => {
-                  removePageFromTopicCacheHeader(
-                    _currentBlock._id,
-                    state.pageHeader._id
-                  )
-                },
-              }[_currentBlock.type]())
+            if (!isAtomicInlineType(_currentBlock.type)) {
+              // check to see if block is atomic and was the last block on the page ignoring closure blocks
+              const { atomicBlocks, inlineBlocks } = getBlocksWithAtomicId(
+                state.blocks,
+                _currentBlock._id
+              )
+              const _blocksWithAtomicId = [...atomicBlocks, ...inlineBlocks]
+              if (_blocksWithAtomicId.length < 2) {
+                // if so, remove page from atomic cache
+                ;({
+                  SOURCE: () => {
+                    removePageFromSourceCacheHeader(
+                      _currentBlock._id,
+                      state.pageHeader._id
+                    )
+                  },
+                  TOPIC: () => {
+                    removePageFromTopicCacheHeader(
+                      _currentBlock._id,
+                      state.pageHeader._id
+                    )
+                  },
+                }[_currentBlock.type]())
+              }
             }
             Transforms.delete(editor, {
               distance: 1,
