@@ -30,7 +30,9 @@ const SuggestTopics = ({
   const onTopicSelected = topic => {
     // check document to see if page should be added to topic cache
     if (state.blocks.filter(b => b._id === topic._id).length < 1) {
-      addPageToCacheHeader(topic._id, state.pageHeader._id)
+      if (state.pageHeader?._id) {
+        addPageToCacheHeader(topic._id, state.pageHeader._id)
+      }
     }
     if (!inlineAtomic) {
       replace([topic])

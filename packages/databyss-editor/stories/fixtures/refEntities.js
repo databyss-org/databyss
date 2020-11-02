@@ -16,5 +16,7 @@ export const topicFixture = [
       textValue: 'Some topic',
       ranges: [],
     },
+    isInPages: ['5e3b1bc48fb28680fe26437c'],
+    type: 'TOPIC',
   },
 ]

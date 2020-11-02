@@ -507,6 +507,7 @@ export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
     // if there's a match and the atomic type matches, use the cached 
     // block's _id and textValue (to correct casing differences
     const _suggestion = draft.entitySuggestionCache?.[inlineMarkupData.text.substring(1).toLowerCase()]
+
     // if suggestion exists in cache, grab values
     if (_suggestion?.type === _atomicType) {
       _atomicId = _suggestion._id

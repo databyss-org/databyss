@@ -370,13 +370,25 @@ const ContentEditable = ({
           // if only atomic symbol exists, remove mark
           if (_currentLeaf.inlineAtomicMenu && _currentLeaf.text.length === 1) {
             // remove inline mark
-            Transforms.setNodes(
-              editor,
-              { inlineAtomicMenu: false },
-              {
-                match: node => node === _currentLeaf,
-              }
-            )
+            Transforms.move(editor, {
+              unit: 'character',
+              distance: 1,
+              reverse: true,
+            })
+            Transforms.move(editor, {
+              unit: 'character',
+              distance: 1,
+              edge: 'focus',
+            })
+            // remove all active marks in current text
+            const _activeMarks = SlateEditor.marks(editor)
+            Object.keys(_activeMarks).forEach(m => {
+              toggleMark(editor, m)
+            })
+            Transforms.collapse(editor, {
+              edge: 'focus',
+            })
+
             if (event.key === ' ') {
               Transforms.insertText(editor, event.key)
             }
@@ -454,9 +466,12 @@ const ContentEditable = ({
                 /*
                   scan page for matching atomic ID's if there are less than two blocks, this delete will remove the atomic type from the header cache
                 */
-                if (_blocksWithAtomicId.length < 2) {
+                if (
+                  _blocksWithAtomicId.length < 2 &&
+                  removePageFromTopicCacheHeader
+                ) {
                   // if so, remove page from atomic cache
-                  if (_currentLeaf.inlineTopic) {
+                  if (_currentLeaf.inlineTopic && state.pageHeader?._id) {
                     removePageFromTopicCacheHeader(
                       _currentLeaf.atomicId,
                       state.pageHeader._id
@@ -471,7 +486,7 @@ const ContentEditable = ({
                   _currentBlock,
                   _currentLeaf.atomicId
                 )
-                if (_inlineRangeMatch.length < 2) {
+                if (_inlineRangeMatch.length < 2 && setBlockRelations) {
                   // clear this block relation
                   const blockRelation = {
                     block: _currentBlock._id,
@@ -898,19 +913,29 @@ const ContentEditable = ({
                 })
               } else {
                 // if atomic symbol is being removed, remove inlineAtomic mark from leaf
-                Transforms.setNodes(
-                  editor,
-                  { inlineAtomicMenu: false },
-                  {
-                    match: node => node === _currentLeaf,
-                  }
-                )
+
                 // allow backspace
                 Transforms.delete(editor, {
                   distance: 1,
                   unit: 'character',
                   reverse: true,
                 })
+
+                // remove inline mark
+                Transforms.move(editor, {
+                  unit: 'character',
+                  distance: _currentLeaf.text.length - 1,
+                  edge: 'focus',
+                })
+                // remove all active marks in current text
+                const _activeMarks = SlateEditor.marks(editor)
+                Object.keys(_activeMarks).forEach(m => {
+                  toggleMark(editor, m)
+                })
+                Transforms.collapse(editor, {
+                  edge: 'anchor',
+                })
+
                 event.preventDefault()
                 return
               }

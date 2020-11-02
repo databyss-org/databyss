@@ -180,6 +180,7 @@ const SuggestMenu = ({
   return (
     <ClickAwayListener onClickAway={onClickAway}>
       <DropdownContainer
+        data-test-element="suggest-menu"
         position={{
           top: position.top,
           left: position.left,
