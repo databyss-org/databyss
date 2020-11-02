@@ -22,6 +22,7 @@ import {
   leftKey,
   isSaved,
   escapeKey,
+  leftShiftKey,
 } from './_helpers.selenium'
 
 let driver
@@ -250,6 +251,72 @@ describe('editor clipboard', () => {
         <block type="SOURCE">
           <text>
             this is a source text<cursor />
+          </text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should test inline atomic functionality', async () => {
+    // paste in inline range
+    await toggleBold(actions)
+    await sendKeys(actions, 'some topic')
+    await selectAll(actions)
+    await copy(actions)
+    await sendKeys(actions, 'and we append #')
+    await paste(actions)
+    await enterKey(actions)
+    // copy fraction of an inline
+    await leftShiftKey(actions)
+    await copy(actions)
+    await rightKey(actions)
+    await enterKey(actions)
+    await enterKey(actions)
+    await paste(actions)
+
+    // block pasting multiple blocks
+    await enterKey(actions)
+    await enterKey(actions)
+    await selectAll(actions)
+    await copy(actions)
+    await rightKey(actions)
+    await sendKeys(actions, 'this should block #')
+    await paste(actions)
+    await enterKey(actions)
+    await getEditor(driver)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const _id = actual.children[0].children[1].atomicId
+
+    const expected = (
+      <editor>
+        <block type="ENTRY">
+          <text bold>and we append </text>
+          <text inlineTopic atomicId={_id}>
+            #some topic
+          </text>
+        </block>
+        <block type="ENTRY">
+          <text inlineTopic atomicId={_id}>
+            #some topic
+          </text>
+        </block>
+        <block type="ENTRY">
+          <text />
+        </block>
+        <block type="ENTRY">
+          <text>
+            this should block #<cursor />
           </text>
         </block>
       </editor>
