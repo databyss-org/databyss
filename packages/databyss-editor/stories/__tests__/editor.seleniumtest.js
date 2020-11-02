@@ -464,7 +464,7 @@ describe('editor selenium', () => {
         <block type="ENTRY">
           <text />
           <text inlineTopic atomicId="5e3b1bc48fb28680fe26437d">
-            #Some topic
+            #some topic
           </text>
         </block>
       </editor>
@@ -499,7 +499,7 @@ describe('editor selenium', () => {
         <block type="ENTRY">
           add this text{' '}
           <text inlineTopic atomicId="5e3b1bc48fb28680fe26437d">
-            #Some topic
+            #some topic
           </text>
           {'\n'}
           <cursor />text
