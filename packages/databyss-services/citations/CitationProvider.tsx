@@ -40,11 +40,6 @@ const CitationProvider: React.FunctionComponent<PropsType> = (
   const [state, dispatch] = useReducer(
     reducer,
     {
-      errorCount: 0,
-      queue: {
-        current: null,
-        next: null,
-      },
       citationCache: {},
     },
     { name: 'CitationProvider' }
