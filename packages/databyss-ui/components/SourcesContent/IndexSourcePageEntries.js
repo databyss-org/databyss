@@ -7,13 +7,16 @@ import {
   Text,
   View,
 } from '@databyss-org/ui/primitives'
-import { defaultCitationStyle } from '@databyss-org/services/citations/constants'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 
 import Citation from '../Citation/Citation'
 
 const IndexSourcePageEntries = ({ entries, icon, onClick }) => {
+  const { getPreferredCitationStyle } = useSourceContext()
+  const preferredCitationStyle = getPreferredCitationStyle()
+
   const renderStyledCitation = entry => {
-    const formatOptions = { styleId: defaultCitationStyle.id }
+    const formatOptions = { styleId: preferredCitationStyle }
     return (
       <Citation
         citation={entry.citation}

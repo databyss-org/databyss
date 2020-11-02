@@ -119,6 +119,8 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     [dispatch]
   )
 
+  const getPreferredCitationStyle = () => state.preferredCitationStyle
+
   // provider methods - citations
   const getAuthors = useCallback(
     (): ResourceResponse<Author[]> => {
@@ -145,6 +147,7 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
         addPageToCacheHeader,
         resetSourceHeaders,
         setPreferredCitationStyle,
+        getPreferredCitationStyle,
       }}
     >
       {children}
