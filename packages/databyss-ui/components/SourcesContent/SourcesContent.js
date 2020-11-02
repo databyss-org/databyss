@@ -18,11 +18,17 @@ import AuthorsContent from '@databyss-org/ui/components/SourcesContent/AuthorsCo
 import SourcesCitations from '@databyss-org/ui/components/SourcesContent/SourcesCitations'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 
-import { DropDownControl } from '../../primitives'
+import { DropDownControl, pxUnits, styled } from '../../primitives'
 
 import IndexPageContent from '../PageContent/IndexPageContent'
 
 import IndexSourcePageEntries from './IndexSourcePageEntries'
+
+// styled components
+const CitationStyleDropDown = styled(DropDownControl, () => ({
+  width: pxUnits(120),
+  alignSelf: 'end',
+}))
 
 // utils
 const buildSortedSources = sourceCitations => {
@@ -85,7 +91,7 @@ const SourcesContent = () => {
           <meta charSet="utf-8" />
           <title>All Sources</title>
         </Helmet>
-        <DropDownControl
+        <CitationStyleDropDown
           items={CitationStyleOptions}
           value={citationStyleOption}
           onChange={onCitationStyleChange}
