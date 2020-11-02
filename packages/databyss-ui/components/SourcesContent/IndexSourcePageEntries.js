@@ -1,33 +1,30 @@
 import React from 'react'
 
-import {
-  BaseControl,
-  Icon,
-  pxUnits,
-  Text,
-  View,
-} from '@databyss-org/ui/primitives'
+import { BaseControl, pxUnits, Text, View } from '@databyss-org/ui/primitives'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 
 import Citation from '../Citation/Citation'
 
-const IndexSourcePageEntries = ({ entries, icon, onClick }) => {
+const IndexSourcePageEntries = ({ entries, onClick }) => {
   const { getPreferredCitationStyle } = useSourceContext()
   const preferredCitationStyle = getPreferredCitationStyle()
 
-  const renderStyledCitation = entry => {
-    const formatOptions = { styleId: preferredCitationStyle }
-    return (
-      <Citation
-        citation={entry.citation}
-        formatOptions={formatOptions}
-        childViewProps={{
-          marginTop: pxUnits(20),
-          marginBottom: pxUnits(20),
-        }}
-      />
-    )
-  }
+  const renderStyledCitation = entry => (
+    <Citation
+      citation={entry.citation}
+      formatOptions={{ styleId: preferredCitationStyle }}
+      childViewProps={{
+        marginTop: pxUnits(10),
+        marginBottom: pxUnits(10),
+      }}
+      citationTextProps={{
+        color: 'gray.3',
+        style: {
+          lineHeight: 1.5,
+        },
+      }}
+    />
+  )
 
   const renderPlacesCited = entry =>
     entry.citations?.map((citation, i) => (
@@ -37,7 +34,7 @@ const IndexSourcePageEntries = ({ entries, icon, onClick }) => {
     ))
 
   const render = () =>
-    entries.map((entry, index) => {
+    entries?.map((entry, index) => {
       if (entry.text) {
         return (
           <View key={index} mb="em" px="medium" widthVariant="content">
@@ -54,20 +51,7 @@ const IndexSourcePageEntries = ({ entries, icon, onClick }) => {
               userSelect="auto"
               childViewProps={{ flexDirection: 'row' }}
             >
-              {icon && (
-                <Icon sizeVariant="small" color="text.3" mt="tiny" mr="tiny">
-                  {icon}
-                </Icon>
-              )}
-              <Text
-                variant={
-                  entry.type === 'sources'
-                    ? 'bodyNormalUnderline'
-                    : 'bodyNormalSemibold'
-                }
-              >
-                {entry.text}
-              </Text>
+              <Text variant="bodyNormalSemibold">{entry.text}</Text>
             </BaseControl>
 
             {renderStyledCitation(entry)}

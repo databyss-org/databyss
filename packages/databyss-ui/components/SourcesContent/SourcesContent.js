@@ -16,7 +16,6 @@ import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import AuthorCitations from '@databyss-org/ui/components/SourcesContent/AuthorCitations'
 import AuthorsContent from '@databyss-org/ui/components/SourcesContent/AuthorsContent'
 import SourcesCitations from '@databyss-org/ui/components/SourcesContent/SourcesCitations'
-import SourceSvg from '@databyss-org/ui/assets/source.svg'
 
 import { DropDownControl, pxUnits, styled } from '../../primitives'
 
@@ -99,7 +98,6 @@ const SourcesContent = () => {
         <IndexSourcePageEntries
           onClick={onSourceClick}
           entries={sortedSources}
-          icon={<SourceSvg />}
         />
       </IndexPageContent>
     )
