@@ -165,9 +165,9 @@ describe('inline atomic', () => {
     const textInput = await getElementByTag(driver, '[data-test-path="text"]')
     await textInput.click()
 
-    await selectAll(actions)
-    await backspaceKey(actions)
-    await sendKeys(actions, 'new topic')
+    // await selectAll(actions)
+    // await backspaceKey(actions)
+    await sendKeys(actions, ' with update')
 
     const doneButton = await getElementByTag(
       driver,
@@ -182,7 +182,7 @@ describe('inline atomic', () => {
     await searchInput.click()
 
     await sleep(500)
-    await sendKeys(actions, 'new topic')
+    await sendKeys(actions, 'inline source')
     await enterKey(actions)
 
     // verify results still appear
@@ -212,7 +212,7 @@ describe('inline atomic', () => {
     // check highlight for correct words
     assert.equal(
       _selection.trim(),
-      'this will contain a new #new topic with appended text'
+      'this will contain a new #inline source  with update with appended text'
     )
 
     await backspaceKey(actions)
