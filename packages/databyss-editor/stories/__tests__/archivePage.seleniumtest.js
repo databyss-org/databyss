@@ -55,7 +55,8 @@ describe('archive page', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
+    await driver.close()
+    driver = null
   })
 
   it('should archive a page and remove the page from the sidebar', async () => {

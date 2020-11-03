@@ -59,7 +59,8 @@ describe('page sharing', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
+    await driver.close()
+    driver = null
   })
 
   it('should ensure page sharing integrity', async () => {

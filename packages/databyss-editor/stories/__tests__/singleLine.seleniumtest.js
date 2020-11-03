@@ -26,7 +26,7 @@ describe('value list controller', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
+    await driver.close()
     driver = null
   })
   it('should accept inputs', async () => {

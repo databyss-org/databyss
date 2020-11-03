@@ -31,7 +31,7 @@ describe('editor selenium', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
+    await driver.close()
     driver = null
   })
 

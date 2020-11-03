@@ -83,7 +83,7 @@ describe('editor history', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
+    await driver.close()
     driver = null
   })
 

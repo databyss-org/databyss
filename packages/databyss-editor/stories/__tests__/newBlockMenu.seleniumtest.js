@@ -28,7 +28,7 @@ describe('new block menu actions', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
+    await driver.close()
     driver = null
   })
 

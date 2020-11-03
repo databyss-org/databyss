@@ -36,7 +36,7 @@ describe('format text in editor', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
+    await driver.close()
     driver = null
   })
 

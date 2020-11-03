@@ -57,7 +57,7 @@ describe('entry search', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
+    await driver.close()
     driver = null
   })
 

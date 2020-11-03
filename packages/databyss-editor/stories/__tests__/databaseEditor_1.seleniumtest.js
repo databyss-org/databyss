@@ -75,7 +75,7 @@ describe('connected editor', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
+    await driver.close()
     driver = null
   })
 

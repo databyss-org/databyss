@@ -59,7 +59,7 @@ describe('app sticky header', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
+    await driver.close()
     driver = null
   })
 

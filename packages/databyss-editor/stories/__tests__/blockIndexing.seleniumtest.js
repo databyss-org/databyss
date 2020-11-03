@@ -62,7 +62,7 @@ describe('block indexing', () => {
   })
 
   afterEach(async () => {
-    await driver.quit()
+    await driver.close()
     driver = null
   })
 
