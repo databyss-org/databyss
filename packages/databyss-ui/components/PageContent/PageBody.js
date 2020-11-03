@@ -53,11 +53,11 @@ const PageBody = ({
 
   // state from provider is out of date
   const onChange = value => {
-    if (editorStateRef.current?.pagePath) {
-      requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      if (editorStateRef.current?.pagePath) {
         onEditorPathChange(editorStateRef.current.pagePath)
-      )
-    }
+      }
+    })
 
     pageState.current = value.nextState
 
