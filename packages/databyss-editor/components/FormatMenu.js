@@ -11,10 +11,7 @@ import {
   toggleMark,
   slateSelectionToStateSelection,
 } from './../lib/slateUtils'
-import {
-  doesSelectionHaveInlineOrAtomic,
-  getInlineOrAtomicsFromStateSelection,
-} from '../state/util'
+import { getInlineOrAtomicsFromStateSelection } from '../state/util'
 import { useEditorContext } from '../state/EditorProvider'
 
 const formatActions = () => [
