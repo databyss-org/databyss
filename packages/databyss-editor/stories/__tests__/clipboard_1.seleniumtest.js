@@ -83,12 +83,9 @@ describe('editor clipboard', () => {
   })
 
   afterEach(async () => {
-    await driver.close()
-    driver = null
-  })
-
-  afterAll(async () => {
+    await driver.sleep(100)
     await driver.quit()
+    driver = null
   })
 
   it('should copy a whole block and paste it at the end of the same block', async () => {

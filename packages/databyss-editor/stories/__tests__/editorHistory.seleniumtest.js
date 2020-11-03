@@ -83,12 +83,9 @@ describe('editor history', () => {
   })
 
   afterEach(async () => {
-    await driver.close()
-    driver = null
-  })
-
-  afterAll(async () => {
+    await driver.sleep(100)
     await driver.quit()
+    driver = null
   })
 
   it('should undo a multiblock entry with an atomic', async () => {

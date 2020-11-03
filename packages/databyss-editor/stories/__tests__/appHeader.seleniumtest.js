@@ -59,12 +59,9 @@ describe('app sticky header', () => {
   })
 
   afterEach(async () => {
-    await driver.close()
-    driver = null
-  })
-
-  afterAll(async () => {
+    await driver.sleep(100)
     await driver.quit()
+    driver = null
   })
 
   it('should render correct editor path for cursor', async () => {

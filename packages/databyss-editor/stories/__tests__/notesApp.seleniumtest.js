@@ -62,12 +62,9 @@ describe('notes app', () => {
   })
 
   afterEach(async () => {
-    await driver.close()
-    driver = null
-  })
-
-  afterAll(async () => {
+    await driver.sleep(100)
     await driver.quit()
+    driver = null
   })
 
   it('should switch page names and verify atomics appear on the sidebar', async () => {
