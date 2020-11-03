@@ -13,8 +13,8 @@ import {
   backspaceKey,
   getEditor,
   isAppInNotesSaved,
-  //  selectAll,
   downShiftKey,
+  rightKey,
 } from './_helpers.selenium'
 
 let driver
@@ -63,7 +63,7 @@ describe('inline atomic', () => {
     await driver.quit()
   })
 
-  it('test the integrity of inline atomics', async () => {
+  it('should test the integrity of inline atomics', async () => {
     let topicsSidebarButton = await getElementByTag(
       driver,
       '[data-test-sidebar-element="topics"]'
@@ -79,9 +79,9 @@ describe('inline atomic', () => {
     await sendKeys(actions, 'this is the first page title')
     await enterKey(actions)
 
-    await sendKeys(actions, 'this will contain a new #inline source')
+    await sendKeys(actions, 'this will contain a new #test')
     await enterKey(actions)
-    await sendKeys(actions, ' with appended text')
+    await sendKeys(actions, ' text')
 
     await isAppInNotesSaved(driver)
 
@@ -113,7 +113,7 @@ describe('inline atomic', () => {
 
     await sendKeys(actions, 'this is the second page title')
     await enterKey(actions)
-    await sendKeys(actions, '#inline source')
+    await sendKeys(actions, '#test')
     await sleep(1000)
     await downKey(actions)
     await enterKey(actions)
@@ -166,8 +166,13 @@ describe('inline atomic', () => {
     await textInput.click()
 
     // await selectAll(actions)
-    // await backspaceKey(actions)
-    await sendKeys(actions, ' with update')
+    await backspaceKey(actions)
+    await backspaceKey(actions)
+    await backspaceKey(actions)
+    await backspaceKey(actions)
+    await backspaceKey(actions)
+
+    await sendKeys(actions, 'new topic')
 
     const doneButton = await getElementByTag(
       driver,
@@ -182,7 +187,7 @@ describe('inline atomic', () => {
     await searchInput.click()
 
     await sleep(500)
-    await sendKeys(actions, 'inline source')
+    await sendKeys(actions, 'new topic')
     await enterKey(actions)
 
     // verify results still appear
@@ -210,10 +215,15 @@ describe('inline atomic', () => {
       'return window.getSelection().toString()'
     )
     // check highlight for correct words
-    assert.equal(
-      _selection.trim(),
-      'this will contain a new #inline source  with update with appended text'
-    )
+    assert.equal(_selection.trim(), 'this will contain a new #new topic text')
+    // remove the inline topic and it should be removed from search results
+    await rightKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
+    await leftKey(actions)
 
     await backspaceKey(actions)
 
