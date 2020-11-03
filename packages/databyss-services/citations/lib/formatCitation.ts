@@ -2,37 +2,12 @@ import Cite from 'citation-js'
 
 import {
   CitationOutputTypes,
-  CitationStyleIds,
   CitationStyles,
+  DefaultCitationStyleId,
 } from '../constants'
 
 // consts
-const Styles = [
-  {
-    id: CitationStyleIds.APA,
-    data: null,
-  },
-  {
-    id: CitationStyleIds.CHICAGO,
-    data: null,
-  },
-  {
-    id: CitationStyleIds.HARVARD,
-    data: null,
-  },
-  {
-    id: CitationStyleIds.IEEE,
-    data: null,
-  },
-  {
-    id: CitationStyleIds.MLA,
-    data: null,
-  },
-  {
-    id: CitationStyleIds.VANCOUVER,
-    data: null,
-  },
-]
+const Styles = CitationStyles.map(s => ({ id: s.id, data: null }))
 
 // vars
 let cite = null
@@ -51,7 +26,7 @@ export async function formatCitation(csl, options) {
       : CitationOutputTypes.BIBLIOGRAPHY
 
   const styleId =
-    options && options.styleId ? options.styleId : CitationStyleIds.MLA
+    options && options.styleId ? options.styleId : DefaultCitationStyleId
 
   // error checks
   if (!csl) {
@@ -73,14 +48,11 @@ export async function formatCitation(csl, options) {
       'formatCitation() expected `options.styleId` to be a string.'
     )
   }
-  const style = CitationStyles.find(
-    s => s.id.toLowerCase() === styleId.toLowerCase()
-  )
+  const style = CitationStyles.find(s => s.id === styleId)
   if (!style) {
     throw new Error(
-      'formatCitation() encountered an unhandled value for the `styleId` parameter: ' +
-        `"${styleId}". ` +
-        'Look at `citation-styles.js` for accepted style IDs.'
+      'formatCitation() encountered an unhandled value ' +
+        `for the \`styleId\` parameter: "${styleId}". `
     )
   }
 
