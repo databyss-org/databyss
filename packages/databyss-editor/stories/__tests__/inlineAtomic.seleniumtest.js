@@ -15,7 +15,6 @@ import {
   isAppInNotesSaved,
   downShiftKey,
   rightKey,
-  upKey,
 } from './_helpers.selenium'
 
 let driver
