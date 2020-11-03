@@ -40,7 +40,11 @@ import {
   isAtomicInlineType,
 } from '../lib/util'
 import Hotkeys, { isPrintable } from './../lib/hotKeys'
-import { symbolToAtomicType, selectionHasRange } from '../state/util'
+import {
+  symbolToAtomicType,
+  selectionHasRange,
+  getInlineOrAtomicsFromStateSelection,
+} from '../state/util'
 import { showAtomicModal } from '../lib/atomicModal'
 import { isAtomicClosure } from './Element'
 import { useHistoryContext } from '../history/EditorHistory'
@@ -557,19 +561,26 @@ const ContentEditable = ({
         }
 
         if (Hotkeys.isBold(event)) {
+          if (!getInlineOrAtomicsFromStateSelection(state).length) {
+            toggleMark(editor, 'bold')
+          }
           event.preventDefault()
-          toggleMark(editor, 'bold')
+
           return
         }
 
         if (Hotkeys.isItalic(event)) {
-          toggleMark(editor, 'italic')
+          if (!getInlineOrAtomicsFromStateSelection(state).length) {
+            toggleMark(editor, 'italic')
+          }
           event.preventDefault()
           return
         }
 
         if (Hotkeys.isLocation(event)) {
-          toggleMark(editor, 'location')
+          if (!getInlineOrAtomicsFromStateSelection(state).length) {
+            toggleMark(editor, 'location')
+          }
           event.preventDefault()
           return
         }

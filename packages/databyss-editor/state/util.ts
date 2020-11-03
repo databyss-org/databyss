@@ -596,11 +596,20 @@ const _inlines = _frag.filter(b =>
       ).length
   ).length)
 
+  const _inlineMenuRange = _frag.filter(b =>
+    b.text.ranges.filter(
+      r =>
+        r.marks.filter(
+          m => m === 'inlineAtomicMenu'
+        ).length
+    ).length)
+
+
   const _atomics = _frag.filter(
     b => isAtomicInlineType(b.type)
   )
 
-const atomicsInSelection = [..._inlines, ..._atomics]
+const atomicsInSelection = [..._inlines,..._inlineMenuRange, ..._atomics]
 
 return atomicsInSelection
 }
