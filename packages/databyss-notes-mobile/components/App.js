@@ -23,7 +23,7 @@ const App = () => {
         code={urlParams.get('code')}
         unauthorizedChildren={
           <Viewport p={0}>
-            <Public />
+            <Public signupFlow={isSignUp()} />
           </Viewport>
         }
       >
