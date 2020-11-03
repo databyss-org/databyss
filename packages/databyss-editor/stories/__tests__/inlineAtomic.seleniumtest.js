@@ -15,6 +15,7 @@ import {
   isAppInNotesSaved,
   downShiftKey,
   rightKey,
+  upKey,
 } from './_helpers.selenium'
 
 let driver
@@ -261,8 +262,9 @@ describe('inline atomic', () => {
     )
     await topicsSidebarButton.click()
     await getEditor(driver)
-    await leftKey(actions)
-    await leftKey(actions)
+    await upKey(actions)
+    await rightKey(actions)
+    await rightKey(actions)
 
     await backspaceKey(actions)
     await backspaceKey(actions)
