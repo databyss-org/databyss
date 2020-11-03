@@ -63,6 +63,10 @@ describe('app sticky header', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should render correct editor path for cursor', async () => {
     const pageTitle = await getElementByTag(
       driver,

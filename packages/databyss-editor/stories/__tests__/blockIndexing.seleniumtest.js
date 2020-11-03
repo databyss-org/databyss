@@ -66,6 +66,10 @@ describe('block indexing', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   // Tests for indexing [adding a topic, adds it to the index, clicking on it should show results, clicking on results should show page with correct entries]
   // Check for indexing closure accuracy [delete an atomic, it should remove all entries from that atomic; if you add an end atomic, it should only show entries up until that end atomic; if you delete an end atomic, it should carry on until there's another atomic] 5) Click on all authors brings up all authors, clicking on all sources brings up all sources, clicking on all topics brings up all topics 6) Clicking on an author in all authors, should bring you to that author's entry result page (same for all sources, and all topics)
 

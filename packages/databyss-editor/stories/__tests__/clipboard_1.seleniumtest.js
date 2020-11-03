@@ -87,6 +87,10 @@ describe('editor clipboard', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should copy a whole block and paste it at the end of the same block', async () => {
     // TODO: FIX CURSOR POSITION FOR THIS TEST
     await sendKeys(actions, 'this text will be pasted with ')

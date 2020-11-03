@@ -86,6 +86,10 @@ describe('editor clipboard', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should copy two entry fragments and paste them within an entry', async () => {
     await sendKeys(actions, 'this is a test')
     await enterKey(actions)

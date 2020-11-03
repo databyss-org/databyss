@@ -79,6 +79,10 @@ describe('connected editor', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should test editor and database sync and functionality', async () => {
     await sleep(300)
     await sendKeys(actions, 'the following text should be ')

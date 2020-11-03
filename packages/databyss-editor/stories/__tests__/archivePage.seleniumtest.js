@@ -58,6 +58,10 @@ describe('archive page', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should archive a page and remove the page from the sidebar', async () => {
     // populate a page
     const pageTitle = await getElementByTag(

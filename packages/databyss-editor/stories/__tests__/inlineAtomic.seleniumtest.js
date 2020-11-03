@@ -64,6 +64,10 @@ describe('inline atomic', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should test the integrity of inline atomics', async () => {
     let topicsSidebarButton = await getElementByTag(
       driver,

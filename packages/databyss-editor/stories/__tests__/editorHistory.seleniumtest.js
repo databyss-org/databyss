@@ -87,6 +87,10 @@ describe('editor history', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should undo a multiblock entry with an atomic', async () => {
     await sleep(300)
     await sendKeys(actions, 'this entry should stay')

@@ -61,6 +61,10 @@ describe('entry search', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   // should search an entry at the middle of an entry
   // should search an entry at the end of an entry
   it('should test the integrity of search results', async () => {

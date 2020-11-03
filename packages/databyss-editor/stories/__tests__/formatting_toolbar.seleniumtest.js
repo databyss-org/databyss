@@ -40,6 +40,10 @@ describe('format text in editor', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should toggle italic using the format toolbar', async () => {
     await sleep(300)
     await actions.sendKeys('first word should be italic')

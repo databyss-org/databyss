@@ -60,6 +60,11 @@ describe('editor performance', () => {
     await driver.close()
     driver = null
   })
+
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should test for loading time', async () => {
     await sleep(300)
     const _times = []

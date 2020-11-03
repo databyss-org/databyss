@@ -63,6 +63,10 @@ describe('page sharing', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should ensure page sharing integrity', async () => {
     // If a page has been copied but is not public, only the private user can view it
     // populate a page

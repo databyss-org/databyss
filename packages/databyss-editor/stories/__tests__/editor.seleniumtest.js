@@ -35,6 +35,10 @@ describe('editor selenium', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should test basic editor functionality', async () => {
     await sleep(300)
     await editor.sendKeys('this is an example of an entry text')

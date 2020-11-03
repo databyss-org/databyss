@@ -85,6 +85,10 @@ describe('connected editor', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should insert atomic source and edit source fields and test for suggestions', async () => {
     await sleep(300)
     await sendKeys(actions, '@this is a test')

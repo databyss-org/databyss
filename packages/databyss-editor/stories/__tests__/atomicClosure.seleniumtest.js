@@ -80,6 +80,10 @@ describe('atomic closure', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should open, close, overwrite and delete source and topics', async () => {
     await sendKeys(actions, '@this is an opening source')
     await enterKey(actions)

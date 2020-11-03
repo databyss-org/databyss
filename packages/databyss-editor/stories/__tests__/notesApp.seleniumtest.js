@@ -66,6 +66,10 @@ describe('notes app', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should switch page names and verify atomics appear on the sidebar', async () => {
     // click on topics sidebar
     const topicSidebarButton = await getElementByTag(

@@ -29,6 +29,11 @@ describe('value list controller', () => {
     await driver.close()
     driver = null
   })
+
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should accept inputs', async () => {
     // name = await getElementByTag(driver, '[data-test-path="text"]')
 

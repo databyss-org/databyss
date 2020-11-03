@@ -84,6 +84,10 @@ describe('editor clipboard', () => {
     driver = null
   })
 
+  afterAll(async () => {
+    await driver.quit()
+  })
+
   it('should have a multi-block selection with atomics and paste the whole atomic blocks', async () => {
     await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
