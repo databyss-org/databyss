@@ -261,6 +261,7 @@ describe('inline atomic', () => {
       '[data-test-sidebar-element="topics"]'
     )
     await topicsSidebarButton.click()
+    await sleep(1000)
     await getEditor(driver)
     await upKey(actions)
     await rightKey(actions)
