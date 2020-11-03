@@ -443,20 +443,23 @@ const ContentEditable = ({
             ) {
               // if so, remove page from atomic cache
 
-              ;({
-                SOURCE: () => {
+              switch (_currentBlock.type) {
+                case 'SOURCE': {
                   removePageFromSourceCacheHeader(
                     _currentBlock._id,
                     state.pageHeader._id
                   )
-                },
-                TOPIC: () => {
+                  break
+                }
+                case 'TOPIC': {
                   removePageFromTopicCacheHeader(
                     _currentBlock._id,
                     state.pageHeader._id
                   )
-                },
-              }[_currentBlock.type]())
+                  break
+                }
+                default:
+              }
             }
 
             Transforms.delete(editor, {
