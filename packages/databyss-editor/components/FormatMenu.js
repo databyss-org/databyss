@@ -11,6 +11,11 @@ import {
   toggleMark,
   slateSelectionToStateSelection,
 } from './../lib/slateUtils'
+import {
+  doesSelectionHaveInlineOrAtomic,
+  getInlineOrAtomicsFromStateSelection,
+} from '../state/util'
+import { useEditorContext } from '../state/EditorProvider'
 
 const formatActions = () => [
   {
@@ -114,6 +119,7 @@ const isBackwards = stateSelection => {
 }
 
 const FormatMenu = () => {
+  const { state } = useEditorContext()
   const ref = useRef()
   const editor = useSlate()
   const [menuActive, setMenuActive] = useState(false)
@@ -165,11 +171,17 @@ const FormatMenu = () => {
     () => {
       const domSelection = window.getSelection()
 
+      /*
+      check if selection contains inline atomics or inline sources
+      */
+      const _atomics = getInlineOrAtomicsFromStateSelection(state)
+
       const dontShowMenu =
         !selection ||
         !ReactEditor.isFocused(editor) ||
         Range.isCollapsed(selection) ||
-        domSelection.isCollapsed === true
+        domSelection.isCollapsed === true ||
+        !!_atomics.length
 
       if (dontShowMenu) {
         setMenuActive(false)
@@ -186,7 +198,9 @@ const FormatMenu = () => {
   )
 
   const openFormatMenu = () => {
-    if (Range.isCollapsed(selection)) {
+    const _atomics = getInlineOrAtomicsFromStateSelection(state)
+
+    if (Range.isCollapsed(selection) || _atomics.length) {
       return
     }
     const domSelection = window.getSelection()

@@ -4,8 +4,8 @@ import { Patch } from 'immer'
 import { Selection, Block, Range, EditorState, Text, Point } from '../interfaces'
 import { OnChangeArgs } from './EditorProvider'
 import { isAtomicInlineType } from '../lib/util'
-import { splitTextAtOffset } from '../lib/clipboardUtils'
-import { mergeText } from '../lib/clipboardUtils/index';
+import { splitTextAtOffset, getFragmentAtSelection } from '../lib/clipboardUtils'
+import { mergeText, isSelectionCollapsed } from '../lib/clipboardUtils/index';
 
 /*
 takes a text object and a range type and returns the length of the range, the location of the offset and the text contained within the range, this fuction works when text block has of of that range type
@@ -576,4 +576,31 @@ export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
       draft.newEntities.push(_entity)
     }
   }
+}
+
+export const getInlineOrAtomicsFromStateSelection = (state: EditorState): Block[] => {
+  if(isSelectionCollapsed(state.selection)){
+    return []
+  }
+
+const _frag = getFragmentAtSelection(state)
+// check fragment for inline blocks
+const _inlines = _frag.filter(b =>
+  b.text.ranges.filter(
+    r =>
+      r.marks.filter(
+        m =>
+          Array.isArray(m) &&
+          m.length === 2 &&
+          m[0] === 'inlineTopic'
+      ).length
+  ).length)
+
+  const _atomics = _frag.filter(
+    b => isAtomicInlineType(b.type)
+  )
+
+const atomicsInSelection = [..._inlines, ..._atomics]
+
+return atomicsInSelection
 }
