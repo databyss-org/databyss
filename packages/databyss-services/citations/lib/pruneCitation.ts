@@ -1,5 +1,3 @@
-import { CitationStyleIds } from '../constants'
-
 /**
  * Trims the citation provided by CitationJS to remove the numbering.
  * Used when only one citation is required.
@@ -18,14 +16,16 @@ export function pruneCitation(citation, styleId) {
   }
 
   switch (styleId) {
-    case CitationStyleIds.APA:
-    case CitationStyleIds.CHICAGO:
-    case CitationStyleIds.MLA:
+    case 'apa':
+    case 'chicago':
+    case 'harvard1':
+    case 'mla':
       response = cslEntries[0].outerHTML
       break
 
-    case CitationStyleIds.IEEE:
-    case CitationStyleIds.VANCOUVER:
+    case 'american-medical-association':
+    case 'ieee':
+    case 'vancouver':
       const numberedEntry = cslEntries[0]
       const lastIndex = numberedEntry.children.length - 1
       const lastChild = numberedEntry.children[lastIndex]
