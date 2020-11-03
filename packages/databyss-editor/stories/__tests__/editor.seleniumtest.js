@@ -32,6 +32,7 @@ describe('editor selenium', () => {
 
   afterEach(async () => {
     await driver.quit()
+    driver = null
   })
 
   it('should test basic editor functionality', async () => {

@@ -82,6 +82,7 @@ describe('connected editor', () => {
 
   afterEach(async () => {
     await driver.quit()
+    driver = null
   })
 
   it('should insert atomic source and edit source fields and test for suggestions', async () => {

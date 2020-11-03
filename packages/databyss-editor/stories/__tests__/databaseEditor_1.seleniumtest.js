@@ -76,6 +76,7 @@ describe('connected editor', () => {
 
   afterEach(async () => {
     await driver.quit()
+    driver = null
   })
 
   it('should test editor and database sync and functionality', async () => {

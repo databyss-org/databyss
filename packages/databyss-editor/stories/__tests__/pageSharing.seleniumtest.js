@@ -62,7 +62,7 @@ describe('page sharing', () => {
     await driver.quit()
   })
 
-  it('should archive a page and remove the page from the sidebar', async () => {
+  it('should ensure page sharing integrity', async () => {
     // If a page has been copied but is not public, only the private user can view it
     // populate a page
     let pageTitle = await getElementByTag(

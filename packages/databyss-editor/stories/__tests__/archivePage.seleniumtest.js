@@ -50,7 +50,7 @@ describe('archive page', () => {
     // wait for editor to be visible
     await getEditor(driver)
     actions = driver.actions()
-
+    driver = null
     done()
   })
 
