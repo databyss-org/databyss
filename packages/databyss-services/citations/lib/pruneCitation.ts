@@ -28,8 +28,12 @@ export function pruneCitation(citation, styleId) {
     case 'vancouver':
       const numberedEntry = cslEntries[0]
       const lastIndex = numberedEntry.children.length - 1
-      const lastChild = numberedEntry.children[lastIndex]
-      response = lastChild.outerHTML
+      if (lastIndex > 0) {
+        const lastChild = numberedEntry.children[lastIndex]
+        response = lastChild.outerHTML
+      } else {
+        response = ''
+      }
       break
   }
 
