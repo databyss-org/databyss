@@ -10,6 +10,7 @@ import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useEditorContext } from '../../state/EditorProvider'
 import { splitTextAtOffset, mergeText } from '../../lib/clipboardUtils'
 import { getTextOffsetWithRange } from '../../state/util'
+import { slateSelectionToStateSelection } from '../../lib/slateUtils'
 
 const SuggestTopics = ({
   query,
@@ -148,8 +149,14 @@ const SuggestTopics = ({
     const _index = state.selection.anchor.index
     const _stateBlock = state.blocks[_index]
     // set the block with a re-render
+    const selection = slateSelectionToStateSelection(editor)
+
+    // preserve selection id from DB
+    if (state.selection._id) {
+      selection._id = state.selection._id
+    }
     setContent({
-      selection: state.selection,
+      selection,
       operations: [
         {
           index: _index,
@@ -161,6 +168,16 @@ const SuggestTopics = ({
   }
 
   useEventListener('keydown', e => {
+    /*
+    bake topic if arrow up or down without suggestion
+    */
+    if (
+      !filteredSuggestions.length &&
+      (e.key === 'ArrowDown' || e.key === 'ArrowUp')
+    ) {
+      setCurrentTopicWithoutSuggestion()
+    }
+
     if (e.key === 'Enter') {
       window.requestAnimationFrame(() => {
         if (!pendingSetContent.current) {

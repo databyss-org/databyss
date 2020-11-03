@@ -164,8 +164,12 @@ describe('page sharing', () => {
 
     body = await body.getAttribute('innerText')
 
+    /*
+      unauthorized page should return empty page or not authorized
+    */
+    const pageBody = body.trim() === 'Not Authorized' || body.trim() === ''
     // confirm private page is not authorized
-    assert.equal(body.trim(), 'Not Authorized')
+    assert.equal(true, pageBody)
 
     // navigate to public pageq
     await driver.get(publicPageUrl)

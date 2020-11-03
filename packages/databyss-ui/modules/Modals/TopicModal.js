@@ -23,7 +23,6 @@ const TopicModal = ({ refId, visible, onUpdate, id }) => {
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
 
-  console.log(values)
   const onBlur = () => {
     if (values && values.text.textValue.length) {
       setTopic(values)
