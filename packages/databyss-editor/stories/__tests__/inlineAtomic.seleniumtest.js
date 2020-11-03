@@ -263,6 +263,7 @@ describe('inline atomic', () => {
     await getEditor(driver)
     await leftKey(actions)
     await backspaceKey(actions)
+    await backspaceKey(actions)
 
     // check sidebar for removed topic
     await isAppInNotesSaved(driver)
