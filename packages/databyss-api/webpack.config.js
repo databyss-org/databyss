@@ -36,7 +36,7 @@ module.exports = {
       }),
   ].filter(Boolean),
   resolve: {
-    extensions: ['.js', '.ts'],
+    extensions: ['.js', '.ts', '.json'],
     alias: {
       deepmerge$: 'deepmerge/dist/umd.js',
     },
