@@ -32,11 +32,14 @@ const NavigationProvider = ({ children }) => {
 
   const hideModal = () => dispatch(actions.hideModal())
   const navigate = (url, options) => {
-    if (options?.hasAccount) {
+    const accountId = getAccountFromLocation()
+    const hasAccount =
+      options?.hasAccount || (accountId && url.match(`/${accountId}/`))
+    if (hasAccount) {
       navigateRouter(url)
       return
     }
-    navigateRouter(`/${getAccountFromLocation()}${url}`)
+    navigateRouter(accountId ? `/${accountId}${url}` : url)
   }
 
   const navigateSidebar = options => dispatch(actions.navigateSidebar(options))
@@ -85,6 +88,7 @@ const NavigationProvider = ({ children }) => {
         navigateSidebar,
         getSidebarPath,
         getQueryParams,
+        getAccountFromLocation,
       }}
     >
       {children}

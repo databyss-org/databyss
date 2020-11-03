@@ -116,6 +116,9 @@ const Control = forwardRef(
               if (disabled) {
                 return
               }
+              if (e.getModifierState && e.getModifierState('Meta')) {
+                return
+              }
               if (onPress) {
                 onPress(e)
               }
