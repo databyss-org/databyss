@@ -262,6 +262,8 @@ describe('inline atomic', () => {
     await topicsSidebarButton.click()
     await getEditor(driver)
     await leftKey(actions)
+    await leftKey(actions)
+
     await backspaceKey(actions)
     await backspaceKey(actions)
 
