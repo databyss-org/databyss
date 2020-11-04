@@ -669,29 +669,27 @@ const ContentEditable = ({
               ) {
                 // get length of text to swollow
                 const _wordToSwollow = _text.slice(_offset).split(/\s+/)[0]
+                // insert hash
                 Transforms.insertText(editor, event.key)
+                // highligh next word and remove word
                 Transforms.move(editor, {
                   unit: 'character',
-                  distance: 1,
-                  reverse: true,
+                  distance: _wordToSwollow.length,
+                  edge: 'focus',
                 })
+                Transforms.delete(editor)
+
+                // insert plaintext of word
+                Transforms.insertText(editor, _wordToSwollow)
+                // apply inlineAtomicMenu mark
                 Transforms.move(editor, {
                   unit: 'character',
                   distance: _wordToSwollow.length + 1,
+                  reverse: true,
                   edge: 'focus',
                 })
-                // remove all active marks in current text
-                const _activeMarks = SlateEditor.marks(editor)
-                console.log('active marks', _activeMarks)
-                Object.keys(_activeMarks).forEach(m => {
-                  toggleMark(editor, m)
-                })
-                if (isFormatActive(editor, 'bold')) {
-                  toggleMark(editor, 'bold')
-                }
                 // activate inlineAtomicMenu
                 SlateEditor.addMark(editor, 'inlineAtomicMenu', true)
-
                 Transforms.collapse(editor, {
                   edge: 'focus',
                 })
