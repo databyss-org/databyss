@@ -339,11 +339,12 @@ export default (
             // check for inline atomic
             const _isSelectionOnInlineAtomic = !!getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor }).filter(r =>
                   r.marks.length &&
-                  r.marks.filter(i => Array.isArray(i) && i[0] === 'inlineTopic')
+                  r.marks.filter(i => Array.isArray(i) && i[0] === 'inlineTopic').length
               ).length
 
-
+              console.log(JSON.parse(JSON.stringify(getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor }))))
             if (_isSelectionOnInlineAtomic || isAtomicInlineType(_startBlock.type)) {
+              console.log('here in this one')
               break
             }
           }
@@ -363,6 +364,8 @@ export default (
           */
           const _isAtomicBeingPastedIntoInline = _frag.length === 1 && isAtomicInlineType(_frag[0].type) && !!_rangesAtCurrentSelection.filter(r => r.marks.includes("inlineAtomicMenu")).length
 
+          console.log(_isAtomicBeingPastedIntoInline)
+
           // if replacing, fragment contains multiple blocks, the cursor block is empty, 
           // the cursor block is atomic, or the fragment starts with an atomic, 
           // do not split the cursor block...
@@ -375,6 +378,7 @@ export default (
 
             // check if we are pasting inside of an inline atomic field
             if (_rangesAtCurrentSelection.filter(r => r.marks.includes("inlineAtomicMenu")).length) {
+              console.log('HERE NOW')
               break
             }
 
@@ -440,7 +444,7 @@ export default (
               // merge 'inlineAtomicMenu Ranges'
 
               mergeInlineAtomicMenuRange({block: draft.blocks[draft.selection.anchor.index]})
-
+              console.log('HERE NOW')
        
             } else {
               insertText({
