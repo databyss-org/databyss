@@ -43,9 +43,11 @@ export async function formatCitation(csl, options) {
         `Received "${outputType}". `
     )
   }
-  if (typeof styleId !== 'string') {
+  const typeOfStyleId = typeof styleId
+  if (typeOfStyleId !== 'string') {
     throw new Error(
-      'formatCitation() expected `options.styleId` to be a string.'
+      'formatCitation() expected `options.styleId` to be a string. ' +
+        `Received "${typeOfStyleId}".`
     )
   }
   const style = CitationStyles.find(s => s.id === styleId)

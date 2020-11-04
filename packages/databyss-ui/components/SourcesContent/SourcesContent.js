@@ -6,10 +6,8 @@ import {
   sortEntriesAtoZ,
   createIndexPageEntries,
 } from '@databyss-org/services/entries/util'
-import {
-  CitationStyleOptions,
-  defaultCitationStyle,
-} from '@databyss-org/services/citations/constants'
+import { CitationStyleOptions } from '@databyss-org/services/citations/constants'
+import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
@@ -59,12 +57,17 @@ const SourcesContent = () => {
   const navigate = useNavigationContext(c => c.navigate)
 
   const getQueryParams = useNavigationContext(c => c.getQueryParams)
+
+  const getPreferredCitationStyle = useSourceContext(
+    c => c.getPreferredCitationStyle
+  )
   const setPreferredCitationStyle = useSourceContext(
     c => c.setPreferredCitationStyle
   )
+  const preferredCitationStyle = getPreferredCitationStyle()
 
   const [citationStyleOption, setCitationStyleOption] = useState(
-    defaultCitationStyle
+    getCitationStyleOption(preferredCitationStyle)
   )
 
   const onCitationStyleChange = value => {
