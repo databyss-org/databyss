@@ -6,9 +6,12 @@ import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import Citation from '../Citation/Citation'
 
 const IndexSourcePageEntries = ({ entries, onClick }) => {
-  const { getPreferredCitationStyle } = useSourceContext()
+  const getPreferredCitationStyle = useSourceContext(
+    c => c.getPreferredCitationStyle
+  )
   const preferredCitationStyle = getPreferredCitationStyle()
 
+  // render methods
   const renderStyledCitation = entry => (
     <Citation
       citation={entry.citation}

@@ -114,6 +114,15 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
 
   const setPreferredCitationStyle = useCallback(
     (styleId: string) => {
+      // error checks
+      const typeOfStyleId = typeof styleId
+      if (typeOfStyleId !== 'string') {
+        throw new Error(
+          'setPreferredCitationStyle() expected `styleId` to be a string. ' +
+            `Received "${typeOfStyleId}".`
+        )
+      }
+      // dispatch
       dispatch({ type: SET_PREFERRED_CITATION_STYLE, payload: { styleId } })
     },
     [dispatch]

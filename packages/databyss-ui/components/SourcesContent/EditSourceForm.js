@@ -1,14 +1,6 @@
 import React, { useState } from 'react'
 import { cloneDeep } from 'lodash'
 
-import { isArticle, isBook } from '@databyss-org/services/sources/lib'
-import { MonthOptions } from '@databyss-org/services/sources/constants/MonthOptions'
-import { pruneCitation } from '@databyss-org/services/citations/lib'
-import { PublicationTypes } from '@databyss-org/services/sources/constants/PublicationTypes'
-import { SeasonOptions } from '@databyss-org/services/sources/constants/SeasonOptions'
-import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
-import { useCitationContext } from '@databyss-org/services/citations/CitationProvider'
-import EditAuthorFields from '@databyss-org/ui/components/SourcesContent/EditAuthorFields'
 import {
   Button,
   RawHtml,
@@ -16,13 +8,22 @@ import {
   TextControl,
   View,
 } from '@databyss-org/ui/primitives'
+import { CitationStyleOptions } from '@databyss-org/services/citations/constants'
+import {
+  getCitationStyleOption,
+  pruneCitation,
+} from '@databyss-org/services/citations/lib'
+import { isArticle, isBook } from '@databyss-org/services/sources/lib'
+import { MonthOptions } from '@databyss-org/services/sources/constants/MonthOptions'
+import { PublicationTypes } from '@databyss-org/services/sources/constants/PublicationTypes'
+import { SeasonOptions } from '@databyss-org/services/sources/constants/SeasonOptions'
+import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
+import { useCitationContext } from '@databyss-org/services/citations/CitationProvider'
+import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import EditAuthorFields from '@databyss-org/ui/components/SourcesContent/EditAuthorFields'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
-import {
-  CitationStyleOptions,
-  defaultCitationStyle,
-} from '@databyss-org/services/citations/constants'
 
 import { pxUnits } from '../../theming/views'
 import LabeledDropDownControl from '../../primitives/Control/LabeledDropDownControl'
@@ -84,13 +85,19 @@ const LabeledTextInput = props => (
 )
 
 const EditSourceForm = props => {
-  const citationContext = useCitationContext()
-  const { generateCitation } = citationContext
-
   const { values, onChange } = props
 
+  const { generateCitation } = useCitationContext()
+  const getPreferredCitationStyle = useSourceContext(
+    c => c.getPreferredCitationStyle
+  )
+  const setPreferredCitationStyle = useSourceContext(
+    c => c.setPreferredCitationStyle
+  )
+  const preferredCitationStyle = getPreferredCitationStyle()
+
   const [citationStyleOption, setCitationStyleOption] = useState(
-    defaultCitationStyle
+    getCitationStyleOption(preferredCitationStyle)
   )
 
   const hasDetail = 'detail' in values
@@ -239,6 +246,12 @@ const EditSourceForm = props => {
     if (values && values.text.textValue.length && onChange) {
       onChange(values)
     }
+  }
+
+  // citation methods
+  const onCitationStyleOptionChange = value => {
+    setPreferredCitationStyle(value.id)
+    setCitationStyleOption(value)
   }
 
   // render methods
@@ -522,7 +535,8 @@ const EditSourceForm = props => {
       return null
     }
 
-    const formatOptions = { styleId: citationStyleOption.id }
+    const formatOptions = { styleId: preferredCitationStyle }
+
     return (
       <>
         <FormHeading>Citation</FormHeading>
@@ -541,7 +555,7 @@ const EditSourceForm = props => {
           gridFlexWrap="nowrap"
           paddingVariant="tiny"
           value={citationStyleOption}
-          onChange={setCitationStyleOption}
+          onChange={onCitationStyleOptionChange}
           dropDownProps={{
             concatCss: { width: '75%' },
             ctaLabel: 'Choose a citation style',
