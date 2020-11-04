@@ -31,7 +31,6 @@ import {
   isCharacterKeyPress,
   insertTextWithInilneCorrection,
   inlineAtomicBlockCorrector,
-  isFormatActive,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
 import {
