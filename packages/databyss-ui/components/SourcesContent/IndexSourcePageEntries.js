@@ -1,6 +1,13 @@
 import React from 'react'
 
-import { BaseControl, pxUnits, Text, View } from '@databyss-org/ui/primitives'
+import {
+  BaseControl,
+  pxUnits,
+  RawHtml,
+  Text,
+  View,
+} from '@databyss-org/ui/primitives'
+import { stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 
 import Citation from '../Citation/Citation'
@@ -29,13 +36,6 @@ const IndexSourcePageEntries = ({ entries, onClick }) => {
     />
   )
 
-  const renderPlacesCited = entry =>
-    entry.citations?.map((citation, i) => (
-      <Text key={i} ml="medium" variant="bodySmall" color="text.2">
-        {citation}
-      </Text>
-    ))
-
   const render = () =>
     entries?.map((entry, index) => {
       if (entry.text) {
@@ -54,12 +54,12 @@ const IndexSourcePageEntries = ({ entries, onClick }) => {
               userSelect="auto"
               childViewProps={{ flexDirection: 'row' }}
             >
-              <Text variant="bodyNormalSemibold">{entry.text}</Text>
+              <Text variant="bodyNormalSemibold">
+                <RawHtml html={stateBlockToHtml(entry)} />
+              </Text>
             </BaseControl>
 
             {renderStyledCitation(entry)}
-
-            {renderPlacesCited(entry)}
           </View>
         )
       }

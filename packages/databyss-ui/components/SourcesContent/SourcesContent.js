@@ -2,11 +2,8 @@ import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 import { Router } from '@reach/router'
 
-import {
-  sortEntriesAtoZ,
-  createIndexPageEntries,
-} from '@databyss-org/services/entries/util'
 import { CitationStyleOptions } from '@databyss-org/services/citations/constants'
+import { createIndexPageEntries } from '@databyss-org/services/entries/util'
 import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -32,16 +29,18 @@ const buildSortedSources = sourceCitations => {
   const sourcesData = Object.values(sourceCitations).map(value =>
     createIndexPageEntries({
       id: value._id,
-      text: value.text?.textValue,
+      text: value.text,
       citation: value.citation,
-      citations: value.detail?.citations?.map(
-        citation => citation.text?.textValue
-      ),
       type: 'sources',
     })
   )
 
-  return sortEntriesAtoZ(sourcesData, 'text')
+  const sortedSources = sourcesData.sort(
+    (a, b) =>
+      a.text.textValue.toLowerCase() > b.text.textValue.toLowerCase() ? 1 : -1
+  )
+
+  return sortedSources
 }
 
 // components
