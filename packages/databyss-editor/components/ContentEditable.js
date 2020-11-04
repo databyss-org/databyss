@@ -31,7 +31,6 @@ import {
   isCharacterKeyPress,
   insertTextWithInilneCorrection,
   inlineAtomicBlockCorrector,
-  isFormatActive,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
 import {
@@ -668,7 +667,8 @@ const ContentEditable = ({
                 !isCurrentlyInInlineAtomicField(editor)
               ) {
                 // get length of text to swollow
-                const _wordToSwollow = _text.slice(_offset).split(/\s+/)[0]
+                // get word to swollow divided by white space, comma or period
+                const _wordToSwollow = _text.slice(_offset).split(/\s|\.|,/)[0]
                 // insert hash
                 Transforms.insertText(editor, event.key)
                 // highligh next word and remove word
