@@ -31,6 +31,7 @@ import {
   isCharacterKeyPress,
   insertTextWithInilneCorrection,
   inlineAtomicBlockCorrector,
+  isFormatActive,
 } from '../lib/slateUtils'
 import { replaceShortcut } from '../lib/editorShortcuts'
 import {
@@ -506,6 +507,17 @@ const ContentEditable = ({
                 event.preventDefault()
                 return
               }
+
+              /*
+              if cursor is on an inline atomic and enter is pressed, launch modal
+              */
+              if (event.key === 'Enter') {
+                const inlineAtomicData = {
+                  refId: _currentLeaf.atomicId,
+                  type: 'TOPIC',
+                }
+                onInlineAtomicClick(inlineAtomicData)
+              }
               event.preventDefault()
               return
             }
@@ -560,13 +572,41 @@ const ContentEditable = ({
           return
         }
 
-        if (Hotkeys.isBold(event)) {
-          if (!getInlineOrAtomicsFromStateSelection(state).length) {
-            toggleMark(editor, 'bold')
-          }
-          event.preventDefault()
+        if (
+          Hotkeys.isBold(event) ||
+          Hotkeys.isItalic(event) ||
+          Hotkeys.isLocation(event)
+        ) {
+          /*
+          before toggling a range, make sure that no atomics are selected or we are not in an inlineAtomicMenu range
+          */
+          const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
+          if (
+            !(
+              getInlineOrAtomicsFromStateSelection(state).length ||
+              _currentLeaf.inlineAtomicMenu
+            )
+          ) {
+            if (Hotkeys.isBold(event)) {
+              toggleMark(editor, 'bold')
+              event.preventDefault()
+              return
+            }
 
-          return
+            if (Hotkeys.isItalic(event)) {
+              toggleMark(editor, 'italic')
+
+              event.preventDefault()
+              return
+            }
+
+            if (Hotkeys.isLocation(event)) {
+              toggleMark(editor, 'location')
+
+              event.preventDefault()
+              return
+            }
+          }
         }
 
         if (Hotkeys.isItalic(event)) {
@@ -642,9 +682,13 @@ const ContentEditable = ({
                 })
                 // remove all active marks in current text
                 const _activeMarks = SlateEditor.marks(editor)
+                console.log('active marks', _activeMarks)
                 Object.keys(_activeMarks).forEach(m => {
                   toggleMark(editor, m)
                 })
+                if (isFormatActive(editor, 'bold')) {
+                  toggleMark(editor, 'bold')
+                }
                 // activate inlineAtomicMenu
                 SlateEditor.addMark(editor, 'inlineAtomicMenu', true)
 
