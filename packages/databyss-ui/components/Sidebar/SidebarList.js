@@ -33,17 +33,18 @@ const SidebarList = ({
   onItemSelected,
   ...others
 }) => {
-  const { getTokensFromPath } = useNavigationContext()
+  const { getTokensFromPath, getAccountFromLocation } = useNavigationContext()
   const location = useLocation()
   const tokens = getTokensFromPath()
 
   const getHref = item => {
+    const routeWithAccount = `/${getAccountFromLocation()}${item.route}`
     if (item.params) {
-      return `${item.route}${query || item.type === 'authors' ? '?' : '/'}${
-        item.params
-      }`
+      return `${routeWithAccount}${
+        query || item.type === 'authors' ? '?' : '/'
+      }${item.params}`
     }
-    return `${item.route}`
+    return `${routeWithAccount}`
   }
 
   const getActiveItem = item => {

@@ -44,6 +44,7 @@ const Private = () => {
       backgroundColor="background.1"
     >
       <Router>
+        <Redirect noThrow from="/signup" to="/" />
         <RouterGroup path="/:accountId">
           <RouterGroup path="pages">
             <PagesIndex path="/" />
