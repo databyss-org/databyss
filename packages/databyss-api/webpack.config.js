@@ -35,7 +35,7 @@ module.exports = {
             __dirname,
             '../../node_modules/sync-fetch/worker.js'
           ),
-          to: path.resolve(__dirname, '../../build/api/worker.js'),
+          to: '/worker.js',
         },
       ],
     }),
