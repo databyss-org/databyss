@@ -2,6 +2,7 @@ const webpack = require('webpack')
 const path = require('path')
 const { BugsnagSourceMapUploaderPlugin } = require('webpack-bugsnag-plugins')
 const getClientEnvironment = require('../../config/env')
+const CopyPlugin = require('copy-webpack-plugin')
 
 const env = getClientEnvironment()
 const envDefines = Object.keys(env.raw).reduce((accum, key) => {
@@ -27,6 +28,17 @@ module.exports = {
     minimize: false,
   },
   plugins: [
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve(
+            __dirname,
+            '../../node_modules/sync-fetch/worker.js'
+          ),
+          to: path.resolve(__dirname, '../../build/api/worker.js'),
+        },
+      ],
+    }),
     new webpack.DefinePlugin(envDefines),
     process.env.API_BUGSNAG_KEY &&
       new BugsnagSourceMapUploaderPlugin({
