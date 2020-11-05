@@ -212,7 +212,10 @@ describe('entry search', () => {
     )
     await searchInput.click()
     await sendKeys(actions, 'something')
+    await sleep(1000)
     await enterKey(actions)
+    await enterKey(actions)
+
     // verify that a source is shown in the search results
     let sourceResult = await getElementsByTag(
       driver,

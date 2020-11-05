@@ -865,15 +865,14 @@ export default (
       // flag currently selected block with `__showNewBlockMenu` if empty
 
       // first reset `__showNewBlockMenu` on all other blocks
-      draft.blocks.forEach((block) => {
+      draft.blocks.forEach((block, i) => {
         block.__showNewBlockMenu = false
         block.__isActive = false
+        block.__showInlineTopicMenu = false
       })
       const _selectedBlock = draft.blocks[draft.selection.focus.index]
 
       if (_selectedBlock) {
-
-
         // show newBlockMenu if selection is collapsed and is empty
         _selectedBlock.__showNewBlockMenu =
           !selectionHasRange(draft.selection) &&
