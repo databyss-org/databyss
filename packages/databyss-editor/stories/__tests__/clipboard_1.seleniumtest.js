@@ -14,6 +14,7 @@ import {
   downKey,
   paste,
   copy,
+  sleep,
   cut,
   selectAll,
   rightShiftKey,
@@ -83,9 +84,10 @@ describe('editor clipboard', () => {
   })
 
   afterEach(async () => {
-    await driver.sleep(100)
+    await sleep(100)
     await driver.quit()
     driver = null
+    await sleep(100)
   })
 
   it('should copy a whole block and paste it at the end of the same block', async () => {

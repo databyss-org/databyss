@@ -57,9 +57,10 @@ describe('entry search', () => {
   })
 
   afterEach(async () => {
-    await driver.sleep(100)
+    await sleep(100)
     await driver.quit()
     driver = null
+    await sleep(100)
   })
 
   // should search an entry at the middle of an entry

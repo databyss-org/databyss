@@ -76,9 +76,10 @@ describe('atomic closure', () => {
   })
 
   afterEach(async () => {
-    await driver.sleep(100)
+    await sleep(100)
     await driver.quit()
     driver = null
+    await sleep(100)
   })
 
   it('should open, close, overwrite and delete source and topics', async () => {

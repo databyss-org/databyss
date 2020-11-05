@@ -62,9 +62,10 @@ describe('block indexing', () => {
   })
 
   afterEach(async () => {
-    await driver.sleep(100)
+    await sleep(100)
     await driver.quit()
     driver = null
+    await sleep(100)
   })
 
   // Tests for indexing [adding a topic, adds it to the index, clicking on it should show results, clicking on results should show page with correct entries]

@@ -22,6 +22,7 @@ import {
   leftKey,
   isSaved,
   escapeKey,
+  sleep,
 } from './_helpers.selenium'
 
 let driver
@@ -82,9 +83,10 @@ describe('editor clipboard', () => {
   })
 
   afterEach(async () => {
-    await driver.sleep(100)
+    await sleep(100)
     await driver.quit()
     driver = null
+    await sleep(100)
   })
 
   it('should copy two entry fragments and paste them within an entry', async () => {

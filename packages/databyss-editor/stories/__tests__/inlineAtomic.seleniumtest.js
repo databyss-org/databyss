@@ -60,9 +60,10 @@ describe('inline atomic', () => {
   })
 
   afterEach(async () => {
-    await driver.sleep(100)
+    await sleep(100)
     await driver.quit()
     driver = null
+    await sleep(100)
   })
 
   it('should test the integrity of inline atomics', async () => {
