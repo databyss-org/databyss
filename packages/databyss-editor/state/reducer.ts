@@ -701,12 +701,6 @@ export default (
                 index: op.index,
                 block: _block,
               })
-            } else {
-              // normally operations pass through
-              // TODO: Block text inserted at inline
-              // console.log('CHECK TEXT')
-              // check if any text is being entered in an inline atomic
-
             }
           })
           break
@@ -892,24 +886,6 @@ export default (
         ) && !_selectedBlock.text.textValue.match(`\n`) && !_doesBlockHaveInlineAtomicRange
 
 
-        // // if currently in an inline atomic
-        // if(!(_selectedBlock.__showInlineTopicMenu || _selectedBlock.__showInlineCitationMenu)){
-
-
-
-
-
-
-        // // get if inline was active in the last pass
-        // _selectedBlock.__activeInline = (_selectedBlock.__showInlineTopicMenu || _selectedBlock.__showInlineCitationMenu)
-
-        // const _currentWord = getWordFromOffset({text: _selectedBlock.text.textValue, offset: draft.selection.anchor.offset})
-
-        // // show __showInlineCitationMenu if selection is collapsed, selection is within text precedded with a `@` and it is currently not tagged already  
-        // _selectedBlock.__showInlineCitationMenu = (!selectionHasRange(draft.selection) && !_selectedBlock.__showCitationMenu && _currentWord?.word.startsWith(
-        //   '@'
-        // ) )?_currentWord: false
-
         // check if selected block has range type 'inlineAtomicMenu'
         const _hasInlineMenuMark = _selectedBlock.text.ranges.reduce((acc, curr) => {
           if (acc === true) {
@@ -924,16 +900,6 @@ export default (
 
         // show __showInlineTopicMenu if selection is collapsed, selection is within text precedded with a `#` and it is currently not tagged already
         _selectedBlock.__showInlineTopicMenu = !selectionHasRange(draft.selection) && _hasInlineMenuMark
-
-
-
-        // _selectedBlock.__showInlineTopicMenu = (!selectionHasRange(draft.selection) && !_selectedBlock.__showTopicMenu && _currentWord?.word.startsWith('#') )?_currentWord: false
-
-
-
-
-
-        // }
 
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element

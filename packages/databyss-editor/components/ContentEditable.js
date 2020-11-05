@@ -523,6 +523,7 @@ const ContentEditable = ({
           }
         }
 
+        console.log('HERE CHECK THIS')
         if (isCharacterKeyPress(event) && isMarkActive(editor, 'inlineTopic')) {
           toggleMark(editor, 'inlineTopic')
         }
@@ -595,7 +596,7 @@ const ContentEditable = ({
             if (Hotkeys.isItalic(event)) {
               toggleMark(editor, 'italic')
 
-              event.preventDefault()
+              einsert key manually to trigger an vent.preventDefault()
               return
             }
 
@@ -606,22 +607,6 @@ const ContentEditable = ({
               return
             }
           }
-        }
-
-        if (Hotkeys.isItalic(event)) {
-          if (!getInlineOrAtomicsFromStateSelection(state).length) {
-            toggleMark(editor, 'italic')
-          }
-          event.preventDefault()
-          return
-        }
-
-        if (Hotkeys.isLocation(event)) {
-          if (!getInlineOrAtomicsFromStateSelection(state).length) {
-            toggleMark(editor, 'location')
-          }
-          event.preventDefault()
-          return
         }
 
         // don't allow a printable key to "overwrite" a selection that spans multiple blocks
@@ -688,6 +673,7 @@ const ContentEditable = ({
               }
             }
 
+            console.log('CHECK HERE AS WELL')
             // toggle the inline atomic block
             // insert key manually to trigger an 'insert_text' command
             if (!isCurrentlyInInlineAtomicField(editor) && !_isClosure) {
@@ -964,6 +950,7 @@ const ContentEditable = ({
                   reverse: true,
                 })
 
+                console.log('HERE AS WELL')
                 // remove inline mark
                 Transforms.move(editor, {
                   unit: 'character',
