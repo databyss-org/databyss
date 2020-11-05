@@ -523,7 +523,6 @@ const ContentEditable = ({
           }
         }
 
-        console.log('HERE CHECK THIS')
         if (isCharacterKeyPress(event) && isMarkActive(editor, 'inlineTopic')) {
           toggleMark(editor, 'inlineTopic')
         }
@@ -595,8 +594,7 @@ const ContentEditable = ({
 
             if (Hotkeys.isItalic(event)) {
               toggleMark(editor, 'italic')
-
-              einsert key manually to trigger an vent.preventDefault()
+              event.preventDefault()
               return
             }
 
@@ -653,7 +651,9 @@ const ContentEditable = ({
               ) {
                 // get length of text to swollow
                 // get word to swollow divided by white space, comma or period
-                const _wordToSwollow = _text.slice(_offset).split(/\s|\.|,/)[0]
+                const _wordToSwollow = _text
+                  .slice(_offset)
+                  .split(/\s|\.|,|\;|\:|\"|\]/)[0]
 
                 // highligh next word and remove word
                 Transforms.move(editor, {
@@ -673,29 +673,12 @@ const ContentEditable = ({
               }
             }
 
-            console.log('CHECK HERE AS WELL')
             // toggle the inline atomic block
             // insert key manually to trigger an 'insert_text' command
             if (!isCurrentlyInInlineAtomicField(editor) && !_isClosure) {
-              Transforms.insertText(editor, event.key)
-              Transforms.move(editor, {
-                unit: 'character',
-                distance: 1,
-                reverse: true,
-              })
-              Transforms.move(editor, {
-                unit: 'character',
-                distance: 1,
-                edge: 'focus',
-              })
-              // remove all active marks in current text
-              const _activeMarks = SlateEditor.marks(editor)
-              Object.keys(_activeMarks).forEach(m => {
-                toggleMark(editor, m)
-              })
-              SlateEditor.addMark(editor, 'inlineAtomicMenu', true)
-              Transforms.collapse(editor, {
-                edge: 'focus',
+              Transforms.insertNodes(editor, {
+                text: event.key,
+                inlineAtomicMenu: true,
               })
               event.preventDefault()
               return
@@ -942,30 +925,14 @@ const ContentEditable = ({
                 })
               } else {
                 // if atomic symbol is being removed, remove inlineAtomic mark from leaf
-
-                // allow backspace
-                Transforms.delete(editor, {
-                  distance: 1,
-                  unit: 'character',
-                  reverse: true,
+                const _textToInsert = _currentLeaf.text.substring(1)
+                Transforms.removeNodes(editor, {
+                  match: node => node === _currentLeaf,
                 })
 
-                console.log('HERE AS WELL')
-                // remove inline mark
-                Transforms.move(editor, {
-                  unit: 'character',
-                  distance: _currentLeaf.text.length - 1,
-                  edge: 'focus',
+                Transforms.insertNodes(editor, {
+                  text: _textToInsert,
                 })
-                // remove all active marks in current text
-                const _activeMarks = SlateEditor.marks(editor)
-                Object.keys(_activeMarks).forEach(m => {
-                  toggleMark(editor, m)
-                })
-                Transforms.collapse(editor, {
-                  edge: 'anchor',
-                })
-
                 event.preventDefault()
                 return
               }
