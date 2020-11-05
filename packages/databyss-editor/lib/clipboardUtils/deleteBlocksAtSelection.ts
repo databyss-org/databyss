@@ -7,6 +7,7 @@ import {
   makeEmptyBlock,
 } from './'
 import { isAtomicInlineType } from '../util'
+import adjustSelectionToIncludeInlineAtomics from './adjustSelectionToIncludeInlineAtomics'
 
 // updates block with selection removed
 const deleteSelectionWithinBlock = ({
@@ -105,6 +106,8 @@ export default (draft: EditorState) => {
 
   const { selection, blocks } = draft
   const { anchor, focus } = sortSelection(selection)
+
+  adjustSelectionToIncludeInlineAtomics({ blocks, anchor, focus })
 
   // check if selection is within a block
   if (focus.index === anchor.index) {

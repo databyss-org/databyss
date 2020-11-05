@@ -10,6 +10,7 @@ module.exports = api => {
       },
     ],
   ]
+
   const ignore = ['**/node_modules']
 
   return {

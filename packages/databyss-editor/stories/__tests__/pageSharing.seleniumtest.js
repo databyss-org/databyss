@@ -59,10 +59,13 @@ describe('page sharing', () => {
   })
 
   afterEach(async () => {
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
-  it('should archive a page and remove the page from the sidebar', async () => {
+  it('should ensure page sharing integrity', async () => {
     // If a page has been copied but is not public, only the private user can view it
     // populate a page
     let pageTitle = await getElementByTag(
@@ -162,8 +165,12 @@ describe('page sharing', () => {
 
     body = await body.getAttribute('innerText')
 
+    /*
+      unauthorized page should return empty page or not authorized
+    */
+    const pageBody = body.trim() === 'Not Authorized' || body.trim() === ''
     // confirm private page is not authorized
-    assert.equal(body.trim(), 'Not Authorized')
+    assert.equal(true, pageBody)
 
     // navigate to public pageq
     await driver.get(publicPageUrl)

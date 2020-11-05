@@ -43,25 +43,28 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     dispatch(onClearCache())
   }
 
-  const throttleBlockRelations = throttle(() => {
+  const throttleBlockRelations = throttle(callback => {
     if (blockRelationsQueueRef.current.length) {
-      dispatch(onSetBlockRelations(blockRelationsQueueRef.current))
+      dispatch(onSetBlockRelations(blockRelationsQueueRef.current, callback))
       blockRelationsQueueRef.current = []
     }
   }, THROTTLE_BLOCK_RELATIONS)
 
-  // TODO: block relations should have an id for source name and page name in order to not have to update the block relations in the editor provider
-  const setBlockRelations = blockRelations => {
-    if (
-      blockRelations.blocksRelationArray.length ||
-      blockRelations.clearPageRelationships
-    ) {
-      const _arr = blockRelationsQueueRef.current
-      _arr.push(blockRelations)
-      blockRelationsQueueRef.current = _arr
-      throttleBlockRelations()
-    }
-  }
+  // async function could receive a callback function
+  const setBlockRelations = blockRelations =>
+    new Promise(res => {
+      // if callback is provided, this function will wait till throttle is complete before executing callback function
+      if (
+        blockRelations.blocksRelationArray.length ||
+        blockRelations.clearPageRelationships
+      ) {
+        const _arr = blockRelationsQueueRef.current
+        _arr.push(blockRelations)
+        blockRelationsQueueRef.current = _arr
+        // pass the callback to the throttle function
+        throttleBlockRelations(res)
+      }
+    })
 
   const findBlockRelations = query => {
     // fetch block relations from the server

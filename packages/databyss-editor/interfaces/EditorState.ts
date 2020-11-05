@@ -4,14 +4,18 @@ import { Block, Selection } from './'
 export interface PayloadOperation {
   index: number
   text: Text
-  isRefEntity?: boolean
+  isRefEntity?: string
+  withRerender?: string
   withBakeAtomic?: boolean
+  convertInlineToAtomic?: boolean
 }
 
 export interface BackflowOperation {
   index: number
   block: Block
   insertBefore?: Boolean
+  setSelection?: Boolean
+  reloadAll?: Boolean
 }
 
 export interface EditorState {

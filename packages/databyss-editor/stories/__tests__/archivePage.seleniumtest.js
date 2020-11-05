@@ -50,12 +50,14 @@ describe('archive page', () => {
     // wait for editor to be visible
     await getEditor(driver)
     actions = driver.actions()
-
     done()
   })
 
   afterEach(async () => {
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
   it('should archive a page and remove the page from the sidebar', async () => {

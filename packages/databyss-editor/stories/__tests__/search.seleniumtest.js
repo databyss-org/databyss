@@ -57,7 +57,10 @@ describe('entry search', () => {
   })
 
   afterEach(async () => {
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
   // should search an entry at the middle of an entry
@@ -210,7 +213,10 @@ describe('entry search', () => {
     )
     await searchInput.click()
     await sendKeys(actions, 'something')
+    await sleep(1000)
     await enterKey(actions)
+    await enterKey(actions)
+
     // verify that a source is shown in the search results
     let sourceResult = await getElementsByTag(
       driver,

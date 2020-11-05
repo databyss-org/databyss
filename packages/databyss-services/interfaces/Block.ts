@@ -7,6 +7,12 @@ export enum BlockType {
   EndSource = 'END_SOURCE',
   EndTopic = 'END_TOPIC',
 }
+
+// interface InlineAtomic {
+//   word: string
+//   offset: number
+// }
+
 export interface Block {
   _id: string
   type: BlockType
@@ -14,6 +20,8 @@ export interface Block {
   __showCitationMenu?: boolean
   __showTopicMenu?: boolean
   __showNewBlockMenu?: boolean
+  __showInlineCitationMenu?: boolean
+  __showInlineTopicMenu?: boolean
   __isActive?: boolean
 }
 

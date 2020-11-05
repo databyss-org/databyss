@@ -143,7 +143,14 @@ export const stateToSlateMarkup = block => {
 
     const ranges = {}
     b.marks.forEach(m => {
-      ranges[m] = true
+      // check if current mark is a tuple,
+      if (Array.isArray(m)) {
+        // if so, mark both items: atomic type, and id in slate block
+        ranges[m[0]] = true
+        ranges.atomicId = m[1]
+      } else {
+        ranges[m] = true
+      }
     })
     _currentIndex += b.length
     _children.push({ text, ...ranges })

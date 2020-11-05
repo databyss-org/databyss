@@ -56,7 +56,7 @@ const TextControl = ({
   useEffect(() => {
     if (focusOnMount && !active && inputRef.current) {
       setActive(true)
-      window.requestAnimationFrame(() => inputRef.current.focus())
+      window.requestAnimationFrame(() => inputRef.current?.focus())
     }
   }, [])
 

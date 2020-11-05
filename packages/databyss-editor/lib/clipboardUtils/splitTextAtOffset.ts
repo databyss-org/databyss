@@ -39,7 +39,7 @@ export default ({
     // |----------S--------------|
     //    ######
     //
-    if (r.offset + r.length < offset) {
+    if (r.offset + r.length <= offset) {
       rangesForBlockBefore.push(r)
     }
     // range spans split offset, split into 2 ranges and distribute

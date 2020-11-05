@@ -28,7 +28,10 @@ describe('new block menu actions', () => {
   })
 
   afterEach(async () => {
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
   it('should toggle a new atomics', async () => {
