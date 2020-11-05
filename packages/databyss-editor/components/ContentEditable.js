@@ -653,7 +653,7 @@ const ContentEditable = ({
                 // get word to swollow divided by white space, comma or period
                 const _wordToSwollow = _text
                   .slice(_offset)
-                  .split(/\s|\.|,|\;|\:|\"|\]/)[0]
+                  .split(/\s|\.|,|;|:|"|\]/)[0]
 
                 // highligh next word and remove word
                 Transforms.move(editor, {
@@ -932,6 +932,11 @@ const ContentEditable = ({
 
                 Transforms.insertNodes(editor, {
                   text: _textToInsert,
+                })
+                Transforms.move(editor, {
+                  unit: 'character',
+                  distance: _textToInsert.length,
+                  reverse: true,
                 })
                 event.preventDefault()
                 return
