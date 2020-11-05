@@ -58,43 +58,37 @@ export async function formatCitation(csl, options) {
     )
   }
 
-  return new Promise((resolve, reject) => {
-    try {
-      // cache to avoid fetching at every call
-      let styleData = ''
-      if (!hasStyle(styleId)) {
-        // 📡 no style data, must fetch it
-        styleData = Cite.util.fetchFile(style.url)
-        addStyle(styleId, styleData)
-      } else {
-        // ✅ style data already saved
-        styleData = getStyle(styleId)
-      }
+  // cache to avoid fetching at every call
+  let styleData = ''
+  if (!hasStyle(styleId)) {
+    // 📡 no style data, must fetch it
+    styleData = await Cite.util.fetchFileAsync(style.url)
+    addStyle(styleId, styleData)
+  } else {
+    // ✅ style data already saved
+    styleData = getStyle(styleId)
+  }
 
-      const styleConfig = Cite.plugins.config.get('@csl')
+  const styleConfig = Cite.plugins.config.get('@csl')
 
-      if (!hasConfig(styleId, styleConfig)) {
-        // 📡 missing config, must fetch it
-        styleConfig.templates.add(styleId, styleData)
-      }
+  if (!hasConfig(styleId, styleConfig)) {
+    // 📡 missing config, must fetch it
+    styleConfig.templates.add(styleId, styleData)
+  }
 
-      if (!cite) {
-        cite = new Cite(csl)
-      } else {
-        cite = cite.reset()
-        cite.set(csl)
-      }
+  if (!cite) {
+    cite = new Cite(csl)
+  } else {
+    cite = cite.reset()
+    cite.set(csl)
+  }
 
-      const citation = cite.format(outputType, {
-        format: 'html',
-        template: styleId,
-      })
-
-      resolve(citation)
-    } catch (error) {
-      reject(error)
-    }
+  const citation = cite.format(outputType, {
+    format: 'html',
+    template: styleId,
   })
+
+  return citation
 }
 
 // utils
