@@ -6,6 +6,7 @@ import {
   composeAuthorName,
   isCurrentAuthor,
 } from '@databyss-org/services/sources/lib'
+import { sortPageEntriesAlphabetically } from '@databyss-org/services/entries/lib'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 
@@ -13,25 +14,22 @@ import IndexPageContent from '../PageContent/IndexPageContent'
 
 import AuthorIndexEntries from './AuthorIndexEntries'
 
-function sortPageEntriesAlphabetically(entries) {
-  // error checks
-  if (!entries) {
-    throw new Error(
-      'sortPageEntriesAlphabetically() expected an array to sort,' +
-        'but none was provided'
-    )
-  }
+const buildEntries = (sources, firstName, lastName) => {
+  const entries = []
+  const values = Object.values(sources)
+  values.forEach(value => {
+    const isAuthor = isCurrentAuthor(value.detail?.authors, firstName, lastName)
+    if (isAuthor) {
+      entries.push(
+        createIndexPageEntries({
+          id: value._id,
+          text: value.text,
+        })
+      )
+    }
+  })
 
-  // defensive checks
-  if (!entries.length) {
-    return entries
-  }
-
-  // sort
-  return entries.sort(
-    (a, b) =>
-      a.text.textValue.toLowerCase() > b.text.textValue.toLowerCase() ? 1 : -1
-  )
+  return sortPageEntriesAlphabetically(entries)
 }
 
 const AuthorCitations = ({ query }) => {
@@ -51,26 +49,12 @@ const AuthorCitations = ({ query }) => {
 
   return (
     <SourceCitationsLoader>
-      {sourceCitations => {
-        const sourceEntries = []
-        const values = Object.values(sourceCitations)
-        values.forEach(value => {
-          const isAuthor = isCurrentAuthor(
-            value.detail?.authors,
-            authorQueryFirstName,
-            authorQueryLastName
-          )
-          if (isAuthor) {
-            sourceEntries.push(
-              createIndexPageEntries({
-                id: value._id,
-                text: value.text,
-              })
-            )
-          }
-        })
-
-        const sortedSourceEntries = sortPageEntriesAlphabetically(sourceEntries)
+      {sources => {
+        const entries = buildEntries(
+          sources,
+          authorQueryFirstName,
+          authorQueryLastName
+        )
 
         return (
           <IndexPageContent title={authorFullName}>
@@ -78,10 +62,7 @@ const AuthorCitations = ({ query }) => {
               <meta charSet="utf-8" />
               <title>{authorFullName}</title>
             </Helmet>
-            <AuthorIndexEntries
-              onClick={onEntryClick}
-              entries={sortedSourceEntries}
-            />
+            <AuthorIndexEntries onClick={onEntryClick} entries={entries} />
           </IndexPageContent>
         )
       }}
