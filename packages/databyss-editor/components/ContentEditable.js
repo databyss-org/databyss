@@ -793,12 +793,14 @@ const ContentEditable = ({
             // we're not creating a new block, so just insert a carriage return
             event.preventDefault()
 
-            Transforms.insertNodes(editor, { text: `\n` })
-            // remove all active marks in current text
-            const _activeMarks = SlateEditor.marks(editor)
-            Object.keys(_activeMarks).forEach(m => {
-              toggleMark(editor, m)
-            })
+            const _isNextCharNewLine = _text.charAt(_offset) === `\n`
+            if (!_isNextCharNewLine) {
+              // inserts the text without markup
+              Transforms.insertNodes(editor, { text: `\n` })
+            } else {
+              Transforms.insertText(editor, '\n')
+            }
+
             return
           }
           // if next character is a line break force the cursor down one position
