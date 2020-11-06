@@ -6,7 +6,7 @@ import {
   withKeyboardNavigation,
 } from '@databyss-org/ui/primitives'
 
-const SidebarListItem = ({
+export const SidebarListItem = ({
   isActive,
   text,
   href,
