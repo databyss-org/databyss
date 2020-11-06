@@ -643,7 +643,8 @@ const ContentEditable = ({
                 10
               )
 
-              const _nextCharIsWhitespace = _text.charAt(_offset) === ' '
+              const _nextCharIsWhitespace =
+                _text.charAt(_offset) === ' ' || _text.charAt(_offset) === '\n'
               // if next character is not a whitespace, swollow next word into mark `inlineAtomicMenu`
               if (
                 !_nextCharIsWhitespace &&
