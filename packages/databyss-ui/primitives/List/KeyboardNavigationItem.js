@@ -25,7 +25,7 @@ const KeyboardNavigationItem = ({ children }) => {
 
   // if we're the first item and activeIndex has been reset to -1, scroll to our ref to restore
   // scroll to the top of the list
-  if (activeIndex < 0 && index === 0) {
+  if (activeIndex < 0 && index === 0 && keyboardEventsActive) {
     scrollIntoView(navigationItemRef.current, {
       block: 'nearest',
       inline: 'nearest',
