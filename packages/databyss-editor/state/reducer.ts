@@ -432,7 +432,7 @@ export default (
               strip all text and carriage returns from text being pasted, add the mark `inlineAtomicMenu` to data being pasted
               */
               const _fragment = _frag[0].text
-              _fragment.textValue = _fragment.textValue.replaceAll('\n', ' ').replaceAll('\t', ' ').trim()
+              _fragment.textValue = _fragment.textValue.replaceAll(/\n|\t/gi, ' ').trim()
 
               _fragment.ranges = [{ offset: 0, length: _fragment.textValue.length, marks: ["inlineAtomicMenu"] }]
               // insert pasted text
