@@ -87,6 +87,7 @@ const ContentEditable = ({
     remove,
     removeAtSelection,
     removeEntityFromQueue,
+    removeAtomicFromQueue,
     setInlineBlockRelations,
   } = editorContext
 
@@ -125,6 +126,19 @@ const ContentEditable = ({
       }
     },
     [focusIndex]
+  )
+
+  // if an atomic has been removed in the reducer, push action upstream
+  useEffect(
+    () => {
+      if (state.removedEntities.length && removePageFromTopicCacheHeader) {
+        state.removedEntities.forEach(e => {
+          removePageFromTopicCacheHeader(e._id, state.pageHeader._id)
+          removeAtomicFromQueue(e._id)
+        })
+      }
+    },
+    [state.removedEntities]
   )
 
   // if new atomic block has been added, save atomic
