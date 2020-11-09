@@ -107,13 +107,18 @@ describe('connected editor', () => {
 
     await sendKeys(actions, '@test this')
 
+    // FIXME: duration to wait to ensure suggestions length is availble is not consistent
+    await sleep(7500)
+
     // verify both the sources appear in suggestions
     const suggestions = await getElementsByTag(
       driver,
       '[data-test-element="suggested-menu-sources"]'
     )
 
+    // ensure amount of sources added is reflected in menu
     assert.equal(suggestions.length, 2)
+
     // suggestions might not be in the same order
     const _firstSuggestion = await suggestions[0].getText()
     const _secondSuggestion = await suggestions[1].getText()
@@ -136,20 +141,18 @@ describe('connected editor', () => {
     await leftKey(actions)
     await enterKey(actions)
 
+    // TODO: there should be an individual test suite for the whole edit source form
+
     const name = await getElementByTag(driver, '[data-test-path="text"]')
 
     await name.click()
     await rightKey(actions)
-    await tabKey(actions)
-    await sendKeys(actions, 'new citation')
-    await tabKey(actions)
+
+    // reach the publication title field
     await tabKey(actions)
 
-    await sendKeys(actions, 'authors last name')
-    await tabKey(actions)
-    await sendKeys(actions, 'authors first name')
-    await tabKey(actions)
-    await tabKey(actions)
+    // enter values to test later
+    await sendKeys(actions, 'this is a test')
 
     let doneButton = await getElementByTag(
       driver,
@@ -174,17 +177,10 @@ describe('connected editor', () => {
     await rightKey(actions)
     await enterKey(actions)
 
-    let citationsField = await getElementById(driver, 'citation')
-
-    citationsField = await citationsField.getText()
-
-    let firstName = await getElementById(driver, 'firstName')
-
-    firstName = await firstName.getAttribute('value')
-
-    let lastName = await getElementById(driver, 'lastName')
-
-    lastName = await lastName.getAttribute('value')
+    // ensure source title is what has been entered previously
+    const titleLabeledInput = await getElementById(driver, 'title')
+    const titleValue = await titleLabeledInput.getText()
+    assert.equal(titleValue, 'this is a test')
 
     doneButton = await getElementByTag(
       driver,
@@ -194,12 +190,6 @@ describe('connected editor', () => {
     await doneButton.click()
     await isSaved(driver)
     await sleep(1000)
-
-    assert.equal(citationsField, 'new citation')
-
-    assert.equal(firstName, 'authors first name')
-
-    assert.equal(lastName, 'authors last name')
 
     slateDocument = await getElementById(driver, 'slateDocument')
 

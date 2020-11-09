@@ -278,6 +278,7 @@ const EditSourceForm = props => {
         label="Title"
         multiline
         onBlur={onFieldBlur}
+        dataTestId="edfTitle"
       />
 
       <LabeledTextInput
