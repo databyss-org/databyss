@@ -6,7 +6,7 @@ const tags: { [mark: string]: string[] } = {
   italic: ['i', 'i'],
   highlight: [`span style="background-color: ${colors.orange[3]}"`, 'span'],
   location: [`span style="color: ${colors.gray[4]}"`, 'span'],
-  inlineTopic: [`span style="color: ${colors.red[0]}"`, 'span'],
+  inlineTopic: [`span style="color: ${colors.red[1]}"`, 'span'],
 }
 
 /**
