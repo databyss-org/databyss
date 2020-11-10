@@ -342,6 +342,36 @@ export default (
               applyPatches(draft, [p])
             }
           })
+
+        // check if any atomics were removed in the redo process, if so, push removed atomics upstream
+
+        // create a selection which includes the whole document
+        const _selectionFromState =  {
+          anchor: {offset: 0, index: 0}, 
+          focus: {
+          offset: state.blocks[state.blocks.length - 1].text.textValue.length, 
+          index: state.blocks.length
+            }
+          }
+
+        const _selectionFromDraft =  {
+          anchor: {offset: 0, index: 0}, 
+          focus: {
+            offset: draft.blocks[draft.blocks.length - 1].text.textValue.length, 
+            index: draft.blocks.length
+          }
+        }
+    
+        // return a list of atomics which were found in the second selection and not the first, this is used to see if atomics were removed from the page
+
+        const _listOfAtomicsToRemove : AtomicType[] = getAtomicDifference({stateBefore:{...state, selection: _selectionFromState} , stateAfter: {...draft, selection: _selectionFromDraft }})          
+
+        // if undo action added atomics not found in page, refresh page headers
+        if(_listOfAtomicsToRemove.length){
+          // push removed entities upstream
+          draft.removedEntities.push.apply(draft.removedEntities, _listOfAtomicsToRemove)
+         }
+
           draft.operations.reloadAll = true
 
           break
