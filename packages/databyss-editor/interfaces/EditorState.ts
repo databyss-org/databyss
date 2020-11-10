@@ -18,10 +18,7 @@ export interface BackflowOperation {
   reloadAll?: Boolean
 }
 
-export interface AtomicType {
-  type: string
-  _id: string
-}
+export type AtomicType = Partial<Block>
 
 export interface EditorState {
   preventDefault?: boolean
@@ -30,7 +27,7 @@ export interface EditorState {
   showNewBlockMenu?: boolean
   operations: BackflowOperation[]
   selection: Selection
-  newEntities: Block[]
+  newEntities: AtomicType[]
   removedEntities: AtomicType[]
   blocks: Block[]
   pageHeader?: PageHeader

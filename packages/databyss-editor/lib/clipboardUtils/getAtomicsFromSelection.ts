@@ -1,11 +1,8 @@
+import _ from 'lodash'
 import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
 import { isAtomicInlineType } from '../util'
-
-interface AtomicType {
-  type: string
-  _id: string
-}
+import { AtomicType } from '../../interfaces/EditorState'
 
 const getAtomicsFromFrag = (frag: Block[]): AtomicType[] => {
   const atomics: AtomicType[] = []
@@ -34,9 +31,35 @@ const getAtomicsFromFrag = (frag: Block[]): AtomicType[] => {
   return atomics
 }
 
-export default ({ state }: { state: EditorState }) => {
+export const getAtomicsFromSelection = ({ state }: { state: EditorState }) => {
   const _frag = getFragmentAtSelection(state)
 
   const _atomicsInSelection = getAtomicsFromFrag(_frag)
   return _atomicsInSelection
+}
+
+/*
+will return the results of atomics within selection, this helper function is used to see if atomics were added or deleted from page state
+*/
+export const getAtomicDifference = ({
+  stateBefore,
+  stateAfter,
+}: {
+  stateBefore: EditorState
+  stateAfter: EditorState
+}): AtomicType[] => {
+  // returns array of atomics within selection
+  const _atomicsBefore = getAtomicsFromSelection({
+    state: stateBefore,
+  })
+
+  const _atomicsAfter = getAtomicsFromSelection({ state: stateAfter })
+
+  const _listOfAtomicsToRemove: AtomicType[] = _.differenceWith(
+    _atomicsBefore,
+    _atomicsAfter,
+    _.isEqual
+  )
+
+  return _listOfAtomicsToRemove
 }
