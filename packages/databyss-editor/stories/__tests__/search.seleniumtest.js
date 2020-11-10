@@ -110,6 +110,7 @@ describe('entry search', () => {
     // wait for editor to be visible
     await sleep(500)
     await sendKeys(actions, 'something searched will')
+    await sleep(500)
     await enterKey(actions)
 
     // get the search results, they should be in the order of relevance
