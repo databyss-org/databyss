@@ -40,6 +40,8 @@ describe('<EditSourceForm/>', () => {
     driver = await startSession()
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
+    await sleep(1000)
+
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
     await emailField.sendKeys(`${random}@test.com`)
 
