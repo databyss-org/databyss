@@ -46,9 +46,8 @@ import {
   convertInlineToAtomicBlocks,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
-import { getTextOffsetWithRange, replaceInlineText, getRangesAtPoint, getInlineOrAtomicsFromStateSelection } from './util';
+import {  replaceInlineText, getRangesAtPoint } from './util';
 import mergeInlineAtomicMenuRange from '../lib/clipboardUtils/mergeInlineAtomicMenuRange'
-import { AtomicType } from '../interfaces/EditorState';
 import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
 
 // if block at @index in @draft.blocks starts with an atomic identifier character,
@@ -379,7 +378,7 @@ export default (
           draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
          }
 
-        // if undo action removed atomics not found in page, refresh page headers
+        // if redo action removed atomics not found in page, refresh page headers
         if(atomicsRemoved.length){
           // push removed entities upstream
           draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
