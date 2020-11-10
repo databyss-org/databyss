@@ -24,6 +24,7 @@ import {
   REDO,
   REMOVE_AT_SELECTION,
   CACHE_ENTITY_SUGGESTIONS,
+  DEQUEUE_REMOVED_ENTITY,
 } from './constants'
 import {
   Text,
@@ -70,6 +71,7 @@ type ContextType = {
   setSelection: (selection: Selection) => void
   remove: (index: number) => void
   removeAtSelection: () => void
+  removeAtomicFromQueue: (id: string) => void
   removeEntityFromQueue: (id: number) => void
   clear: (index: number) => void
   copy: (event: ClipboardEvent) => void
@@ -341,6 +343,13 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
         payload: { id },
       })
 
+      const removeAtomicFromQueue = (id: number): void =>
+      dispatch({
+        type: DEQUEUE_REMOVED_ENTITY,
+        payload: { id },
+      })
+      
+
     const cut = (e: ClipboardEvent) => {
       const _frag = getFragmentAtSelection(state)
       cutOrCopyEventHandler(e, _frag)
@@ -422,6 +431,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
             clear,
             removeEntityFromQueue,
             cacheEntitySuggestions,
+            removeAtomicFromQueue,
             setInlineBlockRelations,
           }}
         >

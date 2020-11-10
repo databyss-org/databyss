@@ -87,6 +87,7 @@ const ContentEditable = ({
     remove,
     removeAtSelection,
     removeEntityFromQueue,
+    removeAtomicFromQueue,
     setInlineBlockRelations,
   } = editorContext
 
@@ -125,6 +126,19 @@ const ContentEditable = ({
       }
     },
     [focusIndex]
+  )
+
+  // if an atomic has been removed in the reducer, push action upstream
+  useEffect(
+    () => {
+      if (state.removedEntities.length && removePageFromTopicCacheHeader) {
+        state.removedEntities.forEach(e => {
+          removePageFromTopicCacheHeader(e._id, state.pageHeader._id)
+          removeAtomicFromQueue(e._id)
+        })
+      }
+    },
+    [state.removedEntities]
   )
 
   // if new atomic block has been added, save atomic
@@ -643,7 +657,8 @@ const ContentEditable = ({
                 10
               )
 
-              const _nextCharIsWhitespace = _text.charAt(_offset) === ' '
+              const _nextCharIsWhitespace =
+                _text.charAt(_offset) === ' ' || _text.charAt(_offset) === '\n'
               // if next character is not a whitespace, swollow next word into mark `inlineAtomicMenu`
               if (
                 !_nextCharIsWhitespace &&
@@ -720,6 +735,7 @@ const ContentEditable = ({
               _focusedBlock.__isActive &&
               !isAtomicClosure(_focusedBlock.type)
             ) {
+              event.preventDefault()
               showAtomicModal({ editorContext, navigationContext, editor })
             }
             // if closure block is highlighted prevent `enter` key
@@ -791,7 +807,15 @@ const ContentEditable = ({
             }
             // we're not creating a new block, so just insert a carriage return
             event.preventDefault()
-            Transforms.insertText(editor, `\n`)
+
+            const _isNextCharNewLine = _text.charAt(_offset) === `\n`
+            if (!_isNextCharNewLine) {
+              // inserts the text without markup
+              Transforms.insertNodes(editor, { text: `\n` })
+            } else {
+              Transforms.insertText(editor, '\n')
+            }
+
             return
           }
           // if next character is a line break force the cursor down one position

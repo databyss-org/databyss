@@ -99,6 +99,7 @@ export const getSelectedIndicies = (selection: Selection) =>
 export const withMetaData = (state: EditorState) => ({
   ...state,
   newEntities: [],
+  removedEntities:[],
   operations: [],
 })
 

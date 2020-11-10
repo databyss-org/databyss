@@ -104,12 +104,14 @@ describe('archive page', () => {
       '[data-test-element="archive-dropdown"]'
     )
     await archiveDropdown.click()
+    await sleep(500)
 
     let archiveButton = await getElementByTag(
       driver,
       '[data-test-block-menu="archive"]'
     )
     await archiveButton.click()
+    await sleep(500)
 
     let pagesSidebarList = await getElementByTag(
       driver,

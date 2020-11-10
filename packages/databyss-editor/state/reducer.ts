@@ -1,4 +1,5 @@
 import ObjectId from 'bson-objectid'
+import _ from 'lodash'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
 import { FSA, BlockType, Block } from '@databyss-org/services/interfaces'
 import {
@@ -10,6 +11,7 @@ import {
   CLEAR,
   SET_SELECTION,
   DEQUEUE_NEW_ENTITY,
+  DEQUEUE_REMOVED_ENTITY,
   PASTE,
   CUT,
   UNDO,
@@ -23,6 +25,7 @@ import {
   deleteBlocksAtSelection,
   sortSelection,
   splitTextAtOffset,
+  getFragmentAtSelection,
 } from '../lib/clipboardUtils'
 import {
   selectionHasRange,
@@ -46,8 +49,11 @@ import {
   convertInlineToAtomicBlocks,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
-import { getTextOffsetWithRange, replaceInlineText, getRangesAtPoint } from './util';
+import { getTextOffsetWithRange, replaceInlineText, getRangesAtPoint, getInlineOrAtomicsFromStateSelection } from './util';
 import mergeInlineAtomicMenuRange from '../lib/clipboardUtils/mergeInlineAtomicMenuRange'
+import { getBlocksWithAtomicId } from '../lib/slateUtils'
+import getAtomicsFromSelection from '../lib/clipboardUtils/getAtomicsFromSelection'
+import { AtomicType } from '../interfaces/EditorState';
 
 // if block at @index in @draft.blocks starts with an atomic identifier character,
 // e.g. @ or #, convert the block to the appropriate atomic type and return it.
@@ -426,7 +432,7 @@ export default (
               strip all text and carriage returns from text being pasted, add the mark `inlineAtomicMenu` to data being pasted
               */
               const _fragment = _frag[0].text
-              _fragment.textValue = _fragment.textValue.replaceAll('\n', ' ').trim()
+              _fragment.textValue = _fragment.textValue.replaceAll(/\n|\t/gi, ' ').trim()
 
               _fragment.ranges = [{ offset: 0, length: _fragment.textValue.length, marks: ["inlineAtomicMenu"] }]
               // insert pasted text
@@ -711,8 +717,38 @@ export default (
           )
           break
         }
+        case DEQUEUE_REMOVED_ENTITY: {
+          draft.removedEntities = state.removedEntities.filter(
+            (q) => q._id !== payload.id
+          )
+          break
+        }
+        
         case REMOVE_AT_SELECTION: {
+          // get highlighted text and verify if its the last atomic being removed
+
+          // returns array of atomics within selection
+          const _atomicsBeforeDelete =  getAtomicsFromSelection({state})
+          // remove atomics from sidebar
           deleteBlocksAtSelection(draft)
+
+          // create a selection which includes the whole document
+          const _selection =  {
+            anchor: {offset: 0, index: 0}, 
+            focus: {
+              offset: draft.blocks[draft.blocks.length - 1].text.textValue.length, 
+              index: draft.blocks.length
+            }
+          }
+          // get a list of atomics after delete
+          const _atomicsAfterDelete = getAtomicsFromSelection({ state: {...draft, selection: _selection }})
+
+          // iterate through first atomic list to ensure they still exist after the delete, if atomic does not exist, remove atomic from page in sidebar
+          const _listOfAtomicsToRemove : AtomicType[] = _.differenceWith(_atomicsBeforeDelete, _atomicsAfterDelete, _.isEqual)
+
+          // push removed entities upstream
+          draft.removedEntities.push.apply(draft.removedEntities, _listOfAtomicsToRemove)
+
           pushSingleBlockOperation({ stateSelection: state.selection, draft })
           break
         }

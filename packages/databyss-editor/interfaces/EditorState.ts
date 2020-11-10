@@ -18,6 +18,11 @@ export interface BackflowOperation {
   reloadAll?: Boolean
 }
 
+export interface AtomicType {
+  type: string
+  _id: string
+}
+
 export interface EditorState {
   preventDefault?: boolean
   showMenuActions?: boolean
@@ -26,6 +31,7 @@ export interface EditorState {
   operations: BackflowOperation[]
   selection: Selection
   newEntities: Block[]
+  removedEntities: AtomicType[]
   blocks: Block[]
   pageHeader?: PageHeader
   /**

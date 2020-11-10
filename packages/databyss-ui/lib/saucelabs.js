@@ -59,7 +59,7 @@ export const startSession = process.env.LOCAL_ENV
             build: 'databyss-org/databyss',
             name: name || getDefaultSessionName(),
             maxDuration: 10800,
-            maxInstances: 5,
+            maxInstances: 1,
             commandTimeout: 600,
             idleTimeout: 120,
           },

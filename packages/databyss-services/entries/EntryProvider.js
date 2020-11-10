@@ -11,6 +11,7 @@ import {
   fetchBlockRelations,
   onClearBlockRelationsCache,
 } from './actions'
+import { optimizeBlockRelations } from './util'
 
 const THROTTLE_BLOCK_RELATIONS = 1000
 
@@ -45,7 +46,11 @@ const EntryProvider = ({ children, initialState, reducer }) => {
 
   const throttleBlockRelations = throttle(callback => {
     if (blockRelationsQueueRef.current.length) {
-      dispatch(onSetBlockRelations(blockRelationsQueueRef.current, callback))
+      const _blockRelations = optimizeBlockRelations(
+        blockRelationsQueueRef.current
+      )
+
+      dispatch(onSetBlockRelations(_blockRelations, callback))
       blockRelationsQueueRef.current = []
     }
   }, THROTTLE_BLOCK_RELATIONS)
