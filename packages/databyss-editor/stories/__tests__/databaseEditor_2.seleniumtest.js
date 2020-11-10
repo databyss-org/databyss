@@ -181,7 +181,10 @@ describe('connected editor', () => {
     await enterKey(actions)
 
     // ensure source title is what has been entered previously
-    const titleLabeledInput = await getElementById(driver, 'title')
+    const titleLabeledInput = await getElementByTag(
+      driver,
+      '[data-test-id="edfTitle"]'
+    )
     const titleValue = await titleLabeledInput.getText()
     assert.equal(titleValue, 'this is a test')
 
