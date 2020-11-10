@@ -323,14 +323,21 @@ export default (
       
         // return a list of atomics which were found in the second selection and not the first, this is used to see if atomics were removed from the page
 
-          const _listOfAtomicsToRemove : AtomicType[] = getAtomicDifference({stateBefore: {...draft, selection: _selectionFromDraft }, stateAfter: {...state, selection: _selectionFromState}})          
+          const { atomicsAdded, atomicsRemoved }  = getAtomicDifference({stateBefore: {...state, selection: _selectionFromState}, stateAfter: {...draft, selection: _selectionFromDraft }})          
 
           // if undo action added atomics not found in page, refresh page headers
-          if(_listOfAtomicsToRemove.length){
-            _listOfAtomicsToRemove.forEach((a)=> {
+          if(atomicsAdded.length){
+            atomicsAdded.forEach((a)=> {
               draft.newEntities.push(a)
             })
            }
+
+          // if undo action removed atomics not found in page, refresh page headers
+          if(atomicsRemoved.length){
+            // push removed entities upstream
+            draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
+          }
+
 
           draft.operations.reloadAll = true
 
@@ -364,13 +371,19 @@ export default (
     
         // return a list of atomics which were found in the second selection and not the first, this is used to see if atomics were removed from the page
 
-        const _listOfAtomicsToRemove : AtomicType[] = getAtomicDifference({stateBefore:{...state, selection: _selectionFromState} , stateAfter: {...draft, selection: _selectionFromDraft }})          
+        const { atomicsRemoved } = getAtomicDifference({stateBefore:{...state, selection: _selectionFromState} , stateAfter: {...draft, selection: _selectionFromDraft }})          
 
-        // if undo action added atomics not found in page, refresh page headers
-        if(_listOfAtomicsToRemove.length){
+        // if redo action removed refresh page headers
+        if(atomicsRemoved.length){
           // push removed entities upstream
-          draft.removedEntities.push.apply(draft.removedEntities, _listOfAtomicsToRemove)
+          draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
          }
+
+        // if undo action removed atomics not found in page, refresh page headers
+        if(atomicsRemoved.length){
+          // push removed entities upstream
+          draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
+          }         
 
           draft.operations.reloadAll = true
 
@@ -800,10 +813,10 @@ export default (
           }
 
           // return a list of atomics which were found in the first selection and not the second, this is used to see if atomics were removed from the page
-          const _listOfAtomicsToRemove : AtomicType[] = getAtomicDifference({stateBefore: state, stateAfter: {...draft, selection: _selection }})
+          const {atomicsRemoved} =  getAtomicDifference({stateBefore: state, stateAfter: {...draft, selection: _selection }})
 
           // push removed entities upstream
-          draft.removedEntities.push.apply(draft.removedEntities, _listOfAtomicsToRemove)
+          draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
 
           pushSingleBlockOperation({ stateSelection: state.selection, draft })
           break

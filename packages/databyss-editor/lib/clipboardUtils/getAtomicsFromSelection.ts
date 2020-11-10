@@ -47,7 +47,7 @@ export const getAtomicDifference = ({
 }: {
   stateBefore: EditorState
   stateAfter: EditorState
-}): AtomicType[] => {
+}): { atomicsRemoved: AtomicType[]; atomicsAdded: AtomicType[] } => {
   // returns array of atomics within selection
   const _atomicsBefore = getAtomicsFromSelection({
     state: stateBefore,
@@ -61,5 +61,14 @@ export const getAtomicDifference = ({
     _.isEqual
   )
 
-  return _listOfAtomicsToRemove
+  const _listOFAtomicsToAdd: AtomicType[] = _.differenceWith(
+    _atomicsAfter,
+    _atomicsBefore,
+    _.isEqual
+  )
+
+  return {
+    atomicsRemoved: _listOfAtomicsToRemove,
+    atomicsAdded: _listOFAtomicsToAdd,
+  }
 }
