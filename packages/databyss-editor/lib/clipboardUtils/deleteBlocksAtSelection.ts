@@ -1,4 +1,5 @@
 import { EditorState, Point, Block } from '../../interfaces'
+import cloneDeep from 'clone-deep'
 import {
   isSelectionCollapsed,
   sortSelection,
@@ -8,6 +9,7 @@ import {
 } from './'
 import { isAtomicInlineType } from '../util'
 import adjustSelectionToIncludeInlineAtomics from './adjustSelectionToIncludeInlineAtomics'
+import { getAtomicDifference } from './getAtomicsFromSelection'
 
 // updates block with selection removed
 const deleteSelectionWithinBlock = ({
@@ -104,6 +106,8 @@ export default (draft: EditorState) => {
     return
   }
 
+  const state = cloneDeep(draft)
+
   const { selection, blocks } = draft
   const { anchor, focus } = sortSelection(selection)
 
@@ -124,6 +128,27 @@ export default (draft: EditorState) => {
     anchor: _cursor,
     focus: _cursor,
   }
+
+  // check to see if any atomics were removed in delete and push them upstream
+
+  // create a selection which includes the whole document
+  const _selection = {
+    anchor: { offset: 0, index: 0 },
+    focus: {
+      offset: draft.blocks[draft.blocks.length - 1].text.textValue.length,
+      index: draft.blocks.length,
+    },
+  }
+
+  // return a list of atomics which were found in the first selection and not the second, this is used to see if atomics were removed from the page
+  const { atomicsRemoved } = getAtomicDifference({
+    stateBefore: state,
+    stateAfter: { ...draft, selection: _selection },
+  })
+
+  // push removed entities upstream
+  // eslint-disable-next-line prefer-spread
+  draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
 
   // TODO: create operation for this mutation
 }

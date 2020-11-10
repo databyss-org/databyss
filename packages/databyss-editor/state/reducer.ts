@@ -803,21 +803,6 @@ export default (
           // remove atomics from sidebar
           deleteBlocksAtSelection(draft)
 
-          // create a selection which includes the whole document
-          const _selection =  {
-            anchor: {offset: 0, index: 0}, 
-            focus: {
-              offset: draft.blocks[draft.blocks.length - 1].text.textValue.length, 
-              index: draft.blocks.length
-            }
-          }
-
-          // return a list of atomics which were found in the first selection and not the second, this is used to see if atomics were removed from the page
-          const {atomicsRemoved} =  getAtomicDifference({stateBefore: state, stateAfter: {...draft, selection: _selection }})
-
-          // push removed entities upstream
-          draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
-
           pushSingleBlockOperation({ stateSelection: state.selection, draft })
           break
         }
