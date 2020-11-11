@@ -20,7 +20,7 @@ export const getCatalogSearchType = (query: string) => {
     return 'DOI'
   }
   // ISBN
-  if (query.match(/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/i)) {
+  if (query.match(/\b(\d\s*?){10,13}\b/gm)) {
     return 'ISBN'
   }
   return false

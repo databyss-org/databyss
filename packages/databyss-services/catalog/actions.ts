@@ -40,7 +40,6 @@ export function searchCatalog({
         query,
       })
 
-      console.log(results)
       dispatch({
         type: CACHE_SEARCH_RESULTS,
         payload: {
@@ -77,12 +76,8 @@ function composeResults({
   query: string
   service: CatalogService
 }): GroupedCatalogResults {
-  console.log(query)
-  console.log(results)
   const _query = query.toLowerCase()
   const _allResults = service.getResults(results)
-
-  console.log(_allResults)
   if (!_allResults?.length) {
     return {}
   }
@@ -106,8 +101,6 @@ function composeResults({
       ), true)
     })
   }
-
-  console.log('results', _filteredResults)
 
   if (!_filteredResults) {
     return {}
