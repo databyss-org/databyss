@@ -7,16 +7,46 @@ import { Text, View } from '@databyss-org/ui/primitives'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import { useEditorContext } from '../../state/EditorProvider'
 import { isAtomicInlineType } from '../../lib/util'
-import { getClosureType } from '../../state/util'
+import { getClosureType, getTextOffsetWithRange } from '../../state/util'
 
 const MENU_HEIGHT = 200
 
-export const getPosition = editor => {
+export const getPosition = (editor, inlineAtomic) => {
   if (editor.selection) {
     const _activeNode = editor.children[editor.selection.anchor.path[0]]
     const _node = ReactEditor.toDOMNode(editor, _activeNode)
+
     if (_node) {
       const _rect = _node.getBoundingClientRect()
+      if (inlineAtomic && document.getElementById('inline-atomic')) {
+        const _textNode = document
+          .getElementById('inline-atomic')
+          .getBoundingClientRect()
+        const relativePos = {
+          top: _textNode.top - _rect.top + 36,
+          left: _textNode.left - _rect.left,
+        }
+
+        const _windowHeight = window.innerHeight
+
+        // check if menu should be above text
+        const isMenuTop = _windowHeight < _rect.bottom + MENU_HEIGHT
+
+        if (isMenuTop) {
+          return { bottom: 40, left: _textNode.left - _rect.left }
+        }
+
+        // if previous block is an atomic closure block move offest down 20px
+        const _index = editor.selection.anchor.path[0]
+        if (_index > 0) {
+          const previousNode = editor.children[_index - 1]
+          if (getClosureType(previousNode.type)) {
+            relativePos.top += 20
+          }
+        }
+
+        return relativePos
+      }
       const _windowHeight = window.innerHeight
 
       // check if menu should be above text
@@ -38,7 +68,13 @@ export const getPosition = editor => {
   return { top: 40, left: 0 }
 }
 
-const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
+const SuggestMenu = ({
+  children,
+  placeholder,
+  onSuggestions,
+  suggestType,
+  inlineAtomic,
+}) => {
   const activeIndexRef = useRef(-1)
   const [position, setPosition] = useState({
     top: 40,
@@ -55,7 +91,7 @@ const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
 
   // set position of dropdown
   const setMenuPosition = () => {
-    const _position = getPosition(editor)
+    const _position = getPosition(editor, inlineAtomic)
 
     if (_position) {
       setPosition(_position)
@@ -65,19 +101,34 @@ const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
   useEffect(
     () => {
       if (editorContext && ReactEditor.isFocused(editor)) {
-        // get current input value
         const _index = editorContext.state.selection.anchor.index
         const _node = editor.children[_index]
-        const _text = Node.string(_node)
-        if (!isAtomicInlineType(_node.type)) {
-          setQuery(_text.substring(1))
+        const _stateBlock = editorContext.state.blocks[_index]
+        if (!inlineAtomic) {
+          // get current input value
+          const _text = Node.string(_node)
+          if (!isAtomicInlineType(_node.type)) {
+            setQuery(_text.substring(1))
+            setMenuPosition()
+            if (!menuActive) setMenuActive(true)
+          } else if (menuActive) {
+            setMenuActive(false)
+          } else if (menuActive) {
+            setMenuActive(false)
+          }
+        } else if (!isAtomicInlineType(_node.type)) {
+          // get current text with markup 'inlineAtomicMenu'
+          // get text with active `inlineAtomicMenu` mark
+          const innerText = getTextOffsetWithRange({
+            text: _stateBlock.text,
+            rangeType: 'inlineAtomicMenu',
+          })
+          if (innerText) {
+            setQuery(innerText.text.substring(1))
+          }
           setMenuPosition()
-          if (!menuActive) setMenuActive(true)
-        } else if (menuActive) {
-          setMenuActive(false)
+          setMenuActive(true)
         }
-      } else if (menuActive) {
-        setMenuActive(false)
       }
     },
     [editor.selection]
@@ -125,9 +176,11 @@ const SuggestMenu = ({ children, placeholder, onSuggestions, suggestType }) => {
     suggestType === 'topics'
       ? menuActive && (!query || hasSuggestions)
       : menuActive
+
   return (
     <ClickAwayListener onClickAway={onClickAway}>
       <DropdownContainer
+        data-test-element="suggest-menu"
         position={{
           top: position.top,
           left: position.left,

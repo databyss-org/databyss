@@ -20,6 +20,7 @@ import {
   sendKeys,
   leftKey,
   isSaved,
+  sleep,
 } from './_helpers.selenium'
 
 let driver
@@ -80,7 +81,10 @@ describe('editor clipboard', () => {
   })
 
   afterEach(async () => {
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
   it('should have a multi-block selection with atomics and paste the whole atomic blocks', async () => {

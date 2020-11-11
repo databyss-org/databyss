@@ -18,6 +18,7 @@ const initialState: EditorState = {
     },
   },
   newEntities: [],
+  removedEntities: [],
   blocks: [],
   entitySuggestionCache: {},
 }
@@ -30,6 +31,8 @@ export const addMetaDataToBlocks = (init: EditorState) => {
     __showNewBlockMenu: false,
     __showCitationMenu: false,
     __showTopicMenu: false,
+    __showInlineCitationMenu: false,
+    __showInlineTopicMenu: false,
   }))
   init.blocks = _blocks
   return init

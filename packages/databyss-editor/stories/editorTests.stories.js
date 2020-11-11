@@ -95,12 +95,15 @@ storiesOf('Selenium//Tests', module)
         }
         return null
       }, sourceFixture)
-      .get(url => {
-        if (url.includes('/api/topics')) {
-          return true
-        }
-        return null
-      }, topicFixture)
+      .get(
+        url => {
+          if (url.includes('/api/topics')) {
+            return true
+          }
+          return null
+        },
+        [topicFixture]
+      )
       .get(url => {
         if (url.includes('googleapis')) {
           return true

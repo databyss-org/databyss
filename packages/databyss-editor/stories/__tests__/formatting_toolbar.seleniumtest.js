@@ -36,7 +36,10 @@ describe('format text in editor', () => {
   })
 
   afterEach(async () => {
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
   it('should toggle italic using the format toolbar', async () => {

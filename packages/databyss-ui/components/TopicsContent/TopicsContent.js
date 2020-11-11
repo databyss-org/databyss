@@ -35,7 +35,6 @@ const TopicsContent = () => {
         const onTopicClick = topic => {
           navigate(`/topics/${topic.id}`)
         }
-
         return (
           <IndexPageContent title="All Topics">
             <Helmet>

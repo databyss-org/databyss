@@ -1,4 +1,5 @@
 import ObjectId from 'bson-objectid'
+import _ from 'lodash'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
 import { FSA, BlockType, Block } from '@databyss-org/services/interfaces'
 import {
@@ -10,6 +11,7 @@ import {
   CLEAR,
   SET_SELECTION,
   DEQUEUE_NEW_ENTITY,
+  DEQUEUE_REMOVED_ENTITY,
   PASTE,
   CUT,
   UNDO,
@@ -41,8 +43,12 @@ import {
   trimLeft,
   trimRight,
   splitBlockAtEmptyLine,
+  convertInlineToAtomicBlocks,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
+import {  replaceInlineText, getRangesAtPoint } from './util';
+import mergeInlineAtomicMenuRange from '../lib/clipboardUtils/mergeInlineAtomicMenuRange'
+import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
 
 // if block at @index in @draft.blocks starts with an atomic identifier character,
 // e.g. @ or #, convert the block to the appropriate atomic type and return it.
@@ -56,15 +62,22 @@ export const bakeAtomicBlock = ({
 }): Block | null => {
   const _block = draft.blocks[index]
   // check if current text should be converted to atomic block
+
+  // check for inline atomic
+  const _doesBlockHaveInlineAtomicRange = !!_block?.text.ranges.filter(r =>
+    r.marks.length &&
+    r.marks.filter(i => Array.isArray(i) && i[0] === 'inlineTopic').length).length
+
   if (
     _block &&
     !isAtomicInlineType(_block.type) &&
+    !_doesBlockHaveInlineAtomicRange &&
     !_block.text.textValue.match(`\n`)
   ) {
     const _atomicType = symbolToAtomicType(_block.text.textValue.charAt(0))
 
     // if current block is empty with n atomic prefix, replace block with new empty block
-    if( _block.text.textValue.trim().length < 2 && _atomicType){
+    if (_block.text.textValue.trim().length < 2 && _atomicType) {
       // create a new entity
       let _block: Block = {
         type: BlockType.Entry,
@@ -172,18 +185,18 @@ export const bakeAtomicClosureBlock = ({
     if (_atomicClosureType) {
       if (!isAtomicInlineType(_block.type)) {
         // if on last block. add new block below
-        if((draft.blocks.length - 1 ) === index){
-      // create a new entity
+        if ((draft.blocks.length - 1) === index) {
+          // create a new entity
           let _newBlock: Block = {
             type: BlockType.Entry,
             _id: new ObjectId().toHexString(),
             text: { textValue: '', ranges: [] },
           }
-          draft.blocks[index+ 1] = _newBlock
+          draft.blocks[index + 1] = _newBlock
 
           // push update operation back to editor
           draft.operations.push({
-            index: index+1,
+            index: index + 1,
             block: blockValue(_newBlock),
           })
         }
@@ -265,6 +278,7 @@ export default (
   action: FSA,
   onChange?: Function
 ): EditorState => {
+
   let clearBlockRelations = false
 
   const [nextState, patches, inversePatches] = produceWithPatches(
@@ -272,6 +286,7 @@ export default (
     (draft) => {
       draft.operations = []
       draft.preventDefault = false
+      // if flag is set, atomics were added or removed, blockRelations must be refreshed upstream and the headers must be reset
 
       const { payload } = action
 
@@ -280,11 +295,49 @@ export default (
 
       switch (action.type) {
         case UNDO: {
+
+
           payload.patches.forEach((p: Patch) => {
             if (p.path[0] === 'blocks' || p.path[0] === 'selection') {
               applyPatches(draft, [p])
             }
           })
+
+          // create a selection which includes the whole document
+            const _selectionFromState =  {
+              anchor: {offset: 0, index: 0}, 
+              focus: {
+                offset: state.blocks[state.blocks.length - 1].text.textValue.length, 
+                index: state.blocks.length
+              }
+            }
+
+          const _selectionFromDraft =  {
+            anchor: {offset: 0, index: 0}, 
+            focus: {
+              offset: draft.blocks[draft.blocks.length - 1].text.textValue.length, 
+              index: draft.blocks.length
+            }
+          }
+      
+        // return a list of atomics which were found in the second selection and not the first, this is used to see if atomics were removed from the page
+
+          const { atomicsAdded, atomicsRemoved }  = getAtomicDifference({stateBefore: {...state, selection: _selectionFromState}, stateAfter: {...draft, selection: _selectionFromDraft }})          
+
+          // if undo action added atomics not found in page, refresh page headers
+          if(atomicsAdded.length){
+            atomicsAdded.forEach((a)=> {
+              draft.newEntities.push(a)
+            })
+           }
+
+          // if undo action removed atomics not found in page, refresh page headers
+          if(atomicsRemoved.length){
+            // push removed entities upstream
+            draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
+          }
+
+
           draft.operations.reloadAll = true
 
           break
@@ -295,6 +348,43 @@ export default (
               applyPatches(draft, [p])
             }
           })
+
+        // check if any atomics were removed in the redo process, if so, push removed atomics upstream
+
+        // create a selection which includes the whole document
+        const _selectionFromState =  {
+          anchor: {offset: 0, index: 0}, 
+          focus: {
+          offset: state.blocks[state.blocks.length - 1].text.textValue.length, 
+          index: state.blocks.length
+            }
+          }
+
+        const _selectionFromDraft =  {
+          anchor: {offset: 0, index: 0}, 
+          focus: {
+            offset: draft.blocks[draft.blocks.length - 1].text.textValue.length, 
+            index: draft.blocks.length
+          }
+        }
+    
+        // return a list of atomics which were found in the second selection and not the first, this is used to see if atomics were removed from the page
+
+        const { atomicsRemoved, atomicsAdded } = getAtomicDifference({stateBefore:{...state, selection: _selectionFromState} , stateAfter: {...draft, selection: _selectionFromDraft }})          
+
+        // if redo action removed refresh page headers
+        if(atomicsRemoved.length){
+          // push removed entities upstream
+          draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
+         }
+
+          // if undo action added atomics not found in page, refresh page headers
+          if(atomicsAdded.length){
+            atomicsAdded.forEach((a)=> {
+              draft.newEntities.push(a)
+            })
+           }       
+
           draft.operations.reloadAll = true
 
           break
@@ -308,6 +398,7 @@ export default (
           const _frag = payload.data
           const { replace } = payload
 
+
           if (!_frag.length) {
             break
           }
@@ -317,12 +408,19 @@ export default (
           const { anchor: _startAnchor } = sortSelection(state.selection)
           const _startBlock = state.blocks[_startAnchor.index]
 
-          // if selection in the middle of atomic prevent paste
+          // if selection in the middle of atomic or inline atomic prevent paste
           if (
             !isSelectionCollapsed(state.selection) ||
             _startBlock.text.textValue.length !== _startAnchor.offset
           ) {
-            if (isAtomicInlineType(_startBlock.type)) {
+
+            // check for inline atomic
+            const _isSelectionOnInlineAtomic = !!getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor }).filter(r =>
+                  r.marks.length &&
+                  r.marks.filter(i => Array.isArray(i) && i[0] === 'inlineTopic').length
+              ).length
+
+            if (_isSelectionOnInlineAtomic || isAtomicInlineType(_startBlock.type)) {
               break
             }
           }
@@ -335,16 +433,29 @@ export default (
             draft.selection.anchor.index
           ].text.textValue.length
 
+          const _rangesAtCurrentSelection = getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor })
+
+          /*
+            allow pasting an single atomic block in an inline field
+          */
+          const _isAtomicBeingPastedIntoInline = _frag.length === 1 && isAtomicInlineType(_frag[0].type) && !!_rangesAtCurrentSelection.filter(r => r.marks.includes("inlineAtomicMenu")).length
+
 
           // if replacing, fragment contains multiple blocks, the cursor block is empty, 
           // the cursor block is atomic, or the fragment starts with an atomic, 
           // do not split the cursor block...
           if (
-            _frag.length > 1 ||
+            !_isAtomicBeingPastedIntoInline &&(_frag.length > 1 ||
             _replace ||
             isAtomicInlineType(_frag[0].type) ||
-            isAtomicInlineType(_startBlock.type)
+            isAtomicInlineType(_startBlock.type))
           ) {
+
+            // check if we are pasting inside of an inline atomic field
+            if (_rangesAtCurrentSelection.filter(r => r.marks.includes("inlineAtomicMenu")).length) {
+              break
+            }
+
             // if replacing or cursor block is empty, start inserting the fragments here
             // otherwise, insert them on the following line
             const _spliceIndex = _replace
@@ -382,11 +493,39 @@ export default (
             nextSelection = _nextSelection
           } else {
             // we have some text in our fragment to insert at the cursor, so do the split and insert
-            insertText({
-              block: draft.blocks[draft.selection.anchor.index],
-              text: _frag[0].text,
-              offset: draft.selection.anchor.offset,
-            })
+
+
+            // check if we are pasting inside of an inline atomic field
+            const _ranges = getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor })
+   
+            if (_ranges.filter(r => r.marks.includes("inlineAtomicMenu")).length) {
+              /*
+              if pasting within an inlineAtomicMenu field
+              strip all text and carriage returns from text being pasted, add the mark `inlineAtomicMenu` to data being pasted
+              */
+              const _fragment = _frag[0].text
+              _fragment.textValue = _fragment.textValue.replaceAll(/\n|\t/gi, ' ').trim()
+
+              _fragment.ranges = [{ offset: 0, length: _fragment.textValue.length, marks: ["inlineAtomicMenu"] }]
+              // insert pasted text
+              insertText({
+                block: draft.blocks[draft.selection.anchor.index],
+                text: _frag[0].text,
+                offset: draft.selection.anchor.offset,
+              })
+
+              // merge 'inlineAtomicMenu Ranges'
+
+              mergeInlineAtomicMenuRange({block: draft.blocks[draft.selection.anchor.index]})
+       
+            } else {
+              insertText({
+                block: draft.blocks[draft.selection.anchor.index],
+                text: _frag[0].text,
+                offset: draft.selection.anchor.offset,
+              })
+            }
+
 
             const _cursor = {
               index: draft.selection.anchor.index,
@@ -454,7 +593,7 @@ export default (
               } else {
                 draft.blocks.splice(_insertAt + 1, 0, _emptyBlock)
               }
-              
+
               // add insertAfter operation to backflow with empty line
               draft.operations.push({
                 index: _insertAt + 1,
@@ -536,8 +675,11 @@ export default (
 
           payload.operations.forEach((op: PayloadOperation) => {
             // update node text
-            const _block = draft.blocks[op.index]
-            _block.text = op.text
+            let _block = draft.blocks[op.index]
+            // if operation is ref entity, handle separately
+            if (!op.isRefEntity) {
+              _block.text = op.text
+            }
 
             // check for atomic closure
             if (bakeAtomicClosureBlock({ draft, index: op.index })) {
@@ -553,7 +695,12 @@ export default (
             if (op.isRefEntity) {
               // update all blocks with matching _id and push ops for each
               draft.blocks.forEach((_b, _idx) => {
-                if (_b._id === _block._id) {
+                if (_b._id === op.isRefEntity) {
+
+                  _block = draft.blocks[_idx]
+                  _block.text = op.text
+
+
                   let _nextBlock = { ..._block, __isActive: false }
 
                   // if atomic type is closure, get updated text value and overwrite `nextBlock`
@@ -578,13 +725,60 @@ export default (
                     index: _idx,
                     block: _nextBlock,
                   })
+                } else if (op.isRefEntity) {
+
+                  // check text value to update any inline atomics found
+                  const _newText = replaceInlineText({
+                    text: _b.text,
+                    refId: op.isRefEntity,
+                    newText: op.text,
+                  })
+
+                  if (_newText) {
+                    const _newBlock = {
+                      ...draft.blocks[_idx],
+                      text: _newText
+                    }
+                    draft.blocks[_idx] = _newBlock
+
+
+                    if (_idx === state.selection.anchor.index) {
+                      // get current ranges for selection
+                      const _ranges = getRangesAtPoint({ blocks: draft.blocks, point: state.selection.anchor })
+
+                      // if current block has the selection and current inline is being updated, set the selection and a flag so the editor can update the selection
+                      if (_ranges.length) {
+                        const _point = { index: _idx, offset: _ranges[0].offset + _ranges[0].length }
+                        const _newSelection = {
+                          ...state.selection,
+                          anchor: _point,
+                          focus: _point
+                        }
+                        nextSelection = _newSelection
+                      }
+                    }
+
+                    draft.operations.push({
+                      index: _idx,
+                      block: _newBlock,
+                      setSelection: _idx === state.selection.anchor.index
+                    })
+                  }
                 }
               })
             } else if (op.withBakeAtomic) {
               // reset block relations
-
               clearBlockRelations = true
               bakeAtomicBlock({ draft, index: op.index })
+
+            } else if (op.convertInlineToAtomic) {
+              convertInlineToAtomicBlocks({ block: _block, index: op.index, draft })
+            } else if (op.withRerender) {
+              // if operation requires re-render push operation upstream
+              draft.operations.push({
+                index: op.index,
+                block: _block,
+              })
             }
           })
           break
@@ -595,8 +789,20 @@ export default (
           )
           break
         }
+        case DEQUEUE_REMOVED_ENTITY: {
+          draft.removedEntities = state.removedEntities.filter(
+            (q) => q._id !== payload.id
+          )
+          break
+        }
+        
         case REMOVE_AT_SELECTION: {
+          // get highlighted text and verify if its the last atomic being removed
+
+
+          // remove atomics from sidebar
           deleteBlocksAtSelection(draft)
+
           pushSingleBlockOperation({ stateSelection: state.selection, draft })
           break
         }
@@ -648,7 +854,23 @@ export default (
           })
           break
         }
-        case SET_SELECTION:
+        case SET_SELECTION: {
+          /* 
+            if selection is collapsed, check if we were in an `activeInlineMenu` trap focus until user bakes inline atomic
+          */
+          if (!selectionHasRange(draft.selection)) {
+            const _activeRangesBefore = getRangesAtPoint({ blocks: state.blocks, point: state.selection.anchor })
+            const _activeRangesAfter = getRangesAtPoint({ blocks: state.blocks, point: action.payload.selection.anchor })
+
+            const _activeInlineBefore = _activeRangesBefore.filter(r => r.marks.includes("inlineAtomicMenu"))
+            const _activeInlineAfter = _activeRangesAfter.filter(r => r.marks.includes("inlineAtomicMenu"))
+            // if active selection was 'inlineAtomicMenu and' before and not after, convert inlines to atomic
+            if (_activeInlineBefore.length && !_activeInlineAfter.length) {
+              const _index = draft.selection.anchor.index
+              convertInlineToAtomicBlocks({ block: draft.blocks[_index], index: _index, draft })
+            }
+          }
+        }
         default:
       }
 
@@ -727,9 +949,10 @@ export default (
       // flag currently selected block with `__showNewBlockMenu` if empty
 
       // first reset `__showNewBlockMenu` on all other blocks
-      draft.blocks.forEach((block) => {
+      draft.blocks.forEach((block, i) => {
         block.__showNewBlockMenu = false
         block.__isActive = false
+        block.__showInlineTopicMenu = false
       })
       const _selectedBlock = draft.blocks[draft.selection.focus.index]
 
@@ -742,9 +965,32 @@ export default (
         _selectedBlock.__showCitationMenu = _selectedBlock.text.textValue.startsWith(
           '@'
         ) && !_selectedBlock.text.textValue.match(`\n`)
+
+        // block new topic menu if current range is inlineTopic
+        const _doesBlockHaveInlineAtomicRange = !!_selectedBlock.text.ranges.filter(r =>
+          r.marks.length &&
+          r.marks.filter(i => Array.isArray(i) && i[0] === 'inlineTopic')).length
+      
         _selectedBlock.__showTopicMenu = _selectedBlock.text.textValue.startsWith(
           '#'
-        ) && !_selectedBlock.text.textValue.match(`\n`)
+        ) && !_selectedBlock.text.textValue.match(`\n`) && !_doesBlockHaveInlineAtomicRange
+
+
+        // check if selected block has range type 'inlineAtomicMenu'
+        const _hasInlineMenuMark = _selectedBlock.text.ranges.reduce((acc, curr) => {
+          if (acc === true) {
+            return true
+          }
+          if (curr.marks.includes('inlineAtomicMenu')) {
+            return true
+          }
+          return false
+        }, false)
+
+
+        // show __showInlineTopicMenu if selection is collapsed, selection is within text precedded with a `#` and it is currently not tagged already
+        _selectedBlock.__showInlineTopicMenu = !selectionHasRange(draft.selection) && _hasInlineMenuMark
+
 
         // flag blocks with `__isActive` if selection is collapsed and within an atomic element
         _selectedBlock.__isActive =
@@ -753,6 +999,8 @@ export default (
           draft.selection.focus.offset < _selectedBlock.text.textValue.length &&
           draft.selection.focus.offset > 0
       }
+
+
 
       return draft
     }

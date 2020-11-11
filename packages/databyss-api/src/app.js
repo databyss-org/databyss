@@ -29,7 +29,12 @@ const run = async () => {
   app = express()
 
   // Connect Database
-  await connectDB()
+  let dbURI = process.env.MONGO_URI
+  if (process.env.LOCAL_ENV) {
+    dbURI = process.env.LOCAL_MONGO_URI
+  }
+
+  await connectDB(dbURI)
 
   // Init Bugsnag
   Bugsnag.init()

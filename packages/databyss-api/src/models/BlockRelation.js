@@ -23,6 +23,7 @@ const BlockRelationSchema = new Schema({
 })
 
 BlockRelationSchema.index({ block: 1, relatedBlock: 1 }, { unique: true })
+BlockRelationSchema.index({ account: 1 })
 
 const BlockRelation =
   mongoose.models.BlockRelation ||

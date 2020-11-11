@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { updateTimestamps } from '../lib/timestamps'
 import Text from './Text'
 
 const Schema = mongoose.Schema
@@ -21,11 +22,18 @@ const BlockSchema = new Schema(
     detail: {
       type: Schema.Types.Mixed,
     },
+    createdAt: {
+      type: Date,
+    },
+    updatedAt: {
+      type: Date,
+    },
   },
-  { versionKey: false, timestamps: true }
+  { versionKey: false }
 )
 
 BlockSchema.index({ 'text.textValue': 'text' }, { default_language: 'none' })
+BlockSchema.index({ account: 1 })
 
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */
@@ -35,14 +43,14 @@ BlockSchema.index({ 'text.textValue': 'text' }, { default_language: 'none' })
 // If Block has `detail` values in it, use this method instead of `save`.
 BlockSchema.method('saveWithDetail', async function() {
   validateBlock(this)
+  updateTimestamps(this)
   const Block = mongoose.model('block', BlockSchema)
+  const blockObj = this.toObject()
+  const { _id, ...others } = blockObj
   await Block.replaceOne(
-    { _id: this._id },
+    { _id },
     {
-      text: this.text,
-      account: this.account,
-      detail: this.detail,
-      type: this.type,
+      ...others,
     },
     { upsert: true }
   )
@@ -50,6 +58,7 @@ BlockSchema.method('saveWithDetail', async function() {
 
 BlockSchema.pre('save', function(next) {
   validateBlock(this)
+  updateTimestamps(this)
   next()
 })
 

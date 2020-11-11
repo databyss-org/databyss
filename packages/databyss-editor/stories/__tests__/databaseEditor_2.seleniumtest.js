@@ -78,7 +78,10 @@ describe('connected editor', () => {
   })
 
   afterEach(async () => {
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
   it('should insert atomic source', async () => {
@@ -238,8 +241,8 @@ describe('connected editor', () => {
       <editor>
         <block type="ENTRY">
           <text>this is an entry with </text>
-          <text bold>bold{'\n'}</text>
-          <text>still within the same block</text>
+          <text bold>bold</text>
+          <text>{'\n'}still within the same block</text>
         </block>
         <block type="TOPIC">
           <text>this should toggle a topics block</text>

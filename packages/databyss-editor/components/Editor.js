@@ -15,6 +15,7 @@ const Editor = ({
   autofocus,
   readonly,
   onFocus,
+  onInlineAtomicClick,
   ...others
 }) => {
   const entryContext = useEntryContext()
@@ -37,8 +38,14 @@ const Editor = ({
     []
   )
 
+  const onInlineClick = useCallback(({ atomicType, id }) => {
+    onInlineAtomicClick({ type: atomicType, refId: id })
+  }, [])
+
   const renderLeaf = useCallback(
-    props => <Leaf {...props} readOnly={readOnly} />,
+    props => (
+      <Leaf {...props} readOnly={readOnly} onInlineClick={onInlineClick} />
+    ),
     [searchTerm]
   )
 
@@ -104,6 +111,7 @@ const Editor = ({
           },
         })
       }
+
       if (!searchTerm.length) {
         return ranges
       }
@@ -111,7 +119,7 @@ const Editor = ({
       const _searchTerm = searchTerm.split(' ')
 
       _searchTerm.forEach(word => {
-        if (word && Text.isText(node)) {
+        if (word && Text.isText(node) && !node.inlineAtomicMenu) {
           const { text } = node
           // normalize diactritics
           const parts = text
@@ -148,7 +156,6 @@ const Editor = ({
     },
     [searchTerm]
   )
-
   return (
     <Slate editor={editor} {...slateProps}>
       {children}

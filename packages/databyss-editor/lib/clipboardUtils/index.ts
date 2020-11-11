@@ -115,6 +115,7 @@ export const pasteEventHandler = (e: ClipboardEvent): Block[] | null => {
 
   if (databyssDataTransfer) {
     let data = JSON.parse(databyssDataTransfer)
+
     data = resetIds(data)
     return data
   }

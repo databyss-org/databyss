@@ -153,7 +153,6 @@ router.get(
         }
         _rec.type = _block.type
       }
-
       blocks.push(_rec)
     }
 
