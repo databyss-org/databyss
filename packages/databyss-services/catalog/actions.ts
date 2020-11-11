@@ -33,6 +33,7 @@ export function searchCatalog({
       payload: { type, query },
     })
 
+    console.log('ACTIONS.36')
     try {
       const results = composeResults({
         service: serviceMap[type],

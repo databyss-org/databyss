@@ -14,7 +14,9 @@ const crossref: CatalogService = {
     if (process.env.CITEBOT_EMAIL) {
       _uri += `&mailto=${process.env.CITEBOT_EMAIL}`
     }
+    console.log(_uri)
     const results = await request(_uri)
+    console.log(results)
     return results
   },
   getResults: (apiResults: any) => apiResults.message.items || [apiResults.message],
