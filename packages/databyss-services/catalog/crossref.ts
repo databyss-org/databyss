@@ -6,12 +6,7 @@ const crossref: CatalogService = {
   search: async (query: string): Promise<GroupedCatalogResults> => {
     let _baseUri = "https://api.crossref.org/works?query="
 
-    // if(getCatalogSearchType(query) === 'ISBN'){
-    //   _baseUri = 'https://api.crossref.org/works?filter=isbn:'
-    // }
-
     if(getCatalogSearchType(query) === 'DOI'){
-      console.log('change')
       _baseUri =`https://api.crossref.org/works/`
     }
 

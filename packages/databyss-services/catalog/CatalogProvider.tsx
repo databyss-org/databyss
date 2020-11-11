@@ -56,9 +56,7 @@ const CatalogProvider: React.FunctionComponent<PropsType> = ({
       GroupedCatalogResults
     > => {
       if (!query) return null
-      // allow only alphanumeric characters
-
-      
+      // allow only alphanumeric characters if its not ISBN OR DOI
       let _query = !getCatalogSearchType(query)?query.replace(/[^a-z0-9 ]/gi, ''): query
       if (state.searchCache[type]?.[_query]) {
         return state.searchCache[type][_query]
