@@ -37,6 +37,7 @@ export interface Citations {
 
 export interface SourceDetail {
   authors: Author[]
+  publisher?: string
   citations?: Citations[]
   doi?: string
   issn?: string

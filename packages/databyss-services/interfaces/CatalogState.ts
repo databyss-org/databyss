@@ -29,4 +29,5 @@ export interface CatalogService {
   getTitle: (apiResult: any) => string
   getSubtitle: (apiResult: any) => string
   getPublishedYear: (apiResult: any) => string
+  getPublisher: (apiResult: any) => string
 }
