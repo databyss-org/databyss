@@ -2,6 +2,7 @@ import googleBooks from './googleBooks'
 import openLibrary from './openLibrary'
 import crossref from './crossref'
 import { SEARCH_CATALOG, CACHE_SEARCH_RESULTS } from './constants'
+import { getCatalogSearchType } from './util';
 import {
   CatalogType,
   NetworkUnavailableError,
@@ -38,6 +39,8 @@ export function searchCatalog({
         results: await serviceMap[type].search(query),
         query,
       })
+
+      console.log(results)
       dispatch({
         type: CACHE_SEARCH_RESULTS,
         payload: {
@@ -74,9 +77,12 @@ function composeResults({
   query: string
   service: CatalogService
 }): GroupedCatalogResults {
+  console.log(query)
+  console.log(results)
   const _query = query.toLowerCase()
   const _allResults = service.getResults(results)
 
+  console.log(_allResults)
   if (!_allResults?.length) {
     return {}
   }
@@ -84,18 +90,24 @@ function composeResults({
   // all query terms must be included* in one of: title, subtitile or author
   // *included as prefix search
   const _queryTerms = _query.split(/\b/)
-  const _filteredResults = _allResults.filter(_apiResult => {
-    const _resultFields = [
-      service.getTitle(_apiResult),
-      service.getSubtitle(_apiResult),
-    ].concat(service.getAuthors(_apiResult))
-    return _queryTerms.reduce((qacc: Boolean, qcurr: string) => 
-      (qacc && _resultFields.reduce(
-        (racc: Boolean, rcurr: string) =>
-          racc || (rcurr && rcurr.match(new RegExp(`\\b${qcurr}`, 'i'))),
-        false)
-    ), true)
-  })
+  let _filteredResults = _allResults
+
+  if(!getCatalogSearchType(query)){
+    _filteredResults = _allResults.filter(_apiResult => {
+      const _resultFields = [
+        service.getTitle(_apiResult),
+        service.getSubtitle(_apiResult),
+      ].concat(service.getAuthors(_apiResult))
+      return _queryTerms.reduce((qacc: Boolean, qcurr: string) => 
+        (qacc && _resultFields.reduce(
+          (racc: Boolean, rcurr: string) =>
+            racc || (rcurr && rcurr.match(new RegExp(`\\b${qcurr}`, 'i'))),
+          false)
+      ), true)
+    })
+  }
+
+  console.log('results', _filteredResults)
 
   if (!_filteredResults) {
     return {}
