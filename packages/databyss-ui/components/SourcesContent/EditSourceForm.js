@@ -400,7 +400,9 @@ const EditSourceForm = props => {
         ))}
 
         <View marginTop="5px">
-          <Button onPress={onAddAuthor}>Add Author</Button>
+          <Button onPress={onAddAuthor} data-test-button="source-add-author">
+            Add Author
+          </Button>
         </View>
       </>
     )

@@ -11,7 +11,6 @@ import {
   rightShiftKey,
   upKey,
   rightKey,
-  tabKey,
   downKey,
   leftKey,
   backspaceKey,
@@ -91,14 +90,27 @@ describe('block indexing', () => {
 
     await name.click()
     await rightKey(actions)
-    await tabKey(actions)
-    await sendKeys(actions, 'author citation')
-    await tabKey(actions)
-    await sendKeys(actions, 'Jaques')
-    await tabKey(actions)
+
+    const addAuthorButton = await getElementByTag(
+      driver,
+      '[data-test-button="source-add-author"]'
+    )
+
+    await addAuthorButton.click()
+
+    const lastName = await getElementByTag(
+      driver,
+      '[data-test-path="detail.authors[0].lastName"]'
+    )
+    await lastName.click()
     await sendKeys(actions, 'Derrida')
-    await tabKey(actions)
-    await tabKey(actions)
+
+    const firstName = await getElementByTag(
+      driver,
+      '[data-test-path="detail.authors[0].firstName"]'
+    )
+    await firstName.click()
+    await sendKeys(actions, 'Jaques')
 
     const doneButton = await getElementByTag(
       driver,
@@ -206,7 +218,6 @@ describe('block indexing', () => {
     await authorSorces[0].click()
     await sleep(1000)
 
-    //  data-test-element="source-results"
     const citationsResults = await getElementsByTag(
       driver,
       '[data-test-element="atomic-result-item"]'
