@@ -13,6 +13,8 @@ const openLibrary: CatalogService = {
   getAuthors: (apiResult: any) => c(apiResult.author_name || []),
   getTitle: (apiResult: any) => c(apiResult.title),
   getSubtitle: (apiResult: any) => c(apiResult.subtitle),
+  getPublisher: (apiResult: any) =>
+    apiResult.publisher && c(apiResult.publisher[0]),
   getPublishedYear: (apiResult: any) => apiResult.first_publish_year,
 }
 

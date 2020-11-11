@@ -21,7 +21,7 @@ const crossref: CatalogService = {
   getAuthors: (apiResult: any) => c((apiResult.author || []).map(authorName)),
   getTitle: (apiResult: any) => c(apiResult.title ? apiResult.title[0] : ''),
   getSubtitle: (apiResult: any) => c(apiResult.subtitle?.[0]),
-  getPublisher: (apiResult: any) => console.log(apiResult),
+  getPublisher: (apiResult: any) => c(apiResult.publisher),
   getPublishedYear: (apiResult: any) => {
     return apiResult.issued?.['date-parts']?.[0]?.[0] ||
       apiResult['published-print']?.['date-parts']?.[0]?.[0] ||
