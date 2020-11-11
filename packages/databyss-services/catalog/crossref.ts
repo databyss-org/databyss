@@ -11,12 +11,10 @@ const crossref: CatalogService = {
     }
 
     let _uri = `${_baseUri}${!getCatalogSearchType(query) ?encodeURIComponent(query): query}`
-    if (process.env.CITEBOT_EMAIL) {
+    if (process.env.CITEBOT_EMAIL && !getCatalogSearchType(query)) {
       _uri += `&mailto=${process.env.CITEBOT_EMAIL}`
     }
-    console.log(_uri)
     const results = await request(_uri)
-    console.log(results)
     return results
   },
   getResults: (apiResults: any) => apiResults.message.items || [apiResults.message],
