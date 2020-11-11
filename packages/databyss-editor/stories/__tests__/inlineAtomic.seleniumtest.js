@@ -191,8 +191,9 @@ describe('inline atomic', () => {
 
     await sleep(500)
     await sendKeys(actions, 'new topic')
+    await sleep(1000)
     await enterKey(actions)
-
+    await sleep(1000)
     // verify results still appear
 
     topicResults = await await getElementsByTag(
