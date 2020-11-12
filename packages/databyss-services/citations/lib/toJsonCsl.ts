@@ -49,8 +49,8 @@ export const toJsonCsl = source => {
     response.author = []
     authors.forEach(a => {
       response.author.push({
-        given: a.firstName.textValue,
-        family: a.lastName.textValue,
+        given: a.firstName?.textValue,
+        family: a.lastName?.textValue,
       })
     })
   }
@@ -60,8 +60,8 @@ export const toJsonCsl = source => {
     response.editor = []
     editors.forEach(e => {
       response.editor.push({
-        given: e.firstName.textValue,
-        family: e.lastName.textValue,
+        given: e.firstName?.textValue,
+        family: e.lastName?.textValue,
       })
     })
   }
@@ -71,8 +71,8 @@ export const toJsonCsl = source => {
     response.translator = []
     translators.forEach(t => {
       response.translator.push({
-        given: t.firstName.textValue,
-        family: t.lastName.textValue,
+        given: t.firstName?.textValue,
+        family: t.lastName?.textValue,
       })
     })
   }
