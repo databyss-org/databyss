@@ -19,7 +19,7 @@ export function fetchSource(id: string) {
   return async (dispatch: Function) => {
     dispatch({
       type: FETCH_SOURCE,
-      payload: {},
+      payload: { id },
     })
 
     try {

@@ -16,6 +16,7 @@ import {
   CACHE_AUTHOR_HEADERS,
   CACHE_SOURCE_CITATIONS,
   CACHE_SOURCE,
+  FETCH_SOURCE,
   FETCH_AUTHOR_HEADERS,
   FETCH_SOURCE_CITATIONS,
   REMOVE_PAGE_FROM_HEADERS,
@@ -40,6 +41,10 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
   }
 
   switch (action.type) {
+    case FETCH_SOURCE: {
+      draft.cache[action.payload.id] = new ResourcePending()
+      break
+    }
     case CACHE_SOURCE: {
       const _source = { ...action.payload.source, type: 'SOURCE' }
       draft.cache[action.payload.id] = _source

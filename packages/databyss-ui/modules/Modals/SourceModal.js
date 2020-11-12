@@ -13,7 +13,7 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
 
-  const isDismissable = () => values && values.text.textValue.length
+  const isDismissable = () => values?.text?.textValue?.length
 
   const onDismiss = () => {
     if (isDismissable()) {
