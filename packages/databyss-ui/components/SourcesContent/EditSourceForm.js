@@ -269,8 +269,11 @@ const EditSourceForm = props => {
   )
 
   const renderPublicationSection = () => {
-    console.info('--- renderPublicationSection ---')
-    console.log('publicationType:', values.detail.publicationType)
+    if (values && values.detail) {
+      console.info('--- renderPublicationSection ---')
+      const { publicationType } = values.detail
+      console.log('publicationType:', publicationType)
+    }
 
     return (
       <>
