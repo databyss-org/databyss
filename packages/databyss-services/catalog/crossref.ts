@@ -30,9 +30,10 @@ const crossref: CatalogService = {
       _uri += `&mailto=${process.env.CITEBOT_EMAIL}`
     }
     const results = await request(_uri)
+
     return results
   },
-  getResults: (apiResults: any) => apiResults.message.items,
+  getResults: (apiResults: any) => apiResults.message.items || [apiResults.message],
 
   // details
   getAuthors: (apiResult: any) => c((apiResult.author || []).map(authorName)),
