@@ -268,105 +268,97 @@ const EditSourceForm = props => {
     </>
   )
 
-  const renderPublicationSection = () => {
-    if (values && values.detail) {
-      console.info('--- renderPublicationSection ---')
-      const { publicationType } = values.detail
-      console.log('publicationType:', publicationType)
-    }
+  const renderPublicationSection = () => (
+    <>
+      <FormHeading>Publication</FormHeading>
 
-    return (
-      <>
-        <FormHeading>Publication</FormHeading>
+      <LabeledTextInput
+        path="detail.title"
+        id="title"
+        label="Title"
+        multiline
+        onBlur={onFieldBlur}
+        dataTestId="edfTitle"
+      />
 
-        <LabeledTextInput
-          path="detail.title"
-          id="title"
-          label="Title"
-          multiline
-          onBlur={onFieldBlur}
-          dataTestId="edfTitle"
+      <LabeledTextInput
+        path="detail.year"
+        id="year"
+        label="Year"
+        onBlur={onFieldBlur}
+      />
+
+      {isArticle ? (
+        <View marginBottom="10px">
+          <ValueListItem path="detail.month">
+            <LabeledDropDownControl
+              label="Month"
+              labelProps={labelProps}
+              gridFlexWrap="nowrap"
+              paddingVariant="tiny"
+              dropDownProps={{
+                concatCss: { width: '75%' },
+                ctaLabel: 'Choose a month/season',
+                itemGroups: [
+                  { label: 'Months', items: MonthOptions },
+                  { label: 'Seasons', items: SeasonOptions },
+                ],
+              }}
+            />
+          </ValueListItem>
+        </View>
+      ) : null}
+
+      <ValueListItem path="detail.publicationType">
+        <LabeledDropDownControl
+          label="Publication type"
+          labelProps={labelProps}
+          gridFlexWrap="nowrap"
+          paddingVariant="tiny"
+          dropDownProps={{
+            concatCss: { width: '75%' },
+            ctaLabel: 'Choose a type',
+            items: publicationTypeOptions,
+          }}
         />
+      </ValueListItem>
 
-        <LabeledTextInput
-          path="detail.year"
-          id="year"
-          label="Year"
-          onBlur={onFieldBlur}
-        />
+      <LabeledTextInput
+        path="detail.publisherName"
+        id="publisherName"
+        label="Publisher"
+        onBlur={onFieldBlur}
+      />
 
-        {isArticle ? (
-          <View marginBottom="10px">
-            <ValueListItem path="detail.month">
-              <LabeledDropDownControl
-                label="Month"
-                labelProps={labelProps}
-                gridFlexWrap="nowrap"
-                paddingVariant="tiny"
-                dropDownProps={{
-                  concatCss: { width: '75%' },
-                  ctaLabel: 'Choose a month/season',
-                  itemGroups: [
-                    { label: 'Months', items: MonthOptions },
-                    { label: 'Seasons', items: SeasonOptions },
-                  ],
-                }}
-              />
-            </ValueListItem>
-          </View>
-        ) : null}
+      <LabeledTextInput
+        path="detail.publisherPlace"
+        id="publisherPlace"
+        label="Place"
+        multiline
+        onBlur={onFieldBlur}
+      />
 
-        <ValueListItem path="detail.publicationType">
-          <LabeledDropDownControl
-            label="Publication type"
-            labelProps={labelProps}
-            gridFlexWrap="nowrap"
-            paddingVariant="tiny"
-            dropDownProps={{
-              concatCss: { width: '75%' },
-              ctaLabel: 'Choose a type',
-              items: publicationTypeOptions,
-            }}
+      {isArticle ? (
+        <>
+          <LabeledTextInput
+            path="detail.volume"
+            id="volume"
+            label="Volume"
+            multiline
+            onBlur={onFieldBlur}
           />
-        </ValueListItem>
 
-        <LabeledTextInput
-          path="detail.publisherName"
-          id="publisherName"
-          label="Publisher"
-          onBlur={onFieldBlur}
-        />
-
-        <LabeledTextInput
-          path="detail.publisherPlace"
-          id="publisherPlace"
-          label="Place"
-          multiline
-          onBlur={onFieldBlur}
-        />
-
-        {isArticle ? (
-          <>
-            <LabeledTextInput
-              path="detail.volume"
-              id="volume"
-              label="Volume"
-              multiline
-              onBlur={onFieldBlur}
-            />
-
-            <LabeledTextInput
-              path="detail.issue"
-              id="issue"
-              label="Issue"
-              multiline
-              onBlur={onFieldBlur}
-            />
-          </>
-        ) : null}
-      </>
-    )
-  }
+          <LabeledTextInput
+            path="detail.issue"
+            id="issue"
+            label="Issue"
+            multiline
+            onBlur={onFieldBlur}
+          />
+        </>
+      ) : null}
+    </>
+  )
 
   const renderAuthorsSection = () => {
     if (!hasDetail) {
