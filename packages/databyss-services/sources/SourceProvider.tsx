@@ -1,25 +1,28 @@
-import React, { useCallback } from 'react'
-import { createContext, useContextSelector } from 'use-context-selector'
-import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
-import reducer, { initialState } from './reducer'
+import { createContext, useContextSelector } from 'use-context-selector'
+import React, { useCallback } from 'react'
+
+import createReducer from '@databyss-org/services/lib/createReducer'
+
 import {
+  Author,
   ResourceResponse,
   Source,
-  SourceState,
-  Author,
   SourceCitationHeader,
+  SourceState,
 } from '../interfaces'
 
 import {
-  fetchSource,
-  saveSource,
-  removeSourceFromCache,
+  addPageToHeaders,
   fetchAuthorHeaders,
+  fetchSource,
   fetchSourceCitations,
   removePageFromHeaders,
-  addPageToHeaders,
+  removeSourceFromCache,
+  saveSource,
 } from './actions'
+import { SET_PREFERRED_CITATION_STYLE } from './constants'
+import reducer, { initialState } from './reducer'
 
 interface PropsType {
   children: JSX.Element
@@ -47,7 +50,7 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
 }: PropsType) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  // provider methods
+  // provider methods - source
   const setSource = useCallback(
     (source: Source) => {
       if (_.isEqual(state.cache[source._id], source)) {
@@ -71,6 +74,7 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     [state.cache]
   )
 
+  // provider methods - cache
   const removeCacheValue = useCallback(
     (id: string) => {
       if (state.cache[id]) {
@@ -80,6 +84,7 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     [state.cache]
   )
 
+  // provider methods - header
   const removePageFromCacheHeader = useCallback(
     (id: string, pageId: string) => dispatch(removePageFromHeaders(id, pageId)),
     [state.citationHeaderCache, state.citationHeaderCache]
@@ -90,18 +95,42 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     [state.citationHeaderCache, state.citationHeaderCache]
   )
 
+  const resetSourceHeaders = () => {
+    dispatch(fetchAuthorHeaders())
+    dispatch(fetchSourceCitations())
+  }
+
+  // provider methods - citations
   const getSourceCitations = useCallback(
     (): ResourceResponse<SourceCitationHeader> => {
       if (state.citationHeaderCache) {
         return state.citationHeaderCache
       }
-
       dispatch(fetchSourceCitations())
       return null
     },
-    [state.citationHeaderCache]
+    [state]
   )
 
+  const setPreferredCitationStyle = useCallback(
+    (styleId: string) => {
+      // error checks
+      const typeOfStyleId = typeof styleId
+      if (typeOfStyleId !== 'string') {
+        throw new Error(
+          'setPreferredCitationStyle() expected `styleId` to be a string. ' +
+            `Received "${typeOfStyleId}".`
+        )
+      }
+      // dispatch
+      dispatch({ type: SET_PREFERRED_CITATION_STYLE, payload: { styleId } })
+    },
+    [dispatch]
+  )
+
+  const getPreferredCitationStyle = () => state.preferredCitationStyle
+
+  // provider methods - citations
   const getAuthors = useCallback(
     (): ResourceResponse<Author[]> => {
       if (state.authorsHeaderCache) {
@@ -113,11 +142,6 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     },
     [state.authorsHeaderCache]
   )
-
-  const resetSourceHeaders = () => {
-    dispatch(fetchAuthorHeaders())
-    dispatch(fetchSourceCitations())
-  }
 
   return (
     <SourceContext.Provider
@@ -131,6 +155,8 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
         removePageFromCacheHeader,
         addPageToCacheHeader,
         resetSourceHeaders,
+        setPreferredCitationStyle,
+        getPreferredCitationStyle,
       }}
     >
       {children}

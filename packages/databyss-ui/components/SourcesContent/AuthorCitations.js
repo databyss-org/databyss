@@ -1,14 +1,36 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
+
+import { createIndexPageEntries } from '@databyss-org/services/entries/util'
 import {
-  sortEntriesAtoZ,
-  createIndexPageEntries,
-} from '@databyss-org/services/entries/util'
+  composeAuthorName,
+  isCurrentAuthor,
+} from '@databyss-org/services/sources/lib'
+import { sortPageEntriesAlphabetically } from '@databyss-org/services/entries/lib'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import SourceSvg from '@databyss-org/ui/assets/source.svg'
+
 import IndexPageContent from '../PageContent/IndexPageContent'
-import IndexPageEntries from '../PageContent/IndexPageEntries'
+
+import AuthorIndexEntries from './AuthorIndexEntries'
+
+const buildEntries = (sources, firstName, lastName) => {
+  const entries = []
+  const values = Object.values(sources)
+  values.forEach(value => {
+    const isAuthor = isCurrentAuthor(value.detail?.authors, firstName, lastName)
+    if (isAuthor) {
+      entries.push(
+        createIndexPageEntries({
+          id: value._id,
+          text: value.text,
+        })
+      )
+    }
+  })
+
+  return sortPageEntriesAlphabetically(entries)
+}
 
 const AuthorCitations = ({ query }) => {
   const { navigate } = useNavigationContext()
@@ -16,75 +38,31 @@ const AuthorCitations = ({ query }) => {
   const params = new URLSearchParams(query)
   const authorQueryFirstName = params.get('firstName')
   const authorQueryLastName = params.get('lastName')
+  const authorFullName = composeAuthorName(
+    authorQueryFirstName,
+    authorQueryLastName
+  )
 
-  const composeAuthorName = (firstName, lastName) => {
-    if (firstName && lastName) {
-      return `${lastName}, ${firstName}`
-    }
-    return lastName || firstName
+  const onEntryClick = entry => {
+    navigate(`/sources/${entry.id}`)
   }
 
   return (
     <SourceCitationsLoader>
-      {sourceCitations => {
-        // TODO: replace with packages/databyss-notes-mobile/utils/buildAuthorCitationData.js
-        const authorCitationsData = Object.values(sourceCitations).map(
-          value => {
-            const isCurrentAuthor = value.detail?.authors?.some(author => {
-              const firstName = author.firstName?.textValue
-              const lastName = author.lastName?.textValue
-              // If firstName or LastName is missing, only check the one defined
-              if (firstName === undefined && lastName) {
-                return lastName === authorQueryLastName
-              }
-              if (lastName === undefined && firstName) {
-                return firstName === authorQueryFirstName
-              }
-
-              return (
-                firstName === authorQueryFirstName &&
-                lastName === authorQueryLastName
-              )
-            })
-
-            if (isCurrentAuthor) {
-              return createIndexPageEntries({
-                id: value._id,
-                text: value.text.textValue,
-                citations: value.detail?.citations?.map(
-                  citation => citation.text?.textValue
-                ),
-                type: 'sources',
-              })
-            }
-            return {}
-          }
+      {sources => {
+        const entries = buildEntries(
+          sources,
+          authorQueryFirstName,
+          authorQueryLastName
         )
-
-        const sortedAuthorCitations = sortEntriesAtoZ(
-          authorCitationsData,
-          'text'
-        )
-
-        const onCitationClick = c => {
-          navigate(`/sources/${c.id}`)
-        }
 
         return (
-          <IndexPageContent
-            title={composeAuthorName(authorQueryFirstName, authorQueryLastName)}
-          >
+          <IndexPageContent title={authorFullName}>
             <Helmet>
               <meta charSet="utf-8" />
-              <title>
-                {composeAuthorName(authorQueryFirstName, authorQueryLastName)}
-              </title>
+              <title>{authorFullName}</title>
             </Helmet>
-            <IndexPageEntries
-              onClick={onCitationClick}
-              entries={sortedAuthorCitations}
-              icon={<SourceSvg />}
-            />
+            <AuthorIndexEntries onClick={onEntryClick} entries={entries} />
           </IndexPageContent>
         )
       }}

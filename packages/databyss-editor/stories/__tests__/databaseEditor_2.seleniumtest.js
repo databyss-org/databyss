@@ -17,9 +17,6 @@ import {
   upKey,
   downKey,
   backspaceKey,
-  tabKey,
-  leftKey,
-  rightKey,
   isSaved,
 } from './_helpers.selenium'
 
@@ -87,9 +84,11 @@ describe('connected editor', () => {
     await sleep(100)
   })
 
-  it('should insert atomic source and edit source fields and test for suggestions', async () => {
+  it('should insert atomic source', async () => {
     await sleep(300)
+
     await sendKeys(actions, '@this is a test')
+
     // verify if there are no suggestions the suggestion menu appears
     await getElementByTag(driver, '[data-test-block-menu="OPEN_LIBRARY"]')
     await getElementByTag(driver, '[data-test-block-menu="CROSSREF"]')
@@ -100,109 +99,20 @@ describe('connected editor', () => {
     await sendKeys(actions, 'dummy text')
     await enterKey(actions)
     await enterKey(actions)
+
     // Suggestions don't break with strange characters (i.e. "[" "\" etc.)
     await sendKeys(actions, '@test [this] second \\ source')
-
     await enterKey(actions)
+
     await sendKeys(actions, 'this is more dummy text')
     await enterKey(actions)
     await enterKey(actions)
 
-    await sendKeys(actions, '@test this')
-
-    // verify both the sources appear in suggestions
-    const suggestions = await getElementsByTag(
-      driver,
-      '[data-test-element="suggested-menu-sources"]'
-    )
-
-    assert.equal(suggestions.length, 2)
-    // suggestions might not be in the same order
-    const _firstSuggestion = await suggestions[0].getText()
-    const _secondSuggestion = await suggestions[1].getText()
-
-    const suggestionIndex = [_firstSuggestion, _secondSuggestion].findIndex(
-      s => s === 'this is a test'
-    )
-
-    // click on existing source
-    await suggestions[suggestionIndex].click()
-    await isSaved(driver)
-
-    // refresh page
-    await driver.navigate().refresh()
-
-    // navigate into the source modal and populate fields
-    await getEditor(driver)
-
-    await leftKey(actions)
-    await leftKey(actions)
+    await sendKeys(actions, '@this is a test')
     await enterKey(actions)
-
-    const name = await getElementByTag(driver, '[data-test-path="text"]')
-
-    await name.click()
-    await rightKey(actions)
-    await tabKey(actions)
-    await sendKeys(actions, 'new citation')
-    await tabKey(actions)
-    await tabKey(actions)
-
-    await sendKeys(actions, 'authors last name')
-    await tabKey(actions)
-    await sendKeys(actions, 'authors first name')
-    await tabKey(actions)
-    await tabKey(actions)
-
-    let doneButton = await getElementByTag(
-      driver,
-      '[data-test-dismiss-modal="true"]'
-    )
-    await doneButton.click()
 
     await isSaved(driver)
     await sleep(1000)
-
-    // refresh page
-    await driver.navigate().refresh()
-
-    // navigate into first source and verify the integrity of the atomic from the suggestions dropdown
-    await getEditor(driver)
-    await upKey(actions)
-    await upKey(actions)
-    await upKey(actions)
-    await upKey(actions)
-    await upKey(actions)
-    await upKey(actions)
-    await rightKey(actions)
-    await enterKey(actions)
-
-    let citationsField = await getElementById(driver, 'citation')
-
-    citationsField = await citationsField.getText()
-
-    let firstName = await getElementById(driver, 'firstName')
-
-    firstName = await firstName.getAttribute('value')
-
-    let lastName = await getElementById(driver, 'lastName')
-
-    lastName = await lastName.getAttribute('value')
-
-    doneButton = await getElementByTag(
-      driver,
-      '[data-test-dismiss-modal="true"]'
-    )
-
-    await doneButton.click()
-    await isSaved(driver)
-    await sleep(1000)
-
-    assert.equal(citationsField, 'new citation')
-
-    assert.equal(firstName, 'authors first name')
-
-    assert.equal(lastName, 'authors last name')
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -227,15 +137,57 @@ describe('connected editor', () => {
         <block type="SOURCE">
           <text>this is a test</text>
         </block>
+        <block type="ENTRY">
+          <text />
+        </block>
       </editor>
     )
+
     // check if editor has correct value
     assert.deepEqual(
       sanitizeEditorChildren(actual.children),
       sanitizeEditorChildren(expected.children)
     )
+  })
 
-    assert.deepEqual(actual.selection, expected.selection)
+  it('should provide previously entered sources as suggestions', async () => {
+    await sleep(300)
+    await sendKeys(actions, '@this is a test')
+    // verify if there are no suggestions the suggestion menu appears
+    await getElementByTag(driver, '[data-test-block-menu="OPEN_LIBRARY"]')
+    await getElementByTag(driver, '[data-test-block-menu="CROSSREF"]')
+    await getElementByTag(driver, '[data-test-block-menu="GOOGLE_BOOKS"]')
+    await enterKey(actions)
+
+    // populate with dummy text and other sources
+    await sendKeys(actions, 'dummy text')
+    await enterKey(actions)
+    await enterKey(actions)
+
+    // Suggestions don't break with strange characters (i.e. "[" "\" etc.)
+    await sendKeys(actions, '@test [this] second \\ source')
+    await enterKey(actions)
+
+    await sendKeys(actions, 'this is more dummy text')
+    await enterKey(actions)
+    await enterKey(actions)
+
+    await sendKeys(actions, '@test this')
+
+    await isSaved(driver)
+    await sleep(1000)
+
+    // FIXME: duration to wait to ensure suggestions length is availble is not consistent
+    await sleep(5000)
+
+    // verify both the sources appear in suggestions
+    const suggestions = await getElementsByTag(
+      driver,
+      '[data-test-element="suggested-menu-sources"]'
+    )
+
+    // ensure amount of sources added is reflected in menu
+    assert.equal(suggestions.length, 2)
   })
 
   it('should test data integrity in round trip testing', async () => {

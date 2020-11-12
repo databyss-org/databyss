@@ -1,17 +1,25 @@
-import googleBooks from './googleBooks'
-import openLibrary from './openLibrary'
-import crossref from './crossref'
-import { SEARCH_CATALOG, CACHE_SEARCH_RESULTS } from './constants'
+import { makeText } from '../block/makeText'
 import {
-  CatalogType,
-  NetworkUnavailableError,
-  CatalogService,
-  GroupedCatalogResults,
-  CatalogResult,
-  Source,
   BlockType,
+  CatalogResult,
+  CatalogService,
+  CatalogType,
+  GroupedCatalogResults,
+  NetworkUnavailableError,
+  Source,
   Text,
 } from '../interfaces'
+
+import { buildDatabyssName, buildFullTitle, buildOnlyTitle, splitName } from './util'
+import { SEARCH_CATALOG, CACHE_SEARCH_RESULTS } from './constants'
+import crossref from './crossref'
+import googleBooks from './googleBooks'
+import openLibrary from './openLibrary'
+
+interface CatalogParsingParams {
+  service: CatalogService
+  result: any
+}
 
 const serviceMap: { [type: string]: CatalogService } = {
   [CatalogType.GoogleBooks]: googleBooks,
@@ -107,7 +115,7 @@ function composeResults({
   _filteredResults.forEach((_apiResult: any) => {
     const _authorsString = service.getAuthors(_apiResult).join(', ')
     const _result: CatalogResult = {
-      title: titleFromResult({ service, result: _apiResult }),
+      title: buildFullTitle({ service, result: _apiResult }),
       source: sourceFromResult({ service, result: _apiResult }),
       apiResult: _apiResult,
     }
@@ -127,90 +135,47 @@ function composeResults({
 /**
  * composes Source from api result
  */
-function sourceFromResult({
-  service,
-  result,
-}: {
-  service: CatalogService
-  result: any
-}): Source {
+function sourceFromResult(options: CatalogParsingParams): Source {
+  const {service, result} = options
+
   const _authors = service.getAuthors(result)
-  const _names = _authors.length && splitName(_authors[0])
 
-  const _authorText = _names
-    ? _names[1] +
-      (_names[0] ? ', ' : '.') +
-      (_names[0] ? `${_names[0].charAt(0)}.` : '')
-    : ''
-
-  const _text = titleFromResult({ service, result })
-  _text.textValue = `${_authorText} ${_text.textValue}`
-  _text.ranges[0].offset += _authorText.length + 1
+  const publicationType = service.getPublicationType(result)
 
   return {
     _id: '', // will be generated if imported
     type: BlockType.Source,
-    text: _text,
+    text: buildDatabyssName(options),
     detail: {
       authors: _authors.length
         ? _authors.map((_a: string) => {
             const _n = splitName(_a)
             return {
-              firstName: { textValue: _n[0], ranges: [] },
-              lastName: { textValue: _n[1], ranges: [] },
+              firstName: makeText(_n[0]),
+              lastName: makeText(_n[1]),
             }
           })
         : [],
+      editors: [],
+      translators: [],
       citations: [],
+      title: buildOnlyTitle(options),
+
+      // publication details (common)
+      publicationType,
+      publisherName: makeText(service.getPublisher(result)),
+      publisherPlace: makeText(service.getPublisherPlace(result)),
+      year: makeText(service.getPublishedYear(result)),
+      month: service.getPublishedMonth(result, publicationType),
+      volume: makeText(service.getVolume(result)),
+      issue: makeText(service.getIssue(result)),
+
+      // publication details (book)
+      isbn: makeText(service.getISBN(result)),
+
+      // publication details (journal article)
+      doi: makeText(service.getDOI(result)),
+      issn: makeText(service.getISSN(result)),
     },
   }
-}
-
-function splitName(name: string) {
-  return [
-    name
-      .split(' ')
-      .slice(0, -1)
-      .join(' '),
-    name
-      .split(' ')
-      .slice(-1)
-      .join(' '),
-  ]
-}
-
-/**
- * composes source title
- * @param result catalog API result
- * @returns Text with formatted source title
- */
-function titleFromResult({
-  service,
-  result,
-}: {
-  service: CatalogService
-  result: any
-}): Text {
-  const _text: Text = {
-    textValue: service.getTitle(result),
-    ranges: [],
-  }
-
-  if (service.getSubtitle(result)) {
-    _text.textValue += `: ${service.getSubtitle(result)}`
-  }
-
-  _text.ranges = [
-    {
-      offset: 0,
-      length: _text.textValue.length,
-      marks: ['italic'],
-    },
-  ]
-
-  if (service.getPublishedYear(result)) {
-    _text.textValue += ` (${service.getPublishedYear(result)})`
-  }
-
-  return _text
 }

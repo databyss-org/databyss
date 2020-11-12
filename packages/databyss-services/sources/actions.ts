@@ -1,3 +1,5 @@
+import { Source, Author, SourceCitationHeader } from '../interfaces'
+
 import * as services from '.'
 import {
   FETCH_SOURCE,
@@ -11,7 +13,7 @@ import {
   REMOVE_PAGE_FROM_HEADERS,
   ADD_PAGE_TO_HEADER,
 } from './constants'
-import { Source, Author, SourceCitationHeader } from '../interfaces'
+import { buildSourceDetail } from './lib'
 
 export function fetchSource(id: string) {
   return async (dispatch: Function) => {
@@ -41,6 +43,11 @@ export function fetchSource(id: string) {
 
 export function saveSource(sourceFields: Source) {
   return async (dispatch: Function) => {
+    // ensure to add necessary detail default properties
+    if (!('detail' in sourceFields)) {
+      sourceFields.detail = buildSourceDetail()
+    }
+
     dispatch({
       type: SAVE_SOURCE,
       payload: { source: sourceFields, id: sourceFields._id },
@@ -108,12 +115,15 @@ export function addPageToHeaders(id: string, pageId: string) {
 }
 
 export function fetchSourceCitations() {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
     dispatch({
       type: FETCH_SOURCE_CITATIONS,
     })
     try {
-      const sourceCitations: SourceCitationHeader[] = await services.getSourceCitations()
+      const { preferredCitationStyle } = getState()
+      const sourceCitations: SourceCitationHeader[] = await services.getSourceCitations(
+        preferredCitationStyle
+      )
       dispatch({
         type: CACHE_SOURCE_CITATIONS,
         payload: { results: sourceCitations },
