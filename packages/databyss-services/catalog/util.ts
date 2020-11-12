@@ -52,7 +52,9 @@ export function buildFullTitle(options: CatalogParsingParams): Text {
   ]
 
   if (service.getPublishedYear(result)) {
-    _text.textValue += ` (${service.getPublishedYear(result)})`
+    _text.textValue += ` (${
+      service.getPublisher(result) ? service.getPublisher(result) : ''
+    }, ${service.getPublishedYear(result)})`
   }
 
   return _text

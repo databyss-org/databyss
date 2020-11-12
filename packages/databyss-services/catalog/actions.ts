@@ -40,7 +40,6 @@ export function searchCatalog({
       payload: { type, query },
     })
 
-    console.log('ACTIONS.36')
     try {
       const results = composeResults({
         service: serviceMap[type],
@@ -185,39 +184,3 @@ function sourceFromResult(options: CatalogParsingParams): Source {
   }
 }
 
-
-/**
- * composes source title
- * @param result catalog API result
- * @returns Text with formatted source title
- */
-function titleFromResult({
-  service,
-  result,
-}: {
-  service: CatalogService
-  result: any
-}): Text {
-  const _text: Text = {
-    textValue: service.getTitle(result),
-    ranges: [],
-  }
-
-  if (service.getSubtitle(result)) {
-    _text.textValue += `: ${service.getSubtitle(result)}`
-  }
-
-  _text.ranges = [
-    {
-      offset: 0,
-      length: _text.textValue.length,
-      marks: ['italic'],
-    },
-  ]
-
-  if (service.getPublishedYear(result)) {
-    _text.textValue += ` (${service.getPublisher(result) ? service.getPublisher(result): ''}, ${service.getPublishedYear(result)})`
-  }
-
-  return _text
-}
