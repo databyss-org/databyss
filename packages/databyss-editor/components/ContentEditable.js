@@ -68,9 +68,13 @@ const ContentEditable = ({
     c => c && c.removePageFromCacheHeader
   )
 
+  const resetSourceHeaders = useSourceContext(c => c && c.resetSourceHeaders)
+
   const removePageFromTopicCacheHeader = useTopicContext(
     c => c && c.removePageFromCacheHeader
   )
+
+  const resetTopicHeaders = useTopicContext(c => c && c.resetTopicHeaders)
 
   const hasPendingPatches = usePageContext(c => c && c.hasPendingPatches)
 
@@ -95,19 +99,24 @@ const ContentEditable = ({
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
 
-  if (!valueRef.current || state.operations.reloadAll) {
-    editor.children = stateToSlate(state)
-    // load selection from DB
-    if (state.selection) {
-      const selection = stateSelectionToSlateSelection(
-        editor.children,
-        state.selection
-      )
-      Transforms.select(editor, selection)
-      if (!state.operations.reloadAll) {
-        setSelection(state.selection)
+  try {
+    if (!valueRef.current || state.operations.reloadAll) {
+      editor.children = stateToSlate(state)
+      // load selection from DB
+      if (state.selection) {
+        const selection = stateSelectionToSlateSelection(
+          editor.children,
+          state.selection
+        )
+        Transforms.select(editor, selection)
+        if (!state.operations.reloadAll) {
+          setSelection(state.selection)
+        }
       }
     }
+  } catch (error) {
+    // FIXME: handle selection failure, to prevent page from breaking on load
+    console.warn(error)
   }
 
   // if focus index is provides, move caret
@@ -153,23 +162,37 @@ const ContentEditable = ({
         const { setTopic } = topicContext
 
         state.newEntities.forEach(entity => {
-          const _data = {
-            _id: entity._id,
-            text: {
-              textValue: entity.text.textValue,
-              ranges: entity.text.ranges,
-            },
-          }
+          const _data = entity.text
+            ? {
+                _id: entity._id,
+                text: {
+                  textValue: entity.text.textValue,
+                  ranges: entity.text.ranges,
+                },
+              }
+            : null
           ;({
             SOURCE: () => {
               // requestAnimationFrame will allow the `forkOnChange` function in the editor provider to execute before setting the inline block relations
               window.requestAnimationFrame(() => {
-                setInlineBlockRelations(() => setSource(_data))
+                setInlineBlockRelations(() => {
+                  if (_data) {
+                    setSource(_data)
+                  } else {
+                    resetSourceHeaders()
+                  }
+                })
               })
             },
             TOPIC: () => {
               window.requestAnimationFrame(() => {
-                setInlineBlockRelations(() => setTopic(_data))
+                setInlineBlockRelations(() => {
+                  if (_data) {
+                    setTopic(_data)
+                  } else {
+                    resetTopicHeaders()
+                  }
+                })
               })
             },
           }[entity.type]())

@@ -1,3 +1,4 @@
+import { SelectOption } from './CatalogState'
 import { Text } from './Text'
 
 export enum BlockType {
@@ -38,10 +39,26 @@ export interface Citations {
 export interface SourceDetail {
   authors: Author[]
   publisher?: string
+  editors?: Author[]
+  translators?: Author[]
   citations?: Citations[]
-  doi?: string
-  issn?: string
-  year?: number
+  title?: Text
+
+  // publication details (common)
+  publicationType?: SelectOption | null | undefined
+  publisherName?: Text
+  publisherPlace?: Text
+  year?: Text
+  month?: SelectOption | null | undefined
+  volume?: Text
+  issue?: Text
+
+  // catalog identifiers (book)
+  isbn?: Text
+
+  // catalog identifiers (articles)
+  doi?: Text
+  issn?: Text
 }
 
 export interface SourceCitationHeader extends Source {

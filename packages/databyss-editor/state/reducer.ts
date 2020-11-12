@@ -24,8 +24,6 @@ import {
   insertText,
   deleteBlocksAtSelection,
   sortSelection,
-  splitTextAtOffset,
-  getFragmentAtSelection,
 } from '../lib/clipboardUtils'
 import {
   selectionHasRange,
@@ -45,15 +43,12 @@ import {
   trimLeft,
   trimRight,
   splitBlockAtEmptyLine,
-  getWordFromOffset,
   convertInlineToAtomicBlocks,
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
-import { getTextOffsetWithRange, replaceInlineText, getRangesAtPoint, getInlineOrAtomicsFromStateSelection } from './util';
+import {  replaceInlineText, getRangesAtPoint } from './util';
 import mergeInlineAtomicMenuRange from '../lib/clipboardUtils/mergeInlineAtomicMenuRange'
-import { getBlocksWithAtomicId } from '../lib/slateUtils'
-import getAtomicsFromSelection from '../lib/clipboardUtils/getAtomicsFromSelection'
-import { AtomicType } from '../interfaces/EditorState';
+import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
 
 // if block at @index in @draft.blocks starts with an atomic identifier character,
 // e.g. @ or #, convert the block to the appropriate atomic type and return it.
@@ -283,6 +278,7 @@ export default (
   action: FSA,
   onChange?: Function
 ): EditorState => {
+
   let clearBlockRelations = false
 
   const [nextState, patches, inversePatches] = produceWithPatches(
@@ -290,6 +286,7 @@ export default (
     (draft) => {
       draft.operations = []
       draft.preventDefault = false
+      // if flag is set, atomics were added or removed, blockRelations must be refreshed upstream and the headers must be reset
 
       const { payload } = action
 
@@ -298,11 +295,49 @@ export default (
 
       switch (action.type) {
         case UNDO: {
+
+
           payload.patches.forEach((p: Patch) => {
             if (p.path[0] === 'blocks' || p.path[0] === 'selection') {
               applyPatches(draft, [p])
             }
           })
+
+          // create a selection which includes the whole document
+            const _selectionFromState =  {
+              anchor: {offset: 0, index: 0}, 
+              focus: {
+                offset: state.blocks[state.blocks.length - 1].text.textValue.length, 
+                index: state.blocks.length
+              }
+            }
+
+          const _selectionFromDraft =  {
+            anchor: {offset: 0, index: 0}, 
+            focus: {
+              offset: draft.blocks[draft.blocks.length - 1].text.textValue.length, 
+              index: draft.blocks.length
+            }
+          }
+      
+        // return a list of atomics which were found in the second selection and not the first, this is used to see if atomics were removed from the page
+
+          const { atomicsAdded, atomicsRemoved }  = getAtomicDifference({stateBefore: {...state, selection: _selectionFromState}, stateAfter: {...draft, selection: _selectionFromDraft }})          
+
+          // if undo action added atomics not found in page, refresh page headers
+          if(atomicsAdded.length){
+            atomicsAdded.forEach((a)=> {
+              draft.newEntities.push(a)
+            })
+           }
+
+          // if undo action removed atomics not found in page, refresh page headers
+          if(atomicsRemoved.length){
+            // push removed entities upstream
+            draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
+          }
+
+
           draft.operations.reloadAll = true
 
           break
@@ -313,6 +348,43 @@ export default (
               applyPatches(draft, [p])
             }
           })
+
+        // check if any atomics were removed in the redo process, if so, push removed atomics upstream
+
+        // create a selection which includes the whole document
+        const _selectionFromState =  {
+          anchor: {offset: 0, index: 0}, 
+          focus: {
+          offset: state.blocks[state.blocks.length - 1].text.textValue.length, 
+          index: state.blocks.length
+            }
+          }
+
+        const _selectionFromDraft =  {
+          anchor: {offset: 0, index: 0}, 
+          focus: {
+            offset: draft.blocks[draft.blocks.length - 1].text.textValue.length, 
+            index: draft.blocks.length
+          }
+        }
+    
+        // return a list of atomics which were found in the second selection and not the first, this is used to see if atomics were removed from the page
+
+        const { atomicsRemoved, atomicsAdded } = getAtomicDifference({stateBefore:{...state, selection: _selectionFromState} , stateAfter: {...draft, selection: _selectionFromDraft }})          
+
+        // if redo action removed refresh page headers
+        if(atomicsRemoved.length){
+          // push removed entities upstream
+          draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
+         }
+
+          // if undo action added atomics not found in page, refresh page headers
+          if(atomicsAdded.length){
+            atomicsAdded.forEach((a)=> {
+              draft.newEntities.push(a)
+            })
+           }       
+
           draft.operations.reloadAll = true
 
           break
@@ -727,27 +799,9 @@ export default (
         case REMOVE_AT_SELECTION: {
           // get highlighted text and verify if its the last atomic being removed
 
-          // returns array of atomics within selection
-          const _atomicsBeforeDelete =  getAtomicsFromSelection({state})
+
           // remove atomics from sidebar
           deleteBlocksAtSelection(draft)
-
-          // create a selection which includes the whole document
-          const _selection =  {
-            anchor: {offset: 0, index: 0}, 
-            focus: {
-              offset: draft.blocks[draft.blocks.length - 1].text.textValue.length, 
-              index: draft.blocks.length
-            }
-          }
-          // get a list of atomics after delete
-          const _atomicsAfterDelete = getAtomicsFromSelection({ state: {...draft, selection: _selection }})
-
-          // iterate through first atomic list to ensure they still exist after the delete, if atomic does not exist, remove atomic from page in sidebar
-          const _listOfAtomicsToRemove : AtomicType[] = _.differenceWith(_atomicsBeforeDelete, _atomicsAfterDelete, _.isEqual)
-
-          // push removed entities upstream
-          draft.removedEntities.push.apply(draft.removedEntities, _listOfAtomicsToRemove)
 
           pushSingleBlockOperation({ stateSelection: state.selection, draft })
           break

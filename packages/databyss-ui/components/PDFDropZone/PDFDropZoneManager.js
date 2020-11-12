@@ -5,6 +5,7 @@ import React, { useState, useEffect } from 'react'
 import ObjectId from 'bson-objectid'
 
 import { BlockType } from '@databyss-org/services/interfaces'
+import { makeText } from '@databyss-org/services/block/makeText'
 import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import * as services from '@databyss-org/services/pdf'
@@ -36,71 +37,6 @@ const viewStyles = () => ({
 const StyledView = styled(View, viewStyles)
 
 // methods
-const buildSourceDetail = data => {
-  // NOTE: cannot prefer const, as we may assign props dynamically
-  /* eslint-disable prefer-const */
-  let response = {}
-  if (data.authors) {
-    response.authors = []
-    data.authors.forEach(authorData => {
-      let author = {}
-      if (authorData.firstName) {
-        author.firstName = { textValue: authorData.firstName }
-      }
-      if (authorData.lastName) {
-        author.lastName = { textValue: authorData.lastName }
-      }
-      response.authors.push(author)
-    })
-  }
-  if (data.year) {
-    response.year = { textValue: data.year }
-  }
-  if (data.doi) {
-    response.doi = { textValue: data.doi }
-  }
-  if (data.issn) {
-    response.issn = { textValue: data.issn }
-  }
-  return response
-  /* eslint-enable prefer-const */
-}
-
-const buildEntryText = data => {
-  let text = ''
-
-  // add author(s)
-  const firstAuthor = data.authors[0]
-  text += `${firstAuthor.lastName}, `
-  text += `${firstAuthor.firstName.substr(0, 1)}.`
-  if (data.authors.length > 1) {
-    text += ' et al.'
-  }
-  text += ', '
-
-  // get title index before adding other content
-  const titleStartIndex = text.length
-
-  // add title
-  text += `${data.title}`
-
-  // add year
-  if (data.year) {
-    text += ` (${data.year})`
-  }
-
-  return {
-    textValue: `${text}`,
-    ranges: [
-      {
-        offset: titleStartIndex,
-        length: data.title.length,
-        marks: ['italic'],
-      },
-    ],
-  }
-}
-
 const isAcceptableFile = item =>
   ACCEPTABLE_KINDS.includes(item.kind) && ACCEPTABLE_TYPES.includes(item.type)
 
@@ -191,18 +127,16 @@ const PDFDropZoneManager = () => {
 
   // utils
   const buildEntryBlock = data => {
-    const response = { _id: new ObjectId().toHexString() }
+    let response = { _id: new ObjectId().toHexString() }
 
     if (typeof data === 'string') {
       // filename only
       response.type = BlockType.Entry
-      response.text = { textValue: `@${data}`, ranges: [] }
+      response.text = makeText(`@${data}`)
     } else {
       // complete metadata
       response.type = BlockType.Source
-      response.text = buildEntryText(data)
-      response.detail = buildSourceDetail(data)
-
+      response = Object.assign(response, data)
       setSource(response)
     }
 

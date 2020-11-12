@@ -27,6 +27,7 @@ const TextControl = ({
   multiline,
   focusOnMount,
   css,
+  dataTestId,
   ...others
 }) => {
   const [active, setActive] = useState(false)
@@ -84,6 +85,7 @@ const TextControl = ({
         color={active ? activeLabelColor : 'text.0'}
         multiline={multiline}
         variant={inputVariant}
+        data-test-id={dataTestId}
       />
     </TextInputView>
   )
