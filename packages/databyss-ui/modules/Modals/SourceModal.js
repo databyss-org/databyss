@@ -34,7 +34,7 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
       onDismiss={onDismiss}
       title="Edit Source"
       dismissChild="done"
-      canDismiss={isDismissable()}
+      canDismiss={values ? isDismissable() : true}
     >
       <SourceLoader sourceId={refId}>
         {source => {
