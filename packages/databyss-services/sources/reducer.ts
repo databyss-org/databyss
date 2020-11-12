@@ -46,7 +46,12 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
       break
     }
     case CACHE_SOURCE: {
-      const _source = { ...action.payload.source, type: 'SOURCE' }
+      let _source
+      if(action.payload.source instanceof Error){
+        _source = action.payload.source
+      }else {
+       _source = { ...action.payload.source, type: 'SOURCE' }
+      }
       draft.cache[action.payload.id] = _source
       if (resourceIsReady(_source)) {
         _citationHeaderCache[_source._id] = _source
@@ -58,7 +63,7 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
           )
         }
       }
-
+    
       break
     }
 

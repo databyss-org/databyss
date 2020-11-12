@@ -14,6 +14,7 @@ import {
   ADD_PAGE_TO_HEADER,
 } from './constants'
 import { buildSourceDetail } from './lib'
+import { ResourceNotFoundError } from '../interfaces/Errors'
 
 export function fetchSource(id: string) {
   return async (dispatch: Function) => {
@@ -32,11 +33,11 @@ export function fetchSource(id: string) {
       dispatch({
         type: CACHE_SOURCE,
         payload: {
-          source: err,
+          source: new ResourceNotFoundError(),
           id,
         },
       })
-      throw err
+      // throw err
     }
   }
 }
