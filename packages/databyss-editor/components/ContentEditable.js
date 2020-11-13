@@ -26,7 +26,6 @@ import {
   toggleMark,
   isMarkActive,
   isCurrentlyInInlineAtomicField,
-  getBlocksWithAtomicId,
   getInlineFromBlock,
   isCharacterKeyPress,
   insertTextWithInilneCorrection,
@@ -64,9 +63,9 @@ const ContentEditable = ({
   const setSource = useSourceContext(c => c && c.setSource)
   const setBlockRelations = useEntryContext(c => c && c.setBlockRelations)
 
-  const removePageFromSourceCacheHeader = useSourceContext(
-    c => c && c.removePageFromCacheHeader
-  )
+  // const removePageFromSourceCacheHeader = useSourceContext(
+  //   c => c && c.removePageFromCacheHeader
+  // )
 
   const resetSourceHeaders = useSourceContext(c => c && c.resetSourceHeaders)
 
