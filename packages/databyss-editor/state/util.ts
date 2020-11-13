@@ -6,6 +6,7 @@ import { OnChangeArgs } from './EditorProvider'
 import { isAtomicInlineType } from '../lib/util'
 import { splitTextAtOffset, getFragmentAtSelection } from '../lib/clipboardUtils'
 import { mergeText, isSelectionCollapsed } from '../lib/clipboardUtils/index';
+import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
 
 /*
 takes a text object and a range type and returns the length of the range, the location of the offset and the text contained within the range, this fuction works when text block has of of that range type
@@ -440,10 +441,10 @@ export const replaceInlineText = ({
 }
 
 export const getRangesAtPoint = ({ blocks, point }: { blocks: Block[], point: Point }): Range[] => {
-  
+
   const _currentBlockRanges = blocks[point.index]?.text.ranges
 
-  if(!_currentBlockRanges){
+  if (!_currentBlockRanges) {
     return []
   }
 
@@ -579,22 +580,22 @@ export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
 }
 
 export const getInlineOrAtomicsFromStateSelection = (state: EditorState): Block[] => {
-  if(isSelectionCollapsed(state.selection)){
+  if (isSelectionCollapsed(state.selection)) {
     return []
   }
 
-const _frag = getFragmentAtSelection(state)
-// check fragment for inline blocks
-const _inlines = _frag.filter(b =>
-  b.text.ranges.filter(
-    r =>
-      r.marks.filter(
-        m =>
-          Array.isArray(m) &&
-          m.length === 2 &&
-          m[0] === 'inlineTopic'
-      ).length
-  ).length)
+  const _frag = getFragmentAtSelection(state)
+  // check fragment for inline blocks
+  const _inlines = _frag.filter(b =>
+    b.text.ranges.filter(
+      r =>
+        r.marks.filter(
+          m =>
+            Array.isArray(m) &&
+            m.length === 2 &&
+            m[0] === 'inlineTopic'
+        ).length
+    ).length)
 
   const _inlineMenuRange = _frag.filter(b =>
     b.text.ranges.filter(
@@ -609,7 +610,47 @@ const _inlines = _frag.filter(b =>
     b => isAtomicInlineType(b.type)
   )
 
-const atomicsInSelection = [..._inlines,..._inlineMenuRange, ..._atomics]
+  const atomicsInSelection = [..._inlines, ..._inlineMenuRange, ..._atomics]
 
-return atomicsInSelection
+  return atomicsInSelection
+}
+
+
+export const pushAtomicChangeUpstream = ({ state, draft }: { state: EditorState, draft: EditorState }) => {
+
+  // check if any atomics were removed in the redo process, if so, push removed atomics upstream
+
+  // create a selection which includes the whole document
+  const _selectionFromState = {
+    anchor: { offset: 0, index: 0 },
+    focus: {
+      offset: state.blocks[state.blocks.length - 1].text.textValue.length,
+      index: state.blocks.length
+    }
+  }
+
+  const _selectionFromDraft = {
+    anchor: { offset: 0, index: 0 },
+    focus: {
+      offset: draft.blocks[draft.blocks.length - 1].text.textValue.length,
+      index: draft.blocks.length
+    }
+  }
+
+  // return a list of atomics which were found in the second selection and not the first, this is used to see if atomics were removed from the page
+
+  const { atomicsRemoved, atomicsAdded } = getAtomicDifference({ stateBefore: { ...state, selection: _selectionFromState }, stateAfter: { ...draft, selection: _selectionFromDraft } })
+
+  // if redo action removed refresh page headers
+  if (atomicsRemoved.length) {
+    // push removed entities upstream
+    draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
+  }
+
+  // if undo action added atomics not found in page, refresh page headers
+  if (atomicsAdded.length) {
+    atomicsAdded.forEach((a) => {
+      draft.newEntities.push(a)
+    })
+  }
 }
