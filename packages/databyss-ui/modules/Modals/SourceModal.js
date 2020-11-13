@@ -7,6 +7,7 @@ import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import CitationProvider from '@databyss-org/services/citations/CitationProvider'
 
 import EditSourceForm from '../../components/SourcesContent/EditSourceForm'
+import { buildSourceDetail } from '@databyss-org/services/sources/lib'
 
 const SourceModal = ({ refId, visible, onUpdate, id }) => {
   const { setSource } = useSourceContext()
@@ -39,8 +40,14 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
       <SourceLoader sourceId={refId}>
         {source => {
           if (!values) {
-            setValues(source)
+            const _source = { ...source }
+            // check if detail has been provided
+            if (!_source.detail) {
+              _source.detail = buildSourceDetail()
+            }
+            setValues(_source)
           }
+
           return (
             <CitationProvider>
               <EditSourceForm values={values || source} onChange={setValues} />

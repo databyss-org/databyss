@@ -26,6 +26,7 @@ export const ValueListProvider = ({
 
     // apply changes to values, cloned to preserve immutability
     const _values = cloneDeep(values)
+
     // lodash.set:
     // Sets the value at path of object.
     // If a portion of path doesn't exist, it's created.
@@ -57,6 +58,7 @@ export const ValueListItem = ({ children, path, ...others }) => {
   const { onItemChange, values } = useValueListContext()
 
   const value = _.get(values, path, defaultText)
+
   // lodash.get:
   // Gets the value at path of object.
   // If the resolved value is undefined, the defaultValue is returned in its place.
