@@ -93,6 +93,7 @@ function composeResults({
   // *included as prefix search
   const _queryTerms = _query.split(/\b/)
   let _filteredResults = _allResults
+
   // if an ISBN or DOI is provided, do not filter results
   if(!getCatalogSearchType(query)){
     _filteredResults = _allResults.filter(_apiResult => {
@@ -103,7 +104,7 @@ function composeResults({
       return _queryTerms.reduce((qacc: Boolean, qcurr: string) => 
         (qacc && _resultFields.reduce(
           (racc: Boolean, rcurr: string) =>
-            racc || (rcurr && rcurr.match(new RegExp(`\\b${qcurr}`, 'i'))),
+              racc || (rcurr && rcurr.replace(/[^a-z0-9 ]/gi, '').match(new RegExp(`\\b${qcurr}`, 'i'))),
           false)
       ), true)
     })

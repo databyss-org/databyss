@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-
+import { buildSourceDetail } from '@databyss-org/services/sources/lib'
 import { ModalWindow } from '@databyss-org/ui/primitives'
 import { SourceLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -39,8 +39,14 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
       <SourceLoader sourceId={refId}>
         {source => {
           if (!values) {
-            setValues(source)
+            const _source = { ...source }
+            // check if detail has been provided
+            if (!_source.detail) {
+              _source.detail = buildSourceDetail()
+            }
+            setValues(_source)
           }
+
           return (
             <CitationProvider>
               <EditSourceForm values={values || source} onChange={setValues} />

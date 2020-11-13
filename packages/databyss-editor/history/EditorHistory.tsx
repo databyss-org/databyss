@@ -83,7 +83,6 @@ const HistoryProvider: React.FunctionComponent<PropsType> = forwardRef(
         redoStack.current.push(_filteredPatches)
       }
 
-
       onChange({ inversePatches, patches, ...others })
     }
 

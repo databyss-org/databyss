@@ -6,6 +6,7 @@ export interface PayloadOperation {
   text: Text
   isRefEntity?: string
   withRerender?: string
+  checkAtomicDelta?: boolean
   withBakeAtomic?: boolean
   convertInlineToAtomic?: boolean
 }

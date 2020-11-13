@@ -87,6 +87,7 @@ export const toJsonCsl = source => {
     }
   }
 
+
   // publication type
   if (validateOption(source, 'publicationType')) {
     // TODO: ensure if acceptable type
