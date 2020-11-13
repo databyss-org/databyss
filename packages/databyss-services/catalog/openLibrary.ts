@@ -31,26 +31,27 @@ const openLibrary: CatalogService = {
   getAuthors: (apiResult: any) => c(apiResult.author_name || []),
   getTitle: (apiResult: any) => c(apiResult.title),
   getSubtitle: (apiResult: any) => c(apiResult.subtitle),
-
+  getPublisher: (apiResult: any) =>
+    apiResult.publisher && c(apiResult.publisher[0]),
   // publication details (common)
   getPublicationType: (apiResult: any) => {
-    const pubId = normalizePublicationId(apiResult.type, CatalogType.OpenLibrary)
+    const pubId = normalizePublicationId(
+      apiResult.type,
+      CatalogType.OpenLibrary
+    )
     const pubType = getPublicationTypeById(pubId)
     if (!pubType) {
       return defaultPublicationType
     }
     return pubType
   },
-  getPublisher: (apiResult: any) => {
-    return apiResult['publisher']?.[0]
-  },
   getPublisherPlace: (apiResult: any) => {
     const keys = {
-      hasPlace: apiResult['place'] !== undefined,
-      hasPublishPlace: apiResult['publish_place'] !== undefined,
+      hasPlace: apiResult.place !== undefined,
+      hasPublishPlace: apiResult.publish_place !== undefined,
       hasPublisherLocation: apiResult['publisher-location'] !== undefined,
     }
-    
+
     const responseParts = []
     if (keys.hasPlace) {
       if (Array.isArray(apiResult.place)) {
@@ -61,7 +62,7 @@ const openLibrary: CatalogService = {
     }
 
     if (keys.hasPublishPlace) {
-      const publisherPlace = apiResult['publish_place']
+      const publisherPlace = apiResult.publish_place
       if (Array.isArray(publisherPlace)) {
         responseParts.push(...publisherPlace)
       } else {
@@ -110,18 +111,15 @@ const openLibrary: CatalogService = {
   },
 
   // publication details (journal article)
-  getIssue: (apiResult: any) => {
+  getIssue: (apiResult: any) =>
     // TODO: confirm they never provide it
-    return ''
-  },
-  getVolume: (apiResult: any) => {
+    '',
+  getVolume: (apiResult: any) =>
     // TODO: confirm they never provide it
-    return ''
-  },
-  getDOI: (apiResult: any) => {
+    '',
+  getDOI: (apiResult: any) =>
     // TODO: confirm they never provide it
-    return ''
-  },
+    '',
   getISSN: (apiResult: any) => {
     if (apiResult.issn) {
       if (Array.isArray(apiResult.issn)) {

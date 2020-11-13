@@ -15,6 +15,17 @@ export function stripText(text: string | string[]) {
   return stripHtml(text).result
 }
 
+export const getCatalogSearchType = (query: string) => {
+  // DOI
+  if (query.match(/^10.\d{4,9}\/[-._;()\/:A-Z0-9]+$/i)) {
+    return 'DOI'
+  }
+  // ISBN
+  if (query.match(/\b(\d\s*?){10,13}\b/gm)) {
+    return 'ISBN'
+  }
+  return false
+}
 /**
  * Composes source title using title and subtitle from service results.
  * @param options An instance of CatalogParsingParams
@@ -41,7 +52,9 @@ export function buildFullTitle(options: CatalogParsingParams): Text {
   ]
 
   if (service.getPublishedYear(result)) {
-    _text.textValue += ` (${service.getPublishedYear(result)})`
+    _text.textValue += ` (${
+      service.getPublisher(result) ? `${service.getPublisher(result)}, ` : ''
+    }${service.getPublishedYear(result)})`
   }
 
   return _text

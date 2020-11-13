@@ -38,6 +38,7 @@ export interface Citations {
 
 export interface SourceDetail {
   authors: Author[]
+  publisher?: string
   editors?: Author[]
   translators?: Author[]
   citations?: Citations[]

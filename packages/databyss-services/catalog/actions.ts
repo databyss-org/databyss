@@ -10,7 +10,7 @@ import {
   Text,
 } from '../interfaces'
 
-import { buildDatabyssName, buildFullTitle, buildOnlyTitle, splitName } from './util'
+import { buildDatabyssName, buildFullTitle, buildOnlyTitle, splitName, getCatalogSearchType } from './util';
 import { SEARCH_CATALOG, CACHE_SEARCH_RESULTS } from './constants'
 import crossref from './crossref'
 import googleBooks from './googleBooks'
@@ -46,6 +46,7 @@ export function searchCatalog({
         results: await serviceMap[type].search(query),
         query,
       })
+
       dispatch({
         type: CACHE_SEARCH_RESULTS,
         payload: {
@@ -84,7 +85,6 @@ function composeResults({
 }): GroupedCatalogResults {
   const _query = query.toLowerCase()
   const _allResults = service.getResults(results)
-
   if (!_allResults?.length) {
     return {}
   }
@@ -92,18 +92,22 @@ function composeResults({
   // all query terms must be included* in one of: title, subtitile or author
   // *included as prefix search
   const _queryTerms = _query.split(/\b/)
-  const _filteredResults = _allResults.filter(_apiResult => {
-    const _resultFields = [
-      service.getTitle(_apiResult),
-      service.getSubtitle(_apiResult),
-    ].concat(service.getAuthors(_apiResult))
-    return _queryTerms.reduce((qacc: Boolean, qcurr: string) => 
-      (qacc && _resultFields.reduce(
-        (racc: Boolean, rcurr: string) =>
-          racc || (rcurr && rcurr.match(new RegExp(`\\b${qcurr}`, 'i'))),
-        false)
-    ), true)
-  })
+  let _filteredResults = _allResults
+  // if an ISBN or DOI is provided, do not filter results
+  if(!getCatalogSearchType(query)){
+    _filteredResults = _allResults.filter(_apiResult => {
+      const _resultFields = [
+        service.getTitle(_apiResult),
+        service.getSubtitle(_apiResult),
+      ].concat(service.getAuthors(_apiResult))
+      return _queryTerms.reduce((qacc: Boolean, qcurr: string) => 
+        (qacc && _resultFields.reduce(
+          (racc: Boolean, rcurr: string) =>
+            racc || (rcurr && rcurr.match(new RegExp(`\\b${qcurr}`, 'i'))),
+          false)
+      ), true)
+    })
+  }
 
   if (!_filteredResults) {
     return {}
@@ -179,3 +183,4 @@ function sourceFromResult(options: CatalogParsingParams): Source {
     },
   }
 }
+

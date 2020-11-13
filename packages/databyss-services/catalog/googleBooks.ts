@@ -12,7 +12,6 @@ import {
 import { defaultMonthOption } from '../sources/constants/MonthOptions'
 import { defaultPublicationType } from '../sources/constants/PublicationTypes'
 import request from '../lib/request'
-
 import { GOOGLE_BOOKS } from './constants'
 import { stripText as c } from './util'
 
@@ -33,6 +32,9 @@ const googleBooks: CatalogService = {
   getAuthors: (apiResult: any) => c(apiResult.volumeInfo.authors || []),
   getTitle: (apiResult: any) => c(apiResult.volumeInfo.title),
   getSubtitle: (apiResult: any) => c(apiResult.volumeInfo.subtitle),
+  getPublisher: (apiResult: any) =>  c(apiResult.volumeInfo.publisher),
+  getPublishedYear: (apiResult: any) =>
+    apiResult.volumeInfo.publishedDate?.substring(0, 4),
 
   // publication details (common)
   getPublicationType: (apiResult: any) => {
@@ -42,9 +44,6 @@ const googleBooks: CatalogService = {
       return defaultPublicationType
     }
     return pubType
-  },
-  getPublisher: (apiResult: any) => {
-    return apiResult.volumeInfo.publisher
   },
   getPublisherPlace: (apiResult: any) => {
     // TODO: confirm they never provide it

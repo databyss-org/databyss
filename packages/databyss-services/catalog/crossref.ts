@@ -12,30 +12,35 @@ import {
 import { defaultMonthOption } from '../sources/constants/MonthOptions'
 import { defaultPublicationType } from '../sources/constants/PublicationTypes'
 import request from '../lib/request'
-
+import { stripText as c, getCatalogSearchType } from './util';
 import { CROSSREF } from './constants'
-import { stripText as c } from './util'
 
 const crossref: CatalogService = {
   type: CROSSREF,
 
   search: async (query: string): Promise<GroupedCatalogResults> => {
-    let _uri = `https://api.crossref.org/works?query=${encodeURIComponent(
-      query
-    )}`
-    if (process.env.CITEBOT_EMAIL) {
+    let _baseUri = "https://api.crossref.org/works?query="
+
+    if(getCatalogSearchType(query) === 'DOI'){
+      _baseUri =`https://api.crossref.org/works/`
+    }
+
+    let _uri = `${_baseUri}${!getCatalogSearchType(query) ?encodeURIComponent(query): query}`
+    if (process.env.CITEBOT_EMAIL && !getCatalogSearchType(query)) {
       _uri += `&mailto=${process.env.CITEBOT_EMAIL}`
     }
     const results = await request(_uri)
+
     return results
   },
-  getResults: (apiResults: any) => apiResults.message.items,
+  getResults: (apiResults: any) => apiResults.message.items || [apiResults.message],
 
   // details
   getAuthors: (apiResult: any) => c((apiResult.author || []).map(authorName)),
   getTitle: (apiResult: any) => c(apiResult.title ? apiResult.title[0] : ''),
   getSubtitle: (apiResult: any) => c(apiResult.subtitle?.[0]),
-  
+  getPublisher: (apiResult: any) => c(apiResult.publisher),
+
   // publication details (common)
   getPublicationType: (apiResult: any) => {
     const pubId = normalizePublicationId(apiResult.type, CatalogType.Crossref)
@@ -44,9 +49,6 @@ const crossref: CatalogService = {
       return defaultPublicationType
     }
     return pubType
-  },
-  getPublisher: (apiResult: any) => {
-    return apiResult.publisher
   },
   getPublisherPlace: (apiResult: any) => {
     const publisherLocation = apiResult['publisher-location']
