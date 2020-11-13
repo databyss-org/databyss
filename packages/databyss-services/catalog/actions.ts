@@ -94,7 +94,6 @@ function composeResults({
   const _queryTerms = _query.split(/\b/)
   let _filteredResults = _allResults
 
-  console.log(_filteredResults)
   // if an ISBN or DOI is provided, do not filter results
   if(!getCatalogSearchType(query)){
     _filteredResults = _allResults.filter(_apiResult => {
