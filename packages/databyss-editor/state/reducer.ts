@@ -295,15 +295,13 @@ export default (
 
       switch (action.type) {
         case UNDO: {
-
-
           payload.patches.forEach((p: Patch) => {
             if (p.path[0] === 'blocks' || p.path[0] === 'selection') {
               applyPatches(draft, [p])
             }
           })
           pushAtomicChangeUpstream({state, draft})   
-
+          draft.operations.reloadAll = true
           break
         }
         case REDO: {
@@ -713,7 +711,8 @@ export default (
                 index: op.index,
                 block: _block,
               })
-            } else if(op.checkAtomicDelta){
+            }
+             else if(op.checkAtomicDelta){
               pushAtomicChangeUpstream({state, draft})   
             }
           })

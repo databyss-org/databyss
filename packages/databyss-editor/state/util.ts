@@ -266,6 +266,7 @@ export const filterInversePatches = (patches: Patch[]): Patch[] => {
   if (_patches.length === 1 && _patches[0].path[0] === 'selection') {
     return []
   }
+
   return _patches
 }
 
