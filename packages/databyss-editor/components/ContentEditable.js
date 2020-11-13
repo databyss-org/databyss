@@ -63,9 +63,9 @@ const ContentEditable = ({
   const setSource = useSourceContext(c => c && c.setSource)
   const setBlockRelations = useEntryContext(c => c && c.setBlockRelations)
 
-  // const removePageFromSourceCacheHeader = useSourceContext(
-  //   c => c && c.removePageFromCacheHeader
-  // )
+  const removePageFromSourceCacheHeader = useSourceContext(
+    c => c && c.removePageFromCacheHeader
+  )
 
   const resetSourceHeaders = useSourceContext(c => c && c.resetSourceHeaders)
 
@@ -145,7 +145,13 @@ const ContentEditable = ({
         state?.pageHeader?._id
       ) {
         state.removedEntities.forEach(e => {
-          removePageFromTopicCacheHeader(e._id, state.pageHeader._id)
+          ;({
+            SOURCE: () =>
+              removePageFromSourceCacheHeader(e._id, state.pageHeader._id),
+            TOPIC: () =>
+              removePageFromTopicCacheHeader(e._id, state.pageHeader._id),
+          }[e.type]())
+
           removeAtomicFromQueue(e._id)
         })
       }
@@ -890,7 +896,6 @@ const ContentEditable = ({
           ) {
             event.preventDefault()
             clear(editor.selection.focus.path[0])
-
             Transforms.delete(editor, {
               distance: 1,
               unit: 'character',

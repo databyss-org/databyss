@@ -642,6 +642,7 @@ export const pushAtomicChangeUpstream = ({ state, draft }: { state: EditorState,
 
   const { atomicsRemoved, atomicsAdded } = getAtomicDifference({ stateBefore: { ...state, selection: _selectionFromState }, stateAfter: { ...draft, selection: _selectionFromDraft } })
 
+
   // if redo action removed refresh page headers
   if (atomicsRemoved.length) {
     // push removed entities upstream
