@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-
+import { buildSourceDetail } from '@databyss-org/services/sources/lib'
 import { ModalWindow } from '@databyss-org/ui/primitives'
 import { SourceLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -7,7 +7,6 @@ import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import CitationProvider from '@databyss-org/services/citations/CitationProvider'
 
 import EditSourceForm from '../../components/SourcesContent/EditSourceForm'
-import { buildSourceDetail } from '@databyss-org/services/sources/lib'
 
 const SourceModal = ({ refId, visible, onUpdate, id }) => {
   const { setSource } = useSourceContext()

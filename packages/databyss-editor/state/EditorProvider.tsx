@@ -412,6 +412,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       })
     }
 
+
     return useMemo(
       () => (
         <EditorContext.Provider

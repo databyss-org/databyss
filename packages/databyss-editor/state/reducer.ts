@@ -16,7 +16,7 @@ import {
   CUT,
   UNDO,
   REDO,
-  CACHE_ENTITY_SUGGESTIONS
+  CACHE_ENTITY_SUGGESTIONS,
 } from './constants'
 import { isAtomicInlineType } from '../lib/util'
 import {
@@ -713,6 +713,8 @@ export default (
                 index: op.index,
                 block: _block,
               })
+            } else if(op.checkAtomicDelta){
+              pushAtomicChangeUpstream({state, draft})   
             }
           })
           break
@@ -777,7 +779,7 @@ export default (
               block: blockValue(_block),
             })
           }
-
+          pushAtomicChangeUpstream({state, draft})   
           break
         }
         case CACHE_ENTITY_SUGGESTIONS: {

@@ -499,26 +499,6 @@ const ContentEditable = ({
               if (event.key === 'Backspace') {
                 // remove inline node
 
-                const { atomicBlocks, inlineBlocks } = getBlocksWithAtomicId(
-                  state.blocks,
-                  _currentLeaf.atomicId
-                )
-                const _blocksWithAtomicId = [...atomicBlocks, ...inlineBlocks]
-                /*
-                  scan page for matching atomic ID's if there are less than two blocks, this delete will remove the atomic type from the header cache
-                */
-                if (
-                  _blocksWithAtomicId.length < 2 &&
-                  removePageFromTopicCacheHeader
-                ) {
-                  // if so, remove page from atomic cache
-                  if (_currentLeaf.inlineTopic && state.pageHeader?._id) {
-                    removePageFromTopicCacheHeader(
-                      _currentLeaf.atomicId,
-                      state.pageHeader._id
-                    )
-                  }
-                }
                 /*
                 scan block to see if this is the last instance of inline atomic, if so, remove block relation
                 */
@@ -540,6 +520,30 @@ const ContentEditable = ({
                 Transforms.removeNodes(editor, {
                   match: node => node === _currentLeaf,
                 })
+
+                const _index = state.selection.anchor.index
+                const selection = {
+                  ...slateSelectionToStateSelection(editor),
+                  _id: state.selection._id,
+                }
+
+                // set the block with a re-render
+                setContent({
+                  selection,
+                  operations: [
+                    {
+                      index: _index,
+                      text: {
+                        textValue: Node.string(editor.children[_index]),
+                        ranges: slateRangesToStateRanges(
+                          editor.children[_index]
+                        ),
+                      },
+                      checkAtomicDelta: true,
+                    },
+                  ],
+                })
+
                 event.preventDefault()
                 return
               }
@@ -882,33 +886,8 @@ const ContentEditable = ({
             flattenOffset(editor, editor.selection.focus) > 0
           ) {
             event.preventDefault()
-
             clear(editor.selection.focus.path[0])
-            if (!isAtomicClosure(_currentBlock.type)) {
-              // check to see if block is atomic and was the last block on the page ignoring closure blocks
-              const { atomicBlocks, inlineBlocks } = getBlocksWithAtomicId(
-                state.blocks,
-                _currentBlock._id
-              )
-              const _blocksWithAtomicId = [...atomicBlocks, ...inlineBlocks]
-              if (_blocksWithAtomicId.length < 2) {
-                // if so, remove page from atomic cache
-                ;({
-                  SOURCE: () => {
-                    removePageFromSourceCacheHeader(
-                      _currentBlock._id,
-                      state.pageHeader._id
-                    )
-                  },
-                  TOPIC: () => {
-                    removePageFromTopicCacheHeader(
-                      _currentBlock._id,
-                      state.pageHeader._id
-                    )
-                  },
-                }[_currentBlock.type]())
-              }
-            }
+
             Transforms.delete(editor, {
               distance: 1,
               unit: 'character',
