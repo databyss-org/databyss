@@ -845,11 +845,17 @@ const ContentEditable = ({
             event.preventDefault()
 
             const _isNextCharNewLine = _text.charAt(_offset) === `\n`
+            // firefox HACK: firefox does not like trailing \n
+
+            const firefoxEnterCharacter =
+              navigator.userAgent.indexOf('Firefox') > -1 && _atBlockEnd
+                ? '\n\u2060'
+                : '\n'
             if (!_isNextCharNewLine) {
               // inserts the text without markup
-              Transforms.insertNodes(editor, { text: `\n` })
+              Transforms.insertNodes(editor, { text: firefoxEnterCharacter })
             } else {
-              Transforms.insertText(editor, '\n')
+              Transforms.insertText(editor, firefoxEnterCharacter)
             }
 
             return

@@ -397,6 +397,11 @@ if character is being entered, run the editor through the correction to make sur
 */
 export const inlineAtomicBlockCorrector = (event, editor) => {
   if (Range.isCollapsed(editor.selection)) {
+    /*
+    FIREFOX WHITESPACE BUG: firefox does not like a \n at the end of a content editable, a whitespace must be added. on key down check for white space
+
+    */
+
     // pressed key is a char
     const _text = Node.string(editor.children[editor.selection.focus.path[0]])
     const _offset = parseInt(flattenOffset(editor, editor.selection.focus), 10)
