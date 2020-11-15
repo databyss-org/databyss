@@ -1,0 +1,47 @@
+{
+  "defaultStyleId": "mla",
+  "styles": [
+    {
+      "id": "american-medical-association",
+      "name": "American Medical Association 11th edition",
+      "shortName": "AMA",
+      "url": "https://www.zotero.org/styles/american-medical-association"
+    },
+    {
+      "id": "apa",
+      "name": "American Psychological Association 7th edition",
+      "shortName": "APA",
+      "url": "https://www.zotero.org/styles/apa"
+    },
+    {
+      "id": "chicago",
+      "name": "Chicago Manual of Style 17th edition (full note)",
+      "shortName": "Chicago",
+      "url": "https://www.zotero.org/styles/chicago-fullnote-bibliography"
+    },
+    {
+      "id": "harvard1",
+      "name": "Harvard Reference Format 1",
+      "shortName": "Harvard",
+      "url": "https://www.zotero.org/styles/harvard1"
+    },
+    {
+      "id": "ieee",
+      "name": "IEEE",
+      "shortName": "IEEE",
+      "url": "https://www.zotero.org/styles/ieee"
+    },
+    {
+      "id": "mla",
+      "name": "Modern Language Association 8th edition",
+      "shortName": "MLA",
+      "url": "https://www.zotero.org/styles/modern-language-association"
+    },
+    {
+      "id": "vancouver",
+      "name": "Vancouver",
+      "shortName": "Vancouver",
+      "url": "https://www.zotero.org/styles/vancouver"
+    }
+  ]
+}

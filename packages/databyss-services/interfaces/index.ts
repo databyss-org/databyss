@@ -17,6 +17,7 @@ export type { Text } from './Text'
 export type { Source, SourceDetail, Author, Topic, SourceCitationHeader } from './Block'
 export { BlockType } from './Block'
 export type { FSA } from './FSA'
+export { RangeType } from './Range'
 export type { Range } from './Range'
 export type { PageState } from './PageState'
 export type { PatchBatch } from './Patch'
@@ -24,6 +25,7 @@ export type { SourceState } from './SourceState'
 export type { TopicState } from './TopicState'
 export type { CatalogState, CatalogResult, GroupedCatalogResults, CatalogService } from './CatalogState'
 export { CatalogType } from './CatalogState'
+export { CitationFormatOptions, CitationDTO, CitationProcessOptions } from './Citation'
 export type ResourceResponse<T> = T | ResourcePending | Error | null
 export interface CacheDict<T> {
   [key: string]: ResourceResponse<T>

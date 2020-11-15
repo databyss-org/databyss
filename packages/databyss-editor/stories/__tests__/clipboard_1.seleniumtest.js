@@ -7,7 +7,6 @@ import { sanitizeEditorChildren } from './__helpers'
 import {
   getEditor,
   getElementByTag,
-  sleep,
   toggleBold,
   getElementById,
   enterKey,
@@ -15,12 +14,16 @@ import {
   downKey,
   paste,
   copy,
+  sleep,
   cut,
   selectAll,
   rightShiftKey,
   rightKey,
   sendKeys,
   leftKey,
+  isSaved,
+  escapeKey,
+  leftShiftKey,
 } from './_helpers.selenium'
 
 let driver
@@ -81,17 +84,14 @@ describe('editor clipboard', () => {
   })
 
   afterEach(async () => {
-    const clearButton = await getElementById(driver, 'clear-state')
-    await clearButton.click()
-    await driver.navigate().refresh()
-
-    // sleep(500)
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
   it('should copy a whole block and paste it at the end of the same block', async () => {
     // TODO: FIX CURSOR POSITION FOR THIS TEST
-    await sleep(300)
     await sendKeys(actions, 'this text will be pasted with ')
 
     await toggleBold(actions)
@@ -102,11 +102,9 @@ describe('editor clipboard', () => {
 
     await rightKey(actions)
     await paste(actions)
-    await sleep(3000)
-
+    await isSaved(driver)
     await driver.navigate().refresh()
-
-    await sleep(500)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -133,7 +131,6 @@ describe('editor clipboard', () => {
   })
 
   it('should copy a whole block and paste it in the middle of a block', async () => {
-    await sleep(300)
     await sendKeys(actions, 'this text will be pasted with ')
     await toggleBold(actions)
     await sendKeys(actions, 'bold ')
@@ -149,11 +146,9 @@ describe('editor clipboard', () => {
     await rightKey(actions)
 
     await paste(actions)
-    await sleep(3000)
-
+    await isSaved(driver)
     await driver.navigate().refresh()
-
-    await sleep(500)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -181,7 +176,6 @@ describe('editor clipboard', () => {
   })
 
   it('should copy a whole block and paste it at the start of a block', async () => {
-    await sleep(300)
     await sendKeys(actions, 'this text will be pasted with ')
     await toggleBold(actions)
     await sendKeys(actions, 'bold ')
@@ -189,11 +183,9 @@ describe('editor clipboard', () => {
     await copy(actions)
     await leftKey(actions)
     await paste(actions)
-    await sleep(3000)
-
+    await isSaved(driver)
     await driver.navigate().refresh()
-
-    await sleep(500)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -222,11 +214,11 @@ describe('editor clipboard', () => {
   })
 
   it('should cut an atomic in a multi block selection', async () => {
-    await sleep(1000)
     await sendKeys(actions, 'this is an entry')
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '@this is a source text')
+    await escapeKey(actions)
     await upKey(actions)
     await leftKey(actions)
     await leftKey(actions)
@@ -244,11 +236,9 @@ describe('editor clipboard', () => {
     await cut(actions)
     await downKey(actions)
     await paste(actions)
-    await sleep(5000)
-
+    await isSaved(driver)
     await driver.navigate().refresh()
-
-    await sleep(500)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -265,6 +255,72 @@ describe('editor clipboard', () => {
         <block type="SOURCE">
           <text>
             this is a source text<cursor />
+          </text>
+        </block>
+      </editor>
+    )
+
+    assert.deepEqual(
+      sanitizeEditorChildren(actual.children),
+      sanitizeEditorChildren(expected.children)
+    )
+
+    assert.deepEqual(actual.selection, expected.selection)
+  })
+
+  it('should test inline atomic functionality', async () => {
+    // paste in inline range
+    await toggleBold(actions)
+    await sendKeys(actions, 'some topic')
+    await selectAll(actions)
+    await copy(actions)
+    await sendKeys(actions, 'and we append #')
+    await paste(actions)
+    await enterKey(actions)
+    // copy fraction of an inline
+    await leftShiftKey(actions)
+    await copy(actions)
+    await rightKey(actions)
+    await enterKey(actions)
+    await enterKey(actions)
+    await paste(actions)
+
+    // block pasting multiple blocks
+    await enterKey(actions)
+    await enterKey(actions)
+    await selectAll(actions)
+    await copy(actions)
+    await rightKey(actions)
+    await sendKeys(actions, 'this should block #')
+    await paste(actions)
+    await enterKey(actions)
+    await getEditor(driver)
+
+    slateDocument = await getElementById(driver, 'slateDocument')
+
+    const actual = JSON.parse(await slateDocument.getText())
+
+    const _id = actual.children[0].children[1].atomicId
+
+    const expected = (
+      <editor>
+        <block type="ENTRY">
+          <text bold>and we append </text>
+          <text inlineTopic atomicId={_id}>
+            #some topic
+          </text>
+        </block>
+        <block type="ENTRY">
+          <text inlineTopic atomicId={_id}>
+            #some topic
+          </text>
+        </block>
+        <block type="ENTRY">
+          <text />
+        </block>
+        <block type="ENTRY">
+          <text>
+            this should block #<cursor />
           </text>
         </block>
       </editor>

@@ -18,7 +18,8 @@ import { AccountLoader } from '../Loaders'
 
 const AccountMenu = () => {
   const { navigate } = useNavigationContext()
-  const { isPublicAccount, logout } = useSessionContext()
+  const logout = useSessionContext(c => c && c.logout)
+  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
   const [menuOpen, setMenuOpen] = useState(false)
 
   const navToDefaultPage = userInfo => {
@@ -71,7 +72,10 @@ const AccountMenu = () => {
 
         return (
           <View pl="em" my="extraSmall" position="relative">
-            <BaseControl onClick={() => setMenuOpen(true)}>
+            <BaseControl
+              onClick={() => setMenuOpen(true)}
+              data-test-element="account-menu"
+            >
               <View
                 borderVariant="round"
                 borderRadius="50%"

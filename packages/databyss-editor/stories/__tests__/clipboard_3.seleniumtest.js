@@ -7,7 +7,6 @@ import { sanitizeEditorChildren } from './__helpers'
 import {
   getEditor,
   getElementByTag,
-  sleep,
   getElementById,
   enterKey,
   upKey,
@@ -20,6 +19,8 @@ import {
   rightKey,
   sendKeys,
   leftKey,
+  isSaved,
+  sleep,
 } from './_helpers.selenium'
 
 let driver
@@ -80,31 +81,28 @@ describe('editor clipboard', () => {
   })
 
   afterEach(async () => {
-    const clearButton = await getElementById(driver, 'clear-state')
-    await clearButton.click()
-    await driver.navigate().refresh()
-
-    // sleep(500)
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
   it('should have a multi-block selection with atomics and paste the whole atomic blocks', async () => {
-    await sleep(1000)
-    await actions.sendKeys('@this is a source text')
+    await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
-    await actions.sendKeys('in between text')
+    await sendKeys(actions, 'in between text')
     await enterKey(actions)
     await enterKey(actions)
-    await actions.sendKeys('@this is another source text')
+    await sendKeys(actions, '@this is another source text')
     await upKey(actions)
     await selectAll(actions)
     await copy(actions)
     await downKey(actions)
     await downKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
     await driver.navigate().refresh()
-    await sleep(500)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -144,10 +142,9 @@ describe('editor clipboard', () => {
   })
 
   it('should prevent a paste from occuring in an atomic', async () => {
-    await sleep(3000)
-    await actions.sendKeys('@this is a source text')
+    await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
-    await actions.sendKeys('entry text')
+    await sendKeys(actions, 'entry text')
     await leftShiftKey(actions)
     await leftShiftKey(actions)
     await leftShiftKey(actions)
@@ -161,10 +158,9 @@ describe('editor clipboard', () => {
     await rightKey(actions)
     await rightKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
     await driver.navigate().refresh()
-
-    await sleep(500)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -192,8 +188,7 @@ describe('editor clipboard', () => {
   })
 
   it('should remove an atomic fragment on a cut', async () => {
-    await sleep(3000)
-    await actions.sendKeys('@this is a source text')
+    await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
     await leftKey(actions)
     await leftShiftKey(actions)
@@ -205,10 +200,9 @@ describe('editor clipboard', () => {
     await actions.clear()
     await downKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
     await driver.navigate().refresh()
-
-    await sleep(500)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -236,7 +230,6 @@ describe('editor clipboard', () => {
   })
 
   it('should remove a multi-line atomic fragment on a cut', async () => {
-    await sleep(3000)
     await sendKeys(actions, 'this is an entry')
     await enterKey(actions)
     await enterKey(actions)
@@ -258,12 +251,9 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await downKey(actions)
     await paste(actions)
-
-    await sleep(5000)
-
+    await isSaved(driver)
     await driver.navigate().refresh()
-
-    await sleep(500)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 

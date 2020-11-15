@@ -2,7 +2,7 @@ import { Key, By, until } from 'selenium-webdriver'
 
 const waitUntilTime = 20000
 
-const SLEEP_TIME = 700
+const SLEEP_TIME = 300
 
 // HACK: saucelabs environment double triggers meta key, use ctrl key instead
 
@@ -11,6 +11,7 @@ const CONTROL = process.env.SAUCE !== 'no' ? Key.CONTROL : Key.META
 export const sleep = m => new Promise(r => setTimeout(r, m))
 
 export const getEditor = async driver => {
+  await sleep(500)
   const el = await driver.wait(
     until.elementLocated(By.tagName('[contenteditable="true"]')),
     waitUntilTime
@@ -20,21 +21,42 @@ export const getEditor = async driver => {
   return _driver
 }
 
+export const getElementsByTag = async (driver, tag) => {
+  await sleep(500)
+  const el = await driver.wait(
+    until.elementsLocated(By.tagName(tag)),
+    waitUntilTime
+  )
+
+  // const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
+  return el
+}
+
 export const getElementByTag = async (driver, tag) => {
+  await sleep(500)
   const el = await driver.wait(
     until.elementLocated(By.tagName(tag)),
     waitUntilTime
   )
 
-  const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
-  return _driver
+  // const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
+  return el
 }
 
 export const getElementById = async (driver, id) => {
+  await sleep(500)
   const el = await driver.wait(until.elementLocated(By.id(id)), waitUntilTime)
 
   const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
   return _driver
+}
+
+export const isSaved = async driver => {
+  await getElementById(driver, 'complete')
+}
+
+export const isAppInNotesSaved = async driver => {
+  await getElementById(driver, 'changes-saved')
 }
 
 export const toggleBold = actions =>
@@ -82,6 +104,10 @@ export const enterKey = async actions => {
 
 export const upKey = async actions => {
   await navigationActionsBuilder(actions, Key.ARROW_UP)
+}
+
+export const escapeKey = async actions => {
+  await navigationActionsBuilder(actions, Key.ESCAPE)
 }
 
 export const tabKey = async actions => {

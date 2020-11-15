@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import Block from './Block'
 import Selection from './Selection'
+import { updateTimestamps } from '../lib/timestamps'
 
 const Schema = mongoose.Schema
 
@@ -47,12 +48,26 @@ const PageSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    createdAt: {
+      type: Date,
+    },
+    updatedAt: {
+      type: Date,
+    },
   },
   { versionKey: false }
 )
 
+PageSchema.index({ account: 1 })
+PageSchema.index({ sharedWith: 1 })
+
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */
+PageSchema.pre('save', function(next) {
+  updateTimestamps(this)
+  next()
+})
+
 PageSchema.method('addBlock', async function(values = {}) {
   // add the block record
   const block = await Block.create({

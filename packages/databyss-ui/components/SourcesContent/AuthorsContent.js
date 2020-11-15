@@ -1,51 +1,51 @@
 import React from 'react'
-import {
-  sortEntriesAtoZ,
-  createIndexPageEntries,
-} from '@databyss-org/services/entries/util'
 import { Helmet } from 'react-helmet'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+
 import {
   AuthorsLoader,
   SourceCitationsLoader,
 } from '@databyss-org/ui/components/Loaders'
-import AuthorSvg from '@databyss-org/ui/assets/author.svg'
-import IndexPageEntries from '../PageContent/IndexPageEntries'
+import { composeAuthorName } from '@databyss-org/services/sources/lib'
+import { createIndexPageEntries } from '@databyss-org/services/entries/util'
+import { sortPageEntriesAlphabetically } from '@databyss-org/services/entries/lib'
+import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+
+import AuthorIndexEntries from './AuthorIndexEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
+
+const buildEntries = authors => {
+  const entries = Object.values(authors).map(value =>
+    createIndexPageEntries({
+      text: {
+        textValue: composeAuthorName(
+          value.firstName?.textValue,
+          value.lastName?.textValue
+        ),
+        ranges: [],
+      },
+      type: 'authors',
+      name: value,
+    })
+  )
+
+  return sortPageEntriesAlphabetically(entries)
+}
 
 const AuthorsContent = () => {
   const { navigate } = useNavigationContext()
+
+  const onEntryClick = entry => {
+    const firstName = entry.name.firstName ? entry.name.firstName.textValue : ''
+    const lastName = entry.name.lastName ? entry.name.lastName.textValue : ''
+    navigate(`/sources?firstName=${firstName}&lastName=${lastName}`)
+  }
 
   return (
     <SourceCitationsLoader>
       {() => (
         <AuthorsLoader filtered>
           {authors => {
-            const authorData = Object.values(authors).map(value => {
-              const getAuthorName = () => {
-                const firstName = value.firstName?.textValue
-                const lastName = value.lastName?.textValue
-                if (lastName && firstName) {
-                  return `${lastName}, ${firstName}`
-                }
-                return lastName || firstName
-              }
-
-              return createIndexPageEntries({
-                text: getAuthorName(),
-                type: 'authors',
-                name: value,
-              })
-            })
-            const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
-
-            const onAuthorClick = i => {
-              const _url = `firstName=${
-                i.name.firstName ? i.name.firstName.textValue : ''
-              }&lastName=${i.name.lastName ? i.name.lastName.textValue : ''}`
-
-              navigate(`/sources?${_url}`)
-            }
+            const entries = buildEntries(authors)
 
             return (
               <IndexPageContent title="All Authors">
@@ -53,11 +53,7 @@ const AuthorsContent = () => {
                   <meta charSet="utf-8" />
                   <title>All Authors</title>
                 </Helmet>
-                <IndexPageEntries
-                  onClick={onAuthorClick}
-                  entries={sortedAuthors}
-                  icon={<AuthorSvg />}
-                />
+                <AuthorIndexEntries onClick={onEntryClick} entries={entries} />
               </IndexPageContent>
             )
           }}

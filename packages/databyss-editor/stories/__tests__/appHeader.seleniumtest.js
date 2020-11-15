@@ -3,8 +3,9 @@ import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
-  // getEditor,
+  getEditor,
   getElementByTag,
+  isAppInNotesSaved,
   sleep,
   sendKeys,
   enterKey,
@@ -49,24 +50,22 @@ describe('app sticky header', () => {
 
     await continueButton.click()
 
-    await sleep(1000)
-
-    // editor = await getEditor(driver)
+    // wait for editor to be visible
+    await getEditor(driver)
 
     actions = driver.actions()
-    // await actions.click(editor)
-    // await actions.perform()
-    // await actions.clear()
 
     done()
   })
 
   afterEach(async () => {
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
   it('should render correct editor path for cursor', async () => {
-    await sleep(2000)
     const pageTitle = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
@@ -96,7 +95,7 @@ describe('app sticky header', () => {
     await enterKey(actions)
     await sendKeys(actions, '/#')
     await sendKeys(actions, 'last entry')
-    await sleep(2000)
+    await isAppInNotesSaved(driver)
 
     // get page path
     let headerSticky = await getElementByTag(
@@ -145,6 +144,7 @@ describe('app sticky header', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/#')
+    isAppInNotesSaved(driver)
 
     headerSticky = await getElementByTag(
       driver,

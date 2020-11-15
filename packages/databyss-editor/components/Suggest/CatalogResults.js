@@ -1,15 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Text,
-  View,
-  List,
-  BaseControl,
-  RawHtml,
-} from '@databyss-org/ui/primitives'
+import { Text, View, List } from '@databyss-org/ui/primitives'
 import _ from 'lodash'
 import { CatalogSearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { pxUnits } from '@databyss-org/ui/theming/views'
+import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { textToHtml } from '@databyss-org/services/block/serialize'
 import { CatalogFooter } from './'
 
@@ -31,17 +26,14 @@ const CatalogResults = ({ menuHeight, type, dismiss, query, selectSource }) => {
           <Text variant="uiTextSmall" color="text.2">
             {author}
           </Text>
-          <List verticalItemPadding="none">
+          <List verticalItemPadding="tiny">
             {results[author].map((result, k) => (
-              <BaseControl
+              <DropdownListItem
+                data-test-catalog={type}
+                labelHtml={textToHtml(result.title)}
                 onPress={() => onPress(result)}
                 key={k}
-                hoverColor="background.1"
-              >
-                <Text variant="uiTextSmall" color="text.2">
-                  <RawHtml html={textToHtml(result.title)} />
-                </Text>
-              </BaseControl>
+              />
             ))}
           </List>
         </View>

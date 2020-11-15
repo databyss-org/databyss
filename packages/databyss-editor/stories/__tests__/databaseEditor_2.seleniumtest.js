@@ -8,6 +8,7 @@ import { sanitizeEditorChildren } from './__helpers'
 import {
   getEditor,
   getElementByTag,
+  getElementsByTag,
   sendKeys,
   sleep,
   toggleBold,
@@ -16,9 +17,7 @@ import {
   upKey,
   downKey,
   backspaceKey,
-  tabKey,
-  leftKey,
-  rightKey,
+  isSaved,
 } from './_helpers.selenium'
 
 let driver
@@ -79,82 +78,41 @@ describe('connected editor', () => {
   })
 
   afterEach(async () => {
-    const clearButton = await getElementById(driver, 'clear-state')
-    await clearButton.click()
-    await sleep(500)
-
-    await driver.navigate().refresh()
-
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
-  it('should insert atomic source and edit source fields', async () => {
+  it('should insert atomic source', async () => {
     await sleep(300)
+
+    await sendKeys(actions, '@this is a test')
+
+    // verify if there are no suggestions the suggestion menu appears
+    await getElementByTag(driver, '[data-test-block-menu="OPEN_LIBRARY"]')
+    await getElementByTag(driver, '[data-test-block-menu="CROSSREF"]')
+    await getElementByTag(driver, '[data-test-block-menu="GOOGLE_BOOKS"]')
+    await enterKey(actions)
+
+    // populate with dummy text and other sources
+    await sendKeys(actions, 'dummy text')
+    await enterKey(actions)
+    await enterKey(actions)
+
+    // Suggestions don't break with strange characters (i.e. "[" "\" etc.)
+    await sendKeys(actions, '@test [this] second \\ source')
+    await enterKey(actions)
+
+    await sendKeys(actions, 'this is more dummy text')
+    await enterKey(actions)
+    await enterKey(actions)
+
     await sendKeys(actions, '@this is a test')
     await enterKey(actions)
-    await leftKey(actions)
-    await leftKey(actions)
-    await enterKey(actions)
+
+    await isSaved(driver)
     await sleep(1000)
-
-    const name = await getElementByTag(driver, '[data-test-path="text"]')
-
-    await name.click()
-    await rightKey(actions)
-    await tabKey(actions)
-    await sendKeys(actions, 'new citation')
-    await tabKey(actions)
-    await sendKeys(actions, 'authors first name')
-    await tabKey(actions)
-    await sendKeys(actions, 'authors last name')
-    await tabKey(actions)
-    await tabKey(actions)
-
-    let doneButton = await getElementByTag(
-      driver,
-      '[data-test-dismiss-modal="true"]'
-    )
-    await doneButton.click()
-
-    await sleep(1000)
-
-    // refresh page
-    await driver.navigate().refresh()
-
-    editor = await getEditor(driver)
-    actions = driver.actions()
-    await actions.click(editor)
-    await actions.perform()
-    await actions.clear()
-    await leftKey(actions)
-    await enterKey(actions)
-
-    let citationsField = await getElementById(driver, 'citation')
-
-    citationsField = await citationsField.getText()
-
-    let firstName = await getElementById(driver, 'firstName')
-
-    firstName = await firstName.getAttribute('value')
-
-    let lastName = await getElementById(driver, 'lastName')
-
-    lastName = await lastName.getAttribute('value')
-
-    doneButton = await getElementByTag(
-      driver,
-      '[data-test-dismiss-modal="true"]'
-    )
-
-    await sleep(1000)
-    await doneButton.click()
-    await sleep(2000)
-
-    assert.equal(citationsField, 'new citation')
-
-    assert.equal(firstName, 'authors first name')
-
-    assert.equal(lastName, 'authors last name')
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -168,17 +126,68 @@ describe('connected editor', () => {
           </text>
         </block>
         <block type="ENTRY">
+          <text>dummy text</text>
+        </block>
+        <block type="SOURCE">
+          <text>test [this] second \ source</text>
+        </block>
+        <block type="ENTRY">
+          <text>this is more dummy text</text>
+        </block>
+        <block type="SOURCE">
+          <text>this is a test</text>
+        </block>
+        <block type="ENTRY">
           <text />
         </block>
       </editor>
     )
+
     // check if editor has correct value
     assert.deepEqual(
       sanitizeEditorChildren(actual.children),
       sanitizeEditorChildren(expected.children)
     )
+  })
 
-    assert.deepEqual(actual.selection, expected.selection)
+  it('should provide previously entered sources as suggestions', async () => {
+    await sleep(300)
+    await sendKeys(actions, '@this is a test')
+    // verify if there are no suggestions the suggestion menu appears
+    await getElementByTag(driver, '[data-test-block-menu="OPEN_LIBRARY"]')
+    await getElementByTag(driver, '[data-test-block-menu="CROSSREF"]')
+    await getElementByTag(driver, '[data-test-block-menu="GOOGLE_BOOKS"]')
+    await enterKey(actions)
+
+    // populate with dummy text and other sources
+    await sendKeys(actions, 'dummy text')
+    await enterKey(actions)
+    await enterKey(actions)
+
+    // Suggestions don't break with strange characters (i.e. "[" "\" etc.)
+    await sendKeys(actions, '@test [this] second \\ source')
+    await enterKey(actions)
+
+    await sendKeys(actions, 'this is more dummy text')
+    await enterKey(actions)
+    await enterKey(actions)
+
+    await sendKeys(actions, '@test this')
+
+    await isSaved(driver)
+    await sleep(1000)
+
+    // FIXME: duration to wait to ensure suggestions length is availble is not consistent
+    await sleep(5000)
+
+    // verify both the sources appear in suggestions
+    const suggestions = await getElementsByTag(
+      driver,
+      '[data-test-element="suggested-menu-sources"]'
+    )
+
+    // ensure amount of sources added is reflected in menu
+    assert.equal(suggestions.length, 2)
   })
 
   it('should test data integrity in round trip testing', async () => {
@@ -218,10 +227,11 @@ describe('connected editor', () => {
     await downKey(actions)
     await downKey(actions)
     await sendKeys(actions, 'last entry')
-    await sleep(20000)
+    await isSaved(driver)
 
     // refresh page
     await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -231,8 +241,8 @@ describe('connected editor', () => {
       <editor>
         <block type="ENTRY">
           <text>this is an entry with </text>
-          <text bold>bold{'\n'}</text>
-          <text>still within the same block</text>
+          <text bold>bold</text>
+          <text>{'\n'}still within the same block</text>
         </block>
         <block type="TOPIC">
           <text>this should toggle a topics block</text>

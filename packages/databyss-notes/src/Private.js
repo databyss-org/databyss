@@ -20,7 +20,9 @@ import { View } from '@databyss-org/ui/primitives'
 const App = ({ children }) => (
   <View flexDirection="row" display="flex" width="100vw" height="100vh">
     <Sidebar />
-    <div style={{ width: '100%' }}>{children}</div>
+    <div style={{ width: '100%' }} data-test-element="body">
+      {children}
+    </div>
 
     {/* TODO: replace div with View */}
     {/* <View id="mainid">{children}</View> */}
@@ -29,7 +31,8 @@ const App = ({ children }) => (
 
 const NotFoundRedirect = () => {
   const { navigate } = useNavigationContext()
-  const { getSession } = useSessionContext()
+  const getSession = useSessionContext(c => c && c.getSession)
+
   const { account } = getSession()
 
   // if no page found, navigate to default page
@@ -44,7 +47,7 @@ const NotFoundRedirect = () => {
 
 const Private = () => {
   const { location, navigate } = useNavigationContext()
-  const { getSession } = useSessionContext()
+  const getSession = useSessionContext(c => c && c.getSession)
   const { account } = getSession()
 
   // Navigate to default page is nothing in path

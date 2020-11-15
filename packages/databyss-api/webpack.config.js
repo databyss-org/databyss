@@ -36,9 +36,10 @@ module.exports = {
       }),
   ].filter(Boolean),
   resolve: {
-    extensions: ['.js', '.ts'],
+    extensions: ['.js', '.ts', '.json'],
     alias: {
       deepmerge$: 'deepmerge/dist/umd.js',
+      'isomorphic-fetch': 'cross-fetch/polyfill',
     },
   },
   module: {
@@ -50,6 +51,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env'],
+            plugins: ['@babel/plugin-proposal-class-properties'],
           },
         },
       },

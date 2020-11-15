@@ -22,7 +22,7 @@ export const PageContainer = React.memo(({ anchor, id, page, ...others }) => {
   const getBlockRefByIndex = usePageContext(c => c.getBlockRefByIndex)
 
   const [editorPath, setEditorPath] = useState(null)
-  const { isPublicAccount } = useSessionContext()
+  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
 
   const headerRef = useRef()
   const editorRef = useRef()

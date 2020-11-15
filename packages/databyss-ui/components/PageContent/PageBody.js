@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useRef } from 'react'
 import { throttle } from 'lodash'
-
+import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
@@ -24,7 +24,7 @@ const PageBody = ({
   editorRef,
   onEditorPathChange,
 }) => {
-  const { isPublicAccount } = useSessionContext()
+  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
   const { location } = useNavigationContext()
   const clearBlockDict = usePageContext(c => c.clearBlockDict)
   const setPatches = usePageContext(c => c.setPatches)
@@ -53,11 +53,11 @@ const PageBody = ({
 
   // state from provider is out of date
   const onChange = value => {
-    if (editorStateRef.current?.pagePath) {
-      requestAnimationFrame(() =>
+    requestAnimationFrame(() => {
+      if (editorStateRef.current?.pagePath) {
         onEditorPathChange(editorStateRef.current.pagePath)
-      )
-    }
+      }
+    })
 
     pageState.current = value.nextState
 
@@ -72,6 +72,12 @@ const PageBody = ({
 
     return (
       <CatalogProvider>
+        {isReadOnly && (
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>{page.name}</title>
+          </Helmet>
+        )}
         <HistoryProvider ref={editorStateRef}>
           <EditorProvider
             key={location.pathname}

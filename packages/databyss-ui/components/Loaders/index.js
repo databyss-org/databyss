@@ -1,12 +1,14 @@
 import React from 'react'
 import { pickBy } from 'lodash'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+
+import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
+
 import { isResourceReady } from './_helpers'
 
 export const PageLoader = ({ children, pageId }) => {
@@ -84,19 +86,19 @@ export const CatalogSearchLoader = ({ query, type, children }) => {
 export const AllTopicsLoader = ({ children, filtered, ...others }) => {
   const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
   let _resource = getTopicHeaders()
+
   if (filtered && isResourceReady(_resource)) {
     _resource = pickBy(_resource, topic => topic.isInPages?.length)
   }
 
   return <MakeLoader resources={_resource} children={children} {...others} />
 }
-
 AllTopicsLoader.defaultProps = {
   filtered: true,
 }
 
 export const AccountLoader = ({ children }) => {
-  const { getUserAccount } = useSessionContext()
+  const getUserAccount = useSessionContext(c => c && c.getUserAccount)
   return <MakeLoader resources={getUserAccount()} children={children} />
 }
 
@@ -122,7 +124,9 @@ AuthorsLoader.defaultProps = {
 
 export const SourceCitationsLoader = ({ children, filtered, ...others }) => {
   const getSourceCitations = useSourceContext(c => c.getSourceCitations)
+
   let _resource = getSourceCitations()
+
   if (filtered && isResourceReady(_resource)) {
     _resource = pickBy(_resource, citation => citation.isInPages?.length)
   }

@@ -1,28 +1,34 @@
 import produce, { Draft } from 'immer'
+
 import {
-  CACHE_SOURCE,
-  REMOVE_SOURCE,
-  FETCH_AUTHOR_HEADERS,
-  CACHE_AUTHOR_HEADERS,
-  FETCH_SOURCE_CITATIONS,
-  CACHE_SOURCE_CITATIONS,
-  REMOVE_PAGE_FROM_HEADERS,
-  ADD_PAGE_TO_HEADER
-} from './constants'
-import {
-  FSA,
-  SourceState,
-  SourceCitationHeader,
-  CacheDict,
   Author,
+  CacheDict,
+  FSA,
+  SourceCitationHeader,
+  SourceState,
 } from '../interfaces'
+import { defaultCitationStyle } from '../citations/constants'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import { resourceIsReady, getAuthorsFromSources } from '../lib/util'
+
+import {
+  ADD_PAGE_TO_HEADER,
+  CACHE_AUTHOR_HEADERS,
+  CACHE_SOURCE_CITATIONS,
+  CACHE_SOURCE,
+  FETCH_SOURCE,
+  FETCH_AUTHOR_HEADERS,
+  FETCH_SOURCE_CITATIONS,
+  REMOVE_PAGE_FROM_HEADERS,
+  REMOVE_SOURCE,
+  SET_PREFERRED_CITATION_STYLE,
+} from './constants'
 
 export const initialState: SourceState = {
   cache: {},
   authorsHeaderCache: null,
   citationHeaderCache: null,
+  preferredCitationStyle: defaultCitationStyle.id,
 }
 
 export default produce((draft: Draft<SourceState>, action: FSA) => {
@@ -35,8 +41,17 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
   }
 
   switch (action.type) {
+    case FETCH_SOURCE: {
+      draft.cache[action.payload.id] = new ResourcePending()
+      break
+    }
     case CACHE_SOURCE: {
-      const _source = { ...action.payload.source, type: 'SOURCE' }
+      let _source
+      if(action.payload.source instanceof Error){
+        _source = action.payload.source
+      }else {
+       _source = { ...action.payload.source, type: 'SOURCE' }
+      }
       draft.cache[action.payload.id] = _source
       if (resourceIsReady(_source)) {
         _citationHeaderCache[_source._id] = _source
@@ -48,7 +63,7 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
           )
         }
       }
-
+    
       break
     }
 
@@ -56,10 +71,12 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
       delete draft.cache[action.payload.id]
       break
     }
+
     case FETCH_AUTHOR_HEADERS: {
       draft.authorsHeaderCache = new ResourcePending()
       break
     }
+
     case CACHE_AUTHOR_HEADERS: {
       draft.authorsHeaderCache = action.payload.results.reduce(
         (dict: CacheDict<Author>, author: Author) => {
@@ -73,10 +90,12 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
       )
       break
     }
+
     case FETCH_SOURCE_CITATIONS: {
       draft.citationHeaderCache = new ResourcePending()
       break
     }
+
     case REMOVE_PAGE_FROM_HEADERS: {
       const _inPages = _citationHeaderCache[action.payload.id]?.isInPages
       if(_inPages){
@@ -91,6 +110,7 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
     
       break
     }
+
     case ADD_PAGE_TO_HEADER: {
       if(_citationHeaderCache){
         const _inPages = _citationHeaderCache[action.payload.id]?.isInPages
@@ -106,11 +126,22 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
       }
       break
     }
+
     case CACHE_SOURCE_CITATIONS: {
       action.payload.results.forEach((source: SourceCitationHeader) => {
         _citationHeaderCache[source._id] = source
       })
       draft.citationHeaderCache = _citationHeaderCache
+      break
+    }
+
+    case SET_PREFERRED_CITATION_STYLE: {
+      if (action.payload.styleId !== draft.preferredCitationStyle) {
+        // save style because different than previous 
+        draft.preferredCitationStyle = action.payload.styleId
+        // clear cache to ensure render is done in provider
+        draft.citationHeaderCache = null
+      }
       break
     }
   }

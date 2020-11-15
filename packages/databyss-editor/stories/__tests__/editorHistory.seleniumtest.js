@@ -20,6 +20,7 @@ import {
   upKey,
   rightKey,
   downShiftKey,
+  isSaved,
 } from './_helpers.selenium'
 
 let driver
@@ -82,13 +83,10 @@ describe('editor history', () => {
   })
 
   afterEach(async () => {
-    const clearButton = await getElementById(driver, 'clear-state')
-    await clearButton.click()
-    await sleep(500)
-
-    await driver.navigate().refresh()
-
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
   it('should undo a multiblock entry with an atomic', async () => {
@@ -151,13 +149,13 @@ describe('editor history', () => {
   })
 
   it('should redo a multiblock entry with an atomic', async () => {
-    await sleep(300)
+    await sleep(500)
     await sendKeys(actions, 'this entry should stay')
     await enterKey(actions)
     await enterKey(actions)
-    await sleep(500)
+    await isSaved(driver)
     await driver.navigate().refresh()
-    await sleep(3000)
+    await getEditor(driver)
     await sendKeys(actions, 'this should eventually be undone')
     await enterKey(actions)
     await enterKey(actions)
@@ -179,8 +177,7 @@ describe('editor history', () => {
     await undo(actions)
     await undo(actions)
     await undo(actions)
-
-    await sleep(3000)
+    await isSaved(driver)
 
     // checks before redo
     slateDocument = await getElementById(driver, 'slateDocument')
@@ -223,11 +220,10 @@ describe('editor history', () => {
     await redo(actions)
     await redo(actions)
     await redo(actions)
-
-    await sleep(3000)
+    await isSaved(driver)
 
     await driver.navigate().refresh()
-    await sleep(3000)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -297,7 +293,7 @@ describe('editor history', () => {
     await undo(actions)
     await sleep(2000)
     await undo(actions)
-    await sleep(3000)
+    await isSaved(driver)
 
     // checks before redo
     slateDocument = await getElementById(driver, 'slateDocument')
@@ -330,7 +326,7 @@ describe('editor history', () => {
     await sleep(3000)
 
     await driver.navigate().refresh()
-    await sleep(3000)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 

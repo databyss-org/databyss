@@ -1,3 +1,4 @@
+import { SelectOption } from './CatalogState'
 import { Text } from './Text'
 
 export enum BlockType {
@@ -7,6 +8,12 @@ export enum BlockType {
   EndSource = 'END_SOURCE',
   EndTopic = 'END_TOPIC',
 }
+
+// interface InlineAtomic {
+//   word: string
+//   offset: number
+// }
+
 export interface Block {
   _id: string
   type: BlockType
@@ -14,6 +21,8 @@ export interface Block {
   __showCitationMenu?: boolean
   __showTopicMenu?: boolean
   __showNewBlockMenu?: boolean
+  __showInlineCitationMenu?: boolean
+  __showInlineTopicMenu?: boolean
   __isActive?: boolean
 }
 
@@ -29,10 +38,27 @@ export interface Citations {
 
 export interface SourceDetail {
   authors: Author[]
+  publisher?: string
+  editors?: Author[]
+  translators?: Author[]
   citations?: Citations[]
-  doi?: string
-  issn?: string
-  year?: number
+  title?: Text
+
+  // publication details (common)
+  publicationType?: SelectOption | null | undefined
+  publisherName?: Text
+  publisherPlace?: Text
+  year?: Text
+  month?: SelectOption | null | undefined
+  volume?: Text
+  issue?: Text
+
+  // catalog identifiers (book)
+  isbn?: Text
+
+  // catalog identifiers (articles)
+  doi?: Text
+  issn?: Text
 }
 
 export interface SourceCitationHeader extends Source {

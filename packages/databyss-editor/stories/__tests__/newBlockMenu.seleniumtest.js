@@ -28,10 +28,13 @@ describe('new block menu actions', () => {
   })
 
   afterEach(async () => {
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
-  it('should toggle a new source', async () => {
+  it('should toggle a new atomics', async () => {
     await sleep(300)
     await driver
       .findElement(By.tagName('[data-test-block-menu="open"]'))
@@ -40,6 +43,19 @@ describe('new block menu actions', () => {
       .findElement(By.tagName('[data-test-block-menu="SOURCE"]'))
       .click()
     await actions.sendKeys('this should be a new source')
+    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys('sample text')
+    await actions.sendKeys(Key.ENTER)
+    await actions.sendKeys(Key.ENTER)
+    await actions.perform()
+    await actions.clear()
+    await driver
+      .findElement(By.tagName('[data-test-block-menu="open"]'))
+      .click()
+    await driver
+      .findElement(By.tagName('[data-test-block-menu="TOPIC"]'))
+      .click()
+    await actions.sendKeys('this should be a new topic')
     await actions.sendKeys(Key.ENTER)
     await actions.perform()
     await sleep(300)
@@ -52,73 +68,13 @@ describe('new block menu actions', () => {
           <text>this should be a new source</text>
         </block>
         <block type="ENTRY">
-          <cursor />
+          <text>sample text</text>
         </block>
-      </editor>
-    )
-
-    assert.deepEqual(
-      sanitizeEditorChildren(actual.children),
-      sanitizeEditorChildren(expected.children)
-    )
-
-    assert.deepEqual(actual.selection, expected.selection)
-  })
-
-  it('should toggle a new topic', async () => {
-    await sleep(300)
-    await driver
-      .findElement(By.tagName('[data-test-block-menu="open"]'))
-      .click()
-    await driver
-      .findElement(By.tagName('[data-test-block-menu="TOPIC"]'))
-      .click()
-    await actions.sendKeys('this should be a new topic')
-    await actions.sendKeys(Key.ENTER)
-    await actions.perform()
-    await sleep(500)
-
-    const actual = JSON.parse(await slateDocument.getText())
-
-    const expected = (
-      <editor>
         <block type="TOPIC">
           <text>this should be a new topic</text>
         </block>
         <block type="ENTRY">
           <cursor />
-        </block>
-      </editor>
-    )
-
-    assert.deepEqual(
-      sanitizeEditorChildren(actual.children),
-      sanitizeEditorChildren(expected.children)
-    )
-
-    assert.deepEqual(actual.selection, expected.selection)
-  })
-
-  it('should tag a location block', async () => {
-    await sleep(300)
-    await driver
-      .findElement(By.tagName('[data-test-block-menu="open"]'))
-      .click()
-    await driver
-      .findElement(By.tagName('[data-test-block-menu="LOCATION"]'))
-      .click()
-    await actions.sendKeys('this should be a location')
-    await actions.perform()
-    await sleep(3000)
-
-    const actual = JSON.parse(await slateDocument.getText())
-
-    const expected = (
-      <editor>
-        <block type="ENTRY">
-          <text location>
-            this should be a location<cursor />
-          </text>
         </block>
       </editor>
     )

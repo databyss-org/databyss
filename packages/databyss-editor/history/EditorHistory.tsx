@@ -79,6 +79,7 @@ const HistoryProvider: React.FunctionComponent<PropsType> = forwardRef(
       } else {
         // if a history event, push to redo stack
         const _filteredPatches = filterInversePatches(inversePatches)
+
         redoStack.current.push(_filteredPatches)
       }
 

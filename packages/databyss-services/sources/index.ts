@@ -1,3 +1,4 @@
+import { defaultCitationStyle } from '../citations/constants'
 import { httpGet, httpPost, httpDelete } from '../lib/requestApi'
 import { Source, Author, SourceCitationHeader } from '../interfaces'
 
@@ -10,8 +11,12 @@ export const setSource = (data: Source) => httpPost('/sources', { data })
 
 export const getSources = (): Promise<Source[]> => httpGet('/sources')
 
-export const getSourceCitations = (): Promise<SourceCitationHeader[]> =>
-  httpGet('/sources/citations')
+export const getSourceCitations = (
+  citationStyleId?: string
+): Promise<SourceCitationHeader[]> => {
+  const styleId = citationStyleId || defaultCitationStyle.id
+  return httpGet(`/sources/citations/${styleId}`)
+}
 
 export const deleteSource = (_id: string) => httpDelete(`/sources/${_id}`)
 

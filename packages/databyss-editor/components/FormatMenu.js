@@ -11,6 +11,8 @@ import {
   toggleMark,
   slateSelectionToStateSelection,
 } from './../lib/slateUtils'
+import { getInlineOrAtomicsFromStateSelection } from '../state/util'
+import { useEditorContext } from '../state/EditorProvider'
 
 const formatActions = () => [
   {
@@ -33,9 +35,12 @@ const formatActions = () => [
   },
 ]
 
-const formatActionButtons = () =>
+const formatActionButtons = () => {
+  // FIXME: this should be replaced with a valid condition, or be removed
+  const PLACEHOLDER = true
+
   // placeholder for mobile actions
-  true
+  return PLACEHOLDER
     ? formatActions(true).reduce((acc, a, i) => {
         if (a.type === 'DIVIDER') {
           return acc.concat(
@@ -59,6 +64,7 @@ const formatActionButtons = () =>
         )
       }, [])
     : []
+}
 
 const MarkButton = ({ type, label, variant, ...others }) => {
   const editor = useEditor()
@@ -110,6 +116,7 @@ const isBackwards = stateSelection => {
 }
 
 const FormatMenu = () => {
+  const { state } = useEditorContext()
   const ref = useRef()
   const editor = useSlate()
   const [menuActive, setMenuActive] = useState(false)
@@ -161,11 +168,17 @@ const FormatMenu = () => {
     () => {
       const domSelection = window.getSelection()
 
+      /*
+      check if selection contains inline atomics or inline sources
+      */
+      const _atomics = getInlineOrAtomicsFromStateSelection(state)
+
       const dontShowMenu =
         !selection ||
         !ReactEditor.isFocused(editor) ||
         Range.isCollapsed(selection) ||
-        domSelection.isCollapsed === true
+        domSelection.isCollapsed === true ||
+        !!_atomics.length
 
       if (dontShowMenu) {
         setMenuActive(false)
@@ -182,7 +195,9 @@ const FormatMenu = () => {
   )
 
   const openFormatMenu = () => {
-    if (Range.isCollapsed(selection)) {
+    const _atomics = getInlineOrAtomicsFromStateSelection(state)
+
+    if (Range.isCollapsed(selection) || _atomics.length) {
       return
     }
     const domSelection = window.getSelection()

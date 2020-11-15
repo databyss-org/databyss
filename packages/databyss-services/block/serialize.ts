@@ -6,6 +6,7 @@ const tags: { [mark: string]: string[] } = {
   italic: ['i', 'i'],
   highlight: [`span style="background-color: ${colors.orange[3]}"`, 'span'],
   location: [`span style="color: ${colors.gray[4]}"`, 'span'],
+  inlineTopic: [`span style="color: ${colors.red[1]}"`, 'span'],
 }
 
 /**
@@ -14,8 +15,9 @@ const tags: { [mark: string]: string[] } = {
  */
 export function textToHtml(text: Text): string {
   let _html = text.textValue
+
   if (!text.ranges.length) {
-    return _html
+    return _html.replaceAll('\n', '<br />')
   }
 
   // sort ranges by offset, descending
@@ -34,13 +36,19 @@ export function textToHtml(text: Text): string {
     const _before = _html.slice(0, _range.offset)
     const _segment = _html.slice(_range.offset, _range.offset + _range.length)
     const _after = _html.slice(_range.offset + _range.length)
+
     let _openTags = ''
     let _closeTags = ''
     _range.marks.forEach(_mark => {
-      _openTags += `<${tags[_mark][0]}>`
-      _closeTags = `</${tags[_mark][1]}>${_closeTags}`
+      // mark can also be a tuple, in that case, get first value as the mark
+      let __mark = _mark
+      if (Array.isArray(_mark)) {
+        __mark = _mark[0]
+      }
+      _openTags += `<${tags[__mark][0]}>`
+      _closeTags = `</${tags[__mark][1]}>${_closeTags}`
     })
     _html = `${_before}${_openTags}${_segment}${_closeTags}${_after}`
   })
-  return _html.replace('\n', '<br />')
+  return _html.replaceAll('\n', '<br />')
 }

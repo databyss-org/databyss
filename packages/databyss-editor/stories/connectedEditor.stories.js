@@ -1,13 +1,14 @@
 import React, { useState, useRef, useCallback } from 'react'
 import { throttle } from 'lodash'
 import { storiesOf } from '@storybook/react'
-import { View, Text, Button } from '@databyss-org/ui/primitives'
+import { View, Text } from '@databyss-org/ui/primitives'
 import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
 import ModalManager from '@databyss-org/ui/modules/Modals/ModalManager'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
+import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
 import SessionProvider, {
   useSessionContext,
 } from '@databyss-org/services/session/SessionProvider'
@@ -43,6 +44,7 @@ const Box = ({ children, ...others }) => (
 
 const PageWithAutosave = ({ page }) => {
   const { setPatches } = usePageContext()
+  const hasPendingPatches = usePageContext(c => c && c.hasPendingPatches)
   const [pageState, setPageState] = useState(null)
 
   const operationsQueue = useRef([])
@@ -84,6 +86,11 @@ const PageWithAutosave = ({ page }) => {
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{pageState}</pre>
       </Box>
+      {!hasPendingPatches ? (
+        <Text id="complete" variant="uiText">
+          changes saved
+        </Text>
+      ) : null}
     </View>
   )
 }
@@ -97,15 +104,6 @@ const EditorWithProvider = () => {
 
   return (
     <View>
-      <Button
-        id="clear-state"
-        mb="small"
-        onClick={() => {
-          setPage(_defaultPage)
-        }}
-      >
-        <Text>clear state</Text>
-      </Button>
       <PageLoader pageId={account.defaultPage}>
         {page => {
           if (page.name !== 'test document') {
@@ -126,8 +124,10 @@ const EditorWithModals = () => (
       <PageProvider initialState={pageInitialState}>
         <SourceProvider>
           <TopicProvider>
-            <EditorWithProvider />
-            <ModalManager />
+            <CatalogProvider>
+              <EditorWithProvider />
+              <ModalManager />
+            </CatalogProvider>
           </TopicProvider>
         </SourceProvider>
       </PageProvider>

@@ -11,6 +11,7 @@ import {
 } from '../interfaces'
 
 import * as actions from './actions'
+import { getCatalogSearchType } from './util';
 
 interface PropsType {
   children: JSX.Element
@@ -55,8 +56,8 @@ const CatalogProvider: React.FunctionComponent<PropsType> = ({
       GroupedCatalogResults
     > => {
       if (!query) return null
-      // allow only alphanumeric characters
-      const _query = query.replace(/[^a-z0-9 ]/gi, '')
+      // allow only alphanumeric characters if its not ISBN OR DOI
+      let _query = !getCatalogSearchType(query)?query.replace(/[^a-z0-9 ]/gi, ''): query
       if (state.searchCache[type]?.[_query]) {
         return state.searchCache[type][_query]
       }

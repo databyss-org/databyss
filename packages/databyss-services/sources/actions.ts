@@ -1,3 +1,5 @@
+import { Source, Author, SourceCitationHeader } from '../interfaces'
+
 import * as services from '.'
 import {
   FETCH_SOURCE,
@@ -11,13 +13,14 @@ import {
   REMOVE_PAGE_FROM_HEADERS,
   ADD_PAGE_TO_HEADER,
 } from './constants'
-import { Source, Author, SourceCitationHeader } from '../interfaces'
+import { buildSourceDetail } from './lib'
+import { ResourceNotFoundError } from '../interfaces/Errors'
 
 export function fetchSource(id: string) {
   return async (dispatch: Function) => {
     dispatch({
       type: FETCH_SOURCE,
-      payload: {},
+      payload: { id },
     })
 
     try {
@@ -30,17 +33,22 @@ export function fetchSource(id: string) {
       dispatch({
         type: CACHE_SOURCE,
         payload: {
-          source: err,
+          source: new ResourceNotFoundError(),
           id,
         },
       })
-      throw err
+      // throw err
     }
   }
 }
 
 export function saveSource(sourceFields: Source) {
   return async (dispatch: Function) => {
+    // ensure to add necessary detail default properties
+    if (!('detail' in sourceFields)) {
+      sourceFields.detail = buildSourceDetail()
+    }
+
     dispatch({
       type: SAVE_SOURCE,
       payload: { source: sourceFields, id: sourceFields._id },
@@ -108,12 +116,15 @@ export function addPageToHeaders(id: string, pageId: string) {
 }
 
 export function fetchSourceCitations() {
-  return async (dispatch: Function) => {
+  return async (dispatch: Function, getState: Function) => {
     dispatch({
       type: FETCH_SOURCE_CITATIONS,
     })
     try {
-      const sourceCitations: SourceCitationHeader[] = await services.getSourceCitations()
+      const { preferredCitationStyle } = getState()
+      const sourceCitations: SourceCitationHeader[] = await services.getSourceCitations(
+        preferredCitationStyle
+      )
       dispatch({
         type: CACHE_SOURCE_CITATIONS,
         payload: { results: sourceCitations },

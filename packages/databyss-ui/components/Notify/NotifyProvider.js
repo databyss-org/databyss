@@ -175,18 +175,16 @@ class NotifyProvider extends React.Component {
 
   checkOnlineStatus() {
     if (!this.state.isOnline) {
-      setTimeout(() => {
-        ping()
-          .then(() => {
-            this.setState({
-              isOnline: true,
-              dialogVisible: false,
-            })
+      ping(CHECK_ONLINE_INTERVAL)
+        .then(() => {
+          this.setState({
+            isOnline: true,
+            dialogVisible: false,
           })
-          .catch(() => {
-            this.checkOnlineStatus()
-          })
-      }, CHECK_ONLINE_INTERVAL)
+        })
+        .catch(() => {
+          this.checkOnlineStatus()
+        })
     }
   }
 

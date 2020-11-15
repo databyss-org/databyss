@@ -24,11 +24,19 @@ import {
   REDO,
   REMOVE_AT_SELECTION,
   CACHE_ENTITY_SUGGESTIONS,
+  DEQUEUE_REMOVED_ENTITY,
 } from './constants'
-import { Text, Selection, EditorState, Block } from '../interfaces'
+import {
+  Text,
+  Selection,
+  EditorState,
+  Block,
+  BlockRelation,
+} from '../interfaces'
 import initialState, { addMetaDataToBlocks } from './initialState'
 import reducer from './reducer'
 import { getPagePath, indexPage, PagePath } from '../lib/util'
+
 import {
   cutOrCopyEventHandler,
   pasteEventHandler,
@@ -47,7 +55,7 @@ export type Transform = {
   previous?: Text
   // number of blocks added or removed
   blockDelta?: number
-  isRefEntity?: boolean
+  isRefEntity?: string
 }
 
 export type TransformArray = {
@@ -63,6 +71,7 @@ type ContextType = {
   setSelection: (selection: Selection) => void
   remove: (index: number) => void
   removeAtSelection: () => void
+  removeAtomicFromQueue: (id: string) => void
   removeEntityFromQueue: (id: number) => void
   clear: (index: number) => void
   copy: (event: ClipboardEvent) => void
@@ -71,6 +80,7 @@ type ContextType = {
   insert: (blocks: Block[]) => void
   replace: (blocks: Block[]) => void
   cacheEntitySuggestions: (blocks: Block[]) => void
+  setInlineBlockRelations: () => void
 }
 
 export type OnChangeArgs = {
@@ -122,7 +132,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
   ({ children, initialState, onChange }, ref) => {
     const setBlockRelations = useEntryContext(c => c && c.setBlockRelations)
 
-    //  console.log(initialState)
     // get the current page header
 
     const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
@@ -130,17 +139,27 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     /*
     intercepts onChange props and runs the block relations algorithm, dispatches block relations
     */
+    const blockRelationsBuffer = useRef<any[]>([])
+
+    const pendingAtomicSave = useRef<boolean>(false)
 
     const forkOnChange = props => {
       pagePathRef.current = getPagePath(props.nextState)
-
       if (onChange) {
         if (setBlockRelations) {
+          // check if a new atomic has just been removed in the patches
+
+          if(props.patches.filter(p=> p.op === 'replace' && p?.path[0] === 'newEntities' && p?.value.length === 0).length){
+            // if it has been added, set a flag for pending atomic
+            // useEffect inside of ContentEditable will set this flag to false, block relations must be set before the atomic is set in order to update the headers in the atomic cache
+            pendingAtomicSave.current = true
+          }
+
           const _pageId = props.nextState.pageHeader._id
 
           // if last action was whitelisted, set block relations
           if (isSetBlockRelations.findIndex(t => t === props.type) > -1) {
-            setBlockRelations({
+            blockRelationsBuffer.current.push({
               blocksRelationArray: indexPage({
                 pageId: _pageId,
                 blocks: props.nextState.blocks,
@@ -151,23 +170,38 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
               props.clearBlockRelations) &&
             pagePathRef.current
           ) {
-            setBlockRelations({
-              clearPageRelationships: _pageId,
-              blocksRelationArray: indexPage({
-                pageId: _pageId,
-                blocks: props.nextState.blocks,
-              }),
-            })
+            blockRelationsBuffer.current.push(
+              {
+                clearPageRelationships: _pageId,
+                blocksRelationArray: indexPage({
+                  pageId: _pageId,
+                  blocks: props.nextState.blocks,
+                }),
+              }
+            )
           } else if (props.type === SET_CONTENT && pagePathRef.current) {
+            if (pagePathRef?.current.blockRelations.length) {
             /*
             get the page and block relations at current index
             */
-            setBlockRelations({
-              blocksRelationArray: pagePathRef.current.blockRelations,
-            })
+              blockRelationsBuffer.current.push(
+                {
+                  blocksRelationArray: pagePathRef.current.blockRelations,
+                }
+              )
+            }
+
+
+          }
+
+          // the newEntity array is clear and its not pending a save
+          if (!props.nextState.newEntities.length && !pendingAtomicSave.current) {
+            // set block relations and clear buffer
+            blockRelationsBuffer.current.forEach(b=> setBlockRelations(b))
+            // clear block relations buffer
+            blockRelationsBuffer.current = []
           }
         }
-
         onChange(props)
       }
     }
@@ -201,6 +235,39 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       }),
       [pagePathRef.current]
     )
+
+    const setInlineBlockRelations = (callback: Function) => {
+      //  this function is only called after an async `setAtomic` function
+
+
+      // if nothing in the buffer and callback was provided, fire callback
+      if(!blockRelationsBuffer.current.length){
+        // reset the pendingAtomicSave ref
+          pendingAtomicSave.current  = false
+          if(callback){
+            callback()
+          }
+          return
+      }
+
+
+      // set block relations
+      blockRelationsBuffer.current.forEach((b, i) =>  {
+        // only fire the callback on the last block relation of the array
+        const _fireCallback = i === blockRelationsBuffer.current.length - 1
+
+      setBlockRelations(b).then(()=> {
+        if(callback && _fireCallback){
+          // reset the pendingAtomicSave ref
+          pendingAtomicSave.current  = false
+          callback()
+        }
+      })})
+
+      // clear block relations buffer
+      blockRelationsBuffer.current = []
+
+    }
 
     const setSelection = (selection: Selection) =>
       dispatch({
@@ -276,6 +343,13 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
         payload: { id },
       })
 
+      const removeAtomicFromQueue = (id: number): void =>
+      dispatch({
+        type: DEQUEUE_REMOVED_ENTITY,
+        payload: { id },
+      })
+      
+
     const cut = (e: ClipboardEvent) => {
       const _frag = getFragmentAtSelection(state)
       cutOrCopyEventHandler(e, _frag)
@@ -338,6 +412,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
       })
     }
 
+
     return useMemo(
       () => (
         <EditorContext.Provider
@@ -357,6 +432,8 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
             clear,
             removeEntityFromQueue,
             cacheEntitySuggestions,
+            removeAtomicFromQueue,
+            setInlineBlockRelations,
           }}
         >
           {children}

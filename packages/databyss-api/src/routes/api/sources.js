@@ -1,16 +1,23 @@
 import express from 'express'
 import { pick } from 'lodash'
-import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
-import Block from '../../models/Block'
-import auth from '../../middleware/auth'
-import accountMiddleware from '../../middleware/accountMiddleware'
-import wrap from '../../lib/guardedAsync'
+
+import {
+  asyncForEach,
+  getAuthorsFromSources,
+} from '@databyss-org/services/lib/util'
+import { toCitation } from '@databyss-org/services/citations'
+
 import { ResourceNotFoundError } from '../../lib/Errors'
+import accountMiddleware from '../../middleware/accountMiddleware'
+import auth from '../../middleware/auth'
+import Block from '../../models/Block'
+import Page from '../../models/Page'
+import wrap from '../../lib/guardedAsync'
+
 import {
   getPageAccountQueryMixin,
   getBlockAccountQueryMixin,
 } from './helpers/accountQueryMixin'
-import Page from '../../models/Page'
 
 const router = express.Router()
 
@@ -68,6 +75,7 @@ router.get(
         $project: {
           _id: 1,
           text: 1,
+          type: 1,
           account: 1,
           detail: 1,
           // filter out archived pages,
@@ -86,6 +94,7 @@ router.get(
           _id: 1,
           text: 1,
           account: 1,
+          type: 1,
           detail: 1,
           isInPages: '$isInPages._id',
         },
@@ -107,7 +116,7 @@ router.get(
 // @desc     Get all sources citations in an account
 // @access   Private
 router.get(
-  '/citations',
+  '/citations/:citationStyleId',
   [auth, accountMiddleware(['EDITOR', 'ADMIN', 'PUBLIC'])],
   wrap(async (req, res, _next) => {
     const blocks = await Block.aggregate([
@@ -131,6 +140,7 @@ router.get(
           _id: 1,
           text: 1,
           account: 1,
+          type: 1,
           detail: 1,
           // filter out archived pages,
           isInPages: {
@@ -148,6 +158,7 @@ router.get(
           _id: 1,
           text: 1,
           account: 1,
+          type: 1,
           detail: 1,
           isInPages: '$isInPages._id',
         },
@@ -158,16 +169,29 @@ router.get(
       return res.json([])
     }
 
+    // build responses
     const sourcesCitations = blocks.map(block => {
       const sourcesCitationsDict = pick(block, [
         '_id',
         'text',
+        'type',
+        'detail',
         'detail.authors',
         'detail.citations',
         'isInPages',
       ])
+      sourcesCitationsDict.citation = ''
 
       return sourcesCitationsDict
+    })
+
+    // add formatted citation to each entry
+    const { citationStyleId } = req.params
+    await asyncForEach(sourcesCitations, async s => {
+      const { detail } = s
+      if (detail) {
+        s.citation = await toCitation(s.detail, { styleId: citationStyleId })
+      }
     })
 
     return res.json(sourcesCitations)

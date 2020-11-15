@@ -7,7 +7,6 @@ import { sanitizeEditorChildren } from './__helpers'
 import {
   getEditor,
   getElementByTag,
-  sleep,
   getElementById,
   enterKey,
   upKey,
@@ -21,6 +20,9 @@ import {
   downShiftKey,
   sendKeys,
   leftKey,
+  isSaved,
+  escapeKey,
+  sleep,
 } from './_helpers.selenium'
 
 let driver
@@ -81,16 +83,13 @@ describe('editor clipboard', () => {
   })
 
   afterEach(async () => {
-    const clearButton = await getElementById(driver, 'clear-state')
-    await clearButton.click()
-    await driver.navigate().refresh()
-
-    // sleep(500)
+    await sleep(100)
     await driver.quit()
+    driver = null
+    await sleep(100)
   })
 
   it('should copy two entry fragments and paste them within an entry', async () => {
-    await sleep(3000)
     await sendKeys(actions, 'this is a test')
     await enterKey(actions)
     await enterKey(actions)
@@ -122,10 +121,10 @@ describe('editor clipboard', () => {
     await leftKey(actions)
     await leftKey(actions)
     await paste(actions)
-    await sleep(3000)
-    await driver.navigate().refresh()
+    await isSaved(driver)
 
-    await sleep(500)
+    await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -162,7 +161,6 @@ describe('editor clipboard', () => {
   })
 
   it('should copy an atomic block and maintain atomic id integrity', async () => {
-    await sleep(1000)
     await sendKeys(actions, '@this is a source test')
     await enterKey(actions)
     await upKey(actions)
@@ -174,15 +172,20 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await enterKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
 
-    const atomic = await getElementByTag(
-      driver,
-      '[data-test-atomic-edit="open"]'
-    )
+    let atomic = await getElementByTag(driver, '[data-test-atomic-edit="open"]')
 
     await atomic.click()
+
+    atomic = await getElementByTag(driver, '[data-test-atomic-edit="open"]')
+
     await atomic.click()
+
+    const source = await getElementByTag(driver, '[data-test-path="text"]')
+
+    // double click on atomic
+    await source.click()
 
     await sendKeys(actions, ' with appended text')
 
@@ -191,12 +194,10 @@ describe('editor clipboard', () => {
       '[data-test-dismiss-modal="true"]'
     )
     await doneButton.click()
-
-    await sleep(1000)
+    await isSaved(driver)
 
     await driver.navigate().refresh()
-
-    await sleep(3000)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -227,10 +228,9 @@ describe('editor clipboard', () => {
   })
 
   it('should copy atomic and entry fragment and paste it on an empty block', async () => {
-    await sleep(3000)
     await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
-    await actions.sendKeys('with frag')
+    await sendKeys(actions, 'with frag')
     await leftKey(actions)
     await leftKey(actions)
     await leftKey(actions)
@@ -249,11 +249,10 @@ describe('editor clipboard', () => {
     await enterKey(actions)
     await enterKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
 
     await driver.navigate().refresh()
-
-    await sleep(500)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -287,13 +286,13 @@ describe('editor clipboard', () => {
   })
 
   it('should select an atomic fragment and paste the whole atomic block', async () => {
-    await sleep(1000)
     await sendKeys(actions, '@this is a source text')
     await enterKey(actions)
     await sendKeys(actions, 'in between text')
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '@this is another source text')
+    await escapeKey(actions)
     await upKey(actions)
     await selectAll(actions)
     await downShiftKey(actions)
@@ -303,9 +302,10 @@ describe('editor clipboard', () => {
     await downKey(actions)
     await downKey(actions)
     await paste(actions)
-    await sleep(3000)
+    await isSaved(driver)
+
     await driver.navigate().refresh()
-    await sleep(500)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 

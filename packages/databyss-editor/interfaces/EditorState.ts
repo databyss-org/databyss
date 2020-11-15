@@ -4,15 +4,22 @@ import { Block, Selection } from './'
 export interface PayloadOperation {
   index: number
   text: Text
-  isRefEntity?: boolean
+  isRefEntity?: string
+  withRerender?: string
+  checkAtomicDelta?: boolean
   withBakeAtomic?: boolean
+  convertInlineToAtomic?: boolean
 }
 
 export interface BackflowOperation {
   index: number
   block: Block
   insertBefore?: Boolean
+  setSelection?: Boolean
+  reloadAll?: Boolean
 }
+
+export type AtomicType = Partial<Block>
 
 export interface EditorState {
   preventDefault?: boolean
@@ -21,7 +28,8 @@ export interface EditorState {
   showNewBlockMenu?: boolean
   operations: BackflowOperation[]
   selection: Selection
-  newEntities: Block[]
+  newEntities: AtomicType[]
+  removedEntities: AtomicType[]
   blocks: Block[]
   pageHeader?: PageHeader
   /**

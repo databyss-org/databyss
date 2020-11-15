@@ -17,7 +17,16 @@ const IndexSourceContent = ({ relations }) => {
   const pages = getPages()
 
   const onPageClick = pageId => {
-    navigate(`/pages/${pageId}`)
+    // if topic has no blocks associated with it, page click should instead redirect to the topic in the page
+    if (
+      relations.results[pageId].length === 1 &&
+      !relations.results[pageId][0].blockText.textValue.length
+    ) {
+      const _blockId = relations.results[pageId][0].relatedBlock
+      navigate(`/pages/${pageId}#${_blockId}`)
+    } else {
+      navigate(`/pages/${pageId}`)
+    }
   }
 
   const onEntryClick = (pageId, entryId) => {
@@ -59,6 +68,7 @@ const IndexSourceContent = ({ relations }) => {
           ))}
       </SearchResultsContainer>
     ))
+
   return <View px="medium">{_results}</View>
 }
 

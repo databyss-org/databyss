@@ -49,13 +49,19 @@ export function onClearBlockRelationsCache() {
   }
 }
 
-export function onSetBlockRelations(blocksRelation) {
+export function onSetBlockRelations(blocksRelation, callback) {
   return async dispatch => {
     dispatch({
       type: SET_BLOCK_RELATIONS,
       payload: { data: blocksRelation },
     })
-    if (blocksRelation.length > 0) entries.setBlockRelations(blocksRelation)
+    if (blocksRelation.length > 0)
+      entries.setBlockRelations(blocksRelation).then(() => {
+        // if callback is provided, fire callback
+        if (callback) {
+          callback()
+        }
+      })
   }
 }
 
