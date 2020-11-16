@@ -1,4 +1,4 @@
-{
+{ 
   "references": [
     { "path": "./packages/databyss-services" }
   ]
