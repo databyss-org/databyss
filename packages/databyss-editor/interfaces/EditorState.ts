@@ -1,5 +1,5 @@
 import { Text, PageHeader } from '@databyss-org/services/interfaces'
-import { Block, Selection } from './'
+import { Block, Selection } from '.'
 
 export interface PayloadOperation {
   index: number
@@ -26,7 +26,7 @@ export interface EditorState {
   showMenuActions?: boolean
   showFormatMenu?: boolean
   showNewBlockMenu?: boolean
-  operations: BackflowOperation[]
+  operations: BackflowOperation[] & { reloadAll?: boolean }
   selection: Selection
   newEntities: AtomicType[]
   removedEntities: AtomicType[]

@@ -58,7 +58,16 @@
         "displayName": "lint",
         "runner": "jest-runner-eslint",
         "testMatch": [
-          "<rootDir>/packages/**/*.js"
+          "<rootDir>/packages/**/*.js",
+          "<rootDir>/packages/**/*.ts"
+        ]
+      },
+      {
+        "displayName": "tslint",
+        "runner": "jest-runner-eslint",
+        "testMatch": [
+          "<rootDir>/packages/**/*.tsx",
+          "<rootDir>/packages/**/*.ts"
         ]
       },
       {
@@ -177,16 +186,16 @@
     "dotenv-expand": "^5.1.0",
     "download": "^7.1.0",
     "emotion": "^10.0.17",
-    "eslint": "^6.8.0",
-    "eslint-config-airbnb": "^16.1.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-config-react-app": "^4.0.1",
-    "eslint-loader": "2.1.2",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-jsx-a11y": "6.2.1",
-    "eslint-plugin-prettier": "^2.6.0",
-    "eslint-plugin-react": "^7.13.0",
-    "eslint-plugin-react-hooks": "^2.0.1",
+    "eslint": "^7.13.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-config-react-app": "^6.0.0",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-react": "^7.21.5",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "expo-app-auth": "^6.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.1.1",
@@ -201,7 +210,7 @@
     "jest-dev-server": "^4.3.0",
     "jest-pnp-resolver": "^1.0.1",
     "jest-resolve": "26.6.2",
-    "jest-runner-eslint": "^0.7.1",
+    "jest-runner-eslint": "^0.10.0",
     "json-diff": "^0.5.4",
     "jsonwebtoken": "^8.5.1",
     "kill-port": "^1.5.1",
@@ -218,8 +227,8 @@
     "postcss-normalize": "^8.0.0",
     "postcss-preset-env": "^6.6.0",
     "postcss-safe-parser": "^4.0.1",
-    "prettier": "1.13.5",
-    "prettier-eslint": "^8.8.1",
+    "prettier": "^2.1.2",
+    "prettier-eslint": "^11.0.0",
     "promise": "8.0.1",
     "query-string": "^6.13.1",
     "raf": "3.4.0",

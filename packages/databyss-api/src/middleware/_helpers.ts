@@ -1,6 +1,5 @@
-import Account from '../models/Account'
 import mongoose from 'mongoose'
-import { InsufficientPermissionError } from '../lib/Errors'
+import Account from '../models/Account'
 
 export const checkForPublicAccount = async req => {
   const accountId = req.header('x-databyss-as-account')

@@ -14,4 +14,5 @@ export enum RangeType {
   Bold = 'bold',
   Italic = 'italic',
   Location = 'location',
+  InlineAtomicInput = 'inlineAtomicMenu',
 }
