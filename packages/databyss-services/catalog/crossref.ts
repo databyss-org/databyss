@@ -78,7 +78,30 @@ const crossref: CatalogService = {
     return findPublicationMonthOption(rawMonth)
   },
 
-  // publication details (book)
+  // publication details (articles)
+  getJournalTitle: (apiResult: any) => {
+    if (apiResult['container-title-short']) {
+      return apiResult['container-title-short']
+    }
+    if (apiResult['container-title']) {
+      return apiResult['container-title']
+    }
+    return ''
+  },
+  getIssue: (apiResult: any) => {
+    if (apiResult.issue) {
+      return apiResult.issue
+    }
+    return ''
+  },
+  getVolume: (apiResult: any) => {
+    if (apiResult.volume) {
+      return apiResult.volume
+    }
+    return ''
+  },
+
+  // catalog identifiers (book)
   getISBN: (apiResult: any) => {
     if (apiResult.ISBN) {
       if (Array.isArray(apiResult.ISBN)) {
@@ -90,26 +113,11 @@ const crossref: CatalogService = {
     return ''
   },
 
-  // publication details (journal article)
-  getIssue: (apiResult: any) => {
-    if (apiResult.issue) {
-      return apiResult.issue
-    }
-
-    return ''
-  },
-  getVolume: (apiResult: any) => {
-    if (apiResult.volume) {
-      return apiResult.volume
-    }
-
-    return ''
-  },
+  // catalog identifiers (articles)
   getDOI: (apiResult: any) => {
     if (apiResult.DOI) {
       return apiResult.DOI
     }
-
     return ''
   },
   getISSN: (apiResult: any) => {

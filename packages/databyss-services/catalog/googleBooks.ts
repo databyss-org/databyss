@@ -45,10 +45,9 @@ const googleBooks: CatalogService = {
     }
     return pubType
   },
-  getPublisherPlace: (apiResult: any) => {
+  getPublisherPlace: (apiResult: any) =>
     // TODO: confirm they never provide it
-    return ''
-  },
+    '',
   getPublishedYear: (apiResult: any) => {
     return apiResult.volumeInfo.publishedDate?.substring(0, 4)
   },
@@ -56,25 +55,27 @@ const googleBooks: CatalogService = {
     if (isBook(publicationType)) {
       return defaultMonthOption
     }
-
     return findPublicationMonthOption(rawMonth)
   },
-  
-  // publication details (book)
+
+  // publication details (articles)
+  getJournalTitle: (apiResult: any) =>
+    // TODO: confirm they never provide it
+    '',
+  getIssue: (apiResult: any) =>
+    // TODO: confirm they never provide it
+    '',
+  getVolume: (apiResult: any) =>
+    // TODO: confirm they never provide it
+    '',
+
+  // catalog identifiers (book)
   getISBN: (apiResult: any) => {
     // TODO: confirm they never provide it
     return ''
   },
 
-  // publication details (journal article)
-  getIssue: (apiResult: any) => {
-    // TODO: confirm they never provide it
-    return ''
-  },
-  getVolume: (apiResult: any) => {
-    // TODO: confirm they never provide it
-    return ''
-  },
+  // catalog identifiers (articles)
   getDOI: (apiResult: any) => {
     // TODO: confirm they never provide it
     return ''

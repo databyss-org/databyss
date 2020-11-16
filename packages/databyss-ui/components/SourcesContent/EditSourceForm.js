@@ -323,23 +323,16 @@ const EditSourceForm = props => {
         />
       </ValueListItem>
 
-      <LabeledTextInput
-        path="detail.publisherName"
-        id="publisherName"
-        label="Publisher"
-        onBlur={onFieldBlur}
-      />
-
-      <LabeledTextInput
-        path="detail.publisherPlace"
-        id="publisherPlace"
-        label="Place"
-        multiline
-        onBlur={onFieldBlur}
-      />
-
       {isArticle ? (
         <>
+          <LabeledTextInput
+            path="detail.journalTitle"
+            id="journalTitle"
+            label="Journal Title"
+            multiline
+            onBlur={onFieldBlur}
+          />
+
           <LabeledTextInput
             path="detail.volume"
             id="volume"
@@ -357,6 +350,21 @@ const EditSourceForm = props => {
           />
         </>
       ) : null}
+
+      <LabeledTextInput
+        path="detail.publisherName"
+        id="publisherName"
+        label="Publisher"
+        onBlur={onFieldBlur}
+      />
+
+      <LabeledTextInput
+        path="detail.publisherPlace"
+        id="publisherPlace"
+        label="Place"
+        multiline
+        onBlur={onFieldBlur}
+      />
     </>
   )
 

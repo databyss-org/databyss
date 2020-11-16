@@ -175,13 +175,16 @@ function sourceFromResult(options: CatalogParsingParams): Source {
       publisherPlace: makeText(service.getPublisherPlace(result)),
       year: makeText(service.getPublishedYear(result)),
       month: service.getPublishedMonth(result, publicationType),
+
+      // publication details (articles)
+      journalTitle: makeText(service.getJournalTitle(result)),
       volume: makeText(service.getVolume(result)),
       issue: makeText(service.getIssue(result)),
 
-      // publication details (book)
+      // catalog identifiers (book)
       isbn: makeText(service.getISBN(result)),
 
-      // publication details (journal article)
+      // catalog identifiers (articles)
       doi: makeText(service.getDOI(result)),
       issn: makeText(service.getISSN(result)),
     },

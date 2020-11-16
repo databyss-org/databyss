@@ -25,10 +25,13 @@ export const toJsonCsl = source => {
     publicationType,
     publisherName,
     publisherPlace,
+    // publication details (articles)
+    journalTitle,
     volume,
     issue,
-    // catalog identifiers
+    // catalog identifiers (book)
     isbn,
+    // catalog identifiers (articles)
     issn,
     doi,
   } = source
@@ -104,6 +107,12 @@ export const toJsonCsl = source => {
     response['publisher-place'] = publisherPlace.textValue
   }
 
+  // journal title
+  console.log('journalTitle:', journalTitle);
+  if (validateTextValue(journalTitle)) {
+    response['container-title'] = journalTitle.textValue
+  }
+
   // volume
   if (validateTextValue(volume)) {
     response.volume = volume.textValue
@@ -124,6 +133,8 @@ export const toJsonCsl = source => {
   if (validateTextValue(isbn)) {
     response.ISBN = isbn.textValue
   }
+
+  console.log('csl:', response);
 
   return response
 }
