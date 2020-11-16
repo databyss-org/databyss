@@ -36,8 +36,9 @@ const AuthorCitations = ({ query }) => {
   const { navigate } = useNavigationContext()
 
   const params = new URLSearchParams(query)
-  const authorQueryFirstName = params.get('firstName')
-  const authorQueryLastName = params.get('lastName')
+  const authorQueryFirstName = decodeURIComponent(params.get('firstName'))
+
+  const authorQueryLastName = decodeURIComponent(params.get('lastName'))
   const authorFullName = composeAuthorName(
     authorQueryFirstName,
     authorQueryLastName

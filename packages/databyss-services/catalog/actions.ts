@@ -102,9 +102,12 @@ function composeResults({
         service.getSubtitle(_apiResult),
       ].concat(service.getAuthors(_apiResult))
       return _queryTerms.reduce((qacc: Boolean, qcurr: string) => 
+      // normalize accents and strip non alphanumeric from both search and query
         (qacc && _resultFields.reduce(
           (racc: Boolean, rcurr: string) =>
-              racc || (rcurr && rcurr.replace(/[^a-z0-9 ]/gi, '').match(new RegExp(`\\b${qcurr}`, 'i'))),
+            racc || (rcurr && rcurr.normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9 ]/gi, '').match(new RegExp(`\\b${qcurr?.normalize('NFD')
+              .replace(/[\u0300-\u036f]/g, '')}`, 'i'))),
           false)
       ), true)
     })
