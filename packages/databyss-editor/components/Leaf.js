@@ -14,7 +14,7 @@ const Leaf = ({ attributes, children, leaf, readOnly, onInlineClick }) => {
 
   let _children = children
 
-  if (leaf.inlineAtomicMenu) {
+  if (leaf.inlineAtomicInput) {
     _children = (
       <span
         id="inline-atomic"

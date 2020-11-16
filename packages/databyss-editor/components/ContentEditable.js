@@ -381,7 +381,7 @@ const ContentEditable = ({
           const _index = state.selection.anchor.index
           const _stateBlock = state.blocks[_index]
           const _newRanges = _stateBlock.text.ranges.filter(
-            r => !r.marks.includes('inlineAtomicMenu')
+            r => !r.marks.includes('inlineAtomicInput')
           )
 
           // set the block with a re-render
@@ -418,7 +418,10 @@ const ContentEditable = ({
 
           const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
           // if only atomic symbol exists, remove mark
-          if (_currentLeaf.inlineAtomicMenu && _currentLeaf.text.length === 1) {
+          if (
+            _currentLeaf.inlineAtomicInput &&
+            _currentLeaf.text.length === 1
+          ) {
             // remove inline mark
             Transforms.move(editor, {
               unit: 'character',
@@ -445,11 +448,11 @@ const ContentEditable = ({
             event.preventDefault()
             return
           } else if (
-            _currentLeaf.inlineAtomicMenu &&
+            _currentLeaf.inlineAtomicInput &&
             _atBlockEnd &&
             event.key === 'ArrowRight'
           ) {
-            // if caret is at the end of a block, convert current inlineAtomicMenu to an inline block
+            // if caret is at the end of a block, convert current inlineAtomicInput to an inline block
             const _index = state.selection.anchor.index
             const _stateBlock = state.blocks[_index]
             // set the block with a re-render
@@ -627,13 +630,13 @@ const ContentEditable = ({
           Hotkeys.isLocation(event)
         ) {
           /*
-          before toggling a range, make sure that no atomics are selected or we are not in an inlineAtomicMenu range
+          before toggling a range, make sure that no atomics are selected or we are not in an inlineAtomicInput range
           */
           const _currentLeaf = Node.leaf(editor, editor.selection.focus.path)
           if (
             !(
               getInlineOrAtomicsFromStateSelection(state).length ||
-              _currentLeaf.inlineAtomicMenu
+              _currentLeaf.inlineAtomicInput
             )
           ) {
             if (Hotkeys.isBold(event)) {
@@ -695,7 +698,7 @@ const ContentEditable = ({
 
               const _nextCharIsWhitespace =
                 _text.charAt(_offset) === ' ' || _text.charAt(_offset) === '\n'
-              // if next character is not a whitespace, swollow next word into mark `inlineAtomicMenu`
+              // if next character is not a whitespace, swollow next word into mark `inlineAtomicInput`
               if (
                 !_nextCharIsWhitespace &&
                 !isCurrentlyInInlineAtomicField(editor)
@@ -716,7 +719,7 @@ const ContentEditable = ({
 
                 Transforms.insertNodes(editor, {
                   text: `#${_wordToSwollow}`,
-                  inlineAtomicMenu: true,
+                  inlineAtomicInput: true,
                 })
 
                 event.preventDefault()
@@ -729,7 +732,7 @@ const ContentEditable = ({
             if (!isCurrentlyInInlineAtomicField(editor) && !_isClosure) {
               Transforms.insertNodes(editor, {
                 text: event.key,
-                inlineAtomicMenu: true,
+                inlineAtomicInput: true,
               })
               event.preventDefault()
               return
@@ -937,7 +940,7 @@ const ContentEditable = ({
               reverse: true,
             })
           }
-          // check if `inlineAtomicMenu` is active and atomic symbol is going to be deleted, toggle mark and remove symbol
+          // check if `inlineAtomicInput` is active and atomic symbol is going to be deleted, toggle mark and remove symbol
           const _text = Node.string(
             editor.children[editor.selection.focus.path[0]]
           )
@@ -951,7 +954,7 @@ const ContentEditable = ({
             _text.charAt(_offset - 1) === '#'
           ) {
             const _currentLeaf = Node.leaf(editor, editor.selection.anchor.path)
-            if (_currentLeaf.inlineAtomicMenu) {
+            if (_currentLeaf.inlineAtomicInput) {
               // remove entire inline node if only the atomic symbol exists
               if (_currentLeaf.text.length === 1) {
                 Transforms.removeNodes(editor, {

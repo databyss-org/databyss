@@ -139,7 +139,7 @@ const allowedRanges = [
   'bold',
   'italic',
   'location',
-  'inlineAtomicMenu',
+  'inlineAtomicInput',
   'inlineTopic',
 ]
 
@@ -283,7 +283,7 @@ export const stateToHTMLString = frag => {
 
 export const isCurrentlyInInlineAtomicField = editor => {
   if (
-    isMarkActive(editor, 'inlineAtomicMenu') &&
+    isMarkActive(editor, 'inlineAtomicInput') &&
     Range.isCollapsed(editor.selection)
   ) {
     return true

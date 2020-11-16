@@ -117,11 +117,11 @@ const SuggestMenu = ({
             setMenuActive(false)
           }
         } else if (!isAtomicInlineType(_node.type)) {
-          // get current text with markup 'inlineAtomicMenu'
-          // get text with active `inlineAtomicMenu` mark
+          // get current text with markup 'inlineAtomicInput'
+          // get text with active `inlineAtomicInput` mark
           const innerText = getTextOffsetWithRange({
             text: _stateBlock.text,
-            rangeType: 'inlineAtomicMenu',
+            rangeType: 'inlineAtomicInput',
           })
           if (innerText) {
             setQuery(innerText.text.substring(1))

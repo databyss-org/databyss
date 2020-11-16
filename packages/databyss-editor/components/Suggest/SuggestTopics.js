@@ -48,7 +48,7 @@ const SuggestTopics = ({
       // replace inner text with updated topic
       const _markupTextValue = getTextOffsetWithRange({
         text: _stateBlock.text,
-        rangeType: 'inlineAtomicMenu',
+        rangeType: 'inlineAtomicInput',
       })
 
       // get value before offset
@@ -87,8 +87,8 @@ const SuggestTopics = ({
         text: _newText,
       }
 
-      // toggle editor to remove active 'inlineAtomicMenu'
-      Editor.removeMark(editor, 'inlineAtomicMenu')
+      // toggle editor to remove active 'inlineAtomicInput'
+      Editor.removeMark(editor, 'inlineAtomicInput')
 
       // update the selection
       const _sel = cloneDeep(state.selection)

@@ -1,12 +1,12 @@
 import { Block, Range } from '../../interfaces'
 
 /*
-this function assumes there are two ranges 'inlineAtomicMenu` which are adjacent and must be merged
+this function assumes there are two ranges 'inlineAtomicInput` which are adjacent and must be merged
 */
 export default ({ block }: { block: Block }) => {
-  // get ranges for inlineAtomicMenu and sorted by ascending
+  // get ranges for inlineAtomicInput and sorted by ascending
   const _ranges = block.text.ranges
-    .filter(r => r.marks.includes('inlineAtomicMenu'))
+    .filter(r => r.marks.includes('inlineAtomicInput'))
     .sort((a, b) => {
       if (a.offset > b.offset) {
         return 1
@@ -33,7 +33,7 @@ export default ({ block }: { block: Block }) => {
   // remove second value in array
   _ranges.pop()
   const _newRanges = block.text.ranges.filter(
-    r => !r.marks.includes('inlineAtomicMenu')
+    r => !r.marks.includes('inlineAtomicInput')
   )
   // assign merged values
   _newRanges.push(_ranges[0])

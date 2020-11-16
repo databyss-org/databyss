@@ -47,7 +47,7 @@ import {
 } from './util'
 import { EditorState, PayloadOperation } from '../interfaces'
 import { replaceInlineText, getRangesAtPoint, pushAtomicChangeUpstream } from './util';
-import mergeInlineAtomicMenuRange from '../lib/clipboardUtils/mergeInlineAtomicMenuRange'
+import mergeInlineAtomicInputRange from '../lib/clipboardUtils/mergeInlineAtomicInputRange'
 import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
 
 // if block at @index in @draft.blocks starts with an atomic identifier character,
@@ -367,7 +367,7 @@ export default (
           /*
             allow pasting an single atomic block in an inline field
           */
-          const _isAtomicBeingPastedIntoInline = _frag.length === 1 && isAtomicInlineType(_frag[0].type) && !!_rangesAtCurrentSelection.filter(r => r.marks.includes("inlineAtomicMenu")).length
+          const _isAtomicBeingPastedIntoInline = _frag.length === 1 && isAtomicInlineType(_frag[0].type) && !!_rangesAtCurrentSelection.filter(r => r.marks.includes("inlineAtomicInput")).length
 
 
           // if replacing, fragment contains multiple blocks, the cursor block is empty, 
@@ -381,7 +381,7 @@ export default (
           ) {
 
             // check if we are pasting inside of an inline atomic field
-            if (_rangesAtCurrentSelection.filter(r => r.marks.includes("inlineAtomicMenu")).length) {
+            if (_rangesAtCurrentSelection.filter(r => r.marks.includes("inlineAtomicInput")).length) {
               break
             }
 
@@ -427,15 +427,15 @@ export default (
             // check if we are pasting inside of an inline atomic field
             const _ranges = getRangesAtPoint({ blocks: draft.blocks, point: draft.selection.anchor })
    
-            if (_ranges.filter(r => r.marks.includes("inlineAtomicMenu")).length) {
+            if (_ranges.filter(r => r.marks.includes("inlineAtomicInput")).length) {
               /*
-              if pasting within an inlineAtomicMenu field
-              strip all text and carriage returns from text being pasted, add the mark `inlineAtomicMenu` to data being pasted
+              if pasting within an inlineAtomicInput field
+              strip all text and carriage returns from text being pasted, add the mark `inlineAtomicInput` to data being pasted
               */
               const _fragment = _frag[0].text
               _fragment.textValue = _fragment.textValue.replaceAll(/\n|\t/gi, ' ').trim()
 
-              _fragment.ranges = [{ offset: 0, length: _fragment.textValue.length, marks: ["inlineAtomicMenu"] }]
+              _fragment.ranges = [{ offset: 0, length: _fragment.textValue.length, marks: ["inlineAtomicInput"] }]
               // insert pasted text
               insertText({
                 block: draft.blocks[draft.selection.anchor.index],
@@ -443,9 +443,9 @@ export default (
                 offset: draft.selection.anchor.offset,
               })
 
-              // merge 'inlineAtomicMenu Ranges'
+              // merge 'inlineAtomicInput Ranges'
 
-              mergeInlineAtomicMenuRange({block: draft.blocks[draft.selection.anchor.index]})
+              mergeInlineAtomicInputRange({block: draft.blocks[draft.selection.anchor.index]})
        
             } else {
               insertText({
@@ -797,9 +797,9 @@ export default (
             const _activeRangesBefore = getRangesAtPoint({ blocks: state.blocks, point: state.selection.anchor })
             const _activeRangesAfter = getRangesAtPoint({ blocks: state.blocks, point: action.payload.selection.anchor })
 
-            const _activeInlineBefore = _activeRangesBefore.filter(r => r.marks.includes("inlineAtomicMenu"))
-            const _activeInlineAfter = _activeRangesAfter.filter(r => r.marks.includes("inlineAtomicMenu"))
-            // if active selection was 'inlineAtomicMenu and' before and not after, convert inlines to atomic
+            const _activeInlineBefore = _activeRangesBefore.filter(r => r.marks.includes("inlineAtomicInput"))
+            const _activeInlineAfter = _activeRangesAfter.filter(r => r.marks.includes("inlineAtomicInput"))
+            // if active selection was 'inlineAtomicInput and' before and not after, convert inlines to atomic
             if (_activeInlineBefore.length && !_activeInlineAfter.length) {
               const _index = draft.selection.anchor.index
               convertInlineToAtomicBlocks({ block: draft.blocks[_index], index: _index, draft })
@@ -911,12 +911,12 @@ export default (
         ) && !_selectedBlock.text.textValue.match(`\n`) && !_doesBlockHaveInlineAtomicRange
 
 
-        // check if selected block has range type 'inlineAtomicMenu'
+        // check if selected block has range type 'inlineAtomicInput'
         const _hasInlineMenuMark = _selectedBlock.text.ranges.reduce((acc, curr) => {
           if (acc === true) {
             return true
           }
-          if (curr.marks.includes('inlineAtomicMenu')) {
+          if (curr.marks.includes('inlineAtomicInput')) {
             return true
           }
           return false

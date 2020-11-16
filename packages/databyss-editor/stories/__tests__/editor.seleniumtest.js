@@ -223,7 +223,7 @@ describe('editor selenium', () => {
       <editor>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should{' '}
-          <text inlineAtomicMenu>
+          <text inlineAtomicInput>
             #<cursor />
           </text>
         </block>
@@ -266,7 +266,7 @@ describe('editor selenium', () => {
       <editor>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this{' '}
-          <text inlineAtomicMenu>
+          <text inlineAtomicInput>
             #should<cursor />
           </text>
         </block>
@@ -294,7 +294,7 @@ describe('editor selenium', () => {
       <editor>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the mid
-          <text inlineAtomicMenu>
+          <text inlineAtomicInput>
             #dle<cursor />
           </text>
         </block>

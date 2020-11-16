@@ -466,26 +466,26 @@ export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
   draft: EditorState
 }) => {
   /*
-    if flag `convertInlineToAtomic` is set, pull out text within range `inlineAtomicMenu`, look up in entityCache and set the markup with appropriate id and range
+    if flag `convertInlineToAtomic` is set, pull out text within range `inlineAtomicInput`, look up in entityCache and set the markup with appropriate id and range
   */
   let _pushNewEntity = false
 
   // get the markup data, function returns: offset, length, text
   const inlineMarkupData = getTextOffsetWithRange({
     text: block.text,
-    rangeType: 'inlineAtomicMenu',
+    rangeType: 'inlineAtomicInput',
   })
 
-  // if the only text tagged with inlineAtomicMenu is the opener, remove mark and normalize the text
+  // if the only text tagged with inlineAtomicInput is the opener, remove mark and normalize the text
   if (inlineMarkupData?.length === 1) {
     const ranges: Range[] = []
     block.text.ranges.forEach(r => {
-      if (!r.marks.includes("inlineAtomicMenu")) {
+      if (!r.marks.includes("inlineAtomicInput")) {
         ranges.push(r)
       }
     })
 
-    block.text.ranges = block.text.ranges.filter(r => !r.marks.includes("inlineAtomicMenu"))
+    block.text.ranges = block.text.ranges.filter(r => !r.marks.includes("inlineAtomicInput"))
     // force a re-render
     draft.operations.push({
       index,
@@ -602,7 +602,7 @@ export const getInlineOrAtomicsFromStateSelection = (state: EditorState): Block[
     b.text.ranges.filter(
       r =>
         r.marks.filter(
-          m => m === 'inlineAtomicMenu'
+          m => m === 'inlineAtomicInput'
         ).length
     ).length)
 

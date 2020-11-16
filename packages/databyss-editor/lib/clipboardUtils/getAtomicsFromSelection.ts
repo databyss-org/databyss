@@ -3,6 +3,7 @@ import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
 import { isAtomicInlineType } from '../util'
 import { AtomicType } from '../../interfaces/EditorState'
+import { BlockType } from '../../../databyss-services/interfaces/Block'
 
 const getAtomicsFromFrag = (frag: Block[]): AtomicType[] => {
   const atomics: AtomicType[] = []
@@ -14,7 +15,7 @@ const getAtomicsFromFrag = (frag: Block[]): AtomicType[] => {
             .filter(i => Array.isArray(i) && i[0] === 'inlineTopic')
             .forEach(i => {
               if (!atomics.some(a => a._id === i[1])) {
-                const _inline = { type: 'TOPIC', _id: i[1] }
+                const _inline = { type: BlockType.Topic, _id: i[1] }
                 atomics.push(_inline)
               }
             })

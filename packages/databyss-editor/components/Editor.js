@@ -119,7 +119,7 @@ const Editor = ({
       const _searchTerm = searchTerm.split(' ')
 
       _searchTerm.forEach(word => {
-        if (word && Text.isText(node) && !node.inlineAtomicMenu) {
+        if (word && Text.isText(node) && !node.inlineAtomicInput) {
           const { text } = node
           // normalize diactritics
           const parts = text
