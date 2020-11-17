@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
-import reducer, { initialState } from './reducer'
+import reducer, { initialState as _initState } from './reducer'
 import {
   ResourceResponse,
   CatalogState,
@@ -36,10 +36,12 @@ export const CatalogContext = createContext<ContextType | null>(null)
 
 const CatalogProvider: React.FunctionComponent<PropsType> = ({
   children,
-  initialState,
+  initialState = _initState,
 }: PropsType) => {
   const [state, dispatch] = useReducer(reducer, initialState, {
     name: 'CatalogProvider',
+    initializer: null,
+    onChange: null,
   })
 
   const _searchCatalog = useCallback(
@@ -84,9 +86,5 @@ const CatalogProvider: React.FunctionComponent<PropsType> = ({
 
 export const useCatalogContext = (selector = (x: any) => x) =>
   useContextSelector(CatalogContext, selector)
-
-CatalogProvider.defaultProps = {
-  initialState,
-}
 
 export default CatalogProvider
