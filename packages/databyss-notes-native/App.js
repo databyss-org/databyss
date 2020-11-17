@@ -17,7 +17,7 @@ const App = () => (
       <TextInput
         value=""
         placeholderq="placeholder"
-        onChange={e => console.log(e)}
+        onChange={(e) => console.log(e)}
       />
       <Button label="Primary" buttonType="primary" />
       <Button label="Secondary" buttonType="secondary" />

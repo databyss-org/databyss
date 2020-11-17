@@ -18,7 +18,7 @@ export interface TabPanelProps {
 */
 
 // component
-const TabPanel = props => {
+const TabPanel = (props) => {
   const { id, labelledBy, isActive, children } = props
 
   // render methods

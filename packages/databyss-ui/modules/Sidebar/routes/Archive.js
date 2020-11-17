@@ -7,8 +7,8 @@ import {
 } from '@databyss-org/services/entries/util'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 
-export const getPagesData = pages =>
-  Object.values(pages).map(p =>
+export const getPagesData = (pages) =>
+  Object.values(pages).map((p) =>
     createSidebarListItems({
       text: p.name,
       type: 'pages',
@@ -21,7 +21,7 @@ export const getPagesData = pages =>
 const Archive = ({ filterQuery, height }) => (
   <>
     <PagesLoader archived>
-      {pages => {
+      {(pages) => {
         const _menuItems = getPagesData(pages)
         const sortedPages = sortEntriesAtoZ(_menuItems, 'text')
         const filteredEntries = filterEntries(sortedPages, filterQuery)

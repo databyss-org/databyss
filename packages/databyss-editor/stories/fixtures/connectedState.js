@@ -4,7 +4,7 @@ const entryId = ObjectId().toHexString()
 
 const selectionId = ObjectId().toHexString()
 
-export default pageId => ({
+export default (pageId) => ({
   preventDefault: false,
   operations: [],
   selection: {

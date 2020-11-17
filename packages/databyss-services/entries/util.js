@@ -44,12 +44,12 @@ export const createIndexPageEntries = ({
   })
 
 export const sortEntriesAtoZ = (entries, sortBy) =>
-  entries?.sort(
-    (a, b) => (a[sortBy]?.toLowerCase() > b[sortBy]?.toLowerCase() ? 1 : -1)
+  entries?.sort((a, b) =>
+    a[sortBy]?.toLowerCase() > b[sortBy]?.toLowerCase() ? 1 : -1
   )
 
 export const filterEntries = (entries, filterQuery) => {
-  const findEntry = query => entry =>
+  const findEntry = (query) => (entry) =>
     query
       .split(' ')
       .reduce(
@@ -60,24 +60,24 @@ export const filterEntries = (entries, filterQuery) => {
   return entries.filter(findEntry(filterQuery.textValue))
 }
 
-export const optimizeBlockRelations = blockRelationsArray => {
+export const optimizeBlockRelations = (blockRelationsArray) => {
   // get the latest value in the array
 
   const _filteredBlockArray = []
   /*
   reverse the array, get the last match and push it to an array
   */
-  blockRelationsArray.reverse().forEach(b => {
+  blockRelationsArray.reverse().forEach((b) => {
     // if clear block relations push to array
     if (b.clearPageRelationships) {
       _filteredBlockArray.push(b)
     } else {
       // find matching relatedBlock and block
-      b.blocksRelationArray.forEach(a => {
+      b.blocksRelationArray.forEach((a) => {
         if (
-          !_filteredBlockArray.some(i =>
+          !_filteredBlockArray.some((i) =>
             i.blocksRelationArray.some(
-              j => j.relatedBlock === a.relatedBlock && j.block === a.block
+              (j) => j.relatedBlock === a.relatedBlock && j.block === a.block
             )
           )
         ) {

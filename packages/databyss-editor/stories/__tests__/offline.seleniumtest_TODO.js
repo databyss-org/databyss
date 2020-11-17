@@ -28,10 +28,8 @@ const PROXY_URL_EDITOR =
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('offline testing in editor', () => {
-  beforeEach(async done => {
-    const random = Math.random()
-      .toString(36)
-      .substring(7)
+  beforeEach(async (done) => {
+    const random = Math.random().toString(36).substring(7)
     // https://wiki.saucelabs.com/display/DOCS/Custom+Sauce+Labs+WebDriver+Extensions+for+Network+and+Log+Commands
     // Offline scripts only available in chrome
     driver = await startSession({ platformName: OSX, browserName: CHROME })
@@ -125,7 +123,8 @@ describe('offline testing in editor', () => {
         </block>
         <block type="ENTRY">
           <text>
-            third entry block<cursor />
+            third entry block
+            <cursor />
           </text>
         </block>
       </editor>

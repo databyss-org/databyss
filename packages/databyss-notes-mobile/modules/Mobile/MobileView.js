@@ -21,7 +21,7 @@ interface MockPageProps {
 */
 
 // component
-const MobileView = props => {
+const MobileView = (props) => {
   const render = () => (
     <StyledArea>
       <ViewHeader navItems={props.headerItems} />

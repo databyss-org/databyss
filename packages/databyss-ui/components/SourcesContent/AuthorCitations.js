@@ -17,7 +17,7 @@ import AuthorIndexEntries from './AuthorIndexEntries'
 const buildEntries = (sources, firstName, lastName) => {
   const entries = []
   const values = Object.values(sources)
-  values.forEach(value => {
+  values.forEach((value) => {
     const isAuthor = isCurrentAuthor(value.detail?.authors, firstName, lastName)
     if (isAuthor) {
       entries.push(
@@ -43,13 +43,13 @@ const AuthorCitations = ({ query }) => {
     authorQueryLastName
   )
 
-  const onEntryClick = entry => {
+  const onEntryClick = (entry) => {
     navigate(`/sources/${entry.id}`)
   }
 
   return (
     <SourceCitationsLoader>
-      {sources => {
+      {(sources) => {
         const entries = buildEntries(
           sources,
           authorQueryFirstName,

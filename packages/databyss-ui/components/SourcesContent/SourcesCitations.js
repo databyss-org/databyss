@@ -14,7 +14,7 @@ const SourcesCitations = () => {
 
   return (
     <SourceCitationsLoader>
-      {sourceCitations => {
+      {(sourceCitations) => {
         const _header = sourceCitations[query].text.textValue
         return (
           <IndexPageContent title={_header}>
@@ -25,7 +25,7 @@ const SourcesCitations = () => {
             <PagesLoader filtered>
               {() => (
                 <BlockRelationsLoader atomicId={query}>
-                  {relations => <IndexSourceContent relations={relations} />}
+                  {(relations) => <IndexSourceContent relations={relations} />}
                 </BlockRelationsLoader>
               )}
             </PagesLoader>

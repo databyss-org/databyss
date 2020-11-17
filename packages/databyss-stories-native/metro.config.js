@@ -22,7 +22,7 @@ module.exports = (async () => {
       }),
     },
     resolver: {
-      assetExts: assetExts.filter(ext => ext !== 'svg'),
+      assetExts: assetExts.filter((ext) => ext !== 'svg'),
       sourceExts: [...sourceExts, 'svg'],
       blacklistRE: blacklist([
         /packages\/.*\/node_modules\/react-native\/.*/,

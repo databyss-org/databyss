@@ -63,12 +63,12 @@ PageSchema.index({ sharedWith: 1 })
 
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */
-PageSchema.pre('save', function(next) {
+PageSchema.pre('save', function (next) {
   updateTimestamps(this)
   next()
 })
 
-PageSchema.method('addBlock', async function(values = {}) {
+PageSchema.method('addBlock', async function (values = {}) {
   // add the block record
   const block = await Block.create({
     page: this._id,

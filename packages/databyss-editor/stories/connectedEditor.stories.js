@@ -44,7 +44,7 @@ const Box = ({ children, ...others }) => (
 
 const PageWithAutosave = ({ page }) => {
   const { setPatches } = usePageContext()
-  const hasPendingPatches = usePageContext(c => c && c.hasPendingPatches)
+  const hasPendingPatches = usePageContext((c) => c && c.hasPendingPatches)
   const [pageState, setPageState] = useState(null)
 
   const operationsQueue = useRef([])
@@ -64,11 +64,11 @@ const PageWithAutosave = ({ page }) => {
     []
   )
 
-  const onDocumentChange = val => {
+  const onDocumentChange = (val) => {
     setPageState(JSON.stringify(val, null, 2))
   }
 
-  const onChange = value => {
+  const onChange = (value) => {
     const patches = addMetaToPatches(value)
     // push changes to a queue
     operationsQueue.current = operationsQueue.current.concat(patches)
@@ -105,7 +105,7 @@ const EditorWithProvider = () => {
   return (
     <View>
       <PageLoader pageId={account.defaultPage}>
-        {page => {
+        {(page) => {
           if (page.name !== 'test document') {
             setPage(_defaultPage)
             return null

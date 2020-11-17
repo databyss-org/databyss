@@ -1,7 +1,7 @@
 import NavBarItems from '../constants/NavBarItems'
 import SourcesMetadata from '../modules/Sources/SourcesMetadata'
 
-const getItemByUrl = url => NavBarItems().find(i => i.url === url)
+const getItemByUrl = (url) => NavBarItems().find((i) => i.url === url)
 
 /**
  * @param {object} location Location provided by navigation context.
@@ -11,7 +11,7 @@ const getItemByUrl = url => NavBarItems().find(i => i.url === url)
  * </pre>
  * Do not confuse with `window.location`.
  */
-export const parseLocation = location => {
+export const parseLocation = (location) => {
   const pathFragments = location.pathname.split('/')
   pathFragments.splice(0, 1)
 

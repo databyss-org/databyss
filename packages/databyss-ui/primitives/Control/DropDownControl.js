@@ -47,8 +47,8 @@ const selectStyles = () => ({
 const StyleSelect = styled('select', selectStyles)
 
 // utils
-const validateItem = item => {
-  if (!item || (!('id' in item) || !('label' in item))) {
+const validateItem = (item) => {
+  if (!item || !('id' in item) || !('label' in item)) {
     return false
   }
   return true
@@ -90,7 +90,7 @@ const DropDownControl = forwardRef((props, ref) => {
           '<DropDownControl /> expected the `items` prop to be an array.'
         )
       }
-      items.forEach(item => {
+      items.forEach((item) => {
         if (!validateItem(item)) {
           throw new Error(
             '<DropDownControl /> expected the `items` array to contain elements ' +
@@ -105,7 +105,7 @@ const DropDownControl = forwardRef((props, ref) => {
         '<DropDownControl /> expected the `itemGroups` prop to be an array.'
       )
     }
-    itemGroups.forEach(itemGroup => {
+    itemGroups.forEach((itemGroup) => {
       if (!('label' in itemGroup) || !('items' in itemGroup)) {
         throw new Error(
           '<DropDownControl /> expected each item of the `itemGroups` property' +
@@ -119,7 +119,7 @@ const DropDownControl = forwardRef((props, ref) => {
             'prop to be an array.'
         )
       }
-      itemGroup.items.forEach(item => {
+      itemGroup.items.forEach((item) => {
         if (!validateItem(item)) {
           throw new Error(
             '<DropDownControl /> expected each item group array ' +
@@ -138,13 +138,13 @@ const DropDownControl = forwardRef((props, ref) => {
   }
 
   // utils
-  const getItemByValue = value => {
+  const getItemByValue = (value) => {
     let itemPool = []
     if (items) {
       itemPool = items
     } else {
       const allItems = []
-      itemGroups.forEach(itemGroup => {
+      itemGroups.forEach((itemGroup) => {
         allItems.push(itemGroup.items)
       })
       itemPool = flatten(allItems)
@@ -152,7 +152,7 @@ const DropDownControl = forwardRef((props, ref) => {
 
     /* eslint-disable eqeqeq */
     const response = itemPool.find(
-      item =>
+      (item) =>
         // necessary to not use strict equality
         // since type of value may differ from id
         // but comparison is exactly what is needed
@@ -205,7 +205,7 @@ const DropDownControl = forwardRef((props, ref) => {
     }
   }
 
-  const onInternalChange = event => {
+  const onInternalChange = (event) => {
     if (onChange) {
       const { target } = event
       const item = getItemByValue(target.value)
@@ -226,14 +226,14 @@ const DropDownControl = forwardRef((props, ref) => {
     )
   }
 
-  const renderItems = items =>
-    items.map(item => (
+  const renderItems = (items) =>
+    items.map((item) => (
       <option key={item.id} value={item.id}>
         {item.label}
       </option>
     ))
 
-  const renderItemGroups = itemGroups =>
+  const renderItemGroups = (itemGroups) =>
     itemGroups.map((itemGroup, index) => {
       const itemGroupKey = `${index}-${kebabCase(itemGroup.label)}`
       return (

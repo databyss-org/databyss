@@ -70,11 +70,11 @@ const MarkButton = ({ type, label, variant, ...others }) => {
   const editor = useEditor()
   const isActive = isFormatActive(editor, type)
 
-  const toggleFormat = format => {
+  const toggleFormat = (format) => {
     toggleMark(editor, format)
   }
 
-  const actions = type =>
+  const actions = (type) =>
     ({
       bold: () => toggleFormat(type),
       italic: () => toggleFormat(type),
@@ -85,11 +85,11 @@ const MarkButton = ({ type, label, variant, ...others }) => {
     <Button
       data-test-format-menu={type}
       variant="formatButton"
-      onMouseDown={e => {
+      onMouseDown={(e) => {
         e.preventDefault()
         actions(type)()
       }}
-      onKeyPress={e => {
+      onKeyPress={(e) => {
         if (e.key === 'Enter') {
           actions(type)()
         }
@@ -108,7 +108,7 @@ const MarkButton = ({ type, label, variant, ...others }) => {
   )
 }
 
-const isBackwards = stateSelection => {
+const isBackwards = (stateSelection) => {
   if (stateSelection.anchor.index === stateSelection.focus.index) {
     return stateSelection.anchor.offset - stateSelection.focus.offset > 0
   }
@@ -152,47 +152,41 @@ const FormatMenu = () => {
     })
   }
 
-  useEffect(
-    () => {
-      const stateSelection = slateSelectionToStateSelection(editor)
+  useEffect(() => {
+    const stateSelection = slateSelectionToStateSelection(editor)
 
-      if (editor.selection && !Range.isCollapsed(editor.selection)) {
-        const __isBackwards = isBackwards(stateSelection)
-        setIsSelectionBackwards(__isBackwards)
-      }
-    },
-    [domSelection.isCollapsed]
-  )
+    if (editor.selection && !Range.isCollapsed(editor.selection)) {
+      const __isBackwards = isBackwards(stateSelection)
+      setIsSelectionBackwards(__isBackwards)
+    }
+  }, [domSelection.isCollapsed])
 
-  useEffect(
-    () => {
-      const domSelection = window.getSelection()
+  useEffect(() => {
+    const domSelection = window.getSelection()
 
-      /*
+    /*
       check if selection contains inline atomics or inline sources
       */
-      const _atomics = getInlineOrAtomicsFromStateSelection(state)
+    const _atomics = getInlineOrAtomicsFromStateSelection(state)
 
-      const dontShowMenu =
-        !selection ||
-        !ReactEditor.isFocused(editor) ||
-        Range.isCollapsed(selection) ||
-        domSelection.isCollapsed === true ||
-        !!_atomics.length
+    const dontShowMenu =
+      !selection ||
+      !ReactEditor.isFocused(editor) ||
+      Range.isCollapsed(selection) ||
+      domSelection.isCollapsed === true ||
+      !!_atomics.length
 
-      if (dontShowMenu) {
+    if (dontShowMenu) {
+      setMenuActive(false)
+    }
+
+    window.addEventListener(
+      'scroll',
+      throttle(() => {
         setMenuActive(false)
-      }
-
-      window.addEventListener(
-        'scroll',
-        throttle(() => {
-          setMenuActive(false)
-        }, 200)
-      )
-    },
-    [editor.selection]
-  )
+      }, 200)
+    )
+  }, [editor.selection])
 
   const openFormatMenu = () => {
     const _atomics = getInlineOrAtomicsFromStateSelection(state)

@@ -4,11 +4,11 @@ import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { ScrollView, View } from 'react-native'
 import env from '../env.json'
 
-export const ThemeDecorator = storyFn => (
+export const ThemeDecorator = (storyFn) => (
   <ThemeProvider>{storyFn()}</ThemeProvider>
 )
 
-export const ContentDecorator = storyFn => (
+export const ContentDecorator = (storyFn) => (
   <View style={{ flex: 1 }}>
     <ScrollView
       contentContainerStyle={{
@@ -20,7 +20,7 @@ export const ContentDecorator = storyFn => (
   </View>
 )
 
-export const NotifyDecorator = storyFn => (
+export const NotifyDecorator = (storyFn) => (
   <NotifyProvider
     options={{
       apiKey: env.BUGSNAG_KEY,

@@ -19,11 +19,11 @@ const nestedQuery = (query, styles, theme) => {
   }
 }
 
-export const asNumber = numberLike => parseInt(numberLike, 10)
+export const asNumber = (numberLike) => parseInt(numberLike, 10)
 
-export const mobileOs = styles => (isMobileOs() ? styles : {})
+export const mobileOs = (styles) => (isMobileOs() ? styles : {})
 
-export const notMobileOs = styles => (!isMobileOs() ? styles : {})
+export const notMobileOs = (styles) => (!isMobileOs() ? styles : {})
 
 export const mobile = (styles, theme = defaultTheme) =>
   nestedQuery(`@media (max-width: ${theme.mobileWidth})`, styles, theme)
@@ -78,6 +78,6 @@ export const commas = () => ({
   },
 })
 
-export const focused = theme => ({
+export const focused = (theme) => ({
   outline: `${theme.colors.blue[2]} auto 5px`,
 })

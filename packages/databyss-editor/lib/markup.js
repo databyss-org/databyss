@@ -2,7 +2,7 @@ import { createEditor, Transforms } from '@databyss-org/slate'
 import cloneDeep from 'clone-deep'
 import { toggleMark } from './slateUtils'
 
-const moveToStart = editor => {
+const moveToStart = (editor) => {
   const _zero = { path: [0], offset: 0 }
   Transforms.setSelection(editor, { anchor: _zero, focus: _zero })
 }
@@ -27,7 +27,7 @@ export const applyRange = (editor, range) => {
 
   // apply marks array
   if (range.marks) {
-    range.marks.forEach(mark => {
+    range.marks.forEach((mark) => {
       toggleMark(editor, mark)
     })
   }
@@ -114,7 +114,7 @@ export function flattenRanges(ranges) {
   return flattened
 }
 
-export const stateToSlateMarkup = block => {
+export const stateToSlateMarkup = (block) => {
   // flatten all ranges
   const _ranges = flattenRanges(block.text.ranges)
 
@@ -142,7 +142,7 @@ export const stateToSlateMarkup = block => {
     const text = _text.substring(b.offset, b.offset + b.length)
 
     const ranges = {}
-    b.marks.forEach(m => {
+    b.marks.forEach((m) => {
       // check if current mark is a tuple,
       if (Array.isArray(m)) {
         // if so, mark both items: atomic type, and id in slate block
@@ -166,14 +166,14 @@ export const stateToSlateMarkup = block => {
   return _children
 }
 
-export const getRangesFromBlock = value => {
+export const getRangesFromBlock = (value) => {
   const nodes = value[0].children
   let text = ''
   return {
     ranges: nodes
       .map((n, i) => {
         const _nodes = cloneDeep(nodes)
-        const keys = Object.keys(n).filter(k => k !== 'text')
+        const keys = Object.keys(n).filter((k) => k !== 'text')
 
         // compile full text
         text += n.text
@@ -189,13 +189,13 @@ export const getRangesFromBlock = value => {
           range = {
             offset: previousTextLength,
             length: n.text.length,
-            marks: keys.map(k => k),
+            marks: keys.map((k) => k),
           }
         }
 
         return range
       })
-      .filter(x => x.length != null),
+      .filter((x) => x.length != null),
     textValue: text,
   }
 }

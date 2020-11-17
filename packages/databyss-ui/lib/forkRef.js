@@ -5,8 +5,8 @@ export const setRef = (ref, value) => {
     ref.current = value
   }
 }
-export default (...refs) => value => {
-  refs.forEach(ref => {
+export default (...refs) => (value) => {
+  refs.forEach((ref) => {
     if (!ref) return
     setRef(ref, value)
   })

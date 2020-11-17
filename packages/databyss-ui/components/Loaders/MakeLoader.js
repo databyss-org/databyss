@@ -13,26 +13,23 @@ const MakeLoader = ({ resources, children, onUnload, onLoad }) => {
     []
   )
 
-  useEffect(
-    () => {
-      if (
-        onLoad &&
-        resources &&
-        !(resources instanceof ResourcePending) &&
-        !(resources instanceof Error)
-      ) {
-        onLoad(resources)
-      }
-    },
-    [resources]
-  )
+  useEffect(() => {
+    if (
+      onLoad &&
+      resources &&
+      !(resources instanceof ResourcePending) &&
+      !(resources instanceof Error)
+    ) {
+      onLoad(resources)
+    }
+  }, [resources])
 
   const isLoading = Array.isArray(resources)
-    ? resources.some(r => !r || r instanceof ResourcePending)
+    ? resources.some((r) => !r || r instanceof ResourcePending)
     : !resources || resources instanceof ResourcePending
 
   const errors = Array.isArray(resources)
-    ? resources.some(r => r && r instanceof Error)
+    ? resources.some((r) => r && r instanceof Error)
     : resources instanceof Error
 
   if (isLoading) {
@@ -44,7 +41,7 @@ const MakeLoader = ({ resources, children, onUnload, onLoad }) => {
       <ErrorFallback
         error={
           Array.isArray(resources)
-            ? resources.filter(r => r && r instanceof Error)
+            ? resources.filter((r) => r && r instanceof Error)
             : resources
         }
       />

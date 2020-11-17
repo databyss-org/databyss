@@ -37,15 +37,15 @@ const viewStyles = () => ({
 const StyledView = styled(View, viewStyles)
 
 // methods
-const isAcceptableFile = item =>
+const isAcceptableFile = (item) =>
   ACCEPTABLE_KINDS.includes(item.kind) && ACCEPTABLE_TYPES.includes(item.type)
 
 /* eslint-disable no-prototype-builtins */
-const hasEnoughMetadata = data =>
+const hasEnoughMetadata = (data) =>
   data.hasOwnProperty('author') || data.hasOwnProperty('title')
 /* eslint-enable no-prototype-builtins */
 
-const humanReadableFileSize = bytes => {
+const humanReadableFileSize = (bytes) => {
   const units = ['', 'K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y']
 
   const exponent = Math.floor(Math.log(bytes) / Math.log(1000))
@@ -59,7 +59,7 @@ const humanReadableFileSize = bytes => {
   /* eslint-enable no-irregular-whitespace */
 }
 
-const getFileToProcess = event => {
+const getFileToProcess = (event) => {
   const filesToProcess = []
 
   if (event.dataTransfer.items) {
@@ -102,7 +102,7 @@ const getFileToProcess = event => {
 const findMatchesInCrossref = (crossref, metadata) => {
   const { title } = metadata.fromPDF
   const matches = []
-  crossref.message.items.forEach(element => {
+  crossref.message.items.forEach((element) => {
     if (element.title && Array.isArray(element.title)) {
       const elementTitle = element.title[0]
       if (elementTitle === title.src || elementTitle === title.text) {
@@ -116,7 +116,7 @@ const findMatchesInCrossref = (crossref, metadata) => {
 // component
 const PDFDropZoneManager = () => {
   const editorContext = useEditorContext()
-  const setSource = useSourceContext(c => c && c.setSource)
+  const setSource = useSourceContext((c) => c && c.setSource)
 
   const { showModal } = useNavigationContext()
 
@@ -126,7 +126,7 @@ const PDFDropZoneManager = () => {
   const [hasParsed, setParsed] = useState(false)
 
   // utils
-  const buildEntryBlock = data => {
+  const buildEntryBlock = (data) => {
     let response = { _id: new ObjectId().toHexString() }
 
     if (typeof data === 'string') {
@@ -151,7 +151,7 @@ const PDFDropZoneManager = () => {
     const offset = 0
     const charsBeforePageNumber = 3
     const marks = ['location']
-    annotations.forEach(a => {
+    annotations.forEach((a) => {
       const { page, sourceText, contents } = a
       const length = page.toString().length + charsBeforePageNumber
 
@@ -198,14 +198,14 @@ const PDFDropZoneManager = () => {
     }
   }
 
-  const showMetadataModal = async metadata =>
+  const showMetadataModal = async (metadata) =>
     new Promise((resolve, reject) => {
       try {
         showModal({
           component: 'METADATA',
           props: {
             metadata,
-            dismissCallback: response => {
+            dismissCallback: (response) => {
               resolve(response)
             },
           },
@@ -216,7 +216,7 @@ const PDFDropZoneManager = () => {
     })
 
   // content methods
-  const insert = blocks => {
+  const insert = (blocks) => {
     try {
       editorContext.insert(blocks)
     } catch (error) {
@@ -229,19 +229,19 @@ const PDFDropZoneManager = () => {
   }
 
   // drag handlers
-  const onDragOver = event => {
+  const onDragOver = (event) => {
     event.stopPropagation()
     event.preventDefault()
     setDropAreaVisibility(true)
   }
 
-  const onDragLeave = event => {
+  const onDragLeave = (event) => {
     event.stopPropagation()
     event.preventDefault()
     setDropAreaVisibility(false)
   }
 
-  const onFileDrop = async event => {
+  const onFileDrop = async (event) => {
     // prevent default behavior
     // (prevent file from being opened)
     event.stopPropagation()

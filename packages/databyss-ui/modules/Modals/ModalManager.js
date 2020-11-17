@@ -9,7 +9,7 @@ import { useNavigationContext } from '../../components/Navigation/NavigationProv
  * Whenever new modals are created, ensure to add them to the `modalMap`.
  */
 const ModalManager = () => {
-  const modals = useNavigationContext(c => c.modals)
+  const modals = useNavigationContext((c) => c.modals)
   return modals.map((modal, i) => {
     const ModalComponent = modalMap[modal.component]
     return <ModalComponent visible={modal.visible} key={i} {...modal.props} />

@@ -25,8 +25,8 @@ const sourcesOverview = [
   },
 ]
 
-export const getSourceTitlesData = sources =>
-  Object.values(sources).map(value =>
+export const getSourceTitlesData = (sources) =>
+  Object.values(sources).map((value) =>
     createSidebarListItems({
       text: value.text.textValue,
       type: 'sources',
@@ -39,7 +39,7 @@ export const getSourceTitlesData = sources =>
 
 export const SourceTitles = ({ filterQuery, height }) => (
   <SourceCitationsLoader>
-    {sources => {
+    {(sources) => {
       const sourceData = getSourceTitlesData(sources)
       const sortedSources = sortEntriesAtoZ(sourceData, 'text')
       const filteredEntries = filterEntries(sortedSources, filterQuery)
@@ -56,8 +56,8 @@ export const SourceTitles = ({ filterQuery, height }) => (
   </SourceCitationsLoader>
 )
 
-export const getAuthorData = authors =>
-  Object.values(authors).map(value => {
+export const getAuthorData = (authors) =>
+  Object.values(authors).map((value) => {
     const firstName = value.firstName?.textValue
     const lastName = value.lastName?.textValue
     const shortFirstName = `${
@@ -90,7 +90,7 @@ const Authors = ({ filterQuery, hasIndexPage, height }) => (
   <SourceCitationsLoader>
     {() => (
       <AuthorsLoader filtered>
-        {authors => {
+        {(authors) => {
           const authorData = getAuthorData(authors)
           const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
           const filteredEntries = filterEntries(sortedAuthors, filterQuery)

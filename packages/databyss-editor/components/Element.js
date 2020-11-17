@@ -18,7 +18,7 @@ import { SuggestMenu, SuggestSources, SuggestTopics } from './Suggest'
 // browser still takes some time to process the spellcheck
 const SPELLCHECK_DEBOUNCE_TIME = 300
 
-export const getAtomicStyle = type =>
+export const getAtomicStyle = (type) =>
   ({
     SOURCE: 'bodyHeading3Underline',
     TOPIC: 'bodyHeading2',
@@ -26,14 +26,14 @@ export const getAtomicStyle = type =>
     END_SOURCE: 'uiTextSmall',
   }[type])
 
-export const isAtomicClosure = type =>
+export const isAtomicClosure = (type) =>
   ({
     END_TOPIC: true,
     END_SOURCE: true,
   }[type])
 
 const Element = ({ attributes, children, element, readOnly }) => {
-  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const _isPublic = isPublicAccount ? isPublicAccount() : null
 
   const entryContext = useEntryContext()
@@ -49,10 +49,10 @@ const Element = ({ attributes, children, element, readOnly }) => {
   const navigationContext = useNavigationContext()
 
   const registerBlockRefByIndex = usePageContext(
-    c => c && c.registerBlockRefByIndex
+    (c) => c && c.registerBlockRefByIndex
   )
 
-  const onAtomicMouseDown = e => {
+  const onAtomicMouseDown = (e) => {
     e.preventDefault()
     showAtomicModal({ editorContext, navigationContext, editor })
   }
@@ -70,30 +70,27 @@ const Element = ({ attributes, children, element, readOnly }) => {
   const spellCheckRef = useRef(true)
   const spellCheckTimeoutRef = useRef()
 
-  const onSuggestions = blocks => {
+  const onSuggestions = (blocks) => {
     if (!editorContext) {
       return
     }
     editorContext.cacheEntitySuggestions(blocks)
   }
 
-  useEffect(
-    () => {
-      if (spellCheckTimeoutRef.current) {
-        spellCheckRef.current = false
-        setSpellCheck(false)
-        clearTimeout(spellCheckTimeoutRef.current)
-      }
+  useEffect(() => {
+    if (spellCheckTimeoutRef.current) {
+      spellCheckRef.current = false
+      setSpellCheck(false)
+      clearTimeout(spellCheckTimeoutRef.current)
+    }
 
-      spellCheckTimeoutRef.current = setTimeout(() => {
-        if (!spellCheckRef.current) {
-          spellCheckRef.current = true
-          setSpellCheck(true)
-        }
-      }, SPELLCHECK_DEBOUNCE_TIME)
-    },
-    [element]
-  )
+    spellCheckTimeoutRef.current = setTimeout(() => {
+      if (!spellCheckRef.current) {
+        spellCheckRef.current = true
+        setSpellCheck(true)
+      }
+    }, SPELLCHECK_DEBOUNCE_TIME)
+  }, [element])
 
   return useMemo(
     () => {
@@ -110,7 +107,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
 
       return (
         <View
-          ref={ref => {
+          ref={(ref) => {
             if (registerBlockRefByIndex) {
               const _index = ReactEditor.findPath(editor, element)[0]
               registerBlockRefByIndex(_index, ref)
@@ -125,29 +122,27 @@ const Element = ({ attributes, children, element, readOnly }) => {
           widthVariant="content"
           position="relative"
           justifyContent="center"
-          {...isAtomicClosure(previousBlock?.type) && {
+          {...(isAtomicClosure(previousBlock?.type) && {
             pt: '4',
-          }}
-          {...isAtomicClosure(element.type) && {
+          })}
+          {...(isAtomicClosure(element.type) && {
             borderBottomWidth: '2px',
             borderBottomColor: 'gray.5',
             pb: 'small',
             mr: 'largest',
-          }}
+          })}
         >
-          {block.__showNewBlockMenu &&
-            !readOnly &&
-            !_isPublic && (
-              <View
-                position="absolute"
-                contentEditable="false"
-                readonly
-                suppressContentEditableWarning
-                left={blockMenuWidth * -1}
-              >
-                <BlockMenu element={element} />
-              </View>
-            )}
+          {block.__showNewBlockMenu && !readOnly && !_isPublic && (
+            <View
+              position="absolute"
+              contentEditable="false"
+              readonly
+              suppressContentEditableWarning
+              left={blockMenuWidth * -1}
+            >
+              <BlockMenu element={element} />
+            </View>
+          )}
 
           {block.__showCitationMenu && (
             <View contentEditable="false" suppressContentEditableWarning>
@@ -215,16 +210,15 @@ const Element = ({ attributes, children, element, readOnly }) => {
               >
                 {children}
               </Text>
-              {block.__isActive &&
-                !isAtomicClosure(element.type) && (
-                  <View display="inline">
-                    <Button variant="editSource" onPress={onAtomicMouseDown}>
-                      <Icon sizeVariant="tiny" color="background.5">
-                        <PenSVG />
-                      </Icon>
-                    </Button>
-                  </View>
-                )}
+              {block.__isActive && !isAtomicClosure(element.type) && (
+                <View display="inline">
+                  <Button variant="editSource" onPress={onAtomicMouseDown}>
+                    <Icon sizeVariant="tiny" color="background.5">
+                      <PenSVG />
+                    </Icon>
+                  </Button>
+                </View>
+              )}
             </View>
           ) : (
             <Text {...attributes}>{children}</Text>

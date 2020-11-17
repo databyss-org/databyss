@@ -7,7 +7,7 @@ export const jsx = createHyperscript({
 })
 
 // converts JSX string to Slate JSON value
-export const parse = string => {
+export const parse = (string) => {
   const document = new DOMParser().parseFromString(string, 'text/html')
   return jsx('editor', {}, document.body)
 }

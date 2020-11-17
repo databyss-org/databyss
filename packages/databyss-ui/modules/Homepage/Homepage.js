@@ -8,7 +8,7 @@ import homepageContent from '@databyss-org/ui/modules/Homepage/homepageContent.j
 
 const Homepage = () => (
   <View minHeight="100vh" width="100%" backgroundColor="background.1">
-    {homepageContent.sections.map(section => {
+    {homepageContent.sections.map((section) => {
       if (section.component === 'Hero') {
         return (
           <Hero

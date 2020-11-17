@@ -15,7 +15,7 @@ export default async (filePath, options) => {
   }
 
   try {
-    await fs.unlink(filePath, err => Promise.reject(err))
+    await fs.unlink(filePath, (err) => Promise.reject(err))
   } catch (error) {
     return Promise.reject(error)
   }

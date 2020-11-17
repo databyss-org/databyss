@@ -41,7 +41,7 @@ BlockSchema.index({ account: 1 })
 // Because `detail` is a Mixed type, it doesn't get flagged for update correctly and
 // will not propagate to the server on a normal `save` call.
 // If Block has `detail` values in it, use this method instead of `save`.
-BlockSchema.method('saveWithDetail', async function() {
+BlockSchema.method('saveWithDetail', async function () {
   validateBlock(this)
   updateTimestamps(this)
   const Block = mongoose.model('block', BlockSchema)
@@ -56,7 +56,7 @@ BlockSchema.method('saveWithDetail', async function() {
   )
 })
 
-BlockSchema.pre('save', function(next) {
+BlockSchema.pre('save', function (next) {
   validateBlock(this)
   updateTimestamps(this)
   next()

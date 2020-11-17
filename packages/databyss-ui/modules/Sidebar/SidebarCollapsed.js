@@ -26,11 +26,11 @@ const SidebarCollapsed = () => {
     isMenuOpen,
     setMenuOpen,
   } = useNavigationContext()
-  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   const [activeItem, setActiveItem] = useState('pages')
 
-  const onItemClick = item => {
+  const onItemClick = (item) => {
     if (!isMenuOpen) {
       return (
         setMenuOpen(true) && navigateSidebar(`/${item}`) && setActiveItem(item)
@@ -49,7 +49,7 @@ const SidebarCollapsed = () => {
     [navigateSidebar]
   )
 
-  const isIconButtonActive = item => activeItem === item.name && isMenuOpen
+  const isIconButtonActive = (item) => activeItem === item.name && isMenuOpen
 
   const sideBarCollapsedItems = [
     {

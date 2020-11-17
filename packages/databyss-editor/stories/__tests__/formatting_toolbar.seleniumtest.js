@@ -24,7 +24,7 @@ const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=selenium-tests--slate-5'
 // export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('format text in editor', () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     // OSX and safari are necessary
     driver = await startSession()
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
@@ -66,7 +66,8 @@ describe('format text in editor', () => {
         <block type="ENTRY">
           <text italic>
             <anchor />
-            first<focus />
+            first
+            <focus />
           </text>
           <text> word should be italic</text>
         </block>
@@ -105,7 +106,8 @@ describe('format text in editor', () => {
         <block type="ENTRY">
           <text location>
             <anchor />
-            first<focus />
+            first
+            <focus />
           </text>
           <text> word should be location</text>
         </block>

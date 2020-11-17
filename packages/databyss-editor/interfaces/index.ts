@@ -1,4 +1,5 @@
 import { Text } from '@databyss-org/services/interfaces'
+
 export type {
   EditorState,
   PayloadOperation,

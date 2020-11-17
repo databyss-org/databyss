@@ -29,7 +29,7 @@ const SearchContent = () => {
     navigate(`/pages/${pageId}#${blockId}`)
   }
 
-  const onPageClick = pageId => {
+  const onPageClick = (pageId) => {
     navigate(`/pages/${pageId}`)
   }
 
@@ -80,7 +80,7 @@ const SearchContent = () => {
         </Text>
       </View>
       <EntrySearchLoader query={_query}>
-        {results => ComposeResults(results)}
+        {(results) => ComposeResults(results)}
       </EntrySearchLoader>
     </ScrollView>
   )

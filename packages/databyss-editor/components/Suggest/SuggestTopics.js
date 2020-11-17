@@ -21,16 +21,18 @@ const SuggestTopics = ({
   const editor = useEditor()
 
   const { replace, state, setContent } = useEditorContext()
-  const addPageToCacheHeader = useTopicContext(c => c && c.addPageToCacheHeader)
+  const addPageToCacheHeader = useTopicContext(
+    (c) => c && c.addPageToCacheHeader
+  )
 
   const pendingSetContent = useRef(false)
 
   const [suggestions, setSuggestions] = useState(null)
   const [filteredSuggestions, setFilteredSuggestions] = useState([])
 
-  const onTopicSelected = topic => {
+  const onTopicSelected = (topic) => {
     // check document to see if page should be added to topic cache
-    if (state.blocks.filter(b => b._id === topic._id).length < 1) {
+    if (state.blocks.filter((b) => b._id === topic._id).length < 1) {
       if (state.pageHeader?._id) {
         addPageToCacheHeader(topic._id, state.pageHeader._id)
       }
@@ -120,7 +122,7 @@ const SuggestTopics = ({
     dismiss()
   }
 
-  const filterSuggestions = _topics => {
+  const filterSuggestions = (_topics) => {
     if (!_topics.length) {
       return []
     }
@@ -136,7 +138,7 @@ const SuggestTopics = ({
     setFilteredSuggestions(_nextSuggestions)
   }
 
-  const onTopicsLoaded = topicsDict => {
+  const onTopicsLoaded = (topicsDict) => {
     if (!suggestions) {
       const _topics = Object.values(topicsDict)
       setSuggestions(_topics)
@@ -167,7 +169,7 @@ const SuggestTopics = ({
     })
   }
 
-  useEventListener('keydown', e => {
+  useEventListener('keydown', (e) => {
     /*
     bake topic if arrow up or down without suggestion
     */
@@ -189,7 +191,7 @@ const SuggestTopics = ({
 
   return (
     <AllTopicsLoader onLoad={onTopicsLoaded}>
-      {filteredSuggestions.map(s => (
+      {filteredSuggestions.map((s) => (
         // eslint-disable-next-line react/jsx-indent
         <DropdownListItem
           label={s.text.textValue}

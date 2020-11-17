@@ -69,11 +69,11 @@ const PageWithAutosave = ({ page, refreshPage }) => {
     []
   )
 
-  const onDocumentChange = val => {
+  const onDocumentChange = (val) => {
     setPageState(JSON.stringify(val, null, 2))
   }
 
-  const onChange = value => {
+  const onChange = (value) => {
     const patches = addMetaToPatches(value)
     // push changes to a queue
     operationsQueue.current = operationsQueue.current.concat(patches)
@@ -109,7 +109,7 @@ const EditorWithProvider = () => {
   const _refreshPage = useCallback(
     throttle(() => {
       _setPage(null)
-      pageServices.loadPage(account.defaultPage).then(p => _setPage(p))
+      pageServices.loadPage(account.defaultPage).then((p) => _setPage(p))
     }, 5000),
     []
   )
@@ -131,7 +131,7 @@ const EditorWithProvider = () => {
       </View>
       <View display="-webkit-box">
         <PageLoader pageId={account.defaultPage}>
-          {page => {
+          {(page) => {
             if (page.name !== 'test document') {
               setPage(_defaultPage)
               return null

@@ -38,10 +38,8 @@ const PROXY_URL_EDITOR =
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('editor history', () => {
-  beforeEach(async done => {
-    const random = Math.random()
-      .toString(36)
-      .substring(7)
+  beforeEach(async (done) => {
+    const random = Math.random().toString(36).substring(7)
     // OSX and safari are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
@@ -304,7 +302,8 @@ describe('editor history', () => {
       <editor>
         <block type="ENTRY">
           <text>
-            one<cursor />
+            one
+            <cursor />
           </text>
         </block>
         <block type="ENTRY">

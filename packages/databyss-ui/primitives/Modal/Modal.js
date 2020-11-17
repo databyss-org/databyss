@@ -9,13 +9,7 @@ import theme, { borderRadius } from '../../theming/theme'
 
 const StyledReactModal = styled(
   ReactModal,
-  compose(
-    position,
-    color,
-    shadowVariant,
-    widthVariant,
-    zIndex
-  )
+  compose(position, color, shadowVariant, widthVariant, zIndex)
 )
 
 const _css = {
@@ -39,7 +33,7 @@ const Modal = ({
   zIndex,
   ...others
 }) => {
-  const onOverlayRef = useCallback(ref => {
+  const onOverlayRef = useCallback((ref) => {
     if (!ref) {
       return
     }

@@ -10,7 +10,7 @@ storiesOf('Components|Login', module)
       onSuccess={(arg1, arg2) => {
         console.log('Signed in', arg1, arg2)
       }}
-      onFailure={error => {
+      onFailure={(error) => {
         console.log('Error signing in', error)
       }}
       width="50%"

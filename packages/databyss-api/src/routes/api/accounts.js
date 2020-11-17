@@ -82,7 +82,7 @@ router.post(
 
       // const index = users.indexOf(userId)
       const accountUser = users.find(
-        user => user._id.toString() === userId.toString()
+        (user) => user._id.toString() === userId.toString()
       )
 
       const accountFields = {
@@ -93,7 +93,7 @@ router.post(
       if (accountUser) {
         // UPDATE USER PERMISSION
         const index = users.findIndex(
-          user => user._id.toString() === userId.toString()
+          (user) => user._id.toString() === userId.toString()
         )
         users[index].role = role
       } else {
@@ -133,7 +133,7 @@ router.delete(
       const users = req.account.users
 
       const index = users.findIndex(
-        user => user._id.toString() === userId.toString()
+        (user) => user._id.toString() === userId.toString()
       )
 
       if (index < 0) {

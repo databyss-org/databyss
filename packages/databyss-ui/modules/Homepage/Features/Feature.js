@@ -41,7 +41,7 @@ const Feature = ({
       : `calc(${featureContentMaxHeight} - ${pxUnits(64)})`
   }
 
-  const formatDescriptionText = description => {
+  const formatDescriptionText = (description) => {
     if (Array.isArray(description)) {
       return description.map((text, i) => (
         <p key={i}>

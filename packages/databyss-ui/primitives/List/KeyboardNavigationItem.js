@@ -33,13 +33,10 @@ const KeyboardNavigationItem = ({ children }) => {
     })
   }
 
-  useEffect(
-    () => {
-      const _idx = getNextItemIndex()
-      setIndex(_idx)
-    },
-    [orderKey]
-  )
+  useEffect(() => {
+    const _idx = getNextItemIndex()
+    setIndex(_idx)
+  }, [orderKey])
 
   return useMemo(
     () =>
@@ -54,7 +51,7 @@ const KeyboardNavigationItem = ({ children }) => {
 
 export default KeyboardNavigationItem
 
-export const withKeyboardNavigation = Wrapped => props => (
+export const withKeyboardNavigation = (Wrapped) => (props) => (
   <KeyboardNavigationItem>
     <Wrapped {...props} />
   </KeyboardNavigationItem>

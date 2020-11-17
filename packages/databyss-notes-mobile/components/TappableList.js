@@ -18,11 +18,11 @@ interface ListProps {
 */
 
 // component
-const TappableList = props => {
+const TappableList = (props) => {
   const { items } = props
   // render methods
   const renderListItems = () =>
-    items.map(item => (
+    items.map((item) => (
       <IconControl
         key={item._id}
         href={item.href}

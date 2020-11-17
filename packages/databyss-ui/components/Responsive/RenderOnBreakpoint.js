@@ -27,7 +27,7 @@ class RenderOnBreakpoint extends React.Component {
 
 export default RenderOnBreakpoint
 
-export const withRenderOnBreakpoint = Wrapped => props => (
+export const withRenderOnBreakpoint = (Wrapped) => (props) => (
   <RenderOnBreakpoint>
     <Wrapped {...props} />
   </RenderOnBreakpoint>

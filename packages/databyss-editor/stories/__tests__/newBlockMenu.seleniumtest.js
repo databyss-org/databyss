@@ -15,7 +15,7 @@ const LOCAL_URL = 'http://localhost:6006/iframe.html?id=selenium-tests--slate-5'
 const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=selenium-tests--slate-5'
 
 describe('new block menu actions', () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     // OSX and safari are necessary
     driver = await startSession()
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)

@@ -25,7 +25,7 @@ const tabListStyles = () => ({
 const StyledTabList = styled(View, tabListStyles)
 
 // component
-const TabList = props => {
+const TabList = (props) => {
   const { selectedIndex, items, onChange } = props
   const hasInitSelectedIndex = selectedIndex !== undefined
 
@@ -35,7 +35,7 @@ const TabList = props => {
     hasInitSelectedIndex ? selectedIndex : 0
   )
 
-  const getTabWidth = items => {
+  const getTabWidth = (items) => {
     let response = '100%'
 
     if (items && items.length) {
@@ -45,11 +45,11 @@ const TabList = props => {
     return response
   }
 
-  const isActiveTab = index => index === internalSelectedIndex
+  const isActiveTab = (index) => index === internalSelectedIndex
 
   const onTabClick = useCallback(
-    itemId => {
-      const itemIndex = items.findIndex(item => item._id === itemId)
+    (itemId) => {
+      const itemIndex = items.findIndex((item) => item._id === itemId)
       setSelectedIndex(itemIndex)
       if (onChange) {
         onChange({ itemId, itemIndex })

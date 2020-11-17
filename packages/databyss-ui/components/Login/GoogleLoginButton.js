@@ -22,16 +22,14 @@ const GoogleLoginButton = ({
       prompt: 'select_account',
       response_type: 'code',
       state: oauthHash,
-      redirect_uri: `${window.location.protocol}//${
-        window.location.host
-      }/oauth/google`,
+      redirect_uri: `${window.location.protocol}//${window.location.host}/oauth/google`,
       client_id: process.env.GAPI_CLIENT_ID,
       flowName: 'GeneralOAuthFlow',
     }
     return `${url}?${queryString.stringify(qs)}`
   }
 
-  const onReceiveMessage = msg => {
+  const onReceiveMessage = (msg) => {
     if (!msg || !msg.data || !msg.data.code || !msg.data.state) {
       return onFailure('bad response', msg)
     }
@@ -55,7 +53,7 @@ const GoogleLoginButton = ({
   }
 
   useEffect(() => {
-    window.addEventListener('message', evt => onReceiveMessage(evt), false)
+    window.addEventListener('message', (evt) => onReceiveMessage(evt), false)
     return () => {
       window.removeEventListener('message', onReceiveMessage)
     }

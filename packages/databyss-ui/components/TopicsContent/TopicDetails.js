@@ -13,7 +13,7 @@ const TopicDetails = () => {
   const { id } = useParams()
   return (
     <TopicLoader topicId={id}>
-      {topic => {
+      {(topic) => {
         const topicTitle = topic.text.textValue
 
         return (
@@ -25,7 +25,7 @@ const TopicDetails = () => {
             <PagesLoader filtered>
               {() => (
                 <BlockRelationsLoader atomicId={id}>
-                  {relations => <IndexSourceContent relations={relations} />}
+                  {(relations) => <IndexSourceContent relations={relations} />}
                 </BlockRelationsLoader>
               )}
             </PagesLoader>

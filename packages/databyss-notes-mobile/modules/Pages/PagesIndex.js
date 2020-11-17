@@ -18,7 +18,7 @@ const PagesIndex = () => {
     <PageProvider>
       <MobileView headerItems={headerItems}>
         <PagesLoader>
-          {pages => {
+          {(pages) => {
             const listItems = buildListItems({
               data: pages,
               baseUrl: '/pages',

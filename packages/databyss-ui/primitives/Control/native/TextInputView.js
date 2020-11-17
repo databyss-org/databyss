@@ -17,7 +17,7 @@ const desktopInputCss = {
   backgroundColor: 'transparent',
 }
 
-const mobileInputCss = active => ({
+const mobileInputCss = (active) => ({
   position: active ? 'relative' : 'absolute',
   padding: active ? 'small' : 'none',
   opacity: 0,
@@ -39,7 +39,7 @@ const modalViewCss = (active, labelWidth) =>
         position: 'absolute',
       }
 
-const activeInputCss = modal => ({
+const activeInputCss = (modal) => ({
   bg: 'activeTextInputBackground',
   pointerEvents: 'all',
   cursor: 'text',
@@ -71,7 +71,7 @@ const TextInputView = ({
 
   return (
     <ThemeContext.Consumer>
-      {theme => (
+      {(theme) => (
         <View ref={viewRef} {...others} flexShrink={1}>
           {_modal && (
             <View padding="1px" flexShrink={1} flexWrap="wrap">

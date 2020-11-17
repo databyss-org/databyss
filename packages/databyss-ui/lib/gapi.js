@@ -1,5 +1,5 @@
 export const getGapi = () =>
-  new Promise(resolve => {
+  new Promise((resolve) => {
     // if gapi was already loaded, just return it
     if (window.gapi) {
       resolve(window.gapi)

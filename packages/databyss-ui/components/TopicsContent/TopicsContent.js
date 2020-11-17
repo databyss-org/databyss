@@ -20,11 +20,11 @@ export const TopicsRouter = () => (
 )
 
 const TopicsContent = () => {
-  const navigate = useNavigationContext(c => c.navigate)
+  const navigate = useNavigationContext((c) => c.navigate)
   return (
     <AllTopicsLoader filtered>
-      {topics => {
-        const topicsData = Object.values(topics).map(value =>
+      {(topics) => {
+        const topicsData = Object.values(topics).map((value) =>
           createIndexPageEntries({
             text: value.text?.textValue,
             id: value._id,
@@ -32,7 +32,7 @@ const TopicsContent = () => {
         )
         const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
 
-        const onTopicClick = topic => {
+        const onTopicClick = (topic) => {
           navigate(`/topics/${topic.id}`)
         }
         return (

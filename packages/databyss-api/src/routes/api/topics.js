@@ -58,10 +58,10 @@ router.post(
       if (_block) {
         // get all inline ranges from block
         const _inlineRanges = _block.text.ranges.filter(
-          r => r.marks.filter(m => m.includes('inlineTopic')).length
+          (r) => r.marks.filter((m) => m.includes('inlineTopic')).length
         )
 
-        _inlineRanges.forEach(r => {
+        _inlineRanges.forEach((r) => {
           // if inline range is matches the ID, update block
           if (r.marks[0].length === 2) {
             const _inlineMark = r.marks[0]
@@ -189,7 +189,8 @@ router.get(
     // only allow results that appear on shared page
     if (
       req.publicPages &&
-      req.publicPages[0]?.blocks.filter(b => b._id !== req.params.id).length < 1
+      req.publicPages[0]?.blocks.filter((b) => b._id !== req.params.id).length <
+        1
     ) {
       return next(new InsufficientPermissionError())
     }

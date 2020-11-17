@@ -26,7 +26,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
   const blockRelationsQueueRef = useRef([])
 
   const searchEntries = useCallback(
-    debounce(query => {
+    debounce((query) => {
       const _results = searchCache[query]
       if (!_results) {
         return dispatch(onSearchEntries(query))
@@ -36,7 +36,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     [searchCache]
   )
 
-  const setQuery = query => {
+  const setQuery = (query) => {
     dispatch(onSetQuery(query))
   }
 
@@ -44,7 +44,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     dispatch(onClearCache())
   }
 
-  const throttleBlockRelations = throttle(callback => {
+  const throttleBlockRelations = throttle((callback) => {
     if (blockRelationsQueueRef.current.length) {
       const _blockRelations = optimizeBlockRelations(
         blockRelationsQueueRef.current
@@ -56,8 +56,8 @@ const EntryProvider = ({ children, initialState, reducer }) => {
   }, THROTTLE_BLOCK_RELATIONS)
 
   // async function could receive a callback function
-  const setBlockRelations = blockRelations =>
-    new Promise(res => {
+  const setBlockRelations = (blockRelations) =>
+    new Promise((res) => {
       // if callback is provided, this function will wait till throttle is complete before executing callback function
       if (
         blockRelations.blocksRelationArray.length ||
@@ -71,7 +71,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
       }
     })
 
-  const findBlockRelations = query => {
+  const findBlockRelations = (query) => {
     // fetch block relations from the server
     const _results = blockRelationsSearchCache[query]
     if (_results) {
@@ -104,7 +104,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
   )
 }
 
-export const useEntryContext = (selector = x => x) =>
+export const useEntryContext = (selector = (x) => x) =>
   useContextSelector(EntryContext, selector)
 
 EntryProvider.defaultProps = {

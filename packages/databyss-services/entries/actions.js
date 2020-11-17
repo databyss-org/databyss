@@ -12,12 +12,12 @@ import {
 } from './constants'
 
 export function onSearchEntries(string) {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch({
       type: SEARCH_ENTRY,
       payload: { query: string },
     })
-    entries.searchEntries(string).then(res => {
+    entries.searchEntries(string).then((res) => {
       dispatch({
         type: CACHE_ENTRY_RESULTS,
         payload: { results: res, query: string },
@@ -27,7 +27,7 @@ export function onSearchEntries(string) {
 }
 
 export function onSetQuery(query) {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({
       type: SET_QUERY,
       payload: query,
@@ -36,7 +36,7 @@ export function onSetQuery(query) {
 }
 
 export function onClearCache() {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({
       type: CLEAR_CACHE,
     })
@@ -44,13 +44,13 @@ export function onClearCache() {
 }
 
 export function onClearBlockRelationsCache() {
-  return dispatch => {
+  return (dispatch) => {
     dispatch({ type: CLEAR_BLOCK_RELATIONS_CACHE })
   }
 }
 
 export function onSetBlockRelations(blocksRelation, callback) {
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch({
       type: SET_BLOCK_RELATIONS,
       payload: { data: blocksRelation },
@@ -67,12 +67,12 @@ export function onSetBlockRelations(blocksRelation, callback) {
 
 export function fetchBlockRelations(queryId) {
   // console.log(queryId)
-  return async dispatch => {
+  return async (dispatch) => {
     dispatch({
       type: FETCH_BLOCK_RELATIONS,
       payload: queryId,
     })
-    entries.getBlockRelations(queryId).then(res => {
+    entries.getBlockRelations(queryId).then((res) => {
       dispatch({
         type: CACHE_BLOCK_RELATIONS,
         payload: { results: res, queryId },

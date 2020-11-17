@@ -143,7 +143,7 @@ const View = forwardRef(({ children, onLayout, ...others }, ref) => {
   const viewRef = useRef(null)
   const clientRect = {}
   const _onLayout = useCallback(
-    _clientRect => {
+    (_clientRect) => {
       if (onLayout && !fastCompare(_clientRect, clientRect)) {
         onLayout(clientRect)
       }

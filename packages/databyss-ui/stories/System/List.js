@@ -234,7 +234,7 @@ export const KeyboardNavigationList = () => {
           orderKey={query.textValue}
         >
           {getNames()
-            .filter(s =>
+            .filter((s) =>
               s.toLowerCase().startsWith(query.textValue.toLowerCase())
             )
             .map((item, idx) => (

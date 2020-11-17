@@ -18,6 +18,8 @@
     }
   },
   "rules": {
+    // note you must disable the base rule as it can report incorrect errors
+    "no-use-before-define": "off",
     // for...in and for...of are useful for iteration; prefer functional iterators for mutations, but with modern immutable patterns like immer, mutations are often in-place in the draft
     "no-restricted-syntax": [
       "error",
@@ -47,7 +49,7 @@
     "jsx-a11y/anchor-is-valid": "off",
     "default-case": "off", // switch mostly used for immer produce, which doesn't require a default
     "no-unused-vars": "off", // use Typescript check instead
-    "no-use-before-define": ["error", { "functions": false }], // hoisting is useful for keeping exported functions at the beginning of the file
+    "@typescript-eslint/no-use-before-define": ["error", { "functions": false }], // hoisting is useful for keeping exported functions at the beginning of the file
     "@typescript-eslint/no-unused-vars": [
       "error",
       {

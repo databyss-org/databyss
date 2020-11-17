@@ -25,7 +25,7 @@ const List = ({
     >
       {React.Children.map(
         flattenChildren(children),
-        child =>
+        (child) =>
           child &&
           React.cloneElement(child, {
             ...(removeBorderRadius

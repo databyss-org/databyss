@@ -29,7 +29,7 @@ const Search = () => {
 
   const inputRef = useRef()
 
-  const setSearchValue = val => {
+  const setSearchValue = (val) => {
     setValue(val)
     // if searchbar is cleared and the cache has results, clear results
     if (!val.textValue.length && Object.keys(searchCache).length) {
@@ -39,7 +39,7 @@ const Search = () => {
 
   // wait until user stopped typing for 200ms before setting the value
   const debounced = useCallback(
-    debounce(val => {
+    debounce((val) => {
       // only allow alphanumeric, hyphen and space
       setQuery({
         textValue: val.textValue.replace(/[^a-zA-Z0-9À-ž-'" ]/gi, ''),
@@ -47,12 +47,9 @@ const Search = () => {
     }, 200),
     [setQuery]
   )
-  useEffect(
-    () => {
-      debounced(value)
-    },
-    [value]
-  )
+  useEffect(() => {
+    debounced(value)
+  }, [value])
 
   const clear = () => {
     clearSearchCache()
@@ -63,12 +60,9 @@ const Search = () => {
   // encode the search term and remove '?'
   const encodedSearchTerm = useRef(encodeURI(searchTerm.replace(/\?/g, '')))
 
-  useEffect(
-    () => {
-      encodedSearchTerm.current = encodeURIComponent(value.textValue)
-    },
-    [searchTerm, value]
-  )
+  useEffect(() => {
+    encodedSearchTerm.current = encodeURIComponent(value.textValue)
+  }, [searchTerm, value])
 
   const onSearchClick = () => {
     // clear cache to get updated results
@@ -105,16 +99,15 @@ const Search = () => {
         textColor={menuItem === 'search' ? 'text.2' : 'text.3'}
         ref={inputRef}
       />
-      {searchTerm &&
-        menuItem === 'search' && (
-          <SidebarSearchResults
-            filterQuery={{ textValue: searchTerm }}
-            onSearch={onSearchClick}
-            height={sidebarListHeight}
-            inputRef={inputRef}
-            searchHasFocus={hasFocus}
-          />
-        )}
+      {searchTerm && menuItem === 'search' && (
+        <SidebarSearchResults
+          filterQuery={{ textValue: searchTerm }}
+          onSearch={onSearchClick}
+          height={sidebarListHeight}
+          inputRef={inputRef}
+          searchHasFocus={hasFocus}
+        />
+      )}
     </>
   )
 }

@@ -13,13 +13,13 @@ import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
  * - {SVG element} icon: An SVG element, passed like so: `icon: <SomeSVG />`.
  * The element name does not matter per se, but must be in DOM format.
  */
-export const buildListItems = options => {
+export const buildListItems = (options) => {
   const { baseUrl, data, labelPropPath, icon } = options
 
   const response = []
 
   const keys = Object.keys(data)
-  keys.forEach(key => {
+  keys.forEach((key) => {
     const element = data[key]
     const elementId = element._id || element.id
 

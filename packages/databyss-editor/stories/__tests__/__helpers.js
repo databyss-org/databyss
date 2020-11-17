@@ -7,9 +7,9 @@ export const SMALL = 'SMALL'
 export const MED = 'MED'
 export const LARGE = 'LARGE'
 
-const testWords = words.filter(d => /\b[a-z]{1,6}\b/.test(d))
+const testWords = words.filter((d) => /\b[a-z]{1,6}\b/.test(d))
 
-export const getBlockSize = size =>
+export const getBlockSize = (size) =>
   ({
     SMALL: 5,
     MED: 50,
@@ -63,7 +63,7 @@ const generateBlock = (state, type, index) => {
 
   const numberOfRanges = Math.floor(Math.random() * (_textVal.length / 35))
 
-  const generateRange = string => {
+  const generateRange = (string) => {
     const _length = string.length
     // generate range type
     const _rangeType = rangeTypes[Math.floor(Math.random() * rangeTypes.length)]
@@ -97,7 +97,7 @@ const generateBlock = (state, type, index) => {
   return _state
 }
 
-export const generateState = size => {
+export const generateState = (size) => {
   const blockSize = getBlockSize(size)
   const types = ['ENTRY', 'SOURCE', 'TOPIC', 'ENTRY', 'ENTRY', 'ENTRY']
   let _state = cloneDeep(initialState)
@@ -108,10 +108,10 @@ export const generateState = size => {
   return _state
 }
 
-export const sanitizeEditorChildren = children =>
-  children.map(node => ({
+export const sanitizeEditorChildren = (children) =>
+  children.map((node) => ({
     type: node.type,
-    children: node.children.map(c => {
+    children: node.children.map((c) => {
       const _textNode = { text: c.text }
       if (c.bold) {
         _textNode.bold = true

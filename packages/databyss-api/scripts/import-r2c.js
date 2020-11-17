@@ -7,7 +7,7 @@ const entries = JSON.parse(rawdata)
 // const slicedEntry = entries.slice(1, 3)
 // console.log(slicedEntry[0])
 
-const newEntry = entries.map(e => {
+const newEntry = entries.map((e) => {
   const obj = {}
   obj._id = e._id
   obj.authorId = e.source.author

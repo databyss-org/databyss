@@ -37,7 +37,7 @@ const SourceDetails = () => {
           {() => (
             <EntryProvider>
               <BlockRelationsLoader atomicId={sourceId}>
-                {relations => <IndexSourceContent relations={relations} />}
+                {(relations) => <IndexSourceContent relations={relations} />}
               </BlockRelationsLoader>
             </EntryProvider>
           )}
@@ -50,7 +50,7 @@ const SourceDetails = () => {
     <MobileView headerItems={buildHeaderItems(pageTitle, sourceId)}>
       <SourceProvider>
         <SourceCitationsLoader>
-          {citations => {
+          {(citations) => {
             const heading = citations[sourceId].text.textValue
             setPageTitle(heading)
             return renderSourceDetails()

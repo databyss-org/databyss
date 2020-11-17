@@ -28,30 +28,27 @@ const SuggestSources = ({
   setResultsMode,
   ...others
 }) => {
-  const setSource = useSourceContext(c => c && c.setSource)
+  const setSource = useSourceContext((c) => c && c.setSource)
 
   const addPageToCacheHeader = useSourceContext(
-    c => c && c.addPageToCacheHeader
+    (c) => c && c.addPageToCacheHeader
   )
   const { replace, state } = useEditorContext()
   const [suggestions, setSuggestsions] = useState()
 
-  useEffect(
-    () => {
-      // reset menu when active state changes
-      setResultsMode(LOCAL_SOURCES)
-    },
-    [active]
-  )
+  useEffect(() => {
+    // reset menu when active state changes
+    setResultsMode(LOCAL_SOURCES)
+  }, [active])
 
-  const onSourceSelected = source => {
+  const onSourceSelected = (source) => {
     if (!source._id) {
       source._id = new ObjectId().toHexString()
       setSource(source)
     }
 
     // check document to see if page should be added to source cache
-    if (state.blocks.filter(b => b._id === source._id).length < 1) {
+    if (state.blocks.filter((b) => b._id === source._id).length < 1) {
       addPageToCacheHeader(source._id, state.pageHeader._id)
     }
 
@@ -59,7 +56,7 @@ const SuggestSources = ({
     dismiss()
   }
 
-  const _composeLocalSources = _sourcesDict => {
+  const _composeLocalSources = (_sourcesDict) => {
     let _sources = Object.values(_sourcesDict)
     if (!_sources.length) {
       return []
@@ -67,7 +64,7 @@ const SuggestSources = ({
     _sources = _sources
       .filter(prefixSearchAll(query))
       .slice(0, 4)
-      .map(s => (
+      .map((s) => (
         <DropdownListItem
           data-test-element="suggested-menu-sources"
           label={s.text.textValue}
@@ -98,7 +95,7 @@ const SuggestSources = ({
     },
   ]
 
-  const onSourcesLoaded = resources => {
+  const onSourcesLoaded = (resources) => {
     if (!suggestions) {
       onSuggestionsChanged(Object.values(resources))
       setSuggestsions(resources)
@@ -109,9 +106,9 @@ const SuggestSources = ({
   if (_mode === LOCAL_SOURCES) {
     return (
       <SourceCitationsLoader onLoad={onSourcesLoaded}>
-        {_sourceCitations =>
+        {(_sourceCitations) =>
           _composeLocalSources(_sourceCitations).concat(
-            _menuItems.map(menuItem => (
+            _menuItems.map((menuItem) => (
               <DropdownListItem
                 {...menuItem}
                 key={menuItem.action}

@@ -16,8 +16,8 @@ const topicsOverview = [
   },
 ]
 
-export const getTopicsData = topics =>
-  Object.values(topics).map(value =>
+export const getTopicsData = (topics) =>
+  Object.values(topics).map((value) =>
     createSidebarListItems({
       text: value.text.textValue,
       type: 'topics',
@@ -30,7 +30,7 @@ export const getTopicsData = topics =>
 
 const Topics = ({ filterQuery, height, hasIndexPage }) => (
   <AllTopicsLoader filtered>
-    {topics => {
+    {(topics) => {
       const topicsData = getTopicsData(topics)
       const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
       const filteredEntries = filterEntries(sortedTopics, filterQuery)

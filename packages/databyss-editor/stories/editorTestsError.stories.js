@@ -62,11 +62,11 @@ const PageWithAutosave = ({ page }) => {
     []
   )
 
-  const onDocumentChange = val => {
+  const onDocumentChange = (val) => {
     setPageState(JSON.stringify(val, null, 2))
   }
 
-  const onChange = value => {
+  const onChange = (value) => {
     const patch = addMetaToPatches(value)
     // push changes to a queue
     operationsQueue.current = operationsQueue.current.concat(patch)
@@ -106,7 +106,7 @@ const EditorWithProvider = () => {
         <Text>corrupt page</Text>
       </Button>
       <PageLoader pageId={account.defaultPage}>
-        {page => {
+        {(page) => {
           if (page.page.name !== 'test document') {
             setPage(connectedFixture(account.defaultPage))
             return null

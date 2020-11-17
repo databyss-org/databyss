@@ -3,7 +3,7 @@ import Bugsnag from '@databyss-org/services/lib/bugsnag'
 
 import { ApiError } from '../../lib/Errors'
 
-const delay = timer => new Promise(resolve => setTimeout(resolve, timer))
+const delay = (timer) => new Promise((resolve) => setTimeout(resolve, timer))
 
 const router = express.Router()
 
