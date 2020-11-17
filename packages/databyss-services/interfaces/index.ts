@@ -13,7 +13,7 @@ export {
 export type { Page, PageHeader } from './Page'
 export type { Point } from './Point'
 export type { Selection } from './Selection'
-export type { Block } from './Block'
+export type { Block, BasicBlock } from './Block'
 export type { Text } from './Text'
 export type {
   Source,

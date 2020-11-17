@@ -21,7 +21,6 @@ import {
 import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
 import {
   RangeType,
-  InlineRangeType,
   InlineTypes,
 } from '../../databyss-services/interfaces/Range'
 

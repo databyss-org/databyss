@@ -1,10 +1,10 @@
 import _ from 'lodash'
 import cloneDeep from 'clone-deep'
-import { Block, RangeType } from '@databyss-org/services/interfaces/'
+import { Block } from '@databyss-org/services/interfaces/'
 import {
   stateBlockToHtmlHeader,
   stateBlockToHtml,
-} from '@databyss-org/editor/lib/slateUtils.js'
+} from '@databyss-org/editor/lib/slateUtils'
 import {
   BlockType,
   Selection,
@@ -14,12 +14,14 @@ import {
   Range,
 } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
+import { BasicBlock } from '../../databyss-services/interfaces'
 import {
+  RangeType,
   InlineTypes,
   InlineRangeType,
 } from '../../databyss-services/interfaces/Range'
 
-export const splice = (src, idx, rem, str) =>
+export const splice = (src: any, idx: number, rem: number, str: any) =>
   src.slice(0, idx) + str + src.slice(idx + Math.abs(rem))
 
 const getInlineAtomicFromBlock = (block: Block): Range[] => {
@@ -30,6 +32,34 @@ const getInlineAtomicFromBlock = (block: Block): Range[] => {
       ).length
   )
   return _inlineRanges
+}
+
+export const getInlineAtomicType = (type: InlineTypes): BlockType | null => {
+  switch (type) {
+    case InlineTypes.InlineTopic:
+      return BlockType.Topic
+    default:
+      return null
+  }
+}
+
+const composeBlockRelation = (
+  currentBlock: Block,
+  atomicBlock: BasicBlock,
+  pageId: string,
+  relationshipType: string
+): BlockRelation => {
+  const _blockRelation: BlockRelation = {
+    block: currentBlock._id,
+    relatedBlock: atomicBlock._id,
+    blockText: currentBlock.text,
+    relationshipType,
+    relatedBlockType: atomicBlock.type,
+    page: pageId,
+    blockIndex: 0,
+  }
+
+  return _blockRelation
 }
 
 const getInlineBlockRelations = (
@@ -43,7 +73,7 @@ const getInlineBlockRelations = (
   const _inlineRanges = getInlineAtomicFromBlock(block)
   if (_inlineRanges.length) {
     _inlineRanges.forEach((r) => {
-      if (typeof r.marks !== 'string') {
+      if (r.marks.length && Array.isArray(r.marks[0])) {
         const _inlineRange: InlineRangeType = r.marks[0]
         const _inlineType: InlineTypes = _inlineRange[0]
         const type = getInlineAtomicType(_inlineType)
@@ -64,15 +94,6 @@ const getInlineBlockRelations = (
   return _blockRelations
 }
 
-export const getInlineAtomicType = (type: InlineTypes): BlockType | null => {
-  switch (type) {
-    case InlineTypes.InlineTopic:
-      return BlockType.Topic
-    default:
-      return null
-  }
-}
-
 export const isAtomicInlineType = (type: BlockType) => {
   switch (type) {
     case BlockType.Source:
@@ -90,25 +111,6 @@ export const isAtomicInlineType = (type: BlockType) => {
 
 export const isAtomic = (block: Block) => isAtomicInlineType(block.type)
 export const isEmpty = (block: Block) => block.text.textValue.length === 0
-
-const composeBlockRelation = (
-  currentBlock: Block,
-  atomicBlock: Block,
-  pageId: string,
-  relationshipType: string
-): BlockRelation => {
-  const _blockRelation: BlockRelation = {
-    block: currentBlock._id,
-    relatedBlock: atomicBlock._id,
-    blockText: currentBlock.text,
-    relationshipType,
-    relatedBlockType: atomicBlock.type,
-    page: pageId,
-    blockIndex: 0,
-  }
-
-  return _blockRelation
-}
 
 // returns an array of indicies covered by selection
 export const getSelectedIndicies = (selection: Selection) =>
@@ -185,13 +187,12 @@ export const getPagePath = (page: EditorState): PagePath => {
 
             // add to current atomic
             _currentAtomics.push(_block)
-          } else {
+          } else if (_currentAtomics.findIndex((b) => b.type === type) < 0) {
             // if closure type and block has been closed ignore
             // else push to current atomic array
-            if (_currentAtomics.findIndex((b) => b.type === type) < 0) {
-              // if closure exist, create a block placeholder
-              _currentAtomics.push({ ..._block, closed: true, type })
-            }
+
+            // if closure exist, create a block placeholder
+            _currentAtomics.push({ ..._block, closed: true, type })
           }
         }
       }
@@ -328,7 +329,7 @@ export const slateBlockToHtmlWithSearch = (
         ranges.push({
           offset: offset - _word.length,
           length,
-          marks: ['highlight'],
+          marks: [RangeType.Highlight],
         })
       }
 

@@ -47,7 +47,7 @@ import {
   getRangesAtPoint,
   pushAtomicChangeUpstream,
 } from './util'
-import { EditorState, PayloadOperation, EditorOnChange } from '../interfaces'
+import { EditorState, PayloadOperation } from '../interfaces'
 
 import mergeInlineAtomicMenuRange from '../lib/clipboardUtils/mergeInlineAtomicMenuRange'
 import { RangeType } from '../../databyss-services/interfaces/Range'

@@ -55,7 +55,9 @@
     "script": "babel-node --config-file ./packages/databyss-scripts/babel.config.js --extensions \".js,.ts\" ./packages/databyss-scripts/run.js"
   },
   "jest": {
-    "watchPlugins": ["jest-runner-eslint/watch-fix"],
+    "watchPlugins": [
+      "jest-runner-eslint/watch-fix"
+    ],
     "projects": [
       {
         "displayName": "jslint",
@@ -164,6 +166,7 @@
     "@storybook/addon-storyshots": "5.2.1",
     "@storybook/addons": "5.2.1",
     "@storybook/react": "5.2.1",
+    "@types/clone-deep": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "4.8.0",
     "@typescript-eslint/parser": "4.8.0",
     "an-array-of-english-words": "^2.0.0",
