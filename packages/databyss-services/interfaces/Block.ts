@@ -56,6 +56,10 @@ export interface SourceDetail {
   volume?: Text
   issue?: Text
 
+  // publication details (book section)
+  chapterTitle?: Text
+  chapterNumber?: Text
+
   // catalog identifiers (book)
   isbn?: Text
 

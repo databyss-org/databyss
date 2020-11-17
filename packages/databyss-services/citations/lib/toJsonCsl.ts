@@ -1,6 +1,7 @@
 import { isEqual } from 'lodash'
 
 import { defaultMonthOption } from '../../sources/constants/MonthOptions'
+import { PublicationTypeId } from '../../sources/constants/PublicationTypeId'
 
 /**
  * Converts a Databyss source detail object to a JSON CSL object.
@@ -25,24 +26,38 @@ export const toJsonCsl = source => {
     publicationType,
     publisherName,
     publisherPlace,
-    // publication details (articles)
+    // publication details (article)
     journalTitle,
     volume,
     issue,
+    // publication details (book section)
+    chapterTitle,
     // catalog identifiers (book)
     isbn,
-    // catalog identifiers (articles)
+    // catalog identifiers (article)
     issn,
     doi,
   } = source
 
   const response = {}
 
+  // === PUBLICATION TYPE ===
+  // should be set first, as it may affect other parts
+  if (validateOption(source, 'publicationType')) {
+    response.type = publicationType.id
+  }
+
   // === TITLE ===
-  if (validateTextValue(title)) {
-    response.title = title.textValue
+  let titleValue = validateTextValue(title) ? title.textValue : ''
+  if (response.type === PublicationTypeId.BOOK_SECTION) {
+    if (validateTextValue(chapterTitle)) {
+      response['container-title'] = titleValue
+      response.title = chapterTitle.textValue
+    } else {
+      response.title = titleValue
+    }
   } else {
-    response.title = ''
+    response.title = titleValue
   }
 
   // === PEOPLE ===
@@ -90,13 +105,6 @@ export const toJsonCsl = source => {
     }
   }
 
-
-  // publication type
-  if (validateOption(source, 'publicationType')) {
-    // TODO: ensure if acceptable type
-    response.type = publicationType.id
-  }
-
   // publisher
   if (validateTextValue(publisherName)) {
     response.publisher = publisherName.textValue
@@ -107,8 +115,9 @@ export const toJsonCsl = source => {
     response['publisher-place'] = publisherPlace.textValue
   }
 
+  // == PUBLICATION - ARTICLE ==
+
   // journal title
-  console.log('journalTitle:', journalTitle);
   if (validateTextValue(journalTitle)) {
     response['container-title'] = journalTitle.textValue
   }
@@ -133,8 +142,6 @@ export const toJsonCsl = source => {
   if (validateTextValue(isbn)) {
     response.ISBN = isbn.textValue
   }
-
-  console.log('csl:', response);
 
   return response
 }
