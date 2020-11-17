@@ -112,8 +112,6 @@ const SuggestMenu = ({
           if (!menuActive) setMenuActive(true)
         } else if (menuActive) {
           setMenuActive(false)
-        } else if (menuActive) {
-          setMenuActive(false)
         }
       } else if (!isAtomicInlineType(_node.type)) {
         // get current text with markup 'inlineAtomicMenu'

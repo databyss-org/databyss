@@ -13,12 +13,6 @@ import { Text, View, ScrollView, RawHtml } from '@databyss-org/ui/primitives'
 
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 
-export const SearchRouter = () => (
-  <Router>
-    <SearchContent path=":query" />
-  </Router>
-)
-
 const SearchContent = () => {
   const { navigate } = useNavigationContext()
   const { query } = useParams()
@@ -85,5 +79,11 @@ const SearchContent = () => {
     </ScrollView>
   )
 }
+
+export const SearchRouter = () => (
+  <Router>
+    <SearchContent path=":query" />
+  </Router>
+)
 
 export default SearchContent

@@ -141,13 +141,13 @@ const ContentEditable = ({
       state?.pageHeader?._id
     ) {
       state.removedEntities.forEach((e) => {
-        ;({
+        const _types = {
           SOURCE: () =>
             removePageFromSourceCacheHeader(e._id, state.pageHeader._id),
           TOPIC: () =>
             removePageFromTopicCacheHeader(e._id, state.pageHeader._id),
-        }[e.type]())
-
+        }
+        _types[e.type]()
         removeAtomicFromQueue(e._id)
       })
     }
@@ -164,16 +164,19 @@ const ContentEditable = ({
       const { setTopic } = topicContext
 
       state.newEntities.forEach((entity) => {
-        const _data = entity.text
-          ? {
-              _id: entity._id,
-              text: {
-                textValue: entity.text.textValue,
-                ranges: entity.text.ranges,
-              },
-            }
-          : null
-        ;({
+        let _data = null
+
+        if (entity.text) {
+          _data = {
+            _id: entity._id,
+            text: {
+              textValue: entity.text.textValue,
+              ranges: entity.text.ranges,
+            },
+          }
+        }
+
+        const _types = {
           SOURCE: () => {
             // requestAnimationFrame will allow the `forkOnChange` function in the editor provider to execute before setting the inline block relations
             window.requestAnimationFrame(() => {
@@ -197,7 +200,8 @@ const ContentEditable = ({
               })
             })
           },
-        }[entity.type]())
+        }
+        _types[entity.type]()
         removeEntityFromQueue(entity._id)
       })
     }
@@ -601,7 +605,7 @@ const ContentEditable = ({
 
       if (Hotkeys.isTab(event)) {
         event.preventDefault()
-        insertTextWithInilneCorrection(`\t`, editor)
+        insertTextWithInilneCorrection('\t', editor)
         return
       }
 
@@ -771,13 +775,13 @@ const ContentEditable = ({
           flattenOffset(editor, editor.selection.focus),
           10
         )
-        const _prevIsBreak = _text.charAt(_offset - 1) === `\n`
+        const _prevIsBreak = _text.charAt(_offset - 1) === '\n'
         const _prevIsDoubleBreak =
           _prevIsBreak &&
-          (_offset - 2 <= 0 || _text.charAt(_offset - 2) === `\n`)
-        const _nextIsBreak = _text.charAt(_offset) === `\n`
+          (_offset - 2 <= 0 || _text.charAt(_offset - 2) === '\n')
+        const _nextIsBreak = _text.charAt(_offset) === '\n'
         const _nextIsDoubleBreak =
-          _nextIsBreak && _text.charAt(_offset + 1) === `\n`
+          _nextIsBreak && _text.charAt(_offset + 1) === '\n'
         const _atBlockStart = _offset === 0
         const _atBlockEnd = _offset === _text.length
         const _doubleLineBreak =
@@ -822,10 +826,10 @@ const ContentEditable = ({
           // we're not creating a new block, so just insert a carriage return
           event.preventDefault()
 
-          const _isNextCharNewLine = _text.charAt(_offset) === `\n`
+          const _isNextCharNewLine = _text.charAt(_offset) === '\n'
           if (!_isNextCharNewLine) {
             // inserts the text without markup
-            Transforms.insertNodes(editor, { text: `\n` })
+            Transforms.insertNodes(editor, { text: '\n' })
           } else {
             Transforms.insertText(editor, '\n')
           }

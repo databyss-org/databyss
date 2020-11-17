@@ -1,16 +1,13 @@
 {
   "extends": [
     "eslint-config-airbnb",
-    "eslint-config-prettier",
-    "plugin:prettier/recommended",
     "eslint:recommended",
-    "plugin:react/recommended"
+    "prettier"
   ],
   "plugins": [
-    "eslint-plugin-prettier",
-    "prettier",
     "@typescript-eslint",
-    "react-hooks"
+    "react-hooks",
+    "prettier"
   ],
   "parser": "@typescript-eslint/parser",
   "env": {
@@ -90,6 +87,7 @@
     "prettier/prettier": [
       "error",
       {
+        "usePrettierrc": false,
         "arrowParens": "always",
         "printWidth": 80, // Easy to read
         "semi": false, // Almost always unecessary

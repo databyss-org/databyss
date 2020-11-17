@@ -35,37 +35,6 @@ const formatActions = () => [
   },
 ]
 
-const formatActionButtons = () => {
-  // FIXME: this should be replaced with a valid condition, or be removed
-  const PLACEHOLDER = true
-
-  // placeholder for mobile actions
-  return PLACEHOLDER
-    ? formatActions(true).reduce((acc, a, i) => {
-        if (a.type === 'DIVIDER') {
-          return acc.concat(
-            <View
-              key={i}
-              borderRightColor="border.1"
-              borderRightWidth={pxUnits(1)}
-              marginLeft="extraSmall"
-              marginRight="extraSmall"
-            />
-          )
-        }
-        return acc.concat(
-          <MarkButton
-            key={i}
-            index={i}
-            type={a.type}
-            label={a.label}
-            variant={a.variant}
-          />
-        )
-      }, [])
-    : []
-}
-
 const MarkButton = ({ type, label, variant, ...others }) => {
   const editor = useEditor()
   const isActive = isFormatActive(editor, type)
@@ -106,6 +75,37 @@ const MarkButton = ({ type, label, variant, ...others }) => {
       </Text>
     </Button>
   )
+}
+
+const formatActionButtons = () => {
+  // FIXME: this should be replaced with a valid condition, or be removed
+  const PLACEHOLDER = true
+
+  // placeholder for mobile actions
+  return PLACEHOLDER
+    ? formatActions(true).reduce((acc, a, i) => {
+        if (a.type === 'DIVIDER') {
+          return acc.concat(
+            <View
+              key={i}
+              borderRightColor="border.1"
+              borderRightWidth={pxUnits(1)}
+              marginLeft="extraSmall"
+              marginRight="extraSmall"
+            />
+          )
+        }
+        return acc.concat(
+          <MarkButton
+            key={i}
+            index={i}
+            type={a.type}
+            label={a.label}
+            variant={a.variant}
+          />
+        )
+      }, [])
+    : []
 }
 
 const isBackwards = (stateSelection) => {
@@ -165,8 +165,8 @@ const FormatMenu = () => {
     const domSelection = window.getSelection()
 
     /*
-      check if selection contains inline atomics or inline sources
-      */
+check if selection contains inline atomics or inline sources
+*/
     const _atomics = getInlineOrAtomicsFromStateSelection(state)
 
     const dontShowMenu =
