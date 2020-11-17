@@ -1,4 +1,4 @@
-export const SeasonOptions = [
+export const SeasonOptions: SeasonOption[] = [
   {
     id: 13,
     label: 'Spring',
@@ -16,3 +16,8 @@ export const SeasonOptions = [
     label: 'Winter',
   },
 ]
+
+export interface SeasonOption {
+  id: number
+  label: string
+}

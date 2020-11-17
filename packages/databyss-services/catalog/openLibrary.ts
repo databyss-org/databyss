@@ -110,13 +110,12 @@ const openLibrary: CatalogService = {
   },
 
   // publication details (journal article)
-  getIssue: (apiResult: any) =>
+  getIssue: () => '',
+  // TODO: confirm they never provide it
+  getVolume: () =>
     // TODO: confirm they never provide it
     '',
-  getVolume: (apiResult: any) =>
-    // TODO: confirm they never provide it
-    '',
-  getDOI: (apiResult: any) =>
+  getDOI: () =>
     // TODO: confirm they never provide it
     '',
   getISSN: (apiResult: any) => {
