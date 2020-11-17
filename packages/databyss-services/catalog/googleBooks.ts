@@ -48,7 +48,7 @@ const googleBooks: CatalogService = {
     }
     return pubType
   },
-  getPublisherPlace: (apiResult: any) =>
+  getPublisherPlace: () =>
     // TODO: confirm they never provide it
     '',
   getPublishedMonth: (apiResult: any, publicationType: string) => {
@@ -60,20 +60,20 @@ const googleBooks: CatalogService = {
   },
 
   // publication details (book)
-  getISBN: (apiResult: any) =>
+  getISBN: () =>
     // TODO: confirm they never provide it
     '',
   // publication details (journal article)
-  getIssue: (apiResult: any) =>
+  getIssue: () =>
     // TODO: confirm they never provide it
     '',
-  getVolume: (apiResult: any) =>
+  getVolume: () =>
     // TODO: confirm they never provide it
     '',
-  getDOI: (apiResult: any) =>
+  getDOI: () =>
     // TODO: confirm they never provide it
     '',
-  getISSN: (apiResult: any) =>
+  getISSN: () =>
     // TODO: confirm they never provide it
     '',
 }

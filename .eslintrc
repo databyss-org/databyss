@@ -1,11 +1,13 @@
 {
-  "extends": ["eslint-config-airbnb", "eslint-config-prettier", "plugin:prettier/recommended",
+  "extends": [
+    "eslint-config-airbnb",
+    "eslint-config-prettier",
+    "plugin:prettier/recommended",
     "eslint:recommended",
     "plugin:react/recommended"
-],
+  ],
   "plugins": [
     "eslint-plugin-prettier",
-  
     "prettier",
     "@typescript-eslint",
     "react-hooks"
@@ -18,7 +20,12 @@
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx"
+        ]
       }
     }
   },
@@ -37,7 +44,10 @@
     ],
     "no-continue": "off", // if we're using for...of, we need continue
     "no-await-in-loop": "off", // this is needed for synchronous iteration where order matters
-    "no-return-assign": ["error", "except-parens"], // Default option
+    "no-return-assign": [
+      "error",
+      "except-parens"
+    ], // Default option
     "no-console": "off", // Console logs are too useful and are removed in prod anyway
     "global-require": "off", // Useful for images, assets, etc
     "import/no-dynamic-require": "off", // Useful for images, assets, etc
@@ -52,12 +62,22 @@
     "react/no-multi-comp": "off", // It's often useful to group small, tightly related components
     "prefer-destructuring": "off", // This forces awkward syntax sometimes
     "no-case-declarations": "off", // Fallthrough is useful in case/default clauses
-    "no-param-reassign": ["error", { "props": false }], // Useful for mutating reduce accumulators, ex.
+    "no-param-reassign": [
+      "error",
+      {
+        "props": false
+      }
+    ], // Useful for mutating reduce accumulators, ex.
     "react-hooks/rules-of-hooks": "error",
     "jsx-a11y/anchor-is-valid": "off",
     "default-case": "off", // switch mostly used for immer produce, which doesn't require a default
     "no-unused-vars": "off", // use Typescript check instead
-    "@typescript-eslint/no-use-before-define": ["error", { "functions": false }], // hoisting is useful for keeping exported functions at the beginning of the file
+    "@typescript-eslint/no-use-before-define": [
+      "error",
+      {
+        "functions": false
+      }
+    ], // hoisting is useful for keeping exported functions at the beginning of the file
     "@typescript-eslint/no-unused-vars": [
       "error",
       {

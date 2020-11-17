@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-prop-types */
 import React, { useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '@databyss-org/services/lib/createReducer'
@@ -32,7 +33,7 @@ interface ContextType {
 }
 
 const useReducer = createReducer()
-export const CatalogContext = createContext<ContextType | null>(null)
+export const CatalogContext = createContext<ContextType>(null!)
 
 const CatalogProvider: React.FunctionComponent<PropsType> = ({
   children,
@@ -84,7 +85,7 @@ const CatalogProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const useCatalogContext = (selector = (x: any) => x) =>
+export const useCatalogContext = (selector = (x: ContextType) => x) =>
   useContextSelector(CatalogContext, selector)
 
 export default CatalogProvider

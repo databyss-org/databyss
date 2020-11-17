@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
-import reducer, { initialState } from './reducer'
+import reducer, { initialState as _initState } from './reducer'
 import {
   saveTopic,
   fetchTopic,
@@ -35,11 +35,11 @@ interface ContextType {
   resetTopicHeaders: () => void
 }
 
-export const TopicContext = createContext<ContextType | null>(null)
+export const TopicContext = createContext<ContextType>(null!)
 
 const TopicProvider: React.FunctionComponent<PropsType> = ({
   children,
-  initialState,
+  initialState = _initState,
 }: PropsType) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
@@ -104,11 +104,7 @@ const TopicProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const useTopicContext = (selector = (x: any) => x) =>
+export const useTopicContext = (selector = (x: ContextType) => x) =>
   useContextSelector(TopicContext, selector)
-
-TopicProvider.defaultProps = {
-  initialState,
-}
 
 export default TopicProvider
