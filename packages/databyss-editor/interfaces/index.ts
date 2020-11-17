@@ -4,6 +4,7 @@ export type {
   EditorState,
   PayloadOperation,
   BackflowOperation,
+  EditorOnChange,
 } from './EditorState'
 export type {
   Range,

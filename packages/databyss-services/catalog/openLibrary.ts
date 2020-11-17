@@ -4,7 +4,6 @@ import {
   GroupedCatalogResults,
 } from '../interfaces'
 import {
-  findPublicationMonthOption,
   getPublicationTypeById,
   isBook,
   normalizePublicationId,

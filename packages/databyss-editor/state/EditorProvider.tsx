@@ -130,7 +130,9 @@ export const EditorContext = createContext<ContextType | null>(null)
 
 const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
   ({ children, initialState, onChange }, ref) => {
-    const setBlockRelations = useEntryContext((c) => c && c.setBlockRelations)
+    const setBlockRelations = useEntryContext(
+      (c: BlockRelation[]) => c && c.setBlockRelations
+    )
 
     // get the current page header
 

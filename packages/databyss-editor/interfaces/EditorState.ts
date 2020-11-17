@@ -1,4 +1,5 @@
 import { Text, PageHeader } from '@databyss-org/services/interfaces'
+import { Patch } from 'immer'
 import { Block, Selection } from './'
 
 export interface PayloadOperation {
