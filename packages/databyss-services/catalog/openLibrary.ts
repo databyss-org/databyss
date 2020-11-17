@@ -4,7 +4,6 @@ import {
   GroupedCatalogResults,
 } from '../interfaces'
 import {
-  findPublicationMonthOption,
   getPublicationTypeById,
   isBook,
   normalizePublicationId,
@@ -98,7 +97,18 @@ const openLibrary: CatalogService = {
     return defaultMonthOption
   },
 
-  // publication details (book)
+  // publication details (articles)
+  getJournalTitle: (apiResult: any) =>
+    // TODO: confirm they never provide it
+    '',
+  getIssue: (apiResult: any) =>
+    // TODO: confirm they never provide it
+    '',
+  getVolume: (apiResult: any) =>
+    // TODO: confirm they never provide it
+    '',
+
+  // catalog identifiers (book)
   getISBN: (apiResult: any) => {
     if (apiResult.isbn) {
       if (Array.isArray(apiResult.isbn)) {
@@ -110,13 +120,7 @@ const openLibrary: CatalogService = {
     return ''
   },
 
-  // publication details (journal article)
-  getIssue: (apiResult: any) =>
-    // TODO: confirm they never provide it
-    '',
-  getVolume: (apiResult: any) =>
-    // TODO: confirm they never provide it
-    '',
+  // catalog identifiers (articles)
   getDOI: (apiResult: any) =>
     // TODO: confirm they never provide it
     '',

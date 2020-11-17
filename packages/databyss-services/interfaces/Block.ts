@@ -50,8 +50,15 @@ export interface SourceDetail {
   publisherPlace?: Text
   year?: Text
   month?: SelectOption | null | undefined
+
+  // publication details (articles)
+  journalTitle?: Text
   volume?: Text
   issue?: Text
+
+  // publication details (book section)
+  chapterTitle?: Text
+  chapterNumber?: Text
 
   // catalog identifiers (book)
   isbn?: Text

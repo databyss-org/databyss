@@ -13,7 +13,11 @@ import {
   getCitationStyleOption,
   pruneCitation,
 } from '@databyss-org/services/citations/lib'
-import { isArticle, isBook } from '@databyss-org/services/sources/lib'
+import {
+  isArticle,
+  isBook,
+  isBookSection,
+} from '@databyss-org/services/sources/lib'
 import { MonthOptions } from '@databyss-org/services/sources/constants/MonthOptions'
 import { PublicationTypes } from '@databyss-org/services/sources/constants/PublicationTypes'
 import { SeasonOptions } from '@databyss-org/services/sources/constants/SeasonOptions'
@@ -36,6 +40,16 @@ const labelProps = { width: '115px' }
 const publicationTypeOptions = sortEntriesAtoZ(PublicationTypes, 'label')
 
 // utils
+const checkIfArticle = detail => {
+  if (!detail || !('publicationType' in detail)) {
+    return false
+  }
+  const { publicationType } = detail
+  if (!publicationType) {
+    return false
+  }
+  return isArticle(publicationType.id)
+}
 const checkIfBook = detail => {
   if (!detail || !('publicationType' in detail)) {
     return false
@@ -46,7 +60,7 @@ const checkIfBook = detail => {
   }
   return isBook(publicationType.id)
 }
-const checkIfArticle = detail => {
+const checkIfBookSection = detail => {
   if (!detail || !('publicationType' in detail)) {
     return false
   }
@@ -54,7 +68,7 @@ const checkIfArticle = detail => {
   if (!publicationType) {
     return false
   }
-  return isArticle(publicationType.id)
+  return isBookSection(publicationType.id)
 }
 const swap = (array, indexA, indexB) => {
   const b = array[indexA]
@@ -101,8 +115,9 @@ const EditSourceForm = props => {
   )
 
   const hasDetail = 'detail' in values
-  const isBook = checkIfBook(values.detail)
   const isArticle = checkIfArticle(values.detail)
+  const isBook = checkIfBook(values.detail)
+  const isBookSection = checkIfBookSection(values.detail)
 
   // people base methods
   const addPersonTo = arrayPropName => {
@@ -323,23 +338,16 @@ const EditSourceForm = props => {
         />
       </ValueListItem>
 
-      <LabeledTextInput
-        path="detail.publisherName"
-        id="publisherName"
-        label="Publisher"
-        onBlur={onFieldBlur}
-      />
-
-      <LabeledTextInput
-        path="detail.publisherPlace"
-        id="publisherPlace"
-        label="Place"
-        multiline
-        onBlur={onFieldBlur}
-      />
-
       {isArticle ? (
         <>
+          <LabeledTextInput
+            path="detail.journalTitle"
+            id="journalTitle"
+            label="Journal Title"
+            multiline
+            onBlur={onFieldBlur}
+          />
+
           <LabeledTextInput
             path="detail.volume"
             id="volume"
@@ -357,6 +365,31 @@ const EditSourceForm = props => {
           />
         </>
       ) : null}
+
+      {isBookSection ? (
+        <LabeledTextInput
+          path="detail.chapterTitle"
+          id="chapterTitle"
+          label="Chapter Title"
+          multiline
+          onBlur={onFieldBlur}
+        />
+      ) : null}
+
+      <LabeledTextInput
+        path="detail.publisherName"
+        id="publisherName"
+        label="Publisher"
+        onBlur={onFieldBlur}
+      />
+
+      <LabeledTextInput
+        path="detail.publisherPlace"
+        id="publisherPlace"
+        label="Place"
+        multiline
+        onBlur={onFieldBlur}
+      />
     </>
   )
 
@@ -503,7 +536,7 @@ const EditSourceForm = props => {
       <FormHeading>Catalog Identifiers</FormHeading>
 
       {/* ISBN */}
-      {isBook ? (
+      {isBook || isBookSection ? (
         <LabeledTextInput
           path="detail.isbn"
           id="isbn"
