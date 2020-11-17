@@ -2,7 +2,8 @@
   "extends": [
     "eslint-config-airbnb",
     "eslint:recommended",
-    "prettier"
+    "prettier",
+    "plugin:prettier/recommended"
   ],
   "plugins": [
     "@typescript-eslint",
@@ -85,15 +86,7 @@
       }
     ],
     "prettier/prettier": [
-      "error",
-      {
-        "usePrettierrc": false,
-        "arrowParens": "always",
-        "printWidth": 80, // Easy to read
-        "semi": false, // Almost always unecessary
-        "singleQuote": true, // Easy to read
-        "trailingComma": "es5" // Helps simplify diffs
-      }
+      "error"
     ],
     "import/extensions": [
       "error",
