@@ -1,11 +1,6 @@
 import * as services from '.'
 import { ResourcePending } from '../interfaces/ResourcePending'
-import {
-  NetworkUnavailableError,
-  PatchBatch,
-  PageHeader,
-  Page,
-} from '../interfaces'
+import { PatchBatch, PageHeader, Page } from '../interfaces'
 import {
   PATCH,
   FETCH_PAGE,

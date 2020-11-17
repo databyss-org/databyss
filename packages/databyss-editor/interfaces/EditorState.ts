@@ -26,7 +26,7 @@ export interface EditorState {
   showMenuActions?: boolean
   showFormatMenu?: boolean
   showNewBlockMenu?: boolean
-  operations: BackflowOperation[]
+  operations: BackflowOperation[] & { reloadAll?: boolean }
   selection: Selection
   newEntities: AtomicType[]
   removedEntities: AtomicType[]

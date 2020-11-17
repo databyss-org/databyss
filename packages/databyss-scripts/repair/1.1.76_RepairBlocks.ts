@@ -1,5 +1,5 @@
-import tmp from 'tmp'
 import Block from '@databyss-org/api/src/models/Block'
+import { Block as BlockType } from '@databyss-org/services/interfaces'
 import Page from '@databyss-org/api/src/models/Page'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
 import ServerProcess from '../lib/ServerProcess'
@@ -54,7 +54,7 @@ async function repair() {
     for (const _page of _pages) {
       // find the closing atomic block in the blocks array
       const _openerIndex = _page.blocks.findIndex(
-        (b) => b._id.toString() === _badBlock._id.toString()
+        (b: BlockType) => b._id.toString() === _badBlock._id.toString()
       )
       let _closerIndex = -1
       for (let _i = _openerIndex + 1; _i < _page.blocks.length; _i += 1) {

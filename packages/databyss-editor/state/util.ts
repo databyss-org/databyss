@@ -19,6 +19,7 @@ import {
 } from '../lib/clipboardUtils'
 
 import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
+import { RangeType } from '../../databyss-services/interfaces/Range'
 
 /*
 takes a text object and a range type and returns the length of the range, the location of the offset and the text contained within the range, this fuction works when text block has of of that range type
@@ -28,10 +29,10 @@ export const getTextOffsetWithRange = ({
   rangeType,
 }: {
   text: Text
-  rangeType: string
+  rangeType: RangeType
 }) => {
   const _string = text.textValue
-  const _ranges = text.ranges.filter((r) => r.marks.includes(rangeType))
+  const _ranges = text.ranges.filter(r => r.marks.includes(rangeType))
   if (_ranges.length) {
     // for now assume only one range is provided
     const _range = _ranges[0]
@@ -112,7 +113,7 @@ export const getOpenAtomicText = (state: EditorState): string => {
 
         // return current block to close if its not ignored and is in currently open
         if (
-          _ignoreType.findIndex((t) => t === _block.type) < 0 &&
+          _ignoreType.findIndex(t => t === _block.type) < 0 &&
           openType === _block.type
         ) {
           return _block.text.textValue
@@ -159,11 +160,11 @@ export const getOpenAtomics = (state: EditorState): Block[] => {
         }
 
         // ignore any types that have been closed
-        if (_ignoreType.findIndex((b) => b === _block.type) > -1) {
+        if (_ignoreType.findIndex(b => b === _block.type) > -1) {
           return findPath(blocks, _currentAtomics, _ignoreType)
         }
         // if atomic type is not found in our current atomics array and is not closed, push to array
-        const _idx = _currentAtomics.findIndex((b) => b.type === _block.type)
+        const _idx = _currentAtomics.findIndex(b => b.type === _block.type)
         if (_idx < 0) {
           _currentAtomics.push(_block)
         }
@@ -221,7 +222,7 @@ export const selectionHasRange = (selection: Selection): boolean =>
 
 // shifts the range left `offset`
 export const offsetRanges = (ranges: Array<Range>, _offset: number) =>
-  ranges.map((r) => {
+  ranges.map(r => {
     let length = r.length
     let offset = r.offset
     // if offset is position zero, shift length instead of offset
@@ -234,7 +235,7 @@ export const offsetRanges = (ranges: Array<Range>, _offset: number) =>
   })
 
 export const removeLocationMark = (ranges: Array<Range>) =>
-  ranges.filter((r) => !r.marks.includes('location'))
+  ranges.filter(r => !r.marks.includes('location'))
 
 // returns a shallow clone of the block so immer.patch isn't confused
 export const blockValue = (block: Block): Block => ({ ...block })
@@ -242,11 +243,11 @@ export const blockValue = (block: Block): Block => ({ ...block })
 // remove view-only props from patch
 export const cleanupPatches = (patches: Patch[]) =>
   patches?.filter(
-    (p) =>
+    p =>
       // blacklist if operation array includes `__`
       !(
         p.path
-          .map((k) => typeof k === 'string' && k.includes('__'))
+          .map(k => typeof k === 'string' && k.includes('__'))
           .filter(Boolean).length ||
         // blacklist if it includes sleciton or operation
         //   p.path.includes('selection') ||
@@ -256,7 +257,7 @@ export const cleanupPatches = (patches: Patch[]) =>
   )
 
 export const addMetaToPatches = ({ nextState, patches }: OnChangeArgs) =>
-  cleanupPatches(patches)?.map((_p) => {
+  cleanupPatches(patches)?.map(_p => {
     // add selection
     if (_p.path[0] === 'selection') {
       _p.value = { ..._p.value, _id: nextState.selection._id }
@@ -281,9 +282,9 @@ export const pageToEditorState = (page: Page): EditorState => {
 
 export const filterInversePatches = (patches: Patch[]): Patch[] => {
   const _patches = patches.filter(
-    (p) =>
+    p =>
       (p.path[0] === 'blocks' || p.path[0] === 'selection') &&
-      !p.path.find((_p) => typeof _p === 'string' && _p.search('__') !== -1)
+      !p.path.find(_p => typeof _p === 'string' && _p.search('__') !== -1)
   )
   // if only a selection patch was sent dont return any patches
 
@@ -342,7 +343,7 @@ export const trimRight = (text: Text): Boolean => {
   if (_trim) {
     // cleanup ranges
     text.ranges = text.ranges.filter(
-      (r) => r.offset < text.textValue.length - _trim[0].length
+      r => r.offset < text.textValue.length - _trim[0].length
     )
     text.textValue = text.textValue.substring(
       0,
@@ -440,12 +441,12 @@ export const replaceInlineText = ({
   }
 
   const _rangesWithId = text.ranges.filter(
-    (r) => r.marks[0][0] === 'inlineTopic' && r.marks[0][1] === refId
+    r => r.marks[0][0] === 'inlineTopic' && r.marks[0][1] === refId
   )
   // offset will be updated in loop
   let _cumulativeOffset = 0
   let _textToUpdate = text
-  _rangesWithId.forEach((r) => {
+  _rangesWithId.forEach(r => {
     const _splitText = splitTextAtOffset({
       text: _textToUpdate,
       offset: r.offset + _cumulativeOffset,
@@ -491,7 +492,7 @@ export const getRangesAtPoint = ({
   }
 
   // find which ranges fall within current offset
-  const _activeRanges = _currentBlockRanges.filter((r) => {
+  const _activeRanges = _currentBlockRanges.filter(r => {
     const { offset, length } = r
     if (point.offset >= offset && point.offset <= offset + length) {
       return true
@@ -524,14 +525,14 @@ export const convertInlineToAtomicBlocks = ({
   // if the only text tagged with inlineAtomicMenu is the opener, remove mark and normalize the text
   if (inlineMarkupData?.length === 1) {
     const ranges: Range[] = []
-    block.text.ranges.forEach((r) => {
+    block.text.ranges.forEach(r => {
       if (!r.marks.includes('inlineAtomicMenu')) {
         ranges.push(r)
       }
     })
 
     block.text.ranges = block.text.ranges.filter(
-      (r) => !r.marks.includes('inlineAtomicMenu')
+      r => !r.marks.includes('inlineAtomicMenu')
     )
     // force a re-render
     draft.operations.push({
@@ -637,23 +638,23 @@ export const getInlineOrAtomicsFromStateSelection = (
   const _frag = getFragmentAtSelection(state)
   // check fragment for inline blocks
   const _inlines = _frag.filter(
-    (b) =>
+    b =>
       b.text.ranges.filter(
-        (r) =>
+        r =>
           r.marks.filter(
-            (m) => Array.isArray(m) && m.length === 2 && m[0] === 'inlineTopic'
+            m => Array.isArray(m) && m.length === 2 && m[0] === 'inlineTopic'
           ).length
       ).length
   )
 
   const _inlineMenuRange = _frag.filter(
-    (b) =>
+    b =>
       b.text.ranges.filter(
-        (r) => r.marks.filter((m) => m === 'inlineAtomicMenu').length
+        r => r.marks.filter(m => m === 'inlineAtomicMenu').length
       ).length
   )
 
-  const _atomics = _frag.filter((b) => isAtomicInlineType(b.type))
+  const _atomics = _frag.filter(b => isAtomicInlineType(b.type))
 
   const atomicsInSelection = [..._inlines, ..._inlineMenuRange, ..._atomics]
 
@@ -701,7 +702,7 @@ export const pushAtomicChangeUpstream = ({
 
   // if undo action added atomics not found in page, refresh page headers
   if (atomicsAdded.length) {
-    atomicsAdded.forEach((a) => {
+    atomicsAdded.forEach(a => {
       draft.newEntities.push(a)
     })
   }

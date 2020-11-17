@@ -1,10 +1,10 @@
 /* eslint-disable eqeqeq */
 import { defaultMonthOption, MonthOptions } from '../constants/MonthOptions'
-import { SeasonOptions } from '../constants/SeasonOptions'
+import { SeasonOptions } from '../constants/SeasonOsptions'
 
 export function findPublicationMonthOption(
   value: String | Number
-): SelectOption {
+): SeasonOptions {
   // try months
   let option = MonthOptions.find(
     (monthOption) =>

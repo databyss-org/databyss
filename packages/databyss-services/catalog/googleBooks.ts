@@ -51,8 +51,6 @@ const googleBooks: CatalogService = {
   getPublisherPlace: (apiResult: any) =>
     // TODO: confirm they never provide it
     '',
-  getPublishedYear: (apiResult: any) =>
-    apiResult.volumeInfo.publishedDate?.substring(0, 4),
   getPublishedMonth: (apiResult: any, publicationType: string) => {
     if (isBook(publicationType)) {
       return defaultMonthOption

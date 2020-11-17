@@ -82,7 +82,7 @@ const CatalogProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const useCatalogContext = (selector = (x) => x) =>
+export const useCatalogContext = (selector = (x: any) => x) =>
   useContextSelector(CatalogContext, selector)
 
 CatalogProvider.defaultProps = {

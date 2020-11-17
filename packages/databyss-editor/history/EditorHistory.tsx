@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useRef, forwardRef } from 'react'
-import { OnChangeArgs, EditorRef } from '../state/EditorProvider'
 import { throttle } from 'lodash'
 import { Patch } from 'immer'
 import { filterInversePatches } from '@databyss-org/editor/state/util'
 import forkRef from '@databyss-org/ui/lib/forkRef'
+import { OnChangeArgs, EditorRef } from '../state/EditorProvider'
 
 const THROTTLE_UNDO = 1000
 
@@ -16,6 +16,7 @@ type UndoType = Patch[][]
 
 type PropsType = {
   children: JSX.Element
+  displayName: string
 }
 
 export const HistoryContext = createContext<ContextType | null>(null)
@@ -26,6 +27,13 @@ const HistoryProvider: React.FunctionComponent<PropsType> = forwardRef(
     const undoPatchQueue = useRef<Patch[]>([])
     const undoStack = useRef<UndoType>([])
     const redoStack = useRef<UndoType>([])
+
+    const throttleUndoStack = throttle(() => {
+      if (undoPatchQueue.current.length) {
+        undoStack.current.push(undoPatchQueue.current.reverse())
+        undoPatchQueue.current = []
+      }
+    }, THROTTLE_UNDO)
 
     const undo = () => {
       let _undoBatch
@@ -86,13 +94,6 @@ const HistoryProvider: React.FunctionComponent<PropsType> = forwardRef(
       onChange({ inversePatches, patches, ...others })
     }
 
-    const throttleUndoStack = throttle(() => {
-      if (undoPatchQueue.current.length) {
-        undoStack.current.push(undoPatchQueue.current.reverse())
-        undoPatchQueue.current = []
-      }
-    }, THROTTLE_UNDO)
-
     return (
       <HistoryContext.Provider
         value={{
@@ -110,6 +111,8 @@ const HistoryProvider: React.FunctionComponent<PropsType> = forwardRef(
 )
 
 export const useHistoryContext = () => useContext(HistoryContext)
+
+HistoryProvider.displayName = 'HistoryProvider'
 
 HistoryProvider.defaultProps = {}
 

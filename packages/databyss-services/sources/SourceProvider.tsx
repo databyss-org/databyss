@@ -39,6 +39,8 @@ interface ContextType {
   removePageFromCacheHeader: (id: string, pageId: string) => void
   addPageToCacheHeader: (id: string, pageId: string) => void
   resetSourceHeaders: () => void
+  setPreferredCitationStyle: (styleId: string) => void
+  getPreferredCitationStyle: () => void
 }
 
 const useReducer = createReducer()
@@ -117,8 +119,8 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
       const typeOfStyleId = typeof styleId
       if (typeOfStyleId !== 'string') {
         throw new Error(
-          'setPreferredCitationStyle() expected `styleId` to be a string. ' +
-            `Received "${typeOfStyleId}".`
+          `setPreferredCitationStyle() expected 'styleId' to be a string.
+          Received "${typeOfStyleId}".`
         )
       }
       // dispatch
@@ -160,7 +162,7 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const useSourceContext = (selector = (x) => x) =>
+export const useSourceContext = (selector = (x: any) => x) =>
   useContextSelector(SourceContext, selector)
 
 SourceProvider.defaultProps = {

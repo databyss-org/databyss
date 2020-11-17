@@ -1,7 +1,12 @@
 {
-  "extends": ["eslint-config-airbnb", "eslint-config-prettier"],
+  "extends": ["eslint-config-airbnb", "eslint-config-prettier", "plugin:prettier/recommended",
+    "eslint:recommended",
+    "plugin:react/recommended"
+],
   "plugins": [
     "eslint-plugin-prettier",
+  
+    "prettier",
     "@typescript-eslint",
     "react-hooks"
   ],
@@ -16,6 +21,9 @@
         "extensions": [".js", ".jsx", ".ts", ".tsx"]
       }
     }
+  },
+  "globals": {
+    "JSX": "readonly"
   },
   "rules": {
     // note you must disable the base rule as it can report incorrect errors
@@ -62,6 +70,7 @@
     "prettier/prettier": [
       "error",
       {
+        "arrowParens": "always",
         "printWidth": 80, // Easy to read
         "semi": false, // Almost always unecessary
         "singleQuote": true, // Easy to read

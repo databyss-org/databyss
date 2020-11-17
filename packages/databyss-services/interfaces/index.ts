@@ -1,3 +1,4 @@
+import React from 'react'
 import { ResourcePending } from './ResourcePending'
 
 export { ResourcePending } from './ResourcePending'
@@ -47,6 +48,6 @@ export interface CacheDict<T> {
 }
 export type NullableCache<T> = ResourceResponse<CacheDict<T>>
 export type CacheList<T> = ResourceResponse<T[]>
-interface RefDict {
+export interface RefDict {
   [key: string]: React.Ref<HTMLInputElement>
 }
