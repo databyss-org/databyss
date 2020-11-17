@@ -10,7 +10,7 @@ import { defaultMonthOption } from '../../sources/constants/MonthOptions'
  *
  * @param {SourceDetail} source A Databyss source detail object.
  */
-export const toJsonCsl = source => {
+export const toJsonCsl = (source) => {
   if (!source) {
     return null
   }
@@ -47,7 +47,7 @@ export const toJsonCsl = source => {
   // authors
   if (validatePeopleArray(source, 'authors')) {
     response.author = []
-    authors.forEach(a => {
+    authors.forEach((a) => {
       response.author.push({
         given: a.firstName?.textValue,
         family: a.lastName?.textValue,
@@ -58,7 +58,7 @@ export const toJsonCsl = source => {
   // editors
   if (validatePeopleArray(source, 'editors')) {
     response.editor = []
-    editors.forEach(e => {
+    editors.forEach((e) => {
       response.editor.push({
         given: e.firstName?.textValue,
         family: e.lastName?.textValue,
@@ -69,7 +69,7 @@ export const toJsonCsl = source => {
   // translators
   if (validatePeopleArray(source, 'translators')) {
     response.translator = []
-    translators.forEach(t => {
+    translators.forEach((t) => {
       response.translator.push({
         given: t.firstName?.textValue,
         family: t.lastName?.textValue,
@@ -86,7 +86,6 @@ export const toJsonCsl = source => {
       'date-parts': dateParts,
     }
   }
-
 
   // publication type
   if (validateOption(source, 'publicationType')) {

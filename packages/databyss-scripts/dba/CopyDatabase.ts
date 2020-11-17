@@ -30,14 +30,8 @@ class CopyDatabase extends ServerProcess {
     )
     this.emit('stdout', `temp dir: ${this.tmpDir.name}`)
 
-    const dumpCmd = `mongodump --ssl --db=${this.args.fromDb} --out=${
-      this.tmpDir.name
-    } ${this.env.API_MONGO_URI}`
-    const restoreCmd = `mongorestore --ssl --drop --nsFrom='${
-      this.args.fromDb
-    }.*' --nsTo='${this.args.toDb}.*' '${this.env.API_MONGO_URI}' '${
-      this.tmpDir.name
-    }'`
+    const dumpCmd = `mongodump --ssl --db=${this.args.fromDb} --out=${this.tmpDir.name} ${this.env.API_MONGO_URI}`
+    const restoreCmd = `mongorestore --ssl --drop --nsFrom='${this.args.fromDb}.*' --nsTo='${this.args.toDb}.*' '${this.env.API_MONGO_URI}' '${this.tmpDir.name}'`
 
     try {
       this.emit('stdout', '🔄 DUMPING DATA...')

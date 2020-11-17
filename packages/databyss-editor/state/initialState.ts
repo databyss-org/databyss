@@ -25,7 +25,7 @@ const initialState: EditorState = {
 
 export const addMetaDataToBlocks = (init: EditorState) => {
   let _blocks = init.blocks
-  _blocks = _blocks.map(b => ({
+  _blocks = _blocks.map((b) => ({
     ...b,
     __isActive: false,
     __showNewBlockMenu: false,

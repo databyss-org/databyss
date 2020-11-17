@@ -9,7 +9,7 @@ export function isCurrentAuthor(
     return false
   }
 
-  return authors.some(author => {
+  return authors.some((author) => {
     const firstName = author.firstName?.textValue
     const lastName = author.lastName?.textValue
 

@@ -10,7 +10,7 @@ export function stripText(text: string | string[]) {
     return text
   }
   if (Array.isArray(text)) {
-    return text.map(t => stripHtml(t).result)
+    return text.map((t) => stripHtml(t).result)
   }
   return stripHtml(text).result
 }
@@ -101,13 +101,7 @@ export function buildDatabyssName(options: CatalogParsingParams): Text {
 
 export function splitName(name: string) {
   return [
-    name
-      .split(' ')
-      .slice(0, -1)
-      .join(' '),
-    name
-      .split(' ')
-      .slice(-1)
-      .join(' '),
+    name.split(' ').slice(0, -1).join(' '),
+    name.split(' ').slice(-1).join(' '),
   ]
 }

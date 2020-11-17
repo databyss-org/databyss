@@ -54,7 +54,7 @@ async function repair() {
     for (const _page of _pages) {
       // find the closing atomic block in the blocks array
       const _openerIndex = _page.blocks.findIndex(
-        b => b._id.toString() === _badBlock._id.toString()
+        (b) => b._id.toString() === _badBlock._id.toString()
       )
       let _closerIndex = -1
       for (let _i = _openerIndex + 1; _i < _page.blocks.length; _i += 1) {

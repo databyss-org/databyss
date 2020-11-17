@@ -7,7 +7,7 @@ import {
 } from '../constants'
 
 // consts
-const Styles = CitationStyles.map(s => ({ id: s.id, data: null }))
+const Styles = CitationStyles.map((s) => ({ id: s.id, data: null }))
 
 // vars
 let cite = null
@@ -50,7 +50,7 @@ export async function formatCitation(csl, options) {
         `Received "${typeOfStyleId}".`
     )
   }
-  const style = CitationStyles.find(s => s.id === styleId)
+  const style = CitationStyles.find((s) => s.id === styleId)
   if (!style) {
     throw new Error(
       'formatCitation() encountered an unhandled value ' +
@@ -93,17 +93,17 @@ export async function formatCitation(csl, options) {
 
 // utils
 function addStyle(styleId, data) {
-  const style = Styles.find(s => s.id === styleId)
+  const style = Styles.find((s) => s.id === styleId)
   style.data = data
 }
 
 function getStyle(styleId) {
-  const style = Styles.find(s => s.id === styleId)
+  const style = Styles.find((s) => s.id === styleId)
   return style.data
 }
 
 function hasStyle(styleId) {
-  const style = Styles.find(s => s.id === styleId)
+  const style = Styles.find((s) => s.id === styleId)
   return style.data !== null
 }
 

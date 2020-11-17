@@ -130,7 +130,7 @@ export const EditorContext = createContext<ContextType | null>(null)
 
 const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
   ({ children, initialState, onChange }, ref) => {
-    const setBlockRelations = useEntryContext(c => c && c.setBlockRelations)
+    const setBlockRelations = useEntryContext((c) => c && c.setBlockRelations)
 
     // get the current page header
 
@@ -143,13 +143,20 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
 
     const pendingAtomicSave = useRef<boolean>(false)
 
-    const forkOnChange = props => {
+    const forkOnChange = (props) => {
       pagePathRef.current = getPagePath(props.nextState)
       if (onChange) {
         if (setBlockRelations) {
           // check if a new atomic has just been removed in the patches
 
-          if(props.patches.filter(p=> p.op === 'replace' && p?.path[0] === 'newEntities' && p?.value.length === 0).length){
+          if (
+            props.patches.filter(
+              (p) =>
+                p.op === 'replace' &&
+                p?.path[0] === 'newEntities' &&
+                p?.value.length === 0
+            ).length
+          ) {
             // if it has been added, set a flag for pending atomic
             // useEffect inside of ContentEditable will set this flag to false, block relations must be set before the atomic is set in order to update the headers in the atomic cache
             pendingAtomicSave.current = true
@@ -158,7 +165,7 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
           const _pageId = props.nextState.pageHeader._id
 
           // if last action was whitelisted, set block relations
-          if (isSetBlockRelations.findIndex(t => t === props.type) > -1) {
+          if (isSetBlockRelations.findIndex((t) => t === props.type) > -1) {
             blockRelationsBuffer.current.push({
               blocksRelationArray: indexPage({
                 pageId: _pageId,
@@ -166,38 +173,35 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
               }),
             })
           } else if (
-            (isClearBlockRelations.findIndex(t => t === props.type) > -1 ||
+            (isClearBlockRelations.findIndex((t) => t === props.type) > -1 ||
               props.clearBlockRelations) &&
             pagePathRef.current
           ) {
-            blockRelationsBuffer.current.push(
-              {
-                clearPageRelationships: _pageId,
-                blocksRelationArray: indexPage({
-                  pageId: _pageId,
-                  blocks: props.nextState.blocks,
-                }),
-              }
-            )
+            blockRelationsBuffer.current.push({
+              clearPageRelationships: _pageId,
+              blocksRelationArray: indexPage({
+                pageId: _pageId,
+                blocks: props.nextState.blocks,
+              }),
+            })
           } else if (props.type === SET_CONTENT && pagePathRef.current) {
             if (pagePathRef?.current.blockRelations.length) {
-            /*
+              /*
             get the page and block relations at current index
             */
-              blockRelationsBuffer.current.push(
-                {
-                  blocksRelationArray: pagePathRef.current.blockRelations,
-                }
-              )
+              blockRelationsBuffer.current.push({
+                blocksRelationArray: pagePathRef.current.blockRelations,
+              })
             }
-
-
           }
 
           // the newEntity array is clear and its not pending a save
-          if (!props.nextState.newEntities.length && !pendingAtomicSave.current) {
+          if (
+            !props.nextState.newEntities.length &&
+            !pendingAtomicSave.current
+          ) {
             // set block relations and clear buffer
-            blockRelationsBuffer.current.forEach(b=> setBlockRelations(b))
+            blockRelationsBuffer.current.forEach((b) => setBlockRelations(b))
             // clear block relations buffer
             blockRelationsBuffer.current = []
           }
@@ -239,34 +243,32 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     const setInlineBlockRelations = (callback: Function) => {
       //  this function is only called after an async `setAtomic` function
 
-
       // if nothing in the buffer and callback was provided, fire callback
-      if(!blockRelationsBuffer.current.length){
+      if (!blockRelationsBuffer.current.length) {
         // reset the pendingAtomicSave ref
-          pendingAtomicSave.current  = false
-          if(callback){
-            callback()
-          }
-          return
+        pendingAtomicSave.current = false
+        if (callback) {
+          callback()
+        }
+        return
       }
 
-
       // set block relations
-      blockRelationsBuffer.current.forEach((b, i) =>  {
+      blockRelationsBuffer.current.forEach((b, i) => {
         // only fire the callback on the last block relation of the array
         const _fireCallback = i === blockRelationsBuffer.current.length - 1
 
-      setBlockRelations(b).then(()=> {
-        if(callback && _fireCallback){
-          // reset the pendingAtomicSave ref
-          pendingAtomicSave.current  = false
-          callback()
-        }
-      })})
+        setBlockRelations(b).then(() => {
+          if (callback && _fireCallback) {
+            // reset the pendingAtomicSave ref
+            pendingAtomicSave.current = false
+            callback()
+          }
+        })
+      })
 
       // clear block relations buffer
       blockRelationsBuffer.current = []
-
     }
 
     const setSelection = (selection: Selection) =>
@@ -343,12 +345,11 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
         payload: { id },
       })
 
-      const removeAtomicFromQueue = (id: number): void =>
+    const removeAtomicFromQueue = (id: number): void =>
       dispatch({
         type: DEQUEUE_REMOVED_ENTITY,
         payload: { id },
       })
-      
 
     const cut = (e: ClipboardEvent) => {
       const _frag = getFragmentAtSelection(state)
@@ -411,7 +412,6 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
         payload: { blocks },
       })
     }
-
 
     return useMemo(
       () => (

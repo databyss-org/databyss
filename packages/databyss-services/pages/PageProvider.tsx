@@ -52,19 +52,16 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  useEffect(
-    () => {
-      Object.keys(pageCachedHookRef.current).forEach(k => {
-        if (state.cache[k]) {
-          // execute callback
-          pageCachedHookRef.current[k]()
-          // remove from queue
-          delete pageCachedHookRef.current[k]
-        }
-      })
-    },
-    [state.cache]
-  )
+  useEffect(() => {
+    Object.keys(pageCachedHookRef.current).forEach((k) => {
+      if (state.cache[k]) {
+        // execute callback
+        pageCachedHookRef.current[k]()
+        // remove from queue
+        delete pageCachedHookRef.current[k]
+      }
+    })
+  }, [state.cache])
 
   const hasPendingPatches = state.patchQueueSize
 
@@ -75,7 +72,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 
   const setPage = useCallback(
     (page: Page): Promise<void> =>
-      new Promise(res => {
+      new Promise((res) => {
         onPageCached(page._id, res)
         dispatch(actions.savePage(page))
       }),
@@ -86,20 +83,17 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(actions.savePageHeader(page))
   }, [])
 
-  const getPages = useCallback(
-    (): ResourceResponse<PageHeader> => {
-      if (state.headerCache) {
-        return state.headerCache
-      }
+  const getPages = useCallback((): ResourceResponse<PageHeader> => {
+    if (state.headerCache) {
+      return state.headerCache
+    }
 
-      if (!(state.headerCache instanceof ResourcePending)) {
-        dispatch(actions.fetchPageHeaders())
-      }
+    if (!(state.headerCache instanceof ResourcePending)) {
+      dispatch(actions.fetchPageHeaders())
+    }
 
-      return null
-    },
-    [state.headerCache]
-  )
+    return null
+  }, [state.headerCache])
 
   const getPage = useCallback(
     (id: string): ResourceResponse<Page> => {
@@ -136,7 +130,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 
   const archivePage = useCallback(
     (id: string, boolean: boolean): Promise<void> =>
-      new Promise(res => {
+      new Promise((res) => {
         dispatch(actions.onArchivePage(id, state.cache[id], boolean, res))
       }),
     [state.cache]
@@ -185,7 +179,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const usePageContext = (selector = x => x) =>
+export const usePageContext = (selector = (x) => x) =>
   useContextSelector(PageContext, selector)
 
 PageProvider.defaultProps = {

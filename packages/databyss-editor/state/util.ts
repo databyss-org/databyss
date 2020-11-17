@@ -1,29 +1,53 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
 import ObjectId from 'bson-objectid'
 import { Patch } from 'immer'
-import { Selection, Block, Range, EditorState, Text, Point } from '../interfaces'
+import {
+  Selection,
+  Block,
+  Range,
+  EditorState,
+  Text,
+  Point,
+} from '../interfaces'
 import { OnChangeArgs } from './EditorProvider'
 import { isAtomicInlineType } from '../lib/util'
-import { splitTextAtOffset, getFragmentAtSelection } from '../lib/clipboardUtils'
-import { mergeText, isSelectionCollapsed } from '../lib/clipboardUtils/index';
+import {
+  splitTextAtOffset,
+  getFragmentAtSelection,
+  mergeText,
+  isSelectionCollapsed,
+} from '../lib/clipboardUtils'
+
 import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
 
 /*
 takes a text object and a range type and returns the length of the range, the location of the offset and the text contained within the range, this fuction works when text block has of of that range type
 */
-export const getTextOffsetWithRange = ({ text, rangeType }: { text: Text, rangeType: string }) => {
+export const getTextOffsetWithRange = ({
+  text,
+  rangeType,
+}: {
+  text: Text
+  rangeType: string
+}) => {
   const _string = text.textValue
-  let _ranges = text.ranges.filter(r => r.marks.includes(rangeType))
+  const _ranges = text.ranges.filter((r) => r.marks.includes(rangeType))
   if (_ranges.length) {
     // for now assume only one range is provided
-    let _range = _ranges[0]
-    const _textWithRange = _string.slice(_range.offset, _range.offset + _range.length)
+    const _range = _ranges[0]
+    const _textWithRange = _string.slice(
+      _range.offset,
+      _range.offset + _range.length
+    )
 
-    return { length: _range.length, offset: _range.offset, text: _textWithRange }
+    return {
+      length: _range.length,
+      offset: _range.offset,
+      text: _textWithRange,
+    }
   }
   return null
 }
-
 
 export const symbolToAtomicClosureType = (symbol: string): BlockType => {
   const _type: { [key: string]: BlockType } = {
@@ -318,7 +342,7 @@ export const trimRight = (text: Text): Boolean => {
   if (_trim) {
     // cleanup ranges
     text.ranges = text.ranges.filter(
-      r => r.offset < text.textValue.length - _trim[0].length
+      (r) => r.offset < text.textValue.length - _trim[0].length
     )
     text.textValue = text.textValue.substring(
       0,
@@ -334,12 +358,13 @@ export const trimRight = (text: Text): Boolean => {
  * @param text text to trim
  * @returns true if lines were trimmed
  */
-export const trim = (text: Text) => {
-  return trimLeft(text) || trimRight(text)
-}
+export const trim = (text: Text) => trimLeft(text) || trimRight(text)
 
-export const splitBlockAtEmptyLine = ({ draft, atIndex }: {
-  draft: EditorState,
+export const splitBlockAtEmptyLine = ({
+  draft,
+  atIndex,
+}: {
+  draft: EditorState
   atIndex: number
 }): Boolean => {
   const _emptyLinePattern = /^\n./m
@@ -349,7 +374,10 @@ export const splitBlockAtEmptyLine = ({ draft, atIndex }: {
     return false
   }
   const _offset = _match.index!
-  const { before, after } = splitTextAtOffset({ text: _block.text, offset: _offset + 1 })
+  const { before, after } = splitTextAtOffset({
+    text: _block.text,
+    offset: _offset + 1,
+  })
   // set current block text to first part of split
   //   but remove the last 2 character (which are newlines)
   _block.text.textValue = before.textValue.substring(0, _offset - 1)
@@ -359,7 +387,7 @@ export const splitBlockAtEmptyLine = ({ draft, atIndex }: {
   const _blockToInsert: Block = {
     type: BlockType.Entry,
     _id: new ObjectId().toHexString(),
-    text: after
+    text: after,
   }
 
   // insert the block
@@ -368,14 +396,13 @@ export const splitBlockAtEmptyLine = ({ draft, atIndex }: {
   return true
 }
 
-
 export const getWordFromOffset = ({
   text,
-  offset
+  offset,
 }: {
   text: string
   offset: number
-}): { word: string, offset: number } | null => {
+}): { word: string; offset: number } | null => {
   if (!text) {
     return null
   }
@@ -395,7 +422,7 @@ export const getWordFromOffset = ({
 export const replaceInlineText = ({
   text,
   refId,
-  newText
+  newText,
 }: {
   text: Text
   refId: string
@@ -403,23 +430,32 @@ export const replaceInlineText = ({
 }): Text | null => {
   const _textToInsert = {
     textValue: `#${newText.textValue}`,
-    ranges: [{
-      length: newText.textValue.length + 1,
-      offset: 0,
-      marks: [['inlineTopic', refId]]
-    }]
+    ranges: [
+      {
+        length: newText.textValue.length + 1,
+        offset: 0,
+        marks: [['inlineTopic', refId]],
+      },
+    ],
   }
 
-
-  const _rangesWithId = text.ranges.filter(r => r.marks[0][0] === 'inlineTopic' && r.marks[0][1] === refId)
+  const _rangesWithId = text.ranges.filter(
+    (r) => r.marks[0][0] === 'inlineTopic' && r.marks[0][1] === refId
+  )
   // offset will be updated in loop
   let _cumulativeOffset = 0
   let _textToUpdate = text
-  _rangesWithId.forEach(r => {
-    const _splitText = splitTextAtOffset({ text: _textToUpdate, offset: r.offset + _cumulativeOffset })
+  _rangesWithId.forEach((r) => {
+    const _splitText = splitTextAtOffset({
+      text: _textToUpdate,
+      offset: r.offset + _cumulativeOffset,
+    })
 
     // remove text from second half of split
-    const _textAfter = splitTextAtOffset({ text: _splitText.after, offset: r.length })
+    const _textAfter = splitTextAtOffset({
+      text: _splitText.after,
+      offset: r.length,
+    })
 
     // insert text at offset
     let _mergedText = mergeText(_splitText.before, _textToInsert)
@@ -441,8 +477,13 @@ export const replaceInlineText = ({
   return null
 }
 
-export const getRangesAtPoint = ({ blocks, point }: { blocks: Block[], point: Point }): Range[] => {
-
+export const getRangesAtPoint = ({
+  blocks,
+  point,
+}: {
+  blocks: Block[]
+  point: Point
+}): Range[] => {
   const _currentBlockRanges = blocks[point.index]?.text.ranges
 
   if (!_currentBlockRanges) {
@@ -450,9 +491,9 @@ export const getRangesAtPoint = ({ blocks, point }: { blocks: Block[], point: Po
   }
 
   // find which ranges fall within current offset
-  const _activeRanges = _currentBlockRanges.filter(r => {
+  const _activeRanges = _currentBlockRanges.filter((r) => {
     const { offset, length } = r
-    if (point.offset >= offset && (point.offset <= (offset + length))) {
+    if (point.offset >= offset && point.offset <= offset + length) {
       return true
     }
     return false
@@ -460,7 +501,11 @@ export const getRangesAtPoint = ({ blocks, point }: { blocks: Block[], point: Po
   return _activeRanges
 }
 
-export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
+export const convertInlineToAtomicBlocks = ({
+  block,
+  index,
+  draft,
+}: {
   block: Block
   index: number
   draft: EditorState
@@ -479,13 +524,15 @@ export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
   // if the only text tagged with inlineAtomicMenu is the opener, remove mark and normalize the text
   if (inlineMarkupData?.length === 1) {
     const ranges: Range[] = []
-    block.text.ranges.forEach(r => {
-      if (!r.marks.includes("inlineAtomicMenu")) {
+    block.text.ranges.forEach((r) => {
+      if (!r.marks.includes('inlineAtomicMenu')) {
         ranges.push(r)
       }
     })
 
-    block.text.ranges = block.text.ranges.filter(r => !r.marks.includes("inlineAtomicMenu"))
+    block.text.ranges = block.text.ranges.filter(
+      (r) => !r.marks.includes('inlineAtomicMenu')
+    )
     // force a re-render
     draft.operations.push({
       index,
@@ -494,10 +541,9 @@ export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
     return
   }
 
-
-
   // check if text is inline atomic type
-  const _atomicType = inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))
+  const _atomicType =
+    inlineMarkupData && symbolToAtomicType(inlineMarkupData?.text.charAt(0))
   if (inlineMarkupData && _atomicType) {
     // text value with markup
     let _atomicTextValue = inlineMarkupData?.text
@@ -506,9 +552,12 @@ export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
     let _atomicId = new ObjectId().toHexString()
 
     // check entitySuggestionCache for an atomic with the identical name
-    // if there's a match and the atomic type matches, use the cached 
+    // if there's a match and the atomic type matches, use the cached
     // block's _id and textValue (to correct casing differences
-    const _suggestion = draft.entitySuggestionCache?.[inlineMarkupData.text.substring(1).toLowerCase()]
+    const _suggestion =
+      draft.entitySuggestionCache?.[
+        inlineMarkupData.text.substring(1).toLowerCase()
+      ]
 
     // if suggestion exists in cache, grab values
     if (_suggestion?.type === _atomicType) {
@@ -518,7 +567,6 @@ export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
       // set flag to new push atomic entity to appropriate provider
       _pushNewEntity = true
     }
-
 
     // get value before offset
     let _textBefore = splitTextAtOffset({
@@ -544,7 +592,6 @@ export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
       ],
     })
 
-
     // get the offset value where the cursor should be placed after operation
     const _caretOffest = _textBefore.textValue.length
 
@@ -561,8 +608,8 @@ export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
     // update selection
     const _nextSelection = {
       _id: draft.selection._id,
-      anchor: { index: index, offset: _caretOffest },
-      focus: { index: index, offset: _caretOffest },
+      anchor: { index, offset: _caretOffest },
+      focus: { index, offset: _caretOffest },
     }
 
     // TODO: confirm this selection gets pushed upstream
@@ -573,52 +620,53 @@ export const convertInlineToAtomicBlocks = ({ block, index, draft }: {
         type: _atomicType,
         // remove atomic symbol
         text: { textValue: _atomicTextValue.substring(1), ranges: [] },
-        _id: _atomicId
+        _id: _atomicId,
       }
       draft.newEntities.push(_entity)
     }
   }
 }
 
-export const getInlineOrAtomicsFromStateSelection = (state: EditorState): Block[] => {
+export const getInlineOrAtomicsFromStateSelection = (
+  state: EditorState
+): Block[] => {
   if (isSelectionCollapsed(state.selection)) {
     return []
   }
 
   const _frag = getFragmentAtSelection(state)
   // check fragment for inline blocks
-  const _inlines = _frag.filter(b =>
-    b.text.ranges.filter(
-      r =>
-        r.marks.filter(
-          m =>
-            Array.isArray(m) &&
-            m.length === 2 &&
-            m[0] === 'inlineTopic'
-        ).length
-    ).length)
-
-  const _inlineMenuRange = _frag.filter(b =>
-    b.text.ranges.filter(
-      r =>
-        r.marks.filter(
-          m => m === 'inlineAtomicMenu'
-        ).length
-    ).length)
-
-
-  const _atomics = _frag.filter(
-    b => isAtomicInlineType(b.type)
+  const _inlines = _frag.filter(
+    (b) =>
+      b.text.ranges.filter(
+        (r) =>
+          r.marks.filter(
+            (m) => Array.isArray(m) && m.length === 2 && m[0] === 'inlineTopic'
+          ).length
+      ).length
   )
+
+  const _inlineMenuRange = _frag.filter(
+    (b) =>
+      b.text.ranges.filter(
+        (r) => r.marks.filter((m) => m === 'inlineAtomicMenu').length
+      ).length
+  )
+
+  const _atomics = _frag.filter((b) => isAtomicInlineType(b.type))
 
   const atomicsInSelection = [..._inlines, ..._inlineMenuRange, ..._atomics]
 
   return atomicsInSelection
 }
 
-
-export const pushAtomicChangeUpstream = ({ state, draft }: { state: EditorState, draft: EditorState }) => {
-
+export const pushAtomicChangeUpstream = ({
+  state,
+  draft,
+}: {
+  state: EditorState
+  draft: EditorState
+}) => {
   // check if any atomics were removed in the redo process, if so, push removed atomics upstream
 
   // create a selection which includes the whole document
@@ -626,22 +674,24 @@ export const pushAtomicChangeUpstream = ({ state, draft }: { state: EditorState,
     anchor: { offset: 0, index: 0 },
     focus: {
       offset: state.blocks[state.blocks.length - 1].text.textValue.length,
-      index: state.blocks.length
-    }
+      index: state.blocks.length,
+    },
   }
 
   const _selectionFromDraft = {
     anchor: { offset: 0, index: 0 },
     focus: {
       offset: draft.blocks[draft.blocks.length - 1].text.textValue.length,
-      index: draft.blocks.length
-    }
+      index: draft.blocks.length,
+    },
   }
 
   // return a list of atomics which were found in the second selection and not the first, this is used to see if atomics were removed from the page
 
-  const { atomicsRemoved, atomicsAdded } = getAtomicDifference({ stateBefore: { ...state, selection: _selectionFromState }, stateAfter: { ...draft, selection: _selectionFromDraft } })
-
+  const { atomicsRemoved, atomicsAdded } = getAtomicDifference({
+    stateBefore: { ...state, selection: _selectionFromState },
+    stateAfter: { ...draft, selection: _selectionFromDraft },
+  })
 
   // if redo action removed refresh page headers
   if (atomicsRemoved.length) {

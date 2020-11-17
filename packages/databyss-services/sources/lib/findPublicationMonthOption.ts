@@ -7,7 +7,7 @@ export function findPublicationMonthOption(
 ): SelectOption {
   // try months
   let option = MonthOptions.find(
-    monthOption =>
+    (monthOption) =>
       // necessary to not use strict equality
       // since type of value may differ from id
       // but comparison is exactly what is needed
@@ -20,7 +20,7 @@ export function findPublicationMonthOption(
 
   // try seasons
   option = SeasonOptions.find(
-    monthOption =>
+    (monthOption) =>
       // necessary to not use strict equality
       // since type of value may differ from id
       // but comparison is exactly what is needed

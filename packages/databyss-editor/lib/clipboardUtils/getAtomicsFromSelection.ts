@@ -6,14 +6,14 @@ import { AtomicType } from '../../interfaces/EditorState'
 
 const getAtomicsFromFrag = (frag: Block[]): AtomicType[] => {
   const atomics: AtomicType[] = []
-  frag.forEach(b => {
+  frag.forEach((b) => {
     if (!isAtomicInlineType(b.type)) {
-      b.text.ranges.forEach(r => {
+      b.text.ranges.forEach((r) => {
         if (r.marks.length) {
           r.marks
-            .filter(i => Array.isArray(i) && i[0] === 'inlineTopic')
-            .forEach(i => {
-              if (!atomics.some(a => a._id === i[1])) {
+            .filter((i) => Array.isArray(i) && i[0] === 'inlineTopic')
+            .forEach((i) => {
+              if (!atomics.some((a) => a._id === i[1])) {
                 const _inline = { type: 'TOPIC', _id: i[1] }
                 atomics.push(_inline)
               }
@@ -21,7 +21,7 @@ const getAtomicsFromFrag = (frag: Block[]): AtomicType[] => {
         }
       })
     } else if (
-      !atomics.some(a => a._id === b._id) &&
+      !atomics.some((a) => a._id === b._id) &&
       b.text.textValue.charAt(0) !== '/'
     ) {
       const _atomic = { type: b.type, _id: b._id }

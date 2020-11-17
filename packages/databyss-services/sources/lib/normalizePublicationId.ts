@@ -6,7 +6,7 @@ import { PublicationTypeId } from '../constants/PublicationTypeId'
 
 const allTypes = Object.values(PublicationTypeId)
 const crossRefTypesMap = {}
-allTypes.forEach(type => {
+allTypes.forEach((type) => {
   crossRefTypesMap[kebabCase(type)] = type
 })
 

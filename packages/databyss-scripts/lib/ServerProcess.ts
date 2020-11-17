@@ -25,7 +25,7 @@ class ServerProcess extends EventEmitter {
       child.on('close', () => {
         resolve()
       })
-      child.on('error', data => {
+      child.on('error', (data) => {
         reject(data)
       })
     })
@@ -39,10 +39,10 @@ class ServerProcess extends EventEmitter {
     return proc
   }
   _bindProcEvents(proc) {
-    proc.stdout.on('data', data => {
+    proc.stdout.on('data', (data) => {
       this.stdOut(data)
     })
-    proc.stderr.on('data', data => {
+    proc.stderr.on('data', (data) => {
       this.stdErr(data)
     })
   }

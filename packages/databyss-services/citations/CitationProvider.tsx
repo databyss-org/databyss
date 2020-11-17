@@ -76,7 +76,7 @@ const CitationProvider: React.FunctionComponent<PropsType> = (
   )
 }
 
-export const useCitationContext = (selector = x => x) =>
+export const useCitationContext = (selector = (x) => x) =>
   useContextSelector(CitationContext, selector)
 
 export default CitationProvider

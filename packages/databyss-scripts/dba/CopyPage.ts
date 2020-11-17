@@ -39,9 +39,7 @@ class CopyPage extends ServerProcess {
   async run() {
     this.emit(
       'stdout',
-      `Copying Page with _id "${this.args.pageId}" to account: "${
-        this.args.toAccountId
-      }"`
+      `Copying Page with _id "${this.args.pageId}" to account: "${this.args.toAccountId}"`
     )
 
     try {

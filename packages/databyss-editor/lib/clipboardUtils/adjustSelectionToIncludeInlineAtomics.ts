@@ -20,17 +20,17 @@ export default ({
     blocks,
     point: anchor,
   }).filter(
-    r =>
+    (r) =>
       r.marks.length &&
-      r.marks.filter(i => Array.isArray(i) && i[0] === 'inlineTopic')
+      r.marks.filter((i) => Array.isArray(i) && i[0] === 'inlineTopic')
   )
   const _inlineRangesAtFocus = getRangesAtPoint({
     blocks,
     point: focus,
   }).filter(
-    r =>
+    (r) =>
       r.marks.length &&
-      r.marks.filter(i => Array.isArray(i) && i[0] === 'inlineTopic')
+      r.marks.filter((i) => Array.isArray(i) && i[0] === 'inlineTopic')
   )
 
   // try catch function works with both read only and non read only properties

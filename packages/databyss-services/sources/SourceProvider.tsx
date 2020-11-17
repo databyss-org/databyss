@@ -74,7 +74,6 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     [state.cache]
   )
 
-
   // provider methods - cache
   const removeCacheValue = useCallback(
     (id: string) => {
@@ -102,16 +101,15 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
   }
 
   // provider methods - citations
-  const getSourceCitations = useCallback(
-    (): ResourceResponse<SourceCitationHeader> => {
-      if (state.citationHeaderCache) {
-        return state.citationHeaderCache
-      }
-      dispatch(fetchSourceCitations())
-      return null
-    },
-    [state]
-  )
+  const getSourceCitations = useCallback((): ResourceResponse<
+    SourceCitationHeader
+  > => {
+    if (state.citationHeaderCache) {
+      return state.citationHeaderCache
+    }
+    dispatch(fetchSourceCitations())
+    return null
+  }, [state])
 
   const setPreferredCitationStyle = useCallback(
     (styleId: string) => {
@@ -132,17 +130,14 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
   const getPreferredCitationStyle = () => state.preferredCitationStyle
 
   // provider methods - citations
-  const getAuthors = useCallback(
-    (): ResourceResponse<Author[]> => {
-      if (state.authorsHeaderCache) {
-        return state.authorsHeaderCache
-      }
+  const getAuthors = useCallback((): ResourceResponse<Author[]> => {
+    if (state.authorsHeaderCache) {
+      return state.authorsHeaderCache
+    }
 
-      dispatch(fetchAuthorHeaders())
-      return null
-    },
-    [state.authorsHeaderCache]
-  )
+    dispatch(fetchAuthorHeaders())
+    return null
+  }, [state.authorsHeaderCache])
 
   return (
     <SourceContext.Provider
@@ -165,7 +160,7 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const useSourceContext = (selector = x => x) =>
+export const useSourceContext = (selector = (x) => x) =>
   useContextSelector(SourceContext, selector)
 
 SourceProvider.defaultProps = {
