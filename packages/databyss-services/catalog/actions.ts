@@ -7,7 +7,6 @@ import {
   GroupedCatalogResults,
   NetworkUnavailableError,
   Source,
-  Text,
 } from '../interfaces'
 
 import {

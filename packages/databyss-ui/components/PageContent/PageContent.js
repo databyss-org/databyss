@@ -11,13 +11,6 @@ import PageSticky from './PageSticky'
 import { isMobile } from '../../lib/mediaQuery'
 import AccountMenu from './AccountMenu'
 
-// components
-export const PageRouter = () => (
-  <Router>
-    <PageContent path=":id" />
-  </Router>
-)
-
 export const PageContainer = React.memo(
   ({ anchor, id, page, ...others }) => {
     const getBlockRefByIndex = usePageContext((c) => c.getBlockRefByIndex)
@@ -129,5 +122,12 @@ const PageContent = (others) => {
     </View>
   )
 }
+
+// components
+export const PageRouter = () => (
+  <Router>
+    <PageContent path=":id" />
+  </Router>
+)
 
 export default PageContent

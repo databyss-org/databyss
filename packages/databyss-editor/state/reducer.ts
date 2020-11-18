@@ -1,5 +1,4 @@
 import ObjectId from 'bson-objectid'
-import _ from 'lodash'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
 import { FSA, BlockType, Block } from '@databyss-org/services/interfaces'
 import {
@@ -51,7 +50,8 @@ import {
 import { EditorState, PayloadOperation } from '../interfaces'
 
 import mergeInlineAtomicMenuRange from '../lib/clipboardUtils/mergeInlineAtomicMenuRange'
-import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
+import { RangeType } from '../../databyss-services/interfaces/Range'
+import { OnChangeArgs } from './EditorProvider'
 
 // if block at @index in @draft.blocks starts with an atomic identifier character,
 // e.g. @ or #, convert the block to the appropriate atomic type and return it.
@@ -281,13 +281,13 @@ enablePatches()
 export default (
   state: EditorState,
   action: FSA,
-  onChange?: Function
+  onChange?: (props: OnChangeArgs) => void
 ): EditorState => {
   let clearBlockRelations = false
 
   const [nextState, patches, inversePatches] = produceWithPatches(
     state,
-    (draft) => {
+    (draft: EditorState) => {
       draft.operations = []
       draft.preventDefault = false
       // if flag is set, atomics were added or removed, blockRelations must be refreshed upstream and the headers must be reset
@@ -384,7 +384,7 @@ export default (
             _frag.length === 1 &&
             isAtomicInlineType(_frag[0].type) &&
             !!_rangesAtCurrentSelection.filter((r) =>
-              r.marks.includes('inlineAtomicMenu')
+              r.marks.includes(RangeType.InlineAtomicInput)
             ).length
 
           // if replacing, fragment contains multiple blocks, the cursor block is empty,
@@ -400,7 +400,7 @@ export default (
             // check if we are pasting inside of an inline atomic field
             if (
               _rangesAtCurrentSelection.filter((r) =>
-                r.marks.includes('inlineAtomicMenu')
+                r.marks.includes(RangeType.InlineAtomicInput)
               ).length
             ) {
               break
@@ -447,7 +447,9 @@ export default (
             })
 
             if (
-              _ranges.filter((r) => r.marks.includes('inlineAtomicMenu')).length
+              _ranges.filter((r) =>
+                r.marks.includes(RangeType.InlineAtomicInput)
+              ).length
             ) {
               /*
               if pasting within an inlineAtomicMenu field
@@ -462,7 +464,7 @@ export default (
                 {
                   offset: 0,
                   length: _fragment.textValue.length,
-                  marks: ['inlineAtomicMenu'],
+                  marks: [RangeType.InlineAtomicInput],
                 },
               ]
               // insert pasted text
@@ -838,10 +840,10 @@ export default (
             })
 
             const _activeInlineBefore = _activeRangesBefore.filter((r) =>
-              r.marks.includes('inlineAtomicMenu')
+              r.marks.includes(RangeType.InlineAtomicInput)
             )
             const _activeInlineAfter = _activeRangesAfter.filter((r) =>
-              r.marks.includes('inlineAtomicMenu')
+              r.marks.includes(RangeType.InlineAtomicInput)
             )
             // if active selection was 'inlineAtomicMenu and' before and not after, convert inlines to atomic
             if (_activeInlineBefore.length && !_activeInlineAfter.length) {
@@ -853,6 +855,7 @@ export default (
               })
             }
           }
+          break
         }
         default:
       }
@@ -934,7 +937,7 @@ export default (
       // flag currently selected block with `__showNewBlockMenu` if empty
 
       // first reset `__showNewBlockMenu` on all other blocks
-      draft.blocks.forEach((block, i) => {
+      draft.blocks.forEach((block) => {
         block.__showNewBlockMenu = false
         block.__isActive = false
         block.__showInlineTopicMenu = false
@@ -969,7 +972,7 @@ export default (
             if (acc === true) {
               return true
             }
-            if (curr.marks.includes('inlineAtomicMenu')) {
+            if (curr.marks.includes(RangeType.InlineAtomicInput)) {
               return true
             }
             return false
@@ -996,7 +999,6 @@ export default (
   /*
   historyActions need to bypass the EditorHistory history stack
   */
-
   if (onChange) {
     onChange({
       previousState: state,

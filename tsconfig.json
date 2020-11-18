@@ -1,5 +1,7 @@
 {
   "references": [
-    { "path": "./packages/databyss-services" }
+    {
+      "path": "./packages/databyss-services"
+    }
   ]
 }

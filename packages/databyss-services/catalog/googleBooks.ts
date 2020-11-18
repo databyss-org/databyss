@@ -3,12 +3,7 @@ import {
   CatalogType,
   GroupedCatalogResults,
 } from '../interfaces'
-import {
-  findPublicationMonthOption,
-  getPublicationTypeById,
-  isBook,
-  normalizePublicationId,
-} from '../sources/lib'
+import { getPublicationTypeById, normalizePublicationId } from '../sources/lib'
 import { defaultMonthOption } from '../sources/constants/MonthOptions'
 import { defaultPublicationType } from '../sources/constants/PublicationTypes'
 import request from '../lib/request'
@@ -48,34 +43,35 @@ const googleBooks: CatalogService = {
     }
     return pubType
   },
-  getPublisherPlace: (apiResult: any) =>
+  getPublisherPlace: () =>
     // TODO: confirm they never provide it
     '',
-  getPublishedYear: (apiResult: any) =>
-    apiResult.volumeInfo.publishedDate?.substring(0, 4),
-  getPublishedMonth: (apiResult: any, publicationType: string) => {
-    if (isBook(publicationType)) {
-      return defaultMonthOption
-    }
 
-    return findPublicationMonthOption(rawMonth)
-  },
+  /*
+    All items returned by this catalog are books,
+    and publication month is of no interest
+    for this typeat this time.
+  */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getPublishedMonth: (apiResult: any, publicationType: string) =>
+    defaultMonthOption,
 
   // publication details (book)
-  getISBN: (apiResult: any) =>
+  getISBN: () =>
     // TODO: confirm they never provide it
     '',
+
   // publication details (journal article)
-  getIssue: (apiResult: any) =>
+  getIssue: () =>
     // TODO: confirm they never provide it
     '',
-  getVolume: (apiResult: any) =>
+  getVolume: () =>
     // TODO: confirm they never provide it
     '',
-  getDOI: (apiResult: any) =>
+  getDOI: () =>
     // TODO: confirm they never provide it
     '',
-  getISSN: (apiResult: any) =>
+  getISSN: () =>
     // TODO: confirm they never provide it
     '',
 }

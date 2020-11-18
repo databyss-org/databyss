@@ -19,6 +19,10 @@ import {
 } from '../lib/clipboardUtils'
 
 import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
+import {
+  RangeType,
+  InlineTypes,
+} from '../../databyss-services/interfaces/Range'
 
 /*
 takes a text object and a range type and returns the length of the range, the location of the offset and the text contained within the range, this fuction works when text block has of of that range type
@@ -28,7 +32,7 @@ export const getTextOffsetWithRange = ({
   rangeType,
 }: {
   text: Text
-  rangeType: string
+  rangeType: RangeType
 }) => {
   const _string = text.textValue
   const _ranges = text.ranges.filter((r) => r.marks.includes(rangeType))
@@ -234,7 +238,7 @@ export const offsetRanges = (ranges: Array<Range>, _offset: number) =>
   })
 
 export const removeLocationMark = (ranges: Array<Range>) =>
-  ranges.filter((r) => !r.marks.includes('location'))
+  ranges.filter((r) => !r.marks.includes(RangeType.Location))
 
 // returns a shallow clone of the block so immer.patch isn't confused
 export const blockValue = (block: Block): Block => ({ ...block })
@@ -409,7 +413,7 @@ export const getWordFromOffset = ({
   // split the text by space or new line
   const words: Array<string> = text.split(/\s+/)
   let _currentOffset = 0
-  for (let i = 0; words.length > i; i++) {
+  for (let i = 0; words.length > i; i += 1) {
     const _lastOffset = _currentOffset
     _currentOffset += words[i].length + 1
     if (_currentOffset > offset) {
@@ -428,19 +432,19 @@ export const replaceInlineText = ({
   refId: string
   newText: Text
 }): Text | null => {
-  const _textToInsert = {
+  const _textToInsert: Text = {
     textValue: `#${newText.textValue}`,
     ranges: [
       {
         length: newText.textValue.length + 1,
         offset: 0,
-        marks: [['inlineTopic', refId]],
+        marks: [[InlineTypes.InlineTopic, refId]],
       },
     ],
   }
 
   const _rangesWithId = text.ranges.filter(
-    (r) => r.marks[0][0] === 'inlineTopic' && r.marks[0][1] === refId
+    (r) => r.marks[0][0] === InlineTypes.InlineTopic && r.marks[0][1] === refId
   )
   // offset will be updated in loop
   let _cumulativeOffset = 0
@@ -518,20 +522,20 @@ export const convertInlineToAtomicBlocks = ({
   // get the markup data, function returns: offset, length, text
   const inlineMarkupData = getTextOffsetWithRange({
     text: block.text,
-    rangeType: 'inlineAtomicMenu',
+    rangeType: RangeType.InlineAtomicInput,
   })
 
   // if the only text tagged with inlineAtomicMenu is the opener, remove mark and normalize the text
   if (inlineMarkupData?.length === 1) {
     const ranges: Range[] = []
     block.text.ranges.forEach((r) => {
-      if (!r.marks.includes('inlineAtomicMenu')) {
+      if (!r.marks.includes(RangeType.InlineAtomicInput)) {
         ranges.push(r)
       }
     })
 
     block.text.ranges = block.text.ranges.filter(
-      (r) => !r.marks.includes('inlineAtomicMenu')
+      (r) => !r.marks.includes(RangeType.InlineAtomicInput)
     )
     // force a re-render
     draft.operations.push({
@@ -587,7 +591,7 @@ export const convertInlineToAtomicBlocks = ({
         {
           offset: 0,
           length: _atomicTextValue.length,
-          marks: [['inlineTopic', _atomicId]],
+          marks: [[InlineTypes.InlineTopic, _atomicId]],
         },
       ],
     })
@@ -696,6 +700,7 @@ export const pushAtomicChangeUpstream = ({
   // if redo action removed refresh page headers
   if (atomicsRemoved.length) {
     // push removed entities upstream
+    // eslint-disable-next-line prefer-spread
     draft.removedEntities.push.apply(draft.removedEntities, atomicsRemoved)
   }
 

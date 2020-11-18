@@ -1,6 +1,7 @@
 /* eslint-disable eqeqeq */
 import { defaultMonthOption, MonthOptions } from '../constants/MonthOptions'
 import { SeasonOptions } from '../constants/SeasonOptions'
+import { SelectOption } from '../../interfaces/UI'
 
 export function findPublicationMonthOption(
   value: String | Number

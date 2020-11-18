@@ -1,9 +1,8 @@
-import { Page, PageHeader CacheDict, NullableCache, RefDict } from './'
-import { ResourcePending } from './ResourcePending'
+import { Page, PageHeader, CacheDict, NullableCache, RefDict } from './'
 
 export interface PageState {
-  cache: CacheDict<Page>,
-  headerCache: NullableCache<PageHeader>,
-  refDict: RefDict,
-  patchQueueSize: number,
+  cache: CacheDict<Page>
+  headerCache: NullableCache<PageHeader>
+  refDict: RefDict
+  patchQueueSize: number
 }

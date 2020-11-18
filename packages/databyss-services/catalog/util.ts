@@ -1,6 +1,6 @@
 import stripHtml from 'string-strip-html'
-import { CatalogParsingParams, Text } from '../interfaces/CatalogState'
-
+import { CatalogParsingParams } from '../interfaces/CatalogState'
+import { Text, RangeType } from '../interfaces'
 /**
  * Removes unwanted entities (e.g. html tags) from catalog results
  * @param text string or array of strings to cleanup
@@ -17,7 +17,7 @@ export function stripText(text: string | string[]) {
 
 export const getCatalogSearchType = (query: string) => {
   // DOI
-  if (query.match(/^10.\d{4,9}\/[-._;()\/:A-Z0-9]+$/i)) {
+  if (query.match(/^10.\d{4,9}\/[-._;()/:A-Z0-9]+$/i)) {
     return 'DOI'
   }
   // ISBN
@@ -47,7 +47,7 @@ export function buildFullTitle(options: CatalogParsingParams): Text {
     {
       offset: 0,
       length: _text.textValue.length,
-      marks: ['italic'],
+      marks: [RangeType.Italic],
     },
   ]
 

@@ -9,14 +9,16 @@ export enum BlockType {
   EndTopic = 'END_TOPIC',
 }
 
+export interface BasicBlock {
+  _id: string
+  type: BlockType
+}
+
 // interface InlineAtomic {
 //   word: string
 //   offset: number
 // }
-
-export interface Block {
-  _id: string
-  type: BlockType
+export interface Block extends BasicBlock {
   text: Text
   __showCitationMenu?: boolean
   __showTopicMenu?: boolean

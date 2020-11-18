@@ -1,3 +1,4 @@
+import React from 'react'
 import { ResourcePending } from './ResourcePending'
 
 export { ResourcePending } from './ResourcePending'
@@ -12,7 +13,7 @@ export {
 export type { Page, PageHeader } from './Page'
 export type { Point } from './Point'
 export type { Selection } from './Selection'
-export type { Block } from './Block'
+export type { Block, BasicBlock } from './Block'
 export type { Text } from './Text'
 export type {
   Source,
@@ -47,6 +48,6 @@ export interface CacheDict<T> {
 }
 export type NullableCache<T> = ResourceResponse<CacheDict<T>>
 export type CacheList<T> = ResourceResponse<T[]>
-interface RefDict {
+export interface RefDict {
   [key: string]: React.Ref<HTMLInputElement>
 }

@@ -42,15 +42,6 @@ const buildSortedSources = (sourceCitations) => {
   return sortedSources
 }
 
-// components
-export const SourcesRouter = () => (
-  <Router>
-    <SourcesContent path="/" />
-    <SourcesCitations path="/:query" />
-    <AuthorsContent path="/authors" />
-  </Router>
-)
-
 const SourcesContent = () => {
   const navigate = useNavigationContext((c) => c.navigate)
 
@@ -112,5 +103,14 @@ const SourcesContent = () => {
 
   return render()
 }
+
+// components
+export const SourcesRouter = () => (
+  <Router>
+    <SourcesContent path="/" />
+    <SourcesCitations path="/:query" />
+    <AuthorsContent path="/authors" />
+  </Router>
+)
 
 export default SourcesContent

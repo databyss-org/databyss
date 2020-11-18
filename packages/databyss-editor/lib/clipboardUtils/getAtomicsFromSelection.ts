@@ -2,10 +2,13 @@ import _ from 'lodash'
 import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
 import { isAtomicInlineType } from '../util'
-import { AtomicType } from '../../interfaces/EditorState'
+import {
+  BasicBlock,
+  BlockType,
+} from '../../../databyss-services/interfaces/Block'
 
-const getAtomicsFromFrag = (frag: Block[]): AtomicType[] => {
-  const atomics: AtomicType[] = []
+const getAtomicsFromFrag = (frag: Block[]): BasicBlock[] => {
+  const atomics: BasicBlock[] = []
   frag.forEach((b) => {
     if (!isAtomicInlineType(b.type)) {
       b.text.ranges.forEach((r) => {
@@ -14,7 +17,7 @@ const getAtomicsFromFrag = (frag: Block[]): AtomicType[] => {
             .filter((i) => Array.isArray(i) && i[0] === 'inlineTopic')
             .forEach((i) => {
               if (!atomics.some((a) => a._id === i[1])) {
-                const _inline = { type: 'TOPIC', _id: i[1] }
+                const _inline: BasicBlock = { type: BlockType.Topic, _id: i[1] }
                 atomics.push(_inline)
               }
             })
@@ -47,7 +50,7 @@ export const getAtomicDifference = ({
 }: {
   stateBefore: EditorState
   stateAfter: EditorState
-}): { atomicsRemoved: AtomicType[]; atomicsAdded: AtomicType[] } => {
+}): { atomicsRemoved: BasicBlock[]; atomicsAdded: BasicBlock[] } => {
   // returns array of atomics within selection
   const _atomicsBefore = getAtomicsFromSelection({
     state: stateBefore,
@@ -55,13 +58,13 @@ export const getAtomicDifference = ({
 
   const _atomicsAfter = getAtomicsFromSelection({ state: stateAfter })
 
-  const _listOfAtomicsToRemove: AtomicType[] = _.differenceWith(
+  const _listOfAtomicsToRemove: BasicBlock[] = _.differenceWith(
     _atomicsBefore,
     _atomicsAfter,
     _.isEqual
   )
 
-  const _listOFAtomicsToAdd: AtomicType[] = _.differenceWith(
+  const _listOFAtomicsToAdd: BasicBlock[] = _.differenceWith(
     _atomicsAfter,
     _atomicsBefore,
     _.isEqual
