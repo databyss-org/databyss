@@ -63,22 +63,26 @@ export default produce((draft: Draft<TopicState>, action: FSA) => {
     }
 
     case REMOVE_PAGE_FROM_HEADER: {
-      const _inPages = _headerCache[action.payload.id]?.isInPages
+      const _resource: any = _headerCache[action.payload.id]
+
+      const _inPages: string[] = _resource?.isInPages
       if (_inPages) {
         const _index = _inPages.findIndex((p) => p === action.payload.pageId)
         if (_index > -1) {
-          _headerCache[action.payload.id]?.isInPages.splice(_index, 1)
+          _resource?.isInPages.splice(_index, 1)
         }
       }
 
       break
     }
     case ADD_PAGE_TO_HEADER: {
-      const _inPages = _headerCache[action.payload.id]?.isInPages
+      const _resource: any = _headerCache[action.payload.id]
+
+      const _inPages: string[] = _resource?.isInPages
       if (_inPages) {
         const _index = _inPages.findIndex((p) => p === action.payload.pageId)
         if (_index < 0) {
-          _headerCache[action.payload.id]?.isInPages.push(action.payload.pageId)
+          _resource?.isInPages.push(action.payload.pageId)
         }
       }
 

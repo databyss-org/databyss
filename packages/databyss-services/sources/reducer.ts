@@ -98,11 +98,13 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
     }
 
     case REMOVE_PAGE_FROM_HEADERS: {
-      const _inPages = _citationHeaderCache[action.payload.id]?.isInPages
+      const _resource: any = _citationHeaderCache[action.payload.id]
+
+      const _inPages: string[] = _resource?.isInPages
       if (_inPages) {
         const _index = _inPages.findIndex((p) => p === action.payload.pageId)
         if (_index > -1) {
-          _citationHeaderCache[action.payload.id]?.isInPages.splice(_index, 1)
+          _resource?.isInPages.splice(_index, 1)
           draft.authorsHeaderCache = getAuthorsFromSources(
             Object.values(_citationHeaderCache)
           )
@@ -114,13 +116,13 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
 
     case ADD_PAGE_TO_HEADER: {
       if (_citationHeaderCache) {
-        const _inPages = _citationHeaderCache[action.payload.id]?.isInPages
+        const _resource: any = _citationHeaderCache[action.payload.id]
+
+        const _inPages: string[] = _resource?.isInPages
         if (_inPages) {
           const _index = _inPages.findIndex((p) => p === action.payload.pageId)
           if (_index < 0) {
-            _citationHeaderCache[action.payload.id].isInPages.push(
-              action.payload.pageId
-            )
+            _resource.isInPages.push(action.payload.pageId)
             draft.authorsHeaderCache = getAuthorsFromSources(
               Object.values(_citationHeaderCache)
             )
