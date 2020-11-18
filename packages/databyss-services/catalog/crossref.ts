@@ -12,20 +12,22 @@ import {
 import { defaultMonthOption } from '../sources/constants/MonthOptions'
 import { defaultPublicationType } from '../sources/constants/PublicationTypes'
 import request from '../lib/request'
-import { stripText as c, getCatalogSearchType } from './util';
+import { stripText as c, getCatalogSearchType } from './util'
 import { CROSSREF } from './constants'
 
 const crossref: CatalogService = {
   type: CROSSREF,
 
   search: async (query: string): Promise<GroupedCatalogResults> => {
-    let _baseUri = "https://api.crossref.org/works?query="
+    let _baseUri = 'https://api.crossref.org/works?query='
 
-    if(getCatalogSearchType(query) === 'DOI'){
-      _baseUri =`https://api.crossref.org/works/`
+    if (getCatalogSearchType(query) === 'DOI') {
+      _baseUri = `https://api.crossref.org/works/`
     }
 
-    let _uri = `${_baseUri}${!getCatalogSearchType(query) ?encodeURIComponent(query): query}`
+    let _uri = `${_baseUri}${
+      !getCatalogSearchType(query) ? encodeURIComponent(query) : query
+    }`
     if (process.env.CITEBOT_EMAIL && !getCatalogSearchType(query)) {
       _uri += `&mailto=${process.env.CITEBOT_EMAIL}`
     }
@@ -33,7 +35,8 @@ const crossref: CatalogService = {
 
     return results
   },
-  getResults: (apiResults: any) => apiResults.message.items || [apiResults.message],
+  getResults: (apiResults: any) =>
+    apiResults.message.items || [apiResults.message],
 
   // details
   getAuthors: (apiResult: any) => c((apiResult.author || []).map(authorName)),
@@ -57,28 +60,51 @@ const crossref: CatalogService = {
     }
     return ''
   },
-  getPublishedYear: (apiResult: any) => {
-    return apiResult.issued?.['date-parts']?.[0]?.[0] ||
-      apiResult['published-print']?.['date-parts']?.[0]?.[0] ||
-      apiResult['published-online']?.['date-parts']?.[0]?.[0] ||
-      apiResult['approved']?.['date-parts']?.[0]?.[0] ||
-      apiResult['created']?.['date-parts']?.[0]?.[0]
-  },
+  getPublishedYear: (apiResult: any) =>
+    apiResult.issued?.['date-parts']?.[0]?.[0] ||
+    apiResult['published-print']?.['date-parts']?.[0]?.[0] ||
+    apiResult['published-online']?.['date-parts']?.[0]?.[0] ||
+    apiResult.approved?.['date-parts']?.[0]?.[0] ||
+    apiResult.created?.['date-parts']?.[0]?.[0],
   getPublishedMonth: (apiResult: any, publicationType: string) => {
     if (isBook(publicationType)) {
       return defaultMonthOption
     }
 
-    const rawMonth = apiResult.issued?.['date-parts']?.[0]?.[1] ||
+    const rawMonth =
+      apiResult.issued?.['date-parts']?.[0]?.[1] ||
       apiResult['published-print']?.['date-parts']?.[0]?.[1] ||
       apiResult['published-online']?.['date-parts']?.[0]?.[1] ||
-      apiResult['approved']?.['date-parts']?.[0]?.[1] ||
-      apiResult['created']?.['date-parts']?.[0]?.[1]
+      apiResult.approved?.['date-parts']?.[0]?.[1] ||
+      apiResult.created?.['date-parts']?.[0]?.[1]
 
     return findPublicationMonthOption(rawMonth)
   },
 
-  // publication details (book)
+  // publication details (articles)
+  getJournalTitle: (apiResult: any) => {
+    if (apiResult['container-title-short']) {
+      return apiResult['container-title-short']
+    }
+    if (apiResult['container-title']) {
+      return apiResult['container-title']
+    }
+    return ''
+  },
+  getIssue: (apiResult: any) => {
+    if (apiResult.issue) {
+      return apiResult.issue
+    }
+    return ''
+  },
+  getVolume: (apiResult: any) => {
+    if (apiResult.volume) {
+      return apiResult.volume
+    }
+    return ''
+  },
+
+  // catalog identifiers (book)
   getISBN: (apiResult: any) => {
     if (apiResult.ISBN) {
       if (Array.isArray(apiResult.ISBN)) {
@@ -90,26 +116,11 @@ const crossref: CatalogService = {
     return ''
   },
 
-  // publication details (journal article)
-  getIssue: (apiResult: any) => {
-    if (apiResult.issue) {
-      return apiResult.issue
-    }
-
-    return ''
-  },
-  getVolume: (apiResult: any) => {
-    if (apiResult.volume) {
-      return apiResult.volume
-    }
-
-    return ''
-  },
+  // catalog identifiers (articles)
   getDOI: (apiResult: any) => {
     if (apiResult.DOI) {
       return apiResult.DOI
     }
-
     return ''
   },
   getISSN: (apiResult: any) => {

@@ -11,7 +11,7 @@ import crossref from '@databyss-org/services/catalog/crossref'
 import EditSourceForm from '../../components/SourcesContent/EditSourceForm'
 
 // utils
-const createAuthorFromCrossref = crossrefAuthor => ({
+const createAuthorFromCrossref = (crossrefAuthor) => ({
   firstName: crossrefAuthor.given
     ? makeText(crossrefAuthor.given)
     : makeText(''),
@@ -20,7 +20,7 @@ const createAuthorFromCrossref = crossrefAuthor => ({
     : makeText(''),
 })
 
-const createValueState = metadata => {
+const createValueState = (metadata) => {
   // update props...
   const { fromCrossref } = metadata
   const { author } = fromCrossref
@@ -38,12 +38,12 @@ const createValueState = metadata => {
 
   // ...authors
   if (author) {
-    author.forEach(a => {
+    author.forEach((a) => {
       state.detail.authors.push(createAuthorFromCrossref(a))
     })
   }
 
-  // publication details (common)
+  // ...publication details (common)
   const publicationType = crossref.getPublicationType(fromCrossref)
   state.detail.publisherName = makeText(crossref.getPublisher(fromCrossref))
   state.detail.publisherPlace = makeText(
@@ -51,13 +51,16 @@ const createValueState = metadata => {
   )
   state.detail.year = makeText(crossref.getPublishedYear(fromCrossref))
   state.detail.month = crossref.getPublishedMonth(fromCrossref, publicationType)
+
+  // ...publication details (articles)
+  state.detail.journalTitle = makeText(crossref.getJournalTitle(fromCrossref))
   state.detail.volume = makeText(crossref.getVolume(fromCrossref))
   state.detail.issue = makeText(crossref.getIssue(fromCrossref))
 
-  // publication details (book)
+  // ...catalog identifiers (book)
   state.detail.isbn = makeText(crossref.getISBN(fromCrossref))
 
-  // publication details (journal article)
+  // ...catalog identifiers (articles)
   state.detail.doi = makeText(crossref.getDOI(fromCrossref))
   state.detail.issn = makeText(crossref.getISSN(fromCrossref))
 

@@ -47,12 +47,15 @@ export interface CatalogService {
     publicationType: string
   ) => SelectOption | null | undefined
 
-  // publication details (book)
-  getISBN: (apiResult: any) => string
-
-  // publication details (journal article)
+  // publication details (articles)
+  getJournalTitle: (apiResult: any, publicationType: string) => string
   getIssue: (apiResult: any) => string
   getVolume: (apiResult: any) => string
+
+  // catalog identifiers (book)
+  getISBN: (apiResult: any) => string
+
+  // catalog identifiers (articles)
   getDOI: (apiResult: any) => string
   getISSN: (apiResult: any) => string
 }

@@ -22,11 +22,11 @@ const buildHeaderItems = (firstName, lastName) => [
 const AuthorDetails = ({ query }) => {
   const params = new URLSearchParams(query)
 
-  const authorQueryFirstName = params.get('firstName')
-  const authorQueryLastName = params.get('lastName')
+  const authorQueryFirstName = decodeURIComponent(params.get('firstName'))
+  const authorQueryLastName = decodeURIComponent(params.get('lastName'))
 
   // render methods
-  const renderAuthorCitations = citations => {
+  const renderAuthorCitations = (citations) => {
     const authorCitations = buildAuthorCitationData(
       citations,
       authorQueryFirstName,
@@ -34,7 +34,7 @@ const AuthorDetails = ({ query }) => {
     )
 
     const cleanCitations = authorCitations.filter(
-      c =>
+      (c) =>
         Object.prototype.hasOwnProperty.call(c, 'id') &&
         Object.prototype.hasOwnProperty.call(c, 'text')
     )
@@ -59,7 +59,7 @@ const AuthorDetails = ({ query }) => {
     >
       <SourceProvider>
         <SourceCitationsLoader>
-          {citations => renderAuthorCitations(citations)}
+          {(citations) => renderAuthorCitations(citations)}
         </SourceCitationsLoader>
       </SourceProvider>
     </MobileView>

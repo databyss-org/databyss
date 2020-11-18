@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/scripts",
-  "version": "1.2.00",
+  "version": "1.2.2",
   "description": "databyss scripts",
   "author": "databyss-org",
   "license": "MIT",
@@ -11,6 +11,6 @@
     "tmp": "^0.2.1"
   },
   "peerDependencies": {
-    "@databyss-org/api": "1.2.00"
+    "@databyss-org/api": "1.2.2"
   }
 }

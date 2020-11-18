@@ -72,7 +72,7 @@ const NavigationProvider = ({ children }) => {
     return getTokensFromPath().type ? getTokensFromPath().type : 'pages'
   }
 
-  const getQueryParams = () => decodeURIComponent(location.search)
+  const getQueryParams = () => location.search
 
   return (
     <NavigationContext.Provider

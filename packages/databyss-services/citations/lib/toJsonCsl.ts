@@ -1,6 +1,7 @@
 import { isEqual } from 'lodash'
 
 import { defaultMonthOption } from '../../sources/constants/MonthOptions'
+import { PublicationTypeId } from '../../sources/constants/PublicationTypeId'
 
 /**
  * Converts a Databyss source detail object to a JSON CSL object.
@@ -10,7 +11,7 @@ import { defaultMonthOption } from '../../sources/constants/MonthOptions'
  *
  * @param {SourceDetail} source A Databyss source detail object.
  */
-export const toJsonCsl = source => {
+export const toJsonCsl = (source) => {
   if (!source) {
     return null
   }
@@ -25,21 +26,38 @@ export const toJsonCsl = source => {
     publicationType,
     publisherName,
     publisherPlace,
+    // publication details (article)
+    journalTitle,
     volume,
     issue,
-    // catalog identifiers
+    // publication details (book section)
+    chapterTitle,
+    // catalog identifiers (book)
     isbn,
+    // catalog identifiers (article)
     issn,
     doi,
   } = source
 
   const response = {}
 
+  // === PUBLICATION TYPE ===
+  // should be set first, as it may affect other parts
+  if (validateOption(source, 'publicationType')) {
+    response.type = publicationType.id
+  }
+
   // === TITLE ===
-  if (validateTextValue(title)) {
-    response.title = title.textValue
+  const titleValue = validateTextValue(title) ? title.textValue : ''
+  if (response.type === PublicationTypeId.BOOK_SECTION) {
+    if (validateTextValue(chapterTitle)) {
+      response['container-title'] = titleValue
+      response.title = chapterTitle.textValue
+    } else {
+      response.title = titleValue
+    }
   } else {
-    response.title = ''
+    response.title = titleValue
   }
 
   // === PEOPLE ===
@@ -47,7 +65,7 @@ export const toJsonCsl = source => {
   // authors
   if (validatePeopleArray(source, 'authors')) {
     response.author = []
-    authors.forEach(a => {
+    authors.forEach((a) => {
       response.author.push({
         given: a.firstName?.textValue,
         family: a.lastName?.textValue,
@@ -58,7 +76,7 @@ export const toJsonCsl = source => {
   // editors
   if (validatePeopleArray(source, 'editors')) {
     response.editor = []
-    editors.forEach(e => {
+    editors.forEach((e) => {
       response.editor.push({
         given: e.firstName?.textValue,
         family: e.lastName?.textValue,
@@ -69,7 +87,7 @@ export const toJsonCsl = source => {
   // translators
   if (validatePeopleArray(source, 'translators')) {
     response.translator = []
-    translators.forEach(t => {
+    translators.forEach((t) => {
       response.translator.push({
         given: t.firstName?.textValue,
         family: t.lastName?.textValue,
@@ -87,13 +105,6 @@ export const toJsonCsl = source => {
     }
   }
 
-
-  // publication type
-  if (validateOption(source, 'publicationType')) {
-    // TODO: ensure if acceptable type
-    response.type = publicationType.id
-  }
-
   // publisher
   if (validateTextValue(publisherName)) {
     response.publisher = publisherName.textValue
@@ -102,6 +113,13 @@ export const toJsonCsl = source => {
   // place
   if (validateTextValue(publisherPlace)) {
     response['publisher-place'] = publisherPlace.textValue
+  }
+
+  // == PUBLICATION - ARTICLE ==
+
+  // journal title
+  if (validateTextValue(journalTitle)) {
+    response['container-title'] = journalTitle.textValue
   }
 
   // volume

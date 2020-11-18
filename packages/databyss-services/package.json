@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/services",
-  "version": "1.2.00",
+  "version": "1.2.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/databyss-org/databyss.git"
@@ -13,8 +13,8 @@
   "private": true,
   "peerDependencies": {
     "@bugsnag/js": "^6.3.2",
-    "@databyss-org/services": "1.2.00",
-    "@databyss-org/ui": "1.2.00",
+    "@databyss-org/services": "1.2.2",
+    "@databyss-org/ui": "1.2.2",
     "react": "16.9.0",
     "react-dom": "16.9.0"
   },

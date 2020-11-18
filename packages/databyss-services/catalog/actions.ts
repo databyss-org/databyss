@@ -10,7 +10,13 @@ import {
   Text,
 } from '../interfaces'
 
-import { buildDatabyssName, buildFullTitle, buildOnlyTitle, splitName, getCatalogSearchType } from './util';
+import {
+  buildDatabyssName,
+  buildFullTitle,
+  buildOnlyTitle,
+  splitName,
+  getCatalogSearchType,
+} from './util'
 import { SEARCH_CATALOG, CACHE_SEARCH_RESULTS } from './constants'
 import crossref from './crossref'
 import googleBooks from './googleBooks'
@@ -95,18 +101,36 @@ function composeResults({
   let _filteredResults = _allResults
 
   // if an ISBN or DOI is provided, do not filter results
-  if(!getCatalogSearchType(query)){
-    _filteredResults = _allResults.filter(_apiResult => {
+  if (!getCatalogSearchType(query)) {
+    _filteredResults = _allResults.filter((_apiResult) => {
       const _resultFields = [
         service.getTitle(_apiResult),
         service.getSubtitle(_apiResult),
       ].concat(service.getAuthors(_apiResult))
-      return _queryTerms.reduce((qacc: Boolean, qcurr: string) => 
-        (qacc && _resultFields.reduce(
-          (racc: Boolean, rcurr: string) =>
-              racc || (rcurr && rcurr.replace(/[^a-z0-9 ]/gi, '').match(new RegExp(`\\b${qcurr}`, 'i'))),
-          false)
-      ), true)
+      return _queryTerms.reduce(
+        (qacc: Boolean, qcurr: string) =>
+          // normalize accents and strip non alphanumeric from both search and query
+          qacc &&
+          _resultFields.reduce(
+            (racc: Boolean, rcurr: string) =>
+              racc ||
+              (rcurr &&
+                rcurr
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
+                  .replace(/[^a-z0-9 ]/gi, '')
+                  .match(
+                    new RegExp(
+                      `\\b${qcurr
+                        ?.normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')}`,
+                      'i'
+                    )
+                  )),
+            false
+          ),
+        true
+      )
     })
   }
 
@@ -141,7 +165,7 @@ function composeResults({
  * composes Source from api result
  */
 function sourceFromResult(options: CatalogParsingParams): Source {
-  const {service, result} = options
+  const { service, result } = options
 
   const _authors = service.getAuthors(result)
 
@@ -172,16 +196,18 @@ function sourceFromResult(options: CatalogParsingParams): Source {
       publisherPlace: makeText(service.getPublisherPlace(result)),
       year: makeText(service.getPublishedYear(result)),
       month: service.getPublishedMonth(result, publicationType),
+
+      // publication details (articles)
+      journalTitle: makeText(service.getJournalTitle(result)),
       volume: makeText(service.getVolume(result)),
       issue: makeText(service.getIssue(result)),
 
-      // publication details (book)
+      // catalog identifiers (book)
       isbn: makeText(service.getISBN(result)),
 
-      // publication details (journal article)
+      // catalog identifiers (articles)
       doi: makeText(service.getDOI(result)),
       issn: makeText(service.getISSN(result)),
     },
   }
 }
-

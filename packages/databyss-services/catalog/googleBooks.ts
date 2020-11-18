@@ -1,7 +1,7 @@
 import {
-  CatalogService, 
+  CatalogService,
   CatalogType,
-  GroupedCatalogResults, 
+  GroupedCatalogResults,
 } from '../interfaces'
 import {
   findPublicationMonthOption,
@@ -32,57 +32,56 @@ const googleBooks: CatalogService = {
   getAuthors: (apiResult: any) => c(apiResult.volumeInfo.authors || []),
   getTitle: (apiResult: any) => c(apiResult.volumeInfo.title),
   getSubtitle: (apiResult: any) => c(apiResult.volumeInfo.subtitle),
-  getPublisher: (apiResult: any) =>  c(apiResult.volumeInfo.publisher),
+  getPublisher: (apiResult: any) => c(apiResult.volumeInfo.publisher),
   getPublishedYear: (apiResult: any) =>
     apiResult.volumeInfo.publishedDate?.substring(0, 4),
 
   // publication details (common)
   getPublicationType: (apiResult: any) => {
-    const pubId = normalizePublicationId(apiResult.kind, CatalogType.GoogleBooks)
+    const pubId = normalizePublicationId(
+      apiResult.kind,
+      CatalogType.GoogleBooks
+    )
     const pubType = getPublicationTypeById(pubId)
     if (!pubType) {
       return defaultPublicationType
     }
     return pubType
   },
-  getPublisherPlace: (apiResult: any) => {
+  getPublisherPlace: (apiResult: any) =>
     // TODO: confirm they never provide it
-    return ''
-  },
-  getPublishedYear: (apiResult: any) => {
-    return apiResult.volumeInfo.publishedDate?.substring(0, 4)
-  },
+    '',
+  getPublishedYear: (apiResult: any) =>
+    apiResult.volumeInfo.publishedDate?.substring(0, 4),
   getPublishedMonth: (apiResult: any, publicationType: string) => {
     if (isBook(publicationType)) {
       return defaultMonthOption
     }
-
     return findPublicationMonthOption(rawMonth)
   },
-  
-  // publication details (book)
-  getISBN: (apiResult: any) => {
-    // TODO: confirm they never provide it
-    return ''
-  },
 
-  // publication details (journal article)
-  getIssue: (apiResult: any) => {
+  // publication details (articles)
+  getJournalTitle: (apiResult: any) =>
     // TODO: confirm they never provide it
-    return ''
-  },
-  getVolume: (apiResult: any) => {
+    '',
+  getIssue: (apiResult: any) =>
     // TODO: confirm they never provide it
-    return ''
-  },
-  getDOI: (apiResult: any) => {
+    '',
+  getVolume: (apiResult: any) =>
     // TODO: confirm they never provide it
-    return ''
-  },
-  getISSN: (apiResult: any) => {
+    '',
+
+  // catalog identifiers (book)
+  getISBN: (apiResult: any) =>
     // TODO: confirm they never provide it
-    return ''
-  },
+    '',
+  // catalog identifiers (articles)
+  getDOI: (apiResult: any) =>
+    // TODO: confirm they never provide it
+    '',
+  getISSN: (apiResult: any) =>
+    // TODO: confirm they never provide it
+    '',
 }
 
 export default googleBooks
