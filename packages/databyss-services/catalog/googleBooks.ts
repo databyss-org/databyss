@@ -3,12 +3,7 @@ import {
   CatalogType,
   GroupedCatalogResults,
 } from '../interfaces'
-import {
-  findPublicationMonthOption,
-  getPublicationTypeById,
-  isBook,
-  normalizePublicationId,
-} from '../sources/lib'
+import { getPublicationTypeById, normalizePublicationId } from '../sources/lib'
 import { defaultMonthOption } from '../sources/constants/MonthOptions'
 import { defaultPublicationType } from '../sources/constants/PublicationTypes'
 import request from '../lib/request'
