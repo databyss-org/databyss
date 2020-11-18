@@ -1,3 +1,4 @@
+import { SelectOption } from './UI'
 import { Text, CacheDict, Source } from './'
 
 export enum CatalogType {
@@ -20,12 +21,6 @@ export interface CatalogState {
   searchCache: {
     [catalogType: string]: CacheDict<GroupedCatalogResults>
   }
-}
-
-// TODO: move to a ui-related location?
-export interface SelectOption {
-  label: string
-  id: string
 }
 
 export interface CatalogService {

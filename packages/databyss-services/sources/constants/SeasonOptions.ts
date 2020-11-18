@@ -1,4 +1,6 @@
-export const SeasonOptions: SeasonOption[] = [
+import { SelectOption } from '../../interfaces/UI'
+
+export const SeasonOptions: SelectOption[] = [
   {
     id: 13,
     label: 'Spring',
@@ -16,8 +18,3 @@ export const SeasonOptions: SeasonOption[] = [
     label: 'Winter',
   },
 ]
-
-export interface SeasonOption {
-  id: number
-  label: string
-}
