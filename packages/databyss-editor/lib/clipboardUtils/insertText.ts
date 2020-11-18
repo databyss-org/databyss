@@ -1,4 +1,4 @@
-import { Block } from '../../interfaces'
+import { Block, Text } from '../../interfaces'
 import { splitTextAtOffset, mergeText } from './'
 
 // inserts @text into @block at @offset
