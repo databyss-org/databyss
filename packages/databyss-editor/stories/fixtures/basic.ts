@@ -1,13 +1,14 @@
 import { BlockType } from '@databyss-org/services/interfaces'
 import { EditorState } from '../../interfaces'
+import { RangeType } from '../../../databyss-services/interfaces/Range'
 
 const _source1 = {
-  type: 'SOURCE' as BlockType,
+  type: BlockType.Source,
   _id: '5e3b2000fda293001813b1d6',
   text: {
     textValue:
       'Stamenov, Language Structure, Discourse and the Access to Consciousness',
-    ranges: [{ offset: 0, length: 8, marks: ['bold'] }],
+    ranges: [{ offset: 0, length: 8, marks: [RangeType.Bold] }],
   },
 }
 
@@ -15,7 +16,7 @@ const basicFixture: EditorState = {
   preventDefault: false,
   operations: [],
   selection: {
-    _id: null,
+    _id: '5e3f829ce5447c0018baebed',
     anchor: {
       index: 0,
       offset: 0,
@@ -26,6 +27,8 @@ const basicFixture: EditorState = {
     },
   },
   newEntities: [],
+  entitySuggestionCache: {},
+  removedEntities: [],
   blocks: [
     _source1,
     {
@@ -37,12 +40,12 @@ const basicFixture: EditorState = {
           {
             offset: 7,
             length: 10,
-            marks: ['bold'],
+            marks: [RangeType.Bold],
           },
           {
             offset: 7,
             length: 10,
-            marks: ['italic'],
+            marks: [RangeType.Italic],
           },
         ],
       },

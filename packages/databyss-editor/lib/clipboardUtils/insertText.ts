@@ -11,7 +11,7 @@ export default ({
   block: Block
   text: Text
   offset: number
-}): Block => {
+}): void => {
   const splitText = splitTextAtOffset({
     text: block.text,
     offset,

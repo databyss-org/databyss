@@ -1,11 +1,8 @@
 import _ from 'lodash'
+import { BasicBlock, BlockType } from '@databyss-org/services/interfaces'
 import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
 import { isAtomicInlineType } from '../util'
-import {
-  BasicBlock,
-  BlockType,
-} from '../../../databyss-services/interfaces/Block'
 
 const getAtomicsFromFrag = (frag: Block[]): BasicBlock[] => {
   const atomics: BasicBlock[] = []
@@ -50,7 +47,7 @@ export const getAtomicDifference = ({
 }: {
   stateBefore: EditorState
   stateAfter: EditorState
-}): { atomicsRemoved: BasicBlock[]; atomicsAdded: BasicBlock[] } => {
+}): { atomicsRemoved: BasicBlock[]; atomicsAdded: Block[] | BasicBlock[] } => {
   // returns array of atomics within selection
   const _atomicsBefore = getAtomicsFromSelection({
     state: stateBefore,

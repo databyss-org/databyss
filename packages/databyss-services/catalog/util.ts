@@ -5,14 +5,18 @@ import { Text, RangeType } from '../interfaces'
  * Removes unwanted entities (e.g. html tags) from catalog results
  * @param text string or array of strings to cleanup
  */
-export function stripText(text: string | string[]) {
+export function stripText(text: string) {
   if (!text) {
     return text
   }
+  return stripHtml(text).result
+}
+
+export function stripTextFromArray(text: string[]) {
   if (Array.isArray(text)) {
     return text.map((t) => stripHtml(t).result)
   }
-  return stripHtml(text).result
+  return []
 }
 
 export const getCatalogSearchType = (query: string) => {

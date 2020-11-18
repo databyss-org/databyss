@@ -10,7 +10,7 @@ allTypes.forEach((type) => {
   crossRefTypesMap[kebabCase(type)] = type
 })
 
-export function normalizePublicationId(value, source) {
+export function normalizePublicationId(value: string, source) {
   // error checks
   if (!value) {
     throw new Error(

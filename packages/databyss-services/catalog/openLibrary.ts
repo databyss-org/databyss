@@ -9,7 +9,7 @@ import { getPublicationTypeById, normalizePublicationId } from '../sources/lib'
 import request from '../lib/request'
 
 import { OPEN_LIBRARY } from './constants'
-import { stripText as c } from './util'
+import { stripText as c, stripTextFromArray as cArray } from './util'
 
 const openLibrary: CatalogService = {
   type: OPEN_LIBRARY,
@@ -23,7 +23,7 @@ const openLibrary: CatalogService = {
   getResults: (apiResults: any) => apiResults.docs,
 
   // details
-  getAuthors: (apiResult: any) => c(apiResult.author_name || []),
+  getAuthors: (apiResult: any) => cArray(apiResult.author_name || []),
   getTitle: (apiResult: any) => c(apiResult.title),
   getSubtitle: (apiResult: any) => c(apiResult.subtitle),
   getPublisher: (apiResult: any) =>
@@ -84,8 +84,7 @@ const openLibrary: CatalogService = {
     for this typeat this time.
   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getPublishedMonth: (apiResult: any, publicationType: string) =>
-    defaultMonthOption,
+  getPublishedMonth: () => defaultMonthOption,
 
   // publication details (book)
   getISBN: (apiResult: any) => {

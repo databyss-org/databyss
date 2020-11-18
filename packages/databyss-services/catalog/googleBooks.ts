@@ -8,7 +8,7 @@ import { defaultMonthOption } from '../sources/constants/MonthOptions'
 import { defaultPublicationType } from '../sources/constants/PublicationTypes'
 import request from '../lib/request'
 import { GOOGLE_BOOKS } from './constants'
-import { stripText as c } from './util'
+import { stripText as c, stripTextFromArray as cArray } from './util'
 
 const googleBooks: CatalogService = {
   type: GOOGLE_BOOKS,
@@ -24,7 +24,7 @@ const googleBooks: CatalogService = {
   getResults: (apiResults: any) => apiResults.items,
 
   // details
-  getAuthors: (apiResult: any) => c(apiResult.volumeInfo.authors || []),
+  getAuthors: (apiResult: any) => cArray(apiResult.volumeInfo.authors || []),
   getTitle: (apiResult: any) => c(apiResult.volumeInfo.title),
   getSubtitle: (apiResult: any) => c(apiResult.volumeInfo.subtitle),
   getPublisher: (apiResult: any) => c(apiResult.volumeInfo.publisher),
@@ -53,8 +53,7 @@ const googleBooks: CatalogService = {
     for this typeat this time.
   */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getPublishedMonth: (apiResult: any, publicationType: string) =>
-    defaultMonthOption,
+  getPublishedMonth: () => defaultMonthOption,
 
   // publication details (book)
   getISBN: () =>

@@ -138,6 +138,8 @@ function composeResults({
       apiResult: _apiResult,
     }
 
+    console.log(_result.source.detail.month)
+
     // if not a duplicate, push to author array
     if (!_titles[_result.title.textValue]) {
       _groupedResults[_authorsString] = (
@@ -184,7 +186,8 @@ function sourceFromResult(options: CatalogParsingParams): Source {
       publisherName: makeText(service.getPublisher(result)),
       publisherPlace: makeText(service.getPublisherPlace(result)),
       year: makeText(service.getPublishedYear(result)),
-      month: service.getPublishedMonth(result, publicationType),
+      month:
+        publicationType && service.getPublishedMonth(result, publicationType),
       volume: makeText(service.getVolume(result)),
       issue: makeText(service.getIssue(result)),
 

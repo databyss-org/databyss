@@ -102,7 +102,7 @@ type PropsType = {
   ref?: React.RefObject<EditorRef>
   children: JSX.Element
   initialState: EditorState
-  onChange: (args: OnChangeArgs) => void
+  onChange?: (args: OnChangeArgs) => void
 }
 
 const useReducer = createReducer()

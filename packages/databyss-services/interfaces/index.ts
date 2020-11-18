@@ -37,7 +37,7 @@ export type {
   CatalogService,
 } from './CatalogState'
 export { CatalogType } from './CatalogState'
-export {
+export type {
   CitationFormatOptions,
   CitationDTO,
   CitationProcessOptions,

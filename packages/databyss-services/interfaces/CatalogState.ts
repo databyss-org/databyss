@@ -39,7 +39,7 @@ export interface CatalogService {
   getPublishedYear: (apiResult: any) => string
   getPublishedMonth: (
     apiResult: any,
-    publicationType: string
+    publicationType: SelectOption
   ) => SelectOption | null | undefined
 
   // publication details (book)

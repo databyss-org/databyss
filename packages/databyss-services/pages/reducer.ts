@@ -67,7 +67,8 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
         _headerCache[_page._id] = _page
         // update name in page cache
         if (_cache[_page._id]) {
-          _cache[_page._id].name = _page.name
+          const __cache: any = _cache[_page._id]
+          __cache.name = _page.name
         }
       }
       break
@@ -107,13 +108,19 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
       break
     }
     case SET_PAGE_PUBLIC: {
-      draft.cache[action.payload.id].publicAccountId = new ResourcePending()
+      if (draft.cache[action.payload.id]) {
+        const _resource: any = draft.cache[action.payload.id]
+        _resource.publicAccountId = new ResourcePending()
+      }
+
       break
     }
     // TODO: SET_PUBLIC_PAGE IS SETTING publicAccountId TO RESOURCE PENDING AND place that in a loader
     case CACHE_PUBLIC_PAGE: {
-      draft.cache[action.payload.id].publicAccountId = action.payload.accountId
-
+      if (draft.cache[action.payload.id]) {
+        const _resource: any = draft.cache[action.payload.id]
+        _resource.publicAccountId = action.payload.accountId
+      }
       break
     }
   }

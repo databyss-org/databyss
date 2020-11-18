@@ -3,6 +3,7 @@ import {
   CatalogType,
   GroupedCatalogResults,
 } from '../interfaces'
+import { SelectOption } from '../interfaces/UI'
 import {
   findPublicationMonthOption,
   getPublicationTypeById,
@@ -12,7 +13,11 @@ import {
 import { defaultMonthOption } from '../sources/constants/MonthOptions'
 import { defaultPublicationType } from '../sources/constants/PublicationTypes'
 import request from '../lib/request'
-import { stripText as c, getCatalogSearchType } from './util'
+import {
+  stripText as c,
+  getCatalogSearchType,
+  stripTextFromArray as cArray,
+} from './util'
 import { CROSSREF } from './constants'
 
 const crossref: CatalogService = {
@@ -39,7 +44,8 @@ const crossref: CatalogService = {
     apiResults.message.items || [apiResults.message],
 
   // details
-  getAuthors: (apiResult: any) => c((apiResult.author || []).map(authorName)),
+  getAuthors: (apiResult: any) =>
+    cArray((apiResult.author || []).map(authorName)),
   getTitle: (apiResult: any) => c(apiResult.title ? apiResult.title[0] : ''),
   getSubtitle: (apiResult: any) => c(apiResult.subtitle?.[0]),
   getPublisher: (apiResult: any) => c(apiResult.publisher),
@@ -66,7 +72,7 @@ const crossref: CatalogService = {
     apiResult['published-online']?.['date-parts']?.[0]?.[0] ||
     apiResult.approved?.['date-parts']?.[0]?.[0] ||
     apiResult.created?.['date-parts']?.[0]?.[0],
-  getPublishedMonth: (apiResult: any, publicationType: string) => {
+  getPublishedMonth: (apiResult: any, publicationType: SelectOption) => {
     if (isBook(publicationType)) {
       return defaultMonthOption
     }

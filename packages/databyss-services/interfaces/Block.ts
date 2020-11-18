@@ -1,4 +1,4 @@
-import { SelectOption } from './CatalogState'
+import { SelectOption } from './UI'
 import { Text } from './Text'
 
 export enum BlockType {
