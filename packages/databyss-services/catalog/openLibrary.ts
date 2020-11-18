@@ -3,13 +3,9 @@ import {
   CatalogType,
   GroupedCatalogResults,
 } from '../interfaces'
-import {
-  getPublicationTypeById,
-  isBook,
-  normalizePublicationId,
-} from '../sources/lib'
 import { defaultMonthOption } from '../sources/constants/MonthOptions'
 import { defaultPublicationType } from '../sources/constants/PublicationTypes'
+import { getPublicationTypeById, normalizePublicationId } from '../sources/lib'
 import request from '../lib/request'
 
 import { OPEN_LIBRARY } from './constants'
@@ -32,6 +28,7 @@ const openLibrary: CatalogService = {
   getSubtitle: (apiResult: any) => c(apiResult.subtitle),
   getPublisher: (apiResult: any) =>
     apiResult.publisher && c(apiResult.publisher[0]),
+
   // publication details (common)
   getPublicationType: (apiResult: any) => {
     const pubId = normalizePublicationId(
@@ -80,22 +77,15 @@ const openLibrary: CatalogService = {
     return responseParts.join(', ')
   },
   getPublishedYear: (apiResult: any) => apiResult.first_publish_year,
-  getPublishedMonth: (apiResult: any, publicationType: string) => {
-    if (isBook(publicationType)) {
-      return defaultMonthOption
-    }
 
-    /*
-      All of the items returned by this catalog are books so far.
-      The few that have months have it in the `publish_date` array property,
-      and they are a string, e.g.
-      - publish_date: ['May 01, 2000']
-      - publish_date: ['March 1, 2000']
-      TODO: spend time figuring out how to parse this if it's useful
-    */
-
-    return defaultMonthOption
-  },
+  /*
+    All items returned by this catalog are books,
+    and publication month is of no interest
+    for this typeat this time.
+  */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getPublishedMonth: (apiResult: any, publicationType: string) =>
+    defaultMonthOption,
 
   // publication details (book)
   getISBN: (apiResult: any) => {
@@ -110,8 +100,9 @@ const openLibrary: CatalogService = {
   },
 
   // publication details (journal article)
-  getIssue: () => '',
-  // TODO: confirm they never provide it
+  getIssue: () =>
+    // TODO: confirm they never provide it
+    '',
   getVolume: () =>
     // TODO: confirm they never provide it
     '',

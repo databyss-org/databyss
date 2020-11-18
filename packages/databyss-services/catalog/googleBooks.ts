@@ -51,18 +51,21 @@ const googleBooks: CatalogService = {
   getPublisherPlace: () =>
     // TODO: confirm they never provide it
     '',
-  getPublishedMonth: (apiResult: any, publicationType: string) => {
-    if (isBook(publicationType)) {
-      return defaultMonthOption
-    }
 
-    return findPublicationMonthOption(rawMonth)
-  },
+  /*
+    All items returned by this catalog are books,
+    and publication month is of no interest
+    for this typeat this time.
+  */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  getPublishedMonth: (apiResult: any, publicationType: string) =>
+    defaultMonthOption,
 
   // publication details (book)
   getISBN: () =>
     // TODO: confirm they never provide it
     '',
+
   // publication details (journal article)
   getIssue: () =>
     // TODO: confirm they never provide it
