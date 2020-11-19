@@ -169,6 +169,7 @@
     "@types/clone-deep": "^4.0.1",
     "@types/imurmurhash": "^0.1.1",
     "@types/mongodb": "^3.5.33",
+    "@types/mongoose": "^5.10.1",
     "@types/string-strip-html": "^5.0.0",
     "@types/tmp": "^0.2.0",
     "@typescript-eslint/eslint-plugin": "4.8.0",

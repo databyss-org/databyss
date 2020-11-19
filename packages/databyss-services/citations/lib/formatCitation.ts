@@ -4,13 +4,14 @@ import {
   CitationOutputTypes,
   CitationStyles,
   DefaultCitationStyleId,
+  StyleTypeShortName,
 } from '../constants'
 
 // consts
 const Styles = CitationStyles.map((s) => ({ id: s.id, data: null }))
 
 // vars
-let cite = null
+let cite: any = null
 
 /**
  * @param {object} csl An object formatted following the CSL-JSON schema.
@@ -19,7 +20,7 @@ let cite = null
  * - `outputType`: Either "bibliography" or "citation". Defaults to "bibliography".
  * - `styleId`: The citation style identifier. Defaults to "mla".
  */
-export async function formatCitation(csl, options) {
+export async function formatCitation(csl: any, options: any) {
   const outputType =
     options && options.outputType
       ? options.outputType
@@ -50,7 +51,7 @@ export async function formatCitation(csl, options) {
         `Received "${typeOfStyleId}".`
     )
   }
-  const style = CitationStyles.find((s) => s.id === styleId)
+  const style: any = CitationStyles.find((s) => s.id === styleId)
   if (!style) {
     throw new Error(
       'formatCitation() encountered an unhandled value ' +
@@ -59,7 +60,7 @@ export async function formatCitation(csl, options) {
   }
 
   // cache to avoid fetching at every call
-  let styleData = ''
+  let styleData: string | null = ''
   if (!hasStyle(styleId)) {
     // 📡 no style data, must fetch it
     styleData = await Cite.util.fetchFileAsync(style.url)
@@ -92,22 +93,22 @@ export async function formatCitation(csl, options) {
 }
 
 // utils
-function addStyle(styleId, data) {
-  const style = Styles.find((s) => s.id === styleId)
+function addStyle(styleId: StyleTypeShortName, data: any) {
+  const style: any = Styles.find((s) => s.id === styleId)
   style.data = data
 }
 
-function getStyle(styleId) {
-  const style = Styles.find((s) => s.id === styleId)
+function getStyle(styleId: StyleTypeShortName) {
+  const style: any = Styles.find((s) => s.id === styleId)
   return style.data
 }
 
-function hasStyle(styleId) {
-  const style = Styles.find((s) => s.id === styleId)
+function hasStyle(styleId: StyleTypeShortName) {
+  const style: any = Styles.find((s) => s.id === styleId)
   return style.data !== null
 }
 
-function hasConfig(styleId, styleConfig) {
+function hasConfig(styleId: StyleTypeShortName, styleConfig: any) {
   const keys = Object.keys(styleConfig.templates.data)
   return keys.includes(styleId)
 }

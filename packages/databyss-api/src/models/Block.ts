@@ -5,7 +5,7 @@ import Text from './Text'
 
 const Schema = mongoose.Schema
 
-interface IBlock extends mongoose.Document {
+export interface IBlock extends mongoose.Document {
   type: string
   text: IText
   account: string
@@ -54,7 +54,7 @@ BlockSchema.index({ account: 1 })
 BlockSchema.method('saveWithDetail', async function (this: any) {
   validateBlock(this)
   updateTimestamps(this)
-  const Block = mongoose.model<IBlock>('block', BlockSchema)
+  const Block: any = mongoose.model('block', BlockSchema)
   const blockObj = this.toObject()
   const { _id, ...others } = blockObj
   await Block.replaceOne(
