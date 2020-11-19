@@ -8,16 +8,16 @@ class ServerProcess extends EventEmitter {
     this.exec = this.exec.bind(this)
     this.spawn = this.spawn.bind(this)
   }
-  log(...msgs) {
+  log(...msgs: any) {
     this.stdOut(...msgs)
   }
-  stdOut(...msgs) {
+  stdOut(...msgs: any) {
     this.emit('stdout', msgs.join(' '))
   }
-  stdErr(...msgs) {
+  stdErr(...msgs: any) {
     this.emit('stderr', msgs.join(' '))
   }
-  exec(cmd) {
+  exec(cmd: any) {
     return new Promise((resolve, reject) => {
       this.stdOut(cmd)
       const child = exec(cmd)
@@ -25,12 +25,12 @@ class ServerProcess extends EventEmitter {
       child.on('close', () => {
         resolve()
       })
-      child.on('error', (data) => {
+      child.on('error', (data: any) => {
         reject(data)
       })
     })
   }
-  spawn(cmd) {
+  spawn(cmd: any) {
     const proc = spawnd(cmd, {
       shell: true,
       env: process.env,
@@ -38,11 +38,11 @@ class ServerProcess extends EventEmitter {
     this._bindProcEvents(proc)
     return proc
   }
-  _bindProcEvents(proc) {
-    proc.stdout.on('data', (data) => {
+  _bindProcEvents(proc: any) {
+    proc.stdout.on('data', (data: any) => {
       this.stdOut(data)
     })
-    proc.stderr.on('data', (data) => {
+    proc.stderr.on('data', (data: any) => {
       this.stdErr(data)
     })
   }

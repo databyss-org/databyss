@@ -42,7 +42,9 @@ class RepairBlocks extends ServerProcess {
 
 async function repair() {
   let _repairCount = 0
-  const _badBlocks = await Block.find({ type: { $regex: /^END_/ } })
+  const _badBlocks: BlockType[] = await Block.find({
+    type: { $regex: /^END_/ },
+  })
   console.log(`Found ${_badBlocks.length} bad blocks`)
   for (const _badBlock of _badBlocks) {
     console.log(`Fixing ${_badBlock._id}`)

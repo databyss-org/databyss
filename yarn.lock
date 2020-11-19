@@ -3340,7 +3340,7 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
   integrity sha512-tHq6qdbT9U1IRSGf14CL0pUlULksvY9OZ+5eEgl1N7t+OA3tGvNpxJCzuKQlsNgCVwbAs670L1vcVQi8j9HjnA==
 
-"@types/mongodb@*":
+"@types/mongodb@*", "@types/mongodb@^3.5.33":
   version "3.5.33"
   resolved "https://registry.yarnpkg.com/@types/mongodb/-/mongodb-3.5.33.tgz#1084c3004a426df11b5a985641e7f58d7ceb52a6"
   integrity sha512-biMkaYFyUP8jNczbi2BgtvVfiEtPZ+NTf+Jz4LmsQjO+Zk+kx1WNjz8gNArWlA/5DXVwMVWgIFtbj6Tslt1yWw==
@@ -3450,6 +3450,11 @@
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@types/tapable/-/tapable-1.0.6.tgz#a9ca4b70a18b270ccb2bc0aaafefd1d486b7ea74"
   integrity sha512-W+bw9ds02rAQaMvaLYxAbJ6cvguW/iJXNT6lTssS1ps6QdrMKttqEAMEG/b5CR8TZl3/L7/lH0ZV5nNR1LXikA==
+
+"@types/tmp@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@types/tmp/-/tmp-0.2.0.tgz#e3f52b4d7397eaa9193592ef3fdd44dc0af4298c"
+  integrity sha512-flgpHJjntpBAdJD43ShRosQvNC0ME97DCfGvZEDlAThQmnerRXrLbX6YgzRBQCZTthET9eAWFAMaYP0m0Y4HzQ==
 
 "@types/tough-cookie@*":
   version "4.0.0"
