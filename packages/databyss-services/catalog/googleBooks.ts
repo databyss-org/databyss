@@ -37,6 +37,9 @@ const googleBooks: CatalogService = {
       apiResult.kind,
       CatalogType.GoogleBooks
     )
+    if (!pubId) {
+      return defaultPublicationType
+    }
     const pubType = getPublicationTypeById(pubId)
     if (!pubType) {
       return defaultPublicationType

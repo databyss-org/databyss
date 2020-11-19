@@ -35,6 +35,9 @@ const openLibrary: CatalogService = {
       apiResult.type,
       CatalogType.OpenLibrary
     )
+    if (!pubId) {
+      return defaultPublicationType
+    }
     const pubType = getPublicationTypeById(pubId)
     if (!pubType) {
       return defaultPublicationType

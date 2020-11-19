@@ -1,7 +1,9 @@
 {
   "extends": "../../config/tsconfig.json",
   "include": [
-    "./**/*", "../databyss-services/interfaces/range.ts", "../databyss-services/interfaces/text.ts",
+    "./**/*",
+    "../databyss-services/interfaces/range.ts",
+    "../databyss-services/interfaces/text.ts",
   ],
   "compilerOptions": {
     "composite": true,

@@ -3,7 +3,7 @@ import { throttle } from 'lodash'
 import { Patch } from 'immer'
 import { filterInversePatches } from '@databyss-org/editor/state/util'
 import forkRef from '@databyss-org/ui/lib/forkRef'
-import { OnChangeArgs, EditorRef } from '../state/EditorProvider'
+import { OnChangeArgs, EditorHandles } from '../state/EditorProvider'
 
 const THROTTLE_UNDO = 1000
 
@@ -23,7 +23,7 @@ export const HistoryContext = createContext<ContextType | null>(null)
 
 const HistoryProvider: React.FunctionComponent<PropsType> = forwardRef(
   ({ children }, ref) => {
-    const childRef = useRef<EditorRef>(null)
+    const childRef = useRef<EditorHandles>(null)
     const undoPatchQueue = useRef<Patch[]>([])
     const undoStack = useRef<UndoType>([])
     const redoStack = useRef<UndoType>([])

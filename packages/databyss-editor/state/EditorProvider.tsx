@@ -93,14 +93,14 @@ export type OnChangeArgs = {
   clearBlockRelations: boolean
 }
 
-export interface Handles {
+export interface EditorHandles {
   undo: (patches: Patch[]) => void
   redo: (patches: Patch[]) => void
   pagePath: PagePath
 }
 
 type PropsType = {
-  //  ref?: React.RefObject<Handles>
+  //  ref?: React.RefObject<EditorHandles>
   // children: JSX.Element
   initialState: EditorState
   onChange?: (args: OnChangeArgs) => void
@@ -130,11 +130,11 @@ const isClearBlockRelations = [
 export const EditorContext = createContext<ContextType | null>(null)
 
 // : React.RefForwardingComponent<
-//   React.RefObject<Handles>,
+//   React.RefObject<EditorHandles>,
 //   PropsType
 // >
 
-const EditorProvider: React.RefForwardingComponent<Handles, PropsType> = (
+const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
   { children, initialState = _initState, onChange },
   ref
 ) => {

@@ -53,6 +53,9 @@ const crossref: CatalogService = {
   // publication details (common)
   getPublicationType: (apiResult: any) => {
     const pubId = normalizePublicationId(apiResult.type, CatalogType.Crossref)
+    if (!pubId) {
+      return defaultPublicationType
+    }
     const pubType = getPublicationTypeById(pubId)
     if (!pubType) {
       return defaultPublicationType

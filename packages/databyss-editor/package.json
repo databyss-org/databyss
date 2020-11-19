@@ -14,8 +14,8 @@
   "main": "index.js",
   "peerDependencies": {
     "@databyss-org/editor": "1.2.00",
-    "@databyss-org/ui": "1.2.00",
     "@databyss-org/services": "1.2.00",
+    "@databyss-org/ui": "1.2.00",
     "@storybook/react": "5.2.1",
     "react": "16.9.0",
     "react-dom": "16.9.0",
@@ -26,6 +26,7 @@
     "@databyss-org/slate": "0.58.1-b2",
     "@databyss-org/slate-react": "0.57.2-b4",
     "@styled-system/css": "^5.0.23",
+    "@types/mongoose": "^5.10.1",
     "add": "^2.0.6",
     "an-array-of-english-words": "^2.0.0",
     "assert": "^2.0.0",
