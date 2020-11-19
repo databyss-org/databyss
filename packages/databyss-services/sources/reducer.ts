@@ -28,7 +28,7 @@ export const initialState: SourceState = {
   cache: {},
   authorsHeaderCache: null,
   citationHeaderCache: null,
-  preferredCitationStyle: defaultCitationStyle.id,
+  preferredCitationStyle: defaultCitationStyle?.id || 'mla',
 }
 
 export default produce((draft: Draft<SourceState>, action: FSA) => {

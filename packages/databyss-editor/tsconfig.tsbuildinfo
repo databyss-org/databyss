@@ -2052,7 +2052,7 @@
       "forceConsistentCasingInFileNames": true,
       "module": 99,
       "moduleResolution": 2,
-      "resolveJsonModule": false,
+      "resolveJsonModule": true,
       "isolatedModules": true,
       "noEmit": true,
       "jsx": 2,

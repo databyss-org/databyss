@@ -5,6 +5,7 @@
   ],
   "compilerOptions": {
     "composite": true,
+    "resolveJsonModule": true
   },
   "references": []
 }

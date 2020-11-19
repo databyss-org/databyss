@@ -138,8 +138,6 @@ function composeResults({
       apiResult: _apiResult,
     }
 
-    console.log(_result.source.detail.month)
-
     // if not a duplicate, push to author array
     if (!_titles[_result.title.textValue]) {
       _groupedResults[_authorsString] = (
