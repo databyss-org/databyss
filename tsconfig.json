@@ -1,7 +1,3 @@
 {
-  "references": [
-    {
-      "path": "./packages/databyss-services"
-    }
-  ]
+  "extends": "./config/tsconfig.json",
 }
