@@ -50,7 +50,7 @@ export interface SourceDetail {
   month?: SelectOption | null | undefined
   volume?: Text
   issue?: Text
-
+  yearPublished?: Text
   // catalog identifiers (book)
   isbn?: Text
 
