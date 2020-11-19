@@ -31,11 +31,13 @@ import {
   Selection,
   EditorState,
   Block,
+  PagePath,
   BlockRelation,
+  BlockRelationPayload,
 } from '../interfaces'
 import initialState, { addMetaDataToBlocks } from './initialState'
 import reducer from './reducer'
-import { getPagePath, indexPage, PagePath } from '../lib/util'
+import { getPagePath, indexPage } from '../lib/util'
 
 import {
   cutOrCopyEventHandler,
@@ -72,7 +74,7 @@ type ContextType = {
   remove: (index: number) => void
   removeAtSelection: () => void
   removeAtomicFromQueue: (id: string) => void
-  removeEntityFromQueue: (id: number) => void
+  removeEntityFromQueue: (id: string) => void
   clear: (index: number) => void
   copy: (event: ClipboardEvent) => void
   cut: (event: ClipboardEvent) => void
@@ -80,7 +82,7 @@ type ContextType = {
   insert: (blocks: Block[]) => void
   replace: (blocks: Block[]) => void
   cacheEntitySuggestions: (blocks: Block[]) => void
-  setInlineBlockRelations: () => void
+  setInlineBlockRelations: (callback: Function) => void
 }
 
 export type OnChangeArgs = {
@@ -131,7 +133,7 @@ export const EditorContext = createContext<ContextType | null>(null)
 const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
   ({ children, initialState, onChange }, ref) => {
     const setBlockRelations = useEntryContext(
-      (c: BlockRelation[]) => c && c.setBlockRelations
+      (c: any) => c && c.setBlockRelations
     )
 
     // get the current page header
@@ -141,11 +143,11 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
     /*
     intercepts onChange props and runs the block relations algorithm, dispatches block relations
     */
-    const blockRelationsBuffer = useRef<any[]>([])
+    const blockRelationsBuffer = useRef<BlockRelationPayload[]>([])
 
     const pendingAtomicSave = useRef<boolean>(false)
 
-    const forkOnChange = (props) => {
+    const forkOnChange = (props: OnChangeArgs) => {
       pagePathRef.current = getPagePath(props.nextState)
       if (onChange) {
         if (setBlockRelations) {
@@ -164,36 +166,37 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
             pendingAtomicSave.current = true
           }
 
-          const _pageId = props.nextState.pageHeader._id
-
-          // if last action was whitelisted, set block relations
-          if (isSetBlockRelations.findIndex((t) => t === props.type) > -1) {
-            blockRelationsBuffer.current.push({
-              blocksRelationArray: indexPage({
-                pageId: _pageId,
-                blocks: props.nextState.blocks,
-              }),
-            })
-          } else if (
-            (isClearBlockRelations.findIndex((t) => t === props.type) > -1 ||
-              props.clearBlockRelations) &&
-            pagePathRef.current
-          ) {
-            blockRelationsBuffer.current.push({
-              clearPageRelationships: _pageId,
-              blocksRelationArray: indexPage({
-                pageId: _pageId,
-                blocks: props.nextState.blocks,
-              }),
-            })
-          } else if (props.type === SET_CONTENT && pagePathRef.current) {
-            if (pagePathRef?.current.blockRelations.length) {
-              /*
+          const _pageId = props.nextState.pageHeader?._id
+          if (_pageId) {
+            // if last action was whitelisted, set block relations
+            if (isSetBlockRelations.findIndex((t) => t === props.type) > -1) {
+              blockRelationsBuffer.current.push({
+                blocksRelationArray: indexPage({
+                  pageId: _pageId,
+                  blocks: props.nextState.blocks,
+                }),
+              })
+            } else if (
+              (isClearBlockRelations.findIndex((t) => t === props.type) > -1 ||
+                props.clearBlockRelations) &&
+              pagePathRef.current
+            ) {
+              blockRelationsBuffer.current.push({
+                clearPageRelationships: _pageId,
+                blocksRelationArray: indexPage({
+                  pageId: _pageId,
+                  blocks: props.nextState.blocks,
+                }),
+              })
+            } else if (props.type === SET_CONTENT && pagePathRef.current) {
+              if (pagePathRef?.current.blockRelations.length) {
+                /*
             get the page and block relations at current index
             */
-              blockRelationsBuffer.current.push({
-                blocksRelationArray: pagePathRef.current.blockRelations,
-              })
+                blockRelationsBuffer.current.push({
+                  blocksRelationArray: pagePathRef.current.blockRelations,
+                })
+              }
             }
           }
 
@@ -335,19 +338,19 @@ const EditorProvider: React.FunctionComponent<PropsType> = forwardRef(
      * Clear the block at `index`
      * resets the type to `ENTRY`
      */
-    const clear = (index: number): void =>
+    const clear = (index: number) =>
       dispatch({
         type: CLEAR,
         payload: { index },
       })
 
-    const removeEntityFromQueue = (id: number): void =>
+    const removeEntityFromQueue = (id: string) =>
       dispatch({
         type: DEQUEUE_NEW_ENTITY,
         payload: { id },
       })
 
-    const removeAtomicFromQueue = (id: number): void =>
+    const removeAtomicFromQueue = (id: string) =>
       dispatch({
         type: DEQUEUE_REMOVED_ENTITY,
         payload: { id },

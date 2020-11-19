@@ -27,7 +27,7 @@ export interface EditorState {
   showNewBlockMenu?: boolean
   operations: BackflowOperation[] & { reloadAll?: boolean }
   selection: Selection
-  newEntities: Block[]
+  newEntities: Array<BasicBlock | Block>
   removedEntities: BasicBlock[]
   blocks: Block[]
   pageHeader?: PageHeader

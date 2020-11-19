@@ -25,6 +25,11 @@ export type BlockRelation = {
   removeBlock?: boolean
 }
 
+export type BlockRelationPayload = {
+  blocksRelationArray?: BlockRelation[]
+  clearPageRelationships?: string
+}
+
 export type PagePath = {
   path: string[]
   blockRelations: BlockRelation[]

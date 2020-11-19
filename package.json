@@ -167,6 +167,7 @@
     "@storybook/addons": "5.2.1",
     "@storybook/react": "5.2.1",
     "@types/clone-deep": "^4.0.1",
+    "@types/imurmurhash": "^0.1.1",
     "@types/string-strip-html": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "4.8.0",
     "@typescript-eslint/parser": "4.8.0",

@@ -14,10 +14,6 @@ export interface BasicBlock {
   type: BlockType
 }
 
-// interface InlineAtomic {
-//   word: string
-//   offset: number
-// }
 export interface Block extends BasicBlock {
   text: Text
   __showCitationMenu?: boolean

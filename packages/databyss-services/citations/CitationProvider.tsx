@@ -6,9 +6,9 @@ import React, { useCallback } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 
 import { CitationFormatOptions, SourceDetail } from '../interfaces'
-
-import { CitationDTO, processCitation } from './actions'
+import { processCitation } from './actions'
 import reducer from './reducer'
+import { CitationDTO } from '../interfaces/Citation'
 
 interface PropsType {
   children: JSX.Element
@@ -23,7 +23,7 @@ interface ContextType {
 
 const useReducer = createReducer()
 
-export const CitationContext = createContext<ContextType | null>(null)
+export const CitationContext = createContext<ContextType>(null!)
 export const citationUpdateCooldown = 1500
 
 const generateHash = (source: SourceDetail, options: CitationFormatOptions) => {
@@ -42,7 +42,7 @@ const CitationProvider: React.FunctionComponent<PropsType> = (
     {
       citationCache: {},
     },
-    { name: 'CitationProvider' }
+    { name: 'CitationProvider', initializer: null, onChange: null }
   )
 
   const debouncedProcessCitation = useCallback(
@@ -55,7 +55,7 @@ const CitationProvider: React.FunctionComponent<PropsType> = (
 
   const generateCitation = useCallback(
     (source: SourceDetail, options: CitationFormatOptions) => {
-      const hash = generateHash(source, options)
+      const hash = generateHash(source, options).toString()
       if (state.citationCache[hash]) {
         return state.citationCache[hash]
       }
@@ -76,7 +76,7 @@ const CitationProvider: React.FunctionComponent<PropsType> = (
   )
 }
 
-export const useCitationContext = (selector = (x) => x) =>
+export const useCitationContext = (selector = (x: ContextType) => x) =>
   useContextSelector(CitationContext, selector)
 
 export default CitationProvider
