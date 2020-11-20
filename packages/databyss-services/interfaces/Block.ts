@@ -69,6 +69,7 @@ export interface Source extends Block {
 }
 
 export interface Topic extends Block {
+  
   isInPages?: string[]
 }
 

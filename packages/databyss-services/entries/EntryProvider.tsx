@@ -138,7 +138,8 @@ const EntryProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const useEntryContext = (selector = (x: any) => x) =>
-  useContextSelector<EntryContextType, any>(EntryContext, selector)
+export const useEntryContext: <T>(selector: (c: EntryContextType) => T) => T = (
+  selector
+) => useContextSelector(EntryContext, selector)
 
 export default EntryProvider
