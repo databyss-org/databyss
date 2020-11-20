@@ -1,8 +1,9 @@
 import React, { useCallback, useRef } from 'react'
 import { throttle, debounce } from 'lodash'
+import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { createContext, useContextSelector } from 'use-context-selector'
-import reducer, { initialState } from './reducer'
+import reducer, { initialState as _initState } from './reducer'
 import {
   onSearchEntries,
   onSetQuery,
@@ -12,21 +13,50 @@ import {
   onClearBlockRelationsCache,
 } from './actions'
 import { optimizeBlockRelations } from './util'
+import {
+  Text,
+  BlockRelationsServerResponse,
+  ResourceResponse,
+  EntryState,
+} from '../interfaces'
 
 const THROTTLE_BLOCK_RELATIONS = 1000
 
 const useReducer = createReducer()
 
-export const EntryContext = createContext()
+interface PropsType {
+  children: JSX.Element
+  // todo: get state
+  initialState: any
+}
 
-const EntryProvider = ({ children, initialState, reducer }) => {
+export interface EntryContextType {
+  state: EntryState
+  searchTerm: string
+  clearSearchCache: () => void
+  setQuery: (query: Text) => void
+  setBlockRelations: (blockRelations: BlockRelationPayload) => Promise<any>
+  searchCache: any
+  searchEntries: (query: string) => void
+  findBlockRelations: (
+    query: string
+  ) => ResourceResponse<BlockRelationsServerResponse>
+  clearBlockRelationsCache: () => void
+}
+
+export const EntryContext = createContext<EntryContextType>(null!)
+
+const EntryProvider: React.FunctionComponent<PropsType> = ({
+  children,
+  initialState = _initState,
+}) => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { searchCache, searchTerm, blockRelationsSearchCache } = state
 
-  const blockRelationsQueueRef = useRef([])
+  const blockRelationsQueueRef = useRef<BlockRelationPayload[] | null>([])
 
   const searchEntries = useCallback(
-    debounce((query) => {
+    debounce((query: string) => {
       const _results = searchCache[query]
       if (!_results) {
         return dispatch(onSearchEntries(query))
@@ -36,7 +66,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
     [searchCache]
   )
 
-  const setQuery = (query) => {
+  const setQuery = (query: Text) => {
     dispatch(onSetQuery(query))
   }
 
@@ -45,7 +75,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
   }
 
   const throttleBlockRelations = throttle((callback) => {
-    if (blockRelationsQueueRef.current.length) {
+    if (blockRelationsQueueRef?.current?.length) {
       const _blockRelations = optimizeBlockRelations(
         blockRelationsQueueRef.current
       )
@@ -56,22 +86,26 @@ const EntryProvider = ({ children, initialState, reducer }) => {
   }, THROTTLE_BLOCK_RELATIONS)
 
   // async function could receive a callback function
-  const setBlockRelations = (blockRelations) =>
+  const setBlockRelations = (blockRelations: BlockRelationPayload) =>
     new Promise((res) => {
       // if callback is provided, this function will wait till throttle is complete before executing callback function
       if (
-        blockRelations.blocksRelationArray.length ||
+        blockRelations?.blocksRelationArray?.length ||
         blockRelations.clearPageRelationships
       ) {
         const _arr = blockRelationsQueueRef.current
-        _arr.push(blockRelations)
+        _arr?.push(blockRelations)
         blockRelationsQueueRef.current = _arr
         // pass the callback to the throttle function
         throttleBlockRelations(res)
       }
     })
 
-  const findBlockRelations = (query) => {
+  console.log(state.blockRelationsSearchCache)
+
+  const findBlockRelations = (
+    query: string
+  ): ResourceResponse<BlockRelationsServerResponse> => {
     // fetch block relations from the server
     const _results = blockRelationsSearchCache[query]
     if (_results) {
@@ -104,12 +138,7 @@ const EntryProvider = ({ children, initialState, reducer }) => {
   )
 }
 
-export const useEntryContext = (selector = (x) => x) =>
-  useContextSelector(EntryContext, selector)
-
-EntryProvider.defaultProps = {
-  initialState,
-  reducer,
-}
+export const useEntryContext = (selector = (x: any) => x) =>
+  useContextSelector<EntryContextType, any>(EntryContext, selector)
 
 export default EntryProvider

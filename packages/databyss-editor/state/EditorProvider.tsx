@@ -127,7 +127,7 @@ const isClearBlockRelations = [
   REMOVE,
 ]
 
-export const EditorContext = createContext<ContextType | null>(null)
+export const EditorContext = createContext<ContextType>(null!)
 
 // : React.RefForwardingComponent<
 //   React.RefObject<EditorHandles>,
@@ -138,9 +138,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
   { children, initialState = _initState, onChange },
   ref
 ) => {
-  const setBlockRelations = useEntryContext(
-    (c: any) => c && c.setBlockRelations
-  )
+  const setBlockRelations = useEntryContext((c) => c && c.setBlockRelations)
 
   // get the current page header
 
@@ -452,11 +450,5 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
 }
 
 export const useEditorContext = () => useContext(EditorContext)
-
-// EditorProvider.defaultProps = {
-//   onChange: () => null,
-//   // ref: PropTypes.object,
-//   initialState,
-// }
 
 export default forwardRef(EditorProvider)

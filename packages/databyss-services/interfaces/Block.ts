@@ -1,3 +1,4 @@
+import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { SelectOption } from './UI'
 import { Text } from './Text'
 
@@ -69,4 +70,9 @@ export interface Source extends Block {
 
 export interface Topic extends Block {
   isInPages?: string[]
+}
+
+export interface BlockRelationsServerResponse {
+  count: number
+  results: BlockRelation[]
 }
