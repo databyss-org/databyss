@@ -61,6 +61,14 @@
     ],
     "projects": [
       {
+        "displayName": "ts-check",
+        "runner": "ts-jest",
+        "preset": "ts-jest",
+        "testMatch": [
+          "<rootDir>/packages/**/*.ts*"
+        ]
+      },
+      {
         "displayName": "jslint",
         "runner": "jest-runner-eslint",
         "testMatch": [
