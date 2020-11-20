@@ -1,5 +1,4 @@
 import Block, { IBlock } from '@databyss-org/api/src/models/Block'
-import { Block as BlockType } from '@databyss-org/services/interfaces'
 import Page, { IPage } from '@databyss-org/api/src/models/Page'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
 import ServerProcess from '../lib/ServerProcess'
