@@ -36,11 +36,12 @@ const Element = ({ attributes, children, element, readOnly }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const _isPublic = isPublicAccount ? isPublicAccount() : null
 
-  const entryContext = useEntryContext()
+  const _searchTerm = useEntryContext((c) => c && c.searchTerm)
+
   let searchTerm = ''
 
-  if (entryContext) {
-    searchTerm = entryContext.searchTerm
+  if (_searchTerm) {
+    searchTerm = _searchTerm
   }
   const editor = useEditor()
 

@@ -18,7 +18,8 @@ const Editor = ({
   onInlineAtomicClick,
   ...others
 }) => {
-  const entryContext = useEntryContext()
+  const _searchTerm = useEntryContext((c) => c && c._searchTerm)
+
   const { copy, paste, cut } = useEditorContext()
 
   let searchTerm = ''
@@ -27,8 +28,8 @@ const Editor = ({
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
   }
 
-  if (entryContext) {
-    searchTerm = escapeRegExp(entryContext.searchTerm)
+  if (_searchTerm) {
+    searchTerm = escapeRegExp(_searchTerm)
   }
 
   const readOnly = !others.onChange || readonly
