@@ -55,6 +55,7 @@
     "script": "babel-node --config-file ./packages/databyss-scripts/babel.config.js --extensions \".js,.ts\" ./packages/databyss-scripts/run.js"
   },
   "jest": {
+    "preset": "ts-jest",
     "watchPlugins": [
       "jest-runner-eslint/watch-fix"
     ],
@@ -268,6 +269,7 @@
     "styled-system": "^5.0.5",
     "supertest": "^4.0.2",
     "sw-precache-webpack-plugin": "0.11.5",
+    "ts-jest": "^26.4.4",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.7.5",
     "url-loader": "0.6.2",
