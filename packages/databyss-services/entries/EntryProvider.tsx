@@ -101,8 +101,6 @@ const EntryProvider: React.FunctionComponent<PropsType> = ({
       }
     })
 
-  console.log(state.blockRelationsSearchCache)
-
   const findBlockRelations = (
     query: string
   ): ResourceResponse<BlockRelationsServerResponse> => {

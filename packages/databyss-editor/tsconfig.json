@@ -8,5 +8,6 @@
   "compilerOptions": {
     "composite": true,
   },
-  "references": []
+  "references": [],
+  "outDir": "dist",
 }

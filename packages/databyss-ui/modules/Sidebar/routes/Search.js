@@ -16,12 +16,15 @@ const Search = () => {
   } = useNavigationContext()
 
   const { params } = getTokensFromPath()
-  const {
-    searchTerm,
-    setQuery,
-    clearSearchCache,
-    searchCache,
-  } = useEntryContext()
+
+  const searchTerm = useEntryContext((c) => c && c.searchTerm)
+
+  const setQuery = useEntryContext((c) => c && c.setQuery)
+
+  const clearSearchCache = useEntryContext((c) => c && c.clearSearchCache)
+
+  const searchCache = useEntryContext((c) => c && c.searchCache)
+
   const menuItem = getSidebarPath()
 
   const [value, setValue] = useState({ textValue: searchTerm })
