@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useRef, forwardRef } from 'react'
 import { throttle } from 'lodash'
 import { Patch } from 'immer'
-import { filterInversePatches } from '@databyss-org/editor/state/util'
 import forkRef from '@databyss-org/ui/lib/forkRef'
+import { filterInversePatches } from '../state/util'
 import { OnChangeArgs, EditorHandles } from '../state/EditorProvider'
 
 const THROTTLE_UNDO = 1000

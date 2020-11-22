@@ -205,7 +205,7 @@ function validatePeopleArray(
   return array && Array.isArray(array) && array.length > 0
 }
 
-function validateTextValue(prop: Text | undefined) {
+function validateTextValue(prop?: Text | null) {
   if (prop && 'textValue' in prop && prop.textValue !== '') {
     return true
   }

@@ -1,10 +1,7 @@
 import _ from 'lodash'
 import cloneDeep from 'clone-deep'
 import { Block } from '@databyss-org/services/interfaces/'
-import {
-  stateBlockToHtmlHeader,
-  stateBlockToHtml,
-} from '@databyss-org/editor/lib/slateUtils'
+import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import {
   BlockType,
   Selection,

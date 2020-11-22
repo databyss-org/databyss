@@ -43,7 +43,7 @@ export interface CatalogService {
   ) => SelectOption | null | undefined
 
   // publication details (articles)
-  getJournalTitle: (apiResult: any, publicationType: string) => string
+  getJournalTitle: (apiResult: any, publicationType: SelectOption) => string
   getIssue: (apiResult: any) => string
   getVolume: (apiResult: any) => string
 

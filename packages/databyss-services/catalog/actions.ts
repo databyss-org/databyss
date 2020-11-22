@@ -194,15 +194,13 @@ function sourceFromResult(options: CatalogParsingParams): Source {
       publisherName: makeText(service.getPublisher(result)),
       publisherPlace: makeText(service.getPublisherPlace(result)),
       year: makeText(service.getPublishedYear(result)),
-<<<<<<< HEAD
       month:
         publicationType && service.getPublishedMonth(result, publicationType),
-=======
-      month: service.getPublishedMonth(result, publicationType),
 
       // publication details (articles)
-      journalTitle: makeText(service.getJournalTitle(result)),
->>>>>>> next
+      journalTitle:
+        publicationType &&
+        makeText(service.getJournalTitle(result, publicationType)),
       volume: makeText(service.getVolume(result)),
       issue: makeText(service.getIssue(result)),
 

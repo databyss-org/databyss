@@ -42,8 +42,8 @@ export interface SourceDetail {
   translators?: Author[]
   citations?: Citations[]
   title?: Text
-  journalTitle?: Text
-  chapterTitle?: Text
+  journalTitle?: Text | null
+  chapterTitle?: Text | null
 
   // publication details (common)
   publicationType?: SelectOption | null | undefined
