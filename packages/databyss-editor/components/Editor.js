@@ -18,7 +18,8 @@ const Editor = ({
   onInlineAtomicClick,
   ...others
 }) => {
-  const entryContext = useEntryContext()
+  const _searchTerm = useEntryContext((c) => c && c._searchTerm)
+
   const { copy, paste, cut } = useEditorContext()
 
   let searchTerm = ''
@@ -27,14 +28,14 @@ const Editor = ({
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
   }
 
-  if (entryContext) {
-    searchTerm = escapeRegExp(entryContext.searchTerm)
+  if (_searchTerm) {
+    searchTerm = escapeRegExp(_searchTerm)
   }
 
   const readOnly = !others.onChange || readonly
   // const editor = useMemo(() => withReact(createEditor()), [])
   const renderElement = useCallback(
-    props => <Element readOnly={readOnly} {...props} />,
+    (props) => <Element readOnly={readOnly} {...props} />,
     []
   )
 
@@ -43,7 +44,7 @@ const Editor = ({
   }, [])
 
   const renderLeaf = useCallback(
-    props => (
+    (props) => (
       <Leaf {...props} readOnly={readOnly} onInlineClick={onInlineClick} />
     ),
     [searchTerm]
@@ -65,7 +66,7 @@ const Editor = ({
         const emailMatches = [...matchAll(_string, _emailRegEx)]
 
         if (emailMatches.length) {
-          emailMatches.forEach(e => {
+          emailMatches.forEach((e) => {
             const _parts = _string.split(e[0])
             if (_parts.length > 1) {
               let offset = 0
@@ -85,7 +86,7 @@ const Editor = ({
 
         // check for url in text
         linksFinder.wrapLinks(_string, {
-          onMatch: link => {
+          onMatch: (link) => {
             // split string by link
             const _parts = _string.split(link)
             if (_parts.length > 1) {
@@ -100,7 +101,7 @@ const Editor = ({
                     url: link,
                   }
                   // check to see if this range is already included as an email address range
-                  if (!ranges.filter(r => Range.includes(r, _range)).length) {
+                  if (!ranges.filter((r) => Range.includes(r, _range)).length) {
                     ranges.push(_range)
                   }
                 }
@@ -118,7 +119,7 @@ const Editor = ({
       // search each word individually
       const _searchTerm = searchTerm.split(' ')
 
-      _searchTerm.forEach(word => {
+      _searchTerm.forEach((word) => {
         if (word && Text.isText(node) && !node.inlineAtomicMenu) {
           const { text } = node
           // normalize diactritics
@@ -161,15 +162,15 @@ const Editor = ({
       {children}
       {!readonly && <FormatMenu />}
       <Editable
-        onCopy={e => {
+        onCopy={(e) => {
           e.preventDefault()
           copy(e)
         }}
-        onPaste={e => {
+        onPaste={(e) => {
           e.preventDefault()
           paste(e)
         }}
-        onCut={e => {
+        onCut={(e) => {
           e.preventDefault()
           cut(e)
         }}

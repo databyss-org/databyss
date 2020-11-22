@@ -21,10 +21,8 @@ const PROXY_URL = 'http://0.0.0.0:3000'
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('entry search', () => {
-  beforeEach(async done => {
-    const random = Math.random()
-      .toString(36)
-      .substring(7)
+  beforeEach(async (done) => {
+    const random = Math.random().toString(36).substring(7)
     // OSX and chrome are necessary
     driver = await startSession({ platformName: OSX, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
@@ -124,7 +122,7 @@ describe('entry search', () => {
 
     // get text from entry search results
     const results = await Promise.all(
-      searchPageEntryResults.map(async r => {
+      searchPageEntryResults.map(async (r) => {
         const _text = await r.getAttribute('innerText')
         return _text.trim()
       })
@@ -254,7 +252,7 @@ describe('entry search', () => {
     // a combination of all three page headers
 
     const pageTitleResults = await Promise.all(
-      searchPageResultsTitle.map(async r => {
+      searchPageResultsTitle.map(async (r) => {
         const _text = await r.getAttribute('innerText')
         return _text.trim()
       })
@@ -286,14 +284,14 @@ describe('entry search', () => {
     )
 
     const entrySearchResultArray = await Promise.all(
-      entrySearchResult.map(async r => {
+      entrySearchResult.map(async (r) => {
         const _text = await r.getAttribute('innerText')
         return _text.trim()
       })
     )
 
     const _idx = entrySearchResultArray.findIndex(
-      e => e === 'keyword appears at the end of an entry something'
+      (e) => e === 'keyword appears at the end of an entry something'
     )
 
     await entrySearchResult[_idx].click()

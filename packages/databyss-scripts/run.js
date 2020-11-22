@@ -6,7 +6,7 @@ const scriptMap = {
 }
 
 function usageArgs(jobArgList) {
-  return jobArgList.map(a => `<${a}>`).join(' ')
+  return jobArgList.map((a) => `<${a}>`).join(' ')
 }
 
 function run(args) {
@@ -32,10 +32,10 @@ function run(args) {
   job.on('end', () => {
     process.exit()
   })
-  job.on('stdout', msg => {
+  job.on('stdout', (msg) => {
     console.log(msg)
   })
-  job.on('stderr', msg => {
+  job.on('stderr', (msg) => {
     console.error(msg)
   })
   job.run()

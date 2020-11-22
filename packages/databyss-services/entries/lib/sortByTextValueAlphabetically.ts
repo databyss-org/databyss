@@ -15,7 +15,7 @@ export function sortByTextValueAlphabetically(array: Text[]) {
   }
 
   // sort
-  return array.sort(
-    (a, b) => (a.textValue.toLowerCase() > b.textValue.toLowerCase() ? 1 : -1)
+  return array.sort((a, b) =>
+    a.textValue.toLowerCase() > b.textValue.toLowerCase() ? 1 : -1
   )
 }

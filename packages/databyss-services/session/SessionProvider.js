@@ -30,36 +30,27 @@ const SessionProvider = ({
   })
   const { session: actions } = useServiceContext()
 
-  const isPublicAccount = useCallback(
-    () => {
-      if (state.session.publicAccount?._id) {
-        return true
-      }
-      return false
-    },
-    [state.session?.publicAccount]
-  )
+  const isPublicAccount = useCallback(() => {
+    if (state.session.publicAccount?._id) {
+      return true
+    }
+    return false
+  }, [state.session?.publicAccount])
 
-  const getUserAccount = useCallback(
-    () => {
-      if (state.userInfo) {
-        return state.userInfo
-      }
-      dispatch(actions.getUserAccount())
-      return null
-    },
-    [state.userInfo]
-  )
+  const getUserAccount = useCallback(() => {
+    if (state.userInfo) {
+      return state.userInfo
+    }
+    dispatch(actions.getUserAccount())
+    return null
+  }, [state.userInfo])
 
-  const getCurrentAccount = useCallback(
-    () => {
-      if (state.session.publicAccount?._id) {
-        return state.session.publicAccount._id
-      }
-      return state.session.account._id
-    },
-    [state.session]
-  )
+  const getCurrentAccount = useCallback(() => {
+    if (state.session.publicAccount?._id) {
+      return state.session.publicAccount._id
+    }
+    return state.session.account._id
+  }, [state.session])
   // credentials can be:
   // - `undefined` if we're just reloading
   // - `code` if we're logging in from an email link or code
@@ -106,7 +97,7 @@ const SessionProvider = ({
     dispatch(actions.logout())
   }
 
-  const setDefaultPage = useCallback(id => {
+  const setDefaultPage = useCallback((id) => {
     dispatch(actions.onSetDefaultPage(id))
   }, [])
 
@@ -128,7 +119,7 @@ const SessionProvider = ({
   )
 }
 
-export const useSessionContext = (selector = x => x) =>
+export const useSessionContext = (selector = (x) => x) =>
   useContextSelector(SessionContext, selector)
 
 // useContext(SessionContext)

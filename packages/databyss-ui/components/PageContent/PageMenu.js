@@ -37,8 +37,8 @@ function copyToClipboard(text) {
 }
 
 const PageMenu = ({ pages }) => {
-  const getSession = useSessionContext(c => c && c.getSession)
-  const setDefaultPage = useSessionContext(c => c && c.setDefaultPage)
+  const getSession = useSessionContext((c) => c && c.getSession)
+  const setDefaultPage = useSessionContext((c) => c && c.setDefaultPage)
   const { account } = getSession()
   const [showMenu, setShowMenu] = useState(false)
   const [isPagePublic, setIsPagePublic] = useState(false)
@@ -52,19 +52,20 @@ const PageMenu = ({ pages }) => {
 
   const { params } = getTokensFromPath()
 
-  const archivePage = usePageContext(c => c.archivePage)
-  const deletePage = usePageContext(c => c.deletePage)
-  const getPage = usePageContext(c => c.getPage)
+  const archivePage = usePageContext((c) => c.archivePage)
+  const deletePage = usePageContext((c) => c.deletePage)
+  const getPage = usePageContext((c) => c.getPage)
 
-  const setPagePublic = usePageContext(c => c && c.setPagePublic)
+  const setPagePublic = usePageContext((c) => c && c.setPagePublic)
 
-  const getPublicAccount = usePageContext(c => c && c.getPublicAccount)
+  const getPublicAccount = usePageContext((c) => c && c.getPublicAccount)
 
-  const resetSourceHeaders = useSourceContext(c => c && c.resetSourceHeaders)
+  const resetSourceHeaders = useSourceContext((c) => c && c.resetSourceHeaders)
 
-  const resetTopicHeaders = useTopicContext(c => c && c.resetTopicHeaders)
+  const resetTopicHeaders = useTopicContext((c) => c && c.resetTopicHeaders)
 
-  const canBeArchived = Object.values(pages).filter(p => !p.archive).length > 1
+  const canBeArchived =
+    Object.values(pages).filter((p) => !p.archive).length > 1
 
   // if page is shared, toggle public page
   useEffect(() => {
@@ -73,7 +74,7 @@ const PageMenu = ({ pages }) => {
     }
   }, [])
 
-  const onArchivePress = bool => {
+  const onArchivePress = (bool) => {
     archivePage(params, bool).then(() => {
       // reset headers
       resetSourceHeaders()
@@ -82,7 +83,7 @@ const PageMenu = ({ pages }) => {
         // if default page is archived set new page as default page
         let redirect = account.defaultPage
         if (account.defaultPage === params) {
-          redirect = Object.keys(pages).find(_id => _id !== params)
+          redirect = Object.keys(pages).find((_id) => _id !== params)
           setDefaultPage(redirect)
         }
         navigate(`/pages/${redirect}`)
@@ -92,7 +93,7 @@ const PageMenu = ({ pages }) => {
     })
   }
 
-  const handleEscKey = e => {
+  const handleEscKey = (e) => {
     if (e.key === 'Escape') {
       setShowMenu(false)
     }
@@ -112,9 +113,7 @@ const PageMenu = ({ pages }) => {
 
     // generate url and copy to clipboard
     const getUrl = window.location
-    const baseUrl = `${getUrl.protocol}//${
-      getUrl.host
-    }/${_accountId}/pages/${params}`
+    const baseUrl = `${getUrl.protocol}//${getUrl.host}/${_accountId}/pages/${params}`
 
     copyToClipboard(baseUrl)
     setShowCopiedCheck(true)
@@ -180,7 +179,7 @@ const PageMenu = ({ pages }) => {
   )
 
   const DropdownList = () =>
-    menuItems.map(menuItem => (
+    menuItems.map((menuItem) => (
       <DropdownListItem
         {...menuItem}
         action={menuItem.actionType}
@@ -189,14 +188,11 @@ const PageMenu = ({ pages }) => {
       />
     ))
 
-  useEffect(
-    () => {
-      if (showCopiedCheck && !showMenu) {
-        setShowCopiedCheck(false)
-      }
-    },
-    [showMenu]
-  )
+  useEffect(() => {
+    if (showCopiedCheck && !showMenu) {
+      setShowCopiedCheck(false)
+    }
+  }, [showMenu])
 
   const publicLinkItem = showCopiedCheck ? (
     <DropdownListItem
@@ -208,7 +204,7 @@ const PageMenu = ({ pages }) => {
     />
   ) : (
     <SharedPageLoader>
-      {res =>
+      {(res) =>
         res.length ? (
           <DropdownListItem
             icon={<LinkSvg />}

@@ -32,10 +32,10 @@ const BaseControl = forwardRef(
 
     const _children = React.Children.map(
       children,
-      child => child && React.cloneElement(child, { disabled })
+      (child) => child && React.cloneElement(child, { disabled })
     )
 
-    const _onPress = event => {
+    const _onPress = (event) => {
       if (typeof onPress === 'function') {
         onPress(event)
       }

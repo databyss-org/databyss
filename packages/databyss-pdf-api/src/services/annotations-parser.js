@@ -17,7 +17,7 @@ const viewPath =
 const viewURL = `${protocol}${viewPath}`
 
 // methods definitions
-export const parse = async docPath => {
+export const parse = async (docPath) => {
   // ensure to add protocol to temp path for uploaded file
   const pdfPath = `${protocol}${docPath}`
 
@@ -61,7 +61,7 @@ async function parse1stPass(pdfPath) {
   // prepare promise to return
   const promise = new Promise((resolve, reject) => {
     // handle signal of completion
-    const onFirstPassComplete = response => {
+    const onFirstPassComplete = (response) => {
       // response structure:
       // {
       //   success <boolean>
@@ -109,7 +109,7 @@ async function parse1stPass(pdfPath) {
   console.log('✅ Created page...')
 
   // show view console logs in node console
-  page.on('console', msg => {
+  page.on('console', (msg) => {
     /* eslint-disable no-plusplus */
     for (let i = 0; i < msg.args().length; ++i) {
       console.log(`${i}: ${msg.args()[i]}`)
@@ -177,8 +177,8 @@ function mergeAnnotations(annotations1, annotations2) {
   console.log('📑 Merging annotations')
 
   /* eslint-disable no-param-reassign */
-  annotations1 = annotations1.filter(a => annotationsTypes.includes(a.type))
-  annotations2 = annotations2.filter(a => annotationsTypes.includes(a.type))
+  annotations1 = annotations1.filter((a) => annotationsTypes.includes(a.type))
+  annotations2 = annotations2.filter((a) => annotationsTypes.includes(a.type))
   /* eslint-enable no-param-reassign */
 
   if (annotations1.length !== annotations2.length) {
@@ -189,11 +189,11 @@ function mergeAnnotations(annotations1, annotations2) {
 
   const response = []
 
-  annotations1.forEach(annotation => {
+  annotations1.forEach((annotation) => {
     const newAnnotation = Object.assign({}, annotation)
 
     const filtered = annotations2.filter(
-      b =>
+      (b) =>
         // raw id contains text, whereas id from modified annotation parser is only number
         // to match, ensure mod. annot. id is contained in raw id
         b.id.indexOf(annotation.id) > -1

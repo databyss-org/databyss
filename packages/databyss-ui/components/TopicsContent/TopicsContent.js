@@ -12,19 +12,12 @@ import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import IndexPageEntries from '../PageContent/IndexPageEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
 
-export const TopicsRouter = () => (
-  <Router>
-    <TopicsContent path="/" />
-    <TopicDetails path=":id" />
-  </Router>
-)
-
 const TopicsContent = () => {
-  const navigate = useNavigationContext(c => c.navigate)
+  const navigate = useNavigationContext((c) => c.navigate)
   return (
     <AllTopicsLoader filtered>
-      {topics => {
-        const topicsData = Object.values(topics).map(value =>
+      {(topics) => {
+        const topicsData = Object.values(topics).map((value) =>
           createIndexPageEntries({
             text: value.text?.textValue,
             id: value._id,
@@ -32,7 +25,7 @@ const TopicsContent = () => {
         )
         const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
 
-        const onTopicClick = topic => {
+        const onTopicClick = (topic) => {
           navigate(`/topics/${topic.id}`)
         }
         return (
@@ -52,5 +45,12 @@ const TopicsContent = () => {
     </AllTopicsLoader>
   )
 }
+
+export const TopicsRouter = () => (
+  <Router>
+    <TopicsContent path="/" />
+    <TopicDetails path=":id" />
+  </Router>
+)
 
 export default TopicsContent

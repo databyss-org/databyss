@@ -1,4 +1,4 @@
-import { Block } from '../../interfaces'
+import { Block, Text } from '../../interfaces'
 import { splitTextAtOffset, mergeText } from './'
 
 // inserts @text into @block at @offset
@@ -11,7 +11,7 @@ export default ({
   block: Block
   text: Text
   offset: number
-}): Block => {
+}): void => {
   const splitText = splitTextAtOffset({
     text: block.text,
     offset,

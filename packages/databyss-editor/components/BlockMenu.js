@@ -26,13 +26,13 @@ const BlockMenu = ({ element }) => {
     setShowMenu(!showMenu)
   }
 
-  const handleEscKey = e => {
+  const handleEscKey = (e) => {
     if (e.key === 'Escape') {
       setShowMenu(false)
     }
   }
 
-  const actions = type =>
+  const actions = (type) =>
     ({
       END_SOURCE: () => editor.insertText('/@'),
       END_TOPIC: () => editor.insertText('/#'),
@@ -42,7 +42,7 @@ const BlockMenu = ({ element }) => {
         Transforms.setNodes(
           editor,
           { location: true, type: 'location' },
-          { match: n => Text.isText(n), split: true }
+          { match: (n) => Text.isText(n), split: true }
         )
       },
     }[type])
@@ -91,7 +91,7 @@ const BlockMenu = ({ element }) => {
     // filter out items not currently open
     const _openAtomics = getOpenAtomics(editorContext.state)
     _closureItems = _closureItems.filter(
-      i => _openAtomics.findIndex(j => j.type === i.closureType) > -1
+      (i) => _openAtomics.findIndex((j) => j.type === i.closureType) > -1
     )
   }
 
@@ -130,7 +130,7 @@ const BlockMenu = ({ element }) => {
           <React.Fragment key={menuItem.action}>
             <DropdownListItem
               {...menuItem}
-              onPress={e => onMenuAction(e, menuItem.action)}
+              onPress={(e) => onMenuAction(e, menuItem.action)}
               onKeyDown={handleEscKey}
             />
             {_closureItems.length && _closureItems.length - 1 === i ? (

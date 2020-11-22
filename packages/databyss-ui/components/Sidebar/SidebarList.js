@@ -10,7 +10,7 @@ import { ScrollView, Icon, List } from '@databyss-org/ui/primitives'
 import { useLocation } from '@reach/router'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 
-const menuSvgs = type =>
+const menuSvgs = (type) =>
   ({
     pages: <PageSvg />,
     sources: <SourcesSvg />,
@@ -37,7 +37,7 @@ const SidebarList = ({
   const location = useLocation()
   const tokens = getTokensFromPath()
 
-  const getHref = item => {
+  const getHref = (item) => {
     const routeWithAccount = `/${getAccountFromLocation()}${item.route}`
     if (item.params) {
       return `${routeWithAccount}${
@@ -47,7 +47,7 @@ const SidebarList = ({
     return `${routeWithAccount}`
   }
 
-  const getActiveItem = item => {
+  const getActiveItem = (item) => {
     // if we're using keyboard navigation, that takes precedence
     if (keyboardNavigation && keyboardEventsActive) {
       return false

@@ -19,7 +19,7 @@ const TopicsIndex = () => {
     <TopicProvider>
       <MobileView headerItems={headerItems}>
         <AllTopicsLoader>
-          {topics => {
+          {(topics) => {
             const listItems = buildListItems({
               data: topics,
               baseUrl: '/topics',

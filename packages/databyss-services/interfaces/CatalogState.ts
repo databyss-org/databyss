@@ -1,3 +1,4 @@
+import { SelectOption } from './UI'
 import { Text, CacheDict, Source } from './'
 
 export enum CatalogType {
@@ -22,12 +23,6 @@ export interface CatalogState {
   }
 }
 
-// TODO: move to a ui-related location?
-export interface SelectOption {
-  label: string
-  id: string
-}
-
 export interface CatalogService {
   type: string
 
@@ -44,11 +39,11 @@ export interface CatalogService {
   getPublishedYear: (apiResult: any) => string
   getPublishedMonth: (
     apiResult: any,
-    publicationType: string
+    publicationType: SelectOption
   ) => SelectOption | null | undefined
 
   // publication details (articles)
-  getJournalTitle: (apiResult: any, publicationType: string) => string
+  getJournalTitle: (apiResult: any, publicationType: SelectOption) => string
   getIssue: (apiResult: any) => string
   getVolume: (apiResult: any) => string
 

@@ -47,18 +47,30 @@
     "storybook:sauce": "ENV_PREFIX=REACT_APP_ REACT_APP_META_USE_CTRL=true REACT_APP_STORYBOOK=true NPM_BUILD_TARGET=TEST start-storybook -h 0.0.0.0 -p 8080 -s ./packages/databyss-ui/public --ci --quiet",
     "storybook:build": "NPM_BUILD_TARGET=TEST build-storybook -o build -s ./packages/databyss-ui/public && node scripts/sb-publish.js Databyss",
     "sync-versions": "node scripts/sync-versions.js @databyss-org",
-    "lint": "eslint . --cache && echo \"eslint: no lint errors\"",
+    "lint": "yarn test --selectProjects jslint tslint",
+    "lint:js": "yarn test --selectProjects jslint",
+    "lint:ts": "yarn test --selectProjects tslint",
     "sauce:proxy": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/SauceConnect.js",
     "sauce:dev-server": "NODE_ENV=test NPM_BUILD_TARGET=API_SERVER node scripts/sauce-dev-server.js",
     "script": "babel-node --config-file ./packages/databyss-scripts/babel.config.js --extensions \".js,.ts\" ./packages/databyss-scripts/run.js"
   },
   "jest": {
+    "watchPlugins": [
+      "jest-runner-eslint/watch-fix"
+    ],
     "projects": [
       {
-        "displayName": "lint",
+        "displayName": "jslint",
         "runner": "jest-runner-eslint",
         "testMatch": [
           "<rootDir>/packages/**/*.js"
+        ]
+      },
+      {
+        "displayName": "tslint",
+        "runner": "jest-runner-eslint",
+        "testMatch": [
+          "<rootDir>/packages/**/*.ts*"
         ]
       },
       {
@@ -154,8 +166,14 @@
     "@storybook/addon-storyshots": "5.2.1",
     "@storybook/addons": "5.2.1",
     "@storybook/react": "5.2.1",
-    "@typescript-eslint/eslint-plugin": "^3.7.1",
-    "@typescript-eslint/parser": "^3.7.1",
+    "@types/clone-deep": "^4.0.1",
+    "@types/imurmurhash": "^0.1.1",
+    "@types/mongodb": "^3.5.33",
+    "@types/mongoose": "^5.10.1",
+    "@types/string-strip-html": "^5.0.0",
+    "@types/tmp": "^0.2.0",
+    "@typescript-eslint/eslint-plugin": "4.8.0",
+    "@typescript-eslint/parser": "4.8.0",
     "an-array-of-english-words": "^2.0.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
@@ -177,16 +195,16 @@
     "dotenv-expand": "^5.1.0",
     "download": "^7.1.0",
     "emotion": "^10.0.17",
-    "eslint": "^6.8.0",
+    "eslint": "7.13.0",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-config-prettier": "^2.9.0",
-    "eslint-config-react-app": "^4.0.1",
-    "eslint-loader": "2.1.2",
-    "eslint-plugin-import": "^2.18.2",
-    "eslint-plugin-jsx-a11y": "6.2.1",
-    "eslint-plugin-prettier": "^2.6.0",
-    "eslint-plugin-react": "^7.13.0",
-    "eslint-plugin-react-hooks": "^2.0.1",
+    "eslint-config-react-app": "6.0.0",
+    "eslint-loader": "4.0.2",
+    "eslint-plugin-import": "2.22.1",
+    "eslint-plugin-jsx-a11y": "6.4.1",
+    "eslint-plugin-prettier": "3.1.4",
+    "eslint-plugin-react": "7.21.5",
+    "eslint-plugin-react-hooks": "4.2.0",
     "expo-app-auth": "^6.0.0",
     "express": "^4.17.1",
     "express-validator": "^6.1.1",
@@ -201,7 +219,7 @@
     "jest-dev-server": "^4.3.0",
     "jest-pnp-resolver": "^1.0.1",
     "jest-resolve": "26.6.2",
-    "jest-runner-eslint": "^0.7.1",
+    "jest-runner-eslint": "0.10.0",
     "json-diff": "^0.5.4",
     "jsonwebtoken": "^8.5.1",
     "kill-port": "^1.5.1",
@@ -218,8 +236,8 @@
     "postcss-normalize": "^8.0.0",
     "postcss-preset-env": "^6.6.0",
     "postcss-safe-parser": "^4.0.1",
-    "prettier": "1.13.5",
-    "prettier-eslint": "^8.8.1",
+    "prettier": "2.1.2",
+    "prettier-eslint": "11.0.0",
     "promise": "8.0.1",
     "query-string": "^6.13.1",
     "raf": "3.4.0",

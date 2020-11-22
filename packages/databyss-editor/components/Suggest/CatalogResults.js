@@ -10,16 +10,16 @@ import { CatalogFooter } from './'
 
 const CatalogResults = ({ menuHeight, type, dismiss, query, selectSource }) => {
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
-  const setSource = useSourceContext(c => c && c.setSource)
+  const setSource = useSourceContext((c) => c && c.setSource)
 
-  const onPress = result => {
+  const onPress = (result) => {
     selectSource({ ...result.source })
     dismiss()
   }
 
   useEffect(() => () => setSourcesLoaded(false), [])
 
-  const _renderResults = results =>
+  const _renderResults = (results) =>
     !_.isEmpty(results) ? (
       Object.keys(results).map((author, i) => (
         <View key={i} mb="em">
@@ -49,7 +49,7 @@ const CatalogResults = ({ menuHeight, type, dismiss, query, selectSource }) => {
       <View overflowX="hidden" overflowY="auto" maxHeight={pxUnits(menuHeight)}>
         {setSource && (
           <CatalogSearchLoader type={type} query={query}>
-            {results => {
+            {(results) => {
               setSourcesLoaded(true)
               return _renderResults(results)
             }}

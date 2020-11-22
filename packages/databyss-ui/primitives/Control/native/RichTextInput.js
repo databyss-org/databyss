@@ -6,11 +6,11 @@ const RichTextInput = forwardRef(
     { value, onChange, id, concatCss, onBlur, onFocus, active, multiline },
     ref
   ) => {
-    const _onBlur = event => {
+    const _onBlur = (event) => {
       onBlur(event)
     }
 
-    const _onFocus = event => {
+    const _onFocus = (event) => {
       onFocus(event)
     }
 

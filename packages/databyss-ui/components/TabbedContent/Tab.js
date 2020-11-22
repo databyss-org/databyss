@@ -41,7 +41,7 @@ const TabButton = styled(Button, tabStyles)
 const Label = styled(Text, labelStyles)
 
 // component
-const Tab = props => {
+const Tab = (props) => {
   const { id, icon, label, onClick, isActive, width } = props
 
   // render methods

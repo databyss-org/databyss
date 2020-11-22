@@ -4,7 +4,7 @@
  * @param {string} citation A string of raw HTML provided by CitationJS.
  * @param {*} styleId The identifier of the citation style.
  */
-export function pruneCitation(citation, styleId) {
+export function pruneCitation(citation: string, styleId: string) {
   let response = citation
 
   const div = document.createElement('div')

@@ -66,7 +66,7 @@ export const ValueListItem = ({ children, path, ...others }) => {
 
   return React.cloneElement(React.Children.only(children), {
     value,
-    onChange: _value => onItemChange(path, _value),
+    onChange: (_value) => onItemChange(path, _value),
     'data-test-path': path,
     ...others,
   })

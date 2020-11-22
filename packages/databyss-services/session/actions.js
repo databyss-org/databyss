@@ -26,10 +26,9 @@ import {
 
 import { getAccountFromLocation } from './_helpers'
 
-export const fetchSession = ({
-  _request,
-  ...credentials
-}) => async dispatch => {
+export const fetchSession = ({ _request, ...credentials }) => async (
+  dispatch
+) => {
   // eslint-disable-next-line no-param-reassign
   _request = _request || request
 
@@ -138,7 +137,7 @@ export const endSession = () => {
   }
 }
 
-export const getUserAccount = () => async dispatch => {
+export const getUserAccount = () => async (dispatch) => {
   dispatch({ type: GET_USER_ACCOUNT })
   const authToken = getAuthToken()
   if (authToken) {
@@ -150,13 +149,13 @@ export const getUserAccount = () => async dispatch => {
   }
 }
 
-export const logout = () => dispatch => {
+export const logout = () => (dispatch) => {
   deleteAuthToken()
   deleteAccountId()
   dispatch({ type: LOGOUT })
 }
 
-export const onSetDefaultPage = id => async dispatch => {
+export const onSetDefaultPage = (id) => async (dispatch) => {
   httpPost(`/accounts/page/${id}`).then(() => {
     dispatch({
       type: SET_DEFAULT_PAGE,

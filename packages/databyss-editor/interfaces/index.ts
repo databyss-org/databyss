@@ -1,4 +1,5 @@
 import { Text } from '@databyss-org/services/interfaces'
+
 export type {
   EditorState,
   PayloadOperation,
@@ -22,6 +23,11 @@ export type BlockRelation = {
   page?: string
   blockIndex?: number
   removeBlock?: boolean
+}
+
+export type BlockRelationPayload = {
+  blocksRelationArray?: BlockRelation[]
+  clearPageRelationships?: string
 }
 
 export type PagePath = {

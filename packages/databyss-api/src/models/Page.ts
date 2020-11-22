@@ -5,6 +5,15 @@ import { updateTimestamps } from '../lib/timestamps'
 
 const Schema = mongoose.Schema
 
+export interface IPage extends mongoose.Document {
+  blocks: any[]
+  account: string
+  sharedWith: []
+  name: string
+  selection: any
+  archive: boolean
+}
+
 const PageSchema = new Schema(
   {
     account: {
@@ -63,12 +72,12 @@ PageSchema.index({ sharedWith: 1 })
 
 /* eslint-disable prefer-arrow-callback */
 /* eslint-disable func-names */
-PageSchema.pre('save', function(next) {
+PageSchema.pre('save', function (next) {
   updateTimestamps(this)
   next()
 })
 
-PageSchema.method('addBlock', async function(values = {}) {
+PageSchema.method('addBlock', async function (this: any, values: any = {}) {
   // add the block record
   const block = await Block.create({
     page: this._id,
@@ -95,7 +104,7 @@ PageSchema.static('create', async (values = {}) => {
   selection = new Selection(selection)
   await selection.save()
 
-  const instance = new Page({ ...values, selection })
+  const instance: any = new Page({ ...values, selection })
 
   // add an empty entry
   await instance.addBlock()
@@ -104,4 +113,4 @@ PageSchema.static('create', async (values = {}) => {
   return instance
 })
 
-export default mongoose.model('page', PageSchema)
+export default mongoose.model<IPage>('page', PageSchema)

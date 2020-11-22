@@ -5,7 +5,7 @@ import { defaultPublicationType } from '../constants/PublicationTypes'
 
 export function buildSourceDetail(): SourceDetail {
   return {
-    title: '',
+    title: { textValue: '', ranges: [] },
     authors: [],
     editors: [],
     translators: [],

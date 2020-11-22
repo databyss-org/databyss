@@ -14,9 +14,9 @@ import AccountMenu from './AccountMenu'
 
 const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
-  const hasPendingPatches = usePageContext(c => c.hasPendingPatches)
+  const hasPendingPatches = usePageContext((c) => c.hasPendingPatches)
   // get page name from headerCache
-  const getPages = usePageContext(c => c && c.getPages)
+  const getPages = usePageContext((c) => c && c.getPages)
 
   const [pendingPatches, setPendingPatches] = useState(0)
   const [showSaving, setShowSaving] = useState(false)
@@ -27,7 +27,7 @@ const PageSticky = ({ pagePath, pageId }) => {
   // debonce the ui component showing the saving icon
   const debounceSavingIcon = useCallback(
     debounce(
-      count => {
+      (count) => {
         setShowSaving(count)
       },
       1000,
@@ -36,14 +36,11 @@ const PageSticky = ({ pagePath, pageId }) => {
     []
   )
 
-  useEffect(
-    () => {
-      // set the true state of pending patches
-      setPendingPatches(hasPendingPatches)
-      debounceSavingIcon(hasPendingPatches)
-    },
-    [hasPendingPatches]
-  )
+  useEffect(() => {
+    // set the true state of pending patches
+    setPendingPatches(hasPendingPatches)
+    debounceSavingIcon(hasPendingPatches)
+  }, [hasPendingPatches])
 
   const pages = getPages()
   // get page title
@@ -102,7 +99,7 @@ const PageSticky = ({ pagePath, pageId }) => {
         </Icon>
         <AccountMenu />
         <View ml="em">
-          <PagesLoader>{pages => <PageMenu pages={pages} />}</PagesLoader>
+          <PagesLoader>{(pages) => <PageMenu pages={pages} />}</PagesLoader>
         </View>
       </View>
     </View>

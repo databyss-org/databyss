@@ -19,15 +19,15 @@ export const mono = Platform.select({
 })
 
 export const pxUnits = Platform.select({
-  ios: v => v,
-  android: v => v,
-  default: v => `${v}px`,
+  ios: (v) => v,
+  android: (v) => v,
+  default: (v) => `${v}px`,
 })
 
 export const weightUnits = Platform.select({
-  ios: v => `${v}`,
-  android: v => `${v}`,
-  default: v => v,
+  ios: (v) => `${v}`,
+  android: (v) => `${v}`,
+  default: (v) => v,
 })
 
 export const underline = Platform.select({
@@ -55,14 +55,14 @@ fontWeights.bold = fontWeights[2]
 fontWeights.semiBold = fontWeights[1]
 fontWeights.regular = fontWeights[0]
 
-const headingText = size => ({
+const headingText = (size) => ({
   fontFamily: fonts.headingFont,
   fontWeight: fontWeights.bold,
   fontSize: size,
   lineHeight: pxUnits(size * 1.15),
 })
 
-const uiText = size => ({
+const uiText = (size) => ({
   fontFamily: fonts.uiFont,
   fontSize: size,
   fontWeight: fontWeights.normal,
@@ -133,14 +133,14 @@ const uiTextBoldUnderlineVariants = Object.keys(uiTextBoldVariants).reduce(
   {}
 )
 
-const bodyHeading = size => ({
+const bodyHeading = (size) => ({
   fontFamily: fonts.bodyFont,
   fontSize: size,
   lineHeight: pxUnits(size * 1.75),
   fontWeight: fontWeights.regular,
 })
 
-const bodyText = size => ({
+const bodyText = (size) => ({
   fontFamily: fonts.bodyFont,
   fontSize: size,
   lineHeight: pxUnits(size * 1.5),

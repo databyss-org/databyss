@@ -55,7 +55,7 @@ class NotifyProvider extends React.Component {
     this.bugsnagClient = Bugsnag.init(props.options)
 
     if (IS_NATIVE) {
-      global.ErrorUtils.setGlobalHandler(error => {
+      global.ErrorUtils.setGlobalHandler((error) => {
         this.bugsnagClient.notify(error)
         this.showUnhandledErrorDialog()
         console.error(error)
@@ -114,7 +114,7 @@ class NotifyProvider extends React.Component {
     ping().catch(this.onUnhandledError)
   }
 
-  onUnhandledError = e => {
+  onUnhandledError = (e) => {
     // HACK: ignore ResizeObserver loop limit errors, which are more like warnings
     //   (see https://stackoverflow.com/questions/49384120/resizeobserver-loop-limit-exceeded)
     if (e === 'ResizeObserver loop limit exceeded') {
@@ -147,7 +147,7 @@ class NotifyProvider extends React.Component {
     }
   }
 
-  setOnlineStatus = isOnline => {
+  setOnlineStatus = (isOnline) => {
     if (!isOnline) {
       this.showOfflineMessage()
     } else {
@@ -200,7 +200,7 @@ class NotifyProvider extends React.Component {
     })
   }
 
-  notifyError = error => {
+  notifyError = (error) => {
     this.bugsnagClient.notify(error)
     this.notify(error.message, error)
   }
@@ -233,7 +233,7 @@ class NotifyProvider extends React.Component {
           onConfirm={() => this.setState({ dialogVisible: false })}
           visible={dialogVisible}
           message={message}
-          {...!isOnline && { 'data-test-modal': 'offline' }}
+          {...(!isOnline && { 'data-test-modal': 'offline' })}
         />
       </NotifyContext.Provider>
     )

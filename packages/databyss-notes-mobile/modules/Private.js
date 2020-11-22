@@ -24,7 +24,7 @@ const Private = () => {
 
   const [currentTab, setCurrentTab] = useState(Tabs.PAGES)
 
-  const onNavBarChange = item => {
+  const onNavBarChange = (item) => {
     if (item.name !== currentTab) {
       setCurrentTab(item.name)
 

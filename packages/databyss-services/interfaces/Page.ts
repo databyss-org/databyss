@@ -9,4 +9,5 @@ export interface PageHeader {
 export interface Page extends PageHeader {
   blocks: Block[]
   selection: Selection
+  publicAccountId?: string
 }

@@ -21,7 +21,9 @@ const DialogView = ({
       <Text variant="uiTextNormal">{nl2br(message)}</Text>
       {showConfirmButtons && (
         <List verticalItemPadding="small">
-          {confirmButtons.map((btn, key) => <View key={key}>{btn}</View>)}
+          {confirmButtons.map((btn, key) => (
+            <View key={key}>{btn}</View>
+          ))}
         </List>
       )}
     </View>

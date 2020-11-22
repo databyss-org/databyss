@@ -15,7 +15,7 @@ let httpServer = null
 const start = () =>
   require('./src/app')
     .default()
-    .then(app => {
+    .then((app) => {
       const PORT = process.env.PORT || 5000
       httpServer = http.createServer(app)
       httpServer.listen(PORT, () => {
@@ -32,8 +32,8 @@ const restart = async () => {
   mongoose.models = {}
 
   console.log('Reloading...')
-  Object.keys(require.cache).forEach(id => {
-    watchPaths.forEach(path => {
+  Object.keys(require.cache).forEach((id) => {
+    watchPaths.forEach((path) => {
       if (id.startsWith(path)) {
         delete require.cache[id]
       }

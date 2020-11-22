@@ -41,7 +41,7 @@ const TextInputField = React.forwardRef(
               variant="uiTextNormal"
               onFocus={() => setActive(true)}
               onBlur={() => setActive(false)}
-              onKeyUp={e => e.keyCode === 13 && onSubmit()}
+              onKeyUp={(e) => e.keyCode === 13 && onSubmit()}
               placeholder={placeholder}
               ref={ref}
               {...textInputProps}

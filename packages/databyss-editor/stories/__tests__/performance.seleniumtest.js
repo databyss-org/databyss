@@ -33,7 +33,7 @@ const PROXY_URL =
   'http://0.0.0.0:8080/iframe.html?id=selenium-tests--slate-5-editor-performance'
 
 describe('editor performance', () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     // OSX and safari are necessary
     driver = await startSession()
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)

@@ -38,7 +38,7 @@ const StyledArea = styled(View, areaStyles)
 const StyledText = styled(Text, textStyles)
 
 // component
-const DashedArea = props => {
+const DashedArea = (props) => {
   const getBottom = () => (props.isVisible ? visibleBottom : hiddenBottom)
 
   const getOpacity = () => (props.isVisible ? 1 : 0)

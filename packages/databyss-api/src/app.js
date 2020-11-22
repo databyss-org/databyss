@@ -87,7 +87,7 @@ if (process.env.NODE_ENV === 'production') {
     process.exit()
   }
   // start server on port from env
-  run().then(app => {
+  run().then((app) => {
     const httpServer = http.createServer(app)
     httpServer.listen(PORT, () => {
       console.log(`Server started on port ${PORT}`)

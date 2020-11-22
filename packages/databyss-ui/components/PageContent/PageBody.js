@@ -24,10 +24,10 @@ const PageBody = ({
   editorRef,
   onEditorPathChange,
 }) => {
-  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const { location } = useNavigationContext()
-  const clearBlockDict = usePageContext(c => c.clearBlockDict)
-  const setPatches = usePageContext(c => c.setPatches)
+  const clearBlockDict = usePageContext((c) => c.clearBlockDict)
+  const setPatches = usePageContext((c) => c.setPatches)
 
   useEffect(() => () => clearBlockDict(), [])
 
@@ -52,7 +52,7 @@ const PageBody = ({
   )
 
   // state from provider is out of date
-  const onChange = value => {
+  const onChange = (value) => {
     requestAnimationFrame(() => {
       if (editorStateRef.current?.pagePath) {
         onEditorPathChange(editorStateRef.current.pagePath)
@@ -82,7 +82,7 @@ const PageBody = ({
           <EditorProvider
             key={location.pathname}
             // if read only, disable on change
-            onChange={v => !isReadOnly && onChange(v)}
+            onChange={(v) => !isReadOnly && onChange(v)}
             initialState={pageToEditorState(withMetaData(page))}
           >
             <PDFDropZoneManager />

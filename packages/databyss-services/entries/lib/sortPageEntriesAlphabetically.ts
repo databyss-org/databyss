@@ -19,8 +19,7 @@ export function sortPageEntriesAlphabetically(entries: Entry[]) {
   }
 
   // sort
-  return entries.sort(
-    (a, b) =>
-      a.text.textValue.toLowerCase() > b.text.textValue.toLowerCase() ? 1 : -1
+  return entries.sort((a, b) =>
+    a.text.textValue.toLowerCase() > b.text.textValue.toLowerCase() ? 1 : -1
   )
 }

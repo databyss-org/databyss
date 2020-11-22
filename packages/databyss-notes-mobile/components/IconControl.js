@@ -20,7 +20,7 @@ interface Props {
 */
 
 // component
-const IconControl = props => {
+const IconControl = (props) => {
   const { isActive, icon, label, href } = props
 
   const getCSS = () =>

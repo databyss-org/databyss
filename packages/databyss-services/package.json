@@ -15,6 +15,7 @@
     "@bugsnag/js": "^6.3.2",
     "@databyss-org/services": "1.2.2",
     "@databyss-org/ui": "1.2.2",
+    "@databyss-org/editor": "1.2.2",
     "react": "16.9.0",
     "react-dom": "16.9.0"
   },

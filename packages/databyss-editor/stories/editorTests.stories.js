@@ -42,14 +42,14 @@ const EditorWithProvider = ({ initialState }) => {
   const [slateState, setSlateState] = useState(null)
 
   // manipulating the state effects reducer
-  const onChange = state => {
+  const onChange = (state) => {
     const { entityCache, blockCache, blocks } = state
     setPageState({ entityCache, blockCache, blocks })
   }
 
   // console.log(slateToJSX())
 
-  const onDocumentChange = val => {
+  const onDocumentChange = (val) => {
     setSlateState(JSON.stringify(val, null, 2))
   }
 
@@ -83,20 +83,20 @@ storiesOf('Selenium//Tests', module)
   .add('Slate 5', () => {
     fetchMock
       .restore()
-      .post(url => {
+      .post((url) => {
         if (url.includes('/api/sources') || url.includes('/api/topics')) {
           return true
         }
         return null
       }, 200)
-      .get(url => {
+      .get((url) => {
         if (url.includes('/api/sources')) {
           return true
         }
         return null
       }, sourceFixture)
       .get(
-        url => {
+        (url) => {
           if (url.includes('/api/topics')) {
             return true
           }
@@ -104,7 +104,7 @@ storiesOf('Selenium//Tests', module)
         },
         [topicFixture]
       )
-      .get(url => {
+      .get((url) => {
         if (url.includes('googleapis')) {
           return true
         }

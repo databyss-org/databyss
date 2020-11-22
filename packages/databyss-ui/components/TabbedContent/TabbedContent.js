@@ -15,7 +15,7 @@ export interface TabbedContentProps {
 */
 
 // component
-const TabbedContent = props => {
+const TabbedContent = (props) => {
   const { selectedIndex, tabItems, panels, onChange } = props
   const hasInitSelectedIndex = selectedIndex !== undefined
 
@@ -66,11 +66,11 @@ const TabbedContent = props => {
     hasInitSelectedIndex ? selectedIndex : 0
   )
 
-  const getTabIdAt = index => `${tabItems[index]._id}Tab`
+  const getTabIdAt = (index) => `${tabItems[index]._id}Tab`
 
-  const getPanelIdAt = index => `${tabItems[index]._id}Panel`
+  const getPanelIdAt = (index) => `${tabItems[index]._id}Panel`
 
-  const setSelectedTabWithIndex = index => {
+  const setSelectedTabWithIndex = (index) => {
     // quick exit
     if (index === null || index === undefined) {
       return
@@ -106,7 +106,7 @@ const TabbedContent = props => {
   }
 
   const onTabChange = useCallback(
-    payload => {
+    (payload) => {
       setSelectedTabWithIndex(payload.itemIndex)
     },
     [setSelectedTabWithIndex]

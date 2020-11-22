@@ -43,20 +43,20 @@ const ListItem = styled(View, listItemStyles)
 const NavButton = styled(SidebarIconButton, buttonStyles)
 
 // component
-const NavBar = props => {
+const NavBar = (props) => {
   const navigationContext = useNavigationContext()
-  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
   const { location } = navigationContext
 
   const navBarItems = NavBarItems(isPublicAccount())
-  const getItemByName = name => navBarItems.find(i => i.name === name)
+  const getItemByName = (name) => navBarItems.find((i) => i.name === name)
 
   const [activeItem, setActiveItem] = useState(Tabs.PAGES)
 
-  const isItemActive = item => item.name === activeItem
+  const isItemActive = (item) => item.name === activeItem
 
-  const dispatchItemChange = item => {
+  const dispatchItemChange = (item) => {
     if (!item) {
       // no item provided, set pages as default
       /* eslint-disable no-param-reassign */
@@ -76,27 +76,24 @@ const NavBar = props => {
     }
   }
 
-  const onItemClick = item => {
+  const onItemClick = (item) => {
     navigationContext.navigate(item.url)
   }
 
-  useEffect(
-    () => {
-      const { breadCrumbs } = parseLocation(location)
+  useEffect(() => {
+    const { breadCrumbs } = parseLocation(location)
 
-      if (!Array.isArray(breadCrumbs) || !breadCrumbs.length) {
-        // When loading index page, before redirection,
-        // location is empty, and throws an error.
-        // Ignore case, redirection will go to page
-        // with proper content for breadcrumbs.
-        return
-      }
+    if (!Array.isArray(breadCrumbs) || !breadCrumbs.length) {
+      // When loading index page, before redirection,
+      // location is empty, and throws an error.
+      // Ignore case, redirection will go to page
+      // with proper content for breadcrumbs.
+      return
+    }
 
-      const navItem = breadCrumbs[0].index
-      dispatchItemChange(navItem)
-    },
-    [dispatchItemChange, location]
-  )
+    const navItem = breadCrumbs[0].index
+    dispatchItemChange(navItem)
+  }, [dispatchItemChange, location])
 
   // render methods
   const render = () => (

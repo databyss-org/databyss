@@ -47,7 +47,7 @@ export const TextControls = ({ labelProps, listProps }) => {
         }}
         label="Citation"
         value={textValue4}
-        onChange={value => setTextValue4(value)}
+        onChange={(value) => setTextValue4(value)}
         gridFlexWrap="nowrap"
         multiline
       />
@@ -58,7 +58,7 @@ export const TextControls = ({ labelProps, listProps }) => {
         }}
         label="Author (First Name)"
         value={textValue}
-        onChange={value => setTextValue(value)}
+        onChange={(value) => setTextValue(value)}
         gridFlexWrap="nowrap"
       />
       <TextControl
@@ -68,7 +68,7 @@ export const TextControls = ({ labelProps, listProps }) => {
         }}
         label="Author (Last Name)"
         value={textValue2}
-        onChange={value => setTextValue2(value)}
+        onChange={(value) => setTextValue2(value)}
         gridFlexWrap="nowrap"
       />
     </ControlList>

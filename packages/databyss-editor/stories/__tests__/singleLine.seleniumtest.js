@@ -16,7 +16,7 @@ const PROXY_URL =
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('value list controller', () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     // OSX and safari are necessary
     driver = await startSession()
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)

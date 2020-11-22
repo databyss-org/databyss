@@ -14,12 +14,12 @@ import Citation from '../Citation/Citation'
 
 const IndexSourcePageEntries = ({ entries, onClick }) => {
   const getPreferredCitationStyle = useSourceContext(
-    c => c.getPreferredCitationStyle
+    (c) => c.getPreferredCitationStyle
   )
   const preferredCitationStyle = getPreferredCitationStyle()
 
   // render methods
-  const renderStyledCitation = entry => (
+  const renderStyledCitation = (entry) => (
     <Citation
       citation={entry.citation}
       formatOptions={{ styleId: preferredCitationStyle }}

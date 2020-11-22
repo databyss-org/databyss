@@ -8,12 +8,7 @@ const Styled = styled(
     ios: 'TouchableOpacity',
     android: 'TouchableNativeFeedback',
   },
-  compose(
-    color,
-    border,
-    space,
-    layout
-  )
+  compose(color, border, space, layout)
 )
 
 export const ControlNoFeedback = Platform.select({

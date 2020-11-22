@@ -1,4 +1,6 @@
-export const MonthOptions = [
+import { SelectOption } from '../../interfaces/UI'
+
+export const MonthOptions: SelectOption[] = [
   {
     id: 0,
     label: 'None',

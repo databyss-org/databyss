@@ -41,20 +41,12 @@ _c = {
   secondary: [_c.blue[1], _c.gray[6], _c.gray[5], _c.blue[1]],
   // BaseControl colors [enabled, hover, pressed]
   control: [_c.transparent].concat(
-    [_c.gray[4], _c.gray[5]].map(c =>
-      Color(c)
-        .alpha(0.4)
-        .rgb()
-        .string()
-    )
+    [_c.gray[4], _c.gray[5]].map((c) => Color(c).alpha(0.4).rgb().string())
   ),
   // borders [darkest...lightest]
   border: [_c.black, _c.gray[3], _c.gray[5], _c.gray[6]],
   // application specific
-  selectionHighlight: Color(_c.blue[3])
-    .alpha(0.5)
-    .rgb()
-    .string(),
+  selectionHighlight: Color(_c.blue[3]).alpha(0.5).rgb().string(),
   activeTextInputBackground: _c.white,
   pageBackground: _c.gray[7],
 }
@@ -72,13 +64,7 @@ _c = {
   modes: {
     dark: {
       // [lightest...darkest]
-      text: [
-        _c.white,
-        ..._c.gray
-          .slice()
-          .reverse()
-          .slice(1),
-      ],
+      text: [_c.white, ..._c.gray.slice().reverse().slice(1)],
       // [darkest...lightest]
       background: _c.gray.slice(1),
       // borders [darkest...lightest]
@@ -89,12 +75,7 @@ _c = {
       pageBackground: _c.black,
       // BaseControl colors [enabled, hover, pressed]
       control: [_c.transparent].concat(
-        [_c.gray[4], _c.gray[3]].map(c =>
-          Color(c)
-            .alpha(0.4)
-            .rgb()
-            .string()
-        )
+        [_c.gray[4], _c.gray[3]].map((c) => Color(c).alpha(0.4).rgb().string())
       ),
     },
   },

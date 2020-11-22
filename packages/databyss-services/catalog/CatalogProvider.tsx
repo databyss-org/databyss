@@ -1,8 +1,9 @@
+/* eslint-disable react/no-unused-prop-types */
 import React, { useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import _ from 'lodash'
-import reducer, { initialState } from './reducer'
+import reducer, { initialState as _initState } from './reducer'
 import {
   ResourceResponse,
   CatalogState,
@@ -11,7 +12,7 @@ import {
 } from '../interfaces'
 
 import * as actions from './actions'
-import { getCatalogSearchType } from './util';
+import { getCatalogSearchType } from './util'
 
 interface PropsType {
   children: JSX.Element
@@ -25,20 +26,23 @@ interface SearchCatalogParams {
 
 interface ContextType {
   state: CatalogState
-  searchCatalog: (
-    { type, query }: SearchCatalogParams
-  ) => ResourceResponse<GroupedCatalogResults>
+  searchCatalog: ({
+    type,
+    query,
+  }: SearchCatalogParams) => ResourceResponse<GroupedCatalogResults>
 }
 
 const useReducer = createReducer()
-export const CatalogContext = createContext<ContextType | null>(null)
+export const CatalogContext = createContext<ContextType>(null!)
 
 const CatalogProvider: React.FunctionComponent<PropsType> = ({
   children,
-  initialState,
+  initialState = _initState,
 }: PropsType) => {
   const [state, dispatch] = useReducer(reducer, initialState, {
     name: 'CatalogProvider',
+    initializer: null,
+    onChange: null,
   })
 
   const _searchCatalog = useCallback(
@@ -52,12 +56,15 @@ const CatalogProvider: React.FunctionComponent<PropsType> = ({
   )
 
   const searchCatalog = useCallback(
-    ({ query, type }: SearchCatalogParams): ResourceResponse<
-      GroupedCatalogResults
-    > => {
+    ({
+      query,
+      type,
+    }: SearchCatalogParams): ResourceResponse<GroupedCatalogResults> => {
       if (!query) return null
       // allow only alphanumeric characters if its not ISBN OR DOI
-      let _query = !getCatalogSearchType(query)?query.replace(/[^a-z0-9 ]/gi, ''): query
+      const _query = !getCatalogSearchType(query)
+        ? query.replace(/[^a-z0-9 ]/gi, '')
+        : query
       if (state.searchCache[type]?.[_query]) {
         return state.searchCache[type][_query]
       }
@@ -78,11 +85,7 @@ const CatalogProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const useCatalogContext = (selector = x => x) =>
+export const useCatalogContext = (selector = (x: ContextType) => x) =>
   useContextSelector(CatalogContext, selector)
-
-CatalogProvider.defaultProps = {
-  initialState,
-}
 
 export default CatalogProvider

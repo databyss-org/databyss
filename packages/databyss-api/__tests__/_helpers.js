@@ -4,20 +4,20 @@ import { send } from '../src/lib/sendgrid'
 
 jest.mock('../src/lib/sendgrid')
 
-export const noAuthPost = async resource =>
+export const noAuthPost = async (resource) =>
   request(await app())
     .post('/api/sources')
     .send({
       resource,
     })
 
-export const getUserInfo = async token =>
+export const getUserInfo = async (token) =>
   request(await app())
     .get('/api/profile/me')
     .set('x-auth-token', token)
     .send()
 
-export const noAuthEntry = async entry =>
+export const noAuthEntry = async (entry) =>
   request(await app())
     .post('/api/entries')
     .send({
@@ -32,9 +32,9 @@ export const noAuthAuthor = async (firstName, lastName) =>
       lastName,
     })
 
-export const createUser = async email => {
+export const createUser = async (email) => {
   let code
-  send.mockImplementation(msg => {
+  send.mockImplementation((msg) => {
     code = msg.dynamic_template_data.code
   })
 
@@ -131,7 +131,7 @@ export const getEditedSourceWithAuthor = async (token, sourceId) =>
     .get(`/api/sources/${sourceId}`)
     .set('x-auth-token', token)
 
-export const deleteUserPosts = async token =>
+export const deleteUserPosts = async (token) =>
   request(await app())
     .del(`/api/profile/`)
     .set('x-auth-token', token)
@@ -191,7 +191,7 @@ export const getPopulatedPage = async (token, accountId, _id) =>
     .set('x-auth-token', token)
     .set('x-databyss-account', accountId)
 
-export const newAccountWithUserId = async token =>
+export const newAccountWithUserId = async (token) =>
   request(await app())
     .post('/api/accounts')
     .set('x-auth-token', token)

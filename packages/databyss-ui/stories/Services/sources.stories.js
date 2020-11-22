@@ -20,7 +20,7 @@ const EditFirstCitation = withSource(({ source }) => {
     ranges: source.detail.citations[0].ranges,
   }
 
-  const updateSource = _value => {
+  const updateSource = (_value) => {
     setSource({
       ...source,
       detail: {
@@ -48,7 +48,7 @@ const SourcesDemo = () => {
 
   const { setSource } = useSourceContext()
 
-  const valuesToSource = values => {
+  const valuesToSource = (values) => {
     const { authors, citations, ...blockFields } = values
     return {
       ...blockFields,
@@ -59,11 +59,11 @@ const SourcesDemo = () => {
     }
   }
 
-  const setSourceFields = sourceFields => {
+  const setSourceFields = (sourceFields) => {
     setSource(valuesToSource(sourceFields))
   }
 
-  const getSourceFields = id => {
+  const getSourceFields = (id) => {
     // don't need to call `getSource` here because `withSource` does that for us
     setSourceState(id)
   }
@@ -88,7 +88,7 @@ const SourcesDemo = () => {
   )
 }
 
-const ProviderDecorator = storyFn => (
+const ProviderDecorator = (storyFn) => (
   <SourceProvider initialState={initialState} reducer={reducer}>
     {storyFn()}
   </SourceProvider>

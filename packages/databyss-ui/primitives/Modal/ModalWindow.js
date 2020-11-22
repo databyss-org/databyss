@@ -4,7 +4,7 @@ import { isMobileOs } from '../../lib/mediaQuery'
 import ModalView from './ModalView'
 import makeAnimations from './animations'
 
-const mobileCss = closing => ({
+const mobileCss = (closing) => ({
   position: 'absolute',
   left: 0,
   right: 0,

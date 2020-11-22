@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 import User from '../models/User'
 import Account from '../models/Account'
 
-export const getTokenFromUserId = userId =>
+export const getTokenFromUserId = (userId) =>
   new Promise((resolve, reject) =>
     jwt.sign(
       { user: { id: userId } },
@@ -17,7 +17,7 @@ export const getTokenFromUserId = userId =>
     )
   )
 
-export const getSessionFromUserId = async userId => {
+export const getSessionFromUserId = async (userId) => {
   const user = await User.findOne({ _id: userId })
   if (!userId) {
     throw new Error('Bad userId')
@@ -31,7 +31,7 @@ export const getSessionFromUserId = async userId => {
   }
 }
 
-export const getSessionFromToken = token => {
+export const getSessionFromToken = (token) => {
   const { user } = jwt.verify(token, process.env.JWT_SECRET)
   return getSessionFromUserId(user.id)
 }

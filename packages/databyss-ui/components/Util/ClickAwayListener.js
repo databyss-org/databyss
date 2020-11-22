@@ -13,7 +13,7 @@ function mapEventPropToEvent(eventProp) {
  * Listen for click events that occur somewhere in the document, outside of the element itself.
  * For instance, if you need to hide a menu when people click anywhere else on your page.
  */
-const ClickAwayListener = props => {
+const ClickAwayListener = (props) => {
   const {
     children,
     mouseEvent = 'onClick',
@@ -24,7 +24,7 @@ const ClickAwayListener = props => {
   const movedRef = React.useRef(false)
   const nodeRef = React.useRef(null)
 
-  const handleClickAway = useEventCallback(event => {
+  const handleClickAway = useEventCallback((event) => {
     // Ignore events that have been `event.preventDefault()` marked.
     if (event.defaultPrevented) {
       return
@@ -65,40 +65,34 @@ const ClickAwayListener = props => {
     movedRef.current = true
   }, [])
 
-  React.useEffect(
-    () => {
-      if (touchEvent !== false) {
-        const mappedTouchEvent = mapEventPropToEvent(touchEvent)
+  React.useEffect(() => {
+    if (touchEvent !== false) {
+      const mappedTouchEvent = mapEventPropToEvent(touchEvent)
 
-        document.addEventListener(mappedTouchEvent, handleClickAway)
-        document.addEventListener('touchmove', handleTouchMove)
+      document.addEventListener(mappedTouchEvent, handleClickAway)
+      document.addEventListener('touchmove', handleTouchMove)
 
-        return () => {
-          document.removeEventListener(mappedTouchEvent, handleClickAway)
-          document.removeEventListener('touchmove', handleTouchMove)
-        }
+      return () => {
+        document.removeEventListener(mappedTouchEvent, handleClickAway)
+        document.removeEventListener('touchmove', handleTouchMove)
       }
+    }
 
-      return undefined
-    },
-    [handleClickAway, handleTouchMove, touchEvent]
-  )
+    return undefined
+  }, [handleClickAway, handleTouchMove, touchEvent])
 
-  React.useEffect(
-    () => {
-      if (mouseEvent !== false) {
-        const mappedMouseEvent = mapEventPropToEvent(mouseEvent)
-        document.addEventListener(mappedMouseEvent, handleClickAway)
+  React.useEffect(() => {
+    if (mouseEvent !== false) {
+      const mappedMouseEvent = mapEventPropToEvent(mouseEvent)
+      document.addEventListener(mappedMouseEvent, handleClickAway)
 
-        return () => {
-          document.removeEventListener(mappedMouseEvent, handleClickAway)
-        }
+      return () => {
+        document.removeEventListener(mappedMouseEvent, handleClickAway)
       }
+    }
 
-      return undefined
-    },
-    [handleClickAway, mouseEvent]
-  )
+    return undefined
+  }, [handleClickAway, mouseEvent])
 
   return (
     <React.Fragment>

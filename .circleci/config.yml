@@ -24,7 +24,7 @@ jobs:
       - checkout
 
       - run:
-          name: "Reset next branch"
+          name: 'Reset next branch'
           command: |
             git checkout -q next
             git reset --hard origin/next
@@ -54,11 +54,15 @@ jobs:
             - ~/.cache/yarn
 
       - run:
+          name: typescript
+          command: yarn tsc
+
+      - run:
           name: start api server
           command: yarn start:server:test
           background: true
 
-      - run: 
+      - run:
           name: wait on api server
           command: ./node_modules/.bin/wait-on http://0.0.0.0:5000/api/version/
 
@@ -70,7 +74,7 @@ jobs:
       #     command: yarn storybook
       #     background: true
 
-      # - run: 
+      # - run:
       #     name: wait on storybook server
       #     command: ./node_modules/.bin/wait-on http://localhost:6006
 
@@ -79,7 +83,7 @@ jobs:
           command: yarn start:notes
           background: true
 
-      - run: 
+      - run:
           name: wait on notes app
           command: ./node_modules/.bin/wait-on http://localhost:3000
 

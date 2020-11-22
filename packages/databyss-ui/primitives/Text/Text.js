@@ -18,12 +18,7 @@ export const variants = variant({
   },
 })
 
-export const styleProps = compose(
-  variants,
-  color,
-  typography,
-  layout
-)
+export const styleProps = compose(variants, color, typography, layout)
 
 const Styled = styled(
   {
@@ -31,13 +26,7 @@ const Styled = styled(
     android: 'Text',
     default: 'div',
   },
-  compose(
-    variants,
-    color,
-    typography,
-    space,
-    layout
-  )
+  compose(variants, color, typography, space, layout)
 )
 
 const Text = forwardRef(({ children, color, ...others }, ref) => (

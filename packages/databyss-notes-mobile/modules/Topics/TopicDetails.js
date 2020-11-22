@@ -38,7 +38,7 @@ const TopicDetails = () => {
           {() => (
             <EntryProvider>
               <BlockRelationsLoader atomicId={topicId}>
-                {relations => <IndexSourceContent relations={relations} />}
+                {(relations) => <IndexSourceContent relations={relations} />}
               </BlockRelationsLoader>
             </EntryProvider>
           )}
@@ -51,7 +51,7 @@ const TopicDetails = () => {
     <MobileView headerItems={buildHeaderItems(pageTitle, topicId)}>
       <TopicProvider>
         <TopicLoader topicId={topicId}>
-          {topic => {
+          {(topic) => {
             setPageTitle(topic.text.textValue)
             return renderTopicDetails()
           }}

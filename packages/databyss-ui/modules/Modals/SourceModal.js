@@ -37,7 +37,7 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
       canDismiss={values ? isDismissable() : true}
     >
       <SourceLoader sourceId={refId}>
-        {source => {
+        {(source) => {
           if (!values) {
             const _source = { ...source }
             // check if detail has been provided

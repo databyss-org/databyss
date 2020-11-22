@@ -65,47 +65,38 @@ const Login = ({ pending, signupFlow, navLinks }) => {
 
   const onGoogleResponse = ({ code }) => code && onSubmit({ googleCode: code })
 
-  const onChange = values => {
+  const onChange = (values) => {
     setValues(values)
   }
 
   // autofocus the request code field when it is shown
-  useEffect(
-    () => {
-      if (showRequestCode && codeInputRef) {
-        codeInputRef.current.focus()
-      }
-    },
-    [showRequestCode, codeInputRef]
-  )
+  useEffect(() => {
+    if (showRequestCode && codeInputRef) {
+      codeInputRef.current.focus()
+    }
+  }, [showRequestCode, codeInputRef])
 
   // reset TFA (request code) if email changes
-  useEffect(
-    () => {
-      // if valid email addres, enable button
-      if (invalidEmail && validateEmail(values.email.textValue)) {
-        setInvalidEmail(false)
-      }
+  useEffect(() => {
+    // if valid email addres, enable button
+    if (invalidEmail && validateEmail(values.email.textValue)) {
+      setInvalidEmail(false)
+    }
 
-      if (showRequestCode) {
-        setValues({ ...values, code: { textValue: '' } })
-        setShowRequestCode(false)
-        setDidSubmit(false)
-      }
-    },
-    [values.email.textValue]
-  )
+    if (showRequestCode) {
+      setValues({ ...values, code: { textValue: '' } })
+      setShowRequestCode(false)
+      setDidSubmit(false)
+    }
+  }, [values.email.textValue])
 
   // auth response may contain the `requestCode` verb for TFA
   // if it does, show the request code UI
-  useEffect(
-    () => {
-      if (!showRequestCode && requestCode) {
-        setShowRequestCode(true)
-      }
-    },
-    [requestCode]
-  )
+  useEffect(() => {
+    if (!showRequestCode && requestCode) {
+      setShowRequestCode(true)
+    }
+  }, [requestCode])
 
   const signInOrSignUp = signupFlow ? 'Sign up ' : 'Sign in '
 
@@ -183,20 +174,19 @@ const Login = ({ pending, signupFlow, navLinks }) => {
                 )}
               </Button>
             </View>
-            {didSubmit &&
-              session instanceof NotAuthorizedError && (
-                <View alignItems="center">
-                  <Text
-                    color="red.0"
-                    variant="uiTextNormal"
-                    data-test-id="errorMessage"
-                  >
-                    {showRequestCode
-                      ? 'Code is invalid or expired'
-                      : 'Please enter a valid email'}
-                  </Text>
-                </View>
-              )}
+            {didSubmit && session instanceof NotAuthorizedError && (
+              <View alignItems="center">
+                <Text
+                  color="red.0"
+                  variant="uiTextNormal"
+                  data-test-id="errorMessage"
+                >
+                  {showRequestCode
+                    ? 'Code is invalid or expired'
+                    : 'Please enter a valid email'}
+                </Text>
+              </View>
+            )}
           </FormFieldList>
           <View flexDirection="horizontal" alignItems="center">
             <Text variant="uiTextSmall" mr="tiny" color="gray.3">

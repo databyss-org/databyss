@@ -18,11 +18,11 @@ import { AccountLoader } from '../Loaders'
 
 const AccountMenu = () => {
   const { navigate } = useNavigationContext()
-  const logout = useSessionContext(c => c && c.logout)
-  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
+  const logout = useSessionContext((c) => c && c.logout)
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const navToDefaultPage = userInfo => {
+  const navToDefaultPage = (userInfo) => {
     navigate(`/${userInfo.defaultAccount}/pages/${userInfo.defaultPage}`, {
       hasAccount: true,
     })
@@ -37,7 +37,7 @@ const AccountMenu = () => {
 
   return getAuthToken() ? (
     <AccountLoader>
-      {userInfo => {
+      {(userInfo) => {
         const menuItems = [
           {
             icon: <LogoutSvg />,

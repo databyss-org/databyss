@@ -2,7 +2,7 @@
 import { copyPage } from '@databyss-org/api/src/lib/pages'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
 import ServerProcess from '../lib/ServerProcess'
-import { getEnv, objectId } from '../lib/util'
+import { getEnv } from '../lib/util'
 
 interface EnvDict {
   [key: string]: string
@@ -39,9 +39,7 @@ class CopyPage extends ServerProcess {
   async run() {
     this.emit(
       'stdout',
-      `Copying Page with _id "${this.args.pageId}" to account: "${
-        this.args.toAccountId
-      }"`
+      `Copying Page with _id "${this.args.pageId}" to account: "${this.args.toAccountId}"`
     )
 
     try {

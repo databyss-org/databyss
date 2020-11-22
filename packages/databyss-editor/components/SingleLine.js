@@ -95,25 +95,22 @@ const RichText = forwardRef(
 
     const [value, setValue] = useState(initValue)
 
-    const renderLeaf = useCallback(props => <Leaf {...props} />, [])
+    const renderLeaf = useCallback((props) => <Leaf {...props} />, [])
     const editor = useMemo(() => withReact(createEditor()), [])
 
-    const onChangeEvent = value => {
+    const onChangeEvent = (value) => {
       if (onChange) {
         onChange(getRangesFromBlock(value))
       }
       setValue(value)
     }
 
-    useEffect(
-      () => {
-        if (active && editor) {
-          ReactEditor.focus(editor)
-          Transforms.select(editor, Editor.end(editor, []))
-        }
-      },
-      [active]
-    )
+    useEffect(() => {
+      if (active && editor) {
+        ReactEditor.focus(editor)
+        Transforms.select(editor, Editor.end(editor, []))
+      }
+    }, [active])
 
     return (
       <View ref={ref}>
@@ -125,7 +122,7 @@ const RichText = forwardRef(
             renderLeaf={renderLeaf}
             placeholder={placeholder}
             spellCheck
-            onKeyDown={event => {
+            onKeyDown={(event) => {
               if (event.key === 'Enter') {
                 event.preventDefault()
 

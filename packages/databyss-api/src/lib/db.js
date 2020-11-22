@@ -4,14 +4,11 @@ const dB = mongoose
 
 export const connectDB = async (dbURI = process.env.MONGO_URI) => {
   try {
-    await dB.connect(
-      dbURI,
-      {
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-      }
-    )
+    await dB.connect(dbURI, {
+      useNewUrlParser: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+    })
     console.log('MongoDB Connected...')
   } catch (err) {
     console.error(err.message)

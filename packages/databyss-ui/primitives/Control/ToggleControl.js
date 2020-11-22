@@ -32,15 +32,14 @@ const ToggleControl = ({
     {...others}
   >
     {children}
-    {label &&
-      label.length && (
-        <View
-          {...{ [alignLabel === 'right' ? 'ml' : 'mr']: 'small' }}
-          {...labelProps}
-        >
-          <Text variant={textVariant}>{label}</Text>
-        </View>
-      )}
+    {label && label.length && (
+      <View
+        {...{ [alignLabel === 'right' ? 'ml' : 'mr']: 'small' }}
+        {...labelProps}
+      >
+        <Text variant={textVariant}>{label}</Text>
+      </View>
+    )}
   </BaseControl>
 )
 

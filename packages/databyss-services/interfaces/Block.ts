@@ -1,4 +1,5 @@
-import { SelectOption } from './CatalogState'
+import { BlockRelation } from '@databyss-org/editor/interfaces/index'
+import { SelectOption } from './UI'
 import { Text } from './Text'
 
 export enum BlockType {
@@ -9,14 +10,12 @@ export enum BlockType {
   EndTopic = 'END_TOPIC',
 }
 
-// interface InlineAtomic {
-//   word: string
-//   offset: number
-// }
-
-export interface Block {
+export interface BasicBlock {
   _id: string
   type: BlockType
+}
+
+export interface Block extends BasicBlock {
   text: Text
   __showCitationMenu?: boolean
   __showTopicMenu?: boolean
@@ -43,6 +42,8 @@ export interface SourceDetail {
   translators?: Author[]
   citations?: Citations[]
   title?: Text
+  journalTitle?: Text | null
+  chapterTitle?: Text | null
 
   // publication details (common)
   publicationType?: SelectOption | null | undefined
@@ -50,16 +51,9 @@ export interface SourceDetail {
   publisherPlace?: Text
   year?: Text
   month?: SelectOption | null | undefined
-
-  // publication details (articles)
-  journalTitle?: Text
   volume?: Text
   issue?: Text
-
-  // publication details (book section)
-  chapterTitle?: Text
-  chapterNumber?: Text
-
+  yearPublished?: Text
   // catalog identifiers (book)
   isbn?: Text
 
@@ -78,4 +72,9 @@ export interface Source extends Block {
 
 export interface Topic extends Block {
   isInPages?: string[]
+}
+
+export interface BlockRelationsServerResponse {
+  count: number
+  results: BlockRelation[]
 }

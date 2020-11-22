@@ -27,16 +27,16 @@ export const unlockBodyScroll = () => {
   window.clearInterval(fixScrollInterval)
 }
 
-export const raf = cb => window.requestAnimationFrame(cb)
+export const raf = (cb) => window.requestAnimationFrame(cb)
 
 export const getBodyScroll = () =>
   window.pageYOffset || document.documentElement.scrollTop
-export const setBodyScroll = pos => {
+export const setBodyScroll = (pos) => {
   document.documentElement.scrollTop = pos
   document.body.scrollTop = pos
 }
 
-export const setElementDisplayNone = id => {
+export const setElementDisplayNone = (id) => {
   const el = document.querySelectorAll(id)[0]
   const display = el.style.display
   el.style.display = 'none'
@@ -48,7 +48,7 @@ export const restoreElementDisplay = (id, display) => {
   el.style.display = display
 }
 
-export const scrollTo = scrollnumber =>
+export const scrollTo = (scrollnumber) =>
   window.requestAnimationFrame(() => {
     window.scrollTo(0, scrollnumber)
   })
@@ -62,9 +62,9 @@ export const triggerMouseEvent = (node, eventName) => {
   return node.dispatchEvent(evt)
 }
 
-export const idFromTitle = title => title.toLowerCase().replace(/[^a-z]/, '_')
+export const idFromTitle = (title) => title.toLowerCase().replace(/[^a-z]/, '_')
 
-export const getPosition = element => {
+export const getPosition = (element) => {
   let caretOffset = 0
   const doc = element.ownerDocument || element.document
   const win = doc.defaultView || doc.parentWindow
@@ -120,7 +120,7 @@ export const getCaretPosition = () => {
   }
 }
 
-export const setCaretPosition = pos => {
+export const setCaretPosition = (pos) => {
   try {
     const _selection = window.getSelection()
     const _el = _selection.focusNode.parentElement.closest('[data-byss-block]')
@@ -135,9 +135,9 @@ export const setCaretPosition = pos => {
   }
 }
 
-export const inKeyWhitelist = e => {
+export const inKeyWhitelist = (e) => {
   const whitelist = ['ArrowUp', 'ArrowDown', 'Shift', 'Meta']
-  const inWhteList = whitelist.findIndex(w => w === e.key) > -1
+  const inWhteList = whitelist.findIndex((w) => w === e.key) > -1
 
   return inWhteList || e.ctrlKey || e.metaKey
 }

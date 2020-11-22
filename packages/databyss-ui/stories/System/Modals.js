@@ -45,7 +45,7 @@ const modals = {
 }
 
 const dialogs = {
-  ok: onDismiss => ({
+  ok: (onDismiss) => ({
     name: 'Ok Dialog',
     message: shortIpsum,
     onConfirm: onDismiss,
@@ -80,7 +80,7 @@ export default () => {
 
   return (
     <Section title="Modals">
-      {Object.keys(modals).map(key => (
+      {Object.keys(modals).map((key) => (
         <Button
           key={key}
           onPress={() => {
@@ -117,7 +117,7 @@ export const Editable = () => {
 
   return (
     <Section title="Modals (editable content)">
-      {Object.keys(editableModals).map(key => (
+      {Object.keys(editableModals).map((key) => (
         <Button
           key={key}
           onPress={() => {
@@ -157,7 +157,7 @@ export const Dialogs = () => {
 
   return (
     <Section title="Dialogs">
-      {Object.keys(dialogs).map(key => (
+      {Object.keys(dialogs).map((key) => (
         <Button
           key={key}
           onPress={() => {

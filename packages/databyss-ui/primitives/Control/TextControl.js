@@ -40,7 +40,7 @@ const TextControl = ({
     },
   }
   const webProps = {
-    onMouseDown: event => {
+    onMouseDown: (event) => {
       if (!active) {
         event.preventDefault()
         setActive(true)

@@ -22,7 +22,7 @@ interface ViewHeaderProps {
 */
 
 // component
-const ViewHeader = props => {
+const ViewHeader = (props) => {
   const render = () => (
     <View
       height={`${ViewHeaderHeight}px`}

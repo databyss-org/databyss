@@ -98,43 +98,38 @@ const SuggestMenu = ({
     }
   }
 
-  useEffect(
-    () => {
-      if (editorContext && ReactEditor.isFocused(editor)) {
-        const _index = editorContext.state.selection.anchor.index
-        const _node = editor.children[_index]
-        const _stateBlock = editorContext.state.blocks[_index]
-        if (!inlineAtomic) {
-          // get current input value
-          const _text = Node.string(_node)
-          if (!isAtomicInlineType(_node.type)) {
-            setQuery(_text.substring(1))
-            setMenuPosition()
-            if (!menuActive) setMenuActive(true)
-          } else if (menuActive) {
-            setMenuActive(false)
-          } else if (menuActive) {
-            setMenuActive(false)
-          }
-        } else if (!isAtomicInlineType(_node.type)) {
-          // get current text with markup 'inlineAtomicMenu'
-          // get text with active `inlineAtomicMenu` mark
-          const innerText = getTextOffsetWithRange({
-            text: _stateBlock.text,
-            rangeType: 'inlineAtomicMenu',
-          })
-          if (innerText) {
-            setQuery(innerText.text.substring(1))
-          }
+  useEffect(() => {
+    if (editorContext && ReactEditor.isFocused(editor)) {
+      const _index = editorContext.state.selection.anchor.index
+      const _node = editor.children[_index]
+      const _stateBlock = editorContext.state.blocks[_index]
+      if (!inlineAtomic) {
+        // get current input value
+        const _text = Node.string(_node)
+        if (!isAtomicInlineType(_node.type)) {
+          setQuery(_text.substring(1))
           setMenuPosition()
-          setMenuActive(true)
+          if (!menuActive) setMenuActive(true)
+        } else if (menuActive) {
+          setMenuActive(false)
         }
+      } else if (!isAtomicInlineType(_node.type)) {
+        // get current text with markup 'inlineAtomicMenu'
+        // get text with active `inlineAtomicMenu` mark
+        const innerText = getTextOffsetWithRange({
+          text: _stateBlock.text,
+          rangeType: 'inlineAtomicMenu',
+        })
+        if (innerText) {
+          setQuery(innerText.text.substring(1))
+        }
+        setMenuPosition()
+        setMenuActive(true)
       }
-    },
-    [editor.selection]
-  )
+    }
+  }, [editor.selection])
 
-  useEventListener('keydown', e => {
+  useEventListener('keydown', (e) => {
     if (
       e.key === 'Escape' ||
       (e.key === 'Enter' && activeIndexRef.current < 0)
@@ -161,12 +156,12 @@ const SuggestMenu = ({
     onFocusEditor()
   }
 
-  const onSuggestionsChanged = suggestions => {
+  const onSuggestionsChanged = (suggestions) => {
     onSuggestions(suggestions)
     setHasSuggestions(suggestions?.length)
   }
 
-  const onActiveIndexChanged = index => {
+  const onActiveIndexChanged = (index) => {
     activeIndexRef.current = index
   }
 

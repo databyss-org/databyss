@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '../lib/createReducer'
-import reducer, { initialState } from './reducer'
+import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import {
   Page,
@@ -38,44 +38,49 @@ interface ContextType {
   ) => void
   getBlockRefByIndex: (index: number) => React.Ref<HTMLInputElement>
   getPublicAccount: (id: string) => string | string[]
+  archivePage: (id: string, boolean: boolean) => Promise<void>
+  onPageCached: (id: string, callback: Function) => void
+  hasPendingPatches: number
+  removePageFromCache: (id: string) => void
 }
 
 const useReducer = createReducer()
-export const PageContext = createContext<ContextType | null>(null)
+export const PageContext = createContext<ContextType>(null!)
 
 const PageProvider: React.FunctionComponent<PropsType> = ({
   children,
-  initialState,
+  initialState = _initState,
 }: PropsType) => {
   const refDictRef = useRef<RefDict>({})
   const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  useEffect(
-    () => {
-      Object.keys(pageCachedHookRef.current).forEach(k => {
-        if (state.cache[k]) {
+  useEffect(() => {
+    if (pageCachedHookRef.current) {
+      Object.keys(pageCachedHookRef.current).forEach((k) => {
+        if (state.cache[k] && pageCachedHookRef.current) {
           // execute callback
           pageCachedHookRef.current[k]()
           // remove from queue
           delete pageCachedHookRef.current[k]
         }
       })
-    },
-    [state.cache]
-  )
+    }
+  }, [state.cache])
 
   const hasPendingPatches = state.patchQueueSize
 
   const onPageCached = (id: string, callback: Function) => {
     // add back to dictionary
-    pageCachedHookRef.current[id] = callback
+    if (pageCachedHookRef.current) {
+      pageCachedHookRef.current[id] = callback
+    }
   }
 
   const setPage = useCallback(
     (page: Page): Promise<void> =>
-      new Promise(res => {
+      new Promise((res) => {
         onPageCached(page._id, res)
         dispatch(actions.savePage(page))
       }),
@@ -86,20 +91,17 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(actions.savePageHeader(page))
   }, [])
 
-  const getPages = useCallback(
-    (): ResourceResponse<PageHeader> => {
-      if (state.headerCache) {
-        return state.headerCache
-      }
+  const getPages = useCallback((): ResourceResponse<PageHeader> => {
+    if (state.headerCache) {
+      return state.headerCache
+    }
 
-      if (!(state.headerCache instanceof ResourcePending)) {
-        dispatch(actions.fetchPageHeaders())
-      }
+    if (!(state.headerCache instanceof ResourcePending)) {
+      dispatch(actions.fetchPageHeaders())
+    }
 
-      return null
-    },
-    [state.headerCache]
-  )
+    return null
+  }, [state.headerCache])
 
   const getPage = useCallback(
     (id: string): ResourceResponse<Page> => {
@@ -136,7 +138,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 
   const archivePage = useCallback(
     (id: string, boolean: boolean): Promise<void> =>
-      new Promise(res => {
+      new Promise((res) => {
         dispatch(actions.onArchivePage(id, state.cache[id], boolean, res))
       }),
     [state.cache]
@@ -185,11 +187,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const usePageContext = (selector = x => x) =>
+export const usePageContext = (selector = (x: ContextType) => x) =>
   useContextSelector(PageContext, selector)
-
-PageProvider.defaultProps = {
-  initialState,
-}
 
 export default PageProvider

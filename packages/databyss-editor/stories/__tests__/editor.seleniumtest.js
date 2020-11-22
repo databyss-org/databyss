@@ -18,7 +18,7 @@ const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=selenium-tests--slate-5'
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('editor selenium', () => {
-  beforeEach(async done => {
+  beforeEach(async (done) => {
     // OSX and safari are necessary
     driver = await startSession()
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
@@ -90,7 +90,8 @@ describe('editor selenium', () => {
         </block>
         <block type="SOURCE">this is an example of a source text</block>
         <block type="TOPIC">
-          <cursor />this is an example of a topic text
+          <cursor />
+          this is an example of a topic text
         </block>
         <block type="ENTRY">
           <text />
@@ -124,7 +125,8 @@ describe('editor selenium', () => {
     expected = (
       <editor>
         <block type="ENTRY">
-          this is an example of an entry text{'\n'}this should be on the same<cursor />
+          this is an example of an entry text{'\n'}this should be on the same
+          <cursor />
         </block>
         <block type="SOURCE">this is an example of a source text</block>
         <block type="TOPIC">this is an example of a topic text</block>
@@ -162,7 +164,8 @@ describe('editor selenium', () => {
         </block>
         <block type="SOURCE">this is an example of a source text</block>
         <block type="ENTRY">
-          this entry replaces a topic<cursor />
+          this entry replaces a topic
+          <cursor />
         </block>
         <block type="ENTRY">
           <text />
@@ -196,7 +199,8 @@ describe('editor selenium', () => {
         </block>
         <block type="SOURCE">this is an example of a source text</block>
         <block type="ENTRY">
-          this entry replaces a topic<cursor /> move
+          this entry replaces a topic
+          <cursor /> move
         </block>
         <block type="ENTRY">
           <text />
@@ -267,7 +271,8 @@ describe('editor selenium', () => {
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this{' '}
           <text inlineAtomicMenu>
-            #should<cursor />
+            #should
+            <cursor />
           </text>
         </block>
       </editor>
@@ -295,7 +300,8 @@ describe('editor selenium', () => {
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the mid
           <text inlineAtomicMenu>
-            #dle<cursor />
+            #dle
+            <cursor />
           </text>
         </block>
       </editor>
@@ -314,7 +320,8 @@ describe('editor selenium', () => {
     expected = (
       <editor>
         <block type="ENTRY">
-          this is an example of an entry text{'\n'}this should be in the mid#dle<cursor />
+          this is an example of an entry text{'\n'}this should be in the mid#dle
+          <cursor />
         </block>
       </editor>
     )
@@ -342,7 +349,8 @@ describe('editor selenium', () => {
       <editor>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the #
-          plaintext<cursor />
+          plaintext
+          <cursor />
         </block>
       </editor>
     )
@@ -367,7 +375,8 @@ describe('editor selenium', () => {
       <editor>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the #
-          plaintext append <cursor />this
+          plaintext append <cursor />
+          this
         </block>
       </editor>
     )
@@ -424,7 +433,8 @@ describe('editor selenium', () => {
         <block type="ENTRY">
           add{' '}
           <text inlineTopic atomicId="5e3b1bc48fb28680fe26437d">
-            #some topic<cursor />
+            #some topic
+            <cursor />
           </text>
         </block>
       </editor>
@@ -462,7 +472,8 @@ describe('editor selenium', () => {
       <editor>
         <block type="ENTRY">
           this is an example of an entry text{'\n'}this should be in the #
-          plaintext append # this add text<cursor />
+          plaintext append # this add text
+          <cursor />
         </block>
         <block type="ENTRY">
           <text />
@@ -505,7 +516,8 @@ describe('editor selenium', () => {
             #some topic
           </text>
           {'\n'}
-          <cursor />text
+          <cursor />
+          text
         </block>
       </editor>
     )
@@ -528,7 +540,8 @@ describe('editor selenium', () => {
           plaintext append # this add text
         </block>
         <block type="ENTRY">
-          add this text <cursor />text
+          add this text <cursor />
+          text
         </block>
       </editor>
     )

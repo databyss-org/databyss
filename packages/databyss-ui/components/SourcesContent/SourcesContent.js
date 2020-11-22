@@ -25,8 +25,8 @@ const CitationStyleDropDown = styled(DropDownControl, () => ({
 }))
 
 // utils
-const buildSortedSources = sourceCitations => {
-  const sourcesData = Object.values(sourceCitations).map(value =>
+const buildSortedSources = (sourceCitations) => {
+  const sourcesData = Object.values(sourceCitations).map((value) =>
     createIndexPageEntries({
       id: value._id,
       text: value.text,
@@ -35,33 +35,23 @@ const buildSortedSources = sourceCitations => {
     })
   )
 
-  const sortedSources = sourcesData.sort(
-    (a, b) =>
-      a.text.textValue.toLowerCase() > b.text.textValue.toLowerCase() ? 1 : -1
+  const sortedSources = sourcesData.sort((a, b) =>
+    a.text.textValue.toLowerCase() > b.text.textValue.toLowerCase() ? 1 : -1
   )
 
   return sortedSources
 }
 
-// components
-export const SourcesRouter = () => (
-  <Router>
-    <SourcesContent path="/" />
-    <SourcesCitations path="/:query" />
-    <AuthorsContent path="/authors" />
-  </Router>
-)
-
 const SourcesContent = () => {
-  const navigate = useNavigationContext(c => c.navigate)
+  const navigate = useNavigationContext((c) => c.navigate)
 
-  const getQueryParams = useNavigationContext(c => c.getQueryParams)
+  const getQueryParams = useNavigationContext((c) => c.getQueryParams)
 
   const getPreferredCitationStyle = useSourceContext(
-    c => c.getPreferredCitationStyle
+    (c) => c.getPreferredCitationStyle
   )
   const setPreferredCitationStyle = useSourceContext(
-    c => c.setPreferredCitationStyle
+    (c) => c.setPreferredCitationStyle
   )
   const preferredCitationStyle = getPreferredCitationStyle()
 
@@ -69,7 +59,7 @@ const SourcesContent = () => {
     getCitationStyleOption(preferredCitationStyle)
   )
 
-  const onCitationStyleChange = value => {
+  const onCitationStyleChange = (value) => {
     setCitationStyleOption(value)
     setPreferredCitationStyle(value.id)
   }
@@ -84,7 +74,7 @@ const SourcesContent = () => {
   const renderBody = (sources, navigate) => {
     const sortedSources = buildSortedSources(sources)
 
-    const onSourceClick = source => navigate(`/sources/${source.id}`)
+    const onSourceClick = (source) => navigate(`/sources/${source.id}`)
 
     return (
       <IndexPageContent title="All Sources">
@@ -107,11 +97,20 @@ const SourcesContent = () => {
 
   const render = () => (
     <SourceCitationsLoader filtered>
-      {source => renderBody(source, navigate)}
+      {(source) => renderBody(source, navigate)}
     </SourceCitationsLoader>
   )
 
   return render()
 }
+
+// components
+export const SourcesRouter = () => (
+  <Router>
+    <SourcesContent path="/" />
+    <SourcesCitations path="/:query" />
+    <AuthorsContent path="/authors" />
+  </Router>
+)
 
 export default SourcesContent

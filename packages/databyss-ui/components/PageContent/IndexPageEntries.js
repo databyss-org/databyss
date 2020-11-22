@@ -6,12 +6,12 @@ import { SourceLoader } from '../Loaders'
 import CitationLoader from '../Citation/CitationLoader'
 
 const IndexPageEntries = ({ entries, icon, onClick }) => {
-  const renderStyledCitation = entry => {
+  const renderStyledCitation = (entry) => {
     const formatOptions = { styleId: defaultCitationStyle.id }
 
     return (
       <SourceLoader sourceId={entry.id}>
-        {source => (
+        {(source) => (
           <CitationLoader
             sourceDetail={source.detail}
             formatOptions={formatOptions}
@@ -21,7 +21,7 @@ const IndexPageEntries = ({ entries, icon, onClick }) => {
     )
   }
 
-  const renderPlacesCited = entry =>
+  const renderPlacesCited = (entry) =>
     entry.citations?.map((citation, i) => (
       <Text key={i} ml="medium" variant="bodySmall" color="text.2">
         {citation}

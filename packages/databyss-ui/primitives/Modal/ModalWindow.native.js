@@ -4,13 +4,7 @@ import { color, flexbox, compose } from 'styled-system'
 import ModalView from './ModalView'
 import styled from '../styled'
 
-const StyledSafeArea = styled(
-  SafeAreaView,
-  compose(
-    color,
-    flexbox
-  )
-)
+const StyledSafeArea = styled(SafeAreaView, compose(color, flexbox))
 
 const ModalWindow = ({ visible, children, ...others }) => (
   <NativeModal

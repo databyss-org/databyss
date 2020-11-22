@@ -7,7 +7,6 @@ import {
   GroupedCatalogResults,
   NetworkUnavailableError,
   Source,
-  Text,
 } from '../interfaces'
 
 import {
@@ -195,10 +194,13 @@ function sourceFromResult(options: CatalogParsingParams): Source {
       publisherName: makeText(service.getPublisher(result)),
       publisherPlace: makeText(service.getPublisherPlace(result)),
       year: makeText(service.getPublishedYear(result)),
-      month: service.getPublishedMonth(result, publicationType),
+      month:
+        publicationType && service.getPublishedMonth(result, publicationType),
 
       // publication details (articles)
-      journalTitle: makeText(service.getJournalTitle(result)),
+      journalTitle:
+        publicationType &&
+        makeText(service.getJournalTitle(result, publicationType)),
       volume: makeText(service.getVolume(result)),
       issue: makeText(service.getIssue(result)),
 
