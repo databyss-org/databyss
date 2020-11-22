@@ -59,6 +59,9 @@ const googleBooks: CatalogService = {
   getPublishedMonth: () => defaultMonthOption,
 
   // publication details (book)
+  getJournalTitle: () =>
+    // TODO: confirm they never provide it
+    '',
   getISBN: () =>
     // TODO: confirm they never provide it
     '',

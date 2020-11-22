@@ -3,6 +3,7 @@ import { isEqual } from 'lodash'
 import { defaultMonthOption } from '../../sources/constants/MonthOptions'
 import { Text } from '../../interfaces/Text'
 import { SourceDetail } from '../../interfaces/Block'
+import { PublicationTypeId } from '../../sources/constants/PublicationTypeId'
 
 /**
  * Converts a Databyss source detail object to a JSON CSL object.
@@ -27,10 +28,15 @@ export const toJsonCsl = (source: SourceDetail) => {
     publicationType,
     publisherName,
     publisherPlace,
+    // publication details (article)
+    journalTitle,
     volume,
     issue,
-    // catalog identifiers
+    // publication details (book section)
+    chapterTitle,
+    // catalog identifiers (book)
     isbn,
+    // catalog identifiers (article)
     issn,
     doi,
   } = source
@@ -38,11 +44,23 @@ export const toJsonCsl = (source: SourceDetail) => {
   // TODO: find the correct type
   const response: any = {}
 
+  // === PUBLICATION TYPE ===
+  // should be set first, as it may affect other parts
+  if (validateOption(source, 'publicationType')) {
+    response.type = publicationType!.id
+  }
+
   // === TITLE ===
-  if (title && validateTextValue(title)) {
-    response.title = title.textValue
+  const titleValue = validateTextValue(title) ? title!.textValue : ''
+  if (response.type === PublicationTypeId.BOOK_SECTION) {
+    if (validateTextValue(chapterTitle)) {
+      response['container-title'] = titleValue
+      response.title = chapterTitle!.textValue
+    } else {
+      response.title = titleValue
+    }
   } else {
-    response.title = ''
+    response.title = titleValue
   }
 
   // === PEOPLE ===
@@ -104,6 +122,13 @@ export const toJsonCsl = (source: SourceDetail) => {
   // place
   if (validateTextValue(publisherPlace)) {
     response['publisher-place'] = publisherPlace?.textValue
+  }
+
+  // == PUBLICATION - ARTICLE ==
+
+  // journal title
+  if (validateTextValue(journalTitle)) {
+    response['container-title'] = journalTitle!.textValue
   }
 
   // volume

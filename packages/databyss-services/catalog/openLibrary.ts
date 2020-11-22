@@ -89,7 +89,7 @@ const openLibrary: CatalogService = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getPublishedMonth: () => defaultMonthOption,
 
-  // publication details (book)
+  // catalog identifiers (book)
   getISBN: (apiResult: any) => {
     if (apiResult.isbn) {
       if (Array.isArray(apiResult.isbn)) {
@@ -102,6 +102,9 @@ const openLibrary: CatalogService = {
   },
 
   // publication details (journal article)
+  getJournalTitle: () =>
+    // TODO: confirm they never provide it
+    '',
   getIssue: () =>
     // TODO: confirm they never provide it
     '',

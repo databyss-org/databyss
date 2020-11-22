@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/pdf-api",
-  "version": "1.2.00",
+  "version": "1.2.2",
   "description": "Webservices to parse PDF data and metadata",
   "main": "server.js",
   "author": "databyss-org",
@@ -19,7 +19,7 @@
     "signals": "^1.0.0"
   },
   "peerDependencies": {
-    "@databyss-org/api": "1.2.00",
-    "@databyss-org/services": "1.2.00"
+    "@databyss-org/api": "1.2.2",
+    "@databyss-org/services": "1.2.2"
   }
 }

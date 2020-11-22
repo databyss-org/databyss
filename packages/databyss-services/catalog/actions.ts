@@ -108,14 +108,24 @@ function composeResults({
       ].concat(service.getAuthors(_apiResult))
       return _queryTerms.reduce(
         (qacc: Boolean, qcurr: string) =>
+          // normalize accents and strip non alphanumeric from both search and query
           qacc &&
           _resultFields.reduce(
             (racc: Boolean, rcurr: string) =>
               racc ||
               (rcurr &&
                 rcurr
+                  .normalize('NFD')
+                  .replace(/[\u0300-\u036f]/g, '')
                   .replace(/[^a-z0-9 ]/gi, '')
-                  .match(new RegExp(`\\b${qcurr}`, 'i'))),
+                  .match(
+                    new RegExp(
+                      `\\b${qcurr
+                        ?.normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')}`,
+                      'i'
+                    )
+                  )),
             false
           ),
         true
@@ -184,15 +194,22 @@ function sourceFromResult(options: CatalogParsingParams): Source {
       publisherName: makeText(service.getPublisher(result)),
       publisherPlace: makeText(service.getPublisherPlace(result)),
       year: makeText(service.getPublishedYear(result)),
+<<<<<<< HEAD
       month:
         publicationType && service.getPublishedMonth(result, publicationType),
+=======
+      month: service.getPublishedMonth(result, publicationType),
+
+      // publication details (articles)
+      journalTitle: makeText(service.getJournalTitle(result)),
+>>>>>>> next
       volume: makeText(service.getVolume(result)),
       issue: makeText(service.getIssue(result)),
 
-      // publication details (book)
+      // catalog identifiers (book)
       isbn: makeText(service.getISBN(result)),
 
-      // publication details (journal article)
+      // catalog identifiers (articles)
       doi: makeText(service.getDOI(result)),
       issn: makeText(service.getISSN(result)),
     },

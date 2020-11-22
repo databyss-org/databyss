@@ -45,7 +45,16 @@ export const createIndexPageEntries = ({
 
 export const sortEntriesAtoZ = (entries, sortBy) =>
   entries?.sort((a, b) =>
-    a[sortBy]?.toLowerCase() > b[sortBy]?.toLowerCase() ? 1 : -1
+    a[sortBy]
+      ?.toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') >
+    b[sortBy]
+      ?.toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      ? 1
+      : -1
   )
 
 export const filterEntries = (entries, filterQuery) => {

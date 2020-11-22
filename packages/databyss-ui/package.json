@@ -2,7 +2,7 @@
   "name": "@databyss-org/ui",
   "author": "databyss-org",
   "license": "MIT",
-  "version": "1.2.00",
+  "version": "1.2.2",
   "private": false,
   "repository": {
     "type": "git",
@@ -13,10 +13,10 @@
   },
   "main": "index.js",
   "peerDependencies": {
-    "@databyss-org/editor": "1.2.00",
-    "@databyss-org/services": "1.2.00",
-    "@databyss-org/slate": "1.2.00",
-    "@databyss-org/ui": "1.2.00",
+    "@databyss-org/editor": "1.2.2",
+    "@databyss-org/services": "1.2.2",
+    "@databyss-org/slate": "1.2.2",
+    "@databyss-org/ui": "1.2.2",
     "@storybook/react": "5.2.1",
     "react": "16.9.0",
     "react-dom": "16.9.0",
