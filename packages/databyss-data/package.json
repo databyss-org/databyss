@@ -1,0 +1,23 @@
+{
+  "name": "@databyss-org/data",
+  "version": "1.2.2",
+  "description": "Library for working with persistent storage and replication of databyss entities",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/databyss-org/databyss.git"
+  },
+  "bugs": {
+    "url": "https://github.com/databyss-org/databyss/issues"
+  },
+  "author": "databyss-org",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "hashids": "^2.2.2",
+    "nanoid": "^3.1.18",
+    "pouchdb-adapter-indexeddb": "^7.2.2",
+    "rxdb": "^9.9.0",
+    "rxjs": "^6.6.3"
+  }
+}
