@@ -1,28 +1,29 @@
 import { RxCollection, RxJsonSchema, RxDocument } from 'rxdb'
 
-type CollectionUserDocType = {
+type GroupUserDocType = {
   name: string
   role: string
 }
 
-type CollectionDocType = {
+export type GroupDocType = {
   _id: string
   name: string
-  users: CollectionUserDocType[]
+  users: GroupUserDocType[]
   defaultPageId: string
 }
 
-export type CollectionDoc = RxDocument<CollectionDocType>
-export type CollectionCollection = RxCollection<CollectionDocType>
-export const CollectionSchema: RxJsonSchema<CollectionDocType> = {
-  title: 'collection schema',
+export type GroupDoc = RxDocument<GroupDocType>
+export type GroupCollection = RxCollection<GroupDocType>
+export const GroupSchema: RxJsonSchema<GroupDocType> = {
+  title: 'group schema ("collections" to the user)',
   version: 0,
   description:
-    'A Databyss Collection is a set of pages and blocks that share properties like read/write permissions',
+    'A Databyss Collection (Group) is a set of pages and blocks that share properties like read/write permissions',
   type: 'object',
   properties: {
     _id: {
       type: 'string',
+      primary: true,
     },
     name: {
       type: 'string',
@@ -44,4 +45,5 @@ export const CollectionSchema: RxJsonSchema<CollectionDocType> = {
       type: 'string',
     },
   },
+  required: ['name', 'users', 'defaultPageId'],
 }
