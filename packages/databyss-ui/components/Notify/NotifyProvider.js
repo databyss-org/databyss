@@ -73,6 +73,7 @@ class NotifyProvider extends React.Component {
     message: null,
     isOnline: true,
     hasError: false,
+    html: false,
   }
 
   static getDerivedStateFromError() {
@@ -188,9 +189,10 @@ class NotifyProvider extends React.Component {
     }
   }
 
-  notify = (message, _error) => {
+  notify = (message, _error, _html) => {
     this.setState({
       message,
+      html: _html,
       dialogVisible: true,
       ...(_error
         ? {
@@ -205,8 +207,12 @@ class NotifyProvider extends React.Component {
     this.notify(error.message, error)
   }
 
+  notifyHtml = (message) => {
+    this.notify(message, null, true)
+  }
+
   render() {
-    const { dialogVisible, message, isOnline } = this.state
+    const { dialogVisible, message, isOnline, html } = this.state
     const errorConfirmButtons = [
       <Button
         key="help"
@@ -224,7 +230,12 @@ class NotifyProvider extends React.Component {
 
     return (
       <NotifyContext.Provider
-        value={{ notify: this.notify, notifyError: this.notifyError, isOnline }}
+        value={{
+          notify: this.notify,
+          notifyError: this.notifyError,
+          notifyHtml: this.notifyHtml,
+          isOnline,
+        }}
       >
         {!this.state.hasError && this.props.children}
         <Dialog
@@ -233,6 +244,7 @@ class NotifyProvider extends React.Component {
           onConfirm={() => this.setState({ dialogVisible: false })}
           visible={dialogVisible}
           message={message}
+          html={html}
           {...!isOnline && { 'data-test-modal': 'offline' }}
         />
       </NotifyContext.Provider>

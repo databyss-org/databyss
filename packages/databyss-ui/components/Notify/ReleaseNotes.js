@@ -1,17 +1,19 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
-import { version } from '../../../../package.json'
+import { version } from '@databyss-org/ui/package.json'
 
-export const NotifyMessage = () => {
-  const { notify } = useNotifyContext()
+const NotifyMessage = () => {
+  const { notifyHtml } = useNotifyContext()
 
   useEffect(() => {
     const _shown = localStorage.getItem(`releasenotes_${version}`)
     if (!_shown) {
-      const _msg = require(`../../../../.releasenotes/notify_${version}.json`)
+      const _msg = process.env.RELEASE_NOTES
       localStorage.setItem(`releasenotes_${version}`, true)
-      notify(_msg.message)
+      notifyHtml(_msg)
     }
   }, [])
   return null
 }
+
+export default NotifyMessage
