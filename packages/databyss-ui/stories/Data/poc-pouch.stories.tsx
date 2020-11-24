@@ -84,26 +84,21 @@ const DataPocDemo: FunctionComponent<DemoProps> = ({ groupIds }) => {
 
   return (
     <Grid>
-      <View>
-        <Button onPress={() => addBlock('A')}>Add Block to Group A</Button>
-        <Button onPress={() => addBlock('B')}>Add Block to Group B</Button>
-      </View>
-      <View>
-        <h2>Group A</h2>
-        {blocks
-          ?.filter((b) => b.groupId === 'A')
-          .map((b) => (
-            <Text key={b._id}>Block: {b.text?.textValue}</Text>
-          ))}
-      </View>
-      <View>
-        <h2>Group B</h2>
-        {blocks
-          ?.filter((b) => b.groupId === 'B')
-          .map((b) => (
-            <Text key={b._id}>Block: {b.text?.textValue}</Text>
-          ))}
-      </View>
+      {groupIds.map((gid) => (
+        <Grid key={gid}>
+          <View>
+            <Button onPress={() => addBlock(gid)}>Add Block to {gid}</Button>
+          </View>
+          <View>
+            <h2>{gid}</h2>
+            {blocks
+              ?.filter((b) => b.groupId === gid)
+              .map((b) => (
+                <Text key={b._id}>Block: {b.text?.textValue}</Text>
+              ))}
+          </View>
+        </Grid>
+      ))}
     </Grid>
   )
 }
@@ -112,3 +107,6 @@ storiesOf('Data|POC', module)
   .addDecorator(ViewportDecorator)
   .add('groups: A,B', () => <DataPocDemo groupIds={['A', 'B']} />)
   .add('groups: B', () => <DataPocDemo groupIds={['B']} />)
+  .add('cloudant: test_group_a', () => (
+    <DataPocDemo groupIds={['test_group_a']} />
+  ))
