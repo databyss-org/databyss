@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, FunctionComponent } from 'react'
 import * as PouchDB from 'pouchdb'
 import { storiesOf } from '@storybook/react'
 import { View, Text, List, Button, Grid } from '@databyss-org/ui/primitives'
@@ -8,32 +8,37 @@ import { uid } from '@databyss-org/data/lib/uid'
 
 import { ViewportDecorator } from '../decorators'
 
-const DataPocDemo = () => {
+type DemoProps = {
+  groupIds: string[]
+}
+
+const DataPocDemo: FunctionComponent<DemoProps> = ({ groupIds }) => {
   const [db, setDb] = useState<PouchDB.Database>()
-  const [groups, setGroups] = useState<any>()
+  // const [groups, setGroups] = useState<any>()
   const [blocks, setBlocks] = useState<any>()
 
-  const listGroups = async () => {
-    const _docs = await db?.find({
-      selector: {
-        $type: 'group',
-      },
-    })
-    console.log('listBlocks', _docs)
-    setGroups(_docs?.docs)
-  }
-  const addGroup = () => {
-    const _uid = uid()
-    db?.put({
-      _id: _uid,
-      $type: 'group',
-      name: `test group ${_uid}`,
-      users: [],
-      defaultPageId: 'foo',
-    })
-  }
+  // const listGroups = async () => {
+  //   const _docs = await db?.find({
+  //     selector: {
+  //       $type: 'group',
+  //     },
+  //   })
+  //   console.log('listBlocks', _docs)
+  //   setGroups(_docs?.docs)
+  // }
 
-  const addBlock = () => {
+  // const addGroup = () => {
+  //   const _uid = uid()
+  //   db?.put({
+  //     _id: _uid,
+  //     $type: 'group',
+  //     name: `test group ${_uid}`,
+  //     users: [],
+  //     defaultPageId: 'foo',
+  //   })
+  // }
+
+  const addBlock = (groupId: string) => {
     const _uid = uid()
     db?.put({
       _id: _uid,
@@ -42,7 +47,7 @@ const DataPocDemo = () => {
         textValue: `test block ${_uid}`,
         ranges: [],
       },
-      groupId: '???',
+      groupId,
       sharedWithGroupIds: [],
     })
   }
@@ -50,6 +55,7 @@ const DataPocDemo = () => {
     const _docs = await db?.find({
       selector: {
         $type: 'block',
+        groupId: { $in: groupIds },
       },
     })
     console.log('listBlocks', _docs)
@@ -58,13 +64,13 @@ const DataPocDemo = () => {
 
   useEffect(() => {
     const init = async () => {
-      setDb(await create())
+      setDb(await create(groupIds))
     }
     init()
   }, [])
 
   const updateLists = () => {
-    listGroups()
+    // listGroups()
     listBlocks()
   }
 
@@ -73,28 +79,30 @@ const DataPocDemo = () => {
       since: 'now',
       live: true,
     }).on('change', updateLists)
+    updateLists()
   }, [db])
 
   return (
     <Grid>
       <View>
-        <Button onPress={() => addGroup()}>Add Group</Button>
-        <Button onPress={() => listGroups()}>List Groups</Button>
-        <hr />
-        <Button onPress={() => addBlock()}>Add Block</Button>
-        <Button onPress={() => listBlocks()}>List Blocks</Button>
+        <Button onPress={() => addBlock('A')}>Add Block to Group A</Button>
+        <Button onPress={() => addBlock('B')}>Add Block to Group B</Button>
       </View>
       <View>
-        <h2>Groups</h2>
-        {groups?.map((group) => (
-          <Text key={group._id}>Group: {group.name}</Text>
-        ))}
+        <h2>Group A</h2>
+        {blocks
+          ?.filter((b) => b.groupId === 'A')
+          .map((b) => (
+            <Text key={b._id}>Block: {b.text?.textValue}</Text>
+          ))}
       </View>
       <View>
-        <h2>Blocks</h2>
-        {blocks?.map((block) => (
-          <Text key={block._id}>block: {block.text?.textValue}</Text>
-        ))}
+        <h2>Group B</h2>
+        {blocks
+          ?.filter((b) => b.groupId === 'B')
+          .map((b) => (
+            <Text key={b._id}>Block: {b.text?.textValue}</Text>
+          ))}
       </View>
     </Grid>
   )
@@ -102,4 +110,5 @@ const DataPocDemo = () => {
 
 storiesOf('Data|POC', module)
   .addDecorator(ViewportDecorator)
-  .add('pouchdb', () => <DataPocDemo />)
+  .add('groups: A,B', () => <DataPocDemo groupIds={['A', 'B']} />)
+  .add('groups: B', () => <DataPocDemo groupIds={['B']} />)
