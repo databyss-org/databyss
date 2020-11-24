@@ -1,38 +1,26 @@
-import { createRxDatabase, addRxPlugin, RxDatabase } from 'rxdb'
-import { RxDBReplicationPlugin } from 'rxdb/plugins/replication'
-import { GroupCollection, GroupSchema } from '../schemas/group'
+import PouchDB from 'pouchdb'
 
-addRxPlugin(require('pouchdb-adapter-indexeddb'))
-addRxPlugin(require('pouchdb-adapter-http'))
-addRxPlugin(RxDBReplicationPlugin)
+PouchDB.plugin(require('pouchdb-find').default)
 
-const DEFAULT_NAME = 'rxdb'
-const TEST_DBNAME = 'testdb'
+const dbname = 'test6'
+const remoteUrl = `http://localhost:5001/${dbname}`
 
-export type DatabyssCollections = {
-  groups: GroupCollection
-  // blocks: BlockCollection
+const sync = (db: PouchDB.Database) => {
+  const opts = { live: true }
+  db.replicate.to(remoteUrl, opts)
+  db.replicate.from(remoteUrl, opts)
 }
 
-export type DatabyssDatabase = RxDatabase<DatabyssCollections>
-
-interface CreateOptions {
-  name?: string
+const addIndexes = (db: PouchDB.Database) => {
+  console.log('addIndexes', db)
+  db.createIndex({
+    index: { fields: ['$type'] },
+  })
 }
 
-export const create = async (options: CreateOptions = {}) => {
-  const db: DatabyssDatabase = await createRxDatabase({
-    name: options.name || DEFAULT_NAME,
-    adapter: 'indexeddb',
-  })
-
-  const _groups = await db.collection({
-    name: 'groups',
-    schema: GroupSchema,
-    // sync: true,
-  })
-  _groups.sync({
-    remote: `http://localhost:5001/groups`,
-  })
-  return db
+export const create = () => {
+  const _db = new PouchDB(dbname)
+  sync(_db)
+  addIndexes(_db)
+  return _db
 }

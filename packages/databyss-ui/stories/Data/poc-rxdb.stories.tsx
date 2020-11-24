@@ -55,6 +55,6 @@ const DataPocDemo = () => {
   )
 }
 
-storiesOf('Data|POC', module)
-  .addDecorator(ViewportDecorator)
-  .add('default', () => <DataPocDemo />)
+// storiesOf('Data|POC', module)
+//   .addDecorator(ViewportDecorator)
+//   .add('default', () => <DataPocDemo />)
