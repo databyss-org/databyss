@@ -17,6 +17,7 @@ import errorRoute from './routes/api/error'
 import entriesRoute from './routes/api/entries'
 import sourcesRoute from './routes/api/sources'
 import topicsRoute from './routes/api/topics'
+import cloudantRoute from './routes/api/cloudant'
 import { versionChecker } from './middleware/versionCheckMiddleware'
 
 let app = null
@@ -45,7 +46,7 @@ const run = async () => {
   // set the max limit to 50mb
   app.use(express.json({ extended: false, limit: '50mb' }))
 
-  app.use(versionChecker)
+  // app.use(versionChecker)
 
   app.get('/', (_req, res) => {
     res.redirect('https://app.databyss.org')
@@ -53,6 +54,7 @@ const run = async () => {
 
   // Define Routes
   app.use('/api/users', usersRoute)
+  app.use('/api/cloudant', cloudantRoute)
   app.use('/api/auth', authRoute)
   app.use('/api/pages', pagesRoute)
   app.use('/api/accounts', accountsRoute)

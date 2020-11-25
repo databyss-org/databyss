@@ -10,6 +10,7 @@ import Account from '../../models/Account'
 import Login from '../../models/Login'
 import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
+import { cloudant } from './cloudantService'
 
 const router = express.Router()
 
@@ -26,6 +27,8 @@ const oauth2ClientMobile =
     process.env.API_GOOGLE_CLIENT_SECRET,
     process.env.API_GOOGLE_REDIRECT_URI_MOBILE
   )
+
+// const Users = await cloudant.use('users')
 
 // @route    POST api/users/google
 // @desc     create or get profile info for google user
@@ -50,16 +53,33 @@ router.post(
       const { name, email: _email, sub } = decoded
 
       const email = _email?.toLowerCase()
-      let user = await User.findOne({ googleId: sub })
+      const users = cloudant.use('users')
+      const _selector = {
+        selector: {
+          googleId: { $eq: sub },
+        },
+      }
+      let user = await users.find(_selector)
+
+      // let user = await users.get({ googleId: sub })
+
+      // let user = await User.findOne({ googleId: sub })
       if (!user) {
-        user = await User.create({
+        user = await users.insert({
           name,
           email,
           googleId: sub,
         })
+        // user = await User.create({
+        //   name,
+        //   email,
+        //   googleId: sub,
+        // })
       }
-      const session = await getSessionFromUserId(user._id)
-      res.json({ data: { session } })
+      // const session = await getSessionFromUserId(user.id)
+      res.json({ data: { user } }).status(200)
+
+      //   res.json({ data: { session } })
     })
   })
 )
@@ -81,17 +101,25 @@ router.post(
 
     const email = _email?.toLowerCase()
 
-    let user = await User.findOne({ email })
-    if (!user) {
+    const users = cloudant.use('users')
+    const _selector = {
+      selector: {
+        email: { $eq: email },
+      },
+    }
+    let user = await users.find(_selector)
+
+    if (!user.docs.length) {
       // Creates new user
-      user = await User.create({
+      user = await users.insert({
         email,
       })
     } else {
+      user = user.docs[0]
       emailExists = true
     }
 
-    const token = await getTokenFromUserId(user._id)
+    const token = await getTokenFromUserId(user.id)
     const loginObj = {
       email,
       code:
@@ -99,10 +127,13 @@ router.post(
           ? 'test-code-42'
           : humanReadableIds.hri.random(),
       token,
+      date: Date.now(),
     }
-    await Login.replaceOne({ email, code: loginObj.code }, loginObj, {
-      upsert: true,
-    })
+
+    const login = await cloudant.db.use('login')
+
+    login.upsert({ email, code: loginObj.code }, () => loginObj)
+
     const msg = {
       to: email,
       from: process.env.TRANSACTIONAL_EMAIL_SENDER,
