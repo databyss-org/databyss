@@ -3,6 +3,7 @@ import SessionProvider from '@databyss-org/services/session/SessionProvider'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { Viewport, useNavigationContext } from '@databyss-org/ui'
+import ReleaseNotes from '@databyss-org/ui/components/Notify/ReleaseNotes'
 import Public from './Public'
 import Private from './Private'
 
@@ -18,6 +19,7 @@ const App = () => {
             code={urlParams.get('code')}
             unauthorizedChildren={<Public />}
           >
+            <ReleaseNotes />
             <Private />
           </SessionProvider>
         </Viewport>
