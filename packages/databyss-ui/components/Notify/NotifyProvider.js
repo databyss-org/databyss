@@ -207,7 +207,7 @@ class NotifyProvider extends React.Component {
     this.notify(error.message, error)
   }
 
-  notifyHtml = (message) => {
+  notifyHtml = message => {
     this.notify(message, null, true)
   }
 
