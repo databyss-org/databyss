@@ -6,6 +6,10 @@ const NotifyMessage = () => {
   const { notifyHtml } = useNotifyContext()
 
   useEffect(() => {
+    if (process.env.NODE_ENV === 'test') {
+      // never show release notes dialog in TEST env
+      return
+    }
     const _shown = localStorage.getItem(`releasenotes_${version}`)
     const _msg = JSON.parse(process.env.RELEASE_NOTES)[version]
     if (!_shown && _msg) {
