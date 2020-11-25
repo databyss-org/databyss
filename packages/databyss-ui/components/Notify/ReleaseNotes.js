@@ -7,8 +7,8 @@ const NotifyMessage = () => {
 
   useEffect(() => {
     const _shown = localStorage.getItem(`releasenotes_${version}`)
-    if (!_shown) {
-      const _msg = process.env.RELEASE_NOTES
+    const _msg = JSON.parse(process.env.RELEASE_NOTES)[version]
+    if (!_shown && _msg) {
       localStorage.setItem(`releasenotes_${version}`, true)
       notifyHtml(_msg)
     }
