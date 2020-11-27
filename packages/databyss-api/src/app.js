@@ -99,11 +99,12 @@ const run = async () => {
   // Bugsnag middleware must go before other error handler middleware
   app.use(bugsnagMiddleware.errorHandler)
 
+  // Global error handler
   app.use((err, _req, res, _next) => {
     if (err instanceof ApiError) {
       return res.status(err.status).json({ error: err })
     }
-    console.error('ERR', err)
+    console.error('Unexpected error', err)
     return res.status(500).json({ error: { message: err.message } })
   })
 
