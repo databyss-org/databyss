@@ -1,4 +1,9 @@
 {
+  "addons": [
+    {
+      "plan": "heroku-redis:hobby-dev"
+    }
+  ],
   "buildpacks": [
     {
       "url": "https://github.com/databyss-org/heroku-buildpack-monorepo.git"
