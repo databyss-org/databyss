@@ -8,8 +8,10 @@ import {
   InsufficientPermissionError,
   ResourceNotFoundError,
 } from '@databyss-org/services/interfaces'
-import Bugsnag from '@databyss-org/services/lib/bugsnag'
+import Bugsnag from '@bugsnag/js'
+import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
+import { throttle } from 'lodash'
 import IS_NATIVE from '../../lib/isNative'
 
 const CHECK_ONLINE_INTERVAL = 3000
@@ -28,35 +30,28 @@ const instanceofAny = (objs, types) => {
 }
 
 // from @bugsnag/plugin-react
-export const makeBugsnagReport = (client, error, info) => {
-  const handledState = {
+export const enhanceBugsnagEvent = (event, info) => {
+  event.handledState = {
     severity: 'error',
     unhandled: true,
     severityReason: { type: 'unhandledException' },
   }
-  const report = new client.BugsnagReport(
-    error.name,
-    error.message,
-    client.BugsnagReport?.getStacktrace(error),
-    handledState,
-    error
-  )
-  if (info && info.componentStack) {
+  // const event = Bugsnag.Event.create(error, true, handledState, 1)
+  if (info && info.componentStack)
     info.componentStack = formatComponentStack(info.componentStack)
-  }
-  report.updateMetaData('react', info)
-  return report
+  event.addMetadata('react', info)
 }
 
 // TODO: update to functional component when `componentDidCatch` hook is added
 class NotifyProvider extends React.Component {
   constructor(props) {
     super(props)
-    this.bugsnagClient = Bugsnag.init(props.options)
+    startBugsnag(props.options)
+    this.shouldCheckOnlineStatus = props.shouldCheckOnlineStatus
 
     if (IS_NATIVE) {
       global.ErrorUtils.setGlobalHandler((error) => {
-        this.bugsnagClient.notify(error)
+        Bugsnag.notify(error)
         this.showUnhandledErrorDialog()
         console.error(error)
       })
@@ -95,9 +90,13 @@ class NotifyProvider extends React.Component {
       // we don't need to notify, we should be showing authwall, 403 or 404
       return
     }
-    this.bugsnagClient.notify(
-      IS_NATIVE ? error : makeBugsnagReport(this.bugsnagClient, error, info)
-    )
+    if (IS_NATIVE) {
+      Bugsnag.notify(error)
+    } else {
+      Bugsnag.notify(error, (event) => {
+        enhanceBugsnagEvent(event, info)
+      })
+    }
     this.showUnhandledErrorDialog()
   }
 
@@ -112,6 +111,9 @@ class NotifyProvider extends React.Component {
   }
 
   onWindowFocus = () => {
+    if (!this.shouldCheckOnlineStatus) {
+      return
+    }
     ping().catch(this.onUnhandledError)
   }
 
@@ -133,7 +135,7 @@ class NotifyProvider extends React.Component {
       return
     }
     if (e && instanceofAny([e, e.reason, e.error], [VersionConflictError])) {
-      window.location.reload()
+      window.location.reload(true)
       return
     }
     if (
@@ -174,7 +176,10 @@ class NotifyProvider extends React.Component {
     }
   }
 
-  checkOnlineStatus() {
+  checkOnlineStatus = throttle(() => {
+    if (!this.shouldCheckOnlineStatus) {
+      return
+    }
     if (!this.state.isOnline) {
       ping(CHECK_ONLINE_INTERVAL)
         .then(() => {
@@ -187,7 +192,7 @@ class NotifyProvider extends React.Component {
           this.checkOnlineStatus()
         })
     }
-  }
+  }, 3000)
 
   notify = (message, _error, _html) => {
     this.setState({
@@ -203,7 +208,7 @@ class NotifyProvider extends React.Component {
   }
 
   notifyError = (error) => {
-    this.bugsnagClient.notify(error)
+    Bugsnag.notify(error)
     this.notify(error.message, error)
   }
 
@@ -223,7 +228,7 @@ class NotifyProvider extends React.Component {
       >
         Support Request Form
       </Button>,
-      <Button key="ok" onPress={() => window.location.reload()}>
+      <Button key="ok" onPress={() => window.location.reload(true)}>
         Refresh and try again
       </Button>,
     ]
@@ -245,7 +250,7 @@ class NotifyProvider extends React.Component {
           visible={dialogVisible}
           message={message}
           html={html}
-          {...(!isOnline && { 'data-test-modal': 'offline' })}
+          {...!isOnline && { 'data-test-modal': 'offline' }}
         />
       </NotifyContext.Provider>
     )
@@ -254,6 +259,7 @@ class NotifyProvider extends React.Component {
 
 NotifyProvider.defaultProps = {
   options: {},
+  shouldCheckOnlineStatus: true,
 }
 
 export const useNotifyContext = () => useContext(NotifyContext)
