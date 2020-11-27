@@ -11,14 +11,13 @@ the version in package.json before the script
 completes.
 */
 
+require('../config/env')
+
 const POLL_DELAY_MS = 10000
 
-const dotenv = require('dotenv')
-const dotenvExpand = require('dotenv-expand')
 const fetch = require('node-fetch')
 const packageJson = require('../package.json')
 
-dotenvExpand(dotenv.config())
 const versionUrl = process.env.BUILD_WAIT_FOR_VERSION_URL
 if (!versionUrl) {
   process.exit(0)
@@ -42,6 +41,7 @@ function pollVersion(count = 0) {
     })
     .catch((err) => {
       console.error('[⏳ wait-for-version]', err)
+      process.exit(1)
     })
 }
 
