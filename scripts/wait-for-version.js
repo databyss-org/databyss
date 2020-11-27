@@ -13,13 +13,17 @@ completes.
 
 const POLL_DELAY_MS = 10000
 
+const dotenv = require('dotenv')
+const dotenvExpand = require('dotenv-expand')
 const fetch = require('node-fetch')
 const packageJson = require('../package.json')
 
+dotenvExpand(dotenv.config())
 const versionUrl = process.env.BUILD_WAIT_FOR_VERSION_URL
 if (!versionUrl) {
   process.exit(0)
 }
+console.log('[⏳ wait-for-version] URL', versionUrl)
 
 function pollVersion(count = 0) {
   fetch(versionUrl)
