@@ -170,7 +170,7 @@ router.get(
     }
 
     // build responses
-    const sourcesCitations = blocks.map(block => {
+    const sourcesCitations = blocks.map((block) => {
       const sourcesCitationsDict = pick(block, [
         '_id',
         'text',
@@ -187,7 +187,7 @@ router.get(
 
     // add formatted citation to each entry
     const { citationStyleId } = req.params
-    await asyncForEach(sourcesCitations, async s => {
+    await asyncForEach(sourcesCitations, async (s) => {
       const { detail } = s
       if (detail) {
         s.citation = await toCitation(s.detail, { styleId: citationStyleId })
@@ -220,7 +220,7 @@ router.get(
       ...getPageAccountQueryMixin(req),
     })
     if (_pages) {
-      isInPages = _pages.map(p => p._id)
+      isInPages = _pages.map((p) => p._id)
     }
 
     return res.json({ ...source._doc, isInPages })

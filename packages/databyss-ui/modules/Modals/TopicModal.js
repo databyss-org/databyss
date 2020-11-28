@@ -19,7 +19,7 @@ const ControlList = ({ children, ...others }) => (
 )
 
 const TopicModal = ({ refId, visible, onUpdate, id }) => {
-  const setTopic = useTopicContext(c => c.setTopic)
+  const setTopic = useTopicContext((c) => c.setTopic)
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
 
@@ -51,7 +51,7 @@ const TopicModal = ({ refId, visible, onUpdate, id }) => {
       canDismiss={values && values.text.textValue.length}
     >
       <TopicLoader topicId={refId}>
-        {topic => {
+        {(topic) => {
           if (!values) {
             setValues(topic)
           }

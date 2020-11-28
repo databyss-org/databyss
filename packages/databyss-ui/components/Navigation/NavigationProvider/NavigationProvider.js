@@ -10,7 +10,7 @@ const useReducer = createReducer()
 
 export const NavigationContext = createContext()
 
-const withRouter = Wrapped => ({ children }) => (
+const withRouter = (Wrapped) => ({ children }) => (
   <Router>
     <Wrapped default>
       {React.cloneElement(React.Children.only(children), { default: true })}
@@ -27,8 +27,8 @@ const NavigationProvider = ({ children }) => {
 
   const navigateRouter = useNavigate()
 
-  const showModal = options => dispatch(actions.showModal(options))
-  const setMenuOpen = bool => dispatch(actions.menuOpen(bool))
+  const showModal = (options) => dispatch(actions.showModal(options))
+  const setMenuOpen = (bool) => dispatch(actions.menuOpen(bool))
 
   const hideModal = () => dispatch(actions.hideModal())
   const navigate = (url, options) => {
@@ -42,7 +42,8 @@ const NavigationProvider = ({ children }) => {
     navigateRouter(accountId ? `/${accountId}${url}` : url)
   }
 
-  const navigateSidebar = options => dispatch(actions.navigateSidebar(options))
+  const navigateSidebar = (options) =>
+    dispatch(actions.navigateSidebar(options))
 
   const getTokensFromPath = () => {
     const _path = location.pathname.split('/')
@@ -96,7 +97,7 @@ const NavigationProvider = ({ children }) => {
   )
 }
 
-export const useNavigationContext = (selector = x => x) =>
+export const useNavigationContext = (selector = (x) => x) =>
   useContextSelector(NavigationContext, selector)
 
 NavigationProvider.defaultProps = {

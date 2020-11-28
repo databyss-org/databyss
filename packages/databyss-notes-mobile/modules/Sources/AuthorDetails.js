@@ -26,7 +26,7 @@ const AuthorDetails = ({ query }) => {
   const authorQueryLastName = decodeURIComponent(params.get('lastName'))
 
   // render methods
-  const renderAuthorCitations = citations => {
+  const renderAuthorCitations = (citations) => {
     const authorCitations = buildAuthorCitationData(
       citations,
       authorQueryFirstName,
@@ -34,7 +34,7 @@ const AuthorDetails = ({ query }) => {
     )
 
     const cleanCitations = authorCitations.filter(
-      c =>
+      (c) =>
         Object.prototype.hasOwnProperty.call(c, 'id') &&
         Object.prototype.hasOwnProperty.call(c, 'text')
     )
@@ -59,7 +59,7 @@ const AuthorDetails = ({ query }) => {
     >
       <SourceProvider>
         <SourceCitationsLoader>
-          {citations => renderAuthorCitations(citations)}
+          {(citations) => renderAuthorCitations(citations)}
         </SourceCitationsLoader>
       </SourceProvider>
     </MobileView>

@@ -28,7 +28,7 @@ const getDotStyles = (isActive, isBottomNav) => {
   })
 }
 
-const getGridStyles = isBottomNav => {
+const getGridStyles = (isBottomNav) => {
   const commonStyles = {
     alignItems: 'center',
     justifyContent: 'center',

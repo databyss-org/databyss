@@ -50,7 +50,7 @@ export async function parse(path) {
 function loadPDF(path) {
   return new Promise((resolve, reject) => {
     const loadingTask = pdfjs.getDocument(path)
-    loadingTask.promise.then(pdf => resolve(pdf)).catch(reject)
+    loadingTask.promise.then((pdf) => resolve(pdf)).catch(reject)
   })
 }
 
@@ -58,7 +58,7 @@ function getMetadata(pdf) {
   return new Promise((resolve, reject) => {
     pdf
       .getMetadata()
-      .then(data => {
+      .then((data) => {
         metadata = {}
         if (data.info.Author) {
           metadata.author = data.info.Author
@@ -87,7 +87,7 @@ function getAllPages(pdf) {
       /* eslint-disable no-loop-func */
       const page = pdf
         .getPage(pageNumber)
-        .then(pageContent => {
+        .then((pageContent) => {
           allPagesData.push({
             data: pageContent,
             pageNumber: pageContent.pageNumber,
@@ -110,15 +110,15 @@ function getAllPages(pdf) {
 function getAllAnnotations() {
   return new Promise((resolve, reject) => {
     const allPromises = []
-    allPagesData.forEach(page => {
+    allPagesData.forEach((page) => {
       const { data } = page
       const annotationPromise = data
         .getAnnotations('print')
-        .then(annotations => {
+        .then((annotations) => {
           page.numAnnotations = annotations.length
           page.annotations = []
           if (page.numAnnotations) {
-            annotations.forEach(annotation => {
+            annotations.forEach((annotation) => {
               page.annotations.push(parseAnnotation(annotation))
             })
           }
@@ -152,13 +152,13 @@ function prepareResponse() {
   const allAnnotations = []
 
   // get annotations from page data
-  allPagesData.forEach(pageData => {
+  allPagesData.forEach((pageData) => {
     allAnnotations.push(...pageData.annotations)
   })
 
   // clone to ensure not to touch raw data
   const annotations = allAnnotations.slice()
-  annotations.forEach(annotation => {
+  annotations.forEach((annotation) => {
     // remove superfluous property
     delete annotation.data
   })

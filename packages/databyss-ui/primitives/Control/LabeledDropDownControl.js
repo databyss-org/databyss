@@ -3,7 +3,7 @@ import { Text, Grid } from '../'
 import DropDownControl from './DropDownControl'
 
 // component
-const LabeledDropDownControl = props => {
+const LabeledDropDownControl = (props) => {
   const {
     active,
     activeLabelColor,

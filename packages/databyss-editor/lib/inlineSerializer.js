@@ -1,12 +1,12 @@
 import escapeHtml from 'escape-html'
 import { Text } from '@databyss-org/slate'
 
-export const serialize = node => {
+export const serialize = (node) => {
   if (Text.isText(node)) {
     return escapeHtml(node.text)
   }
 
-  const children = node.children.map(n => serialize(n)).join('')
+  const children = node.children.map((n) => serialize(n)).join('')
   switch (node.type) {
     case 'bold':
       return `<strong>${children}</strong>`
@@ -17,8 +17,8 @@ export const serialize = node => {
   }
 }
 
-export const atomicHTMLSerializer = childrenArray => {
-  const _childrenText = childrenArray[0].children.map(c => {
+export const atomicHTMLSerializer = (childrenArray) => {
+  const _childrenText = childrenArray[0].children.map((c) => {
     if (!c.type) {
       return c
     }

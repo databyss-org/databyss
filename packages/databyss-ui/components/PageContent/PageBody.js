@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useRef } from 'react'
-import { throttle } from 'lodash'
+import { debounce } from 'lodash'
 import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
@@ -24,10 +24,10 @@ const PageBody = ({
   editorRef,
   onEditorPathChange,
 }) => {
-  const isPublicAccount = useSessionContext(c => c && c.isPublicAccount)
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const { location } = useNavigationContext()
-  const clearBlockDict = usePageContext(c => c.clearBlockDict)
-  const setPatches = usePageContext(c => c.setPatches)
+  const clearBlockDict = usePageContext((c) => c.clearBlockDict)
+  const setPatches = usePageContext((c) => c.setPatches)
 
   useEffect(() => () => clearBlockDict(), [])
 
@@ -37,7 +37,7 @@ const PageBody = ({
 
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
   const throttledAutosave = useCallback(
-    throttle(({ nextState, patches }) => {
+    debounce(({ nextState, patches }) => {
       const _patches = cleanupPatches(patches)
       if (_patches.length) {
         const payload = {
@@ -52,7 +52,7 @@ const PageBody = ({
   )
 
   // state from provider is out of date
-  const onChange = value => {
+  const onChange = (value) => {
     requestAnimationFrame(() => {
       if (editorStateRef.current?.pagePath) {
         onEditorPathChange(editorStateRef.current.pagePath)
@@ -82,7 +82,7 @@ const PageBody = ({
           <EditorProvider
             key={location.pathname}
             // if read only, disable on change
-            onChange={v => !isReadOnly && onChange(v)}
+            onChange={(v) => !isReadOnly && onChange(v)}
             initialState={pageToEditorState(withMetaData(page))}
           >
             <PDFDropZoneManager />

@@ -37,9 +37,9 @@ export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
   )
 }
 
-export const ping = timeout => requestApi(`/ping`, { timeout })
+export const ping = (timeout) => requestApi(`/ping`, { timeout })
 
-export const httpGet = path => requestApi(path)
+export const httpGet = (path) => requestApi(path)
 
 export const httpPost = (path, body) =>
   requestApi(path, {

@@ -31,9 +31,9 @@ function checkStatus(response) {
 
 function parseResponse(responseIsJson) {
   if (responseIsJson) {
-    return response => response.json()
+    return (response) => response.json()
   }
-  return response =>
+  return (response) =>
     response.headers.get('Content-Type')?.match('json')
       ? response.json()
       : response.text()
@@ -51,10 +51,10 @@ function request(uri, options = {}, responseIsJson) {
   }, _timeoutDuration)
 
   return fetch(uri, { ..._options, signal: _controller.signal })
-    .catch(err => {
+    .catch((err) => {
       throw new NetworkUnavailableError(err)
     })
-    .then(response => {
+    .then((response) => {
       clearTimeout(_timeoutId)
       return response
     })

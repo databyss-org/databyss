@@ -40,7 +40,7 @@ const labelProps = { width: '115px' }
 const publicationTypeOptions = sortEntriesAtoZ(PublicationTypes, 'label')
 
 // utils
-const checkIfArticle = detail => {
+const checkIfArticle = (detail) => {
   if (!detail || !('publicationType' in detail)) {
     return false
   }
@@ -50,7 +50,7 @@ const checkIfArticle = detail => {
   }
   return isArticle(publicationType.id)
 }
-const checkIfBook = detail => {
+const checkIfBook = (detail) => {
   if (!detail || !('publicationType' in detail)) {
     return false
   }
@@ -60,7 +60,7 @@ const checkIfBook = detail => {
   }
   return isBook(publicationType.id)
 }
-const checkIfBookSection = detail => {
+const checkIfBookSection = (detail) => {
   if (!detail || !('publicationType' in detail)) {
     return false
   }
@@ -78,13 +78,13 @@ const swap = (array, indexA, indexB) => {
 }
 
 // components
-const FormHeading = props => (
+const FormHeading = (props) => (
   <Text variant="uiTextHeading" marginTop={pxUnits(20)} {...props}>
     {props.children}
   </Text>
 )
 
-const LabeledTextInput = props => (
+const LabeledTextInput = (props) => (
   <ValueListItem path={props.path}>
     <TextControl
       labelProps={labelProps}
@@ -98,15 +98,15 @@ const LabeledTextInput = props => (
   </ValueListItem>
 )
 
-const EditSourceForm = props => {
+const EditSourceForm = (props) => {
   const { values, onChange } = props
 
   const { generateCitation } = useCitationContext()
   const getPreferredCitationStyle = useSourceContext(
-    c => c.getPreferredCitationStyle
+    (c) => c.getPreferredCitationStyle
   )
   const setPreferredCitationStyle = useSourceContext(
-    c => c.setPreferredCitationStyle
+    (c) => c.setPreferredCitationStyle
   )
   const preferredCitationStyle = getPreferredCitationStyle()
 
@@ -120,7 +120,7 @@ const EditSourceForm = props => {
   const isBookSection = checkIfBookSection(values.detail)
 
   // people base methods
-  const addPersonTo = arrayPropName => {
+  const addPersonTo = (arrayPropName) => {
     // deep clone to be able to modify
     const clone = cloneDeep(values)
 
@@ -180,7 +180,7 @@ const EditSourceForm = props => {
   }
 
   // author methods
-  const canDeleteAuthor = index => {
+  const canDeleteAuthor = (index) => {
     const { authors, editors } = values.detail
 
     // if there are editors, it's ok to allow to delete all authors
@@ -197,20 +197,20 @@ const EditSourceForm = props => {
     addPersonTo('authors')
   }
 
-  const onDeleteAuthor = index => {
+  const onDeleteAuthor = (index) => {
     removePersonFrom('authors', index)
   }
 
-  const onMoveAuthorDown = index => {
+  const onMoveAuthorDown = (index) => {
     movePersonDownIn('authors', index)
   }
 
-  const onMoveAuthorUp = index => {
+  const onMoveAuthorUp = (index) => {
     movePersonUpIn('authors', index)
   }
 
   // editor methods
-  const canDeleteEditor = index => {
+  const canDeleteEditor = (index) => {
     const { authors, editors } = values.detail
 
     // if there are authors, it's ok to allow to delete all editors
@@ -227,15 +227,15 @@ const EditSourceForm = props => {
     addPersonTo('editors')
   }
 
-  const onDeleteEditor = index => {
+  const onDeleteEditor = (index) => {
     removePersonFrom('editors', index)
   }
 
-  const onMoveEditorDown = index => {
+  const onMoveEditorDown = (index) => {
     movePersonDownIn('editors', index)
   }
 
-  const onMoveEditorUp = index => {
+  const onMoveEditorUp = (index) => {
     movePersonUpIn('editors', index)
   }
 
@@ -244,15 +244,15 @@ const EditSourceForm = props => {
     addPersonTo('translators')
   }
 
-  const onDeleteTranslator = index => {
+  const onDeleteTranslator = (index) => {
     removePersonFrom('translators', index)
   }
 
-  const onMoveTranslatorDown = index => {
+  const onMoveTranslatorDown = (index) => {
     movePersonDownIn('translators', index)
   }
 
-  const onMoveTranslatorUp = index => {
+  const onMoveTranslatorUp = (index) => {
     movePersonUpIn('translators', index)
   }
 
@@ -264,7 +264,7 @@ const EditSourceForm = props => {
   }
 
   // citation methods
-  const onCitationStyleOptionChange = value => {
+  const onCitationStyleOptionChange = (value) => {
     setPreferredCitationStyle(value.id)
     setCitationStyleOption(value)
   }
@@ -578,7 +578,7 @@ const EditSourceForm = props => {
         <FormHeading>Citation</FormHeading>
 
         <MakeLoader resources={generateCitation(values.detail, formatOptions)}>
-          {citation => (
+          {(citation) => (
             <View marginTop={pxUnits(20)} marginBottom={pxUnits(20)}>
               <RawHtml html={pruneCitation(citation, formatOptions.styleId)} />
             </View>

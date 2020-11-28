@@ -48,7 +48,7 @@ const DeleteButton = styled(Button, buttonStyles)
 const ArrowButton = styled(Button, buttonStyles)
 
 // components
-const LabeledTextInput = props => (
+const LabeledTextInput = (props) => (
   <ValueListItem path={props.path}>
     <TextControl
       labelProps={labelProps}
@@ -62,7 +62,7 @@ const LabeledTextInput = props => (
   </ValueListItem>
 )
 
-const EditAuthorFields = props => {
+const EditAuthorFields = (props) => {
   const {
     canDelete,
     canMoveDown,

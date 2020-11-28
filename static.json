@@ -7,7 +7,7 @@
   "https_only": true,
   "headers": {
     "/**": {
-      "Cache-Control": "no-cache, no-store, must-revalidate",
+      "Cache-Control": "private, no-cache, no-store, must-revalidate",
       "Strict-Transport-Security": "max-age=31536000"
     }
   }

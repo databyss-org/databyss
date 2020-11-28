@@ -1,5 +1,5 @@
-import { EditorState, Point, Block } from '../../interfaces'
 import cloneDeep from 'clone-deep'
+import { EditorState, Point, Block } from '../../interfaces'
 import {
   isSelectionCollapsed,
   sortSelection,

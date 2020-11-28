@@ -39,7 +39,7 @@ interface ListItemProps {
 */
 
 // component
-const TappableListItem = props => {
+const TappableListItem = (props) => {
   const onClick = () => {
     if (props.onTap) {
       props.onTap(props._id)

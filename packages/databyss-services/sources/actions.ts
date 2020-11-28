@@ -45,7 +45,7 @@ export function fetchSource(id: string) {
 export function saveSource(sourceFields: Source) {
   return async (dispatch: Function) => {
     // ensure to add necessary detail default properties
-    if (!('detail' in sourceFields)) {
+    if (!sourceFields?.detail) {
       sourceFields.detail = buildSourceDetail()
     }
 

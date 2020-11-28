@@ -20,7 +20,7 @@ const RichTextInput = forwardRef(
       color="text.0"
       value={value.textValue}
       ref={ref}
-      onChangeText={value => onChange({ textValue: value })}
+      onChangeText={(value) => onChange({ textValue: value })}
       multiline={multiline}
       flexGrow={0}
       flexShrink={1}

@@ -13,8 +13,8 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import AuthorIndexEntries from './AuthorIndexEntries'
 import IndexPageContent from '../PageContent/IndexPageContent'
 
-const buildEntries = authors => {
-  const entries = Object.values(authors).map(value =>
+const buildEntries = (authors) => {
+  const entries = Object.values(authors).map((value) =>
     createIndexPageEntries({
       text: {
         textValue: composeAuthorName(
@@ -34,7 +34,7 @@ const buildEntries = authors => {
 const AuthorsContent = () => {
   const { navigate } = useNavigationContext()
 
-  const onEntryClick = entry => {
+  const onEntryClick = (entry) => {
     const firstName = entry.name.firstName ? entry.name.firstName.textValue : ''
     const lastName = entry.name.lastName ? entry.name.lastName.textValue : ''
     navigate(`/sources?firstName=${firstName}&lastName=${lastName}`)
@@ -44,7 +44,7 @@ const AuthorsContent = () => {
     <SourceCitationsLoader>
       {() => (
         <AuthorsLoader filtered>
-          {authors => {
+          {(authors) => {
             const entries = buildEntries(authors)
 
             return (

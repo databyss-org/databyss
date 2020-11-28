@@ -9,7 +9,7 @@ import {
   flattenRanges,
 } from './markup'
 
-export const flattenNode = node => {
+export const flattenNode = (node) => {
   if (!node) {
     return null
   }
@@ -38,7 +38,7 @@ export const flattenNodeToPoint = (editor, point) => {
 export const flattenOffset = (editor, point) =>
   (flattenNodeToPoint(editor, point) || '').length
 
-export const slateSelectionToStateSelection = editor =>
+export const slateSelectionToStateSelection = (editor) =>
   editor.selection
     ? {
         anchor: {
@@ -67,13 +67,13 @@ export const stateSelectionToSlateSelection = (children, selection) => {
   return _selection
 }
 
-export const entities = type =>
+export const entities = (type) =>
   ({ SOURCE: 'sources', TOPIC: 'topics', ENTRY: 'entries' }[type])
 
 // map between state block stringifies and slate block values
 const slateBlockMap = {}
 
-export const stateBlockToHtml = block => {
+export const stateBlockToHtml = (block) => {
   const _text = block.text.textValue
   const _ranges = flattenRanges(block.text.ranges)
   return textToHtml({
@@ -83,7 +83,7 @@ export const stateBlockToHtml = block => {
 }
 
 // convert state and apply markup values
-export const stateBlockToSlateBlock = block => {
+export const stateBlockToSlateBlock = (block) => {
   // object hash
   const _hashBlock = { text: block.text, type: block.type }
   const str = JSON.stringify(_hashBlock)
@@ -100,7 +100,7 @@ export const stateBlockToSlateBlock = block => {
 
   // CACHE CLEANUP
   // look up any block in dicitonary by same block id
-  const _hash = pickBy(slateBlockMap, b => b._id === block._id)
+  const _hash = pickBy(slateBlockMap, (b) => b._id === block._id)
 
   // if value exists with same id, remove from dictionary
   if (_hash) {
@@ -129,9 +129,9 @@ export const stateBlockToSlateBlock = block => {
 convert page state to a slate value on initial mount
 */
 
-export const stateToSlate = initState => {
+export const stateToSlate = (initState) => {
   const _blocks = initState.blocks
-  const _state = _blocks.map(_block => stateBlockToSlateBlock(_block))
+  const _state = _blocks.map((_block) => stateBlockToSlateBlock(_block))
   return _state
 }
 
@@ -145,20 +145,20 @@ const allowedRanges = [
 
 const allowedInlines = ['inlineTopic']
 
-export const slateRangesToStateRanges = node => {
+export const slateRangesToStateRanges = (node) => {
   let _offset = 0
   const _ranges = []
   if (!node) {
     return _ranges
   }
-  node.children.forEach(child => {
+  node.children.forEach((child) => {
     if (!child.text) {
       return
     }
     const _textLength = child.text.length
 
     // check if range is inline type
-    const _inlineType = Object.keys(child).filter(prop =>
+    const _inlineType = Object.keys(child).filter((prop) =>
       allowedInlines.includes(prop)
     )
 
@@ -170,7 +170,7 @@ export const slateRangesToStateRanges = node => {
         marks: [[_inlineType[0], child.atomicId]],
       })
     } else {
-      Object.keys(child).forEach(prop => {
+      Object.keys(child).forEach((prop) => {
         if (allowedRanges.includes(prop) && child[prop]) {
           _ranges.push({ offset: _offset, length: _textLength, marks: [prop] })
         }
@@ -185,7 +185,7 @@ export const slateRangesToStateRanges = node => {
 
 export const isFormatActive = (editor, format) => {
   const [match] = Editor.nodes(editor, {
-    match: n => n[format] === true,
+    match: (n) => n[format] === true,
     mode: 'all',
   })
   return !!match
@@ -194,7 +194,7 @@ export const isFormatActive = (editor, format) => {
 /*
 checks selection for inline types
 */
-export const isSelectionAtomic = editor => {
+export const isSelectionAtomic = (editor) => {
   const _frag = Editor.fragment(editor, editor.selection)
   return !_frag.reduce(
     (acc, curr) => acc * !isAtomicInlineType(curr.type),
@@ -217,7 +217,7 @@ export const toggleMark = (editor, format) => {
 }
 
 // serialize slate node to html for page path header
-const serializeHeader = node => {
+const serializeHeader = (node) => {
   if (Text.isText(node)) {
     let _children = node.text
 
@@ -230,7 +230,7 @@ const serializeHeader = node => {
     return _children
   }
 
-  const children = node.children.map(n => serializeHeader(n)).join('')
+  const children = node.children.map((n) => serializeHeader(n)).join('')
 
   switch (node.type) {
     // case 'SOURCE':
@@ -241,7 +241,7 @@ const serializeHeader = node => {
 }
 
 // serialize slate node to html
-export const serialize = node => {
+export const serialize = (node) => {
   if (Text.isText(node)) {
     let _children = node.text
 
@@ -254,7 +254,7 @@ export const serialize = node => {
     return _children
   }
 
-  const children = node.children.map(n => serialize(n)).join('')
+  const children = node.children.map((n) => serialize(n)).join('')
 
   switch (node.type) {
     case 'SOURCE':
@@ -264,14 +264,14 @@ export const serialize = node => {
   }
 }
 
-export const stateBlockToHtmlHeader = stateBlock => {
+export const stateBlockToHtmlHeader = (stateBlock) => {
   const _slateNode = stateBlockToSlateBlock(stateBlock)
   return serializeHeader(_slateNode)
 }
 
-export const stateToHTMLString = frag => {
+export const stateToHTMLString = (frag) => {
   const _innerHtml = frag
-    .map(b => {
+    .map((b) => {
       const _slateNode = stateBlockToSlateBlock(b)
       return `<p>${serialize(_slateNode)}</p>`
     })
@@ -281,7 +281,7 @@ export const stateToHTMLString = frag => {
   return `<span>${_innerHtml}</span>`
 }
 
-export const isCurrentlyInInlineAtomicField = editor => {
+export const isCurrentlyInInlineAtomicField = (editor) => {
   if (
     isMarkActive(editor, 'inlineAtomicMenu') &&
     Range.isCollapsed(editor.selection)
@@ -297,15 +297,15 @@ returns all blocks which contain an inline or atomic block with provided id igno
 
 export const getBlocksWithAtomicId = (blocks, id) => {
   const _atomicBlocks = blocks.filter(
-    b => b._id === id && b.text.textValue.charAt(0) !== '/'
+    (b) => b._id === id && b.text.textValue.charAt(0) !== '/'
   )
 
   const _inlineBlocks = blocks.filter(
-    b =>
+    (b) =>
       b.text.ranges.filter(
-        r =>
+        (r) =>
           r.marks.filter(
-            m =>
+            (m) =>
               Array.isArray(m) &&
               m.length === 2 &&
               m[0] === 'inlineTopic' &&
@@ -318,18 +318,18 @@ export const getBlocksWithAtomicId = (blocks, id) => {
 
 export const getInlineFromBlock = (block, id) =>
   block.text.ranges
-    .map(r =>
+    .map((r) =>
       r.marks.filter(
-        m =>
+        (m) =>
           Array.isArray(m) &&
           m.length === 2 &&
           m[0] === 'inlineTopic' &&
           m[1] === id
       )
     )
-    .filter(r => r.length)
+    .filter((r) => r.length)
 
-export const isCharacterKeyPress = evt => {
+export const isCharacterKeyPress = (evt) => {
   if (typeof evt.which === 'undefined') {
     // This is IE, which only fires keypress events for printable keys
     return true

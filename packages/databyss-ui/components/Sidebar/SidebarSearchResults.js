@@ -15,7 +15,7 @@ import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
 import { Text, View } from '@databyss-org/ui/primitives'
 
-const FulltextSearchItem = props => (
+const FulltextSearchItem = (props) => (
   <SidebarListItem
     text="Find in notes"
     id="sidebarListItem-entry-search"
@@ -52,7 +52,7 @@ const SidebarSearchResults = ({
   searchHasFocus,
 }) => (
   <SearchAllLoader filtered>
-    {results => {
+    {(results) => {
       const sourceTitlesData = getSourceTitlesData(results[0])
       const authorsData = getAuthorData(results[1])
       const topicsData = getTopicsData(results[2])

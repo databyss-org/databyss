@@ -18,11 +18,11 @@ const createReducer = (...middlewares) => {
   ])
 
   return (reducer, initialState, { initializer, name, onChange } = {}) => {
-    const ref = useRef((initializer || (value => value))(initialState))
+    const ref = useRef((initializer || ((value) => value))(initialState))
     const [, setState] = useState(ref.current)
 
     const dispatch = useCallback(
-      action => {
+      (action) => {
         action.meta = { provider: name }
         ref.current = reducer(ref.current, action, onChange)
         // TODO: remove after refactoring all reducers to use immer, which freezes for us
@@ -43,18 +43,15 @@ const createReducer = (...middlewares) => {
       )
     )
 
-    useEffect(
-      () => {
-        dispatchRef.current = composedMiddleware(
-          {
-            getState: () => ref.current,
-            dispatch: (...args) => dispatchRef.current(...args),
-          },
-          dispatch
-        )
-      },
-      [dispatch]
-    )
+    useEffect(() => {
+      dispatchRef.current = composedMiddleware(
+        {
+          getState: () => ref.current,
+          dispatch: (...args) => dispatchRef.current(...args),
+        },
+        dispatch
+      )
+    }, [dispatch])
 
     return [ref.current, dispatchRef.current, ref]
   }

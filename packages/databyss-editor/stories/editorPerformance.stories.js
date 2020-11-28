@@ -68,7 +68,7 @@ const EditorWithProvider = () => {
     }
   }
 
-  const onBlockSizeClick = size => {
+  const onBlockSizeClick = (size) => {
     // use for laoding time calculation
     timeDelta.current = Date.now()
     setTime(null)
@@ -78,16 +78,13 @@ const EditorWithProvider = () => {
     // setBlockSize(size)
   }
 
-  useEffect(
-    () => {
-      if (blockSize) {
-        // force rerender
-        window.requestAnimationFrame(() => setProviderKey(providerKey + 1))
-        setEditbleState(generateState(blockSize))
-      }
-    },
-    [blockSize]
-  )
+  useEffect(() => {
+    if (blockSize) {
+      // force rerender
+      window.requestAnimationFrame(() => setProviderKey(providerKey + 1))
+      setEditbleState(generateState(blockSize))
+    }
+  }, [blockSize])
 
   const onKeyDown = () => {
     if (!timeDelta.current && !loading) {
@@ -196,25 +193,25 @@ storiesOf('Selenium//Tests', module)
   .add('Slate 5 - Editor Performance', () => {
     fetchMock
       .restore()
-      .post(url => {
+      .post((url) => {
         if (url.includes('/api/sources') || url.includes('/api/topics')) {
           return true
         }
         return null
       }, 200)
-      .get(url => {
+      .get((url) => {
         if (url.includes('/api/sources')) {
           return true
         }
         return null
       }, sourceFixture)
-      .get(url => {
+      .get((url) => {
         if (url.includes('/api/topics')) {
           return true
         }
         return null
       }, topicFixture)
-      .get(url => {
+      .get((url) => {
         if (url.includes('googleapis')) {
           return true
         }

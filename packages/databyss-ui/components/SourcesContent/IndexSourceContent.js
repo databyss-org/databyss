@@ -16,7 +16,7 @@ const IndexSourceContent = ({ relations }) => {
 
   const pages = getPages()
 
-  const onPageClick = pageId => {
+  const onPageClick = (pageId) => {
     // if topic has no blocks associated with it, page click should instead redirect to the topic in the page
     if (
       relations.results[pageId].length === 1 &&
@@ -36,9 +36,9 @@ const IndexSourceContent = ({ relations }) => {
   const _results = Object.keys(relations.results)
     // filter out results not associated to a page
     // page may have been archived
-    .filter(r => pages[r]?.name)
+    .filter((r) => pages[r]?.name)
     // filter out results if no entries are included
-    .filter(r => relations.results[r].length)
+    .filter((r) => relations.results[r].length)
     .map((r, i) => (
       <SearchResultsContainer key={i}>
         <SearchResultTitle
@@ -50,7 +50,7 @@ const IndexSourceContent = ({ relations }) => {
         />
 
         {relations.results[r]
-          .filter(e => e.blockText.textValue.length)
+          .filter((e) => e.blockText.textValue.length)
           .map((e, k) => (
             <SearchResultDetails
               key={k}

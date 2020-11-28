@@ -2,10 +2,10 @@ import Account from '../models/Account'
 import Page from '../models/Page'
 
 function checkRequiredRoles(requiredRoles, userRoles) {
-  return requiredRoles.filter(value => userRoles.includes(value)).length > 0
+  return requiredRoles.filter((value) => userRoles.includes(value)).length > 0
 }
 
-const accountMiddleware = requiredRoles => async (req, res, next) => {
+const accountMiddleware = (requiredRoles) => async (req, res, next) => {
   // if in shared account, favor shared account
   // check required roles for 'PUBLIC'
   if (req.asAccount && checkRequiredRoles(requiredRoles, 'PUBLIC')) {
@@ -26,7 +26,7 @@ const accountMiddleware = requiredRoles => async (req, res, next) => {
     return res.status(400).json({ msg: 'no account found' })
   }
   const accountUser = account.users.find(
-    user => user._id.toString() === req.user.id.toString()
+    (user) => user._id.toString() === req.user.id.toString()
   )
 
   if (!accountUser) {

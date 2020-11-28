@@ -7,7 +7,7 @@ import { getScrollViewMaxHeight } from '../utils/getScrollViewMaxHeight'
 import TappableList from './TappableList'
 
 // component
-const ScrollableListView = props => {
+const ScrollableListView = (props) => {
   const getMaxHeight = () => {
     if (props.maxHeight) {
       return props.maxHeight

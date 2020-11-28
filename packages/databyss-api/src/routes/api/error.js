@@ -1,14 +1,14 @@
 import express from 'express'
-import Bugsnag from '@databyss-org/services/lib/bugsnag'
+import Bugsnag from '@bugsnag/js'
 
 import { ApiError } from '../../lib/Errors'
 
-const delay = timer => new Promise(resolve => setTimeout(resolve, timer))
+const delay = (timer) => new Promise((resolve) => setTimeout(resolve, timer))
 
 const router = express.Router()
 
 router.get('/', () => {
-  Bugsnag.client.notify(new Error('Test notify error'))
+  Bugsnag.notify(new Error('Test notify error'))
 
   throw new Error('Test throw error')
 })

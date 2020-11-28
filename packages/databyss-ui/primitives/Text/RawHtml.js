@@ -4,15 +4,7 @@ import styled from '../styled'
 import IS_NATIVE from '../../lib/isNative'
 import { variants } from './Text'
 
-const Styled = styled(
-  'span',
-  compose(
-    variants,
-    color,
-    space,
-    border
-  )
-)
+const Styled = styled('span', compose(variants, color, space, border))
 
 const RawHtml = forwardRef(({ _html, html, ...others }, ref) => {
   if (IS_NATIVE) {

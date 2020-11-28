@@ -27,7 +27,7 @@ const PageDetails = () => {
   const [pageTitle, setPageTitle] = useState('Loading...')
 
   // render methods
-  const renderPageDetails = page => (
+  const renderPageDetails = (page) => (
     <NotifyProvider>
       <PageContainer
         anchor={anchor}
@@ -42,7 +42,7 @@ const PageDetails = () => {
     <MobileView headerItems={buildHeaderItems(pageTitle, pageId)}>
       <PageProvider>
         <PageLoader pageId={pageId}>
-          {page => {
+          {(page) => {
             setPageTitle(page.name)
             return renderPageDetails(page)
           }}

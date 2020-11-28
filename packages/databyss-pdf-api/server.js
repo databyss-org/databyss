@@ -8,7 +8,7 @@ let httpServer = null
 const start = () =>
   require('./src/app')
     .default()
-    .then(app => {
+    .then((app) => {
       const PORT = process.env.PORT || 5005
 
       httpServer = http.createServer(app)
@@ -19,7 +19,7 @@ const start = () =>
 
 const restart = async () => {
   console.log('Reloading', watchPath)
-  Object.keys(require.cache).forEach(id => {
+  Object.keys(require.cache).forEach((id) => {
     if (id.startsWith(watchPath)) {
       delete require.cache[id]
     }

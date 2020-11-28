@@ -2,7 +2,7 @@ import React from 'react'
 import { View, Text, Grid, pxUnits, Button } from '@databyss-org/ui/primitives'
 import Login from '@databyss-org/ui/modules/Login/Login'
 
-const Public = props => (
+const Public = (props) => (
   <React.Fragment>
     <Grid
       widthVariant="page"

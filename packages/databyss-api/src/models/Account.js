@@ -56,7 +56,7 @@ AccountSchema.static('create', async (values = {}) => {
   return instance
 })
 
-AccountSchema.post('remove', async doc => {
+AccountSchema.post('remove', async (doc) => {
   console.log(`Account hook [remove]: ${doc._id}`)
   // delete all Page, Block and BlockRelation records in account
   await Page.deleteMany({ account: doc._id })
@@ -69,9 +69,9 @@ AccountSchema.post('remove', async doc => {
 /* eslint-disable func-names */
 // updates `users` to set @role for @userId
 // adds user if they don't exist
-AccountSchema.method('setUserRole', async function({ userId, role }) {
+AccountSchema.method('setUserRole', async function ({ userId, role }) {
   const _idx = this.users.findIndex(
-    user => user._id.toString() === userId.toString()
+    (user) => user._id.toString() === userId.toString()
   )
   if (_idx >= 0) {
     // UPDATE USER PERMISSION

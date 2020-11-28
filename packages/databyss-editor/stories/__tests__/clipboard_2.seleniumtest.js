@@ -38,10 +38,8 @@ const PROXY_URL_EDITOR =
   'http://0.0.0.0:8080/iframe.html?id=services-page--slate-5'
 
 describe('editor clipboard', () => {
-  beforeEach(async done => {
-    const random = Math.random()
-      .toString(36)
-      .substring(7)
+  beforeEach(async (done) => {
+    const random = Math.random().toString(36).substring(7)
     // OSX and safari are necessary
     driver = await startSession({ platformName: WIN, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
@@ -207,7 +205,8 @@ describe('editor clipboard', () => {
       <editor>
         <block type="SOURCE">
           <text>
-            this is a source test with appended text<cursor />
+            this is a source test with appended text
+            <cursor />
           </text>
         </block>
         <block type="ENTRY">
@@ -271,7 +270,8 @@ describe('editor clipboard', () => {
         </block>
         <block type="ENTRY">
           <text>
-            with<cursor />
+            with
+            <cursor />
           </text>
         </block>
       </editor>
@@ -330,7 +330,8 @@ describe('editor clipboard', () => {
         </block>
         <block type="SOURCE">
           <text>
-            this is another source text<cursor />
+            this is another source text
+            <cursor />
           </text>
         </block>
       </editor>

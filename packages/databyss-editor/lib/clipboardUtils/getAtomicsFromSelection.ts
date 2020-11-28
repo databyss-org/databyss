@@ -1,27 +1,27 @@
 import _ from 'lodash'
+import { BasicBlock, BlockType } from '@databyss-org/services/interfaces'
 import { EditorState, Block } from '../../interfaces'
 import { getFragmentAtSelection } from './'
 import { isAtomicInlineType } from '../util'
-import { AtomicType } from '../../interfaces/EditorState'
 
-const getAtomicsFromFrag = (frag: Block[]): AtomicType[] => {
-  const atomics: AtomicType[] = []
-  frag.forEach(b => {
+const getAtomicsFromFrag = (frag: Block[]): BasicBlock[] => {
+  const atomics: BasicBlock[] = []
+  frag.forEach((b) => {
     if (!isAtomicInlineType(b.type)) {
-      b.text.ranges.forEach(r => {
+      b.text.ranges.forEach((r) => {
         if (r.marks.length) {
           r.marks
-            .filter(i => Array.isArray(i) && i[0] === 'inlineTopic')
-            .forEach(i => {
-              if (!atomics.some(a => a._id === i[1])) {
-                const _inline = { type: 'TOPIC', _id: i[1] }
+            .filter((i) => Array.isArray(i) && i[0] === 'inlineTopic')
+            .forEach((i) => {
+              if (!atomics.some((a) => a._id === i[1])) {
+                const _inline: BasicBlock = { type: BlockType.Topic, _id: i[1] }
                 atomics.push(_inline)
               }
             })
         }
       })
     } else if (
-      !atomics.some(a => a._id === b._id) &&
+      !atomics.some((a) => a._id === b._id) &&
       b.text.textValue.charAt(0) !== '/'
     ) {
       const _atomic = { type: b.type, _id: b._id }
@@ -47,7 +47,7 @@ export const getAtomicDifference = ({
 }: {
   stateBefore: EditorState
   stateAfter: EditorState
-}): { atomicsRemoved: AtomicType[]; atomicsAdded: AtomicType[] } => {
+}): { atomicsRemoved: BasicBlock[]; atomicsAdded: Block[] | BasicBlock[] } => {
   // returns array of atomics within selection
   const _atomicsBefore = getAtomicsFromSelection({
     state: stateBefore,
@@ -55,13 +55,13 @@ export const getAtomicDifference = ({
 
   const _atomicsAfter = getAtomicsFromSelection({ state: stateAfter })
 
-  const _listOfAtomicsToRemove: AtomicType[] = _.differenceWith(
+  const _listOfAtomicsToRemove: BasicBlock[] = _.differenceWith(
     _atomicsBefore,
     _atomicsAfter,
     _.isEqual
   )
 
-  const _listOFAtomicsToAdd: AtomicType[] = _.differenceWith(
+  const _listOFAtomicsToAdd: BasicBlock[] = _.differenceWith(
     _atomicsAfter,
     _atomicsBefore,
     _.isEqual

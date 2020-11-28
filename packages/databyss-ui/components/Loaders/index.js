@@ -23,9 +23,9 @@ export const PageLoader = ({ children, pageId }) => {
   )
 }
 
-export const withPage = Wrapped => ({ pageId, ...others }) => (
+export const withPage = (Wrapped) => ({ pageId, ...others }) => (
   <PageLoader pageId={pageId}>
-    {page => <Wrapped page={page} {...others} />}
+    {(page) => <Wrapped page={page} {...others} />}
   </PageLoader>
 )
 
@@ -35,43 +35,43 @@ export const PagesLoader = ({ children, filtered, archived }) => {
   let _resources = getPages()
 
   if (filtered && isResourceReady(_resources)) {
-    _resources = pickBy(_resources, page => !page.archive)
+    _resources = pickBy(_resources, (page) => !page.archive)
   }
 
   if (archived && isResourceReady(_resources)) {
-    _resources = pickBy(_resources, page => page.archive)
+    _resources = pickBy(_resources, (page) => page.archive)
   }
 
   return <MakeLoader resources={_resources} children={children} />
 }
 
-export const withPages = Wrapped => ({ ...others }) => (
-  <PagesLoader>{pages => <Wrapped pages={pages} {...others} />}</PagesLoader>
+export const withPages = (Wrapped) => ({ ...others }) => (
+  <PagesLoader>{(pages) => <Wrapped pages={pages} {...others} />}</PagesLoader>
 )
 
 export const EntrySearchLoader = ({ query, children }) => {
-  const searchEntries = useEntryContext(c => c.searchEntries)
+  const searchEntries = useEntryContext((c) => c.searchEntries)
   const resources = useEntryContext(
-    c => c.searchCache[query.replace(/\?/g, '')]
+    (c) => c.searchCache[query.replace(/\?/g, '')]
   )
   searchEntries(query.replace(/\?/g, ''))
   return <MakeLoader resources={resources} children={children} />
 }
 
 export const SourceLoader = ({ sourceId, children }) => {
-  const getSource = useSourceContext(c => c.getSource)
+  const getSource = useSourceContext((c) => c.getSource)
 
   return <MakeLoader resources={getSource(sourceId)} children={children} />
 }
 
-export const withSource = Wrapped => ({ sourceId, ...others }) => (
+export const withSource = (Wrapped) => ({ sourceId, ...others }) => (
   <SourceLoader sourceId={sourceId}>
-    {source => <Wrapped source={source} {...others} />}
+    {(source) => <Wrapped source={source} {...others} />}
   </SourceLoader>
 )
 
 export const CatalogSearchLoader = ({ query, type, children }) => {
-  const searchCatalog = useCatalogContext(c => c && c.searchCatalog)
+  const searchCatalog = useCatalogContext((c) => c && c.searchCatalog)
   if (!searchCatalog) {
     return children
   }
@@ -84,11 +84,11 @@ export const CatalogSearchLoader = ({ query, type, children }) => {
 }
 
 export const AllTopicsLoader = ({ children, filtered, ...others }) => {
-  const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
+  const getTopicHeaders = useTopicContext((c) => c.getTopicHeaders)
   let _resource = getTopicHeaders()
 
   if (filtered && isResourceReady(_resource)) {
-    _resource = pickBy(_resource, topic => topic.isInPages?.length)
+    _resource = pickBy(_resource, (topic) => topic.isInPages?.length)
   }
 
   return <MakeLoader resources={_resource} children={children} {...others} />
@@ -98,23 +98,23 @@ AllTopicsLoader.defaultProps = {
 }
 
 export const AccountLoader = ({ children }) => {
-  const getUserAccount = useSessionContext(c => c && c.getUserAccount)
+  const getUserAccount = useSessionContext((c) => c && c.getUserAccount)
   return <MakeLoader resources={getUserAccount()} children={children} />
 }
 
 export const TopicLoader = ({ topicId, children }) => {
-  const getTopic = useTopicContext(c => c.getTopic)
+  const getTopic = useTopicContext((c) => c.getTopic)
 
   return <MakeLoader resources={getTopic(topicId)} children={children} />
 }
 
 export const AuthorsLoader = ({ children, filtered }) => {
-  const getAuthors = useSourceContext(c => c.getAuthors)
+  const getAuthors = useSourceContext((c) => c.getAuthors)
 
   let _results = getAuthors()
   // if filtered is pass as a prop, remove resource that dont appear on a page
   if (filtered && isResourceReady(_results)) {
-    _results = pickBy(_results, author => author.isInPages?.length)
+    _results = pickBy(_results, (author) => author.isInPages?.length)
   }
   return <MakeLoader resources={_results} children={children} />
 }
@@ -123,12 +123,12 @@ AuthorsLoader.defaultProps = {
 }
 
 export const SourceCitationsLoader = ({ children, filtered, ...others }) => {
-  const getSourceCitations = useSourceContext(c => c.getSourceCitations)
+  const getSourceCitations = useSourceContext((c) => c.getSourceCitations)
 
   let _resource = getSourceCitations()
 
   if (filtered && isResourceReady(_resource)) {
-    _resource = pickBy(_resource, citation => citation.isInPages?.length)
+    _resource = pickBy(_resource, (citation) => citation.isInPages?.length)
   }
   return <MakeLoader resources={_resource} children={children} {...others} />
 }
@@ -137,27 +137,27 @@ SourceCitationsLoader.defaultProps = {
 }
 
 export const SearchAllLoader = ({ children, filtered, ...others }) => {
-  const getAuthors = useSourceContext(c => c.getAuthors)
-  const getTopicHeaders = useTopicContext(c => c.getTopicHeaders)
+  const getAuthors = useSourceContext((c) => c.getAuthors)
+  const getTopicHeaders = useTopicContext((c) => c.getTopicHeaders)
   const { getPages } = usePageContext()
-  const getSourceCitations = useSourceContext(c => c.getSourceCitations)
+  const getSourceCitations = useSourceContext((c) => c.getSourceCitations)
 
   let sourceCitations = getSourceCitations()
   if (filtered && isResourceReady(sourceCitations)) {
     sourceCitations = pickBy(
       sourceCitations,
-      citation => citation.isInPages?.length
+      (citation) => citation.isInPages?.length
     )
   }
 
   let authors = getAuthors()
   if (filtered && isResourceReady(authors)) {
-    authors = pickBy(authors, author => author.isInPages?.length)
+    authors = pickBy(authors, (author) => author.isInPages?.length)
   }
 
   let topics = getTopicHeaders()
   if (filtered && isResourceReady(topics)) {
-    topics = pickBy(topics, topic => topic.isInPages?.length)
+    topics = pickBy(topics, (topic) => topic.isInPages?.length)
   }
 
   const pages = getPages()
@@ -168,10 +168,10 @@ export const SearchAllLoader = ({ children, filtered, ...others }) => {
 }
 
 export const BlockRelationsLoader = ({ children, atomicId }) => {
-  const findBlockRelations = useEntryContext(c => c.findBlockRelations)
+  const findBlockRelations = useEntryContext((c) => c.findBlockRelations)
 
   const clearBlockRelationsCache = useEntryContext(
-    c => c.clearBlockRelationsCache
+    (c) => c.clearBlockRelationsCache
   )
   return (
     <MakeLoader

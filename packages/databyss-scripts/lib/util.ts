@@ -14,7 +14,7 @@ export function objectId(): string {
 export function getEnv(envName: string): { [key: string]: string } {
   const dotenvFiles = [`.env.${envName}.local`, `.env.${envName}`]
   let envObj = {}
-  dotenvFiles.forEach(dotenvFile => {
+  dotenvFiles.forEach((dotenvFile) => {
     if (fs.existsSync(dotenvFile)) {
       envObj = {
         ...envObj,

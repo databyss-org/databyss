@@ -31,7 +31,7 @@ export const showAtomicModal = ({
   }
 
   // compose modal dismiss callback function
-  const onUpdate = atomic => {
+  const onUpdate = (atomic) => {
     // if atomic is saved, update content
     if (atomic) {
       const _selection = state.selection

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { keyframes as makeKeyframes } from '@emotion/core'
 import { timing as themeTiming } from '../../theming/theme'
 
-const reverseKeyframes = keyframes => ({
+const reverseKeyframes = (keyframes) => ({
   '0%': {
     ...keyframes['100%'],
   },
@@ -28,7 +28,7 @@ const makeAnimation = (keyframes, duration, timing) => {
 
   return {
     css: state && animationCss(animationKeyframes, duration, timing),
-    run: onComplete => {
+    run: (onComplete) => {
       timerRef.current = setTimeout(() => {
         if (onComplete) {
           onComplete()

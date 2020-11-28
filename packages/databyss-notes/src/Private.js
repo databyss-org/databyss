@@ -31,7 +31,7 @@ const App = ({ children }) => (
 
 const NotFoundRedirect = () => {
   const { navigate } = useNavigationContext()
-  const getSession = useSessionContext(c => c && c.getSession)
+  const getSession = useSessionContext((c) => c && c.getSession)
 
   const { account } = getSession()
 
@@ -47,7 +47,7 @@ const NotFoundRedirect = () => {
 
 const Private = () => {
   const { location, navigate } = useNavigationContext()
-  const getSession = useSessionContext(c => c && c.getSession)
+  const getSession = useSessionContext((c) => c && c.getSession)
   const { account } = getSession()
 
   // Navigate to default page is nothing in path

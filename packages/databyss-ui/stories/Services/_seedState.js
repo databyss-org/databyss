@@ -5,7 +5,7 @@ const entryId = ObjectId().toHexString()
 const blockOneId = ObjectId().toHexString()
 const blockTwoId = ObjectId().toHexString()
 
-export default pageId => ({
+export default (pageId) => ({
   editableState: null,
   activeBlockId: null,
   newSources: [],

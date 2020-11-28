@@ -47,7 +47,7 @@ interface ViewHeaderNavItemProps {
 */
 
 // component
-const ViewHeaderNavItem = props => {
+const ViewHeaderNavItem = (props) => {
   const { navigate } = useNavigationContext()
 
   const labelRef = useRef()
@@ -70,20 +70,17 @@ const ViewHeaderNavItem = props => {
     updateLabelWidth()
   }
 
-  useEffect(
-    () => {
-      updateLabelWidth()
+  useEffect(() => {
+    updateLabelWidth()
 
-      // add listeners
-      window.addEventListener('resize', onWindowResize)
+    // add listeners
+    window.addEventListener('resize', onWindowResize)
 
-      return () => {
-        // cleanup
-        window.removeEventListener('resize', onWindowResize)
-      }
-    },
-    [labelRef]
-  )
+    return () => {
+      // cleanup
+      window.removeEventListener('resize', onWindowResize)
+    }
+  }, [labelRef])
 
   // render methods
   const renderIcon = () =>

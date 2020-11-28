@@ -1,18 +1,19 @@
 import { ResourcePending } from '../interfaces/ResourcePending'
 
-export const resourceIsReady = resource =>
+export const resourceIsReady = (resource) =>
   resource &&
   !(resource instanceof ResourcePending) &&
   !(resource instanceof Error)
 
 // TODO: extract and move to `packages/databyss-services/sources/lib` ?
-export const getAuthorsFromSources = blocks =>
+export const getAuthorsFromSources = (blocks) =>
   blocks.reduce((dict, block) => {
     if (block.detail?.authors) {
-      block.detail.authors.forEach(author => {
+      block.detail.authors.forEach((author) => {
         dict[
-          `${author.firstName?.textValue || ''}${author.lastName?.textValue ||
-            ''}`
+          `${author.firstName?.textValue || ''}${
+            author.lastName?.textValue || ''
+          }`
         ] = { ...author, isInPages: block?.isInPages }
       })
     }

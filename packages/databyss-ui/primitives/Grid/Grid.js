@@ -15,7 +15,7 @@ const Grid = ({
 }) => {
   const childrenWithLayout = React.Children.map(
     children,
-    child =>
+    (child) =>
       child &&
       React.cloneElement(child, {
         flexGrow: 0,

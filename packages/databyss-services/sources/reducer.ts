@@ -28,7 +28,7 @@ export const initialState: SourceState = {
   cache: {},
   authorsHeaderCache: null,
   citationHeaderCache: null,
-  preferredCitationStyle: defaultCitationStyle.id,
+  preferredCitationStyle: defaultCitationStyle?.id || 'mla',
 }
 
 export default produce((draft: Draft<SourceState>, action: FSA) => {
@@ -47,23 +47,23 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
     }
     case CACHE_SOURCE: {
       let _source
-      if(action.payload.source instanceof Error){
+      if (action.payload.source instanceof Error) {
         _source = action.payload.source
-      }else {
-       _source = { ...action.payload.source, type: 'SOURCE' }
+      } else {
+        _source = { ...action.payload.source, type: 'SOURCE' }
       }
       draft.cache[action.payload.id] = _source
       if (resourceIsReady(_source)) {
         _citationHeaderCache[_source._id] = _source
         draft.citationHeaderCache = _citationHeaderCache
         // only populate header if header has been loaded
-        if (draft.authorsHeaderCache){
+        if (draft.authorsHeaderCache) {
           draft.authorsHeaderCache = getAuthorsFromSources(
             Object.values(_citationHeaderCache)
           )
         }
       }
-    
+
       break
     }
 
@@ -81,8 +81,9 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
       draft.authorsHeaderCache = action.payload.results.reduce(
         (dict: CacheDict<Author>, author: Author) => {
           dict[
-            `${author.firstName?.textValue || ''}${author.lastName?.textValue ||
-              ''}`
+            `${author.firstName?.textValue || ''}${
+              author.lastName?.textValue || ''
+            }`
           ] = author
           return dict
         },
@@ -97,30 +98,34 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
     }
 
     case REMOVE_PAGE_FROM_HEADERS: {
-      const _inPages = _citationHeaderCache[action.payload.id]?.isInPages
-      if(_inPages){
-        const _index = _inPages.findIndex(p=> p === action.payload.pageId)
-        if(_index>-1){
-          _citationHeaderCache[action.payload.id]?.isInPages.splice(_index, 1)
-         draft.authorsHeaderCache = getAuthorsFromSources(
-              Object.values(_citationHeaderCache)
-            )
+      const _resource: any = _citationHeaderCache[action.payload.id]
+
+      const _inPages: string[] = _resource?.isInPages
+      if (_inPages) {
+        const _index = _inPages.findIndex((p) => p === action.payload.pageId)
+        if (_index > -1) {
+          _resource?.isInPages.splice(_index, 1)
+          draft.authorsHeaderCache = getAuthorsFromSources(
+            Object.values(_citationHeaderCache)
+          )
         }
       }
-    
+
       break
     }
 
     case ADD_PAGE_TO_HEADER: {
-      if(_citationHeaderCache){
-        const _inPages = _citationHeaderCache[action.payload.id]?.isInPages
-        if(_inPages){
-          const _index = _inPages.findIndex(p=> p === action.payload.pageId)
-          if(_index<0){
-            _citationHeaderCache[action.payload.id].isInPages.push(action.payload.pageId)
-           draft.authorsHeaderCache = getAuthorsFromSources(
-                Object.values(_citationHeaderCache)
-              )
+      if (_citationHeaderCache) {
+        const _resource: any = _citationHeaderCache[action.payload.id]
+
+        const _inPages: string[] = _resource?.isInPages
+        if (_inPages) {
+          const _index = _inPages.findIndex((p) => p === action.payload.pageId)
+          if (_index < 0) {
+            _resource.isInPages.push(action.payload.pageId)
+            draft.authorsHeaderCache = getAuthorsFromSources(
+              Object.values(_citationHeaderCache)
+            )
           }
         }
       }
@@ -137,7 +142,7 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
 
     case SET_PREFERRED_CITATION_STYLE: {
       if (action.payload.styleId !== draft.preferredCitationStyle) {
-        // save style because different than previous 
+        // save style because different than previous
         draft.preferredCitationStyle = action.payload.styleId
         // clear cache to ensure render is done in provider
         draft.citationHeaderCache = null

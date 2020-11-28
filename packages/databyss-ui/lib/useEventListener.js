@@ -9,12 +9,9 @@ export default function useEventListener(eventName, handler, element = window) {
   // This allows our effect below to always get latest handler ...
   // ... without us needing to pass it in effect deps array ...
   // ... and potentially cause effect to re-run every render.
-  useEffect(
-    () => {
-      savedHandler.current = handler
-    },
-    [handler]
-  )
+  useEffect(() => {
+    savedHandler.current = handler
+  }, [handler])
 
   useEffect(
     () => {
@@ -24,7 +21,7 @@ export default function useEventListener(eventName, handler, element = window) {
       let eventListener
       if (isSupported) {
         // Create event listener that calls handler function stored in ref
-        eventListener = event => savedHandler.current(event)
+        eventListener = (event) => savedHandler.current(event)
 
         // Add event listener
         element.addEventListener(eventName, eventListener)

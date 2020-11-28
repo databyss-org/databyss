@@ -3,14 +3,16 @@ import { kebabCase } from 'lodash'
 import { CROSSREF, GOOGLE_BOOKS, OPEN_LIBRARY } from '../../catalog/constants'
 
 import { PublicationTypeId } from '../constants/PublicationTypeId'
+import { CatalogType } from '../../interfaces/CatalogState'
 
 const allTypes = Object.values(PublicationTypeId)
-const crossRefTypesMap = {}
-allTypes.forEach(type => {
+
+const crossRefTypesMap: { [key: string]: string } = {}
+allTypes.forEach((type) => {
   crossRefTypesMap[kebabCase(type)] = type
 })
 
-export function normalizePublicationId(value, source) {
+export function normalizePublicationId(value: string, source: CatalogType) {
   // error checks
   if (!value) {
     throw new Error(
@@ -40,11 +42,11 @@ export function normalizePublicationId(value, source) {
   }
 
   switch (source) {
-    case CROSSREF:
+    case CatalogType.Crossref:
       return normalizeFromCrossRef(value)
-    case GOOGLE_BOOKS:
+    case CatalogType.GoogleBooks:
       return normalizeFromGoogleBooks(value)
-    case OPEN_LIBRARY:
+    case CatalogType.OpenLibrary:
       return normalizeFromOpenLibrary()
     default:
       // somehow got passed the check above?
@@ -55,7 +57,7 @@ export function normalizePublicationId(value, source) {
 }
 
 // utils
-function normalizeFromCrossRef(value) {
+function normalizeFromCrossRef(value: string) {
   // specific cases handling
   if (value.toLowerCase() === 'book-chapter') {
     return PublicationTypeId.BOOK_SECTION
@@ -74,7 +76,7 @@ function normalizeFromCrossRef(value) {
   return null
 }
 
-function normalizeFromGoogleBooks(value) {
+function normalizeFromGoogleBooks(value: string) {
   // books#bookshelves
   // books#bookshelf
   // books#volumes

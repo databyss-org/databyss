@@ -1,4 +1,4 @@
-const icon = size => ({
+const icon = (size) => ({
   width: size,
   height: size,
 })

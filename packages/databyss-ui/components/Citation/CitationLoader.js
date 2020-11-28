@@ -8,7 +8,7 @@ import MakeLoader from '../Loaders/MakeLoader'
 
 import Citation from './Citation'
 
-const CitationLoader = props => {
+const CitationLoader = (props) => {
   const { sourceDetail, formatOptions } = props
 
   let generateCitation = null
@@ -25,7 +25,7 @@ const CitationLoader = props => {
 
     return (
       <MakeLoader resources={generateCitation(sourceDetail, formatOptions)}>
-        {citation => (
+        {(citation) => (
           <Citation
             citation={citation}
             formatOptions={formatOptions}

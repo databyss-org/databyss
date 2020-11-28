@@ -26,20 +26,17 @@ export const KeyboardNavigationProvider = ({
   /**
    * Gets the next item index and increments the state.itemCount
    */
-  const getNextItemIndex = useCallback(
-    () => {
-      const _idx = itemCountRef.current
-      itemCountRef.current += 1
-      return _idx
-    },
-    [itemCountRef]
-  )
+  const getNextItemIndex = useCallback(() => {
+    const _idx = itemCountRef.current
+    itemCountRef.current += 1
+    return _idx
+  }, [itemCountRef])
 
   /**
    * Increments activeIndex by 1, wrapping to 0 at end of list
    * Calls setActiveIndex to re-render the children
    */
-  const incrementActiveIndex = step => {
+  const incrementActiveIndex = (step) => {
     activeIndexRef.current += step
     if (activeIndexRef.current > itemCountRef.current - 1) {
       activeIndexRef.current = 0
@@ -51,7 +48,7 @@ export const KeyboardNavigationProvider = ({
   }
 
   const onKeydown = useCallback(
-    e => {
+    (e) => {
       if (e.key === 'Down' || e.key === 'ArrowDown') {
         e.preventDefault()
         incrementActiveIndex(1)
@@ -73,39 +70,30 @@ export const KeyboardNavigationProvider = ({
     [itemCountRef]
   )
 
-  const setActiveItem = item => {
+  const setActiveItem = (item) => {
     activeItemRef.current = item
   }
 
-  useEffect(
-    () => {
-      if (keyboardEventsActive) {
-        window.addEventListener('keydown', onKeydown)
-      } else {
-        window.removeEventListener('keydown', onKeydown)
-      }
-      return () => {
-        window.removeEventListener('keydown', onKeydown)
-      }
-    },
-    [keyboardEventsActive]
-  )
+  useEffect(() => {
+    if (keyboardEventsActive) {
+      window.addEventListener('keydown', onKeydown)
+    } else {
+      window.removeEventListener('keydown', onKeydown)
+    }
+    return () => {
+      window.removeEventListener('keydown', onKeydown)
+    }
+  }, [keyboardEventsActive])
 
-  useEffect(
-    () => {
-      onActiveIndexChanged(activeIndexRef.current)
-    },
-    [activeIndexRef.current]
-  )
+  useEffect(() => {
+    onActiveIndexChanged(activeIndexRef.current)
+  }, [activeIndexRef.current])
 
-  useEffect(
-    () => {
-      itemCountRef.current = 0
-      activeIndexRef.current = initialActiveIndex
-      setOrderKeyValue(orderKey)
-    },
-    [orderKey]
-  )
+  useEffect(() => {
+    itemCountRef.current = 0
+    activeIndexRef.current = initialActiveIndex
+    setOrderKeyValue(orderKey)
+  }, [orderKey])
 
   return (
     <KeyboardNavigationContext.Provider

@@ -58,9 +58,9 @@ export default ({
     }
   })
 
-  rangesForBlockBefore = rangesForBlockBefore.filter(r => r.length > 0)
+  rangesForBlockBefore = rangesForBlockBefore.filter((r) => r.length > 0)
 
-  rangesForBlockAfter = rangesForBlockAfter.filter(r => r.length > 0)
+  rangesForBlockAfter = rangesForBlockAfter.filter((r) => r.length > 0)
 
   return {
     before: {

@@ -23,7 +23,7 @@ const applyPatch = (node, path, value) => {
 
 // same as Object.assign, but filters out unwanted fields
 const assignPatchValue = (obj, value) => {
-  Object.keys(value).forEach(key => {
+  Object.keys(value).forEach((key) => {
     if (!key.match(/^__/)) {
       obj[key] = value[key]
     }

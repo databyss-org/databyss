@@ -24,14 +24,7 @@ const variants = variant({
 
 const StyledControl = styled(
   BaseControl,
-  compose(
-    flexbox,
-    shadow,
-    layout,
-    variants,
-    shadowVariant,
-    border
-  )
+  compose(flexbox, shadow, layout, variants, shadowVariant, border)
 )
 
 const Button = forwardRef(
@@ -40,7 +33,7 @@ const Button = forwardRef(
     const { buttonVariants, buttonThemes } = buttons
     if (
       Array.isArray(_children) &&
-      _children.filter(c => typeof c !== 'string').length === 0
+      _children.filter((c) => typeof c !== 'string').length === 0
     ) {
       _children = _children.join(' ')
     }

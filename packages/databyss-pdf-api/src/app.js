@@ -1,7 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import http from 'http'
-import Bugsnag from '@databyss-org/services/lib/bugsnag'
+import Bugsnag from '@bugsnag/js'
+import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import { ApiError } from '@databyss-org/api/src/lib/Errors'
 
 // routes
@@ -17,9 +18,7 @@ const run = async () => {
   app = express()
 
   // Init Bugsnag
-  if (process.env.NODE_ENV !== 'test') {
-    Bugsnag.init()
-  }
+  startBugsnag()
 
   // Init Middleware
   app.use(cors())
@@ -37,7 +36,7 @@ const run = async () => {
       return res.status(err.status).json({ error: err })
     }
     console.error('ERR', err)
-    Bugsnag.client.notify(err)
+    Bugsnag.notify(err)
     return res.status(500).json({ error: { message: err.message } })
   })
 
@@ -55,7 +54,7 @@ if (process.env.NODE_ENV === 'production') {
     process.exit()
   }
   // start server on port from env
-  run().then(app => {
+  run().then((app) => {
     const httpServer = http.createServer(app)
     httpServer.listen(PORT, () => {
       console.log(`Server started on port ${PORT}`)

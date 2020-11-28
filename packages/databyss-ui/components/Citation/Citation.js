@@ -4,7 +4,7 @@ import { pruneCitation } from '@databyss-org/services/citations/lib'
 
 import { RawHtml, View } from '../../primitives'
 
-const Citation = props => {
+const Citation = (props) => {
   const { citation, formatOptions, childViewProps, citationTextProps } = props
 
   const render = () => (

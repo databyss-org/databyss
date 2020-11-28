@@ -29,10 +29,13 @@ export const fragmentId = (type: BlockType, id: string): string =>
 
 // takes blocks array and resets the id's for non atomic types
 export const resetIds = (fragment: Block[]): Block[] =>
-  fragment.map(block => ({ ...block, _id: fragmentId(block.type, block._id) }))
+  fragment.map((block) => ({
+    ...block,
+    _id: fragmentId(block.type, block._id),
+  }))
 
 export const addBlockUIFields = (frag: Block[]): Block[] =>
-  frag.map(b => ({ ...b, __showNewBlockMenu: false, __isActive: false }))
+  frag.map((b) => ({ ...b, __showNewBlockMenu: false, __isActive: false }))
 
 // always have the anchor come before the focus
 export const sortSelection = (selection: Selection): Selection => {
@@ -59,7 +62,7 @@ export const mergeText = (a: Text, b: Text): Text => {
       ...r,
       offset: r.offset + a.textValue.length,
     })),
-  ].filter(r => r.length > 0)
+  ].filter((r) => r.length > 0)
 
   const mergedText = {
     textValue: mergedTextValue,
@@ -78,8 +81,8 @@ export const databyssFragToPlainText = (fragment: Block[]): string =>
 export const plainTextToDatabyssFrag = (text: string): Block[] => {
   const _frag = text
     .split('\n')
-    .filter(t => t.length)
-    .map(f => ({
+    .filter((t) => t.length)
+    .map((f) => ({
       text: { textValue: f, ranges: [] },
       type: BlockType.Entry,
       _id: new ObjectId().toHexString(),

@@ -1,6 +1,5 @@
-import tmp from 'tmp'
-import Block from '@databyss-org/api/src/models/Block'
-import Page from '@databyss-org/api/src/models/Page'
+import Block, { IBlock } from '@databyss-org/api/src/models/Block'
+import Page, { IPage } from '@databyss-org/api/src/models/Page'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
 import ServerProcess from '../lib/ServerProcess'
 import { getEnv } from '../lib/util'
@@ -42,7 +41,9 @@ class RepairBlocks extends ServerProcess {
 
 async function repair() {
   let _repairCount = 0
-  const _badBlocks = await Block.find({ type: { $regex: /^END_/ } })
+  const _badBlocks = await Block.find({
+    type: { $regex: /^END_/ },
+  })
   console.log(`Found ${_badBlocks.length} bad blocks`)
   for (const _badBlock of _badBlocks) {
     console.log(`Fixing ${_badBlock._id}`)
@@ -50,11 +51,12 @@ async function repair() {
     const _openerType = _badBlock.type.substring(4)
     console.log(`Opener type: ${_openerType}`)
     // find the block in pages collection
-    const _pages = await Page.find({ 'blocks._id': _badBlock._id })
+    const _pages: IPage[] = await Page.find({ 'blocks._id': _badBlock._id })
+
     for (const _page of _pages) {
       // find the closing atomic block in the blocks array
       const _openerIndex = _page.blocks.findIndex(
-        b => b._id.toString() === _badBlock._id.toString()
+        (b: IBlock) => b._id.toString() === _badBlock._id.toString()
       )
       let _closerIndex = -1
       for (let _i = _openerIndex + 1; _i < _page.blocks.length; _i += 1) {

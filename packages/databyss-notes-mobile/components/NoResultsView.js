@@ -18,7 +18,7 @@ const textStyles = () => ({
 const TextArea = styled(Text, textStyles)
 
 // component
-const NoResultsView = props => {
+const NoResultsView = (props) => {
   // render methods
   const render = () => <TextArea>{props.text}</TextArea>
 

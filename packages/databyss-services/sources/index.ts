@@ -14,7 +14,7 @@ export const getSources = (): Promise<Source[]> => httpGet('/sources')
 export const getSourceCitations = (
   citationStyleId?: string
 ): Promise<SourceCitationHeader[]> => {
-  const styleId = citationStyleId || defaultCitationStyle.id
+  const styleId = citationStyleId || defaultCitationStyle?.id
   return httpGet(`/sources/citations/${styleId}`)
 }
 

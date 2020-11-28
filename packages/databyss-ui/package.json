@@ -2,7 +2,7 @@
   "name": "@databyss-org/ui",
   "author": "databyss-org",
   "license": "MIT",
-  "version": "1.2.4",
+  "version": "1.2.6",
   "private": false,
   "repository": {
     "type": "git",
@@ -13,17 +13,18 @@
   },
   "main": "index.js",
   "peerDependencies": {
-    "@databyss-org/editor": "1.2.4",
-    "@databyss-org/services": "1.2.4",
-    "@databyss-org/slate": "1.2.4",
-    "@databyss-org/ui": "1.2.4",
+    "@databyss-org/editor": "1.2.6",
+    "@databyss-org/services": "1.2.6",
+    "@databyss-org/slate": "1.2.6",
+    "@databyss-org/ui": "1.2.6",
     "@storybook/react": "5.2.1",
+    "@bugsnag/js": "^7.5.1",
     "react": "16.9.0",
     "react-dom": "16.9.0",
     "react-native": "0.60.4"
   },
   "dependencies": {
-    "@bugsnag/plugin-react": "^6.4.0",
+    "@bugsnag/plugin-react": "^7.3.5",
     "@emotion/core": "^10.0.14",
     "@emotion/native": "^10.0.14",
     "@emotion/styled": "^10.0.14",

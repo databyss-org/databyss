@@ -7,7 +7,6 @@ const initialState: EditorState = {
   showNewBlockMenu: true,
   operations: [],
   selection: {
-    _id: null,
     anchor: {
       index: 0,
       offset: 0,
@@ -25,7 +24,7 @@ const initialState: EditorState = {
 
 export const addMetaDataToBlocks = (init: EditorState) => {
   let _blocks = init.blocks
-  _blocks = _blocks.map(b => ({
+  _blocks = _blocks.map((b) => ({
     ...b,
     __isActive: false,
     __showNewBlockMenu: false,

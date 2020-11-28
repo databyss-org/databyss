@@ -48,7 +48,7 @@ export const pageMiddleware = wrap(async (req, _res, next) => {
   if (
     req.asAccount &&
     page?.sharedWith.find(
-      s => s.account.toString() === req?.asAccount.toString()
+      (s) => s.account.toString() === req?.asAccount.toString()
     )
   ) {
     page.readOnly = true

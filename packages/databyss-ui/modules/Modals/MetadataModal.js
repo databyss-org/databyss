@@ -11,7 +11,7 @@ import crossref from '@databyss-org/services/catalog/crossref'
 import EditSourceForm from '../../components/SourcesContent/EditSourceForm'
 
 // utils
-const createAuthorFromCrossref = crossrefAuthor => ({
+const createAuthorFromCrossref = (crossrefAuthor) => ({
   firstName: crossrefAuthor.given
     ? makeText(crossrefAuthor.given)
     : makeText(''),
@@ -20,7 +20,7 @@ const createAuthorFromCrossref = crossrefAuthor => ({
     : makeText(''),
 })
 
-const createValueState = metadata => {
+const createValueState = (metadata) => {
   // update props...
   const { fromCrossref } = metadata
   const { author } = fromCrossref
@@ -38,7 +38,7 @@ const createValueState = metadata => {
 
   // ...authors
   if (author) {
-    author.forEach(a => {
+    author.forEach((a) => {
       state.detail.authors.push(createAuthorFromCrossref(a))
     })
   }

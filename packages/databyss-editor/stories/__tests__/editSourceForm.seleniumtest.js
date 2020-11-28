@@ -31,10 +31,8 @@ const PROXY_URL_EDITOR =
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('<EditSourceForm/>', () => {
-  beforeEach(async done => {
-    const random = Math.random()
-      .toString(36)
-      .substring(7)
+  beforeEach(async (done) => {
+    const random = Math.random().toString(36).substring(7)
 
     // osx and safari are necessary
     driver = await startSession()

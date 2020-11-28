@@ -18,7 +18,7 @@ const SlateDemo = () => {
   const [slateValue, setSlateValue] = useState(initialValue)
   const [count, setCount] = useState(0)
 
-  const onChange = value => {
+  const onChange = (value) => {
     console.log('onchange')
     setSlateValue(value)
     setTimeout(() => {

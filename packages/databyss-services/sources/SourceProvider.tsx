@@ -22,7 +22,7 @@ import {
   saveSource,
 } from './actions'
 import { SET_PREFERRED_CITATION_STYLE } from './constants'
-import reducer, { initialState } from './reducer'
+import reducer, { initialState as _initState } from './reducer'
 
 interface PropsType {
   children: JSX.Element
@@ -39,14 +39,16 @@ interface ContextType {
   removePageFromCacheHeader: (id: string, pageId: string) => void
   addPageToCacheHeader: (id: string, pageId: string) => void
   resetSourceHeaders: () => void
+  setPreferredCitationStyle: (styleId: string) => void
+  getPreferredCitationStyle: () => void
 }
 
 const useReducer = createReducer()
-export const SourceContext = createContext<ContextType | null>(null)
+export const SourceContext = createContext<ContextType>(null!)
 
 const SourceProvider: React.FunctionComponent<PropsType> = ({
   children,
-  initialState,
+  initialState = _initState,
 }: PropsType) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
@@ -73,7 +75,6 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     },
     [state.cache]
   )
-
 
   // provider methods - cache
   const removeCacheValue = useCallback(
@@ -102,16 +103,15 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
   }
 
   // provider methods - citations
-  const getSourceCitations = useCallback(
-    (): ResourceResponse<SourceCitationHeader> => {
-      if (state.citationHeaderCache) {
-        return state.citationHeaderCache
-      }
-      dispatch(fetchSourceCitations())
-      return null
-    },
-    [state]
-  )
+  const getSourceCitations = useCallback((): ResourceResponse<
+    SourceCitationHeader
+  > => {
+    if (state.citationHeaderCache) {
+      return state.citationHeaderCache
+    }
+    dispatch(fetchSourceCitations())
+    return null
+  }, [state])
 
   const setPreferredCitationStyle = useCallback(
     (styleId: string) => {
@@ -119,8 +119,8 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
       const typeOfStyleId = typeof styleId
       if (typeOfStyleId !== 'string') {
         throw new Error(
-          'setPreferredCitationStyle() expected `styleId` to be a string. ' +
-            `Received "${typeOfStyleId}".`
+          `setPreferredCitationStyle() expected 'styleId' to be a string.
+          Received "${typeOfStyleId}".`
         )
       }
       // dispatch
@@ -132,17 +132,14 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
   const getPreferredCitationStyle = () => state.preferredCitationStyle
 
   // provider methods - citations
-  const getAuthors = useCallback(
-    (): ResourceResponse<Author[]> => {
-      if (state.authorsHeaderCache) {
-        return state.authorsHeaderCache
-      }
+  const getAuthors = useCallback((): ResourceResponse<Author[]> => {
+    if (state.authorsHeaderCache) {
+      return state.authorsHeaderCache
+    }
 
-      dispatch(fetchAuthorHeaders())
-      return null
-    },
-    [state.authorsHeaderCache]
-  )
+    dispatch(fetchAuthorHeaders())
+    return null
+  }, [state.authorsHeaderCache])
 
   return (
     <SourceContext.Provider
@@ -165,11 +162,7 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
   )
 }
 
-export const useSourceContext = (selector = x => x) =>
+export const useSourceContext = (selector = (x: ContextType) => x) =>
   useContextSelector(SourceContext, selector)
-
-SourceProvider.defaultProps = {
-  initialState,
-}
 
 export default SourceProvider

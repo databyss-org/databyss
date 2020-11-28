@@ -63,7 +63,7 @@ const controlCssMobile = () => ({
   },
 })
 
-const controlCss = props => ({
+const controlCss = (props) => ({
   position: 'relative',
   userSelect: props.userSelect,
   borderWidth: '1px',
@@ -107,12 +107,12 @@ const Control = forwardRef(
     const StyledComponent = renderAsView ? View : StyledControl
     return (
       <ThemeContext.Consumer>
-        {theme => (
+        {(theme) => (
           <StyledComponent
-            onDragStart={e => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
             ref={forkRef(ref, _childRef)}
             tabIndex={0}
-            onClick={e => {
+            onClick={(e) => {
               if (disabled) {
                 return
               }

@@ -41,13 +41,13 @@ export const ViewportWrapper = ({ children, ...others }) => {
   )
 }
 
-export const ViewportDecorator = storyFn => (
+export const ViewportDecorator = (storyFn) => (
   <ViewportWrapper>{storyFn()}</ViewportWrapper>
 )
 
-export const ContentDecorator = storyFn => <Content>{storyFn()}</Content>
+export const ContentDecorator = (storyFn) => <Content>{storyFn()}</Content>
 
-export const NotifyDecorator = storyFn => (
+export const NotifyDecorator = (storyFn) => (
   <NotifyProvider envPrefix="STORYBOOK">{storyFn()}</NotifyProvider>
 )
 

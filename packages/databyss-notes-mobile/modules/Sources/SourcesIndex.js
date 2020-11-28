@@ -23,7 +23,7 @@ import AuthorDetails from './AuthorDetails'
 
 import SourcesMetadata from './SourcesMetadata'
 
-const getAuthorName = value => {
+const getAuthorName = (value) => {
   const firstName = value.firstName?.textValue
   const lastName = value.lastName?.textValue
   if (lastName && firstName) {
@@ -33,11 +33,11 @@ const getAuthorName = value => {
 }
 
 // utils
-const buildAuthorList = data => {
+const buildAuthorList = (data) => {
   const response = []
 
   const keys = Object.keys(data)
-  keys.forEach(key => {
+  keys.forEach((key) => {
     const element = data[key]
     const _url = `firstName=${
       element?.firstName ? element.firstName.textValue : ''
@@ -64,7 +64,7 @@ const headerItems = [SourcesMetadata]
 const SourcesIndex = () => {
   const navigationContext = useNavigationContext()
 
-  const getQueryParams = useNavigationContext(c => c.getQueryParams)
+  const getQueryParams = useNavigationContext((c) => c.getQueryParams)
 
   const _queryParams = getQueryParams()
 
@@ -82,7 +82,7 @@ const SourcesIndex = () => {
   // render methods
   const renderSourcesList = () => (
     <SourceCitationsLoader>
-      {sources => {
+      {(sources) => {
         const listItems = buildListItems({
           data: sources,
           baseUrl: '/sources',
@@ -104,7 +104,7 @@ const SourcesIndex = () => {
 
   const renderAuthorsList = () => (
     <AuthorsLoader>
-      {authors => {
+      {(authors) => {
         const listItems = buildAuthorList(authors)
 
         return listItems.length ? (

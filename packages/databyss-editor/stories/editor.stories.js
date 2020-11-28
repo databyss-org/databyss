@@ -37,7 +37,7 @@ const _res = {
   ],
 }
 
-const EditorWithProvider = props => (
+const EditorWithProvider = (props) => (
   <EditorProvider {...props}>
     <ContentEditable autofocus />
   </EditorProvider>
@@ -51,7 +51,7 @@ const SideBySide = ({ initialState }) => {
       <View width="40%">
         <EditorWithProvider
           initialState={initialState}
-          onChange={s => {
+          onChange={(s) => {
             if (!s) {
               return
             }
@@ -85,20 +85,20 @@ const EditorWithModals = ({ initialState }) => (
 const initFetchMock = () => {
   fetchMock
     .restore()
-    .post(url => {
+    .post((url) => {
       if (url.includes('/api/sources') || url.includes('/api/topics')) {
         return true
       }
       return null
     }, 200)
-    .get(url => {
+    .get((url) => {
       if (url.includes('/api/sources')) {
         return true
       }
       return null
     }, sourceFixture)
     .get(
-      url => {
+      (url) => {
         if (url.includes('/api/topics')) {
           return true
         }
@@ -106,7 +106,7 @@ const initFetchMock = () => {
       },
       [topicFixture]
     )
-    .get(url => {
+    .get((url) => {
       if (url.includes('googleapis')) {
         return true
       }
