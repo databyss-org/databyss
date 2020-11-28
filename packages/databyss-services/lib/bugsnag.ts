@@ -1,7 +1,7 @@
-import packageJson from '../package.json'
 import Bugsnag from '@bugsnag/js'
 import { BrowserConfig } from '@bugsnag/browser'
 import { NodeConfig } from '@bugsnag/node'
+import packageJson from '../package.json'
 
 export const startBugsnag = (
   options?: Partial<BrowserConfig> | Partial<NodeConfig>
@@ -17,6 +17,7 @@ export const startBugsnag = (
       if (!process.env.BUGSNAG_NOTIFY) {
         return false
       }
+      return true
     },
     ...(options || {}),
   })

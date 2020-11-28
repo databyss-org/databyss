@@ -250,7 +250,7 @@ class NotifyProvider extends React.Component {
           visible={dialogVisible}
           message={message}
           html={html}
-          {...!isOnline && { 'data-test-modal': 'offline' }}
+          {...(!isOnline && { 'data-test-modal': 'offline' })}
         />
       </NotifyContext.Provider>
     )

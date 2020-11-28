@@ -13,6 +13,9 @@
   "private": true,
   "peerDependencies": {
     "@bugsnag/js": "^6.3.2",
+    "@bugsnag/browser": "^6.3.2",
+    "@bugsnag/node": "^6.3.2",
+    "@databyss-org/editor": "1.2.5",
     "@databyss-org/services": "1.2.5",
     "@databyss-org/ui": "1.2.5",
     "react": "16.9.0",
