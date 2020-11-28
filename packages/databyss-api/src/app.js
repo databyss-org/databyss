@@ -2,8 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import http from 'http'
 import Bugsnag from '@bugsnag/js'
-import ExpressSlowDown from 'express-slow-down'
-import RedisStore from 'rate-limit-redis'
+
 import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import BugsnagPluginExpress from '@bugsnag/plugin-express'
 import { ApiError } from './lib/Errors'
@@ -21,7 +20,10 @@ import errorRoute from './routes/api/error'
 import entriesRoute from './routes/api/entries'
 import sourcesRoute from './routes/api/sources'
 import topicsRoute from './routes/api/topics'
+
+// middleware
 import { versionChecker } from './middleware/versionCheckMiddleware'
+import { createRateController } from './middleware/rateControlMiddleware'
 
 let app = null
 
@@ -40,12 +42,17 @@ const run = async () => {
 
   await connectDB(dbURI)
 
-  // Start Bugsnag
+  // bugsnag middleware must go first
   startBugsnag({
     plugins: [BugsnagPluginExpress],
   })
   const bugsnagMiddleware = Bugsnag.getPlugin('express')
   app.use(bugsnagMiddleware.requestHandler)
+
+  // rate limiter must go near the top of the chain
+  if (process.env.NODE_ENV !== 'test') {
+    app.use(createRateController(app))
+  }
 
   // Init Middleware
   app.use(cors())
@@ -56,32 +63,6 @@ const run = async () => {
   app.get('/', (_req, res) => {
     res.redirect('https://app.databyss.org')
   })
-
-  // configure rate limiting
-  if (process.env.NODE_ENV !== 'test') {
-    // Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
-    // see https://expressjs.com/en/guide/behind-proxies.html
-    app.set('trust proxy', 1)
-
-    // limit to 50 req / min / IP
-    const limiterConfig = {
-      windowMs: 1 * 60 * 1000,
-      delayAfter: 20,
-      delayMs: 500,
-    }
-
-    // store to REDIS on production environments
-    if (process.env.NODE_ENV === 'production') {
-      limiterConfig.store = new RedisStore({
-        redisURL: process.env.REDIS_URL,
-      })
-    }
-
-    const limiter = ExpressSlowDown(limiterConfig)
-
-    // apply limiter to all requests
-    app.use(limiter)
-  }
 
   // Define Routes
   app.use('/api/users', versionChecker, usersRoute)
@@ -102,10 +83,11 @@ const run = async () => {
   // Global error handler
   app.use((err, _req, res, _next) => {
     if (err instanceof ApiError) {
-      return res.status(err.status).json({ error: err })
+      res.status(err.status).json({ error: err })
+    } else {
+      console.error('Unexpected error', err)
+      res.status(500).json({ error: { message: err.message } })
     }
-    console.error('Unexpected error', err)
-    return res.status(500).json({ error: { message: err.message } })
   })
 
   return app
