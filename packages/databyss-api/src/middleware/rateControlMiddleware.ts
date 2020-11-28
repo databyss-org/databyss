@@ -8,14 +8,6 @@ import { Redis } from 'ioredis'
 const WINDOW_MS = 60 * 1000
 const MAX_DELAY_MS = 60 * 1000
 
-const getReditHostAndPort = (uri: string): Partial<redis.ClientOpts> => {
-  const _parts = uri.split(':')
-  return {
-    port: parseInt(_parts[_parts.length - 1], 10),
-    host: _parts.slice(0, _parts.length - 1).join(':'),
-  }
-}
-
 export const createRateController = (app: Express) => {
   // Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
   // see https://expressjs.com/en/guide/behind-proxies.html
@@ -31,7 +23,7 @@ export const createRateController = (app: Express) => {
     process.env.NODE_ENV === 'production'
       ? new RedisStore({
           client: redis.createClient({
-            ...getReditHostAndPort(process.env.REDIS_URL!),
+            url: process.env.REDIS_URL,
             tls: { checkServerIdentity: () => undefined },
           }),
         })
