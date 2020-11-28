@@ -12,7 +12,7 @@ const getReditHostAndPort = (uri: string): Partial<redis.ClientOpts> => {
   const _parts = uri.split(':')
   return {
     port: parseInt(_parts[_parts.length - 1], 10),
-    host: _parts.slice(0, _parts.length - 1).join(''),
+    host: _parts.slice(0, _parts.length - 1).join(':'),
   }
 }
 
