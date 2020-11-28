@@ -56,7 +56,7 @@ export const createRateController = (app: Express) =>
       redisClient = new Redis(process.env.REDISCLOUD_URL!, {
         lazyConnect: true,
       })
-      console.log('[rate contrl] ⏳ REDIS connecting...')
+      console.log('[rate control] ⏳ REDIS connecting...')
       redisClient
         .connect()
         .then(() => {
