@@ -1,7 +1,7 @@
 {
   "addons": [
     {
-      "plan": "heroku-redis:hobby-dev"
+      "plan": "rediscloud:30"
     }
   ],
   "buildpacks": [

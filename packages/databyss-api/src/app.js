@@ -51,7 +51,12 @@ const run = async () => {
 
   // rate limiter must go near the top of the chain
   if (process.env.NODE_ENV !== 'test') {
-    app.use(createRateController(app))
+    const rateController = await createRateController(app)
+    if (rateController) {
+      app.use(rateController)
+    } else {
+      console.error('[app] 👎 falling back to no rate control')
+    }
   }
 
   // Init Middleware
