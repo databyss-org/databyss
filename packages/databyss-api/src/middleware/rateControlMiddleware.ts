@@ -1,10 +1,10 @@
 import ExpressSlowDown from 'express-slow-down'
 import RedisStore from 'rate-limit-redis'
 import { Express, Request } from 'express'
-import MurmurHash3 from 'imurmurhash'
 
 // how long to keep records of requests in memor
 const WINDOW_MS = 60 * 1000
+const MAX_DELAY_MS = 60 * 1000
 
 export const createRateController = (app: Express) => {
   // Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -12,11 +12,7 @@ export const createRateController = (app: Express) => {
   app.set('trust proxy', 1)
 
   const keyGenerator = (tag: string) => (req: Request) => {
-    const requestHash = MurmurHash3(
-      JSON.stringify([req.rawHeaders, req.method, req.url, req.body])
-    ).result()
-    const key = `${tag}:${req.ip}:${requestHash}`
-    console.log(key)
+    const key = `${tag}:${req.ip}`
     return key
   }
 
@@ -33,6 +29,7 @@ export const createRateController = (app: Express) => {
     windowMs: WINDOW_MS,
     delayAfter: 10,
     delayMs: 50,
+    maxDelayMs: MAX_DELAY_MS,
     skipFailedRequests: true,
     keyGenerator: keyGenerator('S'),
     store,
@@ -43,6 +40,7 @@ export const createRateController = (app: Express) => {
     windowMs: WINDOW_MS,
     delayAfter: 1,
     delayMs: 1000,
+    maxDelayMs: MAX_DELAY_MS,
     skipSuccessfulRequests: true,
     keyGenerator: keyGenerator('F'),
     store,
