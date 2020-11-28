@@ -14,6 +14,7 @@ export const createRateController = (app: Express) => {
       JSON.stringify([req.rawHeaders, req.method, req.url, req.body])
     ).result()
     const key = `${tag}:${req.ip}:${requestHash}`
+    console.log(key)
     return key
   }
 
