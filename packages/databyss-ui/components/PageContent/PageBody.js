@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useRef } from 'react'
-import { throttle } from 'lodash'
+import { debounce } from 'lodash'
 import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
@@ -37,7 +37,7 @@ const PageBody = ({
 
   // throttled autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
   const throttledAutosave = useCallback(
-    throttle(({ nextState, patches }) => {
+    debounce(({ nextState, patches }) => {
       const _patches = cleanupPatches(patches)
       if (_patches.length) {
         const payload = {

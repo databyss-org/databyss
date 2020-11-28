@@ -2,18 +2,18 @@ import React from 'react'
 import { storiesOf } from '@storybook/react'
 import ErrorFallback from '@databyss-org/ui/components/Notify/ErrorFallback'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
-import { ViewportDecorator, NotifyDecorator } from '../decorators'
+import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
+import { ViewportDecorator } from '../decorators'
 import { NotifyMessage, NotifyError, TriggerError } from './Notifys'
 
 storiesOf('Components|Notify', module)
-  .addDecorator(NotifyDecorator)
   .addDecorator(ViewportDecorator)
   .add('Notify', () => (
-    <React.Fragment>
+    <NotifyProvider envPrefix="STORYBOOK" shouldCheckOnlineStatus={false}>
       <NotifyMessage />
       <NotifyError />
       <TriggerError />
-    </React.Fragment>
+    </NotifyProvider>
   ))
   .add('Error', () => <ErrorFallback message="No Source Found" />)
   .add('Loading', () => <Loading />)
