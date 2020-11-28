@@ -18,7 +18,7 @@ export const createRateController = (app: Express) => {
 
   const MemoryStore = require('express-slow-down/lib/memory-store')
   const store =
-    process.env.NODE_ENV === 'fooooooo'
+    process.env.NODE_ENV === 'production'
       ? new RedisStore({
           redisURL: process.env.REDIS_URL,
         })
