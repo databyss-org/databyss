@@ -1,6 +1,7 @@
 import ExpressSlowDown from 'express-slow-down'
 import RedisStore from 'rate-limit-redis'
 import { Express, Request } from 'express'
+import redis from 'redis'
 
 // how long to keep records of requests in memor
 const WINDOW_MS = 60 * 1000
@@ -20,7 +21,10 @@ export const createRateController = (app: Express) => {
   const store =
     process.env.NODE_ENV === 'production'
       ? new RedisStore({
-          redisURL: process.env.REDIS_URL,
+          client: redis.createClient({
+            host: process.env.REDIS_URL,
+            tls: { checkServerIdentity: () => undefined },
+          }),
         })
       : new MemoryStore(WINDOW_MS)
 
