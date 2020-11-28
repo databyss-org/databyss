@@ -20,12 +20,12 @@ export const createRateController = (app: Express) => {
 
   const MemoryStore = require('express-slow-down/lib/memory-store')
   const store =
-    process.env.NODE_ENV === 'production'
-      ? new RedisStore({
-          redisURL: process.env.REDIS_URL,
-        })
-      : // MemoryStore(windowMs) # how long to keep records of requests in memory
-        new MemoryStore(60 * 1000)
+    // process.env.NODE_ENV === 'production'
+    //   ? new RedisStore({
+    //       redisURL: process.env.REDIS_URL,
+    //     })
+    //   : // MemoryStore(windowMs) # how long to keep records of requests in memory
+    new MemoryStore(60 * 1000)
 
   // limit successful requests (status < 400) to 10 req / sec / IP
   const successLimiterConfig = {
