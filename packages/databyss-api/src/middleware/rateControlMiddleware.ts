@@ -2,10 +2,19 @@ import ExpressSlowDown from 'express-slow-down'
 import RedisStore from 'rate-limit-redis'
 import { Express, Request } from 'express'
 import redis from 'redis'
+import { Redis } from 'ioredis'
 
 // how long to keep records of requests in memor
 const WINDOW_MS = 60 * 1000
 const MAX_DELAY_MS = 60 * 1000
+
+const getReditHostAndPort = (uri: string): Partial<redis.ClientOpts> => {
+  const _parts = uri.split(':')
+  return {
+    port: parseInt(_parts[_parts.length - 1], 10),
+    host: _parts.slice(0, _parts.length - 1).join(''),
+  }
+}
 
 export const createRateController = (app: Express) => {
   // Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -22,7 +31,7 @@ export const createRateController = (app: Express) => {
     process.env.NODE_ENV === 'production'
       ? new RedisStore({
           client: redis.createClient({
-            host: process.env.REDIS_URL,
+            ...getReditHostAndPort(process.env.REDIS_URL!),
             tls: { checkServerIdentity: () => undefined },
           }),
         })
