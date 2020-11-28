@@ -42,6 +42,7 @@ module.exports = (webpackEnv) => {
   console.log('TYPESCRIPT?', useTypeScript)
   const isEnvDevelopment = webpackEnv === 'development'
   const isEnvProduction = webpackEnv === 'production'
+  const isEnvTest = process.env.NODE_ENV === 'test'
 
   // Webpack uses `publicPath` to determine where the app is being served from.
   // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -454,19 +455,20 @@ module.exports = (webpackEnv) => {
         },
       }),
       // Generate the manifest.json file
-      new CopyWebpackPlugin({
-        patterns: [
-          {
-            from: `${paths.appPublic}/manifest.json`,
-            to: paths.appBuild,
-            transform: (buf) => {
-              const _manifest = JSON.parse(buf.toString())
-              _manifest.version = packageJson.version
-              return JSON.stringify(_manifest, null, 2)
+      !isEnvTest &&
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: `${paths.appPublic}/manifest.json`,
+              to: paths.appBuild,
+              transform: (buf) => {
+                const _manifest = JSON.parse(buf.toString())
+                _manifest.version = packageJson.version
+                return JSON.stringify(_manifest, null, 2)
+              },
             },
-          },
-        ],
-      }),
+          ],
+        }),
       // Moment.js is an extremely popular library that bundles large locale files
       // by default due to how Webpack interprets its code. This is a practical
       // solution that requires the user to opt into importing specific locales.
