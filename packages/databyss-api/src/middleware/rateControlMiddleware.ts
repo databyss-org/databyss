@@ -2,6 +2,7 @@ import ExpressSlowDown from 'express-slow-down'
 import RedisStore from 'rate-limit-redis'
 import { Express, Request } from 'express'
 import MurmurHash3 from 'imurmurhash'
+import { fail } from 'assert'
 
 export const createRateController = (app: Express) => {
   // Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
@@ -56,8 +57,9 @@ export const createRateController = (app: Express) => {
     successLimiterConfig.store = _store
   }
 
-  return [
-    ExpressSlowDown(successLimiterConfig),
-    ExpressSlowDown(failedLimiterConfig),
-  ]
+  // return [
+  //   ExpressSlowDown(successLimiterConfig),
+  //   ExpressSlowDown(failedLimiterConfig),
+  // ]
+  return ExpressSlowDown(failedLimiterConfig)
 }
