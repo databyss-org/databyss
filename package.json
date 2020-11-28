@@ -154,6 +154,7 @@
     "@storybook/addon-storyshots": "5.2.1",
     "@storybook/addons": "5.2.1",
     "@storybook/react": "5.2.1",
+    "@types/clone-deep": "^4.0.1",
     "@typescript-eslint/eslint-plugin": "^3.7.1",
     "@typescript-eslint/parser": "^3.7.1",
     "an-array-of-english-words": "^2.0.0",

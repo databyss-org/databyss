@@ -5,6 +5,7 @@
   "author": "databyss-org",
   "license": "MIT",
   "dependencies": {
+    "@types/tmp": "^0.2.0",
     "bson-objectid": "^1.3.0",
     "dotenv": "^8.0.0",
     "spawnd": "^4.0.0",
