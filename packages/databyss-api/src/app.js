@@ -52,6 +52,12 @@ const run = async () => {
   // rate limiter must go near the top of the chain
   if (process.env.NODE_ENV !== 'test') {
     app.use(createRateController(app))
+    app.use((req, res, next) => {
+      res.on('finish', () => {
+        console.log(req.slowDown)
+      })
+      next()
+    })
   }
 
   // Init Middleware
