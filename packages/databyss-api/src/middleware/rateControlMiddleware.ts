@@ -20,15 +20,6 @@ export const createRateController = (app: Express) =>
         return key
       }
 
-      let redisClient: Redis.Redis
-      if (process.env.NODE_ENV === 'production') {
-        redisClient = new Redis(process.env.REDISCLOUD_URL!, {
-          lazyConnect: true,
-          reconnectOnError: () => false,
-          maxRetriesPerRequest: null,
-        })
-      }
-
       const MemoryStore = require('express-slow-down/lib/memory-store')
 
       // limit successful requests (status < 400) to 10 req / min / IP
@@ -53,7 +44,7 @@ export const createRateController = (app: Express) =>
         store: new MemoryStore(WINDOW_MS),
       }
 
-      redisClient = new Redis(process.env.REDISCLOUD_URL!, {
+      const redisClient = new Redis(process.env.REDISCLOUD_URL!, {
         lazyConnect: true,
       })
       console.log('[rate control] ⏳ REDIS connecting...')
