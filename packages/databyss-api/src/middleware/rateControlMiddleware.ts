@@ -22,10 +22,10 @@ export const createRateController = (app: Express) =>
 
       const MemoryStore = require('express-slow-down/lib/memory-store')
 
-      // limit successful requests (status < 400) to 10 req / min / IP
+      // limit successful requests (status < 400) to 60 req / min / IP
       const successLimiterConfig = {
         windowMs: WINDOW_MS,
-        delayAfter: 10,
+        delayAfter: 60,
         delayMs: 50,
         maxDelayMs: MAX_DELAY_MS,
         skipFailedRequests: true,
