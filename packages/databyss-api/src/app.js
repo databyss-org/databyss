@@ -2,6 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import http from 'http'
 import Bugsnag from '@databyss-org/services/lib/bugsnag'
+import { Users, Login } from '@databyss-org/services/database/cloudantService'
+
 import { ApiError } from './lib/Errors'
 import { connectDB } from './lib/db'
 
@@ -35,6 +37,14 @@ const run = async () => {
   }
 
   await connectDB(dbURI)
+
+  const _dd = {
+    _id: '_design/my_validation_name',
+    validate_doc_update:
+      "function(newDoc, oldDoc, userCtx) {throw({forbidden : 'not able now!'});}",
+  }
+
+  await Users.upsert(_dd._id, () => _dd)
 
   // Init Bugsnag
   Bugsnag.init()
