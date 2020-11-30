@@ -25,7 +25,7 @@ export const createRateController = (app: Express) =>
       // limit successful requests (status < 400) to 60 req / min / IP
       const successLimiterConfig = {
         windowMs: WINDOW_MS,
-        delayAfter: 60,
+        delayAfter: 120,
         delayMs: 50,
         maxDelayMs: MAX_DELAY_MS,
         skipFailedRequests: true,
