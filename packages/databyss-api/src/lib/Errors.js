@@ -1,3 +1,5 @@
+import { version } from './../../package.json'
+
 export class ApiError extends Error {
   constructor(message, status) {
     super()
@@ -27,6 +29,13 @@ export class UnauthorizedError extends ApiError {
 export class InsufficientPermissionError extends ApiError {
   constructor(message, status = 403) {
     const _message = `Not authorized. ${message}`
+    super(_message, status)
+  }
+}
+
+export class VersionMismatchError extends ApiError {
+  constructor(requestVersion, status = 409) {
+    const _message = `request version (${requestVersion}) does not match API version (${version})`
     super(_message, status)
   }
 }

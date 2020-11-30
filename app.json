@@ -1,4 +1,9 @@
 {
+  "addons": [
+    {
+      "plan": "rediscloud:30"
+    }
+  ],
   "buildpacks": [
     {
       "url": "https://github.com/databyss-org/heroku-buildpack-monorepo.git"
