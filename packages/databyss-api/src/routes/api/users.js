@@ -7,10 +7,10 @@ import { google } from 'googleapis'
 import { send } from '../../lib/sendgrid'
 import User from '../../models/User'
 import Account from '../../models/Account'
-import Login from '../../models/Login'
+// import Login from '../../models/Login'
 import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
-import { cloudant } from './cloudantService'
+import { Users, Login } from '@databyss-org/services/database/cloudantService'
 
 const router = express.Router()
 
@@ -27,8 +27,6 @@ const oauth2ClientMobile =
     process.env.API_GOOGLE_CLIENT_SECRET,
     process.env.API_GOOGLE_REDIRECT_URI_MOBILE
   )
-
-// const Users = await cloudant.use('users')
 
 // @route    POST api/users/google
 // @desc     create or get profile info for google user
@@ -53,19 +51,18 @@ router.post(
       const { name, email: _email, sub } = decoded
 
       const email = _email?.toLowerCase()
-      const users = cloudant.use('users')
       const _selector = {
         selector: {
           googleId: { $eq: sub },
         },
       }
-      let user = await users.find(_selector)
+      let user = await Users.find(_selector)
 
-      // let user = await users.get({ googleId: sub })
+      // let user = await Users.get({ googleId: sub })
 
       // let user = await User.findOne({ googleId: sub })
       if (!user) {
-        user = await users.insert({
+        user = await Users.insert({
           name,
           email,
           googleId: sub,
@@ -101,17 +98,17 @@ router.post(
 
     const email = _email?.toLowerCase()
 
-    const users = cloudant.use('users')
     const _selector = {
       selector: {
         email: { $eq: email },
       },
     }
-    let user = await users.find(_selector)
+    // todo: use users.get({})
+    let user = await Users.find(_selector)
 
     if (!user.docs.length) {
       // Creates new user
-      user = await users.insert({
+      user = await Users.insert({
         email,
       })
     } else {
@@ -130,9 +127,7 @@ router.post(
       date: Date.now(),
     }
 
-    const login = await cloudant.db.use('login')
-
-    login.upsert({ email, code: loginObj.code }, () => loginObj)
+    Login.upsert({ email, code: loginObj.code }, () => loginObj)
 
     const msg = {
       to: email,

@@ -12,6 +12,9 @@
   "license": "MIT",
   "private": true,
   "peerDependencies": {
+    "cloudant-upsert": "^0.11.1",
+    "@cloudant/cloudant": "^4.3.0",
+    "jsonschema": "^1.4.0",
     "@bugsnag/js": "^6.3.2",
     "@databyss-org/services": "1.2.2",
     "@databyss-org/ui": "1.2.2",

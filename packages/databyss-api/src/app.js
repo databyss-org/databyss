@@ -45,7 +45,7 @@ const run = async () => {
   // set the max limit to 50mb
   app.use(express.json({ extended: false, limit: '50mb' }))
 
-  // app.use(versionChecker)
+  app.use(versionChecker)
 
   app.get('/', (_req, res) => {
     res.redirect('https://app.databyss.org')

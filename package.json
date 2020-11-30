@@ -224,6 +224,7 @@
     "jest-resolve": "26.6.2",
     "jest-runner-eslint": "0.10.0",
     "json-diff": "^0.5.4",
+    "jsonschema": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
     "kill-port": "^1.5.1",
     "links-finder": "^1.0.0",

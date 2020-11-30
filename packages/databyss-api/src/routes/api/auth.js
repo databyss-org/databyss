@@ -1,8 +1,12 @@
 import express from 'express'
 import auth from '../../middleware/auth'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
-import Login from '../../models/Login'
-import { cloudant } from './cloudantService'
+//import Login from '../../models/Login'
+import {
+  cloudant,
+  Login,
+} from '@databyss-org/services/database/cloudantService'
+// import { cloudant } from './cloudantService'
 
 const router = express.Router()
 
@@ -29,9 +33,10 @@ router.post('/', auth, async (req, res) => {
 // @desc     verify user with code
 // @access   Public
 router.post('/code', async (req, res) => {
+  // todo: remove try, catch and wrap
   try {
     const { code, email } = req.body
-    const login = await cloudant.db.use('login')
+    // const login = await cloudant.db.use('login')
 
     const _selector = {
       selector: {
@@ -40,28 +45,22 @@ router.post('/code', async (req, res) => {
       },
     }
 
-    const query = await login.find(_selector)
+    const query = await Login.find(_selector)
+
     if (query.docs.length) {
       const _login = query.docs[0]
+
       // todo: cahnge this back
       if (_login.date >= Date.now() - 36000000) {
         const token = _login.token
-        console.log(_login)
-        const _res = await login.get(_login._id, _login._rev)
+        const _res = await Login.get(_login._id, _login._rev)
 
-        try {
-          await login.destroy(_res._id, _res._rev)
-          const session = await getSessionFromToken(token)
-          console.log(session)
-          return res.json({ data: { session } })
-        } catch (err) {
-          console.error(err.message)
-          res.status(500).send('Server Error')
-          throw new Error('err')
-        }
-      } else {
-        res.status(401).json({ error: 'token expired' })
+        await Login.destroy(_res._id, _res._rev)
+        const session = await getSessionFromToken(token)
+        console.log(session)
+        return res.json({ data: { session } })
       }
+      res.status(401).json({ error: 'token expired' })
     } else {
       res.status(401).end()
     }

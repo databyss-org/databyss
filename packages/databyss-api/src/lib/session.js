@@ -1,7 +1,11 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/User'
 import Account from '../models/Account'
-import Cloudant from '@cloudant/cloudant'
+// import Cloudant from '@cloudant/cloudant'
+import {
+  cloudant,
+  Users,
+} from '@databyss-org/services/database/cloudantService'
 
 export const getTokenFromUserId = (userId) =>
   new Promise((resolve, reject) =>
@@ -18,20 +22,29 @@ export const getTokenFromUserId = (userId) =>
     )
   )
 
-const cloudant = Cloudant({
-  account: process.env.CLOUDANT_USERNAME,
-  password: process.env.CLOUDANT_PASSWORD,
-})
-
 export const getSessionFromUserId = async (userId) => {
-  const users = await cloudant.use('users')
-  const user = await users.get(userId)
+  const user = await Users.get(userId)
   //  const user = await User.findOne({ _id: userId })
   if (!userId || !user) {
     throw new Error('Bad userId')
   }
   const account = 'dummyid'
-  // TODO
+  /*
+
+ { 
+   defaultGroup: aslkfjsafj
+    groups: [ 
+      {
+        _id: asdlkjfdsaklfsdj
+        name: 'string',
+        username: aslkdjafslkjdsfs
+        password: XXXXXXXXXX
+      }
+    ]
+  }
+
+  */
+  // TODO: account will become group
   // const account = await Account.findOne({ _id: user.defaultAccount })
   const token = await getTokenFromUserId(userId)
   return {

@@ -7,3 +7,7 @@ export const cloudant = Cloudant({
 })
 
 require('cloudant-upsert')(cloudant)
+
+export const Users = cloudant.use('users')
+
+export const Login = cloudant.use('login')
