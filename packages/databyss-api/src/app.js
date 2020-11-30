@@ -1,7 +1,11 @@
 import express from 'express'
 import cors from 'cors'
 import http from 'http'
-import Bugsnag from '@databyss-org/services/lib/bugsnag'
+import Bugsnag from '@bugsnag/js'
+import { Users, Login } from '@databyss-org/services/database/cloudantService'
+
+import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
+import BugsnagPluginExpress from '@bugsnag/plugin-express'
 import { ApiError } from './lib/Errors'
 import { connectDB } from './lib/db'
 
@@ -17,7 +21,10 @@ import errorRoute from './routes/api/error'
 import entriesRoute from './routes/api/entries'
 import sourcesRoute from './routes/api/sources'
 import topicsRoute from './routes/api/topics'
+
+// middleware
 import { versionChecker } from './middleware/versionCheckMiddleware'
+import { createRateController } from './middleware/rateControlMiddleware'
 
 let app = null
 
@@ -36,8 +43,30 @@ const run = async () => {
 
   await connectDB(dbURI)
 
-  // Init Bugsnag
-  Bugsnag.init()
+  // bugsnag middleware must go first
+  startBugsnag({
+    plugins: [BugsnagPluginExpress],
+  })
+  const bugsnagMiddleware = Bugsnag.getPlugin('express')
+  app.use(bugsnagMiddleware.requestHandler)
+
+  // rate limiter must go near the top of the chain
+  if (process.env.NODE_ENV !== 'test') {
+    const rateController = await createRateController(app)
+    if (rateController) {
+      app.use(rateController)
+    } else {
+      console.error('[app] 👎 falling back to no rate control')
+    }
+  }
+
+  const _dd = {
+    _id: '_design/my_validation_name',
+    validate_doc_update:
+      "function(newDoc, oldDoc, userCtx) {throw({forbidden : 'not able now!'});}",
+  }
+
+  await Users.upsert(_dd._id, () => _dd)
 
   // Init Middleware
   app.use(cors())
@@ -45,32 +74,34 @@ const run = async () => {
   // set the max limit to 50mb
   app.use(express.json({ extended: false, limit: '50mb' }))
 
-  app.use(versionChecker)
-
   app.get('/', (_req, res) => {
     res.redirect('https://app.databyss.org')
   })
 
   // Define Routes
-  app.use('/api/users', usersRoute)
-  app.use('/api/auth', authRoute)
-  app.use('/api/pages', pagesRoute)
-  app.use('/api/accounts', accountsRoute)
-  app.use('/api/ping', pingRoute)
+  app.use('/api/users', versionChecker, usersRoute)
+  app.use('/api/auth', versionChecker, authRoute)
+  app.use('/api/pages', versionChecker, pagesRoute)
+  app.use('/api/accounts', versionChecker, accountsRoute)
+  app.use('/api/ping', versionChecker, pingRoute)
+  app.use('/api/entries', versionChecker, entriesRoute)
+  app.use('/api/sources', versionChecker, sourcesRoute)
+  app.use('/api/topics', versionChecker, topicsRoute)
+  app.use('/api/echo', versionChecker, echoRoute)
   app.use('/api/version', versionRoute)
-  app.use('/api/echo', echoRoute)
   app.use('/api/error', errorRoute)
-  app.use('/api/entries', entriesRoute)
-  app.use('/api/sources', sourcesRoute)
-  app.use('/api/topics', topicsRoute)
 
+  // Bugsnag middleware must go before other error handler middleware
+  app.use(bugsnagMiddleware.errorHandler)
+
+  // Global error handler
   app.use((err, _req, res, _next) => {
-    Bugsnag.client.notify(err)
     if (err instanceof ApiError) {
-      return res.status(err.status).json({ error: err })
+      res.status(err.status).json({ error: err })
+    } else {
+      console.error('Unexpected error', err)
+      res.status(500).json({ error: { message: err.message } })
     }
-    console.error('ERR', err)
-    return res.status(500).json({ error: { message: err.message } })
   })
 
   return app

@@ -35,6 +35,7 @@ then
 elif [ $NPM_DEPLOY_TARGET == API_SERVER ]
 then
   ENV_PREFIX=API_ NPM_BUILD_TARGET=API_SERVER BABEL_ENV=production webpack --config packages/databyss-api/webpack.config.js --mode=production
+  node scripts/wait-for-version.js
   cleanup
 elif [ $NPM_DEPLOY_TARGET == PDF_API ]
 then
