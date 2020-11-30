@@ -42,7 +42,6 @@ module.exports = (webpackEnv) => {
   console.log('TYPESCRIPT?', useTypeScript)
   const isEnvDevelopment = webpackEnv === 'development'
   const isEnvProduction = webpackEnv === 'production'
-  const isEnvTest = process.env.NODE_ENV === 'test'
 
   // Webpack uses `publicPath` to determine where the app is being served from.
   // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -455,7 +454,7 @@ module.exports = (webpackEnv) => {
         },
       }),
       // Generate the manifest.json file
-      !isEnvTest &&
+      isEnvProduction &&
         new CopyWebpackPlugin({
           patterns: [
             {
