@@ -1,11 +1,7 @@
 import jwt from 'jsonwebtoken'
 import User from '../models/User'
 import Account from '../models/Account'
-// import Cloudant from '@cloudant/cloudant'
-import {
-  cloudant,
-  Users,
-} from '@databyss-org/services/database/cloudantService'
+import { Users } from '@databyss-org/data/serverdbs'
 
 export const getTokenFromUserId = (userId) =>
   new Promise((resolve, reject) =>

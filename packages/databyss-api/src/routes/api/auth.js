@@ -2,11 +2,8 @@ import express from 'express'
 import auth from '../../middleware/auth'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 //import Login from '../../models/Login'
-import {
-  cloudant,
-  Login,
-} from '@databyss-org/services/database/cloudantService'
-// import { cloudant } from './cloudantService'
+import wrap from '../../lib/guardedAsync'
+import { Login } from '@databyss-org/data/serverdbs'
 
 const router = express.Router()
 
@@ -32,9 +29,9 @@ router.post('/', auth, async (req, res) => {
 // @route    POST api/auth/code
 // @desc     verify user with code
 // @access   Public
-router.post('/code', async (req, res) => {
-  // todo: remove try, catch and wrap
-  try {
+router.post(
+  '/code',
+  wrap(async (req, res) => {
     const { code, email } = req.body
     // const login = await cloudant.db.use('login')
 
@@ -54,21 +51,15 @@ router.post('/code', async (req, res) => {
       if (_login.date >= Date.now() - 36000000) {
         const token = _login.token
         const _res = await Login.get(_login._id, _login._rev)
-
         await Login.destroy(_res._id, _res._rev)
         const session = await getSessionFromToken(token)
         console.log(session)
         return res.json({ data: { session } })
       }
-      res.status(401).json({ error: 'token expired' })
-    } else {
-      res.status(401).end()
+      return res.status(401).json({ error: 'token expired' })
     }
-  } catch (err) {
-    console.error(err.message)
-    res.status(500).send('Server Error')
-    throw new Error('err')
-  }
-})
+    return res.status(401).end()
+  })
+)
 
 export default router

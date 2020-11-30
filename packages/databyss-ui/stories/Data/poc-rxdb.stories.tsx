@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Text, List, Button, Grid } from '@databyss-org/ui/primitives'
-import { create, DatabyssDatabase } from '@databyss-org/data/db/create'
+import { create, DatabyssDatabase } from '@databyss-org/data/appdb/create'
 import { GroupDocType } from '@databyss-org/data/schemas/group'
 import { uid } from '@databyss-org/data/lib/uid'
 

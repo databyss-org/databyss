@@ -10,7 +10,7 @@ import Account from '../../models/Account'
 // import Login from '../../models/Login'
 import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
-import { Users, Login } from '@databyss-org/services/database/cloudantService'
+import { Users, Login } from '@databyss-org/data/serverdbs'
 
 const router = express.Router()
 
@@ -94,7 +94,7 @@ router.post(
     }
 
     const { email: _email } = req.body
-    let emailExists = false
+    let emailExists = true
 
     const email = _email?.toLowerCase()
 
@@ -108,15 +108,16 @@ router.post(
 
     if (!user.docs.length) {
       // Creates new user
-      user = await Users.insert({
+      emailExists = false
+      await Users.insert({
         email,
       })
-    } else {
-      user = user.docs[0]
-      emailExists = true
+      user = await Users.find(_selector)
     }
 
-    const token = await getTokenFromUserId(user.id)
+    user = user.docs[0]
+
+    const token = await getTokenFromUserId(user._id)
     const loginObj = {
       email,
       code:

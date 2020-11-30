@@ -2,12 +2,12 @@ import express from 'express'
 import cors from 'cors'
 import http from 'http'
 import Bugsnag from '@bugsnag/js'
-import { Users, Login } from '@databyss-org/services/database/cloudantService'
 
 import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import BugsnagPluginExpress from '@bugsnag/plugin-express'
 import { ApiError } from './lib/Errors'
 import { connectDB } from './lib/db'
+import { updateAuthValidationDocs } from './lib/couchdb'
 
 // routes
 import usersRoute from './routes/api/users'
@@ -43,6 +43,8 @@ const run = async () => {
 
   await connectDB(dbURI)
 
+  await updateAuthValidationDocs()
+
   // bugsnag middleware must go first
   startBugsnag({
     plugins: [BugsnagPluginExpress],
@@ -59,14 +61,6 @@ const run = async () => {
       console.error('[app] 👎 falling back to no rate control')
     }
   }
-
-  const _dd = {
-    _id: '_design/my_validation_name',
-    validate_doc_update:
-      "function(newDoc, oldDoc, userCtx) {throw({forbidden : 'not able now!'});}",
-  }
-
-  await Users.upsert(_dd._id, () => _dd)
 
   // Init Middleware
   app.use(cors())
