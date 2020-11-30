@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react'
-import { throttle, debounce } from 'lodash'
+import { debounce } from 'lodash'
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { createContext, useContextSelector } from 'use-context-selector'
@@ -74,7 +74,7 @@ const EntryProvider: React.FunctionComponent<PropsType> = ({
     dispatch(onClearCache())
   }
 
-  const throttleBlockRelations = throttle((callback) => {
+  const throttleBlockRelations = debounce((callback) => {
     if (blockRelationsQueueRef?.current?.length) {
       const _blockRelations = optimizeBlockRelations(
         blockRelationsQueueRef.current
