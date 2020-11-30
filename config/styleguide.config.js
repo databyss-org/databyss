@@ -15,9 +15,9 @@ module.exports = {
     ...webpackConfig,
     plugins: [
       ...webpackConfig.plugins,
-      new CopyWebpackPlugin([
-        path.join(__dirname, '../packages/databyss-ui/public'),
-      ]),
+      new CopyWebpackPlugin({
+        patterns: [path.join(__dirname, '../packages/databyss-ui/public')],
+      }),
     ],
   },
   context: {
