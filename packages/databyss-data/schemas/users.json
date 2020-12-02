@@ -1,0 +1,27 @@
+{
+  "title": "Users",
+  "type": "object",
+  "properties": {
+    "_id": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "googleId": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    },
+    "defaultAccount": {
+      "type": "string"
+    }
+  }
+}

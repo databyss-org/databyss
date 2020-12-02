@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*
 Author: Geraint Luff and others
 Year: 2013
