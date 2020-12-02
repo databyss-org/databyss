@@ -62,10 +62,7 @@ router.post(
         if (!session.user.defaultGroupId) {
           // cloudant.generate_api_key((err, api)=> {
           const credentials = await createUserDatabaseCredentials()
-          console.log(session)
-          console.log(credentials)
-          // })
-          console.log('create credentials')
+          // NEXT WE MUST ADD THE CREDENTIALS TO THE USERS DATABASE
         }
 
         // console.log(session)

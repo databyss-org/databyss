@@ -1,12 +1,14 @@
 import { cloudant } from '@databyss-org/services/lib/cloudant'
 
 export const createGroupId = async () => {
-  const Groups = cloudant.db.use('groups')
+  // TODO: fix this so its not 'any'
+  const Groups: any = cloudant.db.use('groups')
   const group = await Groups.insert({ name: 'untitled' })
   return group.id
 }
 
 const createGroupDatabase = async (id: string) => {
+  // database are not allowed to start with a number
   try {
     await cloudant.db.get(`g_${id}`)
   } catch (err) {
@@ -14,26 +16,13 @@ const createGroupDatabase = async (id: string) => {
   }
 }
 
-export const createUserDatabaseCredentials = async (
-  groupId: string | null
-): { dbKey: string; dbPassword: string; groupId: string } => {
-  let _groupId: string = groupId
-
-  if (_groupId) {
-    const _group = await cloudant.db.get(_groupId)
-    console.log(_group)
-  } else {
-    _groupId = await createGroupId()
-  }
-
-  // creates a database if not yet defined
-  await createGroupDatabase(_groupId)
-
-  const response = await setSecurity(_groupId)
-  return response
+interface credentialResponse {
+  dbKey: string
+  dbPassword: string
+  groupId: string
 }
 
-const setSecurity = (groupId: string) =>
+const setSecurity = (groupId: string): Promise<credentialResponse> =>
   new Promise((resolve, reject) => {
     const _credentials = {
       dbKey: '',
@@ -45,15 +34,14 @@ const setSecurity = (groupId: string) =>
         reject(err)
       }
 
-      console.log('API key: %s', api.key)
-      console.log('Password for this key: %s', api.password)
-
       const security: { [key: string]: string[] } = {}
       // define permissions
       security[api.key] = ['_reader', '_writer']
-      const groupDb = cloudant.db.use(`g_${groupId}`)
 
-      await groupDb.set_security(security, (err, result) => {
+      // TODO: fix this so its not 'any'
+      const groupDb: any = cloudant.db.use(`g_${groupId}`)
+
+      await groupDb.set_security(security, (err: any) => {
         if (err) {
           reject(err)
         }
@@ -64,3 +52,15 @@ const setSecurity = (groupId: string) =>
       })
     })
   })
+
+export const createUserDatabaseCredentials = async (): Promise<
+  credentialResponse
+> => {
+  const _groupId = await createGroupId()
+
+  // creates a database if not yet defined
+  await createGroupDatabase(_groupId)
+
+  const response = await setSecurity(_groupId)
+  return response
+}
