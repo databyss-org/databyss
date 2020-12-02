@@ -14,8 +14,25 @@
     "googleId": {
       "type": "string"
     },
-    "password": {
-      "type": "string"
+    "groups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "groupId": {
+            "type": "string"
+          },
+          "dbKey": {
+            "type": "string"
+          },
+          "dbPassword": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          }
+        }
+      }
     },
     "date": {
       "type": "string"

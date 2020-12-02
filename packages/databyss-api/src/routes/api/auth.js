@@ -4,6 +4,11 @@ import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 //import Login from '../../models/Login'
 import wrap from '../../lib/guardedAsync'
 import { Login } from '@databyss-org/data/serverdbs'
+import { cloudant } from '@databyss-org/services/lib/cloudant'
+import {
+  createUserDatabaseCredentials,
+  createGroupId,
+} from '../../lib/createUserDatabase'
 
 const router = express.Router()
 
@@ -47,13 +52,23 @@ router.post(
     if (query.docs.length) {
       const _login = query.docs[0]
 
-      // todo: cahnge this back
+      // todo: change this back
       if (_login.date >= Date.now() - 36000000) {
         const token = _login.token
         const _res = await Login.get(_login._id, _login._rev)
         await Login.destroy(_res._id, _res._rev)
         const session = await getSessionFromToken(token)
-        console.log(session)
+        // check if user has login credentials
+        if (!session.user.defaultGroupId) {
+          // cloudant.generate_api_key((err, api)=> {
+          const credentials = await createUserDatabaseCredentials()
+          console.log(session)
+          console.log(credentials)
+          // })
+          console.log('create credentials')
+        }
+
+        // console.log(session)
         return res.json({ data: { session } })
       }
       return res.status(401).json({ error: 'token expired' })

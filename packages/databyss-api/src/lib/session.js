@@ -20,6 +20,7 @@ export const getTokenFromUserId = (userId) =>
 
 export const getSessionFromUserId = async (userId) => {
   const user = await Users.get(userId)
+  // console.log(user)
   //  const user = await User.findOne({ _id: userId })
   if (!userId || !user) {
     throw new Error('Bad userId')
