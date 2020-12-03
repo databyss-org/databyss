@@ -4,10 +4,8 @@ import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 //import Login from '../../models/Login'
 import wrap from '../../lib/guardedAsync'
 import { Login } from '@databyss-org/data/serverdbs'
-import { cloudant } from '@databyss-org/services/lib/cloudant'
 import {
   createUserDatabaseCredentials,
-  createGroupId,
   addCredentialsToUser,
 } from '../../lib/createUserDatabase'
 
@@ -62,14 +60,20 @@ router.post(
         // check if user has login credentials
         if (!session.user.defaultGroupId) {
           // if default group doesnt exist, initiate a new database and pass the data back to the client
-          const credentials = await createUserDatabaseCredentials()
+          const credentials = await createUserDatabaseCredentials(session.user)
           const _user = await addCredentialsToUser(
             session.user._id,
             credentials
           )
-          session.user = _user
-          console.log('session', session)
           // add credential to users `groups` property
+
+          session.user.groups = [
+            {
+              ..._user.groups[0],
+              dbKey: credentials.dbKey,
+              dbPassword: credentials.dbPassword,
+            },
+          ]
         }
 
         // console.log(session)
