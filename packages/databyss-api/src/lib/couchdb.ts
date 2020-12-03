@@ -1,6 +1,7 @@
 import { Users } from '@databyss-org/data/serverdbs'
 import userSchema from '@databyss-org/data/schemas/users.json'
 import path from 'path'
+import { cloudant } from '../../../databyss-services/lib/cloudant'
 
 const fs = require('fs')
 
@@ -19,4 +20,23 @@ export const updateAuthValidationDocs = async () => {
   }
 
   await Users.upsert(_dd._id, () => _dd)
+}
+
+export const initiateDatabases = async () => {
+  // initialize databases if not yet created
+  try {
+    await cloudant.db.get(`groups`)
+  } catch (err) {
+    await cloudant.db.create(`groups`)
+  }
+  try {
+    await cloudant.db.get(`login`)
+  } catch (err) {
+    await cloudant.db.create(`login`)
+  }
+  try {
+    await cloudant.db.get(`users`)
+  } catch (err) {
+    await cloudant.db.create(`users`)
+  }
 }
