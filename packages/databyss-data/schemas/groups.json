@@ -1,0 +1,25 @@
+{
+  "title": "Groups",
+  "type": "object",
+  "properties": {
+    "_rev": {
+      "type": "string"
+    },
+    "_revisions": {
+      "type": "object",
+      "properties": {
+        "start": "number",
+        "ids": {
+          "type": "array",
+          "items": "string"
+        }
+      }
+    },
+    "_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    }
+  }
+}

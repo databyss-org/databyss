@@ -125,7 +125,7 @@ router.post(
           ? 'test-code-42'
           : humanReadableIds.hri.random(),
       token,
-      date: Date.now(),
+      date: Date.now().toString(),
     }
 
     Login.upsert({ email, code: loginObj.code }, () => loginObj)
