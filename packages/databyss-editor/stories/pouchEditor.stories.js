@@ -34,115 +34,60 @@ import {
 } from '../state/util'
 import blankState from './fixtures/blankState'
 
-const LoginRequired = () => (
-  <Text>You must login before running this story</Text>
-)
-
 const Box = ({ children, ...others }) => (
   <View borderVariant="thinDark" paddingVariant="tiny" width="100%" {...others}>
     {children}
   </View>
 )
 
-const PageWithAutosave = ({ page }) => {
-  const { setPatches } = usePageContext()
-  const hasPendingPatches = usePageContext((c) => c && c.hasPendingPatches)
+const PageBody = ({ page }) => {
   const [pageState, setPageState] = useState(null)
-
-  const operationsQueue = useRef([])
-
-  const throttledAutosave = useCallback(
-    throttle(({ nextState, patches }) => {
-      const _patches = cleanupPatches(patches)
-      if (_patches?.length) {
-        const payload = {
-          id: nextState.pageHeader._id,
-          patches: operationsQueue.current,
-        }
-        setPatches(payload)
-        operationsQueue.current = []
-      }
-    }, 500),
-    []
-  )
 
   const onDocumentChange = (val) => {
     setPageState(JSON.stringify(val, null, 2))
   }
 
-  const onChange = (value) => {
-    const patches = addMetaToPatches(value)
-    // push changes to a queue
-    operationsQueue.current = operationsQueue.current.concat(patches)
-    throttledAutosave({ ...value, patches })
-  }
-
   return (
     <View>
-      <HistoryProvider>
-        <EditorProvider onChange={onChange} initialState={withMetaData(page)}>
-          <ContentEditable onDocumentChange={onDocumentChange} autofocus />
-        </EditorProvider>
-      </HistoryProvider>
+      <EditorProvider
+        // onChange={onChange}
+        initialState={withMetaData(page)}
+      >
+        <ContentEditable onDocumentChange={onDocumentChange} autofocus />
+      </EditorProvider>
       <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{pageState}</pre>
       </Box>
-      {!hasPendingPatches ? (
-        <Text id="complete" variant="uiText">
-          changes saved
-        </Text>
-      ) : null}
     </View>
   )
 }
 
 const EditorWithProvider = () => {
-  const { getSession } = useSessionContext()
-  const { account } = getSession()
-  const { setPage } = usePageContext()
+  const _defaultPage = editorStateToPage(connectedFixture('test_page_id'))
 
-  const _defaultPage = editorStateToPage(connectedFixture(account.defaultPage))
+  console.log(pageToEditorState(_defaultPage))
 
   return (
     <View>
-      <PageLoader pageId={account.defaultPage}>
-        {(page) => {
-          if (page.name !== 'test document') {
-            setPage(_defaultPage)
-            return null
-          }
-
-          return <PageWithAutosave page={pageToEditorState(page)} />
-        }}
-      </PageLoader>
+      <PageBody page={pageToEditorState(_defaultPage)} />
     </View>
   )
 }
 
 const EditorWithModals = () => (
-  <ServiceProvider>
-    <DatabaseProvider>
-      <SessionProvider unauthorizedChildren={<LoginRequired />}>
-        <PageProvider initialState={pageInitialState}>
-          <SourceProvider>
-            <TopicProvider>
-              <CatalogProvider>
-                <EditorWithProvider initialState={blankState} />
-                <ModalManager />
-              </CatalogProvider>
-            </TopicProvider>
-          </SourceProvider>
-        </PageProvider>
-      </SessionProvider>
-    </DatabaseProvider>
-  </ServiceProvider>
+  <DatabaseProvider>
+    <CatalogProvider>
+      <EditorWithProvider initialState={blankState} />
+      <ModalManager />
+    </CatalogProvider>
+  </DatabaseProvider>
 )
 
 storiesOf('Services|Page', module)
   .addDecorator(NotifyDecorator)
   .addDecorator(ViewportDecorator)
-  .add('Slate 5', () => (
+  .add('Slate - PouchDb', () => (
     <NavigationProvider>
       <EditorWithModals />
     </NavigationProvider>

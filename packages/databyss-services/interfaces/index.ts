@@ -1,5 +1,4 @@
 import React from 'react'
-import { ResourcePending } from './ResourcePending'
 
 export { ResourcePending } from './ResourcePending'
 export {
@@ -10,6 +9,7 @@ export {
   VersionConflictError,
   UnexpectedServerError,
 } from './Errors'
+export type { DatabaseState } from './DatabaseState'
 export type { Page, PageHeader } from './Page'
 export type { Point } from './Point'
 export type { Selection } from './Selection'

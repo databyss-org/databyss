@@ -80,6 +80,8 @@ const SessionProvider = ({
 
   let _children = children
   const isPending = state.session instanceof ResourcePending
+
+  console.log(state)
   if (
     !state.session ||
     state.session instanceof Error ||

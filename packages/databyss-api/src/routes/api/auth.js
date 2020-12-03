@@ -66,7 +66,6 @@ router.post(
             credentials
           )
           // add credential to users `groups` property
-
           session.user.groups = [
             {
               ..._user.groups[0],
@@ -74,6 +73,7 @@ router.post(
               dbPassword: credentials.dbPassword,
             },
           ]
+          session.user.defaultGroupId = _user.groups[0].groupId
         }
 
         // console.log(session)

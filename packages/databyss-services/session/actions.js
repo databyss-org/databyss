@@ -20,8 +20,10 @@ import {
   getAuthToken,
   deleteAuthToken,
   getAccountId,
-  setAccountId,
+  deleteSession,
+  // setAccountId,
   deleteAccountId,
+  setSession,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
@@ -95,7 +97,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     if (res.data && res.data.session) {
       // authenticated
       setAuthToken(res.data.session.token)
-      setAccountId(res.data.session.user.defaultGroupId)
+      setSession(JSON.stringify(res.data.session.user))
       dispatch({
         type: CACHE_SESSION,
         payload: {
@@ -117,7 +119,8 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     }
   } catch (error) {
     deleteAuthToken()
-    deleteAccountId()
+    deleteSession()
+    // deleteAccountId()
     dispatch({
       type: DENY_ACCESS,
       payload: { error },
