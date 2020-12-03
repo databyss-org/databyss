@@ -25,7 +25,6 @@ export const getSessionFromUserId = async (userId) => {
   if (!userId || !user) {
     throw new Error('Bad userId')
   }
-  const account = 'dummyid'
   /*
 
  { 
@@ -47,7 +46,6 @@ export const getSessionFromUserId = async (userId) => {
   return {
     token,
     user,
-    account,
   }
 }
 

@@ -1,4 +1,30 @@
 import { cloudant } from '@databyss-org/services/lib/cloudant'
+import { Users } from '@databyss-org/data/serverdbs/index'
+
+interface ICredentialResponse {
+  dbKey: string
+  dbPassword: string
+  groupId: string
+}
+
+enum Role {
+  Admin = 'ADMIN',
+  Read = 'READ',
+  Write = 'WRITE',
+}
+
+interface IUserCredentials extends ICredentialResponse {
+  role: Role
+}
+
+interface IUser {
+  _id: string
+  email: string
+  name: string
+  googleId: string
+  defaultGroupId: string
+  groups: IUserCredentials[]
+}
 
 export const createGroupId = async () => {
   // TODO: fix this so its not 'any'
@@ -16,13 +42,7 @@ const createGroupDatabase = async (id: string) => {
   }
 }
 
-interface credentialResponse {
-  dbKey: string
-  dbPassword: string
-  groupId: string
-}
-
-const setSecurity = (groupId: string): Promise<credentialResponse> =>
+const setSecurity = (groupId: string): Promise<ICredentialResponse> =>
   new Promise((resolve, reject) => {
     const _credentials = {
       dbKey: '',
@@ -54,7 +74,7 @@ const setSecurity = (groupId: string): Promise<credentialResponse> =>
   })
 
 export const createUserDatabaseCredentials = async (): Promise<
-  credentialResponse
+  ICredentialResponse
 > => {
   const _groupId = await createGroupId()
 
@@ -63,4 +83,17 @@ export const createUserDatabaseCredentials = async (): Promise<
 
   const response = await setSecurity(_groupId)
   return response
+}
+
+export const addCredentialsToUser = async (
+  userId: string,
+  credentials: ICredentialResponse
+): Promise<IUser> => {
+  const _res = await Users.upsert(userId, (oldDoc: IUser) => {
+    const _groups = oldDoc.groups || []
+    _groups.push({ ...credentials, role: Role.Admin })
+    return { ...oldDoc, groups: _groups, defaultGroupId: credentials.groupId }
+  })
+
+  return _res
 }

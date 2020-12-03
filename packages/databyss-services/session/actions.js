@@ -95,7 +95,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     if (res.data && res.data.session) {
       // authenticated
       setAuthToken(res.data.session.token)
-      setAccountId(res.data.session.account._id)
+      setAccountId(res.data.session.user.defaultGroupId)
       dispatch({
         type: CACHE_SESSION,
         payload: {

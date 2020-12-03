@@ -8,6 +8,7 @@ import { cloudant } from '@databyss-org/services/lib/cloudant'
 import {
   createUserDatabaseCredentials,
   createGroupId,
+  addCredentialsToUser,
 } from '../../lib/createUserDatabase'
 
 const router = express.Router()
@@ -60,9 +61,15 @@ router.post(
         const session = await getSessionFromToken(token)
         // check if user has login credentials
         if (!session.user.defaultGroupId) {
-          // cloudant.generate_api_key((err, api)=> {
+          // if default group doesnt exist, initiate a new database and pass the data back to the client
           const credentials = await createUserDatabaseCredentials()
-          // NEXT WE MUST ADD THE CREDENTIALS TO THE USERS DATABASE
+          const _user = await addCredentialsToUser(
+            session.user._id,
+            credentials
+          )
+          session.user = _user
+          console.log('session', session)
+          // add credential to users `groups` property
         }
 
         // console.log(session)
