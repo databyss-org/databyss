@@ -1,5 +1,6 @@
 import React, { useState, useEffect, FunctionComponent } from 'react'
-// import * as PouchDB from 'pouchdb'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as PouchDB from 'pouchdb'
 import { storiesOf } from '@storybook/react'
 import { View, Text, Button, Grid } from '@databyss-org/ui/primitives'
 import { create } from '@databyss-org/data/appdb/create'
