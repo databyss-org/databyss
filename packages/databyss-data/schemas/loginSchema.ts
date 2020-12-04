@@ -1,6 +1,6 @@
 import { JSONSchema4 } from 'json-schema'
 
-export const userSchema: JSONSchema4 = {
+export const loginSchema: JSONSchema4 = {
   title: 'Login',
   type: 'object',
   properties: {
@@ -19,19 +19,22 @@ export const userSchema: JSONSchema4 = {
             type: 'string',
           },
         },
+      },
+      _id: {
+        type: 'string',
+      },
+      email: {
+        type: 'string',
+      },
+      code: {
+        type: 'string',
+      },
+      date: {
+        type: 'number',
+      },
     },
-    _id: {
-      type: 'string',
-    },
-    email: {
-      type: 'string',
-    },
-    code: {
-      type: 'string',
-    },
-    date: {
-      type: 'number',
-    },
+    required: ['_id', 'email', 'date'],
   },
-  required: ['_id', 'email', 'date'],
 }
+
+export default loginSchema

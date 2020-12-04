@@ -49,5 +49,7 @@ export const userSchema: JSONSchema4 = {
       required: ['userId', 'dbkey', 'lastLoginAt'],
     },
   },
-  required: ['_rev', '_id', 'name', 'sessions'],
+  required: ['_id', 'name', 'sessions'],
 }
+
+export default userSchema

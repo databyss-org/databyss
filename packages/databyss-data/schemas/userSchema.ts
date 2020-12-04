@@ -57,5 +57,7 @@ export const userSchema: JSONSchema4 = {
       type: 'string',
     },
   },
-  required: ['_rev', '_id', 'email', 'groups'],
+  required: ['_id', 'email', 'groups'],
 }
+
+export default userSchema

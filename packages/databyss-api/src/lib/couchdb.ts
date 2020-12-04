@@ -16,15 +16,18 @@ const updateDesignDoc = async <D>(schema: JSONSchema4, db: CouchDB<D>) => {
     _id: '_design/schema_validation',
     validate_doc_update: fs
       .readFileSync(
-        path.join(__dirname, './_helpers/validate_doc_update.js.es5')
+        path.join(
+          __dirname,
+          './_design_doc_includes/validate_doc_update.js.es5'
+        )
       )
       .toString(),
     libs: {
       tv4: fs
-        .readFileSync(path.join(__dirname, './_helpers/tv4.js.es5'))
+        .readFileSync(path.join(__dirname, './_design_doc_includes/tv4.js.es5'))
         .toString(),
     },
-    schema,
+    schema: JSON.stringify(schema),
   }
   await db.upsert(_dd._id, () => _dd)
 }
