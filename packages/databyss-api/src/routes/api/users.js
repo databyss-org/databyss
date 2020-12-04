@@ -4,13 +4,13 @@ import humanReadableIds from 'human-readable-ids'
 import jwt from 'jsonwebtoken'
 import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
+import { Users, Logins } from '@databyss-org/data/serverdbs'
 import { send } from '../../lib/sendgrid'
 import User from '../../models/User'
 import Account from '../../models/Account'
 // import Login from '../../models/Login'
-import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
+import { getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
-import { Users, Logins } from '@databyss-org/data/serverdbs'
 
 const router = express.Router()
 

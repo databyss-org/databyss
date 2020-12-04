@@ -1,9 +1,8 @@
 import express from 'express'
+import { Logins } from '@databyss-org/data/serverdbs'
 import auth from '../../middleware/auth'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
-//import Login from '../../models/Login'
 import wrap from '../../lib/guardedAsync'
-import { Logins } from '@databyss-org/data/serverdbs'
 import {
   createUserDatabaseCredentials,
   addCredentialsToUser,

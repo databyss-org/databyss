@@ -33,11 +33,13 @@ const updateDesignDoc = async <D>(schema: JSONSchema4, db: CouchDB<D>) => {
 }
 
 export const updateDesignDocs = async () => {
-  ;[
+  const _designDatabaseTuple: [JSONSchema4, any][] = [
     [userSchema, Users],
     [loginSchema, Logins],
     [groupSchema, Groups],
-  ].forEach((t) => updateDesignDoc(t[0], t[1]))
+  ]
+
+  _designDatabaseTuple.forEach((t) => updateDesignDoc(t[0], t[1]))
 }
 
 export const initiateDatabases = async () => {

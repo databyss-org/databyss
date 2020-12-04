@@ -15,7 +15,8 @@
   "private": false,
   "peerDependencies": {
     "@databyss-org/services": "1.2.6",
-    "@databyss-org/data": "1.2.6"
+    "@databyss-org/data": "1.2.6",
+    "json-schema": "^0.2.5"
   },
   "dependencies": {
     "@types/pouchdb": "^6.4.0",
