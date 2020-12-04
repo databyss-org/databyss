@@ -3,7 +3,7 @@ import auth from '../../middleware/auth'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 //import Login from '../../models/Login'
 import wrap from '../../lib/guardedAsync'
-import { Login } from '@databyss-org/data/serverdbs'
+import { Logins } from '@databyss-org/data/serverdbs'
 import {
   createUserDatabaseCredentials,
   addCredentialsToUser,
@@ -46,7 +46,7 @@ router.post(
       },
     }
 
-    const query = await Login.find(_selector)
+    const query = await Logins.find(_selector)
 
     if (query.docs.length) {
       const _login = query.docs[0]
