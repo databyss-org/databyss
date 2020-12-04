@@ -111,6 +111,7 @@ router.post(
       emailExists = false
       await Users.insert({
         email,
+        groups: [],
       })
       user = await Users.find(_selector)
     }
@@ -125,7 +126,7 @@ router.post(
           ? 'test-code-42'
           : humanReadableIds.hri.random(),
       token,
-      date: Date.now().toString(),
+      createdAt: Date.now(),
     }
 
     Login.upsert({ email, code: loginObj.code }, () => loginObj)
