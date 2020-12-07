@@ -73,10 +73,6 @@ router.post(
               dbPassword: credentials.dbPassword,
             },
           ]
-<<<<<<< HEAD
-          session.user.defaultGroupId = _user.groups[0].groupId
-=======
->>>>>>> paul/datastore
         }
 
         // console.log(session)
