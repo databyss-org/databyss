@@ -4,14 +4,18 @@ import {
   loginSchema,
   groupSchema,
 } from '@databyss-org/data/schemas'
-import { CouchDB, DesignDoc } from '@databyss-org/data/interfaces'
+import { DocumentScope } from 'nano'
+import { DesignDoc } from '@databyss-org/data/interfaces'
 import { JSONSchema4 } from 'json-schema'
 import path from 'path'
 import { cloudant } from '../../../databyss-services/lib/cloudant'
 
 const fs = require('fs')
 
-const updateDesignDoc = async <D>(schema: JSONSchema4, db: CouchDB<D>) => {
+const updateDesignDoc = async <D>(
+  schema: JSONSchema4,
+  db: DocumentScope<D>
+) => {
   const _dd: DesignDoc = {
     _id: '_design/schema_validation',
     validate_doc_update: fs
