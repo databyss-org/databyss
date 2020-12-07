@@ -1,3 +1,5 @@
+export default null
+
 // import { createRxDatabase, addRxPlugin, RxDatabase } from 'rxdb'
 // import { RxDBReplicationPlugin } from 'rxdb/plugins/replication'
 // import { GroupCollection, GroupSchema } from '../schemas/group'

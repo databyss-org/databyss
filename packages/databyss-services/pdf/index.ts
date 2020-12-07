@@ -29,7 +29,7 @@ export interface Metadata {
 export const fetchMetadata = (data: Metadata): Promise<any> => {
   const { title, author } = data
 
-  const queries = []
+  const queries: string[] = []
   if (title) {
     const t = title.text.replace(/ /g, '+')
     queries.push(`query.bibliographic=${t.toLowerCase()}`)
