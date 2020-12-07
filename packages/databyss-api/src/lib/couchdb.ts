@@ -1,4 +1,8 @@
-import { Users, Logins, Groups } from '@databyss-org/data/serverdbs'
+import {
+  LoginsDesignDoc,
+  GroupsDesignDoc,
+  UsersDesignDoc,
+} from '@databyss-org/data/serverdbs'
 import {
   userSchema,
   loginSchema,
@@ -12,9 +16,9 @@ import { cloudant } from '../../../databyss-services/lib/cloudant'
 
 const fs = require('fs')
 
-const updateDesignDoc = async <D>(
+const updateDesignDoc = async (
   schema: JSONSchema4,
-  db: DocumentScope<D>
+  db: DocumentScope<DesignDoc>
 ) => {
   const _dd: DesignDoc = {
     _id: '_design/schema_validation',
@@ -37,10 +41,10 @@ const updateDesignDoc = async <D>(
 }
 
 export const updateDesignDocs = async () => {
-  const _designDatabaseTuple: [JSONSchema4, any][] = [
-    [userSchema, Users],
-    [loginSchema, Logins],
-    [groupSchema, Groups],
+  const _designDatabaseTuple: [JSONSchema4, DocumentScope<DesignDoc>][] = [
+    [userSchema, UsersDesignDoc],
+    [loginSchema, LoginsDesignDoc],
+    [groupSchema, GroupsDesignDoc],
   ]
 
   _designDatabaseTuple.forEach((t) => updateDesignDoc(t[0], t[1]))
