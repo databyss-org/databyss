@@ -142,7 +142,7 @@ const EditorWithModals = () => (
 storiesOf('Services|Page', module)
   .addDecorator(NotifyDecorator)
   .addDecorator(ViewportDecorator)
-  .add('Slate 5', () => (
+  .add('Slate 5 - pouch', () => (
     <NavigationProvider>
       <EditorWithModals />
     </NavigationProvider>
