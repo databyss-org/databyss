@@ -65,6 +65,7 @@ router.post(
             credentials
           )
           // add credential to users `groups` property
+
           session.user.groups = [
             {
               ..._user.groups[0],
@@ -72,7 +73,10 @@ router.post(
               dbPassword: credentials.dbPassword,
             },
           ]
+<<<<<<< HEAD
           session.user.defaultGroupId = _user.groups[0].groupId
+=======
+>>>>>>> paul/datastore
         }
 
         // console.log(session)
