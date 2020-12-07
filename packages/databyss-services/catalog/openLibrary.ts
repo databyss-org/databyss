@@ -51,7 +51,7 @@ const openLibrary: CatalogService = {
       hasPublisherLocation: apiResult['publisher-location'] !== undefined,
     }
 
-    const responseParts = []
+    const responseParts: any = []
     if (keys.hasPlace) {
       if (Array.isArray(apiResult.place)) {
         responseParts.push(...apiResult.place)

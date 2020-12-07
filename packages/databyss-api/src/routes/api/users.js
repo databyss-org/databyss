@@ -4,11 +4,12 @@ import humanReadableIds from 'human-readable-ids'
 import jwt from 'jsonwebtoken'
 import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
+import { Users, Logins } from '@databyss-org/data/serverdbs'
 import { send } from '../../lib/sendgrid'
 import User from '../../models/User'
 import Account from '../../models/Account'
-import Login from '../../models/Login'
-import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
+// import Login from '../../models/Login'
+import { getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
 
 const router = express.Router()
@@ -50,16 +51,32 @@ router.post(
       const { name, email: _email, sub } = decoded
 
       const email = _email?.toLowerCase()
-      let user = await User.findOne({ googleId: sub })
+      const _selector = {
+        selector: {
+          googleId: { $eq: sub },
+        },
+      }
+      let user = await Users.find(_selector)
+
+      // let user = await Users.get({ googleId: sub })
+
+      // let user = await User.findOne({ googleId: sub })
       if (!user) {
-        user = await User.create({
+        user = await Users.insert({
           name,
           email,
           googleId: sub,
         })
+        // user = await User.create({
+        //   name,
+        //   email,
+        //   googleId: sub,
+        // })
       }
-      const session = await getSessionFromUserId(user._id)
-      res.json({ data: { session } })
+      // const session = await getSessionFromUserId(user.id)
+      res.json({ data: { user } }).status(200)
+
+      //   res.json({ data: { session } })
     })
   })
 )
@@ -77,19 +94,29 @@ router.post(
     }
 
     const { email: _email } = req.body
-    let emailExists = false
+    let emailExists = true
 
     const email = _email?.toLowerCase()
 
-    let user = await User.findOne({ email })
-    if (!user) {
-      // Creates new user
-      user = await User.create({
-        email,
-      })
-    } else {
-      emailExists = true
+    const _selector = {
+      selector: {
+        email: { $eq: email },
+      },
     }
+    // todo: use users.get({})
+    let user = await Users.find(_selector)
+
+    if (!user.docs.length) {
+      // Creates new user
+      emailExists = false
+      await Users.insert({
+        email,
+        groups: [],
+      })
+      user = await Users.find(_selector)
+    }
+
+    user = user.docs[0]
 
     const token = await getTokenFromUserId(user._id)
     const loginObj = {
@@ -99,10 +126,11 @@ router.post(
           ? 'test-code-42'
           : humanReadableIds.hri.random(),
       token,
+      createdAt: Date.now(),
     }
-    await Login.replaceOne({ email, code: loginObj.code }, loginObj, {
-      upsert: true,
-    })
+
+    Logins.upsert({ email, code: loginObj.code }, () => loginObj)
+
     const msg = {
       to: email,
       from: process.env.TRANSACTIONAL_EMAIL_SENDER,

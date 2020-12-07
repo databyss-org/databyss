@@ -1,8 +1,6 @@
 {
   "extends": "../../config/tsconfig.json",
-  "include": [
-    "./**/*",
-  ],
+  "include": ["./**/*", "../databyss-data/schemas/users.ts"],
   "compilerOptions": {
     "composite": true,
     "resolveJsonModule": true

@@ -7,6 +7,7 @@ import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import BugsnagPluginExpress from '@bugsnag/plugin-express'
 import { ApiError } from './lib/Errors'
 import { connectDB } from './lib/db'
+import { updateDesignDocs, initiateDatabases } from './lib/couchdb'
 
 // routes
 import usersRoute from './routes/api/users'
@@ -41,6 +42,10 @@ const run = async () => {
   }
 
   await connectDB(dbURI)
+
+  // couchdb routines
+  await initiateDatabases()
+  await updateDesignDocs()
 
   // bugsnag middleware must go first
   startBugsnag({
