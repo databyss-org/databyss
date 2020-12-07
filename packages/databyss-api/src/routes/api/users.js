@@ -4,13 +4,13 @@ import humanReadableIds from 'human-readable-ids'
 import jwt from 'jsonwebtoken'
 import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
+import { Users, Logins } from '@databyss-org/data/serverdbs'
 import { send } from '../../lib/sendgrid'
 import User from '../../models/User'
 import Account from '../../models/Account'
 // import Login from '../../models/Login'
-import { getSessionFromUserId, getTokenFromUserId } from '../../lib/session'
+import { getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
-import { Users, Login } from '@databyss-org/data/serverdbs'
 
 const router = express.Router()
 
@@ -111,6 +111,7 @@ router.post(
       emailExists = false
       await Users.insert({
         email,
+        groups: [],
       })
       user = await Users.find(_selector)
     }
@@ -125,10 +126,10 @@ router.post(
           ? 'test-code-42'
           : humanReadableIds.hri.random(),
       token,
-      date: Date.now().toString(),
+      createdAt: Date.now(),
     }
 
-    Login.upsert({ email, code: loginObj.code }, () => loginObj)
+    Logins.upsert({ email, code: loginObj.code }, () => loginObj)
 
     const msg = {
       to: email,

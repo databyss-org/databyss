@@ -1,87 +1,62 @@
-import { Users, Login, Groups } from '@databyss-org/data/serverdbs'
-import userSchema from '@databyss-org/data/schemas/users.json'
-import loginSchema from '@databyss-org/data/schemas/login.json'
-import groupsSchema from '@databyss-org/data/schemas/groups.json'
+import {
+  LoginsDesignDoc,
+  GroupsDesignDoc,
+  UsersDesignDoc,
+} from '@databyss-org/data/serverdbs'
+import {
+  userSchema,
+  loginSchema,
+  groupSchema,
+} from '@databyss-org/data/schemas'
+import { DocumentScope } from 'nano'
+import { DesignDoc } from '@databyss-org/data/interfaces'
+import { JSONSchema4 } from 'json-schema'
 import path from 'path'
 import { cloudant } from '../../../databyss-services/lib/cloudant'
 
 const fs = require('fs')
 
-const updateUsersDesignDocs = async () => {
-  // update Users design doc
-  const _dd = {
+const updateDesignDoc = async (
+  schema: JSONSchema4,
+  db: DocumentScope<DesignDoc>
+) => {
+  const _dd: DesignDoc = {
     _id: '_design/schema_validation',
     validate_doc_update: fs
-      .readFileSync(path.join(__dirname, './_helpers/validate_doc_update.js'))
+      .readFileSync(
+        path.join(
+          __dirname,
+          './_design_doc_includes/validate_doc_update.js.es5'
+        )
+      )
       .toString(),
     libs: {
       tv4: fs
-        .readFileSync(path.join(__dirname, './_helpers/tv4.js'))
+        .readFileSync(path.join(__dirname, './_design_doc_includes/tv4.js.es5'))
         .toString(),
     },
-    schema: userSchema,
+    schema: JSON.stringify(schema),
   }
-
-  await Users.upsert(_dd._id, () => _dd)
-}
-
-const updateLoginDesignDocs = async () => {
-  // update Users design doc
-  const _dd = {
-    _id: '_design/schema_validation',
-    validate_doc_update: fs
-      .readFileSync(path.join(__dirname, './_helpers/validate_doc_update.js'))
-      .toString(),
-    libs: {
-      tv4: fs
-        .readFileSync(path.join(__dirname, './_helpers/tv4.js'))
-        .toString(),
-    },
-    schema: loginSchema,
-  }
-
-  await Login.upsert(_dd._id, () => _dd)
-}
-
-const updateGroupsDesignDocs = async () => {
-  // update Users design doc
-  const _dd = {
-    _id: '_design/schema_validation',
-    validate_doc_update: fs
-      .readFileSync(path.join(__dirname, './_helpers/validate_doc_update.js'))
-      .toString(),
-    libs: {
-      tv4: fs
-        .readFileSync(path.join(__dirname, './_helpers/tv4.js'))
-        .toString(),
-    },
-    schema: groupsSchema,
-  }
-
-  await Groups.upsert(_dd._id, () => _dd)
+  await db.upsert(_dd._id, () => _dd)
 }
 
 export const updateDesignDocs = async () => {
-  await updateUsersDesignDocs()
-  await updateLoginDesignDocs()
-  await updateGroupsDesignDocs()
+  const _designDatabaseTuple: [JSONSchema4, DocumentScope<DesignDoc>][] = [
+    [userSchema, UsersDesignDoc],
+    [loginSchema, LoginsDesignDoc],
+    [groupSchema, GroupsDesignDoc],
+  ]
+
+  _designDatabaseTuple.forEach((t) => updateDesignDoc(t[0], t[1]))
 }
 
 export const initiateDatabases = async () => {
   // initialize databases if not yet created
-  try {
-    await cloudant.db.get(`groups`)
-  } catch (err) {
-    await cloudant.db.create(`groups`)
-  }
-  try {
-    await cloudant.db.get(`login`)
-  } catch (err) {
-    await cloudant.db.create(`login`)
-  }
-  try {
-    await cloudant.db.get(`users`)
-  } catch (err) {
-    await cloudant.db.create(`users`)
+  for (const d of ['groups', 'logins', 'users']) {
+    try {
+      await cloudant.db.get(d)
+    } catch (err) {
+      await cloudant.db.create(d)
+    }
   }
 }

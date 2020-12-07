@@ -1,31 +1,11 @@
 import { cloudant } from '@databyss-org/services/lib/cloudant'
 import { Users, Groups } from '@databyss-org/data/serverdbs/index'
+import { User, Role } from '@databyss-org/data/interfaces'
 
-interface ICredentialResponse {
+interface CredentialResponse {
   dbKey: string
   dbPassword: string
   groupId: string
-}
-
-enum Role {
-  Admin = 'ADMIN',
-  ReadOnly = 'READ_ONLY',
-  Editor = 'EDITOR',
-  GroupAdmin = 'GROUP_ADMIN',
-}
-
-interface IUserCredentials {
-  role: Role
-  groupId: string
-}
-
-interface IUser {
-  _id: string
-  email?: string
-  name?: string
-  googleId?: string
-  defaultGroupId?: string
-  groups?: IUserCredentials[]
 }
 
 // TODO: CREATE OUR OWN IDS
@@ -46,7 +26,7 @@ const createGroupDatabase = async (id: string) => {
   }
 }
 
-const setSecurity = (groupId: string): Promise<ICredentialResponse> =>
+const setSecurity = (groupId: string): Promise<CredentialResponse> =>
   new Promise((resolve, reject) => {
     const _credentials = {
       dbKey: '',
@@ -79,7 +59,7 @@ const setSecurity = (groupId: string): Promise<ICredentialResponse> =>
 
 const addSessionToGroup = async (
   userId: string,
-  credentials: ICredentialResponse
+  credentials: CredentialResponse
 ) => {
   await Groups.upsert(credentials.groupId, (oldDoc: any) => {
     const _sessions = oldDoc.sessions || []
@@ -87,15 +67,15 @@ const addSessionToGroup = async (
       userId,
       clientInfo: 'get client info',
       dbKey: credentials.dbKey,
-      lastLoginAt: Date.now().toString(),
+      lastLoginAt: Date.now(),
     })
     return { ...oldDoc, sessions: _sessions }
   })
 }
 
 export const createUserDatabaseCredentials = async (
-  user: IUser
-): Promise<ICredentialResponse> => {
+  user: User
+): Promise<CredentialResponse> => {
   const _groupId = await createGroupId()
 
   // creates a database if not yet defined
@@ -111,9 +91,9 @@ export const createUserDatabaseCredentials = async (
 
 export const addCredentialsToUser = async (
   userId: string,
-  credentials: ICredentialResponse
-): Promise<IUser> => {
-  const _res = await Users.upsert(userId, (oldDoc: IUser) => {
+  credentials: CredentialResponse
+): Promise<User> => {
+  const _res = await Users.upsert(userId, (oldDoc: User) => {
     // TODO: do not upload the password
     const _groups = oldDoc.groups || []
     _groups.push({ groupId: credentials.groupId, role: Role.GroupAdmin })

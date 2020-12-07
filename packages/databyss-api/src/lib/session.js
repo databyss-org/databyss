@@ -1,6 +1,4 @@
 import jwt from 'jsonwebtoken'
-import User from '../models/User'
-import Account from '../models/Account'
 import { Users } from '@databyss-org/data/serverdbs'
 
 export const getTokenFromUserId = (userId) =>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, FunctionComponent } from 'react'
+// eslint-disable-next-line import/no-extraneous-dependencies
 import * as PouchDB from 'pouchdb'
 import { storiesOf } from '@storybook/react'
-import { View, Text, List, Button, Grid } from '@databyss-org/ui/primitives'
+import { View, Text, Button, Grid } from '@databyss-org/ui/primitives'
 import { create } from '@databyss-org/data/appdb/create'
 // import { GroupDocType } from '@databyss-org/data/schemas/group'
 import { uid } from '@databyss-org/data/lib/uid'

@@ -1,13 +1,14 @@
 {
   "include": [
-    "../**/*",
+    "../**/*.ts",
+    "../**/*.tsx"
   ],
   "exclude": [
     "node_modules"
   ],
   "compilerOptions": {
     "typeRoots": [
-      "../types",
+      "../types"
     ],
     "target": "es5",
     "lib": [
@@ -15,7 +16,6 @@
       "dom.iterable",
       "esnext"
     ],
-    "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -27,6 +27,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react",
-    "declaration": true
+    "declaration": true,
+    "noImplicitAny": false
   }
 }

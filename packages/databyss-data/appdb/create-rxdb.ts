@@ -1,38 +1,42 @@
-import { createRxDatabase, addRxPlugin, RxDatabase } from 'rxdb'
-import { RxDBReplicationPlugin } from 'rxdb/plugins/replication'
-import { GroupCollection, GroupSchema } from '../schemas/group'
+export default null
 
-addRxPlugin(require('pouchdb-adapter-indexeddb'))
-addRxPlugin(require('pouchdb-adapter-http'))
-addRxPlugin(RxDBReplicationPlugin)
+// import { createRxDatabase, addRxPlugin, RxDatabase } from 'rxdb'
+// import { RxDBReplicationPlugin } from 'rxdb/plugins/replication'
+// import { GroupCollection, GroupSchema } from '../schemas/group'
 
-const DEFAULT_NAME = 'rxdb'
-const TEST_DBNAME = 'testdb'
+// addRxPlugin(require('pouchdb-adapter-indexeddb'))
 
-export type DatabyssCollections = {
-  groups: GroupCollection
-  // blocks: BlockCollection
-}
+// addRxPlugin(require('pouchdb-adapter-http'))
 
-export type DatabyssDatabase = RxDatabase<DatabyssCollections>
+// addRxPlugin(RxDBReplicationPlugin)
 
-interface CreateOptions {
-  name?: string
-}
+// const DEFAULT_NAME = 'rxdb'
+// // const TEST_DBNAME = 'testdb'
 
-export const create = async (options: CreateOptions = {}) => {
-  const db: DatabyssDatabase = await createRxDatabase({
-    name: options.name || DEFAULT_NAME,
-    adapter: 'indexeddb',
-  })
+// export type DatabyssCollections = {
+//   groups: GroupCollection
+//   // blocks: BlockCollection
+// }
 
-  const _groups = await db.collection({
-    name: 'groups',
-    schema: GroupSchema,
-    // sync: true,
-  })
-  _groups.sync({
-    remote: `http://localhost:5001/groups`,
-  })
-  return db
-}
+// export type DatabyssDatabase = RxDatabase<DatabyssCollections>
+
+// interface CreateOptions {
+//   name?: string
+// }
+
+// export const create = async (options: CreateOptions = {}) => {
+//   const db: DatabyssDatabase = await createRxDatabase({
+//     name: options.name || DEFAULT_NAME,
+//     adapter: 'indexeddb',
+//   })
+
+//   const _groups = await db.collection({
+//     name: 'groups',
+//     schema: GroupSchema,
+//     // sync: true,
+//   })
+//   _groups.sync({
+//     remote: `http://localhost:5001/groups`,
+//   })
+//   return db
+// }

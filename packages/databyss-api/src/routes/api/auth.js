@@ -1,9 +1,8 @@
 import express from 'express'
+import { Logins } from '@databyss-org/data/serverdbs'
 import auth from '../../middleware/auth'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
-//import Login from '../../models/Login'
 import wrap from '../../lib/guardedAsync'
-import { Login } from '@databyss-org/data/serverdbs'
 import {
   createUserDatabaseCredentials,
   addCredentialsToUser,
@@ -46,16 +45,16 @@ router.post(
       },
     }
 
-    const query = await Login.find(_selector)
+    const query = await Logins.find(_selector)
 
     if (query.docs.length) {
       const _login = query.docs[0]
 
       // todo: change this back
-      if (_login.date >= Date.now() - 36000000) {
+      if (_login.createdAt >= Date.now() - 36000000) {
         const token = _login.token
-        const _res = await Login.get(_login._id, _login._rev)
-        await Login.destroy(_res._id, _res._rev)
+        const _res = await Logins.get(_login._id, _login._rev)
+        await Logins.destroy(_res._id, _res._rev)
         const session = await getSessionFromToken(token)
         // check if user has login credentials
         if (!session.user.defaultGroupId) {
