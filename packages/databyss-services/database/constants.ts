@@ -1,0 +1,3 @@
+export const PUT_DOCUMENT = 'PUT_DOCUMENT'
+export const CREATE_DATABASE = 'CREATE_DATABASE'
+export const CACHE_PAGE = 'CACHE_PAGE'

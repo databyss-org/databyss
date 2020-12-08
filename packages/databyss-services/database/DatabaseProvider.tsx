@@ -1,45 +1,69 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useRef } from 'react'
 import PouchDB from 'pouchdb'
 import { createContext, useContextSelector } from 'use-context-selector'
+import createReducer from '@databyss-org/services/lib/createReducer'
+import reducer, { initialState as _initState } from './reducer'
+import * as actions from './actions'
 
 interface PropsType {
   children: JSX.Element
+  initialState: any
 }
 
 interface ContextType {
-  getDb: () => PouchDB.Database | undefined
+  getDatabase: () => PouchDB.Database | null
+  // getDb: () => PouchDB.Database | undefined
+  putDocument: (doc: any) => void
+  getDocument: (id: string) => any
 }
-
-const localDbName = 'test_pouch'
 
 export const DatabaseContext = createContext<ContextType>(null!)
 
+const useReducer = createReducer()
+
 const DatabaseProvider: React.FunctionComponent<PropsType> = ({
   children,
+  initialState = _initState,
 }: PropsType) => {
-  const [db, setDb] = useState<PouchDB.Database>()
+  const [state, dispatch] = useReducer(reducer, initialState)
 
-  const createDb = () => {
-    const _db = new PouchDB(localDbName)
-    return _db
-  }
+  const putDocument = useCallback(
+    (doc) => {
+      if (state.db) {
+        dispatch(actions.putDocument(doc, state.db))
+      }
+    },
+    [state.db]
+  )
 
-  useEffect(() => {
-    const init = async () => {
-      setDb(await createDb())
+  const getDatabase = useCallback(() => {
+    if (state.db) {
+      return state.db
     }
-    init()
-  }, [])
+    dispatch(actions.getDatabase())
+    return null
+  }, [state.db])
 
-  const getDb = useCallback(() => {
-    console.log(db)
-    return db
-  }, [db])
+  const getDocument = useCallback(
+    (id) => {
+      if (!state.db) {
+        return null
+      }
+      if (state.pages[id]) {
+        return state.pages[id]
+      }
+      dispatch(actions.getDocument(id, state.db))
+      return null
+    },
+    [state.db, JSON.stringify(state.pages)]
+  )
 
   return (
     <DatabaseContext.Provider
       value={{
-        getDb,
+        getDatabase,
+        putDocument,
+        getDocument,
       }}
     >
       {children}

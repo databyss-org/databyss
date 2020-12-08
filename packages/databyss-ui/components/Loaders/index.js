@@ -10,6 +10,7 @@ import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 
 import { isResourceReady } from './_helpers'
+import { useDatabaseContext } from '@databyss-org/services/database/DatabaseProvider'
 
 export const PageLoader = ({ children, pageId }) => {
   const { getPage, removePageFromCache } = usePageContext()
@@ -180,4 +181,20 @@ export const BlockRelationsLoader = ({ children, atomicId }) => {
       children={children}
     />
   )
+}
+
+export const PouchDbLoader = ({ children }) => {
+  const getDatabase = useDatabaseContext((c) => c && c.getDatabase)
+
+  const _resource = getDatabase()
+
+  return <MakeLoader resources={_resource} children={children} />
+}
+
+export const PouchPageLoader = ({ children, pageId }) => {
+  const getDocument = useDatabaseContext((c) => c && c.getDocument)
+
+  const _resource = getDocument(pageId)
+
+  return <MakeLoader resources={_resource} children={children} />
 }

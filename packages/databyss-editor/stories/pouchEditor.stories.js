@@ -1,13 +1,14 @@
-import React, { useState, useRef, useCallback } from 'react'
-import { throttle } from 'lodash'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { storiesOf } from '@storybook/react'
-import { View, Text } from '@databyss-org/ui/primitives'
+import { View, Text, Button } from '@databyss-org/ui/primitives'
 import {
   ViewportDecorator,
   NotifyDecorator,
 } from '@databyss-org/ui/stories/decorators'
 import ModalManager from '@databyss-org/ui/modules/Modals/ModalManager'
-import DatabaseProvider from '@databyss-org/services/database/DatabaseProvider'
+import DatabaseProvider, {
+  useDatabaseContext,
+} from '@databyss-org/services/database/DatabaseProvider'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
 import SessionProvider, {
@@ -20,18 +21,17 @@ import PageProvider, {
   usePageContext,
 } from '@databyss-org/services/pages/PageProvider'
 import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
-import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import {
+  PageLoader,
+  PouchDbLoader,
+  PouchPageLoader,
+} from '@databyss-org/ui/components/Loaders'
 import HistoryProvider from '../history/EditorHistory'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
 import connectedFixture from './fixtures/connectedState'
-import {
-  cleanupPatches,
-  addMetaToPatches,
-  editorStateToPage,
-  pageToEditorState,
-} from '../state/util'
+import { editorStateToPage, pageToEditorState } from '../state/util'
 import blankState from './fixtures/blankState'
 
 const Box = ({ children, ...others }) => (
@@ -41,20 +41,44 @@ const Box = ({ children, ...others }) => (
 )
 
 const PageBody = ({ page }) => {
+  const putDocument = useDatabaseContext((c) => c && c.putDocument)
+  const getDocument = useDatabaseContext((c) => c && c.getDocument)
+
   const [pageState, setPageState] = useState(null)
+  const [editorState, setEditorState] = useState(null)
+
+  useEffect(() => {
+    setEditorState(withMetaData(page))
+  }, [])
 
   const onDocumentChange = (val) => {
     setPageState(JSON.stringify(val, null, 2))
   }
 
+  const onChange = (val) => {
+    putDocument({ ...val.nextState, _id: 'test_doc' })
+  }
+
   return (
     <View>
-      <EditorProvider
-        // onChange={onChange}
-        initialState={withMetaData(page)}
-      >
-        <ContentEditable onDocumentChange={onDocumentChange} autofocus />
-      </EditorProvider>
+      <Button onClick={() => putDocument({ ...editorState, _id: 'test_doc' })}>
+        get doc
+      </Button>
+      <PouchDbLoader>
+        {() => (
+          <PouchPageLoader pageId="test_doc">
+            {(pageState) => (
+              <EditorProvider onChange={onChange} initialState={pageState}>
+                <ContentEditable
+                  onDocumentChange={onDocumentChange}
+                  autofocus
+                />
+              </EditorProvider>
+            )}
+          </PouchPageLoader>
+        )}
+      </PouchDbLoader>
+
       <Box maxHeight="300px" overflow="scroll" flexShrink={1}>
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{pageState}</pre>
@@ -65,8 +89,6 @@ const PageBody = ({ page }) => {
 
 const EditorWithProvider = () => {
   const _defaultPage = editorStateToPage(connectedFixture('test_page_id'))
-
-  console.log(pageToEditorState(_defaultPage))
 
   return (
     <View>
