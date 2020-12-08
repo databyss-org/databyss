@@ -27,6 +27,20 @@ const DatabaseProvider: React.FunctionComponent<PropsType> = ({
 }: PropsType) => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
+  const onDbChange = (change) => {
+    console.log(change)
+  }
+
+  useEffect(() => {
+    console.log('will it do it more than once')
+    state.db
+      ?.changes({
+        since: 'now',
+        live: true,
+      })
+      .on('change', onDbChange)
+  }, [state.db])
+
   const putDocument = useCallback(
     (doc) => {
       if (state.db) {
