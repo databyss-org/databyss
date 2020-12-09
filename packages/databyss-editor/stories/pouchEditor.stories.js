@@ -57,7 +57,7 @@ const PageBody = ({ page }) => {
 
   const onChange = _.debounce((val) => {
     putDocument({ ...val.nextState, _id: 'test_doc' })
-  }, 1000)
+  }, 500)
 
   return (
     <View>
@@ -70,7 +70,6 @@ const PageBody = ({ page }) => {
             {(pageState) => (
               <EditorProvider onChange={onChange} initialState={pageState}>
                 <ContentEditable
-                  _key={pageState._rev}
                   initialState={pageState}
                   onDocumentChange={onDocumentChange}
                   autofocus

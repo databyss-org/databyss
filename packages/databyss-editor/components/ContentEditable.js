@@ -115,8 +115,12 @@ const ContentEditable = ({
 
   useEffect(() => {
     if (editor.children && state?._rev !== initialState?._rev) {
-      // console.log('UPATE', JSON.stringify(editor.children))
       editor.children = stateToSlate(initialState)
+      // update selection
+      selectionRef.current = stateSelectionToSlateSelection(
+        editor.children,
+        initialState.selection
+      )
       setRevision(initialState._rev)
     }
   }, [JSON.stringify(initialState)])
