@@ -1,4 +1,11 @@
-import React, { useMemo, useRef, useEffect, useImperativeHandle } from 'react'
+import React, {
+  useMemo,
+  useRef,
+  useEffect,
+  useState,
+  useImperativeHandle,
+} from 'react'
+import { View } from '@databyss-org/ui/primitives'
 import {
   createEditor,
   Node,
@@ -50,6 +57,7 @@ import { useHistoryContext } from '../history/EditorHistory'
 import insertTextAtOffset from '../lib/clipboardUtils/insertTextAtOffset'
 
 const ContentEditable = ({
+  initialState,
   onDocumentChange,
   focusIndex,
   autofocus,
@@ -97,6 +105,21 @@ const ContentEditable = ({
   const editor = useMemo(() => withReact(createEditor()), [])
   const valueRef = useRef(null)
   const selectionRef = useRef(null)
+  const [revision, setRevision] = useState(initialState._rev)
+
+  /*
+  if initial state has been update and revisions do not match, update document
+  */
+
+  // console.log(revision)
+
+  useEffect(() => {
+    if (editor.children && state?._rev !== initialState?._rev) {
+      // console.log('UPATE', JSON.stringify(editor.children))
+      editor.children = stateToSlate(initialState)
+      setRevision(initialState._rev)
+    }
+  }, [JSON.stringify(initialState)])
 
   try {
     if (!valueRef.current || state.operations.reloadAll) {
@@ -1055,19 +1078,21 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
     }
 
     return (
-      <Editor
-        onInlineAtomicClick={onInlineAtomicClick}
-        editor={editor}
-        onFocus={onFocus}
-        autofocus={autofocus}
-        value={editor.children}
-        selection={nextSelection}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
-        readonly={readonly}
-      />
+      <View>
+        <Editor
+          onInlineAtomicClick={onInlineAtomicClick}
+          editor={editor}
+          onFocus={onFocus}
+          autofocus={autofocus}
+          value={editor.children}
+          selection={nextSelection}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          readonly={readonly}
+        />
+      </View>
     )
-  }, [editor, state])
+  }, [editor, state, revision])
 }
 
 export default ContentEditable

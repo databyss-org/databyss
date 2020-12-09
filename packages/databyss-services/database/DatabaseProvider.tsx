@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react'
+import _ from 'lodash'
 import PouchDB from 'pouchdb'
 import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '@databyss-org/services/lib/createReducer'
@@ -26,25 +27,12 @@ const DatabaseProvider: React.FunctionComponent<PropsType> = ({
   initialState = _initState,
 }: PropsType) => {
   const [state, dispatch] = useReducer(reducer, initialState)
-
-  const onDbChange = (change) => {
-    console.log(change)
-  }
-
-  useEffect(() => {
-    console.log('will it do it more than once')
-    state.db
-      ?.changes({
-        since: 'now',
-        live: true,
-      })
-      .on('change', onDbChange)
-  }, [state.db])
+  const pageStateRef = useRef({})
 
   const putDocument = useCallback(
     (doc) => {
       if (state.db) {
-        dispatch(actions.putDocument(doc, state.db))
+        dispatch(actions.putDocument(doc, state.db, pageStateRef))
       }
     },
     [state.db]
@@ -58,6 +46,27 @@ const DatabaseProvider: React.FunctionComponent<PropsType> = ({
     return null
   }, [state.db])
 
+  const onDbChange = (change) => {
+    // check id to see if it matches state
+    if (state.pages[change.id]) {
+      // compare to see if the change is up to date
+      state?.db.get(change.id).then((doc) => {
+        if (doc._rev !== pageStateRef.current[doc._id]) {
+          dispatch(actions.updatePage(doc))
+        }
+      })
+    }
+  }
+
+  useEffect(() => {
+    state.db
+      ?.changes({
+        since: 'now',
+        live: true,
+      })
+      .on('change', onDbChange)
+  }, [state.db])
+
   const getDocument = useCallback(
     (id) => {
       if (!state.db) {
@@ -69,7 +78,11 @@ const DatabaseProvider: React.FunctionComponent<PropsType> = ({
       dispatch(actions.getDocument(id, state.db))
       return null
     },
-    [state.db, JSON.stringify(state.pages)]
+    [
+      state.db,
+      JSON.stringify(state.pages),
+      JSON.stringify(pageStateRef.current),
+    ]
   )
 
   return (

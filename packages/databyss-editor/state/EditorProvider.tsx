@@ -4,6 +4,7 @@ import React, {
   forwardRef,
   useImperativeHandle,
   useRef,
+  useState,
   useMemo,
 } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
@@ -128,11 +129,6 @@ const isClearBlockRelations = [
 ]
 
 export const EditorContext = createContext<ContextType>(null!)
-
-// : React.RefForwardingComponent<
-//   React.RefObject<EditorHandles>,
-//   PropsType
-// >
 
 const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
   { children, initialState = _initState, onChange },
@@ -445,7 +441,7 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
         {children}
       </EditorContext.Provider>
     ),
-    [state]
+    [state, JSON.stringify(initialState)]
   )
 }
 

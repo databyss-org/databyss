@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
+import _ from 'lodash'
 import { storiesOf } from '@storybook/react'
 import { View, Text, Button } from '@databyss-org/ui/primitives'
 import {
@@ -42,7 +43,6 @@ const Box = ({ children, ...others }) => (
 
 const PageBody = ({ page }) => {
   const putDocument = useDatabaseContext((c) => c && c.putDocument)
-  const getDocument = useDatabaseContext((c) => c && c.getDocument)
 
   const [pageState, setPageState] = useState(null)
   const [editorState, setEditorState] = useState(null)
@@ -55,14 +55,14 @@ const PageBody = ({ page }) => {
     setPageState(JSON.stringify(val, null, 2))
   }
 
-  const onChange = (val) => {
+  const onChange = _.debounce((val) => {
     putDocument({ ...val.nextState, _id: 'test_doc' })
-  }
+  }, 1000)
 
   return (
     <View>
       <Button onClick={() => putDocument({ ...editorState, _id: 'test_doc' })}>
-        get doc
+        put doc
       </Button>
       <PouchDbLoader>
         {() => (
@@ -70,6 +70,8 @@ const PageBody = ({ page }) => {
             {(pageState) => (
               <EditorProvider onChange={onChange} initialState={pageState}>
                 <ContentEditable
+                  _key={pageState._rev}
+                  initialState={pageState}
                   onDocumentChange={onDocumentChange}
                   autofocus
                 />

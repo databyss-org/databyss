@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { pickBy } from 'lodash'
 
 import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
@@ -11,6 +11,7 @@ import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 
 import { isResourceReady } from './_helpers'
 import { useDatabaseContext } from '@databyss-org/services/database/DatabaseProvider'
+import { View } from '../../primitives'
 
 export const PageLoader = ({ children, pageId }) => {
   const { getPage, removePageFromCache } = usePageContext()
@@ -193,8 +194,18 @@ export const PouchDbLoader = ({ children }) => {
 
 export const PouchPageLoader = ({ children, pageId }) => {
   const getDocument = useDatabaseContext((c) => c && c.getDocument)
-
+  // const [page, setPage] = useState(null)
   const _resource = getDocument(pageId)
+
+  // // if (!page) {
+  // //   const _resource = getDocument(pageId)
+  // //   setPage(_resource)
+  // // }
+  // useEffect(() => {
+  //   setPage(_resource)
+  // }, [JSON.stringify(_resource)])
+
+  // console.log('PAGE RESOURCE', _resource?._rev)
 
   return <MakeLoader resources={_resource} children={children} />
 }

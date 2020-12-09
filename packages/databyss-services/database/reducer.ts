@@ -1,7 +1,7 @@
 import produce, { Draft } from 'immer'
 import { FSA, DatabaseState } from '../interfaces'
 import { ResourcePending } from '../interfaces/ResourcePending'
-import { CREATE_DATABASE, CACHE_PAGE } from './constants'
+import { CREATE_DATABASE, CACHE_PAGE, UPDATE_DOC } from './constants'
 
 export const initialState: DatabaseState = {
   db: null,
@@ -19,6 +19,15 @@ export default (state: any, action: FSA) => {
     case CACHE_PAGE: {
       const _pages = state.pages
       _pages[action.payload.id] = action.payload.doc
+
+      return {
+        ...state,
+        pages: _pages,
+      }
+    }
+    case UPDATE_DOC: {
+      const _pages = state.pages
+      _pages[action.payload.doc._id] = action.payload.doc
 
       return {
         ...state,
