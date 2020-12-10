@@ -48,12 +48,15 @@ const NotFoundRedirect = () => {
 const Private = () => {
   const { location, navigate } = useNavigationContext()
   const getSession = useSessionContext((c) => c && c.getSession)
-  const { account } = getSession()
+  console.log(getSession())
+  const { user } = getSession()
+
+  const { defaultGroupId } = user
 
   // Navigate to default page is nothing in path
   useEffect(() => {
     if (location.pathname === '/') {
-      navigate(`/${account._id}/pages/${account.defaultPage}`, {
+      navigate(`/${defaultGroupId}/pages/${'test_default_page'}`, {
         hasAccount: true,
       })
     }

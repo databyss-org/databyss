@@ -43,7 +43,8 @@ export function fetchPageHeaders() {
       type: FETCH_PAGE_HEADERS,
     })
     try {
-      const pages = await services.getAllPages()
+      const _response = await services.getAllPages()
+      const pages = _response.docs
       dispatch({
         type: CACHE_PAGE_HEADERS,
         payload: pages,
@@ -114,7 +115,7 @@ export function savePatchBatch(batch?: PatchBatch) {
     })
     try {
       await services.savePatchBatch(_batchPatch)
-
+      console.log('AFER AWAIT')
       busy = false
       // repeat function with no patch variable if patches are still in queue
       dispatch({
