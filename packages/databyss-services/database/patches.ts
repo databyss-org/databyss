@@ -65,21 +65,29 @@ const addOrReplaceBlock = async (p, page) => {
     page: page._id,
     account: 'DEFAULT ACCOUNT',
   }
-  console.log('block ids', _blockId)
-  let _block
-  try {
-    _block: Block = await db.get(_blockId)
-  } catch {}
-  let _block: Block = await db.get(_blockId)
-  if (!_block) {
-    // todo: create new block
-    _block = {
-      _id: new ObjectId().toHexString(),
-      documentType: DocumentType.Block,
-      type: BlockType.Entry,
-      text: { textValue: '', ranges: [] },
-    }
+
+  let _response = await db.find({
+    selector: {
+      _id: _blockId,
+    },
+  })
+  let _block: Block | null
+  if (_response.docs.length) {
+    // populate block
+    _block = _response.docs[0]
+  } else {
+    // initiate new block
+    await db.upsert(_blockId, () => {
+      _block = {
+        _id: new ObjectId().toHexString(),
+        documentType: DocumentType.Block,
+        type: BlockType.Entry,
+        text: { textValue: '', ranges: [] },
+      }
+      return _block
+    })
   }
+
   Object.assign(_block, _blockFields)
   // if it's an add or we're replacing the whole block, just assign the value
   if (p.op === 'add' || p.path.length === 2) {
@@ -89,8 +97,6 @@ const addOrReplaceBlock = async (p, page) => {
   }
 
   db.upsert(_block._id, (oldDoc) => ({ ...oldDoc, ..._block }))
-  // todo. save page
-  //   await _block.save()
 }
 
 const replacePatch = async (p, page) => {
@@ -147,7 +153,6 @@ export const runPatches = async (p: Patch, page: DbPage) => {
       break
     }
     case 'add': {
-      console.log(p)
       await addPatch(p, page)
       break
     }
@@ -157,4 +162,6 @@ export const runPatches = async (p: Patch, page: DbPage) => {
     // }
     default:
   }
+  // save page
+  await db.upsert(page._id, () => page)
 }
