@@ -14,6 +14,6 @@ test('uid() should randomize based on hash', () => {
 
   const id1 = uid(hashids1, { count: 0 })
   const id2 = uid(hashids2, { count: 0 })
-
+ 
   expect(id1).not.toEqual(id2)
 })
