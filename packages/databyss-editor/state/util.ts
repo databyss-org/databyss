@@ -261,7 +261,6 @@ export const cleanupPatches = (patches: Patch[]) =>
 
 export const addMetaToPatches = ({ nextState, patches }: OnChangeArgs) =>
   cleanupPatches(patches)?.map((_p) => {
-    console.log(_p)
     // add selection
     if (_p.path[0] === 'selection') {
       _p.value = { ..._p.value, _id: nextState.selection._id }

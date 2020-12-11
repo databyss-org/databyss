@@ -2,9 +2,14 @@ import { Text } from '../interfaces/Text'
 import { PageHeader } from '../interfaces/Page'
 import { Selection } from '../interfaces/Selection'
 
+export interface MangoResponse<D> {
+  docs: D[]
+}
+
 export enum DocumentType {
   Page = 'PAGE',
   Block = 'BLOCK',
+  Selection = 'SELECTION',
 }
 
 export enum BlockType {

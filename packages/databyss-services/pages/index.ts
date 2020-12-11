@@ -2,7 +2,11 @@ import { httpGet, httpPost, httpDelete, httpPatch } from '../lib/requestApi'
 import { Page, PatchBatch, PageHeader } from '../interfaces'
 
 import { db } from '@databyss-org/services/database/db.ts'
-import { populatePage, savePatchData } from '../database/_helpers'
+import {
+  populatePage,
+  savePatchData,
+  fetchAllPages,
+} from '../database/_helpers'
 // TODO: Add native versions of these
 
 interface MangoResponse<D> {
@@ -24,11 +28,7 @@ export const loadPage = (_id: string): Promise<Page | null> => populatePage(_id)
 
 // export const getAllPages = (): Promise<PageHeader[]> => httpGet(`/pages/`)
 export const getAllPages = (): Promise<MangoResponse<PageHeader>> =>
-  db.find({
-    selector: {
-      documentType: 'PAGE',
-    },
-  })
+  fetchAllPages()
 
 export const deletePage = (id: string) => httpDelete(`/pages/${id}`)
 

@@ -94,17 +94,15 @@ const replacePatch = async (p, page) => {
       await addOrReplaceBlock(p, page)
       break
     }
-    // case 'selection': {
-    //   const _id = p.value._id
-    //   if (_id) {
-    //     await Selection.update({ _id }, { $set: p.value })
-
-    //     // if new selection._id is passed tag it to page
-    //     const { selection } = req.page
-    //     selection._id = _id
-    //   }
-    //   break
-    // }
+    case 'selection': {
+      const _id = p.value._id
+      if (_id) {
+        db.upsert(_id, () => p.value)
+        // // if new selection._id is passed tag it to page
+        page.selection._id = _id
+      }
+      break
+    }
     default:
   }
 }
