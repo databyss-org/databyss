@@ -1,4 +1,5 @@
 import { cloudant } from '@databyss-org/services/lib/cloudant'
+import ObjectId from 'bson-objectid'
 import { Users, Groups } from '@databyss-org/data/serverdbs/index'
 import { User, Role } from '@databyss-org/data/interfaces'
 
@@ -97,8 +98,13 @@ export const addCredentialsToUser = async (
     // TODO: do not upload the password
     const _groups = oldDoc.groups || []
     _groups.push({ groupId: credentials.groupId, role: Role.GroupAdmin })
-    return { ...oldDoc, groups: _groups, defaultGroupId: credentials.groupId }
+    return {
+      ...oldDoc,
+      groups: _groups,
+      defaultGroupId: credentials.groupId,
+      defaultPageId: new ObjectId(),
+    }
   })
-
+  // TODO: determine where the default page id comes from
   return _res
 }

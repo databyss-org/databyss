@@ -1,15 +1,10 @@
 import { Page } from '@databyss-org/services/interfaces'
+import { getDefaultPageId } from '@databyss-org/services/session/clientStorage'
+
 import { db } from './db'
 import { PatchBatch } from '../interfaces/Patch'
 import { runPatches } from './patches'
-import {
-  Block,
-  DocumentType,
-  BlockType,
-  DbPage,
-  MangoResponse,
-} from './interfaces'
-import { Selection } from '../interfaces/Selection'
+import { DocumentType, DbPage, MangoResponse } from './interfaces'
 import { PageHeader } from '../interfaces/Page'
 import { initSelection, initBlock, initPage } from './initialState'
 
@@ -59,7 +54,9 @@ export const savePatchData = async (data: PatchBatch) => {
 
 export const initNewPage = async () => {
   // ADD BLOCK DOCUMENT
-  await db.upsert(initPage._id, () => initPage)
+  const _id = getDefaultPageId()
+  const _page = initPage(_id)
+  await db.upsert(_id, () => _page)
 
   // ADD PAGE DOCUMENT
   await db.upsert(initBlock._id, () => initBlock)

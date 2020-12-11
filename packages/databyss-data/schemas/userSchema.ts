@@ -36,6 +36,9 @@ export const userSchema: JSONSchema4 = {
     defaultGroupId: {
       type: 'string',
     },
+    defaultPageId: {
+      type: 'string',
+    },
     groups: {
       type: 'array',
       items: {

@@ -73,9 +73,11 @@ router.post(
               dbPassword: credentials.dbPassword,
             },
           ]
+          // TODO: this should be saved by the user
+          session.user.defaultPageId = _user.defaultPageId
+          session.user.defaultGroupId = _user.defaultGroupId
         }
 
-        // console.log(session)
         return res.json({ data: { session } })
       }
       return res.status(401).json({ error: 'token expired' })

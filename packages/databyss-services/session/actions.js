@@ -21,7 +21,9 @@ import {
   deleteAuthToken,
   getAccountId,
   setAccountId,
+  getDefaultPageId,
   deleteAccountId,
+  setDefaultPageId,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
@@ -93,9 +95,11 @@ export const fetchSession = ({ _request, ...credentials }) => async (
 
     const res = await _request(path, options, true)
     if (res.data && res.data.session) {
+      console.log(res.data)
       // authenticated
       setAuthToken(res.data.session.token)
       setAccountId(res.data.session.user.defaultGroupId)
+      setDefaultPageId(res.data.session.user.defaultPageId)
       dispatch({
         type: CACHE_SESSION,
         payload: {

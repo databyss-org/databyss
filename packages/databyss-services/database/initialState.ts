@@ -28,11 +28,11 @@ export const initBlock: Block = {
   _id: blockId,
 }
 
-export const initPage: DbPage = {
+export const initPage = (_id: string): DbPage => ({
   documentType: DocumentType.Page,
   name: 'default test page',
-  _id: _pageID,
+  _id,
   selection: initSelection,
   archive: false,
   blocks: [{ _id: blockId, type: BlockType.Entry }],
-}
+})

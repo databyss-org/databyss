@@ -26,3 +26,15 @@ export function getAccountId() {
 export function deleteAccountId() {
   localStorage.removeItem('account')
 }
+
+export function setDefaultPageId(value) {
+  localStorage.setItem('defaultPageId', value)
+}
+
+export function getDefaultPageId() {
+  return localStorage.getItem('defaultPageId')
+}
+
+export function deleteDefaultPageId() {
+  localStorage.removeItem('defaultPageId')
+}
