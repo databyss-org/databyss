@@ -34,7 +34,7 @@ interface PageBlock {
 
 export interface DbPage extends PageHeader {
   blocks: PageBlock[]
-  selection: Selection
+  selection: string
   publicAccountId?: string
   documentType: DocumentType.Page
 }

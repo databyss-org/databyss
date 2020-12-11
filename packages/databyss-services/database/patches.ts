@@ -1,6 +1,8 @@
+import ObjectId from 'bson-objectid'
 import { db } from './db'
 import { Block, DocumentType, BlockType, DbPage } from './interfaces'
 import { Patch } from 'immer'
+import ObjectID from 'bson-objectid'
 // const { patches } = req.body.data
 // if (!patches) {
 //   return next(new BadRequestError('Missing patch data'))
@@ -63,12 +65,16 @@ const addOrReplaceBlock = async (p, page) => {
     page: page._id,
     account: 'DEFAULT ACCOUNT',
   }
+  console.log('block ids', _blockId)
+  let _block
+  try {
+    _block: Block = await db.get(_blockId)
+  } catch {}
   let _block: Block = await db.get(_blockId)
   if (!_block) {
     // todo: create new block
-    console.log('NOT FOUND')
     _block = {
-      _id: 'some_other_id',
+      _id: new ObjectId().toHexString(),
       documentType: DocumentType.Block,
       type: BlockType.Entry,
       text: { textValue: '', ranges: [] },
@@ -99,7 +105,7 @@ const replacePatch = async (p, page) => {
       if (_id) {
         db.upsert(_id, () => p.value)
         // // if new selection._id is passed tag it to page
-        page.selection._id = _id
+        page.selection = _id
       }
       break
     }
@@ -107,12 +113,12 @@ const replacePatch = async (p, page) => {
   }
 }
 
-const addPatch = async (p, req) => {
+const addPatch = async (p, page) => {
   const _prop = p.path[0]
 
   switch (_prop) {
     case 'blocks': {
-      await addOrReplaceBlock(p, req)
+      await addOrReplaceBlock(p, page)
       break
     }
     default:
@@ -140,10 +146,11 @@ export const runPatches = async (p: Patch, page: DbPage) => {
       await replacePatch(p, page)
       break
     }
-    // case 'add': {
-    //   await addPatch(p, req)
-    //   break
-    // }
+    case 'add': {
+      console.log(p)
+      await addPatch(p, page)
+      break
+    }
     // case 'remove': {
     //   await removePatches(p, req)
     //   break

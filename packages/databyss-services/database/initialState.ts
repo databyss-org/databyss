@@ -4,8 +4,6 @@ import { Selection } from '../interfaces/Selection'
 
 const _selectionId = new ObjectId().toHexString()
 
-const _pageID = new ObjectId().toHexString()
-
 const blockId = new ObjectId().toHexString()
 
 export const initSelection: Selection = {
@@ -32,7 +30,7 @@ export const initPage = (_id: string): DbPage => ({
   documentType: DocumentType.Page,
   name: 'default test page',
   _id,
-  selection: initSelection,
+  selection: _selectionId,
   archive: false,
   blocks: [{ _id: blockId, type: BlockType.Entry }],
 })

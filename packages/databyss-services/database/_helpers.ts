@@ -19,10 +19,15 @@ export const populatePage = async (_id: string): Promise<Page | null> => {
     const _page: Page = _response.docs[0]
 
     // populate selection
-    if (_page.selection?._id) {
-      const _selection = await db.get(_page.selection._id)
+    if (_page.selection) {
+      //  await db.upsert(_page.selection._id, ()=> {
+
+      //   })
+      const _selection = await db.get(_page.selection)
+
       _page.selection = _selection
     }
+
     const _blocks = await Promise.all(
       _page.blocks.map(async (data) => {
         const _response = await db.find({
@@ -35,6 +40,7 @@ export const populatePage = async (_id: string): Promise<Page | null> => {
       })
     )
     _page.blocks = _blocks
+
     return _page
   }
   return null
@@ -53,6 +59,9 @@ export const savePatchData = async (data: PatchBatch) => {
 }
 
 export const initNewPage = async () => {
+  // ADD SELECTION DOCUMENT
+  await db.upsert(initSelection._id, () => initSelection)
+
   // ADD BLOCK DOCUMENT
   const _id = getDefaultPageId()
   const _page = initPage(_id)
@@ -60,9 +69,6 @@ export const initNewPage = async () => {
 
   // ADD PAGE DOCUMENT
   await db.upsert(initBlock._id, () => initBlock)
-
-  // ADD SELECTION DOCUMENT
-  await db.upsert(initSelection._id, () => initSelection)
 }
 
 export const fetchAllPages = async (): Promise<MangoResponse<PageHeader>> => {
