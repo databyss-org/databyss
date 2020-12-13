@@ -1,20 +1,13 @@
 import { customAlphabet } from 'nanoid'
 
+export const BASE62 =
+  '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+
 /**
- * Generate a 12 character UID that has < 1% chance of collision¹ across all Databyss instances.
+ * Generate a 12-character unique ID. Assuming an average speed of 1000 IDs / hr across
+ * all Databyss instances, the 12-character nanoid will take about almost 1000 years to have
+ * a 1% chance of one collision¹.
  *
- * ```
- *`0ql87rp Ijdjz`
- *|-------|       Timestamp to nearest second -> base-36 -> pad to 7 chars
- *        |-----| Cryptographically random 5 character string
- * ```
- * 1) https://zelark.github.io/nano-id-cc/
+ * 1) see https://zelark.github.io/nano-id-cc/
  */
-export const uid = () =>
-  Math.floor(new Date().getTime() / 1000)
-    .toString(36)
-    .padStart(7, '0') +
-  customAlphabet(
-    '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
-    5
-  )()
+export const uid = () => customAlphabet(BASE62, 12)()
