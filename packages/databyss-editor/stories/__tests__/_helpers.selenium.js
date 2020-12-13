@@ -23,10 +23,17 @@ export const getEditor = async (driver) => {
 
 export const getElementsByTag = async (driver, tag) => {
   await sleep(500)
-  const el = await driver.wait(
-    until.elementsLocated(By.tagName(tag)),
-    waitUntilTime
-  )
+  let el = []
+  try {
+    el = await driver.wait(
+      until.elementsLocated(By.tagName(tag)),
+      waitUntilTime
+    )
+  } catch (ex) {
+    if (ex.name !== 'TimeoutError') {
+      throw ex
+    }
+  }
 
   // const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
   return el

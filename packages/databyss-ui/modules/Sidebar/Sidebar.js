@@ -72,11 +72,7 @@ const Sidebar = () => {
               />
             )}
             {menuItem === 'topics' && (
-              <Topics
-                filterQuery={filterQuery}
-                height={sidebarListHeight}
-                hasIndexPage
-              />
+              <Topics filterQuery={filterQuery} height={sidebarListHeight} />
             )}
             {menuItem === 'archive' && (
               <Archive filterQuery={filterQuery} height={sidebarListHeight} />

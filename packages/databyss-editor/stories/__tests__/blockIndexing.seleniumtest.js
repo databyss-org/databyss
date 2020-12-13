@@ -162,7 +162,7 @@ describe('block indexing', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
-    await secondTopic[2].click()
+    await secondTopic[1].click()
     await sleep(1000)
 
     const topicResults = await await getElementsByTag(
