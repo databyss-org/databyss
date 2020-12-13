@@ -102,7 +102,7 @@ describe('notes app', () => {
     assert.equal(sidebar.trim(), 'this is a new topic')
 
     // click on the topic in sidebar
-    await sidebarTopic[1].click()
+    await sidebarTopic[0].click()
     await sleep(1000)
 
     // get all search page results
