@@ -97,7 +97,7 @@ describe('notes app', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
-    const sidebar = await sidebarTopic[1].getAttribute('innerText')
+    const sidebar = await sidebarTopic[0].getAttribute('innerText')
 
     assert.equal(sidebar.trim(), 'this is a new topic')
 

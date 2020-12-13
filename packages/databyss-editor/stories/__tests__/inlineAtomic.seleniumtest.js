@@ -136,7 +136,7 @@ describe('inline atomic', () => {
       driver,
       '[data-test-element="page-sidebar-item"]'
     )
-    await sidebarTopics[1].click()
+    await sidebarTopics[0].click()
 
     await sleep(500)
     // verify both atomics are linked

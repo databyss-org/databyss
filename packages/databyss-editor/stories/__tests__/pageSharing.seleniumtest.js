@@ -186,7 +186,7 @@ describe('page sharing', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
-    await topic[1].click()
+    await topic[0].click()
 
     await sleep(1000)
 
