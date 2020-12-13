@@ -15,7 +15,6 @@
   "private": false,
   "peerDependencies": {
     "@databyss-org/data": "1.2.6",
-    "@databyss-org/services": "1.2.6",
     "json-schema": "^0.2.5"
   },
   "dependencies": {

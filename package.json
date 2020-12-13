@@ -101,7 +101,7 @@
           "^(?!.*\\.(js|json)$)": "<rootDir>/config/jest/fileTransform.js"
         },
         "transformIgnorePatterns": [
-          "node_modules/(?!(react-native-web|hashids)/)"
+          "node_modules/(?!(react-native-web)/)"
         ],
         "moduleFileExtensions": [
           "js",
