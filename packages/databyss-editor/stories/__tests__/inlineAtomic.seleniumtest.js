@@ -92,7 +92,7 @@ describe('inline atomic', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
-    assert.equal(sidebarTopics.length, 2)
+    assert.equal(sidebarTopics.length, 1)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'this entry should get ignored')
@@ -281,6 +281,6 @@ describe('inline atomic', () => {
       driver,
       '[data-test-element="page-sidebar-item"]'
     )
-    assert.equal(sidebarTopics.length, 1)
+    assert.equal(sidebarTopics.length, 0)
   })
 })
