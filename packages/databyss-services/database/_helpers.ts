@@ -4,9 +4,10 @@ import { getDefaultPageId } from '@databyss-org/services/session/clientStorage'
 import { db } from './db'
 import { PatchBatch } from '../interfaces/Patch'
 import { runPatches } from './patches'
-import { DocumentType, DbPage, MangoResponse } from './interfaces'
+import { DocumentType, DbPage, MangoResponse, Block } from './interfaces'
 import { PageHeader } from '../interfaces/Page'
 import { initSelection, initBlock, initPage } from './initialState'
+import { Selection } from '../interfaces/Selection'
 
 export const populatePage = async (_id: string): Promise<Page | null> => {
   const _response = await db.find({
@@ -23,12 +24,12 @@ export const populatePage = async (_id: string): Promise<Page | null> => {
       //  await db.upsert(_page.selection._id, ()=> {
 
       //   })
-      const _selection = await db.get(_page.selection)
+      const _selection: Selection = await db.get(_page.selection)
 
       _page.selection = _selection
     }
 
-    const _blocks = await Promise.all(
+    const _blocks: Block[] = await Promise.all(
       _page.blocks.map(async (data) => {
         const _response = await db.find({
           selector: {
@@ -55,7 +56,8 @@ export const savePatchData = async (data: PatchBatch) => {
   for (const patch of patches) {
     await runPatches(patch, _page)
   }
-  //   await req.page.save()
+  // save page
+  await db.upsert(_page._id, () => _page)
 }
 
 export const initNewPage = async () => {

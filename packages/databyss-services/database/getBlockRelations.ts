@@ -1,6 +1,7 @@
 import { db } from './db'
 import { DocumentType } from './interfaces'
 // import { BlockRelation } from '../../databyss-editor/interfaces/index'
+import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 
 const getPouchBlockRelations = async (id: string) => {
   const _results = await db.find({
@@ -9,9 +10,8 @@ const getPouchBlockRelations = async (id: string) => {
       relatedBlock: id,
     },
   })
-  const _docs = _results.docs
+  const _docs: BlockRelation[] = _results.docs
 
-  console.log(_docs)
   _docs.sort((a, b) => (a.blockIndex > b.blockIndex ? 1 : -1))
 
   if (_docs.length) {
@@ -33,7 +33,7 @@ const getPouchBlockRelations = async (id: string) => {
         acc.results[curr.page] = _entries
       }
       return acc
-    }, _docs)
+    }, _results)
     return _results
   }
 }

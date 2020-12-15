@@ -22,12 +22,6 @@ const setPouchTopic = async (data: Topic) => {
       find all inline block relations with associated id and update blocks
     */
 
-  //   const _relations = await BlockRelation.find({
-  //     relatedBlock: _id,
-  //     account: req.account.id.toString(),
-  //     relationshipType: 'INLINE',
-  //   })
-
   const _results = await db.find({
     selector: {
       documentType: DocumentType.BlockRelation,
@@ -40,10 +34,6 @@ const setPouchTopic = async (data: Topic) => {
 
   for (const relation of _relations) {
     // get the block to update
-    // const _block = await Block.findOne({
-    //   _id: relation.block,
-    //   account: req.account.id.toString(),
-    // })
     const _blockResults = await db.find({
       selector: {
         documentType: DocumentType.Block,
@@ -76,7 +66,7 @@ const setPouchTopic = async (data: Topic) => {
       })
       if (_inlineRanges.length) {
         // update block
-        // await _block.save()
+
         await db.upsert(_block._id, () => _block)
         // update relation
 
@@ -93,18 +83,6 @@ const setPouchTopic = async (data: Topic) => {
             blockText: _block.text,
           }))
         }
-        // await BlockRelation.replaceOne(
-        //   {
-        //     relatedBlock: _id,
-        //     account: req.account.id.toString(),
-        //     block: _block._id,
-        //   },
-        //   {
-        //     ...relation.toJSON(),
-        //     blockText: _block.text,
-        //   },
-        //   { upsert: true }
-        // )
       }
     }
   }

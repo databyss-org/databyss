@@ -162,6 +162,4 @@ export const runPatches = async (p: Patch, page: DbPage) => {
     }
     default:
   }
-  // save page
-  await db.upsert(page._id, () => page)
 }

@@ -8,17 +8,20 @@ const setPouchBlockRelations = async (payloadArray) => {
 
     // clear all block relationships associated to page id
     if (clearPageRelationships) {
-      await db.bulkDocs([
-        {
-          documentType: 'BLOCK_RELATIONS',
+      const _blockRelationsToClear = await db.find({
+        selector: {
+          documentType: DocumentType.BlockRelation,
           page: clearPageRelationships,
-          _deleted: true,
         },
-      ])
-      //   await BlockRelation.deleteMany({
-      //     page: clearPageRelationships,
-      //     account: req.account._id,
-      //   })
+      })
+      const _idsToDelete = _blockRelationsToClear.docs.map((r) => ({
+        _id: r._id,
+        _rev: r._rev,
+      }))
+
+      await db.bulkDocs(
+        _idsToDelete.map((i) => ({ _id: i._id, _rev: i._rev, _deleted: true }))
+      )
     }
     if (blocksRelationArray.length) {
       for (const relationship of blocksRelationArray) {
