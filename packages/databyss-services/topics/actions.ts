@@ -54,8 +54,7 @@ export function fetchTopicHeaders() {
       type: FETCH_TOPIC_HEADERS,
     })
     try {
-      const results = await services.getTopicHeaders()
-      const topics = results.docs
+      const topics = await services.getTopicHeaders()
       dispatch({
         type: CACHE_TOPIC_HEADERS,
         payload: { topics },

@@ -1,8 +1,8 @@
 import ObjectId from 'bson-objectid'
 import { db } from './db'
+import { DocumentType } from './interfaces'
 
 const setPouchBlockRelations = async (payloadArray) => {
-  console.log(payloadArray)
   for (const payload of payloadArray) {
     const { blocksRelationArray, clearPageRelationships } = payload
 
@@ -23,24 +23,33 @@ const setPouchBlockRelations = async (payloadArray) => {
     if (blocksRelationArray.length) {
       for (const relationship of blocksRelationArray) {
         const { block, relatedBlock, removeBlock } = relationship
-        if (removeBlock) {
+
+        const _blockRelationResults = await db.find({
+          selector: {
+            block,
+            relatedBlock,
+          },
+        })
+        const _blockRelation = _blockRelationResults.docs[0]
+        if (removeBlock && _blockRelation) {
           // get blockID
-          const _blockToDelete = await db.find({
-            selector: {
-              block,
-              relatedBlock,
-            },
-          })
-          db.put({ _id: _blockToDelete._id, _deleted: true })
+          await db.upsert(_blockRelation._id, () => ({ _deleted: true }))
+        } else if (_blockRelation) {
+          // update block relation
+          await db.upsert(_blockRelation._id, (oldDoc) => ({
+            ...oldDoc,
+            ...relationship,
+          }))
         } else {
+          // create a new block relation
           await db.put({
+            documentType: DocumentType.BlockRelation,
             _id: new ObjectId().toHexString(),
             block,
             relatedBlock,
             ...relationship,
           })
         }
-        // await addRelationships(relationship, req)
       }
     }
   }
