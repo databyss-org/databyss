@@ -32,12 +32,13 @@ const App = ({ children }) => (
 const NotFoundRedirect = () => {
   const { navigate } = useNavigationContext()
   const getSession = useSessionContext((c) => c && c.getSession)
+  const { user } = getSession()
+  const { defaultGroupId, defaultPageId } = user
 
-  const { account } = getSession()
-
+  console.log(user)
   // if no page found, navigate to default page
   useEffect(() => {
-    navigate(`/${account._id}/pages/${account.defaultPage}`, {
+    navigate(`/${defaultGroupId}/pages/${defaultPageId}`, {
       hasAccount: true,
     })
   }, [])
