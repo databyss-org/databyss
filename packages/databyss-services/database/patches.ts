@@ -131,13 +131,13 @@ const addPatch = async (p, page) => {
   }
 }
 
-const removePatches = async (p, req) => {
+const removePatches = async (p, page) => {
   const _prop = p.path[0]
 
   switch (_prop) {
     case 'blocks': {
       const _index = p.path[1]
-      const { blocks } = req.page
+      const { blocks } = page
       blocks.splice(_index, 1)
       // TODO: REMOVE BLOCK FROM DB
       break
@@ -156,10 +156,10 @@ export const runPatches = async (p: Patch, page: DbPage) => {
       await addPatch(p, page)
       break
     }
-    // case 'remove': {
-    //   await removePatches(p, req)
-    //   break
-    // }
+    case 'remove': {
+      await removePatches(p, page)
+      break
+    }
     default:
   }
   // save page
