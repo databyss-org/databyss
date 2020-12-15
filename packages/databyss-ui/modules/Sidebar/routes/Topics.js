@@ -31,7 +31,9 @@ export const getTopicsData = (topics) =>
 const Topics = ({ filterQuery, height, hasIndexPage }) => (
   <AllTopicsLoader filtered>
     {(topics) => {
+      console.log(topics)
       const topicsData = getTopicsData(topics)
+      console.log('TOPICS DATA', topicsData)
       const sortedTopics = sortEntriesAtoZ(topicsData, 'text')
       const filteredEntries = filterEntries(sortedTopics, filterQuery)
 

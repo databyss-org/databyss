@@ -10,6 +10,7 @@ export enum DocumentType {
   Page = 'PAGE',
   Block = 'BLOCK',
   Selection = 'SELECTION',
+  BlockRelation = 'BLOCK_RELATION',
 }
 
 export enum BlockType {

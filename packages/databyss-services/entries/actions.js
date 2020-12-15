@@ -55,6 +55,7 @@ export function onSetBlockRelations(blocksRelation, callback) {
       type: SET_BLOCK_RELATIONS,
       payload: { data: blocksRelation },
     })
+
     if (blocksRelation.length > 0)
       entries.setBlockRelations(blocksRelation).then(() => {
         // if callback is provided, fire callback
