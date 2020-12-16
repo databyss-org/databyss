@@ -1,17 +1,7 @@
-import ObjectId from 'bson-objectid'
-import { db } from './db'
-import { Block, DocumentType, BlockType, DbPage } from './interfaces'
 import { Patch } from 'immer'
-import ObjectID from 'bson-objectid'
-// const { patches } = req.body.data
-// if (!patches) {
-//   return next(new BadRequestError('Missing patch data'))
-// }
-// for (const patch of patches) {
-//   await runPatches(patch, req)
-// }
-// await req.page.save()
-// return res.status(200).end()
+import ObjectId from 'bson-objectid'
+import { DbPage, Block, DocumentType, BlockType } from '../interfaces'
+import { db } from '../db'
 
 export const getAtomicClosureText = (type, text) =>
   ({

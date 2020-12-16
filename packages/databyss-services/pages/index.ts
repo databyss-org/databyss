@@ -2,11 +2,9 @@ import { httpGet, httpPost, httpDelete, httpPatch } from '../lib/requestApi'
 import { Page, PatchBatch, PageHeader } from '../interfaces'
 
 import { db } from '@databyss-org/services/database/db.ts'
-import {
-  populatePage,
-  savePatchData,
-  fetchAllPages,
-} from '../database/_helpers'
+// packages/databyss-services/database/pages/index.ts
+import * as pouchDb from '../database/pages'
+import { populatePage, fetchAllPages } from '../database/_helpers'
 // TODO: Add native versions of these
 
 interface MangoResponse<D> {
@@ -20,7 +18,7 @@ export const savePage = (data: Page | PageHeader): Promise<boolean> =>
 
 // export const savePatchBatch = (data: PatchBatch) =>
 //   httpPatch(`/pages/${data.id}`, { data })
-export const savePatchBatch = (data: PatchBatch) => savePatchData(data)
+export const savePatchBatch = (data: PatchBatch) => pouchDb.savePatchData(data)
 
 // export const loadPage = (id: string): Promise<Page> =>
 //   httpGet(`/pages/populate/${id}`)

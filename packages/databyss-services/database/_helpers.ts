@@ -3,8 +3,7 @@ import { getDefaultPageId } from '@databyss-org/services/session/clientStorage'
 
 import { db } from './db'
 import { PatchBatch } from '../interfaces/Patch'
-import { runPatches } from './patches'
-import { DocumentType, DbPage, MangoResponse, Block } from './interfaces'
+import { DocumentType, MangoResponse, Block } from './interfaces'
 import { PageHeader } from '../interfaces/Page'
 import { initSelection, initBlock, initPage } from './initialState'
 import { Selection } from '../interfaces/Selection'
@@ -47,18 +46,18 @@ export const populatePage = async (_id: string): Promise<Page | null> => {
   return null
 }
 
-export const savePatchData = async (data: PatchBatch) => {
-  const { patches, id } = data
-  const _page: DbPage = await db.get(id)
-  if (!patches) {
-    return
-  }
-  for (const patch of patches) {
-    await runPatches(patch, _page)
-  }
-  // save page
-  await db.upsert(_page._id, () => _page)
-}
+// export const savePatchData = async (data: PatchBatch) => {
+//   const { patches, id } = data
+//   const _page: DbPage = await db.get(id)
+//   if (!patches) {
+//     return
+//   }
+//   for (const patch of patches) {
+//     await runPatches(patch, _page)
+//   }
+//   // save page
+//   await db.upsert(_page._id, () => _page)
+// }
 
 export const initNewPage = async () => {
   // ADD SELECTION DOCUMENT
