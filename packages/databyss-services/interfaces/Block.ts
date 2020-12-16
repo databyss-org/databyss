@@ -54,12 +54,14 @@ export interface SourceDetail {
   volume?: Text
   issue?: Text
   yearPublished?: Text
+  page?: Text
   // catalog identifiers (book)
   isbn?: Text
 
   // catalog identifiers (articles)
   doi?: Text
   issn?: Text
+  url?: Text
 }
 
 export interface SourceCitationHeader extends Source {

@@ -390,6 +390,13 @@ const EditSourceForm = (props) => {
         multiline
         onBlur={onFieldBlur}
       />
+
+      <LabeledTextInput
+        path="detail.page"
+        id="page"
+        label="Page(s)"
+        onBlur={onFieldBlur}
+      />
     </>
   )
 
@@ -561,6 +568,13 @@ const EditSourceForm = (props) => {
         path="detail.doi"
         id="doi"
         label="DOI"
+        onBlur={onFieldBlur}
+      />
+
+      <LabeledTextInput
+        path="detail.url"
+        id="url"
+        label="URL"
         onBlur={onFieldBlur}
       />
     </>
