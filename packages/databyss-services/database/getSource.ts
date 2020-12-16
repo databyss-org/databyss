@@ -25,7 +25,9 @@ const getPouchSource = async (_id: string) => {
   })
   if (_response.docs.length) {
     _response.docs.forEach((d) => {
-      isInPages.push(d._id)
+      if (!d.archive) {
+        isInPages.push(d._id)
+      }
     })
   }
   _source.isInPages = isInPages

@@ -12,7 +12,6 @@ export const setPouchSource = async (data: Source) => {
     detail,
   }
 
-  console.log(blockFields)
   await db.upsert(_id, (oldDoc) => {
     const _source = oldDoc
     Object.assign(_source, blockFields)
