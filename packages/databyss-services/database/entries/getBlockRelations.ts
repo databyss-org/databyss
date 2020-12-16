@@ -1,9 +1,9 @@
-import { db } from './db'
-import { DocumentType } from './interfaces'
+import { db } from '../db'
+import { DocumentType } from '../interfaces'
 // import { BlockRelation } from '../../databyss-editor/interfaces/index'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 
-const getPouchBlockRelations = async (id: string) => {
+const getBlockRelations = async (id: string) => {
   const _results = await db.find({
     selector: {
       documentType: DocumentType.BlockRelation,
@@ -38,4 +38,4 @@ const getPouchBlockRelations = async (id: string) => {
   }
 }
 
-export default getPouchBlockRelations
+export default getBlockRelations

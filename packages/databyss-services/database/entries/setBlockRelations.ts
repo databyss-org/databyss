@@ -1,8 +1,8 @@
 import ObjectId from 'bson-objectid'
-import { db } from './db'
-import { DocumentType } from './interfaces'
+import { db } from '../db'
+import { DocumentType } from '../interfaces'
 
-const setPouchBlockRelations = async (payloadArray) => {
+const setBlockRelations = async (payloadArray) => {
   for (const payload of payloadArray) {
     const { blocksRelationArray, clearPageRelationships } = payload
 
@@ -58,4 +58,4 @@ const setPouchBlockRelations = async (payloadArray) => {
   }
 }
 
-export default setPouchBlockRelations
+export default setBlockRelations
