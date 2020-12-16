@@ -30,7 +30,6 @@ export const deleteSource = (_id: string) => httpDelete(`/sources/${_id}`)
 
 export const getAuthors = (): Promise<Author[]> => getPouchAuthors()
 
-// httpGet('/sources/authors')
-
-export const getPageSources = (_id: string): Promise<Source[]> =>
-  httpGet(`/sources/pages/${_id}`)
+// dead link?
+// export const getPageSources = (_id: string): Promise<Source[]> =>
+//   httpGet(`/sources/pages/${_id}`)
