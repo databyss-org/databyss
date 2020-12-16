@@ -4,7 +4,8 @@ import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvi
 const FIREFOX_WARNING =
   'Databyss was built to run best on Chromium- and WebKit-based browsers (such as Chrome, Safari, Edge, Brave, Iron). At this time, we cannot guarantee the best experience on Firefox.'
 
-const IS_FIREFOX = navigator.userAgent.search('Firefox')
+const IS_FIREFOX = navigator.userAgent.search('Firefox') >= 0
+console.log(IS_FIREFOX)
 
 const FirefoxWarning = () => {
   const { notify } = useNotifyContext()
@@ -17,9 +18,9 @@ const FirefoxWarning = () => {
     if (!IS_FIREFOX) {
       return
     }
-    const _shown = localStorage.getItem(`ffwarning`)
-    if (!_shown) {
-      localStorage.setItem(`ffwarning`, true)
+    const _shown = parseInt(localStorage.getItem(`ffwarning`) || '0', 10)
+    if (_shown < 2) {
+      localStorage.setItem(`ffwarning`, _shown + 1)
       notify(FIREFOX_WARNING)
     }
   }, [])
