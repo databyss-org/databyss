@@ -1,7 +1,8 @@
-import { db } from './db'
-import { BlockType, DocumentType } from './interfaces'
-import { Source } from '../interfaces/Block'
-const getPouchSources = async (): Promise<Source[]> => {
+import { db } from '../db'
+import { BlockType, DocumentType } from '../interfaces'
+import { Source } from '../../interfaces/Block'
+
+const getSources = async (): Promise<Source[]> => {
   let _source: Source[] = []
   const _response = await db.find({
     selector: {
@@ -15,4 +16,4 @@ const getPouchSources = async (): Promise<Source[]> => {
   return _source
 }
 
-export default getPouchSources
+export default getSources

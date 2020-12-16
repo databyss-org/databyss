@@ -1,10 +1,10 @@
-import { Topic } from '../interfaces/Block'
-import { db } from './db'
-import { DocumentType } from './interfaces'
-import { BlockRelation } from '../../databyss-editor/interfaces/index'
-import { Page } from '../interfaces/Page'
+import { Topic } from '../../interfaces/Block'
+import { db } from '../db'
+import { DocumentType } from '../interfaces'
+import { BlockRelation } from '@databyss-org/editor/interfaces'
+import { Page } from '../../interfaces/Page'
 
-const getPouchTopic = async (_id: string): Promise<Topic> => {
+const getTopic = async (_id: string): Promise<Topic> => {
   const _topic: Topic = await db.get(_id)
   const isInPages: string[] = []
   // returns all pages where source id is found in element id
@@ -22,7 +22,6 @@ const getPouchTopic = async (_id: string): Promise<Topic> => {
   // append pages topic appears in as property `inPages`
   if (_response.docs.length) {
     _response.docs.forEach((d) => {
-      console.log(d)
       if (!d.archive) {
         isInPages.push(d._id)
       }
@@ -59,4 +58,4 @@ const getPouchTopic = async (_id: string): Promise<Topic> => {
   return _topic
 }
 
-export default getPouchTopic
+export default getTopic

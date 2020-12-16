@@ -1,8 +1,8 @@
-import { Source, BlockType } from '../interfaces/Block'
-import { DocumentType } from './interfaces'
-import { db } from './db'
+import { Source, BlockType } from '../../interfaces/Block'
+import { DocumentType } from '../interfaces'
+import { db } from '../db'
 
-export const setPouchSource = async (data: Source) => {
+export const setSource = async (data: Source) => {
   const { text, detail, _id } = data
   const blockFields = {
     _id,
@@ -19,4 +19,4 @@ export const setPouchSource = async (data: Source) => {
   })
 }
 
-export default setPouchSource
+export default setSource

@@ -1,9 +1,9 @@
-import { db } from './db'
-import { Block, DocumentType, BlockType } from './interfaces'
-import { Topic, Page } from '../interfaces'
+import { db } from '../db'
+import { Block, DocumentType, BlockType } from '../interfaces'
+import { Topic, Page } from '../../interfaces'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 
-const getPouchTopicHeaders = async () => {
+const getTopicHeaders = async () => {
   const _response = await db.find({
     selector: {
       documentType: DocumentType.Block,
@@ -13,6 +13,7 @@ const getPouchTopicHeaders = async () => {
   if (_response.docs.length) {
     const _topics: Topic[] = _response.docs
     for (const _topic of _topics) {
+      // look up pages topic appears in using block relations
       const isInPages: string[] = []
 
       const _blockRelationsResponse = await db.find({
@@ -42,4 +43,4 @@ const getPouchTopicHeaders = async () => {
   return []
 }
 
-export default getPouchTopicHeaders
+export default getTopicHeaders

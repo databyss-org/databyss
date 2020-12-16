@@ -1,9 +1,9 @@
-import { db } from './db'
-import { DocumentType, BlockType, DbPage } from './interfaces'
-import { ResourceNotFoundError } from '../interfaces/Errors'
-import { SourceCitationHeader } from '../interfaces'
+import { db } from '../db'
+import { DocumentType, BlockType, DbPage } from '../interfaces'
+import { ResourceNotFoundError } from '../../interfaces/Errors'
+import { SourceCitationHeader } from '../../interfaces'
 
-const getPouchSource = async (_id: string) => {
+const getSource = async (_id: string) => {
   // get source and pages source exists in
   const _source: SourceCitationHeader = await db.get(_id)
   // TODO: SHOULD THIS RETURN ERROR
@@ -35,4 +35,4 @@ const getPouchSource = async (_id: string) => {
   return _source
 }
 
-export default getPouchSource
+export default getSource

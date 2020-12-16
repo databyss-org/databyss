@@ -1,17 +1,17 @@
 import { pick } from 'lodash'
 import { asyncForEach } from '@databyss-org/services/lib/util'
 import { toCitation } from '@databyss-org/services/citations'
-import { db } from './db'
-import { DocumentType, BlockType } from './interfaces'
-import { Source, SourceCitationHeader } from '../interfaces/Block'
-import { BlockRelation } from '../../databyss-editor/interfaces/index'
-import { Page } from '../interfaces/Page'
+import { db } from '../db'
+import { DocumentType, BlockType } from '../interfaces'
+import { Source, SourceCitationHeader } from '../../interfaces/Block'
+import { BlockRelation } from '@databyss-org/editor/interfaces'
+import { Page } from '../../interfaces/Page'
 
 export type CitationResponse = Partial<SourceCitationHeader> & {
   citation?: string
 }
 
-const getPouchSourceCitation = async (
+const getSourceCitation = async (
   styleId: string
 ): Promise<CitationResponse[]> => {
   const _response = await db.find({
@@ -102,4 +102,4 @@ const getPouchSourceCitation = async (
   return sourcesCitations
 }
 
-export default getPouchSourceCitation
+export default getSourceCitation

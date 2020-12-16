@@ -1,11 +1,11 @@
-import { Author } from '../interfaces'
-import { db } from './db'
+import { Author } from '../../interfaces'
+import { db } from '../db'
 import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
-import { DocumentType } from './interfaces'
+import { DocumentType } from '../interfaces'
 import { BlockType } from '@databyss-org/services/interfaces'
-import { Source } from '../interfaces/Block'
+import { Source } from '../../interfaces/Block'
 
-const getPouchAuthors = async (): Promise<Author[]> => {
+const getAuthors = async (): Promise<Author[]> => {
   const _response = await db.find({
     selector: {
       documentType: DocumentType.Block,
@@ -49,4 +49,4 @@ const getPouchAuthors = async (): Promise<Author[]> => {
   return Object.values(authorsDict)
 }
 
-export default getPouchAuthors
+export default getAuthors

@@ -1,11 +1,10 @@
-import { Topic } from '../interfaces'
 import { db } from '@databyss-org/services/database/db'
-import { DocumentType, Block } from './interfaces'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
-import { Range } from '../interfaces/Range'
-import { replaceInlineText } from '../../databyss-editor/state/util'
+import { replaceInlineText } from '@databyss-org/editor/state/util'
+import { Topic } from '../../interfaces'
+import { DocumentType, Block } from '.././interfaces'
 
-const setPouchTopic = async (data: Topic) => {
+const setTopic = async (data: Topic) => {
   const { text, _id } = data
 
   let block
@@ -88,4 +87,4 @@ const setPouchTopic = async (data: Topic) => {
   }
 }
 
-export default setPouchTopic
+export default setTopic
