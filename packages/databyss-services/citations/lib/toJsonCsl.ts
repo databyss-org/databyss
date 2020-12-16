@@ -28,6 +28,7 @@ export const toJsonCsl = (source: SourceDetail) => {
     publicationType,
     publisherName,
     publisherPlace,
+    page,
     // publication details (article)
     journalTitle,
     volume,
@@ -39,6 +40,7 @@ export const toJsonCsl = (source: SourceDetail) => {
     // catalog identifiers (article)
     issn,
     doi,
+    url,
   } = source
 
   // TODO: find the correct type
@@ -124,6 +126,11 @@ export const toJsonCsl = (source: SourceDetail) => {
     response['publisher-place'] = publisherPlace?.textValue
   }
 
+  // page(s)
+  if (validateTextValue(page)) {
+    response.page = page?.textValue
+  }
+
   // == PUBLICATION - ARTICLE ==
 
   // journal title
@@ -150,6 +157,9 @@ export const toJsonCsl = (source: SourceDetail) => {
   }
   if (validateTextValue(isbn)) {
     response.ISBN = isbn?.textValue
+  }
+  if (validateTextValue(url)) {
+    response.URL = url?.textValue
   }
 
   return response
