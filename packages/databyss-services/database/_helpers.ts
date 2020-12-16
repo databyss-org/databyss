@@ -12,7 +12,7 @@ import { Selection } from '../interfaces/Selection'
 export const populatePage = async (_id: string): Promise<Page | null> => {
   const _response = await db.find({
     selector: {
-      documentType: 'PAGE',
+      documentType: DocumentType.Page,
       _id,
     },
   })

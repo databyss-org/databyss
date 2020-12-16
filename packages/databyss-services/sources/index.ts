@@ -1,15 +1,20 @@
 import { defaultCitationStyle } from '../citations/constants'
 import { httpGet, httpPost, httpDelete } from '../lib/requestApi'
 import { Source, Author, SourceCitationHeader } from '../interfaces'
+import getPouchSource from '../database/getSource'
+import setPouchSource from '../database/setSource'
+import getPouchSources from '../database/getSources'
 
 // TODO: Add native versions of these
 
-export const getSource = (_id: string): Promise<Source> =>
-  httpGet(`/sources/${_id}`)
+export const getSource = (_id: string): Promise<SourceCitationHeader> =>
+  getPouchSource(_id)
 
-export const setSource = (data: Source) => httpPost('/sources', { data })
+export const setSource = (data: Source) => setPouchSource(data)
 
-export const getSources = (): Promise<Source[]> => httpGet('/sources')
+export const getSources = (): Promise<Source[]> => getPouchSources()
+
+// httpGet('/sources')
 
 export const getSourceCitations = (
   citationStyleId?: string

@@ -35,7 +35,6 @@ const NotFoundRedirect = () => {
   const { user } = getSession()
   const { defaultGroupId, defaultPageId } = user
 
-  console.log(user)
   // if no page found, navigate to default page
   useEffect(() => {
     navigate(`/${defaultGroupId}/pages/${defaultPageId}`, {
