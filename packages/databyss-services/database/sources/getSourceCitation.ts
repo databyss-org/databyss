@@ -1,11 +1,15 @@
 import { pick } from 'lodash'
 import { asyncForEach } from '@databyss-org/services/lib/util'
 import { toCitation } from '@databyss-org/services/citations'
+import {
+  // BlockRelation,
+  DocumentType,
+  BlockType,
+} from '@databyss-org/editor/interfaces'
 import { db } from '../db'
-import { DocumentType, BlockType } from '../interfaces'
-import { Source, SourceCitationHeader } from '../../interfaces/Block'
-import { BlockRelation } from '@databyss-org/editor/interfaces'
-import { Page } from '../../interfaces/Page'
+import { SourceCitationHeader } from '../../interfaces/Block'
+
+// import { Page } from '../../interfaces/Page'
 
 export type CitationResponse = Partial<SourceCitationHeader> & {
   citation?: string

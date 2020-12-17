@@ -1,5 +1,5 @@
 import { Point } from './'
-import { DocumentType } from '../database/interfaces'
+import { DocumentType } from './Block'
 
 export interface Selection {
   anchor: Point

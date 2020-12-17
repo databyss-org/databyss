@@ -1,11 +1,12 @@
 import { db } from '../db'
-import { DocumentType, BlockType, DbPage } from '../interfaces'
-import { ResourceNotFoundError } from '../../interfaces/Errors'
-import { SourceCitationHeader } from '../../interfaces'
+// import { DocumentType } from '../interfaces'
+// import { ResourceNotFoundError } from '../../interfaces/Errors'
+import { SourceCitationHeader, DocumentType } from '../../interfaces'
 
-const getSource = async (_id: string) => {
+const getSource = async (_id: string): Promise<SourceCitationHeader> => {
   // get source and pages source exists in
   const _source: SourceCitationHeader = await db.get(_id)
+
   // TODO: SHOULD THIS RETURN ERROR
   //   if (!_source || _source.type !== BlockType.Source) {
   //     return new ResourceNotFoundError()

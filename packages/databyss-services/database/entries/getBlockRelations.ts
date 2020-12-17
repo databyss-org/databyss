@@ -1,9 +1,14 @@
 import * as PouchDB from 'pouchdb-browser'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { db } from '../db'
-import { DocumentType } from '../../interfaces/Block'
+import {
+  DocumentType,
+  BlockRelationsServerResponse,
+} from '../../interfaces/Block'
 
-const getBlockRelations = async (id: string) => {
+const getBlockRelations = async (
+  id: string
+): Promise<BlockRelationsServerResponse | null> => {
   const _results: PouchDB.Find.FindResponse<BlockRelation> = await db.find({
     selector: {
       documentType: DocumentType.BlockRelation,
@@ -36,6 +41,7 @@ const getBlockRelations = async (id: string) => {
     }, _results)
     return _results
   }
+  return null
 }
 
 export default getBlockRelations

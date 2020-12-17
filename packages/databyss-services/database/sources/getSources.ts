@@ -1,6 +1,5 @@
 import { db } from '../db'
-import { BlockType, DocumentType } from '../interfaces'
-import { Source } from '../../interfaces/Block'
+import { Source, BlockType, DocumentType } from '../../interfaces'
 
 const getSources = async (): Promise<Source[]> => {
   let _source: Source[] = []

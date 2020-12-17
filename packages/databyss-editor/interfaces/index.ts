@@ -12,7 +12,7 @@ export type {
   Point,
   Text,
 } from '@databyss-org/services/interfaces'
-export { BlockType } from '@databyss-org/services/interfaces'
+export { BlockType, DocumentType } from '@databyss-org/services/interfaces'
 
 export type BlockRelation = {
   block: string

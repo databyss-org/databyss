@@ -82,7 +82,10 @@ export interface Topic extends Block {
   isInPages?: string[]
 }
 
+export interface CacheDict<T> {
+  [key: string]: T
+}
 export interface BlockRelationsServerResponse {
   count: number
-  results: BlockRelation[]
+  results: CacheDict<BlockRelation[]>
 }

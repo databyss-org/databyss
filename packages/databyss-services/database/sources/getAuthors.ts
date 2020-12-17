@@ -1,9 +1,11 @@
-import { Author } from '../../interfaces'
-import { db } from '../db'
 import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
-import { DocumentType } from '../interfaces'
-import { BlockType } from '@databyss-org/services/interfaces'
-import { Source } from '../../interfaces/Block'
+import {
+  BlockType,
+  DocumentType,
+  SourceCitationHeader,
+} from '@databyss-org/services/interfaces'
+import { db } from '../db'
+import { Author } from '../../interfaces'
 
 const getAuthors = async (): Promise<Author[]> => {
   const _response = await db.find({
@@ -17,7 +19,7 @@ const getAuthors = async (): Promise<Author[]> => {
     return []
   }
 
-  const _sources: Source[] = _response.docs
+  const _sources: SourceCitationHeader[] = _response.docs
 
   for (const _source of _sources) {
     // look up pages topic appears in using block relations

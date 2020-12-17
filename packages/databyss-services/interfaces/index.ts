@@ -22,7 +22,7 @@ export type {
   Topic,
   SourceCitationHeader,
 } from './Block'
-export { BlockType } from './Block'
+export { BlockType, DocumentType } from './Block'
 export type { FSA } from './FSA'
 export { RangeType } from './Range'
 export type { Range } from './Range'

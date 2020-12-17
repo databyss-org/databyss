@@ -1,6 +1,6 @@
 import ObjectId from 'bson-objectid'
-import { Block, DocumentType, BlockType, DbPage } from './interfaces'
-import { Selection } from '../interfaces/Selection'
+import { DbPage } from './interfaces'
+import { Selection, Block, DocumentType, BlockType } from '../interfaces'
 
 const _selectionId = new ObjectId().toHexString()
 
