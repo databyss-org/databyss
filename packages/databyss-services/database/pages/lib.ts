@@ -1,7 +1,10 @@
+import * as PouchDB from 'pouchdb-browser'
 import { Patch } from 'immer'
 import ObjectId from 'bson-objectid'
+import { getDefaultPageId } from '@databyss-org/services/session/clientStorage'
 import { DbPage, Block, DocumentType, BlockType } from '../interfaces'
 import { db } from '../db'
+import { initSelection, initPage, initBlock } from '../initialState'
 
 export const getAtomicClosureText = (type, text) =>
   ({
@@ -56,7 +59,7 @@ const addOrReplaceBlock = async (p, page) => {
     account: 'DEFAULT ACCOUNT',
   }
 
-  let _response = await db.find({
+  const _response: PouchDB.Find.FindResponse<Block> = await db.find({
     selector: {
       _id: _blockId,
     },
@@ -66,16 +69,14 @@ const addOrReplaceBlock = async (p, page) => {
     // populate block
     _block = _response.docs[0]
   } else {
+    _block = {
+      _id: new ObjectId().toHexString(),
+      documentType: DocumentType.Block,
+      type: BlockType.Entry,
+      text: { textValue: '', ranges: [] },
+    }
     // initiate new block
-    await db.upsert(_blockId, () => {
-      _block = {
-        _id: new ObjectId().toHexString(),
-        documentType: DocumentType.Block,
-        type: BlockType.Entry,
-        text: { textValue: '', ranges: [] },
-      }
-      return _block
-    })
+    await db.upsert(_blockId, () => _block)
   }
 
   Object.assign(_block, _blockFields)
@@ -152,4 +153,17 @@ export const runPatches = async (p: Patch, page: DbPage) => {
     }
     default:
   }
+}
+
+export const initNewPage = async () => {
+  // ADD SELECTION DOCUMENT
+  await db.upsert(initSelection._id, () => initSelection)
+
+  // ADD BLOCK DOCUMENT
+  const _id = getDefaultPageId()
+  const _page = initPage(_id)
+  await db.upsert(_id, () => _page)
+
+  // ADD PAGE DOCUMENT
+  await db.upsert(initBlock._id, () => initBlock)
 }

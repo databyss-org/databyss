@@ -1,6 +1,5 @@
 import { Text } from '../interfaces/Text'
-import { PageHeader, Page } from '../interfaces/Page'
-import { Selection } from '../interfaces/Selection'
+import { PageHeader } from '../interfaces/Page'
 import { BasicBlock } from '../interfaces/Block'
 
 export interface MangoResponse<D> {

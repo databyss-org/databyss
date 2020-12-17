@@ -11,22 +11,16 @@ interface MangoResponse<D> {
   docs: D[]
 }
 
-// export const getPage = (_id: string): Promise<Page> => httpGet(`/pages/${_id}`)
-
 export const savePage = (data: Page | PageHeader): Promise<boolean> =>
   httpPost('/pages', { data })
 
-// export const savePatchBatch = (data: PatchBatch) =>
-//   httpPatch(`/pages/${data.id}`, { data })
 export const savePatchBatch = (data: PatchBatch) => pouchDb.savePatchData(data)
 
-// export const loadPage = (id: string): Promise<Page> =>
-//   httpGet(`/pages/populate/${id}`)
-export const loadPage = (_id: string): Promise<Page | null> => populatePage(_id)
+export const loadPage = (_id: string): Promise<Page | null> =>
+  pouchDb.populatePage(_id)
 
-// export const getAllPages = (): Promise<PageHeader[]> => httpGet(`/pages/`)
 export const getAllPages = (): Promise<MangoResponse<PageHeader>> =>
-  fetchAllPages()
+  pouchDb.fetchAllPages()
 
 export const deletePage = (id: string) => httpDelete(`/pages/${id}`)
 

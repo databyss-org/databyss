@@ -1,3 +1,5 @@
 import savePatchData from './savePatchBatch'
+import { fetchAllPages } from './fetchAllPages'
+import populatePage from './populatePage'
 
-export { savePatchData }
+export { savePatchData, fetchAllPages, populatePage }
