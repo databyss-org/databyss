@@ -1,8 +1,9 @@
 import ObjectId from 'bson-objectid'
 import { db } from '../db'
-import { DocumentType } from '../interfaces'
+import { DocumentType } from '../../interfaces/Block'
+import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
 
-const setBlockRelations = async (payloadArray) => {
+const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
   for (const payload of payloadArray) {
     const { blocksRelationArray, clearPageRelationships } = payload
 
@@ -23,7 +24,7 @@ const setBlockRelations = async (payloadArray) => {
         _idsToDelete.map((i) => ({ _id: i._id, _rev: i._rev, _deleted: true }))
       )
     }
-    if (blocksRelationArray.length) {
+    if (blocksRelationArray?.length) {
       for (const relationship of blocksRelationArray) {
         const { block, relatedBlock, removeBlock } = relationship
 
@@ -45,13 +46,11 @@ const setBlockRelations = async (payloadArray) => {
           }))
         } else {
           // create a new block relation
-          await db.put({
+          await db.upsert(new ObjectId().toHexString(), () => ({
             documentType: DocumentType.BlockRelation,
             _id: new ObjectId().toHexString(),
-            block,
-            relatedBlock,
             ...relationship,
-          })
+          }))
         }
       }
     }
