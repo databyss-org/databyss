@@ -1,7 +1,7 @@
-import { PatchBatch } from '../../interfaces/Patch'
-import { DbPage } from '../interfaces'
-import { db } from '../db'
-import { runPatches } from './lib'
+import { PatchBatch } from '../../../interfaces/Patch'
+import { DbPage } from '../../interfaces'
+import { db } from '../../db'
+import { runPatches } from '../util'
 
 const savePatchData = async (data: PatchBatch) => {
   const { patches, id } = data

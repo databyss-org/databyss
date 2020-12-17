@@ -1,5 +1,5 @@
-import { Source, BlockType, DocumentType } from '../../interfaces'
-import { db } from '../db'
+import { db } from '../../db'
+import { Source, BlockType, DocumentType } from '../../../interfaces'
 
 export const setSource = async (data: Source) => {
   const { text, detail, _id } = data

@@ -4,7 +4,7 @@ import { Source, Author, SourceCitationHeader } from '../interfaces'
 
 import * as pouchDb from '../database/sources'
 
-import { CitationResponse } from '../database/sources/getSourceCitation'
+import { CitationResponse } from '../database/sources/lib/getSourceCitation'
 
 // TODO: Add native versions of these
 

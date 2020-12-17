@@ -1,10 +1,8 @@
-import { httpGet, httpPost, httpDelete, httpPatch } from '../lib/requestApi'
+import { httpPost, httpDelete } from '../lib/requestApi'
 import { Page, PatchBatch, PageHeader } from '../interfaces'
 
-import { db } from '@databyss-org/services/database/db.ts'
 // packages/databyss-services/database/pages/index.ts
 import * as pouchDb from '../database/pages'
-import { populatePage, fetchAllPages } from '../database/_helpers'
 // TODO: Add native versions of these
 
 interface MangoResponse<D> {

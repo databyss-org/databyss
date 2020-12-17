@@ -8,6 +8,5 @@ export interface MangoResponse<D> {
 export interface DbPage extends PageHeader {
   blocks: BasicBlock[]
   selection: string
-  publicAccountId?: string
   documentType: DocumentType.Page
 }

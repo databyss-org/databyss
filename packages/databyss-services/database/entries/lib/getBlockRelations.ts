@@ -1,10 +1,10 @@
 import * as PouchDB from 'pouchdb-browser'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
-import { db } from '../db'
+import { db } from '../../db'
 import {
   DocumentType,
   BlockRelationsServerResponse,
-} from '../../interfaces/Block'
+} from '../../../interfaces/Block'
 
 const getBlockRelations = async (
   id: string

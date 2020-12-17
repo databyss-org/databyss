@@ -1,7 +1,7 @@
-import { db } from '../db'
+import { db } from '../../db'
 // import { DocumentType } from '../interfaces'
 // import { ResourceNotFoundError } from '../../interfaces/Errors'
-import { SourceCitationHeader, DocumentType } from '../../interfaces'
+import { SourceCitationHeader, DocumentType } from '../../../interfaces'
 
 const getSource = async (_id: string): Promise<SourceCitationHeader> => {
   // get source and pages source exists in

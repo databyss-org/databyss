@@ -1,7 +1,7 @@
-import { Page } from '../../interfaces/Page'
-import { DbPage } from '../interfaces'
-import { db } from '../db'
-import { Selection, DocumentType, Block } from '../../interfaces'
+import { Page } from '../../../interfaces/Page'
+import { DbPage } from '../../interfaces'
+import { Selection, DocumentType, Block } from '../../../interfaces'
+import { db } from '../../db'
 
 const populatePage = async (_id: string): Promise<Page | null> => {
   const _response = await db.find({

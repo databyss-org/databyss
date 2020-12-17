@@ -3,8 +3,8 @@ import {
   DocumentType,
   BlockType,
 } from '@databyss-org/editor/interfaces'
-import { db } from '../db'
-import { Topic, Page } from '../../interfaces'
+import { db } from '../../db'
+import { Topic, Page } from '../../../interfaces'
 
 const getTopicHeaders = async () => {
   const _response = await db.find({

@@ -1,7 +1,7 @@
 import ObjectId from 'bson-objectid'
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
-import { db } from '../db'
-import { DocumentType } from '../../interfaces/Block'
+import { db } from '../../db'
+import { DocumentType } from '../../../interfaces/Block'
 
 const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
   for (const payload of payloadArray) {

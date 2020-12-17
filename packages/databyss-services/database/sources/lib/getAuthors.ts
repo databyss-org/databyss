@@ -4,8 +4,8 @@ import {
   DocumentType,
   SourceCitationHeader,
 } from '@databyss-org/services/interfaces'
-import { db } from '../db'
-import { Author } from '../../interfaces'
+import { db } from '../../db'
+import { Author } from '../../../interfaces'
 
 const getAuthors = async (): Promise<Author[]> => {
   const _response = await db.find({

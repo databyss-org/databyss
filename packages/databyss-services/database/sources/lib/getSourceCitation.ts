@@ -6,8 +6,8 @@ import {
   DocumentType,
   BlockType,
 } from '@databyss-org/editor/interfaces'
-import { db } from '../db'
-import { SourceCitationHeader } from '../../interfaces/Block'
+import { db } from '../../db'
+import { SourceCitationHeader } from '../../../interfaces/Block'
 
 // import { Page } from '../../interfaces/Page'
 
