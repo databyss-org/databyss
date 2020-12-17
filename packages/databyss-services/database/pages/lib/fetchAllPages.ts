@@ -1,10 +1,9 @@
 import * as PouchDB from 'pouchdb-browser'
-import { MangoResponse, DbPage } from '../../interfaces'
-import { PageHeader } from '../../../interfaces/Page'
+import { DbPage } from '../../interfaces'
 import { db } from '../../db'
 import { initNewPage } from '../util'
 
-const fetchAllPages = async (): Promise<MangoResponse<PageHeader>> => {
+const fetchAllPages = async (): Promise<DbPage[]> => {
   let _pages: PouchDB.Find.FindResponse<DbPage> = await db.find({
     selector: {
       documentType: 'PAGE',
@@ -19,7 +18,7 @@ const fetchAllPages = async (): Promise<MangoResponse<PageHeader>> => {
       },
     })
   }
-  return _pages
+  return _pages.docs
 }
 
 export default fetchAllPages
