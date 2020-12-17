@@ -44,8 +44,7 @@ export function fetchPageHeaders() {
       type: FETCH_PAGE_HEADERS,
     })
     try {
-      const _response = await services.getAllPages()
-      const pages = _response.docs
+      const pages = await services.getAllPages()
 
       dispatch({
         type: CACHE_PAGE_HEADERS,
