@@ -1,10 +1,10 @@
+import * as PouchDB from 'pouchdb-browser'
+import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { db } from '../db'
 import { DocumentType } from '../interfaces'
-// import { BlockRelation } from '../../databyss-editor/interfaces/index'
-import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 
 const getBlockRelations = async (id: string) => {
-  const _results = await db.find({
+  const _results: PouchDB.Find.FindResponse<BlockRelation> = await db.find({
     selector: {
       documentType: DocumentType.BlockRelation,
       relatedBlock: id,

@@ -1,9 +1,16 @@
 import PouchDB from 'pouchdb-browser'
+import PouchDBFind from 'pouchdb-find'
+import PouchDBUpsert from 'pouchdb-upsert'
 
-PouchDB.plugin(require('pouchdb-find').default)
-PouchDB.plugin(require('pouchdb-upsert'))
+// import { DbPage } from './interfaces'
+// import { Selection } from '../interfaces/Selection'
+// import { Source, Topic } from '../interfaces/Block'
 
-export const db = new PouchDB('local')
+PouchDB.plugin(PouchDBFind)
+
+PouchDB.plugin(PouchDBUpsert)
+
+export const db: PouchDB.Database<any> = new PouchDB('local')
 
 // // EXTENDS documentscope to include upsert
 // declare module 'PouchDb' {
