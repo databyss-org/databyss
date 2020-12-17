@@ -1,7 +1,6 @@
+import { BlockRelation, DocumentType } from '@databyss-org/editor/interfaces'
 import { Topic } from '../../interfaces/Block'
 import { db } from '../db'
-import { DocumentType } from '../interfaces'
-import { BlockRelation } from '@databyss-org/editor/interfaces'
 import { Page } from '../../interfaces/Page'
 
 const getTopic = async (_id: string): Promise<Topic> => {

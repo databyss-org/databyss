@@ -1,8 +1,7 @@
 import { db } from '@databyss-org/services/database/db'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { replaceInlineText } from '@databyss-org/editor/state/util'
-import { Topic } from '../../interfaces'
-import { DocumentType, Block } from '.././interfaces'
+import { Topic, DocumentType, Block } from '../../interfaces'
 
 const setTopic = async (data: Topic) => {
   const { text, _id } = data

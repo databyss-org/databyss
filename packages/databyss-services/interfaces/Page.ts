@@ -1,5 +1,5 @@
 import { Block, Selection } from './'
-import { DocumentType } from '../database/interfaces'
+import { DocumentType } from './Block'
 
 export interface PageHeader {
   _id: string
