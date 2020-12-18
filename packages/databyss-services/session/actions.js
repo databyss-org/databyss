@@ -1,6 +1,7 @@
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
 import { NotAuthorizedError } from '../interfaces'
+import { initNewPage } from '../database/pages/util'
 import { version as databyssVersion } from '../package.json'
 import {
   FETCH_SESSION,
@@ -99,12 +100,18 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       setAuthToken(res.data.session.token)
       setAccountId(res.data.session.user.defaultGroupId)
       setDefaultPageId(res.data.session.user.defaultPageId)
+
       dispatch({
         type: CACHE_SESSION,
         payload: {
           session: res.data.session,
         },
       })
+      // initialize a new user
+      if (res.data.session.user.provisionClientDatabase) {
+        await initNewPage(res.data.session.user.defaultPageId)
+        window.location.href = '/'
+      }
     } else if (res.data?.isPublic) {
       // cache public account info in session state
       dispatch({

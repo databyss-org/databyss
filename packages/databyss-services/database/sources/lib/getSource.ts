@@ -8,9 +8,9 @@ const getSource = async (_id: string): Promise<SourceCitationHeader> => {
   const _source: SourceCitationHeader = await db.get(_id)
 
   // TODO: SHOULD THIS RETURN ERROR
-  //   if (!_source || _source.type !== BlockType.Source) {
-  //     return new ResourceNotFoundError()
-  //   }
+  // if (!_source || _source.type !== BlockType.Source) {
+  //   return new ResourceNotFoundError()
+  // }
 
   const isInPages: string[] = []
   // returns all pages where source id is found in element id

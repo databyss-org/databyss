@@ -1,6 +1,10 @@
 import PouchDB from 'pouchdb-browser'
 import PouchDBFind from 'pouchdb-find'
 import PouchDBUpsert from 'pouchdb-upsert'
+import PouchDbQuickSearch from 'pouchdb-quick-search'
+
+// add plugins
+PouchDB.plugin(PouchDbQuickSearch)
 
 PouchDB.plugin(PouchDBFind)
 

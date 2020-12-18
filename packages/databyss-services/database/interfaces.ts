@@ -1,8 +1,9 @@
 import { PageHeader } from '../interfaces/Page'
-import { BasicBlock, DocumentType } from '../interfaces/Block'
+import { BasicBlock } from '../interfaces/Block'
 
+// TODO: call this PageDoc
 export interface DbPage extends PageHeader {
   blocks: BasicBlock[]
   selection: string
-  documentType: DocumentType.Page
+  // documentType: DocumentType.Page
 }

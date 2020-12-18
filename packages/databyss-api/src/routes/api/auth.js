@@ -57,6 +57,8 @@ router.post(
         await Logins.destroy(_res._id, _res._rev)
         const session = await getSessionFromToken(token)
         // check if user has login credentials
+
+        // INIT SUBROUTINE
         if (!session.user.defaultGroupId) {
           // if default group doesnt exist, initiate a new database and pass the data back to the client
           const credentials = await createUserDatabaseCredentials(session.user)
@@ -73,9 +75,11 @@ router.post(
               dbPassword: credentials.dbPassword,
             },
           ]
-          // TODO: this should be saved by the user
+
           session.user.defaultPageId = _user.defaultPageId
           session.user.defaultGroupId = _user.defaultGroupId
+          // init a new user
+          session.user.provisionClientDatabase = true
         }
 
         return res.json({ data: { session } })

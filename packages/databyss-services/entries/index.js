@@ -1,8 +1,6 @@
 import * as pouchDb from '../database/entries'
 
-import { httpPost } from '../lib/requestApi'
-
-export const searchEntries = (data) => httpPost('/entries/search/', { data })
+export const searchEntries = (data) => pouchDb.searchEntries(data)
 
 export const setBlockRelations = (data) => pouchDb.setBlockRelations(data)
 

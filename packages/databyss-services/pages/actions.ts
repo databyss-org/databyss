@@ -1,7 +1,7 @@
 import * as services from '.'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import { PatchBatch, PageHeader, Page } from '../interfaces'
-import { initNewPage } from '../database/_helpers'
+
 import {
   PATCH,
   FETCH_PAGE,

@@ -39,6 +39,7 @@ const NavigationProvider = ({ children }) => {
       navigateRouter(url)
       return
     }
+    // navigateRouter(accountId ? `/testaccount` : url)
     navigateRouter(accountId ? `/${accountId}${url}` : url)
   }
 

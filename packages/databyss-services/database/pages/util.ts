@@ -156,12 +156,17 @@ export const runPatches = async (p: Patch, page: DbPage) => {
   }
 }
 
-export const initNewPage = async () => {
+export const initNewPage = async (id: string | null) => {
+  console.log('NEW PAGE', id)
   // ADD SELECTION DOCUMENT
   await db.upsert(initSelection._id, () => initSelection)
 
   // ADD BLOCK DOCUMENT
-  const _id = getDefaultPageId()
+  let _id = id
+  if (!_id) {
+    // TODO: generate new id
+    _id = new ObjectId().toHexString()
+  }
   const _page = initPage(_id)
   await db.upsert(_id, () => _page)
 
