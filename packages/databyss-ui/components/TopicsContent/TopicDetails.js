@@ -5,7 +5,7 @@ import {
   BlockRelationsLoader,
   PagesLoader,
 } from '@databyss-org/ui/components/Loaders'
-import { useParams } from '@reach/router'
+import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import IndexPageContent from '../PageContent/IndexPageContent'
 import IndexSourceContent from '../SourcesContent/IndexSourceContent'
 

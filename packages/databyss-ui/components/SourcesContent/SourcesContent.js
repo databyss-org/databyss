@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
-import { Router } from '@reach/router'
+import { Router } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 
 import { CitationStyleOptions } from '@databyss-org/services/citations/constants'
 import { createIndexPageEntries } from '@databyss-org/services/entries/util'

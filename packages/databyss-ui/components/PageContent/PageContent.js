@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useParams, useLocation, Router } from '@reach/router'
+import {
+  useParams,
+  useLocation,
+  Router,
+} from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { View } from '@databyss-org/ui/primitives'

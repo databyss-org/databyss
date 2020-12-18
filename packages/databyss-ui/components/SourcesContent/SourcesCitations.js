@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from '@reach/router'
+import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import {
   BlockRelationsLoader,
   SourceCitationsLoader,

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Router } from '@reach/router'
+import { Router } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { PageProvider } from '@databyss-org/services'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'

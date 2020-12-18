@@ -7,7 +7,7 @@ import PageSvg from '@databyss-org/ui/assets/page.svg'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import TopicsSvg from '@databyss-org/ui/assets/topics.svg'
 import { ScrollView, Icon, List } from '@databyss-org/ui/primitives'
-import { useLocation } from '@reach/router'
+import { useLocation } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 
 const menuSvgs = (type) =>

@@ -7,7 +7,7 @@ import {
   createMemorySource,
   createHistory,
   LocationProvider,
-} from '@reach/router'
+} from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import defaultTheme, { darkTheme } from '../theming/theme'
 import { ThemeProvider } from '../theming'
 

@@ -1634,6 +1634,16 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
+"@databyss-org/reach-router@1.3.4-b1":
+  version "1.3.4-b1"
+  resolved "https://registry.yarnpkg.com/@databyss-org/reach-router/-/reach-router-1.3.4-b1.tgz#d37dcb24e9e42b77d3f56323803215b5f188b256"
+  integrity sha512-pNxuVZFaN8JwvcqUjdpbk+X6TnrvrwbmqYHgFKiW314/3iBJyVrN5lSt/zz9/OwtPjS6HglpU5N0C4hLfBmsaA==
+  dependencies:
+    create-react-context "0.3.0"
+    invariant "^2.2.3"
+    prop-types "^15.6.1"
+    react-lifecycles-compat "^3.0.4"
+
 "@databyss-org/slate-react@0.57.2-b4":
   version "0.57.2-b4"
   resolved "https://registry.yarnpkg.com/@databyss-org/slate-react/-/slate-react-0.57.2-b4.tgz#eaee65d54bae03e4240e78cac64dd3df2b0b8666"
@@ -2269,7 +2279,7 @@
   dependencies:
     mkdirp "^1.0.4"
 
-"@reach/router@^1.2.1", "@reach/router@^1.3.3":
+"@reach/router@^1.2.1":
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/@reach/router/-/router-1.3.4.tgz#d2574b19370a70c80480ed91f3da840136d10f8c"
   integrity sha512-+mtn9wjlB9NN2CNnnC/BRYtwdKBfSyyasPYraNAyvaV1occr/5NnB4CVzjEZipNHwYebQwcndGUmpFzxAUoqSA==
