@@ -6,6 +6,10 @@ import * as pouchDb from '../database/pages'
 import { DbPage } from '../database/interfaces'
 // TODO: Add native versions of these
 
+// save page is used to rename page name
+export const savePageHeader = (data: Page | PageHeader): Promise<void> =>
+  pouchDb.savePageHeader(data)
+
 export const savePage = (data: Page | PageHeader): Promise<boolean> =>
   httpPost('/pages', { data })
 

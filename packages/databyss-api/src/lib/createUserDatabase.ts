@@ -95,14 +95,22 @@ export const addCredentialsToUser = async (
   credentials: CredentialResponse
 ): Promise<User> => {
   const _res = await Users.upsert(userId, (oldDoc: User) => {
-    // TODO: do not upload the password
     const _groups = oldDoc.groups || []
     _groups.push({ groupId: credentials.groupId, role: Role.GroupAdmin })
+
+    const _defaultPageId = new ObjectId().toHexString()
+
+    // check if group has default page id, if not, create id
+    Groups.upsert(credentials.groupId, (oldDoc) =>
+      oldDoc.defaultPageId
+        ? oldDoc
+        : { ...oldDoc, defaultPageId: _defaultPageId }
+    )
     return {
       ...oldDoc,
       groups: _groups,
       defaultGroupId: credentials.groupId,
-      defaultPageId: new ObjectId(),
+      defaultPageId: _defaultPageId,
     }
   })
   // TODO: determine where the default page id comes from

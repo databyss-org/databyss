@@ -6,6 +6,7 @@ import {
   Separator,
   pxUnits,
 } from '@databyss-org/ui/primitives'
+import { db } from '@databyss-org/services/database/db'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import LogoutSvg from '@databyss-org/ui/assets/log-out.svg'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -31,6 +32,8 @@ const AccountMenu = () => {
   }
 
   const onLogout = () => {
+    // TODO: THIS WILL DESTORY DATABASE ONLY ON LOGOUT CLICK
+    db.destroy()
     logout()
     window.requestAnimationFrame(() => (window.location.href = '/'))
   }

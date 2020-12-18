@@ -160,7 +160,7 @@ export function savePageHeader(page: PageHeader) {
       type: CACHE_PAGE,
       payload: { id, page },
     })
-    services.savePage(page)
+    services.savePageHeader(page)
   }
 }
 

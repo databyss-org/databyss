@@ -1,13 +1,14 @@
 import express from 'express'
+import _ from 'lodash'
 import querystring from 'querystring'
 import humanReadableIds from 'human-readable-ids'
 import jwt from 'jsonwebtoken'
 import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
-import { Users, Logins } from '@databyss-org/data/serverdbs'
+import { Users, Logins, Groups } from '@databyss-org/data/serverdbs'
 import { send } from '../../lib/sendgrid'
-import User from '../../models/User'
-import Account from '../../models/Account'
+// import User from '../../models/User'
+// import Account from '../../models/Account'
 // import Login from '../../models/Login'
 import { getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
@@ -158,19 +159,19 @@ router.post(
 
     try {
       const decoded = jwt.verify(authToken, process.env.JWT_SECRET)
-
       if (decoded) {
-        const user = await User.findOne({ _id: decoded.user.id }).select(
-          'defaultAccount email'
-        )
+        //
+        let user = await Users.get(decoded.user.id)
         if (user) {
-          const account = await Account.findOne({
-            _id: user.defaultAccount,
-          }).select('defaultPage')
-          if (account) {
-            return res
-              .json({ data: { ...user._doc, ...account._doc } })
-              .status(200)
+          user = _.pick(user, ['defaultGroupId', 'email'])
+        }
+
+        if (user) {
+          let group = await Groups.get(user.defaultGroupId)
+          if (group) {
+            group = _.pick(group, 'defaultPageId')
+
+            return res.json({ data: { ...user, ...group } }).status(200)
           }
         }
       }
