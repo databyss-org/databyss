@@ -29,7 +29,7 @@ const SearchInputContainer = React.forwardRef(
     },
     ref
   ) => (
-    <View width="100%" px="small" mt="small" mb={pxUnits(12)} onClick={onClick}>
+    <View width="100%" px="small" my="small" onClick={onClick}>
       <View
         backgroundColor="background.0"
         height="100%"

@@ -68,7 +68,7 @@ const SidebarList = ({
   }
 
   return (
-    <ScrollView height={height} {...others}>
+    <ScrollView height={height} flexShrink={1} {...others}>
       <List
         orderKey={orderKey}
         onActiveItemChanged={onActiveItemChanged}
