@@ -62,7 +62,7 @@ const Footer = ({ collapsed }) => {
               justifyContent="space-between"
               flexGrow="1"
             >
-              <Text variant="uiTextNormal" color="text.2" ml="em">
+              <Text variant="uiTextNormal" color="text.2" ml="small">
                 New Page
               </Text>
               {/* 
