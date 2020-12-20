@@ -6,7 +6,6 @@ const Public = (props) => (
   <React.Fragment>
     <Grid
       widthVariant="page"
-      position="fixed"
       backgroundColor="background.1"
       width="100%"
       top="0"

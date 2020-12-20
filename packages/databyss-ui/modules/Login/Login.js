@@ -108,7 +108,14 @@ const Login = ({ pending, signupFlow, navLinks }) => {
         onChange={onChange}
         onSubmit={onSubmit}
       >
-        <View widthVariant="dialog" alignItems="center" minWidth={pxUnits(320)}>
+        <View
+          widthVariant="dialog"
+          alignItems="center"
+          minWidth={pxUnits(320)}
+          flexGrow={1}
+          justifyContent="center"
+          mb="extraLarge"
+        >
           <Text variant="heading2" color="gray.3">
             {signupFlow ? 'Sign Up' : 'Log In'}
           </Text>
