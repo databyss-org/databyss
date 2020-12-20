@@ -8,6 +8,7 @@ const Viewport = ({ children, ...others }) => (
     height="100vh"
     alignItems="center"
     justifyContent="center"
+    overflowY="auto"
     {...others}
   >
     {children}
