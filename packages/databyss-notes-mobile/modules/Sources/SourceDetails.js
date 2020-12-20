@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useParams } from '@reach/router'
+import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 
 import { ScrollView } from '@databyss-org/ui/primitives'
 import { PageProvider } from '@databyss-org/services'

@@ -14,9 +14,7 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { darkTheme } from '../../theming/theme'
 import { sidebar } from '../../theming/components'
 
-export const defaultProps = {
-  height: '100vh',
-}
+export const defaultProps = {}
 
 const SidebarCollapsed = () => {
   const {
@@ -100,12 +98,16 @@ const SidebarCollapsed = () => {
       {...defaultProps}
       theme={darkTheme}
       bg="background.1"
-      height="100vh"
       borderRightColor="border.1"
       borderRightWidth={pxUnits(1)}
       width={sidebar.collapsedWidth}
     >
-      <List verticalItemPadding={2} horizontalItemPadding={1} m="none">
+      <List
+        verticalItemPadding={2}
+        horizontalItemPadding={1}
+        py="none"
+        flexGrow={1}
+      >
         {sideBarCollapsedItems.map((item, i) => (
           <SidebarIconButton
             name={item.name}
@@ -120,7 +122,7 @@ const SidebarCollapsed = () => {
           />
         ))}
       </List>
-      <Footer />
+      <Footer collapsed />
     </View>
   )
 }

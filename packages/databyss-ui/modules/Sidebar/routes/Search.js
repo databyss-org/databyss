@@ -1,9 +1,9 @@
 import React, { useEffect, useCallback, useState, useRef } from 'react'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { View } from '@databyss-org/ui/primitives'
 import SearchInputContainer from '@databyss-org/ui/components/SearchContent/SearchInputContainer'
 import { debounce } from 'lodash'
-import { sidebarListHeight } from '@databyss-org/ui/modules/Sidebar/Sidebar'
 
 import SidebarSearchResults from '../../../components/Sidebar/SidebarSearchResults'
 
@@ -102,14 +102,18 @@ const Search = () => {
         textColor={menuItem === 'search' ? 'text.2' : 'text.3'}
         ref={inputRef}
       />
-      {searchTerm && menuItem === 'search' && (
+      {searchTerm && menuItem === 'search' ? (
         <SidebarSearchResults
           filterQuery={{ textValue: searchTerm }}
           onSearch={onSearchClick}
-          height={sidebarListHeight}
+          height="100%"
           inputRef={inputRef}
           searchHasFocus={hasFocus}
         />
+      ) : (
+        menuItem === 'search' && (
+          <View height="100%" flexShrink={1} flexGrow={1} />
+        )
       )}
     </>
   )

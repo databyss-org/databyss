@@ -1,14 +1,14 @@
 {
   "name": "@databyss-org/api",
-  "version": "1.2.10",
+  "version": "1.2.11",
   "description": "api",
   "main": "server.js",
   "author": "databyss-org",
   "license": "MIT",
   "peerDependencies": {
     "@bugsnag/js": "^7.5.1",
-    "@databyss-org/editor": "1.2.10",
-    "@databyss-org/services": "1.2.10",
+    "@databyss-org/editor": "1.2.11",
+    "@databyss-org/services": "1.2.11",
     "imurmurhash": "^0.1.4"
   },
   "dependencies": {

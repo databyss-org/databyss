@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Router } from '@reach/router'
+import { Router } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { PageProvider } from '@databyss-org/services'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
@@ -18,14 +18,18 @@ import {
 import { View } from '@databyss-org/ui/primitives'
 
 const App = ({ children }) => (
-  <View flexDirection="row" display="flex" width="100vw" height="100vh">
+  <View
+    flexDirection="row"
+    display="flex"
+    width="100%"
+    overflow="hidden"
+    flexShrink={1}
+    flexGrow={1}
+  >
     <Sidebar />
-    <div style={{ width: '100%' }} data-test-element="body">
+    <View data-test-element="body" flexGrow={1} flexShrink={1}>
       {children}
-    </div>
-
-    {/* TODO: replace div with View */}
-    {/* <View id="mainid">{children}</View> */}
+    </View>
   </View>
 )
 
