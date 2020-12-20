@@ -13,9 +13,7 @@ import Archive from './routes/Archive'
 import Header from '../../components/Sidebar/Header'
 import { sidebar } from '../../theming/components'
 
-export const defaultProps = {
-  height: '100%',
-}
+export const defaultProps = {}
 
 const Section = ({ children, title, variant, ...others }) => (
   <View mb="medium" {...others}>
@@ -57,13 +55,23 @@ const Sidebar = () => {
         position="relative"
         width={sidebar.width}
         key={`sidebar-key-${menuItem}`}
+        overflow="hidden"
       >
-        <View theme={darkTheme} bg="background.1" height="100%">
+        <View
+          theme={darkTheme}
+          bg="background.1"
+          flexGrow={1}
+          flexShrink={1}
+          overflow="hidden"
+        >
           <List
             verticalItemPadding={2}
             horizontalItemPadding={2}
             height="100%"
+            flexGrow={1}
+            flexShrink={1}
             pb={0}
+            overflow="hidden"
           >
             <Header />
             <Search />

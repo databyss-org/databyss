@@ -111,7 +111,9 @@ const Search = () => {
           searchHasFocus={hasFocus}
         />
       ) : (
-        menuItem === 'search' && <View height="100%" flexShrink={1} />
+        menuItem === 'search' && (
+          <View height="100%" flexShrink={1} flexGrow={1} />
+        )
       )}
     </>
   )

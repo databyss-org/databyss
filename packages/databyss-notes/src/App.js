@@ -15,6 +15,7 @@ const App = () => {
     <NotifyProvider>
       <ServiceProvider>
         <Viewport p={0}>
+          <FirefoxWarning />
           <SessionProvider
             signUp={location.pathname === '/signup'}
             code={urlParams.get('code')}
@@ -23,7 +24,6 @@ const App = () => {
             <ReleaseNotes />
             <Private />
           </SessionProvider>
-          <FirefoxWarning />
         </Viewport>
       </ServiceProvider>
     </NotifyProvider>

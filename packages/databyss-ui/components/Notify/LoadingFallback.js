@@ -10,6 +10,7 @@ const Loading = ({ size, ...others }) => (
     justifySelf="stretch"
     height="100%"
     flexShrink={1}
+    flexGrow={1}
     {...others}
   >
     <LoadingIcon width={size} height={size} />

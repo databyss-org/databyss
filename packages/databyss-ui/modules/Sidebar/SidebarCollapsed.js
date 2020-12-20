@@ -14,9 +14,7 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { darkTheme } from '../../theming/theme'
 import { sidebar } from '../../theming/components'
 
-export const defaultProps = {
-  height: '100%',
-}
+export const defaultProps = {}
 
 const SidebarCollapsed = () => {
   const {
@@ -100,7 +98,6 @@ const SidebarCollapsed = () => {
       {...defaultProps}
       theme={darkTheme}
       bg="background.1"
-      height="100%"
       borderRightColor="border.1"
       borderRightWidth={pxUnits(1)}
       width={sidebar.collapsedWidth}
