@@ -126,8 +126,8 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       })
     }
   } catch (error) {
-    deleteAuthToken()
-    deleteAccountId()
+    // deleteAuthToken()
+    // deleteAccountId()
     dispatch({
       type: DENY_ACCESS,
       payload: { error },
