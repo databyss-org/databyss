@@ -1,0 +1,13 @@
+- Better handling of network availability (#257, #315)
+- Back button fix (#258)
+- RichTextControl fix (#263)
+- Improved search results formatting (#273)
+- Improved performance when loading and editing pages (#209)
+- Improved search performance (#313)
+- Improved inline formatting menu UI (#302, #327)
+- Working with line breaks and block breaks is easier now (#310)
+- Visual improvements to the editor (#323)
+- Text selection improvements (#325)
+- Topics and sources hidden if they don't appear on pages (#331)
+- Spellcheck performance improved (#342)
+- 

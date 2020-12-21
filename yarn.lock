@@ -11518,11 +11518,6 @@ hash.js@^1.0.0, hash.js@^1.0.3:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
 
-hashids@^2.2.2:
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/hashids/-/hashids-2.2.2.tgz#5381257b34f0d0aca2063967b14a30a9312f650d"
-  integrity sha512-nqH06JLFeBBCg31jYSArbOs/XddTdnHSul/hb6XbrWg/UlUWFQc9KR21sVLoGKQGKPW1D3zgTgTew0oY7nhrhQ==
-
 hast-util-parse-selector@^2.0.0:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/hast-util-parse-selector/-/hast-util-parse-selector-2.2.4.tgz#60c99d0b519e12ab4ed32e58f150ec3f61ed1974"
