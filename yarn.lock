@@ -16979,6 +16979,13 @@ postcss@^7, postcss@^7.0.0, postcss@^7.0.1, postcss@^7.0.14, postcss@^7.0.17, po
     source-map "^0.6.1"
     supports-color "^6.1.0"
 
+postmark@^2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/postmark/-/postmark-2.6.1.tgz#65db8dbfe240349b65e3a4cc3c2ef3a6d1e96866"
+  integrity sha512-qvLiznIT2cYl9GFxSE8SFJkmX/r6As7swQaOioxMmjSmg6Osvspq292ojpsKXpjltToruBlF46rbA5l125gd3A==
+  dependencies:
+    axios "^0.19.2"
+
 prelude-ls@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"
