@@ -5,9 +5,10 @@ const Viewport = ({ children, ...others }) => (
   <View
     paddingVariant="medium"
     backgroundColor="pageBackground"
-    minHeight="100vh"
+    height="100vh"
     alignItems="center"
-    justifyContent="center"
+    justifyContent="flex-start"
+    overflowY="auto"
     {...others}
   >
     {children}

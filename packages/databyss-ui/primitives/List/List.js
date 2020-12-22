@@ -18,11 +18,7 @@ const List = ({
   ...others
 }) => {
   const _render = (
-    <View
-      marginTop={verticalItemPadding}
-      marginBottom={verticalItemPadding}
-      {...others}
-    >
+    <View py={verticalItemPadding} {...others}>
       {React.Children.map(
         flattenChildren(children),
         (child) =>

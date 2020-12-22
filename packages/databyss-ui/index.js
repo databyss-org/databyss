@@ -29,7 +29,4 @@ export {
   default as SourcesContent,
   SourcesRouter,
 } from './components/SourcesContent/SourcesContent'
-export {
-  default as TopicsContent,
-  TopicsRouter,
-} from './components/TopicsContent/TopicsContent'
+export { TopicsRouter } from './components/TopicsContent/TopicsContent'

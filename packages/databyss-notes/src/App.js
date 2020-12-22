@@ -4,6 +4,7 @@ import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { Viewport, useNavigationContext } from '@databyss-org/ui'
 import ReleaseNotes from '@databyss-org/ui/components/Notify/ReleaseNotes'
+import FirefoxWarning from '@databyss-org/ui/components/Notify/FirefoxWarning'
 import Public from './Public'
 import Private from './Private'
 
@@ -14,6 +15,7 @@ const App = () => {
     <NotifyProvider>
       <ServiceProvider>
         <Viewport p={0}>
+          <FirefoxWarning />
           <SessionProvider
             signUp={location.pathname === '/signup'}
             code={urlParams.get('code')}

@@ -8,14 +8,6 @@ import {
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 
-const topicsOverview = [
-  {
-    type: 'topics',
-    text: 'All Topics',
-    route: '/topics',
-  },
-]
-
 export const getTopicsData = (topics) =>
   Object.values(topics).map((value) =>
     createSidebarListItems({
@@ -28,7 +20,7 @@ export const getTopicsData = (topics) =>
     })
   )
 
-const Topics = ({ filterQuery, height, hasIndexPage }) => (
+const Topics = ({ filterQuery, height }) => (
   <AllTopicsLoader filtered>
     {(topics) => {
       const topicsData = getTopicsData(topics)
@@ -37,10 +29,9 @@ const Topics = ({ filterQuery, height, hasIndexPage }) => (
 
       return (
         <SidebarList
-          menuItems={[
-            ...(hasIndexPage ? topicsOverview : ''),
-            ...(filterQuery.textValue === '' ? sortedTopics : filteredEntries),
-          ]}
+          menuItems={
+            filterQuery.textValue === '' ? sortedTopics : filteredEntries
+          }
           height={height}
         />
       )

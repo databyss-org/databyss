@@ -27,7 +27,13 @@ const ErrorFallback = ({ error, message, ...others }) => {
   }
 
   return (
-    <View alignSelf="center" justifyContent="center" {...others}>
+    <View
+      alignSelf="center"
+      justifyContent="center"
+      height="100%"
+      flexShrink={1}
+      {...others}
+    >
       <Text>{_message}</Text>
     </View>
   )

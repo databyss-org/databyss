@@ -19,9 +19,9 @@ import {
   PageConstructor,
 } from '@databyss-org/services/database/pages/util'
 
-const Footer = () => {
+const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  const { navigate, navigateSidebar, isMenuOpen } = useNavigationContext()
+  const { navigate, navigateSidebar } = useNavigationContext()
 
   const clearSearchCache = useEntryContext((c) => c && c.clearSearchCache)
 
@@ -39,41 +39,34 @@ const Footer = () => {
   }
 
   return !isPublicAccount() ? (
-    <View
-      position="absolute"
-      bottom={0}
-      left={0}
-      width={
-        isMenuOpen
-          ? sidebar.width + sidebar.collapsedWidth
-          : sidebar.collapsedWidth
-      }
-      zIndex="base"
-    >
+    <>
       <Separator color="border.1" spacing="none" />
       <BaseControl
         px="small"
         py="extraSmall"
         width="100%"
+        height={sidebar.footerHeight}
         m="none"
         data-test-element="new-page-button"
         onClick={() => onNewPageClick()}
         flexDirection="row"
+        alignItems="center"
         childViewProps={{ width: '100%' }}
       >
         <Grid singleRow alignItems="center" columnGap="small">
-          <View p="extraSmall">
-            <Icon sizeVariant="medium" color="text.2">
-              <AddPageSvg />
-            </Icon>
-          </View>
-          {isMenuOpen && (
+          {collapsed ? (
+            <View p="extraSmall">
+              <Icon sizeVariant="medium" color="text.2">
+                <AddPageSvg />
+              </Icon>
+            </View>
+          ) : (
             <View
               flexDirection="row"
               justifyContent="space-between"
               flexGrow="1"
             >
-              <Text variant="uiTextNormal" color="text.2" ml="em">
+              <Text variant="uiTextNormal" color="text.2" ml="small">
                 New Page
               </Text>
               {/* 
@@ -87,7 +80,7 @@ const Footer = () => {
           )}
         </Grid>
       </BaseControl>
-    </View>
+    </>
   ) : null
 }
 

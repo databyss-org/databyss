@@ -22,7 +22,6 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 // const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin')
 // const typescriptFormatter = require('react-dev-utils/typescriptFormatter')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const manifestSeedJson = require('../public/manifest.json')
 const packageJson = require(paths.appPackageJson)
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
@@ -42,6 +41,7 @@ module.exports = (webpackEnv) => {
   console.log('TYPESCRIPT?', useTypeScript)
   const isEnvDevelopment = webpackEnv === 'development'
   const isEnvProduction = webpackEnv === 'production'
+  const isEnvTest = process.env.NODE_ENV === 'test'
 
   // Webpack uses `publicPath` to determine where the app is being served from.
   // It requires a trailing slash, or the file assets will get an incorrect path.
@@ -454,7 +454,7 @@ module.exports = (webpackEnv) => {
         },
       }),
       // Generate the manifest.json file
-      isEnvProduction &&
+      !isEnvTest &&
         new CopyWebpackPlugin({
           patterns: [
             {
