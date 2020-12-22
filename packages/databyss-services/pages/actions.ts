@@ -211,7 +211,11 @@ export function onArchivePage(
       payload: { id },
     })
     const _page = { ...page, archive: bool }
-    await services.savePage({ _id: page._id, name: page.name, archive: bool })
+    await services.savePageHeader({
+      _id: page._id,
+      name: page.name,
+      archive: bool,
+    })
     if (callback) {
       callback()
     }

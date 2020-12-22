@@ -20,7 +20,7 @@ export const loadPage = (_id: string): Promise<Page | null> =>
 
 export const getAllPages = (): Promise<DbPage[]> => pouchDb.fetchAllPages()
 
-export const deletePage = (id: string) => httpDelete(`/pages/${id}`)
+export const deletePage = (id: string) => pouchDb.deletePage(id)
 
 export const setPagePublic = (id: string, bool: boolean, accountId: string) =>
   httpPost(`/pages/${id}/public/`, { data: { isPublic: bool, accountId } })

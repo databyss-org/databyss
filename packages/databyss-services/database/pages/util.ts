@@ -1,11 +1,10 @@
 import * as PouchDB from 'pouchdb-browser'
 import { Patch } from 'immer'
 import ObjectId from 'bson-objectid'
-import { getDefaultPageId } from '@databyss-org/services/session/clientStorage'
 import { DbPage } from '../interfaces'
 import { db } from '../db'
-import { initSelection, initPage, initBlock } from '../initialState'
 import { Block, BlockType, DocumentType } from '../../interfaces'
+import { Selection } from '../../interfaces/Selection'
 
 export const getAtomicClosureText = (type, text) =>
   ({
@@ -156,20 +155,63 @@ export const runPatches = async (p: Patch, page: DbPage) => {
   }
 }
 
-export const initNewPage = async (id: string | null) => {
-  console.log('NEW PAGE', id)
-  // ADD SELECTION DOCUMENT
-  await db.upsert(initSelection._id, () => initSelection)
-
-  // ADD BLOCK DOCUMENT
-  let _id = id
-  if (!_id) {
-    // TODO: generate new id
-    _id = new ObjectId().toHexString()
+export class PageConstructor {
+  _id: string
+  selection: Selection
+  blocks: Block[]
+  name: string
+  archive: boolean
+  documentType: DocumentType
+  constructor(id?: string) {
+    this._id = id || new ObjectId().toHexString()
+    this.selection = {
+      documentType: DocumentType.Selection,
+      anchor: {
+        index: 0,
+        offset: 0,
+      },
+      focus: {
+        index: 0,
+        offset: 0,
+      },
+      _id: new ObjectId().toHexString(),
+    }
+    this.documentType = DocumentType.Page
+    this.name = 'untitled'
+    this.archive = false
+    this.blocks = [
+      {
+        _id: new ObjectId().toHexString(),
+        documentType: DocumentType.Block,
+        type: BlockType.Entry,
+        text: { textValue: '', ranges: [] },
+      },
+    ]
+    this.documentType = DocumentType.Page
   }
-  const _page = initPage(_id)
-  await db.upsert(_id, () => _page)
 
-  // ADD PAGE DOCUMENT
-  await db.upsert(initBlock._id, () => initBlock)
+  async addSelection() {
+    await db.upsert(this.selection._id, () => this.selection)
+  }
+
+  async addBlock() {
+    const _block = this.blocks[0]
+    await db.upsert(_block._id, () => _block)
+  }
+
+  async addPage() {
+    await this.addSelection()
+    await this.addBlock()
+    const _page = await db.upsert(this._id, () => ({
+      ...this,
+      selection: this.selection._id,
+      blocks: [
+        {
+          _id: this.blocks[0]._id,
+          type: BlockType.Entry,
+        },
+      ],
+    }))
+    return _page
+  }
 }

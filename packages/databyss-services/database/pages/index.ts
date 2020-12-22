@@ -2,5 +2,12 @@ import savePatchData from './lib/savePatchBatch'
 import fetchAllPages from './lib/fetchAllPages'
 import populatePage from './lib/populatePage'
 import savePageHeader from './lib/savePageHeader'
+import deletePage from './lib/deletePage'
 
-export { savePatchData, fetchAllPages, populatePage, savePageHeader }
+export {
+  savePatchData,
+  fetchAllPages,
+  populatePage,
+  savePageHeader,
+  deletePage,
+}

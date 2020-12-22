@@ -1,7 +1,7 @@
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
 import { NotAuthorizedError } from '../interfaces'
-import { initNewPage } from '../database/pages/util'
+import { PageConstructor } from '../database/pages/util'
 import { version as databyssVersion } from '../package.json'
 import {
   FETCH_SESSION,
@@ -109,7 +109,11 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       })
       // initialize a new user
       if (res.data.session.user.provisionClientDatabase) {
-        await initNewPage(res.data.session.user.defaultPageId)
+        // TODO: HOW DOES NEW PAGE GET INITIATED
+        const _page = new PageConstructor(res.data.session.user.defaultPageId)
+        // adds page to database
+        await _page.addPage()
+        // TODO: how to use navigation provider here
         window.location.href = '/'
       }
     } else if (res.data?.isPublic) {
@@ -165,11 +169,16 @@ export const logout = () => (dispatch) => {
   dispatch({ type: LOGOUT })
 }
 
-export const onSetDefaultPage = (id) => async (dispatch) => {
-  httpPost(`/accounts/page/${id}`).then(() => {
-    dispatch({
-      type: SET_DEFAULT_PAGE,
-      payload: { id },
-    })
-  })
-}
+export const onSetDefaultPage = (id) =>
+  // async (dispatch) =>
+  {
+    // TODO: THIS ONLY SETS THE DEFAULT PAGE LOCALLY. PAGE NEEDS TO BE CHANGED ON CLOUDANT AS WELL
+    // default page will always be the same since it is recieveing it from the server
+    setDefaultPageId(id)
+    // httpPost(`/accounts/page/${id}`).then(() => {
+    //   dispatch({
+    //     type: SET_DEFAULT_PAGE,
+    //     payload: { id },
+    //   })
+    // })
+  }
