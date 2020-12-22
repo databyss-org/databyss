@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useParams, useLocation, Router } from '@reach/router'
+import {
+  useParams,
+  useLocation,
+  Router,
+} from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { View } from '@databyss-org/ui/primitives'
@@ -64,12 +68,13 @@ export const PageContainer = React.memo(
     }
 
     return (
-      <View height="100vh" overflowY="auto" ref={editorWindowRef} {...others}>
+      <View height="100%" overflowY="auto" ref={editorWindowRef} {...others}>
         <View
           pl="medium"
           pr="medium"
           pb="medium"
           pt={isPublicAccount() || isMobile() ? 'large' : 'none'}
+          flexGrow={1}
         >
           {!isPublicAccount() && !isMobile() && (
             <PageSticky pagePath={editorPath} pageId={page._id} />
@@ -111,7 +116,7 @@ const PageContent = (others) => {
   */
 
   return (
-    <View flex="1" height="100vh" backgroundColor="background.1">
+    <View flex="1" height="100%" backgroundColor="background.1">
       {id && (
         <PageLoader pageId={id} key={id}>
           {(page) => (

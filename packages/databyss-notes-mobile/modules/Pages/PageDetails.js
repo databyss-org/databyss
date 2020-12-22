@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
-import { useParams, useLocation } from '@reach/router'
+import {
+  useParams,
+  useLocation,
+} from '@databyss-org/ui/components/Navigation/NavigationProvider'
 
 import { PageContainer } from '@databyss-org/ui/components/PageContent/PageContent'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'

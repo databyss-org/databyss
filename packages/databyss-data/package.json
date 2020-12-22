@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/data",
-  "version": "1.2.6",
+  "version": "1.2.11",
   "description": "Library for working with persistent storage and replication of databyss entities",
   "main": "index.js",
   "repository": {
@@ -14,7 +14,8 @@
   "license": "MIT",
   "private": false,
   "peerDependencies": {
-    "@databyss-org/data": "1.2.6",
+    "@databyss-org/data": "1.2.11",
+    "@databyss-org/services": "1.2.11",
     "json-schema": "^0.2.5"
   },
   "dependencies": {

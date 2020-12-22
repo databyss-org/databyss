@@ -5,7 +5,7 @@ import jwt from 'jsonwebtoken'
 import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
 import { Users, Logins } from '@databyss-org/data/serverdbs'
-import { send } from '../../lib/sendgrid'
+import { send } from '../../lib/postmark'
 import User from '../../models/User'
 import Account from '../../models/Account'
 // import Login from '../../models/Login'
@@ -132,12 +132,10 @@ router.post(
     Logins.upsert({ email, code: loginObj.code }, () => loginObj)
 
     const msg = {
-      to: email,
-      from: process.env.TRANSACTIONAL_EMAIL_SENDER,
-      templateId: emailExists
-        ? 'd-9e03c4ebd5a24560b6e02a15af4b9b2e'
-        : 'd-845a6d7d37c14d828191b6c7933b20f7',
-      dynamic_template_data: {
+      From: process.env.TRANSACTIONAL_EMAIL_SENDER,
+      To: email,
+      TemplateAlias: emailExists ? 'databyss_login' : 'databyss_signup',
+      TemplateModel: {
         code: loginObj.code,
         url: process.env.LOGIN_URL,
       },
