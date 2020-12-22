@@ -57,6 +57,18 @@ describe('app sticky header', () => {
   })
 
   afterEach(async () => {
+    const accountDropdown = await getElementByTag(
+      driver,
+      '[data-test-element="account-menu"]'
+    )
+
+    await accountDropdown.click()
+    const logoutButton = await getElementByTag(
+      driver,
+      '[data-test-block-menu="logout"]'
+    )
+
+    await logoutButton.click()
     await sleep(100)
     await driver.quit()
     driver = null
@@ -150,90 +162,5 @@ describe('app sticky header', () => {
     )
     headerSticky = await headerSticky.getAttribute('innerText')
     assert.equal(headerSticky, 'this is a page title')
-
-    // let headerSticky = await getElementByTag(
-    //     driver,
-    //     '[data-test-element="editor-sticky-header"]'
-    //   )
-
-    // let headerField = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-header"]'
-    // )
-    // await headerField.sendKeys('First Test Page Title')
-
-    // editor.sendKeys('Editor test one')
-
-    // await sleep(2000)
-
-    // const newPageButton = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="new-page-button"]'
-    // )
-
-    // await newPageButton.click()
-    // await sleep(2000)
-
-    // headerField = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-header"]'
-    // )
-
-    // await headerField.sendKeys('Second page title')
-
-    // editor = await getEditor(driver)
-
-    // editor.sendKeys('Editor test two')
-
-    // await sleep(2000)
-
-    // const firstPageButton = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-sidebar-0"]'
-    // )
-
-    // await firstPageButton.click()
-
-    // await sleep(1000)
-
-    // headerField = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-header"]'
-    // )
-
-    // headerField = await headerField.getAttribute('value')
-
-    // editor = await getEditor(driver)
-
-    // let editorField = await editor.getAttribute('innerText')
-
-    // assert.equal(headerField, 'First Test Page Title')
-    // assert.equal(editorField, 'Editor test one')
-
-    // // Second page integrity test
-    // const secondPageButton = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-sidebar-1"]'
-    // )
-
-    // await secondPageButton.click()
-
-    // await sleep(1000)
-
-    // headerField = await getElementByTag(
-    //   driver,
-    //   '[data-test-element="page-header"]'
-    // )
-
-    // headerField = await headerField.getAttribute('value')
-
-    // editor = await getEditor(driver)
-
-    // editorField = await editor.getAttribute('innerText')
-
-    // await sleep(1000)
-
-    // assert.equal(true, true)
-    //   assert.equal(editorField, 'Editor test two')
   })
 })

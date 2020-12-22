@@ -201,7 +201,9 @@ export class PageConstructor {
 
   async addPage() {
     await this.addSelection()
+
     await this.addBlock()
+
     const _page = await db.upsert(this._id, () => ({
       ...this,
       selection: this.selection._id,

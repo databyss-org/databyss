@@ -60,6 +60,18 @@ describe('notes app', () => {
   })
 
   afterEach(async () => {
+    const accountDropdown = await getElementByTag(
+      driver,
+      '[data-test-element="account-menu"]'
+    )
+
+    await accountDropdown.click()
+    const logoutButton = await getElementByTag(
+      driver,
+      '[data-test-block-menu="logout"]'
+    )
+
+    await logoutButton.click()
     await sleep(100)
     await driver.quit()
     driver = null

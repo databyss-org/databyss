@@ -28,6 +28,7 @@ import {
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
+import { db } from '../database/db'
 
 export const fetchSession = ({ _request, ...credentials }) => async (
   dispatch
@@ -113,8 +114,9 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         const _page = new PageConstructor(res.data.session.user.defaultPageId)
         // adds page to database
         await _page.addPage()
+
         // TODO: how to use navigation provider here
-        window.location.href = '/'
+        //    window.location.href = '/'
       }
     } else if (res.data?.isPublic) {
       // cache public account info in session state

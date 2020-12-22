@@ -54,7 +54,7 @@ const Private = () => {
 
   // Navigate to default page is nothing in path
   useEffect(() => {
-    if (location.pathname === '/') {
+    if (location.pathname === '/' || user.provisionClientDatabase) {
       navigate(`/${defaultGroupId}/pages/${defaultPageId}`, {
         hasAccount: true,
       })
