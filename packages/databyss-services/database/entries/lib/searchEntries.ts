@@ -32,6 +32,8 @@ const searchEntries = async (encodedQuery: string) => {
         if (_page && !_page?.archive) {
           // if page has not been archived and is currently not in array, push to array
           _result.doc.page = _page
+        } else {
+          _result.doc.page = null
         }
       }
     }
@@ -60,10 +62,8 @@ const searchEntries = async (encodedQuery: string) => {
         __results.count -= 1
         return acc
       }
-
       const pageId = curr.page._id
       // get index where block appears on page
-
       const _blockIndex = curr.page.blocks.findIndex((b) => b._id === curr._id)
       if (!acc.results.get(pageId)) {
         // init result

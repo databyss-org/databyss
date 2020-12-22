@@ -2,6 +2,7 @@ import { Page } from '../../../interfaces/Page'
 import { DbPage } from '../../interfaces'
 import { Selection, DocumentType, Block } from '../../../interfaces'
 import { db } from '../../db'
+import { getAtomicClosureText } from '../util'
 
 const populatePage = async (_id: string): Promise<Page | null> => {
   const _response = await db.find({
@@ -12,7 +13,7 @@ const populatePage = async (_id: string): Promise<Page | null> => {
   })
   if (_response.docs.length) {
     const _page: DbPage = _response.docs[0]
-
+    console.log('PAGE THAT WAS SAVED', _page)
     // load selection
     const _selection: Selection = await db.get(_page.selection)
 
@@ -25,6 +26,17 @@ const populatePage = async (_id: string): Promise<Page | null> => {
             _id: data._id,
           },
         })
+        const _block = _response.docs[0]
+        // check for atomic block closure
+        if (data.type?.match(/^END_/)) {
+          console.log('OVERRRIDE', _block)
+          _block.text = {
+            textValue: getAtomicClosureText(data.type, _block.text.textValue),
+            ranges: [],
+          }
+          _block.type = data.type
+        }
+
         return _response.docs[0]
       })
     )
@@ -35,7 +47,7 @@ const populatePage = async (_id: string): Promise<Page | null> => {
       selection: _selection,
       blocks: _blocks,
     }
-
+    console.log('can get populated', _populatedPage)
     return _populatedPage
   }
   return null

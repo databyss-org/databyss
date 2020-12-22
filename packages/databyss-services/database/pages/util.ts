@@ -43,12 +43,14 @@ const addOrReplaceBlock = async (p, page) => {
   }
   // add or replace entry in blocks array
   const _removeBlockCount = p.op === 'add' ? 0 : 1
+  console.log('TYPE', p)
   blocks.splice(_index, _removeBlockCount, {
     _id: _blockId,
     type: p.value.type ? p.value.type : 'ENTRY',
   })
 
   if (p.value.type?.match(/^END_/)) {
+    console.log('ENDED', p)
     return
   }
 
