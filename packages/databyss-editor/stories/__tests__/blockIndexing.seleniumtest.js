@@ -156,8 +156,7 @@ describe('block indexing', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'second entry within topic')
-    await sleep(10000)
-    // await isAppInNotesSaved(driver)
+    await isAppInNotesSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
     const topicsSidebarButton = await getElementByTag(

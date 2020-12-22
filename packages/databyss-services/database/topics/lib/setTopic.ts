@@ -12,6 +12,7 @@ const setTopic = async (data: Topic) => {
       ...oldDoc,
       ...data,
       type: 'TOPIC',
+      documentType: DocumentType.Block,
     }
     return block
   })
