@@ -6,7 +6,6 @@ export interface PageHeader {
   name: string
   archive: boolean
   documentType?: DocumentType
-  // selection: string | Selection
 }
 
 export interface Page extends PageHeader {
@@ -14,3 +13,5 @@ export interface Page extends PageHeader {
   selection: Selection
   publicAccountId?: string
 }
+
+export interface PageConstructor extends Page

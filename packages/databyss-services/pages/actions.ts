@@ -1,6 +1,7 @@
 import * as services from '.'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import { PatchBatch, PageHeader, Page } from '../interfaces'
+import { PageConstructor } from '../database/pages/util'
 
 import {
   PATCH,
@@ -164,7 +165,7 @@ export function savePageHeader(page: PageHeader) {
   }
 }
 
-export function savePage(page: Page) {
+export function savePage(page: PageConstructor) {
   const id = page._id
 
   return (dispatch: Function) => {
@@ -172,6 +173,7 @@ export function savePage(page: Page) {
       type: CACHE_PAGE,
       payload: { page: new ResourcePending(), id },
     })
+
     services.savePage(page).then(() => {
       dispatch({
         type: CACHE_PAGE,

@@ -1,17 +1,17 @@
-import { httpPost, httpDelete } from '../lib/requestApi'
+import { httpPost } from '../lib/requestApi'
 import { Page, PatchBatch, PageHeader } from '../interfaces'
 
 // packages/databyss-services/database/pages/index.ts
 import * as pouchDb from '../database/pages'
 import { DbPage } from '../database/interfaces'
+import { PageConstructor } from '../database/pages/util'
 // TODO: Add native versions of these
 
 // save page is used to rename page name
 export const savePageHeader = (data: Page | PageHeader): Promise<void> =>
   pouchDb.savePageHeader(data)
 
-export const savePage = (data: Page | PageHeader): Promise<boolean> =>
-  httpPost('/pages', { data })
+export const savePage = (page: PageConstructor): Promise<any> => page.addPage()
 
 export const savePatchBatch = (data: PatchBatch) => pouchDb.savePatchData(data)
 

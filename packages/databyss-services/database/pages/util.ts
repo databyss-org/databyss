@@ -100,7 +100,7 @@ const replacePatch = async (p, page) => {
     case 'selection': {
       const _id = p.value._id
       if (_id) {
-        db.upsert(_id, () => p.value)
+        db.upsert(_id, (oldDoc) => ({ ...oldDoc, ...p.value }))
         // // if new selection._id is passed tag it to page
         page.selection = _id
       }

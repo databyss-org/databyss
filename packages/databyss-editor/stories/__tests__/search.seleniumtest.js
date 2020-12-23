@@ -182,7 +182,7 @@ describe('entry search', () => {
     await sendKeys(actions, '# this is a topic with something keyword')
     await enterKey(actions)
     await isAppInNotesSaved(driver)
-    await sleep(10000)
+
     // create a third page
     newPageButton = await getElementByTag(
       driver,

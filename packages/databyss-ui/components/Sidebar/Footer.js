@@ -17,6 +17,7 @@ import {
   initNewPage,
   PageConstructor,
 } from '@databyss-org/services/database/pages/util'
+import { db } from '@databyss-org/services/database/db'
 
 const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
@@ -31,7 +32,7 @@ const Footer = ({ collapsed }) => {
     clearSearchCache()
     const _page = new PageConstructor()
 
-    _page.addPage().then(() => {
+    setPage(_page).then(() => {
       navigate(`/pages/${_page._id}`)
     })
 
