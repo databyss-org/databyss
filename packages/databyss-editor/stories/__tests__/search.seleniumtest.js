@@ -168,6 +168,7 @@ describe('entry search', () => {
       '[data-test-element="page-header"]'
     )
     await pageTitle.click()
+    await sleep(500)
     await sendKeys(actions, 'this is the second page title')
     await sleep(500)
     await enterKey(actions)
@@ -181,7 +182,7 @@ describe('entry search', () => {
     await sendKeys(actions, '# this is a topic with something keyword')
     await enterKey(actions)
     await isAppInNotesSaved(driver)
-
+    await sleep(10000)
     // create a third page
     newPageButton = await getElementByTag(
       driver,

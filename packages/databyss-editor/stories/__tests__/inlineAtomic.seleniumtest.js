@@ -58,12 +58,14 @@ describe('inline atomic', () => {
   })
 
   afterEach(async () => {
+    await sleep(500)
     const accountDropdown = await getElementByTag(
       driver,
       '[data-test-element="account-menu"]'
     )
 
     await accountDropdown.click()
+    await sleep(500)
     const logoutButton = await getElementByTag(
       driver,
       '[data-test-block-menu="logout"]'
@@ -240,6 +242,7 @@ describe('inline atomic', () => {
     await leftKey(actions)
 
     await backspaceKey(actions)
+    await sleep(500)
 
     // check the sidebar for topic and see results
     // only one result should be present

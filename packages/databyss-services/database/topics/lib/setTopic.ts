@@ -37,10 +37,11 @@ const setTopic = async (data: Topic) => {
       selector: {
         documentType: DocumentType.Block,
         _id: relation.block,
-        relationshipType: 'INLINE',
+        //     relationshipType: 'INLINE',
       },
     })
     const _block: Block = _blockResults.docs[0]
+
     if (_block) {
       // get all inline ranges from block
       const _inlineRanges = _block.text.ranges.filter(
@@ -65,7 +66,6 @@ const setTopic = async (data: Topic) => {
       })
       if (_inlineRanges.length) {
         // update block
-
         await db.upsert(_block._id, () => _block)
         // update relation
 
@@ -73,11 +73,13 @@ const setTopic = async (data: Topic) => {
           selector: {
             documentType: DocumentType.BlockRelation,
             relatedBlock: _id,
+            block: _block._id,
           },
         })
-        const _blockRelationId = _blockRelationResults.docs[0]
-        if (_blockRelationId) {
-          await db.upsert(_blockRelationId, () => ({
+
+        const _blockRelationToUpdate = _blockRelationResults.docs[0]
+        if (_blockRelationToUpdate) {
+          await db.upsert(_blockRelationToUpdate._id, () => ({
             ...relation,
             blockText: _block.text,
           }))

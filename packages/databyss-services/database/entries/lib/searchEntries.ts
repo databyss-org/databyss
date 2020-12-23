@@ -1,13 +1,25 @@
 import { db } from '../../db'
-import { DocumentType } from '../../../interfaces'
+import { DocumentType, BlockType } from '../../../interfaces'
 
 const searchEntries = async (encodedQuery: string) => {
   const _query = decodeURIComponent(encodedQuery)
-  // SEARCH string value
+
+  // calculate how strict we want the search to be
+
+  // will require at least one word to be in the results
+  const _queryLength = _query.split(' ').length
+  let _percentageToMatch = 1 / _queryLength
+  _percentageToMatch = +_percentageToMatch.toFixed(3)
+  _percentageToMatch *= 100
+  _percentageToMatch = +_percentageToMatch.toFixed(0)
+
   const _res = await db.search({
     query: _query,
     fields: ['text.textValue'],
     include_docs: true,
+    filter: (doc) => doc.type === BlockType.Entry,
+    // TODO: FIGURE OUT HOW STRICT WE WANT THE SERACH
+    mm: `${_percentageToMatch}%`,
   })
 
   const _queryResponse = _res.rows

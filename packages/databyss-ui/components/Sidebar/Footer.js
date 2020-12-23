@@ -3,7 +3,6 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { newPage } from '@databyss-org/services/pages/util'
 import AddPageSvg from '@databyss-org/ui/assets/add_page.svg'
 import {
   Text,
@@ -31,6 +30,7 @@ const Footer = ({ collapsed }) => {
     // clears search cache
     clearSearchCache()
     const _page = new PageConstructor()
+
     _page.addPage().then(() => {
       navigate(`/pages/${_page._id}`)
     })
