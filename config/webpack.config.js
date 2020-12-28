@@ -456,6 +456,7 @@ module.exports = (webpackEnv) => {
       }),
       // Generate the manifest.json file
       !isEnvTest &&
+        !process.env.REACT_APP_STORYBOOK &&
         new CopyWebpackPlugin({
           patterns: [
             {
