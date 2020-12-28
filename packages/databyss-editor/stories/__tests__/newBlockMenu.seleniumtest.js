@@ -5,7 +5,7 @@ import assert from 'assert'
 import { startSession } from '@databyss-org/ui/lib/saucelabs'
 import { jsx as h } from './hyperscript'
 import { sanitizeEditorChildren } from './__helpers'
-import { getEditor, sleep, getElementByTag } from './_helpers.selenium'
+import { getEditor, sleep } from './_helpers.selenium'
 
 let driver
 let editor
@@ -28,18 +28,6 @@ describe('new block menu actions', () => {
   })
 
   afterEach(async () => {
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
-
-    await accountDropdown.click()
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-
-    await logoutButton.click()
     await sleep(100)
     await driver.quit()
     driver = null

@@ -13,7 +13,7 @@ import {
   GET_USER_ACCOUNT,
   CACHE_USER_ACCOUNT,
   LOGOUT,
-  SET_DEFAULT_PAGE,
+  // SET_DEFAULT_PAGE,
 } from './constants'
 
 import {
@@ -22,13 +22,12 @@ import {
   deleteAuthToken,
   getAccountId,
   setAccountId,
-  getDefaultPageId,
+  // getDefaultPageId,
   deleteAccountId,
   setDefaultPageId,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
-import { db } from '../database/db'
 
 export const fetchSession = ({ _request, ...credentials }) => async (
   dispatch
@@ -57,6 +56,8 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     if (authToken && accountId) {
       // if not at at root path '/' and accountID is not the same as the one in the url, set as guest account
       if (
+        // This had to be added for the pouchDB refactor, not sure why this had to be changed?
+        !process.env.STORYBOOK &&
         getAccountFromLocation() &&
         (accountId !== getAccountFromLocation() ||
           !window.location.pathname === '/')

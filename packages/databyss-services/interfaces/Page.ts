@@ -14,4 +14,4 @@ export interface Page extends PageHeader {
   publicAccountId?: string
 }
 
-export interface PageConstructor extends Page
+// export interface PageConstructor extends Page

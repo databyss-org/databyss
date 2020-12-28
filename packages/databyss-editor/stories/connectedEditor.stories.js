@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { throttle } from 'lodash'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
@@ -31,6 +31,8 @@ import {
   editorStateToPage,
   pageToEditorState,
 } from '../state/util'
+import { PageConstructor } from '@databyss-org/services/database/pages/util'
+import { db } from '@databyss-org/services/database/db'
 
 const LoginRequired = () => (
   <Text>You must login before running this story</Text>
@@ -97,22 +99,29 @@ const PageWithAutosave = ({ page }) => {
 
 const EditorWithProvider = () => {
   const { getSession } = useSessionContext()
-  const { account } = getSession()
+  const { user } = getSession()
   const { setPage } = usePageContext()
 
-  const _defaultPage = editorStateToPage(connectedFixture(account.defaultPage))
+  const _pageId = user.defaultPageId
+
+  // const _defaultPage = editorStateToPage(connectedFixture(_pageId))
+
+  // save new page
+  const _page = new PageConstructor(_pageId)
+
+  useEffect(() => {
+    // check to see if page exists in DB, if not add page
+    db.find({ selector: { _id: _pageId } }).then((res) => {
+      if (!res.docs.length) {
+        setPage(_page)
+      }
+    })
+  }, [])
 
   return (
     <View>
-      <PageLoader pageId={account.defaultPage}>
-        {(page) => {
-          if (page.name !== 'test document') {
-            setPage(_defaultPage)
-            return null
-          }
-
-          return <PageWithAutosave page={pageToEditorState(page)} />
-        }}
+      <PageLoader pageId={_pageId}>
+        {(page) => <PageWithAutosave page={pageToEditorState(page)} />}
       </PageLoader>
     </View>
   )
