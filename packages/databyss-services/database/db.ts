@@ -106,8 +106,9 @@ db.createIndex({
 })
 
 db.changes({
-  since: 0,
+  since: 'now',
+  live: true,
   include_docs: true,
-}).then((changes) => {
-  console.log('DATABASE.CHANGE', changes)
+}).on('change', (change) => {
+  console.log('DATABASE.CHANGE', change)
 })

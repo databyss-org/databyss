@@ -39,6 +39,8 @@ const getBlockRelations = async (
       }
       return acc
     }, _results)
+
+    console.log('results being returned', _results)
     return _results
   }
   return null

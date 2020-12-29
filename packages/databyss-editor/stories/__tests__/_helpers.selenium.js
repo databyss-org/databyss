@@ -70,8 +70,8 @@ export const isSaved = async () => {
 // same issue as above
 export const isAppInNotesSaved = async (driver) => {
   await sleep(1000)
-
   await getElementById(driver, 'changes-saved')
+  await sleep(1000)
 }
 
 export const toggleBold = (actions) =>
