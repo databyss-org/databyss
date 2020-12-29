@@ -146,6 +146,8 @@ describe('block indexing', () => {
     await sendKeys(actions, '/#')
     await enterKey(actions)
     await sendKeys(actions, 'fourth entry not in atomic')
+    // TODO: DOES THIS BREAK THE TEST IN SAUCELABS
+    await sleep(10000)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/@')
