@@ -71,7 +71,7 @@ const addOrReplaceBlock = async (p, page) => {
   } else {
     _block = {
       _id: new ObjectId().toHexString(),
-      documentType: DocumentType.Block,
+      $type: DocumentType.Block,
       type: BlockType.Entry,
       text: { textValue: '', ranges: [] },
     }
@@ -161,11 +161,11 @@ export class PageConstructor {
   blocks: Block[]
   name: string
   archive: boolean
-  documentType: DocumentType
+  $type: DocumentType
   constructor(id?: string) {
     this._id = id || new ObjectId().toHexString()
     this.selection = {
-      documentType: DocumentType.Selection,
+      $type: DocumentType.Selection,
       anchor: {
         index: 0,
         offset: 0,
@@ -176,18 +176,19 @@ export class PageConstructor {
       },
       _id: new ObjectId().toHexString(),
     }
-    this.documentType = DocumentType.Page
+    this.$type = DocumentType.Page
+    this.$type = DocumentType.Page
     this.name = 'untitled'
     this.archive = false
     this.blocks = [
       {
         _id: new ObjectId().toHexString(),
-        documentType: DocumentType.Block,
+        $type: DocumentType.Block,
         type: BlockType.Entry,
         text: { textValue: '', ranges: [] },
       },
     ]
-    this.documentType = DocumentType.Page
+    this.$type = DocumentType.Page
   }
 
   async addSelection() {

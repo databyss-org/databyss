@@ -7,7 +7,7 @@ const initialState: EditorState = {
   showNewBlockMenu: true,
   operations: [],
   selection: {
-    documentType: DocumentType.Selection,
+    $type: DocumentType.Selection,
     // TODO: IS THIS PLACEHOLDER NEEDED
     _id: 'placeholder',
     anchor: {

@@ -5,5 +5,5 @@ import { BasicBlock } from '../interfaces/Block'
 export interface DbPage extends PageHeader {
   blocks: BasicBlock[]
   selection: string
-  // documentType: DocumentType.Page
+  // $type: DocumentType.Page
 }

@@ -16,7 +16,7 @@ const getSource = async (_id: string): Promise<SourceCitationHeader> => {
   // returns all pages where source id is found in element id
   const _response = await db.find({
     selector: {
-      documentType: DocumentType.Page,
+      $type: DocumentType.Page,
       blocks: {
         $elemMatch: {
           _id,

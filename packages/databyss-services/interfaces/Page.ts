@@ -5,7 +5,7 @@ export interface PageHeader {
   _id: string
   name: string
   archive: boolean
-  documentType?: DocumentType
+  $type?: DocumentType
 }
 
 export interface Page extends PageHeader {

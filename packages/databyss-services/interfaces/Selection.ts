@@ -5,5 +5,5 @@ export interface Selection {
   anchor: Point
   focus: Point
   _id: string
-  documentType: DocumentType
+  $type: DocumentType
 }

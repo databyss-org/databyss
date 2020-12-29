@@ -217,7 +217,7 @@ export const bakeAtomicClosureBlock = ({
           index: index + 1,
         }
         draft.selection = {
-          documentType: DocumentType.Selection,
+          $type: DocumentType.Selection,
           anchor: _cursor,
           focus: _cursor,
           _id: draft.selection._id,
@@ -934,7 +934,7 @@ export default (
       ) {
         draft.selection = {
           _id: new ObjectId().toHexString(),
-          documentType: DocumentType.Selection,
+          $type: DocumentType.Selection,
           anchor: { offset: 0, index: 0 },
           focus: { offset: 0, index: 0 },
         }

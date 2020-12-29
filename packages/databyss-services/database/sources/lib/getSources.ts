@@ -6,7 +6,7 @@ const getSources = async (): Promise<Source[]> => {
   const _response = await db.find({
     selector: {
       type: BlockType.Source,
-      documentType: DocumentType.Block,
+      $type: DocumentType.Block,
     },
   })
   if (_response.docs.length) {

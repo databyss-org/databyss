@@ -8,7 +8,7 @@ export const newPage = (): Page => ({
 
   selection: {
     _id: new ObjectId().toHexString(),
-    documentType: DocumentType.Selection,
+    $type: DocumentType.Selection,
     focus: {
       offset: 0,
       index: 0,

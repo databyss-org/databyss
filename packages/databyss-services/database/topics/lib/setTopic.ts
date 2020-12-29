@@ -12,7 +12,7 @@ const setTopic = async (data: Topic) => {
       ...oldDoc,
       ...data,
       type: 'TOPIC',
-      documentType: DocumentType.Block,
+      $type: DocumentType.Block,
     }
     return block
   })
@@ -23,7 +23,7 @@ const setTopic = async (data: Topic) => {
 
   const _results = await db.find({
     selector: {
-      documentType: DocumentType.BlockRelation,
+      $type: DocumentType.BlockRelation,
       relatedBlock: _id,
       relationshipType: 'INLINE',
     },
@@ -35,7 +35,7 @@ const setTopic = async (data: Topic) => {
     // get the block to update
     const _blockResults = await db.find({
       selector: {
-        documentType: DocumentType.Block,
+        $type: DocumentType.Block,
         _id: relation.block,
         //     relationshipType: 'INLINE',
       },
@@ -71,7 +71,7 @@ const setTopic = async (data: Topic) => {
 
         const _blockRelationResults = await db.find({
           selector: {
-            documentType: DocumentType.BlockRelation,
+            $type: DocumentType.BlockRelation,
             relatedBlock: _id,
             block: _block._id,
           },

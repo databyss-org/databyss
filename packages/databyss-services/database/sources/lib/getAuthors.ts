@@ -10,7 +10,7 @@ import { Author } from '../../../interfaces'
 const getAuthors = async (): Promise<Author[]> => {
   const _response = await db.find({
     selector: {
-      documentType: DocumentType.Block,
+      $type: DocumentType.Block,
       type: BlockType.Source,
     },
   })
@@ -28,7 +28,7 @@ const getAuthors = async (): Promise<Author[]> => {
     // returns all pages where source id is found in element id
     const __response = await db.find({
       selector: {
-        documentType: DocumentType.Page,
+        $type: DocumentType.Page,
         blocks: {
           $elemMatch: {
             _id: _source._id,

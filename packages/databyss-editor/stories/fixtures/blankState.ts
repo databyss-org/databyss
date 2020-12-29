@@ -6,7 +6,7 @@ const initialState: EditorState = {
   operations: [],
   selection: {
     _id: new ObjectID().toHexString(),
-    documentType: DocumentType.Selection,
+    $type: DocumentType.Selection,
     anchor: {
       index: 0,
       offset: 0,

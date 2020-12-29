@@ -7,7 +7,7 @@ import { getAtomicClosureText } from '../util'
 const populatePage = async (_id: string): Promise<Page | null> => {
   const _response = await db.find({
     selector: {
-      documentType: DocumentType.Page,
+      $type: DocumentType.Page,
       _id,
     },
   })
@@ -21,7 +21,7 @@ const populatePage = async (_id: string): Promise<Page | null> => {
       _page.blocks.map(async (data) => {
         const _response = await db.find({
           selector: {
-            documentType: DocumentType.Block,
+            $type: DocumentType.Block,
             _id: data._id,
           },
         })

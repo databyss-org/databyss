@@ -157,6 +157,8 @@ describe('block indexing', () => {
     await enterKey(actions)
     await sendKeys(actions, 'second entry within topic')
     await isAppInNotesSaved(driver)
+    // TODO: WHY DO PATCHES BREAK THIS
+    await sleep(5000)
     await driver.navigate().refresh()
     await getEditor(driver)
     const topicsSidebarButton = await getElementByTag(

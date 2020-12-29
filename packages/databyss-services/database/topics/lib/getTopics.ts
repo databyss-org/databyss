@@ -9,7 +9,7 @@ import { Topic, Page } from '../../../interfaces'
 const getTopicHeaders = async () => {
   const _response = await db.find({
     selector: {
-      documentType: DocumentType.Block,
+      $type: DocumentType.Block,
       type: BlockType.Topic,
     },
   })
@@ -21,7 +21,7 @@ const getTopicHeaders = async () => {
 
       const _blockRelationsResponse = await db.find({
         selector: {
-          documentType: DocumentType.BlockRelation,
+          $type: DocumentType.BlockRelation,
           relatedBlock: _topic._id,
         },
       })
@@ -44,7 +44,7 @@ const getTopicHeaders = async () => {
       // returns all pages where source id is found in element id
       const __response = await db.find({
         selector: {
-          documentType: DocumentType.Page,
+          $type: DocumentType.Page,
           blocks: {
             $elemMatch: {
               _id: _topic._id,

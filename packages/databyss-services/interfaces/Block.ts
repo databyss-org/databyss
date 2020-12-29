@@ -18,7 +18,7 @@ export enum BlockType {
 }
 
 export interface BasicBlock {
-  documentType?: DocumentType
+  $type?: DocumentType
   _id: string
   type: BlockType
 }

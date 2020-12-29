@@ -7,7 +7,7 @@ export const setSource = async (data: Source) => {
     _id,
     text,
     type: BlockType.Source,
-    documentType: DocumentType.Block,
+    $type: DocumentType.Block,
     detail,
   }
 

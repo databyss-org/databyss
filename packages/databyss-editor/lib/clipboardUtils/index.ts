@@ -49,10 +49,10 @@ export const sortSelection = (selection: Selection): Selection => {
       anchor: focus,
       focus: anchor,
       _id,
-      documentType: DocumentType.Selection,
+      $type: DocumentType.Selection,
     }
   }
-  return { anchor, focus, _id, documentType: DocumentType.Selection }
+  return { anchor, focus, _id, $type: DocumentType.Selection }
 }
 
 export const mergeText = (a: Text, b: Text): Text => {

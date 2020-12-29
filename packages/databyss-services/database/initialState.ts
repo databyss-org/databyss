@@ -7,7 +7,7 @@ const _selectionId = new ObjectId().toHexString()
 const blockId = new ObjectId().toHexString()
 
 export const initSelection: Selection = {
-  documentType: DocumentType.Selection,
+  $type: DocumentType.Selection,
   anchor: {
     index: 0,
     offset: 0,
@@ -22,12 +22,12 @@ export const initSelection: Selection = {
 export const initBlock: Block = {
   text: { textValue: '', ranges: [] },
   type: BlockType.Entry,
-  documentType: DocumentType.Block,
+  $type: DocumentType.Block,
   _id: blockId,
 }
 
 export const initPage = (_id: string): DbPage => ({
-  documentType: DocumentType.Page,
+  $type: DocumentType.Page,
   name: 'default test page',
   _id,
   selection: _selectionId,

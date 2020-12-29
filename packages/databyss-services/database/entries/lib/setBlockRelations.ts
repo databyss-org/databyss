@@ -11,7 +11,7 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
     if (clearPageRelationships) {
       const _blockRelationsToClear = await db.find({
         selector: {
-          documentType: DocumentType.BlockRelation,
+          $type: DocumentType.BlockRelation,
           page: clearPageRelationships,
         },
       })
@@ -47,7 +47,7 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
         } else {
           // create a new block relation
           await db.upsert(new ObjectId().toHexString(), () => ({
-            documentType: DocumentType.BlockRelation,
+            $type: DocumentType.BlockRelation,
             _id: new ObjectId().toHexString(),
             ...relationship,
           }))

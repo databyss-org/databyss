@@ -20,7 +20,7 @@ const getSourceCitation = async (
 ): Promise<CitationResponse[]> => {
   const _response = await db.find({
     selector: {
-      documentType: DocumentType.Block,
+      $type: DocumentType.Block,
       type: BlockType.Source,
     },
   })
@@ -30,13 +30,13 @@ const getSourceCitation = async (
 
   const _sources: SourceCitationHeader[] = _response.docs
   for (const _source of _sources) {
-    // look up pages topic appears in using block relations
+    // look up pages sources appears in using block relations
 
     const isInPages: string[] = []
     // returns all pages where source id is found in element id
     const __response = await db.find({
       selector: {
-        documentType: DocumentType.Page,
+        $type: DocumentType.Page,
         blocks: {
           $elemMatch: {
             _id: _source._id,
@@ -56,7 +56,7 @@ const getSourceCitation = async (
     // UNCOMMENT THIS IF adding block relations to `inPages` property`
     // const _blockRelationsResponse = await db.find({
     //   selector: {
-    //     documentType: DocumentType.BlockRelation,
+    //     $type: DocumentType.BlockRelation,
     //     relatedBlock: _source._id,
     //   },
     // })

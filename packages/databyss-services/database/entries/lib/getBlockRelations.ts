@@ -11,7 +11,7 @@ const getBlockRelations = async (
 ): Promise<BlockRelationsServerResponse | null> => {
   const _results: PouchDB.Find.FindResponse<BlockRelation> = await db.find({
     selector: {
-      documentType: DocumentType.BlockRelation,
+      $type: DocumentType.BlockRelation,
       relatedBlock: id,
     },
   })
