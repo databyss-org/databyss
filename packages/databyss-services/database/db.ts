@@ -13,6 +13,11 @@ PouchDB.plugin(PouchDBUpsert)
 
 export const db: PouchDB.Database<any> = new PouchDB('local')
 
+db.search({
+  fields: ['text.textValue'],
+  build: true,
+})
+
 db.createIndex({
   index: {
     fields: [
