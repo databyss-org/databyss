@@ -67,8 +67,11 @@ export const isSaved = async () => {
   // await getElementById(driver, 'complete')
 }
 
-export const isAppInNotesSaved = async (driver) => {
-  await getElementById(driver, 'changes-saved')
+// same issue as above
+export const isAppInNotesSaved = async () => {
+  await sleep(2000)
+
+  // await getElementById(driver, 'changes-saved')
 }
 
 export const toggleBold = (actions) =>
