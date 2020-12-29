@@ -63,13 +63,13 @@ TODO: patches dont update now in storybook when compleated
 */
 
 export const isSaved = async () => {
-  await sleep(2000)
+  await sleep(3000)
   // await getElementById(driver, 'complete')
 }
 
 // same issue as above
 export const isAppInNotesSaved = async () => {
-  await sleep(2000)
+  await sleep(3000)
 
   // await getElementById(driver, 'changes-saved')
 }
