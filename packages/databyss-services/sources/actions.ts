@@ -1,4 +1,4 @@
-import { Source, Author, SourceCitationHeader } from '../interfaces'
+import { Source, Author } from '../interfaces'
 
 import * as services from '.'
 import {
