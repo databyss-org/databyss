@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, OSX, SAFARI } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
   getElementsByTag,
@@ -28,8 +28,8 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 describe('block indexing', () => {
   beforeEach(async (done) => {
     const random = Math.random().toString(36).substring(7)
-    // OSX and chrome are necessary
-    driver = await startSession({ platformName: OSX, browserName: CHROME })
+    // OSX and SAFARI are necessary
+    driver = await startSession({ platformName: OSX, browserName: SAFARI })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
@@ -146,8 +146,6 @@ describe('block indexing', () => {
     await sendKeys(actions, '/#')
     await enterKey(actions)
     await sendKeys(actions, 'fourth entry not in atomic')
-    // TODO: DOES THIS BREAK THE TEST IN SAUCELABS
-    await sleep(10000)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/@')
