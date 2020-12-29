@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, SAFARI, WIN } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, CHROME, WIN } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
   getElementsByTag,
@@ -29,7 +29,7 @@ describe('block indexing', () => {
   beforeEach(async (done) => {
     const random = Math.random().toString(36).substring(7)
     // WIN and SAFARI are necessary
-    driver = await startSession({ platformName: WIN, browserName: SAFARI })
+    driver = await startSession({ platformName: WIN, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
