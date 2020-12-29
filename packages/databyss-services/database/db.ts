@@ -13,6 +13,21 @@ PouchDB.plugin(PouchDBUpsert)
 
 export const db: PouchDB.Database<any> = new PouchDB('local')
 
+db.createIndex({
+  index: {
+    fields: [
+      '_id',
+      'blocks',
+      '$type',
+      'type',
+      'relatedBlock',
+      'page',
+      'block',
+      'relationshipType',
+    ],
+  },
+})
+
 db.changes({
   since: 0,
   include_docs: true,
