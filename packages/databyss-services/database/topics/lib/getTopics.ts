@@ -38,8 +38,29 @@ const getTopicHeaders = async () => {
             }
           }
         }
-        _topic.isInPages = isInPages
       }
+
+      // look up to see if it exists on a page not yet added as a block relation
+      // returns all pages where source id is found in element id
+      const __response = await db.find({
+        selector: {
+          documentType: DocumentType.Page,
+          blocks: {
+            $elemMatch: {
+              _id: _topic._id,
+            },
+          },
+        },
+      })
+      if (__response.docs.length) {
+        __response.docs.forEach((d) => {
+          if (!d.archive && !isInPages.includes(d._id)) {
+            isInPages.push(d._id)
+          }
+        })
+        // _source.isInPages = isInPages
+      }
+      _topic.isInPages = isInPages
     }
     return _topics
   }
