@@ -27,18 +27,14 @@ const CatalogResults = ({ menuHeight, type, dismiss, query, selectSource }) => {
             {author}
           </Text>
           <List verticalItemPadding="tiny">
-            {results[author].map((result, k) => {
-              console.log(result)
-
-              return (
-                <DropdownListItem
-                  data-test-catalog={type}
-                  labelHtml={textToHtml(result.title)}
-                  onPress={() => onPress(result)}
-                  key={k}
-                />
-              )
-            })}
+            {results[author].map((result, k) => (
+              <DropdownListItem
+                data-test-catalog={type}
+                labelHtml={textToHtml(result.title)}
+                onPress={() => onPress(result)}
+                key={k}
+              />
+            ))}
           </List>
         </View>
       ))

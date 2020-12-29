@@ -345,6 +345,7 @@ export const slateBlockToHtmlWithSearch = (
 
     _block.text.ranges = _ranges
   }
+  console.log('block in util.ts', _block)
   const _frag = stateBlockToHtml(_block)
 
   return _frag

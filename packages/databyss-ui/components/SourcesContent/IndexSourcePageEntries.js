@@ -36,6 +36,7 @@ const IndexSourcePageEntries = ({ entries, onClick }) => {
     />
   )
 
+  console.log('INDEXSOURCEPAGEENTRIES', entries)
   const render = () =>
     entries?.map((entry, index) => {
       if (entry.text) {
