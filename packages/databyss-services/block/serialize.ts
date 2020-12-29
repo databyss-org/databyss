@@ -18,6 +18,7 @@ const tags: { [mark: string]: string[] } = {
  * TODO: add support for nested and overlapped ranges
  */
 export function textToHtml(text: Text): string {
+  console.log('THIS IS TEXT VALUE', text)
   let _html = text.textValue
 
   if (!text.ranges.length) {
