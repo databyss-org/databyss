@@ -62,7 +62,7 @@ const PageWithAutosave = ({ page }) => {
         setPatches(payload)
         operationsQueue.current = []
       }
-    }, 500),
+    }, 100),
     []
   )
 

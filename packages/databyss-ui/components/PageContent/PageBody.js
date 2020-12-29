@@ -47,7 +47,8 @@ const PageBody = ({
         setPatches(payload)
         patchQueue.current = []
       }
-    }, process.env.SAVE_PAGE_THROTTLE),
+      // TODO: THIS SHOULD BE process.env.SAVE_PAGE_THROTTLE
+    }, 100),
     []
   )
 
