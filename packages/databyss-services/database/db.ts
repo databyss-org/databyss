@@ -18,18 +18,90 @@ db.search({
   build: true,
 })
 
+// db.createIndex({
+//   index: {
+//     fields: [
+//       '_id',
+//       'blocks',
+//       '$type',
+//       'type',
+//       'relatedBlock',
+//       'page',
+//       'block',
+//       'relationshipType',
+//     ],
+//   },
+// })
+
 db.createIndex({
   index: {
-    fields: [
-      '_id',
-      'blocks',
-      '$type',
-      'type',
-      'relatedBlock',
-      'page',
-      'block',
-      'relationshipType',
-    ],
+    fields: ['_id'],
+  },
+})
+
+db.createIndex({
+  index: {
+    fields: ['$type'],
+  },
+})
+
+db.createIndex({
+  index: {
+    fields: ['$type', '_id'],
+  },
+})
+
+db.createIndex({
+  index: {
+    fields: ['$type', 'relatedBlock'],
+  },
+})
+
+db.createIndex({
+  index: {
+    fields: ['$type', 'page'],
+  },
+})
+
+db.createIndex({
+  index: {
+    fields: ['$type', 'blocks'],
+  },
+})
+
+db.createIndex({
+  index: {
+    fields: ['block', 'relatedBlock'],
+  },
+})
+
+db.createIndex({
+  index: {
+    fields: ['$type', 'relatedBlock'],
+  },
+})
+
+db.createIndex({
+  index: {
+    fields: ['$type', 'page'],
+  },
+})
+
+db.createIndex({
+  index: {
+    fields: ['$type', 'type'],
+  },
+})
+
+db.createIndex({
+  index: {
+    fields: ['$type', 'relatedBlock', 'relationshipType'],
+  },
+})
+
+db.createIndex({
+  index: {
+    fields: ['$type', 'relatedBlock', 'block'],
   },
 })
 

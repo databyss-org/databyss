@@ -39,8 +39,6 @@ const getTopic = async (_id: string): Promise<Topic> => {
   })
   const _blockRelations: BlockRelation[] = _blockRelationsResponse.docs
 
-  console.log('block relations response', _blockRelations)
-
   if (_blockRelations.length) {
     // find if page has been archived
     for (const _relation of _blockRelations) {
