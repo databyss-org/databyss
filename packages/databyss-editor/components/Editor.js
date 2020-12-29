@@ -1,8 +1,7 @@
 import React, { useCallback } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
-import { Text, Node, Range } from '@databyss-org/slate'
+import { Text, Node } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
-import linksFinder from 'links-finder'
 import matchAll from 'string.prototype.matchall'
 import { useEditorContext } from '../state/EditorProvider'
 import Leaf from './Leaf'
@@ -18,7 +17,7 @@ const Editor = ({
   onInlineAtomicClick,
   ...others
 }) => {
-  const _searchTerm = useEntryContext((c) => c && c._searchTerm)
+  const _searchTerm = useEntryContext((c) => c && c.searchTerm)
 
   const { copy, paste, cut } = useEditorContext()
 
@@ -51,6 +50,8 @@ const Editor = ({
   )
 
   const { onKeyDown, ...slateProps } = others
+
+  // TODO: extract this to a library file
   const decorate = useCallback(
     ([node, path]) => {
       const ranges = []
@@ -63,53 +64,35 @@ const Editor = ({
           /\b([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)\b/,
           'gi'
         )
-        const emailMatches = [...matchAll(_string, _emailRegEx)]
-
-        if (emailMatches.length) {
-          emailMatches.forEach((e) => {
-            const _parts = _string.split(e[0])
-            if (_parts.length > 1) {
-              let offset = 0
-              _parts.forEach((part, i) => {
-                if (i !== 0) {
-                  ranges.push({
-                    anchor: { path, offset: offset - e[0].length },
-                    focus: { path, offset },
-                    url: e[0],
-                  })
-                }
-                offset = offset + part.length + e[0].length
-              })
-            }
-          })
-        }
-
         // check for url in text
-        linksFinder.wrapLinks(_string, {
-          onMatch: (link) => {
-            // split string by link
-            const _parts = _string.split(link)
-            if (_parts.length > 1) {
-              let offset = 0
-
-              // add url link to markup
-              _parts.forEach((part, i) => {
-                if (i !== 0) {
-                  const _range = {
-                    anchor: { path, offset: offset - link.length },
-                    focus: { path, offset },
-                    url: link,
-                  }
-                  // check to see if this range is already included as an email address range
-                  if (!ranges.filter((r) => Range.includes(r, _range)).length) {
-                    ranges.push(_range)
-                  }
+        // uri's must begin with "http:// or "https://"
+        // test it here: https://regexr.com/5jcg0
+        const _uriRegEx = new RegExp(
+          /https?:\/\/[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}:?[\d{1,5}]*\b(\/[-a-zA-Z0-9@:%_+.~#?&//=,[\]]*)?\b/,
+          'gi'
+        )
+        ;[_emailRegEx, _uriRegEx].forEach((_regex) => {
+          const _matches = [...matchAll(_string, _regex)]
+          _matches.forEach((e) => {
+            const _parts = _string.split(e[0])
+            let offset = 0
+            _parts.forEach((part, i) => {
+              if (i !== 0) {
+                const _range = {
+                  anchor: { path, offset: offset - e[0].length },
+                  focus: { path, offset },
+                  url: e[0],
                 }
-
-                offset = offset + part.length + link.length
-              })
-            }
-          },
+                // check to see if this range is already included as a range
+                // NOTE: enable this if patterns might overlap
+                // if (!ranges.filter((r) => Range.includes(r, _range)).length) {
+                //   ranges.push(_range)
+                // }
+                ranges.push(_range)
+              }
+              offset = offset + part.length + e[0].length
+            })
+          })
         })
       }
 
