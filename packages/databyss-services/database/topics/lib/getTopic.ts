@@ -18,6 +18,7 @@ const getTopic = async (_id: string): Promise<Topic> => {
     },
   })
 
+  console.log('FIRST RESPONSE PAGE', _response)
   // append pages topic appears in as property `inPages`
   if (_response.docs.length) {
     _response.docs.forEach((d) => {
@@ -38,6 +39,8 @@ const getTopic = async (_id: string): Promise<Topic> => {
   })
   const _blockRelations: BlockRelation[] = _blockRelationsResponse.docs
 
+  console.log('block relations response', _blockRelations)
+
   if (_blockRelations.length) {
     // find if page has been archived
     for (const _relation of _blockRelations) {
@@ -54,6 +57,7 @@ const getTopic = async (_id: string): Promise<Topic> => {
     _topic.isInPages = isInPages
   }
 
+  console.log('topic being returned', _topic)
   return _topic
 }
 
