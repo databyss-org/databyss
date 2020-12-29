@@ -1,3 +1,5 @@
+// THE END OF THIS TEST FAILS BECAUSE WE ARE NOT ABLE TO SET A NEW DEFAULT PAGE WITH OUR CURRENT SETUP
+
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
