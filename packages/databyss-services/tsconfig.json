@@ -2,11 +2,12 @@
   "extends": "../../config/tsconfig.json",
   "include": [
     "./**/*",
-    "../databyss-data/schemas/users.ts"
+    "../databyss-data/schemas/users.ts",
+    "database/interfaces/.d.ts"
   ],
   "compilerOptions": {
     "composite": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
   },
   "references": []
 }
