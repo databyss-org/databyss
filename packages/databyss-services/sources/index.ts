@@ -18,7 +18,7 @@ export const getSources = (): Promise<Source[]> => pouchDb.getSources()
 export const getSourceCitations = (
   citationStyleId?: string
 ): Promise<CitationResponse[]> => {
-  const styleId: string = citationStyleId || defaultCitationStyle?.id
+  const styleId = citationStyleId || defaultCitationStyle?.id
   return pouchDb.getSourceCitation(styleId)
 }
 

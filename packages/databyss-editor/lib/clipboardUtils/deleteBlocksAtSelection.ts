@@ -1,5 +1,5 @@
 import cloneDeep from 'clone-deep'
-import { EditorState, Point, Block } from '../../interfaces'
+import { EditorState, Point, Block, DocumentType } from '../../interfaces'
 import {
   isSelectionCollapsed,
   sortSelection,
@@ -124,6 +124,7 @@ export default (draft: EditorState) => {
   // collapse selection
   const _cursor = { offset: anchor.offset, index: anchor.index }
   draft.selection = {
+    documentType: DocumentType.Selection,
     _id: draft.selection._id,
     anchor: _cursor,
     focus: _cursor,
@@ -133,6 +134,8 @@ export default (draft: EditorState) => {
 
   // create a selection which includes the whole document
   const _selection = {
+    documentType: DocumentType.Selection,
+    _id: draft.selection._id,
     anchor: { offset: 0, index: 0 },
     focus: {
       offset: draft.blocks[draft.blocks.length - 1].text.textValue.length,

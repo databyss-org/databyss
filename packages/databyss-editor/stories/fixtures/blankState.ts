@@ -1,11 +1,12 @@
 import ObjectID from 'bson-objectid'
-import { EditorState, BlockType } from '../../interfaces'
+import { EditorState, BlockType, DocumentType } from '../../interfaces'
 
 const initialState: EditorState = {
   preventDefault: false,
   operations: [],
   selection: {
     _id: new ObjectID().toHexString(),
+    documentType: DocumentType.Selection,
     anchor: {
       index: 0,
       offset: 0,

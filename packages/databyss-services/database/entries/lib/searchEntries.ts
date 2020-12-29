@@ -51,7 +51,7 @@ const searchEntries = async (encodedQuery: string) => {
     }
   }
 
-  let __results = {
+  let __results: { count: number; results: any } = {
     count: 0,
     results: {},
   }

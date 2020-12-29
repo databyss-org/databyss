@@ -16,7 +16,7 @@ export type CitationResponse = Partial<SourceCitationHeader> & {
 }
 
 const getSourceCitation = async (
-  styleId: string
+  styleId: string | undefined
 ): Promise<CitationResponse[]> => {
   const _response = await db.find({
     selector: {

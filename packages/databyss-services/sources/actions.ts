@@ -122,7 +122,7 @@ export function fetchSourceCitations() {
     })
     try {
       const { preferredCitationStyle } = getState()
-      const sourceCitations: SourceCitationHeader[] = await services.getSourceCitations(
+      const sourceCitations = await services.getSourceCitations(
         preferredCitationStyle
       )
       dispatch({

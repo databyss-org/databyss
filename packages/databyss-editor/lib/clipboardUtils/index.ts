@@ -1,5 +1,5 @@
 import ObjectId from 'bson-objectid'
-import { BlockType } from '@databyss-org/services/interfaces'
+import { BlockType, DocumentType } from '@databyss-org/services/interfaces'
 import { Text, Range, Selection, Block } from '../../interfaces'
 import { isAtomicInlineType } from '../util'
 import { stateToHTMLString } from '../slateUtils'
@@ -39,7 +39,7 @@ export const addBlockUIFields = (frag: Block[]): Block[] =>
 
 // always have the anchor come before the focus
 export const sortSelection = (selection: Selection): Selection => {
-  const { anchor, focus } = selection
+  const { anchor, focus, _id } = selection
 
   if (
     anchor.index > focus.index ||
@@ -48,9 +48,11 @@ export const sortSelection = (selection: Selection): Selection => {
     return {
       anchor: focus,
       focus: anchor,
+      _id,
+      documentType: DocumentType.Selection,
     }
   }
-  return { anchor, focus }
+  return { anchor, focus, _id, documentType: DocumentType.Selection }
 }
 
 export const mergeText = (a: Text, b: Text): Text => {

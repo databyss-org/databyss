@@ -1,4 +1,4 @@
-import { EditorState } from '../interfaces'
+import { EditorState, DocumentType } from '../interfaces'
 
 const initialState: EditorState = {
   preventDefault: false,
@@ -7,6 +7,9 @@ const initialState: EditorState = {
   showNewBlockMenu: true,
   operations: [],
   selection: {
+    documentType: DocumentType.Selection,
+    // TODO: IS THIS PLACEHOLDER NEEDED
+    _id: 'placeholder',
     anchor: {
       index: 0,
       offset: 0,

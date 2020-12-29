@@ -13,6 +13,7 @@ import {
 } from '../interfaces'
 
 import * as actions from './actions'
+import { PageConstructor } from '../database/pages/util'
 
 interface PropsType {
   children: JSX.Element
@@ -25,7 +26,7 @@ interface PageHookDict {
 
 interface ContextType {
   setPagePublic: (id: string, bool: boolean, accountId: string) => void
-  setPage: (page: Page) => void
+  setPage: (page: PageConstructor) => void
   deletePage: (id: string) => void
   setPageHeader: (page: Page) => void
   getPages: () => void
@@ -79,7 +80,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   }
 
   const setPage = useCallback(
-    (page: Page): Promise<void> =>
+    (page: PageConstructor): Promise<void> =>
       new Promise((res) => {
         onPageCached(page._id, res)
         dispatch(actions.savePage(page))
