@@ -22,6 +22,7 @@ export function textToHtml(text: Text): string {
   let _html = text.textValue
 
   if (!text.ranges.length) {
+    console.log('HTML HERE', _html)
     return _html.replaceAll('\n', '<br />')
   }
 
