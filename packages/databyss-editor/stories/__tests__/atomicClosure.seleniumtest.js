@@ -143,6 +143,7 @@ describe('atomic closure', () => {
     // close source
     await sleep(300)
     await sendKeys(actions, '/@')
+
     await isSaved(driver)
 
     await driver.navigate().refresh()

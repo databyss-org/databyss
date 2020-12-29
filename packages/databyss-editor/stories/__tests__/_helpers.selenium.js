@@ -58,8 +58,13 @@ export const getElementById = async (driver, id) => {
   return _driver
 }
 
-export const isSaved = async (driver) => {
-  await getElementById(driver, 'complete')
+/*
+TODO: patches dont update now in storybook when compleated
+*/
+
+export const isSaved = async () => {
+  await sleep(2000)
+  // await getElementById(driver, 'complete')
 }
 
 export const isAppInNotesSaved = async (driver) => {
