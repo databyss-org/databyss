@@ -1,5 +1,10 @@
 import { httpPost } from '../lib/requestApi'
-import { Page, PatchBatch, PageHeader } from '../interfaces'
+import {
+  Page,
+  PatchBatch,
+  PageHeader,
+  ResourceNotFoundError,
+} from '../interfaces'
 
 // packages/databyss-services/database/pages/index.ts
 import * as pouchDb from '../database/pages'
@@ -16,10 +21,11 @@ export const savePage = (page: PageConstructor): Promise<any> => page.addPage()
 export const savePatchBatch = async (data: PatchBatch) =>
   pouchDb.savePatchData(data)
 
-export const loadPage = (_id: string): Promise<Page | null> =>
+export const loadPage = (_id: string): Promise<Page | ResourceNotFoundError> =>
   pouchDb.populatePage(_id)
 
-export const getAllPages = (): Promise<DbPage[]> => pouchDb.fetchAllPages()
+export const getAllPages = (): Promise<DbPage[] | ResourceNotFoundError> =>
+  pouchDb.fetchAllPages()
 
 export const deletePage = (id: string) => pouchDb.deletePage(id)
 

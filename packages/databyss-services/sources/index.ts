@@ -5,26 +5,31 @@ import { Source, Author, SourceCitationHeader } from '../interfaces'
 import * as pouchDb from '../database/sources'
 
 import { CitationResponse } from '../database/sources/lib/getSourceCitation'
+import { ResourceNotFoundError } from '../interfaces/Errors'
 
 // TODO: Add native versions of these
 
-export const getSource = (_id: string): Promise<SourceCitationHeader> =>
+export const getSource = (
+  _id: string
+): Promise<SourceCitationHeader | ResourceNotFoundError> =>
   pouchDb.getSource(_id)
 
 export const setSource = (data: Source) => pouchDb.setSource(data)
 
-export const getSources = (): Promise<Source[]> => pouchDb.getSources()
+export const getSources = (): Promise<Source[] | ResourceNotFoundError> =>
+  pouchDb.getSources()
 
 export const getSourceCitations = (
   citationStyleId?: string
-): Promise<CitationResponse[]> => {
+): Promise<CitationResponse[] | ResourceNotFoundError> => {
   const styleId = citationStyleId || defaultCitationStyle?.id
   return pouchDb.getSourceCitation(styleId)
 }
 
 export const deleteSource = (_id: string) => httpDelete(`/sources/${_id}`)
 
-export const getAuthors = (): Promise<Author[]> => pouchDb.getAuthors()
+export const getAuthors = (): Promise<Author[] | ResourceNotFoundError> =>
+  pouchDb.getAuthors()
 
 // dead link?
 // export const getPageSources = (_id: string): Promise<Source[]> =>
