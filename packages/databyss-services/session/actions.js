@@ -103,12 +103,6 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       setAccountId(res.data.session.user.defaultGroupId)
       setDefaultPageId(res.data.session.user.defaultPageId)
 
-      dispatch({
-        type: CACHE_SESSION,
-        payload: {
-          session: res.data.session,
-        },
-      })
       // initialize a new user
       if (res.data.session.user.provisionClientDatabase) {
         // TODO: HOW DOES NEW PAGE GET INITIATED
@@ -118,6 +112,13 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         // TODO: how to use navigation provider here
         //    window.location.href = '/'
       }
+
+      dispatch({
+        type: CACHE_SESSION,
+        payload: {
+          session: res.data.session,
+        },
+      })
     } else if (res.data?.isPublic) {
       // cache public account info in session state
       dispatch({
