@@ -16,7 +16,8 @@ const getTopicHeaders = async () => {
     },
   })
   if (!_response.docs.length) {
-    return new ResourceNotFoundError('no topics found')
+    return []
+    // return new ResourceNotFoundError('no topics found')
   }
 
   const _topics: Topic[] = _response.docs

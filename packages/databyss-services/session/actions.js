@@ -115,7 +115,6 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         const _page = new PageConstructor(res.data.session.user.defaultPageId)
         // adds page to database
         await _page.addPage()
-
         // TODO: how to use navigation provider here
         //    window.location.href = '/'
       }

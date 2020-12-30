@@ -18,7 +18,8 @@ const getAuthors = async (): Promise<Author[] | ResourceNotFoundError> => {
   })
 
   if (!_response.docs.length) {
-    return new ResourceNotFoundError('no authors found')
+    return []
+    // return new ResourceNotFoundError('no authors found')
   }
 
   const _sources: SourceCitationHeader[] = _response.docs
