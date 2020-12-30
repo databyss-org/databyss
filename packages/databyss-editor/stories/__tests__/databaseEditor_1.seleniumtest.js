@@ -15,6 +15,8 @@ import {
   toggleLocation,
   getElementById,
   isSaved,
+  enterKey,
+  backspaceKey,
 } from './_helpers.selenium'
 
 let driver
@@ -128,11 +130,13 @@ describe('connected editor', () => {
     await sendKeys(actions, 'following text should be ')
     await toggleBold(actions)
     await toggleItalic(actions)
-    await await sendKeys(actions, 'bold and italic ')
+    await sendKeys(actions, 'bold and italic ')
     await toggleItalic(actions)
-    await await sendKeys(actions, 'and just bold ')
+    await sendKeys(actions, 'and just bold ')
     await toggleLocation(actions)
-    await await sendKeys(actions, 'and location with bold')
+    await sendKeys(actions, 'and location with bold')
+    await enterKey(actions)
+    await backspaceKey(actions)
     await isSaved(driver)
 
     await driver.navigate().refresh()
