@@ -4,6 +4,7 @@ import { Selection, DocumentType, Block } from '../../../interfaces'
 import { db } from '../../db'
 import { getAtomicClosureText } from '../util'
 import { ResourceNotFoundError } from '../../../interfaces/Errors'
+import { asyncErrorHandler } from '../../util'
 
 const populatePage = async (
   _id: string
@@ -58,4 +59,4 @@ const populatePage = async (
   return _populatedPage
 }
 
-export default populatePage
+export default asyncErrorHandler(populatePage)

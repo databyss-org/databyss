@@ -3,7 +3,8 @@ import { DbPage } from '../../interfaces'
 import { db, addTimeStamp } from '../../db'
 import { runPatches } from '../util'
 
-const savePatchData = async (data: PatchBatch) => {
+// TODO: WRAP THIS IN ERROR HANDLER
+const savePatchBatch = async (data: PatchBatch) => {
   const { patches, id } = data
   const _page: DbPage = await db.get(id)
   if (!patches) {
@@ -16,4 +17,4 @@ const savePatchData = async (data: PatchBatch) => {
   await db.upsert(_page._id, () => addTimeStamp(_page))
 }
 
-export default savePatchData
+export default savePatchBatch

@@ -3,6 +3,7 @@ import { Topic, BlockType } from '../../../interfaces/Block'
 import { db } from '../../db'
 import { Page } from '../../../interfaces/Page'
 import { ResourceNotFoundError } from '../../../interfaces/Errors'
+import { asyncErrorHandler } from '../../util'
 
 const getTopic = async (
   _id: string
@@ -69,4 +70,4 @@ const getTopic = async (
   return _topic
 }
 
-export default getTopic
+export default asyncErrorHandler(getTopic)

@@ -6,6 +6,7 @@ import {
   DocumentType,
   BlockRelationsServerResponse,
 } from '../../../interfaces/Block'
+import { asyncErrorHandler } from '../../util'
 
 const getBlockRelations = async (
   id: string
@@ -47,4 +48,4 @@ const getBlockRelations = async (
   return _response
 }
 
-export default getBlockRelations
+export default asyncErrorHandler(getBlockRelations)

@@ -4,6 +4,7 @@ import { replaceInlineText } from '@databyss-org/editor/state/util'
 import { Topic, DocumentType, Block } from '../../../interfaces'
 import { addTimeStamp } from '../../db'
 import { BlockType } from '../../../interfaces/Block'
+import { asyncErrorHandler } from '../../util'
 
 const setTopic = async (data: Topic) => {
   const { text, _id } = data
@@ -95,4 +96,4 @@ const setTopic = async (data: Topic) => {
   }
 }
 
-export default setTopic
+export default asyncErrorHandler(setTopic)

@@ -13,7 +13,8 @@ export const savePageHeader = (data: Page | PageHeader): Promise<void> =>
 
 export const savePage = (page: PageConstructor): Promise<any> => page.addPage()
 
-export const savePatchBatch = (data: PatchBatch) => pouchDb.savePatchData(data)
+export const savePatchBatch = async (data: PatchBatch) =>
+  pouchDb.savePatchData(data)
 
 export const loadPage = (_id: string): Promise<Page | null> =>
   pouchDb.populatePage(_id)

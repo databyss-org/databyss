@@ -6,6 +6,7 @@ import {
 import { db } from '../../db'
 import { Topic, Page } from '../../../interfaces'
 import { ResourceNotFoundError } from '../../../interfaces/Errors'
+import { asyncErrorHandler } from '../../util'
 
 const getTopicHeaders = async () => {
   const _response = await db.find({
@@ -69,4 +70,4 @@ const getTopicHeaders = async () => {
   return _topics
 }
 
-export default getTopicHeaders
+export default asyncErrorHandler(getTopicHeaders)

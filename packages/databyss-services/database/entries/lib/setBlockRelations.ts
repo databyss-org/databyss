@@ -2,6 +2,7 @@
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
 import { db, addTimeStamp } from '../../db'
 import { DocumentType } from '../../../interfaces/Block'
+import { asyncErrorHandler } from '../../util'
 
 const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
   for (const payload of payloadArray) {
@@ -58,4 +59,4 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
   }
 }
 
-export default setBlockRelations
+export default asyncErrorHandler(setBlockRelations)

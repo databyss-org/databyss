@@ -1,6 +1,7 @@
 import { db } from '../../db'
 import { DocumentType, BlockType } from '../../../interfaces'
 import { ResourceNotFoundError } from '../../../interfaces/Errors'
+import asyncErrorHandler from './getBlockRelations'
 
 const searchEntries = async (
   encodedQuery: string
@@ -159,4 +160,4 @@ const searchEntries = async (
   return __results
 }
 
-export default searchEntries
+export default asyncErrorHandler(searchEntries)
