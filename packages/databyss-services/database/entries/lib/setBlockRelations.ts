@@ -15,10 +15,12 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
           page: clearPageRelationships,
         },
       })
-      const _idsToDelete = _blockRelationsToClear.docs.map((r) => ({
-        _id: r._id,
-        _rev: r._rev,
-      }))
+      const _idsToDelete: any = []
+      _blockRelationsToClear.docs.forEach((r) => {
+        if (r?._id && r?._rev) {
+          _idsToDelete.push({ _id: r._id, _rev: r._rev })
+        }
+      })
 
       await db.bulkDocs(
         _idsToDelete.map((i) => ({ _id: i._id, _rev: i._rev, _deleted: true }))
