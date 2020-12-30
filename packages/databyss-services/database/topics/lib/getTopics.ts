@@ -5,7 +5,7 @@ import {
 } from '@databyss-org/editor/interfaces'
 import { db } from '../../db'
 import { Topic, Page } from '../../../interfaces'
-import { ResourceNotFoundError } from '../../../interfaces/Errors'
+// import { ResourceNotFoundError } from '../../../interfaces/Errors'
 // import { asyncErrorHandler } from '../../util'
 
 const getTopicHeaders = async () => {
