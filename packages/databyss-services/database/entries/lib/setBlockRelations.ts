@@ -1,4 +1,4 @@
-import ObjectId from 'bson-objectid'
+// import ObjectId from 'bson-objectid'
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
 import { db } from '../../db'
 import { DocumentType } from '../../../interfaces/Block'
@@ -29,31 +29,36 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
     if (blocksRelationArray?.length) {
       for (const relationship of blocksRelationArray) {
         const { block, relatedBlock, removeBlock } = relationship
-
-        const _blockRelationResults = await db.find({
-          selector: {
-            block,
-            relatedBlock,
-          },
-        })
-        const _blockRelation = _blockRelationResults.docs[0]
-        if (removeBlock && _blockRelation) {
+        // get id of block
+        // const _blockRelationResults = await db.find({
+        //   selector: {
+        //     block,
+        //     relatedBlock,
+        //   },
+        // })
+        // TODO: HOW DO WE GET THE BLOCK ID IN A MORE EFFICIENT WAY
+        const _relationshipID = `${block}${relatedBlock}`
+        // const _blockRelation = _blockRelationResults.docs[0]
+        if (removeBlock) {
           // get blockID
-          await db.upsert(_blockRelation._id, () => ({ _deleted: true }))
-        } else if (_blockRelation) {
+          await db.upsert(_relationshipID, () => ({ _deleted: true }))
+        } else {
           // update block relation
-          await db.upsert(_blockRelation._id, (oldDoc) => ({
+          await db.upsert(_relationshipID, (oldDoc) => ({
             ...oldDoc,
             ...relationship,
-          }))
-        } else {
-          // create a new block relation
-          await db.upsert(new ObjectId().toHexString(), () => ({
             $type: DocumentType.BlockRelation,
-            _id: new ObjectId().toHexString(),
-            ...relationship,
           }))
         }
+
+        // else {
+        //   // create a new block relation
+        //   await db.upsert(new ObjectId().toHexString(), () => ({
+        //     $type: DocumentType.BlockRelation,
+        //     _id: new ObjectId().toHexString(),
+        //     ...relationship,
+        //   }))
+        // }
       }
     }
   }
