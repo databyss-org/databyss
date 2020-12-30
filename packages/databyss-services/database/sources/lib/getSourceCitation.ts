@@ -11,7 +11,7 @@ import { SourceCitationHeader } from '../../../interfaces/Block'
 
 // import { Page } from '../../interfaces/Page'
 import { ResourceNotFoundError } from '../../../interfaces/Errors'
-import { asyncErrorHandler } from '../../util'
+// import { asyncErrorHandler } from '../../util'
 
 export type CitationResponse = Partial<SourceCitationHeader> & {
   citation?: string
@@ -108,4 +108,5 @@ const getSourceCitation = async (
   return sourcesCitations
 }
 
-export default asyncErrorHandler(getSourceCitation)
+export default getSourceCitation
+// export default asyncErrorHandler(getSourceCitation)

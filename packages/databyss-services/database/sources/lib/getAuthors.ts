@@ -7,7 +7,7 @@ import {
 import { db } from '../../db'
 import { Author } from '../../../interfaces'
 import { ResourceNotFoundError } from '../../../interfaces/Errors'
-import { asyncErrorHandler } from '../../util'
+// import { asyncErrorHandler } from '../../util'
 
 const getAuthors = async (): Promise<Author[] | ResourceNotFoundError> => {
   const _response = await db.find({
@@ -53,4 +53,5 @@ const getAuthors = async (): Promise<Author[] | ResourceNotFoundError> => {
   return Object.values(authorsDict)
 }
 
-export default asyncErrorHandler(getAuthors)
+export default getAuthors
+// export default asyncErrorHandler(getAuthors)

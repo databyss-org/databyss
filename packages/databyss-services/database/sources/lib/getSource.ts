@@ -4,7 +4,7 @@ import { db } from '../../db'
 import { SourceCitationHeader, DocumentType } from '../../../interfaces'
 import { BlockType } from '../../../interfaces/Block'
 import { ResourceNotFoundError } from '../../../interfaces/Errors'
-import { asyncErrorHandler } from '../../util'
+// import { asyncErrorHandler } from '../../util'
 
 const getSource = async (
   _id: string
@@ -47,4 +47,5 @@ const getSource = async (
   return _source
 }
 
-export default asyncErrorHandler(getSource)
+export default getSource
+// export default asyncErrorHandler(getSource)

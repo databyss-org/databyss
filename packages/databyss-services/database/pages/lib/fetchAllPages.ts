@@ -3,7 +3,7 @@ import { DbPage } from '../../interfaces'
 import { db } from '../../db'
 import { DocumentType } from '../../../interfaces/Block'
 import { ResourceNotFoundError } from '../../../interfaces/Errors'
-import { asyncErrorHandler } from '../../util'
+// import { asyncErrorHandler } from '../../util'
 
 const fetchAllPages = async (): Promise<DbPage[] | ResourceNotFoundError> => {
   const _pages: PouchDB.Find.FindResponse<DbPage> = await db.find({
@@ -17,4 +17,5 @@ const fetchAllPages = async (): Promise<DbPage[] | ResourceNotFoundError> => {
   return _pages.docs
 }
 
-export default asyncErrorHandler(fetchAllPages)
+export default fetchAllPages
+// export default asyncErrorHandler(fetchAllPages)

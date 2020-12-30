@@ -1,7 +1,7 @@
 import { db } from '../../db'
 import { Source, BlockType, DocumentType } from '../../../interfaces'
 import { ResourceNotFoundError } from '../../../interfaces/Errors'
-import { asyncErrorHandler } from '../../util'
+// import { asyncErrorHandler } from '../../util'
 
 const getSources = async (): Promise<Source[] | ResourceNotFoundError> => {
   const _response = await db.find({
@@ -18,4 +18,5 @@ const getSources = async (): Promise<Source[] | ResourceNotFoundError> => {
   return _response.docs
 }
 
-export default asyncErrorHandler(getSources)
+export default getSources
+// export default asyncErrorHandler(getSources)
