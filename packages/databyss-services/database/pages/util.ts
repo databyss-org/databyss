@@ -2,7 +2,7 @@ import * as PouchDB from 'pouchdb-browser'
 import { Patch } from 'immer'
 import ObjectId from 'bson-objectid'
 import { DbPage } from '../interfaces'
-import { db } from '../db'
+import { db, addTimeStamp } from '../db'
 import { Block, BlockType, DocumentType } from '../../interfaces'
 import { Selection } from '../../interfaces/Selection'
 
@@ -76,7 +76,9 @@ const addOrReplaceBlock = async (p, page) => {
       text: { textValue: '', ranges: [] },
     }
     // initiate new block
-    await db.upsert(_blockId, () => _block)
+    await db.upsert(_blockId, () => ({
+      ...addTimeStamp(_block),
+    }))
   }
 
   Object.assign(_block, _blockFields)
@@ -87,7 +89,7 @@ const addOrReplaceBlock = async (p, page) => {
     applyPatch(_block, p.path.slice(2), p.value)
   }
 
-  db.upsert(_block._id, (oldDoc) => ({ ...oldDoc, ..._block }))
+  db.upsert(_block._id, (oldDoc) => ({ ...oldDoc, ...addTimeStamp(_block) }))
 }
 
 const replacePatch = async (p, page) => {
@@ -100,7 +102,7 @@ const replacePatch = async (p, page) => {
     case 'selection': {
       const _id = p.value._id
       if (_id) {
-        db.upsert(_id, (oldDoc) => ({ ...oldDoc, ...p.value }))
+        db.upsert(_id, (oldDoc) => ({ ...addTimeStamp(oldDoc), ...p.value }))
         // // if new selection._id is passed tag it to page
         page.selection = _id
       }
@@ -192,12 +194,18 @@ export class PageConstructor {
   }
 
   async addSelection() {
-    await db.upsert(this.selection._id, () => this.selection)
+    await db.upsert(this.selection._id, (oldDoc) => ({
+      ...addTimeStamp(oldDoc),
+      ...this.selection,
+    }))
   }
 
   async addBlock() {
     const _block = this.blocks[0]
-    await db.upsert(_block._id, () => _block)
+    await db.upsert(_block._id, (oldDoc) => ({
+      ...addTimeStamp(oldDoc),
+      ..._block,
+    }))
   }
 
   async addPage() {
@@ -207,6 +215,7 @@ export class PageConstructor {
 
     const _page = await db.upsert(this._id, () => ({
       ...this,
+      createdAt: Date.now(),
       selection: this.selection._id,
       blocks: [
         {

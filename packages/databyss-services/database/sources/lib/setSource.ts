@@ -1,4 +1,4 @@
-import { db } from '../../db'
+import { db, addTimeStamp } from '../../db'
 import { Source, BlockType, DocumentType } from '../../../interfaces'
 
 export const setSource = async (data: Source) => {
@@ -14,7 +14,7 @@ export const setSource = async (data: Source) => {
   await db.upsert(_id, (oldDoc) => {
     const _source = oldDoc
     Object.assign(_source, blockFields)
-    return _source
+    return addTimeStamp(_source)
   })
 }
 

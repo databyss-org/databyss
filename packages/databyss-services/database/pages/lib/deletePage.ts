@@ -1,8 +1,8 @@
-import { db } from '../../db'
+import { db, addTimeStamp } from '../../db'
 
 const deletePage = (id: string) =>
   db.upsert(id, (oldDoc) => ({
-    ...oldDoc,
+    ...addTimeStamp(oldDoc),
     _deleted: true,
   }))
 

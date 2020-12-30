@@ -1,6 +1,6 @@
 import { PatchBatch } from '../../../interfaces/Patch'
 import { DbPage } from '../../interfaces'
-import { db } from '../../db'
+import { db, addTimeStamp } from '../../db'
 import { runPatches } from '../util'
 
 const savePatchData = async (data: PatchBatch) => {
@@ -13,7 +13,7 @@ const savePatchData = async (data: PatchBatch) => {
     await runPatches(patch, _page)
   }
   // save page
-  await db.upsert(_page._id, () => _page)
+  await db.upsert(_page._id, () => addTimeStamp(_page))
 }
 
 export default savePatchData

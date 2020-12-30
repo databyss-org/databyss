@@ -1,6 +1,6 @@
 // import ObjectId from 'bson-objectid'
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
-import { db } from '../../db'
+import { db, addTimeStamp } from '../../db'
 import { DocumentType } from '../../../interfaces/Block'
 
 const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
@@ -45,21 +45,14 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
           await db.upsert(_relationshipID, () => ({ _deleted: true }))
         } else {
           // update block relation
-          await db.upsert(_relationshipID, () => ({
-            // ...oldDoc,
-            ...relationship,
-            $type: DocumentType.BlockRelation,
+          await db.upsert(_relationshipID, (oldDoc) => ({
+            ...addTimeStamp({
+              ...oldDoc,
+              ...relationship,
+              $type: DocumentType.BlockRelation,
+            }),
           }))
         }
-
-        // else {
-        //   // create a new block relation
-        //   await db.upsert(new ObjectId().toHexString(), () => ({
-        //     $type: DocumentType.BlockRelation,
-        //     _id: new ObjectId().toHexString(),
-        //     ...relationship,
-        //   }))
-        // }
       }
     }
   }

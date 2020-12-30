@@ -105,10 +105,17 @@ db.createIndex({
   },
 })
 
-db.changes({
-  since: 'now',
-  live: true,
-  include_docs: true,
-}).on('change', (change) => {
-  console.log('DATABASE.CHANGE', change)
-})
+export const addTimeStamp = (oldDoc: any): any => {
+  // if document has been created add a modifiedAt timestamp
+  if (oldDoc.createdAt) {
+    return { ...oldDoc, modifiedAt: Date.now() }
+  }
+  return { ...oldDoc, createdAt: Date.now() }
+}
+// db.changes({
+//   since: 'now',
+//   live: true,
+//   include_docs: true,
+// }).on('change', (change) => {
+//   console.log('DATABASE.CHANGE', change)
+// })

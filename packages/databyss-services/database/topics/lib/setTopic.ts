@@ -2,6 +2,8 @@ import { db } from '@databyss-org/services/database/db'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { replaceInlineText } from '@databyss-org/editor/state/util'
 import { Topic, DocumentType, Block } from '../../../interfaces'
+import { addTimeStamp } from '../../db'
+import { BlockType } from '../../../interfaces/Block'
 
 const setTopic = async (data: Topic) => {
   const { text, _id } = data
@@ -9,9 +11,9 @@ const setTopic = async (data: Topic) => {
   let block
   await db.upsert(_id, (oldDoc) => {
     block = {
-      ...oldDoc,
+      ...addTimeStamp(oldDoc),
       ...data,
-      type: 'TOPIC',
+      type: BlockType.Topic,
       $type: DocumentType.Block,
     }
     return block
@@ -66,7 +68,10 @@ const setTopic = async (data: Topic) => {
       })
       if (_inlineRanges.length) {
         // update block
-        await db.upsert(_block._id, () => _block)
+        await db.upsert(_block._id, (oldDoc) => ({
+          ...addTimeStamp(oldDoc),
+          ..._block,
+        }))
         // update relation
 
         const _blockRelationResults = await db.find({
@@ -79,7 +84,8 @@ const setTopic = async (data: Topic) => {
 
         const _blockRelationToUpdate = _blockRelationResults.docs[0]
         if (_blockRelationToUpdate) {
-          await db.upsert(_blockRelationToUpdate._id, () => ({
+          await db.upsert(_blockRelationToUpdate._id, (oldDoc) => ({
+            ...addTimeStamp(oldDoc),
             ...relation,
             blockText: _block.text,
           }))
