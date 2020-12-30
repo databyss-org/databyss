@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { debounce } from 'lodash'
+import { throttle } from 'lodash'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import {
@@ -52,7 +52,7 @@ const PageWithAutosave = ({ page }) => {
   const operationsQueue = useRef([])
 
   const throttledAutosave = useCallback(
-    debounce(({ nextState, patches }) => {
+    throttle(({ nextState, patches }) => {
       const _patches = cleanupPatches(patches)
       if (_patches?.length) {
         const payload = {
@@ -62,7 +62,7 @@ const PageWithAutosave = ({ page }) => {
         setPatches(payload)
         operationsQueue.current = []
       }
-    }, 1000),
+    }, 500),
     []
   )
 
