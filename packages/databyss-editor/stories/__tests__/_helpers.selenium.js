@@ -62,9 +62,9 @@ export const getElementById = async (driver, id) => {
 TODO: patches dont update now in storybook when compleated
 */
 
-export const isSaved = async () => {
-  await sleep(3000)
-  // await getElementById(driver, 'complete')
+export const isSaved = async (driver) => {
+  // await sleep(3000)
+  await getElementById(driver, 'complete')
 }
 
 // same issue as above
