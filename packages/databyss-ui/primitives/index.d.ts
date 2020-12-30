@@ -22,11 +22,15 @@ import {
   TypographyProps,
 } from 'styled-system'
 import * as ReactModal from 'react-modal'
+import * as ReactDnd from 'react-dnd'
 import { InterpolationWithTheme } from '@emotion/core'
 
 export type RefForwardingFC<T, P = {}> = ForwardRefExoticComponent<
   PropsWithoutRef<P> & RefAttributes<T>
 >
+
+// TODO: add type hints to theme
+// see https://blog.agney.dev/styled-components-&-typescript/
 
 //
 // View
@@ -134,22 +138,26 @@ export interface ControlHandle {
 }
 
 export interface BaseControlProps {
-  hoverColor: string
-  activeColor: string
-  pressedColor: string
-  borderRadius: ReactText
-  userSelect: CSS.Property.UserSelect
+  hoverColor?: string
+  activeColor?: string
+  pressedColor?: string
+  borderRadius?: ReactText
+  userSelect?: CSS.Property.UserSelect
   active?: boolean
   disabled?: boolean
   onPress?: (e: MouseEvent | KeyboardEvent) => void
   href?: string
-  handle: MutableRefObject<ControlHandle>
+  handle?: MutableRefObject<ControlHandle>
   noFeedback?: boolean
   childViewProps?: ViewProps
   onKeyDown?: (e: KeyboardEvent) => void
+  draggable?: boolean
 }
 
-declare const BaseControl: RefForwardingFC<HTMLElement, BaseControlProps>
+declare const BaseControl: RefForwardingFC<
+  HTMLElement,
+  PropsWithChildren<BaseControlProps>
+>
 
 export interface ValueControlProps {
   value?: string
@@ -240,3 +248,25 @@ export interface DialogProps extends DialogViewProps {
 }
 
 declare const Dialog: FC<DialogProps>
+
+//
+// Gestures
+// ----------------------------------------------------------------------
+
+export interface GestureProviderProps extends PropsWithChildren<{}> {}
+
+declare const GestureProvider: FC<GestureProviderProps>
+declare const useDrop: <
+  DragObject extends ReactDnd.DragObjectWithType,
+  DropResult,
+  CollectedProps
+>(
+  spec: ReactDnd.DropTargetHookSpec<DragObject, DropResult, CollectedProps>
+) => [CollectedProps, ReactDnd.ConnectDropTarget]
+declare const useDrag: <
+  DragObject extends ReactDnd.DragObjectWithType,
+  DropResult,
+  CollectedProps
+>(
+  spec: ReactDnd.DragSourceHookSpec<DragObject, DropResult, CollectedProps>
+) => [CollectedProps, ReactDnd.ConnectDragSource, ReactDnd.ConnectDragPreview]

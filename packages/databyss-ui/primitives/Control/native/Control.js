@@ -92,7 +92,16 @@ const StyledLink = styled('a', styleProps)
 
 const Control = forwardRef(
   (
-    { disabled, children, onPress, renderAsView, href, handle, ...others },
+    {
+      disabled,
+      children,
+      onPress,
+      renderAsView,
+      href,
+      handle,
+      draggable,
+      ...others
+    },
     ref
   ) => {
     const _childRef = useRef()
@@ -109,7 +118,6 @@ const Control = forwardRef(
       <ThemeContext.Consumer>
         {(theme) => (
           <StyledComponent
-            onDragStart={(e) => e.preventDefault()}
             ref={forkRef(ref, _childRef)}
             tabIndex={0}
             onClick={(e) => {
@@ -123,6 +131,7 @@ const Control = forwardRef(
                 onPress(e)
               }
             }}
+            {...(draggable ? {} : { onDragStart: (e) => e.preventDefault() })}
             {...(renderAsView ? {} : viewProps)}
             css={[
               !renderAsView && resetCss,

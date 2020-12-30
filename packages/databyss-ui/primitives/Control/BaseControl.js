@@ -1,8 +1,23 @@
 import React, { forwardRef } from 'react'
 import { Platform } from 'react-native'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useDrag } from '@databyss-org/ui/primitives/Gestures/GestureProvider'
 import Control, { ControlNoFeedback } from './native/Control'
 import { View } from '../'
+
+const DraggableView = ({ children, ...others }) => {
+  const [{ isDragging }, dragRef] = useDrag({
+    item: { type: 'BOX' },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  })
+  return (
+    <View ref={dragRef} {...others}>
+      {children}
+    </View>
+  )
+}
 
 /**
  * Base Control component that handles disabled state
@@ -17,12 +32,15 @@ const BaseControl = forwardRef(
       childViewProps,
       href,
       onKeyDown,
+      draggable,
       ...others
     },
     ref
   ) => {
     // may not exist
     const navigationContext = useNavigationContext()
+
+    // may not exist
 
     const Styled = Platform.select({
       ios: disabled || noFeedback ? ControlNoFeedback : Control,
@@ -51,6 +69,8 @@ const BaseControl = forwardRef(
       }
     }
 
+    const ChildView = draggable ? DraggableView : View
+
     return (
       <Styled
         onPress={disabled ? null : _onPress}
@@ -59,11 +79,12 @@ const BaseControl = forwardRef(
         opacity={disabled ? 0.5 : 1}
         ref={ref}
         href={href}
+        draggable={draggable}
         {...others}
       >
-        <View zIndex="base" {...childViewProps}>
+        <ChildView zIndex="base" {...childViewProps}>
           {_children}
-        </View>
+        </ChildView>
       </Styled>
     )
   }
