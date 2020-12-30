@@ -6,8 +6,9 @@ import {
 } from '@databyss-org/services/interfaces'
 import { db } from '../../db'
 import { Author } from '../../../interfaces'
+import { ResourceNotFoundError } from '../../../interfaces/Errors'
 
-const getAuthors = async (): Promise<Author[]> => {
+const getAuthors = async (): Promise<Author[] | ResourceNotFoundError> => {
   const _response = await db.find({
     selector: {
       $type: DocumentType.Block,
@@ -16,7 +17,7 @@ const getAuthors = async (): Promise<Author[]> => {
   })
 
   if (!_response.docs.length) {
-    return []
+    return new ResourceNotFoundError('no authors found')
   }
 
   const _sources: SourceCitationHeader[] = _response.docs

@@ -10,6 +10,7 @@ import { db } from '../../db'
 import { SourceCitationHeader } from '../../../interfaces/Block'
 
 // import { Page } from '../../interfaces/Page'
+import { ResourceNotFoundError } from '../../../interfaces/Errors'
 
 export type CitationResponse = Partial<SourceCitationHeader> & {
   citation?: string
@@ -17,7 +18,7 @@ export type CitationResponse = Partial<SourceCitationHeader> & {
 
 const getSourceCitation = async (
   styleId: string | undefined
-): Promise<CitationResponse[]> => {
+): Promise<CitationResponse[] | ResourceNotFoundError> => {
   const _response = await db.find({
     selector: {
       $type: DocumentType.Block,
@@ -25,7 +26,7 @@ const getSourceCitation = async (
     },
   })
   if (!_response.docs.length) {
-    return []
+    return new ResourceNotFoundError('no citation found')
   }
 
   const _sources: SourceCitationHeader[] = _response.docs

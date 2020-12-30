@@ -1,7 +1,16 @@
 import { db } from '../../db'
 import { DocumentType, BlockType } from '../../../interfaces'
+import { ResourceNotFoundError } from '../../../interfaces/Errors'
 
-const searchEntries = async (encodedQuery: string) => {
+const searchEntries = async (
+  encodedQuery: string
+): Promise<
+  | ResourceNotFoundError
+  | {
+      count: number
+      results: any
+    }
+> => {
   const _query = decodeURIComponent(encodedQuery)
 
   // calculate how strict we want the search to be
@@ -23,30 +32,33 @@ const searchEntries = async (encodedQuery: string) => {
   })
 
   const _queryResponse = _res.rows
+  if (!_queryResponse.length) {
+    return new ResourceNotFoundError('no results found')
+  }
+
   // if results are found, look up page and append to result
-  if (_queryResponse.length) {
-    const _results = _queryResponse
-    for (const _result of _results) {
-      // returns all pages where source id is found in element id
-      const _response = await db.find({
-        selector: {
-          $type: DocumentType.Page,
-          blocks: {
-            $elemMatch: {
-              _id: _result.id,
-            },
+
+  const _results = _queryResponse
+  for (const _result of _results) {
+    // returns all pages where source id is found in element id
+    const _response = await db.find({
+      selector: {
+        $type: DocumentType.Page,
+        blocks: {
+          $elemMatch: {
+            _id: _result.id,
           },
         },
-      })
-      if (_response.docs.length) {
-        // only one search result should appear per entry
-        const _page = _response.docs[0]
-        if (_page && !_page?.archive) {
-          // if page has not been archived and is currently not in array, push to array
-          _result.doc.page = _page
-        } else {
-          _result.doc.page = null
-        }
+      },
+    })
+    if (_response.docs.length) {
+      // only one search result should appear per entry
+      const _page = _response.docs[0]
+      if (_page && !_page?.archive) {
+        // if page has not been archived and is currently not in array, push to array
+        _result.doc.page = _page
+      } else {
+        _result.doc.page = null
       }
     }
   }

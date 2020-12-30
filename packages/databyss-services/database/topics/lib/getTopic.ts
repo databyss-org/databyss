@@ -1,10 +1,22 @@
 import { BlockRelation, DocumentType } from '@databyss-org/editor/interfaces'
-import { Topic } from '../../../interfaces/Block'
+import { Topic, BlockType } from '../../../interfaces/Block'
 import { db } from '../../db'
 import { Page } from '../../../interfaces/Page'
+import { ResourceNotFoundError } from '../../../interfaces/Errors'
 
-const getTopic = async (_id: string): Promise<Topic> => {
-  const _topic: Topic = await db.get(_id)
+const getTopic = async (
+  _id: string
+): Promise<Topic | ResourceNotFoundError> => {
+  const _topicResponse = await db.find({
+    selector: { _id, $type: DocumentType.Block, type: BlockType.Topic },
+  })
+  if (!_topicResponse.docs.length) {
+    return new ResourceNotFoundError('no topics founds')
+  }
+
+  const _topic = _topicResponse.docs[0]
+
+  // const _topic: Topic = await db.get(_id)
   const isInPages: string[] = []
   // returns all pages where source id is found in element id
   const _response = await db.find({
@@ -18,7 +30,6 @@ const getTopic = async (_id: string): Promise<Topic> => {
     },
   })
 
-  console.log('FIRST RESPONSE PAGE', _response)
   // append pages topic appears in as property `inPages`
   if (_response.docs.length) {
     _response.docs.forEach((d) => {
@@ -55,7 +66,6 @@ const getTopic = async (_id: string): Promise<Topic> => {
     _topic.isInPages = isInPages
   }
 
-  console.log('topic being returned', _topic)
   return _topic
 }
 
