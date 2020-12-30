@@ -37,6 +37,7 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
         //   },
         // })
         // TODO: HOW DO WE GET THE BLOCK ID IN A MORE EFFICIENT WAY
+        // will one block only ever have a relationship with another block?
         const _relationshipID = `${block}${relatedBlock}`
         // const _blockRelation = _blockRelationResults.docs[0]
         if (removeBlock) {
@@ -44,8 +45,8 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
           await db.upsert(_relationshipID, () => ({ _deleted: true }))
         } else {
           // update block relation
-          await db.upsert(_relationshipID, (oldDoc) => ({
-            ...oldDoc,
+          await db.upsert(_relationshipID, () => ({
+            // ...oldDoc,
             ...relationship,
             $type: DocumentType.BlockRelation,
           }))
