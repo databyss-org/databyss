@@ -27,7 +27,8 @@ const getSourceCitation = async (
     },
   })
   if (!_response.docs.length) {
-    return new ResourceNotFoundError('no citation found')
+    return []
+    // return new ResourceNotFoundError('no citation found')
   }
 
   const _sources: SourceCitationHeader[] = _response.docs
