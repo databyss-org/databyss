@@ -5,12 +5,13 @@ import { useDrag } from '@databyss-org/ui/primitives/Gestures/GestureProvider'
 import Control, { ControlNoFeedback } from './native/Control'
 import { View } from '../'
 
-const DraggableView = ({ children, ...others }) => {
-  const [{ isDragging }, dragRef] = useDrag({
-    item: { type: 'BOX' },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
+const DraggableView = ({ children, draggable, ...others }) => {
+  let draggableItem = { type: 'BaseControl' }
+  if (typeof draggable !== 'boolean') {
+    draggableItem = { ...draggableItem, ...draggable }
+  }
+  const [, dragRef] = useDrag({
+    item: draggableItem,
   })
   return (
     <View ref={dragRef} {...others}>
@@ -82,7 +83,7 @@ const BaseControl = forwardRef(
         draggable={draggable}
         {...others}
       >
-        <ChildView zIndex="base" {...childViewProps}>
+        <ChildView zIndex="base" {...childViewProps} draggable={draggable}>
           {_children}
         </ChildView>
       </Styled>

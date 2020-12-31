@@ -16,6 +16,7 @@ import List, {
 import Modals, { Editable as EditableModals, Dialogs } from './Modals'
 import { SimpleDragAndDrop } from './Gestures/simpleDnd'
 import { SimpleDragAndDropWithControls } from './Gestures/simpleDndWithControls'
+import { SimpleDragAndDropSystem } from './Gestures/simpleDndSystem'
 
 storiesOf('Design System|Buttons', module)
   .addDecorator(ViewportDecorator)
@@ -51,3 +52,4 @@ storiesOf('Design System|Gestures', module)
   .addDecorator(GestureDecorator)
   .add('Simple Drag and Drop', () => <SimpleDragAndDrop />)
   .add('Draggable BaseControls', () => <SimpleDragAndDropWithControls />)
+  .add('Draggable System', () => <SimpleDragAndDropSystem />)

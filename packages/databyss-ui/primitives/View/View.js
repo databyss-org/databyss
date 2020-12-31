@@ -10,6 +10,7 @@ import {
   color,
   shadow,
 } from 'styled-system'
+import { useDrop } from '@databyss-org/ui/primitives/Gestures/GestureProvider'
 import { zIndex } from '@databyss-org/ui/theming/system'
 import { ThemeProvider } from 'emotion-theming'
 import forkRef from '@databyss-org/ui/lib/forkRef'
@@ -139,7 +140,44 @@ const Styled = styled(
   styleProps
 )
 
-const View = forwardRef(({ children, onLayout, ...others }, ref) => {
+const ActiveDropzoneOverlay = () => (
+  <Styled
+    position="absolute"
+    left={0}
+    top={0}
+    bottom={0}
+    right={0}
+    bg="green.0"
+    opacity={0.3}
+  />
+)
+
+const DropzoneChild = forwardRef(({ children, dropzone, ...others }, ref) => {
+  const dropzoneProps = {}
+  if (dropzone.onDrop) {
+    dropzoneProps.drop = dropzone.onDrop
+  }
+  if (dropzone.accepts) {
+    dropzoneProps.accept = dropzone.accepts
+  }
+  const [{ canDrop, isOver }, dropRef] = useDrop({
+    accept: 'BaseControl',
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+    ...dropzoneProps,
+  })
+  const isActive = canDrop && isOver
+  return (
+    <Styled ref={forkRef(dropRef, ref)} position="relative" {...others}>
+      {children}
+      {isActive && <ActiveDropzoneOverlay />}
+    </Styled>
+  )
+})
+
+const View = forwardRef(({ children, onLayout, dropzone, ...others }, ref) => {
   const viewRef = useRef(null)
   const clientRect = {}
   const _onLayout = useCallback(
@@ -183,16 +221,19 @@ const View = forwardRef(({ children, onLayout, ...others }, ref) => {
     console.warn('onLayout removed until optimized')
   }
 
+  const ChildContainer = dropzone ? DropzoneChild : Styled
+
   // fixes white space in scroll bar when using external mouse
   const view = (
-    <Styled
+    <ChildContainer
       ref={forkRef(viewRef, ref)}
       {...defaultProps}
       {...(IS_NATIVE ? nativeProps : webProps)}
       {...others}
+      dropzone={dropzone}
     >
       {children}
-    </Styled>
+    </ChildContainer>
   )
 
   if (others.theme) {

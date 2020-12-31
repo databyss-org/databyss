@@ -36,6 +36,16 @@ export type RefForwardingFC<T, P = {}> = ForwardRefExoticComponent<
 // View
 // ----------------------------------------------------------------------
 
+export interface DraggableItem {
+  type: string
+  payload?: any
+}
+
+export interface DropzoneProps {
+  accepts?: string
+  onDrop?: (item: DraggableItem) => void
+}
+
 export interface ViewProps
   extends SpaceProps,
     LayoutProps,
@@ -52,6 +62,7 @@ export interface ViewProps
   shadowVariant?: string
   widthVariant?: string
   wrapVariant?: string
+  dropzone?: boolean | DropzoneProps
 }
 
 declare const View: RefForwardingFC<HTMLElement, PropsWithChildren<ViewProps>>
@@ -151,7 +162,7 @@ export interface BaseControlProps {
   noFeedback?: boolean
   childViewProps?: ViewProps
   onKeyDown?: (e: KeyboardEvent) => void
-  draggable?: boolean
+  draggable?: boolean | Partial<DraggableItem>
 }
 
 declare const BaseControl: RefForwardingFC<
