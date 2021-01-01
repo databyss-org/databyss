@@ -3,6 +3,7 @@ import {
   Text,
   BaseControl,
   Grid,
+  View,
   withKeyboardNavigation,
 } from '@databyss-org/ui/primitives'
 
@@ -31,31 +32,28 @@ const SidebarListItem = ({
   return (
     <BaseControl
       data-test-element="page-sidebar-item"
-      py="small"
-      px="em"
-      width="100%"
       href={href}
       onPress={onPress}
-      childViewProps={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
-      css={{
-        textDecoration: 'none',
-        boxSizing: 'border-box',
-      }}
       active={isActive || activeNavigationItem}
       ref={navigationItemRef}
       handle={_controlHandle}
     >
-      <Grid singleRow flexWrap="nowrap" columnGap="small" maxWidth="100%">
-        {icon}
-        <Text variant="uiTextSmall" color={isActive ? 'text.1' : 'text.3'}>
-          {text}
-        </Text>
-      </Grid>
-      {children}
+      <View
+        py="small"
+        px="em"
+        width="100%"
+        flexDirection="row"
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <Grid singleRow flexWrap="nowrap" columnGap="small" maxWidth="100%">
+          {icon}
+          <Text variant="uiTextSmall" color={isActive ? 'text.1' : 'text.3'}>
+            {text}
+          </Text>
+        </Grid>
+        {children}
+      </View>
     </BaseControl>
   )
 }

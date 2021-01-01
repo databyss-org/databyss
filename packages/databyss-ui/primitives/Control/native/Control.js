@@ -138,6 +138,11 @@ const Control = forwardRef(
               css(controlCss(others))(theme),
               _mobile && css(controlCssMobile(others))(theme),
               !_mobile && css(controlCssDesktop(others, theme))(theme),
+              draggable && {
+                // note this is necessary to remove extra junk around the edges of the
+                // drag preview. see: https://github.com/react-dnd/react-dnd/issues/788#issuecomment-393620979
+                transform: 'translate(0, 0)',
+              },
             ]}
             href={href}
             disabled={disabled}

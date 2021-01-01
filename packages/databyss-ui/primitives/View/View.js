@@ -147,7 +147,7 @@ const ActiveDropzoneOverlay = () => (
     top={0}
     bottom={0}
     right={0}
-    bg="green.0"
+    bg="gray.4"
     opacity={0.3}
   />
 )
