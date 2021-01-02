@@ -17,6 +17,7 @@ const SidebarListItem = ({
   activeNavigationItem,
   navigationItemRef,
   navigationItemHandle,
+  draggable,
 }) => {
   const _controlHandle = useRef()
   useImperativeHandle(navigationItemHandle, () => ({
@@ -37,6 +38,7 @@ const SidebarListItem = ({
       active={isActive || activeNavigationItem}
       ref={navigationItemRef}
       handle={_controlHandle}
+      draggable={draggable}
     >
       <View
         py="small"

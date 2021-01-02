@@ -1,6 +1,4 @@
 import React from 'react'
-import AuthorSvg from '@databyss-org/ui/assets/author.svg'
-import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import {
   sortEntriesAtoZ,
   filterEntries,
@@ -29,11 +27,10 @@ export const getSourceTitlesData = (sources) =>
   Object.values(sources).map((value) =>
     createSidebarListItems({
       text: value.text.textValue,
-      type: 'sources',
+      type: 'source',
       route: '/sources',
       id: value._id,
       params: value._id,
-      icon: <SourceSvg />,
     })
   )
 
@@ -78,10 +75,9 @@ export const getAuthorData = (authors) =>
 
     return createSidebarListItems({
       text: getShortAuthorName(),
-      type: 'authors',
+      type: 'author',
       route: '/sources',
       params: authorParams.toString(),
-      icon: <AuthorSvg />,
     })
   })
 

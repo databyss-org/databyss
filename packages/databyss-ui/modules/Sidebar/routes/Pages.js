@@ -13,7 +13,7 @@ export const getPagesData = (pages) =>
     .map((p) =>
       createSidebarListItems({
         text: p.name,
-        type: 'pages',
+        type: 'page',
         route: '/pages',
         id: p._id,
         params: p._id,

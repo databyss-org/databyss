@@ -54,7 +54,7 @@ const DraggableBox = ({ name }: { name: string }) => (
     </View>
   </BaseControl>
 )
-export const SimpleDragAndDropWithControls = () => (
+export const DragAndDropWithControls = () => (
   <Grid>
     <View>
       <DraggableBox name="Glass" />

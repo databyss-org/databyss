@@ -24,8 +24,9 @@ import {
 import * as ReactModal from 'react-modal'
 import * as ReactDnd from 'react-dnd'
 import { InterpolationWithTheme } from '@emotion/core'
+import { Text } from '@databyss-org/editor/interfaces'
 
-export type RefForwardingFC<T, P = {}> = ForwardRefExoticComponent<
+export type RefForwardingFC<P, T = HTMLElement> = ForwardRefExoticComponent<
   PropsWithoutRef<P> & RefAttributes<T>
 >
 
@@ -65,7 +66,7 @@ export interface ViewProps
   dropzone?: boolean | DropzoneProps
 }
 
-declare const View: RefForwardingFC<HTMLElement, PropsWithChildren<ViewProps>>
+declare const View: RefForwardingFC<PropsWithChildren<ViewProps>>
 declare const ScrollView: FC<PropsWithChildren<ViewProps>>
 
 export interface GridProps extends ViewProps {
@@ -89,14 +90,14 @@ export interface TextProps
   variant?: string
 }
 
-declare const Text: RefForwardingFC<HTMLElement, PropsWithChildren<TextProps>>
+declare const TextPrimitive: RefForwardingFC<PropsWithChildren<TextProps>>
 
 export interface RawHtmlProps extends ColorProps, SpaceProps, BorderProps {
   _html?: string
   html?: string
 }
 
-declare const RawHtml: RefForwardingFC<HTMLElement, RawHtmlProps>
+declare const RawHtml: RefForwardingFC<RawHtmlProps>
 
 //
 // Icon
@@ -165,15 +166,7 @@ export interface BaseControlProps {
   draggable?: boolean | Partial<DraggableItem>
 }
 
-declare const BaseControl: RefForwardingFC<
-  HTMLElement,
-  PropsWithChildren<BaseControlProps>
->
-
-export interface ValueControlProps {
-  value?: string
-  onChange?: (e: MouseEvent | KeyboardEvent) => void
-}
+declare const BaseControl: RefForwardingFC<PropsWithChildren<BaseControlProps>>
 
 export interface ControlLabelProps {
   label?: string
@@ -182,9 +175,10 @@ export interface ControlLabelProps {
 
 export interface ToggleControlProps
   extends BaseControlProps,
-    ValueControlProps,
     ControlLabelProps {
   alignLabel?: 'left' | 'right'
+  value?: string
+  onChange?: (e: MouseEvent | KeyboardEvent) => void
 }
 
 declare const ToggleControl: FC<PropsWithChildren<ToggleControlProps>>
@@ -197,10 +191,31 @@ export interface ButtonProps extends BaseControlProps {
 
 declare const Button: RefForwardingFC<PropsWithChildren<ButtonProps>>
 
-export interface TextControlProps
-  extends BaseControlProps,
-    ValueControlProps,
-    ControlLabelProps {
+export interface TextInputProps extends TextProps {
+  value: Partial<Text>
+  onChange: (value: Text) => void
+  multiline?: boolean
+  active?: boolean
+  concatCss?: InterpolationWithTheme<any>
+  readonly?: boolean
+  autoFocus?: boolean
+}
+
+declare const TextInput: RefForwardingFC<TextInputProps>
+
+export interface RichTextInputProps {
+  value: Partial<Text>
+  onChange: (value: Text) => void
+  multiline?: boolean
+  active?: boolean
+  concatCss?: InterpolationWithTheme<any>
+  onFocus?: () => void
+  onBlur?: () => void
+}
+
+declare const RichTextInput: RefForwardingFC<TextInputProps>
+
+export interface TextControlProps extends BaseControlProps, ControlLabelProps {
   labelColor?: string
   activeLabelColor?: string
   labelVariant?: string

@@ -41,7 +41,7 @@ const DraggableBox = ({ name, dark }: { name: string; dark?: boolean }) => (
   </BaseControl>
 )
 
-export const SimpleDragAndDropSystem = () => (
+export const DragAndDropSystem = () => (
   <Grid>
     <View>
       <List

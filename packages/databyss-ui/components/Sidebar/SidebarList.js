@@ -1,20 +1,26 @@
 import React from 'react'
-import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useNavigationContext } from '@databyss-org/ui/components'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import TopicsSvg from '@databyss-org/ui/assets/topics.svg'
+import AuthorSvg from '@databyss-org/ui/assets/author.svg'
+import SourceSvg from '@databyss-org/ui/assets/source.svg'
+import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import { ScrollView, Icon, List } from '@databyss-org/ui/primitives'
 import { useLocation } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 
 const menuSvgs = (type) =>
   ({
-    pages: <PageSvg />,
+    page: <PageSvg />,
     sources: <SourcesSvg />,
+    source: <SourceSvg />,
+    author: <AuthorSvg />,
     authors: <AuthorsSvg />,
+    topic: <TopicSvg />,
     topics: <TopicsSvg />,
     archive: <ArchiveSvg />,
   }[type])
@@ -66,6 +72,9 @@ const SidebarList = ({
     return false
   }
 
+  const canDrag = (item) =>
+    item.type === 'page' && location.pathname.match(/\/collection\//)
+
   return (
     <ScrollView height={height} flexShrink={1} flexGrow={1} {...others}>
       <List
@@ -85,6 +94,7 @@ const SidebarList = ({
                 text={item.text}
                 href={getHref(item)}
                 key={`${item.type}-${index}`}
+                draggable={canDrag(item)}
                 icon={
                   <Icon
                     sizeVariant="tiny"

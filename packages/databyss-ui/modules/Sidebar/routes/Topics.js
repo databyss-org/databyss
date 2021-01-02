@@ -6,17 +6,15 @@ import {
   createSidebarListItems,
 } from '@databyss-org/services/entries/util'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
-import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 
 export const getTopicsData = (topics) =>
   Object.values(topics).map((value) =>
     createSidebarListItems({
       text: value.text.textValue,
-      type: 'topics',
+      type: 'topic',
       route: '/topics',
       id: value._id,
       params: value._id,
-      icon: <TopicSvg />,
     })
   )
 
