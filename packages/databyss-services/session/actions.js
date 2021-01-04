@@ -24,7 +24,9 @@ import {
   setAccountId,
   // getDefaultPageId,
   deleteAccountId,
-  setDefaultPageId,
+  // setDefaultPageId,
+  setCredentials,
+  deleteCredentials,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
@@ -101,7 +103,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       // authenticated
       setAuthToken(res.data.session.token)
       setAccountId(res.data.session.user.defaultGroupId)
-      setDefaultPageId(res.data.session.user.defaultPageId)
+      setCredentials(res.data.session.user.groups[0])
 
       // initialize a new user
       if (res.data.session.user.provisionClientDatabase) {
@@ -166,18 +168,30 @@ export const getUserAccount = () => async (dispatch) => {
   }
 }
 
-export const logout = () => (dispatch) => {
+export const logout = () => async (dispatch) => {
   deleteAuthToken()
   deleteAccountId()
+  deleteCredentials()
+
+  // deletes databases
+  const dbs = await window.indexedDB.databases()
+  dbs.forEach((db) => {
+    if (db.name.includes('_pouch_')) {
+      window.indexedDB.deleteDatabase(db.name)
+    }
+  })
+
   dispatch({ type: LOGOUT })
+  window.requestAnimationFrame(() => (window.location.href = '/'))
 }
 
 export const onSetDefaultPage = (id) =>
   // async (dispatch) =>
   {
+    console.log('SET DEFAULT PAGE', id)
     // TODO: THIS ONLY SETS THE DEFAULT PAGE LOCALLY. PAGE NEEDS TO BE CHANGED ON CLOUDANT AS WELL
     // default page will always be the same since it is recieveing it from the server
-    setDefaultPageId(id)
+    // setDefaultPageId(id)
     // httpPost(`/accounts/page/${id}`).then(() => {
     //   dispatch({
     //     type: SET_DEFAULT_PAGE,

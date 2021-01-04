@@ -7,6 +7,16 @@ export function setAuthToken(value) {
   localStorage.setItem('token', token)
 }
 
+export function setCredentials(group) {
+  localStorage.setItem('dbKey', group.dbKey)
+  localStorage.setItem('dbPassword', group.dbPassword)
+}
+
+export function deleteCredentials() {
+  localStorage.removeItem('dbKey')
+  localStorage.removeItem('dbPassword')
+}
+
 export function getAuthToken() {
   return localStorage.getItem('token')
 }
@@ -29,12 +39,4 @@ export function deleteAccountId() {
 
 export function setDefaultPageId(value) {
   localStorage.setItem('defaultPageId', value)
-}
-
-export function getDefaultPageId() {
-  return localStorage.getItem('defaultPageId')
-}
-
-export function deleteDefaultPageId() {
-  localStorage.removeItem('defaultPageId')
 }

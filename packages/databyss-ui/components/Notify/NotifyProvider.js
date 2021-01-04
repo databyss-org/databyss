@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import { Dialog, Button } from '@databyss-org/ui/primitives'
-import { ping } from '@databyss-org/services/lib/requestApi'
+//  import { ping } from '@databyss-org/services/lib/requestApi'
 import {
   NotAuthorizedError,
   NetworkUnavailableError,
@@ -11,10 +11,10 @@ import {
 import Bugsnag from '@bugsnag/js'
 import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import { formatComponentStack } from '@bugsnag/plugin-react'
-import { throttle } from 'lodash'
+//  import { throttle } from 'lodash'
 import IS_NATIVE from '../../lib/isNative'
 
-const CHECK_ONLINE_INTERVAL = 3000
+// const CHECK_ONLINE_INTERVAL = 3000
 
 const NotifyContext = createContext()
 
@@ -47,7 +47,7 @@ class NotifyProvider extends React.Component {
   constructor(props) {
     super(props)
     startBugsnag(props.options)
-    this.shouldCheckOnlineStatus = props.shouldCheckOnlineStatus
+    // this.shouldCheckOnlineStatus = props.shouldCheckOnlineStatus
 
     if (IS_NATIVE) {
       global.ErrorUtils.setGlobalHandler((error) => {
@@ -60,7 +60,7 @@ class NotifyProvider extends React.Component {
       window.addEventListener('online', () => this.setOnlineStatus(true))
       window.addEventListener('error', this.onUnhandledError)
       window.addEventListener('unhandledrejection', this.onUnhandledError)
-      window.addEventListener('focus', this.onWindowFocus)
+      // window.addEventListener('focus', this.onWindowFocus)
     }
   }
   state = {
@@ -106,16 +106,16 @@ class NotifyProvider extends React.Component {
       window.removeEventListener('online', this.setOnlineStatus)
       window.removeEventListener('error', this.onUnhandledError)
       window.removeEventListener('unhandledrejection', this.onUnhandledError)
-      window.removeEventListener('focus', this.onWindowFocus)
+      // window.removeEventListener('focus', this.onWindowFocus)
     }
   }
 
-  onWindowFocus = () => {
-    if (!this.shouldCheckOnlineStatus) {
-      return
-    }
-    ping().catch(this.onUnhandledError)
-  }
+  // onWindowFocus = () => {
+  //   if (!this.shouldCheckOnlineStatus) {
+  //     return
+  //   }
+  //   ping().catch(this.onUnhandledError)
+  // }
 
   onUnhandledError = (e) => {
     // HACK: ignore ResizeObserver loop limit errors, which are more like warnings
@@ -144,7 +144,7 @@ class NotifyProvider extends React.Component {
       this.state.isOnline
     ) {
       this.showOfflineMessage()
-      this.checkOnlineStatus()
+      // this.checkOnlineStatus()
     } else {
       this.showUnhandledErrorDialog()
     }
@@ -176,23 +176,23 @@ class NotifyProvider extends React.Component {
     }
   }
 
-  checkOnlineStatus = throttle(() => {
-    if (!this.shouldCheckOnlineStatus) {
-      return
-    }
-    if (!this.state.isOnline) {
-      ping(CHECK_ONLINE_INTERVAL)
-        .then(() => {
-          this.setState({
-            isOnline: true,
-            dialogVisible: false,
-          })
-        })
-        .catch(() => {
-          this.checkOnlineStatus()
-        })
-    }
-  }, 3000)
+  // checkOnlineStatus = throttle(() => {
+  //   if (!this.shouldCheckOnlineStatus) {
+  //     return
+  //   }
+  //   if (!this.state.isOnline) {
+  //     ping(CHECK_ONLINE_INTERVAL)
+  //       .then(() => {
+  //         this.setState({
+  //           isOnline: true,
+  //           dialogVisible: false,
+  //         })
+  //       })
+  //       .catch(() => {
+  //         this.checkOnlineStatus()
+  //       })
+  //   }
+  // }, 3000)
 
   notify = (message, _error, _html) => {
     this.setState({
@@ -259,7 +259,7 @@ class NotifyProvider extends React.Component {
 
 NotifyProvider.defaultProps = {
   options: {},
-  shouldCheckOnlineStatus: true,
+  // shouldCheckOnlineStatus: true,
 }
 
 export const useNotifyContext = () => useContext(NotifyContext)

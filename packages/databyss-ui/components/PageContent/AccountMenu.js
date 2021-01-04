@@ -35,7 +35,6 @@ const AccountMenu = () => {
     // TODO: THIS WILL DESTORY DATABASE ONLY ON LOGOUT CLICK
     db.destroy()
     logout()
-    window.requestAnimationFrame(() => (window.location.href = '/'))
   }
 
   return getAuthToken() ? (
