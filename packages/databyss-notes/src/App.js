@@ -1,4 +1,5 @@
 import React from 'react'
+import { Base64 } from 'js-base64'
 import SessionProvider from '@databyss-org/services/session/SessionProvider'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
@@ -11,6 +12,13 @@ import Private from './Private'
 const App = () => {
   const { location } = useNavigationContext()
   const urlParams = new URLSearchParams(location.search)
+  let email
+  let code
+  try {
+    ;[email, code] = JSON.parse(Base64.decode(urlParams.get('auth')))
+    console.log(email, code)
+    // eslint-disable-next-line no-empty
+  } catch (e) {}
   return (
     <NotifyProvider>
       <ServiceProvider>
@@ -18,8 +26,9 @@ const App = () => {
           <FirefoxWarning />
           <SessionProvider
             signUp={location.pathname === '/signup'}
-            code={urlParams.get('code')}
             unauthorizedChildren={<Public />}
+            email={email}
+            code={code}
           >
             <ReleaseNotes />
             <Private />
