@@ -98,7 +98,6 @@ router.post(
           session.user.provisionClientDatabase = true
         } else {
           // user already exists, generate new credentials
-
           const credentials = await addCredentialsToGroupId({
             groupId: session.user.defaultGroupId,
             userId: session.user._id,
@@ -108,6 +107,8 @@ router.post(
               ...credentials,
             },
           ]
+          // let client know to wait until replication is done
+          session.user.replicateClientDatabase = true
         }
 
         return res.json({ data: { session } })

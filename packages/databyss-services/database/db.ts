@@ -100,6 +100,35 @@ export const addTimeStamp = (oldDoc: any): any => {
   return { ...oldDoc, createdAt: Date.now() }
 }
 
+/*
+replicates remote DB to local
+*/
+
+export const replicateDbFromRemote = ({
+  dbKey,
+  dbPassword,
+  groupId,
+}: {
+  dbKey: string
+  dbPassword: string
+  groupId: string
+}) =>
+  new Promise((resolve, reject) => {
+    const opts = {
+      // live: true,
+      retry: true,
+      // continuous: true,
+      auth: {
+        username: dbKey,
+        password: dbPassword,
+      },
+    }
+    db.replicate
+      .from(`${REMOTE_URL}/g_${groupId}`, { ...opts })
+      .on('complete', () => resolve())
+      .on('error', (err) => reject(err))
+  })
+
 export const syncPouchDb = ({
   dbKey,
   dbPassword,
@@ -118,31 +147,18 @@ export const syncPouchDb = ({
       password: dbPassword,
     },
   }
-  // db.sync(`${REMOTE_URL}/g_${groupId}`)
 
-  console.log('OPTIONS', opts)
+  db.replicate.to(`${REMOTE_URL}/g_${groupId}`, {
+    ...opts,
+    // todo: add groupId to every document
+    // filter: (doc) => doc.groupId === groupId,
+  })
+  // .on('error', (err) => console.log(err))
+  // .on('change', (info) => console.log('changing TO', info))
+  // .on('complete', () => console.log('FINSIHED SYNCING TO'))
 
-  db.replicate
-    .to(`${REMOTE_URL}/g_${groupId}`, {
-      ...opts,
-      // todo: add groupId to every document
-      // filter: (doc) => doc.groupId === groupId,
-    })
-    .on('error', (err) => console.log(err))
-    // .on('change', () => console.log('changing TO'))
-    .on('complete', () => console.log('FINSIHED SYNCING TO'))
-
-  db.replicate
-    .from(`${REMOTE_URL}/g_${groupId}`, { ...opts })
-    .on('complete', () => console.log('FINSIHED SYNCING FROM'))
-    // .on('change', () => console.log('changing FROM'))
-    .on('error', (err) => console.log(err))
+  db.replicate.from(`${REMOTE_URL}/g_${groupId}`, { ...opts })
+  // .on('complete', () => console.log('FINSIHED SYNCING FROM'))
+  // .on('change', (info) => console.log('changing FROM', info))
+  // .on('error', (err) => console.log(err))
 }
-
-// db.changes({
-//   since: 'now',
-//   live: true,
-//   include_docs: true,
-// }).on('change', (change) => {
-//   console.log('DATABASE.CHANGE', change)
-// })

@@ -30,7 +30,7 @@ import {
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
-import { syncPouchDb } from '../database/db'
+import { syncPouchDb, replicateDbFromRemote } from '../database/db'
 
 export const fetchSession = ({ _request, ...credentials }) => async (
   dispatch
@@ -99,10 +99,8 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       }
     }
 
-    console.log('PATH', path)
     const res = await _request(path, options, true)
 
-    console.log('FETCH_SESSION', res)
     if (res.data && res.data.session) {
       // authenticated
       setAuthToken(res.data.session.token)
@@ -114,6 +112,16 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         const _page = new PageConstructor(res.data.session.user.defaultPageId)
         // adds page to database
         await _page.addPage()
+      }
+
+      /*
+      if logging into an existing account, wait for database replication to complete before continuing
+      */
+      if (res.data.session.user.replicateClientDatabase) {
+        await replicateDbFromRemote({
+          ...res.data.session.user.groups[0],
+          groupId: res.data.session.user.defaultGroupId,
+        })
       }
 
       // sync database
