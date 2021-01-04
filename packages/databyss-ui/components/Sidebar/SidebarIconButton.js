@@ -61,6 +61,7 @@ const SidebarIconButton = ({
   onClick,
   title,
   seperatorTop,
+  useSvgColors,
   ...others
 }) => (
   <>
@@ -78,6 +79,7 @@ const SidebarIconButton = ({
           sizeVariant="medium"
           color={getIconColor(isActive, isBottomNav)}
           title={title}
+          useSvgColors={useSvgColors}
         >
           {icon}
         </Icon>

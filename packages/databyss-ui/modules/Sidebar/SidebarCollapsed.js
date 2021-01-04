@@ -5,7 +5,7 @@ import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
-import MenuSvg from '@databyss-org/ui/assets/menu.svg'
+import GroupsSvg from '@databyss-org/ui/assets/logo-thick.svg'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
@@ -51,10 +51,11 @@ const SidebarCollapsed = () => {
 
   const sideBarCollapsedItems = [
     {
-      name: 'menuCollapse',
-      title: 'Collapse menu',
-      icon: <MenuSvg />,
-      onClick: () => setMenuOpen(!isMenuOpen),
+      name: 'groups',
+      title: 'Databyss Groups',
+      icon: <GroupsSvg />,
+      iconUsesSvgColors: true,
+      onClick: () => onItemClick('groups'),
     },
     {
       name: 'search',
@@ -110,6 +111,7 @@ const SidebarCollapsed = () => {
       >
         {sideBarCollapsedItems.map((item, i) => (
           <SidebarIconButton
+            useSvgColors={item.iconUsesSvgColors}
             name={item.name}
             key={item.name}
             title={item.title}
