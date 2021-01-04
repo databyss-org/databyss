@@ -30,6 +30,7 @@ import {
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
+import { syncPouchDb } from '../database/db'
 
 export const fetchSession = ({ _request, ...credentials }) => async (
   dispatch
@@ -98,7 +99,10 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       }
     }
 
+    console.log('PATH', path)
     const res = await _request(path, options, true)
+
+    console.log('FETCH_SESSION', res)
     if (res.data && res.data.session) {
       // authenticated
       setAuthToken(res.data.session.token)
@@ -107,13 +111,16 @@ export const fetchSession = ({ _request, ...credentials }) => async (
 
       // initialize a new user
       if (res.data.session.user.provisionClientDatabase) {
-        // TODO: HOW DOES NEW PAGE GET INITIATED
         const _page = new PageConstructor(res.data.session.user.defaultPageId)
         // adds page to database
         await _page.addPage()
-        // TODO: how to use navigation provider here
-        //    window.location.href = '/'
       }
+
+      // sync database
+      syncPouchDb({
+        ...res.data.session.user.groups[0],
+        groupId: res.data.session.user.defaultGroupId,
+      })
 
       dispatch({
         type: CACHE_SESSION,

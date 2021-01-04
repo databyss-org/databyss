@@ -41,7 +41,7 @@ const setSecurity = (groupId: string): Promise<CredentialResponse> =>
 
       const security: { [key: string]: string[] } = {}
       // define permissions
-      security[api.key] = ['_reader', '_writer']
+      security[api.key] = ['_reader', '_writer', '_replicator']
 
       // TODO: fix this so its not 'any'
       const groupDb: any = cloudant.db.use(`g_${groupId}`)
@@ -74,6 +74,24 @@ const addSessionToGroup = async (
   })
 }
 
+/*
+generates credentials for given groupID with given user
+*/
+
+export const addCredentialsToGroupId = async ({
+  groupId,
+  userId,
+}: {
+  groupId: string
+  userId: string
+}) => {
+  const response = await setSecurity(groupId)
+  // add the user session to groups
+  await addSessionToGroup(userId, response)
+
+  return response
+}
+
 export const createUserDatabaseCredentials = async (
   user: User
 ): Promise<CredentialResponse> => {
@@ -82,10 +100,14 @@ export const createUserDatabaseCredentials = async (
   // creates a database if not yet defined
   await createGroupDatabase(_groupId)
 
-  const response = await setSecurity(_groupId)
+  const response = await addCredentialsToGroupId({
+    groupId: _groupId,
+    userId: user._id,
+  })
+  // const response = await setSecurity(_groupId)
 
-  // add the user session to groups
-  await addSessionToGroup(user._id, response)
+  // // add the user session to groups
+  // await addSessionToGroup(user._id, response)
 
   return response
 }
@@ -96,6 +118,7 @@ export const addCredentialsToUser = async (
 ): Promise<User> => {
   const _res = await Users.upsert(userId, (oldDoc: User) => {
     const _groups = oldDoc.groups || []
+
     _groups.push({ groupId: credentials.groupId, role: Role.GroupAdmin })
 
     const _defaultPageId = new ObjectId().toHexString()

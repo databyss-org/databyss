@@ -6,6 +6,7 @@ import wrap from '../../lib/guardedAsync'
 import {
   createUserDatabaseCredentials,
   addCredentialsToUser,
+  addCredentialsToGroupId,
 } from '../../lib/createUserDatabase'
 
 const router = express.Router()
@@ -17,6 +18,21 @@ router.post('/', auth, async (req, res) => {
   try {
     if (req?.user) {
       const session = await getSessionFromUserId(req.user.id)
+
+      // TODO: on every re-login attempt we are creating new user credentials, should this happen on the back end or should the user save the credentials in their offline database?
+      let credentials
+      if (session.user.defaultGroupId && session.user._id) {
+        credentials = await addCredentialsToGroupId({
+          groupId: session.user.defaultGroupId,
+          userId: session.user._id,
+        })
+      }
+      session.user.groups = [
+        {
+          ...credentials,
+        },
+      ]
+
       return res.json({ data: { session } })
     }
     return res
@@ -80,6 +96,18 @@ router.post(
           session.user.defaultGroupId = _user.defaultGroupId
           // init a new user
           session.user.provisionClientDatabase = true
+        } else {
+          // user already exists, generate new credentials
+
+          const credentials = await addCredentialsToGroupId({
+            groupId: session.user.defaultGroupId,
+            userId: session.user._id,
+          })
+          session.user.groups = [
+            {
+              ...credentials,
+            },
+          ]
         }
 
         return res.json({ data: { session } })

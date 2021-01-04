@@ -4,6 +4,8 @@ import PouchDBFind from 'pouchdb-find'
 import PouchDBUpsert from 'pouchdb-upsert'
 import PouchDbQuickSearch from 'pouchdb-quick-search'
 
+const REMOTE_URL = `https://9cd55e3f-315b-420d-aa03-418d20aae3dd-bluemix.cloudantnosqldb.appdomain.cloud`
+
 // add plugins
 PouchDB.plugin(PouchDbQuickSearch)
 
@@ -17,21 +19,6 @@ db.search({
   fields: ['text.textValue'],
   build: true,
 })
-
-// db.createIndex({
-//   index: {
-//     fields: [
-//       '_id',
-//       'blocks',
-//       '$type',
-//       'type',
-//       'relatedBlock',
-//       'page',
-//       'block',
-//       'relationshipType',
-//     ],
-//   },
-// })
 
 db.createIndex({
   index: {
@@ -112,6 +99,46 @@ export const addTimeStamp = (oldDoc: any): any => {
   }
   return { ...oldDoc, createdAt: Date.now() }
 }
+
+export const syncPouchDb = ({
+  dbKey,
+  dbPassword,
+  groupId,
+}: {
+  dbKey: string
+  dbPassword: string
+  groupId: string
+}) => {
+  const opts = {
+    live: true,
+    retry: true,
+    continuous: true,
+    auth: {
+      username: dbKey,
+      password: dbPassword,
+    },
+  }
+  // db.sync(`${REMOTE_URL}/g_${groupId}`)
+
+  console.log('OPTIONS', opts)
+
+  db.replicate
+    .to(`${REMOTE_URL}/g_${groupId}`, {
+      ...opts,
+      // todo: add groupId to every document
+      // filter: (doc) => doc.groupId === groupId,
+    })
+    .on('error', (err) => console.log(err))
+    // .on('change', () => console.log('changing TO'))
+    .on('complete', () => console.log('FINSIHED SYNCING TO'))
+
+  db.replicate
+    .from(`${REMOTE_URL}/g_${groupId}`, { ...opts })
+    .on('complete', () => console.log('FINSIHED SYNCING FROM'))
+    // .on('change', () => console.log('changing FROM'))
+    .on('error', (err) => console.log(err))
+}
+
 // db.changes({
 //   since: 'now',
 //   live: true,
