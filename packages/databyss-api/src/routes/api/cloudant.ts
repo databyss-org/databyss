@@ -1,6 +1,5 @@
 import express from 'express'
 import { cloudant } from '@databyss-org/services/lib/cloudant'
-import { wrap } from 'lodash'
 
 const router = express.Router()
 
