@@ -13,12 +13,12 @@ router.delete('/', async (req, res) => {
   // console.log(_dbs)
   if (_dbs.length) {
     for (const _db of _dbs) {
-      if (_db.substring(0, 2) === 'g_') {
-        await cloudant.db.destroy(_db)
-        // dont exceed cloudant rate limit
-        await sleep(50)
-        console.log(`destroyed - ${_db}`)
-      }
+      // if (_db.substring(0, 2) === 'g_') {
+      await cloudant.db.destroy(_db)
+      // dont exceed cloudant rate limit
+      await sleep(50)
+      console.log(`destroyed - ${_db}`)
+      // }
     }
   }
 

@@ -1,0 +1,10 @@
+function(newDoc) {
+  if (newDoc['_deleted']) return;
+  var tv4 = require('libs/tv4');
+
+
+ tv4.addSchema('text', this.textSchema);
+  if (!tv4.validate(newDoc, this.sourceSchema, false, true)) {
+    throw({forbidden: tv4.error.message + ' -> ' + tv4.error.dataPath + '/ / ' + JSON.stringify(newDoc)});
+  }
+}

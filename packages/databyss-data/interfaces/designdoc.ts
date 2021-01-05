@@ -8,5 +8,7 @@ export interface DesignDoc {
   _id: string
   validate_doc_update: string
   libs: DesignDocLibs
-  schema: string
+  schema?: string
+  sourceSchema?: string
+  textSchema?: string
 }

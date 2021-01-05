@@ -2,6 +2,8 @@ import { cloudant } from '@databyss-org/services/lib/cloudant'
 import ObjectId from 'bson-objectid'
 import { Users, Groups } from '@databyss-org/data/serverdbs/index'
 import { User, Role } from '@databyss-org/data/interfaces'
+import { updateClientDesignDoc } from './couchdb'
+import { DesignDoc } from '../../../databyss-data/interfaces/designdoc'
 
 interface CredentialResponse {
   dbKey: string
@@ -25,6 +27,35 @@ const createGroupDatabase = async (id: string) => {
   } catch (err) {
     await cloudant.db.create(`g_${id}`)
   }
+
+  // await cloudant.db.get(`g_${id}`)
+
+  // _db = await cloudant.db.use<DesignDoc>(`g_${id}`)
+  // console.log('DATABASE CREATED')
+  // await updateClientDesignDoc(_db)
+  // setTimeout(async () => {
+  //   console.log('TESTING DOC')
+  //   await _db.upsert('test', () => ({
+  //     _id: 'test',
+  //     old: true,
+  //   }))
+  //   console.log('AFTER TESTING')
+  //   await _db.upsert('test', () => ({
+  //     _id: 'test',
+  //     old: false,
+  //   }))
+  //   console.log('AFTER update')
+  //   await Groups.upsert('test', () => ({
+  //     id: 'test',
+  //     dummy: true,
+  //   }))
+  //   await _db.insert({
+  //     _id: 'newTest',
+  //     name: `test`,
+  //   })
+
+  //   console.log('AFTER INSERT')
+  // }, 10000)
 }
 
 const setSecurity = (groupId: string): Promise<CredentialResponse> =>
