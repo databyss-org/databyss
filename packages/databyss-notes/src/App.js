@@ -16,7 +16,6 @@ const App = () => {
   let code
   try {
     ;[email, code] = JSON.parse(Base64.decode(urlParams.get('auth')))
-    console.log(email, code)
     // eslint-disable-next-line no-empty
   } catch (e) {}
   return (
