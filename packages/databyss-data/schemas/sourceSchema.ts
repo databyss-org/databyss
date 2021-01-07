@@ -50,6 +50,14 @@ export const sourceSchema: JSONSchema4 = {
             },
           },
         },
+        publisher: {
+          type: 'string',
+        },
+        issn: {
+          $ref: 'text',
+        },
+        // TODO: THIS SHOULD MATCH BLOCK SOURCE SCHEMA
+        // editors, translators, citations, title, journaltype, chapterTitle, publicationDate, publisherName, PublisherPlace, year, month, volume, issue, yearPublished, page, isbn, doi, issn, url
       },
     },
     title: {

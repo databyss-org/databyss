@@ -15,6 +15,7 @@ export const setSource = async (data: Source) => {
   await db.upsert(_id, (oldDoc) => {
     const _source = oldDoc
     Object.assign(_source, blockFields)
+    console.log('SOURCE', _source)
     return addTimeStamp(_source)
   })
 }

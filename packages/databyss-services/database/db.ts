@@ -4,9 +4,17 @@ import PouchDBFind from 'pouchdb-find'
 import PouchDBUpsert from 'pouchdb-upsert'
 import PouchDbQuickSearch from 'pouchdb-quick-search'
 import PouchDBTransform from 'transform-pouch'
-import { sourceSchema, textSchema } from '@databyss-org/data/schemas'
+import {
+  // sourceSchema,
+  blockRelationSchema,
+  selectionSchema,
+  pageSchema,
+  textSchema,
+  entrySchema,
+} from '@databyss-org/data/schemas'
 import tv4 from 'tv4'
 import { BlockType, DocumentType } from '../interfaces/Block'
+import { JSONSchema4 } from 'json-schema'
 
 const REMOTE_URL = `https://9cd55e3f-315b-420d-aa03-418d20aae3dd-bluemix.cloudantnosqldb.appdomain.cloud/`
 
@@ -166,41 +174,29 @@ export const syncPouchDb = ({
 
 // pouchDB validator
 
-const _validatorSchemas = [BlockType.Source, sourceSchema]
+const _validatorSchemas: Array<[BlockType | DocumentType, JSONSchema4]> = [
+  // [BlockType.Source, sourceSchema],
+  [BlockType.Entry, entrySchema],
+  [DocumentType.Page, pageSchema],
+  [DocumentType.Selection, selectionSchema],
+  [DocumentType.BlockRelation, blockRelationSchema],
+]
 
 tv4.addSchema('text', textSchema)
 
 db.transform({
   outgoing: (doc) => {
-    // _validatorSchemas.forEach((s) => {
-    //   if (doc.type === s[0]) {
-    //     if (!tv4.validate(doc, s[1], false, true)) {
-    //       console.error(`${s[1].title} - ${tv4.error.message}`)
-    //     }
-    //   }
-    // })
-    if (doc.type === BlockType.Source) {
-      if (!tv4.validate(doc, sourceSchema, false, true)) {
-        console.error(
-          `${sourceSchema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
-        )
+    _validatorSchemas.forEach((s) => {
+      if (doc.type === s[0] || doc.$type === s[0]) {
+        if (!tv4.validate(doc, s[1], false, true)) {
+          console.log('DOCUMENT', doc)
+          console.error(
+            `${s[1].title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+          )
+        }
       }
-    }
-    // if (doc.type === BlockType.Entry) {
-    //   if (!tv4.validate(doc, entrySchema)) {
-    //     console.error(tv4.error.message)
-    //   }
-    // }
-    // if (doc.type === DocumentType.Page) {
-    //   if (!tv4.validate(doc, pageSchema)) {
-    //     console.error(tv4.error.message)
-    //   }
-    // }
-    // if (doc.type === DocumentType.Selection) {
-    //   if (!tv4.validate(doc, selectionSchema)) {
-    //     console.error(tv4.error.message)
-    //   }
-    // }
+    })
+
     // if (doc.type === DocumentType.BlockRelation) {
     //   if (!tv4.validate(doc, blockRelationsSchema)) {
     //     console.error(tv4.error.message)
