@@ -1,7 +1,7 @@
 import * as PouchDB from 'pouchdb-browser'
 import { Patch } from 'immer'
 import ObjectId from 'bson-objectid'
-import { DbPage } from '../interfaces'
+import { PageDoc } from '../interfaces'
 import { db, addTimeStamp } from '../db'
 import { Block, BlockType, DocumentType } from '../../interfaces'
 import { Selection } from '../../interfaces/Selection'
@@ -139,7 +139,7 @@ const removePatches = async (p, page) => {
   }
 }
 
-export const runPatches = async (p: Patch, page: DbPage) => {
+export const runPatches = async (p: Patch, page: PageDoc) => {
   switch (p.op) {
     case 'replace': {
       await replacePatch(p, page)

@@ -3,7 +3,7 @@ const fetch = require('node-fetch')
 
 module.exports = async function globalSetup() {
   if (!process.env.LOCAL_ENV) {
-    await fetch(`${process.env.API_URL}/cloudant`, {
+    await fetch(`http://localhost:5000/api/cloudant`, {
       method: 'DELETE',
     })
     console.log('cloudant has been cleared')

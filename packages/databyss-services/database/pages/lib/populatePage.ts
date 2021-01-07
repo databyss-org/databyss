@@ -1,5 +1,5 @@
 import { Page } from '../../../interfaces/Page'
-import { DbPage } from '../../interfaces'
+import { PageDoc } from '../../interfaces'
 import { Selection, DocumentType, Block } from '../../../interfaces'
 import { db } from '../../db'
 import { getAtomicClosureText } from '../util'
@@ -20,7 +20,7 @@ const populatePage = async (
   if (!_response.docs.length) {
     return new ResourceNotFoundError('page not found')
   }
-  const _page: DbPage = _response.docs[0]
+  const _page: PageDoc = _response.docs[0]
   // load selection
   const _selection: Selection = await db.get(_page.selection)
 

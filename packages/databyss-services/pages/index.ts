@@ -5,10 +5,8 @@ import {
   PageHeader,
   ResourceNotFoundError,
 } from '../interfaces'
-
-// packages/databyss-services/database/pages/index.ts
 import * as pouchDb from '../database/pages'
-import { DbPage } from '../database/interfaces'
+import { PageDoc } from '../database/interfaces'
 import { PageConstructor } from '../database/pages/util'
 // TODO: Add native versions of these
 
@@ -24,7 +22,7 @@ export const savePatchBatch = async (data: PatchBatch) =>
 export const loadPage = (_id: string): Promise<Page | ResourceNotFoundError> =>
   pouchDb.populatePage(_id)
 
-export const getAllPages = (): Promise<DbPage[] | ResourceNotFoundError> =>
+export const getAllPages = (): Promise<PageDoc[] | ResourceNotFoundError> =>
   pouchDb.fetchAllPages()
 
 export const deletePage = (id: string) => pouchDb.deletePage(id)

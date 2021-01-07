@@ -17,7 +17,6 @@ const getTopic = async (
 
   const _topic = _topicResponse.docs[0]
 
-  // const _topic: Topic = await db.get(_id)
   const isInPages: string[] = []
   // returns all pages where source id is found in element id
   const _response = await db.find({

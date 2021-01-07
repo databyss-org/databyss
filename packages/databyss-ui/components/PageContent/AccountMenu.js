@@ -32,8 +32,6 @@ const AccountMenu = () => {
   }
 
   const onLogout = () => {
-    // TODO: THIS WILL DESTORY DATABASE ONLY ON LOGOUT CLICK
-    db.destroy()
     logout()
   }
 

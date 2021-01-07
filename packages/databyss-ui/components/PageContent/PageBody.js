@@ -35,7 +35,6 @@ const PageBody = ({
   const pageState = useRef(null)
   const editorStateRef = useRef()
 
-  // debounce autosave occurs every SAVE_PAGE_THROTTLE ms when changes are happening
   const throttledAutosave = useCallback(
     debounce(({ nextState, patches }) => {
       const _patches = cleanupPatches(patches)

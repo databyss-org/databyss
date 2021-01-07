@@ -1,12 +1,12 @@
 import * as PouchDB from 'pouchdb-browser'
-import { DbPage } from '../../interfaces'
+import { PageDoc } from '../../interfaces'
 import { db } from '../../db'
 import { DocumentType } from '../../../interfaces/Block'
 import { ResourceNotFoundError } from '../../../interfaces/Errors'
 // import { asyncErrorHandler } from '../../util'
 
-const fetchAllPages = async (): Promise<DbPage[] | ResourceNotFoundError> => {
-  const _pages: PouchDB.Find.FindResponse<DbPage> = await db.find({
+const fetchAllPages = async (): Promise<PageDoc[] | ResourceNotFoundError> => {
+  const _pages: PouchDB.Find.FindResponse<PageDoc> = await db.find({
     selector: {
       $type: DocumentType.Page,
     },

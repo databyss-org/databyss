@@ -6,8 +6,6 @@ export const getAccountFromLocation = (): string | boolean => {
   if (accountId.length) {
     return accountId
   }
-  // if (mongoose.Types.ObjectId.isValid(accountId)) {
-  //   return accountId
-  // }
+
   return false
 }

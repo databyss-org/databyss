@@ -8,8 +8,7 @@ const initialState: EditorState = {
   operations: [],
   selection: {
     $type: DocumentType.Selection,
-    // TODO: IS THIS PLACEHOLDER NEEDED
-    _id: 'placeholder',
+    _id: '',
     anchor: {
       index: 0,
       offset: 0,

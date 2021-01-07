@@ -31,16 +31,9 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
       for (const relationship of blocksRelationArray) {
         const { block, relatedBlock, removeBlock } = relationship
         // get id of block
-        // const _blockRelationResults = await db.find({
-        //   selector: {
-        //     block,
-        //     relatedBlock,
-        //   },
-        // })
         // TODO: HOW DO WE GET THE BLOCK ID IN A MORE EFFICIENT WAY
         // will one block only ever have a relationship with another block?
         const _relationshipID = `${block}${relatedBlock}`
-        // const _blockRelation = _blockRelationResults.docs[0]
         if (removeBlock) {
           // get blockID
           await db.upsert(_relationshipID, () => ({ _deleted: true }))

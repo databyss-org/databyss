@@ -1,5 +1,4 @@
 import PouchDB from 'pouchdb-browser'
-// import PouchDB from 'pouchdb'
 import PouchDBFind from 'pouchdb-find'
 import PouchDBUpsert from 'pouchdb-upsert'
 import PouchDbQuickSearch from 'pouchdb-quick-search'
