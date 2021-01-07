@@ -148,17 +148,15 @@ export const syncPouchDb = ({
     },
   }
 
-  db.replicate.to(`${REMOTE_URL}/g_${groupId}`, {
-    ...opts,
-    // todo: add groupId to every document
-    // filter: (doc) => doc.groupId === groupId,
-  })
-  // .on('error', (err) => console.log(err))
-  // .on('change', (info) => console.log('changing TO', info))
-  // .on('complete', () => console.log('FINSIHED SYNCING TO'))
+  db.replicate
+    .to(`${REMOTE_URL}/g_${groupId}`, {
+      ...opts,
+      // todo: add groupId to every document
+      // filter: (doc) => doc.groupId === groupId,
+    })
+    .on('error', (err) => console.log(`REPLICATE.TO ERROR - ${err}`))
 
-  db.replicate.from(`${REMOTE_URL}/g_${groupId}`, { ...opts })
-  // .on('complete', () => console.log('FINSIHED SYNCING FROM'))
-  // .on('change', (info) => console.log('changing FROM', info))
-  // .on('error', (err) => console.log(err))
+  db.replicate
+    .from(`${REMOTE_URL}/g_${groupId}`, { ...opts })
+    .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
 }

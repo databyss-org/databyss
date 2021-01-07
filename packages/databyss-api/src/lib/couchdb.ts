@@ -25,7 +25,7 @@ export const updateClientDesignDoc = async (db: DocumentScope<DesignDoc>) => {
       .readFileSync(
         path.join(
           __dirname,
-          './_design_doc_includes/validate_doc_update.js.es5'
+          './_design_doc_includes/validate_client_doc_update.js.es5'
         )
       )
       .toString(),
@@ -34,9 +34,9 @@ export const updateClientDesignDoc = async (db: DocumentScope<DesignDoc>) => {
         .readFileSync(path.join(__dirname, './_design_doc_includes/tv4.js.es5'))
         .toString(),
     },
-    schema: JSON.stringify(loginSchema),
-    // sourceSchema: JSON.stringify(sourceSchema),
-    // textSchema: JSON.stringify(textSchema),
+    // schema: sourceSchema,
+    sourceSchema,
+    textSchema,
   }
 
   await db.upsert(_dd._id, () => _dd)
@@ -62,7 +62,7 @@ const updateDesignDoc = async (
         .readFileSync(path.join(__dirname, './_design_doc_includes/tv4.js.es5'))
         .toString(),
     },
-    schema: JSON.stringify(schema),
+    schema,
   }
   await db.upsert(_dd._id, () => _dd)
 }

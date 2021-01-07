@@ -27,6 +27,9 @@ export const userSchema: JSONSchema4 = {
     name: {
       type: 'string',
     },
+    defaultPageId: {
+      type: 'string',
+    },
     sessions: {
       type: 'array',
       items: {

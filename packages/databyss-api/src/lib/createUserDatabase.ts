@@ -16,7 +16,7 @@ interface CredentialResponse {
 export const createGroupId = async () => {
   // TODO: fix this so its not 'any'
   const Groups: any = cloudant.db.use('groups')
-  const group = await Groups.insert({ name: 'untitled' })
+  const group = await Groups.insert({ name: 'untitled', sessions: [] })
   return group.id
 }
 
@@ -26,36 +26,12 @@ const createGroupDatabase = async (id: string) => {
     await cloudant.db.get(`g_${id}`)
   } catch (err) {
     await cloudant.db.create(`g_${id}`)
+
+    const _db = await cloudant.db.use<DesignDoc>(`g_${id}`)
+
+    // add validation documents to group database
+    await updateClientDesignDoc(_db)
   }
-
-  // await cloudant.db.get(`g_${id}`)
-
-  // _db = await cloudant.db.use<DesignDoc>(`g_${id}`)
-  // console.log('DATABASE CREATED')
-  // await updateClientDesignDoc(_db)
-  // setTimeout(async () => {
-  //   console.log('TESTING DOC')
-  //   await _db.upsert('test', () => ({
-  //     _id: 'test',
-  //     old: true,
-  //   }))
-  //   console.log('AFTER TESTING')
-  //   await _db.upsert('test', () => ({
-  //     _id: 'test',
-  //     old: false,
-  //   }))
-  //   console.log('AFTER update')
-  //   await Groups.upsert('test', () => ({
-  //     id: 'test',
-  //     dummy: true,
-  //   }))
-  //   await _db.insert({
-  //     _id: 'newTest',
-  //     name: `test`,
-  //   })
-
-  //   console.log('AFTER INSERT')
-  // }, 10000)
 }
 
 const setSecurity = (groupId: string): Promise<CredentialResponse> =>

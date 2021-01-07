@@ -67,7 +67,7 @@ router.post(
       const _login = query.docs[0]
 
       // todo: change this back
-      if (_login.createdAt >= Date.now() - 36000000) {
+      if (_login.date >= Date.now() - 36000000) {
         const token = _login.token
         const _res = await Logins.get(_login._id, _login._rev)
         await Logins.destroy(_res._id, _res._rev)
