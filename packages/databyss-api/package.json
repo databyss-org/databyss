@@ -11,7 +11,8 @@
     "@databyss-org/data": "1.2.11",
     "@databyss-org/editor": "1.2.11",
     "@databyss-org/services": "1.2.11",
-    "imurmurhash": "^0.1.4"
+    "imurmurhash": "^0.1.4",
+    "node-fetch": "^2.6.1"
   },
   "dependencies": {
     "@bugsnag/plugin-express": "^7.3.5",
