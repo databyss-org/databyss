@@ -7,7 +7,7 @@ import { debounce } from 'lodash'
 
 import SidebarSearchResults from '../../../components/Sidebar/SidebarSearchResults'
 
-const Search = () => {
+const Search = (others) => {
   const {
     navigate,
     navigateSidebar,
@@ -101,6 +101,7 @@ const Search = () => {
         autoFocus={menuItem === 'search'}
         textColor={menuItem === 'search' ? 'text.2' : 'text.3'}
         ref={inputRef}
+        {...others}
       />
       {searchTerm && menuItem === 'search' ? (
         <SidebarSearchResults
@@ -109,6 +110,7 @@ const Search = () => {
           height="100%"
           inputRef={inputRef}
           searchHasFocus={hasFocus}
+          {...others}
         />
       ) : (
         menuItem === 'search' && (

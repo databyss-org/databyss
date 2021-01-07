@@ -50,6 +50,7 @@ const SidebarSearchResults = ({
   onSearch,
   inputRef,
   searchHasFocus,
+  ...others
 }) => (
   <SearchAllLoader filtered>
     {(results) => {
@@ -85,6 +86,7 @@ const SidebarSearchResults = ({
               inputRef.current.focus()
             }, 50)
           }}
+          {...others}
         >
           <FulltextSearchItem onPress={onSearch} />
         </SidebarList>

@@ -1,9 +1,5 @@
 import React from 'react'
-import {
-  sortEntriesAtoZ,
-  filterEntries,
-  createSidebarListItems,
-} from '@databyss-org/services/entries/util'
+import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import {
   AuthorsLoader,
   SourceCitationsLoader,
@@ -24,32 +20,22 @@ const sourcesOverview = [
 ]
 
 export const getSourceTitlesData = (sources) =>
-  Object.values(sources).map((value) =>
-    createSidebarListItems({
-      text: value.text.textValue,
-      type: 'source',
-      route: '/sources',
-      id: value._id,
-      params: value._id,
-    })
-  )
+  Object.values(sources).map((value) => ({
+    text: value.text.textValue,
+    type: 'source',
+    route: '/sources',
+    id: value._id,
+    params: value._id,
+  }))
 
-export const SourceTitles = ({ filterQuery, height }) => (
+export const SourceTitles = (others) => (
   <SourceCitationsLoader>
-    {(sources) => {
-      const sourceData = getSourceTitlesData(sources)
-      const sortedSources = sortEntriesAtoZ(sourceData, 'text')
-      const filteredEntries = filterEntries(sortedSources, filterQuery)
-
-      return (
-        <SidebarList
-          menuItems={[
-            ...(filterQuery.textValue === '' ? sortedSources : filteredEntries),
-          ]}
-          height={height}
-        />
-      )
-    }}
+    {(sources) => (
+      <SidebarList
+        menuItems={sortEntriesAtoZ(getSourceTitlesData(sources), 'text')}
+        {...others}
+      />
+    )}
   </SourceCitationsLoader>
 )
 
@@ -73,36 +59,28 @@ export const getAuthorData = (authors) =>
       lastName: encodeURIComponent(lastName || ''),
     })
 
-    return createSidebarListItems({
+    return {
       text: getShortAuthorName(),
       type: 'author',
       route: '/sources',
       params: authorParams.toString(),
-    })
+    }
   })
 
-const Authors = ({ filterQuery, hasIndexPage, height }) => (
+const Authors = ({ hasIndexPage, ...others }) => (
   <SourceCitationsLoader>
     {() => (
       <AuthorsLoader filtered>
-        {(authors) => {
-          const authorData = getAuthorData(authors)
-          const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
-          const filteredEntries = filterEntries(sortedAuthors, filterQuery)
-
-          return (
-            <SidebarList
-              query
-              menuItems={[
-                ...(hasIndexPage ? sourcesOverview : ''),
-                ...(filterQuery.textValue === ''
-                  ? sortedAuthors
-                  : filteredEntries),
-              ]}
-              height={height}
-            />
-          )
-        }}
+        {(authors) => (
+          <SidebarList
+            query
+            menuItems={[
+              ...(hasIndexPage ? sourcesOverview : ''),
+              ...sortEntriesAtoZ(getAuthorData(authors), 'text'),
+            ]}
+            {...others}
+          />
+        )}
       </AuthorsLoader>
     )}
   </SourceCitationsLoader>

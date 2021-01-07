@@ -128,7 +128,9 @@ declare const KeyboardNavigationProvider: FC<PropsWithChildren<
 
 export interface ListProps extends ViewProps, KeyboardNavigationProps {
   horizontalItemPadding?: ReactText
+  horizontalItemMargin?: ReactText
   verticalItemPadding?: ReactText
+  verticalItemMargin?: ReactText
   removeBorderRadius?: boolean
   keyboardNavigation?: boolean
 }

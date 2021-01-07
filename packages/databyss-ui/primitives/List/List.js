@@ -7,6 +7,8 @@ const List = ({
   children,
   horizontalItemPadding,
   verticalItemPadding,
+  horizontalItemMargin,
+  verticalItemMargin,
   removeBorderRadius,
   keyboardNavigation,
   keyboardEventsActive,
@@ -30,6 +32,8 @@ const List = ({
               : {}),
             px: horizontalItemPadding,
             py: verticalItemPadding,
+            mx: horizontalItemMargin,
+            my: verticalItemMargin,
             ...child.props,
           })
       )}
@@ -56,6 +60,8 @@ const List = ({
 List.defaultProps = {
   horizontalItemPadding: 'tiny',
   verticalItemPadding: 'tiny',
+  horizontalItemMargin: 0,
+  verticalItemMargin: 0,
   removeBorderRadius: true,
   keyboardNavigation: false,
   keyboardEventsActive: false,

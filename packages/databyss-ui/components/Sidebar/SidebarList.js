@@ -76,7 +76,14 @@ const SidebarList = ({
     item.type === 'page' && location.pathname.match(/\/collection\//)
 
   return (
-    <ScrollView height={height} flexShrink={1} flexGrow={1} {...others}>
+    <ScrollView
+      height={height}
+      flexShrink={1}
+      flexGrow={1}
+      {...others}
+      mb={0}
+      shadowOnScroll
+    >
       <List
         orderKey={orderKey}
         onActiveIndexChanged={onActiveIndexChanged}
@@ -84,6 +91,7 @@ const SidebarList = ({
         keyboardNavigation={keyboardNavigation}
         keyboardEventsActive={keyboardEventsActive}
         onItemSelected={onItemSelected}
+        py={0}
       >
         {children}
         {menuItems.map((item, index) => {
@@ -112,6 +120,10 @@ const SidebarList = ({
       </List>
     </ScrollView>
   )
+}
+
+SidebarList.defaultProps = {
+  height: '100%',
 }
 
 export default SidebarList

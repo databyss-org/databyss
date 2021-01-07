@@ -61,7 +61,7 @@ const SidebarIconButton = ({
   onClick,
   title,
   seperatorTop,
-  useSvgColors,
+  sizeVariant,
   ...others
 }) => (
   <>
@@ -76,10 +76,9 @@ const SidebarIconButton = ({
       <View bg="purple.2" css={getDotStyles(isActive, isBottomNav)} />
       <Grid singleRow css={getGridStyles(isBottomNav)}>
         <Icon
-          sizeVariant="medium"
+          sizeVariant={sizeVariant}
           color={getIconColor(isActive, isBottomNav)}
           title={title}
-          useSvgColors={useSvgColors}
         >
           {icon}
         </Icon>
@@ -87,5 +86,9 @@ const SidebarIconButton = ({
     </BaseControl>
   </>
 )
+
+SidebarIconButton.defaultProps = {
+  sizeVariant: 'medium',
+}
 
 export default SidebarIconButton

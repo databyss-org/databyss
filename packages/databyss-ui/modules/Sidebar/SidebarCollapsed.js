@@ -5,8 +5,8 @@ import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
-import GroupsSvg from '@databyss-org/ui/assets/logo-thick.svg'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
+import GroupsImg from '@databyss-org/ui/assets/logo-thick.png'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
@@ -52,9 +52,9 @@ const SidebarCollapsed = () => {
   const sideBarCollapsedItems = [
     {
       name: 'groups',
-      title: 'Databyss Groups',
-      icon: <GroupsSvg />,
-      iconUsesSvgColors: true,
+      title: 'Collections',
+      icon: <img src={GroupsImg} />,
+      sizeVariant: 'large',
       onClick: () => onItemClick('groups'),
     },
     {
@@ -111,7 +111,6 @@ const SidebarCollapsed = () => {
       >
         {sideBarCollapsedItems.map((item, i) => (
           <SidebarIconButton
-            useSvgColors={item.iconUsesSvgColors}
             name={item.name}
             key={item.name}
             title={item.title}

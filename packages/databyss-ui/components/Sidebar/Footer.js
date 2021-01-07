@@ -52,7 +52,7 @@ const Footer = ({ collapsed }) => {
         <Grid singleRow alignItems="center" columnGap="small">
           {collapsed ? (
             <View p="extraSmall">
-              <Icon sizeVariant="medium" color="text.2">
+              <Icon sizeVariant="medium" color="text.2" title="New Page">
                 <AddPageSvg />
               </Icon>
             </View>
