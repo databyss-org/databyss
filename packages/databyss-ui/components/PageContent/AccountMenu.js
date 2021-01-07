@@ -6,7 +6,6 @@ import {
   Separator,
   pxUnits,
 } from '@databyss-org/ui/primitives'
-import { db } from '@databyss-org/services/database/db'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import LogoutSvg from '@databyss-org/ui/assets/log-out.svg'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
