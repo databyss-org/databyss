@@ -77,7 +77,7 @@ const addOrReplaceBlock = async (p, page) => {
     }
     // initiate new block
     await db.upsert(_blockId, () => ({
-      ...addTimeStamp(_block),
+      ...addTimeStamp({ ..._block, page: page._id }),
     }))
   }
 

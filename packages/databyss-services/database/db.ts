@@ -13,8 +13,8 @@ import {
   entrySchema,
 } from '@databyss-org/data/schemas'
 import tv4 from 'tv4'
-import { BlockType, DocumentType } from '../interfaces/Block'
 import { JSONSchema4 } from 'json-schema'
+import { BlockType, DocumentType } from '../interfaces/Block'
 
 const REMOTE_URL = `https://9cd55e3f-315b-420d-aa03-418d20aae3dd-bluemix.cloudantnosqldb.appdomain.cloud/`
 
@@ -196,13 +196,6 @@ db.transform({
         }
       }
     })
-
-    // if (doc.type === DocumentType.BlockRelation) {
-    //   if (!tv4.validate(doc, blockRelationsSchema)) {
-    //     console.error(tv4.error.message)
-    //   }
-    // }
-    // do something to the document after retrieval
     return doc
   },
 })

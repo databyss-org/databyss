@@ -43,6 +43,10 @@ declare namespace PouchDB {
   interface Database<Content extends {} = {}> {
     search(query: SearchQuery<Content>): SearchResponse<Content>
   }
+
+  interface Database {
+    transform: any
+  }
 }
 
 declare module 'pouchdb-quick-search' {
