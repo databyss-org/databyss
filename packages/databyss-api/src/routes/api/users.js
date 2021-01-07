@@ -7,9 +7,6 @@ import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
 import { Users, Logins, Groups } from '@databyss-org/data/serverdbs'
 import { send } from '../../lib/sendgrid'
-// import User from '../../models/User'
-// import Account from '../../models/Account'
-// import Login from '../../models/Login'
 import { getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
 
@@ -59,25 +56,14 @@ router.post(
       }
       let user = await Users.find(_selector)
 
-      // let user = await Users.get({ googleId: sub })
-
-      // let user = await User.findOne({ googleId: sub })
       if (!user) {
         user = await Users.insert({
           name,
           email,
           googleId: sub,
         })
-        // user = await User.create({
-        //   name,
-        //   email,
-        //   googleId: sub,
-        // })
       }
-      // const session = await getSessionFromUserId(user.id)
       res.json({ data: { user } }).status(200)
-
-      //   res.json({ data: { session } })
     })
   })
 )
@@ -104,7 +90,6 @@ router.post(
         email: { $eq: email },
       },
     }
-    // todo: use users.get({})
     let user = await Users.find(_selector)
 
     if (!user.docs.length) {

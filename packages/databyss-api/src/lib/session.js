@@ -22,8 +22,6 @@ export const getSessionFromUserId = async (userId) => {
     throw new Error('Bad userId')
   }
 
-  // TODO: account will become group
-  // const account = await Account.findOne({ _id: user.defaultAccount })
   const token = await getTokenFromUserId(userId)
   return {
     token,

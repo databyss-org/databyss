@@ -50,7 +50,7 @@ const setSecurity = (groupId: string): Promise<CredentialResponse> =>
       // define permissions
       security[api.key] = ['_reader', '_writer', '_replicator']
 
-      // TODO: fix this so its not 'any'
+      // TODO: use group schema to create typescript interface
       const groupDb: any = cloudant.db.use(`g_${groupId}`)
 
       await groupDb.set_security(security, (err: any) => {
@@ -84,7 +84,6 @@ const addSessionToGroup = async (
 /*
 generates credentials for given groupID with given user
 */
-
 export const addCredentialsToGroupId = async ({
   groupId,
   userId,
@@ -111,10 +110,6 @@ export const createUserDatabaseCredentials = async (
     groupId: _groupId,
     userId: user._id,
   })
-  // const response = await setSecurity(_groupId)
-
-  // // add the user session to groups
-  // await addSessionToGroup(user._id, response)
 
   return response
 }

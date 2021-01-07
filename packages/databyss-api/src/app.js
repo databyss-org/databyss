@@ -14,8 +14,6 @@ import usersRoute from './routes/api/users'
 import authRoute from './routes/api/auth'
 import pagesRoute from './routes/api/pages'
 import accountsRoute from './routes/api/accounts'
-// TODO: REMOVE ROUTE AS WELL
-// import pingRoute from './routes/api/ping'
 import cloudantRoute from './routes/api/cloudant'
 
 import versionRoute from './routes/api/version'
@@ -82,7 +80,6 @@ const run = async () => {
   app.use('/api/auth', versionChecker, authRoute)
   app.use('/api/pages', versionChecker, pagesRoute)
   app.use('/api/accounts', versionChecker, accountsRoute)
-  // app.use('/api/ping', versionChecker, pingRoute)
   app.use('/api/cloudant', cloudantRoute)
 
   app.use('/api/entries', versionChecker, entriesRoute)

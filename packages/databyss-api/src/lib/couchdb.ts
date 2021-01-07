@@ -34,7 +34,7 @@ export const updateClientDesignDoc = async (db: DocumentScope<DesignDoc>) => {
         .readFileSync(path.join(__dirname, './_design_doc_includes/tv4.js.es5'))
         .toString(),
     },
-    // schema: sourceSchema,
+    // TODO: this should be a map function iterating over all the schemas
     sourceSchema,
     textSchema,
   }
