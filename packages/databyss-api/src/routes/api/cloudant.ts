@@ -9,16 +9,16 @@ export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 // @desc     delete all user database, for use in tests only
 // @access   private
 router.delete('/', async (req, res) => {
-  const _dbs = await cloudant.db.list()
-  // console.log(_dbs)
-  if (_dbs.length) {
-    for (const _db of _dbs) {
-      // if (_db.substring(0, 2) === 'g_') {
-      await cloudant.db.destroy(_db)
-      // dont exceed cloudant rate limit
-      await sleep(50)
-      console.log(`destroyed - ${_db}`)
-      // }
+  if (process.env.NODE_ENV === 'test') {
+    const _dbs = await cloudant.db.list()
+    // console.log(_dbs)
+    if (_dbs.length) {
+      for (const _db of _dbs) {
+        await cloudant.db.destroy(_db)
+        // dont exceed cloudant rate limit
+        await sleep(50)
+        console.log(`destroyed - ${_db}`)
+      }
     }
   }
 
