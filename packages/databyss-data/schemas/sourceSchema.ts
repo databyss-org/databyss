@@ -55,6 +55,9 @@ export const sourceSchema: JSONSchema4 = {
     title: {
       $ref: 'text',
     },
+    createdAt: {
+      type: 'number',
+    },
   },
   required: ['_id', 'type', '$type', 'text'],
 }
