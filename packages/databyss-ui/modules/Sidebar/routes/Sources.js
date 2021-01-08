@@ -23,9 +23,7 @@ export const getSourceTitlesData = (sources) =>
   Object.values(sources).map((value) => ({
     text: value.text.textValue,
     type: 'source',
-    route: '/sources',
-    id: value._id,
-    params: value._id,
+    route: `/sources${value._id}`,
   }))
 
 export const SourceTitles = (others) => (
@@ -62,8 +60,7 @@ export const getAuthorData = (authors) =>
     return {
       text: getShortAuthorName(),
       type: 'author',
-      route: '/sources',
-      params: authorParams.toString(),
+      route: `/sources?${authorParams.toString()}`,
     }
   })
 

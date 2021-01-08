@@ -20,27 +20,45 @@ const List = ({
 }) => {
   const _render = (
     <View py={verticalItemPadding} {...others}>
-      {React.Children.map(
-        flattenChildren(children),
-        (child) =>
-          child &&
-          React.cloneElement(child, {
-            ...(removeBorderRadius
-              ? {
-                  borderRadius: 0,
-                }
-              : {}),
-            pl: horizontalItemPadding,
-            pr: horizontalItemPadding,
-            pt: verticalItemPadding,
-            pb: verticalItemPadding,
-            ml: horizontalItemMargin,
-            mr: horizontalItemMargin,
-            mt: verticalItemMargin,
-            mb: verticalItemMargin,
-            ...child.props,
-          })
-      )}
+      {React.Children.map(flattenChildren(children), (child) => {
+        if (!child) {
+          return false
+        }
+        // apply mx, my, px, py to correctly override
+        const childProps = Object.assign({}, child.props)
+        if (typeof childProps.mx !== 'undefined') {
+          childProps.ml = childProps.mx
+          childProps.mr = childProps.mx
+        }
+        if (typeof childProps.my !== 'undefined') {
+          childProps.mt = childProps.my
+          childProps.mb = childProps.my
+        }
+        if (typeof childProps.px !== 'undefined') {
+          childProps.pl = childProps.px
+          childProps.pr = childProps.px
+        }
+        if (typeof childProps.py !== 'undefined') {
+          childProps.pt = childProps.py
+          childProps.pb = childProps.py
+        }
+        return React.cloneElement(child, {
+          ...(removeBorderRadius
+            ? {
+                borderRadius: 0,
+              }
+            : {}),
+          pl: horizontalItemPadding,
+          pr: horizontalItemPadding,
+          pt: verticalItemPadding,
+          pb: verticalItemPadding,
+          ml: horizontalItemMargin,
+          mr: horizontalItemMargin,
+          mt: verticalItemMargin,
+          mb: verticalItemMargin,
+          ...childProps,
+        })
+      })}
     </View>
   )
 

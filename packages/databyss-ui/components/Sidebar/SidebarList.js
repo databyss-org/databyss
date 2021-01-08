@@ -29,7 +29,6 @@ const menuSvgs = (type) =>
 
 const SidebarList = ({
   menuItems,
-  query,
   height,
   children,
   orderKey,
@@ -40,38 +39,20 @@ const SidebarList = ({
   onItemSelected,
   ...others
 }) => {
-  const { getTokensFromPath, getAccountFromLocation } = useNavigationContext()
+  const { getAccountFromLocation } = useNavigationContext()
   const location = useLocation()
-  const tokens = getTokensFromPath()
+  const account = getAccountFromLocation()
 
-  const getHref = (item) => {
-    const routeWithAccount = `/${getAccountFromLocation()}${item.route}`
-    if (item.params) {
-      return `${routeWithAccount}${
-        query || item.type === 'authors' ? '?' : '/'
-      }${item.params}`
-    }
-    return `${routeWithAccount}`
-  }
+  const getHref = (item) => `/${account}${item.route}`
 
   const getActiveItem = (item) => {
     // if we're using keyboard navigation, that takes precedence
     if (keyboardNavigation && keyboardEventsActive) {
       return false
     }
-    // For authors the url structure changes to query parameters separated by '?'
-    if (location.search) {
-      return `?${item.params}` === location.search
-    }
-    // For topics, pages, and search, the url is separated by id or search param with a '/'
-    if (item.params) {
-      return item.params === tokens.params
-    }
-    // For index pages
-    if (!location.search) {
-      return item.route === location.pathname
-    }
-    return false
+    return getHref(item) === location.pathname + location.search
+      ? `?${location.search}`
+      : ''
   }
 
   const canDrag = (item) =>

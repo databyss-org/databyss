@@ -7,9 +7,7 @@ export const getTopicsData = (topics) =>
   Object.values(topics).map((value) => ({
     text: value.text.textValue,
     type: 'topic',
-    route: '/topics',
-    id: value._id,
-    params: value._id,
+    route: `/topics/${value._id}`,
   }))
 
 const Topics = (others) => (

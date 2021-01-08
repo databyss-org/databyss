@@ -9,9 +9,7 @@ export const getPagesData = (pages, archive) =>
     .map((p) => ({
       text: p.name,
       type: 'page',
-      route: '/pages',
-      id: p._id,
-      params: p._id,
+      route: `/pages/${p._id}`,
     }))
 
 const Pages = ({ archive, ...others }) => (

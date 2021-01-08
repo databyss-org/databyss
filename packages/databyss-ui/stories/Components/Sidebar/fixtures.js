@@ -235,17 +235,14 @@ export const collectionsItems = [
   {
     text: 'PHIL 103',
     type: 'group',
-    pageCount: 15,
   },
   {
     text: 'PHIL 103 shared',
     type: 'group',
-    pageCount: 4,
   },
   {
     text: 'Default (private)',
     type: 'group',
-    pageCount: 10,
     default: true,
   },
   {
@@ -253,8 +250,9 @@ export const collectionsItems = [
     type: 'heading',
   },
   {
-    text: 'Freud notes',
+    text: 'How to Write a Grant Proposal',
     type: 'page',
-    pageCount: 1,
+    route: '/pages/5fce38d147a60b37ec159f4f',
+    id: '5fce38d147a60b37ec159f4f',
   },
 ]
