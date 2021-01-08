@@ -1,4 +1,4 @@
-import * as pouchDb from '../database/entries'
+import * as pouchDb from '@databyss-org/data/database/entries'
 
 export const searchEntries = (data) => pouchDb.searchEntries(data)
 

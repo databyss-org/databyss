@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
+import { PageConstructor } from '@databyss-org/data/database/pages/util'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -13,7 +14,6 @@ import {
 } from '../interfaces'
 
 import * as actions from './actions'
-import { PageConstructor } from '../database/pages/util'
 
 interface PropsType {
   children: JSX.Element

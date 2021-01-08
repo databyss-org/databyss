@@ -1,10 +1,9 @@
+import * as pouchDb from '@databyss-org/data/database/sources'
+import { CitationResponse } from '@databyss-org/data/database/sources/lib/getSourceCitation'
 import { defaultCitationStyle } from '../citations/constants'
 import { httpDelete } from '../lib/requestApi'
 import { Source, Author, SourceCitationHeader } from '../interfaces'
 
-import * as pouchDb from '../database/sources'
-
-import { CitationResponse } from '../database/sources/lib/getSourceCitation'
 import { ResourceNotFoundError } from '../interfaces/Errors'
 
 // TODO: Add native versions of these

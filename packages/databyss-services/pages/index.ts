@@ -1,3 +1,6 @@
+import * as pouchDb from '@databyss-org/data/database/pages'
+import { PageDoc } from '@databyss-org/data/database/interfaces'
+import { PageConstructor } from '@databyss-org/data/database/pages/util'
 import { httpPost } from '../lib/requestApi'
 import {
   Page,
@@ -5,9 +8,6 @@ import {
   PageHeader,
   ResourceNotFoundError,
 } from '../interfaces'
-import * as pouchDb from '../database/pages'
-import { PageDoc } from '../database/interfaces'
-import { PageConstructor } from '../database/pages/util'
 // TODO: Add native versions of these
 
 // save page is used to rename page name

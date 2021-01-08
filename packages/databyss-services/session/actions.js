@@ -1,7 +1,11 @@
+import {
+  syncPouchDb,
+  replicateDbFromRemote,
+} from '@databyss-org/data/database/db'
+import { PageConstructor } from '@databyss-org/data/database/pages/util'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
 import { NotAuthorizedError } from '../interfaces'
-import { PageConstructor } from '../database/pages/util'
 import { version as databyssVersion } from '../package.json'
 import {
   FETCH_SESSION,
@@ -15,7 +19,6 @@ import {
   LOGOUT,
   // SET_DEFAULT_PAGE,
 } from './constants'
-
 import {
   setAuthToken,
   getAuthToken,
@@ -30,7 +33,6 @@ import {
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
-import { syncPouchDb, replicateDbFromRemote } from '../database/db'
 
 export const fetchSession = ({ _request, ...credentials }) => async (
   dispatch
