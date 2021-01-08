@@ -22,7 +22,7 @@ const SourcesCitations = () => {
               <meta charSet="utf-8" />
               <title>{_header}</title>
             </Helmet>
-            <PagesLoader filtered>
+            <PagesLoader>
               {() => (
                 <BlockRelationsLoader atomicId={query}>
                   {(relations) => <IndexSourceContent relations={relations} />}

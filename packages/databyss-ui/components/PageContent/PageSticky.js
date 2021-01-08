@@ -99,7 +99,9 @@ const PageSticky = ({ pagePath, pageId }) => {
         </Icon>
         <AccountMenu />
         <View ml="em">
-          <PagesLoader>{(pages) => <PageMenu pages={pages} />}</PagesLoader>
+          <PagesLoader includeArchived>
+            {(pages) => <PageMenu pages={pages} />}
+          </PagesLoader>
         </View>
       </View>
     </View>

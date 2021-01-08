@@ -81,6 +81,7 @@ const SidebarList = ({
       flexShrink={1}
       flexGrow={1}
       {...others}
+      mt="tiny"
       mb={0}
       shadowOnScroll
     >

@@ -3,9 +3,9 @@ import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 
-export const getPagesData = (pages) =>
+export const getPagesData = (pages, archive) =>
   Object.values(pages)
-    .filter((p) => !p.archive)
+    .filter((p) => (archive && p.archive) || !p.archive)
     .map((p) => ({
       text: p.name,
       type: 'page',
@@ -15,11 +15,11 @@ export const getPagesData = (pages) =>
     }))
 
 const Pages = ({ archive, ...others }) => (
-  <PagesLoader filtered archive={archive}>
+  <PagesLoader archived={archive}>
     {(pages) => (
       <SidebarList
         data-test-element="sidebar-pages-list"
-        menuItems={sortEntriesAtoZ(getPagesData(pages), 'text')}
+        menuItems={sortEntriesAtoZ(getPagesData(pages, archive), 'text')}
         {...others}
       />
     )}

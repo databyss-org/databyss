@@ -22,7 +22,7 @@ const TopicDetails = () => {
               <meta charSet="utf-8" />
               <title>{topicTitle}</title>
             </Helmet>
-            <PagesLoader filtered>
+            <PagesLoader>
               {() => (
                 <BlockRelationsLoader atomicId={id}>
                   {(relations) => <IndexSourceContent relations={relations} />}
