@@ -1,5 +1,5 @@
 const { teardown: teardownDevServer } = require('jest-dev-server')
-// const fetch = require('node-fetch')
+const fetch = require('node-fetch')
 
 module.exports = async function globalTeardown() {
   // clears cloudant database
