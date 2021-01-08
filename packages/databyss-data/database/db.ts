@@ -11,9 +11,12 @@ import {
   textSchema,
   entrySchema,
 } from '@databyss-org/data/schemas'
+import {
+  BlockType,
+  DocumentType,
+} from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { JSONSchema4 } from 'json-schema'
-import { BlockType, DocumentType } from '../interfaces/Block'
 
 const REMOTE_URL = `https://9cd55e3f-315b-420d-aa03-418d20aae3dd-bluemix.cloudantnosqldb.appdomain.cloud/`
 
@@ -172,8 +175,8 @@ export const syncPouchDb = ({
 }
 
 // pouchDB validator
-
 const _validatorSchemas: Array<[BlockType | DocumentType, JSONSchema4]> = [
+  // ADD topic types
   [BlockType.Source, sourceSchema],
   [BlockType.Entry, entrySchema],
   [DocumentType.Page, pageSchema],

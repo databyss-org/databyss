@@ -1,9 +1,8 @@
 import { BlockRelation, DocumentType } from '@databyss-org/editor/interfaces'
-import { Topic, BlockType } from '../../../interfaces/Block'
+import { Page } from '@databyss-org/services/interfaces/Page'
+import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
+import { Topic, BlockType } from '@databyss-org/services/interfaces/Block'
 import { db } from '../../db'
-import { Page } from '../../../interfaces/Page'
-import { ResourceNotFoundError } from '../../../interfaces/Errors'
-// import { asyncErrorHandler } from '../../util'
 
 const getTopic = async (
   _id: string
@@ -70,4 +69,3 @@ const getTopic = async (
 }
 
 export default getTopic
-// export default asyncErrorHandler(getTopic)

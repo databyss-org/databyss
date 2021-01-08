@@ -1,9 +1,8 @@
 import * as PouchDB from 'pouchdb-browser'
+import { DocumentType } from '@databyss-org/services/interfaces/Block'
+import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { PageDoc } from '../../interfaces'
 import { db } from '../../db'
-import { DocumentType } from '../../../interfaces/Block'
-import { ResourceNotFoundError } from '../../../interfaces/Errors'
-// import { asyncErrorHandler } from '../../util'
 
 const fetchAllPages = async (): Promise<PageDoc[] | ResourceNotFoundError> => {
   const _pages: PouchDB.Find.FindResponse<PageDoc> = await db.find({
@@ -18,4 +17,3 @@ const fetchAllPages = async (): Promise<PageDoc[] | ResourceNotFoundError> => {
 }
 
 export default fetchAllPages
-// export default asyncErrorHandler(fetchAllPages)

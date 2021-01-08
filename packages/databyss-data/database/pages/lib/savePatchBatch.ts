@@ -1,4 +1,4 @@
-import { PatchBatch } from '../../../interfaces/Patch'
+import { PatchBatch } from '@databyss-org/services/interfaces/Patch'
 import { PageDoc } from '../../interfaces'
 import { db, addTimeStamp } from '../../db'
 import { runPatches } from '../util'

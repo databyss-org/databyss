@@ -1,10 +1,8 @@
-import { db } from '@databyss-org/services/database/db'
+import { BlockType } from '@databyss-org/services/interfaces/Block'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { replaceInlineText } from '@databyss-org/editor/state/util'
-import { Topic, DocumentType, Block } from '../../../interfaces'
-import { addTimeStamp } from '../../db'
-import { BlockType } from '../../../interfaces/Block'
-// import { asyncErrorHandler } from '../../util'
+import { Topic, DocumentType, Block } from '@databyss-org/services/interfaces'
+import { addTimeStamp, db } from '../../db'
 
 const setTopic = async (data: Topic) => {
   const { text, _id } = data
@@ -97,4 +95,3 @@ const setTopic = async (data: Topic) => {
 }
 
 export default setTopic
-//  export default asyncErrorHandler(setTopic)

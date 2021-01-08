@@ -1,10 +1,10 @@
+import {
+  SourceCitationHeader,
+  DocumentType,
+  BlockType,
+} from '@databyss-org/services/interfaces'
+import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { db } from '../../db'
-// import { DocumentType } from '../interfaces'
-// import { ResourceNotFoundError } from '../../interfaces/Errors'
-import { SourceCitationHeader, DocumentType } from '../../../interfaces'
-import { BlockType } from '../../../interfaces/Block'
-import { ResourceNotFoundError } from '../../../interfaces/Errors'
-// import { asyncErrorHandler } from '../../util'
 
 const getSource = async (
   _id: string
@@ -48,4 +48,3 @@ const getSource = async (
 }
 
 export default getSource
-// export default asyncErrorHandler(getSource)

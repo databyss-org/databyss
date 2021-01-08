@@ -1,10 +1,14 @@
 import * as PouchDB from 'pouchdb-browser'
 import { Patch } from 'immer'
+import {
+  Block,
+  BlockType,
+  DocumentType,
+} from '@databyss-org/services/interfaces'
+import { Selection } from '@databyss-org/services/interfaces/Selection'
 import { uid } from '@databyss-org/data/lib/uid'
 import { PageDoc } from '../interfaces'
 import { db, addTimeStamp } from '../db'
-import { Block, BlockType, DocumentType } from '../../interfaces'
-import { Selection } from '../../interfaces/Selection'
 
 export const getAtomicClosureText = (type, text) =>
   ({

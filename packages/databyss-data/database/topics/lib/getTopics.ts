@@ -3,9 +3,8 @@ import {
   DocumentType,
   BlockType,
 } from '@databyss-org/editor/interfaces'
+import { Topic, Page } from '@databyss-org/services/interfaces'
 import { db } from '../../db'
-import { Topic, Page } from '../../../interfaces'
-// import { asyncErrorHandler } from '../../util'
 
 const getTopicHeaders = async () => {
   const _response = await db.find({
@@ -71,4 +70,3 @@ const getTopicHeaders = async () => {
 }
 
 export default getTopicHeaders
-// export default asyncErrorHandler(getTopicHeaders)

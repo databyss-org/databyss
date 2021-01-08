@@ -20,6 +20,7 @@ const fs = require('fs')
 
 export const updateClientDesignDoc = async (db: DocumentScope<DesignDoc>) => {
   const _dd: DesignDoc = {
+    // if you want to debug this, debug on the client side using pouchDB transform plugin
     _id: '_design/schema_validation',
     validate_doc_update: fs
       .readFileSync(

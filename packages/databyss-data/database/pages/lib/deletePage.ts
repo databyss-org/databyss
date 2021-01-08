@@ -1,5 +1,4 @@
 import { db, addTimeStamp } from '../../db'
-// import { asyncErrorHandler } from '../../util'
 
 const deletePage = (id: string) =>
   db.upsert(id, (oldDoc) => ({
@@ -8,4 +7,3 @@ const deletePage = (id: string) =>
   }))
 
 export default deletePage
-// export default asyncErrorHandler(deletePage)

@@ -1,10 +1,13 @@
-import { Page } from '../../../interfaces/Page'
+import { Page } from '@databyss-org/services/interfaces/Page'
+import {
+  Selection,
+  DocumentType,
+  Block,
+} from '@databyss-org/services/interfaces'
+import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { PageDoc } from '../../interfaces'
-import { Selection, DocumentType, Block } from '../../../interfaces'
 import { db } from '../../db'
 import { getAtomicClosureText } from '../util'
-import { ResourceNotFoundError } from '../../../interfaces/Errors'
-// import { asyncErrorHandler } from '../../util'
 
 const populatePage = async (
   _id: string
@@ -60,4 +63,3 @@ const populatePage = async (
 }
 
 export default populatePage
-// export default asyncErrorHandler(populatePage)

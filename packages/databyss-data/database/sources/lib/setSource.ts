@@ -1,6 +1,9 @@
+import {
+  Source,
+  BlockType,
+  DocumentType,
+} from '@databyss-org/services/interfaces'
 import { db, addTimeStamp } from '../../db'
-import { Source, BlockType, DocumentType } from '../../../interfaces'
-// import { asyncErrorHandler } from '../../util'
 
 export const setSource = async (data: Source) => {
   const { text, detail, _id } = data
@@ -20,4 +23,3 @@ export const setSource = async (data: Source) => {
 }
 
 export default setSource
-// export default asyncErrorHandler(setSource)

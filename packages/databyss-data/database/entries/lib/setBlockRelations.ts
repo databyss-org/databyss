@@ -1,8 +1,6 @@
-// import ObjectId from 'bson-objectid'
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
+import { DocumentType } from '@databyss-org/services/interfaces/Block'
 import { db, addTimeStamp } from '../../db'
-import { DocumentType } from '../../../interfaces/Block'
-// import { asyncErrorHandler } from '../../util'
 
 const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
   for (const payload of payloadArray) {
@@ -53,4 +51,3 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
 }
 
 export default setBlockRelations
-// export default asyncErrorHandler(setBlockRelations)

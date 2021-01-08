@@ -3,9 +3,9 @@ const { teardown: teardownDevServer } = require('jest-dev-server')
 
 module.exports = async function globalTeardown() {
   // clears cloudant database
-  // await fetch(`http://localhost:5000/api/cloudant/cloudant`, {
-  //   method: 'DELETE',
-  // })
+  await fetch(`http://0.0.0.0:5000/api/cloudant/`, {
+    method: 'DELETE',
+  })
   // console.log('cloudant databse cleared')
   await teardownDevServer()
   // Your global teardown
