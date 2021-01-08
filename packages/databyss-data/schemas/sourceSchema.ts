@@ -53,17 +53,128 @@ export const sourceSchema: JSONSchema4 = {
         publisher: {
           type: 'string',
         },
+        editors: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              firstName: {
+                $ref: 'text',
+              },
+              lastName: {
+                $ref: 'text',
+              },
+            },
+          },
+        },
+        translators: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              firstName: {
+                $ref: 'text',
+              },
+              lastName: {
+                $ref: 'text',
+              },
+            },
+          },
+        },
+        title: {
+          $ref: 'text',
+        },
+        journalTitle: {
+          $ref: 'text',
+        },
+        chapterTitle: {
+          $ref: 'text',
+        },
         issn: {
           $ref: 'text',
         },
-        // TODO: THIS SHOULD MATCH BLOCK SOURCE SCHEMA
-        // editors, translators, citations, title, journaltype, chapterTitle, publicationDate, publisherName, PublisherPlace, year, month, volume, issue, yearPublished, page, isbn, doi, issn, url
+        publisherName: {
+          $ref: 'text',
+        },
+        publisherPlace: {
+          $ref: 'text',
+        },
+        year: {
+          $ref: 'text',
+        },
+        citations: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              text: {
+                $ref: 'text',
+              },
+              format: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        volume: {
+          $ref: 'text',
+        },
+        issue: {
+          $ref: 'text',
+        },
+        yearPublished: {
+          $ref: 'text',
+        },
+        page: {
+          $ref: 'text',
+        },
+        isbn: {
+          $ref: 'text',
+        },
+        doi: {
+          $ref: 'text',
+        },
+        url: {
+          $ref: 'text',
+        },
+        month: {
+          type: 'object',
+          properties: {
+            id: {
+              type: ['string', 'number'],
+            },
+            label: {
+              type: 'string',
+            },
+          },
+        },
+        publicationType: {
+          type: 'object',
+          properties: {
+            id: {
+              type: ['string', 'number'],
+            },
+            label: {
+              type: 'string',
+            },
+          },
+        },
       },
+    },
+    // is this needed?
+    page: {
+      type: 'string',
+    },
+    account: {
+      type: 'string',
     },
     title: {
       $ref: 'text',
     },
     createdAt: {
+      type: 'number',
+    },
+    modifiedAt: {
       type: 'number',
     },
   },

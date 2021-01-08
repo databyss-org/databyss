@@ -24,6 +24,7 @@ export interface BasicBlock {
 }
 
 export interface Block extends BasicBlock {
+  page?: string
   text: Text
   __showCitationMenu?: boolean
   __showTopicMenu?: boolean

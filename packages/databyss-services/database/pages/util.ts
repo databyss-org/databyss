@@ -185,6 +185,7 @@ export class PageConstructor {
     this.blocks = [
       {
         _id: uid(),
+        page: this._id,
         $type: DocumentType.Block,
         type: BlockType.Entry,
         text: { textValue: '', ranges: [] },

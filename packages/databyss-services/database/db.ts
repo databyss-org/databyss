@@ -4,7 +4,7 @@ import PouchDBUpsert from 'pouchdb-upsert'
 import PouchDbQuickSearch from 'pouchdb-quick-search'
 import PouchDBTransform from 'transform-pouch'
 import {
-  // sourceSchema,
+  sourceSchema,
   blockRelationSchema,
   selectionSchema,
   pageSchema,
@@ -174,7 +174,7 @@ export const syncPouchDb = ({
 // pouchDB validator
 
 const _validatorSchemas: Array<[BlockType | DocumentType, JSONSchema4]> = [
-  // [BlockType.Source, sourceSchema],
+  [BlockType.Source, sourceSchema],
   [BlockType.Entry, entrySchema],
   [DocumentType.Page, pageSchema],
   [DocumentType.Selection, selectionSchema],
