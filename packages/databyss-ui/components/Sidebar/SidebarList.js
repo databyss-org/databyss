@@ -9,7 +9,8 @@ import TopicsSvg from '@databyss-org/ui/assets/topics.svg'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
-import { ScrollView, Icon, List } from '@databyss-org/ui/primitives'
+import GroupSvg from '@databyss-org/ui/assets/logo-thick.svg'
+import { ScrollView, Icon, List, View, Text } from '@databyss-org/ui/primitives'
 import { useLocation } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 
@@ -23,6 +24,7 @@ const menuSvgs = (type) =>
     topic: <TopicSvg />,
     topics: <TopicsSvg />,
     archive: <ArchiveSvg />,
+    group: <GroupSvg />,
   }[type])
 
 const SidebarList = ({
@@ -96,27 +98,41 @@ const SidebarList = ({
       >
         {children}
         {menuItems.map((item, index) => {
-          if (item.text) {
+          if (!item.text) {
+            return null
+          }
+          if (item.type === 'heading') {
             return (
-              <SidebarListItem
-                isActive={getActiveItem(item)}
-                text={item.text}
-                href={getHref(item)}
-                key={`${item.type}-${index}`}
-                draggable={canDrag(item)}
-                icon={
-                  <Icon
-                    sizeVariant="tiny"
-                    color={getActiveItem(item) ? 'text.1' : 'text.3'}
-                    mt={pxUnits(2)}
-                  >
-                    {item.icon ? item.icon : menuSvgs(item.type)}
-                  </Icon>
-                }
-              />
+              <View
+                pl="em"
+                pt={index ? 'em' : 'small'}
+                pb="small"
+                key={item.text}
+              >
+                <Text variant="uiTextHeading" color="text.3">
+                  {item.text}
+                </Text>
+              </View>
             )
           }
-          return null
+          return (
+            <SidebarListItem
+              isActive={getActiveItem(item)}
+              text={item.text}
+              href={getHref(item)}
+              key={`${item.type}-${index}`}
+              draggable={canDrag(item)}
+              icon={
+                <Icon
+                  sizeVariant="tiny"
+                  color={getActiveItem(item) ? 'text.1' : 'text.3'}
+                  mt={pxUnits(2)}
+                >
+                  {item.icon ? item.icon : menuSvgs(item.type)}
+                </Icon>
+              }
+            />
+          )
         })}
       </List>
     </ScrollView>

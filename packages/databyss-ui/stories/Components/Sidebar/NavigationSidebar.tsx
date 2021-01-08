@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { View, TextInput, Grid, Button } from '@databyss-org/ui/primitives'
 import { SidebarList, useNavigationContext } from '@databyss-org/ui/components'
 import { darkTheme } from '@databyss-org/ui/theming/theme'
-import { sidebarMenuItems } from './fixtures'
 
 const href = (location: Location) =>
   (
@@ -29,17 +28,18 @@ export const LocationToolbar = () => {
   )
 }
 
-export const NavigationSidebar = () => (
+export const NavigationSidebar = ({ items }: any) => (
   <View>
     <LocationToolbar />
     <View
       height={500}
-      width={250}
+      width={280}
       flexGrow={0}
       theme={darkTheme}
-      bg="background.1"
+      bg="background.2"
+      p="em"
     >
-      <SidebarList menuItems={sidebarMenuItems} />
+      <SidebarList menuItems={items} bg="background.1" />
     </View>
   </View>
 )

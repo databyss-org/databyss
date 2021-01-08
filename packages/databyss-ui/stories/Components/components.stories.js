@@ -10,6 +10,11 @@ import {
 } from '../decorators'
 import { NotifyMessage, NotifyError, TriggerError } from './Notifys'
 import { NavigationSidebar } from './Sidebar'
+import {
+  sidebarMenuItems,
+  sidebarItemsWithSections,
+  collectionsItems,
+} from './Sidebar/fixtures'
 
 storiesOf('Components|Notify', module)
   .addDecorator(ViewportDecorator)
@@ -27,4 +32,12 @@ storiesOf('Components|Sidebar', module)
   .addDecorator(ViewportDecorator)
   .addDecorator(NavigationDecorator)
   .addDecorator(GestureDecorator)
-  .add('Navigation', () => <NavigationSidebar default />)
+  .add('Navigation', () => (
+    <NavigationSidebar default items={sidebarMenuItems} />
+  ))
+  .add('With Sections', () => (
+    <NavigationSidebar default items={sidebarItemsWithSections} />
+  ))
+  .add('Collections', () => (
+    <NavigationSidebar default items={collectionsItems} />
+  ))

@@ -8,6 +8,7 @@ import Search from './routes/Search'
 import Pages from './routes/Pages'
 import Sources from './routes/Sources'
 import Topics from './routes/Topics'
+import Groups from './routes/Groups'
 import Header from '../../components/Sidebar/Header'
 import { sidebar } from '../../theming/components'
 
@@ -50,6 +51,7 @@ const Sidebar = () => {
             {menuItem === 'sources' && <Sources hasIndexPage />}
             {menuItem === 'topics' && <Topics />}
             {menuItem === 'archive' && <Pages archive />}
+            {menuItem === 'groups' && <Groups />}
             <Footer />
           </List>
         </View>

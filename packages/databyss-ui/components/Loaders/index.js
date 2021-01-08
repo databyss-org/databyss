@@ -8,6 +8,7 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
+import { collectionsItems } from '@databyss-org/ui/stories/Components/Sidebar/fixtures'
 
 import { isResourceReady } from './_helpers'
 
@@ -181,3 +182,7 @@ export const BlockRelationsLoader = ({ children, atomicId }) => {
     />
   )
 }
+
+export const GroupHeadersLoader = ({ children }) => (
+  <MakeLoader resources={collectionsItems}>{children}</MakeLoader>
+)

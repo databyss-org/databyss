@@ -30,10 +30,14 @@ const List = ({
                   borderRadius: 0,
                 }
               : {}),
-            px: horizontalItemPadding,
-            py: verticalItemPadding,
-            mx: horizontalItemMargin,
-            my: verticalItemMargin,
+            pl: horizontalItemPadding,
+            pr: horizontalItemPadding,
+            pt: verticalItemPadding,
+            pb: verticalItemPadding,
+            ml: horizontalItemMargin,
+            mr: horizontalItemMargin,
+            mt: verticalItemMargin,
+            mb: verticalItemMargin,
             ...child.props,
           })
       )}

@@ -208,3 +208,53 @@ export const sidebarMenuItems = sortEntriesAtoZ(
   ],
   'text'
 )
+
+export const sidebarItemsWithSections = [
+  {
+    text: 'Pages',
+    type: 'heading',
+  },
+  ...sidebarMenuItems.filter((item) => item.type === 'page'),
+  {
+    text: 'Sources',
+    type: 'heading',
+  },
+  ...sidebarMenuItems.filter((item) => item.type === 'source'),
+  {
+    text: 'Topics',
+    type: 'heading',
+  },
+  ...sidebarMenuItems.filter((item) => item.type === 'topic'),
+]
+
+export const collectionsItems = [
+  {
+    text: 'My Collections',
+    type: 'heading',
+  },
+  {
+    text: 'PHIL 103',
+    type: 'group',
+    pageCount: 15,
+  },
+  {
+    text: 'PHIL 103 shared',
+    type: 'group',
+    pageCount: 4,
+  },
+  {
+    text: 'Default (private)',
+    type: 'group',
+    pageCount: 10,
+    default: true,
+  },
+  {
+    text: 'Shared Pages',
+    type: 'heading',
+  },
+  {
+    text: 'Freud notes',
+    type: 'page',
+    pageCount: 1,
+  },
+]

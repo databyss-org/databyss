@@ -83,9 +83,12 @@ const uiTextVariants = {
   uiTextTiny: uiText(10),
   uiTextHeading: {
     fontFamily: fonts.uiFont,
-    fontSize: 14,
-    fontWeight: fontWeights.normal,
+    fontSize: 13,
+    letterSpacing: '1px',
+    wordSpacing: '2.5px',
+    fontWeight: fontWeights.semiBold,
     textTransform: 'uppercase',
+    opacity: 0.7,
   },
 }
 
