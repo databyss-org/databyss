@@ -1,4 +1,4 @@
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
 import {
   FSA,
@@ -91,7 +91,7 @@ export const bakeAtomicBlock = ({
       // create a new entity
       const _block: Block = {
         type: BlockType.Entry,
-        _id: new ObjectId().toHexString(),
+        _id: uid(),
         text: { textValue: '', ranges: [] },
       }
       draft.blocks[index] = _block
@@ -147,7 +147,7 @@ export const bakeAtomicBlock = ({
         if (getClosureType(draft.blocks[_idx].type)) {
           const _newBlock: Block = {
             type: BlockType.Entry,
-            _id: new ObjectId().toHexString(),
+            _id: uid(),
             text: { textValue: '', ranges: [] },
           }
           draft.blocks[_idx] = _newBlock
@@ -199,7 +199,7 @@ export const bakeAtomicClosureBlock = ({
           // create a new entity
           const _newBlock: Block = {
             type: BlockType.Entry,
-            _id: new ObjectId().toHexString(),
+            _id: uid(),
             text: { textValue: '', ranges: [] },
           }
           draft.blocks[index + 1] = _newBlock
@@ -254,7 +254,7 @@ export const bakeAtomicClosureBlock = ({
             if (getClosureType(_nextBlock.type)) {
               const _newBlock: Block = {
                 type: BlockType.Entry,
-                _id: new ObjectId().toHexString(),
+                _id: uid(),
                 text: { textValue: '', ranges: [] },
               }
               draft.blocks[_idx] = _newBlock
@@ -534,7 +534,7 @@ export default (
           // add or insert a new block
           const _block: Block = {
             type: BlockType.Entry,
-            _id: new ObjectId().toHexString(),
+            _id: uid(),
             text: payload.text,
           }
 
@@ -554,7 +554,7 @@ export default (
             if (payload.text.textValue.length) {
               const _emptyBlock: Block = {
                 type: BlockType.Entry,
-                _id: new ObjectId().toHexString(),
+                _id: uid(),
                 text: { textValue: '', ranges: [] },
               }
               if (_insertAt === draft.blocks.length - 1) {
@@ -790,7 +790,7 @@ export default (
           // create a new entity
           let _block: Block = {
             type: BlockType.Entry,
-            _id: new ObjectId().toHexString(),
+            _id: uid(),
             text: { textValue: '', ranges: [] },
           }
           draft.blocks[payload.index] = _block
@@ -809,7 +809,7 @@ export default (
           if (_idx > -1 && getClosureType(draft.blocks[_idx].type)) {
             _block = {
               type: BlockType.Entry,
-              _id: new ObjectId().toHexString(),
+              _id: uid(),
               text: { textValue: '', ranges: [] },
             }
             draft.blocks[_idx] = _block
@@ -933,7 +933,7 @@ export default (
         !draft.blocks[draft.selection.anchor.index]
       ) {
         draft.selection = {
-          _id: new ObjectId().toHexString(),
+          _id: uid(),
           $type: DocumentType.Selection,
           anchor: { offset: 0, index: 0 },
           focus: { offset: 0, index: 0 },

@@ -1,11 +1,11 @@
-import ObjectID from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 import { EditorState, BlockType, DocumentType } from '../../interfaces'
 
 const initialState: EditorState = {
   preventDefault: false,
   operations: [],
   selection: {
-    _id: new ObjectID().toHexString(),
+    _id: uid(),
     $type: DocumentType.Selection,
     anchor: {
       index: 0,

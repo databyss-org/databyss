@@ -1,5 +1,5 @@
 import React from 'react'
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import AuthorSvg from '@databyss-org/ui/assets/author.svg'
@@ -44,7 +44,7 @@ const buildAuthorList = (data) => {
     }&lastName=${element?.lastName ? element.lastName.textValue : ''}`
     const _label = getAuthorName(element)
     response.push({
-      _id: new ObjectId().toHexString(),
+      _id: uid(),
       label: _label,
       href: `/sources/authors?${_url}`,
       // href: `/sources/authors/${firstName}/${lastName}`,

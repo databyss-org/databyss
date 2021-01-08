@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import ObjectId from 'bson-objectid'
-
+import { uid } from '@databyss-org/data/lib/uid'
 import {
   CROSSREF,
   GOOGLE_BOOKS,
@@ -43,7 +42,7 @@ const SuggestSources = ({
 
   const onSourceSelected = (source) => {
     if (!source._id) {
-      source._id = new ObjectId().toHexString()
+      source._id = uid()
       setSource(source)
     }
 

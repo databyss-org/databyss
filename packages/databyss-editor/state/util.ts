@@ -1,5 +1,5 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
 import {
   Selection,
@@ -391,7 +391,7 @@ export const splitBlockAtEmptyLine = ({
   // make a new block to insert with second part of split
   const _blockToInsert: Block = {
     type: BlockType.Entry,
-    _id: new ObjectId().toHexString(),
+    _id: uid(),
     text: after,
   }
 
@@ -554,7 +554,7 @@ export const convertInlineToAtomicBlocks = ({
     let _atomicTextValue = inlineMarkupData?.text
 
     // new Id for inline atomic
-    let _atomicId = new ObjectId().toHexString()
+    let _atomicId = uid()
 
     // check entitySuggestionCache for an atomic with the identical name
     // if there's a match and the atomic type matches, use the cached

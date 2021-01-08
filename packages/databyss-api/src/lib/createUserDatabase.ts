@@ -1,7 +1,7 @@
 import { cloudant } from '@databyss-org/services/lib/cloudant'
-import ObjectId from 'bson-objectid'
 import { Users, Groups } from '@databyss-org/data/serverdbs/index'
 import { User, Role } from '@databyss-org/data/interfaces'
+import { uid } from '@databyss-org/data/lib/uid'
 import { updateClientDesignDoc } from './couchdb'
 import { DesignDoc } from '../../../databyss-data/interfaces/designdoc'
 
@@ -123,7 +123,7 @@ export const addCredentialsToUser = async (
 
     _groups.push({ groupId: credentials.groupId, role: Role.GroupAdmin })
 
-    const _defaultPageId = new ObjectId().toHexString()
+    const _defaultPageId = uid()
 
     // check if group has default page id, if not, create id
     Groups.upsert(credentials.groupId, (oldDoc) =>

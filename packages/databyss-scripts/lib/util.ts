@@ -1,5 +1,5 @@
 import { parse } from 'dotenv'
-import ObjectID from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 
 const fs = require('fs')
 
@@ -8,7 +8,7 @@ export interface EnvDict {
 }
 
 export function objectId(): string {
-  return new ObjectID().toHexString()
+  return uid()
 }
 
 export function getEnv(envName: string): { [key: string]: string } {

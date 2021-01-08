@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax, no-await-in-loop */
 
 import express from 'express'
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 import Page from '../../models/Page'
 import Block from '../../models/Block'
 import Selection from '../../models/Selection'
@@ -184,7 +184,7 @@ router.post(
 
     if (isPublic) {
       // create a public account
-      _sharedAccount = new ObjectId().toHexString()
+      _sharedAccount = uid()
       const _account = new Account({ _id: _sharedAccount, isPublic: true })
       await _account.save()
 

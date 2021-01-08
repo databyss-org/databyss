@@ -1,6 +1,6 @@
 import * as PouchDB from 'pouchdb-browser'
 import { Patch } from 'immer'
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 import { PageDoc } from '../interfaces'
 import { db, addTimeStamp } from '../db'
 import { Block, BlockType, DocumentType } from '../../interfaces'
@@ -70,7 +70,7 @@ const addOrReplaceBlock = async (p, page) => {
     _block = _response.docs[0]
   } else {
     _block = {
-      _id: new ObjectId().toHexString(),
+      _id: uid(),
       $type: DocumentType.Block,
       type: BlockType.Entry,
       text: { textValue: '', ranges: [] },
@@ -165,7 +165,7 @@ export class PageConstructor {
   archive: boolean
   $type: DocumentType
   constructor(id?: string) {
-    this._id = id || new ObjectId().toHexString()
+    this._id = id || uid()
     this.selection = {
       $type: DocumentType.Selection,
       anchor: {
@@ -176,7 +176,7 @@ export class PageConstructor {
         index: 0,
         offset: 0,
       },
-      _id: new ObjectId().toHexString(),
+      _id: uid(),
     }
     this.$type = DocumentType.Page
     this.$type = DocumentType.Page
@@ -184,7 +184,7 @@ export class PageConstructor {
     this.archive = false
     this.blocks = [
       {
-        _id: new ObjectId().toHexString(),
+        _id: uid(),
         $type: DocumentType.Block,
         type: BlockType.Entry,
         text: { textValue: '', ranges: [] },

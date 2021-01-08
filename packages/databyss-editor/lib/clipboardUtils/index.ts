@@ -1,4 +1,4 @@
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 import { BlockType, DocumentType } from '@databyss-org/services/interfaces'
 import { Text, Range, Selection, Block } from '../../interfaces'
 import { isAtomicInlineType } from '../util'
@@ -10,11 +10,11 @@ export { default as insertText } from './insertText'
 export { default as deleteBlocksAtSelection } from './deleteBlocksAtSelection'
 
 // return a new, empty block
-// if @_id param is null or undefined, generate a new ObjectId
+// if @_id param is null or undefined, generate a uid
 export const makeEmptyBlock = (_id?: string): Block => ({
   type: BlockType.Entry,
   text: { textValue: '', ranges: [] },
-  _id: _id || new ObjectId().toHexString(),
+  _id: uid(),
 })
 
 // checks is state selection is collapsed
@@ -25,7 +25,7 @@ export const isSelectionCollapsed = (selection: Selection): boolean => {
 
 // return atomic or new id
 export const fragmentId = (type: BlockType, id: string): string =>
-  isAtomicInlineType(type) ? id : new ObjectId().toHexString()
+  isAtomicInlineType(type) ? id : uid()
 
 // takes blocks array and resets the id's for non atomic types
 export const resetIds = (fragment: Block[]): Block[] =>
@@ -87,7 +87,7 @@ export const plainTextToDatabyssFrag = (text: string): Block[] => {
     .map((f) => ({
       text: { textValue: f, ranges: [] },
       type: BlockType.Entry,
-      _id: new ObjectId().toHexString(),
+      _id: uid(),
     }))
   return addBlockUIFields(_frag)
 }

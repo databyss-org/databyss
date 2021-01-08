@@ -1,13 +1,13 @@
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 import { Page, BlockType, DocumentType } from '../interfaces'
 
 export const newPage = (): Page => ({
-  _id: new ObjectId().toHexString(),
+  _id: uid(),
   name: 'untitled',
   archive: false,
 
   selection: {
-    _id: new ObjectId().toHexString(),
+    _id: uid(),
     $type: DocumentType.Selection,
     focus: {
       offset: 0,
@@ -20,7 +20,7 @@ export const newPage = (): Page => ({
   },
   blocks: [
     {
-      _id: new ObjectId().toHexString(),
+      _id: uid(),
       type: BlockType.Entry,
       text: { textValue: '', ranges: [] },
     },
