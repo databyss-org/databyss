@@ -1,6 +1,6 @@
 import { LoremIpsum } from 'lorem-ipsum'
 import words from 'an-array-of-english-words'
-import { uid } from '@databyss-org/data/lib/uid'
+import ObjectId from 'bson-objectid'
 import cloneDeep from 'clone-deep'
 
 export const SMALL = 'SMALL'
@@ -34,7 +34,7 @@ const initialState = {
   newEntities: [],
   removedEntities: [],
   selection: {
-    // _id: new uid(),
+    // _id: new ObjectID().toHexString(),
     anchor: {
       index: 0,
       offset: 0,
@@ -46,7 +46,7 @@ const initialState = {
   },
   blocks: [],
   pageHeader: {
-    _id: uid(),
+    _id: ObjectId().toHexString(),
     name: 'test document',
   },
 }
@@ -54,7 +54,8 @@ const initialState = {
 const generateBlock = (state, type, index) => {
   const _state = state
 
-  const _id = uid()
+  // const refId = ObjectId().toHexString()
+  const _id = ObjectId().toHexString()
 
   const _textVal = ipsum.generateParagraphs(2)
 

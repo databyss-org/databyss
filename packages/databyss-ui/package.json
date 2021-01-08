@@ -17,6 +17,7 @@
     "@databyss-org/services": "1.2.11",
     "@databyss-org/slate": "1.2.11",
     "@databyss-org/ui": "1.2.11",
+    "@databyss-org/data": "1.2.11",
     "@storybook/react": "5.2.1",
     "@bugsnag/js": "^7.5.1",
     "react": "16.9.0",
