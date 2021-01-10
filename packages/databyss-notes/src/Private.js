@@ -11,6 +11,7 @@ import {
   SearchRouter,
   SourcesRouter,
   TopicsRouter,
+  GroupsRouter,
   useNavigationContext,
   ModalManager,
 } from '@databyss-org/ui'
@@ -75,6 +76,7 @@ const Private = () => {
                 <SearchRouter path="search/*" />
                 <SourcesRouter path="sources/*" />
                 <TopicsRouter path="topics/*" />
+                <GroupsRouter path="groups/*" />
               </App>
             </Router>
             <ModalManager />

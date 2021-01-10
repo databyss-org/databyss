@@ -6,7 +6,7 @@ import {
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { View } from '@databyss-org/ui/primitives'
+import { View, ScrollView } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import PageHeader from './PageHeader'
@@ -68,36 +68,43 @@ export const PageContainer = React.memo(
     }
 
     return (
-      <View height="100%" overflowY="auto" ref={editorWindowRef} {...others}>
-        <View
-          pl="medium"
-          pr="medium"
-          pb="medium"
-          pt={isPublicAccount() || isMobile() ? 'large' : 'none'}
-          flexGrow={1}
+      <>
+        {!isPublicAccount() && !isMobile() && (
+          <PageSticky pagePath={editorPath} pageId={page._id} />
+        )}
+        <ScrollView
+          flexShrink={1}
+          shadowOnScroll="#00000044"
+          ref={editorWindowRef}
+          {...others}
         >
-          {!isPublicAccount() && !isMobile() && (
-            <PageSticky pagePath={editorPath} pageId={page._id} />
-          )}
-          {getAuthToken() && isPublicAccount() && !isMobile() && (
-            <View position="absolute" right="extraLarge">
-              <AccountMenu />
-            </View>
-          )}
-          <PageHeader
-            ref={headerRef}
-            pageId={id}
-            onNavigateDownFromHeader={onNavigateDownToEditor}
-          />
-          <PageBody
-            onEditorPathChange={setEditorPath}
-            editorRef={editorRef}
-            page={page}
-            focusIndex={index}
-            onNavigateUpFromEditor={onNavigateUpFromEditor}
-          />
-        </View>
-      </View>
+          <View
+            pl="medium"
+            pr="medium"
+            pb="medium"
+            pt={isPublicAccount() || isMobile() ? 'large' : 'none'}
+            flexGrow={1}
+          >
+            {getAuthToken() && isPublicAccount() && !isMobile() && (
+              <View position="absolute" right="extraLarge">
+                <AccountMenu />
+              </View>
+            )}
+            <PageHeader
+              ref={headerRef}
+              pageId={id}
+              onNavigateDownFromHeader={onNavigateDownToEditor}
+            />
+            <PageBody
+              onEditorPathChange={setEditorPath}
+              editorRef={editorRef}
+              page={page}
+              focusIndex={index}
+              onNavigateUpFromEditor={onNavigateUpFromEditor}
+            />
+          </View>
+        </ScrollView>
+      </>
     )
   },
   (prev, next) =>

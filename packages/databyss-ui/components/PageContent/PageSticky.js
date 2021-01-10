@@ -58,13 +58,10 @@ const PageSticky = ({ pagePath, pageId }) => {
       alignItems="center"
       flexDirection="row"
       justifyContent="space-between"
-      py="medium"
-      px="small"
+      py="em"
+      px="medium"
       ref={stickyRef}
       backgroundColor="gray.7"
-      position="sticky"
-      top={0}
-      zIndex="sticky"
     >
       <Helmet>
         <meta charSet="utf-8" />

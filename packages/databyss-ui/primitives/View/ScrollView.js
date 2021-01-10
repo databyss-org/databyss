@@ -1,6 +1,7 @@
 import React, { useCallback, useRef, useState } from 'react'
 import { ScrollView } from 'react-native'
 import { throttle } from 'lodash'
+import css from '@styled-system/css'
 import styled from '../styled'
 import View, { styleProps } from './View'
 import IS_NATIVE from '../../lib/isNative'
@@ -28,27 +29,39 @@ export default ({ children, shadowOnScroll, ...others }) => {
     }, 100),
     [viewRef]
   )
+  const shadowOnScrollProps = shadowOnScroll
+    ? {
+        onScroll,
+        borderTopWidth: '1px',
+        css: css({
+          '&:before': {
+            content: '""',
+            display: 'block',
+            width: '100%',
+            height: '100%',
+            position: 'fixed',
+            padding: '5px',
+            transition: 'box-shadow 30ms linear',
+            pointerEvents: 'none',
+            zIndex: 1,
+            boxShadow:
+              scrollTop > 0
+                ? `inset -5px 0 5px ${
+                    typeof shadowOnScroll === 'string'
+                      ? shadowOnScroll
+                      : 'black'
+                  }`
+                : 'none',
+          },
+        }),
+      }
+    : {}
   return (
     <Styled
       {...(IS_NATIVE ? nativeProps : webProps)}
+      {...(IS_NATIVE ? {} : shadowOnScrollProps)}
       {...others}
       ref={viewRef}
-      {...(shadowOnScroll
-        ? {
-            onScroll,
-            borderTopWidth: '1px',
-            css: {
-              transition: 'border-top-color 100ms linear',
-            },
-            ...(scrollTop > 0
-              ? {
-                  borderTopColor: 'border.1',
-                }
-              : {
-                  borderTopColor: 'transparent',
-                }),
-          }
-        : {})}
     >
       {children}
       {IS_NATIVE && <View height={50} />}

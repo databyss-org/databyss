@@ -235,14 +235,17 @@ export const collectionsItems = [
   {
     text: 'PHIL 103',
     type: 'group',
+    route: '/groups/GROUP_ID',
   },
   {
     text: 'PHIL 103 shared',
     type: 'group',
+    route: '/groups/GROUP_ID',
   },
   {
     text: 'Default (private)',
     type: 'group',
+    route: '/groups/GROUP_ID',
     default: true,
   },
   {

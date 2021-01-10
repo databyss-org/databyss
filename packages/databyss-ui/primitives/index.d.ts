@@ -67,7 +67,18 @@ export interface ViewProps
 }
 
 declare const View: RefForwardingFC<PropsWithChildren<ViewProps>>
-declare const ScrollView: FC<PropsWithChildren<ViewProps>>
+
+export interface ScrollViewProps extends ViewProps {
+  /**
+   * Add a small inset shadow to the top of the scroll view when scrolled.
+   * Set to true to use the default color, or set to a string to specify the color.
+   * NOTE: uses fixed positioning, so add "transform: translate(0, 0)" to the parent
+   * element for correct positioning and sizing.
+   */
+  shadowOnScroll?: boolean | string
+}
+
+declare const ScrollView: FC<PropsWithChildren<ScrollViewProps>>
 
 export interface GridProps extends ViewProps {
   columnGap?: ReactText

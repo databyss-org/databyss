@@ -66,7 +66,7 @@ const SidebarList = ({
       {...others}
       mt="tiny"
       mb={0}
-      shadowOnScroll
+      shadowOnScroll="#111"
     >
       <List
         orderKey={orderKey}

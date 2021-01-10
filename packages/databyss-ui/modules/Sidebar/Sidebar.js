@@ -34,6 +34,7 @@ const Sidebar = () => {
           flexGrow={1}
           flexShrink={1}
           overflow="hidden"
+          css={{ transform: 'translate(0,0)' }}
         >
           <List
             verticalItemPadding={0}
