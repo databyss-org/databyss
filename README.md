@@ -10,11 +10,8 @@ please see our [CONTRIBUTING](CONTRIBUTING.md) guide.
 ## Packages
 
 - [databyss-documentation](packages/databyss-documentation)
-- [databyss-login](packages/databyss-login)
 - [databyss-notes](packages/databyss-notes)
-- [databyss-notes-native](packages/databyss-notes-native)
 - [databyss-services](packages/databyss-services)
-- [databyss-stories-native](packages/databyss-stories-native)
 - [databyss-ui](packages/databyss-ui)
 - [databyss-api](packages/databyss-api)
 - [databyss-pdf-api](packages/databyss-pdf-api)
@@ -62,7 +59,6 @@ Deletes the TEST database and resets it with some sample data. You must run `sta
 
 `> yarn start:pdf-api:test`  
 Starts the PDF annotations parsing webservice locally.
-
 
 ### Testing
 
