@@ -66,9 +66,9 @@ const Editor = ({
         )
         // check for url in text
         // uri's must begin with "http:// or "https://"
-        // test it here: https://regexr.com/5jcg0
+        // test it here: https://regexr.com/5jvei
         const _uriRegEx = new RegExp(
-          /https?:\/\/[-a-zA-Z0-9@:%_+.~#?&//=]{2,256}\.[a-z]{2,4}:?[\d{1,5}]*\b(\/[-a-zA-Z0-9@:%_+.~#?&//=,[\]]*)?\b/,
+          /https?:\/\/[-a-zA-Z0-9@:%_+.~#?&/=]{2,256}\.[a-z]{2,4}:?[\d{1,5}]*\b(\/[-a-zA-Z0-9@:%_+.~#&?/=,[\]]*)?([-a-zA-Z0-9@:%_+.~#&/=])/,
           'gi'
         )
         ;[_emailRegEx, _uriRegEx].forEach((_regex) => {
