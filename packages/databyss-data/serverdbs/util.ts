@@ -7,8 +7,8 @@ import {
   userSchema,
   loginSchema,
   groupSchema,
-  // sourceSchema,
-  // textSchema,
+  sourceSchema,
+  textSchema,
 } from '@databyss-org/data/schemas'
 import { DocumentScope } from 'nano'
 import { DesignDoc } from '@databyss-org/data/interfaces'
@@ -44,19 +44,19 @@ const fs = require('fs')
 //   console.log('AFTER UPSERT OF DESIGN DOCUMENT')
 // }
 
-const updateDesignDoc = async (
-  schema: JSONSchema4,
+const updateDesignDoc = async ({
+  schema,
+  db,
+  script,
+}: {
   db: DocumentScope<DesignDoc>
-) => {
+  script: string
+  schema?: JSONSchema4
+}) => {
   const _dd: DesignDoc = {
     _id: '_design/schema_validation',
     validate_doc_update: fs
-      .readFileSync(
-        path.join(
-          __dirname,
-          './_design_doc_includes/validate_doc_update.js.es5'
-        )
-      )
+      .readFileSync(path.join(__dirname, script))
       .toString(),
     libs: {
       tv4: fs
@@ -64,6 +64,8 @@ const updateDesignDoc = async (
         .toString(),
     },
     schema,
+    sourceSchema,
+    textSchema,
   }
   await db.upsert(_dd._id, () => _dd)
 }
@@ -75,7 +77,13 @@ export const updateDesignDocs = async () => {
     [groupSchema, GroupsDesignDoc],
   ]
 
-  _designDatabaseTuple.forEach((t) => updateDesignDoc(t[0], t[1]))
+  _designDatabaseTuple.forEach((t) =>
+    updateDesignDoc({
+      schema: t[0],
+      db: t[1],
+      script: './_design_doc_includes/validate_doc_update.js.es5',
+    })
+  )
 }
 
 export const initiateDatabases = async () => {

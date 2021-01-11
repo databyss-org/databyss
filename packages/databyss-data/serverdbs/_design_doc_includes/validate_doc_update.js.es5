@@ -1,6 +1,18 @@
 function(newDoc) {
   if (newDoc['_deleted']) return;
   var tv4 = require('libs/tv4');
+  
+  // admin databases have specific schemas passed as this.schema
+  if (!this.schema) {
+    // user database determines the schema by the .type field
+    var schemaMap = {
+      SOURCE: this.sourceSchema,
+      ENTRY: this.entrySchema,
+      ...
+    }
+    this.schema = schemaMap[newDoc.type];
+  }
+
   if (!tv4.validate(newDoc, this.schema, false, true)) {
     throw({forbidden: tv4.error.message + ' -> ' + tv4.error.dataPath + '/ / ' + JSON.stringify(newDoc)});
   }
