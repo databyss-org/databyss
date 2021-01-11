@@ -1,5 +1,5 @@
+import { DocumentType } from '@databyss-org/data/database/interfaces'
 import { Point } from './'
-import { DocumentType } from './Block'
 
 export interface Selection {
   anchor: Point

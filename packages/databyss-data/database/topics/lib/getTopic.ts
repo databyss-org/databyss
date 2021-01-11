@@ -1,8 +1,9 @@
-import { BlockRelation, DocumentType } from '@databyss-org/editor/interfaces'
+import { BlockRelation } from '@databyss-org/editor/interfaces'
 import { Page } from '@databyss-org/services/interfaces/Page'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { Topic, BlockType } from '@databyss-org/services/interfaces/Block'
 import { db } from '../../db'
+import { DocumentType } from '../../interfaces'
 
 const getTopic = async (
   _id: string

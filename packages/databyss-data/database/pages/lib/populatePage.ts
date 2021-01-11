@@ -1,11 +1,7 @@
 import { Page } from '@databyss-org/services/interfaces/Page'
-import {
-  Selection,
-  DocumentType,
-  Block,
-} from '@databyss-org/services/interfaces'
+import { Selection, Block } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
-import { PageDoc } from '../../interfaces'
+import { PageDoc, DocumentType } from '../../interfaces'
 import { db } from '../../db'
 import { getAtomicClosureText } from '../util'
 

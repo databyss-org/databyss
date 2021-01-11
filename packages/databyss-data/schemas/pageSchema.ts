@@ -4,29 +4,6 @@ export const pageSchema: JSONSchema4 = {
   title: 'Page',
   type: 'object',
   properties: {
-    _rev: {
-      type: 'string',
-    },
-    _revisions: {
-      type: 'object',
-      properties: {
-        start: {
-          type: 'number',
-        },
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
-    _id: {
-      type: 'string',
-    },
-    $type: {
-      type: 'string',
-    },
     archive: {
       type: 'boolean',
     },
@@ -50,14 +27,10 @@ export const pageSchema: JSONSchema4 = {
     selection: {
       type: 'string',
     },
-    createdAt: {
-      type: 'number',
-    },
-    modifiedAt: {
-      type: 'number',
-    },
   },
-  required: ['_id', '$type', 'blocks', 'name'],
+  // extend pouchdb types
+  allOf: [{ $ref: 'pouchDb' }],
+  required: ['blocks', 'name'],
 }
 
 export default pageSchema

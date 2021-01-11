@@ -1,5 +1,5 @@
+import { DocumentType } from '@databyss-org/data/database/interfaces'
 import { Block, Selection } from './'
-import { DocumentType } from './Block'
 
 export interface PageHeader {
   _id: string

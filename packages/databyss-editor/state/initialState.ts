@@ -1,4 +1,5 @@
-import { EditorState, DocumentType } from '../interfaces'
+import { DocumentType } from '@databyss-org/data/database/interfaces'
+import { EditorState } from '../interfaces'
 
 const initialState: EditorState = {
   preventDefault: false,

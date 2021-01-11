@@ -1,5 +1,5 @@
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
-import { DocumentType } from '@databyss-org/services/interfaces/Block'
+import { DocumentType } from '../../interfaces'
 import { db, addTimeStamp } from '../../db'
 
 const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {

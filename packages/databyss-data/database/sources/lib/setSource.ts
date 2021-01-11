@@ -1,9 +1,6 @@
-import {
-  Source,
-  BlockType,
-  DocumentType,
-} from '@databyss-org/services/interfaces'
+import { Source, BlockType } from '@databyss-org/services/interfaces'
 import { db, addTimeStamp } from '../../db'
+import { DocumentType } from '../../interfaces'
 
 export const setSource = async (data: Source) => {
   const { text, detail, _id } = data

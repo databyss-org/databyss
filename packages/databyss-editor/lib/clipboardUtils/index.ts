@@ -1,5 +1,6 @@
 import { uid } from '@databyss-org/data/lib/uid'
-import { BlockType, DocumentType } from '@databyss-org/services/interfaces'
+import { DocumentType } from '@databyss-org/data/database/interfaces'
+import { BlockType } from '@databyss-org/services/interfaces'
 import { Text, Range, Selection, Block } from '../../interfaces'
 import { isAtomicInlineType } from '../util'
 import { stateToHTMLString } from '../slateUtils'

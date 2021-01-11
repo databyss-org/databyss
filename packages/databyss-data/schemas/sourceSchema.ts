@@ -4,35 +4,6 @@ export const sourceSchema: JSONSchema4 = {
   title: 'Source',
   type: 'object',
   properties: {
-    _rev: {
-      type: 'string',
-    },
-    _revisions: {
-      type: 'object',
-      properties: {
-        start: {
-          type: 'number',
-        },
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
-    _id: {
-      type: 'string',
-    },
-    type: {
-      type: 'string',
-    },
-    $type: {
-      type: 'string',
-    },
-    text: {
-      $ref: 'text',
-    },
     detail: {
       type: 'object',
       properties: {
@@ -161,24 +132,17 @@ export const sourceSchema: JSONSchema4 = {
         },
       },
     },
-    // is this needed?
+    // TODO: is this needed?
     page: {
-      type: 'string',
-    },
-    account: {
       type: 'string',
     },
     title: {
       $ref: 'text',
     },
-    createdAt: {
-      type: 'number',
-    },
-    modifiedAt: {
-      type: 'number',
-    },
   },
-  required: ['_id', 'type', '$type', 'text'],
+  // extend pouchdb types
+  // block schema
+  allOf: [{ $ref: 'pouchDb' }, { $ref: 'blockSchema' }],
 }
 
 export default sourceSchema

@@ -1,5 +1,6 @@
 import { uid } from '@databyss-org/data/lib/uid'
-import { Page, BlockType, DocumentType } from '../interfaces'
+import { DocumentType } from '@databyss-org/data/database/interfaces'
+import { Page, BlockType } from '../interfaces'
 
 export const newPage = (): Page => ({
   _id: uid(),

@@ -5,3 +5,10 @@ export interface PageDoc extends PageHeader {
   blocks: BasicBlock[]
   selection: string
 }
+
+export enum DocumentType {
+  Page = 'PAGE',
+  Block = 'BLOCK',
+  Selection = 'SELECTION',
+  BlockRelation = 'BLOCK_RELATION',
+}

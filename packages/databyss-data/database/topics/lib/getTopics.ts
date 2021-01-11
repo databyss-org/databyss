@@ -1,10 +1,7 @@
-import {
-  BlockRelation,
-  DocumentType,
-  BlockType,
-} from '@databyss-org/editor/interfaces'
+import { BlockRelation, BlockType } from '@databyss-org/editor/interfaces'
 import { Topic, Page } from '@databyss-org/services/interfaces'
 import { db } from '../../db'
+import { DocumentType } from '../../interfaces'
 
 const getTopicHeaders = async () => {
   const _response = await db.find({

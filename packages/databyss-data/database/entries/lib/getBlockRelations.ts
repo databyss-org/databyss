@@ -1,11 +1,9 @@
 import * as PouchDB from 'pouchdb-browser'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
-import {
-  DocumentType,
-  BlockRelationsServerResponse,
-} from '@databyss-org/services/interfaces/Block'
+import { BlockRelationsServerResponse } from '@databyss-org/services/interfaces/Block'
 import { db } from '../../db'
+import { DocumentType } from '../../interfaces'
 
 const getBlockRelations = async (
   id: string

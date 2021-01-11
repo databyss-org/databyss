@@ -1,4 +1,5 @@
-import { BlockType, DocumentType } from '@databyss-org/services/interfaces'
+import { BlockType } from '@databyss-org/services/interfaces'
+import { DocumentType } from '@databyss-org/data/database/interfaces'
 import { EditorState } from '../../interfaces'
 import { RangeType } from '../../../databyss-services/interfaces/Range'
 

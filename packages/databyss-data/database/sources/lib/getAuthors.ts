@@ -2,11 +2,11 @@ import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import {
   BlockType,
-  DocumentType,
   SourceCitationHeader,
   Author,
 } from '@databyss-org/services/interfaces'
 import { db } from '../../db'
+import { DocumentType } from '../../interfaces'
 
 const getAuthors = async (): Promise<Author[] | ResourceNotFoundError> => {
   const _response = await db.find({

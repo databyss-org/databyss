@@ -4,29 +4,6 @@ export const selectionSchema: JSONSchema4 = {
   title: 'Selection',
   type: 'object',
   properties: {
-    _rev: {
-      type: 'string',
-    },
-    _revisions: {
-      type: 'object',
-      properties: {
-        start: {
-          type: 'number',
-        },
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
-    _id: {
-      type: 'string',
-    },
-    $type: {
-      type: 'string',
-    },
     anchor: {
       type: 'object',
       properties: {
@@ -49,14 +26,10 @@ export const selectionSchema: JSONSchema4 = {
         },
       },
     },
-    modifiedAt: {
-      type: 'number',
-    },
-    createdAt: {
-      type: 'number',
-    },
   },
-  required: ['_id', '$type', 'anchor', 'focus'],
+  // extend pouchdb types
+  allOf: [{ $ref: 'pouchDb' }],
+  required: ['anchor', 'focus'],
 }
 
 export default selectionSchema

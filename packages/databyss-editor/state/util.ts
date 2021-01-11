@@ -1,6 +1,7 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
+import { DocumentType } from '@databyss-org/data/database/interfaces'
 import {
   Selection,
   Block,
@@ -8,7 +9,6 @@ import {
   EditorState,
   Text,
   Point,
-  DocumentType,
 } from '../interfaces'
 import { OnChangeArgs } from './EditorProvider'
 import { isAtomicInlineType } from '../lib/util'

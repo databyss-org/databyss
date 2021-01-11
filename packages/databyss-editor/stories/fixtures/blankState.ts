@@ -1,5 +1,6 @@
 import { uid } from '@databyss-org/data/lib/uid'
-import { EditorState, BlockType, DocumentType } from '../../interfaces'
+import { DocumentType } from '@databyss-org/data/database/interfaces'
+import { EditorState, BlockType } from '../../interfaces'
 
 const initialState: EditorState = {
   preventDefault: false,

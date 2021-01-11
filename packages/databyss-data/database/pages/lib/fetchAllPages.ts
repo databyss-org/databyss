@@ -1,7 +1,6 @@
 import * as PouchDB from 'pouchdb-browser'
-import { DocumentType } from '@databyss-org/services/interfaces/Block'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
-import { PageDoc } from '../../interfaces'
+import { PageDoc, DocumentType } from '../../interfaces'
 import { db } from '../../db'
 
 const fetchAllPages = async (): Promise<PageDoc[] | ResourceNotFoundError> => {

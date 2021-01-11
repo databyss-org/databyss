@@ -1,11 +1,7 @@
 import { uid } from '@databyss-org/data/lib/uid'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
-import {
-  FSA,
-  BlockType,
-  Block,
-  DocumentType,
-} from '@databyss-org/services/interfaces'
+import { DocumentType } from '@databyss-org/data/database/interfaces'
+import { FSA, BlockType, Block } from '@databyss-org/services/interfaces'
 import {
   SPLIT,
   MERGE,

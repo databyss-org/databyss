@@ -1,5 +1,6 @@
 import cloneDeep from 'clone-deep'
-import { EditorState, Point, Block, DocumentType } from '../../interfaces'
+import { DocumentType } from '@databyss-org/data/database/interfaces'
+import { EditorState, Point, Block } from '../../interfaces'
 import {
   isSelectionCollapsed,
   sortSelection,

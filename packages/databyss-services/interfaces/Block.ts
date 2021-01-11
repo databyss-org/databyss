@@ -1,13 +1,7 @@
+import { DocumentType } from '@databyss-org/data/database/interfaces'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { SelectOption } from './UI'
 import { Text } from './Text'
-
-export enum DocumentType {
-  Page = 'PAGE',
-  Block = 'BLOCK',
-  Selection = 'SELECTION',
-  BlockRelation = 'BLOCK_RELATION',
-}
 
 export enum BlockType {
   Entry = 'ENTRY',

@@ -4,29 +4,6 @@ export const blockRelationSchema: JSONSchema4 = {
   title: 'BlockRelation',
   type: 'object',
   properties: {
-    _rev: {
-      type: 'string',
-    },
-    _revisions: {
-      type: 'object',
-      properties: {
-        start: {
-          type: 'number',
-        },
-        ids: {
-          type: 'array',
-          items: {
-            type: 'string',
-          },
-        },
-      },
-    },
-    _id: {
-      type: 'string',
-    },
-    $type: {
-      type: 'string',
-    },
     block: {
       type: 'string',
     },
@@ -48,16 +25,9 @@ export const blockRelationSchema: JSONSchema4 = {
     blockText: {
       $ref: 'text',
     },
-    modifiedAt: {
-      type: 'number',
-    },
-    createdAt: {
-      type: 'number',
-    },
   },
+  allOf: [{ $ref: 'pouchDb' }],
   required: [
-    '_id',
-    '$type',
     'block',
     'relatedBlock',
     'relatedBlockType',

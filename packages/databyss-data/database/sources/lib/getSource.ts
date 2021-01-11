@@ -1,10 +1,10 @@
 import {
   SourceCitationHeader,
-  DocumentType,
   BlockType,
 } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { db } from '../../db'
+import { DocumentType } from '../../interfaces'
 
 const getSource = async (
   _id: string
