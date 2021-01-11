@@ -18,15 +18,15 @@ const createReducer = (...middlewares) => {
   ])
 
   return (reducer, initialState, { initializer, name, onChange } = {}) => {
-    const ref = useRef((initializer || ((value) => value))(initialState))
+    // initialState must be a plain JSON object
+    const _initialState = Object.assign({}, initialState)
+    const ref = useRef((initializer || ((value) => value))(_initialState))
     const [, setState] = useState(ref.current)
 
     const dispatch = useCallback(
       (action) => {
         action.meta = { provider: name }
         ref.current = reducer(ref.current, action, onChange)
-        // TODO: remove after refactoring all reducers to use immer, which freezes for us
-        Object.freeze(ref.current)
         setState(ref.current)
         return action
       },

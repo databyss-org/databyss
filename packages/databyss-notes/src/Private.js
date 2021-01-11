@@ -5,6 +5,7 @@ import { PageProvider } from '@databyss-org/services'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import TopicProvider from '@databyss-org/services/topics/TopicProvider'
 import EntryProvider from '@databyss-org/services/entries/EntryProvider'
+import GroupProvider from '@databyss-org/services/groups/GroupProvider'
 import {
   Sidebar,
   PageRouter,
@@ -69,17 +70,19 @@ const Private = () => {
       <EntryProvider>
         <SourceProvider>
           <TopicProvider>
-            <Router>
-              <App path="/:accountId">
-                <NotFoundRedirect default />
-                <PageRouter path="pages/*" />
-                <SearchRouter path="search/*" />
-                <SourcesRouter path="sources/*" />
-                <TopicsRouter path="topics/*" />
-                <GroupsRouter path="groups/*" />
-              </App>
-            </Router>
-            <ModalManager />
+            <GroupProvider>
+              <Router>
+                <App path="/:accountId">
+                  <NotFoundRedirect default />
+                  <PageRouter path="pages/*" />
+                  <SearchRouter path="search/*" />
+                  <SourcesRouter path="sources/*" />
+                  <TopicsRouter path="topics/*" />
+                  <GroupsRouter path="collections/*" />
+                </App>
+              </Router>
+              <ModalManager />
+            </GroupProvider>
           </TopicProvider>
         </SourceProvider>
       </EntryProvider>

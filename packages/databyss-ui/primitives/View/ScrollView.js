@@ -1,14 +1,15 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useRef, useState, forwardRef } from 'react'
 import { ScrollView } from 'react-native'
 import { throttle } from 'lodash'
 import css from '@styled-system/css'
+import forkRef from '@databyss-org/ui/lib/forkRef'
 import styled from '../styled'
 import View, { styleProps } from './View'
 import IS_NATIVE from '../../lib/isNative'
 
 const Styled = IS_NATIVE ? styled(ScrollView, styleProps) : View
 
-export default ({ children, shadowOnScroll, ...others }) => {
+export default forwardRef(({ children, shadowOnScroll, ...others }, ref) => {
   const viewRef = useRef()
   const [scrollTop, setScrollTop] = useState(0)
   const webProps = {
@@ -61,10 +62,10 @@ export default ({ children, shadowOnScroll, ...others }) => {
       {...(IS_NATIVE ? nativeProps : webProps)}
       {...(IS_NATIVE ? {} : shadowOnScrollProps)}
       {...others}
-      ref={viewRef}
+      ref={forkRef(ref, viewRef)}
     >
       {children}
       {IS_NATIVE && <View height={50} />}
     </Styled>
   )
-}
+})

@@ -14,7 +14,7 @@ export type { Page, PageHeader } from './Page'
 export type { Point } from './Point'
 export type { Selection } from './Selection'
 export type { Block, BasicBlock, BlockRelationsServerResponse } from './Block'
-export type { Text } from './Text'
+export { Text } from './Text'
 export type {
   Source,
   SourceDetail,
@@ -53,3 +53,5 @@ export interface RefDict {
 }
 
 export type { EntryState } from './EntryState'
+export type { GroupHeader } from './Group'
+export { Group, GroupState } from './Group'

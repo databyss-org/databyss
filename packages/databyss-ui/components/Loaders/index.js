@@ -7,8 +7,8 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { useGroupContext } from '@databyss-org/services/groups/GroupProvider'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
-import { collectionsItems } from '@databyss-org/ui/stories/Components/Sidebar/fixtures'
 
 import { isResourceReady } from './_helpers'
 
@@ -183,6 +183,7 @@ export const BlockRelationsLoader = ({ children, atomicId }) => {
   )
 }
 
-export const GroupHeadersLoader = ({ children }) => (
-  <MakeLoader resources={collectionsItems}>{children}</MakeLoader>
-)
+export const GroupHeadersLoader = ({ children }) => {
+  const getGroupHeaders = useGroupContext((c) => c.getGroupHeaders)
+  return <MakeLoader resources={getGroupHeaders()}>{children}</MakeLoader>
+}

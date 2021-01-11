@@ -235,17 +235,17 @@ export const collectionsItems = [
   {
     text: 'PHIL 103',
     type: 'group',
-    route: '/groups/GROUP_ID',
+    route: '/collections/PHIL103',
   },
   {
-    text: 'PHIL 103 shared',
+    text: 'Return to Cinder',
     type: 'group',
-    route: '/groups/GROUP_ID',
+    route: '/collections/RETURNTOCINDER',
   },
   {
     text: 'Default (private)',
     type: 'group',
-    route: '/groups/GROUP_ID',
+    route: '/collections/DEFAULT',
     default: true,
   },
   {
@@ -259,3 +259,31 @@ export const collectionsItems = [
     id: '5fce38d147a60b37ec159f4f',
   },
 ]
+
+export const groupHeaders = [
+  {
+    name: 'PHIL 103',
+    _id: 'PHIL103',
+  },
+  {
+    name: 'Return to Cinder',
+    _id: 'RETURNTOCINDER',
+  },
+  {
+    name: 'Default (private)',
+    _id: 'DEFAULT',
+    default: true,
+  },
+]
+
+export const groupDetails = {
+  RETURNTOCINDER: {
+    name: 'Return to Cinder',
+    description: {
+      textValue:
+        'an enormous (but violently incomplete) database inspurred by the work of Jacques Derrida\n\nThis site now includes work from over 30 other authors.\n\nThe work of Jacques Derrida was not only the first work that I uploaded to this database but it was also the work that inspired its creation. I reproduce here the original description of the database, when it was only a "one man show": Jacques Derrida, perhaps commonly recognized for terms like deconstruction, differance, supplement, parasite, iterability and dissemination, also took the time to write about nearly everything else. This database organizes the breadth of Derrida’s virtuosic reach under 871 motifs. (If these borders are too limiting, the website also provides the option to search a word or phrase or search a source text and/or specific page numbers.) Within each motif you will find quasi-quotations with sufficient referential syntax to help you trace back to the “original” source. The database not only provides a cross-sectional index of terms so that you can find where, for example, Derrida speaks about Justice, Christianity or Heidegger, but each entry gives you the chance to think about the interrupted context you might never retrace.',
+      ranges: [],
+    },
+    pages: [],
+  },
+}

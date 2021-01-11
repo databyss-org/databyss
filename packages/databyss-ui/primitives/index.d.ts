@@ -78,7 +78,7 @@ export interface ScrollViewProps extends ViewProps {
   shadowOnScroll?: boolean | string
 }
 
-declare const ScrollView: FC<PropsWithChildren<ScrollViewProps>>
+declare const ScrollView: RefForwardingFC<PropsWithChildren<ScrollViewProps>>
 
 export interface GridProps extends ViewProps {
   columnGap?: ReactText
