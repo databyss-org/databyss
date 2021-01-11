@@ -1,9 +1,9 @@
-import { cloudant } from '@databyss-org/services/lib/cloudant'
 import { Users, Groups } from '@databyss-org/data/serverdbs/index'
 import { User, Role } from '@databyss-org/data/interfaces'
 import { uid } from '@databyss-org/data/lib/uid'
-import { updateClientDesignDoc } from './couchdb'
-import { DesignDoc } from '../../../databyss-data/interfaces/designdoc'
+import { cloudant } from '@databyss-org/data/serverdbs/cloudant'
+// import { updateClientDesignDoc } from '@databyss-org/data/serverdbs/couchdb'
+// import { DesignDoc } from '../../../databyss-data/interfaces/designdoc'
 
 interface CredentialResponse {
   dbKey: string
@@ -25,12 +25,16 @@ const createGroupDatabase = async (id: string) => {
   try {
     await cloudant.db.get(`g_${id}`)
   } catch (err) {
+    if (err.message !== 'Database does not exist.') {
+      throw err
+    }
     await cloudant.db.create(`g_${id}`)
 
-    const _db = await cloudant.db.use<DesignDoc>(`g_${id}`)
-
+    // TODO: add design docs to sever
     // add validation documents to group database
-    await updateClientDesignDoc(_db)
+    // const _db = await cloudant.db.use<DesignDoc>(`g_${id}`)
+
+    // await updateClientDesignDoc(_db)
   }
 }
 
@@ -140,4 +144,27 @@ export const addCredentialsToUser = async (
   })
   // TODO: determine where the default page id comes from
   return _res
+}
+
+export const addCredientialsToSession = async ({
+  groupId,
+  userId,
+  session,
+}: {
+  groupId: string
+  userId: string
+  // TODO: SESSION SHOULD BE AN OBJECT
+  session: any
+}) => {
+  const credentials = await addCredentialsToGroupId({
+    groupId,
+    userId,
+  })
+
+  session.user.groups = [
+    {
+      ...credentials,
+    },
+  ]
+  return session
 }

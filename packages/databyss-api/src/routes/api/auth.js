@@ -6,7 +6,7 @@ import wrap from '../../lib/guardedAsync'
 import {
   createUserDatabaseCredentials,
   addCredentialsToUser,
-  addCredentialsToGroupId,
+  addCredientialsToSession,
 } from '../../lib/createUserDatabase'
 
 const router = express.Router()
@@ -17,21 +17,14 @@ const router = express.Router()
 router.post('/', auth, async (req, res) => {
   try {
     if (req?.user) {
-      const session = await getSessionFromUserId(req.user.id)
+      let session = await getSessionFromUserId(req.user.id)
 
       // TODO: on every re-login attempt we are creating new user credentials, should this happen on the back end or should the user save the credentials in their offline database?
-      let credentials
-      if (session.user.defaultGroupId && session.user._id) {
-        credentials = await addCredentialsToGroupId({
-          groupId: session.user.defaultGroupId,
-          userId: session.user._id,
-        })
-      }
-      session.user.groups = [
-        {
-          ...credentials,
-        },
-      ]
+      session = await addCredientialsToSession({
+        groupId: session.user.defaultGroupId,
+        userId: session.user._id,
+        session,
+      })
 
       return res.json({ data: { session } })
     }
@@ -71,7 +64,7 @@ router.post(
         const token = _login.token
         const _res = await Logins.get(_login._id, _login._rev)
         await Logins.destroy(_res._id, _res._rev)
-        const session = await getSessionFromToken(token)
+        let session = await getSessionFromToken(token)
         // check if user has login credentials
 
         // INIT SUBROUTINE
@@ -98,15 +91,12 @@ router.post(
           session.user.provisionClientDatabase = true
         } else {
           // user already exists, generate new credentials
-          const credentials = await addCredentialsToGroupId({
+          session = await addCredientialsToSession({
             groupId: session.user.defaultGroupId,
             userId: session.user._id,
+            session,
           })
-          session.user.groups = [
-            {
-              ...credentials,
-            },
-          ]
+
           // let client know to wait until replication is done
           session.user.replicateClientDatabase = true
         }

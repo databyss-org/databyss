@@ -183,7 +183,6 @@ export class PageConstructor {
       _id: uid(),
     }
     this.$type = DocumentType.Page
-    this.$type = DocumentType.Page
     this.name = 'untitled'
     this.archive = false
     this.blocks = [

@@ -15,7 +15,8 @@ const getSources = async (): Promise<Source[] | ResourceNotFoundError> => {
   })
 
   if (!_response.docs.length) {
-    return new ResourceNotFoundError('no sources found')
+    return []
+    // return new ResourceNotFoundError('no sources found')
   }
 
   return _response.docs
