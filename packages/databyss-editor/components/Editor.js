@@ -68,7 +68,7 @@ const Editor = ({
         // uri's must begin with "http:// or "https://"
         // test it here: https://regexr.com/5jvei
         const _uriRegEx = new RegExp(
-          /https?:\/\/[-a-zA-Z0-9:.]{2,256}(\/[-a-zA-Z0-9@:%_+.~#&?/=,[\]]*)?([-a-zA-Z0-9@%_+~#&/=])/,
+          /https?:\/\/[-a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF:.]{2,256}(\/?[-a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF@:%_+.~#&?/=,[\]]*)?([-a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF@%_+~#&/=])/,
           'gi'
         )
         ;[_emailRegEx, _uriRegEx].forEach((_regex) => {
