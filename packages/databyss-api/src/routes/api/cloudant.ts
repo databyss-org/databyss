@@ -10,9 +10,9 @@ export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 // @desc     delete all user database, for use in tests only
 // @access   private
 router.delete('/', async (req, res) => {
-  if (process.env.NODE_ENV !== 'test') {
-    return new UnauthorizedError()
-  }
+  // if (process.env.NODE_ENV !== 'test') {
+  //   return new UnauthorizedError()
+  // }
   const _dbs = await cloudant.db.list()
   // console.log(_dbs)
   if (_dbs.length) {

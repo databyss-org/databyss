@@ -131,8 +131,13 @@ const removePatches = async (p, page) => {
     case 'blocks': {
       const _index = p.path[1]
       const { blocks } = page
+      const _blockId = blocks[_index]._id
+      // remove block from db
+      await db.upsert(_blockId, (oldDoc) => ({
+        ...addTimeStamp({ ...oldDoc, _deleted: true }),
+      }))
+      // remove block from page
       blocks.splice(_index, 1)
-      // TODO: REMOVE BLOCK FROM DB
       break
     }
     default:
