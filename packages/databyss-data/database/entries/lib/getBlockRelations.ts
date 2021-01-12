@@ -8,12 +8,9 @@ const getBlockRelations = async (
   id: string
 ): Promise<BlockRelationsServerResponse | ResourceNotFoundError> => {
   const _docs: BlockRelation[] = await findAll({
-    selector: {
-      $type: DocumentType.BlockRelation,
-      relatedBlock: id,
-    },
+    $type: DocumentType.BlockRelation,
+    relatedBlock: id,
   })
-
   if (!_docs.length) {
     return new ResourceNotFoundError('No block relations found')
   }
