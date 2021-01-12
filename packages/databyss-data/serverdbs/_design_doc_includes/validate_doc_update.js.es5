@@ -6,14 +6,12 @@ function(newDoc) {
   if (!this.schema) {
     // user database determines the schema by the .type field
     var schemaMap = {
-      SOURCE: this.sourceSchema,
-      ENTRY: this.entrySchema,
-      ...
+      SOURCE: this.sourceSchema,      
     }
     this.schema = schemaMap[newDoc.type];
   }
-
-  if (!tv4.validate(newDoc, this.schema, false, true)) {
+  // `this.schema &&` this will be removed when all schemas are implemented
+  if (this.schema && !tv4.validate(newDoc, this.schema, false, true)) {
     throw({forbidden: tv4.error.message + ' -> ' + tv4.error.dataPath + '/ / ' + JSON.stringify(newDoc)});
   }
 }
