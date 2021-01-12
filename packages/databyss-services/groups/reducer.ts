@@ -7,7 +7,11 @@ import {
   ResourcePending,
   GroupHeader,
 } from '../interfaces'
-import { FETCH_GROUP_HEADERS, CACHE_GROUP_HEADERS } from './constants'
+import {
+  FETCH_GROUP_HEADERS,
+  CACHE_GROUP_HEADERS,
+  CACHE_GROUP,
+} from './constants'
 
 export default produce((draft: Draft<GroupState>, action: FSA) => {
   switch (action.type) {
@@ -27,6 +31,10 @@ export default produce((draft: Draft<GroupState>, action: FSA) => {
         },
         {}
       )
+      break
+    }
+    case CACHE_GROUP: {
+      draft.cache[action.payload.group._id] = action.payload.group
       break
     }
   }

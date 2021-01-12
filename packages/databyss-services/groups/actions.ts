@@ -3,6 +3,8 @@ import {
   FETCH_GROUP_HEADERS,
   CACHE_GROUP_HEADERS,
   SAVE_GROUP,
+  FETCH_GROUP,
+  CACHE_GROUP,
 } from './constants'
 import * as services from './services'
 
@@ -17,6 +19,28 @@ export function fetchGroupHeaders() {
       dispatch({
         type: CACHE_GROUP_HEADERS,
         payload: { groups: response },
+      })
+    } catch (err) {
+      response = err
+    }
+
+    if (response instanceof Error) {
+      throw response
+    }
+  }
+}
+
+export function fetchGroup(id: string) {
+  return async (dispatch: Function) => {
+    dispatch({
+      type: FETCH_GROUP,
+    })
+    let response: ResourceResponse<Group>
+    try {
+      response = await services.getGroup(id)
+      dispatch({
+        type: CACHE_GROUP,
+        payload: { group: response },
       })
     } catch (err) {
       response = err

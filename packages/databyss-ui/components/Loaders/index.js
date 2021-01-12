@@ -187,3 +187,8 @@ export const GroupHeadersLoader = ({ children }) => {
   const getGroupHeaders = useGroupContext((c) => c.getGroupHeaders)
   return <MakeLoader resources={getGroupHeaders()}>{children}</MakeLoader>
 }
+
+export const GroupLoader = ({ children, groupId }) => {
+  const getGroup = useGroupContext((c) => c.getGroup)
+  return <MakeLoader resources={getGroup(groupId)}>{children}</MakeLoader>
+}

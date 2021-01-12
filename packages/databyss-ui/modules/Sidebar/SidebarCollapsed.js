@@ -19,33 +19,21 @@ export const defaultProps = {}
 const SidebarCollapsed = () => {
   const {
     navigateSidebar,
-    getTokensFromPath,
     getSidebarPath,
     isMenuOpen,
     setMenuOpen,
   } = useNavigationContext()
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-
-  const [activeItem, setActiveItem] = useState('pages')
+  const activeItem = getSidebarPath()
 
   const onItemClick = (item) => {
     if (!isMenuOpen) {
-      return (
-        setMenuOpen(true) && navigateSidebar(`/${item}`) && setActiveItem(item)
-      )
+      return setMenuOpen(true) && navigateSidebar(`/${item}`)
     }
     return activeItem === item
       ? setMenuOpen(!isMenuOpen)
-      : navigateSidebar(`/${item}`) && setActiveItem(item)
+      : navigateSidebar(`/${item}`)
   }
-
-  useEffect(
-    () =>
-      setActiveItem(
-        getSidebarPath() ? getSidebarPath() : getTokensFromPath().type
-      ),
-    [navigateSidebar]
-  )
 
   const isIconButtonActive = (item) => activeItem === item.name && isMenuOpen
 

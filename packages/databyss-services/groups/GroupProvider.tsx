@@ -1,7 +1,6 @@
-import React, { useCallback, PropsWithChildren, useEffect } from 'react'
+import React, { useCallback, PropsWithChildren } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import { groupHeaders } from '@databyss-org/ui/stories/Components/Sidebar/fixtures'
 import {
   Group,
   ResourcePending,
@@ -10,7 +9,7 @@ import {
   GroupState,
 } from '../interfaces'
 import reducer from './reducer'
-import { fetchGroupHeaders, saveGroup } from './actions'
+import { fetchGroupHeaders, saveGroup, fetchGroup } from './actions'
 
 interface PropsType {
   initialState: GroupState
@@ -20,6 +19,7 @@ interface ContextType {
   state: GroupState
   getGroupHeaders: () => ResourceResponse<CacheDict<Group>>
   setGroup: (group: Group) => void
+  getGroup: (id: string) => Group
 }
 
 export const GroupContext = createContext<ContextType>(null!)
@@ -38,30 +38,35 @@ const GroupProvider = ({
     [state]
   )
 
+  const getGroup = useCallback(
+    (id: string) => {
+      if (state.cache[id]) {
+        return state.cache[id]
+      }
+      if (!(state.cache[id] instanceof ResourcePending)) {
+        dispatch(fetchGroup(id))
+      }
+      return null
+    },
+    [state]
+  )
+
   const getGroupHeaders = useCallback(() => {
     if (state.headerCache) {
       return state.headerCache
     }
-
     if (!(state.headerCache instanceof ResourcePending)) {
       dispatch(fetchGroupHeaders())
     }
-
     return null
   }, [state.headerCache])
-
-  useEffect(() => {
-    console.log(groupHeaders)
-    if (state.headerCache) {
-      dispatch(fetchGroupHeaders())
-    }
-  }, [groupHeaders])
 
   return (
     <GroupContext.Provider
       value={{
         state,
         setGroup,
+        getGroup,
         getGroupHeaders,
       }}
     >

@@ -278,6 +278,7 @@ export const groupHeaders = [
 
 export const groupDetails = {
   RETURNTOCINDER: {
+    _id: 'RETURNTOCINDER',
     name: 'Return to Cinder',
     description: {
       textValue:
