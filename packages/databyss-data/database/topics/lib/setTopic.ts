@@ -29,10 +29,8 @@ const setTopic = async (data: Topic) => {
   for (const relation of _relations) {
     // get the block to update
     const _block: Block = await findOne({
-      selector: {
-        $type: DocumentType.Block,
-        _id: relation.block,
-      },
+      $type: DocumentType.Block,
+      _id: relation.block,
     })
 
     if (_block) {
