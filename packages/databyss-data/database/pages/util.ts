@@ -4,7 +4,8 @@ import { Block, BlockType } from '@databyss-org/services/interfaces'
 import { Selection } from '@databyss-org/services/interfaces/Selection'
 import { uid } from '@databyss-org/data/lib/uid'
 import { PageDoc, DocumentType } from '../interfaces'
-import { db, addTimeStamp } from '../db'
+import { db } from '../db'
+import { upsert } from '../utils'
 
 export const getAtomicClosureText = (type, text) =>
   ({
@@ -76,9 +77,11 @@ const addOrReplaceBlock = async (p, page) => {
       text: { textValue: '', ranges: [] },
     }
     // initiate new block
-    await db.upsert(_blockId, () => ({
-      ...addTimeStamp({ ..._block, page: page._id }),
-    }))
+    await upsert({
+      $type: DocumentType.Block,
+      _id: _blockId,
+      doc: { ..._block, page: page._id },
+    })
   }
 
   Object.assign(_block, _blockFields)
@@ -89,10 +92,7 @@ const addOrReplaceBlock = async (p, page) => {
     applyPatch(_block, p.path.slice(2), p.value)
   }
 
-  db.upsert(_block._id, (oldDoc) => {
-    console.log(oldDoc.timestamp)
-    return { ...oldDoc, ...addTimeStamp(_block) }
-  })
+  await upsert({ $type: DocumentType.Block, _id: _block._id, doc: _block })
 }
 
 const replacePatch = async (p, page) => {
@@ -105,7 +105,8 @@ const replacePatch = async (p, page) => {
     case 'selection': {
       const _id = p.value._id
       if (_id) {
-        db.upsert(_id, (oldDoc) => ({ ...addTimeStamp(oldDoc), ...p.value }))
+        await upsert({ $type: DocumentType.Selection, _id, doc: p.value })
+
         // // if new selection._id is passed tag it to page
         page.selection = _id
       }
@@ -136,9 +137,11 @@ const removePatches = async (p, page) => {
       const { blocks } = page
       const _blockId = blocks[_index]._id
       // remove block from db
-      await db.upsert(_blockId, (oldDoc) => ({
-        ...addTimeStamp({ ...oldDoc, _deleted: true }),
-      }))
+      await upsert({
+        $type: DocumentType.Block,
+        _id: _blockId,
+        doc: { _deleted: true },
+      })
       // remove block from page
       blocks.splice(_index, 1)
       break
@@ -202,18 +205,16 @@ export class PageConstructor {
   }
 
   async addSelection() {
-    await db.upsert(this.selection._id, (oldDoc) => ({
-      ...addTimeStamp(oldDoc),
-      ...this.selection,
-    }))
+    await upsert({
+      $type: DocumentType.Selection,
+      _id: this.selection._id,
+      doc: this.selection,
+    })
   }
 
   async addBlock() {
     const _block = this.blocks[0]
-    await db.upsert(_block._id, (oldDoc) => ({
-      ...addTimeStamp(oldDoc),
-      ..._block,
-    }))
+    await upsert({ $type: DocumentType.Block, _id: _block._id, doc: _block })
   }
 
   async addPage() {
@@ -221,17 +222,21 @@ export class PageConstructor {
 
     await this.addBlock()
 
-    const _page = await db.upsert(this._id, () => ({
-      ...this,
-      createdAt: Date.now(),
-      selection: this.selection._id,
-      blocks: [
-        {
-          _id: this.blocks[0]._id,
-          type: BlockType.Entry,
-        },
-      ],
-    }))
+    const _page = await upsert({
+      $type: DocumentType.Page,
+      _id: this._id,
+      doc: {
+        ...this,
+        selection: this.selection._id,
+        blocks: [
+          {
+            _id: this.blocks[0]._id,
+            type: BlockType.Entry,
+          },
+        ],
+      },
+    })
+
     return _page
   }
 }

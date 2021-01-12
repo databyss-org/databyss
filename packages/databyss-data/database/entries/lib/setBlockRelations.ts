@@ -1,6 +1,7 @@
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
 import { DocumentType } from '../../interfaces'
-import { db, addTimeStamp } from '../../db'
+import { db } from '../../db'
+import { upsert } from '../../utils'
 
 const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
   for (const payload of payloadArray) {
@@ -32,18 +33,21 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
         // TODO: HOW DO WE GET THE BLOCK ID IN A MORE EFFICIENT WAY
         // will one block only ever have a relationship with another block?
         const _relationshipID = `${block}${relatedBlock}`
+
         if (removeBlock) {
           // get blockID
-          await db.upsert(_relationshipID, () => ({ _deleted: true }))
+          await upsert({
+            $type: DocumentType.BlockRelation,
+            _id: _relationshipID,
+            doc: { _deleted: true },
+          })
         } else {
           // update block relation
-          await db.upsert(_relationshipID, (oldDoc) => ({
-            ...addTimeStamp({
-              ...oldDoc,
-              ...relationship,
-              $type: DocumentType.BlockRelation,
-            }),
-          }))
+          await upsert({
+            $type: DocumentType.BlockRelation,
+            _id: _relationshipID,
+            doc: relationship,
+          })
         }
       }
     }

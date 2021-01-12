@@ -1,6 +1,6 @@
 import { Source, BlockType } from '@databyss-org/services/interfaces'
-import { db, addTimeStamp } from '../../db'
 import { DocumentType } from '../../interfaces'
+import { upsert } from '../../utils'
 
 export const setSource = async (data: Source) => {
   const { text, detail, _id } = data
@@ -11,11 +11,11 @@ export const setSource = async (data: Source) => {
     $type: DocumentType.Block,
     detail,
   }
-
-  await db.upsert(_id, (oldDoc) => {
-    const _source = oldDoc
-    Object.assign(_source, blockFields)
-    return addTimeStamp(_source)
+  // TODO: get document and use Object.assign(_source, blockFields) to only replace new fields
+  await upsert({
+    $type: DocumentType.Block,
+    _id,
+    doc: blockFields,
   })
 }
 

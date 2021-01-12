@@ -1,9 +1,7 @@
-import { db, addTimeStamp } from '../../db'
+import { upsert } from '../../utils'
+import { DocumentType } from '../../interfaces'
 
 const deletePage = (id: string) =>
-  db.upsert(id, (oldDoc) => ({
-    ...addTimeStamp(oldDoc),
-    _deleted: true,
-  }))
+  upsert({ $type: DocumentType.Page, _id: id, doc: { _deleted: true } })
 
 export default deletePage

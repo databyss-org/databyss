@@ -2,22 +2,32 @@ import { BlockType } from '@databyss-org/services/interfaces/Block'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { replaceInlineText } from '@databyss-org/editor/state/util'
 import { Topic, Block } from '@databyss-org/services/interfaces'
-import { addTimeStamp, db } from '../../db'
+import { db } from '../../db'
 import { DocumentType } from '../../interfaces'
+import { upsert } from '../../utils'
 
 const setTopic = async (data: Topic) => {
   const { text, _id } = data
 
-  let block
-  await db.upsert(_id, (oldDoc) => {
-    block = {
-      ...addTimeStamp(oldDoc),
+  const block = await upsert({
+    $type: DocumentType.Block,
+    _id,
+    doc: {
       ...data,
       type: BlockType.Topic,
-      $type: DocumentType.Block,
-    }
-    return block
+    },
   })
+
+  console.log('set topic', block)
+  // await db.upsert(_id, (oldDoc) => {
+  //   block = {
+  //     ...addTimeStamp(oldDoc),
+  //     ...data,
+  //     type: BlockType.Topic,
+  //     $type: DocumentType.Block,
+  //   }
+  //   return block
+  // })
 
   /*
       find all inline block relations with associated id and update blocks
@@ -68,10 +78,11 @@ const setTopic = async (data: Topic) => {
       })
       if (_inlineRanges.length) {
         // update block
-        await db.upsert(_block._id, (oldDoc) => ({
-          ...addTimeStamp(oldDoc),
-          ..._block,
-        }))
+        await upsert({
+          $type: DocumentType.Block,
+          _id: _block._id,
+          doc: _block,
+        })
         // update relation
 
         const _blockRelationResults = await db.find({
@@ -84,11 +95,14 @@ const setTopic = async (data: Topic) => {
 
         const _blockRelationToUpdate = _blockRelationResults.docs[0]
         if (_blockRelationToUpdate) {
-          await db.upsert(_blockRelationToUpdate._id, (oldDoc) => ({
-            ...addTimeStamp(oldDoc),
-            ...relation,
-            blockText: _block.text,
-          }))
+          await upsert({
+            $type: DocumentType.BlockRelation,
+            _id: _blockRelationToUpdate._id,
+            doc: {
+              ...relation,
+              blockText: _block.text,
+            },
+          })
         }
       }
     }

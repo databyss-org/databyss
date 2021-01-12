@@ -1,7 +1,8 @@
 import { PatchBatch } from '@databyss-org/services/interfaces/Patch'
-import { PageDoc } from '../../interfaces'
-import { db, addTimeStamp } from '../../db'
+import { PageDoc, DocumentType } from '../../interfaces'
+import { db } from '../../db'
 import { runPatches } from '../util'
+import { upsert } from '../../utils'
 
 // TODO: WRAP THIS IN ERROR HANDLER
 const savePatchBatch = async (data: PatchBatch) => {
@@ -14,7 +15,7 @@ const savePatchBatch = async (data: PatchBatch) => {
     await runPatches(patch, _page)
   }
   // save page
-  await db.upsert(_page._id, () => addTimeStamp(_page))
+  await upsert({ $type: DocumentType.Page, _id: _page._id, doc: _page })
 }
 
 export default savePatchBatch
