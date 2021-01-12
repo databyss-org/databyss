@@ -72,7 +72,7 @@ describe('inline atomic', () => {
     )
 
     await logoutButton.click()
-    await sleep(100)
+    await sleep(1000)
     await driver.quit()
     driver = null
     await sleep(100)
