@@ -17,7 +17,7 @@ const SourcesCitations = () => {
       {(sourceCitations) => {
         const _header = sourceCitations[query].text.textValue
         return (
-          <IndexPageContent title={_header}>
+          <IndexPageContent title={_header} indexName="Sources">
             <Helmet>
               <meta charSet="utf-8" />
               <title>{_header}</title>

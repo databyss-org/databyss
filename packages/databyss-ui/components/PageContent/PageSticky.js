@@ -1,27 +1,22 @@
 /* eslint-disable react/no-danger */
-import React, { useEffect, useRef, useState, useCallback } from 'react'
-import { Helmet } from 'react-helmet'
+import React, { useEffect, useState, useCallback } from 'react'
 import { debounce } from 'lodash'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
-import { View, Text, Icon } from '@databyss-org/ui/primitives'
+import { StickyHeader } from '@databyss-org/ui/components'
+import { View, Icon } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import OnlineSvg from '@databyss-org/ui/assets/online.svg'
-import OfflineSvg from '@databyss-org/ui/assets/offline.svg'
 import LoadingSvg from '@databyss-org/ui/assets/loading.svg'
 import PageMenu from './PageMenu'
-import AccountMenu from './AccountMenu'
 
 const PageSticky = ({ pagePath, pageId }) => {
-  const { isOnline } = useNotifyContext()
   const hasPendingPatches = usePageContext((c) => c.hasPendingPatches)
+  const { isOnline } = useNotifyContext()
   // get page name from headerCache
   const getPages = usePageContext((c) => c && c.getPages)
 
   const [pendingPatches, setPendingPatches] = useState(0)
   const [showSaving, setShowSaving] = useState(false)
-
-  const stickyRef = useRef()
   const currentPath = []
 
   // debonce the ui component showing the saving icon
@@ -54,25 +49,14 @@ const PageSticky = ({ pagePath, pageId }) => {
   }
 
   return (
-    <View
-      alignItems="center"
-      flexDirection="row"
-      justifyContent="space-between"
-      py="em"
-      px="medium"
-      ref={stickyRef}
-      backgroundColor="gray.7"
+    <StickyHeader
+      path={currentPath}
+      contextMenu={
+        <PagesLoader includeArchived>
+          {(pages) => <PageMenu pages={pages} />}
+        </PagesLoader>
+      }
     >
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>{currentPath[0]}</title>
-      </Helmet>
-      <Text color="gray.4" variant="uiTextSmall">
-        <div
-          data-test-element="editor-sticky-header"
-          dangerouslySetInnerHTML={{ __html: currentPath.join(' / ') }}
-        />
-      </Text>
       <View alignItems="center" justifyContent="flex-end" flexDirection="row">
         {pendingPatches ? null : (
           <View id="changes-saved">
@@ -86,22 +70,8 @@ const PageSticky = ({ pagePath, pageId }) => {
             <LoadingSvg />
           </Icon>
         ) : null}
-        <Icon
-          sizeVariant="small"
-          color="gray.5"
-          title={isOnline ? 'Online' : 'Offline'}
-          ml="small"
-        >
-          {isOnline ? <OnlineSvg /> : <OfflineSvg />}
-        </Icon>
-        <AccountMenu />
-        <View ml="em">
-          <PagesLoader includeArchived>
-            {(pages) => <PageMenu pages={pages} />}
-          </PagesLoader>
-        </View>
       </View>
-    </View>
+    </StickyHeader>
   )
 }
 

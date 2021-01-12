@@ -58,7 +58,7 @@ const AuthorCitations = ({ query }) => {
         )
 
         return (
-          <IndexPageContent title={authorFullName}>
+          <IndexPageContent title={authorFullName} indexName="Authors">
             <Helmet>
               <meta charSet="utf-8" />
               <title>{authorFullName}</title>

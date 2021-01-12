@@ -24,7 +24,7 @@ import {
 import * as ReactModal from 'react-modal'
 import * as ReactDnd from 'react-dnd'
 import { InterpolationWithTheme } from '@emotion/core'
-import { Text } from '@databyss-org/editor/interfaces'
+import { Text as TextInterface } from '@databyss-org/editor/interfaces'
 
 export type RefForwardingFC<P, T = HTMLElement> = ForwardRefExoticComponent<
   PropsWithoutRef<P> & RefAttributes<T>
@@ -102,6 +102,7 @@ export interface TextProps
 }
 
 declare const TextPrimitive: RefForwardingFC<PropsWithChildren<TextProps>>
+declare const Text: RefForwardingFC<PropsWithChildren<TextProps>>
 
 export interface RawHtmlProps extends ColorProps, SpaceProps, BorderProps {
   _html?: string
@@ -117,6 +118,7 @@ declare const RawHtml: RefForwardingFC<RawHtmlProps>
 export interface IconProps extends ViewProps {
   sizeVariant?: string
   useSvgColors?: boolean
+  title?: string
 }
 
 declare const Icon: FC<PropsWithChildren<IconProps>>
@@ -205,8 +207,8 @@ export interface ButtonProps extends BaseControlProps {
 declare const Button: RefForwardingFC<PropsWithChildren<ButtonProps>>
 
 export interface TextInputProps extends TextProps {
-  value: Partial<Text>
-  onChange: (value: Text) => void
+  value: Partial<TextInterface>
+  onChange: (value: TextInterface) => void
   multiline?: boolean
   active?: boolean
   concatCss?: InterpolationWithTheme<any>
@@ -217,8 +219,8 @@ export interface TextInputProps extends TextProps {
 declare const TextInput: RefForwardingFC<TextInputProps>
 
 export interface RichTextInputProps {
-  value: Partial<Text>
-  onChange: (value: Text) => void
+  value: Partial<TextInterface>
+  onChange: (value: TextInterface) => void
   multiline?: boolean
   active?: boolean
   concatCss?: InterpolationWithTheme<any>

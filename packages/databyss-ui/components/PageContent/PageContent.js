@@ -12,7 +12,6 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
-import { isMobile } from '../../lib/mediaQuery'
 import AccountMenu from './AccountMenu'
 
 export const PageContainer = React.memo(
@@ -69,27 +68,14 @@ export const PageContainer = React.memo(
 
     return (
       <>
-        {!isPublicAccount() && !isMobile() && (
-          <PageSticky pagePath={editorPath} pageId={page._id} />
-        )}
+        <PageSticky pagePath={editorPath} pageId={page._id} />
         <ScrollView
           flexShrink={1}
-          shadowOnScroll="#00000044"
+          shadowOnScroll
           ref={editorWindowRef}
           {...others}
         >
-          <View
-            pl="medium"
-            pr="medium"
-            pb="medium"
-            pt={isPublicAccount() || isMobile() ? 'large' : 'none'}
-            flexGrow={1}
-          >
-            {getAuthToken() && isPublicAccount() && !isMobile() && (
-              <View position="absolute" right="extraLarge">
-                <AccountMenu />
-              </View>
-            )}
+          <View p="medium" pt="none" flexGrow={1}>
             <PageHeader
               ref={headerRef}
               pageId={id}

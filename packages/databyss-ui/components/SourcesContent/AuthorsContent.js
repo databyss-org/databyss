@@ -48,7 +48,7 @@ const AuthorsContent = () => {
             const entries = buildEntries(authors)
 
             return (
-              <IndexPageContent title="All Authors">
+              <IndexPageContent title="All Authors" indexName="Authors">
                 <Helmet>
                   <meta charSet="utf-8" />
                   <title>All Authors</title>

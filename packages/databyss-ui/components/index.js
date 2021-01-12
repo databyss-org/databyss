@@ -4,3 +4,5 @@ export {
   default as NavigationProvider,
   useNavigationContext,
 } from './Navigation/NavigationProvider/NavigationProvider'
+export { default as AccountMenu } from './PageContent/AccountMenu'
+export { StickyHeader } from './Navigation/SickyHeader'

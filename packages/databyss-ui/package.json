@@ -36,6 +36,7 @@
     "@styled-system/css": "^5.0.23",
     "@styled-system/should-forward-prop": "^5.0.18",
     "@styled-system/theme-get": "^5.1.1",
+    "@types/react-helmet": "^6.1.0",
     "@types/react-modal": "^3.10.6",
     "@types/styled-system": "^5.1.10",
     "@types/styled-system__css": "^5.0.14",

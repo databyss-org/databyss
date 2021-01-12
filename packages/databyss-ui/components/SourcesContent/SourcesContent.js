@@ -77,7 +77,7 @@ const SourcesContent = () => {
     const onSourceClick = (source) => navigate(`/sources/${source.id}`)
 
     return (
-      <IndexPageContent title="All Sources">
+      <IndexPageContent title="All Sources" indexName="Sources">
         <Helmet>
           <meta charSet="utf-8" />
           <title>All Sources</title>
