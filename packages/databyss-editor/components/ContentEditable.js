@@ -175,7 +175,7 @@ const ContentEditable = ({
             },
           }
         }
-
+        console.log(entity)
         const _types = {
           SOURCE: () => {
             // requestAnimationFrame will allow the `forkOnChange` function in the editor provider to execute before setting the inline block relations
@@ -1067,7 +1067,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
         readonly={readonly}
       />
     )
-  }, [editor, state])
+  }, [editor, state, hasPendingPatches])
 }
 
 export default ContentEditable

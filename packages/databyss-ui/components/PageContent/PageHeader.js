@@ -41,7 +41,7 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
       }
       setPageHeader(_pageData)
       // TODO: CHANGE THIS BACK TO process.env.SAVE_PAGE_THROTTLE
-    }, 100),
+    }, process.env.SAVE_PAGE_THROTTLE),
     []
   )
 

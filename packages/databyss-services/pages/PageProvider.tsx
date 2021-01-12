@@ -44,7 +44,6 @@ interface ContextType {
   hasPendingPatches: number
   removePageFromCache: (id: string) => void
 }
-
 const useReducer = createReducer()
 export const PageContext = createContext<ContextType>(null!)
 

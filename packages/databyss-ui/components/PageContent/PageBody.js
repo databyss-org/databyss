@@ -36,17 +36,21 @@ const PageBody = ({
   const editorStateRef = useRef()
 
   const throttledAutosave = useCallback(
-    debounce(({ nextState, patches }) => {
-      const _patches = cleanupPatches(patches)
-      if (_patches.length) {
-        const payload = {
-          id: nextState.pageHeader._id,
-          patches: patchQueue.current,
+    debounce(
+      ({ nextState, patches }) => {
+        const _patches = cleanupPatches(patches)
+        if (_patches.length) {
+          const payload = {
+            id: nextState.pageHeader._id,
+            patches: patchQueue.current,
+          }
+          setPatches(payload)
+          patchQueue.current = []
         }
-        setPatches(payload)
-        patchQueue.current = []
-      }
-    }, process.env.SAVE_PAGE_THROTTLE),
+      },
+      process.env.SAVE_PAGE_THROTTLE,
+      { leading: true, maxWait: 100 }
+    ),
     []
   )
 
