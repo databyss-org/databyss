@@ -1,5 +1,9 @@
 import { CacheDict, Group, ResourceResponse } from '../interfaces'
-import { FETCH_GROUP_HEADERS, CACHE_GROUP_HEADERS } from './constants'
+import {
+  FETCH_GROUP_HEADERS,
+  CACHE_GROUP_HEADERS,
+  SAVE_GROUP,
+} from './constants'
 import * as services from './services'
 
 export function fetchGroupHeaders() {
@@ -21,5 +25,15 @@ export function fetchGroupHeaders() {
     if (response instanceof Error) {
       throw response
     }
+  }
+}
+
+export function saveGroup(group: Group) {
+  return (dispatch: Function) => {
+    services.saveGroup(group)
+    dispatch({
+      type: SAVE_GROUP,
+      payload: { group },
+    })
   }
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useGroupContext } from '@databyss-org/services/groups/GroupProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -15,6 +16,7 @@ import {
   Grid,
 } from '@databyss-org/ui/primitives'
 import { sidebar } from '@databyss-org/ui/theming/components'
+import { Group } from '@databyss-org/services/interfaces'
 
 const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
@@ -23,10 +25,15 @@ const Footer = ({ collapsed }) => {
   const clearSearchCache = useEntryContext((c) => c && c.clearSearchCache)
 
   const setPage = usePageContext((c) => c.setPage)
+  const setGroup = useGroupContext((c) => c.setGroup)
 
   const sidebarPath = getSidebarPath()
 
   const onNewPageClick = () => {
+    if (sidebarPath === 'groups') {
+      setGroup(new Group())
+      return
+    }
     // clears search cache
     clearSearchCache()
     const _page = newPage()
