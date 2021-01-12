@@ -44,6 +44,7 @@ class NotifyProvider extends React.Component {
     super(props)
     startBugsnag(props.options)
     // this.shouldCheckOnlineStatus = props.shouldCheckOnlineStatus
+    // TODO: restore online status checking and inspect pouchdb sync state so we can inform the user of sync progress
 
     if (IS_NATIVE) {
       global.ErrorUtils.setGlobalHandler((error) => {

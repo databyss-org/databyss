@@ -89,7 +89,10 @@ const addOrReplaceBlock = async (p, page) => {
     applyPatch(_block, p.path.slice(2), p.value)
   }
 
-  db.upsert(_block._id, (oldDoc) => ({ ...oldDoc, ...addTimeStamp(_block) }))
+  db.upsert(_block._id, (oldDoc) => {
+    console.log(oldDoc.timestamp)
+    return { ...oldDoc, ...addTimeStamp(_block) }
+  })
 }
 
 const replacePatch = async (p, page) => {
