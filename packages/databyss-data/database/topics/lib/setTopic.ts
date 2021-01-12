@@ -2,14 +2,13 @@ import { BlockType } from '@databyss-org/services/interfaces/Block'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { replaceInlineText } from '@databyss-org/editor/state/util'
 import { Topic, Block } from '@databyss-org/services/interfaces'
-import { db } from '../../db'
 import { DocumentType } from '../../interfaces'
-import { upsert } from '../../utils'
+import { upsert, findAll, findOne } from '../../utils'
 
 const setTopic = async (data: Topic) => {
   const { text, _id } = data
 
-  const block = await upsert({
+  await upsert({
     $type: DocumentType.Block,
     _id,
     doc: {
@@ -18,41 +17,23 @@ const setTopic = async (data: Topic) => {
     },
   })
 
-  console.log('set topic', block)
-  // await db.upsert(_id, (oldDoc) => {
-  //   block = {
-  //     ...addTimeStamp(oldDoc),
-  //     ...data,
-  //     type: BlockType.Topic,
-  //     $type: DocumentType.Block,
-  //   }
-  //   return block
-  // })
-
   /*
       find all inline block relations with associated id and update blocks
     */
-
-  const _results = await db.find({
-    selector: {
-      $type: DocumentType.BlockRelation,
-      relatedBlock: _id,
-      relationshipType: 'INLINE',
-    },
+  const _relations: BlockRelation[] = await findAll({
+    $type: DocumentType.BlockRelation,
+    relatedBlock: _id,
+    relationshipType: 'INLINE',
   })
-
-  const _relations: BlockRelation[] = _results.docs
 
   for (const relation of _relations) {
     // get the block to update
-    const _blockResults = await db.find({
+    const _block: Block = await findOne({
       selector: {
         $type: DocumentType.Block,
         _id: relation.block,
-        //     relationshipType: 'INLINE',
       },
     })
-    const _block: Block = _blockResults.docs[0]
 
     if (_block) {
       // get all inline ranges from block
@@ -84,16 +65,12 @@ const setTopic = async (data: Topic) => {
           doc: _block,
         })
         // update relation
-
-        const _blockRelationResults = await db.find({
-          selector: {
-            $type: DocumentType.BlockRelation,
-            relatedBlock: _id,
-            block: _block._id,
-          },
+        const _blockRelationToUpdate = await findOne({
+          $type: DocumentType.BlockRelation,
+          relatedBlock: _id,
+          block: _block._id,
         })
 
-        const _blockRelationToUpdate = _blockRelationResults.docs[0]
         if (_blockRelationToUpdate) {
           await upsert({
             $type: DocumentType.BlockRelation,

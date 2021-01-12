@@ -9,7 +9,7 @@ export const addTimeStamp = (doc: any): any => {
   return { ...doc, createdAt: Date.now() }
 }
 
-export const upsert = ({
+export const upsert = async ({
   $type,
   _id,
   doc,
@@ -17,9 +17,32 @@ export const upsert = ({
   $type: DocumentType
   _id: string
   doc: any
-}) =>
-  db.upsert(_id, (oldDoc) => ({
-    ...oldDoc,
-    $type,
-    ...addTimeStamp({ ...oldDoc, ...doc }),
-  }))
+}) => {
+  let _doc
+  await db.upsert(_id, (oldDoc) => {
+    _doc = {
+      ...oldDoc,
+      $type,
+      ...addTimeStamp({ ...oldDoc, ...doc }),
+    }
+    return _doc
+  })
+  return _doc
+}
+
+export const findAll = async (query) => {
+  const _response = await db.find({
+    selector: query,
+  })
+  return _response.docs
+}
+
+export const findOne = async (query) => {
+  const _response = await db.find({
+    selector: query,
+  })
+  if (_response.docs.length) {
+    return _response.docs[0]
+  }
+  return null
+}

@@ -1,11 +1,9 @@
-import * as PouchDB from 'pouchdb-browser'
 import { Patch } from 'immer'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
 import { Selection } from '@databyss-org/services/interfaces/Selection'
 import { uid } from '@databyss-org/data/lib/uid'
 import { PageDoc, DocumentType } from '../interfaces'
-import { db } from '../db'
-import { upsert } from '../utils'
+import { upsert, findOne } from '../utils'
 
 export const getAtomicClosureText = (type, text) =>
   ({
@@ -60,16 +58,13 @@ const addOrReplaceBlock = async (p, page) => {
     account: 'DEFAULT ACCOUNT',
   }
 
-  const _response: PouchDB.Find.FindResponse<Block> = await db.find({
-    selector: {
-      _id: _blockId,
-    },
+  let _block: Block | null = await findOne({
+    _id: _blockId,
   })
-  let _block: Block | null
-  if (_response.docs.length) {
+
+  // if block doesnt exist, create block
+  if (!_block) {
     // populate block
-    _block = _response.docs[0]
-  } else {
     _block = {
       _id: uid(),
       $type: DocumentType.Block,
@@ -135,13 +130,14 @@ const removePatches = async (p, page) => {
     case 'blocks': {
       const _index = p.path[1]
       const { blocks } = page
-      const _blockId = blocks[_index]._id
+      // TODO: add this back
+      // const _blockId = blocks[_index]._id
       // remove block from db
-      await upsert({
-        $type: DocumentType.Block,
-        _id: _blockId,
-        doc: { _deleted: true },
-      })
+      // await upsert({
+      //   $type: DocumentType.Block,
+      //   _id: _blockId,
+      //   doc: { _deleted: true },
+      // })
       // remove block from page
       blocks.splice(_index, 1)
       break

@@ -105,14 +105,6 @@ db.createIndex({
   },
 })
 
-// export const addTimeStamp = (oldDoc: any): any => {
-//   // if document has been created add a modifiedAt timestamp
-//   if (oldDoc.createdAt) {
-//     return { ...oldDoc, modifiedAt: Date.now() }
-//   }
-//   return { ...oldDoc, createdAt: Date.now() }
-// }
-
 /*
 replicates remote DB to local
 */

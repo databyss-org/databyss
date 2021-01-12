@@ -5,41 +5,35 @@ import {
   SourceCitationHeader,
   Author,
 } from '@databyss-org/services/interfaces'
-import { db } from '../../db'
 import { DocumentType } from '../../interfaces'
+import { findAll } from '../../utils'
 
 const getAuthors = async (): Promise<Author[] | ResourceNotFoundError> => {
-  const _response = await db.find({
-    selector: {
-      $type: DocumentType.Block,
-      type: BlockType.Source,
-    },
+  const _sources: SourceCitationHeader[] = await findAll({
+    $type: DocumentType.Block,
+    type: BlockType.Source,
   })
 
-  if (!_response.docs.length) {
+  if (!_sources.length) {
     return []
-    // return new ResourceNotFoundError('no authors found')
   }
-
-  const _sources: SourceCitationHeader[] = _response.docs
 
   for (const _source of _sources) {
     // look up pages topic appears in using block relations
 
     const isInPages: string[] = []
     // returns all pages where source id is found in element id
-    const __response = await db.find({
-      selector: {
-        $type: DocumentType.Page,
-        blocks: {
-          $elemMatch: {
-            _id: _source._id,
-          },
+    const _response = await findAll({
+      $type: DocumentType.Page,
+      blocks: {
+        $elemMatch: {
+          _id: _source._id,
         },
       },
     })
-    if (__response.docs.length) {
-      __response.docs.forEach((d) => {
+
+    if (_response.length) {
+      _response.forEach((d) => {
         if (!d.archive) {
           isInPages.push(d._id)
         }

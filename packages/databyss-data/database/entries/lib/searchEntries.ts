@@ -2,6 +2,7 @@ import { BlockType } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { db } from '../../db'
 import { DocumentType } from '../../interfaces'
+import { findOne } from '../../utils'
 
 const searchEntries = async (
   encodedQuery: string
@@ -42,19 +43,18 @@ const searchEntries = async (
   const _results = _queryResponse
   for (const _result of _results) {
     // returns all pages where source id is found in element id
-    const _response = await db.find({
-      selector: {
-        $type: DocumentType.Page,
-        blocks: {
-          $elemMatch: {
-            _id: _result.id,
-          },
+
+    const _page = await findOne({
+      $type: DocumentType.Page,
+      blocks: {
+        $elemMatch: {
+          _id: _result.id,
         },
       },
     })
-    if (_response.docs.length) {
+
+    if (_page) {
       // only one search result should appear per entry
-      const _page = _response.docs[0]
       if (_page && !_page?.archive) {
         // if page has not been archived and is currently not in array, push to array
         _result.doc.page = _page
@@ -131,8 +131,6 @@ const searchEntries = async (
         _data.maxTextScore = _maxScore
 
         acc.results.set(pageId, _data)
-
-        //     acc.results[pageId] = _data
       }
       return acc
     }, __results)

@@ -1,18 +1,16 @@
-import * as PouchDB from 'pouchdb-browser'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { PageDoc, DocumentType } from '../../interfaces'
-import { db } from '../../db'
+import { findAll } from '../../utils'
 
 const fetchAllPages = async (): Promise<PageDoc[] | ResourceNotFoundError> => {
-  const _pages: PouchDB.Find.FindResponse<PageDoc> = await db.find({
-    selector: {
-      $type: DocumentType.Page,
-    },
+  const _pages = await findAll({
+    $type: DocumentType.Page,
   })
-  if (!_pages.docs.length) {
+
+  if (!_pages.length) {
     return new ResourceNotFoundError('no pages found')
   }
-  return _pages.docs
+  return _pages
 }
 
 export default fetchAllPages

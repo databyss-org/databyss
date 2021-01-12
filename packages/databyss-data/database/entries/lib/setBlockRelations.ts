@@ -1,7 +1,7 @@
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
 import { DocumentType } from '../../interfaces'
 import { db } from '../../db'
-import { upsert } from '../../utils'
+import { upsert, findAll } from '../../utils'
 
 const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
   for (const payload of payloadArray) {
@@ -9,14 +9,13 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
 
     // clear all block relationships associated to page id
     if (clearPageRelationships) {
-      const _blockRelationsToClear = await db.find({
-        selector: {
-          $type: DocumentType.BlockRelation,
-          page: clearPageRelationships,
-        },
+      const _blockRelationsToClear = await findAll({
+        $type: DocumentType.BlockRelation,
+        page: clearPageRelationships,
       })
+
       const _idsToDelete: any = []
-      _blockRelationsToClear.docs.forEach((r) => {
+      _blockRelationsToClear.forEach((r) => {
         if (r?._id && r?._rev) {
           _idsToDelete.push({ _id: r._id, _rev: r._rev })
         }

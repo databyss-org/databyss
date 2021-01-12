@@ -1,20 +1,18 @@
-import * as PouchDB from 'pouchdb-browser'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { BlockRelationsServerResponse } from '@databyss-org/services/interfaces/Block'
-import { db } from '../../db'
 import { DocumentType } from '../../interfaces'
+import { findAll } from '../../utils'
 
 const getBlockRelations = async (
   id: string
 ): Promise<BlockRelationsServerResponse | ResourceNotFoundError> => {
-  const _results: PouchDB.Find.FindResponse<BlockRelation> = await db.find({
+  const _docs: BlockRelation[] = await findAll({
     selector: {
       $type: DocumentType.BlockRelation,
       relatedBlock: id,
     },
   })
-  const _docs: BlockRelation[] = _results.docs
 
   if (!_docs.length) {
     return new ResourceNotFoundError('No block relations found')

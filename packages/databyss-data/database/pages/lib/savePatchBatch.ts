@@ -1,13 +1,12 @@
 import { PatchBatch } from '@databyss-org/services/interfaces/Patch'
 import { PageDoc, DocumentType } from '../../interfaces'
-import { db } from '../../db'
 import { runPatches } from '../util'
-import { upsert } from '../../utils'
+import { upsert, findOne } from '../../utils'
 
 // TODO: WRAP THIS IN ERROR HANDLER
 const savePatchBatch = async (data: PatchBatch) => {
   const { patches, id } = data
-  const _page: PageDoc = await db.get(id)
+  const _page: PageDoc = await findOne({ _id: id })
   if (!patches) {
     return
   }

@@ -3,21 +3,23 @@ import {
   BlockType,
 } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
-import { db } from '../../db'
 import { DocumentType } from '../../interfaces'
+import { findOne, findAll } from '../../utils'
 
 const getSource = async (
   _id: string
 ): Promise<SourceCitationHeader | ResourceNotFoundError> => {
   // get source and pages source exists in
-  const _response = await db.find({
-    selector: { _id, $type: DocumentType.Block, type: BlockType.Source },
+
+  const _source: SourceCitationHeader = await findOne({
+    _id,
+    $type: DocumentType.Block,
+    type: BlockType.Source,
   })
-  if (!_response.docs.length) {
+
+  if (!_source) {
     return new ResourceNotFoundError('source not found')
   }
-
-  const _source: SourceCitationHeader = _response.docs[0]
 
   if (!_source || _source.type !== BlockType.Source) {
     return new ResourceNotFoundError()
@@ -25,18 +27,17 @@ const getSource = async (
 
   const isInPages: string[] = []
   // returns all pages where source id is found in element id
-  const _pageResponse = await db.find({
-    selector: {
-      $type: DocumentType.Page,
-      blocks: {
-        $elemMatch: {
-          _id,
-        },
+  const _pageResponse = await findAll({
+    $type: DocumentType.Page,
+    blocks: {
+      $elemMatch: {
+        _id,
       },
     },
   })
-  if (_pageResponse.docs.length) {
-    _pageResponse.docs.forEach((d) => {
+
+  if (_pageResponse.length) {
+    _pageResponse.forEach((d) => {
       if (!d.archive) {
         isInPages.push(d._id)
       }

@@ -1,39 +1,33 @@
 import { Page } from '@databyss-org/services/interfaces/Page'
-import { Selection, Block } from '@databyss-org/services/interfaces'
+import { Block } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { PageDoc, DocumentType } from '../../interfaces'
-import { db } from '../../db'
 import { getAtomicClosureText } from '../util'
+import { findOne } from '../../utils'
 
 const populatePage = async (
   _id: string
 ): Promise<Page | ResourceNotFoundError> => {
   // TODO: wrap function in error handler
-  const _response = await db.find({
-    selector: {
-      $type: DocumentType.Page,
-      _id,
-    },
+
+  const _page: PageDoc | null = await findOne({
+    $type: DocumentType.Page,
+    _id,
   })
 
-  if (!_response.docs.length) {
+  if (!_page) {
     return new ResourceNotFoundError('page not found')
   }
-  const _page: PageDoc = _response.docs[0]
   // load selection
-  const _selection: Selection = await db.get(_page.selection)
+  const _selection = await findOne({ _id: _page.selection })
 
   // load blocks
   const _blocks: Block[] = await Promise.all(
     _page.blocks.map(async (data) => {
-      const _response = await db.find({
-        selector: {
-          $type: DocumentType.Block,
-          _id: data._id,
-        },
+      const _block = await findOne({
+        $type: DocumentType.Block,
+        _id: data._id,
       })
-
-      const _block = _response.docs[0]
 
       // check for atomic block closure
       if (data.type?.match(/^END_/)) {
@@ -44,7 +38,6 @@ const populatePage = async (
         _block.type = data.type
       }
       return _block
-      //  return _response.docs[0]
     })
   )
 
