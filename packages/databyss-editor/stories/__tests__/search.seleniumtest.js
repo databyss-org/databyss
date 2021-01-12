@@ -102,7 +102,7 @@ describe('entry search', () => {
     await enterKey(actions)
     await sendKeys(actions, 'this keyword something will be searched')
     await isAppInNotesSaved(driver)
-    await sleep(500)
+    await sleep(1000)
     // check for search results appearing in the same order as they appear on the page
     let searchSidebarButton = await getElementByTag(
       driver,
