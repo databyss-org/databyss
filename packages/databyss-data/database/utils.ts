@@ -1,5 +1,6 @@
 import { DocumentType } from './interfaces'
 import { db } from './db'
+import { uid } from '../lib/uid'
 
 export const addTimeStamp = (doc: any): any => {
   // if document has been created add a modifiedAt timestamp
@@ -51,4 +52,24 @@ export const findOne = async ($type: DocumentType, query: any) => {
     return _response.docs[0]
   }
   return null
+}
+
+export const replaceOne = async ({
+  $type,
+  query,
+  doc,
+}: {
+  $type: DocumentType
+  query: any
+  doc: any
+}) => {
+  const res = await findOne($type, query)
+  // if document doesnt exit, create a new one
+  if (res) {
+    console.log('RESPONSE EXISTS', doc)
+    console.log('response', res)
+  }
+  const _id = res?._id || uid()
+  // replace document
+  await upsert({ $type, _id, doc })
 }

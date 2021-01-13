@@ -1,7 +1,7 @@
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
 import { DocumentType } from '../../interfaces'
 import { db } from '../../db'
-import { upsert, findAll } from '../../utils'
+import { upsert, findAll, replaceOne } from '../../utils'
 
 const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
   for (const payload of payloadArray) {
@@ -28,25 +28,14 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
       for (const relationship of blocksRelationArray) {
         const { block, relatedBlock, removeBlock } = relationship
         // get id of block
-        // TODO: HOW DO WE GET THE BLOCK ID IN A MORE EFFICIENT WAY
-        // will one block only ever have a relationship with another block?
-        const _relationshipID = `${block}${relatedBlock}`
 
-        if (removeBlock) {
-          // get blockID
-          await upsert({
-            $type: DocumentType.BlockRelation,
-            _id: _relationshipID,
-            doc: { _deleted: true },
-          })
-        } else {
-          // update block relation
-          await upsert({
-            $type: DocumentType.BlockRelation,
-            _id: _relationshipID,
-            doc: relationship,
-          })
-        }
+        // will one block only ever have a relationship with another block?
+        // const _relationshipID = `${block}${relatedBlock}`
+        await replaceOne({
+          $type: DocumentType.BlockRelation,
+          query: { block, relatedBlock },
+          doc: { ...relationship, _deleted: !!removeBlock },
+        })
       }
     }
   }
