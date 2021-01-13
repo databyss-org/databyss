@@ -13,7 +13,7 @@ import {
   Grid,
 } from '@databyss-org/ui/primitives'
 import { sidebar } from '@databyss-org/ui/theming/components'
-import { Page } from '@databyss-org/data/database/pages/util'
+import { Page } from '@databyss-org/services/interfaces'
 
 const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
