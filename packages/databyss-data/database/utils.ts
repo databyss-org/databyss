@@ -30,16 +30,22 @@ export const upsert = async ({
   return _doc
 }
 
-export const findAll = async (query) => {
+export const findAll = async ($type: DocumentType, query?: any) => {
   const _response = await db.find({
-    selector: query,
+    selector: {
+      ...query,
+      $type,
+    },
   })
   return _response.docs
 }
 
-export const findOne = async (query) => {
+export const findOne = async ($type: DocumentType, query: any) => {
   const _response = await db.find({
-    selector: query,
+    selector: {
+      ...query,
+      $type,
+    },
   })
   if (_response.docs.length) {
     return _response.docs[0]

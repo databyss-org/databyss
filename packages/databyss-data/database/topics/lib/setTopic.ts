@@ -20,16 +20,17 @@ const setTopic = async (data: Topic) => {
   /*
       find all inline block relations with associated id and update blocks
     */
-  const _relations: BlockRelation[] = await findAll({
-    $type: DocumentType.BlockRelation,
-    relatedBlock: _id,
-    relationshipType: 'INLINE',
-  })
+  const _relations: BlockRelation[] = await findAll(
+    DocumentType.BlockRelation,
+    {
+      relatedBlock: _id,
+      relationshipType: 'INLINE',
+    }
+  )
 
   for (const relation of _relations) {
     // get the block to update
-    const _block: Block = await findOne({
-      $type: DocumentType.Block,
+    const _block: Block = await findOne(DocumentType.Block, {
       _id: relation.block,
     })
 
@@ -63,11 +64,13 @@ const setTopic = async (data: Topic) => {
           doc: _block,
         })
         // update relation
-        const _blockRelationToUpdate = await findOne({
-          $type: DocumentType.BlockRelation,
-          relatedBlock: _id,
-          block: _block._id,
-        })
+        const _blockRelationToUpdate = await findOne(
+          DocumentType.BlockRelation,
+          {
+            relatedBlock: _id,
+            block: _block._id,
+          }
+        )
 
         if (_blockRelationToUpdate) {
           await upsert({

@@ -58,7 +58,7 @@ const addOrReplaceBlock = async (p, page) => {
     account: 'DEFAULT ACCOUNT',
   }
 
-  let _block: Block | null = await findOne({
+  let _block: Block | null = await findOne(DocumentType.Block, {
     _id: _blockId,
   })
 

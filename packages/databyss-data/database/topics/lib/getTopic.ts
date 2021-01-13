@@ -8,9 +8,8 @@ import { findOne, findAll } from '../../utils'
 const getTopic = async (
   _id: string
 ): Promise<Topic | ResourceNotFoundError> => {
-  const _topic = await findOne({
+  const _topic = await findOne(DocumentType.Block, {
     _id,
-    $type: DocumentType.Block,
     type: BlockType.Topic,
   })
 
@@ -20,8 +19,7 @@ const getTopic = async (
 
   const isInPages: string[] = []
   // returns all pages where source id is found in element id
-  const _pages = await findAll({
-    $type: DocumentType.Page,
+  const _pages = await findAll(DocumentType.Page, {
     blocks: {
       $elemMatch: {
         _id,
@@ -40,16 +38,20 @@ const getTopic = async (
   _topic.isInPages = isInPages
 
   // find inline elements and tag to `isInPages` ignoring duplicates
-  const _blockRelations: BlockRelation[] = await findAll({
-    $type: DocumentType.BlockRelation,
-    relatedBlock: _topic._id,
-  })
+  const _blockRelations: BlockRelation[] = await findAll(
+    DocumentType.BlockRelation,
+    {
+      relatedBlock: _topic._id,
+    }
+  )
 
   if (_blockRelations.length) {
     // find if page has been archived
     for (const _relation of _blockRelations) {
       if (_relation.page) {
-        const _page: Page = await findOne({ _id: _relation.page })
+        const _page: Page = await findOne(DocumentType.Page, {
+          _id: _relation.page,
+        })
 
         if (_page && !_page?.archive) {
           // if page has not been archived and is currently not in array, push to array

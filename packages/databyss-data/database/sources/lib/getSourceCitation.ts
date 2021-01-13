@@ -14,8 +14,7 @@ export type CitationResponse = Partial<SourceCitationHeader> & {
 const getSourceCitation = async (
   styleId: string | undefined
 ): Promise<CitationResponse[] | ResourceNotFoundError> => {
-  const _sources: SourceCitationHeader[] = await findAll({
-    $type: DocumentType.Block,
+  const _sources: SourceCitationHeader[] = await findAll(DocumentType.Block, {
     type: BlockType.Source,
   })
 
@@ -28,8 +27,7 @@ const getSourceCitation = async (
 
     const isInPages: string[] = []
     // returns all pages where source id is found in element id
-    const _response = await findAll({
-      $type: DocumentType.Page,
+    const _response = await findAll(DocumentType.Page, {
       blocks: {
         $elemMatch: {
           _id: _source._id,

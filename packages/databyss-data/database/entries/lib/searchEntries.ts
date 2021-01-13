@@ -44,8 +44,7 @@ const searchEntries = async (
   for (const _result of _results) {
     // returns all pages where source id is found in element id
 
-    const _page = await findOne({
-      $type: DocumentType.Page,
+    const _page = await findOne(DocumentType.Page, {
       blocks: {
         $elemMatch: {
           _id: _result.id,

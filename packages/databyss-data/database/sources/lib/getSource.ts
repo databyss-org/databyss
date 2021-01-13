@@ -11,9 +11,8 @@ const getSource = async (
 ): Promise<SourceCitationHeader | ResourceNotFoundError> => {
   // get source and pages source exists in
 
-  const _source: SourceCitationHeader = await findOne({
+  const _source: SourceCitationHeader = await findOne(DocumentType.Block, {
     _id,
-    $type: DocumentType.Block,
     type: BlockType.Source,
   })
 
@@ -27,8 +26,7 @@ const getSource = async (
 
   const isInPages: string[] = []
   // returns all pages where source id is found in element id
-  const _pageResponse = await findAll({
-    $type: DocumentType.Page,
+  const _pageResponse = await findAll(DocumentType.Page, {
     blocks: {
       $elemMatch: {
         _id,

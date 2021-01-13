@@ -6,7 +6,7 @@ import { upsert, findOne } from '../../utils'
 // TODO: WRAP THIS IN ERROR HANDLER
 const savePatchBatch = async (data: PatchBatch) => {
   const { patches, id } = data
-  const _page: PageDoc = await findOne({ _id: id })
+  const _page: PageDoc = await findOne(DocumentType.Page, { _id: id })
   if (!patches) {
     return
   }

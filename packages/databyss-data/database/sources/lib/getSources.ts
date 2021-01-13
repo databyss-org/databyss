@@ -4,9 +4,8 @@ import { DocumentType } from '../../interfaces'
 import { findAll } from '../../utils'
 
 const getSources = async (): Promise<Source[] | ResourceNotFoundError> => {
-  const _sources = await findAll({
+  const _sources = await findAll(DocumentType.Block, {
     type: BlockType.Source,
-    $type: DocumentType.Block,
   })
 
   return _sources
