@@ -101,4 +101,9 @@ export const initiateDatabases = async () => {
     const _id = { name: '_id', type: 'json', index: { fields: ['_id'] } }
     _db.index(_id)
   }
+
+  // add email index to users
+  const _user = await cloudant.use('users')
+  const _id = { name: 'email', type: 'json', index: { fields: ['email'] } }
+  _user.index(_id)
 }

@@ -104,6 +104,7 @@ router.post(
       })
       user = await Users.find(_selector)
       console.log('FAIL', user)
+      console.log('email', email)
     }
 
     user = user.docs[0]
