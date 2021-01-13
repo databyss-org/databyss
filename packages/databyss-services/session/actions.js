@@ -4,7 +4,7 @@ import {
   initiatePouchDbValidators,
   initiatePouchDbIndexes,
 } from '@databyss-org/data/database/db'
-import { PageConstructor } from '@databyss-org/data/database/pages/util'
+import { addPage } from '@databyss-org/data/database/pages/util'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
 import { NotAuthorizedError } from '../interfaces'
@@ -120,10 +120,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       if (res.data.session.user.provisionClientDatabase) {
         // initate new database
         // await initiateClientDb(res.data.session.user.defaultPageId)
-
-        const _page = new PageConstructor(res.data.session.user.defaultPageId)
-        // adds page to database
-        await _page.addPage()
+        await addPage(res.data.session.user.defaultPageId)
       }
 
       /*

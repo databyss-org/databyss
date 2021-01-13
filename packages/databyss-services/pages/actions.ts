@@ -1,7 +1,7 @@
-import { PageConstructor } from '@databyss-org/data/database/pages/util'
+import { Page } from '@databyss-org/data/database/pages/util'
 import * as services from '.'
 import { ResourcePending } from '../interfaces/ResourcePending'
-import { PatchBatch, PageHeader, Page } from '../interfaces'
+import { PatchBatch, PageHeader } from '../interfaces'
 
 import {
   PATCH,
@@ -165,7 +165,7 @@ export function savePageHeader(page: PageHeader) {
   }
 }
 
-export function savePage(page: PageConstructor) {
+export function savePage(page: Page) {
   const id = page._id
 
   return (dispatch: Function) => {

@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
-import { PageConstructor } from '@databyss-org/data/database/pages/util'
+import { Page } from '@databyss-org/data/database/pages/util'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import {
-  Page,
+  // Page,
   PageState,
   RefDict,
   PageHeader,
@@ -26,7 +26,7 @@ interface PageHookDict {
 
 interface ContextType {
   setPagePublic: (id: string, bool: boolean, accountId: string) => void
-  setPage: (page: PageConstructor) => void
+  setPage: (page: Page) => void
   deletePage: (id: string) => void
   setPageHeader: (page: Page) => void
   getPages: () => void
@@ -79,7 +79,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   }
 
   const setPage = useCallback(
-    (page: PageConstructor): Promise<void> =>
+    (page: Page): Promise<void> =>
       new Promise((res) => {
         onPageCached(page._id, res)
         dispatch(actions.savePage(page))

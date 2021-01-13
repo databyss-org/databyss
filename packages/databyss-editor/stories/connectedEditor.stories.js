@@ -21,7 +21,7 @@ import PageProvider, {
 import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { db } from '@databyss-org/data/database/db'
-import { PageConstructor } from '@databyss-org/data/database/pages/util'
+import { Page } from '@databyss-org/data/database/pages/util'
 import HistoryProvider from '../history/EditorHistory'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
@@ -33,7 +33,6 @@ import {
   editorStateToPage,
   pageToEditorState,
 } from '../state/util'
-// import { db } from '@databyss-org/services/database/db'
 
 const LoginRequired = () => (
   <Text>You must login before running this story</Text>
@@ -109,10 +108,8 @@ const EditorWithProvider = () => {
 
   const _pageId = user.defaultPageId
 
-  // const _defaultPage = editorStateToPage(connectedFixture(_pageId))
-
   // save new page
-  const _page = new PageConstructor(_pageId)
+  const _page = new Page(_pageId)
 
   useEffect(() => {
     // check to see if page exists in DB, if not add page

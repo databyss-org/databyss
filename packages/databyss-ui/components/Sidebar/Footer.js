@@ -13,7 +13,7 @@ import {
   Grid,
 } from '@databyss-org/ui/primitives'
 import { sidebar } from '@databyss-org/ui/theming/components'
-import { PageConstructor } from '@databyss-org/data/database/pages/util'
+import { Page } from '@databyss-org/data/database/pages/util'
 
 const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
@@ -26,7 +26,8 @@ const Footer = ({ collapsed }) => {
   const onNewPageClick = () => {
     // clears search cache
     clearSearchCache()
-    const _page = new PageConstructor()
+
+    const _page = new Page()
 
     setPage(_page).then(() => {
       navigate(`/pages/${_page._id}`)

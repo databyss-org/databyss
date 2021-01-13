@@ -5,11 +5,11 @@ import humanReadableIds from 'human-readable-ids'
 import jwt from 'jsonwebtoken'
 import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
+import { uid } from '@databyss-org/data/lib/uid'
 import { Users, Logins, Groups } from '@databyss-org/data/serverdbs'
 import { send } from '../../lib/sendgrid'
 import { getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
-import { uid } from '@databyss-org/data/lib/uid'
 
 const router = express.Router()
 
@@ -59,6 +59,7 @@ router.post(
 
       if (!user) {
         user = await Users.insert({
+          _id: uid(),
           name,
           email,
           googleId: sub,

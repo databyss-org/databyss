@@ -16,7 +16,11 @@ interface CredentialResponse {
 export const createGroupId = async () => {
   // TODO: fix this so its not 'any'
   const Groups: any = cloudant.db.use('groups')
-  const group = await Groups.insert({ name: 'untitled', sessions: [] })
+  const group = await Groups.insert({
+    name: 'untitled',
+    sessions: [],
+    _id: uid().toLowerCase(),
+  })
   return group.id
 }
 
