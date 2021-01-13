@@ -1,11 +1,10 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
-import { Page } from '@databyss-org/data/database/pages/util'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import {
-  // Page,
+  Page,
   PageState,
   RefDict,
   PageHeader,

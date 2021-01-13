@@ -1,10 +1,10 @@
 import { Patch } from 'immer'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
-import { Selection } from '@databyss-org/services/interfaces/Selection'
 import { uid } from '@databyss-org/data/lib/uid'
 import { PageDoc, DocumentType } from '../interfaces'
 import { upsert, findOne } from '../utils'
-import { PageHeader } from '../../../databyss-services/interfaces/Page'
+import { Page } from '../../../databyss-services/interfaces/Page'
+import { savePage } from './'
 
 export const getAtomicClosureText = (type, text) =>
   ({
@@ -164,7 +164,7 @@ export const runPatches = async (p: Patch, page: PageDoc) => {
   }
 }
 
-const normalizePage = (page: Page): PageDoc => {
+export const normalizePage = (page: Page): PageDoc => {
   const _pageDoc: PageDoc = {
     blocks: [{ _id: page.blocks[0]._id, type: BlockType.Entry }],
     selection: page.selection._id,
@@ -175,62 +175,11 @@ const normalizePage = (page: Page): PageDoc => {
   return _pageDoc
 }
 
-// this replaces Page interface
-export class Page implements PageHeader {
-  _id: string
-  selection: Selection
-  blocks: Block[]
-  name: string
-  archive: boolean
-  constructor(id?: string) {
-    const _selectionId = uid()
-    const _firstBlockId = uid()
-    this._id = id || uid()
-    this.selection = {
-      anchor: {
-        index: 0,
-        offset: 0,
-      },
-      focus: {
-        index: 0,
-        offset: 0,
-      },
-      _id: _selectionId,
-    }
-    this.name = 'untitled'
-    this.archive = false
-    this.blocks = [
-      {
-        _id: _firstBlockId,
-        page: this._id,
-        type: BlockType.Entry,
-        text: { textValue: '', ranges: [] },
-      },
-    ]
-  }
-}
-
-// in @databyss-org/services/pages
-export const savePouchDbPage = async (data: Page) => {
-  await upsert({
-    $type: DocumentType.Selection,
-    _id: data.selection._id,
-    doc: data.selection,
-  })
-  await upsert({
-    $type: DocumentType.Block,
-    _id: data.blocks[0]._id,
-    doc: data.blocks[0],
-  })
-  await upsert({
-    $type: DocumentType.Page,
-    _id: data._id,
-    doc: normalizePage(data),
-  })
-}
-
+/*
+generic function to add a new page given id
+*/
 export const addPage = async (id?: string) => {
   const _page = new Page(id)
-  await savePouchDbPage(_page)
+  await savePage(_page)
   return _page
 }

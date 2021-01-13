@@ -1,7 +1,6 @@
-import { Page } from '@databyss-org/data/database/pages/util'
 import * as services from '.'
 import { ResourcePending } from '../interfaces/ResourcePending'
-import { PatchBatch, PageHeader } from '../interfaces'
+import { PatchBatch, PageHeader, Page } from '../interfaces'
 
 import {
   PATCH,

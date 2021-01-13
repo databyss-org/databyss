@@ -10,7 +10,8 @@ export {
   VersionConflictError,
   UnexpectedServerError,
 } from './Errors'
-export type { Page, PageHeader } from './Page'
+export type { PageHeader } from './Page'
+export { Page } from './Page'
 export type { Point } from './Point'
 export type { Selection } from './Selection'
 export type { Block, BasicBlock, BlockRelationsServerResponse } from './Block'

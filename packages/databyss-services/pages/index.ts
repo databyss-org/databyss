@@ -1,15 +1,20 @@
 import * as pouchDb from '@databyss-org/data/database/pages'
 import { PageDoc } from '@databyss-org/data/database/interfaces'
-import { Page, savePouchDbPage } from '@databyss-org/data/database/pages/util'
+
 import { httpPost } from '../lib/requestApi'
-import { PatchBatch, PageHeader, ResourceNotFoundError } from '../interfaces'
+import {
+  PatchBatch,
+  PageHeader,
+  ResourceNotFoundError,
+  Page,
+} from '../interfaces'
 // TODO: Add native versions of these
 
 // save page is used to rename page name
 export const savePageHeader = (data: Page | PageHeader): Promise<void> =>
   pouchDb.savePageHeader(data)
 
-export const savePage = (page: Page): Promise<any> => savePouchDbPage(page)
+export const savePage = (page: Page): Promise<any> => pouchDb.savePage(page)
 
 export const savePatchBatch = async (data: PatchBatch) =>
   pouchDb.savePatchData(data)

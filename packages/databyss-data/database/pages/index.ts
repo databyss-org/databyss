@@ -3,6 +3,7 @@ import fetchAllPages from './lib/fetchAllPages'
 import populatePage from './lib/populatePage'
 import savePageHeader from './lib/savePageHeader'
 import deletePage from './lib/deletePage'
+import savePage from './lib/savePage'
 
 export {
   savePatchData,
@@ -10,4 +11,5 @@ export {
   populatePage,
   savePageHeader,
   deletePage,
+  savePage,
 }
