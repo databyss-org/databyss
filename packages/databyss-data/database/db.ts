@@ -28,82 +28,84 @@ PouchDB.plugin(PouchDBUpsert)
 
 export const db: PouchDB.Database<any> = new PouchDB('local')
 
-db.search({
-  fields: ['text.textValue'],
-  build: true,
-})
+export const initiatePouchDbIndexes = async () => {
+  await db.search({
+    fields: ['text.textValue'],
+    build: true,
+  })
 
-db.createIndex({
-  index: {
-    fields: ['_id'],
-  },
-})
+  await db.createIndex({
+    index: {
+      fields: ['_id'],
+    },
+  })
 
-db.createIndex({
-  index: {
-    fields: ['$type'],
-  },
-})
+  await db.createIndex({
+    index: {
+      fields: ['$type'],
+    },
+  })
 
-db.createIndex({
-  index: {
-    fields: ['$type', '_id'],
-  },
-})
+  await db.createIndex({
+    index: {
+      fields: ['$type', '_id'],
+    },
+  })
 
-db.createIndex({
-  index: {
-    fields: ['$type', 'relatedBlock'],
-  },
-})
+  await db.createIndex({
+    index: {
+      fields: ['$type', 'relatedBlock'],
+    },
+  })
 
-db.createIndex({
-  index: {
-    fields: ['$type', 'page'],
-  },
-})
+  await db.createIndex({
+    index: {
+      fields: ['$type', 'page'],
+    },
+  })
 
-db.createIndex({
-  index: {
-    fields: ['$type', 'blocks'],
-  },
-})
+  await db.createIndex({
+    index: {
+      fields: ['$type', 'blocks'],
+    },
+  })
 
-db.createIndex({
-  index: {
-    fields: ['block', 'relatedBlock'],
-  },
-})
+  await db.createIndex({
+    index: {
+      fields: ['block', 'relatedBlock'],
+    },
+  })
 
-db.createIndex({
-  index: {
-    fields: ['$type', 'relatedBlock'],
-  },
-})
+  await db.createIndex({
+    index: {
+      fields: ['$type', 'relatedBlock'],
+    },
+  })
 
-db.createIndex({
-  index: {
-    fields: ['$type', 'page'],
-  },
-})
+  await db.createIndex({
+    index: {
+      fields: ['$type', 'page'],
+    },
+  })
 
-db.createIndex({
-  index: {
-    fields: ['$type', 'type'],
-  },
-})
+  await db.createIndex({
+    index: {
+      fields: ['$type', 'type'],
+    },
+  })
 
-db.createIndex({
-  index: {
-    fields: ['$type', 'relatedBlock', 'relationshipType'],
-  },
-})
+  await db.createIndex({
+    index: {
+      fields: ['$type', 'relatedBlock', 'relationshipType'],
+    },
+  })
 
-db.createIndex({
-  index: {
-    fields: ['$type', 'relatedBlock', 'block'],
-  },
-})
+  await db.createIndex({
+    index: {
+      fields: ['$type', 'relatedBlock', 'block'],
+    },
+  })
+}
 
 /*
 replicates remote DB to local
@@ -166,35 +168,37 @@ export const syncPouchDb = ({
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
 }
 
-// pouchDB validator
-const _validatorSchemas: Array<[BlockType | DocumentType, JSONSchema4]> = [
-  // ADD topic types
-  [BlockType.Source, sourceSchema],
-  [BlockType.Entry, entrySchema],
-  [DocumentType.Page, pageSchema],
-  [DocumentType.Selection, selectionSchema],
-  [DocumentType.BlockRelation, blockRelationSchema],
-]
+export const initiatePouchDbValidators = () => {
+  // pouchDB validator
+  const _validatorSchemas: Array<[BlockType | DocumentType, JSONSchema4]> = [
+    // ADD topic types
+    [BlockType.Source, sourceSchema],
+    [BlockType.Entry, entrySchema],
+    [DocumentType.Page, pageSchema],
+    [DocumentType.Selection, selectionSchema],
+    [DocumentType.BlockRelation, blockRelationSchema],
+  ]
 
-// add $ref schemas, these schemas are reused
-tv4.addSchema('text', textSchema)
-tv4.addSchema('pouchDb', pouchDocSchema)
-tv4.addSchema('blockSchema', blockSchema)
+  // add $ref schemas, these schemas are reused
+  tv4.addSchema('text', textSchema)
+  tv4.addSchema('pouchDb', pouchDocSchema)
+  tv4.addSchema('blockSchema', blockSchema)
 
-db.transform({
-  outgoing: (doc) => {
-    _validatorSchemas.forEach((s) => {
-      if (doc.type === s[0] || doc.$type === s[0]) {
-        if (!tv4.validate(doc, s[1], false, true)) {
-          console.log('DOCUMENT', doc)
-          console.error(
-            `${s[1].title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
-          )
+  db.transform({
+    outgoing: (doc) => {
+      _validatorSchemas.forEach((s) => {
+        if (doc.type === s[0] || doc.$type === s[0]) {
+          if (!tv4.validate(doc, s[1], false, true)) {
+            console.log('DOCUMENT', doc)
+            console.error(
+              `${s[1].title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+            )
+          }
         }
-      }
-    })
-    return doc
-  },
-})
+      })
+      return doc
+    },
+  })
+}
 
 // TODO MAKE UTILS DIRECTORY HERE

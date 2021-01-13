@@ -1,6 +1,8 @@
 import {
   syncPouchDb,
   replicateDbFromRemote,
+  initiatePouchDbValidators,
+  initiatePouchDbIndexes,
 } from '@databyss-org/data/database/db'
 import { PageConstructor } from '@databyss-org/data/database/pages/util'
 import request from '../lib/request'
@@ -109,8 +111,16 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       setAccountId(res.data.session.user.defaultGroupId)
       setCredentials(res.data.session.user.groups[0])
 
+      // initiate database validators
+      initiatePouchDbValidators()
+      // initiate database indexes
+      await initiatePouchDbIndexes()
+
       // initialize a new user
       if (res.data.session.user.provisionClientDatabase) {
+        // initate new database
+        // await initiateClientDb(res.data.session.user.defaultPageId)
+
         const _page = new PageConstructor(res.data.session.user.defaultPageId)
         // adds page to database
         await _page.addPage()
