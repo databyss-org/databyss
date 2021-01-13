@@ -260,6 +260,13 @@ export const collectionsItems = [
   },
 ]
 
+export const sharedPages = [
+  {
+    name: 'How to Write a Grant Proposal',
+    _id: '5fce38d147a60b37ec159f4f',
+  },
+]
+
 export const groupHeaders = [
   {
     name: 'PHIL 103',

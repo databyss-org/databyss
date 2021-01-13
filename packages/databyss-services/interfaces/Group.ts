@@ -24,10 +24,12 @@ export class Group implements GroupHeader {
 
 export class GroupState {
   cache: CacheDict<Group>
-  headerCache: ResourceResponse<CacheDict<Group>>
+  headerCache: ResourceResponse<CacheDict<GroupHeader>>
+  sharedPageHeaderCache: ResourceResponse<CacheDict<PageHeader>>
 
   constructor() {
     this.cache = {}
     this.headerCache = null
+    this.sharedPageHeaderCache = null
   }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { View, List } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
@@ -13,8 +13,6 @@ import Footer from '@databyss-org/ui/components/Sidebar/Footer'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { darkTheme } from '../../theming/theme'
 import { sidebar } from '../../theming/components'
-
-export const defaultProps = {}
 
 const SidebarCollapsed = () => {
   const {
@@ -84,7 +82,6 @@ const SidebarCollapsed = () => {
 
   return (
     <View
-      {...defaultProps}
       theme={darkTheme}
       bg="background.1"
       borderRightColor="border.1"
@@ -92,6 +89,7 @@ const SidebarCollapsed = () => {
       width={sidebar.collapsedWidth}
     >
       <List
+        mt={pxUnits(2)}
         verticalItemPadding={2}
         horizontalItemPadding={1}
         py="none"

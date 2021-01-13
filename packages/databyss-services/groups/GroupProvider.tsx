@@ -9,7 +9,12 @@ import {
   GroupState,
 } from '../interfaces'
 import reducer from './reducer'
-import { fetchGroupHeaders, saveGroup, fetchGroup } from './actions'
+import {
+  fetchGroupHeaders,
+  fetchSharedPageHeaders,
+  saveGroup,
+  fetchGroup,
+} from './actions'
 
 interface PropsType {
   initialState: GroupState
@@ -18,6 +23,7 @@ interface PropsType {
 interface ContextType {
   state: GroupState
   getGroupHeaders: () => ResourceResponse<CacheDict<Group>>
+  getSharedPageHeaders: () => ResourceResponse<CacheDict<Group>>
   setGroup: (group: Group) => void
   getGroup: (id: string) => Group
 }
@@ -61,6 +67,16 @@ const GroupProvider = ({
     return null
   }, [state.headerCache])
 
+  const getSharedPageHeaders = useCallback(() => {
+    if (state.sharedPageHeaderCache) {
+      return state.sharedPageHeaderCache
+    }
+    if (!(state.sharedPageHeaderCache instanceof ResourcePending)) {
+      dispatch(fetchSharedPageHeaders())
+    }
+    return null
+  }, [state.sharedPageHeaderCache])
+
   return (
     <GroupContext.Provider
       value={{
@@ -68,6 +84,7 @@ const GroupProvider = ({
         setGroup,
         getGroup,
         getGroupHeaders,
+        getSharedPageHeaders,
       }}
     >
       {children}

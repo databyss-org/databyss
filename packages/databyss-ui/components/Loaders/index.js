@@ -185,7 +185,12 @@ export const BlockRelationsLoader = ({ children, atomicId }) => {
 
 export const GroupHeadersLoader = ({ children }) => {
   const getGroupHeaders = useGroupContext((c) => c.getGroupHeaders)
-  return <MakeLoader resources={getGroupHeaders()}>{children}</MakeLoader>
+  const getSharedPageHeaders = useGroupContext((c) => c.getSharedPageHeaders)
+  return (
+    <MakeLoader resources={[getGroupHeaders(), getSharedPageHeaders()]}>
+      {children}
+    </MakeLoader>
+  )
 }
 
 export const GroupLoader = ({ children, groupId }) => {

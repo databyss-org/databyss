@@ -1,9 +1,10 @@
 import React from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { View, List } from '@databyss-org/ui/primitives'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
 import SidebarCollapsed from './SidebarCollapsed'
-import { darkTheme } from '../../theming/theme'
+import { darkTheme, pxUnits } from '../../theming/theme'
 import Search from './routes/Search'
 import Pages from './routes/Pages'
 import Sources from './routes/Sources'
@@ -14,6 +15,7 @@ import { sidebar } from '../../theming/components'
 
 const Sidebar = () => {
   const { getSidebarPath, isMenuOpen } = useNavigationContext()
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const menuItem = getSidebarPath()
 
   /*
@@ -38,15 +40,16 @@ const Sidebar = () => {
         >
           <List
             verticalItemPadding={0}
-            verticalItemMargin="small"
+            verticalItemMargin={pxUnits(10)}
             horizontalItemPadding={0}
             height="100%"
             flexGrow={1}
             flexShrink={1}
-            mt="em"
+            mt={pxUnits(5)}
             overflow="hidden"
           >
-            <Header />
+            {/* TODO: on public collections, change name and link it to defaultPage */}
+            {isPublicAccount() && <Header />}
             <Search />
             {(menuItem === 'pages' || !menuItem) && <Pages />}
             {menuItem === 'sources' && <Sources hasIndexPage />}
