@@ -95,4 +95,10 @@ export const initiateDatabases = async () => {
       await cloudant.db.create(d)
     }
   }
+  // update index
+  for (const d of ['groups', 'logins', 'users']) {
+    const _db = await cloudant.use(d)
+    const _id = { name: '_id', type: 'json', index: { fields: ['_id'] } }
+    _db.index(_id)
+  }
 }

@@ -93,7 +93,7 @@ router.post(
       },
     }
     let user = await Users.find(_selector)
-
+    console.log('BEFORE', user)
     if (!user.docs.length) {
       // Creates new user
       emailExists = false
@@ -103,6 +103,7 @@ router.post(
         groups: [],
       })
       user = await Users.find(_selector)
+      console.log('FAIL', user)
     }
 
     user = user.docs[0]
