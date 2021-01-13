@@ -50,6 +50,8 @@ const PageWithAutosave = ({ page }) => {
   const hasPendingPatches = usePageContext((c) => c && c.hasPendingPatches)
   const [pageState, setPageState] = useState(null)
 
+  console.log('hasPendingPatches', hasPendingPatches)
+
   const operationsQueue = useRef([])
 
   const throttledAutosave = useCallback(
