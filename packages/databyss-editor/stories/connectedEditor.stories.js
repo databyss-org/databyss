@@ -65,7 +65,7 @@ const PageWithAutosave = ({ page }) => {
           operationsQueue.current = []
         }
       },
-      500,
+      100,
       { wait: 100 }
     ),
     []

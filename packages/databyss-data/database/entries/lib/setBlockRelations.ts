@@ -1,7 +1,7 @@
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
 import { DocumentType } from '../../interfaces'
 import { db } from '../../db'
-import { upsert, findAll, replaceOne } from '../../utils'
+import { findAll, replaceOne } from '../../utils'
 
 const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
   for (const payload of payloadArray) {
@@ -27,10 +27,6 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
     if (blocksRelationArray?.length) {
       for (const relationship of blocksRelationArray) {
         const { block, relatedBlock, removeBlock } = relationship
-        // get id of block
-
-        // will one block only ever have a relationship with another block?
-        // const _relationshipID = `${block}${relatedBlock}`
         await replaceOne({
           $type: DocumentType.BlockRelation,
           query: { block, relatedBlock },
