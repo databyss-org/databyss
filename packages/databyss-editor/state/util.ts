@@ -1,7 +1,6 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
-import { DocumentType } from '@databyss-org/data/database/interfaces'
 import {
   Selection,
   Block,
@@ -613,7 +612,6 @@ export const convertInlineToAtomicBlocks = ({
     // update selection
     const _nextSelection = {
       _id: draft.selection._id,
-      $type: DocumentType.Selection,
       anchor: { index, offset: _caretOffest },
       focus: { index, offset: _caretOffest },
     }
@@ -678,7 +676,6 @@ export const pushAtomicChangeUpstream = ({
   // create a selection which includes the whole document
   const _selectionFromState = {
     _id: draft.selection._id,
-    $type: DocumentType.Selection,
     anchor: { offset: 0, index: 0 },
     focus: {
       offset: state.blocks[state.blocks.length - 1].text.textValue.length,
@@ -688,7 +685,6 @@ export const pushAtomicChangeUpstream = ({
 
   const _selectionFromDraft = {
     _id: draft.selection._id,
-    $type: DocumentType.Selection,
     anchor: { offset: 0, index: 0 },
     focus: {
       offset: draft.blocks[draft.blocks.length - 1].text.textValue.length,

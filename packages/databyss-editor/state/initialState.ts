@@ -1,4 +1,3 @@
-import { DocumentType } from '@databyss-org/data/database/interfaces'
 import { EditorState } from '../interfaces'
 
 const initialState: EditorState = {
@@ -8,7 +7,6 @@ const initialState: EditorState = {
   showNewBlockMenu: true,
   operations: [],
   selection: {
-    $type: DocumentType.Selection,
     _id: '',
     anchor: {
       index: 0,

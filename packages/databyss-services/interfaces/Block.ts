@@ -1,4 +1,3 @@
-import { DocumentType } from '@databyss-org/data/database/interfaces'
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { SelectOption } from './UI'
 import { Text } from './Text'
@@ -12,7 +11,6 @@ export enum BlockType {
 }
 
 export interface BasicBlock {
-  $type?: DocumentType
   _id: string
   type: BlockType
 }

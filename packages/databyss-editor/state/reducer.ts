@@ -1,6 +1,5 @@
 import { uid } from '@databyss-org/data/lib/uid'
 import { produceWithPatches, enablePatches, applyPatches, Patch } from 'immer'
-import { DocumentType } from '@databyss-org/data/database/interfaces'
 import { FSA, BlockType, Block } from '@databyss-org/services/interfaces'
 import {
   SPLIT,
@@ -213,7 +212,6 @@ export const bakeAtomicClosureBlock = ({
           index: index + 1,
         }
         draft.selection = {
-          $type: DocumentType.Selection,
           anchor: _cursor,
           focus: _cursor,
           _id: draft.selection._id,
@@ -930,7 +928,6 @@ export default (
       ) {
         draft.selection = {
           _id: uid(),
-          $type: DocumentType.Selection,
           anchor: { offset: 0, index: 0 },
           focus: { offset: 0, index: 0 },
         }

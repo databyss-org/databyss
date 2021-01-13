@@ -1,5 +1,4 @@
 import { uid } from '@databyss-org/data/lib/uid'
-import { DocumentType } from '@databyss-org/data/database/interfaces'
 import { Page, BlockType } from '../interfaces'
 
 export const newPage = (): Page => ({
@@ -9,7 +8,6 @@ export const newPage = (): Page => ({
 
   selection: {
     _id: uid(),
-    $type: DocumentType.Selection,
     focus: {
       offset: 0,
       index: 0,

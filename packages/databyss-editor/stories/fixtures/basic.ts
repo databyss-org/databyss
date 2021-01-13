@@ -1,5 +1,4 @@
 import { BlockType } from '@databyss-org/services/interfaces'
-import { DocumentType } from '@databyss-org/data/database/interfaces'
 import { EditorState } from '../../interfaces'
 import { RangeType } from '../../../databyss-services/interfaces/Range'
 
@@ -18,7 +17,6 @@ const basicFixture: EditorState = {
   operations: [],
   selection: {
     _id: '5e3f829ce5447c0018baebed',
-    $type: DocumentType.Selection,
     anchor: {
       index: 0,
       offset: 0,

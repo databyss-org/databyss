@@ -83,6 +83,7 @@ describe('editor clipboard', () => {
   afterEach(async () => {
     await sleep(100)
     await driver.quit()
+    await sleep(100)
     driver = null
     await sleep(100)
   })

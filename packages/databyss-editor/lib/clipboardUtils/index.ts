@@ -1,5 +1,4 @@
 import { uid } from '@databyss-org/data/lib/uid'
-import { DocumentType } from '@databyss-org/data/database/interfaces'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { Text, Range, Selection, Block } from '../../interfaces'
 import { isAtomicInlineType } from '../util'
@@ -50,10 +49,9 @@ export const sortSelection = (selection: Selection): Selection => {
       anchor: focus,
       focus: anchor,
       _id,
-      $type: DocumentType.Selection,
     }
   }
-  return { anchor, focus, _id, $type: DocumentType.Selection }
+  return { anchor, focus, _id }
 }
 
 export const mergeText = (a: Text, b: Text): Text => {

@@ -9,6 +9,7 @@ import { Users, Logins, Groups } from '@databyss-org/data/serverdbs'
 import { send } from '../../lib/sendgrid'
 import { getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
+import { uid } from '@databyss-org/data/lib/uid'
 
 const router = express.Router()
 
@@ -96,6 +97,7 @@ router.post(
       // Creates new user
       emailExists = false
       await Users.insert({
+        _id: uid(),
         email,
         groups: [],
       })

@@ -1,5 +1,4 @@
 import { uid } from '@databyss-org/data/lib/uid'
-import { DocumentType } from '@databyss-org/data/database/interfaces'
 import { EditorState, BlockType } from '../../interfaces'
 
 const initialState: EditorState = {
@@ -7,7 +6,6 @@ const initialState: EditorState = {
   operations: [],
   selection: {
     _id: uid(),
-    $type: DocumentType.Selection,
     anchor: {
       index: 0,
       offset: 0,

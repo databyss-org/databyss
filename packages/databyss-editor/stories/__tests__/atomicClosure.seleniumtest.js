@@ -2,7 +2,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import { jsx as h } from './hyperscript'
 import { sanitizeEditorChildren } from './__helpers'
 import {
@@ -36,7 +36,7 @@ describe('atomic closure', () => {
   beforeEach(async (done) => {
     const random = Math.random().toString(36).substring(7)
     // OSX and safari are necessary
-    driver = await startSession()
+    driver = await startSession({ platformName: WIN, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
