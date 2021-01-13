@@ -107,7 +107,15 @@ router.post(
 
     user = user.docs[0]
 
-    const token = await getTokenFromUserId(user._id)
+    // TODO: THIS IS TEMPORARY TO FIND BUG
+    let token
+    try {
+      token = await getTokenFromUserId(user._id)
+    } catch (err) {
+      console.log(err)
+      console.log('USER IS ', user)
+    }
+
     const loginObj = {
       email,
       code:

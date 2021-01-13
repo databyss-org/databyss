@@ -176,7 +176,7 @@ export const normalizePage = (page: Page): PageDoc => {
 }
 
 /*
-generic function to add a new page given id
+generic function to add a new page to database given id. this function is only used in provisioning a new user database
 */
 export const addPage = async (id?: string) => {
   const _page = new Page(id)
