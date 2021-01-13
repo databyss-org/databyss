@@ -67,7 +67,7 @@ const PageWithAutosave = ({ page }) => {
       100,
       { wait: 100 }
     ),
-    []
+    [hasPendingPatches]
   )
 
   const onDocumentChange = (val) => {
