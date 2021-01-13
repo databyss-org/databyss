@@ -1,4 +1,4 @@
-import { Page, BlockType } from '@databyss-org/services/interfaces'
+import { Page } from '@databyss-org/services/interfaces'
 import { DocumentType } from '../../interfaces'
 import { upsert } from '../../utils'
 import { normalizePage } from '../util'
