@@ -25,6 +25,7 @@ import * as ReactModal from 'react-modal'
 import * as ReactDnd from 'react-dnd'
 import { InterpolationWithTheme } from '@emotion/core'
 import { Text as TextInterface } from '@databyss-org/editor/interfaces'
+import { CSSObject } from '@styled-system/css'
 
 export type RefForwardingFC<P, T = HTMLElement> = ForwardRefExoticComponent<
   PropsWithoutRef<P> & RefAttributes<T>
@@ -99,6 +100,8 @@ export interface TextProps
     ColorProps,
     TypographyProps {
   variant?: string
+  css?: InterpolationWithTheme<any>
+  userSelect?: CSS.Property.UserSelect
 }
 
 declare const TextPrimitive: RefForwardingFC<PropsWithChildren<TextProps>>
@@ -207,13 +210,15 @@ export interface ButtonProps extends BaseControlProps {
 declare const Button: RefForwardingFC<PropsWithChildren<ButtonProps>>
 
 export interface TextInputProps extends TextProps {
-  value: Partial<TextInterface>
-  onChange: (value: TextInterface) => void
+  value?: Partial<TextInterface>
+  onChange?: (value: TextInterface) => void
   multiline?: boolean
   active?: boolean
-  concatCss?: InterpolationWithTheme<any>
+  concatCss?: CSSObject
   readonly?: boolean
   autoFocus?: boolean
+  placeholder?: string
+  maxRows?: number
 }
 
 declare const TextInput: RefForwardingFC<TextInputProps>

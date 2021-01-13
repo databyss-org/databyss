@@ -10,7 +10,6 @@ import {
   FETCH_SHARED_PAGE_HEADERS,
   CACHE_GROUP_HEADERS,
   CACHE_SHARED_PAGE_HEADERS,
-  SAVE_GROUP,
   FETCH_GROUP,
   CACHE_GROUP,
 } from './constants'
@@ -85,7 +84,7 @@ export function saveGroup(group: Group) {
   return (dispatch: Function) => {
     services.saveGroup(group)
     dispatch({
-      type: SAVE_GROUP,
+      type: CACHE_GROUP,
       payload: { group },
     })
   }

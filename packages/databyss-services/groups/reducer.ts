@@ -6,6 +6,7 @@ import {
   ResourcePending,
   GroupHeader,
   PageHeader,
+  Group,
 } from '../interfaces'
 import {
   FETCH_GROUP_HEADERS,
@@ -55,6 +56,11 @@ export default produce((draft: Draft<GroupState>, action: FSA) => {
     }
     case CACHE_GROUP: {
       draft.cache[action.payload.group._id] = action.payload.group
+      const _headerCache = draft.headerCache as CacheDict<GroupHeader>
+      _headerCache[action.payload.group._id] = {
+        _id: action.payload.group._id,
+        name: action.payload.group.name,
+      }
       break
     }
   }

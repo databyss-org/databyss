@@ -90,7 +90,7 @@ const SidebarList = ({
                 pb="small"
                 key={item.text}
               >
-                <Text variant="uiTextHeading" color="text.3">
+                <Text variant="uiTextHeading" color="text.3" userSelect="none">
                   {item.text}
                 </Text>
               </View>

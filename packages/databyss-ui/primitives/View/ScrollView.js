@@ -47,7 +47,7 @@ const ScrollView = forwardRef(
               padding: '5px',
               transition: 'box-shadow 30ms linear',
               pointerEvents: 'none',
-              zIndex: 1,
+              zIndex: get(theme.zIndex, 'scrollEffects'),
               boxShadow:
                 scrollTop > 0
                   ? `inset -5px 0 5px ${

@@ -84,8 +84,7 @@ const uiTextVariants = {
   uiTextHeading: {
     fontFamily: fonts.uiFont,
     fontSize: 13,
-    letterSpacing: '1px',
-    wordSpacing: '2.5px',
+    letterSpacing: '0.8px',
     fontWeight: fontWeights.semiBold,
     textTransform: 'uppercase',
     opacity: 0.7,

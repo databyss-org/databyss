@@ -87,7 +87,9 @@ const NavigationProvider = ({ children }) => {
 
     // determine path from location
     const _item = getTokensFromPath().type
-    return sidebarItemAliases[_item] || _item || 'pages'
+    const _derivedPath = sidebarItemAliases[_item] || _item || 'pages'
+    navigateSidebar(`/${_derivedPath}`)
+    return _derivedPath
 
     // TODO: within PageContent (or wherever we mount a <PageLoader>), check if archive
     // flag is set. If so, nagivate the sidebar to the archive tab

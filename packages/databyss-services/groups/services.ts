@@ -17,7 +17,7 @@ export const getSharedPageHeaders = async (): Promise<PageHeader[]> => {
   return sharedPages
 }
 
-export const getGroup = async (id: string): Promise<Group[]> => {
+export const getGroup = async (id: string): Promise<Group> => {
   await sleep(50)
   return groupDetails[id]
 }
