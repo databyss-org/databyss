@@ -21,7 +21,7 @@ import PageProvider, {
 import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { db } from '@databyss-org/data/database/db'
-import { Page } from '@databyss-org/data/database/pages/util'
+import { Page } from '@databyss-org/services/interfaces'
 import HistoryProvider from '../history/EditorHistory'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'

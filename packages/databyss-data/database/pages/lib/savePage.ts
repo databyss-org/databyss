@@ -1,4 +1,4 @@
-import { Page } from '@databyss-org/services/interfaces'
+import { Page, BlockType } from '@databyss-org/services/interfaces'
 import { DocumentType } from '../../interfaces'
 import { upsert } from '../../utils'
 import { normalizePage } from '../util'
@@ -12,7 +12,7 @@ export const savePage = async (data: Page) => {
   await upsert({
     $type: DocumentType.Block,
     _id: data.blocks[0]._id,
-    doc: data.blocks[0],
+    doc: { ...data.blocks[0] },
   })
   await upsert({
     $type: DocumentType.Page,
