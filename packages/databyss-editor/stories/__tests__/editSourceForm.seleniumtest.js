@@ -86,6 +86,7 @@ describe('<EditSourceForm/>', () => {
     // write to editor
     await sendKeys(actions, `@${sourceTitle}`)
     await enterKey(actions)
+    await isSaved(driver)
 
     await sleep(1000)
 

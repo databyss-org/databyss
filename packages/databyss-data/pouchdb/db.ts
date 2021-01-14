@@ -27,7 +27,6 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 
 export const db: PouchDB.Database<any> = new PouchDB('local', {
-  revs_limit: 2,
   auto_compaction: true,
 })
 
