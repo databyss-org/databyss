@@ -16,6 +16,7 @@ import {
 import { GroupLoader } from '../../components/Loaders'
 import { StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
+import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
 
 interface GroupSectionProps extends ViewProps {
@@ -79,7 +80,11 @@ export const GroupFields = ({ group }: { group: Group }) => {
                 </ValueListItem>
               </View>
             </GroupSection>
-            <GroupSection title="Share with Everyone">pages</GroupSection>
+            <GroupSection title="Share with Everyone">
+              <ValueListItem path="public">
+                <PublicSharingSettings />
+              </ValueListItem>
+            </GroupSection>
           </View>
         </Grid>
       </View>

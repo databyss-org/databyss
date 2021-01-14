@@ -4,6 +4,7 @@ export interface GroupHeader {
   _id: string
   name: string
   default: boolean
+  public: boolean
 }
 
 export class Group implements GroupHeader {
@@ -12,6 +13,7 @@ export class Group implements GroupHeader {
   default: boolean
   description: Text
   pages: PageHeader[]
+  public: boolean
 
   constructor() {
     this._id = 'NEW_GROUP' // TODO: replace with uid() unique id gen
@@ -19,6 +21,7 @@ export class Group implements GroupHeader {
     this.name = 'untitled'
     this.description = new Text()
     this.pages = []
+    this.public = false
   }
 }
 

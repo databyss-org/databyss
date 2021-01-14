@@ -13,6 +13,7 @@ const ToggleControl = ({
   label,
   alignLabel,
   labelProps,
+  labelTextProps,
   textVariant,
   ...others
 }) => (
@@ -37,7 +38,9 @@ const ToggleControl = ({
         {...{ [alignLabel === 'right' ? 'ml' : 'mr']: 'small' }}
         {...labelProps}
       >
-        <Text variant={textVariant}>{label}</Text>
+        <Text variant={textVariant} {...labelTextProps}>
+          {label}
+        </Text>
       </View>
     )}
   </BaseControl>
@@ -46,6 +49,7 @@ const ToggleControl = ({
 ToggleControl.defaultProps = {
   alignLabel: 'right',
   textVariant: 'uiTextSmall',
+  labelTextProps: {},
   onChange: () => null,
 }
 

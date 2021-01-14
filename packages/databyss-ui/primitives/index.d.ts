@@ -189,6 +189,7 @@ declare const BaseControl: RefForwardingFC<PropsWithChildren<BaseControlProps>>
 export interface ControlLabelProps {
   label?: string
   labelProps?: ViewProps
+  labelTextProps?: TextProps
 }
 
 export interface ToggleControlProps

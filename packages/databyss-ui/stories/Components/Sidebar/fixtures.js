@@ -293,5 +293,6 @@ export const groupDetails = {
       ranges: [],
     },
     pages: [],
+    public: false,
   },
 }
