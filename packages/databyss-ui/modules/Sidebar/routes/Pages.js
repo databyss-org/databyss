@@ -10,6 +10,7 @@ export const getPagesData = (pages, archive) =>
       text: p.name,
       type: 'page',
       route: `/pages/${p._id}`,
+      data: p,
     }))
 
 const Pages = ({ archive, ...others }) => (

@@ -66,6 +66,7 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
       placeholder={noPageTitle}
       variant="bodyHeading1"
       color="text.3"
+      ml="medium"
       mb="em"
     />
   )

@@ -142,6 +142,7 @@ const Control = forwardRef(
                 // note this is necessary to remove extra junk around the edges of the
                 // drag preview. see: https://github.com/react-dnd/react-dnd/issues/788#issuecomment-393620979
                 transform: 'translate(0, 0)',
+                cursor: 'grab',
               },
             ]}
             href={href}

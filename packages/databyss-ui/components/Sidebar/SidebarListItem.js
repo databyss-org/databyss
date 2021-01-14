@@ -4,8 +4,35 @@ import {
   BaseControl,
   Grid,
   View,
+  Icon,
   withKeyboardNavigation,
+  pxUnits,
 } from '@databyss-org/ui/primitives'
+
+export const SidebarListRow = ({ children, text, icon, isActive }) => (
+  <View
+    py="small"
+    px="em"
+    width="100%"
+    flexDirection="row"
+    alignItems="center"
+    justifyContent="space-between"
+  >
+    <Grid singleRow flexWrap="nowrap" columnGap="small" maxWidth="100%">
+      <Icon
+        sizeVariant="tiny"
+        color={isActive ? 'text.1' : 'text.3'}
+        mt={pxUnits(2)}
+      >
+        {icon}
+      </Icon>
+      <Text variant="uiTextSmall" color={isActive ? 'text.1' : 'text.3'}>
+        {text}
+      </Text>
+    </Grid>
+    {children}
+  </View>
+)
 
 const SidebarListItem = ({
   isActive,
@@ -40,22 +67,9 @@ const SidebarListItem = ({
       handle={_controlHandle}
       draggable={draggable}
     >
-      <View
-        py="small"
-        px="em"
-        width="100%"
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Grid singleRow flexWrap="nowrap" columnGap="small" maxWidth="100%">
-          {icon}
-          <Text variant="uiTextSmall" color={isActive ? 'text.1' : 'text.3'}>
-            {text}
-          </Text>
-        </Grid>
+      <SidebarListRow isActive={isActive} icon={icon} text={text}>
         {children}
-      </View>
+      </SidebarListRow>
     </BaseControl>
   )
 }

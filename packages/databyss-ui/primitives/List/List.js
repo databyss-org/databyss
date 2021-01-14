@@ -48,14 +48,24 @@ const List = ({
                 borderRadius: 0,
               }
             : {}),
-          pl: horizontalItemPadding,
-          pr: horizontalItemPadding,
-          pt: verticalItemPadding,
-          pb: verticalItemPadding,
-          ml: horizontalItemMargin,
-          mr: horizontalItemMargin,
-          mt: verticalItemMargin,
-          mb: verticalItemMargin,
+          ...(typeof childProps.padding === 'undefined' &&
+          typeof childProps.p === 'undefined'
+            ? {
+                pl: horizontalItemPadding,
+                pr: horizontalItemPadding,
+                pt: verticalItemPadding,
+                pb: verticalItemPadding,
+              }
+            : {}),
+          ...(typeof childProps.margin === 'undefined' &&
+          typeof childProps.m === 'undefined'
+            ? {
+                ml: horizontalItemMargin,
+                mr: horizontalItemMargin,
+                mt: verticalItemMargin,
+                mb: verticalItemMargin,
+              }
+            : {}),
           ...childProps,
         })
       })}

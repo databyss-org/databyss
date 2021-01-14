@@ -17,7 +17,7 @@ import {
   ModalManager,
 } from '@databyss-org/ui'
 
-import { View } from '@databyss-org/ui/primitives'
+import { GestureProvider, View } from '@databyss-org/ui/primitives'
 
 const App = ({ children }) => (
   <View
@@ -71,17 +71,19 @@ const Private = () => {
         <SourceProvider>
           <TopicProvider>
             <GroupProvider>
-              <Router>
-                <App path="/:accountId">
-                  <NotFoundRedirect default />
-                  <PageRouter path="pages/*" />
-                  <SearchRouter path="search/*" />
-                  <SourcesRouter path="sources/*" />
-                  <TopicsRouter path="topics/*" />
-                  <GroupsRouter path="collections/*" />
-                </App>
-              </Router>
-              <ModalManager />
+              <GestureProvider>
+                <Router>
+                  <App path="/:accountId">
+                    <NotFoundRedirect default />
+                    <PageRouter path="pages/*" />
+                    <SearchRouter path="search/*" />
+                    <SourcesRouter path="sources/*" />
+                    <TopicsRouter path="topics/*" />
+                    <GroupsRouter path="collections/*" />
+                  </App>
+                </Router>
+                <ModalManager />
+              </GestureProvider>
             </GroupProvider>
           </TopicProvider>
         </SourceProvider>

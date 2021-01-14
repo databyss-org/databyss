@@ -55,8 +55,16 @@ const SidebarList = ({
       : ''
   }
 
-  const canDrag = (item) =>
-    item.type === 'page' && location.pathname.match(/\/collection\//)
+  const getDraggable = (item) => {
+    if (item.type !== 'page' || !location.pathname.match(/\/collections\//)) {
+      return false
+    }
+    return {
+      type: 'PAGE',
+      // payload type is PageHeader
+      payload: item.data,
+    }
+  }
 
   return (
     <ScrollView
@@ -102,16 +110,8 @@ const SidebarList = ({
               text={item.text}
               href={getHref(item)}
               key={`${item.type}-${index}`}
-              draggable={canDrag(item)}
-              icon={
-                <Icon
-                  sizeVariant="tiny"
-                  color={getActiveItem(item) ? 'text.1' : 'text.3'}
-                  mt={pxUnits(2)}
-                >
-                  {item.icon ? item.icon : menuSvgs(item.type)}
-                </Icon>
-              }
+              draggable={getDraggable(item)}
+              icon={item.icon ? item.icon : menuSvgs(item.type)}
             />
           )
         })}

@@ -75,11 +75,12 @@ export const PageContainer = React.memo(
           ref={editorWindowRef}
           {...others}
         >
-          <View p="medium" pt="none" flexGrow={1}>
+          <View p="medium" pt="small" flexGrow={1}>
             <PageHeader
               ref={headerRef}
               pageId={id}
               onNavigateDownFromHeader={onNavigateDownToEditor}
+              ml="small"
             />
             <PageBody
               onEditorPathChange={setEditorPath}

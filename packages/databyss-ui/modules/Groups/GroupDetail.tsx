@@ -11,9 +11,12 @@ import {
   TextInput,
   Grid,
   ViewProps,
+  ScrollView,
 } from '@databyss-org/ui/primitives'
 import { GroupLoader } from '../../components/Loaders'
 import { StickyHeader, TitleInput } from '../../components'
+import { PageDropzone } from './PageDropzone'
+import { darkTheme } from '../../theming/theme'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -50,26 +53,34 @@ export const GroupFields = ({ group }: { group: Group }) => {
 
   return (
     <ValueListProvider onChange={onChange} values={values}>
-      <View px="medium" pt="none" flexGrow={1} widthVariant="content">
+      <View px="medium" pt="none" flexGrow={1}>
         <ValueListItem path="name">
           <TitleInput placeholder="untitled" />
         </ValueListItem>
-        <GroupSection title="Description">
-          <View borderVariant="thinLight">
-            <ValueListItem path="description">
-              <TextInput
-                p="small"
-                multiline
-                maxRows={10}
-                variant="uiTextSmall"
-                placeholder="Type a description of your shared or public collection"
-              />
-            </ValueListItem>
+        <Grid columnGap="large" widthVariant="content" flexGrow={1}>
+          <GroupSection title="Pages" flexGrow={1} flexBasis={1}>
+            <View theme={darkTheme} flexGrow={1}>
+              <ValueListItem path="pages">
+                <PageDropzone bg="background.2" height="100%" />
+              </ValueListItem>
+            </View>
+          </GroupSection>
+          <View flexGrow={1} flexBasis={1}>
+            <GroupSection title="Description" widthVariant="content">
+              <View borderVariant="thinLight">
+                <ValueListItem path="description">
+                  <TextInput
+                    p="small"
+                    multiline
+                    maxRows={10}
+                    variant="uiTextSmall"
+                    placeholder="Type a description of your shared or public collection"
+                  />
+                </ValueListItem>
+              </View>
+            </GroupSection>
+            <GroupSection title="Share with Everyone">pages</GroupSection>
           </View>
-        </GroupSection>
-        <Grid columnGap="large">
-          <GroupSection title="Pages">pages</GroupSection>
-          <GroupSection title="Share with Everyone">pages</GroupSection>
         </Grid>
       </View>
     </ValueListProvider>
@@ -84,7 +95,15 @@ export const GroupDetail = () => {
       {(group: Group) => (
         <>
           <StickyHeader path={['Collections', group.name]} />
-          <GroupFields group={group} />
+          <ScrollView
+            p="medium"
+            pt="small"
+            flexGrow={1}
+            flexShrink={1}
+            shadowOnScroll
+          >
+            <GroupFields group={group} />
+          </ScrollView>
         </>
       )}
     </GroupLoader>

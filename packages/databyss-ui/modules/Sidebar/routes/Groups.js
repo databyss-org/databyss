@@ -7,6 +7,7 @@ const getGroupItems = (groupHeaders) =>
     text: header.name,
     type: 'group',
     route: `/collections/${header._id}`,
+    data: header,
   }))
 
 const getPageItems = (pageHeaders) =>
@@ -14,6 +15,7 @@ const getPageItems = (pageHeaders) =>
     text: header.name,
     type: 'page',
     route: `/pages/${header._id}`,
+    data: header,
   }))
 
 const Groups = (others) => (

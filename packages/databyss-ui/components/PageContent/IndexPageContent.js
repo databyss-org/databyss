@@ -6,8 +6,8 @@ const IndexPageContent = ({ indexName, title, children }) => (
   <>
     <StickyHeader path={[indexName, title]} />
     <ScrollView flex="1" shadowOnScroll>
-      <View p="medium" pt="none">
-        <Text variant="bodyHeading1" color="text.3">
+      <View p="medium" pt="small">
+        <Text variant="bodyHeading1" color="text.3" ml="medium">
           {title}
         </Text>
       </View>
