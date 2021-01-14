@@ -65,10 +65,6 @@ export const replaceOne = async ({
 }) => {
   const res = await findOne($type, query)
   // if document doesnt exit, create a new one
-  if (res) {
-    console.log('RESPONSE EXISTS', doc)
-    console.log('response', res)
-  }
   const _id = res?._id || uid()
   // replace document
   await upsert({ $type, _id, doc })

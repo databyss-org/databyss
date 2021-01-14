@@ -74,10 +74,17 @@ export function savePatchBatch(batch?: PatchBatch) {
   // if server has not completed previous request bail action
   if (busy) {
     return (dispatch: Function) => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+
+      // TODO: CHANGE TIMEOUT TO ENV VARIABLE
+      timeoutId = setTimeout(() => dispatch(savePatchBatch()), 1000)
+
       dispatch({
         type: QUEUE_PATCH,
         payload: {
-          queueSize: queue.length,
+          queueSize: queue.length || 1,
         },
       })
     }
@@ -93,6 +100,7 @@ export function savePatchBatch(batch?: PatchBatch) {
       })
     }
   }
+
   // perform first batch of patches in queue
   busy = true
   let _batch = queue.shift()

@@ -175,7 +175,7 @@ const ContentEditable = ({
             },
           }
         }
-        console.log(entity)
+
         const _types = {
           SOURCE: () => {
             // requestAnimationFrame will allow the `forkOnChange` function in the editor provider to execute before setting the inline block relations

@@ -65,7 +65,7 @@ const PageWithAutosave = ({ page }) => {
         }
       },
       100,
-      { leading: true, maxWait: 100 }
+      { leading: true, maxWait: 500 }
     ),
     []
   )
