@@ -69,7 +69,7 @@ describe('app sticky header', () => {
     )
 
     await logoutButton.click()
-    await sleep(1000)
+    await getElementByTag(driver, '[data-test-path="email"]')
     await driver.quit()
     driver = null
     await sleep(100)

@@ -198,15 +198,22 @@ export const logout = () => async (dispatch) => {
   deleteCredentials()
 
   // deletes databases
-  const dbs = await window.indexedDB.databases()
-  dbs.forEach((db) => {
-    if (db.name.includes('_pouch_')) {
-      window.indexedDB.deleteDatabase(db.name)
-    }
-  })
+  let dbs = await window.indexedDB.databases()
+  dbs = dbs.filter((db) => db.name.includes('_pouch_'))
+
+  await Promise.all(
+    dbs.map(
+      (db) =>
+        new Promise((resolve, reject) => {
+          const request = indexedDB.deleteDatabase(db.name)
+          request.onsuccess = resolve
+          request.onerror = reject
+        })
+    )
+  )
 
   dispatch({ type: LOGOUT })
-  window.requestAnimationFrame(() => (window.location.href = '/'))
+  setTimeout(() => (window.location.href = '/'), 50)
 }
 
 export const onSetDefaultPage = (id) =>
