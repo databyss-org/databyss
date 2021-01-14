@@ -54,6 +54,8 @@ export const PageDropzone = ({
                 text={page.name}
                 isActive
                 icon={<PageSvg />}
+                hoverColor="control.1"
+                p="em"
               >
                 <BaseControl onPress={() => onRemove(page)}>
                   <Icon sizeVariant="tiny">

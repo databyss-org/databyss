@@ -13,8 +13,10 @@ import {
 import { useDrop } from '@databyss-org/ui/primitives/Gestures/GestureProvider'
 import { zIndex } from '@databyss-org/ui/theming/system'
 import { ThemeProvider } from 'emotion-theming'
+import { ThemeContext } from '@emotion/core'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import fastCompare from 'react-fast-compare'
+import applyTheme from '@styled-system/css'
 import styled from '../styled'
 import IS_NATIVE from '../../lib/isNative'
 
@@ -112,24 +114,32 @@ export const defaultProps = {
   flexDirection: 'column',
 }
 
-export const webProps = {
-  css: {
-    boxSizing: 'border-box',
-    // webkit scrollbars
-    '::-webkit-scrollbar': {
-      width: '0.7em',
-      background: 'transparent',
-    },
-    '::-webkit-scrollbar-track': {
-      background: 'transparent',
-    },
-    '::-webkit-scrollbar-thumb': {
-      background: '#00000033',
-    },
-    // firefox scrollbars
-    'scrollbar-color': '#00000033 transparent !important',
+export const desktopResetCss = {
+  boxSizing: 'border-box',
+  // webkit scrollbars
+  '::-webkit-scrollbar': {
+    width: '0.7em',
+    background: 'transparent',
   },
+  '::-webkit-scrollbar-track': {
+    background: 'transparent',
+  },
+  '::-webkit-scrollbar-thumb': {
+    background: '#00000033',
+  },
+  // firefox scrollbars
+  'scrollbar-color': '#00000033 transparent !important',
 }
+
+const desktopCss = (props) => ({
+  ...(props.hoverColor
+    ? {
+        '&:hover': {
+          backgroundColor: props.hoverColor,
+        },
+      }
+    : {}),
+})
 
 const Styled = styled(
   {
@@ -177,70 +187,62 @@ const DropzoneChild = forwardRef(({ children, dropzone, ...others }, ref) => {
   )
 })
 
-const View = forwardRef(({ children, onLayout, dropzone, ...others }, ref) => {
-  const viewRef = useRef(null)
-  const clientRect = {}
-  const _onLayout = useCallback(
-    (_clientRect) => {
-      if (onLayout && !fastCompare(_clientRect, clientRect)) {
-        onLayout(clientRect)
-      }
-      Object.assign(clientRect, _clientRect)
-    },
-    [clientRect]
-  )
-  const nativeProps = {
-    onLayout: () =>
-      onLayout &&
-      viewRef &&
-      viewRef.current &&
-      viewRef.current.measure((x, y, width, height) =>
-        _onLayout({ x, y, width, height })
-      ),
+const View = forwardRef(
+  ({ children, onLayout, dropzone, theme, css, ...others }, ref) => {
+    const viewRef = useRef(null)
+    const clientRect = {}
+    const _onLayout = useCallback(
+      (_clientRect) => {
+        if (onLayout && !fastCompare(_clientRect, clientRect)) {
+          onLayout(clientRect)
+        }
+        Object.assign(clientRect, _clientRect)
+      },
+      [clientRect]
+    )
+    const nativeProps = {
+      onLayout: () =>
+        onLayout &&
+        viewRef &&
+        viewRef.current &&
+        viewRef.current.measure((x, y, width, height) =>
+          _onLayout({ x, y, width, height })
+        ),
+    }
+
+    const ChildContainer = dropzone ? DropzoneChild : Styled
+
+    // fixes white space in scroll bar when using external mouse
+    const view = (_theme) => (
+      <ChildContainer
+        ref={forkRef(viewRef, ref)}
+        {...defaultProps}
+        {...(IS_NATIVE ? nativeProps : {})}
+        css={[
+          !IS_NATIVE && desktopResetCss,
+          !IS_NATIVE && applyTheme(desktopCss(others))(_theme),
+          css,
+        ]}
+        theme={_theme}
+        {...others}
+        dropzone={dropzone}
+      >
+        {children}
+      </ChildContainer>
+    )
+
+    if (theme) {
+      return <ThemeProvider theme={theme}>{view(theme)}</ThemeProvider>
+    }
+
+    return (
+      <ThemeContext.Consumer>{(_theme) => view(_theme)}</ThemeContext.Consumer>
+    )
   }
-  // useEffect(() => {
-  //   if (IS_NATIVE) {
-  //     return () => null
-  //   }
-  //   function onWindowResize() {
-  //     if (!onLayout || !viewRef || !viewRef.current) {
-  //       // only do expensive dimension stuff if we care
-  //       return () => null
-  //     }
-  //     const { x, y, width, height } = viewRef.current.getBoundingClientRect()
-  //     _onLayout({ x, y, width, height })
-  //     return () => null
-  //   }
-  //   window.addEventListener('resize', onWindowResize)
-  //   onWindowResize()
-  //   return function cleanup() {
-  //     window.removeEventListener('resize', onWindowResize)
-  //   }
-  // })
-  if (onLayout) {
-    console.warn('onLayout removed until optimized')
-  }
+)
 
-  const ChildContainer = dropzone ? DropzoneChild : Styled
-
-  // fixes white space in scroll bar when using external mouse
-  const view = (
-    <ChildContainer
-      ref={forkRef(viewRef, ref)}
-      {...defaultProps}
-      {...(IS_NATIVE ? nativeProps : webProps)}
-      {...others}
-      dropzone={dropzone}
-    >
-      {children}
-    </ChildContainer>
-  )
-
-  if (others.theme) {
-    return <ThemeProvider theme={others.theme}>{view}</ThemeProvider>
-  }
-
-  return view
-})
+View.defaultProps = {
+  css: {},
+}
 
 export default View

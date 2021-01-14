@@ -9,7 +9,13 @@ import {
   pxUnits,
 } from '@databyss-org/ui/primitives'
 
-export const SidebarListRow = ({ children, text, icon, isActive }) => (
+export const SidebarListRow = ({
+  children,
+  text,
+  icon,
+  isActive,
+  ...others
+}) => (
   <View
     py="small"
     px="em"
@@ -17,19 +23,25 @@ export const SidebarListRow = ({ children, text, icon, isActive }) => (
     flexDirection="row"
     alignItems="center"
     justifyContent="space-between"
+    {...others}
   >
-    <Grid singleRow flexWrap="nowrap" columnGap="small" maxWidth="100%">
+    <View flexDirection="row" flexWrap="nowrap" maxWidth="100%" flexShrink={1}>
       <Icon
         sizeVariant="tiny"
         color={isActive ? 'text.1' : 'text.3'}
         mt={pxUnits(2)}
+        mr="small"
       >
         {icon}
       </Icon>
-      <Text variant="uiTextSmall" color={isActive ? 'text.1' : 'text.3'}>
+      <Text
+        variant="uiTextSmall"
+        color={isActive ? 'text.1' : 'text.3'}
+        userSelect="none"
+      >
         {text}
       </Text>
-    </Grid>
+    </View>
     {children}
   </View>
 )

@@ -36,7 +36,6 @@ const ScrollView = forwardRef(
     const shadowOnScrollProps = shadowOnScroll
       ? {
           onScroll,
-          borderTopWidth: '1px',
           css: css({
             '&:before': {
               content: '""',
