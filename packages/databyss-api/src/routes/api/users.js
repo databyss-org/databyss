@@ -92,27 +92,26 @@ router.post(
         email: { $eq: email },
       },
     }
-    let user = await Users.find(_selector)
-    console.log('BEFORE', user)
+    const user = await Users.find(_selector)
+    let _userId
     if (!user.docs.length) {
+      _userId = uid()
       // Creates new user
       emailExists = false
-      await Users.insert({
-        _id: uid(),
+      const _res = await Users.insert({
+        _id: _userId,
         email,
         groups: [],
       })
-      user = await Users.find(_selector)
-      console.log('FAIL', user)
-      console.log('email', email)
+      console.log('RES', _res)
+    } else {
+      _userId = user.docs[0]._id
     }
-
-    user = user.docs[0]
 
     // TODO: THIS IS TEMPORARY TO FIND BUG
     let token
     try {
-      token = await getTokenFromUserId(user._id)
+      token = await getTokenFromUserId(_userId)
     } catch (err) {
       console.log(err)
       console.log('USER IS ', user)
