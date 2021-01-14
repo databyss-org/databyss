@@ -11,4 +11,5 @@ export enum DocumentType {
   Block = 'BLOCK',
   Selection = 'SELECTION',
   BlockRelation = 'BLOCK_RELATION',
+  UserPreferences = 'USER_PREFERENCES',
 }

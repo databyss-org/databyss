@@ -69,3 +69,16 @@ export const replaceOne = async ({
   // replace document
   await upsert({ $type, _id, doc })
 }
+
+/*
+_local documents do not appear with `find` so a `get` function must be used
+*/
+export const getUserPreferences = async () => {
+  let response
+  try {
+    response = await db.get('_local/user_preferences')
+  } catch (err) {
+    console.error('user preferences not found')
+  }
+  return response
+}

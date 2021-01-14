@@ -18,7 +18,7 @@ import AccountMenu from './AccountMenu'
 export const PageContainer = React.memo(
   ({ anchor, id, page, ...others }) => {
     const getBlockRefByIndex = usePageContext((c) => c.getBlockRefByIndex)
-
+    const [authToken, setAuthToken] = useState()
     const [editorPath, setEditorPath] = useState(null)
     const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
@@ -28,6 +28,18 @@ export const PageContainer = React.memo(
 
     // index is used to set selection in slate
     const [index, setIndex] = useState(null)
+
+    /*
+  confirms a token is in local pouch in order to show account menu
+  */
+
+    useEffect(() => {
+      getAuthToken().then((a) => {
+        if (a) {
+          setAuthToken(true)
+        }
+      })
+    }, [])
 
     useEffect(() => {
       // if anchor link exists, scroll to anchor
@@ -79,7 +91,7 @@ export const PageContainer = React.memo(
           {!isPublicAccount() && !isMobile() && (
             <PageSticky pagePath={editorPath} pageId={page._id} />
           )}
-          {getAuthToken() && isPublicAccount() && !isMobile() && (
+          {authToken && isPublicAccount() && !isMobile() && (
             <View position="absolute" right="extraLarge">
               <AccountMenu />
             </View>

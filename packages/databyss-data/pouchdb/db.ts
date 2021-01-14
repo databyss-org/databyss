@@ -161,7 +161,7 @@ export const syncPouchDb = ({
     .to(`${REMOTE_URL}/g_${groupId}`, {
       ...opts,
       // todo: add groupId to every document
-      // filter: (doc) => doc.groupId === groupId,
+      filter: (doc) => doc.$type !== DocumentType.UserPreferences,
     })
     .on('error', (err) => console.log(`REPLICATE.TO ERROR - ${err}`))
 

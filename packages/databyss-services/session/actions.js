@@ -19,19 +19,17 @@ import {
   GET_USER_ACCOUNT,
   CACHE_USER_ACCOUNT,
   LOGOUT,
-  // SET_DEFAULT_PAGE,
+  SET_DEFAULT_PAGE,
 } from './constants'
 import {
   setAuthToken,
   getAuthToken,
-  deleteAuthToken,
   getAccountId,
   setAccountId,
-  // getDefaultPageId,
-  deleteAccountId,
-  // setDefaultPageId,
   setCredentials,
-  deleteCredentials,
+  deletePouchDbs,
+  setDefaultPageId,
+  deleteUserPreferences,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
@@ -57,8 +55,8 @@ export const fetchSession = ({ _request, ...credentials }) => async (
   }
 
   try {
-    const authToken = getAuthToken()
-    const accountId = getAccountId()
+    const authToken = await getAuthToken()
+    const accountId = await getAccountId()
 
     if (authToken && accountId) {
       // if not at at root path '/' and accountID is not the same as the one in the url, set as guest account
@@ -107,9 +105,9 @@ export const fetchSession = ({ _request, ...credentials }) => async (
 
     if (res.data && res.data.session) {
       // authenticated
-      setAuthToken(res.data.session.token)
+      await setAuthToken(res.data.session.token)
       setAccountId(res.data.session.user.defaultGroupId)
-      setCredentials(res.data.session.user.groups[0])
+      await setCredentials(res.data.session.user.groups[0])
 
       // initiate database validators
       initiatePouchDbValidators()
@@ -119,7 +117,6 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       // initialize a new user
       if (res.data.session.user.provisionClientDatabase) {
         // initate new database
-        // await initiateClientDb(res.data.session.user.defaultPageId)
         await addPage(res.data.session.user.defaultPageId)
       }
 
@@ -159,8 +156,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       })
     }
   } catch (error) {
-    deleteAuthToken()
-    deleteAccountId()
+    await deleteUserPreferences()
     dispatch({
       type: DENY_ACCESS,
       payload: { error },
@@ -171,18 +167,16 @@ export const fetchSession = ({ _request, ...credentials }) => async (
   }
 }
 
-export const endSession = () => {
-  deleteAuthToken()
-  deleteAccountId()
-
-  return {
+export const endSession = () => async (dispatch) => {
+  await deletePouchDbs()
+  dispatch({
     type: END_SESSION,
-  }
+  })
 }
 
 export const getUserAccount = () => async (dispatch) => {
   dispatch({ type: GET_USER_ACCOUNT })
-  const authToken = getAuthToken()
+  const authToken = await getAuthToken()
   if (authToken) {
     const data = { authToken }
     const _res = await httpPost('/users', { data })
@@ -193,40 +187,18 @@ export const getUserAccount = () => async (dispatch) => {
 }
 
 export const logout = () => async (dispatch) => {
-  deleteAuthToken()
-  deleteAccountId()
-  deleteCredentials()
-
   // deletes databases
-  let dbs = await window.indexedDB.databases()
-  dbs = dbs.filter((db) => db.name.includes('_pouch_'))
-
-  await Promise.all(
-    dbs.map(
-      (db) =>
-        new Promise((resolve, reject) => {
-          const request = indexedDB.deleteDatabase(db.name)
-          request.onsuccess = resolve
-          request.onerror = reject
-        })
-    )
-  )
+  await deletePouchDbs()
 
   dispatch({ type: LOGOUT })
   setTimeout(() => (window.location.href = '/'), 50)
 }
 
-export const onSetDefaultPage = (id) =>
-  // async (dispatch) =>
-  {
-    console.log('SET DEFAULT PAGE', id)
-    // TODO: THIS ONLY SETS THE DEFAULT PAGE LOCALLY. PAGE NEEDS TO BE CHANGED ON CLOUDANT AS WELL
-    // default page will always be the same since it is recieveing it from the server
-    // setDefaultPageId(id)
-    // httpPost(`/accounts/page/${id}`).then(() => {
-    //   dispatch({
-    //     type: SET_DEFAULT_PAGE,
-    //     payload: { id },
-    //   })
-    // })
-  }
+export const onSetDefaultPage = (id) => async (dispatch) => {
+  await setDefaultPageId(id)
+
+  dispatch({
+    type: SET_DEFAULT_PAGE,
+    payload: { id },
+  })
+}

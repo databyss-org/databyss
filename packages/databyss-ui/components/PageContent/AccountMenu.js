@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Text,
   BaseControl,
@@ -21,6 +21,7 @@ const AccountMenu = () => {
   const logout = useSessionContext((c) => c && c.logout)
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [authToken, setAuthToken] = useState()
 
   const navToDefaultPage = (userInfo) => {
     navigate(`/${userInfo.defaultAccount}/pages/${userInfo.defaultPage}`, {
@@ -34,7 +35,19 @@ const AccountMenu = () => {
     logout()
   }
 
-  return getAuthToken() ? (
+  /*
+  confirms a token is in local pouch in order to show account menu
+  */
+
+  useEffect(() => {
+    getAuthToken().then((a) => {
+      if (a) {
+        setAuthToken(true)
+      }
+    })
+  }, [])
+
+  return authToken ? (
     <AccountLoader>
       {(userInfo) => {
         const menuItems = [

@@ -1,42 +1,74 @@
 import _ from 'lodash'
+import { upsert, getUserPreferences } from '@databyss-org/data/pouchdb/utils'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { db } from '@databyss-org/data/pouchdb/db'
 
 // TODO: Add native versions of these
-export function setAuthToken(value) {
+export const setAuthToken = async (value) => {
   const token = value && !_.isEmpty(value.token) ? value.token : value
 
-  localStorage.setItem('token', token)
+  await upsert({
+    $type: DocumentType.UserPreferences,
+    _id: '_local/user_preferences',
+    doc: { token },
+  })
 }
 
-export function setCredentials(group) {
-  localStorage.setItem('dbKey', group.dbKey)
-  localStorage.setItem('dbPassword', group.dbPassword)
+export const setCredentials = async (group) => {
+  await upsert({
+    $type: DocumentType.UserPreferences,
+    _id: '_local/user_preferences',
+    doc: { dbKey: group.dbKey, dbPassword: group.dbPassword },
+  })
 }
 
-export function deleteCredentials() {
-  localStorage.removeItem('dbKey')
-  localStorage.removeItem('dbPassword')
+export const deleteUserPreferences = async () => {
+  const _res = await getUserPreferences()
+  if (_res) {
+    db.remove(_res)
+  }
 }
 
-export function getAuthToken() {
-  return localStorage.getItem('token')
+export const getAuthToken = async () => {
+  const _res = await getUserPreferences()
+  return _res?.token
 }
 
-export function deleteAuthToken() {
-  localStorage.removeItem('token')
+export const setAccountId = async (value) => {
+  await upsert({
+    $type: DocumentType.UserPreferences,
+    _id: '_local/user_preferences',
+    doc: { account: value },
+  })
 }
 
-export function setAccountId(value) {
-  localStorage.setItem('account', value)
+export const getAccountId = async () => {
+  const _res = await getUserPreferences()
+  return _res?.account
 }
 
-export function getAccountId() {
-  return localStorage.getItem('account')
+export const setDefaultPageId = async (value) => {
+  await upsert({
+    $type: DocumentType.UserPreferences,
+    _id: '_local/user_preferences',
+    doc: { defaultPageId: value },
+  })
+  console.log('DEFAULT PAGE UPSERTED')
+  // localStorage.setItem('defaultPageId', value)
 }
 
-export function deleteAccountId() {
-  localStorage.removeItem('account')
-}
+export const deletePouchDbs = async () => {
+  let dbs = await window.indexedDB.databases()
+  dbs = dbs.filter((db) => db.name.includes('_pouch_'))
 
-export function setDefaultPageId(value) {
-  localStorage.setItem('defaultPageId', value)
+  await Promise.all(
+    dbs.map(
+      (db) =>
+        new Promise((resolve, reject) => {
+          const request = indexedDB.deleteDatabase(db.name)
+          request.onsuccess = resolve
+          request.onerror = reject
+        })
+    )
+  )
 }

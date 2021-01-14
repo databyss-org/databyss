@@ -98,9 +98,7 @@ const SessionProvider = ({
   }
 
   const setDefaultPage = useCallback((id) => {
-    actions.onSetDefaultPage(id)
-
-    // dispatch(actions.onSetDefaultPage(id))
+    dispatch(actions.onSetDefaultPage(id))
   }, [])
 
   return (
