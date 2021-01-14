@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { throttle } from 'lodash'
+import { debounce } from 'lodash'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import {
@@ -52,7 +52,7 @@ const PageWithAutosave = ({ page }) => {
   const operationsQueue = useRef([])
 
   const throttledAutosave = useCallback(
-    throttle(
+    debounce(
       ({ nextState, patches }) => {
         const _patches = cleanupPatches(patches)
         if (_patches?.length) {
@@ -65,9 +65,9 @@ const PageWithAutosave = ({ page }) => {
         }
       },
       100,
-      { wait: 100 }
+      { leading: true, maxWait: 100 }
     ),
-    [hasPendingPatches]
+    []
   )
 
   const onDocumentChange = (val) => {
@@ -94,9 +94,10 @@ const PageWithAutosave = ({ page }) => {
       </Box>
       {!hasPendingPatches ? (
         <Text id="complete" variant="uiText">
-          changes saved
+          changes saved -
         </Text>
       ) : null}
+      <text>{hasPendingPatches}</text>
     </View>
   )
 }
