@@ -1,9 +1,7 @@
-import { Users, Groups } from '@databyss-org/data/serverdbs/index'
+import { Users, Groups } from '@databyss-org/data/couchdb'
 import { User, Role } from '@databyss-org/data/interfaces'
 import { uid } from '@databyss-org/data/lib/uid'
-import { cloudant } from '@databyss-org/data/serverdbs/cloudant'
-// import { updateClientDesignDoc } from '@databyss-org/data/serverdbs/couchdb'
-// import { DesignDoc } from '../../../databyss-data/interfaces/designdoc'
+import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 
 interface CredentialResponse {
   dbKey: string
@@ -11,14 +9,14 @@ interface CredentialResponse {
   groupId: string
 }
 
-// TODO: CREATE OUR OWN IDS
-
 export const createGroupId = async () => {
   // TODO: fix this so its not 'any'
   const Groups: any = cloudant.db.use('groups')
   const group = await Groups.insert({
     name: 'untitled',
     sessions: [],
+    // TODO: cloudant does not allow uppercase for db names,
+    // will this affect collisions?
     _id: uid().toLowerCase(),
   })
   return group.id

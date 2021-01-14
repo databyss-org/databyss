@@ -2,10 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import http from 'http'
 import Bugsnag from '@bugsnag/js'
-import {
-  updateDesignDocs,
-  initiateDatabases,
-} from '@databyss-org/data/serverdbs'
+import { updateDesignDocs, initiateDatabases } from '@databyss-org/data/couchdb'
 import { startBugsnag } from '@databyss-org/services/lib/bugsnag'
 import BugsnagPluginExpress from '@bugsnag/plugin-express'
 import { ApiError } from './lib/Errors'

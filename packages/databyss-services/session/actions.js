@@ -3,8 +3,8 @@ import {
   replicateDbFromRemote,
   initiatePouchDbValidators,
   initiatePouchDbIndexes,
-} from '@databyss-org/data/database/db'
-import { addPage } from '@databyss-org/data/database/pages/util'
+} from '@databyss-org/data/pouchdb/db'
+import { addPage } from '@databyss-org/data/pouchdb/pages/util'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
 import { NotAuthorizedError } from '../interfaces'

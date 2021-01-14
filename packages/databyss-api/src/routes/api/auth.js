@@ -1,5 +1,5 @@
 import express from 'express'
-import { Logins } from '@databyss-org/data/serverdbs'
+import { Logins } from '@databyss-org/data/couchdb'
 import auth from '../../middleware/auth'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'

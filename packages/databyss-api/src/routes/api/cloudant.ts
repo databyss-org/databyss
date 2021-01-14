@@ -1,5 +1,5 @@
 import express from 'express'
-import { cloudant } from '@databyss-org/data/serverdbs/cloudant'
+import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import { UnauthorizedError } from './../../lib/Errors'
 
 const router = express.Router()

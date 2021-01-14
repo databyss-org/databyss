@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { Users } from '@databyss-org/data/serverdbs'
+import { Users } from '@databyss-org/data/couchdb'
 
 export const getTokenFromUserId = (userId) =>
   new Promise((resolve, reject) =>

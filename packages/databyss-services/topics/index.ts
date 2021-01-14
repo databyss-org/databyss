@@ -1,4 +1,4 @@
-import * as pouchDB from '@databyss-org/data/database/topics'
+import * as pouchDB from '@databyss-org/data/pouchdb/topics'
 import { Topic } from '../interfaces'
 import { ResourceNotFoundError } from '../interfaces/Errors'
 

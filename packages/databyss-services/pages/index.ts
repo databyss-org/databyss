@@ -1,6 +1,5 @@
-import * as pouchDb from '@databyss-org/data/database/pages'
-import { PageDoc } from '@databyss-org/data/database/interfaces'
-
+import * as pouchDb from '@databyss-org/data/pouchdb/pages'
+import { PageDoc } from '@databyss-org/data/pouchdb/interfaces'
 import { httpPost } from '../lib/requestApi'
 import {
   PatchBatch,

@@ -1,5 +1,5 @@
-import * as pouchDb from '@databyss-org/data/database/sources'
-import { CitationResponse } from '@databyss-org/data/database/sources/lib/getSourceCitation'
+import * as pouchDb from '@databyss-org/data/pouchdb/sources'
+import { CitationResponse } from '@databyss-org/data/pouchdb/sources/lib/getSourceCitation'
 import { defaultCitationStyle } from '../citations/constants'
 import { httpDelete } from '../lib/requestApi'
 import { Source, Author, SourceCitationHeader } from '../interfaces'

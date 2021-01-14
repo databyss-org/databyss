@@ -2,7 +2,7 @@ import {
   LoginsDesignDoc,
   GroupsDesignDoc,
   UsersDesignDoc,
-} from '@databyss-org/data/serverdbs'
+} from '@databyss-org/data/couchdb'
 import {
   userSchema,
   loginSchema,
