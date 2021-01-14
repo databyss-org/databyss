@@ -109,13 +109,7 @@ router.post(
     }
 
     // TODO: THIS IS TEMPORARY TO FIND BUG
-    let token
-    try {
-      token = await getTokenFromUserId(_userId)
-    } catch (err) {
-      console.log(err)
-      console.log('USER IS ', user)
-    }
+    const token = await getTokenFromUserId(_userId)
 
     const loginObj = {
       email,
@@ -139,8 +133,8 @@ router.post(
       },
     }
     send(msg)
-    res.status(200).json({})
-    return res.status(200)
+    // res.status(200).json({})
+    return res.status(200).end()
   })
 )
 
