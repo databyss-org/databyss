@@ -138,7 +138,7 @@ export function savePatchBatch(batch?: PatchBatch) {
       }
 
       // TODO: CHANGE TIMEOUT TO ENV VARIABLE
-      timeoutId = setTimeout(() => dispatch(savePatchBatch()), 3000)
+      timeoutId = setTimeout(() => dispatch(savePatchBatch()), 1000)
 
       dispatch({
         type: QUEUE_PATCH,

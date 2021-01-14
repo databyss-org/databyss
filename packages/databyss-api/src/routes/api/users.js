@@ -108,7 +108,6 @@ router.post(
       _userId = user.docs[0]._id
     }
 
-    // TODO: THIS IS TEMPORARY TO FIND BUG
     const token = await getTokenFromUserId(_userId)
 
     const loginObj = {
@@ -133,8 +132,8 @@ router.post(
       },
     }
     send(msg)
-    // res.status(200).json({})
-    return res.status(200).end()
+    res.status(200).json({})
+    return res.status(200)
   })
 )
 
