@@ -19,7 +19,7 @@ export const createIndexPageEntries = ({
   })
 
 export const sortEntriesAtoZ = (entries, sortBy) =>
-  entries?.sort((a, b) =>
+  [...entries]?.sort((a, b) =>
     a[sortBy]
       ?.toLowerCase()
       .normalize('NFD')

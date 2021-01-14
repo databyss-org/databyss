@@ -14,6 +14,7 @@ import { PageHeader } from '@databyss-org/services/interfaces'
 import { SidebarListRow } from '@databyss-org/ui/components'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
+import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 
 interface PageDropzoneProps extends ScrollViewProps {
   value?: PageHeader[]
@@ -36,8 +37,10 @@ export const PageDropzone = ({
     onChange!(value!.filter((p) => p._id !== page._id))
   }
 
+  const _sortedItems: PageHeader[] = sortEntriesAtoZ(value, 'name')
+
   return (
-    <ScrollView shadowOnScroll {...others}>
+    <ScrollView shadowOnScroll borderRadius="default" {...others}>
       <List
         height="100%"
         dropzone={{
@@ -48,7 +51,7 @@ export const PageDropzone = ({
       >
         {value!.length ? (
           <>
-            {value!.map((page) => (
+            {_sortedItems.map((page: PageHeader) => (
               <SidebarListRow
                 key={page._id}
                 text={page.name}
@@ -65,15 +68,24 @@ export const PageDropzone = ({
               </SidebarListRow>
             ))}
             {value!.length === 1 && (
-              <View pl="em" pt="none" pr="medium">
-                <Separator spacing="small" color="text.3" />
-                <Text variant="uiTextSmall" mb="em" mt="small" color="text.2">
-                  To remove a page from this collection, click the ‘X’.
-                </Text>
-                <Text variant="uiTextSmall" color="text.2">
-                  This will not remove it from its original collection.
-                </Text>
-              </View>
+              <>
+                <View px="em" pt="none">
+                  <Separator spacing="small" color="text.3" />
+                  <View mr="small">
+                    <Text
+                      variant="uiTextSmall"
+                      mb="em"
+                      mt="small"
+                      color="text.2"
+                    >
+                      To remove a page from this collection, click the ‘X’.
+                    </Text>
+                    <Text variant="uiTextSmall" color="text.2">
+                      This will not remove it from its original collection.
+                    </Text>
+                  </View>
+                </View>
+              </>
             )}
           </>
         ) : (
