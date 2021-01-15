@@ -82,7 +82,7 @@ const PageMenu = ({ pages }) => {
       if (bool) {
         // if default page is archived set new page as default page
         let redirect = user.defaultPageId
-        if (user.defaultPageId === params) {
+        if (redirect === params) {
           redirect = Object.keys(pages).find((_id) => _id !== params)
           setDefaultPage(redirect)
         }

@@ -121,13 +121,15 @@ describe('archive page', () => {
       driver,
       '[data-test-element="archive-dropdown"]'
     )
+    await sleep(500)
     await archiveDropdown.click()
-    await sleep(1000)
+    await sleep(500)
 
     let archiveButton = await getElementByTag(
       driver,
       '[data-test-block-menu="archive"]'
     )
+    await sleep(500)
     await archiveButton.click()
     await sleep(1000)
 
@@ -159,21 +161,26 @@ describe('archive page', () => {
       driver,
       '[data-test-element="page-sidebar-item"]'
     )
-
+    await sleep(500)
     await archivedPageButton[0].click()
+    await sleep(500)
 
     archiveDropdown = await getElementByTag(
       driver,
       '[data-test-element="archive-dropdown"]'
     )
+    await sleep(500)
     await archiveDropdown.click()
+    await sleep(500)
 
     // restore the page
     const restoreButton = await getElementByTag(
       driver,
       '[data-test-block-menu="restore"]'
     )
+    await sleep(500)
     await restoreButton.click()
+    await sleep(500)
 
     await getEditor(driver)
 
@@ -199,6 +206,7 @@ describe('archive page', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
+    await sleep(500)
     await firstPageSidebarButton[0].click()
     await getEditor(driver)
 
@@ -206,12 +214,14 @@ describe('archive page', () => {
       driver,
       '[data-test-element="archive-dropdown"]'
     )
+    await sleep(500)
     await archiveDropdown.click()
 
     archiveButton = await getElementByTag(
       driver,
       '[data-test-block-menu="archive"]'
     )
+    await sleep(500)
     await archiveButton.click()
     await getEditor(driver)
 
@@ -227,7 +237,9 @@ describe('archive page', () => {
       driver,
       '[data-test-element="search-input"]'
     )
+    await sleep(500)
     await searchInput.click()
+    await sleep(500)
     await sendKeys(actions, 'source')
     await enterKey(actions)
 
@@ -245,7 +257,7 @@ describe('archive page', () => {
       driver,
       '[data-test-element="clear-search-results"]'
     )
-
+    await sleep(500)
     await clearInput.click()
     // test the word 'entry'
     // it should only have one search result
@@ -269,27 +281,27 @@ describe('archive page', () => {
       driver,
       '[data-test-sidebar-element="archive"]'
     )
-
+    await sleep(500)
     await archiveButton.click()
     await sleep(1000)
-    console.log('BEFORE')
     archivedPageButton = await getElementsByTag(
       driver,
       '[data-test-element="page-sidebar-item"]'
     )
 
     await archivedPageButton[0].click()
-    console.log('AFTER')
     archiveDropdown = await getElementByTag(
       driver,
       '[data-test-element="archive-dropdown"]'
     )
+    await sleep(500)
     await archiveDropdown.click()
 
     const deleteButton = await getElementByTag(
       driver,
       '[data-test-block-menu="delete"]'
     )
+    await sleep(500)
     await deleteButton.click()
 
     // verify only one page exists
@@ -301,6 +313,7 @@ describe('archive page', () => {
 
     _sidebarList = await pagesSidebarList.getText()
     assert.equal(_sidebarList, 'this is the second page title')
+    await sleep(500)
     await archiveButton.click()
     // verify no pages are in archive bin
     pagesSidebarList = await getElementByTag(
@@ -315,7 +328,7 @@ describe('archive page', () => {
       driver,
       '[data-test-element="new-page-button"]'
     )
-
+    await sleep(500)
     await newPageButton.click()
     // wait for editor to be visible
     await getEditor(driver)
