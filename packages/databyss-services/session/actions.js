@@ -22,14 +22,12 @@ import {
   SET_DEFAULT_PAGE,
 } from './constants'
 import {
-  setAuthToken,
   getAuthToken,
   getAccountId,
-  setAccountId,
-  setCredentials,
   deletePouchDbs,
   setDefaultPageId,
   deleteUserPreferences,
+  setUserSession,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
@@ -104,10 +102,23 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     const res = await _request(path, options, true)
 
     if (res.data && res.data.session) {
+      const { session } = res.data
+      const _userSession = {
+        token: session.token,
+        userId: session.user._id,
+        email: session.user.email,
+        defaultGroupId: session.user.defaultGroupId,
+        groups: session.user.groups,
+      }
+
+      await setUserSession(_userSession)
+      // TODO: get authenitcated in same format
+
       // authenticated
-      await setAuthToken(res.data.session.token)
-      setAccountId(res.data.session.user.defaultGroupId)
-      await setCredentials(res.data.session.user.groups[0])
+
+      // await setAuthToken(res.data.session.token)
+      // await setAccountId(res.data.session.user.defaultGroupId)
+      // await setCredentials(res.data.session.user.groups[0])
 
       // initiate database validators
       initiatePouchDbValidators()

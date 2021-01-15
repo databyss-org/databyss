@@ -73,12 +73,12 @@ export const replaceOne = async ({
 /*
 _local documents do not appear with `find` so a `get` function must be used
 */
-export const getUserPreferences = async () => {
+export const getUserSession = async () => {
   let response
   try {
     response = await db.get('_local/user_preferences')
   } catch (err) {
-    console.error('user preferences not found')
+    console.error('user session not found')
   }
   return response
 }
