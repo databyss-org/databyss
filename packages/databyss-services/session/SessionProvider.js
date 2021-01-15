@@ -105,19 +105,22 @@ const SessionProvider = ({
 
   // keep track of user preferences, if changes are made, send to api
   const userSession = useRef()
-  db.changes({
-    since: 'now',
-    live: true,
-    include_docs: true,
-  }).on('change', (changes) => {
-    if (
-      changes.id === 'user_preferences' &&
-      !_.isEqual(userSession.current, changes.doc)
-    ) {
-      userSession.current = changes.doc
-      dispatch(actions.setSession(changes.doc))
-    }
-  })
+
+  useEffect(() => {
+    db.changes({
+      since: 'now',
+      live: true,
+      include_docs: true,
+    }).on('change', (changes) => {
+      if (
+        changes.id === 'user_preferences' &&
+        !_.isEqual(userSession.current, changes.doc)
+      ) {
+        userSession.current = changes.doc
+        dispatch(actions.setSession(changes.doc))
+      }
+    })
+  }, [])
 
   return (
     <SessionContext.Provider

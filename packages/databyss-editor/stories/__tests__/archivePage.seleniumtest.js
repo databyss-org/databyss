@@ -74,7 +74,7 @@ describe('archive page', () => {
 
   it('should archive a page and remove the page from the sidebar', async () => {
     // populate a page
-    const pageTitle = await getElementByTag(
+    let pageTitle = await getElementByTag(
       driver,
       '[data-test-element="page-header"]'
     )
@@ -96,6 +96,12 @@ describe('archive page', () => {
     await newPageButton.click()
     // wait for editor to be visible
     await getEditor(driver)
+
+    pageTitle = await getElementByTag(
+      driver,
+      '[data-test-element="page-header"]'
+    )
+    await pageTitle.click()
 
     await sendKeys(actions, 'this is the second page title')
     await enterKey(actions)
@@ -265,13 +271,15 @@ describe('archive page', () => {
     )
 
     await archiveButton.click()
-
+    await sleep(1000)
+    console.log('BEFORE')
     archivedPageButton = await getElementsByTag(
       driver,
       '[data-test-element="page-sidebar-item"]'
     )
-    await archivedPageButton[0].click()
 
+    await archivedPageButton[0].click()
+    console.log('AFTER')
     archiveDropdown = await getElementByTag(
       driver,
       '[data-test-element="archive-dropdown"]'
