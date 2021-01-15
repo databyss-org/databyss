@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, forwardRef } from 'react'
 import {
   useParams,
   useLocation,
@@ -12,7 +12,17 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
-import AccountMenu from './AccountMenu'
+
+export const PageContentView = forwardRef(({ children, ...others }, ref) => (
+  <ScrollView
+    flexShrink={1}
+    // shadowOnScroll
+  >
+    <View pl="em" pr="medium" pt="small" flexGrow={1} ref={ref} {...others}>
+      {children}
+    </View>
+  </ScrollView>
+))
 
 export const PageContainer = React.memo(
   ({ anchor, id, page, ...others }) => {
@@ -69,28 +79,21 @@ export const PageContainer = React.memo(
     return (
       <>
         <PageSticky pagePath={editorPath} pageId={page._id} />
-        <ScrollView
-          flexShrink={1}
-          shadowOnScroll
-          ref={editorWindowRef}
-          {...others}
-        >
-          <View p="medium" pt="small" flexGrow={1}>
-            <PageHeader
-              ref={headerRef}
-              pageId={id}
-              onNavigateDownFromHeader={onNavigateDownToEditor}
-              ml="small"
-            />
-            <PageBody
-              onEditorPathChange={setEditorPath}
-              editorRef={editorRef}
-              page={page}
-              focusIndex={index}
-              onNavigateUpFromEditor={onNavigateUpFromEditor}
-            />
-          </View>
-        </ScrollView>
+        <PageContentView ref={editorWindowRef} {...others}>
+          <PageHeader
+            ref={headerRef}
+            pageId={id}
+            onNavigateDownFromHeader={onNavigateDownToEditor}
+            ml="small"
+          />
+          <PageBody
+            onEditorPathChange={setEditorPath}
+            editorRef={editorRef}
+            page={page}
+            focusIndex={index}
+            onNavigateUpFromEditor={onNavigateUpFromEditor}
+          />
+        </PageContentView>
       </>
     )
   },

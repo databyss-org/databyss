@@ -54,7 +54,7 @@ export const GroupFields = ({ group }: { group: Group }) => {
 
   return (
     <ValueListProvider onChange={onChange} values={values}>
-      <View px="medium" pt="none" flexGrow={1}>
+      <View pl="em" pr="medium" pt="none" flexGrow={1}>
         <ValueListItem path="name">
           <TitleInput placeholder="untitled" />
         </ValueListItem>

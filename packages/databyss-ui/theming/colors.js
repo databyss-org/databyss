@@ -49,7 +49,7 @@ _c = {
   selectionHighlight: Color(_c.blue[3]).alpha(0.5).rgb().string(),
   activeTextInputBackground: _c.white,
   pageBackground: _c.gray[7],
-  scrollShadow: '#00000044',
+  scrollShadow: '#bbb',
 }
 
 // legacy (deprecated)
@@ -78,7 +78,7 @@ _c = {
       control: [_c.transparent].concat(
         [_c.gray[4], _c.gray[3]].map((c) => Color(c).alpha(0.4).rgb().string())
       ),
-      scrollShadow: '#111',
+      scrollShadow: '#222',
     },
   },
 }

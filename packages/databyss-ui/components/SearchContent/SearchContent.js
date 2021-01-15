@@ -15,6 +15,8 @@ import {
 import { Text, View, ScrollView, RawHtml } from '@databyss-org/ui/primitives'
 
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
+import { StickyHeader } from '../Navigation/SickyHeader'
+import { PageContentView } from '../PageContent/PageContent'
 
 const SearchContent = () => {
   const { navigate } = useNavigationContext()
@@ -62,24 +64,27 @@ const SearchContent = () => {
     ) : (
       <Text>no results found</Text>
     )
-    return <View px="medium">{_Pages}</View>
+    return _Pages
   }
 
   return (
-    <ScrollView p="medium" flex="1" maxHeight="100vh">
+    <>
+      <StickyHeader path={['Search in text', _query]} />
       <Helmet>
         <meta charSet="utf-8" />
         <title>{_query}</title>
       </Helmet>
-      <View p="medium">
-        <Text variant="bodyHeading1" color="text.3">
-          &quot;{_query}&quot;
-        </Text>
-      </View>
-      <EntrySearchLoader query={_query}>
-        {(results) => ComposeResults(results)}
-      </EntrySearchLoader>
-    </ScrollView>
+      <PageContentView ml="medium">
+        <View pb="medium">
+          <Text variant="bodyHeading1" color="text.3">
+            &quot;{_query}&quot;
+          </Text>
+        </View>
+        <EntrySearchLoader query={_query}>
+          {(results) => ComposeResults(results)}
+        </EntrySearchLoader>
+      </PageContentView>
+    </>
   )
 }
 
