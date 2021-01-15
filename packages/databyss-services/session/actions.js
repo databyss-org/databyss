@@ -20,6 +20,7 @@ import {
   CACHE_USER_ACCOUNT,
   LOGOUT,
   SET_DEFAULT_PAGE,
+  SET_SESSION,
 } from './constants'
 import {
   getAuthToken,
@@ -102,23 +103,19 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     const res = await _request(path, options, true)
 
     if (res.data && res.data.session) {
+      // authenticated
+
       const { session } = res.data
       const _userSession = {
         token: session.token,
         userId: session.user._id,
         email: session.user.email,
+        defaultPageId: session.user.defaultPageId,
         defaultGroupId: session.user.defaultGroupId,
         groups: session.user.groups,
       }
 
       await setUserSession(_userSession)
-      // TODO: get authenitcated in same format
-
-      // authenticated
-
-      // await setAuthToken(res.data.session.token)
-      // await setAccountId(res.data.session.user.defaultGroupId)
-      // await setCredentials(res.data.session.user.groups[0])
 
       // initiate database validators
       initiatePouchDbValidators()
@@ -211,5 +208,13 @@ export const onSetDefaultPage = (id) => async (dispatch) => {
   dispatch({
     type: SET_DEFAULT_PAGE,
     payload: { id },
+  })
+}
+
+export const setSession = (session) => async (dispatch) => {
+  await httpPost(`/cloudant/user`, { data: { session } })
+  dispatch({
+    type: SET_SESSION,
+    payload: { session },
   })
 }

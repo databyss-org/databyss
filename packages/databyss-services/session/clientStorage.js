@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { upsert, getUserSession } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { db } from '@databyss-org/data/pouchdb/db'
@@ -25,7 +24,7 @@ export const getAccountId = async () => {
 export const setDefaultPageId = async (value) => {
   await upsert({
     $type: DocumentType.UserPreferences,
-    _id: '_local/user_preferences',
+    _id: 'user_preferences',
     doc: { defaultPageId: value },
   })
 }
@@ -50,7 +49,7 @@ export const setUserSession = async (session) => {
   console.log(session)
   await upsert({
     $type: DocumentType.UserPreferences,
-    _id: '_local/user_preferences',
+    _id: 'user_preferences',
     doc: session,
   })
 }

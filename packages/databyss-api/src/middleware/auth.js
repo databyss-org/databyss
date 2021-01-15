@@ -1,16 +1,18 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
-import { checkForPublicAccount } from './_helpers'
+// import { checkForPublicAccount } from './_helpers'
 
 dotenv.config()
 
 async function auth(req, res, next) {
   // check if current account is public account
-  const reqHasSharedAccount = await checkForPublicAccount(req)
 
-  if (reqHasSharedAccount) {
-    return next()
-  }
+  // TODO: THIS WILL BE REPLPACED IN REFACTOR
+  // const reqHasSharedAccount = await checkForPublicAccount(req)
+
+  // if (reqHasSharedAccount) {
+  //   return next()
+  // }
 
   // Get token from header
   const token = req.header('x-auth-token')
