@@ -1,6 +1,7 @@
 const webpack = require('webpack')
 const path = require('path')
 const { BugsnagSourceMapUploaderPlugin } = require('webpack-bugsnag-plugins')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const getClientEnvironment = require('../../config/env')
 
 const env = getClientEnvironment()
@@ -34,6 +35,17 @@ module.exports = {
         publicPath: 'build/api',
         overwrite: true,
       }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(
+            __dirname,
+            '../databyss-data/couchdb/_design_doc_includes'
+          ),
+          to: path.resolve(__dirname, '../../build/api/'),
+        },
+      ],
+    }),
   ].filter(Boolean),
   resolve: {
     extensions: ['.js', '.ts', '.json'],
