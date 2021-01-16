@@ -44,7 +44,7 @@ const fs = require('fs')
 //   console.log('AFTER UPSERT OF DESIGN DOCUMENT')
 // }
 
-const baseDir = process.env.NODE_ENV === 'production' ? './build/api' : '.'
+const baseDir = process.env.NODE_ENV === 'production' ? '/app/build/api' : '.'
 
 const updateDesignDoc = async ({
   schema,
