@@ -1,14 +1,15 @@
 {
   "name": "@databyss-org/notes",
-  "version": "1.2.11",
+  "version": "1.2.15",
   "private": true,
   "dependencies": {
-    "@databyss-org/reach-router": "1.3.4-b1"
+    "@databyss-org/reach-router": "1.3.4-b1",
+    "js-base64": "^3.6.0"
   },
   "peerDependencies": {
+    "@databyss-org/services": "1.2.15",
+    "@databyss-org/ui": "1.2.15",
     "react": "16.9.0",
-    "react-dom": "16.9.0",
-    "@databyss-org/ui": "1.2.11",
-    "@databyss-org/services": "1.2.11"
+    "react-dom": "16.9.0"
   }
 }
