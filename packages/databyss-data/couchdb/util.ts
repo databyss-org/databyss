@@ -44,6 +44,8 @@ const fs = require('fs')
 //   console.log('AFTER UPSERT OF DESIGN DOCUMENT')
 // }
 
+const baseDir = process.env.NODE_ENV === 'production' ? './build/api' : '.'
+
 const updateDesignDoc = async ({
   schema,
   db,
@@ -60,7 +62,9 @@ const updateDesignDoc = async ({
       .toString(),
     libs: {
       tv4: fs
-        .readFileSync(path.join(__dirname, './_design_doc_includes/tv4.js.es5'))
+        .readFileSync(
+          path.join(__dirname, `${baseDir}/_design_doc_includes/tv4.js.es5`)
+        )
         .toString(),
     },
     schema,
@@ -81,7 +85,7 @@ export const updateDesignDocs = async () => {
     updateDesignDoc({
       schema: t[0],
       db: t[1],
-      script: './_design_doc_includes/validate_doc_update.js.es5',
+      script: `${baseDir}/_design_doc_includes/validate_doc_update.js.es5`,
     })
   )
 }
