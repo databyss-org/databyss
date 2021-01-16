@@ -42,7 +42,7 @@ module.exports = {
             __dirname,
             '../databyss-data/couchdb/_design_doc_includes'
           ),
-          to: path.resolve(__dirname, '../../build/api/'),
+          to: path.resolve(__dirname, '../../build/api/_design_doc_includes'),
         },
       ],
     }),
