@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View, ScrollView } from '@databyss-org/ui/primitives'
+import { Text, View } from '@databyss-org/ui/primitives'
 import { StickyHeader } from '../Navigation/SickyHeader'
 import { PageContentView } from './PageContent'
 

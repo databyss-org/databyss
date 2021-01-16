@@ -13,11 +13,13 @@ import {
   ViewProps,
   ScrollView,
 } from '@databyss-org/ui/primitives'
+
 import { GroupLoader } from '../../components/Loaders'
 import { StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
+import { RouteComponentProps } from '../../components/Navigation/NavigationProvider/interfaces'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -92,7 +94,7 @@ export const GroupFields = ({ group }: { group: Group }) => {
   )
 }
 
-export const GroupDetail = () => {
+export const GroupDetail = (_: RouteComponentProps) => {
   const { id } = useParams()
 
   return (

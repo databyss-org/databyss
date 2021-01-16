@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { PropsWithChildren, ReactNode } from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
@@ -10,22 +9,43 @@ import AuthorSvg from '@databyss-org/ui/assets/author.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import GroupSvg from '@databyss-org/ui/assets/logo-thick.svg'
-import { ScrollView, Icon, List, View, Text } from '@databyss-org/ui/primitives'
+import {
+  ScrollView,
+  List,
+  View,
+  Text,
+  ScrollViewProps,
+  KeyboardNavigationProps,
+} from '@databyss-org/ui/primitives'
 import { useLocation } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 
-const menuSvgs = (type) =>
-  ({
-    page: <PageSvg />,
-    sources: <SourcesSvg />,
-    source: <SourceSvg />,
-    author: <AuthorSvg />,
-    authors: <AuthorsSvg />,
-    topic: <TopicSvg />,
-    topics: <TopicsSvg />,
-    archive: <ArchiveSvg />,
-    group: <GroupSvg />,
-  }[type])
+export interface SidebarMenuItem {
+  text: string
+  type: string
+  route: string
+  data: any
+  icon?: ReactNode
+}
+
+export interface SidebarListProps
+  extends ScrollViewProps,
+    KeyboardNavigationProps {
+  menuItems: SidebarMenuItem[]
+  keyboardNavigation?: boolean
+}
+
+const menuSvgs: { [key: string]: ReactNode } = {
+  page: <PageSvg />,
+  sources: <SourcesSvg />,
+  source: <SourceSvg />,
+  author: <AuthorSvg />,
+  authors: <AuthorsSvg />,
+  topic: <TopicSvg />,
+  topics: <TopicsSvg />,
+  archive: <ArchiveSvg />,
+  group: <GroupSvg />,
+}
 
 const SidebarList = ({
   menuItems,
@@ -38,14 +58,14 @@ const SidebarList = ({
   keyboardEventsActive,
   onItemSelected,
   ...others
-}) => {
+}: PropsWithChildren<SidebarListProps>) => {
   const { getAccountFromLocation } = useNavigationContext()
   const location = useLocation()
   const account = getAccountFromLocation()
 
-  const getHref = (item) => `/${account}${item.route}`
+  const getHref = (item: SidebarMenuItem) => `/${account}${item.route}`
 
-  const getActiveItem = (item) => {
+  const getActiveItem = (item: SidebarMenuItem) => {
     // if we're using keyboard navigation, that takes precedence
     if (keyboardNavigation && keyboardEventsActive) {
       return false
@@ -55,7 +75,7 @@ const SidebarList = ({
       : ''
   }
 
-  const getDraggable = (item) => {
+  const getDraggable = (item: SidebarMenuItem) => {
     if (item.type !== 'page' || !location.pathname.match(/\/collections\//)) {
       return false
     }
@@ -111,7 +131,7 @@ const SidebarList = ({
               href={getHref(item)}
               key={`${item.type}-${index}`}
               draggable={getDraggable(item)}
-              icon={item.icon ? item.icon : menuSvgs(item.type)}
+              icon={item.icon ? item.icon : menuSvgs[item.type]}
             />
           )
         })}

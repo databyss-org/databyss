@@ -2,7 +2,6 @@ import React, { useImperativeHandle, useRef } from 'react'
 import {
   Text,
   BaseControl,
-  Grid,
   View,
   Icon,
   withKeyboardNavigation,

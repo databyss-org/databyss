@@ -6,7 +6,6 @@ import {
   ResourcePending,
   GroupHeader,
   PageHeader,
-  Group,
 } from '../interfaces'
 import {
   FETCH_GROUP_HEADERS,

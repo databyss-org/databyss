@@ -1,4 +1,5 @@
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
+import { Group, GroupHeader } from '@databyss-org/services/interfaces'
 
 export const sidebarMenuItems = sortEntriesAtoZ(
   [
@@ -267,7 +268,7 @@ export const sharedPages = [
   },
 ]
 
-export const groupHeaders = [
+export const groupHeaders: GroupHeader[] = [
   {
     name: 'PHIL 103',
     _id: 'PHIL103',
@@ -283,7 +284,7 @@ export const groupHeaders = [
   },
 ]
 
-export const groupDetails = {
+export const groupDetails: { [key: string]: Group } = {
   RETURNTOCINDER: {
     _id: 'RETURNTOCINDER',
     name: 'Return to Cinder',

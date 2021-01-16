@@ -4,11 +4,9 @@ import {
   useLocation,
   Router,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
-import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { View, ScrollView } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
@@ -29,7 +27,6 @@ export const PageContainer = React.memo(
     const getBlockRefByIndex = usePageContext((c) => c.getBlockRefByIndex)
 
     const [editorPath, setEditorPath] = useState(null)
-    const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
     const headerRef = useRef()
     const editorRef = useRef()

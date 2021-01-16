@@ -1,10 +1,10 @@
 import React, { forwardRef, useCallback, useEffect, useRef } from 'react'
-import { View, TextInput, TextInputProps } from '@databyss-org/ui/primitives'
+import { View, TextInput } from '@databyss-org/ui/primitives'
 import { theme } from '@databyss-org/ui/theming'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import styledCss from '@styled-system/css'
-import { isMobile } from '../../lib/mediaQuery'
 import { Text } from '@databyss-org/editor/interfaces'
+import { isMobile } from '../../lib/mediaQuery'
 
 interface TitleInputProps {
   /**

@@ -3,7 +3,7 @@ import { Block, Selection } from './'
 export interface PageHeader {
   _id: string
   name: string
-  archive: boolean
+  archive?: boolean
 }
 
 export interface Page extends PageHeader {

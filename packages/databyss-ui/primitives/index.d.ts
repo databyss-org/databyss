@@ -196,8 +196,9 @@ export interface ToggleControlProps
   extends BaseControlProps,
     ControlLabelProps {
   alignLabel?: 'left' | 'right'
-  value?: string
-  onChange?: (e: MouseEvent | KeyboardEvent) => void
+  value?: boolean
+  onChange?: (value: boolean) => void
+  textVariant?: string
 }
 
 declare const ToggleControl: FC<PropsWithChildren<ToggleControlProps>>

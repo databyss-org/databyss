@@ -12,7 +12,7 @@ import {
   SearchResultTitle,
   SearchResultDetails,
 } from '@databyss-org/ui/components/SearchContent/SearchResults'
-import { Text, View, ScrollView, RawHtml } from '@databyss-org/ui/primitives'
+import { Text, View, RawHtml } from '@databyss-org/ui/primitives'
 
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 import { StickyHeader } from '../Navigation/SickyHeader'
