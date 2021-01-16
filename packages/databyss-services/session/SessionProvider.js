@@ -25,6 +25,7 @@ const SessionProvider = ({
   initialState,
   signUp,
   code,
+  email,
   unauthorizedChildren,
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState, {
@@ -77,7 +78,7 @@ const SessionProvider = ({
 
   // try to resume session on mount
   useEffect(() => {
-    getSession({ retry: true, code })
+    getSession({ retry: true, code, email })
   }, [])
 
   let _children = children

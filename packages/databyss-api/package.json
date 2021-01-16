@@ -1,16 +1,16 @@
 {
   "name": "@databyss-org/api",
-  "version": "1.2.11",
+  "version": "1.2.15",
   "description": "api",
   "main": "server.js",
   "author": "databyss-org",
   "license": "MIT",
   "peerDependencies": {
     "@bugsnag/js": "^7.5.1",
+    "@databyss-org/data": "1.2.15",
+    "@databyss-org/editor": "1.2.15",
+    "@databyss-org/services": "1.2.15",
     "nano": "~8.2.2",
-    "@databyss-org/data": "1.2.11",
-    "@databyss-org/editor": "1.2.11",
-    "@databyss-org/services": "1.2.11",
     "imurmurhash": "^0.1.4",
     "node-fetch": "^2.6.1"
   },
@@ -43,6 +43,7 @@
     "jest": "^24.8.0",
     "jest-dev-server": "^4.2.0",
     "json-schema": "^0.2.5",
+    "js-base64": "^3.6.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.11",
     "mongoose": "^5.9.20",
