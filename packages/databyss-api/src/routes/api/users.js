@@ -8,7 +8,7 @@ import { google } from 'googleapis'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Users, Logins, Groups } from '@databyss-org/data/couchdb'
 import { Base64 } from 'js-base64'
-import { send } from '../../lib/sendgrid'
+import { send } from '../../lib/postmark'
 import { getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
 
