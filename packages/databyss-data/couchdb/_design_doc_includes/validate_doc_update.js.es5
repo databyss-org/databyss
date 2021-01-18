@@ -1,17 +1,33 @@
 function(newDoc) {
   if (newDoc['_deleted']) return;
+
+
   var tv4 = require('libs/tv4');
+  tv4.addSchema('text', this.textSchema)
+  tv4.addSchema('pouchDb', this.pouchDocSchema)
+  tv4.addSchema('blockSchema', this.blockSchema)
   
   // admin databases have specific schemas passed as this.schema
-  if (!this.schema) {
+
+  var schema = this.schema
+  if (!schema) {
     // user database determines the schema by the .type field
     var schemaMap = {
-      SOURCE: this.sourceSchema,      
+      SOURCE: this.sourceSchema,
+      ENTRY: this.entrySchema,
+      TOPIC: this.topicSchema,
+      PAGE: this.pageSchema,
+      SELECTION: this.selectionSchema,
+      BLOCK_RELATION: this.blockRelationSchema
     }
-    this.schema = schemaMap[newDoc.type];
+    if(newDoc.$type == 'BLOCK'){
+      schema = schemaMap[newDoc.type]
+    } else {
+      schema = schemaMap[newDoc.$type]
+    }
   }
   // `this.schema &&` this will be removed when all schemas are implemented
-  if (this.schema && !tv4.validate(newDoc, this.schema, false, true)) {
+  if (schema && !tv4.validate(newDoc, schema, false, true)) {
     throw({forbidden: tv4.error.message + ' -> ' + tv4.error.dataPath + '/ / ' + JSON.stringify(newDoc)});
   }
 }

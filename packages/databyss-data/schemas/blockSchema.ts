@@ -13,6 +13,9 @@ export const blockSchema: JSONSchema4 = {
     account: {
       type: 'string',
     },
+    _deleted: {
+      type: 'boolean',
+    },
   },
   // TODO: account must become groupId and be required
   required: ['type', 'text'],

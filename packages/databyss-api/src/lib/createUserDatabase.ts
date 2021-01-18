@@ -1,7 +1,9 @@
 import { Users, Groups } from '@databyss-org/data/couchdb'
 import { User, Role } from '@databyss-org/data/interfaces'
+import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
 import { uid } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { DesignDoc } from '../../../databyss-data/interfaces/designdoc'
 
 interface CredentialResponse {
   dbKey: string
@@ -32,10 +34,9 @@ const createGroupDatabase = async (id: string) => {
     }
     await cloudant.db.create(`g_${id}`)
 
-    // TODO: add design docs to sever
-    // add validation documents to group database
-    // const _db = await cloudant.db.use<DesignDoc>(`g_${id}`)
-
+    // add design docs to sever
+    const _db = await cloudant.db.use<DesignDoc>(`g_${id}`)
+    await updateDesignDoc({ db: _db })
     // await updateClientDesignDoc(_db)
   }
 }

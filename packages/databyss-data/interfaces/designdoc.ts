@@ -10,6 +10,13 @@ export interface DesignDoc {
   validate_doc_update: string
   libs: DesignDocLibs
   schema?: JSONSchema4
-  sourceSchema?: JSONSchema4
-  textSchema?: JSONSchema4
+  sourceSchema: JSONSchema4
+  textSchema: JSONSchema4
+  pouchDocSchema: JSONSchema4
+  blockSchema: JSONSchema4
+  blockRelationSchema: JSONSchema4
+  selectionSchema: JSONSchema4
+  pageSchema: JSONSchema4
+  entrySchema: JSONSchema4
+  topicSchema: JSONSchema4
 }
