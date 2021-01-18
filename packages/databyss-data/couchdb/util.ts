@@ -25,7 +25,39 @@ import { cloudant } from './cloudant'
 
 const fs = require('fs')
 
+<<<<<<< HEAD
 export const updateDesignDoc = async ({
+=======
+// export const updateClientDesignDoc = async (db: DocumentScope<DesignDoc>) => {
+//   const _dd: DesignDoc = {
+//     // if you want to debug this, debug on the client side using pouchDB transform plugin
+//     _id: '_design/schema_validation',
+//     validate_doc_update: fs
+//       .readFileSync(
+//         path.join(
+//           __dirname,
+//           './_design_doc_includes/validate_client_doc_update.js.es5'
+//         )
+//       )
+//       .toString(),
+//     libs: {
+//       tv4: fs
+//         .readFileSync(path.join(__dirname, './_design_doc_includes/tv4.js.es5'))
+//         .toString(),
+//     },
+//     // TODO: this should be a map function iterating over all the schemas
+//     sourceSchema,
+//     textSchema,
+//   }
+
+//   await db.upsert(_dd._id, () => _dd)
+//   console.log('AFTER UPSERT OF DESIGN DOCUMENT')
+// }
+
+const baseDir = process.env.NODE_ENV === 'production' ? '/app/build/api' : '.'
+
+const updateDesignDoc = async ({
+>>>>>>> ed539277d8f0d9f3d3d716be3298cfcd24deb54e
   schema,
   db,
 }: {
@@ -44,7 +76,9 @@ export const updateDesignDoc = async ({
       .toString(),
     libs: {
       tv4: fs
-        .readFileSync(path.join(__dirname, './_design_doc_includes/tv4.js.es5'))
+        .readFileSync(
+          path.join(__dirname, `${baseDir}/_design_doc_includes/tv4.js.es5`)
+        )
         .toString(),
     },
     schema,
@@ -72,6 +106,10 @@ export const updateDesignDocs = async () => {
     updateDesignDoc({
       schema: t[0],
       db: t[1],
+<<<<<<< HEAD
+=======
+      script: `${baseDir}/_design_doc_includes/validate_doc_update.js.es5`,
+>>>>>>> ed539277d8f0d9f3d3d716be3298cfcd24deb54e
     })
   )
 }

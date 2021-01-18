@@ -7,7 +7,8 @@ import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Users, Logins, Groups } from '@databyss-org/data/couchdb'
-import { send } from '../../lib/sendgrid'
+import { Base64 } from 'js-base64'
+import { send } from '../../lib/postmark'
 import { getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
 
@@ -125,9 +126,10 @@ router.post(
     const msg = {
       From: process.env.TRANSACTIONAL_EMAIL_SENDER,
       To: email,
-      TemplateAlias: emailExists ? 'databyss_login' : 'databyss_signup',
+      TemplateAlias: emailExists ? 'databyss_login_v2' : 'databyss_signup_v2',
       TemplateModel: {
         code: loginObj.code,
+        auth: Base64.encodeURI(JSON.stringify([email, loginObj.code])),
         url: process.env.LOGIN_URL,
       },
     }

@@ -11,7 +11,6 @@ const List = ({
   keyboardNavigation,
   keyboardEventsActive,
   orderKey,
-  onActiveItemChanged,
   onActiveIndexChanged,
   initialActiveIndex,
   onItemSelected,
@@ -42,7 +41,6 @@ const List = ({
       <KeyboardNavigationProvider
         keyboardEventsActive={keyboardEventsActive}
         orderKey={orderKey}
-        onActiveItemChanged={onActiveItemChanged}
         onActiveIndexChanged={onActiveIndexChanged}
         initialActiveIndex={initialActiveIndex}
         onItemSelected={onItemSelected}

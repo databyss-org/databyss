@@ -25,7 +25,6 @@ const SidebarList = ({
   height,
   children,
   orderKey,
-  onActiveItemChanged,
   onActiveIndexChanged,
   initialActiveIndex,
   keyboardNavigation,
@@ -71,7 +70,6 @@ const SidebarList = ({
     <ScrollView height={height} flexShrink={1} flexGrow={1} {...others}>
       <List
         orderKey={orderKey}
-        onActiveItemChanged={onActiveItemChanged}
         onActiveIndexChanged={onActiveIndexChanged}
         initialActiveIndex={initialActiveIndex}
         keyboardNavigation={keyboardNavigation}

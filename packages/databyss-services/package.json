@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/services",
-  "version": "1.2.11",
+  "version": "1.2.15",
   "repository": {
     "type": "git",
     "url": "https://github.com/databyss-org/databyss.git"
@@ -18,10 +18,10 @@
     "@bugsnag/js": "^6.3.2",
     "@bugsnag/browser": "^6.3.2",
     "@bugsnag/node": "^6.3.2",
-    "@databyss-org/editor": "1.2.11",
-    "@databyss-org/services": "1.2.11",
-    "@databyss-org/data": "1.2.11",
-    "@databyss-org/ui": "1.2.11",
+    "@databyss-org/editor": "1.2.15",
+    "@databyss-org/services": "1.2.15",
+    "@databyss-org/data": "1.2.15",
+    "@databyss-org/ui": "1.2.15",
     "pouchdb-browser": "^7.2.2",
     "pouchdb-find": "^7.2.2",
     "pouchdb-upsert": "^2.2.0",

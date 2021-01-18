@@ -1,6 +1,6 @@
 {
   "name": "@databyss-org/data",
-  "version": "1.2.11",
+  "version": "1.2.15",
   "description": "Library for working with persistent storage and replication of databyss entities",
   "main": "index.js",
   "repository": {
