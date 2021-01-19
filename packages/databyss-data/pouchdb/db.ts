@@ -144,10 +144,12 @@ export const syncPouchDb = ({
   dbKey,
   dbPassword,
   groupId,
+  dispatch,
 }: {
   dbKey: string
   dbPassword: string
   groupId: string
+  dispatch: Function
 }) => {
   const opts = {
     live: true,
@@ -158,7 +160,6 @@ export const syncPouchDb = ({
       password: dbPassword,
     },
   }
-
   db.replicate
     .to(`${REMOTE_URL}/g_${groupId}`, {
       ...opts,
@@ -166,10 +167,29 @@ export const syncPouchDb = ({
       // filter: (doc) => doc.$type !== DocumentType.UserPreferences,
     })
     .on('error', (err) => console.log(`REPLICATE.TO ERROR - ${err}`))
+    .on('change', () => {
+      dispatch({
+        type: 'DB_BUSY',
+        payload: {
+          isBusy: true,
+        },
+      })
+    })
+    .on('paused', (err) => {
+      if (!err) {
+        dispatch({
+          type: 'DB_BUSY',
+          payload: {
+            isBusy: false,
+          },
+        })
+      }
+    })
 
   db.replicate
     .from(`${REMOTE_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
+  // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
 }
 
 export const initiatePouchDbValidators = () => {

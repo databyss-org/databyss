@@ -160,6 +160,8 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       syncPouchDb({
         ...res.data.session.user.groups[0],
         groupId: res.data.session.user.defaultGroupId,
+        // TODO: how to curry dispatch
+        dispatch,
       })
 
       dispatch({

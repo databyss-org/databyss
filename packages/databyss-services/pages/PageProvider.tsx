@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -55,6 +57,8 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
+  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+
   useEffect(() => {
     if (pageCachedHookRef.current) {
       Object.keys(pageCachedHookRef.current).forEach((k) => {
@@ -68,7 +72,8 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     }
   }, [state.cache])
 
-  const hasPendingPatches = state.patchQueueSize
+  const hasPendingPatches = isDbBusy
+  // const hasPendingPatches = state.patchQueueSize
 
   const onPageCached = (id: string, callback: Function) => {
     // add back to dictionary

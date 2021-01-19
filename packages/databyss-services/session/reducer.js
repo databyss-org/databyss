@@ -25,6 +25,8 @@ export const initialState = {
   // cleared when challenge is accepted or rejected
   lastCredentials: null,
   userInfo: null,
+  // monitors pouch db sync
+  isDbBusy: false,
 }
 
 export default (state, action) => {
@@ -113,6 +115,13 @@ export default (state, action) => {
             _id: action.payload.publicAccount,
           },
         },
+      }
+    }
+
+    case 'DB_BUSY': {
+      return {
+        ...state,
+        isDbBusy: action.payload.isBusy,
       }
     }
 

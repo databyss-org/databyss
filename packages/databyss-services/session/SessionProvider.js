@@ -98,6 +98,9 @@ const SessionProvider = ({
     dispatch(actions.logout())
   }
 
+  // TODO: WRAP THIS IN A CALLBACK
+  const isDbBusy = state.isDbBusy
+
   const setDefaultPage = useCallback((id) => {
     dispatch(actions.onSetDefaultPage(id))
   }, [])
@@ -106,6 +109,7 @@ const SessionProvider = ({
     <SessionContext.Provider
       value={{
         ...state,
+        isDbBusy,
         setDefaultPage,
         getSession,
         endSession,
