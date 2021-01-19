@@ -48,8 +48,8 @@ const PageBody = ({
           patchQueue.current = []
         }
       },
-      process.env.SAVE_PAGE_THROTTLE
-      // { leading: true }
+      process.env.SAVE_PAGE_THROTTLE,
+      { leading: true, maxWait: 500 }
     ),
     []
   )
