@@ -19,4 +19,5 @@ export interface DesignDoc {
   pageSchema: JSONSchema4
   entrySchema: JSONSchema4
   topicSchema: JSONSchema4
+  userPreferenceSchema: JSONSchema4
 }

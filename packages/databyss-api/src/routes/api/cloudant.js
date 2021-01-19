@@ -1,6 +1,6 @@
 import express from 'express'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
-import { Users } from '@databyss-org/data/couchdb'
+// import { Users } from '@databyss-org/data/couchdb'
 import auth from '../../middleware/auth'
 import { UnauthorizedError } from '../../lib/Errors'
 

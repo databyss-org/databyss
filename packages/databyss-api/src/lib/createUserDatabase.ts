@@ -78,7 +78,7 @@ const addSessionToGroup = async (
   userId: string,
   credentials: CredentialResponse
 ) => {
-  await Groups.upsert(credentials.groupId, (oldDoc: any) => {
+  const _res = await Groups.upsert(credentials.groupId, (oldDoc: any) => {
     const _sessions = oldDoc.sessions || []
     _sessions.push({
       userId,
@@ -89,6 +89,7 @@ const addSessionToGroup = async (
     })
     return { ...oldDoc, sessions: _sessions }
   })
+  return _res
 }
 
 /*
@@ -104,9 +105,9 @@ export const addCredentialsToGroupId = async ({
   // set user as GROUP_ADMIN and return credentials
   const response = await setSecurity(groupId)
   // add the user session to groups
-  await addSessionToGroup(userId, response)
+  const _group = await addSessionToGroup(userId, response)
 
-  return response
+  return { ...response, defaultPageId: _group.defaultPageId }
 }
 
 export const createUserDatabaseCredentials = async (

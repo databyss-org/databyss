@@ -13,6 +13,7 @@ import {
   topicSchema,
   pouchDocSchema,
   blockSchema,
+  userPreferenceSchema,
 } from '@databyss-org/data/schemas'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
@@ -162,7 +163,7 @@ export const syncPouchDb = ({
     .to(`${REMOTE_URL}/g_${groupId}`, {
       ...opts,
       // todo: add groupId to every document
-      filter: (doc) => doc.$type !== DocumentType.UserPreferences,
+      // filter: (doc) => doc.$type !== DocumentType.UserPreferences,
     })
     .on('error', (err) => console.log(`REPLICATE.TO ERROR - ${err}`))
 
@@ -180,6 +181,7 @@ export const initiatePouchDbValidators = () => {
     [DocumentType.Page, pageSchema],
     [DocumentType.Selection, selectionSchema],
     [DocumentType.BlockRelation, blockRelationSchema],
+    [DocumentType.UserPreferences, userPreferenceSchema],
   ]
 
   // add $ref schemas, these schemas are reused

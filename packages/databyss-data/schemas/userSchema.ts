@@ -36,23 +36,6 @@ export const userSchema: JSONSchema4 = {
     defaultGroupId: {
       type: 'string',
     },
-    // defaultPageId: {
-    //   type: 'string',
-    // },
-    // groups: {
-    //   type: 'array',
-    //   items: {
-    //     type: 'object',
-    //     properties: {
-    //       groupId: {
-    //         type: 'string',
-    //       },
-    //       role: {
-    //         type: 'string',
-    //       },
-    //     },
-    //   },
-    // },
     date: {
       type: 'string',
     },

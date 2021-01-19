@@ -29,6 +29,7 @@ import {
   setDefaultPageId,
   deleteUserPreferences,
   setUserSession,
+  setDbPassword,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
@@ -107,7 +108,6 @@ export const fetchSession = ({ _request, ...credentials }) => async (
 
       const { session } = res.data
 
-      console.log('SESSION', session)
       const _defaultPageId = session.user.groups.find(
         (g) => g.groupId === session.user.defaultGroupId
       ).defaultPageId
@@ -120,7 +120,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         email: session.user.email,
         defaultPageId: _defaultPageId,
         defaultGroupId: session.user.defaultGroupId,
-        // groups: session.user.groups,
+        // remove password
         groups: session.user.groups.map((g) => ({
           dbKey: g.dbKey,
           defaultPageId: g.defaultPageId,
@@ -129,8 +129,10 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         })),
       }
 
-      // TODO: SAVE PASSWORDS LOCALLY
+      // save passwords in localstorage
+      setDbPassword(session.user.groups)
 
+      // save session in pouchdb
       await setUserSession(_userSession)
 
       // initiate database validators
