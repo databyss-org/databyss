@@ -47,6 +47,7 @@ export const deletePouchDbs = async () => {
 
 export const setUserSession = async (session) => {
   console.log(session)
+  // TODO: remove dbPassword and add them to a local dictionary
   await upsert({
     $type: DocumentType.UserPreferences,
     _id: 'user_preferences',

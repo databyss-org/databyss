@@ -9,6 +9,7 @@ interface CredentialResponse {
   dbKey: string
   dbPassword: string
   groupId: string
+  role: Role
 }
 
 export const createGroupId = async () => {
@@ -47,6 +48,7 @@ const setSecurity = (groupId: string): Promise<CredentialResponse> =>
       dbKey: '',
       dbPassword: '',
       groupId: '',
+      role: Role.GroupAdmin,
     }
     cloudant.generate_api_key(async (err, api) => {
       if (err) {
@@ -83,6 +85,7 @@ const addSessionToGroup = async (
       clientInfo: 'get client info',
       dbKey: credentials.dbKey,
       lastLoginAt: Date.now(),
+      role: credentials.role,
     })
     return { ...oldDoc, sessions: _sessions }
   })
@@ -98,6 +101,7 @@ export const addCredentialsToGroupId = async ({
   groupId: string
   userId: string
 }) => {
+  // set user as GROUP_ADMIN and return credentials
   const response = await setSecurity(groupId)
   // add the user session to groups
   await addSessionToGroup(userId, response)
@@ -108,11 +112,12 @@ export const addCredentialsToGroupId = async ({
 export const createUserDatabaseCredentials = async (
   user: User
 ): Promise<CredentialResponse> => {
-  const _groupId = await createGroupId()
+  const _groupId: string = await createGroupId()
 
   // creates a database if not yet defined
   await createGroupDatabase(_groupId)
 
+  // add credentials to new database
   const response = await addCredentialsToGroupId({
     groupId: _groupId,
     userId: user._id,
@@ -124,29 +129,26 @@ export const createUserDatabaseCredentials = async (
 export const addCredentialsToUser = async (
   userId: string,
   credentials: CredentialResponse
-): Promise<User> => {
+): Promise<any /* this should extend User with property  */> => {
+  let _defaultPageId
+
   const _res = await Users.upsert(userId, (oldDoc: User) => {
-    const _groups = oldDoc.groups || []
-
-    _groups.push({ groupId: credentials.groupId, role: Role.GroupAdmin })
-
-    const _defaultPageId = uid()
+    _defaultPageId = uid()
 
     // check if group has default page id, if not, create id
-    Groups.upsert(credentials.groupId, (oldDoc) =>
-      oldDoc.defaultPageId
-        ? oldDoc
-        : { ...oldDoc, defaultPageId: _defaultPageId }
+    Groups.upsert(credentials.groupId, (_oldDoc) =>
+      _oldDoc.defaultPageId
+        ? _oldDoc
+        : { ..._oldDoc, defaultPageId: _defaultPageId }
     )
+
     return {
       ...oldDoc,
-      groups: _groups,
       defaultGroupId: credentials.groupId,
-      defaultPageId: _defaultPageId,
     }
   })
-  // TODO: determine where the default page id comes from
-  return _res
+
+  return { ..._res, defaultPageId: _defaultPageId }
 }
 
 export const addCredientialsToSession = async ({

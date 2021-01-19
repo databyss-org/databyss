@@ -100,7 +100,7 @@ export default (state, action) => {
     }
     case SET_DEFAULT_PAGE: {
       const _nextState = state
-      _nextState.session.user.defaultPageId = action.payload.id
+      _nextState.session.defaultPageId = action.payload.id
       // _nextState.userInfo.defaultPage = action.payload.id
       return _nextState
     }

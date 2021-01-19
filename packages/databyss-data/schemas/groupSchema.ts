@@ -41,6 +41,9 @@ export const userSchema: JSONSchema4 = {
           dbKey: {
             type: 'string',
           },
+          role: {
+            type: 'string',
+          },
           lastLoginAt: {
             type: 'number',
           },
@@ -49,7 +52,7 @@ export const userSchema: JSONSchema4 = {
           },
         },
       },
-      required: ['userId', 'dbkey', 'lastLoginAt'],
+      required: ['userId', 'dbkey', 'lastLoginAt', 'role'],
     },
   },
   required: ['_id', 'name', 'sessions'],

@@ -33,25 +33,25 @@ router.delete('/', async (req, res) => {
 // @desc     Updates user preferences
 // @access   private
 router.post('/user', auth, async (req, res) => {
-  const { session } = req.body.data
+  // const { session } = req.body.data
   // user from auth token to user from session token
-
-  if (session.userId === req.user.id) {
-    const _selector = {
-      selector: {
-        _id: { $eq: session.userId },
-      },
-    }
-    const _res = await Users.find(_selector)
-    if (!_res.docs.length) {
-      return res.status(401)
-    }
-    const user = _res.docs[0]
-    await Users.upsert(user._id, (oldDoc) => ({
-      ...oldDoc,
-      defaultPageId: session.defaultPageId,
-    }))
-  }
+  console.log('TODO ADD SYNC IN GROUP DB')
+  // if (session.userId === req.user.id) {
+  //   const _selector = {
+  //     selector: {
+  //       _id: { $eq: session.userId },
+  //     },
+  //   }
+  //   const _res = await Users.find(_selector)
+  //   if (!_res.docs.length) {
+  //     return res.status(401)
+  //   }
+  //   const user = _res.docs[0]
+  //   await Users.upsert(user._id, (oldDoc) => ({
+  //     ...oldDoc,
+  //     defaultPageId: session.defaultPageId,
+  //   }))
+  // }
 
   return res.status(200).send()
 })

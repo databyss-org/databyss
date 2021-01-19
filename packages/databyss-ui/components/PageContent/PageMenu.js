@@ -39,7 +39,7 @@ function copyToClipboard(text) {
 const PageMenu = ({ pages }) => {
   const getSession = useSessionContext((c) => c && c.getSession)
   const setDefaultPage = useSessionContext((c) => c && c.setDefaultPage)
-  const { account, user } = getSession()
+  const { account, defaultPageId } = getSession()
   const [showMenu, setShowMenu] = useState(false)
   const [isPagePublic, setIsPagePublic] = useState(false)
   const [showCopiedCheck, setShowCopiedCheck] = useState(false)
@@ -81,7 +81,7 @@ const PageMenu = ({ pages }) => {
       resetTopicHeaders()
       if (bool) {
         // if default page is archived set new page as default page
-        let redirect = user.defaultPageId
+        let redirect = defaultPageId
         if (redirect === params) {
           redirect = Object.keys(pages).find((_id) => _id !== params)
           setDefaultPage(redirect)
@@ -122,7 +122,7 @@ const PageMenu = ({ pages }) => {
 
   const onPageDelete = () => {
     deletePage(params)
-    navigate(`/pages/${user.defaultPageId}`)
+    navigate(`/pages/${defaultPageId}`)
     navigateSidebar('/pages')
 
     // delete page
