@@ -1,7 +1,12 @@
 /* eslint-disable react/no-danger */
-import React, { useEffect, useRef, useState, useCallback } from 'react'
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  //  useCallback
+} from 'react'
 import { Helmet } from 'react-helmet'
-import { debounce } from 'lodash'
+// import { debounce } from 'lodash'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { View, Text, Icon } from '@databyss-org/ui/primitives'
@@ -24,22 +29,23 @@ const PageSticky = ({ pagePath, pageId }) => {
   const stickyRef = useRef()
   const currentPath = []
 
-  // debonce the ui component showing the saving icon
-  const debounceSavingIcon = useCallback(
-    debounce(
-      (count) => {
-        setShowSaving(count)
-      },
-      1000,
-      { maxWait: 1000 }
-    ),
-    []
-  )
+  // // debonce the ui component showing the saving icon
+  // const debounceSavingIcon = useCallback(
+  //   debounce(
+  //     (count) => {
+  //       setShowSaving(count)
+  //     },
+  //     1000,
+  //     { maxWait: 1000 }
+  //   ),
+  //   []
+  // )
 
   useEffect(() => {
     // set the true state of pending patches
     setPendingPatches(hasPendingPatches)
-    debounceSavingIcon(hasPendingPatches)
+    setShowSaving(hasPendingPatches)
+    // debounceSavingIcon(hasPendingPatches)
   }, [hasPendingPatches])
 
   const pages = getPages()
