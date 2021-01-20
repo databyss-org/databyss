@@ -17,7 +17,7 @@ let driver
 // let editor
 let actions
 const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
+const PROXY_URL = 'http://127.0.0.1:3000'
 
 const random = Math.random().toString(36).substring(7)
 

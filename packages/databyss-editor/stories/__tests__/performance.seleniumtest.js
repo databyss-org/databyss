@@ -30,7 +30,7 @@ function getAvg(threshold) {
 const LOCAL_URL =
   'http://localhost:6006/iframe.html?id=selenium-tests--slate-5-editor-performance'
 const PROXY_URL =
-  'http://0.0.0.0:8080/iframe.html?id=selenium-tests--slate-5-editor-performance'
+  'http://127.0.0.1:8080/iframe.html?id=selenium-tests--slate-5-editor-performance'
 
 describe('editor performance', () => {
   beforeEach(async (done) => {
