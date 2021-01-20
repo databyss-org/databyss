@@ -18,7 +18,6 @@ router.post('/', auth, async (req, res) => {
   try {
     if (req?.user) {
       let session = await getSessionFromUserId(req.user.id)
-
       // TODO: on every re-login attempt we are creating new user credentials, should this happen on the back end or should the user save the credentials in their offline database?
       session = await addCredientialsToSession({
         groupId: session.user.defaultGroupId,
@@ -59,33 +58,29 @@ router.post(
     if (query.docs.length) {
       const _login = query.docs[0]
 
-      // todo: change this back
       if (_login.date >= Date.now() - 36000000) {
         const token = _login.token
         const _res = await Logins.get(_login._id, _login._rev)
         await Logins.destroy(_res._id, _res._rev)
         let session = await getSessionFromToken(token)
         // check if user has login credentials
-
         // INIT SUBROUTINE
         if (!session.user.defaultGroupId) {
           // if default group doesnt exist, initiate a new database and pass the data back to the client
           const credentials = await createUserDatabaseCredentials(session.user)
+
+          // add defaultGroupId to user
           const _user = await addCredentialsToUser(
             session.user._id,
             credentials
           )
-          // add credential to users `groups` property
 
+          // add credential to users `groups` property
           session.user.groups = [
-            {
-              ..._user.groups[0],
-              dbKey: credentials.dbKey,
-              dbPassword: credentials.dbPassword,
-            },
+            { ...credentials, defaultPageId: _user.defaultPageId },
           ]
 
-          session.user.defaultPageId = _user.defaultPageId
+          // session.user.defaultPageId = _user.defaultPageId
           session.user.defaultGroupId = _user.defaultGroupId
           // init a new user
           session.user.provisionClientDatabase = true

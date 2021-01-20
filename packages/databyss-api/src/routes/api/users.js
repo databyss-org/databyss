@@ -99,12 +99,12 @@ router.post(
       _userId = uid()
       // Creates new user
       emailExists = false
-      const _res = await Users.insert({
+      await Users.insert({
         _id: _userId,
         email,
-        groups: [],
+        // create the default id for user account
+        // defaultGroupId: uid(),
       })
-      console.log('RES', _res)
     } else {
       _userId = user.docs[0]._id
     }

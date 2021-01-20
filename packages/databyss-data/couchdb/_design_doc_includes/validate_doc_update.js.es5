@@ -18,7 +18,8 @@ function(newDoc) {
       TOPIC: this.topicSchema,
       PAGE: this.pageSchema,
       SELECTION: this.selectionSchema,
-      BLOCK_RELATION: this.blockRelationSchema
+      BLOCK_RELATION: this.blockRelationSchema,
+      USER_PREFERENCES: this.userPreferenceSchema
     }
     if(newDoc.$type == 'BLOCK'){
       schema = schemaMap[newDoc.type]
@@ -29,5 +30,9 @@ function(newDoc) {
   // `this.schema &&` this will be removed when all schemas are implemented
   if (schema && !tv4.validate(newDoc, schema, false, true)) {
     throw({forbidden: tv4.error.message + ' -> ' + tv4.error.dataPath + '/ / ' + JSON.stringify(newDoc)});
+  }
+
+  if(!schema){
+    throw({forbidden: 'no schema found'});
   }
 }

@@ -36,8 +36,8 @@ const App = ({ children }) => (
 const NotFoundRedirect = () => {
   const { navigate } = useNavigationContext()
   const getSession = useSessionContext((c) => c && c.getSession)
-  const { user } = getSession()
-  const { defaultGroupId, defaultPageId } = user
+
+  const { defaultGroupId, defaultPageId } = getSession()
 
   // if no page found, navigate to default page
   useEffect(() => {
@@ -52,13 +52,17 @@ const NotFoundRedirect = () => {
 const Private = () => {
   const { location, navigate } = useNavigationContext()
   const getSession = useSessionContext((c) => c && c.getSession)
-  const { user } = getSession()
+  const {
+    defaultGroupId,
+    defaultPageId,
+    provisionClientDatabase,
+  } = getSession()
 
-  const { defaultGroupId, defaultPageId } = user
+  // const { defaultGroupId, defaultPageId } = user
 
   // Navigate to default page is nothing in path
   useEffect(() => {
-    if (location.pathname === '/' || user.provisionClientDatabase) {
+    if (location.pathname === '/' || provisionClientDatabase) {
       navigate(`/${defaultGroupId}/pages/${defaultPageId}`, {
         hasAccount: true,
       })

@@ -64,7 +64,7 @@ const PageWithAutosave = ({ page }) => {
           operationsQueue.current = []
         }
       },
-      100,
+      500,
       { leading: true, maxWait: 500 }
     ),
     []
@@ -104,10 +104,10 @@ const PageWithAutosave = ({ page }) => {
 
 const EditorWithProvider = () => {
   const { getSession } = useSessionContext()
-  const { user } = getSession()
+  const { defaultPageId } = getSession()
   const { setPage } = usePageContext()
 
-  const _pageId = user.defaultPageId
+  const _pageId = defaultPageId
 
   // save new page
   const _page = new Page(_pageId)

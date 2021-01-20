@@ -13,6 +13,7 @@ import {
   topicSchema,
   pouchDocSchema,
   blockSchema,
+  userPreferenceSchema,
 } from '@databyss-org/data/schemas'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
@@ -143,10 +144,12 @@ export const syncPouchDb = ({
   dbKey,
   dbPassword,
   groupId,
+  dispatch,
 }: {
   dbKey: string
   dbPassword: string
   groupId: string
+  dispatch: Function
 }) => {
   const opts = {
     live: true,
@@ -157,18 +160,36 @@ export const syncPouchDb = ({
       password: dbPassword,
     },
   }
-
   db.replicate
     .to(`${REMOTE_URL}/g_${groupId}`, {
       ...opts,
       // todo: add groupId to every document
-      filter: (doc) => doc.$type !== DocumentType.UserPreferences,
+      // filter: (doc) => doc.$type !== DocumentType.UserPreferences,
     })
     .on('error', (err) => console.log(`REPLICATE.TO ERROR - ${err}`))
+    .on('change', () => {
+      dispatch({
+        type: 'DB_BUSY',
+        payload: {
+          isBusy: true,
+        },
+      })
+    })
+    .on('paused', (err) => {
+      if (!err) {
+        dispatch({
+          type: 'DB_BUSY',
+          payload: {
+            isBusy: false,
+          },
+        })
+      }
+    })
 
   db.replicate
     .from(`${REMOTE_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
+  // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
 }
 
 export const initiatePouchDbValidators = () => {
@@ -180,6 +201,7 @@ export const initiatePouchDbValidators = () => {
     [DocumentType.Page, pageSchema],
     [DocumentType.Selection, selectionSchema],
     [DocumentType.BlockRelation, blockRelationSchema],
+    [DocumentType.UserPreferences, userPreferenceSchema],
   ]
 
   // add $ref schemas, these schemas are reused

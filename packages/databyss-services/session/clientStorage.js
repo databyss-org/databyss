@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { upsert, getUserSession } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { db } from '@databyss-org/data/pouchdb/db'
@@ -46,10 +47,30 @@ export const deletePouchDbs = async () => {
 }
 
 export const setUserSession = async (session) => {
-  console.log(session)
   await upsert({
     $type: DocumentType.UserPreferences,
     _id: 'user_preferences',
-    doc: session,
+    doc: _.pick(session, [
+      '_id',
+      'token',
+      '$type',
+      'userId',
+      'email',
+      'defaultGroupId',
+      'groups',
+    ]),
   })
+}
+
+export const setDbPassword = (groups) => {
+  let keyMap = localStorage.getItem('dbKeys')
+  if (!keyMap) {
+    keyMap = {}
+  } else {
+    keyMap = JSON.parse(keyMap)
+  }
+  groups.forEach((g) => {
+    keyMap[g.groupId] = { dbPassword: g.dbPassword, dbKey: g.dbKey }
+  })
+  localStorage.setItem('dbKeys', JSON.stringify(keyMap))
 }

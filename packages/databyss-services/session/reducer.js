@@ -25,6 +25,8 @@ export const initialState = {
   // cleared when challenge is accepted or rejected
   lastCredentials: null,
   userInfo: null,
+  // monitors pouch db sync
+  isDbBusy: false,
 }
 
 export default (state, action) => {
@@ -100,7 +102,7 @@ export default (state, action) => {
     }
     case SET_DEFAULT_PAGE: {
       const _nextState = state
-      _nextState.session.user.defaultPageId = action.payload.id
+      _nextState.session.defaultPageId = action.payload.id
       // _nextState.userInfo.defaultPage = action.payload.id
       return _nextState
     }
@@ -113,6 +115,13 @@ export default (state, action) => {
             _id: action.payload.publicAccount,
           },
         },
+      }
+    }
+
+    case 'DB_BUSY': {
+      return {
+        ...state,
+        isDbBusy: action.payload.isBusy,
       }
     }
 

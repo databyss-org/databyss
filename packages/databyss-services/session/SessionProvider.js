@@ -1,7 +1,6 @@
-import React, { useEffect, useCallback, useRef } from 'react'
-import _ from 'lodash'
+import React, { useEffect, useCallback, useState } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
-import { db } from '@databyss-org/data/pouchdb/db'
+import { debounce } from 'lodash'
 import Login from '@databyss-org/ui/modules/Login/Login'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -32,6 +31,7 @@ const SessionProvider = ({
     name: 'SessionProvider',
   })
   const { session: actions } = useServiceContext()
+  const [dbPending, setDbPending] = useState(false)
 
   const isPublicAccount = useCallback(() => {
     if (state.session.publicAccount?._id) {
@@ -100,33 +100,35 @@ const SessionProvider = ({
     dispatch(actions.logout())
   }
 
-  const setDefaultPage = useCallback((id) => {
-    dispatch(actions.onSetDefaultPage(id))
-  }, [])
+  // TODO: WRAP THIS IN A CALLBACK
 
-  // keep track of user preferences, if changes are made, send to api
-  const userSession = useRef()
+  // debonce the ui component showing the saving icon
+  const debounceDbBusy = useCallback(
+    debounce(
+      (bool) => {
+        setDbPending(bool)
+      },
+      500,
+      { leading: true }
+    ),
+    []
+  )
 
   useEffect(() => {
-    db.changes({
-      since: 'now',
-      live: true,
-      include_docs: true,
-    }).on('change', (changes) => {
-      if (
-        changes.id === 'user_preferences' &&
-        !_.isEqual(userSession.current, changes.doc)
-      ) {
-        userSession.current = changes.doc
-        dispatch(actions.setSession(changes.doc))
-      }
-    })
+    debounceDbBusy(state.isDbBusy)
+  }, [state.isDbBusy])
+
+  const isDbBusy = useCallback(() => dbPending, [dbPending])
+
+  const setDefaultPage = useCallback((id) => {
+    dispatch(actions.onSetDefaultPage(id))
   }, [])
 
   return (
     <SessionContext.Provider
       value={{
         ...state,
+        isDbBusy,
         setDefaultPage,
         getSession,
         endSession,

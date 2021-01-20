@@ -29,6 +29,7 @@ import {
   setDefaultPageId,
   deleteUserPreferences,
   setUserSession,
+  setDbPassword,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
@@ -106,15 +107,32 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       // authenticated
 
       const { session } = res.data
+
+      const _defaultPageId = session.user.groups.find(
+        (g) => g.groupId === session.user.defaultGroupId
+      ).defaultPageId
+
       const _userSession = {
+        provisionClientDatabase: session.user.provisionClientDatabase,
+        replicateClientDatabase: session.user.replicateClientDatabase,
         token: session.token,
         userId: session.user._id,
         email: session.user.email,
-        defaultPageId: session.user.defaultPageId,
+        defaultPageId: _defaultPageId,
         defaultGroupId: session.user.defaultGroupId,
-        groups: session.user.groups,
+        // remove password
+        groups: session.user.groups.map((g) => ({
+          dbKey: g.dbKey,
+          defaultPageId: g.defaultPageId,
+          groupId: g.groupId,
+          role: g.role,
+        })),
       }
 
+      // save passwords in localstorage
+      setDbPassword(session.user.groups)
+
+      // save session in pouchdb
       await setUserSession(_userSession)
 
       // initiate database validators
@@ -123,15 +141,15 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       await initiatePouchDbIndexes()
 
       // initialize a new user
-      if (res.data.session.user.provisionClientDatabase) {
+      if (_userSession.provisionClientDatabase) {
         // initate new database
-        await addPage(res.data.session.user.defaultPageId)
+        await addPage(_defaultPageId)
       }
 
       /*
       if logging into an existing account, wait for database replication to complete before continuing
       */
-      if (res.data.session.user.replicateClientDatabase) {
+      if (_userSession.replicateClientDatabase) {
         await replicateDbFromRemote({
           ...res.data.session.user.groups[0],
           groupId: res.data.session.user.defaultGroupId,
@@ -142,12 +160,14 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       syncPouchDb({
         ...res.data.session.user.groups[0],
         groupId: res.data.session.user.defaultGroupId,
+        // TODO: how to curry dispatch
+        dispatch,
       })
 
       dispatch({
         type: CACHE_SESSION,
         payload: {
-          session: res.data.session,
+          session: _userSession,
         },
       })
     } else if (res.data?.isPublic) {
