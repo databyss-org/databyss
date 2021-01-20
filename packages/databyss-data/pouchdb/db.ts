@@ -20,7 +20,7 @@ import tv4 from 'tv4'
 import { JSONSchema4 } from 'json-schema'
 import { DocumentType } from './interfaces'
 
-const REMOTE_URL = `https://9cd55e3f-315b-420d-aa03-418d20aae3dd-bluemix.cloudantnosqldb.appdomain.cloud/`
+const REMOTE_URL = `https://fa0a57bd-308f-4564-9e4d-e69d68aad000-bluemix.cloudantnosqldb.appdomain.cloud`
 
 // add plugins
 PouchDB.plugin(PouchDBTransform)
