@@ -11,7 +11,7 @@ const ErrorFallback = ({ error, message, ...others }) => {
   let _message = message
   if (!_message && error) {
     if (error instanceof ResourceNotFoundError) {
-      _message = 'not found'
+      _message = 'Resource not found. How about a nice game of chess?'
     } else if (error instanceof NetworkUnavailableError) {
       _message = 'Network error'
     } else if (error instanceof NotAuthorizedError) {

@@ -2,7 +2,8 @@ const scriptMap = {
   'copy-database': ['dba/CopyDatabase', ['envName', 'fromDb', 'toDb']],
   'copy-page': ['dba/CopyPage', ['envName', 'pageId', 'toAccountId']],
   'delete-account': ['dba/DeleteAccount', ['envName', 'accountId']],
-  'repair-blocks': ['repair/1.1.76_RepairBlocks', ['envName']],
+  'migrate-user': ['migrate/UserMongoToCloudant', ['envName', 'email']],
+  'public-pages': ['reports/PublicPages', ['envName']],
 }
 
 function usageArgs(jobArgList) {
