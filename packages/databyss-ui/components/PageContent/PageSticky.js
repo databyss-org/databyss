@@ -1,12 +1,7 @@
 /* eslint-disable react/no-danger */
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  //  useCallback
-} from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { Helmet } from 'react-helmet'
-// import { debounce } from 'lodash'
+import { debounce } from 'lodash'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { View, Text, Icon } from '@databyss-org/ui/primitives'
@@ -24,29 +19,29 @@ const PageSticky = ({ pagePath, pageId }) => {
   // get page name from headerCache
   const getPages = usePageContext((c) => c && c.getPages)
 
-  const [pendingPatches, setPendingPatches] = useState(0)
+  // const [pendingPatches, setPendingPatches] = useState(0)
   const [showSaving, setShowSaving] = useState(false)
 
   const stickyRef = useRef()
   const currentPath = []
 
-  // // debonce the ui component showing the saving icon
-  // const debounceSavingIcon = useCallback(
-  //   debounce(
-  //     (count) => {
-  //       setShowSaving(count)
-  //     },
-  //     1000,
-  //     { maxWait: 1000 }
-  //   ),
-  //   []
-  // )
+  // debonce the ui component showing the saving icon
+  const debounceSavingIcon = useCallback(
+    debounce(
+      (count) => {
+        setShowSaving(count)
+      },
+      2500,
+      { leading: true }
+    ),
+    []
+  )
 
   useEffect(() => {
     // set the true state of pending patches
-    setPendingPatches(_hasPendingPatches)
-    setShowSaving(_hasPendingPatches)
-    // debounceSavingIcon(hasPendingPatches)
+    // setPendingPatches(_hasPendingPatches)
+    // setShowSaving(_hasPendingPatches)
+    debounceSavingIcon(_hasPendingPatches)
   }, [_hasPendingPatches])
 
   const pages = getPages()
@@ -84,7 +79,7 @@ const PageSticky = ({ pagePath, pageId }) => {
         />
       </Text>
       <View alignItems="center" justifyContent="flex-end" flexDirection="row">
-        {pendingPatches ? null : (
+        {showSaving ? null : (
           <View id="changes-saved">
             {' '}
             &nbsp;

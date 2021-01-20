@@ -49,6 +49,26 @@ const PageWithAutosave = ({ page }) => {
   const hasPendingPatches = usePageContext((c) => c && c.hasPendingPatches)
   const _hasPendingPatches = hasPendingPatches()
   const [pageState, setPageState] = useState(null)
+  const [showSaving, setShowSaving] = useState(false)
+
+  // debonce the ui component showing the saving icon
+  const debounceSavingIcon = useCallback(
+    debounce(
+      (count) => {
+        setShowSaving(count)
+      },
+      2500,
+      { leading: true }
+    ),
+    []
+  )
+
+  useEffect(() => {
+    // set the true state of pending patches
+    // setPendingPatches(_hasPendingPatches)
+    // setShowSaving(_hasPendingPatches)
+    debounceSavingIcon(_hasPendingPatches)
+  }, [_hasPendingPatches])
 
   const operationsQueue = useRef([])
 
@@ -93,9 +113,9 @@ const PageWithAutosave = ({ page }) => {
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{pageState}</pre>
       </Box>
-      {!_hasPendingPatches ? (
+      {!showSaving ? (
         <Text id="complete" variant="uiText">
-          changes saved -
+          changes saved
         </Text>
       ) : null}
       <text>{_hasPendingPatches}</text>
