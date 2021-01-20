@@ -16,6 +16,7 @@ import {
   backspaceKey,
   getEditor,
   isAppInNotesSaved,
+  logout,
 } from './_helpers.selenium'
 
 let driver
@@ -58,23 +59,9 @@ describe('block indexing', () => {
     done()
   })
 
-  afterEach(async () => {
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
-
-    await accountDropdown.click()
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-
-    await logoutButton.click()
-    await getElementByTag(driver, '[data-test-path="email"]')
-    await driver.quit()
-    driver = null
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
+    done()
   })
 
   // Tests for indexing [adding a topic, adds it to the index, clicking on it should show results, clicking on results should show page with correct entries]

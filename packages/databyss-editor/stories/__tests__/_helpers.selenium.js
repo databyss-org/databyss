@@ -50,6 +50,22 @@ export const getElementByTag = async (driver, tag) => {
   return el
 }
 
+export const logout = async (driver) => {
+  const accountDropdown = await getElementByTag(
+    driver,
+    '[data-test-element="account-menu"]'
+  )
+  await accountDropdown.click()
+  await sleep(500)
+  const logoutButton = await getElementByTag(
+    driver,
+    '[data-test-block-menu="logout"]'
+  )
+  await logoutButton.click()
+  await getElementByTag(driver, '[data-test-path="email"]')
+  await driver.quit()
+}
+
 export const getElementById = async (driver, id) => {
   await sleep(500)
   const el = await driver.wait(until.elementLocated(By.id(id)), waitUntilTime)
@@ -60,14 +76,22 @@ export const getElementById = async (driver, id) => {
 
 export const isSaved = async (driver) => {
   await sleep(1000)
-  await getElementById(driver, 'complete')
-  await sleep(1000)
+  try {
+    await getElementById(driver, 'complete')
+    await sleep(1000)
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 export const isAppInNotesSaved = async (driver) => {
   await sleep(1000)
-  await getElementById(driver, 'changes-saved')
-  await sleep(1000)
+  try {
+    await getElementById(driver, 'changes-saved')
+    await sleep(1000)
+  } catch (err) {
+    console.log(err)
+  }
 }
 
 export const toggleBold = (actions) =>

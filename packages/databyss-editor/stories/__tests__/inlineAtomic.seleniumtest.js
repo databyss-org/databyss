@@ -15,6 +15,7 @@ import {
   isAppInNotesSaved,
   downShiftKey,
   rightKey,
+  logout,
 } from './_helpers.selenium'
 
 let driver
@@ -57,25 +58,9 @@ describe('inline atomic', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(500)
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
-
-    await accountDropdown.click()
-    await sleep(500)
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-
-    await logoutButton.click()
-    await getElementByTag(driver, '[data-test-path="email"]')
-    await driver.quit()
-    driver = null
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
+    done()
   })
 
   it('should test the integrity of inline atomics', async () => {

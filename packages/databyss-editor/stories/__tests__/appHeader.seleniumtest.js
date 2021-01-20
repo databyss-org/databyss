@@ -11,6 +11,7 @@ import {
   enterKey,
   upKey,
   downKey,
+  logout,
 } from './_helpers.selenium'
 
 let driver
@@ -56,23 +57,9 @@ describe('app sticky header', () => {
     done()
   })
 
-  afterEach(async () => {
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
-
-    await accountDropdown.click()
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-
-    await logoutButton.click()
-    await getElementByTag(driver, '[data-test-path="email"]')
-    await driver.quit()
-    driver = null
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
+    done()
   })
 
   it('should render correct editor path for cursor', async () => {

@@ -12,6 +12,7 @@ import {
   enterKey,
   getEditor,
   isAppInNotesSaved,
+  logout,
 } from './_helpers.selenium'
 
 let driver
@@ -53,23 +54,9 @@ describe('archive page', () => {
     done()
   })
 
-  afterEach(async () => {
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
-
-    await accountDropdown.click()
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-
-    await logoutButton.click()
-    await sleep(1000)
-    await driver.quit()
-    driver = null
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
+    done()
   })
 
   it('should archive a page and remove the page from the sidebar', async () => {

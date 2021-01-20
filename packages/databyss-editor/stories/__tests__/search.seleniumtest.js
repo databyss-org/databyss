@@ -11,6 +11,7 @@ import {
   enterKey,
   rightShiftKey,
   sleep,
+  logout,
 } from './_helpers.selenium'
 
 let driver
@@ -54,23 +55,9 @@ describe('entry search', () => {
     done()
   })
 
-  afterEach(async () => {
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
-
-    await accountDropdown.click()
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-
-    await logoutButton.click()
-    await getElementByTag(driver, '[data-test-path="email"]')
-    await driver.quit()
-    driver = null
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
+    done()
   })
 
   // should search an entry at the middle of an entry
