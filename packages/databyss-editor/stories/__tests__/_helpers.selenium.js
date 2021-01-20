@@ -58,14 +58,16 @@ export const getElementById = async (driver, id) => {
   return _driver
 }
 
-export const isSaved = async (driver) => {
-  await getElementById(driver, 'complete')
+export const isSaved = async () => {
+  await sleep(5000)
+
+  // await getElementById(driver, 'complete')
 }
 
-export const isAppInNotesSaved = async (driver) => {
-  await sleep(1000)
-  await getElementById(driver, 'changes-saved')
-  await sleep(1000)
+export const isAppInNotesSaved = async () => {
+  await sleep(5000)
+  // await getElementById(driver, 'changes-saved')
+  // await sleep(1000)
 }
 
 export const toggleBold = (actions) =>
