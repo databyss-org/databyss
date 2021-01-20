@@ -20,6 +20,7 @@ import AccountMenu from './AccountMenu'
 const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
   const hasPendingPatches = usePageContext((c) => c.hasPendingPatches)
+  const _hasPendingPatches = hasPendingPatches()
   // get page name from headerCache
   const getPages = usePageContext((c) => c && c.getPages)
 
@@ -43,10 +44,10 @@ const PageSticky = ({ pagePath, pageId }) => {
 
   useEffect(() => {
     // set the true state of pending patches
-    setPendingPatches(hasPendingPatches)
-    setShowSaving(hasPendingPatches)
+    setPendingPatches(_hasPendingPatches)
+    setShowSaving(_hasPendingPatches)
     // debounceSavingIcon(hasPendingPatches)
-  }, [hasPendingPatches])
+  }, [_hasPendingPatches])
 
   const pages = getPages()
   // get page title

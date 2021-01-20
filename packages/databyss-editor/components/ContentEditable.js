@@ -76,6 +76,7 @@ const ContentEditable = ({
   const resetTopicHeaders = useTopicContext((c) => c && c.resetTopicHeaders)
 
   const hasPendingPatches = usePageContext((c) => c && c.hasPendingPatches)
+  const _hasPendingPatches = hasPendingPatches()
 
   const topicContext = useTopicContext()
   const historyContext = useHistoryContext()
@@ -159,7 +160,7 @@ const ContentEditable = ({
       state.newEntities.length &&
       setSource &&
       topicContext &&
-      !hasPendingPatches
+      !_hasPendingPatches
     ) {
       const { setTopic } = topicContext
 
@@ -205,7 +206,7 @@ const ContentEditable = ({
         removeEntityFromQueue(entity._id)
       })
     }
-  }, [state.newEntities.length, hasPendingPatches])
+  }, [state.newEntities.length, _hasPendingPatches])
 
   useImperativeHandle(editorRef, () => ({
     focus: () => {
