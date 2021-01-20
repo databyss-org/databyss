@@ -130,13 +130,14 @@ const removePatches = async (p, page) => {
     case 'blocks': {
       const _index = p.path[1]
       const { blocks } = page
-      const _blockId = blocks[_index]._id
+      // TODO: add this back
+      // const _blockId = blocks[_index]._id
       // remove block from db
-      await upsert({
-        $type: DocumentType.Block,
-        _id: _blockId,
-        doc: { _deleted: true },
-      })
+      // await upsert({
+      //   $type: DocumentType.Block,
+      //   _id: _blockId,
+      //   doc: { _deleted: true },
+      // })
       // remove block from page
       blocks.splice(_index, 1)
       break

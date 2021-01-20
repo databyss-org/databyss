@@ -80,6 +80,8 @@ describe('block indexing', () => {
 
     await sendKeys(actions, '@this is an opening source')
     await enterKey(actions)
+    await isAppInNotesSaved(driver)
+
     await upKey(actions)
     // edits the author
     await rightKey(actions)
@@ -123,6 +125,8 @@ describe('block indexing', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '#a topic')
+    await isAppInNotesSaved(driver)
+
     await enterKey(actions)
     await sendKeys(actions, 'second entry')
     await enterKey(actions)

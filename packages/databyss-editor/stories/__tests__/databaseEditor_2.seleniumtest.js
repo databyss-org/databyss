@@ -170,6 +170,7 @@ describe('connected editor', () => {
     await sendKeys(actions, 'this is more dummy text')
     await enterKey(actions)
     await enterKey(actions)
+    await isSaved(driver)
 
     await sendKeys(actions, '@test this')
 

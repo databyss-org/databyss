@@ -80,6 +80,8 @@ describe('notes app', () => {
     await enterKey(actions)
     await isAppInNotesSaved(driver)
 
+    await isAppInNotesSaved(driver)
+
     await sendKeys(actions, 'entries included within the topic')
     await enterKey(actions)
     await enterKey(actions)
@@ -138,6 +140,8 @@ describe('notes app', () => {
 
     // select author from the google api
     await sendKeys(actions, '@Murray Bookchin')
+    await isAppInNotesSaved(driver)
+
     const googleApi = await getElementByTag(
       driver,
       '[data-test-block-menu="GOOGLE_BOOKS"]'
