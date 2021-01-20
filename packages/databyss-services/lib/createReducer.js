@@ -14,7 +14,10 @@ const createReducer = (...middlewares) => {
   const composedMiddleware = composeMiddleware([
     thunk,
     ...middlewares,
-    ...(process.env.NODE_ENV === 'development' ? [logger] : []),
+    ...(process.env.NODE_ENV === 'development' ||
+    process.env.NODE_ENV === 'test'
+      ? [logger]
+      : []),
   ])
 
   return (reducer, initialState, { initializer, name, onChange } = {}) => {
