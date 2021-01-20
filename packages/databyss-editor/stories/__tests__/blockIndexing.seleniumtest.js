@@ -148,8 +148,8 @@ describe('block indexing', () => {
     await enterKey(actions)
     await sendKeys(actions, 'second entry within topic')
     // BLOCK RELATIONS NEED TO BE ADDED, WAIT FOR CHANGE
-    await sleep(2000)
     await isAppInNotesSaved(driver)
+    await sleep(2000)
 
     await driver.navigate().refresh()
     await getEditor(driver)
