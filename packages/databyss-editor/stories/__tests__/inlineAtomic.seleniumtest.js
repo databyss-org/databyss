@@ -272,6 +272,7 @@ describe('inline atomic', () => {
 
     await getEditor(driver)
     await driver.navigate().refresh()
+    await sleep(1000)
     topicsSidebarButton = await getElementByTag(
       driver,
       '[data-test-sidebar-element="topics"]'

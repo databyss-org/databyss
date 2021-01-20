@@ -118,7 +118,6 @@ describe('<EditSourceForm/>', () => {
     await dismissModalButton.click()
 
     await isSaved(driver)
-    await sleep(1000)
 
     // refresh page
     await driver.navigate().refresh()

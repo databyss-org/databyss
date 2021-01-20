@@ -92,9 +92,9 @@ describe('editor history', () => {
     await sendKeys(actions, 'this entry should stay')
     await enterKey(actions)
     await enterKey(actions)
-    await sleep(500)
+    await isSaved(driver)
     await driver.navigate().refresh()
-    await sleep(3000)
+    await getEditor(driver)
     await sendKeys(actions, 'this should eventually be undone')
     await enterKey(actions)
     await enterKey(actions)
@@ -115,10 +115,9 @@ describe('editor history', () => {
     await undo(actions)
     await undo(actions)
     await undo(actions)
-
-    await sleep(3000)
+    await isSaved(driver)
     await driver.navigate().refresh()
-    await sleep(3000)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -321,9 +320,7 @@ describe('editor history', () => {
 
     await redo(actions)
     await redo(actions)
-
-    await sleep(3000)
-
+    await isSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
 
