@@ -80,7 +80,7 @@ export const isSaved = async (driver) => {
     await getElementById(driver, 'complete')
     await sleep(1000)
   } catch (err) {
-    console.log(err)
+    console.log(err.name)
   }
 }
 
@@ -90,7 +90,7 @@ export const isAppInNotesSaved = async (driver) => {
     await getElementById(driver, 'changes-saved')
     await sleep(1000)
   } catch (err) {
-    console.log(err)
+    console.log(err.name)
   }
 }
 
