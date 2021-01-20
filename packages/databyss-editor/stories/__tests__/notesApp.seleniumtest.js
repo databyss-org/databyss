@@ -78,6 +78,8 @@ describe('notes app', () => {
 
     await sendKeys(actions, '#this is a new topic')
     await enterKey(actions)
+    await isAppInNotesSaved(driver)
+
     await sendKeys(actions, 'entries included within the topic')
     await enterKey(actions)
     await enterKey(actions)
