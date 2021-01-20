@@ -21,12 +21,12 @@ let editor
 let actions
 
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://127.0.0.1:8080/iframe.html?id=services-auth--login'
+const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
 
 const LOCAL_URL_EDITOR =
   'http://localhost:6006/iframe.html?id=services-page--slate-5'
 const PROXY_URL_EDITOR =
-  'http://127.0.0.1:8080/iframe.html?id=services-page--slate-5'
+  'http://localhost:8080/iframe.html?id=services-page--slate-5'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
