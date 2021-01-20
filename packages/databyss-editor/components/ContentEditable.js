@@ -76,7 +76,10 @@ const ContentEditable = ({
   const resetTopicHeaders = useTopicContext((c) => c && c.resetTopicHeaders)
 
   const hasPendingPatches = usePageContext((c) => c && c.hasPendingPatches)
-  const _hasPendingPatches = hasPendingPatches()
+  let _hasPendingPatches
+  if (hasPendingPatches) {
+    _hasPendingPatches = hasPendingPatches()
+  }
 
   const topicContext = useTopicContext()
   const historyContext = useHistoryContext()
