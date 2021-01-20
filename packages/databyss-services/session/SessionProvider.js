@@ -108,7 +108,7 @@ const SessionProvider = ({
       (bool) => {
         setDbPending(bool)
       },
-      2000,
+      2500,
       { leading: true }
     ),
     []

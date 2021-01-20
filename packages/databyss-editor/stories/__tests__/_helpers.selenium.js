@@ -14,10 +14,17 @@ export const getEditor = async (driver) => {
   await sleep(500)
   const el = await driver.wait(
     until.elementLocated(By.tagName('[contenteditable="true"]')),
-    waitUntilTime
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
   )
 
-  const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
+  const _driver = await driver.wait(
+    until.elementIsVisible(el),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
   return _driver
 }
 
@@ -27,7 +34,9 @@ export const getElementsByTag = async (driver, tag) => {
   try {
     el = await driver.wait(
       until.elementsLocated(By.tagName(tag)),
-      waitUntilTime
+      waitUntilTime,
+      'Timed out after 30 seconds',
+      500
     )
   } catch (ex) {
     if (ex.name !== 'TimeoutError') {
@@ -43,7 +52,9 @@ export const getElementByTag = async (driver, tag) => {
   await sleep(500)
   const el = await driver.wait(
     until.elementLocated(By.tagName(tag)),
-    waitUntilTime
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
   )
 
   // const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
@@ -68,9 +79,19 @@ export const logout = async (driver) => {
 
 export const getElementById = async (driver, id) => {
   await sleep(500)
-  const el = await driver.wait(until.elementLocated(By.id(id)), waitUntilTime)
+  const el = await driver.wait(
+    until.elementLocated(By.id(id)),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
 
-  const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
+  const _driver = await driver.wait(
+    until.elementIsVisible(el),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
   return _driver
 }
 
