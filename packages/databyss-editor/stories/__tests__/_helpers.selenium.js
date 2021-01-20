@@ -75,10 +75,9 @@ export const getElementById = async (driver, id) => {
 }
 
 export const isSaved = async (driver) => {
-  await sleep(1000)
+  await sleep(2000)
   try {
     await getElementById(driver, 'complete')
-    await sleep(1000)
   } catch (err) {
     if (!err.name !== 'StaleElementReferenceError') {
       throw err
@@ -87,10 +86,9 @@ export const isSaved = async (driver) => {
 }
 
 export const isAppInNotesSaved = async (driver) => {
-  await sleep(1000)
+  await sleep(2000)
   try {
     await getElementById(driver, 'changes-saved')
-    await sleep(1000)
   } catch (err) {
     if (!err.name !== 'StaleElementReferenceError') {
       throw err
