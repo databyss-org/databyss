@@ -11,7 +11,6 @@ const savePatchBatch = async (data: PatchBatch) => {
     return
   }
   for (const patch of patches) {
-    console.log('PATCH')
     await runPatches(patch, _page)
   }
   // save page
