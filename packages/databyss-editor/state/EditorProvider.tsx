@@ -5,7 +5,6 @@ import React, {
   useImperativeHandle,
   useRef,
   useMemo,
-  useEffect,
 } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
