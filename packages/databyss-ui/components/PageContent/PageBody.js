@@ -54,10 +54,9 @@ const PageBody = ({
   // if DB has no pending patches and we have patches waiting, send patches
   useEffect(() => {
     if (!_isDbBusy && patchQueue.current.length && pageState.current) {
-      // OPTIMIZE THESE PATCHES
       const payload = {
         id: pageState.current.pageHeader._id,
-        patches: patchQueue.current,
+        patches: optimizePatches(patchQueue.current),
       }
 
       setPatches(payload)
@@ -79,7 +78,7 @@ const PageBody = ({
         }
       },
       process.env.SAVE_PAGE_THROTTLE,
-      { leading: true, maxWait: 500 }
+      { leading: true, maxWait: 750 }
     ),
     []
   )
