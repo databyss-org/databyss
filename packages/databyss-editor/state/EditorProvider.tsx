@@ -5,6 +5,7 @@ import React, {
   useImperativeHandle,
   useRef,
   useMemo,
+  useEffect,
 } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
@@ -156,7 +157,6 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
     if (onChange) {
       if (setBlockRelations) {
         // check if a new atomic has just been removed in the patches
-
         if (
           props.patches.filter(
             (p) =>
@@ -225,6 +225,10 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
       onChange: forkOnChange,
     }
   )
+
+  useEffect(() => {
+    console.log('PENDING', pendingAtomicSave.current)
+  }, [pendingAtomicSave.current])
 
   useImperativeHandle(
     ref,
