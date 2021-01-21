@@ -259,6 +259,13 @@ export const cleanupPatches = (patches: Patch[]) =>
       )
   )
 
+export const optimizePatches = (patches: Patch[]): Patch[] => {
+  const _patches = patches
+  // console.log(_patches)
+
+  return patches
+}
+
 export const addMetaToPatches = ({ nextState, patches }: OnChangeArgs) =>
   cleanupPatches(patches)?.map((_p) => {
     // add selection

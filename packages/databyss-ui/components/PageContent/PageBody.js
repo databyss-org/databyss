@@ -13,6 +13,7 @@ import {
   addMetaToPatches,
   cleanupPatches,
   pageToEditorState,
+  optimizePatches,
 } from '@databyss-org/editor/state/util'
 
 import { isMobile } from '../../lib/mediaQuery'
@@ -40,7 +41,7 @@ const PageBody = ({
   const editorStateRef = useRef()
   const [pendingPatches, setPendingPatches] = useState(false)
 
-  // updates state for content editable `pendingPatches` property
+  // updates state for contentEditable `pendingPatches` property
   useEffect(() => {
     if (patchQueue.current.length === 0 && pendingPatches) {
       setPendingPatches(true)
@@ -53,10 +54,12 @@ const PageBody = ({
   // if DB has no pending patches and we have patches waiting, send patches
   useEffect(() => {
     if (!_isDbBusy && patchQueue.current.length && pageState.current) {
+      // OPTIMIZE THESE PATCHES
       const payload = {
         id: pageState.current.pageHeader._id,
         patches: patchQueue.current,
       }
+
       setPatches(payload)
       patchQueue.current = []
     }
@@ -69,7 +72,7 @@ const PageBody = ({
         if (_patches.length) {
           const payload = {
             id: nextState.pageHeader._id,
-            patches: patchQueue.current,
+            patches: optimizePatches(patchQueue.current),
           }
           setPatches(payload)
           patchQueue.current = []

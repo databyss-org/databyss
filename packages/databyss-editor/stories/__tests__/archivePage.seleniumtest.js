@@ -332,5 +332,6 @@ describe('archive page', () => {
 
     // check that the editor only shows one suggestion, the deleted page should not be shown
     assert.equal(suggestedSources.length, 1)
+    await isAppInNotesSaved(driver)
   })
 })
