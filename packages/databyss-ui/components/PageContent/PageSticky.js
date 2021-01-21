@@ -33,7 +33,10 @@ const PageSticky = ({ pagePath, pageId }) => {
         setShowSaving(count)
       },
       2500,
-      { leading: true }
+      {
+        //  leading: true,
+        maxWait: 500,
+      }
     ),
     []
   )

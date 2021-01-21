@@ -39,6 +39,7 @@ const PageBody = ({
   const pageState = useRef(null)
   const editorStateRef = useRef()
 
+  // console.log('db busy', _isDbBusy)
   // if DB has no pending patches and we have patches waiting, send patches
   useEffect(() => {
     if (!_isDbBusy && patchQueue.current.length && pageState.current) {
