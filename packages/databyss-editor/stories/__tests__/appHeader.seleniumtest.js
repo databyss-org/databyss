@@ -143,7 +143,7 @@ describe('app sticky header', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/#')
-    isAppInNotesSaved(driver)
+    await isAppInNotesSaved(driver)
 
     headerSticky = await getElementByTag(
       driver,

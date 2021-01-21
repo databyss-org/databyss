@@ -169,7 +169,7 @@ const ContentEditable = ({
       setSource &&
       topicContext &&
       !_isDbBusy &&
-      !patchQueue.length &&
+      !patchQueue?.length &&
       !patchQueueSize
     ) {
       const { setTopic } = topicContext
