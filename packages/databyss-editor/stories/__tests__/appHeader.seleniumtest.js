@@ -151,5 +151,6 @@ describe('app sticky header', () => {
     )
     headerSticky = await headerSticky.getAttribute('innerText')
     assert.equal(headerSticky, 'this is a page title')
+    await isAppInNotesSaved(driver)
   })
 })
