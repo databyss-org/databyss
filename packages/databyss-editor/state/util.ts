@@ -19,6 +19,7 @@ import {
 } from '../lib/clipboardUtils'
 
 import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
+import _ from 'lodash'
 import {
   RangeType,
   InlineTypes,
@@ -259,11 +260,42 @@ export const cleanupPatches = (patches: Patch[]) =>
       )
   )
 
+// checks if all operation have occured within one block, this will work for `selection` and `block` updates
 export const optimizePatches = (patches: Patch[]): Patch[] => {
   const _patches = patches
-  // console.log(_patches)
+  // checks if all operation are of type `replace`
+  if (_patches.find((p) => p.op !== 'replace')) {
+    return _patches
+  }
 
-  return _patches
+  // check if all operations have occured on the same index
+  const _firstPatch = _patches[0]
+  let _index
+  if (_firstPatch?.path[0] === 'blocks') {
+    _index = _firstPatch.path[1]
+  }
+  if (_firstPatch?.path[0] === 'selection') {
+    _index =
+      _firstPatch.value.anchor.index === _firstPatch.value.focus.index &&
+      _firstPatch.value.anchor.index
+  }
+  // if index span across multiple blocks or doesnt exist, return default patch
+  if (!_.isNumber(_index) && !_index) {
+    return _patches
+  }
+
+  const _optimizedPatches: Patch[] = []
+  _patches.reverse().forEach((p) => {
+    // get latest selection
+    if (!_optimizedPatches.find((_p: Patch) => _p?.path[0] === 'selection')) {
+      _optimizedPatches.push(p)
+    } else if (!_optimizedPatches.find((_p) => _p?.path[0] === 'blocks')) {
+      // get latest block
+      _optimizedPatches.push(p)
+    }
+  })
+
+  return _optimizedPatches.reverse()
 }
 
 export const addMetaToPatches = ({ nextState, patches }: OnChangeArgs) =>
