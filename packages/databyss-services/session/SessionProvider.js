@@ -121,6 +121,8 @@ const SessionProvider = ({
 
   const isDbBusy = useCallback(() => dbPending, [dbPending])
 
+  // const isDbBusy = () => dbPending
+
   const setDefaultPage = useCallback((id) => {
     dispatch(actions.onSetDefaultPage(id))
   }, [])

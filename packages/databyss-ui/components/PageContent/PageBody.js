@@ -49,7 +49,7 @@ const PageBody = ({
       setPatches(payload)
       patchQueue.current = []
     }
-  }, [_isDbBusy])
+  }, [_isDbBusy, patchQueue.current.length])
 
   const throttledAutosave = useCallback(
     debounce(
@@ -72,7 +72,6 @@ const PageBody = ({
 
   // state from provider is out of date
   const onChange = (value) => {
-    // console.log(patchQueue.current)
     requestAnimationFrame(() => {
       if (editorStateRef.current?.pagePath) {
         onEditorPathChange(editorStateRef.current.pagePath)
