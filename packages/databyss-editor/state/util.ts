@@ -1,4 +1,5 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
+import _ from 'lodash'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
 import {
@@ -19,7 +20,6 @@ import {
 } from '../lib/clipboardUtils'
 
 import { getAtomicDifference } from '../lib/clipboardUtils/getAtomicsFromSelection'
-import _ from 'lodash'
 import {
   RangeType,
   InlineTypes,
@@ -260,11 +260,18 @@ export const cleanupPatches = (patches: Patch[]) =>
       )
   )
 
+// checks if all operation are of type `replace`
+export const canPatchesBeOptimized = (patches: Patch[]): boolean => {
+  if (patches.find((p) => p.op !== 'replace')) {
+    return false
+  }
+  return true
+}
+
 // checks if all operation have occured within one block, this will work for `selection` and `block` updates
 export const optimizePatches = (patches: Patch[]): Patch[] => {
   const _patches = patches
-  // checks if all operation are of type `replace`
-  if (_patches.find((p) => p.op !== 'replace')) {
+  if (!canPatchesBeOptimized(_patches)) {
     return _patches
   }
 

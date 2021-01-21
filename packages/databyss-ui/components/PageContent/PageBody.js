@@ -14,6 +14,7 @@ import {
   cleanupPatches,
   pageToEditorState,
   optimizePatches,
+  canPatchesBeOptimized,
 } from '@databyss-org/editor/state/util'
 
 import { isMobile } from '../../lib/mediaQuery'
@@ -78,7 +79,10 @@ const PageBody = ({
         }
       },
       process.env.SAVE_PAGE_THROTTLE,
-      { leading: true, maxWait: 750 }
+      {
+        leading: true,
+        maxWait: 500,
+      }
     ),
     []
   )
@@ -95,7 +99,20 @@ const PageBody = ({
 
     const patches = addMetaToPatches(value)
     // push changes to a queue
+    if (!canPatchesBeOptimized(patches) && patchQueue.current.length) {
+      console.log('SEND EARLY PAYLOAD')
+      // if new patches cant be optimized, send current payload
+      const payload = {
+        id: pageState.current.pageHeader._id,
+        patches: optimizePatches(patchQueue.current),
+      }
+      console.log('SEND EARLY PAYLOAD', payload)
+
+      setPatches(payload)
+      patchQueue.current = []
+    }
     patchQueue.current = patchQueue.current.concat(patches)
+    //
     throttledAutosave({ ...value, patches })
   }
 

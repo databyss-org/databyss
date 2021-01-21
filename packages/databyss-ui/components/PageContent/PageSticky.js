@@ -16,6 +16,7 @@ import AccountMenu from './AccountMenu'
 const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+  const patchQueueSize = usePageContext((c) => c && c.patchQueueSize)
 
   const _isDbBusy = isDbBusy()
   // get page name from headerCache
@@ -34,7 +35,7 @@ const PageSticky = ({ pagePath, pageId }) => {
       },
       2500,
       {
-        //  leading: true,
+        // leading: true,
         maxWait: 500,
       }
     ),
@@ -42,8 +43,9 @@ const PageSticky = ({ pagePath, pageId }) => {
   )
 
   useEffect(() => {
-    debounceSavingIcon(_isDbBusy)
-  }, [_isDbBusy])
+    // check if database is busy or if we have pending patches
+    debounceSavingIcon(!!(_isDbBusy || patchQueueSize))
+  }, [_isDbBusy, patchQueueSize])
 
   const pages = getPages()
   // get page title

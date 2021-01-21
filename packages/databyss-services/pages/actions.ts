@@ -116,6 +116,7 @@ export function savePatchBatch(batch?: PatchBatch) {
   }
   const _batchPatch = { id: _pageId, patches: _patches }
   return async (dispatch: Function) => {
+    console.log(_patches)
     dispatch({
       type: QUEUE_PATCH,
       payload: {
