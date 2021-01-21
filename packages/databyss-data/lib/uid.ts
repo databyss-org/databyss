@@ -23,4 +23,4 @@ export const uid = () => customAlphabet(BASE62, 12)()
  *
  * 1) see https://zelark.github.io/nano-id-cc/
  */
-export const uidlc = () => customAlphabet(BASE62, 14)()
+export const uidlc = () => customAlphabet(BASE36, 14)()

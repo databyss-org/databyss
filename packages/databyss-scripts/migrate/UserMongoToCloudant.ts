@@ -1,7 +1,11 @@
 import Account from '@databyss-org/api/src/models/Account'
 import User from '@databyss-org/api/src/models/User'
+import Page from '@databyss-org/api/src/models/Page'
+import Block from '@databyss-org/api/src/models/Block'
+import { Page as PageInterface } from '@databyss-org/services/interfaces/Page'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
-// import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import {
   createGroupId,
   createGroupDatabase,
@@ -16,9 +20,10 @@ interface JobArgs {
   email: string
 }
 
-class DeleteAccount extends ServerProcess {
+class UserMongoToCloudant extends ServerProcess {
   args: JobArgs
   env: EnvDict
+  static importEnv: string[]
 
   constructor(args: JobArgs) {
     super()
@@ -42,13 +47,58 @@ class DeleteAccount extends ServerProcess {
 
       // STEP 2: Create the user's default group database and add design docs
       const _defaultGroupId = await createGroupId()
+      const _couchGroupName = `g_${_defaultGroupId}`
+      console.log(`⏳ Create group: ${_couchGroupName}`)
       await createGroupDatabase(_defaultGroupId)
+      console.log(`✅ Group created: ${_defaultGroupId}`)
+      const _groupDb = await cloudant.db.use<PageInterface>(_couchGroupName)
+      const _mongoAccount = await Account.findOne({ _id: _defaultAccountId })
+      console.log(`ℹ️  Old defaultPageId: ${_mongoAccount.defaultPage}`)
 
-      // STEP 3: Add the userPreferences doc to the default group database
-      //   with the defaultPageId
-
-      // STEP 4: Copy all Pages, Blocks, Selections and BlockRelations belonging to the user
+      // STEP 3: Copy all Pages, Blocks, Selections and BlockRelations belonging to the user
       //   to the group db
+
+      // get all Blocks for account
+      const _mongoBlocks = await Block.find({
+        account: _defaultAccountId,
+      })
+
+      // insert the pages in couch, generating new ids and keeping a map
+      const _blockIdMap = {}
+      for (const _mongoBlock of _mongoBlocks) {
+        const _couchBlockId = uid()
+        _blockIdMap[_mongoBlock._id] = _couchBlockId
+        console.log(_mongoBlock)
+        await _groupDb.insert({
+          $type: DocumentType.Block,
+          _id: _couchBlockId,
+          type: _mongoBlock.type,
+          text: _mongoBlock.text,
+        })
+      }
+
+      // get all Pages for account
+      const _mongoPages = await Page.find({
+        account: _defaultAccountId,
+      })
+
+      // insert the pages in couch, generating new ids and keeping a map of old => new id
+      const _pageIdMap = {}
+      for (const _mongoPage of _mongoPages) {
+        const _couchPageId = uid()
+        _pageIdMap[_mongoPage._id] = _couchPageId
+        await _groupDb.insert({
+          $type: DocumentType.Page,
+          _id: _couchPageId,
+          blocks: _mongoPage.blocks.map((_mongoBlock) => ({
+            ..._mongoBlock,
+            _id: _blockIdMap[_mongoBlock._id],
+          })),
+        })
+      }
+
+      // STEP 4: Add the userPreferences doc to the default group database
+      //   with the defaultPageId
 
       // STEP 5: Create documents in the Users db for the new user so they can login
 
@@ -65,4 +115,6 @@ class DeleteAccount extends ServerProcess {
   }
 }
 
-export default DeleteAccount
+UserMongoToCloudant.importEnv = ['CLOUDANT_USERNAME', 'CLOUDANT_PASSWORD']
+
+export default UserMongoToCloudant

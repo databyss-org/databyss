@@ -13,6 +13,7 @@
   },
   "peerDependencies": {
     "@databyss-org/api": "1.2.15",
-    "@databyss-org/data": "1.2.15"
+    "@databyss-org/data": "1.2.15",
+    "@databyss-org/services": "1.2.15"
   }
 }

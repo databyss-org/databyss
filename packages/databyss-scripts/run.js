@@ -1,3 +1,5 @@
+const { getEnv } = require('./lib/util')
+
 const scriptMap = {
   'copy-database': ['dba/CopyDatabase', ['envName', 'fromDb', 'toDb']],
   'copy-page': ['dba/CopyPage', ['envName', 'pageId', 'toAccountId']],
@@ -18,7 +20,6 @@ function run(args) {
     process.exit()
   }
   const [_jobFile, _jobArgList] = scriptMap[_scriptName]
-  const Job = require(`./${_jobFile}`).default
   const _args = args.slice(3)
   if (_args.length !== _jobArgList.length) {
     console.log(`Usage: yarn script ${_scriptName} ${usageArgs(_jobArgList)}`)
@@ -29,6 +30,10 @@ function run(args) {
     return _acc
   }, {})
   console.log(_scriptName, _jobArgs)
+  if (_jobArgs.envName) {
+    getEnv(_jobArgs.envName, true)
+  }
+  const Job = require(`./${_jobFile}`).default
   const job = new Job(_jobArgs)
   job.on('end', () => {
     process.exit()

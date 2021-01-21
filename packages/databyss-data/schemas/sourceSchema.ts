@@ -132,10 +132,6 @@ export const sourceSchema: JSONSchema4 = {
         },
       },
     },
-    // TODO: is this needed?
-    page: {
-      type: 'string',
-    },
     title: {
       $ref: 'text',
     },

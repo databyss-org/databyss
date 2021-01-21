@@ -29,8 +29,7 @@ export const createGroupDatabase = async (id: string) => {
   try {
     await cloudant.db.get(`g_${id}`)
   } catch (err) {
-    console.log(err)
-    if (err.message !== 'Database does not exist.') {
+    if (err.error !== 'not_found') {
       throw err
     }
     await cloudant.db.create(`g_${id}`)
