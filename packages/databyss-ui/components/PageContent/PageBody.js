@@ -53,8 +53,9 @@ const PageBody = ({
   }, [patchQueue.current.length])
 
   // if DB has no pending patches and we have patches waiting, send patches
+
   useEffect(() => {
-    if (!_isDbBusy && patchQueue.current.length && pageState.current) {
+    if (!_isDbBusy && pendingPatches && pageState.current) {
       const payload = {
         id: pageState.current.pageHeader._id,
         patches: optimizePatches(patchQueue.current),
@@ -63,7 +64,7 @@ const PageBody = ({
       setPatches(payload)
       patchQueue.current = []
     }
-  }, [_isDbBusy, patchQueue.current.length])
+  }, [_isDbBusy, pendingPatches])
 
   const throttledAutosave = useCallback(
     debounce(
@@ -81,7 +82,7 @@ const PageBody = ({
       process.env.SAVE_PAGE_THROTTLE,
       {
         leading: true,
-        maxWait: 500,
+        maxWait: 1000,
       }
     ),
     []
@@ -100,13 +101,11 @@ const PageBody = ({
     const patches = addMetaToPatches(value)
     // push changes to a queue
     if (!canPatchesBeOptimized(patches) && patchQueue.current.length) {
-      console.log('SEND EARLY PAYLOAD')
       // if new patches cant be optimized, send current payload
       const payload = {
         id: pageState.current.pageHeader._id,
         patches: optimizePatches(patchQueue.current),
       }
-      console.log('SEND EARLY PAYLOAD', payload)
 
       setPatches(payload)
       patchQueue.current = []
