@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef } from 'react'
+import React, { useEffect, useCallback, useRef, useState } from 'react'
 import { debounce } from 'lodash'
 import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
@@ -38,8 +38,18 @@ const PageBody = ({
   const patchQueue = useRef([])
   const pageState = useRef(null)
   const editorStateRef = useRef()
+  const [pendingPatches, setPendingPatches] = useState(false)
 
-  // console.log('db busy', _isDbBusy)
+  // updates state for content editable `pendingPatches` property
+  useEffect(() => {
+    if (patchQueue.current.length === 0 && pendingPatches) {
+      setPendingPatches(true)
+    }
+    if (patchQueue.current.length && !pendingPatches) {
+      setPendingPatches(false)
+    }
+  }, [patchQueue.current.length])
+
   // if DB has no pending patches and we have patches waiting, send patches
   useEffect(() => {
     if (!_isDbBusy && patchQueue.current.length && pageState.current) {
@@ -107,7 +117,7 @@ const PageBody = ({
           >
             <PDFDropZoneManager />
             <ContentEditable
-              patchQueue={patchQueue.current}
+              pendingPatches={pendingPatches}
               autofocus
               focusIndex={focusIndex}
               onNavigateUpFromTop={onNavigateUpFromEditor}

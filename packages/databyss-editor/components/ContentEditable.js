@@ -57,7 +57,7 @@ const ContentEditable = ({
   readonly,
   onNavigateUpFromTop,
   editorRef,
-  patchQueue,
+  pendingPatches,
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
@@ -169,7 +169,7 @@ const ContentEditable = ({
       setSource &&
       topicContext &&
       !_isDbBusy &&
-      !patchQueue?.length &&
+      !pendingPatches &&
       !patchQueueSize
     ) {
       const { setTopic } = topicContext
@@ -219,7 +219,7 @@ const ContentEditable = ({
     // checks DB for pending patches
     _isDbBusy,
     // checks patch queue from PageBody
-    patchQueue?.length,
+    pendingPatches,
     // checks patches from PageProvider
     patchQueueSize,
   ])

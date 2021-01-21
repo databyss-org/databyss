@@ -226,10 +226,6 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
     }
   )
 
-  useEffect(() => {
-    console.log('PENDING', pendingAtomicSave.current)
-  }, [pendingAtomicSave.current])
-
   useImperativeHandle(
     ref,
     () => ({
