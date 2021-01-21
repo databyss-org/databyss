@@ -46,8 +46,8 @@ const Box = ({ children, ...others }) => (
 
 const PageWithAutosave = ({ page }) => {
   const { setPatches } = usePageContext()
-  const hasPendingPatches = usePageContext((c) => c && c.hasPendingPatches)
-  const _hasPendingPatches = hasPendingPatches()
+  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+  const _isDbBusy = isDbBusy()
   const [pageState, setPageState] = useState(null)
   const [showSaving, setShowSaving] = useState(false)
 
@@ -64,11 +64,8 @@ const PageWithAutosave = ({ page }) => {
   )
 
   useEffect(() => {
-    // set the true state of pending patches
-    // setPendingPatches(_hasPendingPatches)
-    // setShowSaving(_hasPendingPatches)
-    debounceSavingIcon(_hasPendingPatches)
-  }, [_hasPendingPatches])
+    debounceSavingIcon(_isDbBusy)
+  }, [_isDbBusy])
 
   const operationsQueue = useRef([])
 
@@ -118,7 +115,6 @@ const PageWithAutosave = ({ page }) => {
           changes saved
         </Text>
       ) : null}
-      <text>{_hasPendingPatches}</text>
     </View>
   )
 }

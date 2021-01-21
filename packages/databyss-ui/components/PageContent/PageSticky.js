@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { Helmet } from 'react-helmet'
 import { debounce } from 'lodash'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { View, Text, Icon } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
@@ -14,12 +15,12 @@ import AccountMenu from './AccountMenu'
 
 const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
-  const hasPendingPatches = usePageContext((c) => c.hasPendingPatches)
-  const _hasPendingPatches = hasPendingPatches()
+  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+
+  const _isDbBusy = isDbBusy()
   // get page name from headerCache
   const getPages = usePageContext((c) => c && c.getPages)
 
-  // const [pendingPatches, setPendingPatches] = useState(0)
   const [showSaving, setShowSaving] = useState(false)
 
   const stickyRef = useRef()
@@ -38,11 +39,8 @@ const PageSticky = ({ pagePath, pageId }) => {
   )
 
   useEffect(() => {
-    // set the true state of pending patches
-    // setPendingPatches(_hasPendingPatches)
-    // setShowSaving(_hasPendingPatches)
-    debounceSavingIcon(_hasPendingPatches)
-  }, [_hasPendingPatches])
+    debounceSavingIcon(_isDbBusy)
+  }, [_isDbBusy])
 
   const pages = getPages()
   // get page title

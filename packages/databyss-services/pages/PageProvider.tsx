@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
@@ -42,7 +41,7 @@ interface ContextType {
   getPublicAccount: (id: string) => string | string[]
   archivePage: (id: string, boolean: boolean) => Promise<void>
   onPageCached: (id: string, callback: Function) => void
-  hasPendingPatches: number
+  patchQueueSize: number
   removePageFromCache: (id: string) => void
 }
 const useReducer = createReducer()
@@ -57,8 +56,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
-
   useEffect(() => {
     if (pageCachedHookRef.current) {
       Object.keys(pageCachedHookRef.current).forEach((k) => {
@@ -72,8 +69,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     }
   }, [state.cache])
 
-  const hasPendingPatches = isDbBusy
-  // const hasPendingPatches = state.patchQueueSize
+  const patchQueueSize = state.patchQueueSize
 
   const onPageCached = (id: string, callback: Function) => {
     // add back to dictionary
@@ -181,7 +177,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         archivePage,
         onPageCached,
         setPagePublic,
-        hasPendingPatches,
+        patchQueueSize,
         removePageFromCache,
         getPublicAccount,
       }}

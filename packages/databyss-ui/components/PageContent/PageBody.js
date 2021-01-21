@@ -25,6 +25,10 @@ const PageBody = ({
   onEditorPathChange,
 }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+
+  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+
+  const _isDbBusy = isDbBusy()
   const { location } = useNavigationContext()
   const clearBlockDict = usePageContext((c) => c.clearBlockDict)
   const setPatches = usePageContext((c) => c.setPatches)
@@ -34,6 +38,18 @@ const PageBody = ({
   const patchQueue = useRef([])
   const pageState = useRef(null)
   const editorStateRef = useRef()
+
+  // if DB has no pending patches and we have patches waiting, send patches
+  useEffect(() => {
+    if (!_isDbBusy && patchQueue.current.length && pageState.current) {
+      const payload = {
+        id: pageState.current.pageHeader._id,
+        patches: patchQueue.current,
+      }
+      setPatches(payload)
+      patchQueue.current = []
+    }
+  }, [_isDbBusy])
 
   const throttledAutosave = useCallback(
     debounce(
@@ -56,6 +72,7 @@ const PageBody = ({
 
   // state from provider is out of date
   const onChange = (value) => {
+    // console.log(patchQueue.current)
     requestAnimationFrame(() => {
       if (editorStateRef.current?.pagePath) {
         onEditorPathChange(editorStateRef.current.pagePath)
@@ -90,6 +107,7 @@ const PageBody = ({
           >
             <PDFDropZoneManager />
             <ContentEditable
+              patchQueue={patchQueue.current}
               autofocus
               focusIndex={focusIndex}
               onNavigateUpFromTop={onNavigateUpFromEditor}
