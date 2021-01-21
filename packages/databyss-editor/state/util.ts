@@ -263,7 +263,7 @@ export const optimizePatches = (patches: Patch[]): Patch[] => {
   const _patches = patches
   // console.log(_patches)
 
-  return patches
+  return _patches
 }
 
 export const addMetaToPatches = ({ nextState, patches }: OnChangeArgs) =>

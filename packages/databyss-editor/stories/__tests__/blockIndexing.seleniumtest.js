@@ -143,6 +143,8 @@ describe('block indexing', () => {
     await sendKeys(actions, '#this is the second topic')
     await enterKey(actions)
     await sendKeys(actions, 'entry should be contained within topic')
+    await isAppInNotesSaved(driver)
+
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'second entry within topic')
