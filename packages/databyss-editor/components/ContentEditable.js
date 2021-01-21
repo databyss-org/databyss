@@ -219,7 +219,7 @@ const ContentEditable = ({
     // checks DB for pending patches
     _isDbBusy,
     // checks patch queue from PageBody
-    patchQueue.length,
+    patchQueue?.length,
     // checks patches from PageProvider
     patchQueueSize,
   ])
