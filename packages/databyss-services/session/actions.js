@@ -3,6 +3,7 @@ import {
   replicateDbFromRemote,
   initiatePouchDbValidators,
   initiatePouchDbIndexes,
+  resetPouchDb,
 } from '@databyss-org/data/pouchdb/db'
 import { addPage } from '@databyss-org/data/pouchdb/pages/util'
 import request from '../lib/request'
@@ -27,7 +28,6 @@ import {
   getAccountId,
   deletePouchDbs,
   setDefaultPageId,
-  deleteUserPreferences,
   setUserSession,
   setDbPassword,
 } from './clientStorage'
@@ -184,7 +184,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       })
     }
   } catch (error) {
-    await deleteUserPreferences()
+    await resetPouchDb()
     dispatch({
       type: DENY_ACCESS,
       payload: { error },

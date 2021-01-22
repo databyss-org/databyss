@@ -38,9 +38,16 @@ export const dbRef: DbRef = {
   }),
 }
 
-export const db: PouchDB.Database<any> = new PouchDB('local', {
-  auto_compaction: true,
-})
+export const resetPouchDb = async () => {
+  await dbRef.current.destroy()
+  dbRef.current = new PouchDB('local', {
+    auto_compaction: true,
+  })
+}
+
+// export const db: PouchDB.Database<any> = new PouchDB('local', {
+//   auto_compaction: true,
+// })
 
 export const initiatePouchDbIndexes = async () => {
   await dbRef.current.search({
