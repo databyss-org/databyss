@@ -3,7 +3,6 @@ import {
   replicateDbFromRemote,
   initiatePouchDbValidators,
   initiatePouchDbIndexes,
-  resetPouchDb,
 } from '@databyss-org/data/pouchdb/db'
 import { addPage } from '@databyss-org/data/pouchdb/pages/util'
 import request from '../lib/request'
@@ -184,7 +183,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       })
     }
   } catch (error) {
-    await resetPouchDb()
+    await deletePouchDbs()
     dispatch({
       type: DENY_ACCESS,
       payload: { error },
