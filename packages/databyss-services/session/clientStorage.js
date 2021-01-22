@@ -32,6 +32,10 @@ export const deletePouchDbs = async () => {
     dbs.map(
       (db) =>
         new Promise((resolve, reject) => {
+          if (db.name === '_pouch_local') {
+            resolve()
+          }
+          // deletes index databases
           const request = indexedDB.deleteDatabase(db.name)
           request.onsuccess = resolve
           request.onerror = reject

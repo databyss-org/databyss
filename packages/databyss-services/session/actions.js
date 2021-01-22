@@ -56,6 +56,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
   try {
     const authToken = await getAuthToken()
     const accountId = await getAccountId()
+    console.log('after', accountId, authToken)
 
     if (authToken && accountId) {
       // if not at at root path '/' and accountID is not the same as the one in the url, set as guest account
@@ -101,10 +102,10 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     }
 
     const res = await _request(path, options, true)
+    console.log('ELSE')
 
     if (res.data && res.data.session) {
       // authenticated
-
       const { session } = res.data
 
       const _defaultPageId = session.user.groups.find(

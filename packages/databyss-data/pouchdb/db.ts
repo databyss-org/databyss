@@ -39,7 +39,7 @@ export const dbRef: DbRef = {
 }
 
 export const resetPouchDb = async () => {
-  if (dbRef.current) {
+  if (dbRef.current?.destroy) {
     await dbRef.current.destroy()
   }
   dbRef.current = new PouchDB('local', {
