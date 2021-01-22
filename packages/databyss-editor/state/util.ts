@@ -265,20 +265,10 @@ export const canPatchesBeOptimized = (patches: Patch[]): boolean => {
   if (patches.find((p) => p.op !== 'replace')) {
     return false
   }
-  return true
-}
-
-// checks if all operation have occured within one block, this will work for `selection` and `block` updates
-export const optimizePatches = (patches: Patch[]): Patch[] => {
-  const _patches = patches
-
-  if (!canPatchesBeOptimized(_patches)) {
-    return _patches
-  }
 
   // check if all operations have occured on the same index
 
-  const _areBlockOperationsOnSameIndex = _patches
+  const _areBlockOperationsOnSameIndex = patches
     .filter((p) => p.path[0] === 'blocks')
     .reduce((acc: any, curr: any, i: number) => {
       if (i === 0) {
@@ -290,7 +280,7 @@ export const optimizePatches = (patches: Patch[]): Patch[] => {
       return acc
     }, null)
 
-  const _areSelectionOperationsOnSameIndex = _patches
+  const _areSelectionOperationsOnSameIndex = patches
     .filter((p) => p.path[0] === 'selection')
     .reduce((acc: any, curr: any, i: number) => {
       if (curr.value.anchor.index !== curr.value.focus.index) {
@@ -313,9 +303,20 @@ export const optimizePatches = (patches: Patch[]): Patch[] => {
     !_.isNumber(_areBlockOperationsOnSameIndex) ||
     !_.isNumber(_areSelectionOperationsOnSameIndex)
   ) {
-    return _patches
+    return false
   }
   if (!_areBlockOperationsOnSameIndex || !_areSelectionOperationsOnSameIndex) {
+    return false
+  }
+
+  return true
+}
+
+// checks if all operation have occured within one block, this will work for `selection` and `block` updates
+export const optimizePatches = (patches: Patch[]): Patch[] => {
+  const _patches = patches
+
+  if (!canPatchesBeOptimized(_patches)) {
     return _patches
   }
 
