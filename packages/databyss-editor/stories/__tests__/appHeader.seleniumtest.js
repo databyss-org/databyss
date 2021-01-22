@@ -76,14 +76,15 @@ describe('app sticky header', () => {
     await enterKey(actions)
     await sendKeys(actions, '@this is a test source')
     await enterKey(actions)
-    await isAppInNotesSaved(driver)
     await sendKeys(actions, 'this is another test entry')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'this is a test entry')
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'entry')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '#this is a topic')
@@ -131,6 +132,8 @@ describe('app sticky header', () => {
     await enterKey(actions)
     await sendKeys(actions, '/@')
     await downKey(actions)
+    await isAppInNotesSaved(driver)
+
     headerSticky = await getElementByTag(
       driver,
       '[data-test-element="editor-sticky-header"]'
