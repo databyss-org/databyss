@@ -91,6 +91,7 @@ describe('app sticky header', () => {
     await enterKey(actions)
     await isAppInNotesSaved(driver)
     await sendKeys(actions, 'this is a test entry')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/#')

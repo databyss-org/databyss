@@ -1,6 +1,6 @@
 import { Key, By, until } from 'selenium-webdriver'
 
-const waitUntilTime = 20000
+const waitUntilTime = 30000
 
 const SLEEP_TIME = 300
 
