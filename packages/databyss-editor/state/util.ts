@@ -271,23 +271,51 @@ export const canPatchesBeOptimized = (patches: Patch[]): boolean => {
 // checks if all operation have occured within one block, this will work for `selection` and `block` updates
 export const optimizePatches = (patches: Patch[]): Patch[] => {
   const _patches = patches
+
   if (!canPatchesBeOptimized(_patches)) {
     return _patches
   }
 
   // check if all operations have occured on the same index
-  const _firstPatch = _patches[0]
-  let _index
-  if (_firstPatch?.path[0] === 'blocks') {
-    _index = _firstPatch.path[1]
+
+  const _areBlockOperationsOnSameIndex = _patches
+    .filter((p) => p.path[0] === 'blocks')
+    .reduce((acc: any, curr: any, i: number) => {
+      if (!acc && i === 0) {
+        return curr.path[1]
+      }
+      if (acc !== curr.path[1]) {
+        return false
+      }
+      return acc
+    }, null)
+
+  const _areSelectionOperationsOnSameIndex = _patches
+    .filter((p) => p.path[0] === 'selection')
+    .reduce((acc: any, curr: any, i: number) => {
+      if (curr.value.anchor.index !== curr.value.focus.index) {
+        return false
+      }
+      if (!acc && i === 0) {
+        return curr.value.anchor.index
+      }
+
+      if (acc !== curr.value.anchor.index) {
+        return false
+      }
+      return acc
+    }, null)
+
+  // if either operation is not on the same index, return default patches
+
+  // if index is at zero, it will throw a false negative, check if number
+  if (
+    !_.isNumber(_areBlockOperationsOnSameIndex) ||
+    !_.isNumber(_areSelectionOperationsOnSameIndex)
+  ) {
+    return _patches
   }
-  if (_firstPatch?.path[0] === 'selection') {
-    _index =
-      _firstPatch.value.anchor.index === _firstPatch.value.focus.index &&
-      _firstPatch.value.anchor.index
-  }
-  // if index span across multiple blocks or doesnt exist, return default patch
-  if (!_.isNumber(_index) && !_index) {
+  if (!_areBlockOperationsOnSameIndex || !_areSelectionOperationsOnSameIndex) {
     return _patches
   }
 

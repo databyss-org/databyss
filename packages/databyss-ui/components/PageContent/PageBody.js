@@ -82,7 +82,7 @@ const PageBody = ({
       process.env.SAVE_PAGE_THROTTLE,
       {
         leading: true,
-        maxWait: 1000,
+        maxWait: 500,
       }
     ),
     []

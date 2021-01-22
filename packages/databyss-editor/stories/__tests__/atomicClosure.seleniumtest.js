@@ -95,7 +95,10 @@ describe('atomic closure', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/#')
+    await sleep(1000)
+
     await isSaved(driver)
+
     await driver.navigate().refresh()
     await getEditor(driver)
 
@@ -141,6 +144,7 @@ describe('atomic closure', () => {
     // close source
     await sleep(300)
     await sendKeys(actions, '/@')
+    await sleep(1000)
 
     await isSaved(driver)
 
@@ -199,6 +203,8 @@ describe('atomic closure', () => {
     await leftKey(actions)
     await leftKey(actions)
     await backspaceKey(actions)
+    await sleep(1000)
+
     await isSaved(driver)
 
     await driver.navigate().refresh()
@@ -250,6 +256,7 @@ describe('atomic closure', () => {
     await sleep(300)
     await sendKeys(actions, '/@')
     await isSaved(driver)
+
     await driver.navigate().refresh()
     await getEditor(driver)
 
