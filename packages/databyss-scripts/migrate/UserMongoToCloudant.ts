@@ -2,6 +2,8 @@ import Account from '@databyss-org/api/src/models/Account'
 import User from '@databyss-org/api/src/models/User'
 import Page from '@databyss-org/api/src/models/Page'
 import Block from '@databyss-org/api/src/models/Block'
+import Selection from '@databyss-org/api/src/models/Selection'
+import BlockRelation from '@databyss-org/api/src/models/BlockRelation'
 import { Page as PageInterface } from '@databyss-org/services/interfaces/Page'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
@@ -13,6 +15,7 @@ import {
 import { uid } from '@databyss-org/data/lib/uid'
 import ServerProcess from '../lib/ServerProcess'
 import { getEnv, EnvDict } from '../lib/util'
+import { Role } from '@databyss-org/data/interfaces'
 
 interface JobArgs {
   envName: string
@@ -58,7 +61,7 @@ class UserMongoToCloudant extends ServerProcess {
       console.log(`⏳ Create group: ${_couchGroupName}`)
       await createGroupDatabase(_defaultGroupId)
       console.log(`✅ Group created: ${_defaultGroupId}`)
-      const _groupDb = await cloudant.db.use<PageInterface>(_couchGroupName)
+      const _groupDb = await cloudant.db.use<any>(_couchGroupName)
       const _mongoAccount = await Account.findOne({ _id: _defaultAccountId })
       console.log(`ℹ️  Old defaultPageId: ${_mongoAccount.defaultPage}`)
 
@@ -90,17 +93,41 @@ class UserMongoToCloudant extends ServerProcess {
           ...getTimestamps(_mongoBlock),
         })
       }
+      console.log(`➡️  Migrated ${Object.keys(_blockIdMap).length} Blocks`)
 
       // get all Pages for account
       const _mongoPages = await Page.find({
         account: _defaultAccountId,
       })
 
-      // insert the pages in couch, generating new ids and keeping a map of old => new id
+      // insert the Pages in couch, generating new ids and keeping a map of old => new id
       const _pageIdMap = {}
       for (const _mongoPage of _mongoPages) {
         const _couchPageId = uid()
         _pageIdMap[_mongoPage._id] = _couchPageId
+
+        // get the Selection from mongo
+        const _mongoSelection = await Selection.findOne({
+          _id: _mongoPage.selection._id,
+        })
+        // generate a new id for the Selection
+        const _couchSelectionId = uid()
+        // insert the Selection in couch
+        await _groupDb.insert({
+          $type: DocumentType.Selection,
+          _id: _couchSelectionId,
+          // TODO: why dosen't tv4 validation work for these fields?
+          focus: {
+            index: _mongoSelection.focus.index,
+            offset: _mongoSelection.focus.offset,
+          },
+          anchor: {
+            index: _mongoSelection.focus.index,
+            offset: _mongoSelection.focus.offset,
+          },
+          ...getTimestamps(_mongoPage),
+        })
+
         await _groupDb.insert({
           $type: DocumentType.Page,
           _id: _couchPageId,
@@ -109,12 +136,59 @@ class UserMongoToCloudant extends ServerProcess {
             type: _mongoBlock.type,
             _id: _blockIdMap[_mongoBlock._id],
           })),
+          selection: _couchSelectionId,
           ...getTimestamps(_mongoPage),
         })
       }
 
+      console.log(`➡️  Migrated ${Object.keys(_pageIdMap).length} Pages`)
+
+      // get all BlockRelations for account
+      const _mongoRelations = await BlockRelation.find({
+        account: _defaultAccountId,
+      })
+
+      // insert the BlockRelations in couch
+      let _relationsCount = 0
+      for (const _mongoRelation of _mongoRelations) {
+        const _couchRelationId = uid()
+
+        await _groupDb.insert({
+          $type: DocumentType.BlockRelation,
+          _id: _couchRelationId,
+          block: _blockIdMap[_mongoRelation.block],
+          relatedBlock: _blockIdMap[_mongoRelation.relatedBlock],
+          relatedBlockType: _mongoRelation.relatedBlockType,
+          relationshipType: _mongoRelation.relationshipType,
+          page: _mongoRelation.page,
+          blockIndex: _mongoRelation.blockIndex,
+          blockText: _mongoRelation.blockText,
+          ...getTimestamps(_mongoRelation),
+        })
+        _relationsCount += 1
+      }
+      console.log(`➡️  Migrated ${_relationsCount} BlockRelations`)
+
       // STEP 4: Add the userPreferences doc to the default group database
       //   with the defaultPageId
+
+      // generate a userId for the user
+      const _couchUserId = uid()
+
+      await _groupDb.insert({
+        $type: DocumentType.UserPreferences,
+        userId: _couchUserId,
+        defaultGroupId: _defaultGroupId,
+        groups: [
+          {
+            groupId: _defaultGroupId,
+            role: Role.GroupAdmin,
+            defaultPageId: _pageIdMap[_mongoAccount.defaultPage],
+          },
+        ],
+        ...getTimestamps({}),
+      })
+      console.log(`➡️  Migrated userPreferences`)
 
       // STEP 5: Create documents in the Users db for the new user so they can login
 

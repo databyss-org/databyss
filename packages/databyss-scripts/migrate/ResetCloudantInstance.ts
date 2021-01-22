@@ -30,13 +30,15 @@ class ResetCloudantInstance extends ServerProcess {
           await cloudant.db.destroy(_db)
           // dont exceed cloudant rate limit
           await sleep(100)
-          console.log(`destroyed - ${_db}`)
+          console.log(`🗑  destroyed - ${_db}`)
         }
       }
 
       // re-initialize the database
       await initiateDatabases()
+      console.log('✅ created admin dbs')
       await updateDesignDocs()
+      console.log('✅ added design docs to admin dbs')
     } catch (err) {
       this.emit('stderr', err)
       this.emit('end', false)
