@@ -20,7 +20,7 @@ import PageProvider, {
 } from '@databyss-org/services/pages/PageProvider'
 import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { db } from '@databyss-org/data/pouchdb/db'
+import { debRef } from '@databyss-org/data/pouchdb/db'
 import { Page } from '@databyss-org/services/interfaces'
 import HistoryProvider from '../history/EditorHistory'
 import ContentEditable from '../components/ContentEditable'
@@ -132,7 +132,7 @@ const EditorWithProvider = () => {
 
   useEffect(() => {
     // check to see if page exists in DB, if not add page
-    db.find({ selector: { _id: _pageId } }).then((res) => {
+    debRef.current.find({ selector: { _id: _pageId } }).then((res) => {
       if (!res.docs.length) {
         setPage(_page)
       }

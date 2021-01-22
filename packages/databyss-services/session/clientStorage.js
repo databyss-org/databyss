@@ -1,14 +1,15 @@
 import _ from 'lodash'
 import { upsert, getUserSession } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
-import { db } from '@databyss-org/data/pouchdb/db'
+import { dbRef } from '@databyss-org/data/pouchdb/db'
 
 // TODO: Add native versions of these
 
 export const deleteUserPreferences = async () => {
+  // resets the database
   const _res = await getUserSession()
   if (_res) {
-    db.remove(_res)
+    dbRef.current.remove(_res)
   }
 }
 

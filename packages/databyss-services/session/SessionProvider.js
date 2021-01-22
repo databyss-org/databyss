@@ -102,18 +102,6 @@ const SessionProvider = ({
 
   // TODO: WRAP THIS IN A CALLBACK
 
-  // debonce the ui component showing the saving icon
-  // const debounceDbBusy = useCallback(
-  //   debounce(
-  //     (bool) => {
-  //       setDbPending(bool)
-  //     },
-  //     2500,
-  //     { leading: true }
-  //   ),
-  //   []
-  // )
-
   useEffect(() => {
     setDbPending(state.isDbBusy)
     // debounceDbBusy(state.isDbBusy)

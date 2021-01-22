@@ -28,83 +28,93 @@ PouchDB.plugin(PouchDbQuickSearch)
 PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 
+interface DbRef {
+  current: PouchDB.Database<any>
+}
+
+export const dbRef: DbRef = {
+  current: new PouchDB('local', {
+    auto_compaction: true,
+  }),
+}
+
 export const db: PouchDB.Database<any> = new PouchDB('local', {
   auto_compaction: true,
 })
 
 export const initiatePouchDbIndexes = async () => {
-  await db.search({
+  await dbRef.current.search({
     fields: ['text.textValue'],
     build: true,
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['_id'],
     },
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['$type'],
     },
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['$type', '_id'],
     },
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['$type', 'relatedBlock'],
     },
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['$type', 'page'],
     },
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['$type', 'blocks'],
     },
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['block', 'relatedBlock'],
     },
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['$type', 'relatedBlock'],
     },
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['$type', 'page'],
     },
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['$type', 'type'],
     },
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['$type', 'relatedBlock', 'relationshipType'],
     },
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['$type', 'relatedBlock', 'block'],
     },
@@ -134,7 +144,7 @@ export const replicateDbFromRemote = ({
         password: dbPassword,
       },
     }
-    db.replicate
+    dbRef.current.replicate
       .from(`${REMOTE_URL}/g_${groupId}`, { ...opts })
       .on('complete', () => resolve())
       .on('error', (err) => reject(err))
@@ -160,7 +170,7 @@ export const syncPouchDb = ({
       password: dbPassword,
     },
   }
-  db.replicate
+  dbRef.current.replicate
     .to(`${REMOTE_URL}/g_${groupId}`, {
       ...opts,
       // todo: add groupId to every document
@@ -186,7 +196,7 @@ export const syncPouchDb = ({
       }
     })
 
-  db.replicate
+  dbRef.current.replicate
     .from(`${REMOTE_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
   // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
@@ -209,7 +219,7 @@ export const initiatePouchDbValidators = () => {
   tv4.addSchema('pouchDb', pouchDocSchema)
   tv4.addSchema('blockSchema', blockSchema)
 
-  db.transform({
+  dbRef.current.transform({
     outgoing: (doc) => {
       _validatorSchemas.forEach((s) => {
         if (doc.type === s[0] || doc.$type === s[0]) {
