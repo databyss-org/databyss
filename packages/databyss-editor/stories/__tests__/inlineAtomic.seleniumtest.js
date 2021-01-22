@@ -267,14 +267,16 @@ describe('inline atomic', () => {
       driver,
       '[data-test-element="page-header"]'
     )
+    await sleep(1000)
     await pageTitle.click()
+    await sleep(1000)
     await enterKey(actions)
     await rightKey(actions)
     await rightKey(actions)
 
     await backspaceKey(actions)
     await backspaceKey(actions)
-
+    await sleep(1000)
     // check sidebar for removed topic
     await isAppInNotesSaved(driver)
 
