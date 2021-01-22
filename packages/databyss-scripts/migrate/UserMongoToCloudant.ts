@@ -13,9 +13,9 @@ import {
   createGroupDatabase,
 } from '@databyss-org/api/src/lib/createUserDatabase'
 import { uid } from '@databyss-org/data/lib/uid'
+import { Role, User as UserInterface } from '@databyss-org/data/interfaces'
 import ServerProcess from '../lib/ServerProcess'
 import { getEnv, EnvDict } from '../lib/util'
-import { Role } from '@databyss-org/data/interfaces'
 
 interface JobArgs {
   envName: string
@@ -90,6 +90,7 @@ class UserMongoToCloudant extends ServerProcess {
               length: r.length,
             })),
           },
+          detail: _mongoBlock.detail,
           ...getTimestamps(_mongoBlock),
         })
       }
@@ -116,7 +117,6 @@ class UserMongoToCloudant extends ServerProcess {
         await _groupDb.insert({
           $type: DocumentType.Selection,
           _id: _couchSelectionId,
-          // TODO: why dosen't tv4 validation work for these fields?
           focus: {
             index: _mongoSelection.focus.index,
             offset: _mongoSelection.focus.offset,
@@ -160,7 +160,7 @@ class UserMongoToCloudant extends ServerProcess {
           relatedBlock: _blockIdMap[_mongoRelation.relatedBlock],
           relatedBlockType: _mongoRelation.relatedBlockType,
           relationshipType: _mongoRelation.relationshipType,
-          page: _mongoRelation.page,
+          page: _pageIdMap[_mongoRelation.page],
           blockIndex: _mongoRelation.blockIndex,
           blockText: _mongoRelation.blockText,
           ...getTimestamps(_mongoRelation),
@@ -190,9 +190,16 @@ class UserMongoToCloudant extends ServerProcess {
       })
       console.log(`➡️  Migrated userPreferences`)
 
-      // STEP 5: Create documents in the Users db for the new user so they can login
+      // STEP 5: Create document in the Users db for the new user so they can login
+      const _usersDb = await cloudant.db.use<UserInterface>('users')
+      _usersDb.insert({
+        _id: _couchUserId,
+        email: _mongoUser.email,
+        defaultGroupId: _defaultGroupId,
+      })
+      console.log(`👤 Created User document`)
 
-      // STEP 6: Migrate pages shared by this user by creating a new group db for each page
+      // TODO: STEP 6: Migrate pages shared by this user by creating a new group db for each page
       //   and updating the page.groups array with the new group id
 
       this.emit('stdout', `✅ User migrated.`)
