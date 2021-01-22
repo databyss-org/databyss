@@ -281,7 +281,7 @@ export const optimizePatches = (patches: Patch[]): Patch[] => {
   const _areBlockOperationsOnSameIndex = _patches
     .filter((p) => p.path[0] === 'blocks')
     .reduce((acc: any, curr: any, i: number) => {
-      if (!acc && i === 0) {
+      if (i === 0) {
         return curr.path[1]
       }
       if (acc !== curr.path[1]) {
@@ -296,7 +296,7 @@ export const optimizePatches = (patches: Patch[]): Patch[] => {
       if (curr.value.anchor.index !== curr.value.focus.index) {
         return false
       }
-      if (!acc && i === 0) {
+      if (i === 0) {
         return curr.value.anchor.index
       }
 
