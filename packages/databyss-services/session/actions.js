@@ -104,64 +104,74 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     const res = await _request(path, options, true)
 
     if (res.data && res.data.session) {
-      // authenticated
-      const { session } = res.data
+      // get auth token and credentials, set them in local storage
 
-      const _defaultPageId = session.user.groups.find(
-        (g) => g.groupId === session.user.defaultGroupId
-      ).defaultPageId
+      // replicate database from cloudant
 
-      const _userSession = {
-        provisionClientDatabase: session.user.provisionClientDatabase,
-        replicateClientDatabase: session.user.replicateClientDatabase,
-        token: session.token,
-        userId: session.user._id,
-        email: session.user.email,
-        defaultPageId: _defaultPageId,
-        defaultGroupId: session.user.defaultGroupId,
-        // remove password
-        groups: session.user.groups.map((g) => ({
-          dbKey: g.dbKey,
-          defaultPageId: g.defaultPageId,
-          groupId: g.groupId,
-          role: g.role,
-        })),
-      }
+      // await replicateDbFromRemote({
+      //   ...res.data.session.user.groups[0],
+      //   groupId: res.data.session.user.defaultGroupId,
+      // })
+      // TODO: provision database first
 
-      // save passwords in localstorage
-      setDbPassword(session.user.groups)
+      // // authenticated
+      // const { session } = res.data
 
-      // save session in pouchdb
-      await setUserSession(_userSession)
+      // const _defaultPageId = session.user.groups.find(
+      //   (g) => g.groupId === session.user.defaultGroupId
+      // ).defaultPageId
 
-      // initiate database validators
-      initiatePouchDbValidators()
-      // initiate database indexes
-      await initiatePouchDbIndexes()
+      // const _userSession = {
+      //   provisionClientDatabase: session.user.provisionClientDatabase,
+      //   replicateClientDatabase: session.user.replicateClientDatabase,
+      //   token: session.token,
+      //   userId: session.user._id,
+      //   email: session.user.email,
+      //   defaultPageId: _defaultPageId,
+      //   defaultGroupId: session.user.defaultGroupId,
+      //   // remove password
+      //   groups: session.user.groups.map((g) => ({
+      //     dbKey: g.dbKey,
+      //     defaultPageId: g.defaultPageId,
+      //     groupId: g.groupId,
+      //     role: g.role,
+      //   })),
+      // }
 
-      // initialize a new user
-      if (_userSession.provisionClientDatabase) {
-        // initate new database
-        await addPage(_defaultPageId)
-      }
+      // // save passwords in localstorage
+      // setDbPassword(session.user.groups)
 
-      /*
-      if logging into an existing account, wait for database replication to complete before continuing
-      */
-      if (_userSession.replicateClientDatabase) {
-        await replicateDbFromRemote({
-          ...res.data.session.user.groups[0],
-          groupId: res.data.session.user.defaultGroupId,
-        })
-      }
+      // // save session in pouchdb
+      // await setUserSession(_userSession)
 
-      // sync database
-      syncPouchDb({
-        ...res.data.session.user.groups[0],
-        groupId: res.data.session.user.defaultGroupId,
-        // TODO: how to curry dispatch
-        dispatch,
-      })
+      // // initiate database validators
+      // initiatePouchDbValidators()
+      // // initiate database indexes
+      // await initiatePouchDbIndexes()
+
+      // // initialize a new user
+      // if (_userSession.provisionClientDatabase) {
+      //   // initate new database
+      //   await addPage(_defaultPageId)
+      // }
+
+      // /*
+      // if logging into an existing account, wait for database replication to complete before continuing
+      // */
+      // if (_userSession.replicateClientDatabase) {
+      //   await replicateDbFromRemote({
+      //     ...res.data.session.user.groups[0],
+      //     groupId: res.data.session.user.defaultGroupId,
+      //   })
+      // }
+
+      // // sync database
+      // syncPouchDb({
+      //   ...res.data.session.user.groups[0],
+      //   groupId: res.data.session.user.defaultGroupId,
+      //   // TODO: how to curry dispatch
+      //   dispatch,
+      // })
 
       dispatch({
         type: CACHE_SESSION,
