@@ -6,6 +6,7 @@ const scriptMap = {
   'delete-account': ['dba/DeleteAccount', ['envName', 'accountId']],
   'migrate-user': ['migrate/UserMongoToCloudant', ['envName', 'email']],
   'public-pages': ['reports/PublicPages', ['envName']],
+  'reset-cloudant': ['migrate/ResetCloudantInstance', ['envName']],
 }
 
 function usageArgs(jobArgList) {

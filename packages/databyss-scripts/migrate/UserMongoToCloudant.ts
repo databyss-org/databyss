@@ -9,7 +9,6 @@ import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import {
   createGroupId,
   createGroupDatabase,
-  addCredentialsToUser,
 } from '@databyss-org/api/src/lib/createUserDatabase'
 import { uid } from '@databyss-org/data/lib/uid'
 import ServerProcess from '../lib/ServerProcess'
@@ -20,10 +19,18 @@ interface JobArgs {
   email: string
 }
 
+const getTimestamps = (doc) => ({
+  createdAt: doc.createdAt
+    ? new Date(doc.createdAt).getTime()
+    : new Date().getTime(),
+  modifiedAt: doc.updatedAt
+    ? new Date(doc.updatedAt).getTime()
+    : new Date().getTime(),
+})
+
 class UserMongoToCloudant extends ServerProcess {
   args: JobArgs
   env: EnvDict
-  static importEnv: string[]
 
   constructor(args: JobArgs) {
     super()
@@ -68,12 +75,19 @@ class UserMongoToCloudant extends ServerProcess {
       for (const _mongoBlock of _mongoBlocks) {
         const _couchBlockId = uid()
         _blockIdMap[_mongoBlock._id] = _couchBlockId
-        console.log(_mongoBlock)
         await _groupDb.insert({
           $type: DocumentType.Block,
           _id: _couchBlockId,
           type: _mongoBlock.type,
-          text: _mongoBlock.text,
+          text: {
+            textValue: _mongoBlock.text.textValue,
+            ranges: _mongoBlock.text.ranges.map((r) => ({
+              marks: r.marks,
+              offset: r.offset,
+              length: r.length,
+            })),
+          },
+          ...getTimestamps(_mongoBlock),
         })
       }
 
@@ -90,10 +104,12 @@ class UserMongoToCloudant extends ServerProcess {
         await _groupDb.insert({
           $type: DocumentType.Page,
           _id: _couchPageId,
+          name: _mongoPage.name,
           blocks: _mongoPage.blocks.map((_mongoBlock) => ({
-            ..._mongoBlock,
+            type: _mongoBlock.type,
             _id: _blockIdMap[_mongoBlock._id],
           })),
+          ...getTimestamps(_mongoPage),
         })
       }
 
@@ -114,7 +130,5 @@ class UserMongoToCloudant extends ServerProcess {
     }
   }
 }
-
-UserMongoToCloudant.importEnv = ['CLOUDANT_USERNAME', 'CLOUDANT_PASSWORD']
 
 export default UserMongoToCloudant
