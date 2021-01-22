@@ -33,7 +33,9 @@ export const deletePouchDbs = async () => {
       (db) =>
         new Promise((resolve, reject) => {
           if (db.name === '_pouch_local') {
-            resolve()
+            resetPouchDb()
+              .then(() => resolve())
+              .catch((err) => reject(err))
           }
           // deletes index databases
           const request = indexedDB.deleteDatabase(db.name)
@@ -42,8 +44,6 @@ export const deletePouchDbs = async () => {
         })
     )
   )
-
-  await resetPouchDb()
 }
 
 export const setUserSession = async (session) => {

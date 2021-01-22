@@ -102,7 +102,6 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     }
 
     const res = await _request(path, options, true)
-    console.log('ELSE')
 
     if (res.data && res.data.session) {
       // authenticated

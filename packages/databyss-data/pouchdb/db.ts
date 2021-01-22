@@ -38,15 +38,6 @@ export const dbRef: DbRef = {
   }),
 }
 
-export const resetPouchDb = async () => {
-  if (dbRef.current?.destroy) {
-    await dbRef.current.destroy()
-  }
-  dbRef.current = new PouchDB('local', {
-    auto_compaction: true,
-  })
-}
-
 export const initiatePouchDbIndexes = async () => {
   await dbRef.current.search({
     fields: ['text.textValue'],
@@ -242,3 +233,13 @@ export const initiatePouchDbValidators = () => {
 }
 
 // TODO MAKE UTILS DIRECTORY HERE
+
+export const resetPouchDb = async () => {
+  if (dbRef.current?.destroy) {
+    await dbRef.current.destroy()
+  }
+
+  dbRef.current = new PouchDB('local', {
+    auto_compaction: true,
+  })
+}
