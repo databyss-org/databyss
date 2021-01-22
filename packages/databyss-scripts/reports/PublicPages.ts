@@ -56,7 +56,7 @@ class PublicPages extends ServerProcess {
           continue
         }
 
-        const _user = await User.findOne({
+        const _user: any = await User.findOne({
           defaultAccount: _pages[0].account,
         })
         if (!_user) {

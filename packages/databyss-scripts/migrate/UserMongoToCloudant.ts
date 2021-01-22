@@ -4,7 +4,6 @@ import Page from '@databyss-org/api/src/models/Page'
 import Block from '@databyss-org/api/src/models/Block'
 import Selection from '@databyss-org/api/src/models/Selection'
 import BlockRelation from '@databyss-org/api/src/models/BlockRelation'
-import { Page as PageInterface } from '@databyss-org/services/interfaces/Page'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
@@ -48,7 +47,7 @@ class UserMongoToCloudant extends ServerProcess {
       // (cloudant connects when the lib functions are called below)
 
       // STEP 1a: Get User record from mongo and save the defaultAccountId
-      const _mongoUser = await User.findOne({ email: this.args.email })
+      const _mongoUser: any = await User.findOne({ email: this.args.email })
       if (!_mongoUser) {
         throw new Error('User not found')
       }
@@ -62,8 +61,10 @@ class UserMongoToCloudant extends ServerProcess {
       await createGroupDatabase(_defaultGroupId)
       console.log(`✅ Group created: ${_defaultGroupId}`)
       const _groupDb = await cloudant.db.use<any>(_couchGroupName)
-      const _mongoAccount = await Account.findOne({ _id: _defaultAccountId })
-      console.log(`ℹ️  Old defaultPageId: ${_mongoAccount.defaultPage}`)
+      const _mongoAccount: any = await Account.findOne({
+        _id: _defaultAccountId,
+      })
+      console.log(`ℹ️  Old defaultPageId: ${_mongoAccount!.defaultPage}`)
 
       // STEP 3: Copy all Pages, Blocks, Selections and BlockRelations belonging to the user
       //   to the group db
