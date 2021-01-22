@@ -1,6 +1,6 @@
 import { BlockType } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
-import { db } from '../../db'
+import { dbRef } from '../../db'
 import { DocumentType } from '../../interfaces'
 import { findOne } from '../../utils'
 
@@ -24,7 +24,7 @@ const searchEntries = async (
   _percentageToMatch *= 100
   _percentageToMatch = +_percentageToMatch.toFixed(0)
 
-  const _res = await db.search({
+  const _res = await dbRef.current.search({
     query: _query,
     fields: ['text.textValue'],
     include_docs: true,
