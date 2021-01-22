@@ -76,7 +76,6 @@ describe('editor performance', () => {
 
     const _averageTime = getAvg(_times)
 
-    // console.log(_averageTime)
     await sleep(3000)
 
     assert.equal(_averageTime < 2, true)
