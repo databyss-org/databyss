@@ -152,6 +152,11 @@ class UserMongoToCloudant extends ServerProcess {
       // insert the BlockRelations in couch
       let _relationsCount = 0
       for (const _mongoRelation of _mongoRelations) {
+        const _relationPageId = _pageIdMap[_mongoRelation.page]
+        if (!_relationPageId) {
+          console.log(`⚠️  relation.page not found: ${_mongoRelation.page}`)
+          continue
+        }
         const _couchRelationId = uid()
 
         await _groupDb.insert({
@@ -161,9 +166,16 @@ class UserMongoToCloudant extends ServerProcess {
           relatedBlock: _blockIdMap[_mongoRelation.relatedBlock],
           relatedBlockType: _mongoRelation.relatedBlockType,
           relationshipType: _mongoRelation.relationshipType,
-          page: _pageIdMap[_mongoRelation.page],
+          page: _relationPageId,
           blockIndex: _mongoRelation.blockIndex,
-          blockText: _mongoRelation.blockText,
+          blockText: {
+            textValue: _mongoRelation.blockText.textValue,
+            ranges: _mongoRelation.blockText.ranges.map((r) => ({
+              marks: r.marks,
+              offset: r.offset,
+              length: r.length,
+            })),
+          },
           ...getTimestamps(_mongoRelation),
         })
         _relationsCount += 1
