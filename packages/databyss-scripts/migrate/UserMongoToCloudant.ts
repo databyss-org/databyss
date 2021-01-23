@@ -1,3 +1,4 @@
+import cloneDeep from 'clone-deep'
 import Account from '@databyss-org/api/src/models/Account'
 import User from '@databyss-org/api/src/models/User'
 import Page from '@databyss-org/api/src/models/Page'
@@ -29,6 +30,35 @@ const getTimestamps = (doc) => ({
     ? new Date(doc.updatedAt).getTime()
     : new Date().getTime(),
 })
+
+const fixDetail = (detail: any) => {
+  if (!detail) {
+    return detail
+  }
+  const _detail = cloneDeep(detail)
+  // TODO: fix title in source modal
+  if (_detail.title === '') {
+    _detail.title = {
+      textValue: '',
+      ranges: [],
+    }
+  }
+  // TODO: fix year in source modal
+  if (_detail.year?.textValue) {
+    _detail.year = {
+      textValue: detail.year.textValue.toString(),
+      ranges: detail.year.ranges || [],
+    }
+  }
+  // TODO: fix journalTitle in source modal
+  if (Array.isArray(_detail.journalTitle?.textValue)) {
+    _detail.journalTitle = {
+      textValue: detail.journalTitle.textValue[0],
+      ranges: detail.journalTitle.ranges || [],
+    }
+  }
+  return _detail
+}
 
 class UserMongoToCloudant extends ServerProcess {
   args: JobArgs
@@ -69,6 +99,23 @@ class UserMongoToCloudant extends ServerProcess {
       // STEP 3: Copy all Pages, Blocks, Selections and BlockRelations belonging to the user
       //   to the group db
 
+      // get all Pages and aggregate all blocks into a Map so we don't write orphaned blocks
+      const _mongoPages = await Page.find({
+        account: _defaultAccountId,
+      })
+
+      const _validMongoBlockMap = {}
+      _mongoPages.forEach((page) => {
+        page.blocks.forEach((block) => {
+          _validMongoBlockMap[block._id] = true
+        })
+      })
+      console.log(
+        `ℹ️  Valid (non-orphaned) Block count: ${
+          Object.values(_validMongoBlockMap).length
+        }`
+      )
+
       // get all Blocks for account
       const _mongoBlocks = await Block.find({
         account: _defaultAccountId,
@@ -77,6 +124,10 @@ class UserMongoToCloudant extends ServerProcess {
       // insert the pages in couch, generating new ids and keeping a map
       const _blockIdMap = {}
       for (const _mongoBlock of _mongoBlocks) {
+        // skip the block if it's orphaned (not in any pages)
+        if (!_validMongoBlockMap[_mongoBlock._id]) {
+          continue
+        }
         const _couchBlockId = uid()
         _blockIdMap[_mongoBlock._id] = _couchBlockId
         await _groupDb.insert({
@@ -91,16 +142,11 @@ class UserMongoToCloudant extends ServerProcess {
               length: r.length,
             })),
           },
-          detail: _mongoBlock.detail,
+          detail: fixDetail(_mongoBlock.detail),
           ...getTimestamps(_mongoBlock),
         })
       }
       console.log(`➡️  Migrated ${Object.keys(_blockIdMap).length} Blocks`)
-
-      // get all Pages for account
-      const _mongoPages = await Page.find({
-        account: _defaultAccountId,
-      })
 
       // insert the Pages in couch, generating new ids and keeping a map of old => new id
       const _pageIdMap = {}
@@ -112,22 +158,25 @@ class UserMongoToCloudant extends ServerProcess {
         const _mongoSelection = await Selection.findOne({
           _id: _mongoPage.selection._id,
         })
-        // generate a new id for the Selection
-        const _couchSelectionId = uid()
-        // insert the Selection in couch
-        await _groupDb.insert({
-          $type: DocumentType.Selection,
-          _id: _couchSelectionId,
-          focus: {
-            index: _mongoSelection.focus.index,
-            offset: _mongoSelection.focus.offset,
-          },
-          anchor: {
-            index: _mongoSelection.focus.index,
-            offset: _mongoSelection.focus.offset,
-          },
-          ...getTimestamps(_mongoPage),
-        })
+        let _couchSelectionId: string | null = null
+        if (_mongoSelection) {
+          // generate a new id for the Selection
+          _couchSelectionId = uid()
+          // insert the Selection in couch
+          await _groupDb.insert({
+            $type: DocumentType.Selection,
+            _id: _couchSelectionId,
+            focus: {
+              index: _mongoSelection.focus.index,
+              offset: _mongoSelection.focus.offset,
+            },
+            anchor: {
+              index: _mongoSelection.focus.index,
+              offset: _mongoSelection.focus.offset,
+            },
+            ...getTimestamps(_mongoPage),
+          })
+        }
 
         await _groupDb.insert({
           $type: DocumentType.Page,
@@ -137,7 +186,11 @@ class UserMongoToCloudant extends ServerProcess {
             type: _mongoBlock.type,
             _id: _blockIdMap[_mongoBlock._id],
           })),
-          selection: _couchSelectionId,
+          ...(_couchSelectionId
+            ? {
+                selection: _couchSelectionId,
+              }
+            : {}),
           ...getTimestamps(_mongoPage),
         })
       }
@@ -152,18 +205,39 @@ class UserMongoToCloudant extends ServerProcess {
       // insert the BlockRelations in couch
       let _relationsCount = 0
       for (const _mongoRelation of _mongoRelations) {
+        // skip blockRelation if block or relatedBlock is orphaned
+        if (
+          !_validMongoBlockMap[_mongoRelation.block] ||
+          !_validMongoBlockMap[_mongoRelation.relatedBlock]
+        ) {
+          continue
+        }
+
         const _relationPageId = _pageIdMap[_mongoRelation.page]
         if (!_relationPageId) {
           console.log(`⚠️  relation.page not found: ${_mongoRelation.page}`)
           continue
         }
+        const _relationRelatedBlockId = _blockIdMap[_mongoRelation.relatedBlock]
+        if (!_relationRelatedBlockId) {
+          console.log(
+            `⚠️  relation.relatedBlock not found: ${_mongoRelation.relatedBlock}`
+          )
+          continue
+        }
+        const _relationBlockId = _blockIdMap[_mongoRelation.block]
+        if (!_relationBlockId) {
+          console.log(`⚠️  relation.block not found: ${_mongoRelation.block}`)
+          continue
+        }
+
         const _couchRelationId = uid()
 
         await _groupDb.insert({
           $type: DocumentType.BlockRelation,
           _id: _couchRelationId,
-          block: _blockIdMap[_mongoRelation.block],
-          relatedBlock: _blockIdMap[_mongoRelation.relatedBlock],
+          block: _relationBlockId,
+          relatedBlock: _relationRelatedBlockId,
           relatedBlockType: _mongoRelation.relatedBlockType,
           relationshipType: _mongoRelation.relationshipType,
           page: _relationPageId,
