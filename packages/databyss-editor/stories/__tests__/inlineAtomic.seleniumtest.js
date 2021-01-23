@@ -15,12 +15,13 @@ import {
   isAppInNotesSaved,
   downShiftKey,
   rightKey,
+  logout,
 } from './_helpers.selenium'
 
 let driver
 let actions
 const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
+const PROXY_URL = 'http://localhost:3000'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -57,25 +58,9 @@ describe('inline atomic', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(500)
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
-
-    await accountDropdown.click()
-    await sleep(500)
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-
-    await logoutButton.click()
-    await getElementByTag(driver, '[data-test-path="email"]')
-    await driver.quit()
-    driver = null
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
+    done()
   })
 
   it('should test the integrity of inline atomics', async () => {
@@ -272,6 +257,7 @@ describe('inline atomic', () => {
 
     await getEditor(driver)
     await driver.navigate().refresh()
+    await sleep(1000)
     topicsSidebarButton = await getElementByTag(
       driver,
       '[data-test-sidebar-element="topics"]'
@@ -281,14 +267,16 @@ describe('inline atomic', () => {
       driver,
       '[data-test-element="page-header"]'
     )
+    await sleep(1000)
     await pageTitle.click()
+    await sleep(1000)
     await enterKey(actions)
     await rightKey(actions)
     await rightKey(actions)
 
     await backspaceKey(actions)
     await backspaceKey(actions)
-
+    await sleep(1000)
     // check sidebar for removed topic
     await isAppInNotesSaved(driver)
 

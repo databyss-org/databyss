@@ -156,7 +156,6 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
     if (onChange) {
       if (setBlockRelations) {
         // check if a new atomic has just been removed in the patches
-
         if (
           props.patches.filter(
             (p) =>

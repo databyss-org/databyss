@@ -23,12 +23,12 @@ let editor
 let slateDocument
 let actions
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=services-auth--login'
+const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
 
 const LOCAL_URL_EDITOR =
   'http://localhost:6006/iframe.html?id=services-page--slate-5'
 const PROXY_URL_EDITOR =
-  'http://0.0.0.0:8080/iframe.html?id=services-page--slate-5'
+  'http://localhost:8080/iframe.html?id=services-page--slate-5'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -95,12 +95,12 @@ describe('atomic closure', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/#')
-    await isSaved(driver)
     await sleep(1000)
 
-    await driver.navigate().refresh()
+    await isSaved(driver)
 
-    await sleep(300)
+    await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -144,13 +144,12 @@ describe('atomic closure', () => {
     // close source
     await sleep(300)
     await sendKeys(actions, '/@')
-
-    await isSaved(driver)
     await sleep(1000)
 
-    await driver.navigate().refresh()
+    await isSaved(driver)
 
-    await sleep(300)
+    await driver.navigate().refresh()
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -204,11 +203,12 @@ describe('atomic closure', () => {
     await leftKey(actions)
     await leftKey(actions)
     await backspaceKey(actions)
-    await isSaved(driver)
     await sleep(1000)
 
+    await isSaved(driver)
+
     await driver.navigate().refresh()
-    await sleep(300)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -256,10 +256,9 @@ describe('atomic closure', () => {
     await sleep(300)
     await sendKeys(actions, '/@')
     await isSaved(driver)
-    await sleep(1000)
 
     await driver.navigate().refresh()
-    await sleep(500)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 

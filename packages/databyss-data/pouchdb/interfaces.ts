@@ -17,8 +17,7 @@ export enum DocumentType {
 
 export interface UserGroup {
   groupId: string
-  dbKey: string
-  dbPassword: string
+  defaultPageId: string
   role: Role
 }
 
@@ -29,4 +28,12 @@ export interface UserSession {
   googleId?: string
   defaultGroupId: string
   groups: Array<UserGroup>
+}
+
+export interface UserPreference {
+  $type: DocumentType
+  userId: string
+  email?: string
+  defaultGroupId?: string
+  groups?: Array<UserGroup>
 }

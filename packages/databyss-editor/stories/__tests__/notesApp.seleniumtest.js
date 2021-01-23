@@ -11,13 +11,14 @@ import {
   sendKeys,
   enterKey,
   backspaceKey,
+  logout,
 } from './_helpers.selenium'
 
 let driver
 let editor
 let actions
 const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
+const PROXY_URL = 'http://localhost:3000'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -53,23 +54,9 @@ describe('notes app', () => {
     done()
   })
 
-  afterEach(async () => {
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
-
-    await accountDropdown.click()
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-
-    await logoutButton.click()
-    await getElementByTag(driver, '[data-test-path="email"]')
-    await driver.quit()
-    driver = null
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
+    done()
   })
 
   it('should switch page names and verify atomics appear on the sidebar', async () => {
@@ -92,6 +79,7 @@ describe('notes app', () => {
     await sendKeys(actions, '#this is a new topic')
     await enterKey(actions)
     await sendKeys(actions, 'entries included within the topic')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'more entries included within topic')
@@ -149,6 +137,8 @@ describe('notes app', () => {
 
     // select author from the google api
     await sendKeys(actions, '@Murray Bookchin')
+    await isAppInNotesSaved(driver)
+
     const googleApi = await getElementByTag(
       driver,
       '[data-test-block-menu="GOOGLE_BOOKS"]'

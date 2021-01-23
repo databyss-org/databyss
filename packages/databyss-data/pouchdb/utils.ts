@@ -1,5 +1,5 @@
 import { DocumentType } from './interfaces'
-import { db } from './db'
+import { dbRef } from './db'
 import { uid } from '../lib/uid'
 
 export const addTimeStamp = (doc: any): any => {
@@ -20,7 +20,7 @@ export const upsert = async ({
   doc: any
 }) => {
   let _doc
-  await db.upsert(_id, (oldDoc) => {
+  await dbRef.current.upsert(_id, (oldDoc) => {
     _doc = {
       ...oldDoc,
       $type,
@@ -32,7 +32,7 @@ export const upsert = async ({
 }
 
 export const findAll = async ($type: DocumentType, query?: any) => {
-  const _response = await db.find({
+  const _response = await dbRef.current.find({
     selector: {
       ...query,
       $type,
@@ -42,7 +42,7 @@ export const findAll = async ($type: DocumentType, query?: any) => {
 }
 
 export const findOne = async ($type: DocumentType, query: any) => {
-  const _response = await db.find({
+  const _response = await dbRef.current.find({
     selector: {
       ...query,
       $type,
@@ -76,7 +76,7 @@ _local documents do not appear with `find` so a `get` function must be used
 export const getUserSession = async () => {
   let response
   try {
-    response = await db.get('user_preferences')
+    response = await dbRef.current.get('user_preferences')
   } catch (err) {
     console.error('user session not found')
   }

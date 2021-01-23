@@ -11,13 +11,14 @@ import {
   enterKey,
   upKey,
   downKey,
+  logout,
 } from './_helpers.selenium'
 
 let driver
 // let editor
 let actions
 const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
+const PROXY_URL = 'http://localhost:3000'
 
 const random = Math.random().toString(36).substring(7)
 
@@ -56,23 +57,9 @@ describe('app sticky header', () => {
     done()
   })
 
-  afterEach(async () => {
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
-
-    await accountDropdown.click()
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-
-    await logoutButton.click()
-    await getElementByTag(driver, '[data-test-path="email"]')
-    await driver.quit()
-    driver = null
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
+    done()
   })
 
   it('should render correct editor path for cursor', async () => {
@@ -90,17 +77,21 @@ describe('app sticky header', () => {
     await sendKeys(actions, '@this is a test source')
     await enterKey(actions)
     await sendKeys(actions, 'this is another test entry')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'this is a test entry')
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'entry')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '#this is a topic')
     await enterKey(actions)
+    await isAppInNotesSaved(driver)
     await sendKeys(actions, 'this is a test entry')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/#')
@@ -142,6 +133,8 @@ describe('app sticky header', () => {
     await enterKey(actions)
     await sendKeys(actions, '/@')
     await downKey(actions)
+    await isAppInNotesSaved(driver)
+
     headerSticky = await getElementByTag(
       driver,
       '[data-test-element="editor-sticky-header"]'
@@ -154,7 +147,7 @@ describe('app sticky header', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/#')
-    isAppInNotesSaved(driver)
+    await isAppInNotesSaved(driver)
 
     headerSticky = await getElementByTag(
       driver,
@@ -162,5 +155,6 @@ describe('app sticky header', () => {
     )
     headerSticky = await headerSticky.getAttribute('innerText')
     assert.equal(headerSticky, 'this is a page title')
+    await isAppInNotesSaved(driver)
   })
 })

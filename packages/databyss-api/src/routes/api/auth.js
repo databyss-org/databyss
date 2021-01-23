@@ -1,5 +1,9 @@
 import express from 'express'
 import { Logins } from '@databyss-org/data/couchdb'
+import {
+  UserPreference,
+  DocumentType,
+} from '@databyss-org/data/pouchdb/interfaces'
 import auth from '../../middleware/auth'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
@@ -84,6 +88,16 @@ router.post(
           session.user.defaultGroupId = _user.defaultGroupId
           // init a new user
           session.user.provisionClientDatabase = true
+
+          // add user preferences to user database
+          const _userPreferences = {
+            $type: DocumentType.UserPreferences,
+            userId: session.user._id,
+            email,
+            defaultGroupId: _user.defaultGroupId,
+          }
+
+          console.log('USER SESSION', _userPreferences)
         } else {
           // user already exists, generate new credentials
           session = await addCredientialsToSession({

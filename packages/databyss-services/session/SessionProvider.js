@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback, useState } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
-import { debounce } from 'lodash'
+// import { debounce } from 'lodash'
 import Login from '@databyss-org/ui/modules/Login/Login'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -102,23 +102,14 @@ const SessionProvider = ({
 
   // TODO: WRAP THIS IN A CALLBACK
 
-  // debonce the ui component showing the saving icon
-  const debounceDbBusy = useCallback(
-    debounce(
-      (bool) => {
-        setDbPending(bool)
-      },
-      500,
-      { leading: true }
-    ),
-    []
-  )
-
   useEffect(() => {
-    debounceDbBusy(state.isDbBusy)
+    setDbPending(state.isDbBusy)
+    // debounceDbBusy(state.isDbBusy)
   }, [state.isDbBusy])
 
   const isDbBusy = useCallback(() => dbPending, [dbPending])
+
+  // const isDbBusy = () => dbPending
 
   const setDefaultPage = useCallback((id) => {
     dispatch(actions.onSetDefaultPage(id))

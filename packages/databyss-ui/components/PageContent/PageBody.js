@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef } from 'react'
+import React, { useEffect, useCallback, useRef, useState } from 'react'
 import { debounce } from 'lodash'
 import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
@@ -13,6 +13,8 @@ import {
   addMetaToPatches,
   cleanupPatches,
   pageToEditorState,
+  optimizePatches,
+  canPatchesBeOptimized,
 } from '@databyss-org/editor/state/util'
 
 import { isMobile } from '../../lib/mediaQuery'
@@ -25,6 +27,10 @@ const PageBody = ({
   onEditorPathChange,
 }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
+
+  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+
+  const _isDbBusy = isDbBusy()
   const { location } = useNavigationContext()
   const clearBlockDict = usePageContext((c) => c.clearBlockDict)
   const setPatches = usePageContext((c) => c.setPatches)
@@ -34,6 +40,31 @@ const PageBody = ({
   const patchQueue = useRef([])
   const pageState = useRef(null)
   const editorStateRef = useRef()
+  const [pendingPatches, setPendingPatches] = useState(false)
+
+  // updates state for contentEditable `pendingPatches` property
+  useEffect(() => {
+    if (patchQueue.current.length === 0 && pendingPatches) {
+      setPendingPatches(true)
+    }
+    if (patchQueue.current.length && !pendingPatches) {
+      setPendingPatches(false)
+    }
+  }, [patchQueue.current.length])
+
+  // if DB has no pending patches and we have patches waiting, send patches
+
+  useEffect(() => {
+    if (!_isDbBusy && pendingPatches && pageState.current) {
+      const payload = {
+        id: pageState.current.pageHeader._id,
+        patches: optimizePatches(patchQueue.current),
+      }
+
+      setPatches(payload)
+      patchQueue.current = []
+    }
+  }, [_isDbBusy, pendingPatches])
 
   const throttledAutosave = useCallback(
     debounce(
@@ -42,14 +73,17 @@ const PageBody = ({
         if (_patches.length) {
           const payload = {
             id: nextState.pageHeader._id,
-            patches: patchQueue.current,
+            patches: optimizePatches(patchQueue.current),
           }
           setPatches(payload)
           patchQueue.current = []
         }
       },
       process.env.SAVE_PAGE_THROTTLE,
-      { leading: true, maxWait: 500 }
+      {
+        leading: true,
+        maxWait: 500,
+      }
     ),
     []
   )
@@ -66,7 +100,18 @@ const PageBody = ({
 
     const patches = addMetaToPatches(value)
     // push changes to a queue
+    if (!canPatchesBeOptimized(patches) && patchQueue.current.length) {
+      // if new patches cant be optimized, send current payload
+      const payload = {
+        id: pageState.current.pageHeader._id,
+        patches: optimizePatches(patchQueue.current),
+      }
+
+      setPatches(payload)
+      patchQueue.current = []
+    }
     patchQueue.current = patchQueue.current.concat(patches)
+    //
     throttledAutosave({ ...value, patches })
   }
 
@@ -90,6 +135,7 @@ const PageBody = ({
           >
             <PDFDropZoneManager />
             <ContentEditable
+              pendingPatches={pendingPatches}
               autofocus
               focusIndex={focusIndex}
               onNavigateUpFromTop={onNavigateUpFromEditor}

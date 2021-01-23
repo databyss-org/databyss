@@ -20,18 +20,19 @@ import PageProvider, {
 } from '@databyss-org/services/pages/PageProvider'
 import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { db } from '@databyss-org/data/pouchdb/db'
+import { dbRef } from '@databyss-org/data/pouchdb/db'
 import { Page } from '@databyss-org/services/interfaces'
 import HistoryProvider from '../history/EditorHistory'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
-import connectedFixture from './fixtures/connectedState'
+// import connectedFixture from './fixtures/connectedState'
 import {
   cleanupPatches,
   addMetaToPatches,
-  editorStateToPage,
+  // editorStateToPage,
   pageToEditorState,
+  optimizePatches,
 } from '../state/util'
 
 const LoginRequired = () => (
@@ -46,8 +47,26 @@ const Box = ({ children, ...others }) => (
 
 const PageWithAutosave = ({ page }) => {
   const { setPatches } = usePageContext()
-  const hasPendingPatches = usePageContext((c) => c && c.hasPendingPatches)
+  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+  const _isDbBusy = isDbBusy()
   const [pageState, setPageState] = useState(null)
+  const [showSaving, setShowSaving] = useState(false)
+
+  // debonce the ui component showing the saving icon
+  const debounceSavingIcon = useCallback(
+    debounce(
+      (count) => {
+        setShowSaving(count)
+      },
+      2500,
+      { leading: true }
+    ),
+    []
+  )
+
+  useEffect(() => {
+    debounceSavingIcon(_isDbBusy)
+  }, [_isDbBusy])
 
   const operationsQueue = useRef([])
 
@@ -58,7 +77,7 @@ const PageWithAutosave = ({ page }) => {
         if (_patches?.length) {
           const payload = {
             id: nextState.pageHeader._id,
-            patches: operationsQueue.current,
+            patches: optimizePatches(operationsQueue.current),
           }
           setPatches(payload)
           operationsQueue.current = []
@@ -92,12 +111,11 @@ const PageWithAutosave = ({ page }) => {
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{pageState}</pre>
       </Box>
-      {!hasPendingPatches ? (
+      {!showSaving ? (
         <Text id="complete" variant="uiText">
-          changes saved -
+          changes saved
         </Text>
       ) : null}
-      <text>{hasPendingPatches}</text>
     </View>
   )
 }
@@ -114,7 +132,7 @@ const EditorWithProvider = () => {
 
   useEffect(() => {
     // check to see if page exists in DB, if not add page
-    db.find({ selector: { _id: _pageId } }).then((res) => {
+    dbRef.current.find({ selector: { _id: _pageId } }).then((res) => {
       if (!res.docs.length) {
         setPage(_page)
       }

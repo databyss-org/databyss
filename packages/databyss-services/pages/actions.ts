@@ -1,3 +1,4 @@
+import { optimizePatches } from '@databyss-org/editor/state/util'
 import * as services from '.'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import { PatchBatch, PageHeader, Page } from '../interfaces'
@@ -79,7 +80,7 @@ export function savePatchBatch(batch?: PatchBatch) {
       }
 
       // TODO: CHANGE TIMEOUT TO ENV VARIABLE
-      timeoutId = setTimeout(() => dispatch(savePatchBatch()), 1000)
+      timeoutId = setTimeout(() => dispatch(savePatchBatch()), 500)
 
       dispatch({
         type: QUEUE_PATCH,
@@ -114,7 +115,7 @@ export function savePatchBatch(batch?: PatchBatch) {
     }
     _patches = _patches!.concat(_batch!.patches)
   }
-  const _batchPatch = { id: _pageId, patches: _patches }
+  const _batchPatch = { id: _pageId, patches: optimizePatches(_patches) }
   return async (dispatch: Function) => {
     dispatch({
       type: QUEUE_PATCH,

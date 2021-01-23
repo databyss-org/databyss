@@ -18,12 +18,8 @@ export const textSchema: JSONSchema4 = {
           offset: {
             type: 'number',
           },
-          marks: {
-            type: 'array',
-            items: {
-              type: 'string',
-            },
-          },
+          // marks can be an array or string
+          marks: {},
         },
       },
     },

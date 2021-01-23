@@ -1,6 +1,6 @@
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
 import { DocumentType } from '../../interfaces'
-import { db } from '../../db'
+import { dbRef } from '../../db'
 import { findAll, replaceOne } from '../../utils'
 
 const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
@@ -20,7 +20,7 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
         }
       })
 
-      await db.bulkDocs(
+      await dbRef.current.bulkDocs(
         _idsToDelete.map((i) => ({ _id: i._id, _rev: i._rev, _deleted: true }))
       )
     }

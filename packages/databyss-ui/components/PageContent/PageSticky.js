@@ -1,13 +1,9 @@
 /* eslint-disable react/no-danger */
-import React, {
-  useEffect,
-  useRef,
-  useState,
-  //  useCallback
-} from 'react'
+import React, { useEffect, useRef, useState, useCallback } from 'react'
 import { Helmet } from 'react-helmet'
-// import { debounce } from 'lodash'
+import { debounce } from 'lodash'
 import { PagesLoader } from '@databyss-org/ui/components/Loaders'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { View, Text, Icon } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
@@ -19,34 +15,37 @@ import AccountMenu from './AccountMenu'
 
 const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
-  const hasPendingPatches = usePageContext((c) => c.hasPendingPatches)
+  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+  const patchQueueSize = usePageContext((c) => c && c.patchQueueSize)
+
+  const _isDbBusy = isDbBusy()
   // get page name from headerCache
   const getPages = usePageContext((c) => c && c.getPages)
 
-  const [pendingPatches, setPendingPatches] = useState(0)
   const [showSaving, setShowSaving] = useState(false)
 
   const stickyRef = useRef()
   const currentPath = []
 
-  // // debonce the ui component showing the saving icon
-  // const debounceSavingIcon = useCallback(
-  //   debounce(
-  //     (count) => {
-  //       setShowSaving(count)
-  //     },
-  //     1000,
-  //     { maxWait: 1000 }
-  //   ),
-  //   []
-  // )
+  // debonce the ui component showing the saving icon
+  const debounceSavingIcon = useCallback(
+    debounce(
+      (count) => {
+        setShowSaving(count)
+      },
+      2500,
+      {
+        // leading: true,
+        maxWait: 500,
+      }
+    ),
+    []
+  )
 
   useEffect(() => {
-    // set the true state of pending patches
-    setPendingPatches(hasPendingPatches)
-    setShowSaving(hasPendingPatches)
-    // debounceSavingIcon(hasPendingPatches)
-  }, [hasPendingPatches])
+    // check if database is busy or if we have pending patches
+    debounceSavingIcon(!!(_isDbBusy || patchQueueSize))
+  }, [_isDbBusy, patchQueueSize])
 
   const pages = getPages()
   // get page title
@@ -83,7 +82,7 @@ const PageSticky = ({ pagePath, pageId }) => {
         />
       </Text>
       <View alignItems="center" justifyContent="flex-end" flexDirection="row">
-        {pendingPatches ? null : (
+        {showSaving ? null : (
           <View id="changes-saved">
             {' '}
             &nbsp;

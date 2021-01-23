@@ -10,6 +10,7 @@ import {
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import cloneDeep from 'clone-deep'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
@@ -56,6 +57,7 @@ const ContentEditable = ({
   readonly,
   onNavigateUpFromTop,
   editorRef,
+  pendingPatches,
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
@@ -74,8 +76,6 @@ const ContentEditable = ({
   )
 
   const resetTopicHeaders = useTopicContext((c) => c && c.resetTopicHeaders)
-
-  const hasPendingPatches = usePageContext((c) => c && c.hasPendingPatches)
 
   const topicContext = useTopicContext()
   const historyContext = useHistoryContext()
@@ -153,16 +153,26 @@ const ContentEditable = ({
     }
   }, [state.removedEntities])
 
+  // checks if db is currently processing patches
+  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+  let _isDbBusy
+  if (isDbBusy) {
+    _isDbBusy = isDbBusy()
+  }
+
+  const patchQueueSize = usePageContext((c) => c && c.patchQueueSize)
+
   // if new atomic block has been added, save atomic
   useEffect(() => {
     if (
       state.newEntities.length &&
       setSource &&
       topicContext &&
-      !hasPendingPatches
+      !_isDbBusy &&
+      !pendingPatches &&
+      !patchQueueSize
     ) {
       const { setTopic } = topicContext
-
       state.newEntities.forEach((entity) => {
         let _data = null
 
@@ -175,7 +185,6 @@ const ContentEditable = ({
             },
           }
         }
-
         const _types = {
           SOURCE: () => {
             // requestAnimationFrame will allow the `forkOnChange` function in the editor provider to execute before setting the inline block relations
@@ -205,7 +214,15 @@ const ContentEditable = ({
         removeEntityFromQueue(entity._id)
       })
     }
-  }, [state.newEntities.length, hasPendingPatches])
+  }, [
+    state.newEntities.length,
+    // checks DB for pending patches
+    _isDbBusy,
+    // checks patch queue from PageBody
+    pendingPatches,
+    // checks patches from PageProvider
+    patchQueueSize,
+  ])
 
   useImperativeHandle(editorRef, () => ({
     focus: () => {
@@ -1067,7 +1084,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
         readonly={readonly}
       />
     )
-  }, [editor, state, hasPendingPatches])
+  }, [editor, state, _isDbBusy])
 }
 
 export default ContentEditable
