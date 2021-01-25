@@ -228,7 +228,7 @@ export const logout = () => async (dispatch) => {
   await deletePouchDbs()
 
   dispatch({ type: LOGOUT })
-  // setTimeout(() => (window.location.href = '/'), 50)
+  setTimeout(() => (window.location.href = '/'), 50)
 }
 
 export const onSetDefaultPage = (id) => async (dispatch) => {
