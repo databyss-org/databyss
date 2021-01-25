@@ -108,70 +108,70 @@ export const fetchSession = ({ _request, ...credentials }) => async (
 
       // replicate database from cloudant
 
-      // await replicateDbFromRemote({
-      //   ...res.data.session.user.groups[0],
-      //   groupId: res.data.session.user.defaultGroupId,
-      // })
+      await replicateDbFromRemote({
+        ...res.data.session.user.groups[0],
+        groupId: res.data.session.user.defaultGroupId,
+      })
       // TODO: provision database first
 
-      // // authenticated
-      // const { session } = res.data
+      // authenticated
+      const { session } = res.data
 
-      // const _defaultPageId = session.user.groups.find(
-      //   (g) => g.groupId === session.user.defaultGroupId
-      // ).defaultPageId
+      const _defaultPageId = session.user.groups.find(
+        (g) => g.groupId === session.user.defaultGroupId
+      ).defaultPageId
 
-      // const _userSession = {
-      //   provisionClientDatabase: session.user.provisionClientDatabase,
-      //   replicateClientDatabase: session.user.replicateClientDatabase,
-      //   token: session.token,
-      //   userId: session.user._id,
-      //   email: session.user.email,
-      //   defaultPageId: _defaultPageId,
-      //   defaultGroupId: session.user.defaultGroupId,
-      //   // remove password
-      //   groups: session.user.groups.map((g) => ({
-      //     dbKey: g.dbKey,
-      //     defaultPageId: g.defaultPageId,
-      //     groupId: g.groupId,
-      //     role: g.role,
-      //   })),
-      // }
+      const _userSession = {
+        provisionClientDatabase: session.user.provisionClientDatabase,
+        replicateClientDatabase: session.user.replicateClientDatabase,
+        token: session.token,
+        userId: session.user._id,
+        email: session.user.email,
+        defaultPageId: _defaultPageId,
+        defaultGroupId: session.user.defaultGroupId,
+        // remove password
+        groups: session.user.groups.map((g) => ({
+          dbKey: g.dbKey,
+          defaultPageId: g.defaultPageId,
+          groupId: g.groupId,
+          role: g.role,
+        })),
+      }
 
-      // // save passwords in localstorage
-      // setDbPassword(session.user.groups)
+      // save passwords in localstorage
+      setDbPassword(session.user.groups)
 
-      // // save session in pouchdb
-      // await setUserSession(_userSession)
+      // save session in pouchdb
+      await setUserSession(_userSession)
 
-      // // initiate database validators
-      // initiatePouchDbValidators()
-      // // initiate database indexes
-      // await initiatePouchDbIndexes()
+      // initiate database validators
+      initiatePouchDbValidators()
+      // initiate database indexes
+      await initiatePouchDbIndexes()
 
-      // // initialize a new user
-      // if (_userSession.provisionClientDatabase) {
-      //   // initate new database
-      //   await addPage(_defaultPageId)
-      // }
+      // initialize a new user
+      if (_userSession.provisionClientDatabase) {
+        // initate new database
+        await addPage(_defaultPageId)
+      }
 
-      // /*
-      // if logging into an existing account, wait for database replication to complete before continuing
-      // */
-      // if (_userSession.replicateClientDatabase) {
-      //   await replicateDbFromRemote({
-      //     ...res.data.session.user.groups[0],
-      //     groupId: res.data.session.user.defaultGroupId,
-      //   })
-      // }
+      /*
+      if logging into an existing account, wait for database replication to complete before continuing
+      */
+      if (_userSession.replicateClientDatabase) {
+        await replicateDbFromRemote({
+          ...res.data.session.user.groups[0],
+          groupId: res.data.session.user.defaultGroupId,
+        })
+      }
 
-      // // sync database
-      // syncPouchDb({
-      //   ...res.data.session.user.groups[0],
-      //   groupId: res.data.session.user.defaultGroupId,
-      //   // TODO: how to curry dispatch
-      //   dispatch,
-      // })
+      // sync database
+      syncPouchDb({
+        ...res.data.session.user.groups[0],
+        groupId: res.data.session.user.defaultGroupId,
+        // TODO: how to curry dispatch
+        dispatch,
+      })
 
       dispatch({
         type: CACHE_SESSION,
@@ -228,7 +228,7 @@ export const logout = () => async (dispatch) => {
   await deletePouchDbs()
 
   dispatch({ type: LOGOUT })
-  setTimeout(() => (window.location.href = '/'), 50)
+  // setTimeout(() => (window.location.href = '/'), 50)
 }
 
 export const onSetDefaultPage = (id) => async (dispatch) => {
