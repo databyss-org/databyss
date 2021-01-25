@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import { sleep, getElementById, getElementByTag } from './_helpers.selenium'
 
 let driver
@@ -18,7 +18,7 @@ export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 describe('value list controller', () => {
   beforeEach(async (done) => {
     // OSX and safari are necessary
-    driver = await startSession()
+    driver = await startSession({ browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     actions = driver.actions()
