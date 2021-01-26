@@ -1,4 +1,4 @@
-import { DocumentType } from './interfaces'
+import { DocumentType, UserPreference } from './interfaces'
 import { dbRef } from './db'
 import { uid } from '../lib/uid'
 
@@ -73,10 +73,10 @@ export const replaceOne = async ({
 /*
 _local documents do not appear with `find` so a `get` function must be used
 */
-export const getUserSession = async () => {
+export const getUserSession = async (): Promise<UserPreference | null> => {
   let response
   try {
-    response = await dbRef.current.get('user_preferences')
+    response = await dbRef.current.get('user_preference')
   } catch (err) {
     console.error('user session not found')
   }

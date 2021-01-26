@@ -1,17 +1,10 @@
-import {
-  syncPouchDb,
-  replicateDbFromRemote,
-  initiatePouchDbValidators,
-  initiatePouchDbIndexes,
-} from '@databyss-org/data/pouchdb/db'
-import { addPage } from '@databyss-org/data/pouchdb/pages/util'
+import { replicateDbFromRemote } from '@databyss-org/data/pouchdb/db'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
 import { NotAuthorizedError } from '../interfaces'
 import { version as databyssVersion } from '../package.json'
 import {
   FETCH_SESSION,
-  CACHE_SESSION,
   DENY_ACCESS,
   REQUEST_CODE,
   END_SESSION,
@@ -21,14 +14,15 @@ import {
   LOGOUT,
   SET_DEFAULT_PAGE,
   SET_SESSION,
+  STORE_SESSION_LOCALLY,
 } from './constants'
 import {
   getAuthToken,
-  getAccountId,
   deletePouchDbs,
   setDefaultPageId,
-  setUserSession,
-  setDbPassword,
+  setAuthToken,
+  setPouchSecret,
+  getUserId,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
@@ -42,7 +36,6 @@ export const fetchSession = ({ _request, ...credentials }) => async (
   const { code, googleCode, email } = credentials
 
   dispatch({ type: FETCH_SESSION, payload: { credentials } })
-
   // fetch params
   let path = process.env.API_URL
   const options = {
@@ -54,9 +47,8 @@ export const fetchSession = ({ _request, ...credentials }) => async (
   }
 
   try {
-    const authToken = await getAuthToken()
-    const accountId = await getAccountId()
-    console.log('after', accountId, authToken)
+    const authToken = getAuthToken()
+    const accountId = await getUserId()
 
     if (authToken && accountId) {
       // if not at at root path '/' and accountID is not the same as the one in the url, set as guest account
@@ -72,6 +64,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         path += '/auth'
         options.headers['x-databyss-as-account'] = _accountId
       } else {
+        console.log('IN THIS ELSE STATMENT')
         // if we have the token, try to use it
         path += '/auth'
         options.headers['x-databyss-account'] = accountId
@@ -102,82 +95,28 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     }
 
     const res = await _request(path, options, true)
-
     if (res.data && res.data.session) {
-      // get auth token and credentials, set them in local storage
-
-      // replicate database from cloudant
-
-      await replicateDbFromRemote({
-        ...res.data.session.user.groups[0],
-        groupId: res.data.session.user.defaultGroupId,
-      })
-      // TODO: provision database first
-
-      // authenticated
       const { session } = res.data
 
-      const _defaultPageId = session.user.groups.find(
-        (g) => g.groupId === session.user.defaultGroupId
-      ).defaultPageId
-
-      const _userSession = {
-        provisionClientDatabase: session.user.provisionClientDatabase,
-        replicateClientDatabase: session.user.replicateClientDatabase,
-        token: session.token,
-        userId: session.user._id,
-        email: session.user.email,
-        defaultPageId: _defaultPageId,
-        defaultGroupId: session.user.defaultGroupId,
-        // remove password
-        groups: session.user.groups.map((g) => ({
-          dbKey: g.dbKey,
-          defaultPageId: g.defaultPageId,
-          groupId: g.groupId,
-          role: g.role,
-        })),
+      // set credentials in local storage if sent from server
+      if (session.groupCredentials) {
+        setPouchSecret(session.groupCredentials)
       }
 
-      // save passwords in localstorage
-      setDbPassword(session.user.groups)
+      // set token in local storage
+      setAuthToken(session.token)
 
-      // save session in pouchdb
-      await setUserSession(_userSession)
+      // replicate database from cloudant
+      // assume its the first ID provided in credentials
+      const _defaultGroupId =
+        session.user?.defaultGroupId || session?.groupCredentials[0].groupId
 
-      // initiate database validators
-      initiatePouchDbValidators()
-      // initiate database indexes
-      await initiatePouchDbIndexes()
-
-      // initialize a new user
-      if (_userSession.provisionClientDatabase) {
-        // initate new database
-        await addPage(_defaultPageId)
-      }
-
-      /*
-      if logging into an existing account, wait for database replication to complete before continuing
-      */
-      if (_userSession.replicateClientDatabase) {
-        await replicateDbFromRemote({
-          ...res.data.session.user.groups[0],
-          groupId: res.data.session.user.defaultGroupId,
-        })
-      }
-
-      // sync database
-      syncPouchDb({
-        ...res.data.session.user.groups[0],
-        groupId: res.data.session.user.defaultGroupId,
-        // TODO: how to curry dispatch
-        dispatch,
+      await replicateDbFromRemote({
+        groupId: _defaultGroupId,
       })
 
       dispatch({
-        type: CACHE_SESSION,
-        payload: {
-          session: _userSession,
-        },
+        type: STORE_SESSION_LOCALLY,
       })
     } else if (res.data?.isPublic) {
       // cache public account info in session state
@@ -193,7 +132,11 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       })
     }
   } catch (error) {
-    await deletePouchDbs()
+    try {
+      await deletePouchDbs()
+    } catch (err) {
+      console.error(err)
+    }
     dispatch({
       type: DENY_ACCESS,
       payload: { error },
@@ -213,7 +156,7 @@ export const endSession = () => async (dispatch) => {
 
 export const getUserAccount = () => async (dispatch) => {
   dispatch({ type: GET_USER_ACCOUNT })
-  const authToken = await getAuthToken()
+  const authToken = getAuthToken()
   if (authToken) {
     const data = { authToken }
     const _res = await httpPost('/users', { data })

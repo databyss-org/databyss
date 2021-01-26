@@ -1,12 +1,11 @@
 import express from 'express'
-import _ from 'lodash'
 import querystring from 'querystring'
 import humanReadableIds from 'human-readable-ids'
 import jwt from 'jsonwebtoken'
 import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
 import { uid } from '@databyss-org/data/lib/uid'
-import { Users, Logins, Groups } from '@databyss-org/data/couchdb'
+import { Users, Logins } from '@databyss-org/data/couchdb'
 import { Base64 } from 'js-base64'
 import { send } from '../../lib/postmark'
 import { getTokenFromUserId } from '../../lib/session'
@@ -93,6 +92,7 @@ router.post(
         email: { $eq: email },
       },
     }
+
     const user = await Users.find(_selector)
     let _userId
     if (!user.docs.length) {
@@ -153,17 +153,18 @@ router.post(
         //
         let user = await Users.get(decoded.user.id)
         if (user) {
-          user = _.pick(user, ['defaultGroupId', 'email'])
+          user = { email: user.email }
         }
 
-        if (user) {
-          let group = await Groups.get(user.defaultGroupId)
-          if (group) {
-            group = _.pick(group, 'defaultPageId')
+        return res.json({ data: { ...user } }).status(200)
+        // if (user) {
+        //   let group = await Groups.get(user.defaultGroupId)
+        //   if (group) {
+        //     group = _.pick(group, 'defaultPageId')
 
-            return res.json({ data: { ...user, ...group } }).status(200)
-          }
-        }
+        //     return res.json({ data: { ...user, ...group } }).status(200)
+        //   }
+        // }
       }
       return res.status(401).json({ msg: 'Token is not valid' })
     } catch (err) {

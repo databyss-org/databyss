@@ -15,6 +15,10 @@ import {
   blockSchema,
   userPreferenceSchema,
 } from '@databyss-org/data/schemas'
+import {
+  getPouchSecret,
+  getDbCredentialsFromLocal,
+} from '@databyss-org/services/session/clientStorage'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { JSONSchema4 } from 'json-schema'
@@ -122,22 +126,39 @@ replicates remote DB to local
 */
 
 export const replicateDbFromRemote = ({
-  dbKey,
-  dbPassword,
+  // dbKey,
+  // dbPassword,
   groupId,
 }: {
-  dbKey: string
-  dbPassword: string
+  // dbKey: string
+  // dbPassword: string
   groupId: string
 }) =>
   new Promise((resolve, reject) => {
+    // for now we are getting the first credentials from local storage groups
+    let _creds = getPouchSecret()
+    // let _dbId
+    let _cred
+
+    if (!_creds) {
+      reject()
+    }
+    _creds = _creds && JSON.parse(_creds)
+    if (_creds) {
+      // _dbId = Object.keys(_creds)[0]
+      _cred = _creds[groupId]
+    }
+    if (!_cred) {
+      reject()
+    }
+
     const opts = {
       // live: true,
       retry: true,
       // continuous: true,
       auth: {
-        username: dbKey,
-        password: dbPassword,
+        username: _cred.dbKey,
+        password: _cred.dbPassword,
       },
     }
     dbRef.current.replicate
@@ -147,25 +168,32 @@ export const replicateDbFromRemote = ({
   })
 
 export const syncPouchDb = ({
-  dbKey,
-  dbPassword,
+  // dbKey,
+  // dbPassword,
   groupId,
   dispatch,
 }: {
-  dbKey: string
-  dbPassword: string
+  // dbKey: string
+  // dbPassword: string
   groupId: string
   dispatch: Function
 }) => {
+  // get credentials from local storage
+  const _cred: any = getDbCredentialsFromLocal(groupId)
+
+  if (!_cred) {
+    console.error('credentials not found')
+  }
   const opts = {
     live: true,
     retry: true,
     continuous: true,
     auth: {
-      username: dbKey,
-      password: dbPassword,
+      username: _cred.dbKey,
+      password: _cred.dbPassword,
     },
   }
+
   dbRef.current.replicate
     .to(`${REMOTE_URL}/g_${groupId}`, {
       ...opts,

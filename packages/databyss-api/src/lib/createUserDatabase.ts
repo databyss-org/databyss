@@ -5,9 +5,12 @@ import { uid } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 
 import { DocumentScope } from 'nano'
+import { Page } from '../../../databyss-services/interfaces/Page'
+import { BlockType } from '../../../databyss-services/interfaces/Block'
 import {
   UserPreference,
   DocumentType,
+  PageDoc,
 } from '../../../databyss-data/pouchdb/interfaces'
 
 interface CredentialResponse {
@@ -17,17 +20,63 @@ interface CredentialResponse {
   role: Role
 }
 
+/*
+TODO: importing this function causes server to fail
+
+*/
+export const normalizePage = (page: Page): PageDoc => {
+  const _pageDoc: PageDoc = {
+    blocks: [{ _id: page.blocks[0]._id, type: BlockType.Entry }],
+    selection: page.selection._id,
+    _id: page._id,
+    name: page.name,
+    archive: page.archive,
+  }
+  return _pageDoc
+}
+
+export const initializeNewPage = async ({
+  groupId,
+  pageId,
+}: {
+  groupId: string
+  pageId: string
+}) => {
+  // get user group
+  const groupDb = await cloudant.db.use(`g_${groupId}`)
+  const _page: any = new Page(pageId)
+  // upsert selection
+  groupDb.upsert(_page.selection._id, () => ({
+    $type: DocumentType.Selection,
+    createdAt: Date.now(),
+    ..._page.selection,
+  }))
+  // upsert blocks
+  groupDb.upsert(_page.selection._id, () => ({
+    $type: DocumentType.Block,
+    createdAt: Date.now(),
+    ..._page.blocks[0],
+  }))
+
+  groupDb.upsert(_page._id, () => ({
+    createdAt: Date.now(),
+    $type: DocumentType.Page,
+    ...normalizePage(_page),
+  }))
+}
+
 export const createGroupId = async () => {
   // TODO: fix this so its not 'any'
+  const _id: string = uid().toLowerCase()
   const Groups: any = await cloudant.db.use('groups')
-  const group = await Groups.insert({
+  await Groups.insert({
     name: 'untitled',
     sessions: [],
     // TODO: cloudant does not allow uppercase for db names,
     // will this affect collisions?
-    _id: uid().toLowerCase(),
+    _id,
   })
-  return group.id
+  return _id
 }
 
 const createGroupDatabase = async (id: string): Promise<DocumentScope<any>> => {
@@ -91,7 +140,7 @@ const addSessionToGroup = async (
     _sessions.push({
       userId,
       clientInfo: 'get client info',
-      dbKey: credentials.dbKey,
+      // dbKey: credentials.dbKey,
       lastLoginAt: Date.now(),
       role: credentials.role,
     })
@@ -113,70 +162,92 @@ export const addCredentialsToGroupId = async ({
   // set user as GROUP_ADMIN and return credentials
   const response = await setSecurity(groupId)
   // add the user session to groups
-  const _group = await addSessionToGroup(userId, response)
+  await addSessionToGroup(userId, response)
 
-  return { ...response, defaultPageId: _group.defaultPageId }
+  // new default pageID is created here
+  return { ...response }
 }
 
 export const createUserDatabaseCredentials = async (
   user: User
 ): Promise<CredentialResponse> => {
-  const _groupId: string = await createGroupId()
+  let groupId = user.defaultGroupId
 
-  // creates a database if not yet defined
-  const _db = await createGroupDatabase(_groupId)
-  // add user preferences to user database
-  const _userPreferences: UserPreference = {
-    _id: 'user_preference',
-    $type: DocumentType.UserPreferences,
-    userId: user._id,
-    email: user?.email,
-    defaultGroupId: _groupId,
-    createdAt: Date.now(),
-    groups: [
-      {
-        groupId: _groupId,
-        defaultPageId: uid(),
-        role: Role.GroupAdmin,
-      },
-    ],
+  // create new group if user does not have one
+  if (!groupId) {
+    groupId = await createGroupId()
+
+    // creates a database if not yet defined
+    const _db = await createGroupDatabase(groupId)
+    // add user preferences to user database
+
+    const defaultPageId = uid()
+    const _userPreferences: UserPreference = {
+      _id: 'user_preference',
+      $type: DocumentType.UserPreferences,
+      userId: user._id,
+      email: user?.email,
+      defaultGroupId: groupId,
+      createdAt: Date.now(),
+      groups: [
+        {
+          groupId,
+          // creates a new default page id
+          defaultPageId,
+          role: Role.GroupAdmin,
+        },
+      ],
+    }
+
+    initializeNewPage({
+      groupId,
+      pageId: defaultPageId,
+    })
+
+    // TODO: add new page to userDB
+
+    await _db.upsert(_userPreferences._id, () => _userPreferences)
+
+    // add defaultPageId to Userdb
+    await Users.upsert(_userPreferences.userId, (oldDoc) => ({
+      ...oldDoc,
+      defaultGroupId: _userPreferences.defaultGroupId,
+    }))
   }
-
-  _db.upsert(_userPreferences._id, () => _userPreferences)
 
   // add credentials to new database
   const response = await addCredentialsToGroupId({
-    groupId: _groupId,
+    groupId,
     userId: user._id,
   })
 
   return response
 }
 
-export const addCredentialsToUser = async (
-  userId: string,
-  credentials: CredentialResponse
-): Promise<any /* this should extend User with property  */> => {
-  let _defaultPageId
+// export const addCredentialsToUser = async (
+//   userId: string,
+//   credentials: CredentialResponse
+// ): Promise<any /* this should extend User with property  */> => {
+//   let _defaultPageId
 
-  const _res = await Users.upsert(userId, (oldDoc: User) => {
-    _defaultPageId = uid()
+//   const _res = await Users.upsert(userId, (oldDoc: User) => {
+//     _defaultPageId = uid()
 
-    // check if group has default page id, if not, create id
-    Groups.upsert(credentials.groupId, (_oldDoc) =>
-      _oldDoc.defaultPageId
-        ? _oldDoc
-        : { ..._oldDoc, defaultPageId: _defaultPageId }
-    )
+//     // check if group has default page id, if not, create id
+//     Groups.upsert(credentials.groupId, (_oldDoc) =>
+//       _oldDoc.defaultPageId
+//         ? _oldDoc
+//         : { ..._oldDoc, defaultPageId: _defaultPageId }
+//     )
 
-    return {
-      ...oldDoc,
-      defaultGroupId: credentials.groupId,
-    }
-  })
+//     return {
+//       ...oldDoc,
+//       defaultGroupId: credentials.groupId,
+//     }
+//   })
 
-  return { ..._res, defaultPageId: _defaultPageId }
-}
+//   return { ..._res, defaultPageId: _defaultPageId }
+// }
 
 export const addCredientialsToSession = async ({
   groupId,

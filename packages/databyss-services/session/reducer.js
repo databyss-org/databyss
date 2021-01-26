@@ -8,6 +8,7 @@ import {
   GET_USER_ACCOUNT,
   CACHE_USER_ACCOUNT,
   SET_DEFAULT_PAGE,
+  STORE_SESSION_LOCALLY,
 } from './constants'
 
 import { ResourcePending } from '../interfaces/'
@@ -27,6 +28,7 @@ export const initialState = {
   userInfo: null,
   // monitors pouch db sync
   isDbBusy: false,
+  sessionIsStored: false,
 }
 
 export default (state, action) => {
@@ -50,6 +52,12 @@ export default (state, action) => {
       return {
         ...state,
         userInfo: action.payload.data,
+      }
+    }
+    case STORE_SESSION_LOCALLY: {
+      return {
+        ...state,
+        sessionIsStored: true,
       }
     }
     case GET_USER_ACCOUNT: {

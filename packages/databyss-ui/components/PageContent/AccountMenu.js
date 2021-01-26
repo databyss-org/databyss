@@ -40,11 +40,10 @@ const AccountMenu = () => {
   */
 
   useEffect(() => {
-    getAuthToken().then((a) => {
-      if (a) {
-        setAuthToken(true)
-      }
-    })
+    const _token = getAuthToken()
+    if (_token) {
+      setAuthToken(true)
+    }
   }, [])
 
   return authToken ? (
