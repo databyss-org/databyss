@@ -24,7 +24,11 @@ import tv4 from 'tv4'
 import { JSONSchema4 } from 'json-schema'
 import { DocumentType } from './interfaces'
 
-const REMOTE_URL = `https://fa0a57bd-308f-4564-9e4d-e69d68aad000-bluemix.cloudantnosqldb.appdomain.cloud`
+const REMOTE_CLOUDANT_URL = process.env.REMOTE_CLOUDANT_URL
+
+console.log(process.env)
+
+// const REMOTE_CLOUDANT_URL = `https://fa0a57bd-308f-4564-9e4d-e69d68aad000-bluemix.cloudantnosqldb.appdomain.cloud`
 
 // add plugins
 PouchDB.plugin(PouchDBTransform)
@@ -162,7 +166,7 @@ export const replicateDbFromRemote = ({
       },
     }
     dbRef.current.replicate
-      .from(`${REMOTE_URL}/g_${groupId}`, { ...opts })
+      .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
       .on('complete', () => resolve())
       .on('error', (err) => reject(err))
   })
@@ -195,7 +199,7 @@ export const syncPouchDb = ({
   }
 
   dbRef.current.replicate
-    .to(`${REMOTE_URL}/g_${groupId}`, {
+    .to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
       ...opts,
       // todo: add groupId to every document
       // filter: (doc) => doc.$type !== DocumentType.UserPreferences,
@@ -221,7 +225,7 @@ export const syncPouchDb = ({
     })
 
   dbRef.current.replicate
-    .from(`${REMOTE_URL}/g_${groupId}`, { ...opts })
+    .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
   // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
 }
