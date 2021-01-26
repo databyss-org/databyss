@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@databyss-org/slate": "0.58.1-b2",
-    "@databyss-org/slate-react": "0.57.2-b4",
+    "@databyss-org/slate-react": "0.57.2-b5",
     "@styled-system/css": "^5.0.23",
     "@types/mongoose": "^5.10.1",
     "add": "^2.0.6",
