@@ -34,7 +34,6 @@ export class Page implements PageHeader {
     this.blocks = [
       {
         _id: _firstBlockId,
-        page: this._id,
         type: BlockType.Entry,
         text: { textValue: '', ranges: [] },
       },

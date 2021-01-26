@@ -1,6 +1,6 @@
 import { JSONSchema4 } from 'json-schema'
 
-export const userSchema: JSONSchema4 = {
+export const groupSchema: JSONSchema4 = {
   title: 'Groups',
   type: 'object',
   properties: {
@@ -58,4 +58,4 @@ export const userSchema: JSONSchema4 = {
   required: ['_id', 'name', 'sessions'],
 }
 
-export default userSchema
+export default groupSchema

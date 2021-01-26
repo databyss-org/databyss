@@ -1,7 +1,7 @@
 import { Users, Groups } from '@databyss-org/data/couchdb'
 import { User, Role } from '@databyss-org/data/interfaces'
 import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
-import { uid } from '@databyss-org/data/lib/uid'
+import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 
 import { DocumentScope } from 'nano'
@@ -23,14 +23,15 @@ export const createGroupId = async () => {
   const group = await Groups.insert({
     name: 'untitled',
     sessions: [],
-    // TODO: cloudant does not allow uppercase for db names,
-    // will this affect collisions?
-    _id: uid().toLowerCase(),
+    // cloudant does not allow uppercase for db names so use lowercase uid generator
+    _id: uidlc(),
   })
   return group.id
 }
 
-const createGroupDatabase = async (id: string): Promise<DocumentScope<any>> => {
+export const createGroupDatabase = async (
+  id: string
+): Promise<DocumentScope<any>> => {
   // database are not allowed to start with a number
   let _db
   try {
@@ -38,8 +39,7 @@ const createGroupDatabase = async (id: string): Promise<DocumentScope<any>> => {
     _db = await cloudant.db.use<any>(`g_${id}`)
     return _db
   } catch (err) {
-    if (err.message !== 'Database does not exist.') {
-      console.log(err.message)
+    if (err.error !== 'not_found') {
       throw err
     }
     await cloudant.db.create(`g_${id}`)

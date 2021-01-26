@@ -5,26 +5,10 @@ export const selectionSchema: JSONSchema4 = {
   type: 'object',
   properties: {
     anchor: {
-      type: 'object',
-      properties: {
-        index: {
-          type: 'number',
-        },
-        offset: {
-          type: 'number',
-        },
-      },
+      $ref: 'point',
     },
     focus: {
-      type: 'object',
-      properties: {
-        index: {
-          type: 'number',
-        },
-        offset: {
-          type: 'number',
-        },
-      },
+      $ref: 'point',
     },
   },
   // extend pouchdb types

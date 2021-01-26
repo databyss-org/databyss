@@ -1,6 +1,6 @@
 import { JSONSchema4 } from 'json-schema'
 
-const text: JSONSchema4 = {
+export const textSchema: JSONSchema4 = {
   type: 'object',
   title: 'Text',
   properties: {
@@ -26,4 +26,4 @@ const text: JSONSchema4 = {
   },
 }
 
-export default text
+export default textSchema

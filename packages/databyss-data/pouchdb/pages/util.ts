@@ -55,7 +55,6 @@ const addOrReplaceBlock = async (p, page) => {
   // add or update block
   const _blockFields = {
     _id: _blockId,
-    page: page._id,
     account: 'DEFAULT ACCOUNT',
   }
 
@@ -75,7 +74,7 @@ const addOrReplaceBlock = async (p, page) => {
     await upsert({
       $type: DocumentType.Block,
       _id: _blockId,
-      doc: { ..._block, page: page._id },
+      doc: _block,
     })
   }
 
