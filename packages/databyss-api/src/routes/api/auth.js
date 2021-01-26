@@ -62,6 +62,7 @@ router.post(
         const _res = await Logins.get(_login._id, _login._rev)
         await Logins.destroy(_res._id, _res._rev)
         const session = await getSessionFromToken(token)
+
         // give user credentials, if default db does not exist for user, create one
         const credentials = await createUserDatabaseCredentials(session.user)
 
