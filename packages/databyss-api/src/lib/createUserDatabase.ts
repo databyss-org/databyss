@@ -1,7 +1,7 @@
 import { Users, Groups } from '@databyss-org/data/couchdb'
 import { User, Role } from '@databyss-org/data/interfaces'
 import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
-import { uid } from '@databyss-org/data/lib/uid'
+import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 
 import { DocumentScope } from 'nano'
@@ -67,7 +67,7 @@ export const initializeNewPage = async ({
 
 export const createGroupId = async () => {
   // TODO: fix this so its not 'any'
-  const _id: string = uid().toLowerCase()
+  const _id: string = uidlc()
   const Groups: any = await cloudant.db.use('groups')
   await Groups.insert({
     name: 'untitled',
@@ -79,7 +79,9 @@ export const createGroupId = async () => {
   return _id
 }
 
-const createGroupDatabase = async (id: string): Promise<DocumentScope<any>> => {
+export const createGroupDatabase = async (
+  id: string
+): Promise<DocumentScope<any>> => {
   // database are not allowed to start with a number
   let _db
   try {
@@ -87,8 +89,7 @@ const createGroupDatabase = async (id: string): Promise<DocumentScope<any>> => {
     _db = await cloudant.db.use<any>(`g_${id}`)
     return _db
   } catch (err) {
-    if (err.message !== 'Database does not exist.') {
-      console.log(err.message)
+    if (err.error !== 'not_found') {
       throw err
     }
     await cloudant.db.create(`g_${id}`)

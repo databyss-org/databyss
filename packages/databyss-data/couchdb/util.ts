@@ -17,6 +17,7 @@ import {
   pouchDocSchema,
   blockSchema,
   userPreferenceSchema,
+  pointSchema,
 } from '@databyss-org/data/schemas'
 import { DocumentScope } from 'nano'
 import { DesignDoc } from '@databyss-org/data/interfaces'
@@ -64,6 +65,7 @@ export const updateDesignDoc = async ({
     entrySchema,
     topicSchema,
     userPreferenceSchema,
+    pointSchema,
   }
   await db.upsert(_dd._id, () => _dd)
 }
