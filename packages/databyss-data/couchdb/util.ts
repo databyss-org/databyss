@@ -24,6 +24,8 @@ import { DesignDoc } from '@databyss-org/data/interfaces'
 import { JSONSchema4 } from 'json-schema'
 import path from 'path'
 import { cloudant } from './cloudant'
+// import { UserPreference } from '../pouchdb/interfaces'
+// import { upsert } from '../pouchdb/utils'
 
 const fs = require('fs')
 

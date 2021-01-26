@@ -3,7 +3,12 @@ import { User, Role } from '@databyss-org/data/interfaces'
 import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
 import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
-import { DesignDoc } from '../../../databyss-data/interfaces/designdoc'
+
+import { DocumentScope } from 'nano'
+import {
+  UserPreference,
+  DocumentType,
+} from '../../../databyss-data/pouchdb/interfaces'
 
 interface CredentialResponse {
   dbKey: string
@@ -14,7 +19,7 @@ interface CredentialResponse {
 
 export const createGroupId = async () => {
   // TODO: fix this so its not 'any'
-  const Groups: any = cloudant.db.use('groups')
+  const Groups: any = await cloudant.db.use('groups')
   const group = await Groups.insert({
     name: 'untitled',
     sessions: [],
@@ -24,19 +29,24 @@ export const createGroupId = async () => {
   return group.id
 }
 
-export const createGroupDatabase = async (id: string) => {
+export const createGroupDatabase = async (
+  id: string
+): Promise<DocumentScope<any>> => {
   // database are not allowed to start with a number
+  let _db
   try {
     await cloudant.db.get(`g_${id}`)
+    _db = await cloudant.db.use<any>(`g_${id}`)
+    return _db
   } catch (err) {
     if (err.error !== 'not_found') {
       throw err
     }
     await cloudant.db.create(`g_${id}`)
-
     // add design docs to sever
-    const _db = await cloudant.db.use<DesignDoc>(`g_${id}`)
+    _db = await cloudant.db.use<any>(`g_${id}`)
     await updateDesignDoc({ db: _db })
+    return _db
   }
 }
 
@@ -114,7 +124,25 @@ export const createUserDatabaseCredentials = async (
   const _groupId: string = await createGroupId()
 
   // creates a database if not yet defined
-  await createGroupDatabase(_groupId)
+  const _db = await createGroupDatabase(_groupId)
+  // add user preferences to user database
+  const _userPreferences: UserPreference = {
+    _id: 'user_preference',
+    $type: DocumentType.UserPreferences,
+    userId: user._id,
+    email: user?.email,
+    defaultGroupId: _groupId,
+    createdAt: Date.now(),
+    groups: [
+      {
+        groupId: _groupId,
+        defaultPageId: uid(),
+        role: Role.GroupAdmin,
+      },
+    ],
+  }
+
+  _db.upsert(_userPreferences._id, () => _userPreferences)
 
   // add credentials to new database
   const response = await addCredentialsToGroupId({

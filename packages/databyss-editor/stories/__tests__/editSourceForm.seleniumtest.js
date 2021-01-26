@@ -2,7 +2,7 @@
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
 
-import { startSession } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, CHROME } from '@databyss-org/ui/lib/saucelabs'
 
 import {
   enterKey,
@@ -35,7 +35,7 @@ describe('<EditSourceForm/>', () => {
     const random = Math.random().toString(36).substring(7)
 
     // osx and safari are necessary
-    driver = await startSession()
+    driver = await startSession({ browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     await sleep(1000)

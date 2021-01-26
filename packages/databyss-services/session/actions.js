@@ -104,6 +104,16 @@ export const fetchSession = ({ _request, ...credentials }) => async (
     const res = await _request(path, options, true)
 
     if (res.data && res.data.session) {
+      // get auth token and credentials, set them in local storage
+
+      // replicate database from cloudant
+
+      await replicateDbFromRemote({
+        ...res.data.session.user.groups[0],
+        groupId: res.data.session.user.defaultGroupId,
+      })
+      // TODO: provision database first
+
       // authenticated
       const { session } = res.data
 
