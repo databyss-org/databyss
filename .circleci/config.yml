@@ -23,20 +23,6 @@ jobs:
     steps:
       - checkout
 
-      - run:
-          name: 'Reset next branch'
-          command: |
-            git checkout -q next
-            git reset --hard origin/next
-            if [ -n "$CIRCLE_TAG" ]
-            then
-              git checkout "$CIRCLE_TAG"
-            elif [ -n "$CIRCLE_BRANCH" ]
-            then
-              git checkout "$CIRCLE_BRANCH"
-            fi
-            git reset --hard "$CIRCLE_SHA1"
-
       # https://circleci.com/docs/2.0/yarn/
       # Download and cache dependencies
       - restore_cache:
