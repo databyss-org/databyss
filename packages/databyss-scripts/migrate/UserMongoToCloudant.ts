@@ -263,6 +263,7 @@ class UserMongoToCloudant extends ServerProcess {
       const _couchUserId = uid()
 
       await _groupDb.insert({
+        _id: 'user_preference',
         $type: DocumentType.UserPreferences,
         userId: _couchUserId,
         email: _mongoUser.email,
