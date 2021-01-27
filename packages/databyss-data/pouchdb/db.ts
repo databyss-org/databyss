@@ -24,11 +24,9 @@ import tv4 from 'tv4'
 import { JSONSchema4 } from 'json-schema'
 import { DocumentType } from './interfaces'
 
-const REMOTE_CLOUDANT_URL = process.env.REMOTE_CLOUDANT_URL
+const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
 console.log(process.env)
-
-// const REMOTE_CLOUDANT_URL = `https://fa0a57bd-308f-4564-9e4d-e69d68aad000-bluemix.cloudantnosqldb.appdomain.cloud`
 
 // add plugins
 PouchDB.plugin(PouchDBTransform)
