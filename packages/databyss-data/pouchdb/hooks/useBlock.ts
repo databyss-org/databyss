@@ -1,25 +1,58 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   ResourceResponse,
   ResourcePending,
+  Block,
 } from '@databyss-org/services/interfaces'
+import { resourceIsReady } from '@databyss-org/services/lib/util'
 import { dbRef } from '../db'
 
-export const useBlock = <blockType>(id: string): blockType | null => {
-  const [doc, setDoc] = useState<ResourceResponse<blockType>>(null)
-  if (doc && !(doc instanceof ResourcePending) && !(doc instanceof Error)) {
-    return doc
+export const useBlock = <blockType extends Block>(
+  id: string
+): blockType | null => {
+  const [, setState] = useState<ResourceResponse<blockType>>(null)
+  const docRef = useRef<ResourceResponse<blockType>>(null)
+
+  const setDoc = (doc: ResourceResponse<blockType>) => {
+    docRef.current = doc
+    setState(doc)
   }
-  if (doc instanceof ResourcePending) {
+
+  const refresh = () =>
+    dbRef.current
+      .get(id)
+      .then((res) => setDoc(res))
+      .catch((err) => setDoc(err))
+
+  useEffect(() => {
+    if (!resourceIsReady(docRef.current)) {
+      return () => null
+    }
+    const _changes = dbRef.current
+      .changes({
+        since: 'now',
+        live: true,
+        doc_ids: [(docRef.current as blockType)._id],
+      })
+      .on('change', (change) => {
+        console.log('useBlock.change', change)
+        refresh()
+      })
+    return () => {
+      _changes.cancel()
+    }
+  }, [docRef.current])
+
+  if (resourceIsReady(docRef.current)) {
+    return docRef.current as blockType
+  }
+  if (docRef.current instanceof ResourcePending) {
     return null
   }
-  if (doc instanceof Error) {
-    throw doc
+  if (docRef.current instanceof Error) {
+    throw docRef.current
   }
-  dbRef.current
-    .get(id)
-    .then((res) => setDoc(res))
-    .catch((err) => setDoc(err))
+  refresh()
   setDoc(new ResourcePending())
   return null
 }
