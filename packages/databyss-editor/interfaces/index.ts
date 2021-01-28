@@ -1,4 +1,4 @@
-import { Text } from '@databyss-org/services/interfaces'
+import { BlockRelation } from '@databyss-org/services/interfaces'
 
 export type {
   EditorState,
@@ -11,19 +11,9 @@ export type {
   Selection,
   Point,
   Text,
+  BlockRelation,
 } from '@databyss-org/services/interfaces'
 export { BlockType } from '@databyss-org/services/interfaces'
-
-export type BlockRelation = {
-  block: string
-  relatedBlock: string
-  blockText?: Text
-  relationshipType?: string
-  relatedBlockType?: string
-  page: string
-  blockIndex: number
-  removeBlock?: boolean
-}
 
 export type BlockRelationPayload = {
   blocksRelationArray?: BlockRelation[]

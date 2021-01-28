@@ -1,4 +1,3 @@
-import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { SelectOption } from './UI'
 import { Text } from './Text'
 
@@ -83,4 +82,15 @@ export interface CacheDict<T> {
 export interface BlockRelationsServerResponse {
   count: number
   results: CacheDict<BlockRelation[]>
+}
+
+export interface BlockRelation {
+  _id: string
+  block: string
+  relatedBlock: string
+  relationshipType: 'HEADING' | 'INLINE'
+  relatedBlockType: BlockType
+  page: string
+  blockIndex: number
+  blockText: Text
 }

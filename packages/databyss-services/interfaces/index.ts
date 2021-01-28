@@ -22,6 +22,7 @@ export type {
   Author,
   Topic,
   SourceCitationHeader,
+  BlockRelation,
 } from './Block'
 export { BlockType } from './Block'
 export type { FSA } from './FSA'
