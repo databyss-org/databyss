@@ -14,8 +14,10 @@ import {
   useNavigationContext,
   ModalManager,
 } from '@databyss-org/ui'
-
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { View } from '@databyss-org/ui/primitives'
+
+const queryClient = new QueryClient()
 
 const App = ({ children }) => (
   <View
@@ -70,24 +72,26 @@ const Private = () => {
   }, [])
 
   return (
-    <PageProvider>
-      <EntryProvider>
-        <SourceProvider>
-          <TopicProvider>
-            <Router>
-              <App path="/:accountId">
-                <NotFoundRedirect default />
-                <PageRouter path="pages/*" />
-                <SearchRouter path="search/*" />
-                <SourcesRouter path="sources/*" />
-                <TopicsRouter path="topics/*" />
-              </App>
-            </Router>
-            <ModalManager />
-          </TopicProvider>
-        </SourceProvider>
-      </EntryProvider>
-    </PageProvider>
+    <QueryClientProvider client={queryClient}>
+      <PageProvider>
+        <EntryProvider>
+          <SourceProvider>
+            <TopicProvider>
+              <Router>
+                <App path="/:accountId">
+                  <NotFoundRedirect default />
+                  <PageRouter path="pages/*" />
+                  <SearchRouter path="search/*" />
+                  <SourcesRouter path="sources/*" />
+                  <TopicsRouter path="topics/*" />
+                </App>
+              </Router>
+              <ModalManager />
+            </TopicProvider>
+          </SourceProvider>
+        </EntryProvider>
+      </PageProvider>
+    </QueryClientProvider>
   )
 }
 

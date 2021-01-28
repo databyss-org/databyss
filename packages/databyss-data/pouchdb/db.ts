@@ -180,6 +180,7 @@ export const syncPouchDb = ({
   groupId: string
   dispatch: Function
 }) => {
+  console.log('Start PouchDB <=> Cloudant sync')
   // get credentials from local storage
   const _cred: any = getDbCredentialsFromLocal(groupId)
 
