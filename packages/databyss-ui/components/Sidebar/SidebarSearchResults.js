@@ -1,5 +1,4 @@
 import React from 'react'
-import { SearchAllLoader } from '@databyss-org/ui/components/Loaders'
 import {
   sortEntriesAtoZ,
   filterEntries,
@@ -14,6 +13,15 @@ import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
 import { Text, View } from '@databyss-org/ui/primitives'
+import {
+  useBlockRelations,
+  useBlocks,
+  usePages,
+} from '@databyss-org/data/pouchdb/hooks'
+import { BlockType } from '@databyss-org/editor/interfaces'
+import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
+import { joinBlockRelationsWithBlocks } from '@databyss-org/services/blocks'
+import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
 
 const FulltextSearchItem = (props) => (
   <SidebarListItem
@@ -50,47 +58,70 @@ const SidebarSearchResults = ({
   onSearch,
   inputRef,
   searchHasFocus,
-}) => (
-  <SearchAllLoader filtered>
-    {(results) => {
-      const sourceTitlesData = getSourceTitlesData(results[0])
-      const authorsData = getAuthorData(results[1])
-      const topicsData = getTopicsData(results[2])
-      const pagesData = getPagesData(results[3])
+}) => {
+  const sourcesRes = useBlocks(BlockType.Source)
+  const topicsRes = useBlocks(BlockType.Topic)
+  const blockRelationsRes = useBlockRelations()
+  const pagesRes = usePages()
 
-      const allResults = [
-        ...sourceTitlesData,
-        ...pagesData,
-        ...authorsData,
-        ...topicsData,
-      ]
+  if (
+    !(
+      sourcesRes.isSuccess &&
+      topicsRes.isSuccess &&
+      blockRelationsRes.isSuccess &&
+      pagesRes.isSuccess
+    )
+  ) {
+    return <LoadingFallback />
+  }
 
-      const sortedSources = sortEntriesAtoZ(allResults, 'text')
-      const filteredEntries = filterEntries(sortedSources, filterQuery)
+  const sources = joinBlockRelationsWithBlocks(
+    blockRelationsRes.data,
+    sourcesRes.data
+  )
+  const topics = joinBlockRelationsWithBlocks(
+    blockRelationsRes.data,
+    topicsRes.data
+  )
+  const authors = getAuthorsFromSources(sources)
+  const pages = pagesRes.data
 
-      return (
-        <SidebarList
-          data-test-element="search-results"
-          menuItems={[
-            ...(filterQuery.textValue === '' ? sortedSources : filteredEntries),
-          ]}
-          height={height}
-          keyboardNavigation
-          keyboardEventsActive={searchHasFocus}
-          orderKey={filterQuery.textValue}
-          initialActiveIndex={0}
-          onItemSelected={() => {
-            // HACK: replace with an "onLoadersComplete" event
-            setTimeout(() => {
-              inputRef.current.focus()
-            }, 50)
-          }}
-        >
-          <FulltextSearchItem onPress={onSearch} />
-        </SidebarList>
-      )
-    }}
-  </SearchAllLoader>
-)
+  const sourceTitlesData = getSourceTitlesData(sources)
+  const authorsData = getAuthorData(authors)
+  const topicsData = getTopicsData(topics)
+  const pagesData = getPagesData(pages)
+
+  const allResults = [
+    ...sourceTitlesData,
+    ...pagesData,
+    ...authorsData,
+    ...topicsData,
+  ]
+
+  const sortedSources = sortEntriesAtoZ(allResults, 'text')
+  const filteredEntries = filterEntries(sortedSources, filterQuery)
+
+  return (
+    <SidebarList
+      data-test-element="search-results"
+      menuItems={[
+        ...(filterQuery.textValue === '' ? sortedSources : filteredEntries),
+      ]}
+      height={height}
+      keyboardNavigation
+      keyboardEventsActive={searchHasFocus}
+      orderKey={filterQuery.textValue}
+      initialActiveIndex={0}
+      onItemSelected={() => {
+        // HACK: replace with an "onLoadersComplete" event
+        setTimeout(() => {
+          inputRef.current.focus()
+        }, 50)
+      }}
+    >
+      <FulltextSearchItem onPress={onSearch} />
+    </SidebarList>
+  )
+}
 
 export default SidebarSearchResults

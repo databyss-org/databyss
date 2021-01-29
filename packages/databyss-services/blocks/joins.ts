@@ -9,4 +9,4 @@ export const joinBlockRelationsWithBlocks = (
       _blocks[_relation.relatedBlock] = blockDict[_relation.relatedBlock]
       return _blocks
     }, {})
-  )
+  ).filter((v) => v)
