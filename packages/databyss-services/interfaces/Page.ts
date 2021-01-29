@@ -1,8 +1,8 @@
 import { uid } from '@databyss-org/data/lib/uid'
-import { BlockType } from '@databyss-org/services/interfaces'
+import { BlockType, Document } from '@databyss-org/services/interfaces'
 import { Block, Selection } from './'
 
-export interface PageHeader {
+export interface PageHeader extends Document {
   _id: string
   name: string
   archive: boolean

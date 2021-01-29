@@ -1,7 +1,7 @@
 import MurmurHash3 from 'imurmurhash'
 import { Text, Editor, Node, Range, Transforms } from '@databyss-org/slate'
 import { pickBy } from 'lodash'
-import { textToHtml } from '@databyss-org/services/block/serialize'
+import { textToHtml } from '@databyss-org/services/blocks'
 import { isAtomicInlineType } from './util'
 import {
   stateToSlateMarkup,

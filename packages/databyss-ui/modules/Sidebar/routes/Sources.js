@@ -6,11 +6,12 @@ import {
   filterEntries,
   createSidebarListItems,
 } from '@databyss-org/services/entries/util'
-import {
-  AuthorsLoader,
-  SourceCitationsLoader,
-} from '@databyss-org/ui/components/Loaders'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
+import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
+import { useBlockRelations, useBlocks } from '@databyss-org/data/pouchdb/hooks'
+import { BlockType } from '@databyss-org/editor/interfaces'
+import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
+import { joinBlockRelationsWithBlocks } from '@databyss-org/services/blocks'
 
 const sourcesOverview = [
   {
@@ -37,24 +38,34 @@ export const getSourceTitlesData = (sources) =>
     })
   )
 
-export const SourceTitles = ({ filterQuery, height }) => (
-  <SourceCitationsLoader>
-    {(sources) => {
-      const sourceData = getSourceTitlesData(sources)
-      const sortedSources = sortEntriesAtoZ(sourceData, 'text')
-      const filteredEntries = filterEntries(sortedSources, filterQuery)
+export const SourceTitles = ({ filterQuery, height }) => {
+  const sourcesRes = useBlocks(BlockType.Source)
+  const blockRelationsRes = useBlockRelations(BlockType.Source)
 
-      return (
-        <SidebarList
-          menuItems={[
-            ...(filterQuery.textValue === '' ? sortedSources : filteredEntries),
-          ]}
-          height={height}
-        />
-      )
-    }}
-  </SourceCitationsLoader>
-)
+  if (!blockRelationsRes.isSuccess || !sourcesRes.isSuccess) {
+    return <LoadingFallback />
+  }
+
+  const sources = Object.values(
+    Object.values(blockRelationsRes.data).reduce((_sources, _relation) => {
+      _sources[_relation.relatedBlock] = sourcesRes.data[_relation.relatedBlock]
+      return _sources
+    }, {})
+  )
+
+  const sourceData = getSourceTitlesData(sources)
+  const sortedSources = sortEntriesAtoZ(sourceData, 'text')
+  const filteredEntries = filterEntries(sortedSources, filterQuery)
+
+  return (
+    <SidebarList
+      menuItems={[
+        ...(filterQuery.textValue === '' ? sortedSources : filteredEntries),
+      ]}
+      height={height}
+    />
+  )
+}
 
 export const getAuthorData = (authors) =>
   Object.values(authors).map((value) => {
@@ -85,31 +96,35 @@ export const getAuthorData = (authors) =>
     })
   })
 
-const Authors = ({ filterQuery, hasIndexPage, height }) => (
-  <SourceCitationsLoader>
-    {() => (
-      <AuthorsLoader filtered>
-        {(authors) => {
-          const authorData = getAuthorData(authors)
-          const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
-          const filteredEntries = filterEntries(sortedAuthors, filterQuery)
+const Authors = ({ filterQuery, hasIndexPage, height }) => {
+  const sourcesRes = useBlocks(BlockType.Source)
+  const blockRelationsRes = useBlockRelations(BlockType.Source)
 
-          return (
-            <SidebarList
-              query
-              menuItems={[
-                ...(hasIndexPage ? sourcesOverview : ''),
-                ...(filterQuery.textValue === ''
-                  ? sortedAuthors
-                  : filteredEntries),
-              ]}
-              height={height}
-            />
-          )
-        }}
-      </AuthorsLoader>
-    )}
-  </SourceCitationsLoader>
-)
+  if (!blockRelationsRes.isSuccess || !sourcesRes.isSuccess) {
+    return <LoadingFallback />
+  }
+
+  const sources = joinBlockRelationsWithBlocks(
+    blockRelationsRes.data,
+    sourcesRes.data
+  )
+
+  const authors = getAuthorsFromSources(sources)
+
+  const authorData = getAuthorData(authors)
+  const sortedAuthors = sortEntriesAtoZ(authorData, 'text')
+  const filteredEntries = filterEntries(sortedAuthors, filterQuery)
+
+  return (
+    <SidebarList
+      query
+      menuItems={[
+        ...(hasIndexPage ? sourcesOverview : ''),
+        ...(filterQuery.textValue === '' ? sortedAuthors : filteredEntries),
+      ]}
+      height={height}
+    />
+  )
+}
 
 export default Authors

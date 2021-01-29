@@ -22,26 +22,34 @@ export const useDocuments = <T extends Document>(
   )
 
   useEffect(() => {
-    console.log('useDocuments.subscribe')
+    console.log('useDocuments.subscribe', queryKey)
     const changes = dbRef.current
       .changes({
         since: 'now',
         live: true,
+        include_docs: true,
+        selector,
       })
       .on('change', (change) => {
-        console.log('useDocuments.change', change)
         if (
           change.deleted ||
           !queryClient.getQueryData<DocumentDict<T>>(queryKey)?.[change.id]
         ) {
           // doc was added or removed, refresh list
+          console.log('useDocuments.invalidateAll', queryKey)
           queryClient.invalidateQueries(queryKey)
+        } else {
+          console.log('useDocuments.invalidateOne', queryKey)
+          queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {
+            oldData![change.doc._id] = change.doc
+            return oldData as DocumentDict<T>
+          })
         }
         // else the doc was modified, so the cache at the last value
         // it is up to another query hook to update single block relations
       })
     return () => {
-      console.log('useDocuments.unsubscribe')
+      console.log('useDocuments.unsubscribe', queryKey)
       changes.cancel()
     }
   }, [])

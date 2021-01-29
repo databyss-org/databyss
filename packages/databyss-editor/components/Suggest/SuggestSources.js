@@ -5,7 +5,7 @@ import {
   GOOGLE_BOOKS,
   OPEN_LIBRARY,
 } from '@databyss-org/services/catalog/constants'
-import { prefixSearchAll } from '@databyss-org/services/block/filter'
+import { prefixSearchAll } from '@databyss-org/services/blocks'
 import { Separator } from '@databyss-org/ui/primitives'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'

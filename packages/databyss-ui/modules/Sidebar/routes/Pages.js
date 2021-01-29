@@ -1,11 +1,12 @@
 import React from 'react'
-import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import {
   sortEntriesAtoZ,
   filterEntries,
   createSidebarListItems,
 } from '@databyss-org/services/entries/util'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 
 export const getPagesData = (pages) =>
   Object.values(pages)
@@ -20,26 +21,24 @@ export const getPagesData = (pages) =>
       })
     )
 
-const Pages = ({ filterQuery, height }) => (
-  <>
-    <PagesLoader filtered>
-      {(pages) => {
-        const _menuItems = getPagesData(pages)
-        const sortedPages = sortEntriesAtoZ(_menuItems, 'text')
-        const filteredEntries = filterEntries(sortedPages, filterQuery)
+const Pages = ({ filterQuery, height }) => {
+  const pagesRes = usePages()
 
-        return (
-          <SidebarList
-            data-test-element="sidebar-pages-list"
-            menuItems={
-              filterQuery.textValue === '' ? sortedPages : filteredEntries
-            }
-            height={height}
-          />
-        )
-      }}
-    </PagesLoader>
-  </>
-)
+  if (pagesRes.status !== 'success') {
+    return <LoadingFallback />
+  }
+
+  const _menuItems = getPagesData(pagesRes.data)
+  const sortedPages = sortEntriesAtoZ(_menuItems, 'text')
+  const filteredEntries = filterEntries(sortedPages, filterQuery)
+
+  return (
+    <SidebarList
+      data-test-element="sidebar-pages-list"
+      menuItems={filterQuery.textValue === '' ? sortedPages : filteredEntries}
+      height={height}
+    />
+  )
+}
 
 export default Pages
