@@ -1,7 +1,11 @@
 import React, { ReactNode } from 'react'
 import { storiesOf } from '@storybook/react'
 import { Text, List } from '@databyss-org/ui/primitives'
-import { useBlock, useBlockRelations } from '@databyss-org/data/pouchdb/queries'
+import {
+  useBlock,
+  useBlockRelations,
+  useBlocks,
+} from '@databyss-org/data/pouchdb/hooks'
 import { BlockType, Block } from '@databyss-org/services/interfaces'
 import {
   QueryObserverResult,
@@ -25,22 +29,26 @@ const BlockText = ({ id }: { id: string }) => {
 }
 
 const AllTopics = () => {
-  const res = useBlockRelations(BlockType.Topic)
-  if (!res.isSuccess) {
+  const _blockRelationsRes = useBlockRelations(BlockType.Topic)
+  const _topicsRes = useBlocks(BlockType.Topic)
+
+  if (!_blockRelationsRes.isSuccess || !_topicsRes.isSuccess) {
     return <Text>...</Text>
   }
-  const _topics = Object.keys(
-    res.data!.reduce((_topics, _relation) => {
-      _topics[_relation.relatedBlock] = true
+
+  const _topics: Block[] = Object.values(
+    Object.values(_blockRelationsRes.data).reduce((_topics, _relation) => {
+      _topics[_relation.relatedBlock] = _topicsRes.data[_relation.relatedBlock]
       return _topics
     }, {})
   )
 
-  return withLoader(
-    res,
+  // sortEntriesAtoZ(_topics, '')
+
+  return (
     <List>
-      {sortEntriesAtoZ(_topics).map((_relation) => (
-        <BlockText id={_relation.relatedBlock} key={_relation._id} />
+      {_topics.map((_topic) => (
+        <Text key={_topic._id}>{_topic.text.textValue}</Text>
       ))}
     </List>
   )

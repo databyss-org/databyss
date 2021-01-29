@@ -1,5 +1,6 @@
 import { SelectOption } from './UI'
 import { Text } from './Text'
+import { Document } from './Document'
 
 export enum BlockType {
   Entry = 'ENTRY',
@@ -9,12 +10,11 @@ export enum BlockType {
   EndTopic = 'END_TOPIC',
 }
 
-export interface BasicBlock {
-  _id: string
+export interface BlockReference extends Document {
   type: BlockType
 }
 
-export interface Block extends BasicBlock {
+export interface Block extends BlockReference {
   page?: string
   text: Text
   __showCitationMenu?: boolean
@@ -84,8 +84,7 @@ export interface BlockRelationsServerResponse {
   results: CacheDict<BlockRelation[]>
 }
 
-export interface BlockRelation {
-  _id: string
+export interface BlockRelation extends Document {
   block: string
   relatedBlock: string
   relationshipType: 'HEADING' | 'INLINE'

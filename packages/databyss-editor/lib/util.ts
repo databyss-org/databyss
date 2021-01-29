@@ -11,7 +11,7 @@ import {
   Range,
 } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
-import { BasicBlock } from '../../databyss-services/interfaces'
+import { BlockReference } from '../../databyss-services/interfaces'
 import {
   RangeType,
   InlineTypes,
@@ -42,7 +42,7 @@ export const getInlineAtomicType = (type: InlineTypes): BlockType | null => {
 
 const composeBlockRelation = (
   currentBlock: Block,
-  atomicBlock: BasicBlock,
+  atomicBlock: BlockReference,
   pageId: string,
   relationshipType: string
 ): BlockRelation => {

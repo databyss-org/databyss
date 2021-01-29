@@ -1,58 +1,36 @@
-import { useState, useRef, useEffect } from 'react'
-import {
-  ResourceResponse,
-  ResourcePending,
-  Block,
-} from '@databyss-org/services/interfaces'
-import { resourceIsReady } from '@databyss-org/services/lib/util'
+import { useEffect } from 'react'
+import { useQuery, useQueryClient } from 'react-query'
+import { Block } from '@databyss-org/services/interfaces'
 import { dbRef } from '../db'
 
-export const useBlock = <blockType extends Block>(
-  id: string
-): blockType | null => {
-  const [, setState] = useState<ResourceResponse<blockType>>(null)
-  const docRef = useRef<ResourceResponse<blockType>>(null)
-
-  const setDoc = (doc: ResourceResponse<blockType>) => {
-    docRef.current = doc
-    setState(doc)
-  }
-
-  const refresh = () =>
-    dbRef.current
-      .get(id)
-      .then((res) => setDoc(res))
-      .catch((err) => setDoc(err))
+export const useBlock = <blockType extends Block>(id: string) => {
+  const queryKey = `block_${id}`
+  const queryClient = useQueryClient()
+  const query = useQuery<blockType>(queryKey, () => dbRef.current.get(id))
 
   useEffect(() => {
-    if (!resourceIsReady(docRef.current)) {
-      return () => null
-    }
-    const _changes = dbRef.current
+    console.log('useBlock.subscribe')
+    const changes = dbRef.current
       .changes({
         since: 'now',
         live: true,
-        doc_ids: [(docRef.current as blockType)._id],
+        doc_ids: [id],
       })
       .on('change', (change) => {
         console.log('useBlock.change', change)
-        refresh()
+        if (change.deleted) {
+          // if the block is deleted, leave the cache at the last value
+          // it is up to another query hook to "clean up" this block from the DOM
+          changes.cancel()
+          return
+        }
+        queryClient.invalidateQueries(queryKey)
       })
     return () => {
-      _changes.cancel()
+      console.log('useBlock.unsubscribe')
+      changes.cancel()
     }
-  }, [docRef.current])
+  }, [])
 
-  if (resourceIsReady(docRef.current)) {
-    return docRef.current as blockType
-  }
-  if (docRef.current instanceof ResourcePending) {
-    return null
-  }
-  if (docRef.current instanceof Error) {
-    throw docRef.current
-  }
-  refresh()
-  setDoc(new ResourcePending())
-  return null
+  return query
 }

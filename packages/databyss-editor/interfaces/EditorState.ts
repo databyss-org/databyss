@@ -1,6 +1,6 @@
 import { Text, PageHeader } from '@databyss-org/services/interfaces'
 import { Block, Selection } from './'
-import { BasicBlock } from '../../databyss-services/interfaces'
+import { BlockReference } from '../../databyss-services/interfaces'
 
 export interface PayloadOperation {
   index: number
@@ -27,8 +27,8 @@ export interface EditorState {
   showNewBlockMenu?: boolean
   operations: BackflowOperation[] & { reloadAll?: boolean }
   selection: Selection
-  newEntities: Array<BasicBlock | Block>
-  removedEntities: BasicBlock[]
+  newEntities: Array<BlockReference | Block>
+  removedEntities: BlockReference[]
   blocks: Block[]
   pageHeader?: PageHeader
   /**
