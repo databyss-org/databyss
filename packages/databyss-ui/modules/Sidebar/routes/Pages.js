@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   sortEntriesAtoZ,
-  filterEntries,
   createSidebarListItems,
 } from '@databyss-org/services/entries/util'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
@@ -21,7 +20,7 @@ export const getPagesData = (pages) =>
       })
     )
 
-const Pages = ({ filterQuery, height }) => {
+const Pages = ({ archive, height }) => {
   const pagesRes = usePages()
 
   if (pagesRes.status !== 'success') {
@@ -30,12 +29,14 @@ const Pages = ({ filterQuery, height }) => {
 
   const _menuItems = getPagesData(pagesRes.data)
   const sortedPages = sortEntriesAtoZ(_menuItems, 'text')
-  const filteredEntries = filterEntries(sortedPages, filterQuery)
+  const filteredEntries = sortedPages.filter((page) =>
+    archive ? page.archive : !page.archive
+  )
 
   return (
     <SidebarList
       data-test-element="sidebar-pages-list"
-      menuItems={filterQuery.textValue === '' ? sortedPages : filteredEntries}
+      menuItems={filteredEntries}
       height={height}
     />
   )
