@@ -30,3 +30,4 @@ export {
   SourcesRouter,
 } from './components/SourcesContent/SourcesContent'
 export { TopicsRouter } from './components/TopicsContent/TopicsContent'
+export { GroupsRouter } from './modules/Groups'

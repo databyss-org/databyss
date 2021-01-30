@@ -17,12 +17,12 @@ const TopicDetails = () => {
         const topicTitle = topic.text.textValue
 
         return (
-          <IndexPageContent title={topicTitle}>
+          <IndexPageContent title={topicTitle} indexName="Topics">
             <Helmet>
               <meta charSet="utf-8" />
               <title>{topicTitle}</title>
             </Helmet>
-            <PagesLoader filtered>
+            <PagesLoader>
               {() => (
                 <BlockRelationsLoader atomicId={id}>
                   {(relations) => <IndexSourceContent relations={relations} />}

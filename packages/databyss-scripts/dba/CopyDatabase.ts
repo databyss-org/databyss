@@ -24,6 +24,9 @@ class CopyDatabase extends ServerProcess {
     this.tmpDir = tmp.dirSync({ unsafeCleanup: true })
   }
   async run() {
+    if (this.args.toDb === 'production') {
+      throw new Error('Cannot overwrite production database')
+    }
     this.emit(
       'stdout',
       `Copying database "${this.args.fromDb}" to "${this.args.toDb}"`

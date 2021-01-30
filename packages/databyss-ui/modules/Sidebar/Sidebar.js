@@ -1,45 +1,21 @@
 import React from 'react'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { Text, View, List } from '@databyss-org/ui/primitives'
+import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { View, List } from '@databyss-org/ui/primitives'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
-import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarCollapsed from './SidebarCollapsed'
-import { darkTheme } from '../../theming/theme'
+import { darkTheme, pxUnits } from '../../theming/theme'
 import Search from './routes/Search'
 import Pages from './routes/Pages'
 import Sources from './routes/Sources'
 import Topics from './routes/Topics'
+import Groups from './routes/Groups'
 import Header from '../../components/Sidebar/Header'
 import { sidebar } from '../../theming/components'
 
-export const defaultProps = {}
-
-const Section = ({ children, title, variant, ...others }) => (
-  <View mb="medium" {...others}>
-    <View mb="small">
-      <Text variant={variant} color="text.3">
-        {title}
-      </Text>
-    </View>
-    {children}
-  </View>
-)
-
-Section.defaultProps = {
-  variant: 'heading3',
-}
-
-const padding = 26
-const headerHeight = 34
-const footerHeight = 48
-const searchBar = 54
-
-export const sidebarListHeight = `calc(100% - ${pxUnits(
-  padding + headerHeight + footerHeight + searchBar
-)})`
-
 const Sidebar = () => {
   const { getSidebarPath, isMenuOpen } = useNavigationContext()
+  const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const menuItem = getSidebarPath()
 
   /*
@@ -49,7 +25,6 @@ const Sidebar = () => {
     <>
       <SidebarCollapsed />
       <View
-        {...defaultProps}
         position="relative"
         width={sidebar.width}
         key={`sidebar-key-${menuItem}`}
@@ -61,22 +36,26 @@ const Sidebar = () => {
           flexGrow={1}
           flexShrink={1}
           overflow="hidden"
+          css={{ transform: 'translate(0,0)' }}
         >
           <List
-            verticalItemPadding={2}
-            horizontalItemPadding={2}
+            verticalItemPadding={0}
+            verticalItemMargin={pxUnits(10)}
+            horizontalItemPadding={0}
             height="100%"
             flexGrow={1}
             flexShrink={1}
-            pb={0}
+            mt={pxUnits(5)}
             overflow="hidden"
           >
-            <Header />
+            {/* TODO: on public collections, change name and link it to defaultPage */}
+            {isPublicAccount() && <Header />}
             <Search />
-            {(menuItem === 'pages' || !menuItem) && <Pages height="100%" />}
-            {menuItem === 'sources' && <Sources height="100%" hasIndexPage />}
-            {menuItem === 'topics' && <Topics height="100%" />}
-            {menuItem === 'archive' && <Pages height="100%" archive />}
+            {(menuItem === 'pages' || !menuItem) && <Pages />}
+            {menuItem === 'sources' && <Sources hasIndexPage />}
+            {menuItem === 'topics' && <Topics />}
+            {menuItem === 'archive' && <Pages archive />}
+            {menuItem === 'groups' && <Groups />}
             <Footer />
           </List>
         </View>

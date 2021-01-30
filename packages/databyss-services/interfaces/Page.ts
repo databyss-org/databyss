@@ -5,7 +5,7 @@ import { Block, Selection } from './'
 export interface PageHeader extends Document {
   _id: string
   name: string
-  archive: boolean
+  archive?: boolean
 }
 
 export class Page implements PageHeader {

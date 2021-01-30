@@ -25,3 +25,8 @@ export {
   withKeyboardNavigation,
   default as KeyboardNavigationItem,
 } from './List/KeyboardNavigationItem'
+export {
+  default as GestureProvider,
+  useDrag,
+  useDrop,
+} from './Gestures/GestureProvider'

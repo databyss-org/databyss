@@ -25,19 +25,20 @@ const SearchInputContainer = React.forwardRef(
       autoFocus,
       value,
       textColor,
+      ...others
     },
     ref
   ) => (
-    <View width="100%" px="small" my="small" onClick={onClick}>
+    <View width="100%" {...others} onClick={onClick} px="small">
       <View
         backgroundColor="background.0"
         height="100%"
         justifyContent="center"
         position="relative"
         flex={1}
-        borderVariant="thinLight"
         px="small"
         py="extraSmall"
+        borderRadius="none"
       >
         <Grid singleRow alignItems="center" columnGap="none" flexWrap="nowrap">
           <Icon sizeVariant="medium" color="text.3" pr="small">

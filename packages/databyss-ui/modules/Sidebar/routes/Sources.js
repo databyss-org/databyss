@@ -1,11 +1,9 @@
 import React from 'react'
-import AuthorSvg from '@databyss-org/ui/assets/author.svg'
-import SourceSvg from '@databyss-org/ui/assets/source.svg'
+import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import {
-  sortEntriesAtoZ,
-  filterEntries,
-  createSidebarListItems,
-} from '@databyss-org/services/entries/util'
+  AuthorsLoader,
+  SourceCitationsLoader,
+} from '@databyss-org/ui/components/Loaders'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { useBlockRelations, useBlocks } from '@databyss-org/data/pouchdb/hooks'
@@ -27,45 +25,22 @@ const sourcesOverview = [
 ]
 
 export const getSourceTitlesData = (sources) =>
-  Object.values(sources).map((value) =>
-    createSidebarListItems({
-      text: value.text.textValue,
-      type: 'sources',
-      route: '/sources',
-      id: value._id,
-      params: value._id,
-      icon: <SourceSvg />,
-    })
-  )
+  Object.values(sources).map((value) => ({
+    text: value.text.textValue,
+    type: 'source',
+    route: `/sources${value._id}`,
+  }))
 
-export const SourceTitles = ({ filterQuery, height }) => {
-  const sourcesRes = useBlocks(BlockType.Source)
-  const blockRelationsRes = useBlockRelations(BlockType.Source)
-
-  if (!blockRelationsRes.isSuccess || !sourcesRes.isSuccess) {
-    return <LoadingFallback />
-  }
-
-  const sources = Object.values(
-    Object.values(blockRelationsRes.data).reduce((_sources, _relation) => {
-      _sources[_relation.relatedBlock] = sourcesRes.data[_relation.relatedBlock]
-      return _sources
-    }, {})
-  )
-
-  const sourceData = getSourceTitlesData(sources)
-  const sortedSources = sortEntriesAtoZ(sourceData, 'text')
-  const filteredEntries = filterEntries(sortedSources, filterQuery)
-
-  return (
-    <SidebarList
-      menuItems={[
-        ...(filterQuery.textValue === '' ? sortedSources : filteredEntries),
-      ]}
-      height={height}
-    />
-  )
-}
+export const SourceTitles = (others) => (
+  <SourceCitationsLoader>
+    {(sources) => (
+      <SidebarList
+        menuItems={sortEntriesAtoZ(getSourceTitlesData(sources), 'text')}
+        {...others}
+      />
+    )}
+  </SourceCitationsLoader>
+)
 
 export const getAuthorData = (authors) =>
   Object.values(authors).map((value) => {
@@ -87,15 +62,14 @@ export const getAuthorData = (authors) =>
       lastName: encodeURIComponent(lastName || ''),
     })
 
-    return createSidebarListItems({
+    return {
       text: getShortAuthorName(),
-      type: 'authors',
-      route: '/sources',
-      params: authorParams.toString(),
-      icon: <AuthorSvg />,
-    })
+      type: 'author',
+      route: `/sources?${authorParams.toString()}`,
+    }
   })
 
+<<<<<<< HEAD
 const Authors = ({ filterQuery, hasIndexPage, height }) => {
   const sourcesRes = useBlocks(BlockType.Source)
   const blockRelationsRes = useBlockRelations(BlockType.Source)
@@ -126,5 +100,25 @@ const Authors = ({ filterQuery, hasIndexPage, height }) => {
     />
   )
 }
+=======
+const Authors = ({ hasIndexPage, ...others }) => (
+  <SourceCitationsLoader>
+    {() => (
+      <AuthorsLoader filtered>
+        {(authors) => (
+          <SidebarList
+            query
+            menuItems={[
+              ...(hasIndexPage ? sourcesOverview : ''),
+              ...sortEntriesAtoZ(getAuthorData(authors), 'text'),
+            ]}
+            {...others}
+          />
+        )}
+      </AuthorsLoader>
+    )}
+  </SourceCitationsLoader>
+)
+>>>>>>> paul/collections-ui
 
 export default Authors

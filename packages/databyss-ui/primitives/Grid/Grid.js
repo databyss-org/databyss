@@ -39,6 +39,8 @@ const Grid = ({
         flexWrap={flexWrap || 'wrap'}
         alignItems={alignItems}
         overflow={overflow}
+        {...(others.flexShrink ? { flexShrink: others.flexShrink } : {})}
+        {...(others.flexGrow ? { flexGrow: others.flexGrow } : {})}
       >
         {childrenWithLayout}
       </View>

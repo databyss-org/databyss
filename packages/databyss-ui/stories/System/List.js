@@ -97,15 +97,16 @@ export const ComplexItems = () => {
         theme={darkTheme}
         bg="background.0"
       >
-        <List
-          verticalItemPadding={2}
-          horizontalItemPadding={2}
-          mt="none"
-          mb="none"
-        >
+        <List verticalItemPadding={2} horizontalItemPadding={2} py="none">
           {menuItems.reduce((acc, item, index) => {
             if (index > 0) {
-              acc.push(<Separator key={`separator${index}`} />)
+              acc.push(
+                <Separator
+                  spacing="none"
+                  color="border.1"
+                  key={`separator${index}`}
+                />
+              )
             }
             acc.push(
               <BaseControl key={index}>

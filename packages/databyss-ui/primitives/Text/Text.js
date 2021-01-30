@@ -18,7 +18,7 @@ export const variants = variant({
   },
 })
 
-export const styleProps = compose(variants, color, typography, layout)
+export const styleProps = compose(variants, color, typography, space, layout)
 
 const Styled = styled(
   {
@@ -26,18 +26,28 @@ const Styled = styled(
     android: 'Text',
     default: 'div',
   },
-  compose(variants, color, typography, space, layout)
+  styleProps
 )
 
-const Text = forwardRef(({ children, color, ...others }, ref) => (
-  // TODO: capture css `white-space` and translate to `numberOfLines` for native
-  <Styled ref={ref} variant="bodyNormal" color={color} {...others}>
-    {children}
-  </Styled>
-))
+const Text = forwardRef(
+  ({ children, color, userSelect, css, ...others }, ref) => (
+    // TODO: capture css `white-space` and translate to `numberOfLines` for native
+    <Styled
+      ref={ref}
+      variant="bodyNormal"
+      color={color}
+      css={{ userSelect, ...css }}
+      {...others}
+    >
+      {children}
+    </Styled>
+  )
+)
 
 Text.defaultProps = {
   color: 'text.0',
+  userSelect: 'auto',
+  css: {},
 }
 
 export default Text

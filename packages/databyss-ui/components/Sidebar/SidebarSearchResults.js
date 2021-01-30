@@ -58,6 +58,7 @@ const SidebarSearchResults = ({
   onSearch,
   inputRef,
   searchHasFocus,
+  ...others
 }) => {
   const sourcesRes = useBlocks(BlockType.Source)
   const topicsRes = useBlocks(BlockType.Topic)
@@ -113,6 +114,7 @@ const SidebarSearchResults = ({
           inputRef.current.focus()
         }, 50)
       }}
+      {...others}
     >
       <FulltextSearchItem onPress={onSearch} />
     </SidebarList>

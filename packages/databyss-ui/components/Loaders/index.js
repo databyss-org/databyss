@@ -7,6 +7,7 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { useGroupContext } from '@databyss-org/services/groups/GroupProvider'
 import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 
 import { isResourceReady } from './_helpers'
@@ -29,17 +30,17 @@ export const withPage = (Wrapped) => ({ pageId, ...others }) => (
   </PageLoader>
 )
 
-export const PagesLoader = ({ children, filtered, archived }) => {
+export const PagesLoader = ({ children, includeArchived, archived }) => {
   const { getPages } = usePageContext()
 
   let _resources = getPages()
 
-  if (filtered && isResourceReady(_resources)) {
-    _resources = pickBy(_resources, (page) => !page.archive)
-  }
-
-  if (archived && isResourceReady(_resources)) {
-    _resources = pickBy(_resources, (page) => page.archive)
+  if (isResourceReady(_resources)) {
+    if (archived) {
+      _resources = pickBy(_resources, (page) => page.archive)
+    } else if (!includeArchived) {
+      _resources = pickBy(_resources, (page) => !page.archive)
+    }
   }
 
   return <MakeLoader resources={_resources} children={children} />
@@ -180,4 +181,19 @@ export const BlockRelationsLoader = ({ children, atomicId }) => {
       children={children}
     />
   )
+}
+
+export const GroupHeadersLoader = ({ children }) => {
+  const getGroupHeaders = useGroupContext((c) => c.getGroupHeaders)
+  const getSharedPageHeaders = useGroupContext((c) => c.getSharedPageHeaders)
+  return (
+    <MakeLoader resources={[getGroupHeaders(), getSharedPageHeaders()]}>
+      {children}
+    </MakeLoader>
+  )
+}
+
+export const GroupLoader = ({ children, groupId }) => {
+  const getGroup = useGroupContext((c) => c.getGroup)
+  return <MakeLoader resources={getGroup(groupId)}>{children}</MakeLoader>
 }

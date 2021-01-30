@@ -29,6 +29,10 @@ const withRouter = (Wrapped) => ({ children }) => (
   </Router>
 )
 
+const sidebarItemAliases = {
+  collections: 'groups',
+}
+
 const NavigationProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState, {
     name: 'NavigationProvider',
@@ -81,7 +85,14 @@ const NavigationProvider = ({ children }) => {
       return type
     }
 
-    return getTokensFromPath().type ? getTokensFromPath().type : 'pages'
+    // determine path from location
+    const _item = getTokensFromPath().type
+    const _derivedPath = sidebarItemAliases[_item] || _item || 'pages'
+    navigateSidebar(`/${_derivedPath}`)
+    return _derivedPath
+
+    // TODO: within PageContent (or wherever we mount a <PageLoader>), check if archive
+    // flag is set. If so, nagivate the sidebar to the archive tab
   }
 
   const getQueryParams = () => location.search

@@ -22,15 +22,31 @@ import {
   TypographyProps,
 } from 'styled-system'
 import * as ReactModal from 'react-modal'
+import * as ReactDnd from 'react-dnd'
 import { InterpolationWithTheme } from '@emotion/core'
+import { Text as TextInterface } from '@databyss-org/editor/interfaces'
+import { CSSObject } from '@styled-system/css'
 
-export type RefForwardingFC<T, P = {}> = ForwardRefExoticComponent<
+export type RefForwardingFC<P, T = HTMLElement> = ForwardRefExoticComponent<
   PropsWithoutRef<P> & RefAttributes<T>
 >
+
+// TODO: add type hints to theme
+// see https://blog.agney.dev/styled-components-&-typescript/
 
 //
 // View
 // ----------------------------------------------------------------------
+
+export interface DraggableItem {
+  type: string
+  payload?: any
+}
+
+export interface DropzoneProps {
+  accepts?: string
+  onDrop?: (item: DraggableItem) => void
+}
 
 export interface ViewProps
   extends SpaceProps,
@@ -48,10 +64,22 @@ export interface ViewProps
   shadowVariant?: string
   widthVariant?: string
   wrapVariant?: string
+  dropzone?: boolean | DropzoneProps
 }
 
-declare const View: RefForwardingFC<HTMLElement, PropsWithChildren<ViewProps>>
-declare const ScrollView: FC<PropsWithChildren<ViewProps>>
+declare const View: RefForwardingFC<PropsWithChildren<ViewProps>>
+
+export interface ScrollViewProps extends ViewProps {
+  /**
+   * Add a small inset shadow to the top of the scroll view when scrolled.
+   * Set to true to use the default color, or set to a string to specify the color.
+   * NOTE: uses fixed positioning, so add "transform: translate(0, 0)" to the parent
+   * element for correct positioning and sizing.
+   */
+  shadowOnScroll?: boolean | string
+}
+
+declare const ScrollView: RefForwardingFC<PropsWithChildren<ScrollViewProps>>
 
 export interface GridProps extends ViewProps {
   columnGap?: ReactText
@@ -72,16 +100,19 @@ export interface TextProps
     ColorProps,
     TypographyProps {
   variant?: string
+  css?: InterpolationWithTheme<any>
+  userSelect?: CSS.Property.UserSelect
 }
 
-declare const Text: RefForwardingFC<HTMLElement, PropsWithChildren<TextProps>>
+declare const TextPrimitive: RefForwardingFC<PropsWithChildren<TextProps>>
+declare const Text: RefForwardingFC<PropsWithChildren<TextProps>>
 
 export interface RawHtmlProps extends ColorProps, SpaceProps, BorderProps {
   _html?: string
   html?: string
 }
 
-declare const RawHtml: RefForwardingFC<HTMLElement, RawHtmlProps>
+declare const RawHtml: RefForwardingFC<RawHtmlProps>
 
 //
 // Icon
@@ -90,6 +121,7 @@ declare const RawHtml: RefForwardingFC<HTMLElement, RawHtmlProps>
 export interface IconProps extends ViewProps {
   sizeVariant?: string
   useSvgColors?: boolean
+  title?: string
 }
 
 declare const Icon: FC<PropsWithChildren<IconProps>>
@@ -112,7 +144,9 @@ declare const KeyboardNavigationProvider: FC<PropsWithChildren<
 
 export interface ListProps extends ViewProps, KeyboardNavigationProps {
   horizontalItemPadding?: ReactText
+  horizontalItemMargin?: ReactText
   verticalItemPadding?: ReactText
+  verticalItemMargin?: ReactText
   removeBorderRadius?: boolean
   keyboardNavigation?: boolean
 }
@@ -134,38 +168,37 @@ export interface ControlHandle {
 }
 
 export interface BaseControlProps {
-  hoverColor: string
-  activeColor: string
-  pressedColor: string
-  borderRadius: ReactText
-  userSelect: CSS.Property.UserSelect
+  hoverColor?: string
+  activeColor?: string
+  pressedColor?: string
+  borderRadius?: ReactText
+  userSelect?: CSS.Property.UserSelect
   active?: boolean
   disabled?: boolean
   onPress?: (e: MouseEvent | KeyboardEvent) => void
   href?: string
-  handle: MutableRefObject<ControlHandle>
+  handle?: MutableRefObject<ControlHandle>
   noFeedback?: boolean
   childViewProps?: ViewProps
   onKeyDown?: (e: KeyboardEvent) => void
+  draggable?: boolean | Partial<DraggableItem>
 }
 
-declare const BaseControl: RefForwardingFC<HTMLElement, BaseControlProps>
-
-export interface ValueControlProps {
-  value?: string
-  onChange?: (e: MouseEvent | KeyboardEvent) => void
-}
+declare const BaseControl: RefForwardingFC<PropsWithChildren<BaseControlProps>>
 
 export interface ControlLabelProps {
   label?: string
   labelProps?: ViewProps
+  labelTextProps?: TextProps
 }
 
 export interface ToggleControlProps
   extends BaseControlProps,
-    ValueControlProps,
     ControlLabelProps {
   alignLabel?: 'left' | 'right'
+  value?: boolean
+  onChange?: (value: boolean) => void
+  textVariant?: string
 }
 
 declare const ToggleControl: FC<PropsWithChildren<ToggleControlProps>>
@@ -178,10 +211,33 @@ export interface ButtonProps extends BaseControlProps {
 
 declare const Button: RefForwardingFC<PropsWithChildren<ButtonProps>>
 
-export interface TextControlProps
-  extends BaseControlProps,
-    ValueControlProps,
-    ControlLabelProps {
+export interface TextInputProps extends TextProps {
+  value?: Partial<TextInterface>
+  onChange?: (value: TextInterface) => void
+  multiline?: boolean
+  active?: boolean
+  concatCss?: CSSObject
+  readonly?: boolean
+  autoFocus?: boolean
+  placeholder?: string
+  maxRows?: number
+}
+
+declare const TextInput: RefForwardingFC<TextInputProps>
+
+export interface RichTextInputProps {
+  value: Partial<TextInterface>
+  onChange: (value: TextInterface) => void
+  multiline?: boolean
+  active?: boolean
+  concatCss?: InterpolationWithTheme<any>
+  onFocus?: () => void
+  onBlur?: () => void
+}
+
+declare const RichTextInput: RefForwardingFC<TextInputProps>
+
+export interface TextControlProps extends BaseControlProps, ControlLabelProps {
   labelColor?: string
   activeLabelColor?: string
   labelVariant?: string
@@ -240,3 +296,25 @@ export interface DialogProps extends DialogViewProps {
 }
 
 declare const Dialog: FC<DialogProps>
+
+//
+// Gestures
+// ----------------------------------------------------------------------
+
+export interface GestureProviderProps extends PropsWithChildren<{}> {}
+
+declare const GestureProvider: FC<GestureProviderProps>
+declare const useDrop: <
+  DragObject extends ReactDnd.DragObjectWithType,
+  DropResult,
+  CollectedProps
+>(
+  spec: ReactDnd.DropTargetHookSpec<DragObject, DropResult, CollectedProps>
+) => [CollectedProps, ReactDnd.ConnectDropTarget]
+declare const useDrag: <
+  DragObject extends ReactDnd.DragObjectWithType,
+  DropResult,
+  CollectedProps
+>(
+  spec: ReactDnd.DragSourceHookSpec<DragObject, DropResult, CollectedProps>
+) => [CollectedProps, ReactDnd.ConnectDragSource, ReactDnd.ConnectDragPreview]

@@ -249,8 +249,8 @@ const PageMenu = ({ pages }) => {
             }}
           >
             <DropdownListItem
-              px="small"
               height={pxUnits(34)}
+              px="small"
               justifyContent="center"
               label={isPagePublic ? 'Page is public' : 'Make page public '}
               value={isPagePublic}

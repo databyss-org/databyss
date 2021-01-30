@@ -1,6 +1,11 @@
 import { Range } from './Range'
 
-export interface Text {
+export class Text {
   textValue: string
   ranges: Array<Range>
+
+  constructor() {
+    this.textValue = ''
+    this.ranges = []
+  }
 }

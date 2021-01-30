@@ -1,26 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, forwardRef } from 'react'
 import {
   useParams,
   useLocation,
   Router,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
-import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
-import { View } from '@databyss-org/ui/primitives'
+import { View, ScrollView } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
-import { isMobile } from '../../lib/mediaQuery'
-import AccountMenu from './AccountMenu'
+
+export const PageContentView = forwardRef(({ children, ...others }, ref) => (
+  <ScrollView
+    flexShrink={1}
+    // shadowOnScroll
+  >
+    <View pl="em" pr="medium" pt="small" flexGrow={1} ref={ref} {...others}>
+      {children}
+    </View>
+  </ScrollView>
+))
 
 export const PageContainer = React.memo(
   ({ anchor, id, page, ...others }) => {
     const getBlockRefByIndex = usePageContext((c) => c.getBlockRefByIndex)
     const [authToken, setAuthToken] = useState()
     const [editorPath, setEditorPath] = useState(null)
-    const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
     const headerRef = useRef()
     const editorRef = useRef()
@@ -79,26 +85,14 @@ export const PageContainer = React.memo(
     }
 
     return (
-      <View height="100%" overflowY="auto" ref={editorWindowRef} {...others}>
-        <View
-          pl="medium"
-          pr="medium"
-          pb="medium"
-          pt={isPublicAccount() || isMobile() ? 'large' : 'none'}
-          flexGrow={1}
-        >
-          {!isPublicAccount() && !isMobile() && (
-            <PageSticky pagePath={editorPath} pageId={page._id} />
-          )}
-          {authToken && isPublicAccount() && !isMobile() && (
-            <View position="absolute" right="extraLarge">
-              <AccountMenu />
-            </View>
-          )}
+      <>
+        <PageSticky pagePath={editorPath} pageId={page._id} />
+        <PageContentView ref={editorWindowRef} {...others}>
           <PageHeader
             ref={headerRef}
             pageId={id}
             onNavigateDownFromHeader={onNavigateDownToEditor}
+            ml="small"
           />
           <PageBody
             onEditorPathChange={setEditorPath}
@@ -107,8 +101,8 @@ export const PageContainer = React.memo(
             focusIndex={index}
             onNavigateUpFromEditor={onNavigateUpFromEditor}
           />
-        </View>
-      </View>
+        </PageContentView>
+      </>
     )
   },
   (prev, next) =>
