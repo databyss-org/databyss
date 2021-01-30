@@ -64,15 +64,10 @@ const SidebarSearchResults = ({
   const blockRelationsRes = useBlockRelations()
   const pagesRes = usePages()
 
-  if (
-    !(
-      sourcesRes.isSuccess &&
-      topicsRes.isSuccess &&
-      blockRelationsRes.isSuccess &&
-      pagesRes.isSuccess
-    )
-  ) {
-    return <LoadingFallback />
+  const queryRes = [sourcesRes, topicsRes, blockRelationsRes, pagesRes]
+
+  if (queryRes.some((q) => !q.isSuccess)) {
+    return <LoadingFallback queryObserver={queryRes} />
   }
 
   const sources = joinBlockRelationsWithBlocks(
@@ -89,7 +84,7 @@ const SidebarSearchResults = ({
   const sourceTitlesData = getSourceTitlesData(sources)
   const authorsData = getAuthorData(authors)
   const topicsData = getTopicsData(topics)
-  const pagesData = getPagesData(pages)
+  const pagesData = getPagesData(Object.values(pages))
 
   const allResults = [
     ...sourceTitlesData,

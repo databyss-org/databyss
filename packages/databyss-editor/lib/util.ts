@@ -285,7 +285,7 @@ export const indexPage = ({
 
 export const slateBlockToHtmlWithSearch = (
   block: Block,
-  query: string
+  query?: string
 ): string => {
   const _block = cloneDeep(block)
 

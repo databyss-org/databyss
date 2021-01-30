@@ -1,4 +1,8 @@
 export { prefixSearchAll } from './filter'
-export { joinBlockRelationsWithBlocks } from './joins'
+export { joinBlockRelations } from './joins'
 export { makeText } from './makeText'
 export { textToHtml } from './serialize'
+export {
+  groupBlockRelationsByPage,
+  groupBlockRelationsByRelatedBlock,
+} from './aggregate'
