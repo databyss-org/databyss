@@ -1,4 +1,4 @@
-import { Source, Author, SourceCitationHeader } from '../interfaces'
+import { Source } from '../interfaces'
 
 import * as services from '.'
 import {
@@ -24,7 +24,7 @@ export function fetchSource(id: string) {
     })
 
     try {
-      const source: Source = await services.getSource(id)
+      const source = await services.getSource(id)
       dispatch({
         type: CACHE_SOURCE,
         payload: { source, id },
@@ -80,7 +80,7 @@ export function fetchAuthorHeaders() {
       type: FETCH_AUTHOR_HEADERS,
     })
     try {
-      const authors: Author[] = await services.getAuthors()
+      const authors = await services.getAuthors()
       dispatch({
         type: CACHE_AUTHOR_HEADERS,
         payload: { results: authors },
@@ -122,7 +122,7 @@ export function fetchSourceCitations() {
     })
     try {
       const { preferredCitationStyle } = getState()
-      const sourceCitations: SourceCitationHeader[] = await services.getSourceCitations(
+      const sourceCitations = await services.getSourceCitations(
         preferredCitationStyle
       )
       dispatch({

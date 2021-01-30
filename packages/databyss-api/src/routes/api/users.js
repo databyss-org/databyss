@@ -4,12 +4,10 @@ import humanReadableIds from 'human-readable-ids'
 import jwt from 'jsonwebtoken'
 import { check, validationResult } from 'express-validator/check'
 import { google } from 'googleapis'
-import { Users, Logins } from '@databyss-org/data/serverdbs'
+import { uid } from '@databyss-org/data/lib/uid'
+import { Users, Logins } from '@databyss-org/data/couchdb'
 import { Base64 } from 'js-base64'
 import { send } from '../../lib/postmark'
-import User from '../../models/User'
-import Account from '../../models/Account'
-// import Login from '../../models/Login'
 import { getTokenFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
 
@@ -59,25 +57,15 @@ router.post(
       }
       let user = await Users.find(_selector)
 
-      // let user = await Users.get({ googleId: sub })
-
-      // let user = await User.findOne({ googleId: sub })
       if (!user) {
         user = await Users.insert({
+          _id: uid(),
           name,
           email,
           googleId: sub,
         })
-        // user = await User.create({
-        //   name,
-        //   email,
-        //   googleId: sub,
-        // })
       }
-      // const session = await getSessionFromUserId(user.id)
       res.json({ data: { user } }).status(200)
-
-      //   res.json({ data: { session } })
     })
   })
 )
@@ -104,22 +92,25 @@ router.post(
         email: { $eq: email },
       },
     }
-    // todo: use users.get({})
-    let user = await Users.find(_selector)
 
+    const user = await Users.find(_selector)
+    let _userId
     if (!user.docs.length) {
+      _userId = uid()
       // Creates new user
       emailExists = false
       await Users.insert({
+        _id: _userId,
         email,
-        groups: [],
+        // create the default id for user account
+        // defaultGroupId: uid(),
       })
-      user = await Users.find(_selector)
+    } else {
+      _userId = user.docs[0]._id
     }
 
-    user = user.docs[0]
+    const token = await getTokenFromUserId(_userId)
 
-    const token = await getTokenFromUserId(user._id)
     const loginObj = {
       email,
       code:
@@ -127,7 +118,7 @@ router.post(
           ? 'test-code-42'
           : humanReadableIds.hri.random(),
       token,
-      createdAt: Date.now(),
+      date: Date.now(),
     }
 
     Logins.upsert({ email, code: loginObj.code }, () => loginObj)
@@ -158,21 +149,22 @@ router.post(
 
     try {
       const decoded = jwt.verify(authToken, process.env.JWT_SECRET)
-
       if (decoded) {
-        const user = await User.findOne({ _id: decoded.user.id }).select(
-          'defaultAccount email'
-        )
+        //
+        let user = await Users.get(decoded.user.id)
         if (user) {
-          const account = await Account.findOne({
-            _id: user.defaultAccount,
-          }).select('defaultPage')
-          if (account) {
-            return res
-              .json({ data: { ...user._doc, ...account._doc } })
-              .status(200)
-          }
+          user = { email: user.email }
         }
+
+        return res.json({ data: { ...user } }).status(200)
+        // if (user) {
+        //   let group = await Groups.get(user.defaultGroupId)
+        //   if (group) {
+        //     group = _.pick(group, 'defaultPageId')
+
+        //     return res.json({ data: { ...user, ...group } }).status(200)
+        //   }
+        // }
       }
       return res.status(401).json({ msg: 'Token is not valid' })
     } catch (err) {

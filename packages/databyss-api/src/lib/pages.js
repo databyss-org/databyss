@@ -1,4 +1,4 @@
-import ObjectID from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 import Block from '../models/Block'
 import BlockRelation from '../models/BlockRelation'
 import Page from '../models/Page'
@@ -174,7 +174,7 @@ export const copyPage = async ({ pageId, toAccountId }) => {
     // for normal blocks, copy the Block as well
     const _block = await Block.findOne({ _id: _pageBlock._id })
     const _blockObj = _block.toObject()
-    _blockObj._id = new ObjectID().toHexString()
+    _blockObj._id = uid()
     _blockObj.account = toAccountId
     await new Block(_blockObj).save()
     _blockIdMap[_block._id] = _blockObj._id
@@ -183,7 +183,7 @@ export const copyPage = async ({ pageId, toAccountId }) => {
 
   // Reset Page, Block and BlockRelation _ids and account
   const _pageObj = _page.toObject()
-  _pageObj._id = new ObjectID().toHexString()
+  _pageObj._id = uid()
   _pageObj.account = toAccountId
   delete _pageObj.selection
 
@@ -191,7 +191,7 @@ export const copyPage = async ({ pageId, toAccountId }) => {
 
   for (const _blockRelation of _blockRelations) {
     const _blockRelationObj = _blockRelation.toObject()
-    _blockRelationObj._id = new ObjectID().toHexString()
+    _blockRelationObj._id = uid()
     _blockRelationObj.account = toAccountId
     _blockRelationObj.page = _pageObj._id
     _blockRelationObj.block = _blockIdMap[_blockRelation.block]

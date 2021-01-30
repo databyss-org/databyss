@@ -3,7 +3,6 @@ import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { newPage } from '@databyss-org/services/pages/util'
 import AddPageSvg from '@databyss-org/ui/assets/add_page.svg'
 import {
   Text,
@@ -14,6 +13,7 @@ import {
   Grid,
 } from '@databyss-org/ui/primitives'
 import { sidebar } from '@databyss-org/ui/theming/components'
+import { Page } from '@databyss-org/services/interfaces'
 
 const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
@@ -26,7 +26,9 @@ const Footer = ({ collapsed }) => {
   const onNewPageClick = () => {
     // clears search cache
     clearSearchCache()
-    const _page = newPage()
+
+    const _page = new Page()
+
     setPage(_page).then(() => {
       navigate(`/pages/${_page._id}`)
     })

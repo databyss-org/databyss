@@ -1,6 +1,6 @@
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 
-const _id = ObjectId().toHexString()
+const _id = uid()
 
 export const emptySource = {
   authors: [

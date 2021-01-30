@@ -28,12 +28,12 @@ let editor
 let slateDocument
 let actions
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=services-auth--login'
+const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
 
 const LOCAL_URL_EDITOR =
   'http://localhost:6006/iframe.html?id=services-page--slate-5'
 const PROXY_URL_EDITOR =
-  'http://0.0.0.0:8080/iframe.html?id=services-page--slate-5'
+  'http://localhost:8080/iframe.html?id=services-page--slate-5'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -92,9 +92,9 @@ describe('editor history', () => {
     await sendKeys(actions, 'this entry should stay')
     await enterKey(actions)
     await enterKey(actions)
-    await sleep(500)
+    await isSaved(driver)
     await driver.navigate().refresh()
-    await sleep(3000)
+    await getEditor(driver)
     await sendKeys(actions, 'this should eventually be undone')
     await enterKey(actions)
     await enterKey(actions)
@@ -115,10 +115,9 @@ describe('editor history', () => {
     await undo(actions)
     await undo(actions)
     await undo(actions)
-
-    await sleep(3000)
+    await isSaved(driver)
     await driver.navigate().refresh()
-    await sleep(3000)
+    await getEditor(driver)
 
     slateDocument = await getElementById(driver, 'slateDocument')
 
@@ -321,9 +320,7 @@ describe('editor history', () => {
 
     await redo(actions)
     await redo(actions)
-
-    await sleep(3000)
-
+    await isSaved(driver)
     await driver.navigate().refresh()
     await getEditor(driver)
 

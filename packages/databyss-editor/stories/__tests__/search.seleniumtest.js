@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, WIN, CHROME } from '@databyss-org/ui/lib/saucelabs'
 import {
   getEditor,
   isAppInNotesSaved,
@@ -11,12 +11,13 @@ import {
   enterKey,
   rightShiftKey,
   sleep,
+  logout,
 } from './_helpers.selenium'
 
 let driver
 let actions
 const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
+const PROXY_URL = 'http://localhost:3000'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -24,7 +25,7 @@ describe('entry search', () => {
   beforeEach(async (done) => {
     const random = Math.random().toString(36).substring(7)
     // OSX and chrome are necessary
-    driver = await startSession({ platformName: OSX, browserName: CHROME })
+    driver = await startSession({ platformName: WIN, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
@@ -54,11 +55,9 @@ describe('entry search', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
-    await driver.quit()
-    driver = null
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
+    done()
   })
 
   // should search an entry at the middle of an entry
@@ -90,7 +89,7 @@ describe('entry search', () => {
     await enterKey(actions)
     await sendKeys(actions, 'this keyword something will be searched')
     await isAppInNotesSaved(driver)
-    await sleep(500)
+    await sleep(1000)
     // check for search results appearing in the same order as they appear on the page
     let searchSidebarButton = await getElementByTag(
       driver,
@@ -156,6 +155,7 @@ describe('entry search', () => {
       '[data-test-element="page-header"]'
     )
     await pageTitle.click()
+    await sleep(500)
     await sendKeys(actions, 'this is the second page title')
     await sleep(500)
     await enterKey(actions)
@@ -199,6 +199,8 @@ describe('entry search', () => {
     // refresh and archive the page
     await driver.navigate().refresh()
 
+    await getEditor(driver)
+
     // click on sidebar entry search
     searchSidebarButton = await getElementByTag(
       driver,
@@ -213,7 +215,7 @@ describe('entry search', () => {
     await searchInput.click()
     await sendKeys(actions, 'something')
     await sleep(1000)
-    await enterKey(actions)
+    // await enterKey(actions)
     await enterKey(actions)
 
     // verify that a source is shown in the search results

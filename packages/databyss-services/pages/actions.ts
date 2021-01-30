@@ -1,6 +1,8 @@
+import { optimizePatches } from '@databyss-org/editor/state/util'
 import * as services from '.'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import { PatchBatch, PageHeader, Page } from '../interfaces'
+
 import {
   PATCH,
   FETCH_PAGE,
@@ -44,6 +46,7 @@ export function fetchPageHeaders() {
     })
     try {
       const pages = await services.getAllPages()
+
       dispatch({
         type: CACHE_PAGE_HEADERS,
         payload: pages,
@@ -72,10 +75,17 @@ export function savePatchBatch(batch?: PatchBatch) {
   // if server has not completed previous request bail action
   if (busy) {
     return (dispatch: Function) => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+
+      // TODO: CHANGE TIMEOUT TO ENV VARIABLE
+      timeoutId = setTimeout(() => dispatch(savePatchBatch()), 500)
+
       dispatch({
         type: QUEUE_PATCH,
         payload: {
-          queueSize: queue.length,
+          queueSize: queue.length || 1,
         },
       })
     }
@@ -91,6 +101,7 @@ export function savePatchBatch(batch?: PatchBatch) {
       })
     }
   }
+
   // perform first batch of patches in queue
   busy = true
   let _batch = queue.shift()
@@ -104,7 +115,7 @@ export function savePatchBatch(batch?: PatchBatch) {
     }
     _patches = _patches!.concat(_batch!.patches)
   }
-  const _batchPatch = { id: _pageId, patches: _patches }
+  const _batchPatch = { id: _pageId, patches: optimizePatches(_patches) }
   return async (dispatch: Function) => {
     dispatch({
       type: QUEUE_PATCH,
@@ -114,7 +125,6 @@ export function savePatchBatch(batch?: PatchBatch) {
     })
     try {
       await services.savePatchBatch(_batchPatch)
-
       busy = false
       // repeat function with no patch variable if patches are still in queue
       dispatch({
@@ -137,7 +147,7 @@ export function savePatchBatch(batch?: PatchBatch) {
       }
 
       // TODO: CHANGE TIMEOUT TO ENV VARIABLE
-      timeoutId = setTimeout(() => dispatch(savePatchBatch()), 3000)
+      timeoutId = setTimeout(() => dispatch(savePatchBatch()), 1000)
 
       dispatch({
         type: QUEUE_PATCH,
@@ -159,7 +169,7 @@ export function savePageHeader(page: PageHeader) {
       type: CACHE_PAGE,
       payload: { id, page },
     })
-    services.savePage(page)
+    services.savePageHeader(page)
   }
 }
 
@@ -171,6 +181,7 @@ export function savePage(page: Page) {
       type: CACHE_PAGE,
       payload: { page: new ResourcePending(), id },
     })
+
     services.savePage(page).then(() => {
       dispatch({
         type: CACHE_PAGE,
@@ -210,7 +221,11 @@ export function onArchivePage(
       payload: { id },
     })
     const _page = { ...page, archive: bool }
-    await services.savePage({ _id: page._id, name: page.name, archive: bool })
+    await services.savePageHeader({
+      _id: page._id,
+      name: page.name,
+      archive: bool,
+    })
     if (callback) {
       callback()
     }

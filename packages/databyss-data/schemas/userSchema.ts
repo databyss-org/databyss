@@ -36,28 +36,11 @@ export const userSchema: JSONSchema4 = {
     defaultGroupId: {
       type: 'string',
     },
-    groups: {
-      type: 'array',
-      items: {
-        type: 'object',
-        properties: {
-          groupId: {
-            type: 'string',
-          },
-          role: {
-            type: 'string',
-          },
-        },
-      },
-    },
     date: {
       type: 'string',
     },
-    defaultAccount: {
-      type: 'string',
-    },
   },
-  required: ['_id', 'email', 'groups'],
+  required: ['_id', 'email'],
 }
 
 export default userSchema

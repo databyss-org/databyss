@@ -20,7 +20,7 @@ import {
   EntryState,
 } from '../interfaces'
 
-const THROTTLE_BLOCK_RELATIONS = 1000
+const THROTTLE_BLOCK_RELATIONS = 100
 
 const useReducer = createReducer()
 

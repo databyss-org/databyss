@@ -16,6 +16,7 @@ export interface BasicBlock {
 }
 
 export interface Block extends BasicBlock {
+  page?: string
   text: Text
   __showCitationMenu?: boolean
   __showTopicMenu?: boolean
@@ -76,7 +77,10 @@ export interface Topic extends Block {
   isInPages?: string[]
 }
 
+export interface CacheDict<T> {
+  [key: string]: T
+}
 export interface BlockRelationsServerResponse {
   count: number
-  results: BlockRelation[]
+  results: CacheDict<BlockRelation[]>
 }

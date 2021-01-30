@@ -1,11 +1,18 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback, useState } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
+// import { debounce } from 'lodash'
 import Login from '@databyss-org/ui/modules/Login/Login'
+import {
+  replicateDbFromRemote,
+  syncPouchDb,
+} from '@databyss-org/data/pouchdb/db'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { useServiceContext } from '../'
+import { localStorageHasSession } from './clientStorage'
+import { CACHE_SESSION } from './constants'
 
 const useReducer = createReducer()
 
@@ -30,6 +37,7 @@ const SessionProvider = ({
     name: 'SessionProvider',
   })
   const { session: actions } = useServiceContext()
+  const [dbPending, setDbPending] = useState(false)
 
   const isPublicAccount = useCallback(() => {
     if (state.session.publicAccount?._id) {
@@ -74,10 +82,44 @@ const SessionProvider = ({
 
   const endSession = () => dispatch(actions.endSession())
 
-  // try to resume session on mount
   useEffect(() => {
-    getSession({ retry: true, code, email })
-  }, [])
+    const _init = async () => {
+      const _sesionFromLocalStorage = await localStorageHasSession()
+      if (_sesionFromLocalStorage) {
+        // 2nd pass: load session from local_storage
+        // replicate from cloudant
+        const groupId = _sesionFromLocalStorage.defaultGroupId
+        await replicateDbFromRemote({
+          groupId,
+        })
+        // set up live sync
+        syncPouchDb({
+          groupId,
+          // TODO: how to curry dispatch
+          dispatch,
+        })
+
+        // dispatch
+        dispatch({
+          type: CACHE_SESSION,
+          payload: {
+            session: _sesionFromLocalStorage,
+          },
+        })
+      } else {
+        getSession({ retry: true, code, email })
+      }
+    }
+
+    if (!state.sesson) {
+      _init()
+    }
+  }, [state.sessionIsStored])
+
+  // // try to resume session on mount
+  // useEffect(() => {
+  //   getSession({ retry: true, code, email })
+  // }, [])
 
   let _children = children
   const isPending = state.session instanceof ResourcePending
@@ -98,6 +140,17 @@ const SessionProvider = ({
     dispatch(actions.logout())
   }
 
+  // TODO: WRAP THIS IN A CALLBACK
+
+  useEffect(() => {
+    setDbPending(state.isDbBusy)
+    // debounceDbBusy(state.isDbBusy)
+  }, [state.isDbBusy])
+
+  const isDbBusy = useCallback(() => dbPending, [dbPending])
+
+  // const isDbBusy = () => dbPending
+
   const setDefaultPage = useCallback((id) => {
     dispatch(actions.onSetDefaultPage(id))
   }, [])
@@ -106,6 +159,7 @@ const SessionProvider = ({
     <SessionContext.Provider
       value={{
         ...state,
+        isDbBusy,
         setDefaultPage,
         getSession,
         endSession,

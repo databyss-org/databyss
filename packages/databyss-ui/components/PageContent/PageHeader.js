@@ -1,5 +1,5 @@
 import React, { useState, useEffect, forwardRef, useCallback } from 'react'
-import { throttle } from 'lodash'
+import { debounce } from 'lodash'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { View, TextInput } from '@databyss-org/ui/primitives'
@@ -34,7 +34,7 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
   }, [pageId])
 
   const throttledAutosave = useCallback(
-    throttle((val) => {
+    debounce((val) => {
       const _pageData = {
         name: val.textValue ? val.textValue : noPageTitle,
         _id: pageId,

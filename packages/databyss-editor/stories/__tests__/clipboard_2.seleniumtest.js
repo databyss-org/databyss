@@ -30,12 +30,12 @@ let editor
 let slateDocument
 let actions
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=services-auth--login'
-const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=services-auth--login'
+const PROXY_URL = 'http://localhost:8080/iframe.html?id=services-auth--login'
 
 const LOCAL_URL_EDITOR =
   'http://localhost:6006/iframe.html?id=services-page--slate-5'
 const PROXY_URL_EDITOR =
-  'http://0.0.0.0:8080/iframe.html?id=services-page--slate-5'
+  'http://localhost:8080/iframe.html?id=services-page--slate-5'
 
 describe('editor clipboard', () => {
   beforeEach(async (done) => {
@@ -83,6 +83,7 @@ describe('editor clipboard', () => {
   afterEach(async () => {
     await sleep(100)
     await driver.quit()
+    await sleep(100)
     driver = null
     await sleep(100)
   })

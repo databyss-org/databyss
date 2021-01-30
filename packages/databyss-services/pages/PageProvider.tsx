@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
+
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -40,10 +41,9 @@ interface ContextType {
   getPublicAccount: (id: string) => string | string[]
   archivePage: (id: string, boolean: boolean) => Promise<void>
   onPageCached: (id: string, callback: Function) => void
-  hasPendingPatches: number
+  patchQueueSize: number
   removePageFromCache: (id: string) => void
 }
-
 const useReducer = createReducer()
 export const PageContext = createContext<ContextType>(null!)
 
@@ -69,7 +69,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
     }
   }, [state.cache])
 
-  const hasPendingPatches = state.patchQueueSize
+  const patchQueueSize = state.patchQueueSize
 
   const onPageCached = (id: string, callback: Function) => {
     // add back to dictionary
@@ -177,7 +177,7 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
         archivePage,
         onPageCached,
         setPagePublic,
-        hasPendingPatches,
+        patchQueueSize,
         removePageFromCache,
         getPublicAccount,
       }}

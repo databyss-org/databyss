@@ -10,20 +10,15 @@ import {
   isAppInNotesSaved,
   sendKeys,
   enterKey,
-  //  toggleBold,
-  //   toggleItalic,
-  //   toggleLocation,
-  //   enterKey,
-  //   upKey,
-  //   downKey,
   backspaceKey,
+  logout,
 } from './_helpers.selenium'
 
 let driver
 let editor
 let actions
 const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
+const PROXY_URL = 'http://localhost:3000'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
@@ -59,11 +54,9 @@ describe('notes app', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
-    await driver.quit()
-    driver = null
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
+    done()
   })
 
   it('should switch page names and verify atomics appear on the sidebar', async () => {
@@ -86,6 +79,7 @@ describe('notes app', () => {
     await sendKeys(actions, '#this is a new topic')
     await enterKey(actions)
     await sendKeys(actions, 'entries included within the topic')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'more entries included within topic')
@@ -143,6 +137,8 @@ describe('notes app', () => {
 
     // select author from the google api
     await sendKeys(actions, '@Murray Bookchin')
+    await isAppInNotesSaved(driver)
+
     const googleApi = await getElementByTag(
       driver,
       '[data-test-block-menu="GOOGLE_BOOKS"]'
@@ -234,52 +230,52 @@ describe('notes app', () => {
     assert.equal(editorField.trim(), 'Editor test two')
   })
 
-  it('disable in offline mode', async () => {
-    const newPageButton = await getElementByTag(
-      driver,
-      '[data-test-element="new-page-button"]'
-    )
+  // it('disable in offline mode', async () => {
+  //   const newPageButton = await getElementByTag(
+  //     driver,
+  //     '[data-test-element="new-page-button"]'
+  //   )
 
-    await newPageButton.click()
+  //   await newPageButton.click()
 
-    const editor = await getEditor(driver)
-    editor.sendKeys('Offline test')
-    await sleep(3000)
+  //   const editor = await getEditor(driver)
+  //   editor.sendKeys('Offline test')
+  //   await sleep(3000)
 
-    // toggle offline
-    if (!process.env.LOCAL_ENV) {
-      await driver.executeScript('sauce:throttleNetwork', {
-        condition: 'offline',
-      })
-    }
+  //   // toggle offline
+  //   if (!process.env.LOCAL_ENV) {
+  //     await driver.executeScript('sauce:throttleNetwork', {
+  //       condition: 'offline',
+  //     })
+  //   }
 
-    let isEnabled
+  //   let isEnabled
 
-    try {
-      await newPageButton.click()
-      isEnabled = true
-    } catch {
-      isEnabled = false
-    }
+  //   try {
+  //     await newPageButton.click()
+  //     isEnabled = true
+  //   } catch {
+  //     isEnabled = false
+  //   }
 
-    assert.equal(isEnabled, false)
+  //   assert.equal(isEnabled, false)
 
-    //   toggle online
-    if (!process.env.LOCAL_ENV) {
-      await driver.executeScript('sauce:throttleNetwork', {
-        condition: 'online',
-      })
-    }
+  //   //   toggle online
+  //   if (!process.env.LOCAL_ENV) {
+  //     await driver.executeScript('sauce:throttleNetwork', {
+  //       condition: 'online',
+  //     })
+  //   }
 
-    await sleep(500)
+  //   await sleep(500)
 
-    try {
-      await newPageButton.click()
-      isEnabled = true
-    } catch {
-      isEnabled = false
-    }
+  //   try {
+  //     await newPageButton.click()
+  //     isEnabled = true
+  //   } catch {
+  //     isEnabled = false
+  //   }
 
-    assert.equal(isEnabled, true)
-  })
+  //   assert.equal(isEnabled, true)
+  // })
 })

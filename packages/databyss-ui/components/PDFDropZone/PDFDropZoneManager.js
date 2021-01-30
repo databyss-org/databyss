@@ -1,9 +1,7 @@
 /* eslint-disable no-plusplus */
 
 import React, { useState, useEffect } from 'react'
-
-import ObjectId from 'bson-objectid'
-
+import { uid } from '@databyss-org/data/lib/uid'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { makeText } from '@databyss-org/services/block/makeText'
 import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
@@ -127,7 +125,7 @@ const PDFDropZoneManager = () => {
 
   // utils
   const buildEntryBlock = (data) => {
-    let response = { _id: new ObjectId().toHexString() }
+    let response = { _id: uid() }
 
     if (typeof data === 'string') {
       // filename only
@@ -158,7 +156,7 @@ const PDFDropZoneManager = () => {
       // source text
       if (sourceText) {
         response.push({
-          _id: new ObjectId().toHexString(),
+          _id: uid(),
           type: BlockType.Entry,
           text: {
             textValue: `p. ${page} ${sourceText}`,
@@ -170,7 +168,7 @@ const PDFDropZoneManager = () => {
       // annotation contents
       if (contents) {
         response.push({
-          _id: new ObjectId().toHexString(),
+          _id: uid(),
           type: BlockType.Entry,
           text: {
             textValue: `p. ${page} [${contents}]`,

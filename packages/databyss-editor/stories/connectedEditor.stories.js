@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react'
-import { throttle } from 'lodash'
+import React, { useState, useRef, useCallback, useEffect } from 'react'
+import { debounce } from 'lodash'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
 import {
@@ -20,16 +20,19 @@ import PageProvider, {
 } from '@databyss-org/services/pages/PageProvider'
 import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import { dbRef } from '@databyss-org/data/pouchdb/db'
+import { Page } from '@databyss-org/services/interfaces'
 import HistoryProvider from '../history/EditorHistory'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
-import connectedFixture from './fixtures/connectedState'
+// import connectedFixture from './fixtures/connectedState'
 import {
   cleanupPatches,
   addMetaToPatches,
-  editorStateToPage,
+  // editorStateToPage,
   pageToEditorState,
+  optimizePatches,
 } from '../state/util'
 
 const LoginRequired = () => (
@@ -44,23 +47,45 @@ const Box = ({ children, ...others }) => (
 
 const PageWithAutosave = ({ page }) => {
   const { setPatches } = usePageContext()
-  const hasPendingPatches = usePageContext((c) => c && c.hasPendingPatches)
+  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+  const _isDbBusy = isDbBusy()
   const [pageState, setPageState] = useState(null)
+  const [showSaving, setShowSaving] = useState(false)
+
+  // debonce the ui component showing the saving icon
+  const debounceSavingIcon = useCallback(
+    debounce(
+      (count) => {
+        setShowSaving(count)
+      },
+      2500,
+      { leading: true }
+    ),
+    []
+  )
+
+  useEffect(() => {
+    debounceSavingIcon(_isDbBusy)
+  }, [_isDbBusy])
 
   const operationsQueue = useRef([])
 
   const throttledAutosave = useCallback(
-    throttle(({ nextState, patches }) => {
-      const _patches = cleanupPatches(patches)
-      if (_patches?.length) {
-        const payload = {
-          id: nextState.pageHeader._id,
-          patches: operationsQueue.current,
+    debounce(
+      ({ nextState, patches }) => {
+        const _patches = cleanupPatches(patches)
+        if (_patches?.length) {
+          const payload = {
+            id: nextState.pageHeader._id,
+            patches: optimizePatches(operationsQueue.current),
+          }
+          setPatches(payload)
+          operationsQueue.current = []
         }
-        setPatches(payload)
-        operationsQueue.current = []
-      }
-    }, 500),
+      },
+      500,
+      { leading: true, maxWait: 500 }
+    ),
     []
   )
 
@@ -86,7 +111,7 @@ const PageWithAutosave = ({ page }) => {
         <Text variant="uiTextLargeSemibold">Slate State</Text>
         <pre id="slateDocument">{pageState}</pre>
       </Box>
-      {!hasPendingPatches ? (
+      {!showSaving ? (
         <Text id="complete" variant="uiText">
           changes saved
         </Text>
@@ -97,22 +122,27 @@ const PageWithAutosave = ({ page }) => {
 
 const EditorWithProvider = () => {
   const { getSession } = useSessionContext()
-  const { account } = getSession()
+  const { defaultPageId } = getSession()
   const { setPage } = usePageContext()
 
-  const _defaultPage = editorStateToPage(connectedFixture(account.defaultPage))
+  const _pageId = defaultPageId
+
+  // save new page
+  const _page = new Page(_pageId)
+
+  useEffect(() => {
+    // check to see if page exists in DB, if not add page
+    dbRef.current.find({ selector: { _id: _pageId } }).then((res) => {
+      if (!res.docs.length) {
+        setPage(_page)
+      }
+    })
+  }, [])
 
   return (
     <View>
-      <PageLoader pageId={account.defaultPage}>
-        {(page) => {
-          if (page.name !== 'test document') {
-            setPage(_defaultPage)
-            return null
-          }
-
-          return <PageWithAutosave page={pageToEditorState(page)} />
-        }}
+      <PageLoader pageId={_pageId}>
+        {(page) => <PageWithAutosave page={pageToEditorState(page)} />}
       </PageLoader>
     </View>
   )

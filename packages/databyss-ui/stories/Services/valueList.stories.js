@@ -4,7 +4,7 @@ import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
 import { View, List, Grid, TextControl } from '@databyss-org/ui/primitives'
-import ObjectId from 'bson-objectid'
+import { uid } from '@databyss-org/data/lib/uid'
 
 import SourceProvider, {
   useSourceContext,
@@ -15,7 +15,7 @@ import { withSource } from '@databyss-org/ui/components/Loaders'
 import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
 
-const _id = ObjectId().toHexString()
+const _id = uid()
 
 const _initialValue = {
   authors: [

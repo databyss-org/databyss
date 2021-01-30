@@ -20,8 +20,8 @@ export type BlockRelation = {
   blockText?: Text
   relationshipType?: string
   relatedBlockType?: string
-  page?: string
-  blockIndex?: number
+  page: string
+  blockIndex: number
   removeBlock?: boolean
 }
 

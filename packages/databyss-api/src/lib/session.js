@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { Users } from '@databyss-org/data/serverdbs'
+import { Users } from '@databyss-org/data/couchdb'
 
 export const getTokenFromUserId = (userId) =>
   new Promise((resolve, reject) =>
@@ -18,28 +18,10 @@ export const getTokenFromUserId = (userId) =>
 
 export const getSessionFromUserId = async (userId) => {
   const user = await Users.get(userId)
-  // console.log(user)
-  //  const user = await User.findOne({ _id: userId })
   if (!userId || !user) {
     throw new Error('Bad userId')
   }
-  /*
 
- { 
-   defaultGroup: aslkfjsafj
-    groups: [ 
-      {
-        _id: asdlkjfdsaklfsdj
-        name: 'string',
-        username: aslkdjafslkjdsfs
-        password: XXXXXXXXXX
-      }
-    ]
-  }
-
-  */
-  // TODO: account will become group
-  // const account = await Account.findOne({ _id: user.defaultAccount })
   const token = await getTokenFromUserId(userId)
   return {
     token,

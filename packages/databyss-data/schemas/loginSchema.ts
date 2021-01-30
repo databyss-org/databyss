@@ -20,21 +20,24 @@ export const loginSchema: JSONSchema4 = {
           },
         },
       },
-      _id: {
-        type: 'string',
-      },
-      email: {
-        type: 'string',
-      },
-      code: {
-        type: 'string',
-      },
-      date: {
-        type: 'number',
-      },
     },
-    required: ['_id', 'email', 'date'],
+    _id: {
+      type: 'string',
+    },
+    email: {
+      type: 'string',
+    },
+    code: {
+      type: 'string',
+    },
+    token: {
+      type: 'string',
+    },
+    date: {
+      type: 'number',
+    },
   },
+  required: ['_id', 'email', 'date'],
 }
 
 export default loginSchema

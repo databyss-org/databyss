@@ -1,7 +1,7 @@
 /* eslint-disable func-names */
 import { Key } from 'selenium-webdriver'
 import assert from 'assert'
-import { startSession, OSX, CHROME } from '@databyss-org/ui/lib/saucelabs'
+import { startSession, CHROME, WIN } from '@databyss-org/ui/lib/saucelabs'
 import {
   getElementByTag,
   getElementsByTag,
@@ -16,20 +16,21 @@ import {
   backspaceKey,
   getEditor,
   isAppInNotesSaved,
+  logout,
 } from './_helpers.selenium'
 
 let driver
 let actions
 const LOCAL_URL = 'http://localhost:3000'
-const PROXY_URL = 'http://0.0.0.0:3000'
+const PROXY_URL = 'http://localhost:3000'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 
 describe('block indexing', () => {
   beforeEach(async (done) => {
     const random = Math.random().toString(36).substring(7)
-    // OSX and chrome are necessary
-    driver = await startSession({ platformName: OSX, browserName: CHROME })
+    // WIN and SAFARI are necessary
+    driver = await startSession({ platformName: WIN, browserName: CHROME })
     await driver.get(process.env.LOCAL_ENV ? LOCAL_URL : PROXY_URL)
 
     const emailField = await getElementByTag(driver, '[data-test-path="email"]')
@@ -58,11 +59,9 @@ describe('block indexing', () => {
     done()
   })
 
-  afterEach(async () => {
-    await sleep(100)
-    await driver.quit()
-    driver = null
-    await sleep(100)
+  afterEach(async (done) => {
+    await logout(driver)
+    done()
   })
 
   // Tests for indexing [adding a topic, adds it to the index, clicking on it should show results, clicking on results should show page with correct entries]
@@ -81,6 +80,8 @@ describe('block indexing', () => {
 
     await sendKeys(actions, '@this is an opening source')
     await enterKey(actions)
+    await isAppInNotesSaved(driver)
+
     await upKey(actions)
     // edits the author
     await rightKey(actions)
@@ -129,11 +130,13 @@ describe('block indexing', () => {
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, 'third entry')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/#')
     await enterKey(actions)
     await sendKeys(actions, 'fourth entry not in atomic')
+    await isAppInNotesSaved(driver)
     await enterKey(actions)
     await enterKey(actions)
     await sendKeys(actions, '/@')
@@ -141,10 +144,18 @@ describe('block indexing', () => {
     await sendKeys(actions, '#this is the second topic')
     await enterKey(actions)
     await sendKeys(actions, 'entry should be contained within topic')
-    await enterKey(actions)
-    await enterKey(actions)
-    await sendKeys(actions, 'second entry within topic')
     await isAppInNotesSaved(driver)
+
+    await enterKey(actions)
+    await enterKey(actions)
+    await isAppInNotesSaved(driver)
+
+    await sendKeys(actions, 'second entry within topic')
+    // BLOCK RELATIONS NEED TO BE ADDED, WAIT FOR CHANGE
+    await sleep(3000)
+    await isAppInNotesSaved(driver)
+    await sleep(3000)
+
     await driver.navigate().refresh()
     await getEditor(driver)
     const topicsSidebarButton = await getElementByTag(

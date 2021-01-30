@@ -1,10 +1,10 @@
+import { replicateDbFromRemote } from '@databyss-org/data/pouchdb/db'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
 import { NotAuthorizedError } from '../interfaces'
 import { version as databyssVersion } from '../package.json'
 import {
   FETCH_SESSION,
-  CACHE_SESSION,
   DENY_ACCESS,
   REQUEST_CODE,
   END_SESSION,
@@ -13,15 +13,16 @@ import {
   CACHE_USER_ACCOUNT,
   LOGOUT,
   SET_DEFAULT_PAGE,
+  SET_SESSION,
+  STORE_SESSION_LOCALLY,
 } from './constants'
-
 import {
-  setAuthToken,
   getAuthToken,
-  deleteAuthToken,
-  getAccountId,
-  setAccountId,
-  deleteAccountId,
+  deletePouchDbs,
+  setDefaultPageId,
+  setAuthToken,
+  setPouchSecret,
+  getUserId,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
@@ -35,7 +36,6 @@ export const fetchSession = ({ _request, ...credentials }) => async (
   const { code, googleCode, email } = credentials
 
   dispatch({ type: FETCH_SESSION, payload: { credentials } })
-
   // fetch params
   let path = process.env.API_URL
   const options = {
@@ -48,11 +48,13 @@ export const fetchSession = ({ _request, ...credentials }) => async (
 
   try {
     const authToken = getAuthToken()
-    const accountId = getAccountId()
+    const accountId = await getUserId()
 
     if (authToken && accountId) {
       // if not at at root path '/' and accountID is not the same as the one in the url, set as guest account
       if (
+        // This had to be added for the pouchDB refactor, not sure why this had to be changed?
+        !process.env.STORYBOOK &&
         getAccountFromLocation() &&
         (accountId !== getAccountFromLocation() ||
           !window.location.pathname === '/')
@@ -62,6 +64,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
         path += '/auth'
         options.headers['x-databyss-as-account'] = _accountId
       } else {
+        console.log('IN THIS ELSE STATMENT')
         // if we have the token, try to use it
         path += '/auth'
         options.headers['x-databyss-account'] = accountId
@@ -93,14 +96,27 @@ export const fetchSession = ({ _request, ...credentials }) => async (
 
     const res = await _request(path, options, true)
     if (res.data && res.data.session) {
-      // authenticated
-      setAuthToken(res.data.session.token)
-      setAccountId(res.data.session.user.defaultGroupId)
+      const { session } = res.data
+
+      // set credentials in local storage if sent from server
+      if (session.groupCredentials) {
+        setPouchSecret(session.groupCredentials)
+      }
+
+      // set token in local storage
+      setAuthToken(session.token)
+
+      // replicate database from cloudant
+      // assume its the first ID provided in credentials
+      const _defaultGroupId =
+        session.user?.defaultGroupId || session?.groupCredentials[0].groupId
+
+      await replicateDbFromRemote({
+        groupId: _defaultGroupId,
+      })
+
       dispatch({
-        type: CACHE_SESSION,
-        payload: {
-          session: res.data.session,
-        },
+        type: STORE_SESSION_LOCALLY,
       })
     } else if (res.data?.isPublic) {
       // cache public account info in session state
@@ -116,8 +132,11 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       })
     }
   } catch (error) {
-    deleteAuthToken()
-    deleteAccountId()
+    try {
+      await deletePouchDbs()
+    } catch (err) {
+      console.error(err)
+    }
     dispatch({
       type: DENY_ACCESS,
       payload: { error },
@@ -128,13 +147,11 @@ export const fetchSession = ({ _request, ...credentials }) => async (
   }
 }
 
-export const endSession = () => {
-  deleteAuthToken()
-  deleteAccountId()
-
-  return {
+export const endSession = () => async (dispatch) => {
+  await deletePouchDbs()
+  dispatch({
     type: END_SESSION,
-  }
+  })
 }
 
 export const getUserAccount = () => async (dispatch) => {
@@ -149,17 +166,27 @@ export const getUserAccount = () => async (dispatch) => {
   }
 }
 
-export const logout = () => (dispatch) => {
-  deleteAuthToken()
-  deleteAccountId()
+export const logout = () => async (dispatch) => {
+  // deletes databases
+  await deletePouchDbs()
+
   dispatch({ type: LOGOUT })
+  setTimeout(() => (window.location.href = '/'), 50)
 }
 
 export const onSetDefaultPage = (id) => async (dispatch) => {
-  httpPost(`/accounts/page/${id}`).then(() => {
-    dispatch({
-      type: SET_DEFAULT_PAGE,
-      payload: { id },
-    })
+  await setDefaultPageId(id)
+
+  dispatch({
+    type: SET_DEFAULT_PAGE,
+    payload: { id },
+  })
+}
+
+export const setSession = (session) => async (dispatch) => {
+  await httpPost(`/cloudant/user`, { data: { session } })
+  dispatch({
+    type: SET_SESSION,
+    payload: { session },
   })
 }

@@ -1,6 +1,6 @@
 import { JSONSchema4 } from 'json-schema'
 
-export const userSchema: JSONSchema4 = {
+export const groupSchema: JSONSchema4 = {
   title: 'Groups',
   type: 'object',
   properties: {
@@ -27,6 +27,9 @@ export const userSchema: JSONSchema4 = {
     name: {
       type: 'string',
     },
+    defaultPageId: {
+      type: 'string',
+    },
     sessions: {
       type: 'array',
       items: {
@@ -38,6 +41,9 @@ export const userSchema: JSONSchema4 = {
           dbKey: {
             type: 'string',
           },
+          role: {
+            type: 'string',
+          },
           lastLoginAt: {
             type: 'number',
           },
@@ -46,10 +52,10 @@ export const userSchema: JSONSchema4 = {
           },
         },
       },
-      required: ['userId', 'dbkey', 'lastLoginAt'],
+      required: ['userId', 'dbkey', 'lastLoginAt', 'role'],
     },
   },
   required: ['_id', 'name', 'sessions'],
 }
 
-export default userSchema
+export default groupSchema

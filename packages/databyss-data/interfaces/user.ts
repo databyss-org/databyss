@@ -16,5 +16,4 @@ export interface User {
   name?: string
   googleId?: string
   defaultGroupId?: string
-  groups?: UserGroup[]
 }

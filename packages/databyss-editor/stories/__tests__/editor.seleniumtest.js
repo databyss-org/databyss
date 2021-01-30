@@ -13,7 +13,7 @@ let slateDocument
 
 // let actions
 const LOCAL_URL = 'http://localhost:6006/iframe.html?id=selenium-tests--slate-5'
-const PROXY_URL = 'http://0.0.0.0:8080/iframe.html?id=selenium-tests--slate-5'
+const PROXY_URL = 'http://localhost:8080/iframe.html?id=selenium-tests--slate-5'
 
 export const CONTROL = process.env.LOCAL_ENV ? Key.META : Key.CONTROL
 

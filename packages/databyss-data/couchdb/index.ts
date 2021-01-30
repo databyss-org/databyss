@@ -1,5 +1,7 @@
-import { cloudant } from '@databyss-org/services/lib/cloudant'
 import { User, Group, Login, DesignDoc } from '../interfaces'
+import { cloudant } from './cloudant'
+
+export { updateDesignDocs, initiateDatabases } from './util'
 
 export const Users = cloudant.db.use<User>('users')
 export const UsersDesignDoc = cloudant.db.use<DesignDoc>('users')

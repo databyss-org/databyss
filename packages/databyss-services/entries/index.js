@@ -1,9 +1,7 @@
-import { httpPost, httpGet } from '../lib/requestApi'
+import * as pouchDb from '@databyss-org/data/pouchdb/entries'
 
-export const searchEntries = (data) => httpPost('/entries/search/', { data })
+export const searchEntries = (data) => pouchDb.searchEntries(data)
 
-export const setBlockRelations = (data) =>
-  httpPost('/entries/relations/', { data })
+export const setBlockRelations = (data) => pouchDb.setBlockRelations(data)
 
-export const getBlockRelations = (queryId) =>
-  httpGet(`/entries/relations/${queryId}`)
+export const getBlockRelations = (queryId) => pouchDb.getBlockRelations(queryId)

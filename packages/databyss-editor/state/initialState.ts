@@ -7,6 +7,7 @@ const initialState: EditorState = {
   showNewBlockMenu: true,
   operations: [],
   selection: {
+    _id: '',
     anchor: {
       index: 0,
       offset: 0,

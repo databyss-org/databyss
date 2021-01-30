@@ -1,11 +1,11 @@
 import express from 'express'
-import { Logins } from '@databyss-org/data/serverdbs'
+import { Logins } from '@databyss-org/data/couchdb'
 import auth from '../../middleware/auth'
 import { getSessionFromToken, getSessionFromUserId } from '../../lib/session'
 import wrap from '../../lib/guardedAsync'
 import {
   createUserDatabaseCredentials,
-  addCredentialsToUser,
+  addCredientialsToSession,
 } from '../../lib/createUserDatabase'
 
 const router = express.Router()
@@ -16,7 +16,14 @@ const router = express.Router()
 router.post('/', auth, async (req, res) => {
   try {
     if (req?.user) {
-      const session = await getSessionFromUserId(req.user.id)
+      let session = await getSessionFromUserId(req.user.id)
+      // TODO: on every re-login attempt we are creating new user credentials, should this happen on the back end or should the user save the credentials in their offline database?
+      session = await addCredientialsToSession({
+        groupId: session.user.defaultGroupId,
+        userId: session.user._id,
+        session,
+      })
+
       return res.json({ data: { session } })
     }
     return res
@@ -50,32 +57,17 @@ router.post(
     if (query.docs.length) {
       const _login = query.docs[0]
 
-      // todo: change this back
-      if (_login.createdAt >= Date.now() - 36000000) {
+      if (_login.date >= Date.now() - 36000000) {
         const token = _login.token
         const _res = await Logins.get(_login._id, _login._rev)
         await Logins.destroy(_res._id, _res._rev)
         const session = await getSessionFromToken(token)
-        // check if user has login credentials
-        if (!session.user.defaultGroupId) {
-          // if default group doesnt exist, initiate a new database and pass the data back to the client
-          const credentials = await createUserDatabaseCredentials(session.user)
-          const _user = await addCredentialsToUser(
-            session.user._id,
-            credentials
-          )
-          // add credential to users `groups` property
 
-          session.user.groups = [
-            {
-              ..._user.groups[0],
-              dbKey: credentials.dbKey,
-              dbPassword: credentials.dbPassword,
-            },
-          ]
-        }
+        // give user credentials, if default db does not exist for user, create one
+        const credentials = await createUserDatabaseCredentials(session.user)
 
-        // console.log(session)
+        session.groupCredentials = [credentials]
+
         return res.json({ data: { session } })
       }
       return res.status(401).json({ error: 'token expired' })

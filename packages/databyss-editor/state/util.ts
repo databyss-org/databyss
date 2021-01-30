@@ -1,5 +1,6 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
-import ObjectId from 'bson-objectid'
+import _ from 'lodash'
+import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
 import {
   Selection,
@@ -259,6 +260,80 @@ export const cleanupPatches = (patches: Patch[]) =>
       )
   )
 
+// checks if all operation are of type `replace`
+export const canPatchesBeOptimized = (patches: Patch[]): boolean => {
+  if (patches.find((p) => p.op !== 'replace')) {
+    return false
+  }
+
+  // check if all operations have occured on the same index
+
+  const _areBlockOperationsOnSameIndex = patches
+    .filter((p) => p.path[0] === 'blocks')
+    .reduce((acc: any, curr: any, i: number) => {
+      if (i === 0) {
+        return curr.path[1]
+      }
+      if (acc !== curr.path[1]) {
+        return false
+      }
+      return acc
+    }, null)
+
+  const _areSelectionOperationsOnSameIndex = patches
+    .filter((p) => p.path[0] === 'selection')
+    .reduce((acc: any, curr: any, i: number) => {
+      if (curr.value.anchor.index !== curr.value.focus.index) {
+        return false
+      }
+      if (i === 0) {
+        return curr.value.anchor.index
+      }
+
+      if (acc !== curr.value.anchor.index) {
+        return false
+      }
+      return acc
+    }, null)
+
+  // if either operation is not on the same index, return default patches
+
+  // if index is at zero, it will throw a false negative, check if number
+  if (
+    !_.isNumber(_areBlockOperationsOnSameIndex) ||
+    !_.isNumber(_areSelectionOperationsOnSameIndex)
+  ) {
+    return false
+  }
+  if (!_areBlockOperationsOnSameIndex || !_areSelectionOperationsOnSameIndex) {
+    return false
+  }
+
+  return true
+}
+
+// checks if all operation have occured within one block, this will work for `selection` and `block` updates
+export const optimizePatches = (patches: Patch[]): Patch[] => {
+  const _patches = patches
+
+  if (!canPatchesBeOptimized(_patches)) {
+    return _patches
+  }
+
+  const _optimizedPatches: Patch[] = []
+  _patches.reverse().forEach((p) => {
+    // get latest selection
+    if (!_optimizedPatches.find((_p: Patch) => _p?.path[0] === 'selection')) {
+      _optimizedPatches.push(p)
+    } else if (!_optimizedPatches.find((_p) => _p?.path[0] === 'blocks')) {
+      // get latest block
+      _optimizedPatches.push(p)
+    }
+  })
+
+  return _optimizedPatches.reverse()
+}
+
 export const addMetaToPatches = ({ nextState, patches }: OnChangeArgs) =>
   cleanupPatches(patches)?.map((_p) => {
     // add selection
@@ -390,7 +465,7 @@ export const splitBlockAtEmptyLine = ({
   // make a new block to insert with second part of split
   const _blockToInsert: Block = {
     type: BlockType.Entry,
-    _id: new ObjectId().toHexString(),
+    _id: uid(),
     text: after,
   }
 
@@ -553,7 +628,7 @@ export const convertInlineToAtomicBlocks = ({
     let _atomicTextValue = inlineMarkupData?.text
 
     // new Id for inline atomic
-    let _atomicId = new ObjectId().toHexString()
+    let _atomicId = uid()
 
     // check entitySuggestionCache for an atomic with the identical name
     // if there's a match and the atomic type matches, use the cached
@@ -675,6 +750,7 @@ export const pushAtomicChangeUpstream = ({
 
   // create a selection which includes the whole document
   const _selectionFromState = {
+    _id: draft.selection._id,
     anchor: { offset: 0, index: 0 },
     focus: {
       offset: state.blocks[state.blocks.length - 1].text.textValue.length,
@@ -683,6 +759,7 @@ export const pushAtomicChangeUpstream = ({
   }
 
   const _selectionFromDraft = {
+    _id: draft.selection._id,
     anchor: { offset: 0, index: 0 },
     focus: {
       offset: draft.blocks[draft.blocks.length - 1].text.textValue.length,

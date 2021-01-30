@@ -1,6 +1,6 @@
 import { Key, By, until } from 'selenium-webdriver'
 
-const waitUntilTime = 20000
+const waitUntilTime = 30000
 
 const SLEEP_TIME = 300
 
@@ -14,10 +14,17 @@ export const getEditor = async (driver) => {
   await sleep(500)
   const el = await driver.wait(
     until.elementLocated(By.tagName('[contenteditable="true"]')),
-    waitUntilTime
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
   )
 
-  const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
+  const _driver = await driver.wait(
+    until.elementIsVisible(el),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
   return _driver
 }
 
@@ -27,7 +34,9 @@ export const getElementsByTag = async (driver, tag) => {
   try {
     el = await driver.wait(
       until.elementsLocated(By.tagName(tag)),
-      waitUntilTime
+      waitUntilTime,
+      'Timed out after 30 seconds',
+      500
     )
   } catch (ex) {
     if (ex.name !== 'TimeoutError') {
@@ -43,27 +52,69 @@ export const getElementByTag = async (driver, tag) => {
   await sleep(500)
   const el = await driver.wait(
     until.elementLocated(By.tagName(tag)),
-    waitUntilTime
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
   )
 
   // const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
   return el
 }
 
+export const logout = async (driver) => {
+  const accountDropdown = await getElementByTag(
+    driver,
+    '[data-test-element="account-menu"]'
+  )
+  await accountDropdown.click()
+  await sleep(500)
+  const logoutButton = await getElementByTag(
+    driver,
+    '[data-test-block-menu="logout"]'
+  )
+  await logoutButton.click()
+  await getElementByTag(driver, '[data-test-path="email"]')
+  await driver.quit()
+}
+
 export const getElementById = async (driver, id) => {
   await sleep(500)
-  const el = await driver.wait(until.elementLocated(By.id(id)), waitUntilTime)
+  const el = await driver.wait(
+    until.elementLocated(By.id(id)),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
 
-  const _driver = await driver.wait(until.elementIsVisible(el), waitUntilTime)
+  const _driver = await driver.wait(
+    until.elementIsVisible(el),
+    waitUntilTime,
+    'Timed out after 30 seconds',
+    500
+  )
   return _driver
 }
 
 export const isSaved = async (driver) => {
-  await getElementById(driver, 'complete')
+  await sleep(2000)
+  try {
+    await getElementById(driver, 'complete')
+  } catch (err) {
+    if (!err.name !== 'StaleElementReferenceError') {
+      throw err
+    }
+  }
 }
 
 export const isAppInNotesSaved = async (driver) => {
-  await getElementById(driver, 'changes-saved')
+  await sleep(2000)
+  try {
+    await getElementById(driver, 'changes-saved')
+  } catch (err) {
+    if (!err.name !== 'StaleElementReferenceError') {
+      throw err
+    }
+  }
 }
 
 export const toggleBold = (actions) =>

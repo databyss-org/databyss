@@ -1,12 +1,19 @@
 import request from './request'
-import { getAuthToken, getAccountId } from './../session/clientStorage'
+import { getAccountId, getAuthToken } from './../session/clientStorage'
 import { getAccountFromLocation } from '../session/_helpers'
 import { version as databyssVersion } from './../package.json'
 
-export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
+export const requestApi = async (
+  path,
+  options = { headers: {} },
+  responseIsJson
+) => {
   // get current databyss version
-  const _accountId = getAccountId()
+  const _accountId = await getAccountId()
+
   const _accountFromLocation = getAccountFromLocation()
+
+  const _token = await getAuthToken()
 
   // If accountId in local storage same as account from location
   //   only include x-databyss-account else only include x-databyss-as-account.
@@ -18,7 +25,7 @@ export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
     !_accountFromLocation ||
     _accountId === _accountFromLocation
       ? {
-          'x-databyss-account': `${getAccountId()}`,
+          'x-databyss-account': `${_accountId}`,
         }
       : { 'x-databyss-as-account': `${getAccountFromLocation()}` }
 
@@ -28,7 +35,7 @@ export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
       ...options,
       headers: {
         ...options.headers,
-        'x-auth-token': `${getAuthToken()}`,
+        'x-auth-token': `${_token}`,
         'x-databyss-version': databyssVersion,
         ..._account,
       },
@@ -37,11 +44,9 @@ export const requestApi = (path, options = { headers: {} }, responseIsJson) => {
   )
 }
 
-export const ping = (timeout) => requestApi(`/ping`, { timeout })
+export const httpGet = async (path) => requestApi(path)
 
-export const httpGet = (path) => requestApi(path)
-
-export const httpPost = (path, body) =>
+export const httpPost = async (path, body) =>
   requestApi(path, {
     method: 'POST',
     headers: {
