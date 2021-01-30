@@ -10,8 +10,10 @@ import {
 // TODO: Add native versions of these
 
 // save page is used to rename page name
-export const savePageHeader = (data: Page | PageHeader): Promise<void> =>
+export const savePageHeader = (data: Page | PageHeader): Promise<void> => {
+  console.log('savePageHeader', data)
   pouchDb.savePageHeader(data)
+}
 
 export const savePage = (page: Page): Promise<any> => pouchDb.savePage(page)
 
