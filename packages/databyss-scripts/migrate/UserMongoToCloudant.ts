@@ -182,6 +182,7 @@ class UserMongoToCloudant extends ServerProcess {
           $type: DocumentType.Page,
           _id: _couchPageId,
           name: _mongoPage.name,
+          archive: _mongoPage.archive,
           blocks: _mongoPage.blocks.map((_mongoBlock) => ({
             type: _mongoBlock.type,
             _id: _blockIdMap[_mongoBlock._id],
