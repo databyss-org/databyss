@@ -18,7 +18,7 @@ const getPageItems = (pageHeaders) =>
     data: header,
   }))
 
-const Groups = (others) => (
+export const GroupList = (others) => (
   <GroupHeadersLoader>
     {([groupHeaders, sharedPageHeaders]) => (
       <>
@@ -41,5 +41,3 @@ const Groups = (others) => (
     )}
   </GroupHeadersLoader>
 )
-
-export default Groups

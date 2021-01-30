@@ -5,7 +5,7 @@ import { View } from '@databyss-org/ui/primitives'
 import SearchInputContainer from '@databyss-org/ui/components/SearchContent/SearchInputContainer'
 import { debounce } from 'lodash'
 
-import SidebarSearchResults from '../../../components/Sidebar/SidebarSearchResults'
+import SidebarSearchResults from './SidebarSearchResults'
 
 const Search = (others) => {
   const {

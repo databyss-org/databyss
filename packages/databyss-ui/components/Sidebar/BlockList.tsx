@@ -5,20 +5,16 @@ import {
   joinBlockRelations,
 } from '@databyss-org/services/blocks'
 import { useBlockRelations, useBlocks, usePages } from '@databyss-org/data/pouchdb/hooks'
-import { LoadingFallback } from '@databyss-org/ui/components'
+import { LoadingFallback, SidebarListItemData } from '@databyss-org/ui/components'
 import SidebarList from './SidebarList'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { Document } from '@databyss-org/services/interfaces'
 
-interface BlockListProps {
-  blockType: BlockType
-}
+export type SidebarMiddlewareFunction<T extends Document> = (docs: T[]) => SidebarListItemData<T>[]
 
-export interface SidebarListItem<T extends Document> {
-  text: string
-  type: string
-  route: string
-  data?: T
+interface BlockListProps<T extends Block> {
+  blockType: BlockType
+  middleware?: SidebarMiddlewareFunction<T>
 }
 
 const blockTypeToListItemType = (blockType: BlockType): string => {
@@ -32,20 +28,20 @@ const blockTypeToListItemType = (blockType: BlockType): string => {
   }
 }
 
-
-export const BlockList = ({ blockType,  ...others }) => {
+export const BlockList = ({ blockType, middleware, ...others }: BlockListProps<Block>) => {
   const blockRelationsRes = useBlockRelations(blockType)
   const blocksRes = useBlocks(BlockType.Topic)
   const pagesRes = usePages()
   const queryRes = [blockRelationsRes, blocksRes, pagesRes]
   
-  const blocksToListItems = (blocks: Block[]): SidebarListItem[] => (
+  const blocksToListItems: SidebarMiddlewareFunction<Block> = (blocks) => (
     blocks.map(_block => ({
       type: blockTypeToListItemType(blockType),
       route: `/${blockTypeToListItemType(blockType)}s/${_block._id}`,
       text: _block.text.textValue
     }))
   )
+  let _middleware = middleware || blocksToListItems
 
   if (queryRes.some((q) => !q.isSuccess)) {
     return <LoadingFallback queryObserver={queryRes} />
@@ -57,8 +53,7 @@ export const BlockList = ({ blockType,  ...others }) => {
     pagePredicate: (page) => !page.archive,
   })
   const grouped = groupBlockRelationsByRelatedBlock(Object.values(filtered))
-  const mapped = blocksToListItems(
-    Object.keys(grouped).map((blockId) => blocksRes.data![blockId])
+  const mapped = _middleware(Object.keys(grouped).map((blockId) => blocksRes.data![blockId])
   )
   const sorted = sortEntriesAtoZ(mapped, 'text')
 

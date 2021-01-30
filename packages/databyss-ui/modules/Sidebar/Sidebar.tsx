@@ -3,12 +3,16 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { View, List } from '@databyss-org/ui/primitives'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
-import { BlockList, PageList } from '@databyss-org/ui/components'
+import {
+  BlockList,
+  PageList,
+  GroupList,
+  Search,
+  Header,
+} from '@databyss-org/ui/components/Sidebar'
 import { BlockType } from '@databyss-org/services/interfaces'
 import SidebarCollapsed from './SidebarCollapsed'
 import { darkTheme, pxUnits } from '../../theming/theme'
-import Search from './routes/Search'
-import Header from '../../components/Sidebar/Header'
 import { sidebar } from '../../theming/components'
 import { authorsFromSources } from './middleware'
 
@@ -71,6 +75,7 @@ export const Sidebar = () => {
             )}
             {menuItem === 'topics' && <BlockList blockType={BlockType.Topic} />}
             {menuItem === 'archive' && <PageList archive />}
+            {menuItem === 'groups' && <GroupList />}
             <Footer />
           </List>
         </View>
