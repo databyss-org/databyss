@@ -30,7 +30,7 @@ const blockTypeToListItemType = (blockType: BlockType): string => {
 
 export const BlockList = ({ blockType, middleware, ...others }: BlockListProps<Block>) => {
   const blockRelationsRes = useBlockRelations(blockType)
-  const blocksRes = useBlocks(BlockType.Topic)
+  const blocksRes = useBlocks(blockType)
   const pagesRes = usePages()
   const queryRes = [blockRelationsRes, blocksRes, pagesRes]
   

@@ -7,6 +7,7 @@ import {
 import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { View, ScrollView } from '@databyss-org/ui/primitives'
 import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
 import PageSticky from './PageSticky'
@@ -25,7 +26,7 @@ export const PageContentView = forwardRef(({ children, ...others }, ref) => (
 export const PageContainer = React.memo(
   ({ anchor, id, page, ...others }) => {
     const getBlockRefByIndex = usePageContext((c) => c.getBlockRefByIndex)
-    const [authToken, setAuthToken] = useState()
+    const [, setAuthToken] = useState()
     const [editorPath, setEditorPath] = useState(null)
 
     const headerRef = useRef()

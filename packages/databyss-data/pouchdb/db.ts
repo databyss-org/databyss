@@ -26,8 +26,6 @@ import { DocumentType } from './interfaces'
 
 const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
-console.log(process.env)
-
 // add plugins
 PouchDB.plugin(PouchDBTransform)
 PouchDB.plugin(PouchDbQuickSearch)

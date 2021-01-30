@@ -11,7 +11,6 @@ export type {
   Selection,
   Point,
   Text,
-  BlockRelation,
 } from '@databyss-org/services/interfaces'
 export { BlockType } from '@databyss-org/services/interfaces'
 
