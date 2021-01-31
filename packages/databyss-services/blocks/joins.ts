@@ -21,7 +21,7 @@ export const joinBlockRelations = ({
       _include = _include && blockPredicate(blockDict![curr.block])
     }
     if (pagePredicate) {
-      _include = _include && pagePredicate(pageDict![curr.block])
+      _include = _include && pagePredicate(pageDict![curr.page])
     }
     if (_include) {
       accum[curr._id] = curr

@@ -3,12 +3,6 @@ import {
   sortEntriesAtoZ,
   filterEntries,
 } from '@databyss-org/services/entries/util'
-import {
-  getAuthorData,
-  getSourceTitlesData,
-} from '@databyss-org/ui/modules/Sidebar/routes/Sources'
-import { getPagesData } from '@databyss-org/ui/modules/Sidebar/routes/Pages'
-import { getTopicsData } from '@databyss-org/ui/modules/Sidebar/routes/Topics'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
@@ -18,10 +12,14 @@ import {
   useBlocks,
   usePages,
 } from '@databyss-org/data/pouchdb/hooks'
-import { BlockType } from '@databyss-org/editor/interfaces'
+import { Source, BlockType } from '@databyss-org/services/interfaces'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
-import { joinBlockRelationsWithBlocks } from '@databyss-org/services/blocks'
-import { getAuthorsFromSources } from '@databyss-org/services/lib/util'
+import {
+  authorsToListItemData,
+  pagesToListItemData,
+  blocksToListItemData,
+} from './transforms'
+import { getBlocksInPages } from './lists/BlockList'
 
 const FulltextSearchItem = (props) => (
   <SidebarListItem
@@ -71,27 +69,33 @@ const SidebarSearchResults = ({
     return <LoadingFallback queryObserver={queryRes} />
   }
 
-  const sources = joinBlockRelationsWithBlocks(
-    blockRelationsRes.data,
-    sourcesRes.data
+  const mappedSources = getBlocksInPages(
+    blockRelationsRes.data!,
+    sourcesRes.data!,
+    pagesRes.data!,
+    blocksToListItemData,
+    false
   )
-  const topics = joinBlockRelationsWithBlocks(
-    blockRelationsRes.data,
-    topicsRes.data
-  )
-  const authors = getAuthorsFromSources(sources)
-  const pages = pagesRes.data
 
-  const sourceTitlesData = getSourceTitlesData(sources)
-  const authorsData = getAuthorData(authors)
-  const topicsData = getTopicsData(topics)
-  const pagesData = getPagesData(Object.values(pages))
+  const mappedTopics = getBlocksInPages(
+    blockRelationsRes.data!,
+    topicsRes.data!,
+    pagesRes.data!,
+    blocksToListItemData,
+    false
+  )
+
+  const mappedAuthors = authorsToListItemData(
+    Object.values(sourcesRes.data!) as Source[]
+  )
+
+  const mappedPages = pagesToListItemData(Object.values(pagesRes.data!))
 
   const allResults = [
-    ...sourceTitlesData,
-    ...pagesData,
-    ...authorsData,
-    ...topicsData,
+    ...mappedSources,
+    ...mappedPages,
+    ...mappedAuthors,
+    ...mappedTopics,
   ]
 
   const sortedSources = sortEntriesAtoZ(allResults, 'text')

@@ -1,4 +1,4 @@
-import { Document } from '@databyss-org/services/interfaces'
+import { ReactNode } from 'react'
 
 export { LoadingFallback } from './Notify/LoadingFallback'
 export { default as SidebarList } from './Sidebar/SidebarList'
@@ -14,9 +14,10 @@ export { default as AccountMenu } from './PageContent/AccountMenu'
 export { StickyHeader } from './Navigation/SickyHeader'
 export { TitleInput } from './PageContent/TitleInput'
 
-export interface SidebarListItemData<T extends Document> {
+export interface SidebarListItemData<T> {
   text: string
   type: string
   route: string
+  icon?: ReactNode
   data?: T
 }

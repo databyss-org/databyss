@@ -3,18 +3,14 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { View, List } from '@databyss-org/ui/primitives'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
-import {
-  BlockList,
-  PageList,
-  GroupList,
-  Search,
-  Header,
-} from '@databyss-org/ui/components/Sidebar'
+import { Header } from '@databyss-org/ui/components/Sidebar'
 import { BlockType } from '@databyss-org/services/interfaces'
+import { darkTheme, pxUnits } from '@databyss-org/ui/theming/theme'
+import { sidebar } from '@databyss-org/ui/theming/components'
 import SidebarCollapsed from './SidebarCollapsed'
-import { darkTheme, pxUnits } from '../../theming/theme'
-import { sidebar } from '../../theming/components'
-import { authorsFromSources } from './middleware'
+import { BlockList, PageList, GroupList } from './lists'
+import { authorsToListItemData } from './transforms'
+import Search from './Search'
 
 export const Sidebar = () => {
   const { getSidebarPath, isMenuOpen } = useNavigationContext()
@@ -58,17 +54,12 @@ export const Sidebar = () => {
             {menuItem === 'sources' && (
               <BlockList
                 blockType={BlockType.Source}
-                middleware={[authorsFromSources]}
+                transform={authorsToListItemData}
                 prependItems={[
                   {
                     type: 'sources',
                     text: 'All sources',
                     route: '/sources',
-                  },
-                  {
-                    type: 'authors',
-                    text: 'All authors',
-                    route: '/sources/authors',
                   },
                 ]}
               />

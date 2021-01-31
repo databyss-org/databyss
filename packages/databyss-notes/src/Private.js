@@ -79,18 +79,21 @@ const Private = () => {
         <EntryProvider>
           <SourceProvider>
             <TopicProvider>
-              <GestureProvider>
-                <Router>
-                  <App path="/:accountId">
-                    <NotFoundRedirect default />
-                    <PageRouter path="pages/*" />
-                    <SearchRouter path="search/*" />
-                    <SourcesRouter path="sources/*" />
-                    <TopicsRouter path="topics/*" />
-                  </App>
-                </Router>
-                <ModalManager />
-              </GestureProvider>
+              <GroupProvider>
+                <GestureProvider>
+                  <Router>
+                    <App path="/:accountId">
+                      <NotFoundRedirect default />
+                      <PageRouter path="pages/*" />
+                      <SearchRouter path="search/*" />
+                      <SourcesRouter path="sources/*" />
+                      <TopicsRouter path="topics/*" />
+                      <GroupsRouter path="collections/*" />
+                    </App>
+                  </Router>
+                  <ModalManager />
+                </GestureProvider>
+              </GroupProvider>
             </TopicProvider>
           </SourceProvider>
         </EntryProvider>

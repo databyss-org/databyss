@@ -9,7 +9,7 @@ import {
 } from '../interfaces'
 import { defaultCitationStyle } from '../citations/constants'
 import { ResourcePending } from '../interfaces/ResourcePending'
-import { resourceIsReady, getAuthorsFromSources } from '../lib/util'
+import { resourceIsReady } from '../lib/util'
 
 import {
   ADD_PAGE_TO_HEADER,
@@ -46,23 +46,23 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
       break
     }
     case CACHE_SOURCE: {
-      let _source
-      if (action.payload.source instanceof Error) {
-        _source = action.payload.source
-      } else {
-        _source = { ...action.payload.source, type: 'SOURCE' }
-      }
-      draft.cache[action.payload.id] = _source
-      if (resourceIsReady(_source)) {
-        _citationHeaderCache[_source._id] = _source
-        draft.citationHeaderCache = _citationHeaderCache
-        // only populate header if header has been loaded
-        if (draft.authorsHeaderCache) {
-          draft.authorsHeaderCache = getAuthorsFromSources(
-            Object.values(_citationHeaderCache)
-          )
-        }
-      }
+      // let _source
+      // if (action.payload.source instanceof Error) {
+      //   _source = action.payload.source
+      // } else {
+      //   _source = { ...action.payload.source, type: 'SOURCE' }
+      // }
+      // draft.cache[action.payload.id] = _source
+      // if (resourceIsReady(_source)) {
+      //   _citationHeaderCache[_source._id] = _source
+      //   draft.citationHeaderCache = _citationHeaderCache
+      //   // only populate header if header has been loaded
+      //   if (draft.authorsHeaderCache) {
+      //     draft.authorsHeaderCache = getAuthorsFromSources(
+      //       Object.values(_citationHeaderCache)
+      //     )
+      //   }
+      // }
 
       break
     }
@@ -98,37 +98,37 @@ export default produce((draft: Draft<SourceState>, action: FSA) => {
     }
 
     case REMOVE_PAGE_FROM_HEADERS: {
-      const _resource: any = _citationHeaderCache[action.payload.id]
+      // const _resource: any = _citationHeaderCache[action.payload.id]
 
-      const _inPages: string[] = _resource?.isInPages
-      if (_inPages) {
-        const _index = _inPages.findIndex((p) => p === action.payload.pageId)
-        if (_index > -1) {
-          _resource?.isInPages.splice(_index, 1)
-          draft.authorsHeaderCache = getAuthorsFromSources(
-            Object.values(_citationHeaderCache)
-          )
-        }
-      }
+      // const _inPages: string[] = _resource?.isInPages
+      // if (_inPages) {
+      //   const _index = _inPages.findIndex((p) => p === action.payload.pageId)
+      //   if (_index > -1) {
+      //     _resource?.isInPages.splice(_index, 1)
+      //     draft.authorsHeaderCache = getAuthorsFromSources(
+      //       Object.values(_citationHeaderCache)
+      //     )
+      //   }
+      // }
 
       break
     }
 
     case ADD_PAGE_TO_HEADER: {
-      if (_citationHeaderCache) {
-        const _resource: any = _citationHeaderCache[action.payload.id]
+      // if (_citationHeaderCache) {
+      //   const _resource: any = _citationHeaderCache[action.payload.id]
 
-        const _inPages: string[] = _resource?.isInPages
-        if (_inPages) {
-          const _index = _inPages.findIndex((p) => p === action.payload.pageId)
-          if (_index < 0) {
-            _resource.isInPages.push(action.payload.pageId)
-            draft.authorsHeaderCache = getAuthorsFromSources(
-              Object.values(_citationHeaderCache)
-            )
-          }
-        }
-      }
+      //   const _inPages: string[] = _resource?.isInPages
+      //   if (_inPages) {
+      //     const _index = _inPages.findIndex((p) => p === action.payload.pageId)
+      //     if (_index < 0) {
+      //       _resource.isInPages.push(action.payload.pageId)
+      //       draft.authorsHeaderCache = getAuthorsFromSources(
+      //         Object.values(_citationHeaderCache)
+      //       )
+      //     }
+      //   }
+      // }
       break
     }
 

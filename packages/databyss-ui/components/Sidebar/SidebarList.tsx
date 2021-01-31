@@ -1,5 +1,8 @@
 import React, { PropsWithChildren, ReactNode } from 'react'
-import { useNavigationContext } from '@databyss-org/ui/components'
+import {
+  SidebarListItemData,
+  useNavigationContext,
+} from '@databyss-org/ui/components'
 import SourcesSvg from '@databyss-org/ui/assets/sources.svg'
 import AuthorsSvg from '@databyss-org/ui/assets/authors.svg'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
@@ -20,18 +23,10 @@ import {
 import { useLocation } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 
-export interface SidebarMenuItem {
-  text: string
-  type: string
-  route: string
-  data: any
-  icon?: ReactNode
-}
-
 export interface SidebarListProps
   extends ScrollViewProps,
     KeyboardNavigationProps {
-  menuItems: SidebarMenuItem[]
+  menuItems: SidebarListItemData<any>[]
   keyboardNavigation?: boolean
 }
 
@@ -63,9 +58,9 @@ const SidebarList = ({
   const location = useLocation()
   const account = getAccountFromLocation()
 
-  const getHref = (item: SidebarMenuItem) => `/${account}${item.route}`
+  const getHref = (item: SidebarListItemData<any>) => `/${account}${item.route}`
 
-  const getActiveItem = (item: SidebarMenuItem) => {
+  const getActiveItem = (item: SidebarListItemData<any>) => {
     // if we're using keyboard navigation, that takes precedence
     if (keyboardNavigation && keyboardEventsActive) {
       return false
@@ -75,7 +70,7 @@ const SidebarList = ({
       : ''
   }
 
-  const getDraggable = (item: SidebarMenuItem) => {
+  const getDraggable = (item: SidebarListItemData<any>) => {
     if (item.type !== 'page' || !location.pathname.match(/\/collections\//)) {
       return false
     }
