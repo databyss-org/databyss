@@ -13,13 +13,13 @@ export const IndexResultsContainer = ({ children }) => (
   </View>
 )
 
-export const IndexResultTitle = ({ onPress, text, icon, dataTestElement }) => (
+export const IndexResultTitle = ({ href, text, icon, dataTestElement }) => (
   <View height="40px">
     <BaseControl
       data-test-element={dataTestElement}
       hoverColor="background.2"
       activeColor="background.3"
-      onPress={onPress}
+      href={href}
     >
       <Grid singleRow alignItems="center" columnGap="small">
         <Icon sizeVariant="small" color="text.3">
@@ -31,14 +31,14 @@ export const IndexResultTitle = ({ onPress, text, icon, dataTestElement }) => (
   </View>
 )
 
-export const IndexResultDetails = ({ onPress, dataTestElement, text }) => (
+export const IndexResultDetails = ({ dataTestElement, text, ...others }) => (
   <BaseControl
     data-test-element={dataTestElement}
     hoverColor="background.2"
     activeColor="background.3"
     p="small"
-    onPress={onPress}
     mt="tiny"
+    {...others}
   >
     <View p="tiny">
       <Text>{text}</Text>

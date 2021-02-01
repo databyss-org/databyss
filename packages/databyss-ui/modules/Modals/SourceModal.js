@@ -6,7 +6,7 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import CitationProvider from '@databyss-org/services/citations/CitationProvider'
 
-import EditSourceForm from '../../components/SourcesContent/EditSourceForm'
+import EditSourceForm from '../../components/SourceForm/EditSourceForm'
 
 const SourceModal = ({ refId, visible, onUpdate, id }) => {
   const { setSource } = useSourceContext()

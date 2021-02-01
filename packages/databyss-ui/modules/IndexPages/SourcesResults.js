@@ -9,10 +9,9 @@ import {
 } from '@databyss-org/ui/primitives'
 import { stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { Citation } from '@databyss-org/ui/components'
 
-import Citation from '../Citation/Citation'
-
-const IndexSourcePageEntries = ({ entries, onClick }) => {
+export const SourcesResults = ({ entries, onClick }) => {
   const getPreferredCitationStyle = useSourceContext(
     (c) => c.getPreferredCitationStyle
   )
@@ -68,5 +67,3 @@ const IndexSourcePageEntries = ({ entries, onClick }) => {
 
   return render()
 }
-
-export default IndexSourcePageEntries

@@ -1,5 +1,10 @@
 import { useEffect } from 'react'
-import { useQuery, useQueryClient, QueryObserverResult } from 'react-query'
+import {
+  useQuery,
+  useQueryClient,
+  QueryObserverResult,
+  QueryKey,
+} from 'react-query'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 import { dbRef } from '../db'
@@ -9,37 +14,44 @@ export interface QueryOptions {
   includeIds?: string[] | null
 }
 
-export interface IncludeFromResultOptions<RT extends Document> {
-  result: QueryObserverResult<DocumentDict<RT>>
-  resultToBlockId: (doc: RT) => string
+export interface IncludeFromResultOptions<T extends Document> {
+  result: QueryObserverResult<DocumentDict<T>>
+  resultToBlockId: (doc: T) => string
 }
 
-export interface UseDocumentsOptions<RT extends Document> extends QueryOptions {
-  includeFromResults?: IncludeFromResultOptions<RT>
+export interface UseDocumentsOptions extends QueryOptions {
+  includeFromResults?: IncludeFromResultOptions<any>
 }
 
-export const useDocuments = <T extends Document, RT extends Document>(
-  queryKey: string,
+export const useDocuments = <T extends Document>(
+  queryKey: unknown[],
   selector: PouchDB.Find.Selector,
-  options?: UseDocumentsOptions<RT>
+  options?: UseDocumentsOptions
 ) => {
   const queryOptions: QueryOptions = {
     includeIds: null,
   }
   const queryClient = useQueryClient()
 
-  if (options?.includeFromResults) {
+  if (
+    options?.includeFromResults &&
+    options.includeFromResults.result.isSuccess
+  ) {
     queryOptions.includeIds = Object.values(
       options.includeFromResults.result.data!
-    ).map(options?.includeFromResults.resultToBlockId)
+    )
+      .filter(options?.includeFromResults.resultToBlockId)
+      .map(options?.includeFromResults.resultToBlockId)
     selector._id = {
       $in: queryOptions.includeIds,
     }
   }
 
+  queryKey.push(queryOptions)
+
   console.log('useDocuments.selector', selector)
   const query = useQuery<DocumentDict<T>>(
-    [queryKey, queryOptions],
+    queryKey,
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) =>
         dbRef.current
@@ -55,7 +67,7 @@ export const useDocuments = <T extends Document, RT extends Document>(
   )
 
   useEffect(() => {
-    console.log('useDocuments.subscribe', queryKey)
+    console.log('useDocuments.subscribe', queryKey, selector)
     const changes = dbRef.current
       .changes({
         since: 'now',

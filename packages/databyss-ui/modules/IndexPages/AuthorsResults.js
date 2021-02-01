@@ -3,7 +3,7 @@ import React from 'react'
 import { BaseControl, RawHtml, Text, View } from '@databyss-org/ui/primitives'
 import { stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils'
 
-const AuthorIndexEntries = ({ entries, onClick }) => {
+export const AuthorsResults = ({ entries, onClick }) => {
   const render = () =>
     entries.map((entry, index) => {
       if (entry.text) {
@@ -34,5 +34,3 @@ const AuthorIndexEntries = ({ entries, onClick }) => {
 
   return render()
 }
-
-export default AuthorIndexEntries

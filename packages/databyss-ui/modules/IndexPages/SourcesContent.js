@@ -6,12 +6,12 @@ import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import AuthorCitations from '@databyss-org/ui/components/SourcesContent/AuthorCitations'
+import { AuthorsContent } from './AuthorsContent'
 
 import { DropDownControl, pxUnits, styled } from '../../primitives'
 
-import IndexPageContent from './IndexPageContent'
-import IndexSourcePageEntries from './IndexSourcePageEntries'
+import { IndexPageContent } from './IndexPageContent'
+import { SourcesResults } from './SourcesResults'
 
 // styled components
 const CitationStyleDropDown = styled(DropDownControl, () => ({
@@ -61,8 +61,8 @@ export const SourcesContent = () => {
 
   // if author is provided in the url `.../sources?firstName=''&lastName='' render authors
   const _queryParams = getQueryParams()
-  if (Object.keys(_queryParams).length) {
-    return <AuthorCitations query={_queryParams} />
+  if (_queryParams.length) {
+    return <AuthorsContent query={_queryParams} />
   }
 
   // render methods
@@ -82,10 +82,7 @@ export const SourcesContent = () => {
           value={citationStyleOption}
           onChange={onCitationStyleChange}
         />
-        <IndexSourcePageEntries
-          onClick={onSourceClick}
-          entries={sortedSources}
-        />
+        <SourcesResults onClick={onSourceClick} entries={sortedSources} />
       </IndexPageContent>
     )
   }

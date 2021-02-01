@@ -33,7 +33,11 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
           {pageTitle}
         </Text>
       </View>
-      <IndexResults blockType={blockType} relatedBlockId={blockId} />
+      <IndexResults
+        blockType={blockType}
+        relatedBlockId={blockId}
+        key={`${blockType}_${blockId}`}
+      />
     </ScrollView>
   )
 }

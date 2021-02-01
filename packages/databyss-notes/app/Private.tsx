@@ -10,7 +10,7 @@ import { Sidebar, useNavigationContext, ModalManager } from '@databyss-org/ui'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { GestureProvider, View } from '@databyss-org/ui/primitives'
 import { BlockType } from '@databyss-org/services/interfaces'
-import { SourcesContent } from '@databyss-org/ui/modules'
+import { SourcesContent, IndexPageContent } from '@databyss-org/ui/modules'
 import { PageRouter, GroupRouter, SearchRouter } from '../routes'
 
 const queryClient = new QueryClient()

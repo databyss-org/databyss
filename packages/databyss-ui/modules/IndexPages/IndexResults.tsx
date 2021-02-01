@@ -28,14 +28,15 @@ export const IndexResults = ({
   blockType,
   relatedBlockId,
 }: IndexResultsProps) => {
-  const { navigate } = useNavigationContext()
+  const { getAccountFromLocation } = useNavigationContext()
   const blockRelationRes = useBlockRelations(blockType, {
     relatedBlock: relatedBlockId,
   })
   const blocksRes = useBlocks(BlockType.Entry, {
     includeFromResults: {
       result: blockRelationRes,
-      resultToBlockId: (doc) => doc.block,
+      resultToBlockId: (doc) =>
+        doc.relatedBlock === relatedBlockId && doc.block,
     } as IncludeFromResultOptions<BlockRelation>,
   })
   const pagesRes = usePages()
@@ -51,23 +52,6 @@ export const IndexResults = ({
 
   const groupedRelations = groupBlockRelationsByPage(relations)
 
-  const onPageClick = (pageId) => {
-    // if topic has no blocks associated with it, page click should instead redirect to the topic in the page
-    if (
-      groupedRelations[pageId].length === 1 &&
-      !groupedRelations[pageId][0].blockText.textValue.length
-    ) {
-      const _blockId = groupedRelations[pageId][0].relatedBlock
-      navigate(`/pages/${pageId}#${_blockId}`)
-    } else {
-      navigate(`/pages/${pageId}`)
-    }
-  }
-
-  const onEntryClick = (pageId, entryId) => {
-    navigate(`/pages/${pageId}#${entryId}`)
-  }
-
   const _results = Object.keys(groupedRelations)
     // filter out results for archived and missing pages
     .filter((r) => pagesRes.data![r] && !pagesRes.data![r].archive)
@@ -77,7 +61,7 @@ export const IndexResults = ({
       <IndexResultsContainer key={i}>
         <IndexResultTitle
           key={`pageHeader-${i}`}
-          onPress={() => onPageClick(r)}
+          href={`/${getAccountFromLocation()}/pages/${r}`}
           icon={<PageSvg />}
           text={pagesRes.data![r].name}
           dataTestElement="atomic-results"
@@ -85,21 +69,18 @@ export const IndexResults = ({
 
         {groupedRelations[r]
           .filter((e) => e.blockText.textValue.length)
-          .map((e, k) => {
-            console.log(e.block, blocksRes.data![e.block])
-            return (
-              <IndexResultDetails
-                key={k}
-                onPress={() => onEntryClick(r, e.block)}
-                text={
-                  <RawHtml
-                    html={slateBlockToHtmlWithSearch(blocksRes.data![e.block])}
-                  />
-                }
-                dataTestElement="atomic-result-item"
-              />
-            )
-          })}
+          .map((e, k) => (
+            <IndexResultDetails
+              key={k}
+              href={`/${getAccountFromLocation()}/pages/${r}#${e.block}`}
+              text={
+                <RawHtml
+                  html={slateBlockToHtmlWithSearch(blocksRes.data![e.block])}
+                />
+              }
+              dataTestElement="atomic-result-item"
+            />
+          ))}
       </IndexResultsContainer>
     ))
 

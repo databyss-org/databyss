@@ -1,6 +1,6 @@
+// TODO: replace this page with a proper index page
 import React from 'react'
 import { Helmet } from 'react-helmet'
-
 import { createIndexPageEntries } from '@databyss-org/services/entries/util'
 import {
   composeAuthorName,
@@ -9,10 +9,8 @@ import {
 import { sortPageEntriesAlphabetically } from '@databyss-org/services/entries/lib'
 import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-
-import IndexPageContent from '../PageContent/IndexPageContent'
-
-import AuthorIndexEntries from './AuthorIndexEntries'
+import { ScrollView, Text, View, pxUnits } from '@databyss-org/ui/primitives'
+import { AuthorsResults } from './AuthorsResults'
 
 const buildEntries = (sources, firstName, lastName) => {
   const entries = []
@@ -32,7 +30,7 @@ const buildEntries = (sources, firstName, lastName) => {
   return sortPageEntriesAlphabetically(entries)
 }
 
-const AuthorCitations = ({ query }) => {
+export const AuthorsContent = ({ query }) => {
   const { navigate } = useNavigationContext()
 
   const params = new URLSearchParams(query)
@@ -58,17 +56,20 @@ const AuthorCitations = ({ query }) => {
         )
 
         return (
-          <IndexPageContent title={authorFullName} indexName="Authors">
+          <ScrollView p="medium" flex="1">
             <Helmet>
               <meta charSet="utf-8" />
               <title>{authorFullName}</title>
             </Helmet>
-            <AuthorIndexEntries onClick={onEntryClick} entries={entries} />
-          </IndexPageContent>
+            <View py="medium" px={pxUnits(28)}>
+              <Text variant="bodyHeading1" color="text.3">
+                {authorFullName}
+              </Text>
+            </View>
+            <AuthorsResults onClick={onEntryClick} entries={entries} />
+          </ScrollView>
         )
       }}
     </SourceCitationsLoader>
   )
 }
-
-export default AuthorCitations

@@ -18,6 +18,7 @@ export {
   IndexResultTitle,
   IndexResultsContainer,
 } from './IndexPage'
+export { default as Citation } from './Citation/Citation'
 
 export interface SidebarListItemData<T> {
   text: string

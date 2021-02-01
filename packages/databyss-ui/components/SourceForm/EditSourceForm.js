@@ -24,10 +24,10 @@ import { SeasonOptions } from '@databyss-org/services/sources/constants/SeasonOp
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { useCitationContext } from '@databyss-org/services/citations/CitationProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import EditAuthorFields from '@databyss-org/ui/components/SourcesContent/EditAuthorFields'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
+import EditAuthorFields from './EditAuthorFields'
 
 import { pxUnits } from '../../theming/views'
 import LabeledDropDownControl from '../../primitives/Control/LabeledDropDownControl'

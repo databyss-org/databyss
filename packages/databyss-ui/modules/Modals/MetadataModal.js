@@ -8,7 +8,7 @@ import { useNavigationContext } from '@databyss-org/ui/components/Navigation/Nav
 import CitationProvider from '@databyss-org/services/citations/CitationProvider'
 import crossref from '@databyss-org/services/catalog/crossref'
 
-import EditSourceForm from '../../components/SourcesContent/EditSourceForm'
+import EditSourceForm from '../../components/SourceForm/EditSourceForm'
 
 // utils
 const createAuthorFromCrossref = (crossrefAuthor) => ({
