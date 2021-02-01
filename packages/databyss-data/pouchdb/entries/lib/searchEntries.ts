@@ -33,6 +33,8 @@ const searchEntries = async (
     mm: `${_percentageToMatch}%`,
   })
 
+  console.log('first', _res)
+
   const _queryResponse = _res.rows
   if (!_queryResponse.length) {
     return new ResourceNotFoundError('no results found')
@@ -153,6 +155,8 @@ const searchEntries = async (
       results: Object.fromEntries(__results.results),
     }
   }
+
+  console.log('after', __results)
 
   return __results
 }
