@@ -10,7 +10,8 @@ import { Sidebar, useNavigationContext, ModalManager } from '@databyss-org/ui'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { GestureProvider, View } from '@databyss-org/ui/primitives'
 import { BlockType } from '@databyss-org/services/interfaces'
-import { PageRouter, IndexRouter, GroupRouter, SearchRouter } from '../routes'
+import { SourcesContent } from '@databyss-org/ui/modules'
+import { PageRouter, GroupRouter, SearchRouter } from '../routes'
 
 const queryClient = new QueryClient()
 
@@ -80,14 +81,15 @@ const Private = () => {
                       <PageRouter path="pages/*" />
                       <SearchRouter path="search/*" />
                       <GroupRouter path="collections/*" />
-                      <IndexRouter
+                      <IndexPageContent
                         blockType={BlockType.Source}
-                        path="sources/*"
+                        path="sources/:blockId"
                       />
-                      <IndexRouter
+                      <IndexPageContent
                         blockType={BlockType.Topic}
-                        path="topics/*"
+                        path="topics/:blockId"
                       />
+                      <SourcesContent path="sources/" />
                     </App>
                   </Router>
                   <ModalManager />

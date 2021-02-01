@@ -16,6 +16,8 @@ import {
 } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
+import { IncludeFromResultOptions } from '@databyss-org/data/pouchdb/hooks/useDocuments'
+import { BlockRelation } from '@databyss-org/services/interfaces'
 
 interface IndexResultsProps {
   blockType: BlockType
@@ -30,7 +32,12 @@ export const IndexResults = ({
   const blockRelationRes = useBlockRelations(blockType, {
     relatedBlock: relatedBlockId,
   })
-  const blocksRes = useBlocks(BlockType.Entry)
+  const blocksRes = useBlocks(BlockType.Entry, {
+    includeFromResults: {
+      result: blockRelationRes,
+      resultToBlockId: (doc) => doc.block,
+    } as IncludeFromResultOptions<BlockRelation>,
+  })
   const pagesRes = usePages()
   const queryRes = [blockRelationRes, blocksRes, pagesRes]
 

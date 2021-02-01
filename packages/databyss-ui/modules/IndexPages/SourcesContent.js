@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
-import { Router } from '@databyss-org/ui/components/Navigation/NavigationProvider'
-
 import { CitationStyleOptions } from '@databyss-org/services/citations/constants'
 import { createIndexPageEntries } from '@databyss-org/services/entries/util'
 import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
@@ -9,12 +7,10 @@ import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import AuthorCitations from '@databyss-org/ui/components/SourcesContent/AuthorCitations'
-import SourcesCitations from '@databyss-org/ui/components/SourcesContent/SourcesCitations'
 
 import { DropDownControl, pxUnits, styled } from '../../primitives'
 
-import IndexPageContent from '../PageContent/IndexPageContent'
-
+import IndexPageContent from './IndexPageContent'
 import IndexSourcePageEntries from './IndexSourcePageEntries'
 
 // styled components
@@ -41,7 +37,7 @@ const buildSortedSources = (sourceCitations) => {
   return sortedSources
 }
 
-const SourcesContent = () => {
+export const SourcesContent = () => {
   const navigate = useNavigationContext((c) => c.navigate)
 
   const getQueryParams = useNavigationContext((c) => c.getQueryParams)
@@ -102,13 +98,3 @@ const SourcesContent = () => {
 
   return render()
 }
-
-// components
-export const SourcesRouter = () => (
-  <Router>
-    <SourcesContent path="/" />
-    <SourcesCitations path="/:query" />
-  </Router>
-)
-
-export default SourcesContent

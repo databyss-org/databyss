@@ -9,9 +9,9 @@ import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 import { StickyHeader } from '@databyss-org/ui/components/Navigation/SickyHeader'
 import { PageContentView } from '@databyss-org/ui/components/PageContent/PageContent'
 import {
-  SearchResultsContainer,
-  SearchResultTitle,
-  SearchResultDetails,
+  IndexResultsContainer,
+  IndexResultTitle,
+  IndexResultDetails,
 } from '@databyss-org/ui/components'
 
 export const SearchContent = () => {
@@ -31,8 +31,8 @@ export const SearchContent = () => {
   const ComposeResults = ({ results }) => {
     const _Pages = Object.values(results).length ? (
       Object.values(results).map((r, i) => (
-        <SearchResultsContainer key={i}>
-          <SearchResultTitle
+        <IndexResultsContainer key={i}>
+          <IndexResultTitle
             onPress={() => onPageClick(r.pageId)}
             text={r.page}
             icon={<PageSvg />}
@@ -40,7 +40,7 @@ export const SearchContent = () => {
           />
 
           {r.entries.map((e, k) => (
-            <SearchResultDetails
+            <IndexResultDetails
               key={k}
               dataTestElement="search-result-entries"
               onPress={() => onEntryClick(r.pageId, e.entryId)}
@@ -55,7 +55,7 @@ export const SearchContent = () => {
               }
             />
           ))}
-        </SearchResultsContainer>
+        </IndexResultsContainer>
       ))
     ) : (
       <Text>no results found</Text>

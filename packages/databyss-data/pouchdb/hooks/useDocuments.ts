@@ -1,24 +1,57 @@
 import { useEffect } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery, useQueryClient, QueryObserverResult } from 'react-query'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 import { dbRef } from '../db'
 import { DocumentArrayToDict } from './utils'
 
-export const useDocuments = <T extends Document>(
+export interface QueryOptions {
+  includeIds?: string[] | null
+}
+
+export interface IncludeFromResultOptions<RT extends Document> {
+  result: QueryObserverResult<DocumentDict<RT>>
+  resultToBlockId: (doc: RT) => string
+}
+
+export interface UseDocumentsOptions<RT extends Document> extends QueryOptions {
+  includeFromResults?: IncludeFromResultOptions<RT>
+}
+
+export const useDocuments = <T extends Document, RT extends Document>(
   queryKey: string,
-  selector: PouchDB.Find.Selector
+  selector: PouchDB.Find.Selector,
+  options?: UseDocumentsOptions<RT>
 ) => {
+  const queryOptions: QueryOptions = {
+    includeIds: null,
+  }
   const queryClient = useQueryClient()
+
+  if (options?.includeFromResults) {
+    queryOptions.includeIds = Object.values(
+      options.includeFromResults.result.data!
+    ).map(options?.includeFromResults.resultToBlockId)
+    selector._id = {
+      $in: queryOptions.includeIds,
+    }
+  }
+
+  console.log('useDocuments.selector', selector)
   const query = useQuery<DocumentDict<T>>(
-    queryKey,
+    [queryKey, queryOptions],
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) =>
         dbRef.current
           .find({ selector })
           .then((res) => resolve(DocumentArrayToDict(res.docs)))
           .catch((err) => reject(err))
-      )
+      ),
+    {
+      enabled:
+        !options?.includeFromResults ||
+        options?.includeFromResults?.result.isSuccess,
+    }
   )
 
   useEffect(() => {
