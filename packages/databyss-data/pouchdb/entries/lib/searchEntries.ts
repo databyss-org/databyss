@@ -64,7 +64,6 @@ const searchEntries = async (
       }
     }
   }
-
   let __results: { count: number; results: any } = {
     count: 0,
     results: {},
