@@ -5,6 +5,7 @@ import Login from '@databyss-org/ui/modules/Login/Login'
 import {
   replicateDbFromRemote,
   syncPouchDb,
+  initiatePouchDbIndexes,
 } from '@databyss-org/data/pouchdb/db'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -86,12 +87,14 @@ const SessionProvider = ({
     const _init = async () => {
       const _sesionFromLocalStorage = await localStorageHasSession()
       if (_sesionFromLocalStorage) {
+        await initiatePouchDbIndexes()
         // 2nd pass: load session from local_storage
         // replicate from cloudant
         const groupId = _sesionFromLocalStorage.defaultGroupId
         await replicateDbFromRemote({
           groupId,
         })
+
         // set up live sync
         syncPouchDb({
           groupId,
