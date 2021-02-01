@@ -13,6 +13,11 @@ export {
 export { default as AccountMenu } from './PageContent/AccountMenu'
 export { StickyHeader } from './Navigation/SickyHeader'
 export { TitleInput } from './PageContent/TitleInput'
+export {
+  IndexResultDetails,
+  IndexResultTitle,
+  IndexResultsContainer,
+} from './IndexPage'
 
 export interface SidebarListItemData<T> {
   text: string

@@ -6,18 +6,11 @@ import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import TopicProvider from '@databyss-org/services/topics/TopicProvider'
 import EntryProvider from '@databyss-org/services/entries/EntryProvider'
 import GroupProvider from '@databyss-org/services/groups/GroupProvider'
-import {
-  Sidebar,
-  PageRouter,
-  SearchRouter,
-  SourcesRouter,
-  TopicsRouter,
-  GroupsRouter,
-  useNavigationContext,
-  ModalManager,
-} from '@databyss-org/ui'
+import { Sidebar, useNavigationContext, ModalManager } from '@databyss-org/ui'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { GestureProvider, View } from '@databyss-org/ui/primitives'
+import { BlockType } from '@databyss-org/services/interfaces'
+import { PageRouter, IndexRouter, GroupRouter, SearchRouter } from '../routes'
 
 const queryClient = new QueryClient()
 
@@ -86,9 +79,15 @@ const Private = () => {
                       <NotFoundRedirect default />
                       <PageRouter path="pages/*" />
                       <SearchRouter path="search/*" />
-                      <SourcesRouter path="sources/*" />
-                      <TopicsRouter path="topics/*" />
-                      <GroupsRouter path="collections/*" />
+                      <GroupRouter path="collections/*" />
+                      <IndexRouter
+                        blockType={BlockType.Source}
+                        path="sources/*"
+                      />
+                      <IndexRouter
+                        blockType={BlockType.Topic}
+                        path="topics/*"
+                      />
                     </App>
                   </Router>
                   <ModalManager />

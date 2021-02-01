@@ -1,8 +1,8 @@
 import React from 'react'
 import { Router } from '@databyss-org/ui/components/Navigation/NavigationProvider'
-import { GroupDetail } from './GroupDetail'
+import { GroupDetail } from '@databyss-org/ui'
 
-export const GroupsRouter = () => (
+export const GroupRouter = () => (
   <Router>
     <GroupDetail path=":id" />
   </Router>

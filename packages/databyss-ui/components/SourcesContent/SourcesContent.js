@@ -9,7 +9,6 @@ import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import AuthorCitations from '@databyss-org/ui/components/SourcesContent/AuthorCitations'
-import AuthorsContent from '@databyss-org/ui/components/SourcesContent/AuthorsContent'
 import SourcesCitations from '@databyss-org/ui/components/SourcesContent/SourcesCitations'
 
 import { DropDownControl, pxUnits, styled } from '../../primitives'
@@ -109,7 +108,6 @@ export const SourcesRouter = () => (
   <Router>
     <SourcesContent path="/" />
     <SourcesCitations path="/:query" />
-    <AuthorsContent path="/authors" />
   </Router>
 )
 

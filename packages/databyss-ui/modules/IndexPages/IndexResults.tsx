@@ -3,10 +3,11 @@ import { View, RawHtml } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import {
-  SearchResultsContainer,
-  SearchResultTitle,
-  SearchResultDetails,
-} from '@databyss-org/ui/components/SearchContent/SearchResults'
+  IndexResultsContainer,
+  IndexResultTitle,
+  IndexResultDetails,
+  LoadingFallback,
+} from '@databyss-org/ui/components'
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 import {
   useBlockRelations,
@@ -14,7 +15,6 @@ import {
   usePages,
 } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/editor/interfaces'
-import { LoadingFallback } from '@databyss-org/ui/components'
 import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
 
 interface IndexResultsProps {
@@ -27,8 +27,10 @@ export const IndexResults = ({
   relatedBlockId,
 }: IndexResultsProps) => {
   const { navigate } = useNavigationContext()
-  const blockRelationRes = useBlockRelations(blockType)
-  const blocksRes = useBlocks(blockType)
+  const blockRelationRes = useBlockRelations(blockType, {
+    relatedBlock: relatedBlockId,
+  })
+  const blocksRes = useBlocks(BlockType.Entry)
   const pagesRes = usePages()
   const queryRes = [blockRelationRes, blocksRes, pagesRes]
 
@@ -65,8 +67,8 @@ export const IndexResults = ({
     // filter out results if no entries are included
     .filter((r) => groupedRelations[r].length)
     .map((r, i) => (
-      <SearchResultsContainer key={i}>
-        <SearchResultTitle
+      <IndexResultsContainer key={i}>
+        <IndexResultTitle
           key={`pageHeader-${i}`}
           onPress={() => onPageClick(r)}
           icon={<PageSvg />}
@@ -76,19 +78,22 @@ export const IndexResults = ({
 
         {groupedRelations[r]
           .filter((e) => e.blockText.textValue.length)
-          .map((e, k) => (
-            <SearchResultDetails
-              key={k}
-              onPress={() => onEntryClick(r, e.block)}
-              text={
-                <RawHtml
-                  html={slateBlockToHtmlWithSearch(blocksRes.data![e.block])}
-                />
-              }
-              dataTestElement="atomic-result-item"
-            />
-          ))}
-      </SearchResultsContainer>
+          .map((e, k) => {
+            console.log(e.block, blocksRes.data![e.block])
+            return (
+              <IndexResultDetails
+                key={k}
+                onPress={() => onEntryClick(r, e.block)}
+                text={
+                  <RawHtml
+                    html={slateBlockToHtmlWithSearch(blocksRes.data![e.block])}
+                  />
+                }
+                dataTestElement="atomic-result-item"
+              />
+            )
+          })}
+      </IndexResultsContainer>
     ))
 
   return <View px="medium">{_results}</View>

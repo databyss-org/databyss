@@ -6,21 +6,21 @@ import { BlockType } from '@databyss-org/editor/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { ScrollView, View, Text } from '@databyss-org/ui/primitives'
 import { pxUnits } from '@databyss-org/ui/theming/theme'
-import IndexResults from './IndexResults'
+import { IndexResults } from './IndexResults'
 
 interface IndexPageContentProps {
   blockType: BlockType
 }
 
 export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
-  const { query } = useParams()
+  const { blockId } = useParams()
   const blocksRes = useBlocks(blockType)
 
   if (!blocksRes.isSuccess) {
     return <LoadingFallback queryObserver={blocksRes} />
   }
 
-  const pageTitle = blocksRes.data![query].text.textValue
+  const pageTitle = blocksRes.data![blockId].text.textValue
 
   return (
     <ScrollView p="medium" flex="1">
@@ -33,7 +33,7 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
           {pageTitle}
         </Text>
       </View>
-      <IndexResults blockType={blockType} relatedBlockId={query} />
+      <IndexResults blockType={blockType} relatedBlockId={blockId} />
     </ScrollView>
   )
 }

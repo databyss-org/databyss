@@ -19,15 +19,7 @@ export { default as Raw } from './components/Viewport/Raw'
 export { default as ThemedViewport } from './components/Viewport/ThemedViewport'
 export { default as Viewport } from './components/Viewport/Viewport'
 export { Sidebar } from './modules/Sidebar/Sidebar'
-export { PageRouter } from '././components/PageContent/PageContent'
 export { default as PageContent } from './components/PageContent/PageContent'
-export {
-  default as SearchContent,
-  SearchRouter,
-} from './components/SearchContent/SearchContent'
-export {
-  default as SourcesContent,
-  SourcesRouter,
-} from './components/SourcesContent/SourcesContent'
-export { TopicsRouter } from './components/TopicsContent/TopicsContent'
-export { GroupsRouter } from './modules/Groups'
+export { default as SourcesContent } from './components/SourcesContent/SourcesContent'
+export { GroupDetail } from './modules/Groups/GroupDetail'
+export { SearchContent } from './modules/FulltextSearch/SearchContent'

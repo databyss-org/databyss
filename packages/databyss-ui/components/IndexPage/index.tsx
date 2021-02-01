@@ -7,13 +7,13 @@ import {
   Icon,
 } from '@databyss-org/ui/primitives'
 
-export const SearchResultsContainer = ({ children }) => (
+export const IndexResultsContainer = ({ children }) => (
   <View mb="medium" widthVariant="content">
     {children}
   </View>
 )
 
-export const SearchResultTitle = ({ onPress, text, icon, dataTestElement }) => (
+export const IndexResultTitle = ({ onPress, text, icon, dataTestElement }) => (
   <View height="40px">
     <BaseControl
       data-test-element={dataTestElement}
@@ -31,7 +31,7 @@ export const SearchResultTitle = ({ onPress, text, icon, dataTestElement }) => (
   </View>
 )
 
-export const SearchResultDetails = ({ onPress, dataTestElement, text }) => (
+export const IndexResultDetails = ({ onPress, dataTestElement, text }) => (
   <BaseControl
     data-test-element={dataTestElement}
     hoverColor="background.2"

@@ -7,7 +7,7 @@ import {
   SearchResultsContainer,
   SearchResultTitle,
   SearchResultDetails,
-} from '@databyss-org/ui/components/SearchContent/SearchResults'
+} from '../../modules/FulltextSearch/SearchResults'
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
 
 const IndexSourceContent = ({ relations }) => {

@@ -134,11 +134,4 @@ const PageContent = (others) => {
   )
 }
 
-// components
-export const PageRouter = () => (
-  <Router>
-    <PageContent path=":id" />
-  </Router>
-)
-
 export default PageContent

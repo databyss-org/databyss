@@ -39,18 +39,19 @@ export const useDocuments = <T extends Document>(
           console.log('useDocuments.invalidateAll', queryKey)
           queryClient.invalidateQueries(queryKey)
         } else {
+          // the doc was modified, so update the cache
           console.log('useDocuments.invalidateOne', queryKey)
           queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {
             oldData![change.doc._id] = change.doc
             return oldData as DocumentDict<T>
           })
         }
-        // else the doc was modified, so the cache at the last value
-        // it is up to another query hook to update single block relations
       })
     return () => {
+      // on unmount, stop listening to pouch changes and invalidate the cache
       console.log('useDocuments.unsubscribe', queryKey)
       changes.cancel()
+      queryClient.invalidateQueries(queryKey)
     }
   }, [])
 
