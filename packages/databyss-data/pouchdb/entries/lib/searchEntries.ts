@@ -24,6 +24,8 @@ const searchEntries = async (
   _percentageToMatch *= 100
   _percentageToMatch = +_percentageToMatch.toFixed(0)
 
+  console.log('init search')
+
   const _res = await dbRef.current.search({
     query: _query,
     fields: ['text.textValue'],
@@ -64,6 +66,8 @@ const searchEntries = async (
       }
     }
   }
+
+  console.log('second')
   let __results: { count: number; results: any } = {
     count: 0,
     results: {},
@@ -155,7 +159,7 @@ const searchEntries = async (
     }
   }
 
-  console.log('after', __results)
+  console.log('finish', __results)
 
   return __results
 }
