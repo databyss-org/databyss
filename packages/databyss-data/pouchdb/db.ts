@@ -46,6 +46,10 @@ export const dbRef: DbRef = {
   }),
 }
 
+export const areIndexBuilt = {
+  current: false,
+}
+
 export const initiatePouchDbIndexes = async () => {
   await dbRef.current.search({
     fields: ['text.textValue'],
@@ -123,6 +127,8 @@ export const initiatePouchDbIndexes = async () => {
       fields: ['$type', 'relatedBlock', 'block'],
     },
   })
+  console.log('indexes built')
+  areIndexBuilt.current = true
 }
 
 /*

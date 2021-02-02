@@ -24,7 +24,7 @@ const searchEntries = async (
   _percentageToMatch *= 100
   _percentageToMatch = +_percentageToMatch.toFixed(0)
 
-  console.log('init search')
+  console.log('init search', _query)
 
   const _res = await dbRef.current.search({
     query: _query,
@@ -48,6 +48,7 @@ const searchEntries = async (
   for (const _result of _results) {
     // returns all pages where source id is found in element id
 
+    // change this to find all pages
     const _page = await findOne(DocumentType.Page, {
       blocks: {
         $elemMatch: {
@@ -67,7 +68,6 @@ const searchEntries = async (
     }
   }
 
-  console.log('second')
   let __results: { count: number; results: any } = {
     count: 0,
     results: {},
