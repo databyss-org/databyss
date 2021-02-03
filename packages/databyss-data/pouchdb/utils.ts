@@ -51,6 +51,8 @@ export const findAll = async ($type: DocumentType, query?: any) => {
       },
     })
     .then((explained) => {
+      console.log(explained.index.ddoc)
+
       if (!explained.index.ddoc) {
         throw new Error(explained)
       }
@@ -81,6 +83,7 @@ export const findOne = async ($type: DocumentType, query: any) => {
       },
     })
     .then((explained) => {
+      console.log(explained.index.ddoc)
       if (!explained.index.ddoc) {
         throw new Error(explained)
       }

@@ -52,12 +52,6 @@ export const areIndexBuilt = {
 }
 
 export const initiatePouchDbIndexes = async () => {
-  // await db.createIndex({
-  //   index: {
-  //     fields: ['_id'],
-  //   },
-  // })
-
   await dbRef.current.createIndex({
     index: {
       fields: ['$type'],
@@ -72,23 +66,26 @@ export const initiatePouchDbIndexes = async () => {
     },
   })
 
-  // await db.createIndex({
-  //   index: {
-  //     fields: ['$type', 'relatedBlock'],
-  //   },
-  // })
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'relatedBlock'],
+      ddoc: 'block-relations',
+    },
+  })
 
-  // await db.createIndex({
-  //   index: {
-  //     fields: ['$type', 'page'],
-  //   },
-  // })
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'page'],
+      ddoc: 'block-relations-page',
+    },
+  })
 
-  // await db.createIndex({
-  //   index: {
-  //     fields: ['$type', 'blocks'],
-  //   },
-  // })
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'blocks'],
+      ddoc: 'page-blocks',
+    },
+  })
 
   // await db.createIndex({
   //   index: {
@@ -108,29 +105,26 @@ export const initiatePouchDbIndexes = async () => {
   //   },
   // })
 
-  // await db.createIndex({
-  //   index: {
-  //     fields: ['$type', 'type'],
-  //   },
-  // })
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'type'],
+      ddoc: 'fetch-atomic',
+    },
+  })
 
-  // await db.createIndex({
-  //   index: {
-  //     fields: ['$type', 'relatedBlock', 'relationshipType'],
-  //   },
-  // })
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'relatedBlock', 'relationshipType'],
+      ddoc: 'inline-atomics',
+    },
+  })
 
-  // await db.createIndex({
-  //   index: {
-  //     fields: ['$type', 'relatedBlock', 'block'],
-  //   },
-  // })
-
-  // await db.createIndex({
-  //   index: {
-  //     fields: ['$type', 'relatedBlock', 'block'],
-  //   },
-  // })
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'relatedBlock', 'block'],
+      ddoc: 'block-reltions',
+    },
+  })
 
   console.log('indexes built')
   areIndexBuilt.current = true
