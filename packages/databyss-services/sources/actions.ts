@@ -53,15 +53,7 @@ export function saveSource(sourceFields: Source) {
       type: SAVE_SOURCE,
       payload: { source: sourceFields, id: sourceFields._id },
     })
-    services.setSource(sourceFields).then(() => {
-      dispatch({
-        type: CACHE_SOURCE,
-        payload: { source: sourceFields, id: sourceFields._id },
-      })
-      // reset headers
-      dispatch(fetchAuthorHeaders())
-      dispatch(fetchSourceCitations())
-    })
+    services.setSource(sourceFields)
   }
 }
 

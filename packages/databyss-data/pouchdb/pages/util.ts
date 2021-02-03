@@ -24,9 +24,9 @@ const applyPatch = (node, path, value) => {
 }
 
 // same as Object.assign, but filters out unwanted fields
-const assignPatchValue = (obj, value) => {
+const assignPatchValue = (obj, value, allowed = ['text', 'type']) => {
   Object.keys(value).forEach((key) => {
-    if (!key.match(/^__/)) {
+    if (allowed.includes(key)) {
       obj[key] = value[key]
     }
   })
@@ -52,33 +52,39 @@ const addOrReplaceBlock = async (p, page) => {
     return
   }
 
-  // add or update block
-  const _blockFields = {
+  // // add or update block
+  // const _blockFields = {
+  //   _id: _blockId,
+  //   account: 'DEFAULT ACCOUNT',
+  // }
+
+  // let _block: Block | null = await findOne(DocumentType.Block, {
+  //   _id: _blockId,
+  // })
+
+  // // if block doesnt exist, create block
+  // if (!_block) {
+  //   // populate block
+  //   _block = {
+  //     _id: uid(),
+  //     type: BlockType.Entry,
+  //     text: { textValue: '', ranges: [] },
+  //   }
+  //   // initiate new block
+  //   await upsert({
+  //     $type: DocumentType.Block,
+  //     _id: _blockId,
+  //     doc: _block,
+  //   })
+  // }
+
+  // Object.assign(_block, _blockFields)
+
+  const _block: Block = {
     _id: _blockId,
     account: 'DEFAULT ACCOUNT',
   }
 
-  let _block: Block | null = await findOne(DocumentType.Block, {
-    _id: _blockId,
-  })
-
-  // if block doesnt exist, create block
-  if (!_block) {
-    // populate block
-    _block = {
-      _id: uid(),
-      type: BlockType.Entry,
-      text: { textValue: '', ranges: [] },
-    }
-    // initiate new block
-    await upsert({
-      $type: DocumentType.Block,
-      _id: _blockId,
-      doc: _block,
-    })
-  }
-
-  Object.assign(_block, _blockFields)
   // if it's an add or we're replacing the whole block, just assign the value
   if (p.op === 'add' || p.path.length === 2) {
     assignPatchValue(_block, p.value)

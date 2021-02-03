@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { createContext, useContextSelector } from 'use-context-selector'
 import React, { useCallback } from 'react'
+import * as services from '.'
 
 import createReducer from '@databyss-org/services/lib/createReducer'
 
@@ -53,17 +54,7 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
   const [state, dispatch] = useReducer(reducer, initialState)
 
   // provider methods - source
-  const setSource = useCallback(
-    (source: Source) => {
-      if (_.isEqual(state.cache[source._id], source)) {
-        return
-      }
-      // add or update source and set cache value
-      // add set timeout to prevent focus issue with line content editable on ta
-      window.requestAnimationFrame(() => dispatch(saveSource(source)))
-    },
-    [state.cache]
-  )
+  const setSource = services.setSource
 
   const getSource = useCallback(
     (id: string): ResourceResponse<Source> => {

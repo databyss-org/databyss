@@ -28,10 +28,10 @@ export const useDocuments = <T extends Document>(
   selector: PouchDB.Find.Selector,
   options?: UseDocumentsOptions
 ) => {
-  const queryOptions: QueryOptions = {
-    includeIds: null,
-  }
   const queryClient = useQueryClient()
+  const queryOptions: QueryOptions = {
+    includeIds: options?.includeIds,
+  }
 
   if (
     options?.includeFromResults &&
@@ -42,23 +42,25 @@ export const useDocuments = <T extends Document>(
     )
       .filter(options?.includeFromResults.resultToBlockId)
       .map(options?.includeFromResults.resultToBlockId)
+  }
+  if (queryOptions.includeIds) {
     selector._id = {
       $in: queryOptions.includeIds,
     }
   }
-
   queryKey.push(queryOptions)
 
   console.log('useDocuments.selector', selector)
   const query = useQuery<DocumentDict<T>>(
     queryKey,
     () =>
-      new Promise<DocumentDict<T>>((resolve, reject) =>
-        dbRef.current
+      new Promise<DocumentDict<T>>((resolve, reject) => {
+        console.log('useDocuments.fetch', selector)
+        return dbRef.current
           .find({ selector })
           .then((res) => resolve(DocumentArrayToDict(res.docs)))
           .catch((err) => reject(err))
-      ),
+      }),
     {
       enabled:
         !options?.includeFromResults ||
@@ -96,7 +98,7 @@ export const useDocuments = <T extends Document>(
       // on unmount, stop listening to pouch changes and invalidate the cache
       console.log('useDocuments.unsubscribe', queryKey)
       changes.cancel()
-      queryClient.invalidateQueries(queryKey)
+      queryClient.removeQueries(queryKey)
     }
   }, [])
 

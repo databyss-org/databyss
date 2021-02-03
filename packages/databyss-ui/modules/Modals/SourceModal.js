@@ -1,17 +1,26 @@
 import React, { useState } from 'react'
 import { buildSourceDetail } from '@databyss-org/services/sources/lib'
 import { ModalWindow } from '@databyss-org/ui/primitives'
-import { SourceLoader } from '@databyss-org/ui/components/Loaders'
+import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import CitationProvider from '@databyss-org/services/citations/CitationProvider'
-
-import EditSourceForm from '../../components/SourceForm/EditSourceForm'
+import { BlockType } from '@databyss-org/editor/interfaces'
+import { LoadingFallback, EditSourceForm } from '@databyss-org/ui/components'
 
 const SourceModal = ({ refId, visible, onUpdate, id }) => {
   const { setSource } = useSourceContext()
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
+  const sourceRes = useBlocks(BlockType.Source, {
+    includeIds: [refId],
+  })
+
+  if (!sourceRes.isSuccess) {
+    return <LoadingFallback queryObserver={sourceRes} />
+  }
+
+  const source = sourceRes?.data[refId]
 
   const isDismissable = () => values?.text?.textValue?.length
 
@@ -26,6 +35,15 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
     onUpdate(values)
   }
 
+  if (!values) {
+    const _source = { ...source }
+    // check if detail has been provided
+    if (!_source.detail) {
+      _source.detail = buildSourceDetail()
+    }
+    setValues(_source)
+  }
+
   return (
     <ModalWindow
       visible={visible}
@@ -36,24 +54,9 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
       dismissChild="done"
       canDismiss={values ? isDismissable() : true}
     >
-      <SourceLoader sourceId={refId}>
-        {(source) => {
-          if (!values) {
-            const _source = { ...source }
-            // check if detail has been provided
-            if (!_source.detail) {
-              _source.detail = buildSourceDetail()
-            }
-            setValues(_source)
-          }
-
-          return (
-            <CitationProvider>
-              <EditSourceForm values={values || source} onChange={setValues} />
-            </CitationProvider>
-          )
-        }}
-      </SourceLoader>
+      <CitationProvider>
+        <EditSourceForm values={values || source} onChange={setValues} />
+      </CitationProvider>
     </ModalWindow>
   )
 }
