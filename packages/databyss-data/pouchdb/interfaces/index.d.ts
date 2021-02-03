@@ -43,7 +43,10 @@ declare namespace PouchDB {
   interface Database<Content extends {} = {}> {
     search(query: SearchQuery<Content>): SearchResponse<Content>
   }
-
+  // TODO: remove this next line
+  interface Database {
+    explain: any
+  }
   interface Database {
     transform: any
   }

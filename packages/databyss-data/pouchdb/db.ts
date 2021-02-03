@@ -23,7 +23,6 @@ import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { JSONSchema4 } from 'json-schema'
 import { DocumentType } from './interfaces'
-import PouchDb from 'pouchdb-browser'
 
 const REMOTE_CLOUDANT_URL = process.env.REMOTE_CLOUDANT_URL
 
