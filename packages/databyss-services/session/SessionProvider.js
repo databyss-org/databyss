@@ -87,7 +87,7 @@ const SessionProvider = ({
     const _init = async () => {
       const _sesionFromLocalStorage = await localStorageHasSession()
       if (_sesionFromLocalStorage) {
-        await initiatePouchDbIndexes()
+        initiatePouchDbIndexes()
 
         // 2nd pass: load session from local_storage
         // replicate from cloudant
