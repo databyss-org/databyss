@@ -51,25 +51,25 @@ export const areIndexBuilt = {
   current: false,
 }
 
-export const initiatePouchDbIndexes = async (db) => {
+export const initiatePouchDbIndexes = async () => {
   // await db.createIndex({
   //   index: {
   //     fields: ['_id'],
   //   },
   // })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['$type'],
+      ddoc: 'fetch-all',
     },
-    ddoc: 'fetch-all',
   })
 
-  await db.createIndex({
+  await dbRef.current.createIndex({
     index: {
       fields: ['$type', '_id'],
+      ddoc: 'fetch-one',
     },
-    ddoc: 'fetch-one',
   })
 
   // await db.createIndex({
@@ -239,8 +239,6 @@ export const syncPouchDb = ({
     .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
   // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
-
-  return dbRef.current
 }
 
 export const initiatePouchDbValidators = () => {
