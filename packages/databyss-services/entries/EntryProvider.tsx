@@ -67,6 +67,7 @@ const EntryProvider: React.FunctionComponent<PropsType> = ({
   )
 
   // https://github.com/pouchdb-community/pouchdb-quick-search/issues/57
+
   /*
   HACK this initiates a search index, if index is already built, this function will pass through
   */

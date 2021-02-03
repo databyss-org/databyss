@@ -52,19 +52,19 @@ export const areIndexBuilt = {
 }
 
 export const initiatePouchDbIndexes = async () => {
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type'],
-      ddoc: 'fetch-all',
-    },
-  })
+  // await dbRef.current.createIndex({
+  //   index: {
+  //     fields: ['$type'],
+  //     ddoc: 'fetch-all',
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', '_id'],
-      ddoc: 'fetch-one',
-    },
-  })
+  // await dbRef.current.createIndex({
+  //   index: {
+  //     fields: ['$type', '_id'],
+  //     ddoc: 'fetch-one',
+  //   },
+  // })
 
   // await dbRef.current.createIndex({
   //   index: {
