@@ -23,6 +23,7 @@ import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { JSONSchema4 } from 'json-schema'
 import { DocumentType } from './interfaces'
+import PouchDb from 'pouchdb-browser'
 
 const REMOTE_CLOUDANT_URL = process.env.REMOTE_CLOUDANT_URL
 
@@ -39,94 +40,99 @@ PouchDB.plugin(PouchDBUpsert)
 interface DbRef {
   current: PouchDB.Database<any>
 }
+const _initDb = new PouchDB('local', {
+  auto_compaction: true,
+})
 
 export const dbRef: DbRef = {
-  current: new PouchDB('local', {
-    auto_compaction: true,
-  }),
+  current: _initDb,
 }
 
 export const areIndexBuilt = {
   current: false,
 }
 
-export const initiatePouchDbIndexes = async () => {
-  await dbRef.current.search({
-    fields: ['text.textValue'],
-    build: true,
-  })
+export const initiatePouchDbIndexes = async (db) => {
+  // await db.createIndex({
+  //   index: {
+  //     fields: ['_id'],
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['_id'],
-    },
-  })
-
-  await dbRef.current.createIndex({
+  await db.createIndex({
     index: {
       fields: ['$type'],
     },
+    ddoc: 'fetch-all',
   })
 
-  await dbRef.current.createIndex({
+  await db.createIndex({
     index: {
       fields: ['$type', '_id'],
     },
+    ddoc: 'fetch-one',
   })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'relatedBlock'],
-    },
-  })
+  // await db.createIndex({
+  //   index: {
+  //     fields: ['$type', 'relatedBlock'],
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'page'],
-    },
-  })
+  // await db.createIndex({
+  //   index: {
+  //     fields: ['$type', 'page'],
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'blocks'],
-    },
-  })
+  // await db.createIndex({
+  //   index: {
+  //     fields: ['$type', 'blocks'],
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['block', 'relatedBlock'],
-    },
-  })
+  // await db.createIndex({
+  //   index: {
+  //     fields: ['block', 'relatedBlock'],
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'relatedBlock'],
-    },
-  })
+  // await db.createIndex({
+  //   index: {
+  //     fields: ['$type', 'relatedBlock'],
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'page'],
-    },
-  })
+  // await db.createIndex({
+  //   index: {
+  //     fields: ['$type', 'page'],
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'type'],
-    },
-  })
+  // await db.createIndex({
+  //   index: {
+  //     fields: ['$type', 'type'],
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'relatedBlock', 'relationshipType'],
-    },
-  })
+  // await db.createIndex({
+  //   index: {
+  //     fields: ['$type', 'relatedBlock', 'relationshipType'],
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'relatedBlock', 'block'],
-    },
-  })
+  // await db.createIndex({
+  //   index: {
+  //     fields: ['$type', 'relatedBlock', 'block'],
+  //   },
+  // })
+
+  // await db.createIndex({
+  //   index: {
+  //     fields: ['$type', 'relatedBlock', 'block'],
+  //   },
+  // })
+
   console.log('indexes built')
   areIndexBuilt.current = true
 }
@@ -234,6 +240,8 @@ export const syncPouchDb = ({
     .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
   // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
+
+  return dbRef.current
 }
 
 export const initiatePouchDbValidators = () => {

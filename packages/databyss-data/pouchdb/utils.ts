@@ -38,6 +38,25 @@ export const findAll = async ($type: DocumentType, query?: any) => {
       $type,
     },
   })
+  if (_response?.warning) {
+    console.log('ERROR', _response)
+    console.log($type, query)
+  }
+
+  dbRef.current
+    .explain({
+      selector: {
+        ...query,
+        $type,
+      },
+    })
+    .then((explained) => {
+      if (!explained.index.ddoc) {
+        throw new Error(explained)
+      }
+      // detailed explained info can be viewed
+    })
+
   return _response.docs
 }
 
@@ -48,6 +67,26 @@ export const findOne = async ($type: DocumentType, query: any) => {
       $type,
     },
   })
+
+  if (_response?.warning) {
+    console.log('ERROR', _response)
+    console.log($type, query)
+  }
+
+  dbRef.current
+    .explain({
+      selector: {
+        ...query,
+        $type,
+      },
+    })
+    .then((explained) => {
+      if (!explained.index.ddoc) {
+        throw new Error(explained)
+      }
+      // detailed explained info can be viewed
+    })
+
   if (_response.docs.length) {
     return _response.docs[0]
   }

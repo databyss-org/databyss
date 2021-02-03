@@ -87,8 +87,6 @@ const SessionProvider = ({
     const _init = async () => {
       const _sesionFromLocalStorage = await localStorageHasSession()
       if (_sesionFromLocalStorage) {
-        initiatePouchDbIndexes()
-
         // 2nd pass: load session from local_storage
         // replicate from cloudant
         const groupId = _sesionFromLocalStorage.defaultGroupId
@@ -97,11 +95,13 @@ const SessionProvider = ({
         })
 
         // set up live sync
-        syncPouchDb({
+        const _db = syncPouchDb({
           groupId,
           // TODO: how to curry dispatch
           dispatch,
         })
+
+        await initiatePouchDbIndexes(_db)
 
         // dispatch
         dispatch({

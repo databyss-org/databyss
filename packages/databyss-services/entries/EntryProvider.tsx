@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useEffect } from 'react'
 import { debounce } from 'lodash'
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
 import createReducer from '@databyss-org/services/lib/createReducer'
@@ -65,6 +65,14 @@ const EntryProvider: React.FunctionComponent<PropsType> = ({
     }, 250),
     [searchCache]
   )
+
+  // https://github.com/pouchdb-community/pouchdb-quick-search/issues/57
+  /*
+  HACK this initiates a search index, if index is already built, this function will pass through
+  */
+  useEffect(() => {
+    searchEntries('test')
+  }, [])
 
   const setQuery = (query: Text) => {
     dispatch(onSetQuery(query))

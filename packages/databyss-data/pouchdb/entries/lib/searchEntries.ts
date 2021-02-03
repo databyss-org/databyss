@@ -25,17 +25,17 @@ const searchEntries = async (
   _percentageToMatch = +_percentageToMatch.toFixed(0)
 
   console.log('init search', _query)
+  console.log(_percentageToMatch)
 
+  console.log('db in search', dbRef.current)
   const _res = await dbRef.current.search({
     query: _query,
     fields: ['text.textValue'],
     include_docs: true,
-    filter: (doc) => doc.type === BlockType.Entry,
-    // TODO: FIGURE OUT HOW STRICT WE WANT THE SERACH
+    filter: (doc) =>
+      doc.type === BlockType.Entry && doc.$type === DocumentType.Block,
     mm: `${_percentageToMatch}%`,
   })
-
-  console.log('first', _res)
 
   const _queryResponse = _res.rows
   if (!_queryResponse.length) {
