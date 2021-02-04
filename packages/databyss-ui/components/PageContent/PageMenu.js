@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useEditorPageContext } from '@databyss-org/services'
 import {
   BaseControl,
   Icon,
@@ -22,6 +22,8 @@ import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContaine
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import LoadingFallback from '../Notify/LoadingFallback'
 
 function copyToClipboard(text) {
   const dummy = document.createElement('textarea')
@@ -36,7 +38,10 @@ function copyToClipboard(text) {
   document.body.removeChild(dummy)
 }
 
-const PageMenu = ({ pages }) => {
+const PageMenu = () => {
+  const pagesRes = usePages()
+  const pages = pagesRes.data
+
   const getSession = useSessionContext((c) => c && c.getSession)
   const setDefaultPage = useSessionContext((c) => c && c.setDefaultPage)
   const { account, defaultPageId } = getSession()
@@ -52,13 +57,12 @@ const PageMenu = ({ pages }) => {
 
   const { params } = getTokensFromPath()
 
-  const archivePage = usePageContext((c) => c.archivePage)
-  const deletePage = usePageContext((c) => c.deletePage)
-  const getPage = usePageContext((c) => c.getPage)
+  const archivePage = useEditorPageContext((c) => c.archivePage)
+  const deletePage = useEditorPageContext((c) => c.deletePage)
 
-  const setPagePublic = usePageContext((c) => c && c.setPagePublic)
+  const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
 
-  const getPublicAccount = usePageContext((c) => c && c.getPublicAccount)
+  const getPublicAccount = useEditorPageContext((c) => c && c.getPublicAccount)
 
   const resetSourceHeaders = useSourceContext((c) => c && c.resetSourceHeaders)
 
@@ -72,7 +76,7 @@ const PageMenu = ({ pages }) => {
     if (pages[params]?.publicAccountId) {
       setIsPagePublic(true)
     }
-  }, [])
+  }, [pages])
 
   const onArchivePress = (bool) => {
     archivePage(params, bool).then(() => {
@@ -99,7 +103,7 @@ const PageMenu = ({ pages }) => {
     }
   }
 
-  const _page = getPage(params)
+  const _page = pages?.[params]
 
   const onCopyLink = () => {
     // TODO: EVERYTHING WITH THIS IS OUTDATED
@@ -164,7 +168,7 @@ const PageMenu = ({ pages }) => {
 
   const togglePublicPage = () => {
     if (isPagePublic) {
-      const _page = getPage(params)
+      const _page = pages?.[params]
       // if account is shared, get public account
       const _accountId = _page.publicAccountId
       setPagePublic(params, !isPagePublic, _accountId)
@@ -217,6 +221,10 @@ const PageMenu = ({ pages }) => {
       }
     </SharedPageLoader>
   )
+
+  if (!pagesRes.isSuccess) {
+    return <LoadingFallback size="extraTiny" queryObserver={pagesRes} />
+  }
 
   return (
     <View

@@ -1,16 +1,17 @@
 // TODO: replace this page with a proper index page
 import React from 'react'
-import { Helmet } from 'react-helmet'
 import { createIndexPageEntries } from '@databyss-org/services/entries/util'
 import {
   composeAuthorName,
   isCurrentAuthor,
 } from '@databyss-org/services/sources/lib'
 import { sortPageEntriesAlphabetically } from '@databyss-org/services/entries/lib'
-import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { ScrollView, Text, View, pxUnits } from '@databyss-org/ui/primitives'
+import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
+import { BlockType } from '@databyss-org/editor/interfaces'
+import { LoadingFallback } from '@databyss-org/ui/components'
 import { AuthorsResults } from './AuthorsResults'
+import { IndexPageView } from './IndexPageContent'
 
 const buildEntries = (sources, firstName, lastName) => {
   const entries = []
@@ -31,6 +32,7 @@ const buildEntries = (sources, firstName, lastName) => {
 }
 
 export const AuthorsContent = ({ query }) => {
+  const sourcesRes = useBlocksInPages(BlockType.Source)
   const { navigate } = useNavigationContext()
 
   const params = new URLSearchParams(query)
@@ -46,30 +48,19 @@ export const AuthorsContent = ({ query }) => {
     navigate(`/sources/${entry.id}`)
   }
 
-  return (
-    <SourceCitationsLoader>
-      {(sources) => {
-        const entries = buildEntries(
-          sources,
-          authorQueryFirstName,
-          authorQueryLastName
-        )
+  if (!sourcesRes.isSuccess) {
+    return <LoadingFallback queryObserver={sourcesRes} />
+  }
 
-        return (
-          <ScrollView p="medium" flex="1">
-            <Helmet>
-              <meta charSet="utf-8" />
-              <title>{authorFullName}</title>
-            </Helmet>
-            <View py="medium" px={pxUnits(28)}>
-              <Text variant="bodyHeading1" color="text.3">
-                {authorFullName}
-              </Text>
-            </View>
-            <AuthorsResults onClick={onEntryClick} entries={entries} />
-          </ScrollView>
-        )
-      }}
-    </SourceCitationsLoader>
+  const entries = buildEntries(
+    sourcesRes.data,
+    authorQueryFirstName,
+    authorQueryLastName
+  )
+
+  return (
+    <IndexPageView title={authorFullName}>
+      <AuthorsResults onClick={onEntryClick} entries={entries} />
+    </IndexPageView>
   )
 }

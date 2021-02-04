@@ -1,5 +1,4 @@
 import React from 'react'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
 import { useGroupContext } from '@databyss-org/services/groups/GroupProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
@@ -16,6 +15,7 @@ import {
 } from '@databyss-org/ui/primitives'
 import { sidebar } from '@databyss-org/ui/theming/components'
 import { Page, Group } from '@databyss-org/services/interfaces'
+import { savePage } from '@databyss-org/services/editorPage'
 
 const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
@@ -23,7 +23,6 @@ const Footer = ({ collapsed }) => {
 
   const clearSearchCache = useEntryContext((c) => c && c.clearSearchCache)
 
-  const setPage = usePageContext((c) => c.setPage)
   const setGroup = useGroupContext((c) => c.setGroup)
 
   const sidebarPath = getSidebarPath()
@@ -38,7 +37,7 @@ const Footer = ({ collapsed }) => {
 
     const _page = new Page()
 
-    setPage(_page).then(() => {
+    savePage(_page).then(() => {
       navigate(`/pages/${_page._id}`)
     })
 

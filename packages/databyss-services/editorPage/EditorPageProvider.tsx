@@ -29,7 +29,6 @@ interface ContextType {
   setPage: (page: Page) => void
   deletePage: (id: string) => void
   setPageHeader: (page: Page) => void
-  getPages: () => void
   getPage: (id: string) => Page | ResourcePending | null
   clearBlockDict: () => void
   setPatches: (patches: PatchBatch) => void
@@ -45,9 +44,9 @@ interface ContextType {
   removePageFromCache: (id: string) => void
 }
 const useReducer = createReducer()
-export const PageContext = createContext<ContextType>(null!)
+export const EditorPageContext = createContext<ContextType>(null!)
 
-const PageProvider: React.FunctionComponent<PropsType> = ({
+export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   children,
   initialState = _initState,
 }: PropsType) => {
@@ -90,18 +89,6 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   const setPageHeader = useCallback((page: PageHeader) => {
     dispatch(actions.savePageHeader(page))
   }, [])
-
-  const getPages = useCallback((): ResourceResponse<PageHeader> => {
-    if (state.headerCache) {
-      return state.headerCache
-    }
-
-    if (!(state.headerCache instanceof ResourcePending)) {
-      dispatch(actions.fetchPageHeaders())
-    }
-
-    return null
-  }, [state.headerCache])
 
   const getPage = useCallback(
     (id: string): ResourceResponse<Page> => {
@@ -163,9 +150,8 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
   )
 
   return (
-    <PageContext.Provider
+    <EditorPageContext.Provider
       value={{
-        getPages,
         getPage,
         setPage,
         setPageHeader,
@@ -183,11 +169,9 @@ const PageProvider: React.FunctionComponent<PropsType> = ({
       }}
     >
       {children}
-    </PageContext.Provider>
+    </EditorPageContext.Provider>
   )
 }
 
-export const usePageContext = (selector = (x: ContextType) => x) =>
-  useContextSelector(PageContext, selector)
-
-export default PageProvider
+export const useEditorPageContext = (selector = (x: ContextType) => x) =>
+  useContextSelector(EditorPageContext, selector)

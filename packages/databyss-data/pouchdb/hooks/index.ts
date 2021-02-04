@@ -1,3 +1,5 @@
 export { useBlockRelations } from './useBlockRelations'
+export { useRelatedBlocks } from './useRelatedBlocks'
+export { useBlocksInPages } from './useBlocksInPages'
 export { useBlocks } from './useBlocks'
 export { usePages } from './usePages'

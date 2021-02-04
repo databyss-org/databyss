@@ -1,4 +1,5 @@
 import { Block, BlockRelation, DocumentDict, Page } from '../interfaces'
+import { groupBlockRelationsByRelatedBlock } from './aggregate'
 
 interface JoinBlockRelationsArgs {
   blockRelationDict: DocumentDict<BlockRelation>
@@ -28,3 +29,24 @@ export const joinBlockRelations = ({
     }
     return accum
   }, {})
+
+/**
+ * Returns only blocks that are in pages
+ */
+export const getBlocksInPages = <T extends Block>(
+  blockRelationDict: DocumentDict<BlockRelation>,
+  blockDict: DocumentDict<Block>,
+  pageDict: DocumentDict<Page>,
+  includeArchived: boolean
+) => {
+  const filtered = joinBlockRelations({
+    blockRelationDict,
+    pageDict,
+    pagePredicate: (page) => Boolean(page.archive) === includeArchived,
+  })
+  const grouped = groupBlockRelationsByRelatedBlock(Object.values(filtered))
+  const blocks = Object.keys(grouped)
+    .map((blockId) => blockDict[blockId])
+    .filter((b) => Boolean(b)) as T[]
+  return blocks
+}

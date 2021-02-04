@@ -32,7 +32,6 @@ interface PropsType {
 
 interface ContextType {
   state: SourceState
-  getSource: (id: string) => ResourceResponse<Source>
   setSource: (source: Source) => void
   removeCacheValue: (id: string) => void
   getAuthors: () => ResourceResponse<Author[]>
@@ -55,17 +54,6 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
 
   // provider methods - source
   const setSource = services.setSource
-
-  const getSource = useCallback(
-    (id: string): ResourceResponse<Source> => {
-      if (state.cache[id]) {
-        return state.cache[id]
-      }
-      dispatch(fetchSource(id))
-      return null
-    },
-    [state.cache]
-  )
 
   // provider methods - cache
   const removeCacheValue = useCallback(
@@ -136,7 +124,6 @@ const SourceProvider: React.FunctionComponent<PropsType> = ({
     <SourceContext.Provider
       value={{
         state,
-        getSource,
         setSource,
         removeCacheValue,
         getAuthors,

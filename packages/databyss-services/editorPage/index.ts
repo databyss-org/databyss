@@ -1,5 +1,4 @@
 import * as pouchDb from '@databyss-org/data/pouchdb/pages'
-import { PageDoc } from '@databyss-org/data/pouchdb/interfaces'
 import { httpPost } from '../lib/requestApi'
 import {
   PatchBatch,
@@ -20,9 +19,6 @@ export const savePatchBatch = async (data: PatchBatch) =>
 
 export const loadPage = (_id: string): Promise<Page | ResourceNotFoundError> =>
   pouchDb.populatePage(_id)
-
-export const getAllPages = (): Promise<PageDoc[] | ResourceNotFoundError> =>
-  pouchDb.fetchAllPages()
 
 export const deletePage = (id: string) => pouchDb.deletePage(id)
 

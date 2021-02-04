@@ -9,7 +9,7 @@ import {
 } from '@databyss-org/slate'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import cloneDeep from 'clone-deep'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
@@ -160,7 +160,7 @@ const ContentEditable = ({
     _isDbBusy = isDbBusy()
   }
 
-  const patchQueueSize = usePageContext((c) => c && c.patchQueueSize)
+  const patchQueueSize = useEditorPageContext((c) => c && c.patchQueueSize)
 
   // if new atomic block has been added, save atomic
   useEffect(() => {

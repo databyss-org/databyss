@@ -3,10 +3,12 @@ import { Editor, Transforms } from '@databyss-org/slate'
 import { useEditor } from '@databyss-org/slate-react'
 import cloneDeep from 'clone-deep'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
-import { AllTopicsLoader } from '@databyss-org/ui/components/Loaders'
 import { prefixSearchAll } from '@databyss-org/services/blocks'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
 import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
+import { BlockType } from '@databyss-org/services/interfaces'
+import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorContext } from '../../state/EditorProvider'
 import { splitTextAtOffset, mergeText } from '../../lib/clipboardUtils'
 import { getTextOffsetWithRange } from '../../state/util'
@@ -19,6 +21,7 @@ const SuggestTopics = ({
   inlineAtomic,
 }) => {
   const editor = useEditor()
+  const topicsRes = useBlocks(BlockType.Topic)
 
   const { replace, state, setContent } = useEditorContext()
   const addPageToCacheHeader = useTopicContext(
@@ -138,13 +141,6 @@ const SuggestTopics = ({
     setFilteredSuggestions(_nextSuggestions)
   }
 
-  const onTopicsLoaded = (topicsDict) => {
-    if (!suggestions) {
-      const _topics = Object.values(topicsDict)
-      setSuggestions(_topics)
-    }
-  }
-
   useEffect(updateSuggestions, [query, suggestions])
 
   const setCurrentTopicWithoutSuggestion = () => {
@@ -189,18 +185,21 @@ const SuggestTopics = ({
     }
   })
 
-  return (
-    <AllTopicsLoader onLoad={onTopicsLoaded}>
-      {filteredSuggestions.map((s) => (
-        // eslint-disable-next-line react/jsx-indent
-        <DropdownListItem
-          label={s.text.textValue}
-          key={s._id}
-          onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
-        />
-      ))}
-    </AllTopicsLoader>
-  )
+  if (!topicsRes.isSuccess) {
+    return <LoadingFallback queryObserver={topicsRes} />
+  }
+  if (!suggestions) {
+    setSuggestions(Object.values(topicsRes.data))
+  }
+
+  return filteredSuggestions.map((s) => (
+    // eslint-disable-next-line react/jsx-indent
+    <DropdownListItem
+      label={s.text.textValue}
+      key={s._id}
+      onPress={() => onTopicSelected({ ...s, type: 'TOPIC' })}
+    />
+  ))
 }
 
 SuggestTopics.defaultProps = {

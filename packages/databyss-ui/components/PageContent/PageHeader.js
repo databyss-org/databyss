@@ -1,7 +1,8 @@
 import React, { useState, useEffect, forwardRef, useCallback } from 'react'
 import { debounce } from 'lodash'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { isMobile } from '../../lib/mediaQuery'
 import { TitleInput } from './TitleInput'
 
@@ -9,15 +10,17 @@ const noPageTitle = 'untitled'
 
 const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  const getPage = usePageContext((c) => c.getPage)
-  const setPageHeader = usePageContext((c) => c.setPageHeader)
+  const setPageHeader = useEditorPageContext((c) => c.setPageHeader)
+  const pagesRes = usePages()
+  const page = pagesRes.data?.[pageId]
 
   const [pageName, setPageName] = useState('')
 
   useEffect(() => {
-    const pageData = getPage(pageId)
-    const pageDataName = pageData.name
-
+    if (!pagesRes.isSuccess) {
+      return
+    }
+    const pageDataName = page.name
     if (pageDataName === noPageTitle) {
       setPageName('')
       // if no page name is provided, focus on page name
@@ -29,7 +32,7 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
     } else {
       setPageName(pageDataName)
     }
-  }, [pageId])
+  }, [pageId, pagesRes])
 
   const throttledAutosave = useCallback(
     debounce((val) => {
@@ -47,9 +50,13 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
     throttledAutosave(val)
   }
 
+  if (!pagesRes.isSuccess) {
+    return null
+  }
+
   return (
     <TitleInput
-      readonly={isPublicAccount() || isMobile() || getPage(pageId)?.archive}
+      readonly={isPublicAccount() || isMobile() || page.archive}
       ref={ref}
       data-test-element="page-header"
       onKeyDown={(e) => {

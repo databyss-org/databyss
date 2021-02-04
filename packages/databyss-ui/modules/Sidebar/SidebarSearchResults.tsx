@@ -19,7 +19,7 @@ import {
   pagesToListItemData,
   blocksToListItemData,
 } from './transforms'
-import { getBlocksInPages } from './lists/BlockList'
+import { getBlocksInPages } from '@databyss-org/services/blocks/joins'
 
 const FulltextSearchItem = (props) => (
   <SidebarListItem
@@ -69,12 +69,13 @@ const SidebarSearchResults = ({
     return <LoadingFallback queryObserver={queryRes} />
   }
 
-  const mappedSources = getBlocksInPages(
-    blockRelationsRes.data!,
-    sourcesRes.data!,
-    pagesRes.data!,
-    blocksToListItemData,
-    false
+  const mappedSources = blocksToListItemData(
+    getBlocksInPages(
+      blockRelationsRes.data!,
+      sourcesRes.data!,
+      pagesRes.data!,
+      false
+    )
   )
 
   const mappedTopics = getBlocksInPages(

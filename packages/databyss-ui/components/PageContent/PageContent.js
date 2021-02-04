@@ -2,11 +2,10 @@ import React, { useState, useEffect, useRef, forwardRef } from 'react'
 import {
   useParams,
   useLocation,
-  Router,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider'
-import { PageLoader } from '@databyss-org/ui/components/Loaders'
+import { EditorPageLoader } from '@databyss-org/ui/components/Loaders'
 import { View, ScrollView } from '@databyss-org/ui/primitives'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useEditorPageContext } from '@databyss-org/services'
 import { getAuthToken } from '@databyss-org/services/session/clientStorage'
 import PageHeader from './PageHeader'
 import PageBody from './PageBody'
@@ -22,7 +21,7 @@ export const PageContentView = forwardRef(({ children, ...others }, ref) => (
 
 export const PageContainer = React.memo(
   ({ anchor, id, page, ...others }) => {
-    const getBlockRefByIndex = usePageContext((c) => c.getBlockRefByIndex)
+    const getBlockRefByIndex = useEditorPageContext((c) => c.getBlockRefByIndex)
     const [, setAuthToken] = useState()
     const [editorPath, setEditorPath] = useState(null)
 
@@ -121,11 +120,11 @@ const PageContent = (others) => {
   return (
     <View flex="1" height="100%" backgroundColor="background.1">
       {id && (
-        <PageLoader pageId={id} key={id}>
+        <EditorPageLoader pageId={id} key={id}>
           {(page) => (
             <PageContainer anchor={anchor} id={id} page={page} {...others} />
           )}
-        </PageLoader>
+        </EditorPageLoader>
       )}
     </View>
   )

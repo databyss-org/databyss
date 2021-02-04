@@ -1,23 +1,22 @@
 /* eslint-disable react/no-danger */
 import React, { useEffect, useState, useCallback } from 'react'
 import { debounce } from 'lodash'
-import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { StickyHeader } from '@databyss-org/ui/components'
 import { View, Icon } from '@databyss-org/ui/primitives'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useEditorPageContext } from '@databyss-org/services'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import LoadingSvg from '@databyss-org/ui/assets/loading.svg'
 import PageMenu from './PageMenu'
 
 const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
-  const patchQueueSize = usePageContext((c) => c && c.patchQueueSize)
+  const patchQueueSize = useEditorPageContext((c) => c && c.patchQueueSize)
 
   const _isDbBusy = isDbBusy()
-  // get page name from headerCache
-  const getPages = usePageContext((c) => c && c.getPages)
+  const pagesRes = usePages()
 
   const [showSaving, setShowSaving] = useState(false)
   const currentPath = []
@@ -42,9 +41,14 @@ const PageSticky = ({ pagePath, pageId }) => {
     debounceSavingIcon(!!(_isDbBusy || patchQueueSize))
   }, [_isDbBusy, patchQueueSize])
 
-  const pages = getPages()
+  if (!pagesRes.isSuccess) {
+    return null
+  }
+
+  const pages = pagesRes.data
+
   // get page title
-  if (pages && pages[pageId]?.name) {
+  if (pages[pageId]?.name) {
     currentPath.push(pages[pageId].name)
   }
 
@@ -54,14 +58,7 @@ const PageSticky = ({ pagePath, pageId }) => {
   }
 
   return (
-    <StickyHeader
-      path={currentPath}
-      contextMenu={
-        <PagesLoader includeArchived>
-          {(pages) => <PageMenu pages={pages} />}
-        </PagesLoader>
-      }
-    >
+    <StickyHeader path={currentPath} contextMenu={<PageMenu pages={pages} />}>
       <View alignItems="center" justifyContent="flex-end" flexDirection="row">
         {showSaving ? null : (
           <View id="changes-saved">

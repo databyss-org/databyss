@@ -1,10 +1,5 @@
 import { useEffect } from 'react'
-import {
-  useQuery,
-  useQueryClient,
-  QueryObserverResult,
-  QueryKey,
-} from 'react-query'
+import { useQuery, useQueryClient, QueryObserverResult } from 'react-query'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 import { dbRef } from '../db'
@@ -21,20 +16,21 @@ export interface IncludeFromResultOptions<T extends Document> {
 
 export interface UseDocumentsOptions extends QueryOptions {
   includeFromResults?: IncludeFromResultOptions<any>
+  enabled: boolean
 }
 
 export const useDocuments = <T extends Document>(
   queryKey: unknown[],
   selector: PouchDB.Find.Selector,
-  options?: UseDocumentsOptions
+  options: UseDocumentsOptions = { enabled: true }
 ) => {
   const queryClient = useQueryClient()
   const queryOptions: QueryOptions = {
-    includeIds: options?.includeIds,
+    includeIds: options.includeIds,
   }
 
   if (
-    options?.includeFromResults &&
+    options.includeFromResults &&
     options.includeFromResults.result.isSuccess
   ) {
     queryOptions.includeIds = Object.values(
@@ -50,12 +46,12 @@ export const useDocuments = <T extends Document>(
   }
   queryKey.push(queryOptions)
 
-  console.log('useDocuments.selector', selector)
+  // console.log('useDocuments.selector', selector)
   const query = useQuery<DocumentDict<T>>(
     queryKey,
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) => {
-        console.log('useDocuments.fetch', selector)
+        // console.log('useDocuments.fetch', selector)
         return dbRef.current
           .find({ selector })
           .then((res) => resolve(DocumentArrayToDict(res.docs)))
@@ -63,13 +59,14 @@ export const useDocuments = <T extends Document>(
       }),
     {
       enabled:
-        !options?.includeFromResults ||
-        options?.includeFromResults?.result.isSuccess,
+        options.enabled &&
+        (!options.includeFromResults ||
+          options.includeFromResults?.result.isSuccess),
     }
   )
 
   useEffect(() => {
-    console.log('useDocuments.subscribe', queryKey, selector)
+    // console.log('useDocuments.subscribe', queryKey, selector)
     const changes = dbRef.current
       .changes({
         since: 'now',
@@ -87,7 +84,7 @@ export const useDocuments = <T extends Document>(
           queryClient.invalidateQueries(queryKey)
         } else {
           // the doc was modified, so update the cache
-          console.log('useDocuments.invalidateOne', queryKey)
+          // console.log('useDocuments.invalidateOne', queryKey)
           queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {
             oldData![change.doc._id] = change.doc
             return oldData as DocumentDict<T>
@@ -96,7 +93,7 @@ export const useDocuments = <T extends Document>(
       })
     return () => {
       // on unmount, stop listening to pouch changes and invalidate the cache
-      console.log('useDocuments.unsubscribe', queryKey)
+      // console.log('useDocuments.unsubscribe', queryKey)
       changes.cancel()
       queryClient.removeQueries(queryKey)
     }

@@ -1,16 +1,16 @@
 import React, { useState } from 'react'
-import { Helmet } from 'react-helmet'
 import { CitationStyleOptions } from '@databyss-org/services/citations/constants'
 import { createIndexPageEntries } from '@databyss-org/services/entries/util'
 import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
-import { SourceCitationsLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
+import { BlockType } from '@databyss-org/editor/interfaces'
+import { LoadingFallback } from '@databyss-org/ui/components'
+import { DropDownControl, pxUnits, styled } from '@databyss-org/ui/primitives'
 import { AuthorsContent } from './AuthorsContent'
 
-import { DropDownControl, pxUnits, styled } from '../../primitives'
-
-import { IndexPageContent } from './IndexPageContent'
+import { IndexPageView } from './IndexPageContent'
 import { SourcesResults } from './SourcesResults'
 
 // styled components
@@ -38,6 +38,8 @@ const buildSortedSources = (sourceCitations) => {
 }
 
 export const SourcesContent = () => {
+  const sourcesRes = useBlocksInPages(BlockType.Source)
+
   const navigate = useNavigationContext((c) => c.navigate)
 
   const getQueryParams = useNavigationContext((c) => c.getQueryParams)
@@ -59,39 +61,28 @@ export const SourcesContent = () => {
     setPreferredCitationStyle(value.id)
   }
 
+  if (!sourcesRes.isSuccess) {
+    return <LoadingFallback queryObserver={sourcesRes} />
+  }
+
   // if author is provided in the url `.../sources?firstName=''&lastName='' render authors
   const _queryParams = getQueryParams()
   if (_queryParams.length) {
     return <AuthorsContent query={_queryParams} />
   }
 
-  // render methods
-  const renderBody = (sources, navigate) => {
-    const sortedSources = buildSortedSources(sources)
+  const sortedSources = buildSortedSources(sourcesRes.data)
 
-    const onSourceClick = (source) => navigate(`/sources/${source.id}`)
+  const onSourceClick = (source) => navigate(`/sources/${source.id}`)
 
-    return (
-      <IndexPageContent title="All Sources" indexName="Sources">
-        <Helmet>
-          <meta charSet="utf-8" />
-          <title>All Sources</title>
-        </Helmet>
-        <CitationStyleDropDown
-          items={CitationStyleOptions}
-          value={citationStyleOption}
-          onChange={onCitationStyleChange}
-        />
-        <SourcesResults onClick={onSourceClick} entries={sortedSources} />
-      </IndexPageContent>
-    )
-  }
-
-  const render = () => (
-    <SourceCitationsLoader filtered>
-      {(source) => renderBody(source, navigate)}
-    </SourceCitationsLoader>
+  return (
+    <IndexPageView title="All Sources">
+      <CitationStyleDropDown
+        items={CitationStyleOptions}
+        value={citationStyleOption}
+        onChange={onCitationStyleChange}
+      />
+      <SourcesResults onClick={onSourceClick} entries={sortedSources} />
+    </IndexPageView>
   )
-
-  return render()
 }

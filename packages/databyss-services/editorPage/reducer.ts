@@ -11,8 +11,6 @@ import {
 import {
   FETCH_PAGE,
   CACHE_PAGE,
-  CACHE_PAGE_HEADERS,
-  FETCH_PAGE_HEADERS,
   DELETE_PAGE,
   ARCHIVE_PAGE,
   QUEUE_PATCH,
@@ -73,10 +71,6 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
       }
       break
     }
-    case FETCH_PAGE_HEADERS: {
-      draft.headerCache = new ResourcePending()
-      break
-    }
 
     case DELETE_PAGE: {
       delete draft.cache[action.payload.id]
@@ -92,21 +86,6 @@ export default produce((draft: Draft<PageState>, action: FSA) => {
       break
     }
 
-    case CACHE_PAGE_HEADERS: {
-      if (action.payload instanceof Error) {
-        break
-      }
-
-      action.payload.forEach((page: PageHeader) => {
-        _headerCache[page._id] = {
-          name: page.name,
-          _id: page._id,
-          archive: page.archive,
-        }
-      })
-      draft.headerCache = _headerCache
-      break
-    }
     case SET_PAGE_PUBLIC: {
       if (draft.cache[action.payload.id]) {
         const _resource: any = draft.cache[action.payload.id]

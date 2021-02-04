@@ -1,11 +1,15 @@
 import { Page } from '@databyss-org/services/interfaces'
 import { DocumentType } from '../interfaces'
-import { useDocuments } from './useDocuments'
+import { useDocuments, UseDocumentsOptions } from './useDocuments'
 
-export const usePages = () => {
+export const usePages = (options?: UseDocumentsOptions) => {
   const queryKey = ['pages']
-  const query = useDocuments<Page>(queryKey, {
-    $type: DocumentType.Page,
-  })
+  const query = useDocuments<Page>(
+    queryKey,
+    {
+      $type: DocumentType.Page,
+    },
+    options
+  )
   return query
 }

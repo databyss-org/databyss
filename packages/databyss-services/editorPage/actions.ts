@@ -7,8 +7,6 @@ import {
   PATCH,
   FETCH_PAGE,
   CACHE_PAGE,
-  CACHE_PAGE_HEADERS,
-  FETCH_PAGE_HEADERS,
   DELETE_PAGE,
   ARCHIVE_PAGE,
   QUEUE_PATCH,
@@ -33,28 +31,6 @@ export function fetchPage(_id: string) {
       dispatch({
         type: CACHE_PAGE,
         payload: { page: e, id: _id },
-      })
-      throw e
-    }
-  }
-}
-
-export function fetchPageHeaders() {
-  return async (dispatch: Function) => {
-    dispatch({
-      type: FETCH_PAGE_HEADERS,
-    })
-    try {
-      const pages = await services.getAllPages()
-
-      dispatch({
-        type: CACHE_PAGE_HEADERS,
-        payload: pages,
-      })
-    } catch (e) {
-      dispatch({
-        type: CACHE_PAGE_HEADERS,
-        payload: e,
       })
       throw e
     }
@@ -205,7 +181,6 @@ export function deletePage(id: string) {
       payload: { id },
     })
     await services.deletePage(id)
-    dispatch(fetchPageHeaders())
   }
 }
 

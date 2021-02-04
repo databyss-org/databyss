@@ -2,7 +2,7 @@ import React, { useEffect, useCallback, useRef, useState } from 'react'
 import { debounce } from 'lodash'
 import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { withMetaData } from '@databyss-org/editor/lib/util'
 import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
@@ -32,8 +32,8 @@ const PageBody = ({
 
   const _isDbBusy = isDbBusy()
   const { location } = useNavigationContext()
-  const clearBlockDict = usePageContext((c) => c.clearBlockDict)
-  const setPatches = usePageContext((c) => c.setPatches)
+  const clearBlockDict = useEditorPageContext((c) => c.clearBlockDict)
+  const setPatches = useEditorPageContext((c) => c.setPatches)
 
   useEffect(() => () => clearBlockDict(), [])
 
