@@ -11,7 +11,7 @@ export interface QueryOptions {
 
 export interface IncludeFromResultOptions<T extends Document> {
   result: QueryObserverResult<DocumentDict<T>>
-  resultToBlockId: (doc: T) => string
+  resultToBlockId?: (doc: T) => string
 }
 
 export interface UseDocumentsOptions extends QueryOptions {
@@ -28,16 +28,17 @@ export const useDocuments = <T extends Document>(
   const queryOptions: QueryOptions = {
     includeIds: options.includeIds,
   }
+  const includeFromResults:
+    | IncludeFromResultOptions<Document>
+    | undefined = options.includeFromResults && {
+    resultToBlockId: (b) => b._id,
+    ...options.includeFromResults,
+  }
 
-  if (
-    options.includeFromResults &&
-    options.includeFromResults.result.isSuccess
-  ) {
-    queryOptions.includeIds = Object.values(
-      options.includeFromResults.result.data!
-    )
-      .filter(options?.includeFromResults.resultToBlockId)
-      .map(options?.includeFromResults.resultToBlockId)
+  if (includeFromResults && includeFromResults.result.isSuccess) {
+    queryOptions.includeIds = Object.values(includeFromResults.result.data!)
+      .filter(includeFromResults.resultToBlockId!)
+      .map(includeFromResults.resultToBlockId!)
   }
   if (queryOptions.includeIds) {
     selector._id = {

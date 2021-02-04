@@ -9,18 +9,20 @@ import {
 } from '@databyss-org/ui/primitives'
 import { stateBlockToHtml } from '@databyss-org/editor/lib/slateUtils'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import { Citation } from '@databyss-org/ui/components'
+import { Citation, useNavigationContext } from '@databyss-org/ui/components'
 
-export const SourcesResults = ({ entries, onClick }) => {
+export const SourcesResults = ({ entries }) => {
   const getPreferredCitationStyle = useSourceContext(
     (c) => c.getPreferredCitationStyle
   )
   const preferredCitationStyle = getPreferredCitationStyle()
 
+  const { getAccountFromLocation } = useNavigationContext()
+
   // render methods
-  const renderStyledCitation = (entry) => (
+  const renderStyledCitation = (citation) => (
     <Citation
-      citation={entry.citation}
+      citation={citation}
       formatOptions={{ styleId: preferredCitationStyle }}
       childViewProps={{
         marginTop: pxUnits(10),
@@ -37,16 +39,12 @@ export const SourcesResults = ({ entries, onClick }) => {
 
   const render = () =>
     entries?.map((entry, index) => {
-      if (entry.text) {
+      if (entry.source?.text) {
         return (
           <View key={index} mb="em" widthVariant="content">
             <BaseControl
               data-test-element="source-results"
-              onClick={() => {
-                if (onClick) {
-                  onClick(entry)
-                }
-              }}
+              href={`/${getAccountFromLocation()}/sources/${entry.source._id}`}
               py="small"
               hoverColor="background.2"
               activeColor="background.3"
@@ -54,11 +52,11 @@ export const SourcesResults = ({ entries, onClick }) => {
               childViewProps={{ flexDirection: 'row' }}
             >
               <Text variant="bodyNormalSemibold">
-                <RawHtml html={stateBlockToHtml(entry)} />
+                <RawHtml html={stateBlockToHtml(entry.source)} />
               </Text>
             </BaseControl>
 
-            {renderStyledCitation(entry)}
+            {renderStyledCitation(entry.citation)}
           </View>
         )
       }

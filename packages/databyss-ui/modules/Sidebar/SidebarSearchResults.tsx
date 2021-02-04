@@ -78,12 +78,13 @@ const SidebarSearchResults = ({
     )
   )
 
-  const mappedTopics = getBlocksInPages(
-    blockRelationsRes.data!,
-    topicsRes.data!,
-    pagesRes.data!,
-    blocksToListItemData,
-    false
+  const mappedTopics = blocksToListItemData(
+    getBlocksInPages(
+      blockRelationsRes.data!,
+      topicsRes.data!,
+      pagesRes.data!,
+      false
+    )
   )
 
   const mappedAuthors = authorsToListItemData(

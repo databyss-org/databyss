@@ -4,7 +4,7 @@ import { createIndexPageEntries } from '@databyss-org/services/entries/util'
 import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
+import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { DropDownControl, pxUnits, styled } from '@databyss-org/ui/primitives'
@@ -19,31 +19,8 @@ const CitationStyleDropDown = styled(DropDownControl, () => ({
   alignSelf: 'end',
 }))
 
-// utils
-const buildSortedSources = (sourceCitations) => {
-  const sourcesData = Object.values(sourceCitations).map((value) =>
-    createIndexPageEntries({
-      id: value._id,
-      text: value.text,
-      citation: value.citation,
-      type: 'sources',
-    })
-  )
-
-  const sortedSources = sourcesData.sort((a, b) =>
-    a.text.textValue.toLowerCase() > b.text.textValue.toLowerCase() ? 1 : -1
-  )
-
-  return sortedSources
-}
-
 export const SourcesContent = () => {
-  const sourcesRes = useBlocksInPages(BlockType.Source)
-
-  const navigate = useNavigationContext((c) => c.navigate)
-
   const getQueryParams = useNavigationContext((c) => c.getQueryParams)
-
   const getPreferredCitationStyle = useSourceContext(
     (c) => c.getPreferredCitationStyle
   )
@@ -51,10 +28,12 @@ export const SourcesContent = () => {
     (c) => c.setPreferredCitationStyle
   )
   const preferredCitationStyle = getPreferredCitationStyle()
-
   const [citationStyleOption, setCitationStyleOption] = useState(
     getCitationStyleOption(preferredCitationStyle)
   )
+  const sourcesRes = useBibliography({
+    styleId: citationStyleOption.id,
+  })
 
   const onCitationStyleChange = (value) => {
     setCitationStyleOption(value)
@@ -71,9 +50,12 @@ export const SourcesContent = () => {
     return <AuthorsContent query={_queryParams} />
   }
 
-  const sortedSources = buildSortedSources(sourcesRes.data)
-
-  const onSourceClick = (source) => navigate(`/sources/${source.id}`)
+  const sortedSources = Object.values(sourcesRes.data).sort((a, b) =>
+    a.source.text.textValue.toLowerCase() >
+    b.source.text.textValue.toLowerCase()
+      ? 1
+      : -1
+  )
 
   return (
     <IndexPageView path={['All Sources']}>
@@ -82,7 +64,7 @@ export const SourcesContent = () => {
         value={citationStyleOption}
         onChange={onCitationStyleChange}
       />
-      <SourcesResults onClick={onSourceClick} entries={sortedSources} />
+      <SourcesResults entries={sortedSources} />
     </IndexPageView>
   )
 }
