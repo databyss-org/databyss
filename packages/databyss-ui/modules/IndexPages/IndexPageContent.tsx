@@ -2,42 +2,56 @@ import React, { PropsWithChildren } from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { Helmet } from 'react-helmet'
 import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
-import { BlockType } from '@databyss-org/editor/interfaces'
-import { LoadingFallback } from '@databyss-org/ui/components'
+import { Block, BlockType } from '@databyss-org/services/interfaces'
+import { LoadingFallback, StickyHeader } from '@databyss-org/ui/components'
 import {
   ScrollView,
   View,
   Text,
   ScrollViewProps,
 } from '@databyss-org/ui/primitives'
-import { pxUnits } from '@databyss-org/ui/theming/theme'
 import { IndexResults } from './IndexResults'
 
 export interface IndexPageViewProps extends ScrollViewProps {
-  title: string
+  path: string[]
 }
 
 export const IndexPageView = ({
-  title,
+  path,
   children,
   ...others
 }: PropsWithChildren<IndexPageViewProps>) => (
-  <ScrollView p="medium" flex="1" {...others}>
-    <Helmet>
-      <meta charSet="utf-8" />
-      <title>{title}</title>
-    </Helmet>
-    <View py="medium" px={pxUnits(28)}>
-      <Text variant="bodyHeading1" color="text.3">
-        {title}
-      </Text>
-    </View>
-    {children}
-  </ScrollView>
+  <>
+    <StickyHeader path={path} />
+    <ScrollView pl="em" flex="1" {...others}>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>{path[path.length - 1]}</title>
+      </Helmet>
+      <View pt="small" pb="medium" pl="medium">
+        <Text variant="bodyHeading1" color="text.3">
+          {path[path.length - 1]}
+        </Text>
+      </View>
+      <View px="medium">{children}</View>
+    </ScrollView>
+  </>
 )
 
 interface IndexPageContentProps {
   blockType: BlockType
+}
+
+export const getPathFromBlock = (block: Block) => {
+  const path = [block.text.textValue]
+  const indexName = {
+    [BlockType.Source]: 'Sources',
+    [BlockType.Topic]: 'Topics',
+  }[block.type]
+  if (indexName) {
+    path.push(indexName)
+  }
+  return path.reverse()
 }
 
 export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
@@ -49,7 +63,7 @@ export const IndexPageContent = ({ blockType }: IndexPageContentProps) => {
   }
 
   return (
-    <IndexPageView title={blocksRes.data![blockId].text.textValue}>
+    <IndexPageView path={getPathFromBlock(blocksRes.data![blockId])}>
       <IndexResults
         blockType={blockType}
         relatedBlockId={blockId}

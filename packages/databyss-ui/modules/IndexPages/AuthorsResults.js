@@ -8,7 +8,7 @@ export const AuthorsResults = ({ entries, onClick }) => {
     entries.map((entry, index) => {
       if (entry.text) {
         return (
-          <View key={index} mb="em" px="medium" widthVariant="content">
+          <View key={index} mb="em" widthVariant="content">
             <BaseControl
               data-test-element="source-results"
               onClick={() => {
@@ -17,6 +17,7 @@ export const AuthorsResults = ({ entries, onClick }) => {
                 }
               }}
               py="small"
+              px="tiny"
               hoverColor="background.2"
               activeColor="background.3"
               userSelect="auto"

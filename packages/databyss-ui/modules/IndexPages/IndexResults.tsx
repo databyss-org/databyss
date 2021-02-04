@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, RawHtml } from '@databyss-org/ui/primitives'
+import { RawHtml } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import {
@@ -84,5 +84,5 @@ export const IndexResults = ({
       </IndexResultsContainer>
     ))
 
-  return <View px="medium">{_results}</View>
+  return <>{_results}</>
 }

@@ -1,18 +1,16 @@
 import React from 'react'
-import { Helmet } from 'react-helmet'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
-import { Text, View, RawHtml } from '@databyss-org/ui/primitives'
+import { Text, RawHtml } from '@databyss-org/ui/primitives'
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
-import { StickyHeader } from '@databyss-org/ui/components/Navigation/SickyHeader'
-import { PageContentView } from '@databyss-org/ui/components/PageContent/PageContent'
 import {
   IndexResultsContainer,
   IndexResultTitle,
   IndexResultDetails,
 } from '@databyss-org/ui/components'
+import { IndexPageView } from './IndexPageContent'
 
 export const SearchContent = () => {
   const { getAccountFromLocation } = useNavigationContext()
@@ -58,22 +56,10 @@ export const SearchContent = () => {
   }
 
   return (
-    <>
-      <StickyHeader path={['Search in text', _query]} />
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>{_query}</title>
-      </Helmet>
-      <PageContentView ml="medium">
-        <View pb="medium">
-          <Text variant="bodyHeading1" color="text.3">
-            &quot;{_query}&quot;
-          </Text>
-        </View>
-        <EntrySearchLoader query={_query}>
-          {(results) => ComposeResults(results)}
-        </EntrySearchLoader>
-      </PageContentView>
-    </>
+    <IndexPageView path={['Search', _query]}>
+      <EntrySearchLoader query={_query}>
+        {(results) => ComposeResults(results)}
+      </EntrySearchLoader>
+    </IndexPageView>
   )
 }

@@ -59,7 +59,7 @@ export const AuthorsContent = ({ query }) => {
   )
 
   return (
-    <IndexPageView title={authorFullName}>
+    <IndexPageView path={['Authors', authorFullName]}>
       <AuthorsResults onClick={onEntryClick} entries={entries} />
     </IndexPageView>
   )

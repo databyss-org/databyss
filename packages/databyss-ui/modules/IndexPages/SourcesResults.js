@@ -39,7 +39,7 @@ export const SourcesResults = ({ entries, onClick }) => {
     entries?.map((entry, index) => {
       if (entry.text) {
         return (
-          <View key={index} mb="em" px="medium" widthVariant="content">
+          <View key={index} mb="em" widthVariant="content">
             <BaseControl
               data-test-element="source-results"
               onClick={() => {

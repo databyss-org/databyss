@@ -16,7 +16,7 @@ export interface IncludeFromResultOptions<T extends Document> {
 
 export interface UseDocumentsOptions extends QueryOptions {
   includeFromResults?: IncludeFromResultOptions<any>
-  enabled: boolean
+  enabled?: boolean
 }
 
 export const useDocuments = <T extends Document>(

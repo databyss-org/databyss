@@ -76,7 +76,7 @@ export const SourcesContent = () => {
   const onSourceClick = (source) => navigate(`/sources/${source.id}`)
 
   return (
-    <IndexPageView title="All Sources">
+    <IndexPageView path={['All Sources']}>
       <CitationStyleDropDown
         items={CitationStyleOptions}
         value={citationStyleOption}
