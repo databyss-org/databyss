@@ -42,6 +42,7 @@ const PageMenu = () => {
 
   const getSession = useSessionContext((c) => c && c.getSession)
   const setDefaultPage = useSessionContext((c) => c && c.setDefaultPage)
+  const getPublicAccount = useEditorPageContext((c) => c && c.getPublicAccount)
   const { account, defaultPageId } = getSession()
   const [showMenu, setShowMenu] = useState(false)
   const [isPagePublic, setIsPagePublic] = useState(false)
