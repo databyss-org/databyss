@@ -52,7 +52,7 @@ export const useDocuments = <T extends Document>(
     queryKey,
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) => {
-        // console.log('useDocuments.fetch', selector)
+        console.log('useDocuments.fetch', selector)
         return dbRef.current
           .find({ selector })
           .then((res) => resolve(DocumentArrayToDict(res.docs)))
@@ -81,7 +81,7 @@ export const useDocuments = <T extends Document>(
           !queryClient.getQueryData<DocumentDict<T>>(queryKey)?.[change.id]
         ) {
           // doc was added or removed, refresh list
-          // console.log('useDocuments.invalidateAll', queryKey)
+          console.log('useDocuments.invalidateAll', queryKey)
           queryClient.invalidateQueries(queryKey)
         } else {
           // the doc was modified, so update the cache
@@ -93,10 +93,10 @@ export const useDocuments = <T extends Document>(
         }
       })
     return () => {
-      // on unmount, stop listening to pouch changes and invalidate the cache
+      // on unmount, stop listening to pouch changes
       // console.log('useDocuments.unsubscribe', queryKey)
       changes.cancel()
-      queryClient.removeQueries(queryKey)
+      // queryClient.removeQueries(queryKey)
     }
   }, [])
 
