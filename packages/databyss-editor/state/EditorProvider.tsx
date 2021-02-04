@@ -7,7 +7,7 @@ import React, {
   useMemo,
 } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { setBlockRelations } from '@databyss-org/services/entries'
 import { Patch } from 'immer'
 import {
   SET_SELECTION,
@@ -138,8 +138,6 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
   { children, initialState = _initState, onChange },
   ref
 ) => {
-  const setBlockRelations = useEntryContext((c) => c && c.setBlockRelations)
-
   // get the current page header
 
   const pagePathRef = useRef<PagePath>({ path: [], blockRelations: [] })
@@ -154,52 +152,50 @@ const EditorProvider: React.RefForwardingComponent<EditorHandles, PropsType> = (
   const forkOnChange = (props: OnChangeArgs) => {
     pagePathRef.current = getPagePath(props.nextState)
     if (onChange) {
-      if (setBlockRelations) {
-        // check if a new atomic has just been removed in the patches
-        if (
-          props.patches.filter(
-            (p) =>
-              p.op === 'replace' &&
-              p?.path[0] === 'newEntities' &&
-              p?.value.length === 0
-          ).length
-        ) {
-          // if it has been added, set a flag for pending atomic
-          // useEffect inside of ContentEditable will set this flag to false, block relations must be set before the atomic is set in order to update the headers in the atomic cache
-          pendingAtomicSave.current = true
-        }
+      // check if a new atomic has just been removed in the patches
+      if (
+        props.patches.filter(
+          (p) =>
+            p.op === 'replace' &&
+            p?.path[0] === 'newEntities' &&
+            p?.value.length === 0
+        ).length
+      ) {
+        // if it has been added, set a flag for pending atomic
+        // useEffect inside of ContentEditable will set this flag to false, block relations must be set before the atomic is set in order to update the headers in the atomic cache
+        pendingAtomicSave.current = true
+      }
 
-        const _pageId = props.nextState.pageHeader?._id
-        if (_pageId) {
-          // if last action was whitelisted, set block relations
-          if (isSetBlockRelations.findIndex((t) => t === props.type) > -1) {
-            blockRelationsBuffer.current.push({
-              blocksRelationArray: indexPage({
-                pageId: _pageId,
-                blocks: props.nextState.blocks,
-              }),
-            })
-          } else if (
-            (isClearBlockRelations.findIndex((t) => t === props.type) > -1 ||
-              props.clearBlockRelations) &&
-            pagePathRef.current
-          ) {
-            blockRelationsBuffer.current.push({
-              clearPageRelationships: _pageId,
-              blocksRelationArray: indexPage({
-                pageId: _pageId,
-                blocks: props.nextState.blocks,
-              }),
-            })
-          } else if (props.type === SET_CONTENT && pagePathRef.current) {
-            if (pagePathRef?.current.blockRelations.length) {
-              /*
+      const _pageId = props.nextState.pageHeader?._id
+      if (_pageId) {
+        // if last action was whitelisted, set block relations
+        if (isSetBlockRelations.findIndex((t) => t === props.type) > -1) {
+          blockRelationsBuffer.current.push({
+            blocksRelationArray: indexPage({
+              pageId: _pageId,
+              blocks: props.nextState.blocks,
+            }),
+          })
+        } else if (
+          (isClearBlockRelations.findIndex((t) => t === props.type) > -1 ||
+            props.clearBlockRelations) &&
+          pagePathRef.current
+        ) {
+          blockRelationsBuffer.current.push({
+            clearPageRelationships: _pageId,
+            blocksRelationArray: indexPage({
+              pageId: _pageId,
+              blocks: props.nextState.blocks,
+            }),
+          })
+        } else if (props.type === SET_CONTENT && pagePathRef.current) {
+          if (pagePathRef?.current.blockRelations.length) {
+            /*
             get the page and block relations at current index
             */
-              blockRelationsBuffer.current.push({
-                blocksRelationArray: pagePathRef.current.blockRelations,
-              })
-            }
+            blockRelationsBuffer.current.push({
+              blocksRelationArray: pagePathRef.current.blockRelations,
+            })
           }
         }
 

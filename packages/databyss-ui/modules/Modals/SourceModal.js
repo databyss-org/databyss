@@ -3,13 +3,12 @@ import { buildSourceDetail } from '@databyss-org/services/sources/lib'
 import { ModalWindow } from '@databyss-org/ui/primitives'
 import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { setSource } from '@databyss-org/services/sources'
 import CitationProvider from '@databyss-org/services/citations/CitationProvider'
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { LoadingFallback, EditSourceForm } from '@databyss-org/ui/components'
 
 const SourceModal = ({ refId, visible, onUpdate, id }) => {
-  const { setSource } = useSourceContext()
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
   const sourceRes = useBlocks(BlockType.Source, {

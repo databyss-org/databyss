@@ -11,10 +11,10 @@ import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import cloneDeep from 'clone-deep'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { setSource } from '@databyss-org/services/sources'
+import { setBlockRelations } from '@databyss-org/services/entries'
+import { setTopic } from '@databyss-org/services/topics'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useEditorContext } from '../state/EditorProvider'
 import Editor from './Editor'
 import {
@@ -62,22 +62,6 @@ const ContentEditable = ({
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
 
-  const setSource = useSourceContext((c) => c && c.setSource)
-  const setBlockRelations = useEntryContext((c) => c && c.setBlockRelations)
-
-  const removePageFromSourceCacheHeader = useSourceContext(
-    (c) => c && c.removePageFromCacheHeader
-  )
-
-  const resetSourceHeaders = useSourceContext((c) => c && c.resetSourceHeaders)
-
-  const removePageFromTopicCacheHeader = useTopicContext(
-    (c) => c && c.removePageFromCacheHeader
-  )
-
-  const resetTopicHeaders = useTopicContext((c) => c && c.resetTopicHeaders)
-
-  const topicContext = useTopicContext()
   const historyContext = useHistoryContext()
 
   const {
@@ -90,7 +74,6 @@ const ContentEditable = ({
     remove,
     removeAtSelection,
     removeEntityFromQueue,
-    removeAtomicFromQueue,
     setInlineBlockRelations,
   } = editorContext
 
@@ -133,26 +116,6 @@ const ContentEditable = ({
     }
   }, [focusIndex])
 
-  // if an atomic has been removed in the reducer, push action upstream
-  useEffect(() => {
-    if (
-      state.removedEntities.length &&
-      removePageFromTopicCacheHeader &&
-      state?.pageHeader?._id
-    ) {
-      state.removedEntities.forEach((e) => {
-        const _types = {
-          SOURCE: () =>
-            removePageFromSourceCacheHeader(e._id, state.pageHeader._id),
-          TOPIC: () =>
-            removePageFromTopicCacheHeader(e._id, state.pageHeader._id),
-        }
-        _types[e.type]()
-        removeAtomicFromQueue(e._id)
-      })
-    }
-  }, [state.removedEntities])
-
   // checks if db is currently processing patches
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
   let _isDbBusy
@@ -167,12 +130,10 @@ const ContentEditable = ({
     if (
       state.newEntities.length &&
       setSource &&
-      topicContext &&
       !_isDbBusy &&
       !pendingPatches &&
       !patchQueueSize
     ) {
-      const { setTopic } = topicContext
       state.newEntities.forEach((entity) => {
         let _data = null
 
@@ -192,8 +153,6 @@ const ContentEditable = ({
               setInlineBlockRelations(() => {
                 if (_data) {
                   setSource(_data)
-                } else {
-                  resetSourceHeaders()
                 }
               })
             })
@@ -203,8 +162,6 @@ const ContentEditable = ({
               setInlineBlockRelations(() => {
                 if (_data) {
                   setTopic(_data)
-                } else {
-                  resetTopicHeaders()
                 }
               })
             })

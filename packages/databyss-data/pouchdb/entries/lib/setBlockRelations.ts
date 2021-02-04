@@ -4,6 +4,7 @@ import { dbRef } from '../../db'
 import { findAll, replaceOne } from '../../utils'
 
 const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
+  console.log('setBlockRelations', payloadArray)
   for (const payload of payloadArray) {
     const { blocksRelationArray, clearPageRelationships } = payload
 

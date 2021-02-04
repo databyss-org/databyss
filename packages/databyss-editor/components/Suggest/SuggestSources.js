@@ -7,7 +7,7 @@ import {
 } from '@databyss-org/services/catalog/constants'
 import { prefixSearchAll } from '@databyss-org/services/blocks'
 import { Separator } from '@databyss-org/ui/primitives'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { setSource } from '@databyss-org/services/sources'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
@@ -29,13 +29,8 @@ const SuggestSources = ({
   setResultsMode,
   ...others
 }) => {
-  const setSource = useSourceContext((c) => c && c.setSource)
   const sourcesRes = useBlocks(BlockType.Source)
-
-  const addPageToCacheHeader = useSourceContext(
-    (c) => c && c.addPageToCacheHeader
-  )
-  const { replace, state } = useEditorContext()
+  const { replace } = useEditorContext()
   const [suggestions, setSuggestsions] = useState()
 
   useEffect(() => {
@@ -47,11 +42,6 @@ const SuggestSources = ({
     if (!source._id) {
       source._id = uid()
       setSource(source)
-    }
-
-    // check document to see if page should be added to source cache
-    if (state.blocks.filter((b) => b._id === source._id).length < 1) {
-      addPageToCacheHeader(source._id, state.pageHeader._id)
     }
 
     replace([source])

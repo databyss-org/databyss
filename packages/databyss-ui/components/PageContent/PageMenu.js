@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
-import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useEditorPageContext } from '@databyss-org/services'
 import {
   BaseControl,
@@ -62,12 +60,6 @@ const PageMenu = () => {
 
   const setPagePublic = useEditorPageContext((c) => c && c.setPagePublic)
 
-  const getPublicAccount = useEditorPageContext((c) => c && c.getPublicAccount)
-
-  const resetSourceHeaders = useSourceContext((c) => c && c.resetSourceHeaders)
-
-  const resetTopicHeaders = useTopicContext((c) => c && c.resetTopicHeaders)
-
   const canBeArchived =
     Object.values(pages).filter((p) => !p.archive).length > 1
 
@@ -80,9 +72,6 @@ const PageMenu = () => {
 
   const onArchivePress = (bool) => {
     archivePage(params, bool).then(() => {
-      // reset headers
-      resetSourceHeaders()
-      resetTopicHeaders()
       if (bool) {
         // if default page is archived set new page as default page
         let redirect = defaultPageId

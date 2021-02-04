@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
+import { setTopic } from '@databyss-org/services/topics'
 import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
@@ -24,7 +24,6 @@ const TopicModal = ({ refId, visible, onUpdate, id }) => {
   const topicsRes = useBlocks(BlockType.Topic, {
     includeIds: [refId],
   })
-  const setTopic = useTopicContext((c) => c.setTopic)
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
 

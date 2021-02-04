@@ -5,7 +5,6 @@ import cloneDeep from 'clone-deep'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { prefixSearchAll } from '@databyss-org/services/blocks'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
-import { useTopicContext } from '@databyss-org/services/topics/TopicProvider'
 import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
@@ -24,9 +23,6 @@ const SuggestTopics = ({
   const topicsRes = useBlocks(BlockType.Topic)
 
   const { replace, state, setContent } = useEditorContext()
-  const addPageToCacheHeader = useTopicContext(
-    (c) => c && c.addPageToCacheHeader
-  )
 
   const pendingSetContent = useRef(false)
 
@@ -34,12 +30,6 @@ const SuggestTopics = ({
   const [filteredSuggestions, setFilteredSuggestions] = useState([])
 
   const onTopicSelected = (topic) => {
-    // check document to see if page should be added to topic cache
-    if (state.blocks.filter((b) => b._id === topic._id).length < 1) {
-      if (state.pageHeader?._id) {
-        addPageToCacheHeader(topic._id, state.pageHeader._id)
-      }
-    }
     if (!inlineAtomic) {
       replace([topic])
     } else {

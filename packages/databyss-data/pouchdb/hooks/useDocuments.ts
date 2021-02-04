@@ -80,7 +80,7 @@ export const useDocuments = <T extends Document>(
           !queryClient.getQueryData<DocumentDict<T>>(queryKey)?.[change.id]
         ) {
           // doc was added or removed, refresh list
-          console.log('useDocuments.invalidateAll', queryKey)
+          // console.log('useDocuments.invalidateAll', queryKey)
           queryClient.invalidateQueries(queryKey)
         } else {
           // the doc was modified, so update the cache
