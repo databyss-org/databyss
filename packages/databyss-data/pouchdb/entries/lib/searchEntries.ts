@@ -48,7 +48,6 @@ const searchEntries = async (
   const _results = _queryResponse
   for (const _result of _results) {
     // returns all pages where source id is found in element id
-
     // change this to find all pages
     const _page = await findOne({
       $type: DocumentType.Page,

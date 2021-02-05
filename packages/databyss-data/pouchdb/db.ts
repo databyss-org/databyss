@@ -89,7 +89,7 @@ export const initiatePouchDbIndexes = async () => {
 
   await dbRef.current.createIndex({
     index: {
-      fields: ['$type', 'blocks._id'],
+      fields: ['$type', 'blocks.[]._id'],
       ddoc: 'page-blocks',
     },
   })
@@ -133,13 +133,6 @@ export const initiatePouchDbIndexes = async () => {
       ddoc: 'inline-atomics',
     },
   })
-
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['$type', 'relatedBlock', 'block'],
-  //     ddoc: 'block-reltions',
-  //   },
-  // })
 
   console.log('indexes built')
   areIndexBuilt.current = true

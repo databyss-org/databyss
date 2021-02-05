@@ -23,29 +23,30 @@ const getAuthors = async (): Promise<Author[] | ResourceNotFoundError> => {
 
   for (const _source of _sources) {
     // look up pages topic appears in using block relations
+    _source.isInPages = ['dummy-data']
 
-    const isInPages: string[] = []
-    // returns all pages where source id is found in element id
-    const _response = await findAll({
-      $type: DocumentType.Page,
-      query: {
-        blocks: {
-          $elemMatch: {
-            _id: _source._id,
-          },
-        },
-      },
-      useIndex: 'page-blocks',
-    })
+    // const isInPages: string[] = []
+    // // returns all pages where source id is found in element id
+    // const _response = await findAll({
+    //   $type: DocumentType.Page,
+    //   query: {
+    //     blocks: {
+    //       $elemMatch: {
+    //         _id: _source._id,
+    //       },
+    //     },
+    //   },
+    //   useIndex: 'page-blocks',
+    // })
 
-    if (_response.length) {
-      _response.forEach((d) => {
-        if (!d.archive) {
-          isInPages.push(d._id)
-        }
-      })
-      _source.isInPages = isInPages
-    }
+    // if (_response.length) {
+    //   _response.forEach((d) => {
+    //     if (!d.archive) {
+    //       isInPages.push(d._id)
+    //     }
+    //   })
+    //   _source.isInPages = isInPages
+    // }
   }
   // group by authors and return array of authors
   const authorsDict = getAuthorsFromSources(_sources)

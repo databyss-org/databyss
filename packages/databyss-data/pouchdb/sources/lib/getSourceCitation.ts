@@ -29,28 +29,32 @@ const getSourceCitation = async (
   for (const _source of _sources) {
     // look up pages sources appears in using block relations
 
-    const isInPages: string[] = []
-    // returns all pages where source id is found in element id
-    const _response = await findAll({
-      $type: DocumentType.Page,
-      query: {
-        blocks: {
-          $elemMatch: {
-            _id: _source._id,
-          },
-        },
-      },
-      useIndex: 'page-blocks',
-    })
+    // TODO: THIS BYPASSES THE ARCHIVE PAGE
 
-    if (_response.length) {
-      _response.forEach((d) => {
-        if (!d.archive) {
-          isInPages.push(d._id)
-        }
-      })
-      _source.isInPages = isInPages
-    }
+    _source.isInPages = ['dummy-data']
+
+    // const isInPages: string[] = []
+    // // returns all pages where source id is found in element id
+    // const _response = await findAll({
+    //   $type: DocumentType.Page,
+    //   query: {
+    //     blocks: {
+    //       $elemMatch: {
+    //         _id: _source._id,
+    //       },
+    //     },
+    //   },
+    //   useIndex: 'page-blocks',
+    // })
+
+    // if (_response.length) {
+    //   _response.forEach((d) => {
+    //     if (!d.archive) {
+    //       isInPages.push(d._id)
+    //     }
+    //   })
+    //   _source.isInPages = isInPages
+    // }
 
     // UNCOMMENT THIS IF adding block relations to `inPages` property`
     // const _blockRelationsResponse = await db.find({

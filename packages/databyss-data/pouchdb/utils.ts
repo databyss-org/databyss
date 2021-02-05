@@ -52,18 +52,18 @@ export const findAll = async ({
     console.log($type, query)
   }
 
-  dbRef.current
-    .explain({
-      selector: {
-        ...query,
-        $type,
-      },
-      use_index: useIndex,
-    })
-    .then((explained) => {
-      console.log(explained.index.ddoc)
-      // detailed explained info can be viewed
-    })
+  // dbRef.current
+  //   .explain({
+  //     selector: {
+  //       ...query,
+  //       $type,
+  //     },
+  //     use_index: useIndex,
+  //   })
+  //   .then((explained) => {
+  //     console.log(explained.index.ddoc)
+  //     // detailed explained info can be viewed
+  //   })
 
   return _response.docs
 }
@@ -77,12 +77,23 @@ export const findOne = async ({
   query: any
   useIndex?: string
 }) => {
+  let _useIndex
+  const _designDocResponse = await dbRef.current.find({
+    selector: {
+      _id: `_design/${useIndex}`,
+    },
+  })
+
+  if (_designDocResponse.docs.length) {
+    _useIndex = useIndex
+  }
+
   const _response = await dbRef.current.find({
     selector: {
       $type,
       ...query,
     },
-    use_index: useIndex,
+    use_index: _useIndex,
   })
 
   if (_response?.warning) {
@@ -90,18 +101,18 @@ export const findOne = async ({
     console.log($type, query)
   }
 
-  dbRef.current
-    .explain({
-      selector: {
-        ...query,
-        $type,
-      },
-      use_index: useIndex,
-    })
-    .then((explained) => {
-      console.log(explained.index.ddoc)
-      // detailed explained info can be viewed
-    })
+  // dbRef.current
+  //   .explain({
+  //     selector: {
+  //       ...query,
+  //       $type,
+  //     },
+  //     use_index: useIndex,
+  //   })
+  //   .then((explained) => {
+  //     console.log(explained.index.ddoc)
+  //     // detailed explained info can be viewed
+  //   })
 
   if (_response.docs.length) {
     return _response.docs[0]

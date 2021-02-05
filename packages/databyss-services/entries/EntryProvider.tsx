@@ -13,6 +13,9 @@ import {
   onClearBlockRelationsCache,
 } from './actions'
 import { optimizeBlockRelations } from './util'
+import { initSearchIndex, dbRef } from '../../databyss-data/pouchdb/db'
+import { BlockType } from '../interfaces/Block'
+import { DocumentType } from '../../databyss-data/pouchdb/interfaces'
 import {
   Text,
   BlockRelationsServerResponse,
@@ -71,10 +74,20 @@ const EntryProvider: React.FunctionComponent<PropsType> = ({
   /*
   HACK this initiates a search index, if index is already built, this function will pass through
   */
+
   useEffect(() => {
     setTimeout(() => {
-      searchEntries('xxxxxx')
-    }, 10000)
+      indexedDB.databases().then((r) => {
+        if (!r.find((_db) => _db.name.includes('_pouch_local-search'))) {
+          setTimeout(() => {
+            console.log('building search index')
+            searchEntries('xxxxx')
+          }, 5000)
+        }
+      })
+
+      // searchEntries('testing')
+    }, 1000)
   }, [])
 
   const setQuery = (query: Text) => {
