@@ -72,7 +72,9 @@ const EntryProvider: React.FunctionComponent<PropsType> = ({
   HACK this initiates a search index, if index is already built, this function will pass through
   */
   useEffect(() => {
-    searchEntries('xxxxxx')
+    setTimeout(() => {
+      searchEntries('xxxxxx')
+    }, 10000)
   }, [])
 
   const setQuery = (query: Text) => {

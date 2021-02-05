@@ -52,40 +52,47 @@ export const areIndexBuilt = {
 }
 
 export const initiatePouchDbIndexes = async () => {
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['$type'],
-  //     ddoc: 'fetch-all',
-  //   },
-  // })
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type'],
+      ddoc: 'fetch-all',
+    },
+  })
 
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['$type', '_id'],
-  //     ddoc: 'fetch-one',
-  //   },
-  // })
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', '_id'],
+      ddoc: 'fetch-one',
+    },
+  })
 
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['$type', 'relatedBlock'],
-  //     ddoc: 'block-relations',
-  //   },
-  // })
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'relatedBlock'],
+      ddoc: 'block-relations',
+    },
+  })
 
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['$type', 'page'],
-  //     ddoc: 'block-relations-page',
-  //   },
-  // })
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'relatedBlock', 'block'],
+      ddoc: 'block-relation',
+    },
+  })
 
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['$type', 'blocks'],
-  //     ddoc: 'page-blocks',
-  //   },
-  // })
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'page'],
+      ddoc: 'block-relations-page',
+    },
+  })
+
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'blocks._id'],
+      ddoc: 'page-blocks',
+    },
+  })
 
   // await db.createIndex({
   //   index: {
@@ -105,19 +112,27 @@ export const initiatePouchDbIndexes = async () => {
   //   },
   // })
 
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['$type', 'type'],
-  //     ddoc: 'fetch-atomic',
-  //   },
-  // })
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'type'],
+      ddoc: 'fetch-atomic',
+    },
+  })
 
-  // await dbRef.current.createIndex({
-  //   index: {
-  //     fields: ['$type', 'relatedBlock', 'relationshipType'],
-  //     ddoc: 'inline-atomics',
-  //   },
-  // })
+  // THIS INDEX CAN BE OPTIONAL USING THE ABOVE INDEX 'fetch-atomic'
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'type', '_id'],
+      ddoc: 'fetch-atomic-id',
+    },
+  })
+
+  await dbRef.current.createIndex({
+    index: {
+      fields: ['$type', 'relatedBlock', 'relationshipType'],
+      ddoc: 'inline-atomics',
+    },
+  })
 
   // await dbRef.current.createIndex({
   //   index: {

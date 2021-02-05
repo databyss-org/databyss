@@ -31,33 +31,77 @@ export const upsert = async ({
   return _doc
 }
 
-export const findAll = async ($type: DocumentType, query?: any) => {
+export const findAll = async ({
+  $type,
+  query,
+  useIndex,
+}: {
+  $type: DocumentType
+  query?: any
+  useIndex?: string
+}) => {
   const _response = await dbRef.current.find({
     selector: {
-      ...query,
       $type,
+      ...query,
     },
+    use_index: useIndex,
   })
   if (_response?.warning) {
     console.log('ERROR', _response)
     console.log($type, query)
   }
+
+  dbRef.current
+    .explain({
+      selector: {
+        ...query,
+        $type,
+      },
+      use_index: useIndex,
+    })
+    .then((explained) => {
+      console.log(explained.index.ddoc)
+      // detailed explained info can be viewed
+    })
 
   return _response.docs
 }
 
-export const findOne = async ($type: DocumentType, query: any) => {
+export const findOne = async ({
+  $type,
+  query,
+  useIndex,
+}: {
+  $type: DocumentType
+  query: any
+  useIndex?: string
+}) => {
   const _response = await dbRef.current.find({
     selector: {
-      ...query,
       $type,
+      ...query,
     },
+    use_index: useIndex,
   })
 
   if (_response?.warning) {
     console.log('ERROR', _response)
     console.log($type, query)
   }
+
+  dbRef.current
+    .explain({
+      selector: {
+        ...query,
+        $type,
+      },
+      use_index: useIndex,
+    })
+    .then((explained) => {
+      console.log(explained.index.ddoc)
+      // detailed explained info can be viewed
+    })
 
   if (_response.docs.length) {
     return _response.docs[0]
@@ -74,7 +118,7 @@ export const replaceOne = async ({
   query: any
   doc: any
 }) => {
-  const res = await findOne($type, query)
+  const res = await findOne({ $type, query })
   // if document doesnt exit, create a new one
   const _id = res?._id || uid()
   // replace document

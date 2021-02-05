@@ -4,8 +4,12 @@ import { DocumentType, PageDoc } from '../../interfaces'
 import { findAll, findOne } from '../../utils'
 
 const getTopicHeaders = async () => {
-  const _topics: Topic[] = await findAll(DocumentType.Block, {
-    type: BlockType.Topic,
+  const _topics: Topic[] = await findAll({
+    $type: DocumentType.Block,
+    query: {
+      type: BlockType.Topic,
+    },
+    useIndex: 'fetch-atomic',
   })
 
   if (!_topics.length) {
@@ -16,19 +20,24 @@ const getTopicHeaders = async () => {
     // look up pages topic appears in using block relations
     const isInPages: string[] = []
 
-    const _blockRelations: BlockRelation[] = await findAll(
-      DocumentType.BlockRelation,
-      {
+    const _blockRelations: BlockRelation[] = await findAll({
+      $type: DocumentType.BlockRelation,
+      query: {
         relatedBlock: _topic._id,
-      }
-    )
+      },
+      useIndex: 'block-relations',
+    })
 
     if (_blockRelations.length) {
       // find if page has been archived
       for (const _relation of _blockRelations) {
         if (_relation.page) {
-          const _page: Page = await findOne(DocumentType.Page, {
-            _id: _relation.page,
+          const _page: Page = await findOne({
+            $type: DocumentType.Page,
+            query: {
+              _id: _relation.page,
+            },
+            useIndex: 'fetch-one',
           })
 
           if (_page && !_page?.archive) {
@@ -41,12 +50,16 @@ const getTopicHeaders = async () => {
 
     // look up to see if it exists on a page not yet added as a block relation
     // returns all pages where source id is found in element id
-    const _pages: PageDoc[] = await findAll(DocumentType.Page, {
-      blocks: {
-        $elemMatch: {
-          _id: _topic._id,
+    const _pages: PageDoc[] = await findAll({
+      $type: DocumentType.Page,
+      query: {
+        blocks: {
+          $elemMatch: {
+            _id: _topic._id,
+          },
         },
       },
+      useIndex: 'page-blocks',
     })
 
     if (_pages.length) {

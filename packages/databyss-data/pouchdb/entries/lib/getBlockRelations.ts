@@ -7,8 +7,12 @@ import { findAll } from '../../utils'
 const getBlockRelations = async (
   id: string
 ): Promise<BlockRelationsServerResponse | ResourceNotFoundError> => {
-  const _docs: BlockRelation[] = await findAll(DocumentType.BlockRelation, {
-    relatedBlock: id,
+  const _docs: BlockRelation[] = await findAll({
+    $type: DocumentType.BlockRelation,
+    query: {
+      relatedBlock: id,
+    },
+    useIndex: 'block-relations',
   })
   if (!_docs.length) {
     return new ResourceNotFoundError('No block relations found')
