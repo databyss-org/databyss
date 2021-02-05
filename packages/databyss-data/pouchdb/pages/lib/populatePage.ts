@@ -10,23 +10,35 @@ const populatePage = async (
 ): Promise<Page | ResourceNotFoundError> => {
   // TODO: wrap function in error handler
 
-  const _page: PageDoc | null = await findOne(DocumentType.Page, {
-    _id,
+  const _page: PageDoc | null = await findOne({
+    $type: DocumentType.Page,
+    query: {
+      _id,
+    },
+    useIndex: 'fetch-one',
   })
 
   if (!_page) {
     return new ResourceNotFoundError('page not found')
   }
   // load selection
-  const _selection = await findOne(DocumentType.Selection, {
-    _id: _page.selection,
+  const _selection = await findOne({
+    $type: DocumentType.Selection,
+    query: {
+      _id: _page.selection,
+    },
+    useIndex: 'fetch-one',
   })
 
   // load blocks
   const _blocks: Block[] = await Promise.all(
     _page.blocks.map(async (data) => {
-      const _block = await findOne(DocumentType.Block, {
-        _id: data._id,
+      const _block = await findOne({
+        $type: DocumentType.Block,
+        query: {
+          _id: data._id,
+        },
+        useIndex: 'fetch-one',
       })
 
       // check for atomic block closure

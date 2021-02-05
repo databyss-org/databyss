@@ -9,8 +9,12 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
 
     // clear all block relationships associated to page id
     if (clearPageRelationships) {
-      const _blockRelationsToClear = await findAll(DocumentType.BlockRelation, {
-        page: clearPageRelationships,
+      const _blockRelationsToClear = await findAll({
+        $type: DocumentType.BlockRelation,
+        query: {
+          page: clearPageRelationships,
+        },
+        useIndex: 'block-relations-page',
       })
 
       const _idsToDelete: any = []

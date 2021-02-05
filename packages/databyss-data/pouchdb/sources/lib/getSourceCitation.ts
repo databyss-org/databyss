@@ -14,8 +14,12 @@ export type CitationResponse = Partial<SourceCitationHeader> & {
 const getSourceCitation = async (
   styleId: string | undefined
 ): Promise<CitationResponse[] | ResourceNotFoundError> => {
-  const _sources: SourceCitationHeader[] = await findAll(DocumentType.Block, {
-    type: BlockType.Source,
+  const _sources: SourceCitationHeader[] = await findAll({
+    $type: DocumentType.Block,
+    query: {
+      type: BlockType.Source,
+    },
+    useIndex: 'fetch-atomic',
   })
 
   if (!_sources.length) {
@@ -25,24 +29,32 @@ const getSourceCitation = async (
   for (const _source of _sources) {
     // look up pages sources appears in using block relations
 
-    const isInPages: string[] = []
-    // returns all pages where source id is found in element id
-    const _response = await findAll(DocumentType.Page, {
-      blocks: {
-        $elemMatch: {
-          _id: _source._id,
-        },
-      },
-    })
+    // TODO: THIS BYPASSES THE ARCHIVE PAGE
 
-    if (_response.length) {
-      _response.forEach((d) => {
-        if (!d.archive) {
-          isInPages.push(d._id)
-        }
-      })
-      _source.isInPages = isInPages
-    }
+    _source.isInPages = ['dummy-data']
+
+    // const isInPages: string[] = []
+    // // returns all pages where source id is found in element id
+    // const _response = await findAll({
+    //   $type: DocumentType.Page,
+    //   query: {
+    //     blocks: {
+    //       $elemMatch: {
+    //         _id: _source._id,
+    //       },
+    //     },
+    //   },
+    //   useIndex: 'page-blocks',
+    // })
+
+    // if (_response.length) {
+    //   _response.forEach((d) => {
+    //     if (!d.archive) {
+    //       isInPages.push(d._id)
+    //     }
+    //   })
+    //   _source.isInPages = isInPages
+    // }
 
     // UNCOMMENT THIS IF adding block relations to `inPages` property`
     // const _blockRelationsResponse = await db.find({

@@ -58,8 +58,12 @@ const addOrReplaceBlock = async (p, page) => {
     account: 'DEFAULT ACCOUNT',
   }
 
-  let _block: Block | null = await findOne(DocumentType.Block, {
-    _id: _blockId,
+  let _block: Block | null = await findOne({
+    $type: DocumentType.Block,
+    query: {
+      _id: _blockId,
+    },
+    useIndex: 'fetch-one',
   })
 
   // if block doesnt exist, create block
