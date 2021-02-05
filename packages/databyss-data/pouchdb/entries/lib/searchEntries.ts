@@ -1,8 +1,6 @@
-import { BlockType } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
-import { dbRef } from '../../db'
 import { DocumentType } from '../../interfaces'
-import { findOne } from '../../utils'
+import { findOne, searchText } from '../../utils'
 
 const searchEntries = async (
   encodedQuery: string
@@ -15,26 +13,7 @@ const searchEntries = async (
 > => {
   const _query = decodeURIComponent(encodedQuery)
 
-  // calculate how strict we want the search to be
-
-  // will require at least one word to be in the results
-  const _queryLength = _query.split(' ').length
-  let _percentageToMatch = 1 / _queryLength
-  _percentageToMatch = +_percentageToMatch.toFixed(3)
-  _percentageToMatch *= 100
-  _percentageToMatch = +_percentageToMatch.toFixed(0)
-
-  console.log('init search', _query)
-  console.log(_percentageToMatch)
-
-  const _res = await dbRef.current.search({
-    query: _query,
-    fields: ['text.textValue'],
-    include_docs: true,
-    filter: (doc) =>
-      doc.type === BlockType.Entry && doc.$type === DocumentType.Block,
-    mm: `${_percentageToMatch}%`,
-  })
+  const _res = await searchText(_query)
 
   console.log('first response', _res)
 
@@ -42,7 +21,6 @@ const searchEntries = async (
   if (!_queryResponse.length) {
     return new ResourceNotFoundError('no results found')
   }
-
   // if results are found, look up page and append to result
 
   const _results = _queryResponse

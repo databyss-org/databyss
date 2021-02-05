@@ -1,7 +1,7 @@
-import { BlockRelation, BlockType } from '@databyss-org/editor/interfaces'
-import { Topic, Page } from '@databyss-org/services/interfaces'
-import { DocumentType, PageDoc } from '../../interfaces'
-import { findAll, findOne } from '../../utils'
+import { BlockType } from '@databyss-org/editor/interfaces'
+import { Topic } from '@databyss-org/services/interfaces'
+import { DocumentType } from '../../interfaces'
+import { findAll } from '../../utils'
 
 const getTopicHeaders = async () => {
   const _topics: Topic[] = await findAll({

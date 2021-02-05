@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useEffect } from 'react'
+import React, { useCallback, useRef } from 'react'
 import { debounce } from 'lodash'
 import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
 import createReducer from '@databyss-org/services/lib/createReducer'
@@ -13,9 +13,6 @@ import {
   onClearBlockRelationsCache,
 } from './actions'
 import { optimizeBlockRelations } from './util'
-import { initSearchIndex, dbRef } from '../../databyss-data/pouchdb/db'
-import { BlockType } from '../interfaces/Block'
-import { DocumentType } from '../../databyss-data/pouchdb/interfaces'
 import {
   Text,
   BlockRelationsServerResponse,
@@ -74,21 +71,6 @@ const EntryProvider: React.FunctionComponent<PropsType> = ({
   /*
   HACK this initiates a search index, if index is already built, this function will pass through
   */
-
-  useEffect(() => {
-    setTimeout(() => {
-      indexedDB.databases().then((r) => {
-        if (!r.find((_db) => _db.name.includes('_pouch_local-search'))) {
-          setTimeout(() => {
-            console.log('building search index')
-            searchEntries('xxxxx')
-          }, 5000)
-        }
-      })
-
-      // searchEntries('testing')
-    }, 1000)
-  }, [])
 
   const setQuery = (query: Text) => {
     dispatch(onSetQuery(query))

@@ -94,7 +94,10 @@ const SessionProvider = ({
           groupId,
         })
 
-        await initiatePouchDbIndexes()
+        // TODO: indexing is built after 5 seconds
+        setTimeout(() => {
+          initiatePouchDbIndexes()
+        }, [5000])
 
         // set up live sync
         syncPouchDb({
