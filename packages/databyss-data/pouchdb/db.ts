@@ -49,7 +49,6 @@ declare global {
 
 const _initDb = new PouchDB('local', {
   auto_compaction: true,
-  adapter: 'websql',
 })
 
 export const dbRef: DbRef = {
@@ -290,6 +289,5 @@ export const resetPouchDb = async () => {
 
   dbRef.current = new PouchDB('local', {
     auto_compaction: true,
-    adapter: 'websql',
   })
 }
