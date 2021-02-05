@@ -99,15 +99,16 @@ export const initiatePouchDbIndexes = async () => {
   // })
 
   // if search index doesnt exist, add search index
-  const _dbs = await window.indexedDB.databases()
+  try {
+    const _dbs = await window.indexedDB.databases()
 
-  console.log(_dbs)
-
-  if (!_dbs.find((_db) => _db.name.includes('_pouch_local-search'))) {
-    console.log('building search index')
-    await searchText('xxxxx')
+    if (!_dbs.find((_db) => _db.name.includes('_pouch_local-search'))) {
+      console.log('building search index')
+      await searchText('xxxxx')
+    }
+  } catch (err) {
+    console.log(err)
   }
-
   // await dbRef.current.createIndex({
   //   index: {
   //     fields: ['$type', 'blocks.[]._id'],
