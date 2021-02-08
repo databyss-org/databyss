@@ -34,7 +34,7 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 
 interface DbRef {
-  current: PouchDB.Database<any>
+  current: PouchDB.Database<any> | null
 }
 
 declare global {
@@ -43,12 +43,19 @@ declare global {
   }
 }
 
-const _initDb = new PouchDB('local', {
-  auto_compaction: true,
-})
+const getPouchDb = (groupId: string) =>
+  new PouchDB(`g_${groupId}`, {
+    auto_compaction: true,
+  })
 
 export const dbRef: DbRef = {
-  current: _initDb,
+  current: null,
+}
+
+// try to load pouch_secrets from local storage to init db
+const _secrets = getPouchSecret()
+if (_secrets) {
+  dbRef.current = getPouchDb(Object.keys(_secrets)[0])
 }
 
 export const areIndexBuilt = {
@@ -151,16 +158,15 @@ export const replicateDbFromRemote = ({
   // dbPassword: string
   groupId: string
 }) =>
-  new Promise((resolve, reject) => {
+  new Promise<void>((resolve, reject) => {
     // for now we are getting the first credentials from local storage groups
-    let _creds = getPouchSecret()
+    const _creds = getPouchSecret()
     // let _dbId
     let _cred
 
     if (!_creds) {
       reject()
     }
-    _creds = _creds && JSON.parse(_creds)
     if (_creds) {
       // _dbId = Object.keys(_creds)[0]
       _cred = _creds[groupId]
@@ -178,6 +184,7 @@ export const replicateDbFromRemote = ({
         password: _cred.dbPassword,
       },
     }
+    dbRef.current = getPouchDb(groupId)
     dbRef.current.replicate
       .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
       .on('complete', () => resolve())
@@ -212,8 +219,8 @@ export const syncPouchDb = ({
     },
   }
 
-  dbRef.current.replicate
-    .to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
+  dbRef
+    .current!.replicate.to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
       ...opts,
       // todo: add groupId to every document
       // filter: (doc) => doc.$type !== DocumentType.UserPreferences,
@@ -238,8 +245,8 @@ export const syncPouchDb = ({
       }
     })
 
-  dbRef.current.replicate
-    .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
+  dbRef
+    .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
   // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
 }
@@ -261,7 +268,7 @@ export const initiatePouchDbValidators = () => {
   tv4.addSchema('pouchDb', pouchDocSchema)
   tv4.addSchema('blockSchema', blockSchema)
 
-  dbRef.current.transform({
+  dbRef.current!.transform({
     outgoing: (doc) => {
       _validatorSchemas.forEach((s) => {
         if (doc.type === s[0] || doc.$type === s[0]) {
@@ -285,7 +292,5 @@ export const resetPouchDb = async () => {
     await dbRef.current.destroy()
   }
 
-  dbRef.current = new PouchDB('local', {
-    auto_compaction: true,
-  })
+  dbRef.current = null
 }
