@@ -1,8 +1,7 @@
 import { Patch } from 'immer'
 import { Block, BlockType } from '@databyss-org/services/interfaces'
-import { uid } from '@databyss-org/data/lib/uid'
 import { PageDoc, DocumentType } from '../interfaces'
-import { upsert, findOne } from '../utils'
+import { upsert } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import { savePage } from './'
 
@@ -24,7 +23,7 @@ const applyPatch = (node, path, value) => {
 }
 
 // same as Object.assign, but filters out unwanted fields
-const assignPatchValue = (obj, value, allowed = ['text', 'type']) => {
+const assignPatchValue = (obj, value, allowed = ['text', 'type', '_id']) => {
   Object.keys(value).forEach((key) => {
     if (allowed.includes(key)) {
       obj[key] = value[key]
@@ -52,37 +51,8 @@ const addOrReplaceBlock = async (p, page) => {
     return
   }
 
-  // // add or update block
-  // const _blockFields = {
-  //   _id: _blockId,
-  //   account: 'DEFAULT ACCOUNT',
-  // }
-
-  // let _block: Block | null = await findOne(DocumentType.Block, {
-  //   _id: _blockId,
-  // })
-
-  // // if block doesnt exist, create block
-  // if (!_block) {
-  //   // populate block
-  //   _block = {
-  //     _id: uid(),
-  //     type: BlockType.Entry,
-  //     text: { textValue: '', ranges: [] },
-  //   }
-  //   // initiate new block
-  //   await upsert({
-  //     $type: DocumentType.Block,
-  //     _id: _blockId,
-  //     doc: _block,
-  //   })
-  // }
-
-  // Object.assign(_block, _blockFields)
-
-  const _block: Block = {
+  const _block: Partial<Block> = {
     _id: _blockId,
-    account: 'DEFAULT ACCOUNT',
   }
 
   // if it's an add or we're replacing the whole block, just assign the value
@@ -92,7 +62,7 @@ const addOrReplaceBlock = async (p, page) => {
     applyPatch(_block, p.path.slice(2), p.value)
   }
 
-  await upsert({ $type: DocumentType.Block, _id: _block._id, doc: _block })
+  await upsert({ $type: DocumentType.Block, _id: _block._id!, doc: _block })
 }
 
 const replacePatch = async (p, page) => {

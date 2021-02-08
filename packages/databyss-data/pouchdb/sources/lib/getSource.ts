@@ -11,9 +11,13 @@ const getSource = async (
 ): Promise<SourceCitationHeader | ResourceNotFoundError> => {
   // get source and pages source exists in
 
-  const _source: SourceCitationHeader = await findOne(DocumentType.Block, {
-    _id,
-    type: BlockType.Source,
+  const _source: SourceCitationHeader = await findOne({
+    $type: DocumentType.Block,
+    query: {
+      type: BlockType.Source,
+      _id,
+    },
+    useIndex: 'fetch-atomic-id',
   })
 
   if (!_source) {
@@ -26,12 +30,16 @@ const getSource = async (
 
   const isInPages: string[] = []
   // returns all pages where source id is found in element id
-  const _pageResponse = await findAll(DocumentType.Page, {
-    blocks: {
-      $elemMatch: {
-        _id,
+  const _pageResponse = await findAll({
+    $type: DocumentType.Page,
+    query: {
+      blocks: {
+        $elemMatch: {
+          _id,
+        },
       },
     },
+    useIndex: 'page-blocks',
   })
 
   if (_pageResponse.length) {

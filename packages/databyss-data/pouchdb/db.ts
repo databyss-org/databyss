@@ -1,4 +1,4 @@
-import PouchDB from 'pouchdb-browser'
+import PouchDB from 'pouchdb'
 import PouchDBFind from 'pouchdb-find'
 import PouchDBUpsert from 'pouchdb-upsert'
 import PouchDbQuickSearch from 'pouchdb-quick-search'
@@ -23,6 +23,7 @@ import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { JSONSchema4 } from 'json-schema'
 import { DocumentType } from './interfaces'
+import { searchText } from './utils'
 
 const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
@@ -36,89 +37,105 @@ interface DbRef {
   current: PouchDB.Database<any>
 }
 
+declare global {
+  interface IDBFactory {
+    databases: () => Promise<{ name: string; version: number }[]>
+  }
+}
+
+const _initDb = new PouchDB('local', {
+  auto_compaction: true,
+})
+
 export const dbRef: DbRef = {
-  current: new PouchDB('local', {
-    auto_compaction: true,
-  }),
+  current: _initDb,
+}
+
+export const areIndexBuilt = {
+  current: false,
 }
 
 export const initiatePouchDbIndexes = async () => {
-  await dbRef.current.search({
-    fields: ['text.textValue'],
-    build: true,
-  })
+  // await dbRef.current.createIndex({
+  //   index: {
+  //     fields: ['$type'],
+  //     ddoc: 'fetch-all',
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['_id'],
-    },
-  })
+  // await dbRef.current.createIndex({
+  //   index: {
+  //     fields: ['$type', '_id'],
+  //     ddoc: 'fetch-one',
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type'],
-    },
-  })
+  // initiate search index
+  // await searchText('xxxxxx')
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', '_id'],
-    },
-  })
+  // await dbRef.current.createIndex({
+  //   index: {
+  //     fields: ['$type', 'relatedBlock'],
+  //     ddoc: 'block-relations',
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'relatedBlock'],
-    },
-  })
+  // await dbRef.current.createIndex({
+  //   index: {
+  //     fields: ['$type', 'relatedBlock', 'block'],
+  //     ddoc: 'block-relation',
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'page'],
-    },
-  })
+  // await dbRef.current.createIndex({
+  //   index: {
+  //     fields: ['$type', 'page'],
+  //     ddoc: 'block-relations-page',
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'blocks'],
-    },
-  })
+  // if search index doesnt exist, add search index
+  try {
+    const _dbs = await window.indexedDB.databases()
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['block', 'relatedBlock'],
-    },
-  })
+    if (!_dbs.find((_db) => _db.name.includes('_pouch_local-search'))) {
+      console.log('building search index')
+      await searchText('xxxxx')
+    }
+  } catch (err) {
+    console.log(err)
+  }
+  // await dbRef.current.createIndex({
+  //   index: {
+  //     fields: ['$type', 'blocks.[]._id'],
+  //     ddoc: 'page-blocks',
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'relatedBlock'],
-    },
-  })
+  // await dbRef.current.createIndex({
+  //   index: {
+  //     fields: ['$type', 'type'],
+  //     ddoc: 'fetch-atomic',
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'page'],
-    },
-  })
+  // // THIS INDEX CAN BE OPTIONAL USING THE ABOVE INDEX 'fetch-atomic'
+  // await dbRef.current.createIndex({
+  //   index: {
+  //     fields: ['$type', 'type', '_id'],
+  //     ddoc: 'fetch-atomic-id',
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'type'],
-    },
-  })
+  // await dbRef.current.createIndex({
+  //   index: {
+  //     fields: ['$type', 'relatedBlock', 'relationshipType'],
+  //     ddoc: 'inline-atomics',
+  //   },
+  // })
 
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'relatedBlock', 'relationshipType'],
-    },
-  })
-
-  await dbRef.current.createIndex({
-    index: {
-      fields: ['$type', 'relatedBlock', 'block'],
-    },
-  })
+  console.log('indexes built')
+  areIndexBuilt.current = true
 }
 
 /*

@@ -1,8 +1,6 @@
-import { BlockType } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
-import { dbRef } from '../../db'
 import { DocumentType } from '../../interfaces'
-import { findOne } from '../../utils'
+import { findOne, searchText } from '../../utils'
 
 const searchEntries = async (
   encodedQuery: string
@@ -15,41 +13,30 @@ const searchEntries = async (
 > => {
   const _query = decodeURIComponent(encodedQuery)
 
-  // calculate how strict we want the search to be
+  const _res = await searchText(_query)
 
-  // will require at least one word to be in the results
-  const _queryLength = _query.split(' ').length
-  let _percentageToMatch = 1 / _queryLength
-  _percentageToMatch = +_percentageToMatch.toFixed(3)
-  _percentageToMatch *= 100
-  _percentageToMatch = +_percentageToMatch.toFixed(0)
-
-  const _res = await dbRef.current.search({
-    query: _query,
-    fields: ['text.textValue'],
-    include_docs: true,
-    filter: (doc) => doc.type === BlockType.Entry,
-    // TODO: FIGURE OUT HOW STRICT WE WANT THE SERACH
-    mm: `${_percentageToMatch}%`,
-  })
+  console.log('first response', _res)
 
   const _queryResponse = _res.rows
   if (!_queryResponse.length) {
     return new ResourceNotFoundError('no results found')
   }
-
   // if results are found, look up page and append to result
 
   const _results = _queryResponse
   for (const _result of _results) {
     // returns all pages where source id is found in element id
-
-    const _page = await findOne(DocumentType.Page, {
-      blocks: {
-        $elemMatch: {
-          _id: _result.id,
+    // change this to find all pages
+    const _page = await findOne({
+      $type: DocumentType.Page,
+      query: {
+        blocks: {
+          $elemMatch: {
+            _id: _result.id,
+          },
         },
       },
+      useIndex: 'page-blocks',
     })
 
     if (_page) {
@@ -153,6 +140,8 @@ const searchEntries = async (
       results: Object.fromEntries(__results.results),
     }
   }
+
+  console.log('finish', __results)
 
   return __results
 }
