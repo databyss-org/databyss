@@ -1,3 +1,4 @@
+import EventEmmiter from 'es-event-emitter'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef } from './db'
 import { uid } from '../lib/uid'
@@ -11,6 +12,28 @@ export const addTimeStamp = (doc: any): any => {
   return { ...doc, createdAt: Date.now() }
 }
 
+// const EM = new EventEmmiter()
+
+// EM.on('foo', () => {
+//   console.log('some code')
+// })
+
+// EM.emit('foo')
+
+interface Patch {
+  $type: string
+  _id: string
+  doc: any
+}
+
+type upsertDictionary = {
+  current: Patch[]
+}
+
+export const upQdict: upsertDictionary = {
+  current: [],
+}
+
 export const upsert = async ({
   $type,
   _id,
@@ -20,16 +43,7 @@ export const upsert = async ({
   _id: string
   doc: any
 }) => {
-  let _doc
-  await dbRef.current.upsert(_id, (oldDoc) => {
-    _doc = {
-      ...oldDoc,
-      $type,
-      ...addTimeStamp({ ...oldDoc, ...doc }),
-    }
-    return _doc
-  })
-  return _doc
+  upQdict.current.push({ ...doc, _id, $type })
 }
 
 export const findAll = async ({
@@ -42,7 +56,7 @@ export const findAll = async ({
   useIndex?: string
 }) => {
   let _useIndex
-  const _designDocResponse = await dbRef.current.find({
+  const _designDocResponse = await dbRef.current!.find({
     selector: {
       _id: `_design/${useIndex}`,
     },
@@ -52,7 +66,7 @@ export const findAll = async ({
     _useIndex = useIndex
   }
 
-  const _response = await dbRef.current.find({
+  const _response = await dbRef.current!.find({
     selector: {
       $type,
       ...query,
@@ -90,7 +104,7 @@ export const findOne = async ({
   useIndex?: string
 }) => {
   let _useIndex
-  const _designDocResponse = await dbRef.current.find({
+  const _designDocResponse = await dbRef.current!.find({
     selector: {
       _id: `_design/${useIndex}`,
     },
@@ -100,7 +114,7 @@ export const findOne = async ({
     _useIndex = useIndex
   }
 
-  const _response = await dbRef.current.find({
+  const _response = await dbRef.current!.find({
     selector: {
       $type,
       ...query,
@@ -171,7 +185,7 @@ export const searchText = async (query) => {
   _percentageToMatch *= 100
   _percentageToMatch = +_percentageToMatch.toFixed(0)
 
-  const _res = await dbRef.current.search({
+  const _res = await dbRef.current!.search({
     query,
     fields: ['text.textValue'],
     include_docs: true,
@@ -182,3 +196,61 @@ export const searchText = async (query) => {
 
   return _res
 }
+
+// export declare interface QueueProcessor {
+//   on(event: string, listener: Function): this
+//   emit(event: string): void
+//   interval: any
+//   isProcessing: boolean
+// }
+
+export class QueueProcessor extends EventEmmiter {
+  on(event: string, listener: Function): this
+  emit(event: string): void
+  interval: any
+  isProcessing: boolean
+  constructor() {
+    super()
+    this.interval = null
+    this.isProcessing = false
+  }
+
+  process = async () => {
+    console.log(upQdict.current)
+    if (!this.isProcessing) {
+      while (upQdict.current.length) {
+        // do a coallece
+        this.isProcessing = true
+        const _upQdict = upQdict.current
+        upQdict.current = []
+        for (const Q of Object.values(_upQdict)) {
+          const { _id } = Q
+
+          await dbRef.current!.upsert(_id, (oldDoc) => {
+            const _doc = {
+              ...oldDoc,
+              ...addTimeStamp({ ...oldDoc, ...Q }),
+            }
+            return _doc
+          })
+        }
+        console.log('DONE PROCESSING')
+        this.isProcessing = false
+      }
+    }
+  }
+
+  start = () => {
+    this.interval = setInterval(this.process, 3000)
+  }
+}
+
+const EM = new QueueProcessor()
+
+EM.start()
+// EM.on('foo', () => {
+//   console.log('some code')
+// })
+
+// EM.emit('foo')
+// EM.process()
