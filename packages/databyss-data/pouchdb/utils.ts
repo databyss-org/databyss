@@ -228,11 +228,13 @@ export class QueueProcessor extends EventEmmiter {
       while (upQdict.current.length) {
         // do a coallece
         this.isProcessing = true
+        console.log('BEFORE PROCESSING', upQdict.current)
         const _upQdict = coallesceQ(upQdict.current)
+        console.log('CURRENT PROCESS', _upQdict)
         upQdict.current = []
         for (const Q of Object.values(_upQdict)) {
           const { _id } = Q
-
+          console.log('current patch', Q)
           await dbRef.current!.upsert(_id, (oldDoc) => {
             const _doc = {
               ...oldDoc,

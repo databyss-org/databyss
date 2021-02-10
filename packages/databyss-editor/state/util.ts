@@ -334,11 +334,26 @@ export const optimizePatches = (patches: Patch[]): Patch[] => {
   return _optimizedPatches.reverse()
 }
 
-export const addMetaToPatches = ({ nextState, patches }: OnChangeArgs) =>
+export const addMetaToPatches = ({
+  nextState,
+  previousState,
+  patches,
+}: OnChangeArgs) =>
   cleanupPatches(patches)?.map((_p) => {
     // add selection
     if (_p.path[0] === 'selection') {
       _p.value = { ..._p.value, _id: nextState.selection._id }
+    }
+    if (_p.path[0] === 'blocks') {
+      console.log(_p)
+      if (_p.op === 'remove') {
+        const _id = previousState.blocks[_p.path[1]]._id
+        _p.value = { ..._p.value, _id }
+      }
+      if (_p.op === 'replace') {
+        const _id = nextState.blocks[_p.path[1]]._id
+        _p.value = { ..._p.value, _id }
+      }
     }
     return _p
   })

@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback, useRef, useState } from 'react'
-import { debounce } from 'lodash'
+import { debounce, isEqual } from 'lodash'
 import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
@@ -18,6 +18,9 @@ import {
 } from '@databyss-org/editor/state/util'
 
 import { isMobile } from '../../lib/mediaQuery'
+import { normalizePage } from '@databyss-org/data/pouchdb/pages/util'
+import { upsert } from '@databyss-org/data/pouchdb/utils'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 
 const PageBody = ({
   page,
@@ -28,68 +31,70 @@ const PageBody = ({
 }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
-  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
+  // const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
 
-  const _isDbBusy = isDbBusy()
+  // const _isDbBusy = isDbBusy()
   const { location } = useNavigationContext()
   const clearBlockDict = useEditorPageContext((c) => c.clearBlockDict)
   const setPatches = useEditorPageContext((c) => c.setPatches)
 
   useEffect(() => () => clearBlockDict(), [])
 
-  const patchQueue = useRef([])
+  // const patchQueue = useRef([])
   const pageState = useRef(null)
   const editorStateRef = useRef()
-  const [pendingPatches, setPendingPatches] = useState(false)
+  // const [pendingPatches, setPendingPatches] = useState(false)
 
   // updates state for contentEditable `pendingPatches` property
-  useEffect(() => {
-    if (patchQueue.current.length === 0 && pendingPatches) {
-      setPendingPatches(true)
-    }
-    if (patchQueue.current.length && !pendingPatches) {
-      setPendingPatches(false)
-    }
-  }, [patchQueue.current.length])
+  // useEffect(() => {
+  //   if (patchQueue.current.length === 0 && pendingPatches) {
+  //     setPendingPatches(true)
+  //   }
+  //   if (patchQueue.current.length && !pendingPatches) {
+  //     setPendingPatches(false)
+  //   }
+  // }, [patchQueue.current.length])
 
   // if DB has no pending patches and we have patches waiting, send patches
 
-  useEffect(() => {
-    if (!_isDbBusy && pendingPatches && pageState.current) {
-      const payload = {
-        id: pageState.current.pageHeader._id,
-        patches: patchQueue.current,
-      }
+  // useEffect(() => {
+  //   if (!_isDbBusy && pendingPatches && pageState.current) {
+  //     const payload = {
+  //       id: pageState.current.pageHeader._id,
+  //       patches: patchQueue.current,
+  //     }
 
-      setPatches(payload)
-      patchQueue.current = []
-    }
-  }, [_isDbBusy, pendingPatches])
+  //     setPatches(payload)
+  //     patchQueue.current = []
+  //   }
+  // }, [_isDbBusy, pendingPatches])
 
-  const throttledAutosave = useCallback(
-    debounce(
-      ({ nextState, patches }) => {
-        const _patches = cleanupPatches(patches)
-        if (_patches.length) {
-          const payload = {
-            id: nextState.pageHeader._id,
-            patches: patchQueue.current,
-          }
-          setPatches(payload)
-          patchQueue.current = []
-        }
-      },
-      process.env.SAVE_PAGE_THROTTLE,
-      {
-        leading: true,
-        maxWait: 500,
-      }
-    ),
-    []
-  )
+  // const throttledAutosave = useCallback(
+  //   debounce(
+  //     ({ nextState, patches }) => {
+  //       const _patches = cleanupPatches(patches)
+  //       if (_patches.length) {
+  //         const payload = {
+  //           id: nextState.pageHeader._id,
+  //           patches: patchQueue.current,
+  //         }
+  //         console.log('SET PATCHES', payload)
+  //         setPatches(payload)
+  //         patchQueue.current = []
+  //       }
+  //     },
+  //     process.env.SAVE_PAGE_THROTTLE,
+  //     {
+  //       leading: true,
+  //       maxWait: 500,
+  //     }
+  //   ),
+  //   []
+  // )
 
   // state from provider is out of date
   const onChange = (value) => {
+    console.log('CHANGE VALUE', value)
     requestAnimationFrame(() => {
       if (editorStateRef.current?.pagePath) {
         onEditorPathChange(editorStateRef.current.pagePath)
@@ -99,20 +104,38 @@ const PageBody = ({
     pageState.current = value.nextState
 
     const patches = addMetaToPatches(value)
-    // push changes to a queue
-    if (!canPatchesBeOptimized(patches) && patchQueue.current.length) {
-      // if new patches cant be optimized, send current payload
-      const payload = {
-        id: pageState.current.pageHeader._id,
-        patches: patchQueue.current,
-      }
-
-      setPatches(payload)
-      patchQueue.current = []
+    const _patches = cleanupPatches(patches)
+    const payload = {
+      id: value.nextState.pageHeader._id,
+      patches: _patches,
     }
-    patchQueue.current = patchQueue.current.concat(patches)
-    //
-    throttledAutosave({ ...value, patches })
+    setPatches(payload)
+
+    // check if changes occured on the page
+    const _prevPage = normalizePage(value.previousState)
+    const _nextPage = normalizePage(value.nextState)
+    if (!isEqual(_prevPage.blocks, _nextPage.blocks)) {
+      const { _id, name, archive } = value.nextState.pageHeader
+      const _page = { ..._nextPage, _id, name, archive }
+      upsert({ $type: DocumentType.Page, _id: _page._id, doc: _page })
+    }
+
+    // TODO: compare pages before and after, if pages has changed, upsert latest change
+
+    // push changes to a queue
+    // if (!canPatchesBeOptimized(patches) && patchQueue.current.length) {
+    //   // if new patches cant be optimized, send current payload
+    //   const payload = {
+    //     id: pageState.current.pageHeader._id,
+    //     patches: patchQueue.current,
+    //   }
+
+    //   setPatches(payload)
+    //   patchQueue.current = []
+    // }
+    // patchQueue.current = patchQueue.current.concat(patches)
+    // //
+    // throttledAutosave({ ...value, patches })
   }
 
   const render = () => {
@@ -135,7 +158,7 @@ const PageBody = ({
           >
             <PDFDropZoneManager />
             <ContentEditable
-              pendingPatches={pendingPatches}
+              // pendingPatches={pendingPatches}
               autofocus
               focusIndex={focusIndex}
               onNavigateUpFromTop={onNavigateUpFromEditor}

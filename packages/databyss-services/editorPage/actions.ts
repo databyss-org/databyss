@@ -43,98 +43,108 @@ let timeoutId: any
 let busy = false
 
 // a PatchBatch is a list of patches that all apply to the same resource (Page)
-export function savePatchBatch(batch?: PatchBatch) {
-  // if patch is sent, add to queue
+export async function savePatchBatch(batch?: PatchBatch) {
   if (batch) {
-    queue.push(batch)
-  }
-  // if server has not completed previous request bail action
-  if (busy) {
-    return (dispatch: Function) => {
-      if (timeoutId) {
-        clearTimeout(timeoutId)
-      }
+    // console.log('before', batch)
+    // const _patches = batch!.patches
+    // const _pageId = batch!.id
 
-      // TODO: CHANGE TIMEOUT TO ENV VARIABLE
-      timeoutId = setTimeout(() => dispatch(savePatchBatch()), 500)
+    // const _batchPatch = { id: _pageId, patches: _patches }
 
-      dispatch({
-        type: QUEUE_PATCH,
-        payload: {
-          queueSize: queue.length || 1,
-        },
-      })
-    }
+    await services.savePatchBatch(batch)
   }
 
-  if (!queue.length) {
-    return (dispatch: Function) => {
-      dispatch({
-        type: PATCH,
-        payload: {
-          queueSize: 0,
-        },
-      })
-    }
-  }
+  // // if patch is sent, add to queue
+  // if (batch) {
+  //   queue.push(batch)
+  // }
+  // // if server has not completed previous request bail action
+  // if (busy) {
+  //   return (dispatch: Function) => {
+  //     if (timeoutId) {
+  //       clearTimeout(timeoutId)
+  //     }
 
-  // perform first batch of patches in queue
-  busy = true
-  let _batch = queue.shift()
-  let _patches = _batch!.patches
-  const _pageId = _batch!.id
-  while (queue.length) {
-    _batch = queue.shift()
-    if (_batch?.id !== _pageId) {
-      queue.unshift(_batch!)
-      break
-    }
-    _patches = _patches!.concat(_batch!.patches)
-  }
-  const _batchPatch = { id: _pageId, patches: _patches }
-  return async (dispatch: Function) => {
-    dispatch({
-      type: QUEUE_PATCH,
-      payload: {
-        queueSize: 1,
-      },
-    })
-    try {
-      await services.savePatchBatch(_batchPatch)
-      busy = false
-      // repeat function with no patch variable if patches are still in queue
-      dispatch({
-        type: PATCH,
-        payload: {
-          queueSize: queue.length,
-        },
-      })
-      if (queue.length) {
-        dispatch(savePatchBatch())
-      }
-    } catch (err) {
-      console.log(err)
-      // if error set the patch back to the queue
-      busy = false
-      queue.unshift(_batchPatch)
+  //     // TODO: CHANGE TIMEOUT TO ENV VARIABLE
+  //     timeoutId = setTimeout(() => dispatch(savePatchBatch()), 500)
 
-      if (timeoutId) {
-        clearTimeout(timeoutId)
-      }
+  //     dispatch({
+  //       type: QUEUE_PATCH,
+  //       payload: {
+  //         queueSize: queue.length || 1,
+  //       },
+  //     })
+  //   }
+  // }
 
-      // TODO: CHANGE TIMEOUT TO ENV VARIABLE
-      timeoutId = setTimeout(() => dispatch(savePatchBatch()), 1000)
+  // if (!queue.length) {
+  //   return (dispatch: Function) => {
+  //     dispatch({
+  //       type: PATCH,
+  //       payload: {
+  //         queueSize: 0,
+  //       },
+  //     })
+  //   }
+  // }
 
-      dispatch({
-        type: QUEUE_PATCH,
-        payload: {
-          queueSize: queue.length,
-        },
-      })
+  // // perform first batch of patches in queue
+  // busy = true
+  // let _batch = queue.shift()
+  // let _patches = _batch!.patches
+  // const _pageId = _batch!.id
+  // while (queue.length) {
+  //   _batch = queue.shift()
+  //   if (_batch?.id !== _pageId) {
+  //     queue.unshift(_batch!)
+  //     break
+  //   }
+  //   _patches = _patches!.concat(_batch!.patches)
+  // }
+  // const _batchPatch = { id: _pageId, patches: _patches }
+  // return async (dispatch: Function) => {
+  //   dispatch({
+  //     type: QUEUE_PATCH,
+  //     payload: {
+  //       queueSize: 1,
+  //     },
+  //   })
+  //   try {
+  //     await services.savePatchBatch(_batchPatch)
+  //     busy = false
+  //     // repeat function with no patch variable if patches are still in queue
+  //     dispatch({
+  //       type: PATCH,
+  //       payload: {
+  //         queueSize: queue.length,
+  //       },
+  //     })
+  //     if (queue.length) {
+  //       dispatch(savePatchBatch())
+  //     }
+  //   } catch (err) {
+  //     console.log(err)
+  //     // if error set the patch back to the queue
+  //     busy = false
+  //     queue.unshift(_batchPatch)
 
-      throw err
-    }
-  }
+  //     if (timeoutId) {
+  //       clearTimeout(timeoutId)
+  //     }
+
+  //     // TODO: CHANGE TIMEOUT TO ENV VARIABLE
+  //     timeoutId = setTimeout(() => dispatch(savePatchBatch()), 1000)
+
+  //     dispatch({
+  //       type: QUEUE_PATCH,
+  //       payload: {
+  //         queueSize: queue.length,
+  //       },
+  //     })
+
+  //     throw err
+  //   }
+  // }
 }
 
 export function savePageHeader(page: PageHeader) {

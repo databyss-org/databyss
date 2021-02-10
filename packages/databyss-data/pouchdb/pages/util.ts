@@ -31,21 +31,23 @@ const assignPatchValue = (obj, value, allowed = ['text', 'type', '_id']) => {
   })
 }
 
-const addOrReplaceBlock = async (p, page) => {
-  const _index = p.path[1]
-  const { blocks } = page
+const addOrReplaceBlock = async (p) => {
+  // const _index = p.path[1]
+  // const { blocks } = page
 
   // if the blockId isn't in the patch, get it from the page
-  let _blockId = p.value._id
-  if (!_blockId) {
-    _blockId = blocks[_index]._id
-  }
+  const { _id, textValue, ranges } = p.value
+  const _blockId = _id
+
+  // if (!_blockId) {
+  //   _blockId = blocks[_index]._id
+  // }
   // add or replace entry in blocks array
-  const _removeBlockCount = p.op === 'add' ? 0 : 1
-  blocks.splice(_index, _removeBlockCount, {
-    _id: _blockId,
-    type: p.value.type ? p.value.type : 'ENTRY',
-  })
+  // const _removeBlockCount = p.op === 'add' ? 0 : 1
+  // blocks.splice(_index, _removeBlockCount, {
+  //   _id: _blockId,
+  //   type: p.value.type ? p.value.type : 'ENTRY',
+  // })
 
   if (p.value.type?.match(/^END_/)) {
     return
@@ -57,28 +59,28 @@ const addOrReplaceBlock = async (p, page) => {
 
   // if it's an add or we're replacing the whole block, just assign the value
   if (p.op === 'add' || p.path.length === 2) {
-    assignPatchValue(_block, p.value)
+    assignPatchValue(_block, { textValue, ranges })
   } else {
-    applyPatch(_block, p.path.slice(2), p.value)
+    applyPatch(_block, p.path.slice(2), { textValue, ranges })
   }
 
-  await upsert({ $type: DocumentType.Block, _id: _block._id!, doc: _block })
+  upsert({ $type: DocumentType.Block, _id: _block._id!, doc: _block })
 }
 
-const replacePatch = async (p, page) => {
+const replacePatch = async (p) => {
   const _prop = p.path[0]
   switch (_prop) {
     case 'blocks': {
-      await addOrReplaceBlock(p, page)
+      await addOrReplaceBlock(p)
       break
     }
     case 'selection': {
       const _id = p.value._id
       if (_id) {
-        await upsert({ $type: DocumentType.Selection, _id, doc: p.value })
+        upsert({ $type: DocumentType.Selection, _id, doc: p.value })
 
         // // if new selection._id is passed tag it to page
-        page.selection = _id
+        // page.selection = _id
       }
       break
     }
@@ -86,25 +88,25 @@ const replacePatch = async (p, page) => {
   }
 }
 
-const addPatch = async (p, page) => {
+const addPatch = async (p) => {
   const _prop = p.path[0]
 
   switch (_prop) {
     case 'blocks': {
-      await addOrReplaceBlock(p, page)
+      await addOrReplaceBlock(p)
       break
     }
     default:
   }
 }
 
-const removePatches = async (p, page) => {
+const removePatches = async (p) => {
   const _prop = p.path[0]
 
   switch (_prop) {
     case 'blocks': {
-      const _index = p.path[1]
-      const { blocks } = page
+      // const _index = p.path[1]
+      // const { blocks } = page
       // TODO: add this back
       // const _blockId = blocks[_index]._id
       // remove block from db
@@ -114,25 +116,25 @@ const removePatches = async (p, page) => {
       //   doc: { _deleted: true },
       // })
       // remove block from page
-      blocks.splice(_index, 1)
+      // blocks.splice(_index, 1)
       break
     }
     default:
   }
 }
 
-export const runPatches = async (p: Patch, page: PageDoc) => {
+export const runPatches = (p: Patch) => {
   switch (p.op) {
     case 'replace': {
-      await replacePatch(p, page)
+      replacePatch(p)
       break
     }
     case 'add': {
-      await addPatch(p, page)
+      addPatch(p)
       break
     }
     case 'remove': {
-      await removePatches(p, page)
+      removePatches(p)
       break
     }
     default:
@@ -141,7 +143,8 @@ export const runPatches = async (p: Patch, page: PageDoc) => {
 
 export const normalizePage = (page: Page): PageDoc => {
   const _pageDoc: PageDoc = {
-    blocks: [{ _id: page.blocks[0]._id, type: BlockType.Entry }],
+    blocks: page.blocks.map((b) => ({ _id: b._id, type: b.type })),
+    // blocks: [{ _id: page.blocks[0]._id, type: BlockType.Entry }],
     selection: page.selection._id,
     _id: page._id,
     name: page.name,

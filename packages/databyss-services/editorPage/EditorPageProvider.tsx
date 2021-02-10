@@ -14,6 +14,7 @@ import {
 } from '../interfaces'
 
 import * as actions from './actions'
+import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
 
 interface PropsType {
   children: JSX.Element
@@ -132,7 +133,9 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   )
 
   const setPatches = useCallback((patches: PatchBatch) => {
-    dispatch(actions.savePatchBatch(patches))
+    if (patches) {
+      savePatchBatch(patches)
+    }
   }, [])
 
   const removePageFromCache = (id: string) => {
