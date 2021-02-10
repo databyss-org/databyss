@@ -13,7 +13,7 @@ import {
   addMetaToPatches,
   cleanupPatches,
   pageToEditorState,
-  optimizePatches,
+  // optimizePatches,
   canPatchesBeOptimized,
 } from '@databyss-org/editor/state/util'
 
@@ -58,7 +58,7 @@ const PageBody = ({
     if (!_isDbBusy && pendingPatches && pageState.current) {
       const payload = {
         id: pageState.current.pageHeader._id,
-        patches: optimizePatches(patchQueue.current),
+        patches: patchQueue.current,
       }
 
       setPatches(payload)
@@ -73,7 +73,7 @@ const PageBody = ({
         if (_patches.length) {
           const payload = {
             id: nextState.pageHeader._id,
-            patches: optimizePatches(patchQueue.current),
+            patches: patchQueue.current,
           }
           setPatches(payload)
           patchQueue.current = []
@@ -104,7 +104,7 @@ const PageBody = ({
       // if new patches cant be optimized, send current payload
       const payload = {
         id: pageState.current.pageHeader._id,
-        patches: optimizePatches(patchQueue.current),
+        patches: patchQueue.current,
       }
 
       setPatches(payload)

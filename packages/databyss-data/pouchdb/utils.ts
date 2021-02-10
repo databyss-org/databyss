@@ -197,12 +197,20 @@ export const searchText = async (query) => {
   return _res
 }
 
-// export declare interface QueueProcessor {
-//   on(event: string, listener: Function): this
-//   emit(event: string): void
-//   interval: any
-//   isProcessing: boolean
-// }
+const coallesceQ = (patches: Patch[]): Patch[] => {
+  const _patches: Patch[] = patches
+    .reverse()
+    .reduce((acc: Patch[], curr: Patch) => {
+      // if _id is already in array, skip
+      if (acc.find((obj: any) => obj._id === curr._id)) {
+        return acc
+      }
+      // add to patch array
+      acc.push(curr)
+      return acc
+    }, [])
+  return _patches
+}
 
 export class QueueProcessor extends EventEmmiter {
   on(event: string, listener: Function): this
@@ -216,12 +224,11 @@ export class QueueProcessor extends EventEmmiter {
   }
 
   process = async () => {
-    console.log(upQdict.current)
     if (!this.isProcessing) {
       while (upQdict.current.length) {
         // do a coallece
         this.isProcessing = true
-        const _upQdict = upQdict.current
+        const _upQdict = coallesceQ(upQdict.current)
         upQdict.current = []
         for (const Q of Object.values(_upQdict)) {
           const { _id } = Q
@@ -234,7 +241,6 @@ export class QueueProcessor extends EventEmmiter {
             return _doc
           })
         }
-        console.log('DONE PROCESSING')
         this.isProcessing = false
       }
     }
@@ -248,9 +254,3 @@ export class QueueProcessor extends EventEmmiter {
 const EM = new QueueProcessor()
 
 EM.start()
-// EM.on('foo', () => {
-//   console.log('some code')
-// })
-
-// EM.emit('foo')
-// EM.process()

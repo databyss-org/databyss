@@ -32,7 +32,7 @@ import {
   addMetaToPatches,
   // editorStateToPage,
   pageToEditorState,
-  optimizePatches,
+  // optimizePatches,
 } from '../state/util'
 
 const LoginRequired = () => (
@@ -77,7 +77,7 @@ const PageWithAutosave = ({ page }) => {
         if (_patches?.length) {
           const payload = {
             id: nextState.pageHeader._id,
-            patches: optimizePatches(operationsQueue.current),
+            patches: operationsQueue.current,
           }
           setPatches(payload)
           operationsQueue.current = []
