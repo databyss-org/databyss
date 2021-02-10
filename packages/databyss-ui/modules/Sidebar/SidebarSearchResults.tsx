@@ -3,6 +3,7 @@ import {
   sortEntriesAtoZ,
   filterEntries,
 } from '@databyss-org/services/entries/util'
+import { getBlocksInPages } from '@databyss-org/services/blocks/joins'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
@@ -19,7 +20,6 @@ import {
   pagesToListItemData,
   blocksToListItemData,
 } from './transforms'
-import { getBlocksInPages } from '@databyss-org/services/blocks/joins'
 
 const FulltextSearchItem = (props) => (
   <SidebarListItem

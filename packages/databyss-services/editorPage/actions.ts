@@ -3,12 +3,12 @@ import { ResourcePending } from '../interfaces/ResourcePending'
 import { PatchBatch, PageHeader, Page } from '../interfaces'
 
 import {
-  PATCH,
+  // PATCH,
   FETCH_PAGE,
   CACHE_PAGE,
   DELETE_PAGE,
   ARCHIVE_PAGE,
-  QUEUE_PATCH,
+  // QUEUE_PATCH,
   REMOVE_PAGE_FROM_CACHE,
   SET_PAGE_PUBLIC,
   CACHE_PUBLIC_PAGE,
@@ -36,7 +36,7 @@ export function fetchPage(_id: string) {
   }
 }
 
-export function savePageHeader(page: PageHeader) {
+export function savePageHeader(page: Page) {
   const id = page._id
 
   return (dispatch: Function) => {

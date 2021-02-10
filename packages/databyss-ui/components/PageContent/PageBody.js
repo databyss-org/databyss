@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback, useRef, useState } from 'react'
-import { debounce, isEqual } from 'lodash'
+import React, { useEffect, useRef } from 'react'
+import { isEqual } from 'lodash'
 import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
@@ -9,6 +9,9 @@ import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
 import ContentEditable from '@databyss-org/editor/components/ContentEditable'
 import EditorProvider from '@databyss-org/editor/state/EditorProvider'
 import HistoryProvider from '@databyss-org/editor/history/EditorHistory'
+import { normalizePage } from '@databyss-org/data/pouchdb/pages/util'
+import { upsert } from '@databyss-org/data/pouchdb/utils'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import {
   addMetaToPatches,
   cleanupPatches,
@@ -17,9 +20,6 @@ import {
 } from '@databyss-org/editor/state/util'
 
 import { isMobile } from '../../lib/mediaQuery'
-import { normalizePage } from '@databyss-org/data/pouchdb/pages/util'
-import { upsert } from '@databyss-org/data/pouchdb/utils'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 
 const PageBody = ({
   page,

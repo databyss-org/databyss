@@ -4,7 +4,7 @@ import { Viewport, useNavigationContext } from '@databyss-org/ui'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import SessionProvider from '@databyss-org/services/session/SessionProvider'
 
-import Public from '../../databyss-notes/src/Public'
+import Public from '@databyss-org/notes/src/Public'
 
 import Private from '../modules/Private'
 

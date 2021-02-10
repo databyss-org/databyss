@@ -87,7 +87,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     []
   )
 
-  const setPageHeader = useCallback((page: PageHeader) => {
+  const setPageHeader = useCallback((page: Page) => {
     dispatch(actions.savePageHeader(page))
   }, [])
 

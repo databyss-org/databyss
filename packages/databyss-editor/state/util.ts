@@ -1,5 +1,4 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
-import _ from 'lodash'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
 import {
