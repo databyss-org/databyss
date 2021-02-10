@@ -74,7 +74,8 @@ const ContentEditable = ({
     remove,
     removeAtSelection,
     removeEntityFromQueue,
-    setInlineBlockRelations,
+    removeAtomicFromQueue,
+    // setInlineBlockRelations,
   } = editorContext
 
   const editor = useMemo(() => withReact(createEditor()), [])
@@ -100,6 +101,10 @@ const ContentEditable = ({
     // FIXME: handle selection failure, to prevent page from breaking on load
     console.warn(error)
   }
+
+  useEffect(() => {
+    console.log('removed', state.removedEntities)
+  }, [state.removedEntities])
 
   // if focus index is provides, move caret
   useEffect(() => {
@@ -148,22 +153,35 @@ const ContentEditable = ({
         }
         const _types = {
           SOURCE: () => {
+            setSource(_data)
             // requestAnimationFrame will allow the `forkOnChange` function in the editor provider to execute before setting the inline block relations
             window.requestAnimationFrame(() => {
-              setInlineBlockRelations(() => {
-                if (_data) {
-                  setSource(_data)
-                }
-              })
+              setBlockRelations('test')
+
+              //   setInlineBlockRelations(() => {
+              //     if (_data) {
+              //       setSource(_data)
+              //     }
+              //   })
             })
           },
           TOPIC: () => {
+            setTopic(_data)
+            console.log(_data)
+
             window.requestAnimationFrame(() => {
-              setInlineBlockRelations(() => {
-                if (_data) {
-                  setTopic(_data)
-                }
-              })
+              // console.log(_data)
+              // const _payload = {
+              //   operationType: 'ADD',
+              //   _id: _data._id,
+              //   page: state.pageHeader._id,
+              // }
+              // setBlockRelations(_payload)
+              // setInlineBlockRelations(() => {
+              //   if (_data) {
+              //     setTopic(_data)
+              //   }
+              // })
             })
           },
         }
@@ -482,12 +500,13 @@ const ContentEditable = ({
               )
               if (_inlineRangeMatch.length < 2 && setBlockRelations) {
                 // clear this block relation
-                const blockRelation = {
-                  block: _currentBlock._id,
-                  relatedBlock: _currentLeaf.atomicId,
-                  removeBlock: true,
-                }
-                setBlockRelations({ blocksRelationArray: [blockRelation] })
+                // const blockRelation = {
+                //   block: _currentBlock._id,
+                //   relatedBlock: _currentLeaf.atomicId,
+                //   removeBlock: true,
+                // }
+                console.log('WOULD SET BLOCK RELATION, remove this inline')
+                // setBlockRelations({ blocksRelationArray: [blockRelation] })
               }
 
               Transforms.removeNodes(editor, {
