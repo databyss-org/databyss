@@ -273,11 +273,16 @@ export const addMetaToPatches = ({
     if (_p.path[0] === 'blocks') {
       if (_p.op === 'remove') {
         const _id = previousState.blocks[_p.path[1]]._id
+        // _p.value._id = _id
+
         _p.value = { ..._p.value, _id }
       }
       if (_p.op === 'replace') {
         const _id = nextState.blocks[_p.path[1]]._id
-        _p.value = { ..._p.value, _id }
+        // _p.value._id = _id
+        if (typeof _p.value !== 'string') {
+          _p.value = { ..._p.value, _id }
+        }
       }
     }
     return _p
