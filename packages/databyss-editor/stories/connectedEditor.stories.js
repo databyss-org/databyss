@@ -26,13 +26,10 @@ import HistoryProvider from '../history/EditorHistory'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
-// import connectedFixture from './fixtures/connectedState'
 import {
   cleanupPatches,
   addMetaToPatches,
-  // editorStateToPage,
   pageToEditorState,
-  // optimizePatches,
 } from '../state/util'
 
 const LoginRequired = () => (
