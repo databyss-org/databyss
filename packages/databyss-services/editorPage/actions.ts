@@ -1,6 +1,6 @@
 import * as services from '.'
 import { ResourcePending } from '../interfaces/ResourcePending'
-import { PatchBatch, PageHeader, Page } from '../interfaces'
+import { Page } from '../interfaces'
 
 import {
   // PATCH,

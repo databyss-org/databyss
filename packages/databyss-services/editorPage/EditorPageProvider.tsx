@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
-
+import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -8,13 +8,11 @@ import {
   Page,
   PageState,
   RefDict,
-  PageHeader,
   PatchBatch,
   ResourceResponse,
 } from '../interfaces'
 
 import * as actions from './actions'
-import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
 
 interface PropsType {
   children: JSX.Element

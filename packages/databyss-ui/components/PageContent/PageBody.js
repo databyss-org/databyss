@@ -30,12 +30,10 @@ const PageBody = ({
 }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
 
-  // const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
-
-  // const _isDbBusy = isDbBusy()
   const { location } = useNavigationContext()
   const clearBlockDict = useEditorPageContext((c) => c.clearBlockDict)
   const setPatches = useEditorPageContext((c) => c.setPatches)
+  // const getPage = useEditorPageContext((c) => c && c.getPage)
 
   useEffect(() => () => clearBlockDict(), [])
 
@@ -63,12 +61,12 @@ const PageBody = ({
     setPatches(payload)
 
     // check if changes occured on the page
-    const _prevPage = normalizePage(value.previousState)
-    const _nextPage = normalizePage(value.nextState)
-    if (!isEqual(_prevPage.blocks, _nextPage.blocks)) {
+    const _prevBlocks = normalizePage(value.previousState).blocks
+    const _nextBlocks = normalizePage(value.nextState).blocks
+    if (!isEqual(_prevBlocks, _nextBlocks)) {
       // if change has occured, build proper payload and upsert page state
-      const { _id, name, archive } = value.nextState.pageHeader
-      const _page = { ..._nextPage, _id, name, archive }
+      const { _id } = value.nextState.pageHeader
+      const _page = { blocks: _nextBlocks, _id }
       upsert({ $type: DocumentType.Page, _id: _page._id, doc: _page })
     }
   }

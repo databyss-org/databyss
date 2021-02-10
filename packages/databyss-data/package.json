@@ -27,6 +27,7 @@
     "pouchdb-quick-search": "^1.3.0",
     "pouchdb-upsert": "^2.2.0",
     "transform-pouch": "^1.1.5",
+    "es-event-emitter": "^1.3.9",
     "tv4": "^1.3.0",
     "react": "16.9.0"
   },

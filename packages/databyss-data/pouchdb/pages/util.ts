@@ -1,5 +1,5 @@
 import { Patch } from 'immer'
-import { Block, BlockType } from '@databyss-org/services/interfaces'
+import { Block } from '@databyss-org/services/interfaces'
 import { PageDoc, DocumentType } from '../interfaces'
 import { upsert } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
