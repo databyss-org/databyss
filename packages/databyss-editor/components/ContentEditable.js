@@ -102,8 +102,18 @@ const ContentEditable = ({
     console.warn(error)
   }
 
+  // if atomics were removed from page, clear page from block relation
   useEffect(() => {
-    console.log('removed', state.removedEntities)
+    state.removedEntities.forEach((e) => {
+      removeAtomicFromQueue(e._id)
+      const _payload = {
+        operationType: 'REMOVE',
+        type: 'TOPIC',
+        _id: e._id,
+        page: state.pageHeader._id,
+      }
+      setBlockRelations(_payload)
+    })
   }, [state.removedEntities])
 
   // if focus index is provides, move caret
@@ -141,7 +151,6 @@ const ContentEditable = ({
     ) {
       state.newEntities.forEach((entity) => {
         let _data = null
-
         if (entity.text) {
           _data = {
             _id: entity._id,
@@ -153,36 +162,30 @@ const ContentEditable = ({
         }
         const _types = {
           SOURCE: () => {
-            setSource(_data)
-            // requestAnimationFrame will allow the `forkOnChange` function in the editor provider to execute before setting the inline block relations
-            window.requestAnimationFrame(() => {
-              setBlockRelations('test')
-
-              //   setInlineBlockRelations(() => {
-              //     if (_data) {
-              //       setSource(_data)
-              //     }
-              //   })
-            })
+            if (_data) {
+              setSource(_data)
+            }
           },
           TOPIC: () => {
-            setTopic(_data)
-            console.log(_data)
+            if (_data) {
+              setTopic(_data)
+            }
+            const _payload = {
+              operationType: 'ADD',
+              type: 'TOPIC',
+              _id: entity._id,
+              page: state.pageHeader._id,
+            }
+            setBlockRelations(_payload)
 
-            window.requestAnimationFrame(() => {
-              // console.log(_data)
-              // const _payload = {
-              //   operationType: 'ADD',
-              //   _id: _data._id,
-              //   page: state.pageHeader._id,
-              // }
-              // setBlockRelations(_payload)
-              // setInlineBlockRelations(() => {
-              //   if (_data) {
-              //     setTopic(_data)
-              //   }
-              // })
-            })
+            // window.requestAnimationFrame(() => {
+
+            //   // setInlineBlockRelations(() => {
+            //   //   if (_data) {
+            //   //     setTopic(_data)
+            //   //   }
+            //   // })
+            // })
           },
         }
         _types[entity.type]()
@@ -192,11 +195,11 @@ const ContentEditable = ({
   }, [
     state.newEntities.length,
     // checks DB for pending patches
-    _isDbBusy,
-    // checks patch queue from PageBody
-    pendingPatches,
-    // checks patches from PageProvider
-    patchQueueSize,
+    // _isDbBusy,
+    // // checks patch queue from PageBody
+    // pendingPatches,
+    // // checks patches from PageProvider
+    // patchQueueSize,
   ])
 
   useImperativeHandle(editorRef, () => ({

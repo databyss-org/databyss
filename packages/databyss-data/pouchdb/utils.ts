@@ -1,4 +1,4 @@
-import EventEmmiter from 'es-event-emitter'
+import EventEmitter from 'es-event-emitter'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef } from './db'
 import { uid } from '../lib/uid'
@@ -12,7 +12,7 @@ export const addTimeStamp = (doc: any): any => {
   return { ...doc, createdAt: Date.now() }
 }
 
-// const EM = new EventEmmiter()
+// const EM = new EventEmitter()
 
 // EM.on('foo', () => {
 //   console.log('some code')
@@ -212,7 +212,7 @@ const coallesceQ = (patches: Patch[]): Patch[] => {
   return _patches
 }
 
-export class QueueProcessor extends EventEmmiter {
+export class QueueProcessor extends EventEmitter {
   on(event: string, listener: Function): this
   emit(event: string): void
   interval: any

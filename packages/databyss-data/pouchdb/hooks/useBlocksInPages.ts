@@ -8,6 +8,7 @@ export const useBlocksInPages = <T extends Block>(
   blockType: BlockType
 ): QueryObserverResult<T[]> => {
   const blockRelationsRes = useBlockRelations(blockType)
+  console.log('BLOCK RELATION', blockRelationsRes)
   const blocksRes = useBlocks(blockType)
   const pagesRes = usePages()
 

@@ -22,12 +22,14 @@ export enum BlockRelationOperation {
 
 export type BlockRelationPayload = {
   _id: string
+  type: BlockType
   page: string
   operationType: BlockRelationOperation
 }
 
 export type BlockRelationResponse = {
   _id: string
+  type: BlockType
   pages: string[]
 }
 

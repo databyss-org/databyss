@@ -30,6 +30,7 @@ export const BlockList = <T extends Block>({
   ...others
 }: BlockListProps<T>) => {
   const blockRelationsRes = useBlockRelations(blockType)
+  console.log('IS GETTINGS', blockRelationsRes)
   const blocksRes = useBlocks(blockType)
   const pagesRes = usePages()
   const queryRes = [blockRelationsRes, blocksRes, pagesRes]
