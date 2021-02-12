@@ -25,7 +25,7 @@ const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
         }
       })
 
-      await dbRef.current.bulkDocs(
+      await dbRef.current!.bulkDocs(
         _idsToDelete.map((i) => ({ _id: i._id, _rev: i._rev, _deleted: true }))
       )
     }

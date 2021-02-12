@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { PropsWithChildren } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import {
   useNavigate,
@@ -9,10 +9,30 @@ import createReducer from '@databyss-org/services/lib/createReducer'
 import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import reducer, { initialState } from './reducer'
 import * as actions from './actions'
+import {
+  ModalOptions,
+  NavigateOptions,
+  NavigationState,
+  PathTokens,
+} from './interfaces'
+
+interface ContextType extends NavigationState {
+  location: Location
+  setMenuOpen: (isOpen: boolean) => void
+  isMenuOpen: boolean
+  showModal: (options: ModalOptions) => void
+  hideModal: () => void
+  navigate: (url: string, options: NavigateOptions) => void
+  getTokensFromPath: () => PathTokens
+  navigateSidebar: (path: string) => void
+  getSidebarPath: () => string
+  getQueryParams: () => { [key: string]: string }
+  getAccountFromLocation: () => string | boolean
+}
 
 const useReducer = createReducer()
 
-export const NavigationContext = createContext()
+export const NavigationContext = createContext<ContextType>(null!)
 
 const RouteWrapper = ({ children }) => <>{children}</>
 export const Router = ({ children, ...others }) => (
@@ -33,7 +53,14 @@ const sidebarItemAliases = {
   collections: 'groups',
 }
 
-const NavigationProvider = ({ children }) => {
+interface PropsType {
+  initialState: NavigationState
+}
+
+const NavigationProvider = ({
+  children,
+  initialState = new NavigationState(),
+}: PropsWithChildren<PropsType>) => {
   const [state, dispatch] = useReducer(reducer, initialState, {
     name: 'NavigationProvider',
   })

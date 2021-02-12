@@ -10,7 +10,7 @@ const useReducer = createReducer()
 
 interface PropsType {
   children: JSX.Element
-  initialState: any
+  initialState?: any
 }
 
 export interface EntryContextType {

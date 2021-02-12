@@ -18,7 +18,7 @@ import {
 import * as services from './services'
 
 interface PropsType {
-  initialState: GroupState
+  initialState?: GroupState
 }
 
 interface ContextType {

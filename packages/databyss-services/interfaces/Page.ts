@@ -13,7 +13,7 @@ export class Page implements PageHeader {
   selection: Selection
   blocks: Block[]
   name: string
-  archive: boolean
+  archive?: boolean
   constructor(id?: string) {
     const _selectionId = uid()
     const _firstBlockId = uid()

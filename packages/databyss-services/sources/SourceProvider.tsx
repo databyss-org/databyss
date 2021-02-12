@@ -10,7 +10,7 @@ import reducer, { initialState as _initState } from './reducer'
 
 interface PropsType {
   children: JSX.Element
-  initialState: SourceState
+  initialState?: SourceState
 }
 
 interface ContextType {

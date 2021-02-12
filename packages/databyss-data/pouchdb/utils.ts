@@ -21,7 +21,7 @@ export const upsert = async ({
   doc: any
 }) => {
   let _doc
-  await dbRef.current.upsert(_id, (oldDoc) => {
+  await dbRef.current!.upsert(_id, (oldDoc) => {
     _doc = {
       ...oldDoc,
       $type,
@@ -42,7 +42,7 @@ export const findAll = async ({
   useIndex?: string
 }) => {
   let _useIndex
-  const _designDocResponse = await dbRef.current.find({
+  const _designDocResponse = await dbRef.current!.find({
     selector: {
       _id: `_design/${useIndex}`,
     },
@@ -52,7 +52,7 @@ export const findAll = async ({
     _useIndex = useIndex
   }
 
-  const _response = await dbRef.current.find({
+  const _response = await dbRef.current!.find({
     selector: {
       $type,
       ...query,
@@ -64,7 +64,7 @@ export const findAll = async ({
     console.log($type, query)
   }
 
-  // dbRef.current
+  // dbRef.current!
   //   .explain({
   //     selector: {
   //       ...query,
@@ -90,7 +90,7 @@ export const findOne = async ({
   useIndex?: string
 }) => {
   let _useIndex
-  const _designDocResponse = await dbRef.current.find({
+  const _designDocResponse = await dbRef.current!.find({
     selector: {
       _id: `_design/${useIndex}`,
     },
@@ -100,7 +100,7 @@ export const findOne = async ({
     _useIndex = useIndex
   }
 
-  const _response = await dbRef.current.find({
+  const _response = await dbRef.current!.find({
     selector: {
       $type,
       ...query,
@@ -113,7 +113,7 @@ export const findOne = async ({
     console.log($type, query)
   }
 
-  // dbRef.current
+  // dbRef.current!
   //   .explain({
   //     selector: {
   //       ...query,
@@ -154,7 +154,7 @@ _local documents do not appear with `find` so a `get` function must be used
 export const getUserSession = async (): Promise<UserPreference | null> => {
   let response
   try {
-    response = await dbRef.current?.get('user_preference')
+    response = await dbRef.current!?.get('user_preference')
   } catch (err) {
     console.error('user session not found')
   }
@@ -171,7 +171,7 @@ export const searchText = async (query) => {
   _percentageToMatch *= 100
   _percentageToMatch = +_percentageToMatch.toFixed(0)
 
-  const _res = await dbRef.current.search({
+  const _res = await dbRef.current!.search({
     query,
     fields: ['text.textValue'],
     include_docs: true,

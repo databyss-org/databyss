@@ -1,3 +1,6 @@
+/* eslint-disable-next-line react/no-typos */
+import 'react'
+
 /* styles and theming */
 export { theme, macros, colors, ThemeProvider } from './theming'
 

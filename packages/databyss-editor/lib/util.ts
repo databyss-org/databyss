@@ -1,17 +1,16 @@
 import _ from 'lodash'
 import cloneDeep from 'clone-deep'
-import { Block } from '@databyss-org/services/interfaces/'
-import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import {
+  Block,
   BlockType,
   Selection,
-  EditorState,
   BlockRelation,
-  PagePath,
   Range,
-} from '../interfaces'
+  BlockReference,
+} from '@databyss-org/services/interfaces'
+import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
+import { EditorState, PagePath } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
-import { BlockReference } from '../../databyss-services/interfaces'
 import {
   RangeType,
   InlineTypes,

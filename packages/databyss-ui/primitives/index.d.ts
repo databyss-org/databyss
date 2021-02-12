@@ -167,7 +167,7 @@ export interface ControlHandle {
   press: () => void
 }
 
-export interface BaseControlProps {
+export interface BaseControlProps extends ViewProps {
   hoverColor?: string
   activeColor?: string
   pressedColor?: string
