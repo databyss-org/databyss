@@ -57,7 +57,6 @@ const ContentEditable = ({
   readonly,
   onNavigateUpFromTop,
   editorRef,
-  pendingPatches,
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
@@ -108,7 +107,7 @@ const ContentEditable = ({
       removeAtomicFromQueue(e._id)
       const _payload = {
         operationType: 'REMOVE',
-        type: 'TOPIC',
+        type: e.type,
         _id: e._id,
         page: state.pageHeader._id,
       }
@@ -131,25 +130,9 @@ const ContentEditable = ({
     }
   }, [focusIndex])
 
-  // checks if db is currently processing patches
-  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
-  let _isDbBusy
-  if (isDbBusy) {
-    _isDbBusy = isDbBusy()
-  }
-
-  const patchQueueSize = useEditorPageContext((c) => c && c.patchQueueSize)
-
   // if new atomic block has been added, save atomic
   useEffect(() => {
-    if (
-      state.newEntities.length &&
-      setSource
-      // &&
-      // !_isDbBusy &&
-      // !pendingPatches &&
-      // !patchQueueSize
-    ) {
+    if (state.newEntities.length) {
       state.newEntities.forEach((entity) => {
         let _data = null
         if (entity.text) {
@@ -171,25 +154,19 @@ const ContentEditable = ({
             if (_data) {
               setTopic(_data)
             }
-            const _payload = {
-              operationType: 'ADD',
-              type: 'TOPIC',
-              _id: entity._id,
-              page: state.pageHeader._id,
-            }
-            setBlockRelations(_payload)
-
-            // window.requestAnimationFrame(() => {
-
-            //   // setInlineBlockRelations(() => {
-            //   //   if (_data) {
-            //   //     setTopic(_data)
-            //   //   }
-            //   // })
-            // })
           },
         }
         _types[entity.type]()
+
+        // set BlockRelation property
+        const _payload = {
+          operationType: 'ADD',
+          type: entity.type,
+          _id: entity._id,
+          page: state.pageHeader._id,
+        }
+        setBlockRelations(_payload)
+
         removeEntityFromQueue(entity._id)
       })
     }
@@ -1064,7 +1041,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
         readonly={readonly}
       />
     )
-  }, [editor, state, _isDbBusy])
+  }, [editor, state])
 }
 
 export default ContentEditable
