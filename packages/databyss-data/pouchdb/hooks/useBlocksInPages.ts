@@ -1,5 +1,5 @@
 import { BlockType } from '@databyss-org/editor/interfaces'
-import { getBlocksInPages } from '@databyss-org/services/blocks/joins'
+import { getBlocksFromBlockRelations } from '@databyss-org/services/blocks/joins'
 import { Block } from '@databyss-org/services/interfaces'
 import { QueryObserverResult } from 'react-query'
 import { useBlockRelations, useBlocks, usePages } from '.'
@@ -8,7 +8,6 @@ export const useBlocksInPages = <T extends Block>(
   blockType: BlockType
 ): QueryObserverResult<T[]> => {
   const blockRelationsRes = useBlockRelations(blockType)
-  console.log('BLOCK RELATION', blockRelationsRes)
   const blocksRes = useBlocks(blockType)
   const pagesRes = usePages()
 
@@ -21,7 +20,7 @@ export const useBlocksInPages = <T extends Block>(
 
   return {
     ...blocksRes,
-    data: getBlocksInPages(
+    data: getBlocksFromBlockRelations(
       blockRelationsRes.data!,
       blocksRes.data!,
       pagesRes.data!,

@@ -273,7 +273,8 @@ export const initiatePouchDbValidators = () => {
     outgoing: (doc) => {
       _validatorSchemas.forEach((s) => {
         if (doc.$type === s[0]) {
-          if (!tv4.validate(doc, s[1], false, true)) {
+          // if validating against Block type, allow unknown properties, next validator will catch
+          if (!tv4.validate(doc, s[1], false, s[0] !== DocumentType.Block)) {
             console.log('TYPE', doc)
             console.error(
               `${s[1].title} - ${tv4.error.message} -> ${tv4.error.dataPath}`

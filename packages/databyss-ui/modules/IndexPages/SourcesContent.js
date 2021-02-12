@@ -35,6 +35,8 @@ export const SourcesContent = () => {
     styleId: citationStyleOption.id,
   })
 
+  console.log(sourcesRes)
+
   const onCitationStyleChange = (value) => {
     setCitationStyleOption(value)
     setPreferredCitationStyle(value.id)

@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react'
-import { isEqual } from 'lodash'
 import { Helmet } from 'react-helmet'
 import { PDFDropZoneManager, useNavigationContext } from '@databyss-org/ui'
 import { useEditorPageContext } from '@databyss-org/services'
@@ -14,7 +13,6 @@ import { upsert } from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import {
   addMetaToPatches,
-  cleanupPatches,
   pageToEditorState,
   // optimizePatches,
 } from '@databyss-org/editor/state/util'
@@ -51,10 +49,8 @@ const PageBody = ({
 
     pageState.current = value.nextState
 
-    // add _id's to patches
     const _patches = addMetaToPatches(value)
-    // // todo: might be redundant
-    // const _patches = cleanupPatches(patches)
+
     const payload = {
       id: value.nextState.pageHeader._id,
       patches: _patches,

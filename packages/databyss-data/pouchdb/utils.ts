@@ -197,18 +197,16 @@ export const searchText = async (query) => {
   return _res
 }
 
-const coallesceQ = (patches: Patch[]): Patch[] => {
-  const _patches: Patch[] = patches
-    .reverse()
-    .reduce((acc: Patch[], curr: Patch) => {
-      // if _id is already in array, skip
-      if (acc.find((obj: any) => obj._id === curr._id)) {
-        return acc
-      }
-      // add to patch array
-      acc.push(curr)
-      return acc
-    }, [])
+const coallesceQ = (patches: Patch[]) => {
+  const _patches = patches.reduce((dict, doc) => {
+    const _id = doc._id
+    dict[_id] = {
+      ...(dict[_id] || {}),
+      ...doc,
+    }
+    return dict
+  }, {})
+
   return _patches
 }
 
@@ -230,13 +228,13 @@ export class QueueProcessor extends EventEmitter {
         this.isProcessing = true
         const _upQdict = coallesceQ(upQdict.current)
         upQdict.current = []
-        for (const Q of Object.values(_upQdict)) {
-          const { _id } = Q
+        for (const _id of Object.keys(_upQdict)) {
           await dbRef.current!.upsert(_id, (oldDoc) => {
             const _doc = {
               ...oldDoc,
-              ...addTimeStamp({ ...oldDoc, ...Q }),
+              ...addTimeStamp({ ...oldDoc, ..._upQdict[_id] }),
             }
+
             return _doc
           })
         }

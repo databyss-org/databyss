@@ -5,7 +5,7 @@ import { Page } from '../interfaces/Page'
 import { indexPage } from '../../databyss-editor/lib/util'
 
 interface JoinBlockRelationsArgs {
-  blockRelationDict: DocumentDict<BlockRelation>
+  blockRelationDict: DocumentDict<BlockRelationResponse>
   blockDict?: DocumentDict<Block>
   blockPredicate?: (block: Block) => boolean
   pageDict?: DocumentDict<Page>
@@ -26,7 +26,7 @@ export const joinBlockRelations = ({
     if (pagePredicate) {
       _include =
         _include &&
-        curr.pages.map((_pageId) => pageDict[_pageId]).every(pagePredicate)
+        curr.pages.map((_pageId) => pageDict![_pageId]).every(pagePredicate)
     }
     if (_include) {
       accum[curr._id] = curr
@@ -37,7 +37,7 @@ export const joinBlockRelations = ({
  * Returns only blocks that are in pages
  */
 export const getBlocksInPages = <T extends Block>(
-  blockRelationDict: DocumentDict<BlockRelation>,
+  blockRelationDict: DocumentDict<BlockRelationResponse>,
   blockDict: DocumentDict<Block>,
   pageDict: DocumentDict<Page>,
   includeArchived: boolean
@@ -98,7 +98,7 @@ export const addPagesToBlockRelation = ({
   )
 
   const relations: BlockRelation[] = []
-
+  // returns array of all block relations to provided id
   _pages.forEach((p) =>
     indexPage({ pageId: p._id, blocks: p.blocks }).forEach((r: BlockRelation) =>
       relations.push(r)

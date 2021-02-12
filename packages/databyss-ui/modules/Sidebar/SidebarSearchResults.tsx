@@ -3,7 +3,7 @@ import {
   sortEntriesAtoZ,
   filterEntries,
 } from '@databyss-org/services/entries/util'
-import { getBlocksInPages } from '@databyss-org/services/blocks/joins'
+import { getBlocksFromBlockRelations } from '@databyss-org/services/blocks/joins'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
@@ -70,7 +70,7 @@ const SidebarSearchResults = ({
   }
 
   const mappedSources = blocksToListItemData(
-    getBlocksInPages(
+    getBlocksFromBlockRelations(
       blockRelationsRes.data!,
       sourcesRes.data!,
       pagesRes.data!,
@@ -79,7 +79,7 @@ const SidebarSearchResults = ({
   )
 
   const mappedTopics = blocksToListItemData(
-    getBlocksInPages(
+    getBlocksFromBlockRelations(
       blockRelationsRes.data!,
       topicsRes.data!,
       pagesRes.data!,
