@@ -11,6 +11,7 @@ import {
 import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import { EditorState, PagePath } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
+import { BlockRelationshipType } from '../../databyss-services/interfaces/Block'
 import {
   RangeType,
   InlineTypes,
@@ -43,7 +44,7 @@ const composeBlockRelation = (
   currentBlock: Block,
   atomicBlock: BlockReference,
   pageId: string,
-  relationshipType: string
+  relationshipType: BlockRelationshipType
 ): BlockRelation => {
   const _blockRelation: BlockRelation = {
     block: currentBlock._id,
@@ -79,7 +80,7 @@ const getInlineBlockRelations = (
             block,
             { type, _id },
             pageId,
-            'INLINE'
+            BlockRelationshipType.INLINE
           )
           _relation.blockIndex = index
           _blockRelations.push(_relation)
@@ -173,7 +174,7 @@ export const getPagePath = (page: EditorState): PagePath => {
                 _currentBlock,
                 _block,
                 pageId,
-                'HEADING'
+                BlockRelationshipType.HEADING
               )
 
               _relation.blockIndex = _index
@@ -269,7 +270,7 @@ export const indexPage = ({
               relatedBlock: value._id,
               blockText: block.text,
               relatedBlockType: value.type,
-              relationshipType: 'HEADING',
+              relationshipType: BlockRelationshipType.HEADING,
               page: pageId,
               blockIndex: index,
             })

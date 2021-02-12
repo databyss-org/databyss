@@ -55,7 +55,7 @@ export const getBlocksInPages = <T extends Block>(
 }
 
 export const getBlocksFromBlockRelations = <T extends Block>(
-  blockRelationDict: DocumentDict<BlockRelation>,
+  blockRelationDict: DocumentDict<BlockRelationResponse>,
   blockDict: DocumentDict<Block>,
   pageDict: DocumentDict<Page>,
   includeArchived: boolean

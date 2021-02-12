@@ -84,10 +84,16 @@ export interface BlockRelationsServerResponse {
   results: CacheDict<BlockRelation[]>
 }
 
-export interface BlockRelation extends Document {
+export enum BlockRelationshipType {
+  'HEADING' = 'HEADING',
+  'INLINE' = 'INLINE',
+}
+
+export interface BlockRelation {
+  _id?: string
   block: string
   relatedBlock: string
-  relationshipType: 'HEADING' | 'INLINE'
+  relationshipType: BlockRelationshipType
   relatedBlockType: BlockType
   page: string
   blockIndex: number
