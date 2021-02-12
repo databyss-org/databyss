@@ -1,6 +1,6 @@
 export interface Document {
   _id: string
-  groups: string[]
+  // groups: string[]
 }
 
 export interface DocumentDict<T extends Document> {

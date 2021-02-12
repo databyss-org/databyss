@@ -9,18 +9,13 @@ import {
   LoadingFallback,
 } from '@databyss-org/ui/components'
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
-import {
-  useBlockRelations,
-  useBlocks,
-  usePages,
-} from '@databyss-org/data/pouchdb/hooks'
+import { useBlockRelations, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
-import { IncludeFromResultOptions } from '@databyss-org/data/pouchdb/hooks/useDocuments'
-import { BlockRelation, Block } from '@databyss-org/services/interfaces'
+import { Block } from '@databyss-org/services/interfaces'
 import { addPagesToBlockRelation } from '@databyss-org/services/blocks/joins'
-import { useDocuments } from '../../../databyss-data/pouchdb/hooks/useDocuments'
-import { DocumentType } from '../../../databyss-data/pouchdb/interfaces'
+import { useDocuments } from '@databyss-org/data/pouchdb/hooks/useDocuments'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 
 interface IndexResultsProps {
   blockType: BlockType

@@ -9,8 +9,6 @@ import {
 } from '@databyss-org/slate'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import cloneDeep from 'clone-deep'
-import { useEditorPageContext } from '@databyss-org/services'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { setSource } from '@databyss-org/services/sources'
 import { setBlockRelations } from '@databyss-org/services/entries'
 import { setTopic } from '@databyss-org/services/topics'

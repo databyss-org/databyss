@@ -1,4 +1,4 @@
-import { BlockRelation, BlockType } from '@databyss-org/services/interfaces'
+import { BlockType } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 import { BlockRelationResponse } from '@databyss-org/editor/interfaces'
 import { DocumentType } from '../interfaces'
