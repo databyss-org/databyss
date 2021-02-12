@@ -15,7 +15,7 @@ import {
   blocksToListItemData,
   SidebarTransformFunction,
 } from '@databyss-org/ui/modules/Sidebar/transforms'
-import { getBlocksInPages } from '@databyss-org/services/blocks/joins'
+import { getBlocksFromBlockRelations } from '@databyss-org/services/blocks/joins'
 
 interface BlockListProps<T extends Block> {
   blockType: BlockType
@@ -30,7 +30,6 @@ export const BlockList = <T extends Block>({
   ...others
 }: BlockListProps<T>) => {
   const blockRelationsRes = useBlockRelations(blockType)
-  console.log('IS GETTINGS', blockRelationsRes)
   const blocksRes = useBlocks(blockType)
   const pagesRes = usePages()
   const queryRes = [blockRelationsRes, blocksRes, pagesRes]
@@ -39,8 +38,18 @@ export const BlockList = <T extends Block>({
     return <LoadingFallback queryObserver={queryRes} />
   }
 
+  // const mapped = transform!(
+  //   getBlocksInPages(
+  //     blockRelationsRes.data!,
+  //     blocksRes.data!,
+  //     pagesRes.data!,
+  //     false
+  //   )
+  // )
+
+  // BlockList
   const mapped = transform!(
-    getBlocksInPages(
+    getBlocksFromBlockRelations(
       blockRelationsRes.data!,
       blocksRes.data!,
       pagesRes.data!,

@@ -53,6 +53,7 @@ const PageBody = ({
 
     // add _id's to patches
     const patches = addMetaToPatches(value)
+    // todo: might be redundant
     const _patches = cleanupPatches(patches)
     const payload = {
       id: value.nextState.pageHeader._id,
@@ -61,14 +62,14 @@ const PageBody = ({
     setPatches(payload)
 
     // check if changes occured on the page
-    const _prevBlocks = normalizePage(value.previousState).blocks
+    // const _prevBlocks = normalizePage(value.previousState).blocks
     const _nextBlocks = normalizePage(value.nextState).blocks
-    if (!isEqual(_prevBlocks, _nextBlocks)) {
-      // if change has occured, build proper payload and upsert page state
-      const { _id } = value.nextState.pageHeader
-      const _page = { blocks: _nextBlocks, _id }
-      upsert({ $type: DocumentType.Page, _id: _page._id, doc: _page })
-    }
+    // if (!isEqual(_prevBlocks, _nextBlocks)) {
+    // if change has occured, build proper payload and upsert page state
+    const { _id } = value.nextState.pageHeader
+    const _page = { blocks: _nextBlocks, _id }
+    upsert({ $type: DocumentType.Page, _id: _page._id, doc: _page })
+    // }
   }
 
   const render = () => {

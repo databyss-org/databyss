@@ -257,6 +257,7 @@ export const initiatePouchDbValidators = () => {
     [BlockType.Source, sourceSchema],
     [BlockType.Entry, entrySchema],
     [BlockType.Topic, topicSchema],
+    [DocumentType.Block, blockSchema],
     [DocumentType.Page, pageSchema],
     [DocumentType.Selection, selectionSchema],
     [DocumentType.BlockRelation, blockRelationSchema],
@@ -271,7 +272,16 @@ export const initiatePouchDbValidators = () => {
   dbRef.current!.transform({
     outgoing: (doc) => {
       _validatorSchemas.forEach((s) => {
-        if (doc.type === s[0] || doc.$type === s[0]) {
+        if (doc.$type === s[0]) {
+          if (!tv4.validate(doc, s[1], false, true)) {
+            console.log('TYPE', doc)
+            console.error(
+              `${s[1].title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+            )
+          }
+        }
+
+        if (doc.type === s[0]) {
           if (!tv4.validate(doc, s[1], false, true)) {
             console.log('DOCUMENT', doc)
             console.error(

@@ -278,10 +278,10 @@ export const addMetaToPatches = ({
         _p.value = { ..._p.value, _id }
       }
       if (_p.op === 'replace') {
-        const _id = nextState.blocks[_p.path[1]]._id
+        const { _id, type } = nextState.blocks[_p.path[1]]
         // _p.value._id = _id
         if (typeof _p.value !== 'string') {
-          _p.value = { ..._p.value, _id }
+          _p.value = { ..._p.value, _id, type }
         }
       }
     }

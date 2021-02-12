@@ -17,7 +17,10 @@ import {
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
 import { IncludeFromResultOptions } from '@databyss-org/data/pouchdb/hooks/useDocuments'
-import { BlockRelation } from '@databyss-org/services/interfaces'
+import { BlockRelation, Block } from '@databyss-org/services/interfaces'
+import { addPagesToBlockRelation } from '@databyss-org/services/blocks/joins'
+import { useDocuments } from '../../../databyss-data/pouchdb/hooks/useDocuments'
+import { DocumentType } from '../../../databyss-data/pouchdb/interfaces'
 
 interface IndexResultsProps {
   blockType: BlockType
@@ -30,8 +33,13 @@ export const IndexResults = ({
 }: IndexResultsProps) => {
   const { getAccountFromLocation } = useNavigationContext()
   const blockRelationRes = useBlockRelations(blockType, {
-    relatedBlock: relatedBlockId,
+    _id: `r_${relatedBlockId}`,
   })
+
+  const _blocksRes = useDocuments<Block>(['blocks'], {
+    $type: DocumentType.Block,
+  })
+
   const blocksRes = useBlocks(BlockType.Entry, {
     includeFromResults: {
       result: blockRelationRes,
@@ -40,49 +48,66 @@ export const IndexResults = ({
     } as IncludeFromResultOptions<BlockRelation>,
   })
   const pagesRes = usePages()
-  const queryRes = [blockRelationRes, blocksRes, pagesRes]
+  const queryRes = [blockRelationRes, blocksRes, pagesRes, _blocksRes]
 
   if (queryRes.some((q) => !q.isSuccess)) {
     return <LoadingFallback queryObserver={queryRes} />
   }
 
-  const relations = Object.values(blockRelationRes.data!).filter(
-    (_rel) => _rel.relatedBlock === relatedBlockId
-  )
+  const _relations = addPagesToBlockRelation({
+    blockRelation: blockRelationRes.data![`r_${relatedBlockId}`],
+    pages: pagesRes.data!,
+    blocks: _blocksRes.data!,
+  })
 
-  const groupedRelations = groupBlockRelationsByPage(relations)
+  // const relations = Object.values(blockRelationRes.data!).filter(
+  //   (_rel) => _rel.relatedBlock === relatedBlockId
+  // )
+
+  const groupedRelations = groupBlockRelationsByPage(_relations)
+
+  console.log(groupedRelations)
 
   const _results = Object.keys(groupedRelations)
     // filter out results for archived and missing pages
     .filter((r) => pagesRes.data![r] && !pagesRes.data![r].archive)
     // filter out results if no entries are included
     .filter((r) => groupedRelations[r].length)
-    .map((r, i) => (
-      <IndexResultsContainer key={i}>
-        <IndexResultTitle
-          key={`pageHeader-${i}`}
-          href={`/${getAccountFromLocation()}/pages/${r}`}
-          icon={<PageSvg />}
-          text={pagesRes.data![r].name}
-          dataTestElement="atomic-results"
-        />
+    .map((r, i) => {
+      console.log('R', r, groupedRelations[r])
 
-        {groupedRelations[r]
-          .filter((e) => e.blockText.textValue.length)
-          .map((e, k) => (
-            <IndexResultDetails
-              key={k}
-              href={`/${getAccountFromLocation()}/pages/${r}#${e.block}`}
-              text={
-                <RawHtml
-                  html={slateBlockToHtmlWithSearch(blocksRes.data![e.block])}
+      return (
+        <IndexResultsContainer key={i}>
+          <IndexResultTitle
+            key={`pageHeader-${i}`}
+            href={`/${getAccountFromLocation()}/pages/${r}`}
+            icon={<PageSvg />}
+            text={pagesRes.data![r].name}
+            dataTestElement="atomic-results"
+          />
+
+          {groupedRelations[r]
+            .filter((e) => e.blockText.textValue.length)
+            .map((e, k) => {
+              console.log('E', e, blocksRes.data![e.block])
+              return (
+                <IndexResultDetails
+                  key={k}
+                  href={`/${getAccountFromLocation()}/pages/${r}#${e.block}`}
+                  text={
+                    <RawHtml
+                      html={slateBlockToHtmlWithSearch(
+                        _blocksRes.data![e.block]
+                      )}
+                    />
+                  }
+                  dataTestElement="atomic-result-item"
                 />
-              }
-              dataTestElement="atomic-result-item"
-            />
-          ))}
-      </IndexResultsContainer>
-    ))
+              )
+            })}
+        </IndexResultsContainer>
+      )
+    })
 
   return <>{_results}</>
 }

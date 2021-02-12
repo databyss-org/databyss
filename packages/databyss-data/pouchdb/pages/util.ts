@@ -36,7 +36,7 @@ const addOrReplaceBlock = async (p) => {
   // const { blocks } = page
 
   // if the blockId isn't in the patch, get it from the page
-  const { _id, textValue, ranges } = p.value
+  const { _id, textValue, ranges, type } = p.value
   const _blockId = _id
 
   // if (!_blockId) {
@@ -59,9 +59,10 @@ const addOrReplaceBlock = async (p) => {
 
   // if it's an add or we're replacing the whole block, just assign the value
   if (p.op === 'add' || p.path.length === 2) {
-    assignPatchValue(_block, { textValue, ranges })
+    assignPatchValue(_block, p.value)
   } else {
     applyPatch(_block, p.path.slice(2), { textValue, ranges })
+    _block.type = type
   }
 
   upsert({ $type: DocumentType.Block, _id: _block._id!, doc: _block })

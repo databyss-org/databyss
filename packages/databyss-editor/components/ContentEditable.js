@@ -144,10 +144,11 @@ const ContentEditable = ({
   useEffect(() => {
     if (
       state.newEntities.length &&
-      setSource &&
-      !_isDbBusy &&
-      !pendingPatches &&
-      !patchQueueSize
+      setSource
+      // &&
+      // !_isDbBusy &&
+      // !pendingPatches &&
+      // !patchQueueSize
     ) {
       state.newEntities.forEach((entity) => {
         let _data = null
