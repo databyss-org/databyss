@@ -38,16 +38,6 @@ export const BlockList = <T extends Block>({
     return <LoadingFallback queryObserver={queryRes} />
   }
 
-  // const mapped = transform!(
-  //   getBlocksInPages(
-  //     blockRelationsRes.data!,
-  //     blocksRes.data!,
-  //     pagesRes.data!,
-  //     false
-  //   )
-  // )
-
-  // BlockList
   const mapped = transform!(
     getBlocksFromBlockRelations(
       blockRelationsRes.data!,

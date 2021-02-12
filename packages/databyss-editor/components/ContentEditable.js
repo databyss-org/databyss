@@ -168,15 +168,7 @@ const ContentEditable = ({
         removeEntityFromQueue(entity._id)
       })
     }
-  }, [
-    state.newEntities.length,
-    // checks DB for pending patches
-    // _isDbBusy,
-    // // checks patch queue from PageBody
-    // pendingPatches,
-    // // checks patches from PageProvider
-    // patchQueueSize,
-  ])
+  }, [state.newEntities.length])
 
   useImperativeHandle(editorRef, () => ({
     focus: () => {
