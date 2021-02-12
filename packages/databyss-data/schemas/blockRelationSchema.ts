@@ -10,6 +10,9 @@ export const blockRelationSchema: JSONSchema4 = {
         type: 'string',
       },
     },
+    type: {
+      type: 'string',
+    },
   },
   allOf: [{ $ref: 'pouchDb' }],
   required: ['pages'],

@@ -281,7 +281,7 @@ export const initiatePouchDbValidators = () => {
           }
         }
 
-        if (doc.type === s[0]) {
+        if (doc.type === s[0] && doc.$type !== DocumentType.BlockRelation) {
           if (!tv4.validate(doc, s[1], false, true)) {
             console.log('DOCUMENT', doc)
             console.error(

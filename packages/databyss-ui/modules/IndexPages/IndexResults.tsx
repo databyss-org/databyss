@@ -36,19 +36,13 @@ export const IndexResults = ({
     _id: `r_${relatedBlockId}`,
   })
 
+  // returns all blocks
   const _blocksRes = useDocuments<Block>(['blocks'], {
     $type: DocumentType.Block,
   })
 
-  const blocksRes = useBlocks(BlockType.Entry, {
-    includeFromResults: {
-      result: blockRelationRes,
-      resultToBlockId: (doc) =>
-        doc.relatedBlock === relatedBlockId && doc.block,
-    } as IncludeFromResultOptions<BlockRelation>,
-  })
   const pagesRes = usePages()
-  const queryRes = [blockRelationRes, blocksRes, pagesRes, _blocksRes]
+  const queryRes = [blockRelationRes, pagesRes, _blocksRes]
 
   if (queryRes.some((q) => !q.isSuccess)) {
     return <LoadingFallback queryObserver={queryRes} />
@@ -60,54 +54,39 @@ export const IndexResults = ({
     blocks: _blocksRes.data!,
   })
 
-  // const relations = Object.values(blockRelationRes.data!).filter(
-  //   (_rel) => _rel.relatedBlock === relatedBlockId
-  // )
-
   const groupedRelations = groupBlockRelationsByPage(_relations)
-
-  console.log(groupedRelations)
 
   const _results = Object.keys(groupedRelations)
     // filter out results for archived and missing pages
     .filter((r) => pagesRes.data![r] && !pagesRes.data![r].archive)
     // filter out results if no entries are included
     .filter((r) => groupedRelations[r].length)
-    .map((r, i) => {
-      console.log('R', r, groupedRelations[r])
+    .map((r, i) => (
+      <IndexResultsContainer key={i}>
+        <IndexResultTitle
+          key={`pageHeader-${i}`}
+          href={`/${getAccountFromLocation()}/pages/${r}`}
+          icon={<PageSvg />}
+          text={pagesRes.data![r].name}
+          dataTestElement="atomic-results"
+        />
 
-      return (
-        <IndexResultsContainer key={i}>
-          <IndexResultTitle
-            key={`pageHeader-${i}`}
-            href={`/${getAccountFromLocation()}/pages/${r}`}
-            icon={<PageSvg />}
-            text={pagesRes.data![r].name}
-            dataTestElement="atomic-results"
-          />
-
-          {groupedRelations[r]
-            .filter((e) => e.blockText.textValue.length)
-            .map((e, k) => {
-              console.log('E', e, blocksRes.data![e.block])
-              return (
-                <IndexResultDetails
-                  key={k}
-                  href={`/${getAccountFromLocation()}/pages/${r}#${e.block}`}
-                  text={
-                    <RawHtml
-                      html={slateBlockToHtmlWithSearch(
-                        _blocksRes.data![e.block]
-                      )}
-                    />
-                  }
-                  dataTestElement="atomic-result-item"
+        {groupedRelations[r]
+          .filter((e) => e.blockText.textValue.length)
+          .map((e, k) => (
+            <IndexResultDetails
+              key={k}
+              href={`/${getAccountFromLocation()}/pages/${r}#${e.block}`}
+              text={
+                <RawHtml
+                  html={slateBlockToHtmlWithSearch(_blocksRes.data![e.block])}
                 />
-              )
-            })}
-        </IndexResultsContainer>
-      )
-    })
+              }
+              dataTestElement="atomic-result-item"
+            />
+          ))}
+      </IndexResultsContainer>
+    ))
 
   return <>{_results}</>
 }
