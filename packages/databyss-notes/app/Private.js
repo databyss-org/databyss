@@ -4,16 +4,26 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import EntryProvider from '@databyss-org/services/entries/EntryProvider'
 import GroupProvider from '@databyss-org/services/groups/GroupProvider'
-import { Sidebar, useNavigationContext, ModalManager } from '@databyss-org/ui'
+import {
+  Sidebar,
+  useNavigationContext,
+  ModalManager,
+  PageContent,
+  GroupDetail,
+} from '@databyss-org/ui'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { GestureProvider, View } from '@databyss-org/ui/primitives'
 import { BlockType } from '@databyss-org/services/interfaces'
-import { SourcesContent, IndexPageContent } from '@databyss-org/ui/modules'
-import { PageRouter, GroupRouter, SearchRouter } from '../routes'
+import {
+  SourcesContent,
+  IndexPageContent,
+  SearchContent,
+} from '@databyss-org/ui/modules'
+import { EditorPageProvider } from '@databyss-org/services'
 
 const queryClient = new QueryClient()
 
-const App = ({ children }) => (
+const AppView = ({ children }) => (
   <View
     flexDirection="row"
     display="flex"
@@ -72,11 +82,13 @@ const Private = () => {
           <GroupProvider>
             <GestureProvider>
               <Router>
-                <App path="/:accountId">
+                <AppView path="/:accountId">
                   <NotFoundRedirect default />
-                  <PageRouter path="pages/*" />
-                  <SearchRouter path="search/*" />
-                  <GroupRouter path="collections/*" />
+                  <EditorPageProvider path="pages">
+                    <PageContent path=":id" />
+                  </EditorPageProvider>
+                  <SearchContent path="search/:query" />
+                  <GroupDetail path="collections/:id" />
                   <IndexPageContent
                     blockType={BlockType.Source}
                     path="sources/:blockId"
@@ -86,7 +98,7 @@ const Private = () => {
                     path="topics/:blockId"
                   />
                   <SourcesContent path="sources/" />
-                </App>
+                </AppView>
               </Router>
               <ModalManager />
             </GestureProvider>

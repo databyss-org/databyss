@@ -1,4 +1,4 @@
-import { BlockRelation } from '@databyss-org/editor/interfaces/index'
+import { BlockRelation } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { BlockRelationsServerResponse } from '@databyss-org/services/interfaces/Block'
 import { DocumentType } from '../../interfaces'

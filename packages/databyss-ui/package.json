@@ -54,6 +54,7 @@
     "emotion-reset": "^2.0.3",
     "emotion-theming": "^10.0.10",
     "fetch-mock": "^8.0.1",
+    "immer": "^6.0.5",
     "immutable": "^4.0.0-rc.12",
     "invariant": "^2.2.4",
     "is-hotkey": "^0.1.5",

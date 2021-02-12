@@ -67,7 +67,7 @@ export const Sidebar = () => {
             {menuItem === 'topics' && <BlockList blockType={BlockType.Topic} />}
             {menuItem === 'archive' && <PageList archive />}
             {menuItem === 'groups' && <GroupList />}
-            <Footer />
+            <Footer collapsed={false} />
           </List>
         </View>
       </View>

@@ -20,16 +20,18 @@ const createReducer = (...middlewares) => {
       : []),
   ])
 
-  return (reducer, initialState, { initializer, name, onChange } = {}) => {
+  return (reducer, initialState, options) => {
     // initialState must be a plain JSON object
     const _initialState = Object.assign({}, initialState)
-    const ref = useRef((initializer || ((value) => value))(_initialState))
+    const ref = useRef(
+      (options?.initializer || ((value) => value))(_initialState)
+    )
     const [, setState] = useState(ref.current)
 
     const dispatch = useCallback(
       (action) => {
-        action.meta = { provider: name }
-        ref.current = reducer(ref.current, action, onChange)
+        action.meta = { provider: options?.name }
+        ref.current = reducer(ref.current, action, options?.onChange)
         setState(ref.current)
         return action
       },

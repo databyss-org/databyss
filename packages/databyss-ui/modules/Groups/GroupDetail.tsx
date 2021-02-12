@@ -19,7 +19,6 @@ import { StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
-import { RouteComponentProps } from '../../components/Navigation/NavigationProvider/interfaces'
 
 interface GroupSectionProps extends ViewProps {
   title: string
@@ -94,7 +93,7 @@ export const GroupFields = ({ group }: { group: Group }) => {
   )
 }
 
-export const GroupDetail = (_: RouteComponentProps) => {
+export const GroupDetail = () => {
   const { id } = useParams()
 
   return (

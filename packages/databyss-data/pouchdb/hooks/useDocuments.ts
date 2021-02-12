@@ -53,8 +53,8 @@ export const useDocuments = <T extends Document>(
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) => {
         console.log('useDocuments.fetch', selector)
-        return dbRef.current
-          .find({ selector })
+        return dbRef
+          .current!.find({ selector })
           .then((res) => resolve(DocumentArrayToDict(res.docs)))
           .catch((err) => reject(err))
       }),
@@ -68,8 +68,8 @@ export const useDocuments = <T extends Document>(
 
   useEffect(() => {
     // console.log('useDocuments.subscribe', queryKey, selector)
-    const changes = dbRef.current
-      .changes({
+    const changes = dbRef
+      .current!.changes({
         since: 'now',
         live: true,
         include_docs: true,

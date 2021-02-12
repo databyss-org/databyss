@@ -4,15 +4,12 @@ import {
   NAVIGATE_SIDEBAR,
   TOGGLE_MENU,
 } from './constants'
+import { ModalOptions } from './interfaces'
 
-export function showModal({ component, props, dismiss }) {
+export function showModal(options: ModalOptions) {
   return {
     type: SHOW_MODAL,
-    payload: {
-      component,
-      props,
-      dismiss,
-    },
+    payload: options,
   }
 }
 
@@ -22,16 +19,16 @@ export function hideModal() {
   }
 }
 
-export function navigateSidebar(path) {
+export function navigateSidebar(path: string) {
   return {
     type: NAVIGATE_SIDEBAR,
     payload: { path },
   }
 }
 
-export function menuOpen(bool) {
+export function menuOpen(isOpen: boolean) {
   return {
     type: TOGGLE_MENU,
-    payload: { bool },
+    payload: { bool: isOpen },
   }
 }

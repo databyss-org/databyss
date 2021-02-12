@@ -1,7 +1,6 @@
 import { BlockType } from '@databyss-org/services/interfaces/Block'
-import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { replaceInlineText } from '@databyss-org/editor/state/util'
-import { Topic, Block } from '@databyss-org/services/interfaces'
+import { Topic, Block, BlockRelation } from '@databyss-org/services/interfaces'
 import { DocumentType } from '../../interfaces'
 import { upsert, findAll, findOne } from '../../utils'
 
