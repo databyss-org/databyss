@@ -1,5 +1,4 @@
-import React, { useState, useEffect, forwardRef, useCallback } from 'react'
-import { debounce } from 'lodash'
+import React, { useState, useEffect, forwardRef } from 'react'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
@@ -34,20 +33,13 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
     }
   }, [pageId, pagesRes])
 
-  const throttledAutosave = useCallback(
-    debounce((val) => {
-      const _pageData = {
-        name: val || noPageTitle,
-        _id: pageId,
-      }
-      setPageHeader(_pageData)
-    }, process.env.SAVE_PAGE_THROTTLE),
-    []
-  )
-
   const onPageNameChange = (val) => {
     setPageName(val)
-    throttledAutosave(val)
+    const _pageData = {
+      name: val || noPageTitle,
+      _id: pageId,
+    }
+    setPageHeader(_pageData)
   }
 
   if (!pagesRes.isSuccess) {
