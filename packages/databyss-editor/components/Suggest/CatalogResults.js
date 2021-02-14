@@ -48,7 +48,6 @@ const CatalogResults = ({ menuHeight, type, dismiss, query, selectSource }) => {
       <View overflowX="hidden" overflowY="auto" maxHeight={pxUnits(menuHeight)}>
         <CatalogSearchLoader type={type} query={query}>
           {(results) => {
-            console.log('catalog.results', results)
             setSourcesLoaded(true)
             return _renderResults(results)
           }}
