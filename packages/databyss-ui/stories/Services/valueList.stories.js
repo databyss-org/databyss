@@ -10,8 +10,6 @@ import SourceProvider, {
   useSourceContext,
 } from '@databyss-org/services/sources/SourceProvider'
 
-import { withSource } from '@databyss-org/ui/components/Loaders'
-
 import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
 
@@ -59,7 +57,7 @@ const valuesToSource = (values) => {
   }
 }
 
-const SourceForm = withSource(({ source }) => {
+const SourceForm = ({ source }) => {
   const [values, setValues] = useState(source)
   const { setSource } = useSourceContext()
 
@@ -142,7 +140,7 @@ const SourceForm = withSource(({ source }) => {
       </Grid>
     </ValueListProvider>
   )
-})
+}
 
 const SourcesDemo = () => {
   const { setSource } = useSourceContext()

@@ -9,10 +9,10 @@ import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
-import TopicProvider from '@databyss-org/services/topics/TopicProvider'
-import topicReducer, {
-  initialState as topicInitialState,
-} from '@databyss-org/services/topics/reducer'
+// import TopicProvider from '@databyss-org/services/topics/TopicProvider'
+// import topicReducer, {
+//   initialState as topicInitialState,
+// } from '@databyss-org/services/topics/reducer'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ContentEditable from '../components/ContentEditable'
 import { stateToSlate } from '../lib/slateUtils'
@@ -68,18 +68,16 @@ const SideBySide = ({ initialState }) => {
 }
 
 const EditorWithModals = ({ initialState }) => (
-  <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
-    <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-      <NavigationProvider>
-        <EditorWithProvider
-          initialState={initialState}
-          onChange={({ patch, inversePatch }) => {
-            console.log(patch, inversePatch)
-          }}
-        />
-      </NavigationProvider>
-    </SourceProvider>
-  </TopicProvider>
+  <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+    <NavigationProvider>
+      <EditorWithProvider
+        initialState={initialState}
+        onChange={({ patch, inversePatch }) => {
+          console.log(patch, inversePatch)
+        }}
+      />
+    </NavigationProvider>
+  </SourceProvider>
 )
 
 const initFetchMock = () => {

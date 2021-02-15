@@ -9,7 +9,6 @@ const populatePage = async (
   _id: string
 ): Promise<Page | ResourceNotFoundError> => {
   // TODO: wrap function in error handler
-
   const _page: PageDoc | null = await findOne({
     $type: DocumentType.Page,
     query: {
