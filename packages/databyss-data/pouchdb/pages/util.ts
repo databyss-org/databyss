@@ -19,6 +19,11 @@ const applyPatch = (node, path, value) => {
     node[key] = value
     return
   }
+
+  // TODO: this might break the patches. check test runner
+  if (!node[key]) {
+    return
+  }
   // recurse
   applyPatch(node[key], path, value)
 }

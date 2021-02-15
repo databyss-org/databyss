@@ -79,13 +79,14 @@ const PageWithAutosave = ({ page }) => {
     }
     setPatches(payload)
 
-    // blocks array in page might have changed, upsert page blocks
-    const _nextBlocks = normalizePage(value.nextState).blocks
-    const { _id } = value.nextState.pageHeader
-    const _page = { blocks: _nextBlocks, _id }
-    console.log('page to upsert', _page)
+    if (_patches.length) {
+      // blocks array in page might have changed, upsert page blocks
+      const _nextBlocks = normalizePage(value.nextState).blocks
+      const { _id } = value.nextState.pageHeader
+      const _page = { blocks: _nextBlocks, _id }
 
-    upsert({ $type: 'PAGE', _id: _page._id, doc: _page })
+      upsert({ $type: 'PAGE', _id: _page._id, doc: _page })
+    }
   }
 
   return (
