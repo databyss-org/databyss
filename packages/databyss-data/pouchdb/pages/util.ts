@@ -1,9 +1,10 @@
 import { Patch } from 'immer'
 import { Block } from '@databyss-org/services/interfaces'
 import { PageDoc, DocumentType } from '../interfaces'
-import { upsert } from '../utils'
+import { upsert, addTimeStamp } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import { savePage } from './'
+import { dbRef } from '../db'
 
 export const getAtomicClosureText = (type, text) =>
   ({
@@ -16,6 +17,11 @@ const applyPatch = (node, path, value) => {
   // if path has length one, just set the value and return
   if (path.length === 0) {
     node[key] = value
+    return
+  }
+
+  // TODO: this might break the patches. check test runner
+  if (!node[key]) {
     return
   }
   // recurse
@@ -154,11 +160,43 @@ export const normalizePage = (page: Page): PageDoc => {
   return _pageDoc
 }
 
+// bypasses upsert queue
+const _upsert = ({
+  $type,
+  _id,
+  doc,
+}: {
+  $type: DocumentType
+  _id: string
+  doc: any
+}) =>
+  dbRef.current!.upsert(_id, (oldDoc) => {
+    const _doc = {
+      ...oldDoc,
+      ...addTimeStamp({ ...oldDoc, ...doc, $type }),
+    }
+    return _doc
+  })
+
 /*
-generic function to add a new page to database given id. this function is only used in provisioning a new user database
+generic function to add a new page to database given id. this function is a promise and bypasses the queue
 */
-export const addPage = async (id?: string) => {
-  const _page = new Page(id)
-  await savePage(_page)
-  return _page
+export const addPage = async (page: Page) => {
+  await _upsert({
+    $type: DocumentType.Selection,
+    _id: page.selection._id,
+    doc: page.selection,
+  })
+  await _upsert({
+    $type: DocumentType.Block,
+    _id: page.blocks[0]._id,
+    doc: { ...page.blocks[0] },
+  })
+  await _upsert({
+    $type: DocumentType.Page,
+    _id: page._id,
+    doc: normalizePage(page),
+  })
+
+  return page
 }
