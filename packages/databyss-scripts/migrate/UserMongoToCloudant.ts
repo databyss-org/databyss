@@ -99,15 +99,37 @@ class UserMongoToCloudant extends ServerProcess {
       // STEP 3: Copy all Pages, Blocks, Selections and BlockRelations belonging to the user
       //   to the group db
 
-      // get all Pages and aggregate all blocks into a Map so we don't write orphaned blocks
+      // get all Pages
       const _mongoPages = await Page.find({
         account: _defaultAccountId,
       })
 
+      /**
+       * mongo blockId => boolean
+       */
       const _validMongoBlockMap = {}
+      /**
+       * mongo blockId => { mongo pageId => boolean }
+       */
+      const _relatedBlockMap = {}
+      /**
+       * mongo blockId => mongo pageId
+       */
+      const _blockToPageMap = {}
       _mongoPages.forEach((page) => {
         page.blocks.forEach((block) => {
+          // aggregate all blocks into a Map so we don't write orphaned blocks
           _validMongoBlockMap[block._id] = true
+
+          // if this is a topic or source block, also add the page into the related block map
+          if (block.type !== 'ENTRY') {
+            if (!_relatedBlockMap[block._id]) {
+              _relatedBlockMap[block._id] = {}
+            }
+            _relatedBlockMap[block._id][page._id] = true
+          }
+
+          _blockToPageMap[block._id] = page._id
         })
       })
       console.log(
@@ -115,14 +137,24 @@ class UserMongoToCloudant extends ServerProcess {
           Object.values(_validMongoBlockMap).length
         }`
       )
+      console.log(
+        `ℹ️  Block relation count: ${Object.keys(_relatedBlockMap).length}`
+      )
 
       // get all Blocks for account
       const _mongoBlocks = await Block.find({
         account: _defaultAccountId,
       })
 
-      // insert the pages in couch, generating new ids and keeping a map
+      // insert the blocks in couch, generating new ids and keeping a map
+      /**
+       * mongo blockId => couch blockId
+       */
       const _blockIdMap = {}
+      /**
+       * mongo blockId => block type
+       */
+      const _blockTypeMap = {}
       for (const _mongoBlock of _mongoBlocks) {
         // skip the block if it's orphaned (not in any pages)
         if (!_validMongoBlockMap[_mongoBlock._id]) {
@@ -145,11 +177,24 @@ class UserMongoToCloudant extends ServerProcess {
           detail: fixDetail(_mongoBlock.detail),
           ...getTimestamps(_mongoBlock),
         })
+
+        _blockTypeMap[_mongoBlock._id] = _mongoBlock.type
+
+        // generate INLINE BlockRelations by scanning ranges for inline topics & sources
+        for (const _range of _mongoBlock.text.ranges) {
+          for (const _mark of _range.marks) {
+            if (Array.isArray(_mark)) {
+              _relatedBlockMap[_mark[1]][
+                _blockToPageMap[_mongoBlock._id]
+              ] = true
+            }
+          }
+        }
       }
       console.log(`➡️  Migrated ${Object.keys(_blockIdMap).length} Blocks`)
 
       // insert the Pages in couch, generating new ids and keeping a map of old => new id
-      const _pageIdMap = {}
+      const _pageIdMap: { [mongoId: string]: string } = {}
       for (const _mongoPage of _mongoPages) {
         const _couchPageId = uid()
         _pageIdMap[_mongoPage._id] = _couchPageId
@@ -183,10 +228,22 @@ class UserMongoToCloudant extends ServerProcess {
           _id: _couchPageId,
           name: _mongoPage.name,
           archive: _mongoPage.archive,
-          blocks: _mongoPage.blocks.map((_mongoBlock) => ({
-            type: _mongoBlock.type,
-            _id: _blockIdMap[_mongoBlock._id],
-          })),
+          blocks: _mongoPage.blocks
+            .map((_mongoBlock) => {
+              const _pageBlockId = _blockIdMap[_mongoBlock._id]
+              if (!_pageBlockId) {
+                return null
+              }
+              let _pageBlockType = _mongoBlock.type
+              if (!_pageBlockType) {
+                _pageBlockType = _blockTypeMap[_mongoBlock._id] || 'ENTRY'
+              }
+              return {
+                type: _pageBlockType,
+                _id: _pageBlockId,
+              }
+            })
+            .filter((_b) => _b),
           ...(_couchSelectionId
             ? {
                 selection: _couchSelectionId,
@@ -198,60 +255,39 @@ class UserMongoToCloudant extends ServerProcess {
 
       console.log(`➡️  Migrated ${Object.keys(_pageIdMap).length} Pages`)
 
-      // get all BlockRelations for account
-      const _mongoRelations = await BlockRelation.find({
-        account: _defaultAccountId,
-      })
-
-      // insert the BlockRelations in couch
+      // generate HEADING BlockRelations for couch using the _blockRelationMap
       let _relationsCount = 0
-      for (const _mongoRelation of _mongoRelations) {
-        // skip blockRelation if block or relatedBlock is orphaned
-        if (
-          !_validMongoBlockMap[_mongoRelation.block] ||
-          !_validMongoBlockMap[_mongoRelation.relatedBlock]
-        ) {
-          continue
-        }
-
-        const _relationPageId = _pageIdMap[_mongoRelation.page]
-        if (!_relationPageId) {
-          console.log(`⚠️  relation.page not found: ${_mongoRelation.page}`)
-          continue
-        }
-        const _relationRelatedBlockId = _blockIdMap[_mongoRelation.relatedBlock]
-        if (!_relationRelatedBlockId) {
-          console.log(
-            `⚠️  relation.relatedBlock not found: ${_mongoRelation.relatedBlock}`
-          )
-          continue
-        }
-        const _relationBlockId = _blockIdMap[_mongoRelation.block]
+      for (const _relationBlockMongoId of Object.keys(_relatedBlockMap)) {
+        // get the block id
+        const _relationBlockId = _blockIdMap[_relationBlockMongoId]
         if (!_relationBlockId) {
-          console.log(`⚠️  relation.block not found: ${_mongoRelation.block}`)
+          console.log(`⚠️  relation.block not found: ${_relationBlockMongoId}`)
           continue
         }
 
-        const _couchRelationId = uid()
+        // build the pages list by converting mongo pageId => couch pageId
+        const _relationPageIds: string[] = []
+        for (const _relationPageMongoId of Object.keys(
+          _relatedBlockMap[_relationBlockMongoId]
+        )) {
+          const _relationPageId = _pageIdMap[_relationPageMongoId]
+          if (!_relationPageId) {
+            console.log(`⚠️  relation.page not found: ${_relationPageMongoId}`)
+            continue
+          }
+          _relationPageIds.push(_relationPageId)
+        }
+
+        const _couchRelationId = `r_${_relationBlockId}`
 
         await _groupDb.insert({
           $type: DocumentType.BlockRelation,
           _id: _couchRelationId,
-          block: _relationBlockId,
-          relatedBlock: _relationRelatedBlockId,
-          relatedBlockType: _mongoRelation.relatedBlockType,
-          relationshipType: _mongoRelation.relationshipType,
-          page: _relationPageId,
-          blockIndex: _mongoRelation.blockIndex,
-          blockText: {
-            textValue: _mongoRelation.blockText.textValue,
-            ranges: _mongoRelation.blockText.ranges.map((r) => ({
-              marks: r.marks,
-              offset: r.offset,
-              length: r.length,
-            })),
-          },
-          ...getTimestamps(_mongoRelation),
+          // blockId: _relationBlockId,
+          // TODO: change to blockType
+          type: _blockTypeMap[_relationBlockMongoId],
+          pages: _relationPageIds,
+          ...getTimestamps({}),
         })
         _relationsCount += 1
       }
