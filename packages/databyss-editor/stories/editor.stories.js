@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { createEditor } from '@databyss-org/slate'
 import { withReact } from '@databyss-org/slate-react'
 import { storiesOf } from '@storybook/react'
@@ -22,6 +23,8 @@ import basicFixture from './fixtures/basic'
 import blankFixture from './fixtures/blankState'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import noAtomicsFixture from './fixtures/no-atomics'
+
+const queryClient = new QueryClient()
 
 const _res = {
   totalItems: 1,
@@ -68,16 +71,18 @@ const SideBySide = ({ initialState }) => {
 }
 
 const EditorWithModals = ({ initialState }) => (
-  <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
-    <NavigationProvider>
-      <EditorWithProvider
-        initialState={initialState}
-        onChange={({ patch, inversePatch }) => {
-          console.log(patch, inversePatch)
-        }}
-      />
-    </NavigationProvider>
-  </SourceProvider>
+  <QueryClientProvider client={queryClient}>
+    <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
+      <NavigationProvider>
+        <EditorWithProvider
+          initialState={initialState}
+          onChange={({ patch, inversePatch }) => {
+            console.log(patch, inversePatch)
+          }}
+        />
+      </NavigationProvider>
+    </SourceProvider>
+  </QueryClientProvider>
 )
 
 const initFetchMock = () => {
