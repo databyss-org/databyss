@@ -5,7 +5,6 @@ import { CatalogSearchLoader } from '@databyss-org/ui/components/Loaders'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { textToHtml } from '@databyss-org/services/blocks'
-import { setSource } from '@databyss-org/services/sources'
 import { CatalogFooter } from './'
 
 const CatalogResults = ({ menuHeight, type, dismiss, query, selectSource }) => {

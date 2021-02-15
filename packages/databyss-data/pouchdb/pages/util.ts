@@ -3,7 +3,6 @@ import { Block } from '@databyss-org/services/interfaces'
 import { PageDoc, DocumentType } from '../interfaces'
 import { upsert, addTimeStamp } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
-import { savePage } from './'
 import { dbRef } from '../db'
 
 export const getAtomicClosureText = (type, text) =>
