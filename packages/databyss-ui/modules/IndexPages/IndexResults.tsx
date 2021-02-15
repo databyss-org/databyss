@@ -47,7 +47,7 @@ export const IndexResults = ({
     blockRelation: blockRelationRes.data![`r_${relatedBlockId}`],
     pages: pagesRes.data!,
     blocks: _blocksRes.data!,
-  })
+  }).filter((r) => r.relatedBlock === relatedBlockId)
 
   const groupedRelations = groupBlockRelationsByPage(_relations)
 
