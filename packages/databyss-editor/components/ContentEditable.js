@@ -107,7 +107,7 @@ const ContentEditable = ({
         operationType: 'REMOVE',
         type: e.type,
         _id: e._id,
-        page: state.pageHeader._id,
+        page: state.pageHeader?._id,
       }
       setBlockRelations(_payload)
     })
@@ -161,7 +161,7 @@ const ContentEditable = ({
           operationType: 'ADD',
           type: entity.type,
           _id: entity._id,
-          page: state.pageHeader._id,
+          page: state.pageHeader?._id,
         }
         setBlockRelations(_payload)
 

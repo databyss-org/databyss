@@ -68,8 +68,8 @@ export const useDocuments = <T extends Document>(
 
   useEffect(() => {
     // console.log('useDocuments.subscribe', queryKey, selector)
-    const changes = dbRef
-      .current!.changes({
+    const changes = dbRef.current
+      ?.changes({
         since: 'now',
         live: true,
         include_docs: true,
@@ -95,7 +95,7 @@ export const useDocuments = <T extends Document>(
     return () => {
       // on unmount, stop listening to pouch changes
       // console.log('useDocuments.unsubscribe', queryKey)
-      changes.cancel()
+      changes?.cancel()
       // queryClient.removeQueries(queryKey)
     }
   }, [])
