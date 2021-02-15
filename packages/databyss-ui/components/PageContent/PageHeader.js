@@ -28,7 +28,8 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
           ref.current.focus()
         }
       }, 10)
-    } else {
+    } else if (!pageName.length) {
+      // only set page name on initial mount
       setPageName(pageDataName)
     }
   }, [pageId, pagesRes])
@@ -61,6 +62,7 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
         }
       }}
       value={pageName}
+      onBlur={() => console.log('blur')}
       onChange={onPageNameChange}
       placeholder={noPageTitle}
       variant="bodyHeading1"
