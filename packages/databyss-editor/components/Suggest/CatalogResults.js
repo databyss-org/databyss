@@ -2,15 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { Text, View, List } from '@databyss-org/ui/primitives'
 import _ from 'lodash'
 import { CatalogSearchLoader } from '@databyss-org/ui/components/Loaders'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { textToHtml } from '@databyss-org/services/blocks'
+import { setSource } from '@databyss-org/services/sources'
 import { CatalogFooter } from './'
 
 const CatalogResults = ({ menuHeight, type, dismiss, query, selectSource }) => {
   const [sourcesLoaded, setSourcesLoaded] = useState(false)
-  const setSource = useSourceContext((c) => c && c.setSource)
 
   const onPress = (result) => {
     selectSource({ ...result.source })
@@ -47,14 +46,12 @@ const CatalogResults = ({ menuHeight, type, dismiss, query, selectSource }) => {
   return (
     <View p={sourcesLoaded && 'small'}>
       <View overflowX="hidden" overflowY="auto" maxHeight={pxUnits(menuHeight)}>
-        {setSource && (
-          <CatalogSearchLoader type={type} query={query}>
-            {(results) => {
-              setSourcesLoaded(true)
-              return _renderResults(results)
-            }}
-          </CatalogSearchLoader>
-        )}
+        <CatalogSearchLoader type={type} query={query}>
+          {(results) => {
+            setSourcesLoaded(true)
+            return _renderResults(results)
+          }}
+        </CatalogSearchLoader>
       </View>
       <View
         pt="small"
