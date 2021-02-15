@@ -220,7 +220,7 @@ describe('block indexing', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
-    await authorSidebarButton[2].click()
+    await authorSidebarButton[1].click()
     await sleep(1000)
     const authorSorces = await getElementsByTag(
       driver,
