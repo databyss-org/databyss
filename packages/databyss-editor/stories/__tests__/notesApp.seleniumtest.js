@@ -153,6 +153,7 @@ describe('notes app', () => {
     await firstResult[0].click()
 
     await isAppInNotesSaved(driver)
+    await sleep(3000)
 
     // check if source is on sidebar
     let sidebarSource = await getElementsByTag(
@@ -160,7 +161,7 @@ describe('notes app', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
-    sidebarSource = await sidebarSource[2].getAttribute('innerText')
+    sidebarSource = await sidebarSource[1].getAttribute('innerText')
 
     // verify source added to sidebar
     assert.equal(sidebarSource.trim().length > 0, true)
