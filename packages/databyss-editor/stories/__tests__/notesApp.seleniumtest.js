@@ -168,6 +168,7 @@ describe('notes app', () => {
     // delete the source and verify its removed from the sidebar
     await backspaceKey(actions)
     await backspaceKey(actions)
+    await sleep(3000)
 
     // check if the source exists in the sidebar, it should be removed
 
@@ -176,7 +177,7 @@ describe('notes app', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
-    assert.equal(sidebarSource.length, 2)
+    assert.equal(sidebarSource.length, 1)
 
     await sendKeys(actions, 'Editor test two')
 
