@@ -21,7 +21,7 @@ export type {
   Author,
   Topic,
   SourceCitationHeader,
-  BlockRelation,
+  IndexPageResult,
   Block,
   BlockReference,
   BlockRelationsServerResponse,

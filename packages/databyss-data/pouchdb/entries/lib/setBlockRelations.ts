@@ -1,25 +1,30 @@
 import {
-  BlockRelationPayload,
-  BlockRelationResponse,
+  BlockRelation,
   BlockRelationOperation,
 } from '@databyss-org/editor/interfaces'
 
 import { findOne, upsert } from '../../utils'
 import { DocumentType } from '../../interfaces'
+import { BlockType } from '../../../../databyss-services/interfaces/Block'
 
-const setBlockRelations = async (payload: BlockRelationPayload) => {
+const setBlockRelations = async (payload: {
+  _id: string
+  type: BlockType
+  page: string
+  operationType: BlockRelationOperation
+}) => {
   const { _id, page, operationType, type } = payload
   // find relation type
 
   const _relationId = `r_${_id}`
 
-  const _payload: BlockRelationResponse = {
+  const _payload: BlockRelation = {
     _id: _relationId,
     type,
     pages: [],
   }
 
-  const res = await findOne({
+  const res: BlockRelation | null = await findOne({
     $type: DocumentType.BlockRelation,
     query: {
       _id: _relationId,

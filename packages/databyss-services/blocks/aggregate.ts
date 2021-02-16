@@ -1,9 +1,9 @@
-import { BlockRelation } from '../interfaces'
+import { IndexPageResult } from '../interfaces'
 
 export const groupBlockRelationsByPage = (
-  blockRelations: BlockRelation[]
+  blockRelations: IndexPageResult[]
 ): {
-  [pageId: string]: BlockRelation[]
+  [pageId: string]: IndexPageResult[]
 } => {
   const _relations = [...blockRelations]
   // sort according to block index
@@ -25,8 +25,8 @@ export const groupBlockRelationsByPage = (
 }
 
 export const groupBlockRelationsByRelatedBlock = (
-  blockRelations: BlockRelation[]
-): { [relatedBlockId: string]: BlockRelation[] } =>
+  blockRelations: IndexPageResult[]
+): { [relatedBlockId: string]: IndexPageResult[] } =>
   blockRelations.reduce((_grouped, _relation) => {
     if (!_grouped[_relation.relatedBlock]) {
       _grouped[_relation.relatedBlock] = []

@@ -1,5 +1,5 @@
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
-import { DocumentType } from '../../interfaces'
+import { DocumentType, PageDoc } from '../../interfaces'
 import { findOne, searchText } from '../../utils'
 
 const searchEntries = async (
@@ -15,8 +15,6 @@ const searchEntries = async (
 
   const _res = await searchText(_query)
 
-  console.log('first response', _res)
-
   const _queryResponse = _res.rows
   if (!_queryResponse.length) {
     return new ResourceNotFoundError('no results found')
@@ -27,7 +25,7 @@ const searchEntries = async (
   for (const _result of _results) {
     // returns all pages where source id is found in element id
     // change this to find all pages
-    const _page = await findOne({
+    const _page: PageDoc | null = await findOne({
       $type: DocumentType.Page,
       query: {
         blocks: {
@@ -140,8 +138,6 @@ const searchEntries = async (
       results: Object.fromEntries(__results.results),
     }
   }
-
-  console.log('finish', __results)
 
   return __results
 }

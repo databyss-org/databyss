@@ -81,7 +81,7 @@ export interface CacheDict<T> {
 }
 export interface BlockRelationsServerResponse {
   count: number
-  results: CacheDict<BlockRelation[]>
+  results: CacheDict<IndexPageResult[]>
 }
 
 export enum BlockRelationshipType {
@@ -89,7 +89,7 @@ export enum BlockRelationshipType {
   'INLINE' = 'INLINE',
 }
 
-export interface BlockRelation {
+export interface IndexPageResult {
   _id?: string
   block: string
   relatedBlock: string

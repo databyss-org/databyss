@@ -1,7 +1,7 @@
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import { replaceInlineText } from '@databyss-org/editor/state/util'
 import { Topic, Block, Page } from '@databyss-org/services/interfaces'
-import { BlockRelationResponse } from '@databyss-org/editor/interfaces'
+import { BlockRelation } from '@databyss-org/editor/interfaces'
 import { DocumentType } from '../../interfaces'
 import { upsert, getDocument } from '../../utils'
 
@@ -22,7 +22,7 @@ const setTopic = async (data: Topic) => {
    * iterate through the pages and update blocks that have the topic as an inline entity
    */
   // TODO: change to blockId so we're not dependent on _id format
-  const _relation = await getDocument<BlockRelationResponse>(`r_${_id}`)
+  const _relation = await getDocument<BlockRelation>(`r_${_id}`)
 
   if (!_relation) {
     // block has no relations yet

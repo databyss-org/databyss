@@ -4,7 +4,7 @@ import {
   Block,
   BlockType,
   Selection,
-  BlockRelation,
+  IndexPageResult,
   Range,
   BlockReference,
 } from '@databyss-org/services/interfaces'
@@ -45,8 +45,8 @@ const composeBlockRelation = (
   atomicBlock: BlockReference,
   pageId: string,
   relationshipType: BlockRelationshipType
-): BlockRelation => {
-  const _blockRelation: BlockRelation = {
+): IndexPageResult => {
+  const _blockRelation: IndexPageResult = {
     block: currentBlock._id,
     relatedBlock: atomicBlock._id,
     blockText: currentBlock.text,
@@ -64,7 +64,7 @@ const getInlineBlockRelations = (
   pageId: string,
   index: number
 ) => {
-  const _blockRelations: BlockRelation[] = []
+  const _blockRelations: IndexPageResult[] = []
 
   // find if any inline topics exist on block
   const _inlineRanges = getInlineAtomicFromBlock(block)
@@ -142,7 +142,7 @@ export const getPagePath = (page: EditorState): PagePath => {
   const _index = page.selection.anchor.index
 
   const _currentBlock = page.blocks[_index]
-  const _blockRelations: BlockRelation[] = []
+  const _blockRelations: IndexPageResult[] = []
 
   // trim blocks to remove content after anchor
   const _blocks = [...page.blocks].reverse()
@@ -209,7 +209,7 @@ export const getPagePath = (page: EditorState): PagePath => {
     }
   })
 
-  let _inlineRelations: BlockRelation[] = []
+  let _inlineRelations: IndexPageResult[] = []
   // inline block indexing
   if (pageId) {
     // returns an array of block relations
@@ -230,14 +230,14 @@ export const indexPage = ({
 }: {
   pageId: string | null
   blocks: Block[]
-}): BlockRelation[] => {
+}): IndexPageResult[] => {
   const currentAtomics: {
     [key: string]: Block | null
   } = {
     [BlockType.Source]: null,
     [BlockType.Topic]: null,
   }
-  const blockRelations: BlockRelation[] = []
+  const blockRelations: IndexPageResult[] = []
 
   if (pageId) {
     blocks.forEach((block, index) => {
@@ -253,7 +253,7 @@ export const indexPage = ({
       // if current block is not empty
       else if (block.text.textValue.length) {
         // before indexing the atomic, check if block contains any inline atomics
-        let _inlineRelations: BlockRelation[] = []
+        let _inlineRelations: IndexPageResult[] = []
         // inline block indexing
         if (pageId) {
           // returns an array of block relations

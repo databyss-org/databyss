@@ -1,9 +1,9 @@
 import EventEmitter from 'es-event-emitter'
+import { Document } from '@databyss-org/services/interfaces'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef } from './db'
 import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
-import { Document } from '@databyss-org/services/interfaces'
 
 export const addTimeStamp = (doc: any): any => {
   // if document has been created add a modifiedAt timestamp
@@ -82,7 +82,7 @@ export const findOne = async <T extends Document>({
   $type: DocumentType
   query: any
   useIndex?: string
-}): Promise<T> => {
+}): Promise<T | null> => {
   let _useIndex
   const _designDocResponse = await dbRef.current!.find({
     selector: {
@@ -195,8 +195,8 @@ const coallesceQ = (patches: Patch[]) => {
 }
 
 export class QueueProcessor extends EventEmitter {
-  on(event: string, listener: Function): this
-  emit(event: string): void
+  // on(event: string, listener: Function): this
+  // emit(event: string): void
   interval: any
   isProcessing: boolean
   constructor() {

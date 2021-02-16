@@ -1,16 +1,17 @@
-import { Block, BlockRelation, DocumentDict } from '../interfaces'
+import { BlockRelation } from '@databyss-org/editor/interfaces/index'
+import { indexPage } from '@databyss-org/editor/lib/util'
+import { Block, IndexPageResult, DocumentDict } from '../interfaces'
 import { groupBlockRelationsByRelatedBlock } from './aggregate'
-import { BlockRelationResponse } from '../../databyss-editor/interfaces/index'
 import { Page } from '../interfaces/Page'
-import { indexPage } from '../../databyss-editor/lib/util'
+import { CacheDict } from '../interfaces/Block'
 
 interface JoinBlockRelationsArgs {
-  blockRelationDict: DocumentDict<BlockRelationResponse>
+  blockRelationDict: CacheDict<BlockRelation>
   blockDict?: DocumentDict<Block>
   blockPredicate?: (block: Block) => boolean
   pageDict?: DocumentDict<Page>
   pagePredicate?: (page: Page) => boolean
-  relationPredicate?: (relation: BlockRelationResponse) => boolean
+  relationPredicate?: (relation: BlockRelation) => boolean
 }
 export const joinBlockRelations = ({
   blockRelationDict,
@@ -19,7 +20,7 @@ export const joinBlockRelations = ({
   pageDict,
   pagePredicate,
   relationPredicate,
-}: JoinBlockRelationsArgs): DocumentDict<BlockRelation> =>
+}: JoinBlockRelationsArgs): CacheDict<IndexPageResult> =>
   Object.values(blockRelationDict).reduce((accum, curr) => {
     let _include = true
     if (relationPredicate) {
@@ -42,7 +43,7 @@ export const joinBlockRelations = ({
  * Returns only blocks that are in pages
  */
 export const getBlocksInPages = <T extends Block>(
-  blockRelationDict: DocumentDict<BlockRelationResponse>,
+  blockRelationDict: DocumentDict<BlockRelation>,
   blockDict: DocumentDict<Block>,
   pageDict: DocumentDict<Page>,
   includeArchived: boolean
@@ -60,7 +61,7 @@ export const getBlocksInPages = <T extends Block>(
 }
 
 export const getBlocksFromBlockRelations = <T extends Block>(
-  blockRelationDict: DocumentDict<BlockRelationResponse>,
+  blockRelationDict: DocumentDict<BlockRelation>,
   blockDict: DocumentDict<Block>,
   pageDict: DocumentDict<Page>,
   includeArchived: boolean
@@ -100,7 +101,7 @@ export const addPagesToBlockRelation = ({
   pages,
   blocks,
 }: {
-  blockRelation: BlockRelationResponse
+  blockRelation: BlockRelation
   pages: DocumentDict<Page>
   blocks: DocumentDict<Block>
 }) => {
@@ -108,12 +109,13 @@ export const addPagesToBlockRelation = ({
     populatePage({ page: pages[p], blocks })
   )
 
-  const relations: BlockRelation[] = []
+  const relations: IndexPageResult[] = []
   // returns array of all block relations to provided id
   _pages.forEach((p) =>
-    indexPage({ pageId: p._id, blocks: p.blocks }).forEach((r: BlockRelation) =>
-      relations.push(r)
-    )
+    indexPage({
+      pageId: p._id,
+      blocks: p.blocks,
+    }).forEach((r: IndexPageResult) => relations.push(r))
   )
 
   return relations
