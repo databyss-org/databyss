@@ -26,10 +26,9 @@ export const useBibliography = (formatOptions: CitationFormatOptions) => {
     async () => {
       const dict: BibliographyDict = {}
       for (const source of blocksInPagesRes.data!) {
-        if (!source.detail) {
-          continue
-        }
-        const citation = await toCitation(source.detail, formatOptions)
+        const citation = source.detail
+          ? await toCitation(source.detail, formatOptions)
+          : null
         dict[source._id] = { citation, source }
       }
       return dict
