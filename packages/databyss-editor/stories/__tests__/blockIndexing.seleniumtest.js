@@ -243,6 +243,7 @@ describe('block indexing', () => {
     await leftKey(actions)
 
     await backspaceKey(actions)
+    await sleep(3000)
     await isAppInNotesSaved(driver)
 
     const allSources = await getElementsByTag(
@@ -251,6 +252,6 @@ describe('block indexing', () => {
     )
 
     // author should not appear on sidebar
-    assert.equal(allSources.length, 2)
+    assert.equal(allSources.length, 1)
   })
 })
