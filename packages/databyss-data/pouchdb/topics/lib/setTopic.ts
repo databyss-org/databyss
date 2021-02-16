@@ -25,7 +25,8 @@ const setTopic = async (data: Topic) => {
   const _relation = await getDocument<BlockRelationResponse>(`r_${_id}`)
 
   if (!_relation) {
-    console.warn(`⚠️  Missing block relation for ${_id}`)
+    // block has no relations yet
+    return
   }
 
   for (const _pageId of _relation!.pages) {
