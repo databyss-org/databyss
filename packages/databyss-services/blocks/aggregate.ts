@@ -23,14 +23,3 @@ export const groupBlockRelationsByPage = (
     return acc
   }, {})
 }
-
-export const groupBlockRelationsByRelatedBlock = (
-  blockRelations: IndexPageResult[]
-): { [relatedBlockId: string]: IndexPageResult[] } =>
-  blockRelations.reduce((_grouped, _relation) => {
-    if (!_grouped[_relation.relatedBlock]) {
-      _grouped[_relation.relatedBlock] = []
-    }
-    _grouped[_relation.relatedBlock].push(_relation)
-    return _grouped
-  }, {})

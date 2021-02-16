@@ -1,7 +1,6 @@
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { indexPage } from '@databyss-org/editor/lib/util'
 import { Block, IndexPageResult, DocumentDict } from '../interfaces'
-import { groupBlockRelationsByRelatedBlock } from './aggregate'
 import { Page } from '../interfaces/Page'
 import { CacheDict } from '../interfaces/Block'
 
