@@ -1,14 +1,9 @@
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import { replaceInlineText } from '@databyss-org/editor/state/util'
-import {
-  Topic,
-  Block,
-  BlockRelation,
-  Page,
-} from '@databyss-org/services/interfaces'
-import { DocumentType } from '../../interfaces'
-import { upsert, findOne, getDocument } from '../../utils'
+import { Topic, Block, Page } from '@databyss-org/services/interfaces'
 import { BlockRelationResponse } from '@databyss-org/editor/interfaces'
+import { DocumentType } from '../../interfaces'
+import { upsert, getDocument } from '../../utils'
 
 const setTopic = async (data: Topic) => {
   const { text, _id } = data
@@ -30,12 +25,10 @@ const setTopic = async (data: Topic) => {
   const _relation = await getDocument<BlockRelationResponse>(`r_${_id}`)
 
   if (!_relation) {
-    console.log(`⚠️  Missing block relation for ${_id}`)
+    console.warn(`⚠️  Missing block relation for ${_id}`)
   }
 
   for (const _pageId of _relation!.pages) {
-    console.log('setTopic.pageId', _pageId)
-
     const _page = await getDocument<Page>(_pageId)
     for (const _blockRef of _page!.blocks) {
       if (_blockRef.type === BlockType.Entry) {
