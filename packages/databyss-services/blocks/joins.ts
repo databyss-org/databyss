@@ -31,7 +31,7 @@ export const joinBlockRelations = ({
     if (pagePredicate) {
       _include =
         _include &&
-        curr.pages.map((_pageId) => pageDict![_pageId]).every(pagePredicate)
+        curr.pages.map((_pageId) => pageDict![_pageId]).some(pagePredicate)
     }
     if (_include) {
       accum[curr._id] = curr
