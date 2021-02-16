@@ -3,6 +3,7 @@ import { DocumentType, UserPreference } from './interfaces'
 import { dbRef } from './db'
 import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
+import { Document } from '@databyss-org/services/interfaces'
 
 export const addTimeStamp = (doc: any): any => {
   // if document has been created add a modifiedAt timestamp
@@ -94,7 +95,7 @@ export const findAll = async ({
   return _response.docs
 }
 
-export const findOne = async ({
+export const findOne = async <T extends Document>({
   $type,
   query,
   useIndex,
@@ -102,7 +103,7 @@ export const findOne = async ({
   $type: DocumentType
   query: any
   useIndex?: string
-}) => {
+}): Promise<T> => {
   let _useIndex
   const _designDocResponse = await dbRef.current!.find({
     selector: {
@@ -144,6 +145,23 @@ export const findOne = async ({
     return _response.docs[0]
   }
   return null
+}
+
+/**
+ * Gets a document by id
+ * @returns Promise, resolves to document or null if not found
+ */
+export const getDocument = async <T extends Document>(
+  id: string
+): Promise<T | null> => {
+  try {
+    return await dbRef.current?.get(id)
+  } catch (err) {
+    if (err.name === 'not_found') {
+      return null
+    }
+    throw err
+  }
 }
 
 export const replaceOne = async ({
