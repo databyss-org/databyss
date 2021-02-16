@@ -3,6 +3,7 @@ import { indexPage } from '@databyss-org/editor/lib/util'
 import { Block, IndexPageResult, DocumentDict } from '../interfaces'
 import { Page } from '../interfaces/Page'
 import { CacheDict } from '../interfaces/Block'
+import { getAtomicClosureText } from '@databyss-org/data/pouchdb/pages/util'
 
 interface JoinBlockRelationsArgs {
   blockRelationDict: CacheDict<BlockRelation>
@@ -71,7 +72,18 @@ const populatePage = ({
   blocks: DocumentDict<Block>
 }) => {
   const _page = page
-  _page.blocks = page.blocks.map((b) => blocks[b._id])
+  _page.blocks = page.blocks.map((b) => {
+    const _block = { ...blocks[b._id] }
+    // check for atomic block closure
+    if (b.type?.match(/^END_/)) {
+      _block.type = b.type
+      _block.text = {
+        textValue: getAtomicClosureText(b.type, _block.text.textValue),
+        ranges: [],
+      }
+    }
+    return _block
+  })
   return _page
 }
 
