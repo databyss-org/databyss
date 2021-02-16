@@ -10,6 +10,7 @@ interface JoinBlockRelationsArgs {
   blockPredicate?: (block: Block) => boolean
   pageDict?: DocumentDict<Page>
   pagePredicate?: (page: Page) => boolean
+  relationPredicate?: (relation: BlockRelationResponse) => boolean
 }
 export const joinBlockRelations = ({
   blockRelationDict,
@@ -17,9 +18,13 @@ export const joinBlockRelations = ({
   blockPredicate,
   pageDict,
   pagePredicate,
+  relationPredicate,
 }: JoinBlockRelationsArgs): DocumentDict<BlockRelation> =>
   Object.values(blockRelationDict).reduce((accum, curr) => {
     let _include = true
+    if (relationPredicate) {
+      _include = _include && relationPredicate(curr)
+    }
     if (blockPredicate) {
       _include = _include && blockPredicate(blockDict![curr.block])
     }
@@ -60,9 +65,15 @@ export const getBlocksFromBlockRelations = <T extends Block>(
   pageDict: DocumentDict<Page>,
   includeArchived: boolean
 ) => {
+  /**
+   * Joined BlockRelationDict
+   * Only include where relation has pages
+   * Also filter based on includeArchived arg
+   */
   const filtered = joinBlockRelations({
     blockRelationDict,
     pageDict,
+    relationPredicate: (relation) => Boolean(relation.pages?.length),
     pagePredicate: (page) => Boolean(page.archive) === includeArchived,
   })
 
