@@ -5,8 +5,6 @@ import {
   CACHE_ENTRY_RESULTS,
   SET_QUERY,
   CLEAR_CACHE,
-  FETCH_BLOCK_RELATIONS,
-  CACHE_BLOCK_RELATIONS,
   CLEAR_BLOCK_RELATIONS_CACHE,
 } from './constants'
 
@@ -45,21 +43,5 @@ export function onClearCache() {
 export function onClearBlockRelationsCache() {
   return (dispatch) => {
     dispatch({ type: CLEAR_BLOCK_RELATIONS_CACHE })
-  }
-}
-
-export function fetchBlockRelations(queryId) {
-  // console.log(queryId)
-  return async (dispatch) => {
-    dispatch({
-      type: FETCH_BLOCK_RELATIONS,
-      payload: queryId,
-    })
-    entries.getBlockRelations(queryId).then((res) => {
-      dispatch({
-        type: CACHE_BLOCK_RELATIONS,
-        payload: { results: res, queryId },
-      })
-    })
   }
 }
