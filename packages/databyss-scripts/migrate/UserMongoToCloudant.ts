@@ -104,10 +104,6 @@ class UserMongoToCloudant extends ServerProcess {
       })
 
       /**
-       * mongo blockId => boolean
-       */
-      const _validMongoBlockMap = {}
-      /**
        * mongo blockId => { mongo pageId => boolean }
        */
       const _relatedBlockMap = {}
@@ -118,22 +114,24 @@ class UserMongoToCloudant extends ServerProcess {
       _mongoPages.forEach((page) => {
         page.blocks.forEach((block) => {
           // aggregate all blocks into a Map so we don't write orphaned blocks
-          _validMongoBlockMap[block._id] = true
+          _blockToPageMap[block._id] = page._id
 
           // if this is a topic or source block, also add the page into the related block map
-          if (block.type !== 'ENTRY') {
+          if (
+            block.type &&
+            block.type !== 'ENTRY' &&
+            !block.type.match(/^END_/)
+          ) {
             if (!_relatedBlockMap[block._id]) {
               _relatedBlockMap[block._id] = {}
             }
             _relatedBlockMap[block._id][page._id] = true
           }
-
-          _blockToPageMap[block._id] = page._id
         })
       })
       console.log(
-        `ℹ️  Valid (non-orphaned) Block count: ${
-          Object.values(_validMongoBlockMap).length
+        `ℹ️  Valid (non-orphaned) ENTRY count: ${
+          Object.values(_blockToPageMap).length
         }`
       )
       console.log(
@@ -155,8 +153,9 @@ class UserMongoToCloudant extends ServerProcess {
        */
       const _blockTypeMap = {}
       for (const _mongoBlock of _mongoBlocks) {
-        // skip the block if it's orphaned (not in any pages)
-        if (!_validMongoBlockMap[_mongoBlock._id]) {
+        // skip the block if it's an orphaned ENTRY (not in any pages)
+        const _mongoBlockPage = _blockToPageMap[_mongoBlock._id]
+        if (!_mongoBlockPage && _mongoBlock.type === 'ENTRY') {
           continue
         }
         const _couchBlockId = uid()
@@ -183,9 +182,10 @@ class UserMongoToCloudant extends ServerProcess {
         for (const _range of _mongoBlock.text.ranges) {
           for (const _mark of _range.marks) {
             if (Array.isArray(_mark)) {
-              _relatedBlockMap[_mark[1]][
-                _blockToPageMap[_mongoBlock._id]
-              ] = true
+              if (!_relatedBlockMap[_mark[1]]) {
+                _relatedBlockMap[_mark[1]] = {}
+              }
+              _relatedBlockMap[_mark[1]][_mongoBlockPage] = true
             }
           }
         }
@@ -235,6 +235,9 @@ class UserMongoToCloudant extends ServerProcess {
               }
               let _pageBlockType = _mongoBlock.type
               if (!_pageBlockType) {
+                console.log(
+                  `⚠️  page.block missing type on page: ${_mongoPage.name}`
+                )
                 _pageBlockType = _blockTypeMap[_mongoBlock._id] || 'ENTRY'
               }
               return {
@@ -254,7 +257,7 @@ class UserMongoToCloudant extends ServerProcess {
 
       console.log(`➡️  Migrated ${Object.keys(_pageIdMap).length} Pages`)
 
-      // generate HEADING BlockRelations for couch using the _blockRelationMap
+      // generate BlockRelations using the _blockRelationMap
       let _relationsCount = 0
       for (const _relationBlockMongoId of Object.keys(_relatedBlockMap)) {
         // get the block id

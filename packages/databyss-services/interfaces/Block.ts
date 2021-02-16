@@ -99,3 +99,10 @@ export interface IndexPageResult {
   blockIndex: number
   blockText: Text
 }
+
+export type BlockRelation = {
+  _id: string
+  blockId: string
+  blockType: BlockType
+  pages: string[]
+}

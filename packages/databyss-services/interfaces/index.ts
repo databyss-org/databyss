@@ -25,6 +25,7 @@ export type {
   Block,
   BlockReference,
   BlockRelationsServerResponse,
+  BlockRelation,
 } from './Block'
 export type { Document, DocumentDict } from './Document'
 export { BlockType } from './Block'

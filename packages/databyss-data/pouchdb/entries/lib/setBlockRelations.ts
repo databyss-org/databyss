@@ -1,11 +1,7 @@
-import {
-  BlockRelation,
-  BlockRelationOperation,
-} from '@databyss-org/editor/interfaces'
-
-import { findOne, upsert } from '../../utils'
+import { BlockRelation, BlockType } from '@databyss-org/services/interfaces'
+import { BlockRelationOperation } from '@databyss-org/editor/interfaces'
+import { getDocument, upsert } from '../../utils'
 import { DocumentType } from '../../interfaces'
-import { BlockType } from '../../../../databyss-services/interfaces/Block'
 
 const setBlockRelations = async (payload: {
   _id: string
@@ -20,16 +16,12 @@ const setBlockRelations = async (payload: {
 
   const _payload: BlockRelation = {
     _id: _relationId,
-    type,
+    blockId: _id,
+    blockType: type,
     pages: [],
   }
 
-  const res: BlockRelation | null = await findOne({
-    $type: DocumentType.BlockRelation,
-    query: {
-      _id: _relationId,
-    },
-  })
+  const res = await getDocument<BlockRelation>(_relationId)
 
   // if no relation exists for atomic, create one
   if (!res) {
@@ -44,7 +36,7 @@ const setBlockRelations = async (payload: {
       doc: _payload,
     })
   } else {
-    // remove page array
+    // remove page from pages array
     if (operationType === BlockRelationOperation.REMOVE) {
       _payload.pages = res.pages.filter((p) => p !== page)
       upsert({
@@ -54,7 +46,7 @@ const setBlockRelations = async (payload: {
       })
       return
     }
-    // append to page if not already in data
+    // append page to pages if not already in data
     if (res.pages.find((p) => p === page)) {
       return
     }
