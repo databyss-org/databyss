@@ -7,7 +7,6 @@ import React, {
   useMemo,
 } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'
-// import { setBlockRelations } from '@databyss-org/services/entries'
 import { Patch } from 'immer'
 import {
   SET_SELECTION,
@@ -26,20 +25,10 @@ import {
   CACHE_ENTITY_SUGGESTIONS,
   DEQUEUE_REMOVED_ENTITY,
 } from './constants'
-import {
-  Text,
-  Selection,
-  EditorState,
-  Block,
-  PagePath,
-  // BlockRelationPayload,
-} from '../interfaces'
+import { Text, Selection, EditorState, Block, PagePath } from '../interfaces'
 import _initState, { addMetaDataToBlocks } from './initialState'
 import reducer from './reducer'
-import {
-  getPagePath,
-  //  indexPage
-} from '../lib/util'
+import { getPagePath } from '../lib/util'
 
 import {
   cutOrCopyEventHandler,
@@ -84,7 +73,6 @@ type ContextType = {
   insert: (blocks: Block[]) => void
   replace: (blocks: Block[]) => void
   cacheEntitySuggestions: (blocks: Block[]) => void
-  // setInlineBlockRelations: (callback: Function) => void
 }
 
 export type OnChangeArgs = {
@@ -103,8 +91,6 @@ export interface EditorHandles {
 }
 
 type PropsType = {
-  //  ref?: React.RefObject<EditorHandles>
-  // children: JSX.Element
   initialState: EditorState
   onChange?: (args: OnChangeArgs) => void
 }

@@ -14,7 +14,6 @@ import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import {
   addMetaToPatches,
   pageToEditorState,
-  // optimizePatches,
 } from '@databyss-org/editor/state/util'
 
 import { isMobile } from '../../lib/mediaQuery'
@@ -31,11 +30,9 @@ const PageBody = ({
   const { location } = useNavigationContext()
   const clearBlockDict = useEditorPageContext((c) => c.clearBlockDict)
   const setPatches = useEditorPageContext((c) => c.setPatches)
-  // const getPage = useEditorPageContext((c) => c && c.getPage)
 
   useEffect(() => () => clearBlockDict(), [])
 
-  // const patchQueue = useRef([])
   const pageState = useRef(null)
   const editorStateRef = useRef()
 
@@ -61,7 +58,6 @@ const PageBody = ({
     const _nextBlocks = normalizePage(value.nextState).blocks
     const { _id } = value.nextState.pageHeader
     const _page = { blocks: _nextBlocks, _id }
-    console.log('page to upsert', _page)
     upsert({ $type: DocumentType.Page, _id: _page._id, doc: _page })
   }
 

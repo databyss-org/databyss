@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 import { CitationStyleOptions } from '@databyss-org/services/citations/constants'
-// import { createIndexPageEntries } from '@databyss-org/services/entries/util'
 import { getCitationStyleOption } from '@databyss-org/services/citations/lib'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
 import { useBibliography } from '@databyss-org/data/pouchdb/hooks'
-// import { BlockType } from '@databyss-org/editor/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { DropDownControl, pxUnits, styled } from '@databyss-org/ui/primitives'
 import { AuthorsContent } from './AuthorsContent'
@@ -34,8 +32,6 @@ export const SourcesContent = () => {
   const sourcesRes = useBibliography({
     styleId: citationStyleOption.id,
   })
-
-  console.log(sourcesRes)
 
   const onCitationStyleChange = (value) => {
     setCitationStyleOption(value)

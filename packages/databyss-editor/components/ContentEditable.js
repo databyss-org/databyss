@@ -25,7 +25,6 @@ import {
   toggleMark,
   isMarkActive,
   isCurrentlyInInlineAtomicField,
-  getInlineFromBlock,
   isCharacterKeyPress,
   insertTextWithInilneCorrection,
   inlineAtomicBlockCorrector,
@@ -72,7 +71,6 @@ const ContentEditable = ({
     removeAtSelection,
     removeEntityFromQueue,
     removeAtomicFromQueue,
-    // setInlineBlockRelations,
   } = editorContext
 
   const editor = useMemo(() => withReact(createEditor()), [])
@@ -460,25 +458,6 @@ const ContentEditable = ({
               */
             if (event.key === 'Backspace') {
               // remove inline node
-
-              /*
-                scan block to see if this is the last instance of inline atomic, if so, remove block relation
-                */
-              const _currentBlock = state.blocks[state.selection.anchor.index]
-              const _inlineRangeMatch = getInlineFromBlock(
-                _currentBlock,
-                _currentLeaf.atomicId
-              )
-              if (_inlineRangeMatch.length < 2 && setBlockRelations) {
-                // clear this block relation
-                // const blockRelation = {
-                //   block: _currentBlock._id,
-                //   relatedBlock: _currentLeaf.atomicId,
-                //   removeBlock: true,
-                // }
-                console.log('WOULD SET BLOCK RELATION, remove this inline')
-                // setBlockRelations({ blocksRelationArray: [blockRelation] })
-              }
 
               Transforms.removeNodes(editor, {
                 match: (node) => node === _currentLeaf,

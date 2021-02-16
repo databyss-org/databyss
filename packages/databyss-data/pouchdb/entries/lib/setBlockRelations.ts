@@ -3,9 +3,6 @@ import {
   BlockRelationResponse,
   BlockRelationOperation,
 } from '@databyss-org/editor/interfaces'
-// import { DocumentType } from '../../interfaces';
-// import { dbRef } from '../../db'
-// import { findAll, replaceOne, findOne } from '../../utils';
 
 import { findOne, upsert } from '../../utils'
 import { DocumentType } from '../../interfaces'

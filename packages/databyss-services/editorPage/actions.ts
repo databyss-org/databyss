@@ -3,12 +3,10 @@ import { ResourcePending } from '../interfaces/ResourcePending'
 import { Page } from '../interfaces'
 
 import {
-  // PATCH,
   FETCH_PAGE,
   CACHE_PAGE,
   DELETE_PAGE,
   ARCHIVE_PAGE,
-  // QUEUE_PATCH,
   REMOVE_PAGE_FROM_CACHE,
   SET_PAGE_PUBLIC,
   CACHE_PUBLIC_PAGE,

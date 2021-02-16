@@ -37,22 +37,9 @@ const assignPatchValue = (obj, value, allowed = ['text', 'type', '_id']) => {
 }
 
 const addOrReplaceBlock = async (p) => {
-  // const _index = p.path[1]
-  // const { blocks } = page
-
   // if the blockId isn't in the patch, get it from the page
   const { _id, textValue, ranges, type } = p.value
   const _blockId = _id
-
-  // if (!_blockId) {
-  //   _blockId = blocks[_index]._id
-  // }
-  // add or replace entry in blocks array
-  // const _removeBlockCount = p.op === 'add' ? 0 : 1
-  // blocks.splice(_index, _removeBlockCount, {
-  //   _id: _blockId,
-  //   type: p.value.type ? p.value.type : 'ENTRY',
-  // })
 
   if (p.value.type?.match(/^END_/)) {
     return
@@ -84,9 +71,6 @@ const replacePatch = async (p) => {
       const _id = p.value._id
       if (_id) {
         upsert({ $type: DocumentType.Selection, _id, doc: p.value })
-
-        // // if new selection._id is passed tag it to page
-        // page.selection = _id
       }
       break
     }
@@ -150,7 +134,6 @@ export const runPatches = (p: Patch) => {
 export const normalizePage = (page: Page): PageDoc => {
   const _pageDoc: PageDoc = {
     blocks: page.blocks.map((b) => ({ _id: b._id, type: b.type })),
-    // blocks: [{ _id: page.blocks[0]._id, type: BlockType.Entry }],
     selection: page.selection._id,
     _id: page._id,
     name: page.name,

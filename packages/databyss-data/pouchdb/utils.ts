@@ -13,25 +13,17 @@ export const addTimeStamp = (doc: any): any => {
   return { ...doc, createdAt: Date.now() }
 }
 
-// const EM = new EventEmitter()
-
-// EM.on('foo', () => {
-//   console.log('some code')
-// })
-
-// EM.emit('foo')
-
 interface Patch {
   $type: string
   _id: string
   doc: any
 }
 
-type upsertDictionary = {
+type upsertQueueRef = {
   current: Patch[]
 }
 
-export const upQdict: upsertDictionary = {
+export const upQdict: upsertQueueRef = {
   current: [],
 }
 
@@ -79,19 +71,6 @@ export const findAll = async ({
     console.log($type, query)
   }
 
-  // dbRef.current!
-  //   .explain({
-  //     selector: {
-  //       ...query,
-  //       $type,
-  //     },
-  //     use_index: useIndex,
-  //   })
-  //   .then((explained) => {
-  //     console.log(explained.index.ddoc)
-  //     // detailed explained info can be viewed
-  //   })
-
   return _response.docs
 }
 
@@ -127,19 +106,6 @@ export const findOne = async <T extends Document>({
     console.log('ERROR', _response)
     console.log($type, query)
   }
-
-  // dbRef.current!
-  //   .explain({
-  //     selector: {
-  //       ...query,
-  //       $type,
-  //     },
-  //     use_index: useIndex,
-  //   })
-  //   .then((explained) => {
-  //     console.log(explained.index.ddoc)
-  //     // detailed explained info can be viewed
-  //   })
 
   if (_response.docs.length) {
     return _response.docs[0]

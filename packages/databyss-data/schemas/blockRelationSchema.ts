@@ -15,7 +15,7 @@ export const blockRelationSchema: JSONSchema4 = {
     },
   },
   allOf: [{ $ref: 'pouchDb' }],
-  required: ['pages'],
+  required: ['pages', 'type'],
 }
 
 export default blockRelationSchema
