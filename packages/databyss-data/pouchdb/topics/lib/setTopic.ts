@@ -3,7 +3,7 @@ import { replaceInlineText } from '@databyss-org/editor/state/util'
 import { Topic, Block, Page } from '@databyss-org/services/interfaces'
 import { BlockRelation } from '@databyss-org/editor/interfaces'
 import { DocumentType } from '../../interfaces'
-import { upsert, getDocument } from '../../utils'
+import { upsert, getDocument, findOne } from '../../utils'
 
 const setTopic = async (data: Topic) => {
   const { text, _id } = data
@@ -22,7 +22,14 @@ const setTopic = async (data: Topic) => {
    * iterate through the pages and update blocks that have the topic as an inline entity
    */
   // TODO: change to blockId so we're not dependent on _id format
-  const _relation = await getDocument<BlockRelation>(`r_${_id}`)
+  const _relation = await findOne<BlockRelation>({
+    $type: DocumentType.BlockRelation,
+    query: {
+      blockId: _id,
+    },
+  })
+
+  console.log(_relation)
 
   if (!_relation) {
     // block has no relations yet

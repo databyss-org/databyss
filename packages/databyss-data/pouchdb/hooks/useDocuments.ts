@@ -51,13 +51,13 @@ export const useDocuments = <T extends Document>(
   const query = useQuery<DocumentDict<T>>(
     queryKey,
     () =>
-      new Promise<DocumentDict<T>>((resolve, reject) => {
-        console.log('useDocuments.fetch', selector)
-        return dbRef
+      new Promise<DocumentDict<T>>((resolve, reject) =>
+        // console.log('useDocuments.fetch', selector)
+        dbRef
           .current!.find({ selector })
           .then((res) => resolve(DocumentArrayToDict(res.docs)))
           .catch((err) => reject(err))
-      }),
+      ),
     {
       enabled:
         options.enabled &&
@@ -81,7 +81,7 @@ export const useDocuments = <T extends Document>(
           !queryClient.getQueryData<DocumentDict<T>>(queryKey)?.[change.id]
         ) {
           // doc was added or removed, refresh list
-          console.log('useDocuments.invalidateAll', queryKey)
+          // console.log('useDocuments.invalidateAll', queryKey)
           queryClient.invalidateQueries(queryKey)
         } else {
           // the doc was modified, so update the cache

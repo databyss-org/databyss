@@ -58,7 +58,7 @@ export const getBlocksFromBlockRelations = <T extends Block>(
   })
 
   const blocks = Object.values(filtered)
-    .map((blockRelation) => blockDict[blockRelation._id.substring(2)])
+    .map((blockRelation) => blockDict[blockRelation.blockId])
     .filter((b) => Boolean(b)) as T[]
   return blocks
 }

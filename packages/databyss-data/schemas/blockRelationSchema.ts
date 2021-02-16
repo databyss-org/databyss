@@ -4,18 +4,21 @@ export const blockRelationSchema: JSONSchema4 = {
   title: 'BlockRelation',
   type: 'object',
   properties: {
+    blockId: {
+      type: 'string',
+    },
     pages: {
       type: 'array',
       items: {
         type: 'string',
       },
     },
-    type: {
+    blockType: {
       type: 'string',
     },
   },
   allOf: [{ $ref: 'pouchDb' }],
-  required: ['pages', 'type'],
+  required: ['pages', 'blockId', 'blockType'],
 }
 
 export default blockRelationSchema

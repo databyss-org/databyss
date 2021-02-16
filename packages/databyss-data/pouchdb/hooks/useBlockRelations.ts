@@ -12,7 +12,7 @@ export const useBlockRelations = (
     $type: DocumentType.BlockRelation,
     ...(blockType
       ? {
-          type: blockType,
+          blockType,
         }
       : {}),
     ...selector,
