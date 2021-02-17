@@ -6,9 +6,7 @@ export const useBlocks = (
   blockType: BlockType,
   options?: UseDocumentsOptions
 ) => {
-  const queryKey = ['blocks', blockType]
   const query = useDocuments<Block>(
-    queryKey,
     {
       $type: DocumentType.Block,
       type: blockType,

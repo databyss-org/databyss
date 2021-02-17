@@ -32,7 +32,7 @@ export const IndexResults = ({
   })
 
   // returns all blocks
-  const _blocksRes = useDocuments<Block>(['blocks'], {
+  const _blocksRes = useDocuments<Block>({
     $type: DocumentType.Block,
   })
 

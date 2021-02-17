@@ -7,8 +7,7 @@ export const useBlockRelations = (
   blockType?: BlockType,
   selector: PouchDB.Find.Selector = {}
 ) => {
-  const queryKey = ['blockRelations', blockType || 'ALL', selector]
-  const query = useDocuments<BlockRelation>(queryKey, {
+  const query = useDocuments<BlockRelation>({
     $type: DocumentType.BlockRelation,
     ...(blockType
       ? {

@@ -251,7 +251,7 @@ export const indexPage = ({
         currentAtomics[block.type] = block
       }
       // if current block is not empty
-      else if (block.text.textValue.length) {
+      else if (block.text?.textValue.length) {
         // before indexing the atomic, check if block contains any inline atomics
         let _inlineRelations: IndexPageResult[] = []
         // inline block indexing
