@@ -1,8 +1,8 @@
 import { Page } from '@databyss-org/services/interfaces/Page'
 import { Block } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
+import { getAtomicClosureText } from '@databyss-org/services/blocks'
 import { PageDoc, DocumentType } from '../../interfaces'
-import { getAtomicClosureText } from '../util'
 import { findOne } from '../../utils'
 import { Selection } from '../../../../databyss-services/interfaces/Selection'
 

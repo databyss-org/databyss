@@ -5,12 +5,6 @@ import { upsert, addTimeStamp } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import { dbRef } from '../db'
 
-export const getAtomicClosureText = (type, text) =>
-  ({
-    END_SOURCE: `/@ ${text}`,
-    END_TOPIC: `/# ${text}`,
-  }[type])
-
 const applyPatch = (node, path, value) => {
   const key = path.shift()
   // if path has length one, just set the value and return

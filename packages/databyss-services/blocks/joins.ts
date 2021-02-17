@@ -1,7 +1,7 @@
 import { BlockRelation } from '@databyss-org/editor/interfaces/index'
 import { indexPage } from '@databyss-org/editor/lib/util'
 // TODO: importing this file makes the server fail
-// import { getAtomicClosureText } from '@databyss-org/data/pouchdb/pages/util'
+import { getAtomicClosureText } from './'
 import { Block, IndexPageResult, DocumentDict } from '../interfaces'
 import { Page } from '../interfaces/Page'
 import { CacheDict } from '../interfaces/Block'
@@ -64,12 +64,6 @@ export const getBlocksFromBlockRelations = <T extends Block>(
     .filter((b) => Boolean(b)) as T[]
   return blocks
 }
-
-export const getAtomicClosureText = (type, text) =>
-  ({
-    END_SOURCE: `/@ ${text}`,
-    END_TOPIC: `/# ${text}`,
-  }[type])
 
 const populatePage = ({
   page,
