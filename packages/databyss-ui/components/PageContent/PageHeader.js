@@ -32,7 +32,7 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
       // only set page name on initial mount
       setPageName(pageDataName)
     }
-  }, [pageId, pagesRes])
+  }, [pageId, pagesRes.isSuccess])
 
   const onPageNameChange = (val) => {
     setPageName(val)
