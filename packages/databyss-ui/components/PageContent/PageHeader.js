@@ -16,6 +16,10 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
   const [pageName, setPageName] = useState('')
 
   useEffect(() => {
+    setPageName(pagesRes.data?.[pageId].name)
+  }, [pagesRes.data?.[pageId]])
+
+  useEffect(() => {
     if (!pagesRes.isSuccess) {
       return
     }
