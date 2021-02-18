@@ -21,7 +21,6 @@ import {
 } from '@databyss-org/services/session/clientStorage'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
-import { JSONSchema4 } from 'json-schema'
 import { DocumentType } from './interfaces'
 import { searchText } from './utils'
 
