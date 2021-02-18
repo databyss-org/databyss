@@ -1,2 +1,5 @@
 export { useServiceContext } from './lib/ServiceProvider'
-export { default as PageProvider } from './pages/PageProvider'
+export {
+  EditorPageProvider,
+  useEditorPageContext,
+} from './editorPage/EditorPageProvider'

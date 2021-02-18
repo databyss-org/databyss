@@ -8,7 +8,7 @@ import { Range } from '@databyss-org/slate'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useEditorPageContext } from '@databyss-org/services'
 import { useEditorContext } from '../state/EditorProvider'
 import BlockMenu from './BlockMenu'
 import { isAtomicInlineType } from '../lib/util'
@@ -49,7 +49,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
 
   const navigationContext = useNavigationContext()
 
-  const registerBlockRefByIndex = usePageContext(
+  const registerBlockRefByIndex = useEditorPageContext(
     (c) => c && c.registerBlockRefByIndex
   )
 

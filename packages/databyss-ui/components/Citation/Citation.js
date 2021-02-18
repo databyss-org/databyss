@@ -2,7 +2,7 @@ import React from 'react'
 
 import { pruneCitation } from '@databyss-org/services/citations/lib'
 
-import { RawHtml, View } from '../../primitives'
+import { RawHtml, View } from '@databyss-org/ui/primitives'
 
 const Citation = (props) => {
   const { citation, formatOptions, childViewProps, citationTextProps } = props

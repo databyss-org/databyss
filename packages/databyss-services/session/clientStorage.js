@@ -60,15 +60,14 @@ export const deletePouchDbs = async () => {
   let dbs = await window.indexedDB.databases()
   dbs = dbs.filter((db) => db.name.includes('_pouch_'))
 
+  // if we don't do this, we get an error that we're accessing
+  //  the db while the connection is closing
+  await resetPouchDb()
+
   await Promise.all(
     dbs.map(
       (db) =>
         new Promise((resolve, reject) => {
-          if (db.name === '_pouch_local') {
-            resetPouchDb()
-              .then(() => resolve())
-              .catch((err) => reject(err))
-          }
           // deletes index databases
           const request = indexedDB.deleteDatabase(db.name)
           request.onsuccess = resolve
@@ -122,7 +121,8 @@ export const getDbCredentialsFromLocal = (groupId) => {
   return keyMap[groupId]
 }
 
-export const getPouchSecret = () => localStorage.getItem('pouch_secrets')
+export const getPouchSecret = () =>
+  JSON.parse(localStorage.getItem('pouch_secrets'))
 
 export const localStorageHasSession = async () => {
   // compose the user session

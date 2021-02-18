@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { View, List } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PagesSvg from '@databyss-org/ui/assets/pages.svg'
 import SearchSvg from '@databyss-org/ui/assets/search.svg'
 import TopicSvg from '@databyss-org/ui/assets/topic.svg'
 import SourceSvg from '@databyss-org/ui/assets/source.svg'
-import MenuSvg from '@databyss-org/ui/assets/menu.svg'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
+import GroupsImg from '@databyss-org/ui/assets/logo-thick.png'
 import { pxUnits } from '@databyss-org/ui/theming/views'
 import SidebarIconButton from '@databyss-org/ui/components/Sidebar/SidebarIconButton'
 import Footer from '@databyss-org/ui/components/Sidebar/Footer'
@@ -14,47 +14,34 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { darkTheme } from '../../theming/theme'
 import { sidebar } from '../../theming/components'
 
-export const defaultProps = {}
-
 const SidebarCollapsed = () => {
   const {
     navigateSidebar,
-    getTokensFromPath,
     getSidebarPath,
     isMenuOpen,
     setMenuOpen,
   } = useNavigationContext()
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-
-  const [activeItem, setActiveItem] = useState('pages')
+  const activeItem = getSidebarPath()
 
   const onItemClick = (item) => {
     if (!isMenuOpen) {
-      return (
-        setMenuOpen(true) && navigateSidebar(`/${item}`) && setActiveItem(item)
-      )
+      return setMenuOpen(true) && navigateSidebar(`/${item}`)
     }
     return activeItem === item
       ? setMenuOpen(!isMenuOpen)
-      : navigateSidebar(`/${item}`) && setActiveItem(item)
+      : navigateSidebar(`/${item}`)
   }
-
-  useEffect(
-    () =>
-      setActiveItem(
-        getSidebarPath() ? getSidebarPath() : getTokensFromPath().type
-      ),
-    [navigateSidebar]
-  )
 
   const isIconButtonActive = (item) => activeItem === item.name && isMenuOpen
 
   const sideBarCollapsedItems = [
     {
-      name: 'menuCollapse',
-      title: 'Collapse menu',
-      icon: <MenuSvg />,
-      onClick: () => setMenuOpen(!isMenuOpen),
+      name: 'groups',
+      title: 'Collections',
+      icon: <img src={GroupsImg} />,
+      sizeVariant: 'large',
+      onClick: () => onItemClick('groups'),
     },
     {
       name: 'search',
@@ -95,7 +82,6 @@ const SidebarCollapsed = () => {
 
   return (
     <View
-      {...defaultProps}
       theme={darkTheme}
       bg="background.1"
       borderRightColor="border.1"
@@ -103,6 +89,7 @@ const SidebarCollapsed = () => {
       width={sidebar.collapsedWidth}
     >
       <List
+        mt={pxUnits(2)}
         verticalItemPadding={2}
         horizontalItemPadding={1}
         py="none"

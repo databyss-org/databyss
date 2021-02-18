@@ -1,86 +1,84 @@
-import React, { useState, useEffect, forwardRef, useCallback } from 'react'
-import { debounce } from 'lodash'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import React, { useState, useEffect, forwardRef } from 'react'
+import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { View, TextInput } from '@databyss-org/ui/primitives'
-import { theme } from '@databyss-org/ui/theming'
-import styledCss from '@styled-system/css'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import { isMobile } from '../../lib/mediaQuery'
+import { TitleInput } from './TitleInput'
 
 const noPageTitle = 'untitled'
 
 const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  const getPage = usePageContext((c) => c.getPage)
-  const setPageHeader = usePageContext((c) => c.setPageHeader)
+  const setPageHeader = useEditorPageContext((c) => c.setPageHeader)
+  const pagesRes = usePages()
+  const page = pagesRes.data?.[pageId]
 
-  const [pageName, setPageName] = useState({ textValue: '' })
+  const [pageName, setPageName] = useState('')
+  const [focused, setFocused] = useState(false)
 
   useEffect(() => {
-    const pageData = getPage(pageId)
-    const pageDataName = pageData.name
+    // if text field is focused, do not allow name update from external sources
+    if (!focused) {
+      setPageName(pagesRes.data?.[pageId].name)
+    }
+  }, [pagesRes.data?.[pageId]])
 
+  useEffect(() => {
+    if (!pagesRes.isSuccess) {
+      return
+    }
+    const pageDataName = page.name
     if (pageDataName === noPageTitle) {
-      setPageName({ textValue: '' })
+      setPageName('')
       // if no page name is provided, focus on page name
       setTimeout(() => {
         if (ref.current) {
           ref.current.focus()
         }
       }, 10)
-    } else {
-      setPageName({ textValue: pageDataName })
+    } else if (!pageName.length) {
+      // only set page name on initial mount
+      setPageName(pageDataName)
     }
-  }, [pageId])
-
-  const throttledAutosave = useCallback(
-    debounce((val) => {
-      const _pageData = {
-        name: val.textValue ? val.textValue : noPageTitle,
-        _id: pageId,
-      }
-      setPageHeader(_pageData)
-    }, process.env.SAVE_PAGE_THROTTLE),
-    []
-  )
+  }, [pageId, pagesRes.isSuccess])
 
   const onPageNameChange = (val) => {
     setPageName(val)
-    throttledAutosave(val)
+    const _pageData = {
+      name: val || noPageTitle,
+      _id: pageId,
+    }
+    setPageHeader(_pageData)
+  }
+
+  if (!pagesRes.isSuccess) {
+    return null
   }
 
   return (
-    <View
-      p={isMobile() ? 'none' : 'medium'}
-      flexGrow={0}
-      mb={isMobile() ? 'small' : 'none'}
-    >
-      <TextInput
-        readonly={isPublicAccount() || isMobile() || getPage(pageId)?.archive}
-        ref={ref}
-        data-test-element="page-header"
-        onKeyDown={(e) => {
-          if (e.key === 'ArrowDown' || e.key === 'Enter') {
-            if (onNavigateDownFromHeader) {
-              e.preventDefault()
-              e.stopPropagation()
-              onNavigateDownFromHeader()
-            }
+    <TitleInput
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      readonly={isPublicAccount() || isMobile() || page.archive}
+      ref={ref}
+      data-test-element="page-header"
+      onKeyDown={(e) => {
+        if (e.key === 'ArrowDown' || e.key === 'Enter') {
+          if (onNavigateDownFromHeader) {
+            e.preventDefault()
+            e.stopPropagation()
+            onNavigateDownFromHeader()
           }
-        }}
-        value={pageName}
-        onChange={onPageNameChange}
-        placeholder={noPageTitle}
-        variant="bodyHeading1"
-        color="text.3"
-        concatCss={styledCss({
-          '::placeholder': {
-            color: 'text.3',
-            opacity: 0.6,
-          },
-        })(theme)}
-      />
-    </View>
+        }
+      }}
+      value={pageName}
+      onChange={onPageNameChange}
+      placeholder={noPageTitle}
+      variant="bodyHeading1"
+      color="text.3"
+      ml="medium"
+      mb="em"
+    />
   )
 })
 

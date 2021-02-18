@@ -1,28 +1,3 @@
-export const createSidebarListItems = ({
-  text,
-  type,
-  route,
-  params,
-  id,
-  icon,
-}) =>
-  // {
-  // text: string,
-  // type: 'sources' | 'authors' | 'topics' | 'pages',
-  // route: '/sources' | '/sources/authors' | '/pages' | '/topics',
-  // params: string,
-  // id: number | string,
-  // icon: React.ReactNode,
-  // }
-  ({
-    text,
-    type,
-    route,
-    params,
-    id,
-    icon,
-  })
-
 export const createIndexPageEntries = ({
   text,
   type,
@@ -44,7 +19,7 @@ export const createIndexPageEntries = ({
   })
 
 export const sortEntriesAtoZ = (entries, sortBy) =>
-  entries?.sort((a, b) =>
+  [...entries]?.sort((a, b) =>
     a[sortBy]
       ?.toLowerCase()
       .normalize('NFD')

@@ -21,15 +21,10 @@ import {
 } from '@databyss-org/services/session/clientStorage'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
-import { JSONSchema4 } from 'json-schema'
 import { DocumentType } from './interfaces'
 import { searchText } from './utils'
 
-const REMOTE_CLOUDANT_URL = process.env.REMOTE_CLOUDANT_URL
-
-console.log(process.env)
-
-// const REMOTE_CLOUDANT_URL = `https://fa0a57bd-308f-4564-9e4d-e69d68aad000-bluemix.cloudantnosqldb.appdomain.cloud`
+const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
 // add plugins
 PouchDB.plugin(PouchDBTransform)
@@ -38,7 +33,7 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 
 interface DbRef {
-  current: PouchDB.Database<any>
+  current: PouchDB.Database<any> | null
 }
 
 declare global {
@@ -47,12 +42,19 @@ declare global {
   }
 }
 
-const _initDb = new PouchDB('local', {
-  auto_compaction: true,
-})
+const getPouchDb = (groupId: string) =>
+  new PouchDB(`g_${groupId}`, {
+    auto_compaction: true,
+  })
 
 export const dbRef: DbRef = {
-  current: _initDb,
+  current: null,
+}
+
+// try to load pouch_secrets from local storage to init db
+const _secrets = getPouchSecret()
+if (_secrets) {
+  dbRef.current = getPouchDb(Object.keys(_secrets)[0])
 }
 
 export const areIndexBuilt = {
@@ -155,16 +157,15 @@ export const replicateDbFromRemote = ({
   // dbPassword: string
   groupId: string
 }) =>
-  new Promise((resolve, reject) => {
+  new Promise<void>((resolve, reject) => {
     // for now we are getting the first credentials from local storage groups
-    let _creds = getPouchSecret()
+    const _creds = getPouchSecret()
     // let _dbId
     let _cred
 
     if (!_creds) {
       reject()
     }
-    _creds = _creds && JSON.parse(_creds)
     if (_creds) {
       // _dbId = Object.keys(_creds)[0]
       _cred = _creds[groupId]
@@ -182,6 +183,7 @@ export const replicateDbFromRemote = ({
         password: _cred.dbPassword,
       },
     }
+    dbRef.current = getPouchDb(groupId)
     dbRef.current.replicate
       .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
       .on('complete', () => resolve())
@@ -199,6 +201,7 @@ export const syncPouchDb = ({
   groupId: string
   dispatch: Function
 }) => {
+  console.log('Start PouchDB <=> Cloudant sync')
   // get credentials from local storage
   const _cred: any = getDbCredentialsFromLocal(groupId)
 
@@ -215,11 +218,11 @@ export const syncPouchDb = ({
     },
   }
 
-  dbRef.current.replicate
-    .to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
+  dbRef
+    .current!.replicate.to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
       ...opts,
-      // todo: add groupId to every document
-      // filter: (doc) => doc.$type !== DocumentType.UserPreferences,
+      // do not replciate design docs
+      filter: (doc) => !doc._id.includes('design/'),
     })
     .on('error', (err) => console.log(`REPLICATE.TO ERROR - ${err}`))
     .on('change', () => {
@@ -241,41 +244,56 @@ export const syncPouchDb = ({
       }
     })
 
-  dbRef.current.replicate
-    .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
+  dbRef
+    .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
   // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
 }
 
 export const initiatePouchDbValidators = () => {
   // pouchDB validator
-  const _validatorSchemas: Array<[BlockType | DocumentType, JSONSchema4]> = [
-    [BlockType.Source, sourceSchema],
-    [BlockType.Entry, entrySchema],
-    [BlockType.Topic, topicSchema],
-    [DocumentType.Page, pageSchema],
-    [DocumentType.Selection, selectionSchema],
-    [DocumentType.BlockRelation, blockRelationSchema],
-    [DocumentType.UserPreferences, userPreferenceSchema],
-  ]
+  const schemaMap = {
+    [BlockType.Source]: sourceSchema,
+    [BlockType.Entry]: entrySchema,
+    [BlockType.Topic]: topicSchema,
+    [DocumentType.Page]: pageSchema,
+    [DocumentType.Selection]: selectionSchema,
+    [DocumentType.BlockRelation]: blockRelationSchema,
+    [DocumentType.UserPreferences]: userPreferenceSchema,
+  }
 
   // add $ref schemas, these schemas are reused
   tv4.addSchema('text', textSchema)
   tv4.addSchema('pouchDb', pouchDocSchema)
   tv4.addSchema('blockSchema', blockSchema)
 
-  dbRef.current.transform({
+  dbRef.current!.transform({
     outgoing: (doc) => {
-      _validatorSchemas.forEach((s) => {
-        if (doc.type === s[0] || doc.$type === s[0]) {
-          if (!tv4.validate(doc, s[1], false, true)) {
-            console.log('DOCUMENT', doc)
-            console.error(
-              `${s[1].title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
-            )
-          }
-        }
-      })
+      if (doc._id.includes('design/')) {
+        return doc
+      }
+      let schema
+      // user database determines the schema by the .type field
+
+      if (doc.$type === DocumentType.Block) {
+        schema = schemaMap[doc.type]
+      } else {
+        schema = schemaMap[doc.$type]
+      }
+
+      // `this.schema &&` this will be removed when all schemas are implemented
+      if (schema && !tv4.validate(doc, schema, false, true)) {
+        console.log('TYPE', doc)
+        console.error(
+          `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+        )
+      }
+
+      if (!schema) {
+        console.log('NOT FOUND', doc)
+        console.error(`no schema found`)
+      }
+
       return doc
     },
   })
@@ -288,7 +306,5 @@ export const resetPouchDb = async () => {
     await dbRef.current.destroy()
   }
 
-  dbRef.current = new PouchDB('local', {
-    auto_compaction: true,
-  })
+  dbRef.current = null
 }

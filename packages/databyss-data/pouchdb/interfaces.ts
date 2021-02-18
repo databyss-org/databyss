@@ -1,9 +1,9 @@
 import { PageHeader } from '@databyss-org/services/interfaces/Page'
-import { BasicBlock } from '@databyss-org/services/interfaces/Block'
+import { BlockReference } from '@databyss-org/services/interfaces/Block'
 import { Role } from '../interfaces/user'
 
 export interface PageDoc extends PageHeader {
-  blocks: BasicBlock[]
+  blocks: BlockReference[]
   selection: string
 }
 

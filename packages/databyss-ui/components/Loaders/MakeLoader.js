@@ -12,18 +12,6 @@ const MakeLoader = ({ resources, children, onUnload, onLoad }) => {
     },
     []
   )
-
-  useEffect(() => {
-    if (
-      onLoad &&
-      resources &&
-      !(resources instanceof ResourcePending) &&
-      !(resources instanceof Error)
-    ) {
-      onLoad(resources)
-    }
-  }, [resources])
-
   const isLoading = Array.isArray(resources)
     ? resources.some((r) => !r || r instanceof ResourcePending)
     : !resources || resources instanceof ResourcePending
@@ -31,6 +19,12 @@ const MakeLoader = ({ resources, children, onUnload, onLoad }) => {
   const errors = Array.isArray(resources)
     ? resources.some((r) => r && r instanceof Error)
     : resources instanceof Error
+
+  useEffect(() => {
+    if (onLoad && resources && !isLoading && !errors) {
+      onLoad(resources)
+    }
+  }, [resources])
 
   if (isLoading) {
     return <Loading padding="small" />

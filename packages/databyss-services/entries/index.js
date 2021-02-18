@@ -1,7 +1,6 @@
 import * as pouchDb from '@databyss-org/data/pouchdb/entries'
 
-export const searchEntries = (data) => pouchDb.searchEntries(data)
+export const searchEntries = (data, pages) => pouchDb.searchEntries(data, pages)
 
-export const setBlockRelations = (data) => pouchDb.setBlockRelations(data)
-
-export const getBlockRelations = (queryId) => pouchDb.getBlockRelations(queryId)
+export const setBlockRelations = (relation) =>
+  pouchDb.setBlockRelations(relation)

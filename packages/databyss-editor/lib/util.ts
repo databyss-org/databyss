@@ -1,17 +1,17 @@
 import _ from 'lodash'
 import cloneDeep from 'clone-deep'
-import { Block } from '@databyss-org/services/interfaces/'
-import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
 import {
+  Block,
   BlockType,
   Selection,
-  EditorState,
-  BlockRelation,
-  PagePath,
+  IndexPageResult,
   Range,
-} from '../interfaces'
+  BlockReference,
+} from '@databyss-org/services/interfaces'
+import { stateBlockToHtmlHeader, stateBlockToHtml } from './slateUtils'
+import { EditorState, PagePath } from '../interfaces'
 import { getClosureType, getClosureTypeFromOpeningType } from '../state/util'
-import { BasicBlock } from '../../databyss-services/interfaces'
+import { BlockRelationshipType } from '../../databyss-services/interfaces/Block'
 import {
   RangeType,
   InlineTypes,
@@ -42,11 +42,11 @@ export const getInlineAtomicType = (type: InlineTypes): BlockType | null => {
 
 const composeBlockRelation = (
   currentBlock: Block,
-  atomicBlock: BasicBlock,
+  atomicBlock: BlockReference,
   pageId: string,
-  relationshipType: string
-): BlockRelation => {
-  const _blockRelation: BlockRelation = {
+  relationshipType: BlockRelationshipType
+): IndexPageResult => {
+  const _blockRelation: IndexPageResult = {
     block: currentBlock._id,
     relatedBlock: atomicBlock._id,
     blockText: currentBlock.text,
@@ -64,7 +64,7 @@ const getInlineBlockRelations = (
   pageId: string,
   index: number
 ) => {
-  const _blockRelations: BlockRelation[] = []
+  const _blockRelations: IndexPageResult[] = []
 
   // find if any inline topics exist on block
   const _inlineRanges = getInlineAtomicFromBlock(block)
@@ -80,7 +80,7 @@ const getInlineBlockRelations = (
             block,
             { type, _id },
             pageId,
-            'INLINE'
+            BlockRelationshipType.INLINE
           )
           _relation.blockIndex = index
           _blockRelations.push(_relation)
@@ -142,7 +142,7 @@ export const getPagePath = (page: EditorState): PagePath => {
   const _index = page.selection.anchor.index
 
   const _currentBlock = page.blocks[_index]
-  const _blockRelations: BlockRelation[] = []
+  const _blockRelations: IndexPageResult[] = []
 
   // trim blocks to remove content after anchor
   const _blocks = [...page.blocks].reverse()
@@ -174,7 +174,7 @@ export const getPagePath = (page: EditorState): PagePath => {
                 _currentBlock,
                 _block,
                 pageId,
-                'HEADING'
+                BlockRelationshipType.HEADING
               )
 
               _relation.blockIndex = _index
@@ -209,7 +209,7 @@ export const getPagePath = (page: EditorState): PagePath => {
     }
   })
 
-  let _inlineRelations: BlockRelation[] = []
+  let _inlineRelations: IndexPageResult[] = []
   // inline block indexing
   if (pageId) {
     // returns an array of block relations
@@ -230,14 +230,14 @@ export const indexPage = ({
 }: {
   pageId: string | null
   blocks: Block[]
-}): BlockRelation[] => {
+}): IndexPageResult[] => {
   const currentAtomics: {
     [key: string]: Block | null
   } = {
     [BlockType.Source]: null,
     [BlockType.Topic]: null,
   }
-  const blockRelations: BlockRelation[] = []
+  const blockRelations: IndexPageResult[] = []
 
   if (pageId) {
     blocks.forEach((block, index) => {
@@ -251,9 +251,9 @@ export const indexPage = ({
         currentAtomics[block.type] = block
       }
       // if current block is not empty
-      else if (block.text.textValue.length) {
+      else if (block.text?.textValue.length) {
         // before indexing the atomic, check if block contains any inline atomics
-        let _inlineRelations: BlockRelation[] = []
+        let _inlineRelations: IndexPageResult[] = []
         // inline block indexing
         if (pageId) {
           // returns an array of block relations
@@ -270,7 +270,7 @@ export const indexPage = ({
               relatedBlock: value._id,
               blockText: block.text,
               relatedBlockType: value.type,
-              relationshipType: 'HEADING',
+              relationshipType: BlockRelationshipType.HEADING,
               page: pageId,
               blockIndex: index,
             })
@@ -285,7 +285,7 @@ export const indexPage = ({
 
 export const slateBlockToHtmlWithSearch = (
   block: Block,
-  query: string
+  query?: string
 ): string => {
   const _block = cloneDeep(block)
 

@@ -1,3 +1,5 @@
+import EventEmitter from 'es-event-emitter'
+import { Document } from '@databyss-org/services/interfaces'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef } from './db'
 import { uid } from '../lib/uid'
@@ -11,6 +13,20 @@ export const addTimeStamp = (doc: any): any => {
   return { ...doc, createdAt: Date.now() }
 }
 
+interface Patch {
+  $type: string
+  _id: string
+  doc: any
+}
+
+type upsertQueueRef = {
+  current: Patch[]
+}
+
+export const upQdict: upsertQueueRef = {
+  current: [],
+}
+
 export const upsert = async ({
   $type,
   _id,
@@ -20,16 +36,7 @@ export const upsert = async ({
   _id: string
   doc: any
 }) => {
-  let _doc
-  await dbRef.current.upsert(_id, (oldDoc) => {
-    _doc = {
-      ...oldDoc,
-      $type,
-      ...addTimeStamp({ ...oldDoc, ...doc }),
-    }
-    return _doc
-  })
-  return _doc
+  upQdict.current.push({ ...doc, _id, $type })
 }
 
 export const findAll = async ({
@@ -42,7 +49,7 @@ export const findAll = async ({
   useIndex?: string
 }) => {
   let _useIndex
-  const _designDocResponse = await dbRef.current.find({
+  const _designDocResponse = await dbRef.current!.find({
     selector: {
       _id: `_design/${useIndex}`,
     },
@@ -52,7 +59,7 @@ export const findAll = async ({
     _useIndex = useIndex
   }
 
-  const _response = await dbRef.current.find({
+  const _response = await dbRef.current!.find({
     selector: {
       $type,
       ...query,
@@ -64,23 +71,10 @@ export const findAll = async ({
     console.log($type, query)
   }
 
-  // dbRef.current
-  //   .explain({
-  //     selector: {
-  //       ...query,
-  //       $type,
-  //     },
-  //     use_index: useIndex,
-  //   })
-  //   .then((explained) => {
-  //     console.log(explained.index.ddoc)
-  //     // detailed explained info can be viewed
-  //   })
-
   return _response.docs
 }
 
-export const findOne = async ({
+export const findOne = async <T extends Document>({
   $type,
   query,
   useIndex,
@@ -88,9 +82,9 @@ export const findOne = async ({
   $type: DocumentType
   query: any
   useIndex?: string
-}) => {
+}): Promise<T | null> => {
   let _useIndex
-  const _designDocResponse = await dbRef.current.find({
+  const _designDocResponse = await dbRef.current!.find({
     selector: {
       _id: `_design/${useIndex}`,
     },
@@ -100,7 +94,7 @@ export const findOne = async ({
     _useIndex = useIndex
   }
 
-  const _response = await dbRef.current.find({
+  const _response = await dbRef.current!.find({
     selector: {
       $type,
       ...query,
@@ -113,23 +107,27 @@ export const findOne = async ({
     console.log($type, query)
   }
 
-  // dbRef.current
-  //   .explain({
-  //     selector: {
-  //       ...query,
-  //       $type,
-  //     },
-  //     use_index: useIndex,
-  //   })
-  //   .then((explained) => {
-  //     console.log(explained.index.ddoc)
-  //     // detailed explained info can be viewed
-  //   })
-
   if (_response.docs.length) {
     return _response.docs[0]
   }
   return null
+}
+
+/**
+ * Gets a document by id
+ * @returns Promise, resolves to document or null if not found
+ */
+export const getDocument = async <T extends Document>(
+  id: string
+): Promise<T | null> => {
+  try {
+    return await dbRef.current?.get(id)
+  } catch (err) {
+    if (err.name === 'not_found') {
+      return null
+    }
+    throw err
+  }
 }
 
 export const replaceOne = async ({
@@ -154,7 +152,7 @@ _local documents do not appear with `find` so a `get` function must be used
 export const getUserSession = async (): Promise<UserPreference | null> => {
   let response
   try {
-    response = await dbRef.current.get('user_preference')
+    response = await dbRef.current!?.get('user_preference')
   } catch (err) {
     console.error('user session not found')
   }
@@ -171,7 +169,7 @@ export const searchText = async (query) => {
   _percentageToMatch *= 100
   _percentageToMatch = +_percentageToMatch.toFixed(0)
 
-  const _res = await dbRef.current.search({
+  const _res = await dbRef.current!.search({
     query,
     fields: ['text.textValue'],
     include_docs: true,
@@ -182,3 +180,58 @@ export const searchText = async (query) => {
 
   return _res
 }
+
+const coallesceQ = (patches: Patch[]) => {
+  const _patches = patches.reduce((dict, doc) => {
+    const _id = doc._id
+    dict[_id] = {
+      ...(dict[_id] || {}),
+      ...doc,
+    }
+    return dict
+  }, {})
+
+  return _patches
+}
+
+export class QueueProcessor extends EventEmitter {
+  // on(event: string, listener: Function): this
+  // emit(event: string): void
+  interval: any
+  isProcessing: boolean
+  constructor() {
+    super()
+    this.interval = null
+    this.isProcessing = false
+  }
+
+  process = async () => {
+    if (!this.isProcessing) {
+      while (upQdict.current.length) {
+        // do a coallece
+        this.isProcessing = true
+        const _upQdict = coallesceQ(upQdict.current)
+        upQdict.current = []
+        for (const _id of Object.keys(_upQdict)) {
+          await dbRef.current!.upsert(_id, (oldDoc) => {
+            const _doc = {
+              ...oldDoc,
+              ...addTimeStamp({ ...oldDoc, ..._upQdict[_id] }),
+            }
+
+            return _doc
+          })
+        }
+        this.isProcessing = false
+      }
+    }
+  }
+
+  start = () => {
+    this.interval = setInterval(this.process, 3000)
+  }
+}
+
+const EM = new QueueProcessor()
+
+EM.start()

@@ -2,9 +2,48 @@ import React, { useImperativeHandle, useRef } from 'react'
 import {
   Text,
   BaseControl,
-  Grid,
+  View,
+  Icon,
   withKeyboardNavigation,
+  pxUnits,
 } from '@databyss-org/ui/primitives'
+
+export const SidebarListRow = ({
+  children,
+  text,
+  icon,
+  isActive,
+  ...others
+}) => (
+  <View
+    py="small"
+    px="em"
+    width="100%"
+    flexDirection="row"
+    alignItems="center"
+    justifyContent="space-between"
+    {...others}
+  >
+    <View flexDirection="row" flexWrap="nowrap" maxWidth="100%" flexShrink={1}>
+      <Icon
+        sizeVariant="tiny"
+        color={isActive ? 'text.1' : 'text.3'}
+        mt={pxUnits(2)}
+        mr="small"
+      >
+        {icon}
+      </Icon>
+      <Text
+        variant="uiTextSmall"
+        color={isActive ? 'text.1' : 'text.3'}
+        userSelect="none"
+      >
+        {text}
+      </Text>
+    </View>
+    {children}
+  </View>
+)
 
 const SidebarListItem = ({
   isActive,
@@ -16,6 +55,7 @@ const SidebarListItem = ({
   activeNavigationItem,
   navigationItemRef,
   navigationItemHandle,
+  draggable,
 }) => {
   const _controlHandle = useRef()
   useImperativeHandle(navigationItemHandle, () => ({
@@ -31,31 +71,16 @@ const SidebarListItem = ({
   return (
     <BaseControl
       data-test-element="page-sidebar-item"
-      py="small"
-      px="em"
-      width="100%"
       href={href}
       onPress={onPress}
-      childViewProps={{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
-      css={{
-        textDecoration: 'none',
-        boxSizing: 'border-box',
-      }}
       active={isActive || activeNavigationItem}
       ref={navigationItemRef}
       handle={_controlHandle}
+      draggable={draggable}
     >
-      <Grid singleRow flexWrap="nowrap" columnGap="small" maxWidth="100%">
-        {icon}
-        <Text variant="uiTextSmall" color={isActive ? 'text.1' : 'text.3'}>
-          {text}
-        </Text>
-      </Grid>
-      {children}
+      <SidebarListRow isActive={isActive} icon={icon} text={text}>
+        {children}
+      </SidebarListRow>
     </BaseControl>
   )
 }

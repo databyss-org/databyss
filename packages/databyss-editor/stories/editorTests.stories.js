@@ -1,21 +1,20 @@
 import React, { useState } from 'react'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { ViewportDecorator } from '@databyss-org/ui/stories/decorators'
 import fetchMock from 'fetch-mock'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
-import TopicProvider from '@databyss-org/services/topics/TopicProvider'
-import topicReducer, {
-  initialState as topicInitialState,
-} from '@databyss-org/services/topics/reducer'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ContentEditable from '../components/ContentEditable'
 import EditorProvider from '../state/EditorProvider'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import blankState from './fixtures/blankState'
+
+const queryClient = new QueryClient()
 
 const _res = {
   totalItems: 1,
@@ -69,13 +68,13 @@ const EditorWithProvider = ({ initialState }) => {
 }
 
 const EditorWithModals = ({ initialState }) => (
-  <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
+  <QueryClientProvider client={queryClient}>
     <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
       <NavigationProvider>
         <EditorWithProvider initialState={initialState} />
       </NavigationProvider>
     </SourceProvider>
-  </TopicProvider>
+  </QueryClientProvider>
 )
 
 storiesOf('Selenium//Tests', module)

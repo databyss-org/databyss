@@ -1,43 +1,64 @@
-import { BlockRelationPayload } from '@databyss-org/editor/interfaces'
+import { BlockRelation, BlockType } from '@databyss-org/services/interfaces'
+import { BlockRelationOperation } from '@databyss-org/editor/interfaces'
+import { getDocument, upsert } from '../../utils'
 import { DocumentType } from '../../interfaces'
-import { dbRef } from '../../db'
-import { findAll, replaceOne } from '../../utils'
 
-const setBlockRelations = async (payloadArray: BlockRelationPayload[]) => {
-  for (const payload of payloadArray) {
-    const { blocksRelationArray, clearPageRelationships } = payload
+const setBlockRelations = async (payload: {
+  _id: string
+  type: BlockType
+  page: string
+  operationType: BlockRelationOperation
+}) => {
+  const { _id, page, operationType, type } = payload
+  // find relation type
 
-    // clear all block relationships associated to page id
-    if (clearPageRelationships) {
-      const _blockRelationsToClear = await findAll({
+  const _relationId = `r_${_id}`
+
+  const _payload: BlockRelation = {
+    _id: _relationId,
+    blockId: _id,
+    blockType: type,
+    pages: [],
+  }
+  console.log('setBlockRelations', payload)
+
+  const res = await getDocument<BlockRelation>(_relationId)
+
+  // if no relation exists for atomic, create one
+  if (!res) {
+    if (operationType === BlockRelationOperation.REMOVE) {
+      // bail early if no relation exists
+      return
+    }
+    _payload.pages = [page]
+    upsert({
+      $type: DocumentType.BlockRelation,
+      _id: _relationId,
+      doc: _payload,
+    })
+  } else {
+    // remove page from pages array
+    if (operationType === BlockRelationOperation.REMOVE) {
+      _payload.pages = res.pages.filter((p) => p !== page)
+      upsert({
         $type: DocumentType.BlockRelation,
-        query: {
-          page: clearPageRelationships,
-        },
-        useIndex: 'block-relations-page',
+        _id: _relationId,
+        doc: _payload,
       })
-
-      const _idsToDelete: any = []
-      _blockRelationsToClear.forEach((r) => {
-        if (r?._id && r?._rev) {
-          _idsToDelete.push({ _id: r._id, _rev: r._rev })
-        }
-      })
-
-      await dbRef.current.bulkDocs(
-        _idsToDelete.map((i) => ({ _id: i._id, _rev: i._rev, _deleted: true }))
-      )
+      return
     }
-    if (blocksRelationArray?.length) {
-      for (const relationship of blocksRelationArray) {
-        const { block, relatedBlock, removeBlock } = relationship
-        await replaceOne({
-          $type: DocumentType.BlockRelation,
-          query: { block, relatedBlock },
-          doc: { ...relationship, _deleted: !!removeBlock },
-        })
-      }
+    // append page to pages if not already in data
+    if (res.pages.find((p) => p === page)) {
+      return
     }
+    const _pages = res.pages
+    _pages.push(page)
+    _payload.pages = _pages
+    upsert({
+      $type: DocumentType.BlockRelation,
+      _id: _relationId,
+      doc: _payload,
+    })
   }
 }
 

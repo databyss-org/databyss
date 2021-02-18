@@ -1,4 +1,4 @@
-import { makeText } from '../block/makeText'
+import { makeText } from '../blocks/makeText'
 import {
   BlockType,
   CatalogResult,

@@ -14,15 +14,20 @@ export type { PageHeader } from './Page'
 export { Page } from './Page'
 export type { Point } from './Point'
 export type { Selection } from './Selection'
-export type { Block, BasicBlock, BlockRelationsServerResponse } from './Block'
-export type { Text } from './Text'
+export { Text } from './Text'
 export type {
   Source,
   SourceDetail,
   Author,
   Topic,
   SourceCitationHeader,
+  IndexPageResult,
+  Block,
+  BlockReference,
+  BlockRelationsServerResponse,
+  BlockRelation,
 } from './Block'
+export type { Document, DocumentDict } from './Document'
 export { BlockType } from './Block'
 export type { FSA } from './FSA'
 export { RangeType } from './Range'
@@ -54,3 +59,5 @@ export interface RefDict {
 }
 
 export type { EntryState } from './EntryState'
+export type { GroupHeader } from './Group'
+export { Group, GroupState } from './Group'

@@ -1,9 +1,9 @@
 import React, { useLayoutEffect, useState } from 'react'
 import addons from '@storybook/addons'
 import Content from '@databyss-org/ui/components/Viewport/Content'
-import { View } from '@databyss-org/ui/primitives'
+import { View, GestureProvider } from '@databyss-org/ui/primitives'
 import NotifyProvider from '@databyss-org/ui/components/Notify/NotifyProvider'
-import {
+import NavigationProvider, {
   createMemorySource,
   createHistory,
   LocationProvider,
@@ -42,7 +42,7 @@ export const ViewportWrapper = ({ children, ...others }) => {
 }
 
 export const ViewportDecorator = (storyFn) => (
-  <ViewportWrapper>{storyFn()}</ViewportWrapper>
+  <ViewportWrapper default>{storyFn()}</ViewportWrapper>
 )
 
 export const ContentDecorator = (storyFn) => <Content>{storyFn()}</Content>
@@ -57,3 +57,13 @@ export const MemoryRouterWrapper = ({ initialPath, children }) => {
 
   return <LocationProvider history={history}>{children}</LocationProvider>
 }
+
+export const GestureDecorator = (storyFn) => (
+  <GestureProvider>{storyFn()}</GestureProvider>
+)
+
+export const NavigationDecorator = (storyFn) => (
+  <MemoryRouterWrapper>
+    <NavigationProvider>{storyFn()}</NavigationProvider>
+  </MemoryRouterWrapper>
+)

@@ -3,9 +3,9 @@
 import React, { useState, useEffect } from 'react'
 import { uid } from '@databyss-org/data/lib/uid'
 import { BlockType } from '@databyss-org/services/interfaces'
-import { makeText } from '@databyss-org/services/block/makeText'
+import { makeText } from '@databyss-org/services/blocks'
 import { useEditorContext } from '@databyss-org/editor/state/EditorProvider'
-import { useSourceContext } from '@databyss-org/services/sources/SourceProvider'
+import { setSource } from '@databyss-org/services/sources'
 import * as services from '@databyss-org/services/pdf'
 
 import { useNavigationContext } from '../../components/Navigation/NavigationProvider'
@@ -114,7 +114,6 @@ const findMatchesInCrossref = (crossref, metadata) => {
 // component
 const PDFDropZoneManager = () => {
   const editorContext = useEditorContext()
-  const setSource = useSourceContext((c) => c && c.setSource)
 
   const { showModal } = useNavigationContext()
 

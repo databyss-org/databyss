@@ -1,6 +1,6 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
-import { ViewportDecorator } from '../decorators'
+import { ViewportDecorator, GestureDecorator } from '../decorators'
 import Typography from './Typography'
 import Views from './Views'
 import Controls from './Controls'
@@ -14,6 +14,11 @@ import List, {
   KeyboardNavigationList,
 } from './List'
 import Modals, { Editable as EditableModals, Dialogs } from './Modals'
+import {
+  DragAndDrop,
+  DragAndDropWithControls,
+  DragAndDropSystem,
+} from './Gestures'
 
 storiesOf('Design System|Buttons', module)
   .addDecorator(ViewportDecorator)
@@ -44,3 +49,9 @@ storiesOf('Design System|Modals', module)
   .add('Default', () => <Modals />)
   .add('Editable', () => <EditableModals />)
   .add('Dialogs', () => <Dialogs />)
+storiesOf('Design System|Gestures', module)
+  .addDecorator(ViewportDecorator)
+  .addDecorator(GestureDecorator)
+  .add('Simple Drag and Drop', () => <DragAndDrop />)
+  .add('Draggable BaseControls', () => <DragAndDropWithControls />)
+  .add('Draggable System', () => <DragAndDropSystem />)

@@ -1,30 +1,24 @@
 /* eslint-disable react/no-danger */
-import React, { useEffect, useRef, useState, useCallback } from 'react'
-import { Helmet } from 'react-helmet'
+import React, { useEffect, useState, useCallback } from 'react'
 import { debounce } from 'lodash'
-import { PagesLoader } from '@databyss-org/ui/components/Loaders'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
-import { View, Text, Icon } from '@databyss-org/ui/primitives'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
-import OnlineSvg from '@databyss-org/ui/assets/online.svg'
-import OfflineSvg from '@databyss-org/ui/assets/offline.svg'
+import { StickyHeader } from '@databyss-org/ui/components'
+import { View, Icon } from '@databyss-org/ui/primitives'
+import { useEditorPageContext } from '@databyss-org/services'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import LoadingSvg from '@databyss-org/ui/assets/loading.svg'
 import PageMenu from './PageMenu'
-import AccountMenu from './AccountMenu'
 
 const PageSticky = ({ pagePath, pageId }) => {
   const { isOnline } = useNotifyContext()
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
-  const patchQueueSize = usePageContext((c) => c && c.patchQueueSize)
+  const patchQueueSize = useEditorPageContext((c) => c && c.patchQueueSize)
 
   const _isDbBusy = isDbBusy()
-  // get page name from headerCache
-  const getPages = usePageContext((c) => c && c.getPages)
+  const pagesRes = usePages()
 
   const [showSaving, setShowSaving] = useState(false)
-
-  const stickyRef = useRef()
   const currentPath = []
 
   // debonce the ui component showing the saving icon
@@ -47,9 +41,14 @@ const PageSticky = ({ pagePath, pageId }) => {
     debounceSavingIcon(!!(_isDbBusy || patchQueueSize))
   }, [_isDbBusy, patchQueueSize])
 
-  const pages = getPages()
+  if (!pagesRes.isSuccess) {
+    return null
+  }
+
+  const pages = pagesRes.data
+
   // get page title
-  if (pages && pages[pageId]?.name) {
+  if (pages[pageId]?.name) {
     currentPath.push(pages[pageId].name)
   }
 
@@ -59,28 +58,7 @@ const PageSticky = ({ pagePath, pageId }) => {
   }
 
   return (
-    <View
-      alignItems="center"
-      flexDirection="row"
-      justifyContent="space-between"
-      py="medium"
-      px="small"
-      ref={stickyRef}
-      backgroundColor="gray.7"
-      position="sticky"
-      top={0}
-      zIndex="sticky"
-    >
-      <Helmet>
-        <meta charSet="utf-8" />
-        <title>{currentPath[0]}</title>
-      </Helmet>
-      <Text color="gray.4" variant="uiTextSmall">
-        <div
-          data-test-element="editor-sticky-header"
-          dangerouslySetInnerHTML={{ __html: currentPath.join(' / ') }}
-        />
-      </Text>
+    <StickyHeader path={currentPath} contextMenu={<PageMenu pages={pages} />}>
       <View alignItems="center" justifyContent="flex-end" flexDirection="row">
         {showSaving ? null : (
           <View id="changes-saved">
@@ -94,20 +72,8 @@ const PageSticky = ({ pagePath, pageId }) => {
             <LoadingSvg />
           </Icon>
         ) : null}
-        <Icon
-          sizeVariant="small"
-          color="gray.5"
-          title={isOnline ? 'Online' : 'Offline'}
-          ml="small"
-        >
-          {isOnline ? <OnlineSvg /> : <OfflineSvg />}
-        </Icon>
-        <AccountMenu />
-        <View ml="em">
-          <PagesLoader>{(pages) => <PageMenu pages={pages} />}</PagesLoader>
-        </View>
       </View>
-    </View>
+    </StickyHeader>
   )
 }
 

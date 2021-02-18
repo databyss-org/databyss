@@ -3,12 +3,14 @@ import Textarea from 'react-textarea-autosize'
 import styled from '../../styled'
 import { styleProps } from '../../Text/Text'
 
-const resetCss = {
-  background: 'transparent',
+const resetProps = {
   padding: 0,
   margin: 0,
+  bg: 'transparent',
+}
+const resetCss = {
+  border: 0,
   outline: 'none',
-  border: 'none',
   resize: 'none',
 }
 
@@ -33,11 +35,12 @@ const TextInput = forwardRef(
       <StyledTextarea
         readOnly={readonly}
         onChange={(e) => onChange({ textValue: e.target.value })}
-        inputRef={ref || undefined}
+        ref={ref}
         css={[resetCss].concat(concatCss)}
         value={value.textValue}
         autoFocus={autoFocus}
         active={active || undefined}
+        {...resetProps}
         {...others}
       />
     ) : (
@@ -49,6 +52,7 @@ const TextInput = forwardRef(
         ref={ref}
         css={[resetCss].concat(concatCss)}
         autoFocus={autoFocus}
+        {...resetProps}
         {...others}
       />
     )

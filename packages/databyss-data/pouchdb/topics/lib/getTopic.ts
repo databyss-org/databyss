@@ -6,7 +6,7 @@ import { findOne } from '../../utils'
 const getTopic = async (
   _id: string
 ): Promise<Topic | ResourceNotFoundError> => {
-  const _topic = await findOne({
+  const _topic: Topic | null = await findOne({
     $type: DocumentType.Block,
     query: {
       type: BlockType.Topic,
@@ -18,62 +18,6 @@ const getTopic = async (
   if (!_topic) {
     return new ResourceNotFoundError('no topics founds')
   }
-
-  // const isInPages: string[] = []
-  // // returns all pages where source id is found in element id
-  // const _pages = await findAll({
-  //   $type: DocumentType.Page,
-  //   query: {
-  //     blocks: {
-  //       $elemMatch: {
-  //         _id,
-  //       },
-  //     },
-  //   },
-  //   useIndex: 'page-blocks',
-  // })
-
-  // // append pages topic appears in as property `inPages`
-  // if (_pages.length) {
-  //   _pages.forEach((d) => {
-  //     if (!d.archive) {
-  //       isInPages.push(d._id)
-  //     }
-  //   })
-  // }
-  // _topic.isInPages = isInPages
-
-  // // find inline elements and tag to `isInPages` ignoring duplicates
-  // const _blockRelations: BlockRelation[] = await findAll({
-  //   $type: DocumentType.BlockRelation,
-  //   query: {
-  //     relatedBlock: _topic._id,
-  //   },
-  // })
-
-  // if (_blockRelations.length) {
-  //   // find if page has been archived
-  //   for (const _relation of _blockRelations) {
-  //     if (_relation.page) {
-  //       const _page: Page = await findOne({
-  //         $type: DocumentType.Page,
-  //         query: {
-  //           _id: _relation.page,
-  //         },
-  //         useIndex: 'fetch-one',
-  //       })
-
-  //       if (_page && !_page?.archive) {
-  //         // if page has not been archived and is currently not in array, push to array
-  //         if (!isInPages.includes(_page._id)) {
-  //           isInPages.push(_page._id)
-  //         }
-  //       }
-  //     }
-  //   }
-  //   _topic.isInPages = isInPages
-  // }
-  _topic.isInPages = ['dummy-data']
 
   return _topic
 }

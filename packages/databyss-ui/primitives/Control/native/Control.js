@@ -3,7 +3,11 @@ import css from '@styled-system/css'
 import { ThemeContext } from '@emotion/core'
 import forkRef from '@databyss-org/ui/lib/forkRef'
 import Color from 'color'
-import View, { styleProps, defaultProps, webProps } from '../../View/View'
+import View, {
+  styleProps,
+  defaultProps,
+  desktopResetCss,
+} from '../../View/View'
 import styled from '../../styled'
 import { isMobileOs } from '../../../lib/mediaQuery'
 import { borderRadius, timing } from '../../../theming/theme'
@@ -25,7 +29,6 @@ const resetCss = {
 const viewProps = {
   ...resetProps,
   ...defaultProps,
-  ...webProps,
 }
 
 const controlCssDesktop = (props, theme) => ({
@@ -92,7 +95,16 @@ const StyledLink = styled('a', styleProps)
 
 const Control = forwardRef(
   (
-    { disabled, children, onPress, renderAsView, href, handle, ...others },
+    {
+      disabled,
+      children,
+      onPress,
+      renderAsView,
+      href,
+      handle,
+      draggable,
+      ...others
+    },
     ref
   ) => {
     const _childRef = useRef()
@@ -109,7 +121,6 @@ const Control = forwardRef(
       <ThemeContext.Consumer>
         {(theme) => (
           <StyledComponent
-            onDragStart={(e) => e.preventDefault()}
             ref={forkRef(ref, _childRef)}
             tabIndex={0}
             onClick={(e) => {
@@ -123,12 +134,20 @@ const Control = forwardRef(
                 onPress(e)
               }
             }}
+            {...(draggable ? {} : { onDragStart: (e) => e.preventDefault() })}
             {...(renderAsView ? {} : viewProps)}
             css={[
               !renderAsView && resetCss,
               css(controlCss(others))(theme),
               _mobile && css(controlCssMobile(others))(theme),
+              !_mobile && desktopResetCss,
               !_mobile && css(controlCssDesktop(others, theme))(theme),
+              draggable && {
+                // note this is necessary to remove extra junk around the edges of the
+                // drag preview. see: https://github.com/react-dnd/react-dnd/issues/788#issuecomment-393620979
+                transform: 'translate(0, 0)',
+                cursor: 'grab',
+              },
             ]}
             href={href}
             disabled={disabled}

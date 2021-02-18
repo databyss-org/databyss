@@ -1,9 +1,10 @@
 import React from 'react'
-import { usePageContext } from '@databyss-org/services/pages/PageProvider'
+import { useGroupContext } from '@databyss-org/services/groups/GroupProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import AddPageSvg from '@databyss-org/ui/assets/add_page.svg'
+import AddGroupSvg from '@databyss-org/ui/assets/add_group.svg'
 import {
   Text,
   View,
@@ -13,27 +14,49 @@ import {
   Grid,
 } from '@databyss-org/ui/primitives'
 import { sidebar } from '@databyss-org/ui/theming/components'
-import { Page } from '@databyss-org/services/interfaces'
+import { Page, Group } from '@databyss-org/services/interfaces'
+import { savePage } from '@databyss-org/services/editorPage'
+import { addPage } from '@databyss-org/data/pouchdb/pages/util'
 
 const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
-  const { navigate, navigateSidebar } = useNavigationContext()
+  const { navigate, navigateSidebar, getSidebarPath } = useNavigationContext()
 
   const clearSearchCache = useEntryContext((c) => c && c.clearSearchCache)
 
-  const setPage = usePageContext((c) => c.setPage)
+  const setGroup = useGroupContext((c) => c.setGroup)
+
+  const sidebarPath = getSidebarPath()
 
   const onNewPageClick = () => {
+    if (sidebarPath === 'groups') {
+      setGroup(new Group())
+      return
+    }
     // clears search cache
     clearSearchCache()
 
     const _page = new Page()
-
-    setPage(_page).then(() => {
-      navigate(`/pages/${_page._id}`)
-    })
+    addPage(_page).then(() =>
+      savePage(_page).then(() => {
+        navigate(`/pages/${_page._id}`)
+      })
+    )
 
     navigateSidebar('/pages')
+  }
+
+  let create = {
+    icon: <AddPageSvg />,
+    tip: 'New Page',
+    text: 'New Page',
+  }
+  if (sidebarPath === 'groups') {
+    create = {
+      icon: <AddGroupSvg />,
+      tip: 'New Collection',
+      text: 'New Collection',
+    }
   }
 
   return !isPublicAccount() ? (
@@ -54,8 +77,8 @@ const Footer = ({ collapsed }) => {
         <Grid singleRow alignItems="center" columnGap="small">
           {collapsed ? (
             <View p="extraSmall">
-              <Icon sizeVariant="medium" color="text.2">
-                <AddPageSvg />
+              <Icon sizeVariant="medium" color="text.2" title={create.tip}>
+                {create.icon}
               </Icon>
             </View>
           ) : (
@@ -65,7 +88,7 @@ const Footer = ({ collapsed }) => {
               flexGrow="1"
             >
               <Text variant="uiTextNormal" color="text.2" ml="small">
-                New Page
+                {create.text}
               </Text>
               {/* 
               TODO: Only show this in electron app, when we get it, because we don't want
