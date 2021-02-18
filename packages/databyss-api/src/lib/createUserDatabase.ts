@@ -46,19 +46,19 @@ export const initializeNewPage = async ({
   const groupDb = await cloudant.db.use(`g_${groupId}`)
   const _page: any = new Page(pageId)
   // upsert selection
-  groupDb.upsert(_page.selection._id, () => ({
+  await groupDb.upsert(_page.selection._id, () => ({
     $type: DocumentType.Selection,
     createdAt: Date.now(),
     ..._page.selection,
   }))
   // upsert blocks
-  groupDb.upsert(_page.selection._id, () => ({
+  await groupDb.upsert(_page.blocks[0]._id, () => ({
     $type: DocumentType.Block,
     createdAt: Date.now(),
     ..._page.blocks[0],
   }))
 
-  groupDb.upsert(_page._id, () => ({
+  await groupDb.upsert(_page._id, () => ({
     createdAt: Date.now(),
     $type: DocumentType.Page,
     ...normalizePage(_page),
@@ -200,7 +200,7 @@ export const createUserDatabaseCredentials = async (
       ],
     }
 
-    initializeNewPage({
+    await initializeNewPage({
       groupId,
       pageId: defaultPageId,
     })
