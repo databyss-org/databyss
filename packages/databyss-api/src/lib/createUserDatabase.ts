@@ -200,12 +200,10 @@ export const createUserDatabaseCredentials = async (
       ],
     }
 
-    initializeNewPage({
+    await initializeNewPage({
       groupId,
       pageId: defaultPageId,
     })
-
-    // TODO: add new page to userDB
 
     await _db.upsert(_userPreferences._id, () => _userPreferences)
 
