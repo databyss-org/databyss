@@ -15,6 +15,7 @@ import { uid } from '@databyss-org/data/lib/uid'
 import { Role, User as UserInterface } from '@databyss-org/data/interfaces'
 import ServerProcess from '../lib/ServerProcess'
 import { getEnv, EnvDict } from '../lib/util'
+import { Block as BlockInterface } from '@databyss-org/services/interfaces'
 
 interface JobArgs {
   envName: string
@@ -192,6 +193,39 @@ class UserMongoToCloudant extends ServerProcess {
       }
       console.log(`➡️  Migrated ${Object.keys(_blockIdMap).length} Blocks`)
 
+      // update inline block ids
+
+      // get all ENTRY blocks in couch
+      const _couchBlocks = await _groupDb.find({
+        selector: {
+          type: { $eq: 'ENTRY' },
+        },
+      })
+
+      let _inlineIdCount = 0
+      for (const _couchBlock of _couchBlocks.docs as BlockInterface[]) {
+        let _hasInline = false
+        for (const _range of _couchBlock.text.ranges) {
+          for (const _mark of _range.marks) {
+            if (Array.isArray(_mark)) {
+              _hasInline = true
+              const _couchInlineBlockId = _blockIdMap[_mark[1]]
+              if (!_couchInlineBlockId) {
+                console.log(
+                  `⚠️  inline block id ${_mark[1]} not found on block: ${_couchBlock._id}`
+                )
+              }
+              _mark[1] = _couchInlineBlockId
+            }
+          }
+        }
+        if (_hasInline) {
+          await _groupDb.upsert(_couchBlock._id, () => _couchBlock)
+          _inlineIdCount += 1
+        }
+      }
+      console.log(`➡️  Updated ${_inlineIdCount} INLINE ids`)
+
       // insert the Pages in couch, generating new ids and keeping a map of old => new id
       const _pageIdMap: { [mongoId: string]: string } = {}
       for (const _mongoPage of _mongoPages) {
@@ -285,9 +319,8 @@ class UserMongoToCloudant extends ServerProcess {
         await _groupDb.insert({
           $type: DocumentType.BlockRelation,
           _id: _couchRelationId,
-          // blockId: _relationBlockId,
-          // TODO: change to blockType
-          type: _blockTypeMap[_relationBlockMongoId],
+          blockId: _relationBlockId,
+          blockType: _blockTypeMap[_relationBlockMongoId],
           pages: _relationPageIds,
           ...getTimestamps({}),
         })
