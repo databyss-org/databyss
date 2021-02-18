@@ -225,16 +225,6 @@ export interface TextInputProps extends TextProps {
 
 declare const TextInput: RefForwardingFC<TextInputProps>
 
-export interface RichTextInputProps {
-  value: Partial<TextInterface>
-  onChange: (value: TextInterface) => void
-  multiline?: boolean
-  active?: boolean
-  concatCss?: InterpolationWithTheme<any>
-  onFocus?: () => void
-  onBlur?: () => void
-}
-
 declare const RichTextInput: RefForwardingFC<TextInputProps>
 
 export interface TextControlProps extends BaseControlProps, ControlLabelProps {
