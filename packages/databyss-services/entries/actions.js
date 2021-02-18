@@ -8,13 +8,13 @@ import {
   CLEAR_BLOCK_RELATIONS_CACHE,
 } from './constants'
 
-export function onSearchEntries(string) {
+export function onSearchEntries(string, pages) {
   return async (dispatch) => {
     dispatch({
       type: SEARCH_ENTRY,
       payload: { query: string },
     })
-    entries.searchEntries(string).then((res) => {
+    entries.searchEntries(string, pages).then((res) => {
       dispatch({
         type: CACHE_ENTRY_RESULTS,
         payload: { results: res, query: string },
