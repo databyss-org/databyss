@@ -21,7 +21,6 @@ import {
 } from '@databyss-org/services/session/clientStorage'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
-import { JSONSchema4 } from 'json-schema'
 import { DocumentType } from './interfaces'
 import { searchText } from './utils'
 
@@ -222,8 +221,8 @@ export const syncPouchDb = ({
   dbRef
     .current!.replicate.to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
       ...opts,
-      // todo: add groupId to every document
-      // filter: (doc) => doc.$type !== DocumentType.UserPreferences,
+      // do not replciate design docs
+      filter: (doc) => !doc._id.includes('design/'),
     })
     .on('error', (err) => console.log(`REPLICATE.TO ERROR - ${err}`))
     .on('change', () => {
@@ -253,15 +252,15 @@ export const syncPouchDb = ({
 
 export const initiatePouchDbValidators = () => {
   // pouchDB validator
-  const _validatorSchemas: Array<[BlockType | DocumentType, JSONSchema4]> = [
-    [BlockType.Source, sourceSchema],
-    [BlockType.Entry, entrySchema],
-    [BlockType.Topic, topicSchema],
-    [DocumentType.Page, pageSchema],
-    [DocumentType.Selection, selectionSchema],
-    [DocumentType.BlockRelation, blockRelationSchema],
-    [DocumentType.UserPreferences, userPreferenceSchema],
-  ]
+  const schemaMap = {
+    [BlockType.Source]: sourceSchema,
+    [BlockType.Entry]: entrySchema,
+    [BlockType.Topic]: topicSchema,
+    [DocumentType.Page]: pageSchema,
+    [DocumentType.Selection]: selectionSchema,
+    [DocumentType.BlockRelation]: blockRelationSchema,
+    [DocumentType.UserPreferences]: userPreferenceSchema,
+  }
 
   // add $ref schemas, these schemas are reused
   tv4.addSchema('text', textSchema)
@@ -270,16 +269,31 @@ export const initiatePouchDbValidators = () => {
 
   dbRef.current!.transform({
     outgoing: (doc) => {
-      _validatorSchemas.forEach((s) => {
-        if (doc.type === s[0] || doc.$type === s[0]) {
-          if (!tv4.validate(doc, s[1], false, true)) {
-            console.log('DOCUMENT', doc)
-            console.error(
-              `${s[1].title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
-            )
-          }
-        }
-      })
+      if (doc._id.includes('design/')) {
+        return doc
+      }
+      let schema
+      // user database determines the schema by the .type field
+
+      if (doc.$type === DocumentType.Block) {
+        schema = schemaMap[doc.type]
+      } else {
+        schema = schemaMap[doc.$type]
+      }
+
+      // `this.schema &&` this will be removed when all schemas are implemented
+      if (schema && !tv4.validate(doc, schema, false, true)) {
+        console.log('TYPE', doc)
+        console.error(
+          `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+        )
+      }
+
+      if (!schema) {
+        console.log('NOT FOUND', doc)
+        console.error(`no schema found`)
+      }
+
       return doc
     },
   })

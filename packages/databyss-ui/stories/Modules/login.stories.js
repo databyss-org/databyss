@@ -10,6 +10,7 @@ import NavigationProvider, {
   useNavigationContext,
 } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 
+console.log(process.env)
 import {
   ViewportDecorator,
   NotifyDecorator,

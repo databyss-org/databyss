@@ -2,7 +2,10 @@ export { prefixSearchAll } from './filter'
 export { joinBlockRelations } from './joins'
 export { makeText } from './makeText'
 export { textToHtml } from './serialize'
-export {
-  groupBlockRelationsByPage,
-  groupBlockRelationsByRelatedBlock,
-} from './aggregate'
+export { groupBlockRelationsByPage } from './aggregate'
+
+export const getAtomicClosureText = (type, text) =>
+  ({
+    END_SOURCE: `/@ ${text}`,
+    END_TOPIC: `/# ${text}`,
+  }[type])

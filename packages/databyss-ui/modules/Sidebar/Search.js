@@ -1,9 +1,9 @@
 import React, { useEffect, useCallback, useState, useRef } from 'react'
+import { debounce } from 'lodash'
 import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { View } from '@databyss-org/ui/primitives'
 import SearchInputContainer from '../../components/Search/SearchInputContainer'
-import { debounce } from 'lodash'
 
 import SidebarSearchResults from './SidebarSearchResults'
 

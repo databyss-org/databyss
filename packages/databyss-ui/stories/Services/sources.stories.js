@@ -6,13 +6,11 @@ import SourceProvider, {
   useSourceContext,
 } from '@databyss-org/services/sources/SourceProvider'
 
-import { withSource } from '@databyss-org/ui/components/Loaders'
-
 import reducer, { initialState } from '@databyss-org/services/sources/reducer'
 import { ViewportDecorator } from '../decorators'
 import { _seedValue1, _seedValue2, _id1, _id2 } from './__tests__/initialValue'
 
-const EditFirstCitation = withSource(({ source }) => {
+const EditFirstCitation = ({ source }) => {
   const { setSource } = useSourceContext()
 
   const value = {
@@ -41,7 +39,7 @@ const EditFirstCitation = withSource(({ source }) => {
       multiline
     />
   )
-})
+}
 
 const SourcesDemo = () => {
   const [sourceId, setSourceState] = useState(_id1)

@@ -16,6 +16,7 @@ import {
 import { sidebar } from '@databyss-org/ui/theming/components'
 import { Page, Group } from '@databyss-org/services/interfaces'
 import { savePage } from '@databyss-org/services/editorPage'
+import { addPage } from '@databyss-org/data/pouchdb/pages/util'
 
 const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
@@ -36,10 +37,11 @@ const Footer = ({ collapsed }) => {
     clearSearchCache()
 
     const _page = new Page()
-
-    savePage(_page).then(() => {
-      navigate(`/pages/${_page._id}`)
-    })
+    addPage(_page).then(() =>
+      savePage(_page).then(() => {
+        navigate(`/pages/${_page._id}`)
+      })
+    )
 
     navigateSidebar('/pages')
   }

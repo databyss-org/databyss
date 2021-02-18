@@ -3,7 +3,17 @@ import SingleLine from '@databyss-org/editor/components/SingleLine'
 
 const RichTextInput = forwardRef(
   (
-    { value, onChange, id, concatCss, onBlur, onFocus, active, multiline },
+    {
+      value,
+      onChange,
+      id,
+      concatCss,
+      onBlur,
+      onFocus,
+      active,
+      multiline,
+      placeholder,
+    },
     ref
   ) => {
     const _onBlur = (event) => {
@@ -34,6 +44,7 @@ const RichTextInput = forwardRef(
         overrideCss={_css}
         name="RichTextInput"
         ref={ref}
+        placeholder={placeholder}
       />
     )
   }

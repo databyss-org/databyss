@@ -22,6 +22,7 @@ export const pageSchema: JSONSchema4 = {
             type: 'string',
           },
         },
+        required: ['_id', 'type'],
       },
     },
     selection: {

@@ -1,4 +1,4 @@
-import { BlockRelation } from '@databyss-org/services/interfaces'
+import { IndexPageResult } from '@databyss-org/services/interfaces'
 
 export type {
   EditorState,
@@ -11,15 +11,17 @@ export type {
   Selection,
   Point,
   Text,
+  BlockRelation,
+  IndexPageResult,
 } from '@databyss-org/services/interfaces'
 export { BlockType } from '@databyss-org/services/interfaces'
 
-export type BlockRelationPayload = {
-  blocksRelationArray?: BlockRelation[]
-  clearPageRelationships?: string
+export enum BlockRelationOperation {
+  ADD = 'ADD',
+  REMOVE = 'REMOVE',
 }
 
 export type PagePath = {
   path: string[]
-  blockRelations: BlockRelation[]
+  blockRelations: IndexPageResult[]
 }

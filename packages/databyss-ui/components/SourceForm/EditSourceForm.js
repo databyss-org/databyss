@@ -28,8 +28,6 @@ import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
 import EditAuthorFields from './EditAuthorFields'
-
-import { pxUnits } from '../../theming/views'
 import LabeledDropDownControl from '../../primitives/Control/LabeledDropDownControl'
 
 import MakeLoader from '../Loaders/MakeLoader'
@@ -79,7 +77,7 @@ const swap = (array, indexA, indexB) => {
 
 // components
 const FormHeading = (props) => (
-  <Text variant="uiTextHeading" marginTop={pxUnits(20)} {...props}>
+  <Text variant="uiTextHeading" ml="tiny" mt="medium" mb="small" {...props}>
     {props.children}
   </Text>
 )
@@ -88,11 +86,8 @@ const LabeledTextInput = (props) => (
   <ValueListItem path={props.path}>
     <TextControl
       labelProps={labelProps}
-      label={props.label}
-      id={props.id}
       gridFlexWrap="nowrap"
       paddingVariant="tiny"
-      onBlur={props.onBlur}
       {...props}
     />
   </ValueListItem>
@@ -256,13 +251,6 @@ const EditSourceForm = (props) => {
     movePersonUpIn('translators', index)
   }
 
-  //
-  const onFieldBlur = () => {
-    if (values && values.text.textValue.length && onChange) {
-      onChange(values)
-    }
-  }
-
   // citation methods
   const onCitationStyleOptionChange = (value) => {
     setPreferredCitationStyle(value.id)
@@ -272,13 +260,12 @@ const EditSourceForm = (props) => {
   // render methods
   const renderDatabyssNameSection = () => (
     <>
-      <FormHeading>Databyss Name</FormHeading>
       <LabeledTextInput
+        placeholder="untitled"
         path="text"
         id="name"
         label="Name"
         rich
-        onBlur={onFieldBlur}
       />
     </>
   )
@@ -292,16 +279,10 @@ const EditSourceForm = (props) => {
         id="title"
         label="Title"
         multiline
-        onBlur={onFieldBlur}
         dataTestId="edfTitle"
       />
 
-      <LabeledTextInput
-        path="detail.year"
-        id="year"
-        label="Year"
-        onBlur={onFieldBlur}
-      />
+      <LabeledTextInput path="detail.year" id="year" label="Year" />
 
       {isArticle ? (
         <View marginBottom="10px">
@@ -345,7 +326,6 @@ const EditSourceForm = (props) => {
             id="journalTitle"
             label="Journal Title"
             multiline
-            onBlur={onFieldBlur}
           />
 
           <LabeledTextInput
@@ -353,7 +333,6 @@ const EditSourceForm = (props) => {
             id="volume"
             label="Volume"
             multiline
-            onBlur={onFieldBlur}
           />
 
           <LabeledTextInput
@@ -361,7 +340,6 @@ const EditSourceForm = (props) => {
             id="issue"
             label="Issue"
             multiline
-            onBlur={onFieldBlur}
           />
         </>
       ) : null}
@@ -372,7 +350,6 @@ const EditSourceForm = (props) => {
           id="chapterTitle"
           label="Chapter Title"
           multiline
-          onBlur={onFieldBlur}
         />
       ) : null}
 
@@ -380,7 +357,6 @@ const EditSourceForm = (props) => {
         path="detail.publisherName"
         id="publisherName"
         label="Publisher"
-        onBlur={onFieldBlur}
       />
 
       <LabeledTextInput
@@ -388,15 +364,9 @@ const EditSourceForm = (props) => {
         id="publisherPlace"
         label="Place"
         multiline
-        onBlur={onFieldBlur}
       />
 
-      <LabeledTextInput
-        path="detail.page"
-        id="page"
-        label="Page(s)"
-        onBlur={onFieldBlur}
-      />
+      <LabeledTextInput path="detail.page" id="page" label="Page(s)" />
     </>
   )
 
@@ -428,7 +398,6 @@ const EditSourceForm = (props) => {
             <EditAuthorFields
               firstNamePath={`detail.authors[${index}].firstName`}
               lastNamePath={`detail.authors[${index}].lastName`}
-              onBlur={onFieldBlur}
               canMoveDown={index < lastIndex}
               onMoveDown={() => onMoveAuthorDown(index)}
               canMoveUp={index > 0}
@@ -473,7 +442,6 @@ const EditSourceForm = (props) => {
                   <EditAuthorFields
                     firstNamePath={`detail.editors[${index}].firstName`}
                     lastNamePath={`detail.editors[${index}].lastName`}
-                    onBlur={onFieldBlur}
                     canMoveDown={index < lastIndex}
                     onMoveDown={() => onMoveEditorDown(index)}
                     canMoveUp={index > 0}
@@ -518,7 +486,6 @@ const EditSourceForm = (props) => {
                   <EditAuthorFields
                     firstNamePath={`detail.translators[${index}].firstName`}
                     lastNamePath={`detail.translators[${index}].lastName`}
-                    onBlur={onFieldBlur}
                     canMoveDown={index < lastIndex}
                     onMoveDown={() => onMoveTranslatorDown(index)}
                     canMoveUp={index > 0}
@@ -544,39 +511,19 @@ const EditSourceForm = (props) => {
 
       {/* ISBN */}
       {isBook || isBookSection ? (
-        <LabeledTextInput
-          path="detail.isbn"
-          id="isbn"
-          label="ISBN"
-          onBlur={onFieldBlur}
-        />
+        <LabeledTextInput path="detail.isbn" id="isbn" label="ISBN" />
       ) : null}
       {/* ISBN END */}
 
       {/* ISSN */}
       {isArticle ? (
-        <LabeledTextInput
-          path="detail.issn"
-          id="issn"
-          label="ISSN"
-          onBlur={onFieldBlur}
-        />
+        <LabeledTextInput path="detail.issn" id="issn" label="ISSN" />
       ) : null}
       {/* ISSN END */}
 
-      <LabeledTextInput
-        path="detail.doi"
-        id="doi"
-        label="DOI"
-        onBlur={onFieldBlur}
-      />
+      <LabeledTextInput path="detail.doi" id="doi" label="DOI" />
 
-      <LabeledTextInput
-        path="detail.url"
-        id="url"
-        label="URL"
-        onBlur={onFieldBlur}
-      />
+      <LabeledTextInput path="detail.url" id="url" label="URL" />
     </>
   )
 
@@ -593,7 +540,7 @@ const EditSourceForm = (props) => {
 
         <MakeLoader resources={generateCitation(values.detail, formatOptions)}>
           {(citation) => (
-            <View marginTop={pxUnits(20)} marginBottom={pxUnits(20)}>
+            <View mb="medium" ml="tiny">
               <RawHtml html={pruneCitation(citation, formatOptions.styleId)} />
             </View>
           )}
@@ -618,8 +565,8 @@ const EditSourceForm = (props) => {
 
   const render = () => (
     <View
-      paddingLeft="medium"
-      paddingRight="medium"
+      paddingLeft="none"
+      paddingRight="small"
       paddingTop="none"
       paddingBottom="medium"
       width="100%"

@@ -1,4 +1,10 @@
-import React, { createContext, useContext } from 'react'
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useRef,
+  useCallback,
+} from 'react'
 import cloneDeep from 'clone-deep'
 import _ from 'lodash'
 
@@ -18,30 +24,37 @@ export const ValueListProvider = ({
   onChange,
   ...otherContext
 }) => {
-  const onItemChange = (path, value) => {
-    const _value = _.get(values, path, defaultText)
-    if (_.isEqual(_value, value)) {
-      return
-    }
+  const valuesRef = useRef(values)
+  valuesRef.current = values
 
-    // apply changes to values, cloned to preserve immutability
-    const _values = cloneDeep(values)
+  const onItemChange = useCallback(
+    (path, value) => {
+      const _value = _.get(valuesRef.current, path, defaultText)
+      if (_.isEqual(_value, value)) {
+        return
+      }
 
-    // lodash.set:
-    // Sets the value at path of object.
-    // If a portion of path doesn't exist, it's created.
-    // https://lodash.com/docs/4.17.15#set
+      // apply changes to values, cloned to preserve immutability
+      const _values = cloneDeep(valuesRef.current)
 
-    _.set(_values, path, value)
+      // lodash.set:
+      // Sets the value at path of object.
+      // If a portion of path doesn't exist, it's created.
+      // https://lodash.com/docs/4.17.15#set
 
-    // pass updated values to parent handler
-    // also pass the path in case the handler wants to know where the change
-    // occurred
-    onChange(_values)
-  }
+      _.set(_values, path, value)
+
+      // pass updated values to parent handler
+      // also pass the path in case the handler wants to know where the change
+      // occurred
+      onChange(_values)
+    },
+    [valuesRef, onChange]
+  )
+
   return (
     <ValueListContext.Provider
-      value={{ onItemChange, values, ...otherContext }}
+      value={{ onItemChange, values, valuesRef, ...otherContext }}
     >
       {children}
     </ValueListContext.Provider>
@@ -55,21 +68,25 @@ export const useValueListContext = () => useContext(ValueListContext)
  */
 
 export const ValueListItem = ({ children, path, ...others }) => {
-  const { onItemChange, values } = useValueListContext()
+  const { onItemChange, valuesRef } = useValueListContext()
 
-  const value = _.get(values, path, defaultText)
+  const value = _.get(valuesRef.current, path, defaultText)
 
   // lodash.get:
   // Gets the value at path of object.
   // If the resolved value is undefined, the defaultValue is returned in its place.
   // https://lodash.com/docs/4.17.15#get
 
-  return React.cloneElement(React.Children.only(children), {
-    value,
-    onChange: (_value) => onItemChange(path, _value),
-    'data-test-path': path,
-    ...others,
-  })
+  return useMemo(
+    () =>
+      React.cloneElement(React.Children.only(children), {
+        value,
+        onChange: (_value) => onItemChange(path, _value),
+        'data-test-path': path,
+        ...others,
+      }),
+    [JSON.stringify(value)]
+  )
 }
 
 export default ValueListProvider

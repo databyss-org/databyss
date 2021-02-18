@@ -18,6 +18,7 @@ export const blockSchema: JSONSchema4 = {
     },
   },
   // TODO: account must become groupId and be required
+  allOf: [{ $ref: 'pouchDb' }],
   required: ['type', 'text'],
 }
 

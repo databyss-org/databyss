@@ -21,10 +21,11 @@ export type {
   Author,
   Topic,
   SourceCitationHeader,
-  BlockRelation,
+  IndexPageResult,
   Block,
   BlockReference,
   BlockRelationsServerResponse,
+  BlockRelation,
 } from './Block'
 export type { Document, DocumentDict } from './Document'
 export { BlockType } from './Block'

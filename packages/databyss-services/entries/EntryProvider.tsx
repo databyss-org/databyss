@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react'
 import { debounce } from 'lodash'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { createContext, useContextSelector } from 'use-context-selector'
 import reducer, { initialState as _initState } from './reducer'
@@ -31,15 +32,17 @@ const EntryProvider: React.FunctionComponent<PropsType> = ({
   const [state, dispatch] = useReducer(reducer, initialState)
   const { searchCache, searchTerm } = state
 
+  const pagesRes = usePages()
+
   const searchEntries = useCallback(
     debounce((query: string) => {
       const _results = searchCache[query]
-      if (!_results) {
-        return dispatch(onSearchEntries(query))
+      if (!_results && pagesRes.isSuccess) {
+        return dispatch(onSearchEntries(query, pagesRes.data))
       }
       return null
     }, 250),
-    [searchCache]
+    [searchCache, pagesRes.isSuccess]
   )
 
   // https://github.com/pouchdb-community/pouchdb-quick-search/issues/57

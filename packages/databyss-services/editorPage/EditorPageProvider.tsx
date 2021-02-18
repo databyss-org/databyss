@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
-
+import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -8,7 +8,6 @@ import {
   Page,
   PageState,
   RefDict,
-  PageHeader,
   PatchBatch,
   ResourceResponse,
 } from '../interfaces'
@@ -86,7 +85,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     []
   )
 
-  const setPageHeader = useCallback((page: PageHeader) => {
+  const setPageHeader = useCallback((page: Page) => {
     dispatch(actions.savePageHeader(page))
   }, [])
 
@@ -132,7 +131,9 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   )
 
   const setPatches = useCallback((patches: PatchBatch) => {
-    dispatch(actions.savePatchBatch(patches))
+    if (patches) {
+      savePatchBatch(patches)
+    }
   }, [])
 
   const removePageFromCache = (id: string) => {

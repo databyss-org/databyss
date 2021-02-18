@@ -1,5 +1,4 @@
-import React, { useState, useEffect, forwardRef, useCallback } from 'react'
-import { debounce } from 'lodash'
+import React, { useState, useEffect, forwardRef } from 'react'
 import { useEditorPageContext } from '@databyss-org/services'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
@@ -15,6 +14,14 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
   const page = pagesRes.data?.[pageId]
 
   const [pageName, setPageName] = useState('')
+  const [focused, setFocused] = useState(false)
+
+  useEffect(() => {
+    // if text field is focused, do not allow name update from external sources
+    if (!focused) {
+      setPageName(pagesRes.data?.[pageId].name)
+    }
+  }, [pagesRes.data?.[pageId]])
 
   useEffect(() => {
     if (!pagesRes.isSuccess) {
@@ -29,25 +36,19 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
           ref.current.focus()
         }
       }, 10)
-    } else {
+    } else if (!pageName.length) {
+      // only set page name on initial mount
       setPageName(pageDataName)
     }
-  }, [pageId, pagesRes])
-
-  const throttledAutosave = useCallback(
-    debounce((val) => {
-      const _pageData = {
-        name: val || noPageTitle,
-        _id: pageId,
-      }
-      setPageHeader(_pageData)
-    }, process.env.SAVE_PAGE_THROTTLE),
-    []
-  )
+  }, [pageId, pagesRes.isSuccess])
 
   const onPageNameChange = (val) => {
     setPageName(val)
-    throttledAutosave(val)
+    const _pageData = {
+      name: val || noPageTitle,
+      _id: pageId,
+    }
+    setPageHeader(_pageData)
   }
 
   if (!pagesRes.isSuccess) {
@@ -56,6 +57,8 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
 
   return (
     <TitleInput
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
       readonly={isPublicAccount() || isMobile() || page.archive}
       ref={ref}
       data-test-element="page-header"

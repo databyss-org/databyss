@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import { createContext, useContextSelector } from 'use-context-selector'
 import React, { useCallback } from 'react'
 import createReducer from '@databyss-org/services/lib/createReducer'

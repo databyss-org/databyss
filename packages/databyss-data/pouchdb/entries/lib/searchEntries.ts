@@ -1,9 +1,10 @@
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
-import { DocumentType } from '../../interfaces'
-import { findOne, searchText } from '../../utils'
+import { PageDoc } from '../../interfaces'
+import { searchText } from '../../utils'
 
 const searchEntries = async (
-  encodedQuery: string
+  encodedQuery: string,
+  pages: PageDoc[]
 ): Promise<
   | ResourceNotFoundError
   | {
@@ -15,8 +16,6 @@ const searchEntries = async (
 
   const _res = await searchText(_query)
 
-  console.log('first response', _res)
-
   const _queryResponse = _res.rows
   if (!_queryResponse.length) {
     return new ResourceNotFoundError('no results found')
@@ -24,20 +23,23 @@ const searchEntries = async (
   // if results are found, look up page and append to result
 
   const _results = _queryResponse
+
+  // create a dictionary of block to pages
+  const _blockToPages = {}
+
+  Object.values(pages).forEach((p) =>
+    p.blocks.forEach((b) => (_blockToPages[b._id] = { pageId: p._id }))
+  )
+
+  // add page to block results
   for (const _result of _results) {
-    // returns all pages where source id is found in element id
-    // change this to find all pages
-    const _page = await findOne({
-      $type: DocumentType.Page,
-      query: {
-        blocks: {
-          $elemMatch: {
-            _id: _result.id,
-          },
-        },
-      },
-      useIndex: 'page-blocks',
-    })
+    let _page
+    const _entryId = _result.id
+    const _pageId = _blockToPages[_entryId]?.pageId
+    // pageId might not exist if block was deleted
+    if (_pageId) {
+      _page = pages[_pageId]
+    }
 
     if (_page) {
       // only one search result should appear per entry
@@ -140,8 +142,6 @@ const searchEntries = async (
       results: Object.fromEntries(__results.results),
     }
   }
-
-  console.log('finish', __results)
 
   return __results
 }

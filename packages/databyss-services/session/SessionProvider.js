@@ -6,6 +6,7 @@ import {
   replicateDbFromRemote,
   syncPouchDb,
   initiatePouchDbIndexes,
+  initiatePouchDbValidators,
 } from '@databyss-org/data/pouchdb/db'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -93,6 +94,8 @@ const SessionProvider = ({
         await replicateDbFromRemote({
           groupId,
         })
+
+        await initiatePouchDbValidators()
 
         // TODO: indexing is built after 5 seconds
         setTimeout(() => {

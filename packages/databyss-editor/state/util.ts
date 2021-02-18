@@ -1,5 +1,4 @@
 import { BlockType, Page } from '@databyss-org/services/interfaces'
-import _ from 'lodash'
 import { uid } from '@databyss-org/data/lib/uid'
 import { Patch } from 'immer'
 import {
@@ -260,85 +259,28 @@ export const cleanupPatches = (patches: Patch[]) =>
       )
   )
 
-// checks if all operation are of type `replace`
-export const canPatchesBeOptimized = (patches: Patch[]): boolean => {
-  if (patches.find((p) => p.op !== 'replace')) {
-    return false
-  }
-
-  // check if all operations have occured on the same index
-
-  const _areBlockOperationsOnSameIndex = patches
-    .filter((p) => p.path[0] === 'blocks')
-    .reduce((acc: any, curr: any, i: number) => {
-      if (i === 0) {
-        return curr.path[1]
-      }
-      if (acc !== curr.path[1]) {
-        return false
-      }
-      return acc
-    }, null)
-
-  const _areSelectionOperationsOnSameIndex = patches
-    .filter((p) => p.path[0] === 'selection')
-    .reduce((acc: any, curr: any, i: number) => {
-      if (curr.value.anchor.index !== curr.value.focus.index) {
-        return false
-      }
-      if (i === 0) {
-        return curr.value.anchor.index
-      }
-
-      if (acc !== curr.value.anchor.index) {
-        return false
-      }
-      return acc
-    }, null)
-
-  // if either operation is not on the same index, return default patches
-
-  // if index is at zero, it will throw a false negative, check if number
-  if (
-    !_.isNumber(_areBlockOperationsOnSameIndex) ||
-    !_.isNumber(_areSelectionOperationsOnSameIndex)
-  ) {
-    return false
-  }
-  if (!_areBlockOperationsOnSameIndex || !_areSelectionOperationsOnSameIndex) {
-    return false
-  }
-
-  return true
-}
-
-// checks if all operation have occured within one block, this will work for `selection` and `block` updates
-export const optimizePatches = (patches: Patch[]): Patch[] => {
-  const _patches = patches
-
-  if (!canPatchesBeOptimized(_patches)) {
-    return _patches
-  }
-
-  const _optimizedPatches: Patch[] = []
-  _patches.reverse().forEach((p) => {
-    // get latest selection
-    if (!_optimizedPatches.find((_p: Patch) => _p?.path[0] === 'selection')) {
-      _optimizedPatches.push(p)
-    } else if (!_optimizedPatches.find((_p) => _p?.path[0] === 'blocks')) {
-      // get latest block
-      _optimizedPatches.push(p)
-    }
-  })
-
-  return _optimizedPatches.reverse()
-}
-
-export const addMetaToPatches = ({ nextState, patches }: OnChangeArgs) =>
+export const addMetaToPatches = ({
+  nextState,
+  previousState,
+  patches,
+}: OnChangeArgs) =>
   cleanupPatches(patches)?.map((_p) => {
     // add selection
     if (_p.path[0] === 'selection') {
       _p.value = { ..._p.value, _id: nextState.selection._id }
+    }
+    // adds _id for patch system to consume
+    if (_p.path[0] === 'blocks') {
+      if (_p.op === 'remove') {
+        const _id = previousState.blocks[_p.path[1]]._id
+        _p.value = { ..._p.value, _id }
+      }
+      if (_p.op === 'replace') {
+        const { _id, type, text } = nextState.blocks[_p.path[1]]
+        if (typeof _p.value !== 'string') {
+          _p.value = { ...text, ..._p.value, _id, type }
+        }
+      }
     }
     return _p
   })

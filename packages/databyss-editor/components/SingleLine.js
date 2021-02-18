@@ -31,42 +31,30 @@ const toggleMark = (editor, format) => {
   }
 }
 
-const Leaf = ({ attributes, children, leaf }) => {
-  let _children =
-    leaf.bold || leaf.italic || leaf.location ? (
-      children
-    ) : (
-      <Text display="inline">{children}</Text>
-    )
+const Leaf = ({ variant, attributes, children, leaf }) => {
+  const boldVariant = `${variant}Semibold`
+  const italicVariant = `${variant}Italic`
 
+  let styleProps = { variant }
   if (leaf.bold) {
-    _children = (
-      <Text display="inline" variant="bodyNormalSemibold">
-        {_children}
-      </Text>
-    )
+    styleProps = { variant: boldVariant }
   }
-
   if (leaf.italic) {
-    _children = (
-      <Text display="inline" variant="bodyNormalItalic">
-        {_children}
-      </Text>
-    )
+    styleProps = { variant: italicVariant }
   }
-
   if (leaf.location) {
-    _children = (
-      <View {...attributes} color="text.3" display="inline" borderRadius={0}>
-        {_children}
-      </View>
-    )
+    styleProps = { color: 'text.3' }
   }
 
   return (
-    <View display="inline" {...attributes}>
-      {_children}
-    </View>
+    <Text
+      {...attributes}
+      {...styleProps}
+      minWidth="10px"
+      display="inline-block"
+    >
+      {children}
+    </Text>
   )
 }
 
@@ -82,20 +70,24 @@ const RichText = forwardRef(
       onBlur,
       onFocus,
       placeholder,
+      variant,
     },
     ref
   ) => {
     // set initial value
 
-    const initValue = [
+    const initValue = (text) => [
       {
-        children: stateToSlateMarkup({ text: initialValue }),
+        children: stateToSlateMarkup({ text }),
       },
     ]
 
-    const [value, setValue] = useState(initValue)
+    const [value, setValue] = useState(initValue(initialValue))
 
-    const renderLeaf = useCallback((props) => <Leaf {...props} />, [])
+    const renderLeaf = useCallback(
+      (props) => <Leaf variant={variant} {...props} />,
+      []
+    )
     const editor = useMemo(() => withReact(createEditor()), [])
 
     const onChangeEvent = (value) => {
@@ -104,6 +96,10 @@ const RichText = forwardRef(
       }
       setValue(value)
     }
+
+    useEffect(() => {
+      setValue(initValue(initialValue))
+    }, [initialValue])
 
     useEffect(() => {
       if (active && editor) {
@@ -154,5 +150,9 @@ const RichText = forwardRef(
     )
   }
 )
+
+RichText.defaultProps = {
+  variant: 'uiTextNormal',
+}
 
 export default RichText

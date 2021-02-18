@@ -9,15 +9,13 @@ import {
   LoadingFallback,
 } from '@databyss-org/ui/components'
 import { slateBlockToHtmlWithSearch } from '@databyss-org/editor/lib/util'
-import {
-  useBlockRelations,
-  useBlocks,
-  usePages,
-} from '@databyss-org/data/pouchdb/hooks'
+import { useBlockRelations, usePages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
-import { IncludeFromResultOptions } from '@databyss-org/data/pouchdb/hooks/useDocuments'
-import { BlockRelation } from '@databyss-org/services/interfaces'
+import { Block } from '@databyss-org/services/interfaces'
+import { addPagesToBlockRelation } from '@databyss-org/services/blocks/joins'
+import { useDocuments } from '@databyss-org/data/pouchdb/hooks/useDocuments'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 
 interface IndexResultsProps {
   blockType: BlockType
@@ -30,27 +28,28 @@ export const IndexResults = ({
 }: IndexResultsProps) => {
   const { getAccountFromLocation } = useNavigationContext()
   const blockRelationRes = useBlockRelations(blockType, {
-    relatedBlock: relatedBlockId,
+    _id: `r_${relatedBlockId}`,
   })
-  const blocksRes = useBlocks(BlockType.Entry, {
-    includeFromResults: {
-      result: blockRelationRes,
-      resultToBlockId: (doc) =>
-        doc.relatedBlock === relatedBlockId && doc.block,
-    } as IncludeFromResultOptions<BlockRelation>,
+
+  // returns all blocks
+  const _blocksRes = useDocuments<Block>({
+    $type: DocumentType.Block,
   })
+
   const pagesRes = usePages()
-  const queryRes = [blockRelationRes, blocksRes, pagesRes]
+  const queryRes = [blockRelationRes, pagesRes, _blocksRes]
 
   if (queryRes.some((q) => !q.isSuccess)) {
     return <LoadingFallback queryObserver={queryRes} />
   }
 
-  const relations = Object.values(blockRelationRes.data!).filter(
-    (_rel) => _rel.relatedBlock === relatedBlockId
-  )
+  const _relations = addPagesToBlockRelation({
+    blockRelation: blockRelationRes.data![`r_${relatedBlockId}`],
+    pages: pagesRes.data!,
+    blocks: _blocksRes.data!,
+  }).filter((r) => r.relatedBlock === relatedBlockId)
 
-  const groupedRelations = groupBlockRelationsByPage(relations)
+  const groupedRelations = groupBlockRelationsByPage(_relations)
 
   const _results = Object.keys(groupedRelations)
     // filter out results for archived and missing pages
@@ -75,7 +74,7 @@ export const IndexResults = ({
               href={`/${getAccountFromLocation()}/pages/${r}#${e.block}`}
               text={
                 <RawHtml
-                  html={slateBlockToHtmlWithSearch(blocksRes.data![e.block])}
+                  html={slateBlockToHtmlWithSearch(_blocksRes.data![e.block])}
                 />
               }
               dataTestElement="atomic-result-item"

@@ -153,6 +153,7 @@ describe('notes app', () => {
     await firstResult[0].click()
 
     await isAppInNotesSaved(driver)
+    await sleep(3000)
 
     // check if source is on sidebar
     let sidebarSource = await getElementsByTag(
@@ -160,13 +161,14 @@ describe('notes app', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
-    sidebarSource = await sidebarSource[2].getAttribute('innerText')
+    sidebarSource = await sidebarSource[1].getAttribute('innerText')
 
     // verify source added to sidebar
     assert.equal(sidebarSource.trim().length > 0, true)
     // delete the source and verify its removed from the sidebar
     await backspaceKey(actions)
     await backspaceKey(actions)
+    await sleep(3000)
 
     // check if the source exists in the sidebar, it should be removed
 
@@ -175,7 +177,7 @@ describe('notes app', () => {
       '[data-test-element="page-sidebar-item"]'
     )
 
-    assert.equal(sidebarSource.length, 2)
+    assert.equal(sidebarSource.length, 1)
 
     await sendKeys(actions, 'Editor test two')
 

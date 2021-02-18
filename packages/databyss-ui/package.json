@@ -22,7 +22,8 @@
     "@storybook/react": "5.2.1",
     "react": "16.9.0",
     "react-dom": "16.9.0",
-    "react-native": "0.60.4"
+    "react-native": "0.60.4",
+    "react-query": "^3.6.0"
   },
   "dependencies": {
     "@bugsnag/plugin-react": "^7.3.5",

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { createEditor } from '@databyss-org/slate'
 import { withReact } from '@databyss-org/slate-react'
 import { storiesOf } from '@storybook/react'
@@ -9,10 +10,10 @@ import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import sourceReducer, {
   initialState as sourceInitialState,
 } from '@databyss-org/services/sources/reducer'
-import TopicProvider from '@databyss-org/services/topics/TopicProvider'
-import topicReducer, {
-  initialState as topicInitialState,
-} from '@databyss-org/services/topics/reducer'
+// import TopicProvider from '@databyss-org/services/topics/TopicProvider'
+// import topicReducer, {
+//   initialState as topicInitialState,
+// } from '@databyss-org/services/topics/reducer'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ContentEditable from '../components/ContentEditable'
 import { stateToSlate } from '../lib/slateUtils'
@@ -22,6 +23,8 @@ import basicFixture from './fixtures/basic'
 import blankFixture from './fixtures/blankState'
 import { sourceFixture, topicFixture } from './fixtures/refEntities'
 import noAtomicsFixture from './fixtures/no-atomics'
+
+const queryClient = new QueryClient()
 
 const _res = {
   totalItems: 1,
@@ -68,7 +71,7 @@ const SideBySide = ({ initialState }) => {
 }
 
 const EditorWithModals = ({ initialState }) => (
-  <TopicProvider initialState={topicInitialState} reducer={topicReducer}>
+  <QueryClientProvider client={queryClient}>
     <SourceProvider initialState={sourceInitialState} reducer={sourceReducer}>
       <NavigationProvider>
         <EditorWithProvider
@@ -79,7 +82,7 @@ const EditorWithModals = ({ initialState }) => (
         />
       </NavigationProvider>
     </SourceProvider>
-  </TopicProvider>
+  </QueryClientProvider>
 )
 
 const initFetchMock = () => {

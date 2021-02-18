@@ -6,3 +6,6 @@ node_modules
 
 # databyss-pdf-api
 /packages/databyss-pdf-api/view
+
+#mobile
+/packages/databyss-notes-mobile

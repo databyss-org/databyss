@@ -9,8 +9,6 @@ import {
 } from '@databyss-org/slate'
 import { ReactEditor, withReact } from '@databyss-org/slate-react'
 import cloneDeep from 'clone-deep'
-import { useEditorPageContext } from '@databyss-org/services'
-import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { setSource } from '@databyss-org/services/sources'
 import { setBlockRelations } from '@databyss-org/services/entries'
 import { setTopic } from '@databyss-org/services/topics'
@@ -27,7 +25,6 @@ import {
   toggleMark,
   isMarkActive,
   isCurrentlyInInlineAtomicField,
-  getInlineFromBlock,
   isCharacterKeyPress,
   insertTextWithInilneCorrection,
   inlineAtomicBlockCorrector,
@@ -57,7 +54,6 @@ const ContentEditable = ({
   readonly,
   onNavigateUpFromTop,
   editorRef,
-  pendingPatches,
 }) => {
   const editorContext = useEditorContext()
   const navigationContext = useNavigationContext()
@@ -74,7 +70,7 @@ const ContentEditable = ({
     remove,
     removeAtSelection,
     removeEntityFromQueue,
-    setInlineBlockRelations,
+    removeAtomicFromQueue,
   } = editorContext
 
   const editor = useMemo(() => withReact(createEditor()), [])
@@ -101,6 +97,20 @@ const ContentEditable = ({
     console.warn(error)
   }
 
+  // if atomics were removed from page, clear page from block relation
+  useEffect(() => {
+    state.removedEntities.forEach((e) => {
+      removeAtomicFromQueue(e._id)
+      const _payload = {
+        operationType: 'REMOVE',
+        type: e.type,
+        _id: e._id,
+        page: state.pageHeader?._id,
+      }
+      setBlockRelations(_payload)
+    })
+  }, [state.removedEntities])
+
   // if focus index is provides, move caret
   useEffect(() => {
     if (typeof focusIndex === 'number' && editor.children) {
@@ -116,27 +126,11 @@ const ContentEditable = ({
     }
   }, [focusIndex])
 
-  // checks if db is currently processing patches
-  const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
-  let _isDbBusy
-  if (isDbBusy) {
-    _isDbBusy = isDbBusy()
-  }
-
-  const patchQueueSize = useEditorPageContext((c) => c && c.patchQueueSize)
-
   // if new atomic block has been added, save atomic
   useEffect(() => {
-    if (
-      state.newEntities.length &&
-      setSource &&
-      !_isDbBusy &&
-      !pendingPatches &&
-      !patchQueueSize
-    ) {
+    if (state.newEntities.length) {
       state.newEntities.forEach((entity) => {
         let _data = null
-
         if (entity.text) {
           _data = {
             _id: entity._id,
@@ -148,38 +142,31 @@ const ContentEditable = ({
         }
         const _types = {
           SOURCE: () => {
-            // requestAnimationFrame will allow the `forkOnChange` function in the editor provider to execute before setting the inline block relations
-            window.requestAnimationFrame(() => {
-              setInlineBlockRelations(() => {
-                if (_data) {
-                  setSource(_data)
-                }
-              })
-            })
+            if (_data) {
+              setSource(_data)
+            }
           },
           TOPIC: () => {
-            window.requestAnimationFrame(() => {
-              setInlineBlockRelations(() => {
-                if (_data) {
-                  setTopic(_data)
-                }
-              })
-            })
+            if (_data) {
+              setTopic(_data)
+            }
           },
         }
         _types[entity.type]()
+
+        // set BlockRelation property
+        const _payload = {
+          operationType: 'ADD',
+          type: entity.type,
+          _id: entity._id,
+          page: state.pageHeader?._id,
+        }
+        setBlockRelations(_payload)
+
         removeEntityFromQueue(entity._id)
       })
     }
-  }, [
-    state.newEntities.length,
-    // checks DB for pending patches
-    _isDbBusy,
-    // checks patch queue from PageBody
-    pendingPatches,
-    // checks patches from PageProvider
-    patchQueueSize,
-  ])
+  }, [state.newEntities.length])
 
   useImperativeHandle(editorRef, () => ({
     focus: () => {
@@ -471,24 +458,6 @@ const ContentEditable = ({
               */
             if (event.key === 'Backspace') {
               // remove inline node
-
-              /*
-                scan block to see if this is the last instance of inline atomic, if so, remove block relation
-                */
-              const _currentBlock = state.blocks[state.selection.anchor.index]
-              const _inlineRangeMatch = getInlineFromBlock(
-                _currentBlock,
-                _currentLeaf.atomicId
-              )
-              if (_inlineRangeMatch.length < 2 && setBlockRelations) {
-                // clear this block relation
-                const blockRelation = {
-                  block: _currentBlock._id,
-                  relatedBlock: _currentLeaf.atomicId,
-                  removeBlock: true,
-                }
-                setBlockRelations({ blocksRelationArray: [blockRelation] })
-              }
 
               Transforms.removeNodes(editor, {
                 match: (node) => node === _currentLeaf,
@@ -1041,7 +1010,7 @@ if focus event is fired and editor.selection is null, set focus at origin. this 
         readonly={readonly}
       />
     )
-  }, [editor, state, _isDbBusy])
+  }, [editor, state])
 }
 
 export default ContentEditable

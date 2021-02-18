@@ -1,21 +1,20 @@
 import { Patch } from 'immer'
-import { Block, BlockType } from '@databyss-org/services/interfaces'
+import { Block } from '@databyss-org/services/interfaces'
 import { PageDoc, DocumentType } from '../interfaces'
-import { upsert } from '../utils'
+import { upsert, addTimeStamp } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
-import { savePage } from './'
-
-export const getAtomicClosureText = (type, text) =>
-  ({
-    END_SOURCE: `/@ ${text}`,
-    END_TOPIC: `/# ${text}`,
-  }[type])
+import { dbRef } from '../db'
 
 const applyPatch = (node, path, value) => {
   const key = path.shift()
   // if path has length one, just set the value and return
   if (path.length === 0) {
     node[key] = value
+    return
+  }
+
+  // TODO: this might break the patches. check test runner
+  if (!node[key]) {
     return
   }
   // recurse
@@ -31,21 +30,10 @@ const assignPatchValue = (obj, value, allowed = ['text', 'type', '_id']) => {
   })
 }
 
-const addOrReplaceBlock = async (p, page) => {
-  const _index = p.path[1]
-  const { blocks } = page
-
+const addOrReplaceBlock = async (p) => {
   // if the blockId isn't in the patch, get it from the page
-  let _blockId = p.value._id
-  if (!_blockId) {
-    _blockId = blocks[_index]._id
-  }
-  // add or replace entry in blocks array
-  const _removeBlockCount = p.op === 'add' ? 0 : 1
-  blocks.splice(_index, _removeBlockCount, {
-    _id: _blockId,
-    type: p.value.type ? p.value.type : 'ENTRY',
-  })
+  const { _id, textValue, ranges, type } = p.value
+  const _blockId = _id
 
   if (p.value.type?.match(/^END_/)) {
     return
@@ -59,26 +47,24 @@ const addOrReplaceBlock = async (p, page) => {
   if (p.op === 'add' || p.path.length === 2) {
     assignPatchValue(_block, p.value)
   } else {
-    applyPatch(_block, p.path.slice(2), p.value)
+    applyPatch(_block, p.path.slice(2), { textValue, ranges })
+    _block.type = type
   }
 
-  await upsert({ $type: DocumentType.Block, _id: _block._id!, doc: _block })
+  upsert({ $type: DocumentType.Block, _id: _block._id!, doc: _block })
 }
 
-const replacePatch = async (p, page) => {
+const replacePatch = async (p) => {
   const _prop = p.path[0]
   switch (_prop) {
     case 'blocks': {
-      await addOrReplaceBlock(p, page)
+      await addOrReplaceBlock(p)
       break
     }
     case 'selection': {
       const _id = p.value._id
       if (_id) {
-        await upsert({ $type: DocumentType.Selection, _id, doc: p.value })
-
-        // // if new selection._id is passed tag it to page
-        page.selection = _id
+        upsert({ $type: DocumentType.Selection, _id, doc: p.value })
       }
       break
     }
@@ -86,25 +72,25 @@ const replacePatch = async (p, page) => {
   }
 }
 
-const addPatch = async (p, page) => {
+const addPatch = async (p) => {
   const _prop = p.path[0]
 
   switch (_prop) {
     case 'blocks': {
-      await addOrReplaceBlock(p, page)
+      await addOrReplaceBlock(p)
       break
     }
     default:
   }
 }
 
-const removePatches = async (p, page) => {
+const removePatches = async (p) => {
   const _prop = p.path[0]
 
   switch (_prop) {
     case 'blocks': {
-      const _index = p.path[1]
-      const { blocks } = page
+      // const _index = p.path[1]
+      // const { blocks } = page
       // TODO: add this back
       // const _blockId = blocks[_index]._id
       // remove block from db
@@ -114,25 +100,25 @@ const removePatches = async (p, page) => {
       //   doc: { _deleted: true },
       // })
       // remove block from page
-      blocks.splice(_index, 1)
+      // blocks.splice(_index, 1)
       break
     }
     default:
   }
 }
 
-export const runPatches = async (p: Patch, page: PageDoc) => {
+export const runPatches = (p: Patch) => {
   switch (p.op) {
     case 'replace': {
-      await replacePatch(p, page)
+      replacePatch(p)
       break
     }
     case 'add': {
-      await addPatch(p, page)
+      addPatch(p)
       break
     }
     case 'remove': {
-      await removePatches(p, page)
+      removePatches(p)
       break
     }
     default:
@@ -141,7 +127,7 @@ export const runPatches = async (p: Patch, page: PageDoc) => {
 
 export const normalizePage = (page: Page): PageDoc => {
   const _pageDoc: PageDoc = {
-    blocks: [{ _id: page.blocks[0]._id, type: BlockType.Entry }],
+    blocks: page.blocks.map((b) => ({ _id: b._id, type: b.type })),
     selection: page.selection._id,
     _id: page._id,
     name: page.name,
@@ -150,11 +136,43 @@ export const normalizePage = (page: Page): PageDoc => {
   return _pageDoc
 }
 
+// bypasses upsert queue
+const _upsert = ({
+  $type,
+  _id,
+  doc,
+}: {
+  $type: DocumentType
+  _id: string
+  doc: any
+}) =>
+  dbRef.current!.upsert(_id, (oldDoc) => {
+    const _doc = {
+      ...oldDoc,
+      ...addTimeStamp({ ...oldDoc, ...doc, $type }),
+    }
+    return _doc
+  })
+
 /*
-generic function to add a new page to database given id. this function is only used in provisioning a new user database
+generic function to add a new page to database given id. this function is a promise and bypasses the queue
 */
-export const addPage = async (id?: string) => {
-  const _page = new Page(id)
-  await savePage(_page)
-  return _page
+export const addPage = async (page: Page) => {
+  await _upsert({
+    $type: DocumentType.Selection,
+    _id: page.selection._id,
+    doc: page.selection,
+  })
+  await _upsert({
+    $type: DocumentType.Block,
+    _id: page.blocks[0]._id,
+    doc: { ...page.blocks[0] },
+  })
+  await _upsert({
+    $type: DocumentType.Page,
+    _id: page._id,
+    doc: normalizePage(page),
+  })
+
+  return page
 }

@@ -15,7 +15,7 @@ import {
   blocksToListItemData,
   SidebarTransformFunction,
 } from '@databyss-org/ui/modules/Sidebar/transforms'
-import { getBlocksInPages } from '@databyss-org/services/blocks/joins'
+import { getBlocksFromBlockRelations } from '@databyss-org/services/blocks/joins'
 
 interface BlockListProps<T extends Block> {
   blockType: BlockType
@@ -39,7 +39,7 @@ export const BlockList = <T extends Block>({
   }
 
   const mapped = transform!(
-    getBlocksInPages(
+    getBlocksFromBlockRelations(
       blockRelationsRes.data!,
       blocksRes.data!,
       pagesRes.data!,

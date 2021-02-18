@@ -35,7 +35,7 @@ const TextInput = forwardRef(
       <StyledTextarea
         readOnly={readonly}
         onChange={(e) => onChange({ textValue: e.target.value })}
-        inputRef={ref || undefined}
+        ref={ref}
         css={[resetCss].concat(concatCss)}
         value={value.textValue}
         autoFocus={autoFocus}

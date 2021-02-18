@@ -1,7 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { debounce } from 'lodash'
 import { storiesOf } from '@storybook/react'
 import { View, Text } from '@databyss-org/ui/primitives'
+import { EditorPageLoader } from '@databyss-org/ui/components/Loaders'
 import {
   ViewportDecorator,
   NotifyDecorator,
@@ -12,28 +14,23 @@ import CatalogProvider from '@databyss-org/services/catalog/CatalogProvider'
 import SessionProvider, {
   useSessionContext,
 } from '@databyss-org/services/session/SessionProvider'
-import TopicProvider from '@databyss-org/services/topics/TopicProvider'
+import {
+  useEditorPageContext,
+  EditorPageProvider,
+} from '@databyss-org/services'
 import NavigationProvider from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
-import PageProvider, {
-  usePageContext,
-} from '@databyss-org/services/pages/PageProvider'
-import { initialState as pageInitialState } from '@databyss-org/services/pages/reducer'
-import { PageLoader } from '@databyss-org/ui/components/Loaders'
 import { dbRef } from '@databyss-org/data/pouchdb/db'
+import { normalizePage } from '@databyss-org/data/pouchdb/pages/util'
+import { upsert } from '@databyss-org/data/pouchdb/utils'
 import { Page } from '@databyss-org/services/interfaces'
 import HistoryProvider from '../history/EditorHistory'
 import ContentEditable from '../components/ContentEditable'
 import { withMetaData } from '../lib/util'
 import EditorProvider from '../state/EditorProvider'
-// import connectedFixture from './fixtures/connectedState'
-import {
-  cleanupPatches,
-  addMetaToPatches,
-  // editorStateToPage,
-  pageToEditorState,
-  optimizePatches,
-} from '../state/util'
+import { addMetaToPatches, pageToEditorState } from '../state/util'
+
+const queryClient = new QueryClient()
 
 const LoginRequired = () => (
   <Text>You must login before running this story</Text>
@@ -46,11 +43,12 @@ const Box = ({ children, ...others }) => (
 )
 
 const PageWithAutosave = ({ page }) => {
-  const { setPatches } = usePageContext()
+  // const { setPatches } = usePageContext()
   const isDbBusy = useSessionContext((c) => c && c.isDbBusy)
   const _isDbBusy = isDbBusy()
   const [pageState, setPageState] = useState(null)
   const [showSaving, setShowSaving] = useState(false)
+  const setPatches = useEditorPageContext((c) => c.setPatches)
 
   // debonce the ui component showing the saving icon
   const debounceSavingIcon = useCallback(
@@ -68,36 +66,27 @@ const PageWithAutosave = ({ page }) => {
     debounceSavingIcon(_isDbBusy)
   }, [_isDbBusy])
 
-  const operationsQueue = useRef([])
-
-  const throttledAutosave = useCallback(
-    debounce(
-      ({ nextState, patches }) => {
-        const _patches = cleanupPatches(patches)
-        if (_patches?.length) {
-          const payload = {
-            id: nextState.pageHeader._id,
-            patches: optimizePatches(operationsQueue.current),
-          }
-          setPatches(payload)
-          operationsQueue.current = []
-        }
-      },
-      500,
-      { leading: true, maxWait: 500 }
-    ),
-    []
-  )
-
   const onDocumentChange = (val) => {
     setPageState(JSON.stringify(val, null, 2))
   }
 
   const onChange = (value) => {
-    const patches = addMetaToPatches(value)
-    // push changes to a queue
-    operationsQueue.current = operationsQueue.current.concat(patches)
-    throttledAutosave({ ...value, patches })
+    const _patches = addMetaToPatches(value)
+
+    const payload = {
+      id: value.nextState.pageHeader._id,
+      patches: _patches,
+    }
+    setPatches(payload)
+
+    if (_patches.length) {
+      // blocks array in page might have changed, upsert page blocks
+      const _nextBlocks = normalizePage(value.nextState).blocks
+      const { _id } = value.nextState.pageHeader
+      const _page = { blocks: _nextBlocks, _id }
+
+      upsert({ $type: 'PAGE', _id: _page._id, doc: _page })
+    }
   }
 
   return (
@@ -123,7 +112,8 @@ const PageWithAutosave = ({ page }) => {
 const EditorWithProvider = () => {
   const { getSession } = useSessionContext()
   const { defaultPageId } = getSession()
-  const { setPage } = usePageContext()
+  // const { setPage } = usePageContext()
+  const setPage = useEditorPageContext((c) => c.setPage)
 
   const _pageId = defaultPageId
 
@@ -141,9 +131,9 @@ const EditorWithProvider = () => {
 
   return (
     <View>
-      <PageLoader pageId={_pageId}>
+      <EditorPageLoader key={_pageId} pageId={_pageId}>
         {(page) => <PageWithAutosave page={pageToEditorState(page)} />}
-      </PageLoader>
+      </EditorPageLoader>
     </View>
   )
 }
@@ -151,16 +141,16 @@ const EditorWithProvider = () => {
 const EditorWithModals = () => (
   <ServiceProvider>
     <SessionProvider unauthorizedChildren={<LoginRequired />}>
-      <PageProvider initialState={pageInitialState}>
-        <SourceProvider>
-          <TopicProvider>
+      <QueryClientProvider client={queryClient}>
+        <EditorPageProvider>
+          <SourceProvider>
             <CatalogProvider>
               <EditorWithProvider />
               <ModalManager />
             </CatalogProvider>
-          </TopicProvider>
-        </SourceProvider>
-      </PageProvider>
+          </SourceProvider>
+        </EditorPageProvider>
+      </QueryClientProvider>
     </SessionProvider>
   </ServiceProvider>
 )
