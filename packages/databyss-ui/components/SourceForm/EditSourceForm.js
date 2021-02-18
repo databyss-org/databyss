@@ -28,8 +28,6 @@ import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
 import EditAuthorFields from './EditAuthorFields'
-
-import { pxUnits } from '../../theming/views'
 import LabeledDropDownControl from '../../primitives/Control/LabeledDropDownControl'
 
 import MakeLoader from '../Loaders/MakeLoader'
