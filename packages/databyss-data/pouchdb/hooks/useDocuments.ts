@@ -63,7 +63,6 @@ export const useDocuments = <T extends Document>(
         selector,
       })
       .on('change', (change) => {
-        // TODO: remove the document to the cache using setQueryData
         queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {
           if (change.deleted) {
             // remove from cache

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { buildSourceDetail } from '@databyss-org/services/sources/lib'
 import { ModalWindow } from '@databyss-org/ui/primitives'
 import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
@@ -8,7 +8,7 @@ import CitationProvider from '@databyss-org/services/citations/CitationProvider'
 import { BlockType } from '@databyss-org/editor/interfaces'
 import { LoadingFallback, EditSourceForm } from '@databyss-org/ui/components'
 
-const SourceModal = ({ refId, visible, onUpdate, id }) => {
+const SourceModal = ({ refId, visible, onUpdate, id, untitledPlaceholder }) => {
   const [values, setValues] = useState(null)
   const { hideModal } = useNavigationContext()
   const sourcesRes = useBlocks(BlockType.Source, {
@@ -17,31 +17,46 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
 
   const source = sourcesRes.isSuccess && sourcesRes.data[refId]
 
-  const isDismissable = () => values?.text?.textValue?.length
+  const saveSource = useCallback(
+    (values) => {
+      if (!values.text.textValue.length) {
+        values.text.textValue = untitledPlaceholder
+      }
+      setSource(values)
+    },
+    [setSource]
+  )
 
   const onDismiss = () => {
-    if (isDismissable()) {
-      // updates in source provider
-      setSource(values)
-    }
+    saveSource(values)
     // hide modal in navProvider
     hideModal()
     // update to editor provider
     onUpdate(values)
   }
 
+  const onChange = useCallback(
+    (values) => {
+      setValues(values)
+    },
+    [setValues]
+  )
+
   useEffect(() => {
     if (!source) {
       // still loading...
       return
     }
-    console.log('SourceModal.useEffect', source)
     // check if detail has been provided
     if (!source.detail) {
       source.detail = buildSourceDetail()
     }
     setValues(source)
   }, [source])
+
+  if (values?.text.textValue === untitledPlaceholder) {
+    values.text.textValue = ''
+  }
 
   return (
     <ModalWindow
@@ -51,17 +66,21 @@ const SourceModal = ({ refId, visible, onUpdate, id }) => {
       onDismiss={onDismiss}
       title="Edit Source"
       dismissChild="done"
-      canDismiss={values ? isDismissable() : true}
+      canDismiss
     >
-      {sourcesRes.isSuccess ? (
+      {sourcesRes.isSuccess && values ? (
         <CitationProvider>
-          <EditSourceForm values={values || source} onChange={setValues} />
+          <EditSourceForm values={values} onChange={onChange} />
         </CitationProvider>
       ) : (
         <LoadingFallback queryObserver={sourcesRes} />
       )}
     </ModalWindow>
   )
+}
+
+SourceModal.defaultProps = {
+  untitledPlaceholder: 'untitled',
 }
 
 export default SourceModal
