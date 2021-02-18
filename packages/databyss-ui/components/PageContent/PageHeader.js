@@ -14,9 +14,13 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
   const page = pagesRes.data?.[pageId]
 
   const [pageName, setPageName] = useState('')
+  const [focused, setFocused] = useState(false)
 
   useEffect(() => {
-    setPageName(pagesRes.data?.[pageId].name)
+    // if text field is focused, do not allow name update from external sources
+    if (!focused) {
+      setPageName(pagesRes.data?.[pageId].name)
+    }
   }, [pagesRes.data?.[pageId]])
 
   useEffect(() => {
@@ -53,6 +57,8 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
 
   return (
     <TitleInput
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
       readonly={isPublicAccount() || isMobile() || page.archive}
       ref={ref}
       data-test-element="page-header"
@@ -66,7 +72,6 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
         }
       }}
       value={pageName}
-      onBlur={() => console.log('blur')}
       onChange={onPageNameChange}
       placeholder={noPageTitle}
       variant="bodyHeading1"

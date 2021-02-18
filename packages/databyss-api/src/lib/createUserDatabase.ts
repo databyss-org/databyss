@@ -205,8 +205,6 @@ export const createUserDatabaseCredentials = async (
       pageId: defaultPageId,
     })
 
-    // TODO: add new page to userDB
-
     await _db.upsert(_userPreferences._id, () => _userPreferences)
 
     // add defaultPageId to Userdb

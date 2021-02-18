@@ -19,6 +19,19 @@ import { CatalogResults } from './'
 
 export const LOCAL_SOURCES = 'LOCAL_SOURCES'
 
+
+const formatSource = (value) => {
+  // format year
+  let _value = JSON.parse(JSON.stringify(value));
+  const year = value?.detail?.year?.textValue
+  if (year) {
+    _value.detail.year.textValue = year.toString()
+  }
+  return _value
+}
+
+
+
 const SuggestSources = ({
   query,
   dismiss,
@@ -41,7 +54,7 @@ const SuggestSources = ({
   const onSourceSelected = (source) => {
     if (!source._id) {
       source._id = uid()
-      setSource(source)
+      setSource(formatSource(source))
     }
 
     replace([source])
