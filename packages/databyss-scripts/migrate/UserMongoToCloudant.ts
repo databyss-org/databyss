@@ -209,12 +209,32 @@ class UserMongoToCloudant extends ServerProcess {
           for (const _mark of _range.marks) {
             if (Array.isArray(_mark)) {
               _hasInline = true
-              const _couchInlineBlockId = _blockIdMap[_mark[1]]
+              let _couchInlineBlockId = _blockIdMap[_mark[1]]
               if (!_couchInlineBlockId) {
+                _couchInlineBlockId = uid()
+                const _textValue = _couchBlock.text.textValue.substr(
+                  _range.offset + 1,
+                  _range.length - 1
+                )
+                await _groupDb.insert({
+                  $type: DocumentType.Block,
+                  _id: _couchInlineBlockId,
+                  type: 'TOPIC',
+                  text: {
+                    textValue: _textValue,
+                    ranges: [],
+                  },
+                  ...getTimestamps({}),
+                })
+                // map the new block and blockType so it can be used by the block relation step
+                _blockIdMap[_mark[1]] = _couchInlineBlockId
+                _blockTypeMap[_mark[1]] = 'TOPIC'
                 console.log(
-                  `⚠️  inline block id ${_mark[1]} not found on block: ${_couchBlock._id}`
+                  `ℹ️  created missing block for TOPIC: ${_textValue}`
                 )
               }
+
+              // update the blockId in the inline mark
               _mark[1] = _couchInlineBlockId
             }
           }
