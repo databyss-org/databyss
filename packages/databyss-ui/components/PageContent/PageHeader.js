@@ -66,7 +66,6 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
         }
       }}
       value={pageName}
-      onBlur={() => console.log('blur')}
       onChange={onPageNameChange}
       placeholder={noPageTitle}
       variant="bodyHeading1"
