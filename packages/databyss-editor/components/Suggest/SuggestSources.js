@@ -19,18 +19,15 @@ import { CatalogResults } from './'
 
 export const LOCAL_SOURCES = 'LOCAL_SOURCES'
 
-
 const formatSource = (value) => {
   // format year
-  let _value = JSON.parse(JSON.stringify(value));
+  const _value = JSON.parse(JSON.stringify(value))
   const year = value?.detail?.year?.textValue
   if (year) {
     _value.detail.year.textValue = year.toString()
   }
   return _value
 }
-
-
 
 const SuggestSources = ({
   query,
