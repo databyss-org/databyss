@@ -1,11 +1,11 @@
 import React, { useCallback } from 'react'
 import { debounce } from 'lodash'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import createReducer from '@databyss-org/services/lib/createReducer'
 import { createContext, useContextSelector } from 'use-context-selector'
 import reducer, { initialState as _initState } from './reducer'
 import { onSearchEntries, onSetQuery, onClearCache } from './actions'
 import { Text, EntryState } from '../interfaces'
-import { usePages } from '@databyss-org/data/pouchdb/hooks'
 
 const useReducer = createReducer()
 
