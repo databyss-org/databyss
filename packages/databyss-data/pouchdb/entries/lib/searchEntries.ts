@@ -85,7 +85,7 @@ const searchEntries = async (
         }
         acc.set(pageId, _data)
       } else {
-        const _data: SearchEntriesResultPage = acc.results.get(pageId)
+        const _data: SearchEntriesResultPage = acc.get(pageId)
         const _entries = _data.entries
 
         // have the max test score on the page dictionary

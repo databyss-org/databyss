@@ -228,7 +228,7 @@ export class QueueProcessor extends EventEmitter {
   }
 
   start = () => {
-    this.interval = setInterval(this.process, 30000)
+    this.interval = setInterval(this.process, 3000)
   }
 }
 
