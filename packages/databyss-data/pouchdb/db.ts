@@ -314,3 +314,57 @@ export const resetPouchDb = async () => {
 
   dbRef.current = null
 }
+
+export const pouchDataValidation = (data) => {
+  // remove undefined properties
+  Object.keys(data).forEach((key) =>
+    data[key] === undefined ? delete data[key] : {}
+  )
+
+  // pouchDB validator
+  const schemaMap = {
+    [BlockType.Source]: sourceSchema,
+    [BlockType.Entry]: entrySchema,
+    [BlockType.Topic]: topicSchema,
+    [DocumentType.Page]: pageSchema,
+    [DocumentType.Selection]: selectionSchema,
+    [DocumentType.BlockRelation]: blockRelationSchema,
+    [DocumentType.UserPreferences]: userPreferenceSchema,
+  }
+
+  // add $ref schemas, these schemas are reused
+  tv4.addSchema('text', textSchema)
+  tv4.addSchema('pouchDb', pouchDocSchema)
+  tv4.addSchema('blockSchema', blockSchema)
+
+  if (data._id.includes('design/')) {
+    return
+  }
+  let schema
+  // user database determines the schema by the .type field
+
+  if (data.$type === DocumentType.Block) {
+    schema = schemaMap[data.type]
+  } else {
+    schema = schemaMap[data.$type]
+  }
+
+  // `this.schema &&` this will be removed when all schemas are implemented
+  if (schema && !tv4.validate(data, schema, false, true)) {
+    console.log('TYPE', data)
+    console.error(
+      `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+    )
+    throw new Error(
+      `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+    )
+  }
+
+  if (!schema) {
+    console.log('NOT FOUND', data)
+    console.error(`no schema found`)
+    throw new Error(
+      `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+    )
+  }
+}

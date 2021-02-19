@@ -95,7 +95,7 @@ const SessionProvider = ({
           groupId,
         })
 
-        await initiatePouchDbValidators()
+        // await initiatePouchDbValidators()
 
         // TODO: indexing is built after 5 seconds
         setTimeout(() => {

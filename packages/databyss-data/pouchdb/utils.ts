@@ -1,7 +1,7 @@
 import EventEmitter from 'es-event-emitter'
 import { Document } from '@databyss-org/services/interfaces'
 import { DocumentType, UserPreference } from './interfaces'
-import { dbRef } from './db'
+import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
 
@@ -218,6 +218,8 @@ export class QueueProcessor extends EventEmitter {
               ...oldDoc,
               ...addTimeStamp({ ...oldDoc, ..._upQdict[_id] }),
             }
+            // validate object before upsert
+            pouchDataValidation(_doc)
 
             return _doc
           })
