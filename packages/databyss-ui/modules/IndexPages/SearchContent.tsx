@@ -1,6 +1,5 @@
 import React from 'react'
 import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
-import { EntrySearchLoader } from '@databyss-org/ui/components/Loaders'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import { Text, RawHtml } from '@databyss-org/ui/primitives'
@@ -9,22 +8,25 @@ import {
   IndexResultsContainer,
   IndexResultTitle,
   IndexResultDetails,
+  LoadingFallback,
 } from '@databyss-org/ui/components'
+import { useSearchEntries } from '@databyss-org/data/pouchdb/hooks'
+import { BlockType } from '@databyss-org/editor/interfaces'
+import { SearchEntriesResultPage } from '@databyss-org/data/pouchdb/entries/lib/searchEntries'
 import { IndexPageView } from './IndexPageContent'
 
 export const SearchContent = () => {
   const { getAccountFromLocation } = useNavigationContext()
-  const { query } = useParams()
+  const searchQuery = decodeURIComponent(useParams().query)
+  const searchRes = useSearchEntries(searchQuery)
 
-  const _query = decodeURIComponent(query)
-
-  const ComposeResults = ({ results }) => {
-    const _Pages = Object.values(results).length ? (
+  const composeResults = (results: SearchEntriesResultPage[]) => {
+    const _Pages = results.length ? (
       Object.values(results).map((r, i) => (
         <IndexResultsContainer key={i}>
           <IndexResultTitle
             href={`/${getAccountFromLocation()}/pages/${r.pageId}`}
-            text={r.page}
+            text={r.pageName}
             icon={<PageSvg />}
             dataTestElement="search-result-page"
           />
@@ -39,9 +41,9 @@ export const SearchContent = () => {
               text={
                 <RawHtml
                   html={slateBlockToHtmlWithSearch(
-                    { text: e.text, type: 'ENTRY' },
+                    { text: e.text, type: BlockType.Entry, _id: e.entryId },
                     // only allow alphanumeric, hyphen and space
-                    _query.replace(/[^a-zA-Z0-9À-ž-' ]/gi, '')
+                    searchQuery.replace(/[^a-zA-Z0-9À-ž-' ]/gi, '')
                   )}
                 />
               }
@@ -56,10 +58,12 @@ export const SearchContent = () => {
   }
 
   return (
-    <IndexPageView path={['Search', _query]}>
-      <EntrySearchLoader query={_query}>
-        {(results) => ComposeResults(results)}
-      </EntrySearchLoader>
+    <IndexPageView path={['Search', searchQuery]}>
+      {searchRes.isSuccess ? (
+        composeResults(searchRes.data)
+      ) : (
+        <LoadingFallback queryObserver={searchRes} />
+      )}
     </IndexPageView>
   )
 }

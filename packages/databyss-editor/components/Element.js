@@ -5,7 +5,7 @@ import PenSVG from '@databyss-org/ui/assets/pen.svg'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
 import { ReactEditor, useEditor } from '@databyss-org/slate-react'
 import { Range } from '@databyss-org/slate'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { useSearchContext } from '@databyss-org/ui/hooks'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { useEditorPageContext } from '@databyss-org/services'
@@ -36,7 +36,7 @@ const Element = ({ attributes, children, element, readOnly }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const _isPublic = isPublicAccount ? isPublicAccount() : null
 
-  const _searchTerm = useEntryContext((c) => c && c.searchTerm)
+  const _searchTerm = useSearchContext((c) => c && c.searchTerm)
 
   let searchTerm = ''
 
