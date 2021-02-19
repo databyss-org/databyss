@@ -287,11 +287,17 @@ export const initiatePouchDbValidators = () => {
         console.error(
           `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
         )
+        throw new Error(
+          `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+        )
       }
 
       if (!schema) {
         console.log('NOT FOUND', doc)
         console.error(`no schema found`)
+        throw new Error(
+          `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
+        )
       }
 
       return doc
