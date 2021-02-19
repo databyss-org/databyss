@@ -250,63 +250,6 @@ export const syncPouchDb = ({
   // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
 }
 
-export const initiatePouchDbValidators = () => {
-  // pouchDB validator
-  const schemaMap = {
-    [BlockType.Source]: sourceSchema,
-    [BlockType.Entry]: entrySchema,
-    [BlockType.Topic]: topicSchema,
-    [DocumentType.Page]: pageSchema,
-    [DocumentType.Selection]: selectionSchema,
-    [DocumentType.BlockRelation]: blockRelationSchema,
-    [DocumentType.UserPreferences]: userPreferenceSchema,
-  }
-
-  // add $ref schemas, these schemas are reused
-  tv4.addSchema('text', textSchema)
-  tv4.addSchema('pouchDb', pouchDocSchema)
-  tv4.addSchema('blockSchema', blockSchema)
-
-  dbRef.current!.transform({
-    outgoing: (doc) => {
-      if (doc._id.includes('design/')) {
-        return doc
-      }
-      let schema
-      // user database determines the schema by the .type field
-
-      if (doc.$type === DocumentType.Block) {
-        schema = schemaMap[doc.type]
-      } else {
-        schema = schemaMap[doc.$type]
-      }
-
-      // `this.schema &&` this will be removed when all schemas are implemented
-      if (schema && !tv4.validate(doc, schema, false, true)) {
-        console.log('TYPE', doc)
-        console.error(
-          `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
-        )
-        throw new Error(
-          `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
-        )
-      }
-
-      if (!schema) {
-        console.log('NOT FOUND', doc)
-        console.error(`no schema found`)
-        throw new Error(
-          `${schema.title} - ${tv4.error.message} -> ${tv4.error.dataPath}`
-        )
-      }
-
-      return doc
-    },
-  })
-}
-
-// TODO MAKE UTILS DIRECTORY HERE
-
 export const resetPouchDb = async () => {
   if (dbRef.current?.destroy) {
     await dbRef.current.destroy()
