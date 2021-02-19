@@ -12,8 +12,8 @@ import PageBody from './PageBody'
 import PageSticky from './PageSticky'
 
 export const PageContentView = forwardRef(({ children, ...others }, ref) => (
-  <ScrollView flexShrink={1} flexGrow={1}>
-    <View pl="em" pr="medium" pt="small" flexGrow={1} ref={ref} {...others}>
+  <ScrollView flexShrink={1} flexGrow={1} ref={ref}>
+    <View pl="em" pr="medium" pt="small" flexGrow={1} {...others}>
       {children}
     </View>
   </ScrollView>
