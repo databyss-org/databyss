@@ -20,7 +20,6 @@ const setBlockRelations = async (payload: {
     blockType: type,
     pages: [],
   }
-  console.log('setBlockRelations', payload)
 
   const res = await getDocument<BlockRelation>(_relationId)
 

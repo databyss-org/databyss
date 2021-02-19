@@ -1,7 +1,6 @@
 import React from 'react'
 
 import { useCatalogContext } from '@databyss-org/services/catalog/CatalogProvider'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useEditorPageContext } from '@databyss-org/services/editorPage/EditorPageProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import { useGroupContext } from '@databyss-org/services/groups/GroupProvider'
@@ -17,15 +16,6 @@ export const EditorPageLoader = ({ children, pageId }) => {
       onUnload={() => removePageFromCache(pageId)}
     />
   )
-}
-
-export const EntrySearchLoader = ({ query, children }) => {
-  const searchEntries = useEntryContext((c) => c.searchEntries)
-  const resources = useEntryContext(
-    (c) => c.searchCache[query.replace(/\?/g, '')]
-  )
-  searchEntries(query.replace(/\?/g, ''))
-  return <MakeLoader resources={resources} children={children} />
 }
 
 export const CatalogSearchLoader = ({ query, type, children }) => {

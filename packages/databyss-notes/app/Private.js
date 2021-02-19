@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Router } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
-import EntryProvider from '@databyss-org/services/entries/EntryProvider'
+import { SearchProvider } from '@databyss-org/ui/hooks'
 import GroupProvider from '@databyss-org/services/groups/GroupProvider'
 import {
   Sidebar,
@@ -77,7 +77,7 @@ const Private = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <EntryProvider>
+      <SearchProvider>
         <SourceProvider>
           <GroupProvider>
             <GestureProvider>
@@ -104,7 +104,7 @@ const Private = () => {
             </GestureProvider>
           </GroupProvider>
         </SourceProvider>
-      </EntryProvider>
+      </SearchProvider>
     </QueryClientProvider>
   )
 }

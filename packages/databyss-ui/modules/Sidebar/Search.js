@@ -1,9 +1,9 @@
 import React, { useEffect, useCallback, useState, useRef } from 'react'
 import { debounce } from 'lodash'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { useSearchContext } from '@databyss-org/ui/hooks'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import { View } from '@databyss-org/ui/primitives'
-import SearchInputContainer from '../../components/Search/SearchInputContainer'
+import SearchInputContainer from '../../components/Sidebar/SearchInputContainer'
 
 import SidebarSearchResults from './SidebarSearchResults'
 
@@ -16,60 +16,42 @@ const Search = (others) => {
   } = useNavigationContext()
 
   const { params } = getTokensFromPath()
-
-  const searchTerm = useEntryContext((c) => c && c.searchTerm)
-
-  const setQuery = useEntryContext((c) => c && c.setQuery)
-
-  const clearSearchCache = useEntryContext((c) => c && c.clearSearchCache)
-
-  const searchCache = useEntryContext((c) => c && c.searchCache)
-
+  const searchTerm = useSearchContext((c) => c && c.searchTerm)
+  const setQuery = useSearchContext((c) => c && c.setQuery)
   const menuItem = getSidebarPath()
 
-  const [value, setValue] = useState({ textValue: searchTerm })
+  const [value, setValue] = useState(searchTerm)
   const [hasFocus, setHasFocus] = useState(false)
 
   const inputRef = useRef()
-
-  const setSearchValue = (val) => {
-    setValue(val)
-    // if searchbar is cleared and the cache has results, clear results
-    if (!val.textValue.length && Object.keys(searchCache).length) {
-      clearSearchCache()
-    }
-  }
 
   // wait until user stopped typing for 200ms before setting the value
   const debounced = useCallback(
     debounce((val) => {
       // only allow alphanumeric, hyphen and space
-      setQuery({
-        textValue: val.textValue.replace(/[^a-zA-Z0-9À-ž-'" ]/gi, ''),
-      })
+      setQuery(val.replace(/[^a-zA-Z0-9À-ž-'" ]/gi, ''))
     }, 200),
     [setQuery]
   )
+
   useEffect(() => {
     debounced(value)
   }, [value])
 
   const clear = () => {
-    clearSearchCache()
-    setQuery({ textValue: '' })
-    setValue({ textValue: '' })
+    setQuery('')
+    setValue('')
+    inputRef.current.focus()
   }
 
   // encode the search term and remove '?'
   const encodedSearchTerm = useRef(encodeURI(searchTerm.replace(/\?/g, '')))
 
   useEffect(() => {
-    encodedSearchTerm.current = encodeURIComponent(value.textValue)
+    encodedSearchTerm.current = encodeURIComponent(value)
   }, [searchTerm, value])
 
   const onSearchClick = () => {
-    // clear cache to get updated results
-    clearSearchCache()
     // if not currently in search page, navigate to search page
     if (encodedSearchTerm.current && params !== encodedSearchTerm.current) {
       navigate(`/search/${encodedSearchTerm.current}`)
@@ -93,7 +75,7 @@ const Search = (others) => {
       <SearchInputContainer
         placeholder="Search"
         value={value}
-        onChange={setSearchValue}
+        onChange={(value) => setValue(value.textValue)}
         onFocus={onInputFocus}
         onBlur={onInputBlur}
         onClear={clear}
@@ -105,7 +87,7 @@ const Search = (others) => {
       />
       {searchTerm && menuItem === 'search' ? (
         <SidebarSearchResults
-          filterQuery={{ textValue: searchTerm }}
+          filterQuery={searchTerm}
           onSearch={onSearchClick}
           height="100%"
           inputRef={inputRef}

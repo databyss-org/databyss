@@ -1,61 +1,57 @@
-import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
-import { PageDoc } from '../../interfaces'
+import { Page, Text } from '@databyss-org/services/interfaces'
 import { searchText } from '../../utils'
+
+export interface SearchEntriesResultRow {
+  entryId: string
+  text: Text
+  index: number
+  textScore: number
+}
+
+export interface SearchEntriesResultPage {
+  entries: SearchEntriesResultRow[]
+  maxTextScore: number
+  pageName: string
+  pageId: string
+}
 
 const searchEntries = async (
   encodedQuery: string,
-  pages: PageDoc[]
-): Promise<
-  | ResourceNotFoundError
-  | {
-      count: number
-      results: any
-    }
-> => {
+  pages: Page[]
+): Promise<SearchEntriesResultPage[]> => {
   const _query = decodeURIComponent(encodedQuery)
 
   const _res = await searchText(_query)
 
   const _queryResponse = _res.rows
   if (!_queryResponse.length) {
-    return new ResourceNotFoundError('no results found')
+    return []
   }
   // if results are found, look up page and append to result
-
-  const _results = _queryResponse
 
   // create a dictionary of block to pages
   const _blockToPages = {}
 
-  Object.values(pages).forEach((p) =>
-    p.blocks.forEach((b) => (_blockToPages[b._id] = { pageId: p._id }))
+  pages.forEach((p) =>
+    p.blocks.forEach((b, index) => (_blockToPages[b._id] = { page: p, index }))
   )
 
   // add page to block results
-  for (const _result of _results) {
-    let _page
+  for (const _result of _queryResponse) {
     const _entryId = _result.id
-    const _pageId = _blockToPages[_entryId]?.pageId
-    // pageId might not exist if block was deleted
-    if (_pageId) {
-      _page = pages[_pageId]
-    }
+    const _page = _blockToPages[_entryId]?.page
 
     if (_page) {
-      // only one search result should appear per entry
-      if (_page && !_page?.archive) {
-        // if page has not been archived and is currently not in array, push to array
+      if (!_page.archive) {
         _result.doc.page = _page
+        _result.doc.index = _blockToPages[_entryId]?.index
       } else {
         _result.doc.page = null
       }
     }
   }
 
-  let __results: { count: number; results: any } = {
-    count: 0,
-    results: {},
-  }
+  let _results = {}
 
   if (_queryResponse.length) {
     // normalize response
@@ -64,39 +60,32 @@ const searchEntries = async (
       score: q.score,
     }))
 
-    __results = {
-      count: _searchResults.length,
-      results: new Map(),
-    }
-
-    __results = _searchResults.reduce((acc, curr) => {
+    let _resultsMap = _searchResults.reduce((acc, curr) => {
       // only show results with associated pages
       if (!curr.page) {
-        __results.count -= 1
         return acc
       }
       const pageId = curr.page._id
       // get index where block appears on page
-      const _blockIndex = curr.page.blocks.findIndex((b) => b._id === curr._id)
-      if (!acc.results.get(pageId)) {
+      if (!acc.get(pageId)) {
         // init result
-        const _data = {
-          page: curr.page.name,
+        const _data: SearchEntriesResultPage = {
+          pageName: curr.page.name,
           pageId,
           maxTextScore: curr.score,
           entries: [
             {
               entryId: curr._id,
               text: curr.text,
-              index: _blockIndex,
+              index: curr.page.index,
               textScore: curr.score,
               //  blockId: curr.block,
             },
           ],
         }
-        acc.results.set(pageId, _data)
+        acc.set(pageId, _data)
       } else {
-        const _data = acc.results.get(pageId)
+        const _data: SearchEntriesResultPage = acc.get(pageId)
         const _entries = _data.entries
 
         // have the max test score on the page dictionary
@@ -109,7 +98,7 @@ const searchEntries = async (
         _entries.push({
           entryId: curr._id,
           text: curr.text,
-          index: _blockIndex,
+          index: curr.page.index,
           textScore: curr.score,
         })
 
@@ -118,14 +107,14 @@ const searchEntries = async (
         _data.entries = _entries
         _data.maxTextScore = _maxScore
 
-        acc.results.set(pageId, _data)
+        acc.set(pageId, _data)
       }
       return acc
-    }, __results)
+    }, new Map<string, SearchEntriesResultPage>())
 
     // sort the map according to the text score per page
-    __results.results = new Map(
-      [...__results.results].sort(([, v], [, v2]) => {
+    _resultsMap = new Map<string, SearchEntriesResultPage>(
+      [..._resultsMap].sort(([, v], [, v2]) => {
         if (v.maxTextScore < v2.maxTextScore) {
           return 1
         }
@@ -137,13 +126,10 @@ const searchEntries = async (
     )
 
     // convert from map back to object
-    __results = {
-      ...__results,
-      results: Object.fromEntries(__results.results),
-    }
+    _results = Object.fromEntries(_resultsMap)
   }
 
-  return __results
+  return Object.values(_results)
 }
 
 export default searchEntries

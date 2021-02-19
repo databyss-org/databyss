@@ -106,13 +106,11 @@ const SidebarSearchResults = ({
   return (
     <SidebarList
       data-test-element="search-results"
-      menuItems={[
-        ...(filterQuery.textValue === '' ? sortedSources : filteredEntries),
-      ]}
+      menuItems={[...(filterQuery === '' ? sortedSources : filteredEntries)]}
       height={height}
       keyboardNavigation
       keyboardEventsActive={searchHasFocus}
-      orderKey={filterQuery.textValue}
+      orderKey={filterQuery}
       initialActiveIndex={0}
       onItemSelected={() => {
         // HACK: replace with an "onLoadersComplete" event
