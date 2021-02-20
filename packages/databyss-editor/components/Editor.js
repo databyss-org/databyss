@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { Slate, Editable } from '@databyss-org/slate-react'
 import { Text, Node } from '@databyss-org/slate'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
+import { useSearchContext } from '@databyss-org/ui/hooks'
 import matchAll from 'string.prototype.matchall'
 import { useEditorContext } from '../state/EditorProvider'
 import Leaf from './Leaf'
@@ -17,7 +17,7 @@ const Editor = ({
   onInlineAtomicClick,
   ...others
 }) => {
-  const _searchTerm = useEntryContext((c) => c && c.searchTerm)
+  const _searchTerm = useSearchContext((c) => c && c.searchTerm)
 
   const { copy, paste, cut } = useEditorContext()
 

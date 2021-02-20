@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { setTopic } from '@databyss-org/services/topics'
 import ValueListProvider, {
   ValueListItem,
@@ -44,15 +44,15 @@ const TopicModal = ({ refId, visible, onUpdate, id }) => {
     onUpdate(values)
   }
 
-  if (!topicsRes.isSuccess) {
-    return <LoadingFallback queryObserver={topicsRes} />
-  }
+  const topic = topicsRes.data?.[refId]
 
-  const topic = topicsRes.data[refId]
-
-  if (!values) {
+  useEffect(() => {
+    if (!topic) {
+      // still loading...
+      return
+    }
     setValues(topic)
-  }
+  }, [topic])
 
   return (
     <ModalWindow
@@ -64,26 +64,34 @@ const TopicModal = ({ refId, visible, onUpdate, id }) => {
       dismissChild="done"
       canDismiss={values && values.text.textValue.length}
     >
-      <ValueListProvider onChange={setValues} values={values || topic}>
-        <View paddingVariant="none" backgroundColor="background.0" width="100%">
-          <ControlList verticalItemPadding="tiny">
-            <ValueListItem path="text">
-              <TextControl
-                labelProps={{
-                  width: '25%',
-                }}
-                label="Name"
-                id="name"
-                gridFlexWrap="nowrap"
-                focusOnMount
-                paddingVariant="tiny"
-                rich
-                onBlur={onBlur}
-              />
-            </ValueListItem>
-          </ControlList>
-        </View>
-      </ValueListProvider>
+      {topicsRes.isSuccess && values ? (
+        <ValueListProvider onChange={setValues} values={values}>
+          <View
+            paddingVariant="none"
+            backgroundColor="background.0"
+            width="100%"
+          >
+            <ControlList verticalItemPadding="tiny">
+              <ValueListItem path="text">
+                <TextControl
+                  labelProps={{
+                    width: '25%',
+                  }}
+                  label="Name"
+                  id="name"
+                  gridFlexWrap="nowrap"
+                  focusOnMount
+                  paddingVariant="tiny"
+                  rich
+                  onBlur={onBlur}
+                />
+              </ValueListItem>
+            </ControlList>
+          </View>
+        </ValueListProvider>
+      ) : (
+        <LoadingFallback queryObserver={topicsRes} />
+      )}
     </ModalWindow>
   )
 }

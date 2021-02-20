@@ -1,7 +1,6 @@
 import React from 'react'
 import { useGroupContext } from '@databyss-org/services/groups/GroupProvider'
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
-import { useEntryContext } from '@databyss-org/services/entries/EntryProvider'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import AddPageSvg from '@databyss-org/ui/assets/add_page.svg'
 import AddGroupSvg from '@databyss-org/ui/assets/add_group.svg'
@@ -22,8 +21,6 @@ const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
   const { navigate, navigateSidebar, getSidebarPath } = useNavigationContext()
 
-  const clearSearchCache = useEntryContext((c) => c && c.clearSearchCache)
-
   const setGroup = useGroupContext((c) => c.setGroup)
 
   const sidebarPath = getSidebarPath()
@@ -33,8 +30,6 @@ const Footer = ({ collapsed }) => {
       setGroup(new Group())
       return
     }
-    // clears search cache
-    clearSearchCache()
 
     const _page = new Page()
     addPage(_page).then(() =>

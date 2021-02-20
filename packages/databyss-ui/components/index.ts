@@ -20,7 +20,6 @@ export {
 } from './IndexPage'
 export { default as Citation } from './Citation/Citation'
 export { default as EditSourceForm } from './SourceForm/EditSourceForm'
-
 export interface SidebarListItemData<T> {
   text: string
   type: string

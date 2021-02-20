@@ -48,9 +48,9 @@ const SearchInputContainer = React.forwardRef(
             data-test-element="search-input"
             placeholder={placeholder}
             autoFocus={autoFocus}
-            variant="bodyNormal"
+            variant="uiTextNormal"
             color={textColor}
-            value={value}
+            value={{ textValue: value }}
             onChange={onChange}
             onKeyDown={onKeyDown}
             onFocus={onFocus}
@@ -63,7 +63,7 @@ const SearchInputContainer = React.forwardRef(
               },
             })(theme)}
           />
-          {value.textValue && (
+          {value && (
             <View position="absolute" right="small">
               <BaseControl
                 data-test-element="clear-search-results"

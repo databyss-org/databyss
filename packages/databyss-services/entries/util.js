@@ -41,7 +41,7 @@ export const filterEntries = (entries, filterQuery) => {
           Boolean(qacc && entry.text.match(new RegExp(`\\b${qcurr}`, 'i'))),
         true
       )
-  return entries.filter(findEntry(filterQuery.textValue))
+  return entries.filter(findEntry(filterQuery))
 }
 
 export const optimizeBlockRelations = (blockRelationsArray) => {
