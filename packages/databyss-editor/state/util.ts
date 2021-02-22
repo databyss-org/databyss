@@ -702,7 +702,7 @@ create a selection which includes the whole document
 */
 
 export const selectAllSelection = (state: EditorState) => {
-   const _selectionFromState = {
+  const _selectionFromState = {
     _id: state.selection._id,
     anchor: { offset: 0, index: 0 },
     focus: {
