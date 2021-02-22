@@ -759,6 +759,7 @@ export default (
                 index: op.index,
                 block: _block,
               })
+              pushAtomicChangeUpstream({ state, draft })
             } else if (op.checkAtomicDelta) {
               pushAtomicChangeUpstream({ state, draft })
             }

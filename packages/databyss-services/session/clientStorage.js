@@ -1,7 +1,12 @@
 import _ from 'lodash'
-import { upsert, getUserSession } from '@databyss-org/data/pouchdb/utils'
+import {
+  upsert,
+  getUserSession,
+  findOne,
+} from '@databyss-org/data/pouchdb/utils'
 import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 import { resetPouchDb } from '@databyss-org/data/pouchdb/db'
+import { getAccountFromLocation } from './_helpers'
 
 // TODO: Add native versions of these
 
@@ -45,11 +50,27 @@ export const getAccountId = async () => {
 }
 
 export const setDefaultPageId = async (value) => {
-  await upsert({
+  const _accountFromLocation = getAccountFromLocation()
+
+  // replace default page id on correct group for user
+  const _result = await findOne({
     $type: DocumentType.UserPreferences,
-    _id: 'user_preferences',
-    doc: { defaultPageId: value },
+    query: { _id: 'user_preference' },
   })
+
+  if (_accountFromLocation && _result) {
+    const _groups = _result.groups
+    // find index in group array
+    const _index = _groups.findIndex((g) => g.groupId === _accountFromLocation)
+    _groups[_index].defaultPageId = value
+
+    // update the group property with proper default page id
+    await upsert({
+      $type: DocumentType.UserPreferences,
+      _id: 'user_preference',
+      doc: { groups: _groups },
+    })
+  }
 }
 
 export const clearLocalStorage = () => {

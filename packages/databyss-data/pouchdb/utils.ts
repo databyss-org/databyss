@@ -218,6 +218,7 @@ export class QueueProcessor extends EventEmitter {
               ...oldDoc,
               ...addTimeStamp({ ...oldDoc, ..._upQdict[_id] }),
             }
+
             // validate object before upsert
             pouchDataValidation(_doc)
 
