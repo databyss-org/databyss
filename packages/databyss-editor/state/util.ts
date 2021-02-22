@@ -697,6 +697,22 @@ export const getInlineOrAtomicsFromStateSelection = (
   return atomicsInSelection
 }
 
+/*
+create a selection which includes the whole document
+*/
+
+export const selectAllSelection = (state: EditorState) => {
+   const _selectionFromState = {
+    _id: state.selection._id,
+    anchor: { offset: 0, index: 0 },
+    focus: {
+      offset: state.blocks[state.blocks.length - 1].text.textValue.length,
+      index: state.blocks.length,
+    },
+  }
+  return _selectionFromState
+}
+
 export const pushAtomicChangeUpstream = ({
   state,
   draft,
@@ -707,23 +723,9 @@ export const pushAtomicChangeUpstream = ({
   // check if any atomics were removed in the redo process, if so, push removed atomics upstream
 
   // create a selection which includes the whole document
-  const _selectionFromState = {
-    _id: draft.selection._id,
-    anchor: { offset: 0, index: 0 },
-    focus: {
-      offset: state.blocks[state.blocks.length - 1].text.textValue.length,
-      index: state.blocks.length,
-    },
-  }
+  const _selectionFromState = selectAllSelection(state)
 
-  const _selectionFromDraft = {
-    _id: draft.selection._id,
-    anchor: { offset: 0, index: 0 },
-    focus: {
-      offset: draft.blocks[draft.blocks.length - 1].text.textValue.length,
-      index: draft.blocks.length,
-    },
-  }
+  const _selectionFromDraft = selectAllSelection(draft)
 
   // return a list of atomics which were found in the second selection and not the first, this is used to see if atomics were removed from the page
 

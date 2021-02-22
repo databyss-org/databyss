@@ -96,7 +96,7 @@ const crossref: CatalogService = {
       return apiResult['container-title-short']
     }
     if (apiResult['container-title']) {
-      return apiResult['container-title']
+      return apiResult['container-title'][0]
     }
     return ''
   },
