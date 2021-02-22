@@ -260,9 +260,14 @@ export const resetPouchDb = async () => {
 
 export const pouchDataValidation = (data) => {
   // remove undefined properties
-  Object.keys(data).forEach((key) =>
-    data[key] === undefined ? delete data[key] : {}
-  )
+  Object.keys(data).forEach((key) => {
+    if (key === '_id' && data[key] === undefined) {
+      console.error('invalid data', data)
+      throw new Error(`_id is undefined`)
+    }
+
+    return data[key] === undefined ? delete data[key] : {}
+  })
 
   // pouchDB validator
   const schemaMap = {

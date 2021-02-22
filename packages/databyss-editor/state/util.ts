@@ -337,14 +337,23 @@ export const pushSingleBlockOperation = ({
  * @param text text to trim
  * @returns true if lines were trimmed
  */
-export const trimLeft = (text: Text): Boolean => {
+export const trimLeft = (block: Block): Boolean => {
+  const text = block?.text
   if (!text) {
     return false
   }
   const _trim = text.textValue.match(/^\n+/)
   if (_trim) {
-    text.textValue = text.textValue.substring(_trim[0].length)
-    text.ranges = offsetRanges(text.ranges, _trim[0].length)
+    const _textValue = text.textValue.substring(_trim[0].length)
+    const _ranges = offsetRanges(text.ranges, _trim[0].length)
+
+    const _text = {
+      textValue: _textValue,
+      ranges: _ranges,
+    }
+
+    block.text = _text
+
     return true
   }
   return false
@@ -355,20 +364,27 @@ export const trimLeft = (text: Text): Boolean => {
  * @param text text to trim
  * @returns true if lines were trimmed
  */
-export const trimRight = (text: Text): Boolean => {
+export const trimRight = (block: Block): Boolean => {
+  const text = block?.text
   if (!text) {
     return false
   }
   const _trim = text.textValue.match(/\n+$/)
   if (_trim) {
     // cleanup ranges
-    text.ranges = text.ranges.filter(
+    const _ranges = text.ranges.filter(
       (r) => r.offset < text.textValue.length - _trim[0].length
     )
-    text.textValue = text.textValue.substring(
+    const _textValue = text.textValue.substring(
       0,
       text.textValue.length - _trim[0].length
     )
+    const _text = {
+      textValue: _textValue,
+      ranges: _ranges,
+    }
+    block.text = _text
+
     return true
   }
   return false
@@ -379,7 +395,7 @@ export const trimRight = (text: Text): Boolean => {
  * @param text text to trim
  * @returns true if lines were trimmed
  */
-export const trim = (text: Text) => trimLeft(text) || trimRight(text)
+export const trim = (block: Block) => trimLeft(block) || trimRight(block)
 
 export const splitBlockAtEmptyLine = ({
   draft,
