@@ -417,8 +417,14 @@ export const splitBlockAtEmptyLine = ({
   })
   // set current block text to first part of split
   //   but remove the last 2 character (which are newlines)
-  _block.text.textValue = before.textValue.substring(0, _offset - 1)
-  _block.text.ranges = before.ranges
+
+  const _text = {
+    textValue: before.textValue.substring(0, _offset - 1),
+    ranges: before.ranges,
+  }
+  _block.text = _text
+  // _block.text.textValue = before.textValue.substring(0, _offset - 1)
+  // _block.text.ranges = before.ranges
 
   // make a new block to insert with second part of split
   const _blockToInsert: Block = {
