@@ -1,5 +1,6 @@
 export interface Document {
   _id: string
+  sharedWithGroups?: string[]
 }
 
 export interface DocumentDict<T extends Document> {
