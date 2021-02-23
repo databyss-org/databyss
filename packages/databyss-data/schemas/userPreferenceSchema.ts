@@ -30,9 +30,6 @@ export const userPreferenceSchema: JSONSchema4 = {
     token: {
       type: 'string',
     },
-    defaultGroupId: {
-      type: 'string',
-    },
     groups: {
       type: 'array',
       items: {
@@ -54,7 +51,7 @@ export const userPreferenceSchema: JSONSchema4 = {
       },
     },
   },
-  required: ['defaultGroupId', 'groups', 'userId'],
+  required: ['groups', 'userId'],
   allOf: [{ $ref: 'pouchDb' }],
 }
 

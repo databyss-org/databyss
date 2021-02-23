@@ -100,22 +100,6 @@ export const deletePouchDbs = async () => {
   clearLocalStorage()
 }
 
-export const setUserSession = async (session) => {
-  await upsert({
-    $type: DocumentType.UserPreferences,
-    _id: 'user_preferences',
-    doc: _.pick(session, [
-      '_id',
-      'token',
-      '$type',
-      'userId',
-      'email',
-      'defaultGroupId',
-      'groups',
-    ]),
-  })
-}
-
 export const setPouchSecret = (credentials) => {
   let keyMap = localStorage.getItem('pouch_secrets')
   if (!keyMap) {
@@ -160,7 +144,7 @@ export const localStorageHasSession = async () => {
       userId: _userSession._id,
       email: _userSession.email,
       defaultPageId: _userSession.groups[0].defaultPageId,
-      defaultGroupId: _userSession.defaultGroupId,
+      defaultGroupId: _userSession.belongsToGroup,
     }
   }
 

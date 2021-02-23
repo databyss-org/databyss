@@ -49,18 +49,21 @@ export const initializeNewPage = async ({
   await groupDb.upsert(_page.selection._id, () => ({
     $type: DocumentType.Selection,
     createdAt: Date.now(),
+    belongsToGroup: groupId,
     ..._page.selection,
   }))
   // upsert blocks
   await groupDb.upsert(_page.blocks[0]._id, () => ({
     $type: DocumentType.Block,
     createdAt: Date.now(),
+    belongsToGroup: groupId,
     ..._page.blocks[0],
   }))
 
   await groupDb.upsert(_page._id, () => ({
     createdAt: Date.now(),
     $type: DocumentType.Page,
+    belongsToGroup: groupId,
     ...normalizePage(_page),
   }))
 }
@@ -207,7 +210,7 @@ export const createUserDatabaseCredentials = async (
       $type: DocumentType.UserPreferences,
       userId: user._id,
       email: user?.email,
-      defaultGroupId: groupId,
+      belongsToGroup: groupId,
       createdAt: Date.now(),
       groups: [
         {
@@ -229,7 +232,7 @@ export const createUserDatabaseCredentials = async (
     // add defaultPageId to Userdb
     await Users.upsert(_userPreferences.userId, (oldDoc) => ({
       ...oldDoc,
-      defaultGroupId: _userPreferences.defaultGroupId,
+      defaultGroupId: _userPreferences.belongsToGroup,
     }))
   }
 

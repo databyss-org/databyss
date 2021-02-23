@@ -1,5 +1,6 @@
 import EventEmitter from 'es-event-emitter'
 import { Document } from '@databyss-org/services/interfaces'
+import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
@@ -217,6 +218,8 @@ export class QueueProcessor extends EventEmitter {
             const _doc = {
               ...oldDoc,
               ...addTimeStamp({ ...oldDoc, ..._upQdict[_id] }),
+              // add groups property
+              belongsToGroup: getAccountFromLocation(),
             }
 
             // validate object before upsert
