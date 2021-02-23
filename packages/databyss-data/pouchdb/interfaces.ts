@@ -13,6 +13,7 @@ export enum DocumentType {
   Selection = 'SELECTION',
   BlockRelation = 'BLOCK_RELATION',
   UserPreferences = 'USER_PREFERENCES',
+  Group = 'GROUP',
 }
 
 export interface UserGroup {

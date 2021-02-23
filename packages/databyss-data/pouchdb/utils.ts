@@ -195,6 +195,27 @@ const coallesceQ = (patches: Patch[]) => {
   return _patches
 }
 
+// bypasses upsert queue
+export const upsertImmediate = ({
+  $type,
+  _id,
+  doc,
+}: {
+  $type: DocumentType
+  _id: string
+  doc: any
+}) => {
+  dbRef.current!.upsert(_id, (oldDoc) => {
+    const _doc = {
+      ...oldDoc,
+      ...addTimeStamp({ ...oldDoc, ...doc, $type }),
+      belongsToGroup: getAccountFromLocation(),
+    }
+    pouchDataValidation(_doc)
+    return _doc
+  })
+}
+
 export class QueueProcessor extends EventEmitter {
   // on(event: string, listener: Function): this
   // emit(event: string): void
@@ -213,20 +234,9 @@ export class QueueProcessor extends EventEmitter {
         this.isProcessing = true
         const _upQdict = coallesceQ(upQdict.current)
         upQdict.current = []
-        for (const _id of Object.keys(_upQdict)) {
-          await dbRef.current!.upsert(_id, (oldDoc) => {
-            const _doc = {
-              ...oldDoc,
-              ...addTimeStamp({ ...oldDoc, ..._upQdict[_id] }),
-              // add groups property
-              belongsToGroup: getAccountFromLocation(),
-            }
-
-            // validate object before upsert
-            pouchDataValidation(_doc)
-
-            return _doc
-          })
+        for (const _docId of Object.keys(_upQdict)) {
+          const { _id, $type } = _upQdict[_docId]
+          upsertImmediate({ _id, $type, doc: _upQdict[_docId] })
         }
         this.isProcessing = false
       }

@@ -3,7 +3,6 @@ import { Router } from '@databyss-org/ui/components/Navigation/NavigationProvide
 import { useSessionContext } from '@databyss-org/services/session/SessionProvider'
 import SourceProvider from '@databyss-org/services/sources/SourceProvider'
 import { SearchProvider } from '@databyss-org/ui/hooks'
-import GroupProvider from '@databyss-org/services/groups/GroupProvider'
 import {
   Sidebar,
   useNavigationContext,
@@ -79,30 +78,28 @@ const Private = () => {
     <QueryClientProvider client={queryClient}>
       <SearchProvider>
         <SourceProvider>
-          <GroupProvider>
-            <GestureProvider>
-              <Router>
-                <AppView path="/:accountId">
-                  <NotFoundRedirect default />
-                  <EditorPageProvider path="pages">
-                    <PageContent path=":id" />
-                  </EditorPageProvider>
-                  <SearchContent path="search/:query" />
-                  <GroupDetail path="collections/:id" />
-                  <IndexPageContent
-                    blockType={BlockType.Source}
-                    path="sources/:blockId"
-                  />
-                  <IndexPageContent
-                    blockType={BlockType.Topic}
-                    path="topics/:blockId"
-                  />
-                  <SourcesContent path="sources/" />
-                </AppView>
-              </Router>
-              <ModalManager />
-            </GestureProvider>
-          </GroupProvider>
+          <GestureProvider>
+            <Router>
+              <AppView path="/:accountId">
+                <NotFoundRedirect default />
+                <EditorPageProvider path="pages">
+                  <PageContent path=":id" />
+                </EditorPageProvider>
+                <SearchContent path="search/:query" />
+                <GroupDetail path="collections/:id" />
+                <IndexPageContent
+                  blockType={BlockType.Source}
+                  path="sources/:blockId"
+                />
+                <IndexPageContent
+                  blockType={BlockType.Topic}
+                  path="topics/:blockId"
+                />
+                <SourcesContent path="sources/" />
+              </AppView>
+            </Router>
+            <ModalManager />
+          </GestureProvider>
         </SourceProvider>
       </SearchProvider>
     </QueryClientProvider>

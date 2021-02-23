@@ -4,18 +4,16 @@ import ValueListProvider, {
   ValueListItem,
 } from '@databyss-org/ui/components/ValueList/ValueListProvider'
 import { Group } from '@databyss-org/services/interfaces'
-import { useGroupContext } from '@databyss-org/services/groups/GroupProvider'
 import {
   View,
   Text,
-  TextInput,
   Grid,
   ViewProps,
   ScrollView,
 } from '@databyss-org/ui/primitives'
-
-import { GroupLoader } from '../../components/Loaders'
-import { StickyHeader, TitleInput } from '../../components'
+import { saveGroup } from '@databyss-org/services/groups'
+import { useGroups } from '@databyss-org/data/pouchdb/hooks'
+import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
 import { darkTheme } from '../../theming/theme'
@@ -38,19 +36,15 @@ const GroupSection = ({
 
 export const GroupFields = ({ group }: { group: Group }) => {
   const [values, setValues] = useState(group)
-  const { setGroup } = useGroupContext()
 
   const onChange = useCallback(
     (_values) => {
       // update internal state
       setValues(_values)
       // update database
-      setGroup(group._id, (oldGroup) => {
-        const _updated = Object.assign({}, oldGroup, _values)
-        return _updated
-      })
+      saveGroup(group)
     },
-    [setGroup]
+    [saveGroup]
   )
 
   return (
@@ -68,19 +62,6 @@ export const GroupFields = ({ group }: { group: Group }) => {
             </View>
           </GroupSection>
           <View flexGrow={1} flexBasis={1}>
-            <GroupSection title="Description" widthVariant="content">
-              <View borderVariant="thinLight">
-                <ValueListItem path="description">
-                  <TextInput
-                    p="small"
-                    multiline
-                    maxRows={10}
-                    variant="uiTextSmall"
-                    placeholder="Type a description of your shared or public collection"
-                  />
-                </ValueListItem>
-              </View>
-            </GroupSection>
             <GroupSection title="Share with Everyone">
               <ValueListItem path="public">
                 <PublicSharingSettings />
@@ -95,23 +76,26 @@ export const GroupFields = ({ group }: { group: Group }) => {
 
 export const GroupDetail = () => {
   const { id } = useParams()
+  const groupsRes = useGroups()
+
+  if (!groupsRes.isSuccess) {
+    return <LoadingFallback queryObserver={groupsRes} />
+  }
+
+  const group = groupsRes!.data[id]
 
   return (
-    <GroupLoader groupId={id}>
-      {(group: Group) => (
-        <>
-          <StickyHeader path={['Collections', group.name]} />
-          <ScrollView
-            p="medium"
-            pt="small"
-            flexGrow={1}
-            flexShrink={1}
-            shadowOnScroll
-          >
-            <GroupFields group={group} />
-          </ScrollView>
-        </>
-      )}
-    </GroupLoader>
+    <>
+      <StickyHeader path={['Collections', group.name]} />
+      <ScrollView
+        p="medium"
+        pt="small"
+        flexGrow={1}
+        flexShrink={1}
+        shadowOnScroll
+      >
+        <GroupFields group={group} />
+      </ScrollView>
+    </>
   )
 }

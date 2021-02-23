@@ -1,38 +1,16 @@
-import { CacheDict, ResourceResponse, PageHeader, Text } from './'
+import { uidlc } from '@databyss-org/data/lib/uid'
 
-export interface GroupHeader {
+export class Group {
   _id: string
-  name: string
+  name?: string
   default?: boolean
-  public?: boolean
-}
-
-export class Group implements GroupHeader {
-  _id: string
-  name: string
-  default?: boolean
-  description: Text
-  pages: PageHeader[]
+  pages: string[]
   public?: boolean
 
-  constructor() {
-    this._id = 'NEW_GROUP' // TODO: replace with uid() unique id gen
-    this.default = false
-    this.name = 'untitled'
-    this.description = new Text()
+  constructor(name: string) {
+    this._id = uidlc()
+    this.name = name
     this.pages = []
     this.public = false
-  }
-}
-
-export class GroupState {
-  cache: CacheDict<Group>
-  headerCache: ResourceResponse<CacheDict<GroupHeader>>
-  sharedPageHeaderCache: ResourceResponse<CacheDict<PageHeader>>
-
-  constructor() {
-    this.cache = {}
-    this.headerCache = null
-    this.sharedPageHeaderCache = null
   }
 }

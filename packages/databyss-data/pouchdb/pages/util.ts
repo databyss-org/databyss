@@ -1,7 +1,7 @@
 import { Patch } from 'immer'
 import { Block } from '@databyss-org/services/interfaces'
 import { PageDoc, DocumentType } from '../interfaces'
-import { upsert, addTimeStamp } from '../utils'
+import { upsert, addTimeStamp, upsertImmediate } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import { dbRef } from '../db'
 
@@ -128,7 +128,7 @@ export const runPatches = (p: Patch) => {
 export const normalizePage = (page: Page): PageDoc => {
   const _pageDoc: PageDoc = {
     blocks: page.blocks.map((b) => ({ _id: b._id, type: b.type })),
-    selection: page.selection._id,
+    selection: page.selection._id!,
     _id: page._id,
     name: page.name,
     archive: page.archive,
@@ -136,39 +136,21 @@ export const normalizePage = (page: Page): PageDoc => {
   return _pageDoc
 }
 
-// bypasses upsert queue
-const _upsert = ({
-  $type,
-  _id,
-  doc,
-}: {
-  $type: DocumentType
-  _id: string
-  doc: any
-}) =>
-  dbRef.current!.upsert(_id, (oldDoc) => {
-    const _doc = {
-      ...oldDoc,
-      ...addTimeStamp({ ...oldDoc, ...doc, $type }),
-    }
-    return _doc
-  })
-
 /*
 generic function to add a new page to database given id. this function is a promise and bypasses the queue
 */
 export const addPage = async (page: Page) => {
-  await _upsert({
+  await upsertImmediate({
     $type: DocumentType.Selection,
-    _id: page.selection._id,
+    _id: page.selection._id!,
     doc: page.selection,
   })
-  await _upsert({
+  await upsertImmediate({
     $type: DocumentType.Block,
     _id: page.blocks[0]._id,
     doc: { ...page.blocks[0] },
   })
-  await _upsert({
+  await upsertImmediate({
     $type: DocumentType.Page,
     _id: page._id,
     doc: normalizePage(page),

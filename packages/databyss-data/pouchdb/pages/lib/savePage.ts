@@ -6,7 +6,7 @@ import { normalizePage } from '../util'
 export const savePage = async (data: Page) => {
   await upsert({
     $type: DocumentType.Selection,
-    _id: data.selection._id,
+    _id: data.selection._id!,
     doc: data.selection,
   })
   await upsert({

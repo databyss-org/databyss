@@ -17,6 +17,7 @@ export interface DesignDoc {
   blockRelationSchema: JSONSchema4
   selectionSchema: JSONSchema4
   pageSchema: JSONSchema4
+  groupSchema: JSONSchema4
   entrySchema: JSONSchema4
   topicSchema: JSONSchema4
   userPreferenceSchema: JSONSchema4
