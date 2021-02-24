@@ -153,6 +153,15 @@ class UserMongoToCloudant extends ServerProcess {
        * mongo blockId => block type
        */
       const _blockTypeMap = {}
+
+      /**
+       * Dict of couch docs to insert if they are referenced as related blocks
+       * couch doc id => doc
+       */
+      const _maybeInsert = {}
+
+      let _couchBlocksInserted = 0
+
       for (const _mongoBlock of _mongoBlocks) {
         // skip the block if it's an orphaned ENTRY (not in any pages)
         const _mongoBlockPage = _blockToPageMap[_mongoBlock._id]
@@ -160,8 +169,12 @@ class UserMongoToCloudant extends ServerProcess {
           continue
         }
         const _couchBlockId = uid()
+
+        // map the block id and type for reference later
         _blockIdMap[_mongoBlock._id] = _couchBlockId
-        await _groupDb.insert({
+        _blockTypeMap[_mongoBlock._id] = _mongoBlock.type
+
+        const _couchBlock = {
           $type: DocumentType.Block,
           _id: _couchBlockId,
           type: _mongoBlock.type,
@@ -175,9 +188,16 @@ class UserMongoToCloudant extends ServerProcess {
           },
           detail: fixDetail(_mongoBlock.detail),
           ...getTimestamps(_mongoBlock),
-        })
+        }
 
-        _blockTypeMap[_mongoBlock._id] = _mongoBlock.type
+        // if the block isn't orphaned, insert it now
+        if (_mongoBlockPage) {
+          await _groupDb.insert(_couchBlock)
+          _couchBlocksInserted += 1
+        } else {
+          // otherwise, store the couch doc and insert later if it's referenced as a related block
+          _maybeInsert[_couchBlockId] = _couchBlock
+        }
 
         // generate INLINE BlockRelations by scanning ranges for inline topics & sources
         for (const _range of _mongoBlock.text.ranges) {
@@ -191,7 +211,10 @@ class UserMongoToCloudant extends ServerProcess {
           }
         }
       }
-      console.log(`➡️  Migrated ${Object.keys(_blockIdMap).length} Blocks`)
+      console.log(`➡️  Migrated ${_couchBlocksInserted} Blocks`)
+      console.log(
+        `ℹ️  ${Object.values(_maybeInsert).length} maybe related blocks saved`
+      )
 
       // update inline block ids
 
@@ -203,6 +226,7 @@ class UserMongoToCloudant extends ServerProcess {
       })
 
       let _inlineIdCount = 0
+      let _deferredInsertCount = 0
       for (const _couchBlock of _couchBlocks.docs as BlockInterface[]) {
         let _hasInline = false
         for (const _range of _couchBlock.text.ranges) {
@@ -210,7 +234,18 @@ class UserMongoToCloudant extends ServerProcess {
             if (Array.isArray(_mark)) {
               _hasInline = true
               let _couchInlineBlockId = _blockIdMap[_mark[1]]
-              if (!_couchInlineBlockId) {
+              if (_couchInlineBlockId) {
+                // save the related block to couch
+                if (_maybeInsert[_couchInlineBlockId]) {
+                  await _groupDb.upsert(
+                    _couchInlineBlockId,
+                    () => _maybeInsert[_couchInlineBlockId]
+                  )
+                  delete _maybeInsert[_couchInlineBlockId]
+                  _deferredInsertCount += 1
+                }
+              } else {
+                // related block missing in mongo, rebuild it
                 _couchInlineBlockId = uid()
                 const _textValue = _couchBlock.text.textValue.substr(
                   _range.offset + 1,
@@ -245,6 +280,7 @@ class UserMongoToCloudant extends ServerProcess {
         }
       }
       console.log(`➡️  Updated ${_inlineIdCount} INLINE ids`)
+      console.log(`➡️  Upserted ${_deferredInsertCount} related blocks`)
 
       // insert the Pages in couch, generating new ids and keeping a map of old => new id
       const _pageIdMap: { [mongoId: string]: string } = {}
