@@ -9,7 +9,7 @@ import { prefixSearchAll } from '@databyss-org/services/blocks'
 import { Separator } from '@databyss-org/ui/primitives'
 import { setSource } from '@databyss-org/services/sources'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
-import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
+import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 
@@ -40,7 +40,7 @@ const SuggestSources = ({
   setResultsMode,
   ...others
 }) => {
-  const sourcesRes = useBlocks(BlockType.Source)
+  const sourcesRes = useBlocksInPages(BlockType.Source)
   const { replace } = useEditorContext()
   const [suggestions, setSuggestsions] = useState()
 

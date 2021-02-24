@@ -21,7 +21,15 @@ import {
 } from '@databyss-org/ui/modules'
 import { EditorPageProvider } from '@databyss-org/services'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    // Disable window focus refetching globally for all react-query hooks
+    // see: https://react-query.tanstack.com/guides/window-focus-refetching
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 const AppView = ({ children }) => (
   <View
