@@ -11,8 +11,9 @@ import {
   ViewProps,
   ScrollView,
 } from '@databyss-org/ui/primitives'
-import { saveGroup } from '@databyss-org/services/groups'
+import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
+import { debounce } from 'lodash'
 import { LoadingFallback, StickyHeader, TitleInput } from '../../components'
 import { PageDropzone } from './PageDropzone'
 import { PublicSharingSettings } from './PublicSharingSettings'
@@ -37,21 +38,31 @@ const GroupSection = ({
 export const GroupFields = ({ group }: { group: Group }) => {
   const [values, setValues] = useState(group)
 
-  const onChange = useCallback(
-    (_values) => {
-      // update internal state
-      setValues(_values)
-      // update database
-      saveGroup(group)
-    },
+  const saveChanges = useCallback(
+    debounce((_values: Group) => saveGroup(_values), 500),
     [saveGroup]
   )
 
+  const onChange = useCallback(
+    (_values: Group) => {
+      // update internal state
+      setValues(_values)
+      // update database
+      saveChanges(_values)
+    },
+    [setValues]
+  )
+
+  const _values = { ...values }
+  if (_values.name === UNTITLED_NAME) {
+    _values.name = ''
+  }
+
   return (
-    <ValueListProvider onChange={onChange} values={values}>
+    <ValueListProvider onChange={onChange} values={_values}>
       <View pl="em" pr="medium" pt="none" flexGrow={1}>
         <ValueListItem path="name">
-          <TitleInput placeholder="untitled" />
+          <TitleInput placeholder={UNTITLED_NAME} />
         </ValueListItem>
         <Grid columnGap="large" widthVariant="content" flexGrow={1}>
           <GroupSection title="Pages" flexGrow={1} flexBasis={1}>
@@ -77,16 +88,15 @@ export const GroupFields = ({ group }: { group: Group }) => {
 export const GroupDetail = () => {
   const { id } = useParams()
   const groupsRes = useGroups()
+  const group = groupsRes.data?.[id]
 
-  if (!groupsRes.isSuccess) {
+  if (!groupsRes.isSuccess || !group) {
     return <LoadingFallback queryObserver={groupsRes} />
   }
 
-  const group = groupsRes!.data[id]
-
   return (
     <>
-      <StickyHeader path={['Collections', group.name]} />
+      <StickyHeader path={['Collections', group.name!]} />
       <ScrollView
         p="medium"
         pt="small"
@@ -94,7 +104,7 @@ export const GroupDetail = () => {
         flexShrink={1}
         shadowOnScroll
       >
-        <GroupFields group={group} />
+        <GroupFields group={group} key={id} />
       </ScrollView>
     </>
   )

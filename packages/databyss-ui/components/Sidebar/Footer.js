@@ -14,7 +14,7 @@ import {
 import { sidebar } from '@databyss-org/ui/theming/components'
 import { Page, Group } from '@databyss-org/services/interfaces'
 import { savePage } from '@databyss-org/services/editorPage'
-import { saveGroup } from '@databyss-org/services/groups'
+import { saveGroup, UNTITLED_NAME } from '@databyss-org/services/groups'
 
 const Footer = ({ collapsed }) => {
   const isPublicAccount = useSessionContext((c) => c && c.isPublicAccount)
@@ -24,7 +24,8 @@ const Footer = ({ collapsed }) => {
 
   const onNewPageClick = () => {
     if (sidebarPath === 'groups') {
-      saveGroup(new Group('untitled collection'))
+      const _group = new Group(UNTITLED_NAME)
+      saveGroup(_group).then(() => navigate(`/collections/${_group._id}`))
       return
     }
 

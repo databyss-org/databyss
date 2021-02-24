@@ -11,14 +11,15 @@ import {
   Separator,
 } from '@databyss-org/ui/primitives'
 import { PageHeader } from '@databyss-org/services/interfaces'
-import { SidebarListRow } from '@databyss-org/ui/components'
+import { LoadingFallback, SidebarListRow } from '@databyss-org/ui/components'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
+import { usePages } from '@databyss-org/data/pouchdb/hooks'
 
 interface PageDropzoneProps extends ScrollViewProps {
-  value?: PageHeader[]
-  onChange?: (value: PageHeader[]) => void
+  value?: string[]
+  onChange?: (value: string[]) => void
 }
 
 export const PageDropzone = ({
@@ -26,18 +27,26 @@ export const PageDropzone = ({
   onChange,
   ...others
 }: PageDropzoneProps) => {
+  const pagesRes = usePages()
+
   const onDrop = useCallback(
     (item: DraggableItem) => {
       const _pageHeader = item.payload as PageHeader
-      onChange!(value!.concat(_pageHeader))
+      onChange!(value!.concat(_pageHeader._id))
     },
     [onChange]
   )
-  const onRemove = (page: PageHeader) => {
-    onChange!(value!.filter((p) => p._id !== page._id))
+  const onRemove = (_id: string) => {
+    onChange!(value!.filter((p) => p !== _id))
   }
 
-  const _sortedItems: PageHeader[] = sortEntriesAtoZ(value, 'name')
+  if (!pagesRes.isSuccess) {
+    return <LoadingFallback queryObserver={pagesRes} />
+  }
+
+  const _pageHeaders = value!.map((pageId) => pagesRes.data![pageId])
+
+  const _sortedItems: PageHeader[] = sortEntriesAtoZ(_pageHeaders, 'name')
 
   return (
     <ScrollView shadowOnScroll borderRadius="default" {...others}>
@@ -60,7 +69,7 @@ export const PageDropzone = ({
                 hoverColor="control.1"
                 p="em"
               >
-                <BaseControl onPress={() => onRemove(page)}>
+                <BaseControl onPress={() => onRemove(page._id)}>
                   <Icon sizeVariant="tiny">
                     <CloseSvg />
                   </Icon>

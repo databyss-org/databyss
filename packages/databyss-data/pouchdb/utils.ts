@@ -204,7 +204,7 @@ export const upsertImmediate = ({
   $type: DocumentType
   _id: string
   doc: any
-}) => {
+}) =>
   dbRef.current!.upsert(_id, (oldDoc) => {
     const _doc = {
       ...oldDoc,
@@ -214,7 +214,6 @@ export const upsertImmediate = ({
     pouchDataValidation(_doc)
     return _doc
   })
-}
 
 export class QueueProcessor extends EventEmitter {
   // on(event: string, listener: Function): this
