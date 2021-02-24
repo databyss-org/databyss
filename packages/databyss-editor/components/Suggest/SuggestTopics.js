@@ -5,7 +5,7 @@ import cloneDeep from 'clone-deep'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import { prefixSearchAll } from '@databyss-org/services/blocks'
 import useEventListener from '@databyss-org/ui/lib/useEventListener'
-import { useBlocks } from '@databyss-org/data/pouchdb/hooks'
+import { useBlocksInPages } from '@databyss-org/data/pouchdb/hooks'
 import { BlockType } from '@databyss-org/services/interfaces'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { useEditorContext } from '../../state/EditorProvider'
@@ -20,7 +20,7 @@ const SuggestTopics = ({
   inlineAtomic,
 }) => {
   const editor = useEditor()
-  const topicsRes = useBlocks(BlockType.Topic)
+  const topicsRes = useBlocksInPages(BlockType.Topic)
 
   const { replace, state, setContent } = useEditorContext()
 
