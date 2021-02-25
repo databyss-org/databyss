@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
+import { setPublicPage } from '@databyss-org/data/pouchdb/groups'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -140,8 +141,8 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
     dispatch(actions.removePageFromCache(id))
   }
 
-  const setPagePublic = (id: string, bool: boolean, accountId: string) => {
-    dispatch(actions.setPagePublic(id, bool, accountId))
+  const setPagePublic = (id: string, bool: boolean) => {
+    setPublicPage(id, bool)
   }
 
   const getPublicAccount = useCallback(

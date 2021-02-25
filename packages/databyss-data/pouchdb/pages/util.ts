@@ -1,9 +1,8 @@
 import { Patch } from 'immer'
 import { Block } from '@databyss-org/services/interfaces'
 import { PageDoc, DocumentType } from '../interfaces'
-import { upsert, addTimeStamp, upsertImmediate } from '../utils'
+import { upsert, upsertImmediate } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
-import { dbRef } from '../db'
 
 const applyPatch = (node, path, value) => {
   const key = path.shift()

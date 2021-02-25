@@ -89,11 +89,9 @@ export const GroupDetail = () => {
   const { id } = useParams()
   const groupsRes = useGroups()
   const group = groupsRes.data?.[id]
-
   if (!groupsRes.isSuccess || !group) {
     return <LoadingFallback queryObserver={groupsRes} />
   }
-
   return (
     <>
       <StickyHeader path={['Collections', group.name!]} />

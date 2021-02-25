@@ -16,6 +16,7 @@ import PageSvg from '@databyss-org/ui/assets/page.svg'
 import CloseSvg from '@databyss-org/ui/assets/close.svg'
 import { sortEntriesAtoZ } from '@databyss-org/services/entries/util'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
 
 interface PageDropzoneProps extends ScrollViewProps {
   value?: string[]
@@ -31,8 +32,14 @@ export const PageDropzone = ({
 
   const onDrop = useCallback(
     (item: DraggableItem) => {
-      const _pageHeader = item.payload as PageHeader
-      onChange!(value!.concat(_pageHeader._id))
+      // if item is being dragged from the `PUBLIC PAGES` section, get the public page id
+      if (item.payload.$type === DocumentType.Group) {
+        const _id = item.payload._id.substring(2)
+        onChange!(value!.concat(_id))
+      } else {
+        const _pageHeader = item.payload as PageHeader
+        onChange!(value!.concat(_pageHeader._id))
+      }
     },
     [onChange]
   )

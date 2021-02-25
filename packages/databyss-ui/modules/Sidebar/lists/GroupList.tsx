@@ -18,9 +18,9 @@ export const GroupList = (others) => {
 
   const getPageItems = (groups: Group[]) =>
     groups.map((group) => ({
-      text: pagesRes.data![group.pages[0]].name,
+      text: pagesRes.data![group.pages[0]]?.name,
       type: 'page',
-      route: `/pages/${group._id}`,
+      route: `/pages/${group._id.substring(2)}`,
       data: group,
     }))
 

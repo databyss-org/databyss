@@ -8,3 +8,16 @@ export const setGroup = (group: Group) =>
     _id: group._id,
     doc: { ...group, $type: DocumentType.Group },
   })
+
+export const setPublicPage = (pageId: string, bool: boolean) => {
+  const _data: Group = {
+    _id: `p_${pageId}`,
+    pages: [pageId],
+    public: bool,
+  }
+  upsertImmediate({
+    $type: DocumentType.Group,
+    _id: _data._id,
+    doc: _data,
+  })
+}

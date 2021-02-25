@@ -8,9 +8,9 @@ import {
   Separator,
   pxUnits,
 } from '@databyss-org/ui/primitives'
-import MakeLoader from '@databyss-org/ui/components/Loaders/MakeLoader'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
+import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import PageSvg from '@databyss-org/ui/assets/page.svg'
 import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
@@ -20,7 +20,7 @@ import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContaine
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
 import { menuLauncherSize } from '@databyss-org/ui/theming/buttons'
-import { usePages } from '@databyss-org/data/pouchdb/hooks'
+import { usePages, useGroups } from '@databyss-org/data/pouchdb/hooks'
 import LoadingFallback from '../Notify/LoadingFallback'
 
 function copyToClipboard(text) {
@@ -38,12 +38,15 @@ function copyToClipboard(text) {
 
 const PageMenu = () => {
   const pagesRes = usePages()
+  const groupsRes = useGroups()
+
   const pages = pagesRes.data
+  const groups = groupsRes.data
 
   const getSession = useSessionContext((c) => c && c.getSession)
   const setDefaultPage = useSessionContext((c) => c && c.setDefaultPage)
-  const getPublicAccount = useEditorPageContext((c) => c && c.getPublicAccount)
-  const { account, defaultPageId } = getSession()
+
+  const { defaultPageId } = getSession()
   const [showMenu, setShowMenu] = useState(false)
   const [isPagePublic, setIsPagePublic] = useState(false)
   const [showCopiedCheck, setShowCopiedCheck] = useState(false)
@@ -66,10 +69,11 @@ const PageMenu = () => {
 
   // if page is shared, toggle public page
   useEffect(() => {
-    if (pages[params]?.publicAccountId) {
-      setIsPagePublic(true)
+    if (groupsRes.isSuccess && groups[`p_${params}`]) {
+      const _pageGroup = groups[`p_${params}`]
+      setIsPagePublic(_pageGroup.public)
     }
-  }, [pages])
+  }, [groupsRes.isSuccess])
 
   const onArchivePress = (bool) => {
     archivePage(params, bool).then(() => {
@@ -96,20 +100,12 @@ const PageMenu = () => {
   const _page = pages?.[params]
 
   const onCopyLink = () => {
-    // TODO: EVERYTHING WITH THIS IS OUTDATED
-    let _accountId
-    // if account is shared, get public account
-    if (_page?.publicAccountId) {
-      _accountId = _page.publicAccountId
-    } else {
-      // if account is private, get private account
-      _accountId = account._id
-    }
-
-    // generate url and copy to clipboard
+    getAccountFromLocation()
+    // // generate url and copy to clipboard
     const getUrl = window.location
-    const baseUrl = `${getUrl.protocol}//${getUrl.host}/${_accountId}/pages/${params}`
-
+    const baseUrl = `${getUrl.protocol}//${
+      getUrl.host
+    }/${getAccountFromLocation()}/pages/${params}`
     copyToClipboard(baseUrl)
     setShowCopiedCheck(true)
   }
@@ -157,21 +153,9 @@ const PageMenu = () => {
   }
 
   const togglePublicPage = () => {
-    if (isPagePublic) {
-      const _page = pages?.[params]
-      // if account is shared, get public account
-      const _accountId = _page.publicAccountId
-      setPagePublic(params, !isPagePublic, _accountId)
-    } else {
-      setPagePublic(params, !isPagePublic)
-    }
+    setPagePublic(params, !isPagePublic)
     setIsPagePublic(!isPagePublic)
-    setShowCopiedCheck(false)
   }
-
-  const SharedPageLoader = ({ children }) => (
-    <MakeLoader resources={getPublicAccount(params)} children={children} />
-  )
 
   const DropdownList = () =>
     menuItems.map((menuItem) => (
@@ -198,18 +182,12 @@ const PageMenu = () => {
       onPress={() => null}
     />
   ) : (
-    <SharedPageLoader>
-      {(res) =>
-        res.length ? (
-          <DropdownListItem
-            icon={<LinkSvg />}
-            action="copy-link"
-            label="Copy link"
-            onPress={onCopyLink}
-          />
-        ) : null
-      }
-    </SharedPageLoader>
+    <DropdownListItem
+      icon={<LinkSvg />}
+      action="copy-link"
+      label="Copy link"
+      onPress={onCopyLink}
+    />
   )
 
   if (!pagesRes.isSuccess) {
@@ -256,7 +234,7 @@ const PageMenu = () => {
               action="togglePublic"
               switchControl
             />
-            {getPublicAccount(params).length ? (
+            {isPagePublic ? (
               <>
                 <Separator />
                 {publicLinkItem}
