@@ -18,6 +18,7 @@ import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
 import { saveGroup } from '@databyss-org/services/groups'
+import { Group } from '@databyss-org/services/interfaces'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
@@ -211,17 +212,24 @@ const PageMenu = () => {
     // TODO: should this also navigate to the collections sidebar?
   }
 
-  const addPageToGroups = (pageId, groupId) => {
-    const _group = groups[groupId]
-    _group.pages = _group.pages.concat(pageId)
-    saveGroup(_group)
-    navigate(`/collections/${groupId}`)
-  }
-
   const collections = () => {
     const _pageNotInGroups = Object.values(groups).filter(
       (group) => !!group.name && !group.pages.includes(params)
     )
+
+    const addPageToGroups = (groupId) => {
+      const _group = groups[groupId]
+      _group.pages = _group.pages.concat(params)
+      saveGroup(_group)
+      navigate(`/collections/${groupId}`)
+    }
+
+    const addPageToNewCollection = () => {
+      const _group = new Group('untitled collection')
+      _group.pages = [params]
+      saveGroup(_group)
+      navigate(`/collections/${_group._id}`)
+    }
 
     return (
       <>
@@ -252,32 +260,40 @@ const PageMenu = () => {
             ))}
           </>
         )}
-        {_pageNotInGroups.length && (
-          <>
-            <View
-              ml="small"
-              height={pxUnits(34)}
+        <>
+          <View
+            ml="small"
+            height={pxUnits(34)}
+            justifyContent="center"
+            key="is-in-groups"
+          >
+            <Text color="text.3" variant="uiTextSmall">
+              Add to Collection:
+            </Text>
+          </View>
+          {_pageNotInGroups.map((g) => (
+            <DropdownListItem
+              key={g._id}
+              mx="small"
+              px="small"
               justifyContent="center"
-              key="is-in-groups"
-            >
-              <Text color="text.3" variant="uiTextSmall">
-                Add to Collection:
-              </Text>
-            </View>
-            {_pageNotInGroups.map((g) => (
-              <DropdownListItem
-                key={g._id}
-                mx="small"
-                px="small"
-                justifyContent="center"
-                label={g.name}
-                // value={isPagePublic}
-                onPress={() => addPageToGroups(params, g._id)}
-                action="groups_click"
-              />
-            ))}
-          </>
-        )}
+              label={g.name}
+              // value={isPagePublic}
+              onPress={() => addPageToGroups(g._id)}
+              action="groups_click"
+            />
+          ))}
+          <DropdownListItem
+            key="new-collection"
+            mx="small"
+            px="small"
+            justifyContent="center"
+            label="New collection..."
+            // value={isPagePublic}
+            onPress={() => addPageToNewCollection(params)}
+            action="groups_click"
+          />
+        </>
       </>
     )
   }
