@@ -233,7 +233,6 @@ const PageMenu = () => {
 
     return (
       <>
-        <Separator />
         {pageInGroups.length && (
           <>
             <View
@@ -298,6 +297,7 @@ const PageMenu = () => {
     )
   }
 
+  console.log(!_page.archive && menuItems.length)
   return (
     <View
       position="relative"
@@ -345,10 +345,11 @@ const PageMenu = () => {
               </>
             ) : null}
             {!_page.archive && menuItems.length ? <Separator /> : null}
+            <DropdownList />
+            {Object.values(groups).length ? <Separator /> : null}
             {groupsRes.isSuccess && Object.values(groups).length
               ? collections()
               : null}
-            <DropdownList />
           </DropdownContainer>
         </ClickAwayListener>
       )}
