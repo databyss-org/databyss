@@ -212,6 +212,13 @@ const PageMenu = () => {
     // TODO: should this also navigate to the collections sidebar?
   }
 
+  const addPageToNewCollection = () => {
+    const _group = new Group('untitled collection')
+    _group.pages = [params]
+    saveGroup(_group)
+    navigate(`/collections/${_group._id}`)
+  }
+
   const collections = () => {
     const _pageNotInGroups = Object.values(groups).filter(
       (group) => !!group.name && !group.pages.includes(params)
@@ -222,13 +229,6 @@ const PageMenu = () => {
       _group.pages = _group.pages.concat(params)
       saveGroup(_group)
       navigate(`/collections/${groupId}`)
-    }
-
-    const addPageToNewCollection = () => {
-      const _group = new Group('untitled collection')
-      _group.pages = [params]
-      saveGroup(_group)
-      navigate(`/collections/${_group._id}`)
     }
 
     return (
@@ -347,9 +347,33 @@ const PageMenu = () => {
             {!_page.archive && menuItems.length ? <Separator /> : null}
             <DropdownList />
             {Object.values(groups).length ? <Separator /> : null}
-            {groupsRes.isSuccess && Object.values(groups).length
-              ? collections()
-              : null}
+            {groupsRes.isSuccess && Object.values(groups).length ? (
+              collections()
+            ) : (
+              <>
+                <Separator />
+                <View
+                  ml="small"
+                  height={pxUnits(34)}
+                  justifyContent="center"
+                  key="is-in-groups"
+                >
+                  <Text color="text.3" variant="uiTextSmall">
+                    Add to Collection:
+                  </Text>
+                </View>
+                <DropdownListItem
+                  key="new-collection"
+                  mx="small"
+                  px="small"
+                  justifyContent="center"
+                  label="New collection..."
+                  // value={isPagePublic}
+                  onPress={() => addPageToNewCollection(params)}
+                  action="groups_click"
+                />
+              </>
+            )}
           </DropdownContainer>
         </ClickAwayListener>
       )}
