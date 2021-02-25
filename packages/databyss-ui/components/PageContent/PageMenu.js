@@ -7,6 +7,7 @@ import {
   View,
   Separator,
   pxUnits,
+  Text,
 } from '@databyss-org/ui/primitives'
 import { useNavigationContext } from '@databyss-org/ui/components/Navigation/NavigationProvider/NavigationProvider'
 import ArchiveSvg from '@databyss-org/ui/assets/archive.svg'
@@ -16,6 +17,7 @@ import LinkSvg from '@databyss-org/ui/assets/link.svg'
 import TrashSvg from '@databyss-org/ui/assets/trash.svg'
 import CheckSvg from '@databyss-org/ui/assets/check.svg'
 import MenuSvg from '@databyss-org/ui/assets/menu_horizontal.svg'
+import { saveGroup } from '@databyss-org/services/groups'
 import DropdownContainer from '@databyss-org/ui/components/Menu/DropdownContainer'
 import DropdownListItem from '@databyss-org/ui/components/Menu/DropdownListItem'
 import ClickAwayListener from '@databyss-org/ui/components/Util/ClickAwayListener'
@@ -49,6 +51,7 @@ const PageMenu = () => {
   const { defaultPageId } = getSession()
   const [showMenu, setShowMenu] = useState(false)
   const [isPagePublic, setIsPagePublic] = useState(false)
+  const [pageInGroups, setPageInGroups] = useState([])
   const [showCopiedCheck, setShowCopiedCheck] = useState(false)
 
   const {
@@ -69,9 +72,18 @@ const PageMenu = () => {
 
   // if page is shared, toggle public page
   useEffect(() => {
-    if (groupsRes.isSuccess && groups[`p_${params}`]) {
-      const _pageGroup = groups[`p_${params}`]
-      setIsPagePublic(_pageGroup.public)
+    if (groupsRes.isSuccess) {
+      if (groups[`p_${params}`]) {
+        // get public status of page
+        const _pageGroup = groups[`p_${params}`]
+        setIsPagePublic(_pageGroup.public)
+      }
+
+      // get all groups page appears in
+      const pageGroups = Object.values(groupsRes.data).filter(
+        (group) => !!group.name && group.pages.includes(params)
+      )
+      setPageInGroups(pageGroups)
     }
   }, [groupsRes.isSuccess])
 
@@ -194,6 +206,82 @@ const PageMenu = () => {
     return <LoadingFallback size="extraTiny" queryObserver={pagesRes} />
   }
 
+  const onGroupClick = (id) => {
+    navigate(`/collections/${id}`)
+    // TODO: should this also navigate to the collections sidebar?
+  }
+
+  const addPageToGroups = (pageId, groupId) => {
+    const _group = groups[groupId]
+    _group.pages = _group.pages.concat(pageId)
+    saveGroup(_group)
+    navigate(`/collections/${groupId}`)
+  }
+
+  const collections = () => {
+    const _pageNotInGroups = Object.values(groups).filter(
+      (group) => !!group.name && !group.pages.includes(params)
+    )
+
+    return (
+      <>
+        <Separator />
+        {pageInGroups.length && (
+          <>
+            <View
+              ml="small"
+              height={pxUnits(34)}
+              justifyContent="center"
+              key="account-name"
+            >
+              <Text color="text.3" variant="uiTextSmall">
+                In collection(s):
+              </Text>
+            </View>
+            {pageInGroups.map((g) => (
+              <DropdownListItem
+                key={g._id}
+                mx="small"
+                px="small"
+                justifyContent="center"
+                label={g.name}
+                // value={isPagePublic}
+                onPress={() => onGroupClick(g._id)}
+                action="groups_click"
+              />
+            ))}
+          </>
+        )}
+        {_pageNotInGroups.length && (
+          <>
+            <View
+              ml="small"
+              height={pxUnits(34)}
+              justifyContent="center"
+              key="is-in-groups"
+            >
+              <Text color="text.3" variant="uiTextSmall">
+                Add to Collection:
+              </Text>
+            </View>
+            {_pageNotInGroups.map((g) => (
+              <DropdownListItem
+                key={g._id}
+                mx="small"
+                px="small"
+                justifyContent="center"
+                label={g.name}
+                // value={isPagePublic}
+                onPress={() => addPageToGroups(params, g._id)}
+                action="groups_click"
+              />
+            ))}
+          </>
+        )}
+      </>
+    )
+  }
+
   return (
     <View
       position="relative"
@@ -241,6 +329,9 @@ const PageMenu = () => {
               </>
             ) : null}
             {!_page.archive && menuItems.length ? <Separator /> : null}
+            {groupsRes.isSuccess && Object.values(groups).length
+              ? collections()
+              : null}
             <DropdownList />
           </DropdownContainer>
         </ClickAwayListener>
