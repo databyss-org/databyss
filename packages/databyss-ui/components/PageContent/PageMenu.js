@@ -297,7 +297,6 @@ const PageMenu = () => {
     )
   }
 
-  console.log(!_page.archive && menuItems.length)
   return (
     <View
       position="relative"
