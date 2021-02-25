@@ -99,6 +99,19 @@ class UserMongoToCloudant extends ServerProcess {
       // STEP 3: Copy all Pages, Blocks, Selections and BlockRelations belonging to the user
       //   to the group db
 
+      // get all Blocks for account
+      const _mongoBlocks = await Block.find({
+        account: _defaultAccountId,
+      })
+
+      /**
+       * mongo block id => mongo block
+       */
+      const _mongoBlockDict = {}
+      for (const _mongoBlock of _mongoBlocks) {
+        _mongoBlockDict[_mongoBlock._id] = _mongoBlock
+      }
+
       // get all Pages
       const _mongoPages = await Page.find({
         account: _defaultAccountId,
@@ -118,11 +131,16 @@ class UserMongoToCloudant extends ServerProcess {
           _blockToPageMap[block._id] = page._id
 
           // if this is a topic or source block, also add the page into the related block map
-          if (
-            block.type &&
-            block.type !== 'ENTRY' &&
-            !block.type.match(/^END_/)
-          ) {
+          if (block.type && block.type.match(/^END_/)) {
+            return
+          }
+          // lookup block type on block because it might be wrong on the page
+          const _mongoBlock = _mongoBlockDict[block._id]
+          if (!_mongoBlock) {
+            console.log(`⚠️  Mongo block id not found: ${block.id}`)
+            return
+          }
+          if (_mongoBlock.type !== 'ENTRY') {
             if (!_relatedBlockMap[block._id]) {
               _relatedBlockMap[block._id] = {}
             }
@@ -138,11 +156,6 @@ class UserMongoToCloudant extends ServerProcess {
       console.log(
         `ℹ️  Block relation count: ${Object.keys(_relatedBlockMap).length}`
       )
-
-      // get all Blocks for account
-      const _mongoBlocks = await Block.find({
-        account: _defaultAccountId,
-      })
 
       // insert the blocks in couch, generating new ids and keeping a map
       /**
