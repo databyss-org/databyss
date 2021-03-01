@@ -2,9 +2,27 @@ import { Group } from '@databyss-org/services/interfaces/Group'
 import { DocumentType, PageDoc } from '../interfaces'
 import { upsertImmediate, findOne, upsert } from '../utils'
 import { Block } from '../../../databyss-services/interfaces/Block'
+import { httpPost } from '@databyss-org/services/lib/requestApi'
 
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
+
+/*
+  creates a cloudant group database if no database exists
+  */
+
+const createCloudantGroupDatabase = async ({
+  groupId,
+  isPublic,
+}: {
+  groupId: string
+  isPublic: boolean
+}) => {
+  await httpPost(`/cloudant/groups`, {
+    // TODO: this should not have to be turned to lowercase
+    data: { groupId, isPublic },
+  })
+}
 
 const addGroupToDocument = (groupId: string, document: any) => {
   // add groupId to page array
@@ -94,4 +112,7 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     _id: _data._id,
     doc: _data,
   })
+
+  // create cloudant db
+  await createCloudantGroupDatabase({ groupId: _data._id, isPublic: true })
 }

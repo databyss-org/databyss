@@ -1,4 +1,4 @@
-import { uid } from '@databyss-org/data/lib/uid'
+import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { BlockType, Document } from '@databyss-org/services/interfaces'
 import { Block, Selection } from './'
 
@@ -17,7 +17,7 @@ export class Page implements PageHeader {
   constructor(id?: string) {
     const _selectionId = uid()
     const _firstBlockId = uid()
-    this._id = id || uid()
+    this._id = id || uidlc()
     this.selection = {
       anchor: {
         index: 0,

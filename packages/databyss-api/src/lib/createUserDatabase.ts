@@ -68,9 +68,9 @@ export const initializeNewPage = async ({
   }))
 }
 
-export const createGroupId = async () => {
+export const createGroupId = async (id?: string) => {
   // TODO: fix this so its not 'any'
-  const _id: string = uidlc()
+  const _id: string = id || uidlc()
   const Groups: any = await cloudant.db.use('groups')
   await Groups.insert({
     name: 'untitled',
@@ -88,16 +88,16 @@ export const createGroupDatabase = async (
   // database are not allowed to start with a number
   let _db
   try {
-    await cloudant.db.get(`g_${id}`)
-    _db = await cloudant.db.use<any>(`g_${id}`)
+    await cloudant.db.get(id)
+    _db = await cloudant.db.use<any>(id)
     return _db
   } catch (err) {
     if (err.error !== 'not_found') {
       throw err
     }
-    await cloudant.db.create(`g_${id}`)
+    await cloudant.db.create(id)
     // add design docs to sever
-    _db = await cloudant.db.use<any>(`g_${id}`)
+    _db = await cloudant.db.use<any>(id)
     await updateDesignDoc({ db: _db })
     return _db
   }
@@ -106,7 +106,7 @@ export const createGroupDatabase = async (
 const getSecurity = (groupId: string): Promise<{ [key: string]: string[] }> =>
   new Promise((resolve, reject) => {
     // get group db
-    const groupDb: any = cloudant.db.use(`g_${groupId}`)
+    const groupDb: any = cloudant.db.use(groupId)
     let security: { [key: string]: string[] } = {}
 
     // get security object if it exists
@@ -121,7 +121,10 @@ const getSecurity = (groupId: string): Promise<{ [key: string]: string[] }> =>
     })
   })
 
-const setSecurity = (groupId: string): Promise<CredentialResponse> =>
+export const setSecurity = (
+  groupId: string,
+  isPublic?: boolean
+): Promise<CredentialResponse> =>
   new Promise((resolve, reject) => {
     const _credentials = {
       dbKey: '',
@@ -134,12 +137,16 @@ const setSecurity = (groupId: string): Promise<CredentialResponse> =>
         reject(err)
       }
       // gets security dictionary
-      const security = await getSecurity(groupId)
+      let security = await getSecurity(groupId)
       // TODO: use group schema to create typescript interface
-      const groupDb: any = cloudant.db.use(`g_${groupId}`)
+      const groupDb: any = cloudant.db.use(groupId)
 
       // define permissions for new credentials
-      security[api.key] = ['_reader', '_writer', '_replicator']
+      if (!isPublic) {
+        security[api.key] = ['_reader', '_writer', '_replicator']
+      } else {
+        security = { nobody: ['_reader', '_replicator'] }
+      }
 
       await groupDb.set_security(security, (err: any) => {
         if (err) {
@@ -147,7 +154,7 @@ const setSecurity = (groupId: string): Promise<CredentialResponse> =>
         }
         _credentials.dbKey = api.key
         _credentials.dbPassword = api.password
-        _credentials.groupId = groupId
+        _credentials.groupId = groupId.substr(2)
 
         resolve(_credentials)
       })
@@ -183,7 +190,7 @@ export const addCredentialsToGroupId = async ({
   userId: string
 }) => {
   // set user as GROUP_ADMIN and return credentials
-  const response = await setSecurity(groupId)
+  const response = await setSecurity(`g_${groupId}`)
   // add the user session to groups
   await addSessionToGroup(userId, response)
 
@@ -201,10 +208,10 @@ export const createUserDatabaseCredentials = async (
     groupId = await createGroupId()
 
     // creates a database if not yet defined
-    const _db = await createGroupDatabase(groupId)
+    const _db = await createGroupDatabase(`g_${groupId}`)
     // add user preferences to user database
 
-    const defaultPageId = uid()
+    const defaultPageId = uidlc()
     const _userPreferences: UserPreference = {
       _id: 'user_preference',
       $type: DocumentType.UserPreferences,

@@ -1,10 +1,28 @@
 import express from 'express'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
+import auth from '../../middleware/auth'
 import { UnauthorizedError } from '../../lib/Errors'
+import createSharedGroupDatabase from './../../lib/createSharedGroupDatabase'
 
 const router = express.Router()
 
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
+
+// @route    POST api/cloudant/groups
+// @desc     creates a database for shared groups
+// @access   private
+router.post('/groups', auth, async (req, res) => {
+  // get user id
+  const _user = req.user
+  console.log('USER', _user)
+  const { groupId, isPublic } = req.body.data
+  // TODO: only user who created the request should be able to also delete this database
+  if (isPublic) {
+    await createSharedGroupDatabase(groupId)
+  }
+
+  return res.status(200).send()
+})
 
 // @route    DELETE api/cloudant/
 // @desc     delete all user database, for use in tests only

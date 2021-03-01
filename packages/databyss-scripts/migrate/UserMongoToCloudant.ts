@@ -88,7 +88,7 @@ class UserMongoToCloudant extends ServerProcess {
       const _defaultGroupId = await createGroupId()
       const _couchGroupName = `g_${_defaultGroupId}`
       console.log(`⏳ Create group: ${_couchGroupName}`)
-      await createGroupDatabase(_defaultGroupId)
+      await createGroupDatabase(`g_${_defaultGroupId}`)
       console.log(`✅ Group created: ${_defaultGroupId}`)
       const _groupDb = await cloudant.db.use<any>(_couchGroupName)
       const _mongoAccount: any = await Account.findOne({
