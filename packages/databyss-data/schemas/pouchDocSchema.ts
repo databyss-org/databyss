@@ -39,6 +39,12 @@ export const pouchDocSchema: JSONSchema4 = {
     belongsToGroup: {
       type: 'string',
     },
+    sharedWithGroups: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    },
   },
   required: ['_id', '$type', 'createdAt', 'belongsToGroup'],
 }

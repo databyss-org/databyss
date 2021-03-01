@@ -3,4 +3,5 @@ import { Group } from '../interfaces'
 
 export const UNTITLED_NAME = 'untitled collection'
 
-export const saveGroup = (group: Group) => setGroup(group)
+export const saveGroup = (group: Group, pageId?: string) =>
+  setGroup(group, pageId)

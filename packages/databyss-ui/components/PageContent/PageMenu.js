@@ -215,7 +215,7 @@ const PageMenu = () => {
   const addPageToNewCollection = () => {
     const _group = new Group('untitled collection')
     _group.pages = [params]
-    saveGroup(_group)
+    saveGroup(_group, params)
     navigate(`/collections/${_group._id}`)
   }
 
@@ -227,7 +227,7 @@ const PageMenu = () => {
     const addPageToGroups = (groupId) => {
       const _group = groups[groupId]
       _group.pages = _group.pages.concat(params)
-      saveGroup(_group)
+      saveGroup(_group, params)
       navigate(`/collections/${groupId}`)
     }
 

@@ -68,7 +68,11 @@ export const GroupFields = ({ group }: { group: Group }) => {
           <GroupSection title="Pages" flexGrow={1} flexBasis={1}>
             <View theme={darkTheme} flexGrow={1}>
               <ValueListItem path="pages">
-                <PageDropzone bg="background.2" height="100%" />
+                <PageDropzone
+                  bg="background.2"
+                  height="100%"
+                  groupId={_values._id}
+                />
               </ValueListItem>
             </View>
           </GroupSection>
