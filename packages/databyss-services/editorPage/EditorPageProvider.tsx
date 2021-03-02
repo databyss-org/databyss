@@ -173,9 +173,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         getPublicAccount,
       }}
     >
-      <PageReplicator pageId={pageId}>
-        {React.cloneElement(React.Children.only(children), { id: 'pageId' })}
-      </PageReplicator>
+      <PageReplicator pageId={pageId}>{children}</PageReplicator>
     </EditorPageContext.Provider>
   )
 }
