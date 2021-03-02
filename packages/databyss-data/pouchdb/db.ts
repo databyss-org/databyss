@@ -19,6 +19,7 @@ import {
 import {
   getPouchSecret,
   getDbCredentialsFromLocal,
+  getDefaultGroup,
 } from '@databyss-org/services/session/clientStorage'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
@@ -34,7 +35,7 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 
 interface DbRef {
-  current: PouchDB.Database<any> | null
+  current: { [key: string]: PouchDB.Database<any> }
 }
 
 declare global {
@@ -49,13 +50,14 @@ const getPouchDb = (groupId: string) =>
   })
 
 export const dbRef: DbRef = {
-  current: null,
+  current: {},
 }
 
 // try to load pouch_secrets from local storage to init db
-const _secrets = getPouchSecret()
-if (_secrets) {
-  dbRef.current = getPouchDb(Object.keys(_secrets)[0])
+// const _secrets = getPouchSecret()
+const defaultGroup = getDefaultGroup()
+if (defaultGroup) {
+  dbRef.current[defaultGroup] = getPouchDb(defaultGroup)
 }
 
 export const areIndexBuilt = {
@@ -184,9 +186,11 @@ export const replicateDbFromRemote = ({
         password: _cred.dbPassword,
       },
     }
-    dbRef.current = getPouchDb(groupId)
-    dbRef.current.replicate
-      .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
+    dbRef.current[groupId] = getPouchDb(groupId)
+    dbRef.current[groupId].replicate
+      .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
+        ...opts,
+      })
       .on('complete', () => resolve())
       .on('error', (err) => reject(err))
   })
@@ -219,8 +223,8 @@ export const syncPouchDb = ({
     },
   }
 
-  dbRef
-    .current!.replicate.to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
+  dbRef.current[groupId].replicate
+    .to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
       ...opts,
       // do not replciate design docs
       filter: (doc) => !doc._id.includes('design/'),
@@ -245,18 +249,19 @@ export const syncPouchDb = ({
       }
     })
 
-  dbRef
-    .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
+  dbRef.current[groupId].replicate
+    .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
   // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
 }
 
 export const resetPouchDb = async () => {
-  if (dbRef.current?.destroy) {
-    await dbRef.current.destroy()
-  }
+  const _dbs = Object.keys(dbRef.current)
 
-  dbRef.current = null
+  _dbs.forEach((_db) => {
+    dbRef.current[_db].destroy()
+    delete dbRef.current[_db]
+  })
 }
 
 export const pouchDataValidation = (data) => {

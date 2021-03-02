@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
+import { getDefaultGroup } from '@databyss-org/services/session/clientStorage'
+
 import { dbRef } from '../db'
 import { DocumentArrayToDict } from './utils'
 
@@ -19,6 +21,8 @@ export const useDocuments = <T extends Document>(
   selector: PouchDB.Find.Selector,
   options: UseDocumentsOptions = { enabled: true }
 ) => {
+  const defaultGroup = getDefaultGroup()
+
   const queryClient = useQueryClient()
   const queryOptions: QueryOptions = {
     includeIds: options.includeIds,
@@ -40,8 +44,8 @@ export const useDocuments = <T extends Document>(
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) =>
         // console.log('useDocuments.fetch', selector)
-        dbRef
-          .current!.find({ selector })
+        dbRef.current[defaultGroup!]
+          .find({ selector })
           .then((res) => resolve(DocumentArrayToDict(res.docs)))
           .catch((err) => reject(err))
       ),
@@ -52,11 +56,12 @@ export const useDocuments = <T extends Document>(
 
   useEffect(() => {
     // console.log('useDocuments.subscribe', queryKey, selector)
+
     if (subscriptionDict[selectorString]) {
       return
     }
-    subscriptionDict[selectorString] = dbRef.current
-      ?.changes({
+    subscriptionDict[selectorString] = dbRef.current[defaultGroup!]
+      .changes({
         since: 'now',
         live: true,
         include_docs: true,

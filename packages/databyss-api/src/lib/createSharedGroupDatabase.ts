@@ -11,7 +11,7 @@ const createSharedGroupDatabase = async (
 ) => {
   await createGroupId(groupId)
   await createGroupDatabase(groupId)
-  await setSecurity(groupId, true)
+  await setSecurity({ groupId, isPublic: true })
 }
 
 export default createSharedGroupDatabase

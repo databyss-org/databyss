@@ -1,7 +1,7 @@
 import { Users, Groups } from '@databyss-org/data/couchdb'
 import { User, Role } from '@databyss-org/data/interfaces'
 import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
-import { uid, uidlc } from '@databyss-org/data/lib/uid'
+import { uidlc } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 
 import { DocumentScope } from 'nano'
@@ -121,10 +121,13 @@ const getSecurity = (groupId: string): Promise<{ [key: string]: string[] }> =>
     })
   })
 
-export const setSecurity = (
-  groupId: string,
+export const setSecurity = ({
+  groupId,
+  isPublic,
+}: {
+  groupId: string
   isPublic?: boolean
-): Promise<CredentialResponse> =>
+}): Promise<CredentialResponse> =>
   new Promise((resolve, reject) => {
     const _credentials = {
       dbKey: '',
@@ -190,7 +193,7 @@ export const addCredentialsToGroupId = async ({
   userId: string
 }) => {
   // set user as GROUP_ADMIN and return credentials
-  const response = await setSecurity(`g_${groupId}`)
+  const response = await setSecurity({ groupId: `g_${groupId}` })
   // add the user session to groups
   await addSessionToGroup(userId, response)
 

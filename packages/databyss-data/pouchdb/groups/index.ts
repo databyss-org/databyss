@@ -1,8 +1,8 @@
 import { Group } from '@databyss-org/services/interfaces/Group'
+import { httpPost } from '@databyss-org/services/lib/requestApi'
 import { DocumentType, PageDoc } from '../interfaces'
 import { upsertImmediate, findOne, upsert } from '../utils'
 import { Block } from '../../../databyss-services/interfaces/Block'
-import { httpPost } from '@databyss-org/services/lib/requestApi'
 
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
