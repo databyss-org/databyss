@@ -43,7 +43,6 @@ export const getDefaultGroup = () => {
     let secretDict = localStorage.getItem('pouch_secrets')
     secretDict = JSON.parse(secretDict)
     Object.keys(secretDict).forEach((k) => {
-      console.log(secretDict[k])
       if (secretDict[k].defaultAccount) {
         groupId = k
       }

@@ -24,7 +24,7 @@ import {
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { DocumentType } from './interfaces'
-import { searchText } from './utils'
+import { searchText, findOne, findAll } from './utils'
 
 const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
@@ -45,7 +45,7 @@ declare global {
 }
 
 const getPouchDb = (groupId: string) =>
-  new PouchDB(`g_${groupId}`, {
+  new PouchDB(groupId, {
     auto_compaction: true,
   })
 
@@ -57,7 +57,7 @@ export const dbRef: DbRef = {
 // const _secrets = getPouchSecret()
 const defaultGroup = getDefaultGroup()
 if (defaultGroup) {
-  dbRef.current[defaultGroup] = getPouchDb(defaultGroup)
+  dbRef.current[defaultGroup] = getPouchDb(`g_${defaultGroup}`)
 }
 
 export const areIndexBuilt = {
@@ -186,7 +186,7 @@ export const replicateDbFromRemote = ({
         password: _cred.dbPassword,
       },
     }
-    dbRef.current[groupId] = getPouchDb(groupId)
+    dbRef.current[groupId] = getPouchDb(`g_${groupId}`)
     dbRef.current[groupId].replicate
       .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
         ...opts,
@@ -253,6 +253,43 @@ export const syncPouchDb = ({
     .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
   // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
+
+  findAll({ $type: DocumentType.Group }).then((res) =>
+    console.log('all groups', res)
+  )
+
+  // add new group listener
+  dbRef.current[groupId!]
+    .changes({
+      since: 'now',
+      live: true,
+      include_docs: true,
+      selector: { $type: DocumentType.Group },
+    })
+    .on('change', (change) => {
+      // if new group has been added, kick of replication for new group
+      const _id = change.doc._id
+      if (!dbRef.current[_id]) {
+        // kick off shared group replication
+        dbRef.current[_id] = getPouchDb(_id)
+
+        dbRef.current[groupId].replicate.to(dbRef.current[_id], {
+          live: true,
+          retry: true,
+          // do not replciate design docs or documents that dont include the page
+          filter: (doc) => {
+            if (!doc?.sharedWithGroups) {
+              return false
+            }
+            const _isSharedWithGroup = doc?.sharedWithGroups.includes(_id)
+            if (!_isSharedWithGroup) {
+              return false
+            }
+            return !doc._id.includes('design/')
+          },
+        })
+      }
+    })
 }
 
 export const resetPouchDb = async () => {

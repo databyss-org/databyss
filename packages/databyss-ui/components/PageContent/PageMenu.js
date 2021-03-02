@@ -224,6 +224,7 @@ const PageMenu = () => {
       (group) => !!group.name && !group.pages.includes(params)
     )
 
+    // todo: make this singular
     const addPageToGroups = (groupId) => {
       const _group = groups[groupId]
       _group.pages = _group.pages.concat(params)
