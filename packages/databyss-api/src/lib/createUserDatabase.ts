@@ -148,7 +148,7 @@ export const setSecurity = ({
       if (!isPublic) {
         security[api.key] = ['_reader', '_writer', '_replicator']
       } else {
-        security = { nobody: ['_reader', '_replicator'] }
+        security = { nobody: ['_reader', '_writer', '_replicator'] }
       }
 
       await groupDb.set_security(security, (err: any) => {

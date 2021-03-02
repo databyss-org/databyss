@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { createContext, useContextSelector } from 'use-context-selector'
 import savePatchBatch from '@databyss-org/data/pouchdb/pages/lib/savePatchBatch'
 import { setPublicPage } from '@databyss-org/data/pouchdb/groups'
+import { useParams } from '@databyss-org/ui/components/Navigation/NavigationProvider'
 import createReducer from '../lib/createReducer'
 import reducer, { initialState as _initState } from './reducer'
 import { ResourcePending } from '../interfaces/ResourcePending'
@@ -12,6 +13,7 @@ import {
   PatchBatch,
   ResourceResponse,
 } from '../interfaces'
+import { PageReplicator } from './PageReplicator'
 
 import * as actions from './actions'
 
@@ -52,6 +54,7 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
 }: PropsType) => {
   const refDictRef = useRef<RefDict>({})
   const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
+  const { id: pageId } = useParams()
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
@@ -170,7 +173,9 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
         getPublicAccount,
       }}
     >
-      {children}
+      <PageReplicator pageId={pageId}>
+        {React.cloneElement(React.Children.only(children), { id: 'pageId' })}
+      </PageReplicator>
     </EditorPageContext.Provider>
   )
 }

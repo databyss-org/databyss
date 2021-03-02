@@ -18,7 +18,7 @@ import {
   IndexPageContent,
   SearchContent,
 } from '@databyss-org/ui/modules'
-import { EditorPageProvider } from '@databyss-org/services'
+import { EditorPageProvider, PageReplicator } from '@databyss-org/services'
 
 const queryClient = new QueryClient()
 
@@ -82,8 +82,8 @@ const Private = () => {
             <Router>
               <AppView path="/:accountId">
                 <NotFoundRedirect default />
-                <EditorPageProvider path="pages">
-                  <PageContent path=":id" />
+                <EditorPageProvider path="pages/:id">
+                  <PageContent default />
                 </EditorPageProvider>
                 <SearchContent path="search/:query" />
                 <GroupDetail path="collections/:id" />
