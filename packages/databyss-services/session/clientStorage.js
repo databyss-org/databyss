@@ -168,7 +168,7 @@ export const localStorageHasSession = async () => {
   if (token && _userSession) {
     session = {
       token,
-      userId: _userSession._id,
+      userId: _userSession.userId,
       email: _userSession.email,
       defaultPageId: _userSession.groups[0].defaultPageId,
       defaultGroupId: _userSession.belongsToGroup,

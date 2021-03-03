@@ -1,5 +1,6 @@
 // import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import {
+  CredentialResponse,
   createGroupId,
   createGroupDatabase,
   setSecurity,
@@ -8,10 +9,11 @@ import {
 const createSharedGroupDatabase = async (
   groupId: string
   // userId: string
-) => {
+): Promise<CredentialResponse> => {
   await createGroupId(groupId)
   await createGroupDatabase(groupId)
-  await setSecurity({ groupId, isPublic: true })
+  const credentials = await setSecurity({ groupId, isPublic: true })
+  return credentials
 }
 
 export default createSharedGroupDatabase

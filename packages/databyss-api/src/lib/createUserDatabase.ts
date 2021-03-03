@@ -13,7 +13,7 @@ import {
   PageDoc,
 } from '../../../databyss-data/pouchdb/interfaces'
 
-interface CredentialResponse {
+export interface CredentialResponse {
   dbKey: string
   dbPassword: string
   groupId: string
@@ -140,16 +140,20 @@ export const setSecurity = ({
         reject(err)
       }
       // gets security dictionary
-      let security = await getSecurity(groupId)
+      const security = await getSecurity(groupId)
       // TODO: use group schema to create typescript interface
       const groupDb: any = cloudant.db.use(groupId)
 
       // define permissions for new credentials
-      if (!isPublic) {
-        security[api.key] = ['_reader', '_writer', '_replicator']
+
+      // if page is public, allow read and replication permission
+      if (isPublic) {
+        security.nobody = ['_reader', '_replicator']
       } else {
-        security = { nobody: ['_reader', '_writer', '_replicator'] }
+        security.nobody = []
       }
+
+      security[api.key] = ['_reader', '_writer', '_replicator']
 
       await groupDb.set_security(security, (err: any) => {
         if (err) {

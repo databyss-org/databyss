@@ -14,14 +14,15 @@ export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 router.post('/groups', auth, async (req, res) => {
   // get user id
   const _user = req.user
-  console.log('USER', _user)
   const { groupId, isPublic } = req.body.data
   // TODO: only user who created the request should be able to also delete this database
+
+  let credentials
   if (isPublic) {
-    await createSharedGroupDatabase(groupId)
+    credentials = await createSharedGroupDatabase(groupId)
   }
 
-  return res.status(200).send()
+  return res.json({ data: { credentials } }).status(200)
 })
 
 // @route    DELETE api/cloudant/

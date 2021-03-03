@@ -3,6 +3,7 @@ import { httpPost } from '@databyss-org/services/lib/requestApi'
 import { DocumentType, PageDoc } from '../interfaces'
 import { upsertImmediate, findOne, upsert } from '../utils'
 import { Block } from '../../../databyss-services/interfaces/Block'
+import { setPouchSecret } from '@databyss-org/services/session/clientStorage'
 
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
@@ -18,10 +19,11 @@ const createCloudantGroupDatabase = async ({
   groupId: string
   isPublic: boolean
 }) => {
-  await httpPost(`/cloudant/groups`, {
+  const res = await httpPost(`/cloudant/groups`, {
     // TODO: this should not have to be turned to lowercase
     data: { groupId, isPublic },
   })
+  return res.data
 }
 
 const addGroupToDocument = (groupId: string, document: any) => {
@@ -114,5 +116,11 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
   })
 
   // create cloudant db
-  await createCloudantGroupDatabase({ groupId: _data._id, isPublic: true })
+  // returns credentials from public page
+  const _credentials = await createCloudantGroupDatabase({
+    groupId: _data._id,
+    isPublic: true,
+  })
+  // add credentials to local storage
+  setPouchSecret(Object.values(_credentials))
 }
