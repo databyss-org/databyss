@@ -10,7 +10,7 @@ import { findAll } from '../../utils'
 
 const getAuthors = async (): Promise<Author[] | ResourceNotFoundError> => {
   const _sources: SourceCitationHeader[] = await findAll({
-    $type: DocumentType.Block,
+    doctype: DocumentType.Block,
     query: {
       type: BlockType.Source,
     },
@@ -28,7 +28,7 @@ const getAuthors = async (): Promise<Author[] | ResourceNotFoundError> => {
     // const isInPages: string[] = []
     // // returns all pages where source id is found in element id
     // const _response = await findAll({
-    //   $type: DocumentType.Page,
+    //   doctype: DocumentType.Page,
     //   query: {
     //     blocks: {
     //       $elemMatch: {

@@ -8,7 +8,7 @@ export const useBlocks = (
 ) => {
   const query = useDocuments<Block>(
     {
-      $type: DocumentType.Block,
+      doctype: DocumentType.Block,
       type: blockType,
     },
     options

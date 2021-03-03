@@ -33,7 +33,7 @@ export const IndexResults = ({
 
   // returns all blocks
   const _blocksRes = useDocuments<Block>({
-    $type: DocumentType.Block,
+    doctype: DocumentType.Block,
   })
 
   const pagesRes = usePages()

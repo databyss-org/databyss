@@ -58,7 +58,7 @@ const PageBody = ({
     const _nextBlocks = normalizePage(value.nextState).blocks
     const { _id } = value.nextState.pageHeader
     const _page = { blocks: _nextBlocks, _id }
-    upsert({ $type: DocumentType.Page, _id: _page._id, doc: _page })
+    upsert({ doctype: DocumentType.Page, _id: _page._id, doc: _page })
   }
 
   const render = () => {

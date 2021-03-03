@@ -11,7 +11,7 @@ const populatePage = async (
 ): Promise<Page | ResourceNotFoundError> => {
   // TODO: wrap function in error handler
   const _page: PageDoc | null = await findOne({
-    $type: DocumentType.Page,
+    doctype: DocumentType.Page,
     query: {
       _id,
     },
@@ -23,7 +23,7 @@ const populatePage = async (
   }
   // load selection
   const _selection: Selection | null = await findOne({
-    $type: DocumentType.Selection,
+    doctype: DocumentType.Selection,
     query: {
       _id: _page.selection,
     },
@@ -34,7 +34,7 @@ const populatePage = async (
   const _blocks: Block[] = await Promise.all(
     _page.blocks.map(async (data) => {
       const _block: Block | null = await findOne({
-        $type: DocumentType.Block,
+        doctype: DocumentType.Block,
         query: {
           _id: data._id,
         },

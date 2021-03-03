@@ -4,7 +4,7 @@ import { findAll } from '../../utils'
 
 const fetchAllPages = async (): Promise<PageDoc[] | ResourceNotFoundError> => {
   const _pages = await findAll({
-    $type: DocumentType.Page,
+    doctype: DocumentType.Page,
     useIndex: 'fetch-all',
   })
 

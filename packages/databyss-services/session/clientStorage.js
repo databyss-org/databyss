@@ -54,7 +54,7 @@ export const setDefaultPageId = async (value) => {
 
   // replace default page id on correct group for user
   const _result = await findOne({
-    $type: DocumentType.UserPreferences,
+    doctype: DocumentType.UserPreferences,
     query: { _id: 'user_preference' },
   })
 
@@ -66,7 +66,7 @@ export const setDefaultPageId = async (value) => {
 
     // update the group property with proper default page id
     await upsert({
-      $type: DocumentType.UserPreferences,
+      doctype: DocumentType.UserPreferences,
       _id: 'user_preference',
       doc: { groups: _groups },
     })
@@ -102,12 +102,12 @@ export const deletePouchDbs = async () => {
 
 export const setUserSession = async (session) => {
   await upsert({
-    $type: DocumentType.UserPreferences,
+    doctype: DocumentType.UserPreferences,
     _id: 'user_preferences',
     doc: _.pick(session, [
       '_id',
       'token',
-      '$type',
+      'doctype',
       'userId',
       'email',
       'defaultGroupId',

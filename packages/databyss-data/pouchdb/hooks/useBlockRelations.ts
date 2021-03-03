@@ -8,7 +8,7 @@ export const useBlockRelations = (
   selector: PouchDB.Find.Selector = {}
 ) => {
   const query = useDocuments<BlockRelation>({
-    $type: DocumentType.BlockRelation,
+    doctype: DocumentType.BlockRelation,
     ...(blockType
       ? {
           blockType,
