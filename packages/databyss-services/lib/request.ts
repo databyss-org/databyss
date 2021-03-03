@@ -1,4 +1,3 @@
-import packageJson from '../package.json'
 import {
   ResourceNotFoundError,
   NotAuthorizedError,
@@ -8,9 +7,9 @@ import {
   UnexpectedServerError,
 } from '../interfaces'
 
-const FETCH_TIMEOUT = process.env.FETCH_TIMEOUT
+const FETCH_TIMEOUT = process.env.FETCH_TIMEOUT!
 
-function checkStatus(response) {
+function checkStatus(response: Response) {
   if (response.status >= 200 && response.status < 300) {
     return response
   }
@@ -29,8 +28,10 @@ function checkStatus(response) {
   throw new UnexpectedServerError(response.statusText, response)
 }
 
-function parseResponse(responseIsJson) {
-  if (responseIsJson) {
+function parseResponse(
+  responseAsJson?: boolean
+): (response: Response) => Promise<any> {
+  if (responseAsJson) {
     return (response) => response.json()
   }
   return (response) =>
@@ -39,10 +40,22 @@ function parseResponse(responseIsJson) {
       : response.text()
 }
 
-function request(uri, options = {}, responseIsJson) {
-  const { timeout, ..._options } = options
+export interface RequestOptions extends RequestInit {
+  /**
+   * Force response parsing to JSON.
+   * If false, only parse as JSON if the Content-Type header is "json"
+   */
+  responseAsJson?: boolean
+  /**
+   * Number of MS to wait for a response from the server before timing out
+   */
+  timeout?: number
+}
+
+function request(uri, options: RequestOptions = {}) {
+  const { timeout, responseAsJson, ..._options } = options
   const _controller = new AbortController()
-  const _timeoutDuration = timeout || FETCH_TIMEOUT
+  const _timeoutDuration = timeout || parseInt(FETCH_TIMEOUT, 10)
   const _timeoutId = setTimeout(() => {
     _controller.abort()
     throw new NetworkUnavailableError(
@@ -59,15 +72,11 @@ function request(uri, options = {}, responseIsJson) {
       return response
     })
     .then(checkStatus)
-    .then(parseResponse(responseIsJson))
+    .then(parseResponse(responseAsJson))
 }
 
 export function getJson(uri) {
-  return request(uri, {}, true)
-}
-
-export function addClientVersionQs(uri) {
-  return `${uri}?clientVersion=${packageJson.version}`
+  return request(uri, { responseAsJson: true })
 }
 
 export default request
