@@ -188,7 +188,7 @@ class UserMongoToCloudant extends ServerProcess {
         _blockTypeMap[_mongoBlock._id] = _mongoBlock.type
 
         const _couchBlock = {
-          $type: DocumentType.Block,
+          doctype: DocumentType.Block,
           _id: _couchBlockId,
           type: _mongoBlock.type,
           text: {
@@ -265,7 +265,7 @@ class UserMongoToCloudant extends ServerProcess {
                   _range.length - 1
                 )
                 await _groupDb.insert({
-                  $type: DocumentType.Block,
+                  doctype: DocumentType.Block,
                   _id: _couchInlineBlockId,
                   type: 'TOPIC',
                   text: {
@@ -311,7 +311,7 @@ class UserMongoToCloudant extends ServerProcess {
           _couchSelectionId = uid()
           // insert the Selection in couch
           await _groupDb.insert({
-            $type: DocumentType.Selection,
+            doctype: DocumentType.Selection,
             _id: _couchSelectionId,
             focus: {
               index: _mongoSelection.focus.index,
@@ -326,7 +326,7 @@ class UserMongoToCloudant extends ServerProcess {
         }
 
         await _groupDb.insert({
-          $type: DocumentType.Page,
+          doctype: DocumentType.Page,
           _id: _couchPageId,
           name: _mongoPage.name,
           archive: _mongoPage.archive,
@@ -386,7 +386,7 @@ class UserMongoToCloudant extends ServerProcess {
         const _couchRelationId = `r_${_relationBlockId}`
 
         await _groupDb.insert({
-          $type: DocumentType.BlockRelation,
+          doctype: DocumentType.BlockRelation,
           _id: _couchRelationId,
           blockId: _relationBlockId,
           blockType: _blockTypeMap[_relationBlockMongoId],
@@ -405,7 +405,7 @@ class UserMongoToCloudant extends ServerProcess {
 
       await _groupDb.insert({
         _id: 'user_preference',
-        $type: DocumentType.UserPreferences,
+        doctype: DocumentType.UserPreferences,
         userId: _couchUserId,
         email: _mongoUser.email,
         defaultGroupId: _defaultGroupId,

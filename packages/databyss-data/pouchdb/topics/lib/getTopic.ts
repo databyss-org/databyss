@@ -7,7 +7,7 @@ const getTopic = async (
   _id: string
 ): Promise<Topic | ResourceNotFoundError> => {
   const _topic: Topic | null = await findOne({
-    $type: DocumentType.Block,
+    doctype: DocumentType.Block,
     query: {
       type: BlockType.Topic,
       _id,

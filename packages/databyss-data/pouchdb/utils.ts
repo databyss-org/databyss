@@ -14,7 +14,7 @@ export const addTimeStamp = (doc: any): any => {
 }
 
 interface Patch {
-  $type: string
+  doctype: string
   _id: string
   doc: any
 }
@@ -28,23 +28,23 @@ export const upQdict: upsertQueueRef = {
 }
 
 export const upsert = async ({
-  $type,
+  doctype,
   _id,
   doc,
 }: {
-  $type: DocumentType
+  doctype: DocumentType
   _id: string
   doc: any
 }) => {
-  upQdict.current.push({ ...doc, _id, $type })
+  upQdict.current.push({ ...doc, _id, doctype })
 }
 
 export const findAll = async ({
-  $type,
+  doctype,
   query,
   useIndex,
 }: {
-  $type: DocumentType
+  doctype: DocumentType
   query?: any
   useIndex?: string
 }) => {
@@ -61,25 +61,25 @@ export const findAll = async ({
 
   const _response = await dbRef.current!.find({
     selector: {
-      $type,
+      doctype,
       ...query,
     },
     use_index: _useIndex,
   })
   if (_response?.warning) {
     console.log('ERROR', _response)
-    console.log($type, query)
+    console.log(doctype, query)
   }
 
   return _response.docs
 }
 
 export const findOne = async <T extends Document>({
-  $type,
+  doctype,
   query,
   useIndex,
 }: {
-  $type: DocumentType
+  doctype: DocumentType
   query: any
   useIndex?: string
 }): Promise<T | null> => {
@@ -96,7 +96,7 @@ export const findOne = async <T extends Document>({
 
   const _response = await dbRef.current!.find({
     selector: {
-      $type,
+      doctype,
       ...query,
     },
     use_index: _useIndex,
@@ -104,7 +104,7 @@ export const findOne = async <T extends Document>({
 
   if (_response?.warning) {
     console.log('ERROR', _response)
-    console.log($type, query)
+    console.log(doctype, query)
   }
 
   if (_response.docs.length) {
@@ -131,19 +131,19 @@ export const getDocument = async <T extends Document>(
 }
 
 export const replaceOne = async ({
-  $type,
+  doctype,
   query,
   doc,
 }: {
-  $type: DocumentType
+  doctype: DocumentType
   query: any
   doc: any
 }) => {
-  const res = await findOne({ $type, query })
+  const res = await findOne({ doctype, query })
   // if document doesnt exit, create a new one
   const _id = res?._id || uid()
   // replace document
-  await upsert({ $type, _id, doc })
+  await upsert({ doctype, _id, doc })
 }
 
 /*
@@ -174,7 +174,7 @@ export const searchText = async (query) => {
     fields: ['text.textValue'],
     include_docs: true,
     filter: (doc) =>
-      doc.type === BlockType.Entry && doc.$type === DocumentType.Block,
+      doc.type === BlockType.Entry && doc.doctype === DocumentType.Block,
     mm: `${_percentageToMatch}%`,
   })
 

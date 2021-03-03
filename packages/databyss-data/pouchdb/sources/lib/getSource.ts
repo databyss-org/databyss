@@ -12,7 +12,7 @@ const getSource = async (
   // get source and pages source exists in
 
   const _source: SourceCitationHeader | null = await findOne({
-    $type: DocumentType.Block,
+    doctype: DocumentType.Block,
     query: {
       type: BlockType.Source,
       _id,
@@ -31,7 +31,7 @@ const getSource = async (
   const isInPages: string[] = []
   // returns all pages where source id is found in element id
   const _pageResponse = await findAll({
-    $type: DocumentType.Page,
+    doctype: DocumentType.Page,
     query: {
       blocks: {
         $elemMatch: {
