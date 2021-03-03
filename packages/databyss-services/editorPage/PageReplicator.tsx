@@ -86,6 +86,7 @@ export const PageReplicator = ({
             // id is in cache without the `p_` prefix
             const creds = dbCache[gId.substr(2)]
             if (!creds) {
+              // credentials are not in local storage yet
               setTimeout(() => validate(), INTERVAL_TIME)
             } else {
               // credentials are in local
@@ -96,7 +97,7 @@ export const PageReplicator = ({
               })
                 .then(() => {
                   replicationStatusRef.current[group._id] = true
-                  // start replication
+                  // start replication with creds
                   startReplication({
                     groupId: gId,
                     dbKey: creds.dbKey,
@@ -109,6 +110,7 @@ export const PageReplicator = ({
                     setTimeout(() => validate(), INTERVAL_TIME)
                   }
                   if (err instanceof NotAuthorizedError) {
+                    // user does not have permission, do not retry
                     console.error('NOT AUTHORIZED')
                   }
                 })
