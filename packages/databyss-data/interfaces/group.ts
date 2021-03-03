@@ -13,4 +13,5 @@ export interface Group {
   name: string
   sessions: GroupSession[]
   defaultPageId: string
+  belongsToUserId: string
 }

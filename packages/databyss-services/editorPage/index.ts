@@ -24,3 +24,18 @@ export const deletePage = (id: string) => pouchDb.deletePage(id)
 
 export const setPagePublic = (id: string, bool: boolean, accountId: string) =>
   httpPost(`/pages/${id}/public/`, { data: { isPublic: bool, accountId } })
+
+export const validateGroupCredentials = ({
+  groupId,
+  dbKey,
+}: {
+  groupId: string
+  dbKey: string
+}) =>
+  httpPost(`/cloudant/groups/auth/${groupId}`, {
+    data: {
+      credentials: {
+        dbKey,
+      },
+    },
+  })

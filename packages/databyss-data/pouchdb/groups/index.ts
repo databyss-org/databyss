@@ -122,5 +122,6 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     isPublic: true,
   })
   // add credentials to local storage
+  console.log('CREDENTIALS from response', _credentials)
   setPouchSecret(Object.values(_credentials))
 }
