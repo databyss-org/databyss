@@ -68,11 +68,18 @@ export const initializeNewPage = async ({
   }))
 }
 
-export const createGroupId = async (id?: string) => {
+export const createGroupId = async ({
+  groupId,
+  userId,
+}: {
+  userId: string
+  groupId?: string
+}) => {
   // TODO: fix this so its not 'any'
-  const _id: string = id || uidlc()
+  const _id: string = groupId || uidlc()
   const Groups: any = await cloudant.db.use('groups')
   await Groups.insert({
+    belongsToUserId: userId,
     name: 'untitled',
     sessions: [],
     // TODO: cloudant does not allow uppercase for db names,
@@ -212,7 +219,7 @@ export const createUserDatabaseCredentials = async (
 
   // create new group if user does not have one
   if (!groupId) {
-    groupId = await createGroupId()
+    groupId = await createGroupId({ userId: user._id })
 
     // creates a database if not yet defined
     const _db = await createGroupDatabase(`g_${groupId}`)

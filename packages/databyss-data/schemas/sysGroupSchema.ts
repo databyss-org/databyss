@@ -30,6 +30,9 @@ export const sysGroupSchema: JSONSchema4 = {
     defaultPageId: {
       type: 'string',
     },
+    belongsToUserId: {
+      type: 'string',
+    },
     sessions: {
       type: 'array',
       items: {
@@ -55,7 +58,7 @@ export const sysGroupSchema: JSONSchema4 = {
       required: ['userId', 'dbkey', 'lastLoginAt', 'role'],
     },
   },
-  required: ['_id', 'name', 'sessions'],
+  required: ['_id', 'name', 'sessions', 'belongsToUserId'],
 }
 
 export default sysGroupSchema

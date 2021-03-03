@@ -13,13 +13,13 @@ export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 // @access   private
 router.post('/groups', auth, async (req, res) => {
   // get user id
-  const _user = req.user
+  const userId = req.user
   const { groupId, isPublic } = req.body.data
   // TODO: only user who created the request should be able to also delete this database
 
   let credentials
   if (isPublic) {
-    credentials = await createSharedGroupDatabase(groupId)
+    credentials = await createSharedGroupDatabase({ groupId, userId })
   }
 
   return res.json({ data: { credentials } }).status(200)
