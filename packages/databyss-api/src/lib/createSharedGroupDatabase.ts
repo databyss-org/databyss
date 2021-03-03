@@ -24,7 +24,8 @@ export const verifyDatabaseCredentials = async ({
 
       if (result.cloudant) {
         const creds = result.cloudant[dbKey]
-        if (creds.length > 2) {
+        if (creds.includes('_writer')) {
+          // see if user has _writer permissions
           resolve(true)
         }
       }

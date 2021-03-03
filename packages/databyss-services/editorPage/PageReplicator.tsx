@@ -1,22 +1,16 @@
 import React, { ReactNode, useEffect, useRef } from 'react'
 import PouchDB from 'pouchdb'
-import { dbRef, REMOTE_CLOUDANT_URL } from '@databyss-org/data/pouchdb/db'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
 import {
-  getDefaultGroup,
   getPouchSecret,
+  getDefaultGroup,
 } from '@databyss-org/services/session/clientStorage'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { validateGroupCredentials } from './index'
 import { ResourceNotFoundError, NotAuthorizedError } from '../interfaces/Errors'
+import { dbRef, REMOTE_CLOUDANT_URL } from '../../databyss-data/pouchdb/db'
 
 const INTERVAL_TIME = 3000
-
-interface CredentialValidation {
-  groupId: string
-  dbKey: string
-  dbPassword: string
-}
 
 export const PageReplicator = ({
   children,
@@ -25,14 +19,52 @@ export const PageReplicator = ({
   children: ReactNode
   pageId: string
 }) => {
-  const replicationsRef = useRef<{
-    [key: string]: PouchDB.Replication.Replication<any>
-  }>({})
+  const replicationsRef = useRef<PouchDB.Replication.Replication<any>[]>([])
 
   const replicationStatusRef = useRef<{ [key: string]: boolean }>({})
 
   // get the groups from react-query
   const groupsRes = useGroups()
+
+  const startReplication = ({
+    groupId,
+    dbKey,
+    dbPassword,
+  }: {
+    groupId: string
+    dbKey: string
+    dbPassword: string
+  }) => {
+    // set up page replication
+    const opts = {
+      live: true,
+      retry: true,
+      continuous: true,
+      auth: {
+        username: dbKey,
+        password: dbPassword,
+      },
+    }
+    const _defaultGroupId = getDefaultGroup()
+    const _replication = dbRef.current[_defaultGroupId!].replicate.to(
+      `${REMOTE_CLOUDANT_URL}/${groupId}`,
+      {
+        ...opts,
+        // do not replciate design docs or documents that dont include the page
+        filter: (doc) => {
+          if (!doc?.sharedWithGroups) {
+            return false
+          }
+          const _isSharedWithGroup = doc?.sharedWithGroups.includes(groupId)
+          if (!_isSharedWithGroup) {
+            return false
+          }
+          return !doc._id.includes('design/')
+        },
+      }
+    )
+    replicationsRef.current.push(_replication)
+  }
 
   // cancel the replications on unmount
   useEffect(() => {
@@ -41,8 +73,6 @@ export const PageReplicator = ({
       const groupsWithPage = Object.values(groupsRes.data!).filter((group) =>
         group.pages.includes(pageId)
       )
-
-      console.log('PageReplicator.groupsWithPage', groupsWithPage)
 
       groupsWithPage.forEach((group) => {
         // check if group is already replicating
@@ -67,7 +97,11 @@ export const PageReplicator = ({
                 .then(() => {
                   replicationStatusRef.current[group._id] = true
                   // start replication
-                  console.log('start', gId, 'CREDENTIALS', creds)
+                  startReplication({
+                    groupId: gId,
+                    dbKey: creds.dbKey,
+                    dbPassword: creds.dbPassword,
+                  })
                 })
                 .catch((err) => {
                   if (err instanceof ResourceNotFoundError) {
@@ -79,54 +113,18 @@ export const PageReplicator = ({
                   }
                 })
             }
-
-            // const res = await validateGroupCredentials()
-            // console.log('RESPONSE', res)
           }
           validate()
         }
-
-        // replicationStatusRef.current[group._id] = undefined
-        // const validate = async () => {
-        //   const res = await validateGroupCredentials()
-        //   console.log('RESPONSE', res)
-        // }
       })
-
-      // groupsWithPage.forEach((group) => {
-      //   // set up page replication
-      //   console.log('PageReplicator.replicate', group._id)
-      //   const _defaultGroupId = getDefaultGroup()
-      //   const _replication = dbRef.current[_defaultGroupId!].replicate.to(
-      //     `${REMOTE_CLOUDANT_URL}/${group._id}`,
-      //     {
-      //       live: true,
-      //       retry: false,
-      //       // do not replciate design docs or documents that dont include the page
-      //       filter: (doc) => {
-      //         if (!doc?.sharedWithGroups) {
-      //           return false
-      //         }
-      //         const _isSharedWithGroup = doc?.sharedWithGroups.includes(
-      //           group._id
-      //         )
-      //         if (!_isSharedWithGroup) {
-      //           return false
-      //         }
-      //         return !doc._id.includes('design/')
-      //       },
-      //     }
-      //   )
-      //   replicationsRef.current.push(_replication)
-      // })
     }
 
     return () => {
       // TODO: if switching pages, this doesnt get called
-      // replicationsRef.current.forEach((replication) => {
-      //   console.log('PageReplicator.cancelReplication', replication)
-      //   replication.cancel()
-      // })
+      replicationsRef.current.forEach((replication) => {
+        console.log('PageReplicator.cancelReplication', replication)
+        replication.cancel()
+      })
     }
   }, [groupsRes.isSuccess, JSON.stringify(groupsRes.data)])
 
