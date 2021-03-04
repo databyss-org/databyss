@@ -87,6 +87,7 @@ export const PageReplicator = ({
             const creds = dbCache[gId.substr(2)]
             if (!creds) {
               // credentials are not in local storage yet
+              // TODO: set up a server endpoint that creates new user credentials and adds them to local storage
               setTimeout(() => validate(), INTERVAL_TIME)
             } else {
               // credentials are in local
