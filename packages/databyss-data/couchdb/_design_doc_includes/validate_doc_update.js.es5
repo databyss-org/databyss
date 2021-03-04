@@ -22,10 +22,10 @@ function(newDoc) {
       BLOCK_RELATION: this.blockRelationSchema,
       USER_PREFERENCES: this.userPreferenceSchema
     }
-    if(newDoc.$type == 'BLOCK'){
+    if(newDoc.doctype == 'BLOCK'){
       schema = schemaMap[newDoc.type]
     } else {
-      schema = schemaMap[newDoc.$type]
+      schema = schemaMap[newDoc.doctype]
     }
   }
   // `this.schema &&` this will be removed when all schemas are implemented

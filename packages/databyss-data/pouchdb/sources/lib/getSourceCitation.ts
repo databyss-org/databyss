@@ -15,7 +15,7 @@ const getSourceCitation = async (
   styleId: string | undefined
 ): Promise<CitationResponse[] | ResourceNotFoundError> => {
   const _sources: SourceCitationHeader[] = await findAll({
-    $type: DocumentType.Block,
+    doctype: DocumentType.Block,
     query: {
       type: BlockType.Source,
     },
@@ -36,7 +36,7 @@ const getSourceCitation = async (
     // const isInPages: string[] = []
     // // returns all pages where source id is found in element id
     // const _response = await findAll({
-    //   $type: DocumentType.Page,
+    //   doctype: DocumentType.Page,
     //   query: {
     //     blocks: {
     //       $elemMatch: {
@@ -59,7 +59,7 @@ const getSourceCitation = async (
     // UNCOMMENT THIS IF adding block relations to `inPages` property`
     // const _blockRelationsResponse = await db.find({
     //   selector: {
-    //     $type: DocumentType.BlockRelation,
+    //     doctype: DocumentType.BlockRelation,
     //     relatedBlock: _source._id,
     //   },
     // })

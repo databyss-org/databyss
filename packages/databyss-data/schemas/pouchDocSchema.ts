@@ -24,7 +24,7 @@ export const pouchDocSchema: JSONSchema4 = {
     _id: {
       type: 'string',
     },
-    $type: {
+    doctype: {
       type: 'string',
     },
     createdAt: {
@@ -37,7 +37,7 @@ export const pouchDocSchema: JSONSchema4 = {
       type: 'boolean',
     },
   },
-  required: ['_id', '$type', 'createdAt'],
+  required: ['_id', 'doctype', 'createdAt'],
 }
 
 export default pouchDocSchema

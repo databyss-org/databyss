@@ -44,8 +44,8 @@ export const useSearchEntries = (searchQuery: string) => {
       })
       .on('change', (change) => {
         if (
-          change.doc?.$type === DocumentType.Block ||
-          change.doc?.$type === DocumentType.Page
+          change.doc?.doctype === DocumentType.Block ||
+          change.doc?.doctype === DocumentType.Page
         ) {
           queryClient.removeQueries(['searchEntries'])
         }
