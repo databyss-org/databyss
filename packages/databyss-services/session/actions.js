@@ -1,4 +1,7 @@
-import { replicateDbFromRemote } from '@databyss-org/data/pouchdb/db'
+import {
+  replicateDbFromRemote,
+  replicatePublicPage,
+} from '@databyss-org/data/pouchdb/db'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
 import { NotAuthorizedError } from '../interfaces'
@@ -11,6 +14,7 @@ import {
   CACHE_PUBLIC_SESSION,
   GET_USER_ACCOUNT,
   CACHE_USER_ACCOUNT,
+  CACHE_SESSION,
   LOGOUT,
   SET_DEFAULT_PAGE,
   SET_SESSION,
@@ -23,6 +27,7 @@ import {
   setAuthToken,
   setPouchSecret,
   getUserId,
+  setDefaultGroup,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
@@ -189,4 +194,25 @@ export const setSession = (session) => async (dispatch) => {
     type: SET_SESSION,
     payload: { session },
   })
+}
+
+export const isUnauthenticatedSession = async () => {
+  const path = window.location.pathname.split('/')
+  // get the page id
+  const pageId = path[3]
+  if (pageId) {
+    const groupId = `p_${pageId}`
+    // attempt page replication
+    const isPublic = await replicatePublicPage({
+      pageId: groupId,
+    })
+    if (!isPublic) {
+      await deletePouchDbs()
+      return false
+    }
+    // set the default group in local storage
+    setDefaultGroup(groupId)
+    return pageId
+  }
+  return false
 }

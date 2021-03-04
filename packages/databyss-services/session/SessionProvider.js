@@ -13,7 +13,8 @@ import createReducer from '../lib/createReducer'
 import reducer, { initialState } from './reducer'
 import { useServiceContext } from '../'
 import { localStorageHasSession } from './clientStorage'
-import { CACHE_SESSION } from './constants'
+import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
+import { isUnauthenticatedSession } from './actions'
 
 const useReducer = createReducer()
 
@@ -106,7 +107,6 @@ const SessionProvider = ({
           dispatch,
         })
 
-        // dispatch
         dispatch({
           type: CACHE_SESSION,
           payload: {
@@ -114,8 +114,18 @@ const SessionProvider = ({
           },
         })
       } else {
-        // pass 1: get session from API
-        getSession({ retry: true, code, email })
+        // if not logged in try to replicate the group database
+
+        const publicAccount = await isUnauthenticatedSession()
+        if (publicAccount) {
+          dispatch({
+            type: CACHE_PUBLIC_SESSION,
+            payload: { publicAccount },
+          })
+        } else {
+          // pass 1: get session from API
+          getSession({ retry: true, code, email })
+        }
       }
     }
 

@@ -40,14 +40,7 @@ export const getAuthToken = () => {
 export const getDefaultGroup = () => {
   let groupId
   try {
-    let secretDict = localStorage.getItem('pouch_secrets')
-    secretDict = JSON.parse(secretDict)
-    Object.keys(secretDict).forEach((k) => {
-      if (secretDict[k].defaultAccount) {
-        groupId = k
-      }
-    })
-    // TODO: add default property to secret dictionary
+    groupId = localStorage.getItem('default_group')
   } catch (err) {
     console.error('no default account found')
   }
@@ -115,6 +108,10 @@ export const deletePouchDbs = async () => {
   clearLocalStorage()
 }
 
+export const setDefaultGroup = (groupId) => {
+  localStorage.setItem('default_group', groupId)
+}
+
 export const setPouchSecret = (credentials) => {
   let keyMap = localStorage.getItem('pouch_secrets')
   if (!keyMap) {
@@ -124,16 +121,16 @@ export const setPouchSecret = (credentials) => {
   }
 
   credentials.forEach((g) => {
-    let defaultAccount = false
+    // let defaultAccount = false
     // if no default account in dictionary, set default account
     if (!Object.keys(keyMap).length) {
-      defaultAccount = true
+      setDefaultGroup(g.groupId)
     }
 
     keyMap[g.groupId] = {
       dbPassword: g.dbPassword,
       dbKey: g.dbKey,
-      defaultAccount,
+      // defaultAccount,
     }
   })
   localStorage.setItem('pouch_secrets', JSON.stringify(keyMap))

@@ -148,6 +148,31 @@ export const initiatePouchDbIndexes = async () => {
 }
 
 /*
+replicates public remote DB to local
+*/
+
+export const replicatePublicPage = ({ pageId }: { pageId: string }) =>
+  new Promise<boolean>((resolve, reject) => {
+    // for now we are getting the first credentials from local storage groups
+    const opts = {
+      retry: true,
+    }
+    dbRef.current[pageId] = getPouchDb(pageId)
+
+    console.log('ATTEMPTINGS')
+    dbRef.current[pageId].replicate
+      .from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
+        ...opts,
+      })
+      .on('complete', () => resolve(true))
+      .on('error', () => {
+        resolve(false)
+        // console.log('REJECT')
+        // reject(err)
+      })
+  })
+
+/*
 replicates remote DB to local
 */
 
