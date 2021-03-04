@@ -25,6 +25,7 @@ import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { DocumentType } from './interfaces'
 import { searchText, findOne, findAll } from './utils'
+import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
@@ -56,7 +57,8 @@ export const dbRef: DbRef = {
 // try to load pouch_secrets from local storage to init db
 // const _secrets = getPouchSecret()
 const defaultGroup = getDefaultGroup()
-if (defaultGroup) {
+const groupIdFromUrl = getAccountFromLocation()
+if (defaultGroup && (!groupIdFromUrl || groupIdFromUrl === defaultGroup)) {
   dbRef.current[defaultGroup] = getPouchDb(`g_${defaultGroup}`)
 }
 
