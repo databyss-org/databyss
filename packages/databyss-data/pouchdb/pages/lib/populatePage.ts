@@ -3,7 +3,7 @@ import { Block } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { getAtomicClosureText } from '@databyss-org/services/blocks'
 import { PageDoc, DocumentType } from '../../interfaces'
-import { findOne } from '../../utils'
+import { findOne, getDocument } from '../../utils'
 import { Selection } from '../../../../databyss-services/interfaces/Selection'
 
 const populatePage = async (
@@ -22,13 +22,13 @@ const populatePage = async (
     return new ResourceNotFoundError('page not found')
   }
   // load selection
-  const _selection: Selection | null = await findOne({
-    doctype: DocumentType.Selection,
-    query: {
-      _id: _page.selection,
-    },
-    useIndex: 'fetch-one',
-  })
+  const _selection: Selection | null = await getDocument(_page.selection)
+
+  // map block ids to load to an array
+  const _blockIds = _page.blocks
+    .map((_block) => !_block.type?.match(/^END_/) && _block._id)
+    .filter((_block) => !!_block)
+  console.log('populatePage.blockIds', _blockIds)
 
   // load blocks
   const _blocks: Block[] = await Promise.all(
@@ -51,6 +51,8 @@ const populatePage = async (
       return _block!
     })
   )
+
+  // TODO: load blocks in bulk
 
   // add to blocks and selection to page
   const _populatedPage: Page = {

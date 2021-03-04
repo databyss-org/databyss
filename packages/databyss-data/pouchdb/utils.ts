@@ -2,6 +2,7 @@ import EventEmitter from 'es-event-emitter'
 import { Document } from '@databyss-org/services/interfaces'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
+import { couchDbRef } from '../couchdb-client/couchdb'
 import { uid } from '../lib/uid'
 import { BlockType } from '../../databyss-services/interfaces/Block'
 
@@ -48,23 +49,30 @@ export const findAll = async ({
   query?: any
   useIndex?: string
 }) => {
-  let _useIndex
-  const _designDocResponse = await dbRef.current!.find({
-    selector: {
-      _id: `_design/${useIndex}`,
-    },
-  })
+  // let _useIndex
+  // const _designDocResponse = await dbRef.current!.find({
+  //   selector: {
+  //     _id: `_design/${useIndex}`,
+  //   },
+  // })
 
-  if (_designDocResponse.docs.length) {
-    _useIndex = useIndex
-  }
+  // if (_designDocResponse.docs.length) {
+  //   _useIndex = useIndex
+  // }
 
-  const _response = await dbRef.current!.find({
+  // const _response = await dbRef.current!.find({
+  //   selector: {
+  //     doctype,
+  //     ...query,
+  //   },
+  //   use_index: _useIndex,
+  // })
+
+  const _response = await couchDbRef.current!.find({
     selector: {
       doctype,
       ...query,
     },
-    use_index: _useIndex,
   })
   if (_response?.warning) {
     console.log('ERROR', _response)
@@ -83,23 +91,30 @@ export const findOne = async <T extends Document>({
   query: any
   useIndex?: string
 }): Promise<T | null> => {
-  let _useIndex
-  const _designDocResponse = await dbRef.current!.find({
-    selector: {
-      _id: `_design/${useIndex}`,
-    },
-  })
+  // let _useIndex
+  // const _designDocResponse = await dbRef.current!.find({
+  //   selector: {
+  //     _id: `_design/${useIndex}`,
+  //   },
+  // })
 
-  if (_designDocResponse.docs.length) {
-    _useIndex = useIndex
-  }
+  // if (_designDocResponse.docs.length) {
+  //   _useIndex = useIndex
+  // }
 
-  const _response = await dbRef.current!.find({
+  // const _response = await dbRef.current!.find({
+  //   selector: {
+  //     doctype,
+  //     ...query,
+  //   },
+  //   use_index: _useIndex,
+  // })
+
+  const _response = await couchDbRef.current!.find({
     selector: {
       doctype,
       ...query,
     },
-    use_index: _useIndex,
   })
 
   if (_response?.warning) {
@@ -121,7 +136,8 @@ export const getDocument = async <T extends Document>(
   id: string
 ): Promise<T | null> => {
   try {
-    return await dbRef.current?.get(id)
+    // return await dbRef.current?.get(id)
+    return await couchDbRef.current?.get(id)
   } catch (err) {
     if (err.name === 'not_found') {
       return null
@@ -213,7 +229,18 @@ export class QueueProcessor extends EventEmitter {
         const _upQdict = coallesceQ(upQdict.current)
         upQdict.current = []
         for (const _id of Object.keys(_upQdict)) {
-          await dbRef.current!.upsert(_id, (oldDoc) => {
+          // await dbRef.current!.upsert(_id, (oldDoc) => {
+          //   const _doc = {
+          //     ...oldDoc,
+          //     ...addTimeStamp({ ...oldDoc, ..._upQdict[_id] }),
+          //   }
+
+          //   // validate object before upsert
+          //   pouchDataValidation(_doc)
+
+          //   return _doc
+          // })
+          await couchDbRef.current!.upsert(_id, (oldDoc) => {
             const _doc = {
               ...oldDoc,
               ...addTimeStamp({ ...oldDoc, ..._upQdict[_id] }),

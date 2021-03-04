@@ -1,10 +1,10 @@
+import { ResourceNotFoundError } from '@databyss-org/services/interfaces'
 import {
   couchGet,
   couchPost,
-  requestCouch,
+  couchPut,
   RequestCouchOptions,
 } from '@databyss-org/services/lib/requestCouch'
-import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 
 interface CouchDbDict {
   [dbName: string]: CouchDb
@@ -21,18 +21,38 @@ export class CouchDb {
     return couchGet(`${this.dbName}/${docId}`, options)
   }
 
-  find(selector: any, options?: RequestCouchOptions) {
-    return couchPost(`${this.dbName}/_find`, { selector }, options)
+  // TODO: add TS defs for find request
+  find(request: any, options?: RequestCouchOptions) {
+    return couchPost(`${this.dbName}/_find`, request, options)
+  }
+
+  // TODO: add TS defs for upsert request
+  async upsert(
+    docId: string,
+    diffFn: (oldDoc: any) => any,
+    options?: RequestCouchOptions
+  ) {
+    let _oldDoc = {}
+    try {
+      _oldDoc = await this.get(docId, options)
+    } catch (err) {
+      if (!(err instanceof ResourceNotFoundError)) {
+        throw err
+      }
+    }
+    const _nextDoc = diffFn(_oldDoc)
+    return couchPut(`${this.dbName}/${docId}`, _nextDoc, options)
   }
 }
 
-const _dbName = `g_${getAccountFromLocation()}`
-export const couchDbDict: CouchDbDict = {
-  [_dbName]: new CouchDb(_dbName),
+export const couchDbDict: CouchDbDict = {}
+
+interface CouchDbRef {
+  current: CouchDb | null
 }
 
-export const couchDbRef = {
-  current: couchDbDict[_dbName],
+export const couchDbRef: CouchDbRef = {
+  current: null,
 }
 
 export const connect = (dbName: string) => {

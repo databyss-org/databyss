@@ -10,13 +10,21 @@ export interface RequestCouchOptions extends RequestOptions {
   authenticateAsGroupId?: string
 }
 
+interface QueuedRequest {
+  resolve: (value: any) => void
+  reject: (reason: any) => void
+  uri: string
+  options: RequestOptions
+}
+const requestQ: QueuedRequest[] = []
+
 /**
  * Wrapper for CouchDB HTTP calls that populates the authorization headers
  * and parses the response as JSON
  * @param path Raw path to the endpoint, appended to the host
  * @param options WHATWG fetch request options
  */
-export const requestCouch = async (
+export const requestCouch = (
   path: string,
   options: RequestCouchOptions = { headers: {} }
 ) => {
@@ -25,14 +33,26 @@ export const requestCouch = async (
   const _groupId = authenticateAsGroupId || Object.keys(_secrets)[0]
   const { dbKey: _username, dbPassword: _password } = _secrets[_groupId]
 
-  return request(`https://${process.env.CLOUDANT_HOST}/${path}`, {
+  const _uri = `https://${process.env.CLOUDANT_HOST}/${path}`
+  const _options = {
     ...options,
     headers: {
       ...options.headers,
       Authorization: `Basic ${Base64.btoa(`${_username}:${_password}`)}`,
     },
+  }
+  return new Promise((resolve, reject) => {
+    requestQ.push({ resolve, reject, uri: _uri, options: _options })
   })
 }
+
+setInterval(() => {
+  if (!requestQ.length) {
+    return
+  }
+  const _req = requestQ.shift()!
+  request(_req.uri, _req.options).then(_req.resolve).catch(_req.resolve)
+}, 250)
 
 export const couchGet = async (path: string, options?: RequestCouchOptions) =>
   requestCouch(path, options)
