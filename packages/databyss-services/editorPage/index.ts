@@ -6,6 +6,7 @@ import {
   ResourceNotFoundError,
   Page,
 } from '../interfaces'
+import { setPouchSecret } from '../session/clientStorage'
 // TODO: Add native versions of these
 
 // save page is used to rename page name
@@ -38,4 +39,21 @@ export const validateGroupCredentials = ({
         dbKey,
       },
     },
+  })
+
+export const createDatabaseCredentials = ({
+  groupId,
+  isPublic,
+}: {
+  groupId: string
+  isPublic?: boolean
+}) =>
+  httpPost(`/cloudant/groups/credentials/${groupId}`, {
+    data: {
+      isPublic,
+    },
+  }).then((res) => {
+    // set the credentials to local storage
+    const cred = res.data
+    setPouchSecret(Object.values(cred))
   })

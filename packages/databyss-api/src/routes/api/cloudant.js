@@ -7,10 +7,38 @@ import createSharedGroupDatabase, {
   verifyUserOwnsDatabase,
   verifyDatabaseCredentials,
 } from './../../lib/createSharedGroupDatabase'
+import { setSecurity } from '../../lib/createUserDatabase'
 
 const router = express.Router()
 
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
+
+// @route    POST api/cloudant/groups/credentials/:id
+// @desc     creates database credentials
+// @access   private
+router.post('/groups/credentials/:id', auth, async (req, res) => {
+  // get user id
+  const userId = req.user.id
+  const groupId = req.params.id
+  const { isPublic } = req.body.data
+
+  console.log('IS PUBLIC', isPublic)
+
+  const _userAuthorized = await verifyUserOwnsDatabase({
+    userId,
+    dbName: groupId,
+  })
+  if (!_userAuthorized) {
+    return res.status(401).json({ message: 'not authorized' })
+  }
+
+  const credentials = await setSecurity({
+    groupId,
+    isPublic,
+  })
+
+  return res.json({ data: { credentials } }).status(200)
+})
 
 // @route    POST api/cloudant/groups/auth:id
 // @desc     verifies user credentials
@@ -23,7 +51,7 @@ router.post('/groups/auth/:id', auth, async (req, res) => {
   // check if group exists
   const _db = await getDB({ dbName: groupId })
   if (!_db) {
-    return res.status(404).json({ message: 'does not exist' })
+    return res.status(404).json({ message: 'database does not exist' })
   }
   // checks if user is owner of the database
   const _userAuthorized = await verifyUserOwnsDatabase({

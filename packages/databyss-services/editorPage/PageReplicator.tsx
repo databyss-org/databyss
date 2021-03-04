@@ -6,7 +6,7 @@ import {
   getDefaultGroup,
 } from '@databyss-org/services/session/clientStorage'
 import { LoadingFallback } from '@databyss-org/ui/components'
-import { validateGroupCredentials } from './index'
+import { validateGroupCredentials, createDatabaseCredentials } from './index'
 import { ResourceNotFoundError, NotAuthorizedError } from '../interfaces/Errors'
 import { dbRef, REMOTE_CLOUDANT_URL } from '../../databyss-data/pouchdb/db'
 
@@ -86,8 +86,12 @@ export const PageReplicator = ({
             // id is in cache without the `p_` prefix
             const creds = dbCache[gId.substr(2)]
             if (!creds) {
-              // credentials are not in local storage yet
-              // TODO: set up a server endpoint that creates new user credentials and adds them to local storage
+              // credentials are not in local storage
+              // creates new user credentials and adds them to local storage
+              await createDatabaseCredentials({
+                groupId: gId,
+                isPublic: group.public,
+              })
               setTimeout(() => validate(), INTERVAL_TIME)
             } else {
               // credentials are in local
