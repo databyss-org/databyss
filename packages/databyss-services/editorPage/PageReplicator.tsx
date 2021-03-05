@@ -1,10 +1,7 @@
 import React, { ReactNode, useEffect, useRef } from 'react'
 import PouchDB from 'pouchdb'
 import { useGroups } from '@databyss-org/data/pouchdb/hooks'
-import {
-  getPouchSecret,
-  getDefaultGroup,
-} from '@databyss-org/services/session/clientStorage'
+import { getPouchSecret } from '@databyss-org/services/session/clientStorage'
 import { LoadingFallback } from '@databyss-org/ui/components'
 import { validateGroupCredentials, createDatabaseCredentials } from './index'
 import { ResourceNotFoundError, NotAuthorizedError } from '../interfaces/Errors'
@@ -45,8 +42,7 @@ export const PageReplicator = ({
         password: dbPassword,
       },
     }
-    const _defaultGroupId = getDefaultGroup()
-    const _replication = dbRef.current[_defaultGroupId!].replicate.to(
+    const _replication = dbRef.current!.replicate.to(
       `${REMOTE_CLOUDANT_URL}/${groupId}`,
       {
         ...opts,

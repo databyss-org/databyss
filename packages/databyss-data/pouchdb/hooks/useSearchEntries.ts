@@ -38,10 +38,9 @@ export const useSearchEntries = (searchQuery: string) => {
       // already subscribed
       return
     }
-    const defaultGroup = getDefaultGroup()
 
-    changesRef.current = dbRef.current[defaultGroup!]
-      .changes({
+    changesRef.current = dbRef
+      .current!.changes({
         since: 'now',
         live: true,
         include_docs: true,

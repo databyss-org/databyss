@@ -115,12 +115,11 @@ const SessionProvider = ({
           },
         })
       } else {
-        // if not logged in try to replicate the group database
-
-        // const publicAccount = await isUnauthenticatedSession()
+        // check if page has public access
         const unauthenticatedPageId = await hasUnathenticatedAccess()
 
         if (unauthenticatedPageId) {
+          // replicate public page to local pouchdb
           await replicatePage(unauthenticatedPageId)
           dispatch({
             type: CACHE_PUBLIC_SESSION,

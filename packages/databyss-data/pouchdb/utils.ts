@@ -1,7 +1,6 @@
 import EventEmitter from 'es-event-emitter'
 import { Document } from '@databyss-org/services/interfaces'
 import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
-import { getDefaultGroup } from '@databyss-org/services/session/clientStorage'
 import { DocumentType, UserPreference } from './interfaces'
 import { dbRef, pouchDataValidation } from './db'
 import { uid } from '../lib/uid'
@@ -50,9 +49,8 @@ export const findAll = async ({
   query?: any
   useIndex?: string
 }) => {
-  const groupId = getDefaultGroup()
   let _useIndex
-  const _designDocResponse = await dbRef.current[groupId!].find({
+  const _designDocResponse = await dbRef.current!.find({
     selector: {
       _id: `_design/${useIndex}`,
     },
@@ -62,7 +60,7 @@ export const findAll = async ({
     _useIndex = useIndex
   }
 
-  const _response = await dbRef.current[groupId!].find({
+  const _response = await dbRef.current!.find({
     selector: {
       $type,
       ...query,
@@ -86,10 +84,8 @@ export const findOne = async <T extends Document>({
   query: any
   useIndex?: string
 }): Promise<T | null> => {
-  const groupId = getDefaultGroup()
-
   let _useIndex
-  const _designDocResponse = await dbRef.current[groupId!].find({
+  const _designDocResponse = await dbRef.current!.find({
     selector: {
       _id: `_design/${useIndex}`,
     },
@@ -99,7 +95,7 @@ export const findOne = async <T extends Document>({
     _useIndex = useIndex
   }
 
-  const _response = await dbRef.current[groupId!].find({
+  const _response = await dbRef.current!.find({
     selector: {
       $type,
       ...query,
@@ -125,10 +121,8 @@ export const findOne = async <T extends Document>({
 export const getDocument = async <T extends Document>(
   id: string
 ): Promise<T | null> => {
-  const groupId = getDefaultGroup()
-
   try {
-    return await dbRef.current[groupId!].get(id)
+    return await dbRef.current!.get(id)
   } catch (err) {
     if (err.name === 'not_found') {
       return null
@@ -157,11 +151,9 @@ export const replaceOne = async ({
 _local documents do not appear with `find` so a `get` function must be used
 */
 export const getUserSession = async (): Promise<UserPreference | null> => {
-  const groupId = getDefaultGroup()
-
   let response
   try {
-    response = await dbRef.current[groupId!].get('user_preference')
+    response = await dbRef.current!.get('user_preference')
   } catch (err) {
     console.error('user session not found')
   }
@@ -169,8 +161,6 @@ export const getUserSession = async (): Promise<UserPreference | null> => {
 }
 
 export const searchText = async (query) => {
-  const groupId = getDefaultGroup()
-
   // calculate how strict we want the search to be
 
   // will require at least one word to be in the results
@@ -180,7 +170,7 @@ export const searchText = async (query) => {
   _percentageToMatch *= 100
   _percentageToMatch = +_percentageToMatch.toFixed(0)
 
-  const _res = await dbRef.current[groupId!].search({
+  const _res = await dbRef.current!.search({
     query,
     fields: ['text.textValue'],
     include_docs: true,
@@ -215,8 +205,7 @@ export const upsertImmediate = async ({
   _id: string
   doc: any
 }) => {
-  const groupId = getDefaultGroup()
-  await dbRef.current[groupId!].upsert(_id, (oldDoc) => {
+  await dbRef.current!.upsert(_id, (oldDoc) => {
     const _doc = {
       ...oldDoc,
       ...addTimeStamp({ ...oldDoc, ...doc, $type }),

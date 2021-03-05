@@ -36,7 +36,7 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 
 interface DbRef {
-  current: { [key: string]: PouchDB.Database<any> }
+  current: PouchDB.Database<any> | null
 }
 
 declare global {
@@ -51,7 +51,7 @@ const getPouchDb = (groupId: string) =>
   })
 
 export const dbRef: DbRef = {
-  current: {},
+  current: null,
 }
 
 // try to load pouch_secrets from local storage to init db
@@ -59,7 +59,7 @@ export const dbRef: DbRef = {
 const defaultGroup = getDefaultGroup()
 const groupIdFromUrl = getAccountFromLocation()
 if (defaultGroup && (!groupIdFromUrl || groupIdFromUrl === defaultGroup)) {
-  dbRef.current[defaultGroup] = getPouchDb(`g_${defaultGroup}`)
+  dbRef.current = getPouchDb(`g_${defaultGroup}`)
 }
 
 export const areIndexBuilt = {
@@ -158,9 +158,9 @@ export const replicatePublicPage = ({ pageId }: { pageId: string }) =>
     const opts = {
       retry: true,
     }
-    dbRef.current[pageId] = getPouchDb(pageId)
+    dbRef.current = getPouchDb(pageId)
 
-    dbRef.current[pageId].replicate
+    dbRef.current.replicate
       .from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
         ...opts,
       })
@@ -209,8 +209,8 @@ export const replicateDbFromRemote = ({
         password: _cred.dbPassword,
       },
     }
-    dbRef.current[groupId] = getPouchDb(`g_${groupId}`)
-    dbRef.current[groupId].replicate
+    dbRef.current = getPouchDb(`g_${groupId}`)
+    dbRef.current.replicate
       .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
         ...opts,
       })
@@ -246,8 +246,8 @@ export const syncPouchDb = ({
     },
   }
 
-  dbRef.current[groupId].replicate
-    .to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
+  dbRef
+    .current!.replicate.to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
       ...opts,
       // do not replciate design docs
       filter: (doc) => !doc._id.includes('design/'),
@@ -272,19 +272,21 @@ export const syncPouchDb = ({
       }
     })
 
-  dbRef.current[groupId].replicate
-    .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
+  dbRef
+    .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
   // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
 }
 
 export const resetPouchDb = async () => {
-  const _dbs = Object.keys(dbRef.current)
+  dbRef.current?.destroy()
+  dbRef.current = null
+  // const _dbs = Object.keys(dbRef.current)
 
-  _dbs.forEach((_db) => {
-    dbRef.current[_db].destroy()
-    delete dbRef.current[_db]
-  })
+  // _dbs.forEach((_db) => {
+  //   dbRef.current[_db].destroy()
+  //   delete dbRef.current[_db]
+  // })
 }
 
 export const pouchDataValidation = (data) => {

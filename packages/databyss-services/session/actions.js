@@ -222,7 +222,4 @@ export const replicatePage = async (pageId) => {
   await replicatePublicPage({
     pageId: groupId,
   })
-
-  // set the default group in local storage
-  setDefaultGroup(groupId)
 }

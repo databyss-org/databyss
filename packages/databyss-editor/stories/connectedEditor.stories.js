@@ -123,15 +123,12 @@ const EditorWithProvider = () => {
 
   useEffect(() => {
     // check to see if page exists in DB, if not add page
-    const defaultGroup = getDefaultGroup()
 
-    dbRef.current[defaultGroup]
-      .find({ selector: { _id: _pageId } })
-      .then((res) => {
-        if (!res.docs.length) {
-          setPage(_page)
-        }
-      })
+    dbRef.current.find({ selector: { _id: _pageId } }).then((res) => {
+      if (!res.docs.length) {
+        setPage(_page)
+      }
+    })
   }, [])
 
   return (

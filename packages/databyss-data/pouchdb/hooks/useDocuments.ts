@@ -44,8 +44,8 @@ export const useDocuments = <T extends Document>(
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) =>
         // console.log('useDocuments.fetch', selector)
-        dbRef.current[defaultGroup!]
-          .find({ selector })
+        dbRef
+          .current!.find({ selector })
           .then((res) => resolve(DocumentArrayToDict(res.docs)))
           .catch((err) => reject(err))
       ),
@@ -60,8 +60,8 @@ export const useDocuments = <T extends Document>(
     if (subscriptionDict[selectorString]) {
       return
     }
-    subscriptionDict[selectorString] = dbRef.current[defaultGroup!]
-      .changes({
+    subscriptionDict[selectorString] = dbRef
+      .current!.changes({
         since: 'now',
         live: true,
         include_docs: true,

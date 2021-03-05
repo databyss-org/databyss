@@ -162,14 +162,15 @@ export const localStorageHasSession = async () => {
     return false
   }
 
+  // get user preferences
+  const _userSession = await getUserSession()
+
   // if we're on a URL with a groupid on it, make sure it matches default group
   const groupIdFromUrl = getAccountFromLocation()
   if (groupIdFromUrl && groupIdFromUrl !== defaultGroup) {
+    // TODO: first check it against the user Session default group
     return false
   }
-
-  // get user preferences
-  const _userSession = await getUserSession(defaultGroup)
 
   if (token && _userSession) {
     session = {
