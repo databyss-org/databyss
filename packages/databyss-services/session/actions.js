@@ -1,6 +1,7 @@
 import {
   replicateDbFromRemote,
   replicatePublicPage,
+  REMOTE_CLOUDANT_URL,
 } from '@databyss-org/data/pouchdb/db'
 import request from '../lib/request'
 import { httpPost } from '../lib/requestApi'
@@ -196,23 +197,32 @@ export const setSession = (session) => async (dispatch) => {
   })
 }
 
-export const isUnauthenticatedSession = async () => {
+/*
+checks url for public page
+*/
+
+export const hasUnathenticatedAccess = async () => {
   const path = window.location.pathname.split('/')
   // get the page id
-  const pageId = path[3]
+  const pageId = path?.[3]
   if (pageId) {
     const groupId = `p_${pageId}`
-    // attempt page replication
-    const isPublic = await replicatePublicPage({
-      pageId: groupId,
-    })
-    if (!isPublic) {
-      await deletePouchDbs()
+    try {
+      await request(`${REMOTE_CLOUDANT_URL}/${groupId}`)
+      return pageId
+    } catch (err) {
       return false
     }
-    // set the default group in local storage
-    setDefaultGroup(groupId)
-    return pageId
   }
-  return false
+}
+
+export const replicatePage = async (pageId) => {
+  const groupId = `p_${pageId}`
+  // attempt page replication
+  await replicatePublicPage({
+    pageId: groupId,
+  })
+
+  // set the default group in local storage
+  setDefaultGroup(groupId)
 }

@@ -4,6 +4,12 @@ import { DocumentType, PageDoc } from '../interfaces'
 import { upsertImmediate, findOne, upsert } from '../utils'
 import { Block } from '../../../databyss-services/interfaces/Block'
 import { setPouchSecret } from '@databyss-org/services/session/clientStorage'
+import { getAtomicClosureText } from '../../../databyss-services/blocks/index'
+import { selectAllSelection } from '@databyss-org/editor/state/util'
+import {
+  getAtomicsFromSelection,
+  getAtomicsFromFrag,
+} from '../../../databyss-editor/lib/clipboardUtils/getAtomicsFromSelection'
 
 const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
@@ -58,28 +64,58 @@ export const addPageToGroup = async ({
     query: { _id: pageId },
   })
   if (_page) {
+    const _blocks: Block[] = []
+
     // add groupId to page array
     addGroupToDocument(groupId, _page)
 
     // add to all blocks associated with page
-    for (const _b of _page.blocks) {
+    for (const [i, _b] of _page.blocks.entries()) {
       const _block = await findOne<Block>({
         $type: DocumentType.Block,
         query: { _id: _b._id },
       })
       if (_block) {
-        addGroupToDocument(groupId, _block)
+        const _populatedBlock = { ..._block }
+
+        if (_b.type?.match(/^END_/)) {
+          _populatedBlock.type = _b.type
+          _populatedBlock.text = {
+            textValue: getAtomicClosureText(
+              _b.type,
+              _populatedBlock.text.textValue
+            ),
+            ranges: [],
+          }
+        } else {
+          addGroupToDocument(groupId, _block)
+        }
+        _blocks[i] = _populatedBlock
       }
     }
 
     // add to selection
     const _selectionId = _page.selection
-    const _selection = await findOne<PageDoc>({
+    const _selection = await findOne<any>({
       $type: DocumentType.Selection,
       query: { _id: _selectionId },
     })
     if (_selection) {
       addGroupToDocument(groupId, _selection)
+    }
+
+    // get all atomics associated with page
+    const _atomics = getAtomicsFromFrag(_blocks)
+    // add groupId to all atomics in pouch
+
+    for (const _a of _atomics) {
+      const _atomic = await findOne<any>({
+        $type: DocumentType.BlockRelation,
+        query: { _id: `r_${_a._id}` },
+      })
+      if (_atomic) {
+        addGroupToDocument(groupId, _atomic)
+      }
     }
   }
 }

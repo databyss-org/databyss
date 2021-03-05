@@ -24,7 +24,7 @@ import {
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { DocumentType } from './interfaces'
-import { searchText, findOne, findAll } from './utils'
+import { searchText } from './utils'
 import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
@@ -155,22 +155,18 @@ replicates public remote DB to local
 
 export const replicatePublicPage = ({ pageId }: { pageId: string }) =>
   new Promise<boolean>((resolve, reject) => {
-    // for now we are getting the first credentials from local storage groups
     const opts = {
       retry: true,
     }
     dbRef.current[pageId] = getPouchDb(pageId)
 
-    console.log('ATTEMPTINGS')
     dbRef.current[pageId].replicate
       .from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
         ...opts,
       })
       .on('complete', () => resolve(true))
-      .on('error', () => {
-        resolve(false)
-        // console.log('REJECT')
-        // reject(err)
+      .on('error', (err) => {
+        reject(err)
       })
   })
 

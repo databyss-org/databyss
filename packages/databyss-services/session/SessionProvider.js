@@ -14,7 +14,7 @@ import reducer, { initialState } from './reducer'
 import { useServiceContext } from '../'
 import { localStorageHasSession } from './clientStorage'
 import { CACHE_SESSION, CACHE_PUBLIC_SESSION } from './constants'
-import { isUnauthenticatedSession } from './actions'
+import { replicatePage, hasUnathenticatedAccess } from './actions'
 
 const useReducer = createReducer()
 
@@ -87,6 +87,7 @@ const SessionProvider = ({
   useEffect(() => {
     const _init = async () => {
       const _sesionFromLocalStorage = await localStorageHasSession()
+
       if (_sesionFromLocalStorage) {
         // 2nd pass: load session from local_storage
         // replicate from cloudant
@@ -116,11 +117,14 @@ const SessionProvider = ({
       } else {
         // if not logged in try to replicate the group database
 
-        const publicAccount = await isUnauthenticatedSession()
-        if (publicAccount) {
+        // const publicAccount = await isUnauthenticatedSession()
+        const unauthenticatedPageId = await hasUnathenticatedAccess()
+
+        if (unauthenticatedPageId) {
+          await replicatePage(unauthenticatedPageId)
           dispatch({
             type: CACHE_PUBLIC_SESSION,
-            payload: { publicAccount },
+            payload: { publicAccount: unauthenticatedPageId },
           })
         } else {
           // pass 1: get session from API
