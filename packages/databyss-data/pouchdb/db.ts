@@ -164,7 +164,18 @@ export const replicatePublicPage = ({ pageId }: { pageId: string }) =>
       .from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
         ...opts,
       })
-      .on('complete', () => resolve(true))
+      .on('complete', () => {
+        const _opts = {
+          ...opts,
+          live: true,
+          continuous: true,
+        }
+        // when replication is complete, kick off a live sync
+        dbRef.current!.replicate.from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
+          ..._opts,
+        })
+        resolve(true)
+      })
       .on('error', (err) => {
         reject(err)
       })

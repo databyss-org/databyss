@@ -139,6 +139,7 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     public: bool,
   }
 
+  // crawls all documents associated with page and appends `groupID` to `sharedWithGroups` array
   await addPageToGroup({ pageId, groupId: _data._id })
 
   await upsertImmediate({
