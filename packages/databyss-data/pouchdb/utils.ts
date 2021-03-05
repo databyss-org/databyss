@@ -130,6 +130,7 @@ export const findOne = async <T extends Document>({
 
 /**
  * Gets a document by id
+ * @id id of the document
  * @returns Promise, resolves to document or null if not found
  */
 export const getDocument = async <T extends Document>(
@@ -137,7 +138,7 @@ export const getDocument = async <T extends Document>(
 ): Promise<T | null> => {
   try {
     // return await dbRef.current?.get(id)
-    return await couchDbRef.current?.get(id)
+    return couchDbRef.current?.get(id) as Promise<T>
   } catch (err) {
     if (err.name === 'not_found') {
       return null
@@ -145,6 +146,17 @@ export const getDocument = async <T extends Document>(
     throw err
   }
 }
+
+/**
+ * Get several documents at once
+ * @param ids array of document ids to get
+ * @returns dictionary of { docId => null | doc } (null if doc not found)
+ */
+export const getDocuments = async (
+  ids: string[]
+): Promise<{ [docId: string]: any | null }> =>
+  // return await dbRef.current?.bulkGet(id)
+  couchDbRef.current!.bulkGet(ids)
 
 export const replaceOne = async ({
   doctype,

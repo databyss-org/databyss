@@ -1,9 +1,8 @@
 import { Page } from '@databyss-org/services/interfaces/Page'
-import { Block } from '@databyss-org/services/interfaces'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { getAtomicClosureText } from '@databyss-org/services/blocks'
 import { PageDoc, DocumentType } from '../../interfaces'
-import { findOne, getDocument } from '../../utils'
+import { findOne, getDocument, getDocuments } from '../../utils'
 import { Selection } from '../../../../databyss-services/interfaces/Selection'
 
 const populatePage = async (
@@ -24,35 +23,40 @@ const populatePage = async (
   // load selection
   const _selection: Selection | null = await getDocument(_page.selection)
 
-  // map block ids to load to an array
-  const _blockIds = _page.blocks
-    .map((_block) => !_block.type?.match(/^END_/) && _block._id)
-    .filter((_block) => !!_block)
-  console.log('populatePage.blockIds', _blockIds)
+  // coallesce page blocks into dict to filter duplicates and end blocks
+  const _blocksToGetDict = _page.blocks.reduce((accum, curr) => {
+    if (curr?.type?.match(/^END_/)) {
+      return accum
+    }
+    accum[curr._id] = curr
+    return accum
+  }, {})
 
-  // load blocks
-  const _blocks: Block[] = await Promise.all(
-    _page.blocks.map(async (data) => {
-      const _block: Block | null = await findOne({
-        doctype: DocumentType.Block,
-        query: {
-          _id: data._id,
-        },
-        useIndex: 'fetch-one',
-      })
-      // check for atomic block closure
-      if (_block && data.type?.match(/^END_/)) {
-        _block.text = {
-          textValue: getAtomicClosureText(data.type, _block.text.textValue),
-          ranges: [],
-        }
-        _block.type = data.type
+  // get all blocks in one request using bulk getDocuments
+  const _blocksDict = await getDocuments(Object.keys(_blocksToGetDict))
+
+  // populate blocks
+  const _blocks = _page.blocks.map((_pageBlock) => {
+    const _block = _blocksDict[_pageBlock._id]
+    if (_pageBlock.type?.match(/^END_/)) {
+      if (!_block) {
+        throw new Error(
+          `Can't find opener block for closer block with id: ${_pageBlock._id}`
+        )
       }
-      return _block!
-    })
-  )
-
-  // TODO: load blocks in bulk
+      return {
+        ..._pageBlock,
+        text: {
+          textValue: getAtomicClosureText(
+            _pageBlock.type,
+            _block.text.textValue
+          ),
+          ranges: [],
+        },
+      }
+    }
+    return _block
+  })
 
   // add to blocks and selection to page
   const _populatedPage: Page = {
