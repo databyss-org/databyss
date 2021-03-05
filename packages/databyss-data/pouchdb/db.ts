@@ -23,9 +23,9 @@ import {
 } from '@databyss-org/services/session/clientStorage'
 import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
+import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 import { DocumentType } from './interfaces'
 import { searchText } from './utils'
-import { getAccountFromLocation } from '@databyss-org/services/session/_helpers'
 
 export const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 

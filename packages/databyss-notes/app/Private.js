@@ -18,7 +18,7 @@ import {
   IndexPageContent,
   SearchContent,
 } from '@databyss-org/ui/modules'
-import { EditorPageProvider, PageReplicator } from '@databyss-org/services'
+import { EditorPageProvider } from '@databyss-org/services'
 
 const queryClient = new QueryClient()
 

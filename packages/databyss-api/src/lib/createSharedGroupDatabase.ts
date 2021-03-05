@@ -1,5 +1,3 @@
-// import { cloudant } from '@databyss-org/data/couchdb/cloudant'
-import { DocumentScope } from '@cloudant/cloudant/types'
 import { Groups } from '@databyss-org/data/couchdb'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import {
@@ -14,7 +12,7 @@ export const verifyDatabaseCredentials = async ({
   cloudantDb,
 }: {
   dbKey: string
-  cloudantDb: DocumentScope<any>
+  cloudantDb: any
 }) =>
   new Promise((resolve, reject) => {
     cloudantDb.get_security((err, result) => {

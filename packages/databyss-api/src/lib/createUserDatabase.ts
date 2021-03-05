@@ -3,7 +3,6 @@ import { User, Role } from '@databyss-org/data/interfaces'
 import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
 import { uidlc } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
-
 import { DocumentScope } from 'nano'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import { BlockType } from '../../../databyss-services/interfaces/Block'

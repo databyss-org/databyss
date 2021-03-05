@@ -15,7 +15,6 @@ import {
   CACHE_PUBLIC_SESSION,
   GET_USER_ACCOUNT,
   CACHE_USER_ACCOUNT,
-  CACHE_SESSION,
   LOGOUT,
   SET_DEFAULT_PAGE,
   SET_SESSION,
@@ -28,7 +27,6 @@ import {
   setAuthToken,
   setPouchSecret,
   getUserId,
-  setDefaultGroup,
 } from './clientStorage'
 
 import { getAccountFromLocation } from './_helpers'
@@ -214,6 +212,7 @@ export const hasUnathenticatedAccess = async () => {
       return false
     }
   }
+  return false
 }
 
 export const replicatePage = async (pageId) => {

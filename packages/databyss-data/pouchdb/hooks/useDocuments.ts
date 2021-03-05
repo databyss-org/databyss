@@ -2,7 +2,6 @@ import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
-import { getDefaultGroup } from '@databyss-org/services/session/clientStorage'
 
 import { dbRef } from '../db'
 import { DocumentArrayToDict } from './utils'
@@ -21,8 +20,6 @@ export const useDocuments = <T extends Document>(
   selector: PouchDB.Find.Selector,
   options: UseDocumentsOptions = { enabled: true }
 ) => {
-  const defaultGroup = getDefaultGroup()
-
   const queryClient = useQueryClient()
   const queryOptions: QueryOptions = {
     includeIds: options.includeIds,

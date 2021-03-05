@@ -1,8 +1,6 @@
 import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import PouchDB from 'pouchdb'
-import { getDefaultGroup } from '@databyss-org/services/session/clientStorage'
-
 import { dbRef } from '../db'
 import { searchEntries } from '../entries'
 import { SearchEntriesResultPage } from '../entries/lib/searchEntries'
