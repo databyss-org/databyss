@@ -230,13 +230,9 @@ export const replicateDbFromRemote = ({
   })
 
 export const syncPouchDb = ({
-  // dbKey,
-  // dbPassword,
   groupId,
   dispatch,
 }: {
-  // dbKey: string
-  // dbPassword: string
   groupId: string
   dispatch: Function
 }) => {
@@ -292,12 +288,6 @@ export const syncPouchDb = ({
 export const resetPouchDb = async () => {
   dbRef.current?.destroy()
   dbRef.current = null
-  // const _dbs = Object.keys(dbRef.current)
-
-  // _dbs.forEach((_db) => {
-  //   dbRef.current[_db].destroy()
-  //   delete dbRef.current[_db]
-  // })
 }
 
 export const pouchDataValidation = (data) => {
