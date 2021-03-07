@@ -1,3 +1,4 @@
+import PouchDB from 'pouchdb'
 import { Page, Text } from '@databyss-org/services/interfaces'
 import { searchText } from '../../utils'
 
@@ -15,6 +16,12 @@ export interface SearchEntriesResultPage {
   pageId: string
 }
 
+interface SearchRow {
+  page: Page | null
+  index: number
+  text: Text
+}
+
 const searchEntries = async (
   encodedQuery: string,
   pages: Page[]
@@ -23,14 +30,14 @@ const searchEntries = async (
 
   const _res = await searchText(_query)
 
-  const _queryResponse = _res.rows
+  const _queryResponse = _res.rows as PouchDB.SearchRow<SearchRow>[]
   if (!_queryResponse.length) {
     return []
   }
   // if results are found, look up page and append to result
 
   // create a dictionary of block to pages
-  const _blockToPages = {}
+  const _blockToPages: { [blockId: string]: { page: Page; index: number } } = {}
 
   pages.forEach((p) =>
     p.blocks.forEach((b, index) => (_blockToPages[b._id] = { page: p, index }))
@@ -77,7 +84,7 @@ const searchEntries = async (
             {
               entryId: curr._id,
               text: curr.text,
-              index: curr.page.index,
+              index: curr.index,
               textScore: curr.score,
               //  blockId: curr.block,
             },
@@ -85,7 +92,7 @@ const searchEntries = async (
         }
         acc.set(pageId, _data)
       } else {
-        const _data: SearchEntriesResultPage = acc.get(pageId)
+        const _data: SearchEntriesResultPage = acc.get(pageId)!
         const _entries = _data.entries
 
         // have the max test score on the page dictionary
@@ -98,7 +105,7 @@ const searchEntries = async (
         _entries.push({
           entryId: curr._id,
           text: curr.text,
-          index: curr.page.index,
+          index: curr.index,
           textScore: curr.score,
         })
 

@@ -1,3 +1,4 @@
+import PouchDB from 'pouchdb'
 import EventEmitter from 'es-event-emitter'
 import { Document } from '@databyss-org/services/interfaces'
 import { DocumentType, UserPreference } from './interfaces'
@@ -49,7 +50,7 @@ export const findAll = async ({
   useIndex?: string
 }) => {
   let _useIndex
-  const _designDocResponse = await dbRef.current!.find({
+  const _designDocResponse: any = await dbRef.current!.find({
     selector: {
       _id: `_design/${useIndex}`,
     },
@@ -59,62 +60,32 @@ export const findAll = async ({
     _useIndex = useIndex
   }
 
-  const _response = await dbRef.current!.find({
+  const _response: any = await dbRef.current!.find({
     selector: {
       doctype,
       ...query,
     },
     use_index: _useIndex,
   })
-  if (_response?.warning) {
-    console.log('ERROR', _response)
-    console.log(doctype, query)
-  }
 
   return _response.docs
 }
 
-export const findOne = async <T extends Document>({
-  doctype,
-  query,
-  useIndex,
-}: {
+export const findOne = async <T extends Document>(args: {
   doctype: DocumentType
   query: any
   useIndex?: string
 }): Promise<T | null> => {
-  let _useIndex
-  const _designDocResponse = await dbRef.current!.find({
-    selector: {
-      _id: `_design/${useIndex}`,
-    },
-  })
-
-  if (_designDocResponse.docs.length) {
-    _useIndex = useIndex
-  }
-
-  const _response = await dbRef.current!.find({
-    selector: {
-      doctype,
-      ...query,
-    },
-    use_index: _useIndex,
-  })
-
-  if (_response?.warning) {
-    console.log('ERROR', _response)
-    console.log(doctype, query)
-  }
-
-  if (_response.docs.length) {
-    return _response.docs[0]
+  const _docs = await findAll(args)
+  if (_docs.length) {
+    return _docs[0]
   }
   return null
 }
 
 /**
  * Gets a document by id
+ * @id id of the document
  * @returns Promise, resolves to document or null if not found
  */
 export const getDocument = async <T extends Document>(
@@ -128,6 +99,30 @@ export const getDocument = async <T extends Document>(
     }
     throw err
   }
+}
+
+/**
+ * Get several documents at once
+ * @param ids array of document ids to get
+ * @returns dictionary of { docId => null | doc } (null if doc not found)
+ */
+export const getDocuments = async (
+  ids: string[]
+): Promise<{ [docId: string]: any | null }> => {
+  const _options = { docs: ids.map((id) => ({ id })) }
+  const _res = await dbRef.current?.bulkGet(_options)
+
+  return _res!.results.reduce((accum, curr) => {
+    const _doc: any = curr.docs[0]
+    if (_doc.error) {
+      if (_doc.error.error !== 'not_found') {
+        throw new Error(`_bulk_get docId ${curr.id}: ${_doc.error.error}`)
+      }
+      accum[curr.id] = null
+    }
+    accum[curr.id] = _doc.ok
+    return accum
+  }, {})
 }
 
 export const replaceOne = async ({
@@ -169,11 +164,11 @@ export const searchText = async (query) => {
   _percentageToMatch *= 100
   _percentageToMatch = +_percentageToMatch.toFixed(0)
 
-  const _res = await dbRef.current!.search({
+  const _res = await (dbRef.current as PouchDB.Database).search({
     query,
     fields: ['text.textValue'],
     include_docs: true,
-    filter: (doc) =>
+    filter: (doc: any) =>
       doc.type === BlockType.Entry && doc.doctype === DocumentType.Block,
     mm: `${_percentageToMatch}%`,
   })

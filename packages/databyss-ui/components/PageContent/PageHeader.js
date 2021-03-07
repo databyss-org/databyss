@@ -36,7 +36,7 @@ const PageHeader = forwardRef(({ pageId, onNavigateDownFromHeader }, ref) => {
           ref.current.focus()
         }
       }, 10)
-    } else if (!pageName.length) {
+    } else if (!pageName?.length) {
       // only set page name on initial mount
       setPageName(pageDataName)
     }
