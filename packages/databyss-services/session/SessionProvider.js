@@ -7,7 +7,7 @@ import {
   syncPouchDb,
   initiatePouchDbIndexes,
 } from '@databyss-org/data/pouchdb/db'
-import { connectDefault } from '@databyss-org/data/couchdb-client/couchdb'
+// import { connect } from '@databyss-org/data/couchdb-client/couchdb'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
@@ -91,23 +91,25 @@ const SessionProvider = ({
         // 2nd pass: load session from local_storage
         // replicate from cloudant
         const groupId = _sesionFromLocalStorage.defaultGroupId
-        console.log('SessionProvider.connectDefault', groupId)
-        connectDefault(`g_${groupId}`)
-        // await replicateDbFromRemote({
-        //   groupId,
-        // })
 
-        // // TODO: indexing is built after 5 seconds
-        // setTimeout(() => {
-        //   initiatePouchDbIndexes()
-        // }, [5000])
+        // TODO: connect directly to CouchDB on cloudant while pouch is synching
+        // connect(`g_${groupId}`)
 
-        // // set up live sync
-        // syncPouchDb({
-        //   groupId,
-        //   // TODO: how to curry dispatch
-        //   dispatch,
-        // })
+        await replicateDbFromRemote({
+          groupId,
+        })
+
+        // TODO: indexing is built after 5 seconds
+        setTimeout(() => {
+          initiatePouchDbIndexes()
+        }, [5000])
+
+        // set up live sync
+        syncPouchDb({
+          groupId,
+          // TODO: how to curry dispatch
+          dispatch,
+        })
 
         // dispatch
         dispatch({

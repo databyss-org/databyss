@@ -1,21 +1,15 @@
 import { Page } from '@databyss-org/services/interfaces/Page'
 import { ResourceNotFoundError } from '@databyss-org/services/interfaces/Errors'
 import { getAtomicClosureText } from '@databyss-org/services/blocks'
-import { PageDoc, DocumentType } from '../../interfaces'
-import { findOne, getDocument, getDocuments } from '../../utils'
+import { PageDoc } from '../../interfaces'
+import { getDocument, getDocuments } from '../../utils'
 import { Selection } from '../../../../databyss-services/interfaces/Selection'
 
 const populatePage = async (
   _id: string
 ): Promise<Page | ResourceNotFoundError> => {
   // TODO: wrap function in error handler
-  const _page: PageDoc | null = await findOne({
-    doctype: DocumentType.Page,
-    query: {
-      _id,
-    },
-    useIndex: 'fetch-one',
-  })
+  const _page: PageDoc | null = await getDocument(_id)
 
   if (!_page) {
     return new ResourceNotFoundError('page not found')

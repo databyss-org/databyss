@@ -3,10 +3,7 @@ import { storiesOf } from '@storybook/react'
 import { Text, View } from '@databyss-org/ui/primitives'
 import ServiceProvider from '@databyss-org/services/lib/ServiceProvider'
 import SessionProvider from '@databyss-org/services/session/SessionProvider'
-import {
-  connectDefault,
-  couchDbRef,
-} from '@databyss-org/data/couchdb-client/couchdb'
+import { connect, couchDbRef } from '@databyss-org/data/couchdb-client/couchdb'
 import { getPouchSecret } from '@databyss-org/services/session/clientStorage'
 import { SessionInfo } from '../Modules/login.stories'
 import { ViewportDecorator } from '../decorators'
@@ -29,12 +26,12 @@ storiesOf('Services|Auth', module)
     const _secrets = getPouchSecret()
     const _groupId = Object.keys(_secrets)[0]
     const _dbName = `g_${_groupId}`
-    connectDefault(_dbName)
-    couchDbRef.current.get('user_preference').then((_doc) => {
+    connect(_dbName)
+    couchDbRef.current!.get('user_preference').then((_doc) => {
       console.log('_doc', _doc)
     })
-    couchDbRef.current
-      .find({
+    couchDbRef
+      .current!.find({
         '\\$type': 'BLOCK',
       })
       .then((_doc) => {

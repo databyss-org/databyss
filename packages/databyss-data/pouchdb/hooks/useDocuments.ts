@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from 'react-query'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 import { dbRef } from '../db'
-import { couchDbRef } from '../../couchdb-client/couchdb'
+import { CouchDb } from '../../couchdb-client/couchdb'
 import { DocumentArrayToDict } from './utils'
 
 export interface QueryOptions {
@@ -41,13 +41,9 @@ export const useDocuments = <T extends Document>(
     () =>
       new Promise<DocumentDict<T>>((resolve, reject) => {
         console.log('useDocuments.fetch', selector)
-        // dbRef
-        //   .current!.find({ selector })
-        //   .then((res) => resolve(DocumentArrayToDict(res.docs)))
-        //   .catch((err) => reject(err))
-        couchDbRef
+        dbRef
           .current!.find({ selector })
-          .then((res) => resolve(DocumentArrayToDict(res.docs)))
+          .then((res: any) => resolve(DocumentArrayToDict(res.docs)))
           .catch((err) => reject(err))
       }),
     {
@@ -55,37 +51,40 @@ export const useDocuments = <T extends Document>(
     }
   )
 
-  // useEffect(() => {
-  //   // console.log('useDocuments.subscribe', queryKey, selector)
-  //   if (subscriptionDict[selectorString]) {
-  //     return
-  //   }
-  //   subscriptionDict[selectorString] = dbRef.current
-  //     ?.changes({
-  //       since: 'now',
-  //       live: true,
-  //       include_docs: true,
-  //       selector,
-  //     })
-  //     .on('change', (change) => {
-  //       queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {
-  //         if (!oldData) {
-  //           return {}
-  //         }
-  //         if (change.deleted) {
-  //           // remove from cache
-  //           // console.log('useDocuments.delete', change.doc)
-  //           delete oldData![change.doc._id]
-  //         } else {
-  //           // add or update cache
-  //           // console.log('useDocuments.addOrUpdate', change.doc)
-  //           oldData![change.doc._id] = change.doc
-  //         }
-  //         return oldData as DocumentDict<T>
-  //       })
-  //     })!
-  //   // console.log('useDocuments.subscribe', subscriptionDict)
-  // }, [])
+  useEffect(() => {
+    if (dbRef.current instanceof CouchDb) {
+      return
+    }
+    // console.log('useDocuments.subscribe', queryKey, selector)
+    if (subscriptionDict[selectorString]) {
+      return
+    }
+    subscriptionDict[selectorString] = dbRef.current
+      ?.changes({
+        since: 'now',
+        live: true,
+        include_docs: true,
+        selector,
+      })
+      .on('change', (change) => {
+        queryClient.setQueryData<DocumentDict<T>>(queryKey, (oldData) => {
+          if (!oldData) {
+            return {}
+          }
+          if (change.deleted) {
+            // remove from cache
+            // console.log('useDocuments.delete', change.doc)
+            delete oldData![change.doc._id]
+          } else {
+            // add or update cache
+            // console.log('useDocuments.addOrUpdate', change.doc)
+            oldData![change.doc._id] = change.doc
+          }
+          return oldData as DocumentDict<T>
+        })
+      })!
+    // console.log('useDocuments.subscribe', subscriptionDict)
+  }, [])
 
   return query
 }
