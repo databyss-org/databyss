@@ -11,7 +11,7 @@ import { ViewportDecorator } from '../decorators'
 storiesOf('Services|Auth', module)
   .addDecorator(ViewportDecorator)
   .add('Login', () => (
-    <View id="login-page">
+    <View data-test-id="login-page">
       <ServiceProvider>
         <SessionProvider>
           <Text variant="uiTextNormalSemibold" data-test-id="authorized">

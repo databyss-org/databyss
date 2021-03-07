@@ -68,13 +68,12 @@ export const httpPatch = (path: string, body: any) =>
     body: JSON.stringify(body),
   })
 
-export const httpDelete = (path: string, body: any) =>
+export const httpDelete = (path: string) =>
   requestApi(path, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(body),
   })
 
 export default httpGet
