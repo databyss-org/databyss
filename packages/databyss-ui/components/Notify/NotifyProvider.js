@@ -91,7 +91,7 @@ class NotifyProvider extends React.Component {
         enhanceBugsnagEvent(event, info)
       })
     }
-    this.showUnhandledErrorDialog(error)
+    this.showUnhandledErrorDialog()
   }
 
   componentWillUnmount() {
@@ -132,7 +132,7 @@ class NotifyProvider extends React.Component {
       this.showOfflineMessage()
       // this.checkOnlineStatus()
     } else {
-      this.showUnhandledErrorDialog(e)
+      this.showUnhandledErrorDialog()
     }
   }
 
@@ -156,13 +156,9 @@ class NotifyProvider extends React.Component {
     })
   }
 
-  showUnhandledErrorDialog = (error) => {
+  showUnhandledErrorDialog = () => {
     if (this.state.isOnline) {
-      if (process.env.NODE_ENV === 'production') {
-        this.notify('😱 So sorry, but Databyss has encountered an error.', true)
-      } else {
-        this.notifyHtml(`<pre>${JSON.stringify(error, null, 2)}</pre>`)
-      }
+      this.notify('😱 So sorry, but Databyss has encountered an error.', true)
     }
   }
 
