@@ -40,6 +40,7 @@ function parseResponse(
       : response.text()
 }
 
+// eslint-disable-next-line no-undef
 export interface RequestOptions extends RequestInit {
   /**
    * Force response parsing to JSON.
