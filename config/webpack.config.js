@@ -22,6 +22,7 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin')
 // const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin')
 // const typescriptFormatter = require('react-dev-utils/typescriptFormatter')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const { BugsnagSourceMapUploaderPlugin } = require('webpack-bugsnag-plugins')
 const packageJson = require(paths.appPackageJson)
 
 // Source maps are resource heavy and can cause out of memory issue for large source files.
@@ -370,6 +371,12 @@ module.exports = (webpackEnv) => {
       ],
     },
     plugins: [
+      isEnvTest &&
+        new BugsnagSourceMapUploaderPlugin({
+          apiKey: process.env.REACT_APP_BUGSNAG_KEY,
+          publicPath: 'build',
+          overwrite: true,
+        }),
       // Generates an `index.html` file with the <script> injected.
       new HtmlWebpackPlugin(
         Object.assign(
