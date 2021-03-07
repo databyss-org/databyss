@@ -71,7 +71,7 @@ module.exports = (webpackEnv) => {
       ? shouldUseSourceMap
         ? 'source-map'
         : false
-      : isEnvDevelopment && 'cheap-module-source-map',
+      : (isEnvDevelopment || isEnvTest) && 'cheap-module-source-map',
     // These are the "entry points" to our application.
     // This means they will be the "root" imports that are included in JS bundle.
     entry: [
@@ -118,7 +118,7 @@ module.exports = (webpackEnv) => {
             path
               .relative(paths.appSrc, info.absoluteResourcePath)
               .replace(/\\/g, '/')
-        : isEnvDevelopment &&
+        : (isEnvDevelopment || isEnvTest) &&
           ((info) =>
             path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
     },

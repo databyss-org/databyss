@@ -161,11 +161,7 @@ class NotifyProvider extends React.Component {
       if (process.env.NODE_ENV === 'production') {
         this.notify('😱 So sorry, but Databyss has encountered an error.', true)
       } else {
-        this.notify(
-          'Error',
-          true,
-          `<pre>${JSON.stringify(error, null, 2)}</pre>`
-        )
+        this.notifyHtml(`<pre>${JSON.stringify(error, null, 2)}</pre>`)
       }
     }
   }
