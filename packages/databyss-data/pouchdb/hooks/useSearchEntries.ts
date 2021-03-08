@@ -6,6 +6,7 @@ import { searchEntries } from '../entries'
 import { SearchEntriesResultPage } from '../entries/lib/searchEntries'
 import { DocumentType } from '../interfaces'
 import { usePages } from './'
+import { CouchDb } from '../../couchdb-client/couchdb'
 
 const changesRef: { current: PouchDB.Core.Changes<any> | undefined } = {
   current: undefined,
@@ -32,6 +33,9 @@ export const useSearchEntries = (searchQuery: string) => {
 
   // watch for changes in pouch and reset cache when necessary
   useEffect(() => {
+    if (dbRef.current instanceof CouchDb) {
+      return
+    }
     if (changesRef.current) {
       // already subscribed
       return

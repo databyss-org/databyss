@@ -23,6 +23,7 @@ import { BlockType } from '@databyss-org/services/interfaces/Block'
 import tv4 from 'tv4'
 import { DocumentType } from './interfaces'
 import { searchText } from './utils'
+import { CouchDb } from '../couchdb-client/couchdb'
 
 const REMOTE_CLOUDANT_URL = `https://${process.env.CLOUDANT_HOST}`
 
@@ -33,7 +34,7 @@ PouchDB.plugin(PouchDBFind)
 PouchDB.plugin(PouchDBUpsert)
 
 interface DbRef {
-  current: PouchDB.Database<any> | null
+  current: PouchDB.Database<any> | CouchDb | null
 }
 
 declare global {
@@ -218,8 +219,8 @@ export const syncPouchDb = ({
     },
   }
 
-  dbRef
-    .current!.replicate.to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
+  ;(dbRef.current as PouchDB.Database).replicate
+    .to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
       ...opts,
       // do not replciate design docs
       filter: (doc) => !doc._id.includes('design/'),
@@ -243,16 +244,15 @@ export const syncPouchDb = ({
         })
       }
     })
-
-  dbRef
-    .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
+  ;(dbRef.current as PouchDB.Database).replicate
+    .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
   // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
 }
 
 export const resetPouchDb = async () => {
-  if (dbRef.current?.destroy) {
-    await dbRef.current.destroy()
+  if (dbRef.current) {
+    await (dbRef.current as PouchDB.Database).destroy()
   }
 
   dbRef.current = null

@@ -7,15 +7,12 @@ export const fetchAnnotations = (file: File): Promise<any> => {
   const formData = new FormData()
   formData.append('pdf', file)
 
-  return request(
-    PDF_API_URL,
-    {
-      method: 'POST',
-      body: formData,
-      timeout: 30000,
-    },
-    false
-  )
+  return request(PDF_API_URL, {
+    method: 'POST',
+    body: formData,
+    timeout: 30000,
+    responseAsJson: false,
+  })
 }
 
 export interface Metadata {
@@ -42,5 +39,5 @@ export const fetchMetadata = (data: Metadata): Promise<any> => {
 
   const url = `${CROSSREF_BASE_URL}?${queries.join('&')}`
 
-  return request(url, { method: 'GET', timeout: 30000 }, true)
+  return request(url, { method: 'GET', timeout: 30000, responseAsJson: true })
 }
