@@ -20,7 +20,6 @@ export const StickyHeader = ({
   children,
 }: PropsWithChildren<StickyHeaderProps>) => {
   const { isOnline } = useNotifyContext()
-  const { isPublicAccount } = useSessionContext()
 
   if (isMobile()) {
     return null
@@ -55,7 +54,8 @@ export const StickyHeader = ({
         >
           {isOnline ? <OnlineSvg /> : <OfflineSvg />}
         </Icon>
-        {!isPublicAccount() && <AccountMenu />}
+        <AccountMenu />
+
         {contextMenu && <View ml="em">{contextMenu}</View>}
       </View>
     </View>

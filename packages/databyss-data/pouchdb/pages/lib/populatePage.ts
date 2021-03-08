@@ -40,6 +40,7 @@ const populatePage = async (
         },
         useIndex: 'fetch-one',
       })
+
       // check for atomic block closure
       if (_block && data.type?.match(/^END_/)) {
         _block.text = {

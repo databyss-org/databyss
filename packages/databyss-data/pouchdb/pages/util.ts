@@ -3,6 +3,7 @@ import { Block } from '@databyss-org/services/interfaces'
 import { PageDoc, DocumentType } from '../interfaces'
 import { upsert, upsertImmediate } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
+import { BlockReference } from '../../../databyss-services/interfaces/Block'
 
 const applyPatch = (node, path, value) => {
   const key = path.shift()
@@ -157,3 +158,22 @@ export const addPage = async (page: Page) => {
 
   return page
 }
+
+export const didBlocksChange = ({
+  blocksAfter,
+  blocksBefore,
+}: {
+  blocksBefore: BlockReference[]
+  blocksAfter: BlockReference[]
+}) =>
+  !blocksAfter.reduce((acc, blockAfter, idx) => {
+    const _blockBefore = blocksBefore[idx]
+    if (
+      acc &&
+      blockAfter?.type === _blockBefore?.type &&
+      blockAfter?._id === _blockBefore?._id
+    ) {
+      return true
+    }
+    return false
+  }, true)

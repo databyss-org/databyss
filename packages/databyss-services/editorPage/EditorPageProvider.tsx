@@ -14,8 +14,10 @@ import {
   ResourceResponse,
 } from '../interfaces'
 import { PageReplicator } from './PageReplicator'
-
+import { pageDependencyObserver } from './pageDependencyObserver'
 import * as actions from './actions'
+
+pageDependencyObserver()
 
 interface PropsType {
   children: JSX.Element
@@ -57,6 +59,8 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
   const { id: pageId } = useParams()
 
   const [state, dispatch] = useReducer(reducer, initialState)
+
+  // TODO: kick off a page listener
 
   useEffect(() => {
     if (pageCachedHookRef.current) {

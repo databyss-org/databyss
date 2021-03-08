@@ -2,7 +2,7 @@ import { Group } from '@databyss-org/services/interfaces/Group'
 import { httpPost } from '@databyss-org/services/lib/requestApi'
 import { setPouchSecret } from '@databyss-org/services/session/clientStorage'
 import { DocumentType, PageDoc } from '../interfaces'
-import { upsertImmediate, findOne, upsert } from '../utils'
+import { upsertImmediate, findOne } from '../utils'
 import { Block } from '../../../databyss-services/interfaces/Block'
 import { getAtomicClosureText } from '../../../databyss-services/blocks/index'
 import { getAtomicsFromFrag } from '../../../databyss-editor/lib/clipboardUtils/getAtomicsFromSelection'
@@ -28,22 +28,75 @@ const createCloudantGroupDatabase = async ({
   return res.data
 }
 
-const addGroupToDocument = (groupId: string, document: any) => {
+const addGroupToDocument = (groupIds: string[], document: any) => {
   // add groupId to page array
-  const _sharedWithGroups = document.sharedWithGroups || []
 
-  document.sharedWithGroups = removeDuplicatesFromArray(
-    _sharedWithGroups.concat(groupId)
-  )
+  const _sharedWithGroups = document.sharedWithGroups || []
+  document.sharedWithGroups = removeDuplicatesFromArray([
+    ..._sharedWithGroups,
+    ...groupIds,
+  ])
   // add group to page document
-  upsert({
+  upsertImmediate({
     $type: document.$type,
     _id: document._id,
     doc: document,
   })
 }
 
-// TODO: this function should use react-query. where should this function go to have access to the hooks?
+export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
+  const _sharedWithPages = page.sharedWithGroups || []
+  const _blocks: Block[] = []
+
+  // add to all blocks associated with page
+  for (const [i, _b] of page.blocks.entries()) {
+    const _block = await findOne<Block>({
+      $type: DocumentType.Block,
+      query: { _id: _b._id },
+    })
+    if (_block) {
+      const _populatedBlock = { ..._block }
+
+      if (_b.type?.match(/^END_/)) {
+        _populatedBlock.type = _b.type
+        _populatedBlock.text = {
+          textValue: getAtomicClosureText(
+            _b.type,
+            _populatedBlock.text.textValue
+          ),
+          ranges: [],
+        }
+      } else {
+        addGroupToDocument(_sharedWithPages, _block)
+      }
+      _blocks[i] = _populatedBlock
+    }
+  }
+
+  // add to selection
+  const _selectionId = page.selection
+  const _selection = await findOne<any>({
+    $type: DocumentType.Selection,
+    query: { _id: _selectionId },
+  })
+  if (_selection) {
+    addGroupToDocument(_sharedWithPages, _selection)
+  }
+
+  // get all atomics associated with page
+  const _atomics = getAtomicsFromFrag(_blocks)
+  // add groupId to all atomics in pouch
+
+  for (const _a of _atomics) {
+    const _atomic = await findOne<any>({
+      $type: DocumentType.BlockRelation,
+      query: { _id: `r_${_a._id}` },
+    })
+    if (_atomic) {
+      addGroupToDocument(_sharedWithPages, _atomic)
+    }
+  }
+}
 
 /*
 crawl page and append groupId to all documents
@@ -59,60 +112,9 @@ export const addPageToGroup = async ({
     $type: DocumentType.Page,
     query: { _id: pageId },
   })
-  if (_page) {
-    const _blocks: Block[] = []
-
-    // add groupId to page array
-    addGroupToDocument(groupId, _page)
-
-    // add to all blocks associated with page
-    for (const [i, _b] of _page.blocks.entries()) {
-      const _block = await findOne<Block>({
-        $type: DocumentType.Block,
-        query: { _id: _b._id },
-      })
-      if (_block) {
-        const _populatedBlock = { ..._block }
-
-        if (_b.type?.match(/^END_/)) {
-          _populatedBlock.type = _b.type
-          _populatedBlock.text = {
-            textValue: getAtomicClosureText(
-              _b.type,
-              _populatedBlock.text.textValue
-            ),
-            ranges: [],
-          }
-        } else {
-          addGroupToDocument(groupId, _block)
-        }
-        _blocks[i] = _populatedBlock
-      }
-    }
-
-    // add to selection
-    const _selectionId = _page.selection
-    const _selection = await findOne<any>({
-      $type: DocumentType.Selection,
-      query: { _id: _selectionId },
-    })
-    if (_selection) {
-      addGroupToDocument(groupId, _selection)
-    }
-
-    // get all atomics associated with page
-    const _atomics = getAtomicsFromFrag(_blocks)
-    // add groupId to all atomics in pouch
-
-    for (const _a of _atomics) {
-      const _atomic = await findOne<any>({
-        $type: DocumentType.BlockRelation,
-        query: { _id: `r_${_a._id}` },
-      })
-      if (_atomic) {
-        addGroupToDocument(groupId, _atomic)
-      }
-    }
+  if (_page && !_page?.sharedWithGroups?.includes(groupId)) {
+    // add groupId to page array if does not already exist
+    addGroupToDocument([groupId], _page)
   }
 }
 
@@ -139,7 +141,8 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     public: bool,
   }
 
-  // crawls all documents associated with page and appends `groupID` to `sharedWithGroups` array
+  // add groupId to pages sharedWithPages array
+  // this will kick off `pageDepencencyObserver` which will add the group id to all page document
   await addPageToGroup({ pageId, groupId: _data._id })
 
   await upsertImmediate({
