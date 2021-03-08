@@ -1,0 +1,1 @@
+export { setDocument } from './setDocument'

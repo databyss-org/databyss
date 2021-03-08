@@ -11,7 +11,6 @@ export enum DocumentType {
   Page = 'PAGE',
   Block = 'BLOCK',
   Selection = 'SELECTION',
-  BlockRelation = 'BLOCK_RELATION',
   UserPreferences = 'USER_PREFERENCES',
 }
 

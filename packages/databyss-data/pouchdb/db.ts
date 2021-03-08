@@ -5,13 +5,12 @@ import PouchDbQuickSearch from 'pouchdb-quick-search'
 import PouchDBTransform from 'transform-pouch'
 import {
   sourceSchema,
-  blockRelationSchema,
   selectionSchema,
   pageSchema,
   textSchema,
   entrySchema,
   topicSchema,
-  pouchDocSchema,
+  documentSchema,
   blockSchema,
   userPreferenceSchema,
 } from '@databyss-org/data/schemas'
@@ -276,13 +275,12 @@ export const pouchDataValidation = (data) => {
     [BlockType.Topic]: topicSchema,
     [DocumentType.Page]: pageSchema,
     [DocumentType.Selection]: selectionSchema,
-    [DocumentType.BlockRelation]: blockRelationSchema,
     [DocumentType.UserPreferences]: userPreferenceSchema,
   }
 
   // add $ref schemas, these schemas are reused
   tv4.addSchema('text', textSchema)
-  tv4.addSchema('pouchDb', pouchDocSchema)
+  tv4.addSchema('pouchDb', documentSchema)
   tv4.addSchema('blockSchema', blockSchema)
 
   if (data._id.includes('design/')) {

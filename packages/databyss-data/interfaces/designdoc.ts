@@ -12,9 +12,8 @@ export interface DesignDoc {
   schema?: JSONSchema4
   sourceSchema: JSONSchema4
   textSchema: JSONSchema4
-  pouchDocSchema: JSONSchema4
+  documentSchema: JSONSchema4
   blockSchema: JSONSchema4
-  blockRelationSchema: JSONSchema4
   selectionSchema: JSONSchema4
   pageSchema: JSONSchema4
   entrySchema: JSONSchema4

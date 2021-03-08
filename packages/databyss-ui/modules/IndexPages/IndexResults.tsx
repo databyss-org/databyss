@@ -15,7 +15,7 @@ import { groupBlockRelationsByPage } from '@databyss-org/services/blocks'
 import { Block } from '@databyss-org/services/interfaces'
 import { addPagesToBlockRelation } from '@databyss-org/services/blocks/joins'
 import { useDocuments } from '@databyss-org/data/pouchdb/hooks/useDocuments'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { DocumentType } from '@databyss-org/data/interfaces'
 
 interface IndexResultsProps {
   blockType: BlockType

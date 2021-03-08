@@ -1,5 +1,11 @@
 import { Users, Groups } from '@databyss-org/data/couchdb'
-import { User, Role } from '@databyss-org/data/interfaces'
+import {
+  User,
+  Role,
+  UserPreference,
+  DocumentType,
+  PageDoc,
+} from '@databyss-org/data/interfaces'
 import { updateDesignDoc } from '@databyss-org/data/couchdb/util'
 import { uid, uidlc } from '@databyss-org/data/lib/uid'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
@@ -7,11 +13,6 @@ import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import { DocumentScope } from 'nano'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import { BlockType } from '../../../databyss-services/interfaces/Block'
-import {
-  UserPreference,
-  DocumentType,
-  PageDoc,
-} from '../../../databyss-data/pouchdb/interfaces'
 
 interface CredentialResponse {
   dbKey: string

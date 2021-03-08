@@ -1,4 +1,3 @@
-export { useBlockRelations } from './useBlockRelations'
 export { useBlocksInPages } from './useBlocksInPages'
 export { useBlocks } from './useBlocks'
 export { usePages } from './usePages'

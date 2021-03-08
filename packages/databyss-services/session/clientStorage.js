@@ -4,7 +4,7 @@ import {
   getUserSession,
   findOne,
 } from '@databyss-org/data/pouchdb/utils'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { DocumentType } from '@databyss-org/data/interfaces'
 import { resetPouchDb } from '@databyss-org/data/pouchdb/db'
 import { getAccountFromLocation } from './_helpers'
 

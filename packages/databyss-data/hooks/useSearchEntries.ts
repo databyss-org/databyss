@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import PouchDB from 'pouchdb'
-import { dbRef } from '../db'
-import { searchEntries } from '../entries'
-import { SearchEntriesResultPage } from '../entries/lib/searchEntries'
+import { dbRef } from '../pouchdb/db'
+import { searchEntries } from '../pouchdb/entries'
+import { SearchEntriesResultPage } from '../pouchdb/entries/lib/searchEntries'
 import { DocumentType } from '../interfaces'
-import { usePages } from './'
-import { CouchDb } from '../../couchdb-client/couchdb'
+import { usePages } from '.'
+import { CouchDb } from '../couchdb-client/couchdb'
 
 const changesRef: { current: PouchDB.Core.Changes<any> | undefined } = {
   current: undefined,

@@ -8,13 +8,12 @@ import {
   loginSchema,
   groupSchema,
   sourceSchema,
-  blockRelationSchema,
   selectionSchema,
   pageSchema,
   entrySchema,
   topicSchema,
   textSchema,
-  pouchDocSchema,
+  documentSchema,
   blockSchema,
   userPreferenceSchema,
   pointSchema,
@@ -24,8 +23,6 @@ import { DesignDoc } from '@databyss-org/data/interfaces'
 import { JSONSchema4 } from 'json-schema'
 import path from 'path'
 import { cloudant } from './cloudant'
-// import { UserPreference } from '../pouchdb/interfaces'
-// import { upsert } from '../pouchdb/utils'
 
 const fs = require('fs')
 
@@ -55,11 +52,10 @@ export const updateDesignDoc = async ({
         .toString(),
     },
     schema,
-    pouchDocSchema,
+    documentSchema,
     blockSchema,
     sourceSchema,
     textSchema,
-    blockRelationSchema,
     selectionSchema,
     pageSchema,
     entrySchema,

@@ -10,7 +10,7 @@ import EditorProvider from '@databyss-org/editor/state/EditorProvider'
 import HistoryProvider from '@databyss-org/editor/history/EditorHistory'
 import { normalizePage } from '@databyss-org/data/pouchdb/pages/util'
 import { upsert } from '@databyss-org/data/pouchdb/utils'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import { DocumentType } from '@databyss-org/data/interfaces'
 import {
   addMetaToPatches,
   pageToEditorState,

@@ -4,7 +4,7 @@ function(newDoc) {
 
   var tv4 = require('libs/tv4');
   tv4.addSchema('text', this.textSchema)
-  tv4.addSchema('pouchDb', this.pouchDocSchema)
+  tv4.addSchema('pouchDb', this.documentSchema)
   tv4.addSchema('blockSchema', this.blockSchema)
   tv4.addSchema('point', this.pointSchema)
   
@@ -19,7 +19,6 @@ function(newDoc) {
       TOPIC: this.topicSchema,
       PAGE: this.pageSchema,
       SELECTION: this.selectionSchema,
-      BLOCK_RELATION: this.blockRelationSchema,
       USER_PREFERENCES: this.userPreferenceSchema
     }
     if(newDoc.doctype == 'BLOCK'){

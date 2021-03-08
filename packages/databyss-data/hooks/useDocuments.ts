@@ -2,8 +2,8 @@ import { useEffect } from 'react'
 import { useQuery, useQueryClient } from 'react-query'
 import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
-import { dbRef } from '../db'
-import { CouchDb } from '../../couchdb-client/couchdb'
+import { dbRef } from '../pouchdb/db'
+import { CouchDb } from '../couchdb-client/couchdb'
 import { DocumentArrayToDict } from './utils'
 
 export interface QueryOptions {

@@ -6,14 +6,18 @@ import Block from '@databyss-org/api/src/models/Block'
 import Selection from '@databyss-org/api/src/models/Selection'
 import { connectDB, closeDB } from '@databyss-org/api/src/lib/db'
 import { Block as BlockInterface } from '@databyss-org/services/interfaces'
-import { DocumentType } from '@databyss-org/data/pouchdb/interfaces'
+import {} from '@databyss-org/data/interfaces'
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import {
   createGroupId,
   createGroupDatabase,
 } from '@databyss-org/api/src/lib/createUserDatabase'
 import { uid } from '@databyss-org/data/lib/uid'
-import { Role, User as UserInterface } from '@databyss-org/data/interfaces'
+import {
+  Role,
+  User as UserDocument,
+  DocumentType,
+} from '@databyss-org/data/interfaces'
 import ServerProcess from '../lib/ServerProcess'
 import { getEnv, EnvDict } from '../lib/util'
 
@@ -421,7 +425,7 @@ class UserMongoToCloudant extends ServerProcess {
       console.log(`➡️  Migrated userPreferences`)
 
       // STEP 5: Create document in the Users db for the new user so they can login
-      const _usersDb = await cloudant.db.use<UserInterface>('users')
+      const _usersDb = await cloudant.db.use UserDocument>('users')
       _usersDb.insert({
         _id: _couchUserId,
         email: _mongoUser.email,

@@ -1,7 +1,7 @@
 import { JSONSchema4 } from 'json-schema'
 
-export const pouchDocSchema: JSONSchema4 = {
-  title: 'PouchDocSchema',
+export const documentSchema: JSONSchema4 = {
+  title: 'DocumentSchema',
   type: 'object',
   properties: {
     _rev: {
@@ -36,8 +36,14 @@ export const pouchDocSchema: JSONSchema4 = {
     _deleted: {
       type: 'boolean',
     },
+    successorOf: {
+      type: 'array',
+      items: {
+        type: 'string',
+      },
+    },
   },
-  required: ['_id', 'doctype', 'createdAt'],
+  required: ['_id', 'doctype', 'createdAt', 'successorOf'],
 }
 
-export default pouchDocSchema
+export default documentSchema
