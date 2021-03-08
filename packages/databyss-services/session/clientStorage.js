@@ -167,7 +167,13 @@ export const localStorageHasSession = async () => {
 
   // if we're on a URL with a groupid on it, make sure it matches default group
   const groupIdFromUrl = getAccountFromLocation()
-  if (groupIdFromUrl && groupIdFromUrl !== defaultGroup) {
+
+  console.log('account from group url', groupIdFromUrl)
+  if (
+    !process.env.STORYBOOK &&
+    groupIdFromUrl &&
+    groupIdFromUrl !== defaultGroup
+  ) {
     // TODO: first check it against the user Session default group
     return false
   }
