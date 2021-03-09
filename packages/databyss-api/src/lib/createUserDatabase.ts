@@ -90,6 +90,22 @@ export const createGroupId = async ({
   return _id
 }
 
+/*
+deletes group id from cloudant Groups database, the user should already be verified to have access to this database
+*/
+export const deleteGroupId = async ({ groupId }) => {
+  const Groups = await cloudant.db.use('groups')
+  const _doc = await Groups.get(groupId)
+  if (_doc) {
+    const latestRev = _doc._rev
+    await Groups.destroy(groupId, latestRev, (err) => {
+      if (!err) {
+        console.log('Successfully deleted doc', groupId)
+      }
+    })
+  }
+}
+
 export const createGroupDatabase = async (
   id: string
 ): Promise<DocumentScope<any>> => {
@@ -122,7 +138,7 @@ const getSecurity = (groupId: string): Promise<{ [key: string]: string[] }> =>
       if (err) {
         reject(err)
       }
-      if (result.cloudant) {
+      if (result?.cloudant) {
         security = result.cloudant
       }
       resolve(security)

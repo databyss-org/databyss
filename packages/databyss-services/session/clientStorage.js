@@ -136,6 +136,17 @@ export const setPouchSecret = (credentials) => {
   localStorage.setItem('pouch_secrets', JSON.stringify(keyMap))
 }
 
+export const deletePouchSecret = (groupId) => {
+  let keyMap = localStorage.getItem('pouch_secrets')
+  if (!keyMap) {
+    return
+  }
+  keyMap = JSON.parse(keyMap)
+
+  delete keyMap[groupId]
+  localStorage.setItem('pouch_secrets', JSON.stringify(keyMap))
+}
+
 export const getDbCredentialsFromLocal = (groupId) => {
   let keyMap = localStorage.getItem('pouch_secrets')
 

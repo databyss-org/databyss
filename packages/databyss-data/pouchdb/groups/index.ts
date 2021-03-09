@@ -1,6 +1,9 @@
 import { Group } from '@databyss-org/services/interfaces/Group'
 import { httpPost } from '@databyss-org/services/lib/requestApi'
-import { setPouchSecret } from '@databyss-org/services/session/clientStorage'
+import {
+  setPouchSecret,
+  deletePouchSecret,
+} from '@databyss-org/services/session/clientStorage'
 import { DocumentType, PageDoc } from '../interfaces'
 import { upsertImmediate, findOne } from '../utils'
 import { Block } from '../../../databyss-services/interfaces/Block'
@@ -11,10 +14,10 @@ const removeDuplicatesFromArray = (array: string[]) =>
   array.filter((v, i, a) => a.indexOf(v) === i)
 
 /*
-  creates a cloudant group database if no database exists
+  creates or removes a cloudant group database if no database exists
   */
 
-const createCloudantGroupDatabase = async ({
+const addOrRemoveCloudantGroupDatabase = async ({
   groupId,
   isPublic,
 }: {
@@ -30,18 +33,44 @@ const createCloudantGroupDatabase = async ({
 
 const addGroupToDocument = (groupIds: string[], document: any) => {
   // add groupId to page array
-
-  const _sharedWithGroups = document.sharedWithGroups || []
-  document.sharedWithGroups = removeDuplicatesFromArray([
+  let _sharedWithGroups = document.sharedWithGroups || []
+  _sharedWithGroups = removeDuplicatesFromArray([
     ..._sharedWithGroups,
     ...groupIds,
   ])
-  // add group to page document
-  upsertImmediate({
-    $type: document.$type,
-    _id: document._id,
-    doc: document,
-  })
+  // update if ids were added
+  if (document?.sharedWithGroups?.length !== _sharedWithGroups.length) {
+    document.sharedWithGroups = _sharedWithGroups
+    // add group to page document
+    console.log('ADD GROUP', groupIds, 'TO ', document)
+
+    upsertImmediate({
+      $type: document.$type,
+      _id: document._id,
+      doc: document,
+    })
+  }
+}
+
+const removeGroupsFromDocument = (groupIds: string[], document: any) => {
+  // if property doenst exist, bail early
+  if (!document?.sharedWithGroups?.length) {
+    return
+  }
+
+  // remove groupIds from sharedWithGroups
+  const _sharedWithGroups = document.sharedWithGroups.filter(
+    (g) => !groupIds.includes(g)
+  )
+  // if elements were removed, update document
+  if (document.sharedWithGroups.length !== _sharedWithGroups.length) {
+    document.sharedWithGroups = _sharedWithGroups
+    upsertImmediate({
+      $type: document.$type,
+      _id: document._id,
+      doc: document,
+    })
+  }
 }
 
 export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
@@ -134,29 +163,123 @@ export const setGroup = async (group: Group, pageId?: string) => {
   })
 }
 
+/*
+removes given groupId from any document associated with pageId
+*/
+
+export const removeGroupFromPage = async ({
+  pageId,
+  groupId,
+}: {
+  pageId: string
+  groupId: string
+}) => {
+  const _page = await findOne<PageDoc>({
+    $type: DocumentType.Page,
+    query: { _id: pageId },
+  })
+  if (_page?.sharedWithGroups) {
+    // removes groupId from sharedWithGroups array
+    await removeGroupsFromDocument([groupId], _page)
+
+    const _blocks: Block[] = []
+
+    // add to all blocks associated with page
+    for (const [i, _b] of _page.blocks.entries()) {
+      const _block = await findOne<Block>({
+        $type: DocumentType.Block,
+        query: { _id: _b._id },
+      })
+      if (_block) {
+        const _populatedBlock = { ..._block }
+
+        if (_b.type?.match(/^END_/)) {
+          _populatedBlock.type = _b.type
+          _populatedBlock.text = {
+            textValue: getAtomicClosureText(
+              _b.type,
+              _populatedBlock.text.textValue
+            ),
+            ranges: [],
+          }
+        } else {
+          await removeGroupsFromDocument([groupId], _block)
+        }
+        _blocks[i] = _populatedBlock
+      }
+    }
+
+    // remove from selection
+    const _selectionId = _page.selection
+    const _selection = await findOne<any>({
+      $type: DocumentType.Selection,
+      query: { _id: _selectionId },
+    })
+    if (_selection._sharedWithPages) {
+      await removeGroupsFromDocument([groupId], _selection)
+    }
+
+    // get all atomics associated with page
+    const _atomics = getAtomicsFromFrag(_blocks)
+    // add groupId to all atomics in pouch
+
+    for (const _a of _atomics) {
+      const _atomic = await findOne<any>({
+        $type: DocumentType.BlockRelation,
+        query: { _id: `r_${_a._id}` },
+      })
+      if (_atomic) {
+        await removeGroupsFromDocument([groupId], _atomic)
+      }
+    }
+  }
+}
+
 export const setPublicPage = async (pageId: string, bool: boolean) => {
   const _data: Group = {
     _id: `p_${pageId}`,
     pages: [pageId],
     public: bool,
   }
+  // if page is shared
+  if (bool) {
+    // add groupId to pages sharedWithPages array
+    // this will kick off `pageDepencencyObserver` which will add the group id to all page document
+    await addPageToGroup({ pageId, groupId: _data._id })
 
-  // add groupId to pages sharedWithPages array
-  // this will kick off `pageDepencencyObserver` which will add the group id to all page document
-  await addPageToGroup({ pageId, groupId: _data._id })
+    await upsertImmediate({
+      $type: DocumentType.Group,
+      _id: _data._id,
+      doc: _data,
+    })
 
-  await upsertImmediate({
-    $type: DocumentType.Group,
-    _id: _data._id,
-    doc: _data,
-  })
+    // create cloudant db
+    // returns credentials from public page
+    const _credentials = await addOrRemoveCloudantGroupDatabase({
+      groupId: _data._id,
+      isPublic: true,
+    })
+    // add credentials to local storage
+    setPouchSecret(Object.values(_credentials))
+  } else {
+    // if page is removed from sharing
 
-  // create cloudant db
-  // returns credentials from public page
-  const _credentials = await createCloudantGroupDatabase({
-    groupId: _data._id,
-    isPublic: true,
-  })
-  // add credentials to local storage
-  setPouchSecret(Object.values(_credentials))
+    // delete group from pouchDb
+    await upsertImmediate({
+      $type: DocumentType.Group,
+      _id: _data._id,
+      doc: { ..._data, _deleted: true },
+    })
+
+    // crawl page and remove groupId from documents
+    await removeGroupFromPage({ pageId, groupId: _data._id })
+
+    // remove database from cloudant
+    await addOrRemoveCloudantGroupDatabase({
+      groupId: _data._id,
+      isPublic: false,
+    })
+    // remove credentials from local storage
+    deletePouchSecret(pageId)
+  }
 }

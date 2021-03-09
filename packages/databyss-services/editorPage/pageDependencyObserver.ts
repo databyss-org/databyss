@@ -13,9 +13,9 @@ export const pageDependencyObserver = () => {
     .on('change', (change) => {
       // crawl page and add property to all pages
       const _pageDoc = change.doc
-      console.log('change', change)
       // TODO: this only works for shareing a page, not unsharing
       if (_pageDoc?.sharedWithGroups?.length) {
+        console.log('ADD THIS PAGE TO SHARE', _pageDoc)
         addGroupToDocumentsFromPage(_pageDoc)
       }
     })
