@@ -6,6 +6,7 @@ import createSharedGroupDatabase, {
   getDB,
   verifyUserOwnsDatabase,
   verifyDatabaseCredentials,
+  deleteSharedGroupDatabase,
 } from './../../lib/createSharedGroupDatabase'
 import { setSecurity } from '../../lib/createUserDatabase'
 
@@ -21,8 +22,6 @@ router.post('/groups/credentials/:id', auth, async (req, res) => {
   const userId = req.user.id
   const groupId = req.params.id
   const { isPublic } = req.body.data
-
-  console.log('IS PUBLIC', isPublic)
 
   const _userAuthorized = await verifyUserOwnsDatabase({
     userId,
@@ -77,17 +76,28 @@ router.post('/groups/auth/:id', auth, async (req, res) => {
 })
 
 // @route    POST api/cloudant/groups
-// @desc     creates a database for shared groups
+// @desc     creates or removes a database for shared groups
 // @access   private
 router.post('/groups', auth, async (req, res) => {
   // get user id
-  const user = req.user
+  const userId = req.user.id
 
   const { groupId, isPublic } = req.body.data
 
   let credentials
   if (isPublic) {
-    credentials = await createSharedGroupDatabase({ groupId, userId: user.id })
+    credentials = await createSharedGroupDatabase({ groupId, userId })
+  } else {
+    // first verify user owns database
+    const _userAuthorized = await verifyUserOwnsDatabase({
+      userId,
+      dbName: groupId,
+    })
+    if (!_userAuthorized) {
+      return res.status(401).json({ message: 'not authorized' })
+    }
+    // if user is authorized, remove database and return apiKey to be deleted on the client
+    deleteSharedGroupDatabase({ groupId })
   }
 
   return res.json({ data: { credentials } }).status(200)

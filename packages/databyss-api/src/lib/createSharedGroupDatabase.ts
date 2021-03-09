@@ -20,7 +20,7 @@ export const verifyDatabaseCredentials = async ({
         reject(err)
       }
 
-      if (result.cloudant) {
+      if (result?.cloudant) {
         const creds = result.cloudant[dbKey]
         if (creds?.includes('_writer')) {
           // see if user has _writer permissions
@@ -56,6 +56,14 @@ export const getDB = async ({ dbName }: { dbName: string }) => {
     return _db
   } catch (err) {
     return false
+  }
+}
+
+export const deleteSharedGroupDatabase = async ({ groupId }) => {
+  try {
+    await cloudant.db.destroy(groupId)
+  } catch (err) {
+    console.error(err)
   }
 }
 
