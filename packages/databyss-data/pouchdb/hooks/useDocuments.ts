@@ -57,8 +57,8 @@ export const useDocuments = <T extends Document>(
     if (subscriptionDict[selectorString]) {
       return
     }
-    subscriptionDict[selectorString] = dbRef
-      .current!.changes({
+    subscriptionDict[selectorString] = dbRef.current
+      ?.changes({
         since: 'now',
         live: true,
         include_docs: true,
