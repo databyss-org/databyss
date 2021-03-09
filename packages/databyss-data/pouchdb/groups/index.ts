@@ -54,7 +54,7 @@ const addGroupToDocument = (groupIds: string[], document: any) => {
 
 const removeGroupsFromDocument = (groupIds: string[], document: any) => {
   // if property doenst exist, bail early
-  if (!document?.sharedWithGroups.length) {
+  if (!document?.sharedWithGroups?.length) {
     return
   }
 
