@@ -98,7 +98,6 @@ export const addPagesToBlockRelation = ({
   pages: DocumentDict<Page>
   blocks: DocumentDict<Block>
 }) => {
-  console.log(blockRelation.pages)
   const _pages: Page[] = []
   blockRelation.pages.forEach((p) => {
     if (!pages[p]) {
