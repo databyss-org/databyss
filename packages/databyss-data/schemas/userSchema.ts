@@ -33,6 +33,7 @@ export const userSchema: JSONSchema4 = {
     googleId: {
       type: 'string',
     },
+    // TODO: rename to "belongsToGroup" for consistency
     defaultGroupId: {
       type: 'string',
     },

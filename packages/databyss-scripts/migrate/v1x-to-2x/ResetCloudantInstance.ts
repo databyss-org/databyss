@@ -1,7 +1,7 @@
 import { cloudant } from '@databyss-org/data/couchdb/cloudant'
 import { updateDesignDocs, initiateDatabases } from '@databyss-org/data/couchdb'
-import ServerProcess from '../lib/ServerProcess'
-import { getEnv } from '../lib/util'
+import ServerProcess from '../../lib/ServerProcess'
+import { getEnv } from '../../lib/util'
 
 export const sleep = (m) => new Promise((r) => setTimeout(r, m))
 
