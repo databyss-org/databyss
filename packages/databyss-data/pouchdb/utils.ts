@@ -212,7 +212,6 @@ export const upsertImmediate = async ({
       belongsToGroup: getAccountFromLocation(),
     }
     pouchDataValidation(_doc)
-    console.log('document to upsert', _doc)
     return _doc
   })
 }

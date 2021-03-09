@@ -3,6 +3,7 @@ import { BlockRelationOperation } from '@databyss-org/editor/interfaces'
 import { getDocument, upsert } from '../../utils'
 import { DocumentType } from '../../interfaces'
 
+// TODO: add addGroupToDocumentsFromPage here
 const setBlockRelations = async (payload: {
   _id: string
   type: BlockType

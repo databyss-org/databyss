@@ -56,7 +56,11 @@ export const EditorPageProvider: React.FunctionComponent<PropsType> = ({
 }: PropsType) => {
   const refDictRef = useRef<RefDict>({})
   const pageCachedHookRef: React.Ref<PageHookDict> = useRef({})
-  const { id: pageId } = useParams()
+  const pageIdParams = useParams()
+  let pageId
+  if (pageIdParams) {
+    pageId = pageIdParams.id
+  }
 
   const [state, dispatch] = useReducer(reducer, initialState)
 
