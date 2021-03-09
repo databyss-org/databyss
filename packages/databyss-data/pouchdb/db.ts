@@ -58,7 +58,11 @@ export const dbRef: DbRef = {
 // const _secrets = getPouchSecret()
 const defaultGroup = getDefaultGroup()
 const groupIdFromUrl = getAccountFromLocation()
-if (defaultGroup && (!groupIdFromUrl || groupIdFromUrl === defaultGroup)) {
+
+if (
+  defaultGroup &&
+  (!groupIdFromUrl || groupIdFromUrl === defaultGroup || process.env.STORYBOOK)
+) {
   dbRef.current = getPouchDb(`g_${defaultGroup}`)
 }
 
