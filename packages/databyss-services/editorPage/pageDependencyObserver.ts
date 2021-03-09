@@ -15,6 +15,7 @@ export const pageDependencyObserver = () => {
       const _pageDoc = change.doc
       // TODO: this only works for shareing a page, not unsharing
       if (_pageDoc?.sharedWithGroups?.length) {
+        console.log('ADD THIS PAGE TO SHARE', _pageDoc)
         addGroupToDocumentsFromPage(_pageDoc)
       }
     })

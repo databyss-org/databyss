@@ -33,7 +33,6 @@ const addOrRemoveCloudantGroupDatabase = async ({
 
 const addGroupToDocument = (groupIds: string[], document: any) => {
   // add groupId to page array
-
   let _sharedWithGroups = document.sharedWithGroups || []
   _sharedWithGroups = removeDuplicatesFromArray([
     ..._sharedWithGroups,
@@ -43,6 +42,8 @@ const addGroupToDocument = (groupIds: string[], document: any) => {
   if (document?.sharedWithGroups?.length !== _sharedWithGroups.length) {
     document.sharedWithGroups = _sharedWithGroups
     // add group to page document
+    console.log('ADD GROUP', groupIds, 'TO ', document)
+
     upsertImmediate({
       $type: document.$type,
       _id: document._id,
