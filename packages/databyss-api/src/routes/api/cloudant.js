@@ -8,7 +8,7 @@ import createSharedGroupDatabase, {
   verifyDatabaseCredentials,
   deleteSharedGroupDatabase,
 } from './../../lib/createSharedGroupDatabase'
-import { setSecurity } from '../../lib/createUserDatabase'
+import { setSecurity, deleteGroupId } from '../../lib/createUserDatabase'
 
 const router = express.Router()
 
@@ -97,7 +97,9 @@ router.post('/groups', auth, async (req, res) => {
       return res.status(401).json({ message: 'not authorized' })
     }
     // if user is authorized, remove database and return apiKey to be deleted on the client
-    deleteSharedGroupDatabase({ groupId })
+    await deleteSharedGroupDatabase({ groupId })
+    // remove the Group from internal cloudant DB
+    await deleteGroupId({ groupId })
   }
 
   return res.json({ data: { credentials } }).status(200)
@@ -111,7 +113,6 @@ router.delete('/', async (req, res) => {
     return new UnauthorizedError()
   }
   const _dbs = await cloudant.db.list()
-  // console.log(_dbs)
   if (_dbs.length) {
     for (const _db of _dbs) {
       await cloudant.db.destroy(_db)

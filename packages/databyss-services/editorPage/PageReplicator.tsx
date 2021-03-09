@@ -124,8 +124,8 @@ export const PageReplicator = ({
 
     return () => {
       // TODO: if switching pages, this doesnt get called
+      replicationStatusRef.current = {}
       replicationsRef.current.forEach((replication) => {
-        console.log('PageReplicator.cancelReplication', replication)
         replication.cancel()
       })
     }
