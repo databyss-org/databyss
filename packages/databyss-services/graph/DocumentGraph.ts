@@ -58,7 +58,7 @@ export class DocumentGraph {
       .current!.allDocs()
       .then((_result) =>
         _result.rows.forEach((_row) =>
-          _row.doc.successorOf.forEach((_id) => this.setEdge(_id, _row.doc._id))
+          _row.doc.successorOf.forEach((sid) => this.setEdge(sid, _row.doc._id))
         )
       )
     // listen for changes to propagate
@@ -86,34 +86,36 @@ export class DocumentGraph {
   /**
    * Updates dependent fields from values in predecessor node(s)
    */
-  propagateChanges(doc: Document, deleted: boolean) {
-    this.successors(doc._id).forEach((sid) =>
-      dbRef.current!.upsert(sid, async (oldDoc) => {
+  propagateChanges(pdoc: Document, deleted: boolean) {
+    this.successors(pdoc._id).forEach((sid) =>
+      // TODO: optimize upsert so it doesn't write unless there are changes
+      dbRef.current!.upsert(sid, async (sdoc) => {
         if (!deleted) {
-          // store successor relationship
-          oldDoc.successorOf = new Set(oldDoc.successorOf).add(doc._id)
+          // store successor relationship (do we need this?)
+          sdoc.successorOf = new Set(sdoc.successorOf).add(pdoc._id)
 
           // propagate sharedWithGroups as union
-          oldDoc.sharedWithGroups = union(
-            oldDoc.sharedWithGroups,
-            doc.sharedWithGroups
+          sdoc.sharedWithGroups = union(
+            sdoc.sharedWithGroups,
+            pdoc.sharedWithGroups
           )
 
-          // update inline text references
-          oldDoc.text = updateInlineText(oldDoc.text, doc)
+          // update inline text references (in text.textValue)
+          // TODO: optimize based on doc.doctype (e.g. only for ATOMIC -> ENTRY)
+          sdoc.text = updateInlineText(sdoc.text, pdoc)
         } else {
           // remove successor/predecessor relationship
-          oldDoc.successorOf = new Set(oldDoc.successorOf).delete(doc._id)
-          this.removeEdge(doc._id, sid)
+          sdoc.successorOf = new Set(sdoc.successorOf).delete(pdoc._id)
+          this.removeEdge(pdoc._id, sid)
 
           // recalculate sharedWithGroups from remaining predecessors
-          const _result = await this.predecessorDocs(oldDoc._id)
-          oldDoc.sharedWithGroups = _result.reduce(
+          const _result = await this.predecessorDocs(sdoc._id)
+          sdoc.sharedWithGroups = _result.reduce(
             (accum, curr) => union(accum, curr.sharedWithGroups),
             new Set()
           )
         }
-        return oldDoc
+        return sdoc
       })
     )
   }
