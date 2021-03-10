@@ -95,8 +95,6 @@ const SessionProvider = ({
         const groupId = _sesionFromLocalStorage.defaultGroupId
 
         // TODO: connect directly to CouchDB on cloudant while pouch is synching
-        // connect(`g_${groupId}`)
-
         await replicateDbFromRemote({
           groupId,
         })

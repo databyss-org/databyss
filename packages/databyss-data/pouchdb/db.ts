@@ -175,9 +175,15 @@ export const replicatePublicPage = ({ pageId }: { pageId: string }) =>
           continuous: true,
         }
         // when replication is complete, kick off a live sync
-        dbRef.current!.replicate.from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
-          ..._opts,
-        })
+        dbRef
+          .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/${pageId}`, {
+            ..._opts,
+          })
+          .on('error', () => {
+            // USER HAS TURNED OFF SHARING
+            window.location.reload()
+          })
+
         resolve(true)
       })
       .on('error', (err) => {
