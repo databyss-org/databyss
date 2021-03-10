@@ -57,19 +57,6 @@ describe('page sharing', () => {
   })
 
   afterEach(async () => {
-    const accountDropdown = await getElementByTag(
-      driver,
-      '[data-test-element="account-menu"]'
-    )
-
-    await accountDropdown.click()
-    const logoutButton = await getElementByTag(
-      driver,
-      '[data-test-block-menu="logout"]'
-    )
-
-    await logoutButton.click()
-    await sleep(1000)
     await driver.quit()
     driver = null
     await sleep(100)
@@ -151,6 +138,9 @@ describe('page sharing', () => {
     await sendKeys(actions, 'this entry exists within the public page')
     await isAppInNotesSaved(driver)
 
+    // allow the public page to replicate
+    await sleep(5000)
+
     // log user out to test links
     const accountDropdown = await getElementByTag(
       driver,
@@ -171,16 +161,14 @@ describe('page sharing', () => {
     // navigate to the private page url
     await driver.get(privatePageURL)
 
-    let body = await getElementByTag(driver, '[data-test-element="body"]')
-
-    body = await body.getAttribute('innerText')
-
     /*
-      unauthorized page should return empty page or not authorized
+      unauthorized page on unauthorized user should return the login screen
     */
-    const pageBody = body.trim() === 'Not Authorized' || body.trim() === ''
-    // confirm private page is not authorized
-    assert.equal(true, pageBody)
+    await getElementByTag(driver, '[data-test-path="email"]')
+
+    // const pageBody = body.trim() === 'Not Authorized' || body.trim() === ''
+    // // confirm private page is not authorized
+    // assert.equal(true, pageBody)
 
     // navigate to public pageq
     await driver.get(publicPageUrl)
