@@ -139,7 +139,7 @@ describe('page sharing', () => {
     await isAppInNotesSaved(driver)
 
     // allow the public page to replicate
-    await sleep(5000)
+    await sleep(7000)
 
     // log user out to test links
     const accountDropdown = await getElementByTag(
