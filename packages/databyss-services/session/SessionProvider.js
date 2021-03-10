@@ -7,6 +7,7 @@ import {
   syncPouchDb,
   initiatePouchDbIndexes,
 } from '@databyss-org/data/pouchdb/db'
+// import { connect } from '@databyss-org/data/couchdb-client/couchdb'
 import Loading from '@databyss-org/ui/components/Notify/LoadingFallback'
 import { ResourcePending } from '../interfaces/ResourcePending'
 import createReducer from '../lib/createReducer'
@@ -92,6 +93,10 @@ const SessionProvider = ({
         // 2nd pass: load session from local_storage
         // replicate from cloudant
         const groupId = _sesionFromLocalStorage.defaultGroupId
+
+        // TODO: connect directly to CouchDB on cloudant while pouch is synching
+        // connect(`g_${groupId}`)
+
         await replicateDbFromRemote({
           groupId,
         })

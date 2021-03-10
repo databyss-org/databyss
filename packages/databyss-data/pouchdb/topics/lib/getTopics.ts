@@ -5,7 +5,7 @@ import { findAll } from '../../utils'
 
 const getTopicHeaders = async () => {
   const _topics: Topic[] = await findAll({
-    $type: DocumentType.Block,
+    doctype: DocumentType.Block,
     query: {
       type: BlockType.Topic,
     },
@@ -23,7 +23,7 @@ const getTopicHeaders = async () => {
     _topic.isInPages = ['dummy-data']
 
     // const _blockRelations: BlockRelation[] = await findAll({
-    //   $type: DocumentType.BlockRelation,
+    //   doctype: DocumentType.BlockRelation,
     //   query: {
     //     relatedBlock: _topic._id,
     //   },
@@ -35,7 +35,7 @@ const getTopicHeaders = async () => {
     //   for (const _relation of _blockRelations) {
     //     if (_relation.page) {
     //       const _page: Page = await findOne({
-    //         $type: DocumentType.Page,
+    //         doctype: DocumentType.Page,
     //         query: {
     //           _id: _relation.page,
     //         },
@@ -53,7 +53,7 @@ const getTopicHeaders = async () => {
     // // look up to see if it exists on a page not yet added as a block relation
     // // returns all pages where source id is found in element id
     // const _pages: PageDoc[] = await findAll({
-    //   $type: DocumentType.Page,
+    //   doctype: DocumentType.Page,
     //   query: {
     //     blocks: {
     //       $elemMatch: {

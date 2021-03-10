@@ -37,7 +37,7 @@ export const PageDropzone = ({
     (item: DraggableItem) => {
       // if item is being dragged from the `PUBLIC PAGES` section, get the public page id
       let _id
-      if (item.payload.$type === DocumentType.Group) {
+      if (item.payload.doctype === DocumentType.Group) {
         _id = item.payload._id.substring(2)
       } else {
         const _pageHeader = item.payload as PageHeader

@@ -3,17 +3,12 @@ import {
   sortEntriesAtoZ,
   filterEntries,
 } from '@databyss-org/services/entries/util'
-import { getBlocksFromBlockRelations } from '@databyss-org/services/blocks/joins'
 import SidebarList from '@databyss-org/ui/components/Sidebar/SidebarList'
 import SidebarListItem from '@databyss-org/ui/components/Sidebar/SidebarListItem'
 import { iconSizeVariants } from '@databyss-org/ui/theming/icons'
 import { Text, View } from '@databyss-org/ui/primitives'
-import {
-  useBlockRelations,
-  useBlocks,
-  usePages,
-} from '@databyss-org/data/pouchdb/hooks'
-import { Source, BlockType } from '@databyss-org/services/interfaces'
+import { useBlocksInPages, usePages } from '@databyss-org/data/pouchdb/hooks'
+import { Source, BlockType, Topic } from '@databyss-org/services/interfaces'
 import LoadingFallback from '@databyss-org/ui/components/Notify/LoadingFallback'
 import {
   authorsToListItemData,
@@ -58,38 +53,20 @@ const SidebarSearchResults = ({
   searchHasFocus,
   ...others
 }) => {
-  const sourcesRes = useBlocks(BlockType.Source)
-  const topicsRes = useBlocks(BlockType.Topic)
-  const blockRelationsRes = useBlockRelations()
+  const sourcesRes = useBlocksInPages<Source>(BlockType.Source)
+  const topicsRes = useBlocksInPages<Topic>(BlockType.Topic)
   const pagesRes = usePages()
 
-  const queryRes = [sourcesRes, topicsRes, blockRelationsRes, pagesRes]
+  const queryRes = [sourcesRes, topicsRes, pagesRes]
 
   if (queryRes.some((q) => !q.isSuccess)) {
     return <LoadingFallback queryObserver={queryRes} />
   }
 
-  const mappedSources = blocksToListItemData(
-    getBlocksFromBlockRelations(
-      blockRelationsRes.data!,
-      sourcesRes.data!,
-      pagesRes.data!,
-      false
-    )
-  )
+  const mappedSources = blocksToListItemData(sourcesRes.data!)
+  const mappedTopics = blocksToListItemData(topicsRes.data!)
 
-  const mappedTopics = blocksToListItemData(
-    getBlocksFromBlockRelations(
-      blockRelationsRes.data!,
-      topicsRes.data!,
-      pagesRes.data!,
-      false
-    )
-  )
-
-  const mappedAuthors = authorsToListItemData(
-    Object.values(sourcesRes.data!) as Source[]
-  )
+  const mappedAuthors = authorsToListItemData(Object.values(sourcesRes.data!))
 
   const mappedPages = pagesToListItemData(Object.values(pagesRes.data!))
 

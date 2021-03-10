@@ -73,14 +73,14 @@ export const areIndexBuilt = {
 export const initiatePouchDbIndexes = async () => {
   // await dbRef.current.createIndex({
   //   index: {
-  //     fields: ['$type'],
+  //     fields: ['doctype'],
   //     ddoc: 'fetch-all',
   //   },
   // })
 
   // await dbRef.current.createIndex({
   //   index: {
-  //     fields: ['$type', '_id'],
+  //     fields: ['doctype', '_id'],
   //     ddoc: 'fetch-one',
   //   },
   // })
@@ -90,21 +90,21 @@ export const initiatePouchDbIndexes = async () => {
 
   // await dbRef.current.createIndex({
   //   index: {
-  //     fields: ['$type', 'relatedBlock'],
+  //     fields: ['doctype', 'relatedBlock'],
   //     ddoc: 'block-relations',
   //   },
   // })
 
   // await dbRef.current.createIndex({
   //   index: {
-  //     fields: ['$type', 'relatedBlock', 'block'],
+  //     fields: ['doctype', 'relatedBlock', 'block'],
   //     ddoc: 'block-relation',
   //   },
   // })
 
   // await dbRef.current.createIndex({
   //   index: {
-  //     fields: ['$type', 'page'],
+  //     fields: ['doctype', 'page'],
   //     ddoc: 'block-relations-page',
   //   },
   // })
@@ -122,14 +122,14 @@ export const initiatePouchDbIndexes = async () => {
   }
   // await dbRef.current.createIndex({
   //   index: {
-  //     fields: ['$type', 'blocks.[]._id'],
+  //     fields: ['doctype', 'blocks.[]._id'],
   //     ddoc: 'page-blocks',
   //   },
   // })
 
   // await dbRef.current.createIndex({
   //   index: {
-  //     fields: ['$type', 'type'],
+  //     fields: ['doctype', 'type'],
   //     ddoc: 'fetch-atomic',
   //   },
   // })
@@ -137,14 +137,14 @@ export const initiatePouchDbIndexes = async () => {
   // // THIS INDEX CAN BE OPTIONAL USING THE ABOVE INDEX 'fetch-atomic'
   // await dbRef.current.createIndex({
   //   index: {
-  //     fields: ['$type', 'type', '_id'],
+  //     fields: ['doctype', 'type', '_id'],
   //     ddoc: 'fetch-atomic-id',
   //   },
   // })
 
   // await dbRef.current.createIndex({
   //   index: {
-  //     fields: ['$type', 'relatedBlock', 'relationshipType'],
+  //     fields: ['doctype', 'relatedBlock', 'relationshipType'],
   //     ddoc: 'inline-atomics',
   //   },
   // })
@@ -257,8 +257,8 @@ export const syncPouchDb = ({
     },
   }
 
-  dbRef
-    .current!.replicate.to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
+  ;(dbRef.current as PouchDB.Database).replicate
+    .to(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, {
       ...opts,
       // do not replciate design docs
       filter: (doc) => !doc._id.includes('design/'),
@@ -282,15 +282,17 @@ export const syncPouchDb = ({
         })
       }
     })
-
-  dbRef
-    .current!.replicate.from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
+  ;(dbRef.current as PouchDB.Database).replicate
+    .from(`${REMOTE_CLOUDANT_URL}/g_${groupId}`, { ...opts })
     .on('error', (err) => console.log(`REPLICATE.from ERROR - ${err}`))
   // .on('paused', (info) => console.log(`REPLICATE.from done - ${info}`))
 }
 
 export const resetPouchDb = async () => {
-  dbRef.current?.destroy()
+  if (dbRef.current) {
+    await (dbRef.current as PouchDB.Database).destroy()
+  }
+
   dbRef.current = null
 }
 
@@ -328,10 +330,10 @@ export const pouchDataValidation = (data) => {
   let schema
   // user database determines the schema by the .type field
 
-  if (data.$type === DocumentType.Block) {
+  if (data.doctype === DocumentType.Block) {
     schema = schemaMap[data.type]
   } else {
-    schema = schemaMap[data.$type]
+    schema = schemaMap[data.doctype]
   }
 
   // `this.schema &&` this will be removed when all schemas are implemented

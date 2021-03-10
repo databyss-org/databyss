@@ -4,6 +4,7 @@ import { DocumentDict, Document } from '@databyss-org/services/interfaces'
 import PouchDB from 'pouchdb'
 
 import { dbRef } from '../db'
+import { CouchDb } from '../../couchdb-client/couchdb'
 import { DocumentArrayToDict } from './utils'
 
 export interface QueryOptions {
@@ -35,23 +36,26 @@ export const useDocuments = <T extends Document>(
 
   const queryKey = selectorString
 
-  // console.log('useDocuments.selector', selector)
+  console.log('useDocuments.selector', selector)
   const query = useQuery<DocumentDict<T>>(
     queryKey,
     () =>
-      new Promise<DocumentDict<T>>((resolve, reject) =>
+      new Promise<DocumentDict<T>>((resolve, reject) => {
         // console.log('useDocuments.fetch', selector)
         dbRef
           .current!.find({ selector })
-          .then((res) => resolve(DocumentArrayToDict(res.docs)))
+          .then((res: any) => resolve(DocumentArrayToDict(res.docs)))
           .catch((err) => reject(err))
-      ),
+      }),
     {
       enabled: options.enabled,
     }
   )
 
   useEffect(() => {
+    if (dbRef.current instanceof CouchDb) {
+      return
+    }
     // console.log('useDocuments.subscribe', queryKey, selector)
 
     if (subscriptionDict[selectorString]) {

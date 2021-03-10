@@ -5,7 +5,7 @@ import { findAll } from '../../utils'
 
 const getSources = async (): Promise<Source[] | ResourceNotFoundError> => {
   const _sources = await findAll({
-    $type: DocumentType.Block,
+    doctype: DocumentType.Block,
     query: {
       type: BlockType.Source,
     },

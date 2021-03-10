@@ -33,7 +33,6 @@ export interface UserSession {
 
 export interface UserPreference {
   _id: string
-  $type: DocumentType
   userId: string
   email?: string
   belongsToGroup: string
