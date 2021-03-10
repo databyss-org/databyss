@@ -5,7 +5,6 @@ import { useSessionContext } from '@databyss-org/services/session/SessionProvide
 import { useNotifyContext } from '@databyss-org/ui/components/Notify/NotifyProvider'
 import { StickyHeader } from '@databyss-org/ui/components'
 import { View, Icon } from '@databyss-org/ui/primitives'
-import { useEditorPageContext } from '@databyss-org/services'
 import { usePages } from '@databyss-org/data/pouchdb/hooks'
 import LoadingSvg from '@databyss-org/ui/assets/loading.svg'
 import PageMenu from './PageMenu'
