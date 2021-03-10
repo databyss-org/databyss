@@ -42,7 +42,6 @@ const addGroupToDocument = (groupIds: string[], document: any) => {
   if (document?.sharedWithGroups?.length !== _sharedWithGroups.length) {
     document.sharedWithGroups = _sharedWithGroups
     // add group to page document
-    console.log('ADD GROUP', groupIds, 'TO ', document)
 
     upsertImmediate({
       doctype: document.doctype,
@@ -241,6 +240,7 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     pages: [pageId],
     public: bool,
   }
+
   // if page is shared
   if (bool) {
     // add groupId to pages sharedWithPages array

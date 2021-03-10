@@ -74,7 +74,6 @@ const createSharedGroupDatabase = async ({
   groupId: string
   userId: string
 }): Promise<CredentialResponse> => {
-  console.log(groupId)
   await createGroupId({ groupId, userId })
   await createGroupDatabase(groupId)
   const credentials = await setSecurity({ groupId, isPublic: true })

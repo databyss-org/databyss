@@ -47,11 +47,6 @@ export const getDefaultGroup = () => {
   return groupId
 }
 
-// export const getAuthToken = async () => {
-//   const _res = await getUserSession()
-//   return _res?.token
-// }
-
 export const getAccountId = async () => {
   const defaultGroup = getDefaultGroup()
   return defaultGroup
@@ -179,7 +174,6 @@ export const localStorageHasSession = async () => {
   // if we're on a URL with a groupid on it, make sure it matches default group
   const groupIdFromUrl = getAccountFromLocation()
 
-  console.log('account from group url', groupIdFromUrl)
   if (
     !process.env.STORYBOOK &&
     groupIdFromUrl &&
