@@ -36,7 +36,7 @@ export const useDocuments = <T extends Document>(
 
   const queryKey = selectorString
 
-  console.log('useDocuments.selector', selector)
+  // console.log('useDocuments.selector', selector)
   const query = useQuery<DocumentDict<T>>(
     queryKey,
     () =>

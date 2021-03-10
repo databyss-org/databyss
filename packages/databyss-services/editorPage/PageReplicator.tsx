@@ -69,7 +69,6 @@ export const PageReplicator = ({
       const groupsWithPage = Object.values(groupsRes.data!).filter((group) =>
         group.pages.includes(pageId)
       )
-
       groupsWithPage.forEach((group) => {
         // check if group is already replicating
         const _repStatus = replicationStatusRef.current[group._id]

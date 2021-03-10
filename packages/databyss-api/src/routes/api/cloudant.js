@@ -50,7 +50,7 @@ router.post('/groups/auth/:id', auth, async (req, res) => {
   // check if group exists
   const _db = await getDB({ dbName: groupId })
   if (!_db) {
-    return res.status(404).json({ message: 'database does not exist' })
+    return res.status(404).json({ message: 'database does not exist' }).send()
   }
   // checks if user is owner of the database
   const _userAuthorized = await verifyUserOwnsDatabase({
@@ -58,7 +58,7 @@ router.post('/groups/auth/:id', auth, async (req, res) => {
     dbName: groupId,
   })
   if (!_userAuthorized) {
-    return res.status(401).json({ message: 'not authorized' })
+    return res.status(401).json({ message: 'not authorized' }).send()
   }
   // verify credentials
   const { dbKey } = credentials
@@ -67,12 +67,12 @@ router.post('/groups/auth/:id', auth, async (req, res) => {
     cloudantDb: _db,
   })
   if (!dbCredentialsVerified) {
-    return res.status(401).json({ message: 'not authorized' })
+    return res.status(401).json({ message: 'not authorized' }).send()
   }
 
   // all verification has passed
 
-  return res.status(200).json({})
+  return res.status(200).json({}).send()
 })
 
 // @route    POST api/cloudant/groups
