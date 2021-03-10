@@ -86,7 +86,7 @@ const PageWithAutosave = ({ page }) => {
       const { _id } = value.nextState.pageHeader
       const _page = { blocks: _nextBlocks, _id }
 
-      upsert({ $type: 'PAGE', _id: _page._id, doc: _page })
+      upsert({ doctype: 'PAGE', _id: _page._id, doc: _page })
     }
   }
 

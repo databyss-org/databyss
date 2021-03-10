@@ -45,7 +45,7 @@ const addGroupToDocument = (groupIds: string[], document: any) => {
     console.log('ADD GROUP', groupIds, 'TO ', document)
 
     upsertImmediate({
-      $type: document.$type,
+      doctype: document.doctype,
       _id: document._id,
       doc: document,
     })
@@ -66,7 +66,7 @@ const removeGroupsFromDocument = (groupIds: string[], document: any) => {
   if (document.sharedWithGroups.length !== _sharedWithGroups.length) {
     document.sharedWithGroups = _sharedWithGroups
     upsertImmediate({
-      $type: document.$type,
+      doctype: document.doctype,
       _id: document._id,
       doc: document,
     })
@@ -80,7 +80,7 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
   // add to all blocks associated with page
   for (const [i, _b] of page.blocks.entries()) {
     const _block = await findOne<Block>({
-      $type: DocumentType.Block,
+      doctype: DocumentType.Block,
       query: { _id: _b._id },
     })
     if (_block) {
@@ -105,7 +105,7 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
   // add to selection
   const _selectionId = page.selection
   const _selection = await findOne<any>({
-    $type: DocumentType.Selection,
+    doctype: DocumentType.Selection,
     query: { _id: _selectionId },
   })
   if (_selection) {
@@ -118,7 +118,7 @@ export const addGroupToDocumentsFromPage = async (page: PageDoc) => {
 
   for (const _a of _atomics) {
     const _atomic = await findOne<any>({
-      $type: DocumentType.BlockRelation,
+      doctype: DocumentType.BlockRelation,
       query: { _id: `r_${_a._id}` },
     })
     if (_atomic) {
@@ -138,7 +138,7 @@ export const addPageToGroup = async ({
   groupId: string
 }) => {
   const _page = await findOne<PageDoc>({
-    $type: DocumentType.Page,
+    doctype: DocumentType.Page,
     query: { _id: pageId },
   })
   if (_page && !_page?.sharedWithGroups?.includes(groupId)) {
@@ -157,9 +157,9 @@ export const setGroup = async (group: Group, pageId?: string) => {
   group.pages = removeDuplicatesFromArray(group.pages)
 
   await upsertImmediate({
-    $type: DocumentType.Group,
+    doctype: DocumentType.Group,
     _id: group._id,
-    doc: { ...group, $type: DocumentType.Group },
+    doc: { ...group, doctype: DocumentType.Group },
   })
 }
 
@@ -175,7 +175,7 @@ export const removeGroupFromPage = async ({
   groupId: string
 }) => {
   const _page = await findOne<PageDoc>({
-    $type: DocumentType.Page,
+    doctype: DocumentType.Page,
     query: { _id: pageId },
   })
   if (_page?.sharedWithGroups) {
@@ -187,7 +187,7 @@ export const removeGroupFromPage = async ({
     // add to all blocks associated with page
     for (const [i, _b] of _page.blocks.entries()) {
       const _block = await findOne<Block>({
-        $type: DocumentType.Block,
+        doctype: DocumentType.Block,
         query: { _id: _b._id },
       })
       if (_block) {
@@ -212,7 +212,7 @@ export const removeGroupFromPage = async ({
     // remove from selection
     const _selectionId = _page.selection
     const _selection = await findOne<any>({
-      $type: DocumentType.Selection,
+      doctype: DocumentType.Selection,
       query: { _id: _selectionId },
     })
     if (_selection._sharedWithPages) {
@@ -225,7 +225,7 @@ export const removeGroupFromPage = async ({
 
     for (const _a of _atomics) {
       const _atomic = await findOne<any>({
-        $type: DocumentType.BlockRelation,
+        doctype: DocumentType.BlockRelation,
         query: { _id: `r_${_a._id}` },
       })
       if (_atomic) {
@@ -248,7 +248,7 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
     await addPageToGroup({ pageId, groupId: _data._id })
 
     await upsertImmediate({
-      $type: DocumentType.Group,
+      doctype: DocumentType.Group,
       _id: _data._id,
       doc: _data,
     })
@@ -266,7 +266,7 @@ export const setPublicPage = async (pageId: string, bool: boolean) => {
 
     // delete group from pouchDb
     await upsertImmediate({
-      $type: DocumentType.Group,
+      doctype: DocumentType.Group,
       _id: _data._id,
       doc: { ..._data, _deleted: true },
     })

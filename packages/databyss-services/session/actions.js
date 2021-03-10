@@ -98,7 +98,7 @@ export const fetchSession = ({ _request, ...credentials }) => async (
       }
     }
 
-    const res = await _request(path, options, true)
+    const res = await _request(path, { ...options, responseAsJson: true })
     if (res.data && res.data.session) {
       const { session } = res.data
 

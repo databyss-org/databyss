@@ -9,7 +9,7 @@ const setTopic = async (data: Topic) => {
   const { text, _id } = data
 
   await upsert({
-    $type: DocumentType.Block,
+    doctype: DocumentType.Block,
     _id,
     doc: {
       ...data,
@@ -23,7 +23,7 @@ const setTopic = async (data: Topic) => {
    */
   // TODO: change to blockId so we're not dependent on _id format
   const _relation = await findOne<BlockRelation>({
-    $type: DocumentType.BlockRelation,
+    doctype: DocumentType.BlockRelation,
     query: {
       blockId: _id,
     },
@@ -67,7 +67,7 @@ const setTopic = async (data: Topic) => {
         if (_inlineRanges.length) {
           // update block
           await upsert({
-            $type: DocumentType.Block,
+            doctype: DocumentType.Block,
             _id: _block!._id,
             doc: _block,
           })

@@ -5,7 +5,7 @@ import { useDocuments, UseDocumentsOptions } from './useDocuments'
 export const usePages = (options?: UseDocumentsOptions) => {
   const query = useDocuments<Page>(
     {
-      $type: DocumentType.Page,
+      doctype: DocumentType.Page,
     },
     options
   )

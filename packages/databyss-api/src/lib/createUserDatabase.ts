@@ -46,14 +46,14 @@ export const initializeNewPage = async ({
   const _page: any = new Page(pageId)
   // upsert selection
   await groupDb.upsert(_page.selection._id, () => ({
-    $type: DocumentType.Selection,
+    doctype: DocumentType.Selection,
     createdAt: Date.now(),
     belongsToGroup: groupId,
     ..._page.selection,
   }))
   // upsert blocks
   await groupDb.upsert(_page.blocks[0]._id, () => ({
-    $type: DocumentType.Block,
+    doctype: DocumentType.Block,
     createdAt: Date.now(),
     belongsToGroup: groupId,
     ..._page.blocks[0],
@@ -61,7 +61,7 @@ export const initializeNewPage = async ({
 
   await groupDb.upsert(_page._id, () => ({
     createdAt: Date.now(),
-    $type: DocumentType.Page,
+    doctype: DocumentType.Page,
     belongsToGroup: groupId,
     ...normalizePage(_page),
   }))
@@ -245,7 +245,6 @@ export const createUserDatabaseCredentials = async (
     const defaultPageId = uidlc()
     const _userPreferences: UserPreference = {
       _id: 'user_preference',
-      $type: DocumentType.UserPreferences,
       userId: user._id,
       email: user?.email,
       belongsToGroup: groupId,
@@ -265,7 +264,10 @@ export const createUserDatabaseCredentials = async (
       pageId: defaultPageId,
     })
 
-    await _db.upsert(_userPreferences._id, () => _userPreferences)
+    await _db.upsert(_userPreferences._id, () => ({
+      ..._userPreferences,
+      doctype: DocumentType.UserPreferences,
+    }))
 
     // add defaultPageId to Userdb
     await Users.upsert(_userPreferences.userId, (oldDoc) => ({

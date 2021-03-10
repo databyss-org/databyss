@@ -8,12 +8,12 @@ export const setSource = async (data: Source) => {
     _id,
     text,
     type: BlockType.Source,
-    $type: DocumentType.Block,
+    doctype: DocumentType.Block,
     detail,
   }
   // TODO: get document and use Object.assign(_source, blockFields) to only replace new fields
   await upsert({
-    $type: DocumentType.Block,
+    doctype: DocumentType.Block,
     _id,
     doc: blockFields,
   })

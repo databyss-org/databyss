@@ -69,7 +69,7 @@ const PageBody = ({
     ) {
       const { _id } = value.nextState.pageHeader
       const _page = { blocks: _nextBlocks, _id }
-      upsert({ $type: DocumentType.Page, _id: _page._id, doc: _page })
+      upsert({ doctype: DocumentType.Page, _id: _page._id, doc: _page })
     }
   }
 

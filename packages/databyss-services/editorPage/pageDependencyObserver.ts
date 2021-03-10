@@ -8,7 +8,7 @@ export const pageDependencyObserver = () => {
       since: 'now',
       live: true,
       include_docs: true,
-      selector: { $type: DocumentType.Page },
+      selector: { doctype: DocumentType.Page },
     })
     .on('change', (change) => {
       // crawl page and add property to all pages

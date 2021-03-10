@@ -32,7 +32,7 @@ const setBlockRelations = async (payload: {
     }
     _payload.pages = [page]
     upsert({
-      $type: DocumentType.BlockRelation,
+      doctype: DocumentType.BlockRelation,
       _id: _relationId,
       doc: _payload,
     })
@@ -41,7 +41,7 @@ const setBlockRelations = async (payload: {
     if (operationType === BlockRelationOperation.REMOVE) {
       _payload.pages = res.pages.filter((p) => p !== page)
       upsert({
-        $type: DocumentType.BlockRelation,
+        doctype: DocumentType.BlockRelation,
         _id: _relationId,
         doc: _payload,
       })
@@ -55,7 +55,7 @@ const setBlockRelations = async (payload: {
     _pages.push(page)
     _payload.pages = _pages
     upsert({
-      $type: DocumentType.BlockRelation,
+      doctype: DocumentType.BlockRelation,
       _id: _relationId,
       doc: _payload,
     })

@@ -1,9 +1,10 @@
 import { Patch } from 'immer'
 import { Block } from '@databyss-org/services/interfaces'
 import { PageDoc, DocumentType } from '../interfaces'
-import { upsert, upsertImmediate } from '../utils'
+import { upsert, addTimeStamp } from '../utils'
 import { Page } from '../../../databyss-services/interfaces/Page'
 import { BlockReference } from '../../../databyss-services/interfaces/Block'
+import { dbRef } from '../db'
 
 const applyPatch = (node, path, value) => {
   const key = path.shift()
@@ -51,7 +52,7 @@ const addOrReplaceBlock = async (p) => {
     _block.type = type
   }
 
-  upsert({ $type: DocumentType.Block, _id: _block._id!, doc: _block })
+  upsert({ doctype: DocumentType.Block, _id: _block._id!, doc: _block })
 }
 
 const replacePatch = async (p) => {
@@ -64,7 +65,7 @@ const replacePatch = async (p) => {
     case 'selection': {
       const _id = p.value._id
       if (_id) {
-        upsert({ $type: DocumentType.Selection, _id, doc: p.value })
+        upsert({ doctype: DocumentType.Selection, _id, doc: p.value })
       }
       break
     }
@@ -95,7 +96,7 @@ const removePatches = async (p) => {
       // const _blockId = blocks[_index]._id
       // remove block from db
       // await upsert({
-      //   $type: DocumentType.Block,
+      //   doctype: DocumentType.Block,
       //   _id: _blockId,
       //   doc: { _deleted: true },
       // })
@@ -136,22 +137,40 @@ export const normalizePage = (page: Page): PageDoc => {
   return _pageDoc
 }
 
+// bypasses upsert queue
+const _upsert = ({
+  doctype,
+  _id,
+  doc,
+}: {
+  doctype: DocumentType
+  _id: string
+  doc: any
+}) =>
+  dbRef.current!.upsert(_id, (oldDoc) => {
+    const _doc = {
+      ...oldDoc,
+      ...addTimeStamp({ ...oldDoc, ...doc, doctype }),
+    }
+    return _doc
+  })
+
 /*
 generic function to add a new page to database given id. this function is a promise and bypasses the queue
 */
 export const addPage = async (page: Page) => {
-  await upsertImmediate({
-    $type: DocumentType.Selection,
-    _id: page.selection._id!,
+  await _upsert({
+    doctype: DocumentType.Selection,
+    _id: page.selection._id,
     doc: page.selection,
   })
-  await upsertImmediate({
-    $type: DocumentType.Block,
+  await _upsert({
+    doctype: DocumentType.Block,
     _id: page.blocks[0]._id,
     doc: { ...page.blocks[0] },
   })
-  await upsertImmediate({
-    $type: DocumentType.Page,
+  await _upsert({
+    doctype: DocumentType.Page,
     _id: page._id,
     doc: normalizePage(page),
   })
